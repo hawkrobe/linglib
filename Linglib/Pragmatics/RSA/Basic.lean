@@ -1,4 +1,5 @@
 import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
+import Linglib.Core.MeasureTheory.Measure.WithDensity
 import Linglib.Core.Probability.Kernel.OfWeights
 import Linglib.Core.Probability.Kernel.Posterior
 import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
@@ -81,12 +82,41 @@ theorem literalListener_indicator [DiscreteMeasurableSpace W] (μ : Measure W)
     rw [withDensity_indicator_one .of_discrete]
     simp only [ProbabilityTheory.cond, Measure.restrict_univ, Measure.restrict_apply_univ]
 
+theorem literalListener_apply_singleton' [MeasurableSingletonClass W] (μ : Measure W)
+    (m : U → W → ℝ≥0∞) (u : U) (w : W) :
+    literalListener μ m u {w} = m u w * μ {w} / ∫⁻ w', m u w' ∂μ := by
+  rw [literalListener_apply, cond_apply MeasurableSet.univ, Set.univ_inter,
+    withDensity_apply _ (.singleton w), lintegral_singleton, withDensity_apply _ MeasurableSet.univ,
+    Measure.restrict_univ, ENNReal.div_eq_inv_mul]
+
 theorem literalListener_apply_singleton [Fintype W] [MeasurableSingletonClass W] (μ : Measure W)
     (m : U → W → ℝ≥0∞) (u : U) (w : W) :
     literalListener μ m u {w} = m u w * μ {w} / ∑ w', m u w' * μ {w'} := by
-  rw [literalListener_apply, cond_apply MeasurableSet.univ, Set.univ_inter,
-    withDensity_apply _ (.singleton w), lintegral_singleton, withDensity_apply _ MeasurableSet.univ,
-    Measure.restrict_univ, lintegral_fintype, ENNReal.div_eq_inv_mul]
+  rw [literalListener_apply_singleton', lintegral_fintype]
+
+/-- The literal listener of an utterance whose meaning has positive finite mass under the prior is
+a probability measure. -/
+theorem isProbabilityMeasure_literalListener (μ : Measure W) (m : U → W → ℝ≥0∞) (u : U)
+    (h0 : ∫⁻ w, m u w ∂μ ≠ 0) (htop : ∫⁻ w, m u w ∂μ ≠ ∞) :
+    IsProbabilityMeasure (literalListener μ m u) := by
+  rw [literalListener_apply]
+  refine cond_isProbabilityMeasure_of_finite ?_ ?_ <;>
+    rwa [withDensity_apply _ MeasurableSet.univ, Measure.restrict_univ]
+
+/-- Marginalizing a joint literal listener whose meaning depends on the first coordinate alone
+gives the literal listener on the marginal prior: the meaning carries no information about the
+second coordinate. -/
+theorem literalListener_map_fst {V : Type*} [MeasurableSpace V] (μ : Measure (W × V))
+    (m : U → W → ℝ≥0∞) (hm : ∀ u, Measurable (m u)) (u : U) :
+    (literalListener μ (λ u p => m u p.1) u).map Prod.fst =
+      literalListener (μ.map Prod.fst) m u := by
+  have key : (μ.withDensity λ p => m u p.1).map Prod.fst = (μ.map Prod.fst).withDensity (m u) :=
+    Measure.map_withDensity_comp (hm u) measurable_fst
+  have huniv : (μ.withDensity λ p => m u p.1) Set.univ =
+      (μ.map Prod.fst).withDensity (m u) Set.univ := by
+    rw [← key, Measure.map_apply measurable_fst MeasurableSet.univ, Set.preimage_univ]
+  simp only [literalListener_apply, ProbabilityTheory.cond, Measure.restrict_univ, Measure.map_smul,
+    key, huniv]
 
 theorem literalListener_indicator_apply_singleton [DiscreteMeasurableSpace W] (μ : Measure W)
     (sem : U → Set W) {u : U} {w : W} (h : w ∈ sem u) :
@@ -270,6 +300,13 @@ theorem speakerOfScore_apply_singleton_ne_zero {w : W} {u : U} (h : score w u �
     (htop : ∀ u', score w u' ≠ ⊤) : speakerOfScore score w {u} ≠ 0 :=
   Kernel.ofWeights_apply_singleton_ne_zero (mt EReal.exp_eq_zero_iff.mp h)
     λ u' => mt EReal.exp_eq_top_iff.mp (htop u')
+
+/-- Translation invariance: two states whose scores differ by a real constant across utterances
+have the same speaker row. -/
+theorem speakerOfScore_apply_eq_of_add {w₁ w₂ : W} {k : ℝ} (h : ∀ u, score w₂ u = score w₁ u + k) :
+    speakerOfScore score w₂ = speakerOfScore score w₁ :=
+  Kernel.ofWeights_apply_eq_of_mul (mt EReal.exp_eq_zero_iff.mp (EReal.coe_ne_bot k))
+    (mt EReal.exp_eq_top_iff.mp (EReal.coe_ne_top k)) λ u => by rw [h, EReal.exp_add]
 
 /-- Row preference of the score speaker is score comparison; the normalization cancels. -/
 theorem speakerOfScore_real_singleton_lt_iff {w : W} (htop : ∀ u, score w u ≠ ⊤)

@@ -75,6 +75,12 @@ theorem ofWeights_apply_singleton_ne_zero {w : α → β → ℝ≥0∞} {a : α
   rw [ofWeights_apply_singleton, ne_eq, ENNReal.div_eq_zero_iff, not_or]
   exact ⟨h, ENNReal.sum_ne_top.mpr λ c _ => htop c⟩
 
+/-- Two rows whose weights differ by a positive finite factor are the same row. -/
+theorem ofWeights_apply_eq_of_mul {w : α → β → ℝ≥0∞} {a₁ a₂ : α} {c : ℝ≥0∞} (hc0 : c ≠ 0)
+    (hc : c ≠ ∞) (h : ∀ b, w a₂ b = w a₁ b * c) : ofWeights w a₂ = ofWeights w a₁ :=
+  Measure.ext_of_singleton λ b => by
+    simp only [ofWeights_apply_singleton, h, ← Finset.sum_mul, ENNReal.mul_div_mul_right _ _ hc0 hc]
+
 /-- In a row with exactly two nonzero weights, both finite, the real mass of one is its share
 of the two. -/
 theorem ofWeights_real_singleton_of_pair {w : α → β → ℝ≥0∞} (a : α) {b b' : β} (hbb' : b ≠ b')

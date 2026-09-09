@@ -171,6 +171,7 @@ import Linglib.Core.Relation.FactorsThroughOn
 import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
 import Linglib.Core.MeasureTheory.Measure.Decomposition.RadonNikodym
 import Linglib.Core.MeasureTheory.Measure.Prod
+import Linglib.Core.MeasureTheory.Measure.WithDensity
 import Linglib.Core.ModelTheory.Binders
 import Linglib.Core.ModelTheory.StructureFamily
 import Linglib.Core.ModelTheory.EhrenfeuchtFraisse
