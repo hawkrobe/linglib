@@ -1,491 +1,265 @@
-import Linglib.Processing.Psychophysics.SignalDetection
-import Linglib.Processing.Psychophysics.Psychophysics
-import Linglib.Studies.KursatDegen2021
-import Linglib.Studies.DegenEtAl2020
-import Linglib.Studies.EngelhardtEtAl2006
+import Mathlib.Order.MinMax
+import Linglib.Data.Examples.GilesEtAl2026
 
 /-!
-# [giles-etal-2026]
+# Giles, Rubio-Fernandez and Mollica (2026): Search Efficiency Drives Reference Production Across Modalities, But Colour Is Special
 
-Search Efficiency Drives Reference Production Across Modalities,
-But Colour Is Special. *Open Mind: Discoveries in Cognitive Science*
-10, 236–260.
+This file formalizes the search-efficiency view of overinformative reference as [giles-etal-2026]
+test it across attributes and sensory modalities. On that view ([rubio-fernandez-2019],
+[jara-ettinger-rubio-fernandez-2022]) a speaker adds a redundant modifier when it speeds the
+listener's search for the referent, and a description guides search along the most discriminable
+attribute it mentions (`Display.efficiency`); so a redundant attribute exerts a pressure to
+overinform exactly when it is more discriminable than the attribute that already singles out the
+target (`Display.Pressure`, `Display.pressure_iff`). The three display types of the first
+experiment, built from the two calibration points the psychophysical staircases deliver, come out
+as the paper predicts: pressure when the sufficient attribute is hard and the redundant one easy,
+none when both are easy or the redundant one is hard (`predicted_sHighRLow`, `predicted_baseline`).
+The rival strategy of mentioning every highly discriminable attribute ([fukumura-carminati-2022])
+cannot tell the baseline from the critical display (`highRedundant_predicted_baseline`), and the
+baseline contrast decides between the two (`rows_baseline_refutes_highRedundant`).
 
-## Core Argument
+Any strategy that reads only the display predicts no difference between two redundant attributes
+at matched discriminability (`predictedBy_self`). The data contradict this twice: redundant colour
+is used more than redundant material in the first experiment and more than redundant orientation
+in the second, where attentional guidance, production effort and term frequency are controlled
+(`rows_colour_special`), while low- and high-frequency colour terms do not differ
+(`rows_frequency_predicted`).
 
-Overinformativeness is communicatively efficient: speakers use redundant
-modifiers to help listeners search for the referent. The rate of
-overinformativeness tracks the **search efficiency** gained by adding
-the modifier — the interaction of discriminability (ease of perceptual
-search along the redundant attribute) and sufficiency (difficulty of
-search using the sufficient attribute alone).
+## Implementation notes
 
-## Experiments
+* Discriminability is the two-point scale the adaptive staircases produce for each participant
+  and attribute (`Discriminability`); the model is stated for any linear order so that graded
+  measures fit it too.
+* A row is one non-reference level of one predictor of the paper's regressions (Tables 1 and 2);
+  its observed direction against the reference level is the side of zero its 95% credible
+  interval lies on (`Row.observed`), and the coefficients stay in the data rows.
+* In the second experiment the sufficient attribute is the shape noun, which was never at a
+  category boundary, so both attributes count as highly discriminable there.
+* The paper's speculations about why colour is privileged, optimised category partitions and
+  learned strategy selection, are not modelled; nor are display density and contextual
+  distinctiveness, which the second experiment varied without finding an effect.
 
-- **Exp 1** (N = 72, bat factory director task): Manipulates discriminability
-  (high vs low via psychophysical staircases) and sufficiency (which
-  attribute identifies the target) across two modalities — visual colour
-  and auditory material. Results: overinformativeness tracks the
-  discriminability × sufficiency interaction in both modalities, but
-  colour is overinformed more than material even with equalized
-  discriminability.
+## References
 
-- **Exp 2** (N = 97, shape array director task): Compares redundant colour
-  (high-frequency and low-frequency terms) vs redundant orientation,
-  controlling for discriminability, salience (contextual distinctiveness),
-  production effort (button-click), and word frequency. Result: colour
-  is overinformed significantly more than orientation, ruling out
-  salience, frequency, and effort as explanations.
-
-## Key Findings
-
-| # | Finding | Evidence | β | 95% CI |
-|---|---------|----------|---|--------|
-| 1 | Search efficiency: S-Low/R-High > S-High/R-Low | Exp 1 | −1.09 | [−1.35, −0.83] |
-| 2 | Search efficiency: S-Low/R-High > Baseline | Exp 1 | −0.94 | [−1.20, −0.68] |
-| 3 | Colour > material (cross-modal) | Exp 1 | −1.43 | [−1.65, −1.20] |
-| 4 | Colour HF > orientation | Exp 2 | −0.97 | [−1.20, −0.75] |
-| 5 | Colour LF ≈ Colour HF (frequency doesn't explain) | Exp 2 | −0.20 | [−0.44, 0.03] |
-
-## Theoretical Implications
-
-A discriminability-based noise model correctly predicts Findings 1–2
-(discriminability drives overinformativeness) and Finding 3 (colour >
-material). But it predicts that colour and orientation — equally
-discriminable, ≥99% labelling accuracy each — should be overinformed
-equally. Finding 4 falsifies this: colour has a **residual privilege**
-beyond discriminability.
-
-## Verified Data
-
-Regression coefficients verified against Tables 1 and 2 of the paper.
+* [giles-etal-2026]
+* [rubio-fernandez-2019]
+* [jara-ettinger-rubio-fernandez-2022]
+* [fukumura-carminati-2022]
+* [kursat-degen-2021]
+* [degen-etal-2020]
+* [wolfe-horowitz-2017]
 -/
 
 namespace GilesEtAl2026
 
--- ============================================================================
--- §0. Search Efficiency Display Types (Exp 1 conditions)
--- ============================================================================
+open Data.Examples
 
-/-- The experimental conditions of Exp 1, defined by the sufficiency ×
-    discriminability interaction: which attribute identifies the target
-    (sufficient vs. redundant) crossed with how easy each attribute is to
-    search (high vs. low discriminability, set via psychophysical
-    staircases). -/
-inductive DisplayType where
-  /-- Sufficient attribute: high discriminability,
-      Redundant attribute: low discriminability. -/
+variable {D : Type*}
+
+/-! ### Displays and the predictions of a production strategy -/
+
+/-- A display as the speaker's choice sees it: the perceptual discriminability of the attribute
+that alone singles out the target and that of the redundant attribute. -/
+structure Display (D : Type*) where
+  /-- Discriminability of the sufficient attribute. -/
+  sufficient : D
+  /-- Discriminability of the redundant attribute. -/
+  redundant : D
+  deriving DecidableEq
+
+/-- The speaker's options: the sufficient attribute alone, or both attributes. -/
+inductive Description
+  | minimal
+  | overinformative
+  deriving DecidableEq
+
+/-- The direction of a level against its reference level. -/
+inductive Direction
+  | lower
+  | higher
+  | null
+  deriving DecidableEq, Repr
+
+/-- The direction a production strategy predicts for a level against its reference, given the
+condition `P` under which the strategy overinforms. -/
+def predictedBy (P : Display D → Prop) [DecidablePred P] (level ref : Display D) : Direction :=
+  if P level then (if P ref then .null else .higher) else (if P ref then .lower else .null)
+
+variable {P : Display D → Prop} [DecidablePred P] {level ref : Display D}
+
+theorem predictedBy_eq_null (h : P level ↔ P ref) : predictedBy P level ref = .null := by
+  by_cases hl : P level
+  · simp [predictedBy, hl, h.1 hl]
+  · simp [predictedBy, hl, mt h.2 hl]
+
+theorem predictedBy_eq_lower (hl : ¬ P level) (hr : P ref) : predictedBy P level ref = .lower := by
+  simp [predictedBy, hl, hr]
+
+/-- A strategy that reads only the display predicts no difference between two conditions with
+the same display, in particular between two redundant attributes at matched discriminability. -/
+theorem predictedBy_self (P : Display D → Prop) [DecidablePred P] (d : Display D) :
+    predictedBy P d d = .null :=
+  predictedBy_eq_null Iff.rfl
+
+variable [LinearOrder D]
+
+/-! ### Search efficiency -/
+
+/-- A description guides the listener's search along the most discriminable attribute it
+mentions. -/
+def Display.efficiency (d : Display D) : Description → D
+  | .minimal => d.sufficient
+  | .overinformative => max d.sufficient d.redundant
+
+/-- The search-efficiency pressure to overinform: the redundant attribute makes the description
+easier to search with. -/
+def Display.Pressure (d : Display D) : Prop :=
+  d.efficiency .minimal < d.efficiency .overinformative
+
+instance (d : Display D) : Decidable d.Pressure := inferInstanceAs (Decidable (_ < _))
+
+theorem Display.pressure_iff (d : Display D) : d.Pressure ↔ d.sufficient < d.redundant := by
+  simp only [Display.Pressure, Display.efficiency, lt_max_iff, lt_self_iff_false, false_or]
+
+/-- The rival strategy's condition for overinforming: the redundant attribute reaches the threshold
+`θ` of high discriminability, whether or not it is needed. -/
+def Display.HighRedundant (θ : D) (d : Display D) : Prop := θ ≤ d.redundant
+
+instance (θ : D) (d : Display D) : Decidable (d.HighRedundant θ) :=
+  inferInstanceAs (Decidable (_ ≤ _))
+
+/-! ### The display types of the first experiment -/
+
+/-- The display types of the first experiment: the sufficient attribute of high and the redundant
+one of low discriminability, the reverse, and both high. -/
+inductive DisplayType
   | sHighRLow
-  /-- Sufficient attribute: low discriminability,
-      Redundant attribute: high discriminability. -/
   | sLowRHigh
-  /-- Both attributes: high discriminability. -/
   | baseline
-  deriving Repr, DecidableEq
+  deriving DecidableEq, Repr
 
-/-- The search efficiency view's prediction: overinformativeness is high
-    exactly when the sufficient attribute is hard to search and the
-    redundant attribute facilitates search. When the sufficient attribute
-    is already search-efficient, redundancy adds no benefit. -/
-def searchEfficiencyPredicts : DisplayType → Bool
-  | .sLowRHigh => true   -- high overinformativeness predicted
-  | .baseline  => false  -- intermediate (lower than sLowRHigh)
-  | .sHighRLow => false  -- low overinformativeness predicted
+/-- The display of a type, from the low and the high calibration point. -/
+def DisplayType.display (lo hi : D) : DisplayType → Display D
+  | .sHighRLow => ⟨hi, lo⟩
+  | .sLowRHigh => ⟨lo, hi⟩
+  | .baseline => ⟨hi, hi⟩
 
--- ============================================================================
--- §1. Regression Results
--- ============================================================================
+variable {lo hi : D}
 
-/-- A regression coefficient from a Bayesian mixed-effects logistic model
-    with 95% credible interval. -/
-structure BayesianCoefficient where
-  β : ℚ
-  se : ℚ
-  ci_lower : ℚ
-  ci_upper : ℚ
-  deriving Repr, DecidableEq
+theorem pressure_sLowRHigh (h : lo < hi) : (DisplayType.sLowRHigh.display lo hi).Pressure :=
+  (Display.pressure_iff _).2 h
 
-/-- The 95% CI excludes zero (evidence of a reliable effect). -/
-def BayesianCoefficient.IsSignificant (c : BayesianCoefficient) : Prop :=
-  0 < c.ci_lower ∨ c.ci_upper < 0
+theorem not_pressure_sHighRLow (h : lo < hi) : ¬ (DisplayType.sHighRLow.display lo hi).Pressure :=
+  λ hp => absurd ((Display.pressure_iff _).1 hp) (not_lt.2 h.le)
 
-instance : DecidablePred BayesianCoefficient.IsSignificant :=
-  fun _ => inferInstanceAs (Decidable (_ ∨ _))
+theorem not_pressure_baseline : ¬ (DisplayType.baseline.display lo hi).Pressure :=
+  λ hp => lt_irrefl _ ((Display.pressure_iff _).1 hp)
 
--- ============================================================================
--- §2. Experiment 1: Search Efficiency Across Modalities (N = 72)
--- ============================================================================
+/-- Against the critical display, the view predicts less overinformativeness when the sufficient
+attribute is easy and the redundant one hard. -/
+theorem predicted_sHighRLow (h : lo < hi) :
+    predictedBy Display.Pressure (DisplayType.sHighRLow.display lo hi)
+      (DisplayType.sLowRHigh.display lo hi) = .lower :=
+  predictedBy_eq_lower (not_pressure_sHighRLow h) (pressure_sLowRHigh h)
 
--- Reference level: Colour-Redundant, S-Low/R-High.
+/-- Against the critical display, the view predicts less overinformativeness when both attributes
+are easy: speakers do not simply mention every easy attribute. -/
+theorem predicted_baseline (h : lo < hi) :
+    predictedBy Display.Pressure (DisplayType.baseline.display lo hi)
+      (DisplayType.sLowRHigh.display lo hi) = .lower :=
+  predictedBy_eq_lower not_pressure_baseline (pressure_sLowRHigh h)
 
-/-- Intercept (Table 1). -/
-def exp1_intercept : BayesianCoefficient :=
-  { β := -2.50, se := 0.41, ci_lower := -3.34, ci_upper := -1.70 }
+/-- The rival strategy predicts no difference between the baseline and the critical display. -/
+theorem highRedundant_predicted_baseline :
+    predictedBy (Display.HighRedundant hi) (DisplayType.baseline.display lo hi)
+      (DisplayType.sLowRHigh.display lo hi) = .null :=
+  predictedBy_eq_null Iff.rfl
 
-/-- Material-Redundant vs Colour-Redundant (Table 1).
-    Negative β: colour is overinformed MORE than material even with
-    equalized discriminability via psychophysical staircases. -/
-def exp1_material_redundant : BayesianCoefficient :=
-  { β := -1.43, se := 0.11, ci_lower := -1.65, ci_upper := -1.20 }
+/-! ### The regressions -/
 
-/-- Baseline vs S-Low/R-High (Table 1).
-    Negative β: overinformativeness is LOWER at baseline (both attributes
-    high-discriminability) than when the sufficient attribute is hard. -/
-def exp1_baseline : BayesianCoefficient :=
-  { β := -0.94, se := 0.13, ci_lower := -1.20, ci_upper := -0.68 }
+/-- The calibration points the adaptive staircases deliver for each participant and attribute: a
+stimulus the participant categorizes consistently and one at the participant's category
+boundary. -/
+inductive Discriminability
+  | low
+  | high
+  deriving DecidableEq, Repr
 
-/-- S-High/R-Low vs S-Low/R-High (Table 1).
-    Negative β: overinformativeness is LOWER when the sufficient attribute
-    is already search-efficient. -/
-def exp1_sHighRLow : BayesianCoefficient :=
-  { β := -1.09, se := 0.13, ci_lower := -1.35, ci_upper := -0.83 }
+instance : LinearOrder Discriminability :=
+  LinearOrder.lift' (λ d => decide (d = .high)) (by intro a b h; cases a <;> cases b <;> simp_all)
 
--- ============================================================================
--- §3. Experiment 2: Colour vs Orientation (N = 97)
--- ============================================================================
+theorem Discriminability.low_lt_high : Discriminability.low < .high := by decide
 
--- Reference level: High-Frequency Colour Terms Redundant.
+/-- The predictors of the two regressions. -/
+inductive Predictor
+  | displayType
+  | attribute
+  | frequency
+  deriving DecidableEq, Repr
 
-/-- Intercept (Table 2). -/
-def exp2_intercept : BayesianCoefficient :=
-  { β := 0.97, se := 0.09, ci_lower := 0.80, ci_upper := 1.14 }
+/-- A non-reference level of a predictor: the displays of the level and of the reference level, and
+the 95% credible interval of its coefficient in hundredths of a logit. -/
+structure Row where
+  experiment : ℕ
+  predictor : Predictor
+  level : Display Discriminability
+  reference : Display Discriminability
+  ci : ℤ × ℤ
+  deriving DecidableEq
 
-/-- Low-frequency colour terms (Table 2, sum contrasts).
-    Small negative β relative to grand mean; CI includes zero →
-    frequency does NOT explain colour's disproportionate use. -/
-def exp2_lf_colour : BayesianCoefficient :=
-  { β := -0.20, se := 0.12, ci_lower := -0.44, ci_upper := 0.03 }
+private def discriminability : List (String × Discriminability) := [("low", .low), ("high", .high)]
 
-/-- Orientation-redundant (Table 2, sum contrasts).
-    Large negative β relative to grand mean; CI excludes zero →
-    colour is overinformed SIGNIFICANTLY MORE than orientation. -/
-def exp2_orientation : BayesianCoefficient :=
-  { β := -0.97, se := 0.12, ci_lower := -1.20, ci_upper := -0.75 }
+def Row.ofExample (ex : LinguisticExample) : Option Row := do
+  let experiment ← ex.nat? "experiment"
+  let predictor ← ex.parse? "predictor"
+    [("displayType", .displayType), ("attribute", .attribute), ("frequency", .frequency)]
+  let s ← ex.parse? "sufficient" discriminability
+  let r ← ex.parse? "redundant" discriminability
+  let s' ← ex.parse? "refSufficient" discriminability
+  let r' ← ex.parse? "refRedundant" discriminability
+  let lo ← ex.int? "ciLower"
+  let hi ← ex.int? "ciUpper"
+  pure ⟨experiment, predictor, ⟨s, r⟩, ⟨s', r'⟩, (lo, hi)⟩
 
--- ============================================================================
--- §4. Verified Data
--- ============================================================================
+/-- The observed direction of a level against its reference: the side of zero its credible
+interval lies on, null when the interval includes zero. -/
+def Row.observed (r : Row) : Direction :=
+  if r.ci.2 < 0 then .lower else if 0 < r.ci.1 then .higher else .null
 
-/-- All Exp 1 effects are significant (95% CI excludes zero). -/
-theorem exp1_all_significant :
-    exp1_material_redundant.IsSignificant ∧
-    exp1_baseline.IsSignificant ∧
-    exp1_sHighRLow.IsSignificant := by
-  norm_num [BayesianCoefficient.IsSignificant, exp1_material_redundant,
-    exp1_baseline, exp1_sHighRLow]
+/-- The direction the search-efficiency view predicts for the level. -/
+def Row.predicted (r : Row) : Direction := predictedBy Display.Pressure r.level r.reference
 
-/-- The colour vs orientation effect is significant. -/
-theorem exp2_orientation_significant :
-    exp2_orientation.IsSignificant := by
-  norm_num [BayesianCoefficient.IsSignificant, exp2_orientation]
+/-- The five coefficients of Tables 1 and 2. -/
+def rows : List Row := Examples.all.filterMap Row.ofExample
 
-/-- The low-frequency colour effect is NOT significant. -/
-theorem exp2_lf_colour_not_significant :
-    ¬exp2_lf_colour.IsSignificant := by
-  norm_num [BayesianCoefficient.IsSignificant, exp2_lf_colour]
+/-- Both display-type contrasts of the first experiment go the way the view predicts. -/
+theorem rows_displayType_predicted :
+    ∀ r ∈ rows, r.predictor = .displayType → r.observed = r.predicted := by decide
 
--- ============================================================================
--- §5. Search Efficiency Predictions
--- ============================================================================
+/-- The baseline contrast refutes the strategy of mentioning every highly discriminable attribute,
+which predicts no difference from the critical display. -/
+theorem rows_baseline_refutes_highRedundant :
+    ∀ r ∈ rows, r.predictor = .displayType → r.level = DisplayType.baseline.display .low .high →
+      r.observed ≠ predictedBy (Display.HighRedundant .high) r.level r.reference := by decide
 
-/-- The search efficiency ordering: S-Low/R-High > S-High/R-Low.
-    When the sufficient attribute is hard to search and the redundant
-    attribute facilitates search, speakers overinform more. -/
-theorem search_efficiency_ordering :
-    exp1_sHighRLow.IsSignificant ∧ exp1_sHighRLow.β < 0 := by
-  norm_num [BayesianCoefficient.IsSignificant, exp1_sHighRLow]
+theorem rows_attribute_level_eq_reference :
+    ∀ r ∈ rows, r.predictor = .attribute → r.level = r.reference := by decide
 
-/-- The search efficiency ordering: S-Low/R-High > Baseline.
-    Speakers don't just mention all high-discriminability attributes;
-    they selectively overinform to help difficult searches. -/
-theorem search_efficiency_vs_baseline :
-    exp1_baseline.IsSignificant ∧ exp1_baseline.β < 0 := by
-  norm_num [BayesianCoefficient.IsSignificant, exp1_baseline]
+theorem rows_attribute_observed_lower :
+    ∀ r ∈ rows, r.predictor = .attribute → r.observed = .lower := by decide
 
--- ============================================================================
--- §6. Bridge: Colour > Material (Cross-Modal Search Efficiency)
--- ============================================================================
+/-- Colour is special: no strategy that reads only the display distinguishes the redundant
+attributes of either experiment, yet redundant material and redundant orientation are both used
+less than redundant colour. -/
+theorem rows_colour_special (P : Display Discriminability → Prop) [DecidablePred P] :
+    ∀ r ∈ rows, r.predictor = .attribute →
+      predictedBy P r.level r.reference = .null ∧ r.observed = .lower := λ r hr hp =>
+  ⟨by rw [← rows_attribute_level_eq_reference r hr hp]; exact predictedBy_self P r.level,
+    rows_attribute_observed_lower r hr hp⟩
 
-/-- Colour is overinformed more than material (Exp 1), extending
-    [kursat-degen-2021]'s finding cross-modally.
-
-    [kursat-degen-2021] showed colour > material with visual stimuli.
-    This study confirms the asymmetry persists when material is presented
-    in the auditory modality via impact sounds, with discriminability
-    equalized via psychophysical staircases. -/
-theorem colour_exceeds_material :
-    exp1_material_redundant.IsSignificant ∧
-    exp1_material_redundant.β < 0 := by
-  norm_num [BayesianCoefficient.IsSignificant, exp1_material_redundant]
-
-/-- Converging evidence with [kursat-degen-2021]: both studies
-    find colour used redundantly more than material. The present study
-    adds cross-modal generalisation. -/
-theorem converging_with_kursat_degen :
-    -- This study: colour > material (cross-modal, equalized discriminability)
-    exp1_material_redundant.IsSignificant ∧
-    -- Kursat & Degen 2021: colour > material (visual, perceptual difficulty)
-    KursatDegen2021.exp2_redundancy.significant ∧
-    KursatDegen2021.exp2_redundancy.beta > 0 :=
-  ⟨by norm_num [BayesianCoefficient.IsSignificant, exp1_material_redundant], rfl,
-   by norm_num [KursatDegen2021.exp2_redundancy]⟩
-
--- ============================================================================
--- §8. Colour Privilege: Limits of the Noise Model
--- ============================================================================
-
-/-- The noise model predicts equally discriminable features are
-    overinformed equally, but the data shows colour >> orientation
-    (β = −0.97) at matched discriminability. This is the central
-    dissociation: search efficiency (noise discrimination)
-    is *necessary but not sufficient* to explain overinformativeness
-    patterns. Colour has a residual privilege.
-
-    Possible explanations (General Discussion):
-    1. Colour categories are optimised for perceptual communication
-       ([regier-etal-2007]), making colour inherently more
-       search-efficient than orientation across naturalistic contexts.
-    2. Speakers learn from experience that colour is a reliable
-       referential strategy and deploy it even when its search
-       efficiency advantage is controlled away. -/
-theorem colour_privilege_residual :
-    exp2_orientation.IsSignificant ∧ exp2_orientation.β < 0 := by
-  norm_num [BayesianCoefficient.IsSignificant, exp2_orientation]
-
-/-- Word frequency does not explain the colour privilege: low-frequency
-    colour terms (teal, jade) produce overinformativeness rates
-    indistinguishable from high-frequency terms (green, blue). -/
-theorem frequency_does_not_explain :
-    ¬exp2_lf_colour.IsSignificant := by
-  norm_num [BayesianCoefficient.IsSignificant, exp2_lf_colour]
-
--- ============================================================================
--- §11. Bridge: [engelhardt-etal-2006] Over-Description Rates
--- ============================================================================
-
-/-- Both this study and [engelhardt-etal-2006] find that speakers
-    routinely over-describe: a third of Engelhardt et al.'s one-referent
-    instructions carried the modifier that makes *the apple on the towel*
-    an over-description. The search efficiency view reinterprets these
-    violations of Gricean Q2 as communicatively efficient: the "extra"
-    information facilitates listener search. -/
-theorem overinformativeness_is_efficient :
-    -- Engelhardt: the modified target of the one-referent display over-describes
-    EngelhardtEtAl2006.violation EngelhardtEtAl2006.oneReferent 0 0 (.on .apple .towel) =
-      some .overInformative ∧
-    -- This study: over-description tracks search efficiency
-    exp1_sHighRLow.IsSignificant :=
-  ⟨EngelhardtEtAl2006.oneReferent_target.2,
-   by norm_num [BayesianCoefficient.IsSignificant, exp1_sHighRLow]⟩
-
--- ============================================================================
--- §12. Search Efficiency Display Types
--- ============================================================================
-
-/-- The search efficiency prediction for each display type matches the
-    empirical ordering from Exp 1. -/
-theorem display_type_predictions :
-    -- S-Low/R-High: search efficiency predicts overinformativeness
-    searchEfficiencyPredicts .sLowRHigh = true ∧
-    -- Baseline: intermediate (both attributes are search-efficient)
-    searchEfficiencyPredicts .baseline = false ∧
-    -- S-High/R-Low: no search benefit from redundancy
-    searchEfficiencyPredicts .sHighRLow = false := by
-  exact ⟨rfl, rfl, rfl⟩
-
--- ============================================================================
--- §13. Deep Unification: d' Predicts Overmodification
--- ============================================================================
-
-/-- **Algebraic biconditional**: In a cs-RSA scene with one target and two
-    distractors (cf. [degen-etal-2020] §2), L0 prefers the overmodified
-    form iff the redundant modifier's noise gap is positive.
-
-    Scene structure: size is sufficient (only target is small), color is
-    redundant (one distractor shares the target's color).
-
-    - L0(target | sufficient) = sM / (sM + 2·sMM)
-    - L0(target | sufficient+redundant) = sM·cM / (sMM·cM + sMM·cMM + sM·cM)
-
-    Proved algebraically over free variables — a general property of the
-    product architecture, not a finite data check. -/
-theorem overmodification_iff_positive_gap
-    (sM sMM cM cMM : ℚ) (hsM : 0 < sM) (hsMM : 0 < sMM)
-    (hcM : 0 < cM) (hcMM : 0 < cMM) :
-    sM * cM / (sMM * cM + sMM * cMM + sM * cM) > sM / (sM + 2 * sMM) ↔
-    cM > cMM := by
-  have hD1 : (0:ℚ) < sM + 2 * sMM := by linarith
-  have hD2 : (0:ℚ) < sMM * cM + sMM * cMM + sM * cM := by positivity
-  rw [gt_iff_lt, gt_iff_lt, div_lt_div_iff₀ hD1 hD2]
-  constructor
-  · intro h
-    by_contra hle; push Not at hle
-    have : sM * cM * (sM + 2 * sMM) ≤
-           sM * (sMM * cM + sMM * cMM + sM * cM) := by
-      nlinarith [mul_pos hsM hsMM]
-    linarith
-  · intro h
-    nlinarith [mul_pos hsM hsMM]
-
-/-- **d' predicts overmodification**: The SDT sensitivity d' for the
-    redundant feature is positive iff the cs-RSA L0 prefers the overmodified
-    form. This unifies three levels of linglib:
-
-    - **Psychophysics** (`Core.SDTModel`): d' measures perceptual sensitivity
-    - **Noise parameters**: match/mismatch are hit/false-alarm rates
-    - **Pragmatics** (cs-RSA): L0 posterior determines speaker choice
-
-    The match/mismatch noise parameters ARE the observer's hit rate and false
-    alarm rate for feature verification. Positive d' means the observer can
-    discriminate match from mismatch above chance — exactly when the redundant
-    modifier carries useful information through the noise channel.
-
-    [giles-etal-2026] provide the perceptual grounding: discriminability
-    measured via psychophysical staircases (d') maps to the noise parameters
-    that drive overinformativeness in reference production. -/
-theorem dprime_iff_overmodification
-    (sM sMM cM cMM : ℚ) (hsM : 0 < sM) (hsMM : 0 < sMM)
-    (hcM : 0 < cM) (hcMM : 0 < cMM)
-    (hcM_lt1 : (cM : ℝ) < 1) (hcMM_lt1 : (cMM : ℝ) < 1) :
-    0 < Core.dPrimeFromRates (↑cM) (↑cMM) ↔
-    sM * cM / (sMM * cM + sMM * cMM + sM * cM) > sM / (sM + 2 * sMM) := by
-  rw [overmodification_iff_positive_gap sM sMM cM cMM hsM hsMM hcM hcMM, gt_iff_lt]
-  constructor
-  · intro h
-    exact_mod_cast (Core.dPrimeFromRates_pos_iff
-      (by exact_mod_cast hcM) hcM_lt1 (by exact_mod_cast hcMM) hcMM_lt1).mp h
-  · intro h
-    exact (Core.dPrimeFromRates_pos_iff
-      (by exact_mod_cast hcM) hcM_lt1 (by exact_mod_cast hcMM) hcMM_lt1).mpr
-      (by exact_mod_cast h)
-
-/-- Instantiation: for the illustrative colour channel of `DegenEtAl2020`
-    (match 0.99, mismatch 0.01), the redundant color modifier's d' is
-    positive, so L0 prefers "small blue" over "small."
-
-    This connects the concrete cs-RSA demonstration to the general
-    `dprime_iff_overmodification` theorem. -/
-theorem color_dprime_predicts_overmod :
-    0 < Core.dPrimeFromRates
-      (↑DegenEtAl2020.colorMatch) (↑DegenEtAl2020.colorMismatch) := by
-  simp only [DegenEtAl2020.colorMatch, DegenEtAl2020.colorMismatch]
-  exact (Core.dPrimeFromRates_pos_iff
-    (by push_cast; norm_num) (by push_cast; norm_num)
-    (by push_cast; norm_num) (by push_cast; norm_num)).mpr
-    (by push_cast; norm_num)
-
--- ============================================================================
--- §14. Monotonicity: Likelihood Ratio Determines Overmod Strength
--- ============================================================================
-
-/-- **Monotonicity in likelihood ratio**: For two redundant features with
-    noise channels (cM₁, cMM₁) and (cM₂, cMM₂), the first produces a
-    higher L0 posterior from overmodification iff its likelihood ratio
-    cM₁/cMM₁ exceeds cM₂/cMM₂.
-
-    The likelihood ratio — not the noise gap (cM − cMM) or d' alone —
-    is the quantity that determines the *strength* of overmodification.
-    Two features with equal d' but different likelihood ratios produce
-    different overmodification rates. -/
-theorem overmod_monotone_in_likelihood_ratio
-    (sM sMM cM₁ cMM₁ cM₂ cMM₂ : ℚ)
-    (hsM : 0 < sM) (hsMM : 0 < sMM)
-    (hcM₁ : 0 < cM₁) (hcMM₁ : 0 < cMM₁)
-    (hcM₂ : 0 < cM₂) (hcMM₂ : 0 < cMM₂) :
-    sM * cM₁ / (sMM * cM₁ + sMM * cMM₁ + sM * cM₁) >
-    sM * cM₂ / (sMM * cM₂ + sMM * cMM₂ + sM * cM₂) ↔
-    cM₁ * cMM₂ > cM₂ * cMM₁ := by
-  have hD₁ : (0:ℚ) < sMM * cM₁ + sMM * cMM₁ + sM * cM₁ := by positivity
-  have hD₂ : (0:ℚ) < sMM * cM₂ + sMM * cMM₂ + sM * cM₂ := by positivity
-  rw [gt_iff_lt, gt_iff_lt, div_lt_div_iff₀ hD₂ hD₁]
-  constructor
-  · intro h
-    by_contra hle; push Not at hle
-    have : sM * cM₁ * (sMM * cM₂ + sMM * cMM₂ + sM * cM₂) ≤
-           sM * cM₂ * (sMM * cM₁ + sMM * cMM₁ + sM * cM₁) := by
-      nlinarith [mul_pos hsM hsMM]
-    linarith
-  · intro h
-    nlinarith [mul_pos hsM hsMM]
-
-/-- For the one-parameter noise family (x, 1−x) used in BDA fitting,
-    the likelihood ratio ordering reduces to the parameter ordering:
-    x₁ > x₂ iff x₁·(1−x₂) > x₂·(1−x₁). Combined with probit
-    monotonicity, this gives: **higher d' → stronger overmodification**.
-
-    This is the one-parameter specialization where d', noise gap, and
-    likelihood ratio are all monotonically related — the only regime
-    where "higher d'" unambiguously predicts "more overmodification." -/
-theorem one_param_ratio_is_param_ordering
-    (x₁ x₂ : ℚ) (_hx₁ : 0 < x₁) (_hx₁' : x₁ < 1)
-    (_hx₂ : 0 < x₂) (_hx₂' : x₂ < 1) :
-    x₁ * (1 - x₂) > x₂ * (1 - x₁) ↔ x₁ > x₂ := by
-  rw [gt_iff_lt, gt_iff_lt]
-  constructor <;> intro h <;> nlinarith
-
--- ============================================================================
--- §15. Symmetry-Breaking: Why Colour Is Special
--- ============================================================================
-
-/-! The d'/likelihood-ratio model's monotonicity is *correct within* a
-feature (higher d' → more overmod, §14) but *incomplete across* features:
-two features with equal d' can have different overmod rates
-(`colour_privilege_residual`). [giles-etal-2026] propose two accounts for
-the residual colour privilege: **category optimality** — colour naming
-systems are near-optimal partitions of perceptual space ([regier-etal-2007],
-[zaslavsky-etal-2019]), so colour categories maximise discriminability
-across natural contexts even when within-trial d' is equalized — and
-**learned strategy** — speakers learn that colour is a reliable referential
-cue and deploy it by default. Both accounts locate the symmetry-breaking
-*outside* the single-trial noise parameters, in the ecological statistics
-of feature reliability across contexts. -/
-
--- ============================================================================
--- §15. Bridge: Product Architecture from Dimension Independence
--- ============================================================================
-
-/-- The cs-RSA product architecture — φ(u, o) = ∏ features,
-    channel_f(u, o) — is the UNIQUE factoring consistent with
-    [luce-1959]'s dimension independence axiom, as proven by
-    `Core.multidimensional_decomposition` in Psychophysics.lean.
-
-    The argument chain:
-    1. Dimension independence ([luce-1959] §2.C): the ratio
-       v(a[d↦s])/v(a) depends only on dimension d and the old/new values
-    2. Decomposition theorem: under independence, v(a) = C · ∏ scale_d(a_d)
-    3. cs-RSA instantiation: scale_color(match) = `DegenEtAl2020.colorMatch`,
-       scale_color(mismatch) = `DegenEtAl2020.colorMismatch`, etc.
-    4. [giles-etal-2026] ground the scale parameters in d' measured
-       via psychophysical staircases
-
-    [degen-etal-2020] builds the factoring into the concrete φ
-    (`DegenEtAl2020.φ` multiplies per-feature channels). This bridge
-    connects to the ABSTRACT infrastructure that shows the factoring is
-    forced by independence — not an ad hoc modelling choice. -/
-noncomputable def poeNoiseScales : Core.MultidimStimulus (Fin 2) (fun _ => Bool) where
-  scale
-    | 0, true  => ↑DegenEtAl2020.sizeMatch
-    | 0, false => ↑DegenEtAl2020.sizeMismatch
-    | 1, true  => ↑DegenEtAl2020.colorMatch
-    | 1, false => ↑DegenEtAl2020.colorMismatch
-  scale_pos
-    | 0, true  => by norm_num [DegenEtAl2020.sizeMatch]
-    | 0, false => by norm_num [DegenEtAl2020.sizeMismatch]
-    | 1, true  => by norm_num [DegenEtAl2020.colorMatch]
-    | 1, false => by norm_num [DegenEtAl2020.colorMismatch]
-
-/-- Map each world to its (sizeMatch?, colorMatch?) feature vector,
-    relative to the "small blue" target from [degen-etal-2020]. -/
-def worldStimulus : DegenEtAl2020.World → (Fin 2 → Bool)
-  | .bigBlue   => ![true,  true]
-  | .bigRed    => ![true,  false]
-  | .smallBlue => ![false, true]
-
-/-- The cs-RSA φ function, expressed as a `multidim_luce` model.
-    The score for each world is ∏ d, scale_d(stimulus(w)(d)), which
-    equals sizeParam × colorParam — exactly the product factoring. -/
-noncomputable def poeAsMultidimLuce :
-    Core.RationalAction Unit DegenEtAl2020.World :=
-  Core.multidim_luce poeNoiseScales worldStimulus
+/-- Low- and high-frequency colour terms do not differ, as the view predicts for one attribute at
+one discriminability. -/
+theorem rows_frequency_predicted :
+    ∀ r ∈ rows, r.predictor = .frequency → r.observed = r.predicted := by decide
 
 end GilesEtAl2026
