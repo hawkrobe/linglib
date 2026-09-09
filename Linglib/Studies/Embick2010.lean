@@ -1,47 +1,59 @@
-import Linglib.Morphology.DistributedMorphology.Locality
 import Linglib.Data.Examples.Embick2010
+import Linglib.Morphology.DistributedMorphology.Locality
 
 /-!
-# Localism versus globalism in morphology and phonology
+# Embick (2010): Localism versus Globalism in Morphology and Phonology
 
-[embick-2010]: contextual allomorphy holds only between concatenated nodes
-that are active in the same cycle of Spell-Out — the C₁-LIN theory. The
-category-defining heads are cyclic; merging one spells out the cyclic domains
-in its complement, so a cyclic head and the noncyclic heads attached to it
-are realized in the cycle of the next cyclic head, with the complement of the
-inner one inactive (the Domain and Activity Corollaries), and nodes with null
-exponents are pruned from the concatenation statements. Latin perfect
-agreement takes its special endings only when a null present tense is pruned
-between it and Asp[perf] (§3.1.1); a theme vowel reads the conjugation class
-of the node it is concatenated with — the root's across a null v, *-ess*'s
-otherwise (§3.1.2); root-attached n has root-determined allomorphs and the
-gerund's n none, while *-ity* and *-ation* are potentiated by the *-able* and
-*-ize* they follow (§2.2, §3.3); past tense and plural see the root across
-pruned categorizers (§2.2–2.3); and Hindi Voice shows root-determined
-allomorphy in the transitive but only its default in the indirect causative,
-two cycles up (§3.2.2).
+This file formalizes [embick-2010]'s C₁-LIN theory of contextual allomorphy: a node conditions
+the Vocabulary Insertion ([halle-marantz-1993]) of another only when the two are concatenated and
+active in the same cycle of Spell-Out. The category-defining heads are cyclic. Merging one spells
+out the cyclic domains in its complement, so a cyclic head and the noncyclic heads attached to it
+are realized in the cycle of the next cyclic head, the Domain Corollary, while the complement of
+an inner cyclic head is inactive when an outer one is spelled out, the Activity Corollary; nodes
+with null exponents are pruned from the concatenation statements. The case studies follow. The
+Latin perfect indicative takes its special agreement endings only where a null present tense is
+pruned between Agr and Asp[perf], the overt tenses of the other perfects intervening (§3.1.1); a
+theme vowel reads the conjugation class of the node it is concatenated with, the root's across a
+null v and *-ess*'s otherwise (§3.1.2); root-attached n has root-determined allomorphs while the
+gerund's n, an outer cyclic head, has none, and *-ity* and *-ation* are potentiated by the *-able*
+and *-ize* they follow (§2.2–2.3, §3.3); the noncyclic past tense and plural see the root across
+pruned categorizers (§2.3.3); and the Hindi agentive Voice ([kratzer-1996]) shows root-determined
+allomorphy in the transitive but only its default in the indirect causative, where the root lies
+two cycles down (§3.2.2).
 
-## Main definitions
+## Implementation notes
 
-* `Head`, `Morpheme`, `cyclic`, `phonNull`: the heads of the case studies.
-* `Row`, `rows`: each conditioning relation the book attests or excludes.
+* Cycles, coactivity, the root's domain and adjacency across pruned heads are the substrate's
+  `Spine` API; this file contributes the heads of the case studies, the rows, and the predictions
+  checked over them. A row records a word's heads innermost first with their exponents, the head
+  whose realization is at issue, its conditioner, the root or another head, and whether the book
+  attests or excludes the conditioning.
+* The examples are `Data.Examples.Embick2010`.
 
-## Main results
+## References
 
-* `root_rows`, `head_rows`: attested conditioning is predicted and blocked
-  conditioning excluded, by the root and by a head.
-* `perfect_one_cycle`: the Latin perfects share one cycle, so only linear
-  intervention separates the perfect indicative from the rest.
+* [embick-2010]
+* [halle-marantz-1993]
+* [kratzer-1996]
 -/
 
 namespace Embick2010
 
-open DistributedMorphology Data.Examples
+open DistributedMorphology Data.Examples Embick2010.Examples
 
-/-- The heads of the case studies: the categorizers, active and passive Voice,
-the theme position, and the inflectional heads. -/
-inductive Head where
-  | n | v | a | voice | voicePassive | theme | aspect | tense | agr | number
+/-- The heads of the case studies: the categorizers, active and passive Voice, the theme position,
+and the inflectional heads. -/
+inductive Head
+  | n
+  | v
+  | a
+  | voice
+  | voicePassive
+  | theme
+  | aspect
+  | tense
+  | agr
+  | number
   deriving DecidableEq, Repr
 
 /-- A head occurrence with its exponent, empty when null. -/
@@ -50,103 +62,88 @@ structure Morpheme where
   exponent : String
   deriving DecidableEq, Repr
 
-/-- The category-defining heads are the cyclic heads. -/
+/-- The category-defining heads are the cyclic heads (§2.3.1). -/
 def cyclic (m : Morpheme) : Prop := m.head = .n ∨ m.head = .v ∨ m.head = .a
 
-/-- A null exponent, pruned from concatenation. -/
+/-- A null exponent, pruned from the concatenation statements, (53) of ch. 2. -/
 def phonNull (m : Morpheme) : Prop := m.exponent = ""
 
-instance : DecidablePred cyclic := fun _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _))
-instance : DecidablePred phonNull := fun _ => inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred cyclic := λ _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+instance : DecidablePred phonNull := λ _ => inferInstanceAs (Decidable (_ = _))
 
 /-! ### The case studies -/
 
 /-- Whether the book attests the conditioning or excludes it. -/
-inductive Claim where
-  | attested | blocked
-  deriving DecidableEq, Repr, Fintype
+inductive Claim
+  | attested
+  | blocked
+  deriving DecidableEq, Repr
 
-/-- A word, the head whose realization is at issue, what conditions it — the
-root, or another head — and the book's verdict. -/
+/-- A conditioning relation: the word's heads, the head whose realization is at issue, its
+conditioner, `none` for the root, and the book's verdict. -/
 structure Row where
-  form : String
   spine : Spine Morpheme
   target : Fin spine.heads.length
   conditioner : Option (Fin spine.heads.length)
   claim : Claim
-  deriving Repr
 
-def Morpheme.ofLabel (exp : String) : String → Option Morpheme
-  | "n" => some ⟨.n, exp⟩
-  | "v" => some ⟨.v, exp⟩
-  | "a" => some ⟨.a, exp⟩
-  | "voice" => some ⟨.voice, exp⟩
-  | "voicePassive" => some ⟨.voicePassive, exp⟩
-  | "theme" => some ⟨.theme, exp⟩
-  | "aspect" => some ⟨.aspect, exp⟩
-  | "tense" => some ⟨.tense, exp⟩
-  | "agr" => some ⟨.agr, exp⟩
-  | "number" => some ⟨.number, exp⟩
-  | _ => none
+/-- The heads as named in the rows. -/
+def headTable : List (String × Head) :=
+  [("n", .n), ("v", .v), ("a", .a), ("voice", .voice), ("voicePassive", .voicePassive),
+    ("theme", .theme), ("aspect", .aspect), ("tense", .tense), ("agr", .agr), ("number", .number)]
 
-/-- A position among the heads, innermost first. -/
-def positionOfLabel : String → Option ℕ
-  | "1" => some 0
-  | "2" => some 1
-  | "3" => some 2
-  | "4" => some 3
-  | "5" => some 4
-  | _ => none
-
-def Claim.ofLabel : String → Option Claim
-  | "attested" => some .attested
-  | "blocked" => some .blocked
-  | _ => none
+/-- The verdicts as named in the rows. -/
+def claimTable : List (String × Claim) := [("attested", .attested), ("blocked", .blocked)]
 
 /-- The roots of the pool, indexed by first occurrence. -/
 def rootNames : List String := (Examples.all.filterMap (·.feature? "root")).eraseDups
 
+/-- The heads of a row innermost first, `hᵢ` with the exponent `hᵢexp`. -/
+def heads (ex : LinguisticExample) : List Morpheme :=
+  ["h1", "h2", "h3", "h4", "h5"].filterMap λ k =>
+    (ex.parse? k headTable).map λ h => ⟨h, (ex.feature? (k ++ "exp")).getD ""⟩
+
+/-- A row from an example: positions count from one, innermost first. -/
 def Row.ofExample (ex : LinguisticExample) : Option Row := do
   let root ← ex.feature? "root"
-  let heads := [("h1", "h1exp"), ("h2", "h2exp"), ("h3", "h3exp"), ("h4", "h4exp"),
-    ("h5", "h5exp")].filterMap
-    fun (k, e) => (ex.feature? k).bind (Morpheme.ofLabel ((ex.feature? e).getD ""))
-  let t ← (ex.feature? "target").bind positionOfLabel
+  let hs := heads ex
+  let t ← ex.nat? "target"
+  let claim ← ex.parse? "claim" claimTable
   let c ← ex.feature? "conditioner"
-  let claim ← (ex.feature? "claim").bind Claim.ofLabel
-  if ht : t < heads.length then
+  if ht : t - 1 < hs.length then
     if c = "root" then
-      pure ⟨ex.primaryText, ⟨⟨rootNames.idxOf root⟩, heads⟩, ⟨t, ht⟩, none, claim⟩
+      pure ⟨⟨⟨rootNames.idxOf root⟩, hs⟩, ⟨t - 1, ht⟩, none, claim⟩
     else
-      let j ← positionOfLabel c
-      if hj : j < heads.length then
-        pure ⟨ex.primaryText, ⟨⟨rootNames.idxOf root⟩, heads⟩, ⟨t, ht⟩, some ⟨j, hj⟩, claim⟩
+      let j ← ex.nat? "conditioner"
+      if hj : j - 1 < hs.length then
+        pure ⟨⟨⟨rootNames.idxOf root⟩, hs⟩, ⟨t - 1, ht⟩, some ⟨j - 1, hj⟩, claim⟩
       else none
   else none
 
 theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
 
-/-- The conditioning relations of §2.2–2.3, §3.1–3.3. -/
+/-- The conditioning relations of §2.2–2.3 and §3.1–3.3. -/
 def rows : List Row := Examples.all.filterMap Row.ofExample
 
 /-! ### Predictions -/
 
-/-- Root-determined allomorphy is attested exactly where the target sees the
-root: the first cycle, across pruned heads only. -/
+/-- Root-determined allomorphy is attested exactly where the target sees the root: in the first
+cycle, across pruned heads only. The gerund's n and the indirect causative's Voice are outside
+the root's domain, and *-ess* blocks the theme's view of the root. -/
 theorem root_rows :
     ∀ r ∈ rows, r.conditioner = none →
       (r.spine.SeesRoot cyclic phonNull r.target ↔ r.claim = .attested) := by
   decide
 
-/-- Head-determined allomorphy is attested exactly where the target sees the
-conditioning head: present at its insertion and concatenated with it. -/
+/-- Head-determined allomorphy is attested exactly where the target sees the conditioning head:
+present at its insertion and concatenated with it. -/
 theorem head_rows :
     ∀ r ∈ rows, ∀ j, r.conditioner = some j →
       (r.spine.Sees cyclic phonNull r.target j ↔ r.claim = .attested) := by
   decide
 
-/-- The Latin perfects share one cycle: agreement is coactive with Asp[perf]
-throughout, and only the overt tense of the non-indicative forms intervenes
+/-- The Latin perfects share one cycle: Agr is coactive with Asp[perf] throughout, and only the
+overt tense of the non-indicative forms intervenes, so the effect is linear rather than cyclic
 (§3.1.1). -/
 theorem perfect_one_cycle :
     ∀ r ∈ rows, r.spine.root = ⟨rootNames.idxOf "AM"⟩ → ∀ j, r.conditioner = some j →

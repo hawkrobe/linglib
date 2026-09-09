@@ -1,7 +1,8 @@
 [
   {
     "id": "embick2010_amavi",
-    "source": {"bibkey": "embick-2010", "paperLabel": "(3), (10a)"},
+    "source": {"bibkey": "embick-2010", "paperLabel": "ch. 3, (3), (10a)"},
+    "reportedIn": null,
     "language": "lati1261",
     "primaryText": "amā-v-ī",
     "discourseSegments": [],
@@ -31,7 +32,8 @@
   },
   {
     "id": "embick2010_amavisti",
-    "source": {"bibkey": "embick-2010", "paperLabel": "(3)"},
+    "source": {"bibkey": "embick-2010", "paperLabel": "ch. 3, (3)"},
+    "reportedIn": null,
     "language": "lati1261",
     "primaryText": "amā-v-istī",
     "discourseSegments": [],
@@ -61,7 +63,8 @@
   },
   {
     "id": "embick2010_amaveram",
-    "source": {"bibkey": "embick-2010", "paperLabel": "(3), (10b)"},
+    "source": {"bibkey": "embick-2010", "paperLabel": "ch. 3, (3), (10b)"},
+    "reportedIn": null,
     "language": "lati1261",
     "primaryText": "amā-ve-rā-m",
     "discourseSegments": [],
@@ -91,7 +94,8 @@
   },
   {
     "id": "embick2010_amaverim",
-    "source": {"bibkey": "embick-2010", "paperLabel": "(3)"},
+    "source": {"bibkey": "embick-2010", "paperLabel": "ch. 3, (3)"},
+    "reportedIn": null,
     "language": "lati1261",
     "primaryText": "amā-ve-rī-m",
     "discourseSegments": [],
@@ -121,7 +125,8 @@
   },
   {
     "id": "embick2010_amavero",
-    "source": {"bibkey": "embick-2010", "paperLabel": "(3)"},
+    "source": {"bibkey": "embick-2010", "paperLabel": "ch. 3, (3)"},
+    "reportedIn": null,
     "language": "lati1261",
     "primaryText": "amā-ve-r-ō",
     "discourseSegments": [],
@@ -151,7 +156,8 @@
   },
   {
     "id": "embick2010_capimus",
-    "source": {"bibkey": "embick-2010", "paperLabel": "(17)"},
+    "source": {"bibkey": "embick-2010", "paperLabel": "ch. 3, (12), (17)"},
+    "reportedIn": null,
     "language": "lati1261",
     "primaryText": "cap-i-mus",
     "discourseSegments": [],
@@ -175,7 +181,8 @@
   },
   {
     "id": "embick2010_capessimus_root",
-    "source": {"bibkey": "embick-2010", "paperLabel": "(18)"},
+    "source": {"bibkey": "embick-2010", "paperLabel": "ch. 3, (16), (18)"},
+    "reportedIn": null,
     "language": "lati1261",
     "primaryText": "cap-ess-i-mus",
     "discourseSegments": [],
@@ -199,7 +206,8 @@
   },
   {
     "id": "embick2010_capessimus_v",
-    "source": {"bibkey": "embick-2010", "paperLabel": "(18)"},
+    "source": {"bibkey": "embick-2010", "paperLabel": "ch. 3, (16), (18)"},
+    "reportedIn": null,
     "language": "lati1261",
     "primaryText": "cap-ess-i-mus",
     "discourseSegments": [],
@@ -223,7 +231,8 @@
   },
   {
     "id": "embick2010_marriage",
-    "source": {"bibkey": "embick-2010", "paperLabel": "(31)"},
+    "source": {"bibkey": "embick-2010", "paperLabel": "ch. 2, (31), (46)–(47)"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "marri-age",
     "discourseSegments": [],
@@ -245,7 +254,8 @@
   },
   {
     "id": "embick2010_marrying",
-    "source": {"bibkey": "embick-2010", "paperLabel": "(31), (50)"},
+    "source": {"bibkey": "embick-2010", "paperLabel": "ch. 2, (31), (48)–(50)"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "marry-ing",
     "discourseSegments": [],
@@ -269,7 +279,8 @@
   },
   {
     "id": "embick2010_bent",
-    "source": {"bibkey": "embick-2010", "paperLabel": "(34)"},
+    "source": {"bibkey": "embick-2010", "paperLabel": "ch. 2, (34), (54)–(56)"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "ben-t",
     "discourseSegments": [],
@@ -293,7 +304,8 @@
   },
   {
     "id": "embick2010_oxen",
-    "source": {"bibkey": "embick-2010", "paperLabel": "(24)"},
+    "source": {"bibkey": "embick-2010", "paperLabel": "ch. 2, (24)"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "ox-en",
     "discourseSegments": [],
@@ -317,7 +329,8 @@
   },
   {
     "id": "embick2010_breakability",
-    "source": {"bibkey": "embick-2010", "paperLabel": "(36)–(37)"},
+    "source": {"bibkey": "embick-2010", "paperLabel": "ch. 2, (36)–(37)"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "break-abil-ity",
     "discourseSegments": [],
@@ -341,7 +354,8 @@
   },
   {
     "id": "embick2010_colorization_v",
-    "source": {"bibkey": "embick-2010", "paperLabel": "(49)–(53)"},
+    "source": {"bibkey": "embick-2010", "paperLabel": "ch. 3, (49)–(53)"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "color-iz-ation",
     "discourseSegments": [],
@@ -365,7 +379,8 @@
   },
   {
     "id": "embick2010_colorization_root",
-    "source": {"bibkey": "embick-2010", "paperLabel": "(49)–(53)"},
+    "source": {"bibkey": "embick-2010", "paperLabel": "ch. 3, (49)–(53)"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "color-iz-ation",
     "discourseSegments": [],
@@ -389,7 +404,8 @@
   },
   {
     "id": "embick2010_bachaanaa",
-    "source": {"bibkey": "embick-2010", "paperLabel": "(22b), (23)"},
+    "source": {"bibkey": "embick-2010", "paperLabel": "ch. 3, (22b), (23), (27)"},
+    "reportedIn": null,
     "language": "hind1269",
     "primaryText": "bach-aa-naa",
     "discourseSegments": [],
@@ -413,7 +429,8 @@
   },
   {
     "id": "embick2010_bachvaanaa",
-    "source": {"bibkey": "embick-2010", "paperLabel": "(25b), (26)"},
+    "source": {"bibkey": "embick-2010", "paperLabel": "ch. 3, (25b), (26)–(27)"},
+    "reportedIn": null,
     "language": "hind1269",
     "primaryText": "bach-vaa-naa",
     "discourseSegments": [],

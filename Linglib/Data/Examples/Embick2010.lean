@@ -15,7 +15,7 @@ open Data.Examples
 
 def amavi : LinguisticExample :=
   { id := "embick2010_amavi"
-    source := ⟨"embick-2010", "(3), (10a)"⟩
+    source := ⟨"embick-2010", "ch. 3, (3), (10a)"⟩
     reportedIn := none
     language := "lati1261"
     primaryText := "amā-v-ī"
@@ -33,7 +33,7 @@ def amavi : LinguisticExample :=
 
 def amavisti : LinguisticExample :=
   { id := "embick2010_amavisti"
-    source := ⟨"embick-2010", "(3)"⟩
+    source := ⟨"embick-2010", "ch. 3, (3)"⟩
     reportedIn := none
     language := "lati1261"
     primaryText := "amā-v-istī"
@@ -51,7 +51,7 @@ def amavisti : LinguisticExample :=
 
 def amaveram : LinguisticExample :=
   { id := "embick2010_amaveram"
-    source := ⟨"embick-2010", "(3), (10b)"⟩
+    source := ⟨"embick-2010", "ch. 3, (3), (10b)"⟩
     reportedIn := none
     language := "lati1261"
     primaryText := "amā-ve-rā-m"
@@ -69,7 +69,7 @@ def amaveram : LinguisticExample :=
 
 def amaverim : LinguisticExample :=
   { id := "embick2010_amaverim"
-    source := ⟨"embick-2010", "(3)"⟩
+    source := ⟨"embick-2010", "ch. 3, (3)"⟩
     reportedIn := none
     language := "lati1261"
     primaryText := "amā-ve-rī-m"
@@ -87,7 +87,7 @@ def amaverim : LinguisticExample :=
 
 def amavero : LinguisticExample :=
   { id := "embick2010_amavero"
-    source := ⟨"embick-2010", "(3)"⟩
+    source := ⟨"embick-2010", "ch. 3, (3)"⟩
     reportedIn := none
     language := "lati1261"
     primaryText := "amā-ve-r-ō"
@@ -105,7 +105,7 @@ def amavero : LinguisticExample :=
 
 def capimus : LinguisticExample :=
   { id := "embick2010_capimus"
-    source := ⟨"embick-2010", "(17)"⟩
+    source := ⟨"embick-2010", "ch. 3, (12), (17)"⟩
     reportedIn := none
     language := "lati1261"
     primaryText := "cap-i-mus"
@@ -123,7 +123,7 @@ def capimus : LinguisticExample :=
 
 def capessimus_root : LinguisticExample :=
   { id := "embick2010_capessimus_root"
-    source := ⟨"embick-2010", "(18)"⟩
+    source := ⟨"embick-2010", "ch. 3, (16), (18)"⟩
     reportedIn := none
     language := "lati1261"
     primaryText := "cap-ess-i-mus"
@@ -141,7 +141,7 @@ def capessimus_root : LinguisticExample :=
 
 def capessimus_v : LinguisticExample :=
   { id := "embick2010_capessimus_v"
-    source := ⟨"embick-2010", "(18)"⟩
+    source := ⟨"embick-2010", "ch. 3, (16), (18)"⟩
     reportedIn := none
     language := "lati1261"
     primaryText := "cap-ess-i-mus"
@@ -159,7 +159,7 @@ def capessimus_v : LinguisticExample :=
 
 def marriage : LinguisticExample :=
   { id := "embick2010_marriage"
-    source := ⟨"embick-2010", "(31)"⟩
+    source := ⟨"embick-2010", "ch. 2, (31), (46)–(47)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "marri-age"
@@ -177,7 +177,7 @@ def marriage : LinguisticExample :=
 
 def marrying : LinguisticExample :=
   { id := "embick2010_marrying"
-    source := ⟨"embick-2010", "(31), (50)"⟩
+    source := ⟨"embick-2010", "ch. 2, (31), (48)–(50)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "marry-ing"
@@ -195,7 +195,7 @@ def marrying : LinguisticExample :=
 
 def bent : LinguisticExample :=
   { id := "embick2010_bent"
-    source := ⟨"embick-2010", "(34)"⟩
+    source := ⟨"embick-2010", "ch. 2, (34), (54)–(56)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "ben-t"
@@ -213,7 +213,7 @@ def bent : LinguisticExample :=
 
 def oxen : LinguisticExample :=
   { id := "embick2010_oxen"
-    source := ⟨"embick-2010", "(24)"⟩
+    source := ⟨"embick-2010", "ch. 2, (24)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "ox-en"
@@ -231,7 +231,7 @@ def oxen : LinguisticExample :=
 
 def breakability : LinguisticExample :=
   { id := "embick2010_breakability"
-    source := ⟨"embick-2010", "(36)–(37)"⟩
+    source := ⟨"embick-2010", "ch. 2, (36)–(37)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "break-abil-ity"
@@ -249,7 +249,7 @@ def breakability : LinguisticExample :=
 
 def colorization_v : LinguisticExample :=
   { id := "embick2010_colorization_v"
-    source := ⟨"embick-2010", "(49)–(53)"⟩
+    source := ⟨"embick-2010", "ch. 3, (49)–(53)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "color-iz-ation"
@@ -267,7 +267,7 @@ def colorization_v : LinguisticExample :=
 
 def colorization_root : LinguisticExample :=
   { id := "embick2010_colorization_root"
-    source := ⟨"embick-2010", "(49)–(53)"⟩
+    source := ⟨"embick-2010", "ch. 3, (49)–(53)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "color-iz-ation"
@@ -285,7 +285,7 @@ def colorization_root : LinguisticExample :=
 
 def bachaanaa : LinguisticExample :=
   { id := "embick2010_bachaanaa"
-    source := ⟨"embick-2010", "(22b), (23)"⟩
+    source := ⟨"embick-2010", "ch. 3, (22b), (23), (27)"⟩
     reportedIn := none
     language := "hind1269"
     primaryText := "bach-aa-naa"
@@ -303,7 +303,7 @@ def bachaanaa : LinguisticExample :=
 
 def bachvaanaa : LinguisticExample :=
   { id := "embick2010_bachvaanaa"
-    source := ⟨"embick-2010", "(25b), (26)"⟩
+    source := ⟨"embick-2010", "ch. 3, (25b), (26)–(27)"⟩
     reportedIn := none
     language := "hind1269"
     primaryText := "bach-vaa-naa"
