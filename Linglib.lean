@@ -3052,3 +3052,4 @@ import Linglib.Data.Examples.ErlewineSommerlot2025
 import Linglib.Data.Examples.EvcenBaleBarner2026
 import Linglib.Data.Examples.Everdell2023
 import Linglib.Data.Examples.FarkasBruce2010
+import Linglib.Data.Examples.FarkasRoelofsen2017

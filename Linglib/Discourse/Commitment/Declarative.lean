@@ -68,29 +68,6 @@ def IsBiased : Prop := IsControversial K pᶜ ∧ ¬ IsControversial K p
 /-- (68): the context is neutral with respect to `p`. -/
 def IsNeutral : Prop := ¬ IsControversial K p ∧ ¬ IsControversial K pᶜ
 
-theorem ofCommitter_insert_of_eq (c : Commitment Discourse.Role W) (h : c.committer = x) :
-    ofCommitter (insert c K) x = insert c (ofCommitter K x) := by
-  ext d
-  simp only [ofCommitter, Set.mem_ofPred_eq, Set.mem_insert_iff]
-  constructor
-  · rintro ⟨rfl | hd, hc⟩
-    · exact Or.inl rfl
-    · exact Or.inr ⟨hd, hc⟩
-  · rintro (rfl | ⟨hd, hc⟩)
-    · exact ⟨Or.inl rfl, h⟩
-    · exact ⟨Or.inr hd, hc⟩
-
-theorem ofCommitter_insert_of_ne (c : Commitment Discourse.Role W) (h : c.committer ≠ x) :
-    ofCommitter (insert c K) x = ofCommitter K x := by
-  ext d
-  simp only [ofCommitter, Set.mem_ofPred_eq, Set.mem_insert_iff]
-  constructor
-  · rintro ⟨rfl | hd, hc⟩
-    · exact absurd hc h
-    · exact ⟨hd, hc⟩
-  · rintro ⟨hd, hc⟩
-    exact ⟨Or.inr hd, hc⟩
-
 @[simp] theorem commitmentSet_empty :
     commitmentSet (∅ : State Discourse.Role W) x = Set.univ := by
   simp [commitmentSet, ofCommitter]
