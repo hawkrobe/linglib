@@ -55,6 +55,18 @@ def ExcI (Q : GQ α) (A E B : α → Prop) : Prop :=
 def ExcE (Q : GQ α) (A E B : α → Prop) : Prop :=
   Q (λ x => A x ∧ ¬ E x) B ∧ (∀ x, E x → A x → B x)
 
+/-- The least-exception schema of [von-fintel-1993]: *D A but C P* holds when subtracting `C` from
+the restrictor makes the quantification true and `C` is the least set that does so. -/
+def ExcLeast (Q : GQ α) (A C B : α → Prop) : Prop :=
+  Q (λ x => A x ∧ ¬ C x) B ∧ ∀ S : α → Prop, Q (λ x => A x ∧ ¬ S x) B → ∀ x, C x → S x
+
+/-- A left-upward-monotone determiner has no nonempty least exception: once the quantification
+holds with `C` subtracted it holds with nothing subtracted, so the least exception is empty
+([von-fintel-1993]; the argument [gajewski-2002] turns into an L-contradiction). -/
+theorem ExcLeast.not_of_restrictorUpwardMono {Q : GQ α} (hQ : RestrictorUpwardMono Q)
+    {A C B : α → Prop} (h : ExcLeast Q A C B) (x : α) : ¬ C x :=
+  λ hx => h.2 (λ _ => False) (hQ _ _ _ (λ _ ha => ⟨ha.1, id⟩) h.1) x hx
+
 /-! ### Peters & Westerståhl (2006) Exceptive Operators -/
 
 /-- Whether an element is an "exception" for a positive generalization Q₁(A, B):
