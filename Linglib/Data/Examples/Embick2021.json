@@ -19,7 +19,7 @@
       ["h1", "n"],
       ["h1exp", "-tion"]
     ],
-    "comment": "Agentive reading of the possessor."
+    "comment": "Agentive reading of the possessor available."
   },
   {
     "id": "embick2021_6d",
@@ -45,7 +45,7 @@
       ["h3", "n"],
       ["h3exp", "-ing"]
     ],
-    "comment": "Agentive reading of the possessor."
+    "comment": "Agentive reading of the possessor available."
   },
   {
     "id": "embick2021_7c",
@@ -67,7 +67,7 @@
       ["h1", "n"],
       ["h1exp", "-th"]
     ],
-    "comment": "Agentive reading of the possessor."
+    "comment": "No agentive reading of the possessor: a derived nominal of a non-agentive root."
   },
   {
     "id": "embick2021_7d",
@@ -93,11 +93,11 @@
       ["h3", "n"],
       ["h3exp", "-ing"]
     ],
-    "comment": "Agentive reading of the possessor."
+    "comment": "Agentive reading of the possessor available."
   },
   {
     "id": "embick2021_bent",
-    "source": {"bibkey": "embick-2021", "paperLabel": "§5"},
+    "source": {"bibkey": "embick-2021", "paperLabel": "§5, structure (15)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "bent",
@@ -116,11 +116,11 @@
       ["h2", "T"],
       ["h2exp", "-t"]
     ],
-    "comment": "Root-determined allomorphy of a noncyclic head outside the categorizer (structure 15)."
+    "comment": "Root-determined allomorphy of a noncyclic head outside the categorizer, structure (15): the exponent of tense or aspect realized next to the root."
   },
   {
     "id": "embick2021_broken",
-    "source": {"bibkey": "embick-2021", "paperLabel": "§5"},
+    "source": {"bibkey": "embick-2021", "paperLabel": "§5, structure (15)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "broken",
@@ -139,6 +139,6 @@
       ["h2", "aspect"],
       ["h2exp", "-en"]
     ],
-    "comment": "Root-determined allomorphy of a noncyclic head outside the categorizer (structure 15)."
+    "comment": "Root-determined allomorphy of a noncyclic head outside the categorizer, structure (15): the exponent of tense or aspect realized next to the root."
   }
 ]
