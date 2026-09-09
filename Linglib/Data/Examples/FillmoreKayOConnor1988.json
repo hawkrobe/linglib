@@ -1,7 +1,10 @@
 [
   {
     "id": "fillmorekayoconnor1988_ex15b",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(15b)"},
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(15b)"
+    },
     "language": "stan1293",
     "primaryText": "I barely got up in time to eat lunch, let alone cook breakfast",
     "discourseSegments": [],
@@ -12,11 +15,14 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "basic let alone with barely"
+    "comment": "Reply to: Did the kids get their breakfast on time this morning?"
   },
   {
     "id": "fillmorekayoconnor1988_ex16b",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(16b)"},
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(16b)"
+    },
     "language": "stan1293",
     "primaryText": "I doubt you could get Fred to eat shrimp, let alone Louise squid",
     "discourseSegments": [],
@@ -27,13 +33,16 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "let alone with multiple paired foci"
+    "comment": "Reply to: I know that Louise is a picky eater, but I bought the kids some squid for dinner. Two paired foci."
   },
   {
-    "id": "fillmorekayoconnor1988_ex62",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(62)"},
+    "id": "fillmorekayoconnor1988_ex21",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(21)"
+    },
     "language": "stan1293",
-    "primaryText": "He didn't reach Denver, let alone Chicago",
+    "primaryText": "I doubt he made colonel in World War II, let alone general",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -41,87 +50,32 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [],
-    "comment": "let alone licensed by simple negation"
-  },
-  {
-    "id": "fillmorekayoconnor1988_ex63",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(63)"},
-    "language": "stan1293",
-    "primaryText": "I'm too tired to get up, let alone go running with you",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [],
-    "comment": "let alone licensed by too-complementation"
-  },
-  {
-    "id": "fillmorekayoconnor1988_ex66",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(66)"},
-    "language": "stan1293",
-    "primaryText": "I barely got up in time for lunch, let alone breakfast",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [],
-    "comment": "let alone licensed by barely"
-  },
-  {
-    "id": "fillmorekayoconnor1988_ex113",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(113)"},
-    "language": "stan1293",
-    "primaryText": "He almost reached Denver let alone Chicago",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [],
-    "comment": "let alone NOT licensed by almost"
-  },
-  {
-    "id": "fillmorekayoconnor1988_ex114",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(114)"},
-    "language": "stan1293",
-    "primaryText": "He only reached Denver let alone Chicago",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [],
-    "comment": "let alone NOT licensed by non-subject only"
-  },
-  {
-    "id": "fillmorekayoconnor1988_ex115",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(115)"},
-    "language": "stan1293",
-    "primaryText": "He barely reached Denver let alone Chicago",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [],
-    "comment": "let alone licensed by barely (contrast with almost/only)"
+    "paperFeatures": [
+      [
+        "conjunction",
+        "letAlone"
+      ],
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "a",
+        "colonel"
+      ],
+      [
+        "b",
+        "general"
+      ]
+    ],
+    "comment": "F = I doubt, X = he made, Y = in World War II, A = colonel, B = general."
   },
   {
     "id": "fillmorekayoconnor1988_ex31a",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(31a)"},
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(31a)"
+    },
     "language": "stan1293",
     "primaryText": "Shrimp and squid Moishe won't eat",
     "discourseSegments": [],
@@ -132,11 +86,14 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "and-coordination permits topicalization"
+    "comment": "Topicalization of an and-coordination."
   },
   {
     "id": "fillmorekayoconnor1988_ex31b",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(31b)"},
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(31b)"
+    },
     "language": "stan1293",
     "primaryText": "Shrimp let alone squid Moishe won't eat",
     "discourseSegments": [],
@@ -147,11 +104,14 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "let alone blocks topicalization"
+    "comment": "Topicalization of A let alone B; fn. 8 shows the scope of negation is not the reason."
   },
   {
     "id": "fillmorekayoconnor1988_ex31c",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(31c)"},
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(31c)"
+    },
     "language": "stan1293",
     "primaryText": "Shrimp Moishe won't eat and squid",
     "discourseSegments": [],
@@ -162,11 +122,14 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "and-coordination: can't split"
+    "comment": "An and-coordination cannot be split."
   },
   {
     "id": "fillmorekayoconnor1988_ex31d",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(31d)"},
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(31d)"
+    },
     "language": "stan1293",
     "primaryText": "Shrimp Moishe won't eat, let alone squid",
     "discourseSegments": [],
@@ -177,56 +140,14 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "let alone permits parenthetical-like extraposition"
-  },
-  {
-    "id": "fillmorekayoconnor1988_ex39",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(39)"},
-    "language": "stan1293",
-    "primaryText": "Max will eat shrimp more willingly than Minnie will",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [],
-    "comment": "comparative permits VP ellipsis"
-  },
-  {
-    "id": "fillmorekayoconnor1988_ex40",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(40)"},
-    "language": "stan1293",
-    "primaryText": "Max won't eat shrimp but Minnie will",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [],
-    "comment": "but-coordination permits VP ellipsis"
-  },
-  {
-    "id": "fillmorekayoconnor1988_ex41",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(41)"},
-    "language": "stan1293",
-    "primaryText": "Max won't eat shrimp let alone Minnie will",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [],
-    "comment": "let alone blocks VP ellipsis"
+    "comment": "let alone B extraposed."
   },
   {
     "id": "fillmorekayoconnor1988_ex32a",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(32a)"},
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(32a)"
+    },
     "language": "stan1293",
     "primaryText": "a man who Mary hasn't met or ridden in his car",
     "discourseSegments": [],
@@ -237,11 +158,14 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "wh-extraction from and-coordination blocked"
+    "comment": "Wh-extraction from one conjunct of an or-coordination."
   },
   {
     "id": "fillmorekayoconnor1988_ex32b",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(32b)"},
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(32b)"
+    },
     "language": "stan1293",
     "primaryText": "a man who Mary hasn't met, let alone ridden in his car",
     "discourseSegments": [],
@@ -252,71 +176,14 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "wh-extraction from let alone is better"
-  },
-  {
-    "id": "fillmorekayoconnor1988_ex104",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(104)"},
-    "language": "stan1293",
-    "primaryText": "Fred doesn't have an odd number of books, let alone seventy-five",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [],
-    "comment": "scalar anomaly: odd-number doesn't form a scale with 75"
-  },
-  {
-    "id": "fillmorekayoconnor1988_ex121",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(121)"},
-    "language": "stan1293",
-    "primaryText": "You couldn't get a poor man to wash your car for $2, let alone a rich man to wax your truck for $1",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [],
-    "comment": "multi-dimensional scalar model: four paired foci (ex. 120 adds a fifth dimension)"
-  },
-  {
-    "id": "fillmorekayoconnor1988_ex122a",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(122a)"},
-    "language": "stan1293",
-    "primaryText": "You couldn't get a rich man to wash your car for $2 let alone a poor man to wax your truck for $1",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [],
-    "comment": "scalar anomaly: swapped foci on poor/rich dimension"
-  },
-  {
-    "id": "fillmorekayoconnor1988_ex122b",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(122b)"},
-    "language": "stan1293",
-    "primaryText": "You couldn't get a poor man to wax your car for $2 let alone a rich man to wash your truck for $1",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [],
-    "comment": "scalar anomaly: swapped foci on wash/wax dimension"
+    "comment": "Wh-extraction from one side of let alone, better than (32a)."
   },
   {
     "id": "fillmorekayoconnor1988_ex33",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(33)"},
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(33)"
+    },
     "language": "stan1293",
     "primaryText": "It's shrimp let alone squid that Max won't eat",
     "discourseSegments": [],
@@ -327,11 +194,14 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "IT-clefting blocked with let alone"
+    "comment": "IT-clefting of A let alone B."
   },
   {
     "id": "fillmorekayoconnor1988_ex34",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(34)"},
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(34)"
+    },
     "language": "stan1293",
     "primaryText": "It's shrimp and squid that Max won't eat",
     "discourseSegments": [],
@@ -342,13 +212,16 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "IT-clefting fine with and-coordination"
+    "comment": "IT-clefting of an and-coordination."
   },
   {
-    "id": "fillmorekayoconnor1988_ex106",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(106)"},
+    "id": "fillmorekayoconnor1988_ex39",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(39)"
+    },
     "language": "stan1293",
-    "primaryText": "He wasn't even a commissioned officer, let alone a colonel",
+    "primaryText": "Max will eat shrimp more willingly than Minnie will",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -357,26 +230,212 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "let alone with B higher on the scale"
+    "comment": "VP ellipsis in a comparative."
   },
   {
-    "id": "fillmorekayoconnor1988_ex107",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(107)"},
+    "id": "fillmorekayoconnor1988_ex40",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(40)"
+    },
     "language": "stan1293",
-    "primaryText": "He wasn't even a commissioned officer, let alone a second lieutenant",
+    "primaryText": "Max won't eat shrimp but Minnie will",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "scalar anomaly: B is the lowest point on the scale"
+    "comment": "VP ellipsis under but."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex41",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(41)"
+    },
+    "language": "stan1293",
+    "primaryText": "Max won't eat shrimp let alone Minnie will",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "No VP ellipsis: the INFL-complex belongs to the F element (sec. 2.2.3)."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex62",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(62)"
+    },
+    "language": "stan1293",
+    "primaryText": "He didn't reach Denver, let alone Chicago",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Simple negation."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex63",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(63)"
+    },
+    "language": "stan1293",
+    "primaryText": "I'm too tired to get up, let alone go running with you",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "too complementation."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex64",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(64)"
+    },
+    "language": "stan1293",
+    "primaryText": "She gave me more candy than I could carry, let alone eat",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Comparison of inequality."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex65",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(65)"
+    },
+    "language": "stan1293",
+    "primaryText": "Only a linguist would buy that book, let alone read it",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "only as determiner of the subject."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex66",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(66)"
+    },
+    "language": "stan1293",
+    "primaryText": "I barely got up in time for lunch, let alone breakfast",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Minimal attainment qualifier barely."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex67",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(67)"
+    },
+    "language": "stan1293",
+    "primaryText": "I had all I could do to get out of bed, let alone do my morning calisthenics",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Minimal attainment: all I could do."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex68",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(68)"
+    },
+    "language": "stan1293",
+    "primaryText": "It would surprise me if John could pass the test, let alone Bill",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Antecedent of a conditional under surprise."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex69",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(69)"
+    },
+    "language": "stan1293",
+    "primaryText": "He failed to reach the sixth grade, let alone get a B.A.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "fail."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex70",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(70)"
+    },
+    "language": "stan1293",
+    "primaryText": "Anyone who'd been to high school, let alone graduate students in math, should be able to solve that problem",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Restrictor of anyone."
   },
   {
     "id": "fillmorekayoconnor1988_ex71",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(71)"},
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(71)"
+    },
     "language": "stan1293",
     "primaryText": "You've got enough material there for a whole semester, let alone a week",
     "discourseSegments": [],
@@ -387,11 +446,14 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "let alone in positive polarity context (attested)"
+    "comment": "Attested, positive polarity; the fragment denies the context proposition (73a)."
   },
   {
     "id": "fillmorekayoconnor1988_ex72",
-    "source": {"bibkey": "fillmore-kay-oconnor-1988", "paperLabel": "(72)"},
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(72)"
+    },
     "language": "stan1293",
     "primaryText": "Penutian has been broken up, let alone Macro-Penutian",
     "discourseSegments": [],
@@ -402,6 +464,461 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "let alone in positive polarity context (attested)"
+    "comment": "Attested, positive polarity; the fragment denies the context proposition (73b)."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex104",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(104)"
+    },
+    "language": "stan1293",
+    "primaryText": "Fred doesn't have an odd number of books, let alone seventy-five",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Not having an odd number entails not having seventy-five, but not within a scalar model (fn. 16); the lottery context of (105) supplies a second dimension."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex106",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(106)"
+    },
+    "language": "stan1293",
+    "primaryText": "He wasn't even a commissioned officer, let alone a colonel",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjunction",
+        "letAlone"
+      ],
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "a",
+        "secondLieutenant"
+      ],
+      [
+        "b",
+        "colonel"
+      ]
+    ],
+    "comment": "Being a commissioned officer is having made the lowest commissioned rank, second lieutenant."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex107",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(107)"
+    },
+    "language": "stan1293",
+    "primaryText": "He wasn't even a commissioned officer, let alone a second lieutenant",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjunction",
+        "letAlone"
+      ],
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "a",
+        "secondLieutenant"
+      ],
+      [
+        "b",
+        "secondLieutenant"
+      ]
+    ],
+    "comment": "B is the lowest point of the scale."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex113",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(113)"
+    },
+    "language": "stan1293",
+    "primaryText": "He almost reached Denver let alone Chicago",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "almost is not a polarity trigger; fn. 15 gives a positive-polarity context in which it improves."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex114",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(114)"
+    },
+    "language": "stan1293",
+    "primaryText": "He only reached Denver let alone Chicago",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Non-subject only."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex115",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(115)"
+    },
+    "language": "stan1293",
+    "primaryText": "He barely reached Denver let alone Chicago",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "barely is a polarity trigger; the fragment reads as (119), he did not reach Chicago."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex116",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(116)"
+    },
+    "language": "stan1293",
+    "primaryText": "He almost earned any money",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "almost does not license any."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex117",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(117)"
+    },
+    "language": "stan1293",
+    "primaryText": "He only earned any money",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Non-subject only does not license any."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex121",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(121)"
+    },
+    "language": "stan1293",
+    "primaryText": "You couldn't get a poor man to wash your car for $2, let alone a rich man to wax your truck for $1",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjunction",
+        "letAlone"
+      ],
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "wealth",
+        "poor rich"
+      ],
+      [
+        "task",
+        "wash wax"
+      ],
+      [
+        "vehicle",
+        "car truck"
+      ],
+      [
+        "fee",
+        "$2 $1"
+      ]
+    ],
+    "comment": "Four paired foci; (120) adds a fifth dimension, bad times against prosperous times."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex122a",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(122a)"
+    },
+    "language": "stan1293",
+    "primaryText": "You couldn't get a rich man to wash your car for $2 let alone a poor man to wax your truck for $1",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjunction",
+        "letAlone"
+      ],
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "wealth",
+        "rich poor"
+      ],
+      [
+        "task",
+        "wash wax"
+      ],
+      [
+        "vehicle",
+        "car truck"
+      ],
+      [
+        "fee",
+        "$2 $1"
+      ]
+    ],
+    "comment": "The poor/rich foci exchanged."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex122b",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(122b)"
+    },
+    "language": "stan1293",
+    "primaryText": "You couldn't get a poor man to wax your car for $2 let alone a rich man to wash your truck for $1",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjunction",
+        "letAlone"
+      ],
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "wealth",
+        "poor rich"
+      ],
+      [
+        "task",
+        "wax wash"
+      ],
+      [
+        "vehicle",
+        "car truck"
+      ],
+      [
+        "fee",
+        "$2 $1"
+      ]
+    ],
+    "comment": "The wash/wax foci exchanged; acceptable where washing is the more distasteful task."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex122c",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(122c)"
+    },
+    "language": "stan1293",
+    "primaryText": "You couldn't get a poor man to wash your car for one dollar let alone a rich man to wax your truck for two dollars",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjunction",
+        "letAlone"
+      ],
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "wealth",
+        "poor rich"
+      ],
+      [
+        "task",
+        "wash wax"
+      ],
+      [
+        "vehicle",
+        "car truck"
+      ],
+      [
+        "fee",
+        "$1 $2"
+      ]
+    ],
+    "comment": "The fee foci exchanged."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex130",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(130)"
+    },
+    "language": "stan1293",
+    "primaryText": "He didn't make general; in fact, he didn't even make colonel",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjunction",
+        "inFact"
+      ],
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "a",
+        "general"
+      ],
+      [
+        "b",
+        "colonel"
+      ]
+    ],
+    "comment": "in fact presents the stronger clause second."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex131",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(131)"
+    },
+    "language": "stan1293",
+    "primaryText": "He did make colonel; in fact, he even made general",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjunction",
+        "inFact"
+      ],
+      [
+        "polarity",
+        "positive"
+      ],
+      [
+        "a",
+        "colonel"
+      ],
+      [
+        "b",
+        "general"
+      ]
+    ],
+    "comment": "in fact presents the stronger clause second."
+  },
+  {
+    "id": "fillmorekayoconnor1988_ex132",
+    "source": {
+      "bibkey": "fillmore-kay-oconnor-1988",
+      "paperLabel": "(132)"
+    },
+    "language": "stan1293",
+    "primaryText": "I believe he made colonel, if not general",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjunction",
+        "ifNot"
+      ],
+      [
+        "polarity",
+        "positive"
+      ],
+      [
+        "a",
+        "colonel"
+      ],
+      [
+        "b",
+        "general"
+      ]
+    ],
+    "comment": "if not presents the stronger clause second."
   }
 ]
