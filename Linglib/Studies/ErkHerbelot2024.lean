@@ -10,54 +10,46 @@ import Linglib.Core.Probability.UniformOn
 import Mathlib.MeasureTheory.Constructions.Pi
 
 /-!
-# Erk & Herbelot 2024 — How to Marry a Star
-[erk-herbelot-2024]
+# Erk and Herbelot (2024): How to Marry a Star: Probabilistic Constraints for Meaning in Context
 
-Situation description systems (SDS) model utterance understanding as Bayesian inference over
-the *concepts* underlying the words of a sentence, constrained locally by *selectional
-preferences* and globally by *scenarios*. The graphical model (§5.1, Figure 5; the sampling
-process in Appendix A):
+This file formalizes [erk-herbelot-2024]'s situation description systems, which model utterance
+understanding as Bayesian inference over the concepts underlying the words of a sentence,
+constrained locally by selectional preferences and globally by scenarios. In the graphical model
+(§5.1, Figure 5; the sampling process in Appendix A) a scenario mix is drawn from a symmetric
+Dirichlet with concentration `α`, one scenario per concept node is drawn from the mix, one
+concept per node is drawn from its scenario's concept distribution, for a role filler from the
+Product of Experts of that distribution with the role's selectional constraint (p. 570), and
+each node emits its condition label deterministically. `SDS.nodePosterior` is the posterior over
+the concept at one node given the labels of all nodes, mathlib's posterior kernel `κ†μ` of the
+deterministic label kernel against the joint, pushed forward to the node, and
+`SDS.nodePosterior_apply` is the closed form the paper estimates by WebPPL sampling, a ratio of
+sums over scenario assignments of per-node fibre masses. The paper's two sentences follow with
+their posteriors as functions of `α`. In *a player was holding a bat* (§5.1, Table 1) the
+*stick* sense of *bat* has posterior `(α + 1) / (2α + 1)`, which strengthens as `α` decreases
+(p. 571); in *an astronomer married a star* (§5.2, Table 2) the *person* sense has posterior
+`105α / (115α + 8)`, so the *sun* sense strengthens as `α` decreases (p. 572); and on the *star*
+node the selectional constraint prefers STAR-PERSON while the STARGAZING scenario prefers
+STAR-SUN, the conflict of Figure 6.
 
-1. a scenario mix drawn from a symmetric Dirichlet with concentration `α` — integrated out
-   here into the Pólya-urn law of the per-node scenario draws, `PolyaUrn.seqLaw`;
-2. one scenario per concept node, drawn from the mix;
-3. one concept per node: a top-level concept (the verb) is drawn from its scenario's concept
-   distribution alone; a role filler is drawn from the *Product of Experts* of its scenario's
-   distribution and its role's selectional constraint (p. 570: `a_i b_i / ∑_j a_j b_j`);
-4. one observed condition label per node, a deterministic function of the concept.
+## Implementation notes
 
-`SDS.nodePosterior` is the posterior over the concept at one node given the labels of all
-nodes: mathlib's posterior kernel `κ†μ` of the deterministic label kernel against the joint,
-pushed forward to the node. `SDS.nodePosterior_apply` is the closed form the paper estimates by
-WebPPL sampling — a ratio of sums, over scenario assignments, of per-node fibre masses.
+* The Dirichlet prior on the scenario mix is integrated out into the Pólya-urn law of the
+  per-node scenario draws, `PolyaUrn.seqLaw`.
+* Ingredients the paper leaves unspecified are set as follows: HOLD-AGENT and MARRY-AGENT get
+  the same constraint as the corresponding theme role, and both cancel since the agent concept
+  is observed; MARRY-THEME gives MARRY itself weight `0`, the three stated values already summing
+  to `1`.
 
-## Main results
+## TODO
 
-The paper's two worked sentences, with the posteriors computed exactly as functions of `α`:
+* The exact posteriors against the paper's WebPPL estimates from 2000 samples: the astronomer
+  rows, `105/131 ≈ 0.80` and `7/13 ≈ 0.54` against `0.82` and `0.57`, are within sampling
+  error; the bat rows, `3/4` and `11/12` against `0.82` and `0.96`, are not, and the paper does
+  not describe its WebPPL model in enough detail to locate the difference.
 
-* `batStick_real` — *a player was holding a bat* (§5.1, Table 1):
-  `P(BAT-STICK | labels) = (α + 1) / (2α + 1)`; hence `batStick_strictAnti`: the *stick*
-  reading strengthens as `α` decreases (p. 571).
-* `starPerson_real` — *an astronomer married a star* (§5.2, Table 2):
-  `P(STAR-PERSON | labels) = 105α / (115α + 8)`; hence `starSun_strictAnti`: the *sun*
-  reading strengthens as `α` decreases (p. 572).
-* `star_constraints_conflict` — Figure 6: on the `star` node the selectional constraint prefers
-  STAR-PERSON while the STARGAZING scenario prefers STAR-SUN.
+## References
 
-## Numbers
-
-| sentence, α | exact posterior | paper (WebPPL, 2000 samples) |
-|---|---|---|
-| bat, ½: P(stick) | 3/4 | 0.82 |
-| bat, 0.1: P(stick) | 11/12 | 0.96 |
-| star, ½: P(person) | 105/131 ≈ 0.80 | 0.82 |
-| star, 0.1: P(person) | 7/13 ≈ 0.54 | 0.57 |
-
-The astronomer rows are within sampling error of the paper's; the bat rows are not, and the
-paper does not describe its WebPPL model in enough detail to locate the difference. Ingredients
-the paper leaves unspecified are set as follows: HOLD-AGENT and MARRY-AGENT get the same
-constraint as the corresponding theme role (both cancel, since the agent concept is observed);
-MARRY-THEME gives MARRY itself weight `0` (the three stated values already sum to `1`).
+* [erk-herbelot-2024]
 -/
 
 namespace ErkHerbelot2024
@@ -88,7 +80,7 @@ variable {S C R : Type*} [MeasurableSpace S] [MeasurableSpace C] [MeasurableSpac
 the normalized pointwise product of `scenario s` and `selectional r`. When the two share no
 concept (fn 10) the row is the zero measure. -/
 noncomputable def poe : Kernel (S × R) C :=
-  Kernel.ofWeights fun p c => m.scenario p.1 {c} * m.selectional p.2 {c}
+  Kernel.ofWeights λ p c => m.scenario p.1 {c} * m.selectional p.2 {c}
 
 instance : IsFiniteKernel m.poe := inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
 
@@ -123,18 +115,18 @@ omit [DecidableEq S] [Nonempty S] [Nonempty C] in
 /-- The concept nodes of an `n`-node sentence with roles `ρ`, conditionally independent given
 their scenarios. -/
 noncomputable def emissions (ρ : Fin n → Option R) : Kernel (Fin n → S) (Fin n → C) :=
-  Kernel.ofFunOfCountable fun s => Measure.pi fun i => m.emission (s i) (ρ i)
+  Kernel.ofFunOfCountable λ s => Measure.pi λ i => m.emission (s i) (ρ i)
 
 omit [DecidableEq S] [Nonempty S] [Nonempty C] [MeasurableSingletonClass C]
   [∀ s, IsProbabilityMeasure (m.scenario s)] in
 theorem emissions_apply (ρ : Fin n → Option R) (s : Fin n → S) :
-    m.emissions ρ s = Measure.pi fun i => m.emission (s i) (ρ i) := rfl
+    m.emissions ρ s = Measure.pi λ i => m.emission (s i) (ρ i) := rfl
 
 omit [DecidableEq S] [Nonempty S] [Nonempty C] in
 instance (ρ : Fin n → Option R) : IsFiniteKernel (m.emissions ρ) :=
-  ⟨⟨1, ENNReal.one_lt_top, fun s => by
+  ⟨⟨1, ENNReal.one_lt_top, λ s => by
     rw [emissions_apply, Measure.pi_univ]
-    exact Finset.prod_le_one (fun _ _ => zero_le) fun i _ =>
+    exact Finset.prod_le_one (λ _ _ => zero_le) λ i _ =>
       m.emission_univ_le_one _ _⟩⟩
 
 omit [Nonempty C] in
@@ -150,7 +142,7 @@ instance (ρ : Fin n → Option R) : IsFiniteMeasure (m.joint ρ) :=
 noncomputable def observe (S : Type*) [MeasurableSpace S] [Countable S]
     [MeasurableSingletonClass S] (label : C → L) (n : ℕ) :
     Kernel ((Fin n → S) × (Fin n → C)) (Fin n → L) :=
-  Kernel.deterministic (fun ω i => label (ω.2 i)) (measurable_of_countable _)
+  Kernel.deterministic (λ ω i => label (ω.2 i)) (measurable_of_countable _)
 
 instance (label : C → L) (n : ℕ) : IsFiniteKernel (observe S label n) :=
   inferInstanceAs (IsFiniteKernel (Kernel.deterministic _ _))
@@ -158,7 +150,7 @@ instance (label : C → L) (n : ℕ) : IsFiniteKernel (observe S label n) :=
 /-- The posterior over the concept at node `t`, given the labels `x` of all nodes. -/
 noncomputable def nodePosterior (label : C → L) (ρ : Fin n → Option R) (x : Fin n → L)
     (t : Fin n) : Measure C :=
-  (((observe S label n)†(m.joint ρ)) x).map fun ω => ω.2 t
+  (((observe S label n)†(m.joint ρ)) x).map λ ω => ω.2 t
 
 variable (label : C → L) (ρ : Fin n → Option R) (x : Fin n → L)
 
@@ -170,7 +162,7 @@ theorem joint_apply_univ_prod_pi (T : Fin n → Set C) :
       ∑ s, m.urn.seqLaw n {s} * ∏ i, m.emission (s i) (ρ i) (T i) := by
   rw [joint, Measure.compProd_apply_prod .univ .of_discrete, Measure.restrict_univ,
     lintegral_fintype]
-  exact Finset.sum_congr rfl fun s _ => by rw [emissions_apply, Measure.pi_pi, mul_comm]
+  exact Finset.sum_congr rfl λ s _ => by rw [emissions_apply, Measure.pi_pi, mul_comm]
 
 /-- The node posterior in closed form: the ratio of two scenario-assignment sums of per-node
 fibre masses — the quantity the paper estimates by sampling. -/
@@ -180,21 +172,21 @@ theorem nodePosterior_apply (t : Fin n) (c : C)
       (∑ s, m.urn.seqLaw n {s} *
           ∏ i, m.emission (s i) (ρ i) {c' | label c' = x i ∧ (i = t → c' = c)}) /
         ∑ s, m.urn.seqLaw n {s} * ∏ i, m.emission (s i) (ρ i) (label ⁻¹' {x i}) := by
-  have hF : (fun ω : (Fin n → S) × (Fin n → C) => fun i => label (ω.2 i)) ⁻¹' {x} =
-      Set.univ ×ˢ Set.pi Set.univ fun i => label ⁻¹' {x i} := by
+  have hF : (λ ω : (Fin n → S) × (Fin n → C) => λ i => label (ω.2 i)) ⁻¹' {x} =
+      Set.univ ×ˢ Set.pi Set.univ λ i => label ⁻¹' {x i} := by
     ext ⟨s, c⟩; simp [funext_iff]
-  have hE : (Set.univ ×ˢ Set.pi Set.univ fun i => label ⁻¹' {x i}) ∩
-      ((fun ω : (Fin n → S) × (Fin n → C) => ω.2 t) ⁻¹' {c}) =
-      Set.univ ×ˢ Set.pi Set.univ fun i => {c' | label c' = x i ∧ (i = t → c' = c)} := by
+  have hE : (Set.univ ×ˢ Set.pi Set.univ λ i => label ⁻¹' {x i}) ∩
+      ((λ ω : (Fin n → S) × (Fin n → C) => ω.2 t) ⁻¹' {c}) =
+      Set.univ ×ˢ Set.pi Set.univ λ i => {c' | label c' = x i ∧ (i = t → c' = c)} := by
     ext ⟨s, c'⟩
     simp only [Set.mem_inter_iff, Set.mem_prod, Set.mem_univ, true_and, Set.mem_univ_pi,
       Set.mem_preimage, Set.mem_singleton_iff, Set.mem_ofPred_eq]
-    exact ⟨fun ⟨h₁, h₂⟩ i => ⟨h₁ i, fun hi => hi ▸ h₂⟩, fun h => ⟨fun i => (h i).1, (h t).2 rfl⟩⟩
+    exact ⟨λ ⟨h₁, h₂⟩ i => ⟨h₁ i, λ hi => hi ▸ h₂⟩, λ h => ⟨λ i => (h i).1, (h t).2 rfl⟩⟩
   rw [nodePosterior, Measure.map_apply (measurable_of_countable _) (measurableSet_singleton c)]
   unfold observe
   rw [posterior_deterministic_eq_cond _ _ (by rwa [hF, joint_apply_univ_prod_pi]), hF,
     ProbabilityTheory.cond_apply
-      (s := Set.univ ×ˢ Set.pi Set.univ fun i => label ⁻¹' {x i}) .of_discrete, hE,
+      (s := Set.univ ×ˢ Set.pi Set.univ λ i => label ⁻¹' {x i}) .of_discrete, hE,
     joint_apply_univ_prod_pi, joint_apply_univ_prod_pi, ENNReal.div_eq_inv_mul]
 
 omit [Nonempty C] [MeasurableSingletonClass C] in
@@ -202,9 +194,9 @@ omit [Nonempty C] [MeasurableSingletonClass C] in
 theorem sum_toReal (T : Fin n → Set C) :
     (∑ s, m.urn.seqLaw n {s} * ∏ i, m.emission (s i) (ρ i) (T i)).toReal =
       ∑ s, m.urn.seqProb (PolyaUrn.countVec s) * ∏ i, (m.emission (s i) (ρ i)).real (T i) := by
-  rw [ENNReal.toReal_sum fun s _ =>
-    ENNReal.mul_ne_top (measure_ne_top _ _) (ENNReal.prod_ne_top fun i _ => measure_ne_top _ _)]
-  refine Finset.sum_congr rfl fun s _ => ?_
+  rw [ENNReal.toReal_sum λ s _ =>
+    ENNReal.mul_ne_top (measure_ne_top _ _) (ENNReal.prod_ne_top λ i _ => measure_ne_top _ _)]
+  refine Finset.sum_congr rfl λ s _ => ?_
   rw [ENNReal.toReal_mul, ENNReal.toReal_prod, PolyaUrn.seqLaw_singleton,
     ENNReal.toReal_ofReal (m.urn.seqProb_pos _).le]
   rfl
@@ -218,12 +210,12 @@ end SDS
 /-- A sum over three-node scenario assignments, coordinatewise. -/
 private theorem sum_fin_three {S M : Type*} [Fintype S] [AddCommMonoid M]
     (f : (Fin 3 → S) → M) : ∑ s, f s = ∑ a, ∑ b, ∑ c, f ![a, b, c] := by
-  rw [← (Fin.consEquiv fun _ => S).sum_comp, Fintype.sum_prod_type]
-  refine Finset.sum_congr rfl fun a _ => ?_
-  rw [← (Fin.consEquiv fun _ => S).sum_comp, Fintype.sum_prod_type]
-  refine Finset.sum_congr rfl fun b _ => ?_
-  rw [← (Fin.consEquiv fun _ => S).sum_comp, Fintype.sum_prod_type]
-  refine Finset.sum_congr rfl fun c _ => ?_
+  rw [← (Fin.consEquiv λ _ => S).sum_comp, Fintype.sum_prod_type]
+  refine Finset.sum_congr rfl λ a _ => ?_
+  rw [← (Fin.consEquiv λ _ => S).sum_comp, Fintype.sum_prod_type]
+  refine Finset.sum_congr rfl λ b _ => ?_
+  rw [← (Fin.consEquiv λ _ => S).sum_comp, Fintype.sum_prod_type]
+  refine Finset.sum_congr rfl λ c _ => ?_
   rw [Fintype.sum_unique]
   exact congrArg f (by funext i; fin_cases i <;> rfl)
 
@@ -258,13 +250,13 @@ inductive BatLabel
   deriving Fintype, DecidableEq
 
 instance : MeasurableSpace BatConcept := ⊤
-instance : DiscreteMeasurableSpace BatConcept := ⟨fun _ => trivial⟩
+instance : DiscreteMeasurableSpace BatConcept := ⟨λ _ => trivial⟩
 instance : MeasurableSpace BatScenario := ⊤
-instance : DiscreteMeasurableSpace BatScenario := ⟨fun _ => trivial⟩
+instance : DiscreteMeasurableSpace BatScenario := ⟨λ _ => trivial⟩
 instance : MeasurableSpace BatRole := ⊤
-instance : DiscreteMeasurableSpace BatRole := ⟨fun _ => trivial⟩
+instance : DiscreteMeasurableSpace BatRole := ⟨λ _ => trivial⟩
 instance : MeasurableSpace BatLabel := ⊤
-instance : DiscreteMeasurableSpace BatLabel := ⟨fun _ => trivial⟩
+instance : DiscreteMeasurableSpace BatLabel := ⟨λ _ => trivial⟩
 instance : Nonempty BatConcept := ⟨.HOLD⟩
 instance : Nonempty BatScenario := ⟨.BASEBALL⟩
 
@@ -312,8 +304,8 @@ def batLabels : Fin 3 → BatLabel := ![.hold, .player, .bat]
 /-- A role filler's distribution is uniform on the concepts its scenario and role agree on. -/
 theorem batSDS_poe (α : ℝ) (hα : 0 < α) (s : BatScenario) (r : BatRole) :
     (batSDS α hα).poe (s, r) = uniformOn (↑(batScenario s ∩ holdFiller) : Set BatConcept) :=
-  Kernel.ofWeights_uniformOn_mul_uniformOn (fun p : BatScenario × BatRole => batScenario p.1)
-    (fun _ => holdFiller) (s, r)
+  Kernel.ofWeights_uniformOn_mul_uniformOn (λ p : BatScenario × BatRole => batScenario p.1)
+    (λ _ => holdFiller) (s, r)
 
 private theorem sum_batScenario {M : Type*} [AddCommMonoid M] (f : BatScenario → M) :
     ∑ s, f s = f .BASEBALL + f .GOTHIC := by
@@ -354,9 +346,9 @@ private theorem bat_cards_den :
 
 private theorem bat_cards_num :
     ((batScenario .BASEBALL ∩ holdFiller).filter
-      (fun c => batLabel c = .bat ∧ c = .BAT_STICK)).card = 1 ∧
+      (λ c => batLabel c = .bat ∧ c = .BAT_STICK)).card = 1 ∧
     ((batScenario .GOTHIC ∩ holdFiller).filter
-      (fun c => batLabel c = .bat ∧ c = .BAT_STICK)).card = 0 := by decide
+      (λ c => batLabel c = .bat ∧ c = .BAT_STICK)).card = 0 := by decide
 
 /-- The observation likelihood of *a player was holding a bat*: `1/160`, independent of `α`
 (the observed labels pin the *player* node's scenario to BASEBALL, whose prior mass is `1/2`,
@@ -454,13 +446,13 @@ inductive StarLabel
   deriving Fintype, DecidableEq
 
 instance : MeasurableSpace StarConcept := ⊤
-instance : DiscreteMeasurableSpace StarConcept := ⟨fun _ => trivial⟩
+instance : DiscreteMeasurableSpace StarConcept := ⟨λ _ => trivial⟩
 instance : MeasurableSpace StarScenario := ⊤
-instance : DiscreteMeasurableSpace StarScenario := ⟨fun _ => trivial⟩
+instance : DiscreteMeasurableSpace StarScenario := ⟨λ _ => trivial⟩
 instance : MeasurableSpace StarRole := ⊤
-instance : DiscreteMeasurableSpace StarRole := ⟨fun _ => trivial⟩
+instance : DiscreteMeasurableSpace StarRole := ⟨λ _ => trivial⟩
 instance : MeasurableSpace StarLabel := ⊤
-instance : DiscreteMeasurableSpace StarLabel := ⟨fun _ => trivial⟩
+instance : DiscreteMeasurableSpace StarLabel := ⟨λ _ => trivial⟩
 instance : Nonempty StarConcept := ⟨.MARRY⟩
 instance : Nonempty StarScenario := ⟨.STARGAZING⟩
 
@@ -513,7 +505,7 @@ def starLabels : Fin 3 → StarLabel := ![.astronomer, .marry, .star]
 /-- A role filler's row is the weight kernel of scenario mass times MARRY's constraint. -/
 theorem starSDS_poe (α : ℝ) (hα : 0 < α) :
     (starSDS α hα).poe =
-      Kernel.ofWeights fun p c => uniformOn ↑(starScenario p.1) {c} * marryFiller c := by
+      Kernel.ofWeights λ p c => uniformOn ↑(starScenario p.1) {c} * marryFiller c := by
   show Kernel.ofWeights _ = _
   congr 1
   funext p c
