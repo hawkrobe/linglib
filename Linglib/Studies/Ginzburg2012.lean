@@ -4,85 +4,46 @@ import Linglib.Data.Examples.Ginzburg2012
 /-!
 # Ginzburg (2012): The Interactive Stance
 
-[ginzburg-2012] gives each conversational participant their own *dialogue
-gameboard* — turn holder and addressee, the commonly accepted FACTS, the
-MOVES made, the questions under discussion (QUD) and, once metacommunication
-is added, the ungrounded utterances PENDING — and analyses conversation as the
-application of *conversational rules*, partial maps from gameboards meeting a
-precondition type to gameboards of an effects type. This file states the book's
-rule inventory (Appendix B) over the substrate `DGB`, checks its worked traces,
-and proves the two structural claims it draws from them: participants who
-process the same utterances need not end up with the same gameboard (the
-Turn-Taking Puzzle), and self-repair is other-initiated clarification with the
-turn held.
+This file formalizes the conversational rules of [ginzburg-2012] over the dialogue gameboard
+`DGB`: each participant's turn holder and addressee, the commonly accepted FACTS, the MOVES made,
+the questions under discussion and, once metacommunication enters, the ungrounded utterances
+PENDING. A rule is a partial map from gameboards meeting its preconditions to updated gameboards
+(`Rule.apply`: the inventory of Appendix B, with the utterance, question or turn a
+nondeterministic rule chooses made an argument), a conversation composes rules (`run`), and an
+utterance is coherent when some rule makes it the latest move (`Coherent`). The Question
+Introduction Appropriateness Condition survives QUD-incrementation and is restored by FACTS update
+(`askQud_nonResolveCond`, `factUpdate_nonResolveCond`); a genre makes an initiating move a relevant
+Free Speech move (`IsInitiating`, `coherent_of_isInitiating`); and self-repair is Parameter
+Identification with the turn held (`parameterIdentification_eq_repair_swapTurn`).
 
-## Main definitions
+The worked traces of Ch. 4 reach the tabulated gameboards (`Ex66.trace`, `Ex66.trace68_table`,
+`Ex79.trace`), and after "Is George here? / Is WHO here?" the two participants' gameboards differ
+in QUD and PENDING although both processed the same utterances (`George.differ`). The turn each
+rule leaves is a general property of the inventory: the clarification rules pass it to the
+clarifier, repair keeps it, and QSPEC leaves it open (`spkr_parameterIdentification`,
+`spkr_repair`, `spkr_qspec`); the rows of Chs. 1 and 8 record who holds the turn after a
+clarification request, a self-repair and a bare follow-up question, as the rules predict
+(`rows_turn`).
 
-* `Content`, `Clarifiable` — what the content types supply: `p?`, aboutness and
-  influence (q-specificity), resolution (`⊨`), and the questions clarification
-  accommodates, `λx.Mean(A, u, x)` and `λx.v(u ↦ x)`.
-* `Rule`, `Rule.apply` — the named rules of Chs. 4, 6 and 8 as partial maps on
-  `Board`; `run` composes a trace; `Coherent`, `Reachable`.
-* `Fulfilled`, `GenreRelevant`, `IsInitiating` — the outcome of a gameboard
-  relative to a genre and activity relevance (§4.6).
-* `NSUClass`, `CRForm` — the non-sentential-utterance (Tables 7.3–7.4) and
-  clarification-request (§6.2) taxonomies.
+## Implementation notes
 
-## Main statements
+* The schematic content types of the traces (`Content`, `Clarifiable`) fix exactly the aboutness,
+  influence and resolution relations each trace's side conditions require.
+* Three of the book's tables misprint: trace (66) labels the QUD update after B's question "Assert
+  QUD-incrementation" where it is Ask QUD-incrementation; trace (68) ends with `QUD := ⟨q0⟩`
+  although no `q0` occurs, and Fact update/QUD-downdate leaves QUD empty; Table 7.4 heads the
+  Answers block with 413 while its cells sum to 403, the figure the total of Table 7.3 needs.
+* The clarification-request forms of §6.2.1 and the non-sentential-utterance classes of Tables
+  7.3–7.4 are recorded as taxonomies (`CRForm`, `NSUClass`, `NSUClass.function`).
 
-* `askQud_nonResolveCond`, `factUpdate_nonResolveCond`, `factUpdate_polar` —
-  the Question Introduction Appropriateness Condition (`non-resolve-cond`) is
-  kept by QUD-incrementation of an unresolved question and restored by FACTS
-  update, which in particular removes `p?`.
-* `Ex66.trace`, `Ex66.trace68`, `Ex79.trace` — the Ch. 4 traces (66), (68) and
-  (79) reach the tabulated gameboards.
-* `George.dgb_A`, `George.dgb_B`, `George.differ` — after "Is George here? /
-  Is WHO here?" the two gameboards are those of Ch. 6 (91), and differ in QUD
-  and PENDING.
-* `parameterIdentification_eq_repair_swapTurn` — Parameter Identification and
-  Backwards-looking appropriateness repair accommodate the same question and
-  differ only in the turn (§8.2).
+## References
 
-## Errata
-
-Trace (66) labels the QUD update after B's question "Assert
-QUD-incrementation"; it is Ask QUD-incrementation. Trace (68) ends with
-`QUD := ⟨q0⟩` although no `q0` occurs; Fact update/QUD-downdate leaves QUD
-empty. Table 7.4 heads the Answers block with 413 while its cells sum to 403
-(the total 1283 of Table 7.3 needs 403).
+* [ginzburg-2012]
 -/
-
-namespace Discourse.Gameboard.DGB
-
-variable {P Fact Q : Type*} {Cont : Type}
-
-/-- Turn change: the addressee takes the turn ([ginzburg-2012] Appendix B). -/
-def swapTurn (d : DGB P Fact Q Cont) : DGB P Fact Q Cont :=
-  { d with spkr := d.addr, addr := d.spkr }
-
-/-- The question of MaxQUD. -/
-def maxQud (d : DGB P Fact Q Cont) : Option Q := d.qud.head?.map (·.q)
-
-/-- The content of the latest move. -/
-def latestContent (d : DGB P Fact Q Cont) : Option Cont := d.latestMove.map (·.cont)
-
-@[simp] theorem swapTurn_pushQud (d : DGB P Fact Q Cont) (q : Q) :
-    d.swapTurn.pushQud q = (d.pushQud q).swapTurn := rfl
-
-@[simp] theorem swapTurn_recordMove (d : DGB P Fact Q Cont) (m : LocProp Cont) :
-    d.swapTurn.recordMove m = (d.recordMove m).swapTurn := rfl
-
-@[simp] theorem latestMove_recordMove (d : DGB P Fact Q Cont) (m : LocProp Cont) :
-    (d.recordMove m).latestMove = some m := by
-  simp [latestMove, recordMove]
-
-end Discourse.Gameboard.DGB
-
-deriving instance DecidableEq for Discourse.Gameboard.DGB
 
 namespace Ginzburg2012
 
-open Discourse.Gameboard Question
+open Discourse.Gameboard Question Data.Examples
 
 /-- What a gameboard's content types supply: the polar question `p?`, the
 aboutness and influence relations of q-specificity, and resolution (`⊨`), with
@@ -155,6 +116,7 @@ turn is underspecified takes either. -/
 inductive Turn
   | keep
   | change
+  deriving DecidableEq, Repr
 
 /-- Effect the turn on a gameboard. -/
 def Turn.act : Turn → Board P Fact Q → Board P Fact Q
@@ -610,6 +572,140 @@ theorem accommodate :
       some ([.whoAsked, .polar .georgeHere], []) := by decide
 
 end George
+
+/-! ### Who holds the turn (Chs. 1 and 8)
+
+Only the addressee has the two clarification-request readings of "Bo?" and only the original
+speaker its self-correction reading (ex. 22); bare "Why?" is resolved differently by whoever holds
+the turn, the Turn-Taking Puzzle (ex. 23); and mid-utterance self-repair is the within-utterance
+analogue of a clarification request (ex. 24). Each turns on the turn a rule leaves, a general
+property of the inventory. -/
+
+section Turn
+
+variable {P Fact Q : Type} [DecidableEq Fact] [DecidableEq Q] [Content Fact Q]
+  [Clarifiable P Fact Q] {d d' : Board P Fact Q}
+
+/-- Parameter Identification passes the turn to the clarifier. -/
+theorem spkr_parameterIdentification {u : SubUtterance} {cr : Utt Fact Q}
+    (h : (Rule.parameterIdentification u cr).apply d = some d') : d'.spkr = d.addr := by
+  unfold Rule.apply at h
+  split at h <;> simp only [Option.ite_none_right_eq_some, reduceCtorEq] at h
+  obtain ⟨-, h⟩ := h
+  cases h
+  rfl
+
+/-- Parameter Focussing passes the turn to the clarifier. -/
+theorem spkr_parameterFocussing {u : SubUtterance} {cr : Utt Fact Q}
+    (h : (Rule.parameterFocussing u cr).apply d = some d') : d'.spkr = d.addr := by
+  unfold Rule.apply at h
+  split at h <;> simp only [Option.ite_none_right_eq_some, reduceCtorEq] at h
+  obtain ⟨-, h⟩ := h
+  cases h
+  rfl
+
+/-- Repair keeps the turn. -/
+theorem spkr_repair {u : SubUtterance} {cr : Utt Fact Q}
+    (h : (Rule.repair u cr).apply d = some d') : d'.spkr = d.spkr := by
+  unfold Rule.apply at h
+  split at h <;> simp only [Option.ite_none_right_eq_some, reduceCtorEq] at h
+  obtain ⟨-, h⟩ := h
+  cases h
+  rfl
+
+/-- QSPEC leaves the turn to its argument. -/
+theorem spkr_qspec {u : Utt Fact Q} {t : Turn} (h : (Rule.qspec u t).apply d = some d') :
+    d'.spkr = (t.act d).spkr := by
+  unfold Rule.apply at h
+  split at h <;> simp only [Option.ite_none_right_eq_some, reduceCtorEq] at h
+  obtain ⟨-, h⟩ := h
+  cases h
+  rfl
+
+end Turn
+
+/-! The rows of exx. 22–24: A asks about Bo, or which members of the audience own a parakeet, and
+either A or B follows with "Bo?" or "Why?". -/
+namespace Ex22
+
+inductive Fact
+  | p₀
+  deriving DecidableEq, Repr
+
+/-- A's question, the follow-up `why` influencing it, `p?`, and `λx.Mean(A, u, x)`. -/
+inductive Q
+  | q₀
+  | why
+  | polar (p : Fact)
+  | meant (u : SubUtterance)
+  deriving DecidableEq, Repr
+
+instance : Content Fact Q where
+  supports f q := q = .polar f
+  decSupports _ _ := inferInstanceAs (Decidable (_ = _))
+  polar := .polar
+  About _ _ := False
+  Influences q' q := q' = .why ∧ q = .q₀
+  decAbout _ _ := inferInstanceAs (Decidable False)
+  decInfluences _ _ := inferInstanceAs (Decidable (_ ∧ _))
+  supports_polar _ := rfl
+
+instance : Clarifiable Agent Fact Q where
+  mean _ u := .meant u
+  focus _ _ := .q₀
+
+/-- The sub-utterance "Bo". -/
+def bo : SubUtterance := { phon := "Bo", cat := "NP", cont := "b" }
+
+/-- A's question, with the referent of "Bo" a contextual parameter. -/
+def u₀ : Utt Fact Q :=
+  { phon := "Who does Bo admire?", cat := "S", cont := .ask .q₀,
+    cparams := [{ index := "b", restriction := "Named(Bo, b)" }], constits := [bo] }
+
+/-- The construction of a row: a clarification request by the addressee, a self-repair by the
+original speaker, or a bare follow-up question. -/
+inductive Construction
+  | clarification
+  | selfRepair
+  | followUp
+  deriving DecidableEq, Repr
+
+/-- A row: its construction and the turn the book records after it. -/
+structure Row where
+  construction : Construction
+  turn : Turn
+  deriving DecidableEq
+
+def Row.ofExample (ex : LinguisticExample) : Option Row :=
+  (ex.parse? (α := Row) "speaker" [("addressee", ⟨.clarification, .change⟩),
+      ("original speaker", ⟨.selfRepair, .keep⟩)]).orElse λ _ =>
+    (ex.parse? "repair" [("other-initiated", ⟨.clarification, .change⟩),
+        ("self-initiated", ⟨.selfRepair, .keep⟩)]).orElse λ _ =>
+      ex.parse? "turn" [("kept", ⟨.followUp, .keep⟩), ("taken", ⟨.followUp, .change⟩)]
+
+/-- The gameboard the row's second utterance meets: A's question pending, for a clarification
+request or a repair addressing its constituent "Bo", or under discussion, for a follow-up. -/
+def Row.board (r : Row) : Board Agent Fact Q :=
+  match r.construction with
+  | .clarification | .selfRepair => initial.pushPending u₀
+  | .followUp => (initial.recordMove (ofMove (.ask .q₀))).pushQud .q₀
+
+/-- The rule the construction instantiates: Parameter Identification or repair over "Bo", or
+QSPEC with the influencing `why`, taking whichever turn the row records. -/
+def Row.rule (r : Row) : Rule Agent Fact Q :=
+  match r.construction with
+  | .clarification => .parameterIdentification bo (ofMove (.ask (.meant bo)))
+  | .selfRepair => .repair bo (ofMove (.ask (.meant bo)))
+  | .followUp => .qspec (ofMove (.ask .why)) r.turn
+
+/-- The seven rows of exx. 22–24. -/
+def rows : List Row := Examples.all.filterMap Row.ofExample
+
+/-- Each row's rule applies to its gameboard and leaves the turn where the book records it. -/
+theorem rows_turn :
+    ∀ r ∈ rows, (r.rule.apply r.board).map (·.spkr) = some (r.turn.act r.board).spkr := by decide
+
+end Ex22
 
 /-! ### Taxonomies
 
