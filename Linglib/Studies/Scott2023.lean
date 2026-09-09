@@ -679,13 +679,6 @@ theorem searchOutcome_valued_but_unvalued (rest : List Encounter) :
     valuationOutcome mamInflSatisfaction (voiceTR :: rest) = .unvalued :=
   ⟨rfl, rfl⟩
 
--- The former §13 (Unified Agree — bridging Scott 2023's φ-Agree pipeline
--- with Elkins-Torrence-Brown 2026's oblique-Agree pipeline) violated the
--- chronological dependency rule (a 2023 study cross-referencing a 2026
--- study). It moved to `Studies/ElkinsTorrenceBrown2026.lean`
--- (the later paper, which can correctly back-reference Scott 2023's
--- φ-probe + Set A vocabulary defs).
-
 -- ============================================================================
 -- § 14: Impoverishment — Connecting to DM ([scott-2023], §4.4.3)
 -- ============================================================================
