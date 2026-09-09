@@ -6,53 +6,28 @@ import Linglib.Core.Order.DeMorganAlgebra.Defs
 /-!
 # Fitting (1994): Kleene's three valued logics and their children
 
-This file formalizes [fitting-1994]'s extension of Kleene's three-valued logics ([kleene-1952])
-to Belnap's four-valued logic ([belnap-1977]) and to the distributive bilattices of
-[ginsberg-1988]. In `FOUR` (§3) the classical values are the fixed points of conflation and
-Kleene's three values are the consistent ones, `x ≤ₖ −x`, on which the truth connectives and
-negation are the strong Kleene tables (`ofTruth`, `range_ofTruth`, `inf_ofTruth`). Formulas over
-the bilattice connectives (`Formula`, Definition 4.1) carry the semantic relations that the
-tableau system of §4 tests: `X` restricts `Y` when `Y` is at most true whenever `X` is, `X`
-requires `Y` when `Y` is at least true whenever `X` is; restriction is requirement of the negations
-in reverse, and equivalence is mutual restriction and requirement (`restricts_iff_requires_neg`,
-`equivalent_iff`). The guard `P : Q` of §5 returns `Q` when `P` is at least true and `⊥` otherwise
-(`guard_four`); it is knowledge-monotone in both arguments, truth-monotone in the second only,
-knowledge-monotone in the first with respect to the truth order, and satisfies the identities of
-Figure 4 (`guard_kInf_left` through `kInf_guard_self`). Through it the asymmetric Lisp
-connectives and the weak Kleene connectives are definable, `P ∧⃗ Q = P ∧ (P : Q)` and
-`P ∧ʷ Q = (P ∧⃗ Q) ⊗ (Q ∧⃗ P)` (Definition 5.1), the strong connectives return as the gullible
-combination of the two evaluation orders (`inf_eq_landL_kSup_landL`), on Kleene's values they are
-`Trivalent.meetMiddle` and `Trivalent.meetWeak` (`landL_ofTruth`, `landW_ofTruth`), and
-Lisp distributivity holds on three values but fails on four (`meetMiddle_joinMiddle_distrib`,
-`not_landL_lorL_distrib`). §§6–7 are the substrate: the product `L ⊙ L` with its negation
-(`Bilattice.Product`), conflation from a De Morgan complement (`conf_conf`, `conf_le_conf`,
-`conf_kLE_conf`, `neg_conf`) and the extremal identities (`extremal`). §9 generalizes: the exact
-values contain the truth bounds, are closed under the truth connectives and negation, and exclude
-the knowledge bounds (Theorem 9.2, `IsClassical.inf` through `not_isClassical_kInf`); the
-consistent values contain the exact ones and are closed under the truth connectives, negation,
-consensus, and gullibility below a common consistent bound (Theorem 9.3, `Consistent.inf` through
-`Consistent.kSup`); the generalized guard is Definition 9.4 (`Bilattice.Evidential.guard`), with
-its alternative characterization (`guard_eq_kSup_neg`), preserves consistency (`Consistent.guard`)
-and with the four Kleene connectives it defines is knowledge-monotone (`landL_kLE_landL`). §10
-closes: a product is bilinear exactly when its factors are linear (Proposition 10.2,
-`bilinear_iff`); over a linear factor the map `θ_a` of Definition 10.3 is a homomorphism for every
-connective (Lemma 10.4, `eval_theta`); and an equivalence between formulas is valid in a bilinear
-product exactly when it is valid in `FOUR` (Theorem 10.5, `equivalent_iff_four`).
+This file formalizes [fitting-1994]: Kleene's strong three-valued logic ([kleene-1952]) is the
+consistent part `x ≤ₖ −x` of Belnap's `FOUR` ([belnap-1977]), and the guard connective `P : Q`
+— `Q` if `P` is at least true, `⊥` otherwise — extends Belnap's logic so that Kleene's weak logic
+and the asymmetric Lisp logic become definable there (Definition 5.1). Both generalize to the
+product bilattices `L ⊙ L` of [ginsberg-1988], where the guard is `⟨a, b⟩ : ⟨c, d⟩ = ⟨a ∧ c, a ∧ d⟩`
+(Definition 9.4).
+
+The main results are the identities of Figure 4 for the guard, the closure theorems for exact
+and consistent values (Theorems 9.2 and 9.3, `IsClassical.inf`, `Consistent.kSup`), the
+identification of the Lisp and weak connectives on Kleene's values with `Trivalent.meetMiddle`
+and `Trivalent.meetWeak`, and the collapse for bilinear bilattices: an equivalence of formulas
+holds in `L ⊙ L` for a linear `L` iff it holds in `FOUR` (Theorem 10.5, `equivalent_iff_four`).
 
 ## Implementation notes
 
-* Fitting's Definition 7.1 product, negation and conflation are `Bilattice.Product`,
-  `Product.neg` and `Evidential.conf`; a De Morgan lattice is a `DeMorganAlgebra`. Section 7's
-  claim that the product with a De Morgan complement carries a conflation commuting with negation
-  is proved as the three conditions of Definition 6.2 rather than registered as an instance.
-* The representation theorems of §8 are the substrate's `Bilattice.decompose` in the
-  knowledge-order form of [avron-1996]; the refinements preserving negation and conflation
-  (Theorems 8.2 and 8.3) are not formalized, and §10 is stated for products `L ⊙ L` directly.
-* Theorem 10.5 quantifies over the products of linear bounded lattices; the direction from the
-  product to `FOUR` embeds `FOUR` by sending the Boolean coordinates to the bounds
-  (`ofFour`) and reads the value back with `θ_⊤` (`theta_top_ofFour`).
-* The tableau system of §4 and its covering relation (Proposition 4.4) are not formalized;
-  the semantic side of Proposition 4.4 is `equivalent_iff`.
+* The product, its negation and the conflation of §§6–7 are `Bilattice.Product`, the `Negation`
+  instance on `L ⊙ L`, and `Evidential.conf`; a De Morgan lattice is a `DeMorganAlgebra`.
+* The representation theorems of §8 are `Bilattice.decompose` ([avron-1996]); their
+  negation- and conflation-preserving refinements (Theorems 8.2 and 8.3) and the tableau system
+  of §4 are not formalized.
+* Theorem 10.5 is stated for products of linear bounded lattices; `ofFour` embeds `FOUR` by
+  sending the Boolean coordinates to the bounds, and `θ_⊤` reads it back.
 
 ## References
 
@@ -64,8 +39,7 @@ product exactly when it is valid in `FOUR` (Theorem 10.5, `equivalent_iff_four`)
 * [peters-1979]
 -/
 
-open Bilattice Bilattice.Product Bilattice.Evidential
-open scoped Bilattice
+open Bilattice Product Evidential
 
 namespace Fitting1994
 
@@ -108,7 +82,7 @@ theorem kLE_ofTruth (a b : Trivalent) :
   cases a <;> cases b <;> decide
 
 /-- Kleene negation is `FOUR`'s negation on Kleene's values. -/
-theorem neg_ofTruth (a : Trivalent) : ofTruth (Trivalent.neg a) = Product.neg (ofTruth a) := by
+theorem neg_ofTruth (a : Trivalent) : ofTruth (Trivalent.neg a) = neg (ofTruth a) := by
   cases a <;> rfl
 
 /-- Strong Kleene conjunction is `FOUR`'s truth meet on Kleene's values (§3). -/
@@ -141,7 +115,7 @@ def eval (v : Atom → L ⊙ L) : Formula Atom → L ⊙ L
   | atom a => v a
   | inf φ ψ => eval v φ ⊓ eval v ψ
   | sup φ ψ => eval v φ ⊔ eval v ψ
-  | neg φ => Product.neg (eval v φ)
+  | neg φ => Bilattice.neg (eval v φ)
   | kInf φ ψ => eval v φ ⊗ eval v ψ
   | kSup φ ψ => (eval v φ ⊕ eval v ψ : L ⊙ L)
   | guard φ ψ => Evidential.guard (eval v φ) (eval v ψ)
@@ -163,7 +137,7 @@ def Equivalent (φ ψ : Formula Atom) : Prop := ∀ v : Atom → FOUR, eval v φ
 theorem restricts_iff_requires_neg (φ ψ : Formula Atom) :
     Restricts φ ψ ↔ Requires (.neg ψ) (.neg φ) := by
   have key : ∀ x y : FOUR, (x ≤ₖ FOUR.T → y ≤ₖ FOUR.T) ↔
-      (FOUR.T ≤ₖ Product.neg y → FOUR.T ≤ₖ Product.neg x) := by decide
+      (FOUR.T ≤ₖ Bilattice.neg y → FOUR.T ≤ₖ Bilattice.neg x) := by decide
   exact forall_congr' λ v => key _ _
 
 /-- Two formulas are equivalent iff each restricts and requires the other (§4). -/
@@ -216,7 +190,7 @@ theorem guard_kSup_left_eq :
 
 /-- Figure 4: `P : ¬Q = ¬(P : Q)`. -/
 theorem guard_neg :
-    Evidential.guard x (Product.neg y) = Product.neg (Evidential.guard x y) := by
+    Evidential.guard x (neg y) = neg (Evidential.guard x y) := by
   ext <;> simp [Evidential.guard]
 
 /-- Figure 4: `P : (Q ∧ R) = (P : Q) ∧ (P : R)`. -/
@@ -281,7 +255,7 @@ only past the guard of the first. -/
 def landL (x y : L ⊙ L) : L ⊙ L := x ⊓ Evidential.guard x y
 
 /-- Definition 5.1: Lisp disjunction `P ∨⃗ Q = P ∨ (¬P : Q)`. -/
-def lorL (x y : L ⊙ L) : L ⊙ L := x ⊔ Evidential.guard (Product.neg x) y
+def lorL (x y : L ⊙ L) : L ⊙ L := x ⊔ Evidential.guard (neg x) y
 
 /-- Definition 5.1: weak Kleene conjunction `P ∧ʷ Q = (P ∧⃗ Q) ⊗ (Q ∧⃗ P)`, the consensus of the
 two evaluation orders. -/
@@ -380,7 +354,7 @@ theorem conf_kLE_conf {x y :
 
 /-- Negation and conflation commute (§7). -/
 theorem neg_conf :
-    Product.neg (Evidential.conf compl x) = Evidential.conf compl (Product.neg x) := rfl
+    neg (Evidential.conf compl x) = Evidential.conf compl (neg x) := rfl
 
 end Conflation
 
@@ -422,7 +396,7 @@ theorem IsClassical.sup (hx : IsClassical compl x) (hy : IsClassical compl y) :
   simp [hx, hy]
 
 /-- Theorem 9.2: the exact values are closed under negation. -/
-theorem IsClassical.neg (hx : IsClassical compl x) : IsClassical compl (Product.neg x) := by
+theorem IsClassical.neg (hx : IsClassical compl x) : IsClassical compl (neg x) := by
   rw [isClassical_iff] at *
   simp [hx, LatticeWithInvolution.compl_compl]
 
@@ -463,7 +437,7 @@ theorem Consistent.sup (hx : Consistent compl x) (hy : Consistent compl y) :
   simpa using inf_le_inf hx hy
 
 /-- Theorem 9.3: the consistent values are closed under negation. -/
-theorem Consistent.neg (hx : Consistent compl x) : Consistent compl (Product.neg x) := by
+theorem Consistent.neg (hx : Consistent compl x) : Consistent compl (neg x) := by
   rw [consistent_iff] at *
   simpa using LatticeWithInvolution.le_compl_comm.1 hx
 
@@ -485,7 +459,7 @@ theorem Consistent.kSup (hx : Consistent compl x) (hy : Consistent compl y)
 /-- The generalized guard of Definition 9.4, `(a, b) : (c, d) = (a ∧ c, a ∧ d)`, characterized
 as `[(P ⊗ true) ⊕ ¬(P ⊗ true)] ⊗ Q` (§9). -/
 theorem guard_eq_kSup_neg (x y : L ⊙ L) :
-    Evidential.guard x y = ((x ⊗ ⊤ ⊕ Product.neg (x ⊗ ⊤) : L ⊙ L) ⊗ y) := by
+    Evidential.guard x y = ((x ⊗ ⊤ ⊕ neg (x ⊗ ⊤) : L ⊙ L) ⊗ y) := by
   ext <;> simp [Evidential.guard]
 
 /-- §9: the guard of a consistent value is consistent. -/
@@ -521,7 +495,7 @@ theorem Consistent.landL (hx : Consistent compl x) (hy : Consistent compl y) :
 
 theorem Consistent.lorL (hx : Consistent compl x) (hy : Consistent compl y) :
     Consistent compl (lorL x y) :=
-  Consistent.sup hx (Consistent.guard hy (Product.neg x))
+  Consistent.sup hx (Consistent.guard hy (Bilattice.neg x))
 
 theorem Consistent.landW (hx : Consistent compl x) (hy : Consistent compl y) :
     Consistent compl (landW x y) :=
@@ -579,7 +553,7 @@ private theorem decide_inf (p q : L) : decide (a ≤ p ⊓ q) = (decide (a ≤ p
 private theorem decide_sup (p q : L) : decide (a ≤ p ⊔ q) = (decide (a ≤ p) ⊔ decide (a ≤ q)) := by
   by_cases hp : a ≤ p <;> by_cases hq : a ≤ q <;> simp [hp, hq]
 
-theorem theta_neg : theta a (Product.neg x) = Product.neg (theta a x) := rfl
+theorem theta_neg : theta a (neg x) = neg (theta a x) := rfl
 
 /-- Lemma 10.4: `θ_a` preserves `∧` when `L` is linear. -/
 theorem theta_inf : theta a (x ⊓ y) = theta a x ⊓ theta a y := by

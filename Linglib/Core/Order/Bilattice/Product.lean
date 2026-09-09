@@ -222,28 +222,31 @@ involution reversing the truth order and preserving the knowledge order
 
 section Negation
 
-/-- Ginsberg negation on `L ⊙ L`: swap evidence for/against. -/
-def neg (x : L ⊙ L) : L ⊙ L := mk x.con x.pro
+/-- Ginsberg negation on `L ⊙ L`: swap evidence for/against. Protected: the public spelling is
+the `Negation` class's `neg`, through the instance below. -/
+protected def neg (x : L ⊙ L) : L ⊙ L := mk x.con x.pro
 
-@[simp] theorem neg_mk (a b : L) : neg (mk a b) = mk b a := rfl
-@[simp] theorem neg_neg (x : L ⊙ L) : neg (neg x) = x := rfl
-@[simp] theorem pro_neg (x : L ⊙ L) : (neg x).pro = x.con := rfl
-@[simp] theorem con_neg (x : L ⊙ L) : (neg x).con = x.pro := rfl
+@[simp] theorem neg_mk (a b : L) : Product.neg (mk a b) = mk b a := rfl
+@[simp] theorem neg_neg (x : L ⊙ L) : Product.neg (Product.neg x) = x := rfl
 
 variable [Preorder L]
 
 /-- Negation reverses the truth order ([avron-1996] Def 2.3(ii)). -/
-theorem neg_le_neg {x y : L ⊙ L} (h : x ≤ y) : neg y ≤ neg x := ⟨h.2, h.1⟩
+theorem neg_le_neg {x y : L ⊙ L} (h : x ≤ y) : Product.neg y ≤ Product.neg x := ⟨h.2, h.1⟩
 
 /-- Negation preserves the knowledge order ([avron-1996] Def 2.3(iii)). -/
-theorem neg_kLE_neg {x y : L ⊙ L} (h : x ≤ₖ y) : neg x ≤ₖ neg y := ⟨h.2, h.1⟩
+theorem neg_kLE_neg {x y : L ⊙ L} (h : x ≤ₖ y) : Product.neg x ≤ₖ Product.neg y := ⟨h.2, h.1⟩
 
 /-- **Ginsberg's swap is a negation on the diagonal** ([avron-1996] Thm 2.5(2)). -/
 instance : Negation (L ⊙ L) where
-  neg := neg
+  neg := Product.neg
   neg_neg := neg_neg
   neg_le_neg := neg_le_neg
   neg_kLE_neg := neg_kLE_neg
+
+@[simp] theorem pro_neg (x : L ⊙ L) : (Bilattice.neg x).pro = x.con := rfl
+@[simp] theorem con_neg (x : L ⊙ L) : (Bilattice.neg x).con = x.pro := rfl
+@[simp] theorem neg_mk' (a b : L) : Bilattice.neg (mk a b) = mk b a := rfl
 
 end Negation
 
