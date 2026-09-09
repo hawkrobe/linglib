@@ -12,71 +12,47 @@ import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Data.Examples.Franke2011
 
 /-!
-# [franke-2011]: Quantity implicatures, exhaustive interpretation, and rational conversation
+# Franke (2011): Quantity Implicatures, Exhaustive Interpretation, and Rational Conversation
 
-Quantity implicatures as rational behaviour in an interpretation game
-(`InterpGame`): the context of an utterance is a signaling game whose states
-are the belief-value vectors over the alternatives (§6) and whose solution is
-*iterated best response* — level-0 players stick to conventional meaning,
-level-(k+1) players best-respond to an unbiased belief in level-k behaviour,
-and truth is kept ceteris paribus (§8). The "light system" computes the
-reasoning by counting: a level-(k+1) sender in `t` picks the message with
-fewest level-k interpretations (eq. (76)), a receiver of `m` the state with
-fewest level-k messages (eq. (77)); surprise messages and uninducible
-interpretations fall back to the literal level. Both reasoning chains — from
-the naive sender `S₀` and from the naive receiver `R₀` — are run on the
-paper's games by `decide`, reproducing Figures 7–14, 16 and 17: free choice,
-simplification of disjunctive antecedents and the base-level conjunctive
-reading of plain disjunction are one and the same game (tables (84)–(86)),
-epistemic games deliver ignorance implicatures, conjunctive alternatives
-deliver exclusivity, and priors implement competence lexicographically.
+This file formalizes [franke-2011]'s account of quantity implicatures as rational behaviour in
+an interpretation game. The context of an utterance is a signaling game whose states are the
+belief-value vectors over the alternatives and whose solution is iterated best response:
+level-0 players stick to conventional meaning, level-(k+1) players best-respond to an unbiased
+belief in level-k behaviour, and truth is kept ceteris paribus. The light system computes the
+reasoning by counting: a level-(k+1) sender in a state picks the message with fewest level-k
+interpretations (`senderStep`), a receiver of a message the state with fewest level-k messages
+(`receiverStep`), surprise messages and uninducible states falling back to the literal level.
+The two reasoning chains, from the naive receiver and from the naive sender, run on the paper's
+games by `decide` and reproduce its figures: free choice, simplification of disjunctive
+antecedents and the conjunctive base-level reading of plain disjunction are one and the same
+game, epistemic games deliver ignorance implicatures, conjunctive alternatives deliver
+exclusivity, and priors implement competence lexicographically. The heavy system of Appendix B
+is the same dynamics over behavioural strategies, a sender uniform over her optimal messages and
+a receiver uniform over the maximum-a-posteriori states (`receiverLevel`): Theorem 1 identifies
+the two systems under flat priors, Theorem 2 reads near-flat priors lexicographically, Lemma 3
+and Theorem 3 give convergence through the monotone expected gain, and Theorem 4 reads a fixed
+point as a perfect Bayesian equilibrium. Section 10 places level-1 interpretation inside
+minimal-models exhaustification ([vanrooij-schulz-2004]; Fact 1), strictly so in the free-choice
+game, and Appendix A compares minimal models with [fox-2007]'s innocent exclusion on the
+substrate of [spector-2016].
 
-The "heavy system" (Appendix B) is the same dynamics over behavioural
-strategies, written with `Finset.uniform` and `Finset.argmax`: a level-(k+1)
-sender is uniform over her optimal messages (`senderResponse`), a receiver is
-uniform over the maximum-a-posteriori states (`receiverResponse`), surprise
-messages interpreted literally. Theorem 1 identifies the two systems under
-flat priors (`receiverLevel_eq_uniform`), Theorem 2 the lexicographic reading
-of near-flat priors (`receiverResponse_uniform_nearFlat`), Lemma 3 and
-Theorem 3 give convergence through the monotone expected gain (`eg_monotone`,
-`receiverLevel_reaches_fixedPoint`), and Theorem 4 reads the fixed point as a
-perfect Bayesian equilibrium (`isPBE_of_fixedPoint`).
+## Implementation notes
 
-§10 relates the model to exhaustive interpretation: level-1 interpretation is
-contained in minimal-models exhaustification ([vanrooij-schulz-2004]; Fact 1,
-`receiver1_subset_exhMW`), and in general strictly (`R₁ ≠ R₂` in the
-free-choice game). Appendix A compares `exhMW` with [fox-2007]'s innocent
-exclusion `exhIE` on the substrate of [spector-2016]: Fact 3 is
-`Exhaustification.exhMW_subset_exhIE`, Lemma 1 is
-`exhIE_eq_exhMW_indistinguishable`, and Fact 2 holds for alternatives that are
-*monotonically* determined by the others (`ltALT_insert_of_monotoneDetermined`)
-but not, as printed, for every truth-determined alternative
-(`not_ltALT_insert_compl`: adding the negation of an alternative changes the
-order). Theorem 2's condition (132) is stated with the inequality the proof
-requires, `Pr(t_min)/Pr(t_max) > (|M|-1)/|M|`; the paper prints it reversed.
-The paper's example sentences are `Examples.ex4` through `Examples.ex99`.
+* Belief-value tables (§6.2) build the games: a message is true at a state when the state
+  believes it true, and a base-level state uses only the values true and false.
+* Theorem 2's condition (132) is stated with the inequality its proof requires,
+  `Pr(t_min)/Pr(t_max) > (|M|-1)/|M|`; the paper prints it reversed.
+* Fact 2 of Appendix A holds for alternatives monotonically determined by the others, as in the
+  paper's conjunctive example, and fails as printed for the negation of an alternative
+  (`not_ltALT_insert_compl`).
+* The paper's example sentences are `Data.Examples.Franke2011`.
 
-## Main results
+## References
 
-* `senderStep`, `receiverStep`, `receiverChain`, `senderChain` — the light
-  system (76)–(77) and its two reasoning chains.
-* `receiverChain_subset_trueStates`, `senderChain_subset_trueMessages` — Lemma 2:
-  truth is preserved at every level.
-* `TwoDisjuncts.receiverChain_two`, `TwoDisjuncts.senderChain_two` — Figure 7:
-  free choice / SDA / conjunctive disjunction.
-* `SomeAllEpistemic.receiver_general`, `.receiver_competent`,
-  `.receiver_incompetent` — Figures 8–9: general, strong and weak epistemic
-  implicature from the prior.
-* `DisjunctionEpistemic.receiver_ignorance` — Figure 10: ignorance implicature.
-* `DisjunctionConj.receiver_surprise`, `FreeChoiceConj.receiver_fixed`,
-  `SdaConj.receiver_fixed`, `DisjunctionConjEpistemic.receiver_exclusivity` —
-  Figures 11–14: exclusivity with conjunctive alternatives.
-* `EntailingDisjuncts.receiver_fixed`, `GroupPermission.receiver_mixed`,
-  `GroupPermission.receiver_pruned` — Figures 16–17.
-* `receiver1_subset_exhMW` — Fact 1.
-* `receiverLevel_eq_uniform` — Theorem 1; `receiverResponse_uniform_nearFlat`
-  — Theorem 2; `receiverLevel_reaches_fixedPoint` — Theorem 3;
-  `isPBE_of_fixedPoint` — Theorem 4.
+* [franke-2011]
+* [vanrooij-schulz-2004]
+* [fox-2007]
+* [spector-2016]
 -/
 
 namespace Franke2011
@@ -88,10 +64,10 @@ open Exhaustification
 A base-level game distinguishes the truth-value vectors of the alternatives
 within the target sentence (eq. (61)); an epistemic game the belief-value
 vectors (eq. (66)), with three values — believed true, believed false,
-uncertain (fn. 4). A message is true at a state when the state believes it
+uncertain (§6.2). A message is true at a state when the state believes it
 true. -/
 
-/-- The three belief values of fn. 4: believed true (`1`), believed false
+/-- The three belief values of §6.2: believed true (`1`), believed false
 (`0`), uncertain (`u`). Base-level states use only the first two. -/
 inductive BeliefValue where
   | yes
