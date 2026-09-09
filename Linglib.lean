@@ -1725,7 +1725,6 @@ import Linglib.Semantics.Modality.BranchingTime
 import Linglib.Semantics.Modality.Directive
 import Linglib.Logic.Modal.Epistemic
 import Linglib.Logic.Modal.Extensional
-import Linglib.Semantics.Modality.EpistemicProbability
 import Linglib.Semantics.Modality.EventRelativity
 import Linglib.Semantics.Modality.Exclusion
 import Linglib.Semantics.Modality.HistoricalAlternatives

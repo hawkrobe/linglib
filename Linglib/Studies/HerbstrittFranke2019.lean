@@ -3,7 +3,6 @@ import Linglib.Core.Probability.Posterior
 import Linglib.Core.Probability.JointPosterior
 import Linglib.Core.InformationTheory.Hellinger
 import Mathlib.InformationTheory.KullbackLeibler.Basic
-import Linglib.Semantics.Modality.EpistemicProbability
 import Mathlib.Probability.Distributions.Uniform
 
 /-!
@@ -259,7 +258,7 @@ example : complexMeaning .mightBe .possible 4 2 = true := by
 /-- For HF's specific thresholds, strict `>` and non-strict `≥` give the
     same extension on `UrnState` — no proportion s/10 (s ∈ {0,...,10})
     exactly equals any threshold. Justifies using `>` (paper Eq. 13) even
-    when the theory-layer `nestedThreshold` uses `≥` (Fagin & Halpern). -/
+    where [fagin-halpern-1994]'s probability formulas use `≥`. -/
 theorem strict_threshold_equiv_ge :
     (∀ s : UrnState, proportion s > θ_certainly ↔ proportion s ≥ θ_certainly) ∧
     (∀ s : UrnState, proportion s > θ_probably ↔ proportion s ≥ θ_probably) ∧
