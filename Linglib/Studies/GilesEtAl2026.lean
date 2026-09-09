@@ -263,16 +263,19 @@ theorem frequency_does_not_explain :
 -- §11. Bridge: [engelhardt-etal-2006] Over-Description Rates
 -- ============================================================================
 
-/-- Both this study and [engelhardt-etal-2006] demonstrate that
-    speakers routinely over-describe. The search efficiency view
-    reinterprets these violations of Gricean Q2 as communicatively
-    efficient: the "extra" information facilitates listener search. -/
+/-- Both this study and [engelhardt-etal-2006] find that speakers
+    routinely over-describe: a third of Engelhardt et al.'s one-referent
+    instructions carried the modifier that makes *the apple on the towel*
+    an over-description. The search efficiency view reinterprets these
+    violations of Gricean Q2 as communicatively efficient: the "extra"
+    information facilitates listener search. -/
 theorem overinformativeness_is_efficient :
-    -- Engelhardt: speakers over-describe 31% of the time
-    EngelhardtEtAl2006.exp1_target_1ref.modified > 0.2 ∧
+    -- Engelhardt: the modified target of the one-referent display over-describes
+    EngelhardtEtAl2006.violation EngelhardtEtAl2006.oneReferent 0 0 (.on .apple .towel) =
+      some .overInformative ∧
     -- This study: over-description tracks search efficiency
     exp1_sHighRLow.IsSignificant :=
-  ⟨by norm_num [EngelhardtEtAl2006.exp1_target_1ref],
+  ⟨EngelhardtEtAl2006.oneReferent_target.2,
    by norm_num [BayesianCoefficient.IsSignificant, exp1_sHighRLow]⟩
 
 -- ============================================================================

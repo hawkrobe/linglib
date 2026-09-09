@@ -96,6 +96,13 @@ theorem ofWeights_apply_finset (w : α → β → ℝ≥0∞) (a : α) (E : Fins
   rw [← sum_measure_singleton, div_eq_mul_inv, Finset.sum_mul]
   exact Finset.sum_congr rfl fun b _ => by rw [ofWeights_apply_singleton, div_eq_mul_inv]
 
+/-- A weight-kernel row is carried by the support of its weights. -/
+theorem ofWeights_apply_setOf_eq_zero (w : α → β → ℝ≥0∞) (a : α) :
+    ofWeights w a {b | w a b = 0} = 0 := by
+  rw [show {b | w a b = 0} = ↑(Finset.univ.filter λ b => w a b = 0) by ext; simp,
+    ofWeights_apply_finset, Finset.sum_filter, Finset.sum_eq_zero λ b _ => ?_, ENNReal.zero_div]
+  split_ifs with h <;> simp [h]
+
 /-- The real mass of a finite event under a weight-kernel row with finite weights. -/
 theorem ofWeights_real_finset (w : α → β → ℝ≥0∞) (a : α) (hw : ∀ b, w a b ≠ ∞) (E : Finset β) :
     (ofWeights w a).real ↑E = (∑ b ∈ E, (w a b).toReal) / ∑ b, (w a b).toReal := by

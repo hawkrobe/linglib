@@ -37,8 +37,6 @@ This substrate landed alongside [martinez-vera-2026]'s formalisation;
 existing files that use highlighting-shaped notions but have not yet been
 migrated:
 
-* `Studies/FarkasRoelofsen2017.lean` — paper-side
-  highlighted-alternative prose; F&R 2015 is the substrate's own anchor.
 * `Semantics/Questions/Singleton.lean` — `IsSingleton` documents itself in
   [roelofsen-farkas-2015] terminology but is a different abstraction
   (property of a `Question`, not a discourse context).

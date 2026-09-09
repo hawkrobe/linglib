@@ -119,6 +119,29 @@ def contents : Set (Set W) :=
 /-- The commitments of `a` in `K`. -/
 def ofCommitter (a : A) : State A W := {c ∈ K | c.committer = a}
 
+theorem ofCommitter_insert_of_eq (a : A) (c : Commitment A W) (h : c.committer = a) :
+    ofCommitter (insert c K) a = insert c (ofCommitter K a) := by
+  ext d
+  simp only [ofCommitter, Set.mem_ofPred_eq, Set.mem_insert_iff]
+  constructor
+  · rintro ⟨rfl | hd, hc⟩
+    · exact Or.inl rfl
+    · exact Or.inr ⟨hd, hc⟩
+  · rintro (rfl | ⟨hd, hc⟩)
+    · exact ⟨Or.inl rfl, h⟩
+    · exact ⟨Or.inr hd, hc⟩
+
+theorem ofCommitter_insert_of_ne (a : A) (c : Commitment A W) (h : c.committer ≠ a) :
+    ofCommitter (insert c K) a = ofCommitter K a := by
+  ext d
+  simp only [ofCommitter, Set.mem_ofPred_eq, Set.mem_insert_iff]
+  constructor
+  · rintro ⟨rfl | hd, hc⟩
+    · exact absurd hc h
+    · exact ⟨hd, hc⟩
+  · rintro ⟨hd, hc⟩
+    exact ⟨Or.inr hd, hc⟩
+
 /-- The commitments in `K` to the attitude `f`: `PB` for belief, `PEP` for preference
 ([condoravdi-lauer-2012]). -/
 def ofForce (f : Force) : State A W := {c ∈ K | c.force = f}
