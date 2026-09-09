@@ -32,8 +32,9 @@ referential-property treatment the paper attributes to [grimm-2005].
   as a theorem over all [dowty-1991] profiles.
 - `wellFormedPair_not_preserved`, `kiss_outranking_from_dominance`,
   `arrive_cross_theory`: what the lattice projection of Dowty's profiles
-  loses, and the ASP re-derived from dominance
-  (`outranks_of_lattice_dominance`) rather than checked per verb.
+  loses, the agreement of Dowty's Table 1 with the lattice on *arrive*, and
+  the ASP re-derived from dominance (`outranks_of_lattice_dominance`) rather
+  than checked per verb.
 - `lattice_diverges_from_dependent_case`: the semantic-case vs
   structural-case fault line on animate objects, made explicit against a
   dependent-case pipeline over prominence-annotated clauses.
@@ -439,9 +440,8 @@ theorem desire_object_bridge_tension :
 §2.1 recasts Dowty's ten entailments as four agentivity features plus
 persistence; the projection kernel is
 `Agentivity.fromEntailmentProfile_eq_iff`. Below: what the recast loses
-(Dowty's pairing constraints) and what it fixes (the *arrive* anomaly) —
-cross-theory checks absorbed from `Studies/Dowty1991.lean`, since the
-comparison belongs to the later paper. -/
+(Dowty's pairing constraints) and where it agrees with Dowty's own Table 1
+(*arrive*, *die*) — cross-theory checks that belong to the later paper. -/
 
 /-- Dowty's `WellFormedPair` is invisible to the projection: a {C} and a
     {C, IE} subject project to the same node (IE is dropped,
@@ -455,13 +455,11 @@ theorem wellFormedPair_not_preserved :
       = ParticipantType.fromSubjectProfile
           { causation := true, independentExistence := true } := by decide
 
-/-- The *arrive* anomaly resolved: Table 1, the priority ASP, and the
-    lattice all say unaccusative; only flat counting diverges. -/
+/-- *arrive*: Dowty's Table 1, the priority ASP, and the lattice all say
+    unaccusative. -/
 theorem arrive_cross_theory :
-    Dowty1991.table1 directedMotion.subjectProfile.volition
-        directedMotion.subjectProfile.changeOfState = .unaccusative ∧
+    Dowty1991.intransClass directedMotion.subjectProfile = .unaccusative ∧
     PredictsUnaccusative directedMotion.subjectProfile ∧
-    Dowty1991.flatPredictsUnaccusative directedMotion.subjectProfile = false ∧
     (ParticipantType.fromSubjectProfile directedMotion.subjectProfile).toCaseRegion
       ≠ .nomErg := by decide
 
@@ -472,16 +470,16 @@ theorem kick_asp_grimm_consistent :
     (ParticipantType.fromSubjectProfile mannerContact.subjectProfile).toCaseRegion.toAccusativeCase
       = .nom := by decide
 
-/-- die: priority ASP, flat counting, and the lattice agree on
+/-- die: the priority ASP, Dowty's Table 1, and the lattice agree on
     unaccusativity. -/
 theorem die_asp_grimm_consistent :
     PredictsUnaccusative disappearance.subjectProfile ∧
-    Dowty1991.flatPredictsUnaccusative disappearance.subjectProfile = true ∧
+    Dowty1991.intransClass disappearance.subjectProfile = .unaccusative ∧
     (ParticipantType.fromObjectProfile disappearance.subjectProfile).toCaseRegion
       = .accAbs := by decide
 
-/-- kiss: the subject strictly dominates the object on the lattice —
-    `Dowty1991.kiss_asymmetry_is_volition` as order. -/
+/-- kiss: the subject strictly dominates the object on the lattice — the
+    volition asymmetry of `Dowty1991.kiss_subject_outranks` as order. -/
 theorem kiss_subject_dominates :
     Agentivity.fromEntailmentProfile Dowty1991.kissObjectProfile <
       Agentivity.fromEntailmentProfile Dowty1991.kissSubjectProfile := by
@@ -493,7 +491,7 @@ theorem kiss_subject_dominates :
 theorem kiss_outranking_from_dominance :
     OutranksForSubject Dowty1991.kissSubjectProfile
       Dowty1991.kissObjectProfile :=
-  outranks_of_lattice_dominance _ _ kiss_subject_dominates fun _ => rfl
+  outranks_of_lattice_dominance _ _ kiss_subject_dominates (by decide)
 
 /-- Dowty's count comparison follows from lattice dominance via
     `featureCount_monotone` and `pAgentScore_decomposition`. -/

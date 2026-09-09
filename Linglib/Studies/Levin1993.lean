@@ -31,7 +31,7 @@ alternations.
   representable class and alternation agrees with `participatesIn`
 - `quadruple_patterns_distinct` — the four §0.4 verbs show pairwise
   distinct participation patterns
-- `dowty_*` — [dowty-1991] §9.3's CoS-symmetry predictions checked against
+- `dowty_*` — [dowty-1991] §9.3's change-of-state predictions checked against
   the rows (the comparison lives here, in the later paper's file)
 -/
 
@@ -208,20 +208,20 @@ theorem send_class_matches : send.levinClass = classOf Examples.dat_send := by d
 /-- Spray/load: CoS is symmetric across theme and location, predicting the
     locative alternation — attested for both *spray* and *load*. -/
 theorem dowty_sprayLoad_symmetry_matches_data :
-    Dowty1991.cosSymmetric Dowty1991.sprayLoadTheme Dowty1991.sprayLoadLocation = true
+    Dowty1991.CosSymmetric Dowty1991.sprayLoadTheme Dowty1991.sprayLoadLocation
     ∧ observed Examples.loc_spray = some true
     ∧ observed Examples.loc_load = some true := by decide
 
 /-- *Break*: CoS is asymmetric (direct object vs. instrument), fixing the
     CoS argument as direct object — *break* lacks the locative alternation. -/
 theorem dowty_break_asymmetry_matches_prediction :
-    Dowty1991.cosSymmetric Dowty1991.breakDirectObject Dowty1991.breakInstrument = false
+    ¬ Dowty1991.CosSymmetric Dowty1991.breakDirectObject Dowty1991.breakInstrument
     ∧ LevinClass.break_.participatesIn .locative = false := by decide
 
 /-- *Hit*: both arguments symmetrically lack CoS — the conative is attested
     while the CoS-sensitive causative/inchoative and middle are blocked. -/
 theorem dowty_hit_class_matches_data :
-    Dowty1991.cosSymmetric Dowty1991.hitArg1 Dowty1991.hitArg2 = true
+    Dowty1991.CosSymmetric Dowty1991.hitArg1 Dowty1991.hitArg2
     ∧ observed Examples.con_hit = some true
     ∧ observed Examples.ci_hit = some false
     ∧ observed Examples.mid_hit = some false := by decide
