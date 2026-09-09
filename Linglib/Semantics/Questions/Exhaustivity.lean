@@ -345,6 +345,31 @@ theorem exhCell_eq_strongAnswer {p : Set W} (h : IsStrongestTrueAnswer H w p) :
   · exact fun hv =>
       ⟨⟨h.1.1, (hv p h.1.1).1 h.1.2⟩, fun _ hq => h.2 ⟨hq.1, (hv _ hq.1).2 hq.2⟩⟩
 
+/-- The polar questions of a family of propositions jointly amount to the family's partition
+question: a state resolves each of them iff it lies within a cell of the strong answer, so a
+strategy of polar subquestions resolves the strongly exhaustive question. -/
+theorem iInf_query_ofSet_eq_iSup_ofSet_strongAnswer {ι : Type*} (P : ι → Set W) :
+    ⨅ i, (ofSet (P i)).query = ⨆ w, ofSet (strongAnswer (Set.range P) w) := by
+  apply Question.ext
+  intro σ
+  rw [mem_iInf_iff, mem_iSup_iff]
+  simp only [mem_query, mem_ofSet, info_ofSet]
+  constructor
+  · intro h
+    rcases σ.eq_empty_or_nonempty with rfl | ⟨w, hw⟩
+    · exact Or.inl rfl
+    · refine Or.inr ⟨w, fun v hv => ?_⟩
+      rw [mem_strongAnswer]
+      rintro _ ⟨i, rfl⟩
+      rcases h i with hi | hi
+      · exact ⟨fun _ => hi hv, fun _ => hi hw⟩
+      · exact ⟨fun hw' => absurd hw' (hi hw), fun hv' => absurd hv' (hi hv)⟩
+  · rintro (rfl | ⟨w, hσ⟩) i
+    · exact Or.inl (Set.empty_subset _)
+    · by_cases hw : w ∈ P i
+      · exact Or.inl fun v hv => (hσ hv (P i) ⟨i, rfl⟩).mp hw
+      · exact Or.inr fun v hv hv' => hw ((hσ hv (P i) ⟨i, rfl⟩).mpr hv')
+
 /-- The logical partition: the cells of the strong answer. -/
 def exhaustifiedPartition : Set (Set W) := Set.range (strongAnswer H)
 

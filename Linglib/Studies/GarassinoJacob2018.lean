@@ -1,301 +1,225 @@
-import Linglib.Semantics.Polarity.Marking
+import Linglib.Discourse.QUD.Basic
+import Linglib.Semantics.Questions.Exhaustivity
+import Linglib.Semantics.Focus.Interpretation
 import Linglib.Fragments.Italian.PolarityMarking
 import Linglib.Fragments.Spanish.PolarityMarking
 import Linglib.Fragments.Romance.French.PolarityMarking
+import Linglib.Data.Examples.GarassinoJacob2018
 
 /-!
-# Garassino & Jacob (2018) [garassino-jacob-2018]
+# Garassino and Jacob (2018): Polarity focus and non-canonical syntax in Italian, French and Spanish
 
-*Polarity focus and non-canonical syntax in Italian, French and Spanish:
-Clitic left dislocation and sì che / sí que-constructions.*
-In [dimroth-sudhoff-2018], pp. 227–254. DOI 10.1075/la.249.08gar.
+This file formalizes [garassino-jacob-2018]'s account of clitic left dislocation and the *sì che*
+~ *sí que* constructions as realizations of polarity focus. Polarity focus is focus whose
+background is the whole proposition and whose alternatives are the proposition and its negation,
+so a polarity-focus utterance is a congruent answer to a polar question under discussion
+(`polarFocus_qaCongruent`). The chapter's corpus passages are read as discourse trees in the
+manner of [buring-2003] and [roberts-2012]: a *wh*-question such as *who has been sitting back?*
+is pursued through the polar question for each candidate, each answered with a polarity-focus
+utterance, and a polar question about a hyperonymous proposition through the polar questions of
+its instances. Both strategies are complete: jointly resolving the subquestions resolves the
+question (`agentStrategy_isComplete`, `scalarStrategy_isComplete`), the former because the polar
+questions of a family are its partition question.
 
-This study file anchors three Fragment entries —
-`Italian.PolarityMarking.siChe`,
-`Spanish.PolarityMarking.siQue`, and
-`French.PolarityMarking.si` — to the chapter that compares them
-as Romance polarity-focus (PF) realization strategies.
+The rows are the chapter's examples with the lexical and syntactic means they use, the kind of
+antecedent, the dislocated constituent and, where the chapter says, whether the utterance stands
+to its antecedent in situational identity or analogy and whether it answers a subquestion. The
+contexts attested for *sì che*, *sí que* and French *si* lie within the environments the
+fragments record (`rows_siChe_env`, `rows_siQue_env`, `rows_si_env`), French *si* answering only
+a preceding negative turn.
 
-## Three substantive contributions of the chapter
+## Implementation notes
 
-1. **A typology of PF-marking strategies** in Italian, French and Spanish
-   that carves the inventory differently from the
-   `Polarity.Marking.Strategy` enum: G&J split
-   lexical means (adverbs, affirmative particles, embedded-clause
-   structures) from syntactic means (non-focal fronting, cleft family,
-   clitic dislocation, *sì che* / *sí que* clefts) — see §1 below for
-   the typed constructors.
+* In the Direct Europarl corpus the chapter counts 6 Italian and 4 French polar left dislocations
+  against none in Spanish, and 61 Spanish *sí que* against none in Italian, with 36 of the 61
+  carrying a left element (26 subjects, 2 objects, 8 adverbials); it draws the complementary
+  distribution and Spanish's preference for a transparent assertive particle from these figures
+  and offers no quantitative analysis, so the counts stay in prose.
+* The chapter endorses [matic-nikolaeva-2018]'s view that dislocation is no structural means of
+  polarity focus but makes the reading available in context; the fragments' `polarityReversal`
+  classification of the particles is the form-class view that study contests.
+* The discourse trees are stated for finitely many worlds, which is what the substrate's strategy
+  completeness needs to pass from lattice entailment to alternative entailment.
 
-2. **A corpus result** (Table 1, p. 239) showing complementary distribution
-   of polar left-dislocation and *sì che* / *sí que* across the three
-   languages in *Direct Europarl*: Italian uses LDs (6 occurrences),
-   Spanish uses *sí que* (61 occurrences); the two strategies are
-   essentially non-overlapping — see §2 below.
+## References
 
-3. **An explicit theoretical commitment to [matic-nikolaeva-2018]'s
-   "salient polarity" framework** (footnote 13, p. 236), against the form-
-   class encoding that the substrate's `Strategy` records.
-   See §4 below; the formal statement of the non-equivalence lives in
-   `Studies/MaticNikolaeva2018.lean`.
-
-## Cross-references
-
-- `Studies/MaticNikolaeva2018.lean` — same volume,
-  the framework G&J endorse against form-class encoding.
-- `Studies/TurcoBraunDimroth2014.lean` — earlier
-  Germanic-vs-Romance production study G&J cite as their typological
-  starting point (their footnote 5, p. 230); the
-  `italian_spanish_cognates` theorem squatting at `TBD2014:446` was
-  factually a G&J claim and has been relocated here as
-  `siChe_siQue_cognates_at_encoding_level`.
-- `Fragments/Italian/PolarityMarking.lean::siChe` — the entry whose
-  docstring previously hosted G&J's corpus claim as prose; the claim
-  now lives below as Lean data.
+* [garassino-jacob-2018]
+* [dimroth-sudhoff-2018]
+* [matic-nikolaeva-2018]
+* [buring-2003]
+* [roberts-2012]
+* [hohle-1992]
+* [batllori-hernanz-2013]
+* [poletto-zanuttini-2013]
 -/
 
 namespace GarassinoJacob2018
 
-open Polarity.Marking (Entry Strategy
-  Env)
-open Italian.PolarityMarking (siChe)
-open Spanish.PolarityMarking (siQue)
-open French.PolarityMarking (si)
+open Question Questions Discourse Data.Examples
 
-/-! ## §1 G&J's PF-marking strategy taxonomy
+variable {W F : Type*}
 
-G&J carve the Romance inventory into 8 strategies, organized as
-*lexical* (§2.1: adverbs, particles, embedded clauses, elliptic
-embedding) vs *syntactic* (§2.2: fronting, clefts, dislocation) plus
-the *sì che* / *sí que* construction analyzed separately in §2.3.
+/-! ### Polarity focus as a polar question under discussion -/
 
-This is **not the same carving** as `Strategy`. The
-substrate enum collapses several of these into `.polarityReversal`,
-following the Blühdorn/TBD2014 form-class tradition. G&J's taxonomy
-is finer-grained and cuts on syntactic structure rather than discourse
-function. Both encodings are kept; the divergence is the point. -/
-inductive GJStrategy where
-  /-- Lexical adverbs of truth/certainty/fact: It. *davvero*,
-      Fr. *vraiment*, Sp. *de veras*, *de hecho* — [garassino-jacob-2018]
-      §2.1 ¶1, p. 230. -/
-  | lexicalAdverb
-  /-- Bare affirmative polarity particle: It. *sì*, Sp. *sí*, Fr. *bien*,
-      Sp. *ya* — §2.1 ¶2, p. 230. -/
-  | affirmativePolarityParticle
-  /-- Embedded-clause structure with full matrix speech-act verb:
-      It. *ti assicuro che*, Sp. *te digo que*, Fr. *je t'assure que* —
-      §2.1 ¶3, p. 231 (examples 5–7). -/
-  | embeddedClauseStructure
-  /-- Elliptic embedding with adjective-only matrix: It. *certo che*,
-      Sp. *claro que*, Fr. *bien sûr que* — §2.1 ¶4, p. 231 (examples 8–10). -/
-  | ellipticEmbedding
-  /-- Non-focal fronting (typical of Spanish, marginal in Italian):
-      *Algo debe saber* — §2.2, p. 232 (examples 11–13). -/
-  | nonFocalFronting
-  /-- Cleft-family construction with stressed semantically-empty matrix
-      verb: Fr. *c'est ce qu'elle fait* — §2.2, p. 233 (example 14). -/
-  | faireCleft
-  /-- Clitic dislocation (LD / RD) into a PF-supporting structure —
-      §2.2 ¶ on dislocation, examples 15–16; §2.4, examples 21–22. -/
-  | cliticDislocation
-  /-- *Sì che* / *sí que* cleft-or-cleft-like construction — §2.3,
-      examples 17–19. -/
-  | siQueClass
+/-- The focus value of a polarity-focus utterance: the proposition and its negation. -/
+def polarFocus (p : Set W) : Focus.Interpretation.PropFocusValue W := {p, pᶜ}
+
+/-- The polar question of a proposition is the join of the proposition and its negation. -/
+theorem query_ofSet_eq_iSup (p : Set W) :
+    (ofSet p).query = ⨆ b : Bool, ofSet (bif b then p else pᶜ) := by
+  apply Question.ext
+  intro σ
+  rw [mem_iSup_ofSet, mem_query, mem_ofSet, info_ofSet]
+  constructor
+  · rintro (h | h)
+    · exact Or.inr ⟨true, h⟩
+    · exact Or.inr ⟨false, h⟩
+  · rintro (rfl | ⟨b, hb⟩)
+    · exact Or.inl (Set.empty_subset _)
+    · cases b
+      · exact Or.inr hb
+      · exact Or.inl hb
+
+theorem alt_query_ofSet {p : Set W} (hp : p.Nonempty) (hpc : pᶜ.Nonempty) :
+    alt (ofSet p).query = {p, pᶜ} := by
+  rw [query_ofSet_eq_iSup, alt_iSup_ofSet (λ b => by cases b <;> assumption)
+    (λ i j h => by
+      cases i <;> cases j
+      · rfl
+      · exact absurd (h hpc.some_mem) hpc.some_mem
+      · exact absurd hp.some_mem (h hp.some_mem)
+      · rfl)]
+  ext q
+  simp only [Set.mem_range, Bool.exists_bool, Bool.cond_false, Bool.cond_true, Set.mem_insert_iff,
+    Set.mem_singleton_iff, eq_comm, or_comm]
+
+/-- A polarity-focus utterance is a congruent answer to the polar question of its proposition. -/
+theorem polarFocus_qaCongruent {p : Set W} (hp : p.Nonempty) (hpc : pᶜ.Nonempty) :
+    Focus.Interpretation.qaCongruent (polarFocus p) (alt (ofSet p).query) :=
+  (alt_query_ofSet hp hpc).symm
+
+/-! ### Discourse strategies of polar subquestions -/
+
+/-- A *wh*-question over candidates pursued through the polar question for each: the tree of the
+sitting-back passage. -/
+def agentStrategy (agents : List F) (P : F → Set W) : Strategy W :=
+  .node (⨆ w, ofSet (strongAnswer (Set.range P) w)) (agents.map λ f => .leaf (ofSet (P f)).query)
+
+/-- The polar subquestions for all candidates jointly resolve the *wh*-question. -/
+theorem agentStrategy_isComplete [Finite W] {agents : List F} (hcov : ∀ f, f ∈ agents)
+    (P : F → Set W) : (agentStrategy agents P).IsComplete := by
+  refine .node (λ _ => ?_) (λ c hc => ?_)
+  · have hmem : ∀ q, q ∈ ((agents.map λ f => RoseTree.leaf (ofSet (P f)).query).map RoseTree.value :
+        Multiset (Question W)) ↔ ∃ f, (ofSet (P f)).query = q := by
+      intro q
+      simp only [Multiset.mem_coe, List.mem_map, List.map_map, Function.comp_def, RoseTree.leaf,
+        RoseTree.value_node]
+      exact ⟨λ ⟨f, _, h⟩ => ⟨f, h⟩, λ ⟨f, h⟩ => ⟨f, hcov f, h⟩⟩
+    rw [← iInf_query_ofSet_eq_iSup_ofSet_strongAnswer]
+    refine entails_of_le (le_antisymm ?_ ?_).le (Set.toFinite _)
+    · exact le_iInf λ f => Multiset.inf_le ((hmem _).mpr ⟨f, rfl⟩)
+    · exact Multiset.le_inf.mpr λ q hq => by obtain ⟨f, rfl⟩ := (hmem q).mp hq; exact iInf_le _ f
+  · obtain ⟨f, _, rfl⟩ := List.mem_map.mp hc
+    exact .leaf _
+
+/-- A polar question about a disjunction of instances pursued through the polar questions of the
+instances: the tree of the treaty passage. -/
+def scalarStrategy (p q : Set W) : Strategy W :=
+  .node (ofSet (p ∪ q)).query [.leaf (ofSet p).query, .leaf (ofSet q).query]
+
+theorem scalarStrategy_isComplete [Finite W] (p q : Set W) : (scalarStrategy p q).IsComplete := by
+  refine .node_pair (entails_of_le (le_def.mpr λ σ hσ => ?_) (Set.toFinite _)) (.leaf _) (.leaf _)
+  rw [RoseTree.leaf, RoseTree.leaf, RoseTree.value_node, RoseTree.value_node, inf_eq_conj] at hσ
+  obtain ⟨h₁, h₂⟩ := hσ
+  have h₁' : σ ∈ (ofSet p).query := h₁
+  have h₂' : σ ∈ (ofSet q).query := h₂
+  show σ ∈ (ofSet (p ∪ q)).query
+  rw [mem_query, mem_ofSet, info_ofSet] at h₁' h₂' ⊢
+  rcases h₁' with h₁' | h₁' <;> rcases h₂' with h₂' | h₂'
+  · exact Or.inl (h₁'.trans Set.subset_union_left)
+  · exact Or.inl (h₁'.trans Set.subset_union_left)
+  · exact Or.inl (h₂'.trans Set.subset_union_right)
+  · exact Or.inr λ w hw => (Set.compl_union p q).symm ▸ ⟨h₁' hw, h₂' hw⟩
+
+/-! ### The chapter's examples -/
+
+/-- The lexical and syntactic means of polarity focus the chapter surveys. -/
+inductive Means
+  | emphaticDo | verumAccent | embedding | juxtaposed | ellipticEmbedding | fronting | faireCleft
+  | leftDislocation | rightDislocation | siChe | siQue | siOnly | siParticle
   deriving DecidableEq, Repr
 
-/-- A G&J taxonomy entry: paradigm form + which substrate strategy the
-    Fragment file encodes for this entry (when one exists). -/
-structure GJStrategyDatum where
-  /-- The G&J strategy class. -/
-  gjStrategy : GJStrategy
-  /-- Representative Italian / French / Spanish example surface form. -/
-  exampleForm : String
-  /-- Whether this G&J strategy is *available* in Italian, French, Spanish
-      per [garassino-jacob-2018] §2 prose — ordered (it, fr, sp). -/
-  availability : Bool × Bool × Bool
-
-def davveroDatum : GJStrategyDatum where
-  gjStrategy := .lexicalAdverb
-  exampleForm := "davvero"
-  availability := (true, true, true)
-
-def siParticleDatum : GJStrategyDatum where
-  gjStrategy := .affirmativePolarityParticle
-  exampleForm := "sì / sí / bien"
-  availability := (true, true, true)
-
-def tiAssicuroDatum : GJStrategyDatum where
-  gjStrategy := .embeddedClauseStructure
-  exampleForm := "ti assicuro che"
-  availability := (true, true, true)
-
-def certoCheDatum : GJStrategyDatum where
-  gjStrategy := .ellipticEmbedding
-  exampleForm := "certo che / claro que / bien sûr que"
-  availability := (true, true, true)
-
-def algoDatum : GJStrategyDatum where
-  gjStrategy := .nonFocalFronting
-  exampleForm := "algo debe saber"
-  -- Italian = true (marginally attested per G&J p. 232: "typical of Spanish,
-  -- but is also (more rarely) attested in Italian and Catalan"). The
-  -- Bool encoding records grammatical availability; rarity is a separate
-  -- claim documented here in prose.
-  availability := (true, false, true)
-
-def faireDatum : GJStrategyDatum where
-  gjStrategy := .faireCleft
-  exampleForm := "c'est ce qu'elle fait"
-  availability := (false, true, false)
-
-def dislocationDatum : GJStrategyDatum where
-  gjStrategy := .cliticDislocation
-  exampleForm := "la soluzione gliela troviamo"
-  availability := (true, true, true)
-
-def siCheDatum : GJStrategyDatum where
-  gjStrategy := .siQueClass
-  exampleForm := "sì che / sí que"
-  availability := (true, false, true)  -- Italian + Spanish, not French (fn 11)
-
-def gjAllStrategies : List GJStrategyDatum :=
-  [davveroDatum, siParticleDatum, tiAssicuroDatum, certoCheDatum,
-   algoDatum, faireDatum, dislocationDatum, siCheDatum]
-
-/-- The four lexical strategies (§2.1) are available in all three
-    languages; the chapter's lexical-means inventory is genuinely
-    pan-Romance. -/
-theorem lexical_means_pan_romance :
-    davveroDatum.availability = (true, true, true) ∧
-    siParticleDatum.availability = (true, true, true) ∧
-    tiAssicuroDatum.availability = (true, true, true) ∧
-    certoCheDatum.availability = (true, true, true) := by decide
-
-/-- The syntactic strategies (§2.2–2.3) split asymmetrically across the
-    three languages, with each language licensing a different subset.
-    This is the structural correlate of G&J's observation that
-    "Spanish appears to be, so to speak, more Germanic than Romance"
-    in PF marking (§4, p. 250). Non-focal fronting is *marginally*
-    attested in Italian per G&J p. 232 — encoded as available
-    (Bool collapses primary vs marginal). -/
-theorem syntactic_strategies_split_asymmetrically :
-    algoDatum.availability = (true, false, true) ∧  -- It marginal, Sp typical, Fr none
-    faireDatum.availability = (false, true, false) ∧  -- French faire-clefts
-    siCheDatum.availability = (true, false, true) := by decide  -- It + Sp, not Fr
-
-/-- French does **not** license the *sì che* / *sí que* class — G&J fn 11
-    (p. 234): "French *si*, unlike the corresponding forms in Spanish and
-    Italian, is limited to dialogical contexts." -/
-theorem french_lacks_siQueClass :
-    siCheDatum.availability.2.1 = false := rfl
-
-/-! ## §2 Corpus result (Table 1, p. 239)
-
-Distribution of polar CDs (clitic left-dislocations with PF reading) and
-*sì che* / *sí que* constructions in *Direct Europarl*. Italian sample
-2.3M words, French 2.5M, Spanish 2.8M. Verified from the PDF. -/
-
-/-- One row of [garassino-jacob-2018] Table 1. `siQueCount = none`
-    encodes the chapter's "NA" entry for French. -/
-structure GJCorpusDatum where
-  language : String  -- "Italian", "French", "Spanish"
-  corpusSizeMillionWords : String  -- "2.3", "2.5", "2.8" — kept as label
-  polarLDCount : Nat
-  siQueCount : Option Nat
+/-- What the polarity-focus utterance reacts to. -/
+inductive Antecedent
+  | explicitNegation | explicitQuestion | inferredNegation | openQuestion | modal | positive
+  | absent
   deriving DecidableEq, Repr
 
-def italianRow : GJCorpusDatum where
-  language := "Italian"
-  corpusSizeMillionWords := "2.3"
-  polarLDCount := 6
-  siQueCount := some 0
+/-- The dislocated constituent, if any. -/
+inductive Dislocated
+  | absent | subject | object | adverbial | both
+  deriving DecidableEq, Repr
 
-def frenchRow : GJCorpusDatum where
-  language := "French"
-  corpusSizeMillionWords := "2.5"
-  polarLDCount := 4
-  siQueCount := none  -- NA per Table 1
+/-- Whether the utterance's situation is the antecedent's or an analogous one. -/
+inductive Relation
+  | identity | analogy | unstated
+  deriving DecidableEq, Repr
 
-def spanishRow : GJCorpusDatum where
-  language := "Spanish"
-  corpusSizeMillionWords := "2.8"
-  polarLDCount := 0
-  siQueCount := some 61
+/-- The environment a polarity-focus utterance occupies: correction after a negative antecedent,
+contrast otherwise. -/
+def Antecedent.env : Antecedent → Polarity.Marking.Env
+  | .explicitNegation | .inferredNegation => .correction
+  | _ => .contrast
 
-def gjTable1 : List GJCorpusDatum := [italianRow, frenchRow, spanishRow]
+structure Row where
+  means : Means
+  antecedent : Antecedent
+  dislocated : Dislocated
+  relation : Relation
+  subquestion : Bool
+  deriving DecidableEq, Repr
 
-/-- The central corpus claim of [garassino-jacob-2018] (§3 Conclusions,
-    p. 250): Italian and Spanish exhibit **complementary distribution** for
-    the two PF-marking strategies — Italian uses LDs (6 / 0), Spanish uses
-    *sí que* (0 / 61). -/
-theorem italian_spanish_complementary_distribution :
-    italianRow.polarLDCount > 0 ∧ italianRow.siQueCount = some 0 ∧
-    spanishRow.polarLDCount = 0 ∧ spanishRow.siQueCount = some 61 := by
-  refine ⟨?_, rfl, rfl, rfl⟩
+def Row.ofExample (ex : LinguisticExample) : Option Row := do
+  let means ← ex.parse? "strategy" [("emphaticDo", Means.emphaticDo),
+    ("verumAccent", .verumAccent), ("embedding", .embedding), ("juxtaposed", .juxtaposed),
+    ("ellipticEmbedding", .ellipticEmbedding), ("fronting", .fronting), ("faireCleft", .faireCleft),
+    ("leftDislocation", .leftDislocation), ("rightDislocation", .rightDislocation),
+    ("siChe", .siChe), ("siQue", .siQue), ("siOnly", .siOnly), ("siParticle", .siParticle)]
+  let antecedent ← ex.parse? "antecedent" [("explicitNegation", Antecedent.explicitNegation),
+    ("explicitQuestion", .explicitQuestion), ("inferredNegation", .inferredNegation),
+    ("openQuestion", .openQuestion), ("modal", .modal), ("positive", .positive), ("none", .absent)]
+  let dislocated ← ex.parse? "dislocated" [("none", Dislocated.absent), ("subject", .subject),
+    ("object", .object), ("adverbial", .adverbial), ("both", .both)]
+  let relation ← ex.parse? "relation" [("identity", Relation.identity), ("analogy", .analogy),
+    ("unstated", .unstated)]
+  let subquestion ← ex.parse? "subquestion" [("yes", true), ("no", false)]
+  pure ⟨means, antecedent, dislocated, relation, subquestion⟩
+
+def rows : List Row := Examples.all.filterMap Row.ofExample
+
+/-- *Sì che* is attested answering a polar question as well as a denial, both environments the
+Italian fragment licenses. -/
+theorem rows_siChe_env : ∀ r ∈ rows, r.means = .siChe →
+    r.antecedent.env ∈ Italian.PolarityMarking.siChe.environments := by
   decide
 
--- Italian *sì che* zero-count is one conjunct of the theorem above;
--- G&J p. 239 attribute the gap to register effects ("Italian *sì che*
--- structures are perceived by native speakers as more typical of the
--- spoken language or generally of more informal registers").
+/-- *Sí que* is attested after denials, in non-contradictory contexts and as emphatic
+reinforcement, all within the Spanish fragment's environments. -/
+theorem rows_siQue_env : ∀ r ∈ rows, r.means = .siQue →
+    r.antecedent.env ∈ Spanish.PolarityMarking.siQue.environments := by
+  decide
 
-/-! ## §3 Cognacy at the substrate-encoding level
+/-- French *si* is attested only answering a preceding negative turn, the one environment the
+French fragment licenses. -/
+theorem rows_si_env : ∀ r ∈ rows, r.means = .siParticle →
+    r.antecedent.env ∈ French.PolarityMarking.si.environments := by
+  decide
 
-[garassino-jacob-2018] §2.3 (p. 234) and the broader Romance
-literature ([bernini-1995], [batllori-hernanz-2013],
-[poletto-zanuttini-2013]) treat *sì che* and *sí que* as cognate
-constructions: an affirmative-polarity particle followed by a
-complementizer introducing an embedded clause carrying the asserted
-proposition.
-
-The substrate-level cognacy theorem below records that the two Fragment
-entries agree on every substrate field. **Crucially, this is cognacy at
-the encoding level only.** §2's corpus theorem above shows the two
-constructions diverge in actual usage frequency: Spanish *sí que*
-appears 61× in Direct Europarl, Italian *sì che* zero times. Both
-"the constructions are formally cognate" and "they are pragmatically
-divergent" can hold, and G&J's chapter is precisely the documentation
-that they do.
-
-(Relocated from `TurcoBraunDimroth2014.lean:446`; the cognacy claim
-chronologically anchors on Bernini 1995 / Batllori-Hernanz 2013 /
-G&J 2018, not TBD 2014.) -/
-theorem siChe_siQue_cognates_at_encoding_level :
-    siChe.strategy = siQue.strategy ∧
-    siChe.environments = siQue.environments := ⟨rfl, rfl⟩
-
-/-! ## §4 G&J's framework position (footnote 13, p. 236)
-
-G&J explicitly endorse [matic-nikolaeva-2018]'s rejection of the
-form-class encoding of polarity focus. Footnote 13 reads, verbatim:
-
-> This view is similar to the one presented by Matić & Nikolaeva (this
-> volume), according to whom PF (or salient polarity as they prefer to
-> name this specific type of emphasis) is not directly encoded by certain
-> linguistic forms in a given language but can be pragmatically conveyed
-> by different structures under appropriate (contextual) conditions.
-
-This is in tension with the substrate's `Strategy` enum,
-which assigns each entry a single `.polarityReversal` / `.particle` /
-`.verumFocus` strategy class as if it were a fixed form-meaning property.
-The contradiction is recorded at the substrate's def-site
-(`Semantics/Polarity/Marking.lean::Strategy` docstring)
-and formalized in `Studies/MaticNikolaeva2018.lean`. -/
-
-/-! ## §5 Surface-class lumping caveat (footnote 11, p. 234)
-
-G&J fn 11 distinguishes French *si* from the *sì che* / *sí que* class:
-
-> Si exists in French as an affirmative particle expressing positive
-> polarity in a contrastive way; … However, French *si*, unlike the
-> corresponding forms in Spanish and Italian, is limited to dialogical
-> contexts, where it is used to answer a preceding opposite turn.
-
-So the cross-linguistic lumping under `Strategy.polarityReversal`
-of French *si*, Italian *sì*, and Spanish *sí* records a shared functional
-role only — the surface category differs (French = response particle,
-Italian + Spanish = clause-initial cleft-like construction). The substrate
-flag in `Strategy` docstring records this caveat. The
-`french_lacks_siQueClass` theorem in §1 above proves the corresponding
-data-level claim. -/
+/-- Every utterance the chapter reads as answering a subquestion stands in situational analogy to
+its antecedent, the interrelation of its criteria it states; the converse fails. -/
+theorem rows_subquestion_analogy :
+    (∀ r ∈ rows, r.subquestion = true → r.relation = .analogy) ∧
+      ∃ r ∈ rows, r.relation = .analogy ∧ r.subquestion = false := by
+  decide
 
 end GarassinoJacob2018
