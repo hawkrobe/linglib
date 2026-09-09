@@ -341,8 +341,8 @@ theorem table1_aa : ∀ (p : Parse) (w : World), exhMeaning p .aa w ↔ w = wA :
 theorem literal_eq_exh_none : ∀ (u : Utterance) (w : World),
     literalMeaning u w ↔ exhMeaning ∅ u w := by decide +kernel
 
-/-- ⟦SS⟧^M = {wNS} — the reading that "uniquely singles out this world
-state" (eq. 22) and drives GI's win; the matrix-alone case of `table1_ss`. -/
+/-- ⟦SS⟧^M = {wNS}, the reading that "uniquely singles out this world state" in the
+discussion of eq. 22 and drives GI's win; the matrix-alone case of `table1_ss`. -/
 theorem m_ss_singleton : ∀ w, exhMeaning pM .ss w ↔ w = wNS := by decide +kernel
 
 /-- The matrix operator (eq. A2) is not Fox-style innocent exclusion
@@ -427,7 +427,7 @@ noncomputable abbrev vanillaListener (α : ℝ) : Kernel Utterance World :=
 noncomputable abbrev giListener (α : ℝ) : Kernel Utterance World :=
   (RSA.uniformJointListener giSem Prod.fst α).fst
 
-/-- The GI parse posterior (eq. 22). -/
+/-- The GI parse posterior: the joint listener of eq. 21b marginalized to parses. -/
 noncomputable abbrev giParsePosterior (α : ℝ) : Kernel Utterance (Utterance × Parse) :=
   (RSA.uniformJointListener giSem Prod.fst α).snd
 
