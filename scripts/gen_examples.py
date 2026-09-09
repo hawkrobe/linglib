@@ -19,8 +19,8 @@ Legacy migration: earlier versions spliced a generated block between
 the study file (routed by an optional `<AuthorYear>.target` sidecar). When a
 host file still carries such a block, this script removes it, inserts the
 module import into that file, and deletes any retired `.target` sidecar.
-The `Linglib.lean` root import is kept in sync automatically (appended,
-per the repo's append-ordered convention).
+The `Linglib.lean` root import is not touched: the lakefile globs every
+submodule, and `scripts/mk_all.py` regenerates the root before a release.
 
 JSON file format: a single top-level JSON array of example objects. Each
 object's fields mirror the `LinguisticExample` Lean struct:
@@ -432,8 +432,6 @@ def process(author_year: str, check: bool) -> bool:
             f"[gen] removed retired sidecar {sidecar.relative_to(ROOT)}\n"
         )
 
-    if ensure_import(ROOT / "Linglib.lean", module_name):
-        sys.stdout.write(f"[gen] added {module_name} import to Linglib.lean\n")
     return True
 
 
