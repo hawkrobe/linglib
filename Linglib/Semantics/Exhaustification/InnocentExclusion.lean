@@ -340,6 +340,19 @@ theorem mem_exhIE_iff (hfin : ALT.Finite) {u : World} :
   · exact hu
   · exact h a ⟨ha, hψ⟩
 
+/-- With the innocently excludable alternatives characterized, the exhaustifier denies exactly
+them. -/
+theorem exhIE_eq_of_iff (hfin : ALT.Finite) {P : Set World → Prop}
+    (h : ∀ q ∈ ALT, IsInnocentlyExcludable ALT φ q ↔ P q) :
+    exhIE ALT φ = {w | w ∈ φ ∧ ∀ q ∈ ALT, P q → w ∉ q} := by
+  ext w
+  rw [mem_exhIE_iff ALT φ hfin]
+  constructor
+  · rintro ⟨hw, h'⟩
+    exact ⟨hw, λ q hq hP => h' q ((h q hq).2 hP)⟩
+  · rintro ⟨hw, h'⟩
+    exact ⟨hw, λ q hq => h' q hq.1 ((h q hq.1).1 hq)⟩
+
 
 /-- A world is minimal iff it verifies some maximal compatible set. -/
 theorem mem_exhMW_iff_exists_isMCSet (u : World) :

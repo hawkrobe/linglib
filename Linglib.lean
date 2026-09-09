@@ -1825,6 +1825,7 @@ import Linglib.Semantics.Quantification.Syllogistic.Trees
 import Linglib.Semantics.Quantification.UnifiedUniversal
 import Linglib.Semantics.Questions.Basic
 import Linglib.Semantics.Questions.Bias
+import Linglib.Semantics.Questions.Closure
 import Linglib.Semantics.Questions.Entailment
 import Linglib.Semantics.Questions.Exhaustivity
 import Linglib.Semantics.Questions.Hamblin
@@ -3060,3 +3061,4 @@ import Linglib.Data.Examples.Filip2012
 import Linglib.Data.Examples.Flemming2021
 import Linglib.Data.Examples.Fortuny2024
 import Linglib.Data.Examples.Fox2007
+import Linglib.Data.Examples.Fox2018
