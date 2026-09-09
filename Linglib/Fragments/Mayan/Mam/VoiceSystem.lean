@@ -20,16 +20,10 @@ Voice does not determine the pivot for extraction; instead it carries
 
 ## Implementation notes
 
-The Minimalist `Voice.Head`, `ClauseSpine`, and `MamDirHead` apparatus
-(=(y)a' analysis, antipassive) that previously lived here now lives in
-`Studies/ElkinsTorrenceBrown2026.lean` — the primary anchor for the
-Minimalist treatment of =(y)a' / oblique extraction
-([elkins-torrence-brown-2026]), which also houses the antipassive Voice
-apparatus from [scott-2023] §2.5.4.1; `Studies/Scott2023.lean` imports
-that Mam Voice to compare φ-Agree and oblique-Agree pipelines. SJO Mam
-(San Juan Ostuncalco, [elkins-torrence-brown-2026]) and SJA Mam (San
-Juan Atitán, [scott-2023]) are distinct varieties; this profile
-abstracts over the distinction.
+The Minimalist Voice head of the =(y)a' analysis is paper-specific apparatus and lives in
+`Studies/ElkinsTorrenceBrown2026.lean`. SJO Mam (San Juan Ostuncalco,
+[elkins-torrence-brown-2026]) and SJA Mam (San Juan Atitán, [scott-2023]) are distinct
+varieties; this profile abstracts over the distinction.
 -/
 
 namespace Mam

@@ -1,532 +1,392 @@
-import Linglib.Fragments.Mayan.Mam.Extraction
-import Linglib.Fragments.Mayan.Mam.VoiceSystem
-import Linglib.Fragments.Mayan.Kiche.Extraction
+import Linglib.Data.Examples.ElkinsTorrenceBrown2026
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Agree.Basic
-import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.FeatureBundle
-import Linglib.Studies.Scott2023
 
 /-!
-# Oblique Extraction in Mayan
-[elkins-torrence-brown-2026] [mendes-ranero-2021] [imanishi-2020]
+# Elkins, Torrence and Brown (2026): Wh-movement paths and oblique extraction in Mam
 
-## Part I: Cross-Linguistic Comparison
+This file formalizes [elkins-torrence-brown-2026]'s analysis of the movement enclitic =(y)a' of
+San Juan Ostuncalco Mam (Mayan), which optionally appears on the predicate, and on any directional
+auxiliary, when an instrument, benefactive, dative, locative, reason, purpose or manner adjunct is
+extracted, but not with absolutive or ergative arguments ([aissen-2017]'s Ergative Extraction
+Constraint sends the agent through an antipassive) or with temporals. The enclitic may occur once
+per Voice⁰ and Dir⁰ of a clause and, in long-distance extraction, once per clause along the
+dependency: in the embedded clause exactly when that clause is at least VoiceP-sized, so on both
+predicates over a full CP or an aspectless VoiceP complement, on the matrix predicate only over a
+nonfinite VP complement, and on the embedded predicate only in an embedded question. The authors
+analyse the enclitic as the spellout of Ā-agreement between the extracted adjunct and the
+[Ā]-bearing heads Voice⁰ and Dir⁰ it passes through under Relativized-Minimality successive
+cyclicity ([rizzi-1990], [abels-2003]): Attract Closest forces the mover through the specifier of
+each intervening [Ā]-bearer, each Voice⁰ or Dir⁰ copies the [obl] Case feature the mover receives
+from its relational noun, and the bundle [Ā, obl] is realized as =(y)a' or as ∅. The rival Chain
+Reduction via Substitution of [mendes-ranero-2021] for the K'ichean fronting particle *wi*, which
+spells out lower copies at the base position and at each Spec,CP stopover and so derives the
+Fronting Particle Generalization, predicts a single reflex within a clause, none in the matrix
+clause over an aspectless complement, and one inside a nonfinite complement, all contrary to the
+Mam data; DP-intervention leapfrogging ([keine-zeijlstra-2025]) predicts at most one reflex per
+intervening argument, contrary to a clause with three; and an Agent-Focus-like analysis fails
+because the enclitic co-occurs with the passive and appears in every clause of the path while the
+antipassive is confined to the clause of origin. The two systems also differ in which adjuncts
+trigger the reflex: reasons, purposes and manners do in Mam but are high adjuncts without [appl]
+in K'ichean, and temporals trigger neither.
 
-Cross-linguistic comparison of extraction morphology in two Mayan
-language groups: SJO Mam (=(y)a') and K'ichean (*wi*). Both mark
-oblique extraction with a dedicated morpheme, but the underlying
-mechanisms and distributional properties differ.
+## Implementation notes
 
-### Shared Properties
+* Clause sizes are the substrate's `ClauseSpine`s, full CP, VoiceP and bare VP, with the
+  directional head `Head.dir`, a Mayan-specific category above VoiceP, spliced in by `spine`. A
+  dependency is the list of clauses the mover crosses, bottom-up; its `path` is the [Ā]-bearers of
+  those clauses and its `sites` the Voice and Dir heads among them, so the reflex in a clause is
+  decided by whether the clause projects Voice (`licensed_iff_projects_voice`). The rival
+  mechanisms are predicates on the same dependencies, and the rows discriminate them.
+* The Agree-and-insertion step is the substrate's `applyAgree` and `spellout` on a Voice head with
+  an unvalued [oblique] probe and the vocabulary item (46a); the null exponent (46b) is the
+  independent optionality of each site, `patterns`.
+* [obl] on the movers is the article's featural hypothesis (§1.3, §4.2, §5.3): relational nouns
+  assign it, the locative and manner wh-words are assumed to acquire it, temporals lack it.
+* The examples are `Data.Examples.ElkinsTorrenceBrown2026`; the K'iche' rows are
+  [mendes-ranero-2021]'s as reported there. The variety is SJO Mam; [scott-2023]'s San Juan
+  Atitán Mam is a distinct variety.
 
-- Both mark oblique extraction (spatial, instrumental)
-- Both exempt temporal obliques ('when')
-- Neither marks subject extraction (Agent Focus instead)
-- Neither marks object extraction
+## References
 
-### Parametric Differences
-
-| Property                      | Mam =(y)a'          | K'ichean *wi*         |
-|-------------------------------|---------------------|-----------------------|
-| Locus                         | On probe (Voice⁰)  | At extraction site    |
-| Mechanism                     | Agree reflex        | Copy spellout         |
-| Reason obliques ('why')       | =(y)a' ✓            | *wi* ✗                |
-| FPG (matrix wi ↔ embedded comp) | Does not hold    | Holds                 |
-| Conditioned by clause size    | Yes (Voice project.)| No                    |
-| Multiple spellout in LD       | Yes (per Voice/Dir) | Unclear               |
-
-## Part II: Minimalist Analysis
-
-Connects three Minimalist abstractions — ClauseSpine, Agree/feature-valuation,
-and Spellout — to the empirical data on =(y)a' distribution in SJO Mam.
-
-1. Voice⁰ (and Dir⁰) in Mam carry [uOblique] (an unvalued probe feature).
-2. When an oblique DP undergoes successive-cyclic Ā-movement through
-   Spec,VoiceP, Agree values [uOblique] as [+oblique] on Voice⁰.
-3. At Spellout (PF), [+oblique] on Voice⁰ is realized as =(y)a'.
-4. In infinitival complements, Voice is not projected (VP-sized), so there
-   is no [uOblique] probe — =(y)a' cannot appear.
-5. In long-distance extraction, each Voice⁰/Dir⁰ along the movement path
-   independently Agrees, yielding multiple =(y)a' (one per Voice/Dir).
+* [elkins-torrence-brown-2026]
+* [mendes-ranero-2021]
+* [rizzi-1990]
+* [abels-2003]
+* [keine-zeijlstra-2025]
+* [van-urk-2018]
+* [scott-2023]
+* [england-1989]
+* [aissen-2017]
 -/
 
 namespace ElkinsTorrenceBrown2026
 
--- ============================================================================
--- Part I: Cross-Linguistic Comparison
--- ============================================================================
-
-open Mam Kiche
-
--- ============================================================================
--- § 1: Shared Properties
--- ============================================================================
-
-/-- Both Mam and K'ichean use dedicated morphemes for oblique extraction. -/
-theorem both_mark_oblique :
-    Mam.Extraction.strategy = .dedicatedMorpheme ∧
-    Kiche.Extraction.strategy = .dedicatedMorpheme := ⟨rfl, rfl⟩
-
-/-- Both exempt temporal obliques from extraction marking. -/
-theorem both_exempt_temporal :
-    (Mam.temporalOblExtraction.isTemporal = true ∧
-     Mam.temporalOblExtraction.judgment = .blocked) ∧
-    Kiche.temporalOblExtraction.wiLicensed = false :=
-  ⟨⟨rfl, rfl⟩, rfl⟩
-
-/-- Neither marks subject extraction (Agent Focus instead). -/
-theorem neither_marks_subject :
-    transSubjExtraction.judgment = .blocked ∧
-    Kiche.subjectExtraction.wiLicensed = false := ⟨rfl, rfl⟩
-
-/-- Neither marks object extraction. -/
-theorem neither_marks_object :
-    transObjExtraction.judgment = .blocked ∧
-    Kiche.objectExtraction.wiLicensed = false := ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 2: Parametric Differences
--- ============================================================================
-
-/-- KEY CONTRAST — Reason obliques ('why'):
-    Mam =(y)a' IS licensed with reason extraction; K'ichean *wi* is NOT. -/
-theorem reason_oblique_contrast :
-    transOblExtraction.judgment = .licensed ∧
-    Kiche.reasonOblExtraction.wiLicensed = false := ⟨rfl, rfl⟩
-
-/-- Mam =(y)a' is conditioned by clause size (Voice must project);
-    K'ichean *wi* is conditioned by complementizer presence (FPG). -/
-theorem clause_size_sensitivity :
-    MamClauseType.fullCP.projectsVoice = true ∧
-    MamClauseType.aspectless.projectsVoice = true ∧
-    MamClauseType.infinitival.projectsVoice = false := ⟨rfl, rfl, rfl⟩
-
-/-- The FPG holds for K'ichean: matrix *wi* tracks overt complementizer. -/
-theorem kichean_fpg_holds :
-    Kiche.ldData.all (λ d =>
-      d.embeddedType.hasComp == d.wiOnMatrix) = true := by
-  decide
-
--- ============================================================================
--- § 3: Theoretical Implications
--- ============================================================================
-
-/-- Genuinely different mechanisms producing superficially similar patterns. -/
-inductive ExtractionMorphologyMechanism where
-  | agreeReflex     -- Morpheme on probe head (Mam =(y)a')
-  | copySpellout    -- Morpheme at extraction site (K'ichean *wi*)
-  deriving DecidableEq, Repr
-
-def mamMechanism : ExtractionMorphologyMechanism := .agreeReflex
-def kicheanMechanism : ExtractionMorphologyMechanism := .copySpellout
-
-theorem different_mechanisms :
-    mamMechanism ≠ kicheanMechanism := by decide
-
--- ============================================================================
--- Part II: Minimalist Analysis
--- ============================================================================
-
-open Minimalist SyntacticObject
-open DistributedMorphology (VocabularyItem)
+open Minimalist DistributedMorphology Data.Examples ElkinsTorrenceBrown2026.Examples
 open scoped DistributedMorphology.VocabularyItem
 
-/-! ### Mam Voice substrate (Minimalist)
+/-! ### The extended verbal domain (§1.3) -/
 
-This subsection houses the Minimalist `Voice.Head`, `ClauseSpine`, and
-`MamDirHead` definitions for Mam, formerly in
-`Linglib/Fragments/Mayan/Mam/VoiceSystem.lean`. Per CLAUDE.md
-"Per-language paper-specific apparatus lives in Studies, not
-Fragments," these belong with the paper that anchors them
-([elkins-torrence-brown-2026] for the =(y)a' analysis;
-[scott-2023] for the antipassive). The Fragment file retains only
-the per-language `Mam.VoiceSystem.voices`/`symmetry` defs.
-
-`Studies/Scott2023.lean` consumes `mamVoice` and
-`eqYaVocab` from this file via cross-Studies import. -/
-
-/-- Mam agentive Voice head with [uOblique] probe.
-
-    In Mam, Voice⁰ probes for an oblique feature on a passing
-    Ā-moved constituent. When an oblique DP moves through Spec,VoiceP,
-    Agree values [uOblique] as [+oblique], which is then spelled out
-    as =(y)a' at PF. -/
-def mamVoice : Voice.Head :=
-  { flavor := .agentive
-  , hasD := true
-  , features := .ofGramFeatures [.unvalued (.oblique false)] }
-
-/-- Mam transitive clause spine: full CP with Voice. -/
-def mamTransitiveSpine : ClauseSpine := ClauseSpine.cP
-
-/-- Mam aspectless complement spine: VoiceP-sized.
-    Still has Voice → =(y)a' possible. -/
-def mamAspectlessSpine : ClauseSpine := ClauseSpine.voiceP
-
-/-- Mam infinitival complement spine: VP-sized.
-    No Voice → =(y)a' impossible. -/
-def mamInfinitivalSpine : ClauseSpine := ClauseSpine.bareVP
-
-/-- Mam directional auxiliary head (Dir⁰).
-
-    Dir is NOT a universal category — it is specific to Mayan languages.
-    Modeled as a language-specific type rather than added to `Cat`.
-    In Elkins et al.'s analysis, Dir⁰ occupies V1 position in the verbal
-    template (Voice > V1(Dir) > Appl > V2(root)). Like Voice⁰, Dir⁰
-    bears [uOblique] and can host =(y)a'. -/
-structure MamDirHead where
-  /-- Cislocative (toward speaker) vs translocative (away). -/
-  cislocative : Bool
-  /-- Whether this Dir head carries [uOblique]. -/
-  hasUOblique : Bool := false
+/-- A head of the SJO Mam clausal spine: a head of the substrate spine, or a directional auxiliary
+Dir⁰, the Mayan-specific head whose projection dominates VoiceP (8). -/
+inductive Head
+  | cat (c : Cat)
+  | dir
   deriving DecidableEq, Repr
 
-/-- Dir⁰'s probe features when it carries [uOblique]. -/
-def MamDirHead.features (d : MamDirHead) : FeatureBundle :=
-  if d.hasUOblique then .ofGramFeatures [.unvalued (.oblique false)] else ⊥
+/-- A clause as its projected heads, bottom-up. -/
+abbrev Spine := List Head
 
-/-- Cislocative directional with [uOblique]. -/
-def dirCis : MamDirHead := { cislocative := true, hasUOblique := true }
+/-- A clause of the given size with `n` directionals above Voice (8). Nonfinite clauses, which lack
+Voice, lack directionals (§3.4). -/
+def spine (s : ClauseSpine) (n : ℕ) : Spine :=
+  s.projectedHeads.flatMap λ c =>
+    if c = .Voice then .cat .Voice :: List.replicate n .dir else [.cat c]
 
-/-- Translocative directional with [uOblique]. -/
-def dirTrans : MamDirHead := { cislocative := false, hasUOblique := true }
+/-- The reduced K'ichean complement of [mendes-ranero-2021], an AspP without a CP layer (§5.1). -/
+def aspP : ClauseSpine := ⟨[.V, .Appl, .v, .Voice, .Asp], by decide⟩
 
-/-- The Vocabulary Item for =(y)a': [+oblique] on Voice⁰ spells out as "=(y)a'". -/
-def eqYaVocab : VocabularyItem GramFeature String := [.valued (.oblique true)] ⟷ "=(y)a'"
+/-- The feature bearers of [Ā], (41) and (44): C⁰, Voice⁰ and Dir⁰. -/
+def BearsA (h : Head) : Prop := h = .cat .C ∨ h = .cat .Voice ∨ h = .dir
 
-/-- The items Voice⁰ consults in Mam: just =(y)a'. -/
-def mamVoiceVocab : List (VocabularyItem GramFeature String) := [eqYaVocab]
+instance : DecidablePred BearsA := λ _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
-/-- Mam passive Voice head: carries [uOblique] just like agentive Voice.
-    [elkins-torrence-brown-2026] §7.2: =(y)a' co-occurs with
-    passive *-njtz*. -/
-def mamPassiveVoice : Voice.Head :=
-  { flavor := .nonThematic
-  , hasD := false
-  , features := .ofGramFeatures [.unvalued (.oblique false)] }
+/-- The heads that copy the mover's [obl] and host the reflex, (45)–(46): Voice⁰ and Dir⁰. C⁰
+attracts by [Ā] alone, so there is no C-domain reflex. -/
+def HostsReflex (h : Head) : Prop := h = .cat .Voice ∨ h = .dir
 
-/-- Mam antipassive Voice head ([scott-2023] §2.5.4.1).
-    Subject gets ABS not ERG; not a phase head. -/
-def mamAntipassiveVoice : Voice.Head :=
-  { flavor := .antipassive
-  , hasD := true
-  , features := ⊥ }
+instance : DecidablePred HostsReflex := λ _ => inferInstanceAs (Decidable (_ ∨ _))
 
--- ── Substrate-level theorems ─────────────────────────────────────────
+theorem HostsReflex.bearsA {h : Head} (hh : HostsReflex h) : BearsA h := Or.inr hh
 
-/-- Mam Voice head carries [uOblique]. -/
-theorem mamVoice_has_uOblique :
-    mamVoice.features.hasUnvaluedFeature .oblique = true := by decide
+/-! ### The movement path (§4.1–4.3) -/
 
-/-- Mam Voice is a phase head. -/
-theorem mamVoice_is_phase : mamVoice.IsPhasal := by decide
+/-- A dependency: the clauses the extracted adjunct crosses, bottom-up, the clause of origin
+first. -/
+abbrev Dependency := List Spine
 
-/-- Mam Voice assigns a θ-role (agentive). -/
-theorem mamVoice_assigns_theta : mamVoice.AssignsTheta := by decide
+/-- The movement path, (43): the [Ā]-bearing heads of the clauses crossed, bottom-up and tagged by
+clause. By Attract Closest (39) the mover stops in the specifier of each. -/
+def path (d : Dependency) : List (ℕ × Head) :=
+  (List.range d.length).flatMap λ i =>
+    ((d.getD i []).filter λ h => decide (BearsA h)).map (i, ·)
 
-/-- Mam transitive spine projects Voice. -/
-theorem mamTransitive_has_voice :
-    mamTransitiveSpine.projects .Voice = true := by decide
+/-- The sites of the reflex: the Agree relations with Voice⁰ or Dir⁰ along the path (§4.2). -/
+def sites (d : Dependency) : List (ℕ × Head) :=
+  (path d).filter λ p => decide (HostsReflex p.2)
 
-/-- Mam aspectless spine projects Voice. -/
-theorem mamAspectless_has_voice :
-    mamAspectlessSpine.projects .Voice = true := by decide
+/-- =(y)a' is licensed in clause `i` of the dependency when the path has a site there. -/
+def Licensed (d : Dependency) (i : ℕ) : Prop := i ∈ (sites d).map Prod.fst
 
-/-- Mam infinitival spine does NOT project Voice. -/
-theorem mamInfinitival_lacks_voice :
-    mamInfinitivalSpine.projects .Voice = false := by decide
+instance (d : Dependency) (i : ℕ) : Decidable (Licensed d i) :=
+  inferInstanceAs (Decidable (_ ∈ _))
 
-/-- Cislocative Dir carries [uOblique]. -/
-theorem dirCis_has_uOblique : dirCis.hasUOblique = true := rfl
+theorem mem_path {d : Dependency} {i : ℕ} {h : Head} :
+    (i, h) ∈ path d ↔ i < d.length ∧ h ∈ d.getD i [] ∧ BearsA h := by
+  simp only [path, List.mem_flatMap, List.mem_range, List.mem_map, List.mem_filter,
+    decide_eq_true_eq, Prod.mk.injEq]
+  constructor
+  · rintro ⟨j, hj, h', ⟨hmem, hb⟩, rfl, rfl⟩
+    exact ⟨hj, hmem, hb⟩
+  · rintro ⟨hi, hmem, hb⟩
+    exact ⟨i, hi, h, ⟨hmem, hb⟩, rfl, rfl⟩
 
-/-- Translocative Dir carries [uOblique]. -/
-theorem dirTrans_has_uOblique : dirTrans.hasUOblique = true := rfl
+/-- The reflex is licensed in a clause exactly when the clause contains a reflex host: every
+Voice⁰ or Dir⁰ crossed is an [Ā]-bearer and so a stopover. -/
+theorem licensed_iff {d : Dependency} {i : ℕ} :
+    Licensed d i ↔ ∃ h ∈ d.getD i [], HostsReflex h := by
+  simp only [Licensed, sites, List.mem_map, List.mem_filter, decide_eq_true_eq]
+  constructor
+  · rintro ⟨⟨j, h⟩, ⟨hp, hh⟩, rfl⟩
+    exact ⟨h, (mem_path.mp hp).2.1, hh⟩
+  · rintro ⟨h, hmem, hh⟩
+    refine ⟨(i, h), ⟨mem_path.mpr ⟨?_, hmem, hh.bearsA⟩, hh⟩, rfl⟩
+    by_contra hlt
+    rw [List.getD_eq_getElem?_getD, List.getElem?_eq_none (Nat.le_of_not_lt hlt)] at hmem
+    exact List.not_mem_nil hmem
 
-/-- Dir's probe features match Voice's. -/
-theorem dir_features_match_voice :
-    dirCis.features = mamVoice.features := by decide
+/-- A clause of a given size contains a reflex host exactly when the size projects Voice, since
+directionals come only with Voice. -/
+theorem exists_hostsReflex_spine_iff (s : ClauseSpine) (n : ℕ) :
+    (∃ h ∈ spine s n, HostsReflex h) ↔ .Voice ∈ s.projectedHeads := by
+  simp only [spine, List.mem_flatMap]
+  constructor
+  · rintro ⟨h, ⟨c, hc, hmem⟩, hh⟩
+    split at hmem
+    · next hcv => exact hcv ▸ hc
+    · next hcv =>
+      rw [List.mem_singleton] at hmem
+      rcases hh with rfl | rfl
+      · exact absurd (Head.cat.inj hmem).symm hcv
+      · exact Head.noConfusion hmem
+  · intro hv
+    exact ⟨.cat .Voice, ⟨.Voice, hv, by simp⟩, Or.inl rfl⟩
 
-/-- Passive and agentive Voice differ in flavor but share the same
-    oblique probe features. -/
-theorem passive_voice_same_features :
-    mamPassiveVoice.features = mamVoice.features ∧
-    mamPassiveVoice.flavor ≠ mamVoice.flavor := ⟨rfl, by decide⟩
+theorem projects_voice_iff (s : ClauseSpine) :
+    s.projects .Voice = true ↔ .Voice ∈ s.projectedHeads := by
+  simp [ClauseSpine.projects]
 
-/-- Antipassive Voice assigns a θ-role (the agent is present). -/
-theorem mamAntipassive_assigns_theta :
-    mamAntipassiveVoice.AssignsTheta := by decide
+/-- Table 3: =(y)a' is licensed in a clause of the dependency exactly when that clause's size
+projects Voice, so in full CP and aspectless complements but not in nonfinite ones (§3.3–3.4,
+§4.3). -/
+theorem licensed_iff_projects_voice {d : Dependency} {i : ℕ} {s : ClauseSpine} {n : ℕ}
+    (hd : d.getD i [] = spine s n) : Licensed d i ↔ s.projects .Voice = true := by
+  rw [licensed_iff, hd, exists_hostsReflex_spine_iff, projects_voice_iff]
 
-/-- Antipassive Voice is NOT a phase head. -/
-theorem mamAntipassive_not_phase :
-    ¬ mamAntipassiveVoice.IsPhasal := by decide
+/-! ### Multiple exponence (§3.1, §5.2) -/
 
-/-- Antipassive and agentive Voice differ in phase-head status but both
-    assign θ-roles. -/
-theorem antipassive_vs_agentive :
-    (mamAntipassiveVoice.AssignsTheta ↔ mamVoice.AssignsTheta) ∧
-    (mamAntipassiveVoice.IsPhasal ↔ ¬ mamVoice.IsPhasal) := by decide
+/-- Within a clause the sites are Voice⁰ and each directional, (45): `n + 1` of them. -/
+theorem sites_monoclausal (n : ℕ) :
+    sites [spine .cP n] = (0, .cat .Voice) :: List.replicate n (0, .dir) := by
+  simp [sites, path, spine, ClauseSpine.cP, BearsA, HostsReflex, List.map_replicate]
 
--- ============================================================================
--- § 4: Spellout Theorems
--- ============================================================================
+theorem sites_monoclausal_length (n : ℕ) : (sites [spine .cP n]).length = n + 1 := by
+  rw [sites_monoclausal]
+  simp
 
-/-- Valued [+oblique] on Voice spells out as =(y)a'. -/
-theorem spellout_oblique_voice :
-    spellout mamVoiceVocab (.ofGramFeatures [.valued (.oblique true)]) = some "=(y)a'" := by
+/-- (46b): each site is independently realized as =(y)a' or as ∅, so the surface patterns of a
+dependency are the sublists of its sites. -/
+def patterns (d : Dependency) : List (List (ℕ × Head)) := (sites d).sublists
+
+/-- (22): with one directional the enclitic may appear on both hosts, on neither, or on either
+alone, four combinations. -/
+theorem patterns_length_22 : (patterns [spine .cP 1]).length = 4 := by decide
+
+/-- (63): with two directionals there are three sites although the intransitive clause has a
+single argument DP, so leapfrogging over intervening DPs ([keine-zeijlstra-2025]) yields too few
+stopovers (§5.2). -/
+theorem sites_exceed_interveners : 1 < (sites [spine .cP 2]).length := by
+  rw [sites_monoclausal_length]
   decide
 
-/-- Without [+oblique], Voice has no exponent from this vocabulary. -/
-theorem spellout_no_oblique :
-    spellout mamVoiceVocab (.ofGramFeatures [.valued (.oblique false)]) = none := by
+/-! ### The rival mechanisms (§3.6, §5.1) -/
+
+/-- Chain Reduction via Substitution, (55)–(57): the reflex spells out the lower copies of the
+mover, the base copy in the clause of origin and the intermediate copy in each Spec,CP crossed,
+which linearizes onto the predicate of the next clause up. -/
+def CopyLicensed (d : Dependency) (i : ℕ) : Prop :=
+  i = 0 ∨ (0 < i ∧ i < d.length ∧ .cat .C ∈ d.getD (i - 1) [])
+
+instance (d : Dependency) (i : ℕ) : Decidable (CopyLicensed d i) :=
+  inferInstanceAs (Decidable (_ ∨ _ ∧ _ ∧ _))
+
+/-- The Fronting Particle Generalization (54): over a single embedded clause, the matrix reflex is
+contingent on the embedded clause projecting C. -/
+theorem fpg (e m : Spine) : CopyLicensed [e, m] 1 ↔ .cat .C ∈ e := by
+  simp [CopyLicensed]
+
+/-- Applied to Mam, copy spellout allows a single reflex in a monoclausal dependency, whereas
+Ā-agreement gives one per Voice⁰ and Dir⁰ (§3.1, §5.1). -/
+theorem copy_single_site (n : ℕ) : (∀ i, CopyLicensed [spine .cP n] i → i = 0) ∧
+    (sites [spine .cP n]).length = n + 1 :=
+  ⟨λ i h => h.elim id λ h' => by
+    have h1 := h'.1
+    have h2 := h'.2.1
+    simp only [List.length_singleton] at h2
+    omega, sites_monoclausal_length n⟩
+
+/-- Over an aspectless complement, (31): copy spellout predicts no matrix reflex, since the
+complement has no Spec,CP, whereas Ā-agreement predicts one at the matrix Voice⁰. -/
+theorem copy_fails_aspectless :
+    ¬ CopyLicensed [spine .voiceP 0, spine .cP 0] 1 ∧
+      Licensed [spine .voiceP 0, spine .cP 0] 1 := by
   decide
 
--- ============================================================================
--- § 5: Prediction Function
--- ============================================================================
-
-/-- Predict whether =(y)a' is licensed from a clause spine and extraction type. -/
-def predictEqYa (spine : ClauseSpine) (obliqueExtracted : Bool)
-    (isTemporal : Bool := false) : MamExtractionJudgment :=
-  if spine.projects .Voice && obliqueExtracted && !isTemporal then .licensed
-  else .blocked
-
--- ============================================================================
--- § 6: Per-Datum Theorems (Monoclausal)
--- ============================================================================
-
-/-- Transitive clause + oblique extraction → =(y)a' licensed. -/
-theorem bridge_trans_obl :
-    mamTransitiveSpine.projects .Voice = true ∧
-    predictEqYa mamTransitiveSpine true = .licensed ∧
-    transOblExtraction.judgment = .licensed := by
-  exact ⟨by decide, by decide, rfl⟩
-
-/-- Transitive + subject extraction → no =(y)a'. -/
-theorem bridge_trans_subj :
-    predictEqYa mamTransitiveSpine false = .blocked ∧
-    transSubjExtraction.judgment = .blocked := by
-  exact ⟨by decide, rfl⟩
-
-/-- Transitive + object extraction → no =(y)a'. -/
-theorem bridge_trans_obj :
-    predictEqYa mamTransitiveSpine false = .blocked ∧
-    transObjExtraction.judgment = .blocked := by
-  exact ⟨by decide, rfl⟩
-
-/-- Passive + oblique → =(y)a' licensed. -/
-theorem bridge_passive_obl :
-    mamTransitiveSpine.projects .Voice = true ∧
-    predictEqYa mamTransitiveSpine true = .licensed ∧
-    passiveOblExtraction.judgment = .licensed := by
-  exact ⟨by decide, by decide, rfl⟩
-
-/-- Temporal oblique + full clause → =(y)a' BLOCKED. -/
-theorem bridge_temporal_obl :
-    predictEqYa mamTransitiveSpine true (isTemporal := true) = .blocked ∧
-    temporalOblExtraction.judgment = .blocked := by
-  exact ⟨by decide, rfl⟩
-
--- ============================================================================
--- § 7: Long-Distance Theorems
--- ============================================================================
-
-/-- Map MamClauseType to the corresponding ClauseSpine. -/
-def spineOf : MamClauseType → ClauseSpine
-  | .fullCP => mamTransitiveSpine
-  | .aspectless => mamAspectlessSpine
-  | .infinitival => mamInfinitivalSpine
-
-/-- LD from full CP → =(y)a' licensed on both predicates. -/
-theorem bridge_ld_fullCP :
-    (spineOf ldFullCP.embeddedClauseType).projects .Voice = true ∧
-    ldFullCP.matrixJudgment = .licensed ∧
-    ldFullCP.embeddedJudgment = .licensed := by
-  exact ⟨by decide, rfl, rfl⟩
-
-/-- LD from aspectless → =(y)a' licensed on both. -/
-theorem bridge_ld_aspectless :
-    (spineOf ldAspectless.embeddedClauseType).projects .Voice = true ∧
-    ldAspectless.matrixJudgment = .licensed ∧
-    ldAspectless.embeddedJudgment = .licensed := by
-  exact ⟨by decide, rfl, rfl⟩
-
-/-- LD from infinitival → =(y)a' on matrix only. -/
-theorem bridge_ld_infinitival :
-    (spineOf ldInfinitival.embeddedClauseType).projects .Voice = false ∧
-    ldInfinitival.matrixJudgment = .licensed ∧
-    ldInfinitival.embeddedJudgment = .blocked := by
-  exact ⟨by decide, rfl, rfl⟩
-
-/-- EQ → =(y)a' on embedded only. -/
-theorem bridge_ld_eq :
-    ldEmbeddedQuestion.matrixJudgment = .blocked ∧
-    ldEmbeddedQuestion.embeddedJudgment = .licensed := ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 8: Completeness
--- ============================================================================
-
-/-- All monoclausal predictions match. -/
-theorem all_mono_predictions_match :
-    monoData.all (λ d =>
-      predictEqYa (spineOf d.clauseType) d.obliqueExtracted d.isTemporal
-        == d.judgment) = true := by
+/-- Over a nonfinite complement, (34): copy spellout predicts a reflex in the complement, where
+the base copy sits, whereas Ā-agreement finds no Voice⁰ there. -/
+theorem copy_fails_nonfinite :
+    CopyLicensed [spine .bareVP 0, spine .cP 0] 0 ∧
+      ¬ Licensed [spine .bareVP 0, spine .cP 0] 0 := by
   decide
 
-/-- All LD embedded predictions match. -/
-theorem all_ld_embedded_predictions_match :
-    ldData.all (λ d =>
-      d.embeddedClauseType.projectsVoice == (d.embeddedJudgment == .licensed)) = true := by
+/-- Conversely, Ā-agreement through the verbal domain would put a matrix reflex over a K'ichean
+AspP complement, (53), against the Fronting Particle Generalization; copy spellout does not. -/
+theorem agree_fails_fpg :
+    Licensed [spine aspP 0, spine .cP 0] 1 ∧ ¬ CopyLicensed [spine aspP 0, spine .cP 0] 1 := by
   decide
 
--- ============================================================================
--- § 9: Against Alternative Analyses
--- ============================================================================
-
-/-- Against resumptive-pronoun analysis: =(y)a' is island-sensitive. -/
-theorem eqya_not_resumptive :
-    eqyaIslandSensitive = true := rfl
-
-/-- Against Agent Focus analysis: =(y)a' co-occurs with passive voice. -/
-theorem eqya_not_agent_focus :
-    mamPassiveVoice.features = mamVoice.features ∧
-    mamPassiveVoice.flavor ≠ mamVoice.flavor ∧
-    passiveOblExtraction.judgment = .licensed ∧
-    transSubjExtraction.judgment = .blocked ∧
-    transOblExtraction.judgment = .licensed := by
-  exact ⟨rfl, by decide, rfl, rfl, rfl⟩
-
-/-- Against copy spellout: =(y)a' disappears when Voice is absent. -/
-theorem eqya_not_copy_spellout :
-    (spineOf MamClauseType.aspectless).projects .Voice = true ∧
-    (spineOf MamClauseType.infinitival).projects .Voice = false ∧
-    ldAspectless.embeddedJudgment = .licensed ∧
-    ldInfinitival.embeddedJudgment = .blocked := by
-  exact ⟨by decide, by decide, rfl, rfl⟩
-
--- ============================================================================
--- § 10: ClauseSpine vs. ComplementSize
--- ============================================================================
-
-/-- ClauseSpine is finer than ComplementSize: it can distinguish
-    infinitival (VP) from aspectless (VoiceP). -/
-theorem clauseSpine_finer_than_complementSize :
-    mamAspectlessSpine.projects .Voice = true ∧
-    mamInfinitivalSpine.projects .Voice = false := by
-  exact ⟨by decide, by decide⟩
-
--- ============================================================================
--- § 11: Dir⁰ Spellout
--- ============================================================================
-
-/-- Dir⁰ also carries [uOblique]. -/
-theorem dir_probe_matches_voice :
-    dirCis.features = mamVoice.features := by decide
-
-/-- Dir⁰ with valued [+oblique] also spells out as =(y)a'. -/
-theorem dir_spellout_eqya :
-    spellout mamVoiceVocab (.ofGramFeatures [.valued (.oblique true)]) = some "=(y)a'" := by
+/-- An Agent-Focus-like reflex is confined to the clause of origin, as the antipassive is in
+(38); =(y)a' is licensed in every clause of the path, (24). -/
+theorem origin_only_fails : Licensed [spine .cP 0, spine .cP 0] 1 ∧ (1 : ℕ) ≠ 0 := by
   decide
 
--- ============================================================================
--- § 12: Derivation Tree
--- ============================================================================
+/-! ### Which movers trigger the reflex (§2, §5.3) -/
 
-section Derivation
+/-- The adjunct classes of §2.2. -/
+inductive Adjunct
+  | instrument
+  | benefactive
+  | dative
+  | locative
+  | reason
+  | purpose
+  | manner
+  | temporal
+  deriving DecidableEq, Fintype
 
-open RoseTree UnorderedTree
+/-- The article's featural hypothesis (9), footnotes 3 and 12, §5.3: every adjunct class but the
+temporals bears the [obl] Case feature that Voice⁰ and Dir⁰ copy. -/
+def Adjunct.BearsObl (a : Adjunct) : Prop := a ≠ .temporal
 
-/-- Leaf tokens for the SJO Mam transitive-CP derivation. -/
-private def obliqueTok : LIToken := ⟨.simple .D [] "jawu'", 1⟩
-private def verbTok    : LIToken := ⟨.simple .V [.D] "loq'", 2⟩
-private def objectTok  : LIToken := ⟨.simple .D [] "wääy", 3⟩
-private def voiceTok   : LIToken := ⟨.simple .Voice [.V] "", 4⟩
-private def tTok       : LIToken := ⟨.simple .T [.Voice] "", 5⟩
-private def cTok       : LIToken := ⟨.simple .C [.T] "", 6⟩
+instance : DecidablePred Adjunct.BearsObl := λ _ => inferInstanceAs (Decidable (_ ≠ _))
 
-/-- The full CP derivation, built planar-first (Merge `SyntacticObject.merge` is noncomputable,
-    so concrete `decide`-able trees use the planar DSL): the oblique DP undergoes
-    successive-cyclic Ā-movement, surfacing at Spec,CP with a trace lower down.
-    Structure: `[CP oblique [C' C [TP T [VoiceP oblique [Voice' Voice [VP V obj]]]]]]`. -/
-private def cp : PlanarSyntacticObject :=
-  
-    (obliqueTok * (cTok * (tTok * (obliqueTok * (voiceTok * (verbTok * objectTok))))))
+/-- [mendes-ranero-2021]'s low adjuncts, merged in Spec,ApplP with [appl], which alone trigger
+*wi* (§5.3). -/
+def Adjunct.IsLow (a : Adjunct) : Prop :=
+  a = .instrument ∨ a = .benefactive ∨ a = .dative ∨ a = .locative
 
-theorem derivation_tree_size : cp.toSyntacticObject.nodeCount = 6 := by decide
+instance : DecidablePred Adjunct.IsLow := λ _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _ ∨ _))
 
-theorem voice_has_uOblique :
-    mamVoice.features.hasUnvaluedFeature .oblique = true := by decide
-
-private def oblique_goal_features : FeatureBundle := .ofGramFeatures [.valued (.oblique true)]
-
-/-- Agree at Voice: [uOblique] valued by oblique DP's [+oblique]. -/
-theorem voice_agree_values_oblique :
-    applyAgree mamVoice.features oblique_goal_features .oblique =
-    some (.ofGramFeatures [.valued (.oblique true)]) := by
+/-- Table 4: the Mam and K'ichean triggers differ exactly at reasons, purposes and manners. -/
+theorem table4 (a : Adjunct) :
+    ¬ (a.BearsObl ↔ a.IsLow) ↔ a = .reason ∨ a = .purpose ∨ a = .manner := by
+  revert a
   decide
 
-/-- Spellout: valued [+oblique] on Voice maps to "=(y)a'". -/
-theorem voice_spellout_eqya :
-    spellout mamVoiceVocab (.ofGramFeatures [.valued (.oblique true)]) =
-    some "=(y)a'" := by
+/-- What is extracted, if anything: an absolutive argument, an ergative argument, or an adjunct. -/
+inductive Mover
+  | none
+  | absolutive
+  | ergative
+  | adjunct (a : Adjunct)
+  deriving DecidableEq
+
+/-- Only an adjunct with [obl] feeds the reflex: absolutives and ergatives lack it (§4.2). -/
+def Mover.BearsObl : Mover → Prop
+  | .adjunct a => a.BearsObl
+  | _ => False
+
+instance : ∀ m : Mover, Decidable m.BearsObl
+  | .adjunct a => inferInstanceAs (Decidable a.BearsObl)
+  | .none => inferInstanceAs (Decidable False)
+  | .absolutive => inferInstanceAs (Decidable False)
+  | .ergative => inferInstanceAs (Decidable False)
+
+/-- The reflex is realizable in clause `i` when the mover bears [obl] and the path has a site
+there. -/
+def Realizable (m : Mover) (d : Dependency) (i : ℕ) : Prop := m.BearsObl ∧ Licensed d i
+
+instance (m : Mover) (d : Dependency) (i : ℕ) : Decidable (Realizable m d i) :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
+/-! ### Agree and insertion (§4.2) -/
+
+/-- Voice⁰ of the analysis: an [Ā]-bearing head with an unvalued [oblique] probe that Agree with
+the mover values, (45a). -/
+def voice : Voice.Head :=
+  { flavor := .agentive, hasD := true, features := .ofGramFeatures [.unvalued (.oblique false)] }
+
+/-- (46a): the vocabulary item realizing the valued [obl] on Voice⁰ or Dir⁰. -/
+def eqYa : VocabularyItem GramFeature String := [.valued (.oblique true)] ⟷ "=(y)a'"
+
+/-- Agree with an [obl] mover followed by insertion yields the enclitic. -/
+theorem agree_spellout :
+    (applyAgree voice.features (.ofGramFeatures [.valued (.oblique true)]) .oblique).bind
+      (spellout [eqYa]) = some "=(y)a'" := by
   decide
 
-/-- Full derivation pipeline: Agree then Spellout → "=(y)a'". -/
-theorem full_derivation_pipeline :
-    (applyAgree mamVoice.features oblique_goal_features .oblique).bind
-      (λ fb => spellout mamVoiceVocab fb) = some "=(y)a'" := by
+/-- A mover without [obl], an absolutive argument or a temporal, transmits nothing to Voice⁰. -/
+theorem no_obl_no_agree : applyAgree voice.features ⊥ .oblique = none := by
   decide
 
-end Derivation
+/-! ### The rows (§2, §3, §5) -/
 
--- ============================================================================
--- § 13: Unified Agree — Ā-agreement and φ-agreement as One Operation
--- (back-reference to [scott-2023]; this lives in ETB 2026 because
---  the cross-paper bridge runs from later → earlier per CLAUDE.md
---  chronological-dependency rule.)
--- ============================================================================
+/-- The movers as named in the rows. -/
+def moverTable : List (String × Mover) :=
+  [("none", .none), ("absolutive", .absolutive), ("ergative", .ergative),
+    ("instrument", .adjunct .instrument), ("benefactive", .adjunct .benefactive),
+    ("dative", .adjunct .dative), ("locative", .adjunct .locative), ("reason", .adjunct .reason),
+    ("purpose", .adjunct .purpose), ("manner", .adjunct .manner), ("temporal", .adjunct .temporal)]
 
-/-! Voice⁰ in Mam carries two independent probes:
+/-- Whether the reflex may appear, as recorded in the rows. -/
+def reflexTable : List (String × Bool) := [("licensed", true), ("blocked", false)]
 
-1. **φ-probe** [uPerson, uNumber] (analyzed by [scott-2023]):
-   Agrees with agent in Spec,VoiceP, yielding Set A morphology.
-2. **Oblique probe** [uOblique] (analyzed by [elkins-torrence-brown-2026],
-   this file): Agrees with a passing Ā-moved oblique, yielding =(y)a'
-   on Voice⁰.
+/-- The monoclausal Mam rows of §2 and §3.5–3.6: the enclitic is licensed exactly for the movers
+bearing [obl]. -/
+theorem mamRows_realizable :
+    ∀ e ∈ [ex_10b, ex_11b, ex_12b, ex_13a, ex_13b, ex_14b, ex_15b, ex_16b, ex_17b, ex_18b, ex_19b,
+        ex_20b, ex_21b, ex_35c, ex_37, ex_65],
+      ∀ m, e.parse? "mover" moverTable = some m → ∀ b, e.parse? "reflex" reflexTable = some b →
+        (b = true ↔ Realizable m [spine .cP 0] 0) := by
+  decide
 
-Both are instances of the same abstract Agree operation: probe searches
-c-command domain, finds closest matching goal, copies features, and the
-valued features are spelled out by Vocabulary Insertion. They differ only
-in which features they probe for and what vocabulary entries match. -/
+/-- The K'iche' rows (51) and (64): *wi* is licensed exactly for the low adjuncts. -/
+theorem kicheRows_low :
+    ∀ e ∈ [ex_51, ex_64], ∀ a, e.parse? "mover" moverTable = some (.adjunct a) →
+      ∀ b, e.parse? "reflex" reflexTable = some b → (b = true ↔ a.IsLow) := by
+  decide
 
-section UnifiedAgree
-open Scott2023
+/-- The rows with directionals, (22) and (63): one host per Voice⁰ and directional. -/
+theorem directionalRows_sites :
+    ∀ e ∈ [ex_22, ex_63], ∀ n, e.nat? "directionals" = some n →
+      ∀ k, e.nat? "hosts" = some k → (sites [spine .cP n]).length = k := by
+  decide
 
-/-- Voice's oblique probe features (paired with Scott 2023's φ-probe). -/
-private def voiceOblProbe : FeatureBundle := mamVoice.features
+/-- The clause sizes as named in the rows. -/
+def sizeTable : List (String × ClauseSpine) :=
+  [("cP", .cP), ("voiceP", .voiceP), ("bareVP", .bareVP), ("aspP", aspP)]
 
-/-- Both Voice probes are unvalued features. -/
-theorem both_probes_unvalued :
-    (Minimalist.FeatureBundle.toGramFeatures voiceProbe).all GramFeature.isUnvalued = true ∧
-    (Minimalist.FeatureBundle.toGramFeatures voiceOblProbe).all GramFeature.isUnvalued = true := by
-  exact ⟨by decide, by decide⟩
+/-- The dependency of a long-distance row: the embedded clause and, when the wh-expression lands
+in the matrix clause, the full-CP matrix clause above it. -/
+def dependencyOf (e : LinguisticExample) : Option Dependency :=
+  (e.parse? "embeddedSize" sizeTable).bind λ s =>
+    e.parse? "landing" [("embedded", [spine s 0]), ("matrix", [spine s 0, spine .cP 0])]
 
-/-- φ-Agree (Scott 2023) and oblique-Agree (this paper) are parallel
-    instances of the same operation, differing only in which features
-    are probed and which vocabulary entries match. -/
-theorem phi_and_oblique_agree_parallel :
-    -- φ-Agree pipeline: value person, then number, then spellout
-    (applyAgree voiceProbe dp3sg .person).bind
-      (λ fb => applyAgree fb dp3sg .number) = some voiceFullyAgreed ∧
-    spellout setAVocab voiceFullyAgreed = some "t-" ∧
-    -- Oblique-Agree pipeline: value oblique, then spellout
-    applyAgree voiceOblProbe (.ofGramFeatures [.valued (.oblique true)]) .oblique =
-      some (.ofGramFeatures [.valued (.oblique true)]) ∧
-    spellout [eqYaVocab] (.ofGramFeatures [.valued (.oblique true)]) = some "=(y)a'" := by
-  exact ⟨by decide, by decide, by decide, by decide⟩
+/-- The long-distance Mam rows (24), (26), (31) and (34), Table 3: the reflex in each clause
+follows from Ā-agreement along the path. -/
+theorem mamLD_licensed :
+    ∀ e ∈ [ex_24, ex_26, ex_31, ex_34], ∀ d, dependencyOf e = some d →
+      (∀ b, e.parse? "embeddedReflex" reflexTable = some b → (b = true ↔ Licensed d 0)) ∧
+        ∀ b, e.parse? "matrixReflex" reflexTable = some b → (b = true ↔ Licensed d 1) := by
+  decide
 
-end UnifiedAgree
+/-- The long-distance K'iche' rows (52) and (53) follow from copy spellout. -/
+theorem kicheLD_copy :
+    ∀ e ∈ [ex_52, ex_53], ∀ d, dependencyOf e = some d →
+      (∀ b, e.parse? "embeddedReflex" reflexTable = some b → (b = true ↔ CopyLicensed d 0)) ∧
+        ∀ b, e.parse? "matrixReflex" reflexTable = some b → (b = true ↔ CopyLicensed d 1) := by
+  decide
 
 end ElkinsTorrenceBrown2026

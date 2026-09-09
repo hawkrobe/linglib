@@ -93,7 +93,7 @@ def ClauseSpine.vP : ClauseSpine :=
 
 /-- VoiceP-sized clause: [V, Appl, v, Voice]. Projects Voice head.
     In Mam, this is the size of "aspectless" complements — Voice is projected,
-    so [oblique] can be hosted, and =(y)a' is obligatory on oblique extraction. -/
+    so [oblique] can be hosted, and =(y)a' is licensed on oblique extraction. -/
 def ClauseSpine.voiceP : ClauseSpine :=
   ⟨[.V, .Appl, .v, .Voice], by decide⟩
 
