@@ -3073,3 +3073,4 @@ import Linglib.Data.Examples.FuscoSgrizzi2026
 import Linglib.Data.Examples.Gajewski2002
 import Linglib.Data.Examples.Gajewski2011
 import Linglib.Data.Examples.George2011
+import Linglib.Data.Examples.GarassinoJacob2018
