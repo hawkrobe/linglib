@@ -234,6 +234,39 @@ theorem exhIEII_singleton (hsat : ∃ w, φ w) : exhIEII {φ} φ = φ := by
   · rw [Set.mem_singleton_iff.1 hr.1]; exact hw
 
 
+/-! ### Cells from a characterization of innocent exclusion -/
+
+/-- With the innocently excludable alternatives characterized, the cell denies them and asserts
+the rest. -/
+theorem cell_eq_of_iff {P : Set World → Prop}
+    (h : ∀ q ∈ ALT, IsInnocentlyExcludable ALT φ q ↔ P q) :
+    cell ALT φ = {w | w ∈ φ ∧ ∀ q ∈ ALT, (w ∈ q ↔ ¬ P q)} := by
+  ext w
+  constructor
+  · rintro ⟨hw, hIE, hne⟩
+    exact ⟨hw, λ q hq => ⟨λ hwq hP => hIE q ((h q hq).2 hP) hwq,
+      λ hP => hne q ⟨hq, λ hIE' => hP ((h q hq).1 hIE')⟩⟩⟩
+  · rintro ⟨hw, h'⟩
+    exact ⟨hw, λ q hIE hwq => (h' q hIE.1).1 hwq ((h q hIE.1).1 hIE),
+      λ r hr => (h' r hr.1).2 λ hP => hr.2 ((h r hr.1).2 hP)⟩
+
+/-- Over alternatives indexed by a family, the cell denies the indices characterized as
+innocently excludable and asserts the rest. -/
+theorem cell_image_eq {ι : Type*} {f : ι → Set World} {I : Set ι} {P : ι → Prop}
+    (h : ∀ i ∈ I, IsInnocentlyExcludable (f '' I) φ (f i) ↔ P i) :
+    cell (f '' I) φ = {w | w ∈ φ ∧ ∀ i ∈ I, (w ∈ f i ↔ ¬ P i)} := by
+  ext w
+  constructor
+  · rintro ⟨hw, hIE, hne⟩
+    exact ⟨hw, λ i hi => ⟨λ hwi hP => hIE _ ((h i hi).2 hP) hwi,
+      λ hP => hne _ ⟨⟨i, hi, rfl⟩, λ hIE' => hP ((h i hi).1 hIE')⟩⟩⟩
+  · rintro ⟨hw, h'⟩
+    refine ⟨hw, λ q hIE => ?_, λ r hr => ?_⟩
+    · obtain ⟨i, hi, rfl⟩ := hIE.1
+      exact λ hwi => (h' i hi).1 hwi ((h i hi).1 hIE)
+    · obtain ⟨i, hi, rfl⟩ := hr.1
+      exact (h' i hi).2 λ hP => hr.2 ((h i hi).2 hP)
+
 /-! ### Representative minimal worlds -/
 
 section MinimalCover
