@@ -1,515 +1,368 @@
-/-
-# Domain Widening: *just* as addressing the widest answerable question
-
-Formalizes [deo-thomas-2025]: *just* signals that the speaker addresses the
-**widest answerable construal** of an underspecified question (UQ). The 9 flavors
-arise from how the widest construal is determined by Quality and Relevance.
-
-## Core claim
-
-*Just* has a SINGLE lexical entry. The apparent polysemy follows from
-the interaction of domain widening with different alternative sources and Gricean
-maxim failures. *Only* shares the exhaustification semantics but requires Roothian
-alternatives, explaining why it substitutes in only 2 of the 9 flavors.
-
-## Main declarations
-
-- `JustFlavor`, `ContextType`: the paper's §2 taxonomy
-- `flavorOf`, `contextTypeOf`: adapters over `Data/Examples/DeoThomas2025.json`
-- `only_substitutes_iff_roothian` and friends: the §2 generalizations,
-  quantified over the example rows
-- `justFlavorFromConstruction`: the [thomas-deo-2020] construction → flavor
-  bridge
-- `refinement_implies_wider`, `finer_granularity_implies_wider`: finer
-  granularity yields wider questions (§3.1.2–3.2, Figure 1)
-
--/
-
-import Linglib.Semantics.Questions.Partition.QUD
-import Linglib.Semantics.Questions.Basic
 import Linglib.Semantics.Questions.Partition.Basic
-import Linglib.Semantics.Degree.Granularity
-import Linglib.Semantics.Degree.Defs
+import Linglib.Semantics.Presupposition.Defs
 import Linglib.Data.Examples.DeoThomas2025
-import Linglib.Studies.ThomasDeo2020
 
-/-- The width relation between issues ([deo-thomas-2025] (32)): same
-informational content, no `Q`-alternative properly inside a
-`P`-alternative, and some `P`-alternative properly inside a
-`Q`-alternative — `P` makes finer distinctions. Not comparable to
-question entailment ([deo-thomas-2025] fn. 20). -/
-def Question.widerThan {W : Type*} (P Q : Question W) : Prop :=
-  P.info = Q.info ∧
-  (∀ p₂ ∈ Question.alt Q, ∀ p₁ ∈ Question.alt P, ¬ (p₂ ⊂ p₁)) ∧
-  (∃ p₁ ∈ Question.alt P, ∃ p₂ ∈ Question.alt Q, p₁ ⊂ p₂)
+/-!
+# Deo and Thomas (2025): Addressing the widest answerable question
+
+This file formalizes [deo-thomas-2025]'s account of English *just* as a domain-widening
+strategy. Beyond the complement-exclusion and rank-order uses it shares with *only*, (1) and
+(3), *just* has emphatic, precisifying, minimal-sufficiency, unexplanatory, unelaboratory and
+counterexpectational uses, (5) to (18), in none of which *only* can replace it and in some of
+which its prejacent is not a member of the question it answers on any standard construal,
+(19). The account replaces the shared current question of [beaver-clark-2008] and
+[coppock-beaver-2014] by an underspecified question, the set of a question's construals at a
+context, (31), each a cover of the common ground by alternatives none of which contains
+another, (30), after the issues of [ciardelli-groenendijk-roelofsen-2018]. Construals are
+compared by width, (32): one is wider than another over the same common ground when no
+alternative of the narrower is properly contained in an alternative of the wider and some
+alternative of the wider is properly contained in an alternative of the narrower. Width is
+weaker than [groenendijk-stokhof-1984]'s question entailment, since construals at different
+scale granularities, (22) to (24), are ordered by width but not by entailment, fn. 20 and
+Figure 1. A construal is answerable when the speaker has evidence for a true answer to it,
+Quality, and takes answering it to be relevant, Relevance, (34), and the optimal construal is
+the unique widest answerable one, (35). *Just* presupposes that the current question is the
+optimal construal and asserts its prejacent, (36), after which its uses fall into three kinds
+of context, (37): the widest construal is answerable; the wider construals fail Quality, the
+unexplanatory use of [wiegand-2018], §4.4; or they fail Relevance, the unelaboratory use of
+[warstadt-2020], §4.5. The mention-all construal of a constituent question is wider than the
+mention-some one, §4.1; a finer partition of the common ground is a wider construal, §4.2 and
+§4.7; a finer grain is wider without refining the coarser one, Figure 1; and the construals
+of a degree question with an extreme adjective, which differ in where the zone of
+indifference of [morzycki-2012] begins, are wider the later it begins, Figure 2 of §4.8.
+
+## Implementation notes
+
+A construal is a `Question`, whose alternatives `Question.alt` are the maximal resolving
+states, so (30a) holds by construction and (30b) is `Question.info`. The context of (31)
+carries the common ground, the construals, and the speaker's Quality and Relevance verdicts
+as primitives, with the paper's requirements that every construal cover the common ground
+and that any two construals be comparable by width, which is what makes the optimal construal
+unique. Partition construals are `Question.fromSetoid`, so refinement is the order on
+`Setoid`. Grains follow the paper's convention that a measure phrase denotes the cell it lies
+at the centre of, (24): on a discrete scale the grain of width `ε` has cells of `ε`
+consecutive points centred on the multiples of `ε`, and Figure 1's year and half-year grains
+are `grain 4` and `grain 2` in quarter years. Worlds for the constituent question of §4.1 are
+the extensions of its predicate. The exhaustive interpretation of the prejacent is a mandatory
+implicature that the paper leaves to Gricean reasoning, §4.1 and §4.9, and is not formalized;
+neither are the interpretation of the prejacent relative to the granularity of the current
+question in (36), the minimal-sufficiency construal of §4.3, whose alternatives are fixed by a
+causal structure, nor the Focus Principle, (21).
+
+## References
+
+* [deo-thomas-2025]
+* [thomas-deo-2020]
+* [beaver-clark-2008]
+* [coppock-beaver-2014]
+* [ciardelli-groenendijk-roelofsen-2018]
+* [groenendijk-stokhof-1984]
+* [morzycki-2012]
+* [wiegand-2018]
+* [warstadt-2020]
+-/
 
 namespace DeoThomas2025
 
-open Data.Examples (LinguisticExample)
-
--- ============================================================================
--- A. The §2 Taxonomy
--- ============================================================================
-
-/-- The interpretive flavors of *just* ([deo-thomas-2025]: §2).
-    Nine constructors covering the paper's 7 major categories, with
-    precisifying split into equality/proximity (§2.3.1-2) and complement
-    exclusion separated from rank order (§2.1). -/
-inductive JustFlavor where
-  | complementExclusion  -- "She just went to Spain and Portugal" → nowhere else
-  | rankOrder            -- "She is just an intern" → nothing higher on scale
-  | emphatic             -- "The food was just amazing!" → exceeds expectations
-  | precisifyingEquality -- "The tank is just full" → exactly (= paraphrase)
-  | precisifyingProximity -- "Fafen is just older than Siri" → barely (≈ slightly)
-  | minimalSufficiency   -- "Just a 3.5 GPA is sufficient" → nothing less needed
-  | unexplanatory        -- "The lamp just broke" → no identifiable cause
-  | unelaboratory        -- "Fido is just a dog" → no further elaboration needed
-  | counterexpectational -- "She just ate the communion wafer!" → norm violation
-  deriving Repr, DecidableEq
-
-/-- Why the widest answerable construal is optimal at context
-    ([deo-thomas-2025] (37)). -/
-inductive ContextType where
-  | answerable  -- (37a): widest construal is answerable (Quality + Relevance)
-  | qualityFail -- (37b): wider construals fail Quality (speaker lacks evidence)
-  | relevanceFail -- (37c): wider construals fail Relevance (not discourse-relevant)
-  deriving Repr, DecidableEq
-
-/-- Where the alternatives for *just* come from.
-    Roothian alternatives are the standard focus-semantic alternatives;
-    the other sources are what distinguish *just* from *only*. -/
-inductive AlternativeSource where
-  | roothian     -- Standard focus alternatives (shared with *only*)
-  | granularity  -- Precision / scale granularity levels
-  | causal       -- Causal explanations
-  | elaboration  -- Elaboration / specification alternatives
-  | normative    -- Norm-based expectations
-  deriving Repr, DecidableEq
-
-/-- Map each flavor of *just* to its alternative source. -/
-def associatedSource : JustFlavor → AlternativeSource
-  | .complementExclusion   => .roothian
-  | .rankOrder             => .roothian
-  | .emphatic              => .granularity
-  | .precisifyingEquality  => .granularity
-  | .precisifyingProximity => .granularity
-  | .minimalSufficiency    => .causal
-  | .unexplanatory         => .causal
-  | .unelaboratory         => .elaboration
-  | .counterexpectational  => .normative
-
--- ============================================================================
--- B. Row Adapters (Data/Examples/DeoThomas2025.json)
--- ============================================================================
-
-/-- A row's `flavor` feature as a `JustFlavor`. -/
-def flavorOf (row : LinguisticExample) : Option JustFlavor :=
-  match row.feature? "flavor" with
-  | some "complementExclusion"   => some .complementExclusion
-  | some "rankOrder"             => some .rankOrder
-  | some "emphatic"              => some .emphatic
-  | some "precisifyingEquality"  => some .precisifyingEquality
-  | some "precisifyingProximity" => some .precisifyingProximity
-  | some "minimalSufficiency"    => some .minimalSufficiency
-  | some "unexplanatory"         => some .unexplanatory
-  | some "unelaboratory"         => some .unelaboratory
-  | some "counterexpectational"  => some .counterexpectational
-  | _ => none
-
-/-- A row's `context_type` feature as a `ContextType`. -/
-def contextTypeOf (row : LinguisticExample) : Option ContextType :=
-  match row.feature? "context_type" with
-  | some "answerable"    => some .answerable
-  | some "qualityFail"   => some .qualityFail
-  | some "relevanceFail" => some .relevanceFail
-  | _ => none
-
-/-- Whether the row's `#only` substitution test succeeds. -/
-def onlyOkOf (row : LinguisticExample) : Bool :=
-  row.feature? "only_ok" == some "true"
-
--- ============================================================================
--- C. Discourse Context
--- ============================================================================
-
-/-- A discourse context provides construals of an underspecified question (UQ)
-    together with Quality and Relevance filters.
-
-    Construals are `Question`s (sets of alternative propositions), matching the
-    paper's definition (30)-(31): questions are sets of propositions that cover
-    the common ground. This is more faithful than using partitions (`QUD`),
-    since the paper explicitly notes that granularity-based construals generally
-    cannot be ordered by question entailment (fn. 20).
-
-    `W` is the world type. -/
-structure DiscourseContext (W : Type*) where
-  /-- The available construals of UQ_c -/
-  construals : List (Question W)
-  /-- Does the speaker have sufficient evidence to answer this question? -/
-  quality : Question W → Bool
-  /-- Is this question relevant to the current discourse? -/
-  relevance : Question W → Bool
-  /-- There must be at least one construal -/
-  nonempty : construals ≠ []
+open Question Presupposition
 
 variable {W : Type*}
 
-/-- A question is answerable iff it passes both Quality and Relevance (34). -/
-def answerable (ctx : DiscourseContext W) (q : Question W) : Bool :=
-  ctx.quality q && ctx.relevance q
+/-! ### Width, (32) -/
 
-/-- OPT_c(Q) ([deo-thomas-2025] (35)): the optimal question in a set
-    of construals.
+/-- `P` is wider than `Q`, (32): the two cover the same common ground, no alternative of `Q`
+is properly contained in an alternative of `P`, and some alternative of `P` is properly
+contained in an alternative of `Q`. -/
+def WiderThan (P Q : Question W) : Prop :=
+  P.info = Q.info ∧ (∀ q ∈ alt Q, ∀ p ∈ alt P, ¬ q ⊂ p) ∧ ∃ p ∈ alt P, ∃ q ∈ alt Q, p ⊂ q
 
-    `q` is the widest answerable construal: it is answerable, it is in the
-    construal set, and no strictly wider answerable construal exists.
+theorem WiderThan.irrefl (P : Question W) : ¬ WiderThan P P :=
+  λ ⟨_, h, p, hp, q, hq, hpq⟩ => h p hp q hq hpq
 
-    Width is measured by `Question.widerThan` ((32)), the paper's comparison
-    of question inquisitivity — explicitly weaker than G&S question entailment
-    (fn. 20), because granularity-based construals generally cannot be ordered
-    by entailment strength. -/
-def isWidestAnswerable (ctx : DiscourseContext W) (q : Question W) : Prop :=
-  q ∈ ctx.construals ∧
-  answerable ctx q = true ∧
-  ∀ q' ∈ ctx.construals, answerable ctx q' = true → ¬ q'.widerThan q
+theorem WiderThan.asymm {P Q : Question W} (h : WiderThan P Q) : ¬ WiderThan Q P :=
+  λ ⟨_, h', _⟩ => let ⟨p, hp, q, hq, hpq⟩ := h.2.2; h' p hp q hq hpq
 
-/-- Classify a discourse context by WHY the widest answerable construal
-    is optimal ([deo-thomas-2025] (37)).
+/-- The trivial construal, whose one alternative is the common ground, is narrower than any
+other construal of the same common ground: the disjunction of all possible causes of §4.4. -/
+theorem widerThan_ofSet {P : Question W} {s p : Set W} (hs : P.info = s) (hp : p ∈ alt P)
+    (hne : p ≠ s) : WiderThan P (ofSet s) := by
+  have hsub : ∀ q ∈ alt P, q ⊆ s := λ q hq =>
+    hs ▸ (Set.subset_sUnion_of_mem hq).trans (sUnion_alt_subset_info P)
+  refine ⟨by rw [hs, info_ofSet], ?_, p, hp, s, self_mem_alt_ofSet s,
+    Set.ssubset_iff_subset_ne.2 ⟨hsub p hp, hne⟩⟩
+  rw [alt_ofSet]
+  rintro _ rfl q hq hlt
+  exact hlt.2 (hsub q hq)
 
-    - (37a) answerable: all construals are answerable → CQ = widest overall
-    - (37b) qualityFail: some construal fails Quality (speaker lacks evidence)
-    - (37c) relevanceFail: some construal fails Relevance (not discourse-relevant) -/
-def classifyContext (ctx : DiscourseContext W) : ContextType :=
-  if ctx.construals.all (λ q => answerable ctx q) then
-    .answerable
-  else if ctx.construals.any (λ q => !ctx.quality q) then
-    .qualityFail
-  else
-    .relevanceFail
+/-! ### The context, (31), and the optimal construal, (33) to (35) -/
 
--- ============================================================================
--- D. The §2 Generalizations over the Example Rows
--- ============================================================================
+/-- A context, (31): the common ground, the construals of the underspecified question, each a
+cover of the common ground and any two comparable by width, and the speaker's verdicts on
+which questions satisfy Quality and Relevance, (34). -/
+structure Context (W : Type*) where
+  /-- The common ground. -/
+  info : Set W
+  /-- The construals of the underspecified question. -/
+  uq : Set (Question W)
+  /-- The speaker has sufficient evidence that a true answer is accessible, (34a). -/
+  quality : Question W → Prop
+  /-- The speaker considers answering the question relevant to the discourse goals, (34b). -/
+  relevance : Question W → Prop
+  nonempty : uq.Nonempty
+  info_eq : ∀ q ∈ uq, q.info = info
+  comparable : ∀ q ∈ uq, ∀ q' ∈ uq, q ≠ q' → WiderThan q q' ∨ WiderThan q' q
 
-/-- *Only* can substitute for *just* exactly in the complement-exclusion
-    and rank-order uses. -/
-theorem only_substitutes_iff_exclusive :
-    ∀ row ∈ Examples.all,
-      onlyOkOf row = true ↔
-        (flavorOf row = some .complementExclusion ∨
-         flavorOf row = some .rankOrder) := by
-  decide
+namespace Context
 
-/-- *Only* can replace *just* exactly when the alternatives are Roothian. -/
-theorem only_substitutes_iff_roothian :
-    ∀ row ∈ Examples.all,
-      onlyOkOf row = true ↔
-        (flavorOf row).map associatedSource = some .roothian := by
-  decide
+variable (c : Context W) (q : Question W)
 
-/-- Unexplanatory uses arise when wider construals fail Quality (37b). -/
-theorem unexplanatory_is_quality_fail :
-    ∀ row ∈ Examples.all,
-      flavorOf row = some .unexplanatory →
-        contextTypeOf row = some .qualityFail := by
-  decide
+/-- A question is answerable when it satisfies Quality and Relevance, (34). -/
+def Answerable : Prop := c.quality q ∧ c.relevance q
 
-/-- Unelaboratory uses arise when wider construals fail Relevance (37c). -/
-theorem unelaboratory_is_relevance_fail :
-    ∀ row ∈ Examples.all,
-      flavorOf row = some .unelaboratory →
-        contextTypeOf row = some .relevanceFail := by
-  decide
+/-- The widest construal, (33): none is wider. -/
+def IsWidest : Prop := q ∈ c.uq ∧ ∀ q' ∈ c.uq, ¬ WiderThan q' q
 
-/-- All other uses — complement exclusion, rank order, emphatic,
-    precisifying, minimal sufficiency, counterexpectational — arise when
-    the widest construal IS answerable (37a). -/
-theorem standard_uses_are_answerable :
-    ∀ row ∈ Examples.all,
-      contextTypeOf row = some .answerable ↔
-        (flavorOf row ≠ some .unexplanatory ∧
-         flavorOf row ≠ some .unelaboratory) := by
-  decide
+/-- The optimal construal, (35): answerable, with no wider answerable construal. -/
+def IsOptimal : Prop :=
+  q ∈ c.uq ∧ c.Answerable q ∧ ∀ q' ∈ c.uq, c.Answerable q' → ¬ WiderThan q' q
 
-/-- Quality-failure contexts yield only causal-alternative flavors. -/
-theorem quality_fail_implies_causal :
-    ∀ row ∈ Examples.all,
-      contextTypeOf row = some .qualityFail →
-        (flavorOf row).map associatedSource = some .causal := by
-  decide
+variable {c q}
 
-/-- Relevance-failure contexts yield only elaboration-alternative flavors. -/
-theorem relevance_fail_implies_elaboration :
-    ∀ row ∈ Examples.all,
-      contextTypeOf row = some .relevanceFail →
-        (flavorOf row).map associatedSource = some .elaboration := by
-  decide
+/-- The widest construal is unique, since any two construals are comparable. -/
+theorem IsWidest.unique {q' : Question W} (h : c.IsWidest q) (h' : c.IsWidest q') : q = q' :=
+  by_contra λ hne => (c.comparable q h.1 q' h'.1 hne).elim (h'.2 q h.1) (h.2 q' h'.1)
 
-/-- *only* is felicitous only with Roothian alternatives (shared CQ).
-    *just* is felicitous regardless of alternative source.
-    This is WHY they diverge: *only* exhaustifies over shared alternatives,
-    *just* widens the question. -/
-theorem only_requires_shared_cq :
-    ∀ row ∈ Examples.all,
-      onlyOkOf row = true →
-        (flavorOf row).map associatedSource = some .roothian :=
-  fun row hrow h => (only_substitutes_iff_roothian row hrow).mp h
+/-- The optimal construal is unique: the definite description of (35). -/
+theorem IsOptimal.unique {q' : Question W} (h : c.IsOptimal q) (h' : c.IsOptimal q') :
+    q = q' :=
+  by_contra λ hne =>
+    (c.comparable q h.1 q' h'.1 hne).elim (h'.2.2 q h.1 h.2.1) (h.2.2 q' h'.1 h'.2.1)
 
-/-- All 9 `JustFlavor` constructors are attested in the example rows. -/
-theorem all_flavors_attested :
-    ∀ f : JustFlavor, Examples.all.any (flavorOf · == some f) = true := by
-  intro f
-  cases f <;> decide
+/-- (37a): the widest construal, when answerable, is the optimal one. -/
+theorem IsWidest.isOptimal (h : c.IsWidest q) (ha : c.Answerable q) : c.IsOptimal q :=
+  ⟨h.1, ha, λ q' hq' _ => h.2 q' hq'⟩
 
--- ============================================================================
--- E. Construction → Flavor Bridge ([thomas-deo-2020])
--- ============================================================================
+/-- No construal wider than the optimal one is answerable. -/
+theorem IsOptimal.not_answerable {q' : Question W} (h : c.IsOptimal q) (hq' : q' ∈ c.uq)
+    (hw : WiderThan q' q) : ¬ c.Answerable q' :=
+  λ ha => h.2.2 q' hq' ha hw
 
-open Degree (Construction)
+/-- The three kinds of context in which a construal is optimal, (37): it is the widest
+construal; or some wider construal fails Quality; or some wider construal satisfies Quality
+and fails Relevance. -/
+theorem IsOptimal.widest_or_quality_or_relevance (h : c.IsOptimal q) :
+    c.IsWidest q ∨ (∃ q' ∈ c.uq, WiderThan q' q ∧ ¬ c.quality q') ∨
+      ∃ q' ∈ c.uq, WiderThan q' q ∧ c.quality q' ∧ ¬ c.relevance q' := by
+  by_cases hw : c.IsWidest q
+  · exact Or.inl hw
+  obtain ⟨q', hq', hw'⟩ : ∃ q' ∈ c.uq, WiderThan q' q := by
+    by_contra h'
+    exact hw ⟨h.1, λ q' hq' hw' => h' ⟨q', hq', hw'⟩⟩
+  by_cases hq : c.quality q'
+  · exact Or.inr (Or.inr ⟨q', hq', hw', hq, λ hr => h.not_answerable hq' hw' ⟨hq, hr⟩⟩)
+  · exact Or.inr (Or.inl ⟨q', hq', hw', hq⟩)
 
-/-- Derive *just* flavor from adjectival construction type.
-    [thomas-deo-2020] predict:
-    - comparative + just → precisifying proximity (barely)
-    - equative + just → precisifying equality (exactly) -/
-def justFlavorFromConstruction : Construction → JustFlavor
-  | .comparative => .precisifyingProximity
-  | .equative => .precisifyingEquality
-  | .positive | .measurePhrase | .degreeQuestion => .complementExclusion
+/-- The trivial construal is optimal exactly when it is answerable and no other construal is:
+the unexplanatory use, where the others fail Quality, and the unelaboratory use, where they
+fail Relevance, §4.4 and §4.5. -/
+theorem isOptimal_ofSet_iff (hmem : ofSet c.info ∈ c.uq)
+    (hnt : ∀ q ∈ c.uq, q ≠ ofSet c.info → ∃ p ∈ alt q, p ≠ c.info) :
+    c.IsOptimal (ofSet c.info) ↔
+      c.Answerable (ofSet c.info) ∧ ∀ q ∈ c.uq, q ≠ ofSet c.info → ¬ c.Answerable q := by
+  refine ⟨λ h => ⟨h.2.1, λ q hq hne ha => ?_⟩, λ ⟨ha, h⟩ => ⟨hmem, ha, λ q hq ha' hw => ?_⟩⟩
+  · obtain ⟨p, hp, hpne⟩ := hnt q hq hne
+    exact h.2.2 q hq ha (widerThan_ofSet (c.info_eq q hq) hp hpne)
+  · by_cases hne : q = ofSet c.info
+    · exact WiderThan.irrefl _ (hne ▸ hw)
+    · exact h q hq hne ha'
 
-/-- "Fafen is just older than Siri" — comparative + just = proximity. -/
-theorem comparative_yields_proximity :
-    flavorOf Examples.precisifying_prox_older =
-      some (justFlavorFromConstruction .comparative) := by
-  decide
+end Context
 
-/-- Equative + just = equality ("just as tall as" ≈ "exactly as tall as").
-    Note: `precisifying_eq_full` ("just full") achieves equality via a
-    closed-scale endpoint standard, not via equative morphology. The
-    shared flavor (`.precisifyingEquality`) reflects parallel pragmatic
-    effects through different compositional routes. -/
-theorem equative_yields_equality :
-    flavorOf Examples.precisifying_eq_full =
-      some (justFlavorFromConstruction .equative) := by
-  decide
+/-! ### The lexical entry, (36) -/
 
-/-- Every equative datum of [thomas-deo-2020] §3 receives the flavor of
-    the 2025 corpus's equality row. -/
-theorem equative_data_match_corpus :
-    ∀ d ∈ ThomasDeo2020.allGranularityData,
-      d.construction = .equative →
-        some (justFlavorFromConstruction d.construction) =
-          flavorOf Examples.precisifying_eq_full := by
-  decide
+/-- *Just* with the current question `cq` and prejacent `p`, (36): it presupposes that `cq` is
+the optimal construal of the underspecified question and asserts `p`. -/
+def just (c : Context W) (cq : Question W) (p : Set W) : PartialProp W where
+  presup _ := c.IsOptimal cq
+  assertion := (· ∈ p)
 
-/-- Every comparative datum of [thomas-deo-2020] §3 receives the flavor of
-    the 2025 corpus's proximity row. -/
-theorem comparative_data_match_corpus :
-    ∀ d ∈ ThomasDeo2020.allGranularityData,
-      d.construction = .comparative →
-        some (justFlavorFromConstruction d.construction) =
-          flavorOf Examples.precisifying_prox_older := by
-  decide
+variable {c : Context W} {cq cq' : Question W} {p p' : Set W} {w w' : W}
 
--- ============================================================================
--- F. WXDY bridge ([kay-fillmore-1999])
--- ============================================================================
+theorem just_defined_iff : PartialProp.defined w (just c cq p) ↔ c.IsOptimal cq := Iff.rfl
 
-/-- WXDY's incredulity arises from a normative expectation violation:
-the situation violates what the speaker considers normal/appropriate.
-This is the same alternative source as counterexpectational *just*
-("He's just texting during the lecture!").
+theorem just_holds_iff : PartialProp.holds w (just c cq p) ↔ c.IsOptimal cq ∧ w ∈ p :=
+  Iff.rfl
 
-- WXDY: "What's this fly doing in my soup?" — violates dining norms
-- *just*: "He's just texting during the lecture!" — violates classroom norms -/
-def wxdyAlternativeSource : AlternativeSource := .normative
+/-- Two defined uses of *just* in one context address the same current question: the
+presupposition fixes the construal. -/
+theorem eq_of_just_defined (h : PartialProp.defined w (just c cq p))
+    (h' : PartialProp.defined w' (just c cq' p')) : cq = cq' :=
+  h.unique h'
 
-/-- WXDY's incongruity and counterexpectational *just* share the same
-    alternative source: both involve normative expectations being violated. -/
-theorem wxdy_incongruity_is_counterexpectational :
-    wxdyAlternativeSource = associatedSource .counterexpectational := rfl
+/-! ### Partitions: refinement is width, §4.2 and §4.7 -/
 
--- ============================================================================
--- G. Granularity-Width Bridge (Figure 1)
--- ============================================================================
+/-- A finer partition of the common ground is a wider construal, (40b) against (40a). -/
+theorem widerThan_fromSetoid {r s : Setoid W} (h : r < s) :
+    WiderThan (fromSetoid r) (fromSetoid s) := by
+  obtain ⟨hle, hnle⟩ := lt_iff_le_not_ge.1 h
+  obtain ⟨x, y, hs, hr⟩ : ∃ x y, s x y ∧ ¬ r x y := by
+    by_contra h'
+    exact hnle (Setoid.le_def.2 λ {x y} hxy => by_contra λ hr => h' ⟨x, y, hxy, hr⟩)
+  have : Nonempty W := ⟨x⟩
+  refine ⟨by rw [info_fromSetoid, info_fromSetoid], ?_, {z | r z y},
+    mem_alt_fromSetoid_of_mem_classes _ (Setoid.mem_classes r y), {z | s z y},
+    mem_alt_fromSetoid_of_mem_classes _ (Setoid.mem_classes s y),
+    λ z hz => Setoid.le_def.1 hle hz, λ hsub => hr (hsub hs)⟩
+  rw [alt_fromSetoid, alt_fromSetoid]
+  rintro _ ⟨v, rfl⟩ _ ⟨u, rfl⟩ hlt
+  have huv : s u v := s.symm (Setoid.le_def.1 hle (hlt.1 (s.refl v)))
+  exact hlt.2 λ z hz => s.trans (Setoid.le_def.1 hle hz) huv
 
-/-! ### Partition refinement implies question width
+/-! ### Grains, (22) to (24), and Figure 1 -/
 
-The paper's central formal insight: finer granularity produces wider questions.
-At the partition level, "finer" is `QUD.refines` (every fine cell ⊆ some coarse
-cell), equivalently `q.toSetoid ≤ q'.toSetoid` in mathlib's `Setoid` lattice.
-At the issue level, "wider" is `Question.widerThan` ([deo-thomas-2025]
-(32): same `info`, no coarse answer ⊊ fine answer, some fine answer ⊊ coarse
-answer). The bridge `QUD.toQuestion` (in
-`Semantics/Questions/Partition/Basic.lean`) preserves this relationship.
+/-- The grain of width `ε` on a discrete scale: cells of `ε` consecutive points centred on the
+multiples of `ε`, so that a measure phrase denotes the cell it lies at the centre of, (24). -/
+def grain (ε : ℕ) : Setoid ℕ := Setoid.ker (λ d => (2 * d + ε) / (2 * ε))
 
-The proof is an order-theoretic one-liner over `Setoid`: every alternative
-of `Question.fromSetoid r` is either `∅` or an equivalence class of `r`
-(`eq_empty_or_mem_classes_of_mem_alt_fromSetoid`), and the q-class of `w₀` is contained in
-the q'-class of `w₀` by refinement, with `v₀` witnessing strict containment.
-This replaces a 100-line Bool/List proof that managed indices into
-`worlds : List W` and case-split on `properlyContains`. -/
+/-- The `k`th cell of the grain of width `ε`. -/
+theorem mem_cell_iff {ε x k : ℕ} (hε : 0 < ε) :
+    (2 * x + ε) / (2 * ε) = k ↔ 2 * (ε * k) ≤ 2 * x + ε ∧ 2 * x + ε < 2 * (ε * k) + 2 * ε := by
+  have h2 : 0 < 2 * ε := by omega
+  have e1 : k * (2 * ε) = 2 * (ε * k) := by rw [Nat.mul_comm k (2 * ε), Nat.mul_assoc]
+  have e2 : (k + 1) * (2 * ε) = 2 * (ε * k) + 2 * ε := by rw [Nat.add_mul, Nat.one_mul, e1]
+  rw [eq_comm, le_antisymm_iff, Nat.le_div_iff_mul_le h2, e1]
+  refine and_congr_right λ _ => ⟨λ h3 => ?_, λ h3 => ?_⟩
+  · have := (Nat.div_lt_iff_lt_mul h2).1 (Nat.lt_add_one_iff.2 h3)
+    rwa [e2] at this
+  · exact Nat.lt_add_one_iff.1 ((Nat.div_lt_iff_lt_mul h2).2 (by rw [e2]; exact h3))
 
-/-- Strict partition refinement implies issue width.
+/-- A cell of the grain of width `ε` spans fewer than `ε` points. -/
+theorem sub_lt_of_cell {ε x y k : ℕ} (hε : 0 < ε) (hx : (2 * x + ε) / (2 * ε) = k)
+    (hy : (2 * y + ε) / (2 * ε) = k) : y - x < ε := by
+  have := (mem_cell_iff hε).1 hx
+  have := (mem_cell_iff hε).1 hy
+  omega
 
-    If `q` (strictly) refines `q'` (`q` is the finer partition), then
-    `QUD.toQuestion q` is wider than `QUD.toQuestion q'` as `Question`s.
+/-- Away from the bottom of the scale, a cell of the coarser grain has two points that no cell
+of the finer grain contains together. -/
+theorem not_cell_subset {ε₁ ε₂ k j : ℕ} (h₁ : 0 < ε₁) (h : ε₁ < ε₂) (hk : 0 < k) :
+    ¬ {x | (2 * x + ε₂) / (2 * ε₂) = k} ⊆ {x | (2 * x + ε₁) / (2 * ε₁) = j} := λ hsub => by
+  have hεk : ε₂ ≤ ε₂ * k := Nat.le_mul_of_pos_right ε₂ hk
+  have hb : ε₂ * k - ε₂ / 2 ∈ {x | (2 * x + ε₂) / (2 * ε₂) = k} :=
+    (mem_cell_iff (by omega)).2 ⟨by omega, by omega⟩
+  have ht : ε₂ * k + (ε₂ - 1) / 2 ∈ {x | (2 * x + ε₂) / (2 * ε₂) = k} :=
+    (mem_cell_iff (by omega)).2 ⟨by omega, by omega⟩
+  have := sub_lt_of_cell h₁ (hsub hb) (hsub ht)
+  omega
 
-    The strictness witnesses `w₀, v₀ : W` share a coarse cell
-    (`q'.r w₀ v₀`) but not a fine cell
-    (`¬ q.r w₀ v₀`); they witness condition (c).
+/-- The finer grain is the wider construal, (23) and §4.7.1: no cell of the coarser grain is
+properly contained in a cell of the finer one, and the finer cell centred on `ε₁ * ε₂` is
+properly contained in the coarser cell centred there. -/
+theorem widerThan_grain {ε₁ ε₂ : ℕ} (h₁ : 0 < ε₁) (h : ε₁ < ε₂) :
+    WiderThan (fromSetoid (grain ε₁)) (fromSetoid (grain ε₂)) := by
+  have h₂ : 0 < ε₂ := h₁.trans h
+  have hcomm : ε₂ * ε₁ = ε₁ * ε₂ := Nat.mul_comm _ _
+  have hf : (2 * (ε₁ * ε₂) + ε₁) / (2 * ε₁) = ε₂ := (mem_cell_iff h₁).2 ⟨by omega, by omega⟩
+  have hc : (2 * (ε₂ * ε₁) + ε₂) / (2 * ε₂) = ε₁ := (mem_cell_iff h₂).2 ⟨by omega, by omega⟩
+  refine ⟨by rw [info_fromSetoid, info_fromSetoid], ?_, {x | grain ε₁ x (ε₁ * ε₂)},
+    mem_alt_fromSetoid_of_mem_classes _ (Setoid.mem_classes _ _), {x | grain ε₂ x (ε₂ * ε₁)},
+    mem_alt_fromSetoid_of_mem_classes _ (Setoid.mem_classes _ _), ?_, ?_⟩
+  · rw [alt_fromSetoid, alt_fromSetoid]
+    rintro _ ⟨y, rfl⟩ _ ⟨z, rfl⟩ ⟨hsub, hnsub⟩
+    rcases Nat.eq_zero_or_pos ((2 * y + ε₂) / (2 * ε₂)) with hk | hk
+    · have h0 : (2 * 0 + ε₁) / (2 * ε₁) = 0 := (mem_cell_iff h₁).2 ⟨by omega, by omega⟩
+      have hz : (2 * z + ε₁) / (2 * ε₁) = 0 := by
+        have := hsub (show (0 : ℕ) ∈ {x | grain ε₂ x y} by
+          show (2 * 0 + ε₂) / (2 * ε₂) = (2 * y + ε₂) / (2 * ε₂)
+          rw [hk]
+          exact (mem_cell_iff h₂).2 ⟨by omega, by omega⟩)
+        exact (this : (2 * 0 + ε₁) / (2 * ε₁) = (2 * z + ε₁) / (2 * ε₁)).symm.trans h0
+      refine hnsub λ x hx => ?_
+      have := (mem_cell_iff h₁).1 ((hx : (2 * x + ε₁) / (2 * ε₁) = _).trans hz)
+      show (2 * x + ε₂) / (2 * ε₂) = (2 * y + ε₂) / (2 * ε₂)
+      rw [hk]
+      exact (mem_cell_iff h₂).2 ⟨by omega, by omega⟩
+    · exact not_cell_subset h₁ h hk hsub
+  · intro x hx
+    have := (mem_cell_iff h₁).1 ((hx : (2 * x + ε₁) / (2 * ε₁) = _).trans hf)
+    show (2 * x + ε₂) / (2 * ε₂) = (2 * (ε₂ * ε₁) + ε₂) / (2 * ε₂)
+    rw [hc]
+    exact (mem_cell_iff h₂).2 ⟨by omega, by omega⟩
+  · intro hsub
+    exact not_cell_subset h₁ h h₁ λ x hx => hsub (hx.trans hc.symm)
 
-    The proof establishes the three conditions of `Question.widerThan`:
-    - (a) Same `info`: both `fromSetoid`-derived issues have `info = univ`.
-    - (b) No q'-alternative is properly contained in any q-alternative:
-      alternatives are classes (or `∅`); under refinement, classes only
-      widen as we go from the finer to the coarser setoid, so the
-      reverse containment is impossible.
-    - (c) Some q-alternative properly contained in some q'-alternative:
-      witnessed by the q-class and q'-class of `w₀`, with `v₀` showing
-      the inclusion is strict. -/
-theorem refinement_implies_wider {W : Type*}
-    (q q' : QUD W)
-    (hRefines : QUD.refines q q')
-    (w₀ v₀ : W)
-    (hCoarse : q'.r w₀ v₀)
-    (hFine : ¬ q.r w₀ v₀) :
-    (QUD.toQuestion q).widerThan (QUD.toQuestion q') := by
-  -- Refinement reads as `q.toSetoid ≤ q'.toSetoid` in mathlib's lattice
-  have hle : ∀ {x y : W}, q.toSetoid x y → q'.toSetoid x y :=
-    fun {x y} hxy => QUD.r_of_sameAnswer (hRefines x y (QUD.sameAnswer_of_r hxy))
-  -- The q-class and q'-class of w₀
-  let C₁ : Set W := {x | q.toSetoid x w₀}
-  let C₂ : Set W := {x | q'.toSetoid x w₀}
-  have hC₁_class : C₁ ∈ q.toSetoid.classes := Setoid.mem_classes q.toSetoid w₀
-  have hC₂_class : C₂ ∈ q'.toSetoid.classes := Setoid.mem_classes q'.toSetoid w₀
-  have hC₁_alt : C₁ ∈ Question.alt (Question.fromSetoid q.toSetoid) :=
-    Question.mem_alt_fromSetoid_of_mem_classes _ hC₁_class
-  have hC₂_alt : C₂ ∈ Question.alt (Question.fromSetoid q'.toSetoid) :=
-    Question.mem_alt_fromSetoid_of_mem_classes _ hC₂_class
-  refine ⟨?_, ?_, ?_⟩
-  -- (a) Same info: both reduce to Set.univ
-  · simp only [QUD.toQuestion, Question.info_fromSetoid]
-  -- (b) No q'-alternative properly contained in any q-alternative
-  · intro p₂ hp₂ p₁ hp₁ hssub
-    rcases Question.eq_empty_or_mem_classes_of_mem_alt_fromSetoid _ hp₂ with hp₂_empty | hp₂_class
-    · -- p₂ = ∅ but the q'-class of w₀ contains w₀, so ∅ ∉ alt — contradiction
-      have hC₂_props : C₂ ∈ (Question.fromSetoid q'.toSetoid).props :=
-        Or.inr ⟨C₂, hC₂_class, subset_rfl⟩
-      have hp_sub : p₂ ⊆ C₂ := by rw [hp₂_empty]; exact Set.empty_subset _
-      have heq : p₂ = C₂ := hp₂.2 C₂ hC₂_props hp_sub
-      have hw₀_in : w₀ ∈ p₂ := by rw [heq]; exact Setoid.refl' q'.toSetoid w₀
-      rw [hp₂_empty] at hw₀_in
-      exact hw₀_in.elim
-    · rcases Question.eq_empty_or_mem_classes_of_mem_alt_fromSetoid _ hp₁ with hp₁_empty | hp₁_class
-      · -- p₁ = ∅, so p₂ ⊊ ∅: p₂ ⊆ ∅ AND ¬ ∅ ⊆ p₂. The latter is vacuously false.
-        rw [hp₁_empty] at hssub
-        exact hssub.2 (Set.empty_subset _)
-      · -- Both classes; refinement forces p₁ ⊆ p₂, contradicting p₂ ⊊ p₁
-        obtain ⟨w, hp₂_eq⟩ := hp₂_class
-        obtain ⟨v, hp₁_eq⟩ := hp₁_class
-        -- p₂ = {x | q'.toSetoid x w}, p₁ = {x | q.toSetoid x v}
-        have hsub : p₁ ⊆ p₂ := by
-          rw [hp₁_eq, hp₂_eq]
-          intro x (hxv : q.toSetoid x v)
-          have hxv' : q'.toSetoid x v := hle hxv
-          -- w ∈ p₂ (refl), so w ∈ p₁ (by ⊆); thus q.toSetoid w v
-          have hw_in_p₂ : w ∈ p₂ := by
-            rw [hp₂_eq]; exact Setoid.refl' q'.toSetoid w
-          have hw_in_p₁ : w ∈ p₁ := hssub.1 hw_in_p₂
-          have hwv_q : q.toSetoid w v := by rw [hp₁_eq] at hw_in_p₁; exact hw_in_p₁
-          have hwv_q' : q'.toSetoid w v := hle hwv_q
-          have hvw : q'.toSetoid v w := Setoid.symm' q'.toSetoid hwv_q'
-          exact Setoid.trans' q'.toSetoid hxv' hvw
-        exact hssub.2 hsub
-  -- (c) C₁ ⊊ C₂: the q-class of w₀ is properly contained in the q'-class
-  · refine ⟨C₁, hC₁_alt, C₂, hC₂_alt, ?_, ?_⟩
-    · intro x (hx : q.toSetoid x w₀); exact hle hx
-    · intro hCsub
-      -- v₀ ∈ C₂ (from hCoarse + symm) but v₀ ∉ C₁ (from hFine)
-      have hv₀_C₂ : v₀ ∈ C₂ := by
-        change q'.toSetoid v₀ w₀
-        exact Setoid.symm' q'.toSetoid hCoarse
-      have hv₀_C₁ : v₀ ∈ C₁ := hCsub hv₀_C₂
-      -- hv₀_C₁ : q.toSetoid v₀ w₀, want: q.r w₀ v₀
-      exact hFine (q.iseqv.symm hv₀_C₁)
+/-- Figure 1 in quarter years: the half-year grain is wider than the year grain but does not
+refine it, since the half-year cell of one and a half years straddles two year cells; so the
+construals are ordered by width and not by [groenendijk-stokhof-1984]'s entailment, fn. 20. -/
+theorem figure1 :
+    WiderThan (fromSetoid (grain 2)) (fromSetoid (grain 4)) ∧ ¬ grain 2 ≤ grain 4 ∧
+      ¬ fromSetoid (grain 2) ≤ fromSetoid (grain 4) := by
+  have hle : ¬ grain 2 ≤ grain 4 := λ h =>
+    absurd (Setoid.le_def.1 h (show grain 2 5 6 from rfl))
+      (show (2 * 5 + 4) / (2 * 4) ≠ (2 * 6 + 4) / (2 * 4) by decide)
+  exact ⟨widerThan_grain (by omega) (by omega), hle, λ h => hle ((fromSetoid_le_iff _ _).1 h)⟩
 
--- ============================================================================
--- H. Granularity–Question Composition (§3.1.2 + §3.2)
--- ============================================================================
+/-! ### Extreme adjectives, §4.8 -/
 
-/-! ### The full chain: finer granularity → wider question
+/-- The construal of a degree question whose zone of indifference, [morzycki-2012], begins at
+`m`: degrees below `m` are distinguished and degrees from `m` on are not. -/
+def zone (m : ℕ) : Setoid ℕ := Setoid.ker (min · m)
 
-Composes the two independently proved steps:
-1. `finer_granularity_refines` (from `Degree.Granularity`):
-   if ε₁ ∣ ε₂, the ε₁-partition refines the ε₂-partition
-2. `refinement_implies_wider` (proved above):
-   strict partition refinement → issue width
+/-- A construal whose zone of indifference begins later is finer and so wider, Figure 2: the
+emphatic use takes the zone to begin as late as the speaker can conceive. -/
+theorem widerThan_zone {m m' : ℕ} (h : m < m') :
+    WiderThan (fromSetoid (zone m')) (fromSetoid (zone m)) := by
+  refine widerThan_fromSetoid (lt_iff_le_not_ge.2 ⟨Setoid.le_def.2 λ {x y} hxy => ?_, λ hle => ?_⟩)
+  · have hxy : min x m' = min y m' := hxy
+    show min x m = min y m
+    omega
+  · have hmm : zone m m m' := by
+      show min m m = min m' m
+      omega
+    have := Setoid.le_def.1 hle hmm
+    have : min m m' = min m' m' := this
+    omega
 
-This is the formal content of the lexical entry (36): *just* selects
-the widest answerable construal, which — when alternatives vary by
-granularity — is the finest one the speaker can answer. -/
+/-! ### Constituent questions, §4.1 -/
 
-open Degree.Granularity (granQUD finer_granularity_refines)
+variable {A : Type*}
 
-/-- The complete granularity–width chain ([deo-thomas-2025] §3.1.2–3.2).
+/-- The mention-all construal of *which x is P?* over worlds that are extensions of `P`: one
+alternative per nonempty extension. -/
+def mentionAll : Question (Set A) := which {E : Set A | E.Nonempty} λ E => {E}
 
-    If ε₁ divides ε₂ (finer grain) and there exist worlds that share a
-    coarse cell but not a fine cell, then the fine-grained question is
-    strictly wider than the coarse-grained question.
+/-- The mention-some construal: one alternative per individual, the worlds in which it is `P`. -/
+def mentionSome : Question (Set A) := which Set.univ λ a => {E | a ∈ E}
 
-    This is the general version of Figure 1: any uniform-grain-width
-    scale satisfies the width relation when grain widths are divisible. -/
-theorem finer_granularity_implies_wider (n ε₁ ε₂ : Nat)
-    (hdvd : ε₁ ∣ ε₂)
-    (w₀ v₀ : Fin n)
-    (hCoarse : (granQUD n ε₂).r w₀ v₀)
-    (hFine : ¬ (granQUD n ε₁).r w₀ v₀) :
-    (QUD.toQuestion (granQUD n ε₁)).widerThan (QUD.toQuestion (granQUD n ε₂)) :=
-  refinement_implies_wider _ _
-    (finer_granularity_refines n ε₁ ε₂ hdvd)
-    w₀ v₀ hCoarse hFine
-
--- ============================================================================
--- I. Concrete Verification: Figure 1
--- ============================================================================
-
-/-- The 8-point age scale from Figure 1 ([deo-thomas-2025]). -/
-def fig1Worlds : List (Fin 8) := [0, 1, 2, 3, 4, 5, 6, 7]
-
-/-- Coarse granularity: 2 cells of 4 (e.g., "younger half" vs "older half").
-    Worlds 0–3 share one answer, worlds 4–7 share another. -/
-def coarseQ : QUD (Fin 8) := QUD.ofProject (λ w => w.val / 4)
-
-/-- Fine granularity: 4 cells of 2 (e.g., {0,1}, {2,3}, {4,5}, {6,7}).
-    Each pair of adjacent worlds shares an answer. -/
-def fineQ : QUD (Fin 8) := QUD.ofProject (λ w => w.val / 2)
-
-/-- Figure 1's partitions are instances of the general `granQUD`. -/
-theorem coarseQ_is_granQUD : coarseQ = granQUD 8 4 := rfl
-theorem fineQ_is_granQUD : fineQ = granQUD 8 2 := rfl
-
-/-- Fine strictly refines coarse: knowing the fine answer determines the
-    coarse answer, but not vice versa (0 and 2 share a coarse cell but
-    not a fine cell). -/
-theorem fig1_strict_refinement :
-    QUD.refines fineQ coarseQ ∧ ¬QUD.refines coarseQ fineQ := by
-  constructor
-  · rw [coarseQ_is_granQUD, fineQ_is_granQUD]
-    exact finer_granularity_refines 8 2 4 ⟨2, rfl⟩
-  · intro h
-    exact absurd (h 0 2 (by native_decide)) (by native_decide)
-
-/-- Figure 1 via the general granularity–width theorem.
-    The fine 4-cell partition produces a wider issue than
-    the coarse 2-cell partition over the 8-point domain.
-
-    Witnessed by worlds 0 and 2: they share a coarse cell (0/4 = 2/4 = 0)
-    but not a fine cell (0/2 = 0 ≠ 2/2 = 1). -/
-theorem fig1_finer_is_wider :
-    (QUD.toQuestion fineQ).widerThan (QUD.toQuestion coarseQ) := by
-  rw [coarseQ_is_granQUD, fineQ_is_granQUD]
-  exact finer_granularity_implies_wider 8 2 4 ⟨2, rfl⟩
-    0 2
-    (by native_decide) (by native_decide)
+/-- The mention-all construal of a constituent question is wider than the mention-some one,
+§4.1: none of its alternatives is entailed by an alternative of the mention-some construal. -/
+theorem widerThan_mentionAll [Nontrivial A] :
+    WiderThan (mentionAll (A := A)) mentionSome := by
+  obtain ⟨a, b, hab⟩ := exists_pair_ne A
+  have hall : alt (mentionAll (A := A)) = (λ E => {E}) '' {E : Set A | E.Nonempty} :=
+    alt_which_of_forall_subset_eq ⟨{a}, Set.singleton_nonempty a⟩
+      (λ E _ => Set.singleton_nonempty E) λ E _ E' _ h => by
+        rw [Set.singleton_subset_singleton.1 h]
+  have hsome : alt (mentionSome (A := A)) = (λ a => {E | a ∈ E}) '' Set.univ :=
+    alt_which_of_forall_subset_eq ⟨a, Set.mem_univ a⟩ (λ a _ => ⟨{a}, Set.mem_singleton a⟩)
+      λ a _ b _ h => by
+        have hba : b = a := h (Set.mem_singleton a)
+        rw [hba]
+  refine ⟨?_, ?_, {{a}}, hall ▸ ⟨{a}, Set.singleton_nonempty a, rfl⟩, {E | a ∈ E},
+    hsome ▸ ⟨a, Set.mem_univ a, rfl⟩, Set.singleton_subset_iff.2 (Set.mem_singleton a),
+    λ hsub => ?_⟩
+  · ext E
+    simp only [mentionAll, mentionSome, info_which, Set.mem_iUnion, Set.mem_ofPred_eq,
+      Set.mem_singleton_iff, Set.mem_univ, true_and, exists_prop, exists_eq_right']
+    exact Set.nonempty_def
+  · rw [hall, hsome]
+    rintro _ ⟨x, -, rfl⟩ _ ⟨E, -, rfl⟩ hlt
+    have hlt' : {E : Set A | x ∈ E} = ∅ := Set.eq_empty_of_ssubset_singleton hlt
+    have hmem : ({x} : Set A) ∈ {E : Set A | x ∈ E} := Set.mem_singleton x
+    rw [hlt'] at hmem
+    exact Set.notMem_empty _ hmem
+  · have hab' : ({a, b} : Set A) = {a} := hsub (show ({a, b} : Set A) ∈ {E | a ∈ E} from
+      Set.mem_insert a {b})
+    exact hab (hab' ▸ Set.mem_insert_of_mem a (Set.mem_singleton b) : b ∈ ({a} : Set A)).symm
 
 end DeoThomas2025

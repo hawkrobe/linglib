@@ -251,10 +251,12 @@ wider questions ([deo-thomas-2025] §3.1.2–3.2).
 The key chain:
 - Grain width ε induces a partition via ⌊d/ε⌋ (integer division)
 - If ε₁ ∣ ε₂, the ε₁-partition refines the ε₂-partition
-- Partition refinement implies question width (`refinement_implies_wider`)
+- Partition refinement implies question width,
+  `DeoThomas2025.widerThan_fromSetoid`
 
-The first two steps live here; the third is composed in the study file
-since it requires `toIssue` from inquisitive semantics. -/
+The first two steps live here. The paper's own grains are centred on the
+multiples of ε rather than aligned at 0, `DeoThomas2025.grain`, and a finer
+centred grain is wider without refining the coarser one. -/
 
 section GranularityQuestion
 
@@ -267,7 +269,7 @@ section GranularityQuestion
 
     [deo-thomas-2025] definition (22): γ maps each point p to a cell I
     of a partition such that p ∈ I. For uniform grain width ε on a discrete
-    scale, this is exactly integer division by ε. -/
+    scale with cells aligned at 0, this is integer division by ε. -/
 def granQUD (n : Nat) (ε : Nat) : QUD (Fin n) :=
   QUD.ofProject (λ w => w.val / ε)
 
