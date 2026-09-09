@@ -3050,3 +3050,4 @@ import Linglib.Data.Examples.EngelhardtEtAl2006
 import Linglib.Data.Examples.Enguehard2024
 import Linglib.Data.Examples.Erlewine2016
 import Linglib.Data.Examples.ErlewineSommerlot2025
+import Linglib.Data.Examples.EvcenBaleBarner2026
