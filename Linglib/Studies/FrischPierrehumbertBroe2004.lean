@@ -1,182 +1,172 @@
-import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Linarith
 import Linglib.Fragments.Arabic.ModernStandard.Phonology
 import Linglib.Studies.Broe1993
-import Linglib.Phonology.Subregular.ForbiddenPairs
-import Linglib.Phonology.Subregular.Multitier
+import Linglib.Data.Examples.FrischPierrehumbertBroe2004
 
 /-!
-# Frisch, Pierrehumbert & Broe (2004) [frisch-pierrehumbert-broe-2004]
+# Frisch, Pierrehumbert and Broe (2004): Similarity Avoidance and the OCP
 
-*Similarity avoidance and the OCP* argues that OCP-Place in Arabic verbal
-roots is gradient: constraint strength is a quantitative function of the
-similarity of the homorganic pair, where similarity is the natural-classes
-metric of eq. (7) — shared natural classes over shared plus non-shared,
-restricted to classes defined by a place feature. A larger, more
-contrastive region of the inventory generates more natural classes, so any
-coronal pair is automatically less similar than a comparable labial pair,
-deriving the strong-coronal vs weak-dorsal/guttural asymmetry that
-categorical class-based analyses ([mccarthy-1986], [mccarthy-1994],
-[padgett-1995]) must stipulate.
+This file formalizes [frisch-pierrehumbert-broe-2004]'s gradient OCP-Place: the rarity of
+homorganic consonant pairs in Arabic verbal roots is a decreasing function of the similarity of
+the pair, where similarity counts the natural classes two consonants share against those they
+share or do not share, restricted to the classes defined by a place feature (`similarity`, the
+paper's equation (7)). The natural classes are generated from the feature matrix by
+[broe-1993]'s structured specification, so a larger, more contrastive region of the inventory
+generates more classes and any coronal pair is less similar than a comparable labial pair,
+deriving the strength of the labial restriction against the weakness of the coronal one that the
+categorical analyses of [mccarthy-1986], [mccarthy-1994] and [padgett-1995] stipulate. The
+paper's worked labial examples are reproduced both from its printed class lists and from the
+labial columns of its feature matrix through `Broe1993.naturalClasses`; the printed list for
+/b, f/ contains the class {b, w}, which no description over the matrix generates, in place of
+{f}, leaving the count and the reported value correct (`similarity_derived_b_f`). Against the
+gradient, a categorical OCP-Place predicts only two rates of co-occurrence, one for violations
+and one for the rest; three distinct rates defeat it (`not_categorical_of_three`), and the
+paper's three worked root types, with no /d t C/ roots where 2.3 are expected, two /d s C/ roots
+where 2.9 are expected, and four /d g C/ roots where 3.3 are expected, are three such rates
+ordered against similarity (`rows_not_categorical`). The paper's own comparison is the fit over
+the whole lexicon of [cowan-1979]: observed over expected co-occurrence falls from 1.22 for
+non-homorganic adjacent pairs to near zero from similarity 0.4 upward (Table IV), and the
+natural-classes model explains more of the variance than the categorical one (Table V).
+
+## Implementation notes
+
+* Similarity is exact over ℚ. The rows carry observed counts, expected counts in tenths, and
+  rates and similarities in hundredths, the paper's printed precision.
+* The two class lists are the paper's enumerations; `labialContext` records the labial columns
+  of the feature matrix with nasality specified for the stops only, the paper's trivial
+  underspecification.
+* The examples are `Data.Examples.FrischPierrehumbertBroe2004`.
+
+## References
+
+* [frisch-pierrehumbert-broe-2004]
+* [broe-1993]
+* [mccarthy-1986]
+* [mccarthy-1994]
+* [padgett-1995]
+* [cowan-1979]
 -/
 
 namespace FrischPierrehumbertBroe2004
 
-open Arabic.ModernStandard
+open Arabic.ModernStandard Data.Examples
 
-/-- The natural-classes similarity metric of eq. (7) (p. 198): shared
-natural classes over shared plus non-shared. -/
+/-- The natural-classes similarity of two segments (equation (7)): the classes containing both
+over the classes containing either. -/
 def similarity {α : Type*} [DecidableEq α] (xs : List (Finset α)) (x y : α) : ℚ :=
-  (xs.countP (λ s => decide (x ∈ s ∧ y ∈ s)) : ℚ) /
-    xs.countP (λ s => decide (x ∈ s ∨ y ∈ s))
+  (xs.countP λ s => decide (x ∈ s ∧ y ∈ s) : ℚ) / xs.countP λ s => decide (x ∈ s ∨ y ∈ s)
 
-/-! ### Labial natural classes (p. 199) -/
+/-! ### The labial worked examples (p. 199) -/
 
-/-- Labial natural classes for the /f, m/ computation (p. 199): the 2
-shared classes, then the 7 non-shared. -/
+/-- The labial natural classes of the /f, m/ computation: the two shared, then the seven not
+shared. -/
 def labialClasses_fm : List (Finset Consonant) :=
   [{.b, .f, .m, .w}, {.b, .f, .m},
    {.b, .f}, {.f, .w}, {.f}, {.b, .m, .w}, {.b, .m}, {.m, .w}, {.m}]
 
-/-- Labial natural classes for the /b, f/ computation (p. 199): the 3
-shared classes, then the 5 non-shared, verbatim from the paper. The
-`{b, w}` entry is a substitution typo for `{f}` — matrix (8) generates
-`{f}` and cannot generate `{b, w}` (`derived_bf_classes`) — leaving the
-count, and the reported 3/8, correct. -/
+/-- The labial natural classes of the /b, f/ computation as printed: the three shared, then the
+five not shared. The entry {b, w} stands where the feature matrix generates {f}
+(`derived_bf_classes`); the count, and the reported 3/8, are unaffected. -/
 def labialClasses_bf : List (Finset Consonant) :=
   [{.b, .f, .m, .w}, {.b, .f, .m}, {.b, .f},
    {.f, .w}, {.b, .m, .w}, {.b, .m}, {.b, .w}, {.b}]
 
-/-- Worked example, p. 199. -/
 theorem similarity_f_m : similarity labialClasses_fm .f .m = 2/9 := by decide +kernel
 
-/-- Worked example, p. 199. -/
 theorem similarity_b_f : similarity labialClasses_bf .b .f = 3/8 := by decide +kernel
 
-/-! ### Deriving the classes from feature matrix (8)
+/-! ### The classes from the feature matrix (8) (p. 201) -/
 
-`labialContext` records the labial columns of matrix (8), p. 201: [cons],
-[son], [cont], [voice] on all four labials, [nasal] on the stops only
-(trivial underspecification). [broe-1993]'s construction over this context
-regenerates the /f, m/ enumeration exactly and vindicates the reported
-3/8 for /b, f/ despite the printed list's typo. -/
-
-/-- The labial columns of feature matrix (8) (p. 201): the extents on
-`{b, f, m, w}` of the feature values the matrix specifies. -/
+/-- The labial columns of the feature matrix: the extents on {b, f, m, w} of the values it
+specifies for consonantal, sonorant, continuant, nasal (on the stops only) and voice. -/
 def labialContext : List (Finset Consonant) :=
-  [{.b, .f, .m}, {.w},   -- [±cons]
-   {.m, .w}, {.b, .f},   -- [±son]
-   {.f, .w}, {.b, .m},   -- [±cont]
-   {.m}, {.b},           -- [±nasal], specified for stops only
-   {.b, .m, .w}, {.f}]   -- [±voice]
+  [{.b, .f, .m}, {.w},
+   {.m, .w}, {.b, .f},
+   {.f, .w}, {.b, .m},
+   {.m}, {.b},
+   {.b, .m, .w}, {.f}]
 
-/-- The natural classes matrix (8) generates for the labial subinventory. -/
+/-- The natural classes the matrix generates over the labials. -/
 def derivedLabialClasses : List (Finset Consonant) :=
   Broe1993.naturalClasses {.b, .f, .m, .w} labialContext
 
-/-- The derived classes relevant to /f, m/ are exactly the paper's
-enumeration. -/
+/-- The derived classes containing /f/ or /m/ are the paper's enumeration. -/
 theorem derived_fm_classes :
-    (derivedLabialClasses.filter
-      (λ s => decide (Consonant.f ∈ s ∨ Consonant.m ∈ s))).toFinset =
-      labialClasses_fm.toFinset := by decide +kernel
+    (derivedLabialClasses.filter λ s => decide (Consonant.f ∈ s ∨ Consonant.m ∈ s)).toFinset =
+      labialClasses_fm.toFinset := by
+  decide +kernel
 
-/-- The derived classes relevant to /b, f/ are the paper's enumeration with
-`{f}` in place of `{b, w}`: no description over matrix (8) has extent
-`{b, w}`. -/
+/-- The derived classes containing /b/ or /f/ are the paper's enumeration with {f} in place of
+{b, w}. -/
 theorem derived_bf_classes :
-    (derivedLabialClasses.filter
-      (λ s => decide (Consonant.b ∈ s ∨ Consonant.f ∈ s))).toFinset =
-      insert {.f} (labialClasses_bf.toFinset.erase {.b, .w}) := by decide +kernel
+    (derivedLabialClasses.filter λ s => decide (Consonant.b ∈ s ∨ Consonant.f ∈ s)).toFinset =
+      insert {.f} (labialClasses_bf.toFinset.erase {.b, .w}) := by
+  decide +kernel
 
-/-- similarity(/f, m/) = 2/9, derived from matrix (8) rather than the
-printed enumeration. -/
 theorem similarity_derived_f_m : similarity derivedLabialClasses .f .m = 2/9 := by
   decide +kernel
 
-/-- similarity(/b, f/) = 3/8, derived from matrix (8): the paper's reported
-value is correct despite its list typo. -/
+/-- The reported value survives the list's typo. -/
 theorem similarity_derived_b_f : similarity derivedLabialClasses .b .f = 3/8 := by
   decide +kernel
 
-/-! ### Table IV (p. 203): O/E by similarity, adjacent pairs -/
+/-! ### Gradient against categorical -/
 
-/-- The adjacent-pair column of Table IV: pairs of similarity-bin
-representative (bin midpoint) and observed-over-expected co-occurrence
-rate. O/E falls from 1.22 at similarity 0 to near zero from similarity 0.4
-upward — the gradient pattern no two-valued model can match. -/
-def adjacentPairOE : List (ℚ × ℚ) :=
-  [(0,        122/100),
-   (5/100,    105/100),
-   (15/100,    83/100),
-   (25/100,    59/100),
-   (35/100,    32/100),
-   (45/100,     3/100),
-   (55/100,     6/100),
-   (8/10,            0),
-   (1,          1/100)]
+variable (t c₁ c₂ : ℚ)
 
-/-! ### Gradient vs categorical: no threshold TSL₂ grammar fits Table IV
+/-- A categorical OCP-Place as a predictor of co-occurrence: one rate for pairs whose similarity
+reaches the threshold, another for the rest. -/
+def categoricalAtThreshold (sim : ℚ) : ℚ := if sim < t then c₁ else c₂
 
-A TSL₂ grammar forbidding tier-adjacent pairs with `similarity ≥ t`
-decides each labial pair by the two-valued step function `similarity < t`,
-so as an O/E predictor it realises at most two values — one per side of
-the threshold. Table IV has more than two distinct O/E levels, so no such
-model fits it exactly. This is the corpus-free core of FPB's quantitative
-argument; their own comparison is the R² fit of Table V. -/
-
-variable (xs : List (Finset Consonant)) (t c₁ c₂ : ℚ)
-
-/-- Step-function O/E prediction of a threshold model: `c₁` strictly below
-the threshold `t`, `c₂` at or above it. -/
-def categoricalAtThreshold (sim : ℚ) : ℚ :=
-  if sim < t then c₁ else c₂
-
-/-- The TSL₂ grammar over `Consonant` forbidding tier-adjacent labial pairs of
-similarity at least `t` — [heinz-rawal-tanner-2011]'s forbidden-pair schema
-instantiated with FPB's metric. -/
-def thresholdedTSL : Subregular.TierStrictlyLocalGrammar 2 Consonant :=
-  Subregular.TierStrictlyLocalGrammar.ofForbiddenPairs
-    (λ x y => similarity xs x y ≥ t) Consonant.IsLabial
-
-/-- **TSL₂ witness**: the threshold grammar's stringset is tier-based
-strictly 2-local. -/
-theorem thresholdedTSL_lang_isTSL2 :
-    Language.IsTierStrictlyLocal 2 (thresholdedTSL xs t).language :=
-  (thresholdedTSL xs t).isTierStrictlyLocal_language
-
-/-- **BTSL₂ corollary**: the threshold grammar's stringset is in the
-multitier closure of strictly local languages, hence consumed by the
-[lambert-2026] BTC framework. -/
-theorem thresholdedTSL_lang_isBTSL2 :
-    Language.IsBTSL 2 (thresholdedTSL xs t).language :=
-  (thresholdedTSL_lang_isTSL2 xs t).toIsBTSL
-
-/-- The threshold grammar accepts a labial pair iff its similarity is
-strictly below the threshold — the precise sense in which any
-similarity-threshold TSL₂ grammar collapses to the two-valued
-`categoricalAtThreshold` prediction. -/
-theorem thresholdedTSL_pair_iff {x y : Consonant} (hx : x.IsLabial) (hy : y.IsLabial) :
-    [x, y] ∈ (thresholdedTSL xs t).language ↔ similarity xs x y < t := by
-  unfold thresholdedTSL
-  rw [Subregular.mem_ofForbiddenPairs_language_iff_filter_isChain]
-  simp only [List.filter_cons, decide_eq_true hx, decide_eq_true hy, ↓reduceIte,
-    List.filter_nil, List.isChain_cons_cons, List.isChain_singleton, and_true, not_le]
-
-/-- **No exact categorical fit to Table IV**: for every threshold `t` and
-predicted rates `c₁, c₂`, some Table IV bin is missed. A threshold model
-realises at most two O/E values, but Table IV contains at least three
-(1.22, 0.59, 0.06). FPB's own argument is the aggregate R² comparison of
-Table V (p. 207: categorical 0.70 vs natural classes 0.75), which requires
-the [cowan-1979] corpus; the exact-fit impossibility here is its
-corpus-free core. -/
-theorem categorical_cannot_fit_adjacentPairOE :
-    ¬ ∀ p ∈ adjacentPairOE, categoricalAtThreshold t c₁ c₂ p.1 = p.2 := by
-  intro hfit
-  have h₁ := hfit (0, 122/100) (by norm_num [adjacentPairOE])
-  have h₂ := hfit (25/100, 59/100) (by norm_num [adjacentPairOE])
-  have h₃ := hfit (55/100, 6/100) (by norm_num [adjacentPairOE])
+/-- A categorical predictor takes at most two values, so three distinct rates defeat it. -/
+theorem not_categorical_of_three {s₁ s₂ s₃ o₁ o₂ o₃ : ℚ} (h₁₂ : o₁ ≠ o₂) (h₁₃ : o₁ ≠ o₃)
+    (h₂₃ : o₂ ≠ o₃) :
+    ¬ (categoricalAtThreshold t c₁ c₂ s₁ = o₁ ∧ categoricalAtThreshold t c₁ c₂ s₂ = o₂ ∧
+      categoricalAtThreshold t c₁ c₂ s₃ = o₃) := by
+  rintro ⟨h₁, h₂, h₃⟩
   simp only [categoricalAtThreshold] at h₁ h₂ h₃
-  split_ifs at h₁ h₂ h₃ <;> linarith
+  split_ifs at h₁ h₂ h₃ <;>
+    first
+    | exact h₁₂ (h₁.symm.trans h₂)
+    | exact h₁₃ (h₁.symm.trans h₃)
+    | exact h₂₃ (h₂.symm.trans h₃)
+
+/-! ### The paper's root types -/
+
+/-- A root type of the paper: its first two consonants, the roots observed and expected (in
+tenths) in the lexicon, their ratio in hundredths, and the consonants' similarity in hundredths
+(Table III). -/
+structure Row where
+  pair : Consonant × Consonant
+  observed : ℕ
+  expected : ℕ
+  oe : ℕ
+  similarity : ℕ
+  deriving DecidableEq
+
+private def consonants : List (String × Consonant) := [("d", .d), ("t", .t), ("s", .s), ("g", .jim)]
+
+def Row.ofExample (ex : LinguisticExample) : Option Row := do
+  let c₁ ← ex.parse? "c1" consonants
+  let c₂ ← ex.parse? "c2" consonants
+  let o ← ex.nat? "observed"
+  let e ← ex.nat? "expectedTenths"
+  let oe ← ex.nat? "oeHundredths"
+  let s ← ex.nat? "similarityHundredths"
+  pure ⟨(c₁, c₂), o, e, oe, s⟩
+
+def rows : List Row := Examples.all.filterMap Row.ofExample
+
+/-- Co-occurrence falls as similarity rises across the worked root types. -/
+theorem rows_antitone :
+    ∀ r ∈ rows, ∀ r' ∈ rows, r.similarity < r'.similarity → r'.oe < r.oe := by
+  decide
+
+/-- No categorical predictor fits the three worked root types. -/
+theorem rows_not_categorical :
+    ¬ ∀ r ∈ rows, categoricalAtThreshold t c₁ c₂ (r.similarity / 100) = r.oe / 100 := λ h =>
+  not_categorical_of_three t c₁ c₂ (by norm_num) (by norm_num) (by norm_num)
+    ⟨h ⟨(.d, .t), 0, 23, 0, 42⟩ (by decide), h ⟨(.d, .s), 2, 29, 69, 17⟩ (by decide),
+      h ⟨(.d, .jim), 4, 33, 121, 0⟩ (by decide)⟩
 
 end FrischPierrehumbertBroe2004
