@@ -1,7 +1,7 @@
 [
   {
     "id": "embick2015_latin_present_1sg",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(40)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 4, (40)"},
     "language": "lati1261",
     "primaryText": "laud-(ā)-ō",
     "discourseSegments": [],
@@ -19,11 +19,11 @@
       ["m2", "ā"],
       ["m3", "ō"]
     ],
-    "comment": "Morphs as exponents; vowel deletion, shortening and the vi~ve lowering are phonological."
+    "comment": "Morphs as exponents; the vowel deletions and shortenings and the vi ~ ve lowering are phonological (§4.6.1)."
   },
   {
     "id": "embick2015_latin_present_2sg",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(40)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 4, (40)"},
     "language": "lati1261",
     "primaryText": "laud-ā-s",
     "discourseSegments": [],
@@ -41,11 +41,11 @@
       ["m2", "ā"],
       ["m3", "s"]
     ],
-    "comment": "Morphs as exponents; vowel deletion, shortening and the vi~ve lowering are phonological."
+    "comment": "Morphs as exponents; the vowel deletions and shortenings and the vi ~ ve lowering are phonological (§4.6.1)."
   },
   {
     "id": "embick2015_latin_present_3sg",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(40)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 4, (40)"},
     "language": "lati1261",
     "primaryText": "laud-a-t",
     "discourseSegments": [],
@@ -63,11 +63,11 @@
       ["m2", "ā"],
       ["m3", "t"]
     ],
-    "comment": "Morphs as exponents; vowel deletion, shortening and the vi~ve lowering are phonological."
+    "comment": "Morphs as exponents; the vowel deletions and shortenings and the vi ~ ve lowering are phonological (§4.6.1)."
   },
   {
     "id": "embick2015_latin_present_1pl",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(40)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 4, (40)"},
     "language": "lati1261",
     "primaryText": "laud-ā-mus",
     "discourseSegments": [],
@@ -85,11 +85,11 @@
       ["m2", "ā"],
       ["m3", "mus"]
     ],
-    "comment": "Morphs as exponents; vowel deletion, shortening and the vi~ve lowering are phonological."
+    "comment": "Morphs as exponents; the vowel deletions and shortenings and the vi ~ ve lowering are phonological (§4.6.1)."
   },
   {
     "id": "embick2015_latin_present_2pl",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(40)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 4, (40)"},
     "language": "lati1261",
     "primaryText": "laud-ā-tis",
     "discourseSegments": [],
@@ -107,11 +107,11 @@
       ["m2", "ā"],
       ["m3", "tis"]
     ],
-    "comment": "Morphs as exponents; vowel deletion, shortening and the vi~ve lowering are phonological."
+    "comment": "Morphs as exponents; the vowel deletions and shortenings and the vi ~ ve lowering are phonological (§4.6.1)."
   },
   {
     "id": "embick2015_latin_present_3pl",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(40)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 4, (40)"},
     "language": "lati1261",
     "primaryText": "laud-a-nt",
     "discourseSegments": [],
@@ -129,11 +129,11 @@
       ["m2", "ā"],
       ["m3", "nt"]
     ],
-    "comment": "Morphs as exponents; vowel deletion, shortening and the vi~ve lowering are phonological."
+    "comment": "Morphs as exponents; the vowel deletions and shortenings and the vi ~ ve lowering are phonological (§4.6.1)."
   },
   {
     "id": "embick2015_latin_imperfect_1sg",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(40)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 4, (40)"},
     "language": "lati1261",
     "primaryText": "laud-ā-ba-m",
     "discourseSegments": [],
@@ -152,11 +152,11 @@
       ["m3", "bā"],
       ["m4", "m"]
     ],
-    "comment": "Morphs as exponents; vowel deletion, shortening and the vi~ve lowering are phonological."
+    "comment": "Morphs as exponents; the vowel deletions and shortenings and the vi ~ ve lowering are phonological (§4.6.1)."
   },
   {
     "id": "embick2015_latin_imperfect_2sg",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(40)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 4, (40)"},
     "language": "lati1261",
     "primaryText": "laud-ā-bā-s",
     "discourseSegments": [],
@@ -175,11 +175,11 @@
       ["m3", "bā"],
       ["m4", "s"]
     ],
-    "comment": "Morphs as exponents; vowel deletion, shortening and the vi~ve lowering are phonological."
+    "comment": "Morphs as exponents; the vowel deletions and shortenings and the vi ~ ve lowering are phonological (§4.6.1)."
   },
   {
     "id": "embick2015_latin_imperfect_3sg",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(40)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 4, (40)"},
     "language": "lati1261",
     "primaryText": "laud-ā-ba-t",
     "discourseSegments": [],
@@ -198,11 +198,11 @@
       ["m3", "bā"],
       ["m4", "t"]
     ],
-    "comment": "Morphs as exponents; vowel deletion, shortening and the vi~ve lowering are phonological."
+    "comment": "Morphs as exponents; the vowel deletions and shortenings and the vi ~ ve lowering are phonological (§4.6.1)."
   },
   {
     "id": "embick2015_latin_imperfect_1pl",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(40)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 4, (40)"},
     "language": "lati1261",
     "primaryText": "laud-ā-bā-mus",
     "discourseSegments": [],
@@ -221,11 +221,11 @@
       ["m3", "bā"],
       ["m4", "mus"]
     ],
-    "comment": "Morphs as exponents; vowel deletion, shortening and the vi~ve lowering are phonological."
+    "comment": "Morphs as exponents; the vowel deletions and shortenings and the vi ~ ve lowering are phonological (§4.6.1)."
   },
   {
     "id": "embick2015_latin_imperfect_2pl",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(40)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 4, (40)"},
     "language": "lati1261",
     "primaryText": "laud-ā-bā-tis",
     "discourseSegments": [],
@@ -244,11 +244,11 @@
       ["m3", "bā"],
       ["m4", "tis"]
     ],
-    "comment": "Morphs as exponents; vowel deletion, shortening and the vi~ve lowering are phonological."
+    "comment": "Morphs as exponents; the vowel deletions and shortenings and the vi ~ ve lowering are phonological (§4.6.1)."
   },
   {
     "id": "embick2015_latin_imperfect_3pl",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(40)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 4, (40)"},
     "language": "lati1261",
     "primaryText": "laud-ā-ba-nt",
     "discourseSegments": [],
@@ -267,11 +267,11 @@
       ["m3", "bā"],
       ["m4", "nt"]
     ],
-    "comment": "Morphs as exponents; vowel deletion, shortening and the vi~ve lowering are phonological."
+    "comment": "Morphs as exponents; the vowel deletions and shortenings and the vi ~ ve lowering are phonological (§4.6.1)."
   },
   {
     "id": "embick2015_latin_perfect_1sg",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(40)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 4, (40)"},
     "language": "lati1261",
     "primaryText": "laud-ā-v(i)-ī",
     "discourseSegments": [],
@@ -290,11 +290,11 @@
       ["m3", "vi"],
       ["m4", "ī"]
     ],
-    "comment": "Morphs as exponents; vowel deletion, shortening and the vi~ve lowering are phonological."
+    "comment": "Morphs as exponents; the vowel deletions and shortenings and the vi ~ ve lowering are phonological (§4.6.1)."
   },
   {
     "id": "embick2015_latin_perfect_2sg",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(40)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 4, (40)"},
     "language": "lati1261",
     "primaryText": "laud-ā-vi-stī",
     "discourseSegments": [],
@@ -313,11 +313,11 @@
       ["m3", "vi"],
       ["m4", "stī"]
     ],
-    "comment": "Morphs as exponents; vowel deletion, shortening and the vi~ve lowering are phonological."
+    "comment": "Morphs as exponents; the vowel deletions and shortenings and the vi ~ ve lowering are phonological (§4.6.1)."
   },
   {
     "id": "embick2015_latin_perfect_3sg",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(40)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 4, (40)"},
     "language": "lati1261",
     "primaryText": "laud-ā-vi-t",
     "discourseSegments": [],
@@ -336,11 +336,11 @@
       ["m3", "vi"],
       ["m4", "t"]
     ],
-    "comment": "Morphs as exponents; vowel deletion, shortening and the vi~ve lowering are phonological."
+    "comment": "Morphs as exponents; the vowel deletions and shortenings and the vi ~ ve lowering are phonological (§4.6.1)."
   },
   {
     "id": "embick2015_latin_perfect_1pl",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(40)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 4, (40)"},
     "language": "lati1261",
     "primaryText": "laud-ā-vi-mus",
     "discourseSegments": [],
@@ -359,11 +359,11 @@
       ["m3", "vi"],
       ["m4", "mus"]
     ],
-    "comment": "Morphs as exponents; vowel deletion, shortening and the vi~ve lowering are phonological."
+    "comment": "Morphs as exponents; the vowel deletions and shortenings and the vi ~ ve lowering are phonological (§4.6.1)."
   },
   {
     "id": "embick2015_latin_perfect_2pl",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(40)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 4, (40)"},
     "language": "lati1261",
     "primaryText": "laud-ā-vi-stis",
     "discourseSegments": [],
@@ -382,11 +382,11 @@
       ["m3", "vi"],
       ["m4", "stis"]
     ],
-    "comment": "Morphs as exponents; vowel deletion, shortening and the vi~ve lowering are phonological."
+    "comment": "Morphs as exponents; the vowel deletions and shortenings and the vi ~ ve lowering are phonological (§4.6.1)."
   },
   {
     "id": "embick2015_latin_perfect_3pl",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(40)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 4, (40)"},
     "language": "lati1261",
     "primaryText": "laud-ā-v(i)-ērunt",
     "discourseSegments": [],
@@ -405,11 +405,11 @@
       ["m3", "vi"],
       ["m4", "ērunt"]
     ],
-    "comment": "Morphs as exponents; vowel deletion, shortening and the vi~ve lowering are phonological."
+    "comment": "Morphs as exponents; the vowel deletions and shortenings and the vi ~ ve lowering are phonological (§4.6.1)."
   },
   {
     "id": "embick2015_latin_pluperfect_1sg",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(40)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 4, (40)"},
     "language": "lati1261",
     "primaryText": "laud-ā-ve-ra-m",
     "discourseSegments": [],
@@ -429,11 +429,11 @@
       ["m4", "rā"],
       ["m5", "m"]
     ],
-    "comment": "Morphs as exponents; vowel deletion, shortening and the vi~ve lowering are phonological."
+    "comment": "Morphs as exponents; the vowel deletions and shortenings and the vi ~ ve lowering are phonological (§4.6.1)."
   },
   {
     "id": "embick2015_latin_pluperfect_2sg",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(40)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 4, (40)"},
     "language": "lati1261",
     "primaryText": "laud-ā-ve-rā-s",
     "discourseSegments": [],
@@ -453,11 +453,11 @@
       ["m4", "rā"],
       ["m5", "s"]
     ],
-    "comment": "Morphs as exponents; vowel deletion, shortening and the vi~ve lowering are phonological."
+    "comment": "Morphs as exponents; the vowel deletions and shortenings and the vi ~ ve lowering are phonological (§4.6.1)."
   },
   {
     "id": "embick2015_latin_pluperfect_3sg",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(40)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 4, (40)"},
     "language": "lati1261",
     "primaryText": "laud-ā-ve-ra-t",
     "discourseSegments": [],
@@ -477,11 +477,11 @@
       ["m4", "rā"],
       ["m5", "t"]
     ],
-    "comment": "Morphs as exponents; vowel deletion, shortening and the vi~ve lowering are phonological."
+    "comment": "Morphs as exponents; the vowel deletions and shortenings and the vi ~ ve lowering are phonological (§4.6.1)."
   },
   {
     "id": "embick2015_latin_pluperfect_1pl",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(40)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 4, (40)"},
     "language": "lati1261",
     "primaryText": "laud-ā-ve-rā-mus",
     "discourseSegments": [],
@@ -501,11 +501,11 @@
       ["m4", "rā"],
       ["m5", "mus"]
     ],
-    "comment": "Morphs as exponents; vowel deletion, shortening and the vi~ve lowering are phonological."
+    "comment": "Morphs as exponents; the vowel deletions and shortenings and the vi ~ ve lowering are phonological (§4.6.1)."
   },
   {
     "id": "embick2015_latin_pluperfect_2pl",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(40)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 4, (40)"},
     "language": "lati1261",
     "primaryText": "laud-ā-ve-rā-tis",
     "discourseSegments": [],
@@ -525,11 +525,11 @@
       ["m4", "rā"],
       ["m5", "tis"]
     ],
-    "comment": "Morphs as exponents; vowel deletion, shortening and the vi~ve lowering are phonological."
+    "comment": "Morphs as exponents; the vowel deletions and shortenings and the vi ~ ve lowering are phonological (§4.6.1)."
   },
   {
     "id": "embick2015_latin_pluperfect_3pl",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(40)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 4, (40)"},
     "language": "lati1261",
     "primaryText": "laud-ā-ve-ra-nt",
     "discourseSegments": [],
@@ -549,16 +549,16 @@
       ["m4", "rā"],
       ["m5", "nt"]
     ],
-    "comment": "Morphs as exponents; vowel deletion, shortening and the vi~ve lowering are phonological."
+    "comment": "Morphs as exponents; the vowel deletions and shortenings and the vi ~ ve lowering are phonological (§4.6.1)."
   },
   {
     "id": "embick2015_hungarian_ruha_pl",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(7)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 7, (7)"},
     "language": "hung1274",
     "primaryText": "ruhá-k",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "ruhas",
+    "translation": "dresss",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -568,16 +568,16 @@
       ["poss", "no"],
       ["plExponent", "k"]
     ],
-    "comment": "Plural exponent -(V)k without a following possessive."
+    "comment": "Plural -(V)k with no possessive following."
   },
   {
     "id": "embick2015_hungarian_ruha_plposs",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(7)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 7, (7)"},
     "language": "hung1274",
     "primaryText": "ruha-ái-m",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "my ruhas",
+    "translation": "my dresss",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -587,16 +587,16 @@
       ["poss", "yes"],
       ["plExponent", "ai"]
     ],
-    "comment": "Plural exponent -((j)a)i- before the possessive."
+    "comment": "Plural -((j)a)i- before the first singular possessive -m."
   },
   {
     "id": "embick2015_hungarian_kalap_pl",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(7)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 7, (7)"},
     "language": "hung1274",
     "primaryText": "kalap-ok",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "kalaps",
+    "translation": "hats",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -606,16 +606,16 @@
       ["poss", "no"],
       ["plExponent", "k"]
     ],
-    "comment": "Plural exponent -(V)k without a following possessive."
+    "comment": "Plural -(V)k with no possessive following."
   },
   {
     "id": "embick2015_hungarian_kalap_plposs",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(7)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 7, (7)"},
     "language": "hung1274",
     "primaryText": "kalap-jai-m",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "my kalaps",
+    "translation": "my hats",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -625,16 +625,16 @@
       ["poss", "yes"],
       ["plExponent", "ai"]
     ],
-    "comment": "Plural exponent -((j)a)i- before the possessive."
+    "comment": "Plural -((j)a)i- before the first singular possessive -m."
   },
   {
     "id": "embick2015_hungarian_ház_pl",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(7)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 7, (7)"},
     "language": "hung1274",
     "primaryText": "ház-ak",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "házs",
+    "translation": "houses",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -644,16 +644,16 @@
       ["poss", "no"],
       ["plExponent", "k"]
     ],
-    "comment": "Plural exponent -(V)k without a following possessive."
+    "comment": "Plural -(V)k with no possessive following."
   },
   {
     "id": "embick2015_hungarian_ház_plposs",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(7)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 7, (7)"},
     "language": "hung1274",
     "primaryText": "ház-ai-m",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "my házs",
+    "translation": "my houses",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -663,11 +663,11 @@
       ["poss", "yes"],
       ["plExponent", "ai"]
     ],
-    "comment": "Plural exponent -((j)a)i- before the possessive."
+    "comment": "Plural -((j)a)i- before the first singular possessive -m."
   },
   {
     "id": "embick2015_korean_pap",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(10)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 7, (10)"},
     "language": "kore1280",
     "primaryText": "pap-i",
     "discourseSegments": [],
@@ -682,11 +682,11 @@
       ["final", "C"],
       ["nomExponent", "i"]
     ],
-    "comment": ""
+    "comment": "Nominative allomorph conditioned by the final segment of the host (§7.2.2)."
   },
   {
     "id": "embick2015_korean_ai",
-    "source": {"bibkey": "embick-2015", "paperLabel": "(10)"},
+    "source": {"bibkey": "embick-2015", "paperLabel": "ch. 7, (10)"},
     "language": "kore1280",
     "primaryText": "ai-ka",
     "discourseSegments": [],
@@ -701,6 +701,6 @@
       ["final", "V"],
       ["nomExponent", "ka"]
     ],
-    "comment": ""
+    "comment": "Nominative allomorph conditioned by the final segment of the host (§7.2.2)."
   }
 ]
