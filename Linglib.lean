@@ -3054,3 +3054,4 @@ import Linglib.Data.Examples.Everdell2023
 import Linglib.Data.Examples.FarkasBruce2010
 import Linglib.Data.Examples.FarkasRoelofsen2017
 import Linglib.Data.Examples.Faust2026
+import Linglib.Data.Examples.FaustLampitelli2026

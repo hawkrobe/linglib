@@ -1,565 +1,460 @@
-/-
-Copyright (c) 2026 Robert Hawkins. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Robert Hawkins
--/
 import Linglib.Phonology.Segmental.ElementTheory
-import Linglib.Phonology.OCP
 import Linglib.Fragments.Tigrinya.Phonology
 import Linglib.Fragments.Tigre.Phonology
+import Linglib.Data.Examples.FaustLampitelli2026
 
 /-!
-# Faust & Lampitelli (2026): Guttural Synseresis in Tigrinya and Tigre
-[faust-lampitelli-2026]
+# Faust and Lampitelli (2026): Guttural syneresis in Tigrinya and Tigre
 
-[faust-lampitelli-2026]'s headline claim: in the Ethiosemitic
-languages Tigre and Tigrinya, gutturals (ʔ, h, ħ, ʕ) function as
-**low glides** — the consonantal counterpart of low vowels [ʌ, a].
-Sequences /ʌGV/ undergo *synersis* (the /ʌ/ syncopated, only G
-surfaces) just as /iIu/ → [ju] in classical hiatus-resolution; both
-patterns instantiate the same Element-Theoretic operation
-([kaye-lowenstamm-vergnaud-1985], [backley-2011]) of
-element-fusion under OCP.
+This file formalizes [faust-lampitelli-2026]'s analysis of guttural syneresis: in Tigrinya and
+Tigre a low vowel in an open syllable before a guttural is syncopated ([sɨmʕ-i] from
+/s_mʌʕ-i/, (10), (36)), the way /i/ is before /j/, because gutturals and low vowels share the
+element |A| of Element Theory ([kaye-lowenstamm-vergnaud-1985], [backley-2011];
+[angoujard-1995] for the gutturals, (20)–(22)) and two adjacent |A|s fuse into one (26). The
+analysis runs in Strict CV ([lowenstamm-1996], [scheer-2004]) with the lateral relations of
+Government Phonology ([kaye-lowenstamm-vergnaud-1990], [charette-1991],
+[scheer-segeral-2001]): `fusion` always applies to a low vowel next to an |A| consonant and
+lowers it to [a] ((27), the headed |A| of (21)); `dissociation` empties the fused nucleus iff it
+is properly governed by a contentful nucleus and is not the licensor of its own fused domain,
+so lowering without syneresis results before a final guttural (27) and after a guttural (28);
+`epenthesis` marks the nuclei that must be realized — the initial one, the one licensing a
+word-internal guttural (25), the one after a silent empty nucleus — and `realizations` fills
+each with the weak vowel or, by trans-guttural harmony, a copy of the vowel across the guttural
+((7), (13), (37)). The operations apply in the order "rules apply" gives ([kaye-1992], (30)),
+which makes syneresis opaque in (14), (16), (37). `rows_derived` derives every attested form of
+(4)–(19) and (31)–(38) from the fragments' roots and the paper's templates
+(`Data/Examples/FaustLampitelli2026.json`); `rows_unpredicted` records the forms of (17) and
+(39) whose retained position the analysis does not predict (§3.3.3, [buckley-2000]).
 
-Two co-equal headline contributions (paper §1, eq. 2):
+## Implementation notes
 
-* **Empirical**: gutturals = low glides (the |A|-as-consonantal
-  analogue of |I|-as-glide |j| and |U|-as-glide |w|).
-* **Polemical**: synersis is *economy-driven* (eq. 2b: "two
-  homorganic elements are realized in one if possible"), not
-  phonotactic-driven (eq. 2a: "fancy Latinate name for gliding").
-  The Ethiosemitic facts force (2b): /mibarak/ → [mɨbɨrak] (paper
-  eq. 18c, 39b) shows synersis applies even when no surface
-  phonotactic problem would arise from leaving the sequence
-  unfused.
+* A form is a list of CV units; templates are positions (radical, geminable radical, fixed
+  segment) with nuclei, instantiated by a fragment root. Gutturals do not geminate (§2.1), so
+  a geminable position holding a guttural is a single unit ((12): -sʌʔɨl).
+* The prefixes tɨ- and mɨ- carry empty nuclei realized by epenthesis, as in the paper's
+  underlying forms (t_-, m_-); the causative ʔʌ- is lexical (19c).
+* Among the realizations of a run of empty nuclei the analysis takes the Ethiosemitic option
+  C▪C_C▪C (37a): reading left to right, a nucleus after a silent one is realized.
+* Trans-guttural harmony "can, but does not have to apply" (§2.1), so `realizations` lists
+  every option and `rows_derived` asks that each attested form be among them. Realization
+  does not feed fusion again, the paper's first way out of the loop of (37b–d).
+* The postvocalic spirantization of b ([nɨβaħ], (10b)) is outside the analysis; β is read as b.
+* Not derived: the |I|-syneresis of (8)–(9) and the ejective asymmetry of fn. 8.
 
-## What this file formalizes
+## References
 
-* §1 ET decomposition of Tigrinya/Tigre vowels and gutturals (paper
-  eq. 20-22), as a per-segment projection from the theory-neutral
-  fragment files.
-* §0 The Strict-CV substrate (`StrictCV` namespace below): `VStatus`,
-  `CVSeq`, `ProperlyGoverned`, `ECPSatisfied`, `LicensesPrecedingC`.
-  Inlined here as a single-consumer concept (CLAUDE.md graduation rule).
-* §2 Strict-CV representations of the paper's worked examples,
-  encoded as `CVSeq` values with per-V-slot melodic status.
-* §3 Five named theorems:
-  * `T0_economy_drives_syneresis` — witness `/mibarak/ → [mɨbɨrak]`.
-  * `T1_gutturals_are_lowGlides` — structural; ET decomposition.
-  * `T2_synersis_iff_fused_and_governed` — analysis's core
-    biconditional.
-  * `T3_selfLicensing_blocks_dissociation` — explains [ʕarifu].
-  * `T4_walker_rose_2015_overshoots` — divergence with witness
-    `/mismaʕa/`.
-* §4 The OCP-merger reading: |A|+|A| → |A| as instance of the
-  shared `OCP.collapse` substrate.
-* §5 Paper self-flagged limits as LIMITATION-tagged comments.
-
-## What this file does NOT formalize
-
-* The full GP/Strict-CV apparatus (Coda Mirror, lateral
-  relation typology). The `StrictCV` namespace below carries the
-  *simplified* form per the paper's n. 16.
-* The phonetic implementation of [ɨ] vs [a]/[ʌ] — see
-  [faust-2024] for the cross-linguistic theory.
-* Templatic morphology beyond bare CV patterns (see
-  [faust-2014], [faust-2017b], [faust-lampitelli-2023]).
-
-## Cross-framework engagement
-
-* §3 T4 makes explicit the divergence with [walker-rose-2015-amp].
-* The OCP merger operation (`OCP.collapse`) unifies
-  this paper's |A|+|A| fusion with [lionnet-2022]'s TRN merger
-  (Laal subtonal phonology). They are instances of one operation
-  on different feature spaces; the framework choice (binary-feature
-  TRN vs privative-element |A|) lives at the segment-representation
-  level, not at the merger-operation level.
-
-## Convention
-
-Predicates in this file are `Prop`-valued with `Decidable` instances,
-matching mathlib + the existing `OCP` style.
-Worked examples are checked via `decide` rather than `rfl` where
-appropriate.
+* [faust-lampitelli-2026]
+* [kaye-lowenstamm-vergnaud-1985]
+* [backley-2011]
+* [angoujard-1995]
+* [lowenstamm-1996]
+* [scheer-2004]
+* [kaye-lowenstamm-vergnaud-1990]
+* [charette-1991]
+* [scheer-segeral-2001]
+* [kaye-1992]
+* [bye-2011]
+* [buckley-2000]
 -/
 
 namespace FaustLampitelli2026
 
-open ElementTheory
+open Morphology ElementTheory Tigrinya.Phonology Data.Examples
 
-/-! ## §0 Strict-CV Government Phonology substrate
-[kaye-lowenstamm-vergnaud-1985] [kaye-lowenstamm-vergnaud-1990]
-[charette-1991] [lowenstamm-1996] [scheer-2004]
-[scheer-segeral-2001]
+/-! ### Element-theoretic representations (20)–(22) -/
 
-Inlined here as a `StrictCV` namespace; single-consumer concept per
-CLAUDE.md graduation rule. Government Phonology (GP) and its Strict-CV
-(CVCV) descendant ([lowenstamm-1996], [scheer-2004]) build
-phonological representations as alternating C-V skeletal sequences,
-with three core lateral relations between V-slots:
+/-- (21)–(22): [ʌ] is |A| and [a] headed |A|; the mid vowels combine |A| with |I| or |U|; the
+weak vowel is the realization of an empty nucleus. -/
+def vowelET : Vowel → MR
+  | .a => MR.headedSimplex .A
+  | .aBare => MR.simplex .A
+  | .i => MR.headedSimplex .I
+  | .u => MR.headedSimplex .U
+  | .e => MR.headPlusOp .I .A
+  | .o => MR.headPlusOp .U .A
+  | .weak => MR.empty
 
-* **Proper Government** ([kaye-lowenstamm-vergnaud-1990]): a
-  contentful nucleus governs a preceding empty nucleus, allowing the
-  empty nucleus to remain phonetically silent.
-* **Empty Category Principle** (ECP, simplified): an empty nucleus
-  may be phonetically non-interpreted iff it is properly governed.
-* **Licensing** ([scheer-segeral-2001]): a contentful nucleus
-  licenses an adjacent position (typically the preceding onset).
+/-- (20): every guttural contains |A|, and the pharyngeals are headed by it. -/
+def gutturalET : Guttural → MR
+  | .glottalStop => MR.headPlusOp .glottal .A
+  | .h => MR.headPlusOp .H .A
+  | .pharyngealVoiceless => (MR.numeration {.glottal, .H}).headCompose .A
+  | .pharyngealVoiced => (MR.numeration {.glottal, .H, .L}).headCompose .A
 
-The substrate here gives the **simplified** form of these definitions
-used in [faust-lampitelli-2026], which acknowledges the
-simplification (paper n. 16).
--/
+theorem gutturalET_hasElement_A : ∀ g : Guttural, (gutturalET g).HasElement .A := by decide
 
-namespace StrictCV
+theorem isHead_A_iff_isPharyngeal : ∀ g : Guttural, (gutturalET g).IsHead .A ↔ g.IsPharyngeal := by
+  decide
 
-/-- A V-slot's melodic status. Per Strict CV ([lowenstamm-1996]),
-    every consonant-cluster representation interpolates empty V-slots,
-    so the same skeletal position may surface silently if properly
-    governed, or with an epenthetic vowel if not. -/
-inductive VStatus where
-  /-- The V-slot has melodic content. -/
-  | full
-  /-- The V-slot has no melodic content. -/
-  | empty
+/-- `IsLowA v`: the vowel's melody is |A| alone, the low vowels of (21). The mid vowels carry
+|A| in a complex expression, which blocks fusion (§3.2.2). -/
+def IsLowA (v : Vowel) : Prop := (vowelET v).elements = {.A}
+
+instance : DecidablePred IsLowA := λ _ => inferInstanceAs (Decidable (_ = _))
+
+theorem isLowA_iff_isLow : ∀ v : Vowel, IsLowA v ↔ v.IsLow := by decide
+
+/-- The vowel with a given melody, if any. -/
+def Vowel.ofMR? (m : MR) : Option Vowel :=
+  [Vowel.a, .aBare, .i, .u, .e, .o, .weak].find? (vowelET · = m)
+
+/-- The fused |A|, spanning nucleus and consonant, is headed ((21), (27)): a fused vowel is
+realized with |A| as its head, so [ʌ] lowers to [a]. -/
+def lowered (v : Vowel) : Vowel := (Vowel.ofMR? ((vowelET v).headCompose .A)).getD v
+
+theorem lowered_aBare : lowered .aBare = .a := by decide
+
+/-! ### Strict CV forms -/
+
+/-- A consonantal position: a guttural, or any other consonant by its transcription. -/
+inductive Cons where
+  | guttural (g : Guttural)
+  | plain (s : String)
   deriving DecidableEq, Repr
 
-namespace VStatus
+/-- The consonant written by a root segment. -/
+def Cons.ofIPA (s : String) : Cons :=
+  match Guttural.ofIPA? s with
+  | some g => .guttural g
+  | none => .plain s
 
-def IsFull : VStatus → Prop
-  | .full  => True
-  | .empty => False
+/-- `c.HasA`: the consonant's melody contains |A|, which every guttural's does (20). Other
+consonants carry no representation here: ejectives also lower but never trigger syneresis
+(fn. 8). -/
+def Cons.HasA : Cons → Prop
+  | .guttural g => (gutturalET g).HasElement .A
+  | .plain _ => False
 
-instance : DecidablePred IsFull
-  | .full  => isTrue trivial
-  | .empty => isFalse not_false
+instance : DecidablePred Cons.HasA := λ c => by cases c <;> unfold Cons.HasA <;> infer_instance
 
-def IsEmpty : VStatus → Prop
-  | .empty => True
-  | .full  => False
+theorem hasA_guttural (g : Guttural) : (Cons.guttural g).HasA := gutturalET_hasElement_A g
 
-instance : DecidablePred IsEmpty
-  | .empty => isTrue trivial
-  | .full  => isFalse not_false
+/-- The transcription of a consonant. -/
+def Cons.chars : Cons → List Char
+  | .guttural g => g.toIPA.toList
+  | .plain s => s.toList
 
-end VStatus
+/-- A nucleus in the course of a derivation (29): empty, empty but to be realized (▪), or a
+lexical vowel, shaded when fused with an adjacent guttural. -/
+inductive Nuc where
+  | empty
+  | mark
+  | vowel (v : Vowel) (fused : Bool)
+  deriving DecidableEq, Repr
 
-/-- A **Strict-CV sequence** is a list of V-slot statuses. C-slots are
-    implicit between each pair ([lowenstamm-1996]). The list
-    `[v₁, v₂, v₃]` represents the skeleton `C₁ V₁ C₂ V₂ C₃ V₃`. -/
-structure CVSeq where
-  vStatus : List VStatus
-  deriving Repr, DecidableEq
+/-- A CV unit ([lowenstamm-1996]). -/
+structure CV where
+  c : Cons
+  v : Nuc
+  deriving DecidableEq, Repr
 
-namespace CVSeq
+/-- A form: a strict iteration of CV units. -/
+abbrev Form := List CV
 
-def vCount (s : CVSeq) : Nat := s.vStatus.length
+/-- The nucleus at `i` is contentful, so that it properly governs the nucleus before it (23a). -/
+def Contentful (f : Form) (i : Nat) : Prop :=
+  match f[i]? with
+  | some ⟨_, .vowel _ _⟩ => True
+  | _ => False
 
-def vAt (s : CVSeq) (i : Nat) : Option VStatus := s.vStatus[i]?
+instance (f : Form) (i : Nat) : Decidable (Contentful f i) := by
+  unfold Contentful; split <;> infer_instance
 
-def ofList (vs : List VStatus) : CVSeq := ⟨vs⟩
+/-- The consonant at `i` contains |A|. -/
+def HasAAt (f : Form) (i : Nat) : Prop :=
+  match f[i]? with
+  | some u => u.c.HasA
+  | none => False
 
-/-- **Proper Government** ([kaye-lowenstamm-vergnaud-1990],
-    simplified per [faust-lampitelli-2026] eq. 23a): V-slot at
-    index `i` is *properly governed* iff V-slot `i+1` exists and is
-    contentful. -/
-def ProperlyGoverned (s : CVSeq) (i : Nat) : Prop :=
-  s.vAt (i + 1) = some .full
+instance (f : Form) (i : Nat) : Decidable (HasAAt f i) := by
+  unfold HasAAt; split <;> infer_instance
 
-instance (s : CVSeq) (i : Nat) : Decidable (s.ProperlyGoverned i) :=
-  inferInstanceAs (Decidable (s.vAt (i + 1) = some .full))
+/-- The nucleus at `i` sits inside a geminate. -/
+def GeminateInternal (f : Form) (i : Nat) : Prop :=
+  match f[i]?, f[i + 1]? with
+  | some u, some u' => u.c = u'.c
+  | _, _ => False
 
-/-- **Empty Category Principle** ([kaye-1992], simplified per
-    [faust-lampitelli-2026] eq. 23b): an empty V-slot may surface
-    silently iff it is properly governed; a full V-slot is always
-    realized; out-of-range positions vacuously hold. -/
-def ECPSatisfied (s : CVSeq) (i : Nat) : Prop :=
-  match s.vAt i with
-  | some .empty => s.ProperlyGoverned i
-  | _           => True
+instance (f : Form) (i : Nat) : Decidable (GeminateInternal f i) := by
+  unfold GeminateInternal; split <;> infer_instance
 
-instance (s : CVSeq) (i : Nat) : Decidable (s.ECPSatisfied i) := by
-  unfold CVSeq.ECPSatisfied
-  split <;> infer_instance
+/-! ### The operations of (30) -/
 
-/-- **Licensing** ([scheer-segeral-2001], simplified per
-    [faust-lampitelli-2026] eq. 24): V-slot at index `i` licenses
-    its preceding C-position iff `i` is contentful. -/
-def LicensesPrecedingC (s : CVSeq) (i : Nat) : Prop :=
-  s.vAt i = some .full
+/-- Fusion ((26b), (27b), (28b)): a low vowel next to an |A| consonant — its own onset or the
+next — fuses with it and is lowered. Fusion always applies (§3.2.2). -/
+def fusion (f : Form) : Form :=
+  f.mapIdx λ i u =>
+    match u.v with
+    | .vowel v false =>
+      if IsLowA v ∧ (u.c.HasA ∨ HasAAt f (i + 1)) then ⟨u.c, .vowel (lowered v) true⟩ else u
+    | _ => u
 
-instance (s : CVSeq) (i : Nat) : Decidable (s.LicensesPrecedingC i) :=
-  inferInstanceAs (Decidable (s.vAt i = some .full))
+/-- Dissociation (26c): a fused nucleus is emptied iff it is properly governed by a contentful
+nucleus and is not the licensor of its own fused domain — the guttural is the next onset
+(Av + Ac) rather than its own (Ac + Av, (28)). -/
+def dissociation (f : Form) : Form :=
+  f.mapIdx λ i u =>
+    match u.v with
+    | .vowel _ true =>
+      if HasAAt f (i + 1) ∧ ¬ u.c.HasA ∧ Contentful f (i + 1) then ⟨u.c, .empty⟩ else u
+    | _ => u
 
-/-- An empty nucleus that is not properly governed violates ECP. -/
-theorem empty_not_governed_violates_ecp (s : CVSeq) (i : Nat)
-    (hempty : s.vAt i = some .empty) (hpg : ¬ s.ProperlyGoverned i) :
-    ¬ s.ECPSatisfied i := by
-  unfold ECPSatisfied
-  rw [hempty]
-  exact hpg
+/-- Epenthesis (30)–(31): the empty nuclei that must be realized. The word-final nucleus and a
+nucleus inside a geminate stay empty; the initial nucleus (no initial clusters), the nucleus
+licensing a word-internal guttural (25), a nucleus after a silent empty one (no triconsonantal
+clusters) and a nucleus before a geminate are realized; every other empty nucleus is governed
+and silent. -/
+def epenthesis (f : Form) : Form :=
+  (f.zipIdx.foldl (init := ([], false)) λ (acc : Form × Bool) (ui : CV × Nat) =>
+    match ui.1.v with
+    | .empty =>
+      if ui.2 + 1 = f.length ∨ GeminateInternal f ui.2 then (acc.1 ++ [ui.1], true)
+      else if ui.2 = 0 ∨ ui.1.c.HasA ∨ acc.2 ∨ GeminateInternal f (ui.2 + 1) then
+        (acc.1 ++ [⟨ui.1.c, .mark⟩], false)
+      else (acc.1 ++ [ui.1], true)
+    | _ => (acc.1 ++ [ui.1], false)).1
 
-/-- A full nucleus is always ECP-satisfied (vacuous). -/
-theorem full_ecp_satisfied (s : CVSeq) (i : Nat)
-    (hfull : s.vAt i = some .full) :
-    s.ECPSatisfied i := by
-  unfold ECPSatisfied
-  rw [hfull]
-  trivial
+/-- The derivation in the order "rules apply" gives (30): fusion creates the environment of
+dissociation, which creates that of epenthesis. -/
+def derive (f : Form) : Form := epenthesis (dissociation (fusion f))
 
-end CVSeq
+/-- The lexical vowel at `i`, if any. -/
+def vowelAt (f : Form) (i : Nat) : Option Vowel :=
+  match f[i]? with
+  | some ⟨_, .vowel v _⟩ => some v
+  | _ => none
 
-end StrictCV
+/-- The realizations of a nucleus to be realized: the weak vowel, or, by trans-guttural
+harmony ((7), (19c)), a copy of the vowel across an adjacent guttural in either direction. -/
+def realizeMark (f : Form) (i : Nat) : List (List Char) :=
+  (['ɨ'] ::
+    ((if 0 < i ∧ HasAAt f i then (vowelAt f (i - 1)).toList else []) ++
+      (if HasAAt f (i + 1) then (vowelAt f (i + 1)).toList else [])).map
+        (·.toIPA.toList)).dedup
 
-open StrictCV
+/-- The realizations of the nucleus at `i`. -/
+def realizeNuc (f : Form) (i : Nat) : List (List Char) :=
+  match f[i]? with
+  | some ⟨_, .mark⟩ => realizeMark f i
+  | some ⟨_, .vowel v _⟩ => [v.toIPA.toList]
+  | _ => [[]]
 
-/-! ## §1 Element-Theoretic decomposition of Tigrinya/Tigre segments
--/
+/-- The transcription of the consonant at `i`. -/
+def consAt (f : Form) (i : Nat) : List Char :=
+  match f[i]? with
+  | some u => u.c.chars
+  | none => []
 
-/-! ### The vowel decompositions (paper eq. 20-22)
+/-- The surface forms of a form: consonants and realized nuclei in order, one form per choice
+of realization. -/
+def realizations (f : Form) : List (List Char) :=
+  (List.range f.length).foldl (init := [[]]) λ acc i =>
+    acc.flatMap λ s => (realizeNuc f i).map (s ++ consAt f i ++ ·)
 
-* [a] = headed |A| (the marked low vowel)
-* [ʌ] = bare |A| (the unmarked low vowel; this contrast is paper
-  eq. 21)
-* [i] = headed |I|
-* [u] = headed |U|
-* [e] = headed |I| + bare |A|
-* [o] = headed |U| + bare |A|
-* [ɨ] = empty bundle (eq. 22 — phonetic realization of an empty
-  vocalic position)
+/-- After fusion no unfused low vowel is adjacent to an |A| consonant: fusion always applies
+among two adjacent |A|s (§3.2.2). -/
+theorem fusion_fuses (f : Form) (i : Nat) (c : Cons) (v : Vowel)
+    (h : (fusion f)[i]? = some ⟨c, .vowel v false⟩) :
+    ¬ (IsLowA v ∧ (c.HasA ∨ HasAAt f (i + 1))) := by
+  simp only [fusion, List.getElem?_mapIdx, Option.map_eq_some_iff] at h
+  obtain ⟨u, -, hu⟩ := h
+  split at hu
+  · split at hu
+    · exact absurd (congrArg CV.v hu) (by simp)
+    · cases hu
+      simp_all
+  · cases hu
+    simp_all
 
-### The guttural decompositions (paper eq. 20)
+/-- Dissociation empties exactly the fused nuclei that are governed and not self-licensed
+((26c), (28)). -/
+theorem dissociation_empty_iff (f : Form) (i : Nat) (u : CV) (h : f[i]? = some u) :
+    (dissociation f)[i]? = some ⟨u.c, .empty⟩ ↔
+      u.v = .empty ∨ ∃ v, u.v = .vowel v true ∧
+        HasAAt f (i + 1) ∧ ¬ u.c.HasA ∧ Contentful f (i + 1) := by
+  simp only [dissociation, List.getElem?_mapIdx, h, Option.map_some, Option.some.injEq]
+  obtain ⟨c, n⟩ := u
+  cases n with
+  | empty => simp
+  | mark => simp
+  | vowel v fused =>
+    cases fused
+    · simp
+    · simp only [Nuc.vowel.injEq, reduceCtorEq, false_or]
+      split <;> simp_all
 
-All four attested gutturals contain |A|. The pharyngeal/laryngeal
-contrast is the **headedness of |A|**: pharyngeals (ħ, ʕ) are headed
-by |A|, laryngeals (ʔ, h) have |A| as operator.
--/
+/-! ### Templates and suffixes (§2.1) -/
 
-/-- Element-Theoretic decomposition of Tigrinya/Tigre vowels per
-    [faust-lampitelli-2026] eq. 20-22. -/
-def vowelET : Tigrinya.Phonology.Vowel → MR
-  | .a     => MR.headedSimplex .A            -- [a]: headed |A|
-  | .aBare => MR.simplex .A                  -- [ʌ]: non-headed |A|
-  | .i     => MR.headedSimplex .I            -- [i]: headed |I|
-  | .u     => MR.headedSimplex .U            -- [u]: headed |U|
-  | .e     => MR.headPlusOp .I .A            -- [e]: head |I|, op |A|
-  | .o     => MR.headPlusOp .U .A            -- [o]: head |U|, op |A|
-  | .weak  => MR.empty                       -- [ɨ]: empty (eq. 22)
+/-- A templatic position: a radical, a radical geminated where it can be — gutturals cannot
+geminate (§2.1, (12)) — or fixed segmental material. -/
+inductive Pos where
+  | rad (i : Nat)
+  | gem (i : Nat)
+  | seg (s : String)
 
-/-- Element-Theoretic decomposition of Tigrinya/Tigre gutturals per
-    paper eq. 20. All gutturals contain |A|; pharyngeals (ħ, ʕ) have
-    |A| as head, laryngeals (ʔ, h) have |A| as operator. -/
-def gutturalET : Tigrinya.Phonology.Guttural → MR
-  | .glottalStop         => MR.headPlusOp .glottal .A
-  | .h                   => MR.headPlusOp .H .A
-  | .pharyngealVoiced    => MR.headPlusOp .A .glottal
-  | .pharyngealVoiceless => MR.headPlusOp .A .H
+/-- A template: positions with their nuclei; Q, T, L are the radicals. -/
+abbrev Template := List (Pos × Nuc)
 
-/-- Vowel `v` contains the |A| element. -/
-def VowelHasA (v : Tigrinya.Phonology.Vowel) : Prop :=
-  MR.HasElement (vowelET v) .A
+/-- A lexical vowel. -/
+abbrev V (v : Vowel) : Nuc := .vowel v false
 
-instance : DecidablePred VowelHasA :=
-  fun v => inferInstanceAs (Decidable (MR.HasElement (vowelET v) .A))
+/-- A template instantiated by a root. -/
+def instantiate (t : Template) (r : ConsonantalRoot String) : Option Form :=
+  (t.mapM λ (pn : Pos × Nuc) =>
+    match pn.1 with
+    | .rad i => (r.segments[i]?).map λ s => [CV.mk (Cons.ofIPA s) pn.2]
+    | .gem i => (r.segments[i]?).map λ s =>
+        let c := Cons.ofIPA s
+        if c.HasA then [CV.mk c pn.2] else [CV.mk c .empty, CV.mk c pn.2]
+    | .seg s => some [CV.mk (Cons.ofIPA s) pn.2]).map List.flatten
 
-/-- Guttural `g` contains |A|. By paper eq. 20, all four do. -/
-def GutturalHasA (g : Tigrinya.Phonology.Guttural) : Prop :=
-  MR.HasElement (gutturalET g) .A
+/-- A suffix: a vowel filling the stem-final nucleus, then further CV units. -/
+structure Suffix where
+  vowel : Option Vowel := none
+  rest : List (String × Nuc) := []
 
-instance : DecidablePred GutturalHasA :=
-  fun g => inferInstanceAs (Decidable (MR.HasElement (gutturalET g) .A))
+/-- A stem with a suffix. -/
+def attach (f : Form) (s : Suffix) : Form :=
+  (match s.vowel with
+    | some v => f.dropLast ++ (f.getLast?.map λ u => [⟨u.c, .vowel v false⟩]).getD []
+    | none => f) ++ s.rest.map λ cn => ⟨Cons.ofIPA cn.1, cn.2⟩
 
-/-- All four attested gutturals contain |A| (paper eq. 20). -/
-theorem all_gutturals_have_A :
-    ∀ g : Tigrinya.Phonology.Guttural, GutturalHasA g := by
-  intro g; cases g <;> decide
+/-- The 2nd-person prefix tɨ-, an empty nucleus in the underlying forms of (31)–(39). -/
+def prefix2 : Template := [(.seg "t", .empty)]
 
-/-- Pharyngeals are headed by |A| (paper eq. 20: ħ, ʕ have A
-    underlined as head). -/
-theorem pharyngeals_A_headed :
-    MR.IsHead (gutturalET .pharyngealVoiced) .A ∧
-    MR.IsHead (gutturalET .pharyngealVoiceless) .A := by
+/-- DEP.PRF QʌTʌL (4). -/
+def depPrf : Template := [(.rad 0, V .aBare), (.rad 1, V .aBare), (.rad 2, .empty)]
+
+/-- The type B DEP.PRF QʌTTʌL, with medial gemination (18b). -/
+def depPrfB : Template := [(.rad 0, V .aBare), (.gem 1, V .aBare), (.rad 2, .empty)]
+
+/-- The type C DEP.PRF QaTʌL, with [a] after the first radical (18c). -/
+def depPrfC : Template := [(.rad 0, V .a), (.rad 1, V .aBare), (.rad 2, .empty)]
+
+/-- PRF QʌTiL (4). -/
+def prf : Template := [(.rad 0, V .aBare), (.rad 1, V .i), (.rad 2, .empty)]
+
+/-- IMPRF QʌTTɨL (4), the Tigre 2-IMP.M with its prefix (12). -/
+def imprf : Template := [(.rad 0, V .aBare), (.gem 1, V .weak), (.rad 2, .empty)]
+
+/-- 2-IMPRF tɨ-QʌTTɨL ((7), (17)). -/
+def imprf2 : Template := prefix2 ++ imprf
+
+/-- The 2-IMPRF without gemination, tɨ-QʌTɨL, as (7c) [ta-ħadɨm] shows it. -/
+def imprf2NoGem : Template :=
+  prefix2 ++ [(.rad 0, V .aBare), (.rad 1, V .weak), (.rad 2, .empty)]
+
+/-- PASS-PRF tɨ-QʌTiL (17). -/
+def passPrf : Template := prefix2 ++ prf
+
+/-- IMP QɨTʌL ((5), (10)). -/
+def imp : Template := [(.rad 0, .empty), (.rad 1, V .aBare), (.rad 2, .empty)]
+
+/-- 2-JUSS tɨ-QTʌL ((5)–(6), (31)–(32)). -/
+def juss2 : Template := prefix2 ++ imp
+
+/-- The Tigre IMP QaTTɨL of (5a). -/
+def impGem : Template := [(.rad 0, V .a), (.gem 1, V .weak), (.rad 2, .empty)]
+
+/-- The Tigre 2-JUSS tɨ-QaTTɨL of (5a). -/
+def jussGem2 : Template := prefix2 ++ impGem
+
+/-- The type A gerund mɨQTaL (13). -/
+def gerA : Template := [(.seg "m", .empty), (.rad 0, .empty), (.rad 1, V .a), (.rad 2, .empty)]
+
+/-- The type B gerund mɨQTTaL (18b). -/
+def gerB : Template := [(.seg "m", .empty), (.rad 0, .empty), (.gem 1, V .a), (.rad 2, .empty)]
+
+/-- The type C gerund mɨQaTaL ((18c), (39b)). -/
+def gerC : Template := [(.seg "m", .empty), (.rad 0, V .a), (.rad 1, V .a), (.rad 2, .empty)]
+
+/-- The causative PRF ʔʌQTiL (19c). -/
+def caus : Template := [(.seg "ʔ", V .aBare), (.rad 0, .empty), (.rad 1, V .i), (.rad 2, .empty)]
+
+/-- The Tigre PRF-3MSG stem QaTL- (6). -/
+def prf3 : Template := [(.rad 0, V .a), (.rad 1, .empty), (.rad 2, .empty)]
+
+/-! ### The paradigms (4)–(19) and the derivations (31)–(39) -/
+
+/-- The languages of the rows. -/
+inductive Lang where
+  | tigrinya
+  | tigre
+  deriving DecidableEq, Repr
+
+/-- An attested form with the root, template and suffix that build it, and whether the analysis
+predicts it. -/
+structure Row where
+  lang : Lang
+  root : ConsonantalRoot String
+  template : Template
+  suffix : Option Suffix
+  /-- The attested forms, hyphens removed and β read as b. -/
+  forms : List (List Char)
+  predicted : Bool
+
+def langTable : List (String × Lang) := [("tigr1271", .tigrinya), ("tigr1270", .tigre)]
+
+def tigrinyaRoots : List (String × ConsonantalRoot String) :=
+  [("whip", whip), ("hear", hear), ("arrest", arrest), ("pull", pull), ("teach", teach),
+   ("slaughter", slaughter), ("escape", escape), ("ask", ask), ("uncover", uncover),
+   ("bark", bark), ("hurt", hurt), ("bless", bless), ("arf", arf)]
+
+def tigreRoots : List (String × ConsonantalRoot String) :=
+  [("weigh", Tigre.Phonology.weigh), ("leave", Tigre.Phonology.leave),
+   ("wash", Tigre.Phonology.wash), ("flee", Tigre.Phonology.flee),
+   ("getUp", Tigre.Phonology.getUp), ("whip", Tigre.Phonology.whip),
+   ("ask", Tigre.Phonology.ask), ("load", Tigre.Phonology.load),
+   ("uncover", Tigre.Phonology.uncover), ("pull", Tigre.Phonology.pull)]
+
+def templateTable : List (String × Template) :=
+  [("depPrf", depPrf), ("depPrfB", depPrfB), ("depPrfC", depPrfC), ("prf", prf),
+   ("imprf", imprf), ("imprf2", imprf2), ("imprf2NoGem", imprf2NoGem), ("passPrf", passPrf),
+   ("imp", imp), ("juss2", juss2),
+   ("impGem", impGem), ("jussGem2", jussGem2), ("gerA", gerA), ("gerB", gerB), ("gerC", gerC),
+   ("caus", caus), ("prf3", prf3)]
+
+def suffixTable : List (String × Suffix) :=
+  [("a", ⟨some .a, []⟩), ("i", ⟨some .i, []⟩), ("u", ⟨some .u, []⟩), ("ʌ", ⟨some .aBare, []⟩),
+   ("ej", ⟨some .e, [("j", .empty)]⟩), ("om", ⟨some .o, [("m", .empty)]⟩),
+   ("ku", ⟨none, [("k", V .u)]⟩), ("ka", ⟨none, [("k", V .a)]⟩)]
+
+/-- A transcription as compared with the realizations: hyphens removed, β read as b. -/
+def transcribe (s : String) : List Char :=
+  (s.toList.filter (· ≠ '-')).map λ c => if c = 'β' then 'b' else c
+
+def Row.ofExample (ex : LinguisticExample) : Option Row := do
+  let lang ← List.lookup ex.language langTable
+  let root ← ex.parse? "root" (match lang with | .tigrinya => tigrinyaRoots | .tigre => tigreRoots)
+  let template ← ex.parse? "template" templateTable
+  pure ⟨lang, root, template, ex.parse? "suffix" suffixTable,
+    (ex.primaryText :: ex.alternatives.map Prod.fst).map transcribe,
+    ex.feature? "predicted" != some "no"⟩
+
+theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
+
+def rows : List Row := Examples.all.filterMap Row.ofExample
+
+/-- The underlying form of a row: its template instantiated by its root, with its suffix. -/
+def Row.stem (r : Row) : Option Form :=
+  (instantiate r.template r.root).map λ f => (r.suffix.map (attach f)).getD f
+
+/-- The surface forms the analysis yields for a row. -/
+def Row.realizations (r : Row) : List (List Char) :=
+  match r.stem with
+  | some f => FaustLampitelli2026.realizations (derive f)
+  | none => []
+
+theorem rows_stem_isSome : ∀ r ∈ rows, r.stem.isSome := by decide
+
+/-- Every attested form of (4)–(19) and (31)–(38) is a realization of the derivation of its
+underlying form. -/
+theorem rows_derived : ∀ r ∈ rows, r.predicted → ∀ f ∈ r.forms, f ∈ r.realizations := by
   decide
 
-/-- Laryngeals (glottals) are NOT headed by |A| (their |A| is operator,
-    not head; paper eq. 20). -/
-theorem laryngeals_A_not_headed :
-    ¬ MR.IsHead (gutturalET .glottalStop) .A ∧
-    ¬ MR.IsHead (gutturalET .h) .A := by
+/-- The forms of (17b–d) and (39): the position the analysis empties is realized in them, which
+it does not predict (§3.3.3). -/
+theorem rows_unpredicted : ∀ r ∈ rows, ¬ r.predicted → ∀ f ∈ r.forms, f ∉ r.realizations := by
   decide
-
-/-! ## §2 Gutturals are low glides (the paper's headline structural claim)
-
-The paper's headline #1 (paper §1, Conclusion §4): a guttural's |A|
-element associates to a C-slot just as a high vowel's |I| or |U|
-element associates to a C-slot to surface as a glide. The proof is
-structural — the ET decomposition (`gutturalET`) makes every guttural
-|A|-bearing, captured by `all_gutturals_have_A` above.
-
-The synersis-engagement consequence (|A| at C fuses with |A| at
-preceding V via OCP) is in §4 below.
--/
-
-/-! ## §3 CV-skeletal modeling and worked examples
--/
-
-/-! ### The synersis configuration
-
-The paper's synersis trigger is /Aᵥ + A_c/ — a low vowel (|A| at a
-V-slot) adjacent to a guttural (|A| at a C-slot). The CV sequence
-encoding tracks per-V-slot melodic status. After the analysis applies
-fusion + dissociation, the V-slot containing the underlying /ʌ/
-becomes empty and is licensed silent (per ECP) iff the next V-slot
-is contentful.
-
-Below we encode the post-fusion forms of the paper's worked examples;
-the underlying pre-fusion forms differ only in V-slot status (the
-target V is `.full` rather than `.empty`).
--/
-
-/-- The Tigrinya /CʌGV/ pattern from paper eq. (10b), surface
-    [niβah] / [nibh-i] 'bark': three V-slots. The IMP.F [nibh-i]
-    form is the syneresis-applied version where, after fusion +
-    dissociation, V₂ (which underlyingly hosted /ʌ/) is empty. -/
-def afterFusion_nibhi : CVSeq :=
-  CVSeq.ofList [.full, .empty, .full]
-
-/-- The /CʌGV/ baseline before fusion (the underlying form): V₂
-    contentful with /ʌ/. The IMP.M [niβah] form realises this
-    underlying state with V₂ surfacing as the lowered [a]. -/
-def beforeFusion_nibhi : CVSeq :=
-  CVSeq.ofList [.full, .full, .full]
-
-/-- Verify post-fusion V₂ is properly governed by V₃ (which is full). -/
-theorem nibhi_v2_properly_governed :
-    afterFusion_nibhi.ProperlyGoverned 1 := by decide
-
-/-- Verify post-fusion V₂ satisfies ECP (empty + properly governed →
-    silent is licit). -/
-theorem nibhi_v2_ecp_satisfied :
-    afterFusion_nibhi.ECPSatisfied 1 := by decide
-
-/-- The /ʕarif-u/ CV configuration (paper eq. 19b: /ʕarif-u/ →
-    [ʕarifu]; analyzed in eq. 28c with self-licensing diagram in
-    eq. 28a-b). Three V-slots, all contentful. The fused element at
-    V₁ self-licenses C₁; the self-licensing domain blocks
-    dissociation, so V₂ stays full even though V₃ would govern it. -/
-def arifu_CV : CVSeq := CVSeq.ofList [.full, .full, .full]
-
-theorem arifu_v2_full :
-    arifu_CV.vAt 1 = some .full := rfl
-
-/-- The /CʌGV/ → [CɨGV] case (paper eq. 17): position retained as
-    epenthetic [ɨ] even though V₃ is full. Witness: PASS-PRF
-    [ti-siħib ~ ti-sɨħib] from eq. (17b) for √sħb. Encoded as V₂ =
-    empty (post-fusion) but realised as [ɨ] surfacing rather than
-    silent — discussed at paper §3.3.3 as a position-retention case
-    not predicted by the basic analysis. -/
-def tisihib_CV : CVSeq := CVSeq.ofList [.full, .empty, .full]
-
-theorem tisihib_v2_properly_governed :
-    tisihib_CV.ProperlyGoverned 1 := by decide
-
-/-! ## §4 Synersis as fused-and-governed; self-licensing block
--/
-
-/-- A V-slot is *synersis-licensed silent* iff (a) it is empty
-    (post-fusion) and (b) it is properly governed.
-    [faust-lampitelli-2026] eq. (23)-(28). -/
-def IsSynersisLicensedSilent (s : CVSeq) (i : Nat) : Prop :=
-  s.vAt i = some .empty ∧ s.ProperlyGoverned i
-
-instance (s : CVSeq) (i : Nat) : Decidable (IsSynersisLicensedSilent s i) :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
-/-- The post-fusion [nibh-i] form (paper eq. 10b IMP.F) licenses
-    synersis at V₂. The corresponding IMP.M [niβah] (eq. 10b)
-    realises the unfused underlying form. -/
-theorem nibhi_synersis_succeeds :
-    IsSynersisLicensedSilent afterFusion_nibhi 1 := by decide
-
-/-- **Self-licensing blocks dissociation**
-    [faust-lampitelli-2026] eq. (28a-c). When the fused |A| at
-    V₁ self-licenses preceding C₁ in a self-licensing domain,
-    dissociation does NOT apply, and V₂ stays full.
-
-    Witness: in /ʕarif-u/, V₂ remains full (containing the /i/
-    vocalization), and the surface form is [ʕarifu] (eq. 19b/28c)
-    not *[ʕarfu]. The structural prediction is the *absence* of an
-    empty V₂, despite V₃'s government potential. -/
-theorem arifu_blocks_synersis :
-    arifu_CV.vAt 1 = some .full ∧ ¬ IsSynersisLicensedSilent arifu_CV 1 := by
-  refine ⟨rfl, ?_⟩
-  decide
-
-/-! ### NOTE on T3 — "self-licensing domain"
-
-The "self-licensing domain" itself is paper-specific apparatus
-(paper n. 18: "this cannot be a general principle in Strict CV").
-The inlined `StrictCV` substrate above deliberately does NOT define
-self-licensing — this study file is where the Faust-specific
-stipulation lives. T3 captures the
-*prediction* (V₂ full ⇒ no synersis) without committing the
-substrate to the stipulation that *generates* it.
--/
-
-/-! ## §5 Economy drives synersis (witness from eq. 18, 39)
--/
-
-/-- **Economy drives synersis** [faust-lampitelli-2026]
-    §1, eq. 2b, eq. 18c, eq. 39b. The paper's central polemical
-    claim against the simpler "synersis = phonotactic-driven gliding"
-    view (eq. 2a).
-
-    Witness: /mibarak/ → [mɨbɨrak] (eq. 18c, 39b). The underlying
-    form has no guttural and no phonotactic problem; yet synersis
-    applies and the position is retained as [ɨ] rather than left
-    full. The paper concludes (§3.3.3): "the absence of syncope is
-    not as straightforward [as a phonotactic explanation predicts]".
-    The form [mibarak] would not pose a phonotactic problem yet
-    [mɨbɨrak] is what surfaces.
-
-    Encoded structurally: the /mibarak/ post-fusion sequence has V₂
-    empty + properly governed, so synersis structurally licenses
-    silence at V₂ even though no guttural is present. The fact that
-    [ɨ] surfaces rather than silence is a separate observation
-    (covered in §7's discussion of n. 23). -/
-theorem mibarak_synersis_licensed_no_phonotactic_motivation :
-    let mibarakAfter : CVSeq := CVSeq.ofList [.full, .empty, .full]
-    IsSynersisLicensedSilent mibarakAfter 1 := by decide
-
-/-! ## §6 Walker & Rose 2015 divergence (with the strongest witness)
--/
-
-/-- The /mismaʕa/ identical-vowel configuration (paper p. 22-23). Both
-    V-flanking vowels are /a/; the medial consonant is the
-    pharyngeal /ʕ/. The F&L analysis predicts synersis applies
-    (V₁ /a/'s |A| fuses with /ʕ/'s |A|, then V₁ becomes empty under
-    proper government).
-
-    Identifier note: the IPA name /mismaʕa/ contains the unicode `ʕ`
-    which is not a valid Lean identifier character, so the def is
-    named `identicalVowel_after`. -/
-def identicalVowel_after : CVSeq := CVSeq.ofList [.empty, .full]
-
-/-- **T4 — Walker & Rose 2015 overshoots**
-    [faust-lampitelli-2026] §3.3.2 critique of
-    [walker-rose-2015-amp]. Three refutation legs (the third
-    is the strongest and is the one this theorem encodes):
-
-    1. /iIu/ → [ju] (vowel + glide synersis): F&L's analysis
-       predicts (extending to non-guttural |I|), W&R's `*VαCVβ`
-       does not predict synersis here.
-    2. Glides like /j/ are the consonants least likely to allow
-       harmony, so subjecting them to `*VαCVβ` is unmotivated.
-    3. **Synersis applies between identical vowels**: in
-       /mismʌʕa/ → [mismaʕa], the analysis applies fusion of
-       the /a/ to the |A| of /ʕ/ (creating the structural
-       configuration of synersis), but `*VαCVβ` does not apply
-       (α = β = /a/).
-
-    The third leg is encoded here as a structural witness: the
-    F&L post-fusion form is `[.empty, .full]` (V₁ vacated by
-    synersis), and W&R's `*VαCVβ`-based analysis does not yield
-    this empty V₁ from an identical-flanking-vowel input.
-
-    The full surface-form prediction comparison requires modeling
-    W&R's constraint apparatus (deferred — W&R 2015 is a handout,
-    not a published paper [walker-rose-2015-amp] note 22). -/
-theorem identicalVowel_synersis_overshoots_walker_rose :
-    -- F&L predicts: V₁ empty after fusion.
-    identicalVowel_after.vAt 0 = some .empty := rfl
-
-/-! ## §7 OCP merger as instance of the shared substrate
--/
-
-/-- The |A|+|A| → fused |A| operation of paper eq. (26) is an
-    instance of `OCP.collapse` over a tier of `Element` values: two
-    adjacent |A| elements collapse to one.
-
-    This makes structurally explicit that F&L's "fusion" mechanism
-    is the same operation as [lionnet-2022]'s `TRN.merge` for
-    Laal tones, just instantiated over a different value space
-    (privative `Element` vs binary-feature `TRN`). -/
-theorem fusion_is_collapse_instance :
-    OCP.collapse [Element.A, Element.A] = [Element.A] := by
-  decide
-
-/-- The OCP-merger output is OCP-clean: no two adjacent identical
-    elements remain. Direct application of the substrate theorem
-    `OCP.collapse_clean`. -/
-theorem fusion_output_is_ocp_clean (xs : List Element) :
-    OCP.IsClean (OCP.collapse xs) :=
-  OCP.collapse_clean xs
-
-/-! ## §8 Paper-acknowledged scope limits
-
-The paper itself marks several places where its analysis is
-incomplete or stipulative. These are documented here as the paper
-states them, not encoded as theorems — over-formalising them would
-misrepresent the paper's epistemic stance.
-
-* **Ejectives also contain |A| but never undergo syneresis** (paper
-  n. 8, page 9). Per [lowenstamm-prunet-1988] and
-  [faust-2017b], ejectives also lower /ʌ/ to [a], suggesting
-  ejectives also bear the |A| element; per [bellem-2007]:102-153
-  for an ET implementation. Yet syneresis never applies before
-  ejectives. The paper hypothesises a structural difference between
-  ejectives and gutturals but does not derive it.
-
-* **The Tigre [samʕa] underlying form** (paper n. 11, page 11). The
-  parallel form to Tigrinya /sʌmʌʕ-ko/ in the Tigre PRF is
-  [samʕako] 'I heard'. But the unsuffixed Tigre PRF base always
-  lacks the second stem vowel regardless of final-C identity (cf.
-  [samʕa] 'he heard' and [fagra] 'he left' per [raz-1980]). The
-  paper concludes [samʕako] is probably not underlyingly /sʌmʌʕ-ko/
-  in Tigre — flagging an unresolved underlying-form question.
-
-* **The supposed weakness of gutturals lacks an external definition**
-  (paper n. 17, page 16). The premise of eq. (25) — that gutturals
-  must be licensed — is motivated only by the present analysis; the
-  paper acknowledges no prior study defines this weakness
-  satisfactorily, citing only sketches in [angoujard-1995] and
-  [walker-rose-2015-amp].
-
-* **"Licensing overrides government" is not a general Strict-CV
-  principle** (paper n. 18, page 16). In many languages, codas (Cs
-  before empty V-slots) are lost or lenited; if licensing always
-  overrode government, epenthesis would always occur to avoid this
-  lenition, contrary to fact. The self-licensing-domain stipulation
-  is therefore paper-specific apparatus; it is documented in §4 of
-  this file as belonging to the study, not the substrate.
-
-* **The TGH generalisation predicts an unattested form**
-  (paper n. 23, page 24). The paper generalises TGH to derivations
-  like (37b-c), which would predict [siħab] alongside the attested
-  [sahab]. The paper has not encountered [siħab] but expects it
-  to be possible — a predicted-but-unattested gap.
-
-* **"Rules apply" generates derivation loops on opaque cases**
-  (paper n. 25 + §3.3.3 discussion of eq. 37, pages 24-25). The
-  derivations in eq. (37b-d) raise an issue: under naive "rules
-  apply", the situation created by TGH /sahab/ could be regarded as
-  identical to the environment of fusion+dissociation, leading to
-  loop /sʌħab/ → /s_ħab/ → /sahab/ → /s_hab/ → /sahab/ → … . The
-  paper offers three escape hatches without committing to one:
-  (i) the output of TGH is somehow different from a fused |A|;
-  (ii) epenthesis/TGH is phonetic implementation, post-phonological;
-  (iii) disallow repeated application of operations.
-
-* **The realised vowel position in /tisʌħib/ → [tisɨħib] and
-  /mibarak/ → [mɨbɨrak] is not predicted** (paper §3.3.3 final
-  paragraph + discussion of eq. 39, page 26). The paper acknowledges
-  "we do not have an insightful explanation for the retention of the
-  position", tentatively invoking [buckley-2000]'s
-  morpheme-specific alignment for Tigrinya but admitting Tigre lacks
-  the same morpheme-specific requirement.
-
-* **The cross-linguistic rarity of |A|-glides remains unexplained**
-  (paper §4 conclusion, page 27). The paper concedes "possibly, the
-  absence of guttural sounds from most languages accounts for the
-  lack of more widespread effects of |A| 'glides'" — a typological
-  observation, not a derived prediction.
--/
 
 end FaustLampitelli2026
