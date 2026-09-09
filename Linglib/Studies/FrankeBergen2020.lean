@@ -5,69 +5,57 @@ import Mathlib.Data.List.ProdSigma
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Franke & Bergen 2020: grammatically generated implicature readings
+# Franke and Bergen (2020): Theory-Driven Statistical Modeling for Semantics and Pragmatics
 
-[franke-bergen-2020] compares four RSA models ([frank-goodman-2012]) of the
-nested Aristotelians "Q₁ of the aliens drank Q₂ of their water"
-(Q ∈ {none, some, all}). An alien's drinking amount is a `SomeAllWorld`; a
-world state is the nonempty set of amounts realized by at least one alien
-(7 states); a parse is the set of EXH insertion sites among matrix/outer/inner
-(8 parses); the readings are the paper's Table 1 (the `table1_*` lemmas, one
-per row, each characterized by a membership predicate). The models differ in where
-the parse enters the speaker: vanilla (§3.1) has only the literal parse; LU
-(§3.2) fixes a lexicon `l ∈ {lit, OI}` per speaker — the parse an *argument*
-of the speaker (eq. 11) and a latent the listener marginalizes
-([bergen-levy-goodman-2016], [potts-etal-2016]); the LI (§3.3) and GI (§3.4)
-speakers instead *choose* an (utterance, parse) pair (eqs. 18a/21a), over the
-4 matrix-free parses resp. all 8 — one softmax over pairs per world, heard
-through the observation map of `RSA.jointListener`.
-
-We show that GI corrects the SS interpretation vanilla gets wrong
-(`vanilla_ss_prefers_wNA` vs `gi_ss_prefers_wNS`), and that its parse
-posterior for SS peaks at the matrix-only parse (`ss_m_parse_pref`), whose
-reading ⟦SS⟧^M = {wNS} "uniquely singles out this world state" (eq. 22,
-`m_ss_singleton`) and is unavailable to LI and LU (`li_excludes_matrix`,
-`lu_excludes_matrix`) — the paper's explanation of GI's win in its Bayesian
-model comparison (posterior 0.956 vs LI 0.033, LU 0.01, vanilla 0; Table 2).
-The M-advantage exists *because* the pooled speaker normalizes over pairs:
-under the per-parse normalization the paper rejects (p. e85), O beats M at
-every rationality (`perParse_ss_prefers_o`). LI and LU still derive the
-embedded enrichments (`li_ss_outer_exh`, `li_ss_prefers_wNS`,
-`lu_ss_prefers_wNS`).
-
-## Main results
-
-* `table1_*` — the paper's Table 1, one lemma per row, including NN's
-  distinct matrix row (fn. 7) from the `none ~ not all` lexical alternative
-  ([levinson-2000]).
-* `ss_m_parse_pref` vs `perParse_ss_prefers_o` — the architectural headline:
-  pooled (utterance, parse) choice peaks at M (α = 5), per-parse
-  normalization prefers O for every rationality. With
-  `RSA.familySpeaker_apply` (identical weights), the pair locates GI's win
-  purely in the position of the latent parameter (p. e86).
-* `moi_ss_ne_innocent_exclusion` — the paper's matrix operator (eq. A2) is
-  not Fox-style innocent exclusion ([fox-2007]).
+This file formalizes [franke-bergen-2020]'s comparison of four rational speech act models
+([frank-goodman-2012]) of the nested Aristotelians *Q₁ of the aliens drank Q₂ of their water*,
+with *none*, *some* and *all* in each position. An alien's drinking amount is a `SomeAllWorld`, a
+world state is the nonempty set of amounts some alien realizes, and a parse is the set of sites,
+among the whole sentence and the two quantifiers, at which an exhaustivity operator applies; the
+readings of every utterance under every parse are the paper's Table 1, one characterization per
+utterance (`table1_ss` and its siblings). The models differ in where the parse enters the
+speaker. The vanilla model has only the literal parse; lexical uncertainty fixes a lexicon per
+speaker, the parse an argument of the speaker and a latent the listener marginalizes
+([bergen-levy-goodman-2016], [potts-etal-2016]); the local- and global-implicature speakers
+instead choose an utterance together with a parse, over the four matrix-free parses or over all
+eight, one softmax over pairs per world heard through the utterance alone. The global model
+corrects the interpretation of *some of the aliens drank some of their water* that the vanilla
+model gets wrong, and its parse posterior peaks at the matrix-only parse, whose reading singles
+out the world with none- and some-drinkers only and is unavailable to the other two models: the
+paper's explanation of the global model's win in its Bayesian model comparison. The advantage
+exists because the pooled speaker normalizes over pairs; under the per-parse normalization the
+paper rejects, exhaustifying the outer quantifier beats exhaustifying the whole sentence at every
+rationality (`perParse_ss_prefers_o`).
 
 ## Implementation notes
 
-One reading family (`ext`) generates every model: vanilla is its
-literal member, GI and LI pool (utterance, parse) pairs into the choice
-space (`RSA.uniformJointListener` over pairs, eqs. 18a/21a), and LU — like the rejected
-per-parse architecture — fixes the latent as a speaker argument
-(`RSA.familySpeaker`, eq. 11). Sentential alternatives (A3a) range
-over a fourth quantifier `notAll` that is never an utterance — the paper's
-grammatical-vs-utterance alternatives distinction (its comparison with
-[gotzner-romoli-2018]'s alternative set favors this one by a Bayes factor of
-~1,530). Findings come in two registers, both closed by `decide`:
-`Multiset.StrictDominates` certificates — strict stochastic dominance of
-informativity profiles — hold for every rationality `α > 0`, while genuinely
-α-dependent findings are pinned at the paper's illustrative α = 5, where
-comparisons clear to ℕ inequalities via `Multiset.divPowSum`. We omit the
-paper's cost term for *none*-initial utterances and fixed error ε = 0.045
-(eqs. 25–28); `vanilla_ss_prefers_wNA` reverses at the fitted cost. The
-paper's S2/L2 layer for LU ([lassiter-goodman-2017], eqs. 14a–14b) is also
-omitted: our L1-only LU keeps wNS over wNA at every rationality, though the
-paper's LU-L2 concentrates on wNSA (eq. 15).
+* One reading family, `ext`, generates every model: the vanilla model is its literal member, the
+  pooled models run `RSA.uniformJointListener` over utterance–parse pairs, and lexical
+  uncertainty, like the rejected per-parse architecture, fixes the latent as a speaker argument
+  through `RSA.familySpeaker`. Sentential alternatives range over a fourth quantifier, *not all*,
+  that is never uttered: the paper's distinction between grammatical and utterance alternatives,
+  which its model comparison favors over the alternative set of [gotzner-romoli-2018].
+* Findings that hold at every rationality are closed by strict stochastic dominance of
+  informativity profiles (`Multiset.StrictDominates`); the rationality-dependent ones are pinned
+  at the paper's illustrative value of 5, where the comparisons clear to inequalities of naturals.
+* The paper's cost term for *none*-initial utterances and its fixed error rate are omitted, and
+  the vanilla preference reverses at the fitted cost. The second-level layer of the
+  lexical-uncertainty model ([lassiter-goodman-2017]) is omitted; the first-level listener
+  formalized here keeps the preference the paper's second-level listener loses.
+* The paper's matrix exhaustivity operator is not innocent exclusion ([fox-2007]):
+  `moi_ss_ne_innocent_exclusion`. The distinct matrix reading of *none of the aliens drank none
+  of their water* comes from the lexical alternative *not all* of *none* ([levinson-2000]).
+
+## References
+
+* [franke-bergen-2020]
+* [frank-goodman-2012]
+* [bergen-levy-goodman-2016]
+* [potts-etal-2016]
+* [lassiter-goodman-2017]
+* [gotzner-romoli-2018]
+* [levinson-2000]
+* [fox-2007]
 -/
 
 namespace FrankeBergen2020
@@ -89,13 +77,13 @@ def World := {s : Finset AlienType // s.Nonempty}
 instance : DecidableEq World := Subtype.instDecidableEq
 instance : Fintype World := Subtype.fintype _
 
-instance : Membership AlienType World := ⟨fun w t => t ∈ w.val⟩
+instance : Membership AlienType World := ⟨λ w t => t ∈ w.val⟩
 
 instance (t : AlienType) (w : World) : Decidable (t ∈ w) :=
   inferInstanceAs (Decidable (t ∈ w.val))
 
 instance : MeasurableSpace World := ⊤
-instance : DiscreteMeasurableSpace World := ⟨fun _ => trivial⟩
+instance : DiscreteMeasurableSpace World := ⟨λ _ => trivial⟩
 
 /-- The world with only N-type aliens (each drank none). -/
 def wN : World := ⟨{.none}, Finset.singleton_nonempty _⟩
@@ -124,7 +112,7 @@ inductive ExhPosition where
 abbrev Parse := Finset ExhPosition
 
 instance : MeasurableSpace Parse := ⊤
-instance : DiscreteMeasurableSpace Parse := ⟨fun _ => trivial⟩
+instance : DiscreteMeasurableSpace Parse := ⟨λ _ => trivial⟩
 instance : Nonempty Parse := ⟨∅⟩
 
 /-- The matrix-only parse M. -/
@@ -148,7 +136,7 @@ inductive Utterance where
 
 instance : Nonempty Utterance := ⟨.nn⟩
 instance : MeasurableSpace Utterance := ⊤
-instance : DiscreteMeasurableSpace Utterance := ⟨fun _ => trivial⟩
+instance : DiscreteMeasurableSpace Utterance := ⟨λ _ => trivial⟩
 
 /-- Outer quantifier of an utterance. -/
 def Utterance.outer : Utterance → AristQuant
@@ -191,7 +179,7 @@ def AristQuant.altCandidates : AristQuant → List AltQuant
 /-- Satisfaction of "drank Q" by an alien of a given amount, via the
 `SomeAllWorld` meanings. -/
 def AltQuant.sat : AltQuant → AlienType → Prop
-  | .none => fun t => ¬ t.atLeastOne
+  | .none => λ t => ¬ t.atLeastOne
   | .some => SomeAllWorld.atLeastOne
   | .all => SomeAllWorld.universal
   | .notAll => SomeAllWorld.notUniversal
@@ -216,8 +204,7 @@ instance : ∀ (q : AltQuant) (w : World) (sat : AlienType → Prop) [DecidableP
   | .all, _, _, _ => inferInstanceAs (Decidable (∀ _ ∈ _, _))
   | .notAll, _, _, _ => inferInstanceAs (Decidable (¬ ∀ _ ∈ _, _))
 
-/-- *not all* is the negation of *all* — definitionally, where the Bool
-version transcribed the negated clause by hand. -/
+/-- *not all* is the negation of *all*, definitionally. -/
 theorem eval_notAll_iff (w : World) (sat : AlienType → Prop) :
     AltQuant.eval .notAll w sat ↔ ¬ AltQuant.eval .all w sat := Iff.rfl
 
@@ -232,7 +219,7 @@ abbrev AltSentence := AltQuant × AltQuant
 /-- Literal meaning of a sentential alternative. -/
 def altLiteral (a : AltSentence) (w : World) : Prop := a.1.eval w a.2.sat
 
-instance (a : AltSentence) : DecidablePred (altLiteral a) := fun _ =>
+instance (a : AltSentence) : DecidablePred (altLiteral a) := λ _ =>
   inferInstanceAs (Decidable (AltQuant.eval _ _ _))
 
 /-- Literal meaning of an utterance. -/
@@ -254,7 +241,7 @@ Exh(none) and Exh(all) are vacuous. -/
 def enrichedSat (qi : AristQuant) (p : Parse) (t : AlienType) : Prop :=
   (↑qi : AltQuant).sat t ∧ (ExhPosition.inner ∈ p ∧ qi = .some → t.notUniversal)
 
-instance (qi : AristQuant) (p : Parse) : DecidablePred (enrichedSat qi p) := fun _ =>
+instance (qi : AristQuant) (p : Parse) : DecidablePred (enrichedSat qi p) := λ _ =>
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The sub-matrix reading: in-situ enrichments, with outer EXH (Exh(some) at
@@ -264,7 +251,7 @@ def subMatrix (p : Parse) (u : Utterance) (w : World) : Prop :=
   ∧ (ExhPosition.outer ∈ p ∧ u.outer = .some →
       ¬ AltQuant.eval .all w (enrichedSat u.inner p))
 
-instance (p : Parse) (u : Utterance) : DecidablePred (subMatrix p u) := fun _ =>
+instance (p : Parse) (u : Utterance) : DecidablePred (subMatrix p u) := λ _ =>
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- A sentential alternative is strictly stronger than the sub-matrix reading
@@ -282,7 +269,7 @@ strictly stronger sentential alternative's literal meaning negated. -/
 def matrixExh (p : Parse) (u : Utterance) (w : World) : Prop :=
   subMatrix p u w ∧ ∀ a ∈ matrixAlts u, StrictlyStronger p u a → ¬ altLiteral a w
 
-instance (p : Parse) (u : Utterance) : DecidablePred (matrixExh p u) := fun _ =>
+instance (p : Parse) (u : Utterance) : DecidablePred (matrixExh p u) := λ _ =>
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Exhaustified meaning under a parse: the sub-matrix reading, negating the
@@ -292,7 +279,7 @@ def exhMeaning (p : Parse) (u : Utterance) (w : World) : Prop :=
   subMatrix p u w ∧ (ExhPosition.matrix ∈ p ∧ (∃ w', matrixExh p u w') →
     ∀ a ∈ matrixAlts u, StrictlyStronger p u a → ¬ altLiteral a w)
 
-instance (p : Parse) (u : Utterance) : DecidablePred (exhMeaning p u) := fun _ =>
+instance (p : Parse) (u : Utterance) : DecidablePred (exhMeaning p u) := λ _ =>
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-! ### Truth-table verification (the paper's Table 1)
@@ -365,9 +352,9 @@ theorem moi_ss_ne_innocent_exclusion :
     exhMeaning {.matrix, .outer, .inner} .ss wSA
       ∧ wSA ∉ Exhaustification.innocent.exh
           (Exhaustification.altsFromPreds
-            ((matrixAlts .ss).map fun a w => decide (altLiteral a w)))
+            ((matrixAlts .ss).map λ a w => decide (altLiteral a w)))
           (Exhaustification.predToFinset
-            fun w => decide (exhMeaning {.outer, .inner} .ss w)) :=
+            λ w => decide (exhMeaning {.outer, .inner} .ss w)) :=
   ⟨by decide +kernel, by decide +kernel⟩
 
 /-- Every `(world, parse)` state has a true utterance. -/
@@ -408,7 +395,7 @@ inductive LIParse where
 
 instance : Nonempty LIParse := ⟨.lit⟩
 instance : MeasurableSpace LIParse := ⊤
-instance : DiscreteMeasurableSpace LIParse := ⟨fun _ => trivial⟩
+instance : DiscreteMeasurableSpace LIParse := ⟨λ _ => trivial⟩
 
 /-- Map LI parse to the full parse space. -/
 def LIParse.toParse : LIParse → Parse
@@ -423,14 +410,14 @@ theorem li_excludes_matrix : ∀ l : LIParse, .matrix ∉ l.toParse := by decide
 /-- The LI choice space (eq. 18a): pairs over the matrix-free parses. -/
 def liSem (cl : Utterance × LIParse) : Finset World := ext cl.2.toParse cl.1
 
-theorem vanilla_expressible : ∀ w, ∃ u, w ∈ ext ∅ u := fun w =>
-  (exists_true w ∅).imp fun _ h => mem_ext.mpr h
+theorem vanilla_expressible : ∀ w, ∃ u, w ∈ ext ∅ u := λ w =>
+  (exists_true w ∅).imp λ _ h => mem_ext.mpr h
 
-theorem gi_expressible : ∀ w, ∃ c, w ∈ giSem c := fun w =>
-  (exists_true w ∅).elim fun u h => ⟨(u, ∅), mem_ext.mpr h⟩
+theorem gi_expressible : ∀ w, ∃ c, w ∈ giSem c := λ w =>
+  (exists_true w ∅).elim λ u h => ⟨(u, ∅), mem_ext.mpr h⟩
 
-theorem li_expressible : ∀ w, ∃ c, w ∈ liSem c := fun w =>
-  (exists_true w ∅).elim fun u h => ⟨(u, .lit), mem_ext.mpr h⟩
+theorem li_expressible : ∀ w, ∃ c, w ∈ liSem c := λ w =>
+  (exists_true w ∅).elim λ u h => ⟨(u, .lit), mem_ext.mpr h⟩
 
 /-- The vanilla listener (§3.1): the literal reading only. -/
 noncomputable abbrev vanillaListener (α : ℝ) : Kernel Utterance World :=
@@ -458,7 +445,7 @@ inductive LULex where
 
 instance : Nonempty LULex := ⟨.lit⟩
 instance : MeasurableSpace LULex := ⊤
-instance : DiscreteMeasurableSpace LULex := ⟨fun _ => trivial⟩
+instance : DiscreteMeasurableSpace LULex := ⟨λ _ => trivial⟩
 
 /-- Map LU lexicon to the corresponding parse. -/
 def LULex.toParse : LULex → Parse
@@ -593,7 +580,7 @@ theorem lu_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
         (ext LULex.lit.toParse) hα.le (by decide +kernel : wNS ∈ ext LULex.lit.toParse .ss))]
   calc (∑ l : LULex, (RSA.speaker α 1 (luFam l) wNA).real {.ss})
       = (RSA.uniformSpeaker (ext LULex.lit.toParse) α wNA).real {.ss} :=
-        Fintype.sum_eq_single LULex.lit fun
+        Fintype.sum_eq_single LULex.lit λ
           | .lit, hl => absurd rfl hl
           | .oi, _ => RSA.uniformSpeaker_real_singleton_eq_zero (ext LULex.oi.toParse) hα
               (by decide +kernel : wNA ∉ ext LULex.oi.toParse .ss)
@@ -613,7 +600,7 @@ theorem lu_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
         linarith
     _ ≤ ∑ l : LULex, (RSA.speaker α 1 (luFam l) wNS).real {.ss} :=
         Finset.single_le_sum
-          (fun l _ => measureReal_nonneg (μ := RSA.speaker α 1 (luFam l) wNS))
+          (λ l _ => measureReal_nonneg (μ := RSA.speaker α 1 (luFam l) wNS))
           (Finset.mem_univ LULex.oi)
 
 /-! ### The position of the latent parameter -/
@@ -623,7 +610,7 @@ listener's parse posterior peaks at exhaustification of the whole
 sentence. -/
 theorem ss_m_parse_pref : ∀ p : Parse, p ≠ pM →
     (giParsePosterior 5 .ss).real {(.ss, p)} < (giParsePosterior 5 .ss).real {(.ss, pM)} :=
-  fun p _ =>
+  λ p _ =>
   RSA.uniformJointListener_snd_real_lt_of_divPowSum giSem Prod.fst gi_expressible (k := 5)
     (D := 12) (by decide +kernel) rfl rfl (by revert p; decide +kernel)
 
@@ -641,21 +628,21 @@ theorem perParse_ss_prefers_o {α : ℝ} (hα : 0 < α) :
         (mem_ext.mpr ((m_ss_singleton wNS).mpr rfl)))]
   calc (∑ w : World, (RSA.uniformSpeaker (ext pM) α w).real {.ss})
       = (RSA.uniformSpeaker (ext pM) α wNS).real {.ss} :=
-        Fintype.sum_eq_single wNS fun w hw =>
-          RSA.uniformSpeaker_real_singleton_eq_zero (ext pM) hα fun hmem =>
+        Fintype.sum_eq_single wNS λ w hw =>
+          RSA.uniformSpeaker_real_singleton_eq_zero (ext pM) hα λ hmem =>
             hw ((m_ss_singleton w).mp (mem_ext.mp hmem))
     _ < 1 :=
         RSA.uniformSpeaker_real_singleton_lt_one (ext pM) hα.le
           (nofun : Utterance.sn ≠ Utterance.ss) (by decide +kernel : wNS ∈ ext pM .sn)
     _ = ∑ w ∈ ({wNS, wNA, wNSA} : Finset World),
           (RSA.uniformSpeaker (ext pO) α w).real {.ss} := by
-        rw [Finset.sum_eq_card_nsmul fun w hw =>
+        rw [Finset.sum_eq_card_nsmul λ w hw =>
             RSA.uniformSpeaker_real_singleton_of_profile_replicate (ext pO) hα
               (hOprof w hw) (hOmem w hw),
           show ({wNS, wNA, wNSA} : Finset World).card = 3 from by decide +kernel]
         norm_num
     _ ≤ ∑ w : World, (RSA.uniformSpeaker (ext pO) α w).real {.ss} :=
         Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
-          fun w _ _ => measureReal_nonneg
+          λ w _ _ => measureReal_nonneg
 
 end FrankeBergen2020
