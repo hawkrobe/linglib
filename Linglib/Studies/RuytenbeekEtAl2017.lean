@@ -70,10 +70,9 @@ regression coefficients.
   later sibling that contradicts the imperative's deontic-flavor
   assignment; the cross-paper wedge lives in Roberts2023.
 - `Studies/FrancikClark1985.lean`: another
-  consumer of `PreparatoryCondition`. Both that file's
-  `RequestForm.queriedCondition` and this file's `SentType.queriedPrep`
-  are `Option PreparatoryCondition`-valued projections sharing the
-  Searle/Francik substrate.
+  consumer of `PreparatoryCondition`. That file's `Query` and this
+  file's `SentType.queriedPrep` both read off which preparatory
+  condition a form asks about, on the shared Searle/Francik substrate.
 
 ## Mood substrate choice
 
@@ -207,11 +206,9 @@ instance : DecidablePred SentType.deonticMatch := fun _ => decEq _ _
 Per [clark-1979], asking about a preparatory condition for a
 request licenses the directive interpretation without sharing the
 imperative's modal semantics. The substrate
-`PreparatoryCondition` (Searle's hierarchy: ability /
-knowledge / memory / perception / permission / willingness) is the
-target type; the projection `SentType.queriedPrep` mirrors
-`Studies/FrancikClark1985.lean`'s
-`RequestForm.queriedCondition`. -/
+`PreparatoryCondition` (Searle's conditions, ordered by specificity)
+is the target type; the projection `SentType.queriedPrep` mirrors
+`Studies/FrancikClark1985.lean`'s `Query`. -/
 
 /-- The preparatory condition queried by each sentence type, when one
     is queried. The two interrogative IRs both query `.ability` (per

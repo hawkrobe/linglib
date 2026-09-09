@@ -1,4 +1,5 @@
 import Linglib.Semantics.Mood.Defs
+import Mathlib.Order.Max
 
 /-!
 # Searlean Speech Acts: F(p) and S(r)
@@ -18,8 +19,8 @@ conditions for directives, in the inventory of [francik-clark-1985].
   per-mood illocutionary class and the `F → S` bridge.
 * `CausalSelfRef`, `PsychMode.causalSelfRef` — whether a mode must figure in the
   causal chain producing its own conditions of satisfaction.
-* `PreparatoryCondition` — felicity preconditions for directives, ordered by the
-  `subsumes` specificity relation.
+* `PreparatoryCondition` — felicity preconditions on a request for information, partially
+  ordered by specificity.
 * `Illocutionary.sincerityCondition_directionOfFit` — the sincerity
   condition's direction of fit matches the speech act's.
 * `PsychMode.causalSelfRef_not_determined_by_directionOfFit` — causal
@@ -172,55 +173,53 @@ theorem PsychMode.causalSelfRef_not_determined_by_directionOfFit :
 
 /-! ### Preparatory conditions -/
 
-/-- Preparatory conditions for directive speech acts. [searle-1969] introduces
-the notion; the ability/knowledge/memory/perception/permission/willingness
-inventory and the specificity subsumption used below are consolidated in the
-analysis of [francik-clark-1985] on indirect requests.
--- UNVERIFIED: the precise subsumption ordering attribution. -/
+/-- Preparatory conditions on a request for information, in the inventory of
+[francik-clark-1985]: the hearer's ability to supply it, with knowing it, remembering it, having
+come across it and being allowed to tell it as ways of being able; the hearer's willingness; and
+[searle-1969]'s condition on questions that the speaker does not already have it. -/
 inductive PreparatoryCondition where
-  /-- The hearer is able to perform the act. -/
+  /-- The hearer is able to supply the information. -/
   | ability
-  /-- The hearer knows the relevant information. -/
+  /-- The hearer knows the information. -/
   | knowledge
-  /-- The hearer remembers the relevant information. -/
+  /-- The hearer remembers the information. -/
   | memory
-  /-- The hearer can perceive the relevant object. -/
+  /-- The hearer has come across the information. -/
   | perception
-  /-- The relevant permission obtains. -/
+  /-- The hearer is allowed to give the information. -/
   | permission
-  /-- The hearer is willing to perform the act. -/
+  /-- The hearer is willing to give the information. -/
   | willingness
-  deriving DecidableEq, Repr, Inhabited
+  /-- The speaker does not already have the information. -/
+  | speakerIgnorance
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-- `c₁.subsumes c₂` iff satisfying `c₂` entails satisfying `c₁`. -/
-def PreparatoryCondition.subsumes : PreparatoryCondition → PreparatoryCondition → Prop
-  -- reflexive
-  | .ability, .ability | .knowledge, .knowledge | .memory, .memory
-  | .perception, .perception | .permission, .permission
-  | .willingness, .willingness => True
-  -- ability subsumes its subtypes
-  | .ability, .knowledge | .ability, .memory
-  | .ability, .perception | .ability, .permission => True
-  -- knowledge subsumes its subtypes
-  | .knowledge, .memory | .knowledge, .perception => True
-  | _, _ => False
+namespace PreparatoryCondition
 
-instance : DecidableRel PreparatoryCondition.subsumes := fun c₁ c₂ => by
-  cases c₁ <;> cases c₂ <;> unfold PreparatoryCondition.subsumes <;> infer_instance
+/-- Satisfying the first condition is a way of satisfying the second: [francik-clark-1985]'s
+gradient of specificity, on which knowing, remembering, having come across and being allowed to
+tell are ways of being able to supply the information, and remembering or having come across it
+are ways of knowing it. Willingness and the speaker's own condition stand alone. -/
+protected def le : PreparatoryCondition → PreparatoryCondition → Prop
+  | .knowledge, .ability | .memory, .ability | .perception, .ability | .permission, .ability
+  | .memory, .knowledge | .perception, .knowledge => True
+  | c, d => c = d
 
-theorem PreparatoryCondition.subsumes_refl (c : PreparatoryCondition) :
-    c.subsumes c := by cases c <;> trivial
+instance : DecidableRel PreparatoryCondition.le := λ c d => by
+  cases c <;> cases d <;> unfold PreparatoryCondition.le <;> infer_instance
 
-/-- The specificity chain: memory/perception → knowledge → ability. -/
-theorem PreparatoryCondition.specificity_chain :
-    PreparatoryCondition.ability.subsumes .knowledge ∧
-      PreparatoryCondition.knowledge.subsumes .memory ∧
-      PreparatoryCondition.knowledge.subsumes .perception ∧
-      PreparatoryCondition.ability.subsumes .permission :=
-  ⟨trivial, trivial, trivial, trivial⟩
+instance : LE PreparatoryCondition := ⟨PreparatoryCondition.le⟩
 
-/-- Willingness is independent of ability: neither subsumes the other. -/
-theorem PreparatoryCondition.willingness_independent :
-    ¬ PreparatoryCondition.ability.subsumes .willingness ∧
-      ¬ PreparatoryCondition.willingness.subsumes .ability :=
-  ⟨id, id⟩
+instance : DecidableLE PreparatoryCondition :=
+  inferInstanceAs (DecidableRel PreparatoryCondition.le)
+
+instance : PartialOrder PreparatoryCondition where
+  le_refl := by decide
+  le_trans := by decide
+  le_antisymm := by decide
+
+instance : NoTopOrder PreparatoryCondition := ⟨by decide⟩
+
+instance : NoBotOrder PreparatoryCondition := ⟨by decide⟩
+
+end PreparatoryCondition
