@@ -123,6 +123,32 @@ theorem top_eq [Preorder L] [Preorder R] [BoundedOrder L] [BoundedOrder R] :
 theorem bot_eq [Preorder L] [Preorder R] [BoundedOrder L] [BoundedOrder R] :
     (⊥ : L ⊙ R) = mk ⊥ ⊤ := rfl
 
+/-- The truth order on the projections. -/
+theorem le_def [Preorder L] [Preorder R] {x y : L ⊙ R} :
+    x ≤ y ↔ x.pro ≤ y.pro ∧ y.con ≤ x.con := Iff.rfl
+
+section Proj
+
+variable [Lattice L] [Lattice R] (x y : L ⊙ R)
+
+@[simp] theorem pro_inf : (x ⊓ y).pro = x.pro ⊓ y.pro := rfl
+@[simp] theorem con_inf : (x ⊓ y).con = x.con ⊔ y.con := rfl
+@[simp] theorem pro_sup : (x ⊔ y).pro = x.pro ⊔ y.pro := rfl
+@[simp] theorem con_sup : (x ⊔ y).con = x.con ⊓ y.con := rfl
+
+end Proj
+
+section ProjBounds
+
+variable [Preorder L] [Preorder R] [BoundedOrder L] [BoundedOrder R]
+
+@[simp] theorem pro_top : (⊤ : L ⊙ R).pro = ⊤ := rfl
+@[simp] theorem con_top : (⊤ : L ⊙ R).con = ⊥ := rfl
+@[simp] theorem pro_bot : (⊥ : L ⊙ R).pro = ⊥ := rfl
+@[simp] theorem con_bot : (⊥ : L ⊙ R).con = ⊤ := rfl
+
+end ProjBounds
+
 /-! ### The knowledge order
 
 The instances on the synonym `Know (L ⊙ R)`, transported from the plain
@@ -165,6 +191,21 @@ theorem know_top_eq [Preorder L] [Preorder R] [BoundedOrder L] [BoundedOrder R] 
 theorem know_bot_eq [Preorder L] [Preorder R] [BoundedOrder L] [BoundedOrder R] :
     (⊥ : Know (L ⊙ R)) = toKnow (mk ⊥ ⊥) := rfl
 
+/-- The knowledge order on the projections. -/
+theorem kLE_iff [Preorder L] [Preorder R] {x y : L ⊙ R} :
+    x ≤ₖ y ↔ x.pro ≤ y.pro ∧ x.con ≤ y.con := Iff.rfl
+
+section KProj
+
+variable [Lattice L] [Lattice R] (x y : L ⊙ R)
+
+@[simp] theorem pro_kInf : (x ⊗ y).pro = x.pro ⊓ y.pro := rfl
+@[simp] theorem con_kInf : (x ⊗ y).con = x.con ⊓ y.con := rfl
+@[simp] theorem pro_kSup : (x ⊕ y : L ⊙ R).pro = x.pro ⊔ y.pro := rfl
+@[simp] theorem con_kSup : (x ⊕ y : L ⊙ R).con = x.con ⊔ y.con := rfl
+
+end KProj
+
 /-- **The product is an interlaced bilattice** ([avron-1996] Thm 2.5): each
 order's meet and join are monotone for the other order. -/
 instance [Lattice L] [Lattice R] : Interlaced (L ⊙ R) where
@@ -181,26 +222,31 @@ involution reversing the truth order and preserving the knowledge order
 
 section Negation
 
-/-- Ginsberg negation on `L ⊙ L`: swap evidence for/against. -/
-def neg (x : L ⊙ L) : L ⊙ L := mk x.con x.pro
+/-- Ginsberg negation on `L ⊙ L`: swap evidence for/against. Protected: the public spelling is
+the `Negation` class's `neg`, through the instance below. -/
+protected def neg (x : L ⊙ L) : L ⊙ L := mk x.con x.pro
 
-@[simp] theorem neg_mk (a b : L) : neg (mk a b) = mk b a := rfl
-@[simp] theorem neg_neg (x : L ⊙ L) : neg (neg x) = x := rfl
+@[simp] theorem neg_mk (a b : L) : Product.neg (mk a b) = mk b a := rfl
+@[simp] theorem neg_neg (x : L ⊙ L) : Product.neg (Product.neg x) = x := rfl
 
 variable [Preorder L]
 
 /-- Negation reverses the truth order ([avron-1996] Def 2.3(ii)). -/
-theorem neg_le_neg {x y : L ⊙ L} (h : x ≤ y) : neg y ≤ neg x := ⟨h.2, h.1⟩
+theorem neg_le_neg {x y : L ⊙ L} (h : x ≤ y) : Product.neg y ≤ Product.neg x := ⟨h.2, h.1⟩
 
 /-- Negation preserves the knowledge order ([avron-1996] Def 2.3(iii)). -/
-theorem neg_kLE_neg {x y : L ⊙ L} (h : x ≤ₖ y) : neg x ≤ₖ neg y := ⟨h.2, h.1⟩
+theorem neg_kLE_neg {x y : L ⊙ L} (h : x ≤ₖ y) : Product.neg x ≤ₖ Product.neg y := ⟨h.2, h.1⟩
 
 /-- **Ginsberg's swap is a negation on the diagonal** ([avron-1996] Thm 2.5(2)). -/
 instance : Negation (L ⊙ L) where
-  neg := neg
+  neg := Product.neg
   neg_neg := neg_neg
   neg_le_neg := neg_le_neg
   neg_kLE_neg := neg_kLE_neg
+
+@[simp] theorem pro_neg (x : L ⊙ L) : (Bilattice.neg x).pro = x.con := rfl
+@[simp] theorem con_neg (x : L ⊙ L) : (Bilattice.neg x).con = x.pro := rfl
+@[simp] theorem neg_mk' (a b : L) : Bilattice.neg (mk a b) = mk b a := rfl
 
 end Negation
 
