@@ -1,168 +1,315 @@
-import Linglib.Syntax.Tree.Cat
+import Mathlib.Data.Finset.Basic
 import Linglib.Syntax.Category.Coordinator
+import Linglib.Data.Examples.Fortuny2024
 
 /-!
-# [fortuny-2024] — Deducing the Coordinand Constraint
+# Fortuny (2024): Deducing the Coordinand Constraint
 
-Fortuny, Jordi. 2024. Deducing the Coordinand Constraint. *Linguistic Inquiry*
-55(2). 219–253.
+This file formalizes [fortuny-2024]'s deduction of the Coordinand Constraint, [grosu-1973]'s
+half of [ross-1967]'s Coordinate Structure Constraint that no coordinand may be moved (5). A
+coordinator is the categorial-grammar functor `(X/X)/X` of [steedman-1985] (10), so two
+constituents coordinate exactly when they are of one category, and a category is its set of
+generalized categorial features together with its bar-level features (12), (18)–(21): the
+Coordinability Condition (22) is a theorem (`coordinable_iff`), not a stipulation. A coordinand
+moved for a criterial feature the other coordinand lacks is therefore not coordinable with it
+(Case 1, `not_coordinable_of_mem_of_notMem`), and so are two coordinands moved for different
+features (Case 2, subcase I). Categorially identical coordinands fall under the Integrity
+Condition (50), by which a probe targets the coordinate structure and never a coordinand within
+it, and the same constituent cannot occupy both coordinated positions (71), a coordination the
+`Coordinator` substrate shows to be semantically vacuous (`op_self`).
 
-Grosu (1973) decomposes Ross's (1967) Coordinate Structure Constraint into the
-**Coordinand Constraint** (CC: *no coordinand may be moved*) and the Element
-Constraint. Fortuny gives a **categorematic** definition of the coordinator —
-`Coord : (X/X)/X` in Categorial Grammar, requiring the two coordinands and the
-coordinate structure to be *categorially identical* (the Parallelism Requirement /
-Law of Coordination of Likes) — and *deduces* the CC from it.
+The paper's judgments are the rows of `Data/Examples/Fortuny2024.json`; `rows_predicted` checks
+them against the three-factor decomposition, and `rows_factor` that each ill-formed coordination
+falls under exactly one factor, as §2.3 claims.
 
-Relation to the `Coordinator` API. The CC and the semantic `Coordinator.op` are two
-*sibling realizations* of the **categorematic schema** `Coord : (X/X)/X` (combine two
-same-`X` constituents into `X`): `op : α → α → α` realizes it over Boolean-algebra
-*types*, this file realizes it over syntactic *categorial features* — they share the
-schema, not a Lean object (`op` lives over `[BooleanAlgebra α]`; categories are not a
-Boolean algebra, and the criterial `[wh]`/`[focus]`/`[topic]` features that drive the
-CC have no semantic-`op` counterpart). The genuine API tie-in is Fortuny's own point
-that **the CC is uniform across coordinator types** (his (3a–f): *and*/*or*/*but* all
-obey it): `cc_uniform` quantifies over `Coordinator.Role`, and its proof ignores the
-role — the precise content of "the CC is structural, not meaning-based."
+## Implementation notes
 
-## Main definitions
+* Movement is not derived: the rows record which coordinands move, and the Integrity Condition
+  is stated as the paper states it, with its Least Effort rationale (58) as `superfluous_of_twice`.
+* Base categorial features are the paper's [D], [P], [C], [I], [V], [Adj] of (14) plus the
+  criterial [wh], [focus], [topic] ([rizzi-1997]) and the unvalued case feature of (59)–(62);
+  bar-level features follow [muysken-1982]. All coordinands in the data are maximal projections.
+* Feature percolation (§2.2.1.3) is recorded on the rows rather than computed.
 
-* `CatFeature` / `Category` — generalized categorial features (Fortuny (12), (18)–(20)).
-* `Coordinable` — the Coordinability Condition (Fortuny (21)/(22)): categorial identity.
-* `MovesFor` — a coordinand bears a criterial feature that triggers A-bar movement
-  (Remark (23): the feature triggering internal Merge is categorial).
+## References
 
-## Main results
-
-* `cc_case1` — **Case 1** (§2.2.1): a single coordinand cannot be extracted. Moving one
-  coordinand for a criterial feature the other lacks makes them categorially distinct,
-  so they are not coordinable. Derived from the categorematic coordinator alone.
-* `coordinand_extraction_illformed` — the CC stated over a coordinate structure.
+* [fortuny-2024]
+* [grosu-1973]
+* [ross-1967]
+* [steedman-1985]
+* [muysken-1982]
+* [rizzi-1997]
+* [chomsky-1991]
+* [zhang-2010]
 -/
 
 namespace Fortuny2024
 
-open Syntax (Cat)
+open Data.Examples
 
-/-! ### Generalized categorial features (Fortuny (12), (18)–(20)) -/
+/-! ### Categories as feature clusters (§2.1) -/
 
-/-- A **generalized categorial feature** (Fortuny (12)): a feature that determines a
-    constituent's syntactic distribution. Beyond the base categories, the criterial
-    A-bar features [wh]/[focus]/[topic] (Rizzi's cartography) are categorial features —
-    they have distinctive syntactic distributions and trigger movement (Remark (23)). -/
-inductive CatFeature where
-  /-- A base categorial feature [D], [V], [C], … (Fortuny (14)). -/
-  | base : Cat → CatFeature
-  /-- The criterial [wh] feature (Wh-Criterion → Spec,ForceP). -/
-  | wh
-  /-- The criterial [focus] feature (Focus Criterion → Spec,FocP). -/
-  | focus
-  /-- The criterial [topic] feature (Topic Criterion → Spec,TopP). -/
-  | topic
+/-- The bar-level features of [muysken-1982]: a minimal category is `[−projected, −maximal]`, an
+intermediate one `[+projected, −maximal]`, a maximal one `[+projected, +maximal]` (18)–(20). -/
+structure BarLevel where
+  projected : Bool
+  maximal : Bool
   deriving DecidableEq, Repr
 
-/-- A constituent's **category** = its set of generalized categorial features
-    (Fortuny (18)–(20): a category is a feature matrix). -/
-abbrev Category := Finset CatFeature
+/-- The bar level of a maximal projection. -/
+def BarLevel.max : BarLevel := ⟨true, true⟩
 
-/-- A criterial (A-bar movement-triggering) feature: [wh]/[focus]/[topic]. Base
-    categories are not criterial. -/
-def CatFeature.isCriterial : CatFeature → Bool
-  | .wh | .focus | .topic => true
-  | .base _ => false
+/-- Generalized categorial features (12): features determining a constituent's distribution — the
+base categories of (14), the criterial features of the left periphery ([rizzi-1997]) that trigger
+internal Merge (23), and the unvalued case feature of (59)–(62). -/
+inductive CatFeature where
+  | D
+  | P
+  | C
+  | I
+  | V
+  | Adj
+  | wh
+  | focus
+  | topic
+  | uCase
+  deriving DecidableEq, Repr
 
-/-! ### The Coordinability Condition (Fortuny (21)/(22)) -/
+/-- A category is its categorial features and its bar level (18)–(21). -/
+@[ext]
+structure Category where
+  cf : Finset CatFeature
+  bar : BarLevel
+  deriving DecidableEq
 
-/-- **Coordinability Condition** (Fortuny (22), from the categorematic `Coord : (X/X)/X`
-    (10) + categorial identity (21)): two constituents can be coordinated iff they are
-    categorially identical. This is the Parallelism Requirement / Law of Coordination of
-    Likes at the level of categorial features — the syntactic counterpart of the
-    same-type requirement `op : α → α → α` encodes in its type signature. -/
-def Coordinable (a b : Category) : Prop := a = b
+/-- (21): categorial identity is identity of categorial and bar-level features. -/
+theorem Category.eq_iff (a b : Category) : a = b ↔ a.cf = b.cf ∧ a.bar = b.bar :=
+  Category.ext_iff
 
-instance (a b : Category) : Decidable (Coordinable a b) := decEq a b
+/-! ### The categorematic coordinator (10)–(11) -/
 
-/-- **Remark (23)**: the grammatical feature that triggers internal Merge (movement) is
-    a categorial feature. So a coordinand that moves to satisfy a criterion bears that
-    criterial feature *in its category*. -/
-def MovesFor (a : Category) (f : CatFeature) : Prop := f ∈ a ∧ f.isCriterial
+/-- Categorial-grammar types over categories: `slash r a` selects an `a` and yields an `r`. -/
+inductive CGType where
+  | of : Category → CGType
+  | slash : CGType → CGType → CGType
+  deriving DecidableEq
 
-/-! ### Deriving the Coordinand Constraint, Case 1 (§2.2.1) -/
+/-- Functional application: `r / a` applied to `a` yields `r`. -/
+def CGType.apply : CGType → CGType → Option CGType
+  | .slash r a, b => if a = b then some r else none
+  | .of _, _ => none
 
-/-- **Coordinand Constraint, Case 1** (Fortuny §2.2.1, his (24)): a single coordinand
-    cannot be syntactically extracted. If coordinand `a` moves for a criterial feature
-    `f` (e.g. [wh]) that the other coordinand `b` lacks, then `a` and `b` carry different
-    categorial features, hence are *not* coordinable. The ill-formedness follows from the
-    categorematic coordinator (Coordinability) — no construction-specific island
-    stipulation is needed. -/
-theorem cc_case1 {a b : Category} {f : CatFeature}
-    (hmove : MovesFor a f) (hb : f ∉ b) : ¬ Coordinable a b := by
-  intro h
-  exact hb (h ▸ hmove.1)
+/-- (10): a coordinator is `(X/X)/X` — it selects an internal coordinand of category `X`, yields
+`X/X`, selects an external coordinand of category `X`, and yields a coordinate structure of
+category `X`. -/
+def coord (X : Category) : CGType := .slash (.slash (.of X) (.of X)) (.of X)
 
-/-- A coordinate structure of two coordinands is well-formed only if they are
-    coordinable (the categorematic `Coord` projects a single category `X`). -/
-def WellFormedCoordination (a b : Category) : Prop := Coordinable a b
+/-- (11): the coordinator applied to the internal coordinand `β` and then to the external
+coordinand `α`. -/
+def coordinate (X α β : Category) : Option CGType :=
+  ((coord X).apply (.of β)).bind (·.apply (.of α))
 
-/-- The CC over a coordinate structure: extracting a single coordinand (moving `a` for a
-    criterial feature the in-situ coordinand `b` lacks) makes the coordination
-    ill-formed. -/
-theorem coordinand_extraction_illformed {a b : Category} {f : CatFeature}
-    (hmove : MovesFor a f) (hb : f ∉ b) : ¬ WellFormedCoordination a b :=
-  cc_case1 hmove hb
+theorem coordinate_eq (X α β : Category) :
+    coordinate X α β = if X = β ∧ X = α then some (.of X) else none := by
+  unfold coordinate coord
+  by_cases hβ : X = β
+  · subst hβ
+    simp [CGType.apply]
+  · simp [CGType.apply, hβ]
 
-/-- A coordinate structure: a coordinator with its role (`Coordinator.Role` from the
-    API — conjunctive `.j`, disjunctive `.disj`, adversative `.advers`) combining two
-    coordinands. -/
+/-- The coordination projects `X` exactly when both coordinands are of category `X`. -/
+theorem coordinate_eq_some_iff (X α β : Category) :
+    coordinate X α β = some (.of X) ↔ α = X ∧ β = X := by
+  rw [coordinate_eq]
+  split_ifs with h
+  · exact ⟨λ _ => ⟨h.2.symm, h.1.symm⟩, λ _ => rfl⟩
+  · exact ⟨λ h' => h'.elim, λ ⟨ha, hb⟩ => (h ⟨hb.symm, ha.symm⟩).elim⟩
+
+/-- (66): the coordinator applied to a single coordinand is the unsaturated `X/X` — the structure
+a sideward-moved coordinate phrase would land in (65). -/
+theorem coord_apply_single (X : Category) :
+    (coord X).apply (.of X) = some (.slash (.of X) (.of X)) := by
+  simp [coord, CGType.apply]
+
+/-- (22): two constituents are coordinable when some category is projected for them. -/
+def Coordinable (α β : Category) : Prop := ∃ X, coordinate X α β = some (.of X)
+
+/-- The Coordinability Condition (22) follows from the categorematic coordinator (10) and
+categorial identity (21): coordinable iff the same categorial and bar-level features. -/
+theorem coordinable_iff (α β : Category) : Coordinable α β ↔ α.cf = β.cf ∧ α.bar = β.bar := by
+  rw [← Category.eq_iff]
+  constructor
+  · rintro ⟨X, h⟩
+    obtain ⟨rfl, rfl⟩ := (coordinate_eq_some_iff X α β).1 h
+    rfl
+  · rintro rfl
+    exact ⟨α, (coordinate_eq_some_iff α α α).2 ⟨rfl, rfl⟩⟩
+
+instance (α β : Category) : Decidable (Coordinable α β) :=
+  decidable_of_iff _ (coordinable_iff α β).symm
+
+/-! ### Case 1 and Case 2, subcase I (§2.2.1, §2.2.2.1) -/
+
+/-- (24): a coordinand carrying a categorial feature the other lacks — as when it alone is
+attracted by a probe for that feature (23) — is not coordinable with it. -/
+theorem not_coordinable_of_mem_of_notMem {α β : Category} {φ : CatFeature} (hα : φ ∈ α.cf)
+    (hβ : φ ∉ β.cf) : ¬ Coordinable α β :=
+  λ h => hβ (((coordinable_iff α β).1 h).1 ▸ hα)
+
+/-- (25): *who* is `[+wh]`, *a girl* is not. -/
+example : ¬ Coordinable ⟨{.D, .wh}, .max⟩ ⟨{.D}, .max⟩ :=
+  not_coordinable_of_mem_of_notMem (φ := .wh) (by decide) (by decide)
+
+/-- (47), subcase I of Case 2: a `[+topic]` and a `[+focus]` coordinand, each carrying a feature
+the other lacks. -/
+example : ¬ Coordinable ⟨{.D, .topic}, .max⟩ ⟨{.D, .focus}, .max⟩ :=
+  not_coordinable_of_mem_of_notMem (φ := .topic) (by decide) (by decide)
+
+/-- (30): identity is not required of the elements inside the coordinands. -/
+example : Coordinable ⟨{.D}, .max⟩ ⟨{.D}, .max⟩ := by decide
+
+/-! ### The Integrity Condition (50) and its rationale (§2.2.2.2) -/
+
+/-- The positions of a coordinate structure a probe might target. -/
+inductive Position where
+  | whole
+  | left
+  | right
+  deriving DecidableEq, Repr
+
+/-- A well-formed coordinate structure: a coordinator of some role with two coordinands of one
+category `X`, which it projects. -/
 structure CoordStructure where
   role : Coordinator.Role
+  X : Category
+
+/-- (50): in a well-formed coordinate structure of category `X` whose coordinands carry `φ`, a
+probe searching for `[+φ]` targets the coordinate structure and not a coordinand within it. -/
+def CoordStructure.Goal (cs : CoordStructure) (φ : CatFeature) (p : Position) : Prop :=
+  φ ∈ cs.X.cf ∧ p = .whole
+
+/-- Pattern 1 (51b), (53): neither coordinand is a goal, so the coordinands cannot move to
+separate specifiers, with or without the coordinate structure. -/
+theorem CoordStructure.not_goal_coordinand (cs : CoordStructure) (φ : CatFeature) :
+    ¬ cs.Goal φ .left ∧ ¬ cs.Goal φ .right :=
+  ⟨λ h => Position.noConfusion h.2, λ h => Position.noConfusion h.2⟩
+
+/-- (59)–(62): a probe for the unvalued case feature targets a DP coordination as a whole, so a
+single coordinand cannot raise to the subject position. -/
+theorem CoordStructure.goal_uCase (r : Coordinator.Role) :
+    (CoordStructure.mk r ⟨{.D, .uCase}, .max⟩).Goal .uCase .whole ∧
+      ¬ (CoordStructure.mk r ⟨{.D, .uCase}, .max⟩).Goal .uCase .left :=
+  ⟨⟨by simp, rfl⟩, λ h => Position.noConfusion h.2⟩
+
+/-- A derivation as the positions moved for each feature. -/
+def Derivation := CatFeature → List Position
+
+/-- (58): a derivation is superfluous when a coordinand moves twice for one feature, once on its
+own and once inside the coordinate structure — what the Least Effort Principle (79) bans. -/
+def Derivation.Superfluous (d : Derivation) : Prop :=
+  ∃ φ, .whole ∈ d φ ∧ (.left ∈ d φ ∨ .right ∈ d φ)
+
+/-- (53): moving the coordinate structure and both coordinands to specifiers of one head is
+superfluous. -/
+theorem superfluous_of_twice (φ : CatFeature) :
+    Derivation.Superfluous λ ψ => if ψ = φ then [.left, .right, .whole] else [] :=
+  ⟨φ, by simp⟩
+
+/-! ### The Prohibition against Self-Coordination (71) -/
+
+/-- An occurrence of a constituent: its category and the derivational step at which it entered
+the computation (fn. 16); two selections of one constituent are two occurrences. -/
+structure Occurrence where
+  cat : Category
+  step : ℕ
+  deriving DecidableEq
+
+/-- (71): a coordination is well formed only if its coordinands are coordinable and are distinct
+occurrences — a constituent cannot appear in both coordinated positions. -/
+def WellFormed (α β : Occurrence) : Prop := Coordinable α.cat β.cat ∧ α ≠ β
+
+/-- Self-coordination is semantically vacuous: for the conjunctive, additive, disjunctive and
+adversative roles the coordinator's operation on a constituent and itself returns it, the
+interface counterpart of (71) that §2.3 relates to the Least Effort Principle. -/
+theorem op_self {α : Type*} [BooleanAlgebra α] (r : Coordinator.Role)
+    (hr : r = .j ∨ r = .mu ∨ r = .disj ∨ r = .advers) (x : α) : Coordinator.op r x x = x := by
+  rcases hr with rfl | rfl | rfl | rfl <;> simp [Coordinator.op]
+
+/-! ### The judgments -/
+
+/-- Which coordinands a probe outside the coordinate structure attracts. -/
+inductive Moved where
+  | none
+  | left
+  | right
+  | both
+  | whole
+  deriving DecidableEq, Repr
+
+/-- A coordination of the data: the two coordinands' categories, which of them move, and whether
+they are one and the same occurrence. -/
+structure Row where
   left : Category
   right : Category
+  moved : Moved
+  same : Bool
+  judgment : Features.Judgment
+  deriving DecidableEq
 
-/-- The structure is well-formed only if the coordinands are coordinable (the
-    categorematic `Coord` projects a single category `X`). -/
-def CoordStructure.WellFormed (cs : CoordStructure) : Prop := Coordinable cs.left cs.right
+/-- A coordinand, and not the whole, is attracted: the Integrity Condition (50) forbids it. -/
+def Moved.Coordinand : Moved → Prop
+  | .left | .right | .both => True
+  | .none | .whole => False
 
-/-- **The Coordinand Constraint is uniform across coordinator types** (Fortuny (3a–f):
-    *How was Emma [how and/or/but sleepy]?* — *and*, *or*, and *but* all obey the CC).
-    Extracting a single coordinand is ill-formed *regardless* of the coordinator's
-    `Coordinator.Role`: the proof discharges the goal without inspecting `r`, which is
-    exactly the claim that the CC falls out of the categorematic coordinator's
-    parallelism, not the role's denotation. -/
-theorem cc_uniform (r : Coordinator.Role) {a b : Category} {f : CatFeature}
-    (hmove : MovesFor a f) (hb : f ∉ b) :
-    ¬ CoordStructure.WellFormed ⟨r, a, b⟩ :=
-  cc_case1 hmove hb
+instance : DecidablePred Moved.Coordinand := λ _ => by
+  unfold Moved.Coordinand; split <;> infer_instance
 
-/-! ### Illustrations (§2.2.1.1–§2.2.1.2) -/
+/-- The three factors of §2.3: the coordinands are not coordinable (10)/(22); they are, but a
+coordinand is attracted (50); or the coordinands are one occurrence (71). -/
+def Row.Factor (r : Row) : Fin 3 → Prop
+  | 0 => ¬ Coordinable r.left r.right
+  | 1 => Coordinable r.left r.right ∧ r.moved.Coordinand
+  | 2 => r.same = true
 
-/-- (25) *Who did John kiss [who] and/or [a girl]? — the wh-moved coordinand `who` is
-    `[+wh]`, the in-situ `a girl` is `[−wh]`; categorially distinct, so not coordinable. -/
-example :
-    ¬ Coordinable {.base (.proj .NOUN), .wh} {.base (.proj .NOUN)} :=
-  cc_case1 (a := {.base (.proj .NOUN), .wh}) (f := .wh) ⟨by decide, by decide⟩ (by decide)
+instance (r : Row) (i : Fin 3) : Decidable (r.Factor i) := by
+  unfold Row.Factor; split <;> infer_instance
 
-/-- (26)/(28) Focalization of a single coordinand (Catalan *LES PASTANAGUES, sembra i/o
-    les mongetes*): the `[+focus]` coordinand and the `[−focus]` one are not coordinable.
-    The same derivation covers conjunctive, disjunctive, and adversative coordination —
-    the CC is uniform because it falls out of the categorematic coordinator, not of any
-    one coordinator's meaning. -/
-example :
-    ¬ Coordinable {.base (.proj .NOUN), .focus} {.base (.proj .NOUN)} :=
-  cc_case1 (f := .focus) ⟨by decide, by decide⟩ (by decide)
+def IllFormed (r : Row) : Prop := ∃ i, r.Factor i
 
-/-- The well-formed control: coordinating two categorially-identical (here `[−wh]`)
-    coordinands *is* coordinable — nothing is extracted, so the parallelism holds. -/
-example : Coordinable {.base (.proj .NOUN)} {.base (.proj .NOUN)} := rfl
+instance : DecidablePred IllFormed := λ r => inferInstanceAs (Decidable (∃ i, r.Factor i))
 
-/-! ### Case 2 and the Least Effort deduction (§2.2.2–§2.3) — TODO
+def categoryTable : List (String × Category) :=
+  [("D", ⟨{.D}, .max⟩), ("D wh", ⟨{.D, .wh}, .max⟩), ("D focus", ⟨{.D, .focus}, .max⟩),
+    ("D topic", ⟨{.D, .topic}, .max⟩), ("D uC", ⟨{.D, .uCase}, .max⟩), ("P", ⟨{.P}, .max⟩),
+    ("C", ⟨{.C}, .max⟩), ("Adj", ⟨{.Adj}, .max⟩), ("Adj wh", ⟨{.Adj, .wh}, .max⟩),
+    ("Adj focus", ⟨{.Adj, .focus}, .max⟩), ("Adj topic", ⟨{.Adj, .topic}, .max⟩)]
 
-Fortuny's full account adds two further factors for **Case 2** (why *both* coordinands
-cannot move) and the ultimate deduction: an economy condition on movement (the Integrity
-Condition on Coordinate Structures (50)) and an interface condition (the Prohibition
-against Self-Coordination (71)), all derived from Chomsky's (1991) Least Effort
-Principle. Case 1 above — the robust, crosslinguistically pervasive core of the CC —
-follows from the categorematic coordinator alone; the Least Effort deduction of Cases 1+2
-is the larger formalization, deferred. -/
+def movedTable : List (String × Moved) :=
+  [("none", .none), ("left", .left), ("right", .right), ("both", .both), ("whole", .whole)]
+
+def sameTable : List (String × Bool) := [("yes", true), ("no", false)]
+
+def Row.ofExample (ex : LinguisticExample) : Option Row := do
+  let l ← ex.parse? "left" categoryTable
+  let r ← ex.parse? "right" categoryTable
+  let m ← ex.parse? "moved" movedTable
+  let s ← ex.parse? "same" sameTable
+  pure ⟨l, r, m, s, ex.judgment⟩
+
+theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
+
+def rows : List Row := Examples.all.filterMap Row.ofExample
+
+/-- The paper's judgments are the three-factor decomposition's: a coordination is ungrammatical
+exactly when one of the factors applies. -/
+theorem rows_predicted : ∀ r ∈ rows, (r.judgment = .acceptable ↔ ¬ IllFormed r) := by
+  decide
+
+/-- §2.3: each ill-formed coordination in the data falls under exactly one factor — only the
+coordinator's definition rules out extraction of a single coordinand, only the Integrity Condition
+extraction of identical coordinands, only the Prohibition against Self-Coordination the
+across-the-board dependency with coordinated positions. -/
+theorem rows_factor : ∀ r ∈ rows, ∀ i j, r.Factor i → r.Factor j → i = j := by
+  decide
 
 end Fortuny2024
