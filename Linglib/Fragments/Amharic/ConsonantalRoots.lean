@@ -1,89 +1,41 @@
 import Linglib.Morphology.Root.Consonantal
-import Linglib.Phonology.Constraints.Basic
 
 /-!
-# Amharic Consonantal Roots
+# Amharic consonantal roots
 
-A minimal inventory of Amharic verbal roots used by [faust-2026]'s
-re-analysis of [broselow-1984]'s claim that Amharic admits OCP-violating
-biradical roots like √TT/√QQ.
+The roots of the type A verbal paradigms of [leslau-1995]'s reference grammar that
+[faust-2026] discusses ((5), (12)): a regular triradical, a root whose stems have identical
+final consonants, a root whose second stem consonant is palatalized, and the [a]-final and
+hollow roots traditionally analysed with a nonconsonantal radical. The root identities
+follow [faust-2026]; [broselow-1984] analyses `wd` as √wdd and `fdj` as biradical.
 
-[faust-2026] argues that the seemingly-biconsonantal verbs (paradigm
-(5b), e.g. [wäddäd-ä] `liked`) are in fact triradical √wdd, satisfying the
-template by spreading; while the [t]-intruding paradigm (5c)/(12)/(13) is
-triradical with a [j] in the final position whose palatality merges with
-the preceding consonant — under this analysis Amharic has no OCP-violating
-roots after all.
+## References
+
+* [faust-2026]
+* [broselow-1984]
+* [leslau-1995]
 -/
 
 namespace Amharic
 
 open Morphology
 
--- ============================================================================
--- § 1: [j]-final triradicals — the [t]-intrusion class ([faust-2026] (5c))
--- ============================================================================
-
-/-- √fdj — base of [fädʤ-ä] `scorch` PFV.3MSG, [fädʤ-o] gerund.
-    [broselow-1984] analyzes this as a *biradical* √fd with /t/
-    as a default consonant inserted to satisfy the template;
-    [faust-2026] reanalyzes it as triradical with the third
-    radical /j/, which palatalizes the preceding [d] to [dʒ] in the
-    verbal paradigm and fails to surface as a separate segment. In
-    nominal forms (gerund, INF), the feminine /t/ intrudes — *not* as
-    a default consonant but as the n[+gen] exponent ([faust-2026]
-    (7)–(8), (11)–(12)). -/
-def fdj : ConsonantalRoot String := ⟨["f", "d", "j"]⟩
-
-/-- √hid — base of [hed-ä] `go` PFV.3MSG, INF [mäh(i)d].
-    A "hollow" root in the standard analysis: the medial radical /i/
-    is non-consonantal and merges with the vocalization
-    ([faust-2026] (12e), (13c)). -/
-def hid : ConsonantalRoot String := ⟨["h", "i", "d"]⟩
-
-/-- √sma — base of [sämm-a] `hear` PFV.3MSG, INF [mäsmat]
-    ([faust-2026] (12c), (13a)). The non-consonantal final radical
-    /a/ merges with the vocalization. -/
-def sma : ConsonantalRoot String := ⟨["s", "m", "a"]⟩
-
-/-- √sam — base of [sam-ä] `kiss` PFV.3MSG, INF [mäsam]
-    ([faust-2026] (12d), (13b)). The non-consonantal medial
-    radical /a/ merges with the vocalization. -/
-def sam : ConsonantalRoot String := ⟨["s", "a", "m"]⟩
-
--- ============================================================================
--- § 2: True triradical (control) and Faust's biradical reanalysis
--- ============================================================================
-
-/-- √sbr — base of [säbbär-ä] `break` PFV.3MSG, INF [mäsbär]
-    ([faust-2026] (5a), (12a)). A canonical type-A triradical
-    with three distinct surface consonants. -/
+/-- √sbr `break`: [säbbär-ä] PFV.3MSG, [säbr-o] GRND, [mäsbär] INF ((5a), (12a)). -/
 def sbr : ConsonantalRoot String := ⟨["s", "b", "r"]⟩
 
-/-- √wd — base of [wäddäd-ä] `liked` PFV.3MSG ([faust-2026] (5b),
-    page 432). Both [broselow-1984] and [faust-2026] agree
-    this is a *biradical* root. The two analysts diverge on √fdj
-    (Broselow: biradical √fd; Faust: triradical √fdj) but agree on
-    √wd. Crucially for [faust-2026]: √wd does *not* violate the
-    OCP at the root level, since /w/ ≠ /d/ — even though it surfaces
-    with adjacent identical [d][d] in [wäddäd-ä]. The surface gemination
-    is a template-spreading effect, not a root-level identity. -/
+/-- √wd `like`: [wäddäd-ä] PFV.3MSG, [wädd-o] GRND, [mäwdäd] INF (5b). -/
 def wd : ConsonantalRoot String := ⟨["w", "d"]⟩
 
--- ============================================================================
--- § 3: Sanity properties
--- ============================================================================
+/-- √fdj `scorch`: [fäʤʤ-ä] PFV.3MSG, [fäʤt-o] GRND, [mäfʤät] INF ((5c), (12b)). -/
+def fdj : ConsonantalRoot String := ⟨["f", "d", "j"]⟩
 
-theorem fdj_triradical : fdj.Triradical := rfl
-theorem sbr_triradical : sbr.Triradical := rfl
-theorem wd_biradical : wd.Biradical := rfl
+/-- √sma `hear`: [sämm-a] PFV.3MSG, [sämt-o] GRND, [mäsmat] INF (12c). -/
+def sma : ConsonantalRoot String := ⟨["s", "m", "a"]⟩
 
-/-- [faust-2026]'s key claim about √wd (page 432): even though
-    the surface form [wäddäd-ä] has adjacent identical [d][d], the
-    *root* √wd has no adjacent identical segments — so the OCP is
-    not violated at the root level. The biradical analysis (shared
-    with [broselow-1984]) is therefore maintained. -/
-theorem wd_no_adjacent_identical :
-    Constraints.adjacentIdentical wd.segments = 0 := rfl
+/-- √sam `kiss`: [sam-ä] PFV.3MSG, [sam-o] GRND, [mäsam] INF (12d). -/
+def sam : ConsonantalRoot String := ⟨["s", "a", "m"]⟩
+
+/-- √hid `go`: [hed-ä] PFV.3MSG, [hed-o] GRND, [mähed] INF (12e). -/
+def hid : ConsonantalRoot String := ⟨["h", "i", "d"]⟩
 
 end Amharic
