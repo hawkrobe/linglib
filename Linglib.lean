@@ -3049,3 +3049,4 @@ import Linglib.Data.Examples.ElkinsTorrenceBrown2026
 import Linglib.Data.Examples.Elliott2025
 import Linglib.Data.Examples.EngelhardtEtAl2006
 import Linglib.Data.Examples.Enguehard2024
+import Linglib.Data.Examples.Erlewine2016
