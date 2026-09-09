@@ -3069,3 +3069,4 @@ import Linglib.Data.Examples.Francescotti1995
 import Linglib.Data.Examples.FrancikClark1985
 import Linglib.Data.Examples.FrischPierrehumbertBroe2004
 import Linglib.Data.Examples.Funakoshi2016
+import Linglib.Data.Examples.FuscoSgrizzi2026

@@ -23,6 +23,7 @@ Standard EPs:
 -/
 
 import Linglib.Syntax.Minimalist.SyntacticObject.Basic
+import Mathlib.Order.Basic
 
 namespace Minimalist
 
@@ -560,6 +561,29 @@ def ComplementSize.finP : ComplementSize := ⟨.Fin⟩
 def ComplementSize.cP : ComplementSize := ⟨.C⟩
 def ComplementSize.forceP : ComplementSize := ⟨.Force⟩
 def ComplementSize.saP : ComplementSize := ⟨.SA⟩
+
+/-- Complement sizes are ordered by F-level: a complement is at most another when it projects no
+higher in the functional sequence. Sizes with distinct highest heads at one F-level, such as
+tense and negation, are equivalent but not equal, so the order is a preorder. -/
+instance : Preorder ComplementSize := Preorder.lift ComplementSize.fLevel
+
+instance : DecidableLE ComplementSize := λ a b => inferInstanceAs (Decidable (a.fLevel ≤ b.fLevel))
+
+instance : DecidableLT ComplementSize := λ a b => inferInstanceAs (Decidable (a.fLevel < b.fLevel))
+
+theorem ComplementSize.le_def {a b : ComplementSize} : a ≤ b ↔ a.fLevel ≤ b.fLevel := Iff.rfl
+
+theorem ComplementSize.lt_def {a b : ComplementSize} : a < b ↔ a.fLevel < b.fLevel := Iff.rfl
+
+/-- Phase-sized complements are those at least as large as a CP. -/
+theorem ComplementSize.isPhaseSized_iff {cs : ComplementSize} :
+    cs.isPhaseSized = true ↔ ComplementSize.cP ≤ cs := by
+  simp [isPhaseSized, le_def, fLevel, cP]
+
+/-- Complements transparent to tense Agree are those smaller than a CP. -/
+theorem ComplementSize.transparentToTenseAgree_iff {cs : ComplementSize} :
+    cs.transparentToTenseAgree = true ↔ cs < ComplementSize.cP := by
+  simp [transparentToTenseAgree, lt_def, fLevel, cP]
 
 -- ── Bridge theorems ──
 
