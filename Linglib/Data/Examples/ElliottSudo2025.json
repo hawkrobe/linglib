@@ -1,20 +1,588 @@
 [
   {
-    "id": "elliottsudo2025_double_negation",
-    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "UNVERIFIED double negation enables anaphora"},
+    "id": "elliottsudo2025_1",
+    "source": {"bibkey": "kamp-1973", "paperLabel": "permission sentences"},
+    "reportedIn": {"bibkey": "elliott-sudo-2025", "paperLabel": "(1)"},
     "language": "stan1293",
-    "primaryText": "It's not the case that John didn't see a bird. It was singing.",
-    "discourseSegments": ["It's not the case that John didn't see a bird.", "It was singing."],
+    "primaryText": "You may have tea or coffee.",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "It's not the case that John didn't see a bird. It was singing.",
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "implies: you may have coffee and you may have tea", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "1"]
+    ],
+    "comment": "Kamp's deontic free choice, the original observation.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_2",
+    "source": {"bibkey": "zimmermann-2000", "paperLabel": "epistemic free choice"},
+    "reportedIn": {"bibkey": "elliott-sudo-2025", "paperLabel": "(2)"},
+    "language": "stan1293",
+    "primaryText": "It might be here or there.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "implies: it might be here and it might be there", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "1"]
+    ],
+    "comment": "Epistemic free choice.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_6",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(6)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either there isn't a bathroom in this house, or it's in a funny place.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "existential: either no bathroom, or a bathroom in a funny place", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "2.1"]
+    ],
+    "comment": "The bathroom disjunction: the negation of the first disjunct entails a witness for the pronoun in the second.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_10a",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(10a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Ethan has a husband. He's standing outside.",
+    "discourseSegments": [
+      "Ethan has a husband.",
+      "He's standing outside."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "It is known that if Ethan is married, he is married to a man.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.1"]
+    ],
+    "comment": "The indefinite introduces a discourse referent for the pronoun.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_10b",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(10b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Ethan is married. He's standing outside.",
+    "discourseSegments": [
+      "Ethan is married.",
+      "He's standing outside."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "It is known that if Ethan is married, he is married to a man.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.1"]
+    ],
+    "comment": "Contextually equivalent to (10a) but without a linguistic antecedent: the formal link condition.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_11a",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(11a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either John has no husband, or he's standing outside.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["antecedent_type", "indefinite"],
-      ["context", "double_negation"]
+      ["section", "2.1"]
     ],
-    "comment": "Migrated from Phenomena/Anaphora/CrossSentential.lean doubleNegation. Doubly negated indefinites license cross-sentential anaphora, in contrast with single negation (heim1982_standard_negation_blocks). DPL predicts infelicity here because its negation is a test (double negation elimination fails for anaphora); bilateral update semantics recovers the binding."
+    "comment": "Anaphora across a disjunction with an indefinite in the negated first disjunct.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_11b",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(11b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either John isn't married, or he's standing outside.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.1"]
+    ],
+    "comment": "The formal link condition holds across disjunctions too.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_14",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(14)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either Sue didn't buy a sage plant, or she bought eight others along with it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.1"]
+    ],
+    "comment": "The pronoun does not project uniqueness in a bathroom disjunction, against an E-type analysis; adapted from Heim's sage plant sentence.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_16a",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(16a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either John doesn't own a shirt, or it's in the wardrobe.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [
+      {"form": "John owns a shirt, and it's in the wardrobe.", "judgment": "questionable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.1"]
+    ],
+    "comment": "The conditional-uniqueness oddness is shared by the conjunctive discourse (16b), so it is not special to disjunction.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_18",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(18)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either Gennaro doesn't have a credit card, or he paid with it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Wondering how Gennaro paid for dinner.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "existential: consistent with a credit card he did not pay with", "judgment": "acceptable"},
+      {"name": "universal: every credit card was used to pay", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "2.1"]
+    ],
+    "comment": "Universal truth conditions for bathroom disjunctions are too strong.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_22",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(22)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It's possible that either there's no bathroom in this house or it's in a surprising place.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "entails: it's possible that there's no bathroom in this house", "judgment": "acceptable"},
+      {"name": "entails: it's possible that there's a bathroom in this house in a surprising place", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "2.2"]
+    ],
+    "comment": "Free choice with anaphora under an epistemic modal: the second inference combines material from both disjuncts.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_23",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(23)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You may include no appendix, or keep it to a single page.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "entails: you may include no appendix", "judgment": "acceptable"},
+      {"name": "entails: you may include an appendix kept to a single page", "judgment": "acceptable"},
+      {"name": "entails: you may keep it to a single page", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "2.2"]
+    ],
+    "comment": "Free choice with anaphora under a deontic modal; the classical schema's conclusion (25) has a free pronoun and is not the attested inference.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_42",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(42)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Gabor didn't write a paper about free choice, but it was interesting.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.3"]
+    ],
+    "comment": "An indefinite under negation licenses no subsequent pronoun: the negative update of an existential introduces no anaphoric information.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_51",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(51)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It's not true that Sue didn't buy a sage plant — she bought eight others along with it!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.3"]
+    ],
+    "comment": "A doubly negated indefinite licenses anaphora without a uniqueness inference: Double Negation Elimination holds for anaphoric information.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_52b",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(52b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "No, Kafuku doesn't own no car — he drives it every day.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Answering: Does Kafuku own no car?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.3"]
+    ],
+    "comment": "A doubly negated existential introduces the same anaphoric information as its positive counterpart, which standard dynamic semantics cannot deliver.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_63",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(63)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either it's upstairs, or there is no bathroom.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.4.2"]
+    ],
+    "comment": "A backwards bathroom disjunction, cataphora that the asymmetric dynamic entries do not capture.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_71",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(71)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either Gennaro doesn't have a credit card, or he paid with it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Gennaro has a credit card that he paid with and another that he did not.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "true in the context", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "3.4.2"]
+    ],
+    "comment": "The derived truth conditions (70) are existential: true as soon as some credit card was used.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_74",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(74)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Maybe there isn't a bathroom.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.5"]
+    ],
+    "comment": "The positive update passes when some possibility has no bathroom; the negative update passes when the state subsists in the positive update of the existential, that is, every possibility has a bathroom.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_78",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(78)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "There might be a bathroom and it might be upstairs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.5"]
+    ],
+    "comment": "Modal subordination: the externally static test semantics for modals does not license this anaphora.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_82",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(82)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "There might be coffee or tea.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "entails: there might be coffee and there might be tea", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "3.6"]
+    ],
+    "comment": "Free choice without anaphora: modal disjunction requires both disjuncts to be possible.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_85",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(85)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It's impossible that there's coffee or tea.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "entails: no coffee is possible and no tea is possible", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "3.6"]
+    ],
+    "comment": "Dual prohibition is preserved because the negative update of modal disjunction is untouched.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_110",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(110)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either it's possible there's no bathroom, or it's possible it's upstairs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "entails: it's possible there's no bathroom, and it's possible there's a bathroom upstairs", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "5.1"]
+    ],
+    "comment": "Wide free choice with anaphora, beyond the externally static modals of the analysis.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_114",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(114)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every student read The Master and Margarita or The White Guard.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "entails: some student read The Master and Margarita", "judgment": "acceptable"},
+      {"name": "entails: some student read The White Guard", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "5.2"]
+    ],
+    "comment": "The distributive inference of a disjunction under a universal.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_116",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(116)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every student either didn't read a novel, or wrote a report on it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "entails: some student didn't read a novel", "judgment": "acceptable"},
+      {"name": "entails: some student read a novel and wrote a report on it", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "5.2"]
+    ],
+    "comment": "The distributive inference with anaphora, with the universal as the dual of the existential and disjunction as modal disjunction.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_118",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(118)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Not every linguist is attending the plenary talk. She's smoking outside.",
+    "discourseSegments": [
+      "Not every linguist is attending the plenary talk.",
+      "She's smoking outside."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "5.2"]
+    ],
+    "comment": "The dual treatment of the universal wrongly predicts that a negated universal introduces a singular discourse referent; a plural setting is needed.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_126",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(126)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If either there's no bathroom or it's upstairs, this house needs to be renovated.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "entails: if there's no bathroom, this house needs to be renovated", "judgment": "acceptable"},
+      {"name": "entails: if there's a bathroom upstairs, this house needs to be renovated", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "5.3"]
+    ],
+    "comment": "Simplification of disjunctive antecedents with anaphora, left for future work.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "elliottsudo2025_129",
+    "source": {"bibkey": "elliott-sudo-2025", "paperLabel": "(129)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It's not required that you include an appendix and keep it to a single page.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "negative free choice with anaphora", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "5.4"]
+    ],
+    "comment": "Negative free choice with an anaphoric dependency inside the conjunction, derived by a precondition on the negative update of conjunction.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   }
 ]

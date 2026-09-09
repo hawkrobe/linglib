@@ -1,391 +1,348 @@
-import Linglib.Fragments.Mayan.Kaqchikel.Extraction
-import Linglib.Phonology.Constraints.Defs
+import Linglib.Data.Examples.Erlewine2016
+import Linglib.Features.Person.Basic
+import Linglib.Fragments.Mayan.Params
 import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Studies.CoonMateoPedroPreminger2014
+import Mathlib.Order.Interval.Finset.Nat
 
 /-!
-# Erlewine 2016: Anti-Locality and Optimality in Kaqchikel Agent Focus
-[erlewine-2016] [erlewine-2018]
+# Erlewine (2016): Anti-locality and Optimality in Kaqchikel Agent Focus
 
-[erlewine-2016] analyzes Kaqchikel Agent Focus as the optimal output
-of a competition between derivations, ranked by three violable
-constraints: **XRef-Participant** ≫ **Spec-to-Spec Anti-Locality
-(SSAL)** ≫ **XRef** (cross-referencing). The core two-candidate
-competition is decided by the SSAL ≫ XRef sub-ranking; top-ranked
-XRef-Participant produces the participant exception below. The
-fragment in `Fragments/Mayan/Kaqchikel/Extraction.lean` carries the
-typology-neutral extraction profile; this study file adds the
-theory-laden OT machinery and verifies the paper's results.
+This file formalizes [erlewine-2016]'s account of Kaqchikel Agent Focus (AF), the verb form with
+an AF suffix and no Set A agreement that a transitive subject takes under Ā-extraction. The
+trigger is not subject extraction but movement that is too short: AF disappears when a preverbal
+adverb (§3.1) or another preverbal operator (§3.2) intervenes, and long-distance extraction puts
+it on the embedded verb alone. Spec-to-Spec Anti-Locality (§4) bans Ā-movement from the
+specifier of XP that crosses no maximal projection but XP, crossing being dominance of the origin
+but not of the landing site. Kaqchikel T carries an obligatory Set B probe and an optional Set A
+probe with the EPP property (§4.1); a constraint that every argument be cross-referenced makes
+the transitive subject move to Spec,TP, from where its next step to Spec,CP is too short, while
+an intransitive subject stays in situ, which derives the ergative alignment of agreement (§4.2).
+Among the competing derivations of one numeration (§5.1) the AF derivation skips Spec,TP at the
+cost of a cross-referencing violation, so anti-locality outranks cross-referencing, and the AF
+suffix realizes an argument left un-cross-referenced (§4.1). Set B on an AF verb targets the
+participant argument ([stiebels-2006], [preminger-2011]), and when both arguments are
+participants the full-agreement transitive returns even under subject extraction (§5.2), which a
+top-ranked constraint cross-referencing participants derives and a last-resort account, such as
+[coon-mateo-pedro-preminger-2014]'s for Q'anjob'al, cannot (§5.3); evaluation must see the whole
+clause, since at TP the anti-locality violation is not yet visible. Rerankings give the typology
+of §6.1: Popti', whose Set B targets only the object, keeps the full form whenever the subject is
+a participant; Akatek ranks anti-locality highest and uses AF regardless of person; Ch'ol ranks
+cross-referencing highest and has no AF.
 
-## The Derivation ([erlewine-2016] §§4–5)
+## Implementation notes
 
-### Why the transitive derivation crashes
+* A clause is the spine VP, vP, TP and the layers above TP, an adverb's projection
+  ([cinque-1999]), the CPs of a split periphery ([rizzi-1997]) and the topic projection (§4.4),
+  indexed from the bottom. A position lies within the projection of its index, so the crossing
+  set of a step is the interval of projections from the origin's up to but excluding the landing
+  site's. Long-distance extraction is the embedded clause's competition, since movement stops at
+  the embedded Spec,CP (§4.3).
+* A candidate is a choice of the optional Set A probe and of the Set B probe's target; the two
+  probes cannot share a goal, and the Set A probe, which moves its goal, sees only the subject at
+  the vP edge. Popti' and Akatek restrict Set B to the object.
+* The grammars are the rankings of §6.1 over the three constraints of §5; the constraint
+  preferring plural targets that the paper mentions in a footnote is not modelled.
+* Example numbers follow the lingbuzz preprint, the version consulted.
+* The examples are `Data.Examples.Erlewine2016`.
 
-In a normal Kaqchikel transitive, the agent base-generates in Spec,vP
-and is attracted to Spec,TP by the A-probe on T (receiving Set A
-agreement). For Ā-extraction, the agent must then move from Spec,TP
-to Spec,CP. But CP immediately dominates TP, so this step crosses no
-intervening maximal projection — violating Spec-to-Spec Anti-Locality.
+## References
 
-### Why AF is selected
-
-The grammar generates a competing candidate — the AF structure — with
-an intransitive-like v that does NOT introduce the agent in Spec,vP.
-The agent extracts directly to Spec,CP without passing through Spec,TP,
-so no SSAL violation occurs. But the agent never enters Spec,TP, so
-the A-probe cannot establish Set A (ergative) agreement — violating
-the lower-ranked XRef constraint.
-
-The evaluation selects AF because SSAL ≫ XRef: avoiding the too-local
-movement outranks maintaining cross-referencing agreement.
-
-### Key insight: locality, not extraction per se
-
-AF is triggered by the *locality of movement*, not by agent extraction
-per se. Two signatures ([erlewine-2016] §§2.2, 3): intervening
-preverbal material lengthens the subject's movement and obviates AF —
-the full-agreement transitive resurfaces and AF becomes ungrammatical;
-and long-distance subject extraction places AF on the *embedded* verb,
-whose subject makes the too-local first step, while the matrix verb,
-whose own subject has not moved, must stay transitive.
-
-### Spec-to-Spec anti-locality
-
-The constraint that blocks the transitive derivation: movement from
-Spec,XP to Spec,YP is blocked when YP immediately dominates XP. In
-Kaqchikel, XP = TP and YP = CP. SSAL traces to [abels-2003]'s
-anti-locality theory, with refinements in [boskovic-1997] and
-many subsequent papers; [erlewine-2016]'s contribution is the
-specific application to Kichean AF as an OT-competing-candidate
-analysis.
-
-### Connection to Constraint
-
-The OT tableau uses the lexicographic comparison from
-`Phonology/OptimalityTheory/Tableau.lean`. The key result
-`af_is_optimal` shows that AF beats the transitive under strict
-ranking — and `satisfaction_ordering_incomparable` shows this requires
-OT's lexicographic comparison, not satisfaction ordering's subset
-inclusion.
-
-## Anti-agreement
-
-AF is an instance of a broader cross-linguistic pattern of
-**anti-agreement**: when extraction forces a DP to skip an A-position
-(to avoid SSAL), the agreement morphology associated with that
-position is lost — Kaqchikel Set A under agent extraction, Trentino
-Italian nominative under extraction, Karitiâna absolutive under
-extraction. All derive from the same mechanism: SSAL forces skipping
-an A-position, and agreement with the head at that position fails.
-
-## Contrast with Toba Batak
-
-Both Kaqchikel and Toba Batak have extraction restrictions derived
-from anti-locality in predicate-fronting contexts, but the repair
-strategies differ: Toba Batak restricts extraction to the pivot
-position (structural restriction), while Kaqchikel repairs the
-derivation via AF (alternation strategy).
+* [erlewine-2016]
+* [abels-2003]
+* [cinque-1999]
+* [rizzi-1997]
+* [stiebels-2006]
+* [preminger-2011]
+* [coon-mateo-pedro-preminger-2014]
+* [prince-smolensky-1993]
 -/
 
 namespace Erlewine2016
 
-open Kaqchikel Minimalist Minimalist.Voice
-open Mayan (VerbForm)
-open Constraints OptimalityTheory
+open Constraints OptimalityTheory Data.Examples Erlewine2016.Examples Features
 
-/-! ### Competing derivations -/
-
-/-- A candidate derivation for clause-local transitive agent extraction.
-    The OT competition evaluates these: which structure best satisfies
-    the ranked constraints? Both candidates share the same clausal spine
-    (CP > TP > vP > VP); they differ in the v head and the agent's
-    movement path. -/
-inductive AFCandidate where
-  /-- Normal transitive derivation: transitive v introduces agent in
-      Spec,vP. A-probe on T attracts agent to Spec,TP (triggering Set A
-      agreement). Subsequent Ā-extraction from Spec,TP to Spec,CP
-      violates SSAL because CP immediately dominates TP. -/
-  | transitiveExtraction
-  /-- Agent Focus derivation: intransitive-like v, agent NOT in Spec,vP.
-      Agent extracts directly to Spec,CP without passing through Spec,TP.
-      No SSAL violation, but cross-referencing is incomplete: no Set A
-      (ergative) agreement because the agent never enters Spec,TP. -/
-  | agentFocusExtraction
+/-- The arguments of a verb. -/
+inductive Arg
+  | subj
+  | obj
   deriving DecidableEq, Repr
 
-/-- The verb form that surfaces for each candidate. -/
-def AFCandidate.verbForm : AFCandidate → VerbForm
-  | .transitiveExtraction => .transitive
-  | .agentFocusExtraction => .agentFocus
+/-- A layer of the clause above TP: an adverb's projection, a CP of the periphery, or the topic
+projection. -/
+inductive Layer
+  | advP
+  | cP
+  | topP
+  deriving DecidableEq, Repr
 
-/-- Does this candidate violate Spec-to-Spec Anti-Locality (SSAL)?
-    The transitive derivation does: the step Spec,TP → Spec,CP crosses
-    no intervening maximal projection (CP immediately dominates TP). -/
-def AFCandidate.violatesAntiLocality : AFCandidate → Bool
-  | .transitiveExtraction => true
-  | .agentFocusExtraction => false
+/-- A clause and its extraction: whether it is transitive, the layers above TP from the bottom,
+the extracted argument with the index of the layer it lands in, and the person of each
+argument. -/
+structure Input where
+  transitive : Bool
+  layers : List Layer
+  extracted : Option (Arg × ℕ)
+  subj : Person
+  obj : Person
+  deriving DecidableEq, Repr
 
-/-- Does this candidate violate the XRef (cross-referencing) constraint?
-    AF loses Set A agreement because the agent never enters Spec,TP
-    where the A-probe resides. The transitive candidate maintains full
-    cross-referencing (Set A + Set B). -/
-def AFCandidate.violatesXRef : AFCandidate → Bool
-  | .transitiveExtraction => false
-  | .agentFocusExtraction => true
+/-- The arguments of a transitive or intransitive clause. -/
+def argsOf (transitive : Bool) : List Arg := if transitive then [.subj, .obj] else [.subj]
 
-/-! ### The constraints and rankings -/
+/-- The arguments of the clause. -/
+def Input.args (i : Input) : List Arg := argsOf i.transitive
 
-/-- Spec-to-Spec Anti-Locality: movement from Spec,XP to Spec,YP is
-    banned when YP immediately dominates XP. Outranks XRef; outranked
-    only by XRef-Participant. -/
-def ssalConstraint : Constraint AFCandidate :=
-  fun c => if c.violatesAntiLocality then 1 else 0
+/-- The person of an argument. -/
+def Input.person (i : Input) : Arg → Person
+  | .subj => i.subj
+  | .obj => i.obj
 
-/-- XRef (cross-referencing, lowest-ranked): every argument DP must be
-    cross-referenced by a pronominal morpheme on the verb (Set A for
-    ergative, Set B for absolutive). -/
-def xrefConstraint : Constraint AFCandidate :=
-  fun c => if c.violatesXRef then 1 else 0
+/-! ### The spine and anti-locality -/
 
-/-- XRef-Participant (top-ranked): every 1st/2nd-person argument must be
-    cross-referenced. Parameterized by whether both arguments are
-    participants: the AF candidate's single Set B slot can cross-reference
-    only one of them, so AF incurs a violation exactly then; the
-    full-agreement transitive never does. -/
-def xrefPConstraint (bothParticipants : Bool) : Constraint AFCandidate
-  | .agentFocusExtraction => if bothParticipants then 1 else 0
-  | .transitiveExtraction => 0
+/-- The index of TP in the spine VP, vP, TP, layers. -/
+def tP : ℕ := 2
 
-/-- The core two-constraint competition for Kaqchikel AF: SSAL ≫ XRef.
-    Decides the outcome whenever XRef-Participant is inactive (at most
-    one participant argument) — see `fullRanking`. -/
-def afRanking : List (Constraint AFCandidate) :=
-  [ssalConstraint, xrefConstraint]
+/-- The index of the `k`th layer above TP. -/
+def layerIndex (k : ℕ) : ℕ := 3 + k
 
-/-- The full Kaqchikel ranking ([erlewine-2016]'s (83)):
-    XRef-Participant ≫ SSAL ≫ XRef. -/
-def fullRanking (bothParticipants : Bool) : List (Constraint AFCandidate) :=
-  [xrefPConstraint bothParticipants, ssalConstraint, xrefConstraint]
+/-- The base position of an argument: Spec,vP for the subject, the complement of V for the
+object (§4.1). -/
+def Arg.base : Arg → ℕ
+  | .subj => 1
+  | .obj => 0
 
-/-- The two candidates in the OT competition. -/
-def afCandidates : List AFCandidate :=
-  [.transitiveExtraction, .agentFocusExtraction]
+/-- The projections a step crosses, (43): those dominating the origin, which lies within
+projection `α`, but not the landing site, the specifier of projection `β`. -/
+def crosses (α β : ℕ) : Finset ℕ := Finset.Ico α β
 
-/-! ### Anti-locality grounds the transitive crash -/
+/-- Spec-to-Spec Anti-Locality, (42): a step is too close when it crosses no maximal projection
+other than the one it leaves. -/
+def TooClose (α β : ℕ) : Prop := ∀ γ ∈ crosses α β, γ = α
 
-/-- The transitive candidate violates SSAL. The agent, having moved to
-    Spec,TP via the A-probe, cannot continue to Spec,CP because CP
-    immediately dominates TP — the movement is too local. -/
-theorem transitive_crashes :
-    AFCandidate.transitiveExtraction.violatesAntiLocality = true := rfl
+instance (α β : ℕ) : Decidable (TooClose α β) := by unfold TooClose; infer_instance
 
-/-- The AF candidate does NOT violate SSAL. The agent skips Spec,TP
-    and extracts directly to Spec,CP, crossing enough structure to
-    satisfy anti-locality. -/
-theorem af_survives :
-    AFCandidate.agentFocusExtraction.violatesAntiLocality = false := rfl
+/-- An upward step is too close exactly when its landing site immediately dominates its
+origin, the configuration of (44). -/
+theorem tooClose_iff {α β : ℕ} (h : α < β) : TooClose α β ↔ β = α + 1 := by
+  constructor
+  · intro H
+    by_contra hne
+    have := H (α + 1) (by simp only [crosses, Finset.mem_Ico]; omega)
+    omega
+  · intro hβ γ hγ
+    simp only [crosses, Finset.mem_Ico] at hγ
+    omega
 
-/-- The two candidates have different violation profiles: they disagree
-    on at least one constraint. -/
-theorem candidates_differ :
-    ssalConstraint .transitiveExtraction ≠
-      ssalConstraint .agentFocusExtraction ∨
-    xrefConstraint .transitiveExtraction ≠
-      xrefConstraint .agentFocusExtraction := by decide
+/-! ### Derivations and constraints -/
 
-/-! ### The evaluation selects AF -/
+/-- A derivation of the clause (§5.1): whether T's optional Set A probe is used, moving the
+subject to Spec,TP, and the argument its Set B probe targets. -/
+structure Candidate where
+  aProbe : Bool
+  bTarget : Arg
+  deriving DecidableEq, Repr
 
-/-- AF is the unique optimal candidate. SSAL ≫ XRef means the derivation
-    that avoids anti-locality wins, even though it loses Set A agreement.
-    This is the central result of [erlewine-2016]. -/
-theorem af_is_optimal :
-    (Tableau.ofRanking afCandidates afRanking).optimal =
-      {AFCandidate.agentFocusExtraction} := by
+/-- The candidates of a numeration: the Set B target is an argument, the two probes cannot share
+a goal, and where Set B is restricted to the object it targets the object. -/
+def candidatesOf (transitive objectOnly : Bool) : List Candidate :=
+  ([true, false].flatMap λ a => (argsOf transitive).map (⟨a, ·⟩)).filter λ c =>
+    (c.aProbe → c.bTarget ≠ .subj) ∧ (objectOnly → transitive → c.bTarget = .obj)
+
+/-- The candidates of a clause. -/
+def candidates (i : Input) (objectOnly : Bool) : List Candidate :=
+  candidatesOf i.transitive objectOnly
+
+theorem candidates_ne_nil (i : Input) (o : Bool) : candidates i o ≠ [] := by
+  unfold candidates; cases i.transitive <;> cases o <;> decide
+
+/-- An argument is cross-referenced when the Set A probe targets it, the subject having moved to
+Spec,TP, or the Set B probe does, (46). -/
+def CrossRef (c : Candidate) (a : Arg) : Prop := (c.aProbe ∧ a = .subj) ∨ c.bTarget = a
+
+instance (c : Candidate) (a : Arg) : Decidable (CrossRef c a) := by unfold CrossRef; infer_instance
+
+/-- The position an extracted argument moves from: Spec,TP for a subject the Set A probe has
+attracted, its base position otherwise. -/
+def Candidate.origin (c : Candidate) : Arg → ℕ
+  | .subj => if c.aProbe then tP else Arg.subj.base
+  | .obj => Arg.obj.base
+
+/-- Spec-to-Spec Anti-Locality as a violable constraint: one violation per step that is too
+close. -/
+def ssal (i : Input) : Constraint Candidate := λ c =>
+  match i.extracted with
+  | none => 0
+  | some (a, k) => if TooClose (c.origin a) (layerIndex k) then 1 else 0
+
+/-- XRef: one violation per argument not cross-referenced. -/
+def xref (i : Input) : Constraint Candidate := λ c => (i.args.filter (¬ CrossRef c ·)).length
+
+/-- XRef-Participant: one violation per participant argument not cross-referenced (§5.2). -/
+def xrefP (i : Input) : Constraint Candidate := λ c =>
+  (i.args.filter λ a => (i.person a).IsSAP ∧ ¬ CrossRef c a).length
+
+/-- A grammar of §6.1: a ranking of the constraints and whether Set B is restricted to the
+object. -/
+structure Grammar where
+  ranking : List (Input → Constraint Candidate)
+  objectOnly : Bool
+
+/-- The competition of a clause under a grammar. -/
+def Grammar.tableau (g : Grammar) (i : Input) :=
+  Tableau.ofRanking (candidates i g.objectOnly) (g.ranking.map (· i)) (candidates_ne_nil i _)
+
+/-- Kaqchikel: XRef-Participant ≫ SSAL ≫ XRef, Set B free to target either argument. -/
+def kaqchikel : Grammar := ⟨[xrefP, ssal, xref], false⟩
+
+/-- Popti': the Kaqchikel ranking with Set B restricted to the object. -/
+def popti : Grammar := ⟨[xrefP, ssal, xref], true⟩
+
+/-- Akatek: SSAL above both cross-referencing constraints, Set B restricted to the object. -/
+def akatek : Grammar := ⟨[ssal, xrefP, xref], true⟩
+
+/-- A Mayan language without AF, Ch'ol: XRef ≫ SSAL. -/
+def chol : Grammar := ⟨[xref, ssal], false⟩
+
+/-! ### Realization -/
+
+/-- (48): the AF suffix is realized when some argument is not cross-referenced. -/
+def Candidate.AFSuffix (args : List Arg) (c : Candidate) : Prop := ∃ a ∈ args, ¬ CrossRef c a
+
+instance (args : List Arg) (c : Candidate) : Decidable (c.AFSuffix args) := by
+  unfold Candidate.AFSuffix; infer_instance
+
+/-- The AF suffix marks a violation of XRef. -/
+theorem afSuffix_iff_xref_pos (i : Input) (c : Candidate) :
+    c.AFSuffix i.args ↔ 0 < xref i c := by
+  simp [Candidate.AFSuffix, xref, List.length_pos_iff_exists_mem, List.mem_filter]
+
+/-- The verb form of a derivation, Set A being realized only when the subject moved to
+Spec,TP. -/
+def Candidate.form (args : List Arg) (c : Candidate) : Mayan.VerbForm :=
+  if c.AFSuffix args then .agentFocus else .transitive
+
+/-- Among the candidates of a transitive clause, the AF form is exactly the absence of the Set
+A probe: the derivation that skips Spec,TP loses Set A and gains the suffix. -/
+theorem form_hasSetA (o : Bool) :
+    ∀ c ∈ candidatesOf true o, (c.form (argsOf true)).hasSetA = c.aProbe := by
+  cases o <;> decide
+
+/-! ### The rows -/
+
+/-- The clause types as named in the rows. -/
+def clauseTable : List (String × Bool) := [("transitive", true), ("intransitive", false)]
+
+/-- The layers above TP as named in the rows. -/
+def layerTable : List (String × List Layer) :=
+  [("CP", [.cP]), ("AdvP,CP", [.advP, .cP]), ("CP,CP", [.cP, .cP]), ("CP,TopP", [.cP, .topP])]
+
+/-- The extracted argument as named in the rows. -/
+def extractedTable : List (String × Option Arg) :=
+  [("none", none), ("subject", some .subj), ("object", some .obj)]
+
+/-- The persons as named in the rows. -/
+def personTable : List (String × Person) := [("1", .first), ("2", .second), ("3", .third)]
+
+/-- The verb forms as named in the rows: whether the AF suffix appears. -/
+def verbTable : List (String × Bool) := [("AF", true), ("full", false)]
+
+/-- The grammars by glottocode. -/
+def grammarTable : List (String × Grammar) :=
+  [("kaqc1270", kaqchikel), ("popt1235", popti), ("akat1248", akatek), ("chol1282", chol)]
+
+/-- A row: the clause, its language's grammar, whether the attested form bears the AF suffix,
+and the judgment. -/
+structure Row where
+  input : Input
+  grammar : Grammar
+  af : Bool
+  judgment : Judgment
+
+/-- A row from an example; landing layers count from one in the rows. -/
+def Row.ofExample (ex : LinguisticExample) : Option Row := do
+  let transitive ← ex.parse? "clause" clauseTable
+  let layers ← ex.parse? "layers" layerTable
+  let extracted ← match ← ex.parse? "extracted" extractedTable with
+    | none => pure none
+    | some a => do pure (some (a, (← ex.nat? "landing") - 1))
+  let subj ← ex.parse? "subject" personTable
+  let grammar ← List.lookup ex.language grammarTable
+  let af ← ex.parse? "verb" verbTable
+  pure ⟨⟨transitive, layers, extracted, subj, (ex.parse? "object" personTable).getD .third⟩,
+    grammar, af, ex.judgment⟩
+
+theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
+
+/-- The rows of all four languages. -/
+def rows : List Row := Examples.all.filterMap Row.ofExample
+
+/-- The Kaqchikel rows. -/
+def kaqchikelRows : List Row :=
+  (Examples.all.filter (·.language = "kaqc1270")).filterMap Row.ofExample
+
+/-- Every row: the attested form is grammatical exactly when an optimal derivation realizes
+it. -/
+theorem rows_optimal :
+    ∀ r ∈ rows, r.judgment = .acceptable ↔
+      ∃ c ∈ (r.grammar.tableau r.input).optimal, (c.AFSuffix r.input.args ↔ r.af = true) := by
   decide
 
-/-- The winning candidate surfaces with AF morphology: the AF suffix
-    (*-ö* or *-n*), no Set A (ergative) agreement. -/
-theorem af_morphology :
-    AFCandidate.agentFocusExtraction.verbForm = .agentFocus ∧
-    VerbForm.agentFocus.hasSetA = false ∧
-    VerbForm.agentFocus.hasAFSuffix = true := ⟨rfl, rfl, rfl⟩
-
-/-! ### Lexicographic vs satisfaction ordering -/
-
-/-- Under componentwise ≤ (satisfaction ordering), neither candidate
-    dominates: the transitive satisfies XRef but violates SSAL, while AF
-    satisfies SSAL but violates XRef. Each satisfies a constraint the
-    other violates — they are incomparable. OT's lexicographic ranking
-    is what breaks the tie in favor of AF. -/
-theorem satisfaction_ordering_incomparable :
-    ¬(ssalConstraint .transitiveExtraction ≤
-        ssalConstraint .agentFocusExtraction ∧
-      xrefConstraint .transitiveExtraction ≤
-        xrefConstraint .agentFocusExtraction) ∧
-    ¬(ssalConstraint .agentFocusExtraction ≤
-        ssalConstraint .transitiveExtraction ∧
-      xrefConstraint .agentFocusExtraction ≤
-        xrefConstraint .transitiveExtraction) := by
+/-- The generalization of §3: with at most one participant argument, AF is optimal in Kaqchikel
+exactly when the subject moves to the layer immediately above TP. -/
+theorem af_iff_immediately_preverbal :
+    ∀ r ∈ kaqchikelRows, ¬ (r.input.subj.IsSAP ∧ r.input.obj.IsSAP) →
+      ((∃ c ∈ (kaqchikel.tableau r.input).optimal, c.AFSuffix r.input.args) ↔
+        r.input.extracted = some (.subj, 0)) := by
   decide
 
-/-- The transitive candidate is lexicographically worse because it
-    violates the HIGHER-ranked constraint (SSAL, position 0).
-    AF violates only the lower-ranked constraint (XRef, position 1). -/
-theorem transitive_worse_on_ssal :
-    ssalConstraint .transitiveExtraction >
-      ssalConstraint .agentFocusExtraction := by decide
+/-! ### The competitions of §5 and §6 -/
 
-/-! ### Anti-locality grounding -/
+/-- Subject extraction to Spec,CP in a simple transitive clause. -/
+def subjectExtraction (s o : Person) : Input := ⟨true, [.cP], some (.subj, 0), s, o⟩
 
-/-- The transitive candidate's violation profile reflects Spec-to-Spec
-    anti-locality. The SSAL constraint assigns 1 violation to the
-    transitive candidate and 0 to AF, grounding the OT violation count
-    in the structural constraint. -/
-theorem antilocality_grounded :
-    ssalConstraint .transitiveExtraction = 1 ∧
-    ssalConstraint .agentFocusExtraction = 0 :=
-  ⟨rfl, rfl⟩
+/-- §5.1: without extraction, cross-referencing selects the derivation that moves the subject to
+Spec,TP; this is also what an evaluation at TP would select before the anti-locality violation
+of a later extraction is visible, the argument of §5.3 for evaluation at the clause. -/
+theorem no_extraction_full (s o : Person) :
+    (kaqchikel.tableau ⟨true, [.cP], none, s, o⟩).optimal = {⟨true, .obj⟩} := by
+  cases s <;> cases o <;> decide
 
-/-- AF wins because it has 0 violations of the highest-ranked constraint.
-    The transitive derivation would require movement from Spec,TP to
-    Spec,CP where CP immediately dominates TP — exactly what the
-    constraint bans. AF avoids this
-    by not placing the agent in Spec,TP at all. -/
-theorem antilocality_drives_af :
-    ssalConstraint .agentFocusExtraction = 0 ∧
-    (Tableau.ofRanking afCandidates afRanking).optimal =
-      {AFCandidate.agentFocusExtraction} :=
-  ⟨rfl, af_is_optimal⟩
-
-/-! ### SSAL-inactive contexts: where AF does not appear
-
-Wherever the extractee's movement is not too short, SSAL assigns no
-violations and XRef alone decides — the full-agreement transitive wins
-and AF is ungrammatical. Three empirical cells share this violation
-profile ([erlewine-2016] §§2.2, 3.1): patient extraction (the patient
-starts in Comp,VP and never passes through Spec,TP), subject
-extraction across intervening preverbal material (adverb obviation),
-and the matrix clause of a long-distance extraction (the matrix
-subject has not moved). Long-distance subject extraction is the two
-halves side by side: the *embedded* clause is exactly the
-`af_is_optimal` competition — the subject's first step, embedded
-Spec,TP → Spec,CP, would be too short — so AF appears on the embedded
-verb, while the matrix verb sits in an SSAL-inactive context and must
-stay transitive. -/
-
-/-- SSAL in a context where no candidate's movement is too short:
-    vacuously satisfied by both candidates. -/
-def ssalInactive : Constraint AFCandidate := fun _ => 0
-
-/-- Without an anti-locality violation at stake, the full-agreement
-    transitive is the unique winner — AF is ungrammatical wherever the
-    subject's movement is not too short. Derives the extraction asymmetry
-    (patient extraction never triggers AF), adverb obviation, and the
-    transitive matrix verb under long-distance extraction. -/
-theorem transitive_optimal_when_ssal_inactive :
-    (Tableau.ofRanking afCandidates [ssalInactive, xrefConstraint]).optimal =
-      {AFCandidate.transitiveExtraction} := by
+/-- §5.1: under subject extraction with two third-person arguments, both AF derivations beat
+the derivation through Spec,TP, and the two constraints do not decide the Set B target. -/
+theorem subject_extraction_af :
+    (kaqchikel.tableau (subjectExtraction .third .third)).optimal =
+      {⟨false, .subj⟩, ⟨false, .obj⟩} := by
   decide
 
-/-! ### The participant exception (XRef-Participant) -/
-
-/-- With at most one participant argument, XRef-Participant is inactive
-    and the full ranking agrees with the core competition: AF wins. -/
-theorem af_optimal_full_ranking :
-    (Tableau.ofRanking afCandidates (fullRanking false)).optimal =
-      {AFCandidate.agentFocusExtraction} := by
+/-- §5.2: a participant argument breaks the tie, Set B cross-referencing it. -/
+theorem participant_breaks_tie :
+    (kaqchikel.tableau (subjectExtraction .second .third)).optimal = {⟨false, .subj⟩} ∧
+      (kaqchikel.tableau (subjectExtraction .third .second)).optimal = {⟨false, .obj⟩} := by
   decide
 
-/-- When both arguments are 1st/2nd person, top-ranked XRef-Participant
-    reverses the outcome: the full-agreement transitive appears even
-    under subject extraction, because AF's single Set B slot would leave
-    a participant argument un-cross-referenced ([erlewine-2016] §5.2). -/
+/-- §5.2: with two participant arguments the full-agreement transitive is optimal, the
+anti-locality violation notwithstanding. -/
 theorem participant_exception :
-    (Tableau.ofRanking afCandidates (fullRanking true)).optimal =
-      {AFCandidate.transitiveExtraction} := by
+    (kaqchikel.tableau (subjectExtraction .first .second)).optimal = {⟨true, .obj⟩} := by
   decide
 
-/-! ### Reranking and the typology of Mayan AF
-
-[erlewine-2016] §6.1 (his (84)): rerankings of the same three
-constraints predict three attested language types. Kaqchikel and
-Popti' instantiate XRef-Participant ≫ SSAL ≫ XRef (AF with the
-participant exception; in Popti' the exception surfaces whenever the
-extracted subject is a participant, since Popti's Set B strictly
-targets the object). Akatek ranks SSAL above both cross-referencing
-constraints: AF regardless of the arguments' φ-features. Languages
-ranking XRef ≫ SSAL lack AF altogether — transitive subjects extract
-with the full-agreement transitive, e.g. Ch'ol (his (93)–(94)):
-grammatical extraction, not a gap. The two-candidate competition here
-collapses his AF candidates (which differ in Set B target) into one. -/
-
-/-- Akatek (SSAL ≫ {XRef-Participant, XRef}): AF wins regardless of the
-    arguments' φ-features — no participant exception. -/
-theorem akatek_af_regardless_of_participants (b : Bool) :
-    (Tableau.ofRanking afCandidates
-      [ssalConstraint, xrefPConstraint b, xrefConstraint]).optimal =
-      {AFCandidate.agentFocusExtraction} := by
-  cases b <;> decide
-
-/-- A no-AF language (XRef ≫ SSAL): the full-agreement transitive wins,
-    so transitive subjects extract without AF and without ill-formedness,
-    at the cost of a low-ranked anti-locality violation — Ch'ol's
-    pattern. -/
-theorem no_af_language_transitive_wins :
-    (Tableau.ofRanking afCandidates [xrefConstraint, ssalConstraint]).optimal =
-      {AFCandidate.transitiveExtraction} := by
+/-- §4.2: object extraction and intransitive subject extraction cross enough structure, and no
+optimal derivation bears the AF suffix. -/
+theorem no_af_without_short_step :
+    (kaqchikel.tableau ⟨true, [.cP], some (.obj, 0), .third, .third⟩).optimal =
+        {⟨true, .obj⟩} ∧
+      ∀ c ∈ (kaqchikel.tableau ⟨false, [.cP], some (.subj, 0), .third, .third⟩).optimal,
+        ¬ c.AFSuffix (argsOf false) := by
   decide
 
-/-! ### Contrast with Q'anjob'al ([coon-mateo-pedro-preminger-2014])
-
-Different Mayan languages circumvent syntactic ergativity through
-different mechanisms. Q'anjob'al's AF Voice assigns case to the
-object, freeing the phase-edge escape hatch
-([coon-mateo-pedro-preminger-2014]); Kaqchikel's AF avoids the
-too-local Spec,TP → Spec,CP step at the cost of Set A agreement
-([erlewine-2016], for whom the case-based account is the principal
-foil). Both assume a phasal vP, but only the case-based account has
-the object trap the subject there; Erlewine's subject sits at the
-edge and the problem is the too-local next step. The two share the
-surface effect, loss of Set A. -/
-
-open CoonMateoPedroPreminger2014 in
-/-- Q'anjob'al AF Voice checks case; Kaqchikel's regular agentive Voice
-    does NOT. This is the core parametric difference: Q'anjob'al's AF is a
-    case-assigning repair, while Kaqchikel's AF is a locality repair. -/
-theorem af_mechanism_contrast :
-    voiceAF.ChecksCase ∧ ¬ agentive.ChecksCase := by decide
-
-open CoonMateoPedroPreminger2014 in
-/-- Kaqchikel's regular Voice is the agentive phase head that traps the
-    subject in both languages; Q'anjob'al's Agent Focus Voice is the head
-    that is not. -/
-theorem af_voice_phase_contrast :
-    agentive.IsPhasal ∧ ¬ voiceAF.IsPhasal := by decide
-
-/-- Both Q'anjob'al and Kaqchikel are HIGH-ABS languages that mark
-    transitive-subject extraction. -/
-theorem both_have_extraction_asymmetries :
-    Qanjobal.absPosition = .high ∧ Kaqchikel.absPosition = .high ∧
-    Extraction.Marked Qanjobal.Extraction.realize .subject ∧
-    Extraction.Marked Kaqchikel.Extraction.realize .subject :=
-  ⟨rfl, rfl, by decide, by decide⟩
-
-/-- Kaqchikel AF loses Set A agreement (the agent never enters Spec,TP).
-    Q'anjob'al AF also loses Set A agreement.
-    Same surface morphological effect, different underlying mechanism. -/
-theorem both_af_lose_setA :
-    Qanjobal.agentFocusForm.hasSetA = false ∧
-    VerbForm.agentFocus.hasSetA = false := ⟨rfl, rfl⟩
-
-/-! ### Extraction strategy -/
-
-/-- Kaqchikel marks transitive-subject extraction with dedicated AF
-    morphology (*-ö* or *-n*) — the same surface strategy-type as Mam's
-    extraction marker, in contrast to Toba Batak's structural pivot
-    restriction ([erlewine-2018]). Same underlying problem
-    (anti-locality), different marking. -/
-theorem strategy_is_af :
-    Extraction.strategy = .dedicatedMorpheme := rfl
+/-- §6.1: the typology of rerankings. Popti' keeps the full form when the subject is a
+participant and uses AF when it is not; Akatek uses AF for a participant subject; Ch'ol keeps
+the full form throughout. -/
+theorem typology :
+    (popti.tableau (subjectExtraction .second .third)).optimal = {⟨true, .obj⟩} ∧
+      (popti.tableau (subjectExtraction .third .second)).optimal = {⟨false, .obj⟩} ∧
+      (akatek.tableau (subjectExtraction .first .third)).optimal = {⟨false, .obj⟩} ∧
+      (chol.tableau (subjectExtraction .third .second)).optimal = {⟨true, .obj⟩} := by
+  decide
 
 end Erlewine2016

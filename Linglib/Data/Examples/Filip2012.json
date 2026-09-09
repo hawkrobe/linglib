@@ -1,0 +1,467 @@
+[
+  {
+    "id": "filip2012_1a_in",
+    "source": {
+      "bibkey": "filip-2012",
+      "paperLabel": "(1a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John recovered in an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John recovered in an hour.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verbClass",
+        "telic"
+      ],
+      [
+        "object",
+        "none"
+      ],
+      [
+        "adverbial",
+        "in"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "filip2012_1a_for",
+    "source": {
+      "bibkey": "filip-2012",
+      "paperLabel": "(1a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John recovered for an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John recovered for an hour.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verbClass",
+        "telic"
+      ],
+      [
+        "object",
+        "none"
+      ],
+      [
+        "adverbial",
+        "for"
+      ]
+    ],
+    "comment": "Acceptable only on a shifted reading, the chapter's (*)."
+  },
+  {
+    "id": "filip2012_1b_in",
+    "source": {
+      "bibkey": "filip-2012",
+      "paperLabel": "(1b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John swam in an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John swam in an hour.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verbClass",
+        "atelic"
+      ],
+      [
+        "object",
+        "none"
+      ],
+      [
+        "adverbial",
+        "in"
+      ]
+    ],
+    "comment": "Acceptable only on a shifted reading, the chapter's (*)."
+  },
+  {
+    "id": "filip2012_1b_for",
+    "source": {
+      "bibkey": "filip-2012",
+      "paperLabel": "(1b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John swam for an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John swam for an hour.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verbClass",
+        "atelic"
+      ],
+      [
+        "object",
+        "none"
+      ],
+      [
+        "adverbial",
+        "for"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "filip2012_25a_in",
+    "source": {
+      "bibkey": "filip-2012",
+      "paperLabel": "(25a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John ate two apples in an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John ate two apples in an hour.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verbClass",
+        "incremental"
+      ],
+      [
+        "object",
+        "quantized"
+      ],
+      [
+        "adverbial",
+        "in"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "filip2012_25a_for",
+    "source": {
+      "bibkey": "filip-2012",
+      "paperLabel": "(25a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John ate two apples for an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John ate two apples for an hour.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verbClass",
+        "incremental"
+      ],
+      [
+        "object",
+        "quantized"
+      ],
+      [
+        "adverbial",
+        "for"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "filip2012_25b_in",
+    "source": {
+      "bibkey": "filip-2012",
+      "paperLabel": "(25b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John ate apples in an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John ate apples in an hour.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verbClass",
+        "incremental"
+      ],
+      [
+        "object",
+        "cumulative"
+      ],
+      [
+        "adverbial",
+        "in"
+      ]
+    ],
+    "comment": "Acceptable only on a shifted reading, the chapter's (*)."
+  },
+  {
+    "id": "filip2012_25b_for",
+    "source": {
+      "bibkey": "filip-2012",
+      "paperLabel": "(25b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John ate apples for an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John ate apples for an hour.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verbClass",
+        "incremental"
+      ],
+      [
+        "object",
+        "cumulative"
+      ],
+      [
+        "adverbial",
+        "for"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "filip2012_26a_in",
+    "source": {
+      "bibkey": "filip-2012",
+      "paperLabel": "(26a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John watched two apples on the display in an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John watched two apples on the display in an hour.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verbClass",
+        "atelic"
+      ],
+      [
+        "object",
+        "quantized"
+      ],
+      [
+        "adverbial",
+        "in"
+      ]
+    ],
+    "comment": "Acceptable only on a shifted reading, the chapter's (*)."
+  },
+  {
+    "id": "filip2012_26a_for",
+    "source": {
+      "bibkey": "filip-2012",
+      "paperLabel": "(26a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John watched two apples on the display for an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John watched two apples on the display for an hour.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verbClass",
+        "atelic"
+      ],
+      [
+        "object",
+        "quantized"
+      ],
+      [
+        "adverbial",
+        "for"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "filip2012_26b_in",
+    "source": {
+      "bibkey": "filip-2012",
+      "paperLabel": "(26b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John watched apples on the display in an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John watched apples on the display in an hour.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verbClass",
+        "atelic"
+      ],
+      [
+        "object",
+        "cumulative"
+      ],
+      [
+        "adverbial",
+        "in"
+      ]
+    ],
+    "comment": "Acceptable only on a shifted reading, the chapter's (*)."
+  },
+  {
+    "id": "filip2012_26b_for",
+    "source": {
+      "bibkey": "filip-2012",
+      "paperLabel": "(26b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John watched apples on the display for an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John watched apples on the display for an hour.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verbClass",
+        "atelic"
+      ],
+      [
+        "object",
+        "cumulative"
+      ],
+      [
+        "adverbial",
+        "for"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "filip2012_31a_for",
+    "source": {
+      "bibkey": "filip-2012",
+      "paperLabel": "(31a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John proved the theorem for an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John proved the theorem for an hour.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verbClass",
+        "incremental"
+      ],
+      [
+        "object",
+        "quantized"
+      ],
+      [
+        "adverbial",
+        "for"
+      ]
+    ],
+    "comment": "Attributed to Zucchi (1998)."
+  },
+  {
+    "id": "filip2012_37a_for",
+    "source": {
+      "bibkey": "filip-2012",
+      "paperLabel": "(37a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The climbers reached the summit for an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The climbers reached the summit for an hour.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verbClass",
+        "telic"
+      ],
+      [
+        "object",
+        "quantized"
+      ],
+      [
+        "adverbial",
+        "for"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "filip2012_37a_in",
+    "source": {
+      "bibkey": "filip-2012",
+      "paperLabel": "(37a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The climbers reached the summit in an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The climbers reached the summit in an hour.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verbClass",
+        "telic"
+      ],
+      [
+        "object",
+        "quantized"
+      ],
+      [
+        "adverbial",
+        "in"
+      ]
+    ],
+    "comment": ""
+  }
+]

@@ -1,0 +1,353 @@
+[
+  {
+    "id": "ferreira2023_16",
+    "source": {
+      "bibkey": "ferreira-2023",
+      "paperLabel": "(16)"
+    },
+    "language": "braz1246",
+    "primaryText": "Este homem tem que ter sido assassinado, mas ele pode não ter sido.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "This man must have been murdered, but he may not have been.",
+    "context": "A criminal investigator announces his findings about a man's body found in a dark alley.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "first",
+        "sn_p"
+      ],
+      [
+        "second",
+        "pos_notp"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "ferreira2023_17",
+    "source": {
+      "bibkey": "ferreira-2023",
+      "paperLabel": "(17)"
+    },
+    "language": "braz1246",
+    "primaryText": "Este homem deve ter sido assassinado, mas ele pode não ter sido.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "This man ought to have been murdered, but he may not have been.",
+    "context": "A criminal investigator announces his findings about a man's body found in a dark alley.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "first",
+        "wn_p"
+      ],
+      [
+        "second",
+        "pos_notp"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "ferreira2023_18",
+    "source": {
+      "bibkey": "ferreira-2023",
+      "paperLabel": "(18)"
+    },
+    "language": "braz1246",
+    "primaryText": "Este homem pode ter sido assassinado, mas ele pode não ter sido.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "This man may have been murdered, but he may not have been.",
+    "context": "A criminal investigator announces his findings about a man's body found in a dark alley.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "first",
+        "pos_p"
+      ],
+      [
+        "second",
+        "pos_notp"
+      ]
+    ],
+    "comment": "Repeated as (23)."
+  },
+  {
+    "id": "ferreira2023_19",
+    "source": {
+      "bibkey": "ferreira-2023",
+      "paperLabel": "(19)"
+    },
+    "language": "braz1246",
+    "primaryText": "Este homem tem que ter sido assassinado, mas ele não deve ter sido.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "This man must have been murdered, but he ought not to have been.",
+    "context": "A criminal investigator announces his findings about a man's body found in a dark alley.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "first",
+        "sn_p"
+      ],
+      [
+        "second",
+        "not_wn_p"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "ferreira2023_20",
+    "source": {
+      "bibkey": "ferreira-2023",
+      "paperLabel": "(20)"
+    },
+    "language": "braz1246",
+    "primaryText": "Este homem deve ter sido assassinado, mas ele não tem que ter sido.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "This man ought to have been murdered, but he doesn't have to have been.",
+    "context": "A criminal investigator announces his findings about a man's body found in a dark alley.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "first",
+        "wn_p"
+      ],
+      [
+        "second",
+        "not_sn_p"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "ferreira2023_21",
+    "source": {
+      "bibkey": "ferreira-2023",
+      "paperLabel": "(21)"
+    },
+    "language": "braz1246",
+    "primaryText": "Este homem deve ter sido assassinado, mas ele não pode ter sido.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "This man ought to have been murdered, but he can't have been.",
+    "context": "A criminal investigator announces his findings about a man's body found in a dark alley.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "first",
+        "wn_p"
+      ],
+      [
+        "second",
+        "not_pos_p"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "ferreira2023_22",
+    "source": {
+      "bibkey": "ferreira-2023",
+      "paperLabel": "(22)"
+    },
+    "language": "braz1246",
+    "primaryText": "Este homem pode ter sido assassinado, mas não deve ter sido.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "This man may have been murdered, but he ought not to have been.",
+    "context": "A criminal investigator announces his findings about a man's body found in a dark alley.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "first",
+        "pos_p"
+      ],
+      [
+        "second",
+        "not_wn_p"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "ferreira2023_24",
+    "source": {
+      "bibkey": "ferreira-2023",
+      "paperLabel": "(24)"
+    },
+    "language": "braz1246",
+    "primaryText": "Este homem deve ter sido assassinado, mas ele deve não ter sido.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "This man ought to have been murdered, but he ought not to have been.",
+    "context": "A criminal investigator announces his findings about a man's body found in a dark alley.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "first",
+        "wn_p"
+      ],
+      [
+        "second",
+        "wn_notp"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "ferreira2023_25",
+    "source": {
+      "bibkey": "ferreira-2023",
+      "paperLabel": "(25)"
+    },
+    "language": "braz1246",
+    "primaryText": "Este homem tem que ter sido assassinado, mas ele tem que não ter sido.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "This man must have been murdered, but he must not have been.",
+    "context": "A criminal investigator announces his findings about a man's body found in a dark alley.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "first",
+        "sn_p"
+      ],
+      [
+        "second",
+        "sn_notp"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "ferreira2023_30a",
+    "source": {
+      "bibkey": "ferreira-2023",
+      "paperLabel": "(30a)"
+    },
+    "language": "braz1246",
+    "primaryText": "Clientes devem usar máscara, mas eles não têm que.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Clients ought to wear a mask, but they don't have to.",
+    "context": "Concerning the COVID-19 protocol of this establishment.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "first",
+        "wn_p"
+      ],
+      [
+        "second",
+        "not_sn_p"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "ferreira2023_30b",
+    "source": {
+      "bibkey": "ferreira-2023",
+      "paperLabel": "(30b)"
+    },
+    "language": "braz1246",
+    "primaryText": "Clientes devem usar máscara. Na verdade, eles têm que.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Clients ought to wear a mask. In fact, they have to.",
+    "context": "Concerning the COVID-19 protocol of this establishment.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "first",
+        "wn_p"
+      ],
+      [
+        "second",
+        "sn_p"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "ferreira2023_32a",
+    "source": {
+      "bibkey": "ferreira-2023",
+      "paperLabel": "(32a)"
+    },
+    "language": "braz1246",
+    "primaryText": "Tenho que limpar os pratos, mas não estou obrigado.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I must clean the dishes, but I am not obliged.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "first",
+        "sn_p"
+      ],
+      [
+        "second",
+        "not_sn_p"
+      ]
+    ],
+    "comment": "Not being obliged is read as the negation of the strong necessity."
+  },
+  {
+    "id": "ferreira2023_32b",
+    "source": {
+      "bibkey": "ferreira-2023",
+      "paperLabel": "(32b)"
+    },
+    "language": "braz1246",
+    "primaryText": "Devo limpar os pratos, mas não estou obrigado.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I ought to clean the dishes, but I am not obliged.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "first",
+        "wn_p"
+      ],
+      [
+        "second",
+        "not_sn_p"
+      ]
+    ],
+    "comment": ""
+  }
+]

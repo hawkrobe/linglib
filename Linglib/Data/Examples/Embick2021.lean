@@ -27,7 +27,7 @@ def ex_6c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "DESTROY"), ("rootClass", "agentive"), ("construction", "derivedNominal"), ("h1", "n"), ("h1exp", "-tion")]
-    comment := "Agentive reading of the possessor."
+    comment := "Agentive reading of the possessor available."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -45,7 +45,7 @@ def ex_6d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "DESTROY"), ("rootClass", "agentive"), ("construction", "gerund"), ("h1", "v"), ("h1exp", ""), ("h2", "voice"), ("h2exp", ""), ("h3", "n"), ("h3exp", "-ing")]
-    comment := "Agentive reading of the possessor."
+    comment := "Agentive reading of the possessor available."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -63,7 +63,7 @@ def ex_7c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "GROW"), ("rootClass", "nonagentive"), ("construction", "derivedNominal"), ("h1", "n"), ("h1exp", "-th")]
-    comment := "Agentive reading of the possessor."
+    comment := "No agentive reading of the possessor: a derived nominal of a non-agentive root."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -81,13 +81,13 @@ def ex_7d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "GROW"), ("rootClass", "nonagentive"), ("construction", "gerund"), ("h1", "v"), ("h1exp", ""), ("h2", "voice"), ("h2exp", ""), ("h3", "n"), ("h3exp", "-ing")]
-    comment := "Agentive reading of the possessor."
+    comment := "Agentive reading of the possessor available."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
 def bent : LinguisticExample :=
   { id := "embick2021_bent"
-    source := ⟨"embick-2021", "§5"⟩
+    source := ⟨"embick-2021", "§5, structure (15)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "bent"
@@ -99,13 +99,13 @@ def bent : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "BEND"), ("construction", "inflected"), ("h1", "v"), ("h1exp", ""), ("h2", "T"), ("h2exp", "-t")]
-    comment := "Root-determined allomorphy of a noncyclic head outside the categorizer (structure 15)."
+    comment := "Root-determined allomorphy of a noncyclic head outside the categorizer, structure (15): the exponent of tense or aspect realized next to the root."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
 def broken : LinguisticExample :=
   { id := "embick2021_broken"
-    source := ⟨"embick-2021", "§5"⟩
+    source := ⟨"embick-2021", "§5, structure (15)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "broken"
@@ -117,7 +117,7 @@ def broken : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "BREAK"), ("construction", "inflected"), ("h1", "v"), ("h1exp", ""), ("h2", "aspect"), ("h2exp", "-en")]
-    comment := "Root-determined allomorphy of a noncyclic head outside the categorizer (structure 15)."
+    comment := "Root-determined allomorphy of a noncyclic head outside the categorizer, structure (15): the exponent of tense or aspect realized next to the root."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 

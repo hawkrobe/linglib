@@ -207,7 +207,7 @@ theorem definitely_iff_superTrue {Spec : Type*} (eval : Spec → Prop) [Decidabl
 theorem excludedMiddle_superTrue {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
     (S : SpecSpace Spec) :
     superTrue (fun s => eval s ∨ ¬ eval s) S = Trivalent.true :=
-  (superTrue_true_iff _ S).mpr (fun s _ => Decidable.em _)
+  (superTrue_true_iff _ S).mpr (fun _ _ => Decidable.em _)
 
 /-- **Non-contradiction is super-false.** P ∧ ¬P is false on every
     precisification, hence false on ALL. -/

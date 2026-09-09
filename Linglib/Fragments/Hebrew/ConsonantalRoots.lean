@@ -1,95 +1,55 @@
 import Linglib.Morphology.Root.Consonantal
 
 /-!
-# Modern Hebrew Consonantal Roots
+# Modern Hebrew consonantal roots
 
-A small inventory of Modern Hebrew consonantal roots, stored as `ConsonantalRoot String`
-(IPA-symbol segments). Used by templatic-morphology studies, in particular
-[faust-2026]'s analysis of the QaTaT–QaTa problem and templatic intrusion.
+A small inventory of Modern Hebrew consonantal roots as `ConsonantalRoot String` with
+IPA-symbol segments, for templatic-morphology studies: the roots of [faust-2026]'s
+QaTaT–QaTa triplet (3) and taQTiL nouns (9), and the binyan roots of [arad-2005] (3).
 
-The Faust 2026 squib turns on whether a root's final segment is the glide
-[j], because [j] cannot satisfy a [+consonantal] template-final C-slot. The
-inventory below records both [j]-final triradicals (the case at issue) and
-non-glide-final triradicals as the contrast class.
+## References
+
+* [faust-2026]
+* [arad-2005]
+* [mccarthy-1981]
 -/
 
 namespace Hebrew
 
 open Morphology
 
--- ============================================================================
--- § 1: [j]-final triradicals ([faust-2026] (3))
--- ============================================================================
+/-! ### The roots of [faust-2026] (3), (9) -/
 
-/-- √klj — base of [kala] PST.3MSG `roast`, [klija] action noun,
-    [kaluj] passive participle. The third radical is the glide [j],
-    which fails to associate to the [+c]-specified final C-slot of
-    the verbal template ([faust-2026] (4)). -/
-def klj : ConsonantalRoot String := ⟨["k", "l", "j"]⟩
-
-/-- √klt — base of [kalat] PST.3MSG `receive`, [klita] action noun,
-    [kalut] passive participle ([faust-2026] (3a)). The full
-    triradical control case: every radical surfaces in every form,
-    no glide-related issue arises. -/
+/-- √klt: [kalat] PST.3MSG, [klita] action noun, [kalut] passive participle `receive`. -/
 def klt : ConsonantalRoot String := ⟨["k", "l", "t"]⟩
 
-/-- √kll — base of [kalal] PST.3MSG `include`, [klila] action noun,
-    [kalul] passive participle ([faust-2026] (3b)). The
-    final-radical-of-final-slot case: the second /l/ is the *final*
-    root segment, so its association to the template-final C-slot
-    does NOT violate \*Misalignment. This is the QaTaT pattern that
-    contrasts with the QaTa pattern of (3c) under the same template. -/
-def kll : ConsonantalRoot String := ⟨["k", "l", "l"]⟩
+/-- √kl: [kalal] PST.3MSG, [klila] action noun, [kalul] passive participle `include`; the
+identical final consonants of the QaTaT pattern arise by template satisfaction from a
+biradical root ([mccarthy-1981]). -/
+def kl : ConsonantalRoot String := ⟨["k", "l"]⟩
 
-/-- √dmj — base of nominal [dimuj] `simile` and the taQTiL noun
-    [tadmit] `(public) image` ([faust-2026] (9b)). -/
+/-- √klj: [kala] PST.3MSG, [klija] action noun, [kaluj] passive participle `roast`. -/
+def klj : ConsonantalRoot String := ⟨["k", "l", "j"]⟩
+
+/-- √dmj: [dimuj] `simile`, [tadmit] `(public) image`. -/
 def dmj : ConsonantalRoot String := ⟨["d", "m", "j"]⟩
 
-/-- √bnj — base of passive participle [banuj] `built` and the
-    taQTiL nouns [tavnit] `mold` (and similar). Third radical [j]. -/
+/-- √bnj: [banuj] `built`, [tavnit] `mold`. -/
 def bnj : ConsonantalRoot String := ⟨["b", "n", "j"]⟩
 
--- ============================================================================
--- § 2: Non-glide-final triradicals (control class)
--- ============================================================================
+/-- √glj: [galuj] `apparent`, [taglit] `discovery`. -/
+def glj : ConsonantalRoot String := ⟨["g", "l", "j"]⟩
 
-/-- √ktv — base of [katav] PST.3MSG `wrote`, [katuv] passive
-    participle `written`. Final radical [v], a true consonant; the
-    QaTaT–QaTa problem does not arise. -/
+/-- √rmj: [remija] `cheating`, [tarmit] `hoax`. -/
+def rmj : ConsonantalRoot String := ⟨["r", "m", "j"]⟩
+
+/-- √skt: [taskit] `radio drama`. -/
+def skt : ConsonantalRoot String := ⟨["s", "k", "t"]⟩
+
+/-- √ktv: [katav] `wrote`, [katuv] `written`, [kituv] `script`, [ktiva] `writing`. -/
 def ktv : ConsonantalRoot String := ⟨["k", "t", "v"]⟩
 
-/-- √sbr — base of [ʃavar] PST.3MSG `broke` (Faust uses this in the
-    Amharic comparison; Hebrew cognate). -/
-def sbr : ConsonantalRoot String := ⟨["ʃ", "b", "r"]⟩
-
--- ============================================================================
--- § 3: Sanity properties
--- ============================================================================
-
-/-- Every Hebrew root in this inventory is triradical. -/
-theorem klj_triradical : klj.Triradical := rfl
-theorem klt_triradical : klt.Triradical := rfl
-theorem kll_triradical : kll.Triradical := rfl
-theorem dmj_triradical : dmj.Triradical := rfl
-theorem bnj_triradical : bnj.Triradical := rfl
-theorem ktv_triradical : ktv.Triradical := rfl
-theorem sbr_triradical : sbr.Triradical := rfl
-
-/-- The final segment of √klj is the glide [j] (the QaTaT–QaTa trigger). -/
-theorem klj_final_is_j : klj.finalSegment = some "j" := rfl
-
-/-- The final segment of √klt is the consonant [t] — distinguishes the
-    full-triradical control case (3a) from the [j]-final case (3c). -/
-theorem klt_final_is_t : klt.finalSegment = some "t" := rfl
-
-/-- The final segment of √kll is /l/, identical to its medial — but
-    \*Misalignment cares about *root index*, not surface identity, so
-    spreading the final /l/ to template-final is legitimate. -/
-theorem kll_final_is_l : kll.finalSegment = some "l" := rfl
-
--- ============================================================================
--- § 3: The binyan roots of [arad-2005] (3)
--- ============================================================================
+/-! ### The binyan roots of [arad-2005] (3) -/
 
 /-- √lmd — *lamad* 'learn' (P1), *nilmad* 'learn (passive)' (P2) ([arad-2005] (3)). -/
 def lmd : ConsonantalRoot String := ⟨["l", "m", "d"]⟩

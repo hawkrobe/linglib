@@ -1,151 +1,172 @@
-import Linglib.Semantics.Mereology
-import Linglib.Semantics.Events.Basic
-import Linglib.Semantics.ArgumentStructure.Thematic.Mereology
-import Linglib.Semantics.Aspect.Incremental
 import Linglib.Semantics.Aspect.Cumulativity
+import Linglib.Data.Examples.Filip2012
 
 /-!
-# [filip-2012]: "Lexical Aspect"
+# Filip (2012): Lexical aspect
 
-Filip's handbook chapter (Binnick ed., OUP) identifies a **three-way
-classification** of verb predicates beyond K89/K98's binary CUM/QUA:
+This file formalizes the mereological core of [filip-2012]'s survey of lexical aspect. The
+telic/atelic distinction is diagnosed by temporal adverbials — *in an hour* with telic and
+*for an hour* with atelic predicates (1) — and, following [krifka-1998], telic predicates are
+taken as quantized (23) and atelic ones as cumulative (24), the substrate's `QUA` and `CUM`.
+Aspectual composition (25)–(27) is [krifka-1989]'s: the predicate an incremental verb forms
+with its object is quantized or cumulative as the object is, the substrate's
+`qua_propagation` and `cum_propagation` for `IsSincVerb`, while a verb without the
+incremental mapping, like *watch*, is atelic whatever its object (26). Hence the three
+classes of (28): telic verbs, whose eventualities have no proper parts in the relation
+(`Quantized`, `telic_of_quantized`); atelic verbs, whose relation persists to the parts of an
+eventuality, the subinterval property (19) (`Persistent`, `not_telic_of_persistent`); and
+incremental verbs, lexically unmarked for telicity because their non-degeneracy provides both
+a quantized and a cumulative object (`incremental_underspecified`). Incrementality and
+telicity are independent (29): a quantized verb is not strictly incremental
+(`not_sinc_of_quantized`), and an incremental verb with a cumulative object is atelic. The
+diagnostic data (1), (25), (26), (31), (37) are rows of `Data/Examples/Filip2012.json`, and
+`rows_test` checks the adverbial judgments against the telicity the classification assigns.
 
-1. **Telic / quantized** (QUA): *recover*, *arrive*
-2. **Atelic / cumulative** (CUM): *run*, *push*
-3. **Neither** (¬CUM ∧ ¬QUA): *build*, *eat*, *write* — verbs whose
-   telicity is underspecified at the verb level and determined
-   compositionally by the object NP
+## Implementation notes
 
-The third class's compositional behavior:
-* QUA object → QUA VP: "eat two apples" (telic)
-* CUM object → CUM VP: "eat apples" (atelic)
-* ¬CUM ∧ ¬QUA object → ¬CUM ∧ ¬QUA VP: "drink margarita" (Moon's case)
-
-## Main definitions
-
-* `three_way_exhaustive` — Filip's distinctive observation: every
-  predicate is CUM, QUA, or ¬CUM ∧ ¬QUA
-* `not_cum_vp_of_witnesses` — ¬CUM lifts to VP under `[IsSincVerb θ]`
-* `middle_ground_stable` — ¬CUM ∧ ¬QUA lifts to VP under `[IsSincVerb θ]`
-  (the propagation-gap stability result; canonical typeclass-form
-  public API consumed by `Studies/Moon2026.lean`)
-
-## TODO
-
-* The propagation-gap substrate (§ 2 below) was inlined from former
-  `Semantics/Events/PropagationGap.lean` in 0.231.55 as
-  single-consumer substrate. If a second paper-anchored Studies file
-  consumes `middle_ground_stable`, lift back to substrate per CLAUDE.md
-  Theories/ ≥ 2 consumers rule.
+* Telicity is identified with quantization "for the purposes of this summary" (§7), so the
+  telic/atelic contrast is the substrate's `QUA`/`CUM` and the atelic verbs' persistence is
+  stated with `≤` on eventualities.
+* The verb classes of the rows are the chapter's: *recover* and *reach* telic, *swim* and
+  *watch* atelic, *eat* and *prove* incremental; `Row.Telic` states the classification's
+  verdict, whose semantic content is the theorems above.
+* The chapter's surveys of Vendler's and Dowty's classifications (§§3–6) and of degree-based
+  approaches (§8) summarize other authors' analyses and are not formalized here.
 
 ## References
 
-* [filip-2012] (primary)
-* [krifka-1998] §3.3 (CUM/QUA propagation machinery the gap rests on)
-* [krifka-1989] (the binary CUM/QUA antecedent Filip critiques)
-* [moon-2026] (canonical instance: mixed-drink nouns as concrete
-  witness of the topological-source ¬CUM ∧ ¬QUA middle ground)
+* [filip-2012]
+* [krifka-1989]
+* [krifka-1998]
+* [bennett-partee-1972]
+* [vendler-1957]
+* [dowty-1979]
 -/
 
 namespace Filip2012
 
-open _root_.Mereology
-open ArgumentStructure
-open Aspect.Incremental
-open Aspect.Cumulativity
-
-/-! ### Three-way exhaustiveness (Filip's distinctive observation) -/
-
-/-- The three classes are exhaustive: every predicate falls into
-    exactly one of CUM, QUA, or ¬CUM ∧ ¬QUA. Conceptually important:
-    the middle ground is a genuine third category, not a gap in our
-    analysis. -/
-theorem three_way_exhaustive {α : Type*} [SemilatticeSup α]
-    (P : α → Prop) :
-    CUM P ∨ QUA P ∨ (¬ CUM P ∧ ¬ QUA P) := by
-  by_cases hc : CUM P
-  · exact .inl hc
-  · by_cases hq : QUA P
-    · exact .inr (.inl hq)
-    · exact .inr (.inr ⟨hc, hq⟩)
-
-/-! ### Propagation gap substrate (inlined) -/
-
-/-! When OBJ is neither CUM nor QUA, neither `cum_propagation` nor
-    `qua_propagation` fires. Under SINC + UP + CumTheta verbs the
-    middle ground is **stable** — it lifts from OBJ to VP. The concrete
-    witness instance is [moon-2026]'s mixed drink nouns. -/
+open Mereology ArgumentStructure Aspect.Incremental Aspect.Cumulativity Data.Examples
 
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 
-/-- ¬CUM lifts from OBJ to VP (explicit-witness smart constructor):
-    if two OBJ-entities x,y satisfy OBJ but their join x⊔y does not,
-    the corresponding VP events e₁,e₂ also witness ¬CUM(VP).
+/-! ### Telic and atelic predicates (23)–(24) -/
 
-    Proof: if CUM(VP) held, VP(e₁⊔e₂) would give ∃z. OBJ(z) ∧ θ(z, e₁⊔e₂).
-    CumTheta gives θ(x⊔y, e₁⊔e₂), and UP forces z = x⊔y.
-    But OBJ(x⊔y) contradicts hSum. -/
-private theorem not_cum_vp_of_cumTheta_up {θ : α → β → Prop} {OBJ : α → Prop}
-    (hCumTheta : CumTheta θ) (hUP : UP θ)
-    {x y : α} {e₁ e₂ : β}
-    (hx : OBJ x) (hy : OBJ y)
-    (hθ₁ : θ x e₁) (hθ₂ : θ y e₂)
-    (hSum : ¬ OBJ (x ⊔ y)) :
-    ¬ CUM (VP θ OBJ) := by
-  intro hCum
-  have hVP₁ : VP θ OBJ e₁ := ⟨x, hx, hθ₁⟩
-  have hVP₂ : VP θ OBJ e₂ := ⟨y, hy, hθ₂⟩
-  obtain ⟨z, hz_obj, hz_θ⟩ := hCum hVP₁ hVP₂
-  have hθ_sum := hCumTheta x y e₁ e₂ hθ₁ hθ₂
-  have hz_eq := hUP z (x ⊔ y) (e₁ ⊔ e₂) hz_θ hθ_sum
-  exact hSum (hz_eq ▸ hz_obj)
+/-- (23): a telic predicate is quantized. -/
+abbrev Telic (P : β → Prop) : Prop := QUA P
 
-/-- ¬CUM ∧ ¬QUA is stable under VP formation (explicit-witness
-    smart constructor): SINC's MSE maps OBJ proper part y < x to
-    proper sub-event e_y < e_x, witnessing ¬QUA on the VP. -/
-private theorem middle_ground_stable_of_postulates {θ : α → β → Prop} {OBJ : α → Prop}
-    (hCumTheta : CumTheta θ) (hUP : UP θ) (hSinc : SINC θ)
-    {a b : α} {e_a e_b : β}
-    (ha : OBJ a) (hb : OBJ b)
-    (hθ_a : θ a e_a) (hθ_b : θ b e_b)
-    (hSum : ¬ OBJ (a ⊔ b))
-    {x y : α} {e_x : β}
-    (hx : OBJ x) (hy : OBJ y) (hlt : y < x)
-    (hθ_x : θ x e_x) :
-    ¬ CUM (VP θ OBJ) ∧ ¬ QUA (VP θ OBJ) := by
-  constructor
-  · exact not_cum_vp_of_cumTheta_up hCumTheta hUP ha hb hθ_a hθ_b hSum
-  · intro hQua
-    obtain ⟨e_y, he_y_lt, hθ_y⟩ := hSinc.mse x e_x y hθ_x hlt
-    exact hQua ⟨y, hy, hθ_y⟩ ⟨x, hx, hθ_x⟩ he_y_lt.ne he_y_lt.le
+/-- (24): an atelic predicate is cumulative. -/
+abbrev Atelic (P : β → Prop) : Prop := CUM P
 
-/-- **¬CUM lifts to VP** (canonical typeclass form). `[IsSincVerb θ]`
-    bundles `CumTheta` (via `IsCumThetaVerb` parent class) and `UP`. -/
-theorem not_cum_vp_of_witnesses {θ : α → β → Prop} [IsSincVerb θ]
-    {OBJ : α → Prop}
-    {x y : α} {e₁ e₂ : β}
-    (hx : OBJ x) (hy : OBJ y)
-    (hθ₁ : θ x e₁) (hθ₂ : θ y e₂)
-    (hSum : ¬ OBJ (x ⊔ y)) :
-    ¬ CUM (VP θ OBJ) :=
-  not_cum_vp_of_cumTheta_up IsCumThetaVerb.cumTheta IsSincVerb.up
-    hx hy hθ₁ hθ₂ hSum
+/-! ### The three classes of verbs (28) -/
 
-/-- **Middle-ground gap lifts** (canonical typeclass form).
-    `[IsSincVerb θ]` bundles SINC + UP + CumTheta directly. The
-    recommended public API for the [filip-2012] propositional
-    gap-propagation result. -/
-theorem middle_ground_stable {θ : α → β → Prop} [IsSincVerb θ]
-    {OBJ : α → Prop}
-    {a b : α} {e_a e_b : β}
-    (ha : OBJ a) (hb : OBJ b)
-    (hθ_a : θ a e_a) (hθ_b : θ b e_b)
-    (hSum : ¬ OBJ (a ⊔ b))
-    {x y : α} {e_x : β}
-    (hx : OBJ x) (hy : OBJ y) (hlt : y < x)
-    (hθ_x : θ x e_x) :
-    ¬ CUM (VP θ OBJ) ∧ ¬ QUA (VP θ OBJ) :=
-  middle_ground_stable_of_postulates IsCumThetaVerb.cumTheta IsSincVerb.up
-    IsSincVerb.sinc ha hb hθ_a hθ_b hSum hx hy hlt hθ_x
+/-- A telic verb (28i): no eventuality in its relation has a proper part in it — *recover*,
+*arrive*, *burst*. -/
+def Quantized (θ : α → β → Prop) : Prop := ∀ x e, θ x e → ∀ y e', e' < e → ¬ θ y e'
+
+/-- An atelic verb (28ii): its relation persists to the parts of an eventuality, the subinterval
+property (19) — *run*, *watch*, *believe*. -/
+def Persistent (θ : α → β → Prop) : Prop := ∀ x e, θ x e → ∀ e', e' ≤ e → θ x e'
+
+omit [SemilatticeSup α] in
+/-- A telic verb forms a telic predicate with any object. -/
+theorem telic_of_quantized {θ : α → β → Prop} (h : Quantized θ) (OBJ : α → Prop) :
+    Telic (VP θ OBJ) :=
+  qua_of_forall λ _ _ ⟨_, _, hθ⟩ hlt ⟨_, _, hθ'⟩ => h _ _ hθ _ _ hlt hθ'
+
+omit [SemilatticeSup α] in
+/-- (26): an atelic verb forms no telic predicate whatever its object: a proper part of one of
+its eventualities is one too. -/
+theorem not_telic_of_persistent {θ : α → β → Prop} (h : Persistent θ) (OBJ : α → Prop)
+    {e e' : β} (hlt : e' < e) (he : VP θ OBJ e) : ¬ Telic (VP θ OBJ) := λ hQ =>
+  let ⟨x, hx, hθ⟩ := he
+  hQ ⟨x, hx, h x e hθ e' hlt.le⟩ he hlt.ne hlt.le
+
+/-- An atelic verb with a cumulative object forms a cumulative predicate. -/
+theorem atelic_of_persistent {θ : α → β → Prop} [IsCumThetaVerb θ] {OBJ : α → Prop}
+    (hObj : CUM OBJ) : Atelic (VP θ OBJ) :=
+  cum_propagation hObj
+
+/-- (27), (28iii), (29ii): an incremental verb is lexically unmarked for telicity — its
+non-degeneracy provides a quantized object with which its predicate is telic and a cumulative
+one with which it is atelic and not telic. -/
+theorem incremental_underspecified {θ : α → β → Prop} [IsSincVerb θ] :
+    (∃ OBJ : α → Prop, QUA OBJ ∧ Telic (VP θ OBJ) ∧ ∃ e, VP θ OBJ e) ∧
+    (∃ OBJ : α → Prop, CUM OBJ ∧ Atelic (VP θ OBJ) ∧ ¬ Telic (VP θ OBJ)) := by
+  obtain ⟨x, y, e, e', hlt, hlt', hθ, hθ'⟩ := (IsSincVerb.sinc (θ := θ)).extended
+  refine ⟨⟨(· = x), singleton_qua x, qua_propagation (singleton_qua x), e, x, rfl, hθ⟩,
+    ⟨λ _ => True, λ _ _ _ _ => trivial, cum_propagation (λ _ _ _ _ => trivial), λ hQ => ?_⟩⟩
+  exact hQ ⟨y, trivial, hθ'⟩ ⟨x, trivial, hθ⟩ hlt'.ne hlt'.le
+
+/-- (29i): telicity does not require incrementality — a quantized verb is not strictly
+incremental, its eventualities having no proper parts in the relation. -/
+theorem not_sinc_of_quantized {θ : α → β → Prop} (h : Quantized θ) : ¬ SINC θ := λ hS =>
+  let ⟨x, y, e, e', _, hlt', hθ, hθ'⟩ := hS.extended
+  h x e hθ y e' hlt' hθ'
+
+/-! ### The adverbial diagnostic (1) over the chapter's data -/
+
+/-- The verb classes of (28). -/
+inductive VerbClass where
+  | telic
+  | atelic
+  | incremental
+  deriving DecidableEq, Repr
+
+/-- The object's reference: quantized, cumulative, or absent. -/
+inductive Object where
+  | quantized
+  | cumulative
+  | none
+  deriving DecidableEq, Repr
+
+/-- The temporal adverbials of (1). -/
+inductive Adverbial where
+  | inNP
+  | forNP
+  deriving DecidableEq, Repr
+
+/-- A sentence of the diagnostic with its verb's class, its object's reference, its adverbial,
+and the chapter's judgment. -/
+structure Row where
+  cls : VerbClass
+  obj : Object
+  adverbial : Adverbial
+  judgment : Features.Judgment
+  deriving DecidableEq, Repr
+
+/-- The telicity the classification assigns: telic verbs form telic predicates
+(`telic_of_quantized`), atelic verbs never do (`not_telic_of_persistent`), and incremental
+verbs follow their object ((27): `qua_propagation`, `cum_propagation`). -/
+def Row.Telic (r : Row) : Prop :=
+  match r.cls, r.obj with
+  | .telic, _ => True
+  | .atelic, _ => False
+  | .incremental, .quantized => True
+  | .incremental, _ => False
+
+instance (r : Row) : Decidable r.Telic := by unfold Row.Telic; split <;> infer_instance
+
+def classTable : List (String × VerbClass) :=
+  [("telic", .telic), ("atelic", .atelic), ("incremental", .incremental)]
+
+def objectTable : List (String × Object) :=
+  [("quantized", .quantized), ("cumulative", .cumulative), ("none", .none)]
+
+def adverbialTable : List (String × Adverbial) := [("in", .inNP), ("for", .forNP)]
+
+def Row.ofExample (ex : LinguisticExample) : Option Row := do
+  let cls ← ex.parse? "verbClass" classTable
+  let obj ← ex.parse? "object" objectTable
+  let adverbial ← ex.parse? "adverbial" adverbialTable
+  pure ⟨cls, obj, adverbial, ex.judgment⟩
+
+theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
+
+def rows : List Row := Examples.all.filterMap Row.ofExample
+
+/-- (1): the *in* adverbial is acceptable exactly with the telic predicates and the *for*
+adverbial exactly with the atelic ones, across (1), (25), (26), (31), (37). -/
+theorem rows_test : ∀ r ∈ rows, (r.judgment = .acceptable ↔ (r.adverbial = .inNP ↔ r.Telic)) := by
+  decide
 
 end Filip2012

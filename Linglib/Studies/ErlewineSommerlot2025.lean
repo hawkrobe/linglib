@@ -1,395 +1,442 @@
+import Linglib.Data.Examples.ErlewineSommerlot2025
 import Linglib.Syntax.Minimalist.Linearization.Cyclic
-import Linglib.Fragments.Malayic.VoiceSystem
-import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
-# Voice and Extraction in Malayic
-[erlewine-sommerlot-2025]
+# Erlewine and Sommerlot (2025): Voice and Extraction in Malayic
 
-[erlewine-sommerlot-2025] propose a new analysis of Malayic clausal
-morphosyntax that derives the interaction between voice morphology and
-nominal A'-extraction from cyclic linearization ([fox-pesetsky-2005]).
+This file formalizes [erlewine-sommerlot-2025]'s account of the interaction between voice
+morphology and Ā-extraction in Malayic. The verbal domain (§3.1) has two heads, following
+[nomoto-2015] and [nomoto-2021]: a lower v that introduces the agent, the active v licensing the
+theme it c-commands and the passive v the agent in its specifier, and a higher Voice that heads
+a phase and hosts exactly one nominal specifier, with any nonnominal specifiers besides. Every
+nominal must be licensed, by v or by the T that attracts it to Spec,TP, so the nominal v leaves
+unlicensed moves to Spec,VoiceP and on to the subject position; this yields the active, the
+*di-* passive and the bare passive and rules out the mismatched derivations. Vocabulary items
+realize Voice and v by linear adjacency at VoiceP Spell-out: in Desa Voice is *me-* before the
+active v, optionally, and *di-* before the passive v, null elsewhere, and the active v is *N-*;
+in Standard Indonesian and Malay (§4.1) *me-* and *N-* each require the other's adjacency, so
+*meN-* appears whole or not at all. Word order is fixed phase by phase by cyclic linearization
+([fox-pesetsky-2005], §4.2), null heads pruned, and an overt Voice prefix must be adjacent to the
+verb to affix to it. The subject-only restriction follows (§3.2), and so does its exception: a
+theme moved to Spec,VoiceP can be Ā-extracted while the agent moves to Spec,TP, in the standard
+languages (§4.2), or stays in situ, in Desa (§3.3), but only with Voice null, since an overt
+Voice ordered before the agent at VoiceP and after it at CP is an ordering paradox (§4.3); the
+agent of a bare passive cannot be extracted across its theme for the same reason (§4.4); PP
+extraction is free (§3.2); Jakarta Indonesian's *N-* on Voice blocks object extraction while
+Kuching Malay's *N-* on v does not (§5.2); and the polite and familiar registers of Madurese
+([jeoung-2017]) differ only in whether Voice has a null allomorph (§5.3).
 
-## Core claims
+## Implementation notes
 
-1. The verbal domain involves two functional heads: **Voice** (higher,
-   phase head) and ***v*** (lower, introduces external argument).
-   The active prefix *meN-* reflects both: *me-* on Voice, *N-* on *v*.
+* A derivation records the flavour of v, whether the passive v projects the agent, the nominal
+  in Spec,VoiceP, the nominal in Spec,TP if any, what is Ā-extracted if anything, and the
+  exponents chosen for Voice and v. Its two Spell-outs are computed from it, moved material
+  preceding the remainder of VoiceP at CP, and grammaticality is licensing, the EPP as the
+  language sets it, the vocabulary items, local dislocation, and `Consistent`.
+* The paper leaves the ungrammaticality of agent extraction with the passive v (§3.3) open and
+  offers Ā-anti-locality as one possibility; that ban, on an agent licensed in Spec,vP moving to
+  Spec,VoiceP, is adopted.
+* Desa relaxes the EPP under nominal Ā-extraction, T licensing a nominal in situ (§3.3); the
+  other languages attract a nominal to Spec,TP in every clause.
+* Ditransitive, possessor and embedded-argument extraction (§4.4), ellipsis (§4.5) and the
+  Kendayan passives (§5.2) are not modelled.
+* The examples are `Data.Examples.ErlewineSommerlot2025`.
 
-2. **VoiceP is a phase** with exactly one nominal specifier. Only the
-   subject — the nominal in Spec,VoiceP — can A'-extract from the
-   basic clause types (active, *di-* passive, bare passive).
+## References
 
-3. **Object extraction** involves the theme moving to Spec,VoiceP (the
-   single nominal specifier) and then A'-moving to Spec,CP, while the
-   agent stays low in Spec,*v*P. This is possible only when Voice is
-   realized as a **null allomorph**.
-
-4. **meN-deletion derived**: overt Voice (*me-*) in object extraction
-   creates an ordering paradox at cyclic linearization. At VoiceP
-   Spell-out, Voice precedes the agent; at CP Spell-out, the agent
-   (having moved to Spec,TP or staying high) precedes Voice. The
-   contradiction forces Voice to be null.
-
-5. **Cross-linguistic variation** (Desa, SI/SM, polite/familiar Madurese)
-   reduces to parametric differences in vocabulary items for Voice and *v*.
-
-## PIC mode
-
-[erlewine-sommerlot-2025]'s analysis derives the meN-deletion
-constraint from cyclic linearization alone, without invoking the
-Phase Impenetrability Condition. This positions them at
-`PICStrength.linearizationBound` (per `Syntax/Minimalist/Phase.lean`):
-no opacity constraint per se, only ordering constraints from
-`Consistent`. Same regime adopted by
-[sande-clem-dabkowski-2026] for Guébie discontinuous harmony,
-[branan-davis-2019] for agreement-edge unlocking, and others.
-The structural diagnostic that the meN-deletion derivation is
-ruled out is precisely *not* a PIC-violation but a Cyclic Linearization
-contradiction — see `men_deletion` below.
-
-## Formalization strategy
-
-We model each derivation as a sequence of Spell-out domains, where each
-domain is the left-to-right sequence of overt terminals. The cyclic
-linearization machinery from `Linearization/Cyclic.lean` checks for
-ordering contradictions. The key theorem is that object extraction with
-overt Voice creates a contradiction, while null Voice does not.
+* [erlewine-sommerlot-2025]
+* [nomoto-2015]
+* [nomoto-2021]
+* [fox-pesetsky-2005]
+* [embick-noyer-2001]
+* [jeoung-2017]
 -/
 
 namespace ErlewineSommerlot2025
 
-open List Minimalist.Linearization
-open Malayic.VoiceSystem
-
--- ============================================================================
--- § 1: VoiceP Linearizations
--- ============================================================================
-
-/-! ### Overt terminals at VoiceP Spell-out
-
-At VoiceP Spell-out, the phase is:
-```
-[VoiceP  DP_spec  Voice  [vP  (DP_agent)  v+V  (DP_theme)]]
-```
-The specifier of VoiceP is the nominal that has moved there to satisfy
-the single-specifier requirement. In active clauses, this is the agent;
-in passives, the theme; in object extraction, the theme.
-
-We record the left-to-right sequence of overt terminals. Null heads
-(Voice = ∅, v_PASS = ∅) are omitted from the sequence.
--/
-
--- Active clause: agent in Spec,VoiceP; theme is complement of V
--- Overt: [agent, Voice(me-), v(N-)+V, theme]
-def voiceP_active : List String := ["agent", "me-", "NV", "theme"]
-
--- Active with short N- only (Desa free variation)
-def voiceP_active_short : List String := ["agent", "NV", "theme"]
-
--- Di-passive: theme in Spec,VoiceP; no agent in Spec,vP (or optional PP)
--- Overt: [theme, Voice(di-), V]
-def voiceP_diPassive : List String := ["theme", "di-", "V"]
-
--- Bare passive: theme in Spec,VoiceP; agent in Spec,vP; Voice = ∅, v = ∅
--- Overt: [theme, agent, V]
-def voiceP_barePassive : List String := ["theme", "agent", "V"]
-
--- Object extraction with NULL Voice: theme in Spec,VoiceP; agent in Spec,vP
--- Voice = ∅; v_ACT = N- (Desa) or ∅ (SI/SM)
-def voiceP_objExtr_null : List String := ["theme", "agent", "NV"]
-def voiceP_objExtr_null_sism : List String := ["theme", "agent", "V"]
-
--- Object extraction with OVERT Voice (hypothetical — leads to crash)
--- Theme in Spec,VoiceP; Voice = me-; agent in Spec,vP
-def voiceP_objExtr_overt : List String := ["theme", "me-", "agent", "NV"]
-
--- ============================================================================
--- § 2: CP Linearizations
--- ============================================================================
-
-/-! ### Overt terminals at CP Spell-out
-
-At CP Spell-out, material that has moved out of VoiceP is ordered
-relative to VoiceP-internal material and any new CP-level material
-(complementizer, auxiliaries). The key principle: moved material
-precedes VoiceP-internal material in the CP Spell-out domain.
--/
-
--- Active clause: agent moves from Spec,VoiceP to Spec,TP
--- CP: [agent, Aux, me-, NV, theme]
-def cp_active : List String := ["agent", "Aux", "me-", "NV", "theme"]
-def cp_active_short : List String := ["agent", "Aux", "NV", "theme"]
-
--- Subject extraction from active: agent further moves to Spec,CP
--- CP: [agent, Aux, me-, NV, theme]  (same linear order)
-def cp_subjExtr : List String := ["agent", "Aux", "me-", "NV", "theme"]
-
--- Di-passive: theme moves from Spec,VoiceP to Spec,TP
--- CP: [theme, Aux, di-, V]
-def cp_diPassive : List String := ["theme", "Aux", "di-", "V"]
-
--- Bare passive: theme moves to Spec,TP; agent stays in Spec,vP (low)
--- CP: [theme, Aux, agent, V]
-def cp_barePassive : List String := ["theme", "Aux", "agent", "V"]
-
--- Object extraction (SI/SM, ex. 56): theme → Spec,CP; agent → Spec,TP
--- Both move simultaneously out of VoiceP in order-preserving fashion
--- Voice is null → not in linearization
--- CP: [theme, agent, Aux, V]
-def cp_objExtr_sism : List String := ["theme", "agent", "Aux", "V"]
-
--- Object extraction (Desa, ex. 44): theme → Spec,CP; agent stays low
--- No auxiliary precedes agent (Desa-specific: EPP relaxed)
--- CP: [theme, agent, NV]
-def cp_objExtr_desa : List String := ["theme", "agent", "NV"]
-
--- Object extraction with OVERT Voice (hypothetical crash)
--- agent has moved past Voice → agent < me- at CP, but me- < agent at VoiceP
--- CP: [theme, agent, Aux, me-, NV]
-def cp_objExtr_overt : List String := ["theme", "agent", "Aux", "me-", "NV"]
-
--- ============================================================================
--- § 3: Core Derivation Theorems
--- ============================================================================
-
-/-! ### Grammatical derivations
-
-Each grammatical derivation produces consistent ordering across phases.
--/
-
-/-- Active clause is consistently linearizable.
-    [erlewine-sommerlot-2025] (36). -/
-theorem active_consistent :
-    Consistent [voiceP_active, cp_active] := by decide
-
-/-- Active clause with short *N-* prefix (Desa free variation). -/
-theorem active_short_consistent :
-    Consistent [voiceP_active_short, cp_active_short] := by decide
-
-/-- Subject extraction from active is consistent.
-    The subject (agent) was already leftmost in VoiceP and moves further
-    left through Spec,TP to Spec,CP — classic edge movement (Scenario 1
-    of [fox-pesetsky-2005]). -/
-theorem subject_extraction_consistent :
-    Consistent [voiceP_active, cp_subjExtr] := by decide
-
-/-- *di-* passive is consistently linearizable.
-    [erlewine-sommerlot-2025] (37a). -/
-theorem di_passive_consistent :
-    Consistent [voiceP_diPassive, cp_diPassive] := by decide
-
-/-- Bare passive is consistently linearizable.
-    [erlewine-sommerlot-2025] (37b)/(39c). -/
-theorem bare_passive_consistent :
-    Consistent [voiceP_barePassive, cp_barePassive] := by decide
-
-/-- Object extraction with null Voice (Desa) is consistent.
-    [erlewine-sommerlot-2025] (44). -/
-theorem obj_extraction_desa_consistent :
-    Consistent [voiceP_objExtr_null, cp_objExtr_desa] := by decide
-
-/-- Object extraction with null Voice (SI/SM) is consistent.
-    [erlewine-sommerlot-2025] (54)–(56). -/
-theorem obj_extraction_sism_consistent :
-    Consistent [voiceP_objExtr_null_sism, cp_objExtr_sism] := by decide
-
-/-! ### The ordering paradox: overt Voice in object extraction
-
-This is the paper's central formal result. When Voice is overt (*me-*),
-VoiceP Spell-out establishes *me-* < agent (Voice precedes agent in
-Spec,*v*P). But at CP Spell-out, the agent has moved past Voice,
-establishing agent < *me-*. The two are contradictory.
-
-[erlewine-sommerlot-2025] (57).
--/
-
-/-- **meN-deletion theorem**: object extraction with overt Voice
-    creates an ordering paradox.
-
-    VoiceP: [theme, **me-**, **agent**, NV]  →  me- < agent
-    CP:     [theme, **agent**, Aux, **me-**, NV]  →  agent < me-
-
-    These two statements contradict: me- < agent ∧ agent < me-. -/
-theorem men_deletion :
-    ¬ Consistent [voiceP_objExtr_overt, cp_objExtr_overt] := by decide
-
-/-- The specific contradiction: VoiceP spells out me- before agent;
-    CP spells out agent before me-. -/
-theorem men_deletion_witness :
-    ["me-", "agent"] <+ voiceP_objExtr_overt ∧
-    ["agent", "me-"] <+ cp_objExtr_overt ∧
-    ¬ Consistent [voiceP_objExtr_overt, cp_objExtr_overt] :=
-  ⟨by decide, by decide, by decide⟩
-
--- ============================================================================
--- § 4: Cross-Linguistic Predictions
--- ============================================================================
-
-/-! ### Desa vs SI/SM: the *N-* contrast
-
-In Desa, the short nasal prefix *N-* (realization of *v_ACT*) survives
-in object extraction because it is on the lower head *v*, which is not
-implicated in the ordering paradox. In SI/SM, *N-* is lost because
-*v_ACT* only realizes as *N-* when Voice is linearly adjacent — and in
-object extraction, Voice is null (pruned), so the adjacency condition
-fails.
-
-[erlewine-sommerlot-2025] §2.3, (3) vs (22), (25).
--/
-
-/-- Desa object extraction: verb bears short *N-* but not *me-*.
-    Desa (3): *Opai yang inya m-ewa'* 'What did s/he bring?'
-    *m-* = *N-* (v_ACT), no *me-* (Voice). -/
-theorem desa_n_survives :
-    desa.vExponent .objectExtraction = some "N-" ∧
-    desa.voiceExponent .objectExtraction = none := ⟨rfl, rfl⟩
-
-/-- SI/SM object extraction: verb bears NO prefix at all.
-    SI/SM (22): *baju-baju yang Ali tidak basuh*
-    No *meN-*, no *N-*, bare stem *basuh*. -/
-theorem sism_full_deletion :
-    standardSISM.vExponent .objectExtraction = none ∧
-    standardSISM.voiceExponent .objectExtraction = none := ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 5: Madurese Register Variation
--- ============================================================================
-
-/-! ### Polite vs familiar Madurese
-
-[jeoung-2017] documents that polite Madurese has three voices
-(active, *e-* passive, bare passive) plus object extraction, while
-familiar Madurese has only two voices (active, *e-* passive). The
-contrast reduces to whether Voice has a null elsewhere allomorph.
-
-[erlewine-sommerlot-2025] §5.3, (76)–(83).
--/
-
-/-- Polite Madurese allows object extraction (null Voice available). -/
-theorem polite_madurese_obj_extr :
-    politeMadurese.clauseAvailable .objectExtraction = true := rfl
-
-/-- Familiar Madurese blocks object extraction (no null Voice). -/
-theorem familiar_madurese_no_obj_extr :
-    familiarMadurese.clauseAvailable .objectExtraction = false := rfl
-
-/-- The register contrast is exactly the null-Voice parameter. -/
-theorem madurese_minimal_pair :
-    politeMadurese.hasNullVoice ≠ familiarMadurese.hasNullVoice := by decide
-
--- ============================================================================
--- § 6: Nonnominal Extraction Is Voice-Insensitive
--- ============================================================================
-
-/-! ### PP A'-movement
-
-[erlewine-sommerlot-2025] correctly predict that nonnominal
-constituents (PPs) can A'-extract freely, regardless of voice, because
-VoiceP hosts nonnominal specifiers in addition to its one nominal
-specifier ((35b), (42)). PP extraction from active clauses retains
-*meN-* ((40a), (41a)).
-
-We model this as: a PP in an additional specifier of VoiceP moves to
-Spec,CP. It is ordered before Voice at VoiceP Spell-out and remains
-before Voice at CP Spell-out — no contradiction regardless of whether
-Voice is overt.
--/
-
--- PP extraction from active: PP occupies additional spec of VoiceP
--- VoiceP: [PP, agent, me-, NV, theme]  (PP is leftmost, then agent)
--- CP: [PP, agent, Aux, me-, NV, theme]
-theorem pp_extraction_with_overt_voice :
-    Consistent [["PP", "agent", "me-", "NV", "theme"],
-                      ["PP", "agent", "Aux", "me-", "NV", "theme"]] := by
-  decide
-
--- ============================================================================
--- § 7: Summary Prediction Table
--- ============================================================================
-
-/-- Summary: for every basic clause type, the derivation with
-    appropriate null/overt Voice assignments is consistently linearizable.
-    Object extraction requires null Voice (derived, not stipulated). -/
-theorem all_grammatical_derivations_consistent :
-    -- Active (with me-N-)
-    Consistent [voiceP_active, cp_active] ∧
-    -- Active (with N- only, Desa)
-    Consistent [voiceP_active_short, cp_active_short] ∧
-    -- Di-passive
-    Consistent [voiceP_diPassive, cp_diPassive] ∧
-    -- Bare passive
-    Consistent [voiceP_barePassive, cp_barePassive] ∧
-    -- Object extraction, null Voice (Desa)
-    Consistent [voiceP_objExtr_null, cp_objExtr_desa] ∧
-    -- Object extraction, null Voice (SI/SM)
-    Consistent [voiceP_objExtr_null_sism, cp_objExtr_sism] ∧
-    -- Object extraction, overt Voice → CRASH
-    ¬ Consistent [voiceP_objExtr_overt, cp_objExtr_overt] := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
-
--- ============================================================================
--- § 8: Bridge to Core Minimalist Voice Theory
--- ============================================================================
-
-/-! ### Connecting Malayic Voice/v to Core Voice.Head
-
-[erlewine-sommerlot-2025]'s two-head system (Voice + v) maps onto
-Core's single `Voice.Head` type ([kratzer-1996], [schaefer-2008]).
-
-- v_ACT (introduces agent) → agentive Voice flavor
-- v_PASS (no θ) → passive Voice flavor
-- VoiceP is ALWAYS a phase in E&S's system, diverging from Core's
-  flavor-default tabulation in which passive Voice is non-phasal
-  ([collins-2005], [chomsky-2001]). This divergence is captured
-  by the `malayic_passive_phase_diverges` theorem below.
-
-The phase divergence is theoretically significant: E&S need VoiceP to be
-a phase in ALL clause types to trigger cyclic linearization at VoiceP
-Spell-out, including in passives. Phase.lean's `Transfer` corresponds
-to each Spell-out domain in `Linearization/Cyclic.lean`, but operates on
-`SyntacticObject` rather than terminal strings.
--/
-
-/-- Map Malayic v-flavor to Core Voice.Flavor.
-    v_ACT introduces the external argument → agentive.
-    v_PASS licenses EA without θ → passive. -/
-def vFlavorToCore : LittleVFlavor → Minimalist.Voice.Flavor
-  | .act  => .agentive
-  | .pass => .passive
-
-/-- Map each Malayic clause type to its Core Voice.Head equivalent.
-    Active and object-extraction Voice are agentive (flavor-default phasal).
-    `di-`passive and bare passive use `phaseOverride := some true` to express
-    E&S 2025's claim that VoiceP is universally a phase, diverging from the
-    Core default for passive Voice ([chomsky-2001], [collins-2005],
-    encoded in `Voice.Flavor.defaultPhasal`). -/
-def clauseToVoiceHead : VoiceConstruction → Minimalist.Voice.Head
-  | .active          => { flavor := .agentive, hasD := true }
-  | .diPassive       => { flavor := .passive,  hasD := true, phaseOverride := some true }
-  | .barePassive     => { flavor := .passive,  hasD := true, phaseOverride := some true }
-  | .objectExtraction => { flavor := .agentive, hasD := true }
-
-/-- The Voice.Flavor component is consistent with the v-flavor mapping. -/
-theorem voice_flavor_consistent (ct : VoiceConstruction) :
-    (clauseToVoiceHead ct).flavor = vFlavorToCore ct.vFlavor := by
-  cases ct <;> rfl
-
-/-- All Malayic clause types treat VoiceP as a phase head. -/
-theorem voice_always_phase (ct : VoiceConstruction) :
-    (clauseToVoiceHead ct).IsPhasal := by cases ct <;> decide
-
-/-- Phase divergence: Malayic passives are phases, but Core's default
-    passive Voice (following [collins-2005]) is not. -/
-theorem malayic_passive_phase_diverges :
-    (clauseToVoiceHead .diPassive).IsPhasal ∧
-    ¬ Minimalist.Voice.passive.IsPhasal := by decide
-
-/-- Active clause type maps to Core's agentive Voice, which IS a phase
-    head — consistent across both analyses. -/
-theorem active_consistent_with_core :
-    (clauseToVoiceHead .active).flavor = .agentive ∧
-    ((clauseToVoiceHead .active).IsPhasal ↔ Minimalist.Voice.agentive.IsPhasal) := by
-  refine ⟨rfl, ?_⟩; decide
+open Minimalist.Linearization Data.Examples ErlewineSommerlot2025.Examples
+
+/-- The two flavours of v (§3.1). -/
+inductive VFlavor
+  | act
+  | pass
+  deriving DecidableEq, Repr
+
+/-- The nominal arguments of a bivalent verb. -/
+inductive Nominal
+  | agent
+  | theme
+  deriving DecidableEq, Repr
+
+/-- The overt terminals a Spell-out orders: a nominal, a nonnominal specifier, an overt Voice,
+the verb complex v+V, and the auxiliaries. -/
+inductive Term
+  | dp (n : Nominal)
+  | pp
+  | voice
+  | verb
+  | aux
+  deriving DecidableEq, Repr
+
+/-- The exponents of Voice and v across the languages. -/
+inductive Exponent
+  | me
+  | n
+  | di
+  | e
+  deriving DecidableEq, Repr
+
+/-- What is Ā-extracted to Spec,CP. -/
+inductive Extracted
+  | nominal (n : Nominal)
+  | pp
+  deriving DecidableEq, Repr
+
+/-- A derivation of a bivalent clause: the flavour of v, whether the passive v projects the
+agent, the nominal moved to Spec,VoiceP, the nominal T attracts to Spec,TP if any, what is
+Ā-extracted if anything, and the exponents of Voice and v. -/
+structure Derivation where
+  flavor : VFlavor
+  agentProjected : Bool
+  spec : Nominal
+  subject : Option Nominal
+  extracted : Option Extracted
+  voiceExp : Option Exponent
+  vExp : Option Exponent
+  deriving DecidableEq, Repr
+
+namespace Derivation
+
+variable (d : Derivation)
+
+/-- The nominals the clause projects. -/
+def nominals : List Nominal := if d.agentProjected then [.agent, .theme] else [.theme]
+
+/-- v licenses a nominal inside VoiceP: the active v the theme, the passive v its projected
+agent (§3.1). -/
+def LicensedByV : Nominal → Prop
+  | .theme => d.flavor = .act
+  | .agent => d.flavor = .pass ∧ d.agentProjected = true
+
+instance (n : Nominal) : Decidable (d.LicensedByV n) := by
+  cases n <;> unfold LicensedByV <;> infer_instance
+
+/-- The agent stays in Spec,vP at VoiceP Spell-out, between Voice and v. -/
+def agentInSitu : Bool := d.agentProjected && d.spec != .agent
+
+/-- The Ā-extracted nominal, if any. -/
+def aBar : Option Nominal :=
+  match d.extracted with
+  | some (.nominal n) => some n
+  | _ => none
+
+/-- The terminals moved out of VoiceP by CP Spell-out, in their order there: Spec,CP, then
+Spec,TP. -/
+def moved : List Term :=
+  ((match d.extracted with
+    | some (.nominal n) => [Term.dp n]
+    | some .pp => [Term.pp]
+    | none => []) ++ (d.subject.map Term.dp).toList).dedup
+
+/-- VoiceP Spell-out, null heads pruned: the nonnominal specifier, the nominal specifier, Voice
+if overt, the agent if it stays in Spec,vP, v+V, and the theme if it stays in situ. -/
+def voicePSpellout : List Term :=
+  (if d.extracted = some .pp then [Term.pp] else []) ++ [.dp d.spec] ++
+    (if d.voiceExp.isSome then [.voice] else []) ++ (if d.agentInSitu then [.dp .agent] else []) ++
+    [.verb] ++ (if d.spec = .theme then [] else [.dp .theme])
+
+/-- CP Spell-out: the moved material, the auxiliaries, and what remains of VoiceP in its
+order. -/
+def cpSpellout : List Term := d.moved ++ [.aux] ++ d.voicePSpellout.filter (· ∉ d.moved)
+
+/-- An overt Voice prefixes to the verb by local dislocation, which needs adjacency (§3.1). -/
+def LocalDislocation : Prop := d.voiceExp.isSome → d.agentInSitu = false
+
+/-- The specifier of VoiceP, the subject and the extracted nominal are arguments the clause
+projects, and no agent licensed by the passive v Ā-moves out of Spec,vP (§3.3). -/
+def WellFormed : Prop :=
+  d.spec ∈ d.nominals ∧ (∀ s ∈ d.subject, s ∈ d.nominals) ∧ (∀ n ∈ d.aBar, n ∈ d.nominals) ∧
+    ¬ (d.flavor = .pass ∧ d.spec = .agent)
+
+instance : Decidable d.LocalDislocation := by unfold LocalDislocation; infer_instance
+instance : Decidable d.WellFormed := by unfold WellFormed; infer_instance
+
+end Derivation
+
+/-! ### Grammars -/
+
+/-- A language's vocabulary items (§3.1, §4.1, §5): the exponents Voice may take, by the flavour
+of v and whether the two heads are linearly adjacent, likewise for v, and whether T licenses a
+nominal in situ under nominal Ā-extraction instead of attracting one to Spec,TP. -/
+structure Grammar where
+  voice : VFlavor → Bool → List (Option Exponent)
+  v : VFlavor → Bool → List (Option Exponent)
+  inSitu : Bool
+
+/-- Desa (32): *me-* optionally before the active v, *di-* before the passive v, Voice null
+elsewhere; the active v is *N-*; T licenses in situ under Ā-extraction (§3.3). -/
+def desa : Grammar where
+  voice
+    | .act, true => [some .me, none]
+    | .pass, true => [some .di]
+    | _, false => [none]
+  v
+    | .act, _ => [some .n]
+    | .pass, _ => [none]
+  inSitu := true
+
+/-- Standard Indonesian and Malay (49): *me-* and *N-* each only next to the other. -/
+def standard : Grammar where
+  voice
+    | .act, true => [some .me]
+    | .pass, true => [some .di]
+    | _, false => [none]
+  v
+    | .act, true => [some .n]
+    | _, _ => [none]
+  inSitu := false
+
+/-- Jakarta Indonesian (§5.2): the optional *N-* realizes Voice. -/
+def jakarta : Grammar where
+  voice
+    | .act, true => [some .n, none]
+    | .pass, true => [some .di]
+    | _, false => [none]
+  v _ _ := [none]
+  inSitu := false
+
+/-- Kuching Malay (§5.2): the optional *N-* realizes v, Voice being always null. -/
+def kuching : Grammar where
+  voice
+    | .pass, true => [some .di]
+    | _, _ => [none]
+  v
+    | .act, _ => [some .n, none]
+    | .pass, _ => [none]
+  inSitu := false
+
+/-- Polite Madurese (82): Voice is *N-* or *e-* next to v and null elsewhere. -/
+def politeMadurese : Grammar where
+  voice
+    | .act, true => [some .n]
+    | .pass, true => [some .e]
+    | _, false => [none]
+  v _ _ := [none]
+  inSitu := false
+
+/-- Familiar Madurese (83): Voice is *N-* or *e-* by the flavour of v alone, with no null
+allomorph. -/
+def familiarMadurese : Grammar where
+  voice
+    | .act, _ => [some .n]
+    | .pass, _ => [some .e]
+  v _ _ := [none]
+  inSitu := false
+
+namespace Grammar
+
+variable (g : Grammar) (d : Derivation)
+
+/-- T licenses the nominal it attracts, or, where the EPP is relaxed under Ā-extraction, the one
+nominal it c-commands that v leaves unlicensed. -/
+def TLicenses (n : Nominal) : Prop :=
+  match d.subject with
+  | some s => n = s
+  | none => g.inSitu = true ∧ d.aBar.isSome = true ∧ ¬ d.LicensedByV n
+
+instance (n : Nominal) : Decidable (g.TLicenses d n) := by
+  unfold TLicenses; split <;> infer_instance
+
+/-- Every nominal is licensed, by v or by T (§3.1). -/
+def Licensed : Prop := ∀ n ∈ d.nominals, d.LicensedByV n ∨ g.TLicenses d n
+
+/-- The EPP: T attracts a nominal, unless the language licenses in situ under nominal
+Ā-extraction, when it attracts none. -/
+def EPP : Prop :=
+  if g.inSitu && d.aBar.isSome then d.subject = none else d.subject.isSome = true
+
+/-- The exponents are those the vocabulary items allow at VoiceP Spell-out. -/
+def Vocabulary : Prop :=
+  d.voiceExp ∈ g.voice d.flavor (!d.agentInSitu) ∧ d.vExp ∈ g.v d.flavor (!d.agentInSitu)
+
+/-- A derivation is grammatical when it is well formed, licenses every nominal, satisfies the
+EPP, realizes the heads as the vocabulary allows, affixes an overt Voice, and linearizes. -/
+def Grammatical : Prop :=
+  d.WellFormed ∧ g.Licensed d ∧ g.EPP d ∧ g.Vocabulary d ∧ d.LocalDislocation ∧
+    Consistent [d.voicePSpellout, d.cpSpellout]
+
+instance : Decidable (g.Licensed d) := by unfold Licensed; infer_instance
+instance : Decidable (g.EPP d) := by unfold EPP; infer_instance
+instance : Decidable (g.Vocabulary d) := by unfold Vocabulary; infer_instance
+instance : Decidable (g.Grammatical d) := by unfold Grammatical; infer_instance
+
+/-- Every derivation of a bivalent clause the grammar's vocabulary can realize. -/
+def derivations : List Derivation :=
+  [VFlavor.act, .pass].flatMap λ f => [true, false].flatMap λ ag =>
+    [Nominal.agent, .theme].flatMap λ sp => [none, some Nominal.agent, some .theme].flatMap λ su =>
+      [none, some (Extracted.nominal .agent), some (.nominal .theme), some .pp].flatMap λ ex =>
+        let adj := !(ag && sp != .agent)
+        (g.voice f adj).flatMap λ ve => (g.v f adj).map λ vx => ⟨f, ag, sp, su, ex, ve, vx⟩
+
+end Grammar
+
+/-! ### Surface forms -/
+
+/-- The prefix on the verb. -/
+inductive Prefix
+  | meN
+  | n
+  | di
+  | e
+  | bare
+  deriving DecidableEq, Repr
+
+/-- The prefix the exponents of Voice and v spell out together. -/
+def Prefix.ofExponents : Option Exponent → Option Exponent → Option Prefix
+  | some .me, some .n => some .meN
+  | none, some .n => some .n
+  | some .n, none => some .n
+  | some .di, none => some .di
+  | some .e, none => some .e
+  | none, none => some .bare
+  | _, _ => none
+
+/-- What a clause shows: what is Ā-extracted, the nominal before the auxiliaries, whether the
+agent sits between the auxiliaries and the verb, and the verb's prefix. -/
+structure Surface where
+  extracted : Option Extracted
+  subject : Option Nominal
+  lowAgent : Bool
+  form : Prefix
+  deriving DecidableEq, Repr
+
+/-- The surface form of a derivation, if its exponents spell out a prefix. -/
+def Derivation.surface (d : Derivation) : Option Surface :=
+  (Prefix.ofExponents d.voiceExp d.vExp).map λ p =>
+    ⟨d.extracted, d.subject, d.agentProjected && d.subject != some .agent && d.aBar != some .agent,
+      p⟩
+
+/-! ### The rows -/
+
+/-- The grammars as named in the rows. -/
+def grammarTable : List (String × Grammar) :=
+  [("desa", desa), ("standard", standard), ("jakarta", jakarta), ("kuching", kuching),
+    ("politeMadurese", politeMadurese), ("familiarMadurese", familiarMadurese)]
+
+/-- The extracted phrases as named in the rows. -/
+def extractedTable : List (String × Option Extracted) :=
+  [("none", none), ("agent", some (.nominal .agent)), ("theme", some (.nominal .theme)),
+    ("pp", some .pp)]
+
+/-- The subjects as named in the rows. -/
+def subjectTable : List (String × Option Nominal) :=
+  [("none", none), ("agent", some .agent), ("theme", some .theme)]
+
+/-- Whether the agent is low, as named in the rows. -/
+def lowAgentTable : List (String × Bool) := [("yes", true), ("no", false)]
+
+/-- The prefixes as named in the rows. -/
+def prefixTable : List (String × Prefix) :=
+  [("meN", .meN), ("N", .n), ("di", .di), ("e", .e), ("bare", .bare)]
+
+/-- A row: the grammar, the surface form, and the judgment. -/
+structure Row where
+  grammar : Grammar
+  surface : Surface
+  judgment : Features.Judgment
+
+/-- A row from an example. -/
+def Row.ofExample (ex : LinguisticExample) : Option Row := do
+  pure ⟨← ex.parse? "grammar" grammarTable,
+    ⟨← ex.parse? "extracted" extractedTable, ← ex.parse? "subject" subjectTable,
+      ← ex.parse? "lowAgent" lowAgentTable, ← ex.parse? "prefix" prefixTable⟩,
+    ex.judgment⟩
+
+theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
+
+/-- The rows of the six grammars. -/
+def rows : List Row := Examples.all.filterMap Row.ofExample
+
+/-- Every row: the surface form is grammatical exactly when some derivation the grammar
+generates has it. -/
+theorem rows_grammatical :
+    ∀ r ∈ rows, r.judgment = .acceptable ↔
+      ∃ d ∈ r.grammar.derivations, d.surface = some r.surface ∧ r.grammar.Grammatical d := by
+  decide +kernel
+
+/-! ### The ordering paradoxes -/
+
+/-- A derivation with two contradictory Spell-out statements does not linearize. -/
+theorem not_consistent_of_pair {d : Derivation} {a b : Term}
+    (h₁ : List.Sublist [a, b] d.voicePSpellout) (h₂ : List.Sublist [b, a] d.cpSpellout) :
+    ¬ Consistent [d.voicePSpellout, d.cpSpellout] :=
+  λ h => h a (.tail (.single ⟨_, List.mem_cons_self, h₁⟩) ⟨_, by simp, h₂⟩)
+
+/-- (57): with Voice overt and the agent left in Spec,vP at VoiceP Spell-out, the agent's later
+movement to Spec,TP orders it before Voice at CP, against VoiceP; the derivation cannot
+linearize, whatever else it contains. -/
+theorem overt_voice_paradox (d : Derivation) (hv : d.voiceExp.isSome = true)
+    (hi : d.agentInSitu = true) (hs : d.subject = some .agent) :
+    ¬ Consistent [d.voicePSpellout, d.cpSpellout] := by
+  have hvP : Term.voice ∈ d.voicePSpellout := by simp [Derivation.voicePSpellout, hv]
+  have hnot : Term.voice ∉ d.moved := by
+    unfold Derivation.moved
+    rcases d.extracted with _ | ⟨_⟩ | _ <;> rcases d.subject with _ | _ <;> simp
+  have hagent : Term.dp .agent ∈ d.moved := by simp [Derivation.moved, hs]
+  refine not_consistent_of_pair (a := .voice) (b := .dp .agent) ?_ ?_
+  · unfold Derivation.voicePSpellout
+    rw [if_pos hv, if_pos hi]
+    exact (((List.sublist_append_right _ [Term.voice]).append_right [Term.dp .agent]).trans
+      (List.sublist_append_left _ [Term.verb])).trans (List.sublist_append_left _ _)
+  · unfold Derivation.cpSpellout
+    exact List.Sublist.append
+      ((List.singleton_sublist.mpr hagent).trans (List.sublist_append_left _ [Term.aux]))
+      (List.singleton_sublist.mpr (List.mem_filter.mpr ⟨hvP, by simpa using hnot⟩))
+
+/-- (60): the agent of a bare passive cannot be Ā-extracted, since the theme precedes it at
+VoiceP Spell-out but would follow it at CP. -/
+theorem bare_passive_agent_paradox (d : Derivation) (ha : d.agentProjected = true)
+    (hsp : d.spec = .theme) (he : d.extracted = some (.nominal .agent))
+    (hs : d.subject = some .theme) : ¬ Consistent [d.voicePSpellout, d.cpSpellout] := by
+  have hi : d.agentInSitu = true := by simp [Derivation.agentInSitu, ha, hsp]
+  have hm : d.moved = [.dp .agent, .dp .theme] := by
+    unfold Derivation.moved; rw [he, hs]; decide
+  refine not_consistent_of_pair (a := .dp .theme) (b := .dp .agent) ?_ ?_
+  · unfold Derivation.voicePSpellout
+    rw [if_pos hi, if_pos hsp, hsp]
+    exact ((((List.sublist_append_right _ [Term.dp .theme]).trans
+      (List.sublist_append_left _ _)).append_right [Term.dp .agent]).trans
+      (List.sublist_append_left _ [Term.verb])).trans (List.sublist_append_left _ _)
+  · unfold Derivation.cpSpellout
+    rw [hm]
+    exact (List.sublist_append_left _ [Term.aux]).trans (List.sublist_append_left _ _)
+
+/-! ### The predictions of §5 -/
+
+/-- §5.2: with *N-* on v, object extraction crosses an *N-* verb, as in Kuching Malay; with *N-*
+on Voice it cannot, as in Jakarta Indonesian. -/
+theorem n_on_v_allows_object_extraction :
+    (∃ d ∈ kuching.derivations,
+        d.surface = some ⟨some (.nominal .theme), some .agent, false, .n⟩ ∧
+          kuching.Grammatical d) ∧
+      ¬ ∃ d ∈ jakarta.derivations,
+        d.surface = some ⟨some (.nominal .theme), some .agent, false, .n⟩ ∧
+          jakarta.Grammatical d := by
+  decide +kernel
+
+/-- §5.3: the registers of Madurese differ in the bare passive and object extraction alone,
+both of which need a null Voice. -/
+theorem madurese_registers :
+    (∃ d ∈ politeMadurese.derivations,
+        d.surface = some ⟨none, some .theme, true, .bare⟩ ∧ politeMadurese.Grammatical d) ∧
+      (∃ d ∈ politeMadurese.derivations,
+        d.surface = some ⟨some (.nominal .theme), some .agent, false, .bare⟩ ∧
+          politeMadurese.Grammatical d) ∧
+      (¬ ∃ d ∈ familiarMadurese.derivations,
+        d.surface = some ⟨none, some .theme, true, .bare⟩ ∧ familiarMadurese.Grammatical d) ∧
+      ¬ ∃ d ∈ familiarMadurese.derivations,
+        d.surface = some ⟨some (.nominal .theme), some .agent, false, .bare⟩ ∧
+          familiarMadurese.Grammatical d := by
+  decide +kernel
 
 end ErlewineSommerlot2025

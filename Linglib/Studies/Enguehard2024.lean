@@ -1,843 +1,345 @@
+import Linglib.Data.Examples.Enguehard2024
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Semantics.Presupposition.Context
-import Linglib.Studies.Sauerland2003
-import Linglib.Semantics.Presupposition.PhiFeatures
-import Linglib.Semantics.Presupposition.MaximizePresupposition
-import Linglib.Semantics.Exhaustification.Presuppositional
-import Linglib.Semantics.Dynamic.UpdateSemantics.Bilateral
-import Mathlib.Tactic.NormNum
+import Mathlib.Algebra.Order.Field.Rat
+import Mathlib.Order.Monotone.Basic
 import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum
 
 /-!
 # Enguehard (2024): What Number Marking on Indefinites Means
-[enguehard-2024]
 
-Enguehard, Émile. 2024. What number marking on indefinites means:
-conceivability presuppositions and sensitivity to probabilities.
-*Proceedings of Sinn und Bedeutung 28*, 289–302.
+This file formalizes [enguehard-2024]'s conceivability presupposition and its account by
+forward-looking competition. A singular indefinite infers exactly one witness and a plural one
+at least two, (1), yet under negation both mean that the witness set is empty, (2) and (3), the
+number inference being a scalar enrichment absent from downward-entailing environments
+([spector-2007], [zweig-2009]). What survives negation, questions and conditionals is the
+conceivability presupposition (7): the singular presupposes that exactly one witness is
+conceivable and the plural that more than one is, so that a book has no *tables of contents*
+and no *chapter*, (5) and (6). When both cardinalities are conceivable either number may be
+used, and the production experiment of §3 shows that the choice tracks how often the objects
+come in groups: the five conditions (11) teach a probability of multiple symbols from 0 to 1,
+and the share of negated plural indefinites in the rule the participants then state rises
+gradiently with it, both numbers being produced in every intermediate condition. This is the
+gradient hypothesis H2 of (10); it refutes the null hypothesis and the categorical H1 that
+[farkas-de-swart-2010]'s prototypicality generalization (8) yields, which Maximize
+Presupposition ([sauerland-2003]) derives in §4.1 as a complementary distribution, competition
+being unable to produce use conditions that overlap. The account of §5 rests on the dynamic
+potential of negated indefinites, which set up referents for bathroom pronouns, double negation,
+modals and denials, (14)–(17), in a bilateral or two-level dynamic semantics
+([krahmer-muskens-1995], [elliott-2020]), and on the number matching of bound pronouns,
+(18)–(20): a pronoun bears the referent's number feature ([sudo-2012]), is interpreted
+maximally, and must fit the actual cardinality, so the denial of a negated singular indefinite
+is ineffable when the card has several circles, (22). The principle (23), Provide useful
+referents, then yields the conceivability presupposition, a referent whose number can never fit
+being useless, and cannot be obeyed where both numbers can fit, so the speaker minimizes the
+chance of ineffability by a best guess from the distribution of witnesses.
 
-## Core Contributions
+## Implementation notes
 
-1. **Conceivability presupposition** (generalization 7): a sg (resp. pl)
-   indefinite presupposes that it is conceivable the witness set has
-   exactly one (resp. more than one) member. This presupposition projects
-   under negation, questions, and conditionals — unlike scalar
-   implicatures which are blocked in DE environments.
+* Situations carry the cardinality of the witness set, and the conceivability presupposition
+  quantifies over the conceivable situations; it is therefore constant across evaluation worlds
+  and projects through `PartialProp.neg` unchanged. The book examples take their conceivable
+  cardinalities from world knowledge, at most one table of contents and never a single chapter.
+* The hypotheses of (10) are predicates on the share of plural among the negated indefinites
+  produced in a condition. The paper reports Figure 2 graphically, so no observed share is
+  typed; the finding enters through the hypotheses' logical relations and the prose above.
+* The dynamic side is kept to what §5 states, a referent with a number feature and a pronoun
+  that matches it and the actual cardinality; the paper provides no dynamic semantics and none
+  is imported.
+* The examples are `Data.Examples.Enguehard2024`.
 
-2. **Gradient sensitivity** (§3): an experiment shows that speakers'
-   number choice on negated indefinites tracks the probability
-   distribution over witness-set cardinalities, not a categorical
-   presuppositional or MP-based boundary.
+## References
 
-3. **Forward-looking cooperation** (§5.3, principle 23): speakers choose
-   number to set up discourse referents whose number feature will be
-   useful in potential continuations — a Manner-like maxim sensitive to
-   prototypicality.
-
-4. **Dynamic potential** (§5.1–5.2): negated indefinites introduce
-   discourse referents accessible in bilateral dynamic semantics
-   ([elliott-2020]); the number feature on these referents constrains
-   future pronoun binding, grounding the forward-looking principle.
-
-## Integration Points
-
-- `PhiFeatures.sgCardConceivable` / `plCardConceivable` — the
-  conceivability presuppositions defined in §7 of `PhiFeatures.lean`
-- `Sauerland2003` — challenges MP-derived complementary distribution
-- the implicature theory of multiplicity (`TieuEtAl2020.PluralTheory.implicature`,
-  [tieu-etal-2020]) — challenged on its categorical predictions by
-  gradient production data
-- `MaximizePresupposition.phiMP` — MP is underdetermined when both
-  conceivability presuppositions are satisfied
-- `PresuppositionContext.presupSatisfiable` — conceivability =
-  satisfiability in context
-
-## Relation to Sauerland (2003)
-
-[sauerland-2003] treats `plSem` as vacuous (no presupposition).
-Enguehard argues that **indefinite** plurals DO carry a non-trivial
-conceivability presupposition — not about the entity but about the
-*predicate's extension*. This refines rather than replaces Sauerland:
-- For definites, `sgSem`/`plSem` with entity-level presuppositions remain
-  appropriate (the referent is known).
-- For indefinites (especially under negation), the conceivability
-  presupposition governs number choice: the cardinality must be
-  *conceivable*, not *actual*.
+* [enguehard-2024]
+* [farkas-de-swart-2010]
+* [spector-2007]
+* [zweig-2009]
+* [sauerland-2003]
+* [krahmer-muskens-1995]
+* [elliott-2020]
+* [sudo-2012]
+* [sudo-2023]
 -/
 
 namespace Enguehard2024
 
-open Presupposition
-open Presupposition.PhiFeatures
+open Presupposition Data.Examples Enguehard2024.Examples
 
--- ============================================================================
--- §1  Core Types
--- ============================================================================
-
-/-- Indefinite number marking: the two-way contrast. -/
-inductive IndefNumber where
-  | sg | pl
-  deriving DecidableEq, Repr, Inhabited
-
-/-- Experimental conditions from §3.2: the probability that symbols of
-    a given kind appear in multiples on a card (when present at all).
-    Each condition determines a `pMultiple` value. -/
-inductive Condition where
-  /-- 0% chance of multiple symbols. -/
+/-- The number of an indefinite. -/
+inductive Number
   | sg
-  /-- 10% chance of multiple symbols. -/
-  | sgPl
-  /-- 50% chance of multiple symbols. -/
-  | mix
-  /-- 90% chance of multiple symbols. -/
-  | plSg
-  /-- 100% chance of multiple symbols. -/
   | pl
-  deriving DecidableEq, Repr, Inhabited
-
-/-- The probability of multiple symbols for each condition. -/
-def Condition.pMultiple : Condition → ℚ
-  | .sg   => 0
-  | .sgPl => 1/10
-  | .mix  => 1/2
-  | .plSg => 9/10
-  | .pl   => 1
-
-/-- The probability of a unique symbol (complement). -/
-def Condition.pUnique (c : Condition) : ℚ := 1 - c.pMultiple
-
--- ============================================================================
--- §2  Conceivability Presupposition Instances
--- ============================================================================
-
-/-!
-## §2: Book Examples — Conceivability in Action
-
-[enguehard-2024] examples (5)–(6) and [farkas-de-swart-2010]
-generalization (8) illustrate conceivability presuppositions via world
-knowledge about books:
-
-- Table of contents: prototypically unique → sg conceivable, pl not
-- Chapter: prototypically multiple → sg not (prototypically), pl conceivable
-
-We model this with `Bool` situations: `false` = prototypical, `true` = rare.
--/
-
-section BookExamples
-
-/-- A book's table-of-contents count in conceivable situations. -/
-def tocCard : Bool → Nat
-  | false => 1   -- prototypical: exactly one
-  | true  => 0   -- rare: none (e.g., a pamphlet)
-
-/-- All situations are conceivable for table of contents. -/
-def allConceivable' : Bool → Prop := fun _ => True
-
-/-- Table of contents: sg conceivable (prototypical situation has |C|=1). -/
-theorem toc_sg_conceivable :
-    sgCardConceivable tocCard allConceivable' :=
-  ⟨false, trivial, rfl⟩
-
-/-- Table of contents: pl NOT conceivable (no situation has |C|≥2). -/
-theorem toc_pl_not_conceivable :
-    ¬plCardConceivable tocCard allConceivable' := by
-  intro ⟨w, _, h⟩
-  cases w <;> simp [tocCard] at h
-
-/-- A book's chapter count in conceivable situations. -/
-def chapterCard : Bool → Nat
-  | false => 5   -- prototypical: several chapters
-  | true  => 1   -- rare: a single-chapter book
-
-/-- Chapters: pl conceivable (prototypical situation has |C|=5 ≥ 2). -/
-theorem chapter_pl_conceivable :
-    plCardConceivable chapterCard allConceivable' :=
-  ⟨false, trivial, by norm_num [chapterCard]⟩
-
-/-- Chapters: sg also conceivable (rare situation has |C|=1), BUT
-    [farkas-de-swart-2010] argues this is prototypically
-    dispreferred because unique-chapter books are rare. The
-    conceivability presupposition per se is satisfied, but
-    prototypicality (= frequency) governs actual use. -/
-theorem chapter_sg_technically_conceivable :
-    sgCardConceivable chapterCard allConceivable' :=
-  ⟨true, trivial, rfl⟩
-
-/-- Books: both conceivability presuppositions hold for chapters,
-    but only sg holds for tables of contents. This contrast drives
-    the felicity judgments in examples (5)–(6). -/
-theorem book_contrast :
-    (sgCardConceivable tocCard allConceivable' ∧
-     ¬plCardConceivable tocCard allConceivable') ∧
-    (sgCardConceivable chapterCard allConceivable' ∧
-     plCardConceivable chapterCard allConceivable') :=
-  ⟨⟨toc_sg_conceivable, toc_pl_not_conceivable⟩,
-   ⟨chapter_sg_technically_conceivable, chapter_pl_conceivable⟩⟩
-
-end BookExamples
-
--- ============================================================================
--- §3  Experimental Data
--- ============================================================================
-
-/-!
-## §3: Production Experiment (§3.2–3.3)
-
-100 participants (Prolific). Each learned a probability distribution over
-symbol cardinalities through a card-validity task. After 20 trials, they
-described the rule by completing "the card is valid when..."
-
-The result: SG productions decrease and PL productions increase
-monotonically with `pMultiple`, consistent with H₂ (gradient sensitivity
-to prototypicality/frequency).
--/
-
-/-- Observed production proportions by condition (from Figure 2).
-    Values are approximate readings from the published graph. -/
-structure ProductionResult where
-  condition : Condition
-  sgRate : ℚ
-  plRate : ℚ
-  otherRate : ℚ
-  deriving Repr
-
-/-- Observed data: approximate proportions from Figure 2. -/
-def sgResult : ProductionResult :=
-  { condition := .sg, sgRate := 73/100, plRate := 3/100, otherRate := 24/100 }
-
-def sgPlResult : ProductionResult :=
-  { condition := .sgPl, sgRate := 63/100, plRate := 10/100, otherRate := 27/100 }
-
-def mixResult : ProductionResult :=
-  { condition := .mix, sgRate := 50/100, plRate := 25/100, otherRate := 25/100 }
-
-def plSgResult : ProductionResult :=
-  { condition := .plSg, sgRate := 30/100, plRate := 47/100, otherRate := 23/100 }
-
-def plResult : ProductionResult :=
-  { condition := .pl, sgRate := 0, plRate := 80/100, otherRate := 20/100 }
-
-def allResults : List ProductionResult :=
-  [sgResult, sgPlResult, mixResult, plSgResult, plResult]
-
-/-- SG rate weakly decreases across conditions (monotonicity). -/
-theorem sg_rate_monotone_decreasing :
-    sgResult.sgRate ≥ sgPlResult.sgRate ∧
-    sgPlResult.sgRate ≥ mixResult.sgRate ∧
-    mixResult.sgRate ≥ plSgResult.sgRate ∧
-    plSgResult.sgRate ≥ plResult.sgRate :=
-  ⟨by norm_num [sgResult, sgPlResult],
-   by norm_num [sgPlResult, mixResult],
-   by norm_num [mixResult, plSgResult],
-   by norm_num [plSgResult, plResult]⟩
-
-/-- PL rate weakly increases across conditions (monotonicity). -/
-theorem pl_rate_monotone_increasing :
-    sgResult.plRate ≤ sgPlResult.plRate ∧
-    sgPlResult.plRate ≤ mixResult.plRate ∧
-    mixResult.plRate ≤ plSgResult.plRate ∧
-    plSgResult.plRate ≤ plResult.plRate :=
-  ⟨by norm_num [sgResult, sgPlResult],
-   by norm_num [sgPlResult, mixResult],
-   by norm_num [mixResult, plSgResult],
-   by norm_num [plSgResult, plResult]⟩
-
-/-- In the extreme Sg condition, SG dominates PL. -/
-theorem sg_condition_sg_dominates : sgResult.sgRate > sgResult.plRate := by
-  norm_num [sgResult]
-
-/-- In the extreme Pl condition, PL dominates SG. -/
-theorem pl_condition_pl_dominates : plResult.plRate > plResult.sgRate := by
-  norm_num [plResult]
-
-/-- In the Mix condition, BOTH SG and PL are used — production is NOT
-    complementary. This is the central empirical challenge to MP and
-    scalar implicature approaches. -/
-theorem mix_condition_both_used :
-    mixResult.sgRate > 0 ∧ mixResult.plRate > 0 :=
-  ⟨by norm_num [mixResult], by norm_num [mixResult]⟩
-
-/-- Asymmetry between Sg and Pl conditions: some pl productions in Sg
-    but NO sg productions in Pl. This reflects the semantic weakness of
-    plural ("one or more") vs singular ("exactly one"): pl can intrude
-    into sg-biased conditions because it's semantically compatible, but
-    sg cannot intrude into pl-biased conditions. -/
-theorem sg_pl_production_asymmetry :
-    sgResult.plRate > 0 ∧ plResult.sgRate = 0 :=
-  ⟨by norm_num [sgResult], by norm_num [plResult]⟩
-
--- ============================================================================
--- §4  Challenge to Maximize Presupposition
--- ============================================================================
-
-/-!
-## §4: MP Underprediction
-
-[sauerland-2003]'s MP-based account (and all scalar-implicature
-accounts) predicts **complementary distribution**: where sg's
-presupposition is satisfied, use sg; elsewhere, use pl. The experiment
-shows overlapping use in all intermediate conditions.
-
-The structural diagnosis: conceivability presuppositions of sg and pl
-are **incomparable** (`conceivability_presups_incomparable` in
-`PhiFeatures.lean` §7). MP requires a strength ordering; when
-presuppositions are not ordered, MP is silent.
-
-This does NOT mean MP is wrong — it means MP underdetermines the choice
-in intermediate cases, and the residual variation is governed by
-probabilistic/prototypicality factors.
--/
-
-/-- In the Mix condition, both conceivability presuppositions are
-    satisfied: the card-validity task exposed participants to both
-    unique and multiple symbols. The `both_sg_pl_conceivable` theorem
-    from `PhiFeatures.lean` applies directly. -/
-theorem mix_both_conceivable
-    (witnessCard : Bool → Nat)
-    (h₁ : witnessCard false = 1) (h₂ : witnessCard true ≥ 2) :
-    sgCardConceivable witnessCard (fun _ => True) ∧
-    plCardConceivable witnessCard (fun _ => True) :=
-  both_sg_pl_conceivable witnessCard _ false trivial h₁ true trivial h₂
-
-/-- The conceivability presuppositions have the same assertive
-    content — both sg and pl indefinites contribute the same truth
-    conditions (especially under negation: |C| = 0 for both).
-    This mirrors `Sauerland2003.sg_pl_competition` at the
-    conceivability level: the competition is entirely presuppositional.
-    But unlike Sauerland's entity-level presuppositions, the
-    conceivability presuppositions are not ordered by strength. -/
-theorem conceivability_same_assertion {W : Type*}
-    (witnessCard : W → Nat) (conceivable : W → Prop) (w : W) :
-    (⟨fun _ => sgCardConceivable witnessCard conceivable,
-      fun _ => True⟩ : PartialProp W).assertion w ↔
-    (⟨fun _ => plCardConceivable witnessCard conceivable,
-      fun _ => True⟩ : PartialProp W).assertion w :=
-  Iff.rfl
-
--- ============================================================================
--- §5  Challenge to the Implicature Theory
--- ============================================================================
-
-/-!
-## §5: Gradient Data vs Categorical Predictions
-
-On [tieu-etal-2020]'s argument (`TieuEtAl2020.implicature_uniquely_supported`),
-the implicature theory uniquely predicts three patterns (children compute
-fewer, correlation with SI rates, polarity asymmetry). Enguehard's experiment
-reveals a fourth dimension where the implicature theory makes the wrong
-prediction: it predicts categorical (complementary) distribution, but
-production is gradient.
-
-This does not refute the implicature theory for positive uses — the
-multiplicity inference in UE contexts remains well-modeled as an
-implicature/pex effect. But it shows the implicature theory is
-incomplete for negative uses, where the conceivability presupposition
-governs number choice.
--/
-
-/-- The experimental data is inconsistent with H₀ (no effect of
-    distribution): SG rate differs across extreme conditions. -/
-theorem null_hypothesis_refuted :
-    sgResult.sgRate ≠ plResult.sgRate := by
-  norm_num [sgResult, plResult]
-
-/-- The experimental data IS consistent with H₂ (gradient): SG rate
-    monotonically decreases, PL rate monotonically increases, and
-    intermediate conditions show overlap. -/
-theorem gradient_hypothesis_supported :
-    sgResult.sgRate > plResult.sgRate ∧
-    mixResult.sgRate > 0 ∧ mixResult.plRate > 0 :=
-  ⟨by norm_num [sgResult, plResult],
-   mix_condition_both_used.1, mix_condition_both_used.2⟩
-
--- ============================================================================
--- §6  Forward-Looking Cooperation
--- ============================================================================
-
-/-!
-## §6: Provide Useful Referents (Principle 23)
-
-[enguehard-2024] proposes a forward-looking pragmatic principle:
-
-> **Provide useful referents**: between utterances of equivalent
-> acceptability as per other principles, prefer the one that sets up
-> referents that can be used in well-formed continuations.
-
-This is a Manner-like maxim: among truth-conditionally equivalent
-alternatives, prefer the one that facilitates future discourse.
-
-Under negation, indefinites introduce discourse referents bearing the
-indefinite's number feature (cf. [elliott-2020]'s bilateral
-semantics). The number feature constrains future pronoun binding:
-
-- "There is no blue circle₁ on the card. It₁ is hard to see." (sg → "it")
-- "There are no blue circles₂ on the card. They₂ are hard to see."
-  (pl → "they")
-
-When the pronoun's number does not match the actual witness cardinality,
-the continuation is infelicitous — the referent is "useless."
-
-### Formalization as Production Utility
-
-"Provide useful referents" reduces to a production utility function:
-the speaker's expected payoff from choosing number `n` equals the
-probability that a continuation requiring a referent of number `n`
-would be well-formed. This probability tracks the distribution over
-prototypical witness cardinalities.
--/
-
-/-- Production utility for a number choice given a prototypicality
-    distribution. The utility of sg = P(unique witness in prototypical
-    situations); the utility of pl = P(multiple witnesses). -/
-def productionUtility (pUnique : ℚ) : IndefNumber → ℚ
-  | .sg => pUnique
-  | .pl => 1 - pUnique
-
-/-- Production utility for sg decreases with pMultiple. -/
-theorem sg_utility_decreases (c₁ c₂ : Condition)
-    (h : c₁.pMultiple ≤ c₂.pMultiple) :
-    productionUtility c₂.pUnique .sg ≤ productionUtility c₁.pUnique .sg := by
-  simp only [productionUtility, Condition.pUnique]; linarith
-
-/-- Production utility for pl increases with pMultiple. -/
-theorem pl_utility_increases (c₁ c₂ : Condition)
-    (h : c₁.pMultiple ≤ c₂.pMultiple) :
-    productionUtility c₁.pUnique .pl ≤ productionUtility c₂.pUnique .pl := by
-  simp only [productionUtility, Condition.pUnique]; linarith
-
-/-- At pMultiple = 0 (Sg condition), sg utility is maximal (= 1). -/
-theorem sg_utility_maximal_at_zero :
-    productionUtility (Condition.sg.pUnique) .sg = 1 := by
-  simp [productionUtility, Condition.pUnique, Condition.pMultiple]
-
-/-- At pMultiple = 1 (Pl condition), pl utility is maximal (= 1). -/
-theorem pl_utility_maximal_at_one :
-    productionUtility (Condition.pl.pUnique) .pl = 1 := by
-  simp [productionUtility, Condition.pUnique, Condition.pMultiple]
-
-/-- At pMultiple = 1/2 (Mix condition), both utilities are equal.
-    This is the indifference point where both numbers are equally
-    useful — explaining the overlap in production. -/
-theorem mix_indifference :
-    productionUtility (Condition.mix.pUnique) .sg =
-    productionUtility (Condition.mix.pUnique) .pl := by
-  norm_num [productionUtility, Condition.pUnique, Condition.pMultiple]
-
--- ============================================================================
--- §7  Conceivability as Constant Presupposition
--- ============================================================================
-
-/-!
-## §7: Why Conceivability Projects Universally
-
-The conceivability presupposition is a **constant** presupposition: it
-holds at all evaluation worlds or none, because it quantifies over
-conceivable situations rather than testing the evaluation world. This
-is the structural explanation for why it projects under negation,
-questions, and conditionals — constant presuppositions are immune to
-semantic operators that manipulate the evaluation world.
-
-Contrast with standard `sgSem`: atomicity depends on the entity, so it
-can fail at some entities but not others. The conceivability version
-abstracts away from the actual entity.
--/
-
-/-- The conceivability presupposition of a sg indefinite, packaged as
-    a `PartialProp` that is constant across evaluation worlds. -/
-def sgIndefPresup {W : Type*} (witnessCard : W → Nat)
-    (conceivable : W → Prop) : PartialProp W where
-  presup := fun _ => sgCardConceivable witnessCard conceivable
-  assertion := fun _ => True
-
-/-- The conceivability presupposition of a pl indefinite. -/
-def plIndefPresup {W : Type*} (witnessCard : W → Nat)
-    (conceivable : W → Prop) : PartialProp W where
-  presup := fun _ => plCardConceivable witnessCard conceivable
-  assertion := fun _ => True
-
-/-- Conceivability presuppositions are constant: they hold at all
-    evaluation worlds or none. This is why they project under every
-    semantic operator — negation, questions, conditionals, modals. -/
-theorem sgIndefPresup_constant {W : Type*}
-    (witnessCard : W → Nat) (conceivable : W → Prop) :
-    ∀ w₁ w₂ : W,
-      (sgIndefPresup witnessCard conceivable).defined w₁ ↔
-      (sgIndefPresup witnessCard conceivable).defined w₂ :=
-  fun _ _ => Iff.rfl
-
-theorem plIndefPresup_constant {W : Type*}
-    (witnessCard : W → Nat) (conceivable : W → Prop) :
-    ∀ w₁ w₂ : W,
-      (plIndefPresup witnessCard conceivable).defined w₁ ↔
-      (plIndefPresup witnessCard conceivable).defined w₂ :=
-  fun _ _ => Iff.rfl
-
--- ============================================================================
--- §8  Bridge to Presuppositional Exhaustification
--- ============================================================================
-
-/-!
-## §8: Conceivability is Weaker than Pex
-
-[delpinal-bassi-sauerland-2024]'s presuppositional exhaustification
-(pex) derives the sharp multiplicity inference in positive contexts.
-For plural indefinites:
-
-- **pex(pl)** presupposes ¬sg-alternative — i.e., the singular alternative
-  (which entails |C|=1) is false at the actual world. In a positive context
-  where a witness exists, this yields |C|≥2 AT THE ACTUAL WORLD.
-- **Conceivability(pl)** presupposes ∃ conceivable situation with |C|≥2 —
-  much weaker, merely requiring that multiple witnesses be *possible*.
-
-The structural relationship: actual non-atomicity (from pex) ENTAILS
-conceivability of non-atomicity (by `actual_implies_conceivable` from
-`PhiFeatures.lean`), but not vice versa.
-
-This explains the empirical asymmetry:
-- **Positive contexts**: pex applies, deriving |C|≥2 at the actual world.
-  Conceivability is trivially satisfied (the actual world witnesses it).
-  The sharp multiplicity inference comes from pex, not from conceivability.
-- **Negative contexts**: pex is blocked (no exhaustification in DE
-  environments), but the conceivability presupposition projects (it's
-  constant — `sgIndefPresup_constant` / `plIndefPresup_constant`).
-  Only the weaker, gradient conceivability pattern survives.
-
-### Connection to pex infrastructure
-
-`pexIEII` (from `Presuppositional.lean`) produces a
-`PartialProp` with:
-- **assertion** = φ (the prejacent)
-- **presupposition** = ¬IE ∧ homog(II)
-
-For plural with the singular alternative as the only IE member, the
-presupposition reduces to ¬sg. Under negation, `pex_neg_presup` proves
-the presupposition projects unchanged.
--/
-
-open Exhaustification.Presuppositional (pexIEII pex_assertion_eq pex_neg_presup)
-
-/-- In a positive context where the actual witness set is non-empty,
-    the actual situation witnesses sg conceivability (if |C|=1) or
-    pl conceivability (if |C|≥2) — the presupposition is trivially
-    satisfied and thus invisible. -/
-theorem conceivability_trivial_in_positive {W : Type*}
-    (witnessCard : W → Nat) (conceivable : W → Prop)
-    (w₀ : W) (hw₀ : conceivable w₀) (hpos : witnessCard w₀ ≥ 1) :
-    witnessCard w₀ = 1 ∧ sgCardConceivable witnessCard conceivable ∨
-    witnessCard w₀ ≥ 2 ∧ plCardConceivable witnessCard conceivable := by
-  by_cases h : witnessCard w₀ = 1
-  · left; exact ⟨h, w₀, hw₀, h⟩
-  · right; constructor
-    · omega
-    · exact ⟨w₀, hw₀, by omega⟩
-
-/-- **Pex is stronger than conceivability**: if the actual witness set
-    has |C|≥2 (the pex-derived inference), then pl conceivability holds.
-
-    This follows directly from `actual_implies_conceivable`: the actual
-    world is a conceivable world that witnesses |C|≥2.
-
-    The converse fails: conceivability only requires SOME conceivable
-    situation to have |C|≥2, while pex requires the ACTUAL situation to. -/
-theorem pex_entails_conceivability {W : Type*}
-    (witnessCard : W → Nat) (conceivable : W → Prop)
-    (w₀ : W) (hw₀ : conceivable w₀) (hpex : witnessCard w₀ ≥ 2) :
-    plCardConceivable witnessCard conceivable :=
-  ⟨w₀, hw₀, hpex⟩
-
-/-- The converse of `pex_entails_conceivability` fails: there exist
-    models where pl is conceivable (some conceivable situation has |C|≥2)
-    but the actual situation has |C|=0 or |C|=1.
-
-    This is exactly the situation in negative contexts: "there are no
-    blue circles" → |C|=0 at the actual world, but |C|≥2 may be
-    conceivable. Pex would require |C|≥2 actually, which is false. -/
-theorem conceivability_does_not_entail_pex :
-    ∃ (witnessCard : Bool → Nat) (conceivable : Bool → Prop) (w₀ : Bool),
-      conceivable w₀ ∧ witnessCard w₀ < 2 ∧
-      plCardConceivable witnessCard conceivable :=
-  ⟨fun | false => 0 | true => 3,
-   fun _ => True,
-   false, trivial, by norm_num,
-   ⟨true, trivial, by norm_num⟩⟩
-
-/-- The pex infrastructure confirms: negating a pex'd proposition
-    preserves its presupposition but negates its assertion. For plural:
-    ¬pex(∃x.P(x)) asserts ¬∃x.P(x) and presupposes ¬sg-alternative.
-    The presupposition-assertion split is what enables the conceivability
-    pattern under negation: the presupposition (about conceivable
-    cardinalities) is independent of the assertion (about actual
-    cardinality). -/
-theorem pex_neg_preserves_presup {World : Type*}
-    (ALT : Set (World → Prop)) (φ : World → Prop)
-    (Rc : Set (World → Prop)) :
-    ((pexIEII ALT φ Rc).neg).presup = (pexIEII ALT φ Rc).presup :=
-  pex_neg_presup ALT φ Rc
-
--- ============================================================================
--- §9  Bridge to Multiplicity
--- ============================================================================
-
-/-!
-## §9: Refining the Implicature Theory
-
-[sauerland-2003]'s implicature theory (= `TieuEtAl2020.PluralTheory.implicature`)
-correctly predicts the multiplicity inference in positive UE contexts.
-But it does not predict gradient production in negative contexts.
-
-Enguehard's account is complementary: the conceivability presupposition
-is the *underlying* inference that persists across all environments;
-the sharp multiplicity inference in positive contexts is a *strengthened*
-version derived by pex or MP.
-
-This parallels the scalar implicature landscape:
-- Some/all: the "not all" implicature is sharp in UE, absent in DE;
-  but "some is conceivable" is always presupposed.
-- Sg/pl: the multiplicity inference is sharp in UE, absent in DE;
-  but "unique is conceivable" / "multiple is conceivable" persists.
--/
-
-/-- The `productionUtility` model forms a probability distribution:
-    sg and pl rates sum to 1 for any prototypicality parameter. -/
-theorem productionUtility_normalized (pUnique : ℚ) :
-    productionUtility pUnique .sg + productionUtility pUnique .pl = 1 := by
-  simp only [productionUtility]; linarith
-
-/-- Production utility is non-negative for all conditions. Combined
-    with `productionUtility_normalized`, this makes `productionUtility
-    c.pUnique` a probability distribution over `IndefNumber`. -/
-theorem productionUtility_nonneg (c : Condition) (n : IndefNumber) :
-    0 ≤ productionUtility c.pUnique n := by
-  cases n <;> simp only [productionUtility, Condition.pUnique] <;>
-    cases c <;> norm_num [Condition.pMultiple]
-
-/-- The production utility model correctly predicts the dominance
-    pattern in extreme conditions, matching the observed data
-    (`sg_condition_sg_dominates`, `pl_condition_pl_dominates`). -/
-theorem utility_predicts_extreme_dominance :
-    productionUtility (Condition.sg.pUnique) .sg >
-      productionUtility (Condition.sg.pUnique) .pl ∧
-    productionUtility (Condition.pl.pUnique) .pl >
-      productionUtility (Condition.pl.pUnique) .sg := by
-  norm_num [productionUtility, Condition.pUnique, Condition.pMultiple]
-
-/-- `productionUtility` is uniquely characterized by normalization
-    (`f p .sg + f p .pl = 1`) and linearity (`f p .sg = p`). Any
-    model satisfying both conditions IS `productionUtility` — it is
-    not a free parameter but the unique solution. -/
-theorem productionUtility_characterized (f : ℚ → IndefNumber → ℚ)
-    (hNorm : ∀ p, f p .sg + f p .pl = 1)
-    (hLinear : ∀ p, f p .sg = p) :
-    ∀ p n, f p n = productionUtility p n := by
-  intro p n; cases n
-  · exact hLinear p
-  · simp only [productionUtility]; linarith [hNorm p, hLinear p]
-
--- ============================================================================
--- §10  Bridge to PresuppositionContext
--- ============================================================================
-
-/-!
-## §10: Conceivability = Satisfiability in Context
-
-`PresuppositionContext.presupSatisfiable c p` checks whether `p.presup`
-is compatible with context set `c`. This is exactly Enguehard's
-conceivability condition at the context-set level:
-
-- A sg indefinite's conceivability presupposition is satisfied iff the
-  common ground is compatible with a world where |C| = 1.
-- A pl indefinite's conceivability presupposition is satisfied iff the
-  common ground is compatible with a world where |C| ≥ 2.
-
-When the common ground rules out one cardinality entirely (e.g., it's
-common knowledge that books have exactly one table of contents), the
-corresponding conceivability presupposition fails — yielding the
-categorical judgments in examples (5)–(6).
--/
-
-/-- Conceivability presuppositions are constant, so `presupSatisfied`
-    and `presupSatisfiable` coincide for them (on non-empty contexts).
-    Constant presuppositions are either entailed by every world or no
-    world — there is no middle ground. -/
-theorem constant_presup_satisfied_iff_satisfiable
-    {W : Type*} (witnessCard : W → Nat) (conceivable : W → Prop)
-    (c : Set W)
-    (hne : c.Nonempty) :
-    Presupposition.Context.presupSatisfied c
-      (sgIndefPresup witnessCard conceivable) ↔
-    Presupposition.Context.presupSatisfiable c
-      (sgIndefPresup witnessCard conceivable) := by
-  constructor
-  · intro hsat
-    obtain ⟨w, hw⟩ := hne
-    exact ⟨w, hw, hsat hw⟩
-  · intro ⟨_, _, hdef⟩ _ _
-    exact hdef
-
--- ============================================================================
--- §11  Bilateral Dynamics Bridge
--- ============================================================================
-
-/-!
-## §11: Negated Indefinites in Bilateral Dynamic Semantics
-
-[enguehard-2024] §5.1–5.2 argues that negated indefinites introduce
-discourse referents accessible for subsequent anaphora, following
-[elliott-2020]'s bilateral dynamic framework. The key mechanism:
-
-1. `exists_ x φ` introduces a discourse referent `x` by random
-   assignment into the positive update.
-2. `neg` swaps positive and negative updates, so `neg (exists_ x φ)`
-   has as positive update [elliott-sudo-2025]'s (45): the possibilities
-   of the INPUT state `s` whose world classically falsifies the
-   existential — retained when a referent is introduced and negatively
-   updated, absent from the positive update.
-3. The discourse referent `x` is introduced in the INNER computation but
-   the output possibilities come from `s` — so `x` is available for
-   subsequent anaphora (via composition with further updates).
-
-The number feature on the discourse referent (sg/pl) constrains what
-anaphoric continuations are felicitous. Enguehard argues that speakers
-choose the number feature to maximize the utility of the discourse
-referent for likely continuations — which reduces to the
-`productionUtility` model in §4.
-
-### The structural bridge
-
-The bilateral `neg ∘ exists_` construction yields possibilities from `s`
-that falsify the existential. These possibilities carry no witness in
-their assignments — the key structural fact is that the OUTPUT state
-preserves the input possibilities (those that survived universal
-falsification). This means the discourse referent is "set up" by the
-existential introduction but the output state is a subset of the input.
--/
-
-section BilateralBridge
-
-open DynamicSemantics (BilateralDen Possibility)
-open DynamicSemantics.State (randomAssign)
-open DynamicSemantics.BilateralDen (neg exists_ atom)
-
-variable {W E : Type*}
-
-/-- A discourse referent paired with its indefinite number feature.
-    This is the type-theoretic reflex of Enguehard's claim that number
-    marking on indefinites is stored on the discourse referent. -/
-structure NumberedDRef where
-  /-- The variable index in the assignment function -/
-  index : Nat
-  /-- The number feature chosen by the speaker -/
-  number : IndefNumber
   deriving DecidableEq, Repr
 
-/-- The negative update of an existential ([elliott-sudo-2025], (45))
-    keeps exactly those possibilities from `s` whose world falsifies the
-    existential classically: no world of the positive update, some world
-    of the negative continuation. -/
-theorem exists_negative_characterization
-    (x : Nat) (φ : BilateralDen W ℕ E)
-    (s : Set (Possibility W ℕ (Part E))) (p : Possibility W ℕ (Part E)) :
-    p ∈ (exists_ x φ).negative s ↔
-    p ∈ s ∧ p.world ∉ Possibility.world '' φ.positive (randomAssign s x) ∧
-      p.world ∈ Possibility.world '' φ.negative (randomAssign s x) := by
-  simp only [exists_, Set.mem_ofPred_eq]
+/-- The inference about the witness set that (1)–(3) record. -/
+inductive Inference
+  | one
+  | atLeastTwo
+  | zero
+  deriving DecidableEq, Repr
 
-/-- Negating an existential: the positive update of `¬∃x.φ` collects
-    exactly those input possibilities whose world hosts no witness.
-    This is the bilateral analog of universal falsification. -/
-theorem neg_exists_positive
-    (x : Nat) (φ : BilateralDen W ℕ E)
-    (s : Set (Possibility W ℕ (Part E))) (p : Possibility W ℕ (Part E)) :
-    p ∈ (neg (exists_ x φ)).positive s ↔
-    p ∈ s ∧ p.world ∉ Possibility.world '' φ.positive (randomAssign s x) ∧
-      p.world ∈ Possibility.world '' φ.negative (randomAssign s x) := by
-  simp only [neg, exists_negative_characterization]
+/-- The inference as a condition on the cardinality of the witness set. -/
+def Inference.holds : Inference → ℕ → Prop
+  | .one, k => k = 1
+  | .atLeastTwo, k => 2 ≤ k
+  | .zero, k => k = 0
 
-/-- The output of `¬∃x.φ` is a subset of the input state — negated
-    existentials are eliminative. This is crucial for Enguehard's account:
-    the surviving possibilities carry no witness, which is why the
-    discourse referent's number feature matters for continuations
-    (it encodes the speaker's expectation about the predicate's
-    extension). -/
-theorem neg_exists_eliminative
-    (x : Nat) (φ : BilateralDen W ℕ E)
-    (s : Set (Possibility W ℕ (Part E))) :
-    (neg (exists_ x φ)).positive s ⊆ s := by
-  intro p hp
-  rw [neg_exists_positive] at hp
-  exact hp.1
+instance (i : Inference) (k : ℕ) : Decidable (i.holds k) := by
+  cases i <;> unfold Inference.holds <;> infer_instance
 
-/-- Double negation elimination for the existential: ¬¬∃x.φ has the
-    same positive update as ∃x.φ. This is definitional in bilateral
-    semantics — `neg` swaps, so two swaps restore the original. -/
-theorem neg_neg_exists
-    (x : Nat) (φ : BilateralDen W ℕ E)
-    (s : Set (Possibility W ℕ (Part E))) :
-    (neg (neg
-      (exists_ x φ))).positive s =
-    (exists_ x φ).positive s := rfl
+/-- The number inference of a positive indefinite, (1). -/
+def Number.inference : Number → Inference
+  | .sg => .one
+  | .pl => .atLeastTwo
 
-/-- Agreement constraint: a continuation sentence with pronoun `y`
-    agreeing in number with discourse referent `dref` is felicitous
-    only when the number feature matches the conceivability pattern.
+/-- A cardinality fits a number: exactly one for the singular, at least two for the plural. -/
+def Number.Fits (n : Number) (k : ℕ) : Prop := n.inference.holds k
 
-    When `dref.number = .sg`, continuations presuppose `|C| = 1` is
-    conceivable; when `dref.number = .pl`, they presuppose `|C| ≥ 2`.
-    This connects back to `sgCardConceivable`/`plCardConceivable`. -/
-def agreementFelicitous (dref : NumberedDRef)
-    (witnessCard : W → Nat) (conceivable : W → Prop) : Prop :=
-  match dref.number with
-  | .sg => sgCardConceivable witnessCard conceivable
-  | .pl => plCardConceivable witnessCard conceivable
+instance (n : Number) (k : ℕ) : Decidable (n.Fits k) := by unfold Number.Fits; infer_instance
 
-/-- The bilateral bridge: for the book examples, the agreement
-    constraint on discourse referents matches the conceivability
-    presupposition pattern. Table of contents: sg-marked dref is
-    felicitous (sg conceivable), pl-marked is not. -/
-theorem toc_agreement_matches_conceivability :
-    agreementFelicitous ⟨0, .sg⟩ tocCard allConceivable' ∧
-    ¬agreementFelicitous ⟨0, .pl⟩ tocCard allConceivable' := by
-  constructor
-  · exact toc_sg_conceivable
-  · exact toc_pl_not_conceivable
+/-! ### The number inference and its loss under negation -/
 
-/-- Chapters: both sg and pl discourse referents are felicitous
-    (both conceivability presuppositions hold), matching the
-    underdetermination that Enguehard argues requires gradient
-    utility to resolve. -/
-theorem chapter_agreement_underdetermined :
-    agreementFelicitous ⟨0, .sg⟩ chapterCard allConceivable' ∧
-    agreementFelicitous ⟨0, .pl⟩ chapterCard allConceivable' := by
-  exact ⟨chapter_sg_technically_conceivable, chapter_pl_conceivable⟩
+/-- The numbers as named in the rows. -/
+def numberTable : List (String × Number) := [("sg", .sg), ("pl", .pl)]
 
-/-- The full pipeline from bilateral dynamics to production data:
+/-- The inferences as named in the rows. -/
+def inferenceTable : List (String × Inference) :=
+  [("one", .one), ("atLeastTwo", .atLeastTwo), ("zero", .zero)]
 
-    1. Negated indefinites introduce discourse referents (`neg_exists_eliminative`)
-    2. The dref carries a number feature (`NumberedDRef`)
-    3. Agreement constrains continuations (`agreementFelicitous`)
-    4. When both sg and pl are felicitous (underdetermined), the speaker
-       chooses number to maximize `productionUtility`
-    5. At pMultiple = 1/2, both utilities are equal (`mix_indifference`)
+/-- Whether the indefinite is negated or negative, as named in the rows. -/
+def polarityTable : List (String × Bool) :=
+  [("positive", false), ("negated", true), ("negative", true)]
 
-    This theorem ties together steps 3-4: when agreement is underdetermined,
-    production utility determines the choice, and the utility values track
-    the observed production rates (sg dominates when pMultiple is low,
-    pl dominates when pMultiple is high). -/
-theorem underdetermined_implies_gradient
-    (witnessCard : Bool → Nat) (hsg : witnessCard true = 1) (hpl : witnessCard false ≥ 2)
-    (c₁ c₂ : Condition) (h : c₁.pMultiple ≤ c₂.pMultiple) :
-    -- Agreement is underdetermined (both conceivability presups hold)
-    agreementFelicitous ⟨0, .sg⟩ witnessCard (fun _ => True) ∧
-    agreementFelicitous ⟨0, .pl⟩ witnessCard (fun _ => True) ∧
-    -- AND production utility for sg decreases with pMultiple
-    productionUtility c₂.pUnique .sg ≤ productionUtility c₁.pUnique .sg ∧
-    -- AND production utility for pl increases with pMultiple
-    productionUtility c₁.pUnique .pl ≤ productionUtility c₂.pUnique .pl := by
-  refine ⟨⟨true, trivial, hsg⟩, ⟨false, trivial, hpl⟩, ?_, ?_⟩
-  · exact sg_utility_decreases c₁ c₂ h
-  · exact pl_utility_increases c₁ c₂ h
+/-- An indefinite of (1)–(3): its number, whether it is negated, and the inference it carries. -/
+structure IndefiniteRow where
+  number : Number
+  negated : Bool
+  inference : Inference
+  deriving DecidableEq, Repr
 
-end BilateralBridge
+/-- A row from an example. -/
+def IndefiniteRow.ofExample (ex : LinguisticExample) : Option IndefiniteRow := do
+  pure ⟨← ex.parse? "number" numberTable, ← ex.parse? "polarity" polarityTable,
+    ← ex.parse? "inference" inferenceTable⟩
+
+/-- The indefinites of (1)–(3). -/
+def indefiniteRows : List IndefiniteRow := Examples.all.filterMap IndefiniteRow.ofExample
+
+/-- A positive indefinite infers the cardinality fitting its number; a negated one infers an
+empty witness set whatever its number, (1)–(3). -/
+theorem indefiniteRows_inference :
+    ∀ r ∈ indefiniteRows, r.inference = if r.negated then .zero else r.number.inference := by
+  decide
+
+/-! ### The conceivability presupposition -/
+
+variable {W : Type*}
+
+/-- Some conceivable situation has a witness set whose cardinality satisfies `P`. -/
+def Conceivable (C : W → Prop) (card : W → ℕ) (P : ℕ → Prop) : Prop := ∃ w, C w ∧ P (card w)
+
+/-- The negated indefinite of number `n`: it asserts that the witness set is empty and
+presupposes that a cardinality fitting `n` is conceivable, (7). -/
+def negated (C : W → Prop) (card : W → ℕ) (n : Number) : PartialProp W where
+  presup _ := Conceivable C card n.Fits
+  assertion w := card w = 0
+
+/-- Both numbers assert the same thing under negation. -/
+theorem negated_assertion (C : W → Prop) (card : W → ℕ) (n n' : Number) :
+    (negated C card n).assertion = (negated C card n').assertion := rfl
+
+/-- The presupposition is constant across evaluation worlds. -/
+theorem negated_presup_const (C : W → Prop) (card : W → ℕ) (n : Number) (w w' : W) :
+    (negated C card n).presup w ↔ (negated C card n).presup w' := Iff.rfl
+
+/-- The presupposition projects through negation, (15). -/
+theorem negated_neg_presup (C : W → Prop) (card : W → ℕ) (n : Number) :
+    (negated C card n).neg.presup = (negated C card n).presup := rfl
+
+/-- A book has at most one table of contents. -/
+def tableOfContents : ℕ → Prop := (· ≤ 1)
+
+/-- A book never has a single chapter. -/
+def chapters : ℕ → Prop := (· ≠ 1)
+
+/-- (5): the singular presupposition of *table of contents* is met, the plural one fails. -/
+theorem tableOfContents_presup :
+    (negated tableOfContents id .sg).presup 0 ∧ ¬ (negated tableOfContents id .pl).presup 0 :=
+  ⟨⟨1, le_rfl, rfl⟩, λ ⟨k, hk, h⟩ => absurd (h.trans hk) (by decide)⟩
+
+/-- (6): the plural presupposition of *chapters* is met, the singular one fails. -/
+theorem chapters_presup :
+    (negated chapters id .pl).presup 0 ∧ ¬ (negated chapters id .sg).presup 0 :=
+  ⟨⟨2, by simp [chapters], by decide⟩, λ ⟨_, hk, h⟩ => hk h⟩
+
+/-! ### The production experiment -/
+
+/-- The five conditions (11), by the probability that symbols of a kind come in multiples. -/
+inductive Condition
+  | sg
+  | sgPl
+  | mix
+  | plSg
+  | pl
+  deriving DecidableEq, Repr
+
+/-- The probability of multiple symbols of a kind, when there are any. -/
+def Condition.pMultiple : Condition → ℚ
+  | .sg => 0
+  | .sgPl => 1 / 10
+  | .mix => 1 / 2
+  | .plSg => 9 / 10
+  | .pl => 1
+
+/-- A production profile: the share of plural among the negated indefinites produced in a
+condition. -/
+abbrev Profile := Condition → ℚ
+
+/-- H0: productions do not depend on the distribution, (10a). -/
+def H0 (f : Profile) : Prop := ∀ c c', f c = f c'
+
+/-- H1: singular where uniqueness dominates and plural otherwise, plural at parity, (10b). -/
+def H1 (f : Profile) : Prop := ∀ c, f c = if c.pMultiple < 1 / 2 then 0 else 1
+
+/-- H2: the more multiples the more plural, and both numbers at parity, (10c). -/
+def H2 (f : Profile) : Prop :=
+  (∀ c c', c.pMultiple < c'.pMultiple → f c < f c') ∧ 0 < f .mix ∧ f .mix < 1
+
+theorem H1.not_H0 {f : Profile} (h : H1 f) : ¬ H0 f := by
+  intro h0
+  have hs := h .sg
+  have hp := h .pl
+  norm_num [Condition.pMultiple] at hs hp
+  linarith [h0 .sg .pl]
+
+/-- No profile without overlap is gradient: the observed singular and plural productions in
+every intermediate condition refute every complementary profile (§4.1). -/
+theorem not_H2_of_complementary {f : Profile} (h : ∀ c, f c = 0 ∨ f c = 1) : ¬ H2 f := by
+  intro h2
+  rcases h .mix with hm | hm <;> linarith [h2.2.1, h2.2.2]
+
+theorem H1.not_H2 {f : Profile} (h : H1 f) : ¬ H2 f :=
+  not_H2_of_complementary λ c => by rw [h c]; split_ifs <;> simp
+
+/-- Maximize Presupposition with an equivalent plural and a singular whose presupposition is
+`S`: the plural is used exactly where the singular's presupposition fails. -/
+def mpProfile (S : Condition → Prop) [DecidablePred S] : Profile := λ c => if S c then 0 else 1
+
+theorem mpProfile_complementary (S : Condition → Prop) [DecidablePred S] (c : Condition) :
+    mpProfile S c = 0 ∨ mpProfile S c = 1 := by
+  unfold mpProfile; split_ifs <;> simp
+
+/-- With the singular presupposing that any witness is certainly unique, the plural is used
+everywhere but in the Sg condition. -/
+theorem mpProfile_certain_uniqueness (c : Condition) :
+    mpProfile (·.pMultiple = 0) c = if c = .sg then 0 else 1 := by
+  cases c <;> norm_num [mpProfile, Condition.pMultiple] <;> decide
+
+/-- With the singular presupposing that prototypical witnesses are unique, (8) read as
+uniqueness in most situations, Maximize Presupposition yields H1, which the experiment
+refutes: singular is produced in the Mix and PlSg conditions. -/
+theorem mpProfile_prototypical : H1 (mpProfile (·.pMultiple < 1 / 2)) := λ _ => rfl
+
+/-! ### Referents and their continuations -/
+
+/-- The pronouns of (18)–(19). -/
+inductive Pronoun
+  | it
+  | they
+  deriving DecidableEq, Repr
+
+/-- The number feature a pronoun bears, (a). -/
+def Pronoun.number : Pronoun → Number
+  | .it => .sg
+  | .they => .pl
+
+/-- The pronoun of a number. -/
+def Number.pronoun : Number → Pronoun
+  | .sg => .it
+  | .pl => .they
+
+@[simp] theorem Pronoun.number_pronoun (n : Number) : n.pronoun.number = n := by cases n <;> rfl
+
+/-- A pronoun, read maximally, fits the actual cardinality of its referent, (b) and (c). -/
+def Pronoun.Appropriate (p : Pronoun) (k : ℕ) : Prop := p.number.Fits k
+
+/-- The pronouns as named in the rows. -/
+def pronounTable : List (String × Pronoun) := [("it", .it), ("they", .they)]
+
+/-- A continuation of (18)–(19): the number of the negated indefinite, the pronoun, and the
+judgment. -/
+structure ContinuationRow where
+  antecedent : Number
+  pronoun : Pronoun
+  judgment : Features.Judgment
+  deriving DecidableEq, Repr
+
+/-- A row from an example. -/
+def ContinuationRow.ofExample (ex : LinguisticExample) : Option ContinuationRow := do
+  pure ⟨← ex.parse? "antecedent" numberTable, ← ex.parse? "pronoun" pronounTable, ex.judgment⟩
+
+/-- The continuations of (18)–(19). -/
+def continuationRows : List ContinuationRow := Examples.all.filterMap ContinuationRow.ofExample
+
+/-- (18)–(19): a pronoun bound by a negated indefinite must match it in number, (a). -/
+theorem continuationRows_match :
+    ∀ r ∈ continuationRows, r.judgment = .acceptable ↔ r.pronoun.number = r.antecedent := by
+  decide
+
+/-- The referent set up by an indefinite of number `n` can be used in a continuation about a
+witness set of cardinality `k`: some pronoun bears its number and fits the cardinality. -/
+def Usable (n : Number) (k : ℕ) : Prop := ∃ p : Pronoun, p.number = n ∧ p.Appropriate k
+
+theorem usable_iff_fits (n : Number) (k : ℕ) : Usable n k ↔ n.Fits k :=
+  ⟨λ ⟨_, hp, h⟩ => hp ▸ h,
+    λ h => ⟨n.pronoun, Pronoun.number_pronoun n, by simpa [Pronoun.Appropriate]⟩⟩
+
+/-- The denier of (22) is left with a witness but no licit pronoun: the referent of a negated
+singular indefinite is unusable when there are several circles. -/
+theorem not_usable_sg_of_two_le {k : ℕ} (hk : 2 ≤ k) : ¬ Usable .sg k := by
+  rw [usable_iff_fits]; show ¬ k = 1; omega
+
+/-- A referent of number `n` is useful when some conceivable situation lets a continuation use
+it, the principle (23). -/
+def Useful (C : W → Prop) (card : W → ℕ) (n : Number) : Prop := Conceivable C card (Usable n)
+
+/-- (23) yields the conceivability presupposition (7): the referent of `n` is useful exactly
+when the negated indefinite's presupposition holds. -/
+theorem useful_iff_presup (C : W → Prop) (card : W → ℕ) (n : Number) (w : W) :
+    Useful C card n ↔ (negated C card n).presup w := by
+  simp only [Useful, negated, Conceivable, usable_iff_fits]
+
+/-- Where both numbers are conceivable, (23) cannot be obeyed: each number's referent is
+unusable in some conceivable situation that has a witness. -/
+theorem exists_not_usable (C : W → Prop) (card : W → ℕ)
+    (hsg : Conceivable C card Number.sg.Fits) (hpl : Conceivable C card Number.pl.Fits) :
+    ∀ n, ∃ w, C w ∧ 1 ≤ card w ∧ ¬ Usable n (card w) := by
+  intro n
+  cases n
+  · obtain ⟨w, hw, h⟩ := hpl
+    exact ⟨w, hw, by change 2 ≤ card w at h; omega, not_usable_sg_of_two_le h⟩
+  · obtain ⟨w, hw, h⟩ := hsg
+    refine ⟨w, hw, by change card w = 1 at h; omega, ?_⟩
+    rw [usable_iff_fits]; change ¬ 2 ≤ card w; change card w = 1 at h; omega
+
+/-- The chance that a referent of number `n` proves unusable when a witness set has several
+members with probability `p`: the ineffability the speaker's best guess minimizes. -/
+def ineffabilityChance (p : ℚ) : Number → ℚ
+  | .sg => p
+  | .pl => 1 - p
+
+/-- The singular's chance of ineffability rises and the plural's falls with the probability of
+multiples, the sensitivity to the distribution that §3 finds. -/
+theorem ineffabilityChance_sg_monotone : Monotone (ineffabilityChance · .sg) := λ _ _ h => h
+
+theorem ineffabilityChance_pl_antitone : Antitone (ineffabilityChance · .pl) := λ _ _ h => by
+  simp only [ineffabilityChance]; linarith
+
+/-- The conceivability presupposition as the limiting case (§6): in the extreme conditions the
+number whose presupposition fails is the one whose referent is certainly unusable. -/
+theorem ineffabilityChance_extreme :
+    ineffabilityChance Condition.pl.pMultiple .sg = 1 ∧
+      ineffabilityChance Condition.sg.pMultiple .pl = 1 := by
+  norm_num [ineffabilityChance, Condition.pMultiple]
 
 end Enguehard2024

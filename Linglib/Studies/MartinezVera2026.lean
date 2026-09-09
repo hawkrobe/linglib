@@ -228,12 +228,11 @@ def IllocutionaryFlavour.ofCoarseSource :
     IllocutionaryFlavour.ofCoarseSource .inference = .presentFlavour := rfl
 
 /-- Partial collapse of [faller-2019a]'s commitment-grounds evidence types
-    onto the coarse source taxonomy: reportative and inferential evidence
-    carry a source; adequate evidence and best possible grounds are
-    commitment-strength grades that cross-cut the source taxonomy. -/
+    onto the coarse source taxonomy: reportative evidence carries a source;
+    adequate evidence and best possible grounds are commitment-strength
+    grades that cross-cut the source taxonomy. -/
 def fallerCoarseSource : Faller2019.EvidenceType → Option CoarseSource
   | .reportative => some .hearsay
-  | .inferential => some .inference
   | .adequate => none
   | .bpg => none
 

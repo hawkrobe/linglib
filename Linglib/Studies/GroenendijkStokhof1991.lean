@@ -192,7 +192,7 @@ theorem neg_neg_eq_self_iff_isTest (φ : DPL.Rel E) :
 /-- DNE fails for anaphora: `¬¬∃xφ ≠ ∃xφ`, since the existential is not
 a test. The anaphoric consequence — doubly negated indefinites should
 not license anaphora — underpredicts
-(`ElliottSudo2025.Examples.double_negation` is acceptable); the
+(`ElliottSudo2025.Examples.ex_52b` is acceptable); the
 divergence theorem lives with the comparing paper, in
 `Studies/ElliottSudo2025.lean`. -/
 theorem dne_fails_anaphora [Nontrivial E] :
