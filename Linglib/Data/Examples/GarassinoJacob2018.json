@@ -1,0 +1,1461 @@
+[
+  {
+    "id": "garassinojacob2018_ex1",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(1)"
+    },
+    "language": "stan1293",
+    "primaryText": "John DID read it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: John did not read 'War and Peace'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "emphaticDo"
+      ],
+      [
+        "antecedent",
+        "explicitNegation"
+      ],
+      [
+        "dislocated",
+        "none"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": "Emphatic do in a context of conflicting polarity."
+  },
+  {
+    "id": "garassinojacob2018_ex3",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "p. 112"
+    },
+    "language": "stan1295",
+    "primaryText": "Karl SCHREIBT ein Drehbuch.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Karl does write a screenplay.",
+    "context": "A reports Hanna's silly claim that Karl is writing a screenplay.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "verumAccent"
+      ],
+      [
+        "antecedent",
+        "positive"
+      ],
+      [
+        "dislocated",
+        "none"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(3)"
+    }
+  },
+  {
+    "id": "garassinojacob2018_ex4",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(4)"
+    },
+    "language": "stan1295",
+    "primaryText": "(Nein) Karl HAT nicht gelogen.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(No) Karl didn't lie.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "verumAccent"
+      ],
+      [
+        "antecedent",
+        "inferredNegation"
+      ],
+      [
+        "dislocated",
+        "none"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "garassinojacob2018_ex5a",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(5a)"
+    },
+    "language": "stan1290",
+    "primaryText": "Je t'assure qu'il est en train d'écrire un scénario.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I assure you that he is writing a screenplay.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "embedding"
+      ],
+      [
+        "antecedent",
+        "none"
+      ],
+      [
+        "dislocated",
+        "none"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "garassinojacob2018_ex5b",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(5b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Ti assicuro / ti dico che sta scrivendo una sceneggiatura.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I assure you that he is writing a screenplay.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "embedding"
+      ],
+      [
+        "antecedent",
+        "none"
+      ],
+      [
+        "dislocated",
+        "none"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "garassinojacob2018_ex6",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(6)"
+    },
+    "language": "stan1288",
+    "primaryText": "Ya lo creo que fue a la reunión.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "For sure she did go to the meeting.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "embedding"
+      ],
+      [
+        "antecedent",
+        "none"
+      ],
+      [
+        "dislocated",
+        "none"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": "An epistemic matrix verb."
+  },
+  {
+    "id": "garassinojacob2018_ex7a",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(7a)"
+    },
+    "language": "stan1290",
+    "primaryText": "Il écrit un scénario, je t'assure.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He is writing a screenplay, I assure you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "juxtaposed"
+      ],
+      [
+        "antecedent",
+        "none"
+      ],
+      [
+        "dislocated",
+        "none"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "garassinojacob2018_ex7b",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(7b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Sta scrivendo una sceneggiatura, ti dico.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He is writing a screenplay, I assure you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "juxtaposed"
+      ],
+      [
+        "antecedent",
+        "none"
+      ],
+      [
+        "dislocated",
+        "none"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "garassinojacob2018_ex7c",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(7c)"
+    },
+    "language": "stan1288",
+    "primaryText": "Escribe un guión, te digo.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He is writing a screenplay, I assure you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "juxtaposed"
+      ],
+      [
+        "antecedent",
+        "none"
+      ],
+      [
+        "dislocated",
+        "none"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "garassinojacob2018_ex8",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(8)"
+    },
+    "language": "stan1290",
+    "primaryText": "Bien sûr qu'il est en train d'écrire un scénario.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Of course, he is writing a screenplay.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "ellipticEmbedding"
+      ],
+      [
+        "antecedent",
+        "none"
+      ],
+      [
+        "dislocated",
+        "none"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "garassinojacob2018_ex9",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(9)"
+    },
+    "language": "stan1288",
+    "primaryText": "¡Claro que te escucho!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Of course, I do listen to you.",
+    "context": "A: No me escuchas.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "ellipticEmbedding"
+      ],
+      [
+        "antecedent",
+        "explicitNegation"
+      ],
+      [
+        "dislocated",
+        "none"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "garassinojacob2018_ex10",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(10)"
+    },
+    "language": "ital1282",
+    "primaryText": "Certo che ti ascolto!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Of course, I do listen to you.",
+    "context": "A: Non mi ascolti.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "ellipticEmbedding"
+      ],
+      [
+        "antecedent",
+        "explicitNegation"
+      ],
+      [
+        "dislocated",
+        "none"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "garassinojacob2018_ex11",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(11)"
+    },
+    "language": "stan1288",
+    "primaryText": "Algo debe saber.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Something he must know.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "fronting"
+      ],
+      [
+        "antecedent",
+        "none"
+      ],
+      [
+        "dislocated",
+        "none"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": "Non-focal fronting, typical of Spanish."
+  },
+  {
+    "id": "garassinojacob2018_ex12",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(12)"
+    },
+    "language": "ital1282",
+    "primaryText": "Qualcosa avrà fatto, nelle vacanze.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Something he must have done during his holidays.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "fronting"
+      ],
+      [
+        "antecedent",
+        "none"
+      ],
+      [
+        "dislocated",
+        "none"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": "From Cinque (1990)."
+  },
+  {
+    "id": "garassinojacob2018_ex13",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(13)"
+    },
+    "language": "stan1288",
+    "primaryText": "Dije que terminaría el libro, y el libro he terminado.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I said that I was going to finish the book and the book I finished.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "fronting"
+      ],
+      [
+        "antecedent",
+        "modal"
+      ],
+      [
+        "dislocated",
+        "none"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "garassinojacob2018_ex14",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(14)"
+    },
+    "language": "stan1290",
+    "primaryText": "Mais c'est ce qu'elle fait!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "But that's what she does!",
+    "context": "A: Marie devrait passer son permis de conduire.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "faireCleft"
+      ],
+      [
+        "antecedent",
+        "modal"
+      ],
+      [
+        "dislocated",
+        "none"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "garassinojacob2018_ex15",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(15)"
+    },
+    "language": "ital1282",
+    "primaryText": "Io te l'ho dato il tempo.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I gave it to you, the time.",
+    "context": "Non è questione che il tempo non te l'ho dato.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "rightDislocation"
+      ],
+      [
+        "antecedent",
+        "explicitNegation"
+      ],
+      [
+        "dislocated",
+        "object"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": "LIP corpus, cited from Frascarelli (2003)."
+  },
+  {
+    "id": "garassinojacob2018_ex16",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(16)"
+    },
+    "language": "ital1282",
+    "primaryText": "Ah va be', la soluzione gliela troviamo.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Ah well, the solution, we're going to find it.",
+    "context": "A: no, niente, eh, trovare una soluzione.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "leftDislocation"
+      ],
+      [
+        "antecedent",
+        "openQuestion"
+      ],
+      [
+        "dislocated",
+        "object"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": "LIP corpus, cited from Brunetti (2009)."
+  },
+  {
+    "id": "garassinojacob2018_ex17",
+    "source": {
+      "bibkey": "poletto-zanuttini-2013",
+      "paperLabel": "p. 124"
+    },
+    "language": "ital1282",
+    "primaryText": "Sì che è arrivato.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Of course, he has arrived!",
+    "context": "A: È poi arrivato Gianni?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "siChe"
+      ],
+      [
+        "antecedent",
+        "explicitQuestion"
+      ],
+      [
+        "dislocated",
+        "none"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(17)"
+    }
+  },
+  {
+    "id": "garassinojacob2018_ex18",
+    "source": {
+      "bibkey": "batllori-hernanz-2013",
+      "paperLabel": "p. 3"
+    },
+    "language": "stan1288",
+    "primaryText": "Sí que ha cantado la soprano.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "She did sing.",
+    "context": "A: No ha cantado la soprano.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "siQue"
+      ],
+      [
+        "antecedent",
+        "explicitNegation"
+      ],
+      [
+        "dislocated",
+        "none"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(18)"
+    }
+  },
+  {
+    "id": "garassinojacob2018_ex19",
+    "source": {
+      "bibkey": "batllori-hernanz-2013",
+      "paperLabel": "pp. 4-5"
+    },
+    "language": "stan1288",
+    "primaryText": "¡Esto sí que es un aniversario!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Now, that's a real anniversary!",
+    "context": "Carrefour le ofrece este fin de semana precios de vértigo.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "siQue"
+      ],
+      [
+        "antecedent",
+        "positive"
+      ],
+      [
+        "dislocated",
+        "subject"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": "A non-contradictory context.",
+    "reportedIn": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(19)"
+    }
+  },
+  {
+    "id": "garassinojacob2018_fn11",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "fn. 11 (i)"
+    },
+    "language": "stan1290",
+    "primaryText": "Si (il fait beau).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: Il ne fait pas beau.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "siParticle"
+      ],
+      [
+        "antecedent",
+        "explicitNegation"
+      ],
+      [
+        "dislocated",
+        "none"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": "French si is limited to answering a preceding opposite turn."
+  },
+  {
+    "id": "garassinojacob2018_ex21",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(21)"
+    },
+    "language": "ital1282",
+    "primaryText": "Ma le ho prese, le pastiglie!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "But I did take them, the pills.",
+    "context": "A: Non hai preso le pastiglie.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "rightDislocation"
+      ],
+      [
+        "antecedent",
+        "explicitNegation"
+      ],
+      [
+        "dislocated",
+        "object"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": "The dislocated object is a continuous topic."
+  },
+  {
+    "id": "garassinojacob2018_ex22",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(22)"
+    },
+    "language": "ital1282",
+    "primaryText": "Le pastiglie, le ho prese (ma il resto delle medicine no)!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The pills, I did take them (but not the whole medical prescription).",
+    "context": "A: Non hai preso le pastiglie.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "leftDislocation"
+      ],
+      [
+        "antecedent",
+        "explicitNegation"
+      ],
+      [
+        "dislocated",
+        "object"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": "The dislocated object is a contrastive topic."
+  },
+  {
+    "id": "garassinojacob2018_ex23a",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(23a)"
+    },
+    "language": "stan1290",
+    "primaryText": "…parce que, lui, il a une vision.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "…because he did have a vision.",
+    "context": "Il faut rendre honneur au président Chirac, qui a combattu et qui a vaincu sur sa vision de l'Europe.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "leftDislocation"
+      ],
+      [
+        "antecedent",
+        "inferredNegation"
+      ],
+      [
+        "dislocated",
+        "subject"
+      ],
+      [
+        "relation",
+        "analogy"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": "The only subject dislocation with a polarity-focus reading found; the allusion is that others lack a vision."
+  },
+  {
+    "id": "garassinojacob2018_ex23b",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(23b)"
+    },
+    "language": "stan1288",
+    "primaryText": "…porque él sí tiene una visión.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "siOnly"
+      ],
+      [
+        "antecedent",
+        "inferredNegation"
+      ],
+      [
+        "dislocated",
+        "subject"
+      ],
+      [
+        "relation",
+        "analogy"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": "The official Spanish translation of (23a)."
+  },
+  {
+    "id": "garassinojacob2018_ex23c",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(23c)"
+    },
+    "language": "ital1282",
+    "primaryText": "…perché lui sì che ha una visione.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "siChe"
+      ],
+      [
+        "antecedent",
+        "inferredNegation"
+      ],
+      [
+        "dislocated",
+        "subject"
+      ],
+      [
+        "relation",
+        "analogy"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": "The official Italian translation of (23a)."
+  },
+  {
+    "id": "garassinojacob2018_ex24",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(24)"
+    },
+    "language": "ital1282",
+    "primaryText": "…gli strumenti li abbiamo.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "…the tools are there.",
+    "context": "Non dobbiamo abbatterci per il fatto che non abbiamo strumenti a disposizione.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "leftDislocation"
+      ],
+      [
+        "antecedent",
+        "explicitNegation"
+      ],
+      [
+        "dislocated",
+        "object"
+      ],
+      [
+        "relation",
+        "identity"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": "Whether the focus is contrastive or informative is left open."
+  },
+  {
+    "id": "garassinojacob2018_ex25",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(25)"
+    },
+    "language": "ital1282",
+    "primaryText": "…però le premesse per la tolleranza zero le abbiamo davvero messe.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "…nonetheless, we really have laid the foundations for zero tolerance.",
+    "context": "Lei ha sollevato problemi di importanza fondamentale, il primo dei quali sulla tolleranza zero; è di solito un lavoro che nessuno vuole affrontare.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "leftDislocation"
+      ],
+      [
+        "antecedent",
+        "inferredNegation"
+      ],
+      [
+        "dislocated",
+        "object"
+      ],
+      [
+        "relation",
+        "identity"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "garassinojacob2018_ex26",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(26)"
+    },
+    "language": "ital1282",
+    "primaryText": "…ma i problemi della macroeconomia, del lavoro e dei problemi strutturali li mettiamo assieme davvero, adesso.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "…but let us genuinely group macroeconomic issues and labour and structural problems together, right now.",
+    "context": "È chiaro allora che diventa indispensabile mettere assieme i tre processi.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "leftDislocation"
+      ],
+      [
+        "antecedent",
+        "modal"
+      ],
+      [
+        "dislocated",
+        "object"
+      ],
+      [
+        "relation",
+        "analogy"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": "The antecedent is a deontic necessity; the utterance is a referential actualization of it."
+  },
+  {
+    "id": "garassinojacob2018_ex27",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(27)"
+    },
+    "language": "ital1282",
+    "primaryText": "Noi questo sforzo lo abbiamo sempre fatto e continueremo a farlo.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "We always made this effort.",
+    "context": "Nello sviluppo della costruzione europea occorre sempre fare uno sforzo per comprendere le ragioni degli altri.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "leftDislocation"
+      ],
+      [
+        "antecedent",
+        "modal"
+      ],
+      [
+        "dislocated",
+        "both"
+      ],
+      [
+        "relation",
+        "analogy"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": "A dislocated object for topic continuity and a dislocated subject as a frame."
+  },
+  {
+    "id": "garassinojacob2018_ex28",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(28)"
+    },
+    "language": "stan1288",
+    "primaryText": "Sí señor Presidente, sí que puedo responder.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Yes, Mr. President, I can answer.",
+    "context": "Manifestar simplemente que no puede dar una respuesta no forma parte de las reglas del juego.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "siQue"
+      ],
+      [
+        "antecedent",
+        "explicitNegation"
+      ],
+      [
+        "dislocated",
+        "none"
+      ],
+      [
+        "relation",
+        "identity"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "garassinojacob2018_ex29",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(29)"
+    },
+    "language": "stan1288",
+    "primaryText": "En eso, sí que Turquía es un Estado absolutamente europeo.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "On this level, then, yes, Turkey is a totally European State.",
+    "context": "Sigue habiendo detenciones arbitrarias y violaciones de los derechos humanos.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "siQue"
+      ],
+      [
+        "antecedent",
+        "inferredNegation"
+      ],
+      [
+        "dislocated",
+        "adverbial"
+      ],
+      [
+        "relation",
+        "identity"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": "The dislocated adjunct states a condition for the proposition to be true."
+  },
+  {
+    "id": "garassinojacob2018_ex30",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(30)"
+    },
+    "language": "stan1288",
+    "primaryText": "…momentos en el que el Consejo Europeo sí que ha estado con las manos cruzadas.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "…moments when the European Council has been sitting back.",
+    "context": "Creo que aquí alguien se ha podido quedar con las manos cruzadas; quien les habla nunca ha estado con las manos cruzadas.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "siQue"
+      ],
+      [
+        "antecedent",
+        "inferredNegation"
+      ],
+      [
+        "dislocated",
+        "subject"
+      ],
+      [
+        "relation",
+        "analogy"
+      ],
+      [
+        "subquestion",
+        "yes"
+      ]
+    ],
+    "comment": "The polar subquestions of 'who has been sitting back?' are answered one subject at a time."
+  },
+  {
+    "id": "garassinojacob2018_ex32",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(32)"
+    },
+    "language": "stan1288",
+    "primaryText": "…pero sí que se pueden hacer unos diques móviles.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "…but we do have the ability to introduce mobile dikes.",
+    "context": "No podemos evitar el acqua alta – eso es un fenómeno de la naturaleza.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "siQue"
+      ],
+      [
+        "antecedent",
+        "explicitNegation"
+      ],
+      [
+        "dislocated",
+        "none"
+      ],
+      [
+        "relation",
+        "analogy"
+      ],
+      [
+        "subquestion",
+        "yes"
+      ]
+    ],
+    "comment": "The antecedent and the utterance instantiate a hyperonymous proposition; the predicate varies."
+  },
+  {
+    "id": "garassinojacob2018_ex33",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(33)"
+    },
+    "language": "stan1288",
+    "primaryText": "…pero sí que es satisfactorio en alguno de ellos.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "…but that it is satisfactory in some respects.",
+    "context": "Con ello no quiero decirles que el acuerdo alcanzado sea óptimo en todos sus aspectos.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "siQue"
+      ],
+      [
+        "antecedent",
+        "explicitNegation"
+      ],
+      [
+        "dislocated",
+        "none"
+      ],
+      [
+        "relation",
+        "analogy"
+      ],
+      [
+        "subquestion",
+        "yes"
+      ]
+    ],
+    "comment": "The denied antecedent is the stronger scalar alternative."
+  },
+  {
+    "id": "garassinojacob2018_ex35",
+    "source": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(35)"
+    },
+    "language": "stan1288",
+    "primaryText": "Eso sí que es de escándalo.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "That really is a scandal.",
+    "context": "Sólo seis Estados miembros nos dicen qué hacen con la recuperación de los fondos que han usado mal.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "strategy",
+        "siQue"
+      ],
+      [
+        "antecedent",
+        "positive"
+      ],
+      [
+        "dislocated",
+        "subject"
+      ],
+      [
+        "relation",
+        "unstated"
+      ],
+      [
+        "subquestion",
+        "no"
+      ]
+    ],
+    "comment": "Emphatic reinforcement without a contrastive antecedent."
+  }
+]
