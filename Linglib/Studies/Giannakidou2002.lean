@@ -1,914 +1,318 @@
-import Linglib.Studies.Karttunen1974
-import Linglib.Studies.Heinamaki1974
 import Linglib.Semantics.Aspect.Basic
-import Linglib.Semantics.Tense.RunTimes
-import Linglib.Data.Examples.Giannakidou2002
+import Linglib.Studies.Karttunen1974
+import Linglib.Fragments.English.TemporalExpressions
+import Linglib.Fragments.English.PolarityItems
 import Linglib.Fragments.Greek.StandardModern.TemporalConnectives
 import Linglib.Fragments.Icelandic.TemporalConnectives
 import Linglib.Fragments.Dutch.TemporalConnectives
-import Linglib.Fragments.Finnish.TemporalConnectives
+import Linglib.Data.Examples.Giannakidou2002
 
 /-!
 # Giannakidou (2002): UNTIL, Aspect, and Negation
-[giannakidou-2002] [karttunen-1974] [klein-1994]
-[de-swart-1996] [de-swart-molendijk-1999]
 
-A Novel Argument for Two *Until*s. Semantics and Linguistic Theory 12, 84–103.
+This file formalizes [giannakidou-2002]'s argument for [karttunen-1974]'s two *until*s against
+the one-*until* analysis on which negation is an aspectual stativizer ([mittwoch-1977],
+[de-swart-1996]). Durative UNTIL asks its description to hold at every subinterval of an
+interval ending at the until time (`durativeUntil`), which a homogeneous description supplies
+(`durativeUntil_iff_of_homogeneous`) and a perfective description of a single event cannot
+(`not_durativeUntil_prfv`): the imperfective is homogeneous (`impf_homogeneous`), so Greek, which
+marks aspect overtly, lets *mexri* combine with imperfectives and not with negated perfectives,
+where the scalar polarity item *para monon* stands in. Under negation the two analyses part ways:
+the wide-scope reading is durative UNTIL of the state of not-P-ing and holds when nothing P-like
+ever happens (`wideScope_of_forall_not`), whereas the eventive UNTIL entails the event
+(`eventiveUntil_actualization`) and is Karttunen's *not until* together with the actualization his
+presupposition supplies (`eventiveUntil_iff`). *Before* shares the scale but not the event
+(`eventiveUntil_not_before`, `not_before_of_forall_not`).
 
-## Central Argument
+The rows are the paper's Greek, English, Icelandic and Dutch sentences. `Predicted` derives each
+judgment from the fragment entry of its connective, the homogeneity its aspect or eventuality
+affords, and the licensing its polarity requires; the wide-scope reading, which preposing and a
+continuation denying the event diagnose, needs an imperfective or perfect form, which the English
+simple past is not. The stativity diagnostics of the paper's fifth section follow from the same
+homogeneity criterion with negation playing no role (`diagnostics_predicted`).
 
-Viewpoint aspect determines negation scope with *until*:
+## Implementation notes
 
-- **Imperfective main clause**: homogeneous (subinterval property), satisfying
-  durative *until*'s selectional restriction. Both wide-scope and narrow-scope
-  negation are available.
+* Descriptions are the aspect substrate's interval predicates; events carry a run time and a
+  perfective description places it within the reference interval, an imperfective one strictly
+  around it. The until interval is required to be nondegenerate, which is what excludes a single
+  event from satisfying the durative condition at both its endpoints.
+* Which connectives are durative and which punctual is read off the fragments' `order` and
+  `forcesPunctual`; English *until* gets its eventive use from the polarity-item fragment. That
+  *para monon*, *fyrr en* and English *until* need an antiveridical licenser while Dutch *pas* is
+  a positive polarity item is the paper's classification and is recorded here, not in the
+  fragments.
+* The oddity of *Nancy didn't get married until she died* and of its Greek counterpart, which the
+  actualization entailment explains, is pragmatic and is left in prose.
 
-- **Perfective main clause**: not homogeneous. Only narrow-scope negation
-  (= Karttunen's ¬*before*) is available.
+## References
 
-This provides a novel argument for [karttunen-1974]'s two-*until*
-hypothesis: the scope readings are logically independent, so the restriction
-to narrow scope under PRFV is a genuine empirical constraint, not a logical
-consequence.
-
-A secondary contribution (§6) refines [karttunen-1974]'s identity
-NPI-*until* = ¬*before*: while truth-conditionally valid, *para monon*
-(NPI-*until*) and *prin* (*before*) differ on **actualization** — NPI-*until*
-entails the main-clause event occurred, *before* does not — and on scope
-interaction with imperfective aspect.
-
-## Architecture
-
-Uses `Aspect.Core.UNBOUNDED` (= non-strict IMPF, [pancheva-2003]) projected
-to `RunTimes` for the imperfective denotation:
-
-```
-Unit → Event T → Prop ──[UNBOUNDED]──▷ IntervalPred ──[fix w=()]──▷ RunTimes
-```
-
-The key property — subinterval-closure — holds for both `UNBOUNDED` (⊆) and
-`IMPF` (⊂); we use `UNBOUNDED` because the argument doesn't depend on the
-strict/non-strict distinction and the non-strict version connects cleanly to
-`stativeDenotation` in `Basic.lean`.
-
-## Key Results
-
-1. `impfDen_subinterval_closed`: IMPF gives homogeneity
-2. `prfvDen_not_subinterval_closed`: PRFV does not
-3. `scope_readings_distinct`/`scope_readings_independent`: logically independent
-4. `impfDen_homogeneous`/`prfvDen_not_always_homogeneous`: wide scope derived
-5. `wideScopeNotUntil_compatible_with_empty_main`: wide scope lacks actualization
-6. `eventiveUntil_entails_actualization`: NPI-until entails actualization
-7. `negBefore_lacks_actualization`: ¬*before* compatible with no main-clause event
-8. `before_not_equiv_eventiveUntil`: ¬*before* ≠ NPI-*until* on actualization (§6)
-9. `stativizer_all_wrong`: all five diagnostics refute [de-swart-1996] (§5)
-
+* [giannakidou-2002]
+* [karttunen-1974]
+* [mittwoch-1977]
+* [de-swart-1996]
 -/
 
 namespace Giannakidou2002
 
-open NonemptyInterval
-open Aspect
-open Tense Anscombe1964 Karttunen1974 Heinamaki1974
+open Aspect Tense Karttunen1974 Heinamaki1974 Data.Examples
 
-variable {T : Type*} [LinearOrder T]
+variable {W T : Type*} [LinearOrder T]
 
--- ============================================================================
--- § 1: Aspect.Core → RunTimes Projection
--- ============================================================================
+/-! ### Durative UNTIL and homogeneity -/
 
-/-- IMPF denotation: project `Aspect.Core.UNBOUNDED` to `RunTimes`.
-    Each interval in the denotation is a subinterval of some event runtime
-    ([klein-1994]: TT ⊆ TSit). Uses `UNBOUNDED` ([pancheva-2003])
-    rather than `IMPF` (which requires strict ⊂) because the homogeneity
-    argument is identical and the non-strict version connects cleanly to
-    `stativeDenotation`. -/
-abbrev impfDen (P : Unit → Event T → Prop) : RunTimes T :=
-  { i | UNBOUNDED P () i }
+/-- A description of intervals is homogeneous when it holds at every subinterval of an interval
+it holds at. -/
+def Homogeneous (p : IntervalPred W T) : Prop :=
+  ∀ w, ∀ i j : NonemptyInterval T, j ≤ i → p w i → p w j
 
-/-- PRFV denotation: the set of exact event runtimes — the `eventDenotation`
-    τ-image (`Projection.lean`) of `P ()`. Unlike the `Aspect.Core.PRFV` operator
-    (whose intervals CONTAIN the runtime: TSit ⊆ TT), this gives the runtime itself,
-    directly characterizing the event's temporal extent. -/
-def prfvDen (P : Unit → Event T → Prop) : RunTimes T :=
-  eventDenotation (P ())
+theorem impf_homogeneous (P : W → Event T → Prop) : Homogeneous (IMPF P) :=
+  λ _ _ _ hji ⟨e, hlt, he⟩ => ⟨e, lt_of_le_of_lt hji hlt, he⟩
 
--- ============================================================================
--- § 2: Homogeneity
--- ============================================================================
+theorem unbounded_homogeneous (P : W → Event T → Prop) : Homogeneous (UNBOUNDED P) :=
+  λ _ _ _ hji ⟨e, hle, he⟩ => ⟨e, hji.trans hle, he⟩
 
-/-! A run-time set is *homogeneous* (subinterval-closed) when membership is
-    preserved under subintervals — Karttunen's selectional restriction for durative
-    *until*. This is exactly mathlib's `IsLowerSet` over the interval `≤` (subinterval
-    containment), so we state homogeneity directly as `IsLowerSet` below. -/
+/-- Durative UNTIL: the description holds at every subinterval of a nondegenerate interval ending
+at the until time. -/
+def durativeUntil (p : IntervalPred W T) (w : W) (t' : T) : Prop :=
+  ∃ i : NonemptyInterval T, i.fst < i.snd ∧ i.snd = t' ∧ ∀ j ≤ i, p w j
 
-/-- IMPF denotation satisfies the subinterval property.
+/-- A homogeneous description need only hold at the until interval itself. -/
+theorem durativeUntil_iff_of_homogeneous {p : IntervalPred W T} (hp : Homogeneous p) (w : W)
+    (t' : T) :
+    durativeUntil p w t' ↔ ∃ i : NonemptyInterval T, i.fst < i.snd ∧ i.snd = t' ∧ p w i :=
+  ⟨λ ⟨i, hi, ht, h⟩ => ⟨i, hi, ht, h i le_rfl⟩,
+    λ ⟨i, hi, ht, h⟩ => ⟨i, hi, ht, λ j hj => hp w i j hj h⟩⟩
 
-    This is exactly the homogeneity property that [karttunen-1974] requires
-    of the main clause of durative *until*. The imperfective viewpoint
-    provides this automatically: since the event extends beyond any reference
-    interval, every sub-window into the event is equally valid. -/
-theorem impfDen_subinterval_closed (P : Unit → Event T → Prop)
-    (t : NonemptyInterval T) (ht : t ∈ impfDen P)
-    (t' : NonemptyInterval T) (ht' : t' ≤ t) :
-    t' ∈ impfDen P := by
-  obtain ⟨e, hSub, hP⟩ := ht
-  exact ⟨e, ⟨le_trans hSub.1 ht'.1, le_trans ht'.2 hSub.2⟩, hP⟩
+/-- A perfective description of a single event is incompatible with durative UNTIL: an
+achievement or accomplishment cannot lie within both endpoints of the until interval. -/
+theorem not_durativeUntil_prfv {P : W → Event T → Prop} {w : W}
+    (hP : ∀ e e', P w e → P w e' → e = e') (t' : T) : ¬ durativeUntil (PRFV P) w t' := by
+  rintro ⟨i, hi, -, h⟩
+  obtain ⟨e₁, h₁, he₁⟩ :=
+    h (NonemptyInterval.pure i.fst) (NonemptyInterval.le_def.mpr ⟨le_rfl, i.fst_le_snd⟩)
+  obtain ⟨e₂, h₂, he₂⟩ :=
+    h (NonemptyInterval.pure i.snd) (NonemptyInterval.le_def.mpr ⟨i.fst_le_snd, le_rfl⟩)
+  obtain rfl := hP e₁ e₂ he₁ he₂
+  exact absurd ((NonemptyInterval.le_def.mp h₂).1.trans
+    (e₁.τ.fst_le_snd.trans (NonemptyInterval.le_def.mp h₁).2)) (not_le.mpr hi)
 
-/-- IMPF denotation contains the event runtime itself (the maximal interval). -/
-theorem impfDen_contains_runtime (P : Unit → Event T → Prop)
-    (e : Event T) (hP : P () e) :
-    e.τ ∈ impfDen P :=
-  ⟨e, le_refl _, hP⟩
+/-! ### Negation: wide scope, narrow scope and the eventive UNTIL -/
 
-/-- PRFV denotation does NOT have the subinterval property.
+/-- The state of not-P-ing that a stativizing negation would deliver: no P-event overlaps the
+interval. -/
+def notState (P : W → Event T → Prop) : IntervalPred W T :=
+  λ w i => ∀ e, P w e → ∀ a ∈ e.τ, a ∉ i
 
-    Counterexample: An event with runtime [0, 5]. The interval [0, 5] is
-    in the denotation, but [1, 3] (a strict subinterval) is not — PRFV
-    only includes the exact runtime.
+theorem notState_homogeneous (P : W → Event T → Prop) : Homogeneous (notState P) :=
+  λ _ _ _ hji h e he a ha haj => h e he a ha (NonemptyInterval.coe_subset_coe.mpr hji haj)
 
-    This is why perfective clauses cannot be main clauses of durative
-    *until*: they lack the homogeneity that *until* requires. -/
-theorem prfvDen_not_subinterval_closed :
-    ¬ ∀ (P : Unit → Event ℤ → Prop) (t : NonemptyInterval ℤ),
-      t ∈ prfvDen P → ∀ t', t' ≤ t → t' ∈ prfvDen P := by
-  intro h
-  -- sort defaults to .action; the proof doesn't reference .sort
-  let e₀ : Event ℤ := ⟨⟨⟨0, 5⟩, by omega⟩, .action⟩
-  let P : Unit → Event ℤ → Prop := fun _ e => e = e₀
-  let sub : NonemptyInterval ℤ := ⟨⟨1, 3⟩, by omega⟩
-  have hrt : e₀.τ ∈ prfvDen P := ⟨e₀, rfl, rfl⟩
-  have hsub : sub ≤ e₀.τ := by
-    dsimp only [sub, e₀]
-    simp only [NonemptyInterval.le_def, Event.τ]; omega
-  have hmem := h P e₀.τ hrt sub hsub
-  obtain ⟨e', he', hτ⟩ := hmem
-  dsimp only [P] at he'
-  subst he'
-  simp only [Event.τ] at hτ
-  have : (0 : ℤ) = 1 := congrArg (fun i => i.fst) hτ
-  omega
+/-- Mittwoch's wide-scope reading: durative UNTIL of the state of not-P-ing. -/
+def wideScope (P : W → Event T → Prop) (w : W) (t' : T) : Prop := durativeUntil (notState P) w t'
 
--- ============================================================================
--- § 3: Scope Pattern (Derived from Homogeneity)
--- ============================================================================
+/-- External negation: the durative UNTIL claim denied. -/
+def narrowScope (p : IntervalPred W T) (w : W) (t' : T) : Prop := ¬ durativeUntil p w t'
 
-/-- IMPF denotation is homogeneous (a lower set / subinterval-closed) — wide scope
-    is available. -/
-theorem impfDen_homogeneous (P : Unit → Event T → Prop) :
-    IsLowerSet (impfDen P) := by
-  intro a b hba ha
-  exact impfDen_subinterval_closed P a ha b hba
+/-- Karttunen's eventive UNTIL, scalar: a P-event at the until time and none starting earlier. -/
+def eventiveUntil (P : W → Event T → Prop) (w : W) (t : T) : Prop :=
+  (∃ e, P w e ∧ t ∈ e.τ) ∧ ∀ e, P w e → t ≤ e.τ.fst
 
-/-- PRFV denotation is not always homogeneous — wide scope is not always
-    available. This is derived from the subinterval-closure failure, not
-    stipulated as a Bool field. -/
-theorem prfvDen_not_always_homogeneous :
-    ¬ ∀ (P : Unit → Event ℤ → Prop), IsLowerSet (prfvDen P) := by
-  intro h
-  exact prfvDen_not_subinterval_closed fun P t ht t' ht' => h P ht' ht
+theorem eventiveUntil_actualization {P : W → Event T → Prop} {w : W} {t : T}
+    (h : eventiveUntil P w t) : ∃ e, P w e :=
+  let ⟨⟨e, he, _⟩, _⟩ := h; ⟨e, he⟩
 
-/-- [giannakidou-2002]'s scope generalization, derived from homogeneity:
-    wide-scope negation requires a homogeneous main clause, which IMPF provides
-    and PRFV does not. The restriction to narrow scope under PRFV follows from
-    PRFV's failure of subinterval-closure, not from a stipulated constraint. -/
-theorem scope_pattern_derived :
-    -- IMPF always permits wide scope (homogeneous)
-    (∀ (P : Unit → Event T → Prop), IsLowerSet (impfDen P)) ∧
-    -- PRFV does not always permit wide scope (not always homogeneous)
-    ¬ (∀ (P : Unit → Event ℤ → Prop), IsLowerSet (prfvDen P)) :=
-  ⟨impfDen_homogeneous, prfvDen_not_always_homogeneous⟩
+/-- The wide-scope reading holds when nothing P-like ever happens: it carries no actualization. -/
+theorem wideScope_of_forall_not {P : W → Event T → Prop} {w : W} (hP : ∀ e, ¬ P w e) {t t' : T}
+    (h : t < t') : wideScope P w t' :=
+  ⟨⟨(t, t'), h.le⟩, h, rfl, λ _ _ e he => absurd he (hP e)⟩
 
--- ============================================================================
--- § 4: Connection to stativeDenotation
--- ============================================================================
+/-- The run times of a description's events at a world. -/
+def runTimes (P : W → Event T → Prop) (w : W) : RunTimes T := {i | ∃ e, P w e ∧ e.τ = i}
 
-/-- For a single event with runtime `i`, the IMPF denotation is exactly
-    the stative denotation of `i` (all subintervals). This connects the
-    aspect bridge to the existing temporal connective infrastructure
-    in `Basic.lean`. -/
-theorem impfDen_singleton_eq_stativeDenotation
-    (i : NonemptyInterval T) :
-    impfDen (fun () (e : Event T) => e.τ = i) =
-    stativeDenotation i := by
-  ext j
-  simp only [UNBOUNDED, stativeDenotation, Set.mem_Iic, Set.mem_ofPred_eq, Event.τ]
+/-- Eventive UNTIL is Karttunen's *not until* together with the actualization his presupposition
+supplies. -/
+theorem eventiveUntil_iff (P : W → Event T → Prop) (w : W) (t : T) :
+    eventiveUntil P w t ↔ notUntil (runTimes P w) {NonemptyInterval.pure t} ∧
+      when_ (runTimes P w) {NonemptyInterval.pure t} := by
   constructor
-  · rintro ⟨e, hSub, rfl⟩; exact hSub
-    -- sort defaults to .action; the proof doesn't reference .sort
-  · intro h; exact ⟨⟨i, .action⟩, h, rfl⟩
+  · rintro ⟨⟨e, he, ht⟩, hall⟩
+    refine ⟨(notUntil_iff _ _).mpr λ s ⟨_, ⟨e', he', rfl⟩, hs⟩ =>
+      ⟨t, ⟨_, rfl, NonemptyInterval.mem_pure_self t⟩,
+        (hall e' he').trans (NonemptyInterval.mem_def.mp hs).1⟩,
+      t, ⟨e.τ, ⟨e, he, rfl⟩, ht⟩, ⟨_, rfl, NonemptyInterval.mem_pure_self t⟩⟩
+  · rintro ⟨hnu, s, ⟨_, ⟨e, he, rfl⟩, hs⟩, j, hj, hsj⟩
+    obtain rfl := Set.mem_singleton_iff.mp hj
+    rw [NonemptyInterval.mem_pure] at hsj
+    subst hsj
+    refine ⟨⟨e, he, hs⟩, λ e' he' => ?_⟩
+    obtain ⟨t', ⟨j, hj, ht'⟩, hle⟩ := (notUntil_iff _ _).mp hnu e'.τ.fst
+      ⟨e'.τ, ⟨e', he', rfl⟩, NonemptyInterval.mem_def.mpr ⟨le_rfl, e'.τ.fst_le_snd⟩⟩
+    obtain rfl := Set.mem_singleton_iff.mp hj
+    rw [NonemptyInterval.mem_pure] at ht'
+    exact ht' ▸ hle
 
-/-- For a single event, the PRFV denotation is exactly the accomplishment
-    denotation (singleton containing just the runtime). -/
-theorem prfvDen_singleton_eq_accomplishmentDenotation
-    (i : NonemptyInterval T) :
-    prfvDen (fun () (e : Event T) => e.τ = i) =
-    accomplishmentDenotation i := by
-  ext j
-  simp only [prfvDen, mem_eventDenotation, accomplishmentDenotation, Event.τ]
-  constructor
-  · rintro ⟨e, rfl, rfl⟩; rfl
-    -- sort is irrelevant here (defaults to .dynamic); the proof never reads .sort
-  · intro h; exact ⟨⟨i, .action⟩, rfl, h.symm⟩
+/-- Eventive UNTIL entails *not before*, one direction of Karttunen's equivalence. -/
+theorem eventiveUntil_not_before {P : W → Event T → Prop} {w : W} {t : T}
+    (h : eventiveUntil P w t) : ¬ before (runTimes P w) t :=
+  λ ⟨_, ⟨_, ⟨e, he, rfl⟩, hs⟩, hlt⟩ =>
+    absurd ((h.2 e he).trans (NonemptyInterval.mem_def.mp hs).1) (not_le.mpr hlt)
 
--- ============================================================================
--- § 5: Time Traces Coincide
--- ============================================================================
+/-- *Not before* carries no actualization: it holds when nothing P-like ever happens. -/
+theorem not_before_of_forall_not {P : W → Event T → Prop} {w : W} (hP : ∀ e, ¬ P w e) (t : T) :
+    ¬ before (runTimes P w) t :=
+  λ ⟨_, ⟨_, ⟨e, he, _⟩, _⟩, _⟩ => hP e he
 
-/-- The time traces of IMPF and PRFV denotations are identical: both equal
-    the set of times contained in some event runtime.
+/-! ### The paper's sentences -/
 
-    This is why Karttunen's Level 1 (point-set) definitions cannot distinguish
-    imperfective from perfective clauses — the difference is only visible
-    at Level 2 (interval sets). -/
-theorem timeTrace_impf_eq_prfv (P : Unit → Event T → Prop) :
-    timeTrace (impfDen P) = timeTrace (prfvDen P) := by
-  ext t
-  simp only [timeTrace, prfvDen, UNBOUNDED, Set.mem_ofPred_eq, Event.τ]
-  constructor
-  · rintro ⟨i, ⟨e, hSub, hP⟩, ht⟩
-    exact ⟨e.τ, ⟨e, hP, rfl⟩,
-      ⟨le_trans hSub.1 ht.1, le_trans ht.2 hSub.2⟩⟩
-  · rintro ⟨i, ⟨e, hP, rfl⟩, ht⟩
-    exact ⟨NonemptyInterval.pure t,
-      ⟨e, ⟨ht.1, ht.2⟩, hP⟩, ⟨le_refl _, le_refl _⟩⟩
-
--- ============================================================================
--- § 6: Scope Readings
--- ============================================================================
-
-/-- **Wide-scope negation** over imperfective *until*:
-
-    ¬∃t [t ∈ timeTrace(IMPF(A)) ∧ t ∈ timeTrace(B)]
-
-    "It's not the case that A was ongoing up to the time of B."
-
-    Available when A is imperfective: the main clause denotes a homogeneous
-    interval set via IMPF, so *until* can take it as an argument.
-    Negation scopes over the entire *until*-clause. -/
-def wideScopeNotUntil (A : Unit → Event T → Prop) (B : RunTimes T) : Prop :=
-  ¬ when_ (impfDen A) B
-
-/-- **Narrow-scope negation** under *until* (= Karttunen's ¬*before*):
-
-    ¬(A BEFORE B)
-
-    "A didn't happen before B" — the event occurred, but not prior to B.
-
-    This is the only reading available with perfective main clauses:
-    since PRFV gives a bounded event, *until* reduces to temporal ordering
-    and negation gives Karttunen's notUntil = ¬before. -/
-def narrowScopeNotUntil (A : Unit → Event T → Prop) (B : RunTimes T) : Prop :=
-  notUntil (prfvDen A) B
-
-/-- Narrow-scope ¬*until* is exactly ¬*before* (by definition).
-    This is [karttunen-1974]'s identity, now made explicit in the
-    aspectual decomposition. -/
-theorem narrowScope_eq_not_before (A : Unit → Event T → Prop) (B : RunTimes T) :
-    narrowScopeNotUntil A B ↔ ¬ Anscombe.beforeEver (prfvDen A) B :=
-  Iff.rfl
-
-/-- The two scope readings are **semantically distinct**: there exist A, B
-    where wide-scope holds but narrow-scope fails.
-
-    Counterexample: event A with runtime [0, 5], B at time 7.
-    - Wide scope: ¬(any A-time overlaps with time 7). TRUE — 7 ∉ [0, 5].
-    - Narrow scope: ¬(A happened before B). FALSE — time 0 < 7, so A
-      precedes B and `Anscombe.beforeEver` holds. -/
-theorem scope_readings_distinct :
-    ∃ (A : Unit → Event ℤ → Prop) (B : RunTimes ℤ),
-      wideScopeNotUntil A B ∧ ¬ narrowScopeNotUntil A B := by
-  -- sort defaults to .action; the proof doesn't reference .sort
-  let e₀ : Event ℤ := ⟨⟨⟨0, 5⟩, by omega⟩, .action⟩
-  let A : Unit → Event ℤ → Prop := fun _ e => e = e₀
-  let iB : NonemptyInterval ℤ := ⟨⟨7, 7⟩, by omega⟩
-  let B : RunTimes ℤ := {iB}
-  refine ⟨A, B, ?_, ?_⟩
-  · intro ⟨t, ht_A, ht_B⟩
-    obtain ⟨i, ⟨e, hSub, he⟩, hi⟩ := ht_A
-    dsimp only [A] at he; subst he
-    obtain ⟨j, (hj : j = iB), hjt⟩ := ht_B
-    subst hj
-    simp only [NonemptyInterval.le_def, NonemptyInterval.mem_def, Event.τ, e₀, iB] at hSub hi hjt
-    omega
-  · intro hNot
-    apply hNot
-    refine ⟨0, ⟨e₀.τ, ⟨e₀, rfl, rfl⟩, ?_⟩, ?_⟩
-    · simp only [NonemptyInterval.mem_def, Event.τ, e₀]; omega
-    · intro t' ⟨j, (hj : j = iB), hjt⟩
-      subst hj
-      simp only [NonemptyInterval.mem_def, iB] at hjt; omega
-
-/-- The reverse also holds: there exist A, B where narrow-scope holds
-    but wide-scope fails. This confirms the two readings are genuinely
-    independent. -/
-theorem scope_readings_independent :
-    ∃ (A : Unit → Event ℤ → Prop) (B : RunTimes ℤ),
-      ¬ wideScopeNotUntil A B ∧ narrowScopeNotUntil A B := by
-  -- sort defaults to .action; the proof doesn't reference .sort
-  let e₀ : Event ℤ := ⟨⟨⟨5, 10⟩, by omega⟩, .action⟩
-  let A : Unit → Event ℤ → Prop := fun _ e => e = e₀
-  let iB : NonemptyInterval ℤ := ⟨⟨3, 7⟩, by omega⟩
-  let B : RunTimes ℤ := {iB}
-  refine ⟨A, B, ?_, ?_⟩
-  · intro hWide
-    apply hWide
-    refine ⟨5,
-      ⟨NonemptyInterval.pure 5, ⟨e₀, by
-        simp only [NonemptyInterval.le_def, NonemptyInterval.pure, Event.τ, e₀]; omega,
-        rfl⟩,
-        by simp only [NonemptyInterval.mem_def, NonemptyInterval.pure]; omega⟩,
-      ⟨iB, rfl, by simp only [NonemptyInterval.mem_def, iB]; omega⟩⟩
-  · intro ⟨t, ht_A, hall⟩
-    obtain ⟨i, ⟨e, he, hτ⟩, hi⟩ := ht_A
-    dsimp only [A] at he; subst he
-    rw [← hτ] at hi
-    simp only [NonemptyInterval.mem_def, Event.τ, e₀] at hi
-    have h3 : (3 : ℤ) ∈ timeTrace B :=
-      ⟨iB, rfl, by simp only [NonemptyInterval.mem_def, iB]; omega⟩
-    have := hall 3 h3
-    omega
-
--- ============================================================================
--- § 7: Eventive UNTIL (para monon) Semantics ([giannakidou-2002], §3.2)
--- ============================================================================
-
-/-- **Eventive UNTIL**: the semantics of Greek *para monon* and Karttunen's
-    punctual *until*. Combines temporal coincidence (A overlaps B) with
-    lateness (A does not precede B):
-
-    ⟦dhen P para monon Q⟧ = (∃t. t∈A ∧ t∈B) ∧ ¬(A before B)
-
-    This builds actualization into the **assertion**, unlike
-    `notUntil` (= ¬before alone) which holds vacuously when A is
-    empty.
-
-    This is a simplified version of the full ex. (39), which additionally
-    includes a contextual restriction C over the scale of relevant times:
-    `¬∃t'∃e' [t'∈C ∧ t'<t ∧ P(e',t')]`. The scalar/contextual component
-    is abstracted away here; the core truth-conditional difference (overlap +
-    lateness vs. lateness alone) is preserved. -/
-def eventiveUntil (A B : RunTimes T) : Prop :=
-  (∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B) ∧ ¬ Anscombe.beforeEver A B
-
--- ============================================================================
--- § 8: Actualization Asymmetry
--- ============================================================================
-
-/-- Eventive UNTIL entails main-clause actualization: A must have occurred.
-    This is the **actualization entailment** that [giannakidou-2002]
-    identifies as the hallmark of NPI-*until* (para monon), absent from
-    durative *until* (mexri) and before (prin). -/
-theorem eventiveUntil_entails_actualization (A B : RunTimes T) :
-    eventiveUntil A B → ∃ t, t ∈ timeTrace A := by
-  rintro ⟨⟨t, ht, _⟩, _⟩; exact ⟨t, ht⟩
-
-/-- Eventive UNTIL entails complement actualization: B must have occurred. -/
-theorem eventiveUntil_entails_complement (A B : RunTimes T) :
-    eventiveUntil A B → ∃ t, t ∈ timeTrace B := by
-  rintro ⟨⟨t, _, ht⟩, _⟩; exact ⟨t, ht⟩
-
-/-- Eventive UNTIL entails ¬*before*: A didn't happen prior to B. -/
-theorem eventiveUntil_entails_notBefore (A B : RunTimes T) :
-    eventiveUntil A B → notUntil A B :=
-  And.right
-
-/-- Eventive UNTIL entails temporal coincidence (*when*): A and B overlap. -/
-theorem eventiveUntil_entails_when (A B : RunTimes T) :
-    eventiveUntil A B → when_ A B := by
-  rintro ⟨⟨t, htA, htB⟩, _⟩; exact ⟨t, htA, htB⟩
-
-/-- Karttunen's `notUntil` does NOT entail eventive UNTIL:
-    ¬(A before B) holds vacuously when A is empty (no actualization). -/
-theorem notUntil_not_implies_eventiveUntil :
-    ∃ (A B : RunTimes ℤ),
-      notUntil A B ∧ ¬ eventiveUntil A B := by
-  refine ⟨∅, { NonemptyInterval.pure 0 }, ?_, ?_⟩
-  · intro ⟨t, ⟨i, hi, _⟩, _⟩
-    exact absurd hi (Set.mem_empty_iff_false i).mp
-  · intro ⟨⟨t, ⟨i, hi, _⟩, _⟩, _⟩
-    exact absurd hi (Set.mem_empty_iff_false i).mp
-
-/-- **Wide-scope negation does NOT entail actualization.**
-
-    This is the key asymmetry with eventive UNTIL (§8 above):
-    NPI-*until* (para monon) entails actualization, but the Mittwoch
-    reading (wide-scope negation over durative *until*) does not.
-
-    Proved by construction: an event A with runtime [0, 5] and complement B
-    at time 3. Wide-scope negation holds (the state of not-A extends beyond
-    B), but A DID occur — the non-actualization is shown by the fact that
-    wide-scope is COMPATIBLE with either actualization or non-actualization,
-    unlike eventive UNTIL which requires it.
-
-    This formalizes the contrast between [giannakidou-2002]'s ex. (51)
-    (imperfective *mexri* + continuation asserting no event) and ex. (57)
-    (perfective *para monon* + contradictory continuation). -/
-theorem wideScopeNotUntil_compatible_with_empty_main :
-    ∃ (A : Unit → Event ℤ → Prop) (B : RunTimes ℤ),
-      wideScopeNotUntil A B ∧ ¬ ∃ t, t ∈ timeTrace (impfDen A) := by
-  let A : Unit → Event ℤ → Prop := fun _ _ => False
-  let B : RunTimes ℤ := { NonemptyInterval.pure 0 }
-  refine ⟨A, B, ?_, ?_⟩
-  · intro ⟨t, ⟨i, ⟨e, _, habs⟩, _⟩, _⟩; exact habs
-  · intro ⟨t, i, ⟨e, _, habs⟩, _⟩; exact habs
-
-/-- Durative *until* is compatible with A preceding B:
-    the main clause state can extend well before the complement time.
-
-    This is the formal correlate of [giannakidou-2002]'s ex. (7):
-    "Sure, the princess slept until midnight. In fact she only woke up
-    at 2am." — the state extends past the boundary, and the change-of-state
-    is not entailed. -/
-theorem durative_compatible_with_before :
-    ∃ (A B : RunTimes ℤ),
-      until_ A B ∧ Anscombe.beforeEver A B := by
-  let iA : NonemptyInterval ℤ := ⟨⟨0, 10⟩, by omega⟩
-  let iB : NonemptyInterval ℤ := ⟨⟨5, 5⟩, by omega⟩
-  refine ⟨stativeDenotation iA, {iB}, ?_, ?_⟩
-  · exact ⟨5,
-      ⟨iA, stativeDenotation_self iA, by simp only [NonemptyInterval.mem_def, iA]; omega⟩,
-      ⟨iB, rfl, by simp only [NonemptyInterval.mem_def, iB]; omega⟩⟩
-  · refine ⟨0,
-      ⟨iA, stativeDenotation_self iA, by simp only [NonemptyInterval.mem_def, iA]; omega⟩, ?_⟩
-    intro t' ⟨j, hj, hjt⟩
-    simp only [Set.mem_singleton_iff] at hj; subst hj
-    simp only [NonemptyInterval.mem_def, iB] at hjt; omega
-
-/-- **Eventive UNTIL is strictly stronger than Karttunen's notUntil.**
-    - eventiveUntil → notUntil (actualization + lateness → lateness)
-    - notUntil ↛ eventiveUntil (lateness alone lacks actualization)
-
-    This is the formal content of [giannakidou-2002]'s central claim:
-    the two readings are not truth-conditionally equivalent under negation. -/
-theorem eventiveUntil_strictly_stronger :
-    (∀ (A B : RunTimes ℤ), eventiveUntil A B → notUntil A B) ∧
-    (∃ (A B : RunTimes ℤ), notUntil A B ∧ ¬ eventiveUntil A B) :=
-  ⟨fun _ _ h => h.2, notUntil_not_implies_eventiveUntil⟩
-
--- ============================================================================
--- § 9: Bridge to the Example Rows
--- ============================================================================
-
-open Data.Examples
-
-/-- Giannakidou's three-way semantic typology of *until*-type connectives:
-    before-type (*prin*), endpoint-type (durative *until*, *mexri*), and
-    eventive-type (NPI-*until*, *para monon*). -/
-inductive UntilType where
-  | before
-  | endpoint
-  | eventive
+/-- The UNTIL words and *before* of the paper's four languages. -/
+inductive Connective
+  | until | mexri | paraMonon | prin | til | fyrrEn | tot | pas
   deriving DecidableEq, Repr
 
-/-- Whether a connective entails that the main-clause event actually
-    occurred at the boundary time: an entailment (cancellation yields
-    contradiction, ex. 38), a cancellable Q-implicature (ex. 7), or
-    absent entirely (exx. 72–73). -/
-inductive ActualizationStatus where
-  | entailment
-  | implicature
-  | absent
-  deriving DecidableEq, Repr
+/-- The fragment entry of each connective. -/
+def Connective.entry : Connective → English.TemporalExpressions.TemporalExprEntry
+  | .until => English.TemporalExpressions.until_
+  | .mexri => Greek.StandardModern.TemporalConnectives.mexri
+  | .paraMonon => Greek.StandardModern.TemporalConnectives.paraMonon
+  | .prin => Greek.StandardModern.TemporalConnectives.prin
+  | .til => Icelandic.TemporalConnectives.flangaTil
+  | .fyrrEn => Icelandic.TemporalConnectives.fyrrEn
+  | .tot => Dutch.TemporalConnectives.tot
+  | .pas => Dutch.TemporalConnectives.pas
 
-/-- The row's `semantic_type` feature as an `UntilType`. -/
-def untilTypeOf (row : LinguisticExample) : Option UntilType :=
-  match row.feature? "semantic_type" with
-  | some "before"   => some .before
-  | some "endpoint" => some .endpoint
-  | some "eventive" => some .eventive
+/-- The polarity item a connective doubles as: English *until* in its eventive use. -/
+def Connective.polarityItem : Connective → Option Polarity.Item
+  | .until => some English.PolarityItems.until_
   | _ => none
 
-/-- The row's `actualization` feature as an `ActualizationStatus`. -/
-def actualizationOf (row : LinguisticExample) : Option ActualizationStatus :=
-  match row.feature? "actualization" with
-  | some "entailment"  => some .entailment
-  | some "implicature" => some .implicature
-  | some "none"        => some .absent
-  | _ => none
-
-/-- The actualization status each semantic type carries, matching the
-    formal operators: eventive = `eventiveUntil` (the overlap conjunct
-    entails actualization), endpoint = `until_` (boundary
-    change-of-state only implicated), before = `notUntil` under
-    negation (lateness alone, cf. `negBefore_lacks_actualization`). -/
-def UntilType.actualization : UntilType → ActualizationStatus
-  | .before   => .absent
-  | .endpoint => .implicature
-  | .eventive => .entailment
-
-/-- Every row's actualization annotation is determined by its semantic
-    type — the three-way split that is the paper's central claim. -/
-theorem actualization_determined_by_type :
-    ∀ row ∈ Examples.all,
-      actualizationOf row = (untilTypeOf row).map UntilType.actualization := by
-  decide
-
-/-- Endpoint-type rows are exactly the veridical ones: durative *until*
-    presupposes its complement, while before-type and eventive-type
-    connectives are nonveridical. -/
-theorem veridical_iff_endpoint :
-    ∀ row ∈ Examples.all,
-      (row.feature? "complement_veridical" = some "true" ↔
-        untilTypeOf row = some .endpoint) := by
-  decide
-
-/-- Endpoint-type rows are exactly the ones with the durative main-clause
-    restriction. The formal correlate: wide scope requires homogeneity
-    (`impfDen_homogeneous`), which only durative/imperfective main clauses
-    provide; narrow scope (`narrowScopeNotUntil`) does not. -/
-theorem durative_main_iff_endpoint :
-    ∀ row ∈ Examples.all,
-      (row.feature? "requires_durative_main" = some "true" ↔
-        untilTypeOf row = some .endpoint) := by
-  decide
-
-/-- Eventive-type rows are exactly the ones requiring an anti-veridical
-    (DE) trigger — the licensing condition on *para monon* and English
-    NPI-*until*. -/
-theorem requires_de_iff_eventive :
-    ∀ row ∈ Examples.all,
-      (row.feature? "requires_de" = some "true" ↔
-        untilTypeOf row = some .eventive) := by
-  decide
-
-/-- Before-type rows license NPIs; endpoint-type rows do not. (Eventive
-    rows split: English NPI-*until* hosts NPIs, *para monon* does not.) -/
-theorem npi_licensing_by_type :
-    ∀ row ∈ Examples.all,
-      (untilTypeOf row = some .before →
-        row.feature? "licenses_npis" = some "true") ∧
-      (untilTypeOf row = some .endpoint →
-        row.feature? "licenses_npis" = some "false") := by
-  decide
-
-/-- Greek lexicalizes all three semantic types as distinct connectives:
-    *prin* (before), *mexri* (endpoint), *para monon* (eventive). -/
-theorem greek_lexicalizes_three_types :
-    ∀ ty : UntilType, ∃ row ∈ Examples.all,
-      row.language = "mode1248" ∧ untilTypeOf row = some ty := by
-  intro ty; cases ty <;> decide
-
-/-- The mood restriction each semantic type imposes in Greek. -/
-def UntilType.greekMood : UntilType → Option String
-  | .before   => some "subjunctive"
-  | .endpoint => some "indicative"
-  | .eventive => none
-
-/-- Greek mood tracks the semantic type: subjunctive for before-type,
-    indicative for endpoint-type, no mood restriction for eventive-type.
-    The mood split is the morphological reflex of (non)veridicality. -/
-theorem greek_mood_tracks_type :
-    ∀ row ∈ Examples.all, row.language = "mode1248" →
-      row.feature? "mood" = (untilTypeOf row).bind UntilType.greekMood := by
-  decide
-
--- ============================================================================
--- § 10: Bridge to Greek Fragment
--- ============================================================================
-
-open Greek.StandardModern.TemporalConnectives
-
-/-- Greek lexicalizes the three semantic types as distinct lexemes:
-    *mexri* (durative), *para monon* (eventive NPI), *prin* (before).
-    Each maps to a different temporal connective operator:
-    - *mexri* → `until_` (= `when_`, overlap)
-    - *para monon* → `eventiveUntil` (overlap + lateness)
-    - *prin* → `Anscombe.beforeEver` (ordering) -/
-theorem greek_three_way_maps_to_operators :
-    -- mexri is durative until (endpoint type)
-    mexri.order = .until_ ∧ mexri.complementVeridical = true ∧
-    -- para monon is eventive NPI-until
-    paraMonon.order = .until_ ∧ paraMonon.complementVeridical = false ∧
-    paraMonon.forcesPunctual = true ∧
-    -- prin is before
-    prin.order = .before ∧ prin.complementVeridical = false :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-/-- The veridicality split between *mexri* (veridical) and *para monon*
-    (non-veridical) corresponds to the formal difference: durative until
-    presupposes the complement, while eventive until asserts both overlap
-    and non-precedence. -/
-theorem veridicality_split :
-    mexri.complementVeridical = true ∧
-    paraMonon.complementVeridical = false ∧
-    prin.complementVeridical = false :=
-  ⟨rfl, rfl, rfl⟩
-
--- ============================================================================
--- § 11: Negation is NOT a Stativizer ([giannakidou-2002], §5)
--- ============================================================================
-
-/-! [giannakidou-2002] refutes the analysis of negation as an aspectual
-    operator that converts eventive predicates into stative ones
-    ([de-swart-1996], [de-swart-molendijk-1999]). On that account,
-    negation takes an eventuality description P and yields a maximal state s
-    such that no event of type P is contained in s. If this were correct,
-    negated perfectives should behave like statives — but they don't:
-    Greek negated perfectives still reject durative *until* (*mexri*),
-    reject *how long*, reject *while*, and accept imperatives. -/
-
-/-- [de-swart-1996]'s stativizer hypothesis: negation converts events
-    into maximal states, so ALL negated predicates (including perfectives)
-    should be homogeneous (subinterval-closed), just like true statives.
-
-    The formal refutation: if this were correct, then PRFV denotations
-    would always be homogeneous. But we proved in §2 that PRFV is NOT
-    always homogeneous (`prfvDen_not_subinterval_closed`). -/
-theorem stativizer_false_for_perfective :
-    ¬ (∀ (P : Unit → Event ℤ → Prop), IsLowerSet (prfvDen P)) :=
-  prfvDen_not_always_homogeneous
-
-/-- The five stativizer diagnostics and their results for negated
-    perfective forms ([giannakidou-2002], §5, ex. 67–71):
-
-    | Diagnostic | True stative | Neg+PRFV | Stativizer predicts |
-    |------------|-------------|----------|---------------------|
-    | *how long* | ✓           | ✗        | ✓ (WRONG)           |
-    | *while*    | ✓           | ✗        | ✓ (WRONG)           |
-    | *for* adv  | ✓           | ✗        | ✓ (WRONG)           |
-    | imperative | ✗           | ✓        | ✗ (WRONG)           |
-    | *mexri*    | ✓           | ✗        | ✓ (WRONG)           |
-
-    All five diagnostics give results inconsistent with stativehood for
-    negated perfectives. -/
-inductive StativizerDiagnostic where
-  | howLong     -- *for how long* adverbial
-  | while_      -- *while*-clause embedding
-  | forAdverb   -- *for/in* adverbial compatibility
-  | imperative  -- imperative mood
-  | mexri       -- durative *until* compatibility
+/-- The paper's polarity classification of the eventive UNTIL words. -/
+inductive Polarity
+  | npi | ppi | neutral
   deriving DecidableEq, Repr
 
-/-- Result of applying a stativizer diagnostic. -/
-structure DiagnosticResult where
-  diagnostic : StativizerDiagnostic
-  /-- Is this compatible with true statives? -/
-  trueStativeResult : Bool
-  /-- Is this compatible with negated perfectives? -/
-  negPerfResult : Bool
-  /-- What does the stativizer predict for negated perfectives? -/
-  stativizerPredicts : Bool
-  deriving Repr
+def Connective.polarity : Connective → Polarity
+  | .until | .paraMonon | .fyrrEn => .npi
+  | .pas => .ppi
+  | .mexri | .prin | .til | .tot => .neutral
 
-def diagnosticResults : List DiagnosticResult :=
-  [ ⟨.howLong,    true,  false, true⟩
-  , ⟨.while_,     true,  false, true⟩
-  , ⟨.forAdverb,  true,  false, true⟩
-  , ⟨.imperative, false, true,  false⟩
-  , ⟨.mexri,      true,  false, true⟩ ]
+/-- Durative UNTIL: an *until*-ordered entry that does not force a punctual reading. -/
+abbrev Connective.Durative (c : Connective) : Prop :=
+  c.entry.order = .until_ ∧ c.entry.forcesPunctual = false
 
-/-- The stativizer gets every diagnostic wrong: its prediction never
-    matches the actual negated-perfective result. -/
-theorem stativizer_all_wrong :
-    ∀ d ∈ diagnosticResults, d.negPerfResult ≠ d.stativizerPredicts := by
-  intro d hd
-  simp only [diagnosticResults, List.mem_cons, List.mem_nil_iff,
-             or_false] at hd
-  rcases hd with rfl | rfl | rfl | rfl | rfl <;> decide
+/-- Eventive UNTIL: a punctual entry, or an *until* with a polarity-item use. -/
+abbrev Connective.Eventive (c : Connective) : Prop :=
+  c.entry.forcesPunctual = true ∨ c.polarityItem.isSome = true
 
--- ============================================================================
--- § 12: English Simple Past = Covert Perfective ([giannakidou-2002], §4.3)
--- ============================================================================
+abbrev Connective.Before (c : Connective) : Prop := c.entry.order = .before
 
-/-- [giannakidou-2002]'s argument that the English simple past has a
-    perfective default value: English past-tense statives with *until*
-    pattern with Greek PERFECTIVE, not imperfective.
-
-    Evidence: "The princess didn't sleep until midnight" lacks the
-    Mittwoch reading (no wide-scope *until*), entails actualization
-    (she fell asleep at midnight), and disallows preposing
-    ("*Until midnight, the princess didn't sleep"). These are exactly
-    the properties of Greek negated perfective + *mexri*, not
-    Greek negated imperfective + *mexri*.
-
-    Formalized as: the scope pattern for English simple past follows
-    from PRFV (not IMPF), which is why wide-scope is unavailable. -/
-theorem english_past_perfective_default :
-    -- PRFV lacks homogeneity → wide scope unavailable
-    ¬ (∀ (P : Unit → Event ℤ → Prop), IsLowerSet (prfvDen P)) ∧
-    -- IMPF has homogeneity → wide scope would be available if past were imperfective
-    (∀ (P : Unit → Event ℤ → Prop), IsLowerSet (impfDen P)) :=
-  ⟨prfvDen_not_always_homogeneous, impfDen_homogeneous⟩
-
--- ============================================================================
--- § 13: *Before* ≠ NPI-*Until* on Actualization ([giannakidou-2002], §6)
--- ============================================================================
-
-/-! [giannakidou-2002]'s §6 refines [karttunen-1974]'s identity
-    NPI-*until* = ¬*before*: while truth-conditionally valid at the level of
-    temporal ordering, the two connectives differ on **actualization**.
-
-    - *Prin/before*: no actualization. "I prigipisa dhen eftase prin apo ta
-      mesanixta" (ex. 72) is compatible with "she arrived later or didn't
-      arrive at all."
-    - *Para monon*/NPI-*until*: actualization is an entailment. "I prigipisa
-      dhen eftase para monon ta mesanixta" (ex. 38) is contradicted by
-      "she didn't arrive that night."
-
-    Additionally, the Mittwoch reading (wide scope) is NOT available with
-    *prin* + imperfective stative (ex. 76): "I prigipisa dhen kimotane prin
-    apo ta mesanixta" gives only a habitual reading ("there was a period
-    during which she had the habit of not going to bed before midnight"),
-    not a stative reading. This contrasts with *mexri* + IMPF (ex. 74)
-    which does give the stative/Mittwoch reading. -/
-
-/-- ¬*before* (= [karttunen-1974]'s notUntil) is compatible with the
-    main-clause event never occurring: when A = ∅, `¬(A before B)` holds
-    vacuously since `Anscombe.beforeEver ∅ B` is always false.
-
-    [giannakidou-2002], §6, ex. (72): "I prigipisa dhen eftase prin apo
-    ta mesanixta" — the princess may or may not have arrived. *Prin/before*
-    with negation does not entail actualization of the arriving event.
-
-    Contrast with `eventiveUntil`, which requires main-clause actualization
-    (the overlap conjunct forces a witness in A). -/
-theorem negBefore_lacks_actualization :
-    ∃ (A B : RunTimes ℤ),
-      notUntil A B ∧ ¬ ∃ t, t ∈ timeTrace A := by
-  refine ⟨∅, { NonemptyInterval.pure 0 }, ?_, ?_⟩
-  · intro ⟨t, ⟨i, hi, _⟩, _⟩
-    exact absurd hi (Set.mem_empty_iff_false i).mp
-  · intro ⟨t, i, hi, _⟩
-    exact absurd hi (Set.mem_empty_iff_false i).mp
-
-/-- **NPI-*until* ≠ ¬*before* on actualization** ([giannakidou-2002], §6).
-
-    - `eventiveUntil A B` entails main-clause actualization (∃t ∈ A)
-    - `¬(A before B)` is compatible with main-clause non-actualization (A = ∅)
-
-    This is the formal content of [giannakidou-2002]'s central §6 claim:
-    [karttunen-1974]'s truth-conditional identity (NPI-*until* = ¬*before*)
-    holds at the level of temporal ordering, but the two connective types are
-    not interchangeable — NPI-*until* additionally requires actualization.
-    The impression of equivalence is a by-product of scalarity, a feature
-    common to both *prin/before* and *until/para monon*. -/
-theorem before_not_equiv_eventiveUntil :
-    -- eventiveUntil entails main-clause actualization
-    (∀ (A B : RunTimes T), eventiveUntil A B → ∃ t, t ∈ timeTrace A) ∧
-    -- ¬before is compatible with main-clause non-actualization
-    (∃ (A B : RunTimes ℤ), notUntil A B ∧ ¬ ∃ t, t ∈ timeTrace A) :=
-  ⟨eventiveUntil_entails_actualization, negBefore_lacks_actualization⟩
-
--- ============================================================================
--- §7: Cross-Linguistic Until-Strategy Typology
--- ============================================================================
-
-/-! Per-language strategy entries for the durative/eventive *until*
-distinction. The `UntilStrategy` enum + `UntilTypologyEntry` schema (consolidated from the former
-`Typology/TemporalConnectives.lean`) plus the per-language data + Fragment
-grounding theorems are all paper-anchored here. -/
-
-/-- How a language handles the durative/eventive *until* distinction
-    ([giannakidou-2002]). -/
-inductive UntilStrategy where
-  /-- Three distinct lexemes: *before*, durative *until*, eventive NPI-*until*.
-      Greek: *prin*, *mexri*, *para monon*. -/
-  | threeWay
-  /-- Two distinct lexemes: durative *until* and eventive NPI-*until*.
-      Icelandic: *flanga til*, *fyrr en*. Finnish: *kunnes*, *ennenkuin*. -/
-  | twoWay
-  /-- Single ambiguous lexeme, disambiguated by negation context.
-      English: *until*. -/
-  | ambiguous
-  /-- Durative *until* blocked under negation; PPI replaces NPI-*until*.
-      Dutch: *tot*, *pas*. German: *bis*, *erst*. -/
-  | ppiReplacement
+/-- The viewpoint of the main clause. -/
+inductive AspectForm
+  | imperfective | perfective | progressive | perfect | simplePast
   deriving DecidableEq, Repr
 
-/-- A language's strategy for the two-*until* distinction. -/
-structure UntilTypologyEntry where
-  language : String
-  strategy : UntilStrategy
-  /-- Surface form for durative *until*. -/
-  durativeForm : String
-  /-- Surface form for eventive *until* (NPI or PPI). -/
-  eventiveForm : String
-  /-- Is the eventive form morphologically built on *before*?
-      ([karttunen-1974]'s identity NPI-*until* = ¬*before*.) -/
-  eventiveMorphBeforeBased : Bool
-  /-- Does the language have overt perfective/imperfective marking?
-      Orthogonal to the lexicalization choice. -/
-  hasOvertAspect : Bool
-  deriving Repr
+/-- States and activities against achievements and accomplishments. -/
+inductive Eventuality
+  | stative | eventive
+  deriving DecidableEq, Repr
 
+/-- What the sentence puts the connective under. -/
+inductive Licenser
+  | none | negation | without | nonveridical
+  deriving DecidableEq, Repr
 
-def greek : UntilTypologyEntry where
-  language := "Greek"
-  strategy := .threeWay
-  durativeForm := "mexri (μέχρι)"
-  eventiveForm := "para monon (παρά μονον)"
-  eventiveMorphBeforeBased := false
-  hasOvertAspect := true
+/-- Negation and *without*, the antiveridical licensers. -/
+abbrev Licenser.Antiveridical (l : Licenser) : Prop := l = .negation ∨ l = .without
 
-def icelandic : UntilTypologyEntry where
-  language := "Icelandic"
-  strategy := .twoWay
-  durativeForm := "flanga til / til"
-  eventiveForm := "fyrr en"
-  eventiveMorphBeforeBased := true   -- fyrr = 'earlier/before' + en = 'than'
-  hasOvertAspect := false
+/-- What the sentence tests: acceptability, preposing of the UNTIL phrase, or a continuation
+denying the event. -/
+inductive Test
+  | plain | preposed | noEventContinuation
+  deriving DecidableEq, Repr
 
-def finnish : UntilTypologyEntry where
-  language := "Finnish"
-  strategy := .twoWay
-  durativeForm := "kunnes / siihen saakka"
-  eventiveForm := "ennenkuin"
-  eventiveMorphBeforeBased := true   -- ennen = 'before' + kuin = 'than'
-  hasOvertAspect := false
+structure Row where
+  connective : Connective
+  aspect : AspectForm
+  eventuality : Eventuality
+  licenser : Licenser
+  test : Test
+  acceptable : Bool
+  deriving DecidableEq, Repr
 
-def english : UntilTypologyEntry where
-  language := "English"
-  strategy := .ambiguous
-  durativeForm := "until"
-  eventiveForm := "until (NPI, with negation)"
-  eventiveMorphBeforeBased := false
-  hasOvertAspect := false  -- no overt perf/impf; simple past = covert perfective
+/-- A homogeneous main clause: an imperfective, progressive or perfect form, or a stative. -/
+abbrev Homog (a : AspectForm) (e : Eventuality) : Prop :=
+  a = .imperfective ∨ a = .progressive ∨ a = .perfect ∨ e = .stative
 
-def dutch : UntilTypologyEntry where
-  language := "Dutch"
-  strategy := .ppiReplacement
-  durativeForm := "tot"
-  eventiveForm := "pas"
-  eventiveMorphBeforeBased := false
-  hasOvertAspect := false
+/-- The forms that admit the wide-scope reading: the imperfective and the perfect. -/
+abbrev WideScopeForm (a : AspectForm) : Prop := a = .imperfective ∨ a = .perfect
 
-def german : UntilTypologyEntry where
-  language := "German"
-  strategy := .ppiReplacement
-  durativeForm := "bis"
-  eventiveForm := "erst"
-  eventiveMorphBeforeBased := false
-  hasOvertAspect := false
+/-- The licensing a connective's polarity demands. -/
+abbrev Licensed (c : Connective) (l : Licenser) : Prop :=
+  (c.polarity = .npi → l.Antiveridical) ∧ (c.polarity = .ppi → l = .none)
 
-/-- The full typological sample (6 languages, 4 strategies). -/
-def typology : List UntilTypologyEntry :=
-  [greek, icelandic, finnish, english, dutch, german]
+/-- The judgment the two-*until* analysis predicts. -/
+def Predicted (r : Row) : Prop :=
+  (r.test = .plain → (r.connective.Durative ∧ Homog r.aspect r.eventuality) ∨
+    (r.connective.Eventive ∧ Licensed r.connective r.licenser) ∨ r.connective.Before) ∧
+  (r.test = .preposed → r.connective.Durative ∧ WideScopeForm r.aspect) ∧
+  (r.test = .noEventContinuation →
+    (r.connective.Durative ∧ WideScopeForm r.aspect) ∨ r.connective.Before)
 
-/-- Every language in the sample uses distinct surface forms for durative
-    and eventive *until* (even the ambiguous strategy uses the same form
-    in different syntactic contexts, disambiguated by negation). -/
-theorem all_distinguish_durative_eventive :
-    ∀ e ∈ typology, e.durativeForm ≠ e.eventiveForm := by
-  intro e he
-  simp only [typology, List.mem_cons, List.mem_nil_iff, or_false] at he
-  rcases he with rfl | rfl | rfl | rfl | rfl | rfl <;> decide
+instance : DecidablePred Predicted := λ _ => by unfold Predicted; infer_instance
 
-/-- The two-way and three-way strategies both have morphologically
-    *before*-based eventive forms in at least one language, confirming
-    [karttunen-1974]'s identity NPI-*until* = ¬*before*. -/
-theorem before_morphology_attested :
-    icelandic.eventiveMorphBeforeBased = true ∧
-    finnish.eventiveMorphBeforeBased = true :=
-  ⟨rfl, rfl⟩
+def Row.ofExample (ex : LinguisticExample) : Option Row := do
+  let connective ← ex.parse? "connective" [("until", Connective.until), ("mexri", .mexri),
+    ("paraMonon", .paraMonon), ("prin", .prin), ("til", .til), ("fyrrEn", .fyrrEn), ("tot", .tot),
+    ("pas", .pas)]
+  let aspect ← ex.parse? "aspect" [("imperfective", AspectForm.imperfective),
+    ("perfective", .perfective), ("progressive", .progressive), ("perfect", .perfect),
+    ("simplePast", .simplePast)]
+  let eventuality ← ex.parse? "eventuality" [("stative", Eventuality.stative),
+    ("eventive", .eventive)]
+  let licenser ← ex.parse? "licenser" [("none", Licenser.none), ("negation", .negation),
+    ("without", .without), ("nonveridical", .nonveridical)]
+  let test ← ex.parse? "test" [("plain", Test.plain), ("preposed", .preposed),
+    ("noEventContinuation", .noEventContinuation)]
+  pure ⟨connective, aspect, eventuality, licenser, test, ex.judgment == .acceptable⟩
 
-/-- Overt aspect marking is NOT required for lexicalization of the
-    two-*until* distinction. Icelandic and Finnish lack overt verbal
-    aspect but still lexicalize two *until*s. -/
-theorem aspect_not_required :
-    icelandic.hasOvertAspect = false ∧ icelandic.strategy = .twoWay ∧
-    finnish.hasOvertAspect = false ∧ finnish.strategy = .twoWay :=
-  ⟨rfl, rfl, rfl, rfl⟩
+def rows : List Row := Examples.all.filterMap Row.ofExample
 
--- Bridge to Fragment data --
+/-- Every judgment on the UNTIL sentences follows from the connective's fragment entry, the
+homogeneity of the main clause and the licensing of the polarity item. -/
+theorem rows_predicted : ∀ r ∈ rows, (r.acceptable = true ↔ Predicted r) := by
+  decide
 
-open Greek.StandardModern.TemporalConnectives in
-/-- Greek strategy confirmed by fragment: three distinct forms. -/
-theorem greek_confirmed :
-    mexri.form ≠ paraMonon.form ∧
-    mexri.form ≠ prin.form ∧
-    paraMonon.form ≠ prin.form := by
-  exact ⟨by decide, by decide, by decide⟩
+/-- The stativity diagnostics of the fifth section. -/
+inductive Diagnostic
+  | howLong | while | forAdverbial | imperative
+  deriving DecidableEq, Repr
 
-open Icelandic.TemporalConnectives in
-/-- Icelandic strategy confirmed by fragment: two distinct forms with
-    veridicality split. -/
-theorem icelandic_confirmed :
-    flangaTil.form ≠ fyrrEn.form ∧
-    flangaTil.complementVeridical = true ∧
-    fyrrEn.complementVeridical = false :=
-  ⟨by decide, rfl, rfl⟩
+structure DiagnosticRow where
+  diagnostic : Diagnostic
+  aspect : AspectForm
+  eventuality : Eventuality
+  licenser : Licenser
+  acceptable : Bool
+  deriving DecidableEq, Repr
 
-open Dutch.TemporalConnectives in
-/-- Dutch strategy confirmed by fragment: two distinct forms with
-    veridicality split. -/
-theorem dutch_confirmed :
-    tot.form ≠ pas.form ∧
-    tot.complementVeridical = true ∧
-    pas.complementVeridical = false :=
-  ⟨by decide, rfl, rfl⟩
+def DiagnosticRow.ofExample (ex : LinguisticExample) : Option DiagnosticRow := do
+  let diagnostic ← ex.parse? "diagnostic" [("howLong", Diagnostic.howLong), ("while", .while),
+    ("forAdverbial", .forAdverbial), ("imperative", .imperative)]
+  let aspect ← ex.parse? "aspect" [("imperfective", AspectForm.imperfective),
+    ("perfective", .perfective), ("progressive", .progressive), ("perfect", .perfect),
+    ("simplePast", .simplePast)]
+  let eventuality ← ex.parse? "eventuality" [("stative", Eventuality.stative),
+    ("eventive", .eventive)]
+  let licenser ← ex.parse? "licenser" [("none", Licenser.none), ("negation", .negation),
+    ("without", .without), ("nonveridical", .nonveridical)]
+  pure ⟨diagnostic, aspect, eventuality, licenser, ex.judgment == .acceptable⟩
 
--- Bridge to the example rows --
+def diagnostics : List DiagnosticRow := Examples.all.filterMap DiagnosticRow.ofExample
 
-/-- The eventive type is attested in both English (NPI-*until*) and Greek
-    (*para monon*): the lexicalization strategies differ, but the semantic
-    type — and with it the actualization entailment
-    (`actualization_determined_by_type`) — is preserved. -/
-theorem eventive_attested_crosslinguistically :
-    (∃ row ∈ Examples.all,
-      row.language = "stan1293" ∧ untilTypeOf row = some .eventive) ∧
-    (∃ row ∈ Examples.all,
-      row.language = "mode1248" ∧ untilTypeOf row = some .eventive) := by
-  constructor <;> decide
+/-- The stative diagnostics accept a homogeneous clause and the imperative rejects one, with
+negation playing no role: negation is no stativizer. -/
+theorem diagnostics_predicted : ∀ r ∈ diagnostics, (r.acceptable = true ↔
+    ((r.diagnostic = .imperative → ¬ Homog r.aspect r.eventuality) ∧
+      (r.diagnostic ≠ .imperative → Homog r.aspect r.eventuality))) := by
+  decide
 
 end Giannakidou2002
