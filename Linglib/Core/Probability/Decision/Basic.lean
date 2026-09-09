@@ -324,8 +324,9 @@ directly at the `questionUtility` level; the kernel-level fact it specializes �
 coarsening a deterministic classifier is a Markov garbling, so the finer partition
 has lower Bayes risk in every decision problem — is
 `ProbabilityTheory.bayesRisk_deterministic_le_deterministic_comp` in
-`Core.Probability.Decision.Blackwell`, and `eig_deterministicObs_eq_euv` in
-`Studies/HawkinsEtAl2025.lean` identifies `questionUtility` with the
+`Core.Probability.Decision.Blackwell`, and
+`ObservationModel.eig_deterministic_eq_questionUtility` in
+`Core.Probability.Decision.ExperimentDesign` identifies `questionUtility` with the
 expected value of the corresponding deterministic experiment.
 
 The mathematical core is the **unnormalized cell value** `maxₐ ∑_{w∈c} P(w)·U(w,a)`,

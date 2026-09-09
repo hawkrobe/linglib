@@ -1338,7 +1338,7 @@
   subfield  = {pragmatics/rsa},
   validated = {true},
   role      = {formalized},
-  sources   = {Pragmatics/RSA/Canonical.lean;Core/Probability/Decision/ExperimentDesign.lean;Pragmatics/RSA/CombinedUtility.lean}
+  sources   = {Pragmatics/RSA/Canonical.lean;Pragmatics/RSA/CombinedUtility.lean;Studies/HawkinsEtAl2025.lean;Studies/TsvilodubEtAl2026.lean}
 }
 @inproceedings{he-kaiser-iskarous-2025,
   author    = {He, Muxuan and Kaiser, Elsi and Iskarous, Khalil},
@@ -3341,7 +3341,7 @@
   subfield  = {pragmatics/dts},
   validated = {true},
   role      = {foundational},
-  sources   = {Core/Probability/Decision/ExperimentDesign.lean}
+  sources   = {Core/Probability/Decision/ExperimentDesign.lean;Studies/DongEtAl2026.lean;Studies/HawkinsEtAl2025.lean}
 }
 @phdthesis{lauer-2013,
   author    = {Lauer, Sven},
@@ -14771,7 +14771,7 @@
   subfield  = {semantics/questions},
   validated = {true},
   role      = {cited},
-  sources   = {Studies/VanRooy2003.lean;Semantics/Questions/DecisionTheory.lean}
+  sources   = {Core/Probability/Decision/Basic.lean;Core/Probability/Decision/Blackwell.lean;Core/Probability/Decision/Duality.lean;Core/Probability/Decision/ExperimentDesign.lean;Pragmatics/DecisionTheoretic/PartitionAdjunction.lean;Studies/DongEtAl2026.lean;Studies/TsvilodubEtAl2026.lean;Studies/VanRooy2003.lean}
 }
 @article{van-rooy-2003-npi,
   author    = {van Rooy, Robert},
@@ -23957,7 +23957,7 @@
   subfield  = {comparative},
   role      = {cited},
   validated = {true},
-  sources   = {Pragmatics/DecisionTheoretic/PartitionAdjunction.lean;Core/Probability/Decision/Blackwell.lean;Semantics/Questions/PartitionDT.lean;Semantics/Questions/DecisionTheory.lean}
+  sources   = {Core/Probability/Decision/Basic.lean;Core/Probability/Decision/Blackwell.lean;Core/Probability/Decision/ExperimentDesign.lean;Pragmatics/DecisionTheoretic/PartitionAdjunction.lean;Studies/VanRooy2003.lean}
 }% REF: Reinhart (1976). The Syntactic Domain of Anaphora. (introduced c-command)
 @phdthesis{reinhart-1976,
   author    = {Reinhart, Tanya},
@@ -27267,16 +27267,21 @@
   url       = {https://books.google.com/books?id=dJjyEAAAQBAJ},
   subfield  = {decision-theory},
   role      = {foundational},
+  sources   = {Studies/DongEtAl2026.lean;Studies/TsvilodubEtAl2026.lean}
 }
-@misc{dong-etal-2026,
+@inproceedings{dong-etal-2026,
   author    = {Dong, Yijiang River and Hu, Tiancheng and Hui, Zheng and Zhang, Caiqi and Vulić, Ivan and Bobu, Andreea and Collier, Nigel},
-  title     = {Value of Information: A Framework for Human--Agent Communication},
   year      = {2026},
-  url       = {https://arxiv.org/abs/2601.06407},
-  note      = {arXiv:2601.06407},
+  title     = {Value of Information: A Framework for Human--Agent Communication},
+  booktitle = {Proceedings of the 64th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)},
+  publisher = {Association for Computational Linguistics},
+  address   = {San Diego, California},
+  pages     = {42879--42896},
+  doi       = {10.18653/v1/2026.acl-long.1987},
   subfield  = {pragmatics},
-  role      = {primary},
-  sources   = {Studies/DongEtAl2026PMF.lean}
+  validated = {true},
+  role      = {formalized},
+  sources   = {Studies/DongEtAl2026.lean;Studies/TsvilodubEtAl2026.lean}
 }
 @misc{tsvilodub-etal-2026,
   author    = {Tsvilodub, Polina and Mulligan, Karl and Snider, Todd and Hawkins, Robert D. and Franke, Michael},
