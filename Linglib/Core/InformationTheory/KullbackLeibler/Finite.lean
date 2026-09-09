@@ -25,6 +25,12 @@ namespace InformationTheory
 variable {α : Type*} [MeasurableSpace α] [MeasurableSingletonClass α] [Fintype α]
   {μ ν : Measure α}
 
+/-- On a finite type the log-likelihood ratio is integrable, so the divergence is infinite exactly
+when the first measure is not absolutely continuous with respect to the second. -/
+theorem klDiv_eq_top_iff_not_ac [IsFiniteMeasure μ] : klDiv μ ν = ∞ ↔ ¬ μ ≪ ν := by
+  rw [klDiv_eq_top_iff]
+  exact ⟨λ h hμν => h hμν .of_finite, λ h hμν => absurd hμν h⟩
+
 theorem klDiv_eq_sum_klFun [IsFiniteMeasure μ] [IsFiniteMeasure ν] (hμν : μ ≪ ν) :
     klDiv μ ν = ∑ a, ν {a} * ENNReal.ofReal (klFun (μ {a} / ν {a}).toReal) := by
   have h : (fun a => ENNReal.ofReal (klFun (μ.rnDeriv ν a).toReal))
