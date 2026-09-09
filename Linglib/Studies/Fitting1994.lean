@@ -14,15 +14,17 @@ product bilattices `L ⊙ L` of [ginsberg-1988], where the guard is `⟨a, b⟩ 
 (Definition 9.4).
 
 The main results are the identities of Figure 4 for the guard, the closure theorems for exact
-and consistent values (Theorems 9.2 and 9.3, `IsClassical.inf`, `Consistent.kSup`), the
+and consistent values (Theorems 9.2 and 9.3, `not_isExact_kTop`, `isConsistent_kSup`), the
 identification of the Lisp and weak connectives on Kleene's values with `Trivalent.meetMiddle`
 and `Trivalent.meetWeak`, and the collapse for bilinear bilattices: an equivalence of formulas
 holds in `L ⊙ L` for a linear `L` iff it holds in `FOUR` (Theorem 10.5, `equivalent_iff_four`).
 
 ## Implementation notes
 
-* The product, its negation and the conflation of §§6–7 are `Bilattice.Product`, the `Negation`
-  instance on `L ⊙ L`, and `Evidential.conf`; a De Morgan lattice is a `DeMorganAlgebra`.
+* The product, its negation and the conflation of §§6–7 are `Bilattice.Product` and the
+  `Negation` and `Conflation` instances on `L ⊙ L`; a De Morgan lattice is a `DeMorganAlgebra`.
+  The closure clauses of Theorems 9.2 and 9.3 are the substrate's `IsExact.inf`,
+  `IsConsistent.neg` and their kin; the study keeps what the substrate lacks.
 * The representation theorems of §8 are `Bilattice.decompose` ([avron-1996]); their
   negation- and conflation-preserving refinements (Theorems 8.2 and 8.3) and the tableau system
   of §4 are not formalized.
@@ -332,126 +334,51 @@ theorem extremal :
 
 end Product
 
-section Conflation
 
-variable {L : Type*} [LatticeWithInvolution L] (x y : L ⊙ L)
+/-! ### Kleene's logics generalized (§9)
 
-/-- §7: the conflation `−(x, y) = (yᶜ, xᶜ)` from a De Morgan complement is an involution
-(Definition 6.2). -/
-theorem conf_conf :
-    Evidential.conf compl (Evidential.conf compl x) = x := by
-  ext <;> simp [Evidential.conf, LatticeWithInvolution.compl_compl]
-
-/-- Conflation preserves the truth order (Definition 6.2). -/
-theorem conf_le_conf {x y :
-    L ⊙ L} (h : x ≤ y) : Evidential.conf compl x ≤ Evidential.conf compl y :=
-  ⟨LatticeWithInvolution.compl_le_compl h.2, LatticeWithInvolution.compl_le_compl h.1⟩
-
-/-- Conflation reverses the knowledge order (Definition 6.2). -/
-theorem conf_kLE_conf {x y :
-    L ⊙ L} (h : x ≤ₖ y) : Evidential.conf compl y ≤ₖ Evidential.conf compl x :=
-  ⟨LatticeWithInvolution.compl_le_compl h.2, LatticeWithInvolution.compl_le_compl h.1⟩
-
-/-- Negation and conflation commute (§7). -/
-theorem neg_conf :
-    neg (Evidential.conf compl x) = Evidential.conf compl (neg x) := rfl
-
-end Conflation
-
-/-! ### Kleene's logics generalized (§9) -/
+Definition 9.1's exact and consistent values are `IsExact` and `IsConsistent`, read off the
+coordinates by `Evidential.isExact_iff` and `isConsistent_iff`; their closure under the truth
+connectives and negation (Theorems 9.2 and 9.3) is `IsExact.inf`, `IsExact.sup`, `IsExact.neg`,
+`IsConsistent.inf`, `IsConsistent.sup` and `IsConsistent.neg`. -/
 
 section Generalized
 
 variable {L : Type*} [DeMorganAlgebra L]
 
-/-- Definition 9.1: `x` is consistent, `x ≤ₖ −x`, iff its evidence against is below the
-complement of its evidence for. -/
-theorem consistent_iff (x : L ⊙ L) : Consistent compl x ↔ x.con ≤ x.proᶜ :=
-  consistent_iff_con_le LatticeWithInvolution.compl_anti LatticeWithInvolution.compl_compl
-
-/-- Definition 9.1: `x` is exact, `x = −x`, iff its evidence for is the complement of its
-evidence against. -/
-theorem isClassical_iff (x : L ⊙ L) : IsClassical compl x ↔ x.pro = x.conᶜ :=
-  ⟨λ h => congrArg pro h,
-    λ h => Product.ext h (by simp [Evidential.conf, h, LatticeWithInvolution.compl_compl])⟩
-
 variable {x y z : L ⊙ L}
 
-/-- Theorem 9.2: `true` is exact. -/
-theorem isClassical_top : IsClassical compl (⊤ : L ⊙ L) := (isClassical_iff _).2 (by simp)
-
-/-- Theorem 9.2: `false` is exact. -/
-theorem isClassical_bot : IsClassical compl (⊥ : L ⊙ L) := (isClassical_iff _).2 (by simp)
-
-/-- Theorem 9.2: the exact values are closed under `∧`. -/
-theorem IsClassical.inf (hx : IsClassical compl x) (hy : IsClassical compl y) :
-    IsClassical compl (x ⊓ y) := by
-  rw [isClassical_iff] at *
-  simp [hx, hy]
-
-/-- Theorem 9.2: the exact values are closed under `∨`. -/
-theorem IsClassical.sup (hx : IsClassical compl x) (hy : IsClassical compl y) :
-    IsClassical compl (x ⊔ y) := by
-  rw [isClassical_iff] at *
-  simp [hx, hy]
-
-/-- Theorem 9.2: the exact values are closed under negation. -/
-theorem IsClassical.neg (hx : IsClassical compl x) : IsClassical compl (neg x) := by
-  rw [isClassical_iff] at *
-  simp [hx, LatticeWithInvolution.compl_compl]
-
 /-- Theorem 9.2: the knowledge top `⊤ = (⊤, ⊤)` is not exact. -/
-theorem not_isClassical_kTop [Nontrivial L] : ¬ IsClassical compl (mk ⊤ ⊤ : L ⊙ L) := by
-  rw [isClassical_iff]
+theorem not_isExact_kTop [Nontrivial L] : ¬ IsExact (mk ⊤ ⊤ : L ⊙ L) := by
+  rw [isExact_iff]
   simp
 
 /-- Theorem 9.2: the knowledge bottom `⊥ = (⊥, ⊥)` is not exact. -/
-theorem not_isClassical_kBot [Nontrivial L] : ¬ IsClassical compl (mk ⊥ ⊥ : L ⊙ L) := by
-  rw [isClassical_iff]
+theorem not_isExact_kBot [Nontrivial L] : ¬ IsExact (mk ⊥ ⊥ : L ⊙ L) := by
+  rw [isExact_iff]
   simp
 
 /-- Theorem 9.2: the exact values are not closed under `⊗`: `true ⊗ false = ⊥`. -/
-theorem not_isClassical_kInf [Nontrivial L] : ¬ IsClassical compl ((⊤ : L ⊙ L) ⊗ ⊥) := by
-  rw [isClassical_iff]
+theorem not_isExact_kInf [Nontrivial L] : ¬ IsExact ((⊤ : L ⊙ L) ⊗ ⊥) := by
+  rw [isExact_iff]
   simp
 
 /-- Theorem 9.2: the exact values are not closed under `⊕`: `true ⊕ false = ⊤`. -/
-theorem not_isClassical_kSup [Nontrivial L] : ¬ IsClassical compl ((⊤ : L ⊙ L) ⊕ ⊥ : L ⊙ L) := by
-  rw [isClassical_iff]
+theorem not_isExact_kSup [Nontrivial L] : ¬ IsExact ((⊤ : L ⊙ L) ⊕ ⊥ : L ⊙ L) := by
+  rw [isExact_iff]
   simp
-
-/-- Theorem 9.3: the exact values are consistent. -/
-theorem Consistent.of_isClassical (hx : IsClassical compl x) : Consistent compl x := by
-  rw [Evidential.Consistent, ← hx]
-
-/-- Theorem 9.3: the consistent values are closed under `∧`. -/
-theorem Consistent.inf (hx : Consistent compl x) (hy : Consistent compl y) :
-    Consistent compl (x ⊓ y) := by
-  rw [consistent_iff] at *
-  simpa using sup_le_sup hx hy
-
-/-- Theorem 9.3: the consistent values are closed under `∨`. -/
-theorem Consistent.sup (hx : Consistent compl x) (hy : Consistent compl y) :
-    Consistent compl (x ⊔ y) := by
-  rw [consistent_iff] at *
-  simpa using inf_le_inf hx hy
-
-/-- Theorem 9.3: the consistent values are closed under negation. -/
-theorem Consistent.neg (hx : Consistent compl x) : Consistent compl (neg x) := by
-  rw [consistent_iff] at *
-  simpa using LatticeWithInvolution.le_compl_comm.1 hx
 
 /-- Theorem 9.3: the consistent values are closed under consensus `⊗` — indeed the consensus of a
 consistent value with any value is consistent. -/
-theorem Consistent.kInf (hx : Consistent compl x) (y : L ⊙ L) : Consistent compl (x ⊗ y) := by
-  rw [consistent_iff] at *
+theorem isConsistent_kInf (hx : IsConsistent x) (y : L ⊙ L) : IsConsistent (x ⊗ y) := by
+  rw [isConsistent_iff] at *
   simpa using inf_le_left.trans (hx.trans le_sup_left)
 
 /-- Theorem 9.3: the consistent values are closed under gullibility `⊕` below a common consistent
 upper bound. -/
-theorem Consistent.kSup (hx : Consistent compl x) (hy : Consistent compl y)
-    (hz : Consistent compl z) (hxz : x ≤ₖ z) (hyz : y ≤ₖ z) : Consistent compl (x ⊕ y) := by
-  rw [consistent_iff] at *
+theorem isConsistent_kSup (hx : IsConsistent x) (hy : IsConsistent y)
+    (hz : IsConsistent z) (hxz : x ≤ₖ z) (hyz : y ≤ₖ z) : IsConsistent (x ⊕ y) := by
+  rw [isConsistent_iff] at *
   simp only [pro_kSup, con_kSup, LatticeWithInvolution.compl_sup]
   exact sup_le (le_inf hx (hxz.2.trans (hz.trans (LatticeWithInvolution.compl_le_compl hyz.1))))
     (le_inf (hyz.2.trans (hz.trans (LatticeWithInvolution.compl_le_compl hxz.1))) hy)
@@ -463,9 +390,9 @@ theorem guard_eq_kSup_neg (x y : L ⊙ L) :
   ext <;> simp [Evidential.guard]
 
 /-- §9: the guard of a consistent value is consistent. -/
-theorem Consistent.guard (hy :
-    Consistent compl y) (x : L ⊙ L) : Consistent compl (Evidential.guard x y) := by
-  rw [consistent_iff] at *
+theorem isConsistent_guard (hy : IsConsistent y) (x : L ⊙ L) :
+    IsConsistent (Evidential.guard x y) := by
+  rw [isConsistent_iff] at *
   simpa [Evidential.guard] using inf_le_right.trans (hy.trans le_sup_right)
 
 variable {x' y' : L ⊙ L}
@@ -489,21 +416,21 @@ theorem lorW_kLE_lorW (hx : x ≤ₖ x') (hy : y ≤ₖ y') : lorW x y ≤ₖ lo
     inf_le_inf (lorL_kLE_lorL hx hy).2 (lorL_kLE_lorL hy hx).2⟩
 
 /-- §9: the consistent values are closed under the four Kleene connectives. -/
-theorem Consistent.landL (hx : Consistent compl x) (hy : Consistent compl y) :
-    Consistent compl (landL x y) :=
-  Consistent.inf hx (Consistent.guard hy x)
+theorem isConsistent_landL (hx : IsConsistent x) (hy : IsConsistent y) :
+    IsConsistent (landL x y) :=
+  hx.inf (isConsistent_guard hy x)
 
-theorem Consistent.lorL (hx : Consistent compl x) (hy : Consistent compl y) :
-    Consistent compl (lorL x y) :=
-  Consistent.sup hx (Consistent.guard hy (Bilattice.neg x))
+theorem isConsistent_lorL (hx : IsConsistent x) (hy : IsConsistent y) :
+    IsConsistent (lorL x y) :=
+  hx.sup (isConsistent_guard hy (neg x))
 
-theorem Consistent.landW (hx : Consistent compl x) (hy : Consistent compl y) :
-    Consistent compl (landW x y) :=
-  Consistent.kInf (Consistent.landL hx hy) _
+theorem isConsistent_landW (hx : IsConsistent x) (hy : IsConsistent y) :
+    IsConsistent (landW x y) :=
+  isConsistent_kInf (isConsistent_landL hx hy) _
 
-theorem Consistent.lorW (hx : Consistent compl x) (hy : Consistent compl y) :
-    Consistent compl (lorW x y) :=
-  Consistent.kInf (Consistent.lorL hx hy) _
+theorem isConsistent_lorW (hx : IsConsistent x) (hy : IsConsistent y) :
+    IsConsistent (lorW x y) :=
+  isConsistent_kInf (isConsistent_lorL hx hy) _
 
 end Generalized
 

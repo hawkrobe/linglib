@@ -192,7 +192,7 @@ theorem know_bot_eq [Preorder L] [Preorder R] [BoundedOrder L] [BoundedOrder R] 
     (⊥ : Know (L ⊙ R)) = toKnow (mk ⊥ ⊥) := rfl
 
 /-- The knowledge order on the projections. -/
-theorem kLE_def [Preorder L] [Preorder R] {x y : L ⊙ R} :
+theorem kLE_iff [Preorder L] [Preorder R] {x y : L ⊙ R} :
     x ≤ₖ y ↔ x.pro ≤ y.pro ∧ x.con ≤ y.con := Iff.rfl
 
 section KProj
