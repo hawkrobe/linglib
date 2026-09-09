@@ -151,8 +151,7 @@ theorem relExhPresupposition_of_pointwise_EP
 answer; MS rejects this for `can`-questions. The substrate-level
 shadow: a question can fail Dayal's EP at `w` while having
 `Resolves σ Q` succeed for some non-maximal witness — same
-phenomenon as in [fox-2018] §2.1 (already formalised in
-`Fox2018.resolves_can_succeed_when_EP_fails`). RelExh resolves the
+phenomenon as in [fox-2018] §2.1 (`Fox2018.ans_disjClosure`). RelExh resolves the
 dilemma by relativising the EP to a per-accessible-world basis. -/
 
 /-- The defining contrast: a non-modalised question can fail Dayal's

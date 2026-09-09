@@ -1,8 +1,7 @@
 import Linglib.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Semantics.Questions.Closure
 import Linglib.Logic.Modal.Defs
 import Linglib.Data.Examples.Fox2007
-import Mathlib.Data.Fintype.Powerset
-import Mathlib.Order.CompleteLattice.Finset
 
 /-!
 # Fox (2007): Free Choice and the Theory of Scalar Implicatures
@@ -17,8 +16,8 @@ of the paper's note on the diamond configuration, `IsDiamond.exh₂_eq` and
 exactly when `e` is stronger than `s ∩ n`. Disjunction under a possibility modal, under an
 existential quantifier, and conjunction under a negated necessity modal instantiate the diamond
 with `e` strictly stronger; unembedded disjunction has `e = s ∩ n`, so its second
-exhaustification is vacuous. `exhIE_hamblin` is the paper's `some GIRL` computation: against
-Hamblin alternatives, innocent exclusion yields *exactly one*.
+exhaustification is vacuous. `exhIE_conjClosure` is the paper's `some GIRL` computation: against
+the Hamblin alternatives closed under conjunction, innocent exclusion yields *exactly one*.
 
 ## Implementation notes
 
@@ -113,8 +112,9 @@ end Recursive
 /-- A disjunction against its disjuncts and one further alternative: only the further
 alternative is innocently excludable, when each disjunct can hold without the other and
 without it. -/
-theorem exhIE_pair {A B D : Set W} (hA : ((A \ B) \ D).Nonempty)
-    (hB : ((B \ A) \ D).Nonempty) : exhIE {A ∪ B, A, B, D} (A ∪ B) = (A ∪ B) \ D := by
+theorem isInnocentlyExcludable_pair_iff {A B D : Set W} (hA : ((A \ B) \ D).Nonempty)
+    (hB : ((B \ A) \ D).Nonempty) {q : Set W} (hq : q ∈ ({A ∪ B, A, B, D} : Set (Set W))) :
+    IsInnocentlyExcludable {A ∪ B, A, B, D} (A ∪ B) q ↔ q = D := by
   obtain ⟨a, ha⟩ := hA
   obtain ⟨b, hb⟩ := hB
   have notIE : ∀ {A B : Set W} {a : W}, a ∈ (A \ B) \ D →
@@ -158,18 +158,22 @@ theorem exhIE_pair {A B D : Set W} (hA : ((A \ B) \ D).Nonempty)
         exact hE.1.2.1
       exact ⟨a, key ha hAE (union_comm B A ▸ hE.1.1) hE'⟩
     · exact ⟨b, key hb hBE hE.1.1 hE.1.2.1⟩
+  simp only [mem_insert_iff, mem_singleton_iff] at hq
+  obtain h1 | h1 | h1 | h1 := hq <;> subst q
+  · exact iff_of_false (not_isInnocentlyExcludable_of_phi_subset (toFinite _) ⟨a, Or.inl ha.1.1⟩
+      subset_rfl) λ h => ha.2 (h ▸ Or.inl ha.1.1)
+  · exact iff_of_false (notIE ha) λ h => ha.2 (h ▸ ha.1.1)
+  · refine iff_of_false ?_ λ h => hb.2 (h ▸ hb.1.1)
+    have := notIE hb
+    rwa [union_comm B A, insert_comm B A] at this
+  · exact iff_of_true hD rfl
+
+/-- Exhaustifying the disjunction denies only the further alternative. -/
+theorem exhIE_pair {A B D : Set W} (hA : ((A \ B) \ D).Nonempty)
+    (hB : ((B \ A) \ D).Nonempty) : exhIE {A ∪ B, A, B, D} (A ∪ B) = (A ∪ B) \ D := by
+  rw [exhIE_eq_of_iff _ _ (toFinite _) λ q hq => isInnocentlyExcludable_pair_iff hA hB hq]
   ext u
-  rw [mem_exhIE_iff _ _ (toFinite _), mem_sdiff]
-  refine and_congr_right λ hu => ⟨λ h => h D hD, λ h c hc => ?_⟩
-  have hc1 := hc.1
-  simp only [mem_insert_iff, mem_singleton_iff] at hc1
-  obtain h1 | h1 | h1 | h1 := hc1 <;> subst c
-  · exact (not_isInnocentlyExcludable_of_phi_subset (toFinite _) ⟨u, hu⟩ subset_rfl hc).elim
-  · exact (notIE ha hc).elim
-  · have := notIE hb
-    rw [union_comm B A, insert_comm B A] at this
-    exact (this hc).elim
-  · exact h
+  exact ⟨λ ⟨hu, h⟩ => ⟨hu, h D (by simp) rfl⟩, λ ⟨hu, huD⟩ => ⟨hu, λ _ _ hqD => hqD ▸ huD⟩⟩
 
 /-- Exclusive *or*: the Sauerland alternatives of a disjunction exclude only the conjunction. -/
 theorem exhIE_or {p q : Set W} (hp : (p \ q).Nonempty) (hq : (q \ p).Nonempty) :
@@ -204,6 +208,12 @@ theorem notMem : w ∉ ({s, n, e} : Set (Set W)) := by
   · exact ha.2 (hn (h1 ▸ (Or.inl ha.1 : a ∈ s ∪ n)))
 
 /-- Only the strongest alternative is innocently excludable given the weakest. -/
+theorem isInnocentlyExcludable_iff {q : Set W} (hq : q ∈ ({w, s, n, e} : Set (Set W))) :
+    IsInnocentlyExcludable {w, s, n, e} w q ↔ q = e := by
+  obtain ⟨rfl, hs, hn, ⟨a, ha⟩, ⟨b, hb⟩⟩ := h
+  exact isInnocentlyExcludable_pair_iff ⟨a, ha, λ hae => ha.2 (hn hae)⟩
+    ⟨b, hb, λ hbe => hb.2 (hs hbe)⟩ hq
+
 theorem exhIE_w : exhIE {w, s, n, e} w = w \ e := by
   obtain ⟨rfl, hs, hn, ⟨a, ha⟩, ⟨b, hb⟩⟩ := h
   exact exhIE_pair ⟨a, ha, λ hae => ha.2 (hn hae)⟩ ⟨b, hb, λ hbe => hb.2 (hs hbe)⟩
@@ -417,34 +427,18 @@ end Existential
 
 section Hamblin
 
-variable {ι : Type*} (a : ι → Set W)
+open Questions
 
-/-- The Hamblin alternative for a group: the answer holds of every member. -/
-def hamblinAlt (S : Finset ι) : Set W := ⋂ i ∈ S, a i
-
-/-- The Hamblin alternatives: one per non-empty group. -/
-def hamblin : Set (Set W) := hamblinAlt a '' {S | S.Nonempty}
-
-variable {a}
-
-theorem mem_hamblinAlt {S : Finset ι} {u : W} : u ∈ hamblinAlt a S ↔ ∀ i ∈ S, u ∈ a i :=
-  mem_iInter₂
-
-theorem hamblinAlt_singleton (i : ι) : hamblinAlt a {i} = a i :=
-  Finset.set_biInter_singleton i a
-
-theorem hamblinAlt_mem_hamblin {S : Finset ι} (hS : S.Nonempty) : hamblinAlt a S ∈ hamblin a :=
-  ⟨S, hS, rfl⟩
-
+variable {ι : Type*} {a : ι → Set W}
 variable (hsolo : ∀ i, ∃ u, u ∈ a i ∧ ∀ j, j ≠ i → u ∉ a j)
 include hsolo
 
 /-- A group of two or more is innocently excludable given the existential answer. -/
-theorem isInnocentlyExcludable_hamblinAlt {S : Finset ι} {i j : ι} (hi : i ∈ S) (hj : j ∈ S)
-    (hij : i ≠ j) : IsInnocentlyExcludable (hamblin a) (⋃ i, a i) (hamblinAlt a S) := by
-  refine .of_extension_consistent (hamblinAlt_mem_hamblin ⟨i, hi⟩) λ E hE => ?_
+theorem isInnocentlyExcludable_conj {S : Finset ι} {i j : ι} (hi : i ∈ S) (hj : j ∈ S)
+    (hij : i ≠ j) : IsInnocentlyExcludable (conjClosure a) (⋃ i, a i) (conj a S) := by
+  refine .of_extension_consistent (conj_mem_conjClosure ⟨i, hi⟩) λ E hE => ?_
   obtain ⟨v, hv⟩ := hE.1.2.2
-  by_cases hvS : v ∈ hamblinAlt a S
+  by_cases hvS : v ∈ conj a S
   · obtain ⟨u, hui, hu⟩ := hsolo i
     refine ⟨u, ?_⟩
     rintro ψ (hψ | hψ)
@@ -452,13 +446,13 @@ theorem isInnocentlyExcludable_hamblinAlt {S : Finset ι} {i j : ι} (hi : i ∈
       · exact mem_iUnion.2 ⟨i, hui⟩
       · intro huT
         have hTi : ∀ k ∈ T, k = i := λ k hk =>
-          by_contra λ hki => hu k hki (mem_hamblinAlt.1 huT k hk)
-        refine hv _ hψ (mem_hamblinAlt.2 λ k hk => ?_)
+          by_contra λ hki => hu k hki (mem_conj.1 huT k hk)
+        refine hv _ hψ (mem_conj.2 λ k hk => ?_)
         rw [hTi k hk]
-        exact mem_hamblinAlt.1 hvS i hi
+        exact mem_conj.1 hvS i hi
     · rw [mem_singleton_iff] at hψ
       subst hψ
-      exact λ huS => hu j hij.symm (mem_hamblinAlt.1 huS j hj)
+      exact λ huS => hu j hij.symm (mem_conj.1 huS j hj)
   · refine ⟨v, ?_⟩
     rintro ψ (hψ | hψ)
     · exact hv ψ hψ
@@ -467,10 +461,10 @@ theorem isInnocentlyExcludable_hamblinAlt {S : Finset ι} {i j : ι} (hi : i ∈
 
 /-- A single individual is not innocently excludable given the existential answer. -/
 theorem not_isInnocentlyExcludable_atom (i : ι) :
-    ¬ IsInnocentlyExcludable (hamblin a) (⋃ i, a i) (a i) := by
+    ¬ IsInnocentlyExcludable (conjClosure a) (⋃ i, a i) (a i) := by
   obtain ⟨u, hui, hu⟩ := hsolo i
-  have hmem : ∀ k, a k ∈ hamblin a := λ k =>
-    hamblinAlt_singleton (a := a) k ▸ hamblinAlt_mem_hamblin ⟨k, Finset.mem_singleton_self k⟩
+  have hmem : ∀ k, a k ∈ conjClosure a := λ k =>
+    conj_singleton (a := a) k ▸ conj_mem_conjClosure ⟨k, Finset.mem_singleton_self k⟩
   rw [isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ (hmem i)]
   refine λ h => h ⟨mem_iUnion.2 ⟨i, hui⟩, ?_⟩ hui
   rintro ⟨v, hv, hvu, hnuv⟩
@@ -479,23 +473,22 @@ theorem not_isInnocentlyExcludable_atom (i : ι) :
   subst k
   refine hnuv λ c hc huc => ?_
   obtain ⟨T, -, rfl⟩ := hc
-  refine mem_hamblinAlt.2 λ m hm => ?_
-  have hmi : m = i := by_contra λ hmi => hu m hmi (mem_hamblinAlt.1 huc m hm)
+  refine mem_conj.2 λ m hm => ?_
+  have hmi : m = i := by_contra λ hmi => hu m hmi (mem_conj.1 huc m hm)
   rw [hmi]
   exact hkv
 
 /-- Exhaustifying the existential answer against its Hamblin alternatives yields *exactly one*,
 provided each individual can be the sole witness. -/
-theorem exhIE_hamblin [Fintype ι] [DecidableEq ι] :
-    exhIE (hamblin a) (⋃ i, a i) = {u | ∃! i, u ∈ a i} := by
-  have hfin : (hamblin a).Finite := (toFinite {S : Finset ι | S.Nonempty}).image _
+theorem exhIE_conjClosure [Fintype ι] [DecidableEq ι] :
+    exhIE (conjClosure a) (⋃ i, a i) = {u | ∃! i, u ∈ a i} := by
   ext u
-  rw [mem_exhIE_iff _ _ hfin, mem_iUnion, mem_ofPred_eq]
+  rw [mem_exhIE_iff _ _ conjClosure_finite, mem_iUnion, mem_ofPred_eq]
   constructor
   · rintro ⟨⟨i, hi⟩, h⟩
     refine ⟨i, hi, λ j hj => by_contra λ hji =>
-      h (hamblinAlt a {i, j}) ?_ (mem_hamblinAlt.2 λ m hm => ?_)⟩
-    · exact isInnocentlyExcludable_hamblinAlt hsolo (S := {i, j}) (Finset.mem_insert_self i _)
+      h (conj a {i, j}) ?_ (mem_conj.2 λ m hm => ?_)⟩
+    · exact isInnocentlyExcludable_conj hsolo (S := {i, j}) (Finset.mem_insert_self i _)
         (Finset.mem_insert_of_mem (Finset.mem_singleton_self j)) λ h' => hji h'.symm
     · rcases Finset.mem_insert.1 hm with h1 | h1
       · rw [h1]
@@ -508,11 +501,11 @@ theorem exhIE_hamblin [Fintype ι] [DecidableEq ι] :
     by_cases hSi : ∀ j ∈ S, j = i
     · obtain ⟨j, hj⟩ := hS
       have : S = {i} := Finset.eq_singleton_iff_unique_mem.2 ⟨hSi j hj ▸ hj, hSi⟩
-      rw [this, hamblinAlt_singleton] at hc
+      rw [this, conj_singleton] at hc
       exact not_isInnocentlyExcludable_atom hsolo i hc
     · obtain ⟨j, hj⟩ := not_forall.1 hSi
       obtain ⟨hjS, hji⟩ := Classical.not_imp.1 hj
-      exact hji (huniq j (mem_hamblinAlt.1 huc j hjS))
+      exact hji (huniq j (mem_conj.1 huc j hjS))
 
 end Hamblin
 

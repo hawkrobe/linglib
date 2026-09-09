@@ -1,0 +1,411 @@
+[
+  {
+    "id": "fox2018_ex16a",
+    "source": {
+      "bibkey": "fox-2018",
+      "paperLabel": "(16a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Tell me how fast you drove.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "family",
+        "degree"
+      ],
+      [
+        "negation",
+        "no"
+      ],
+      [
+        "modal",
+        "no"
+      ],
+      [
+        "number",
+        "na"
+      ],
+      [
+        "blocked",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fox2018_ex16b",
+    "source": {
+      "bibkey": "fox-hackl-2006",
+      "paperLabel": "negative islands"
+    },
+    "language": "stan1293",
+    "primaryText": "Tell me how fast you didn't drive.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "family",
+        "degree"
+      ],
+      [
+        "negation",
+        "yes"
+      ],
+      [
+        "modal",
+        "no"
+      ],
+      [
+        "number",
+        "na"
+      ],
+      [
+        "blocked",
+        "yes"
+      ]
+    ],
+    "comment": "No smallest degree above the actual speed: no maximally informative true member.",
+    "reportedIn": {
+      "bibkey": "fox-2018",
+      "paperLabel": "(16b)"
+    }
+  },
+  {
+    "id": "fox2018_ex16c",
+    "source": {
+      "bibkey": "fox-2018",
+      "paperLabel": "(16c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Tell me how fast you are not allowed to drive.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "family",
+        "degree"
+      ],
+      [
+        "negation",
+        "yes"
+      ],
+      [
+        "modal",
+        "yes"
+      ],
+      [
+        "number",
+        "na"
+      ],
+      [
+        "blocked",
+        "no"
+      ]
+    ],
+    "comment": "The modal base can entail a least bound, so maximality can be met."
+  },
+  {
+    "id": "fox2018_ex24",
+    "source": {
+      "bibkey": "fox-2018",
+      "paperLabel": "(24)"
+    },
+    "language": "stan1293",
+    "primaryText": "What are you required to read for this class? -- War and Peace or Brothers Karamazov.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "required > or",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "or > required",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "family",
+        "higherOrder"
+      ],
+      [
+        "negation",
+        "no"
+      ],
+      [
+        "modal",
+        "yes"
+      ],
+      [
+        "number",
+        "neutral"
+      ],
+      [
+        "blocked",
+        "no"
+      ]
+    ],
+    "comment": "Both scopes: the trace may range over individuals or over generalized quantifiers."
+  },
+  {
+    "id": "fox2018_ex26",
+    "source": {
+      "bibkey": "fox-2018",
+      "paperLabel": "(26)"
+    },
+    "language": "stan1293",
+    "primaryText": "What did you not read for this class? -- War and Peace or Brothers Karamazov.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not > or",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "or > not",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "family",
+        "higherOrder"
+      ],
+      [
+        "negation",
+        "yes"
+      ],
+      [
+        "modal",
+        "no"
+      ],
+      [
+        "number",
+        "neutral"
+      ],
+      [
+        "blocked",
+        "yes"
+      ]
+    ],
+    "comment": "The higher-order denotation always contains the weak negated conjunction (28), which identifies no cell: Non-Vacuity fails."
+  },
+  {
+    "id": "fox2018_ex27",
+    "source": {
+      "bibkey": "fox-2018",
+      "paperLabel": "(27)"
+    },
+    "language": "stan1293",
+    "primaryText": "What are you not allowed to read for this class? -- War and Peace or Brothers Karamazov.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not > or",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "or > not",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "family",
+        "higherOrder"
+      ],
+      [
+        "negation",
+        "yes"
+      ],
+      [
+        "modal",
+        "yes"
+      ],
+      [
+        "number",
+        "neutral"
+      ],
+      [
+        "blocked",
+        "no"
+      ]
+    ],
+    "comment": "Marked ? for the narrow-scope reading; the necessity modal lets (29) be the strongest true member."
+  },
+  {
+    "id": "fox2018_ex47a",
+    "source": {
+      "bibkey": "fox-2018",
+      "paperLabel": "(47a)"
+    },
+    "language": "stan1293",
+    "primaryText": "What are you required to read for this class? -- War and Peace or Brothers Karamazov.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "required > or",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "or > required",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "family",
+        "higherOrder"
+      ],
+      [
+        "negation",
+        "no"
+      ],
+      [
+        "modal",
+        "yes"
+      ],
+      [
+        "number",
+        "neutral"
+      ],
+      [
+        "blocked",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fox2018_ex47b",
+    "source": {
+      "bibkey": "fox-2018",
+      "paperLabel": "(47b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Which books are you required to read for this class? -- The Russian books or the French books.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "required > or",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "or > required",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "family",
+        "higherOrder"
+      ],
+      [
+        "negation",
+        "no"
+      ],
+      [
+        "modal",
+        "yes"
+      ],
+      [
+        "number",
+        "plural"
+      ],
+      [
+        "blocked",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "fox2018_ex48",
+    "source": {
+      "bibkey": "fox-2018",
+      "paperLabel": "(48)"
+    },
+    "language": "stan1293",
+    "primaryText": "Which book are you required to read for this class? -- War and Peace or Brothers Karamazov.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "required > or",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "or > required",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "family",
+        "higherOrder"
+      ],
+      [
+        "negation",
+        "no"
+      ],
+      [
+        "modal",
+        "yes"
+      ],
+      [
+        "number",
+        "singular"
+      ],
+      [
+        "blocked",
+        "yes"
+      ]
+    ],
+    "comment": "Singular wh-phrases cannot quantify over higher-type traces."
+  }
+]
