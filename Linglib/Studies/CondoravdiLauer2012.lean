@@ -1,6 +1,6 @@
 import Linglib.Semantics.Attitudes.Desire.Preferential
 import Linglib.Semantics.Modality.Kratzer.Operators
-import Linglib.Discourse.Commitment.Basic
+import Linglib.Discourse.Commitment.Preferential
 import Linglib.Data.Examples.CondoravdiLauer2012
 
 /-!
@@ -66,13 +66,8 @@ variable {A W : Type*} {P : A → W → PreferenceStructure W} {a : A} {p q : Se
 effective preference structure `P a w`, the distinguished consistent structure that determines
 `a`'s action choices, (28) and (29). The public commitments of §3.2 are `Commitment`s:
 `commit a p` is `PB(a, p)`, to act as though believing `p`, and `commit a p .preferential` is
-`PEP(a, p)`, to act as though `p` were a maximal effective preference. -/
-
-variable (P) in
-/-- The preferential commitments in `K` are effective preferences at `w`: a speaker commits to
-an effective preference only when holding it, condition (iii) of §3.4. -/
-def Sincere (K : State A W) (w : W) : Prop :=
-  ∀ c ∈ K, c.force = .preferential → c.polarity = .commit → Want P c.committer c.content w
+`PEP(a, p)`, to act as though `p` were a maximal effective preference; a speaker commits to an
+effective preference only when holding it, condition (iii) of §3.4, `Commitment.Sincere`. -/
 
 /-! ### The conventions -/
 
@@ -126,7 +121,7 @@ practical reasoning it leaves informal; without it, the only-if reading is what 
 theorem directive_want_addressee {K : State A W} {ad : A} (hs : Sincere P K w)
     (hp : commit a p .preferential ∈ K) (hii : p ⊆ {v | Want P ad p v}) :
     WantNecessary P a {v | Want P ad p v} w :=
-  (hs _ hp rfl rfl).wantNecessary.mono hii
+  (hs.want hp).wantNecessary.mono hii
 
 /-! ### Consistency -/
 
@@ -145,7 +140,7 @@ the second revises the speaker's effective preferences, (12) to (14). -/
 theorem imperatives_revise {K : State A W} {B : Set W} (hC : (P a w).Consistent B)
     (hp : commit a p .preferential ∈ K) (hq : commit a q .preferential ∈ K)
     (h : B ∩ (p ∩ q) = ∅) : ¬ Sincere P K w :=
-  λ hs => (hC.inter_inter_nonempty_of_mem_maxElts (hs _ hp rfl rfl) (hs _ hq rfl rfl)).ne_empty h
+  λ hs => (hC.inter_inter_nonempty_of_mem_maxElts (hs.want hp) (hs.want hq)).ne_empty h
 
 /-! ### Endorsement: advice, permission, concession -/
 

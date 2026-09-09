@@ -1,23 +1,24 @@
 import Linglib.Syntax.Category.Particle.Basic
 
 /-!
-# Marathi Utterance-Final Particles
-[deo-2025-bara] [deo-2023]
+# Marathi utterance-final particles
 
-Utterance-final Marathi discourse particles as `Particle` values. The
-commitment semantics (dependent vs independent uptake) is analytical
-and lives in `Studies/Deo2025.lean`.
+The utterance-final discourse particles of Marathi as `Particle` values with their clause-type
+distribution. *Bərə* occurs with declaratives, imperatives and wh-interrogatives and never with
+polar interrogatives ([deo-2025-bara] §1); its commitment semantics is the subject of
+`Studies/Deo2025.lean`. *Na* signals a preference for independent shared commitment
+([deo-2023]); only its imperative use is recorded here, from [deo-2025-bara] fn. 5 and fn. 6.
+
+## References
+
+* [deo-2025-bara]
+* [deo-2023]
 -/
 
 namespace Marathi.Particles
 
-/-- *bərə* — utterance-final particle combining with declaratives,
-imperatives, and wh-interrogatives, never polar interrogatives
-([deo-2025-bara] §1). Conventionally signals that the speaker requests
-*dependent* doxastic or preferential commitment uptake tied to an
-addressee-benefiting goal ([deo-2025-bara] (20)–(21)); the apparatus
-and the preferential-vs-doxastic classification live in
-`Studies/Deo2025.lean`. -/
+/-- *bərə*: utterance-final, with declaratives, imperatives and wh-interrogatives, never with
+polar interrogatives ([deo-2025-bara] §1). -/
 def bara : Particle where
   form := "bərə"
   position := some .clauseFinal
@@ -28,11 +29,8 @@ def bara : Particle where
     | .imperative, .matrix => some .optional
     | _, _ => none
 
-/-- *na* — utterance-final particle analyzed in [deo-2023] as
-signalling preference for *independent* shared commitment (the doxastic
-mirror of *bərə*). Only the imperative-augmenting use is attested in
-[deo-2025-bara] (fn. 6, p. 392); other cells are unrecorded pending a
-[deo-2023] formalization. -/
+/-- *na*: utterance-final, augmenting an imperative while leaving the addressee the choice
+([deo-2025-bara] fn. 5); its other uses are not recorded. -/
 def na : Particle where
   form := "na"
   position := some .clauseFinal

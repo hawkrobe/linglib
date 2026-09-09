@@ -193,15 +193,18 @@ def discrete (S : Set (Set W)) : PreferenceStructure W where
 @[simp] theorem maxElts_discrete (S : Set (Set W)) : (discrete S).maxElts = S :=
   Set.ext λ _ => ⟨And.left, λ h => ⟨h, λ _ _ h => h⟩⟩
 
+/-- Unranked preferences are consistent when jointly belief-compatible. -/
+theorem consistent_discrete {S : Set (Set W)} {B : Set W} (h : (B ∩ ⋂₀ S).Nonempty) :
+    (discrete S).Consistent B := λ _ hX hXB =>
+  absurd hXB (h.mono (Set.inter_subset_inter_right _ (Set.sInter_subset_sInter hX))).ne_empty
+
 /-- The structure with the single preference `p`. -/
 abbrev single (p : Set W) : PreferenceStructure W := discrete {p}
 
 @[simp] theorem maxElts_single (p : Set W) : (single p).maxElts = {p} := maxElts_discrete _
 
 theorem consistent_single {p B : Set W} (h : (p ∩ B).Nonempty) : (single p).Consistent B :=
-  consistent_of_realistic_of_isChain
-    (λ _ hq => by rw [Set.mem_singleton_iff.1 hq]; exact h.ne_empty)
-    (Set.pairwise_singleton _ _) (h.mono Set.inter_subset_right)
+  consistent_discrete (by rwa [Set.sInter_singleton, Set.inter_comm])
 
 end PreferenceStructure
 
