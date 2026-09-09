@@ -395,6 +395,12 @@ instance [DecidableLE (Know B)] : DecidablePred (IsConsistent (B := B)) :=
   fun a => inferInstanceAs (Decidable (a ≤ₖ conf a))
 instance [DecidableLE (Know B)] : DecidablePred (IsAnticonsistent (B := B)) :=
   fun a => inferInstanceAs (Decidable (conf a ≤ₖ a))
+instance [DecidableRel (kLE (B := B))] : DecidablePred (IsConsistent (B := B)) :=
+  λ a => inferInstanceAs (Decidable (a ≤ₖ conf a))
+
+instance [DecidableRel (kLE (B := B))] : DecidablePred (IsAnticonsistent (B := B)) :=
+  λ a => inferInstanceAs (Decidable (conf a ≤ₖ a))
+
 instance [DecidableEq B] : DecidablePred (IsExact (B := B)) :=
   fun a => inferInstanceAs (Decidable (conf a = a))
 

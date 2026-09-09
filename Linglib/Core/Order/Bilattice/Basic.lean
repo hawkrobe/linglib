@@ -1,4 +1,5 @@
 import Linglib.Core.Order.Bilattice.Product
+import Linglib.Core.Order.DeMorganAlgebra.Defs
 
 /-!
 # Evidential bilattices over a chain
@@ -91,6 +92,80 @@ theorem guard_of_pro_bot {x : Evidential S} (h : x.pro = ⊥) (y : Evidential S)
   simp [guard, h]
 
 end Guard
+
+/-! ### Conflation from a De Morgan complement
+
+Over a lattice with an involutive antitone complement, `conf compl` is a conflation in the sense
+of `Bilattice.Conflation` — an involution preserving the truth order and reversing the knowledge
+order — and it commutes with Ginsberg negation ([fitting-1994] §7, [fitting-2021] §8.8). The
+exact, consistent and anticonsistent values then read off the coordinates. -/
+
+section Involution
+
+variable [LatticeWithInvolution S]
+
+theorem conf_conf (x : Evidential S) : Evidential.conf compl (Evidential.conf compl x) = x := by
+  ext <;> simp [Evidential.conf, LatticeWithInvolution.compl_compl]
+
+theorem conf_le_conf {x y : Evidential S} (h : x ≤ y) :
+    Evidential.conf compl x ≤ Evidential.conf compl y :=
+  ⟨LatticeWithInvolution.compl_le_compl h.2, LatticeWithInvolution.compl_le_compl h.1⟩
+
+theorem conf_kLE_conf {x y : Evidential S} (h : x ≤ₖ y) :
+    Evidential.conf compl y ≤ₖ Evidential.conf compl x :=
+  ⟨LatticeWithInvolution.compl_le_compl h.2, LatticeWithInvolution.compl_le_compl h.1⟩
+
+instance : Conflation (Evidential S) where
+  conf := Evidential.conf compl
+  conf_conf := conf_conf
+  conf_le_conf := conf_le_conf
+  conf_kLE_conf := conf_kLE_conf
+
+instance : NegConfComm (Evidential S) := ⟨λ _ => rfl⟩
+
+@[simp] theorem pro_conf (x : Evidential S) : (Conflation.conf x).pro = x.conᶜ := rfl
+@[simp] theorem con_conf (x : Evidential S) : (Conflation.conf x).con = x.proᶜ := rfl
+
+/-- The exact values are the pairs `⟨a, aᶜ⟩`. -/
+theorem isExact_iff (x : Evidential S) : IsExact x ↔ x.con = x.proᶜ :=
+  ⟨λ h => (congrArg Product.con h).symm,
+    λ h => Product.ext (by simp [h, LatticeWithInvolution.compl_compl]) (by simpa using h.symm)⟩
+
+/-- The consistent values: the evidence against is below the complement of the evidence for. -/
+theorem isConsistent_iff (x : Evidential S) : IsConsistent x ↔ x.con ≤ x.proᶜ :=
+  consistent_iff_con_le LatticeWithInvolution.compl_anti LatticeWithInvolution.compl_compl
+
+/-- The anticonsistent values: the complement of the evidence for is below the evidence
+against. -/
+theorem isAnticonsistent_iff (x : Evidential S) : IsAnticonsistent x ↔ x.proᶜ ≤ x.con :=
+  ⟨And.right, λ h => ⟨(LatticeWithInvolution.compl_le_compl h).trans
+    (LatticeWithInvolution.compl_compl x.pro).le, h⟩⟩
+
+end Involution
+
+/-! ### The truth lattice as a De Morgan lattice
+
+With Ginsberg negation as complement, the truth lattice of `S ⊙ S` is a lattice with involution,
+distributive when `S` is: `FOUR` under `≤ₜ` is a De Morgan algebra ([fitting-2021] §8.3). -/
+
+section Involutive
+
+variable [Lattice S] [BoundedOrder S]
+
+instance : LatticeWithInvolution (Evidential S) where
+  toLattice := inferInstance
+  toBoundedOrder := inferInstance
+  compl := Product.neg
+  compl_compl := Product.neg_neg
+  compl_le_compl := Product.neg_le_neg
+
+@[simp] theorem compl_eq_neg (x : Evidential S) : xᶜ = neg x := rfl
+
+end Involutive
+
+instance [DistribLattice S] [BoundedOrder S] : DeMorganAlgebra (Evidential S) :=
+  { (inferInstance : DistribLattice (Evidential S)),
+    (inferInstance : LatticeWithInvolution (Evidential S)) with }
 
 end Evidential
 
