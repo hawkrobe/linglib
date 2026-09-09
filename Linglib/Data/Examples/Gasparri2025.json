@@ -1,128 +1,2254 @@
 [
   {
-    "id": "gasparri2025_ruth_dancer",
-    "source": {"bibkey": "gasparri-2025", "paperLabel": "UNVERIFIED ex. 4"},
+    "id": "gasparri2025_ex4a",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(4a)"
+    },
     "language": "stan1293",
-    "primaryText": "Ruth is a dancer.",
+    "primaryText": "Ruth is common.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Ruth is a dancer.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {"name": "token", "judgment": "acceptable"},
-      {"name": "generic", "judgment": "questionable"}
-    ],
-    "paperFeatures": [
-      ["subject_type", "bare_name"],
-      ["licensor", "none"]
-    ],
-    "comment": "Migrated from Phenomena/Generics/BareNames.lean ruth_dancer. Bare singular name without a licensor: the token reading is fine, the generic reading ('people called Ruth are dancers') is degraded — generic recalcitrance."
-  },
-  {
-    "id": "gasparri2025_the_tiger_striped",
-    "source": {"bibkey": "gasparri-2025", "paperLabel": "UNVERIFIED ex. 4"},
-    "language": "stan1293",
-    "primaryText": "The tiger is striped.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "The tiger is striped.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {"name": "token", "judgment": "acceptable"},
-      {"name": "generic", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["subject_type", "definite_common"],
-      ["licensor", "none"]
-    ],
-    "comment": "Migrated from Phenomena/Generics/BareNames.lean the_tiger_striped. Ordinary definite singular: generic reading available without any licensor — the baseline bare names fail to match."
-  },
-  {
-    "id": "gasparri2025_ruth_good_grades",
-    "source": {"bibkey": "gasparri-2025", "paperLabel": "UNVERIFIED ex. 21"},
-    "language": "stan1293",
-    "primaryText": "According to the numbers, Ruth has good grades in biology.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "According to the numbers, Ruth has good grades in biology.",
-    "context": "Naming-convention context: statistical generalization over people called Ruth.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {"name": "token", "judgment": "questionable"},
-      {"name": "generic", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["subject_type", "bare_name"],
-      ["licensor", "generic_context"]
-    ],
-    "comment": "Migrated from Phenomena/Generics/BareNames.lean ruth_good_grades. A naming-convention context licenses the generic reading of the bare singular name."
-  },
-  {
-    "id": "gasparri2025_tristan_extinct",
-    "source": {"bibkey": "gasparri-2025", "paperLabel": "UNVERIFIED ex. 34-35"},
-    "language": "stan1293",
-    "primaryText": "Tristan is extinct.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Tristan is extinct.",
+    "translation": "",
     "context": "",
     "judgment": "questionable",
     "alternatives": [],
     "readings": [
-      {"name": "token", "judgment": "questionable"},
-      {"name": "generic", "judgment": "questionable"}
+      {
+        "name": "generic",
+        "judgment": "questionable"
+      }
     ],
     "paperFeatures": [
-      ["subject_type", "bare_name"],
-      ["licensor", "kind_level_pred"]
+      [
+        "subject",
+        "bareName"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "kindLevel"
+      ]
     ],
-    "comment": "Migrated from Phenomena/Generics/BareNames.lean tristan_extinct. Bare singular names resist kind-level predicates even though those select for kinds."
+    "comment": "The paper marks the sentence ?? without listing a reading; the generic reading is the one at issue."
   },
   {
-    "id": "gasparri2025_quoted_tristan_extinct",
-    "source": {"bibkey": "gasparri-2025", "paperLabel": "UNVERIFIED ex. 34-35"},
+    "id": "gasparri2025_ex4b",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(4b)"
+    },
     "language": "stan1293",
-    "primaryText": "'Tristan' is extinct.",
+    "primaryText": "Ruth is a dancer.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "'Tristan' is extinct.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "token", "judgment": "questionable"},
-      {"name": "generic", "judgment": "acceptable"}
+      {
+        "name": "token",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "generic",
+        "judgment": "questionable"
+      }
     ],
     "paperFeatures": [
-      ["subject_type", "quoted_name"],
-      ["licensor", "kind_level_pred"]
+      [
+        "subject",
+        "bareName"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
     ],
-    "comment": "Migrated from Phenomena/Generics/BareNames.lean quoted_tristan_extinct. Quotation rescues kind-level predication for names: the quoted name denotes the name-kind."
+    "comment": "Bare Ruth obligatorily takes a token reading."
   },
   {
-    "id": "gasparri2025_dodo_extinct",
-    "source": {"bibkey": "gasparri-2025", "paperLabel": "UNVERIFIED ex. 34-35"},
+    "id": "gasparri2025_ex4c",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(4c)"
+    },
     "language": "stan1293",
-    "primaryText": "The dodo is extinct.",
+    "primaryText": "The tiger is striped.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "The dodo is extinct.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "token", "judgment": "questionable"},
-      {"name": "generic", "judgment": "acceptable"}
+      {
+        "name": "token",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
-      ["subject_type", "definite_common"],
-      ["licensor", "kind_level_pred"]
+      [
+        "subject",
+        "definiteCommon"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
     ],
-    "comment": "Migrated from Phenomena/Generics/BareNames.lean dodo_extinct. Definite common NPs accept kind-level predicates — the parallel bare names break and quotation restores."
+    "comment": ""
+  },
+  {
+    "id": "gasparri2025_ex4d",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(4d)"
+    },
+    "language": "stan1293",
+    "primaryText": "The tiger is widespread.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "questionable"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "definiteCommon"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "kindLevel"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gasparri2025_ex5a",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(5a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Marias are common.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "pluralName"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "kindLevel"
+      ]
+    ],
+    "comment": "Bare plural names license generic readings easily."
+  },
+  {
+    "id": "gasparri2025_ex5b",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(5b)"
+    },
+    "language": "stan1293",
+    "primaryText": "(The) Jamals (in my town) are smart.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "pluralName"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gasparri2025_ex6a",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(6a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Ruth is 40 years old.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "generic",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "bareName"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gasparri2025_ex6b",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(6b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Ruth is typically 40 years old.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "generic",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "bareName"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "yes"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": "The paper marks the sentence ?? without listing a reading; the generic reading is the one at issue. A token reading needs a very specific scenario."
+  },
+  {
+    "id": "gasparri2025_ex7a",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(7a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The Rutgers professor is 40 years old.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "generic",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "definiteCommon"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": "Adapted from Dayal (2004)."
+  },
+  {
+    "id": "gasparri2025_ex7b",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(7b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The Rutgers professor is generally 40 years old.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "questionable"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "definiteCommon"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "yes"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": "The adverb recovers the generic reading of the common definite."
+  },
+  {
+    "id": "gasparri2025_ex8a",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(8a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The Coke bottle has a narrow neck.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "definiteCommon"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": "A simple generic, after Partee's example in Carlson (1977)."
+  },
+  {
+    "id": "gasparri2025_ex8b",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(8b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The Coke bottle generally has a narrow neck.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "questionable"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "definiteCommon"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "yes"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": "An overt quantificational generic."
+  },
+  {
+    "id": "gasparri2025_ex11a",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(11a)"
+    },
+    "language": "stan1293",
+    "primaryText": "In English, Leslie is generally a woman.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "questionable"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "bareName"
+      ],
+      [
+        "context",
+        "locative"
+      ],
+      [
+        "qadv",
+        "yes"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": "After Geurts (1997) and Matushansky (2008) on names under naming conventions."
+  },
+  {
+    "id": "gasparri2025_ex11b",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(11b)"
+    },
+    "language": "stan1293",
+    "primaryText": "In England, Leslie is generally a woman.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "questionable"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "bareName"
+      ],
+      [
+        "context",
+        "locative"
+      ],
+      [
+        "qadv",
+        "yes"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": "A marked habitual token reading is also available."
+  },
+  {
+    "id": "gasparri2025_ex12",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(12)"
+    },
+    "language": "stan1293",
+    "primaryText": "Italian Andrea is generally (a) male, German Andrea is generally (a) female.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "marginal"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "modifiedName"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "yes"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gasparri2025_ex13",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(13)"
+    },
+    "language": "stan1293",
+    "primaryText": "Italian Andrea is (a) male, German Andrea is (a) female.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "modifiedName"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": "The generic reading survives without the adverb."
+  },
+  {
+    "id": "gasparri2025_ex14a",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(14a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The dish is nutritious.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "generic",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "definiteCommon"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gasparri2025_ex14b",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(14b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The Italian dish is nutritious.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "generic",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "modifiedCommon"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": "A geographical adjective does not secure a generic reading for a common definite."
+  },
+  {
+    "id": "gasparri2025_ex14c",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(14c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Italian dishes are nutritious.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "questionable"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "bareCommonPlural"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gasparri2025_ex15a",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(15a)"
+    },
+    "language": "ital1282",
+    "primaryText": "L'Andrea italiano è generalmente (un) maschio; l'Andrea tedesca è generalmente (una) femmina.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "questionable"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "modifiedName"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "yes"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": "The modified name takes an obligatory article."
+  },
+  {
+    "id": "gasparri2025_ex15b",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(15b)"
+    },
+    "language": "stan1290",
+    "primaryText": "L'Andrea italien est généralement (un) homme, l'Andrea allemande est généralement (une) femme.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "questionable"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "modifiedName"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "yes"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": "The modified name takes an obligatory article."
+  },
+  {
+    "id": "gasparri2025_ex16a",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(16a)"
+    },
+    "language": "ital1282",
+    "primaryText": "L'Andrea italiano è (un) maschio, l'Andrea tedesca è (una) femmina.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "modifiedName"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gasparri2025_ex16b",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(16b)"
+    },
+    "language": "stan1290",
+    "primaryText": "L'Andrea italien est (un) homme, l'Andrea allemande est (une) femme.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "modifiedName"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gasparri2025_ex17a",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(17a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Children who grow a new tooth show it off.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "questionable"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "bareCommonPlural"
+      ],
+      [
+        "context",
+        "binding"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": "From Lasersohn (1997)."
+  },
+  {
+    "id": "gasparri2025_ex17b",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(17b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Lions that see a gazelle chase it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "questionable"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "bareCommonPlural"
+      ],
+      [
+        "context",
+        "binding"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": "From Leslie (2015)."
+  },
+  {
+    "id": "gasparri2025_ex18a",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(18a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The barn is typically red.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "questionable"
+      },
+      {
+        "name": "generic",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "definiteCommon"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "yes"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gasparri2025_ex18b",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(18b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Every farm around here has a barn, and the barn is typically red.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "questionable"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "definiteCommon"
+      ],
+      [
+        "context",
+        "binding"
+      ],
+      [
+        "qadv",
+        "yes"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": "A donkey definite reads generically."
+  },
+  {
+    "id": "gasparri2025_ex20",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(20)"
+    },
+    "language": "stan1293",
+    "primaryText": "Every woman's husband is called Gerontius, and Gerontius is usually tall.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "questionable"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "bareName"
+      ],
+      [
+        "context",
+        "binding"
+      ],
+      [
+        "qadv",
+        "yes"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": "A donkey use of a bare name, derived from Elbourne (2005)."
+  },
+  {
+    "id": "gasparri2025_ex21",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(21)"
+    },
+    "language": "stan1293",
+    "primaryText": "According to the numbers, Ruth has good grades in biology, whereas Paul excels in latin.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "We have collected data on school performance over the past 5 years across all public schools in the world, and categorized it by given name.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "questionable"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "bareName"
+      ],
+      [
+        "context",
+        "naming"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": "No syntactic binding and no adverb."
+  },
+  {
+    "id": "gasparri2025_ex22a",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(22a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The kangaroo rat is friendly to humans.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "definiteCommon"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": "The token reading is set aside."
+  },
+  {
+    "id": "gasparri2025_ex22b",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(22b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The kangaroo rat is generally friendly to humans.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "definiteCommon"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "yes"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gasparri2025_ex23b",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(23b)"
+    },
+    "language": "stan1293",
+    "primaryText": "According to the numbers, Ruth generally has good grades in biology.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "We have collected data on school performance over the past 5 years across all public schools in the world, and categorized it by given name.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "bareName"
+      ],
+      [
+        "context",
+        "naming"
+      ],
+      [
+        "qadv",
+        "yes"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": "Inserting the adverb changes the meaning minimally."
+  },
+  {
+    "id": "gasparri2025_ex26",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(26)"
+    },
+    "language": "stan1293",
+    "primaryText": "Paul falls in love with Ruth, not with Clementine.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "People have a tendency to fall in love with individuals with names of comparable length to theirs.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "questionable"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "bareName"
+      ],
+      [
+        "context",
+        "naming"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": "About individuals and their names only."
+  },
+  {
+    "id": "gasparri2025_ex27a",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(27a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Regina is noble and determined.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Reading a baby-name catalog.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "bareName"
+      ],
+      [
+        "context",
+        "naming"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gasparri2025_ex28a",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(28a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Apolline is college educated, belongs to an upper middle class family, and her social milieu tends to engage in conspicuous consumption.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A discussion on the sociology of French names.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "questionable"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "bareName"
+      ],
+      [
+        "context",
+        "naming"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gasparri2025_ex28b",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(28b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Even in the absence of real data, we assume that Jean-Hubert hails from an affluent family and that Kevin has humble beginnings.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "We have biases about names.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "questionable"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "bareName"
+      ],
+      [
+        "context",
+        "naming"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gasparri2025_ex31a",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(31a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The green bottle has a narrow neck.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "generic",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "modifiedCommon"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gasparri2025_ex31b",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(31b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The green bottle has a narrow neck.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "We manufacture three types of bottles in this plant: green, blue, and clear.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "questionable"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "modifiedCommon"
+      ],
+      [
+        "context",
+        "focusedKinds"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": "Dayal (2004): kinds in focus license the generic reading."
+  },
+  {
+    "id": "gasparri2025_ex32a",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(32a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The Indian rhinoceros is vertebrate.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "modifiedCommon"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gasparri2025_ex32b",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(32b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The mammal is vertebrate.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "generic",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "definiteCommon"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": "A taxonomically high kind needs a suitable context (Mari, Beyssade and Del Prete 2013)."
+  },
+  {
+    "id": "gasparri2025_ex32c",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(32c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Unlike the members of several other phyla, the mammal is vertebrate.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "definiteCommon"
+      ],
+      [
+        "context",
+        "contrast"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gasparri2025_ex33a",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(33a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The Romanov is refined and cultivated.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "definiteName"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": "Adapted from Jeshion (2018)."
+  },
+  {
+    "id": "gasparri2025_ex33b",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(33b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Romanov is refined and cultivated.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Reading a baby-name catalog.",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "generic",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "bareName"
+      ],
+      [
+        "context",
+        "naming"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "characterizing"
+      ]
+    ],
+    "comment": "A family name fails as a generic even in a baby-name-catalog context."
+  },
+  {
+    "id": "gasparri2025_ex34a",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(34a)"
+    },
+    "language": "stan1293",
+    "primaryText": "(In India,) The dodo is extinct.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "definiteCommon"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "kindLevel"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gasparri2025_ex34b",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(34b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The book became common in the 19th century.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "definiteCommon"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "kindLevel"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gasparri2025_ex34d",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(34d)"
+    },
+    "language": "stan1293",
+    "primaryText": "(In Germany,) Tristan is extinct.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "generic",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "bareName"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "kindLevel"
+      ]
+    ],
+    "comment": "The paper marks the sentence ?? without listing a reading; the generic reading is the one at issue."
+  },
+  {
+    "id": "gasparri2025_ex34e",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(34e)"
+    },
+    "language": "stan1293",
+    "primaryText": "John became common in the 19th century.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "generic",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "bareName"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "kindLevel"
+      ]
+    ],
+    "comment": "The paper marks the sentence ?? without listing a reading; the generic reading is the one at issue."
+  },
+  {
+    "id": "gasparri2025_ex34f",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(34f)"
+    },
+    "language": "stan1293",
+    "primaryText": "(In Germany,) 'Tristan' is extinct.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "quotedName"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "kindLevel"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gasparri2025_ex34g",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(34g)"
+    },
+    "language": "stan1293",
+    "primaryText": "'John' became common in the 19th century.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "quotedName"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "kindLevel"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gasparri2025_ex35a",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(35a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mountains are widespread.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "questionable"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "bareCommonPlural"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "kindLevel"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gasparri2025_ex35b",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(35b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The mountain is widespread.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "generic",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "definiteCommon"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "kindLevel"
+      ]
+    ],
+    "comment": "The paper marks the sentence ?? without listing a reading; the generic reading is the one at issue."
+  },
+  {
+    "id": "gasparri2025_ex35c",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(35c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mountain lakes emerged around 3.5 billion years ago.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "generic",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "bareCommonPlural"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "kindLevel"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gasparri2025_ex35d",
+    "source": {
+      "bibkey": "gasparri-2025",
+      "paperLabel": "(35d)"
+    },
+    "language": "stan1293",
+    "primaryText": "The mountain lake emerged around 3.5 billion years ago.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "token",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "generic",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "definiteCommon"
+      ],
+      [
+        "context",
+        "outOfTheBlue"
+      ],
+      [
+        "qadv",
+        "no"
+      ],
+      [
+        "level",
+        "kindLevel"
+      ]
+    ],
+    "comment": ""
   }
 ]

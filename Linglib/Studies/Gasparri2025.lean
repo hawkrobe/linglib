@@ -1,61 +1,133 @@
+import Linglib.Semantics.Composition.TypeShifting
+import Linglib.Semantics.Quantification.Counting
 import Linglib.Data.Examples.Gasparri2025
 
 /-!
 # Gasparri (2025): Bare Singular Names and Genericity
-[gasparri-2025]
 
-Journal of Semantics 42(1–2): 127–135.
+This file formalizes [gasparri-2025]'s reply to the argument that bare singular names, unlike the
+definite singulars predicativism equates them with ([matushansky-2008], [fara-2015]), never take
+generic readings ([delgado-2024]). The paper's data show that they do, in simple generics as well
+as under quantificational adverbs, though more grudgingly than common-noun definites: out of the
+blue a bare name resists the generic reading, and a naming-convention context, a locative, a
+modifier or binding recovers it. Kind-level generics are the one case that stays closed to bare
+names and open to quoted ones, a gap common nouns share.
 
-Predicativists treat bare singular names (BSNs) like *Ruth* as predicative
-DPs: ⟦∅ Ruth⟧ = ⟦the⟧ [λx. x is called Ruth]. If names are count nouns,
-BSNs should pattern with definite singulars like *the tiger* for
-genericity. The rows in `Data/Examples/Gasparri2025.json` show BSNs CAN
-get generic readings, but exhibit **generic recalcitrance** — they are
-harder to read generically than ordinary definite singulars, and need a
-licensor (naming-convention context, Q-adverb, locative) to recover.
+The rows are the paper's judgments and the theorems the generalizations it draws from them:
+`recalcitrance` against parity with definite singulars, `bareName_simple_generic` against the
+categorical ban. The paper's theoretical point, that a generic use calls for predicative content,
+is `referentialist_generic_is_token`: a referential name shifted to its identity property
+([partee-1987]) and fed to the generic operator yields nothing but the token reading, so the shift
+a referentialist needs must introduce the naming predicate itself.
 
-## Main declarations
+## Implementation notes
 
-- `genericOf` — judgment of a row's generic reading
-- `generic_recalcitrance` — unlicensed BSNs resist generics; unlicensed
-  definite singulars do not
-- `licensing_enables_generic` — naming-convention contexts license BSN generics
-- `quotation_rescues_kind_level` — kind-level predicates reject BSNs but
-  accept quoted names and definite commons
+* The generic operator is *most* over the restrictor, the proportional reading the paper's
+  genericity diagnostics presuppose; the paper itself stays neutral on the semantics of Gen.
+* A sentence the paper marks `??` without listing a reading is recorded with a questionable
+  generic reading, the reading at issue; a reading the paper does not list is absent.
+
+## References
+
+* [gasparri-2025]
+* [partee-1987]
+* [matushansky-2008]
+* [fara-2015]
+* [delgado-2024]
 -/
 
 namespace Gasparri2025
 
-open Data.Examples
+open Quantification Data.Examples Features Semantics.Composition.TypeShifting
 
-/-- Judgment of the row's generic reading, if recorded. -/
-def genericOf (row : LinguisticExample) : Option Features.Judgment :=
-  (row.readings.find? (·.1 == "generic")).map (·.2)
+/-- A referential name shifted to its identity property and fed to the generic operator returns
+the token reading, so a generic use of a bare name needs the naming predicate. -/
+theorem referentialist_generic_is_token {E : Type} [Fintype E] [DecidableEq E] (j : E)
+    (VP : E → Prop) :
+    most_sem (ident j) VP ↔ VP j :=
+  most_sem_singleton_iff j VP
 
-/-- **Generic recalcitrance**: without a licensor, no bare singular name
-    has an acceptable generic reading, while every definite common NP does.
-    This is the asymmetry predicativism leaves unexplained: if *Ruth* is
-    just ⟦the⟧ + a predicate, it should pattern with *the tiger*. -/
-theorem generic_recalcitrance :
-    ∀ row ∈ Examples.all, row.feature? "licensor" = some "none" →
-      (genericOf row = some .acceptable ↔
-        row.feature? "subject_type" = some "definite_common") := by
+/-! ### The paper's judgments -/
+
+/-- The subject of a sentence, as the paper classifies it. -/
+inductive Subject
+  | bareName | modifiedName | pluralName | quotedName | definiteName
+  | definiteCommon | modifiedCommon | bareCommonPlural
+  deriving DecidableEq, Repr
+
+/-- What the sentence is embedded in: nothing, a locative adjunct, a discourse about naming
+conventions, a binding quantifier, a discourse with kinds in focus, or a contrastive adjunct. -/
+inductive Context
+  | outOfTheBlue | locative | naming | binding | focusedKinds | contrast
+  deriving DecidableEq, Repr
+
+/-- Whether the predicate is characterizing or kind-level. -/
+inductive Level
+  | characterizing | kindLevel
+  deriving DecidableEq, Repr
+
+/-- A sentence of the paper with the judgment of its generic reading, if the paper lists one. -/
+structure Row where
+  subject : Subject
+  context : Context
+  qadv : Bool
+  level : Level
+  generic : Option Judgment
+  deriving DecidableEq, Repr
+
+def Row.ofExample (ex : LinguisticExample) : Option Row := do
+  let subject ← ex.parse? "subject" [("bareName", Subject.bareName),
+    ("modifiedName", .modifiedName), ("pluralName", .pluralName), ("quotedName", .quotedName),
+    ("definiteName", .definiteName), ("definiteCommon", .definiteCommon),
+    ("modifiedCommon", .modifiedCommon), ("bareCommonPlural", .bareCommonPlural)]
+  let context ← ex.parse? "context" [("outOfTheBlue", Context.outOfTheBlue),
+    ("locative", .locative), ("naming", .naming), ("binding", .binding),
+    ("focusedKinds", .focusedKinds), ("contrast", .contrast)]
+  let qadv ← ex.parse? "qadv" [("yes", true), ("no", false)]
+  let level ← ex.parse? "level" [("characterizing", Level.characterizing),
+    ("kindLevel", .kindLevel)]
+  pure ⟨subject, context, qadv, level, ex.readings.lookup "generic"⟩
+
+def rows : List Row := Examples.all.filterMap Row.ofExample
+
+/-- Out of the blue, a bare name has no acceptable generic reading. -/
+theorem recalcitrance : ∀ r ∈ rows, r.subject = .bareName → r.context = .outOfTheBlue →
+    r.generic ≠ some .acceptable := by
   decide
 
-/-- Naming-convention contexts license generic readings of BSNs:
-    recalcitrance is not a categorical ban. -/
-theorem licensing_enables_generic :
-    ∀ row ∈ Examples.all,
-      row.feature? "subject_type" = some "bare_name" →
-      row.feature? "licensor" = some "generic_context" →
-        genericOf row = some .acceptable := by
+/-- The recalcitrance is specific to names: a common definite takes a simple generic reading out
+of the blue. -/
+theorem definiteCommon_simple_generic : ∃ r ∈ rows, r.subject = .definiteCommon ∧
+    r.context = .outOfTheBlue ∧ r.qadv = false ∧ r.generic = some .acceptable := by
   decide
 
-/-- Kind-level predicates (*extinct*) accept definite commons and quoted
-    names but not bare names: quotation rescues the kind-level parallel. -/
-theorem quotation_rescues_kind_level :
-    genericOf Examples.tristan_extinct = some .questionable ∧
-    genericOf Examples.quoted_tristan_extinct = some .acceptable ∧
-    genericOf Examples.dodo_extinct = some .acceptable := ⟨rfl, rfl, rfl⟩
+/-- Against the ban on its narrow reading: a bare name in a simple generic. -/
+theorem bareName_simple_generic :
+    ∃ r ∈ rows, r.subject = .bareName ∧ r.qadv = false ∧ r.generic = some .acceptable := by
+  decide
+
+/-- Against the ban on its wide reading: a bare name under a quantificational adverb. -/
+theorem bareName_quantificational_generic :
+    ∃ r ∈ rows, r.subject = .bareName ∧ r.qadv = true ∧ r.generic = some .acceptable := by
+  decide
+
+/-- Kind-level generics stay closed to bare names. -/
+theorem bareName_kindLevel : ∀ r ∈ rows, r.subject = .bareName → r.level = .kindLevel →
+    r.generic ≠ some .acceptable := by
+  decide
+
+/-- Kind-level generics are open to quoted names. -/
+theorem quotedName_kindLevel : ∀ r ∈ rows, r.subject = .quotedName → r.level = .kindLevel →
+    r.generic = some .acceptable := by
+  decide
+
+/-- Common definites go both ways in kind-level generics, so the gap is no discrepancy peculiar
+to names. -/
+theorem definiteCommon_kindLevel_both :
+    (∃ r ∈ rows, r.subject = .definiteCommon ∧ r.level = .kindLevel ∧
+      r.generic = some .acceptable) ∧
+    ∃ r ∈ rows, r.subject = .definiteCommon ∧ r.level = .kindLevel ∧
+      r.generic ≠ some .acceptable := by
+  decide
 
 end Gasparri2025
