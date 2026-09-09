@@ -1,0 +1,570 @@
+[
+  {
+    "id": "foxkatzir2011_ex1",
+    "source": {
+      "bibkey": "fox-katzir-2011",
+      "paperLabel": "(1)"
+    },
+    "language": "stan1293",
+    "primaryText": "John did some of the homework.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not: John did all of the homework",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "inference",
+        "yes"
+      ],
+      [
+        "symmetric",
+        "no"
+      ],
+      [
+        "universal",
+        "no"
+      ],
+      [
+        "compatible",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "foxkatzir2011_ex2",
+    "source": {
+      "bibkey": "fox-katzir-2011",
+      "paperLabel": "(2)"
+    },
+    "language": "stan1293",
+    "primaryText": "John did the reading or the homework.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not: John did the reading and the homework",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "inference",
+        "yes"
+      ],
+      [
+        "symmetric",
+        "no"
+      ],
+      [
+        "universal",
+        "no"
+      ],
+      [
+        "compatible",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "foxkatzir2011_ex3",
+    "source": {
+      "bibkey": "fox-katzir-2011",
+      "paperLabel": "(3)"
+    },
+    "language": "stan1293",
+    "primaryText": "John has three children.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not: John has four children",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "inference",
+        "yes"
+      ],
+      [
+        "symmetric",
+        "no"
+      ],
+      [
+        "universal",
+        "no"
+      ],
+      [
+        "compatible",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "foxkatzir2011_ex29",
+    "source": {
+      "bibkey": "fox-katzir-2011",
+      "paperLabel": "(29)"
+    },
+    "language": "stan1293",
+    "primaryText": "John only [read three books]F.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not: John read four books",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "inference",
+        "yes"
+      ],
+      [
+        "symmetric",
+        "no"
+      ],
+      [
+        "universal",
+        "no"
+      ],
+      [
+        "compatible",
+        "no"
+      ]
+    ],
+    "comment": "Context: What did John do? The symmetric 'read exactly three books' is not a formal alternative."
+  },
+  {
+    "id": "foxkatzir2011_ex33",
+    "source": {
+      "bibkey": "fox-katzir-2011",
+      "paperLabel": "(33)"
+    },
+    "language": "stan1293",
+    "primaryText": "John only [read three books]F.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not: John read exactly three books",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "inference",
+        "no"
+      ],
+      [
+        "symmetric",
+        "yes"
+      ],
+      [
+        "universal",
+        "no"
+      ],
+      [
+        "compatible",
+        "no"
+      ]
+    ],
+    "comment": "Context: Mary read exactly three books. What did John do? Making the symmetric alternative salient does not let context keep it and prune 'four books'."
+  },
+  {
+    "id": "foxkatzir2011_ex38",
+    "source": {
+      "bibkey": "sauerland-2004",
+      "paperLabel": "disjunction"
+    },
+    "language": "stan1293",
+    "primaryText": "John did all of the homework or none of the homework.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not: John did all of the homework",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "inference",
+        "no"
+      ],
+      [
+        "symmetric",
+        "yes"
+      ],
+      [
+        "universal",
+        "no"
+      ],
+      [
+        "compatible",
+        "no"
+      ]
+    ],
+    "comment": "Neither disjunct's negation is an implicature; the disjuncts partition the assertion.",
+    "reportedIn": {
+      "bibkey": "fox-katzir-2011",
+      "paperLabel": "(38)"
+    }
+  },
+  {
+    "id": "foxkatzir2011_ex40",
+    "source": {
+      "bibkey": "fox-katzir-2011",
+      "paperLabel": "(40)"
+    },
+    "language": "stan1293",
+    "primaryText": "John is determined to do all of the homework or none of the homework.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not: John is determined to do all of the homework",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "inference",
+        "yes"
+      ],
+      [
+        "symmetric",
+        "yes"
+      ],
+      [
+        "universal",
+        "yes"
+      ],
+      [
+        "compatible",
+        "no"
+      ]
+    ],
+    "comment": "Both implicatures arise: the universal operator removes the symmetry."
+  },
+  {
+    "id": "foxkatzir2011_ex41",
+    "source": {
+      "bibkey": "fox-katzir-2011",
+      "paperLabel": "(41)"
+    },
+    "language": "stan1293",
+    "primaryText": "Each of my students did all of the homework or none of the homework.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not: Each of my students did all of the homework",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "inference",
+        "yes"
+      ],
+      [
+        "symmetric",
+        "yes"
+      ],
+      [
+        "universal",
+        "yes"
+      ],
+      [
+        "compatible",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "foxkatzir2011_ex42a",
+    "source": {
+      "bibkey": "katzir-2007",
+      "paperLabel": "Matsumoto examples"
+    },
+    "language": "stan1293",
+    "primaryText": "John did some of the homework yesterday, and he did just some of the homework today.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not: John did just some of the homework yesterday",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "inference",
+        "no"
+      ],
+      [
+        "symmetric",
+        "yes"
+      ],
+      [
+        "universal",
+        "no"
+      ],
+      [
+        "compatible",
+        "no"
+      ]
+    ],
+    "comment": "'Just some' is salient, so both it and 'all' are formal alternatives of 'some'; context cannot keep one and prune the other.",
+    "reportedIn": {
+      "bibkey": "fox-katzir-2011",
+      "paperLabel": "(42a)"
+    }
+  },
+  {
+    "id": "foxkatzir2011_ex44",
+    "source": {
+      "bibkey": "fox-katzir-2011",
+      "paperLabel": "(44)"
+    },
+    "language": "stan1293",
+    "primaryText": "John was required to do some of the homework yesterday, and he was required to do just some of the homework today.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not: John was required to do just some of the homework yesterday",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "inference",
+        "yes"
+      ],
+      [
+        "symmetric",
+        "yes"
+      ],
+      [
+        "universal",
+        "yes"
+      ],
+      [
+        "compatible",
+        "no"
+      ]
+    ],
+    "comment": "Also: not required to do all of it yesterday."
+  },
+  {
+    "id": "foxkatzir2011_ex46",
+    "source": {
+      "bibkey": "fox-katzir-2011",
+      "paperLabel": "(46)"
+    },
+    "language": "stan1293",
+    "primaryText": "Every single student got some of the questions right last week; today every single student got just some of the questions right.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not: Last week, every student got just some of the questions right",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "inference",
+        "yes"
+      ],
+      [
+        "symmetric",
+        "yes"
+      ],
+      [
+        "universal",
+        "yes"
+      ],
+      [
+        "compatible",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "foxkatzir2011_ex47a",
+    "source": {
+      "bibkey": "fox-katzir-2011",
+      "paperLabel": "(47a)"
+    },
+    "language": "stan1293",
+    "primaryText": "In last week's robbery they only [stole the books]F. In today's robbery they [stole the books but not the jewelry]F.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not: In last week's robbery they stole the books but not the jewelry",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "inference",
+        "no"
+      ],
+      [
+        "symmetric",
+        "yes"
+      ],
+      [
+        "universal",
+        "no"
+      ],
+      [
+        "compatible",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "foxkatzir2011_ex49a",
+    "source": {
+      "bibkey": "fox-katzir-2011",
+      "paperLabel": "(49a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Detective A only concluded that the robbers [stole the books]F. Detective B concluded that the robbers [stole the books but not the jewelry]F.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not: Detective A concluded that the robbers stole the books but not the jewelry",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "inference",
+        "yes"
+      ],
+      [
+        "symmetric",
+        "yes"
+      ],
+      [
+        "universal",
+        "yes"
+      ],
+      [
+        "compatible",
+        "no"
+      ]
+    ],
+    "comment": "Also: not that they stole the books and the jewelry."
+  },
+  {
+    "id": "foxkatzir2011_ex53",
+    "source": {
+      "bibkey": "fox-katzir-2011",
+      "paperLabel": "(53)"
+    },
+    "language": "stan1293",
+    "primaryText": "Yesterday, John talked to Mary or Sue, and today, John talked to Mary.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not: Yesterday, John talked to Mary",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "inference",
+        "no"
+      ],
+      [
+        "symmetric",
+        "no"
+      ],
+      [
+        "universal",
+        "no"
+      ],
+      [
+        "compatible",
+        "yes"
+      ]
+    ],
+    "comment": "The disjuncts are compatible, so not symmetric; the pruned disjunct is exhaustively relevant given the restriction, which the allowable-restriction condition forbids."
+  }
+]
