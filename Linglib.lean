@@ -3062,3 +3062,4 @@ import Linglib.Data.Examples.Flemming2021
 import Linglib.Data.Examples.Fortuny2024
 import Linglib.Data.Examples.Fox2007
 import Linglib.Data.Examples.Fox2018
+import Linglib.Data.Examples.FoxKatzir2011

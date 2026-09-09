@@ -56,7 +56,7 @@ namespace TrinhHaida2015
 
 open Syntax (Tree Cat)
 open Syntax.Cat
-open Alternatives.Symmetric (isSymmetric)
+open Alternatives
 open Exhaustification (innocent predToFinset altsFromPreds)
 
 
@@ -321,8 +321,9 @@ theorem full_domain_valid :
 /-- "exactly_three" and "four" are symmetric alternatives of "three":
     they partition its denotation. -/
 theorem cookies_symmetric :
-    isSymmetric cwDomain three exactlyThree four = true := by
-  native_decide
+    IsSymmetric (↑(predToFinset three) : Set CW) (↑(predToFinset exactlyThree) : Set CW)
+      (↑(predToFinset four) : Set CW) :=
+  (isSymmetric_coe _ _ _).2 (by decide)
 
 /-- With A = F(S) (the only valid domain), exhIE is vacuous:
     the symmetric alternatives make exhaustification identity. -/

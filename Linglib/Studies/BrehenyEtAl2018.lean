@@ -52,7 +52,7 @@ right ones derive the observed implicature.
 namespace BrehenyEtAl2018
 
 open Exhaustification (innocent predToFinset altsFromPreds)
-open Alternatives.Symmetric
+open Alternatives
 
 /-!
 ## The Problem of Indirect Scalar Implicatures
@@ -271,8 +271,9 @@ private def ranAndNotSmoked : ActivityWorld → Bool
 /-- "smoked" and "ran ∧ ¬smoked" are symmetric alternatives of "ran":
     they partition ran's denotation (ex. 19). -/
 theorem particularised_symmetric :
-    isSymmetric actDomain ran smoked ranAndNotSmoked = true := by
-  decide
+    IsSymmetric (↑(predToFinset ran) : Set ActivityWorld) (↑(predToFinset smoked) : Set ActivityWorld)
+      (↑(predToFinset ranAndNotSmoked) : Set ActivityWorld) :=
+  (isSymmetric_coe _ _ _).2 (by decide)
 
 /-- With the symmetric alternative present, exh is vacuous —
     the inference "John smoked" is not derived. -/
@@ -338,8 +339,9 @@ private def isOptional : DeonticWorld → Bool
     they are symmetric alternatives (cf. some/all and some-but-not-all
     in `Symmetry.lean`). -/
 theorem swanson_symmetric :
-    isSymmetric deonticDomain isPermitted isRequired isOptional
-      = true := by decide
+    IsSymmetric (↑(predToFinset isPermitted) : Set DeonticWorld)
+      (↑(predToFinset isRequired) : Set DeonticWorld) (↑(predToFinset isOptional) : Set DeonticWorld) :=
+  (isSymmetric_coe _ _ _).2 (by decide)
 
 /-- With both lexicalized symmetric alternatives, exh is vacuous.
     The structural approach cannot block "optional" from F because

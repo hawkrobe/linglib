@@ -1,149 +1,75 @@
-/-!
-# Symmetric Alternatives
-
-The **symmetry problem** is the central challenge for any theory of scalar
-implicatures based on alternatives. The problem: for any stronger
-alternative A of an assertion S, the sentence S ∧ ¬A is also stronger
-than S and yields the *opposite* implicature. A theory of alternatives
-must explain why A enters the alternative set but S ∧ ¬A does not.
-
-The problem emerged in the early 1970s: [horn-1972] established
-the Gricean derivation of scalar implicatures, and [kroch-1972]
-discussed the same reasoning for quantifiers, creating the conditions
-for recognizing that symmetric alternatives pose a fundamental obstacle.
-Every subsequent theory of alternatives is shaped by this problem:
-
-- [katzir-2007] addresses it via **structural complexity**: S ∧ ¬A
-  is structurally more complex than S, so it is excluded from F(S)
-- [fox-2007]'s **innocent exclusion** correctly handles symmetric
-  alternatives (they land in different MCEs, so neither is in I-E)
-- [fox-katzir-2011] show that **contextual restriction cannot
-  break symmetry** — only the formal alternative set F can
-- [breheny-et-al-2018] show that none of these fully solve
-  the problem (indirect SIs, gradable adjectives, too many/few
-  lexical alternatives remain problematic)
-- [fox-spector-2018]'s **economy condition** constrains where
-  `exh` can be inserted (not vacuous, not weakening)
-- **RSA** ([frank-goodman-2012], [franke-2011]) **dissolves**
-  rather than solves the symmetry problem: the utterance space is
-  specified directly, and utterance cost penalizes complex expressions
-  like "some but not all"
-
-This file defines the core concepts — `isSymmetric`, complement
-equivalence, and contextual relevance closure — as theory-neutral
-infrastructure that any approach can import. The definition follows
-[fox-katzir-2011] definition 12, but the concept is not specific
-to that paper.
-
-The Fox 2007 innocent-exclusion bridge theorems (`symmetric_not_ie`,
-`exhB_vacuous_of_ie_empty`, `symmetric_exhB_vacuous`,
-`both_excluded_inconsistent`) lived in this file in the legacy
-`Bool`/`List` API. They were never called outside their own
-docstrings, so the post-`Excluder` reorganization simply drops them
-rather than re-deriving Finset versions speculatively. The vacuity
-fact for the new API now lives next to its object as
-`Exhaustification.innocent_exh_eq_phi_of_innocentlyExcludable_empty`
-in `Exhaustification/Finite.lean`.
-
-## Key Definitions and Theorems
-
-- `isSymmetric`: S₁, S₂ partition S's denotation (def 12)
-- `symmetric_complement`: S ∧ ¬S₁ = S₂ when symmetric
-- `RelevanceClosure`: closure under ¬ and ∧ (condition 50)
-- `context_cannot_break_symmetry`: C preserves symmetry (constraint 28)
--/
-
-namespace Alternatives.Symmetric
-
--- ============================================================
--- SECTION 1: The Symmetry Predicate
--- ============================================================
-
-/-- Two propositions are **symmetric alternatives** of S if they
-    partition S's denotation: their union equals S and they are
-    mutually exclusive.
-
-    Formalized from [fox-katzir-2011] definition 12. The
-    underlying problem was recognized in the early 1970s
-    ([horn-1972], [kroch-1972]).
-
-    Note: this is stricter than mere non-innocent-excludability.
-    Disjuncts p, q of p∨q are often mutually compatible (p ∩ q ≠ ∅)
-    and hence NOT symmetric, though they still resist innocent
-    exclusion for related reasons ([fox-katzir-2011] fn. 18). -/
-def isSymmetric {W : Type} (domain : List W)
-    (s s₁ s₂ : W → Bool) : Bool :=
-  -- (a) ⟦S₁⟧ ∪ ⟦S₂⟧ = ⟦S⟧
-  domain.all (fun w => (s₁ w || s₂ w) == s w) &&
-  -- (b) ⟦S₁⟧ ∩ ⟦S₂⟧ = ∅
-  domain.all (fun w => !(s₁ w && s₂ w))
-
-
--- ============================================================
--- SECTION 2: Core Properties
--- ============================================================
-
-/-- When S₁, S₂ are symmetric alternatives of S, S ∧ ¬S₁ is
-    extensionally equal to S₂. This is the key fact underlying
-    the relevance argument: showing S ∧ ¬S₁ is relevant suffices
-    to show S₂ is relevant. -/
-theorem symmetric_complement {W : Type} (domain : List W)
-    (s s₁ s₂ : W → Bool)
-    (hsym : isSymmetric domain s s₁ s₂ = true) :
-    domain.all (fun w => (s w && !s₁ w) == s₂ w) = true := by
-  unfold isSymmetric at hsym
-  have ⟨ha, hb⟩ := Bool.and_eq_true_iff.mp hsym
-  rw [List.all_eq_true] at ha hb ⊢
-  intro w hw
-  specialize ha w hw
-  specialize hb w hw
-  simp [BEq.beq] at ha hb ⊢
-  cases h1 : s₁ w <;> cases h2 : s₂ w <;> simp_all
-
-
--- ============================================================
--- SECTION 3: Relevance Closure and Constraint 28
--- ============================================================
+import Mathlib.Order.BooleanSubalgebra
+import Mathlib.Data.Finset.Basic
 
 /-!
-## Context Cannot Break Symmetry
+# Symmetric alternatives
 
-The set of contextually relevant sentences C must satisfy closure
-conditions ([fox-katzir-2011] condition 50):
+Two alternatives are symmetric for an assertion when they partition it: negating either one
+asserts the other, so no theory that strengthens an assertion by negating alternatives can
+negate one of them without the other. This is the configuration of [kroch-1972]'s symmetry
+problem for scalar implicature, and [fox-katzir-2011]'s definition of it. The file defines
+`IsSymmetric`, shows that the second symmetric alternative is the assertion without the first,
+and that a set of propositions closed under negation and conjunction, a `BooleanSubalgebra`,
+contains both or neither.
 
-(50a) If S is relevant, so is ¬S.
-(50b) If S₁, S₂ are relevant, so is S₁ ∧ S₂.
+## References
 
-From these conditions, constraint (28) follows: **symmetry cannot be
-broken in C**. If S₁ is relevant and S is relevant, then S ∧ ¬S₁ is
-relevant (by 50a + 50b). But when S₁, S₂ are symmetric, S ∧ ¬S₁ ≡ S₂
-(by `symmetric_complement`). So S₂ is also relevant, and contextual
-restriction cannot selectively eliminate one symmetric alternative
-while keeping the other.
+* [kroch-1972]
+* [horn-1972]
+* [katzir-2007]
+* [fox-katzir-2011]
 -/
 
-/-- Closure conditions on relevance (condition 50). -/
-structure RelevanceClosure (W : Type) where
-  relevant : (W → Bool) → Bool
-  negClosed : ∀ (p : W → Bool), relevant p = true →
-    relevant (fun w => !p w) = true
-  conjClosed : ∀ (p q : W → Bool), relevant p = true →
-    relevant q = true → relevant (fun w => p w && q w) = true
+namespace Alternatives
 
-/-- **C cannot break symmetry (constraint 28)**: if S₁ is relevant
-    and S is relevant, then the symmetric partner S ∧ ¬S₁ (which
-    equals S₂ when S₁, S₂ are symmetric by `symmetric_complement`)
-    is also relevant.
+variable {W : Type*} {s s₁ s₂ : Set W}
 
-    Therefore any contextual restriction that keeps S₁ must also
-    keep S₂. Symmetry breaking must happen in F, not in C. -/
-theorem context_cannot_break_symmetry {W : Type}
-    (rc : RelevanceClosure W)
-    (s s₁ : W → Bool)
-    (hs : rc.relevant s = true)
-    (h₁ : rc.relevant s₁ = true) :
-    rc.relevant (fun w => s w && !s₁ w) = true :=
-  rc.conjClosed s (fun w => !s₁ w) hs (rc.negClosed s₁ h₁)
+/-- `s₁` and `s₂` are symmetric alternatives of `s`: they partition it. -/
+structure IsSymmetric (s s₁ s₂ : Set W) : Prop where
+  union : s₁ ∪ s₂ = s
+  disjoint : Disjoint s₁ s₂
 
+/-- The assertion without an alternative it entails is that alternative's symmetric partner. -/
+theorem isSymmetric_sdiff {t : Set W} (h : t ⊆ s) : IsSymmetric s t (s \ t) :=
+  ⟨Set.union_sdiff_cancel h, Set.disjoint_sdiff_right⟩
 
-end Alternatives.Symmetric
+namespace IsSymmetric
+
+theorem symm (h : IsSymmetric s s₁ s₂) : IsSymmetric s s₂ s₁ :=
+  ⟨(Set.union_comm _ _).trans h.union, h.disjoint.symm⟩
+
+theorem subset_left (h : IsSymmetric s s₁ s₂) : s₁ ⊆ s := h.union ▸ Set.subset_union_left
+
+theorem subset_right (h : IsSymmetric s s₁ s₂) : s₂ ⊆ s := h.union ▸ Set.subset_union_right
+
+/-- The second symmetric alternative is the assertion without the first. -/
+theorem sdiff_eq (h : IsSymmetric s s₁ s₂) : s \ s₁ = s₂ := by
+  rw [← h.union, Set.union_sdiff_left]
+  exact h.disjoint.symm.sdiff_eq_left
+
+theorem not_subset_left (h : IsSymmetric s s₁ s₂) (hne : s₂.Nonempty) : ¬ s ⊆ s₁ :=
+  λ hsub => let ⟨_, hw⟩ := hne; Set.disjoint_left.1 h.disjoint (hsub (h.subset_right hw)) hw
+
+theorem ssubset_left (h : IsSymmetric s s₁ s₂) (hne : s₂.Nonempty) : s₁ ⊂ s :=
+  h.subset_left.ssubset_of_not_subset (h.not_subset_left hne)
+
+/-- Contextual restriction cannot break symmetry: a set of propositions closed under negation
+and conjunction that contains the assertion and one symmetric alternative contains the other. -/
+theorem mem_of_mem (h : IsSymmetric s s₁ s₂) {R : BooleanSubalgebra (Set W)} (hs : s ∈ R)
+    (h₁ : s₁ ∈ R) : s₂ ∈ R :=
+  h.sdiff_eq ▸ BooleanSubalgebra.sdiff_mem hs h₁
+
+end IsSymmetric
+
+/-- Symmetry over finite sets is decidable through the underlying finsets. -/
+theorem isSymmetric_coe [DecidableEq W] (A B C : Finset W) :
+    IsSymmetric (↑A : Set W) ↑B ↑C ↔ B ∪ C = A ∧ B ∩ C = ∅ := by
+  constructor
+  · rintro ⟨hu, hd⟩
+    refine ⟨Finset.coe_inj.1 (by rw [Finset.coe_union, hu]), ?_⟩
+    exact Finset.disjoint_iff_inter_eq_empty.1 (Finset.disjoint_coe.1 hd)
+  · rintro ⟨hu, hd⟩
+    refine ⟨by rw [← Finset.coe_union, hu], ?_⟩
+    exact Finset.disjoint_coe.2 (Finset.disjoint_iff_inter_eq_empty.2 hd)
+
+end Alternatives
