@@ -1865,7 +1865,7 @@
   pages     = {105--142},
   subfield  = {pragmatics/rsa},
   role      = {foundational},
-  sources   = {Core/Probability/Choice/GumbelLuce.lean}
+  sources   = {Core/Analysis/SpecialFunctions/Softmax.lean;Core/Optimization/Decoder.lean;Core/Optimization/NoiseKernel.lean;Core/Probability/Choice/GumbelLuce.lean;Processing/Psychophysics/GaussianChoice.lean;Processing/Psychophysics/SignalDetection.lean;Studies/Flemming2021.lean}
 }
 @article{yellott-1977,
   author    = {Yellott, Jr., John I.},
@@ -17668,6 +17668,31 @@
   validated = {true},
   sources   = {Phonology/Constraints/Defs.lean}
 }
+@book{train-2009,
+  author    = {Train, Kenneth E.},
+  year      = {2009},
+  title     = {Discrete Choice Methods with Simulation},
+  edition   = {2},
+  publisher = {Cambridge University Press},
+  address   = {Cambridge},
+  doi       = {10.1017/CBO9780511805271},
+  subfield  = {phonology},
+  role      = {cited},
+  sources   = {Studies/Flemming2021.lean}
+}
+@inproceedings{hayes-2017,
+  author    = {Hayes, Bruce},
+  year      = {2017},
+  title     = {Varieties of Noisy Harmonic Grammar},
+  booktitle = {Proceedings of the 2016 Annual Meeting on Phonology},
+  editor    = {Jesney, Karen and O'Hara, Charlie and Smith, Caitlin and Walker, Rachel},
+  publisher = {Linguistic Society of America},
+  address   = {Washington, DC},
+  doi       = {10.3765/amp.v4i0.3997},
+  subfield  = {phonology},
+  role      = {cited},
+  sources   = {Studies/Flemming2021.lean}
+}
 @article{flemming-2021,
   author    = {Flemming, Edward},
   year      = {2021},
@@ -17680,7 +17705,7 @@
   subfield  = {phonology},
   role      = {formalized},
   validated = {true},
-  sources   = {Phonology/HarmonicGrammar/NoisyHG.lean;Studies/Flemming2021.lean}
+  sources   = {Data/Examples/Flemming2021.json;Phonology/HarmonicGrammar/Noise.lean;Studies/Flemming2021.lean}
 }
 @article{magri-2025,
   author    = {Magri, Giorgio},
@@ -17693,7 +17718,7 @@
   subfield  = {phonology},
   role      = {formalized},
   validated = {true},
-  sources   = {Phonology/HarmonicGrammar/Separability.lean;Fragments/Tagalog/Phonology.lean;Studies/Magri2025.lean}
+  sources   = {Fragments/Tagalog/Phonology.lean;Phonology/HarmonicGrammar/Separability.lean;Studies/Magri2025.lean;Studies/ZurawHayes2017.lean}
 }
 @article{hayes-2022,
   author    = {Hayes, Bruce},
@@ -17818,7 +17843,7 @@
   subfield  = {phonology},
   role      = {cited},
   validated = {true},
-  sources   = {Phonology/HarmonicGrammar/NoisyHG.lean}
+  sources   = {Core/Probability/RandomUtility.lean;Phonology/HarmonicGrammar/Noise.lean;Studies/Flemming2021.lean}
 }
 @article{sloman-barbey-hotaling-2009,
   author    = {Sloman, Steven A. and Barbey, Aron K. and Hotaling, Jared M.},
@@ -17856,7 +17881,7 @@
   subfield  = {phonology},
   role      = {formalized},
   validated = {true},
-  sources   = {Studies/GoldwaterJohnson2003.lean}
+  sources   = {Studies/CoetzeePater2011.lean;Studies/Flemming2021.lean;Studies/GoldwaterJohnson2003.lean;Studies/Jaeger2007.lean}
 }
 @incollection{jaeger-2007,
   author    = {Jäger, Gerhard},
@@ -17883,7 +17908,7 @@
   subfield  = {phonology},
   role      = {cited},
   validated = {true},
-  sources   = {Studies/Flemming2021.lean}
+  sources   = {Data/Examples/Flemming2021.json;Studies/Flemming2021.lean}
 }
 @article{storment-2026,
   author    = {Storment, John David},
@@ -24098,7 +24123,7 @@
   subfield  = {phonology},
   validated = {true},
   role      = {foundational},
-  sources   = {Studies/HayesWilson2008.lean;Studies/Belth2026.lean}
+  sources   = {Phonology/HarmonicGrammar/Expressivity.lean;Studies/Belth2026.lean;Studies/Flemming2021.lean;Studies/HayesWilson2008.lean}
 }
 @article{ringen-heinamaki-1999,
   author    = {Ringen, Catherine O. and Hein{\"a}m{\"a}ki, Orvokki},

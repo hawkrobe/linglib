@@ -1,475 +1,446 @@
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Algebra.Order.Field.Rat
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.FieldSimp
 import Linglib.Phonology.HarmonicGrammar.Noise
-import Linglib.Phonology.HarmonicGrammar.Separability
-import Linglib.Phonology.Constraints.Defs
 import Linglib.Core.Probability.Choice.GumbelLuce
-import Linglib.Core.Optimization.System
-import Linglib.Core.Optimization.Decoder
+import Linglib.Data.Examples.Flemming2021
 
 /-!
-# [flemming-2021]: Comparing MaxEnt and Noisy Harmonic Grammar
-[flemming-2021]
+# Flemming (2021): Comparing MaxEnt and Noisy Harmonic Grammar
 
-[flemming-2021] compares three stochastic Harmonic Grammar variants —
-MaxEnt, Noisy HG (NHG), and Normal MaxEnt — identifying **logit uniformity**
-as the diagnostic that distinguishes them.
+This file formalizes [flemming-2021]'s comparison of the stochastic Harmonic Grammars as random
+utility models ([train-2009]): noise added to candidate harmonies, Gumbel for MaxEnt
+([goldwater-johnson-2003], [hayes-wilson-2008]), normal on the constraint weights for Noisy
+Harmonic Grammar ([boersma-pater-2016]), normal on the candidates for normal MaxEnt
+([hayes-2017]). Between two candidates the probability of the first is `F_d` of the harmony
+difference (7), so its logit is the harmony difference in MaxEnt (10) and its probit the harmony
+difference divided by the noise standard deviation `σ_d` in the normal models (16), (18) — a
+constant `ε√2` for normal MaxEnt but, for NHG, `σ` times the root of the summed squared violation
+differences (14). Hence adding a constraint violation always changes the MaxEnt logit by the
+constraint's weight (§7.1, `hDiff_following`), while the NHG probit change depends on the
+harmony difference before the change (38), (`nhgProbitChange_strictAnti`).
 
-## The three models as Random Utility Models
+The test case is [smith-pater-2020]'s French schwa data (19): eight contexts crossing an
+underlying schwa or none, a preceding C or CC, and a following monosyllable or disyllable,
+evaluated by NoSchwa, \*CCC, \*Clash, Max, Dep and \*Cluster (20)–(28). The difference tableau
+(35) is derived from those definitions (`diff_eq`), the three MaxEnt uniformity predictions and
+the NHG ordering of probit gains 1-2 > 5-6 > 3-4 > 7-8 follow (`logit_following`,
+`clash_gain_ordered`), and the observed rates of Table 2 show the interaction between Max and
+\*CCC that the revised constraint \*CCC/iP of §8.3 accounts for (`onset_effect_larger_for_words`,
+`hDiffRevised_onset`). Tableau (45) closes with the three-candidate case where NHG separates two
+equal-harmony candidates by their noise covariance (§9).
 
-All three HG variants are Random Utility Models (RUMs) differing only in
-the noise distribution added to the deterministic harmony scores:
+## Implementation notes
 
-| Model           | Noise target  | Distribution | Binary P        | Reference |
-|-----------------|---------------|--------------|-----------------|-----------|
-| MaxEnt          | candidates    | Gumbel       | logistic(H−H')  | `maxent_eq_gumbelRUM` |
-| NHG             | weights       | Gaussian     | Φ((H−H')/σ_d)  | `nhg_choiceProb_eq` |
-| Normal MaxEnt   | candidates    | Gaussian     | Φ((H−H')/(ε√2))| `normalMaxEnt_choiceProb_eq` |
+* Candidates are `Fin 2`, `0` the schwa candidate and `1` the schwaless one, so that the
+  substrate's `Real.logit_softmax_fin_two` is (10) directly; constraints are `Constraint.binary`
+  predicates on the context's three features.
+* The fitted weights of Tables 1 and 4 and the deviances of §8 are estimation results and are
+  not formalized; the predictions are stated for arbitrary weights with the sign hypotheses the
+  fits satisfy. Censored NHG (§7.3) has no closed form and is not formalized.
+* The observed rates are hundredths in `Data/Examples/Flemming2021.json`, read by `pObs`; the
+  interaction is stated on odds ratios, the exponential of the logit differences MaxEnt predicts
+  equal.
 
-## Key diagnostic: logit uniformity
+## References
 
-MaxEnt exhibits **logit uniformity** (eq (10)): adding one violation of
-constraint j changes the logit by exactly −wⱼ, regardless of the tableau
-context. This follows from the log-odds identity (`logit_uniformity`):
-
-  `log(P(a)/P(b)) = H(a) − H(b)`
-
-NHG violates logit uniformity because its noise standard deviation
-σ_d = σ · √(Σ(cⱼ(a)−cⱼ(b))²) (`nhgSigmaD`) depends on the violation
-difference profile. The same harmony difference ΔH produces different
-probits ΔH/σ_d in different contexts.
-
-Normal MaxEnt has **probit** uniformity (constant σ_d = ε√2) rather than
-logit uniformity, leading to probit (Φ) rather than logistic probability
-functions — an empirically distinguishable prediction.
-
-## French schwa data
-
-Flemming tests logit uniformity on French schwa deletion across 8
-phonological contexts with 6 constraints (Table (35)). Contexts that share
-the same \*Clash violation difference should show the same logit difference
-under MaxEnt. We encode this data and verify:
-- `logit_uniformity_clash`: the \*Clash contribution to the harmony
-  difference is identical across all four paired contexts (MaxEnt prediction)
-- `nhg_sigmaD_sq_varies`: the NHG noise variance σ_d² differs between
-  paired contexts, violating probit uniformity (NHG prediction)
+* [flemming-2021]
+* [smith-pater-2020]
+* [boersma-pater-2016]
+* [goldwater-johnson-2003]
+* [hayes-wilson-2008]
+* [hayes-2017]
+* [train-2009]
+* [mcfadden-1974]
 -/
 
 namespace Flemming2021
 
-open Core.Optimization Constraints HarmonicGrammar Core Real
+open Core Real Constraints HarmonicGrammar Data.Examples
 
--- ============================================================================
--- § 1: MaxEnt as Gumbel RUM (McFadden)
--- ============================================================================
+/-! ### Stochastic Harmonic Grammars as random utility models (§§4–5) -/
 
-/-- **MaxEnt = Gumbel RUM** ([flemming-2021] §4/§10): the max-probability
-    integral of a RUM with candidate harmonies as utilities and i.i.d.
-    Gumbel(0, 1) noise is exactly the MaxEnt (softmax) formula, by Lemma 1 of
-    [mcfadden-1974] (`rumMaxProb_gumbel_eq_softmax`). -/
-theorem maxent_eq_gumbelRUM {C : Type} [Fintype C] [Nonempty C] [DecidableEq C] {n : ℕ}
-    (con : CON C n) (w : Fin n → ℝ) (c : C) :
-    rumMaxProb (gumbelPDFReal 0 1) (fun x => ProbabilityTheory.cdf (gumbelMeasure 0 1) x)
-      (harmonyScore con w) c =
-    softmax (harmonyScore con w) c := by
+variable {C : Type*} [Fintype C] [Nonempty C] {n : ℕ}
+
+/-- MaxEnt is the Gumbel random utility model (§4): the probability of the highest harmony under
+i.i.d. Gumbel noise is the softmax of (4), by Lemma 1 of [mcfadden-1974]. -/
+theorem maxent_eq_gumbelRUM [DecidableEq C] (con : CON C n) (w : Fin n → ℝ) (c : C) :
+    rumMaxProb (gumbelPDFReal 0 1) (λ x => ProbabilityTheory.cdf (gumbelMeasure 0 1) x)
+      (harmonyScore con w) c = softmax (harmonyScore con w) c := by
   rw [rumMaxProb_gumbel_eq_softmax _ one_pos c]
   norm_num [one_smul]
 
--- ============================================================================
--- § 2: MaxEnt Logit Uniformity (eq (10))
--- ============================================================================
+/-- (10): between two candidates, the MaxEnt logit of the first is the harmony difference. -/
+theorem logit_maxent (con : CON (Fin 2) n) (w : Fin n → ℝ) :
+    logit (softmax (harmonyScore con w) 0) = harmonyScore con w 0 - harmonyScore con w 1 :=
+  logit_softmax_fin_two _
 
-/-- Flemming's eq (10): `logit(P_a) = h_a − h_b`.
-    The MaxEnt logit-harmony identity. Alias for `maxent_logit_harmony`. -/
-theorem eq10_logit_harmony {C : Type} [Fintype C] [Nonempty C] {n : ℕ}
-    (con : CON C n) (w : Fin n → ℝ) (a b : C) :
-    log (softmax (harmonyScore con w) a /
-         softmax (harmonyScore con w) b) =
-    harmonyScore con w a - harmonyScore con w b :=
-  maxent_logit_harmony con w a b
+omit [Fintype C] [Nonempty C] in
+/-- (16): the NHG probit of the first candidate is the harmony difference over `σ_d`. -/
+theorem probit_nhg (con : CON C n) (w : Fin n → ℝ) (σ : ℝ) (a b : C) :
+    probit (nhgChoiceProb con w σ a b) =
+      (harmonyScore con w a - harmonyScore con w b) / nhgSigmaD con σ a b := by
+  rw [nhg_choiceProb_eq, probit_normalCDF]
 
-/-- MaxEnt ratio independence (IIA): `P(a)/P(b) = exp(H(a) − H(b))`.
-    The probability ratio depends only on the candidates' own scores,
-    not on any other candidates. Corollary of `softmax_div_softmax` with α = 1. -/
-theorem iia {C : Type} [Fintype C] [Nonempty C] {n : ℕ}
-    (con : CON C n) (w : Fin n → ℝ) (a b : C) :
-    softmax (harmonyScore con w) a /
-    softmax (harmonyScore con w) b =
-    exp (harmonyScore con w a - harmonyScore con w b) :=
-  maxent_iia con w a b
+omit [Fintype C] [Nonempty C] in
+/-- (18): the normal MaxEnt probit is the harmony difference over the constant `ε√2`. -/
+theorem probit_normalMaxEnt (con : CON C n) (w : Fin n → ℝ) (ε : ℝ) (a b : C) :
+    probit (normalMaxEntChoiceProb con w ε a b) =
+      (harmonyScore con w a - harmonyScore con w b) / normalMaxEntSigmaD ε := by
+  rw [normalMaxEnt_choiceProb_eq, probit_normalCDF]
 
-/-- **MaxEnt binary logistic** ([flemming-2021] eq (9)/(11)):
-    with two candidates, MaxEnt probability is the logistic function
-    of the harmony difference.
+/-! ### The effect of a change in violations on the NHG probit (§7.2) -/
 
-    `P(0) = 1 / (1 + e^{-(H(0) − H(1))})` = `Real.sigmoid(H(0) − H(1))`
+/-- (38a): the change in the NHG probit when the harmony difference `h` changes by `Δh` and the
+noise standard deviation from `σ` to `σ'`. -/
+noncomputable def nhgProbitChange (h Δh σ σ' : ℝ) : ℝ := (h + Δh) / σ' - h / σ
 
-    Corollary of `softmax_fin_two` with α = 1. -/
-theorem eq9_maxent_binary_logistic {n : ℕ}
-    (con : CON (Fin 2) n) (w : Fin n → ℝ) :
-    softmax (harmonyScore con w) 0 =
-    Real.sigmoid (harmonyScore con w 0 - harmonyScore con w 1) :=
-  softmax_fin_two _
-
--- ============================================================================
--- § 3: French Schwa Data (Table (35))
--- ============================================================================
-
-/-- Violation difference matrix: ə candidate minus ∅ candidate.
-    Rows = 8 contexts, columns = 6 constraints.
-    Constraint order: 0=NoSchwa, 1=\*CCC, 2=\*Clash, 3=Max, 4=Dep, 5=\*Cluster.
-    Table (35) from [flemming-2021], data from [smith-pater-2020]. -/
-def schwaDiff (ctx : Fin 8) (con : Fin 6) : Int :=
-  match ctx.val, con.val with
-  -- /∅/, C, _σσ́
-  | 0, 0 => -1 | 0, 1 =>  0 | 0, 2 =>  0 | 0, 3 =>  0 | 0, 4 => -1 | 0, 5 =>  1
-  -- /∅/, C, _σ́
-  | 1, 0 => -1 | 1, 1 =>  0 | 1, 2 =>  1 | 1, 3 =>  0 | 1, 4 => -1 | 1, 5 =>  1
-  -- /∅/, CC, _σσ́
-  | 2, 0 => -1 | 2, 1 =>  1 | 2, 2 =>  0 | 2, 3 =>  0 | 2, 4 => -1 | 2, 5 =>  0
-  -- /∅/, CC, _σ́
-  | 3, 0 => -1 | 3, 1 =>  1 | 3, 2 =>  1 | 3, 3 =>  0 | 3, 4 => -1 | 3, 5 =>  0
-  -- /ə/, C, _σσ́
-  | 4, 0 => -1 | 4, 1 =>  0 | 4, 2 =>  0 | 4, 3 =>  1 | 4, 4 =>  0 | 4, 5 =>  1
-  -- /ə/, C, _σ́
-  | 5, 0 => -1 | 5, 1 =>  0 | 5, 2 =>  1 | 5, 3 =>  1 | 5, 4 =>  0 | 5, 5 =>  1
-  -- /ə/, CC, _σσ́
-  | 6, 0 => -1 | 6, 1 =>  1 | 6, 2 =>  0 | 6, 3 =>  1 | 6, 4 =>  0 | 6, 5 =>  0
-  -- /ə/, CC, _σ́
-  | 7, 0 => -1 | 7, 1 =>  1 | 7, 2 =>  1 | 7, 3 =>  1 | 7, 4 =>  0 | 7, 5 =>  0
-  | _, _ => 0
-
-/-- The four \*Clash pairs: contexts that differ only in \*Clash (index 2).
-    Each pair is (without \*Clash, with \*Clash). -/
-def clashPairs : Fin 4 → Fin 8 × Fin 8
-  | 0 => (0, 1)  -- /∅/, C
-  | 1 => (2, 3)  -- /∅/, CC
-  | 2 => (4, 5)  -- /ə/, C
-  | 3 => (6, 7)  -- /ə/, CC
-
--- ============================================================================
--- § 4: Logit Uniformity on French Schwa
--- ============================================================================
-
-/-- \*Clash pairs differ only in the \*Clash column (index 2):
-    for each pair, all non-\*Clash violations are identical. -/
-theorem clash_pairs_identical_except_clash (pair : Fin 4) (j : Fin 6)
-    (hj : j ≠ 2) :
-    schwaDiff (clashPairs pair).1 j = schwaDiff (clashPairs pair).2 j := by
-  fin_cases pair <;> fin_cases j <;> simp_all [clashPairs, schwaDiff]
-
-/-- The \*Clash violation difference is exactly 1 for all pairs. -/
-theorem clash_diff_is_one (pair : Fin 4) :
-    schwaDiff (clashPairs pair).2 2 - schwaDiff (clashPairs pair).1 2 = 1 := by
-  fin_cases pair <;> simp [clashPairs, schwaDiff]
-
-set_option maxHeartbeats 400000 in
-/-- **Logit uniformity for \*Clash** ([flemming-2021] §7.1):
-    the \*Clash contribution to the harmony difference is the same
-    across all four paired contexts.
-
-    For any weights `w`, the harmony difference change between paired
-    contexts = −w₂ (\*Clash weight), independent of context. This follows
-    from `clash_pairs_identical_except_clash`: since non-\*Clash violations
-    are identical in each pair, their weighted contributions cancel,
-    leaving only −w₂ · 1 = −w₂.
-
-    This is a special case of [magri-2025]'s `me_predicts_hz`:
-    the \*Clash violation differences are column-insensitive (constant
-    across paired contexts), so the weighted sum satisfies the
-    constant-difference identity. -/
-theorem logit_uniformity_clash (w : Fin 6 → ℝ) (pair : Fin 4) :
-    (Finset.univ.sum fun j => w j * (schwaDiff (clashPairs pair).2 j : ℝ)) -
-    (Finset.univ.sum fun j => w j * (schwaDiff (clashPairs pair).1 j : ℝ)) =
-    w 2 := by
-  have h_eq : ∀ j : Fin 6, j ≠ 2 →
-      w j * (schwaDiff (clashPairs pair).2 j : ℝ) =
-      w j * (schwaDiff (clashPairs pair).1 j : ℝ) := by
-    intro j hj; congr 1; exact_mod_cast (clash_pairs_identical_except_clash pair j hj).symm
-  have h_diff : (schwaDiff (clashPairs pair).2 2 : ℝ) -
-      (schwaDiff (clashPairs pair).1 2 : ℝ) = 1 := by exact_mod_cast clash_diff_is_one pair
-  fin_cases pair <;> simp_all [clashPairs, schwaDiff, Fin.sum_univ_six]
-
--- ============================================================================
--- § 5: Observed P(schwa) Data (Table 2)
--- ============================================================================
-
-/-- Observed probability of schwa realization across 8 contexts.
-    Data from [smith-pater-2020] (Table 2 of [flemming-2021]).
-
-    Values are approximate proportions (hundredths). The key pattern:
-    within each \*Clash pair, the +\*Clash context always has higher P(schwa),
-    consistent with the \*Clash constraint favoring schwa insertion. -/
-def observedP : Fin 8 → ℚ
-  | 0 => 9/100   -- /∅/, C, _σσ́
-  | 1 => 12/100  -- /∅/, C, _σ́
-  | 2 => 68/100  -- /∅/, CC, _σσ́
-  | 3 => 83/100  -- /∅/, CC, _σ́
-  | 4 => 56/100  -- /ə/, C, _σσ́
-  | 5 => 65/100  -- /ə/, C, _σ́
-  | 6 => 91/100  -- /ə/, CC, _σσ́
-  | 7 => 94/100  -- /ə/, CC, _σ́
-
-/-- Adding a \*Clash violation increases P(schwa) in every paired context. -/
-theorem clash_increases_schwa (pair : Fin 4) :
-    observedP (clashPairs pair).1 < observedP (clashPairs pair).2 := by
-  fin_cases pair <;> simp [clashPairs, observedP] <;> norm_num
-
--- ============================================================================
--- § 6: NHG Probit Non-Uniformity
--- ============================================================================
-
-/-- Sum of squared violation differences for a context.
-
-    This is the study-local analogue of `violationDiffSqSumQ` from
-    `Noise.lean`: both compute `Σⱼ (cⱼ(ə) − cⱼ(∅))²`, but `schwaSqSum`
-    operates on the pre-computed difference matrix `schwaDiff` (Table (35))
-    rather than a `CON` constraint set. -/
-def schwaSqSum (ctx : Fin 8) : Nat :=
-  (List.finRange 6).foldl (fun acc j => acc + (schwaDiff ctx j).natAbs ^ 2) 0
-
-/-- NHG noise variance σ_d² is context-dependent: without \*Clash,
-    the squared violation sum is 3; with \*Clash, it is 4.
-    The same \*Clash violation change produces different σ_d values
-    in different tableaux — σ_d = √3 vs σ_d = 2 (Table 3 of
-    [flemming-2021]). -/
-theorem nhg_sigmaD_sq_varies :
-    schwaSqSum 0 = 3 ∧ schwaSqSum 1 = 4 ∧
-    schwaSqSum 2 = 3 ∧ schwaSqSum 3 = 4 ∧
-    schwaSqSum 4 = 3 ∧ schwaSqSum 5 = 4 ∧
-    schwaSqSum 6 = 3 ∧ schwaSqSum 7 = 4 := by decide
-
-/-- NHG probit change when moving from one context to another:
-    the change in the probit `Φ⁻¹(P) = Δh / σ_d` when σ_d changes.
-
-    `h_init` = initial harmony difference, `Δh` = harmony change (e.g., −w_Clash),
-    `σ_d` / `σ_d'` = noise s.d. before/after the change. -/
-noncomputable def nhgProbitChange (h_init Δh σ_d σ_d' : ℝ) : ℝ :=
-  (h_init + Δh) / σ_d' - h_init / σ_d
-
-/-- **Probit non-uniformity** ([flemming-2021] §7.2): when σ_d ≠ σ_d',
-    the NHG probit change depends on the initial harmony difference `h_init`.
-
-    Two contexts with different initial harmonies `h₁ ≠ h₂` but the same
-    \*Clash change `Δh` produce different probit changes. This is because
-    the denominator shift (σ_d → σ_d') rescales the existing harmony
-    difference differently depending on its magnitude.
-
-    Concretely, for French schwa with σ = 1 ([flemming-2021] §7.2):
-    adding a \*Clash violation changes σ_d from √3 to 2 in all pairs,
-    but the initial harmony difference h_ə − h_∅ differs between pairs
-    (e.g., −2.2 for pair (0,1) vs 0.01 for pair (4,5)), so the probit
-    changes differ despite the same \*Clash change. -/
-theorem nhg_probit_change_depends_on_h_init
-    (Δh σ_d σ_d' h₁ h₂ : ℝ) (hσ : σ_d ≠ σ_d')
-    (hσ_pos : 0 < σ_d) (hσ'_pos : 0 < σ_d') (hh : h₁ ≠ h₂) :
-    nhgProbitChange h₁ Δh σ_d σ_d' ≠ nhgProbitChange h₂ Δh σ_d σ_d' := by
-  simp only [nhgProbitChange]
-  intro heq
-  have hd : σ_d ≠ 0 := ne_of_gt hσ_pos
-  have hd' : σ_d' ≠ 0 := ne_of_gt hσ'_pos
-  have heq' : h₁ * σ_d - h₁ * σ_d' = h₂ * σ_d - h₂ * σ_d' := by
-    field_simp at heq; linarith
-  have h_eq : h₁ * (1 / σ_d' - 1 / σ_d) = h₂ * (1 / σ_d' - 1 / σ_d) := by
-    rw [mul_sub, mul_sub, mul_one_div, mul_one_div, mul_one_div, mul_one_div,
-        div_sub_div _ _ hd' hd, div_sub_div _ _ hd' hd]
-    congr 1
-    linarith
-  have h_ne : (1 : ℝ) / σ_d' - 1 / σ_d ≠ 0 := by
-    rw [div_sub_div _ _ (ne_of_gt hσ'_pos) (ne_of_gt hσ_pos)]
-    apply div_ne_zero _ (mul_ne_zero (ne_of_gt hσ'_pos) (ne_of_gt hσ_pos))
-    simp only [one_mul, mul_one]
-    exact sub_ne_zero.mpr hσ
-  exact hh (mul_right_cancel₀ h_ne h_eq)
-
-/-- **Probit change decomposition** ([flemming-2021] eq (38b)):
-    the NHG probit change decomposes into a context-dependent term
-    (proportional to initial harmony difference) and a uniform term.
-
-    `Δprobit = h · (σ_d − σ_d') / (σ_d · σ_d') + Δh / σ_d'`
-
-    The first term is why NHG violates probit uniformity: it depends on
-    `h_init`, which varies across contexts. -/
-theorem nhgProbitChange_decomp (h_init Δh σ_d σ_d' : ℝ)
-    (hσ_pos : 0 < σ_d) (hσ'_pos : 0 < σ_d') :
-    nhgProbitChange h_init Δh σ_d σ_d' =
-    h_init * (σ_d - σ_d') / (σ_d * σ_d') + Δh / σ_d' := by
-  simp only [nhgProbitChange]
+/-- (38b): the change decomposes into a term proportional to the initial harmony difference and
+the rescaled harmony change. -/
+theorem nhgProbitChange_eq (h Δh : ℝ) {σ σ' : ℝ} (hσ : 0 < σ) (hσ' : 0 < σ') :
+    nhgProbitChange h Δh σ σ' = h * (σ - σ') / (σ * σ') + Δh / σ' := by
+  unfold nhgProbitChange
   field_simp
   ring
 
--- ============================================================================
--- § 7: Three-Candidate NHG Example (Table (45))
--- ============================================================================
+/-- When the change enlarges the noise, `σ < σ'`, the probit gain decreases with the initial
+harmony difference: the same change in violations has a smaller effect the higher the schwa
+candidate already stands (§7.2). -/
+theorem nhgProbitChange_strictAnti (Δh : ℝ) {σ σ' : ℝ} (hσ : 0 < σ) (hσ' : σ < σ') :
+    StrictAnti (nhgProbitChange · Δh σ σ') := by
+  intro h₁ h₂ hlt
+  have hσ'0 : 0 < σ' := hσ.trans hσ'
+  have key : nhgProbitChange h₂ Δh σ σ' - nhgProbitChange h₁ Δh σ σ' =
+      (h₂ - h₁) * (1 / σ' - 1 / σ) := by
+    unfold nhgProbitChange
+    field_simp
+    ring
+  have hneg : 1 / σ' - 1 / σ < 0 := sub_neg.2 (one_div_lt_one_div_of_lt hσ hσ')
+  have := mul_neg_of_pos_of_neg (sub_pos.2 hlt) hneg
+  linarith
 
--- Flemming's Table (45) shows that NHG can distinguish candidates with
--- equal harmony scores: with w₁ = 15, w₂ = w₃ = 8, candidates b and c
--- have the same harmony H = −16, but different NHG noise variances
--- σ²_d(b−a) = 5σ² ≠ 3σ² = σ²_d(c−a) and non-zero covariance
--- Cov(ε_b−ε_a, ε_c−ε_a) ≠ 0. So NHG assigns them different
--- probabilities despite equal MaxEnt probabilities (§9).
+/-! ### French schwa (§6): the contexts of (19) and the constraints of (20)–(23) -/
 
-private inductive Cand3 | a | b | c deriving DecidableEq, Repr, Fintype
+/-- Whether the schwa site is clitic-final, with an underlying schwa, or word-final, with none. -/
+inductive Underlying where
+  | schwa
+  | zero
+  deriving DecidableEq, Repr, Fintype
 
-private instance : Nonempty Cand3 := ⟨.a⟩
+/-- Whether one or two consonants precede the schwa site. -/
+inductive Onset where
+  | c
+  | cc
+  deriving DecidableEq, Repr, Fintype
 
-private def tableCon : CON Cand3 3 :=
-  ![fun | .a => 1 | _ => 0,
-    fun | .b => 2 | .c => 1 | _ => 0,
-    fun | .c => 1 | _ => 0]
+/-- Whether the following word is a stressed monosyllable (`–ś`) or a disyllable (`–sś`). -/
+inductive Following where
+  | monosyllable
+  | disyllable
+  deriving DecidableEq, Repr, Fintype
 
-private noncomputable def tableW : Fin 3 → ℝ := ![15, 8, 8]
+/-- A context of (19). -/
+structure Context where
+  underlying : Underlying
+  onset : Onset
+  following : Following
+  deriving DecidableEq, Repr
 
-/-- Candidates b and c have equal harmony: H(b) = H(c) = −16. -/
-theorem table45_equal_harmony :
-    harmonyScore tableCon tableW .b = harmonyScore tableCon tableW .c := by
-  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, Fin.sum_univ_three,
-    Fin.sum_univ_three]
-  norm_num [tableCon, tableW, Matrix.cons_val_zero, Matrix.cons_val_one,
-    Matrix.head_cons, Matrix.cons_val_two, Matrix.tail_cons]
+/-- The two candidates of each tableau: `0` realizes the schwa, `1` does not. -/
+abbrev Cand := Fin 2
 
-/-- NHG noise variances differ: σ²_d(b−a) = 5 ≠ 3 = σ²_d(c−a).
-    Equal-harmony candidates can have different NHG probabilities. -/
-theorem table45_nhg_variance_differs :
-    violationDiffSqSumQ tableCon .a .b ≠ violationDiffSqSumQ tableCon .a .c := by
-  norm_num [violationDiffSqSumQ, tableCon, Fin.sum_univ_three, Matrix.cons_val_zero,
-    Matrix.cons_val_one, Matrix.head_cons, Matrix.cons_val_two, Matrix.tail_cons]
+/-- (20) NoSchwa: one violation for the schwa in the output. -/
+def noSchwa (_ : Context) : Constraint Cand := .binary (· = 0)
 
-/-- In MaxEnt, equal harmony implies equal probability: since
-    `softmax(s, α, b) = exp(α·s(b)) / Σ exp(α·s(i))`, candidates with
-    the same score get the same numerator and hence the same probability.
+/-- (21) \*CCC: the schwaless candidate after two consonants forms a three-consonant cluster. -/
+def starCCC (x : Context) : Constraint Cand := .binary λ c => c = 1 ∧ x.onset = .cc
 
-    This is the MaxEnt half of the §9 contrast: MaxEnt assigns
-    P(b) = P(c) (both have H = −16), while NHG assigns P(b) ≠ P(c)
-    because their noise variances differ (`table45_nhg_variance_differs`). -/
-theorem table45_maxent_equal_prob :
-    softmax (harmonyScore tableCon tableW) Cand3.b =
-    softmax (harmonyScore tableCon tableW) Cand3.c := by
-  simp only [softmax]
-  rw [table45_equal_harmony]
+/-- (23) \*Clash: without the schwa, a stressed monosyllable follows a stressed syllable. -/
+def starClash (x : Context) : Constraint Cand := .binary λ c => c = 1 ∧ x.following = .monosyllable
 
-/-- NHG noise covariance value: `Cov(ε_b−ε_a, ε_c−ε_a) = 3σ²`.
+/-- Max: the schwaless candidate deletes an underlying schwa. -/
+def maxSchwa (x : Context) : Constraint Cand := .binary λ c => c = 1 ∧ x.underlying = .schwa
 
-    The paper ([flemming-2021] §9, p. 37) computes `Cov(ε_a−ε_b, ε_c−ε_b) = 2σ²`
-    using candidate b as reference. Our formalization uses candidate a as
-    reference, giving 3σ² — a different but equally valid demonstration
-    that the covariance matrix is non-diagonal. -/
-theorem table45_nhg_covariance_value :
-    nhgCovarianceQ tableCon .a .b .c = 3 := by
-  norm_num [nhgCovarianceQ, tableCon, Fin.sum_univ_three, Matrix.cons_val_zero,
-    Matrix.cons_val_one, Matrix.head_cons, Matrix.cons_val_two, Matrix.tail_cons]
+/-- Dep: the schwa candidate inserts a schwa where there is none underlyingly. -/
+def depSchwa (x : Context) : Constraint Cand := .binary λ c => c = 0 ∧ x.underlying = .zero
 
-/-- NHG noise covariance is non-zero: Cov(ε_b−ε_a, ε_c−ε_a) ≠ 0.
-    The multivariate normal over score differences has a non-diagonal
-    covariance matrix, so binary comparisons don't determine the joint
-    distribution — NHG violates IIA ([flemming-2021] §9). -/
-theorem table45_nhg_covariance_nonzero :
-    nhgCovarianceQ tableCon .a .b .c ≠ 0 := by
-  norm_num [nhgCovarianceQ, tableCon, Fin.sum_univ_three, Matrix.cons_val_zero,
-    Matrix.cons_val_one, Matrix.head_cons, Matrix.cons_val_two, Matrix.tail_cons]
+/-- (22) \*Cluster: a two-consonant cluster, in the schwaless candidate always and in the schwa
+candidate after two consonants. -/
+def starCluster (x : Context) : Constraint Cand := .binary λ c => c = 1 ∨ x.onset = .cc
 
--- ============================================================================
--- § 8: Square Instantiation — French Schwa × Separability
--- ============================================================================
+/-- [smith-pater-2020]'s constraint set in the order of (35). -/
+def constraints (x : Context) : CON Cand 6
+  | 0 => noSchwa x
+  | 1 => starCCC x
+  | 2 => starClash x
+  | 3 => maxSchwa x
+  | 4 => depSchwa x
+  | 5 => starCluster x
 
--- The French schwa data forms two 2×2 squares (one per underlying form):
--- rows = onset type (C vs CC), columns = stress context (_σσ́ vs _σ́).
--- Each constraint is insensitive to at least one dimension, so the
--- violation differences satisfy `ViolDiffIndependence`, and
--- `me_predicts_hz` gives `ConstantLogitDiff` — Flemming's logit
--- uniformity prediction in [magri-2025]'s formulation.
+/-- The difference tableau: the schwa candidate's violations minus the schwaless candidate's,
+signed as the paper signs violations (negative). -/
+def diff (x : Context) (k : Fin 6) : ℤ := (constraints x k 1 : ℤ) - constraints x k 0
 
-/-- The /∅/ square: contexts 0–3 (underlying /∅/, varying onset × stress). -/
-def schwaSquareNull : Square (Fin 8) := ⟨0, 1, 2, 3⟩
+/-- The difference tableaux of (35), derived from the constraint definitions. -/
+theorem diff_eq : ∀ u o f, List.ofFn (diff ⟨u, o, f⟩) =
+    match u, o, f with
+    | .zero, .c, .disyllable => [-1, 0, 0, 0, -1, 1]
+    | .zero, .c, .monosyllable => [-1, 0, 1, 0, -1, 1]
+    | .zero, .cc, .disyllable => [-1, 1, 0, 0, -1, 0]
+    | .zero, .cc, .monosyllable => [-1, 1, 1, 0, -1, 0]
+    | .schwa, .c, .disyllable => [-1, 0, 0, 1, 0, 1]
+    | .schwa, .c, .monosyllable => [-1, 0, 1, 1, 0, 1]
+    | .schwa, .cc, .disyllable => [-1, 1, 0, 1, 0, 0]
+    | .schwa, .cc, .monosyllable => [-1, 1, 1, 1, 0, 0] := by
+  decide
 
-/-- The /ə/ square: contexts 4–7 (underlying /ə/, varying onset × stress). -/
-def schwaSquareSchwa : Square (Fin 8) := ⟨4, 5, 6, 7⟩
+/-- `hə − h∅`, the harmony difference of a context under weights `w`. -/
+noncomputable def hDiff (x : Context) (w : Fin 6 → ℝ) : ℝ :=
+  harmonyScore (constraints x) w 0 - harmonyScore (constraints x) w 1
 
-/-- Violation differences satisfy independence on the /∅/ square:
-    each of the 6 constraints is insensitive to either onset (row)
-    or stress (column). -/
-theorem schwaNull_independence :
-    ViolDiffIndependence
-      (fun (k : Fin 6) (ctx : Fin 8) => (schwaDiff ctx k : ℝ))
-      schwaSquareNull := by
-  have h : ∀ k : Fin 6,
-      (schwaDiff schwaSquareNull.tl k = schwaDiff schwaSquareNull.bl k ∧
-       schwaDiff schwaSquareNull.tr k = schwaDiff schwaSquareNull.br k) ∨
-      (schwaDiff schwaSquareNull.tl k = schwaDiff schwaSquareNull.tr k ∧
-       schwaDiff schwaSquareNull.bl k = schwaDiff schwaSquareNull.br k) := by decide
-  intro k; dsimp only
-  rcases h k with ⟨h1, h2⟩ | ⟨h1, h2⟩
-  · exact Or.inl ⟨by exact_mod_cast h1, by exact_mod_cast h2⟩
-  · exact Or.inr ⟨by exact_mod_cast h1, by exact_mod_cast h2⟩
+/-- The harmony difference is the weighted difference tableau, as in (29)–(34). -/
+theorem hDiff_eq_sum (x : Context) (w : Fin 6 → ℝ) : hDiff x w = ∑ k, w k * diff x k := by
+  simp only [hDiff, harmonyScore_diff, diff, Int.cast_sub, Int.cast_natCast, mul_sub,
+    Finset.sum_sub_distrib]
+  ring
 
-/-- Violation differences satisfy independence on the /ə/ square. -/
-theorem schwaSchwa_independence :
-    ViolDiffIndependence
-      (fun (k : Fin 6) (ctx : Fin 8) => (schwaDiff ctx k : ℝ))
-      schwaSquareSchwa := by
-  have h : ∀ k : Fin 6,
-      (schwaDiff schwaSquareSchwa.tl k = schwaDiff schwaSquareSchwa.bl k ∧
-       schwaDiff schwaSquareSchwa.tr k = schwaDiff schwaSquareSchwa.br k) ∨
-      (schwaDiff schwaSquareSchwa.tl k = schwaDiff schwaSquareSchwa.tr k ∧
-       schwaDiff schwaSquareSchwa.bl k = schwaDiff schwaSquareSchwa.br k) := by decide
-  intro k; dsimp only
-  rcases h k with ⟨h1, h2⟩ | ⟨h1, h2⟩
-  · exact Or.inl ⟨by exact_mod_cast h1, by exact_mod_cast h2⟩
-  · exact Or.inr ⟨by exact_mod_cast h1, by exact_mod_cast h2⟩
+private theorem hDiff_closed (u : Underlying) (o : Onset) (f : Following) (w : Fin 6 → ℝ) :
+    hDiff ⟨u, o, f⟩ w = -w 0 + (if o = .cc then w 1 else 0) + (if f = .monosyllable then w 2 else 0)
+      + (if u = .schwa then w 3 else 0) - (if u = .zero then w 4 else 0)
+      + (if o = .c then w 5 else 0) := by
+  rw [hDiff_eq_sum, Fin.sum_univ_six]
+  cases u <;> cases o <;> cases f <;>
+    simp [diff, constraints, noSchwa, starCCC, starClash, maxSchwa, depSchwa, starCluster] <;> ring
 
-/-- **HZ's generalization for French schwa** (/∅/ square):
-    for any MaxEnt weights, the logit-rate difference across onset
-    types is constant across stress contexts. Derived from
-    `me_predicts_hz` + `schwaNull_independence`. -/
-theorem schwaNull_hz (w : Fin 6 → ℝ) :
-    ConstantLogitDiff
-      (fun ctx => ∑ k : Fin 6, w k * (schwaDiff ctx k : ℝ))
-      schwaSquareNull :=
-  me_predicts_hz w _ schwaSquareNull schwaNull_independence
+/-! ### MaxEnt predicts uniform logit differences (§7.1) -/
 
-/-- **HZ's generalization for French schwa** (/ə/ square). -/
-theorem schwaSchwa_hz (w : Fin 6 → ℝ) :
-    ConstantLogitDiff
-      (fun ctx => ∑ k : Fin 6, w k * (schwaDiff ctx k : ℝ))
-      schwaSquareSchwa :=
-  me_predicts_hz w _ schwaSquareSchwa schwaSchwa_independence
+/-- Adding the \*Clash violation, `–sś` to `–ś`, raises the harmony difference by the weight of
+\*Clash whatever the other features. -/
+theorem hDiff_following (u : Underlying) (o : Onset) (w : Fin 6 → ℝ) :
+    hDiff ⟨u, o, .monosyllable⟩ w - hDiff ⟨u, o, .disyllable⟩ w = w 2 := by
+  rw [hDiff_closed, hDiff_closed]; simp
 
--- ============================================================================
--- § 9: Generic ConstraintSystem View of Table (45)
--- ============================================================================
+/-- Two preceding consonants add a \*CCC and remove a \*Cluster violation difference. -/
+theorem hDiff_onset (u : Underlying) (f : Following) (w : Fin 6 → ℝ) :
+    hDiff ⟨u, .cc, f⟩ w - hDiff ⟨u, .c, f⟩ w = w 1 - w 5 := by
+  rw [hDiff_closed, hDiff_closed]; simp; ring
 
-/-! Flemming's three-candidate table-(45) MaxEnt model is a
-`ConstraintSystem Cand3 ℝ` decoded by `softmaxDecoder 1`. The key
-observation `H(b) = H(c) ⟹ predict b = predict c` is a property of
-*any* MaxEnt-style decoder: it depends only on the score equality and
-the symmetry of softmax. By contrast NHG and Normal MaxEnt distinguish
-b and c despite equal harmony (`table45_nhg_variance_differs`,
-`table45_nhg_covariance_nonzero`) — same `score`, different `decoder`,
-different `predict`. -/
+/-- An underlying schwa adds a Max and removes a Dep violation difference. -/
+theorem hDiff_underlying (o : Onset) (f : Following) (w : Fin 6 → ℝ) :
+    hDiff ⟨.schwa, o, f⟩ w - hDiff ⟨.zero, o, f⟩ w = w 3 + w 4 := by
+  rw [hDiff_closed, hDiff_closed]; simp
 
-/-- Flemming's table-(45) MaxEnt grammar as a generic
-    `ConstraintSystem` over `Cand3`, decoded by softmax at temperature 1
-    (built inline). -/
-private noncomputable def flemmingSystem : ConstraintSystem Cand3 ℝ where
-  candidates := Finset.univ
-  score := harmonyScore tableCon tableW
-  decoder := softmaxDecoder 1
+/-- The MaxEnt probability of the schwa candidate. -/
+noncomputable def pMaxEnt (x : Context) (w : Fin 6 → ℝ) : ℝ :=
+  softmax (harmonyScore (constraints x) w) 0
 
-/-- The MaxEnt system assigns equal probability to candidates b and c,
-    matching `table45_maxent_equal_prob` but stated through the generic
-    `predict` API. The frame here makes the framework distinction
-    sharp: NHG (`argmax` after Gaussian noise on weights) and Normal
-    MaxEnt (`argmax` after Gaussian noise on candidates) would assign
-    different probabilities to b and c despite identical harmonies because
-    they differ only in `decoder`, not in `score`. -/
-theorem flemmingSystem_b_eq_c :
-    flemmingSystem.predict Cand3.b = flemmingSystem.predict Cand3.c :=
-  ConstraintSystem.predict_softmax_eq_of_score_eq _ rfl
-    (Finset.mem_univ _) (Finset.mem_univ _)
-    table45_equal_harmony
+theorem logit_pMaxEnt (x : Context) (w : Fin 6 → ℝ) : logit (pMaxEnt x w) = hDiff x w :=
+  logit_softmax_fin_two _
 
-/-- The MaxEnt system on `Cand3` is a probability distribution. -/
-theorem flemmingSystem_isProb :
-    ∑ x : Cand3, flemmingSystem.predict x = 1 :=
-  ConstraintSystem.predict_softmax_isProb _ rfl
-    ⟨.a, Finset.mem_univ _⟩
+/-- MaxEnt predicts the same logit difference, the weight of \*Clash, across the four pairs
+1-2, 3-4, 5-6, 7-8. -/
+theorem logit_following (u : Underlying) (o : Onset) (w : Fin 6 → ℝ) :
+    logit (pMaxEnt ⟨u, o, .monosyllable⟩ w) - logit (pMaxEnt ⟨u, o, .disyllable⟩ w) = w 2 := by
+  rw [logit_pMaxEnt, logit_pMaxEnt, hDiff_following]
+
+/-- … and the same logit difference across the pairs 1-3, 2-4, 5-7, 6-8. -/
+theorem logit_onset (u : Underlying) (f : Following) (w : Fin 6 → ℝ) :
+    logit (pMaxEnt ⟨u, .cc, f⟩ w) - logit (pMaxEnt ⟨u, .c, f⟩ w) = w 1 - w 5 := by
+  rw [logit_pMaxEnt, logit_pMaxEnt, hDiff_onset]
+
+/-- … and across the pairs 1-5, 2-6, 3-7, 4-8. -/
+theorem logit_underlying (o : Onset) (f : Following) (w : Fin 6 → ℝ) :
+    logit (pMaxEnt ⟨.schwa, o, f⟩ w) - logit (pMaxEnt ⟨.zero, o, f⟩ w) = w 3 + w 4 := by
+  rw [logit_pMaxEnt, logit_pMaxEnt, hDiff_underlying]
+
+/-! ### NHG predicts context-dependent probit differences (§7.2, §8.2) -/
+
+/-- The NHG probability of the schwa candidate with weight noise `σ`. -/
+noncomputable def pNHG (x : Context) (w : Fin 6 → ℝ) (σ : ℝ) : ℝ :=
+  nhgChoiceProb (constraints x) w σ 0 1
+
+/-- The summed squared violation differences (37): the number of differing constraints, 4 with
+the \*Clash difference and 3 without (Table 3). -/
+theorem violationDiffSqSum_eq (x : Context) :
+    violationDiffSqSum (constraints x) 0 1 = if x.following = .monosyllable then 4 else 3 := by
+  obtain ⟨u, o, f⟩ := x
+  rw [violationDiffSqSum, Fin.sum_univ_six]
+  cases u <;> cases o <;> cases f <;>
+    simp [constraints, noSchwa, starCCC, starClash, maxSchwa, depSchwa, starCluster] <;> norm_num
+
+/-- (36): the NHG probit of the schwa candidate. -/
+theorem probit_pNHG (x : Context) (w : Fin 6 → ℝ) (σ : ℝ) :
+    probit (pNHG x w σ) =
+      hDiff x w / (σ * √(if x.following = .monosyllable then 4 else 3)) := by
+  rw [pNHG, probit_nhg, nhgSigmaD, violationDiffSqSum_eq]
+  rfl
+
+/-- The probit gain from the \*Clash violation is (38a) with `Δh` the weight of \*Clash, `σ_d = σ√3`
+and `σ_d' = 2σ`. -/
+theorem probit_gain_following (u : Underlying) (o : Onset) (w : Fin 6 → ℝ) (σ : ℝ) :
+    probit (pNHG ⟨u, o, .monosyllable⟩ w σ) - probit (pNHG ⟨u, o, .disyllable⟩ w σ) =
+      nhgProbitChange (hDiff ⟨u, o, .disyllable⟩ w) (w 2) (σ * √3) (2 * σ) := by
+  rw [probit_pNHG, probit_pNHG, nhgProbitChange, ← hDiff_following u o w]
+  simp only [if_true, if_false, reduceCtorEq]
+  rw [show √(4 : ℝ) = 2 by rw [show (4 : ℝ) = 2 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]]
+  ring
+
+/-- §8.2: with positive weights and the Max and Dep effect below the \*CCC one, the initial harmony
+differences of the four \*Clash pairs are ordered 1 < 5 < 3 < 7, so NHG predicts their probit
+gains ordered 1-2 > 5-6 > 3-4 > 7-8 — where the data show the same gain in three of the four. -/
+theorem clash_gain_ordered (w : Fin 6 → ℝ) {σ : ℝ} (hσ : 0 < σ) (hw : 0 < w 3 + w 4)
+    (hw' : w 3 + w 4 < w 1 - w 5) :
+    let gain u o := probit (pNHG ⟨u, o, .monosyllable⟩ w σ) - probit (pNHG ⟨u, o, .disyllable⟩ w σ)
+    gain .schwa .c < gain .zero .c ∧ gain .zero .cc < gain .schwa .c ∧
+      gain .schwa .cc < gain .zero .cc := by
+  intro gain
+  have hanti := nhgProbitChange_strictAnti (w 2) (mul_pos hσ (Real.sqrt_pos.2 (by norm_num)))
+    (show σ * √3 < 2 * σ by
+      rw [mul_comm]
+      exact mul_lt_mul_of_pos_right (Real.sqrt_lt' (by norm_num) |>.2 (by norm_num)) hσ)
+  have h15 := hDiff_underlying .c .disyllable w
+  have h13 := hDiff_onset .zero .disyllable w
+  have h37 := hDiff_underlying .cc .disyllable w
+  simp only [gain, probit_gain_following]
+  exact ⟨hanti (by linarith), hanti (by linarith), hanti (by linarith)⟩
+
+/-- For the pairs differing in the preceding consonants, `σ_d` is unchanged, so the NHG probit gain
+is the rescaled harmony change (41): the same for words and clitics, larger before a monosyllable
+than before a disyllable. -/
+theorem probit_gain_onset (u : Underlying) (f : Following) (w : Fin 6 → ℝ) (σ : ℝ) :
+    probit (pNHG ⟨u, .cc, f⟩ w σ) - probit (pNHG ⟨u, .c, f⟩ w σ) =
+      (w 1 - w 5) / (σ * √(if f = .monosyllable then 4 else 3)) := by
+  rw [probit_pNHG, probit_pNHG, ← sub_div, hDiff_onset]
+
+/-! ### The observed rates (Table 2) and the revised constraint set (§8.3) -/
+
+/-- A context with the observed probability of pronouncing the schwa, in hundredths. -/
+structure Row where
+  ctx : Context
+  pSchwa : ℕ
+  deriving DecidableEq, Repr
+
+def underlyingTable : List (String × Underlying) := [("schwa", .schwa), ("zero", .zero)]
+
+def onsetTable : List (String × Onset) := [("C", .c), ("CC", .cc)]
+
+def followingTable : List (String × Following) :=
+  [("monosyllable", .monosyllable), ("disyllable", .disyllable)]
+
+def Row.ofExample (ex : LinguisticExample) : Option Row := do
+  let u ← ex.parse? "underlying" underlyingTable
+  let o ← ex.parse? "onset" onsetTable
+  let f ← ex.parse? "following" followingTable
+  let p ← ex.nat? "pSchwa"
+  pure ⟨⟨u, o, f⟩, p⟩
+
+theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
+
+def rows : List Row := Examples.all.filterMap Row.ofExample
+
+/-- The observed rate of a context, in hundredths. -/
+def pObs (x : Context) : ℕ := ((rows.find? (·.ctx = x)).map Row.pSchwa).getD 0
+
+theorem rows_cover : ∀ u o f, (rows.find? (·.ctx = ⟨u, o, f⟩)).isSome := by decide
+
+/-- The schwa is pronounced more often before a monosyllable in every pair, as every model with a
+positive \*Clash weight predicts. -/
+theorem pObs_following : ∀ u o, pObs ⟨u, o, .disyllable⟩ < pObs ⟨u, o, .monosyllable⟩ := by
+  decide
+
+/-- MaxEnt's side of that prediction: a positive \*Clash weight raises the schwa's probability. -/
+theorem pMaxEnt_following_lt (u : Underlying) (o : Onset) (w : Fin 6 → ℝ) (hw : 0 < w 2) :
+    pMaxEnt ⟨u, o, .disyllable⟩ w < pMaxEnt ⟨u, o, .monosyllable⟩ w := by
+  simp only [pMaxEnt, softmax_fin_two]
+  exact sigmoid_strictMono (by have := hDiff_following u o w; unfold hDiff at this; linarith)
+
+/-- The observed odds of the schwa. -/
+def odds (x : Context) : ℚ := pObs x / (100 - pObs x)
+
+/-- §8.2: the effect of the preceding consonants is larger in words than in clitics — the odds ratio
+across \*CCC is larger with underlying `/∅/` than with `/ə/`, in both stress contexts. MaxEnt with
+Smith & Pater's constraints predicts equal odds ratios (`logit_onset`); this is the Max × \*CCC
+interaction that motivates \*CCC/iP. -/
+theorem onset_effect_larger_for_words : ∀ f,
+    odds ⟨.schwa, .cc, f⟩ / odds ⟨.schwa, .c, f⟩ < odds ⟨.zero, .cc, f⟩ / odds ⟨.zero, .c, f⟩ := by
+  have h : ∀ u o f, pObs ⟨u, o, f⟩ = match u, o, f with
+      | .zero, .c, .disyllable => 9 | .zero, .c, .monosyllable => 12
+      | .zero, .cc, .disyllable => 68 | .zero, .cc, .monosyllable => 83
+      | .schwa, .c, .disyllable => 56 | .schwa, .c, .monosyllable => 65
+      | .schwa, .cc, .disyllable => 91 | .schwa, .cc, .monosyllable => 94 := by decide
+  intro f
+  cases f <;> simp only [odds, h] <;> norm_num
+
+/-- \*CCC/iP (§8.3): a three-consonant cluster within one intermediate phrase, which the
+schwaless candidate forms after two consonants only in the word-final items. -/
+def starCCCiP (x : Context) : Constraint Cand :=
+  .binary λ c => c = 1 ∧ x.onset = .cc ∧ x.underlying = .zero
+
+/-- Max and Dep collapsed into one correspondence constraint (§8.3). -/
+def corr (x : Context) : Constraint Cand :=
+  .binary λ c => (c = 1 ∧ x.underlying = .schwa) ∨ (c = 0 ∧ x.underlying = .zero)
+
+/-- The revised constraint set of Table 4: NoSchwa, \*CCC, \*CCC/iP, \*Clash, Max/Dep, \*Cluster. -/
+def revised (x : Context) : CON Cand 6
+  | 0 => noSchwa x
+  | 1 => starCCC x
+  | 2 => starCCCiP x
+  | 3 => starClash x
+  | 4 => corr x
+  | 5 => starCluster x
+
+/-- `hə − h∅` under the revised constraint set. -/
+noncomputable def hDiffRevised (x : Context) (w : Fin 6 → ℝ) : ℝ :=
+  harmonyScore (revised x) w 0 - harmonyScore (revised x) w 1
+
+/-- With \*CCC/iP the effect of the preceding consonants on the harmony difference is larger in
+words by the weight of \*CCC/iP, so a MaxEnt grammar can fit the interaction (§8.3). -/
+theorem hDiffRevised_onset (u : Underlying) (f : Following) (w : Fin 6 → ℝ) :
+    hDiffRevised ⟨u, .cc, f⟩ w - hDiffRevised ⟨u, .c, f⟩ w =
+      w 1 - w 5 + if u = .zero then w 2 else 0 := by
+  simp only [hDiffRevised, harmonyScore_diff, Fin.sum_univ_six]
+  cases u <;> cases f <;>
+    simp [revised, noSchwa, starCCC, starCCCiP, starClash, corr, starCluster] <;> ring
+
+/-! ### Three candidates (§9): tableau (45) -/
+
+/-- The tableau of (1), (3), (5) and (45): candidates `a`, `b`, `c` as `0`, `1`, `2`. -/
+def tableCon : CON (Fin 3) 3
+  | 0 => λ c => if c = 0 then 1 else 0
+  | 1 => λ c => if c = 1 then 2 else if c = 2 then 1 else 0
+  | 2 => λ c => if c = 2 then 1 else 0
+
+/-- The weights 15, 8, 8. -/
+noncomputable def tableW : Fin 3 → ℝ
+  | 0 => 15
+  | 1 => 8
+  | 2 => 8
+
+/-- Candidates `b` and `c` have equal harmony, `−16`. -/
+theorem table45_harmony :
+    harmonyScore tableCon tableW 0 = -15 ∧ harmonyScore tableCon tableW 1 = -16 ∧
+      harmonyScore tableCon tableW 2 = -16 := by
+  simp [harmonyScore_eq_neg_sum, Fin.sum_univ_three, tableCon, tableW]; norm_num
+
+/-- (5): MaxEnt gives `a` the probability `e⁻¹⁵ / (e⁻¹⁵ + 2e⁻¹⁶) = 1 / (1 + 2e⁻¹)`, 0.58, and
+`b` and `c` equal probabilities. -/
+theorem table45_maxent :
+    softmax (harmonyScore tableCon tableW) 0 = 1 / (1 + 2 * exp (-1)) ∧
+      softmax (harmonyScore tableCon tableW) 1 = softmax (harmonyScore tableCon tableW) 2 := by
+  obtain ⟨h0, h1, h2⟩ := table45_harmony
+  refine ⟨?_, by simp only [softmax, h1, h2]⟩
+  simp only [softmax, Fin.sum_univ_three, h0, h1, h2]
+  rw [show (-16 : ℝ) = -15 + -1 by norm_num, exp_add]
+  field_simp
+  ring
+
+/-- §9: in NHG the noise differences relative to `b` have variances 5 and 2 (14) and covariance 2,
+so the joint distribution is not determined by the harmony differences and `b` and `c` receive
+different probabilities despite equal harmony. -/
+theorem table45_nhg :
+    violationDiffSqSumQ tableCon 0 1 = 5 ∧ violationDiffSqSumQ tableCon 2 1 = 2 ∧
+      nhgCovarianceQ tableCon 1 0 2 = 2 := by
+  simp [violationDiffSqSumQ, nhgCovarianceQ, Fin.sum_univ_three, tableCon]; norm_num
 
 end Flemming2021

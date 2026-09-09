@@ -1,0 +1,314 @@
+[
+  {
+    "id": "flemming2021_ctx1",
+    "source": {
+      "bibkey": "smith-pater-2020",
+      "paperLabel": "experiment"
+    },
+    "reportedIn": {
+      "bibkey": "flemming-2021",
+      "paperLabel": "(19), Table 2"
+    },
+    "language": "stan1290",
+    "primaryText": "yn bɔt(ə) ʃinˈwaz",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a Chinese boot",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "underlying",
+        "zero"
+      ],
+      [
+        "onset",
+        "C"
+      ],
+      [
+        "following",
+        "disyllable"
+      ],
+      [
+        "pSchwa",
+        "9"
+      ]
+    ],
+    "comment": "Observed probability of pronouncing the parenthesized schwa, in hundredths."
+  },
+  {
+    "id": "flemming2021_ctx2",
+    "source": {
+      "bibkey": "smith-pater-2020",
+      "paperLabel": "experiment"
+    },
+    "reportedIn": {
+      "bibkey": "flemming-2021",
+      "paperLabel": "(19), Table 2"
+    },
+    "language": "stan1290",
+    "primaryText": "yn bɔt(ə) ˈʒon",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a yellow boot",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "underlying",
+        "zero"
+      ],
+      [
+        "onset",
+        "C"
+      ],
+      [
+        "following",
+        "monosyllable"
+      ],
+      [
+        "pSchwa",
+        "12"
+      ]
+    ],
+    "comment": "Observed probability of pronouncing the parenthesized schwa, in hundredths."
+  },
+  {
+    "id": "flemming2021_ctx3",
+    "source": {
+      "bibkey": "smith-pater-2020",
+      "paperLabel": "experiment"
+    },
+    "reportedIn": {
+      "bibkey": "flemming-2021",
+      "paperLabel": "(19), Table 2"
+    },
+    "language": "stan1290",
+    "primaryText": "yn vɛst(ə) ʃinˈwaz",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a Chinese jacket",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "underlying",
+        "zero"
+      ],
+      [
+        "onset",
+        "CC"
+      ],
+      [
+        "following",
+        "disyllable"
+      ],
+      [
+        "pSchwa",
+        "68"
+      ]
+    ],
+    "comment": "Observed probability of pronouncing the parenthesized schwa, in hundredths."
+  },
+  {
+    "id": "flemming2021_ctx4",
+    "source": {
+      "bibkey": "smith-pater-2020",
+      "paperLabel": "experiment"
+    },
+    "reportedIn": {
+      "bibkey": "flemming-2021",
+      "paperLabel": "(19), Table 2"
+    },
+    "language": "stan1290",
+    "primaryText": "yn vɛst(ə) ˈʒon",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a yellow jacket",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "underlying",
+        "zero"
+      ],
+      [
+        "onset",
+        "CC"
+      ],
+      [
+        "following",
+        "monosyllable"
+      ],
+      [
+        "pSchwa",
+        "83"
+      ]
+    ],
+    "comment": "Observed probability of pronouncing the parenthesized schwa, in hundredths."
+  },
+  {
+    "id": "flemming2021_ctx5",
+    "source": {
+      "bibkey": "smith-pater-2020",
+      "paperLabel": "experiment"
+    },
+    "reportedIn": {
+      "bibkey": "flemming-2021",
+      "paperLabel": "(19), Table 2"
+    },
+    "language": "stan1290",
+    "primaryText": "eva t(ə) ʃɔˈkɛ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Eva shocked you",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "underlying",
+        "schwa"
+      ],
+      [
+        "onset",
+        "C"
+      ],
+      [
+        "following",
+        "disyllable"
+      ],
+      [
+        "pSchwa",
+        "56"
+      ]
+    ],
+    "comment": "Observed probability of pronouncing the parenthesized schwa, in hundredths."
+  },
+  {
+    "id": "flemming2021_ctx6",
+    "source": {
+      "bibkey": "smith-pater-2020",
+      "paperLabel": "experiment"
+    },
+    "reportedIn": {
+      "bibkey": "flemming-2021",
+      "paperLabel": "(19), Table 2"
+    },
+    "language": "stan1290",
+    "primaryText": "eva t(ə) ˈʃɔk",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Eva shocks you",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "underlying",
+        "schwa"
+      ],
+      [
+        "onset",
+        "C"
+      ],
+      [
+        "following",
+        "monosyllable"
+      ],
+      [
+        "pSchwa",
+        "65"
+      ]
+    ],
+    "comment": "Observed probability of pronouncing the parenthesized schwa, in hundredths."
+  },
+  {
+    "id": "flemming2021_ctx7",
+    "source": {
+      "bibkey": "smith-pater-2020",
+      "paperLabel": "experiment"
+    },
+    "reportedIn": {
+      "bibkey": "flemming-2021",
+      "paperLabel": "(19), Table 2"
+    },
+    "language": "stan1290",
+    "primaryText": "mɔʁiz t(ə) siˈtɛ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Maurice cited you",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "underlying",
+        "schwa"
+      ],
+      [
+        "onset",
+        "CC"
+      ],
+      [
+        "following",
+        "disyllable"
+      ],
+      [
+        "pSchwa",
+        "91"
+      ]
+    ],
+    "comment": "Observed probability of pronouncing the parenthesized schwa, in hundredths."
+  },
+  {
+    "id": "flemming2021_ctx8",
+    "source": {
+      "bibkey": "smith-pater-2020",
+      "paperLabel": "experiment"
+    },
+    "reportedIn": {
+      "bibkey": "flemming-2021",
+      "paperLabel": "(19), Table 2"
+    },
+    "language": "stan1290",
+    "primaryText": "mɔʁiz t(ə) ˈsit",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Maurice cites you",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "underlying",
+        "schwa"
+      ],
+      [
+        "onset",
+        "CC"
+      ],
+      [
+        "following",
+        "monosyllable"
+      ],
+      [
+        "pSchwa",
+        "94"
+      ]
+    ],
+    "comment": "Observed probability of pronouncing the parenthesized schwa, in hundredths."
+  }
+]
