@@ -519,18 +519,34 @@ theorem condNecessity_isStrawsonAA {W : Type*} (domain : W → Set W) (β : Set 
       (fun _ _ => True) :=
   antiAdditive_implies_strawsonAA _ (condNecessity_isAntiAdditive domain β) _
 
-/-- [gajewski-2011] Appendix 1's actual `would` SAA result.
+/-- The full meaning of *would*: the conditional with its non-vacuity presupposition, that the
+modal base admits the antecedent ([von-fintel-1999]). -/
+def wouldFull {W : Type*} (domain : W → Set W) (p q : Set W) : Set W :=
+  fun w => (∃ w' ∈ domain w, p w') ∧ condNecessity domain p q w
 
-    vF's `would` has the same truth conditions as `condNecessity` but
-    with the non-vacuity presupposition `D_i(w) ∩ p ≠ ∅` (the modal
-    base intersected with the antecedent is non-empty). The SAA proof
-    is identical to the classical AA result; the non-vacuity is what
-    matters for non-trivial Strawson reasoning, not for the AA equation
-    itself. -/
+/-- With its presupposition in, *would* is not downward entailing in the antecedent: an empty
+antecedent fails the presupposition. -/
+theorem wouldFull_not_de :
+    ¬ Antitone (λ p => wouldFull (λ (_ : Fin 4) => Set.univ) p Set.univ) := λ h =>
+  have hu : (0 : Fin 4) ∈ wouldFull (λ (_ : Fin 4) => Set.univ) Set.univ Set.univ :=
+    ⟨⟨0, trivial, trivial⟩, λ _ _ _ => trivial⟩
+  (h (Set.empty_subset Set.univ) hu).1.elim λ _ hw => hw.2
+
+/-- *Would* is Strawson downward entailing in its antecedent: definedness supplies the
+non-vacuity a smaller antecedent could lose, and the conditional itself is antitone. -/
+theorem wouldFull_isStrawsonDE {W : Type*} (domain : W → Set W) (q : Set W) :
+    IsStrawsonDE (λ p => wouldFull domain p q) (λ p w => ∃ w' ∈ domain w, p w') :=
+  λ _ _ hpq _ hdef h => ⟨hdef, λ w' hw' hp => h.2 w' hw' (hpq hp)⟩
+
+/-- *Would* is Strawson anti-additive in its antecedent ([gajewski-2011]'s appendix): once both
+disjuncts are possible, the disjunctive antecedent is too, and the conditional distributes. -/
 theorem wouldFull_isStrawsonAA {W : Type*} (domain : W → Set W) (q : Set W) :
-    IsStrawsonAntiAdditive (fun p => condNecessity domain p q)
-      (fun p w => ∃ w' ∈ domain w, p w') :=
-  antiAdditive_implies_strawsonAA _ (condNecessity_isAntiAdditive domain q) _
+    IsStrawsonAntiAdditive (λ p => wouldFull domain p q) (λ p w => ∃ w' ∈ domain w, p w') :=
+  λ _ _ _ hp hp' =>
+    ⟨λ h => ⟨⟨hp, λ w' hw' hpw => h.2 w' hw' (Or.inl hpw)⟩,
+        ⟨hp', λ w' hw' hpw => h.2 w' hw' (Or.inr hpw)⟩⟩,
+      λ ⟨h₁, h₂⟩ => ⟨hp.imp λ _ ⟨hw', hpw⟩ => ⟨hw', Or.inl hpw⟩,
+        λ w' hw' h => h.elim (h₁.2 w' hw') (h₂.2 w' hw')⟩⟩
 
 /-! ### Strictness -/
 

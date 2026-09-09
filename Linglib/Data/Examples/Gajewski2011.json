@@ -1,0 +1,632 @@
+[
+  {
+    "id": "gajewski2011_ex20a",
+    "source": {
+      "bibkey": "gajewski-2011",
+      "paperLabel": "(20a)"
+    },
+    "language": "stan1293",
+    "primaryText": "No doctor has seen anyone.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "no"
+      ],
+      [
+        "strength",
+        "weak"
+      ],
+      [
+        "npi",
+        "anyone"
+      ],
+      [
+        "grammatical",
+        "yes"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2011_ex21a",
+    "source": {
+      "bibkey": "gajewski-2011",
+      "paperLabel": "(21a)"
+    },
+    "language": "stan1293",
+    "primaryText": "No doctor has seen Mary in weeks.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "no"
+      ],
+      [
+        "strength",
+        "strong"
+      ],
+      [
+        "npi",
+        "in weeks"
+      ],
+      [
+        "grammatical",
+        "yes"
+      ]
+    ],
+    "comment": "No sits at the end of its scale, so its enriched meaning is its plain, downward-entailing meaning."
+  },
+  {
+    "id": "gajewski2011_ex20b",
+    "source": {
+      "bibkey": "gajewski-2011",
+      "paperLabel": "(20b)"
+    },
+    "language": "stan1293",
+    "primaryText": "At most five doctors have seen anyone.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "atMostFive"
+      ],
+      [
+        "strength",
+        "weak"
+      ],
+      [
+        "npi",
+        "anyone"
+      ],
+      [
+        "grammatical",
+        "yes"
+      ]
+    ],
+    "comment": "Downward entailing but not anti-additive."
+  },
+  {
+    "id": "gajewski2011_ex21b",
+    "source": {
+      "bibkey": "gajewski-2011",
+      "paperLabel": "(21b)"
+    },
+    "language": "stan1293",
+    "primaryText": "At most five doctors have seen Mary in weeks.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "atMostFive"
+      ],
+      [
+        "strength",
+        "strong"
+      ],
+      [
+        "npi",
+        "in weeks"
+      ],
+      [
+        "grammatical",
+        "no"
+      ]
+    ],
+    "comment": "Excluding the stronger alternative at most four leaves exactly five, which is not downward entailing."
+  },
+  {
+    "id": "gajewski2011_ex1f",
+    "source": {
+      "bibkey": "gajewski-2011",
+      "paperLabel": "(1f)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some student ever said anything.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "some"
+      ],
+      [
+        "strength",
+        "weak"
+      ],
+      [
+        "npi",
+        "ever"
+      ],
+      [
+        "grammatical",
+        "no"
+      ]
+    ],
+    "comment": "Upward entailing in its scope."
+  },
+  {
+    "id": "gajewski2011_ex2f",
+    "source": {
+      "bibkey": "gajewski-2011",
+      "paperLabel": "(2f)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some students left until their birthdays.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "some"
+      ],
+      [
+        "strength",
+        "strong"
+      ],
+      [
+        "npi",
+        "until"
+      ],
+      [
+        "grammatical",
+        "no"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2011_ex26a",
+    "source": {
+      "bibkey": "gajewski-2011",
+      "paperLabel": "(26a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Only John has ever seen anyone.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "only"
+      ],
+      [
+        "strength",
+        "weak"
+      ],
+      [
+        "npi",
+        "ever, anyone"
+      ],
+      [
+        "grammatical",
+        "yes"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2011_ex26b",
+    "source": {
+      "bibkey": "gajewski-2011",
+      "paperLabel": "(26b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Only John has seen Mary in weeks.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "only"
+      ],
+      [
+        "strength",
+        "strong"
+      ],
+      [
+        "npi",
+        "in weeks"
+      ],
+      [
+        "grammatical",
+        "no"
+      ]
+    ],
+    "comment": "Only's presupposition that the focus satisfies the scope is upward entailing."
+  },
+  {
+    "id": "gajewski2011_ex26c",
+    "source": {
+      "bibkey": "gajewski-2011",
+      "paperLabel": "(26c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Only John likes pancakes, either.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "only"
+      ],
+      [
+        "strength",
+        "strong"
+      ],
+      [
+        "npi",
+        "either"
+      ],
+      [
+        "grammatical",
+        "no"
+      ]
+    ],
+    "comment": "Only's presupposition that the focus satisfies the scope is upward entailing. The paper credits the example to Nathan (1999)."
+  },
+  {
+    "id": "gajewski2011_ex26d",
+    "source": {
+      "bibkey": "gajewski-2011",
+      "paperLabel": "(26d)"
+    },
+    "language": "stan1293",
+    "primaryText": "Only John arrived until his birthday.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "only"
+      ],
+      [
+        "strength",
+        "strong"
+      ],
+      [
+        "npi",
+        "until"
+      ],
+      [
+        "grammatical",
+        "no"
+      ]
+    ],
+    "comment": "Only's presupposition that the focus satisfies the scope is upward entailing."
+  },
+  {
+    "id": "gajewski2011_ex27a",
+    "source": {
+      "bibkey": "gajewski-2011",
+      "paperLabel": "(27a)"
+    },
+    "language": "stan1293",
+    "primaryText": "If Bill has ever seen anyone, he is keeping it a secret.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "conditional"
+      ],
+      [
+        "strength",
+        "weak"
+      ],
+      [
+        "npi",
+        "ever, anyone"
+      ],
+      [
+        "grammatical",
+        "yes"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2011_ex27b",
+    "source": {
+      "bibkey": "gajewski-2011",
+      "paperLabel": "(27b)"
+    },
+    "language": "stan1293",
+    "primaryText": "If Bill has seen Mary in weeks, he is keeping it a secret.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "conditional"
+      ],
+      [
+        "strength",
+        "strong"
+      ],
+      [
+        "npi",
+        "in weeks"
+      ],
+      [
+        "grammatical",
+        "no"
+      ]
+    ],
+    "comment": "The conditional's presupposition that its antecedent is possible is upward entailing."
+  },
+  {
+    "id": "gajewski2011_ex27c",
+    "source": {
+      "bibkey": "gajewski-2011",
+      "paperLabel": "(27c)"
+    },
+    "language": "stan1293",
+    "primaryText": "If Bill likes pancakes, either, he is keeping it a secret.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "conditional"
+      ],
+      [
+        "strength",
+        "strong"
+      ],
+      [
+        "npi",
+        "either"
+      ],
+      [
+        "grammatical",
+        "no"
+      ]
+    ],
+    "comment": "The conditional's presupposition that its antecedent is possible is upward entailing."
+  },
+  {
+    "id": "gajewski2011_ex27d",
+    "source": {
+      "bibkey": "gajewski-2011",
+      "paperLabel": "(27d)"
+    },
+    "language": "stan1293",
+    "primaryText": "If Bill arrived until Friday, he is keeping it a secret.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "conditional"
+      ],
+      [
+        "strength",
+        "strong"
+      ],
+      [
+        "npi",
+        "until"
+      ],
+      [
+        "grammatical",
+        "no"
+      ]
+    ],
+    "comment": "The conditional's presupposition that its antecedent is possible is upward entailing."
+  },
+  {
+    "id": "gajewski2011_ex28a",
+    "source": {
+      "bibkey": "gajewski-2011",
+      "paperLabel": "(28a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary is sorry that she ever talked to anyone.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "sorry"
+      ],
+      [
+        "strength",
+        "weak"
+      ],
+      [
+        "npi",
+        "ever, anyone"
+      ],
+      [
+        "grammatical",
+        "yes"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2011_ex28b",
+    "source": {
+      "bibkey": "gajewski-2011",
+      "paperLabel": "(28b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary is sorry that she has talked to Bill in weeks.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "sorry"
+      ],
+      [
+        "strength",
+        "strong"
+      ],
+      [
+        "npi",
+        "in weeks"
+      ],
+      [
+        "grammatical",
+        "no"
+      ]
+    ],
+    "comment": "The factive presupposition of sorry is upward entailing in the complement."
+  },
+  {
+    "id": "gajewski2011_ex28c",
+    "source": {
+      "bibkey": "gajewski-2011",
+      "paperLabel": "(28c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary is sorry that she likes pancakes, either.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "sorry"
+      ],
+      [
+        "strength",
+        "strong"
+      ],
+      [
+        "npi",
+        "either"
+      ],
+      [
+        "grammatical",
+        "no"
+      ]
+    ],
+    "comment": "The factive presupposition of sorry is upward entailing in the complement."
+  },
+  {
+    "id": "gajewski2011_ex28d",
+    "source": {
+      "bibkey": "gajewski-2011",
+      "paperLabel": "(28d)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary is sorry that she arrived until Friday.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "licenser",
+        "sorry"
+      ],
+      [
+        "strength",
+        "strong"
+      ],
+      [
+        "npi",
+        "until"
+      ],
+      [
+        "grammatical",
+        "no"
+      ]
+    ],
+    "comment": "The factive presupposition of sorry is upward entailing in the complement."
+  }
+]
