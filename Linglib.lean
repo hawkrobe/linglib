@@ -1770,7 +1770,6 @@ import Linglib.Semantics.Polarity.Strength
 import Linglib.Semantics.Polarity.Item
 import Linglib.Semantics.Polarity.Licensing
 import Linglib.Semantics.Polarity.Marking
-import Linglib.Semantics.Polarity.Negation
 import Linglib.Semantics.Polarity.Operator
 import Linglib.Semantics.Polarity.Witnesses
 import Linglib.Semantics.Possession.Basic

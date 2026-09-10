@@ -1,4 +1,3 @@
-import Linglib.Semantics.Polarity.ExpletiveNegation
 import Linglib.Semantics.Mood.Defs
 
 /-!
@@ -48,14 +47,12 @@ so consumers can use `obtain`/`rintro` directly. Decidability is provided.
 
 ## Cross-construction connections
 
-§6 connects the predicate to [greco-2020]'s weak-EN polarity profile
-in `Negation.PolarityLicensing`. The Romero-2024 HiNQ bridge — a
-predicate-level correspondence between this licensing condition and
-Romero's bias requirement — lives in
-`Studies/Romero2024.lean`, so that this file does
-not have to import the Bias stack.
+The Romero-2024 HiNQ bridge — a predicate-level correspondence between
+this licensing condition and Romero's bias requirement — lives in
+`Studies/Romero2024.lean`, so that this file does not have to import the
+Bias stack.
 
-These are **predicate-level correspondences**, not stipulated maps. An
+This is a **predicate-level correspondence**, not a stipulated map. An
 earlier draft had `toRomeroForm := if licenses then HiNQ else none` (a
 two-cell table dressed as a function); the relocated bridge instead
 proves the relationship between the licensing condition and Romero's
@@ -74,7 +71,6 @@ commitment-update ([farkas-bruce-2010]) reanalyses.
 
 namespace Pragmatics.Bias
 
-open Negation (PolarityLicensing weakENProfile)
 open Mood (Illocutionary)
 
 -- ════════════════════════════════════════════════════
@@ -215,28 +211,11 @@ theorem blocking_axes_independent :
     noContradictionProfile.imprecise = true := by
   refine ⟨rfl, ?_, rfl, rfl⟩; rfl
 
--- ════════════════════════════════════════════════════
--- § 6. Bridge to Greco's PolarityLicensing
--- ════════════════════════════════════════════════════
-
-/-- [greco-2020]'s weak-EN profile is the polarity-licensing
-    profile that bias-conditioned negation realizes: it licenses weak NPIs
-    (Italian *pur* in [napoli-nespor-1976] §3.11 ex. 46–48) and
-    N-words, but rejects strong NPIs and not-also conjunctions. The
-    correspondence is at the *predicate* level: a licensed bias profile
-    is precisely the one that activates the weak-EN polarity profile. -/
-theorem licensed_activates_weakEN :
-    licensedProfile.licenses → weakENProfile.weakNPIs = true ∧
-                               weakENProfile.nWords = true ∧
-                               weakENProfile.strongNPIs = false ∧
-                               weakENProfile.notAlsoConj = false := by
-  intro _; refine ⟨rfl, rfl, rfl, rfl⟩
-
--- The Romero (2024) HiNQ bridge formerly lived here as §7 but was relocated
+-- The Romero (2024) HiNQ bridge formerly lived here as §6 but was relocated
 -- to `Studies/Romero2024.lean` so that this file does not
 -- have to import the Bias stack (CommonGround / InformationStructure /
--- Discourse.{SpeechAct,Commitment} / Kratzer.Flavor). The bridge is predicate-level — sharing only the
--- licensing predicate, not the form-level structure — and lives naturally in
--- the polar-question phenomenon directory.
+-- Discourse.{SpeechAct,Commitment} / Kratzer.Flavor). The bridge is
+-- predicate-level — sharing only the licensing predicate, not the form-level
+-- structure — and lives naturally in the polar-question phenomenon directory.
 
 end Pragmatics.Bias
