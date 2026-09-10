@@ -1,0 +1,1916 @@
+[
+  {
+    "id": "gutzmann2015_5_34",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(5.34)"
+    },
+    "language": "stan1295",
+    "primaryText": "Wann kommt Peter nach Hause?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Wann",
+        "when"
+      ],
+      [
+        "kommt",
+        "comes"
+      ],
+      [
+        "Peter",
+        "Peter"
+      ],
+      [
+        "nach",
+        "to"
+      ],
+      [
+        "Hause?",
+        "home?"
+      ]
+    ],
+    "translation": "When does Peter get home?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.3"
+      ],
+      [
+        "phenomenon",
+        "verbPosition"
+      ],
+      [
+        "clauseType",
+        "v2Interrogative"
+      ]
+    ],
+    "comment": "Presupposes that the addressee may know the answer.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_5_35",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(5.35)"
+    },
+    "language": "stan1295",
+    "primaryText": "Wann Peter nach Hause kommt?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Wann",
+        "when"
+      ],
+      [
+        "Peter",
+        "Peter"
+      ],
+      [
+        "nach",
+        "to"
+      ],
+      [
+        "Hause",
+        "home"
+      ],
+      [
+        "kommt?",
+        "comes?"
+      ]
+    ],
+    "translation": "I wonder when Peter gets home.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.3"
+      ],
+      [
+        "phenomenon",
+        "verbPosition"
+      ],
+      [
+        "clauseType",
+        "vlInterrogative"
+      ]
+    ],
+    "comment": "A deliberative question: no assumption that the addressee knows the answer.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_5_36a",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(5.36a)"
+    },
+    "language": "stan1295",
+    "primaryText": "Mag er immer noch kubanische Zigarren?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Does he still like Cuban cigars?",
+    "context": "Stefan: Ich hab seit Jahren nichts mehr von Peter gehört. 'I haven't heard from Peter in years.' Heiner: Ich auch nicht. 'Me neither.' Stefan continues:",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.3"
+      ],
+      [
+        "phenomenon",
+        "hearerKnowledge"
+      ],
+      [
+        "clauseType",
+        "v2Interrogative"
+      ]
+    ],
+    "comment": "Truckenbrodt's Cuban cigar scenario: Stefan knows that Heiner cannot know, so the hearer knowledge condition fails."
+  },
+  {
+    "id": "gutzmann2015_5_36b",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(5.36b)"
+    },
+    "language": "stan1295",
+    "primaryText": "Ob er immer noch kubanische Zigarren mag?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I wonder whether he still likes Cuban cigars.",
+    "context": "Stefan: Ich hab seit Jahren nichts mehr von Peter gehört. 'I haven't heard from Peter in years.' Heiner: Ich auch nicht. 'Me neither.' Stefan continues:",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.3"
+      ],
+      [
+        "phenomenon",
+        "hearerKnowledge"
+      ],
+      [
+        "clauseType",
+        "vlInterrogative"
+      ]
+    ],
+    "comment": "The vl-interrogative carries no hearer knowledge condition."
+  },
+  {
+    "id": "gutzmann2015_5_44",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(5.44)"
+    },
+    "language": "stan1295",
+    "primaryText": "Dass du nicht wieder die Schlüssel vergisst!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Dass",
+        "that"
+      ],
+      [
+        "du",
+        "you"
+      ],
+      [
+        "nicht",
+        "not"
+      ],
+      [
+        "wieder",
+        "again"
+      ],
+      [
+        "die",
+        "the"
+      ],
+      [
+        "Schlüssel",
+        "keys"
+      ],
+      [
+        "vergisst!",
+        "forget!"
+      ]
+    ],
+    "translation": "Don't forget the keys again!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.3"
+      ],
+      [
+        "phenomenon",
+        "deonticMood"
+      ],
+      [
+        "clauseType",
+        "dassVL"
+      ]
+    ],
+    "comment": "The speaker wants the hearer not to forget the keys again: deontic interpretation only, since dass is semantically empty.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_5_46",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(5.46)"
+    },
+    "language": "stan1295",
+    "primaryText": "Jim wohnt in Berlin.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Jim lives in Berlin.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.3"
+      ],
+      [
+        "phenomenon",
+        "epistemicMood"
+      ],
+      [
+        "clauseType",
+        "v2Declarative"
+      ]
+    ],
+    "comment": "V-to-C makes [-wh] visible at LF and triggers the epistemic interpretation."
+  },
+  {
+    "id": "gutzmann2015_5_81",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(5.81)"
+    },
+    "language": "stan1295",
+    "primaryText": "Dass du nicht zu spät kommst!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Dass",
+        "that"
+      ],
+      [
+        "du",
+        "you"
+      ],
+      [
+        "nicht",
+        "not"
+      ],
+      [
+        "zu",
+        "too"
+      ],
+      [
+        "spät",
+        "late"
+      ],
+      [
+        "kommst!",
+        "come!"
+      ]
+    ],
+    "translation": "Don't arrive late!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.6"
+      ],
+      [
+        "phenomenon",
+        "deonticMood"
+      ],
+      [
+        "clauseType",
+        "dassVL"
+      ]
+    ],
+    "comment": "True if the hearer does not arrive late; felicitous if the speaker wants the hearer not to be late.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_6_20",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.20)"
+    },
+    "language": "stan1295",
+    "primaryText": "Anna fährt ja morgen nach Hause.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Anna",
+        "Anna"
+      ],
+      [
+        "fährt",
+        "drives"
+      ],
+      [
+        "ja",
+        "MP"
+      ],
+      [
+        "morgen",
+        "tomorrow"
+      ],
+      [
+        "nach",
+        "to"
+      ],
+      [
+        "Hause.",
+        "home."
+      ]
+    ],
+    "translation": "Anna drives ja home tomorrow.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2.3"
+      ],
+      [
+        "phenomenon",
+        "distribution"
+      ],
+      [
+        "clauseType",
+        "v2Declarative"
+      ],
+      [
+        "particle",
+        "ja"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_6_21a",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.21a)"
+    },
+    "language": "stan1295",
+    "primaryText": "Ist Peter ja gekommen?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ist",
+        "is"
+      ],
+      [
+        "Peter",
+        "Peter"
+      ],
+      [
+        "ja",
+        "MP"
+      ],
+      [
+        "gekommen?",
+        "come?"
+      ]
+    ],
+    "translation": "Has Peter ja come?",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2.3"
+      ],
+      [
+        "phenomenon",
+        "distribution"
+      ],
+      [
+        "clauseType",
+        "v2Interrogative"
+      ],
+      [
+        "particle",
+        "ja"
+      ]
+    ],
+    "comment": "The book credits the example to M. Zimmermann (2012).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_6_21b",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.21b)"
+    },
+    "language": "stan1295",
+    "primaryText": "Wer kommt ja nach Tübingen?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Wer",
+        "who"
+      ],
+      [
+        "kommt",
+        "comes"
+      ],
+      [
+        "ja",
+        "MP"
+      ],
+      [
+        "nach",
+        "to"
+      ],
+      [
+        "Tübingen?",
+        "Tübingen?"
+      ]
+    ],
+    "translation": "Who is ja coming to Tübingen?",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2.3"
+      ],
+      [
+        "phenomenon",
+        "distribution"
+      ],
+      [
+        "clauseType",
+        "v2Interrogative"
+      ],
+      [
+        "particle",
+        "ja"
+      ]
+    ],
+    "comment": "The book credits the example to Meibauer (1994).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_6_22a",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.22a)"
+    },
+    "language": "stan1295",
+    "primaryText": "Geh ja nicht zum Museumsball!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Geh",
+        "go"
+      ],
+      [
+        "ja",
+        "MP"
+      ],
+      [
+        "nicht",
+        "not"
+      ],
+      [
+        "zum",
+        "to-the"
+      ],
+      [
+        "Museumsball!",
+        "museum-ball!"
+      ]
+    ],
+    "translation": "Do not ja go to the museum ball!",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2.3"
+      ],
+      [
+        "phenomenon",
+        "distribution"
+      ],
+      [
+        "clauseType",
+        "imperative"
+      ],
+      [
+        "particle",
+        "ja"
+      ]
+    ],
+    "comment": "The book credits the example to Meibauer (1994).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_6_22b",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.22b)"
+    },
+    "language": "stan1295",
+    "primaryText": "Dass du ja nicht dein ganzes Geld ausgibst!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Dass",
+        "that"
+      ],
+      [
+        "du",
+        "you"
+      ],
+      [
+        "ja",
+        "MP"
+      ],
+      [
+        "nicht",
+        "not"
+      ],
+      [
+        "dein",
+        "your"
+      ],
+      [
+        "ganzes",
+        "entire"
+      ],
+      [
+        "Geld",
+        "money"
+      ],
+      [
+        "ausgibst!",
+        "spend!"
+      ]
+    ],
+    "translation": "Do not spend all your money!",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2.3"
+      ],
+      [
+        "phenomenon",
+        "distribution"
+      ],
+      [
+        "clauseType",
+        "dassVL"
+      ],
+      [
+        "particle",
+        "ja"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_6_26",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.26)"
+    },
+    "language": "stan1295",
+    "primaryText": "Du kommst ja morgen um zehn?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Du",
+        "you"
+      ],
+      [
+        "kommst",
+        "come"
+      ],
+      [
+        "ja",
+        "MP"
+      ],
+      [
+        "morgen",
+        "tomorrow"
+      ],
+      [
+        "um",
+        "at"
+      ],
+      [
+        "zehn?",
+        "ten?"
+      ]
+    ],
+    "translation": "You are ja coming tomorrow at ten?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2.3"
+      ],
+      [
+        "phenomenon",
+        "checkQuestion"
+      ],
+      [
+        "clauseType",
+        "v2Declarative"
+      ],
+      [
+        "particle",
+        "ja"
+      ]
+    ],
+    "comment": "A declarative used as a question keeps ja: the restriction is semantic, tied to sentence mood, not to the speech act.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_6_27",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.27)"
+    },
+    "language": "stan1295",
+    "primaryText": "Wer will das Spiel ja nicht gewinnen?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Wer",
+        "who"
+      ],
+      [
+        "will",
+        "want"
+      ],
+      [
+        "das",
+        "the"
+      ],
+      [
+        "Spiel",
+        "game"
+      ],
+      [
+        "ja",
+        "MP"
+      ],
+      [
+        "nicht",
+        "not"
+      ],
+      [
+        "gewinnen?",
+        "win?"
+      ]
+    ],
+    "translation": "Who does not want ja to win the game?",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2.3"
+      ],
+      [
+        "phenomenon",
+        "rhetoricalQuestion"
+      ],
+      [
+        "clauseType",
+        "v2Interrogative"
+      ],
+      [
+        "particle",
+        "ja"
+      ]
+    ],
+    "comment": "A rhetorical question used as an assertion still excludes ja.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_6_28a",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.28a)"
+    },
+    "language": "stan1295",
+    "primaryText": "Hast du denn ein Auto?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Hast",
+        "have"
+      ],
+      [
+        "du",
+        "you"
+      ],
+      [
+        "denn",
+        "MP"
+      ],
+      [
+        "ein",
+        "a"
+      ],
+      [
+        "Auto?",
+        "car?"
+      ]
+    ],
+    "translation": "Do you denn have a car?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2.3"
+      ],
+      [
+        "phenomenon",
+        "distribution"
+      ],
+      [
+        "clauseType",
+        "v2Interrogative"
+      ],
+      [
+        "particle",
+        "denn"
+      ]
+    ],
+    "comment": "The book credits the example to Helbig (1988).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_6_28b",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.28b)"
+    },
+    "language": "stan1295",
+    "primaryText": "Warum lachst du denn?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Warum",
+        "why"
+      ],
+      [
+        "lachst",
+        "laugh"
+      ],
+      [
+        "du",
+        "you"
+      ],
+      [
+        "denn?",
+        "MP?"
+      ]
+    ],
+    "translation": "Why are you laughing denn?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2.3"
+      ],
+      [
+        "phenomenon",
+        "distribution"
+      ],
+      [
+        "clauseType",
+        "v2Interrogative"
+      ],
+      [
+        "particle",
+        "denn"
+      ]
+    ],
+    "comment": "The book credits the example to Kwon (2005).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_6_29",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.29)"
+    },
+    "language": "stan1295",
+    "primaryText": "Peter ist denn ein Philosoph.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Peter",
+        "Peter"
+      ],
+      [
+        "ist",
+        "is"
+      ],
+      [
+        "denn",
+        "MP"
+      ],
+      [
+        "ein",
+        "a"
+      ],
+      [
+        "Philosoph.",
+        "philosopher."
+      ]
+    ],
+    "translation": "Peter is denn a philosopher.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2.3"
+      ],
+      [
+        "phenomenon",
+        "distribution"
+      ],
+      [
+        "clauseType",
+        "v2Declarative"
+      ],
+      [
+        "particle",
+        "denn"
+      ]
+    ],
+    "comment": "Repeated as (6.143), where the use conditions derived for it have the speaker want the hearer to know the reason for asking whether Peter is a philosopher.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_6_30",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.30)"
+    },
+    "language": "stan1295",
+    "primaryText": "Lass mich denn nicht alleine!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Lass",
+        "let"
+      ],
+      [
+        "mich",
+        "me"
+      ],
+      [
+        "denn",
+        "MP"
+      ],
+      [
+        "nicht",
+        "not"
+      ],
+      [
+        "alleine!",
+        "alone!"
+      ]
+    ],
+    "translation": "Do not denn leave me alone!",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2.3"
+      ],
+      [
+        "phenomenon",
+        "distribution"
+      ],
+      [
+        "clauseType",
+        "imperative"
+      ],
+      [
+        "particle",
+        "denn"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_6_31",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.31)"
+    },
+    "language": "stan1295",
+    "primaryText": "Dass du denn pünktlich nach Hause kommst!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Dass",
+        "that"
+      ],
+      [
+        "du",
+        "you"
+      ],
+      [
+        "denn",
+        "MP"
+      ],
+      [
+        "pünktlich",
+        "on-time"
+      ],
+      [
+        "nach",
+        "to"
+      ],
+      [
+        "Hause",
+        "home"
+      ],
+      [
+        "kommst!",
+        "come!"
+      ]
+    ],
+    "translation": "You must denn get home on time!",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2.3"
+      ],
+      [
+        "phenomenon",
+        "distribution"
+      ],
+      [
+        "clauseType",
+        "dassVL"
+      ],
+      [
+        "particle",
+        "denn"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_6_32",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.32)"
+    },
+    "language": "stan1295",
+    "primaryText": "Du kommst denn morgen um zehn?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Du",
+        "you"
+      ],
+      [
+        "kommst",
+        "come"
+      ],
+      [
+        "denn",
+        "MP"
+      ],
+      [
+        "morgen",
+        "tomorrow"
+      ],
+      [
+        "um",
+        "at"
+      ],
+      [
+        "zehn?",
+        "ten?"
+      ]
+    ],
+    "translation": "You are denn coming tomorrow at ten?",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2.3"
+      ],
+      [
+        "phenomenon",
+        "checkQuestion"
+      ],
+      [
+        "clauseType",
+        "v2Declarative"
+      ],
+      [
+        "particle",
+        "denn"
+      ]
+    ],
+    "comment": "A check question excludes denn: declarative mood.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_6_33",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.33)"
+    },
+    "language": "stan1295",
+    "primaryText": "Wer will das Spiel denn nicht gewinnen?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Wer",
+        "who"
+      ],
+      [
+        "will",
+        "want"
+      ],
+      [
+        "das",
+        "the"
+      ],
+      [
+        "Spiel",
+        "game"
+      ],
+      [
+        "denn",
+        "MP"
+      ],
+      [
+        "nicht",
+        "not"
+      ],
+      [
+        "gewinnen?",
+        "win?"
+      ]
+    ],
+    "translation": "Who does not want to win the game?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2.3"
+      ],
+      [
+        "phenomenon",
+        "rhetoricalQuestion"
+      ],
+      [
+        "clauseType",
+        "v2Interrogative"
+      ],
+      [
+        "particle",
+        "denn"
+      ]
+    ],
+    "comment": "A rhetorical question allows denn: interrogative mood.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_6_35",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.35)"
+    },
+    "language": "stan1295",
+    "primaryText": "Hein ist wohl auf See.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Hein",
+        "Hein"
+      ],
+      [
+        "ist",
+        "is"
+      ],
+      [
+        "wohl",
+        "MP"
+      ],
+      [
+        "auf",
+        "at"
+      ],
+      [
+        "See.",
+        "sea."
+      ]
+    ],
+    "translation": "Hein is wohl at sea.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2.3"
+      ],
+      [
+        "phenomenon",
+        "distribution"
+      ],
+      [
+        "clauseType",
+        "v2Declarative"
+      ],
+      [
+        "particle",
+        "wohl"
+      ]
+    ],
+    "comment": "The book credits the example to M. Zimmermann (2004).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_6_36",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.36)"
+    },
+    "language": "stan1295",
+    "primaryText": "Ist Hein wohl auf See?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ist",
+        "is"
+      ],
+      [
+        "Hein",
+        "Hein"
+      ],
+      [
+        "wohl",
+        "MP"
+      ],
+      [
+        "auf",
+        "at"
+      ],
+      [
+        "See?",
+        "sea?"
+      ]
+    ],
+    "translation": "Is Hein wohl at sea?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2.3"
+      ],
+      [
+        "phenomenon",
+        "distribution"
+      ],
+      [
+        "clauseType",
+        "v2Interrogative"
+      ],
+      [
+        "particle",
+        "wohl"
+      ]
+    ],
+    "comment": "The book credits the example to M. Zimmermann (2004).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_6_37a",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.37a)"
+    },
+    "language": "stan1295",
+    "primaryText": "Komm wohl pünktlich nach Hause!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Komm",
+        "come"
+      ],
+      [
+        "wohl",
+        "MP"
+      ],
+      [
+        "pünktlich",
+        "on-time"
+      ],
+      [
+        "nach",
+        "to"
+      ],
+      [
+        "Hause!",
+        "home!"
+      ]
+    ],
+    "translation": "Come wohl home on time!",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2.3"
+      ],
+      [
+        "phenomenon",
+        "distribution"
+      ],
+      [
+        "clauseType",
+        "imperative"
+      ],
+      [
+        "particle",
+        "wohl"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_6_37b",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.37b)"
+    },
+    "language": "stan1295",
+    "primaryText": "Dass du wohl pünktlich nach Hause kommst!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Dass",
+        "that"
+      ],
+      [
+        "du",
+        "you"
+      ],
+      [
+        "wohl",
+        "MP"
+      ],
+      [
+        "pünktlich",
+        "on-time"
+      ],
+      [
+        "nach",
+        "to"
+      ],
+      [
+        "Hause",
+        "home"
+      ],
+      [
+        "kommst!",
+        "come!"
+      ]
+    ],
+    "translation": "You must wohl get home on time!",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2.3"
+      ],
+      [
+        "phenomenon",
+        "distribution"
+      ],
+      [
+        "clauseType",
+        "dassVL"
+      ],
+      [
+        "particle",
+        "wohl"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_6_38",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.38)"
+    },
+    "language": "stan1295",
+    "primaryText": "Bist du wohl still?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Bist",
+        "are"
+      ],
+      [
+        "du",
+        "you"
+      ],
+      [
+        "wohl",
+        "MP"
+      ],
+      [
+        "still?",
+        "quiet?"
+      ]
+    ],
+    "translation": "Will you wohl be quiet!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2.3"
+      ],
+      [
+        "phenomenon",
+        "indirectRequest"
+      ],
+      [
+        "clauseType",
+        "v2Interrogative"
+      ],
+      [
+        "particle",
+        "wohl"
+      ]
+    ],
+    "comment": "An interrogative used as a request keeps wohl. The book credits the example to M. Zimmermann (2004).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_6_39",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.39)"
+    },
+    "language": "stan1295",
+    "primaryText": "Könnst du mir wohl das Salz reichen?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Könnst",
+        "could"
+      ],
+      [
+        "du",
+        "you"
+      ],
+      [
+        "mir",
+        "me"
+      ],
+      [
+        "wohl",
+        "MP"
+      ],
+      [
+        "das",
+        "the"
+      ],
+      [
+        "Salz",
+        "salt"
+      ],
+      [
+        "reichen?",
+        "pass?"
+      ]
+    ],
+    "translation": "Could you wohl pass me the salt?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2.3"
+      ],
+      [
+        "phenomenon",
+        "indirectRequest"
+      ],
+      [
+        "clauseType",
+        "v2Interrogative"
+      ],
+      [
+        "particle",
+        "wohl"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_6_41",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.41)"
+    },
+    "language": "stan1295",
+    "primaryText": "Zeigen Sie mir wohl den Journalisten, der Gehaltseinbußen hinnimmt, um einem der vielen hundert Bewerber den Weg in eine Redaktion zu ebnen.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Show me the journalist who'll take a salary cut in order to pave the way for one of the many hundred applicants to an editorial department.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2.3"
+      ],
+      [
+        "phenomenon",
+        "rhetoricalRequest"
+      ],
+      [
+        "clauseType",
+        "imperative"
+      ],
+      [
+        "particle",
+        "wohl"
+      ]
+    ],
+    "comment": "A rhetorical request that makes an assertion, from Meibauer (1986), still excludes wohl."
+  },
+  {
+    "id": "gutzmann2015_6_108",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.108)"
+    },
+    "language": "stan1295",
+    "primaryText": "Geh wohl weg!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Go wohl away!",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.5.1"
+      ],
+      [
+        "phenomenon",
+        "typeMismatch"
+      ],
+      [
+        "clauseType",
+        "imperative"
+      ],
+      [
+        "particle",
+        "wohl"
+      ]
+    ],
+    "comment": "No well-formed proof: the imperative has no epistemic operator for wohl to modify."
+  },
+  {
+    "id": "gutzmann2015_6_117",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.117)"
+    },
+    "language": "stan1295",
+    "primaryText": "Peter ist wohl ein Philosoph.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Peter is wohl a philosopher.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.5.1"
+      ],
+      [
+        "phenomenon",
+        "useConditions"
+      ],
+      [
+        "clauseType",
+        "v2Declarative"
+      ],
+      [
+        "particle",
+        "wohl"
+      ]
+    ],
+    "comment": "True iff Peter is a philosopher; felicitous iff the speaker wants the hearer to know that the speaker assumes that Peter is a philosopher."
+  },
+  {
+    "id": "gutzmann2015_6_124",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.124)"
+    },
+    "language": "stan1295",
+    "primaryText": "Georg ist ja ein Philosoph.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Georg is ja a philosopher.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.5.2"
+      ],
+      [
+        "phenomenon",
+        "useConditions"
+      ],
+      [
+        "clauseType",
+        "v2Declarative"
+      ],
+      [
+        "particle",
+        "ja"
+      ]
+    ],
+    "comment": "Felicitous iff the speaker wants the hearer to know that Georg is a philosopher and believes it common knowledge or verifiable on the spot. The book prints 'is' for 'ist'."
+  },
+  {
+    "id": "gutzmann2015_6_128",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.128)"
+    },
+    "language": "stan1295",
+    "primaryText": "Ist Peter ja ein Philosoph?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ist",
+        "is"
+      ],
+      [
+        "Peter",
+        "Peter"
+      ],
+      [
+        "ja",
+        "MP"
+      ],
+      [
+        "ein",
+        "a"
+      ],
+      [
+        "Philosoph?",
+        "philosopher?"
+      ]
+    ],
+    "translation": "Is Peter ja a philosopher?",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.5.2"
+      ],
+      [
+        "phenomenon",
+        "useConditions"
+      ],
+      [
+        "clauseType",
+        "v2Interrogative"
+      ],
+      [
+        "particle",
+        "ja"
+      ]
+    ],
+    "comment": "Its use conditions, wanting to know whether p while believing p common knowledge, cannot be met by a reasonable speaker.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_6_134",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.134)"
+    },
+    "language": "stan1295",
+    "primaryText": "Hast du denn einen Führerschein?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Do you denn have a driver's license?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.5.2"
+      ],
+      [
+        "phenomenon",
+        "useConditions"
+      ],
+      [
+        "clauseType",
+        "v2Interrogative"
+      ],
+      [
+        "particle",
+        "denn"
+      ]
+    ],
+    "comment": "Felicitous iff the speaker wants to know, the hearer knows, and there is a proposition the hearer knows to be the reason for asking."
+  },
+  {
+    "id": "gutzmann2015_6_138",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.138)"
+    },
+    "language": "stan1295",
+    "primaryText": "Entschuldigung, könnten Sie mir denn sagen, wo's hier nach Klein-Heubach geht?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Entschuldigung,",
+        "excuse"
+      ],
+      [
+        "könnten",
+        "could"
+      ],
+      [
+        "Sie",
+        "you"
+      ],
+      [
+        "mir",
+        "me"
+      ],
+      [
+        "denn",
+        "MP"
+      ],
+      [
+        "sagen,",
+        "say"
+      ],
+      [
+        "wo's",
+        "where-it"
+      ],
+      [
+        "hier",
+        "here"
+      ],
+      [
+        "nach",
+        "to"
+      ],
+      [
+        "Klein-Heubach",
+        "Klein-Heubach"
+      ],
+      [
+        "geht?",
+        "goes?"
+      ]
+    ],
+    "translation": "Excuse me, could you denn tell me the way to Klein-Heubach?",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.5.2"
+      ],
+      [
+        "phenomenon",
+        "externalMotivation"
+      ],
+      [
+        "clauseType",
+        "v2Interrogative"
+      ],
+      [
+        "particle",
+        "denn"
+      ]
+    ],
+    "comment": "Discourse-initially there is no proposition the hearer knows to be the reason for the question. From Thurmair (1989).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_6_139",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.139)"
+    },
+    "language": "stan1295",
+    "primaryText": "Was schreibst du denn da?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Was",
+        "what"
+      ],
+      [
+        "schreibst",
+        "write"
+      ],
+      [
+        "du",
+        "you"
+      ],
+      [
+        "denn",
+        "MP"
+      ],
+      [
+        "da?",
+        "there?"
+      ]
+    ],
+    "translation": "What are you denn writing there?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.5.2"
+      ],
+      [
+        "phenomenon",
+        "externalMotivation"
+      ],
+      [
+        "clauseType",
+        "v2Interrogative"
+      ],
+      [
+        "particle",
+        "denn"
+      ]
+    ],
+    "comment": "Felicitous given extralinguistic motivation, such as seeing the addressee write. From Kwon (2005).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "gutzmann2015_6_141",
+    "source": {
+      "bibkey": "gutzmann-2015",
+      "paperLabel": "(6.141)"
+    },
+    "language": "stan1295",
+    "primaryText": "Geh denn weg!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Go denn away!",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.5.2"
+      ],
+      [
+        "phenomenon",
+        "useConditions"
+      ],
+      [
+        "clauseType",
+        "imperative"
+      ],
+      [
+        "particle",
+        "denn"
+      ]
+    ],
+    "comment": "denn can only modify the deontic operator here, so the speaker would have to want some proposition to be the reason for asking whether the hearer goes away."
+  }
+]
