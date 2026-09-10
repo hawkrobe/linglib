@@ -43,7 +43,7 @@ later paper that draws it, `Studies/Yagi2025.lean`.
 
 namespace Geurts2005
 
-open Modality Features Data.Examples Function
+open Modality Data.Examples Function
 
 variable {W : Type*}
 

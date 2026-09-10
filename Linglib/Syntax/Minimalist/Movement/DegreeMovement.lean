@@ -12,7 +12,7 @@ the Heim-Kennedy Constraint ([heim-2000]). Both constraints
 relate the LF position of a DegP to the LF position of any
 quantificational DP whose trace appears inside it.
 
-Specializes `lateMergerBleeds` for degree clauses, formalizes the
+Specializes `LateMergerBleeds` for degree clauses, formalizes the
 Heim-Kennedy Constraint as a structural filter, derives the Williams
 correlation as a corollary, and adds the [bhatt-takahashi-2011]
 §4 (43) base-position generalization.
@@ -45,32 +45,30 @@ open Minimalist
 -- § 1. Degree-Clause Late-Merger Admissibility
 -- ════════════════════════════════════════════════════
 
-/-- The B&P specialization of `lateMergerBleeds` for degree clauses:
+/-- The B&P specialization of `LateMergerBleeds` for degree clauses:
     the degree clause can late-merge above a Condition-C-relevant
     binder iff there is a *scope-licit* chain position above the binder.
     Chain positions are the shared `ChainPosition`; here `admissible`
     reads as "scope-licit" (Heim-Kennedy-compliant DegP scope) rather
     than "case-available". -/
-def degreeClauseLateMergerBleeds
-    (chain : List ChainPosition) (binderHeight : Nat) : Bool :=
-  lateMergerBleeds (·.admissible) ChainPosition.height chain binderHeight
+def DegreeClauseLateMergerBleeds (chain : List ChainPosition) (binderHeight : ℕ) : Prop :=
+  LateMergerBleeds (·.admissible = true) ChainPosition.height chain binderHeight
+
+instance (chain : List ChainPosition) (binderHeight : ℕ) :
+    Decidable (DegreeClauseLateMergerBleeds chain binderHeight) :=
+  inferInstanceAs (Decidable (LateMergerBleeds _ _ _ _))
 
 /-- A scope-licit position above the binder bleeds Condition C for
-    degree-clause late merger. Specialization of
-    `admissible_above_binder_bleeds`. -/
-theorem scopeOK_above_binder_bleeds
-    (chain : List ChainPosition) (binderHeight h : Nat)
-    (hgt : h > binderHeight) :
-    degreeClauseLateMergerBleeds (⟨h, true⟩ :: chain) binderHeight = true :=
-  admissible_above_binder_bleeds _ _ chain ⟨h, true⟩ binderHeight rfl hgt
+    degree-clause late merger. Specialization of `lateMergerBleeds_cons_of`. -/
+theorem scopeOK_above_binder_bleeds {chain : List ChainPosition} {binderHeight h : ℕ}
+    (hgt : binderHeight < h) : DegreeClauseLateMergerBleeds (⟨h, true⟩ :: chain) binderHeight :=
+  lateMergerBleeds_cons_of _ rfl hgt
 
 /-- If no chain position is scope-licit, the degree clause is forced to
-    reconstruct. Specialization of `no_admissible_no_bleed`. -/
-theorem no_scopeOK_forces_reconstruction
-    (chain : List ChainPosition) (binderHeight : Nat)
-    (h : ∀ p ∈ chain, p.admissible = false) :
-    degreeClauseLateMergerBleeds chain binderHeight = false :=
-  no_admissible_no_bleed _ _ chain binderHeight h
+    reconstruct. Specialization of `not_lateMergerBleeds_of_none`. -/
+theorem no_scopeOK_forces_reconstruction {chain : List ChainPosition} {binderHeight : ℕ}
+    (h : ∀ p ∈ chain, p.admissible = false) : ¬ DegreeClauseLateMergerBleeds chain binderHeight :=
+  not_lateMergerBleeds_of_none λ p hp => by simp [h p hp]
 
 -- ════════════════════════════════════════════════════
 -- § 2. Heim-Kennedy Constraint as a Structural Filter

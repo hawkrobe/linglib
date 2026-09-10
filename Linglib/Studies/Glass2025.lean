@@ -47,7 +47,7 @@ admitted states (`rows_admits`).
 
 namespace Glass2025
 
-open Doxastic Presupposition Data.Examples Features
+open Doxastic Presupposition Data.Examples
 open English.Predicates.Verbal Mandarin.Predicates
 
 variable {W : Type*} {c : Set W} {p : W → Prop}

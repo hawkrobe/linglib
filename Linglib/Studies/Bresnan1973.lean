@@ -38,7 +38,7 @@ the ambiguities of 1.8 beyond the homophony of *more* are not formalized.
 
 namespace Bresnan1973
 
-open Data.Examples Features
+open Data.Examples
 
 /-! ### The quantifier phrase (1.1–1.3) -/
 

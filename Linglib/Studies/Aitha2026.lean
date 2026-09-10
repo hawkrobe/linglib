@@ -39,7 +39,6 @@ theorems are the Word-to-Phrase rerankings of (68).
 namespace Aitha2026
 
 open Morphology.Case.Allomorphy DistributedMorphology Prosody Data.Examples
-open scoped DistributedMorphology.VocabularyItem
 open Core Constraints OptimalityTheory Core.Optimization Core.Optimization.Evaluation
 
 /-! ### Case -/
