@@ -1,0 +1,3700 @@
+[
+  {
+    "id": "grano2024_1a_sbjv",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(1a)"
+    },
+    "language": "stan1288",
+    "primaryText": "Victoria quiere que Marcela venga al picnic.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Victoria wants Marcela to come to the picnic.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_1a_ind",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(1a)"
+    },
+    "language": "stan1288",
+    "primaryText": "Victoria quiere que Marcela viene al picnic.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_1b",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(1b)"
+    },
+    "language": "stan1288",
+    "primaryText": "Victoria quiere venir al picnic.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Victoria wants to come to the picnic.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_2a_sbjv",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(2a)"
+    },
+    "language": "stan1290",
+    "primaryText": "Alice veut que Blanche soit végétarienne.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Alice wants Blanche to be vegetarian.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_2a_ind",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(2a)"
+    },
+    "language": "stan1290",
+    "primaryText": "Alice veut que Blanche est végétarienne.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_2b",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(2b)"
+    },
+    "language": "stan1290",
+    "primaryText": "Alice veut être végétarienne.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Alice wants to be vegetarian.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_3a_sbjv",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(3a)"
+    },
+    "language": "port1283",
+    "primaryText": "João quer que a Maria esteja feliz.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "João wants Maria to be happy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_3a_ind",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(3a)"
+    },
+    "language": "port1283",
+    "primaryText": "João quer que a Maria está feliz.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_3b",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(3b)"
+    },
+    "language": "port1283",
+    "primaryText": "João quer estar feliz.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "João wants to be happy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_4a_sbjv",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(4a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Gianni vuole che Maria sia contenta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Gianni wants Maria to be happy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_4a_ind",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(4a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Gianni vuole che Maria è contenta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": "Accepted by some speakers only."
+  },
+  {
+    "id": "grano2024_4b",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(4b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Gianni vuole essere contento.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Gianni wants to be happy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_5_sbjv",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(5)"
+    },
+    "language": "mode1248",
+    "primaryText": "Thelo na kerdisi o Janis.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I want Janis to win.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_5_ind",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(5)"
+    },
+    "language": "mode1248",
+    "primaryText": "Thelo oti kerdisi o Janis.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_6a",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(6a)"
+    },
+    "language": "roma1327",
+    "primaryText": "Ion vrea să meargă în parc.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Ion wants to go to the park.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_6b",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(6b)"
+    },
+    "language": "roma1327",
+    "primaryText": "Ion vrea că va merge în parc.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_6c",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(6c)"
+    },
+    "language": "roma1327",
+    "primaryText": "Ion vrea că merge în parc.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_7a",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(7a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim wants to be happy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_7b",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(7b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim wants Sandy to be happy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "forTo"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_8a",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(8a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim wants that she is happy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_8b",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(8b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim wants that Sandy is happy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_9_sbjv",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(9)"
+    },
+    "language": "stan1288",
+    "primaryText": "Espero que mi hermano viniera ayer.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I hope that my brother came yesterday.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hope"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_9_ind",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(9)"
+    },
+    "language": "stan1288",
+    "primaryText": "Espero que mi hermano vino ayer.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hope"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_10_sbjv",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(10)"
+    },
+    "language": "stan1290",
+    "primaryText": "Alice espère que Blanche soit végétarienne.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hope"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_10_ind",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(10)"
+    },
+    "language": "stan1290",
+    "primaryText": "Alice espère que Blanche est végétarienne.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Alice hopes that Blanche is vegetarian.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hope"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_11_sbjv",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(11)"
+    },
+    "language": "port1283",
+    "primaryText": "João espera que a Maria esteja feliz.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "João hopes that Maria is happy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hope"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_11_ind",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(11)"
+    },
+    "language": "port1283",
+    "primaryText": "João espera que a Maria está feliz.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "João hopes that Maria is happy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hope"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_12_sbjv",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(12)"
+    },
+    "language": "ital1282",
+    "primaryText": "Gianni spera che Maria sia contenta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Gianni hopes that Maria is happy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hope"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_12_ind",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(12)"
+    },
+    "language": "ital1282",
+    "primaryText": "Gianni spera che Maria è contenta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hope"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": "Accepted by some speakers only."
+  },
+  {
+    "id": "grano2024_13_sbjv",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(13)"
+    },
+    "language": "mode1248",
+    "primaryText": "Elpizo na kerdise o Janis.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I hope for Janis to have won.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hope"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_13_ind",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(13)"
+    },
+    "language": "mode1248",
+    "primaryText": "Elpizo oti kerdise o Janis.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I hope that Janis won.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hope"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_14a",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(14a)"
+    },
+    "language": "roma1327",
+    "primaryText": "Ion speră să meargă în parc.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Ion hopes to go to the park.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hope"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_14b",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(14b)"
+    },
+    "language": "roma1327",
+    "primaryText": "Ion speră că va merge în parc.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Ion hopes that he will go to the park.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hope"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_15a",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(15a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim hopes to be available tomorrow.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hope"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_15b",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(15b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim hopes for Sandy to be available tomorrow.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hope"
+      ],
+      [
+        "complement",
+        "forTo"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_16",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(16)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim hopes that Sandy is available tomorrow.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hope"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_17",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(17)"
+    },
+    "language": "stan1288",
+    "primaryText": "Tengo la intención de ir al parque hoy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I intend to go to the park today.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_18",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(18)"
+    },
+    "language": "stan1290",
+    "primaryText": "J'ai l'intention d'aller au parc aujourd'hui.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I intend to go to the park today.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_19",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(19)"
+    },
+    "language": "port1283",
+    "primaryText": "Pretendo ir ao parque hoje.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I intend to go to the park today.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_20",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(20)"
+    },
+    "language": "ital1282",
+    "primaryText": "Intendo andare al parco oggi.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I intend to go to the park today.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_21",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(21)"
+    },
+    "language": "stan1293",
+    "primaryText": "I intend to go to the park today.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_22_sbjv",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(22)"
+    },
+    "language": "mode1248",
+    "primaryText": "I Ariadne protithete na fiji noris.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Ariadne intends to leave early.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_22_ind",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(22)"
+    },
+    "language": "mode1248",
+    "primaryText": "I Ariadne protithete oti fiji noris.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_23a",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(23a)"
+    },
+    "language": "roma1327",
+    "primaryText": "Ion intenționează să meargă în parc.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Ion intends to go to the park.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_23b",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(23b)"
+    },
+    "language": "roma1327",
+    "primaryText": "Ion intenționează că va merge în parc.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_24a",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(24a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Hilary intends for Ben to come along to the party.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "forTo"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_24b",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(24b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Hilary intends that Ben come along to the party.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_25_sbjv",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(25)"
+    },
+    "language": "stan1288",
+    "primaryText": "Tengo la intención de que Juan vaya al parque hoy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I intend for Juan to go to the park today.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_25_ind",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(25)"
+    },
+    "language": "stan1288",
+    "primaryText": "Tengo la intención de que Juan va al parque hoy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_25_fut",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(25)"
+    },
+    "language": "stan1288",
+    "primaryText": "Tengo la intención de que Juan irá al parque hoy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_26_sbjv",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(26)"
+    },
+    "language": "port1283",
+    "primaryText": "Pretendo que o João vá ao parque hoje.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I intend for João to go to the park today.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_26_ind",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(26)"
+    },
+    "language": "port1283",
+    "primaryText": "Pretendo que o João vai ao parque hoje.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_26_fut",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(26)"
+    },
+    "language": "port1283",
+    "primaryText": "Pretendo que o João irá ao parque hoje.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_27_sbjv",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(27)"
+    },
+    "language": "stan1290",
+    "primaryText": "J'ai l'intention que Jean aille au parc aujourd'hui.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_27_ind",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(27)"
+    },
+    "language": "stan1290",
+    "primaryText": "J'ai l'intention que Jean va au parc aujourd'hui.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_28_sbjv",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(28)"
+    },
+    "language": "ital1282",
+    "primaryText": "Intendo che Giovanni vada al parco oggi.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_28_ind",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(28)"
+    },
+    "language": "ital1282",
+    "primaryText": "Intendo che Giovanni va al parco oggi.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_36",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(36)"
+    },
+    "language": "stan1288",
+    "primaryText": "Hice a Juan ir al parque.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I made Juan go to the park.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "causative"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_37",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(37)"
+    },
+    "language": "stan1290",
+    "primaryText": "J'ai fait aller Jean au parc.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I made Jean go to the park.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "causative"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_38",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(38)"
+    },
+    "language": "port1283",
+    "primaryText": "Eu fiz João ir ao parque.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I made João go to the park.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "causative"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_39",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(39)"
+    },
+    "language": "ital1282",
+    "primaryText": "Ho fatto andare Giovanni al parco.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I made Giovanni go to the park.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "causative"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_40_sbjv",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(40)"
+    },
+    "language": "stan1288",
+    "primaryText": "Hice que Juan fuera al parque.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I made Juan go to the park.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "causative"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_40_ind",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(40)"
+    },
+    "language": "stan1288",
+    "primaryText": "Hice que Juan fue al parque.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "causative"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_41_sbjv",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(41)"
+    },
+    "language": "port1283",
+    "primaryText": "Eu fiz com que João fosse ao parque.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I made João go to the park.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "causative"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_41_ind",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(41)"
+    },
+    "language": "port1283",
+    "primaryText": "Eu fiz com que João foi ao parque.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "causative"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_42a_sbjv",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(42a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Ho fatto sì che Giovanni andasse al parco.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I made Giovanni go to the park.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "causative"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_42a_ind",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(42a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Ho fatto sì che Giovanni è andato al parco.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "causative"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_42b_sbjv",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(42b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Ho lasciato che Giovanni andasse al parco.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I let Giovanni go to the park.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "causative"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_42b_ind",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(42b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Ho lasciato che Giovanni è andato al parco.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "causative"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_45a",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(45a)"
+    },
+    "language": "mode1248",
+    "primaryText": "Evala ton Jani na pai sto parko.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I made Janis go to the park.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "causative"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_45b",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(45b)"
+    },
+    "language": "mode1248",
+    "primaryText": "Evala oti o Janis pai sto parko.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "causative"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_46a",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(46a)"
+    },
+    "language": "roma1327",
+    "primaryText": "L-am făcut pe Ion să meargă în parc.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I made Ion go to the park.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "causative"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_46b",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(46b)"
+    },
+    "language": "roma1327",
+    "primaryText": "Am făcut că Ion merge în parc.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "causative"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_47a",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(47a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I made John go to the park.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "causative"
+      ],
+      [
+        "complement",
+        "bareInfinitive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_47b",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(47b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I made that John goes to the park.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "causative"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_49a_want",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(49a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I want to be immortal.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ],
+      [
+        "diagnostic",
+        "realism"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_49a_hope",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(49a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I hope to be immortal.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hope"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ],
+      [
+        "diagnostic",
+        "realism"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_50a",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(50a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I want to marry Alice and I want to marry Sue.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ],
+      [
+        "diagnostic",
+        "consistency"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_50b",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(50b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I hope to marry Alice and I hope to marry Sue.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hope"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ],
+      [
+        "diagnostic",
+        "consistency"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_51a",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(51a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I intend to be immortal.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ],
+      [
+        "diagnostic",
+        "realism"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_52",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(52)"
+    },
+    "language": "stan1293",
+    "primaryText": "I intend to marry Alice and I intend to marry Sue.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ],
+      [
+        "diagnostic",
+        "consistency"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_53",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(53)"
+    },
+    "language": "stan1290",
+    "primaryText": "J'ai l'intention d'être immortel.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I intend to be immortal.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ],
+      [
+        "diagnostic",
+        "realism"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_54",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(54)"
+    },
+    "language": "stan1290",
+    "primaryText": "J'ai l'intention d'épouser Alice et j'ai l'intention d'épouser Sue.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I intend to marry Alice and I intend to marry Sue.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ],
+      [
+        "diagnostic",
+        "consistency"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_63",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(63)"
+    },
+    "language": "stan1293",
+    "primaryText": "John wants it to rain so the picnic will be canceled, but he also wants it not to rain so he can go hiking.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "forTo"
+      ],
+      [
+        "diagnostic",
+        "consistency"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_64",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(64)"
+    },
+    "language": "stan1293",
+    "primaryText": "John hopes that it will rain so the picnic will be cancelled, but he also hopes that it won't rain so he can go hiking.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hope"
+      ],
+      [
+        "complement",
+        "indicative"
+      ],
+      [
+        "diagnostic",
+        "consistency"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_65",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(65)"
+    },
+    "language": "stan1293",
+    "primaryText": "I don't want to teach, but (since I have to) I want to teach Tuesdays and Thursdays.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ],
+      [
+        "diagnostic",
+        "monotonicity"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_66",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(66)"
+    },
+    "language": "stan1293",
+    "primaryText": "I don't hope to teach, but (since I have to) I hope to teach Tuesdays and Thursdays.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hope"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ],
+      [
+        "diagnostic",
+        "monotonicity"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_67",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(67)"
+    },
+    "language": "stan1293",
+    "primaryText": "I don't intend to teach, but (since I have to) I intend to teach Tuesdays and Thursdays.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intend"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ],
+      [
+        "diagnostic",
+        "monotonicity"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_90_aim",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(90)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim aimed to get good grades.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intentionRigid"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_90_try",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(90)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim tried to get good grades.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intentionRigid"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_91_aim",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(91)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim aimed that she would get good grades.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intentionRigid"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_91_try",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(91)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim tried that she would get good grades.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "intentionRigid"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_92",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(92)"
+    },
+    "language": "stan1293",
+    "primaryText": "Hilary planned to run the race.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "plan"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ],
+      [
+        "reading",
+        "intention"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_93",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(93)"
+    },
+    "language": "stan1293",
+    "primaryText": "Hilary planned that she would run the race.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "plan"
+      ],
+      [
+        "complement",
+        "indicative"
+      ],
+      [
+        "reading",
+        "foresee"
+      ]
+    ],
+    "comment": "Parasitic on the foresee sense of plan, the paper's hypothesis."
+  },
+  {
+    "id": "grano2024_94",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(94)"
+    },
+    "language": "stan1293",
+    "primaryText": "Hilary planned that there would be thirty people at the meeting.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "plan"
+      ],
+      [
+        "complement",
+        "indicative"
+      ],
+      [
+        "reading",
+        "foresee"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_96a",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(96a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim persuaded Sandy to quit smoking.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hybrid"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ],
+      [
+        "reading",
+        "intention"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_96b",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(96b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim decided to quit smoking.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hybrid"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ],
+      [
+        "reading",
+        "intention"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_97a",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(97a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim persuaded Sandy that smoking is harmful.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hybrid"
+      ],
+      [
+        "complement",
+        "indicative"
+      ],
+      [
+        "reading",
+        "belief"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_97b",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(97b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim decided that smoking is harmful.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hybrid"
+      ],
+      [
+        "complement",
+        "indicative"
+      ],
+      [
+        "reading",
+        "belief"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_98a",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(98a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim promised to quit smoking.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "commissive"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ],
+      [
+        "reading",
+        "intention"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_99a",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(99a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim promised that smoking is harmful.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "commissive"
+      ],
+      [
+        "complement",
+        "indicative"
+      ],
+      [
+        "reading",
+        "assertion"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_100",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(100)"
+    },
+    "language": "mode1248",
+    "primaryText": "I Ariadne epise ton Nikolas na fiji noris.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Ariadne persuaded Nikolas to leave early.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hybrid"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ],
+      [
+        "reading",
+        "intention"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_101",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(101)"
+    },
+    "language": "mode1248",
+    "primaryText": "I Ariadne epise ton Nikolas oti i idea tou ine kali.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Ariadne persuaded Nikolas that his idea is good.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hybrid"
+      ],
+      [
+        "complement",
+        "indicative"
+      ],
+      [
+        "reading",
+        "belief"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_102",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(102)"
+    },
+    "language": "stan1288",
+    "primaryText": "Wendy convenció a Paula de que le pidiera un aumento al jefe.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Wendy persuaded Paula to ask the boss for a pay raise.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hybrid"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ],
+      [
+        "reading",
+        "intention"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_103",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(103)"
+    },
+    "language": "stan1288",
+    "primaryText": "Alice convenció a Emily de que estaba diciendo la verdad.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Alice persuaded Emily that she was telling the truth.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hybrid"
+      ],
+      [
+        "complement",
+        "indicative"
+      ],
+      [
+        "reading",
+        "belief"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_104",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(104)"
+    },
+    "language": "stan1290",
+    "primaryText": "Wendy a persuadé Paula de demander une augmentation à son patron.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Wendy persuaded Paula to ask her boss for a pay raise.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hybrid"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ],
+      [
+        "reading",
+        "intention"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_105",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(105)"
+    },
+    "language": "stan1290",
+    "primaryText": "Mark a persuadé Olivia que son argument était véridique.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mark persuaded Olivia of the truth of his argument.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hybrid"
+      ],
+      [
+        "complement",
+        "indicative"
+      ],
+      [
+        "reading",
+        "belief"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_106",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(106)"
+    },
+    "language": "stan1293",
+    "primaryText": "I promise to lose the race.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "commissive"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ],
+      [
+        "reading",
+        "intention"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_107a",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(107a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I promise that I will lose the race.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "commissive"
+      ],
+      [
+        "complement",
+        "indicative"
+      ],
+      [
+        "reading",
+        "assertion"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_107b",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(107b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I promise that it will rain tomorrow.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "commissive"
+      ],
+      [
+        "complement",
+        "indicative"
+      ],
+      [
+        "reading",
+        "assertion"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_112_plan",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(112)"
+    },
+    "language": "stan1293",
+    "primaryText": "If you plan to get a job next year, you have to send out applications.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "plan"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ],
+      [
+        "reading",
+        "intention"
+      ],
+      [
+        "construction",
+        "anankastic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_112_hope",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(112)"
+    },
+    "language": "stan1293",
+    "primaryText": "If you hope to get a job next year, you have to send out applications.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hope"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ],
+      [
+        "reading",
+        "intention"
+      ],
+      [
+        "construction",
+        "anankastic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_113_plan",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(113)"
+    },
+    "language": "stan1293",
+    "primaryText": "If you plan that you'll get a job next year, you have to send out applications.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "plan"
+      ],
+      [
+        "complement",
+        "indicative"
+      ],
+      [
+        "reading",
+        "intention"
+      ],
+      [
+        "construction",
+        "anankastic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_113_hope",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(113)"
+    },
+    "language": "stan1293",
+    "primaryText": "If you hope that you'll get a job next year, you have to send out applications.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "hope"
+      ],
+      [
+        "complement",
+        "indicative"
+      ],
+      [
+        "reading",
+        "intention"
+      ],
+      [
+        "construction",
+        "anankastic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_115a",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(115a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I began to solve the problem.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "aspectual"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_115b",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(115b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I stopped solving the problem.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "aspectual"
+      ],
+      [
+        "complement",
+        "gerund"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_116",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(116)"
+    },
+    "language": "stan1293",
+    "primaryText": "I began that I solved the problem.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "aspectual"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_117",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(117)"
+    },
+    "language": "stan1290",
+    "primaryText": "Jean commence à manger.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Jean begins to eat.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "aspectual"
+      ],
+      [
+        "complement",
+        "infinitive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_118",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(118)"
+    },
+    "language": "stan1290",
+    "primaryText": "Jean commence qu'il mange.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "aspectual"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_119",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(119)"
+    },
+    "language": "mode1248",
+    "primaryText": "Arxisa na grafo.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I began to write.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "aspectual"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_120",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(120)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim remembered being born at midnight.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "memory"
+      ],
+      [
+        "complement",
+        "gerund"
+      ],
+      [
+        "reading",
+        "event"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_121",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(121)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim remembered that she was born at midnight.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "memory"
+      ],
+      [
+        "complement",
+        "indicative"
+      ],
+      [
+        "reading",
+        "proposition"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_122",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(122)"
+    },
+    "language": "mode1248",
+    "primaryText": "O Nicholas thimate na kleini tin porta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Nicholas remembered closing the door.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "memory"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ],
+      [
+        "reading",
+        "event"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_123",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(123)"
+    },
+    "language": "mode1248",
+    "primaryText": "O Nicholas thimate oti ekleise tin porta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Nicholas remembered that he closed the door.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "memory"
+      ],
+      [
+        "complement",
+        "indicative"
+      ],
+      [
+        "reading",
+        "proposition"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_124",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(124)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim saw Sandy leave.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "perception"
+      ],
+      [
+        "complement",
+        "bareInfinitive"
+      ],
+      [
+        "reading",
+        "event"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_125",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(125)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim saw that Sandy left.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "perception"
+      ],
+      [
+        "complement",
+        "indicative"
+      ],
+      [
+        "reading",
+        "proposition"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_126",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(126)"
+    },
+    "language": "mode1248",
+    "primaryText": "O Nikolas idhe ton Flavio na kleini tin porta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Nikolas saw Flavio closing the door.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "perception"
+      ],
+      [
+        "complement",
+        "subjunctive"
+      ],
+      [
+        "reading",
+        "event"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_127",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(127)"
+    },
+    "language": "mode1248",
+    "primaryText": "O Nikolas idhe oti o Flavio eklise tin porta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Nikolas saw that Flavio closed the door.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "perception"
+      ],
+      [
+        "complement",
+        "indicative"
+      ],
+      [
+        "reading",
+        "proposition"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_128a",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(128a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I want there to be world peace.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "forTo"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "grano2024_128b",
+    "source": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(128b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I want that there is world peace.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "class",
+        "want"
+      ],
+      [
+        "complement",
+        "indicative"
+      ]
+    ],
+    "comment": ""
+  }
+]

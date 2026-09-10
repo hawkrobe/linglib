@@ -1,573 +1,298 @@
 import Linglib.Semantics.Mood.Eventuality
-import Linglib.Semantics.Mood.Verbal
-import Linglib.Studies.Noonan2007
-import Linglib.Fragments.Greek.StandardModern.MoodChoice
-import Linglib.Fragments.Romanian.MoodChoice
-import Linglib.Fragments.Spanish.MoodChoice
-import Linglib.Fragments.Portuguese.MoodChoice
+import Linglib.Data.Examples.Grano2024
+import Mathlib.Data.Set.Basic
 
 /-!
-# Grano 2024: Intention Reports and Event Abstraction [grano-2024]
+# Grano (2024): Intention Reports and Eventuality Abstraction in a Theory of Mood Choice
 
-Cross-linguistic mood choice data and bridge theorems connecting
-[grano-2024]'s analysis of intention reports to the mood and
-attitude infrastructure.
+This file formalizes [grano-2024]'s account of why 'intend' accepts nonfinite and subjunctive
+complements but rejects indicative ones across Spanish, French, Portuguese, Italian, Greek,
+Romanian, and English, as 'want' does and as 'hope' does not (Table 1). Three premises carry the
+argument: intention reports have causally self-referential content ([searle-1983],
+[harman-1976]), an intention being carried out only if it causes the outcome in the right way;
+encoding that content takes abstraction over the complement's eventuality argument, since
+causation relates eventualities; and subjunctive and nonfinite clauses leave that argument open
+where the indicative closes it (`Mood.Grammatical.eventDenotation`). The pool of the paper's judged
+complements records each predicate's class, the complement type, and where it matters the
+reading, and `abstraction_rejects_indicative` checks the conclusion over every row that requires
+abstraction: intention reports, causatives, the intention-rigid *aim* and *try*, aspectual
+predicates, the intention readings of *persuade*, *decide*, *promise*, and *plan*, and the event
+readings of memory and perception reports. Section 3's case against [portner-rubinstein-2020]
+and [giannakidou-mari-2021] is `intend_like_hope_in_logic`: on realism, consistency, and
+monotonicity 'intend' patterns with 'hope', whose indicative those theories license by that very
+profile, yet every indicative row under 'intend' is rejected. The Hintikka semantics of (73)
+derives the three properties from the overlap of intention and doxastic alternatives (`realism`
+and its siblings), and section 7's synthesis reads the availability of the indicative off the two
+departures from default clausal semantics, a pair of modal backgrounds and eventuality
+abstraction (`indicative_possible_iff`).
 
-## Core Proposal (three premises → conclusion)
+## Implementation notes
 
-1. **Premise 1**: Intention reports encode causally self-referential content
-   ([searle-1983]; [harman-1976])
-2. **Premise 2**: Encoding causal self-reference requires abstraction over
-   the complement clause's eventuality argument (CAUSE* binds it)
-3. **Premise 3**: Only subjunctive and nonfinite clauses enable eventuality
-   abstraction; indicative clauses existentially close the event argument
-4. **Conclusion**: 'intend' accepts subjunctive/nonfinite but rejects
-   indicative complements cross-linguistically
+Whether a class needs eventuality abstraction is the paper's premise per class; for the hybrid,
+commissive, *plan*, memory, and perception predicates the reading of the row decides. The
+simplification condition of [portner-rubinstein-2020] is read off the consistency rows: a pair of
+backgrounds may collapse when the class rejects inconsistent prejacents. French *faire* with
+indicative complements, (43a) and (44b), which the paper leaves as open exceptions, is not in the
+pool, and the paper's remarks on nominal *avoir l'intention* and on French and Italian rejecting
+non-control complements under 'intend' altogether are recorded as rows without a theorem.
 
-## Table 1: Cross-Linguistic Mood Choice
+## References
 
-The central empirical finding: 'intend' patterns with 'want' (not 'hope')
-in robustly rejecting indicative complements. 'hope' exhibits cross-linguistic
-and language-internal variation; 'intend' does not.
-
-Independent support comes from causative predicates ('make'), intention-rigid
-predicates ('aim', 'try'), belief–intention hybrid predicates ('decide',
-'convince'), aspectual predicates ('begin'), and memory/perception reports
-('remember', 'see'). All pattern alike: subjunctive/nonfinite required,
-indicative rejected.
-
-## Unified Theory (§7)
-
-Subjunctive mood uniformly signals a departure from the default clausal
-semantics of unembedded assertions. Two kinds of departure:
-- **Comparison** (ordering semantics): 'want', 'hope' ([portner-rubinstein-2020])
-- **Event abstraction**: 'intend', causatives, aspectuals (this paper)
-
-When neither departure is present, only indicative mood is possible.
+* [grano-2024]
+* [portner-rubinstein-2020]
+* [silk-2018]
+* [giannakidou-mari-2021]
+* [searle-1983]
+* [harman-1976]
+* [heim-1992]
+* [jackendoff-culicover-2003]
+* [higginbotham-1983]
 -/
 
 namespace Grano2024
 
-open ArgumentStructure
-open Mood (Grammatical EventDenotation)
-open Mood
+open Data.Examples Features Mood
 
--- ════════════════════════════════════════════════════════════════
--- § 1. Cross-Linguistic Mood Choice Data (Table 1)
--- ════════════════════════════════════════════════════════════════
+/-! ### The pool -/
 
-/-- A mood choice observation: whether a predicate in a language
-    rejects indicative complements ([grano-2024], Table 1).
+/-- The predicate classes of the pool. -/
+inductive Class where
+  | want
+  | hope
+  | intend
+  | causative
+  /-- *aim*, *try*, *endeavor*, *strive*, *seek*, section 6.1. -/
+  | intentionRigid
+  /-- *persuade*, *convince*, *decide*: intention with a nonfinite or subjunctive complement,
+  belief with an indicative one. -/
+  | hybrid
+  /-- *promise*, *agree*, *pledge*, *swear*: a commissive or an assertion by the same split. -/
+  | commissive
+  | plan
+  | aspectual
+  | memory
+  | perception
+  deriving DecidableEq, Repr, Fintype
 
-    This is the key variable: 'want' and 'intend' robustly reject IND
-    across languages, while 'hope' does not. -/
-structure MoodChoiceDatum where
-  language : String
-  predicate : String
-  rejectsIndicative : Bool
+/-- The complement types of the pool. -/
+inductive Complement where
+  | indicative
+  | subjunctive
+  | infinitive
+  | forTo
+  | gerund
+  | bareInfinitive
+  deriving DecidableEq, Repr, Fintype
+
+/-- Premise 3: every complement type but the indicative leaves its eventuality argument open. -/
+def Complement.Abstracts (c : Complement) : Prop := c ≠ .indicative
+
+instance (c : Complement) : Decidable c.Abstracts := inferInstanceAs (Decidable (_ ≠ _))
+
+/-- The reading a row is judged on, where the predicate has more than one. -/
+inductive Reading where
+  | intention
+  | belief
+  | assertion
+  /-- *plan* as 'regard as fixed for planning purposes', section 6.1. -/
+  | foresee
+  | event
+  | proposition
   deriving DecidableEq, Repr
 
--- ── 'want': robustly rejects IND across all 7 languages ──
+/-- The logical diagnostics of section 3: an impossible prejacent, two incompatible prejacents,
+and a prejacent with a rejected superset. -/
+inductive Diagnostic where
+  | realism
+  | consistency
+  | monotonicity
+  deriving DecidableEq, Repr, Fintype
 
-def spanish_want  := MoodChoiceDatum.mk "Spanish"    "querer"  true
-def french_want   := MoodChoiceDatum.mk "French"     "vouloir" true
-def portuguese_want := MoodChoiceDatum.mk "Portuguese" "querer" true
-def italian_want  := MoodChoiceDatum.mk "Italian"    "volere"  true
-def greek_want    := MoodChoiceDatum.mk "Greek"      "thélo"   true
-def romanian_want := MoodChoiceDatum.mk "Romanian"   "a vrea"  true
-def english_want  := MoodChoiceDatum.mk "English"    "want"    true
-
--- ── 'hope': cross-linguistically variable ──
--- Spanish: SBJV only (ex. 9)
--- French: IND preferred, %SBJV for some speakers (ex. 10)
--- Portuguese: IND/SBJV (ex. 11)
--- Italian: SBJV preferred, %IND marginal (ex. 12)
--- Greek: IND/SBJV via na/oti complementizer (ex. 13)
--- Romanian: IND/SBJV (ex. 14)
--- English: IND and for-to (ex. 15–16)
-
-def spanish_hope    := MoodChoiceDatum.mk "Spanish"    "esperar"  true
-def french_hope     := MoodChoiceDatum.mk "French"     "espérer"  false
-def portuguese_hope := MoodChoiceDatum.mk "Portuguese" "esperar"  false
-def italian_hope    := MoodChoiceDatum.mk "Italian"    "sperare"  false
-def greek_hope      := MoodChoiceDatum.mk "Greek"      "elpízo"   false
-def romanian_hope   := MoodChoiceDatum.mk "Romanian"   "a spera"  false
-def english_hope    := MoodChoiceDatum.mk "English"    "hope"     false
-
--- ── 'intend': robustly rejects IND (like 'want') ──
--- Greek: na/*oti (ex. 22)
--- Romanian: să/*că (ex. 23)
--- Spanish: SBJV in non-control complements (ex. 25)
--- Portuguese: SBJV (ex. 26)
--- English: for-to only; *that-clause (ex. 21, 24)
-
-def spanish_intend    := MoodChoiceDatum.mk "Spanish"    "tener la intención" true
-def portuguese_intend := MoodChoiceDatum.mk "Portuguese" "pretender"          true
-def greek_intend      := MoodChoiceDatum.mk "Greek"      "protíthete"         true
-def romanian_intend   := MoodChoiceDatum.mk "Romanian"   "a intenționa"       true
-def english_intend    := MoodChoiceDatum.mk "English"    "intend"             true
-
--- ── Causatives: also robustly reject IND (§2.4) ──
-
-def spanish_make  := MoodChoiceDatum.mk "Spanish"    "hacer"  true
-def french_make   := MoodChoiceDatum.mk "French"     "faire"  true
-def portuguese_make := MoodChoiceDatum.mk "Portuguese" "fazer" true
-def italian_make  := MoodChoiceDatum.mk "Italian"    "fare"   true
-def greek_make    := MoodChoiceDatum.mk "Greek"      "vázo"   true
-def romanian_make := MoodChoiceDatum.mk "Romanian"   "a face" true
-def english_make  := MoodChoiceDatum.mk "English"    "make"   true
-
--- ════════════════════════════════════════════════════════════════
--- § 2. Data Collections and Generalizations
--- ════════════════════════════════════════════════════════════════
-
-def wantData : List MoodChoiceDatum :=
-  [spanish_want, french_want, portuguese_want, italian_want,
-   greek_want, romanian_want, english_want]
-
-def hopeData : List MoodChoiceDatum :=
-  [spanish_hope, french_hope, portuguese_hope, italian_hope,
-   greek_hope, romanian_hope, english_hope]
-
-def intendData : List MoodChoiceDatum :=
-  [spanish_intend, portuguese_intend, greek_intend,
-   romanian_intend, english_intend]
-
-def causativeData : List MoodChoiceDatum :=
-  [spanish_make, french_make, portuguese_make, italian_make,
-   greek_make, romanian_make, english_make]
-
-/-- 'want' robustly rejects indicative across all 7 languages. -/
-theorem want_robustly_rejects_ind :
-    wantData.all (·.rejectsIndicative) = true := by decide
-
-/-- 'hope' does NOT robustly reject indicative — it varies
-    (IND accepted in French, Portuguese, Italian, Greek, Romanian, English). -/
-theorem hope_does_not_robustly_reject_ind :
-    hopeData.all (·.rejectsIndicative) = false := by decide
-
-/-- 'intend' robustly rejects indicative (where testable). -/
-theorem intend_robustly_rejects_ind :
-    intendData.all (·.rejectsIndicative) = true := by decide
-
-/-- Causatives robustly reject indicative (§2.4). -/
-theorem causatives_robustly_reject_ind :
-    causativeData.all (·.rejectsIndicative) = true := by decide
-
-/-- 'intend' patterns with 'want', not 'hope', on indicative rejection.
-    This is the central empirical finding ([grano-2024], Table 1). -/
-theorem intend_patterns_with_want :
-    intendData.all (·.rejectsIndicative) =
-      wantData.all (·.rejectsIndicative) ∧
-    intendData.all (·.rejectsIndicative) ≠
-      hopeData.all (·.rejectsIndicative) := by
-  decide
-
-/-- Causatives pattern with 'intend' and 'want' (not 'hope').
-    Independent support for the eventuality abstraction analysis (§2.4). -/
-theorem causatives_pattern_with_intend :
-    causativeData.all (·.rejectsIndicative) =
-      intendData.all (·.rejectsIndicative) := by
-  decide
-
--- ════════════════════════════════════════════════════════════════
--- § 3. Bridge: Empirical Data → Selector
--- ════════════════════════════════════════════════════════════════
-
-open Noonan2007 (deriveSelector)
-open English.Predicates.Verbal (want hope)
-
-/-- The deriveSelector function correctly classifies 'want' as
-    robustly subjunctive-selecting, matching the cross-linguistic data. -/
-theorem want_selector_matches_data :
-    deriveSelector want = .subjunctiveSelecting ∧
-    wantData.all (·.rejectsIndicative) = true := by
-  decide
-
-/-- The deriveSelector function correctly classifies 'hope' as
-    cross-linguistically variable, matching the data showing variation. -/
-theorem hope_selector_matches_data :
-    deriveSelector hope = .crossLinguisticallyVariable ∧
-    hopeData.all (·.rejectsIndicative) = false := by
-  decide
-
-/-! ### Causal self-reference and the two report types
-
-CAUSE*(s, e, w): the attitude state `s` brings about event `e` in `w`
-"in the right way" — via the agent's intention-in-action, not a
-deviant causal chain ([grano-2024] (79); [searle-1983]; on deviance,
-[harman-1976] and [chisholm-1966]: Betty's intention to shoot makes
-her nervous, the nervousness makes her pull the trigger — the
-intention caused the killing, but not in the right way, so she did
-not carry out her intention). -/
-
-/-- Intention reports with causal self-reference ([grano-2024], (79)):
-    some stative intention state held by the agent, each of whose
-    content pairs ⟨w', x⟩ supports an event that the state brings
-    about in the right way and that satisfies the complement. The
-    complement type `E → W → Event T → Prop` keeps the event
-    argument open — the formal correlate of Premise 3: indicative
-    would existentially close it to `W → Prop`, which cannot compose
-    with the causal self-reference relation. -/
-def intentionHolds {E W T : Type*} [LinearOrder T]
-    (isIntention : Event T → W → Prop)
-    (holder : E → Event T → W → Prop)
-    (content : Event T → Set (W × E))
-    (causeStar : Event T → Event T → W → Prop)
-    (agent : E) (P : E → W → Event T → Prop) (w : W) : Prop :=
-  ∃ s : Event T,
-    s.sort = .state ∧ isIntention s w ∧ holder agent s w ∧
-    ∀ p ∈ content s, ∃ e : Event T, causeStar s e p.1 ∧ P p.2 p.1 e
-
-/-- Plain belief reports need no causal self-reference: the complement
-    is a closed proposition evaluated over doxastic alternatives —
-    which is why *believe* is indicative-selecting while *intend*
-    selects subjunctive. -/
-def beliefHolds {E W : Type*} (dox : E → W → Set W)
-    (agent : E) (P : W → Prop) (w : W) : Prop :=
-  ∀ w' ∈ dox agent w, P w'
-
--- ════════════════════════════════════════════════════════════════
--- § 4. Bridge: Event Denotation → Indicative Rejection
--- ════════════════════════════════════════════════════════════════
-
-/-- Indicative mood closes the eventuality argument: its event-level
-    denotation lands in the `closed` constructor, so predicates
-    requiring eventuality abstraction (CAUSE* binds the event
-    variable) reject indicative complements.
-
-    This is the formal correlate of [grano-2024]'s argument chain:
-    Premise 2 (CAUSE* needs open event arg) + Premise 3 (IND closes it)
-    → Conclusion (intention reports reject IND). -/
-theorem ind_incompatible_with_eventuality_abstraction {E : Type*} (P : E → Prop) :
-    Grammatical.indicative.eventDenotation P = .closed (∃ e, P e) := rfl
-
-/-- Subjunctive mood leaves the eventuality argument open — its
-    denotation lands in `abstracted` with the predicate intact —
-    enabling CAUSE* to bind it. This is why 'intend' and causatives
-    accept SBJV. -/
-theorem subj_enables_eventuality_abstraction {E : Type*} (P : E → Prop) :
-    Grammatical.subjunctive.eventDenotation P = .abstracted P := rfl
-
-/-- The three-premise argument chain:
-    1. `intentionHolds` requires P : E → W → Event T → Prop (open event arg)
-    2. IND closes the event argument (`eventDenotation` lands in `closed`)
-    3. SBJV leaves it open (`eventDenotation` lands in `abstracted`)
-    → intention reports require SBJV, reject IND -/
-theorem grano_argument_chain :
-    -- Premise 3: IND closes, SBJV opens (event denotations by constructor)
-    (∀ P : Unit → Prop, Grammatical.indicative.eventDenotation P = .closed (∃ e, P e)) ∧
-    (∀ P : Unit → Prop, Grammatical.subjunctive.eventDenotation P = .abstracted P) ∧
-    -- Empirical confirmation: intend rejects IND
-    intendData.all (·.rejectsIndicative) = true ∧
-    -- Empirical confirmation: causatives also reject IND (independent support)
-    causativeData.all (·.rejectsIndicative) = true := by
-  refine ⟨fun _ => rfl, fun _ => rfl, ?_, ?_⟩ <;> decide
-
--- ════════════════════════════════════════════════════════════════
--- § 5. Bridge: Unified Theory — Two Kinds of Departure
--- ════════════════════════════════════════════════════════════════
-
-/-- [grano-2024] §7 proposes that subjunctive mood uniformly signals
-    a departure from the default clausal semantics of unembedded assertions.
-    Two kinds of departure trigger SBJV:
-    - **Comparison**: ordering semantics with two modal backgrounds
-      (want, hope; [portner-rubinstein-2020])
-    - **Event abstraction**: open event argument for CAUSE* or
-      aspect (intend, causatives, aspectuals; this paper)
-
-    Predicates like 'hope' involve comparison only (variable mood).
-    Predicates like 'want' involve comparison (robust SBJV: simplification
-      blocked because 'want' does not allow inconsistent prejacents).
-    Predicates like 'intend' involve both comparison and eventuality
-      abstraction (robust SBJV: IND is type-incompatible with CAUSE*).
-    Predicates like 'believe' involve neither → indicative only. -/
-inductive DepartureKind where
-  | comparisonSimplifiable    -- ordering semantics, modal backgrounds can simplify
-                              -- to one → IND possible in some languages ('hope')
-  | comparisonNonSimplifiable -- ordering semantics, simplification blocked because
-                              -- 'want' tolerates inconsistent prejacents ((50), (60))
-                              -- → both modal backgrounds must remain → robust SBJV
-  | eventualityAbstraction    -- open event argument ('begin', 'make')
-  | comparisonAndAbstraction  -- comparison + eventuality abstraction ('intend')
+/-- A judged complement clause. -/
+structure Row where
+  cls : Class
+  complement : Complement
+  reading : Option Reading
+  diagnostic : Option Diagnostic
+  judgment : Judgment
   deriving DecidableEq, Repr
 
-/-- Map departure kind to mood selection prediction.
+def Row.ofExample (ex : LinguisticExample) : Option Row := do
+  let cls ← ex.parse? "class"
+    [("want", Class.want), ("hope", .hope), ("intend", .intend), ("causative", .causative),
+      ("intentionRigid", .intentionRigid), ("hybrid", .hybrid), ("commissive", .commissive),
+      ("plan", .plan), ("aspectual", .aspectual), ("memory", .memory), ("perception", .perception)]
+  let complement ← ex.parse? "complement"
+    [("indicative", Complement.indicative), ("subjunctive", .subjunctive),
+      ("infinitive", .infinitive), ("forTo", .forTo), ("gerund", .gerund),
+      ("bareInfinitive", .bareInfinitive)]
+  pure ⟨cls, complement,
+    ex.parse? "reading"
+      [("intention", Reading.intention), ("belief", .belief), ("assertion", .assertion),
+        ("foresee", .foresee), ("event", .event), ("proposition", .proposition)],
+    ex.parse? "diagnostic"
+      [("realism", Diagnostic.realism), ("consistency", .consistency),
+        ("monotonicity", .monotonicity)],
+    ex.judgment⟩
 
-    [grano-2024] §7: both comparison and eventuality abstraction
-    are departures from the default clausal semantics that trigger SBJV.
-    The key empirical difference:
+/-- The paper's judged complements, sections 2, 3, 6, and 7. -/
+def rows : List Row := Examples.all.filterMap Row.ofExample
 
-    - **Comparison alone**: SBJV is expected, but Portner & Rubinstein's
-      simplification of two modal backgrounds into one can license IND
-      in some languages (French *espérer*). This yields cross-linguistic
-      variation for 'hope'-type verbs.
-    - **Event abstraction** (± comparison): SBJV is robust because
-      IND existentially closes the event argument, making it
-      type-incompatible with CAUSE* / aspect / perception. No
-      simplification can rescue IND here. -/
-def DepartureKind.moodPrediction : DepartureKind → Selector
-  | .comparisonSimplifiable    => .crossLinguisticallyVariable
-  | .comparisonNonSimplifiable => .subjunctiveSelecting
-  | .eventualityAbstraction    => .subjunctiveSelecting
-  | .comparisonAndAbstraction  => .subjunctiveSelecting
+/-! ### Premises 1 and 2 and the conclusion, over the pool -/
 
-/-- Event abstraction robustly predicts subjunctive selection
-    (IND is type-incompatible with open event argument). -/
-theorem eventuality_abstraction_robust :
-    DepartureKind.eventualityAbstraction.moodPrediction = .subjunctiveSelecting ∧
-    DepartureKind.comparisonAndAbstraction.moodPrediction = .subjunctiveSelecting :=
+/-- The classes whose semantics relates to an eventuality: intention through the causal
+self-reference of Premises 1 and 2, causation, the intention-rigid predicates, and aspect. -/
+def Class.RequiresAbstraction (c : Class) : Prop :=
+  c = .intend ∨ c = .causative ∨ c = .intentionRigid ∨ c = .aspectual
+
+instance : DecidablePred Class.RequiresAbstraction := λ c => by
+  unfold Class.RequiresAbstraction; infer_instance
+
+/-- A row requires eventuality abstraction by its class or by an intention or event reading. -/
+def Row.RequiresAbstraction (r : Row) : Prop :=
+  r.cls.RequiresAbstraction ∨ r.reading = some .intention ∨ r.reading = some .event
+
+instance : DecidablePred Row.RequiresAbstraction := λ r => by
+  unfold Row.RequiresAbstraction; infer_instance
+
+/-- The conclusion (72d) over the pool: wherever abstraction is required the indicative is
+rejected, and where the same predicate takes an indicative complement it is read as belief,
+assertion, foresight, or a proposition instead. -/
+theorem abstraction_rejects_indicative :
+    ∀ r ∈ rows, r.RequiresAbstraction → r.complement = .indicative →
+      r.judgment ≠ .acceptable := by
+  decide +kernel
+
+/-- Each class that requires abstraction has an acceptable open complement in the pool. -/
+theorem abstraction_accepts_open :
+    ∀ c : Class, c.RequiresAbstraction →
+      ∃ r ∈ rows, r.cls = c ∧ r.complement.Abstracts ∧ r.judgment = .acceptable := by
+  decide +kernel
+
+/-- 'want' rejects the indicative throughout, the idle desire of (128) included. -/
+theorem want_rejects_indicative :
+    ∀ r ∈ rows, r.cls = .want → r.complement = .indicative → r.judgment ≠ .acceptable := by
+  decide +kernel
+
+/-- 'hope' varies: Spanish rejects the indicative, the other languages accept it. -/
+theorem hope_varies :
+    (∃ r ∈ rows, r.cls = .hope ∧ r.complement = .indicative ∧ r.judgment = .acceptable) ∧
+      ∃ r ∈ rows, r.cls = .hope ∧ r.complement = .indicative ∧ r.judgment = .ungrammatical := by
+  decide
+
+/-! ### Section 3: the logical profile of 'intend' -/
+
+/-- The class fails diagnostic `d` somewhere in the pool. -/
+def Class.Fails (c : Class) (d : Diagnostic) : Prop :=
+  ∃ r ∈ rows, r.cls = c ∧ r.diagnostic = some d ∧ r.judgment ≠ .acceptable
+
+instance (c : Class) (d : Diagnostic) : Decidable (c.Fails d) := by
+  unfold Class.Fails; infer_instance
+
+/-- On realism, consistency, and monotonicity 'intend' patterns with 'hope' and against 'want',
+yet on mood with 'want': the theories that license the indicative under 'hope' by that profile,
+[portner-rubinstein-2020]'s simplification of consistent backgrounds and
+[giannakidou-mari-2021]'s optional nonveridicality, predict it under 'intend' as well. -/
+theorem intend_like_hope_in_logic :
+    (∀ d, Class.hope.Fails d ∧ Class.intend.Fails d ∧ ¬ Class.want.Fails d) ∧
+      (∃ r ∈ rows, r.cls = .hope ∧ r.complement = .indicative ∧ r.judgment = .acceptable) ∧
+      ∀ r ∈ rows, r.cls = .intend → r.complement = .indicative → r.judgment ≠ .acceptable := by
+  decide +kernel
+
+/-! ### The semantics of intention reports, section 4
+
+(73) quantifies over the worlds compatible with the agent's intentions; the one substantive
+constraint is that they overlap the worlds compatible with the agent's beliefs, from which
+realism, consistency, and monotonicity follow. (79) adds the de se triples, the intention state,
+and the causal self-reference, relating the state by `causeStar` to an eventuality of the
+complement, which therefore keeps its eventuality argument. -/
+
+section Hintikka
+
+variable {W : Type*}
+
+/-- (73): the agent intends `p` at `w` when `p` holds throughout the intention alternatives. -/
+def Intends (int : W → Set W) (p : Set W) (w : W) : Prop := int w ⊆ p
+
+/-- Realism: what is intended is believed possible. -/
+theorem realism {int dox : W → Set W} {p : Set W} {w : W} (h : (int w ∩ dox w).Nonempty)
+    (hp : Intends int p w) : ∃ w' ∈ dox w, w' ∈ p :=
+  let ⟨w', hw'⟩ := h
+  ⟨w', hw'.2, hp hw'.1⟩
+
+/-- Consistency: two intentions are believed jointly possible. -/
+theorem consistency {int dox : W → Set W} {p q : Set W} {w : W} (h : (int w ∩ dox w).Nonempty)
+    (hp : Intends int p w) (hq : Intends int q w) : ∃ w' ∈ dox w, w' ∈ p ∩ q :=
+  let ⟨w', hw'⟩ := h
+  ⟨w', hw'.2, hp hw'.1, hq hw'.1⟩
+
+/-- Monotonicity: intending the narrower prejacent is intending the wider. -/
+theorem monotonicity {int : W → Set W} {p q : Set W} {w : W} (hpq : p ⊆ q)
+    (hp : Intends int p w) : Intends int q w :=
+  hp.trans hpq
+
+end Hintikka
+
+/-- The ingredients of (79): intention states, their holders, their content as world, time,
+and individual triples, causation in the right way between eventualities, and runtimes. -/
+structure IntentionFrame (E W T Ev : Type*) where
+  intention : Ev → W → Prop
+  holder : E → Ev → W → Prop
+  content : Ev → Set (W × T × E)
+  causeStar : Ev → Ev → W → Prop
+  runtime : Ev → T
+
+/-- (79): `x` intends `P` at `w` when some intention state of `x` is such that, at every triple of
+its content, the state causes in the right way a later eventuality satisfying `P`. The
+complement is a predicate of individuals, times, worlds, and eventualities. -/
+def IntentionFrame.Report {E W T Ev : Type*} [LT T] (F : IntentionFrame E W T Ev) (x : E)
+    (P : E → T → W → Ev → Prop) (w : W) : Prop :=
+  ∃ s, F.intention s w ∧ F.holder x s w ∧
+    ∀ c ∈ F.content s, ∃ e, F.causeStar s e c.1 ∧ c.2.1 < F.runtime e ∧ P c.2.2 (F.runtime e) c.1 e
+
+/-- What a mood's denotation of the complement offers a predicate that needs the eventuality:
+the open predicate, or nothing once the argument is closed. -/
+def openArgument {Ev : Type*} : EventDenotation Ev → Option (Ev → Prop)
+  | .closed _ => none
+  | .abstracted P => some P
+
+/-- Premise 3 by the mood denotations (87) and (89): the indicative leaves nothing for `Report`
+to take, the subjunctive passes the predicate up. -/
+theorem indicative_closes_subjunctive_opens {Ev : Type*} (P : Ev → Prop) :
+    openArgument (Grammatical.indicative.eventDenotation P) = none ∧
+      openArgument (Grammatical.subjunctive.eventDenotation P) = some P :=
   ⟨rfl, rfl⟩
 
-/-- Simplifiable comparison allows cross-linguistic variation (the 'hope' pattern).
-    Per [portner-rubinstein-2020]: when two modal backgrounds can
-    simplify to one, IND becomes available. -/
-theorem simplifiable_comparison_variable :
-    DepartureKind.comparisonSimplifiable.moodPrediction =
-      .crossLinguisticallyVariable := rfl
+/-! ### Section 7: the two departures from default clausal semantics -/
 
-/-- Non-simplifiable comparison robustly predicts SBJV (the 'want' pattern).
-    'want' blocks simplification: it does not tolerate inconsistent
-    prejacents ((50), (60)), so both modal backgrounds must remain. -/
-theorem nonsimplifiable_comparison_robust :
-    DepartureKind.comparisonNonSimplifiable.moodPrediction =
-      .subjunctiveSelecting := rfl
+/-- A class whose reports carry two modal backgrounds, the doxastic-like and the bouletic
+([portner-rubinstein-2020]); 'intend' is taken to carry one, the paper's footnote 50. -/
+def Class.TwoBackgrounds (c : Class) : Prop := c = .want ∨ c = .hope
 
-/-- 'intend' (comparison + abstraction) patterns with 'want' (non-simplifiable
-    comparison), not with 'hope' (simplifiable comparison). This is the central
-    prediction: all three involve comparison, but eventuality abstraction
-    independently blocks IND. -/
-theorem intend_patterns_with_want_not_hope :
-    DepartureKind.comparisonAndAbstraction.moodPrediction =
-      DepartureKind.comparisonNonSimplifiable.moodPrediction ∧
-    DepartureKind.comparisonAndAbstraction.moodPrediction ≠
-      DepartureKind.comparisonSimplifiable.moodPrediction := by
-  decide
+instance : DecidablePred Class.TwoBackgrounds := λ c => by
+  unfold Class.TwoBackgrounds; infer_instance
 
--- ════════════════════════════════════════════════════════════════
--- § 6. Independent Support (§6)
--- ════════════════════════════════════════════════════════════════
+/-- [portner-rubinstein-2020]'s simplification read off the pool: the pair may collapse to one
+background when the class requires its backgrounds to be consistent, that is, rejects
+inconsistent prejacents. -/
+def Class.Simplifiable (c : Class) : Prop := c.Fails .consistency
 
-/-! ### §6.1 Intention-Rigid Predicates
+instance : DecidablePred Class.Simplifiable := λ c => by unfold Class.Simplifiable; infer_instance
 
-Predicates that obligatorily encode intention: aim, try, endeavor, strive,
-seek. All share 'intend's causally self-referential, goal-oriented property
-and, as predicted, reject indicative complements ((90)–(91)).
+/-- The indicative is available when neither departure is in force: no eventuality abstraction,
+and a single background or a pair that may simplify. -/
+def Class.IndicativePossible (c : Class) : Prop :=
+  ¬ c.RequiresAbstraction ∧ (¬ c.TwoBackgrounds ∨ c.Simplifiable)
 
-### §6.2 Belief-Intention Hybrid Predicates
+instance : DecidablePred Class.IndicativePossible := λ c => by
+  unfold Class.IndicativePossible; infer_instance
 
-Predicates like 'decide', 'convince', 'persuade' report either belief or
-intention formation depending on complement type ((96)–(97)):
-- Nonfinite complement → intention reading → requires SBJV/nonfinite
-- Finite complement → belief reading → allows IND
-
-This is exactly the complement-size-driven alternation that
-[fusco-sgrizzi-2026] formalizes for Italian *convincere*.
-
-### §6.3 Aspectual Predicates
-
-Aspect is inherently event-related and requires eventuality abstraction.
-Aspectual predicates (begin, start, stop, continue) accept nonfinite/SBJV
-complements but reject finite indicative complements ((115)–(119)).
-
-### §6.4 Memory and Perception Reports
-
-'remember' + gerund = event construal (eventuality abstraction);
-'remember' + *that*-clause = propositional construal (no abstraction).
-'see' + bare infinitive = event perception;
-'see' + *that*-clause = indirect evidence. ((120)–(127))
--/
-
-open English.Predicates.Verbal (intend try_ persuade promise decide_
-    start stop begin_ continue_ see remember)
-
-/-- Intention-rigid predicates reject IND like 'intend' (§6.1, (91)).
-    'try' is in the English fragment; it takes infinitival complements
-    and has no alternate finite complement type. -/
-theorem try_rejects_finite :
-    try_.complementType = .infinitival ∧
-    try_.altComplementType = none := by decide
-
-/-- 'persuade' is a hybrid predicate: nonfinite complement with object
-    control → intention reading. This matches [grano-2024] §6.2 (96). -/
-theorem persuade_is_hybrid :
-    persuade.complementType = .infinitival ∧
-    persuade.controlType = .objectControl := by decide
-
-/-- 'promise' is a hybrid predicate: nonfinite complement with subject
-    control → intention (commissive). Matches §6.2 (98a). -/
-theorem promise_is_hybrid :
-    promise.complementType = .infinitival ∧
-    promise.controlType = .subjectControl := by decide
-
-/-- Aspectual predicates are phasal (cosType.isSome) and take gerund
-    complements in English, consistent with requiring eventuality
-    abstraction (§6.3, (115)–(116)). In Romance, these take infinitival
-    or subjunctive complements ((117)–(119)). -/
-theorem start_is_phasal :
-    start.cosType.isSome = true ∧
-    start.complementType = .gerund := by decide
-
-theorem stop_is_phasal :
-    stop.cosType.isSome = true ∧
-    stop.complementType = .gerund := by decide
-
-theorem begin_is_phasal :
-    begin_.cosType.isSome = true ∧
-    begin_.complementType = .gerund := by decide
-
-theorem continue_is_phasal :
-    continue_.cosType.isSome = true ∧
-    continue_.complementType = .gerund := by decide
-
-/-- 'see' takes NP complements primarily (bare perception), with
-    factive presupposition. The bare infinitive (eventive, §6.4 (124))
-    vs *that*-clause (propositional, §6.4 (125)) alternation tracks
-    eventuality abstraction. -/
-theorem see_is_factive_perception :
-    see.factivePresup = true ∧
-    see.levinClass = some .see := by decide
-
-/-- 'decide' is a hybrid predicate: nonfinite complement → intention,
-    finite complement → belief ([grano-2024] §6.2, (96)–(97)).
-    Like 'persuade' and 'convince', the complement type determines whether
-    the reading is intentional or propositional. -/
-theorem decide_is_hybrid :
-    decide_.complementType = .infinitival ∧
-    decide_.altComplementType = some .finiteClause ∧
-    decide_.controlType = .subjectControl := by decide
-
-/-- 'remember' takes infinitival (implicative/eventive, §6.4 (120)).
-    The gerund construal enables event memory; the *that*-clause
-    enables propositional memory ((120)–(121)). -/
-theorem remember_is_implicative :
-    remember.complementType = .infinitival ∧
-    remember.implicative.isSome = true := by decide
-
--- ════════════════════════════════════════════════════════════════
--- § 8. Predicate Classification by Departure Kind
--- ════════════════════════════════════════════════════════════════
-
--- Per-predicate departure classifications. These are stated directly
--- rather than computed from VerbEntry fields because the crucial
--- distinction — whether a predicate has a causative component (CAUSE*)
--- — is not yet captured by a VerbEntry field. The classifications are
--- verified to agree with the independently derived `deriveSelector`.
-
-/-- 'want' involves non-simplifiable comparison (robust SBJV). -/
-theorem want_moodPrediction_agrees :
-    DepartureKind.comparisonNonSimplifiable.moodPrediction =
-      deriveSelector want := by decide
-
-/-- 'hope' involves simplifiable comparison (variable mood). -/
-theorem hope_moodPrediction_agrees :
-    DepartureKind.comparisonSimplifiable.moodPrediction =
-      deriveSelector hope := by decide
-
-/-- 'intend' involves both comparison and eventuality abstraction
-    (robust SBJV). -/
-theorem intend_moodPrediction_agrees :
-    DepartureKind.comparisonAndAbstraction.moodPrediction =
-      deriveSelector intend := by decide
-
-/-- Causatives involve eventuality abstraction (robust SBJV). -/
-theorem causative_moodPrediction_agrees :
-    DepartureKind.eventualityAbstraction.moodPrediction =
-      deriveSelector English.Predicates.Verbal.make := by decide
-
--- ════════════════════════════════════════════════════════════════
--- § 8b. Bridge: deriveSelector → VerbalOp
--- ════════════════════════════════════════════════════════════════
-
-/-! Per-verb closure of `deriveSelector` under
-`Selector.toVerbalOp`. The cross-linguistic mood-choice
-data (§3) flows through `deriveSelector` (§3) and into the
-State-typed verbal-mood operator (`VerbalMood.lean`). For
-robustly subjunctive predicates, the projection lands in
-`some .subjunctive`; for cross-linguistically variable predicates,
-in `none`. The chain `verb → Selector → VerbalOp` makes
-the lexical-class commitment of [grano-2024] operationally
-ready to feed State-side glosses (`ExpState.boxLe` for subjunctive,
-`ExpState.boxCs` for indicative). -/
-
-/-- 'want' lifts to the subjunctive State operator. -/
-theorem want_verbalMood :
-    (deriveSelector want).toVerbalOp = some .subjunctive := by
-  decide
-
-/-- 'hope' is cross-linguistically variable, so it lifts to `none`. -/
-theorem hope_verbalMood :
-    (deriveSelector hope).toVerbalOp = none := by
-  decide
-
-/-- The robust subjunctive predicates (e.g. 'want') project to the
-    `preferential` POSW component — they quantify over the best-ranked
-    subset of the State via `ExpState.boxLe`. The composed projection
-    (`Selector → VerbalOp → Component`) makes the operational
-    target explicit. -/
-theorem want_target :
-    Option.map (Mood.HasTarget.target ·) (deriveSelector want).toVerbalOp
-      = some .preferential := by
-  decide
-
--- ════════════════════════════════════════════════════════════════
--- § 9. Cross-Linguistic Fragment Integration
--- ════════════════════════════════════════════════════════════════
-
-/-! ### Fragment Entry ↔ Datum Consistency
-
-The cross-linguistic fragment files encode verb properties that should be
-consistent with the mood choice data. For predicates in the want-class
-(levinClass = .want), the datum should have rejectsIndicative = true.
-For predicates NOT in the want-class (like 'hope'), the mood variability
-is captured by deriveSelector returning .crossLinguisticallyVariable. -/
-
--- Greek fragments match Greek data
-theorem greek_want_fragment_consistent :
-    Greek.StandardModern.MoodChoice.thelo.levinClass = some LevinClass.want ∧
-    greek_want.rejectsIndicative = true := ⟨rfl, rfl⟩
-
-theorem greek_hope_fragment_consistent :
-    Greek.StandardModern.MoodChoice.elpizo.levinClass ≠ some LevinClass.want ∧
-    greek_hope.rejectsIndicative = false := ⟨by decide, rfl⟩
-
-theorem greek_intend_fragment_consistent :
-    Greek.StandardModern.MoodChoice.protithete.levinClass = some LevinClass.want ∧
-    greek_intend.rejectsIndicative = true := ⟨rfl, rfl⟩
-
-theorem greek_make_fragment_consistent :
-    Greek.StandardModern.MoodChoice.vazo.causative.isSome = true ∧
-    greek_make.rejectsIndicative = true := ⟨rfl, rfl⟩
-
--- Romanian fragments match Romanian data
-theorem romanian_want_fragment_consistent :
-    Romanian.MoodChoice.a_vrea.levinClass = some LevinClass.want ∧
-    romanian_want.rejectsIndicative = true := ⟨rfl, rfl⟩
-
-theorem romanian_hope_fragment_consistent :
-    Romanian.MoodChoice.a_spera.levinClass ≠ some LevinClass.want ∧
-    romanian_hope.rejectsIndicative = false := ⟨by decide, rfl⟩
-
-theorem romanian_intend_fragment_consistent :
-    Romanian.MoodChoice.a_intentiona.levinClass = some LevinClass.want ∧
-    romanian_intend.rejectsIndicative = true := ⟨rfl, rfl⟩
-
--- Spanish fragments match Spanish data
-theorem spanish_want_fragment_consistent :
-    Spanish.MoodChoice.querer.levinClass = some LevinClass.want ∧
-    spanish_want.rejectsIndicative = true := ⟨rfl, rfl⟩
-
-theorem spanish_intend_fragment_consistent :
-    Spanish.MoodChoice.tener_la_intencion.levinClass = some LevinClass.want ∧
-    spanish_intend.rejectsIndicative = true := ⟨rfl, rfl⟩
-
--- Portuguese fragments match Portuguese data
-theorem portuguese_want_fragment_consistent :
-    Portuguese.MoodChoice.querer.levinClass = some LevinClass.want ∧
-    portuguese_want.rejectsIndicative = true := ⟨rfl, rfl⟩
-
-theorem portuguese_intend_fragment_consistent :
-    Portuguese.MoodChoice.pretender.levinClass = some LevinClass.want ∧
-    portuguese_intend.rejectsIndicative = true := ⟨rfl, rfl⟩
+/-- For the four classes of sections 2 and 3, the indicative is possible exactly when the pool
+has an acceptable indicative complement for the class. -/
+theorem indicative_possible_iff :
+    ∀ c ∈ [Class.want, .hope, .intend, .causative],
+      (c.IndicativePossible ↔
+        ∃ r ∈ rows, r.cls = c ∧ r.complement = .indicative ∧ r.judgment = .acceptable) := by
+  decide +kernel
 
 end Grano2024
