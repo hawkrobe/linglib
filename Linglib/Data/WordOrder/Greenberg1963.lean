@@ -1,20 +1,20 @@
-import Linglib.Data.OrderTypology.Schema
+import Linglib.Data.WordOrder.Schema
 
 /-!
-# Greenberg1963 — basic order typology sample (generated)
+# Greenberg1963 — word order sample (generated)
 [greenberg-1963]
 
-Auto-generated from `Linglib/Data/OrderTypology/Greenberg1963.json` by
-`scripts/gen_order_typology.py`. **Do not edit by hand** — edit the JSON and
+Auto-generated from `Linglib/Data/WordOrder/Greenberg1963.json` by
+`scripts/gen_word_order.py`. **Do not edit by hand** — edit the JSON and
 re-run the generator.
 
 Appendix I's 30-language sample with the per-language properties of the text and footnotes, and
 Appendix II's 24 order types with the languages listed as attesting them.
 -/
 
-namespace Data.OrderTypology.Greenberg1963
+namespace Data.WordOrder.Greenberg1963
 
-open Data.OrderTypology
+open Data.WordOrder
 
 /-- The paper's language sample. -/
 def sample : List SampleRow := [
@@ -706,4 +706,4 @@ def types : List OrderType := [
       "Haida", "Tlingit", "Zuni", "Chitimacha", "Tunica", "Lenca", "Matagalpa", "Cuna",
       "Chibcha", "Warrau"] }]
 
-end Data.OrderTypology.Greenberg1963
+end Data.WordOrder.Greenberg1963
