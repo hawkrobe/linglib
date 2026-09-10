@@ -1,59 +1,55 @@
 import Linglib.Phonology.FeatureGeometry
 import Linglib.Phonology.Segmental.FeatureClass
+import Linglib.Data.Examples.HalleVauxWolfe2000
 
 /-!
-# Halle, Vaux and Wolfe (2000): feature spreading and the representation of place
+# Halle, Vaux, and Wolfe (2000): On Feature Spreading and the Representation of Place of Articulation
 
-Halle, Vaux and Wolfe review the four innovations proposed since Clements — Unified
-Feature Theory, Vowel-Place Theory, Partial Spreading and Strict Locality — records that no
-consensus exists on which to adopt (§1.1), and proposes Revised Articulator Theory, which keeps
-Partial Spreading and rejects the other three. Its tree (1) groups the features of the six
-articulators under the nodes Lips, Tongue Blade, Tongue Body, Soft Palate, Tongue Root and
-Larynx, with Place over the three oral articulators, Guttural over tongue root and larynx, and
-the articulator-free features [continuant], [strident], [lateral] and [suction] beside the root
-features [consonantal] and [sonorant] attached to the root. Designated articulators are terminal
-features rather than nodes, so the labiovelar [k͡p] carries both [labial] and [dorsal] while the
-labialised [kʷ] carries [dorsal] beside [+round] (§1.2.2, p. 435). Spreading operates on
-terminal features (§1.2.3), so a rule may spread any subset of a node's features and the tree
-only names the natural sets.
-
-## Main definitions
-
-* `Node`, `Node.parent`, `node` — tree (1) as a `FeatureGeometry` instance over Hayes's
-  inventory.
-* `kp`, `kw` — the feature complements of the labiovelar and the labialised velar (p. 435).
-
-## Main results
-
-* `articulatorFree_mem_naturalClass_iff` — an articulator-free or root feature lies in the
-  root's class and no other.
-* `nasal_notMem_place`, `place_eq_union` — Soft Palate is not under Place, and Place is exactly
-  the three oral articulators.
-* `isComplex_kp`, `not_isComplex_kw` — [k͡p] is complex and [kʷ] is not.
+This file formalizes the feature tree of [halle-vaux-wolfe-2000]'s Revised Articulator Theory.
+The paper reviews the four innovations proposed since [clements-1985], Unified Feature Theory,
+Vowel-Place Theory, Strict Locality, and Partial Spreading, records that no consensus exists on
+which to adopt (section 1.1), and keeps only Partial Spreading. Its tree (1) groups the features
+of the six articulators under the nodes Lips, Tongue Blade, Tongue Body, Soft Palate, Tongue
+Root, and Larynx, with Place over the three oral articulators, Guttural over tongue root and
+larynx, and the articulator-free features [continuant], [strident], [lateral], and [suction]
+beside the root features [consonantal] and [sonorant] at the root, `Node` and `node`, an instance
+of `Phonology.FeatureGeometry` over Hayes's inventory; so an articulator-free feature lies in the
+root's class and no other, `articulatorFree_mem_naturalClass_iff`, Soft Palate is not under
+Place, `nasal_notMem_place`, and Place is exactly the three oral articulators, `place_eq_union`.
+Designated articulators are unary terminal features rather than nodes (section 1.2.2), so the
+labiovelar [k͡p] carries both [labial] and [dorsal] while the labialised [kʷ] carries [dorsal]
+beside [+round], their (4), `kp` and `kw`, and only the first is a complex segment,
+`isComplex_kp` and `not_isComplex_kw`. Spreading operates on terminal features (section 1.2.3),
+so a rule may spread any subset of a node's features and the tree only names the natural sets:
+Irish Nasal Place Assimilation spreads the Place class and so carries each oral articulator's
+class while leaving the sister Soft Palate alone, `placeAssimilation_eqOn_tongueBody` and
+`placeAssimilation_nasal`, and Dorsal Assimilation (44) spreads the terminal [dorsal] alone,
+leaving the target's [back] untouched, `dorsalAssimilation_back`, where spreading the Tongue
+Body node would carry it, `tongueBody_spread_back`, the refuted prediction (45) of a Place-node
+analysis (section 2.2.4). The Irish forms are the rows of `Data.Examples.HalleVauxWolfe2000`.
 
 ## Implementation notes
 
-Features of Hayes's inventory absent from (1) are placed by the paper's own
-articulator-bound/free criterion (§1.2): [approximant], [delayed release], [tap], [trill] and
-[syllabic] are articulator-free and go to the root, [labiodental] to Lips, [front] to Tongue
-Body, and [voice], executed by the larynx, to Larynx; [tense] is left unplaced, since the paper's
+Features of Hayes's inventory absent from (1) are placed by the paper's own articulator-bound
+or free criterion (section 1.2): [approximant], [delayed release], [tap], [trill], and [syllabic]
+are articulator-free and go to the root, [labiodental] to Lips, [front] to Tongue Body, and
+[voice], executed by the larynx, to Larynx; [tense] is left unplaced, since the paper's
 tongue-root features are [ATR] and [RTR] and Hayes's [tense] is not identified with them.
-[suction], [rhinal], [ATR], [RTR], [radical], [stiff vocal folds], [slack vocal folds] and
+[suction], [rhinal], [ATR], [RTR], [radical], [stiff vocal folds], [slack vocal folds], and
 [glottal] have no counterpart in the inventory, so Tongue Root dominates nothing here.
 
 ## TODO
 
-* §2's arguments against Unified Feature Theory and Vowel-Place Theory, §3's analyses (Barra
-  Gaelic vowel copy, Irish nasal place and dorsal assimilation) and §1.2.4's full specification.
+* Section 2's arguments against Unified Feature Theory and Vowel-Place Theory, section 3's
+  analyses (Barra Gaelic vowel copy, Irish nasal place and dorsal assimilation), and section
+  1.2.4's full specification.
 
 ## References
 
-* [M. Halle, B. Vaux and A. Wolfe, *On Feature Spreading and the Representation of Place of
-  Articulation* (2000)][halle-vaux-wolfe-2000]
-* [G. N. Clements, *The Geometry of Phonological Features* (1985)][clements-1985]
-* [B. P. Hayes, *Introductory Phonology* (2009)][hayes-2009]
-* [E. C. Sagey, *The Representation of Features and Relations in Non-Linear Phonology*
-  (1986)][sagey-1986]
+* [halle-vaux-wolfe-2000]
+* [clements-1985]
+* [hayes-2009]
+* [sagey-1986]
 -/
 
 namespace HalleVauxWolfe2000
@@ -141,5 +137,41 @@ def kw : Segment :=
 theorem isComplex_kp : kp.IsComplex := by decide
 
 theorem not_isComplex_kw : ¬ kw.IsComplex := by decide
+
+/-! ### Terminal spreading, sections 1.2.3 and 2.2.4 -/
+
+variable (src tgt : Segment)
+
+/-- Irish Nasal Place Assimilation spreads the terminal features under Place from `src` onto
+`tgt`, the substrate's `Finset.piecewise` on the Place class. -/
+def placeAssimilation : Segment := (naturalClass (F := Feature) Node.place).piecewise src tgt
+
+/-- Spreading Place carries the whole Tongue Body class, `eqOn_piecewise_of_le`; in the same way
+the Lips and Tongue Blade classes. -/
+theorem placeAssimilation_eqOn_tongueBody :
+    Set.EqOn (placeAssimilation src tgt) src ↑(naturalClass (F := Feature) Node.tongueBody) :=
+  eqOn_piecewise_of_le src tgt (by decide)
+
+/-- Soft Palate is a sister of Place, so Place assimilation leaves [nasal] where it was: the
+assimilated nasal is still a nasal, `eqOn_piecewise_of_not_le`. -/
+theorem placeAssimilation_nasal : placeAssimilation src tgt .nasal = tgt .nasal :=
+  eqOn_piecewise_of_not_le (a := Node.place) (b := Node.softPalate) src tgt (by decide) (by decide)
+    (by decide : Feature.nasal ∈ naturalClass (F := Feature) Node.softPalate)
+
+/-- Irish Dorsal Assimilation (44) spreads the designated articulator alone: the terminal
+feature [dorsal], not the Tongue Body node. -/
+def dorsalAssimilation : Segment := ({Feature.dorsal} : Finset Feature).piecewise src tgt
+
+/-- (44): spreading the terminal [dorsal] leaves the target's secondary articulation, its
+[back] value, untouched, which is how the palatalised nasal of (44a) keeps its palatalisation
+and the plain nasal of (44b) stays plain. -/
+theorem dorsalAssimilation_back : dorsalAssimilation src tgt .back = tgt .back :=
+  Finset.piecewise_eq_of_notMem _ _ _ (by decide)
+
+/-- (45): spreading the Tongue Body node instead would carry [back] along with [dorsal], the
+prediction of a Place-node analysis of (44) that the data refute. -/
+theorem tongueBody_spread_back :
+    (naturalClass (F := Feature) Node.tongueBody).piecewise src tgt .back = src .back :=
+  Finset.piecewise_eq_of_mem _ _ _ (by decide)
 
 end HalleVauxWolfe2000
