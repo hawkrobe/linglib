@@ -1,238 +1,1296 @@
 [
   {
     "id": "hacquard2006_ex1a",
-    "source": {"bibkey": "hacquard-2006", "paperLabel": "(1a)"},
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(1a)"
+    },
     "language": "stan1290",
     "primaryText": "Pour aller au zoo, Jane pouvait prendre le train.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Pour", "to"], ["aller", "go"], ["au", "to-the"], ["zoo", "zoo"], ["Jane", "Jane"],
-      ["pouvait", "can-PST.IPFV"], ["prendre", "take"], ["le", "the"], ["train", "train"]
+      [
+        "Pour",
+        "to"
+      ],
+      [
+        "aller",
+        "go"
+      ],
+      [
+        "au",
+        "to-the"
+      ],
+      [
+        "zoo,",
+        "zoo,"
+      ],
+      [
+        "Jane",
+        "Jane"
+      ],
+      [
+        "pouvait",
+        "can-PST-IMPF"
+      ],
+      [
+        "prendre",
+        "take"
+      ],
+      [
+        "le",
+        "the"
+      ],
+      [
+        "train.",
+        "train."
+      ]
     ],
     "translation": "To go to the zoo, Jane could take the train.",
-    "context": "Goal-oriented pouvoir with imparfait. Compatible with a scenario in which Jane did not take the train (nor went to the zoo).",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["aspect", "imperfective"],
-      ["actualityEntailment", "false"],
-      ["flavor", "goal-oriented"]
+      [
+        "section",
+        "intro"
+      ],
+      [
+        "phenomenon",
+        "actualityEntailment"
+      ],
+      [
+        "aspect",
+        "imperfective"
+      ],
+      [
+        "flavor",
+        "goalOriented"
+      ],
+      [
+        "actualityEntailment",
+        "false"
+      ]
     ],
-    "comment": "Ch. 1 opening minimal pair with (1b): perfective on the modal forces actualization of the complement, imperfective does not.",
-    "metaLanguage": "stan1293",
+    "comment": "Compatible with Jane not taking the train.",
     "lgrConformance": "WORD_ALIGNED"
   },
   {
     "id": "hacquard2006_ex1b",
-    "source": {"bibkey": "hacquard-2006", "paperLabel": "(1b)"},
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(1b)"
+    },
     "language": "stan1290",
     "primaryText": "Pour aller au zoo, Jane a pu prendre le train.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Pour", "to"], ["aller", "go"], ["au", "to-the"], ["zoo", "zoo"], ["Jane", "Jane"],
-      ["a pu", "can-PST.PFV"], ["prendre", "take"], ["le", "the"], ["train", "train"]
+      [
+        "Pour",
+        "to"
+      ],
+      [
+        "aller",
+        "go"
+      ],
+      [
+        "au",
+        "to-the"
+      ],
+      [
+        "zoo,",
+        "zoo,"
+      ],
+      [
+        "Jane",
+        "Jane"
+      ],
+      [
+        "a",
+        "has"
+      ],
+      [
+        "pu",
+        "can-PST-PFV"
+      ],
+      [
+        "prendre",
+        "take"
+      ],
+      [
+        "le",
+        "the"
+      ],
+      [
+        "train.",
+        "train."
+      ]
     ],
     "translation": "To go to the zoo, Jane was able to take the train.",
-    "context": "Goal-oriented pouvoir with passé composé. True only if Jane actually took the train; denying the complement yields a contradiction.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["aspect", "perfective"],
-      ["actualityEntailment", "true"],
-      ["flavor", "goal-oriented"]
+      [
+        "section",
+        "intro"
+      ],
+      [
+        "phenomenon",
+        "actualityEntailment"
+      ],
+      [
+        "aspect",
+        "perfective"
+      ],
+      [
+        "flavor",
+        "goalOriented"
+      ],
+      [
+        "actualityEntailment",
+        "true"
+      ]
     ],
-    "comment": "Ch. 1 opening minimal pair with (1a).",
-    "metaLanguage": "stan1293",
+    "comment": "True only if Jane took the train; a continuation denying it is a contradiction.",
     "lgrConformance": "WORD_ALIGNED"
   },
   {
     "id": "hacquard2006_ex2a",
-    "source": {"bibkey": "bhatt-1999", "paperLabel": "(2a)"},
-    "reportedIn": {"bibkey": "hacquard-2006", "paperLabel": "(2a)"},
+    "source": {
+      "bibkey": "bhatt-1999",
+      "paperLabel": "(2a)"
+    },
     "language": "stan1293",
     "primaryText": "Yesterday, firemen were able to eat 50 apples.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Yesterday, firemen were able to eat 50 apples.",
-    "context": "English lacks overt perfective/imperfective morphology; the episodic adverbial 'yesterday' forces the perfective-like reading, which is implicative.",
+    "translation": "",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["aspect", "perfective"],
-      ["actualityEntailment", "true"],
-      ["flavor", "ability"]
+      [
+        "section",
+        "intro"
+      ],
+      [
+        "phenomenon",
+        "actualityEntailment"
+      ],
+      [
+        "aspect",
+        "perfective"
+      ],
+      [
+        "flavor",
+        "ability"
+      ],
+      [
+        "actualityEntailment",
+        "true"
+      ]
     ],
-    "comment": "Bhatt's adverbial pair, reproduced by the dissertation to show the English analogue of the aspect split.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The temporal adverbial brings out the perfective, implicative reading.",
+    "reportedIn": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(2a)"
+    }
   },
   {
     "id": "hacquard2006_ex2b",
-    "source": {"bibkey": "bhatt-1999", "paperLabel": "(2b)"},
-    "reportedIn": {"bibkey": "hacquard-2006", "paperLabel": "(2b)"},
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(2b)"
+    },
     "language": "stan1293",
     "primaryText": "Back in the days, firemen were able to eat 50 apples.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Back in the days, firemen were able to eat 50 apples.",
-    "context": "The habitual adverbial 'back in the days' forces the imperfective-like reading, which is non-implicative.",
+    "translation": "",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["aspect", "imperfective"],
-      ["actualityEntailment", "false"],
-      ["flavor", "ability"]
+      [
+        "section",
+        "intro"
+      ],
+      [
+        "phenomenon",
+        "actualityEntailment"
+      ],
+      [
+        "aspect",
+        "imperfective"
+      ],
+      [
+        "flavor",
+        "ability"
+      ],
+      [
+        "actualityEntailment",
+        "false"
+      ]
     ],
-    "comment": "Bhatt's adverbial pair, reproduced by the dissertation to show the English analogue of the aspect split.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hacquard2006_ex22a",
-    "source": {"bibkey": "hacquard-2006", "paperLabel": "(22a)"},
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(22a)"
+    },
     "language": "stan1290",
-    "primaryText": "Jane a pu soulever cette table, #mais elle ne l'a pas soulevée.",
+    "primaryText": "Jane a pu soulever cette table, mais elle ne l'a pas soulevée.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["Jane", "Jane"], ["a pu", "can-PST.PFV"], ["soulever", "lift"], ["cette", "this"],
-      ["table", "table"], ["mais", "but"], ["elle", "she"], ["ne", "NEG"], ["l'", "it"],
-      ["a", "has"], ["pas", "NEG"], ["soulevée", "lifted"]
-    ],
-    "translation": "Jane could lift this table, #but she didn't lift it.",
-    "context": "Ability pouvoir with passé composé plus a continuation denying the complement: the continuation contradicts the actuality entailment.",
+    "glossedTokens": [],
+    "translation": "Jane could-PFV lift this table, but she didn't lift it.",
+    "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["aspect", "perfective"],
-      ["actualityEntailment", "true"],
-      ["flavor", "ability"]
+      [
+        "section",
+        "1.1.2"
+      ],
+      [
+        "phenomenon",
+        "actualityEntailment"
+      ],
+      [
+        "aspect",
+        "perfective"
+      ],
+      [
+        "flavor",
+        "ability"
+      ],
+      [
+        "actualityEntailment",
+        "true"
+      ]
     ],
-    "comment": "With perfective morphology pouvoir behaves like an implicative predicate (manage): the complement must hold in the actual world.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
-  },
-  {
-    "id": "hacquard2006_ex23a",
-    "source": {"bibkey": "hacquard-2006", "paperLabel": "(23a)"},
-    "language": "stan1290",
-    "primaryText": "Jane pouvait soulever cette table, mais elle ne l'a pas soulevée.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Jane", "Jane"], ["pouvait", "can-PST.IPFV"], ["soulever", "lift"], ["cette", "this"],
-      ["table", "table"], ["mais", "but"], ["elle", "she"], ["ne", "NEG"], ["l'", "it"],
-      ["a", "has"], ["pas", "NEG"], ["soulevée", "lifted"]
-    ],
-    "translation": "Jane could lift this table, but she didn't lift it.",
-    "context": "Ability pouvoir with imparfait plus the same denial continuation: no contradiction, so no actuality entailment.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["aspect", "imperfective"],
-      ["actualityEntailment", "false"],
-      ["flavor", "ability"]
-    ],
-    "comment": "Imperfective counterpart of (22a).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The continuation is a contradiction."
   },
   {
     "id": "hacquard2006_ex22b",
-    "source": {"bibkey": "hacquard-2006", "paperLabel": "(22b)"},
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(22b)"
+    },
     "language": "ital1282",
-    "primaryText": "Jane ha potuto sollevare questo tavolo, #ma non lo ha fatto.",
+    "primaryText": "Jane ha potuto sollevare questo tavolo, ma non lo ha fatto.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["Jane", "Jane"], ["ha potuto", "can-PST.PFV"], ["sollevare", "lift"], ["questo", "this"],
-      ["tavolo", "table"], ["ma", "but"], ["non", "NEG"], ["lo", "it"], ["ha fatto", "did"]
-    ],
-    "translation": "Jane could lift this table, #but she didn't do it.",
-    "context": "Italian potere with passato prossimo: same actuality entailment as French (22a).",
+    "glossedTokens": [],
+    "translation": "Jane could-PFV lift this table, but she didn't do it.",
+    "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["aspect", "perfective"],
-      ["actualityEntailment", "true"],
-      ["flavor", "ability"]
+      [
+        "section",
+        "1.1.2"
+      ],
+      [
+        "phenomenon",
+        "actualityEntailment"
+      ],
+      [
+        "aspect",
+        "perfective"
+      ],
+      [
+        "flavor",
+        "ability"
+      ],
+      [
+        "actualityEntailment",
+        "true"
+      ]
     ],
-    "comment": "Italian member of the (22) pair.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
-    "id": "hacquard2006_ex23b",
-    "source": {"bibkey": "hacquard-2006", "paperLabel": "(23b)"},
-    "language": "ital1282",
-    "primaryText": "Jane poteva sollevare questo tavolo, ma non lo ha fatto.",
+    "id": "hacquard2006_ex23a",
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(23a)"
+    },
+    "language": "stan1290",
+    "primaryText": "Jane pouvait soulever cette table, mais elle ne l'a pas soulevée.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["Jane", "Jane"], ["poteva", "can-PST.IPFV"], ["sollevare", "lift"], ["questo", "this"],
-      ["tavolo", "table"], ["ma", "but"], ["non", "NEG"], ["lo", "it"], ["ha fatto", "did"]
-    ],
-    "translation": "Jane could lift this table, but she didn't do it.",
-    "context": "Italian potere with imperfetto: no actuality entailment, as in French (23a).",
+    "glossedTokens": [],
+    "translation": "Jane could-IMPF lift this table, but she didn't lift it.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["aspect", "imperfective"],
-      ["actualityEntailment", "false"],
-      ["flavor", "ability"]
+      [
+        "section",
+        "1.1.2"
+      ],
+      [
+        "phenomenon",
+        "actualityEntailment"
+      ],
+      [
+        "aspect",
+        "imperfective"
+      ],
+      [
+        "flavor",
+        "ability"
+      ],
+      [
+        "actualityEntailment",
+        "false"
+      ]
     ],
-    "comment": "Italian member of the (23) pair.",
-    "metaLanguage": "stan1293",
+    "comment": ""
+  },
+  {
+    "id": "hacquard2006_ex23b",
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(23b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Jane poteva sollevare questo tavolo, ma non lo ha fatto.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Jane could-IMPF lift this table, but she didn't do it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.1.2"
+      ],
+      [
+        "phenomenon",
+        "actualityEntailment"
+      ],
+      [
+        "aspect",
+        "imperfective"
+      ],
+      [
+        "flavor",
+        "ability"
+      ],
+      [
+        "actualityEntailment",
+        "false"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "hacquard2006_ex81a",
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(81a)"
+    },
+    "language": "stan1290",
+    "primaryText": "Darcy a pu épouser une clocharde.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Darcy could-PFV marry a homeless person.",
+    "context": "Darcy proposes to Jane thinking she is homeless; she is in fact an eccentric billionaire.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.2.3"
+      ],
+      [
+        "phenomenon",
+        "eventIdentification"
+      ],
+      [
+        "aspect",
+        "perfective"
+      ],
+      [
+        "flavor",
+        "circumstantial"
+      ],
+      [
+        "actualityEntailment",
+        "true"
+      ]
+    ],
+    "comment": "A circumstantial modal base does not factor in the subject's beliefs: only the actual description of the event can be reported."
+  },
+  {
+    "id": "hacquard2006_ex81b",
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(81b)"
+    },
+    "language": "stan1290",
+    "primaryText": "Darcy a pu épouser une milliardaire.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Darcy could-PFV marry a billionaire.",
+    "context": "Darcy proposes to Jane thinking she is homeless; she is in fact an eccentric billionaire.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.2.3"
+      ],
+      [
+        "phenomenon",
+        "eventIdentification"
+      ],
+      [
+        "aspect",
+        "perfective"
+      ],
+      [
+        "flavor",
+        "circumstantial"
+      ],
+      [
+        "actualityEntailment",
+        "true"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "hacquard2006_ex86",
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(86)"
+    },
+    "language": "stan1290",
+    "primaryText": "Jane a pu prendre le train pour aller à Paris.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Jane could-PFV take the train to go to Paris.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.2.5"
+      ],
+      [
+        "phenomenon",
+        "goalOriented"
+      ],
+      [
+        "aspect",
+        "perfective"
+      ],
+      [
+        "flavor",
+        "goalOriented"
+      ],
+      [
+        "actualityEntailment",
+        "true"
+      ]
+    ],
+    "comment": "There is an actual past event which, in some circumstantially accessible world where Jane goes to Paris, is a taking-the-train event by Jane."
+  },
+  {
+    "id": "hacquard2006_ex87",
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(87)"
+    },
+    "language": "stan1290",
+    "primaryText": "Jane a dû prendre le train pour aller à Paris.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Jane had to-PFV take the train to go to Paris.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.2.5"
+      ],
+      [
+        "phenomenon",
+        "goalOriented"
+      ],
+      [
+        "aspect",
+        "perfective"
+      ],
+      [
+        "flavor",
+        "goalOriented"
+      ],
+      [
+        "actualityEntailment",
+        "true"
+      ]
+    ],
+    "comment": "In all accessible worlds where Jane goes to Paris that event is a taking-the-train event; false if Jane had other options."
+  },
+  {
+    "id": "hacquard2006_ex88",
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(88)"
+    },
+    "language": "stan1290",
+    "primaryText": "Jane a pu prendre l'avion pour aller à Londres, mais l'avion a été détourné vers Manchester, et elle n'est jamais arrivée à Londres.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Jane could-PFV take the plane to go to London, but the plane got rerouted to Manchester, and she never reached London.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.2.5"
+      ],
+      [
+        "phenomenon",
+        "goalOriented"
+      ],
+      [
+        "aspect",
+        "perfective"
+      ],
+      [
+        "flavor",
+        "goalOriented"
+      ],
+      [
+        "actualityEntailment",
+        "true"
+      ]
+    ],
+    "comment": "The taking of the plane is entailed; the goal that restricts the modal need not hold in the actual world. Italian speakers split."
+  },
+  {
+    "id": "hacquard2006_ex89a",
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(89a)"
+    },
+    "language": "stan1290",
+    "primaryText": "Jane a pris le train pour aller à Paris.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Jane",
+        "Jane"
+      ],
+      [
+        "a",
+        "has"
+      ],
+      [
+        "pris",
+        "taken"
+      ],
+      [
+        "le",
+        "the"
+      ],
+      [
+        "train",
+        "train"
+      ],
+      [
+        "pour",
+        "to"
+      ],
+      [
+        "aller",
+        "go"
+      ],
+      [
+        "à",
+        "to"
+      ],
+      [
+        "Paris.",
+        "Paris."
+      ]
+    ],
+    "translation": "Jane took the train to go to Paris.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.2.5"
+      ],
+      [
+        "phenomenon",
+        "implicature"
+      ],
+      [
+        "aspect",
+        "perfective"
+      ]
+    ],
+    "comment": "The unmodalized sentence: no desirability inference.",
     "lgrConformance": "WORD_ALIGNED"
   },
   {
+    "id": "hacquard2006_ex89b",
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(89b)"
+    },
+    "language": "stan1290",
+    "primaryText": "Jane a pu prendre le train pour aller à Paris.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Jane could-PFV take the train to go to Paris.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.2.5"
+      ],
+      [
+        "phenomenon",
+        "implicature"
+      ],
+      [
+        "aspect",
+        "perfective"
+      ],
+      [
+        "flavor",
+        "goalOriented"
+      ],
+      [
+        "actualityEntailment",
+        "true"
+      ]
+    ],
+    "comment": "Carries the cancellable inference that taking the train was Jane's preferred means, a scalar implicature from not asserting the necessity."
+  },
+  {
+    "id": "hacquard2006_ex89c",
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(89c)"
+    },
+    "language": "stan1290",
+    "primaryText": "Jane a dû prendre le train pour aller à Paris.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Jane had to-PFV take the train to go to Paris.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.2.5"
+      ],
+      [
+        "phenomenon",
+        "implicature"
+      ],
+      [
+        "aspect",
+        "perfective"
+      ],
+      [
+        "flavor",
+        "goalOriented"
+      ],
+      [
+        "actualityEntailment",
+        "true"
+      ]
+    ],
+    "comment": "No desirability inference: Jane had no choice."
+  },
+  {
+    "id": "hacquard2006_ex100a",
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(100a)"
+    },
+    "language": "stan1290",
+    "primaryText": "Elisabeth pouvait parler aux singes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Elisabeth could-IMPF talk to monkeys.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "phenomenon",
+        "genericAbility"
+      ],
+      [
+        "aspect",
+        "imperfective"
+      ],
+      [
+        "flavor",
+        "ability"
+      ],
+      [
+        "actualityEntailment",
+        "false"
+      ]
+    ],
+    "comment": "A long-term ability under GEN, which requires no verifying instance."
+  },
+  {
+    "id": "hacquard2006_ex100b",
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(100b)"
+    },
+    "language": "stan1290",
+    "primaryText": "Cette voiture pouvait faire du 250 km/h.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "This car could-IMPF go 250 kph.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "phenomenon",
+        "genericAbility"
+      ],
+      [
+        "aspect",
+        "imperfective"
+      ],
+      [
+        "flavor",
+        "ability"
+      ],
+      [
+        "actualityEntailment",
+        "false"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "hacquard2006_ex101a",
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(101a)"
+    },
+    "language": "stan1290",
+    "primaryText": "...et qu'elle pouvait leur parler. Malheureusement, quand on est arrivé, tous les singes avaient déjà été transférés au nouveau zoo.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "...and she could-IMPF talk to them. Unfortunately, when we arrived, all the monkeys had already been transferred to the new zoo.",
+    "context": "Hier on est allé au zoo avec les enfants. Elisabeth était particulièrement heureuse, parce qu'elle adorait les singes",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "phenomenon",
+        "genericAbility"
+      ],
+      [
+        "aspect",
+        "imperfective"
+      ],
+      [
+        "flavor",
+        "ability"
+      ],
+      [
+        "actualityEntailment",
+        "false"
+      ]
+    ],
+    "comment": "The ability held over an interval surrounding the trip without being instantiated at the zoo."
+  },
+  {
+    "id": "hacquard2006_ex101b",
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(101b)"
+    },
+    "language": "stan1290",
+    "primaryText": "...et qu'elle a pu leur parler. Malheureusement, quand on est arrivé, tous les singes avaient déjà été transférés au nouveau zoo.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "...and she could-PFV talk to them. #Unfortunately...",
+    "context": "Hier on est allé au zoo avec les enfants. Elisabeth était particulièrement heureuse, parce qu'elle adorait les singes",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "phenomenon",
+        "genericAbility"
+      ],
+      [
+        "aspect",
+        "perfective"
+      ],
+      [
+        "flavor",
+        "ability"
+      ],
+      [
+        "actualityEntailment",
+        "true"
+      ]
+    ],
+    "comment": "Perfective forces an actual event of talking to the monkeys at the zoo."
+  },
+  {
+    "id": "hacquard2006_ex103",
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(103)"
+    },
+    "language": "stan1290",
+    "primaryText": "Jane pouvait prendre le train pour aller à Londres, mais elle...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Jane could-IMPF take the train to go to London, but she...",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "phenomenon",
+        "counterfactualImperfective"
+      ],
+      [
+        "aspect",
+        "imperfective"
+      ],
+      [
+        "flavor",
+        "goalOriented"
+      ],
+      [
+        "actualityEntailment",
+        "false"
+      ]
+    ],
+    "comment": "The preferred reading is counterfactual: a continuation that Jane did not take the train is expected."
+  },
+  {
     "id": "hacquard2006_ex201",
-    "source": {"bibkey": "hacquard-2006", "paperLabel": "(201)"},
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(201)"
+    },
     "language": "stan1290",
     "primaryText": "Jane a dû prendre le train.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Jane", "Jane"], ["a dû", "must-PST.PFV"], ["prendre", "take"], ["le", "the"],
-      ["train", "train"]
+      [
+        "Jane",
+        "Jane"
+      ],
+      [
+        "a",
+        "has"
+      ],
+      [
+        "dû",
+        "must-PST-PFV"
+      ],
+      [
+        "prendre",
+        "take"
+      ],
+      [
+        "le",
+        "the"
+      ],
+      [
+        "train.",
+        "train."
+      ]
     ],
     "translation": "Jane must have taken / had to take the train.",
-    "context": "Ambiguous between an epistemic reading relativized to the speaker's evidence at utterance time and a goal-oriented reading relativized to Jane's circumstances at a past time.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "epistemic: given my evidence now, Jane must have taken the train", "judgment": "acceptable"},
-      {"name": "goal-oriented: given Jane's circumstances then, Jane had to take the train", "judgment": "acceptable"}
+      {
+        "name": "epistemic: given my evidence now, Jane must have taken the train",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "goalOriented: given Jane's circumstances then, Jane had to take the train",
+        "judgment": "acceptable"
+      }
     ],
-    "paperFeatures": [],
-    "comment": "The event-binding ambiguity: speech-event binding yields the epistemic reading (speaker, now); aspect binding yields the goal-oriented reading (Jane, then).",
-    "metaLanguage": "stan1293",
+    "paperFeatures": [
+      [
+        "section",
+        "3.4.1"
+      ],
+      [
+        "phenomenon",
+        "eventBinding"
+      ]
+    ],
+    "comment": "Bound by the speech event the modality is relativized to the speaker at the utterance time; bound by aspect, to Jane at the past time.",
     "lgrConformance": "WORD_ALIGNED"
   },
   {
+    "id": "hacquard2006_ex242a",
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(242a)"
+    },
+    "language": "stan1290",
+    "primaryText": "A l'heure du crime, Jane pouvait être en train de lire un livre.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "At the time of the crime, Jane could-IMPF be reading a book.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4.3"
+      ],
+      [
+        "phenomenon",
+        "progressiveComplement"
+      ],
+      [
+        "aspect",
+        "imperfective"
+      ],
+      [
+        "flavor",
+        "epistemic"
+      ]
+    ],
+    "comment": "With a progressive complement the modal is bound by the speech event and read epistemically."
+  },
+  {
+    "id": "hacquard2006_ex242b",
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(242b)"
+    },
+    "language": "stan1290",
+    "primaryText": "A l'heure du crime, Jane devait lire un livre.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "At the time of the crime, it must be the case that Jane was reading a book.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4.3"
+      ],
+      [
+        "phenomenon",
+        "progressiveComplement"
+      ],
+      [
+        "aspect",
+        "imperfective"
+      ],
+      [
+        "flavor",
+        "epistemic"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "hacquard2006_ex244a",
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(244a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Jane can be sick.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4.3"
+      ],
+      [
+        "phenomenon",
+        "changeOfState"
+      ],
+      [
+        "flavor",
+        "ability"
+      ]
+    ],
+    "comment": "The stative complement is coerced into an inchoative: Jane can get sick."
+  },
+  {
+    "id": "hacquard2006_ex244b",
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(244b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Jane can have blue eyes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4.3"
+      ],
+      [
+        "phenomenon",
+        "changeOfState"
+      ],
+      [
+        "flavor",
+        "ability"
+      ]
+    ],
+    "comment": "Hackl's ban on non-change-denoting complements of ability modals; English can has no epistemic reading to fall back on."
+  },
+  {
+    "id": "hacquard2006_ex245a",
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(245a)"
+    },
+    "language": "stan1290",
+    "primaryText": "Jane a pu être malade.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Jane",
+        "Jane"
+      ],
+      [
+        "a",
+        "has"
+      ],
+      [
+        "pu",
+        "can-PST-PFV"
+      ],
+      [
+        "être",
+        "be"
+      ],
+      [
+        "malade.",
+        "sick."
+      ]
+    ],
+    "translation": "It is possible that Jane was sick.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4.3"
+      ],
+      [
+        "phenomenon",
+        "changeOfState"
+      ],
+      [
+        "aspect",
+        "perfective"
+      ],
+      [
+        "flavor",
+        "epistemic"
+      ],
+      [
+        "actualityEntailment",
+        "false"
+      ]
+    ],
+    "comment": "A speech-event-bound epistemic: the stative complement disprefers a circumstantial relation and aspect's event has no content.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hacquard2006_ex246",
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(246)"
+    },
+    "language": "stan1293",
+    "primaryText": "Jane could lift this table.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4.3"
+      ],
+      [
+        "phenomenon",
+        "contentLicensing"
+      ],
+      [
+        "flavor",
+        "ability"
+      ]
+    ],
+    "comment": "The event provided by aspect has no content, so an epistemic accessibility relation is unavailable for the aspect-bound modal."
+  },
+  {
     "id": "hacquard2006_ex247b",
-    "source": {"bibkey": "hacquard-2006", "paperLabel": "(247b)"},
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(247b)"
+    },
     "language": "stan1290",
     "primaryText": "Jane a pu penser que Darcy aimait Lizzie.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["Jane", "Jane"], ["a pu", "can-PST.PFV"], ["penser", "think"], ["que", "that"],
-      ["Darcy", "Darcy"], ["aimait", "loved"], ["Lizzie", "Lizzie"]
-    ],
+    "glossedTokens": [],
     "translation": "Jane might have thought that Darcy loved Lizzie.",
-    "context": "A low modal is normally barred from epistemic readings because the VP event lacks propositional content; here the complement supplies a contentful thinking event.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "speech-bound epistemic: possible given the speaker's evidence", "judgment": "acceptable"},
-      {"name": "aspect-bound epistemic: an epistemic necessity for Jane at a past belief state", "judgment": "questionable"}
+      {
+        "name": "speechBoundEpistemic: possible given the speaker's evidence",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "aspectBoundEpistemic: an epistemic necessity for Jane at a past belief state",
+        "judgment": "questionable"
+      }
     ],
-    "paperFeatures": [],
-    "comment": "Attributed to K. von Fintel (p.c.). The speech-bound reading is clearly more salient; eventive attitudes (see/notice) make the aspect-bound reading easier and implicative.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "paperFeatures": [
+      [
+        "section",
+        "3.4.3"
+      ],
+      [
+        "phenomenon",
+        "contentLicensing"
+      ],
+      [
+        "aspect",
+        "perfective"
+      ]
+    ],
+    "comment": "The thinking event has content, so aspect can bind the modal's event and yield an epistemic relation for the subject; the speech-bound reading is more salient."
+  },
+  {
+    "id": "hacquard2006_ex249b",
+    "source": {
+      "bibkey": "hacquard-2006",
+      "paperLabel": "(249b)"
+    },
+    "language": "stan1290",
+    "primaryText": "Jane a pu remarquer que Darcy était gentil.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Jane was able to notice that Darcy was nice.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4.3"
+      ],
+      [
+        "phenomenon",
+        "contentLicensing"
+      ],
+      [
+        "aspect",
+        "perfective"
+      ],
+      [
+        "actualityEntailment",
+        "true"
+      ]
+    ],
+    "comment": "With an eventive attitude the subject-bound reading is available and implicative: Jane did notice."
   }
 ]
