@@ -462,8 +462,11 @@ def TradeoffCurve.auc (c : TradeoffCurve) : Nat :=
 
 /-- The efficient trade-off hypothesis: a real language's AUC is smaller
 than its random baseline's AUC. -/
-def efficientTradeoffHypothesis (real baseline : TradeoffCurve) : Bool :=
+def efficientTradeoffHypothesis (real baseline : TradeoffCurve) : Prop :=
   real.auc < baseline.auc
+
+instance (real baseline : TradeoffCurve) : Decidable (efficientTradeoffHypothesis real baseline) :=
+  inferInstanceAs (Decidable (_ < _))
 
 /-- The trade-off bound curve implied by the mutual information profile
 (Theorem 1). Point T maps to (memoryCost(T), surplusSurprisal(T)) for
