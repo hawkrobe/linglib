@@ -44,7 +44,7 @@ namespace KonnellyCowper2020
 open DistributedMorphology (Contrastivity GenderFeature
   Interpretability Categorizer.Head PhiBundle)
 open DistributedMorphology (VocabularyItem subsetPrinciple)
-open scoped DistributedMorphology.VocabularyItem
+open scoped DistributedMorphology
 
 -- ============================================================================
 -- § 1: Morphosyntactic Features for English Pronouns

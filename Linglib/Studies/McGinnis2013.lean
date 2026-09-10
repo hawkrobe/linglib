@@ -57,7 +57,6 @@ geometry supplies the [#] of the revised *-t* (13c).
 namespace McGinnis2013
 
 open DistributedMorphology Phi.Geometry Data.Examples
-open scoped DistributedMorphology.VocabularyItem
 
 /-! ### Features and arguments -/
 

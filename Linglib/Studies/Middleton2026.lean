@@ -66,7 +66,6 @@ namespace Middleton2026
 
 open Minimalist DistributedMorphology
      Taos.Agreement Basque.Postsyntax
-open scoped DistributedMorphology.VocabularyItem
 
 /-! ### Metathesis Rule
 

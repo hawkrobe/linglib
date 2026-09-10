@@ -38,7 +38,7 @@ derives a label only where the citation frame carries an entailment profile.
 
 namespace GoldbergJackendoff2004
 
-open ConstructionGrammar.Resultatives ArgumentStructure Features Data.Examples
+open ConstructionGrammar.Resultatives ArgumentStructure Data.Examples
 open English.Predicates.Verbal
 
 /-- An example row: the verb, the subconstruction, how its subevents relate, the object

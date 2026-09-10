@@ -51,7 +51,6 @@ mismatch resolution (`mismatchResolution`), and Table 2 follows from the geometr
 namespace AdamsonAnagnostopoulou2025
 
 open Minimalist.Coordination DistributedMorphology Morphology.Exponence
-open scoped DistributedMorphology.VocabularyItem
 
 /-- The privative gender nodes of the three geometries. -/
 inductive Node where
