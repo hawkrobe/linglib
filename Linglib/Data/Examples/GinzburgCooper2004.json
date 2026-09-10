@@ -1,247 +1,833 @@
 [
   {
     "id": "ginzburgcooper2004_4a_bo",
-    "source": {"bibkey": "ginzburg-cooper-2004", "paperLabel": "(4a)"},
-    "reportedIn": null,
+    "source": {
+      "bibkey": "ginzburg-cooper-2004",
+      "paperLabel": "(4a)"
+    },
     "language": "stan1293",
     "primaryText": "A: Did Bo finagle a raise? B: Bo?",
-    "discourseSegments": [
-      "A: Did Bo finagle a raise?",
-      "B: Bo?"
-    ],
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "A: Did Bo finagle a raise? B: Bo?",
-    "context": "Clarification ellipsis of a proper name: the paradigm case. Clausal reading: 'Are you asking if BO finagled a raise?'; constituent reading: 'Who is Bo?'",
+    "translation": "",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "clausal", "judgment": "acceptable"},
-      {"name": "constituent", "judgment": "acceptable"}
+      {
+        "name": "clausal",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "constituent",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
-      ["phonIdentical", "true"],
-      ["category", "NP"]
+      [
+        "antecedent",
+        "Bo"
+      ],
+      [
+        "antecedentCat",
+        "NP"
+      ],
+      [
+        "fragment",
+        "Bo"
+      ],
+      [
+        "fragmentCat",
+        "NP"
+      ],
+      [
+        "access",
+        "shared"
+      ]
     ],
-    "comment": "UNVERIFIED paperLabel: ex. (4a) carried from Phenomena/Ellipsis/ClarificationEllipsis.lean ceProperName, not checked against the published paper. RECONCILE: Studies/GinzburgCooper2004.lean uses 'Did Bo leave?' as its running example (paper ex. 28/32 per that file); whether (4a)'s antecedent is 'Did Bo finagle a raise?' or 'Did Bo leave?' needs checking against the paper.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Clausal: are you asking if BO (of all people) finagled a raise? Constituent: who is Bo?"
   },
   {
     "id": "ginzburgcooper2004_4a_finagle",
-    "source": {"bibkey": "ginzburg-cooper-2004", "paperLabel": "(4a)"},
-    "reportedIn": null,
+    "source": {
+      "bibkey": "ginzburg-cooper-2004",
+      "paperLabel": "(4a)"
+    },
     "language": "stan1293",
     "primaryText": "A: Did Bo finagle a raise? B: Finagle?",
-    "discourseSegments": [
-      "A: Did Bo finagle a raise?",
-      "B: Finagle?"
-    ],
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "A: Did Bo finagle a raise? B: Finagle?",
-    "context": "Clarification ellipsis of a rare word: the constituent reading requests lexical clarification ('What does finagle mean?'), not referent identification.",
+    "translation": "",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "clausal", "judgment": "acceptable"},
-      {"name": "constituent", "judgment": "acceptable"}
+      {
+        "name": "clausal",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "constituent",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
-      ["phonIdentical", "true"],
-      ["category", "V"]
+      [
+        "antecedent",
+        "finagle"
+      ],
+      [
+        "antecedentCat",
+        "V[bse]"
+      ],
+      [
+        "fragment",
+        "Finagle"
+      ],
+      [
+        "fragmentCat",
+        "V[bse]"
+      ],
+      [
+        "access",
+        "shared"
+      ]
     ],
-    "comment": "UNVERIFIED paperLabel: ex. (4a) carried from Phenomena/Ellipsis/ClarificationEllipsis.lean ceRareWord, not checked against the published paper (the Lean file labels both the Bo and finagle fragments as 4a).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
-  },
-  {
-    "id": "ginzburgcooper2004_8a",
-    "source": {"bibkey": "ginzburg-cooper-2004", "paperLabel": "(8a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "A: Did Bo leave? B: My cousin?",
-    "discourseSegments": [
-      "A: Did Bo leave?",
-      "B: My cousin?"
-    ],
-    "glossedTokens": [],
-    "translation": "A: Did Bo leave? B: My cousin?",
-    "context": "Non-identical clarification ellipsis: the fragment 'My cousin?' is not phonologically identical to the antecedent sub-utterance 'Bo'. Neither reading requires phonological identity.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {"name": "clausal", "judgment": "acceptable"},
-      {"name": "constituent", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["phonIdentical", "false"],
-      ["category", "NP"]
-    ],
-    "comment": "UNVERIFIED paperLabel: ex. (8a) carried from Phenomena/Ellipsis/ClarificationEllipsis.lean ceNonIdentical, not checked against the published paper.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
-  },
-  {
-    "id": "ginzburgcooper2004_8c",
-    "source": {"bibkey": "ginzburg-cooper-2004", "paperLabel": "(8c)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "A: Did you bike to work yesterday? B: Cycle?",
-    "discourseSegments": [
-      "A: Did you bike to work yesterday?",
-      "B: Cycle?"
-    ],
-    "glossedTokens": [],
-    "translation": "A: Did you bike to work yesterday? B: Cycle?",
-    "context": "Non-identical clarification ellipsis of a verb. Clausal reading: 'Are you asking if I cycled to work yesterday?'; constituent reading: 'When you say bike, are you referring to cycling?'",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {"name": "clausal", "judgment": "acceptable"},
-      {"name": "constituent", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["phonIdentical", "false"],
-      ["category", "V"]
-    ],
-    "comment": "UNVERIFIED paperLabel: ex. (8c) carried from Phenomena/Ellipsis/ClarificationEllipsis.lean ceNonIdenticalVerb, not checked against the published paper.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
-  },
-  {
-    "id": "ginzburgcooper2004_10a",
-    "source": {"bibkey": "ginzburg-cooper-2004", "paperLabel": "(10a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "A: I phoned him. B: Him?",
-    "discourseSegments": [
-      "A: I phoned him.",
-      "B: Him?"
-    ],
-    "glossedTokens": [],
-    "translation": "A: I phoned him. B: Him?",
-    "context": "Syntactic parallelism: the CE fragment must categorially match the antecedent sub-utterance. Accusative 'Him?' matches accusative 'him'; nominative 'he?' does not.",
-    "judgment": "acceptable",
-    "alternatives": [
-      {"form": "He?", "judgment": "unacceptable"}
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["phonIdentical", "true"],
-      ["category", "NP"]
-    ],
-    "comment": "UNVERIFIED paperLabel: ex. (10a) carried from Phenomena/Ellipsis/ClarificationEllipsis.lean accMatchOK/nomMismatchBad, not checked against the published paper. The nominative variant in alternatives is the Lean file's '#he?' (infelicitous), merged here as a within-example contrast.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
-  },
-  {
-    "id": "ginzburgcooper2004_11",
-    "source": {"bibkey": "ginzburg-cooper-2004", "paperLabel": "(11)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "A: Let's hold the conference here. B: Here?",
-    "discourseSegments": [
-      "A: Let's hold the conference here.",
-      "B: Here?"
-    ],
-    "glossedTokens": [],
-    "translation": "A: Let's hold the conference here. B: Here?",
-    "context": "A is in Gothenburg, B is in Hyderabad (no shared belief about the content of 'here'). The content of 'here' differs across participants, so the clausal reading, which presupposes shared belief about content, is unavailable; only the constituent reading survives.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {"name": "clausal", "judgment": "unacceptable"},
-      {"name": "constituent", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["phonIdentical", "true"],
-      ["category", "AdvP"],
-      ["sharedBelief", "false"]
-    ],
-    "comment": "UNVERIFIED paperLabel: ex. (11) carried from Phenomena/Ellipsis/ClarificationEllipsis.lean ceDistinctLocations and differentLocations (the same example encoded twice in the Lean file, merged here), not checked against the published paper.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
-  },
-  {
-    "id": "ginzburgcooper2004_12",
-    "source": {"bibkey": "ginzburg-cooper-2004", "paperLabel": "(12)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "A: Let's hold the conference here. B: Here?",
-    "discourseSegments": [
-      "A: Let's hold the conference here.",
-      "B: Here?"
-    ],
-    "glossedTokens": [],
-    "translation": "A: Let's hold the conference here. B: Here?",
-    "context": "Both A and B are in Gothenburg (shared belief about the content of 'here'). Both readings available; clausal: 'Are you asking if we should hold the conference in Gothenburg of all places?'",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {"name": "clausal", "judgment": "acceptable"},
-      {"name": "constituent", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["phonIdentical", "true"],
-      ["category", "AdvP"],
-      ["sharedBelief", "true"]
-    ],
-    "comment": "UNVERIFIED paperLabel: ex. (12) carried from Phenomena/Ellipsis/ClarificationEllipsis.lean sameLocation, not checked against the published paper. Minimal pair with ex. (11): the shared-belief condition distinguishes the clausal from the constituent reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
-  },
-  {
-    "id": "ginzburgcooper2004_13a",
-    "source": {"bibkey": "ginzburg-cooper-2004", "paperLabel": "(13a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "A: Can I come in? B: I?",
-    "discourseSegments": [
-      "A: Can I come in?",
-      "B: I?"
-    ],
-    "glossedTokens": [],
-    "translation": "A: Can I come in? B: I?",
-    "context": "Clarification ellipsis of an indexical pronoun across speakers: 'I' refers to A when A says it, but would refer to B if B said it. Since the reference changes across speakers, the clausal reading (which requires shared belief about content) is blocked.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {"name": "clausal", "judgment": "unacceptable"},
-      {"name": "constituent", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["phonIdentical", "true"],
-      ["category", "NP"],
-      ["sharedBelief", "false"]
-    ],
-    "comment": "UNVERIFIED paperLabel: ex. (13a) carried from Phenomena/Ellipsis/ClarificationEllipsis.lean ceIndexicalI, not checked against the published paper.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Clausal: are you asking if Bo FINAGLED a raise (of all actions)? Constituent: what does it mean to finagle?"
   },
   {
     "id": "ginzburgcooper2004_6a",
-    "source": {"bibkey": "ginzburg-cooper-2004", "paperLabel": "(6a)"},
-    "reportedIn": null,
+    "source": {
+      "bibkey": "ginzburg-cooper-2004",
+      "paperLabel": "(6a)"
+    },
     "language": "stan1293",
-    "primaryText": "A: you always had er er say every foot he had with a piece of spunyarn in the wire B: Spunyarn?",
-    "discourseSegments": [
-      "A: you always had er er say every foot he had with a piece of spunyarn in the wire",
-      "B: Spunyarn?"
-    ],
+    "primaryText": "George: you always had er er say every foot he had with a piece of spunyarn in the wire. Anon1: Spunyarn? George: Spunyarn, yes. Anon1: What's spunyarn? George: Well that's like er tarred rope.",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "A: you always had er er say every foot he had with a piece of spunyarn in the wire B: Spunyarn?",
-    "context": "British National Corpus attestation (file H5G): clarification ellipsis of an unknown word. Constituent reading dominant: 'What's spunyarn?'",
+    "translation": "",
+    "context": "British National Corpus, file H5G, sentences 193–196.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "clausal", "judgment": "acceptable"},
-      {"name": "constituent", "judgment": "acceptable"}
+      {
+        "name": "clausal",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "constituent",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
-      ["phonIdentical", "true"],
-      ["category", "N"]
+      [
+        "antecedent",
+        "spunyarn"
+      ],
+      [
+        "antecedentCat",
+        "N"
+      ],
+      [
+        "fragment",
+        "Spunyarn"
+      ],
+      [
+        "fragmentCat",
+        "N"
+      ],
+      [
+        "access",
+        "shared"
+      ]
     ],
-    "comment": "UNVERIFIED paperLabel: ex. (6a) carried from Phenomena/Ellipsis/ClarificationEllipsis.lean ceSpunyarn, not checked against the published paper. Originating source is the BNC (file H5G per the Lean notes), reported in Ginzburg & Cooper 2004; no separate BNC bib entry, so source carries the paper's bibkey.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "George answers the clausal reading; Anon1 intended the constituent one and asks it non-elliptically."
+  },
+  {
+    "id": "ginzburgcooper2004_8a",
+    "source": {
+      "bibkey": "ginzburg-cooper-2004",
+      "paperLabel": "(8a)"
+    },
+    "language": "stan1293",
+    "primaryText": "A: Did Bo leave? B: My cousin?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "clausal",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "constituent",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "antecedent",
+        "Bo"
+      ],
+      [
+        "antecedentCat",
+        "NP"
+      ],
+      [
+        "fragment",
+        "My cousin"
+      ],
+      [
+        "fragmentCat",
+        "NP"
+      ],
+      [
+        "access",
+        "shared"
+      ]
+    ],
+    "comment": "Clausal: are you asking if my cousin of all people left? Constituent: when you say Bo, are you referring to my cousin?"
+  },
+  {
+    "id": "ginzburgcooper2004_8b",
+    "source": {
+      "bibkey": "ginzburg-cooper-2004",
+      "paperLabel": "(8b)"
+    },
+    "language": "stan1293",
+    "primaryText": "A: Did she annoy Bo? B: Sue?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "clausal",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "constituent",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "antecedent",
+        "she"
+      ],
+      [
+        "antecedentCat",
+        "NP"
+      ],
+      [
+        "fragment",
+        "Sue"
+      ],
+      [
+        "fragmentCat",
+        "NP"
+      ],
+      [
+        "access",
+        "shared"
+      ]
+    ],
+    "comment": "Clausal: are you asking if Sue of all people annoyed Bo? Constituent: when you say she, are you referring to Sue?"
+  },
+  {
+    "id": "ginzburgcooper2004_8c",
+    "source": {
+      "bibkey": "ginzburg-cooper-2004",
+      "paperLabel": "(8c)"
+    },
+    "language": "stan1293",
+    "primaryText": "A: Did you bike to work yesterday? B: Cycle?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "clausal",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "constituent",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "antecedent",
+        "bike"
+      ],
+      [
+        "antecedentCat",
+        "V[bse]"
+      ],
+      [
+        "fragment",
+        "Cycle"
+      ],
+      [
+        "fragmentCat",
+        "V[bse]"
+      ],
+      [
+        "access",
+        "shared"
+      ]
+    ],
+    "comment": "Clausal: are you asking if I, of all things, cycled to work yesterday? Constituent: when you say bike, are you referring to the activity of cycling?"
+  },
+  {
+    "id": "ginzburgcooper2004_9a",
+    "source": {
+      "bibkey": "ginzburg-cooper-2004",
+      "paperLabel": "(9a)"
+    },
+    "language": "stan1293",
+    "primaryText": "A: Did Bo leave? B: Who?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "clausal",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "constituent",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "antecedent",
+        "Bo"
+      ],
+      [
+        "antecedentCat",
+        "NP"
+      ],
+      [
+        "fragment",
+        "Who"
+      ],
+      [
+        "fragmentCat",
+        "NP"
+      ],
+      [
+        "access",
+        "shared"
+      ]
+    ],
+    "comment": "Clausal: who is it you are asking whether s/he left? Constituent: when you say Bo, who are you referring to?"
+  },
+  {
+    "id": "ginzburgcooper2004_10a_him",
+    "source": {
+      "bibkey": "ginzburg-cooper-2004",
+      "paperLabel": "(10a)"
+    },
+    "language": "stan1293",
+    "primaryText": "A: I phoned him. B: Him?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "antecedent",
+        "him"
+      ],
+      [
+        "antecedentCat",
+        "NP[acc]"
+      ],
+      [
+        "fragment",
+        "Him"
+      ],
+      [
+        "fragmentCat",
+        "NP[acc]"
+      ],
+      [
+        "access",
+        "shared"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "ginzburgcooper2004_10a_he",
+    "source": {
+      "bibkey": "ginzburg-cooper-2004",
+      "paperLabel": "(10a)"
+    },
+    "language": "stan1293",
+    "primaryText": "A: I phoned him. B: He?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "antecedent",
+        "him"
+      ],
+      [
+        "antecedentCat",
+        "NP[acc]"
+      ],
+      [
+        "fragment",
+        "He"
+      ],
+      [
+        "fragmentCat",
+        "NP[nom]"
+      ],
+      [
+        "access",
+        "shared"
+      ]
+    ],
+    "comment": "Marked # in the paper."
+  },
+  {
+    "id": "ginzburgcooper2004_10b_he",
+    "source": {
+      "bibkey": "ginzburg-cooper-2004",
+      "paperLabel": "(10b)"
+    },
+    "language": "stan1293",
+    "primaryText": "A: Did he phone you? B: He?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "antecedent",
+        "he"
+      ],
+      [
+        "antecedentCat",
+        "NP[nom]"
+      ],
+      [
+        "fragment",
+        "He"
+      ],
+      [
+        "fragmentCat",
+        "NP[nom]"
+      ],
+      [
+        "access",
+        "shared"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "ginzburgcooper2004_10b_him",
+    "source": {
+      "bibkey": "ginzburg-cooper-2004",
+      "paperLabel": "(10b)"
+    },
+    "language": "stan1293",
+    "primaryText": "A: Did he phone you? B: Him?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "antecedent",
+        "he"
+      ],
+      [
+        "antecedentCat",
+        "NP[nom]"
+      ],
+      [
+        "fragment",
+        "Him"
+      ],
+      [
+        "fragmentCat",
+        "NP[acc]"
+      ],
+      [
+        "access",
+        "shared"
+      ]
+    ],
+    "comment": "Marked # in the paper."
+  },
+  {
+    "id": "ginzburgcooper2004_10c_adore",
+    "source": {
+      "bibkey": "ginzburg-cooper-2004",
+      "paperLabel": "(10c)"
+    },
+    "language": "stan1293",
+    "primaryText": "A: Did he adore the book? B: Adore?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "antecedent",
+        "adore"
+      ],
+      [
+        "antecedentCat",
+        "V[bse]"
+      ],
+      [
+        "fragment",
+        "Adore"
+      ],
+      [
+        "fragmentCat",
+        "V[bse]"
+      ],
+      [
+        "access",
+        "shared"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "ginzburgcooper2004_10c_adored",
+    "source": {
+      "bibkey": "ginzburg-cooper-2004",
+      "paperLabel": "(10c)"
+    },
+    "language": "stan1293",
+    "primaryText": "A: Did he adore the book? B: Adored?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "antecedent",
+        "adore"
+      ],
+      [
+        "antecedentCat",
+        "V[bse]"
+      ],
+      [
+        "fragment",
+        "Adored"
+      ],
+      [
+        "fragmentCat",
+        "V[fin]"
+      ],
+      [
+        "access",
+        "shared"
+      ]
+    ],
+    "comment": "Marked # in the paper."
+  },
+  {
+    "id": "ginzburgcooper2004_10d_cycling",
+    "source": {
+      "bibkey": "ginzburg-cooper-2004",
+      "paperLabel": "(10d)"
+    },
+    "language": "stan1293",
+    "primaryText": "A: Were you cycling yesterday? B: Cycling?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "antecedent",
+        "cycling"
+      ],
+      [
+        "antecedentCat",
+        "V[prp]"
+      ],
+      [
+        "fragment",
+        "Cycling"
+      ],
+      [
+        "fragmentCat",
+        "V[prp]"
+      ],
+      [
+        "access",
+        "shared"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "ginzburgcooper2004_10d_biking",
+    "source": {
+      "bibkey": "ginzburg-cooper-2004",
+      "paperLabel": "(10d)"
+    },
+    "language": "stan1293",
+    "primaryText": "A: Were you cycling yesterday? B: Biking?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "antecedent",
+        "cycling"
+      ],
+      [
+        "antecedentCat",
+        "V[prp]"
+      ],
+      [
+        "fragment",
+        "Biking"
+      ],
+      [
+        "fragmentCat",
+        "V[prp]"
+      ],
+      [
+        "access",
+        "shared"
+      ]
+    ],
+    "comment": "A non-identical fragment of the same category."
+  },
+  {
+    "id": "ginzburgcooper2004_10d_biked",
+    "source": {
+      "bibkey": "ginzburg-cooper-2004",
+      "paperLabel": "(10d)"
+    },
+    "language": "stan1293",
+    "primaryText": "A: Were you cycling yesterday? B: Biked?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "antecedent",
+        "cycling"
+      ],
+      [
+        "antecedentCat",
+        "V[prp]"
+      ],
+      [
+        "fragment",
+        "Biked"
+      ],
+      [
+        "fragmentCat",
+        "V[psp]"
+      ],
+      [
+        "access",
+        "shared"
+      ]
+    ],
+    "comment": "Marked # in the paper."
+  },
+  {
+    "id": "ginzburgcooper2004_11",
+    "source": {
+      "bibkey": "ginzburg-cooper-2004",
+      "paperLabel": "(11)"
+    },
+    "language": "stan1293",
+    "primaryText": "A: Let's hold the conference here. B: Here?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A is located in Gothenburg, B in Hyderabad.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "clausal",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "constituent",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "antecedent",
+        "here"
+      ],
+      [
+        "antecedentCat",
+        "AdvP"
+      ],
+      [
+        "fragment",
+        "Here"
+      ],
+      [
+        "fragmentCat",
+        "AdvP"
+      ],
+      [
+        "access",
+        "distinct"
+      ]
+    ],
+    "comment": "Only: what location are you talking about? Not: are you asking if we should hold the conference in Hyderabad of all places?"
+  },
+  {
+    "id": "ginzburgcooper2004_12",
+    "source": {
+      "bibkey": "ginzburg-cooper-2004",
+      "paperLabel": "(12)"
+    },
+    "language": "stan1293",
+    "primaryText": "A: Let's hold the conference here. B: Here?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A and B are both located in Gothenburg.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "clausal",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "constituent",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "antecedent",
+        "here"
+      ],
+      [
+        "antecedentCat",
+        "AdvP"
+      ],
+      [
+        "fragment",
+        "Here"
+      ],
+      [
+        "fragmentCat",
+        "AdvP"
+      ],
+      [
+        "access",
+        "shared"
+      ]
+    ],
+    "comment": "Either: what location are you talking about? Or: are you asking if we should hold the conference in Gothenburg of all places?"
+  },
+  {
+    "id": "ginzburgcooper2004_13a",
+    "source": {
+      "bibkey": "ginzburg-cooper-2004",
+      "paperLabel": "(13a)"
+    },
+    "language": "stan1293",
+    "primaryText": "A: Can I come in? B: I?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "clausal",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "constituent",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "antecedent",
+        "I"
+      ],
+      [
+        "antecedentCat",
+        "NP[nom]"
+      ],
+      [
+        "fragment",
+        "I"
+      ],
+      [
+        "fragmentCat",
+        "NP[nom]"
+      ],
+      [
+        "access",
+        "distinct"
+      ]
+    ],
+    "comment": "Who is I, who are you? Cannot mean: am I asking if I of all people can come in."
   }
 ]

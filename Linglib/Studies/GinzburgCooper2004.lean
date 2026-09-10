@@ -2,600 +2,364 @@ import Linglib.Discourse.Gameboard.Defs
 import Linglib.Data.Examples.GinzburgCooper2004
 
 /-!
-# Ginzburg & Cooper (2004): Clarification, Ellipsis, and Contextual Updates
-[ginzburg-cooper-2004]
+# Ginzburg and Cooper (2004): Clarification, Ellipsis, and the Nature of Contextual Updates in Dialogue
 
-Formalization of the core running example from [ginzburg-cooper-2004]:
+This file formalizes the account of clarification ellipsis of [ginzburg-cooper-2004], on which a
+sign carries the contextual parameters its sub-utterances introduce (`LocProp.cparams`,
+`LocProp.constits`), grounding an utterance is finding an assignment for all of them (`Grounds`),
+and an addressee who cannot updates the context instead by a coercion operation on the sign:
+parameter focussing raises the question `?i.p`, the content with the problematic parameter
+abstracted (`parameterFocussing`), parameter identification the question what the speaker meant by
+the sub-utterance (`parameterIdentification`), both making that sub-utterance salient
+(`salUtt_parameterFocussing`), and contextual existential generalization quantifies the parameter
+away so that the weaker content can be grounded (`existentialGeneralization`,
+`grounds_existentialGeneralization`). Since the operations read the constituents of the sign,
+utterances with the same content have different clarification potentials
+(`potential_ne_of_constits`): the Hybrid Content Hypothesis, against the purely semantic updates
+of dynamic semantics.
 
-  A: "Did Bo leave?"
-  B: "Bo?"
+The utterance-processing protocol integrates a pending utterance whose parameters the
+participant's assignment resolves and otherwise clarifies it (`IS.ground`, `IS.clarify`); after
+"Did Bo leave?" the speaker's and the addressee's information states differ in MAX-QUD and
+SAL-UTT (`Ex32.differ`), and the speaker comprehends the addressee's fragment by applying the
+coercion to her own latest move (`IS.backtrack`, `backtrack_eq_clarify`). A fragment resolves
+against the clarification context when it matches the salient sub-utterance in category
+(`DeclFrag`); the clausal reading identifies its index with the parameter and so presupposes that
+the participants share the sub-utterance's content, the constituent reading does not
+(`rows_clausal`, `rows_constituent`), and a fragment of the wrong category has neither
+(`rows_parallelism`).
 
-This study applies the KOS framework (DGB, IS, C-PARAMS, coercion operations)
-to derive both CE readings — clausal and constituent — from the same antecedent
-sign, and demonstrates the speaker/addressee IS asymmetry.
+## Implementation notes
 
-## Key Claims Formalized
+* Signs are the substrate's `LocProp`, whose `constits` name the parameter each sub-utterance
+  contributes; contents are opaque, so existential generalization takes the binder as an argument
+  and the running example writes contents as strings.
+* The information state keeps the components that (82) displays: LATEST-MOVE as a sign with its
+  assignment, PENDING, MAX-QUD and SAL-UTT; the FACTS update (81) and the grounding conditions
+  (80) are not modelled.
+* The constituent reading is licensed by categorial parallelism alone, the reformulation without
+  utterance anaphora of footnote 55, so that the non-identical fragments of (8) get it; the
+  categories of (10) are annotated with the case or verb form the contrasts turn on.
 
-1. Proper names introduce C-PARAMS (referent binding) — ex. 28
-2. The running example has 5 C-PARAMS — ex. 32
-3. Parameter focussing yields clausal CE reading — ex. 53/54
-4. Parameter identification yields constituent CE reading — ex. 59/60
-5. Both coercions take the antecedent sign and target the same SAL-UTT
-6. Existential generalization removes a parameter without clarification — ex. 77/78
-7. Speaker resolves all params; addressee may not — ex. 82
-8. Partial assignment triggers PENDING, not grounding
-9. Updates require structured representations (Hybrid Content Hypothesis) — ex. 2/16
+## References
 
+* [ginzburg-cooper-2004]
+* [ginzburg-sag-2000]
+* [purver-ginzburg-2004]
+* [ginzburg-2012]
 -/
 
 namespace GinzburgCooper2004
 
-open Discourse.Gameboard
+open Discourse.Gameboard Data.Examples
 
-/-- The two readings of a clarification ellipsis.
-[ginzburg-cooper-2004] ex. 4b–c. -/
-inductive CEReading where
-  /-- "Are you asking whether p?" — polar question about propositional content.
-      Paraphrasable as a polar interrogative. Presupposes shared belief about
-      the sub-utterance's content. -/
-  | clausal
-  /-- "Who/what do you mean by X?" — wh-question about the referent/predicate.
-      Paraphrasable as a wh-interrogative. No shared-belief presupposition. -/
-  | constituent
-  deriving Repr, DecidableEq
+variable {V Cont : Type}
 
--- ════════════════════════════════════════════════════
--- § 0. Apparatus (demoted from former KOS substrate)
--- ════════════════════════════════════════════════════
+/-! ### Contextual parameters and grounding -/
 
-/-! ## 1994/2004 Clarification Ellipsis Apparatus
+/-- A contextual assignment: values for parameter indices. -/
+abbrev Assignment (V : Type) := List (String × V)
 
-This section was previously in `Discourse/Gameboard/Basic.lean`
-§§6, 7, 8, 9, 10, 12, 15. It is paper-specific to
-[ginzburg-cooper-2004]: in [ginzburg-2012], the corresponding
-machinery uses dgb-params (record types built on the shared `CParam`)
-rather than `CtxtAssignment`, and CCURs (Clarification Context Update
-Rules) rather than the three coercion operations
-(parameterFocussing, parameterIdentification, existentialGeneralization).
+/-- `f` resolves the parameter `c`. -/
+def Assignment.Resolves (f : Assignment V) (c : CParam) : Prop := c.index ∈ f.map Prod.fst
 
-We preserve the 2004 formulation here because this study replicates the
-2004 paper directly — the apparatus is single-consumer paper-specific
-content, demoted from substrate to consumer per the linglib pattern
-(cf. `Core/FormFrequency.lean → Studies/Haspelmath2021.lean §0`).
+instance (f : Assignment V) (c : CParam) : Decidable (f.Resolves c) :=
+  inferInstanceAs (Decidable (_ ∈ _))
 
-The shared substrate primitives — `CParam`, `CParamSet`, `SubUtterance` —
-remain in `Gameboard/Defs.lean` since they survive into the 2012 framework as
-the dgb-params/sub-constituents apparatus.
+/-- `f` grounds `σ`: it resolves every contextual parameter of the sign. -/
+def Grounds (f : Assignment V) (σ : LocProp Cont) : Prop := ∀ c ∈ σ.cparams, f.Resolves c
 
-The four general theorems about coercion operations are namespaced under
-`Apparatus` to avoid colliding with this file's specific-instance theorems
-on the running example. -/
+instance (f : Assignment V) (σ : LocProp Cont) : Decidable (Grounds f σ) :=
+  inferInstanceAs (Decidable (∀ c ∈ _, _))
 
-namespace Apparatus
+/-- The parameters of `σ` that `f` leaves unresolved. -/
+def unresolved (f : Assignment V) (σ : LocProp Cont) : CParamSet :=
+  σ.cparams.filter (λ c => !decide (f.Resolves c))
 
--- ─── Contextual Assignment ─────────────────────────────────
+theorem grounds_iff (f : Assignment V) (σ : LocProp Cont) :
+    Grounds f σ ↔ unresolved f σ = [] := by
+  simp [Grounds, unresolved, List.filter_eq_nil_iff]
 
-/-- A contextual assignment maps parameter indices to values.
+/-! ### Sign coercion -/
 
-Grounding requires a *total* assignment (all C-PARAMS resolved).
-Clarification arises when the assignment is *partial*.
-[ginzburg-cooper-2004] §6, ex. 81–82. -/
-structure CtxtAssignment where
-  bindings : List (String × String) := []
-  deriving Repr, DecidableEq
+/-- The issues a clarification context makes maximal: the content posed, `?i.p` with the
+problematic parameter abstracted from the content (focussing), and `?c.Mean(addr, u, c)`, what the
+speaker meant by the sub-utterance `u` (identification). -/
+inductive Issue (Cont : Type)
+  | posed (p : Cont)
+  | focus (i : String) (p : Cont)
+  | meaning (u : SubUtterance)
+  deriving DecidableEq, Repr
 
-/-- Does the assignment resolve a given parameter? -/
-def CtxtAssignment.resolves (f : CtxtAssignment) (cp : CParam) : Bool :=
-  f.bindings.any (·.1 == cp.index)
-
-/-- Does the assignment resolve all parameters in a set? -/
-def CtxtAssignment.resolvesAll (f : CtxtAssignment) (ps : CParamSet) : Bool :=
-  ps.all f.resolves
-
-/-- Which parameters remain unresolved? -/
-def CtxtAssignment.unresolved (f : CtxtAssignment) (ps : CParamSet) : CParamSet :=
-  ps.filter (!f.resolves ·)
-
--- ─── Utterance Skeletons ───────────────────────────────────
-
-/-- An utterance skeleton: a sign with C-PARAMS and CONSTITS.
-
-The CONSTITS feature (ex. 30) provides access to all sub-utterances.
-C-PARAMS (ex. 28–29) are the contextual dependencies introduced by the
-sign, amalgamated from daughters via the Non-local Amalgamation Constraint.
-[ginzburg-cooper-2004] §3. -/
-structure UttSkeleton where
-  phon : String
-  cat : String
-  cont : String
-  cparams : CParamSet := []
-  constits : List SubUtterance := []
-  deriving Repr, DecidableEq
-
-/-- Find the constituent whose CONT matches a parameter index. -/
-def UttSkeleton.constitForParam (u : UttSkeleton) (paramIdx : String) :
-    Option SubUtterance :=
-  u.constits.find? (·.cont == paramIdx)
-
--- ─── CE Processing State ───────────────────────────────────
-
-/-- A sign paired with a contextual assignment.
-
-[ginzburg-cooper-2004] ex. 81 p.353. The assignment f records which
-C-PARAMS have been resolved. Grounding checks whether f is total. -/
-structure SignAssignment where
-  sign : UttSkeleton
-  assignment : CtxtAssignment
-  deriving Repr, DecidableEq
-
-/-- Clarification Ellipsis processing state.
-
-[ginzburg-cooper-2004]: MAX-QUD and SAL-UTT are processing state for
-the CE analysis. These are NOT part of the [ginzburg-2012] DGB or TIS
-(in 2012, MaxQUD is computed from the QUD poset's maximal element, not
-stored separately).
-
-This state can be used alongside the 2012 TIS when CE processing is needed. -/
-structure CEState (QContent : Type) where
-  /-- The currently maximal question — for CE coercion operations -/
-  maxQud : Option QContent := none
-  /-- The salient sub-utterance — target of clarification -/
-  salUtt : Option SubUtterance := none
-  /-- Pending utterances awaiting C-PARAMS resolution -/
-  pendingUtts : List SignAssignment := []
-
--- ─── Coercion Operations ───────────────────────────────────
-
-/-- The three coercion operations on signs with unresolved C-PARAMS.
-[ginzburg-cooper-2004] §5. -/
-inductive CoercionOp where
-  /-- Clausal CE reading: polar question about content (ex. 53) -/
-  | paramFocussing
-  /-- Constituent CE reading: wh-question about speaker meaning (ex. 59) -/
-  | paramIdentification
-  /-- Ground without clarification: ∃-quantify a parameter (ex. 77) -/
-  | existentialGeneralization
-  deriving Repr, DecidableEq
-
-/-- Output of a coercion operation: partial specification for the
-    clarification context. -/
-structure CoercionOutput where
-  op : CoercionOp
-  /-- SAL-UTT: the sub-utterance to be echoed -/
+/-- The partial specification a coercion operation yields for the clarification: the salient
+sub-utterance and the maximal question under discussion. -/
+structure Clarification (Cont : Type) where
   salUtt : SubUtterance
-  /-- MAX-QUD: the question raised (string representation) -/
-  maxQud : String
-  deriving Repr, DecidableEq
+  maxQud : Issue Cont
+  deriving DecidableEq, Repr
 
-/-- Parameter focussing ([ginzburg-cooper-2004] ex. 53):
-derive clausal CE reading.
+/-- The sub-utterance contributing the contextual parameter `i` of `σ`: the left-hand side the
+coercion rules share. -/
+def constitOf (σ : LocProp Cont) (i : String) : Option SubUtterance :=
+  if i ∈ σ.cparams.map CParam.index then σ.constits.find? (λ u => decide (u.cont = i)) else none
 
-Takes the *antecedent sign* and a problematic parameter index.
-Finds the constituent that introduced the parameter.
-Produces MAX-QUD = polar question about the antecedent content. -/
-def parameterFocussing (antecedent : UttSkeleton) (paramIdx : String) :
-    Option CoercionOutput :=
-  match antecedent.constitForParam paramIdx with
-  | none => none
-  | some constit => some {
-    op := .paramFocussing
-    salUtt := constit
-    maxQud := s!"?{paramIdx}.{antecedent.cont}"
-  }
+/-- Parameter focussing: MAX-QUD is the content with `i` abstracted, `?i.p`. -/
+def parameterFocussing (σ : LocProp Cont) (i : String) : Option (Clarification Cont) :=
+  (constitOf σ i).map λ u => ⟨u, .focus i σ.cont⟩
 
-/-- Parameter identification ([ginzburg-cooper-2004] ex. 59):
-derive constituent CE reading.
+/-- Parameter identification: MAX-QUD asks what the speaker meant by the sub-utterance. -/
+def parameterIdentification (σ : LocProp Cont) (i : String) : Option (Clarification Cont) :=
+  (constitOf σ i).map λ u => ⟨u, .meaning u⟩
 
-Produces MAX-QUD = wh-question about speaker meaning. -/
-def parameterIdentification (antecedent : UttSkeleton) (paramIdx : String) :
-    Option CoercionOutput :=
-  match antecedent.constitForParam paramIdx with
-  | none => none
-  | some constit => some {
-    op := .paramIdentification
-    salUtt := constit
-    maxQud := s!"?c.spkr-meaning-rel(addr,{constit.phon},c)"
-  }
-
-/-- Contextual existential generalization ([ginzburg-cooper-2004] ex. 77):
-ground without clarifying.
-
-Removes a parameter from C-PARAMS by existentially quantifying it. -/
-def existentialGeneralization (sk : UttSkeleton) (paramIdx : String) : UttSkeleton :=
-  { sk with
-    cparams := sk.cparams.filter (·.index != paramIdx)
-    cont := s!"∃{paramIdx}.{sk.cont}" }
-
--- ─── 2004-era Information State ────────────────────────────
-
-/-- Information State for the [ginzburg-cooper-2004] model.
-
-Bundles a DGB with CE processing state (pending utterances). Uses `String`
-for both Fact and QContent, matching the string-based representations in
-the 2004 paper. The `Participant` type parameter is set to `String`,
-and the LocProp `Cont` is set to `String` since this is a 2004-era model.
-
-This is NOT the [ginzburg-2012] TIS — it predates the genre/agenda
-private state. It exists to support the CE running example. -/
-structure IS (Fact QContent : Type) where
-  dgb : DGB String Fact QContent String := {}
-  /-- Utterances awaiting full C-PARAMS resolution -/
-  pending : List SignAssignment := []
-  ce : CEState QContent := {}
-
-/-- An empty IS. -/
-def IS.initial {Fact QContent : Type} : IS Fact QContent := {}
-
-/-- Integrate an utterance into the IS.
-
-If the assignment fully resolves all C-PARAMS, the utterance is grounded:
-its content goes to FACTS. Otherwise, it goes to PENDING.
-[ginzburg-cooper-2004] §6, ex. 82. -/
-def IS.integrateUtterance {Fact QContent : Type} [BEq Fact]
-    (is_ : IS Fact QContent) (skel : UttSkeleton) (assign : CtxtAssignment)
-    (toFact : String → Fact) : IS Fact QContent :=
-  if assign.resolvesAll skel.cparams then
-    { is_ with dgb := { is_.dgb with facts := is_.dgb.facts ++ [toFact skel.cont] } }
-  else
-    { is_ with pending := is_.pending ++ [{ sign := skel, assignment := assign }] }
-
-/-- String-specialized integration (content IS the fact). -/
-def IS.integrateUtteranceStr (is_ : IS String String)
-    (skel : UttSkeleton) (assign : CtxtAssignment) : IS String String :=
-  is_.integrateUtterance skel assign id
-
-/-- Apply a coercion output to the IS: set MAX-QUD and SAL-UTT. -/
-def IS.applyCoercion {Fact QContent : Type}
-    (is_ : IS Fact QContent) (co : CoercionOutput)
-    (toQ : String → QContent) : IS Fact QContent :=
-  { is_ with ce := { is_.ce with maxQud := some (toQ co.maxQud), salUtt := some co.salUtt } }
-
-/-- String-specialized coercion application. -/
-def IS.applyCoercionStr (is_ : IS String String) (co : CoercionOutput) : IS String String :=
-  is_.applyCoercion co id
-
--- ─── LocProp ↔ UttSkeleton converters ──────────────────────
-
-/-- Convert an `UttSkeleton` to a string-content `LocProp`.
-    Subsumes the 2004 skeleton representation in the 2012 LocProp framework. -/
-def UttSkeleton.toLocProp (sk : UttSkeleton) : LocProp String where
-  phon := sk.phon
-  cat := sk.cat
-  cont := sk.cont
-  cparams := sk.cparams
-  constits := sk.constits
-
-/-- Convert a `LocProp String` back to an `UttSkeleton`.
-    Plain function (not `LocProp.toSkeleton`) because `LocProp` lives in
-    `Discourse.Gameboard` and dot notation looks there for the method, not in
-    `Apparatus`. Use as `locPropToSkeleton lp`. -/
-def locPropToSkeleton (lp : LocProp String) : UttSkeleton where
-  phon := lp.phon
-  cat := lp.cat
-  cont := lp.cont
-  cparams := lp.cparams
-  constits := lp.constits
-
-/-- Round-trip: UttSkeleton → LocProp → UttSkeleton is identity. -/
-theorem skeleton_locprop_roundtrip (sk : UttSkeleton) :
-    locPropToSkeleton sk.toLocProp = sk := rfl
-
--- ─── General theorems on coercion operations ───────────────
-
-/-- Both coercion operations target the same SAL-UTT. -/
-theorem coercions_same_salUtt (ant : UttSkeleton) (idx : String) :
-    (parameterFocussing ant idx).map CoercionOutput.salUtt =
-    (parameterIdentification ant idx).map CoercionOutput.salUtt := by
+/-- The two operations differ only in MAX-QUD: they make the same sub-utterance salient. -/
+theorem salUtt_parameterFocussing (σ : LocProp Cont) (i : String) :
+    (parameterFocussing σ i).map (·.salUtt) = (parameterIdentification σ i).map (·.salUtt) := by
   unfold parameterFocussing parameterIdentification
-  cases ant.constitForParam idx <;> rfl
+  cases constitOf σ i <;> rfl
 
-/-- The two coercion operations produce different operation types. -/
-theorem coercions_different_op (ant : UttSkeleton) (idx : String)
-    (r1 r2 : CoercionOutput)
-    (h1 : parameterFocussing ant idx = some r1)
-    (h2 : parameterIdentification ant idx = some r2) :
-    r1.op ≠ r2.op := by
-  unfold parameterFocussing at h1; unfold parameterIdentification at h2
-  cases h : ant.constitForParam idx with
-  | none => rw [h] at h1; simp at h1
-  | some _ =>
-    rw [h] at h1 h2; simp only [Option.some.injEq] at h1 h2
-    subst h1; subst h2; exact CoercionOp.noConfusion
+/-- Contextual existential generalization: the parameter leaves the sign's parameters and the
+content becomes `bind i p`, the content with `i` existentially bound with widest scope. -/
+def existentialGeneralization (bind : String → Cont → Cont) (σ : LocProp Cont) (i : String) :
+    LocProp Cont :=
+  { σ with cparams := σ.cparams.filter (λ c => decide (c.index ≠ i)), cont := bind i σ.cont }
 
-/-- A fully resolved assignment leaves no unresolved parameters. -/
-theorem resolved_means_no_unresolved (f : CtxtAssignment) (ps : CParamSet)
-    (h : f.resolvesAll ps = true) :
-    f.unresolved ps = [] := by
-  unfold CtxtAssignment.unresolved CtxtAssignment.resolvesAll at *
-  induction ps with
-  | nil => simp
-  | cons p ps ih =>
-    simp only [List.all_cons, Bool.and_eq_true] at h
-    simp only [List.filter_cons, h.1]
-    exact ih h.2
+/-- An assignment resolving every parameter but `i` grounds the generalized sign. -/
+theorem grounds_existentialGeneralization {bind : String → Cont → Cont} {σ : LocProp Cont}
+    {i : String} {f : Assignment V} (h : ∀ c ∈ σ.cparams, c.index ≠ i → f.Resolves c) :
+    Grounds f (existentialGeneralization bind σ i) := by
+  intro c hc
+  simp only [existentialGeneralization, List.mem_filter, decide_eq_true_eq] at hc
+  exact h c hc.1 hc.2
 
-/-- Existential generalization never increases the parameter count. -/
-theorem existential_gen_weakens (sk : UttSkeleton) (idx : String) :
-    (existentialGeneralization sk idx).cparams.length ≤ sk.cparams.length := by
-  simp [existentialGeneralization]
-  exact List.length_filter_le _ _
+/-- The clarification potential of a sign: the clarification contexts its coercion operations make
+available, one of each kind per contextual parameter. -/
+def potential (σ : LocProp Cont) : List (Clarification Cont) :=
+  σ.cparams.filterMap (λ c => parameterFocussing σ c.index) ++
+    σ.cparams.filterMap (λ c => parameterIdentification σ c.index)
 
-end Apparatus
+/-- The Hybrid Content Hypothesis as the paper argues it from (19)–(20): "Jill is the president"
+and "She is the president", with the same content, differ in clarification potential, because the
+potential reads the sub-utterances. -/
+theorem potential_ne_of_constits (p : Cont) :
+    ∃ σ σ' : LocProp Cont, σ.cont = σ'.cont ∧ potential σ ≠ potential σ' :=
+  ⟨{ phon := "Jill is the president", cat := "S", cont := p, cparams := [⟨"j", "named(Jill)(j)"⟩],
+      constits := [⟨"Jill", "NP", "j"⟩] },
+    { phon := "She is the president", cat := "S", cont := p, cparams := [⟨"j", "demonstrated(j)"⟩],
+      constits := [⟨"She", "NP", "j"⟩] },
+    rfl, λ h => by
+      have := congrArg (λ l => l.head?.map Clarification.salUtt) h
+      change some (⟨"Jill", "NP", "j"⟩ : SubUtterance) = some ⟨"She", "NP", "j"⟩ at this
+      exact absurd this (by decide)⟩
 
-open Apparatus
+/-! ### Integrating utterances in information states -/
 
--- ════════════════════════════════════════════════════
--- § 1. C-PARAMS for "Did Bo leave?" (paper ex. 28/32)
--- ════════════════════════════════════════════════════
+/-- The components of a participant's information state that utterance processing reads and
+writes: LATEST-MOVE as the sign with its assignment, the utterances PENDING, and the clarification
+context MAX-QUD and SAL-UTT. -/
+structure IS (V Cont : Type) where
+  latestMove : Option (LocProp Cont × Assignment V) := none
+  pending : List (LocProp Cont) := []
+  maxQud : Option (Issue Cont) := none
+  salUtt : Option SubUtterance := none
+  deriving DecidableEq
 
-/-- C-PARAM for "Bo": binds variable b to the referent named "Bo".
-[ginzburg-cooper-2004] ex. 28. -/
-def cpBo : CParam where
-  index := "b"
-  restriction := "named(Bo)(b)"
+/-- Protocol (84a): the maximal pending utterance, once `f` grounds it, becomes LATEST-MOVE and
+its content the issue posed. -/
+def IS.ground (s : IS V Cont) (f : Assignment V) : Option (IS V Cont) :=
+  match s.pending with
+  | σ :: rest =>
+    if Grounds f σ then
+      some { latestMove := some (σ, f), pending := rest, maxQud := some (.posed σ.cont) }
+    else none
+  | [] => none
 
-/-- C-PARAM for temporal precedence. -/
-def cpTime : CParam where
-  index := "t"
-  restriction := "precedes(t,k)"
+/-- A coercion operation: a partial map from signs and parameters to clarification contexts. -/
+abbrev Coercion (Cont : Type) := LocProp Cont → String → Option (Clarification Cont)
 
-/-- C-PARAM for speaker. -/
-def cpSpkr : CParam where
-  index := "i"
-  restriction := "spkr(i)"
+/-- Protocol (84c): the maximal pending utterance stays pending, and MAX-QUD and SAL-UTT take the
+values the coercion specifies for the parameter `i`. -/
+def IS.clarify (s : IS V Cont) (coe : Coercion Cont) (i : String) : Option (IS V Cont) :=
+  match s.pending with
+  | σ :: _ => (coe σ i).map λ c => { s with maxQud := some c.maxQud, salUtt := some c.salUtt }
+  | [] => none
 
-/-- C-PARAM for addressee. -/
-def cpAddr : CParam where
-  index := "j"
-  restriction := "addr(j)"
+/-- Protocol (84b): the coercion applied to the sign of LATEST-MOVE, by which the speaker of an
+utterance comprehends a clarification of it. -/
+def IS.backtrack (s : IS V Cont) (coe : Coercion Cont) (i : String) : Option (IS V Cont) :=
+  s.latestMove.bind λ m =>
+    (coe m.1 i).map λ c => { s with maxQud := some c.maxQud, salUtt := some c.salUtt }
 
-/-- C-PARAM for utterance time. -/
-def cpUttTime : CParam where
-  index := "k"
-  restriction := "utt-time(k)"
+/-- A coercion reads only the sign, so the speaker backtracking over her latest move and the
+addressee clarifying the same sign, pending for him, reach the same clarification context. -/
+theorem backtrack_eq_clarify {s s' : IS V Cont} {σ : LocProp Cont} (coe : Coercion Cont)
+    (i : String) (hs : s.latestMove.map Prod.fst = some σ) (hs' : s'.pending.head? = some σ) :
+    (s.backtrack coe i).map (λ t => (t.maxQud, t.salUtt)) =
+      (s'.clarify coe i).map (λ t => (t.maxQud, t.salUtt)) := by
+  obtain ⟨⟨τ, f⟩, hm, hτ⟩ := Option.map_eq_some_iff.1 hs
+  cases hτ
+  obtain ⟨ρ, rest, hp⟩ : ∃ ρ rest, s'.pending = ρ :: rest := by
+    cases h : s'.pending with
+    | nil => simp [h] at hs'
+    | cons ρ rest => exact ⟨ρ, rest, rfl⟩
+  have hρ : ρ = τ := by simpa [hp] using hs'
+  subst hρ
+  simp only [IS.backtrack, IS.clarify, hm, hp, Option.bind_some]
+  cases coe ρ i <;> rfl
 
-/-- The full C-PARAMS set for "Did Bo leave?" — 5 parameters.
-[ginzburg-cooper-2004] ex. 32. -/
-def didBoLeaveCParams : CParamSet := [cpBo, cpTime, cpSpkr, cpAddr, cpUttTime]
+/-! ### The running example, "Did Bo leave?" (32) -/
 
--- ════════════════════════════════════════════════════
--- § 2. Sub-Utterances and Skeleton (paper ex. 32)
--- ════════════════════════════════════════════════════
+namespace Ex32
 
-def suDid : SubUtterance where
-  phon := "Did"
-  cat := "AUX"
-  cont := "ask"
+/-- The sub-utterances of (32), each with the parameter or relation it contributes. -/
+def did : SubUtterance := ⟨"Did", "V[fin]", "ask"⟩
 
-def suBo : SubUtterance where
-  phon := "Bo"
-  cat := "NP"
-  cont := "b"
+def bo : SubUtterance := ⟨"Bo", "NP", "b"⟩
 
-def suLeave : SubUtterance where
-  phon := "leave"
-  cat := "V"
-  cont := "leave-rel"
+def leave : SubUtterance := ⟨"leave", "V[bse]", "leave"⟩
 
-def suDidBoLeave : SubUtterance where
-  phon := "Did Bo leave"
-  cat := "S"
-  cont := "ask(i,j,?.leave-rel(b,t))"
+def clause : SubUtterance := ⟨"Did Bo leave", "S", "ask(i,j,?.leave(b,t))"⟩
 
-/-- Full utterance skeleton for "Did Bo leave?" with all 5 C-PARAMS.
-[ginzburg-cooper-2004] ex. 32. -/
-def didBoLeave : UttSkeleton where
-  phon := "did bo leave"
-  cat := "V[+fin]"
-  cont := "ask(i,j,?.leave-rel(b,t))"
-  cparams := didBoLeaveCParams
-  constits := [suDid, suBo, suLeave, suDidBoLeave]
+/-- A's utterance: the root clause's parameters are the referent of "Bo", the time, the speaker,
+the addressee and the utterance time (28), (32). -/
+def σ : LocProp String :=
+  { phon := "did bo leave", cat := "V[+fin]", cont := "ask(i,j,?.leave(b,t))",
+    cparams := [⟨"b", "named(Bo)(b)"⟩, ⟨"t", "precedes(t,k)"⟩, ⟨"i", "spkr(i)"⟩,
+      ⟨"j", "addr(j)"⟩, ⟨"k", "utt-time(k)"⟩],
+    constits := [did, bo, leave, clause] }
 
--- ════════════════════════════════════════════════════
--- § 3. Contextual Assignments (paper ex. 82)
--- ════════════════════════════════════════════════════
+/-- A's assignment (82b). -/
+def fA : Assignment String :=
+  [("b", "B"), ("t", "T0"), ("i", "A"), ("j", "B"), ("k", "T1"), ("s", "S0")]
 
-/-- Speaker (A) resolves all parameters: she knows who Bo is, who she is,
-who the addressee is, and the temporal parameters.
-[ginzburg-cooper-2004] ex. 82b. -/
-def speakerAssignment : CtxtAssignment where
-  bindings := [("b", "B"), ("t", "T0"), ("i", "A"), ("j", "B"), ("k", "T1")]
+/-- B's assignment (82c), with no value for the referent of "Bo". -/
+def fB : Assignment String := [("t", "T0"), ("i", "A"), ("j", "B"), ("k", "T1"), ("s", "S0")]
 
-/-- Addressee (B) resolves all parameters EXCEPT b (Bo's referent).
-B doesn't know who "Bo" refers to.
-[ginzburg-cooper-2004] ex. 82c. -/
-def addresseeAssignment : CtxtAssignment where
-  bindings := [("t", "T0"), ("i", "A"), ("j", "B"), ("k", "T1")]
+theorem grounds_fA : Grounds fA σ := by decide
 
--- ════════════════════════════════════════════════════
--- § 4. IS Update: Speaker vs Addressee (paper ex. 82)
--- ════════════════════════════════════════════════════
+theorem unresolved_fB : unresolved fB σ = [⟨"b", "named(Bo)(b)"⟩] := by decide
 
-/-- A's IS after uttering "Did Bo leave?": fully grounded.
-Speaker resolves all C-PARAMS, so the utterance goes straight to FACTS. -/
-def speakerIS : IS String String :=
-  IS.initial.integrateUtteranceStr didBoLeave speakerAssignment
+/-- (54): focussing on `b` makes "Bo" salient and asks who, named Bo, A is asking about. -/
+theorem focussing_b : parameterFocussing σ "b" = some ⟨bo, .focus "b" σ.cont⟩ := by decide
 
-/-- B's IS after hearing "Did Bo leave?": partial assignment → pending.
-Addressee cannot resolve b, so the utterance goes to PENDING. -/
-def addresseeIS : IS String String :=
-  IS.initial.integrateUtteranceStr didBoLeave addresseeAssignment
+/-- (60): identification asks whom A meant by "Bo". -/
+theorem identification_b : parameterIdentification σ "b" = some ⟨bo, .meaning bo⟩ := by decide
 
--- ════════════════════════════════════════════════════
--- § 5. Coercion Operations (paper ex. 53–54, 59–60)
--- ════════════════════════════════════════════════════
+/-- (78): with `b` generalized away, B's assignment grounds the weaker content. -/
+theorem grounds_fB_generalized (bind : String → String → String) :
+    Grounds fB (existentialGeneralization bind σ "b") :=
+  grounds_existentialGeneralization (by decide)
 
-/-- Parameter focussing on "Bo" (parameter b): clausal CE reading.
-[ginzburg-cooper-2004] ex. 53–54.
-Output: SAL-UTT = "Bo" constituent, MAX-QUD = ?b.ask(i,j,?.leave-rel(b,t))
-Paraphrase: "Are you asking if b left?" -/
-def focussingOnBo : Option CoercionOutput :=
-  parameterFocussing didBoLeave "b"
+/-- The state after A's utterance, pending for both participants. -/
+def initial : IS String String := { pending := [σ] }
 
-/-- Parameter identification on "Bo" (parameter b): constituent CE reading.
-[ginzburg-cooper-2004] ex. 59–60.
-Output: SAL-UTT = "Bo" constituent, MAX-QUD = ?c.spkr-meaning-rel(addr,Bo,c)
-Paraphrase: "Who do you mean by Bo?" -/
-def identificationOnBo : Option CoercionOutput :=
-  parameterIdentification didBoLeave "b"
+/-- (82b): A grounds her own utterance. -/
+theorem speaker : initial.ground fA =
+    some { latestMove := some (σ, fA), maxQud := some (.posed σ.cont) } := by decide
 
-/-- Existential generalization on "Bo" (parameter b).
-[ginzburg-cooper-2004] ex. 77–78.
-Removes b from C-PARAMS, weakens content to ∃b.ask(i,j,?.leave-rel(b,t)). -/
-def existGenOnBo : UttSkeleton :=
-  existentialGeneralization didBoLeave "b"
+/-- B cannot ground it. -/
+theorem addressee_ground : initial.ground fB = none := by decide
 
--- ════════════════════════════════════════════════════
--- § 6. B's IS after coercion
--- ════════════════════════════════════════════════════
+/-- (82c): B clarifies by parameter focussing. -/
+theorem addressee : initial.clarify parameterFocussing "b" =
+    some { pending := [σ], maxQud := some (.focus "b" σ.cont), salUtt := some bo } := by decide
 
-/-- B applies parameter focussing to set up clarification context. -/
-def addresseeISAfterFocussing : Option (IS String String) :=
-  focussingOnBo.map addresseeIS.applyCoercionStr
-
-/-- B applies parameter identification to set up clarification context. -/
-def addresseeISAfterIdentification : Option (IS String String) :=
-  identificationOnBo.map addresseeIS.applyCoercionStr
-
--- ════════════════════════════════════════════════════
--- § 7. Verification Theorems
--- ════════════════════════════════════════════════════
-
--- Running example structure
-
-/-- The running example has exactly 5 C-PARAMS. -/
-theorem five_cparams : didBoLeave.cparams.length = 5 := rfl
-
-/-- The running example has 4 constituents (Did, Bo, leave, Did Bo leave). -/
-theorem four_constits : didBoLeave.constits.length = 4 := rfl
-
--- Speaker/addressee assignment asymmetry
-
-/-- Speaker resolves all C-PARAMS. -/
-theorem speaker_resolves_all :
-    speakerAssignment.resolvesAll didBoLeaveCParams = true := by native_decide
-
-/-- Addressee does NOT resolve all C-PARAMS (missing b). -/
-theorem addressee_partial :
-    addresseeAssignment.resolvesAll didBoLeaveCParams = false := by native_decide
-
-/-- The unresolved parameter for B is exactly {b}. -/
-theorem addressee_unresolved_is_bo :
-    (addresseeAssignment.unresolved didBoLeaveCParams).map CParam.index = ["b"] := by
-  native_decide
-
--- IS update asymmetry (paper ex. 82)
-
-/-- Speaker's utterance is grounded (added to FACTS). -/
-theorem speaker_grounds :
-    speakerIS.dgb.facts = ["ask(i,j,?.leave-rel(b,t))"] := by native_decide
-
-/-- Addressee's utterance is NOT grounded (no new facts). -/
-theorem addressee_no_facts :
-    addresseeIS.dgb.facts = [] := by native_decide
-
-/-- Addressee's utterance goes to PENDING. -/
-theorem addressee_has_pending :
-    addresseeIS.pending.length = 1 := by native_decide
-
--- Coercion availability
-
-/-- Parameter focussing succeeds on "Bo". -/
-theorem focussing_available : focussingOnBo.isSome = true := by native_decide
-
-/-- Parameter identification succeeds on "Bo". -/
-theorem identification_available : identificationOnBo.isSome = true := by native_decide
-
-/-- Both coercions target the same SAL-UTT (the "Bo" constituent). -/
-theorem coercions_same_salUtt :
-    focussingOnBo.map CoercionOutput.salUtt =
-    identificationOnBo.map CoercionOutput.salUtt := by native_decide
-
-/-- The SAL-UTT is "Bo". -/
-theorem salUtt_is_bo :
-    focussingOnBo.map (·.salUtt.phon) = some "Bo" := by native_decide
-
-/-- Focussing and identification produce different operation types. -/
-theorem different_ops :
-    focussingOnBo.map CoercionOutput.op ≠
-    identificationOnBo.map CoercionOutput.op := by native_decide
-
--- Existential generalization (paper ex. 77–78)
-
-/-- Existential generalization removes exactly one parameter. -/
-theorem exist_gen_removes_bo :
-    existGenOnBo.cparams.length = 4 := by native_decide
-
-/-- The removed parameter is b. -/
-theorem exist_gen_keeps_others :
-    existGenOnBo.cparams.map CParam.index = ["t", "i", "j", "k"] := by native_decide
-
-/-- Existential generalization wraps content with ∃. -/
-theorem exist_gen_weakens_content :
-    existGenOnBo.cont = "∃b.ask(i,j,?.leave-rel(b,t))" := rfl
-
--- Coercion output content
-
-/-- Focussing MAX-QUD is a question about the antecedent content. -/
-theorem focussing_maxqud :
-    focussingOnBo.map (·.maxQud) =
-    some "?b.ask(i,j,?.leave-rel(b,t))" := by native_decide
-
-/-- Identification MAX-QUD is a speaker-meaning question. -/
-theorem identification_maxqud :
-    identificationOnBo.map (·.maxQud) =
-    some "?c.spkr-meaning-rel(addr,Bo,c)" := by native_decide
-
--- Bridge: CoercionOp ↔ CEReading
-
-/-- The KOS theory's coercion operations correspond to the empirical CE readings:
-parameterFocussing ↔ clausal, parameterIdentification ↔ constituent.
-[ginzburg-cooper-2004] §5. -/
-def coercionToReading : CoercionOp → CEReading
-  | .paramFocussing => .clausal
-  | .paramIdentification => .constituent
-  | .existentialGeneralization => .clausal  -- acknowledgement variant (ex. 73)
-
-/-- The CE data's two readings map to distinct coercion operations. -/
-theorem readings_biject_coercions :
-    coercionToReading .paramFocussing ≠ coercionToReading .paramIdentification := by
+/-- The same utterance leaves the two participants with distinct MAX-QUD and SAL-UTT. -/
+theorem differ :
+    (initial.ground fA).map (·.maxQud) ≠ (initial.clarify parameterFocussing "b").map (·.maxQud) ∧
+    (initial.ground fA).map (·.salUtt) ≠
+      (initial.clarify parameterFocussing "b").map (·.salUtt) := by
   decide
 
--- Hybrid Content Hypothesis
-
-/-- **Hybrid Content Hypothesis** ([ginzburg-cooper-2004] ex. 2/16):
-The content updated in dynamic semantics consists of structure expressing
-detailed relationships between the content and formal properties (syntax,
-phonology etc) of the various parts of an utterance.
-
-Evidence: The same propositional content ("Bo left") yields different
-clarification potentials depending on phonological/syntactic structure.
-The utterance skeleton encodes this structure via CONSTITS and C-PARAMS. -/
-theorem hybrid_content_evidence :
-    -- Two skeletons with identical CONT but different CONSTITS
-    -- would have different clarification potential (different constitForParam results).
-    -- We demonstrate this with our skeleton: the constituent lookup is non-trivial.
-    didBoLeave.constitForParam "b" = some suBo ∧
-    didBoLeave.constitForParam "leave-rel" = some suLeave := by native_decide
-
--- Integration with CE data
-
-/-- The proper-name CE (ex. 4a) carries both readings, in the order the
-coercion bridge predicts: clausal, then constituent. -/
-theorem running_example_matches_ce_data :
-    Examples.ex_4a_bo.readings.map (·.1) = ["clausal", "constituent"] := rfl
-
-/-- Shared-belief minimal pair (ex. 11 vs 12): when A and B are in different
-locations, "Here?" lacks the clausal reading (no shared belief about the
-content of "here"); when co-located, both readings survive. -/
-theorem shared_belief_gates_clausal :
-    Examples.ex_11.readings = [("clausal", .unacceptable), ("constituent", .acceptable)] ∧
-    Examples.ex_12.readings = [("clausal", .acceptable), ("constituent", .acceptable)] := by
+/-- (83): backtracking with the same coercion, A reaches B's clarification context and can read
+"Bo?" as a clarification of her utterance. -/
+theorem backtrack :
+    ((initial.ground fA).bind (·.backtrack parameterFocussing "b")).map
+        (λ s => (s.maxQud, s.salUtt)) =
+      (initial.clarify parameterFocussing "b").map (λ s => (s.maxQud, s.salUtt)) := by
   decide
 
-/-- Indexical CE (ex. 13a): "I?" across speakers shifts reference, so shared
-belief about content fails and the clausal reading is blocked. -/
-theorem indexical_blocks_clausal :
-    Examples.ex_13a.readings.lookup "clausal" = some .unacceptable := by decide
+end Ex32
+
+/-! ### Clarification ellipsis and its readings -/
+
+/-- decl-frag-cl (47): the fragment resolves against the clarification context when it matches the
+salient sub-utterance in category. -/
+def DeclFrag (c : Clarification Cont) (frag : SubUtterance) : Prop := frag.cat = c.salUtt.cat
+
+instance (c : Clarification Cont) (frag : SubUtterance) : Decidable (DeclFrag c frag) :=
+  inferInstanceAs (Decidable (_ = _))
+
+/-- Whether the participants share (a belief about) the content of the sub-utterance. -/
+inductive Access
+  | shared
+  | distinct
+  deriving DecidableEq, Repr
+
+/-- The clausal reading: the fragment resolves against a focussing context to the polar question
+whether the speaker is asking about this value of the parameter (58), identifying the fragment's
+index with the sub-utterance's, which presupposes shared content. -/
+def Clausal (σ : LocProp Cont) (i : String) (frag : SubUtterance) (a : Access) : Prop :=
+  match parameterFocussing σ i with
+  | some c => DeclFrag c frag ∧ a = .shared
+  | none => False
+
+/-- The constituent reading: the fragment resolves against an identification context to the
+question what the speaker meant (68), presupposing nothing about the value. -/
+def Constituent (σ : LocProp Cont) (i : String) (frag : SubUtterance) : Prop :=
+  match parameterIdentification σ i with
+  | some c => DeclFrag c frag
+  | none => False
+
+instance (σ : LocProp Cont) (i : String) (frag : SubUtterance) (a : Access) :
+    Decidable (Clausal σ i frag a) := by
+  unfold Clausal; split <;> infer_instance
+
+instance (σ : LocProp Cont) (i : String) (frag : SubUtterance) :
+    Decidable (Constituent σ i frag) := by
+  unfold Constituent; split <;> infer_instance
+
+/-- A dialogue of §1.2: the sub-utterance clarified and the fragment, whether the participants
+share the sub-utterance's content, the readings the paper judges available, and the acceptability
+of the ellipsis. -/
+structure Row where
+  antecedent : SubUtterance
+  fragment : SubUtterance
+  access : Access
+  clausal : Option Features.Judgment
+  constituent : Option Features.Judgment
+  judgment : Features.Judgment
+  deriving DecidableEq
+
+def Row.ofExample (ex : LinguisticExample) : Option Row := do
+  let ant ← ex.feature? "antecedent"
+  let antCat ← ex.feature? "antecedentCat"
+  let frag ← ex.feature? "fragment"
+  let fragCat ← ex.feature? "fragmentCat"
+  let access ← ex.parse? "access" [("shared", .shared), ("distinct", .distinct)]
+  pure ⟨⟨ant, antCat, "x"⟩, ⟨frag, fragCat, ""⟩, access, ex.readings.lookup "clausal",
+    ex.readings.lookup "constituent", ex.judgment⟩
+
+/-- The sign of the row's first turn as far as the clarification reads it: the sub-utterance
+contributing the parameter `x`. -/
+def Row.sign (r : Row) : LocProp Unit :=
+  { phon := "", cat := "S", cont := (), cparams := [⟨"x", ""⟩], constits := [r.antecedent] }
+
+/-- The nineteen dialogues of (4), (6), (8)–(13). -/
+def rows : List Row := Examples.all.filterMap Row.ofExample
+
+/-- The clausal reading is judged available exactly when the fragment resolves against the
+focussing context with shared content. -/
+theorem rows_clausal : ∀ r ∈ rows, r.clausal = none ∨
+    (r.clausal = some .acceptable ↔ Clausal r.sign "x" r.fragment r.access) := by decide
+
+/-- The constituent reading is judged available exactly when the fragment resolves against the
+identification context. -/
+theorem rows_constituent : ∀ r ∈ rows, r.constituent = none ∨
+    (r.constituent = some .acceptable ↔ Constituent r.sign "x" r.fragment) := by decide
+
+/-- Categorial parallelism (10): the ellipsis is acceptable exactly when some reading resolves
+it. -/
+theorem rows_parallelism : ∀ r ∈ rows, r.judgment = .acceptable ↔
+    (Clausal r.sign "x" r.fragment r.access ∨ Constituent r.sign "x" r.fragment) := by decide
 
 end GinzburgCooper2004
