@@ -1,300 +1,285 @@
+import Linglib.Syntax.Minimalist.LateMerger
 import Linglib.Fragments.Mongolian.Case
 import Linglib.Fragments.Yakut.Case
+import Linglib.Data.Examples.Gong2022
 
 /-!
-# Gong 2022 [gong-2022]
+# Gong (2022): Case in Wholesale Late Merger: Evidence from Mongolian Scrambling
 
-Case in Wholesale Late Merger: Evidence from Mongolian Scrambling.
-*Linguistic Inquiry*, Early Access.
+This file formalizes [gong-2022]'s argument that Condition C reconstruction in Mongolian
+scrambling tracks case rather than the A/Ā distinction or the subject status of the binder.
+Under [takahashi-hulsey-2009]'s wholesale late merger a determiner moves alone and its restrictor
+merges countercyclically at a chain position where the resulting DP receives case, so scrambling
+bleeds Condition C exactly when the chain has a case position above the pronoun binder, the
+paper's condition (2) (`Bleeds`). The hybrid case rules (26) make accusative a dependent case,
+valued on an NP that an unmarked argumental NP of the same domain c-commands, nominative the
+case finite T assigns, and dative nonstructural (`Site.DependentAcc`, `Site.Nominative`). Read
+off the derivations (27b), (28b), (29c), (55), and (57), the chain positions of short,
+intermediate, and long-distance scrambling predict every judgment of the pool
+(`rows_reconstruction`): a dative binder is bled and a subject binder is not, while the
+embedded-subject binder of (61) is bled because the matrix VP-adjoined position competes for case
+with the matrix subject, which refutes [frank-lee-rambow-1996]'s Subject Binding Generalization
+(`sbg_fails`) and is what an account by movement type cannot state (`is_not_uniform`). The same
+dependent-case rule licenses accusative on an embedded subject exactly when a nominative matrix
+competitor is present, section 5.1 (`acc_subjects`), and the Mongolian grammar differs from
+[baker-vinokurova-2010]'s Sakha only in having no dependent dative
+(`mongolian_differs_from_sakha_in_dat_only`).
 
-## Core claim
+## Implementation notes
 
-Condition C reconstruction effects in Mongolian scrambling are
-controlled by **case assignment**, not by the A/A-bar distinction or
-the special status of subject binders. Wholesale Late Merger (WLM)
-can bleed Condition C iff the movement chain has a case position above
-the pronoun binder.
+Heights order the positions of a clause and, for clause-external scrambling, the matrix clause
+above the embedded one. A site records the arguments of its spell-out domain with the case they
+bear when the mover lands, so the presubject position sees a subject already valued nominative,
+the paper's assumption that case is valued as soon as its conditions are met. A lexically cased
+DP is licensed in its base position and a PP has no restrictor to late-merge, so neither can be
+bled. The CP edge of an embedded clause is a step of successive-cyclic movement without a case
+competitor.
 
-## Mongolian hybrid case system
+## References
 
-- ACC = dependent case (assigned by competition between two NPs in
-  the same phase; [baker-vinokurova-2010])
-- NOM = assigned by finite T via Agree
-- DAT = nonstructural (inherent)
-
-## Key empirical patterns
-
-**Clause-internal scrambling:**
-- SS over IO (DAT) binder: no Condition C effect (WLM bleeds)
-- IS over IO binder: no Condition C effect
-- SS/IS over Subject (NOM) binder: obligatory Condition C reconstruction
-
-**Clause-external scrambling (LDS):**
-- LDS of ACC OBJ, matrix DAT binder: no obligatory Condition C effect
-- LDS of ACC OBJ, matrix NOM (Subject) binder: obligatory Condition C
-
-**PP-scrambling:**
-- Always shows obligatory Condition C reconstruction, regardless of
-  binder position (PPs lack the DP structure required for WLM)
-
-## Negative result
-
-The A/A-bar distinction does not predict these patterns. Mongolian SS and
-IS both behave like A-movement in terms of anaphor binding and WCO
-amelioration, yet they diverge in Condition C reconstruction when the
-binder changes between IO and Subject. The [frank-lee-rambow-1996]
-Subject Binding Generalization also fails for Mongolian: scrambling over
-a subject binder can bleed Condition C in LDS when a dependent ACC
-position is available in the matrix clause.
+* [gong-2022]
+* [takahashi-hulsey-2009]
+* [baker-vinokurova-2010]
+* [frank-lee-rambow-1996]
+* [lebeaux-1988]
 -/
 
 namespace Gong2022
 
-open Minimalist
-open Case
-open Mongolian.Case
+open Minimalist Features Data.Examples
 
--- ============================================================================
--- S 1: Scrambling Scenarios
--- ============================================================================
+/-! ### The hybrid case rules (26) at a landing site -/
 
-/-- A scrambling scenario encoding the empirical data from [gong-2022].
-    Each scenario records the scrambling type, the binder's grammatical role,
-    and whether Condition C reconstruction is observed. -/
-structure ScrambleScenario where
-  label : String
-  scrambleType : ScrambleType
-  binderRole : BinderRole
-  /-- `true` = obligatory Condition C reconstruction observed.
-      `false` = no Condition C effect (WLM bleeds reconstruction). -/
-  reconstructs : Bool
+/-- An argumental NP of a spell-out domain: its height and the case it bears, if any, when the
+mover lands. -/
+structure Arg where
+  height : ℕ
+  valued : Option Case
   deriving DecidableEq, Repr
 
--- ============================================================================
--- S 2: Clause-Internal Scrambling Data
--- ============================================================================
+/-- A landing site of a scrambling chain: its height, the arguments of its spell-out domain, and
+whether it is the specifier finite T agrees into. -/
+structure Site where
+  height : ℕ
+  domain : List Arg
+  specTP : Bool := false
+  deriving DecidableEq, Repr
 
-/-- (18b) SS over IO: DO containing R-expression *Cemeg* scrambled over
-    DAT pronoun binder *tuund*. No Condition C violation.
-    'Cemeg's book, (the) teacher gave (to) her.' -/
-def ss_io : ScrambleScenario :=
-  { label := "SS over IO (18b)"
-  , scrambleType := .SS
-  , binderRole := .io
-  , reconstructs := false }
+/-- (26a): an unmarked argument of the domain c-commands the site, so a DP there is valued
+accusative as a dependent case. -/
+def Site.DependentAcc (s : Site) : Prop := ∃ a ∈ s.domain, s.height < a.height ∧ a.valued = none
 
-/-- (18a) SS over IO, base order: DAT pronoun *tuund* c-commands
-    R-expression *Cemeg* inside the ACC DO. Condition C is violated.
-    '*The teacher gave her Cemeg's book.' -/
-def ss_io_base_ungrammatical : ScrambleScenario :=
-  { label := "SS over IO base order (18a)"
-  , scrambleType := .SS
-  , binderRole := .io
-  , reconstructs := true }  -- base order: R-expression is c-commanded
+/-- (26b): finite T values a DP at its specifier nominative when no unmarked argument is closer
+to T. -/
+def Site.Nominative (s : Site) : Prop :=
+  s.specTP = true ∧ ∀ a ∈ s.domain, s.height < a.height → a.valued ≠ none
 
-/-- (19b) IS over IO: DO scrambled past IO and subject. IO binder is
-    DAT. No Condition C violation.
-    'Cemeg's book, (the) teacher gave (to) her.' -/
-def is_io : ScrambleScenario :=
-  { label := "IS over IO (19b)"
-  , scrambleType := .IS
-  , binderRole := .io
-  , reconstructs := false }
+/-- A position where the late-merged restrictor's DP receives structural case. -/
+def Site.HasCase (s : Site) : Prop := s.DependentAcc ∨ s.Nominative
 
-/-- (20b) IS with Subject binding DO, transitive: Subject pronoun *ter*
-    (NOM) binds R-expression *Cemeg* inside DO. Obligatory reconstruction.
-    '*Cemeg's book, she tore.' -/
-def is_subj_transitive : ScrambleScenario :=
-  { label := "IS over Subj, transitive (20b)"
-  , scrambleType := .IS
-  , binderRole := .subject
-  , reconstructs := true }
+instance (s : Site) : Decidable s.DependentAcc := inferInstanceAs (Decidable (∃ _ ∈ _, _))
+instance (s : Site) : Decidable s.Nominative := inferInstanceAs (Decidable (_ ∧ _))
+instance (s : Site) : Decidable s.HasCase := inferInstanceAs (Decidable (_ ∨ _))
 
-/-- (21b) IS with Subject binding DO, ditransitive: Subject pronoun *ter*
-    (NOM) binds R-expression *Cemeg* inside DO. Obligatory reconstruction.
-    '*Cemeg's book, she gave to Bat.' -/
-def is_subj_ditransitive : ScrambleScenario :=
-  { label := "IS over Subj, ditransitive (21b)"
-  , scrambleType := .IS
-  , binderRole := .subject
-  , reconstructs := true }
+/-- What scrambles: a DP with structural case, a DP with lexical dative, or a PP. -/
+inductive Mover where
+  | dp
+  | lexicalDP
+  | pp
+  deriving DecidableEq, Repr
 
--- ============================================================================
--- S 3: Clause-External Scrambling (LDS)
--- ============================================================================
+/-- Condition (2): scrambling bleeds Condition C when the mover is a DP whose restrictor can
+receive structural case at a chain position above the binder. -/
+def Bleeds (m : Mover) (chain : List Site) (binder : ℕ) : Prop :=
+  m = .dp ∧ LateMergerBleeds Site.HasCase Site.height chain binder
 
-/-- (41) LDS of ACC OBJ with matrix DAT binder: no obligatory Condition C.
-    Embedded ACC object scrambled to matrix clause; matrix dative
-    argument *tuund* is the binder.
-    '?Bat's essay, Zaya said to him that the teacher read.' -/
-def lds_dat_binder : ScrambleScenario :=
-  { label := "LDS, matrix DAT binder (41)"
-  , scrambleType := .LDS
-  , binderRole := .io
-  , reconstructs := false }
+instance (m : Mover) (chain : List Site) (binder : ℕ) : Decidable (Bleeds m chain binder) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
-/-- (40) LDS of ACC OBJ with matrix Subject binder: obligatory Condition C.
-    Embedded ACC object scrambled to matrix clause; matrix Subject
-    *ter* (NOM) is the binder.
-    '*Bat's essay, he said that the teacher read.' -/
-def lds_subj_binder : ScrambleScenario :=
-  { label := "LDS, matrix Subj binder (40)"
-  , scrambleType := .LDS
-  , binderRole := .subject
-  , reconstructs := true }
+/-! ### The positions of the paper's derivations -/
 
--- ============================================================================
--- S 4: All Scenarios
--- ============================================================================
+/-- The subject at the edge of the verb phrase, unmarked until T merges, above the dative
+indirect object. -/
+def subjectUnmarked : Arg := ⟨3, none⟩
 
-def allScenarios : List ScrambleScenario :=
-  [ss_io, is_io, is_subj_transitive, is_subj_ditransitive,
-   lds_dat_binder, lds_subj_binder]
+/-- The dative indirect object. -/
+def io : Arg := ⟨1, some .dat⟩
 
--- ============================================================================
--- S 5: WLM Predictions Match Data
--- ============================================================================
+/-- The VP-edge position of (27b) and (28b): between the subject and the indirect object, valued
+accusative by competition with the subject. -/
+def vpEdge : Site := ⟨2, [subjectUnmarked, io], false⟩
 
-/-- WLM correctly predicts SS over IO: no reconstruction. -/
-theorem ss_io_correct :
-    predictsReconstruction ss_io.binderRole = ss_io.reconstructs := by decide
+/-- The presubject position of (29c): the subject below it is already nominative, and nothing
+c-commands it. -/
+def presubject : Site := ⟨4, [⟨3, some .nom⟩, io], false⟩
 
-/-- WLM correctly predicts IS over IO: no reconstruction. -/
-theorem is_io_correct :
-    predictsReconstruction is_io.binderRole = is_io.reconstructs := by decide
+/-- The edge of the embedded CP, a step of successive-cyclic movement, (55b). -/
+def cpEdge : Site := ⟨4, [], false⟩
 
-/-- WLM correctly predicts IS over Subject (transitive): reconstruction. -/
-theorem is_subj_transitive_correct :
-    predictsReconstruction is_subj_transitive.binderRole
-      = is_subj_transitive.reconstructs := by decide
+/-- The matrix VP-adjoined position of (55c): above the matrix dative argument, below the
+matrix subject, which has not yet been valued. -/
+def matrixVP : Site := ⟨6, [⟨7, none⟩, ⟨5, some .dat⟩], false⟩
 
-/-- WLM correctly predicts IS over Subject (ditransitive): reconstruction. -/
-theorem is_subj_ditransitive_correct :
-    predictsReconstruction is_subj_ditransitive.binderRole
-      = is_subj_ditransitive.reconstructs := by decide
+/-- The matrix presubject position of (57): the matrix subject is nominative by then. -/
+def matrixPresubject : Site := ⟨8, [⟨7, some .nom⟩, ⟨5, some .dat⟩], false⟩
 
-/-- WLM correctly predicts LDS with DAT binder: no reconstruction. -/
-theorem lds_dat_correct :
-    predictsReconstruction lds_dat_binder.binderRole
-      = lds_dat_binder.reconstructs := by decide
+/-- The specifier of finite T in the passive (85b): the agent is instrumental, the goal dative,
+so T values the derived subject nominative. -/
+def specTP : Site := ⟨4, [⟨2, some .inst⟩, io], true⟩
 
-/-- WLM correctly predicts LDS with Subject binder: reconstruction. -/
-theorem lds_subj_correct :
-    predictsReconstruction lds_subj_binder.binderRole
-      = lds_subj_binder.reconstructs := by decide
+/-- The VP edge is a dependent-case position, as the fragment's grammar values the shifted direct
+object of a ditransitive, and the presubject position is none. -/
+theorem vpEdge_dependentAcc :
+    vpEdge.DependentAcc ∧ ¬ presubject.HasCase ∧
+      Case.getMechanismOf "DO" Mongolian.Case.ditransitiveCases = some .dependent := by
+  decide
 
--- ============================================================================
--- S 6: Negative Result — A/A-bar Does Not Predict Reconstruction
--- ============================================================================
+/-! ### The scrambling constructions and their chains -/
 
-/-- The A/A-bar distinction does not predict Mongolian reconstruction.
-    SS over IO and SS over Subject involve the same scrambling type,
-    but differ in Condition C reconstruction. An A/A-bar account would
-    assign the same reconstruction prediction to both, since both
-    involve the same kind of movement. Case-based WLM correctly
-    captures the contrast by looking at case positions, not movement type.
+/-- The scrambling constructions of the pool. -/
+inductive Construction where
+  /-- Short scrambling, the direct object over the indirect object. -/
+  | SS
+  /-- Intermediate scrambling, an object to the presubject position. -/
+  | IS
+  /-- Clause-external scrambling of an accusative embedded subject or of an embedded object,
+  to the matrix presubject position. -/
+  | LDS
+  /-- Clause-external scrambling stopping at the matrix VP-adjoined position, (58). -/
+  | intermediate
+  /-- Scrambling of the dative indirect object over the subject, (79). -/
+  | IO
+  /-- Passivization, (85). -/
+  | passive
+  deriving DecidableEq, Repr
 
-    This connects to [keine-2020]'s probe profiles: even if the
-    scrambling probe is classified as A or A-bar, its classification is
-    constant across scenarios that differ in reconstruction behavior. -/
-theorem same_movement_different_reconstruction :
-    ss_io.scrambleType = ss_io_base_ungrammatical.scrambleType ∧
-    ss_io.reconstructs ≠ ss_io_base_ungrammatical.reconstructs := by decide
+/-- The chain positions each construction makes available, in the paper's derivations. -/
+def Construction.chain : Construction → List Site
+  | .SS => [vpEdge]
+  | .IS | .IO => [vpEdge, presubject]
+  | .LDS => [cpEdge, matrixVP, matrixPresubject]
+  | .intermediate => [cpEdge, matrixVP]
+  | .passive => [specTP]
 
-/-- The Subject Binding Generalization ([frank-lee-rambow-1996]) fails
-    for Mongolian. That generalization predicts that scrambling over a subject
-    binder *always* forces reconstruction. But in LDS, dependent ACC can be
-    assigned in the matrix clause, allowing WLM to bleed Condition C even
-    with a (matrix non-subject) binder. The generalization is too strong:
-    what matters is case positions, not the subject/non-subject status of
-    the binder per se. The correlation with subjects is an epiphenomenon of
-    the fact that subjects typically occupy the highest case position. -/
-theorem sbg_overpredicts :
-    -- Same binder role (IO/DAT) across local and long-distance scrambling
-    ss_io.binderRole = lds_dat_binder.binderRole ∧
-    -- Both correctly predicted by WLM as non-reconstructing
-    ss_io.reconstructs = false ∧
-    lds_dat_binder.reconstructs = false := by decide
+/-- The pronoun that binds the R-expression in the base order. -/
+inductive Binder where
+  | io
+  | subject
+  | matrixDat
+  | matrixSubject
+  | embeddedSubject
+  deriving DecidableEq, Repr
 
--- ============================================================================
--- S 7: Bridge — Dependent Case Algorithm Determines WLM
--- ============================================================================
+/-- The binder's height. -/
+def Binder.height : Binder → ℕ
+  | .io => 1
+  | .subject | .embeddedSubject => 3
+  | .matrixDat => 5
+  | .matrixSubject => 7
 
-/-- The dependent case algorithm *determines* WLM availability: the direct object being
-    valued dependent accusative at Spec,VP (above IO) is exactly what makes the case position
-    available for late merger, and the subject being valued by T rather than a dependent rule
-    is what leaves none above it. -/
-theorem dependent_acc_determines_wlm :
-    Case.getMechanismOf "DO" ditransitiveCases = some .dependent ∧
-    predictsReconstruction .io = false ∧
-    Case.getMechanismOf "subject" ditransitiveCases ≠ some .dependent ∧
-    predictsReconstruction .subject = true := by decide
+/-- Whether the binder is a subject, the Subject Binding Generalization's criterion. -/
+def Binder.IsSubject : Binder → Prop
+  | .subject | .matrixSubject | .embeddedSubject => True
+  | .io | .matrixDat => False
 
--- ============================================================================
--- S 8: PP-Scrambling Contrast
--- ============================================================================
+instance (b : Binder) : Decidable b.IsSubject := by
+  cases b <;> simp only [Binder.IsSubject] <;> infer_instance
 
-/-- PP-scrambling always reconstructs, unlike DP-scrambling.
-    [gong-2022] section 6.2: PPs lack the determiner + NP restrictor
-    structure required for WLM, so Condition C reconstruction is obligatory
-    regardless of the binder's position. This contrast between DP- and
-    PP-scrambling is a further prediction of the WLM account. -/
-theorem pp_vs_dp_contrast :
-    -- DP over IO: no reconstruction
-    predictsReconstruction .io = false ∧
-    -- PP over IO: always reconstructs (no WLM available)
-    ppReconstructsOverIO = true := by decide
+/-! ### The pool -/
 
--- ============================================================================
--- S 9: Successive-Cyclic LDS Through Phase Edges
--- ============================================================================
+/-- A scrambled order: its construction, the base-order binder, the mover, and the judgment. -/
+structure Row where
+  construction : Construction
+  binder : Binder
+  mover : Mover
+  judgment : Judgment
+  deriving DecidableEq, Repr
 
-/-- LDS involves successive-cyclic movement through the embedded CP edge.
+/-- The paper's obligatory reconstruction: the coindexed reading is rejected. -/
+def Row.Reconstructs (r : Row) : Prop :=
+  r.judgment = .ungrammatical ∨ r.judgment = .unacceptable
 
-    The embedded ACC object moves to Spec,CP of the embedded clause (phase
-    edge escape hatch per PIC), then to the matrix clause. The CP edge
-    does NOT provide a case position (C passes features to T via Feature
-    Inheritance, [chomsky-2008]). Case availability in the matrix
-    clause depends on whether a dependent case competitor exists.
+instance (r : Row) : Decidable r.Reconstructs := inferInstanceAs (Decidable (_ ∨ _))
 
-    This derives the LDS chain positions from phase theory rather than
-    stipulating them directly in `casePositionsAbove`. -/
-def ldsChain (binderRole : BinderRole) : List ChainPosition :=
-  ldsChainTemplate
-    (cpEdgeHeight := 4)      -- Spec,CP: above embedded clause
-    (matrixHeight := 5)      -- matrix landing site
-    (matrixCaseAvailable := match binderRole with
-      | .io => true           -- dependent ACC available above matrix IO
-      | .subject => false)    -- no case position above matrix subject
+def Row.ofExample (ex : LinguisticExample) : Option Row := do
+  let construction ← ex.parse? "construction"
+    [("SS", Construction.SS), ("IS", .IS), ("ACC-SUBJ", .LDS), ("LDS", .LDS), ("PP-LDS", .LDS),
+      ("ACC-SUBJ intermediate", .intermediate), ("LDS intermediate", .intermediate), ("IO", .IO),
+      ("passive", .passive)]
+  let binder ← ex.parse? "binder"
+    [("IO", Binder.io), ("subject", .subject), ("matrix DAT", .matrixDat),
+      ("matrix subject", .matrixSubject), ("embedded subject", .embeddedSubject)]
+  let mover ← ex.parse? "mover" [("DP", Mover.dp), ("DP-lexical", .lexicalDP), ("PP", .pp)]
+  pure ⟨construction, binder, mover, ex.judgment⟩
 
-/-- LDS chain predictions agree with the direct `casePositionsAbove`
-    predictions from the Mongolian fragment. The CP edge contributes
-    nothing (no case); only the matrix position matters. -/
-theorem lds_agrees_with_fragment_io :
-    wlmBleedsCondC (ldsChain .io) (binderHeight .io) =
-    wlmBleedsCondC (casePositionsAbove .io) (binderHeight .io) := by decide
+/-- The scrambled orders (18b) to (21b), (32b), (33), (40), (41), (58), (61), (79), (85b), (86),
+(93b), and (94b). -/
+def rows : List Row := Examples.all.filterMap Row.ofExample
 
-theorem lds_agrees_with_fragment_subj :
-    wlmForcesReconstruction (ldsChain .subject) (binderHeight .subject) =
-    wlmForcesReconstruction (casePositionsAbove .subject) (binderHeight .subject) := by decide
+example : rows.length = 16 := by decide
 
-/-- The CP edge alone — without a matrix case position — never
-    bleeds Condition C, regardless of the binder's height. -/
-theorem lds_cp_edge_irrelevant :
-    let cpEdge := successiveCyclicChain
-      [{ height := 4, admissible := false, phaseCat := .C }]
-    wlmForcesReconstruction cpEdge (binderHeight .io) = true ∧
-    wlmForcesReconstruction cpEdge (binderHeight .subject) = true := by
-  exact ⟨lds_cp_edge_alone_no_bleed 4 (binderHeight .io),
-          lds_cp_edge_alone_no_bleed 4 (binderHeight .subject)⟩
+/-- Condition (2) with the hybrid case rules predicts every judgment: reconstruction is
+obligatory exactly when no chain position above the binder receives case. -/
+theorem rows_reconstruction :
+    ∀ r ∈ rows, r.Reconstructs ↔ ¬ Bleeds r.mover r.construction.chain r.binder.height := by
+  decide
 
-/-! ### Dative is inherent, not dependent -/
+/-- Section 2.3: intermediate scrambling of a DP to one landing site reconstructs in (20b) but
+not in (19b), so no classification of the movement as A or Ā decides reconstruction. -/
+theorem is_not_uniform :
+    ∃ r₁ ∈ rows, ∃ r₂ ∈ rows, r₁.construction = .IS ∧ r₂.construction = .IS ∧
+      r₁.mover = .dp ∧ r₂.mover = .dp ∧ ¬ r₁.Reconstructs ∧ r₂.Reconstructs := by
+  decide
 
-/-! [gong-2022] adopts the Sakha grammar of [baker-vinokurova-2010] for
-Mongolian but takes dative to be inherent rather than dependent. Holding the
-other three mechanisms fixed and varying only `datMode`, the algorithm stops
-deriving dative at all, so the dative on a Mongolian goal must be supplied as
-lexical case. -/
+/-- Section 4.2: the Subject Binding Generalization (24) fits the clause-internal data, but (61),
+where the embedded subject binds, is bled because the matrix VP-adjoined position competes for
+case with the matrix subject; and the PP of (94b) reconstructs under a dative binder. -/
+theorem sbg_fails :
+    (∀ r ∈ rows, r.construction = .SS ∨ r.construction = .IS →
+      (r.Reconstructs ↔ r.binder.IsSubject)) ∧
+      (∃ r ∈ rows, r.binder = .embeddedSubject ∧ r.mover = .dp ∧ ¬ r.Reconstructs) ∧
+      ∃ r ∈ rows, ¬ r.binder.IsSubject ∧ r.Reconstructs := by
+  decide
+
+/-! ### Section 5.1: accusative on embedded subjects -/
+
+/-- The matrix argument that could compete with the embedded subject for case. -/
+inductive Competitor where
+  | nom
+  | dat
+  | absent
+  deriving DecidableEq, Repr
+
+/-- The embedded subject at the edge of its clause, in the matrix domain: the site (26a)
+evaluates. -/
+def Competitor.site : Competitor → Site
+  | .nom => ⟨4, [⟨7, none⟩], false⟩
+  | .dat => ⟨4, [⟨7, some .dat⟩], false⟩
+  | .absent => ⟨4, [], false⟩
+
+/-- An accusative-marked embedded subject with its matrix competitor and judgment. -/
+structure AccRow where
+  competitor : Competitor
+  judgment : Judgment
+  deriving DecidableEq, Repr
+
+def AccRow.ofExample (ex : LinguisticExample) : Option AccRow := do
+  let competitor ← ex.parse? "competitor" [("NOM", Competitor.nom), ("DAT", .dat), ("none", .absent)]
+  pure ⟨competitor, ex.judgment⟩
+
+/-- (47), (48), (63), (64), and (65). -/
+def accRows : List AccRow := Examples.all.filterMap AccRow.ofExample
+
+example : accRows.length = 5 := by decide
+
+/-- Accusative on the embedded subject is licensed exactly when an unmarked matrix argument
+c-commands it: a nominative subject competes, a dative or impersonal predicate's argument does
+not. -/
+theorem acc_subjects :
+    ∀ r ∈ accRows, r.judgment = .acceptable ↔ r.competitor.site.DependentAcc := by
+  decide
+
+/-! ### Section 5.3: dative is not a dependent case -/
 
 /-- Mongolian differs from Sakha in the verb phrase's high case alone: no dependent dative. -/
 theorem mongolian_differs_from_sakha_in_dat_only :
@@ -302,14 +287,14 @@ theorem mongolian_differs_from_sakha_in_dat_only :
     Mongolian.Case.grammar.rules .C = Yakut.Case.grammar.rules .C ∧
     Mongolian.Case.grammar.agree = Yakut.Case.grammar.agree := by decide
 
-/-- The Sakha ditransitive: a subject, a VP-internal goal, and a theme shifted to the
-    phase edge. -/
-def sakhaDitransitive : List Minimalist.PhasedNP :=
+/-- The Sakha ditransitive: a subject, a VP-internal goal, and a theme shifted to the phase
+edge. -/
+def sakhaDitransitive : List PhasedNP :=
   [{ label := "subject" }, { label := "goal", phase := .v },
    { label := "theme", phase := .v, shifted := true }]
 
-/-- The Mongolian grammar values no NP of the Sakha ditransitive dative — it mentions no
-    dative — so the goal Sakha values dative comes out otherwise. -/
+/-- The Mongolian grammar values no NP of the Sakha ditransitive dative, so the goal Sakha
+values dative comes out otherwise: the dative of a Mongolian goal is nonstructural. -/
 theorem mongolian_derives_no_dative :
     (∀ s ∈ Mongolian.Case.grammar.assign [(.T, .C)] sakhaDitransitive,
       s.2.map (·.1) ≠ some .dat) ∧
