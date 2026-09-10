@@ -1163,6 +1163,19 @@ def devour : VerbEntry := .mkRegular {
     agentControl := {.neutral}
   } } }
 
+/-- "drink" — Levin 39.1 Eat verbs. -/
+def drink : VerbEntry where
+  form := "drink"
+  form3sg := "drinks"
+  formPast := "drank"
+  formPastPart := "drunk"
+  formPresPart := "drinking"
+  frames := [Frame.np]
+  implicitObj := some .indef
+  vendlerClass := some .accomplishment
+  verbIncClass := some .sinc
+  levinClass := some .eat
+
 /-- "read" — transitive, no presupposition -/
 def read : VerbEntry where
   form := "read"
@@ -2151,11 +2164,25 @@ def thrash : VerbEntry := .mkRegular {
   vendlerClass := some .activity
   levinClass := some .hit }
 
+/-- "hammer" — Levin 18.1 Hit verbs. -/
+def hammer : VerbEntry := .mkRegular {
+  form := "hammer"
+  frames := [Frame.np]
+  vendlerClass := some .activity
+  levinClass := some .hit }
+
 /-- "scrape" — verb of surface contact, wiping (Levin 10.4,
     [levin-2026] (32b)). In intr-push-open, enters through
     surface-contact sense, not removing sense. -/
 def scrape : VerbEntry := .mkRegular {
   form := "scrape"
+  frames := [Frame.np]
+  vendlerClass := some .activity
+  levinClass := some .wipe }
+
+/-- "wipe" — Levin 10.4 Wipe verbs, manner subclass. -/
+def wipe : VerbEntry := .mkRegular {
+  form := "wipe"
   frames := [Frame.np]
   vendlerClass := some .activity
   levinClass := some .wipe }
@@ -2200,6 +2227,12 @@ def place : VerbEntry := .mkRegular {
   frames := [Frame.np_pp]
   vendlerClass := some .achievement
   levinClass := some .put }
+
+/-- "water" — Levin 9.9 Butter verbs (denominal putting). -/
+def water : VerbEntry := .mkRegular {
+  form := "water"
+  frames := [Frame.np]
+  vendlerClass := some .activity }
 
 /-- "pour" — Levin 9.5 Pour verbs. Manner of caused motion. -/
 def pour : VerbEntry := .mkRegular {
@@ -2470,6 +2503,17 @@ def create : VerbEntry := .mkRegular {
   vendlerClass := some .accomplishment
   levinClass := some .create }
 
+/-- "weave" — Levin 26.1 Build verbs. -/
+def weave : VerbEntry where
+  form := "weave"
+  form3sg := "weaves"
+  formPast := "wove"
+  formPastPart := "woven"
+  formPresPart := "weaving"
+  frames := [Frame.np]
+  vendlerClass := some .accomplishment
+  levinClass := some .build
+
 /-- "grow" — Levin 26.2 Grow verbs. Incremental by size. -/
 def grow : VerbEntry where
   form := "grow"
@@ -2575,6 +2619,13 @@ def breathe : VerbEntry := .mkRegular {
   vendlerClass := some .activity
   levinClass := some .bodyProcess }
 
+/-- "laugh" — Levin 40.2 Nonverbal Expression verbs. -/
+def laugh : VerbEntry := .mkRegular {
+  form := "laugh"
+  frames := []
+  passivizable := false
+  vendlerClass := some .activity }
+
 /-- "cough" — Levin 40.1 Body Process verbs.
     Semelfactive: single involuntary event, no result state ([smith-1997] §2.4.3). -/
 def cough : VerbEntry := .mkRegular {
@@ -2679,6 +2730,15 @@ def buzz : VerbEntry := .mkRegular {
   unaccusative := true
   levinClass := some .soundEmission }
 
+/-- "rumble" — Levin 43.2 Sound Emission verbs. -/
+def rumble : VerbEntry := .mkRegular {
+  form := "rumble"
+  frames := []
+  passivizable := false
+  vendlerClass := some .activity
+  unaccusative := true
+  levinClass := some .soundEmission }
+
 /-- "bleed" — Levin 43.4 Substance Emission verbs. -/
 def bleed : VerbEntry where
   form := "bleed"
@@ -2695,6 +2755,26 @@ def bleed : VerbEntry where
 -- ════════════════════════════════════════════════════
 -- § Levin Class Expansion — Change of State (§ 45)
 -- ════════════════════════════════════════════════════
+
+/-- "freeze" — Levin 45.4 Other Change of State verbs. Causative/inchoative alternation. -/
+def freeze : VerbEntry where
+  form := "freeze"
+  form3sg := "freezes"
+  formPast := "froze"
+  formPastPart := "frozen"
+  formPresPart := "freezing"
+  frames := [Frame.np]
+  vendlerClass := some .accomplishment
+  causative := some .make
+  levinClass := some .otherCoS
+
+/-- "heat" — Levin 45.4 Other Change of State verbs. Causative/inchoative alternation. -/
+def heat : VerbEntry := .mkRegular {
+  form := "heat"
+  frames := [Frame.np]
+  vendlerClass := some .accomplishment
+  causative := some .make
+  levinClass := some .otherCoS }
 
 /-- "bend" — Levin 45.2 Bend verbs. Causative/inchoative alternation.
     Degree achievement: closed scale (straight → bent, has maximal endpoint). -/
@@ -2915,6 +2995,22 @@ def fly : VerbEntry where
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .vehicleMotion
+
+/-- "roll" — Levin 51.3.1 Roll verbs (manner of motion). -/
+def roll : VerbEntry := .mkRegular {
+  form := "roll"
+  frames := []
+  passivizable := false
+  vendlerClass := some .activity
+  levinClass := some .mannerOfMotion }
+
+/-- "float" — Levin 51.3.1 Roll verbs (manner of motion). -/
+def float : VerbEntry := .mkRegular {
+  form := "float"
+  frames := []
+  passivizable := false
+  vendlerClass := some .activity
+  levinClass := some .mannerOfMotion }
 
 -- ════════════════════════════════════════════════════
 -- § Levin Class Expansion — Avoid, Linger, Rush (§ 52–53)
@@ -3215,7 +3311,7 @@ def lend : VerbEntry where
 def allVerbs : List VerbEntry := [
   -- Simple
   sleep, run, arrive, come, eat, kick, give, put, buy, meet, sell, leave, see, devour, read,
-  build, write, sweep, sweep_instr,
+  build, write, sweep, sweep_instr, drink, weave,
   -- Factive
   know, regret, realize, discover, notice,
   -- Change of State
@@ -3262,11 +3358,11 @@ def allVerbs : List VerbEntry := [
   -- Levin § 12 Push/Pull (exerting force, [levin-2026])
   shove, tug, yank, jerk, wrench, fling,
   -- Levin § 18.1 Hit (surface contact, [levin-2026])
-  slam, punch, smack, thump, bang, thrash,
+  slam, punch, smack, thump, bang, thrash, hammer,
   -- Levin § 10.4 Wipe (surface contact, [levin-2026])
-  scrape,
+  scrape, wipe,
   -- Levin § 9 Putting
-  place, pour, spray, load,
+  place, pour, spray, load, water,
   -- Levin § 10 Removing
   remove, clean, steal,
   -- Levin § 11 Sending and Carrying
@@ -3302,19 +3398,19 @@ def allVerbs : List VerbEntry := [
   -- Levin § 38 Animal Sounds
   bark,
   -- Levin § 40–41 Body, Grooming
-  breathe, cough, flinch, dress,
+  breathe, cough, flinch, dress, laugh,
   -- Levin § 42 Killing
   drown,
   -- Levin § 43 Emission
-  glow, buzz, bleed,
+  glow, buzz, bleed, rumble,
   -- Levin § 45 Change of State
-  bend, boil, rust, increase,
+  bend, boil, rust, increase, freeze, heat,
   -- Degree Achievement Pairs ([kennedy-2007])
   straighten, flatten, open_, lengthen, widen, cool, warm,
   -- Levin § 47–50 Existence, Appearance, Position
   exist, appear, fidget, sit, stand,
   -- Levin § 51 Motion
-  walk, swim, fly,
+  walk, swim, fly, roll, float,
   -- Levin § 52–53 Avoid, Linger, Rush
   avoid, linger, rush,
   -- Levin § 57 Weather

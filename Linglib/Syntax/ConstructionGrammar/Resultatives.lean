@@ -21,12 +21,10 @@ fusion linking verb meaning to constructional contribution.
 * `ResultativeSubconstruction`: the 2 × 2 family, with its derived
   subevent structure (`constructionalDesc`) and constructions
   (`toConstruction`, `resultativeNetwork`)
-* `SubeventDesc`, `DualSubevent`, `SubeventRelation`: dual subevent
-  structure
-* `ResultativeEntry`, `ResultativeEntry.fusedMC`: a verb in a
-  subconstruction, and its fused meaning
-* `farSatisfied`, `rolesCoherent`, `temporalConstraintSatisfied`: the
-  paper's three substantive constraints
+* `SubeventDesc`, `SubeventRelation`: the constructional subevent and its
+  relation to the verbal one
+* `RPType.undergoer`, `RolesCoherent`: the constructional role of the
+  result phrase's argument, and the semantic coherence principle
 -/
 
 namespace ConstructionGrammar.Resultatives
@@ -90,13 +88,6 @@ def ResultativeSubconstruction.isCausative : ResultativeSubconstruction → Bool
   | .noncausativeProperty => false
   | .noncausativePath => false
 
-/-- Whether a subconstruction has a property (vs path) RP. -/
-def ResultativeSubconstruction.isPropertyRP : ResultativeSubconstruction → Bool
-  | .causativeProperty => true
-  | .causativePath => false
-  | .noncausativeProperty => true
-  | .noncausativePath => false
-
 /-- The RP type of a subconstruction. -/
 def ResultativeSubconstruction.rpType : ResultativeSubconstruction → RPType
   | .causativeProperty => .property
@@ -120,17 +111,6 @@ structure SubeventDesc where
   hasBecome : Bool := false
   deriving Repr, BEq, DecidableEq
 
-/-- The dual subevent structure of a resultative
-([goldberg-jackendoff-2004] §3, the analysis in 14 and 16). -/
-structure DualSubevent where
-  /-- The verbal subevent (from the verb's lexical semantics) -/
-  verbal : SubeventDesc
-  /-- The constructional subevent (from the construction) -/
-  constructional : SubeventDesc
-  /-- How the subevents are related -/
-  relation : SubeventRelation
-  deriving Repr, BEq
-
 /-! ## Derived constructional subevent
 
 The constructional subevent's event-structural features are fully determined
@@ -146,9 +126,6 @@ def ResultativeSubconstruction.constructionalDesc : ResultativeSubconstruction �
   | .causativePath        => { hasCause := true,  hasBecome := true }
   | .noncausativeProperty => { hasCause := false, hasBecome := true }
   | .noncausativePath     => { hasCause := false, hasBecome := true }
-
-/-- The verbal subevent is always a bare manner/activity (no CAUSE, no BECOME). -/
-def verbalSubeventDesc : SubeventDesc := {}
 
 /-- Causative subconstructions have CAUSE in their constructional subevent. -/
 theorem causative_constructional_has_cause (sc : ResultativeSubconstruction)
@@ -229,46 +206,6 @@ inductive ObjectSelection where
   | fakeReflexive
   deriving Repr, DecidableEq, BEq
 
-/-- Intransitive resultatives have no object selection. -/
-def ResultativeSubconstruction.defaultObjectSelection :
-    ResultativeSubconstruction → Option ObjectSelection
-  | .causativeProperty    => some .selected
-  | .causativePath        => some .selected
-  | .noncausativeProperty => none
-  | .noncausativePath     => none
-
-/-! ## Resultative entry -/
-
-/-- A resultative entry: a verb in a subconstruction, with aspectual and
-selectional features. The dual subevent structure is derived from the
-subconstruction, and the Levin class feeds compositional fusion. -/
-structure ResultativeEntry where
-  /-- The verb form -/
-  verb : String
-  /-- Which subconstruction -/
-  subconstruction : ResultativeSubconstruction
-  /-- How the subevents are related (default: MEANS for core subconstructions) -/
-  subeventRelation : SubeventRelation := .means
-  /-- Boundedness of the result phrase -/
-  rpBoundedness : Boundedness
-  /-- Vendler class of the bare verb (without resultative) -/
-  bareVerbClass : VendlerClass
-  /-- How the postverbal NP is selected (transitive only) -/
-  objectSelection : Option ObjectSelection := none
-  /-- Levin class of the verb, for MeaningComponents derivation -/
-  levinClass : LevinClass
-  deriving Repr, BEq
-
-/-- The dual subevent structure of an entry. -/
-def ResultativeEntry.dualSubevent (e : ResultativeEntry) : DualSubevent :=
-  { verbal := verbalSubeventDesc
-  , constructional := e.subconstruction.constructionalDesc
-  , relation := e.subeventRelation }
-
-/-- The verb's inherent meaning components, from its Levin class. -/
-def ResultativeEntry.verbMC (e : ResultativeEntry) : MeaningComponents :=
-  e.levinClass.meaningComponents
-
 /-! ## Aspectual profile (§4 of [goldberg-jackendoff-2004], Principle 27)
 
 The resultative's aspect is derived compositionally:
@@ -288,90 +225,33 @@ def resultativeAspect (b : Boundedness) : AspectualProfile :=
 def resultativeVendlerClass (b : Boundedness) : VendlerClass :=
   (resultativeAspect b).toVendlerClass
 
-/-! ## Semantic roles and argument licensing
+/-! ## Semantic roles
 
-Uses the canonical `ThetaRole` from the linking interface rather than
-a paper-specific enum. [goldberg-jackendoff-2004]'s four
-resultative-relevant roles map to: agent, patient, theme, goal
-(= "resultGoal" in their terminology). -/
+The canonical `ThetaRole` of the linking interface stands in for the paper's
+agent, patient, theme, and goal. -/
 
-/-- An argument with its source (verb or construction). -/
-structure ArgSource where
-  /-- The semantic role -/
-  role : ThetaRole
-  /-- Whether this argument comes from the verb -/
-  fromVerb : Bool
-  /-- Whether this argument comes from the construction -/
-  fromConstruction : Bool
-  deriving Repr, BEq
-
-/-- Whether an argument is fused (shared between verb and construction). -/
-def ArgSource.isFused (a : ArgSource) : Bool :=
-  a.fromVerb && a.fromConstruction
-
-/-! ## Full Argument Realization (FAR) — Principle 37, §6.1
-
-All obligatory arguments of both the verb and the construction must be
-syntactically realized. Arguments shared between verb and construction fuse
-into a single syntactic position. -/
-
-/-- Check FAR: every role's source is accounted for. -/
-def farSatisfied (args : List ArgSource) : Bool :=
-  args.all (λ a => a.fromVerb || a.fromConstruction)
+/-- The constructional role of the result phrase's argument: the patient of
+BECOME for a property result phrase, the theme of GO for a path (summary 97). -/
+def RPType.undergoer : RPType → ThetaRole
+  | .property => .patient
+  | .path => .theme
 
 /-! ## Semantic Coherence Principle — Principle 44, §6.2
 
 A verb role rV and a construction role rC may fuse only if rV is
 construable as an instance of rC. -/
 
-/-- Which role pairs are coherent for fusion (Principle 44).
+/-- Principle 44's construal relation: agent with agent, goal with goal, and
+patient and theme with each other; the remaining roles (experiencer,
+instrument, stimulus, source) are not resultative roles and fuse with
+nothing. -/
+def RolesCoherent : ThetaRole → ThetaRole → Prop
+  | .agent, .agent | .patient, .patient | .patient, .theme | .theme, .patient
+  | .theme, .theme | .goal, .goal => True
+  | _, _ => False
 
-Agent can fuse with agent; patient with patient or theme;
-theme with patient or theme; goal with goal. All other combinations
-(experiencer, instrument, stimulus, source) are incoherent in the
-resultative construction. -/
-def rolesCoherent (rV rC : ThetaRole) : Bool :=
-  match rV, rC with
-  | .agent, .agent => true
-  | .patient, .patient => true
-  | .patient, .theme => true
-  | .theme, .patient => true
-  | .theme, .theme => true
-  | .goal, .goal => true
-  | _, _ => false
-
-/-- Check semantic coherence: all fused arguments have coherent roles. -/
-def semanticCoherenceSatisfied (args : List (ThetaRole × ThetaRole)) : Bool :=
-  args.all (λ ⟨rV, rC⟩ => rolesCoherent rV rC)
-
-/-! ## Temporal constraint (§4.2)
-
-Temporal ordering between subevents is constrained by the subevent relation:
-- **MEANS**: The verbal subevent must temporally overlap with or precede the
-  constructional subevent. Constructional-first is ruled out because you
-  cannot achieve a result before performing the means to it.
-- **RESULT**: The constructional subevent CAN precede the verbal subevent.
-  E.g., "The door banged open" — the opening (constructional) precedes
-  the banging (verbal result of the motion).
-- **INSTANCE/CO-OCCURRENCE**: Simultaneity expected (the verbal IS the
-  constructional, or they merely co-occur). -/
-
-/-- Temporal ordering between subevents. -/
-inductive TemporalOrder where
-  | verbalFirst
-  | simultaneous
-  | constructionalFirst
-  deriving Repr, DecidableEq
-
-/-- Check the temporal constraint given the subevent relation.
-
-For MEANS, the constructional subevent cannot precede the verbal subevent.
-For RESULT, all orderings are acceptable (reversed directionality).
-For INSTANCE/CO-OCCURRENCE, simultaneity is expected but not enforced. -/
-def temporalConstraintSatisfied (rel : SubeventRelation) (order : TemporalOrder) : Bool :=
-  match rel, order with
-  | .means, .constructionalFirst => false
-  | _, _ => true
+instance : DecidableRel RolesCoherent := λ rV rC => by
+  cases rV <;> cases rC <;> unfold RolesCoherent <;> infer_instance
 
 /-! ## Closed-scale → bounded RP bridge (§8 of [goldberg-jackendoff-2004],
 Principle 27)
@@ -514,11 +394,6 @@ def RPType.toUPOS : RPType → UD.UPOS
   | .property => .ADJ
   | .path     => .ADP
 
-/-- The role label for the result phrase slot. -/
-def RPType.roleLabel : RPType → String
-  | .property => "result"
-  | .path     => "goal"
-
 /-- The name suffix for a subconstruction. -/
 def ResultativeSubconstruction.nameSuffix : ResultativeSubconstruction → String
   | .causativeProperty    => "CausativeProperty"
@@ -546,10 +421,6 @@ def ResultativeSubconstruction.toConstruction (sc : ResultativeSubconstruction) 
       , { filler := .open_ sc.rpType.toUPOS } ]
   , meaning := sc.semanticContribution }
 
-/-- The composed meaning: verb MC fused with the subconstruction's contribution. -/
-def ResultativeEntry.fusedMC (e : ResultativeEntry) : MeaningComponents :=
-  composedMeaning e.verbMC e.subconstruction.toConstruction
-
 /-- The causative property resultative as a construction. -/
 def causativePropertyConstruction := ResultativeSubconstruction.causativeProperty.toConstruction
 
@@ -557,7 +428,8 @@ def causativePropertyConstruction := ResultativeSubconstruction.causativePropert
 def causativePathConstruction := ResultativeSubconstruction.causativePath.toConstruction
 
 /-- The noncausative property resultative as a construction. -/
-def noncausativePropertyConstruction := ResultativeSubconstruction.noncausativeProperty.toConstruction
+def noncausativePropertyConstruction :=
+  ResultativeSubconstruction.noncausativeProperty.toConstruction
 
 /-- The noncausative path resultative as a construction. -/
 def noncausativePathConstruction := ResultativeSubconstruction.noncausativePath.toConstruction
@@ -687,6 +559,14 @@ theorem fused_always_has_cos (mc : MeaningComponents)
   cases sc <;> simp [composedMeaning, ResultativeSubconstruction.toConstruction,
     ResultativeSubconstruction.semanticContribution, MeaningComponents.fuse]
 
+/-- The composed meaning has causation exactly when the verb or the
+    subconstruction contributes it. -/
+theorem composedMeaning_causation (mc : MeaningComponents) (sc : ResultativeSubconstruction) :
+    (composedMeaning mc sc.toConstruction).causation = (mc.causation || sc.isCausative) := by
+  cases sc <;> simp [composedMeaning, ResultativeSubconstruction.toConstruction,
+    ResultativeSubconstruction.semanticContribution, ResultativeSubconstruction.isCausative,
+    MeaningComponents.fuse]
+
 /-- The resultative alternation itself is predicted for any non-instrument verb
     in any subconstruction (since all contribute CoS). -/
 theorem resultative_alternation_predicted (mc : MeaningComponents)
@@ -713,15 +593,6 @@ theorem unbounded_rp_atelic :
     Principle 27). -/
 theorem resultative_telicizes_activity :
     activityProfile.telicize.toVendlerClass = .accomplishment := rfl
-
-/-- The resultative's derived aspect matches telicization of the bare verb
-    when the bare verb is an activity and the RP is bounded. -/
-theorem resultative_aspect_matches_telicize (e : ResultativeEntry)
-    (hVerb : e.bareVerbClass = .activity) (hBounded : e.rpBoundedness = .bounded) :
-    resultativeVendlerClass e.rpBoundedness =
-    (e.bareVerbClass.toProfile.telicize).toVendlerClass := by
-  rw [hVerb, hBounded]
-  rfl
 
 /-! ## General chain theorems
 
