@@ -64,7 +64,6 @@ conditioning of v.
 namespace DistributedMorphology.Allosemy
 
 open DistributedMorphology (Categorizer Categorizer.Head)
-open scoped DistributedMorphology.VocabularyItem
 open Minimalist.Voice (Flavor Head)
 
 /-! ### The alloseme carrier

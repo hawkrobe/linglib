@@ -38,7 +38,6 @@ namespace Bobaljik2000
 
 open DistributedMorphology
 open Data.Examples (LinguisticExample)
-open scoped DistributedMorphology.VocabularyItem
 
 inductive Feature where
   | root (s : String) | classII | tense | classMarker

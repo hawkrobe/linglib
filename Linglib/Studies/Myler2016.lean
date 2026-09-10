@@ -45,7 +45,6 @@ syntactic ({D} and φ, the transitive configuration of (24)), and relational
 namespace Myler2016
 
 open DistributedMorphology DistributedMorphology.Allosemy Data.Examples
-open scoped DistributedMorphology.VocabularyItem
 
 /-! ### The copula's context and form -/
 

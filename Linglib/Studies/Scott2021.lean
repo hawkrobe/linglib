@@ -53,7 +53,6 @@ derive it.
 namespace Scott2021
 
 open Swahili Syntax DistributedMorphology Data.Examples
-open scoped DistributedMorphology.VocabularyItem
 open Minimalist (FeatureVal PhiFeature GramFeature)
 
 /-! ### The structure of pronouns (§5.1) -/
