@@ -1,674 +1,417 @@
-import Linglib.Pragmatics.Expressives.Basic
-import Linglib.Fragments.German.ClauseTypes
+import Linglib.Data.Examples.Gutzmann2015
 import Linglib.Fragments.German.Particles
 
 /-!
-# Gutzmann (2015): Sentence Mood as Use-Conditional Meaning
-[gutzmann-2015]
+# Gutzmann (2015): Use-Conditional Meaning
 
-*Use-Conditional Meaning: Studies in Multidimensional Semantics* (OUP).
-Self-contained study: the L_TU logic (the book's central formal
-contribution, a three-dimensional extension of [potts-2005]'s L_CI),
-the sentence-mood operators DEONT/EPIS/HKNOW as use-conditional items,
-their composition in the German clause-type inventory, and the modal
-particle predictions. (L_TU and the mood operators live here rather
-than in the theory layer because this book is their only consumer;
-they graduate per the ≥ 2-studies rule if a second study consumes
-them.)
+This file formalizes the logic `L_TU` of [gutzmann-2015], chapter 4, and its two case studies,
+sentence mood (chapter 5) and German modal particles (chapter 6). An expression of `L_TU` has
+three dimensions, truth-conditional content, active use-conditional content, and the completed
+use-conditional propositions; multidimensional application (4.46) applies functions in the first
+two and merges the third, and use-conditional elimination (4.54) stores a completed second
+dimension in the third, `Expr.app` and `Expr.elim`. The lexical extension rules (4.55), (4.56),
+and (4.67) build three-dimensional entries from one-dimensional ones, giving a use-conditional
+item an identity function as its truth-conditional dimension, `Expr.ofModifier`. The principle
+of non-interaction (4.28) is then a theorem about every derivation, `Deriv.eval_t`: its
+truth-conditional dimension is computed from the lexical items' first dimensions alone. Sentence
+mood follows Truckenbrodt's decomposition into a deontic operator (5.85), present in every
+matrix clause by the root rule (5.43), an epistemic modifier of it (5.91), present where a
+[±wh] feature is visible at LF (5.41), and the hearer knowledge condition (5.99) of
+v2-interrogatives; the German clause types compose as in (5.82), (5.93), and (5.100),
+`GermanClauseType.mood`, so every clause's truth conditions are its content, its use conditions
+are the deontic attitude, and a v2-interrogative differs from a vl-interrogative exactly by
+hearer knowledge, the Cuban cigar scenario (5.36). Of the modal particles, *wohl* modifies the
+epistemic operator (6.103), so its exclusion from imperatives is a type mismatch: no derivation
+over an imperative's lexicon reaches the epistemic type, `Derivable`, which is the distribution
+`Fragments/German/Particles.lean` records, `wohl_licensed_iff`; *ja* (6.122) and *denn*
+(6.133) compose with any mood, and their use conditions in the excluded clause types, (6.129)
+and (6.142), are ones the book argues no rational speaker holds. The book's examples are the
+rows of `Data.Examples.Gutzmann2015`.
 
-## Key claims
+## Implementation notes
 
-1. Sentence mood operators (deontic, epistemic) are UCIs, not presuppositions
-2. The epistemic interpretation of [±wh] does NOT pass standard
-   presupposition tests (negation, disjunction)
-3. V2-interrogatives carry a HKNOW condition absent from VL-interrogatives
-   (the Cuban cigar argument)
-4. Modal particles are functional expletive UCIs whose mood restrictions
-   derive from interaction with sentence mood operators
-5. *wohl* is a UC-modifier (not a UCI), with selectional restriction
+The type system (4.45) is taken at the propositional fragment: `t` is the type of propositions,
+the book's `⟨s,t⟩`, and entities are omitted, so the typology of chapter 2 and the
+expressive-modification examples of chapter 4 are not formalized. The deontic and epistemic
+operators quantify over contextually suitable attitude predicates (5.84), (5.90), which a
+`MoodModel` supplies together with the hearer knowledge, common knowledge, assumption, and
+reason predicates the particles' lexical entries use. The rationality step that rules out *ja*
+in interrogatives and *denn* outside v2-interrogatives (section 6.5.2) is not a theorem of the
+logic, so their use conditions are derived and the restriction is left to the rows.
 
-## Clause type predictions
+## References
 
-| Clause type       | t-content | u-content                    |
-|-------------------|-----------|------------------------------|
-| dass-VL           | p         | DEONT(p)                     |
-| V2-declarative    | p         | DEONT(EPIS(p))               |
-| VL-interrogative  | p         | DEONT(EPIS(p))               |
-| V2-interrogative  | p         | DEONT(EPIS(p)) ⊙ HKNOW(p)   |
-| Imperative        | p         | DEONT(p)                     |
-
-## The L_TU architecture
-
-Every expression carries three meaning dimensions — **t-dim**
-(truth-conditional, world-indexed), **s-dim** (active use-conditional
-content being composed), **u-dim** (completed use-conditional
-propositions, context-indexed). Multidimensional application (MA)
-composes dimensions pointwise; use-conditional elimination (UE) stores
-a completed s-dim in the u-dim and resets. The non-interaction theorem
-(`non_interaction`) guarantees use-conditional meaning never leaks
-into truth conditions.
+* [gutzmann-2015]
+* [potts-2005]
+* [kaplan-1999]
 -/
 
 namespace Gutzmann2015
 
-open Features
-open German.ClauseTypes
-open German.Particles
-open Pragmatics.Expressives (TwoDimProp)
+open German.ClauseTypes German.Particles
 
-/-! ## The L_TU logic -/
+universe u
 
-open Pragmatics.Expressives (TwoDimProp)
+/-! ### The logic `L_TU`, chapter 4 -/
 
-/-! ### L_TU Type System -/
+/-- (4.45) at the propositional fragment: propositions, use-conditional propositions, and
+function types. -/
+inductive UCType
+  | t
+  | u
+  | func (σ τ : UCType)
+  deriving DecidableEq
 
-/-- The L_TU type system ([gutzmann-2015], (4.45)).
+namespace UCType
 
-Basic types: `e` (entities), `t` (truth values), `u` (use-conditional
-propositions, opaque). A type is *use-conditional* iff it equals `u`
-or is a function type whose codomain is use-conditional. -/
-inductive UCType where
-  | e : UCType
-  | t : UCType
-  | u : UCType
-  | func : UCType → UCType → UCType
-  deriving DecidableEq, Repr
-
-/-- A type is use-conditional iff it is `u` or a function into a
-use-conditional type. This determines which dimension an expression's
-content targets during composition. -/
-def UCType.IsUCType : UCType → Prop
+/-- (4.45b) and (4.45e): a type is use-conditional when it is `u` or a function into a
+use-conditional type. -/
+def IsUC : UCType → Prop
   | .u => True
-  | .func _ τ => τ.IsUCType
-  | _ => False
+  | .func _ τ => τ.IsUC
+  | .t => False
 
-instance UCType.decIsUCType : DecidablePred UCType.IsUCType
-  | .e => isFalse (fun h => h)
-  | .t => isFalse (fun h => h)
+instance decIsUC : DecidablePred IsUC
   | .u => isTrue trivial
-  | .func _ τ => UCType.decIsUCType τ
+  | .t => isFalse id
+  | .func _ τ => decIsUC τ
 
-theorem u_is_uc : UCType.u.IsUCType := trivial
-theorem t_is_not_uc : ¬ UCType.t.IsUCType := fun h => h
-theorem func_into_u_is_uc : (UCType.func .e .u).IsUCType := trivial
+/-- (4.66): the `n`-th level modifier type on `α`. -/
+def modifier (α : UCType) : ℕ → UCType
+  | 0 => α
+  | n + 1 => func (modifier α n) (modifier α n)
 
-/-! ### UCI Typology -/
+@[simp] theorem modifier_zero (α : UCType) : modifier α 0 = α := rfl
 
-/-- UCI classification by three binary features ([gutzmann-2015], Ch 2).
+@[simp] theorem modifier_succ (α : UCType) (n : ℕ) :
+    modifier α (n + 1) = func (modifier α n) (modifier α n) := rfl
 
-- `functional`: takes a truth-conditional argument (vs isolated)
-- `twoDimensional`: contributes to both t-dim and s-dim (vs expletive)
-- `resourceSensitive`: argument is consumed/shunted (vs passed through) -/
-structure UCIClass where
-  functional : Bool
-  twoDimensional : Bool
-  resourceSensitive : Bool
-  deriving DecidableEq, Repr
+/-- The denotation of a type: propositions are sets of worlds, use-conditional propositions
+sets of contexts. -/
+def Denote (W C : Type u) : UCType → Type u
+  | .t => W → Prop
+  | .u => C → Prop
+  | .func σ τ => Denote W C σ → Denote W C τ
 
-/-- Isolated expletive: no argument, only use-conditional content.
-Example: *damn* in "the damn dog." -/
-def isolatedExpletive : UCIClass :=
-  { functional := false, twoDimensional := false, resourceSensitive := false }
+end UCType
 
-/-- Isolated mixed: no argument, contributes to both dimensions.
-Example: ethnic slurs with descriptive + expressive content. -/
-def isolatedMixed : UCIClass :=
-  { functional := false, twoDimensional := true, resourceSensitive := false }
+open UCType
 
-/-- Functional expletive: takes an argument, only use-conditional output.
-Example: German modal particles *ja*, *denn*; sentence mood operators. -/
-def functionalExpletive : UCIClass :=
-  { functional := true, twoDimensional := false, resourceSensitive := false }
+variable {W C : Type u}
 
-/-- Functional shunting: takes an argument that is consumed (not returned).
-Example: [potts-2005]'s comma feature for appositives. -/
-def functionalShunting : UCIClass :=
-  { functional := true, twoDimensional := false, resourceSensitive := true }
+/-- A three-dimensional expression: a truth-conditional dimension of type `σ`, an active
+use-conditional dimension of type `ρ`, and the completed use-conditional propositions. -/
+structure Expr (W C : Type u) (σ ρ : UCType) where
+  t : Denote W C σ
+  s : Denote W C ρ
+  u : C → Prop
 
-/-- Functional mixed: takes an argument, contributes to both dimensions.
-Example: some honorific systems. -/
-def functionalMixed : UCIClass :=
-  { functional := true, twoDimensional := true, resourceSensitive := false }
+namespace Expr
 
-/-! ### Use-Conditional Expressions -/
+variable {σ τ ρ ν : UCType}
 
-/-- How a use-conditional expression interacts with composition
-([gutzmann-2015], §6.5).
+/-- (4.46): multidimensional application, application in the first two dimensions and merging
+in the third. -/
+def app (α : Expr W C (func σ τ) (func ρ ν)) (β : Expr W C σ ρ) : Expr W C τ ν :=
+  ⟨α.t β.t, α.s β.s, λ c => α.u c ∧ β.u c⟩
 
-A UCI is a *use-conditional item*: it contributes u-content by taking
-truth-conditional arguments. A UC-modifier takes another UCI as its
-argument and modifies its use-conditional behavior.
+/-- (4.54): unary use-conditional elimination. Once the active dimension is a use-conditional
+proposition it is merged into the third, and the second becomes a copy of the first. -/
+def elim (α : Expr W C σ .u) : Expr W C σ σ := ⟨α.t, α.t, λ c => α.u c ∧ α.s c⟩
 
-This distinction drives two different mechanisms for mood restriction:
-- UCIs are restricted by *use-conditional conflict* (their independent
-  u-content is incompatible with certain mood operators)
-- UC-modifiers are restricted *selectionally* (the mood operator they
-  modify is absent from certain clause types) -/
-inductive UCExprKind where
-  /-- Use-conditional item: maps truth-conditional content to u-content.
-  Type: `⟨⟨s,t⟩, u⟩` (functional) or `u` (isolated). -/
-  | uci
-  /-- Use-conditional modifier: maps UCIs to UCIs.
-  Type: `⟨⟨⟨s,t⟩,u⟩, ⟨⟨s,t⟩,u⟩⟩`. Modifies an existing mood operator
-  (e.g., German *wohl* modifies EPIS). -/
-  | ucModifier
-  deriving DecidableEq, Repr
+/-- (4.55): a truth-conditional item is copied into the second dimension, with the neutral
+third. -/
+def ofTC (a : Denote W C σ) : Expr W C σ σ := ⟨a, a, λ _ => True⟩
 
-/-- How an expression's mood restriction arises
-([gutzmann-2015], §6.5).
+/-- (4.56) and (4.67): an `n`-th level use-conditional modifier on `⟨σ, τ⟩` receives the
+identity on the `n`-th level modifier type on `σ` as its truth-conditional dimension; at
+`n = 0` this is the extension of a functional expletive use-conditional item. -/
+def ofModifier (n : ℕ) (α : Denote W C (modifier (func σ τ) n)) :
+    Expr W C (modifier σ (n + 1)) (modifier (func σ τ) n) :=
+  ⟨λ x => x, α, λ _ => True⟩
 
-The two mechanisms are empirically distinguishable: selectional
-restrictions produce type-mismatch infelicity, while use-conditional
-conflict produces pragmatic deviance. -/
-inductive RestrictionKind where
-  /-- The expression modifies a mood operator that is absent from
-  certain clause types — a type mismatch. Example: German *wohl*
-  modifies EPIS, which is absent from imperatives. -/
-  | selectional
-  /-- The expression's independent u-content is incompatible with
-  certain sentence moods. Example: German *ja*'s common-ground
-  reminder conflicts with the epistemic uncertainty of interrogatives. -/
-  | ucConflict
-  deriving DecidableEq, Repr
+end Expr
 
-/-! ### Three-Dimensional Meanings -/
+/-- A derivation in `L_TU`: lexical items composed by multidimensional application and
+use-conditional elimination. -/
+inductive Deriv (W C : Type u) : UCType → UCType → Type u
+  | lex {σ ρ : UCType} : Expr W C σ ρ → Deriv W C σ ρ
+  | app {σ τ ρ ν : UCType} : Deriv W C (func σ τ) (func ρ ν) → Deriv W C σ ρ → Deriv W C τ ν
+  | elim {σ : UCType} : Deriv W C σ .u → Deriv W C σ σ
 
-/-- A three-dimensional meaning in L_TU ([gutzmann-2015], (4.46)).
+namespace Deriv
 
-`C` is the context type (for use-conditional propositions, sets of contexts),
-`W` is the world type (for truth-conditional propositions, sets of worlds).
+/-- The three-dimensional meaning of a derivation. -/
+def eval : {σ ρ : UCType} → Deriv W C σ ρ → Expr W C σ ρ
+  | _, _, .lex x => x
+  | _, _, .app f a => f.eval.app a.eval
+  | _, _, .elim d => d.eval.elim
 
-The crucial type distinction: `uDim` is `C → Bool` while `tDim`/`sDim`
-are `W → Bool`. Use-conditional propositions constrain the *context of
-utterance*, not the described world — matching Kaplan's character/content
-distinction. -/
-structure ThreeDimMeaning (C : Type*) (W : Type*) where
-  /-- Truth-conditional content: the at-issue proposition -/
-  tDim : W → Prop
-  /-- Active use-conditional content being composed -/
-  sDim : W → Prop
-  /-- Completed use-conditional propositions (stored, inaccessible to
-      further truth-conditional composition) -/
-  uDim : C → Prop
+/-- The truth-conditional dimension computed from the lexical items' first dimensions alone. -/
+def truthShadow : {σ ρ : UCType} → Deriv W C σ ρ → Denote W C σ
+  | _, _, .lex x => x.t
+  | _, _, .app f a => f.truthShadow a.truthShadow
+  | _, _, .elim d => d.truthShadow
 
-/-- Multidimensional application ([gutzmann-2015], (4.46)).
-
-The full MA rule applies functions *intradimensionally*: dimension 1
-applies `σ(β₁)`, dimension 2 applies `ρ(β₂)`, and u-dimensions merge
-via `⊙` (conjunction). At the **propositional level** — where both inputs
-are already of type `⟨s,t⟩` — function application reduces to pointwise
-conjunction, which is what this definition implements. The sub-propositional
-case (where dims 1-2 are genuine function applications) is not formalized. -/
-def multidimApp {C W : Type*}
-    (f a : ThreeDimMeaning C W) : ThreeDimMeaning C W where
-  tDim := λ w => f.tDim w ∧ a.tDim w
-  sDim := λ w => f.sDim w ∧ a.sDim w
-  uDim := λ c => f.uDim c ∧ a.uDim c
-
-/-- Use-conditional elimination ([gutzmann-2015], (4.54)).
-
-When the s-dimension reaches type `u` (its content is a completed
-use-conditional proposition), UE:
-1. Shifts s-dim content to u-dim (conjoining with existing u-content)
-2. Resets s-dim to a copy of t-dim
-
-The `eval` parameter bridges the world-indexed s-dim to the
-context-indexed u-dim, typically by projecting the world from the context. -/
-def ucElim {C W : Type*}
-    (m : ThreeDimMeaning C W) (eval : (W → Prop) → C → Prop) :
-    ThreeDimMeaning C W where
-  tDim := m.tDim
-  sDim := m.tDim
-  uDim := λ c => m.uDim c ∧ eval m.sDim c
-
-/-- Lift a truth-conditional proposition to a three-dimensional meaning.
-
-Both t-dim and s-dim carry the propositional content.
-u-dim is trivially satisfied (no use-conditional content yet).
-Corresponds to a pure truth-conditional lexical item before LER
-extension. -/
-def ofTruthConditional {C W : Type*} (p : W → Prop) : ThreeDimMeaning C W where
-  tDim := p
-  sDim := p
-  uDim := λ _ => True
-
-/-- Lift a use-conditional function to a three-dimensional meaning.
-
-t-dim is trivially true (UCIs do not contribute truth conditions).
-s-dim carries the active UCI content.
-u-dim is trivially true until `ucElim` fires. -/
-def ofUCI {C W : Type*} (ucContent : W → Prop) : ThreeDimMeaning C W where
-  tDim := λ _ => True
-  sDim := ucContent
-  uDim := λ _ => True
-
-/-! ### Bridge to TwoDimProp -/
-
-/-- Project a three-dimensional meaning to a `TwoDimProp` (final
-interpretation).
-
-After all composition and UE steps, the final meaning of a sentence
-has t-dim = truth-conditional content and u-dim = accumulated
-use-conditional propositions. The s-dim equals t-dim (reset by UE)
-and is discarded.
-
-The `evalU` function projects the context-indexed u-dim (`C → Bool`)
-to a world-indexed CI content (`W → Bool`) for the `TwoDimProp.ci`
-field. This corresponds to [gutzmann-2015]'s lowering operator
-`⇓_c` which converts u-propositions to world sets by fixing context
-parameters except the world. -/
-def toTwoDim {C W : Type*}
-    (m : ThreeDimMeaning C W) (evalU : (C → Prop) → W → Prop) :
-    TwoDimProp W where
-  atIssue := m.tDim
-  ci := evalU m.uDim
-
-/-! ### Key Theorems -/
-
-/-- UE does not affect truth conditions.
-
-This is the formal guarantee of *non-interaction*: storing use-conditional
-content in the u-dimension never changes what a sentence says about the
-world. -/
-theorem ucElim_preserves_tDim {C W : Type*}
-    (m : ThreeDimMeaning C W) (eval : (W → Prop) → C → Prop) :
-    (ucElim m eval).tDim = m.tDim := rfl
-
-/-- After UE, the s-dimension is reset to the t-dimension. -/
-theorem ucElim_resets_sDim {C W : Type*}
-    (m : ThreeDimMeaning C W) (eval : (W → Prop) → C → Prop) :
-    (ucElim m eval).sDim = m.tDim := rfl
-
-/-- MA merges u-dimensions via conjunction. Completed use-conditional
-propositions from both constituents are preserved. -/
-theorem multidimApp_merges_uDim {C W : Type*}
-    (f a : ThreeDimMeaning C W) (c : C) :
-    (multidimApp f a).uDim c ↔ (f.uDim c ∧ a.uDim c) := Iff.rfl
-
-/-- A pure truth-conditional expression has trivial use conditions. -/
-theorem ofTruthConditional_trivial_uDim {C W : Type*}
-    (p : W → Prop) (c : C) :
-    (ofTruthConditional (C := C) p).uDim c := trivial
-
-/-- A UCI has trivial truth conditions. -/
-theorem ofUCI_trivial_tDim {C W : Type*}
-    (ucContent : W → Prop) (w : W) :
-    (ofUCI (C := C) ucContent).tDim w := trivial
-
-/-! ### Non-Interaction (General) -/
-
-/-- A derivation in the propositional fragment of L_TU.
-
-Derivation trees encode the composition history: which expressions
-were combined via MA, and where UE was applied. This lets us state
-and prove properties of *all possible* derivations, not just specific
-ones. -/
-inductive LTUDeriv (C : Type*) (W : Type*) where
-  /-- A lexical item (leaf of the derivation tree) -/
-  | leaf : ThreeDimMeaning C W → LTUDeriv C W
-  /-- Multidimensional application of two sub-derivations -/
-  | app : LTUDeriv C W → LTUDeriv C W → LTUDeriv C W
-  /-- Use-conditional elimination applied to a sub-derivation -/
-  | elim : LTUDeriv C W → ((W → Prop) → C → Prop) → LTUDeriv C W
-
-/-- Evaluate a derivation to its three-dimensional meaning. -/
-def LTUDeriv.eval {C W : Type*} : LTUDeriv C W → ThreeDimMeaning C W
-  | .leaf m => m
-  | .app d₁ d₂ => multidimApp d₁.eval d₂.eval
-  | .elim d f => ucElim d.eval f
-
-/-- Strip all use-conditional content from a derivation's leaves,
-replacing s-dim with t-dim and u-dim with trivial content. This
-produces a "truth-conditional shadow" of the derivation. -/
-def LTUDeriv.stripUC {C W : Type*} : LTUDeriv C W → LTUDeriv C W
-  | .leaf m => .leaf ⟨m.tDim, m.tDim, λ _ => True⟩
-  | .app d₁ d₂ => .app d₁.stripUC d₂.stripUC
-  | .elim d f => .elim d.stripUC f
-
-/-- **Non-interaction theorem** ([gutzmann-2015]).
-
-For ANY derivation built from multidimensional application and
-use-conditional elimination, the truth-conditional content of the
-result depends ONLY on the truth-conditional content of the inputs.
-
-Stripping all use-conditional content from the leaves does not change
-the final t-dimension. Use-conditional meaning can never leak into
-truth conditions — not through MA, not through UE, not through any
-combination of the two. This is the fundamental architectural guarantee
-of L_TU. -/
-theorem non_interaction {C W : Type*} (d : LTUDeriv C W) (w : W) :
-    d.eval.tDim w ↔ d.stripUC.eval.tDim w := by
+/-- (4.28), the principle of non-interaction: the truth-conditional dimension of every
+derivation is a function of its lexical items' truth-conditional dimensions alone, so
+use-conditional content never leaks into truth conditions. -/
+theorem eval_t {σ ρ : UCType} (d : Deriv W C σ ρ) : d.eval.t = d.truthShadow := by
   induction d with
-  | leaf _ => exact Iff.rfl
-  | app d₁ d₂ ih₁ ih₂ =>
-    simp only [LTUDeriv.eval, LTUDeriv.stripUC, multidimApp]
-    exact and_congr ih₁ ih₂
-  | elim d _ ih =>
-    simp only [LTUDeriv.eval, LTUDeriv.stripUC, ucElim]
-    exact ih
+  | lex x => rfl
+  | app f a ihf iha => simp only [eval, Expr.app, truthShadow, ihf, iha]
+  | elim d ih => simp only [eval, Expr.elim, truthShadow, ih]
 
-/-- Non-interaction at the function level (extensional form). -/
-theorem non_interaction_ext {C W : Type*} (d : LTUDeriv C W) :
-    d.eval.tDim = d.stripUC.eval.tDim :=
-  funext (λ w => propext (non_interaction d w))
+end Deriv
 
-/-! ### UCI Non-Contribution -/
+/-! ### Sentence mood, chapter 5 -/
 
-/-- Composing with a UCI does not change truth conditions.
+/-- The context-dependent attitudes the sentence mood operators and modal particles quantify
+over: the world of the context, the deontic speaker predicates suitable for a proposition
+(5.84), the epistemic predicates suitable at a world (5.90), whether the addressee knows
+whether a proposition holds (5.99), the speaker's belief that it is common knowledge or
+verifiable (6.122), the assumption operator of *wohl* (6.110), the common ground, and the
+proposition that one proposition is the speaker's reason to ask another (6.133). -/
+structure MoodModel (W C : Type u) where
+  world : C → W
+  deonticFor : C → (W → Prop) → Set ((W → Prop) → W → Prop)
+  episFor : W → (W → Prop) → Set ((W → Prop) → W → Prop)
+  knowsWhether : C → (W → Prop) → Prop
+  commonKnowledge : C → (W → Prop) → Prop
+  assume : (W → Prop) → W → Prop
+  commonGround : C → Set (W → Prop)
+  reasonToAsk : (W → Prop) → (W → Prop) → W → Prop
 
-When a functional expletive UCI (with trivial t-dim) is composed with
-truth-conditional content via MA, the t-dim of the result equals the
-t-dim of the truth-conditional input. This is the formal content of
-"UCIs do not contribute truth conditions." -/
-theorem multidimApp_uci_tDim {C W : Type*}
-    (tc : ThreeDimMeaning C W) (uci : ThreeDimMeaning C W)
-    (h : ∀ w, uci.tDim w) (w : W) :
-    (multidimApp tc uci).tDim w ↔ tc.tDim w := by
-  simp only [multidimApp, and_iff_left (h w)]
+variable (M : MoodModel W C)
 
-/-- Composing with truth-conditional content does not change truth conditions
-of an expression whose t-dim is already trivial. -/
-theorem multidimApp_tc_preserves_uci_tDim {C W : Type*}
-    (uci tc : ThreeDimMeaning C W)
-    (h : ∀ w, uci.tDim w) (w : W) :
-    (multidimApp uci tc).tDim w ↔ tc.tDim w := by
-  simp only [multidimApp, and_iff_right (h w)]
+/-- (5.85): the deontic operator. Some contextually suitable deontic speaker predicate holds of
+the proposition at the world of the context. -/
+def deont : Denote W C (func .t .u) := λ p c => ∃ d ∈ M.deonticFor c p, d p (M.world c)
 
-/-! ### Bridge Compositionality -/
+/-- (5.90): the epistemic predicate, some contextually suitable epistemic attitude toward the
+proposition at a world. -/
+def epis : Denote W C (func .t .t) := λ p w => ∃ e ∈ M.episFor w p, e p w
 
-/-- The 3D→2D bridge commutes with MA when the lowering operator
-distributes over conjunction.
+/-- (5.91): the epistemic sentence mood operator, a modifier feeding the epistemically embedded
+proposition to a mood operator. -/
+def E : Denote W C (modifier (func .t .u) 1) := λ D p => D (epis M p)
 
-If `evalU` preserves conjunctive structure (i.e., lowering a conjunction
-of u-propositions equals the conjunction of lowered u-propositions),
-then projecting a composed 3D meaning to 2D is the same as composing
-the individual 2D projections.
+/-- (5.99): hearer knowledge, a functional expletive item. -/
+def hknow : Denote W C (func .t .u) := λ p c => M.knowsWhether c p
 
-This is the formal guarantee that L_TU's 3D composition "collapses"
-correctly into [potts-2005]'s 2D framework. -/
-theorem toTwoDim_multidimApp {C W : Type*}
-    (f a : ThreeDimMeaning C W) (evalU : (C → Prop) → W → Prop)
-    (hConj : ∀ (p q : C → Prop) (w : W),
-      evalU (λ c => p c ∧ q c) w ↔ (evalU p w ∧ evalU q w)) :
-    toTwoDim (multidimApp f a) evalU =
-    TwoDimProp.and (toTwoDim f evalU) (toTwoDim a evalU) := by
-  ext w
-  · simp only [toTwoDim, multidimApp, TwoDimProp.and_atIssue]
-  · simp only [toTwoDim, multidimApp, TwoDimProp.and_ci, hConj]
+/-- The propositional content as a lexical item, (4.55). -/
+def prop (p : W → Prop) : Deriv W C .t .t := .lex (Expr.ofTC p)
 
-/-! ## Sentence-mood operators as UCIs -/
+/-- (5.82): the mood of a root dass-clause and of an imperative, the deontic operator alone. -/
+def deonticOnly (p : W → Prop) : Deriv W C .t .t :=
+  .elim (.app (.lex (Expr.ofModifier 0 (deont M))) (prop p))
 
-/-! ### Mood Context -/
+/-- (5.93): the mood of a v2-declarative and of a vl-interrogative: the epistemic modifier
+applies to the deontic operator, which takes the content. -/
+def deonticEpistemic (p : W → Prop) : Deriv W C .t .t :=
+  .elim (.app (.app (.lex (Expr.ofModifier 1 (E M))) (.lex (Expr.ofModifier 0 (deont M))))
+    (prop p))
 
-/-- A context of utterance for sentence mood evaluation.
+/-- (5.100): the mood of a v2-interrogative adds the free-floating hearer knowledge
+condition. -/
+def v2InterrogativeMood (p : W → Prop) : Deriv W C .t .t :=
+  .elim (.app (.app (.lex (Expr.ofModifier 1 (E M))) (.lex (Expr.ofModifier 0 (deont M))))
+    (.elim (.app (.lex (Expr.ofModifier 0 (hknow M))) (prop p))))
 
-Captures the context parameters that sentence mood operators quantify
-over: `c_S` (speaker), `c_A` (addressee), `c_W` (world of the context).
+/-- Chapter 5's compositions for the German clause types: dass-VL clauses and imperatives have
+the deontic operator alone, since [−wh] on the meaningless *dass* is invisible at LF (5.41) and
+imperatives carry no visible feature; declaratives and vl-interrogatives the epistemically
+modified deontic operator; v2-interrogatives the hearer knowledge condition as well. -/
+def _root_.German.ClauseTypes.GermanClauseType.mood :
+    GermanClauseType → (W → Prop) → Deriv W C .t .t
+  | .dassVL | .imperative => deonticOnly M
+  | .v2Declarative | .vlInterrogative => deonticEpistemic M
+  | .v2Interrogative => v2InterrogativeMood M
 
-**Simplification**: [gutzmann-2015] defines DEONT via existential
-quantification over a set D of contextually suitable deontic predicates
-(wants, wishes, orders, ...). The full definition is:
-`⟦DEONT⟧ = λp.{c : ∃ d ∈ D, d suitable for p in c ∧ d(c_S, p, c_W)}`.
-We simplify this to a fixed `speakerWants` function, which suffices for
-the core derivation theorems but does not capture the context-dependent
-selection among different deontic attitudes. -/
-structure MoodContext (W : Type*) where
-  /-- The world of the utterance context -/
-  world : W
-  /-- Whether the speaker wants p to hold (given p's truth value at world) -/
-  speakerWants : Bool → Bool
-  /-- Whether the addressee knows whether p (given p's truth value at world) -/
-  addresseeKnows : Bool → Bool
+variable {M} {p : W → Prop} {c : C}
 
-/-! ### Sentence Mood Operators -/
-
-/-- Deontic sentence mood operator ([gutzmann-2015], (5.85)).
-
-⟦DEONT⟧ = λp. {c : there is a d ∈ D such that d is suitable for p
-in c and d holds for p in c_W}
-
-Simplified: the speaker wants `p` to hold in the utterance world.
-
-Introduced by the root rule (5.43): every matrix clause gets a deontic
-interpretation, expressing a volition on the part of the speaker. -/
-def deont {W : Type*} (p : W → Bool) (c : MoodContext W) : Bool :=
-  c.speakerWants (p c.world)
-
-/-- Epistemic sentence mood operator ([gutzmann-2015], (5.90)).
-
-⟦EPIS⟧ = λp. {w : EPIS(p)(w) in w} = λp. {w : there is an e ∈ E
-suitable for p in w and e holds for p in w}
-
-Simplified: at the world level, epistemic embedding preserves truth.
-The epistemic contribution is in the *use-conditional* dimension,
-mediated by the E modifier. -/
-def epis {W : Type*} (p : W → Bool) : W → Bool := p
-
-/-- The E operator: epistemic modifier on UCIs ([gutzmann-2015], (5.91)).
-
-E = λDλp. D(EPIS(p))
-
-This is a use-conditional modifier of type
-`⟨⟨⟨s,t⟩,u⟩, ⟨⟨s,t⟩,u⟩⟩`. It takes a UCI (like DEONT) that maps
-propositions to use-conditional propositions, and pre-composes it
-with EPIS. The result is that DEONT applies to the epistemically
-embedded proposition rather than the raw propositional content. -/
-def episModifier {W : Type*}
-    (d : (W → Bool) → MoodContext W → Bool) :
-    (W → Bool) → MoodContext W → Bool :=
-  λ p c => d (epis p) c
-
-/-- Hearer knowledge operator ([gutzmann-2015], (5.99)).
-
-⟦HKNOW⟧ = λp. {c : c_A knows whether p in c_W}
-
-A functional expletive UCI that adds a "free-floating" use condition:
-the addressee knows the answer to the question. Present only in
-V2-interrogatives (triggered by [−wh] in C⁰), absent from
-VL-interrogatives — accounting for the Cuban cigar scenario. -/
-def hknow {W : Type*} (p : W → Bool) (c : MoodContext W) : Bool :=
-  c.addresseeKnows (p c.world)
-
-/-! ### Mood Operator Inventory -/
-
-/-- Which sentence mood operators are present in a clause type
-([gutzmann-2015], Table 5.1).
-
-Language-agnostic predicate over a (possibly language-specific) clause
-type, recording which of DEONT, EPIS, and HKNOW the clause composes.
-Used by per-language clause-type fragments to declare their mood
-inventories (e.g., `German.ClauseTypes.GermanClauseType.moodStructure`). -/
-structure MoodStructure where
-  hasDeontic : Bool
-  hasEpistemic : Bool
-  hasHearerKnowledge : Bool
-  deriving DecidableEq, Repr
-
-/-! ### Operator-level theorems -/
-
-/-- Epistemic embedding preserves truth at the world level. The
-epistemic contribution is purely use-conditional, not truth-conditional. -/
-theorem epis_preserves_truth {W : Type*} (p : W → Bool) (w : W) :
-    epis p w = p w := rfl
-
-/-! ## The German clause-type mood compositions -/
-
-/-! ### German clause-type mood compositions -/
-
-/-- dass-VL clause mood: DEONT only ([gutzmann-2015], (5.82)).
-
-No [±wh] visible at LF (dass is semantically empty, so [−wh] is
-invisible per the visibility condition (5.41)). Therefore no epistemic
-interpretation is triggered. The root rule introduces DEONT.
-
-"Dass du nicht zu spät kommst!" = The speaker wants [you not arrive late]. -/
-def dassVLMood {W : Type*} (p : W → Bool) (c : MoodContext W) : Bool :=
-  deont p c
-
-/-- V2-declarative mood: DEONT(EPIS(p)) ([gutzmann-2015], (5.93)–(5.96)).
-
-The finite verb moves to C⁰ (V-to-C triggered by [−wh] attached to an
-overt element at PF). The [−wh] is visible at LF, triggering epistemic
-interpretation. The root rule adds DEONT, and E modifies it to embed
-the epistemic predicate.
-
-"Jim wohnt in Berlin." = The speaker wants the hearer to believe
-[Jim lives in Berlin]. -/
-def v2DeclMood {W : Type*} (p : W → Bool) (c : MoodContext W) : Bool :=
-  episModifier deont p c
-
-/-- V2-interrogative mood: DEONT(EPIS(p)) ⊙ HKNOW(p)
-([gutzmann-2015], (5.100)).
-
-V2-interrogatives have two [±wh] specifications: [+wh] in CP^spec
-and [−wh] in C⁰ (Brandt et al. 1992). The first triggers epistemic
-interpretation, the second (in C⁰) triggers an additional epistemic
-interpretation resolved to hearer knowledge. HKNOW is a separate
-functional expletive UCI whose u-content is conjoined (⊙) with the
-deontic/epistemic mood.
-
-"Kommt Peter?" = The speaker wants to know [whether Peter comes]
-AND the addressee knows [whether Peter comes]. -/
-def v2InterrogMood {W : Type*} (p : W → Bool) (c : MoodContext W) : Bool :=
-  episModifier deont p c && hknow p c
-
-/-- VL-interrogative mood: DEONT(EPIS(p)) only — no HKNOW
-([gutzmann-2015], p. 213).
-
-VL-interrogatives (e.g., "Wann Peter nach Hause kommt?") lack the
-[−wh] in C⁰ that triggers HKNOW. Therefore they are felicitous even
-when the hearer does not know the answer (the Cuban cigar scenario). -/
-def vlInterrogMood {W : Type*} (p : W → Bool) (c : MoodContext W) : Bool :=
-  episModifier deont p c
-
-/-! ### Mood-operator theorems for the German clause-type compositions -/
-
-/-- dass-VL clauses have no epistemic component. -/
-theorem dassVL_is_pure_deontic {W : Type*}
-    (p : W → Bool) (c : MoodContext W) :
-    dassVLMood p c = deont p c := rfl
-
-/-- V2-interrogatives differ from VL-interrogatives only in the
-HKNOW component (hearer knowledge use condition). -/
-theorem v2_vs_vl_interrog {W : Type*}
-    (p : W → Bool) (c : MoodContext W) :
-    v2InterrogMood p c = (vlInterrogMood p c && hknow p c) := rfl
-
-/-! ### Mood structures of the German clause types -/
-
-/-- The mood structure of each German clause type, derived from
-the theory of [±wh] visibility and the root rule. -/
-def _root_.German.ClauseTypes.GermanClauseType.moodStructure :
-    GermanClauseType → MoodStructure
-  | .dassVL          => ⟨true, false, false⟩
-  | .v2Declarative   => ⟨true, true, false⟩
-  | .v2Interrogative => ⟨true, true, true⟩
-  | .vlInterrogative => ⟨true, true, false⟩
-  | .imperative      => ⟨true, false, false⟩
-
-/-- Every matrix clause has a deontic operator (the root rule). -/
-theorem every_clause_has_deont (ct : GermanClauseType) :
-    ct.moodStructure.hasDeontic = true := by
+/-- (5.83a) and (5.94): the truth conditions of every clause type are its content. -/
+theorem mood_t (ct : GermanClauseType) : (ct.mood M p).eval.t = p := by
   cases ct <;> rfl
 
-/-- Imperatives lack EPIS — the structural basis for selectional
-restrictions on UC-modifiers like *wohl*. -/
-theorem imperative_lacks_epis :
-    GermanClauseType.imperative.moodStructure.hasEpistemic = false := rfl
+/-- (5.83b): a root dass-clause or imperative is felicitous when the speaker holds a suitable
+deontic attitude toward its content. -/
+theorem deonticOnly_u : (deonticOnly M p).eval.u c ↔ deont M p c := by
+  simp [deonticOnly, Deriv.eval, Expr.app, Expr.elim, Expr.ofModifier, Expr.ofTC, prop]
 
-/-- dass-VL and imperatives share mood structure: deontic only. -/
-theorem dassVL_matches_imperative :
-    GermanClauseType.dassVL.moodStructure =
-    GermanClauseType.imperative.moodStructure := rfl
+/-- (5.95) and (5.96): a v2-declarative or vl-interrogative is felicitous when the speaker holds
+a deontic attitude toward the epistemically embedded content. -/
+theorem deonticEpistemic_u : (deonticEpistemic M p).eval.u c ↔ deont M (epis M p) c := by
+  simp [deonticEpistemic, Deriv.eval, Expr.app, Expr.elim, Expr.ofModifier, Expr.ofTC, prop, E]
 
-/-- V2-interrogatives differ from VL-interrogatives only in HKNOW. -/
-theorem v2_vl_differ_only_in_hknow :
-    GermanClauseType.v2Interrogative.moodStructure.hasDeontic =
-      GermanClauseType.vlInterrogative.moodStructure.hasDeontic ∧
-    GermanClauseType.v2Interrogative.moodStructure.hasEpistemic =
-      GermanClauseType.vlInterrogative.moodStructure.hasEpistemic ∧
-    GermanClauseType.v2Interrogative.moodStructure.hasHearerKnowledge = true ∧
-    GermanClauseType.vlInterrogative.moodStructure.hasHearerKnowledge = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
+/-- (5.100): a v2-interrogative adds that the addressee knows whether the content holds. -/
+theorem v2InterrogativeMood_u :
+    (v2InterrogativeMood M p).eval.u c ↔ M.knowsWhether c p ∧ deont M (epis M p) c := by
+  simp [v2InterrogativeMood, Deriv.eval, Expr.app, Expr.elim, Expr.ofModifier, Expr.ofTC, prop,
+    E, hknow]
 
-/-- HKNOW holds of exactly the V2-interrogative — the matrix question.
-The HKNOW use condition tracks matrix interrogativity
-([gutzmann-2015], p. 213, Cuban cigar argument). -/
-theorem hknow_iff_v2_interrogative (ct : GermanClauseType) :
-    ct.moodStructure.hasHearerKnowledge = true ↔ ct = .v2Interrogative := by
-  cases ct <;> decide
+/-- (5.43), the root rule: the use conditions of every clause type include a deontic attitude
+of the speaker. -/
+theorem exists_deont_of_mood_u (ct : GermanClauseType) (h : (ct.mood M p).eval.u c) :
+    ∃ q, deont M q c := by
+  cases ct
+  · exact ⟨p, deonticOnly_u.1 h⟩
+  · exact ⟨_, deonticEpistemic_u.1 h⟩
+  · exact ⟨_, (v2InterrogativeMood_u.1 h).2⟩
+  · exact ⟨_, deonticEpistemic_u.1 h⟩
+  · exact ⟨p, deonticOnly_u.1 h⟩
 
-/-- dass-VL and V2-declaratives are distinguished only at the
-mood-structure level. -/
-theorem dassVL_v2Decl_differ_in_mood :
-    GermanClauseType.dassVL.moodStructure ≠
-      GermanClauseType.v2Declarative.moodStructure := by decide
+/-- (5.36), the Cuban cigar scenario: a v2-interrogative is felicitous exactly when the
+vl-interrogative with the same content is and the addressee knows the answer. -/
+theorem v2Interrogative_mood_u_iff :
+    (GermanClauseType.v2Interrogative.mood M p).eval.u c ↔
+      (GermanClauseType.vlInterrogative.mood M p).eval.u c ∧ M.knowsWhether c p := by
+  simp only [GermanClauseType.mood, v2InterrogativeMood_u, deonticEpistemic_u]
+  exact and_comm
 
-/-! ## Mood-structure predictions -/
+/-! ### Modal particles, chapter 6 -/
 
-/-- The Cuban cigar argument: V2- and VL-interrogatives differ ONLY in
-the hearer knowledge condition. This explains why VL-interrogatives
-are felicitous even when the hearer clearly does not know the answer
-(the Cuban cigar scenario), while V2-interrogatives are not. -/
-theorem cuban_cigar :
-    GermanClauseType.v2Interrogative.moodStructure.hasHearerKnowledge = true ∧
-    GermanClauseType.vlInterrogative.moodStructure.hasHearerKnowledge = false :=
-  ⟨rfl, rfl⟩
+variable (M)
 
-/-- Imperatives share dass-VL mood structure (deontic only):
-both lack [±wh] at LF, so neither triggers epistemic interpretation. -/
-theorem imperative_matches_dassVL :
-    GermanClauseType.imperative.moodStructure =
-    GermanClauseType.dassVL.moodStructure := rfl
+/-- (6.122): *ja* flags its content as common knowledge or verifiable on the spot. -/
+def jaEntry : Denote W C (func .t .u) := λ p c => M.commonKnowledge c p
 
-/-- dass-VL clauses have no epistemic component. -/
-theorem dassVL_no_epis :
-    GermanClauseType.dassVL.moodStructure.hasEpistemic = false := rfl
+/-- (6.103) and (6.110): *wohl* modifies the epistemic operator, embedding the content under
+the speaker's or hearer's assumption. -/
+def wohlEntry : Denote W C (modifier (func .t .u) 2) := λ E D p => E D (M.assume p)
 
-/-- V2-declaratives have epistemic but not hearer knowledge. -/
-theorem v2Decl_epis_no_hknow :
-    GermanClauseType.v2Declarative.moodStructure.hasEpistemic = true ∧
-    GermanClauseType.v2Declarative.moodStructure.hasHearerKnowledge = false :=
-  ⟨rfl, rfl⟩
+/-- (6.131) and (6.133): *denn* modifies the hearer knowledge operator, adding that some
+common ground proposition is known to be the speaker's reason for asking. -/
+def dennEntry : Denote W C (modifier (func .t .u) 1) :=
+  λ H p c => H p c ∧ ∃ q ∈ M.commonGround c, H (M.reasonToAsk q p) c
 
-/-! ## Modal particle–mood interaction -/
+/-- (6.123): a declarative with *ja*, whose independent contribution is merged with the
+mood. -/
+def jaDeclarative (p : W → Prop) : Deriv W C .t .t :=
+  .elim (.app (.app (.lex (Expr.ofModifier 1 (E M))) (.lex (Expr.ofModifier 0 (deont M))))
+    (.elim (.app (.lex (Expr.ofModifier 0 (jaEntry M))) (prop p))))
 
-/-- Gutzmann's L_TU classification (§6.5): *ja/denn/halt/doch* are
-functional-expletive UCIs of type `⟨⟨s,t⟩, u⟩`, restricted via
-use-conditional conflict. (Formerly fragment fields; the typing is this
-book's analysis.) -/
-def uciParticles : List Particle := [ja, denn, halt, doch]
+/-- (6.128): a v2-interrogative with *ja*. -/
+def jaInterrogative (p : W → Prop) : Deriv W C .t .t :=
+  .elim (.app (.app (.lex (Expr.ofModifier 1 (E M))) (.lex (Expr.ofModifier 0 (deont M))))
+    (.elim (.app (.lex (Expr.ofModifier 0 (hknow M)))
+      (.elim (.app (.lex (Expr.ofModifier 0 (jaEntry M))) (prop p))))))
 
-/-- *wohl* is Gutzmann's sole UC-modifier among the common MPs: type
-`⟨⟨⟨s,t⟩,u⟩, ⟨⟨s,t⟩,u⟩⟩`, modifying EPIS, restricted selectionally. -/
-def ucModifiers : List Particle := [wohl]
+/-- (6.111) to (6.113): a declarative with *wohl*, which takes the epistemic modifier, then the
+deontic operator, then the content. -/
+def wohlDeclarative (p : W → Prop) : Deriv W C .t .t :=
+  .elim (.app (.app (.app (.lex (Expr.ofModifier 2 (wohlEntry M))) (.lex (Expr.ofModifier 1 (E M))))
+    (.lex (Expr.ofModifier 0 (deont M)))) (prop p))
 
-/-- Restriction kind per Gutzmann: UCIs restrict via use-conditional
-conflict, UC-modifiers selectionally (imperatives lack EPIS — a type
-mismatch, not a pragmatic conflict). -/
-def restrictionKind (p : Particle) : RestrictionKind :=
-  if p ∈ ucModifiers then .selectional else .ucConflict
+/-- (6.135): a v2-interrogative with *denn* modifying hearer knowledge. -/
+def dennInterrogative (p : W → Prop) : Deriv W C .t .t :=
+  .elim (.app (.app (.lex (Expr.ofModifier 1 (E M))) (.lex (Expr.ofModifier 0 (deont M))))
+    (.elim (.app (.app (.lex (Expr.ofModifier 1 (dennEntry M)))
+      (.lex (Expr.ofModifier 0 (hknow M)))) (prop p))))
 
-/-- *wohl*'s licensing across German clause types is exactly the
-presence of EPIS in the clause type's mood structure — the formal
-content of the selectional restriction analysis. -/
-theorem wohl_iff_epis (ct : GermanClauseType) :
-    licensedInClause wohl ct = ct.moodStructure.hasEpistemic := by
-  cases ct <;> rfl
+/-- (6.140): in an imperative *denn* can only modify the deontic operator. -/
+def dennImperative (p : W → Prop) : Deriv W C .t .t :=
+  .elim (.app (.app (.lex (Expr.ofModifier 1 (dennEntry M))) (.lex (Expr.ofModifier 0 (deont M))))
+    (prop p))
 
-/-- *ja* is restricted to declaratives, matching the clause type with
-deontic + epistemic mood but without the hearer knowledge condition. -/
-theorem ja_declarative_restriction :
-    ja.LicensedIn .declarative ∧ ¬ ja.LicensedIn .polar := by decide
+variable {M}
 
-/-- *denn* is the interrogative counterpart of *ja*. -/
-theorem denn_interrogative_restriction :
-    ¬ denn.LicensedIn .declarative ∧ denn.LicensedIn .polar := by decide
+/-- (6.125) to (6.127): a *ja*-declarative is felicitous when the speaker wants the hearer to
+know its content and believes it common knowledge or verifiable. -/
+theorem jaDeclarative_u :
+    (jaDeclarative M p).eval.u c ↔ M.commonKnowledge c p ∧ deont M (epis M p) c := by
+  simp [jaDeclarative, Deriv.eval, Expr.app, Expr.elim, Expr.ofModifier, Expr.ofTC, prop, E,
+    jaEntry]
 
-/-- *ja* and *denn* partition clause types: they are never both
-licensed in the same clause type. -/
-theorem ja_denn_partition (ct : GermanClauseType) :
-    ¬(licensedInClause ja ct = true ∧ licensedInClause denn ct = true) :=
-  ja_denn_complementary ct
+/-- (6.129): a *ja*-interrogative would require the speaker to want to know whether its content
+holds, the hearer to know, and the speaker to believe it common knowledge, which the book
+argues no reasonable speaker does. -/
+theorem jaInterrogative_u :
+    (jaInterrogative M p).eval.u c ↔
+      (M.commonKnowledge c p ∧ M.knowsWhether c p) ∧ deont M (epis M p) c := by
+  simp [jaInterrogative, Deriv.eval, Expr.app, Expr.elim, Expr.ofModifier, Expr.ofTC, prop, E,
+    jaEntry, hknow]
+
+/-- (6.114) and (6.116): a *wohl*-declarative is true when its content is, and felicitous under
+a deontic attitude toward the epistemically embedded assumption of the content. -/
+theorem wohlDeclarative_u :
+    (wohlDeclarative M p).eval.t = p ∧
+      ((wohlDeclarative M p).eval.u c ↔ deont M (epis M (M.assume p)) c) :=
+  ⟨rfl, by simp [wohlDeclarative, Deriv.eval, Expr.app, Expr.elim, Expr.ofModifier, Expr.ofTC,
+    prop, E, wohlEntry]⟩
+
+/-- (6.136) and (6.137): a *denn*-interrogative adds that some common ground proposition is
+known by the hearer to be the reason for asking. -/
+theorem dennInterrogative_u :
+    (dennInterrogative M p).eval.u c ↔
+      (M.knowsWhether c p ∧ ∃ q ∈ M.commonGround c, M.knowsWhether c (M.reasonToAsk q p)) ∧
+        deont M (epis M p) c := by
+  simp [dennInterrogative, Deriv.eval, Expr.app, Expr.elim, Expr.ofModifier, Expr.ofTC, prop,
+    E, dennEntry, hknow]
+
+/-- (6.142): a *denn*-imperative would require the speaker to want some proposition to be the
+reason for asking whether its content holds. -/
+theorem dennImperative_u :
+    (dennImperative M p).eval.u c ↔
+      deont M p c ∧ ∃ q ∈ M.commonGround c, deont M (M.reasonToAsk q p) c := by
+  simp [dennImperative, Deriv.eval, Expr.app, Expr.elim, Expr.ofModifier, Expr.ofTC, prop,
+    dennEntry]
+
+/-! ### Selectional restrictions due to types, section 6.5.1 -/
+
+/-- The active-dimension types derivable from a lexicon by multidimensional application and
+use-conditional elimination, which returns a completed use-conditional proposition to the
+propositional type. -/
+inductive Derivable (L : Set UCType) : UCType → Prop
+  | lex {σ : UCType} : σ ∈ L → Derivable L σ
+  | app {σ τ : UCType} : Derivable L (func σ τ) → Derivable L σ → Derivable L τ
+  | elim : Derivable L .u → Derivable L .t
+
+/-- The active-dimension types of a clause type's mood items: the deontic operator, and the
+epistemic modifier where a [±wh] feature is visible at LF; hearer knowledge has the deontic
+operator's type. -/
+def _root_.German.ClauseTypes.GermanClauseType.moodTypes : GermanClauseType → Set UCType
+  | .dassVL | .imperative => {func .t .u}
+  | .v2Declarative | .vlInterrogative | .v2Interrogative => {func .t .u, modifier (func .t .u) 1}
+
+private theorem derivable_deonticOnly_subset {σ : UCType}
+    (h : Derivable ({func .t .u} ∪ {modifier (func .t .u) 2, .t}) σ) :
+    σ ∈ ({.t, .u, func .t .u, modifier (func .t .u) 2} : Set UCType) := by
+  induction h with
+  | lex hσ =>
+    simp only [Set.singleton_union, Set.mem_insert_iff, Set.mem_singleton_iff] at hσ ⊢
+    rcases hσ with rfl | rfl | rfl <;> simp
+  | app _ _ ihf iha =>
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff, modifier_succ, modifier_zero] at ihf iha ⊢
+    rcases ihf with h | h | h | h
+    · exact absurd h (by simp)
+    · exact absurd h (by simp)
+    · obtain ⟨rfl, rfl⟩ := UCType.func.inj h
+      simp
+    · obtain ⟨rfl, rfl⟩ := UCType.func.inj h
+      simp at iha
+  | elim _ _ => simp
+
+/-- (6.108): no derivation over the lexicon of a dass-clause or imperative with *wohl* and a
+proposition reaches the epistemic modifier's type, so *wohl* has nothing to take. -/
+theorem not_derivable_deonticOnly :
+    ¬ Derivable ({func .t .u} ∪ {modifier (func .t .u) 2, .t}) (modifier (func .t .u) 1) :=
+  λ h => by simpa using derivable_deonticOnly_subset h
+
+/-- Section 6.5.1 against Table 6.1: *wohl* is licensed in a clause type exactly when the
+epistemic modifier's type is derivable from that clause's mood items together with *wohl* and a
+proposition. -/
+theorem wohl_licensed_iff (ct : GermanClauseType) :
+    licensedInClause wohl ct = true ↔
+      Derivable (ct.moodTypes ∪ {modifier (func .t .u) 2, .t}) (modifier (func .t .u) 1) := by
+  have hpos (L : Set UCType) (h₂ : modifier (func .t .u) 2 ∈ L) (h₁ : modifier (func .t .u) 1 ∈ L) :
+      Derivable L (modifier (func .t .u) 1) :=
+    .app (.lex h₂) (.lex h₁)
+  cases ct
+  · exact ⟨λ h => absurd h Bool.false_ne_true, λ h => (not_derivable_deonticOnly h).elim⟩
+  · exact ⟨λ _ => hpos _ (by simp) (by simp [GermanClauseType.moodTypes]), λ _ => by decide⟩
+  · exact ⟨λ _ => hpos _ (by simp) (by simp [GermanClauseType.moodTypes]), λ _ => by decide⟩
+  · exact ⟨λ _ => hpos _ (by simp) (by simp [GermanClauseType.moodTypes]), λ _ => by decide⟩
+  · exact ⟨λ h => absurd h Bool.false_ne_true, λ h => (not_derivable_deonticOnly h).elim⟩
 
 end Gutzmann2015

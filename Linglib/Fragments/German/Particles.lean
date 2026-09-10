@@ -61,7 +61,7 @@ def denn : Particle where
 
 /-- *wohl* — epistemic hedging particle: declaratives and interrogatives
 (which involve EPIS), never imperatives (which lack it); see
-`wohl_iff_epis` and the selectional analysis in `Gutzmann2015`. -/
+`wohl_licensed_iff` and the selectional analysis in `Gutzmann2015`. -/
 def wohl : Particle where
   form := "wohl"
   position := some .clauseMedial
