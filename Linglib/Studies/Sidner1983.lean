@@ -257,13 +257,18 @@ def resolvePronounAt {E : Type*} (state : FocusState E) (pos : Position) :
 
 namespace D34
 
+/-- The individuals of the discourse. -/
+inductive Entity
+  | speaker | jeff | carl | linda | cape
+  deriving DecidableEq
+
 /-- (34a) "I haven't seen Jeff for several days." Speaker = subject
     (agent of "see"); Jeff = theme (object of "see"). -/
-def a : Sentence String :=
+def a : Sentence Entity :=
   { form := .normal
     phrases :=
-      [⟨"speaker", .agent, .agent, true⟩,
-       ⟨"Jeff", .theme, .nonAgent, false⟩] }
+      [⟨.speaker, .agent, .agent, true⟩,
+       ⟨.jeff, .theme, .nonAgent, false⟩] }
 
 /-- (34b) "Carl thinks he's studying for his exams." Carl is the
     matrix subject (agent of "think"); the sentence is normal (not
@@ -272,32 +277,32 @@ def a : Sentence String :=
     "think" (the propositional theme), so Jeff (the entity "he"
     co-specifies, carried over from (34a)) becomes the new discourse
     focus. -/
-def b : Sentence String :=
+def b : Sentence Entity :=
   { form := .normal
     phrases :=
-      [⟨"Carl", .agent, .agent, false⟩,
-       ⟨"Jeff", .theme, .nonAgent, true⟩] }
+      [⟨.carl, .agent, .agent, false⟩,
+       ⟨.jeff, .theme, .nonAgent, true⟩] }
 
 /-- The state of Sidner's focusing model after (34a) and (34b),
     starting from the empty state. -/
-def stateAfterB : FocusState String :=
+def stateAfterB : FocusState Entity :=
   updateState (updateState FocusState.empty a) b
 
 /-- After (34b), the discourse focus is Jeff (the theme of "Carl
     thinks ___"; Jeff was already in focus from 34a and is reaffirmed
     by the embedded "he"). The actor focus is Carl (matrix agent).
-    This matches GJW's gloss in §9 p. 222. -/
+    This matches GJW's gloss in §9. -/
 theorem state_after_b :
-    stateAfterB = ⟨some "Jeff", some "Carl"⟩ := by decide
+    stateAfterB = ⟨some .jeff, some .carl⟩ := by decide
 
 /-- **Sidner's prediction** for "he" in (34c). The pronoun is in
     agent (subject) position, so by §5.2.6 step 3 it co-specifies the
-    actor focus. Returns `Option String`: `none` would mean the focus
-    state has no actor focus to resolve to. -/
-def sidnerPredictedHe : Option String :=
+    actor focus. `none` would mean the focus state has no actor focus
+    to resolve to. -/
+def sidnerPredictedHe : Option Entity :=
   resolvePronounAt stateAfterB .agent
 
-theorem sidner_predicts_carl : sidnerPredictedHe = some "Carl" := by decide
+theorem sidner_predicts_carl : sidnerPredictedHe = some .carl := by decide
 
 end D34
 
