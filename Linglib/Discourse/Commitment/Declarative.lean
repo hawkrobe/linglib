@@ -24,7 +24,10 @@ self-generated, the `Commitment.Source` coordinate.
 
 * `Commitment.commitmentSet_falling`, `Commitment.commitmentSet_rising` — each intonation
   narrows exactly one commitment set.
-* `Commitment.isBiased_falling` — a falling declarative biases the context toward its content.
+* `Commitment.isBiased_falling`, `Commitment.isBiased_rising` — a declarative in a neutral,
+  unresolved context biases it toward its content.
+* `Commitment.IsResolved.isNeutral` — a resolved context is neutral under (68), since (66) makes
+  a resolved proposition controversial for no one.
 
 ## References
 
@@ -95,5 +98,73 @@ theorem commitmentSet_rising :
     rfl
   · rw [commitmentSet, rising, ofCommitter_insert_of_ne K .speaker _ (by simp)]
     rfl
+
+/-! ### Statuses -/
+
+variable {K p}
+
+@[simp] theorem isResolved_compl : IsResolved K pᶜ ↔ IsResolved K p := by
+  simp [IsResolved, or_comm]
+
+/-- A resolved proposition is controversial for no one, so a resolved context is neutral. -/
+theorem IsResolved.isNeutral (h : IsResolved K p) : IsNeutral K p :=
+  ⟨λ hc => hc.2.1 h, λ hc => hc.2.1 (isResolved_compl.2 h)⟩
+
+theorem IsNeutral.not_isBiased (h : IsNeutral K p) : ¬ IsBiased K p := λ hb => h.2 hb.1
+
+/-- In a neutral, unresolved, nonempty context no participant is committed either way. -/
+theorem IsNeutral.not_subset (h : IsNeutral K p) (hu : ¬ IsResolved K p)
+    (hne : ∀ x, (commitmentSet K x).Nonempty) (x : Discourse.Role) :
+    ¬ commitmentSet K x ⊆ p ∧ ¬ commitmentSet K x ⊆ pᶜ :=
+  ⟨λ hx => h.2 ⟨⟨x, hne x, by simpa using hx⟩, by simpa using hu, hne⟩,
+    λ hx => h.1 ⟨⟨x, hne x, hx⟩, hu, hne⟩⟩
+
+/-- Narrowing one participant's commitment set to `p` in a neutral, unresolved, nonempty context
+biases it toward `p`. -/
+theorem isBiased_of_commitmentSet_eq {K' : State Discourse.Role W} {y : Discourse.Role}
+    (h : IsNeutral K p) (hu : ¬ IsResolved K p) (hne : ∀ x, (commitmentSet K x).Nonempty)
+    (hy : commitmentSet K' y = p ∩ commitmentSet K y)
+    (hx : ∀ x, x ≠ y → commitmentSet K' x = commitmentSet K x) : IsBiased K' p := by
+  have hyp : (commitmentSet K' y).Nonempty := by
+    obtain ⟨w, hw, hwp⟩ := Set.not_subset.1 (h.not_subset hu hne y).2
+    exact ⟨w, by rw [hy]; exact ⟨by simpa using hwp, hw⟩⟩
+  have hne' : ∀ x, (commitmentSet K' x).Nonempty := λ x => by
+    by_cases hxy : x = y
+    · subst hxy; exact hyp
+    · rw [hx x hxy]; exact hne x
+  have hsub : commitmentSet K' y ⊆ p := by rw [hy]; exact Set.inter_subset_left
+  have hnot : ∀ x, ¬ commitmentSet K' x ⊆ pᶜ := λ x hxp => by
+    by_cases hxy : x = y
+    · subst hxy
+      obtain ⟨w, hw⟩ := hyp
+      exact hxp hw (hsub hw)
+    · exact (h.not_subset hu hne x).2 (by rwa [hx x hxy] at hxp)
+  refine ⟨⟨⟨y, hyp, by simpa using hsub⟩, ?_, hne'⟩, λ hc => hc.1.elim λ x hx' => hnot x hx'.2⟩
+  rw [isResolved_compl]
+  rintro (hj | hj)
+  · obtain ⟨z, hz⟩ : ∃ z, z ≠ y := by
+      rcases y with _ | _
+      · exact ⟨.addressee, by decide⟩
+      · exact ⟨.speaker, by decide⟩
+    exact (h.not_subset hu hne z).1 (by rw [← hx z hz]; exact (hj z).2)
+  · exact hnot y (hj y).2
+
+/-- A falling declarative in a neutral, unresolved, nonempty context biases it toward its
+content. -/
+theorem isBiased_falling (h : IsNeutral K p) (hu : ¬ IsResolved K p)
+    (hne : ∀ x, (commitmentSet K x).Nonempty) : IsBiased (falling K p) p :=
+  isBiased_of_commitmentSet_eq h hu hne (commitmentSet_falling K p).1 λ x hx =>
+    match x, hx with
+    | .speaker, hx => absurd rfl hx
+    | .addressee, _ => (commitmentSet_falling K p).2
+
+/-- A rising declarative in a neutral, unresolved, nonempty context biases it toward its
+content. -/
+theorem isBiased_rising (h : IsNeutral K p) (hu : ¬ IsResolved K p)
+    (hne : ∀ x, (commitmentSet K x).Nonempty) : IsBiased (rising K p) p :=
+  isBiased_of_commitmentSet_eq h hu hne (commitmentSet_rising K p).1 λ x hx =>
+    match x, hx with
+    | .addressee, hx => absurd rfl hx
+    | .speaker, _ => (commitmentSet_rising K p).2
 
 end Commitment
