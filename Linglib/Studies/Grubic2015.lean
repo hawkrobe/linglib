@@ -5,161 +5,126 @@ Authors: Robert Hawkins
 -/
 import Linglib.Semantics.Focus.Control
 import Linglib.Pragmatics.Expressives.Basic
+import Linglib.Data.Examples.Grubic2015
+import Mathlib.Data.Set.Lattice
 
 /-!
-# Alternative-sensitive particles in Ngamo
+# Grubic (2015): Focus and Alternative Sensitivity in Ngamo
 
-Formalises [grubic-2015] Ch. 6–7: the Ngamo particles *yak('i)*
-'only', *ke('e)* 'also', and *har('i)* 'even' in a Beaver &
-Clark-style QUD account. *yak(p)* presupposes *at least p* and
-asserts *at most p* over entailment-ranked alternatives (the Coppock
-& Beaver decomposition); *ke(p)* presupposes a given alternative
-about a different topic situation; *har(p)* presupposes a contextual
-implication of *p* ranked high on a salient scale (kept as prose).
+This file formalizes the question-under-discussion analysis of the Ngamo alternative-sensitive
+particles in chapter 7 of [grubic-2015], "Focus and alternative sensitivity in Ngamo
+(West-Chadic)", against the data of chapter 6, rows of `Data.Examples.Grubic2015`. The
+exclusive *yak('i)* has the entry (2) of [coppock-beaver-2014]'s exclusives: it presupposes
+that some alternative at least as strong as the prejacent on a salient scale is true and asserts
+that no true alternative is stronger (`yak`). On an entailment scale, the complement-exclusion
+reading of section 6.1.1, the presupposition entails the prejacent, which therefore projects
+through negation as in (29) (`prejacent_projects`), and over the conjunctions of independent
+atomic answers, the lattice of (11), the total content is the prejacent with every other atom
+false, the exclusive inference of (166) (`total_yak`). The additive *ke('e)* has no
+truth-conditional content and presupposes a salient antecedent about a different topic
+situation, (45), one that need not be true, (46), and one that parallel background-marked
+antecedents, being anaphoric, cannot supply, (44) and (49) (`ke_undefined_of_anaphoric`). The
+scalar *har('i)* asserts its prejacent and presupposes that a contextual implication of it, in
+the sense of (18), ranks highest among its alternatives, (17) (`har`).
 
-`yak_eq_prejacent_inter_onlyVia` reconciles the scalar and identity
-formulations of exclusivity: over the conjunction-closure of the
-atomic alternatives, *yak*'s total content (presupposition plus
-assertion) coincides with the prejacent exhaustified by the
-strong-theory `onlyVia` over the atoms — the Kiss-style
-identificational meaning derived from the scalar decomposition.
+## Implementation notes
 
-Distribution (her (10)–(12)): *yak* cannot associate with preverbal
-subjects but is fine in any focus construction; *ke/har* associate
-with preverbal subjects but are marginal with `=i/ye`-marked focus
-under parallel backgrounds — data recorded in `distribution`.
+The scale is a relation `S q p` read as `q` at least as strong as `p`, the entailment scale
+being `(· ⊆ ·)`; the VP and NP variants (5) and (6), which reach the propositional entry by the
+Geach rule, are not repeated. Topic situations are abstracted to a map from answers to a type
+of situations, so that the non-overlap of (45) is distinctness. The association facts of
+section 6.2, on which *yak('i)* alone associates with focus conventionally, are data rows and
+not theorems.
+
+## References
+
+* [grubic-2015]
+* [coppock-beaver-2014]
+* [beaver-clark-2008]
 -/
 
 namespace Grubic2015
 
-open Pragmatics.Expressives (TwoDimProp)
-open Focus (onlyVia)
+open Pragmatics.Expressives Focus
 
-variable {W : Type*}
+variable {W T : Type*} (S : Set W → Set W → Prop) (C : Set (Set W)) (p : Set W)
 
-/-! ## The Coppock & Beaver decomposition (Ch. 7) -/
+/-! ### The exclusive *yak('i)*, section 7.1 -/
 
-/-- *At least p*: some alternative at least as strong as the prejacent
-holds — *yak*'s presupposition. -/
-def atLeast (C : Set (Set W)) (p : Set W) : Set W :=
-  {w | ∃ q ∈ C, q ⊆ p ∧ w ∈ q}
+/-- (2i): some alternative at least as strong as the prejacent is true, the presupposition of
+*yak('i)*. -/
+def atLeast : Set W := {w | ∃ q ∈ C, w ∈ q ∧ S q p}
 
-/-- *At most p*: no alternative strictly stronger than the prejacent
-holds — *yak*'s assertion. -/
-def atMost (C : Set (Set W)) (p : Set W) : Set W :=
-  {w | ∀ q ∈ C, w ∈ q → ¬ q ⊂ p}
+/-- (2ii): no true alternative is stronger than the prejacent, the assertion of *yak('i)*. -/
+def atMost : Set W := {w | ∀ q ∈ C, w ∈ q → S p q}
 
-/-- *yak('i)* 'only': presupposes at least `p`, asserts at most `p`
-(her Ch. 7, following Coppock & Beaver's *only*). -/
-def yak (C : Set (Set W)) (p : Set W) : TwoDimProp W :=
-  .withCI (· ∈ atMost C p) (· ∈ atLeast C p)
+/-- *yak('i)* 'only', the propositional entry (2). -/
+def yak : TwoDimProp W := .withCI (· ∈ atMost S C p) (· ∈ atLeast S C p)
 
-/-- *ke('e)* 'also': presupposes that a distinct alternative is given
-(her Ch. 7; the different-topic-situation refinement is prose). -/
-def ke (given : Set (Set W)) (p : Set W) : TwoDimProp W :=
-  .withCI (· ∈ p) (fun w => ∃ q ∈ given, q ≠ p ∧ w ∈ q)
-
-/-- The total content of a two-dimensional meaning: at-issue plus
-presupposed. -/
+/-- The total content of a two-dimensional meaning, at-issue and presupposed together. -/
 def total (m : TwoDimProp W) : Set W := {w | m.atIssue w ∧ m.ci w}
 
-/-! ## Reconciling the scalar and identity formulations
+/-- On an entailment scale the presupposition entails the prejacent. -/
+theorem atLeast_subset : atLeast (· ⊆ ·) C p ⊆ p := λ _ ⟨_, _, hw, hq⟩ => hq hw
 
-On the building scenario (her (10)–(11)): worlds track which of the
-house and the granary Kule built. -/
+/-- (29): negation leaves the presupposition in place, so *not only Dimza built a house* still
+has Dimza building a house; on a rank-order scale, where alternatives need not entail the
+prejacent, nothing of the kind follows. -/
+theorem prejacent_projects {w : W} (h : (yak (· ⊆ ·) C p).neg.ci w) : w ∈ p :=
+  atLeast_subset C p h
 
-/-- Who-built-what worlds. -/
-structure BuildWorld where
-  house   : Bool
-  granary : Bool
-  deriving DecidableEq, Repr
+/-- The answers of (11): the nonempty conjunctions of a set of atomic answers. -/
+def conjunctions (atoms : Set (Set W)) : Set (Set W) :=
+  {q | ∃ A ⊆ atoms, A.Nonempty ∧ q = ⋂₀ A}
 
-def builtHouse : Set BuildWorld := {w | w.house}
-def builtGranary : Set BuildWorld := {w | w.granary}
-def builtBoth : Set BuildWorld := builtHouse ∩ builtGranary
-
-/-- The atomic alternatives. -/
-def atoms : Set (Set BuildWorld) := {builtHouse, builtGranary}
-
-/-- The QUD's answer space: the atoms and their conjunction. -/
-def answers : Set (Set BuildWorld) := {builtHouse, builtGranary, builtBoth}
-
-private theorem builtGranary_ne_builtHouse : builtGranary ≠ builtHouse := by
-  intro h
-  have hmem : (⟨false, true⟩ : BuildWorld) ∈ builtGranary := rfl
-  rw [h] at hmem
-  exact absurd hmem Bool.false_ne_true
-
-private theorem builtBoth_ssubset : builtBoth ⊂ builtHouse := by
-  constructor
-  · exact Set.inter_subset_left
-  · intro h
-    have hmem : (⟨true, false⟩ : BuildWorld) ∈ builtBoth :=
-      h (show (⟨true, false⟩ : BuildWorld) ∈ builtHouse from rfl)
-    exact absurd hmem.2 Bool.false_ne_true
-
-/-- The scalar and identity formulations coincide: *yak*'s total
-content over the conjunction-closed answer space equals the prejacent
-exhaustified by `onlyVia` over the atoms — the Kiss-style
-identificational meaning ('built the house and nothing else') derived
-from the at-least/at-most decomposition. -/
-theorem yak_eq_prejacent_inter_onlyVia :
-    total (yak answers builtHouse) =
-      builtHouse ∩ onlyVia atoms builtHouse := by
+/-- (166) and (25): over the conjunctions of independent atomic answers, the total content of
+*yak('i)* on the entailment scale is the prejacent with no other atom true, the exclusive
+inference in the form of the library's `Focus.onlyVia`. -/
+theorem total_yak {atoms : Set (Set W)} (hp : p ∈ atoms) (hind : ∀ q ∈ atoms, p ⊆ q → q = p) :
+    total (yak (· ⊆ ·) (conjunctions atoms) p) = p ∩ onlyVia atoms p := by
   ext w
   constructor
-  · rintro ⟨hmost, q, hq, hsub, hwq⟩
-    have hp : w ∈ builtHouse := hsub hwq
-    refine ⟨hp, fun r hr hwr => ?_⟩
-    rcases hr with rfl | rfl
-    · rfl
-    · exact absurd builtBoth_ssubset
-        (hmost builtBoth (Or.inr (Or.inr rfl)) ⟨hp, hwr⟩)
-  · rintro ⟨hp, honly⟩
-    refine ⟨fun q hq hwq hlt => ?_, builtHouse, Or.inl rfl, subset_rfl, hp⟩
-    rcases hq with rfl | rfl | rfl
-    · exact absurd rfl hlt.ne
-    · exact absurd (honly builtGranary (Or.inr rfl) hwq)
-        builtGranary_ne_builtHouse
-    · exact absurd (honly builtGranary (Or.inr rfl) hwq.2)
-        builtGranary_ne_builtHouse
+  · rintro ⟨hmost, _, ⟨A, hA, -, rfl⟩, hw, hq⟩
+    refine ⟨hq hw, λ r hr hwr => hind r hr λ x hx => ?_⟩
+    exact (hmost (p ∩ r) ⟨{p, r}, by simp [Set.insert_subset_iff, hp, hr], by simp, by simp⟩
+      ⟨hq hw, hwr⟩ hx).2
+  · rintro ⟨hw, honly⟩
+    refine ⟨?_, p, ⟨{p}, by simpa, Set.singleton_nonempty p, (Set.sInter_singleton p).symm⟩, hw,
+      subset_rfl⟩
+    rintro q ⟨A, hA, -, rfl⟩ hwq x hx
+    refine Set.mem_sInter.mpr λ a ha => ?_
+    rw [honly a (hA ha) (Set.mem_sInter.mp hwq a ha)]
+    exact hx
 
-/-- *ke*'s additive presupposition needs a distinct given alternative:
-with only the prejacent given, the presupposition fails everywhere —
-the anaphoricity behind her (12) parallel-background facts. -/
-theorem ke_needs_distinct_antecedent :
-    ∀ w, ¬ (ke {builtHouse} builtHouse).ci w :=
-  fun _ ⟨_, hq, hne, _⟩ => hne hq
+/-! ### The additive *ke('e)*, section 7.3 -/
 
-/-! ## Distribution (her (10)–(12)) -/
+/-- *ke('e)* 'also', (45): no truth-conditional contribution, and the presupposition of a salient
+antecedent about a different topic situation, one that need not itself be true, (46). -/
+def ke (given : Set (Set W)) (topic : Set W → T) : TwoDimProp W :=
+  .withCI (· ∈ p) (λ _ => ∃ q ∈ given, topic q ≠ topic p)
 
-/-- The particles. -/
-inductive Particle where
-  | yak | ke | har
-  deriving DecidableEq, Repr
+/-- (44) and (49): when every salient antecedent is anaphoric to the host's topic situation, as
+parallel background-marked antecedents are by default, *ke('e)* is undefined. -/
+theorem ke_undefined_of_anaphoric {given : Set (Set W)} {topic : Set W → T}
+    (h : ∀ q ∈ given, topic q = topic p) (w : W) : ¬ (ke p given topic).ci w :=
+  λ ⟨q, hq, hne⟩ => hne (h q hq)
 
-/-- The association configurations tested. -/
-inductive Host where
-  | preverbalSubject
-  | bmMarkedFocus
-  | plainFocus
-  deriving DecidableEq, Repr
+/-! ### The scalar *har('i)*, section 7.2 -/
 
-/-- Her (10)–(11) acceptability table: *yak* cannot associate with
-preverbal subjects; *ke/har* are marginal with `=i/ye`-marked focus
-(under parallel backgrounds — the (12) exception is prose). -/
-def acceptable : Particle → Host → Bool
-  | .yak, .preverbalSubject => false
-  | .yak, _                 => true
-  | _,    .bmMarkedFocus    => false
-  | _,    _                 => true
+/-- A contextual implication, (18): entailed by the common ground updated with the prejacent
+but not by the common ground alone. -/
+def CImpl (CG q : Set W) : Prop := ¬ CG ⊆ q ∧ CG ∩ p ⊆ q
 
-/-- No particle-host uniformity: the two asymmetries cross-cut —
-association possibilities do not follow from the particle or the
-host alone. -/
-theorem association_crosscuts :
-    acceptable .yak .bmMarkedFocus ≠ acceptable .ke .bmMarkedFocus ∧
-    acceptable .yak .preverbalSubject ≠ acceptable .ke .preverbalSubject := by
-  decide
+/-- *har('i)* 'even', (17): asserts the prejacent and presupposes that some contextual
+implication of it ranks highest among its alternatives on the salient scale. -/
+def har (CG : Set W) (alt : Set W → Set (Set W)) : TwoDimProp W :=
+  .withCI (· ∈ p) (λ w => ∃ q, CImpl p CG q ∧ ∀ q' ∈ alt q, w ∈ q' → S q q')
+
+/-- At a world of the common ground where the prejacent holds, the implication *har('i)*
+presupposes holds as well, so the scale is anchored by a true alternative. -/
+theorem har_impl_holds {CG : Set W} {alt : Set W → Set (Set W)} {w : W} (hw : w ∈ CG)
+    (hp : w ∈ p) (h : (har S p CG alt).ci w) : ∃ q, CImpl p CG q ∧ w ∈ q :=
+  let ⟨q, hq, _⟩ := h
+  ⟨q, hq, hq.2 ⟨hw, hp⟩⟩
 
 end Grubic2015
