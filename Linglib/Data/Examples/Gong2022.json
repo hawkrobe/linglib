@@ -1,0 +1,1322 @@
+[
+  {
+    "id": "gong2022_18b",
+    "source": {
+      "bibkey": "gong-2022",
+      "paperLabel": "(18b)"
+    },
+    "language": "halh1238",
+    "primaryText": "Bagš [Čemeg-in nom-ig] tüün-d ög-sön.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Bagš",
+        "teacher.NOM"
+      ],
+      [
+        "Čemeg-in",
+        "Čemeg-GEN"
+      ],
+      [
+        "nom-ig",
+        "book-ACC"
+      ],
+      [
+        "tüün-d",
+        "3SG-DAT"
+      ],
+      [
+        "ög-sön",
+        "give-PST"
+      ]
+    ],
+    "translation": "(The) teacher gave Čemeg's book (to) her.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "kind",
+        "scrambling"
+      ],
+      [
+        "construction",
+        "SS"
+      ],
+      [
+        "binder",
+        "IO"
+      ],
+      [
+        "mover",
+        "DP"
+      ]
+    ],
+    "comment": "Short scrambling of the DO over the dative binder: no reconstruction."
+  },
+  {
+    "id": "gong2022_19b",
+    "source": {
+      "bibkey": "gong-2022",
+      "paperLabel": "(19b)"
+    },
+    "language": "halh1238",
+    "primaryText": "[Čemeg-in nom-ig] bagš tüün-d ög-sön.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Čemeg-in",
+        "Čemeg-GEN"
+      ],
+      [
+        "nom-ig",
+        "book-ACC"
+      ],
+      [
+        "bagš",
+        "teacher.NOM"
+      ],
+      [
+        "tüün-d",
+        "3SG-DAT"
+      ],
+      [
+        "ög-sön",
+        "give-PST"
+      ]
+    ],
+    "translation": "Čemeg's book, (the) teacher gave (to) her.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "kind",
+        "scrambling"
+      ],
+      [
+        "construction",
+        "IS"
+      ],
+      [
+        "binder",
+        "IO"
+      ],
+      [
+        "mover",
+        "DP"
+      ]
+    ],
+    "comment": "Intermediate scrambling over a dative binder: no reconstruction."
+  },
+  {
+    "id": "gong2022_20b",
+    "source": {
+      "bibkey": "gong-2022",
+      "paperLabel": "(20b)"
+    },
+    "language": "halh1238",
+    "primaryText": "[Čemeg-in nom-ig] ter ura-san.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Čemeg-in",
+        "Čemeg-GEN"
+      ],
+      [
+        "nom-ig",
+        "book-ACC"
+      ],
+      [
+        "ter",
+        "3SG.NOM"
+      ],
+      [
+        "ura-san",
+        "tear-PST"
+      ]
+    ],
+    "translation": "Čemeg's book, she tore.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "kind",
+        "scrambling"
+      ],
+      [
+        "construction",
+        "IS"
+      ],
+      [
+        "binder",
+        "subject"
+      ],
+      [
+        "mover",
+        "DP"
+      ]
+    ],
+    "comment": "Intermediate scrambling over a subject binder, transitive: obligatory reconstruction."
+  },
+  {
+    "id": "gong2022_21b",
+    "source": {
+      "bibkey": "gong-2022",
+      "paperLabel": "(21b)"
+    },
+    "language": "halh1238",
+    "primaryText": "[Čemeg-in nom-ig] ter Bat-ad ög-sön.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Čemeg-in",
+        "Čemeg-GEN"
+      ],
+      [
+        "nom-ig",
+        "book-ACC"
+      ],
+      [
+        "ter",
+        "3SG.NOM"
+      ],
+      [
+        "Bat-ad",
+        "Bat-DAT"
+      ],
+      [
+        "ög-sön",
+        "give-PST"
+      ]
+    ],
+    "translation": "Čemeg's book, she gave to Bat.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "kind",
+        "scrambling"
+      ],
+      [
+        "construction",
+        "IS"
+      ],
+      [
+        "binder",
+        "subject"
+      ],
+      [
+        "mover",
+        "DP"
+      ]
+    ],
+    "comment": "Intermediate scrambling over a subject binder, ditransitive."
+  },
+  {
+    "id": "gong2022_32b",
+    "source": {
+      "bibkey": "gong-2022",
+      "paperLabel": "(32b)"
+    },
+    "language": "halh1238",
+    "primaryText": "[Bat-in eej-iig] bi tüün-d [sain khün gej] khel-sen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Bat-in",
+        "Bat-GEN"
+      ],
+      [
+        "eej-iig",
+        "mother-ACC"
+      ],
+      [
+        "bi",
+        "1SG.NOM"
+      ],
+      [
+        "tüün-d",
+        "3SG-DAT"
+      ],
+      [
+        "sain",
+        "good"
+      ],
+      [
+        "khün",
+        "person"
+      ],
+      [
+        "gej",
+        "C"
+      ],
+      [
+        "khel-sen",
+        "say-PST"
+      ]
+    ],
+    "translation": "I said to him that Bat's mother is a good person.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "kind",
+        "scrambling"
+      ],
+      [
+        "construction",
+        "ACC-SUBJ"
+      ],
+      [
+        "binder",
+        "matrix DAT"
+      ],
+      [
+        "mover",
+        "DP"
+      ]
+    ],
+    "comment": "The accusative embedded subject scrambles over the matrix dative binder: no obligatory reconstruction."
+  },
+  {
+    "id": "gong2022_33",
+    "source": {
+      "bibkey": "gong-2022",
+      "paperLabel": "(33)"
+    },
+    "language": "halh1238",
+    "primaryText": "[Baatar-in zokhiol-iig] ter [maš sain gej] khel-sen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Baatar-in",
+        "Baatar-GEN"
+      ],
+      [
+        "zokhiol-iig",
+        "article-ACC"
+      ],
+      [
+        "ter",
+        "3SG.NOM"
+      ],
+      [
+        "maš",
+        "very"
+      ],
+      [
+        "sain",
+        "good"
+      ],
+      [
+        "gej",
+        "C"
+      ],
+      [
+        "khel-sen",
+        "say-PST"
+      ]
+    ],
+    "translation": "Baatar's article, he said was very good.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "kind",
+        "scrambling"
+      ],
+      [
+        "construction",
+        "ACC-SUBJ"
+      ],
+      [
+        "binder",
+        "matrix subject"
+      ],
+      [
+        "mover",
+        "DP"
+      ]
+    ],
+    "comment": "The accusative embedded subject scrambles over the matrix subject binder: obligatory reconstruction."
+  },
+  {
+    "id": "gong2022_40",
+    "source": {
+      "bibkey": "gong-2022",
+      "paperLabel": "(40)"
+    },
+    "language": "halh1238",
+    "primaryText": "[Bat-in esee-g] ter [bagš-iig unš-san gej] khel-sen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Bat-in",
+        "Bat-GEN"
+      ],
+      [
+        "esee-g",
+        "essay-ACC"
+      ],
+      [
+        "ter",
+        "3SG.NOM"
+      ],
+      [
+        "bagš-iig",
+        "teacher-ACC"
+      ],
+      [
+        "unš-san",
+        "read-PST"
+      ],
+      [
+        "gej",
+        "C"
+      ],
+      [
+        "khel-sen",
+        "say-PST"
+      ]
+    ],
+    "translation": "Bat's essay, he said that the teacher read.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "kind",
+        "scrambling"
+      ],
+      [
+        "construction",
+        "LDS"
+      ],
+      [
+        "binder",
+        "matrix subject"
+      ],
+      [
+        "mover",
+        "DP"
+      ]
+    ],
+    "comment": "Long-distance scrambling of the embedded object over the matrix subject binder."
+  },
+  {
+    "id": "gong2022_41",
+    "source": {
+      "bibkey": "gong-2022",
+      "paperLabel": "(41)"
+    },
+    "language": "halh1238",
+    "primaryText": "[Bat-in esee-g] Zaya tüün-d [bagš-iig unš-san gej] khel-sen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Bat-in",
+        "Bat-GEN"
+      ],
+      [
+        "esee-g",
+        "essay-ACC"
+      ],
+      [
+        "Zaya",
+        "Zaya.NOM"
+      ],
+      [
+        "tüün-d",
+        "3SG-DAT"
+      ],
+      [
+        "bagš-iig",
+        "teacher-ACC"
+      ],
+      [
+        "unš-san",
+        "read-PST"
+      ],
+      [
+        "gej",
+        "C"
+      ],
+      [
+        "khel-sen",
+        "say-PST"
+      ]
+    ],
+    "translation": "Bat's essay, Zaya said to him that the teacher read.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "kind",
+        "scrambling"
+      ],
+      [
+        "construction",
+        "LDS"
+      ],
+      [
+        "binder",
+        "matrix DAT"
+      ],
+      [
+        "mover",
+        "DP"
+      ]
+    ],
+    "comment": "Long-distance scrambling over the matrix dative binder: no obligatory reconstruction."
+  },
+  {
+    "id": "gong2022_58a",
+    "source": {
+      "bibkey": "gong-2022",
+      "paperLabel": "(58a)"
+    },
+    "language": "halh1238",
+    "primaryText": "Bi [Bat-in eej-iig] tüün-d [sain khün gej] khel-sen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Bi",
+        "1SG.NOM"
+      ],
+      [
+        "Bat-in",
+        "Bat-GEN"
+      ],
+      [
+        "eej-iig",
+        "mother-ACC"
+      ],
+      [
+        "tüün-d",
+        "3SG-DAT"
+      ],
+      [
+        "sain",
+        "good"
+      ],
+      [
+        "khün",
+        "person"
+      ],
+      [
+        "gej",
+        "C"
+      ],
+      [
+        "khel-sen",
+        "say-PST"
+      ]
+    ],
+    "translation": "I said to him that Bat's mother is a good person.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "kind",
+        "scrambling"
+      ],
+      [
+        "construction",
+        "ACC-SUBJ intermediate"
+      ],
+      [
+        "binder",
+        "matrix DAT"
+      ],
+      [
+        "mover",
+        "DP"
+      ]
+    ],
+    "comment": "The mover surfaces at the matrix intermediate landing site; degraded, but the coindexation is obtained."
+  },
+  {
+    "id": "gong2022_58b",
+    "source": {
+      "bibkey": "gong-2022",
+      "paperLabel": "(58b)"
+    },
+    "language": "halh1238",
+    "primaryText": "Zaya [Bat-in esee-g] tüün-d [bagš-iig-aa unš-san gej] khel-sen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Zaya",
+        "Zaya.NOM"
+      ],
+      [
+        "Bat-in",
+        "Bat-GEN"
+      ],
+      [
+        "esee-g",
+        "essay-ACC"
+      ],
+      [
+        "tüün-d",
+        "3SG-DAT"
+      ],
+      [
+        "bagš-iig-aa",
+        "teacher-ACC-REFL.POSS"
+      ],
+      [
+        "unš-san",
+        "read-PST"
+      ],
+      [
+        "gej",
+        "C"
+      ],
+      [
+        "khel-sen",
+        "say-PST"
+      ]
+    ],
+    "translation": "Zaya said to him that her teacher read Bat's essay.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "kind",
+        "scrambling"
+      ],
+      [
+        "construction",
+        "LDS intermediate"
+      ],
+      [
+        "binder",
+        "matrix DAT"
+      ],
+      [
+        "mover",
+        "DP"
+      ]
+    ],
+    "comment": "As (58a), for the embedded object."
+  },
+  {
+    "id": "gong2022_61",
+    "source": {
+      "bibkey": "gong-2022",
+      "paperLabel": "(61)"
+    },
+    "language": "halh1238",
+    "primaryText": "[Bat-in em-iig] emč [tüün-iig uu-gaagüi gej] uurla-san.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Bat-in",
+        "Bat-GEN"
+      ],
+      [
+        "em-iig",
+        "medicine-ACC"
+      ],
+      [
+        "emč",
+        "doctor.NOM"
+      ],
+      [
+        "tüün-iig",
+        "3SG-ACC"
+      ],
+      [
+        "uu-gaagüi",
+        "drink-PST.NEG"
+      ],
+      [
+        "gej",
+        "C"
+      ],
+      [
+        "uurla-san",
+        "become.angry-PST"
+      ]
+    ],
+    "translation": "Bat's medicine, the doctor became angry that he did not drink.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "kind",
+        "scrambling"
+      ],
+      [
+        "construction",
+        "LDS"
+      ],
+      [
+        "binder",
+        "embedded subject"
+      ],
+      [
+        "mover",
+        "DP"
+      ]
+    ],
+    "comment": "Long-distance scrambling over an embedded subject binder bleeds Condition C, against the Subject Binding Generalization."
+  },
+  {
+    "id": "gong2022_79",
+    "source": {
+      "bibkey": "gong-2022",
+      "paperLabel": "(79)"
+    },
+    "language": "halh1238",
+    "primaryText": "[Čemeg-in eej-id] ter nom ög-sön.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Čemeg-in",
+        "Čemeg-GEN"
+      ],
+      [
+        "eej-id",
+        "mother-DAT"
+      ],
+      [
+        "ter",
+        "3SG.NOM"
+      ],
+      [
+        "nom",
+        "book"
+      ],
+      [
+        "ög-sön",
+        "give-PST"
+      ]
+    ],
+    "translation": "(To) Čemeg's mother, she gave (a) book/books.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "kind",
+        "scrambling"
+      ],
+      [
+        "construction",
+        "IO"
+      ],
+      [
+        "binder",
+        "subject"
+      ],
+      [
+        "mover",
+        "DP-lexical"
+      ]
+    ],
+    "comment": "Scrambling the dative IO over the subject binder forces reconstruction."
+  },
+  {
+    "id": "gong2022_85b",
+    "source": {
+      "bibkey": "gong-2022",
+      "paperLabel": "(85b)"
+    },
+    "language": "halh1238",
+    "primaryText": "[Bat-in nom] bagš-aar tüün-d ögö-gd-sön.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Bat-in",
+        "Bat-GEN"
+      ],
+      [
+        "nom",
+        "book.NOM"
+      ],
+      [
+        "bagš-aar",
+        "teacher-INST"
+      ],
+      [
+        "tüün-d",
+        "3SG-DAT"
+      ],
+      [
+        "ögö-gd-sön",
+        "give-PASS-PST"
+      ]
+    ],
+    "translation": "Bat's book was given to him by the teacher.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "kind",
+        "scrambling"
+      ],
+      [
+        "construction",
+        "passive"
+      ],
+      [
+        "binder",
+        "IO"
+      ],
+      [
+        "mover",
+        "DP"
+      ]
+    ],
+    "comment": "Passivization feeds nominative from T and bleeds Condition C."
+  },
+  {
+    "id": "gong2022_86",
+    "source": {
+      "bibkey": "gong-2022",
+      "paperLabel": "(86)"
+    },
+    "language": "halh1238",
+    "primaryText": "[Zorig-iin emee-d] bi [tüün-iig tusal-dag bai-san gej] bodo-j bai-na.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Zorig-iin",
+        "Zorig-GEN"
+      ],
+      [
+        "emee-d",
+        "grandmother-DAT"
+      ],
+      [
+        "bi",
+        "1SG.NOM"
+      ],
+      [
+        "tüün-iig",
+        "3SG-ACC"
+      ],
+      [
+        "tusal-dag",
+        "help-HABIT"
+      ],
+      [
+        "bai-san",
+        "COP-PST"
+      ],
+      [
+        "gej",
+        "C"
+      ],
+      [
+        "bodo-j",
+        "think-CVB"
+      ],
+      [
+        "bai-na",
+        "COP-NPST"
+      ]
+    ],
+    "translation": "Zorig's grandmother, I am thinking that he had been helping.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "kind",
+        "scrambling"
+      ],
+      [
+        "construction",
+        "LDS"
+      ],
+      [
+        "binder",
+        "embedded subject"
+      ],
+      [
+        "mover",
+        "DP-lexical"
+      ]
+    ],
+    "comment": "Long-distance scrambling of a lexically dative object: rejected by the speakers who accept (88) and (89)."
+  },
+  {
+    "id": "gong2022_93b",
+    "source": {
+      "bibkey": "gong-2022",
+      "paperLabel": "(93b)"
+    },
+    "language": "halh1238",
+    "primaryText": "[Bat-in dontolt-in esreg] emč [tüün-iig kheden jil-iin turš temtse-j bai-san gej] nadad khel-sen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Bat-in",
+        "Bat-GEN"
+      ],
+      [
+        "dontolt-in",
+        "addiction-GEN"
+      ],
+      [
+        "esreg",
+        "against"
+      ],
+      [
+        "emč",
+        "doctor"
+      ],
+      [
+        "tüün-iig",
+        "3SG-ACC"
+      ],
+      [
+        "kheden",
+        "some"
+      ],
+      [
+        "jil-iin",
+        "year-GEN"
+      ],
+      [
+        "turš",
+        "during"
+      ],
+      [
+        "temtse-j",
+        "fight-CVB"
+      ],
+      [
+        "bai-san",
+        "COP-PST"
+      ],
+      [
+        "gej",
+        "C"
+      ],
+      [
+        "nadad",
+        "1SG.DAT"
+      ],
+      [
+        "khel-sen",
+        "say-PST"
+      ]
+    ],
+    "translation": "Against Bat's addiction, the doctor said that he has been fighting for years.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "kind",
+        "scrambling"
+      ],
+      [
+        "construction",
+        "PP-LDS"
+      ],
+      [
+        "binder",
+        "embedded subject"
+      ],
+      [
+        "mover",
+        "PP"
+      ]
+    ],
+    "comment": "PP-scrambling exhibits obligatory reconstruction."
+  },
+  {
+    "id": "gong2022_94b",
+    "source": {
+      "bibkey": "gong-2022",
+      "paperLabel": "(94b)"
+    },
+    "language": "halh1238",
+    "primaryText": "[Zorig-iin öwčin-ii esreg] Zaya tüün-d [emč nar-ig čadakh bükhn-eer-ee temtse-j bol-no gej] khel-sen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Zorig-iin",
+        "Zorig-GEN"
+      ],
+      [
+        "öwčin-ii",
+        "disease-GEN"
+      ],
+      [
+        "esreg",
+        "against"
+      ],
+      [
+        "Zaya",
+        "Zaya.NOM"
+      ],
+      [
+        "tüün-d",
+        "3SG-DAT"
+      ],
+      [
+        "emč",
+        "doctor"
+      ],
+      [
+        "nar-ig",
+        "PL-ACC"
+      ],
+      [
+        "čadakh",
+        "ability"
+      ],
+      [
+        "bükhn-eer-ee",
+        "all-INST-REFL.POSS"
+      ],
+      [
+        "temtse-j",
+        "fight-CVB"
+      ],
+      [
+        "bol-no",
+        "be-NPST"
+      ],
+      [
+        "gej",
+        "C"
+      ],
+      [
+        "khel-sen",
+        "say-PST"
+      ]
+    ],
+    "translation": "Against Zorig's disease, Zaya said to him that the doctors will do their best to fight.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "kind",
+        "scrambling"
+      ],
+      [
+        "construction",
+        "PP-LDS"
+      ],
+      [
+        "binder",
+        "matrix DAT"
+      ],
+      [
+        "mover",
+        "PP"
+      ]
+    ],
+    "comment": "PP-scrambling over a matrix dative binder still reconstructs."
+  },
+  {
+    "id": "gong2022_47",
+    "source": {
+      "bibkey": "gong-2022",
+      "paperLabel": "(47)"
+    },
+    "language": "halh1238",
+    "primaryText": "Emč [Bat-ig em-ee uu-gaagüi gej] uurla-san.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Emč",
+        "doctor.NOM"
+      ],
+      [
+        "Bat-ig",
+        "Bat-ACC"
+      ],
+      [
+        "em-ee",
+        "medicine-REFL.POSS"
+      ],
+      [
+        "uu-gaagüi",
+        "drink-PST.NEG"
+      ],
+      [
+        "gej",
+        "C"
+      ],
+      [
+        "uurla-san",
+        "become.angry-PST"
+      ]
+    ],
+    "translation": "The doctor became angry that Bat did not drink his medicine.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "kind",
+        "accusative subject"
+      ],
+      [
+        "competitor",
+        "NOM"
+      ]
+    ],
+    "comment": "The matrix predicate assigns no accusative, yet the embedded subject is accusative."
+  },
+  {
+    "id": "gong2022_48",
+    "source": {
+      "bibkey": "gong-2022",
+      "paperLabel": "(48)"
+    },
+    "language": "halh1238",
+    "primaryText": "Bi [Čang-iig amid bai-gaa gedeg]-t itgeltei bai-na.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Bi",
+        "1SG.NOM"
+      ],
+      [
+        "Čang-iig",
+        "Čang-ACC"
+      ],
+      [
+        "amid",
+        "alive"
+      ],
+      [
+        "bai-gaa",
+        "COP-NPST.PTCP"
+      ],
+      [
+        "gedeg-t",
+        "C-DAT"
+      ],
+      [
+        "itgeltei",
+        "believe"
+      ],
+      [
+        "bai-na",
+        "COP-NPST"
+      ]
+    ],
+    "translation": "I believe that Čang is alive.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "kind",
+        "accusative subject"
+      ],
+      [
+        "competitor",
+        "NOM"
+      ]
+    ],
+    "comment": "The embedded clause itself is dative-marked; the embedded subject is accusative by competition with the matrix subject."
+  },
+  {
+    "id": "gong2022_63",
+    "source": {
+      "bibkey": "gong-2022",
+      "paperLabel": "(63)"
+    },
+    "language": "halh1238",
+    "primaryText": "[Bat-ig ger-iin daalgawr-aa khiikh ni] čukhal.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Bat-ig",
+        "Bat-ACC"
+      ],
+      [
+        "ger-iin",
+        "home-GEN"
+      ],
+      [
+        "daalgawr-aa",
+        "assignment-REFL.POSS"
+      ],
+      [
+        "khiikh",
+        "do.INF"
+      ],
+      [
+        "ni",
+        "3SG.POSS"
+      ],
+      [
+        "čukhal",
+        "important"
+      ]
+    ],
+    "translation": "It is important that Bat does his homework.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "kind",
+        "accusative subject"
+      ],
+      [
+        "competitor",
+        "none"
+      ]
+    ],
+    "comment": "Under an impersonal predicate the embedded subject cannot be accusative; nominative and genitive are possible."
+  },
+  {
+    "id": "gong2022_64",
+    "source": {
+      "bibkey": "gong-2022",
+      "paperLabel": "(64)"
+    },
+    "language": "halh1238",
+    "primaryText": "Saruul [Jon-ig šine mašin aw-san gej] uurla-san.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Saruul",
+        "Saruul.NOM"
+      ],
+      [
+        "Jon-ig",
+        "Jon-ACC"
+      ],
+      [
+        "šine",
+        "new"
+      ],
+      [
+        "mašin",
+        "car"
+      ],
+      [
+        "aw-san",
+        "buy-PST"
+      ],
+      [
+        "gej",
+        "C"
+      ],
+      [
+        "uurla-san",
+        "become.angry-PST"
+      ]
+    ],
+    "translation": "Saruul became angry that Jon bought a new car.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "kind",
+        "accusative subject"
+      ],
+      [
+        "competitor",
+        "NOM"
+      ]
+    ],
+    "comment": "A nominative matrix argument competes for case."
+  },
+  {
+    "id": "gong2022_65",
+    "source": {
+      "bibkey": "gong-2022",
+      "paperLabel": "(65)"
+    },
+    "language": "halh1238",
+    "primaryText": "Saruul-d [Jon-ig šine mašin aw-san gej] sanagda-j bai-san.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Saruul-d",
+        "Saruul-DAT"
+      ],
+      [
+        "Jon-ig",
+        "Jon-ACC"
+      ],
+      [
+        "šine",
+        "new"
+      ],
+      [
+        "mašin",
+        "car"
+      ],
+      [
+        "aw-san",
+        "buy-PST"
+      ],
+      [
+        "gej",
+        "C"
+      ],
+      [
+        "sanagda-j",
+        "seem-CVB"
+      ],
+      [
+        "bai-san",
+        "COP-PST"
+      ]
+    ],
+    "translation": "It seemed to Saruul that Jon bought a new car.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "kind",
+        "accusative subject"
+      ],
+      [
+        "competitor",
+        "DAT"
+      ]
+    ],
+    "comment": "A dative matrix argument is no competitor: the accusative subject is out, the nominative one in."
+  }
+]
