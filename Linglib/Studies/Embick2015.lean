@@ -49,7 +49,6 @@ may see the phonological features of a realized exponent.
 namespace Embick2015
 
 open DistributedMorphology Data.Examples Embick2015.Examples
-open scoped DistributedMorphology.VocabularyItem
 
 /-! ### The Latin fragment -/
 

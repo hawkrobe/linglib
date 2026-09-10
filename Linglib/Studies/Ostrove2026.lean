@@ -66,7 +66,7 @@ infinitival classification.
 namespace Ostrove2026
 
 open Minimalist.MinimalPronoun
-open scoped DistributedMorphology.VocabularyItem
+open scoped DistributedMorphology
 open Control
 open Minimalist (InfinitivalTenseClass)
 open Mixtec.SMPM (EmbeddedClauseType clauseProperties)

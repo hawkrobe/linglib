@@ -65,7 +65,6 @@ in K'ichean, and temporals trigger neither.
 namespace ElkinsTorrenceBrown2026
 
 open Minimalist DistributedMorphology Data.Examples ElkinsTorrenceBrown2026.Examples
-open scoped DistributedMorphology.VocabularyItem
 
 /-! ### The extended verbal domain (§1.3) -/
 

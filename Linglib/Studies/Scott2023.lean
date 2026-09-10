@@ -167,7 +167,7 @@ section AgreeSpellout
 open Minimalist Mam
 open Agreement
 open DistributedMorphology (VocabularyItem)
-open scoped DistributedMorphology.VocabularyItem
+open scoped DistributedMorphology
 
 -- ============================================================================
 -- § 0: Minimalism-Specific Vocabulary (Set A / Set B as VI entries)

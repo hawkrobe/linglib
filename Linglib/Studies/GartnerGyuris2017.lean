@@ -46,7 +46,7 @@ ones; the paper's Czech and Romero comparisons belong to the later papers' studi
 
 namespace GartnerGyuris2017
 
-open Question Features Data.Examples
+open Question Data.Examples
 
 /-- A bias value: evidence or expectation for p (+), against p (−), or neither (%). -/
 inductive Bias where

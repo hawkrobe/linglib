@@ -125,7 +125,7 @@ namespace Preminger2014
 open Kaqchikel
 open Minimalist
 open DistributedMorphology (VocabularyItem)
-open scoped DistributedMorphology.VocabularyItem
+open scoped DistributedMorphology
 open Agreement
 
 /-! ### Feature decomposition (grounded in `Phi/Geometry.lean`) -/

@@ -51,7 +51,6 @@ and *nanVh* 'face' take the gender of an inalienable possessor on their agreemen
 namespace Adamson2024
 
 open DistributedMorphology
-open scoped DistributedMorphology.VocabularyItem
 open DistributedMorphology.Categorizer (Head)
 
 /-! ### The gender locality hypothesis -/

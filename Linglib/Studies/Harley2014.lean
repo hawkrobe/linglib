@@ -62,7 +62,6 @@ categorizing head.
 namespace Harley2014
 
 open DistributedMorphology
-open scoped DistributedMorphology.VocabularyItem
 open DistributedMorphology.Allosemy (toInterpreted embedding)
 open Morphology.Exponence (selectBy)
 open Clause (Arguments)
