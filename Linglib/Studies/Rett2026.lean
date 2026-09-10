@@ -159,8 +159,7 @@ def spanishComparative : ENDatum :=
 
 /-- Italian *non₂* in *più…di quanto* comparatives. The `isOptional` and
     `licensedNPIForms` fields are coarsenings of the contextual licensing
-    profile in `Pragmatics.Bias.BiasLicensingProfile`, refined in
-    `NapoliNespor1976`:
+    condition `NapoliNespor1976.Move.Licensed`:
 
     - `isOptional = true`: optionality is *contextually conditioned* on
       a contradicted-prior-belief presupposition ([napoli-nespor-1976]
