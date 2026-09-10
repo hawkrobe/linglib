@@ -1,14 +1,14 @@
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Basic order typology samples: schema
+# Word order samples: schema
 
 Typed schema for the language samples of the basic order typology: a paper's classification of
 each language of its sample by dominant clause order, adposition type, and the orders of a noun
 with its genitive, adjective, demonstrative, and numeral, together with the further properties
 the paper records per language, and its table of order types with the languages attesting each.
-Generated rows live in `Data/OrderTypology/<Paper>.lean`, emitted from the canonical
-`<Paper>.json` by `scripts/gen_order_typology.py`.
+Generated rows live in `Data/WordOrder/<Paper>.lean`, emitted from the canonical
+`<Paper>.json` by `scripts/gen_word_order.py`.
 
 This is data: it imports nothing from `Linglib/` and states no theorems. A property the paper
 does not record for a language is `none`.
@@ -18,7 +18,7 @@ does not record for a language is `none`.
 * [greenberg-1963]
 -/
 
-namespace Data.OrderTypology
+namespace Data.WordOrder
 
 /-- The dominant order of verb, nominal subject, and nominal object, by the verb's position:
 verb-subject-object, subject-verb-object, subject-object-verb. -/
@@ -122,4 +122,4 @@ structure OrderType where
   attested : List String
   deriving DecidableEq, Repr
 
-end Data.OrderTypology
+end Data.WordOrder
