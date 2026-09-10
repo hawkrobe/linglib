@@ -7,40 +7,39 @@ import Linglib.Pragmatics.RSA.Basic
 import Linglib.Core.Probability.UniformOn
 
 /-!
-# Rational communication with conditionals
+# Grusdt, Lassiter, and Franke (2022): Rational Communication with Conditionals
 
-The toy model of [grusdt-lassiter-franke-2022], §2.3: three world states, each a probability
-measure on the four worlds `w∅, w_A, w_C, w_AC`; four utterances; and the assertability
-conditions of Table 1 — `P(C | A) ≥ θ` for the conditional, `P(C) ≥ θ` for the literal,
-`P(A ∧ C) ≥ θ` for the conjunction and `P(C) > 1/2` for *likely C* — at `θ = 0.9`. The
-Frank–Goodman speaker and listener over these states (`RSA.speaker`, `RSA.pragmaticListener`)
-give the predictions of Table 2: the pragmatic listener who hears *if A then C* prefers `s2`,
-where the conditional is the most informative assertable utterance, to `s1`, where the literal
-*C* was available.
+This file formalizes the toy example of section 2.3 of [grusdt-lassiter-franke-2022],
+"Probabilistic modeling of rational communication with conditionals", together with the two
+arguments of section 5 that rest on its assertability conditions alone. A state is a
+probability measure on the four worlds that fix the truth of `A` and `C`; an utterance is
+assertable in a state by the conditions of Table 1, `P(A ∧ C) ≥ θ` for the conjunction,
+`P(C) ≥ θ` for the literal, `P(C | A) ≥ θ` for the conditional, and `P(C) > 1/2` for *likely C*
+(`Assertable`); and the vanilla Rational Speech Act model of section 2.1, the library's
+`RSA.speaker` and `RSA.pragmaticListener` at `α = 1` without costs, runs over the three states
+of Table 2. Its predictions are derived: the extensions of Table 2(b), the speaker shares of
+Table 2(d), and the listener posteriors of Table 2(e), on which hearing *if A then C* favors
+the state where the conditional is the most informative assertable utterance over the one
+where the literal was available (`l1_conditional_prefers_s2`). Section 5's observations hold
+for every state: when antecedent and consequent are independent the conditional is assertable
+only where the literal is, so a speaker never prefers it, which is what lies behind the
+infelicity of missing-link conditionals (`assertable_C_of_indep`), and a speaker who can assert
+both *if A then C* and *if not A then C* could have asserted *C* outright
+(`assertable_C_of_conditionals`).
 
-## Main definitions
+## Implementation notes
 
-* `GrusdtLassiterFranke2022.State.dist`: the three states of Table 2(a) as measures on
-  `Bool × Bool`.
-* `GrusdtLassiterFranke2022.Assertable`: the assertability conditions of Table 1, with the
-  conditional's `P(C | A)` as `μ[C | A]`.
-* `GrusdtLassiterFranke2022.S1`, `GrusdtLassiterFranke2022.L1`: the speaker and the pragmatic
-  listener of Table 2.
-
-## Main results
-
-* `GrusdtLassiterFranke2022.ext_conditional` and its companions: Table 2(b), derived from the
-  states.
-* `GrusdtLassiterFranke2022.S1_s1_C`, …: the speaker shares of Table 2(d).
-* `GrusdtLassiterFranke2022.L1_conditional_s2`, …: the listener posteriors of Table 2(e); in
-  particular `11/16` for `s2` against `5/16` for `s1` on hearing the conditional.
-* `GrusdtLassiterFranke2022.perfection_not_semantic`: at `s2` the conditional is assertable
-  while *if not A then not C* is not.
+States are measures built from the cells of Table 2(a); the threshold is the paper's `θ = 0.9`.
+Section 5.3's argument takes `P(A) = 1/2`, but the theorem needs only that the antecedent and
+its negation both have positive probability. The causal Bayes-net prior of sections 2.4 to 3
+and the simulation results over it, including the strength of conditional perfection in
+Figure 8, are not formalized; `perfection_not_semantic` records only that in the toy example
+the conditional is assertable at `s2` while `P(¬C | ¬A)` falls short of the threshold, so any
+perfection reading there is pragmatic.
 
 ## References
 
-* [B. Grusdt, D. Lassiter and M. Franke, *Probabilistic modeling of rational communication with
-  conditionals*][grusdt-lassiter-franke-2022]
+* [grusdt-lassiter-franke-2022]
 -/
 
 namespace GrusdtLassiterFranke2022
@@ -48,7 +47,7 @@ namespace GrusdtLassiterFranke2022
 open MeasureTheory ProbabilityTheory RSA
 open scoped ENNReal NNReal
 
-/-! ### World states, utterances and assertability (§2.2) -/
+/-! ### World states, utterances and assertability, section 2.2 -/
 
 /-- The event that `A` holds, on worlds `(A, C) : Bool × Bool`. -/
 def A : Set (Bool × Bool) := {w | w.1}
@@ -81,7 +80,7 @@ inductive Utt
   deriving DecidableEq, Fintype
 
 instance : MeasurableSpace Utt := ⊤
-instance : DiscreteMeasurableSpace Utt := ⟨fun _ => trivial⟩
+instance : DiscreteMeasurableSpace Utt := ⟨λ _ => trivial⟩
 instance : Nonempty Utt := ⟨.likelyC⟩
 
 private theorem sum_Utt {M : Type*} [AddCommMonoid M] (f : Utt → M) :
@@ -94,14 +93,51 @@ private theorem sum_Utt {M : Type*} [AddCommMonoid M] (f : Utt → M) :
 noncomputable def θ : ℝ := 9 / 10
 
 /-- Table 1: an utterance is assertable in a state `μ` when the probability it conveys reaches
-the threshold — `P(A ∧ C) ≥ θ`, `P(C) ≥ θ`, `P(C | A) ≥ θ` — and *likely C* when `P(C) > 1/2`. -/
+the threshold, `P(A ∧ C) ≥ θ`, `P(C) ≥ θ`, `P(C | A) ≥ θ`, and *likely C* when `P(C) > 1/2`. -/
 def Assertable (θ : ℝ) : Utt → Measure (Bool × Bool) → Prop
   | .conjAC, μ => θ ≤ μ.real (A ∩ C)
   | .C, μ => θ ≤ μ.real C
   | .conditional, μ => θ ≤ (μ[|A]).real C
   | .likelyC, μ => 1 / 2 < μ.real C
 
-/-! ### The toy example (§2.3, Table 2) -/
+/-- A conditional probability as a ratio of real masses. -/
+theorem real_cond (μ : Measure (Bool × Bool)) (S T : Set (Bool × Bool)) :
+    (μ[|S]).real T = μ.real (S ∩ T) / μ.real S := by
+  rw [measureReal_def, cond_apply .of_discrete, ENNReal.toReal_mul, ENNReal.toReal_inv,
+    measureReal_def, measureReal_def, div_eq_inv_mul]
+
+/-! ### Two consequences of the assertability conditions, section 5
+
+Section 5.1: when antecedent and consequent are independent, the conditional is assertable
+only where the literal is, so an informative speaker never chooses it, and a listener who
+takes the two to be independent is surprised by it, the source of the infelicity of
+missing-link conditionals. Section 5.3: a speaker who can assert both *if A then C* and *if
+not A then C* could have asserted *C* outright. -/
+
+theorem assertable_C_of_indep {μ : Measure (Bool × Bool)} {t : ℝ} (hA : 0 < μ.real A)
+    (hind : μ.real (A ∩ C) = μ.real A * μ.real C) (h : Assertable t .conditional μ) :
+    Assertable t .C μ := by
+  simp only [Assertable, real_cond] at h ⊢
+  rwa [hind, mul_div_cancel_left₀ _ hA.ne'] at h
+
+theorem assertable_C_of_conditionals {μ : Measure (Bool × Bool)} [IsProbabilityMeasure μ] {t : ℝ}
+    (hA : 0 < μ.real A) (hAc : 0 < μ.real Aᶜ) (h₁ : t ≤ (μ[|A]).real C)
+    (h₂ : t ≤ (μ[|Aᶜ]).real C) : Assertable t .C μ := by
+  simp only [Assertable]
+  rw [real_cond, le_div_iff₀ hA] at h₁
+  rw [real_cond, le_div_iff₀ hAc] at h₂
+  have htot : μ.real (A ∩ C) + μ.real (Aᶜ ∩ C) = μ.real C := by
+    have := measureReal_inter_add_sdiff (μ := μ) (s := C) (MeasurableSet.of_discrete (s := A))
+    rwa [Set.inter_comm, Set.sdiff_eq_compl_inter] at this
+  have hsum : μ.real A + μ.real Aᶜ = 1 := by
+    rw [measureReal_add_measureReal_compl .of_discrete]
+    simp [measureReal_def]
+  calc t = t * (μ.real A + μ.real Aᶜ) := by rw [hsum, mul_one]
+    _ = t * μ.real A + t * μ.real Aᶜ := mul_add ..
+    _ ≤ μ.real (A ∩ C) + μ.real (Aᶜ ∩ C) := add_le_add h₁ h₂
+    _ = μ.real C := htot
+
+/-! ### The toy example, section 2.3 and Table 2 -/
 
 /-- The three states of Table 2(a): in `s1` and `s3` Alex and Chris come to the party
 independently, in `s2` "usually not without each other". -/
@@ -112,7 +148,7 @@ inductive State
   deriving DecidableEq, Fintype
 
 instance : MeasurableSpace State := ⊤
-instance : DiscreteMeasurableSpace State := ⟨fun _ => trivial⟩
+instance : DiscreteMeasurableSpace State := ⟨λ _ => trivial⟩
 instance : Nonempty State := ⟨.s1⟩
 
 private theorem sum_State {M : Type*} [AddCommMonoid M] (f : State → M) :
@@ -137,16 +173,16 @@ noncomputable def State.cell : State → Bool × Bool → ℝ≥0
 
 /-- A state as a probability measure on worlds. -/
 noncomputable def State.dist (s : State) : Measure (Bool × Bool) :=
-  Measure.sum fun w => (s.cell w : ℝ≥0∞) • Measure.dirac w
+  Measure.sum λ w => (s.cell w : ℝ≥0∞) • Measure.dirac w
 
 theorem State.dist_finset (s : State) (E : Finset (Bool × Bool)) :
     s.dist ↑E = ∑ w ∈ E, (s.cell w : ℝ≥0∞) := by
   rw [← sum_measure_singleton]
-  exact Finset.sum_congr rfl fun w _ => Measure.sum_smul_dirac_singleton
+  exact Finset.sum_congr rfl λ w _ => Measure.sum_smul_dirac_singleton
 
 theorem State.dist_real_finset (s : State) (E : Finset (Bool × Bool)) :
     s.dist.real ↑E = ∑ w ∈ E, (s.cell w : ℝ) := by
-  rw [measureReal_def, State.dist_finset, ENNReal.toReal_sum fun _ _ => ENNReal.coe_ne_top]
+  rw [measureReal_def, State.dist_finset, ENNReal.toReal_sum λ _ _ => ENNReal.coe_ne_top]
   simp only [ENNReal.coe_toReal]
 
 theorem State.sum_cell (s : State) : ∑ w, s.cell w = 1 := by
@@ -154,17 +190,6 @@ theorem State.sum_cell (s : State) : ∑ w, s.cell w = 1 := by
 
 instance (s : State) : IsProbabilityMeasure s.dist :=
   (s.sum_cell ▸ hasSum_fintype s.cell).isProbabilityMeasure_sum_dirac_nnreal
-
-/-- `P(C | A)` as a ratio of real masses. -/
-theorem real_cond (s : State) : (s.dist[|A]).real C = s.dist.real (A ∩ C) / s.dist.real A := by
-  rw [measureReal_def, cond_apply .of_discrete, ENNReal.toReal_mul, ENNReal.toReal_inv,
-    measureReal_def, measureReal_def, div_eq_inv_mul]
-
-/-- `P(¬C | ¬A)` as a ratio of real masses. -/
-theorem real_cond_compl (s : State) :
-    (s.dist[|Aᶜ]).real Cᶜ = s.dist.real (Aᶜ ∩ Cᶜ) / s.dist.real Aᶜ := by
-  rw [measureReal_def, cond_apply .of_discrete, ENNReal.toReal_mul, ENNReal.toReal_inv,
-    measureReal_def, measureReal_def, div_eq_inv_mul]
 
 theorem real_A (s : State) : s.dist.real A = s.cell (true, true) + s.cell (true, false) := by
   rw [A_eq, State.dist_real_finset, Finset.sum_pair (by decide)]
@@ -202,12 +227,12 @@ theorem ext_C : ext .C = ↑({State.s1} : Finset State) := by
 theorem ext_conjAC : ext .conjAC = ∅ := by
   ext s; cases s <;> simp [ext, Assertable, real_A_inter_C, State.cell, θ] <;> norm_num
 
-/-! ### Literal listener and speaker (Table 2(c), (d))
+/-! ### Literal listener and speaker, Table 2(c) and (d)
 
-The Frank–Goodman model at `α = 1` without costs, against the uniform prior over the three
-states: the literal listener conditions the prior on the extension, the speaker is
-`RSA.speaker`, and the pragmatic listener is `RSA.pragmaticListener`. *A and C*, assertable in
-no state, has the zero measure as its literal listener and drops out of the competition. -/
+The vanilla model at `α = 1` without costs, against the uniform prior over the three states:
+the literal listener conditions the prior on the extension, the speaker is `RSA.speaker`, and
+the pragmatic listener is `RSA.pragmaticListener`. *A and C*, assertable in no state, has the
+zero measure as its literal listener and drops out of the competition. -/
 
 /-- The uniform prior over the three states. -/
 noncomputable def prior : Measure State := uniformOn Set.univ
@@ -222,7 +247,7 @@ theorem prior_real_singleton (s : State) : prior.real {s} = 1 / 3 := by
   rw [measureReal_def, prior_singleton, ENNReal.toReal_inv, one_div]; simp
 
 /-- The literal listener: the prior conditioned on the utterance's extension. -/
-noncomputable def L0 : Kernel Utt State := literalListener prior fun u => (ext u).indicator 1
+noncomputable def L0 : Kernel Utt State := literalListener prior λ u => (ext u).indicator 1
 
 /-- The literal listener is uniform on the extension. -/
 theorem L0_apply (u : Utt) : L0 u = uniformOn (ext u) := by
@@ -264,14 +289,14 @@ theorem L0_ne_top (u : Utt) (s : State) : L0 u {s} ≠ ⊤ := by
   rw [L0_apply]; exact measure_ne_top _ _
 
 /-- The speaker of Table 2(d): `RSA.speaker` at `α = 1` without costs. -/
-noncomputable def S1 : Kernel State Utt := speaker 1 (fun _ => 1) L0
+noncomputable def S1 : Kernel State Utt := speaker 1 (λ _ => 1) L0
 
 instance : IsFiniteKernel S1 := inferInstanceAs (IsFiniteKernel (speaker _ _ _))
 
 theorem S1_real (s : State) (u : Utt) :
     (S1 s).real {u} = (L0 u).real {s} / ∑ u', (L0 u').real {s} := by
   simp only [S1, measureReal_def, speaker_apply_singleton, ENNReal.rpow_one, mul_one]
-  rw [ENNReal.toReal_div, ENNReal.toReal_sum fun u' _ => L0_ne_top u' s]
+  rw [ENNReal.toReal_div, ENNReal.toReal_sum λ u' _ => L0_ne_top u' s]
 
 /-- Table 2(d), `s1`: `C` with share `6/11`, the conditional `3/11`, *likely C* `2/11`. -/
 theorem S1_s1_C : (S1 .s1).real {.C} = 6 / 11 := by
@@ -312,13 +337,13 @@ theorem S1_s3_C : (S1 .s3).real {.C} = 0 := by
   rw [S1_real, sum_Utt, L0_real_conjAC, L0_real_C_s3, L0_real_conditional_s3, L0_real_likelyC]
   norm_num
 
-/-! ### The pragmatic listener (Table 2(e)) -/
+/-! ### The pragmatic listener, Table 2(e) -/
 
 /-- The pragmatic listener of Table 2(e): the posterior of `S1` against the uniform prior. -/
-noncomputable def L1 : Kernel Utt State := pragmaticListener 1 (fun _ => 1) L0 prior
+noncomputable def L1 : Kernel Utt State := pragmaticListener 1 (λ _ => 1) L0 prior
 
 private theorem S1_ne_zero {s : State} {u : Utt} (h : (S1 s).real {u} ≠ 0) : S1 s {u} ≠ 0 :=
-  fun h0 => h (by rw [measureReal_def, h0, ENNReal.toReal_zero])
+  λ h0 => h (by rw [measureReal_def, h0, ENNReal.toReal_zero])
 
 theorem comp_conditional_ne_zero : (S1 ∘ₘ prior) {Utt.conditional} ≠ 0 :=
   comp_apply_singleton_ne_zero S1 prior (w := .s2) (by rw [prior_singleton]; norm_num)
@@ -389,14 +414,14 @@ theorem l1_likelyC_prefers_s3 : (L1 .likelyC).real {.s1} < (L1 .likelyC).real {.
 
 /-! ### Conditional perfection
 
-The paper derives conditional perfection — hearing *if A then C* as *if not A then not C* — as
-a pragmatic inference. It is absent from the assertability semantics: at `s2` the conditional is
-assertable while `P(¬C | ¬A) = 6/7` falls short of `θ`. -/
+The paper derives conditional perfection, hearing *if A then C* as *if not A then not C*, as a
+pragmatic inference, section 3. It is absent from the assertability semantics: at `s2` the
+conditional is assertable while `P(¬C | ¬A) = 6/7` falls short of `θ`. -/
 
 theorem perfection_not_semantic :
     Assertable θ .conditional State.s2.dist ∧ ¬ θ ≤ (State.s2.dist[|Aᶜ]).real Cᶜ := by
-  simp only [Assertable, real_cond, real_cond_compl, real_A, real_A_inter_C, real_Ac,
-    real_Ac_inter_Cc, State.cell, θ]
+  simp only [Assertable, real_cond, real_A, real_A_inter_C, real_Ac, real_Ac_inter_Cc, State.cell,
+    θ]
   norm_num
 
 end GrusdtLassiterFranke2022
