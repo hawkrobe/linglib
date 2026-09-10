@@ -1,0 +1,152 @@
+[
+  {
+    "id": "gj2003_kala",
+    "source": {
+      "bibkey": "goldwater-johnson-2003",
+      "paperLabel": "Table 2"
+    },
+    "language": "finn1318",
+    "primaryText": "ká.lo.jen",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "of the fish",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "*ká.loi.den",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "stem",
+        "kala"
+      ],
+      [
+        "loser",
+        "ká.loi.den"
+      ],
+      [
+        "winnerViolations",
+        "11000001011"
+      ],
+      [
+        "loserViolations",
+        "12000001101"
+      ]
+    ],
+    "comment": "Stem class of kala 'fish': only the weak ending; difference vector 0 1 0 0 0 0 0 0 1 -1 0 (Table 3)."
+  },
+  {
+    "id": "gj2003_naapuri",
+    "source": {
+      "bibkey": "goldwater-johnson-2003",
+      "paperLabel": "Table 2"
+    },
+    "language": "finn1318",
+    "primaryText": "náa.pu.ri.en",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "of the neighbors",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "náa.pu.rèi.den",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "stem",
+        "naapuri"
+      ],
+      [
+        "loser",
+        "náa.pu.rèi.den"
+      ],
+      [
+        "winnerViolations",
+        "01000100012"
+      ],
+      [
+        "loserViolations",
+        "01100000100"
+      ]
+    ],
+    "comment": "Stem class of naapuri 'neighbor': both endings occur; difference vector 0 0 1 0 0 -1 0 0 1 -1 -2."
+  },
+  {
+    "id": "gj2003_ministeri",
+    "source": {
+      "bibkey": "goldwater-johnson-2003",
+      "paperLabel": "Table 2"
+    },
+    "language": "finn1318",
+    "primaryText": "mí.nis.te.ri.en",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "stem",
+        "ministeri"
+      ],
+      [
+        "loser",
+        "mí.nis.te.rèi.den"
+      ],
+      [
+        "winnerViolations",
+        "12000100013"
+      ],
+      [
+        "loserViolations",
+        "12100000101"
+      ]
+    ],
+    "comment": "Stem class of ministeri: a different violation pattern from naapuri but the same difference vector, so the two classes are one for a learner that sees only differences (Table 3)."
+  },
+  {
+    "id": "gj2003_maailma",
+    "source": {
+      "bibkey": "goldwater-johnson-2003",
+      "paperLabel": "Table 2"
+    },
+    "language": "finn1318",
+    "primaryText": "máa.il.mo.jen",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "stem",
+        "maailma"
+      ],
+      [
+        "loser",
+        "máa.il.mòi.den"
+      ],
+      [
+        "winnerViolations",
+        "02000001102"
+      ],
+      [
+        "loserViolations",
+        "02001000300"
+      ]
+    ],
+    "comment": "Stem class of maailma: difference vector 0 0 0 0 1 0 0 -1 2 0 -2."
+  }
+]

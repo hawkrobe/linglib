@@ -1,173 +1,211 @@
 import Linglib.Phonology.HarmonicGrammar.Expressivity
 import Linglib.Core.Probability.SoftmaxTheory
+import Linglib.Data.Examples.GoldwaterJohnson2003
 
 /-!
-# [goldwater-johnson-2003]: Learning OT Constraint Rankings Using a Maximum Entropy Model
-[goldwater-johnson-2003]
+# Goldwater and Johnson (2003): Learning OT Constraint Rankings Using a Maximum Entropy Model
 
-[goldwater-johnson-2003] introduce Maximum Entropy models to
-constraint-based phonology. Their eq (1) defines the conditional probability
-of output y given input x as:
+This file formalizes [goldwater-johnson-2003]'s maximum entropy model of constraint-based
+phonology. The probability of an output given an input is the softmax of its harmony, the negated
+weighted sum of its constraint violations (eq. (1)), so the model is `softmax` over `harmonyScore`,
+the log-linear form of Harmonic Grammar ([smolensky-legendre-2006]); learning maximizes the log
+pseudo-likelihood of the training pairs (eq. (2)) less a Gaussian penalty on the weights (eq. (3)).
+Holding the other weights fixed, the log probability of an observation is concave in any one weight
+(`concaveOn_log_gjProb_update`), footnote 4's guarantee of a single global maximum, and replicating
+the corpus r times while dividing the prior's variance by r rescales the objective by r, so only nσ²
+matters for the weights learned (`regularizedObjective_replicate`). The Wolof tongue-root
+grammar's learned weights of Table 1 are exponentially separated (`wolof_separated`), the spacing
+that recovers strict domination in the limit ([johnson-2002]). For [boersma-hayes-2001]'s Finnish
+genitive plurals, a model choosing between two candidates sees their violations only through the
+difference vector (`gjProb_pair`), so Table 2's *naapuri* and *ministeri* classes, distinct in
+violations but not in differences, are one class for the learner (`rows_collapse`).
 
-  `Pr(y|x) = exp(Σ wᵢfᵢ(y,x)) / Z(x)`
+## Implementation notes
 
-This IS `softmax(harmonyScore constraints, 1)` — the same `softmax` from
-`Core.Probability.Choice.RationalAction` used throughout linglib for RSA pragmatics.
-The phonology–pragmatics connection is structural: both are log-linear
-models over weighted features, differing only in what the features measure.
+The four Finnish rows carry Table 2's violation vectors as digit strings, one digit per constraint
+in [boersma-hayes-2001]'s order; Anttila's full grammar is in `Studies/Anttila1997.lean`. The Wolof
+weights are the learned values of Table 1; the error rates and Table 4 stay in the paper, as does
+the comparison with [boersma-1997]'s Gradual Learning Algorithm.
 
-## Key contributions formalized here
+## References
 
-1. **MaxEnt = softmax** (§1): `gjProb` is eq (1) by definition — the conditional
-   probability is `softmax (harmonyScore con w (i, ·))`, a constraint set
-   `con : CON (I × O) n` weighted by `w : Fin n → ℝ` and softmax-decoded.
-
-2. **Log-likelihood** (§2): The learning objective is log pseudo-likelihood,
-   which decomposes as `Σⱼ (H(yⱼ,xⱼ) − log Σ exp H(·,xⱼ))` — the harmony
-   of each observed output minus the log-partition function.
-
-3. **Concavity** (§2): Log-likelihood is concave in each weight
-   (`concavity` via `logConditional_concaveOn`). The decomposition
-   `log P(y|x;w) = log (softmax (wⱼ • s + r) y)` makes this
-   affine minus convex = concave, guaranteeing a unique global maximum.
-
-4. **Learning gradient = E[feature]** (§3): The derivative of log-likelihood
-   w.r.t. each weight equals observed minus expected feature value
-   (`gradient` via `hasDerivAt_logConditional`). At the optimum, observed
-   feature counts equal expected feature counts.
-
-5. **Wolof data** (§4): The learned weights for a categorical grammar are
-   exponentially separated (`ExponentiallySeparated wolofWeights 1`),
-   confirming that MaxEnt reproduces OT for categorical data — the
-   empirical counterpart of `maxent_ot_limit`.
+* [goldwater-johnson-2003]
+* [boersma-hayes-2001]
+* [boersma-1997]
+* [berger-della-pietra-della-pietra-1996]
+* [johnson-2002]
+* [smolensky-legendre-2006]
 -/
 
 namespace GoldwaterJohnson2003
 
-open Core.Optimization Constraints HarmonicGrammar Core Finset Real
+open Constraints HarmonicGrammar Finset Real Data.Examples
 
--- ============================================================================
--- § 1: MaxEnt = softmax (eq (1))
--- ============================================================================
+variable {I O : Type*} [Fintype O] {n : ℕ}
 
-/-- [goldwater-johnson-2003] eq (1): the conditional probability of output
-    `o` given input `i` is the softmax of the harmony score over a constraint
-    set `con` weighted by `w` — `Pr(o ∣ i) ∝ exp(-harmonyScore con w (i, o))`.
-    Mirrors the per-mapping probability of a classical MaxEnt grammar (a
-    constraint set + weight vector, no record). -/
-noncomputable def gjProb {I O : Type} [Fintype O] {n : ℕ}
-    (con : CON (I × O) n) (w : Fin n → ℝ) (i : I) (o : O) : ℝ :=
-  softmax (fun o' => harmonyScore con w (i, o')) o
+/-- Eq. (1): the conditional probability of an output is the softmax of its harmony over the
+candidate set. -/
+noncomputable def gjProb (con : CON (I × O) n) (w : Fin n → ℝ) (i : I) (o : O) : ℝ :=
+  softmax (λ o' => harmonyScore con w (i, o')) o
 
-/-- [goldwater-johnson-2003] eq (1) is `gjProb` by definition — both are
-    `softmax(harmonyScore con w, 1)`.
-
-    The same `softmax` function powers RSA pragmatic reasoning
-    (`Core.Probability.Choice.RationalAction`): both phonological grammar and
-    pragmatic inference are log-linear models over weighted features. -/
-theorem eq1_is_softmax {I O : Type} [Fintype O] {n : ℕ}
-    (con : CON (I × O) n) (w : Fin n → ℝ) (i : I) (o : O) :
-    gjProb con w i o = softmax (fun o' => harmonyScore con w (i, o')) o := rfl
-
--- ============================================================================
--- § 2: Log-Likelihood and Concavity
--- ============================================================================
-
-/-- Log pseudo-likelihood of training data under a MaxEnt grammar (eq (2)).
-
-    `logPL(w) = Σⱼ log P_w(yⱼ | xⱼ)`
-
-    Each term decomposes as `H(yⱼ, xⱼ) − log Σ exp H(·, xⱼ)` via
-    `log_softmax`. -/
-noncomputable def logPseudoLikelihood {I O : Type} [Fintype O] {n : ℕ}
-    (con : CON (I × O) n) (w : Fin n → ℝ)
+/-- Eq. (2), logged: the log pseudo-likelihood of the training pairs. -/
+noncomputable def logPseudoLikelihood (con : CON (I × O) n) (w : Fin n → ℝ)
     (data : List (I × O)) : ℝ :=
-  data.foldl (fun acc ⟨x, y⟩ => acc + Real.log (gjProb con w x y)) 0
+  (data.map λ p => log (gjProb con w p.1 p.2)).sum
 
-/-- Regularized objective (eq (3)): log-likelihood minus L2 penalty.
-
-    `J(w) = logPL(w) − Σᵢ (wᵢ − μᵢ)² / (2σᵢ²)`
-
-    [goldwater-johnson-2003] use μᵢ = 0, σᵢ = σ for all constraints, so the
-    penalty is `Σⱼ wⱼ² / (2σ²)` over the grammar's weight vector. -/
-noncomputable def regularizedObjective {I O : Type} [Fintype O] {n : ℕ}
-    (con : CON (I × O) n) (w : Fin n → ℝ)
-    (data : List (I × O))
+/-- Eq. (3) with the paper's common prior, mean zero and deviation σ for every weight. -/
+noncomputable def regularizedObjective (con : CON (I × O) n) (w : Fin n → ℝ) (data : List (I × O))
     (σ : ℝ) : ℝ :=
-  logPseudoLikelihood con w data - ∑ j, (w j) ^ 2 / (2 * σ ^ 2)
+  logPseudoLikelihood con w data - ∑ j, w j ^ 2 / (2 * σ ^ 2)
 
-/-- **Concavity of log-likelihood** (fn. 4): the log conditional likelihood
-    of a single observation is concave in each weight, guaranteeing a
-    unique global maximum.
+/-- Replicating the corpus r times while dividing the prior's variance by r multiplies the
+objective by r: the weights learned depend on nσ² alone. -/
+theorem regularizedObjective_replicate (con : CON (I × O) n) (w : Fin n → ℝ) (data : List (I × O))
+    {r : ℕ} (hr : 0 < r) {σ σ' : ℝ} (hσ : 0 < σ) (h : (r : ℝ) * σ' ^ 2 = σ ^ 2) :
+    regularizedObjective con w (List.replicate r data).flatten σ' =
+      r * regularizedObjective con w data σ := by
+  have hr' : (r : ℝ) ≠ 0 := by positivity
+  have hσ' : σ' ^ 2 = σ ^ 2 / r := by rw [← h]; field_simp
+  unfold regularizedObjective logPseudoLikelihood
+  simp only [List.map_flatten, List.map_replicate, List.sum_flatten, List.sum_replicate,
+    nsmul_eq_mul]
+  rw [mul_sub, Finset.mul_sum]
+  congr 1
+  refine Finset.sum_congr rfl λ j _ => ?_
+  rw [hσ']
+  field_simp
 
-    When all weights except `wⱼ` are held fixed, `log P(y|x;w)` is
-    `log (softmax (wⱼ • s + r) y)` where `sᵢ = −cⱼ(yᵢ,x)` and
-    `rᵢ = Σₖ≠ⱼ wₖ(−cₖ(yᵢ,x))`: an affine term minus the convex log-partition
-    function (`convexOn_log_sum_exp`), hence concave.
+/-- The same weights maximize the objective before and after replication. -/
+theorem regularizedObjective_replicate_le_iff (con : CON (I × O) n) (w w' : Fin n → ℝ)
+    (data : List (I × O)) {r : ℕ} (hr : 0 < r) {σ σ' : ℝ} (hσ : 0 < σ)
+    (h : (r : ℝ) * σ' ^ 2 = σ ^ 2) :
+    regularizedObjective con w' (List.replicate r data).flatten σ' ≤
+        regularizedObjective con w (List.replicate r data).flatten σ' ↔
+      regularizedObjective con w' data σ ≤ regularizedObjective con w data σ := by
+  rw [regularizedObjective_replicate con w data hr hσ h,
+    regularizedObjective_replicate con w' data hr hσ h]
+  exact mul_le_mul_iff_right₀ (Nat.cast_pos.mpr hr)
 
-    This is `concaveOn_log_softmax` from `Core.Probability.SoftmaxTheory`. -/
-theorem concavity {ι : Type*} [Fintype ι] [Nonempty ι] (s r : ι → ℝ) (y : ι) :
-    ConcaveOn ℝ Set.univ (fun wⱼ : ℝ => log (softmax (wⱼ • s + r) y)) :=
-  concaveOn_log_softmax s r y
+/-- Footnote 4: with the other weights held fixed, the log probability of an observation is
+concave in weight j, since the harmony is then affine in that weight and the log-partition
+function convex. -/
+theorem concaveOn_log_gjProb_update (con : CON (I × O) n) (w : Fin n → ℝ) (j : Fin n) (i : I)
+    (o : O) : ConcaveOn ℝ Set.univ λ t => log (gjProb con (Function.update w j t) i o) := by
+  have : Nonempty O := ⟨o⟩
+  have key : ∀ t, gjProb con (Function.update w j t) i o =
+      softmax (t • (λ o' => -((con j (i, o') : ℕ) : ℝ)) +
+        λ o' => -∑ k ∈ ({j}ᶜ : Finset (Fin n)), w k * (con k (i, o') : ℝ)) o := by
+    intro t
+    unfold gjProb
+    congr 1
+    funext o'
+    simp only [harmonyScore_eq_neg_sum, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+    rw [Fintype.sum_eq_add_sum_compl j, Function.update_self,
+      Finset.sum_congr rfl (g := λ k => w k * (con k (i, o') : ℝ)) λ k hk => by
+        rw [Function.update_of_ne (Finset.notMem_singleton.mp (Finset.mem_compl.mp hk))]]
+    ring
+  simp_rw [key]
+  exact concaveOn_log_softmax _ _ o
 
--- ============================================================================
--- § 3: Learning Gradient
--- ============================================================================
+/-- The log pseudo-likelihood of a corpus is concave in each weight, as a sum of concave terms. -/
+theorem concaveOn_logPseudoLikelihood_update (con : CON (I × O) n) (w : Fin n → ℝ) (j : Fin n)
+    (data : List (I × O)) :
+    ConcaveOn ℝ Set.univ λ t => logPseudoLikelihood con (Function.update w j t) data := by
+  induction data with
+  | nil => simpa [logPseudoLikelihood] using concaveOn_const (0 : ℝ) convex_univ
+  | cons p data ih =>
+    simp only [logPseudoLikelihood, List.map_cons, List.sum_cons] at ih ⊢
+    exact (concaveOn_log_gjProb_update con w j p.1 p.2).add ih
 
-/-- **Learning gradient = observed − expected** (§2, §4.2):
+/-! ### Two candidates: learning from differences (section 3.2) -/
 
-    `∂/∂wⱼ log P(y|x) = sᵧ − Σᵢ softmaxOffset(s,r,wⱼ)ᵢ · sᵢ`
+/-- Two candidates as a constraint set over one input: the winner at 0, the loser at 1. -/
+def pairCON (win lose : Fin n → ℕ) : CON (Unit × Fin 2) n :=
+  λ j c => if c.2 = 0 then win j else lose j
 
-    where `sᵢ = −cⱼ(yᵢ,x)` (negated violation count of constraint j on
-    candidate i) and `rᵢ = Σₖ≠ⱼ wₖ(−cₖ(yᵢ,x))` (contribution of other
-    constraints, constant w.r.t. wⱼ).
+/-- A two-candidate model sees the violations only through their difference: the winner's
+probability is the sigmoid of the weighted difference vector. -/
+theorem gjProb_pair (w : Fin n → ℝ) (win lose : Fin n → ℕ) :
+    gjProb (pairCON win lose) w () 0 = sigmoid (∑ j, w j * ((lose j : ℝ) - win j)) := by
+  unfold gjProb
+  rw [softmax_fin_two]
+  congr 1
+  simp only [harmonyScore_eq_neg_sum, pairCON, Fin.isValue, if_true, if_false, one_ne_zero,
+    mul_sub, Finset.sum_sub_distrib]
+  ring
 
-    At the maximum, this derivative is zero, so `sᵧ = E_P[s]`: the
-    observed feature value equals the expected feature value.
+/-- Two candidate pairs with the same difference vector get the same winner probability under
+every weighting. -/
+theorem gjProb_pair_eq_of_diff_eq (w : Fin n → ℝ) {win lose win' lose' : Fin n → ℕ}
+    (h : (λ j => (lose j : ℤ) - win j) = λ j => (lose' j : ℤ) - win' j) :
+    gjProb (pairCON win lose) w () 0 = gjProb (pairCON win' lose') w () 0 := by
+  rw [gjProb_pair, gjProb_pair]
+  congr 1
+  refine Finset.sum_congr rfl λ j _ => ?_
+  have hj := congrFun h j
+  have : ((lose j : ℝ) - win j) = (((lose j : ℤ) - win j : ℤ) : ℝ) := by push_cast; ring
+  rw [this, hj]
+  push_cast
+  ring
 
-    This is `hasDerivAt_log_softmax` from `Core.Probability.SoftmaxTheory`. -/
-theorem gradient {ι : Type*} [Fintype ι] [Nonempty ι]
-    (s r : ι → ℝ) (y : ι) (wⱼ : ℝ) :
-    HasDerivAt (fun w => log (softmax (w • s + r) y))
-      (s y - ∑ i : ι, softmax (wⱼ • s + r) i * s i) wⱼ :=
-  hasDerivAt_log_softmax s r y wⱼ
+/-! ### Table 1: the Wolof tongue-root grammar -/
 
--- ============================================================================
--- § 4: Wolof Data (Table 1) — Categorical Grammar
--- ============================================================================
-
-/-- Wolof tongue-root harmony constraints (§3.1, from Boersma 1999).
-
-    The five constraints in ranked order, with learned MaxEnt weights
-    from Table 1 (nσ² ≈ 1,200,000). -/
--- UNVERIFIED: exact weight values from Table 1
+/-- The weights learned for Boersma's five Wolof constraints (Table 1, nσ² ≈ 1,200,000): *RTRHI,
+PARSE[RTR], GESTURE[CONTOUR], PARSE[ATR], *ATRLO. -/
 noncomputable def wolofWeights : Fin 5 → ℝ
-  | 0 => 3389/100   -- *RTRHI (33.89)
-  | 1 => 17          -- PARSE[RTR] (17.00)
-  | 2 => 10          -- GESTURE[CONTOUR] (10.00)
-  | 3 => 353/100     -- PARSE[ATR] (3.53)
-  | 4 => 41/100      -- *ATRLO (0.41)
+  | 0 => 3389 / 100
+  | 1 => 17
+  | 2 => 10
+  | 3 => 353 / 100
+  | 4 => 41 / 100
 
-/-- All Wolof weights are positive. -/
-theorem wolof_pos (i : Fin 5) : 0 < wolofWeights i := by
-  fin_cases i <;> norm_num [wolofWeights]
-
-/-- **The learned Wolof weights are exponentially separated (M = 1)**:
-    each weight exceeds the sum of all lower-ranked weights.
-
-    This is the empirical counterpart of `maxent_ot_limit`: for a
-    categorical grammar (no free variation), MaxEnt learning produces
-    weights that satisfy `ExponentiallySeparated`, recovering OT's
-    strict ranking. The theoretical direction is:
-
-    `ExponentiallySeparated` ⟹ `lex_imp_lower_violations` ⟹ HG = OT
-
-    Here we verify the converse empirically: OT-like data ⟹ learning
-    produces `ExponentiallySeparated` weights. -/
+/-- The learned weights are exponentially separated: each exceeds the sum of all lower ones, the
+spacing under which Harmonic Grammar reproduces the strict domination of the ranking the Gradual
+Learning Algorithm finds ([johnson-2002], `lex_imp_lower_violations`). -/
 theorem wolof_separated : ExponentiallySeparated wolofWeights 1 := by
-  refine ⟨wolof_pos, fun k => ?_⟩
+  refine ⟨λ i => by fin_cases i <;> norm_num [wolofWeights], λ k => ?_⟩
   fin_cases k <;>
     simp +decide only [wolofWeights, Finset.sum_filter, Fin.sum_univ_five] <;>
     norm_num
+
+/-! ### Tables 2 and 3: Finnish genitive plurals -/
+
+/-- The digits of a feature string as violation counts, one per constraint. -/
+private def digits (s : String) : List ℕ := s.toList.map λ c => c.toNat - '0'.toNat
+
+/-- A violation vector over [boersma-hayes-2001]'s eleven constraints. -/
+private def vec (l : List ℕ) : Fin 11 → ℕ := λ j => l.getD j 0
+
+/-- A stem class: the violation vectors of the winning and the losing genitive plural. -/
+structure Row where
+  winner : Fin 11 → ℕ
+  loser : Fin 11 → ℕ
+  deriving DecidableEq
+
+def Row.ofExample (ex : LinguisticExample) : Option Row := do
+  let w ← ex.feature? "winnerViolations"
+  let l ← ex.feature? "loserViolations"
+  pure ⟨vec (digits w), vec (digits l)⟩
+
+/-- Table 3's learning signal: the loser's violations minus the winner's. -/
+def Row.diff (r : Row) : Fin 11 → ℤ := λ j => (r.loser j : ℤ) - r.winner j
+
+/-- The four stem classes of Table 2. -/
+def rows : List Row := Examples.all.filterMap Row.ofExample
+
+example : rows.length = Examples.all.length := by decide
+
+/-- Table 3: two of Table 2's classes differ in their violation vectors but not in their
+differences, so a learner that sees only differences treats them as one class. -/
+theorem rows_collapse : ∃ r₁ ∈ rows, ∃ r₂ ∈ rows, r₁.winner ≠ r₂.winner ∧ r₁.diff = r₂.diff := by
+  decide
+
+/-- The two classes receive the same winner probability under every weighting. -/
+theorem rows_collapse_prob :
+    ∃ r₁ ∈ rows, ∃ r₂ ∈ rows, r₁ ≠ r₂ ∧
+      ∀ w, gjProb (pairCON r₁.winner r₁.loser) w () 0 =
+        gjProb (pairCON r₂.winner r₂.loser) w () 0 := by
+  obtain ⟨r₁, h₁, r₂, h₂, hne, hd⟩ := rows_collapse
+  exact ⟨r₁, h₁, r₂, h₂, λ h => hne (congrArg Row.winner h), λ w => gjProb_pair_eq_of_diff_eq w hd⟩
 
 end GoldwaterJohnson2003
