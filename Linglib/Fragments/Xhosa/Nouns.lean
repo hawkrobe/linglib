@@ -6,14 +6,17 @@ import Linglib.Fragments.Xhosa.Basic
 
 Nouns of the class system, each with its singular class and the kind of entity it denotes: the
 lexicon behind the conjoined-subject agreement data of [carstens-2026] and
-[taraldsen-et-al-2018]. Forms are cited with the augment. Class 1a nouns, *u-L*, *u-loliwe*
-'train', *u-nonkala* 'crab', are entered under class 1, from which they differ only in the
-nominal prefix.
+[taraldsen-et-al-2018], and the deverbal nouns in the nominalizing final vowels -i and -o of
+[mletshe-2019] behind [halpert-hammerly-2026]'s stacked class prefixes. Forms are cited with
+the augment. Class 1a nouns, *u-L*, *u-loliwe* 'train', *u-nonkala* 'crab', are entered under
+class 1, from which they differ only in the nominal prefix.
 
 ## References
 
 * [carstens-2026]
 * [taraldsen-et-al-2018]
+* [mletshe-2019]
+* [halpert-hammerly-2026]
 -/
 
 namespace Xhosa
@@ -79,12 +82,25 @@ def ipeni : NounEntry := ⟨"ipeni", "pen", .cl9, .inanimate⟩
 def indlovu : NounEntry := ⟨"indlovu", "elephant", .cl9, .animate⟩
 def ingwe : NounEntry := ⟨"ingwe", "leopard", .cl9, .animate⟩
 
+/-! ### Deverbal nouns
+
+Nominalizations of *thiml-* 'sneeze' and *khohlel-* 'cough' ([mletshe-2019]): the final vowel -i
+forms animate nouns, in class 1 or class 7, and -o and -a inanimate ones. -/
+
+def umthimli : NounEntry := ⟨"umthimli", "sneezer", .cl1, .human⟩
+def umthimlo : NounEntry := ⟨"umthimlo", "manner of sneezing", .cl3, .inanimate⟩
+def isithimli : NounEntry := ⟨"isithimli", "severe sneezer", .cl7, .human⟩
+def umkhohleli : NounEntry := ⟨"umkhohleli", "coughing person", .cl1, .human⟩
+def isikhohleli : NounEntry := ⟨"isikhohleli", "coughing person", .cl7, .human⟩
+def isikhohlela : NounEntry := ⟨"isikhohlela", "phlegm", .cl7, .inanimate⟩
+
 def all : List NounEntry :=
   [ummi, umongameli, umntwana, umfazi, uL, uM, uloliwe, umatshini, ubhaka, unonkala, ukrebe,
     umgewu, umlwelwe, umgulukudu, umnqwazi, umpu, umhlonyane, umnquma, umkhonto, umbhobho,
     umnqathe, umvundla, umqhagi, igqwetha, isela, igorha, ikhoboka, ipolisa, iqanda, icepe,
     ilitye, icici, ihobe, isibane, isitya, isiXhosa, isiZulu, isanuse, isazi, isangoma,
-    isibhanxa, isikhova, intombi, imbongi, ingcaphephe, ingcali, incwadi, ipeni, indlovu, ingwe]
+    isibhanxa, isikhova, intombi, imbongi, ingcaphephe, ingcali, incwadi, ipeni, indlovu, ingwe,
+    umthimli, umthimlo, isithimli, umkhohleli, isikhohleli, isikhohlela]
 
 end Nouns
 

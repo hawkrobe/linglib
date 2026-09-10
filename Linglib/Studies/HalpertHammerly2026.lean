@@ -1,95 +1,142 @@
 import Linglib.Features.ContainmentPair
-import Linglib.Features.Prominence
-import Linglib.Fragments.Bantu.Params
-import Linglib.Fragments.Xhosa.Basic
-import Linglib.Fragments.Swahili.Basic
 import Linglib.Features.Person.Decomposition
-import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
+import Linglib.Fragments.Xhosa.Nouns
+import Linglib.Syntax.Minimalist.Probe.Basic
+import Linglib.Data.Examples.HalpertHammerly2026
+import Mathlib.Order.Interval.Set.LinearOrder
+import Mathlib.Order.Interval.Set.OrdConnected
 
 /-!
-# Halpert & Hammerly 2026: Reconciling Animacy and Noun Class in Bantu
+# Halpert and Hammerly (2026): Reconciling Animacy and Noun Class in Bantu
 
-[halpert-hammerly-2026]
+This file formalizes the Core Noun Class Hypothesis of [halpert-hammerly-2026]: every Bantu
+noun is specified for [±Animate, ±Human] on its nominalizing head, so falls into one of the
+core classes HUMAN, ANIMATE, and INANIMATE, canonically classes 1/2, 9/10, and 7/8 (19),
+whatever class its prefix shows. The features are [hammerly-2023]'s sets of ontological
+primitives, author, addressee, human, animal, force, concrete, and abstract, ranked by
+prominence (1): a feature is the primitives at least as prominent as a cutoff, so features nest
+(3), and a bivalent specification denotes the intersection of features and their complements,
+`category`. Every such category is order-convex, `category_ordConnected`, which is the paper's
+prediction that no conflation in the sense of [mcginnis-2005] groups humans with natural forces
+to the exclusion of animals (section 2); at the limit each primitive is its own category, the
+contrastive hierarchy (4); the incoherent combination [−Animate, +Human] of footnote 10 denotes
+the empty set; and local persons are a more highly specified subset of HUMAN, the containment
+behind Lubukusu alternative agreement (8) and Zulu person reduction (10). Core class is spelled
+out by the nominalizing final vowel, -i for [+Human] and -o otherwise (22), and class prefixes
+are secondary n heads stacked over the core as in [fuchs-van-der-wal-2022]'s diminutives (26):
+a noun whose prefix class disagrees with its core carries a secondary n with a class feature of
+its own (28), `Nominal.ofEntry`, built from the Xhosa nouns fragment. Agreement then depends on
+the probe (29): a flat probe finds the secondary n, so
+agrees with the prefix class as in Zulu, `agreement_flat`, while a probe relativized to
+[+Animate] searches past it to the core, the animacy override of Chiyao (11) and Swahili (13)
+and the animate-only object marking of Nyaturu (14), `agreement_animateProbe`. That Swahili
+overrides to class 1/2 for humans and animals alike, and that Xhosa's class 8 and 10 markers are
+syncretic, are exponents conditioned on [±Animate] or on [±Human] alone. The proposal converges
+with [carstens-2026]'s stacking of genders over a core, [kramer-2015]'s gendered n, but grounds
+the core in the containment features Carstens rejects (footnote 12). The examples are the rows
+of `Data.Examples.HalpertHammerly2026`.
 
-Halpert, Claire & Hammerly, Christopher. 2026. Reconciling animacy and noun
-class in Bantu. *Glossa: a journal of general linguistics* 11(1). 1--25.
+## Implementation notes
 
-## Core claims
+The feature-bearing heads of a nominal are the core n and, when the prefix class is one of the
+three core classes and differs from the core, a secondary n bearing that class's features; the
+paper leaves the features of classes 3/4 and 5/6 open (section 6), so `Nominal.ofEntry` is
+undefined for them, and the fragment's semantic animacy stands in for the grammatical core,
+which the paper allows to be idiosyncratic. Agreement with conjoined subjects, (15) to (18), is
+recorded as data only, since the paper assigns its resolution to a separate mechanism.
 
-1. **Core Noun Class Hypothesis** (19): All Bantu nouns are underlyingly
-   specified for one of three core noun classes based on features
-   [±Animate] and [±Human] from [hammerly-2023]'s containment
-   hierarchy: HUMAN [+Anim, +Hum] ≈ cl 1/2, NON-HUMAN ANIMATE
-   [+Anim, −Hum] ≈ cl 9/10, INANIMATE [−Anim, −Hum] ≈ cl 7/8.
+## References
 
-2. **Containment unification**: Person features [±Author, ±Participant]
-   and animacy features [±Human, ±Animate] are part of the same
-   containment hierarchy (3)–(4): [Auth] ⊂ [Part] ⊂ [Hum] ⊂ [Anim].
-
-3. **Final vowels** (22): Core noun class is morphophonologically encoded
-   by the nominalizing final vowel: n[+Anim, +Hum] ↔ *-i*,
-   n[_, −Hum] ↔ *-o*.
-
-4. **nP stacking** (26): A secondary n wraps the core nP, creating
-   mismatches between the class prefix (secondary) and the core noun
-   class (accessible to agreement).
-
-5. **Probe articulation** (29): Cross-Bantu variation in animacy
-   effects follows from probe sensitivity — flat φ-probes target
-   n_secondary (Zulu), while probes relativized to [+Animate] search
-   past n_secondary to n_core (Swahili).
-
-## Empirical phenomena
-
-- Alternative agreement / anti-agreement in Lubukusu (8)–(9)
-- Animacy override in Chiyao (11)–(12), Swahili (13)
-- Object doubling conditioned by animacy in Nyaturu (14)
-- Agreement convergence with conjoined nouns in Xhosa (18)
-
-## Relationship to Carstens 2026
-
-[halpert-hammerly-2026] and [carstens-2026] converge on nP
-stacking and the three-way core noun class split, but differ on the
-theoretical grounding: H&H derive core classes from [hammerly-2023]'s
-containment-type features [±Animate, ±Human] and propose final vowels
-as their morphophonological locus. Carstens rejects a grammaticalized
-animacy hierarchy (fn. 12). `AnimacyFeatures` formalizes H&H's feature
-system; `Bantu.SemanticCore` (shared with Carstens) is derived from it via
-`AnimacyFeatures.toCoreClass`.
-
-## Integration
-
-- `AnimacyFeatures` instantiates `Features.ContainmentPairLike` (same `ContainmentPair`
-  as person features), connecting person and animacy containment
-- `AnimacyFeatures.toAnimacyLevel` bridges to the `Features.Prominence`
-  hierarchy used throughout the codebase
-- `impossible_human_inanimate_without_animal` proves the conflation
-  impossibility predicted by containment
-- `AnimacyFeatures.toGenderFeature` bridges to [kramer-2015]'s
-  `GenderFeature` type on the n-head
-- Cross-references: `Carstens2026.lean` (convergence data),
-  `Kramer2020.lean` (n-head typology)
+* [halpert-hammerly-2026]
+* [hammerly-2023]
+* [mcginnis-2005]
+* [fuchs-van-der-wal-2022]
+* [taraldsen-et-al-2018]
+* [carstens-2026]
+* [kramer-2015]
 -/
 
 namespace HalpertHammerly2026
 
-open Bantu
-open Person (Features)
+open Bantu Minimalist
 
-/-! ### Core noun class features ((19), (22)) -/
+/-! ### Containment features, section 2 -/
 
-/-- Bivalent animacy features from [hammerly-2023]'s containment
-    hierarchy, applied to Bantu core noun class by
-    [halpert-hammerly-2026].
+/-- The ontological primitives of (1) and (3), most prominent first: the author I, the
+addressee U, other humans O, animals A, natural forces F, concrete things R, and abstract
+things S. -/
+inductive Primitive where
+  | author | addressee | human | animal | force | concrete | abstract
+  deriving DecidableEq, Repr, Fintype
 
-    Two features determine core noun class:
-    - [±Animate]: distinguishes animate from inanimate entities
-    - [±Human]: distinguishes humans from non-human animates
+namespace Primitive
 
-    These stand in a containment relation: [+Human] entails [+Animate]
-    (being human entails being animate). The fourth combination
-    [−Animate, +Human] is semantically incoherent and ruled out by
-    `WellFormed`. -/
+/-- Prominence rank, the author highest. -/
+def rank : Primitive → ℕ
+  | .author => 0 | .addressee => 1 | .human => 2 | .animal => 3
+  | .force => 4 | .concrete => 5 | .abstract => 6
+
+/-- The prominence order (1): `author < addressee < human < animal < force < concrete <
+abstract`. -/
+instance : LinearOrder Primitive :=
+  LinearOrder.lift' rank (λ a b h => by cases a <;> cases b <;> simp_all [rank])
+
+end Primitive
+
+/-- A feature of (3), the primitives at least as prominent as its cutoff: [Author] is
+`feature .author`, [Participant] `feature .addressee`, [Human] `feature .human`, [Animate]
+`feature .animal`, [Agent] `feature .force`, [Individuated] `feature .concrete`, and ɸ
+`feature .abstract`, each contained in the next. -/
+abbrev feature (p : Primitive) : Set Primitive := Set.Iic p
+
+/-- A bivalent value of a feature: the feature itself or its complement. -/
+def value (p : Primitive) : Bool → Set Primitive
+  | true => feature p
+  | false => (feature p)ᶜ
+
+theorem value_ordConnected (p : Primitive) (b : Bool) : (value p b).OrdConnected := by
+  cases b
+  · rw [value, feature, Set.compl_Iic]; exact Set.ordConnected_Ioi
+  · exact Set.ordConnected_Iic
+
+/-- A specification: the value, if any, of each feature. -/
+abbrev Spec := Primitive → Option Bool
+
+/-- The category a specification defines, the intersection of the values it specifies ((4),
+(5)); a feature left unspecified is conflated. -/
+def category (s : Spec) : Set Primitive := ⋂ p, ⋂ b ∈ s p, value p b
+
+theorem mem_category {s : Spec} {x : Primitive} :
+    x ∈ category s ↔ ∀ p b, s p = some b → (x ≤ p ↔ b = true) := by
+  simp only [category, Set.mem_iInter, Option.mem_def]
+  refine forall₂_congr λ p b => imp_congr_right λ _ => ?_
+  cases b <;> simp [value, feature]
+
+/-- Feature-definable categories are order-convex. -/
+theorem category_ordConnected (s : Spec) : (category s).OrdConnected :=
+  Set.ordConnected_iInter λ p => Set.ordConnected_biInter λ b _ => value_ordConnected p b
+
+/-- The impossible conflation (section 2): no category encompasses non-interlocutor humans and
+natural forces to the exclusion of animals. -/
+theorem animal_mem_category {s : Spec} (h₁ : .human ∈ category s)
+    (h₂ : .force ∈ category s) : .animal ∈ category s :=
+  (category_ordConnected s).out h₁ h₂ ⟨by decide, by decide⟩
+
+/-- The full specification singling out a primitive (4): positive on every feature at or
+above it, negative on every feature below it. -/
+def contrast (p : Primitive) : Spec := λ q => some (decide (p ≤ q))
+
+/-- At the limit each primitive defines its own category, the leaves of the contrastive
+hierarchy (4). -/
+theorem category_contrast (p : Primitive) : category (contrast p) = {p} := by
+  ext x
+  simp only [mem_category, contrast, Option.some.injEq, Set.mem_singleton_iff]
+  revert x p
+  decide
+
+/-! ### Core noun classes, (19) and (22) -/
+
+/-- The bivalent features [±Animate, ±Human] of a Bantu nominalizing head (19). -/
 structure AnimacyFeatures where
   isAnimate : Bool
   isHuman : Bool
@@ -97,610 +144,241 @@ structure AnimacyFeatures where
 
 namespace AnimacyFeatures
 
-/-- The `[±Animate, ±Human]` decomposition is carrier-equivalent to the
-    containment pair: `outer` = [±Animate], `inner` = [±Human]. The same
-    mathematical structure as person features (outer = [±participant],
-    inner = [±author]), confirming [hammerly-2023]'s claim that person and
-    animacy features share a common containment architecture. -/
+/-- The features as a containment pair, [+Human] the inner feature entailing [+Animate]. -/
 def featuresEquiv : AnimacyFeatures ≃ Features.ContainmentPair where
   toFun af := ⟨af.isAnimate, af.isHuman⟩
   invFun p := ⟨p.outer, p.inner⟩
-  left_inv := fun ⟨_, _⟩ => rfl
-  right_inv := fun ⟨_, _⟩ => rfl
+  left_inv := λ ⟨_, _⟩ => rfl
+  right_inv := λ ⟨_, _⟩ => rfl
 
 instance : Features.ContainmentPairLike AnimacyFeatures := .ofEquiv featuresEquiv
 
-/-- Well-formedness: [+Human] → [+Animate].
-    Being human entails being animate ([halpert-hammerly-2026] fn. 10). -/
-abbrev WellFormed (af : AnimacyFeatures) : Prop :=
-  Features.ContainmentPairLike.WellFormed af
+/-- Coherence: [+Human] entails [+Animate] (footnote 10). -/
+abbrev WellFormed (af : AnimacyFeatures) : Prop := Features.ContainmentPairLike.WellFormed af
 
-/-- HUMAN = [+Animate, +Human] ≈ class 1/2 -/
-def human : AnimacyFeatures := ⟨true, true⟩
-/-- NON-HUMAN ANIMATE = [+Animate, −Human] ≈ class 9/10 -/
-def animal : AnimacyFeatures := ⟨true, false⟩
-/-- INANIMATE = [−Animate, −Human] ≈ class 7/8 -/
-def inanimate : AnimacyFeatures := ⟨false, false⟩
+/-- The features as a specification of the [Animate] and [Human] features of (3). -/
+def spec (af : AnimacyFeatures) : Spec := λ q =>
+  if q = .animal then some af.isAnimate else if q = .human then some af.isHuman else none
 
-/-- The fourth combination [−Animate, +Human] violates well-formedness. -/
-theorem illFormed_only :
-    ¬ (⟨false, true⟩ : AnimacyFeatures).WellFormed := by decide
-
-/-- Exactly three well-formed core noun classes — the carrier count of the
-    containment chain (`ContainmentPair.card_wellFormed`); any
-    `ContainmentPairLike` type supports at most 3 well-formed cells. -/
-theorem exactly_three :
-    Fintype.card {af : AnimacyFeatures // af.WellFormed} = 3 := by decide
-
-/-- Bridge to `Features.Prominence.AnimacyLevel`: the three well-formed
-    feature bundles map to the three animacy levels used throughout the
-    codebase for differential argument marking, agreement hierarchies, etc. -/
-def toAnimacyLevel : AnimacyFeatures → Features.Prominence.AnimacyLevel
-  | ⟨_, true⟩  => .human
-  | ⟨true, false⟩ => .animate
-  | ⟨false, false⟩ => .inanimate
-
-theorem human_level : human.toAnimacyLevel = .human := rfl
-theorem animal_level : animal.toAnimacyLevel = .animate := rfl
-theorem inanimate_level : inanimate.toAnimacyLevel = .inanimate := rfl
-
-end AnimacyFeatures
-
-/-- Bantu nominalizing final vowels encode core noun class on the
-    categorizing head n ([halpert-hammerly-2026] (22)).
-
-    - *-i*: n[+Animate, +Human] (human nominalizer)
-    - *-o*: n[±Animate, −Human] (non-human nominalizer)
-    - *-a*: verbalizing final vowel (not a core noun class marker) -/
-inductive FinalVowel where
-  | i  -- NFV: human nominalizer ([+Human])
-  | o  -- NFV: non-human nominalizer ([−Human])
-  | a  -- VFV: verbalizing
-  deriving DecidableEq, Repr
-
-namespace AnimacyFeatures
-
-/-- Core noun class features determine the nominalizing final vowel
-    ([halpert-hammerly-2026] (22)). -/
-def toFinalVowel (af : AnimacyFeatures) : FinalVowel :=
-  if af.isHuman then .i else .o
-
-theorem human_fv : human.toFinalVowel = .i := rfl
-theorem animal_fv : animal.toFinalVowel = .o := rfl
-theorem inanimate_fv : inanimate.toFinalVowel = .o := rfl
-
-/-- Derive `SemanticCore` from bivalent features
-    ([halpert-hammerly-2026] (19)). -/
-def toCoreClass : AnimacyFeatures → SemanticCore
-  | ⟨true, true⟩   => .human
-  | ⟨true, false⟩  => .animal
-  | ⟨false, _⟩     => .inanimate
-
-end AnimacyFeatures
-
-/-- Inverse: recover features from `SemanticCore` (for the three Bantu cores). -/
-def SemanticCore.toFeatures : SemanticCore → AnimacyFeatures
-  | .human     => AnimacyFeatures.human
-  | .animal    => AnimacyFeatures.animal
-  | .inanimate => AnimacyFeatures.inanimate
-  | .nonhuman  => AnimacyFeatures.inanimate  -- Shona conflation of animal + inanimate
-
-/-- Round-trip: features → core → features is identity for well-formed features. -/
-theorem AnimacyFeatures.roundtrip :
-    ∀ af : AnimacyFeatures, af.WellFormed →
-      SemanticCore.toFeatures af.toCoreClass = af := by
+/-- The incoherent combination is the one denoting no primitive at all. -/
+theorem category_spec_eq_empty_iff (af : AnimacyFeatures) :
+    category af.spec = ∅ ↔ ¬ af.WellFormed := by
+  simp only [Set.eq_empty_iff_forall_notMem, mem_category]
+  revert af
   decide
 
-/-- A language's **conflation pattern**: which containment features it is
-    sensitive to. Dropping a feature merges the categories it distinguishes
-    ([halpert-hammerly-2026] (5), following [mcginnis-2005]). -/
-structure ConflationPattern where
-  usesAnimate : Bool
-  usesHuman : Bool
+end AnimacyFeatures
+
+/-- A core noun class (19): a coherent specification of [±Animate, ±Human]. -/
+abbrev Core := {af : AnimacyFeatures // af.WellFormed}
+
+namespace Core
+
+/-- HUMAN, [+Animate, +Human]. -/
+def human : Core := ⟨⟨true, true⟩, by decide⟩
+
+/-- ANIMATE, [+Animate, −Human]. -/
+def animal : Core := ⟨⟨true, false⟩, by decide⟩
+
+/-- INANIMATE, [−Animate, −Human]. -/
+def inanimate : Core := ⟨⟨false, false⟩, by decide⟩
+
+/-- HUMAN denotes every primitive down to the local persons: the class contains the speech-act
+participants, the containment behind their reduction to class 1/2 ((8), (10)). -/
+theorem category_spec_human : category human.1.spec = Set.Iic .human := by
+  ext x
+  simp only [mem_category, Set.mem_Iic]
+  revert x
+  decide
+
+/-- INANIMATE is the conflation of natural forces, concrete things, and abstract things, the
+GENERIC INANIMATE of (5). -/
+theorem category_spec_inanimate : category inanimate.1.spec = Set.Ioi .animal := by
+  ext x
+  simp only [mem_category, Set.mem_Ioi]
+  revert x
+  decide
+
+/-- The core class of a referent of a given animacy. -/
+def ofAnimacyLevel : Features.Prominence.AnimacyLevel → Core
+  | .human => human
+  | .animate => animal
+  | .inanimate => inanimate
+
+/-- (19) in Xhosa: HUMAN is class 1/2, ANIMATE class 9/10, and INANIMATE class 7/8. -/
+def gender : Core → Xhosa.Gender
+  | ⟨⟨true, true⟩, _⟩ => .genderA
+  | ⟨⟨true, false⟩, _⟩ => .genderE
+  | ⟨⟨false, false⟩, _⟩ => .genderD
+  | ⟨⟨false, true⟩, h⟩ => absurd h (by decide)
+
+/-- The core class of a gender, read off the semantic core the fragment records for it; none
+for a purely formal gender. -/
+def ofGender (g : Xhosa.Gender) : Option Core :=
+  match g.status with
+  | .interpretable .human => some human
+  | .interpretable .animal => some animal
+  | .interpretable .inanimate => some inanimate
+  | _ => none
+
+/-- (19) agrees with the fragment's semantic cores: the gender a core class is spelled out in
+bears that core. -/
+theorem ofGender_gender : ∀ c : Core, ofGender c.gender = some c := by decide
+
+theorem gender_eq_of_ofGender {g : Xhosa.Gender} {c : Core} (h : ofGender g = some c) :
+    c.gender = g := by
+  revert h; revert c; revert g; decide
+
+/-- The nominalizing final vowels (22). -/
+inductive FinalVowel where
+  | i | o
   deriving DecidableEq, Repr
 
-/-- The number of core noun classes distinguished under a conflation pattern. -/
-def ConflationPattern.classCount : ConflationPattern → Nat
-  | ⟨true, true⟩   => 3  -- HUMAN, ANIMATE, INANIMATE (full system)
-  | ⟨true, false⟩  => 2  -- GENERIC ANIMATE, INANIMATE (no [±Human])
-  | ⟨false, true⟩  => 2  -- HUMAN, GENERIC INANIMATE (no [±Animate])
-  | ⟨false, false⟩ => 1  -- all conflated (no animacy distinctions)
+/-- (22): the core n is spelled out as -i when [+Human] and as -o otherwise. -/
+def finalVowel (c : Core) : FinalVowel := if c.1.isHuman then .i else .o
 
-/-- Xhosa uses both features: three-way distinction. -/
-def ConflationPattern.xhosa : ConflationPattern := ⟨true, true⟩
-/-- Swahili lacks [±Human]: GENERIC ANIMATE (human + animal) vs INANIMATE. -/
-def ConflationPattern.swahili : ConflationPattern := ⟨true, false⟩
+/-- At the core, -i is exactly class 1/2: the 73% of Chichewa -i nouns in class 1 reported in
+section 4.1 are the aligned nominals, the rest stacked. -/
+theorem finalVowel_eq_i_iff (c : Core) : c.finalVowel = .i ↔ c.gender = .genderA := by
+  revert c; decide
 
-theorem xhosa_three_classes : ConflationPattern.xhosa.classCount = 3 := rfl
-theorem swahili_two_classes : ConflationPattern.swahili.classCount = 2 := rfl
+/-- An exponent conditioned on [±Animate] alone, as Swahili's class 1/2 agreement under animacy
+override (13), treats humans and animals alike: the GENERIC ANIMATE conflation of (5). -/
+theorem eq_of_factorsThrough_isAnimate {β : Type*} {f : Core → β}
+    (hf : Function.FactorsThrough f (·.1.isAnimate)) : f human = f animal :=
+  hf (a := human) (b := animal) rfl
 
-/-- A feature-definable category: a conjunction of constraints on
-    [±Animate] and/or [±Human]. `none` means the feature is unconstrained
-    (conflated). This captures exactly the categories that arise from
-    the containment hierarchy ([halpert-hammerly-2026] (4)–(5)). -/
-structure FeatureConjunction where
-  animateReq : Option Bool  -- constraint on [±Animate], or `none` if conflated
-  humanReq : Option Bool    -- constraint on [±Human], or `none` if conflated
+/-- Xhosa's core genders distinguish [±Human] within [+Animate]. -/
+theorem not_factorsThrough_gender : ¬ Function.FactorsThrough gender (·.1.isAnimate) :=
+  λ h => absurd (h (a := human) (b := animal) rfl) (by decide)
+
+/-- The plural subject marker of a core class's gender. -/
+def pluralSubjPrefix (c : Core) : String := c.gender.pluralClass.subjPrefix
+
+/-- Xhosa's class 8 and class 10 subject markers are both *zi-* (footnote 7): the plural marker
+is conditioned on [±Human] alone, so ANIMATE and INANIMATE share it. -/
+theorem pluralSubjPrefix_factorsThrough :
+    Function.FactorsThrough pluralSubjPrefix (·.1.isHuman) := by
+  intro a b; revert a b; decide
+
+end Core
+
+/-! ### Local persons -/
+
+/-- The person features [±Participant, ±Author] as a specification of (3). -/
+def personSpec (pf : Person.Features) : Spec := λ q =>
+  if q = .addressee then some pf.hasParticipant
+  else if q = .author then some pf.hasAuthor else none
+
+/-- Local persons are a more highly specified subset of HUMAN (section 3.2): a participant's
+category lies inside the core class, so a probe for class 1/2 finds them, as Lubukusu
+alternative agreement (8) and Zulu person reduction (10) show. -/
+theorem category_personSpec_subset {pf : Person.Features} (h : pf.hasParticipant = true) :
+    category (personSpec pf) ⊆ category Core.human.1.spec := by
+  rw [Core.category_spec_human]
+  intro x hx
+  have hx' := mem_category.mp hx .addressee pf.hasParticipant (by simp [personSpec])
+  rw [h] at hx'
+  exact le_trans (hx'.mpr rfl) (by decide)
+
+/-! ### Stacked nominals, (26) to (29) -/
+
+/-- The feature-bearing heads of a nominal (26): the core n beneath an optional secondary n
+with a class feature of its own ((27), (28)); an aligned noun's secondary n bears none and is
+spelled out by the core. -/
+structure Nominal where
+  core : Core
+  secondary : Option Core
   deriving DecidableEq, Repr
 
-/-- Whether a feature bundle satisfies a conjunction. -/
-def FeatureConjunction.matches (fc : FeatureConjunction) (af : AnimacyFeatures) : Bool :=
-  (fc.animateReq.isNone || fc.animateReq == some af.isAnimate) &&
-  (fc.humanReq.isNone || fc.humanReq == some af.isHuman)
-
-/-- **Impossible conflation**: no feature-definable category (conjunction
-    of [±Animate, ±Human] constraints) can select HUMAN and INANIMATE
-    while excluding ANIMAL. This follows from containment: HUMAN shares
-    [+Animate] with ANIMAL, and INANIMATE shares [−Human] with ANIMAL,
-    so any conjunction selecting both endpoints must also select the
-    middle ([halpert-hammerly-2026] §2, p. 5). -/
-theorem impossible_human_inanimate_without_animal :
-    ¬∃ (fc : FeatureConjunction),
-      fc.matches .human = true ∧
-      fc.matches .inanimate = true ∧
-      fc.matches .animal = false := by
-  intro ⟨⟨a, h⟩, mH, mI, mA⟩
-  simp only [FeatureConjunction.matches, AnimacyFeatures.human,
-    AnimacyFeatures.inanimate, AnimacyFeatures.animal] at mH mI mA
-  cases a with
-  | none => cases h with
-    | none => simp at mA
-    | some b => cases b <;> simp_all
-  | some b => cases b <;> cases h with
-    | none => simp_all
-    | some b' => cases b' <;> simp_all
-
-/-! ### nP stacking (26) -/
-
-/-- Stacked nP structure for Bantu nominals ([halpert-hammerly-2026] (26),
-    [carstens-2026] §4).
-
-    Bantu nouns have an inner semantic nP (bearing the i-core gender)
-    wrapped by zero or more outer nPs (determining the visible noun class).
-    For nouns in their canonical class, visible = core; for nouns
-    appearing in non-canonical classes (e.g. [human] nouns in classes
-    3/4 or 5/6), the outer nP differs from the inner core.
-
-    `visibleClass` is the outer noun class number (determines morphological
-    agreement with non-conjoined DPs). `coreClass` is the inner class
-    determined by the semantic core (or equal to `visibleClass` if no
-    stacking). -/
-structure NPStack where
-  visibleClass : Nat
-  coreClass : Nat
-  status : GenderStatus
-  deriving DecidableEq, Repr
-
-def NPStack.isCanonical (s : NPStack) : Bool :=
-  s.visibleClass == s.coreClass
-
-/-- Whether the core noun class is [+Animate] (HUMAN or ANIMAL).
-    This is the predicate that [+Animate]-relativized probes and
-    object-doubling conditions both target
-    ([halpert-hammerly-2026] (29)). -/
-def NPStack.hasAnimateCore (s : NPStack) : Bool :=
-  match s.status with
-  | .interpretable .human  => true
-  | .interpretable .animal => true
-  | _ => false
-
-/-- Default agreement class for a semantic core ([carstens-2026] (52c)).
-    Class 2 *ba-* for [human], class 8 *zi-* for [inanimate] and [animal]. -/
-def SemanticCore.defaultPluralClass : SemanticCore → Nat
-  | .human     => 2
-  | .animal    => 8
-  | .inanimate => 8
-  | .nonhuman  => 8
-
-/-- Sample nP structure for a [human] noun in its canonical class 1/2.
-    E.g. *umntwana* 'child': [n₁/₂ √MNTWANA] — single layer. -/
-def humanCanonical : NPStack where
-  visibleClass := 1
-  coreClass := 1
-  status := .interpretable .human
-
-/-- Sample nP structure for a [human] noun in non-canonical class 3/4.
-    E.g. *umgewu* 'criminal': [n₃/₄ [n₁/₂ √GEWU]] — stacked. -/
-def humanInClass3 : NPStack where
-  visibleClass := 3
-  coreClass := 1
-  status := .interpretable .human
-
-/-- Sample nP structure for a [human] noun in non-canonical class 5/6.
-    E.g. *ibutho* 'warrior': [n₅/₆ [n₁/₂ √BUTHO]] — stacked. -/
-def humanInClass5 : NPStack where
-  visibleClass := 5
-  coreClass := 1
-  status := .interpretable .human
-
-/-- Sample nP structure for an [animal] noun in its canonical class 9/10.
-    E.g. *indlovu* 'elephant': [n₉/₁₀ √DLOVU] — single layer. -/
-def animalCanonical : NPStack where
-  visibleClass := 9
-  coreClass := 9
-  status := .interpretable .animal
-
-/-- Sample nP structure for an [animal] noun in non-canonical class 1a/2a.
-    E.g. *unonkala* 'crab': [n₁/₂ [n₉/₁₀ √NONKALA]] — stacked. -/
-def animalInClass1 : NPStack where
-  visibleClass := 1
-  coreClass := 9
-  status := .interpretable .animal
-
--- ============================================================================
--- § 1: Person–Animacy Containment Bridge
--- ============================================================================
-
-/-- The full prominence hierarchy from [hammerly-2023] (3):
-    [Auth] ⊂ [Part] ⊂ [Hum] ⊂ [Anim] ⊂ [Agent] ⊂ [Indiv] ⊂ φ.
-
-    This structure encodes the four innermost features. Person features
-    [±Author, ±Participant] are nested inside animacy features
-    [±Human, ±Animate]. -/
-structure ProminenceFeatures where
-  isAnimate : Bool
-  isHuman : Bool
-  hasParticipant : Bool
-  hasAuthor : Bool
-  deriving DecidableEq, Repr
-
-/-- Well-formedness enforces the full containment chain:
-    [+Author] → [+Participant] → [+Human] → [+Animate]. -/
-def ProminenceFeatures.wellFormed (pf : ProminenceFeatures) : Bool :=
-  (!pf.hasAuthor || pf.hasParticipant) &&
-  (!pf.hasParticipant || pf.isHuman) &&
-  (!pf.isHuman || pf.isAnimate)
-
-/-- Extract the person projection. -/
-def ProminenceFeatures.personFeatures (pf : ProminenceFeatures) :
-    Person.Features :=
-  ⟨pf.hasParticipant, pf.hasAuthor⟩
-
-/-- Extract the animacy projection. -/
-def ProminenceFeatures.animacyFeatures (pf : ProminenceFeatures) :
-    AnimacyFeatures :=
-  ⟨pf.isAnimate, pf.isHuman⟩
-
-/-- The containment chain predicts: speech-act participants are human.
-    [+Participant] → [+Human] ([halpert-hammerly-2026] (3)–(4)). -/
-theorem participant_implies_human (pf : ProminenceFeatures)
-    (hw : pf.wellFormed = true) (hp : pf.hasParticipant = true) :
-    pf.isHuman = true := by
-  cases pf with | mk a h p au =>
-  subst hp
-  cases h with
-  | true => rfl
-  | false => simp [ProminenceFeatures.wellFormed] at hw
-
-/-- The containment chain predicts: speech-act participants are animate.
-    [+Participant] → [+Human] → [+Animate]. -/
-theorem participant_implies_animate (pf : ProminenceFeatures)
-    (hw : pf.wellFormed = true) (hp : pf.hasParticipant = true) :
-    pf.isAnimate = true := by
-  cases pf with | mk a h p au =>
-  subst hp
-  cases h with
-  | true =>
-    cases a with
-    | true => rfl
-    | false => simp [ProminenceFeatures.wellFormed] at hw
-  | false => simp [ProminenceFeatures.wellFormed] at hw
-
-/-- First person is necessarily human and animate. -/
-theorem firstF_person_is_human_animate :
-    ∀ pf : ProminenceFeatures, pf.wellFormed = true →
-    pf.hasAuthor = true →
-    pf.isHuman = true ∧ pf.isAnimate = true := by
-  intro ⟨a, h, p, au⟩ hw ha
-  subst ha
-  cases p with
-  | true =>
-    exact ⟨participant_implies_human ⟨a, h, true, true⟩ hw rfl,
-           participant_implies_animate ⟨a, h, true, true⟩ hw rfl⟩
-  | false => simp [ProminenceFeatures.wellFormed] at hw
-
-/-- Person and animacy features share the `ContainmentPair` structure.
-    Both `Person.Features` and `AnimacyFeatures` are `ContainmentPairLike`
-    instances — the same three-cell, no-four-way-distinction architecture.
-    This is not a coincidence: they are fragments of the same containment
-    hierarchy ([hammerly-2023]). -/
-theorem person_animacy_same_structure :
-    (Features.ContainmentPairLike.toPair Person.firstF).WellFormed ∧
-    (Features.ContainmentPairLike.toPair AnimacyFeatures.human).WellFormed ∧
-    (Features.ContainmentPairLike.toPair Person.thirdF).WellFormed ∧
-    (Features.ContainmentPairLike.toPair AnimacyFeatures.inanimate).WellFormed :=
-  ⟨by decide, by decide, by decide, by decide⟩
-
--- ============================================================================
--- § 2: Core Noun Class Hypothesis Verification
--- ============================================================================
-
-/-- The Core Noun Class Hypothesis (19): the three well-formed feature
-    combinations map exactly to the three core classes. -/
-theorem core_noun_class_hypothesis :
-    AnimacyFeatures.toCoreClass AnimacyFeatures.human = SemanticCore.human ∧
-    AnimacyFeatures.toCoreClass AnimacyFeatures.animal = SemanticCore.animal ∧
-    AnimacyFeatures.toCoreClass AnimacyFeatures.inanimate = SemanticCore.inanimate :=
-  ⟨rfl, rfl, rfl⟩
-
-/-- The feature decomposition of Xhosa's three interpretable genders
-    matches H&H's core noun class features. -/
-theorem xhosa_core_classes :
-    (Xhosa.Gender.status .genderA).core.map SemanticCore.toFeatures
-        = some AnimacyFeatures.human ∧
-    (Xhosa.Gender.status .genderD).core.map SemanticCore.toFeatures
-        = some AnimacyFeatures.inanimate ∧
-    (Xhosa.Gender.status .genderE).core.map SemanticCore.toFeatures
-        = some AnimacyFeatures.animal := ⟨rfl, rfl, rfl⟩
-
-/-- Xhosa's uninterpretable genders have no core feature decomposition. -/
-theorem xhosa_no_core :
-    (Xhosa.Gender.status .genderB).core = none ∧
-    (Xhosa.Gender.status .genderC).core = none := ⟨rfl, rfl⟩
-
-/-- The three core noun classes match the three animacy levels used
-    throughout the codebase (bridging H&H's features to differential
-    argument marking, Corbett/Smith-Stark scales, etc.). -/
-theorem core_classes_match_prominence :
-    AnimacyFeatures.human.toAnimacyLevel = .human ∧
-    AnimacyFeatures.animal.toAnimacyLevel = .animate ∧
-    AnimacyFeatures.inanimate.toAnimacyLevel = .inanimate := ⟨rfl, rfl, rfl⟩
-
--- ============================================================================
--- § 3: Anti-Agreement / Alternative Agreement (§3.2)
--- ============================================================================
-
-/-- Lubukusu alternative agreement (8)–(9): local persons and class 1 nouns
-    all trigger the same AA morpheme *o-* under A-bar extraction, while
-    other classes (e.g. class 7) retain their standard SM.
-
-    This follows from containment: local persons have [+Participant], which
-    entails [+Human] via the prominence hierarchy. Class 1 nouns have
-    [+Human] directly. A probe targeting [+Human] treats them identically.
-    Class 7 lacks [+Human] and so uses a different (unchanged) marker. -/
-inductive LubukusuSM where
-  | a   -- standard class 1 subject marker
-  | o   -- alternative agreement marker (A-bar extraction)
-  | sy  -- class 7 subject marker
-  deriving DecidableEq, Repr
-
-/-- Subject marker pair: declarative context vs A-bar extraction. -/
-structure AAPattern where
-  declarative : LubukusuSM
-  extraction : LubukusuSM
-  deriving DecidableEq, Repr
-
-def lubukusu_class1 : AAPattern := ⟨.a, .o⟩
-def lubukusu_local_person : AAPattern := ⟨.a, .o⟩
-def lubukusu_class7 : AAPattern := ⟨.sy, .sy⟩
-
-/-- Class 1 and local persons share the AA pattern. -/
-theorem aa_class1_eq_local : lubukusu_class1 = lubukusu_local_person := rfl
-
-/-- Class 7 does NOT show alternative agreement (lacks [+Human]). -/
-theorem aa_class7_differs : lubukusu_class1 ≠ lubukusu_class7 := by decide
-
-/-- **Derivation**: AA collapses class 1 and local persons BECAUSE both
-    project [+Human] via `ContainmentPairLike`. Local persons have [+Participant],
-    which entails [+Human] (person features are a subset of the animacy
-    hierarchy). Class 1 has [+Human] directly. Both yield the same
-    `ContainmentPair` outer value.
-
-    This theorem shows the structural basis: well-formed participants
-    must have [+Human], the same outer feature as class 1. -/
-theorem aa_structural_basis :
-    -- Local persons: [+Participant] → [+Human] (containment)
-    (∀ pf : ProminenceFeatures, pf.wellFormed = true →
-      pf.hasParticipant = true → pf.animacyFeatures.isHuman = true) ∧
-    -- Class 1: [+Human] directly
-    AnimacyFeatures.human.isHuman = true :=
-  ⟨fun pf hw hp => participant_implies_human pf hw hp, rfl⟩
-
--- ============================================================================
--- § 4: Probe Articulation (§6, (29))
--- ============================================================================
-
-/-- Probe sensitivity determines whether agreement tracks n_core or
-    n_secondary ([halpert-hammerly-2026] (29)).
-
-    - **flat**: the probe targets the closest φ-features (n_secondary).
-      Agreement always reflects the visible noun class.
-    - **relativized**: the probe bears [+Animate] and searches past
-      n_secondary to find [+Animate] on n_core. Agreement reflects
-      core noun class for animate nouns.
-
-    This is parameterized per grammatical function: a language may
-    have a flat subject probe but a relativized object probe (Nyaturu). -/
-inductive ProbeSensitivity where
-  | flat          -- targets closest φ (always n_secondary)
-  | relativized   -- bears [+Animate], searches to n_core
-  deriving DecidableEq, Repr
-
-/-- Which agreement class surfaces for a given probe and nP stack.
-    Flat probes always return the visible class; relativized probes
-    return the core class when `hasAnimateCore` is true. -/
-def agreementClass (probe : ProbeSensitivity) (stack : NPStack) : Nat :=
-  match probe with
-  | .flat => stack.visibleClass
-  | .relativized =>
-    if stack.hasAnimateCore then stack.coreClass
-    else stack.visibleClass
-
-/-- Zulu (flat probe): a [human] noun in class 3 gets class 3 agreement. -/
-theorem zulu_flat_class3_human :
-    agreementClass .flat (humanInClass3) = 3 := rfl
-
-/-- Swahili (relativized probe): a [human] noun in class 7 gets class 1
-    agreement — animacy override. This is NOT separately stipulated;
-    it FOLLOWS from `agreementClass .relativized` + `hasAnimateCore`. -/
-theorem swahili_relativized_human_override :
-    agreementClass .relativized
-      ⟨7, 1, .interpretable .human⟩ = 1 := rfl
-
-/-- Swahili (relativized probe): an [animal] noun in class 7 ALSO gets
-    core class agreement — animal override (GENERIC ANIMATE). -/
-theorem swahili_relativized_animal_override :
-    agreementClass .relativized
-      ⟨7, 9, .interpretable .animal⟩ = 9 := rfl
-
-/-- Inanimate nouns are unaffected by relativized probes — probe finds
-    no [+Animate] and falls back to visible class. -/
-theorem inanimate_no_override :
-    agreementClass .relativized
-      ⟨5, 7, .interpretable .inanimate⟩ = 5 := rfl
-
-/-- Uninterpretable genders are always tracked by visible class
-    regardless of probe type. -/
-theorem uninterpretable_always_visible (probe : ProbeSensitivity) (v c : Nat) :
-    agreementClass probe ⟨v, c, .uninterpretable⟩ = v := by
-  cases probe <;> rfl
-
-/-- Animacy override is a consequence of probe articulation, not a
-    separate parameter. When the core is [+Animate], a relativized
-    probe returns the core class. When it isn't, the probe falls
-    back to the visible class. -/
-theorem override_from_animate_core (stack : NPStack)
-    (h : stack.hasAnimateCore = true) :
-    agreementClass .relativized stack = stack.coreClass := by
-  simp only [agreementClass, h, ite_true]
-
-theorem no_override_without_animate_core (stack : NPStack)
-    (h : stack.hasAnimateCore = false) :
-    agreementClass .relativized stack = stack.visibleClass := by
-  simp only [agreementClass, h, Bool.false_eq_true, ite_false]
-
--- ============================================================================
--- § 5: Convergence under Coordination (§3.3, Table 18)
--- ============================================================================
-
-/-- The default plural agreement class for conjoined singulars is
-    determined by the core noun class, not the visible class.
-    Human conjuncts → SM2, non-human conjuncts → SM8/10.
-    This follows from `SemanticCore.defaultPluralClass`. -/
-theorem convergence_human_to_sm2 :
-    SemanticCore.defaultPluralClass .human = 2 := rfl
-
-theorem convergence_animal_to_sm8 :
-    SemanticCore.defaultPluralClass .animal = 8 := rfl
-
-theorem convergence_inanimate_to_sm8 :
-    SemanticCore.defaultPluralClass .inanimate = 8 := rfl
-
-/-- Xhosa convergence (Table 18): human nouns in ANY class converge to SM2
-    because all human nouns share core noun class [+Animate, +Human]. -/
-theorem xhosa_human_convergence :
-    SemanticCore.defaultPluralClass
-      (AnimacyFeatures.toCoreClass AnimacyFeatures.human) = 2 := rfl
-
-/-- Xhosa convergence (Table 18): inanimate nouns in any class converge
-    to SM8 because they share core noun class [−Animate, −Human]. -/
-theorem xhosa_inanimate_convergence :
-    SemanticCore.defaultPluralClass
-      (AnimacyFeatures.toCoreClass AnimacyFeatures.inanimate) = 8 := rfl
-
-/-- **Table 18 key insight**: Classes 1, 7, 9 show EXPECTED agreement
-    (their own plural class), not convergence. This is because these
-    are the canonical classes for the three core noun classes — their
-    visible class IS the core class (`isCanonical = true`).
-
-    Classes 3, 5 are non-canonical for all cores, so nouns in those
-    classes show convergence to the core default instead. -/
-theorem canonical_classes_show_expected :
-    humanCanonical.isCanonical = true ∧
-    animalCanonical.isCanonical = true ∧
-    humanInClass3.isCanonical = false ∧
-    humanInClass5.isCanonical = false := by decide
-
-/-- Non-canonical nouns converge to core default, not to their
-    visible class's plural. E.g. a [human] noun in class 3 converges
-    to SM2 (core default for human), not SM4 (plural of class 3). -/
-theorem noncanonical_converges_to_core :
-    -- A [human] noun in class 3: core default is SM2, not the
-    -- expected plural SM4 (class 4 is plural of class 3)
-    SemanticCore.defaultPluralClass
-        (AnimacyFeatures.toCoreClass AnimacyFeatures.human) = 2 ∧
-    SemanticCore.defaultPluralClass
-        (AnimacyFeatures.toCoreClass AnimacyFeatures.human) ≠ 4 :=
-  ⟨rfl, by decide⟩
-
-/-- The SM8/SM10 syncretism in Xhosa (both use *zi-*) follows from the
-    fact that classes 8 and 10 share [−Human] — they differ only in
-    [±Animate], which Xhosa's convergence is insensitive to
-    in this context. -/
-theorem sm8_sm10_syncretism :
-    Xhosa.NounClass.subjPrefix .cl8 =
-    Xhosa.NounClass.subjPrefix .cl10 := rfl
-
--- ============================================================================
--- § 6: Object Doubling (§3.2, (14))
--- ============================================================================
-
-/-- Object doubling in Nyaturu (14): animate objects allow (or require)
-    doubling with an object marker on the verb; inanimate objects
-    disallow it. This uses the SAME predicate as animacy override —
-    `hasAnimateCore` — applied to the object probe, confirming that
-    both phenomena are instances of [+Animate]-relativized probing. -/
-def nyaturu_om_allowed (stack : NPStack) : Bool := stack.hasAnimateCore
-
-theorem nyaturu_human_om : nyaturu_om_allowed
-    ⟨1, 1, .interpretable .human⟩ = true := rfl
-
-theorem nyaturu_inanimate_no_om : nyaturu_om_allowed
-    ⟨7, 7, .interpretable .inanimate⟩ = false := rfl
-
-/-- Object doubling and animacy override share the same structural
-    basis: both depend on `hasAnimateCore`, confirming they are
-    instances of the same [+Animate]-relativized probing mechanism. -/
-theorem om_and_override_share_predicate (stack : NPStack) :
-    nyaturu_om_allowed stack = stack.hasAnimateCore ∧
-    (stack.hasAnimateCore = true →
-      agreementClass .relativized stack = stack.coreClass) := by
-  constructor
-  · rfl
-  · intro h; simp only [agreementClass, h, ite_true]
-
--- ============================================================================
--- § 7: Bridge to Kramer's n-Head Theory
--- ============================================================================
-
-section KramerBridge
-open DistributedMorphology
-
-/-- Bridge from H&H's animacy features to [kramer-2015]'s
-    `GenderFeature` on the categorizing head n.
-
-    H&H's `AnimacyFeatures` encode core noun class via [±Animate, ±Human].
-    Kramer's framework uses `Gender.Dimension.anim` with interpretability.
-    The bridge maps:
-    - [+Animate] (human or animal) → i[+ANIM] (interpretable animate)
-    - [−Animate] (inanimate) → i[−ANIM] (interpretable inanimate)
-
-    Both systems agree that the n-head bears gender features and that
-    interpretability distinguishes natural from arbitrary gender. -/
-def toGenderFeature (af : AnimacyFeatures) : GenderFeature :=
-  { interp := .i, val := { dim := .anim, pole := if af.isAnimate then .pos else .neg } }
-
-private def iAnimPos : GenderFeature :=
-  { interp := .i, val := { dim := .anim, pole := .pos } }
-private def iAnimNeg : GenderFeature :=
-  { interp := .i, val := { dim := .anim, pole := .neg } }
-
-theorem human_is_iAnimPos :
-    toGenderFeature AnimacyFeatures.human = iAnimPos := rfl
-
-theorem inanimate_is_iAnimNeg :
-    toGenderFeature AnimacyFeatures.inanimate = iAnimNeg := rfl
-
-/-- All core noun class features yield interpretable gender on n.
-    This matches [kramer-2015]'s prediction that natural gender
-    is always interpretable, and connects H&H's claim that core noun
-    class lives on n to Kramer's n-head architecture. -/
-theorem core_features_are_interpretable :
-    GenderFeature.IsNatural (toGenderFeature AnimacyFeatures.human) ∧
-    GenderFeature.IsNatural (toGenderFeature AnimacyFeatures.animal) ∧
-    GenderFeature.IsNatural (toGenderFeature AnimacyFeatures.inanimate) :=
-  ⟨rfl, rfl, rfl⟩
-
-end KramerBridge
+namespace Nominal
+
+/-- The goals a probe on the nominal meets, outermost first. -/
+def heads (n : Nominal) : List Core := n.secondary.toList ++ [n.core]
+
+/-- The class prefix: the allomorph of the outermost n, chosen by the core when the secondary n
+bears no feature (27). -/
+def prefixGender (n : Nominal) : Xhosa.Gender := (n.secondary.getD n.core).gender
+
+/-- A nominal from a Xhosa noun (28): the core from the entity denoted, and a secondary n
+bearing the prefix class's features when that class is a core class other than the core's;
+undefined for the classes whose features the paper leaves open. -/
+def ofEntry (e : Xhosa.NounEntry) : Option Nominal :=
+  (Xhosa.Gender.ofSingular e.cls).bind λ g =>
+    let core := Core.ofAnimacyLevel e.animacy
+    if g = core.gender then some ⟨core, none⟩
+    else (Core.ofGender g).map λ s => ⟨core, some s⟩
+
+/-- The prefix class of a nominal is the noun's class. -/
+theorem ofSingular_prefixGender {e : Xhosa.NounEntry} {n : Nominal} (h : ofEntry e = some n) :
+    Xhosa.Gender.ofSingular e.cls = some n.prefixGender := by
+  unfold ofEntry at h
+  rcases hg : Xhosa.Gender.ofSingular e.cls with _ | g
+  · simp [hg] at h
+  · simp only [hg, Option.bind_some] at h
+    split at h
+    · obtain rfl := Option.some.inj h
+      simp_all [prefixGender]
+    · rcases hs : Core.ofGender g with _ | s
+      · simp [hs] at h
+      · simp only [hs, Option.map_some, Option.some.injEq] at h
+        subst h
+        rw [prefixGender, Option.getD_some, Core.gender_eq_of_ofGender hs]
+
+/-- (28): *isikhohleli* 'coughing person' is a human core under a class 7 secondary n, its final
+vowel the animate -i and its prefix class 7. -/
+theorem ofEntry_isikhohleli :
+    ofEntry Xhosa.Nouns.isikhohleli = some ⟨Core.human, some Core.inanimate⟩ := by decide
+
+/-- (27a) and (27c): *umkhohleli* 'coughing person' and *isikhohlela* 'phlegm' are aligned, the
+prefix class the core's own. -/
+theorem ofEntry_aligned :
+    ofEntry Xhosa.Nouns.umkhohleli = some ⟨Core.human, none⟩ ∧
+      ofEntry Xhosa.Nouns.isikhohlela = some ⟨Core.inanimate, none⟩ := by decide
+
+end Nominal
+
+/-- (29a): the flat ɸ probe, to which any n is visible. -/
+def flat : Probe Core := Probe.indiscriminate
+
+/-- (29b): the ɸ probe relativized to [+Animate]. -/
+def animateProbe : Probe Core := Probe.ofVis (·.1.isAnimate)
+
+/-- The gender a probe agrees in: the allomorph of the n it finds. -/
+def agreement (p : Probe Core) (n : Nominal) : Option Xhosa.Gender :=
+  (p.search n.heads).map Core.gender
+
+/-- Zulu: a flat probe finds the outermost n, so agreement tracks the prefix class (29a). -/
+theorem agreement_flat (n : Nominal) : agreement flat n = some n.prefixGender := by
+  rcases n with ⟨c, _ | s⟩ <;> rfl
+
+/-- Swahili: with an inanimate secondary n over an animate core, as in (28), the relativized
+probe searches past the secondary n to the core (29b). -/
+theorem animateProbe_search {n : Nominal} (hc : n.core.1.isAnimate = true)
+    (hs : ∀ s ∈ n.secondary, s.1.isAnimate = false) :
+    animateProbe.search n.heads = some n.core := by
+  rcases n with ⟨c, _ | s⟩ <;> simp only at hc hs
+  · simp [animateProbe, Probe.search, Nominal.heads, Probe.ofVis, hc]
+  · simp [animateProbe, Probe.search, Nominal.heads, Probe.ofVis, hc, hs s rfl]
+
+/-- Animacy override ((11), (13)): the relativized probe agrees with the core class. -/
+theorem agreement_animateProbe {n : Nominal} (hc : n.core.1.isAnimate = true)
+    (hs : ∀ s ∈ n.secondary, s.1.isAnimate = false) :
+    agreement animateProbe n = some n.core.gender := by
+  rw [agreement, animateProbe_search hc hs, Option.map_some]
+
+/-- Nyaturu object doubling (14): an object probe relativized to [+Animate] is valued by an
+aligned noun iff its core is animate, so an inanimate object leaves it unvalued and no object
+marker surfaces. -/
+theorem animateProbe_outcome (c : Core) :
+    animateProbe.outcome (Nominal.mk c none).heads = .valued ↔ c.1.isAnimate = true := by
+  simp [Probe.outcome_eq_valued_iff, Nominal.heads, animateProbe, Probe.ofVis]
+
+/-- (28) through (29): *isikhohleli* agrees in class 7 with a flat probe and in class 1 with the
+relativized one. -/
+theorem isikhohleli_agreement :
+    (Nominal.ofEntry Xhosa.Nouns.isikhohleli).bind (agreement flat) = some .genderD ∧
+      (Nominal.ofEntry Xhosa.Nouns.isikhohleli).bind (agreement animateProbe) = some .genderA := by
+  decide
 
 end HalpertHammerly2026
