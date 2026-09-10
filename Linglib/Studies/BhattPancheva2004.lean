@@ -30,7 +30,7 @@ the empirical claims of B&P, and bridge to neighbouring studies.
 
 - **§3** Late merger of degree clauses. The degree clause is a
   comparative-deletion construction that merges countercyclically with
-  DegP after movement. We instantiate `lateMergerBleeds` at the
+  DegP after movement. We instantiate `LateMergerBleeds` at the
   degree-specific admissibility predicate and witness the Condition C
   bleeding profile via `degree_lm_bleeds_iff_scope_position_above`.
 - **§4.1** Heim-Kennedy Constraint. We use `IsHeimKennedy` from the
@@ -70,9 +70,9 @@ namespace BhattPancheva2004
 
 open Hoeksema1983
 open Heim2001 (IntensionalVerbDatum intensionalVerbData)
-open Minimalist (lateMergerBleeds wlmBleedsCondC ChainPosition admissible_above_binder_bleeds)
+open Minimalist (ChainPosition)
 open Minimalist.DegreeMovement
-  (degreeClauseLateMergerBleeds scopeOK_above_binder_bleeds
+  (DegreeClauseLateMergerBleeds scopeOK_above_binder_bleeds
    ScopeBinding IsHeimKennedy not_isHeimKennedy_QP_above_bound_DegP
    isHeimKennedy_no_dependency isHeimKennedy_dependency_requires_high_DegP
    williams_scope_correlation williams_exempt_when_no_binding)
@@ -93,10 +93,9 @@ variable {Entity : Type*}
     encoding the §5.1 stimulus contrasts. We do not formalize those
     contrasts here. -/
 theorem degree_lm_bleeds_iff_scope_position_above
-    (chain : List ChainPosition) (binderHeight h : Nat)
-    (hgt : h > binderHeight) :
-    degreeClauseLateMergerBleeds (⟨h, true⟩ :: chain) binderHeight = true :=
-  scopeOK_above_binder_bleeds chain binderHeight h hgt
+    (chain : List ChainPosition) (binderHeight h : ℕ) (hgt : binderHeight < h) :
+    DegreeClauseLateMergerBleeds (⟨h, true⟩ :: chain) binderHeight :=
+  scopeOK_above_binder_bleeds hgt
 
 /-! ### Heim-Kennedy Constraint (B&P §4.1) -/
 
