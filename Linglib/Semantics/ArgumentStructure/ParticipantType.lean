@@ -160,9 +160,8 @@ inductive TransitivityRank where
   deriving DecidableEq, Repr
 
 /-- The canonical patient position for each transitivity class
-    (Fig. 5). The agent position for all three classes is `effectorAgent`
-    (Fig. 5, Ia/IIa share the same agent node; Grimm doesn't separately
-    label IIIa). -/
+    (Fig. 5). The agent of classes I and II is `effectorAgent` (Ia/IIa share
+    one node); the agent of class III adds sentience to it (IIIa). -/
 def TransitivityRank.patientType : TransitivityRank → ParticipantType
   | .resultativeEffective => ⟨⊥, .exPersBeginning⟩     -- Ip
   | .contact              => ⟨⊥, .quPersBeginning⟩     -- IIp
