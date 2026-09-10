@@ -1,7 +1,10 @@
 [
   {
     "id": "gj2004_5a",
-    "source": {"bibkey": "goldberg-jackendoff-2004", "paperLabel": "(5a)"},
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(5a)"
+    },
     "language": "stan1293",
     "primaryText": "Herman hammered the metal flat.",
     "discourseSegments": [],
@@ -11,12 +14,32 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["subconstruction", "causative property"], ["rpCat", "AP"]],
+    "paperFeatures": [
+      [
+        "verb",
+        "hammer"
+      ],
+      [
+        "subconstruction",
+        "causative property"
+      ],
+      [
+        "rpCat",
+        "AP"
+      ],
+      [
+        "selection",
+        "selected"
+      ]
+    ],
     "comment": "The paper's first RP AP exemplar."
   },
   {
     "id": "gj2004_5b",
-    "source": {"bibkey": "goldberg-jackendoff-2004", "paperLabel": "(5b)"},
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(5b)"
+    },
     "language": "stan1293",
     "primaryText": "The critics laughed the play off the stage.",
     "discourseSegments": [],
@@ -26,12 +49,32 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["subconstruction", "causative path"], ["rpCat", "PP"]],
+    "paperFeatures": [
+      [
+        "verb",
+        "laugh"
+      ],
+      [
+        "subconstruction",
+        "causative path"
+      ],
+      [
+        "rpCat",
+        "PP"
+      ],
+      [
+        "selection",
+        "unselected"
+      ]
+    ],
     "comment": "The paper's first RP PP exemplar; object unselected by the verb."
   },
   {
     "id": "gj2004_6a",
-    "source": {"bibkey": "goldberg-jackendoff-2004", "paperLabel": "(6a)"},
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(6a)"
+    },
     "language": "stan1293",
     "primaryText": "The pond froze solid.",
     "discourseSegments": [],
@@ -41,12 +84,28 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["subconstruction", "noncausative property"], ["rpCat", "AP"]],
+    "paperFeatures": [
+      [
+        "verb",
+        "freeze"
+      ],
+      [
+        "subconstruction",
+        "noncausative property"
+      ],
+      [
+        "rpCat",
+        "AP"
+      ]
+    ],
     "comment": "Intransitive resultative."
   },
   {
     "id": "gj2004_6b",
-    "source": {"bibkey": "goldberg-jackendoff-2004", "paperLabel": "(6b)"},
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(6b)"
+    },
     "language": "stan1293",
     "primaryText": "Bill rolled out of the room.",
     "discourseSegments": [],
@@ -56,12 +115,28 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["subconstruction", "noncausative path"], ["rpCat", "PP"]],
+    "paperFeatures": [
+      [
+        "verb",
+        "roll"
+      ],
+      [
+        "subconstruction",
+        "noncausative path"
+      ],
+      [
+        "rpCat",
+        "PP"
+      ]
+    ],
     "comment": "Intransitive resultative."
   },
   {
     "id": "gj2004_7a",
-    "source": {"bibkey": "goldberg-jackendoff-2004", "paperLabel": "(7a)"},
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(7a)"
+    },
     "language": "stan1293",
     "primaryText": "The gardener watered the flowers flat.",
     "discourseSegments": [],
@@ -71,12 +146,32 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["subconstruction", "causative property"], ["rpCat", "AP"], ["selection", "selected"]],
+    "paperFeatures": [
+      [
+        "verb",
+        "water"
+      ],
+      [
+        "subconstruction",
+        "causative property"
+      ],
+      [
+        "rpCat",
+        "AP"
+      ],
+      [
+        "selection",
+        "selected"
+      ]
+    ],
     "comment": "Selected transitive resultative: cf. The gardener watered the flowers."
   },
   {
     "id": "gj2004_7b",
-    "source": {"bibkey": "goldberg-jackendoff-2004", "paperLabel": "(7b)"},
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(7b)"
+    },
     "language": "stan1293",
     "primaryText": "Bill broke the bathtub into pieces.",
     "discourseSegments": [],
@@ -86,12 +181,32 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["subconstruction", "causative path"], ["rpCat", "PP"], ["selection", "selected"]],
-    "comment": "Selected transitive resultative: cf. Bill broke the bathtub."
+    "paperFeatures": [
+      [
+        "verb",
+        "break"
+      ],
+      [
+        "subconstruction",
+        "causative property"
+      ],
+      [
+        "rpCat",
+        "PP"
+      ],
+      [
+        "selection",
+        "selected"
+      ]
+    ],
+    "comment": "Selected transitive resultative: cf. Bill broke the bathtub. The PP names the result state, a property RP in the AP/PP sense of the paper's summary (97a)."
   },
   {
     "id": "gj2004_8a",
-    "source": {"bibkey": "goldberg-jackendoff-2004", "paperLabel": "(8a)"},
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(8a)"
+    },
     "language": "stan1293",
     "primaryText": "They drank the pub dry.",
     "discourseSegments": [],
@@ -99,14 +214,39 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [{"form": "*They drank the pub.", "judgment": "ungrammatical"}],
+    "alternatives": [
+      {
+        "form": "*They drank the pub.",
+        "judgment": "ungrammatical"
+      }
+    ],
     "readings": [],
-    "paperFeatures": [["subconstruction", "causative property"], ["rpCat", "AP"], ["selection", "unselected"]],
+    "paperFeatures": [
+      [
+        "verb",
+        "drink"
+      ],
+      [
+        "subconstruction",
+        "causative property"
+      ],
+      [
+        "rpCat",
+        "AP"
+      ],
+      [
+        "selection",
+        "unselected"
+      ]
+    ],
     "comment": "Unselected transitive resultative: object licensed only by the construction."
   },
   {
     "id": "gj2004_8b",
-    "source": {"bibkey": "goldberg-jackendoff-2004", "paperLabel": "(8b)"},
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(8b)"
+    },
     "language": "stan1293",
     "primaryText": "The professor talked us into a stupor.",
     "discourseSegments": [],
@@ -114,14 +254,39 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [{"form": "*The professor talked us.", "judgment": "ungrammatical"}],
+    "alternatives": [
+      {
+        "form": "*The professor talked us.",
+        "judgment": "ungrammatical"
+      }
+    ],
     "readings": [],
-    "paperFeatures": [["subconstruction", "causative path"], ["rpCat", "PP"], ["selection", "unselected"]],
-    "comment": "Unselected transitive resultative with path RP."
+    "paperFeatures": [
+      [
+        "verb",
+        "talk"
+      ],
+      [
+        "subconstruction",
+        "causative property"
+      ],
+      [
+        "rpCat",
+        "PP"
+      ],
+      [
+        "selection",
+        "unselected"
+      ]
+    ],
+    "comment": "Unselected transitive resultative; the PP names the result state."
   },
   {
     "id": "gj2004_9a",
-    "source": {"bibkey": "goldberg-jackendoff-2004", "paperLabel": "(9a)"},
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(9a)"
+    },
     "language": "stan1293",
     "primaryText": "We yelled ourselves hoarse.",
     "discourseSegments": [],
@@ -130,16 +295,42 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "*We yelled ourselves.", "judgment": "ungrammatical"},
-      {"form": "*We yelled Harry hoarse.", "judgment": "ungrammatical"}
+      {
+        "form": "*We yelled ourselves.",
+        "judgment": "ungrammatical"
+      },
+      {
+        "form": "*We yelled Harry hoarse.",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
-    "paperFeatures": [["subconstruction", "causative property"], ["rpCat", "AP"], ["selection", "fake reflexive"]],
+    "paperFeatures": [
+      [
+        "verb",
+        "yell"
+      ],
+      [
+        "subconstruction",
+        "causative property"
+      ],
+      [
+        "rpCat",
+        "AP"
+      ],
+      [
+        "selection",
+        "fake reflexive"
+      ]
+    ],
     "comment": "Fake reflexive: unselected (bad without the RP) and does not alternate with other NPs."
   },
   {
     "id": "gj2004_23a",
-    "source": {"bibkey": "goldberg-jackendoff-2004", "paperLabel": "(23a)"},
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(23a)"
+    },
     "language": "stan1293",
     "primaryText": "For hours, Bill heated the mixture hotter and hotter.",
     "discourseSegments": [],
@@ -149,12 +340,32 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["rpCat", "AP"], ["endBounded", "false"], ["telicity", "atelic"]],
+    "paperFeatures": [
+      [
+        "verb",
+        "heat"
+      ],
+      [
+        "subconstruction",
+        "causative property"
+      ],
+      [
+        "rpCat",
+        "AP"
+      ],
+      [
+        "endBounded",
+        "false"
+      ]
+    ],
     "comment": "Non-end-bounded AP RP: atelic resultative, for-adverbial fine."
   },
   {
     "id": "gj2004_23b",
-    "source": {"bibkey": "goldberg-jackendoff-2004", "paperLabel": "(23b)"},
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(23b)"
+    },
     "language": "stan1293",
     "primaryText": "For hours, Bill hammered the metal ever flatter.",
     "discourseSegments": [],
@@ -164,12 +375,32 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["rpCat", "AP"], ["endBounded", "false"], ["telicity", "atelic"]],
+    "paperFeatures": [
+      [
+        "verb",
+        "hammer"
+      ],
+      [
+        "subconstruction",
+        "causative property"
+      ],
+      [
+        "rpCat",
+        "AP"
+      ],
+      [
+        "endBounded",
+        "false"
+      ]
+    ],
     "comment": "Non-end-bounded AP RP: atelic resultative, for-adverbial fine."
   },
   {
     "id": "gj2004_23c",
-    "source": {"bibkey": "goldberg-jackendoff-2004", "paperLabel": "(23c)"},
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(23c)"
+    },
     "language": "stan1293",
     "primaryText": "For years, Penelope wove the shawl longer and longer.",
     "discourseSegments": [],
@@ -179,12 +410,32 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["rpCat", "AP"], ["endBounded", "false"], ["telicity", "atelic"]],
+    "paperFeatures": [
+      [
+        "verb",
+        "weave"
+      ],
+      [
+        "subconstruction",
+        "causative property"
+      ],
+      [
+        "rpCat",
+        "AP"
+      ],
+      [
+        "endBounded",
+        "false"
+      ]
+    ],
     "comment": "Non-end-bounded AP RP: atelic resultative, for-adverbial fine."
   },
   {
     "id": "gj2004_24a",
-    "source": {"bibkey": "goldberg-jackendoff-2004", "paperLabel": "(24a)"},
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(24a)"
+    },
     "language": "stan1293",
     "primaryText": "*Bill floated into the cave for hours.",
     "discourseSegments": [],
@@ -194,12 +445,32 @@
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["rpCat", "PP"], ["endBounded", "true"], ["telicity", "telic"]],
+    "paperFeatures": [
+      [
+        "verb",
+        "float"
+      ],
+      [
+        "subconstruction",
+        "noncausative path"
+      ],
+      [
+        "rpCat",
+        "PP"
+      ],
+      [
+        "endBounded",
+        "true"
+      ]
+    ],
     "comment": "End-bounded spatial PP: telic resultative, for-adverbial out."
   },
   {
     "id": "gj2004_24b",
-    "source": {"bibkey": "goldberg-jackendoff-2004", "paperLabel": "(24b)"},
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(24b)"
+    },
     "language": "stan1293",
     "primaryText": "*Bill pushed Harry off the sofa for hours.",
     "discourseSegments": [],
@@ -209,12 +480,32 @@
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["rpCat", "PP"], ["endBounded", "true"], ["telicity", "telic"]],
+    "paperFeatures": [
+      [
+        "verb",
+        "push"
+      ],
+      [
+        "subconstruction",
+        "causative path"
+      ],
+      [
+        "rpCat",
+        "PP"
+      ],
+      [
+        "endBounded",
+        "true"
+      ]
+    ],
     "comment": "End-bounded spatial PP: telic resultative, for-adverbial out."
   },
   {
     "id": "gj2004_24c",
-    "source": {"bibkey": "goldberg-jackendoff-2004", "paperLabel": "(24c)"},
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(24c)"
+    },
     "language": "stan1293",
     "primaryText": "Bill floated down the river for hours.",
     "discourseSegments": [],
@@ -224,12 +515,32 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["rpCat", "PP"], ["endBounded", "false"], ["telicity", "atelic"]],
+    "paperFeatures": [
+      [
+        "verb",
+        "float"
+      ],
+      [
+        "subconstruction",
+        "noncausative path"
+      ],
+      [
+        "rpCat",
+        "PP"
+      ],
+      [
+        "endBounded",
+        "false"
+      ]
+    ],
     "comment": "Non-end-bounded spatial PP: atelic resultative, for-adverbial fine."
   },
   {
     "id": "gj2004_24d",
-    "source": {"bibkey": "goldberg-jackendoff-2004", "paperLabel": "(24d)"},
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(24d)"
+    },
     "language": "stan1293",
     "primaryText": "Bill pushed Harry along the trail for hours.",
     "discourseSegments": [],
@@ -239,12 +550,32 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["rpCat", "PP"], ["endBounded", "false"], ["telicity", "atelic"]],
+    "paperFeatures": [
+      [
+        "verb",
+        "push"
+      ],
+      [
+        "subconstruction",
+        "causative path"
+      ],
+      [
+        "rpCat",
+        "PP"
+      ],
+      [
+        "endBounded",
+        "false"
+      ]
+    ],
     "comment": "Non-end-bounded spatial PP: atelic resultative, for-adverbial fine."
   },
   {
     "id": "gj2004_45a",
-    "source": {"bibkey": "goldberg-jackendoff-2004", "paperLabel": "(45a)"},
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(45a)"
+    },
     "language": "stan1293",
     "primaryText": "*She yelled hoarse.",
     "discourseSegments": [],
@@ -254,12 +585,32 @@
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["subconstruction", "noncausative property"], ["coherence", "violation"]],
-    "comment": "Semantic coherence violation: agent subject of yell cannot be construed as the patient of BECOME."
+    "paperFeatures": [
+      [
+        "verb",
+        "yell"
+      ],
+      [
+        "subconstruction",
+        "noncausative property"
+      ],
+      [
+        "rpCat",
+        "AP"
+      ],
+      [
+        "verbRole",
+        "agent"
+      ]
+    ],
+    "comment": "Semantic coherence violation: the agent subject of yell cannot be construed as the patient of BECOME."
   },
   {
     "id": "gj2004_45b",
-    "source": {"bibkey": "goldberg-jackendoff-2004", "paperLabel": "(45b)"},
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(45b)"
+    },
     "language": "stan1293",
     "primaryText": "*Ted cried to sleep.",
     "discourseSegments": [],
@@ -269,12 +620,32 @@
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["subconstruction", "noncausative property"], ["coherence", "violation"]],
-    "comment": "Semantic coherence violation: agent subject of cry cannot be construed as the patient of BECOME."
+    "paperFeatures": [
+      [
+        "verb",
+        "cry"
+      ],
+      [
+        "subconstruction",
+        "noncausative property"
+      ],
+      [
+        "rpCat",
+        "PP"
+      ],
+      [
+        "verbRole",
+        "agent"
+      ]
+    ],
+    "comment": "Semantic coherence violation: the agent subject of cry cannot be construed as the patient of BECOME."
   },
   {
     "id": "gj2004_45c",
-    "source": {"bibkey": "goldberg-jackendoff-2004", "paperLabel": "(45c)"},
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(45c)"
+    },
     "language": "stan1293",
     "primaryText": "The tiger bled to death.",
     "discourseSegments": [],
@@ -284,27 +655,32 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["subconstruction", "noncausative property"], ["coherence", "ok"]],
-    "comment": "Noncausal property resultative: patient subject, roles cohere."
-  },
-  {
-    "id": "gj2004_97c",
-    "source": {"bibkey": "goldberg-jackendoff-2004", "paperLabel": "(97c)"},
-    "language": "stan1293",
-    "primaryText": "The truck rumbled into the station.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [["subconstruction", "noncausative path"], ["subeventRelation", "result"]],
-    "comment": "Sound-emission path resultative: the sound RESULTS from the motion."
+    "paperFeatures": [
+      [
+        "verb",
+        "bleed"
+      ],
+      [
+        "subconstruction",
+        "noncausative property"
+      ],
+      [
+        "rpCat",
+        "PP"
+      ],
+      [
+        "verbRole",
+        "patient"
+      ]
+    ],
+    "comment": "Noncausal property resultative: something happens to the bleeder, a patient, so the roles cohere."
   },
   {
     "id": "gj2004_wipe",
-    "source": {"bibkey": "goldberg-jackendoff-2004", "paperLabel": "§6.2"},
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "§6.2"
+    },
     "language": "stan1293",
     "primaryText": "She wiped the table clean.",
     "discourseSegments": [],
@@ -314,7 +690,63 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["subconstruction", "causative property"], ["coherence", "ok"]],
-    "comment": "The wiped surface is potentially affected and construable as a patient, satisfying semantic coherence."
+    "paperFeatures": [
+      [
+        "verb",
+        "wipe"
+      ],
+      [
+        "subconstruction",
+        "causative property"
+      ],
+      [
+        "rpCat",
+        "AP"
+      ],
+      [
+        "selection",
+        "selected"
+      ],
+      [
+        "verbRole",
+        "patient"
+      ]
+    ],
+    "comment": "The wiped surface is potentially affected and so construable as a patient, satisfying semantic coherence."
+  },
+  {
+    "id": "gj2004_97c",
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(97c)"
+    },
+    "language": "stan1293",
+    "primaryText": "The truck rumbled into the station.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "rumble"
+      ],
+      [
+        "subconstruction",
+        "noncausative path"
+      ],
+      [
+        "rpCat",
+        "PP"
+      ],
+      [
+        "subeventRelation",
+        "result"
+      ]
+    ],
+    "comment": "Sound-emission path resultative: the sound results from the motion."
   }
 ]

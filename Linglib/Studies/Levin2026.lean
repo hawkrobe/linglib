@@ -6,7 +6,6 @@ import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Fragments.Mandarin.Resultatives
-import Linglib.Studies.GoldbergJackendoff2004
 import Linglib.Data.Examples.Levin1993
 
 /-!
@@ -76,7 +75,6 @@ open Causation.Resultatives (resultativeCausativeBuilder)
 open Features.ChangeOfState (CoSType)
 open ConstructionGrammar (resultative composedMeaning predictedAlternationInConstruction
   Construction)
-open GoldbergJackendoff2004 (ResultativeType)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Verb classes in the construction
@@ -916,30 +914,6 @@ theorem pushOpen_filled_covers_core :
     pushOpen_filled.adjective.spatialConfigType.isSome = true := by
   exact ⟨pushOpen_filled.alternationPredicted,
          pushOpen_filled.adjSpatial⟩
-
-/-! ### Connection to ResultativeType
-
-Intr-*push open* resultatives are `anticausativeProperty` in the
-Goldberg & Jackendoff typology (added to `ResultativeType` for
-[levin-2026]). This closes the loop between the `FilledResultative`
-type and the broader resultative classification. -/
-
-/-- Map a `FilledResultative` to its `ResultativeType`.
-    All intr-*push open* resultatives are anticausative property resultatives:
-    the verb is transitive-only, the adjective heads a property result phrase,
-    and the cause is suppressed. The transitive counterpart (tr-*push open*)
-    would be `causativeProperty`, but is modeled separately. -/
-def filledToResultativeType (_ : FilledResultative) :
-    ResultativeType :=
-  .anticausativeProperty
-
-/-- Anticausative property is distinct from noncausative property
-    (freeze solid): the former has a suppressed cause, the latter
-    has no constructional cause at all. -/
-theorem anticausative_not_noncausative :
-    filledToResultativeType pushOpen_filled ≠
-    ResultativeType.noncausativeProperty := by
-  decide
 
 -- ════════════════════════════════════════════════════
 -- § 11. Cross-linguistic: Mandarin tuī-kāi 推开
