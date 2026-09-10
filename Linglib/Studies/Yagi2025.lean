@@ -56,10 +56,9 @@ definition with disjunction-update survival.
   (`filter_wrong_at_kingOpens`)
 - `PartialProp.orKPSymmetric` (symmetric, negative-antecedent K&P of Yagi Def 2):
   presupposition entails assertion (`kp_presup_entails_assertion`)
-- `Geurts2005.exhaustivity_implies_uninformative`:
-  the *consequence* (not the derivation) of [schlenker-2009] §2.4
-  via the Geurts-modal-disjunction substrate
-  (`truthset_uninformative_geurts_route`)
+- `exhaustive_uninformative` ([geurts-2005]'s Exhaustivity on the modal
+  disjunction of the two partial propositions): the *consequence* (not the
+  derivation) of [schlenker-2009] §2.4 (`truthset_uninformative_geurts_route`)
 - `Prop3.metaAssert`: allows falsity, no presupposition
   (`metaAssert_allows_falsity`, `metaAssert_no_gap`)
 - `PartialProp.orFlex` = `PartialProp.orBelnap` (substrate identity from
@@ -469,8 +468,7 @@ holds — at which point the disjunction is trivially true and uninformative.
 What we actually formalise here is the **consequence**, not Yagi's
 derivation. We stipulate the truth-set `truthSet` directly (kingOpens +
 presidentConducts — the worlds where some disjunct is defined-and-true)
-and show via the substrate's
-`Geurts2005.exhaustivity_implies_uninformative` that
+and show via `exhaustive_uninformative` that
 the disjunction is true throughout `truthSet`. This is an instance of
 Geurts's exhaustivity-implies-uninformativity, which Yagi argues coincides
 with Schlenker's verdict on the same context. The actual Schlenker
@@ -487,39 +485,45 @@ disjunct's presupposition-and-assertion holds. Yagi §2.4 argues
 Schlenker's pragmatic condition forces `s_0 ⊆ truthSet`. -/
 def truthSet : Set W := { W.kingOpens, W.presidentConducts }
 
+/-- [geurts-2005]'s modal disjunction of two partial propositions: the
+domains are the presuppositions, the contents the assertions. -/
+def geurtsDisjunction (p q : PartialProp W) : Geurts2005.Disjunction W :=
+  [⟨p.presup, .possibility, p.assertion⟩, ⟨q.presup, .possibility, q.assertion⟩]
+
+/-- A world lies in some cell of the Geurts disjunction exactly when `orFlex`
+asserts it there: the cells are `presup ∧ assertion`. -/
+theorem mem_iUnion_cell_geurtsDisjunction_iff (p q : PartialProp W) (w : W) :
+    w ∈ ⋃ d ∈ geurtsDisjunction p q, d.cell ↔ (PartialProp.orFlex p q).assertion w := by
+  simp only [geurtsDisjunction, Geurts2005.Disjunct.cell, Set.mem_iUnion, List.mem_cons,
+    List.not_mem_nil, or_false, exists_prop, exists_eq_or_imp, exists_eq_left, Set.mem_inter_iff]
+  exact Iff.rfl
+
+/-- Under Geurts's Exhaustivity the disjunction is true throughout the
+background: the formal residue of [schlenker-2009]'s local-context failure. -/
+theorem exhaustive_uninformative (p q : PartialProp W) (C : Set W)
+    (h : Geurts2005.Disjunction.Exhaustive C (geurtsDisjunction p q)) {w : W} (hw : w ∈ C) :
+    (PartialProp.orFlex p q).assertion w :=
+  (mem_iUnion_cell_geurtsDisjunction_iff p q w).mp (h hw)
+
 /-- Geurts exhaustivity holds on `truthSet`: every truth-set world is in
-some disjunct's modal cell (`domain ∩ content` = `presup ∧ assertion`). -/
+some disjunct's cell. -/
 theorem truthSet_exhausted :
-    Geurts2005.exhaustivity truthSet
-      (Geurts2005.fromPartialProp kingOpensParl presConductsCeremony) := by
+    Geurts2005.Disjunction.Exhaustive truthSet
+      (geurtsDisjunction kingOpensParl presConductsCeremony) := by
   intro w hw
   rcases hw with rfl | rfl
-  · -- Witness: the king-disjunct, with cell membership at `kingOpens`.
-    refine ⟨{ domain := kingOpensParl.presup,
-              force := .possibility,
-              content := kingOpensParl.assertion },
-            by simp [Geurts2005.fromPartialProp], ?_⟩
-    exact ⟨trivial, rfl⟩
-  · -- Witness: the president-disjunct, with cell membership at `presidentConducts`.
-    refine ⟨{ domain := presConductsCeremony.presup,
-              force := .possibility,
-              content := presConductsCeremony.assertion },
-            by simp [Geurts2005.fromPartialProp], ?_⟩
-    exact ⟨trivial, rfl⟩
+  · exact Set.mem_iUnion₂.mpr ⟨_, List.mem_cons_self .., ⟨trivial, rfl⟩⟩
+  · exact Set.mem_iUnion₂.mpr ⟨_, List.mem_cons_of_mem _ (List.mem_cons_self ..), ⟨trivial, rfl⟩⟩
 
 /-- Trivalent-set uninformativity via Geurts (the *consequence* of Yagi §2.4,
 not Schlenker's actual local-context derivation): the disjunction is true
-throughout the stipulated `truthSet`. Discharged via the substrate's
-`exhaustivity_implies_uninformative`. A faithful Schlenker formalisation
+throughout the stipulated `truthSet`. A faithful Schlenker formalisation
 would derive `s_0 ⊆ truthSet` from a `localContext` PUpdate operator we
 have not built. -/
 theorem truthset_uninformative_geurts_route :
     ∀ w ∈ truthSet,
-      (PartialProp.orFlex kingOpensParl presConductsCeremony).assertion w := by
-  intro w hw
-  exact Geurts2005.exhaustivity_implies_uninformative
-    kingOpensParl presConductsCeremony truthSet
-    truthSet_exhausted w hw
+      (PartialProp.orFlex kingOpensParl presConductsCeremony).assertion w :=
+  λ _ hw => exhaustive_uninformative _ _ truthSet truthSet_exhausted hw
 
 
 /-! ## Reaction 1: Meta-assertion ([yagi-2025] §3.1, [beaver-krahmer-2001])
@@ -644,7 +648,7 @@ theorem flex_genuineness :
 NOT a Yagi claim — [belnap-1970] is not in his references.
 In the substrate, `orFlex` is *definitionally* `orBelnap` (an abbrev in
 `Semantics/Presupposition/Basic.lean`), and
-`Studies/Geurts2005.lean` extends the identity three ways with
+`mem_iUnion_cell_geurtsDisjunction_iff` extends the identity to
 [geurts-2005]'s modal-disjunction view. We instantiate it at the
 Buganda case for clarity. -/
 
@@ -869,7 +873,7 @@ theorem orFlex_satisfies_both :
 /-- The substrate-canonical orFlex / orBelnap / Geurts three-way
 identity, instantiated at the Buganda case. The substrate-side identity
 is definitional (`orFlex` is an abbrev for `orBelnap`); the Geurts side
-is `Geurts2005.fromPartialProp_cell_iff_orBelnap`. -/
+is `mem_iUnion_cell_geurtsDisjunction_iff`. -/
 theorem orFlex_eq_orBelnap_at_buganda :
     PartialProp.orFlex (W := W) = PartialProp.orBelnap :=
   rfl

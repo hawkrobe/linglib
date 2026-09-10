@@ -1,370 +1,293 @@
-import Mathlib.Data.Set.Basic
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Data.List.Pairwise
-import Mathlib.Tactic.DeriveFintype
+import Mathlib.Data.Set.Lattice
 import Linglib.Semantics.Modality.ModalTypes
-import Linglib.Semantics.Presupposition.Trivalent
+import Linglib.Data.Examples.Geurts2005
 
 /-!
-# Geurts 2005: Disjunctions as Modals
-[geurts-2005]
+# Geurts (2005): Entertaining Alternatives: Disjunctions as Modals
 
-Single-paper study of Bart Geurts, *Entertaining Alternatives: Disjunctions
-as Modals* (Natural Language Semantics 13:383–410). Following
-[zimmermann-2000], disjunctions are conjunctions of modal propositions:
-"S₁ or … or Sₙ" has logical form A₁M₁B₁ ∧ … ∧ AₙMₙBₙ, where
+This file formalizes [geurts-2005]'s modal analysis of disjunction. "S₁ or … or Sₙ" is a conjunction
+of modal propositions AᵢMᵢBᵢ, each a domain Aᵢ drawn from a contextual background C, a force Mᵢ,
+and a descriptive content Bᵢ, constrained by Exhaustivity, Disjointness, and Non-triviality.
+Following [zimmermann-2000], *or* merely presents a list of alternatives; unlike Zimmermann, an
+overt modal fuses with the covert one, and the context dependence of the domains does the work of
+the Self-Reflection Principle.
 
-* Aᵢ is a **modal domain** (subset of background C, context-dependent),
-* Mᵢ is a **modal quantifier** (∃ or ∀, paper p.394),
-* Bᵢ is the **descriptive content** of the disjunct.
-
-## Three departures from Zimmermann (paper §3, p.391)
-
-1. **Modal flavour** is not restricted to epistemic. The background C may
-   be epistemic, deontic, circumstantial, etc.; Geurts: "I will drop the
-   premiss that disjunctions are always *epistemic* modals" (p.391). Force
-   (∃ vs ∀) is a separate dimension carried by `ModalForce`.
-2. Overt and covert modals **fuse**: two operators per disjunct, not four.
-3. Context dependence of modal **domains** Aᵢ does the work of Zimmermann's
-   Self-Reflection Principle.
-
-## Three constraints on interpretation (paper §3, p.395)
-
-* **Exhaustivity**: C ⊆ ⋃(Aᵢ ∩ Bᵢ).
-* **Disjointness**: (Aᵢ ∩ Bᵢ) ∩ (Aⱼ ∩ Bⱼ) = ∅ for i ≠ j.
-* **Non-triviality**: Aᵢ ≠ ∅.
-
-## Main declarations
-
-* `Disjunct`, `MDisjunction` — substrate types for one disjunct and the list
-  of disjuncts.
-* `Disjunct.holds`, `MDisjunction.holds` — truth conditions.
-* `Disjunct.cell`, `exhaustivity`, `disjointness`, `disjointness₂`,
-  `nonTriviality` — the three constraints (Disjointness in n-ary form via
-  `List.Pairwise`, and a binary specialisation used by the bridge theorems
-  and Case #3).
-* `defaultBinding` — by default A = C (paper p.394).
-* `fromPartialProp`, `fromPartialProp_*_iff_orFlex`, `fromPartialProp_*_iff_orBelnap` —
-  specialisation to presuppositional propositions: when domain = presup and
-  content = assertion, the Geurts disjunction coincides pointwise with
-  `PartialProp.orFlex` = `PartialProp.orBelnap` ([belnap-1970]).
-* `exhaustivity_implies_uninformative` — used by
-  `Studies/Yagi2025.lean` as the formal residue of
-  [schlenker-2009]'s local-context-failure observation.
+The case studies of section 3 are theorems about the constraints. Existential disjuncts bind their
+domains to the background by default, so each alternative is possible (`holds_defaultBinding`) and
+under Exhaustivity the background lies within the union of the contents
+(`exhaustive_defaultBinding`). Two universal disjuncts cannot both be bound to the background, since
+Disjointness and Non-triviality would fail together (`not_disjoint_of_necessity`); their domains
+partition it instead (`partition_of_necessity`) and neither "It must be here" nor "It must be
+there" follows (`mustHereOrThere`). In a mixed disjunction the universal disjunct's domain is the
+background minus the existential disjunct's content (`domain_eq_diff`), so the form with the
+universal disjunct first refers forward (`rows_forward_reference`). If-clauses restrict the domain
+of a covert necessity modal ([kratzer-1991]), so a disjunction of conditionals entails the
+disjunction of its consequents (`consequents_of_conditionals`), [woods-1997]'s intuition against
+[johnson-laird-savary-1999]'s illusory inference; and Disjointness yields the exclusive reading of
+section 5 (`exclusive_of_disjoint`).
 
 ## Implementation notes
 
-* Force is the project-canonical `Modality.ModalForce` (necessity |
-  weakNecessity | possibility, [von-fintel-iatridou-2008]). Geurts
-  treats only ∃/∀; we route `weakNecessity` to the universal branch (every
-  weak-necessity claim still quantifies universally over its refined
-  best-worlds set).
-* The `fromPartialProp_*_iff_*` lemmas are structural: `PartialProp.orFlex.presup` is
-  defined as the union of disjunct presuppositions, so the iff is
-  unfolding, not stipulation. The architecture intentionally avoids the
-  "stipulate then prove equivalence" anti-pattern.
+Force is the project's `Modality.ModalForce`; the paper's ∃ is possibility and its ∀ covers both
+necessities. The specialisation of the analysis to partial propositions lives in the study of the
+later paper that draws it, `Studies/Yagi2025.lean`.
 
-## Scope: wide-scope only
+## References
 
-This file formalises Geurts's **wide-scope** analysis: every disjunction is
-treated as A₁M₁B₁ ∧ … ∧ AₙMₙBₙ at LF from the outset. Free choice
-"◇A ∧ ◇B follows" is immediate because the LF *is* the conjunction; the
-substantive move is the LF reanalysis (p.391), not a structural inference.
-
-## Todo
-
-* Geurts §6 (pp.405–407) flags negated disjunctions, conditional antecedents,
-  and attitude-embedded disjunctions as cases his modal analysis "runs into
-  trouble" with; the speaker's-content / factual-content two-level patch in
-  the §6 closing paragraphs is not formalised here.
-* [ciardelli-guerrini-2026] argue "You may A or may B" gets free
-  choice from the narrow-scope LF ◇(A ∨ B) via modal concord
-  ([zeijlstra-2007]), not from wide-scope ◇A ∧ ◇B. Truth-conditionally
-  the two analyses agree; the cross-framework comparison belongs to the
-  later paper's study file ([ciardelli-guerrini-2026]).
-* Geurts §5 (pp.402–404) ultimately suggests Disjointness is itself a
-  conversational effect grounded in exhaustivity; formalised here only as
-  the stipulated constraint, not the deeper pragmatic derivation.
+* [geurts-2005]
+* [zimmermann-2000]
+* [kratzer-1991]
+* [woods-1997]
+* [johnson-laird-savary-1999]
 -/
 
 namespace Geurts2005
 
-open Modality
-open Presupposition
+open Modality Features Data.Examples Function
 
 variable {W : Type*}
 
-/-! ### Modal disjuncts and disjunction -/
-
-/-- A single disjunct in a modal disjunction: AᵢMᵢBᵢ. -/
+/-- A modal proposition AMB: a domain, a modal force, and a descriptive content. -/
 structure Disjunct (W : Type*) where
-  /-- Modal domain Aᵢ (subset of the background, determined by context). -/
   domain : Set W
-  /-- Modal force Mᵢ (from an overt modal or a covert default). -/
   force : ModalForce
-  /-- Descriptive content Bᵢ. -/
   content : Set W
 
-/-- A modal disjunction: a conjunction of modal propositions. -/
-abbrev MDisjunction (W : Type*) := List (Disjunct W)
+namespace Disjunct
 
-/-! ### Truth conditions -/
+variable (d : Disjunct W)
 
-/-- A single disjunct is true iff its modal claim holds.
+/-- AMB holds when an existential domain meets the content and a universal one lies within it. -/
+def Holds : Prop :=
+  if d.force = .possibility then (d.domain ∩ d.content).Nonempty else d.domain ⊆ d.content
 
-Possibility: ∃ w ∈ A, B(w). Necessity (and weak necessity, which still
-universally quantifies over a refined domain): ∀ w ∈ A, B(w). -/
-def Disjunct.holds (d : Disjunct W) : Prop :=
-  match d.force with
-  | .possibility => ∃ w, d.domain w ∧ d.content w
-  | .necessity | .weakNecessity => ∀ w, d.domain w → d.content w
+/-- The worlds a disjunct entertains: its domain within its content. -/
+def cell : Set W := d.domain ∩ d.content
 
-instance Disjunct.decidableHolds [Fintype W] (d : Disjunct W)
-    [DecidablePred d.domain] [DecidablePred d.content] :
-    Decidable d.holds := by
-  unfold Disjunct.holds
-  cases d.force <;> infer_instance
+theorem holds_iff_nonempty (h : d.force = .possibility) :
+    d.Holds ↔ (d.domain ∩ d.content).Nonempty := by
+  simp [Holds, h]
 
-/-- A modal disjunction is true iff every disjunct's modal claim holds. -/
-def MDisjunction.holds (disj : MDisjunction W) : Prop :=
-  ∀ d ∈ disj, d.holds
+theorem holds_iff_subset (h : d.force ≠ .possibility) : d.Holds ↔ d.domain ⊆ d.content := by
+  simp [Holds, h]
 
-/-! ### The three constraints (paper §3, p.395) -/
+/-- A universal disjunct that holds entertains exactly its domain. -/
+theorem cell_eq_domain (h : d.force ≠ .possibility) (hd : d.Holds) : d.cell = d.domain :=
+  Set.inter_eq_left.mpr ((d.holds_iff_subset h).mp hd)
 
-/-- The "modal cell" of a disjunct: worlds in both domain and content. -/
-@[reducible] def Disjunct.cell (d : Disjunct W) : Set W := d.domain ∩ d.content
+end Disjunct
 
-/-- **Exhaustivity**: C ⊆ ⋃(Aᵢ ∩ Bᵢ). Every background world falls in some
-disjunct's modal cell. -/
-def exhaustivity (C : Set W) (disj : MDisjunction W) : Prop :=
-  ∀ w, C w → ∃ d ∈ disj, d.cell w
+/-- The logical form of "S₁ or … or Sₙ": a conjunction of modal propositions. -/
+abbrev Disjunction (W : Type*) := List (Disjunct W)
 
-/-- **Disjointness** (n-ary, paper p.395): distinct disjuncts have disjoint
-cells. -/
-def disjointness (disj : MDisjunction W) : Prop :=
-  disj.Pairwise (fun d₁ d₂ => ∀ w, ¬(d₁.cell w ∧ d₂.cell w))
+namespace Disjunction
 
-/-- **Disjointness₂** — binary specialisation used by the bridge theorems
-and the Case #3 worked example. -/
-def disjointness₂ (d₁ d₂ : Disjunct W) : Prop :=
-  ∀ w, ¬(d₁.cell w ∧ d₂.cell w)
+variable (C : Set W) (ds : Disjunction W)
 
-theorem disjointness_pair_iff (d₁ d₂ : Disjunct W) :
-    disjointness [d₁, d₂] ↔ disjointness₂ d₁ d₂ := by
-  simp [disjointness, disjointness₂]
+/-- Every disjunct's modal claim holds. -/
+def Holds : Prop := ∀ d ∈ ds, d.Holds
 
-/-- **Non-triviality**: Aᵢ ≠ ∅. Each modal domain is non-empty. -/
-def nonTriviality (disj : MDisjunction W) : Prop :=
-  ∀ d, d ∈ disj → ∃ w : W, d.domain w
+/-- Exhaustivity: the background lies within the union of the cells. -/
+def Exhaustive : Prop := C ⊆ ⋃ d ∈ ds, d.cell
 
-/-! ### Key predictions -/
+/-- Disjointness: distinct disjuncts have disjoint cells. -/
+def PairwiseDisjoint : Prop := ds.Pairwise (Disjoint on Disjunct.cell)
 
-/-- Each disjunct's modal claim holds individually.
+/-- Non-triviality: every domain is nonempty. -/
+def Nontrivial : Prop := ∀ d ∈ ds, d.domain.Nonempty
 
-Immediate because Geurts's wide-scope LF (p.391) *is* the conjunction
-A₁M₁B₁ ∧ … ∧ AₙMₙBₙ from the outset: free choice "◇A ∧ ◇B follows" is a
-direct projection of one conjunct, not a structural inference from ◇(A∨B).
-The substantive move is the LF reanalysis, not this lemma. -/
-theorem free_choice (disj : MDisjunction W)
-    (h_holds : disj.holds) (d : Disjunct W) (hd : d ∈ disj) : d.holds :=
-  h_holds d hd
+/-- Default binding: the hearer first equates every domain with the background. -/
+def defaultBinding (f : ModalForce) (bs : List (Set W)) : Disjunction W :=
+  bs.map λ b => ⟨C, f, b⟩
 
-/-- Disjointness gives the exclusive reading (paper §5, pp.402–404):
-exclusivity of 'or' is derived from Disjointness, not from a scalar
-implicature. -/
-theorem disjointness_gives_exclusivity (d₁ d₂ : Disjunct W)
-    (h_dis : disjointness₂ d₁ d₂) (w : W) (h_in_1 : d₁.cell w) :
-    ¬ d₂.cell w := fun h => h_dis w ⟨h_in_1, h⟩
+end Disjunction
 
-/-- Exhaustivity + Disjointness: every C-world lies in at most one cell.
+section Cases
 
-The exhaustivity hypothesis is the upper bound (every C-world lies in
-*some* cell); together they yield exact partition of C across the two
-disjuncts. -/
-theorem partition_unique (C : Set W) (d₁ d₂ : Disjunct W)
-    (h_exh : exhaustivity C [d₁, d₂]) (h_dis : disjointness₂ d₁ d₂)
-    (w : W) (hw : C w) :
-    (d₁.cell w ∨ d₂.cell w) ∧ ¬(d₁.cell w ∧ d₂.cell w) := by
-  refine ⟨?_, fun h => h_dis w h⟩
-  rcases h_exh w hw with ⟨d, hmem, hcell⟩
-  simp only [List.mem_cons, List.not_mem_nil, or_false] at hmem
-  rcases hmem with rfl | rfl
-  · exact Or.inl hcell
-  · exact Or.inr hcell
+open Disjunction
 
-/-! ### Default domain binding (paper §3, p.394) -/
+variable (C : Set W) {d d' : Disjunct W}
 
-/-- Default domain binding: by default each modal domain equals the
-background C. The hearer tries A = C first and only restricts if the
-constraints force it (paper p.394: "the hearer first attempts to equate the
-quantifier domain with the background set"). -/
-def defaultBinding (C : Set W) (content : List (Set W)) (f : ModalForce) :
-    MDisjunction W :=
-  content.map (fun b => { domain := C, force := f, content := b })
+/-- Case 1: under default binding each alternative is possible in the background, and free choice
+is the projection of a conjunct. -/
+theorem holds_defaultBinding (bs : List (Set W)) :
+    (defaultBinding C .possibility bs).Holds ↔ ∀ b ∈ bs, (C ∩ b).Nonempty := by
+  simp [Holds, defaultBinding, Disjunct.Holds]
 
-/-- With default binding and possibility force, truth is equivalent to:
-each disjunct's content is satisfied somewhere in C. The basic free-choice
-structure. -/
-theorem default_existential_holds_iff (C : Set W) (bs : List (Set W)) :
-    (defaultBinding C bs .possibility).holds ↔ ∀ b ∈ bs, ∃ w, C w ∧ b w := by
-  simp only [MDisjunction.holds, defaultBinding, List.mem_map, Disjunct.holds,
-    forall_exists_index, and_imp]
+/-- Case 1 under Exhaustivity: the background lies within the union of the contents, so "It may
+be here or it may be there" says that it must be here or there. -/
+theorem exhaustive_defaultBinding (f : ModalForce) (bs : List (Set W)) :
+    (defaultBinding C f bs).Exhaustive C ↔ C ⊆ ⋃ b ∈ bs, b := by
+  simp only [Exhaustive, defaultBinding, Set.subset_def, Set.mem_iUnion, List.mem_map,
+    Disjunct.cell, Set.mem_inter_iff, exists_prop]
   constructor
-  · intro h b hb; exact h _ b hb rfl
-  · rintro h _ b hb rfl; exact h b hb
+  · intro h w hw
+    obtain ⟨_, ⟨b, hb, rfl⟩, -, hwb⟩ := h w hw
+    exact ⟨b, hb, hwb⟩
+  · intro h w hw
+    obtain ⟨b, hb, hwb⟩ := h w hw
+    exact ⟨_, ⟨b, hb, rfl⟩, hw, hwb⟩
 
-/-! ### Specialisation to PartialProp
+/-- Case 3: two universal disjuncts cannot both be bound to the background. With one domain the
+background and the other within it, Disjointness and Non-triviality fail together. -/
+theorem not_disjoint_of_necessity (hf : d.force ≠ .possibility) (hf' : d'.force ≠ .possibility)
+    (hd : d.Holds) (hd' : d'.Holds) (hC : d.domain = C) (hC' : d'.domain ⊆ C)
+    (hne : d'.domain.Nonempty) : ¬ Disjoint d.cell d'.cell := by
+  rw [d.cell_eq_domain hf hd, d'.cell_eq_domain hf' hd', hC]
+  obtain ⟨w, hw⟩ := hne
+  exact λ h => Set.disjoint_left.mp h (hC' hw) hw
 
-When presuppositions conflict, modal domains coincide with presuppositional
-domains and Geurts's disjunction specialises to `PartialProp.orFlex`. These
-lemmas are structural (the orFlex domain is defined as the union of
-disjunct presuppositions in `Semantics/Presupposition/Basic.lean`), not
-stipulated bridges. -/
+/-- Case 3: universal disjuncts that hold, exhaust the background, and have disjoint cells
+partition the background by their domains. -/
+theorem partition_of_necessity (hf : d.force ≠ .possibility) (hf' : d'.force ≠ .possibility)
+    (hd : d.Holds) (hd' : d'.Holds) (hex : Exhaustive C [d, d']) (hdis : Disjoint d.cell d'.cell) :
+    C ⊆ d.domain ∪ d'.domain ∧ Disjoint d.domain d'.domain := by
+  rw [d.cell_eq_domain hf hd, d'.cell_eq_domain hf' hd'] at hdis
+  refine ⟨λ w hw => ?_, hdis⟩
+  have h := hex hw
+  simpa only [Set.mem_iUnion, List.mem_cons, List.not_mem_nil, or_false, exists_prop,
+    exists_eq_or_imp, exists_eq_left, d.cell_eq_domain hf hd, d'.cell_eq_domain hf' hd',
+    Set.mem_union] using h
 
-/-- Construct a Geurts possibility disjunction from two presuppositional
-propositions: domains = presuppositions, contents = assertions. -/
-def fromPartialProp (p q : PartialProp W) : MDisjunction W :=
-  [ { domain := p.presup, force := .possibility, content := p.assertion }
-  , { domain := q.presup, force := .possibility, content := q.assertion } ]
+/-- Case 5: in "It may be here or else it must be there" the existential disjunct is bound to the
+background and the universal disjunct's domain is the background minus the existential content,
+so the second domain is fixed by the first content. -/
+theorem domain_eq_diff (hf' : d'.force ≠ .possibility) (hd' : d'.Holds) (hC : d.domain = C)
+    (hC' : d'.domain ⊆ C) (hex : Exhaustive C [d, d']) (hdis : Disjoint d.cell d'.cell) :
+    d'.domain = C \ d.content := by
+  rw [d'.cell_eq_domain hf' hd'] at hdis
+  refine Set.Subset.antisymm (λ w hw => ⟨hC' hw, λ hb => ?_⟩) (λ w ⟨hwC, hwB⟩ => ?_)
+  · exact Set.disjoint_left.mp hdis ⟨by rw [hC]; exact hC' hw, hb⟩ hw
+  · have h := hex hwC
+    simp only [Set.mem_iUnion, List.mem_cons, List.not_mem_nil, or_false, exists_prop,
+      exists_eq_or_imp, exists_eq_left, Disjunct.cell, Set.mem_inter_iff] at h
+    rcases h with ⟨-, hb⟩ | ⟨hb, -⟩
+    · exact absurd hb hwB
+    · exact hb
 
-/-- The overall presupposition of a Geurts disjunction from PartialProps coincides
-with `PartialProp.orFlex.presup`: p.presup ∨ q.presup. -/
-theorem fromPartialProp_presup_iff_orFlex (p q : PartialProp W) (w : W) :
-    (∃ d ∈ fromPartialProp p q, d.domain w) ↔ (PartialProp.orFlex p q).presup w := by
-  simp [fromPartialProp, PartialProp.orFlex, PartialProp.orBelnap]
+/-- A conditional "if S₁ then S₂" against the background: the if-clause restricts the domain of
+a covert necessity modal to the antecedent worlds ([kratzer-1991]). -/
+def conditional (A B : Set W) : Disjunct W := ⟨C ∩ A, .necessity, B⟩
 
-/-- The assertion side: Geurts cells = `PartialProp.orFlex.assertion`. -/
-theorem fromPartialProp_cell_iff_orFlex (p q : PartialProp W) (w : W) :
-    (∃ d ∈ fromPartialProp p q, d.cell w) ↔ (PartialProp.orFlex p q).assertion w := by
-  simp only [fromPartialProp, Disjunct.cell, PartialProp.orFlex,
-             List.mem_cons, List.not_mem_nil, or_false,
-             exists_eq_or_imp, exists_eq_left]
-  rfl
+theorem conditional_holds_iff (A B : Set W) : (conditional C A B).Holds ↔ C ∩ A ⊆ B := by
+  simp [conditional, Disjunct.Holds]
 
-/-- Via the definitional identity `orFlex` = `orBelnap`: Geurts
-presupposition = orBelnap presupposition ([belnap-1970] conditional
-assertion). -/
-theorem fromPartialProp_presup_iff_orBelnap (p q : PartialProp W) (w : W) :
-    (∃ d ∈ fromPartialProp p q, d.domain w) ↔ (PartialProp.orBelnap p q).presup w :=
-  fromPartialProp_presup_iff_orFlex p q w
+variable {A₁ B₁ A₂ B₂ : Set W}
 
-/-- Via the definitional identity `orFlex` = `orBelnap`: Geurts cell =
-orBelnap assertion. -/
-theorem fromPartialProp_cell_iff_orBelnap (p q : PartialProp W) (w : W) :
-    (∃ d ∈ fromPartialProp p q, d.cell w) ↔ (PartialProp.orBelnap p q).assertion w :=
-  fromPartialProp_cell_iff_orFlex p q w
+/-- For conditionals that hold, Exhaustivity is exhaustivity of the antecedents. -/
+theorem exhaustive_conditionals_iff (h₁ : (conditional C A₁ B₁).Holds)
+    (h₂ : (conditional C A₂ B₂).Holds) :
+    Exhaustive C [conditional C A₁ B₁, conditional C A₂ B₂] ↔ C ⊆ A₁ ∪ A₂ := by
+  rw [conditional_holds_iff] at h₁ h₂
+  simp only [Exhaustive, Set.subset_def, Set.mem_iUnion, List.mem_cons, List.not_mem_nil,
+    or_false, exists_prop, exists_eq_or_imp, exists_eq_left, Disjunct.cell, conditional,
+    Set.mem_inter_iff, Set.mem_union]
+  exact forall₂_congr λ w hw =>
+    ⟨λ h => h.imp (·.1.2) (·.1.2),
+     λ h => h.imp (λ ha => ⟨⟨hw, ha⟩, h₁ ⟨hw, ha⟩⟩) (λ ha => ⟨⟨hw, ha⟩, h₂ ⟨hw, ha⟩⟩)⟩
 
-/-- If Geurts's exhaustivity holds for C, the disjunction (orFlex/orBelnap)
-is already true throughout C — the disjunction is uninformative.
+/-- Section 4: a disjunction of conditionals that holds and exhausts the background entails the
+disjunction of its consequents, [woods-1997]'s intuition about "Either he will stay in America if
+he is offered tenure or he will return to Europe if he isn't", and [johnson-laird-savary-1999]'s
+"illusory inference" to an ace in the hand. -/
+theorem consequents_of_conditionals (h₁ : (conditional C A₁ B₁).Holds)
+    (h₂ : (conditional C A₂ B₂).Holds)
+    (hex : Exhaustive C [conditional C A₁ B₁, conditional C A₂ B₂]) : C ⊆ B₁ ∪ B₂ := by
+  rw [exhaustive_conditionals_iff C h₁ h₂] at hex
+  rw [conditional_holds_iff] at h₁ h₂
+  exact λ w hw => (hex hw).imp (λ ha => h₁ ⟨hw, ha⟩) (λ ha => h₂ ⟨hw, ha⟩)
 
-The formal residue of [schlenker-2009]'s local-context-failure
-discussion: pragmatic conditions on local contexts force s₀ to contain only
-worlds where some disjunct is true, making the disjunction trivially
-satisfied. Geurts's Exhaustivity is the explicit form of that constraint.
-Consumed by `Studies/Yagi2025.lean`. -/
-theorem exhaustivity_implies_uninformative (p q : PartialProp W)
-    (C : Set W) (h_exh : exhaustivity C (fromPartialProp p q))
-    (w : W) (hw : C w) :
-    (PartialProp.orFlex p q).assertion w :=
-  (fromPartialProp_cell_iff_orFlex p q w).mp (h_exh w hw)
+/-- Section 5, "Gray is either a professor of law or a professor of law and a judge": with the
+second domain the background and the first within it, Exhaustivity and Disjointness make every
+background world a B-world while B′ splits the background, so Gray must be a law professor and
+may or may not be a judge, an exclusive reading without a scalar implicature. -/
+theorem exclusive_of_disjoint {A B B' : Set W} (hA : A ⊆ C)
+    (h : Disjunction.Holds [⟨A, .possibility, B⟩, ⟨C, .possibility, B ∩ B'⟩])
+    (hex : Exhaustive C [⟨A, .possibility, B⟩, ⟨C, .possibility, B ∩ B'⟩])
+    (hdis : Disjoint (A ∩ B) (C ∩ (B ∩ B'))) :
+    C ⊆ B ∧ (C ∩ B').Nonempty ∧ (C \ B').Nonempty := by
+  simp only [Disjunction.Holds, List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp,
+    forall_eq, Disjunct.Holds, if_true] at h
+  obtain ⟨⟨a, haA, haB⟩, ⟨b, hbC, -, hbB'⟩⟩ := h
+  refine ⟨λ w hw => ?_, ⟨b, hbC, hbB'⟩, ⟨a, hA haA, λ haB' => ?_⟩⟩
+  · have h := hex hw
+    simp only [Set.mem_iUnion, List.mem_cons, List.not_mem_nil, or_false, exists_prop,
+      exists_eq_or_imp, exists_eq_left, Disjunct.cell, Set.mem_inter_iff] at h
+    rcases h with ⟨-, hb⟩ | ⟨-, hb, -⟩ <;> exact hb
+  · exact Set.disjoint_left.mp hdis ⟨haA, haB⟩ ⟨hA haA, haB, haB'⟩
 
-/-- When presuppositions conflict (p ∧ q = ⊥), the Geurts domains are
-automatically disjoint — Disjointness is satisfied for free. -/
-theorem conflicting_presups_disjoint (p q : PartialProp W)
-    (h_conflict : ∀ w, ¬(p.presup w ∧ q.presup w)) :
-    disjointness₂
-      { domain := p.presup, force := .possibility, content := p.assertion }
-      { domain := q.presup, force := .possibility, content := q.assertion } := by
-  intro w ⟨h1, h2⟩
-  simp [Disjunct.cell] at h1 h2
-  exact h_conflict w ⟨h1.1, h2.1⟩
+end Cases
 
-/-! ### Worked example: paper §3 Case #3, "It must be here or it must be there"
+/-! ### Case 3 does not entail either disjunct -/
 
-Universal force; A ⊊ C and A' ⊊ C; the constraints force A∪A' = C
-(partition of C by the two modal domains, paper p.397). -/
+/-- The two locations of "It must be here or it must be there". -/
+inductive Loc where
+  | here
+  | there
+  deriving DecidableEq
 
-inductive Loc where | here | there | elsewhere
-  deriving DecidableEq, Repr, Inhabited, Fintype
+/-- Case 3 with the two-world background partitioned by the domains. -/
+def mustHereOrThere : Disjunction Loc :=
+  [⟨{.here}, .necessity, {.here}⟩, ⟨{.there}, .necessity, {.there}⟩]
 
-def isHere : Set Loc := fun w => match w with | .here => True | _ => False
-def isThere : Set Loc := fun w => match w with | .there => True | _ => False
-
-instance : DecidablePred isHere :=
-  fun w => by cases w <;> simp only [isHere] <;> infer_instance
-
-instance : DecidablePred isThere :=
-  fun w => by cases w <;> simp only [isThere] <;> infer_instance
-
-/-- Background C: it's either here or there (not elsewhere). -/
-def bgHereOrThere : Set Loc := fun w =>
-  match w with | .here => True | .there => True | .elsewhere => False
-
-instance : DecidablePred bgHereOrThere :=
-  fun w => by cases w <;> simp only [bgHereOrThere] <;> infer_instance
-
-/-- Disjunct 1: ∀ over domain {here}, content {here}. -/
-def dHere : Disjunct Loc :=
-  { domain := isHere, force := .necessity, content := isHere }
-
-/-- Disjunct 2: ∀ over domain {there}, content {there}. -/
-def dThere : Disjunct Loc :=
-  { domain := isThere, force := .necessity, content := isThere }
-
-/-- "It must be here or it must be there" with domain restriction. -/
-def mustHereOrThere : MDisjunction Loc := [dHere, dThere]
-
-theorem mustHereOrThere_holds : mustHereOrThere.holds := by
+theorem mustHereOrThere_holds : mustHereOrThere.Holds := by
   intro d hd
   simp only [mustHereOrThere, List.mem_cons, List.not_mem_nil, or_false] at hd
-  rcases hd with rfl | rfl
-  · intro w hw; exact hw
-  · intro w hw; exact hw
+  rcases hd with rfl | rfl <;> exact (Disjunct.holds_iff_subset _ (by decide)).mpr subset_rfl
 
-theorem mustHereOrThere_exhaustive :
-    exhaustivity bgHereOrThere mustHereOrThere := by
-  intro w hw
+theorem mustHereOrThere_exhaustive : mustHereOrThere.Exhaustive Set.univ := by
+  intro w _
   cases w
-  · exact ⟨dHere, by simp [mustHereOrThere], by simp [Disjunct.cell, dHere, isHere]⟩
-  · exact ⟨dThere, by simp [mustHereOrThere], by simp [Disjunct.cell, dThere, isThere]⟩
-  · simp [bgHereOrThere] at hw
+  · exact Set.mem_iUnion₂.mpr ⟨_, List.mem_cons_self .., ⟨rfl, rfl⟩⟩
+  · exact Set.mem_iUnion₂.mpr ⟨_, List.mem_cons_of_mem _ (List.mem_cons_self ..), ⟨rfl, rfl⟩⟩
 
-theorem mustHereOrThere_disjoint : disjointness₂ dHere dThere := by
-  intro w ⟨h1, h2⟩
-  cases w <;> simp_all [Disjunct.cell, dHere, dThere, isHere, isThere]
+theorem mustHereOrThere_pairwiseDisjoint : mustHereOrThere.PairwiseDisjoint := by
+  simp [Disjunction.PairwiseDisjoint, mustHereOrThere, Function.onFun, Disjunct.cell]
 
-/-- "It must be here or it must be there" does NOT entail "it must be here"
-(paper p.397): "it does not follow from (27) that It must be here, nor does
-it follow that It must be there." -/
-theorem must_here_not_entailed : ¬ ∀ w : Loc, bgHereOrThere w → isHere w := by
-  decide
-
-/-! ### Worked example: paper §3 Case #1, "It may be here or it may be there"
-
-Existential force; default A = A' = C. -/
-
-/-- "It may be here or it may be there" with default domain binding. -/
-def mayHereOrThere : MDisjunction Loc :=
-  defaultBinding bgHereOrThere [isHere, isThere] .possibility
-
-theorem mayHereOrThere_holds : mayHereOrThere.holds := by
+theorem mustHereOrThere_nontrivial : mustHereOrThere.Nontrivial := by
   intro d hd
-  simp only [mayHereOrThere, defaultBinding, List.map_cons, List.map_nil,
-    List.mem_cons, List.not_mem_nil, or_false] at hd
-  rcases hd with rfl | rfl
-  · exact ⟨.here, trivial, trivial⟩
-  · exact ⟨.there, trivial, trivial⟩
+  simp only [mustHereOrThere, List.mem_cons, List.not_mem_nil, or_false] at hd
+  rcases hd with rfl | rfl <;> exact Set.singleton_nonempty _
 
-/-- Free choice: ◇(here) holds individually. -/
-theorem mayHereOrThere_fc_here :
-    Disjunct.holds (W := Loc)
-      { domain := bgHereOrThere, force := .possibility, content := isHere } :=
-  ⟨.here, trivial, trivial⟩
+/-- "It does not follow from (27) that It must be here": the background is not within the first
+content, although the disjunction holds and satisfies all three constraints. -/
+theorem not_must_here : ¬ (Set.univ : Set Loc) ⊆ {.here} :=
+  λ h => by simpa using h (Set.mem_univ Loc.there)
 
-/-- Free choice: ◇(there) holds individually. -/
-theorem mayHereOrThere_fc_there :
-    Disjunct.holds (W := Loc)
-      { domain := bgHereOrThere, force := .possibility, content := isThere } :=
-  ⟨.there, trivial, trivial⟩
+/-! ### The orders of (1)–(2) -/
+
+/-- An example of (1)–(2): the forces of the two disjuncts, the flavour of the background, and the
+judgment. -/
+structure Row where
+  force₁ : ModalForce
+  force₂ : ModalForce
+  flavor : ModalFlavor
+  judgment : Judgment
+  deriving DecidableEq
+
+private def forces : List (String × ModalForce) := [("may", .possibility), ("must", .necessity)]
+
+def Row.ofExample (ex : LinguisticExample) : Option Row := do
+  let force₁ ← ex.parse? "force1" forces
+  let force₂ ← ex.parse? "force2" forces
+  let flavor ← ex.parse? "flavor" [("deontic", .deontic), ("epistemic", .epistemic)]
+  pure ⟨force₁, force₂, flavor, ex.judgment⟩
+
+/-- The deontic and epistemic disjunctions (1) and (2). -/
+def rows : List Row := Examples.all.filterMap Row.ofExample
+
+example : rows.length = Examples.all.length := by decide
+
+/-- By `domain_eq_diff` the universal disjunct's domain is fixed by the existential disjunct's
+content; the dependence points forward when the universal disjunct comes first. -/
+def ForwardReference (f₁ f₂ : ModalForce) : Prop := f₁ ≠ .possibility ∧ f₂ = .possibility
+
+instance : DecidableRel ForwardReference := λ _ _ => by unfold ForwardReference; infer_instance
+
+/-- (1)–(2): a disjunction of modals is acceptable exactly when no domain refers forward, the
+paper's explanation of the odd "?It must be here or else it may be there". -/
+theorem rows_forward_reference :
+    ∀ r ∈ rows, r.judgment = .acceptable ↔ ¬ ForwardReference r.force₁ r.force₂ := by
+  decide
 
 end Geurts2005

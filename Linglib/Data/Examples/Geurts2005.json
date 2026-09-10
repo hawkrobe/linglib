@@ -1,0 +1,250 @@
+[
+  {
+    "id": "geurts2005_1a",
+    "source": {
+      "bibkey": "geurts-2005",
+      "paperLabel": "(1a)"
+    },
+    "language": "stan1293",
+    "primaryText": "You may do this or (else) you may do that.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "force1",
+        "may"
+      ],
+      [
+        "force2",
+        "may"
+      ],
+      [
+        "flavor",
+        "deontic"
+      ]
+    ],
+    "comment": "Both domains bound to the background; each alternative is possible."
+  },
+  {
+    "id": "geurts2005_1b",
+    "source": {
+      "bibkey": "geurts-2005",
+      "paperLabel": "(1b)"
+    },
+    "language": "stan1293",
+    "primaryText": "You must do this or (else) you must do that.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "force1",
+        "must"
+      ],
+      [
+        "force2",
+        "must"
+      ],
+      [
+        "flavor",
+        "deontic"
+      ]
+    ],
+    "comment": "The domains partition the background; neither disjunct follows on its own."
+  },
+  {
+    "id": "geurts2005_1c",
+    "source": {
+      "bibkey": "geurts-2005",
+      "paperLabel": "(1c)"
+    },
+    "language": "stan1293",
+    "primaryText": "You may do this or (else) you must do that.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "force1",
+        "may"
+      ],
+      [
+        "force2",
+        "must"
+      ],
+      [
+        "flavor",
+        "deontic"
+      ]
+    ],
+    "comment": "The second, universal domain is the background minus the first disjunct's content."
+  },
+  {
+    "id": "geurts2005_1d",
+    "source": {
+      "bibkey": "geurts-2005",
+      "paperLabel": "(1d)"
+    },
+    "language": "stan1293",
+    "primaryText": "?You must do this or (else) you may do that.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "force1",
+        "must"
+      ],
+      [
+        "force2",
+        "may"
+      ],
+      [
+        "flavor",
+        "deontic"
+      ]
+    ],
+    "comment": "The first, universal domain is the background minus the second disjunct's content: a forward dependence, awkward like forward reference."
+  },
+  {
+    "id": "geurts2005_2a",
+    "source": {
+      "bibkey": "geurts-2005",
+      "paperLabel": "(2a)"
+    },
+    "language": "stan1293",
+    "primaryText": "It may be here or (else) it may be there.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "force1",
+        "may"
+      ],
+      [
+        "force2",
+        "may"
+      ],
+      [
+        "flavor",
+        "epistemic"
+      ]
+    ],
+    "comment": "Both domains bound to the background; each alternative is possible."
+  },
+  {
+    "id": "geurts2005_2b",
+    "source": {
+      "bibkey": "geurts-2005",
+      "paperLabel": "(2b)"
+    },
+    "language": "stan1293",
+    "primaryText": "It must be here or (else) it must be there.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "force1",
+        "must"
+      ],
+      [
+        "force2",
+        "must"
+      ],
+      [
+        "flavor",
+        "epistemic"
+      ]
+    ],
+    "comment": "The domains partition the background; neither disjunct follows on its own."
+  },
+  {
+    "id": "geurts2005_2c",
+    "source": {
+      "bibkey": "geurts-2005",
+      "paperLabel": "(2c)"
+    },
+    "language": "stan1293",
+    "primaryText": "It may be here or (else) it must be there.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "force1",
+        "may"
+      ],
+      [
+        "force2",
+        "must"
+      ],
+      [
+        "flavor",
+        "epistemic"
+      ]
+    ],
+    "comment": "The second, universal domain is the background minus the first disjunct's content."
+  },
+  {
+    "id": "geurts2005_2d",
+    "source": {
+      "bibkey": "geurts-2005",
+      "paperLabel": "(2d)"
+    },
+    "language": "stan1293",
+    "primaryText": "?It must be here or (else) it may be there.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "force1",
+        "must"
+      ],
+      [
+        "force2",
+        "may"
+      ],
+      [
+        "flavor",
+        "epistemic"
+      ]
+    ],
+    "comment": "The first, universal domain is the background minus the second disjunct's content: a forward dependence, awkward like forward reference."
+  }
+]
