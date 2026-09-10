@@ -112,4 +112,17 @@ theorem tell_persists (m : Writer (List P) A) (f : A → Writer (List P) B)
   simp only [log_bind, List.mem_append]
   exact Or.inl h
 
+/-- A composition's log extends the input's log: bind is isotone for the prefix order of the
+list monoid ([giorgolo-asudeh-2012]'s condition on the arrows of the Writer's category). -/
+theorem log_prefix_bind (m : Writer (List P) A) (f : A → Writer (List P) B) :
+    m.log <+: (m >>= f).log :=
+  ⟨(f m.val).log, rfl⟩
+
+/-- The at-issue value of a composition depends on the input's value alone: the continuation
+never sees the log, which is [potts-2005]'s restriction on the flow of information from the
+side-issue to the at-issue dimension, enforced by the monad ([giorgolo-asudeh-2012]). -/
+theorem val_bind_congr {m m' : Writer (List P) A} (f : A → Writer (List P) B)
+    (h : m.val = m'.val) : (m >>= f).val = (m' >>= f).val := by
+  simp only [val_bind, h]
+
 end Writer

@@ -17,14 +17,14 @@ contains the disjunction of two incomparable members, the negative island of hig
 questions (`not_nonVacuity_exhCell_of_union`), unless a necessity modal intervenes
 (`nonVacuity_box`). With exhaustification as [bar-lev-fox-2020]'s cell operator, a question closed
 under conjunction and its disjunctive counterpart identify the same cells by different members
-(`cell_conj`, `cell_disj`), and the answer set of the paper's revised answer operator is a
+(`cell_conjFamily`, `cell_disj`), and the answer set of the paper's revised answer operator is a
 singleton for the former but not for the latter: mention-all against mention-some.
 
 ## Implementation notes
 
 Questions are Hamblin sets `Set (Set W)` rather than `Question` lower sets, since the paper's sets
 are not antichains. The three-location model is a family of atoms `a : ι → Set W` with every
-profile realized (`Rich`); `Questions.conjClosure` and `Questions.disjClosure` are the paper's two
+profile realized (`Rich`); `Question.conjClosure` and `Question.disjClosure` are the paper's two
 denotations; their innocently excludable sets are characterized and the cells read off. Sections 5–7
 on the distribution of mention-some enter only through the rows on singular wh-phrases.
 
@@ -40,7 +40,7 @@ on the distribution of mention-some enter only through the rows on singular wh-p
 
 namespace Fox2018
 
-open Questions Exhaustification Set Data.Examples
+open Question Exhaustification Set Data.Examples
 
 variable {W : Type*}
 
@@ -158,9 +158,10 @@ theorem isExhaustivelyResolvable_conjClosure {ι : Type*} [Fintype ι] {a : ι �
   obtain ⟨i, hi⟩ := hw
   let T : Finset ι := Finset.univ.filter (λ i => w ∈ a i)
   have hT : ∀ i, i ∈ T ↔ w ∈ a i := λ i => by simp [T]
-  refine ⟨conj a T, ⟨conj_mem_conjClosure ⟨i, (hT i).2 hi⟩, mem_conj.2 λ i hi => (hT i).1 hi⟩, ?_⟩
+  refine ⟨conjFamily a T, ⟨conjFamily_mem_conjClosure ⟨i, (hT i).2 hi⟩,
+    mem_conjFamily.2 λ i hi => (hT i).1 hi⟩, ?_⟩
   rintro _ ⟨⟨S, -, rfl⟩, hwS⟩ v hv
-  exact mem_conj.2 λ j hj => mem_conj.1 hv j ((hT j).2 (mem_conj.1 hwS j hj))
+  exact mem_conjFamily.2 λ j hj => mem_conjFamily.1 hv j ((hT j).2 (mem_conjFamily.1 hwS j hj))
 
 /-! ### Negative islands -/
 
@@ -291,9 +292,10 @@ theorem leALT_conjClosure_iff {u v : W} :
     (u ≤[conjClosure a] v) ↔ profile a u ⊆ profile a v := by
   constructor
   · intro h i hi
-    exact h _ (conj_singleton (a := a) i ▸ conj_mem_conjClosure ⟨i, Finset.mem_singleton_self i⟩) hi
+    exact h _ (conjFamily_singleton (a := a) i ▸
+      conjFamily_mem_conjClosure ⟨i, Finset.mem_singleton_self i⟩) hi
   · rintro h _ ⟨S, -, rfl⟩ hu
-    exact mem_conj_iff_subset.2 ((mem_conj_iff_subset.1 hu).trans h)
+    exact mem_conjFamily_iff_subset.2 ((mem_conjFamily_iff_subset.1 hu).trans h)
 
 theorem leALT_disjClosure_iff {u v : W} :
     (u ≤[disjClosure a] v) ↔ profile a u ⊆ profile a v := by
@@ -307,14 +309,16 @@ theorem leALT_disjClosure_iff {u v : W} :
 variable (hrich : Rich a)
 include hrich
 
-theorem conj_subset_conj_iff {S T : Finset ι} : conj a T ⊆ conj a S ↔ S ⊆ T := by
+theorem conjFamily_subset_conjFamily_iff {S T : Finset ι} :
+    conjFamily a T ⊆ conjFamily a S ↔ S ⊆ T := by
   constructor
   · intro h i hi
     obtain ⟨w, hw⟩ := hrich T
-    have := mem_conj_iff_subset.1 (h (mem_conj_iff_subset.2 (by rw [hw]))) (Finset.mem_coe.2 hi)
+    have := mem_conjFamily_iff_subset.1 (h (mem_conjFamily_iff_subset.2 (by rw [hw])))
+      (Finset.mem_coe.2 hi)
     rw [hw] at this
     exact Finset.mem_coe.1 this
-  · exact λ h _ hv => mem_conj.2 λ i hi => mem_conj.1 hv i (h hi)
+  · exact λ h _ hv => mem_conjFamily.2 λ i hi => mem_conjFamily.1 hv i (h hi)
 
 theorem disj_subset_disj_iff {S T : Finset ι} : disj a S ⊆ disj a T ↔ S ⊆ T := by
   constructor
@@ -335,21 +339,21 @@ theorem disj_subset_disj_iff {S T : Finset ι} : disj a S ⊆ disj a T ↔ S ⊆
 /-- Given the conjunction over a group, a member is innocently excludable iff its group is not
 included: the paper's computation for the low-type question. -/
 theorem isInnocentlyExcludable_conj_iff [Fintype ι] {S T : Finset ι} (hS : S.Nonempty) :
-    IsInnocentlyExcludable (conjClosure a) (conj a T) (conj a S) ↔ ¬ S ⊆ T := by
+    IsInnocentlyExcludable (conjClosure a) (conjFamily a T) (conjFamily a S) ↔ ¬ S ⊆ T := by
   obtain ⟨w₀, hw₀⟩ := hrich T
-  have hw₀T : w₀ ∈ conj a T := mem_conj_iff_subset.2 (by rw [hw₀])
+  have hw₀T : w₀ ∈ conjFamily a T := mem_conjFamily_iff_subset.2 (by rw [hw₀])
   constructor
   · exact λ hIE hST => not_isInnocentlyExcludable_of_phi_subset conjClosure_finite ⟨w₀, hw₀T⟩
-      ((conj_subset_conj_iff hrich).2 hST) hIE
+      ((conjFamily_subset_conjFamily_iff hrich).2 hST) hIE
   · intro hST
-    refine .of_forall_subset_or_notMem (conj_mem_conjClosure hS) hw₀T ?_ ?_
-    · rw [mem_conj_iff_subset, hw₀]
+    refine .of_forall_subset_or_notMem (conjFamily_mem_conjClosure hS) hw₀T ?_ ?_
+    · rw [mem_conjFamily_iff_subset, hw₀]
       exact λ h => hST (Finset.coe_subset.1 h)
     · rintro _ ⟨U, -, rfl⟩
       by_cases hUT : U ⊆ T
-      · exact Or.inl ((conj_subset_conj_iff hrich).2 hUT)
+      · exact Or.inl ((conjFamily_subset_conjFamily_iff hrich).2 hUT)
       · right
-        rw [mem_conj_iff_subset, hw₀]
+        rw [mem_conjFamily_iff_subset, hw₀]
         exact λ h => hUT (Finset.coe_subset.1 h)
 
 /-- The minimal worlds given the disjunction over a group: the sole witnesses of its members. -/
@@ -406,11 +410,11 @@ theorem isInnocentlyExcludable_disj_iff {S T : Finset ι} (hS : S.Nonempty) :
     exact h hjS (this ▸ hiT)
 
 /-- For the conjunctive question, the member for a group identifies the cell of that profile. -/
-theorem cell_conj [Fintype ι] (T : Finset ι) :
-    cell (conjClosure a) (conj a T) = profileCell a T := by
+theorem cell_conjFamily [Fintype ι] (T : Finset ι) :
+    cell (conjClosure a) (conjFamily a T) = profileCell a T := by
   rw [conjClosure, cell_image_eq _ λ S hS => isInnocentlyExcludable_conj_iff hrich hS]
   ext x
-  simp only [mem_ofPred_eq, mem_conj_iff_subset, not_not, mem_profileCell]
+  simp only [mem_ofPred_eq, mem_conjFamily_iff_subset, not_not, mem_profileCell]
   constructor
   · rintro ⟨-, h⟩
     ext i
@@ -446,22 +450,22 @@ def ans (Exh : Set W → Set W) (H : Set (Set W)) (w : W) : Set (Set W) :=
 
 /-- Mention-all: the conjunctive question's answer set is the conjunction over the profile. -/
 theorem ans_conjClosure [Fintype ι] {T : Finset ι} (hT : T.Nonempty) {w : W} (hw : profile a w = ↑T) :
-    ans (cell (conjClosure a)) (conjClosure a) w = {conj a T} := by
+    ans (cell (conjClosure a)) (conjClosure a) w = {conjFamily a T} := by
   ext q
   rw [mem_singleton_iff]
   constructor
   · rintro ⟨⟨S, -, rfl⟩, hwS, h⟩
     have h1 : S ⊆ T := by
-      have := mem_conj_iff_subset.1 hwS
+      have := mem_conjFamily_iff_subset.1 hwS
       rw [hw] at this
       exact Finset.coe_subset.1 this
-    have h2 : T ⊆ S := (conj_subset_conj_iff hrich).1
-      (h _ (conj_mem_conjClosure hT) (by rw [cell_conj hrich T]; exact hw))
+    have h2 : T ⊆ S := (conjFamily_subset_conjFamily_iff hrich).1
+      (h _ (conjFamily_mem_conjClosure hT) (by rw [cell_conjFamily hrich T]; exact hw))
     rw [Finset.Subset.antisymm h1 h2]
   · rintro rfl
-    refine ⟨conj_mem_conjClosure hT, mem_conj_iff_subset.2 (by rw [hw]), ?_⟩
+    refine ⟨conjFamily_mem_conjClosure hT, mem_conjFamily_iff_subset.2 (by rw [hw]), ?_⟩
     rintro _ ⟨U, hU, rfl⟩ hwU
-    rw [cell_conj hrich U] at hwU
+    rw [cell_conjFamily hrich U] at hwU
     have hwU' : profile a w = ↑U := hwU
     rw [hw, Finset.coe_inj] at hwU'
     subst hwU'

@@ -90,6 +90,38 @@ def DGB.pushPending {P Fact QContent : Type*} {Cont : Type}
     DGB P Fact QContent Cont :=
   { dgb with pending := lp :: dgb.pending }
 
+/-- Turn change: the addressee takes the turn (Appendix B). -/
+def DGB.swapTurn {P Fact QContent : Type*} {Cont : Type}
+    (dgb : DGB P Fact QContent Cont) : DGB P Fact QContent Cont :=
+  { dgb with spkr := dgb.addr, addr := dgb.spkr }
+
+/-- The question of MaxQUD. -/
+def DGB.maxQud {P Fact QContent : Type*} {Cont : Type}
+    (dgb : DGB P Fact QContent Cont) : Option QContent :=
+  dgb.qud.head?.map (·.q)
+
+/-- The content of the latest move. -/
+def DGB.latestContent {P Fact QContent : Type*} {Cont : Type}
+    (dgb : DGB P Fact QContent Cont) : Option Cont :=
+  dgb.latestMove.map (·.cont)
+
+section
+variable {P Fact QContent : Type*} {Cont : Type} (dgb : DGB P Fact QContent Cont)
+
+@[simp] theorem DGB.swapTurn_pushQud (q : QContent) :
+    dgb.swapTurn.pushQud q = (dgb.pushQud q).swapTurn := rfl
+
+@[simp] theorem DGB.swapTurn_recordMove (m : LocProp Cont) :
+    dgb.swapTurn.recordMove m = (dgb.recordMove m).swapTurn := rfl
+
+@[simp] theorem DGB.latestMove_recordMove (m : LocProp Cont) :
+    (dgb.recordMove m).latestMove = some m := by
+  simp [DGB.latestMove, DGB.recordMove]
+
+end
+
+deriving instance DecidableEq for DGB
+
 /-- Assert: add fact to FACTS, record the move, and downdate QUD.
 
 Ch. 4 (p. 95, ex. 66): assertion adds content to FACTS, pushes
