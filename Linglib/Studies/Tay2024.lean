@@ -92,10 +92,9 @@ theorem subject_oriented_count :
     it or with a non-reflexive NP ([goldberg-jackendoff-2004] ex. 9a and
     its starred alternatives). -/
 theorem english_subject_result_requires_reflexive :
-    GoldbergJackendoff2004.yell_hoarse.judgment == .acceptable ∧
-    GoldbergJackendoff2004.Examples.gj2004_9a.alternatives.all
-      (·.2 == .ungrammatical) = true := by
-  refine ⟨?_, ?_⟩ <;> decide
+    GoldbergJackendoff2004.Examples.gj2004_9a.judgment = .acceptable ∧
+    ∀ a ∈ GoldbergJackendoff2004.Examples.gj2004_9a.alternatives, a.2 = .ungrammatical := by
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 2. V-V vs V-de: Syntactic Opacity
