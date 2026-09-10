@@ -2,41 +2,32 @@ import Linglib.Morphology.DistributedMorphology.Spellout
 import Linglib.Data.Examples.HalleMarantz1993
 
 /-!
-# Distributed Morphology and the pieces of inflection
+# Halle and Marantz (1993): Distributed Morphology and the Pieces of Inflection
 
-[halle-marantz-1993]'s English verb inflection: the seven suffixes of their
-(8) compete for the fused Tns–Agr node, and the principal parts of their (7)
-fall out. Their account of the regular verb's identical finite past and past
-participle is underspecification, not a participle rule — `-d` carries only
-`[+past]`, and the only participle-specific past item is the stem-listed
-`-n`.
-
-## Main definitions
-
-* `Feature`: the fused node's alphabet — binary `[±past]` and
-  `[±participle]`, the `[3sg]` agreement complex, and the stem the node is
-  inserted next to (the paper's contextual feature).
-* `vocabulary`: the items of (8), in the paper's order.
-* `tnsAgrFusion`, `tnsAgrSpellout`: Agr, added at MS to `[−participle]` Tns
-  nodes, fuses with Tns before insertion.
-
-## Main results
-
-* `principal_parts`: every cell of (7) receives the suffix the paper segments.
-* `participle_eq_past_of_not_strong`: the participle/finite-past syncretism of
-  every stem outside the `-n` list, by underspecification.
-* `zero_morphemes_distinct`: the stem-conditioned past `∅` and the Elsewhere
-  `∅` are different Vocabulary Items.
-* `agr_only_on_finite`: Fusion refuses a `[+participle]` Tns node.
+This file formalizes the English verb inflection of [halle-marantz-1993], section 3.1. The
+seven suffixes of their (8) compete under the Subset Principle for the fused Tns–Agr node,
+`vocabulary`, and the principal parts of their (7) fall out, `principal_parts`. The node's
+features are the binary `[±past]` and `[±participle]`, the `[3sg]` agreement complex, and the
+stem the node is inserted next to, the paper's contextual feature; Agr is added at MS to
+`[−participle]` Tns nodes and fuses with Tns before insertion, `tnsAgrFusion`, so a participial
+node takes no Agr, `agr_only_on_finite`. The regular verb's identical finite past and past
+participle is underspecification rather than a participle rule: `-d` carries only `[+past]`, and
+the only participle-specific past item is the stem-listed `-n`,
+`participle_eq_past_of_not_strong`; the stem-conditioned past `∅` and the Elsewhere `∅` are
+distinct items, `zero_morphemes_distinct`.
 
 ## Implementation notes
 
-The paper says the ordering among the past block, `[3sg]` `-z`, and
-`[+participle]` `-ing` "is not determined by complexity" and "must be
-stipulated"; the Subset Principle's count ties at those points, and the
-list order of `vocabulary` carries the stipulation
-(`past_precedes_agreement`). Stem readjustment (*dwel-t*, *brough-t*) is the
-paper's separate rule system and is outside this file.
+The paper says the ordering between the `∅` and `-t` pasts "is not determined by complexity"
+and needs none, since their stem lists are disjoint, and that the ordering among the past block,
+`[3sg]` `-z`, and `[+participle]` `-ing` "must be stipulated"; the Subset Principle's count ties
+at those points, and the list order of `vocabulary` carries the stipulation,
+`past_precedes_agreement`. Stem readjustment (*dwel-t*, *brough-t*) is the paper's separate rule
+system (10) and is outside this file.
+
+## References
+
+* [halle-marantz-1993]
 -/
 
 namespace HalleMarantz1993
@@ -97,7 +88,7 @@ def tPast : List Verb := [.dwell]
 disjunctive list in a contextual feature. -/
 def forStems (features : List Feature) (e : String) (stems : List Verb) :
     List (VocabularyItem Feature String) :=
-  stems.map fun v => (features ++ [.stem v]) ⟷ e
+  stems.map λ v => (features ++ [.stem v]) ⟷ e
 
 /-- The seven suffixes of (8): the past block (`-n`, the unordered `∅` and
 `-t`, default `-d`), then `[3sg]` `-z`, `[+participle]` `-ing`, and
