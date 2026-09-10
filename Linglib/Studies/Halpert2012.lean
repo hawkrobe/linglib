@@ -1,36 +1,37 @@
 import Linglib.Syntax.Minimalist.Probe.Basic
 
 /-!
-# Halpert 2012 — Argument Licensing and Agreement in Zulu [halpert-2012]
+# Halpert (2012): Argument Licensing and Agreement in Zulu
 
-[halpert-2012] (MIT dissertation): the familiar structural licensers
-(T⁰, v⁰, P⁰) are not licensers in Zulu; instead a Licensing head L⁰
-above vP licenses the highest element within vP, and the **augment**
-vowel on a nominal is itself an intrinsic case licenser. Augmentless
-nominals therefore need L⁰: they must be vP-internal, structurally
-highest there, and at most one occurs per simplex clause. The
-**conjoint/disjoint** alternation on the verb (present tense:
-conjoint ∅- vs. disjoint *ya-*) is the morphological spellout of L⁰
-itself (her ch. 4): "the disjoint appears when L fails to find a
-goal", and "As long as probing is attempted, the derivation will
-still converge even if a probe fails to find a goal" —
-failure-tolerance, adopted by [preminger-2014] Ch. 6 as the second
-case study in tolerated failed agreement.
+This file formalizes the licensing system of [halpert-2012]. The familiar structural
+licensers, T⁰, v⁰, and P⁰, are not licensers in Zulu; a Licensing head L⁰ above vP licenses the
+highest element within vP, and the augment vowel on a nominal is itself an intrinsic case
+licenser, so augmentless nominals need L⁰: they must be vP-internal, structurally highest there,
+and at most one occurs per simplex clause, `licensingOk_iff_highest` and
+`at_most_one_augmentless`, with the negated-expletive paradigm of chapter 3 as the witnesses,
+`augmentless_distribution`. The conjoint and disjoint alternation on the present-tense verb,
+conjoint ∅- against disjoint *ya-*, is the morphological spellout of L⁰ itself (chapter 4),
+`lSpellout`: "the disjoint appears when L fails to find a goal", and "As long as probing is
+attempted, the derivation will still converge even if a probe fails to find a goal",
+`disjoint_iff_empty` and `failed_agree_spells_disjoint`, the failure tolerance that
+[preminger-2014] adopts as its second case of tolerated failed agreement. L⁰ is the
+indiscriminate instance of `Syntax/Minimalist/Probe/Basic.lean`'s `Probe.search`, so bare
+minimality delivers the head of the sequence and augmented nominals intervene, and the licensing
+condition is the off-diagonal `Probe.AllLicensed` with the needy the augmentless; Kichean
+([preminger-2014], chapter 4) is the diagonal case, the probe relativized to exactly the needy.
 
-Formalized through `Probe/Basic.lean`: L⁰ is the **indiscriminate**
-instance of `Probe.search` (`Probe.indiscriminate`, so bare minimality delivers
-`List.head?`; augmented nominals intervene, her Chomsky-2000-style
-intervention), and the licensing condition is the off-diagonal
-`Probe.AllLicensed` with `needs` = augmentless. Contrast Kichean
-([preminger-2014] Ch. 4): the diagonal case, π⁰ relativized to
-exactly the needy, hence omnivorous and position-insensitive.
+## Implementation notes
 
-Scope: simplex clauses only — the dissertation's second licensing
-route (V⁰ together with specifier-taking CAUS/APPL heads, licensing
-one additional augmentless nominal; her LP schemas in ch. 3) is not
-modeled. `Nominal` also under-populates L⁰'s search space: her L⁰
-targets any vP-internal XP (locatives, adverbs), so a conjoint fed
-by a non-nominal is not representable here.
+Simplex clauses only: the dissertation's second licensing route, V⁰ together with a
+specifier-taking causative or applicative head licensing one further augmentless nominal (its
+chapter 3 schemas), is not modelled, and `Nominal` under-populates L⁰'s search space, since L⁰
+targets any vP-internal phrase, locatives and adverbs included, so a conjoint fed by a
+non-nominal is not representable here.
+
+## References
+
+* [halpert-2012]
+* [preminger-2014]
 -/
 
 namespace Halpert2012
@@ -75,15 +76,21 @@ instance (vp : List Nominal) : Decidable (LicensingOk vp) :=
 def lOutcome (vp : List Nominal) : Probe.Outcome :=
   L.outcome vp
 
+/-- The present-tense verb form, conjoint ∅- or disjoint *ya-*. -/
+inductive VerbForm where
+  | conjoint
+  | disjoint
+  deriving DecidableEq, Repr
+
 /-- The conjoint/disjoint marker (present tense) as the spellout of
     L⁰: conjoint ∅- when L⁰ found a goal, disjoint *ya-* when it
     failed. A marked pattern — the overt member realizes FAILED
     valuation ([preminger-2014] Ch. 6 notes the parallel with English
     non-past -Ø vs. *-z*). -/
-def lSpellout (vp : List Nominal) : String :=
+def lSpellout (vp : List Nominal) : VerbForm :=
   match lOutcome vp with
-  | .valued => "∅-"
-  | .unvalued => "ya-"
+  | .valued => .conjoint
+  | .unvalued => .disjoint
 
 /-! ### The conjoint/disjoint distribution -/
 
@@ -93,11 +100,10 @@ def lSpellout (vp : List Nominal) : String :=
     evidence that L⁰ is unrelativized ([preminger-2014] Ch. 6
     §6.1.3's locative-modifier point). -/
 theorem disjoint_iff_empty (vp : List Nominal) :
-    lSpellout vp = "ya-" ↔ vp = [] := by
+    lSpellout vp = .disjoint ↔ vp = [] := by
   cases vp with
   | nil => exact iff_of_true rfl rfl
-  | cons a t =>
-    exact iff_of_false (show ("∅-" : String) ≠ "ya-" by decide) (nomatch ·)
+  | cons a t => exact iff_of_false (nomatch ·) (nomatch ·)
 
 /-! ### Licensing: highest-only and at-most-one -/
 
@@ -114,7 +120,7 @@ theorem licensingOk_iff_highest (vp : List Nominal) :
     at most one goal. -/
 theorem at_most_one_augmentless {vp : List Nominal} (h : LicensingOk vp) :
     ∀ n ∈ vp, ∀ m ∈ vp, needsL n = true → needsL m = true → n = m :=
-  fun n hn m hm hn' hm' => (h n hn hn').unique (h m hm hm')
+  λ n hn m hm hn' hm' => (h n hn hn').unique (h m hm hm')
 
 /-! ### The negated-expletive VS(O) paradigm -/
 
@@ -148,9 +154,9 @@ theorem augmentless_distribution :
     conjoint ∅- surfaces. -/
 theorem failed_agree_spells_disjoint :
     lOutcome [] = .unvalued ∧
-    lSpellout [] = "ya-" ∧
+    lSpellout [] = .disjoint ∧
     lOutcome [⟨5, true⟩] = .valued ∧
-    lSpellout [⟨5, true⟩] = "∅-" := by
+    lSpellout [⟨5, true⟩] = .conjoint := by
   decide
 
 end Halpert2012
