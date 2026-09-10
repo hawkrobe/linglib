@@ -1,0 +1,311 @@
+[
+  {
+    "id": "gg2017_1",
+    "source": {
+      "bibkey": "gartner-gyuris-2017",
+      "paperLabel": "(1)"
+    },
+    "language": "stan1293",
+    "primaryText": "Is it sunny outside?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A enters S's windowless office in a manifestly dripping wet raincoat.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "English V1"
+      ],
+      [
+        "form",
+        "PPQ"
+      ],
+      [
+        "dimension",
+        "evidential"
+      ],
+      [
+        "value",
+        "-"
+      ]
+    ],
+    "comment": "A positive polar question is infelicitous under compelling evidence against p."
+  },
+  {
+    "id": "gg2017_2a",
+    "source": {
+      "bibkey": "gartner-gyuris-2017",
+      "paperLabel": "(2a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Didn't John go to the party?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "S has just learned that A hosted a party last night but has no idea who did or should have attended.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "English V1"
+      ],
+      [
+        "form",
+        "IN-NPQ"
+      ],
+      [
+        "dimension",
+        "epistemic"
+      ],
+      [
+        "value",
+        "%"
+      ]
+    ],
+    "comment": "A negative polar question conveys the speaker's expectation that p, so it is odd without one."
+  },
+  {
+    "id": "gg2017_2b",
+    "source": {
+      "bibkey": "gartner-gyuris-2017",
+      "paperLabel": "(2b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Did John not go to the party?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "S has just learned that A hosted a party last night but has no idea who did or should have attended.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "English V1"
+      ],
+      [
+        "form",
+        "IN-NPQ"
+      ],
+      [
+        "dimension",
+        "epistemic"
+      ],
+      [
+        "value",
+        "%"
+      ]
+    ],
+    "comment": "As (2a)."
+  },
+  {
+    "id": "gg2017_8_neg",
+    "source": {
+      "bibkey": "gartner-gyuris-2017",
+      "paperLabel": "(8)"
+    },
+    "language": "hung1274",
+    "primaryText": "Süt-e a nap?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Süt-e",
+        "shine-Q"
+      ],
+      [
+        "a",
+        "the"
+      ],
+      [
+        "nap",
+        "sun"
+      ]
+    ],
+    "translation": "Is it sunny?",
+    "context": "A enters S's windowless office in a manifestly dripping wet raincoat.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Hungarian e"
+      ],
+      [
+        "form",
+        "PPQ"
+      ],
+      [
+        "dimension",
+        "evidential"
+      ],
+      [
+        "value",
+        "-"
+      ]
+    ],
+    "comment": "The e-interrogative's evidential anti-bias: infelicitous under compelling evidence against p."
+  },
+  {
+    "id": "gg2017_8_pos",
+    "source": {
+      "bibkey": "gartner-gyuris-2017",
+      "paperLabel": "(8)"
+    },
+    "language": "hung1274",
+    "primaryText": "Süt-e a nap?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Süt-e",
+        "shine-Q"
+      ],
+      [
+        "a",
+        "the"
+      ],
+      [
+        "nap",
+        "sun"
+      ]
+    ],
+    "translation": "Is it sunny?",
+    "context": "A comes in with dark sunglasses, T-shirt, shorts, a straw hat and suntan lotion, humming a song about sunshine.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Hungarian e"
+      ],
+      [
+        "form",
+        "PPQ"
+      ],
+      [
+        "dimension",
+        "evidential"
+      ],
+      [
+        "value",
+        "+"
+      ]
+    ],
+    "comment": "The e-interrogative's evidential anti-bias: infelicitous under compelling evidence for p too."
+  },
+  {
+    "id": "gg2017_9a",
+    "source": {
+      "bibkey": "gartner-gyuris-2017",
+      "paperLabel": "(9a)"
+    },
+    "language": "hung1274",
+    "primaryText": "Nincs-e itt egy francia étterem?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Nincs-e",
+        "not.is-Q"
+      ],
+      [
+        "itt",
+        "here"
+      ],
+      [
+        "egy",
+        "a"
+      ],
+      [
+        "francia",
+        "French"
+      ],
+      [
+        "étterem",
+        "restaurant"
+      ]
+    ],
+    "translation": "Isn't there a French restaurant here?",
+    "context": "S and A stand in front of a billboard in a small village saying that the last restaurant there has just closed for good.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Hungarian e"
+      ],
+      [
+        "form",
+        "ON-NPQ"
+      ],
+      [
+        "dimension",
+        "evidential"
+      ],
+      [
+        "value",
+        "-"
+      ]
+    ],
+    "comment": "The e-interrogative expressing an outside-negation question keeps the anti-bias."
+  },
+  {
+    "id": "gg2017_9b",
+    "source": {
+      "bibkey": "gartner-gyuris-2017",
+      "paperLabel": "(9b)"
+    },
+    "language": "hung1274",
+    "primaryText": "Nincs-e itt egy étterem?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Nincs-e",
+        "not.is-Q"
+      ],
+      [
+        "itt",
+        "here"
+      ],
+      [
+        "egy",
+        "a"
+      ],
+      [
+        "étterem",
+        "restaurant"
+      ]
+    ],
+    "translation": "Isn't there a restaurant here?",
+    "context": "The billboard announces the opening of several new restaurants in the village.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Hungarian e"
+      ],
+      [
+        "form",
+        "ON-NPQ"
+      ],
+      [
+        "dimension",
+        "evidential"
+      ],
+      [
+        "value",
+        "+"
+      ]
+    ],
+    "comment": "As (9a), under compelling evidence for p."
+  }
+]
