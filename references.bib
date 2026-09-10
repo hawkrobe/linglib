@@ -297,7 +297,7 @@
   subfield  = {pragmatics/rsa},
   validated = {true},
   role      = {formalized},
-  sources   = {Core/Probability/Softmax.lean;Pragmatics/Bidirectional.lean;Pragmatics/RSA/Basic.lean;Pragmatics/RSA/Canonical.lean;Pragmatics/RSA/Gibbs.lean;Pragmatics/RSA/Operators.lean;Studies/Anderson2021.lean;Studies/BellerGerstenberg2025.lean;Studies/BergenGoodman2015.lean;Studies/ChampollionAlsopGrosu2019.lean;Studies/CremersWilcoxSpector2023.lean;Studies/DegenEtAl2020.lean;Studies/FrankGoodman2012.lean;Studies/FrankeBergen2020.lean;Studies/GoldszmidtPearl1996.lean;Studies/HardingGerstenbergIcard2025.lean;Studies/KaoEtAl2014PMFMetaphor.lean;Studies/Kennedy2015.lean;Studies/Kennedy2015PMF.lean;Studies/LassiterGoodman2017.lean;Studies/QingFranke2015.lean;Studies/SikosEtAl2021.lean;Studies/SumersEtAl2023.lean;Studies/TesslerGoodman2019.lean;Studies/Thomas2026.lean}
+  sources   = {Core/Probability/Softmax.lean;Pragmatics/Bidirectional.lean;Pragmatics/RSA/Basic.lean;Pragmatics/RSA/Canonical.lean;Pragmatics/RSA/Gibbs.lean;Pragmatics/RSA/Operators.lean;Studies/Anderson2021.lean;Studies/BellerGerstenberg2025.lean;Studies/BergenGoodman2015.lean;Studies/ChampollionAlsopGrosu2019.lean;Studies/CremersWilcoxSpector2023.lean;Studies/DegenEtAl2020.lean;Studies/FrankGoodman2012.lean;Studies/FrankeBergen2020.lean;Studies/HardingGerstenbergIcard2025.lean;Studies/KaoEtAl2014PMFMetaphor.lean;Studies/Kennedy2015.lean;Studies/Kennedy2015PMF.lean;Studies/LassiterGoodman2017.lean;Studies/QingFranke2015.lean;Studies/SikosEtAl2021.lean;Studies/SumersEtAl2023.lean;Studies/TesslerGoodman2019.lean;Studies/Thomas2026.lean}
 }
 @article{sikos-etal-2021,
   author    = {Sikos, Les and Venhuizen, Noortje J. and Drenhaus, Heiner and Crocker, Matthew W.},
@@ -5224,7 +5224,7 @@
   subfield  = {logic},
   role      = {formalized},
   validated = {true},
-  sources   = {Core/Logic/RankingFunction.lean;Studies/Spohn1988.lean;Core/Order/Probability/Conditional.lean}
+  sources   = {Core/Order/Probability/Conditional.lean;Logic/BeliefRevision/Iterated.lean;Logic/RankingFunction.lean;Studies/GoldszmidtPearl1996.lean;Studies/Spohn1988.lean}
 }% REF: Goldszmidt & Pearl (1996). Qualitative Probabilities for Default Reasoning.
 @article{goldszmidt-pearl-1996,
   author    = {Goldszmidt, Moisés and Pearl, Judea},
@@ -5238,7 +5238,7 @@
   subfield  = {logic},
   role      = {formalized},
   validated = {true},
-  sources   = {Core/Logic/SystemZ.lean;Studies/GoldszmidtPearl1996.lean}
+  sources   = {Logic/BeliefRevision.lean;Logic/RankingFunction.lean;Studies/DarwichePearl1997.lean;Studies/GoldszmidtPearl1996.lean}
 }% REF: Barwise (1989). The Situation in Logic.
 @book{barwise-1989,
   author    = {Barwise, Jon},
@@ -43624,4 +43624,14 @@
   subfield  = {psycholinguistics/reasoning},
   role      = {cited},
   sources   = {Studies/Geurts2005.lean}
+}
+@book{adams-1975,
+  author    = {Adams, Ernest W.},
+  year      = {1975},
+  title     = {The Logic of Conditionals: An Application of Probability to Deductive Logic},
+  publisher = {D. Reidel},
+  address   = {Dordrecht},
+  subfield  = {logic/conditionals},
+  role      = {cited},
+  sources   = {Studies/GoldszmidtPearl1996.lean}
 }
