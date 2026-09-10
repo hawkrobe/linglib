@@ -1,555 +1,217 @@
 import Linglib.Semantics.ArgumentStructure.CaseRegion
 import Linglib.Semantics.ArgumentStructure.Projection
 import Linglib.Semantics.ArgumentStructure.RoleList
-import Linglib.Studies.Aissen2003
-import Linglib.Syntax.Case.Dependent
 import Linglib.Studies.Dowty1991
 
 /-!
-# Semantics of Case ([grimm-2011])
+# Grimm (2011): Semantics of Case
 
-Study file for [grimm-2011]: canonical verbs mapped through the agentivity
-lattice (`Semantics/ArgumentStructure/`) to case regions, a
-lattice-derived account of differential object marking checked against the
-[aissen-2003] DOM profiles, and the paper's engagement with [dowty-1991]'s
-Argument Selection Principle. The DOM substrate reconstructs the
-referential-property treatment the paper attributes to [grimm-2005].
+This file formalizes [grimm-2011]'s account of case assignment over the agentivity lattice of
+`Semantics/ArgumentStructure/`: [dowty-1991]'s proto-role entailments recast as four privative
+agentivity properties and a persistence axis, whose product orders participant types by semantic
+prominence, with a case a connected region of that lattice. The canonical subjects of section 2.2
+climb a chain from the positional verbs to *assassinate* (`canonical_verb_chain`), and the
+acceptable arguments of a predicate are closed upward for agents and downward for patients, so
+that natural forces kill and the object of *hit* may be unaffected or destroyed but must exist
+when the event begins (`kill_subject_range`, `transitive_region_eq_Ici`); the dominance
+criterion for subject selection reproduces [dowty-1991]'s choice for *kiss*
+(`kiss_outranking_from_dominance`). Section 3 maps [tsunoda-1985]'s effectiveness hierarchy: the
+agent of *break*, *shoot*, and *search* keeps instigation and motion while the patient rises
+from existential persistence through qualitative persistence and out of the transitivity
+region (`transitivity_hierarchy`). Section 4 reads the two core cases of either alignment off
+the poles (`pole_alignment`), section 5.1 places the recipient, the dative experiencer, and the
+dative object of *danken* and *helfen* at one node of the dative region (`recipient_dative`), and
+section 5.2 derives the Russian genitive/accusative alternation of *ždat'* 'wait for' from
+referentiality: a referring object exists when the event begins and falls in the accusative
+region, a non-specific one may stay at the bottom node that the governed genitive marks, and
+only a verb without existential persistence entailments on its object leaves that node open
+(`genitive_accusative_alternation`, `genitive_outside_region`).
 
-## Main results
+## Implementation notes
 
-- `subject_region_iff_causation` / `kill_subject_range`: for every
-  [dowty-1991] profile the subject is NOM/ERG iff it entails causation, and
-  every node above *kill*'s minimal agent qualifies — both from the
-  substrate's interval characterization of the regions.
-- `russian_dom_matches_lattice` / `spanish_dom_within_lattice` /
-  `animate_dom_object_is_dative_node`: the lattice predicts DOM for exactly
-  {animate, human}, and the animate DOM object is literally the dative node.
-- `domPredicted_monotone`, `latticeDOM_monotoneP`,
-  `latticeDOM_matches_aissen_type2`: the lattice derives [aissen-2003]'s
-  monotonicity universal and reproduces OT Type 2.
-- `genitive_requires_entailment_free`: only the entailment-free object
-  profile reaches the genitive node — the §5.2 intensionality restriction
-  as a theorem over all [dowty-1991] profiles.
-- `wellFormedPair_not_preserved`, `kiss_outranking_from_dominance`,
-  `arrive_cross_theory`: what the lattice projection of Dowty's profiles
-  loses, the agreement of Dowty's Table 1 with the lattice on *arrive*, and
-  the ASP re-derived from dominance (`outranks_of_lattice_dominance`) rather
-  than checked per verb.
-- `lattice_diverges_from_dependent_case`: the semantic-case vs
-  structural-case fault line on animate objects, made explicit against a
-  dependent-case pipeline over prominence-annotated clauses.
+The lattice, the named participant types, the case regions, and the projection from
+[dowty-1991]'s profiles are substrate; this file supplies the paper's placements and reads its
+predictions off the interval characterizations of the regions. The paper's remarks on
+differential object marking (the interaction of verbal and referential properties, deferred to
+[grimm-2005]) and on the size of the nominative or ergative region in a given language are not
+formalized. Definiteness is the paper's three-step hierarchy (14), with the referring feature the
+one that entails existence.
+
+## References
+
+* [grimm-2011]
+* [dowty-1991]
+* [tsunoda-1985]
+* [grimm-2005]
+* [fillmore-1968]
 -/
 
 namespace Grimm2011
 
 open ArgumentStructure
-open ArgumentStructure
-open Features.Prominence
-open Aissen2003
 
-/-! ### The canonical verb chain (§2.2, p.523–524)
+/-! ### The canonical verb chain, section 2.2 -/
 
-Subjects populating a maximal chain: positional verbs at ⊥, then know/see
-(sentience), discover (+instigation), look at (+motion), assassinate
-(+volition, = ⊤). -/
-
-/-- sit/stand subject: ⊥, p.523. -/
+/-- The subject of the positional verbs *sit* and *stand*: no agentivity property. -/
 def sitAgentivity : Agentivity := ⊥
 
-/-- know/see subject: sentience only, p.523–524. -/
+/-- The subject of *know* and *see*: sentience. -/
 def knowAgentivity : Agentivity := .mk false true false false
 
-/-- discover subject: sentience + instigation, p.524. -/
+/-- The subject of *discover*: sentience and instigation. -/
 def discoverAgentivity : Agentivity := .mk false true true false
 
-/-- look at subject: sentience + instigation + motion, p.524. -/
+/-- The subject of *look at*: sentience, instigation, and motion. -/
 def lookAtAgentivity : Agentivity := .mk false true true true
 
-/-- assassinate subject: all four features, p.524. -/
+/-- The subject of *assassinate*: all four properties. -/
 def assassinateAgentivity : Agentivity := ⊤
 
-/-- Each verb adds one feature: a strict chain from ⊥ to ⊤. -/
+/-- Each verb adds one property to the last: a chain from the bottom to the top of the
+agentivity lattice, the paper's illustration that height is degree of agentivity. -/
 theorem canonical_verb_chain :
     sitAgentivity < knowAgentivity ∧ knowAgentivity < discoverAgentivity ∧
-    discoverAgentivity < lookAtAgentivity ∧
-    lookAtAgentivity < assassinateAgentivity := by decide
+      discoverAgentivity < lookAtAgentivity ∧ lookAtAgentivity < assassinateAgentivity := by
+  decide
 
-/-- All chain positions satisfy volition → sentience. -/
+/-- Every node of the chain respects the one relation among the properties, volition
+entails sentience. -/
 theorem canonical_verbs_valid :
     sitAgentivity.Valid ∧ knowAgentivity.Valid ∧ discoverAgentivity.Valid ∧
-    lookAtAgentivity.Valid ∧ assassinateAgentivity.Valid := by decide
+      lookAtAgentivity.Valid ∧ assassinateAgentivity.Valid := by
+  decide
 
-/-- The perception template's subject projects to exactly the know/see
-    node — the [dowty-1991] bridge lands on the chain. -/
+/-- The projection of [dowty-1991]'s perception profile lands on the chain at *see*. -/
 theorem see_subject_agentivity :
-    Agentivity.fromEntailmentProfile perception.subjectProfile
-      = knowAgentivity := rfl
+    Agentivity.fromEntailmentProfile perception.subjectProfile = knowAgentivity := rfl
 
-/-! ### Tsunoda's transitivity hierarchy (§3, example 8)
+/-! ### Argument ranges and subject selection, section 2.3
 
-Resultative Effective Action (kill, break) >> Contact (shoot, hit) >>
-Pursuit (search, seek): the lower the patient's persistence, the more
-prototypically transitive the verb. -/
+The agent of *kill* need only instigate, so natural forces such as electricity and eventive
+nominals such as the explosion are acceptable subjects, and so is every node above them: agents
+are upward closed. The patient of *hit* canonically changes qualitatively, but the object of the
+conative *hit at* is unaffected and an object may happen to be destroyed, while an entity that
+does not exist when the event begins cannot be hit: patients are closed downward to the
+existence of the entity. -/
 
-/-- Class I/II patients are in the transitivity region; Class III (pursuit)
-    is outside. -/
-theorem tsunoda_region_membership :
-    (TransitivityRank.resultativeEffective.patientType).InTransitiveRegion ∧
-    (TransitivityRank.contact.patientType).InTransitiveRegion ∧
-    ¬ (TransitivityRank.pursuit.patientType).InTransitiveRegion := by decide
-
-/-- Patient nodes are ordered III ≤ I ≤ II: lower persistence, more
-    affected. -/
-theorem tsunoda_patient_chain :
-    TransitivityRank.pursuit.patientType ≤
-      TransitivityRank.resultativeEffective.patientType ∧
-    TransitivityRank.resultativeEffective.patientType ≤
-      TransitivityRank.contact.patientType := by decide
-
-/-- Fig. 5 placements: the shared agent (Ia/IIa) is NOM/ERG; Class I/II
-    patients are ACC/ABS; the pursuit patient falls outside the core
-    object region. -/
-theorem tsunoda_case_regions :
-    effectorAgent.toCaseRegion = .nomErg ∧
-    (TransitivityRank.resultativeEffective.patientType).toCaseRegion
-      = .accAbs ∧
-    (TransitivityRank.contact.patientType).toCaseRegion = .accAbs ∧
-    (TransitivityRank.pursuit.patientType).toCaseRegion = .oblique := by
-  decide
-
-/-! ### Case regions for canonical verb classes (§4)
-
-Levin-class templates mapped through the lattice: instigation puts subjects
-in NOM/ERG; ⊥ agentivity plus change-from-the-beginning persistence puts
-objects in ACC/ABS. Contact objects use the project-canonical
-no-entailed-change profile (`contactObject_persistence`), which exits
-ACC/ABS — [grimm-2011]'s own Fig. 5 keeps them inside at `quPersBeginning`. -/
-
-/-- kick: subject → NOM/ERG; object → oblique under the canonical contact
-    profile — a flagged mis-prediction (English gives contact objects plain
-    ACC) inherited from the Fig. 5 deviation. -/
-theorem kick_case_regions :
-    (ParticipantType.fromSubjectProfile mannerContact.subjectProfile).toCaseRegion
-      = .nomErg ∧
-    (ParticipantType.fromObjectProfile contactObject).toCaseRegion = .oblique := by
-  decide
-
-/-- kick/eat objects are in the transitivity region; build objects (not
-    existing at event start, p.529–530) are not. -/
-theorem kick_object_in_region :
-    (ParticipantType.fromObjectProfile contactObject).InTransitiveRegion ∧
-    (ParticipantType.fromObjectProfile consumptionObject).InTransitiveRegion ∧
-    ¬ (ParticipantType.fromObjectProfile creationObject).InTransitiveRegion := by
-  decide
-
-/-- build: subject → NOM/ERG; the created object (`exPersEnd`) → oblique. -/
-theorem build_case_regions :
-    (ParticipantType.fromSubjectProfile creation.subjectProfile).toCaseRegion
-      = .nomErg ∧
-    (ParticipantType.fromObjectProfile creationObject).toCaseRegion = .oblique := by
-  decide
-
-/-- eat: subject → NOM/ERG; the consumed object → ACC/ABS, with destroyed
-    objects. -/
-theorem eat_case_regions :
-    (ParticipantType.fromSubjectProfile consumption.subjectProfile).toCaseRegion
-      = .nomErg ∧
-    (ParticipantType.fromObjectProfile consumptionObject).toCaseRegion
-      = .accAbs := by decide
-
-/-- buy/sell: subject → NOM/ERG. Buyer and seller share one profile — the
-    [dowty-1991] §3.2 alternation tie. -/
-theorem possessionTransfer_case_region :
-    (ParticipantType.fromSubjectProfile possessionTransfer.subjectProfile).toCaseRegion
-      = .nomErg := by decide
-
-/-- see: sentience without instigation → oblique. Experiencer *subjects*
-    land outside the dative region — `fromSubjectProfile` fixes total
-    persistence, the dative region needs `quPersBeginning`. -/
-theorem see_case_region :
-    (ParticipantType.fromSubjectProfile perception.subjectProfile).toCaseRegion
-      = .oblique := by decide
-
-/-- run: volition + sentience + motion without instigation → oblique,
-    matching unergative behaviour in split-S systems. -/
-theorem run_case_region :
-    (ParticipantType.fromSubjectProfile selfMotion.subjectProfile).toCaseRegion
-      = .oblique := by decide
-
-/-- arrive: motion only → oblique. -/
-theorem arrive_case_region :
-    (ParticipantType.fromSubjectProfile directedMotion.subjectProfile).toCaseRegion
-      = .oblique := by decide
-
-/-- die: the sole argument, read as patient, → ACC/ABS; ergative readout
-    ABS — the unaccusative pattern. -/
-theorem die_case_region :
-    (ParticipantType.fromObjectProfile disappearance.subjectProfile).toCaseRegion
-      = .accAbs ∧
-    (ParticipantType.fromObjectProfile disappearance.subjectProfile).toCaseRegion.toErgativeCase
-      = .abs := by decide
-
-/-- **Instigation exactly divides the subjects**: for every [dowty-1991]
-    profile, the subject lands in NOM/ERG iff it entails causation —
-    the per-verb facts above are instances. From the interval
-    characterization and `Agentivity.le_iff`, not enumeration. -/
-theorem subject_region_iff_causation (p : EntailmentProfile) :
-    (ParticipantType.fromSubjectProfile p).toCaseRegion = .nomErg ↔
-      p.causation = true := by
-  rw [ParticipantType.toCaseRegion_eq_nomErg_iff]
-  constructor
-  · exact fun h => ((Agentivity.le_iff _ _).mp h.1).2.2.1 rfl
-  · intro hc
-    exact ⟨(Agentivity.le_iff _ _).mpr
-      ⟨fun h => Bool.noConfusion h, fun h => Bool.noConfusion h,
-       fun _ => hc, fun h => Bool.noConfusion h⟩, le_refl _⟩
-
-/-! ### Acceptable-argument ranges (§2.3, p.528)
-
-Argument acceptability is closure-based: any node above a verb's minimal
-agent requirement qualifies. Since *kill*'s agent requires only instigation,
-its subject range at total persistence is the whole NOM/ERG interval — from
-natural forces to intentional agents. -/
-
-/-- Everything above *kill*'s minimal agent is NOM/ERG: upward closure plus
-    the interval characterization `toCaseRegion_eq_nomErg_iff`. -/
+/-- Everything above the minimal instigator is in the nominative or ergative region: the range of
+the subject of *kill*, from the interval characterization of that region. -/
 theorem kill_subject_range {n : ParticipantType} (h : minimalInstigator ≤ n) :
     n.toCaseRegion = .nomErg :=
   (ParticipantType.toCaseRegion_eq_nomErg_iff n).mpr h
 
-/-- The range's endpoints, derived: electricity (instigation only) and the
-    assassin (⊤) are both acceptable *kill*-subjects. -/
+/-- The endpoints of the range: electricity, with instigation alone, and the assassin. -/
 theorem kill_subject_endpoints :
-    minimalInstigator.toCaseRegion = .nomErg ∧
-    (⊤ : ParticipantType).toCaseRegion = .nomErg :=
+    minimalInstigator.toCaseRegion = .nomErg ∧ (⊤ : ParticipantType).toCaseRegion = .nomErg :=
   ⟨kill_subject_range le_rfl, kill_subject_range le_top⟩
 
-/-! ### Accusative and ergative alignment (§4, Fig. 6) -/
+/-- The persistence levels an entity that exists when the event begins can have are the up-set
+of existential persistence (beginning): the range of the patient of *hit* and, in section 3, the
+persistence axis of the transitivity region. -/
+theorem transitive_region_eq_Ici (n : ParticipantType) :
+    n.InTransitiveRegion ↔ PersistenceLevel.exPersBeginning ≤ n.persistence := by
+  revert n; decide
 
-/-- The poles read out to the core markers of both systems: NOM/ACC in an
-    accusative alignment, ERG/ABS in an ergative one. -/
-theorem pole_alignment :
-    maximalAgent.toCaseRegion.toAccusativeCase = .nom ∧
-    maximalPatient.toCaseRegion.toAccusativeCase = .acc ∧
-    maximalAgent.toCaseRegion.toErgativeCase = .erg ∧
-    maximalPatient.toCaseRegion.toErgativeCase = .abs := by decide
+/-- The subject of *kiss* strictly dominates its object on the agentivity lattice, so the
+dominance criterion selects it, [dowty-1991]'s result for (43) without counting entailments. -/
+theorem kiss_outranking_from_dominance :
+    OutranksForSubject Dowty1991.kissSubjectProfile Dowty1991.kissObjectProfile :=
+  outranks_of_lattice_dominance _ _ (by decide) (by decide)
 
-/-! ### Differential object marking (§4, p.534; [grimm-2005])
+/-! ### The transitivity region and the effectiveness hierarchy, section 3
 
-[grimm-2011] p.534: "it is a combination of verbal and nominal properties
-which trigger DOM", deferring the referential side to [grimm-2005]. This
-section supplies one lattice encoding — a formaliser construction, not the
-paper's: animacy contributes a baseline agentive position, the verb the
-object's persistence, and DOM is predicted iff the node is in the
-transitivity region but outside ACC/ABS. Grimm himself (following
-[aissen-2003]) keeps referential prominence on a separate axis. -/
+[tsunoda-1985]'s hierarchy, the paper's (8): resultative effective action verbs (*break*) above
+contact verbs (*shoot*) above pursuit verbs (*search*). The agent of the first two classes
+entails instigation and motion; the agent of pursuit adds sentience (Fig. 5). -/
 
-/-- Ceiling agentivity of a referent type: human ↦ {V, S}, animate ↦ {S},
-    inanimate ↦ ⊥. Instigation and motion are event-bound, so never
-    contributed; denying animates volition keeps the hierarchy strict — a
-    modelling choice, not Grimm's. -/
-def animacyToAgentivity : AnimacyLevel → Agentivity
-  | .human     => .mk true true false false
-  | .animate   => .mk false true false false
-  | .inanimate => ⊥
+/-- The agent of *search*, Fig. 5's IIIa: instigation, motion, and sentience at total
+persistence. -/
+def pursuitAgent : ParticipantType := ⟨.mk false true true true, .totalPersistence⟩
 
-/-- All animacy-derived nodes satisfy volition → sentience. -/
-theorem animacyToAgentivity_valid (a : AnimacyLevel) :
-    (animacyToAgentivity a).Valid := by cases a <;> decide
-
-/-- Higher animacy → higher agentivity. -/
-theorem animacyToAgentivity_monotone : Monotone animacyToAgentivity :=
-  fun _ _ h =>
-    (by decide : ∀ a b : AnimacyLevel, a ≤ b →
-      animacyToAgentivity a ≤ animacyToAgentivity b) _ _ h
-
-/-- Animacy-derived agentivity × the verb's object persistence. -/
-def objectNodeWithAnimacy (a : AnimacyLevel) (p : PersistenceLevel) :
-    ParticipantType :=
-  ⟨animacyToAgentivity a, p⟩
-
-/-- The key non-circular derivation: at `quPersBeginning`, `toCaseRegion` —
-    defined for general case theory, not DOM — separates inanimate objects
-    (ACC/ABS) from animate/human ones (dative, Fig. 7). -/
-theorem object_regions_by_animacy :
-    (objectNodeWithAnimacy .inanimate .quPersBeginning).toCaseRegion
-      = .accAbs ∧
-    (objectNodeWithAnimacy .animate .quPersBeginning).toCaseRegion
-      = .dative ∧
-    (objectNodeWithAnimacy .human .quPersBeginning).toCaseRegion
-      = .dative := by decide
-
-/-- The animate DOM object at `quPersBeginning` IS `sentientNonInstigator`
-    — one lattice point shared with recipients and experiencers (Fig. 7).
-    On this account DOM marking is dative marking (Spanish *a*). -/
-theorem animate_dom_object_is_dative_node :
-    objectNodeWithAnimacy .animate .quPersBeginning
-      = sentientNonInstigator := rfl
-
-/-- DOM is predicted: the object node is in the transitivity region but
-    outside ACC/ABS. -/
-def DomPredictedByLattice (a : AnimacyLevel) (p : PersistenceLevel) : Prop :=
-  (objectNodeWithAnimacy a p).InTransitiveRegion ∧
-  (objectNodeWithAnimacy a p).toCaseRegion ≠ .accAbs
-
-instance (a : AnimacyLevel) (p : PersistenceLevel) :
-    Decidable (DomPredictedByLattice a p) := by
-  unfold DomPredictedByLattice; infer_instance
-
-/-- DOM for animate/human but not inanimate objects, for both canonical
-    (`quPersBeginning`) and resultative (`exPersBeginning`) transitives. -/
-theorem dom_by_animacy :
-    ¬ DomPredictedByLattice .inanimate .quPersBeginning ∧
-    DomPredictedByLattice .animate .quPersBeginning ∧
-    DomPredictedByLattice .human .quPersBeginning ∧
-    ¬ DomPredictedByLattice .inanimate .exPersBeginning ∧
-    DomPredictedByLattice .animate .exPersBeginning ∧
-    DomPredictedByLattice .human .exPersBeginning := by decide
-
-/-- Creation objects (`exPersEnd`) are outside the transitivity region at
-    every animacy level: DOM is structurally inapplicable. -/
-theorem creation_dom_inapplicable (a : AnimacyLevel) :
-    ¬ DomPredictedByLattice a .exPersEnd := by revert a; decide
-
-/-- [aissen-2003]'s monotonicity universal, derived: DOM prediction is
-    monotone in animacy at every persistence level — from
-    `animacyToAgentivity_monotone` and the region geometry, not
-    stipulation. -/
-theorem domPredicted_monotone (p : PersistenceLevel) :
-    ∀ a a' : AnimacyLevel, a ≤ a' →
-      DomPredictedByLattice a p → DomPredictedByLattice a' p := by
-  revert p; decide
-
-/-! #### Checking attested DOM languages -/
-
-/-- Russian animate accusative: the genitive form realizes the accusative of
-    animates — an animacy-cutoff marking pattern. Not part of
-    [aissen-2003]'s sample; instantiated here for the lattice check. -/
-def russianDOM : MarkingPattern := .animacyAtLeast .animate
-
-/-- Russian (animate accusative) marks exactly the lattice-predicted
-    cells. -/
-theorem russian_dom_matches_lattice :
-    ∀ a, russianDOM a .definite = true ↔
-      DomPredictedByLattice a .quPersBeginning := by decide
-
-/-- Spanish *a* on definite objects is a proper subset of the lattice
-    prediction: it under-marks the predicted animate cell. -/
-theorem spanish_dom_within_lattice :
-    (∀ a, spanishDOM a .definite = true →
-      DomPredictedByLattice a .quPersBeginning) ∧
-    spanishDOM .animate .definite = false ∧
-    DomPredictedByLattice .animate .quPersBeginning := by decide
-
-/-- Hindi agrees on the animacy boundary: inanimate never marked,
-    animate/human marked at some definiteness level. -/
-theorem hindi_dom_consistent_on_animacy :
-    (∀ d, hindiDOM .inanimate d = false) ∧
-    (∃ d, hindiDOM .animate d = true) ∧
-    (∃ d, hindiDOM .human d = true) := by decide
-
-/-! #### The lattice-derived profile against [aissen-2003]'s OT typology -/
-
-/-- The lattice's DOM prediction at a fixed persistence level, as a
-    differential marking pattern. -/
-def latticeDOM (p : PersistenceLevel) : MarkingPattern :=
-  λ a _ => decide (DomPredictedByLattice a p)
-
-/-- Lattice-derived patterns satisfy [aissen-2003]'s monotonicity universal,
-    structurally via `domPredicted_monotone`. -/
-theorem latticeDOM_monotoneP (p : PersistenceLevel) : (latticeDOM p).MonotoneP :=
-  λ _ _ _ _ ha _ hm =>
-    decide_eq_true (domPredicted_monotone p _ _ ha (of_decide_eq_true hm))
-
-/-- At `quPersBeginning` the lattice-derived profile coincides with
-    [aissen-2003]'s animate-cutoff interpolation type (Dhargari's, Figure 3;
-    `Aissen2003.figure3_languages`) — two frameworks, independent premises,
-    same prediction. -/
-theorem latticeDOM_matches_aissen_type2 :
-    ∀ a d, latticeDOM .quPersBeginning a d = dhargariDOM a d := by decide
-
-/-! #### Limitation: total-persistence objects
-
-For `totalPersistence` objects, `toCaseRegion` yields oblique even at ⊥
-agentivity, so DOM is over-predicted at every animacy level — the predicate
-is informative only for the transitivity region's core. -/
-
-/-- DOM over-predicted at every animacy level at total persistence. -/
-theorem totalPersistence_dom_overpredicted (a : AnimacyLevel) :
-    DomPredictedByLattice a .totalPersistence := by revert a; decide
-
-/-! ### The verb-class effect on DOM (p.534; [von-heusinger-2008])
-
-Grimm cites [von-heusinger-2008]'s finding that Spanish DOM regularized at
-different rates for *matar* 'kill', *ver* 'see', *poner* 'put'. This
-section operationalizes Grimm's subject–object opposition gauge through
-subject regions: NOM/ERG subjects give maximal contrast (DOM redundant,
-free to regularize); oblique-region subjects leave DOM discriminating.
-(Von Heusinger's own classification keys on object animacy — the other
-side of the same opposition.) -/
-
-/-- Accomplishment (kill-type) verbs: NOM/ERG subject and ACC/ABS object —
-    maximal contrast (*matar*). Perception verbs lose the contrast on the
-    subject side (`see_case_region`: oblique, *ver*); creation verbs have
-    NOM/ERG subjects (`build_case_regions`) but no DOM question at all
-    (`creation_dom_inapplicable`). -/
-theorem kill_type_maximal_contrast :
-    (ParticipantType.fromSubjectProfile accomplishmentSubjectProfile).toCaseRegion
-      = .nomErg ∧
-    (ParticipantType.fromObjectProfile accomplishmentObjectProfile).toCaseRegion
-      = .accAbs := by decide
-
-/-! ### The Russian genitive/accusative alternation (§5.2, Fig. 8)
-
-Objects of intensional verbs (*want*, *seek*, *await*; p.539–541) take
-accusative under the specific reading and genitive under the non-specific
-one — a case contrast between two lattice nodes. -/
-
-/-- The specific reading (object exists, `exPersBeginning`) sits in
-    ACC/ABS; the non-specific reading (existence not entailed) is the
-    lattice bottom — Grimm's governed genitive at "the lowest node of the
-    lattice" (p.540). -/
-theorem genAcc_reading_regions :
-    (⟨⊥, .exPersBeginning⟩ : ParticipantType).toCaseRegion = .accAbs ∧
-    (⟨⊥, .totalNonPersistence⟩ : ParticipantType) = ⊥ :=
-  ⟨by decide, rfl⟩
-
-/-- Only the entailment-free P-Patient profile reaches the genitive node:
-    the lattice form of "the alternation is limited to intensional verbs"
-    (p.541), for every [dowty-1991] profile. -/
-theorem genitive_requires_entailment_free (p : EntailmentProfile) :
-    PersistenceLevel.fromPatientProfile p = .totalNonPersistence ↔
-      p.changeOfState = false ∧ p.incrementalTheme = false ∧
-      p.causallyAffected = false ∧ p.stationary = false ∧
-      p.dependentExistence = false := by
-  rcases p with ⟨v, s, c, m, ie, cos, it, ca, st, de⟩
-  cases v <;> cases s <;> cases c <;> cases m <;> cases ie <;>
-    cases cos <;> cases it <;> cases ca <;> cases st <;> cases de <;> decide
-
-/-- Limitation: [dowty-1991] (30e) codes de-dicto objects (*needs a car*)
-    with dependent existence, which the bridge reads as destruction — the
-    desire-class object lands at `exPersBeginning`, not at Grimm's ⊥
-    placement for *want*. Dowty's features cannot separate "never entailed
-    to exist" from "ceases to exist". -/
-theorem desire_object_bridge_tension :
-    desire.objectProfile.map PersistenceLevel.fromPatientProfile
-      = some .exPersBeginning := rfl
-
-/-! ### Grimm vs [dowty-1991]
-
-§2.1 recasts Dowty's ten entailments as four agentivity features plus
-persistence; the projection kernel is
-`Agentivity.fromEntailmentProfile_eq_iff`. Below: what the recast loses
-(Dowty's pairing constraints) and where it agrees with Dowty's own Table 1
-(*arrive*, *die*) — cross-theory checks that belong to the later paper. -/
-
-/-- Dowty's `WellFormedPair` is invisible to the projection: a {C} and a
-    {C, IE} subject project to the same node (IE is dropped,
-    `Agentivity.fromEntailmentProfile_eq_iff`), yet against a {CoS}
-    object only the first satisfies the IE→DE pairing constraint. -/
-theorem wellFormedPair_not_preserved :
-    WellFormedPair { causation := true } { changeOfState := true } ∧
-    ¬ WellFormedPair { causation := true, independentExistence := true }
-        { changeOfState := true } ∧
-    ParticipantType.fromSubjectProfile { causation := true }
-      = ParticipantType.fromSubjectProfile
-          { causation := true, independentExistence := true } := by decide
-
-/-- *arrive*: Dowty's Table 1, the priority ASP, and the lattice all say
-    unaccusative. -/
-theorem arrive_cross_theory :
-    Dowty1991.intransClass directedMotion.subjectProfile = .unaccusative ∧
-    PredictsUnaccusative directedMotion.subjectProfile ∧
-    (ParticipantType.fromSubjectProfile directedMotion.subjectProfile).toCaseRegion
-      ≠ .nomErg := by decide
-
-/-- kick: ASP outranking and the lattice's subject region agree — NOM
-    subject. -/
-theorem kick_asp_grimm_consistent :
-    OutranksForSubject mannerContact.subjectProfile contactObject ∧
-    (ParticipantType.fromSubjectProfile mannerContact.subjectProfile).toCaseRegion.toAccusativeCase
-      = .nom := by decide
-
-/-- die: the priority ASP, Dowty's Table 1, and the lattice agree on
-    unaccusativity. -/
-theorem die_asp_grimm_consistent :
-    PredictsUnaccusative disappearance.subjectProfile ∧
-    Dowty1991.intransClass disappearance.subjectProfile = .unaccusative ∧
-    (ParticipantType.fromObjectProfile disappearance.subjectProfile).toCaseRegion
-      = .accAbs := by decide
-
-/-- kiss: the subject strictly dominates the object on the lattice — the
-    volition asymmetry of `Dowty1991.kiss_subject_outranks` as order. -/
-theorem kiss_subject_dominates :
-    Agentivity.fromEntailmentProfile Dowty1991.kissObjectProfile <
-      Agentivity.fromEntailmentProfile Dowty1991.kissSubjectProfile := by
+/-- The hierarchy as a progression of the patient away from the maximal patient: the patient
+of *break* is the maximal patient, that of *shoot* lies above it inside the transitivity region,
+that of *search* outside it, while the agents stay in the nominative or ergative region. -/
+theorem transitivity_hierarchy :
+    TransitivityRank.resultativeEffective.patientType = maximalPatient ∧
+      TransitivityRank.resultativeEffective.patientType ≤ TransitivityRank.contact.patientType ∧
+      TransitivityRank.resultativeEffective.patientType ≠ TransitivityRank.contact.patientType ∧
+      TransitivityRank.contact.patientType.InTransitiveRegion ∧
+      ¬ TransitivityRank.pursuit.patientType.InTransitiveRegion ∧
+      effectorAgent.toCaseRegion = .nomErg ∧ pursuitAgent.toCaseRegion = .nomErg := by
   decide
 
-/-- Subject selection for *kiss* from lattice dominance alone
-    (`outranks_of_lattice_dominance`): the ASP mechanized, re-deriving
-    `Dowty1991.kiss_subject_outranks` without counting or `decide`. -/
-theorem kiss_outranking_from_dominance :
-    OutranksForSubject Dowty1991.kissSubjectProfile
-      Dowty1991.kissObjectProfile :=
-  outranks_of_lattice_dominance _ _ kiss_subject_dominates (by decide)
+/-- The patients of the two effective classes fall in the accusative or absolutive region and the
+pursuit patient does not. -/
+theorem transitivity_patient_regions :
+    TransitivityRank.resultativeEffective.patientType.toCaseRegion = .accAbs ∧
+      TransitivityRank.contact.patientType.toCaseRegion = .accAbs ∧
+      TransitivityRank.pursuit.patientType.toCaseRegion ≠ .accAbs := by
+  decide
 
-/-- Dowty's count comparison follows from lattice dominance via
-    `featureCount_monotone` and `pAgentScore_decomposition`. -/
-theorem kiss_flat_count_from_lattice :
-    Dowty1991.kissObjectProfile.pAgentScore ≤
-      Dowty1991.kissSubjectProfile.pAgentScore := by
-  rw [pAgentScore_decomposition, pAgentScore_decomposition]
-  exact Nat.add_le_add
-    (Agentivity.featureCount_monotone kiss_subject_dominates.le) le_rfl
+/-! ### Core case marking systems, section 4 -/
 
-/-! ### Grimm vs dependent case
+/-- Fig. 6: the maximal agent and the maximal patient read out to the two core cases of either
+alignment, nominative and accusative or ergative and absolutive. -/
+theorem pole_alignment :
+    maximalAgent.toCaseRegion.toAccusativeCase = .nom ∧
+      maximalPatient.toCaseRegion.toAccusativeCase = .acc ∧
+      maximalAgent.toCaseRegion.toErgativeCase = .erg ∧
+      maximalPatient.toCaseRegion.toErgativeCase = .abs := by
+  decide
 
-The dependent-case algorithm ([marantz-1991], `Syntax/Case/Dependent.lean`)
-assigns abstract ACC to every transitive object — case assignment is
-prominence-blind, with DOM a realization filter over it ([aissen-2003]).
-Grimm instead assigns the case *category* by lattice position: on his line
-Spanish *a* is dative, not flagged ACC — the fault line between structural
-and semantic case. The pipeline below runs the dependent-case algorithm on a
-prominence-annotated clause to make the divergence explicit. -/
+/-! ### Extensions of the dative, section 5.1
 
-open Case
+The recipient of *geben* (9) is consciously involved as a possessor and qualitatively changed in
+its possessions; the dative experiencer of the Urdu *ghussa aana* 'get angry' (10) is sentient and
+undergoes a psychological change; the second argument of *danken* and *gratulieren* undergoes
+caused possession in the cognitive realm and that of *dienen* and *helfen* a change through the
+benefit conferred. All three require sentience at qualitative persistence (beginning), the
+substrate's `sentientNonInstigator`. -/
 
-/-- An NP annotated with referential prominence. Dependent case ignores the
-    annotation; the lattice reads it. -/
-structure ProminentNP where
-  label : String
-  lexicalCase : Option Case
-  animacy : AnimacyLevel
-  definiteness : DefinitenessLevel
+/-- The recipient of (9). -/
+def recipient : ParticipantType := sentientNonInstigator
+
+/-- The recipient's node is in the dative region, and with it the experiencer and the second
+argument of the two-place verbs that share its entailments (Fig. 7). -/
+theorem recipient_dative : recipient.toCaseRegion = .dative := by decide
+
+/-! ### The genitive/accusative alternation in Russian, section 5.2
+
+*Ivan ždët tramvaj* (accusative) 'Ivan is waiting for the/a certain tram' against *Ivan ždët
+tramvaja* (genitive) 'Ivan is waiting for a tram', (12). The governed genitive marks the entity
+whose existence is not entailed, the bottom node of the lattice; the accusative region contains
+the node of existential persistence (beginning). An opacity-creating verb entails nothing for
+its object, so the noun phrase decides: a referring one exists when the event begins. -/
+
+/-- The definiteness hierarchy (14): a specific indefinite is referring, a definite referring and
+given, a non-specific indefinite neither. -/
+inductive Definiteness where
+  | nonSpecificIndefinite
+  | specificIndefinite
+  | definite
   deriving DecidableEq, Repr
 
-/-- The NP as the dependent-case algorithm sees it. -/
-def ProminentNP.toNP (pnp : ProminentNP) : Case.NP := ⟨pnp.label, pnp.lexicalCase⟩
+/-- The referring feature of (14a). -/
+def Definiteness.Referring (d : Definiteness) : Prop := d ≠ .nonSpecificIndefinite
 
-/-- A transitive clause: subject c-commands object. -/
-structure TransClause where
-  subject : ProminentNP
-  object : ProminentNP
-  deriving DecidableEq, Repr
+instance (d : Definiteness) : Decidable d.Referring := inferInstanceAs (Decidable (_ ≠ _))
 
-/-- Abstract case assigned to the object by the dependent-case algorithm. -/
-def objectCase (lang : Alignment.AlignmentType) (tc : TransClause) : Option Case :=
-  getCaseOf tc.object.label (assignCases lang [tc.subject.toNP, tc.object.toNP])
+/-- The lowest node an object of an opacity-creating verb can occupy with a noun phrase of the
+given definiteness: the maximal patient once existence is entailed, the bottom otherwise. -/
+def opacityObject (d : Definiteness) : ParticipantType :=
+  if d.Referring then maximalPatient else ⊥
 
-/-- A transitive clause with a fixed human-pronoun subject and a
-    variable-prominence object, both without lexical case. -/
-def mkTrans (a : AnimacyLevel) (d : DefinitenessLevel) : TransClause :=
-  { subject := ⟨"subj", none, .human, .personalPronoun⟩
-    object := ⟨"obj", none, a, d⟩ }
+/-- (12): the object is in the accusative region exactly when the noun phrase refers; the
+non-specific reading stays at the bottom node, the governed genitive's. -/
+theorem genitive_accusative_alternation (d : Definiteness) :
+    ((opacityObject d).toCaseRegion = .accAbs ↔ d.Referring) ∧
+      (opacityObject d = ⊥ ↔ ¬ d.Referring) := by
+  cases d <;> decide
 
-/-- Animate definite object of a canonical transitive: dependent case says
-    ACC, the lattice says DAT — different categories, not different
-    spell-outs. -/
-theorem lattice_diverges_from_dependent_case :
-    objectCase .accusative (mkTrans .animate .definite) = some .acc ∧
-    (objectNodeWithAnimacy .animate .quPersBeginning).toCaseRegion.toAccusativeCase
-      = .dat ∧
-    Case.acc ≠ Case.dat :=
-  ⟨rfl, by decide, by decide⟩
+/-- The alternation is limited to verbs without existential persistence entailments on their
+object: any node inside the transitivity region lies above the genitive's. -/
+theorem genitive_outside_region (n : ParticipantType) (h : n.InTransitiveRegion) :
+    n ≠ ⊥ :=
+  λ hn => absurd h (hn ▸ by decide)
 
 end Grimm2011
