@@ -45,16 +45,16 @@ at fixed sentence lengths, as a paper prints them (values as scaled integers).
 - **Generator**: `scripts/gen_ud_deplength.py` (`--check` verifies sync)
 - **Input/Output**: `Linglib/Data/UD/DependencyLength/{Paper}.json` → `{Paper}.lean`
 
-### Basic order typology samples
+### Word order samples
 
 A paper's classification of its language sample: dominant clause order, adposition
 type, noun–dependent orders, and the further per-language properties the paper records,
 plus its table of order types with the languages attesting each (Greenberg 1963,
 Appendices I and II, with the properties of the text and footnotes).
 
-- **Schema**: `Linglib/Data/OrderTypology/Schema.lean`
-- **Generator**: `scripts/gen_order_typology.py` (`--check` verifies sync)
-- **Input/Output**: `Linglib/Data/OrderTypology/{Paper}.json` → `{Paper}.lean`
+- **Schema**: `Linglib/Data/WordOrder/Schema.lean`
+- **Generator**: `scripts/gen_word_order.py` (`--check` verifies sync)
+- **Input/Output**: `Linglib/Data/WordOrder/{Paper}.json` → `{Paper}.lean`
 
 ### PHOIBLE 2.0
 

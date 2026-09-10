@@ -1,4 +1,4 @@
-import Linglib.Data.OrderTypology.Greenberg1963
+import Linglib.Data.WordOrder.Greenberg1963
 
 /-!
 # Greenberg (1963): Some Universals of Grammar
@@ -7,7 +7,7 @@ This file formalizes the implicational universals of order of [greenberg-1963], 
 of grammar with particular reference to the order of meaningful elements", over the paper's own
 data: the 30-language sample of Appendix I, extended by the per-language properties the text and
 its footnotes record, and the 24 basic order types of Appendix II with the languages listed as
-attesting each (`Data.OrderTypology.Greenberg1963`). A universal is a statement that every
+attesting each (`Data.WordOrder.Greenberg1963`). A universal is a statement that every
 language of the sample with one property has another (`Universal`), and the paper's "almost
 always" and "with overwhelmingly more than chance frequency" are universals with the exceptions
 the paper names (`UniversalExcept`). Over the sample, verb-initial languages are prepositional
@@ -42,7 +42,7 @@ concern properties the appendices and footnotes do not record per language.
 
 namespace Greenberg1963
 
-open Data.OrderTypology Data.OrderTypology.Greenberg1963
+open Data.WordOrder Data.WordOrder.Greenberg1963
 
 /-! ### Universals over the sample -/
 
