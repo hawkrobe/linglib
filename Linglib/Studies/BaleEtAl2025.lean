@@ -63,14 +63,14 @@ instance (q : QUtt) : DecidablePred (· ∈ prop q) :=
 abbrev all : Set WorldState := prop .all
 
 /-- What the participant sees: boxes 1 and 2 have red cubes. -/
-def seen : Set WorldState := {w | 2 ≤ w.toNat}
+def seen : Set WorldState := {w | 2 ≤ w.val}
 
-instance : DecidablePred (· ∈ seen) := λ w => inferInstanceAs (Decidable (2 ≤ w.toNat))
+instance : DecidablePred (· ∈ seen) := λ w => inferInstanceAs (Decidable (2 ≤ w.val))
 
 /-- What Farmer Brown knows in world `w` after looking into `a` boxes, boxes 1 and 2 among
     them: the worlds compatible with the red cubes he saw. -/
 def speakerState (a : Access) (w : WorldState) : Set WorldState :=
-  {v | obsCompatible a ⟨min a.val w.toNat, Nat.lt_succ_of_le (Nat.min_le_left ..)⟩ v}
+  {v | obsCompatible a ⟨min a.val w.val, lt_of_le_of_lt (Nat.min_le_left ..) a.isLt⟩ v}
 
 instance (a : Access) (w : WorldState) : DecidablePred (· ∈ speakerState a w) :=
   λ v => inferInstanceAs (Decidable (obsCompatible a _ v))
@@ -95,7 +95,7 @@ instance (S : Set WorldState) [DecidablePred (· ∈ S)] : Decidable (S ∈ comp
 
 /-- The speaker is competent about *all* exactly when he looked into the third box. -/
 theorem competent_iff_looked (a : Access) (w : WorldState) (hw : w ∈ seen) :
-    speakerState a w ∈ competent all ↔ a = Access.a3 := by
+    speakerState a w ∈ competent all ↔ a = 3 := by
   revert a w; decide
 
 /-! ### The recipe and its integration with context -/
@@ -176,12 +176,12 @@ theorem competenceDefault_eq_contextual (a : Access) (q : QUtt) :
     where contextual licensing leaves the third box open. -/
 theorem load_diverges :
     answer (competenceDefaultLoad .some_) = .no ∧
-      answer (contextual Access.a2 .some_) = .dontKnow := by
+      answer (contextual 2 .some_) = .dontKnow := by
   decide
 
 /-- For the knowledgeable speaker the blocked default changes nothing. -/
 theorem load_agrees_of_knowledgeable (q : QUtt) :
-    answer (competenceDefaultLoad q) = answer (contextual Access.a3 q) := by
+    answer (competenceDefaultLoad q) = answer (contextual 3 q) := by
   revert q; decide
 
 /-! ### The trial types -/
@@ -189,8 +189,8 @@ theorem load_agrees_of_knowledgeable (q : QUtt) :
 /-- How many boxes Farmer Brown looked into. -/
 def access? (r : LinguisticExample) : Option Access :=
   match r.feature? "boxesSeen" with
-  | some "2" => some Access.a2
-  | some "3" => some Access.a3
+  | some "2" => some 2
+  | some "3" => some 3
   | _ => none
 
 /-- The quantifier of his statement. -/
