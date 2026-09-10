@@ -2,6 +2,7 @@ import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Morphology.Exponence.Containment.Contiguity
 import Linglib.Morphology.Paradigm.Degree
 import Linglib.Features.Person.Basic
+import Linglib.Syntax.Agreement.PersonCaseConstraint
 import Mathlib.Tactic.TFAE
 
 /-!
@@ -21,7 +22,8 @@ systems from [harbour-2015] over the [zwicky-1977b] hierarchy (`person_attested_
 the gradation-side *AAB to a different account (`aab_feasiblyMonotone`,
 `aab_not_groundedly_realizable`). Section 4 makes a Person Case Constraint a monotone map from
 the reduced dual person hierarchy (27) to the truth values: of the 64 conceivable constraints
-exactly nine are monotone (`monotone_iff`), the four of Table 4 and Choctaw's (31) among them,
+exactly nine are monotone (`monotone_iff`), the four of Table 4, read off the substrate's
+[pancheva-zubizarreta-2018] grammars (`table4`), and Choctaw's (31) among them,
 and the two without an attested pattern are the ones that single out one combination
 (`unattested_singleton_class`); the naive product hierarchy (23) fails the ultrastrong
 constraint even up to reversing the truth values (`uPCC_not_monotone_naive`).
@@ -49,6 +51,7 @@ syncretisms and the nominative stem-allomorphy generalization (16) remain.
 * [zwicky-1977b]
 * [caha-2009]
 * [nevins-2007]
+* [pancheva-zubizarreta-2018]
 -/
 
 namespace Graf2019
@@ -229,19 +232,31 @@ instance (r : Combination → Combination → Prop) [∀ p q, Decidable (r p q)]
 /-- The constraint with the verdicts reversed, the other order of the truth values. -/
 def PCC.reverse (c : PCC) : PCC := .ofPred λ p => !c.allows p
 
-/-- (19a), Strong: the direct object must be third person. -/
-def sPCC : PCC := .ofPred λ p => p.do = .third
+/-- The constraint a grammar of the substrate's P-Constraint family predicts. -/
+def PCC.ofGrammar (g : PCC.Grammar) : PCC := .ofPred λ p => decide (PCC.IsLicit g p.io p.do)
 
-/-- (19b), Ultrastrong: the direct object is less prominent than the indirect object. -/
-def uPCC : PCC := .ofPred λ p => p.io.hierarchyRank < p.do.hierarchyRank
+/-- (19a), Strong. -/
+def sPCC : PCC := .ofGrammar PCC.strongGrammar
 
-/-- (19c), Weak: a third-person indirect object combines only with a third-person direct
-object. -/
-def wPCC : PCC := .ofPred λ p => p.io = .third → p.do = .third
+/-- (19b), Ultrastrong. -/
+def uPCC : PCC := .ofGrammar PCC.ultraStrongGrammar
 
-/-- (19d), Me-first: a second- or third-person indirect object excludes a first-person direct
-object. -/
-def mPCC : PCC := .ofPred λ p => p.io ≠ .first → p.do ≠ .first
+/-- (19c), Weak. -/
+def wPCC : PCC := .ofGrammar PCC.weakGrammar
+
+/-- (19d), Me-first. -/
+def mPCC : PCC := .ofGrammar PCC.meFirstGrammar
+
+/-- Table 4 in the paper's words (19): the direct object must be third person; the direct
+object is less prominent than the indirect object; a third-person indirect object combines
+only with a third-person direct object; a second- or third-person indirect object excludes a
+first-person direct object. -/
+theorem table4 :
+    (∀ p, sPCC.allows p = true ↔ p.do = .third) ∧
+      (∀ p, uPCC.allows p = true ↔ p.io.hierarchyRank < p.do.hierarchyRank) ∧
+      (∀ p, wPCC.allows p = true ↔ (p.io = .third → p.do = .third)) ∧
+      ∀ p, mPCC.allows p = true ↔ (p.io ≠ .first → p.do ≠ .first) := by
+  decide
 
 /-- Free combination, as in German. -/
 def fPCC : PCC := .ofPred λ _ => true
