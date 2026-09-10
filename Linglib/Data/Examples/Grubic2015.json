@@ -1,0 +1,824 @@
+[
+  {
+    "id": "grubic2015_6_24",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(24)"},
+    "language": "ngam1282",
+    "primaryText": "Ne sakatari yak'i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ne", "1SG.DEP"], ["sakatari", "secretary"], ["yak'i.", "only"]
+    ],
+    "translation": "I'm only a secretary.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "complement exclusion: I am nothing else in addition", "judgment": "acceptable"},
+      {"name": "rank order: I am nothing better", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["particle", "yak"],
+      ["configuration", "predicate"]
+    ],
+    "comment": "Both readings carry a mirative component: more, or something more prestigious, was expected.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_25a",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(25a)"},
+    "language": "ngam1282",
+    "primaryText": "Salko bano=i Dimza yak'i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Salko", "build.PFV"], ["bano=i", "house=BM"], ["Dimza", "Dimza"], ["yak'i.", "only"]
+    ],
+    "translation": "Only Dimza built a house.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "yak"],
+      ["configuration", "markedSubjectFocus"],
+      ["inference", "Dimza built a house"],
+      ["inference", "nobody else built a house"]
+    ],
+    "comment": "Consultant: Dimza built a house, and nobody else built a house.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_25b",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(25b)"},
+    "language": "ngam1282",
+    "primaryText": "Salko bano=i Dimza yak'i bu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Salko", "build.PFV"], ["bano=i", "house=BM"], ["Dimza", "Dimza"], ["yak'i", "only"],
+      ["bu.", "NEG"]
+    ],
+    "translation": "Not only Dimza built a house.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "yak"],
+      ["configuration", "markedSubjectFocus"],
+      ["inference", "Dimza built a house"],
+      ["inference", "other people also built a house"]
+    ],
+    "comment": "The exclusive component is asserted; the prejacent projects through negation.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_25c",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(25c)"},
+    "language": "ngam1282",
+    "primaryText": "Salko bano=i Dimza yak'i ɗo?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Salko", "build.PFV"], ["bano=i", "house=BM"], ["Dimza", "Dimza"], ["yak'i", "only"],
+      ["ɗo?", "Q"]
+    ],
+    "translation": "Did only Dimza build a house?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "yak"],
+      ["configuration", "markedSubjectFocus"],
+      ["inference", "Dimza built a house"]
+    ],
+    "comment": "Consultant: Dimza built a house, and you want to confirm: alone or with other people?",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_26",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(26)"},
+    "language": "ngam1282",
+    "primaryText": "Esha=i Sama yak'i nzono, ke esha Hawwa nzono.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Esha=i", "call.PFV=BM"], ["Sama", "Sama"], ["yak'i", "only"], ["nzono,", "yesterday"],
+      ["ke", "also"], ["esha", "call.PFV"], ["Hawwa", "Hawwa"], ["nzono.", "yesterday"]
+    ],
+    "translation": "He only called Sama yesterday, and he also called Hawwa yesterday.",
+    "context": "Who did Njelu call yesterday?",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "yak"],
+      ["configuration", "markedObjectFocus"]
+    ],
+    "comment": "The exclusive component is not cancellable.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_28",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(28)"},
+    "language": "ngam1282",
+    "primaryText": "Ne'e yak ne wa ampani yam ki korino bu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ne'e", "1SG"], ["yak", "only"], ["ne", "1SG"], ["wa", "get.PFV"], ["ampani", "harvest"],
+      ["yam", "a.lot"], ["ki", "at"], ["korino", "farm=1SG.POSS"], ["bu.", "NEG"]
+    ],
+    "translation": "I didn't only get a good harvest.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "yak"],
+      ["configuration", "predicate"]
+    ],
+    "comment": "The mirative component projects: odd because a good harvest is not less than expected.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_140",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(140)"},
+    "language": "ngam1282",
+    "primaryText": "Kule yak salko bano mano.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kule", "Kule"], ["yak", "only"], ["salko", "build.PFV"], ["bano", "house"],
+      ["mano.", "last.year"]
+    ],
+    "translation": "Kule only built a house last year.",
+    "context": "Kule wanted to build a house and a granary last year.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "yak"],
+      ["configuration", "unmarkedObjectFocus"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_145a",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(145a)"},
+    "language": "ngam1282",
+    "primaryText": "O'o, Kule yak onto agoggo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["O'o,", "no"], ["Kule", "Kule"], ["yak", "only"], ["onto", "give.PFV.3SG.F"],
+      ["agoggo.", "watch"]
+    ],
+    "translation": "No, Kule only gave a watch to her.",
+    "context": "Did Kule give a watch to Dimza and Jajei?",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "yak"],
+      ["configuration", "dependentPronoun"]
+    ],
+    "comment": "Reinterpreted with the exclusive associating with the direct object: Jajei is expecting a watch and other things.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_145b",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(145b)"},
+    "language": "ngam1282",
+    "primaryText": "O'o, Kule onko agoggo=i ki te yak'i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["O'o,", "no"], ["Kule", "Kule"], ["onko", "give.PFV"], ["agoggo=i", "watch=BM"],
+      ["ki", "to"], ["te", "3SG.F"], ["yak'i.", "only"]
+    ],
+    "translation": "No, Kule only gave a watch to her.",
+    "context": "Did Kule give a watch to Dimza and Jajei?",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "yak"],
+      ["configuration", "independentPronoun"]
+    ],
+    "comment": "Marginal because it is hard to tell who te refers to without intermediate discussion of Jajei.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_148a",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(148a)"},
+    "language": "ngam1282",
+    "primaryText": "Hawwa=s, ne moishe Daho a esha=i te yak'i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hawwa=s,", "Hawwa=DEF.DET.F"], ["ne", "1SG"], ["moishe", "see.HAB"], ["Daho", "Daho"],
+      ["a", "3SG.HAB"], ["esha=i", "call.HAB=BM"], ["te", "3SG.F"], ["yak'i.", "only"]
+    ],
+    "translation": "Hawwa, I think Daho only calls her.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "the only person that Daho calls is Hawwa", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["particle", "yak"],
+      ["configuration", "resumptivePronoun"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_148b",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(148b)"},
+    "language": "ngam1282",
+    "primaryText": "Hawwa=s, ne moishe Daho a esha yak'i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hawwa=s,", "Hawwa=DEF.DET.F"], ["ne", "1SG"], ["moishe", "see.HAB"], ["Daho", "Daho"],
+      ["a", "3SG.HAB"], ["esha", "call.HAB"], ["yak'i.", "only"]
+    ],
+    "translation": "Hawwa, I think Daho only calls.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "the only person that Daho calls is Hawwa", "judgment": "unacceptable"},
+      {"name": "Daho does nothing but call", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["particle", "yak"],
+      ["configuration", "topicalizedGap"]
+    ],
+    "comment": "The exclusive cannot associate with the moved constituent.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_149",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(149)"},
+    "language": "ngam1282",
+    "primaryText": "Hawwa=s, ne moishe Daho lei ki tomiya a esha.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hawwa=s,", "Hawwa=DEF.DET.F"], ["ne", "1SG"], ["moishe", "see.HAB"], ["Daho", "Daho"],
+      ["lei", "at"], ["ki", "any"], ["tomiya", "time"], ["a", "3SG.HAB"], ["esha.", "call.HAB"]
+    ],
+    "translation": "Hawwa, I think Daho always calls.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "whenever Daho calls somebody, she calls Hawwa", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["particle", "leiKiTomiya"],
+      ["configuration", "topicalizedGap"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_150a",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(150a)"},
+    "language": "ngam1282",
+    "primaryText": "Hasha hoti maɗɗi a esha Lakka, Gamba me esha=i te yak'i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hasha", "Hasha"], ["hoti", "day"], ["maɗɗi", "some"], ["a", "3SG.HAB"],
+      ["esha", "call.HAB"], ["Lakka,", "Lakka"], ["Gamba", "Gamba"], ["me", "but"],
+      ["esha=i", "call.HAB=BM"], ["te", "3SG.F"], ["yak'i.", "only"]
+    ],
+    "translation": "Hasha sometimes calls Lakka, and Gambo only calls her.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "yak"],
+      ["configuration", "focusedPronoun"]
+    ],
+    "comment": "Consultant: he always calls only her, never anybody else.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_150b",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(150b)"},
+    "language": "ngam1282",
+    "primaryText": "Hasha hoti maɗɗi a esha Lakka, Gambo me a esha yak'i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hasha", "Hasha"], ["hoti", "day"], ["maɗɗi", "some"], ["a", "3SG.HAB"],
+      ["esha", "call.HAB"], ["Lakka,", "Lakka"], ["Gambo", "Gamba"], ["me", "but"],
+      ["a", "3SG.HAB"], ["esha", "call.HAB"], ["yak'i.", "only"]
+    ],
+    "translation": "Hasha sometimes calls Lakka, and Gambo only calls her.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "yak"],
+      ["configuration", "elidedPronoun"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_151",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(151)"},
+    "language": "ngam1282",
+    "primaryText": "Hasha hoti maɗɗi a esha Lakka, Gambo me lei ki tomiya a esha.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hasha", "Hasha"], ["hoti", "day"], ["maɗɗi", "some"], ["a", "3SG.HAB"],
+      ["esha", "call.HAB"], ["Lakka,", "Lakka"], ["Gambo", "Gamba"], ["me", "but"], ["lei", "at"],
+      ["ki", "any"], ["tomiya", "time"], ["a", "3SG.HAB"], ["esha.", "call.HAB"]
+    ],
+    "translation": "Hasha sometimes calls Lakka, and Gambo always does.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "leiKiTomiya"],
+      ["configuration", "elidedPronoun"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_153",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(153)"},
+    "language": "ngam1282",
+    "primaryText": "Biya ma maranko shinkafa a tishe yak'i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Biya", "people"], ["ma", "REL"], ["maranko", "farm.PL.PFV"], ["shinkafa", "rice"],
+      ["a", "3SG.HAB"], ["tishe", "eat.HAB"], ["yak'i.", "only"]
+    ],
+    "translation": "People that grow rice only eat it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "they don't sell it or give it out", "judgment": "acceptable"},
+      {"name": "they eat nothing else", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["particle", "yak"],
+      ["configuration", "elidedObject"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_158",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(158)"},
+    "language": "ngam1282",
+    "primaryText": "Samaye gitkok tishe=i jarabawa=to yak'i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Samaye", "Samaye"], ["gitkok", "be.able.PFV.TOT"], ["tishe=i", "eat.HAB=BM"],
+      ["jarabawa=to", "exam=3SG.F.POSS"], ["yak'i.", "only"]
+    ],
+    "translation": "Samaye only managed to pass her exams.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "yak"],
+      ["configuration", "presupposition"]
+    ],
+    "comment": "The exclusive does not associate with the presupposition of gitko.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_159",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(159)"},
+    "language": "ngam1282",
+    "primaryText": "Samaye lei ki tomiya a gishentik tina=i jarabawa=to.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Samaye", "Samaye"], ["lei", "at"], ["ki", "any"], ["tomiya", "time"], ["a", "3SG.HAB"],
+      ["gishentik", "be.able.HAB.TOT"], ["tina=i", "eat.FUT=BM"],
+      ["jarabawa=to.", "exam=3SG.F.POSS"]
+    ],
+    "translation": "Samaye always manages to pass her exams.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "whenever she tries, she passes", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["particle", "leiKiTomiya"],
+      ["configuration", "presupposition"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_160",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(160)"},
+    "language": "ngam1282",
+    "primaryText": "Si onko agoggo=i ki Shuwa, si ke ono.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Si", "3SG.M"], ["onko", "give.PFV"], ["agoggo=i", "watch=BM"], ["ki", "to"],
+      ["Shuwa,", "Shuwa"], ["si", "3SG.M"], ["ke", "also"], ["ono.", "give.1SG.DEP"]
+    ],
+    "translation": "He gave a watch to Shuwa, and he also gave it to me.",
+    "context": "Whom did Kule give a watch?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "ke"],
+      ["configuration", "dependentPronoun"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_162a",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(162a)"},
+    "language": "ngam1282",
+    "primaryText": "Kule esha=i Dimza, ke esha=i ne'e.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kule", "Kule"], ["esha=i", "call.PFV=BM"], ["Dimza,", "Dimza"], ["ke", "also"],
+      ["esha=i", "call.PFV=BM"], ["ne'e.", "1SG"]
+    ],
+    "translation": "Kule called Dimza and he also called me.",
+    "context": "Whom did Kule call?",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "ke"],
+      ["configuration", "independentPronoun"]
+    ],
+    "comment": "Rejected in favour of a dependent pronoun with a totality-extended verb.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_162b",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(162b)"},
+    "language": "ngam1282",
+    "primaryText": "Kule esha=i Dimza ke eshino.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kule", "Kule"], ["esha=i", "call.PFV=BM"], ["Dimza", "Dimza"], ["ke", "also"],
+      ["eshino.", "call.PFV.TOT.1SG"]
+    ],
+    "translation": "Kule called Dimza and he also called me.",
+    "context": "Whom did Kule call?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "ke"],
+      ["configuration", "dependentPronoun"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_163",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(163)"},
+    "language": "ngam1282",
+    "primaryText": "Ke salko bano.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ke", "also"], ["salko", "build.PFV"], ["bano.", "house"]
+    ],
+    "translation": "He also built a house.",
+    "context": "I know that Hawwa built a house, but what about Kule? What did he build?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "ke"],
+      ["configuration", "elidedTopicalSubject"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_164",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(164)"},
+    "language": "ngam1282",
+    "primaryText": "Kule onko agoggo=i ki Shuwa, ke har ono.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kule", "Kule"], ["onko", "give.PFV"], ["agoggo=i", "watch=BM"], ["ki", "to"],
+      ["Shuwa,", "Shuwa"], ["ke", "and"], ["har", "even"], ["ono.", "give.PFV.1SG.DEP"]
+    ],
+    "translation": "Kule gave a watch to Shuwa, and he even gave one to me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "har"],
+      ["configuration", "dependentPronoun"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_165",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(165)"},
+    "language": "ngam1282",
+    "primaryText": "Hawwa salko bano, Kule ke salko bano.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hawwa", "Hawwa"], ["salko", "build.PFV"], ["bano,", "house"], ["Kule", "Kule"],
+      ["ke", "also"], ["salko", "build.PFV"], ["bano.", "house"]
+    ],
+    "translation": "Hawwa built a house, and Kule also built a house.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "ke"],
+      ["configuration", "preverbalSubject"]
+    ],
+    "comment": "Preverbal subjects are out of focus, which the exclusive cannot associate with.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_166",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(166)"},
+    "language": "ngam1282",
+    "primaryText": "Dimza yak salko bano.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Dimza", "Dimza"], ["yak", "only"], ["salko", "build.PFV"], ["bano.", "house"]
+    ],
+    "translation": "Dimza only built a house.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "yak"],
+      ["configuration", "unmarkedObjectFocus"],
+      ["inference", "Dimza didn't build anything else"],
+      ["inference", "he was expected to build more"],
+      ["inference", "Dimza built a house"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_167",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(167)"},
+    "language": "ngam1282",
+    "primaryText": "Dimza ke salko bano.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Dimza", "Dimza"], ["ke", "also"], ["salko", "build.PFV"], ["bano.", "house"]
+    ],
+    "translation": "Dimza also built a house.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "ke"],
+      ["configuration", "unmarkedObjectFocus"],
+      ["inference", "Dimza built a house"],
+      ["inference", "Dimza built something else"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_168",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(168)"},
+    "language": "ngam1282",
+    "primaryText": "Dimza har salko bano.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Dimza", "Dimza"], ["har", "even"], ["salko", "build.PFV"], ["bano.", "house"]
+    ],
+    "translation": "Dimza even built a house.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "har"],
+      ["configuration", "unmarkedObjectFocus"],
+      ["inference", "Dimza built a house"],
+      ["inference", "he was expected to build less"],
+      ["inference", "Dimza built something else"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_169",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(169)"},
+    "language": "ngam1282",
+    "primaryText": "Ne sakatari yak'i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ne", "1SG"], ["sakatari", "secretary"], ["yak'i.", "only"]
+    ],
+    "translation": "I'm only a secretary.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "yak"],
+      ["configuration", "predicate"],
+      ["inference", "the speaker is nothing better than a secretary"],
+      ["inference", "the speaker was expected to be something better"]
+    ],
+    "comment": "A rank-order scale: the prejacent inference does not survive negation.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_6_170",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(170)"},
+    "language": "ngam1282",
+    "primaryText": "Bah malum har'i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bah", "Bah"], ["malum", "teacher"], ["har'i.", "even"]
+    ],
+    "translation": "Bah is even a teacher.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "har"],
+      ["configuration", "predicate"],
+      ["inference", "Bah is a teacher"],
+      ["inference", "he was expected to be something worse"]
+    ],
+    "comment": "A rank-order scale: no additive inference.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_7_41",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(41)"},
+    "language": "ngam1282",
+    "primaryText": "Kaja mato=i Hawwa, salko bano=i ke Kule.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kaja", "buy.PFV"], ["mato=i", "car=BM"], ["Hawwa,", "Hawwa"], ["salko", "build.PFV"],
+      ["bano=i", "house=BM"], ["ke", "also"], ["Kule.", "Kule"]
+    ],
+    "translation": "Hawwa bought a car, Kule built a house.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "ke"],
+      ["configuration", "distinctBackgroundDistinctFocus"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_7_42",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(42)"},
+    "language": "ngam1282",
+    "primaryText": "Salko bano=i Kule, kaja mato=i ke Kule.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Salko", "build.PFV"], ["bano=i", "house=BM"], ["Kule,", "Kule"], ["kaja", "buy.PFV"],
+      ["mato=i", "car=BM"], ["ke", "also"], ["Kule.", "Kule"]
+    ],
+    "translation": "Kule built a house, and Kule also bought a car.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "ke"],
+      ["configuration", "distinctBackgroundParallelFocus"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_7_43",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(43)"},
+    "language": "ngam1282",
+    "primaryText": "Kule salko makaranta mano, Kule ke salko bano mano.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kule", "Kule"], ["salko", "build.PFV"], ["makaranta", "school"], ["mano,", "last.year"],
+      ["Kule", "Kule"], ["ke", "also"], ["salko", "build.PFV"], ["bano", "house"],
+      ["mano.", "last.year"]
+    ],
+    "translation": "Kule built a school last year, and Kule also built a house last year.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "ke"],
+      ["configuration", "parallelUnmarkedBackground"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_7_44",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(44)"},
+    "language": "ngam1282",
+    "primaryText": "Salko bano=i Hawwa, salko bano=i ke Kule.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Salko", "build.PFV"], ["bano=i", "house=BM"], ["Hawwa,", "Hawwa"], ["salko", "build.PFV"],
+      ["bano=i", "house=BM"], ["ke", "also"], ["Kule.", "Kule"]
+    ],
+    "translation": "Hawwa built a house, and Kule built a house, too.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "ke"],
+      ["configuration", "parallelMarkedBackground"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_7_46",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(46)"},
+    "language": "ngam1282",
+    "primaryText": "Bei a ina ham ɗoshi, ke a ina ham tuha ke'e.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bei", "maybe"], ["a", "3SG"], ["ina", "do.FUT"], ["ham", "water"], ["ɗoshi,", "tomorrow"],
+      ["ke", "and"], ["a", "3SG"], ["ina", "do.FUT"], ["ham", "water"],
+      ["tuha", "day.after.tomorrow"], ["ke'e.", "also"]
+    ],
+    "translation": "It is possible that it will rain tomorrow, and it will also rain the day after tomorrow.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "ke"],
+      ["configuration", "modalizedAntecedent"]
+    ],
+    "comment": "The antecedent is merely given, not asserted to be true.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_7_48",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(48)"},
+    "language": "ngam1282",
+    "primaryText": "Salko bano=i Hawwa, Kule ke salko bano.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Salko", "build.PFV"], ["bano=i", "house=BM"], ["Hawwa,", "Hawwa"], ["Kule", "Kule"],
+      ["ke", "also"], ["salko", "build.PFV"], ["bano.", "house"]
+    ],
+    "translation": "Hawwa built a house and Kule also built a house.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "ke"],
+      ["configuration", "nonParallel"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "grubic2015_7_49",
+    "source": {"bibkey": "grubic-2015", "paperLabel": "(49)"},
+    "language": "ngam1282",
+    "primaryText": "Salko bano=i Hawwa, ke salko bano=i ke Kule.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Salko", "build.PFV"], ["bano=i", "house=BM"], ["Hawwa,", "Hawwa"], ["ke", "also"],
+      ["salko", "build.PFV"], ["bano=i", "house=BM"], ["ke", "also"], ["Kule.", "Kule"]
+    ],
+    "translation": "Hawwa built a house, and Kule also built a house.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["particle", "ke"],
+      ["configuration", "parallelMarkedBackground"]
+    ],
+    "comment": "Possible if a temporal shift is accommodated: it is Hawwa that built the house and then Kule built a house.",
+    "lgrConformance": "WORD_ALIGNED"
+  }
+]
