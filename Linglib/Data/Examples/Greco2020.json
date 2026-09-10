@@ -1,0 +1,1570 @@
+[
+  {
+    "id": "greco2020_2",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(2)"
+    },
+    "language": "ital1282",
+    "primaryText": "E non mi è scesa dal treno Maria?!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "E",
+        "and"
+      ],
+      [
+        "non",
+        "NEG"
+      ],
+      [
+        "mi",
+        "CL.to.me"
+      ],
+      [
+        "è",
+        "is"
+      ],
+      [
+        "scesa",
+        "got.off"
+      ],
+      [
+        "dal",
+        "from.the"
+      ],
+      [
+        "treno",
+        "train"
+      ],
+      [
+        "Maria",
+        "Mary"
+      ]
+    ],
+    "translation": "Mary got off the train!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "baseline"
+      ],
+      [
+        "requirement",
+        "any"
+      ]
+    ],
+    "comment": "The surprise negation sentence: affirmative despite non."
+  },
+  {
+    "id": "greco2020_9a",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(9a)"
+    },
+    "language": "ital1282",
+    "primaryText": "E Maria non mi ha alzato un dito per aiutare Luca?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "weak NPI"
+      ],
+      [
+        "requirement",
+        "negScope"
+      ],
+      [
+        "polarity",
+        "weak NPI"
+      ]
+    ],
+    "comment": "Weak NPI alzare un dito needs negation over the verb phrase."
+  },
+  {
+    "id": "greco2020_9b",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(9b)"
+    },
+    "language": "ital1282",
+    "primaryText": "E non mi è sceso dal treno nessuno?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "n-word"
+      ],
+      [
+        "requirement",
+        "negScope"
+      ],
+      [
+        "polarity",
+        "n-word"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_9c",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(9c)"
+    },
+    "language": "ital1282",
+    "primaryText": "E non mi è affatto scesa dal treno Maria?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "strong NPI"
+      ],
+      [
+        "requirement",
+        "negScope"
+      ],
+      [
+        "polarity",
+        "strong NPI"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_9d",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(9d)"
+    },
+    "language": "ital1282",
+    "primaryText": "E non mi è scesa dal treno Maria e neanche Gianni?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "not-also conjunction"
+      ],
+      [
+        "requirement",
+        "negScope"
+      ],
+      [
+        "polarity",
+        "not-also conjunction"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_23a",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(23a)"
+    },
+    "language": "ital1282",
+    "primaryText": "E Gianni non ti ha trovato alcunché di importante nel cassetto?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "al-word"
+      ],
+      [
+        "requirement",
+        "negScope"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_24b",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(24b)"
+    },
+    "language": "ital1282",
+    "primaryText": "E Gianni non mi ha già finito i compiti?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John already finished the homework!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "PPI"
+      ],
+      [
+        "requirement",
+        "noNegScope"
+      ]
+    ],
+    "comment": "Già is repelled by negation; the verb phrase is outside the negation's scope."
+  },
+  {
+    "id": "greco2020_17a",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(17a)"
+    },
+    "language": "ital1282",
+    "primaryText": "E il libro non me lo ha dato a Luca?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The book, s/he gave it to Luke!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "fronted topic"
+      ],
+      [
+        "requirement",
+        "any"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_17b",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(17b)"
+    },
+    "language": "ital1282",
+    "primaryText": "E LA PENNA non mi ha dato a Luca (non il libro)?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "fronted contrastive focus"
+      ],
+      [
+        "requirement",
+        "freeFocP"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_18a",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(18a)"
+    },
+    "language": "ital1282",
+    "primaryText": "E Gianni non me lo ha dato a Luca il libro?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The book, John gave it to Luke!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "in-situ topic"
+      ],
+      [
+        "requirement",
+        "any"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_18b",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(18b)"
+    },
+    "language": "ital1282",
+    "primaryText": "E Gianni non mi ha dato LA PENNA a Luca (non il libro)?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "in-situ focus"
+      ],
+      [
+        "requirement",
+        "freeFocP"
+      ]
+    ],
+    "comment": "In-situ foci move covertly to the left periphery, the paper's footnote 16."
+  },
+  {
+    "id": "greco2020_53a",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(53a)"
+    },
+    "language": "ital1282",
+    "primaryText": "E Gianni, gli amici, non gli hanno fatto un brutto scherzo?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John, his friends played a bad joke on him!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "hanging topic"
+      ],
+      [
+        "requirement",
+        "any"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_53c",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(53c)"
+    },
+    "language": "ital1282",
+    "primaryText": "E domani Gianni non mi viene a trovare?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Tomorrow John is coming to see me!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "scene-setting topic"
+      ],
+      [
+        "requirement",
+        "any"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_54",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(54)"
+    },
+    "language": "ital1282",
+    "primaryText": "E una sciarpa rossa non mi ha regalato Gianni per Natale?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "mirative fronting"
+      ],
+      [
+        "requirement",
+        "freeFocP"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_55",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(55)"
+    },
+    "language": "ital1282",
+    "primaryText": "E qualcosa non mi ha concluso Luca stando qui?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "quantifier fronting"
+      ],
+      [
+        "requirement",
+        "freeFocP"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_56",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(56B)"
+    },
+    "language": "ital1282",
+    "primaryText": "E questo non mi ha fatto Gianni?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "anaphoric anteposition"
+      ],
+      [
+        "requirement",
+        "freeFocP"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_57c",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(57c)"
+    },
+    "language": "ital1282",
+    "primaryText": "E non mi ha mangiato solo la pizza Gianni?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John only ate pizza!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "solo in situ"
+      ],
+      [
+        "requirement",
+        "any"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_57d",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(57d)"
+    },
+    "language": "ital1282",
+    "primaryText": "E SOLO LA PIZZA non mi ha mangiato Gianni (non anche la pasta)?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "solo fronted"
+      ],
+      [
+        "requirement",
+        "freeFocP"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_26",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(26B)"
+    },
+    "language": "ital1282",
+    "primaryText": "(E) non mi è scesa dal treno Maria?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary got off the train!",
+    "context": "A: Che cosa è successo?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "answer to a propositional question"
+      ],
+      [
+        "requirement",
+        "activeFocP"
+      ]
+    ],
+    "comment": "The whole sentence is the new information the question asks for."
+  },
+  {
+    "id": "greco2020_27",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(27B)"
+    },
+    "language": "ital1282",
+    "primaryText": "(E) non mi è scesa dal treno Maria?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: Chi è sceso dal treno?",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "answer to an entity question"
+      ],
+      [
+        "requirement",
+        "freeFocP"
+      ]
+    ],
+    "comment": "An entity answer needs a sub-clausal focus."
+  },
+  {
+    "id": "greco2020_21",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(21)"
+    },
+    "language": "ital1282",
+    "primaryText": "E non mi è scesa dal treno Maria?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary got off the train!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "expletive e"
+      ],
+      [
+        "requirement",
+        "activeFocP"
+      ]
+    ],
+    "comment": "Expletive e attaches over an active focus layer, section 4.2.7."
+  },
+  {
+    "id": "greco2020_74b",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(74b)"
+    },
+    "language": "ital1282",
+    "primaryText": "E non mi è mica scesa dal treno Maria?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary got off the train!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "presuppositional mica"
+      ],
+      [
+        "requirement",
+        "any"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_76a",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(76a)"
+    },
+    "language": "ital1282",
+    "primaryText": "E da quale treno non mi è scesa Maria?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "wh-element"
+      ],
+      [
+        "requirement",
+        "freeFocP"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_77",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(77)"
+    },
+    "language": "ital1282",
+    "primaryText": "E nessuno mi è sceso dal treno?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "quantifier raising"
+      ],
+      [
+        "requirement",
+        "freeFocP"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_60",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(60)"
+    },
+    "language": "ital1282",
+    "primaryText": "E no mi è scesa dal treno Maria?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "phrasal negator no"
+      ],
+      [
+        "requirement",
+        "phrasalNegator"
+      ]
+    ],
+    "comment": "The maximal-projection negator no in place of the head non."
+  },
+  {
+    "id": "greco2020_61a",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(61a)"
+    },
+    "language": "ital1282",
+    "primaryText": "E non raggiunta Maria, siamo andati al bar?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "past participle clause"
+      ],
+      [
+        "requirement",
+        "noTP"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_64",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(64)"
+    },
+    "language": "ital1282",
+    "primaryText": "E non essendo arrivata Maria, siamo venuti da soli?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "Aux-to-Comp"
+      ],
+      [
+        "requirement",
+        "negScope"
+      ]
+    ],
+    "comment": "Aux-to-Comp carries along a negation generated in the inflectional domain."
+  },
+  {
+    "id": "greco2020_72b",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(72b)"
+    },
+    "language": "ital1282",
+    "primaryText": "E Luca non mi pensa che sia scesa dal treno Maria?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Luke thinks that Mary got off the train!",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "NEG-raising reading"
+      ],
+      [
+        "requirement",
+        "negScope"
+      ]
+    ],
+    "comment": "The negative reading of the complement is unavailable; only the affirmative one survives."
+  },
+  {
+    "id": "greco2020_81a",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(81a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Mi chiedo se non mi sia scesa dal treno Maria?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "indirect question"
+      ],
+      [
+        "requirement",
+        "embedded"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_81b",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(81b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Mi spiace che non mi sia scesa dal treno Maria?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "factive predicate"
+      ],
+      [
+        "requirement",
+        "embedded"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_81c",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(81c)"
+    },
+    "language": "ital1282",
+    "primaryText": "Luca dice che non mi è scesa dal treno Maria?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "bridge verb"
+      ],
+      [
+        "requirement",
+        "embedded"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_83B",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(83B)"
+    },
+    "language": "ital1282",
+    "primaryText": "Mi chiedo se ROMA i turisti pensino che sia bella (non Firenze).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I wonder whether tourists think that ROME is beautiful.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "embedded focus"
+      ],
+      [
+        "phenomenon",
+        "embedded DP focus"
+      ],
+      [
+        "focus",
+        "DP"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_83B2",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(83B′)"
+    },
+    "language": "ital1282",
+    "primaryText": "Mi chiedo se ROMA SIA PULITA i turisti pensino (non Firenze sia bella).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "embedded focus"
+      ],
+      [
+        "phenomenon",
+        "embedded whole-TP focus"
+      ],
+      [
+        "focus",
+        "TP"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_84B",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(84B)"
+    },
+    "language": "ital1282",
+    "primaryText": "Mi spiace che ROMA i turisti pensino che sia brutta (non Firenze).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I'm sorry that tourists think Rome is ugly.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "embedded focus"
+      ],
+      [
+        "phenomenon",
+        "embedded DP focus"
+      ],
+      [
+        "focus",
+        "DP"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_84B2",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(84B′)"
+    },
+    "language": "ital1282",
+    "primaryText": "Mi spiace che ROMA SIA SPORCA i turisti pensino (non Firenze sia brutta).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "embedded focus"
+      ],
+      [
+        "phenomenon",
+        "embedded whole-TP focus"
+      ],
+      [
+        "focus",
+        "TP"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_85B",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(85B)"
+    },
+    "language": "ital1282",
+    "primaryText": "Luca dice che ROMA i turisti pensano che sia bella (non Firenze).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Luca says that the tourists think ROME is beautiful.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "embedded focus"
+      ],
+      [
+        "phenomenon",
+        "embedded DP focus"
+      ],
+      [
+        "focus",
+        "DP"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_85B2",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(85B′)"
+    },
+    "language": "ital1282",
+    "primaryText": "Luca dice che ROMA SIA PULITA i turisti pensano (non Firenze sia bella).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "embedded focus"
+      ],
+      [
+        "phenomenon",
+        "embedded whole-TP focus"
+      ],
+      [
+        "focus",
+        "TP"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_86a",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(86a)"
+    },
+    "language": "ital1282",
+    "primaryText": "E Maria non mi è scesa dal treno?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary got off the train!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "preverbal subject"
+      ],
+      [
+        "requirement",
+        "any"
+      ]
+    ],
+    "comment": "Topicalized, in the specifier of a topic projection above non."
+  },
+  {
+    "id": "greco2020_86b",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(86b)"
+    },
+    "language": "ital1282",
+    "primaryText": "E non mi è scesa dal treno Maria?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary got off the train!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "postverbal subject"
+      ],
+      [
+        "requirement",
+        "any"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_31B",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(31B)"
+    },
+    "language": "ital1282",
+    "primaryText": "Non mi è scesa dal treno Maria?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary got off the train!",
+    "context": "A: Sembri sconvolto. Cos'è successo?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "answer to a question"
+      ],
+      [
+        "diagnostic",
+        "answerhood"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_31B2",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(31B′)"
+    },
+    "language": "ital1282",
+    "primaryText": "Dopo tutto, non è scesa dal treno Maria?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: Sembri sconvolto. Cos'è successo?",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "NRQ"
+      ],
+      [
+        "phenomenon",
+        "answer to a question"
+      ],
+      [
+        "diagnostic",
+        "answerhood"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_34a",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(34a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Dopo tutto, Gianni non è arrivato primo?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "After all, hasn't John come in first?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "NRQ"
+      ],
+      [
+        "phenomenon",
+        "dopo tutto"
+      ],
+      [
+        "diagnostic",
+        "dopo tutto"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_34b",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(34b)"
+    },
+    "language": "ital1282",
+    "primaryText": "E dopo tutto, Gianni non mi è arrivato primo?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "dopo tutto"
+      ],
+      [
+        "diagnostic",
+        "dopo tutto"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_35a",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(35a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Dopo tutto, che cosa non ha fatto Maria per Gianni?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "After all, what hasn't Mary done for John?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "NRQ"
+      ],
+      [
+        "phenomenon",
+        "wh-element"
+      ],
+      [
+        "diagnostic",
+        "wh"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_35b",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(35b)"
+    },
+    "language": "ital1282",
+    "primaryText": "E che cosa non mi ha fatto Maria per Gianni?!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "wh-element"
+      ],
+      [
+        "diagnostic",
+        "wh"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_40a",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(40a)"
+    },
+    "language": "ital1282",
+    "primaryText": "È incredibile che cosa non abbia mangiato Gianni!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It is incredible what John ate!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "ENE"
+      ],
+      [
+        "phenomenon",
+        "factive embedding"
+      ],
+      [
+        "diagnostic",
+        "factive embedding"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_40b",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(40b)"
+    },
+    "language": "ital1282",
+    "primaryText": "È incredibile che Maria non mi sia scesa dal treno!?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "Sneg"
+      ],
+      [
+        "phenomenon",
+        "factive embedding"
+      ],
+      [
+        "diagnostic",
+        "factive embedding"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_41B",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(41B)"
+    },
+    "language": "ital1282",
+    "primaryText": "Che cosa non ha mangiato Gianni!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: Sembri sconvolto. Cos'è successo?",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "ENE"
+      ],
+      [
+        "phenomenon",
+        "answer to a question"
+      ],
+      [
+        "diagnostic",
+        "answerhood"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "greco2020_42a",
+    "source": {
+      "bibkey": "greco-2020",
+      "paperLabel": "(42a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Che cosa non ha fatto Maria per Gianni!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "What has Mary done for John!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "ENE"
+      ],
+      [
+        "phenomenon",
+        "wh-element"
+      ],
+      [
+        "diagnostic",
+        "wh"
+      ]
+    ],
+    "comment": ""
+  }
+]
