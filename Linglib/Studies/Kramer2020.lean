@@ -56,7 +56,6 @@ semantic core from the structural account alone.
 
 namespace Kramer2020
 
-open scoped DistributedMorphology.VocabularyItem
 open DistributedMorphology
 
 /-! ### The semantic core (§1.2) -/

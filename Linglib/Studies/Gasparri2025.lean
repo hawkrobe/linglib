@@ -38,7 +38,7 @@ a referentialist needs must introduce the naming predicate itself.
 
 namespace Gasparri2025
 
-open Quantification Data.Examples Features Semantics.Composition.TypeShifting
+open Quantification Data.Examples Semantics.Composition.TypeShifting
 
 /-- A referential name shifted to its identity property and fed to the generic operator returns
 the token reading, so a generic use of a bare name needs the naming predicate. -/

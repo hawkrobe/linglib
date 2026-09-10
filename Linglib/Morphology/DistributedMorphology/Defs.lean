@@ -39,8 +39,12 @@ def features (i : VocabularyItem F E) : List F := i.site.focus
 /-- A context-free item: the features it spells out and its exponent. -/
 def ofFeatures (fs : List F) (e : E) : VocabularyItem F E := ⟨fs, e⟩
 
+end VocabularyItem
+
 /-- `fs ⟷ e`: the context-free Vocabulary Item spelling out `fs` as `e`. -/
-scoped infixr:25 " ⟷ " => ofFeatures
+scoped infixr:25 " ⟷ " => VocabularyItem.ofFeatures
+
+namespace VocabularyItem
 
 @[simp] theorem site_ofFeatures (fs : List F) (e : E) : (fs ⟷ e).site = ↑fs := rfl
 

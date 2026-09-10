@@ -38,7 +38,7 @@ positions (`orderOf`) and checked against the profiles and the judgments.
 
 namespace AlexeyenkoZeijlstra2025
 
-open Features Data.Examples
+open Data.Examples
 
 /-! ### Agreement marking -/
 

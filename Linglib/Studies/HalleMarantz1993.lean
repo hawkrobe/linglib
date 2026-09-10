@@ -42,7 +42,6 @@ paper's separate rule system and is outside this file.
 namespace HalleMarantz1993
 
 open DistributedMorphology Data.Examples
-open scoped DistributedMorphology.VocabularyItem
 
 /-! ### The fused Tns–Agr node -/
 
