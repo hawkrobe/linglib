@@ -12,7 +12,7 @@ import Linglib.Morphology.Paradigm.Complexity
 [rathi-hahn-futrell-2026] extend the **Memory-Surprisal Tradeoff**
 ([hahn-degen-futrell-2021], formalized in
 `Processing/Memory/SurprisalTradeoff.lean` and consumed in
-`Studies/HahnDegenFutrell2021Morphology.lean`) from word/morpheme
+`Studies/HahnDegenFutrell2021.lean`) from word/morpheme
 order to four further morphological phenomena:
 
 1. **Polyexponence** — features fused into a single morpheme.
