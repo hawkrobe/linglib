@@ -1,0 +1,646 @@
+[
+  {
+    "id": "gs2025_1a",
+    "source": {
+      "bibkey": "goldberg-shirtz-2025",
+      "paperLabel": "(1a)"
+    },
+    "language": "stan1293",
+    "primaryText": "a trickle-down policy",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "prenominal modifier"
+      ]
+    ],
+    "comment": "COCA."
+  },
+  {
+    "id": "gs2025_1b",
+    "source": {
+      "bibkey": "goldberg-shirtz-2025",
+      "paperLabel": "(1b)"
+    },
+    "language": "stan1293",
+    "primaryText": "a must-do task",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "prenominal modifier"
+      ]
+    ],
+    "comment": "COCA."
+  },
+  {
+    "id": "gs2025_1c",
+    "source": {
+      "bibkey": "goldberg-shirtz-2025",
+      "paperLabel": "(1c)"
+    },
+    "language": "stan1293",
+    "primaryText": "the 'both sides do it' argument",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "prenominal modifier"
+      ]
+    ],
+    "comment": "COCA."
+  },
+  {
+    "id": "gs2025_t2_simple",
+    "source": {
+      "bibkey": "goldberg-shirtz-2025",
+      "paperLabel": "Table 2"
+    },
+    "language": "stan1293",
+    "primaryText": "Could've tried a simple 'I'm sorry.'",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "head noun"
+      ]
+    ],
+    "comment": "COCA."
+  },
+  {
+    "id": "gs2025_t2_old",
+    "source": {
+      "bibkey": "goldberg-shirtz-2025",
+      "paperLabel": "Table 2"
+    },
+    "language": "stan1293",
+    "primaryText": "my dad pulled the old 'I'm going to the store for smokes, be back in five'",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "head noun"
+      ]
+    ],
+    "comment": "COCA."
+  },
+  {
+    "id": "gs2025_t2_mustsee",
+    "source": {
+      "bibkey": "goldberg-shirtz-2025",
+      "paperLabel": "Table 2"
+    },
+    "language": "stan1293",
+    "primaryText": "This show is a must see.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "head noun"
+      ]
+    ],
+    "comment": "COCA."
+  },
+  {
+    "id": "gs2025_t2_romney",
+    "source": {
+      "bibkey": "goldberg-shirtz-2025",
+      "paperLabel": "Table 2"
+    },
+    "language": "stan1293",
+    "primaryText": "Romney's slogan should be more 'I'm nothing like you.'",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "predicative adjective"
+      ]
+    ],
+    "comment": "COCA."
+  },
+  {
+    "id": "gs2025_t2_honey",
+    "source": {
+      "bibkey": "goldberg-shirtz-2025",
+      "paperLabel": "Table 2"
+    },
+    "language": "stan1293",
+    "primaryText": "[he was] carrying on like a television husband, honey-I'm-home-ing her from the doorway.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "verb"
+      ],
+      [
+        "inflection",
+        "gerund"
+      ]
+    ],
+    "comment": "Brit Bennett, The vanishing half; progressive -ing on a PAL in a verb slot."
+  },
+  {
+    "id": "gs2025_t2_welcome",
+    "source": {
+      "bibkey": "goldberg-shirtz-2025",
+      "paperLabel": "Table 2"
+    },
+    "language": "stan1293",
+    "primaryText": "A: you're welcome. B: No, don't 'you're welcome' me.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "verb"
+      ]
+    ],
+    "comment": "COCA; the PAL quotes the immediately preceding turn in an interdiction."
+  },
+  {
+    "id": "gs2025_t3_jespersen",
+    "source": {
+      "bibkey": "goldberg-shirtz-2025",
+      "paperLabel": "Table 3"
+    },
+    "language": "stan1293",
+    "primaryText": "his speech abounded in I told you so's",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "head noun"
+      ],
+      [
+        "inflection",
+        "plural"
+      ]
+    ],
+    "comment": "Quoted from Jespersen (1924:96); plural -s on a PAL in a noun slot."
+  },
+  {
+    "id": "gs2025_t3_diy",
+    "source": {
+      "bibkey": "goldberg-shirtz-2025",
+      "paperLabel": "Table 3"
+    },
+    "language": "stan1293",
+    "primaryText": "Their parents were do-it-yourselfers.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "head noun"
+      ],
+      [
+        "inflection",
+        "agentive -er + plural"
+      ]
+    ],
+    "comment": "ABC News; agentive -er and plural -s on a PAL in a noun slot."
+  },
+  {
+    "id": "gs2025_t3_nyt",
+    "source": {
+      "bibkey": "goldberg-shirtz-2025",
+      "paperLabel": "Table 3"
+    },
+    "language": "stan1293",
+    "primaryText": "few people want to be memorialized 'um'-ing, 'you know'-ing, and 'remember that time when we got drunk'-ing their way into ignominy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "position",
+        "verb"
+      ],
+      [
+        "inflection",
+        "gerund"
+      ]
+    ],
+    "comment": "New York Times, 19 June 2015; gerund -ing on PALs in verb slots."
+  },
+  {
+    "id": "gs2025_8a",
+    "source": {
+      "bibkey": "meibauer-2007",
+      "paperLabel": "p. 250"
+    },
+    "reportedIn": {
+      "bibkey": "goldberg-shirtz-2025",
+      "paperLabel": "(8a)"
+    },
+    "language": "stan1295",
+    "primaryText": "Kaufe-Ihr-Auto-Kärtchen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Kaufe-Ihr-Auto-Kärtchen",
+        "buy.prs.1sg-2pl.poss-car-card.dim"
+      ]
+    ],
+    "translation": "I-buy-your-car card",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hostFrame",
+        "compound"
+      ]
+    ],
+    "comment": "German phrasal compound, orthographically presented; the paper's glosses."
+  },
+  {
+    "id": "gs2025_15a",
+    "source": {
+      "bibkey": "meibauer-2007",
+      "paperLabel": "p. 235"
+    },
+    "reportedIn": {
+      "bibkey": "goldberg-shirtz-2025",
+      "paperLabel": "(15a)"
+    },
+    "language": "dutc1256",
+    "primaryText": "lach of ik schiet humor",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "lach",
+        "laugh.imp"
+      ],
+      [
+        "of",
+        "or"
+      ],
+      [
+        "ik",
+        "1sg"
+      ],
+      [
+        "schiet",
+        "shoot.prs.sg"
+      ],
+      [
+        "humor",
+        "humor"
+      ]
+    ],
+    "translation": "laugh-or-I-shoot humor",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hostFrame",
+        "compound"
+      ]
+    ],
+    "comment": "Dutch phrasal compound, orthographically presented; the paper's glosses."
+  },
+  {
+    "id": "gs2025_15b",
+    "source": {
+      "bibkey": "meibauer-2007",
+      "paperLabel": "p. 235"
+    },
+    "reportedIn": {
+      "bibkey": "goldberg-shirtz-2025",
+      "paperLabel": "(15b)"
+    },
+    "language": "afri1274",
+    "primaryText": "God is dod theologie",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "God",
+        "god"
+      ],
+      [
+        "is",
+        "cop.prs.3sg"
+      ],
+      [
+        "dod",
+        "dead"
+      ],
+      [
+        "theologie",
+        "theology"
+      ]
+    ],
+    "translation": "god-is-dead theology",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hostFrame",
+        "compound"
+      ]
+    ],
+    "comment": "Afrikaans phrasal compound, orthographically presented as in the source; the paper's glosses."
+  },
+  {
+    "id": "gs2025_15c",
+    "source": {
+      "bibkey": "trips-kornfilt-2015",
+      "paperLabel": "p. 307"
+    },
+    "reportedIn": {
+      "bibkey": "goldberg-shirtz-2025",
+      "paperLabel": "(15c)"
+    },
+    "language": "nucl1301",
+    "primaryText": "'iç çamasir-ın-ı göster' oyun-u",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "iç",
+        "internal"
+      ],
+      [
+        "çamasir-ın-ı",
+        "laundry-3sg-acc"
+      ],
+      [
+        "göster",
+        "show"
+      ],
+      [
+        "oyun-u",
+        "game-cm"
+      ]
+    ],
+    "translation": "\"show your underwear\" game",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hostFrame",
+        "compound"
+      ]
+    ],
+    "comment": "Turkish; the compound marker on the head noun signals the compound-like frame. Source's parsing, glosses, and translation."
+  },
+  {
+    "id": "gs2025_16b",
+    "source": {
+      "bibkey": "goldberg-shirtz-2025",
+      "paperLabel": "(16b)"
+    },
+    "language": "hebr1245",
+    "primaryText": "keta ʃel mi=ʃe yodea yodea",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "keta",
+        "section"
+      ],
+      [
+        "ʃel",
+        "of"
+      ],
+      [
+        "mi=ʃe",
+        "who=sbj"
+      ],
+      [
+        "yodea",
+        "know.prs.3.m.sg"
+      ],
+      [
+        "yodea",
+        "know.prs.3.m.sg"
+      ]
+    ],
+    "translation": "an if-you-know-you-know thing",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hostFrame",
+        "preposition complement"
+      ]
+    ],
+    "comment": "Modern Hebrew, Twitter; the PAL is the complement of the preposition ʃel."
+  },
+  {
+    "id": "gs2025_17b",
+    "source": {
+      "bibkey": "goldberg-shirtz-2025",
+      "paperLabel": "(17b)"
+    },
+    "language": "hebr1245",
+    "primaryText": "ani mitʁageʃet be=ʁama ʃel ani od ʁega boxa kan",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ani",
+        "1sg"
+      ],
+      [
+        "mitʁageʃet",
+        "be.excited.prs.f.sg"
+      ],
+      [
+        "be=ʁama",
+        "in=level"
+      ],
+      [
+        "ʃel",
+        "of"
+      ],
+      [
+        "ani",
+        "I"
+      ],
+      [
+        "od",
+        "more"
+      ],
+      [
+        "ʁega",
+        "moment"
+      ],
+      [
+        "boxa",
+        "cry.prs.f.sg"
+      ],
+      [
+        "kan",
+        "here"
+      ]
+    ],
+    "translation": "I'm excited to the level of \"I'm gonna start crying here in a minute\"",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hostFrame",
+        "preposition complement"
+      ]
+    ],
+    "comment": "Modern Hebrew; the PAL is the complement of the preposition ʃel."
+  },
+  {
+    "id": "gs2025_18b",
+    "source": {
+      "bibkey": "goldberg-shirtz-2025",
+      "paperLabel": "(18b)"
+    },
+    "language": "braz1246",
+    "primaryText": "o clima ameno de 'eu te ajudo, você me ajuda e está tudo bem'",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "o",
+        "def.m.sg"
+      ],
+      [
+        "clima",
+        "climate"
+      ],
+      [
+        "ameno",
+        "pleasant"
+      ],
+      [
+        "de",
+        "of"
+      ],
+      [
+        "eu",
+        "I"
+      ],
+      [
+        "te",
+        "you"
+      ],
+      [
+        "ajudo",
+        "help.prs.1sg"
+      ],
+      [
+        "você",
+        "you"
+      ],
+      [
+        "me",
+        "me"
+      ],
+      [
+        "ajuda",
+        "help.prs.2sg"
+      ],
+      [
+        "e",
+        "and"
+      ],
+      [
+        "está",
+        "cop.prs.3sg"
+      ],
+      [
+        "tudo",
+        "all"
+      ],
+      [
+        "bem",
+        "good"
+      ]
+    ],
+    "translation": "the pleasant climate of \"I help you, you help me, and everything is good\"",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "hostFrame",
+        "preposition complement"
+      ]
+    ],
+    "comment": "Brazilian Portuguese, NOW corpus; the PAL is the complement of the preposition de."
+  }
+]
