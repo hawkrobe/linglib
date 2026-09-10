@@ -1,1301 +1,479 @@
-import Linglib.Core.Probability.Hypergeometric
-import Linglib.Core.Probability.Posterior
-import Linglib.Pragmatics.RSA.Operators
-import Linglib.Pragmatics.RSA.Silence
-import Mathlib.InformationTheory.KullbackLeibler.DataProcessing
-import Mathlib.Probability.ProbabilityMassFunction.Monad
-import Mathlib.Probability.Distributions.Uniform
+import Linglib.Core.Probability.Kernel.OfWeights
+import Linglib.Core.Probability.Kernel.Posterior
+import Linglib.Core.Probability.UniformOn
+import Linglib.Pragmatics.RSA.Uniform
+import Mathlib.Probability.Kernel.Composition.Comp
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
-# [goodman-stuhlmuller-2013] on mathlib `PMF`
-[goodman-stuhlmuller-2013]
+# Goodman and Stuhlmüller (2013): Knowledge and Implicature
 
-PMF formalization of GS2013 using `PMF.hypergeometric` as the observation
-kernel primitive. The model is parameterized over `a : Access` throughout;
-each downstream operator (`speakerBelief`, `qualityOk`, `s1Score`, `S1g`,
-`marginalSpeaker`, `L1`) takes `(a, k)` where `k : Fin (a.val + 1)` is the
-observed count.
+This file formalizes [goodman-stuhlmuller-2013]'s rational speech-act model of scalar
+implicature under a speaker with incomplete knowledge. The listener infers the state, how many
+of three objects have a property, from the utterance and the speaker's access, the number of
+objects she looked at, by inverting a speaker who softmax-optimizes the expected informativity
+of her utterance under her belief, her posterior over states given what she observed. The
+observation is hypergeometric (`obs`), the speaker's utility is the log-probability of the
+literal listener (`obsSpeaker`), the listener marginalizes the observation she cannot see
+(`speaker`) and applies Bayes' rule (`listener`). With complete access, *some* implicates
+*not all* and a numeral its exact reading, for every rationality (`some_full`,
+`numerals_full`); with access to one or two objects, the *some* implicature is canceled
+(`some_partial`), *one* after one object and *two* after two carry no implicature
+(`one_minimal`, `two_partial`), while *one* after two objects keeps the partial implicature
+against three but not against two (`one_partial`), the fine-grained interaction the
+experiments test.
 
-## PMF stack (one definition each, parameterized)
+## Implementation notes
 
-* `worldPrior : PMF WorldState` — uniform on 4 states
-* `obsKernel a w : PMF (Fin (a.val + 1))` — `PMF.hypergeometric 3 w.toNat a.val`
-* `speakerBelief a k : PMF WorldState` — `PMF.posterior (obsKernel a) worldPrior k`
-* `S1g m α a k h : PMF U` — softmax-of-expected-log over the speaker's belief
-* `marginalSpeaker m α a w hCov : PMF U` — `(obsKernel a w).bind (S1g a)`
-* `L1 m α a u hMarg : PMF WorldState` — `PMF.posterior (marginalSpeaker a) worldPrior u`
+The literal listener is uniform on an utterance's extension, so the expected log-probability
+under the speaker's belief is `-log |⟦u⟧|` when the utterance holds at every state the
+observation leaves possible, Quality, and `-∞` otherwise; `obsSpeaker` is the softmax of that
+closed form, with weight `|⟦u⟧|^{-α}` or `0`. The alternatives are the paper's, *none*, *some*,
+*all* and *one*, *two*, *three*, without a silent option: an observation compatible with no
+utterance gives the zero row, which the marginal speaker simply loses. The prior is uniform, the
+regime of the paper's expository predictions; its fitted binomial prior and its rationality
+`3.4` only reshape the plotted magnitudes. Experiment results and the quantitative fit are prose.
 
-## Silence-extended findings
+## References
 
-All 11 paper findings are stated against the silence-extended utterance
-space `RSA.WithSilence U` — the cover hypothesis `cover_silent` is universal
-because silence is `qOk` at every observation. This dissolves the
-`(access, word)` cells that GS2013's "sensible situations" restriction
-excludes, which would otherwise block formalization without silence.
+* [goodman-stuhlmuller-2013]
+* [frank-goodman-2012]
+* [horn-1972]
 -/
 
 namespace GoodmanStuhlmuller2013
 
-open RSA (WithSilence liftMeaning)
+open MeasureTheory ProbabilityTheory
 open scoped ENNReal
 
-variable {U : Type*}
+/-- A world state: how many of the three objects have the property. -/
+abbrev WorldState := Fin 4
 
-/-! ### Model substrate: world states, utterance enums, meanings, access -/
+/-- The speaker's access: how many of the three objects she looks at. -/
+abbrev Access := Fin 4
 
-/-- World states: how many of 3 objects have the property. -/
-inductive WorldState where
-  | s0 | s1 | s2 | s3
-  deriving DecidableEq, Repr, Inhabited, Fintype
+/-- An observation: how many of the objects she looks at have the property. -/
+abbrev Obs := Fin 4
 
-def WorldState.toNat : WorldState → Nat
-  | .s0 => 0 | .s1 => 1 | .s2 => 2 | .s3 => 3
+/-! ### The observation kernel -/
 
-theorem WorldState.toNat_le_three (w : WorldState) : w.toNat ≤ 3 := by
-  cases w <;> decide
+/-- The hypergeometric weight of observing `k` objects with the property among `a` drawn
+without replacement from three of which `s` have it, `C(s, k) C(3 − s, a − k)`; the
+denominator `C(3, a)` is the row's normalization. -/
+def hyper (a : Access) (s : WorldState) (k : Obs) : ℕ :=
+  if k ≤ a then s.val.choose k.val * (3 - s.val).choose (a.val - k.val) else 0
 
-/-- Quantifier alternative set. -/
+/-- The observation kernel `P(o | a, s)` of section 1. -/
+noncomputable def obs (a : Access) : Kernel WorldState Obs :=
+  Kernel.ofWeights λ s k => (hyper a s k : ℝ≥0∞)
+
+/-- A state is compatible with an observation when the observation is possible there. -/
+def obsCompatible (a : Access) (k : Obs) (s : WorldState) : Prop := hyper a s k ≠ 0
+
+instance (a : Access) (k : Obs) (s : WorldState) : Decidable (obsCompatible a k s) :=
+  inferInstanceAs (Decidable (_ ≠ _))
+
+instance (a : Access) : IsFiniteKernel (obs a) :=
+  inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
+
+theorem obs_apply_singleton (a : Access) (s : WorldState) (k : Obs) :
+    obs a s {k} = (hyper a s k : ℝ≥0∞) / ∑ k', (hyper a s k' : ℝ≥0∞) :=
+  Kernel.ofWeights_apply_singleton _ _ _
+
+/-- Compatibility is positive observation probability. -/
+theorem obs_apply_singleton_ne_zero_iff (a : Access) (s : WorldState) (k : Obs) :
+    obs a s {k} ≠ 0 ↔ obsCompatible a k s := by
+  rw [obs_apply_singleton, ne_eq, ENNReal.div_eq_zero_iff, not_or, Nat.cast_eq_zero]
+  exact ⟨And.left, λ h => ⟨h, ENNReal.sum_ne_top.mpr λ _ _ => ENNReal.natCast_ne_top _⟩⟩
+
+theorem obs_real_singleton (a : Access) (s : WorldState) (k : Obs) :
+    (obs a s).real {k} = (hyper a s k : ℝ) / ∑ k', (hyper a s k' : ℝ) := by
+  rw [obs, Kernel.ofWeights_real_singleton (w := λ s k => (hyper a s k : ℝ≥0∞)) _
+    (λ _ => ENNReal.natCast_ne_top _)]
+  simp only [ENNReal.toReal_natCast]
+
+/-! ### The speaker and the listener -/
+
+section Model
+
+variable {U : Type*} [MeasurableSpace U] [Fintype U] [MeasurableSingletonClass U]
+  (m : U → WorldState → Prop) [∀ u, DecidablePred (m u)]
+
+/-- Quality: the utterance holds at every state the observation leaves possible, so its
+expected log-probability under the speaker's belief is finite. -/
+def Quality (a : Access) (k : Obs) (u : U) : Prop := ∀ s, obsCompatible a k s → m u s
+
+instance (a : Access) (k : Obs) (u : U) : Decidable (Quality m a k u) :=
+  inferInstanceAs (Decidable (∀ _, _ → _))
+
+/-- The extension of an utterance. -/
+def ext (u : U) : Finset WorldState := Finset.univ.filter (m u)
+
+/-- The literal listener `Plex` of section 1: uniform on the utterance's extension. -/
+noncomputable abbrev L0 : Kernel U WorldState := RSA.uniformListener (ext m)
+
+/-- The speaker of equations (2) and (3) after observing `k` of `a` objects: the softmax at
+rationality `α` of the expected log-probability of the literal listener under her belief,
+which is `-log |⟦u⟧|` under Quality and `-∞` otherwise. -/
+noncomputable def obsSpeaker (α : ℝ) (a : Access) : Kernel Obs U :=
+  Kernel.ofWeights λ k u =>
+    if Quality m a k u then ENNReal.ofReal (((ext m u).card : ℝ)⁻¹ ^ α) else 0
+
+instance (α : ℝ) (a : Access) : IsFiniteKernel (obsSpeaker m α a) :=
+  inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
+
+/-- Equation (4): the speaker the listener models, the observation she cannot see marginalized
+over the observation kernel. -/
+noncomputable def speaker (α : ℝ) (a : Access) : Kernel WorldState U :=
+  obsSpeaker m α a ∘ₖ obs a
+
+instance (α : ℝ) (a : Access) : IsFiniteKernel (speaker m α a) :=
+  inferInstanceAs (IsFiniteKernel (obsSpeaker m α a ∘ₖ obs a))
+
+/-- Equation (1): the listener, the speaker's Bayesian inverse under a uniform prior. -/
+noncomputable def listener (α : ℝ) (a : Access) : Kernel U WorldState :=
+  (speaker m α a)†(uniformOn Set.univ)
+
+variable {m}
+
+/-- Under Quality the literal listener's probability of a possible state is the inverse of
+the extension's size, the quantity the speaker's weight raises to the rationality. -/
+theorem L0_apply_singleton_of_quality {a : Access} {k : Obs} {u : U} (hq : Quality m a k u)
+    {s : WorldState} (hs : obsCompatible a k s) : L0 m u {s} = ((ext m u).card : ℝ≥0∞)⁻¹ := by
+  rw [L0, RSA.uniformListener_apply_singleton, if_pos]
+  exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, hq s hs⟩
+
+theorem speaker_apply_singleton (α : ℝ) (a : Access) (s : WorldState) (u : U) :
+    speaker m α a s {u} = ∑ k, obs a s {k} * obsSpeaker m α a k {u} := by
+  rw [speaker, Kernel.comp_apply' _ _ _ (measurableSet_singleton u), lintegral_fintype]
+  exact Finset.sum_congr rfl λ k _ => mul_comm _ _
+
+theorem speaker_real_singleton (α : ℝ) (a : Access) (s : WorldState) (u : U) :
+    (speaker m α a s).real {u} = ∑ k, (obs a s).real {k} * (obsSpeaker m α a k).real {u} := by
+  rw [measureReal_def, speaker_apply_singleton,
+    ENNReal.toReal_sum λ k _ => ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)]
+  simp only [ENNReal.toReal_mul, measureReal_def]
+
+theorem obsSpeaker_real_singleton (α : ℝ) (a : Access) (k : Obs) (u : U) :
+    (obsSpeaker m α a k).real {u} =
+      (if Quality m a k u then ((ext m u).card : ℝ)⁻¹ ^ α else 0) /
+        ∑ u', if Quality m a k u' then ((ext m u').card : ℝ)⁻¹ ^ α else 0 := by
+  rw [obsSpeaker, Kernel.ofWeights_real_singleton
+    (w := λ k u => if Quality m a k u then ENNReal.ofReal (((ext m u).card : ℝ)⁻¹ ^ α) else 0) _
+    (λ u' => by split_ifs <;> simp)]
+  have h : ∀ u', (ENNReal.ofReal (((ext m u').card : ℝ)⁻¹ ^ α)).toReal =
+      ((ext m u').card : ℝ)⁻¹ ^ α :=
+    λ u' => ENNReal.toReal_ofReal (Real.rpow_nonneg (inv_nonneg.mpr (Nat.cast_nonneg _)) α)
+  simp only [apply_ite ENNReal.toReal, h, ENNReal.toReal_zero]
+
+/-- Comparing the listener's posterior at two states is comparing the speaker's probability of
+the utterance at them, the uniform prior canceling. -/
+theorem listener_real_lt_iff {α : ℝ} {a : Access} {u : U}
+    (hu : (speaker m α a ∘ₘ uniformOn Set.univ) {u} ≠ 0) (s₁ s₂ : WorldState) :
+    (listener m α a u).real {s₁} < (listener m α a u).real {s₂} ↔
+      (speaker m α a s₁).real {u} < (speaker m α a s₂).real {u} := by
+  rw [listener, ← Finset.coe_singleton, ← Finset.coe_singleton,
+    posterior_real_finset_lt_iff _ _ hu, Finset.sum_singleton, Finset.sum_singleton,
+    uniformOn_univ_real_singleton, uniformOn_univ_real_singleton]
+  exact mul_lt_mul_iff_of_pos_left (by positivity)
+
+/-- An utterance some state makes probable has positive marginal probability. -/
+theorem comp_ne_zero_of_real_pos {α : ℝ} {a : Access} {u : U} {s : WorldState}
+    (h : 0 < (speaker m α a s).real {u}) : (speaker m α a ∘ₘ uniformOn Set.univ) {u} ≠ 0 := by
+  rw [Measure.comp_apply_singleton, ne_eq, Finset.sum_eq_zero_iff, not_forall]
+  refine ⟨s, ?_⟩
+  simp only [Finset.mem_univ, true_implies]
+  rw [measureReal_def] at h
+  exact mul_ne_zero (uniformOn_univ_singleton_ne_zero s) (ENNReal.toReal_pos_iff.mp h).1.ne'
+
+end Model
+
+/-! ### The alternatives, section 1.1 -/
+
+/-- The quantifier alternatives *none*, *some*, *all*. -/
 inductive QUtt where
-  | none_ | some_ | all
-  deriving DecidableEq, Repr, Inhabited, Fintype
+  | none_
+  | some_
+  | all
+  deriving DecidableEq, Fintype
 
+instance : MeasurableSpace QUtt := ⊤
+instance : DiscreteMeasurableSpace QUtt := ⟨λ _ => MeasurableSpace.measurableSet_top⟩
+instance : MeasurableSingletonClass QUtt := DiscreteMeasurableSpace.toMeasurableSingletonClass
+
+/-- The standard meanings: *none* at zero, *some* at one or more, *all* at three. -/
 def qMeaning : QUtt → WorldState → Prop
-  | .none_, s => s.toNat = 0
-  | .some_, s => 1 ≤ s.toNat
-  | .all,   s => s.toNat = 3
+  | .none_, s => s = 0
+  | .some_, s => 1 ≤ s
+  | .all, s => s = 3
 
-instance : ∀ q : QUtt, DecidablePred (qMeaning q)
-  | .none_, s => inferInstanceAs (Decidable (s.toNat = 0))
-  | .some_, s => inferInstanceAs (Decidable (1 ≤ s.toNat))
-  | .all,   s => inferInstanceAs (Decidable (s.toNat = 3))
+instance : ∀ q, DecidablePred (qMeaning q)
+  | .none_, s => inferInstanceAs (Decidable (s = 0))
+  | .some_, s => inferInstanceAs (Decidable (1 ≤ s))
+  | .all, s => inferInstanceAs (Decidable (s = 3))
 
-/-- Numeral alternative set (lower-bound semantics). -/
+/-- The numeral alternatives *one*, *two*, *three*. -/
 inductive NumUtt where
-  | one | two | three
-  deriving DecidableEq, Repr, Inhabited, Fintype
+  | one
+  | two
+  | three
+  deriving DecidableEq, Fintype
 
+instance : MeasurableSpace NumUtt := ⊤
+instance : DiscreteMeasurableSpace NumUtt := ⟨λ _ => MeasurableSpace.measurableSet_top⟩
+instance : MeasurableSingletonClass NumUtt := DiscreteMeasurableSpace.toMeasurableSingletonClass
+
+/-- [horn-1972]'s lower-bound meanings: a numeral holds at its number or more. -/
 def lbMeaning : NumUtt → WorldState → Prop
-  | .one,   s => 1 ≤ s.toNat
-  | .two,   s => 2 ≤ s.toNat
-  | .three, s => 3 ≤ s.toNat
+  | .one, s => 1 ≤ s
+  | .two, s => 2 ≤ s
+  | .three, s => 3 ≤ s
 
-instance : ∀ n : NumUtt, DecidablePred (lbMeaning n)
-  | .one,   s => inferInstanceAs (Decidable (1 ≤ s.toNat))
-  | .two,   s => inferInstanceAs (Decidable (2 ≤ s.toNat))
-  | .three, s => inferInstanceAs (Decidable (3 ≤ s.toNat))
+instance : ∀ n, DecidablePred (lbMeaning n)
+  | .one, s => inferInstanceAs (Decidable (1 ≤ s))
+  | .two, s => inferInstanceAs (Decidable (2 ≤ s))
+  | .three, s => inferInstanceAs (Decidable (3 ≤ s))
 
-/-- **Speaker access** = number of objects (out of 3) the speaker observes:
-a `Fin 4` indexed at 0..3, so `a.val` is the access value and
-`Fin (a.val + 1)` reduces in type position when `a` is concrete. The paper
-restricts to {1, 2, 3}; access 0 (speaker observes nothing) is well-defined
-but unused. -/
-abbrev Access : Type := Fin 4
+/-- The quantifiers as `Fin 3`, for sums over the alternatives. -/
+def QUtt.equivFin : QUtt ≃ Fin 3 where
+  toFun | .none_ => 0 | .some_ => 1 | .all => 2
+  invFun | 0 => .none_ | 1 => .some_ | 2 => .all
+  left_inv u := by cases u <;> rfl
+  right_inv i := by fin_cases i <;> rfl
 
-namespace Access
+/-- The numerals as `Fin 3`, for sums over the alternatives. -/
+def NumUtt.equivFin : NumUtt ≃ Fin 3 where
+  toFun | .one => 0 | .two => 1 | .three => 2
+  invFun | 0 => .one | 1 => .two | 2 => .three
+  left_inv u := by cases u <;> rfl
+  right_inv i := by fin_cases i <;> rfl
 
-/-- Access value 1 (speaker observes 1 of 3 objects). -/
-abbrev a1 : Access := 1
-/-- Access value 2 (speaker observes 2 of 3 objects). -/
-abbrev a2 : Access := 2
-/-- Access value 3 — full access (speaker observes all 3 objects). -/
-abbrev a3 : Access := 3
-
-theorem val_le_three (a : Access) : a.val ≤ 3 :=
-  Nat.lt_succ_iff.mp a.isLt
-
-theorem a1_val : (a1 : Access).val = 1 := rfl
-theorem a2_val : (a2 : Access).val = 2 := rfl
-theorem a3_val : (a3 : Access).val = 3 := rfl
-
-end Access
-
-/-! ### World prior — uniform on `WorldState` -/
-
-noncomputable def worldPrior : PMF WorldState := PMF.uniformOfFintype WorldState
-
-theorem worldPrior_ne_zero (w : WorldState) : worldPrior w ≠ 0 :=
-  (worldPrior.mem_support_iff w).mp (PMF.mem_support_uniformOfFintype w)
-
-/-- The uniform world prior assigns `ENNReal.ofReal (1/4)` to every world. -/
-theorem worldPrior_apply (s : WorldState) :
-    worldPrior s = ENNReal.ofReal (1/4 : ℝ) := by
-  unfold worldPrior
-  rw [PMF.uniformOfFintype_apply]
-  show ((4 : ℕ) : ℝ≥0∞)⁻¹ = _
-  rw [show ((4 : ℕ) : ℝ≥0∞) = ENNReal.ofReal 4 from by simp,
-      ← ENNReal.ofReal_inv_of_pos (by norm_num)]
-  congr 1; norm_num
-
-/-! ### Hypergeometric observation kernel
-
-`obsKernel a w : PMF (Fin (a.val + 1))` is the hypergeometric distribution
-over count outcomes when the speaker observes `a.val` of the 3 objects, of
-which `w.toNat` have the property. -/
-
-noncomputable def obsKernel (a : Access) (w : WorldState) : PMF (Fin (a.val + 1)) :=
-  PMF.hypergeometric 3 w.toNat a.val a.val_le_three w.toNat_le_three
-
-/-- Closed-form observation kernel value: `C(K, k) · C(N-K, n-k) / C(N, n)`. -/
-theorem obsKernel_apply (a : Access) (w : WorldState) (k : Fin (a.val + 1)) :
-    obsKernel a w k =
-      (w.toNat.choose k.val * (3 - w.toNat).choose (a.val - k.val) : ℕ) /
-      ((3).choose a.val : ℝ≥0∞) :=
-  PMF.hypergeometric_apply _ _ _ _ _ _
-
-/-- The kernel is non-zero iff the count is hypergeometric-feasible. -/
-theorem obsKernel_apply_ne_zero_iff (a : Access) (w : WorldState) (k : Fin (a.val + 1)) :
-    obsKernel a w k ≠ 0 ↔ k.val ≤ w.toNat ∧ a.val - k.val ≤ 3 - w.toNat :=
-  PMF.hypergeometric_apply_ne_zero_iff _ _ _ _ _ _
-
-/-- `obsKernel` value in `ENNReal.ofReal` form — the shape the value table
-below reduces to by `norm_num`. -/
-theorem obsKernel_eq_ofReal (a : Access) (w : WorldState) (k : Fin (a.val + 1)) :
-    obsKernel a w k =
-      ENNReal.ofReal
-        ((w.toNat.choose k.val * (3 - w.toNat).choose (a.val - k.val) : ℝ) /
-          ((3).choose a.val : ℝ)) :=
-  PMF.hypergeometric_apply_eq_ofReal _ _ _ _ _ _
-
-/-! ### Observation compatibility and witness worlds -/
-
-/-- A world `s` is compatible with observing `k.val` successes out of `a.val`
-draws iff the hypergeometric numerator at `(K=s.toNat, k=k.val)` is non-zero. -/
-def obsCompatible (a : Access) (k : Fin (a.val + 1)) (s : WorldState) : Prop :=
-  k.val ≤ s.toNat ∧ a.val - k.val ≤ 3 - s.toNat
-
-instance (a : Access) (k : Fin (a.val + 1)) : DecidablePred (obsCompatible a k) := fun s =>
-  inferInstanceAs (Decidable (k.val ≤ s.toNat ∧ a.val - k.val ≤ 3 - s.toNat))
-
-/-- A witness world at which `obsKernel a · k` is positive: the world whose
-count matches `k.val` (clamped to ≤ 3). -/
-private def witnessWorld (k : ℕ) : WorldState :=
-  match k with
-  | 0 => .s0
-  | 1 => .s1
-  | 2 => .s2
-  | _ => .s3
-
-private theorem witnessWorld_toNat : ∀ {n : ℕ}, n ≤ 3 → (witnessWorld n).toNat = n
-  | 0, _ => rfl
-  | 1, _ => rfl
-  | 2, _ => rfl
-  | 3, _ => rfl
-  | n + 4, h => absurd h (by omega)
-
-private theorem witnessWorld_obsCompatible (a : Access) (k : Fin (a.val + 1)) :
-    obsCompatible a k (witnessWorld k.val) := by
-  have hk : k.val ≤ a.val := Nat.lt_succ_iff.mp k.isLt
-  have ha := a.val_le_three
-  rw [obsCompatible, witnessWorld_toNat (hk.trans ha)]
-  omega
-
-/-! ### Speaker belief — `PMF.posterior` of `obsKernel` -/
-
-private theorem obsMarginal_ne_zero (a : Access) (k : Fin (a.val + 1)) :
-    PMF.marginal (obsKernel a) worldPrior k ≠ 0 :=
-  PMF.marginal_ne_zero _ worldPrior k (worldPrior_ne_zero (witnessWorld k.val))
-    ((obsKernel_apply_ne_zero_iff a _ k).mpr (witnessWorld_obsCompatible a k))
-
-/-- Speaker's posterior over worlds given a count observation. -/
-noncomputable def speakerBelief (a : Access) (k : Fin (a.val + 1)) : PMF WorldState :=
-  PMF.posterior (obsKernel a) worldPrior k (obsMarginal_ne_zero a k)
-
-/-! ### Quality filter, literal probabilities, softmax speaker -/
-
-/-- An utterance `u` is quality-OK at observation `(a, k)` iff `u` is true at
-every world compatible with `(a, k)`. -/
-def qualityOk (m : U → WorldState → Prop)
-    (a : Access) (k : Fin (a.val + 1)) (u : U) : Prop :=
-  ∀ s, obsCompatible a k s → m u s
-
-instance (m : U → WorldState → Prop) [∀ u, DecidablePred (m u)]
-    (a : Access) (k : Fin (a.val + 1)) : DecidablePred (qualityOk m a k) := fun u =>
-  inferInstanceAs (Decidable (∀ s, obsCompatible a k s → m u s))
-
-/-- Uniform-on-extension literal probability. -/
-noncomputable def lexReal [Fintype U]
-    (m : U → WorldState → Prop) [∀ u, DecidablePred (m u)] (u : U) (s : WorldState) : ℝ :=
-  if m u s then ((RSA.extensionOf m u).card : ℝ)⁻¹ else 0
-
-/-- `toReal` projection of `speakerBelief`. -/
-noncomputable def beliefReal (a : Access) (k : Fin (a.val + 1)) (s : WorldState) : ℝ :=
-  (speakerBelief a k s).toReal
-
-/-- Speaker score: `softmaxBelief` over the literal probabilities, filtered
-by `qualityOk`. -/
-noncomputable abbrev s1Score [Fintype U]
-    (m : U → WorldState → Prop) [∀ u, DecidablePred (m u)] (α : ℝ)
-    (a : Access) (k : Fin (a.val + 1)) (u : U) : ℝ≥0∞ :=
-  RSA.softmaxBelief (lexReal m) (beliefReal a k) α (qualityOk m a k) u
-
-/-- Speaker conditional on observation. -/
-noncomputable def S1g [Fintype U]
-    (m : U → WorldState → Prop) [∀ u, DecidablePred (m u)] (α : ℝ)
-    (a : Access) (k : Fin (a.val + 1))
-    (h0 : ∑' u, s1Score m α a k u ≠ 0) : PMF U :=
-  PMF.normalize (s1Score m α a k ·) h0
-    (RSA.softmaxBelief_tsum_ne_top _ _ _ _)
-
-/-! ### Marginal speaker and pragmatic listener
-
-Since `marginalSpeaker` uses `PMF.bind` (not `bindOnSupport`), `S1g` must be
-defined at every `k`, not just kernel-supported ones. The cover hypothesis
-`hCov` therefore quantifies over all `k : Fin (a.val + 1)`. With
-`WithSilence`, this is automatic via `cover_silent`. -/
-
-noncomputable def marginalSpeaker [Fintype U]
-    (m : U → WorldState → Prop) [∀ u, DecidablePred (m u)]
-    (α : ℝ) (a : Access) (w : WorldState)
-    (hCov : ∀ k : Fin (a.val + 1), ∃ u : U, qualityOk m a k u) :
-    PMF U :=
-  (obsKernel a w).bind fun k =>
-    S1g m α a k
-      (RSA.softmaxBelief_tsum_ne_zero_of_witness (hCov k).choose_spec)
-
-/-- Pragmatic listener: Bayesian inversion of the marginal speaker. -/
-noncomputable def L1 [Fintype U]
-    (m : U → WorldState → Prop) [∀ u, DecidablePred (m u)] (α : ℝ) (a : Access)
-    (hCov : ∀ k : Fin (a.val + 1), ∃ u : U, qualityOk m a k u) (u : U)
-    (hMarg : PMF.marginal (fun w => marginalSpeaker m α a w hCov) worldPrior u ≠ 0) :
-    PMF WorldState :=
-  PMF.posterior (fun w => marginalSpeaker m α a w hCov) worldPrior u hMarg
-
-/-- Silence is universally `qOk` — `liftMeaning m none` holds at every world,
-so the cover hypothesis is universally satisfiable. -/
-theorem cover_silent (m : U → WorldState → Prop) [∀ u, DecidablePred (m u)] (a : Access) :
-    ∀ k : Fin (a.val + 1), ∃ u : WithSilence U, qualityOk (liftMeaning m) a k u :=
-  fun _ => ⟨none, fun _ _ => trivial⟩
-
-/-! ### Observation-kernel value table
-
-Closed-form values for `obsKernel a w k`, derived from `obsKernel_eq_ofReal`
-by evaluating the `Nat.choose` arithmetic. Only the cells the findings below
-rewrite with are stated. -/
-
--- `.a3` (full access): the kernel concentrates on the diagonal `k = w.toNat`.
-
-private theorem obsKernel_a3_diag (w : WorldState) :
-    obsKernel .a3 w ⟨w.toNat, by cases w <;> decide⟩ = 1 := by
-  cases w <;>
-    · rw [obsKernel_eq_ofReal]
-      norm_num [WorldState.toNat, Nat.choose, Access.a3_val]
-
-private theorem obsKernel_a3_off (w : WorldState) (k : Fin 4) (h : k.val ≠ w.toNat) :
-    obsKernel .a3 w k = 0 := by
-  by_contra hne
-  obtain ⟨h₁, h₂⟩ := (obsKernel_apply_ne_zero_iff .a3 w k).mp hne
-  have h₃ : Access.a3.val = 3 := rfl
-  have := w.toNat_le_three
-  omega
-
--- `.a2` (partial access, n=2): `C(3, 2) = 3` in the denominator.
-
-private theorem obsKernel_a2_s1_k1 :
-    obsKernel .a2 .s1 ⟨1, by decide⟩ = ENNReal.ofReal (2/3) := by
-  rw [obsKernel_eq_ofReal]
-  norm_num [WorldState.toNat, Nat.choose, Access.a2_val]
-
-private theorem obsKernel_a2_s2_k1 :
-    obsKernel .a2 .s2 ⟨1, by decide⟩ = ENNReal.ofReal (2/3) := by
-  rw [obsKernel_eq_ofReal]
-  norm_num [WorldState.toNat, Nat.choose, Access.a2_val]
-
-private theorem obsKernel_a2_s2_k2 :
-    obsKernel .a2 .s2 ⟨2, by decide⟩ = ENNReal.ofReal (1/3) := by
-  rw [obsKernel_eq_ofReal]
-  norm_num [WorldState.toNat, Nat.choose, Access.a2_val]
-
-private theorem obsKernel_a2_s3_k2 : obsKernel .a2 .s3 ⟨2, by decide⟩ = 1 := by
-  rw [obsKernel_eq_ofReal]
-  norm_num [WorldState.toNat, Nat.choose, Access.a2_val]
-
-private theorem obsKernel_a2_off (w : WorldState) (k : Fin 3)
-    (h : ¬ (k.val ≤ w.toNat ∧ 2 - k.val ≤ 3 - w.toNat)) :
-    obsKernel .a2 w k = 0 := by
-  by_contra hne
-  exact h ((obsKernel_apply_ne_zero_iff .a2 w k).mp hne)
-
-private theorem obsKernel_a2_s3_k1_zero : obsKernel .a2 .s3 ⟨1, by decide⟩ = 0 :=
-  obsKernel_a2_off .s3 ⟨1, by decide⟩ (by decide)
-
-private theorem obsKernel_a2_s1_k2_zero : obsKernel .a2 .s1 ⟨2, by decide⟩ = 0 :=
-  obsKernel_a2_off .s1 ⟨2, by decide⟩ (by decide)
-
-private theorem obsKernel_a2_s2_k0_zero : obsKernel .a2 .s2 ⟨0, by decide⟩ = 0 :=
-  obsKernel_a2_off .s2 ⟨0, by decide⟩ (by decide)
-
-private theorem obsKernel_a2_s3_k0_zero : obsKernel .a2 .s3 ⟨0, by decide⟩ = 0 :=
-  obsKernel_a2_off .s3 ⟨0, by decide⟩ (by decide)
-
--- `.a1` (minimal access, n=1): `C(3, 1) = 3` in the denominator.
-
-private theorem obsKernel_a1_s1_k1 :
-    obsKernel .a1 .s1 ⟨1, by decide⟩ = ENNReal.ofReal (1/3) := by
-  rw [obsKernel_eq_ofReal]
-  norm_num [WorldState.toNat, Nat.choose, Access.a1_val]
-
-private theorem obsKernel_a1_s2_k1 :
-    obsKernel .a1 .s2 ⟨1, by decide⟩ = ENNReal.ofReal (2/3) := by
-  rw [obsKernel_eq_ofReal]
-  norm_num [WorldState.toNat, Nat.choose, Access.a1_val]
-
-private theorem obsKernel_a1_s3_k1 : obsKernel .a1 .s3 ⟨1, by decide⟩ = 1 := by
-  rw [obsKernel_eq_ofReal]
-  norm_num [WorldState.toNat, Nat.choose, Access.a1_val]
-
-/-! ### `marginalSpeaker` collapse
-
-At full access the kernel concentrates on a single `k`, so the bind collapses
-to one `S1g` evaluation; at partial access it expands to the 2- or 3-term
-kernel-weighted sum. -/
-
-private theorem marginalSpeaker_a3_apply
-    [Fintype U] (m : U → WorldState → Prop) [∀ u, DecidablePred (m u)] (w : WorldState)
-    (hCov : ∀ k : Fin (Access.a3.val + 1), ∃ u : U, qualityOk m .a3 k u) (u : U) :
-    marginalSpeaker m 1 .a3 w hCov u =
-      S1g m 1 .a3 ⟨w.toNat, by cases w <;> decide⟩
-        (RSA.softmaxBelief_tsum_ne_zero_of_witness
-          (hCov ⟨w.toNat, by cases w <;> decide⟩).choose_spec) u := by
-  show ((obsKernel .a3 w).bind _) u = _
-  rw [PMF.bind_apply, tsum_eq_single ⟨w.toNat, by cases w <;> decide⟩]
-  · rw [obsKernel_a3_diag, one_mul]
-  · intro k hk
-    have h := obsKernel_a3_off w k (by
-      intro heq; apply hk; apply Fin.ext; simpa [WorldState.toNat] using heq)
-    rw [h, zero_mul]
-
-private theorem marginalSpeaker_a1_apply
-    [Fintype U] (m : U → WorldState → Prop) [∀ u, DecidablePred (m u)] (w : WorldState)
-    (hCov : ∀ k : Fin (Access.a1.val + 1), ∃ u : U, qualityOk m .a1 k u) (u : U) :
-    marginalSpeaker m 1 .a1 w hCov u =
-      obsKernel .a1 w ⟨0, by decide⟩ *
-        S1g m 1 .a1 ⟨0, by decide⟩
-          (RSA.softmaxBelief_tsum_ne_zero_of_witness (hCov ⟨0, by decide⟩).choose_spec) u +
-      obsKernel .a1 w ⟨1, by decide⟩ *
-        S1g m 1 .a1 ⟨1, by decide⟩
-          (RSA.softmaxBelief_tsum_ne_zero_of_witness (hCov ⟨1, by decide⟩).choose_spec) u := by
-  show ((obsKernel .a1 w).bind _) u = _
-  rw [PMF.bind_apply, tsum_fintype]
-  show (∑ k : Fin 2, _) = _
-  rw [Fin.sum_univ_two]
+theorem QUtt.sum_univ {M : Type*} [AddCommMonoid M] (f : QUtt → M) :
+    ∑ u, f u = f .none_ + f .some_ + f .all := by
+  rw [Fintype.sum_equiv QUtt.equivFin f (f ∘ QUtt.equivFin.symm) λ u => by simp,
+    Fin.sum_univ_three]
   rfl
 
-private theorem marginalSpeaker_a2_apply
-    [Fintype U] (m : U → WorldState → Prop) [∀ u, DecidablePred (m u)] (w : WorldState)
-    (hCov : ∀ k : Fin (Access.a2.val + 1), ∃ u : U, qualityOk m .a2 k u) (u : U) :
-    marginalSpeaker m 1 .a2 w hCov u =
-      obsKernel .a2 w ⟨0, by decide⟩ *
-        S1g m 1 .a2 ⟨0, by decide⟩
-          (RSA.softmaxBelief_tsum_ne_zero_of_witness (hCov ⟨0, by decide⟩).choose_spec) u +
-      obsKernel .a2 w ⟨1, by decide⟩ *
-        S1g m 1 .a2 ⟨1, by decide⟩
-          (RSA.softmaxBelief_tsum_ne_zero_of_witness (hCov ⟨1, by decide⟩).choose_spec) u +
-      obsKernel .a2 w ⟨2, by decide⟩ *
-        S1g m 1 .a2 ⟨2, by decide⟩
-          (RSA.softmaxBelief_tsum_ne_zero_of_witness (hCov ⟨2, by decide⟩).choose_spec) u := by
-  show ((obsKernel .a2 w).bind _) u = _
-  rw [PMF.bind_apply, tsum_fintype]
-  show (∑ k : Fin 3, _) = _
-  rw [Fin.sum_univ_three]
+theorem NumUtt.sum_univ {M : Type*} [AddCommMonoid M] (f : NumUtt → M) :
+    ∑ u, f u = f .one + f .two + f .three := by
+  rw [Fintype.sum_equiv NumUtt.equivFin f (f ∘ NumUtt.equivFin.symm) λ u => by simp,
+    Fin.sum_univ_three]
   rfl
 
-/-! ### Extension cardinalities for the silence-extended models -/
-
-private theorem extensionOf_qLifted_some_card :
-    (RSA.extensionOf (liftMeaning qMeaning) (some QUtt.some_)).card = 3 := by decide
-
-private theorem extensionOf_qLifted_all_card :
-    (RSA.extensionOf (liftMeaning qMeaning) (some QUtt.all)).card = 1 := by decide
-
-private theorem extensionOf_qLifted_silent_card :
-    (RSA.extensionOf (liftMeaning qMeaning) (none : WithSilence QUtt)).card = 4 := by decide
-
-private theorem extensionOf_lbLifted_one_card :
-    (RSA.extensionOf (liftMeaning lbMeaning) (some NumUtt.one)).card = 3 := by decide
-
-private theorem extensionOf_lbLifted_two_card :
-    (RSA.extensionOf (liftMeaning lbMeaning) (some NumUtt.two)).card = 2 := by decide
-
-private theorem extensionOf_lbLifted_three_card :
-    (RSA.extensionOf (liftMeaning lbMeaning) (some NumUtt.three)).card = 1 := by decide
-
-private theorem extensionOf_lbLifted_silent_card :
-    (RSA.extensionOf (liftMeaning lbMeaning) (none : WithSilence NumUtt)).card = 4 := by decide
-
-/-! ### Generic `s1Score` evaluation
-
-When `qOk u` passes, `liftMeaning`-lifted utterances have a uniform lex
-value on the belief support (because: `qOk` ⇒ `m u s` holds at all
-compatible `s` ⊇ belief support ⇒ `lex u s = 1/(card extension)`).
-`softmaxBelief_uniform_on_support` then collapses
-`s1Score = ENNReal.ofReal (1/c)`. -/
-
-private theorem belief_support_compat (a : Access) (k : Fin (a.val + 1)) (s : WorldState)
-    (h : beliefReal a k s ≠ 0) : obsCompatible a k s := by
-  unfold beliefReal at h
-  have hb : speakerBelief a k s ≠ 0 := by
-    intro h'; exact h (h' ▸ ENNReal.toReal_zero)
-  unfold speakerBelief at hb
-  rw [PMF.posterior_apply] at hb
-  have h_kernel : obsKernel a s k ≠ 0 := by
-    intro h_zero; apply hb; rw [h_zero, mul_zero, zero_mul]
-  exact (obsKernel_apply_ne_zero_iff a s k).mp h_kernel
-
-private theorem belief_sum_eq_one (a : Access) (k : Fin (a.val + 1)) :
-    (∑ s : WorldState, beliefReal a k s) = 1 := by
-  unfold beliefReal
-  rw [show (∑ s : WorldState, (speakerBelief a k s).toReal) =
-        (∑' s : WorldState, (speakerBelief a k s).toReal) from
-        (tsum_eq_sum (s := Finset.univ) (fun s hs => absurd (Finset.mem_univ s) hs)).symm]
-  rw [← ENNReal.tsum_toReal_eq (fun s => PMF.apply_ne_top _ _),
-      PMF.tsum_coe, ENNReal.toReal_one]
-
-/-- Generic s1Score evaluation: when qOk passes, `s1Score = ENNReal.ofReal (1/c)`
-where `c = (extensionOf m u).card`. -/
-private theorem s1Score_uniform_apply
-    [Fintype U] [DecidableEq U]
-    (m : U → WorldState → Prop) [∀ u, DecidablePred (m u)]
-    (a : Access) (k : Fin (a.val + 1))
-    (u : WithSilence U) (c : ℕ) (hc : c ≠ 0)
-    (h_qok : qualityOk (liftMeaning m) a k u)
-    (h_card : (RSA.extensionOf (liftMeaning m) u).card = c) :
-    s1Score (liftMeaning m) 1 a k u = ENNReal.ofReal (1/c : ℝ) := by
-  refine RSA.softmaxBelief_uniform_on_support _ _ _ _ (1/c : ℝ) h_qok ?_ ?_
-    (belief_sum_eq_one a k)
-  · intro s hbelief
-    unfold lexReal
-    rw [if_pos (h_qok s (belief_support_compat a k s hbelief)), h_card]
-    field_simp
-  · positivity
-
-/-- Sum unfolder for `WithSilence QUtt`: `Fin.sum_univ_*` doesn't apply to
-custom enums, so the sum lemmas below rewrite with this fold. -/
-private theorem WithSilence_QUtt_sum_univ {β : Type*} [AddCommMonoid β]
-    (f : WithSilence QUtt → β) :
-    ∑ i, f i =
-      f none + (f (some .none_) + (f (some .some_) + (f (some .all) + 0))) := by
-  rfl
-
-private theorem WithSilence_NumUtt_sum_univ {β : Type*} [AddCommMonoid β]
-    (f : WithSilence NumUtt → β) :
-    ∑ i, f i =
-      f none + (f (some .one) + (f (some .two) + (f (some .three) + 0))) := by
-  rfl
-
-/-! ### `s1Score` value table
-
-Per-(meaning, access, count, utterance) closed forms. Positive cells go
-through `s1Score_uniform_apply`; `qOk` failures are zero by
-`softmaxBelief_eq_zero_of_not_qOk`. -/
-
--- (.a1, k=0): compatible worlds = {s0, s1, s2}; the target utterances fail qOk.
-
-private theorem s1Score_qLifted_a1_k0_some :
-    s1Score (liftMeaning qMeaning) 1 .a1 ⟨0, by decide⟩
-      (some QUtt.some_) = 0 :=
-  RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
-
-private theorem s1Score_lbLifted_a1_k0_one :
-    s1Score (liftMeaning lbMeaning) 1 .a1 ⟨0, by decide⟩
-      (some NumUtt.one) = 0 :=
-  RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
-
--- (.a1, k=1): compatible worlds = {s1, s2, s3}; silence and `some_`/`one` are qOk.
-
-private theorem s1Score_qLifted_a1_k1_silent :
-    s1Score (liftMeaning qMeaning) 1 .a1 ⟨1, by decide⟩
-      (none : WithSilence QUtt) = ENNReal.ofReal (1/4 : ℝ) :=
-  s1Score_uniform_apply qMeaning .a1 ⟨1, by decide⟩ none 4 (by norm_num)
-    (by decide) extensionOf_qLifted_silent_card
-
-private theorem s1Score_qLifted_a1_k1_none :
-    s1Score (liftMeaning qMeaning) 1 .a1 ⟨1, by decide⟩
-      (some QUtt.none_) = 0 :=
-  RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
-
-private theorem s1Score_qLifted_a1_k1_some :
-    s1Score (liftMeaning qMeaning) 1 .a1 ⟨1, by decide⟩
-      (some QUtt.some_) = ENNReal.ofReal (1/3 : ℝ) :=
-  s1Score_uniform_apply qMeaning .a1 ⟨1, by decide⟩ (some QUtt.some_) 3 (by norm_num)
-    (by decide) extensionOf_qLifted_some_card
-
-private theorem s1Score_qLifted_a1_k1_all :
-    s1Score (liftMeaning qMeaning) 1 .a1 ⟨1, by decide⟩
-      (some QUtt.all) = 0 :=
-  RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
-
-private theorem s1Score_lbLifted_a1_k1_silent :
-    s1Score (liftMeaning lbMeaning) 1 .a1 ⟨1, by decide⟩
-      (none : WithSilence NumUtt) = ENNReal.ofReal (1/4 : ℝ) :=
-  s1Score_uniform_apply lbMeaning .a1 ⟨1, by decide⟩ none 4 (by norm_num)
-    (by decide) extensionOf_lbLifted_silent_card
-
-private theorem s1Score_lbLifted_a1_k1_one :
-    s1Score (liftMeaning lbMeaning) 1 .a1 ⟨1, by decide⟩
-      (some NumUtt.one) = ENNReal.ofReal (1/3 : ℝ) :=
-  s1Score_uniform_apply lbMeaning .a1 ⟨1, by decide⟩ (some NumUtt.one) 3 (by norm_num)
-    (by decide) extensionOf_lbLifted_one_card
-
-private theorem s1Score_lbLifted_a1_k1_two :
-    s1Score (liftMeaning lbMeaning) 1 .a1 ⟨1, by decide⟩
-      (some NumUtt.two) = 0 :=
-  RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
-
-private theorem s1Score_lbLifted_a1_k1_three :
-    s1Score (liftMeaning lbMeaning) 1 .a1 ⟨1, by decide⟩
-      (some NumUtt.three) = 0 :=
-  RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
-
--- (.a2, k=0): compatible = {s0, s1}; the target utterances fail qOk.
-
-private theorem s1Score_qLifted_a2_k0_some :
-    s1Score (liftMeaning qMeaning) 1 .a2 ⟨0, by decide⟩
-      (some QUtt.some_) = 0 :=
-  RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
-
-private theorem s1Score_lbLifted_a2_k0_one :
-    s1Score (liftMeaning lbMeaning) 1 .a2 ⟨0, by decide⟩
-      (some NumUtt.one) = 0 :=
-  RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
-
-private theorem s1Score_lbLifted_a2_k0_two :
-    s1Score (liftMeaning lbMeaning) 1 .a2 ⟨0, by decide⟩
-      (some NumUtt.two) = 0 :=
-  RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
-
--- (.a2, k=1): compatible = {s1, s2}.
-
-private theorem s1Score_qLifted_a2_k1_silent :
-    s1Score (liftMeaning qMeaning) 1 .a2 ⟨1, by decide⟩
-      (none : WithSilence QUtt) = ENNReal.ofReal (1/4 : ℝ) :=
-  s1Score_uniform_apply qMeaning .a2 ⟨1, by decide⟩ none 4 (by norm_num)
-    (by decide) extensionOf_qLifted_silent_card
-
-private theorem s1Score_qLifted_a2_k1_none :
-    s1Score (liftMeaning qMeaning) 1 .a2 ⟨1, by decide⟩
-      (some QUtt.none_) = 0 :=
-  RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
-
-private theorem s1Score_qLifted_a2_k1_some :
-    s1Score (liftMeaning qMeaning) 1 .a2 ⟨1, by decide⟩
-      (some QUtt.some_) = ENNReal.ofReal (1/3 : ℝ) :=
-  s1Score_uniform_apply qMeaning .a2 ⟨1, by decide⟩ (some QUtt.some_) 3 (by norm_num)
-    (by decide) extensionOf_qLifted_some_card
-
-private theorem s1Score_qLifted_a2_k1_all :
-    s1Score (liftMeaning qMeaning) 1 .a2 ⟨1, by decide⟩
-      (some QUtt.all) = 0 :=
-  RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
-
-private theorem s1Score_lbLifted_a2_k1_silent :
-    s1Score (liftMeaning lbMeaning) 1 .a2 ⟨1, by decide⟩
-      (none : WithSilence NumUtt) = ENNReal.ofReal (1/4 : ℝ) :=
-  s1Score_uniform_apply lbMeaning .a2 ⟨1, by decide⟩ none 4 (by norm_num)
-    (by decide) extensionOf_lbLifted_silent_card
-
-private theorem s1Score_lbLifted_a2_k1_one :
-    s1Score (liftMeaning lbMeaning) 1 .a2 ⟨1, by decide⟩
-      (some NumUtt.one) = ENNReal.ofReal (1/3 : ℝ) :=
-  s1Score_uniform_apply lbMeaning .a2 ⟨1, by decide⟩ (some NumUtt.one) 3 (by norm_num)
-    (by decide) extensionOf_lbLifted_one_card
-
-private theorem s1Score_lbLifted_a2_k1_two :
-    s1Score (liftMeaning lbMeaning) 1 .a2 ⟨1, by decide⟩
-      (some NumUtt.two) = 0 :=
-  RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
-
-private theorem s1Score_lbLifted_a2_k1_three :
-    s1Score (liftMeaning lbMeaning) 1 .a2 ⟨1, by decide⟩
-      (some NumUtt.three) = 0 :=
-  RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
-
--- (.a2, k=2): compatible = {s2, s3}.
-
-private theorem s1Score_qLifted_a2_k2_silent :
-    s1Score (liftMeaning qMeaning) 1 .a2 ⟨2, by decide⟩
-      (none : WithSilence QUtt) = ENNReal.ofReal (1/4 : ℝ) :=
-  s1Score_uniform_apply qMeaning .a2 ⟨2, by decide⟩ none 4 (by norm_num)
-    (by decide) extensionOf_qLifted_silent_card
-
-private theorem s1Score_qLifted_a2_k2_none :
-    s1Score (liftMeaning qMeaning) 1 .a2 ⟨2, by decide⟩
-      (some QUtt.none_) = 0 :=
-  RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
-
-private theorem s1Score_qLifted_a2_k2_some :
-    s1Score (liftMeaning qMeaning) 1 .a2 ⟨2, by decide⟩
-      (some QUtt.some_) = ENNReal.ofReal (1/3 : ℝ) :=
-  s1Score_uniform_apply qMeaning .a2 ⟨2, by decide⟩ (some QUtt.some_) 3 (by norm_num)
-    (by decide) extensionOf_qLifted_some_card
-
-private theorem s1Score_qLifted_a2_k2_all :
-    s1Score (liftMeaning qMeaning) 1 .a2 ⟨2, by decide⟩
-      (some QUtt.all) = 0 :=
-  RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
-
-private theorem s1Score_lbLifted_a2_k2_silent :
-    s1Score (liftMeaning lbMeaning) 1 .a2 ⟨2, by decide⟩
-      (none : WithSilence NumUtt) = ENNReal.ofReal (1/4 : ℝ) :=
-  s1Score_uniform_apply lbMeaning .a2 ⟨2, by decide⟩ none 4 (by norm_num)
-    (by decide) extensionOf_lbLifted_silent_card
-
-private theorem s1Score_lbLifted_a2_k2_one :
-    s1Score (liftMeaning lbMeaning) 1 .a2 ⟨2, by decide⟩
-      (some NumUtt.one) = ENNReal.ofReal (1/3 : ℝ) :=
-  s1Score_uniform_apply lbMeaning .a2 ⟨2, by decide⟩ (some NumUtt.one) 3 (by norm_num)
-    (by decide) extensionOf_lbLifted_one_card
-
-private theorem s1Score_lbLifted_a2_k2_two :
-    s1Score (liftMeaning lbMeaning) 1 .a2 ⟨2, by decide⟩
-      (some NumUtt.two) = ENNReal.ofReal (1/2 : ℝ) :=
-  s1Score_uniform_apply lbMeaning .a2 ⟨2, by decide⟩ (some NumUtt.two) 2 (by norm_num)
-    (by decide) extensionOf_lbLifted_two_card
-
-private theorem s1Score_lbLifted_a2_k2_three :
-    s1Score (liftMeaning lbMeaning) 1 .a2 ⟨2, by decide⟩
-      (some NumUtt.three) = 0 :=
-  RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
-
--- (.a3, k=1): compatible = {s1}.
-
-private theorem s1Score_lbLifted_a3_k1_silent :
-    s1Score (liftMeaning lbMeaning) 1 .a3 ⟨1, by decide⟩
-      (none : WithSilence NumUtt) = ENNReal.ofReal (1/4 : ℝ) :=
-  s1Score_uniform_apply lbMeaning .a3 ⟨1, by decide⟩ none 4 (by norm_num)
-    (by decide) extensionOf_lbLifted_silent_card
-
-private theorem s1Score_lbLifted_a3_k1_one :
-    s1Score (liftMeaning lbMeaning) 1 .a3 ⟨1, by decide⟩
-      (some NumUtt.one) = ENNReal.ofReal (1/3 : ℝ) :=
-  s1Score_uniform_apply lbMeaning .a3 ⟨1, by decide⟩ (some NumUtt.one) 3 (by norm_num)
-    (by decide) extensionOf_lbLifted_one_card
-
-private theorem s1Score_lbLifted_a3_k1_two :
-    s1Score (liftMeaning lbMeaning) 1 .a3 ⟨1, by decide⟩
-      (some NumUtt.two) = 0 :=
-  RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
-
-private theorem s1Score_lbLifted_a3_k1_three :
-    s1Score (liftMeaning lbMeaning) 1 .a3 ⟨1, by decide⟩
-      (some NumUtt.three) = 0 :=
-  RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
-
--- (.a3, k=2): compatible = {s2}.
-
-private theorem s1Score_qLifted_a3_k2_silent :
-    s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩
-      (none : WithSilence QUtt) = ENNReal.ofReal (1/4 : ℝ) :=
-  s1Score_uniform_apply qMeaning .a3 ⟨2, by decide⟩ none 4 (by norm_num)
-    (by decide) extensionOf_qLifted_silent_card
-
-private theorem s1Score_qLifted_a3_k2_none :
-    s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩
-      (some QUtt.none_) = 0 :=
-  RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
-
-private theorem s1Score_qLifted_a3_k2_some :
-    s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩
-      (some QUtt.some_) = ENNReal.ofReal (1/3 : ℝ) :=
-  s1Score_uniform_apply qMeaning .a3 ⟨2, by decide⟩ (some QUtt.some_) 3 (by norm_num)
-    (by decide) extensionOf_qLifted_some_card
-
-private theorem s1Score_qLifted_a3_k2_all :
-    s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩
-      (some QUtt.all) = 0 :=
-  RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
-
-private theorem s1Score_lbLifted_a3_k2_silent :
-    s1Score (liftMeaning lbMeaning) 1 .a3 ⟨2, by decide⟩
-      (none : WithSilence NumUtt) = ENNReal.ofReal (1/4 : ℝ) :=
-  s1Score_uniform_apply lbMeaning .a3 ⟨2, by decide⟩ none 4 (by norm_num)
-    (by decide) extensionOf_lbLifted_silent_card
-
-private theorem s1Score_lbLifted_a3_k2_one :
-    s1Score (liftMeaning lbMeaning) 1 .a3 ⟨2, by decide⟩
-      (some NumUtt.one) = ENNReal.ofReal (1/3 : ℝ) :=
-  s1Score_uniform_apply lbMeaning .a3 ⟨2, by decide⟩ (some NumUtt.one) 3 (by norm_num)
-    (by decide) extensionOf_lbLifted_one_card
-
-private theorem s1Score_lbLifted_a3_k2_two :
-    s1Score (liftMeaning lbMeaning) 1 .a3 ⟨2, by decide⟩
-      (some NumUtt.two) = ENNReal.ofReal (1/2 : ℝ) :=
-  s1Score_uniform_apply lbMeaning .a3 ⟨2, by decide⟩ (some NumUtt.two) 2 (by norm_num)
-    (by decide) extensionOf_lbLifted_two_card
-
-private theorem s1Score_lbLifted_a3_k2_three :
-    s1Score (liftMeaning lbMeaning) 1 .a3 ⟨2, by decide⟩
-      (some NumUtt.three) = 0 :=
-  RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
-
--- (.a3, k=3): compatible = {s3}.
-
-private theorem s1Score_qLifted_a3_k3_silent :
-    s1Score (liftMeaning qMeaning) 1 .a3 ⟨3, by decide⟩
-      (none : WithSilence QUtt) = ENNReal.ofReal (1/4 : ℝ) :=
-  s1Score_uniform_apply qMeaning .a3 ⟨3, by decide⟩ none 4 (by norm_num)
-    (by decide) extensionOf_qLifted_silent_card
-
-private theorem s1Score_qLifted_a3_k3_none :
-    s1Score (liftMeaning qMeaning) 1 .a3 ⟨3, by decide⟩
-      (some QUtt.none_) = 0 :=
-  RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
-
-private theorem s1Score_qLifted_a3_k3_some :
-    s1Score (liftMeaning qMeaning) 1 .a3 ⟨3, by decide⟩
-      (some QUtt.some_) = ENNReal.ofReal (1/3 : ℝ) :=
-  s1Score_uniform_apply qMeaning .a3 ⟨3, by decide⟩ (some QUtt.some_) 3 (by norm_num)
-    (by decide) extensionOf_qLifted_some_card
-
-private theorem s1Score_qLifted_a3_k3_all :
-    s1Score (liftMeaning qMeaning) 1 .a3 ⟨3, by decide⟩
-      (some QUtt.all) = ENNReal.ofReal 1 := by
-  rw [s1Score_uniform_apply qMeaning .a3 ⟨3, by decide⟩ (some QUtt.all) 1 (by norm_num)
-    (by decide) extensionOf_qLifted_all_card]
-  norm_num
-
-private theorem s1Score_lbLifted_a3_k3_silent :
-    s1Score (liftMeaning lbMeaning) 1 .a3 ⟨3, by decide⟩
-      (none : WithSilence NumUtt) = ENNReal.ofReal (1/4 : ℝ) :=
-  s1Score_uniform_apply lbMeaning .a3 ⟨3, by decide⟩ none 4 (by norm_num)
-    (by decide) extensionOf_lbLifted_silent_card
-
-private theorem s1Score_lbLifted_a3_k3_one :
-    s1Score (liftMeaning lbMeaning) 1 .a3 ⟨3, by decide⟩
-      (some NumUtt.one) = ENNReal.ofReal (1/3 : ℝ) :=
-  s1Score_uniform_apply lbMeaning .a3 ⟨3, by decide⟩ (some NumUtt.one) 3 (by norm_num)
-    (by decide) extensionOf_lbLifted_one_card
-
-private theorem s1Score_lbLifted_a3_k3_two :
-    s1Score (liftMeaning lbMeaning) 1 .a3 ⟨3, by decide⟩
-      (some NumUtt.two) = ENNReal.ofReal (1/2 : ℝ) :=
-  s1Score_uniform_apply lbMeaning .a3 ⟨3, by decide⟩ (some NumUtt.two) 2 (by norm_num)
-    (by decide) extensionOf_lbLifted_two_card
-
-private theorem s1Score_lbLifted_a3_k3_three :
-    s1Score (liftMeaning lbMeaning) 1 .a3 ⟨3, by decide⟩
-      (some NumUtt.three) = ENNReal.ofReal 1 := by
-  rw [s1Score_uniform_apply lbMeaning .a3 ⟨3, by decide⟩ (some NumUtt.three) 1 (by norm_num)
-    (by decide) extensionOf_lbLifted_three_card]
-  norm_num
-
-/-! ### Partition functions -/
-
-private theorem sum_s1Score_qLifted_a1_k1 :
-    (∑' u : WithSilence QUtt, s1Score (liftMeaning qMeaning) 1 .a1 ⟨1, by decide⟩ u) =
-      ENNReal.ofReal (7/12 : ℝ) := by
-  rw [tsum_fintype, WithSilence_QUtt_sum_univ, s1Score_qLifted_a1_k1_silent,
-      s1Score_qLifted_a1_k1_none, s1Score_qLifted_a1_k1_some, s1Score_qLifted_a1_k1_all]
-  simp only [add_zero, zero_add]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1; norm_num
-
-private theorem sum_s1Score_lbLifted_a1_k1 :
-    (∑' u : WithSilence NumUtt, s1Score (liftMeaning lbMeaning) 1 .a1 ⟨1, by decide⟩ u) =
-      ENNReal.ofReal (7/12 : ℝ) := by
-  rw [tsum_fintype, WithSilence_NumUtt_sum_univ, s1Score_lbLifted_a1_k1_silent,
-      s1Score_lbLifted_a1_k1_one, s1Score_lbLifted_a1_k1_two, s1Score_lbLifted_a1_k1_three]
-  simp only [add_zero]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1; norm_num
-
-private theorem sum_s1Score_qLifted_a2_k1 :
-    (∑' u : WithSilence QUtt, s1Score (liftMeaning qMeaning) 1 .a2 ⟨1, by decide⟩ u) =
-      ENNReal.ofReal (7/12 : ℝ) := by
-  rw [tsum_fintype, WithSilence_QUtt_sum_univ, s1Score_qLifted_a2_k1_silent,
-      s1Score_qLifted_a2_k1_none, s1Score_qLifted_a2_k1_some, s1Score_qLifted_a2_k1_all]
-  simp only [add_zero, zero_add]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1; norm_num
-
-private theorem sum_s1Score_qLifted_a2_k2 :
-    (∑' u : WithSilence QUtt, s1Score (liftMeaning qMeaning) 1 .a2 ⟨2, by decide⟩ u) =
-      ENNReal.ofReal (7/12 : ℝ) := by
-  rw [tsum_fintype, WithSilence_QUtt_sum_univ, s1Score_qLifted_a2_k2_silent,
-      s1Score_qLifted_a2_k2_none, s1Score_qLifted_a2_k2_some, s1Score_qLifted_a2_k2_all]
-  simp only [add_zero, zero_add]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1; norm_num
-
-private theorem sum_s1Score_lbLifted_a2_k1 :
-    (∑' u : WithSilence NumUtt, s1Score (liftMeaning lbMeaning) 1 .a2 ⟨1, by decide⟩ u) =
-      ENNReal.ofReal (7/12 : ℝ) := by
-  rw [tsum_fintype, WithSilence_NumUtt_sum_univ, s1Score_lbLifted_a2_k1_silent,
-      s1Score_lbLifted_a2_k1_one, s1Score_lbLifted_a2_k1_two, s1Score_lbLifted_a2_k1_three]
-  simp only [add_zero]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1; norm_num
-
-private theorem sum_s1Score_lbLifted_a2_k2 :
-    (∑' u : WithSilence NumUtt, s1Score (liftMeaning lbMeaning) 1 .a2 ⟨2, by decide⟩ u) =
-      ENNReal.ofReal (13/12 : ℝ) := by
-  rw [tsum_fintype, WithSilence_NumUtt_sum_univ, s1Score_lbLifted_a2_k2_silent,
-      s1Score_lbLifted_a2_k2_one, s1Score_lbLifted_a2_k2_two, s1Score_lbLifted_a2_k2_three]
-  simp only [add_zero]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1; norm_num
-
-private theorem sum_s1Score_lbLifted_a3_k1 :
-    (∑' u : WithSilence NumUtt, s1Score (liftMeaning lbMeaning) 1 .a3 ⟨1, by decide⟩ u) =
-      ENNReal.ofReal (7/12 : ℝ) := by
-  rw [tsum_fintype, WithSilence_NumUtt_sum_univ, s1Score_lbLifted_a3_k1_silent,
-      s1Score_lbLifted_a3_k1_one, s1Score_lbLifted_a3_k1_two, s1Score_lbLifted_a3_k1_three]
-  simp only [add_zero]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1; norm_num
-
-private theorem sum_s1Score_qLifted_a3_k2 :
-    (∑' u : WithSilence QUtt, s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩ u) =
-      ENNReal.ofReal (7/12 : ℝ) := by
-  rw [tsum_fintype, WithSilence_QUtt_sum_univ, s1Score_qLifted_a3_k2_silent,
-      s1Score_qLifted_a3_k2_none, s1Score_qLifted_a3_k2_some, s1Score_qLifted_a3_k2_all]
-  simp only [add_zero, zero_add]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1; norm_num
-
-private theorem sum_s1Score_qLifted_a3_k3 :
-    (∑' u : WithSilence QUtt, s1Score (liftMeaning qMeaning) 1 .a3 ⟨3, by decide⟩ u) =
-      ENNReal.ofReal (19/12 : ℝ) := by
-  rw [tsum_fintype, WithSilence_QUtt_sum_univ, s1Score_qLifted_a3_k3_silent,
-      s1Score_qLifted_a3_k3_none, s1Score_qLifted_a3_k3_some, s1Score_qLifted_a3_k3_all]
-  simp only [add_zero, zero_add]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1; norm_num
-
-private theorem sum_s1Score_lbLifted_a3_k2 :
-    (∑' u : WithSilence NumUtt, s1Score (liftMeaning lbMeaning) 1 .a3 ⟨2, by decide⟩ u) =
-      ENNReal.ofReal (13/12 : ℝ) := by
-  rw [tsum_fintype, WithSilence_NumUtt_sum_univ, s1Score_lbLifted_a3_k2_silent,
-      s1Score_lbLifted_a3_k2_one, s1Score_lbLifted_a3_k2_two, s1Score_lbLifted_a3_k2_three]
-  simp only [add_zero]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1; norm_num
-
-private theorem sum_s1Score_lbLifted_a3_k3 :
-    (∑' u : WithSilence NumUtt, s1Score (liftMeaning lbMeaning) 1 .a3 ⟨3, by decide⟩ u) =
-      ENNReal.ofReal (25/12 : ℝ) := by
-  rw [tsum_fintype, WithSilence_NumUtt_sum_univ, s1Score_lbLifted_a3_k3_silent,
-      s1Score_lbLifted_a3_k3_one, s1Score_lbLifted_a3_k3_two, s1Score_lbLifted_a3_k3_three]
-  simp only [add_zero]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1; norm_num
-
-/-! ### `S1g` value table -/
-
-private theorem S1g_qLifted_a1_k0_some_eq_zero
-    (h0 : ∑' u, s1Score (liftMeaning qMeaning) 1 .a1 ⟨0, by decide⟩ u ≠ 0) :
-    S1g (liftMeaning qMeaning) 1 .a1 ⟨0, by decide⟩ h0 (some QUtt.some_) = 0 := by
-  rw [S1g, PMF.normalize_apply, s1Score_qLifted_a1_k0_some, zero_mul]
-
-private theorem S1g_qLifted_a1_k1_some_eq
-    (h0 : ∑' u, s1Score (liftMeaning qMeaning) 1 .a1 ⟨1, by decide⟩ u ≠ 0) :
-    S1g (liftMeaning qMeaning) 1 .a1 ⟨1, by decide⟩ h0 (some QUtt.some_) =
-      ENNReal.ofReal (4/7 : ℝ) := by
-  rw [S1g, PMF.normalize_apply, s1Score_qLifted_a1_k1_some, sum_s1Score_qLifted_a1_k1,
-      ← ENNReal.ofReal_inv_of_pos (by norm_num : (0 : ℝ) < 7/12),
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 1/3)]
-  congr 1; norm_num
-
-private theorem S1g_lbLifted_a1_k0_one_eq_zero
-    (h0 : ∑' u, s1Score (liftMeaning lbMeaning) 1 .a1 ⟨0, by decide⟩ u ≠ 0) :
-    S1g (liftMeaning lbMeaning) 1 .a1 ⟨0, by decide⟩ h0 (some NumUtt.one) = 0 := by
-  rw [S1g, PMF.normalize_apply, s1Score_lbLifted_a1_k0_one, zero_mul]
-
-private theorem S1g_lbLifted_a1_k1_one_eq
-    (h0 : ∑' u, s1Score (liftMeaning lbMeaning) 1 .a1 ⟨1, by decide⟩ u ≠ 0) :
-    S1g (liftMeaning lbMeaning) 1 .a1 ⟨1, by decide⟩ h0 (some NumUtt.one) =
-      ENNReal.ofReal (4/7 : ℝ) := by
-  rw [S1g, PMF.normalize_apply, s1Score_lbLifted_a1_k1_one, sum_s1Score_lbLifted_a1_k1,
-      ← ENNReal.ofReal_inv_of_pos (by norm_num : (0 : ℝ) < 7/12),
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 1/3)]
-  congr 1; norm_num
-
-private theorem S1g_qLifted_a2_k0_some_eq_zero
-    (h0 : ∑' u, s1Score (liftMeaning qMeaning) 1 .a2 ⟨0, by decide⟩ u ≠ 0) :
-    S1g (liftMeaning qMeaning) 1 .a2 ⟨0, by decide⟩ h0 (some QUtt.some_) = 0 := by
-  rw [S1g, PMF.normalize_apply, s1Score_qLifted_a2_k0_some, zero_mul]
-
-private theorem S1g_qLifted_a2_k1_some_eq
-    (h0 : ∑' u, s1Score (liftMeaning qMeaning) 1 .a2 ⟨1, by decide⟩ u ≠ 0) :
-    S1g (liftMeaning qMeaning) 1 .a2 ⟨1, by decide⟩ h0 (some QUtt.some_) =
-      ENNReal.ofReal (4/7 : ℝ) := by
-  rw [S1g, PMF.normalize_apply, s1Score_qLifted_a2_k1_some, sum_s1Score_qLifted_a2_k1,
-      ← ENNReal.ofReal_inv_of_pos (by norm_num : (0 : ℝ) < 7/12),
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 1/3)]
-  congr 1; norm_num
-
-private theorem S1g_qLifted_a2_k2_some_eq
-    (h0 : ∑' u, s1Score (liftMeaning qMeaning) 1 .a2 ⟨2, by decide⟩ u ≠ 0) :
-    S1g (liftMeaning qMeaning) 1 .a2 ⟨2, by decide⟩ h0 (some QUtt.some_) =
-      ENNReal.ofReal (4/7 : ℝ) := by
-  rw [S1g, PMF.normalize_apply, s1Score_qLifted_a2_k2_some, sum_s1Score_qLifted_a2_k2,
-      ← ENNReal.ofReal_inv_of_pos (by norm_num : (0 : ℝ) < 7/12),
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 1/3)]
-  congr 1; norm_num
-
-private theorem S1g_lbLifted_a2_k0_one_eq_zero
-    (h0 : ∑' u, s1Score (liftMeaning lbMeaning) 1 .a2 ⟨0, by decide⟩ u ≠ 0) :
-    S1g (liftMeaning lbMeaning) 1 .a2 ⟨0, by decide⟩ h0 (some NumUtt.one) = 0 := by
-  rw [S1g, PMF.normalize_apply, s1Score_lbLifted_a2_k0_one, zero_mul]
-
-private theorem S1g_lbLifted_a2_k0_two_eq_zero
-    (h0 : ∑' u, s1Score (liftMeaning lbMeaning) 1 .a2 ⟨0, by decide⟩ u ≠ 0) :
-    S1g (liftMeaning lbMeaning) 1 .a2 ⟨0, by decide⟩ h0 (some NumUtt.two) = 0 := by
-  rw [S1g, PMF.normalize_apply, s1Score_lbLifted_a2_k0_two, zero_mul]
-
-private theorem S1g_lbLifted_a2_k1_one_eq
-    (h0 : ∑' u, s1Score (liftMeaning lbMeaning) 1 .a2 ⟨1, by decide⟩ u ≠ 0) :
-    S1g (liftMeaning lbMeaning) 1 .a2 ⟨1, by decide⟩ h0 (some NumUtt.one) =
-      ENNReal.ofReal (4/7 : ℝ) := by
-  rw [S1g, PMF.normalize_apply, s1Score_lbLifted_a2_k1_one, sum_s1Score_lbLifted_a2_k1,
-      ← ENNReal.ofReal_inv_of_pos (by norm_num : (0 : ℝ) < 7/12),
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 1/3)]
-  congr 1; norm_num
-
-private theorem S1g_lbLifted_a2_k1_two_eq_zero
-    (h0 : ∑' u, s1Score (liftMeaning lbMeaning) 1 .a2 ⟨1, by decide⟩ u ≠ 0) :
-    S1g (liftMeaning lbMeaning) 1 .a2 ⟨1, by decide⟩ h0 (some NumUtt.two) = 0 := by
-  rw [S1g, PMF.normalize_apply, s1Score_lbLifted_a2_k1_two, zero_mul]
-
-private theorem S1g_lbLifted_a2_k2_one_eq
-    (h0 : ∑' u, s1Score (liftMeaning lbMeaning) 1 .a2 ⟨2, by decide⟩ u ≠ 0) :
-    S1g (liftMeaning lbMeaning) 1 .a2 ⟨2, by decide⟩ h0 (some NumUtt.one) =
-      ENNReal.ofReal (4/13 : ℝ) := by
-  rw [S1g, PMF.normalize_apply, s1Score_lbLifted_a2_k2_one, sum_s1Score_lbLifted_a2_k2,
-      ← ENNReal.ofReal_inv_of_pos (by norm_num : (0 : ℝ) < 13/12),
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 1/3)]
-  congr 1; norm_num
-
-private theorem S1g_lbLifted_a2_k2_two_eq
-    (h0 : ∑' u, s1Score (liftMeaning lbMeaning) 1 .a2 ⟨2, by decide⟩ u ≠ 0) :
-    S1g (liftMeaning lbMeaning) 1 .a2 ⟨2, by decide⟩ h0 (some NumUtt.two) =
-      ENNReal.ofReal (6/13 : ℝ) := by
-  rw [S1g, PMF.normalize_apply, s1Score_lbLifted_a2_k2_two, sum_s1Score_lbLifted_a2_k2,
-      ← ENNReal.ofReal_inv_of_pos (by norm_num : (0 : ℝ) < 13/12),
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 1/2)]
-  congr 1; norm_num
-
-/-! ### Observation-level cancellation (DPI)
-
-The paper's **cancellation principle** (informal): as the speaker's
-observation kernel becomes noisier, the listener's posterior moves closer to
-the prior. The universally provable structural content is observation-level:
-if the noisy kernel post-processes the informative one
-(`noise ∘ₖ κ_i`), the state–observation mutual information decreases — a
-per-state corollary of the data processing inequality
-(`InformationTheory.klDiv_comp_right_le`).
-
-The utterance-level form `MI(state; utt_n) ≤ MI(state; utt_i)` is NOT a
-clean DPI corollary: the noisy and informative utterances share the
-observation as a common parent, so there is no Markov chain
-`state → utt_i → utt_n`. The per-(world-pair) orderings in the findings
-below are numerical evaluations of the model, not corollaries of this
-theorem. -/
-
-section Cancellation
-
-open InformationTheory MeasureTheory ProbabilityTheory
-open scoped ProbabilityTheory
-
-variable {W Obs : Type*} [Fintype W] [MeasurableSpace W] [MeasurableSpace Obs]
-
-/-- Per-state-decomposed mutual information between state and observation:
-`MI(state; obs) = ∑ s, prior {s} · KL(κ s ‖ κ ∘ₘ prior)` — the
-conditional-relative-entropy form, which is what makes the per-state DPI
-argument applicable. -/
-noncomputable def mutualInfoStateObs (prior : Measure W) (κ : Kernel W Obs) : ℝ≥0∞ :=
-  ∑ s, prior {s} * klDiv (κ s) (κ ∘ₘ prior)
-
-/-- **Observation-level cancellation (DPI form)**: post-processing the
-observation kernel through a noise channel decreases the mutual information
-between state and observation. -/
-theorem mutualInfoStateObs_comp_le (prior : Measure W) [IsFiniteMeasure prior]
-    (κ_i : Kernel W Obs) [IsMarkovKernel κ_i] (noise : Kernel Obs Obs) [IsMarkovKernel noise] :
-    mutualInfoStateObs prior (noise ∘ₖ κ_i) ≤ mutualInfoStateObs prior κ_i := by
-  unfold mutualInfoStateObs
-  simp_rw [← Measure.comp_assoc, Kernel.comp_apply]
-  gcongr with s
-  exact klDiv_comp_right_le _ _ noise
-
-end Cancellation
-
-/-! ### Findings
-
-The 11 paper findings, stated against `WithSilence` + `liftMeaning` so the
-cover hypothesis is automatically satisfied via `cover_silent`.
-
-These cells are computational evaluations of the model at specific
-(meaning, access, world-pair, utterance) tuples, in the paper's expository
-regime (α = 1, uniform prior), not the fitted regime (higher α, non-uniform
-prior). Where the fitted model predicts only a marginal implicature
-(access 2), directions can differ from the plotted predictions.
-
-**They are NOT corollaries of a single information-theoretic cancellation
-theorem.** The provable structural content is `mutualInfoStateObs_comp_le`
-above; the per-(world-pair) orderings these cells encode are utterance-level
-claims that depend on the specific lex shape, not just on kernel
-informativity. -/
-
-/-- Finding 1: at full access, `some` favors `s2 > s3` (scalar implicature). -/
-theorem some_full_implicature
-    (hMarg : PMF.marginal
-              (fun w => marginalSpeaker (liftMeaning qMeaning) 1 .a3 w
-                          (cover_silent qMeaning .a3))
-              worldPrior (some QUtt.some_) ≠ 0) :
-    (L1 (liftMeaning qMeaning) 1 .a3 (cover_silent qMeaning .a3)
-        (some QUtt.some_) hMarg) .s2 >
-    (L1 (liftMeaning qMeaning) 1 .a3 (cover_silent qMeaning .a3)
-        (some QUtt.some_) hMarg) .s3 := by
-  unfold L1 worldPrior
-  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform,
-      marginalSpeaker_a3_apply, marginalSpeaker_a3_apply]
-  show (PMF.normalize (s1Score (liftMeaning qMeaning) 1 .a3 ⟨3, by decide⟩) _ _)
-        (some QUtt.some_) <
-       (PMF.normalize (s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩) _ _)
-        (some QUtt.some_)
-  apply PMF.normalize_lt_of_apply_eq_of_sum_lt (a := some QUtt.some_)
-  · rw [s1Score_qLifted_a3_k3_some, s1Score_qLifted_a3_k2_some]
-  · rw [s1Score_qLifted_a3_k2_some]
-    exact (ENNReal.ofReal_pos.mpr (by norm_num)).ne'
-  · rw [s1Score_qLifted_a3_k2_some]
-    exact ENNReal.ofReal_ne_top
-  · rw [sum_s1Score_qLifted_a3_k2, sum_s1Score_qLifted_a3_k3]
-    exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
-
-/-- Finding 4: at full access, `two` favors `s2 > s3` (upper-bounded reading). -/
-theorem two_full_upper_bounded
-    (hMarg : PMF.marginal
-              (fun w => marginalSpeaker (liftMeaning lbMeaning) 1 .a3 w
-                          (cover_silent lbMeaning .a3))
-              worldPrior (some NumUtt.two) ≠ 0) :
-    (L1 (liftMeaning lbMeaning) 1 .a3 (cover_silent lbMeaning .a3)
-        (some NumUtt.two) hMarg) .s2 >
-    (L1 (liftMeaning lbMeaning) 1 .a3 (cover_silent lbMeaning .a3)
-        (some NumUtt.two) hMarg) .s3 := by
-  unfold L1 worldPrior
-  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform,
-      marginalSpeaker_a3_apply, marginalSpeaker_a3_apply]
-  show (PMF.normalize (s1Score (liftMeaning lbMeaning) 1 .a3 ⟨3, by decide⟩) _ _)
-        (some NumUtt.two) <
-       (PMF.normalize (s1Score (liftMeaning lbMeaning) 1 .a3 ⟨2, by decide⟩) _ _)
-        (some NumUtt.two)
-  apply PMF.normalize_lt_of_apply_eq_of_sum_lt (a := some NumUtt.two)
-  · rw [s1Score_lbLifted_a3_k3_two, s1Score_lbLifted_a3_k2_two]
-  · rw [s1Score_lbLifted_a3_k2_two]
-    exact (ENNReal.ofReal_pos.mpr (by norm_num)).ne'
-  · rw [s1Score_lbLifted_a3_k2_two]
-    exact ENNReal.ofReal_ne_top
-  · rw [sum_s1Score_lbLifted_a3_k2, sum_s1Score_lbLifted_a3_k3]
-    exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
-
-/-- Finding 6: at full access, `one` favors `s1 > s2`. -/
-theorem one_full_1v2
-    (hMarg : PMF.marginal
-              (fun w => marginalSpeaker (liftMeaning lbMeaning) 1 .a3 w
-                          (cover_silent lbMeaning .a3))
-              worldPrior (some NumUtt.one) ≠ 0) :
-    (L1 (liftMeaning lbMeaning) 1 .a3 (cover_silent lbMeaning .a3)
-        (some NumUtt.one) hMarg) .s1 >
-    (L1 (liftMeaning lbMeaning) 1 .a3 (cover_silent lbMeaning .a3)
-        (some NumUtt.one) hMarg) .s2 := by
-  unfold L1 worldPrior
-  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform,
-      marginalSpeaker_a3_apply, marginalSpeaker_a3_apply]
-  show (PMF.normalize (s1Score (liftMeaning lbMeaning) 1 .a3 ⟨2, by decide⟩) _ _)
-        (some NumUtt.one) <
-       (PMF.normalize (s1Score (liftMeaning lbMeaning) 1 .a3 ⟨1, by decide⟩) _ _)
-        (some NumUtt.one)
-  apply PMF.normalize_lt_of_apply_eq_of_sum_lt (a := some NumUtt.one)
-  · rw [s1Score_lbLifted_a3_k2_one, s1Score_lbLifted_a3_k1_one]
-  · rw [s1Score_lbLifted_a3_k1_one]
-    exact (ENNReal.ofReal_pos.mpr (by norm_num)).ne'
-  · rw [s1Score_lbLifted_a3_k1_one]
-    exact ENNReal.ofReal_ne_top
-  · rw [sum_s1Score_lbLifted_a3_k1, sum_s1Score_lbLifted_a3_k2]
-    exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
-
-/-- Finding 7: at full access, `one` favors `s1 > s3`. -/
-theorem one_full_1v3
-    (hMarg : PMF.marginal
-              (fun w => marginalSpeaker (liftMeaning lbMeaning) 1 .a3 w
-                          (cover_silent lbMeaning .a3))
-              worldPrior (some NumUtt.one) ≠ 0) :
-    (L1 (liftMeaning lbMeaning) 1 .a3 (cover_silent lbMeaning .a3)
-        (some NumUtt.one) hMarg) .s1 >
-    (L1 (liftMeaning lbMeaning) 1 .a3 (cover_silent lbMeaning .a3)
-        (some NumUtt.one) hMarg) .s3 := by
-  unfold L1 worldPrior
-  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform,
-      marginalSpeaker_a3_apply, marginalSpeaker_a3_apply]
-  show (PMF.normalize (s1Score (liftMeaning lbMeaning) 1 .a3 ⟨3, by decide⟩) _ _)
-        (some NumUtt.one) <
-       (PMF.normalize (s1Score (liftMeaning lbMeaning) 1 .a3 ⟨1, by decide⟩) _ _)
-        (some NumUtt.one)
-  apply PMF.normalize_lt_of_apply_eq_of_sum_lt (a := some NumUtt.one)
-  · rw [s1Score_lbLifted_a3_k3_one, s1Score_lbLifted_a3_k1_one]
-  · rw [s1Score_lbLifted_a3_k1_one]
-    exact (ENNReal.ofReal_pos.mpr (by norm_num)).ne'
-  · rw [s1Score_lbLifted_a3_k1_one]
-    exact ENNReal.ofReal_ne_top
-  · rw [sum_s1Score_lbLifted_a3_k1, sum_s1Score_lbLifted_a3_k3]
-    exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
-
-/-! #### `.a1` minimal-access findings
-
-Each shows `marginalSpeaker (smaller-state) ≤ marginalSpeaker (larger-state)`,
-so `¬ L1 (smaller) > L1 (larger)`. At (.a1, k=0) the target utterance has
-`S1g = 0` (qOk fails); at (.a1, k=1) it has `S1g = 4/7`. So the comparison
-reduces to `obsKernel(smaller)(k=1) ≤ obsKernel(larger)(k=1)`. -/
-
-/-- Finding 2: at minimal access, `some` does NOT favor `s2 > s3`. -/
-theorem some_minimal_canceled
-    (hMarg : PMF.marginal
-              (fun w => marginalSpeaker (liftMeaning qMeaning) 1 .a1 w
-                          (cover_silent qMeaning .a1))
-              worldPrior (some QUtt.some_) ≠ 0) :
-    ¬ ((L1 (liftMeaning qMeaning) 1 .a1 (cover_silent qMeaning .a1)
-        (some QUtt.some_) hMarg) .s2 >
-       (L1 (liftMeaning qMeaning) 1 .a1 (cover_silent qMeaning .a1)
-        (some QUtt.some_) hMarg) .s3) := by
-  rw [gt_iff_lt, not_lt]
-  unfold L1 worldPrior
-  rw [PMF.posterior_le_iff_kernel_le_of_uniform,
-      marginalSpeaker_a1_apply, marginalSpeaker_a1_apply,
-      S1g_qLifted_a1_k0_some_eq_zero, S1g_qLifted_a1_k1_some_eq,
-      obsKernel_a1_s2_k1, obsKernel_a1_s3_k1]
-  simp only [mul_zero, zero_add, one_mul]
-  rw [← ENNReal.ofReal_mul (by norm_num)]
-  exact ENNReal.ofReal_le_ofReal (by norm_num)
-
-/-- Finding 8: at minimal access, `one` does NOT favor `s1 > s2`. -/
-theorem one_minimal_1v2_canceled
-    (hMarg : PMF.marginal
-              (fun w => marginalSpeaker (liftMeaning lbMeaning) 1 .a1 w
-                          (cover_silent lbMeaning .a1))
-              worldPrior (some NumUtt.one) ≠ 0) :
-    ¬ ((L1 (liftMeaning lbMeaning) 1 .a1 (cover_silent lbMeaning .a1)
-        (some NumUtt.one) hMarg) .s1 >
-       (L1 (liftMeaning lbMeaning) 1 .a1 (cover_silent lbMeaning .a1)
-        (some NumUtt.one) hMarg) .s2) := by
-  rw [gt_iff_lt, not_lt]
-  unfold L1 worldPrior
-  rw [PMF.posterior_le_iff_kernel_le_of_uniform,
-      marginalSpeaker_a1_apply, marginalSpeaker_a1_apply,
-      S1g_lbLifted_a1_k0_one_eq_zero, S1g_lbLifted_a1_k1_one_eq,
-      obsKernel_a1_s1_k1, obsKernel_a1_s2_k1]
-  simp only [mul_zero, zero_add]
-  rw [← ENNReal.ofReal_mul (by norm_num), ← ENNReal.ofReal_mul (by norm_num)]
-  exact ENNReal.ofReal_le_ofReal (by norm_num)
-
-/-- Finding 9: at minimal access, `one` does NOT favor `s1 > s3`. -/
-theorem one_minimal_1v3_canceled
-    (hMarg : PMF.marginal
-              (fun w => marginalSpeaker (liftMeaning lbMeaning) 1 .a1 w
-                          (cover_silent lbMeaning .a1))
-              worldPrior (some NumUtt.one) ≠ 0) :
-    ¬ ((L1 (liftMeaning lbMeaning) 1 .a1 (cover_silent lbMeaning .a1)
-        (some NumUtt.one) hMarg) .s1 >
-       (L1 (liftMeaning lbMeaning) 1 .a1 (cover_silent lbMeaning .a1)
-        (some NumUtt.one) hMarg) .s3) := by
-  rw [gt_iff_lt, not_lt]
-  unfold L1 worldPrior
-  rw [PMF.posterior_le_iff_kernel_le_of_uniform,
-      marginalSpeaker_a1_apply, marginalSpeaker_a1_apply,
-      S1g_lbLifted_a1_k0_one_eq_zero, S1g_lbLifted_a1_k1_one_eq,
-      obsKernel_a1_s1_k1, obsKernel_a1_s3_k1]
-  simp only [mul_zero, zero_add, one_mul]
-  rw [← ENNReal.ofReal_mul (by norm_num)]
-  exact ENNReal.ofReal_le_ofReal (by norm_num)
-
-/-! #### `.a2` partial-access findings -/
-
-/-- Finding 3: at partial access, `some` does NOT favor `s2 > s3` (equality). -/
-theorem some_partial_canceled
-    (hMarg : PMF.marginal
-              (fun w => marginalSpeaker (liftMeaning qMeaning) 1 .a2 w
-                          (cover_silent qMeaning .a2))
-              worldPrior (some QUtt.some_) ≠ 0) :
-    ¬ ((L1 (liftMeaning qMeaning) 1 .a2 (cover_silent qMeaning .a2)
-        (some QUtt.some_) hMarg) .s2 >
-       (L1 (liftMeaning qMeaning) 1 .a2 (cover_silent qMeaning .a2)
-        (some QUtt.some_) hMarg) .s3) := by
-  rw [gt_iff_lt, not_lt]
-  unfold L1 worldPrior
-  rw [PMF.posterior_le_iff_kernel_le_of_uniform,
-      marginalSpeaker_a2_apply, marginalSpeaker_a2_apply,
-      S1g_qLifted_a2_k0_some_eq_zero, S1g_qLifted_a2_k1_some_eq, S1g_qLifted_a2_k2_some_eq,
-      obsKernel_a2_s2_k1, obsKernel_a2_s2_k2, obsKernel_a2_s3_k2,
-      obsKernel_a2_s3_k1_zero, obsKernel_a2_s2_k0_zero, obsKernel_a2_s3_k0_zero]
-  simp only [mul_zero, zero_mul, zero_add, add_zero, one_mul]
-  rw [← ENNReal.ofReal_mul (by norm_num), ← ENNReal.ofReal_mul (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  exact ENNReal.ofReal_le_ofReal (by norm_num)
-
-/-- Finding 5: at partial access, `two` does NOT favor `s2 > s3` (weakened). -/
-theorem two_partial_weakened
-    (hMarg : PMF.marginal
-              (fun w => marginalSpeaker (liftMeaning lbMeaning) 1 .a2 w
-                          (cover_silent lbMeaning .a2))
-              worldPrior (some NumUtt.two) ≠ 0) :
-    ¬ ((L1 (liftMeaning lbMeaning) 1 .a2 (cover_silent lbMeaning .a2)
-        (some NumUtt.two) hMarg) .s2 >
-       (L1 (liftMeaning lbMeaning) 1 .a2 (cover_silent lbMeaning .a2)
-        (some NumUtt.two) hMarg) .s3) := by
-  rw [gt_iff_lt, not_lt]
-  unfold L1 worldPrior
-  rw [PMF.posterior_le_iff_kernel_le_of_uniform,
-      marginalSpeaker_a2_apply, marginalSpeaker_a2_apply,
-      S1g_lbLifted_a2_k0_two_eq_zero, S1g_lbLifted_a2_k1_two_eq_zero,
-      S1g_lbLifted_a2_k2_two_eq,
-      obsKernel_a2_s2_k2, obsKernel_a2_s3_k2]
-  simp only [mul_zero, zero_add, add_zero, one_mul]
-  rw [← ENNReal.ofReal_mul (by norm_num)]
-  exact ENNReal.ofReal_le_ofReal (by norm_num)
-
-/-- Finding 10 (HEADLINE): at partial access, `one` favors `s1 > s3`. -/
-theorem one_partial_1v3
-    (hMarg : PMF.marginal
-              (fun w => marginalSpeaker (liftMeaning lbMeaning) 1 .a2 w
-                          (cover_silent lbMeaning .a2))
-              worldPrior (some NumUtt.one) ≠ 0) :
-    (L1 (liftMeaning lbMeaning) 1 .a2 (cover_silent lbMeaning .a2)
-        (some NumUtt.one) hMarg) .s1 >
-    (L1 (liftMeaning lbMeaning) 1 .a2 (cover_silent lbMeaning .a2)
-        (some NumUtt.one) hMarg) .s3 := by
-  unfold L1 worldPrior
-  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform,
-      marginalSpeaker_a2_apply, marginalSpeaker_a2_apply,
-      S1g_lbLifted_a2_k0_one_eq_zero, S1g_lbLifted_a2_k1_one_eq, S1g_lbLifted_a2_k2_one_eq,
-      obsKernel_a2_s3_k2, obsKernel_a2_s1_k1,
-      obsKernel_a2_s3_k1_zero, obsKernel_a2_s1_k2_zero]
-  simp only [mul_zero, zero_mul, zero_add, add_zero, one_mul]
-  rw [← ENNReal.ofReal_mul (by norm_num)]
-  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
-
-/-- Finding 11: at partial access, `one` does NOT favor `s1 > s2`. -/
-theorem one_partial_1v2_canceled
-    (hMarg : PMF.marginal
-              (fun w => marginalSpeaker (liftMeaning lbMeaning) 1 .a2 w
-                          (cover_silent lbMeaning .a2))
-              worldPrior (some NumUtt.one) ≠ 0) :
-    ¬ ((L1 (liftMeaning lbMeaning) 1 .a2 (cover_silent lbMeaning .a2)
-        (some NumUtt.one) hMarg) .s1 >
-       (L1 (liftMeaning lbMeaning) 1 .a2 (cover_silent lbMeaning .a2)
-        (some NumUtt.one) hMarg) .s2) := by
-  rw [gt_iff_lt, not_lt]
-  unfold L1 worldPrior
-  rw [PMF.posterior_le_iff_kernel_le_of_uniform,
-      marginalSpeaker_a2_apply, marginalSpeaker_a2_apply,
-      S1g_lbLifted_a2_k0_one_eq_zero, S1g_lbLifted_a2_k1_one_eq, S1g_lbLifted_a2_k2_one_eq,
-      obsKernel_a2_s1_k1, obsKernel_a2_s2_k1, obsKernel_a2_s2_k2,
-      obsKernel_a2_s1_k2_zero]
-  simp only [mul_zero, zero_mul, zero_add, add_zero]
-  rw [← ENNReal.ofReal_mul (by norm_num), ← ENNReal.ofReal_mul (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  exact ENNReal.ofReal_le_ofReal (by norm_num)
+/-! ### The predictions of section 1.1, for every rationality -/
+
+section Findings
+
+variable {α : ℝ}
+
+/-- The extension sizes and Quality decisions the findings need. -/
+private theorem qCells :
+    (ext qMeaning .none_).card = 1 ∧ (ext qMeaning .some_).card = 3 ∧
+      (ext qMeaning .all).card = 1 ∧ (ext lbMeaning .one).card = 3 ∧
+      (ext lbMeaning .two).card = 2 ∧ (ext lbMeaning .three).card = 1 := by
+  decide
+
+/-- The speaker's real probability of an utterance at a state, expanded over the observations
+and the alternatives. -/
+private theorem speaker_real_q (a : Access) (s : WorldState) (u : QUtt) :
+    (speaker qMeaning α a s).real {u} =
+      ∑ k, ((hyper a s k : ℝ) / ∑ k', (hyper a s k' : ℝ)) *
+        ((if Quality qMeaning a k u then ((ext qMeaning u).card : ℝ)⁻¹ ^ α else 0) /
+          ∑ u', if Quality qMeaning a k u' then ((ext qMeaning u').card : ℝ)⁻¹ ^ α else 0) := by
+  simp only [speaker_real_singleton, obs_real_singleton, obsSpeaker_real_singleton]
+
+private theorem speaker_real_lb (a : Access) (s : WorldState) (u : NumUtt) :
+    (speaker lbMeaning α a s).real {u} =
+      ∑ k, ((hyper a s k : ℝ) / ∑ k', (hyper a s k' : ℝ)) *
+        ((if Quality lbMeaning a k u then ((ext lbMeaning u).card : ℝ)⁻¹ ^ α else 0) /
+          ∑ u', if Quality lbMeaning a k u' then ((ext lbMeaning u').card : ℝ)⁻¹ ^ α else 0) := by
+  simp only [speaker_real_singleton, obs_real_singleton, obsSpeaker_real_singleton]
+
+/-- The weights `|⟦u⟧|^{-α}` of an extension of three states and of two, `x = 3^{-α}` and
+`y = 2^{-α}`, with `0 < x < y < 1`. -/
+private theorem xy (hα : 0 < α) :
+    (1 / 3 : ℝ) ^ α ≠ 0 ∧ 0 < (1 / 3 : ℝ) ^ α ∧ (1 / 3 : ℝ) ^ α < (1 / 2 : ℝ) ^ α ∧
+      (1 / 2 : ℝ) ^ α < 1 :=
+  have hx : 0 < (1 / 3 : ℝ) ^ α := Real.rpow_pos_of_pos (by norm_num) α
+  ⟨hx.ne', hx, Real.rpow_lt_rpow (by norm_num) (by norm_num) hα,
+    Real.rpow_lt_one (by norm_num) (by norm_num) hα⟩
+
+/-- With complete access, *some* is read as *some but not all*: the state with two objects is
+more probable than the state with three, since at three the speaker would rather say *all*. -/
+theorem some_full (hα : 0 < α) :
+    (listener qMeaning α 3 .some_).real {3} < (listener qMeaning α 3 .some_).real {2} := by
+  obtain ⟨hx0, hx, hxy, hy1⟩ := xy hα
+  obtain ⟨h1, h2, h3, -, -, -⟩ := qCells
+  have e2 : (speaker qMeaning α 3 2).real {.some_} = 1 := by
+    rw [speaker_real_q]
+    simp +decide only [Fin.sum_univ_four, QUtt.sum_univ, hyper, h1, h2, h3]
+    norm_num [hx0]
+  have e3 : (speaker qMeaning α 3 3).real {.some_} = (1 / 3 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + 1) := by
+    rw [speaker_real_q]
+    simp +decide only [Fin.sum_univ_four, QUtt.sum_univ, hyper, h1, h2, h3]
+    norm_num [hx0]
+  rw [listener_real_lt_iff (comp_ne_zero_of_real_pos (s := 2) (by rw [e2]; norm_num)), e2, e3,
+    div_lt_one (by positivity)]
+  linarith
+
+/-- With access to one or two objects the implicature is canceled: the state with two objects
+is not more probable than the state with three, since a speaker who has seen one or two
+objects with the property can say nothing stronger than *some* whatever the state. -/
+theorem some_partial (hα : 0 < α) :
+    ¬ (listener qMeaning α 1 .some_).real {3} < (listener qMeaning α 1 .some_).real {2} ∧
+      ¬ (listener qMeaning α 2 .some_).real {3} < (listener qMeaning α 2 .some_).real {2} := by
+  obtain ⟨hx0, hx, hxy, hy1⟩ := xy hα
+  obtain ⟨h1, h2, h3, -, -, -⟩ := qCells
+  have a12 : (speaker qMeaning α 1 2).real {.some_} = 2 / 3 := by
+    rw [speaker_real_q]
+    simp +decide only [Fin.sum_univ_four, QUtt.sum_univ, hyper, h1, h2, h3]
+    norm_num [hx0]
+  have a13 : (speaker qMeaning α 1 3).real {.some_} = 1 := by
+    rw [speaker_real_q]
+    simp +decide only [Fin.sum_univ_four, QUtt.sum_univ, hyper, h1, h2, h3]
+    norm_num [hx0]
+  have a22 : (speaker qMeaning α 2 2).real {.some_} = 1 := by
+    rw [speaker_real_q]
+    simp +decide only [Fin.sum_univ_four, QUtt.sum_univ, hyper, h1, h2, h3]
+    norm_num [hx0]
+  have a23 : (speaker qMeaning α 2 3).real {.some_} = 1 := by
+    rw [speaker_real_q]
+    simp +decide only [Fin.sum_univ_four, QUtt.sum_univ, hyper, h1, h2, h3]
+    norm_num [hx0]
+  constructor
+  · rw [listener_real_lt_iff (comp_ne_zero_of_real_pos (s := 3) (by rw [a13]; norm_num)), a12,
+      a13]
+    norm_num
+  · rw [listener_real_lt_iff (comp_ne_zero_of_real_pos (s := 3) (by rw [a23]; norm_num)), a22,
+      a23]
+    exact lt_irrefl _
+
+/-- With complete access the numerals get their exact readings: after *two* the state with two
+objects beats the state with three, and after *one* the state with one beats both others. -/
+theorem numerals_full (hα : 0 < α) :
+    (listener lbMeaning α 3 .two).real {3} < (listener lbMeaning α 3 .two).real {2} ∧
+      (listener lbMeaning α 3 .one).real {2} < (listener lbMeaning α 3 .one).real {1} ∧
+      (listener lbMeaning α 3 .one).real {3} < (listener lbMeaning α 3 .one).real {1} := by
+  obtain ⟨hx0, hx, hxy, hy1⟩ := xy hα
+  obtain ⟨-, -, -, h4, h5, h6⟩ := qCells
+  have hy0 : (1 / 2 : ℝ) ^ α ≠ 0 := (hx.trans hxy).ne'
+  have t2 : (speaker lbMeaning α 3 2).real {.two} =
+      (1 / 2 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + (1 / 2 : ℝ) ^ α) := by
+    rw [speaker_real_lb]
+    simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
+    norm_num [hx0, hy0]
+  have t3 : (speaker lbMeaning α 3 3).real {.two} =
+      (1 / 2 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + (1 / 2 : ℝ) ^ α + 1) := by
+    rw [speaker_real_lb]
+    simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
+    norm_num [hx0, hy0]
+  have o1 : (speaker lbMeaning α 3 1).real {.one} = 1 := by
+    rw [speaker_real_lb]
+    simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
+    norm_num [hx0, hy0]
+  have o2 : (speaker lbMeaning α 3 2).real {.one} =
+      (1 / 3 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + (1 / 2 : ℝ) ^ α) := by
+    rw [speaker_real_lb]
+    simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
+    norm_num [hx0, hy0]
+  have o3 : (speaker lbMeaning α 3 3).real {.one} =
+      (1 / 3 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + (1 / 2 : ℝ) ^ α + 1) := by
+    rw [speaker_real_lb]
+    simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
+    norm_num [hx0, hy0]
+  refine ⟨?_, ?_, ?_⟩
+  · rw [listener_real_lt_iff (comp_ne_zero_of_real_pos (s := 2) (by rw [t2]; positivity)), t2,
+      t3]
+    exact div_lt_div_of_pos_left (by positivity) (by positivity) (by linarith)
+  · rw [listener_real_lt_iff (comp_ne_zero_of_real_pos (s := 1) (by rw [o1]; norm_num)), o1,
+      o2, div_lt_one (by positivity)]
+    linarith
+  · rw [listener_real_lt_iff (comp_ne_zero_of_real_pos (s := 1) (by rw [o1]; norm_num)), o1,
+      o3, div_lt_one (by positivity)]
+    linarith
+
+/-- After seeing one object, *one* carries no implicature: the state with one object beats
+neither the state with two nor the state with three. -/
+theorem one_minimal (hα : 0 < α) :
+    ¬ (listener lbMeaning α 1 .one).real {2} < (listener lbMeaning α 1 .one).real {1} ∧
+      ¬ (listener lbMeaning α 1 .one).real {3} < (listener lbMeaning α 1 .one).real {1} := by
+  obtain ⟨hx0, hx, hxy, hy1⟩ := xy hα
+  obtain ⟨-, -, -, h4, h5, h6⟩ := qCells
+  have hy0 : (1 / 2 : ℝ) ^ α ≠ 0 := (hx.trans hxy).ne'
+  have v1 : (speaker lbMeaning α 1 1).real {.one} = 1 / 3 := by
+    rw [speaker_real_lb]
+    simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
+    norm_num [hx0, hy0]
+  have v2 : (speaker lbMeaning α 1 2).real {.one} = 2 / 3 := by
+    rw [speaker_real_lb]
+    simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
+    norm_num [hx0, hy0]
+  have v3 : (speaker lbMeaning α 1 3).real {.one} = 1 := by
+    rw [speaker_real_lb]
+    simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
+    norm_num [hx0, hy0]
+  constructor
+  · rw [listener_real_lt_iff (comp_ne_zero_of_real_pos (s := 3) (by rw [v3]; norm_num)), v1, v2]
+    norm_num
+  · rw [listener_real_lt_iff (comp_ne_zero_of_real_pos (s := 3) (by rw [v3]; norm_num)), v1, v3]
+    norm_num
+
+/-- After seeing two objects, *two* carries no implicature: the state with two objects does not
+beat the state with three, since the speaker could only have seen both objects with the
+property in either. -/
+theorem two_partial (hα : 0 < α) :
+    ¬ (listener lbMeaning α 2 .two).real {3} < (listener lbMeaning α 2 .two).real {2} := by
+  obtain ⟨hx0, hx, hxy, hy1⟩ := xy hα
+  obtain ⟨-, -, -, h4, h5, h6⟩ := qCells
+  have hy0 : (1 / 2 : ℝ) ^ α ≠ 0 := (hx.trans hxy).ne'
+  have v2 : (speaker lbMeaning α 2 2).real {.two} =
+      1 / 3 * ((1 / 2 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + (1 / 2 : ℝ) ^ α)) := by
+    rw [speaker_real_lb]
+    simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
+    norm_num [hx0, hy0]
+  have v3 : (speaker lbMeaning α 2 3).real {.two} =
+      (1 / 2 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + (1 / 2 : ℝ) ^ α) := by
+    rw [speaker_real_lb]
+    simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
+    norm_num [hx0, hy0]
+  rw [listener_real_lt_iff (comp_ne_zero_of_real_pos (s := 3) (by rw [v3]; positivity)), v2, v3,
+    not_lt]
+  have : 0 ≤ (1 / 2 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + (1 / 2 : ℝ) ^ α) := by positivity
+  linarith
+
+/-- After seeing two objects, *one* keeps a partial implicature: the state with one object beats
+the state with three, where the speaker who saw both would have preferred *two*, but not the
+state with two, where she may have seen only one. -/
+theorem one_partial (hα : 0 < α) :
+    (listener lbMeaning α 2 .one).real {3} < (listener lbMeaning α 2 .one).real {1} ∧
+      ¬ (listener lbMeaning α 2 .one).real {2} < (listener lbMeaning α 2 .one).real {1} := by
+  obtain ⟨hx0, hx, hxy, hy1⟩ := xy hα
+  obtain ⟨-, -, -, h4, h5, h6⟩ := qCells
+  have hy0 : (1 / 2 : ℝ) ^ α ≠ 0 := (hx.trans hxy).ne'
+  have v1 : (speaker lbMeaning α 2 1).real {.one} = 2 / 3 := by
+    rw [speaker_real_lb]
+    simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
+    norm_num [hx0, hy0]
+  have v2 : (speaker lbMeaning α 2 2).real {.one} =
+      2 / 3 + 1 / 3 * ((1 / 3 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + (1 / 2 : ℝ) ^ α)) := by
+    rw [speaker_real_lb]
+    simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
+    norm_num [hx0, hy0]
+  have v3 : (speaker lbMeaning α 2 3).real {.one} =
+      (1 / 3 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + (1 / 2 : ℝ) ^ α) := by
+    rw [speaker_real_lb]
+    simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
+    norm_num [hx0, hy0]
+  have hp : (1 / 3 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + (1 / 2 : ℝ) ^ α) < 1 / 2 := by
+    rw [div_lt_iff₀ (by positivity)]; linarith
+  constructor
+  · rw [listener_real_lt_iff (comp_ne_zero_of_real_pos (s := 1) (by rw [v1]; norm_num)), v1, v3]
+    linarith
+  · rw [listener_real_lt_iff (comp_ne_zero_of_real_pos (s := 1) (by rw [v1]; norm_num)), v1, v2,
+      not_lt]
+    have : 0 ≤ (1 / 3 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + (1 / 2 : ℝ) ^ α) := by positivity
+    linarith
+
+end Findings
 
 end GoodmanStuhlmuller2013
