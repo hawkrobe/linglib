@@ -1,0 +1,110 @@
+[
+  {
+    "id": "hallevauxwolfe2000_ex44a",
+    "source": {
+      "bibkey": "halle-vaux-wolfe-2000",
+      "paperLabel": "(44a)"
+    },
+    "language": "iris1253",
+    "primaryText": "dʲekʲhʲinʲ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I would see",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2.4"
+      ],
+      [
+        "phenomenon",
+        "dorsalAssimilation"
+      ]
+    ],
+    "comment": "The palatalised coronal nasal before assimilation."
+  },
+  {
+    "id": "hallevauxwolfe2000_ex44a-ii",
+    "source": {
+      "bibkey": "halle-vaux-wolfe-2000",
+      "paperLabel": "(44a-ii)"
+    },
+    "language": "iris1253",
+    "primaryText": "dʲekʲhʲiŋʲ gan eː",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I would see without it",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2.4"
+      ],
+      [
+        "phenomenon",
+        "dorsalAssimilation"
+      ]
+    ],
+    "comment": "The nasal assimilates the dorsal primary articulation of the following g but keeps its own palatalisation."
+  },
+  {
+    "id": "hallevauxwolfe2000_ex44b",
+    "source": {
+      "bibkey": "halle-vaux-wolfe-2000",
+      "paperLabel": "(44b)"
+    },
+    "language": "iris1253",
+    "primaryText": "dʲiːlən",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a diary",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2.4"
+      ],
+      [
+        "phenomenon",
+        "dorsalAssimilation"
+      ]
+    ],
+    "comment": "The plain coronal nasal before assimilation."
+  },
+  {
+    "id": "hallevauxwolfe2000_ex44b-ii",
+    "source": {
+      "bibkey": "halle-vaux-wolfe-2000",
+      "paperLabel": "(44b-ii)"
+    },
+    "language": "iris1253",
+    "primaryText": "dʲiːləŋgʲiːvʲrʲi",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a winter's diary",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2.4"
+      ],
+      [
+        "phenomenon",
+        "dorsalAssimilation"
+      ]
+    ],
+    "comment": "The plain nasal assimilates the dorsal articulation of the following palatalised gʲ but not its palatalisation."
+  }
+]
