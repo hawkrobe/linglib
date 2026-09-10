@@ -1,246 +1,246 @@
 import Linglib.Syntax.DependencyGrammar.Projectivity
 import Linglib.Syntax.DependencyGrammar.Length
-import Linglib.Data.WALS.Features.F95A
-import Linglib.Data.WALS.Features.F96A
-import Linglib.Data.UD.Basic
 import Linglib.Features.WordOrder
 import Linglib.Morphology.Word.Basic
 
 /-!
-# Gibson 2025: DLM and the head-direction generalization
-[gibson-2025] [dryer-1992] [greenberg-1963] [dryer-haspelmath-2013]
+# Gibson (2025): Syntax: A Cognitive Approach
 
-[gibson-2025] argues that dependency length minimization explains the
-head-direction generalization of [greenberg-1963] and [dryer-1992]:
-languages overwhelmingly prefer consistent (harmonic) head direction
-because disharmonic order stretches spine dependencies on recursive
-structures, while single-word dependents (his Table 4: adjective-noun,
-demonstrative-noun, intensifier-adjective, negator-verb) escape the
-pressure because direction does not affect the length of a one-word
-attachment. Both halves are worked examples below
-(`harmonic_always_shorter`, `single_word_direction_irrelevant`); the
-typological half is the harmonic-dominance of his WALS cross-tabulations
-(Tables 1–3) and of their substrate-derived counterparts
-(`CrossTab.fromWALSCh95`, `CrossTab.fromWALSCh96`).
+This file formalizes chapter 5 of [gibson-2025], where dependency length minimization is a
+constraint on grammars: the head-direction generalization of [greenberg-1963] and [dryer-1992],
+that a language's head-argument orders share one direction, follows because a disharmonic order
+stretches the dependencies along a recursive spine. The measure is the total dependency length
+of [futrell-mahowald-gibson-2015], illustrated on the book's (99a) (`totalLength_99a`), and a
+head-final language reads the same structure in the mirrored order of its head-argument rules
+with subjects kept before their verbs (`sov_harmonic`). The argument is worked through the
+book's (122) and (123): every regime is one dependency structure read in a different order
+(`Graph.linearize`), the harmonic orders are the shortest, and each mismatch of verb-complement
+direction with the direction of infinitival, subordinator, adposition, or relative-clause
+dependencies costs the lengths the book computes (`totalLength_122`, `totalLength_123`). The
+mechanism is an arc to the far end of its own phrase (`Graph.ncard_dominated_le_dist`), which
+is why the one-word dependents of Table 5.4 need not align (`single_word_free`).
 
-The `AlignmentCell`/`CrossTab` apparatus is paper-anchored here; its
-other consumer is the gradient extension in
-`Studies/LevshinaEtAl2023.lean`. Gibson's hand-coded counts differ from
-the raw WALS chapters by a handful of languages (his reporting excludes
-"Other" rows); cell *pairings* match exactly, and the dominance
-conclusion is the same on both.
+## Implementation notes
+
+Arcs follow the book's chapter 3: a subordinator or infinitival marker heads its clause, an
+adposition its noun phrase, and a relative clause's verb the clause, with the nearest UD label
+on each arc. The book's Tables 5.1 to 5.3, WALS cross-tabulations of verb-object order with
+adposition, subordinator, and relative-clause order ([dryer-haspelmath-2013]), are prose here:
+raw-count dominance over atlas rows is not a theorem of the theory. The full mirror of (123)
+costs the same as the English order (`Graph.totalLength_mirror`); the book's head-final orders
+cost more only because they keep subjects before their verbs.
+
+## References
+
+* [gibson-2025]
+* [futrell-mahowald-gibson-2015]
+* [greenberg-1963]
+* [dryer-1992]
+* [dryer-haspelmath-2013]
+* [temperley-2007]
 -/
 
 namespace Gibson2025
 
-open DependencyGrammar
-open Morphology (Word)
+open DependencyGrammar Morphology Features
 
-/-! ### Cross-tabulation apparatus -/
+variable {n : ℕ}
 
-/-- A single cell in a 2×2 head-direction cross-tabulation: the head
-    directions of the two construction types being correlated, and the
-    language count. -/
-structure AlignmentCell where
-  dir1 : HeadDirection
-  dir2 : HeadDirection
-  count : Nat
-  deriving Repr, DecidableEq
+/-- The direction of an arc: head-initial when the head precedes its dependent. -/
+def arcDirection (v w : Fin n) : HeadDirection := if v < w then .headInitial else .headFinal
 
-/-- A cell is harmonic when both constructions take the same head
-    direction. -/
-def AlignmentCell.IsHarmonic (c : AlignmentCell) : Prop :=
-  c.dir1 = c.dir2
+/-- Section 5.2: an order is head-first or head-final when every head-argument arc, that is
+every arc but a subject's, takes that direction. -/
+def Harmonic (g : Graph n) (d : HeadDirection) : Prop :=
+  ∀ v w, g.Adj v w → g.label v w ≠ some .nsubj → arcDirection v w = d
 
-instance : DecidablePred AlignmentCell.IsHarmonic := fun c =>
-  decEq c.dir1 c.dir2
+instance (g : Graph n) (d : HeadDirection) : Decidable (Harmonic g d) :=
+  inferInstanceAs (Decidable (∀ _ _, _))
 
-/-- A 2×2 cross-tabulation of two head-direction-bearing construction
-    types (e.g., verb-object × adposition). -/
-structure CrossTab where
-  name : String
-  construction1 : String
-  construction2 : String
-  hihi : AlignmentCell
-  hihf : AlignmentCell
-  hfhi : AlignmentCell
-  hfhf : AlignmentCell
-  deriving Repr
+/-- An order that is neither head-first nor head-final. -/
+abbrev Disharmonic (g : Graph n) : Prop := ¬ Harmonic g .headInitial ∧ ¬ Harmonic g .headFinal
 
-/-- Total count of harmonic (diagonal) cells. -/
-def CrossTab.harmonicCount (t : CrossTab) : Nat :=
-  t.hihi.count + t.hfhf.count
+/-! ### Section 5.1: the measure, on (99a) -/
 
-/-- Total count of disharmonic (off-diagonal) cells. -/
-def CrossTab.disharmonicCount (t : CrossTab) : Nat :=
-  t.hihf.count + t.hfhi.count
+/-- (99a) *Mary threw away the important documents that she brought home yesterday*, whose
+total dependency length the book computes as eighteen. -/
+def ex99a : Graph 11 :=
+  .ofArcs [Word.mk' "Mary" .PROPN, Word.mk' "threw" .VERB, Word.mk' "away" .ADV,
+      Word.mk' "the" .DET, Word.mk' "important" .ADJ, Word.mk' "documents" .NOUN,
+      Word.mk' "that" .PRON, Word.mk' "she" .PRON, Word.mk' "brought" .VERB,
+      Word.mk' "home" .ADV, Word.mk' "yesterday" .ADV]
+    1 [(1, 0, .nsubj), (1, 2, .advmod), (1, 5, .obj), (5, 3, .det), (5, 4, .amod), (5, 8, .acl),
+      (8, 6, .mark), (8, 7, .nsubj), (8, 9, .advmod), (8, 10, .advmod)]
 
-/-- Total number of languages in the table. -/
-def CrossTab.totalCount (t : CrossTab) : Nat :=
-  t.harmonicCount + t.disharmonicCount
+example : ex99a.IsTree ∧ ex99a.IsProjective := by decide
 
-/-- Harmonic pairings strictly outnumber disharmonic. A *raw-count*
-    primitive; serious typological generalisations require sample-bias
-    correction (cf. [dryer-1992]'s genus method). -/
-def CrossTab.IsHarmonicDominant (t : CrossTab) : Prop :=
-  t.harmonicCount > t.disharmonicCount
+theorem totalLength_99a : ex99a.totalLength = 18 := by decide
 
-instance : DecidablePred CrossTab.IsHarmonicDominant := fun _ =>
-  Nat.decLt _ _
+/-- (99b), the particle after the long object: the arc to *away* crosses the eight words of
+the object. -/
+def ex99b : Graph 11 := ex99a.linearize [0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 2] (by decide)
 
-/-! ### Gibson's tables -/
-
-/-- Gibson Table 1: verb-object order × adposition order (981 languages). -/
-def voAdposition : CrossTab :=
-  { name := "VO × Adposition"
-    construction1 := "Verb-Object"
-    construction2 := "Adposition"
-    hihi := ⟨.headInitial, .headInitial, 454⟩
-    hihf := ⟨.headInitial, .headFinal, 41⟩
-    hfhi := ⟨.headFinal, .headInitial, 14⟩
-    hfhf := ⟨.headFinal, .headFinal, 472⟩ }
-
-/-- Gibson Table 2: verb-object order × subordinator order (456 languages). -/
-def voSubordinator : CrossTab :=
-  { name := "VO × Subordinator"
-    construction1 := "Verb-Object"
-    construction2 := "Subordinator"
-    hihi := ⟨.headInitial, .headInitial, 302⟩
-    hihf := ⟨.headInitial, .headFinal, 2⟩
-    hfhi := ⟨.headFinal, .headInitial, 61⟩
-    hfhf := ⟨.headFinal, .headFinal, 91⟩ }
-
-/-- Gibson Table 3: verb-object order × relative clause order (665 languages). -/
-def voRelativeClause : CrossTab :=
-  { name := "VO × Relative clause"
-    construction1 := "Verb-Object"
-    construction2 := "Relative clause"
-    hihi := ⟨.headInitial, .headInitial, 415⟩
-    hihf := ⟨.headInitial, .headFinal, 5⟩
-    hfhi := ⟨.headFinal, .headInitial, 113⟩
-    hfhf := ⟨.headFinal, .headFinal, 132⟩ }
-
-/-- Gibson's three cross-tabulations. -/
-def allTables : List CrossTab :=
-  [voAdposition, voSubordinator, voRelativeClause]
-
-/-- The head-direction generalization ([greenberg-1963], [dryer-1992]):
-    harmonic pairings dominate in every one of Gibson's construction-pair
-    tables. -/
-theorem head_direction_generalization :
-    ∀ t ∈ allTables, t.IsHarmonicDominant := by decide
-
-/-! ### The recursive-embedding worked examples
-
-Gibson's mechanism: "thinks John knows Mary likes cats" in the four
-head-direction regimes. Consistent direction keeps every arc short;
-mixed direction stretches the spine arcs. -/
-
-/-- Harmonic head-initial. -/
-def harmonicHI : Graph 6 :=
-  .ofArcs [Word.mk' "thinks" .VERB, Word.mk' "John" .PROPN, Word.mk' "knows" .VERB,
-           Word.mk' "Mary" .PROPN, Word.mk' "likes" .VERB, Word.mk' "cats" .NOUN]
-    0 [(0, 1, .nsubj), (0, 2, .ccomp), (2, 3, .nsubj), (2, 4, .ccomp), (4, 5, .obj)]
-
-/-- Harmonic head-final (the mirror). -/
-def harmonicHF : Graph 6 :=
-  .ofArcs [Word.mk' "cats" .NOUN, Word.mk' "likes" .VERB, Word.mk' "Mary" .PROPN,
-           Word.mk' "knows" .VERB, Word.mk' "John" .PROPN, Word.mk' "thinks" .VERB]
-    5 [(1, 0, .obj), (3, 1, .ccomp), (3, 2, .nsubj), (5, 3, .ccomp), (5, 4, .nsubj)]
-
-/-- Disharmonic: head-initial spine, head-final complements. -/
-def disharmonicHF : Graph 6 :=
-  .ofArcs [Word.mk' "thinks" .VERB, Word.mk' "John" .PROPN, Word.mk' "Mary" .PROPN,
-           Word.mk' "cats" .NOUN, Word.mk' "likes" .VERB, Word.mk' "knows" .VERB]
-    0 [(0, 1, .nsubj), (0, 5, .ccomp), (5, 2, .nsubj), (5, 4, .ccomp), (4, 3, .obj)]
-
-/-- Disharmonic: head-final spine, head-initial complements. -/
-def disharmonicFH : Graph 6 :=
-  .ofArcs [Word.mk' "John" .PROPN, Word.mk' "knows" .VERB, Word.mk' "Mary" .PROPN,
-           Word.mk' "likes" .VERB, Word.mk' "cats" .NOUN, Word.mk' "thinks" .VERB]
-    5 [(5, 0, .nsubj), (5, 1, .ccomp), (1, 2, .nsubj), (1, 3, .ccomp), (3, 4, .obj)]
-
-example : harmonicHI.IsTree ∧ harmonicHF.IsTree ∧
-    disharmonicHF.IsTree ∧ disharmonicFH.IsTree := by decide
-
-/-- All four regimes are projective: the disharmonic ones are longer not
-    because of non-projectivity — consistent direction is a separate,
-    stronger constraint. -/
-example : harmonicHI.IsProjective ∧ harmonicHF.IsProjective ∧
-    disharmonicHF.IsProjective ∧ disharmonicFH.IsProjective := by decide
-
-/-- Harmonic order is strictly cheaper in both directions, and the mirror
-    pair costs exactly the same. -/
-theorem harmonic_always_shorter :
-    harmonicHI.totalLength < disharmonicHF.totalLength ∧
-    harmonicHI.totalLength < disharmonicFH.totalLength ∧
-    harmonicHF.totalLength = harmonicHI.totalLength := by decide
-
-/-- Harmonic trees satisfy [behaghel-1932]'s Oberstes Gesetz at
-    threshold 2; disharmonic trees do not. -/
-example : OberstesGesetz harmonicHI 2 ∧ OberstesGesetz harmonicHF 2 := by decide
-example : ¬ OberstesGesetz disharmonicHF 2 ∧ ¬ OberstesGesetz disharmonicFH 2 := by
+theorem totalLength_99b : ex99b.totalLength = 25 ∧ ex99a.totalLength < ex99b.totalLength := by
   decide
 
-/-! ### Single-word dependents escape the pressure (Gibson Table 4)
+/-! ### Section 5.2: the mirror rules of a verb-final language, (119) to (121) -/
 
-Adjective-noun, demonstrative-noun, intensifier-adjective, and
-negator-verb orders are frequently disharmonic; all four involve
-dependents that are typically single words, and a one-word attachment
-has the same dependency length in either direction. -/
+/-- (119a) *Lana ate pizza*. -/
+def svo119 : Graph 3 :=
+  .ofArcs [Word.mk' "Lana" .PROPN, Word.mk' "ate" .VERB, Word.mk' "pizza" .NOUN]
+    1 [(1, 0, .nsubj), (1, 2, .obj)]
 
-/-- "very tall": single-word intensifier before its head. -/
-def intensifierFinal : Graph 2 :=
+/-- (119b) *Lana pizza ate*. -/
+def sov119 : Graph 3 := svo119.linearize [0, 2, 1] (by decide)
+
+/-- (120a) *Lana gave pizza to Francine*. -/
+def svo120 : Graph 5 :=
+  .ofArcs [Word.mk' "Lana" .PROPN, Word.mk' "gave" .VERB, Word.mk' "pizza" .NOUN,
+      Word.mk' "to" .ADP, Word.mk' "Francine" .PROPN]
+    1 [(1, 0, .nsubj), (1, 2, .obj), (1, 3, .obl), (3, 4, .obj)]
+
+/-- (120b) *Lana Francine to pizza gave*. -/
+def sov120 : Graph 5 := svo120.linearize [0, 4, 3, 2, 1] (by decide)
+
+/-- (121a) *Alfred said that Lana gave pizza to Francine*. -/
+def svo121 : Graph 8 :=
+  .ofArcs [Word.mk' "Alfred" .PROPN, Word.mk' "said" .VERB, Word.mk' "that" .SCONJ,
+      Word.mk' "Lana" .PROPN, Word.mk' "gave" .VERB, Word.mk' "pizza" .NOUN,
+      Word.mk' "to" .ADP, Word.mk' "Francine" .PROPN]
+    1 [(1, 0, .nsubj), (1, 2, .ccomp), (2, 4, .ccomp), (4, 3, .nsubj), (4, 5, .obj),
+      (4, 6, .obl), (6, 7, .obj)]
+
+/-- (121b) *Alfred Lana Francine to pizza gave that said*: each clause keeps its subject first
+and mirrors the rest. -/
+def sov121 : Graph 8 := svo121.linearize [0, 3, 7, 6, 5, 4, 2, 1] (by decide)
+
+/-- The English orders are head-first and their verb-final counterparts head-final in every
+head-argument rule. -/
+theorem sov_harmonic :
+    Harmonic svo119 .headInitial ∧ Harmonic sov119 .headFinal ∧
+      Harmonic svo120 .headInitial ∧ Harmonic sov120 .headFinal ∧
+      Harmonic svo121 .headInitial ∧ Harmonic sov121 .headFinal := by
+  decide
+
+/-! ### Section 5.3.1: verb-object and verb-complement direction, (122) -/
+
+/-- (122) *Alfred wanted to eat bananas from Hawaii*, head-first: every arc is adjacent. -/
+def hi122 : Graph 7 :=
+  .ofArcs [Word.mk' "Alfred" .PROPN, Word.mk' "wanted" .VERB, Word.mk' "to" .PART,
+      Word.mk' "eat" .VERB, Word.mk' "bananas" .NOUN, Word.mk' "from" .ADP,
+      Word.mk' "Hawaii" .PROPN]
+    1 [(1, 0, .nsubj), (1, 2, .xcomp), (2, 3, .xcomp), (3, 4, .obj), (4, 5, .nmod),
+      (5, 6, .obj)]
+
+example : hi122.IsTree ∧ hi122.IsProjective := by decide
+
+/-- The head-final order with the subject next to its verb: *Hawaii from bananas eat to Alfred
+wanted*. -/
+def hf122 : Graph 7 := hi122.linearize [6, 5, 4, 3, 2, 0, 1] (by decide)
+
+/-- Verb-object order for *eat* but complement-verb order for *wanted*: *Alfred to eat bananas
+from Hawaii wanted*. -/
+def voCompV122 : Graph 7 := hi122.linearize [0, 2, 3, 4, 5, 6, 1] (by decide)
+
+/-- Object-verb order for *eat* but verb-complement order for *wanted*: *Alfred wanted to
+bananas from Hawaii eat*. -/
+def ovVComp122 : Graph 7 := hi122.linearize [0, 1, 2, 4, 5, 6, 3] (by decide)
+
+/-- The harmonic orders cost six and seven, the mismatches fifteen and eleven. -/
+theorem totalLength_122 :
+    hi122.totalLength = 6 ∧ hf122.totalLength = 7 ∧
+      voCompV122.totalLength = 15 ∧ ovVComp122.totalLength = 11 := by
+  decide
+
+theorem harmonic_122 :
+    Harmonic hi122 .headInitial ∧ Harmonic hf122 .headFinal ∧
+      Disharmonic voCompV122 ∧ Disharmonic ovVComp122 := by
+  decide
+
+/-! ### Sections 5.3.2 to 5.3.4: subordinators, adpositions, and relative clauses, (123) -/
+
+/-- (123) *Alfred said that Lana gave pizza to monkeys who wanted bananas* in English order. -/
+def en123 : Graph 11 :=
+  .ofArcs [Word.mk' "Alfred" .PROPN, Word.mk' "said" .VERB, Word.mk' "that" .SCONJ,
+      Word.mk' "Lana" .PROPN, Word.mk' "gave" .VERB, Word.mk' "pizza" .NOUN,
+      Word.mk' "to" .ADP, Word.mk' "monkeys" .NOUN, Word.mk' "who" .PRON,
+      Word.mk' "wanted" .VERB, Word.mk' "bananas" .NOUN]
+    1 [(1, 0, .nsubj), (1, 2, .ccomp), (2, 4, .ccomp), (4, 3, .nsubj), (4, 5, .obj),
+      (4, 6, .obl), (6, 7, .obj), (7, 9, .acl), (9, 8, .nsubj), (9, 10, .obj)]
+
+example : en123.IsTree ∧ en123.IsProjective := by decide
+
+/-- The head-final order with subjects first: *Alfred Lana who bananas wanted monkeys to pizza
+gave that said*. -/
+def hfSubjFirst123 : Graph 11 :=
+  en123.linearize [0, 3, 8, 10, 9, 7, 6, 5, 4, 2, 1] (by decide)
+
+/-- The head-final order with subjects next to their verbs: *who bananas wanted monkeys to pizza
+Lana gave that Alfred said*. -/
+def hf123 : Graph 11 := en123.linearize [8, 10, 9, 7, 6, 5, 3, 4, 2, 0, 1] (by decide)
+
+/-- Verb-initial but subordinator-final: *that* follows the clause it heads. -/
+def voSubFinal123 : Graph 11 :=
+  en123.linearize [0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 2] (by decide)
+
+/-- Verb-final but subordinator-initial: *that* precedes the clause it heads. -/
+def ovSubInitial123 : Graph 11 :=
+  en123.linearize [2, 8, 10, 9, 7, 6, 5, 3, 4, 0, 1] (by decide)
+
+/-- Verb-initial but postpositional: *to* follows its noun phrase. -/
+def voPost123 : Graph 11 :=
+  en123.linearize [0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 6] (by decide)
+
+/-- Verb-final but prepositional: *to* precedes its noun phrase. -/
+def ovPre123 : Graph 11 :=
+  en123.linearize [6, 8, 10, 9, 7, 5, 3, 4, 2, 0, 1] (by decide)
+
+/-- Verb-initial but with the relative clause before its noun. -/
+def voRelN123 : Graph 11 :=
+  en123.linearize [0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 7] (by decide)
+
+/-- Verb-final but with the relative clause after its noun. -/
+def ovNRel123 : Graph 11 :=
+  en123.linearize [7, 8, 10, 9, 6, 5, 3, 4, 2, 0, 1] (by decide)
+
+/-- The English order costs thirteen and the head-final orders twenty-seven and fifteen; each
+mismatch costs more than its harmonic baseline. -/
+theorem totalLength_123 :
+    en123.totalLength = 13 ∧ hfSubjFirst123.totalLength = 27 ∧ hf123.totalLength = 15 ∧
+      voSubFinal123.totalLength = 26 ∧ ovSubInitial123.totalLength = 30 ∧
+      voPost123.totalLength = 20 ∧ ovPre123.totalLength = 22 ∧
+      voRelN123.totalLength = 16 ∧ ovNRel123.totalLength = 20 := by
+  decide
+
+theorem harmonic_123 :
+    Harmonic en123 .headInitial ∧ Harmonic hfSubjFirst123 .headFinal ∧
+      Harmonic hf123 .headFinal ∧
+      Disharmonic voSubFinal123 ∧ Disharmonic ovSubInitial123 ∧ Disharmonic voPost123 ∧
+        Disharmonic ovPre123 ∧ Disharmonic voRelN123 ∧ Disharmonic ovNRel123 := by
+  decide
+
+/-- Reversing every arc, subjects included, costs nothing: the book's head-final orders are
+dearer than English only because their subjects stay before their verbs. -/
+theorem totalLength_mirror_123 : en123.mirror.totalLength = 13 :=
+  en123.totalLength_mirror.trans totalLength_123.1
+
+/-- A subordinator at the far end of its clause: the arc from *said* to *that* is at least as
+long as the nine-word clause *that* heads. -/
+theorem subordinator_final_stretches :
+    (voSubFinal123.dominated 10).ncard ≤ Nat.dist (1 : Fin 11) 10 :=
+  voSubFinal123.ncard_dominated_le_dist (by decide)
+    (λ x hx => Set.mem_uIcc.mpr (by revert x hx; decide))
+
+/-! ### Section 5.3.5: one-word dependents, Table 5.4 -/
+
+/-- *very tall*: an intensifier before its adjective. -/
+def intensifierFirst : Graph 2 :=
   .ofArcs [Word.mk' "very" .ADV, Word.mk' "tall" .ADJ] 1 [(1, 0, .advmod)]
 
-/-- "tall very": the same attachment, head-initial. -/
-def intensifierInitial : Graph 2 :=
-  .ofArcs [Word.mk' "tall" .ADJ, Word.mk' "very" .ADV] 0 [(0, 1, .advmod)]
-
-/-- A single-word dependent costs the same in either direction — DLM is
-    silent exactly where the typology tolerates disharmony. -/
-theorem single_word_direction_irrelevant :
-    intensifierFinal.totalLength = intensifierInitial.totalLength := by decide
-
-/-! ### Substrate-derived counterparts (WALS Ch 95, Ch 96) -/
-
-/-- Gibson's Table 1 rebuilt from `Data.WALS.F95A.allData`
-    ([dryer-haspelmath-2013] Ch 95): the verb-object × adposition
-    correlation from raw WALS counts. -/
-def CrossTab.fromWALSCh95 : CrossTab :=
-  let data := Data.WALS.F95A.allData
-  { name := "WALS Ch 95: VO × Adposition"
-    construction1 := "Verb-Object"
-    construction2 := "Adposition"
-    hihi := ⟨.headInitial, .headInitial, (data.filter (·.value == .voAndPrepositions)).length⟩
-    hihf := ⟨.headInitial, .headFinal, (data.filter (·.value == .voAndPostpositions)).length⟩
-    hfhi := ⟨.headFinal, .headInitial, (data.filter (·.value == .ovAndPrepositions)).length⟩
-    hfhf := ⟨.headFinal, .headFinal, (data.filter (·.value == .ovAndPostpositions)).length⟩ }
-
-/-- Gibson's Table 3 rebuilt from `Data.WALS.F96A.allData`
-    ([dryer-haspelmath-2013] Ch 96): the verb-object × relative-clause
-    correlation from raw WALS counts. NRel is head-initial for the
-    noun-relative construction, RelN head-final. -/
-def CrossTab.fromWALSCh96 : CrossTab :=
-  let data := Data.WALS.F96A.allData
-  { name := "WALS Ch 96: VO × Relative clause"
-    construction1 := "Verb-Object"
-    construction2 := "Relative clause"
-    hihi := ⟨.headInitial, .headInitial, (data.filter (·.value == .voAndNrel)).length⟩
-    hihf := ⟨.headInitial, .headFinal, (data.filter (·.value == .voAndReln)).length⟩
-    hfhi := ⟨.headFinal, .headInitial, (data.filter (·.value == .ovAndNrel)).length⟩
-    hfhf := ⟨.headFinal, .headFinal, (data.filter (·.value == .ovAndReln)).length⟩ }
-
-set_option maxRecDepth 8192 in
-/-- The substrate-derived Ch 95 table is harmonic-dominant — the same
-    conclusion as Gibson's hand-coded Table 1. -/
-theorem fromWALSCh95_harmonic_dominant :
-    CrossTab.fromWALSCh95.IsHarmonicDominant := by decide
-
-set_option maxRecDepth 8192 in
-/-- The substrate-derived Ch 96 table is harmonic-dominant — the same
-    conclusion as Gibson's hand-coded Table 3. -/
-theorem fromWALSCh96_harmonic_dominant :
-    CrossTab.fromWALSCh96.IsHarmonicDominant := by decide
+/-- A one-word dependent costs the same on either side of its head, since the two orders are
+mirror images: Table 5.4's adjective, demonstrative, intensifier, and negator orders need not
+align with the verb-object order. -/
+theorem single_word_free : intensifierFirst.mirror.totalLength = intensifierFirst.totalLength :=
+  intensifierFirst.totalLength_mirror
 
 end Gibson2025
