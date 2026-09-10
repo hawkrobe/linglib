@@ -1,46 +1,633 @@
 [
   {
-    "id": "gunlogson2001_falling_decl",
+    "id": "gunlogson2001_13",
     "source": {
       "bibkey": "gunlogson-2001",
-      "paperLabel": "falling declarative"
+      "paperLabel": "(13)"
     },
     "language": "stan1293",
-    "primaryText": "It's raining.",
+    "primaryText": "During the tax year, did you receive a distribution from a foreign trust?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "",
+    "context": "On a tax form.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "alternatives": [
+      {
+        "form": "During the tax year, you received a distribution from a foreign trust?",
+        "judgment": "unacceptable"
+      },
+      {
+        "form": "During the tax year, you received a distribution from a foreign trust.",
+        "judgment": "unacceptable"
+      }
+    ],
     "readings": [],
     "paperFeatures": [
-      ["intonation", "falling"],
-      ["speaker_commits", "true"],
-      ["attributed_to_addressee", "false"]
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "phenomenon",
+        "neutrality"
+      ],
+      [
+        "locutions",
+        "interrogative;risingDeclarative;fallingDeclarative"
+      ]
     ],
-    "comment": "Gunlogson's signature minimal pair: a falling declarative commits the speaker to its content."
+    "comment": "Declaratives cannot elicit information in an unbiased way."
   },
   {
-    "id": "gunlogson2001_rising_decl",
+    "id": "gunlogson2001_14",
     "source": {
       "bibkey": "gunlogson-2001",
-      "paperLabel": "rising declarative"
+      "paperLabel": "(14)"
     },
     "language": "stan1293",
-    "primaryText": "It's raining?",
+    "primaryText": "Is it bigger than a breadbox?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "In a guessing game.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "It's bigger than a breadbox?",
+        "judgment": "unacceptable"
+      },
+      {
+        "form": "It's bigger than a breadbox.",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "phenomenon",
+        "neutrality"
+      ],
+      [
+        "locutions",
+        "interrogative;risingDeclarative;fallingDeclarative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gunlogson2001_16",
+    "source": {
+      "bibkey": "gunlogson-2001",
+      "paperLabel": "(16)"
+    },
+    "language": "stan1293",
+    "primaryText": "Did she lie to the grand jury?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "It's an open question.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "She lied to the grand jury?",
+        "judgment": "unacceptable"
+      },
+      {
+        "form": "She lied to the grand jury.",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "phenomenon",
+        "neutrality"
+      ],
+      [
+        "locutions",
+        "interrogative;risingDeclarative;fallingDeclarative"
+      ]
+    ],
+    "comment": "The issue raised by a declarative question cannot be regarded as open."
+  },
+  {
+    "id": "gunlogson2001_27",
+    "source": {
+      "bibkey": "gunlogson-2001",
+      "paperLabel": "(27)"
+    },
+    "language": "stan1293",
+    "primaryText": "Can you (please) pass the salt?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "You can (please) pass the salt?",
+        "judgment": "unacceptable"
+      },
+      {
+        "form": "You can (please) pass the salt.",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "phenomenon",
+        "neutrality"
+      ],
+      [
+        "locutions",
+        "interrogative;risingDeclarative;fallingDeclarative"
+      ]
+    ],
+    "comment": "Polite requests for action are a function of interrogatives that declaratives lack."
+  },
+  {
+    "id": "gunlogson2001_31",
+    "source": {
+      "bibkey": "gunlogson-2001",
+      "paperLabel": "(31)"
+    },
+    "language": "stan1293",
+    "primaryText": "Am I from Skokie?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Radio station DJ: Good morning Susan. Where are you calling from? The caller answers.",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {
+        "form": "I'm from Skokie?",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "I'm from Skokie.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "phenomenon",
+        "informativeRising"
+      ],
+      [
+        "locutions",
+        "interrogative;risingDeclarative;fallingDeclarative"
+      ]
+    ],
+    "comment": "A rising declarative can offer new information; adapted by the paper from Hirschberg and Ward 1995. Rising interrogatives lack this function."
+  },
+  {
+    "id": "gunlogson2001_33",
+    "source": {
+      "bibkey": "gunlogson-2001",
+      "paperLabel": "(33)"
+    },
+    "language": "stan1293",
+    "primaryText": "Has the manager of course been informed?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {
+        "form": "The manager has of course been informed?",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "The manager has of course been informed.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "phenomenon",
+        "biasMarker"
+      ],
+      [
+        "locutions",
+        "interrogative;risingDeclarative;fallingDeclarative"
+      ]
+    ],
+    "comment": "Bias markers such as 'of course' are incompatible with interrogatives, an observation the paper credits to Huddleston 1994."
+  },
+  {
+    "id": "gunlogson2001_44",
+    "source": {
+      "bibkey": "gunlogson-2001",
+      "paperLabel": "(44)"
+    },
+    "language": "stan1293",
+    "primaryText": "Has it? I don't see much evidence of that.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A and B are looking at a co-worker's much-dented car. A: His driving has gotten a lot better. B responds.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "It has? I don't see much evidence of that.",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "It has. I don't see much evidence of that.",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "phenomenon",
+        "speakerCommitment"
+      ],
+      [
+        "locutions",
+        "interrogative;risingDeclarative;fallingDeclarative"
+      ]
+    ],
+    "comment": "Only the falling declarative is inconsistent with the skeptical follow-up."
+  },
+  {
+    "id": "gunlogson2001_45",
+    "source": {
+      "bibkey": "gunlogson-2001",
+      "paperLabel": "(45)"
+    },
+    "language": "stan1293",
+    "primaryText": "Is it? Thanks, I'll use a different one.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: That copier is broken. B responds.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "It is? Thanks, I'll use a different one.",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "(Oh), it is. Thanks, I'll use a different one.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "phenomenon",
+        "speakerCommitment"
+      ],
+      [
+        "locutions",
+        "interrogative;risingDeclarative;fallingDeclarative"
+      ]
+    ],
+    "comment": "All three are compatible with the speaker's routine acceptance; a reiterative question."
+  },
+  {
+    "id": "gunlogson2001_46",
+    "source": {
+      "bibkey": "gunlogson-2001",
+      "paperLabel": "(46)"
+    },
+    "language": "stan1293",
+    "primaryText": "Is Jake here? Then let's get started.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: Jake's here. B responds.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Jake's here? Then let's get started.",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "(Oh), Jake's here. Then let's get started.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "phenomenon",
+        "speakerCommitment"
+      ],
+      [
+        "locutions",
+        "interrogative;risingDeclarative;fallingDeclarative"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gunlogson2001_47",
+    "source": {
+      "bibkey": "gunlogson-2001",
+      "paperLabel": "(47)"
+    },
+    "language": "stan1293",
+    "primaryText": "Is France a monarchy?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: The king of France is bald. B responds.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "France is a monarchy?",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "France is a monarchy.",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "phenomenon",
+        "speakerCommitment"
+      ],
+      [
+        "locutions",
+        "interrogative;risingDeclarative;fallingDeclarative"
+      ]
+    ],
+    "comment": "The question concerns a presupposition of A's utterance rather than its main content."
+  },
+  {
+    "id": "gunlogson2001_48",
+    "source": {
+      "bibkey": "gunlogson-2001",
+      "paperLabel": "(48)"
+    },
+    "language": "stan1293",
+    "primaryText": "Is shoplifting fun?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Uttered to insinuate that the addressee has shoplifted.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Shoplifting's fun?",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "Shoplifting's fun.",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "phenomenon",
+        "speakerCommitment"
+      ],
+      [
+        "locutions",
+        "interrogative;risingDeclarative;fallingDeclarative"
+      ]
+    ],
+    "comment": "The falling declarative portrays the speaker as the source of the information."
+  },
+  {
+    "id": "gunlogson2001_100",
+    "source": {
+      "bibkey": "gunlogson-2001",
+      "paperLabel": "(100)"
+    },
+    "language": "stan1293",
+    "primaryText": "A: That was a kingfisher. B: Are you sure? It looked like a seagull to me. A: I'm positive. It was a kingfisher.",
+    "discourseSegments": [
+      "A: That was a kingfisher.",
+      "B: Are you sure? It looked like a seagull to me.",
+      "A: I'm positive. It was a kingfisher."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A is watching a bird fly away; neither A nor B has a prior commitment about its identity.",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["intonation", "rising"],
-      ["speaker_commits", "false"],
-      ["attributed_to_addressee", "true"]
+      [
+        "section",
+        "3.5"
+      ],
+      [
+        "phenomenon",
+        "entailedButInformative"
+      ]
     ],
-    "comment": "Same words, rising intonation: the speaker does not commit; the content is attributed to the addressee, inviting confirmation or denial."
+    "comment": "A's second falling declarative is entailed by the context, since A is already committed, but still informative with respect to B's commitment set."
+  },
+  {
+    "id": "gunlogson2001_102",
+    "source": {
+      "bibkey": "gunlogson-2001",
+      "paperLabel": "(102)"
+    },
+    "language": "stan1293",
+    "primaryText": "Are we out of beer?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: I've just searched the refrigerator and there's absolutely nothing cold to drink. B responds.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "We're out of beer?",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "(So) we're out of beer.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.5"
+      ],
+      [
+        "phenomenon",
+        "vacuousness"
+      ],
+      [
+        "locutions",
+        "interrogative;risingDeclarative;fallingDeclarative"
+      ]
+    ],
+    "comment": "Not vacuous: A's entailment that there is no beer is not yet a joint commitment, though the rising declarative and the interrogative are uninformative and entailed."
+  },
+  {
+    "id": "gunlogson2001_103",
+    "source": {
+      "bibkey": "gunlogson-2001",
+      "paperLabel": "(103)"
+    },
+    "language": "stan1293",
+    "primaryText": "Are we out of beer?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "B: I've just searched the refrigerator and there's absolutely nothing cold to drink. A: Yeah, I know. We're out of just about everything. B responds.",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {
+        "form": "We're out of beer?",
+        "judgment": "unacceptable"
+      },
+      {
+        "form": "(So) we're out of beer.",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.5"
+      ],
+      [
+        "phenomenon",
+        "vacuousness"
+      ],
+      [
+        "locutions",
+        "interrogative;risingDeclarative;fallingDeclarative"
+      ]
+    ],
+    "comment": "Vacuous in every form: A and B agree about the barren state of the refrigerator."
+  },
+  {
+    "id": "gunlogson2001_118",
+    "source": {
+      "bibkey": "gunlogson-2001",
+      "paperLabel": "(118)"
+    },
+    "language": "stan1293",
+    "primaryText": "Is Maria married?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: Maria's husband was at the party. B responds.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Maria's married?",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "Maria's married.",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "phenomenon",
+        "fallingDeclarativeQuestion"
+      ],
+      [
+        "locutions",
+        "interrogative;risingDeclarative;fallingDeclarative"
+      ]
+    ],
+    "comment": "The falling declarative fails as a question although A's statement presupposes its content."
+  },
+  {
+    "id": "gunlogson2001_128",
+    "source": {
+      "bibkey": "gunlogson-2001",
+      "paperLabel": "(128)"
+    },
+    "language": "stan1293",
+    "primaryText": "Is it raining?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Robin is sitting in a windowless computer room when another person enters, wearing a wet raincoat and boots. Robin says:",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "It's raining?",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "(I see that/So) It's raining.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "phenomenon",
+        "fallingDeclarativeQuestion"
+      ],
+      [
+        "locutions",
+        "interrogative;risingDeclarative;fallingDeclarative"
+      ]
+    ],
+    "comment": "A resolving question; the falling declarative works much better with the parenthesized inferential marker, which shows the speaker's commitment to be contingent on the addressee's."
   }
 ]
