@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.DependencyGrammar.Basic
+import Linglib.Syntax.DependencyGrammar.Dominance
 import Mathlib.Data.Nat.Dist
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Data.Set.Card
+import Mathlib.Order.Interval.Finset.Fin
 
 /-!
 # Dependency length
@@ -103,5 +105,34 @@ theorem _root_.Fin.dist_rev_rev (v w : Fin n) :
 theorem Graph.totalLength_mirror (g : Graph n) :
     g.mirror.totalLength = g.totalLength :=
   g.totalLength_relabel _ (λ v w => Fin.dist_rev_rev v w)
+
+/-- The graph read in the order `order`, which lists every position once: the token at
+    position `p` is the token of `g` at `order[p]`, arcs and root following. -/
+def Graph.linearize (g : Graph n) (order : List (Fin n)) (h : order.Perm (List.finRange n)) :
+    Graph n :=
+  g.relabel ((finCongr (h.length_eq.trans List.length_finRange).symm).trans
+    ((h.nodup_iff.mpr (List.nodup_finRange n)).getEquivOfForallMemList order
+      λ x => h.mem_iff.mpr (List.mem_finRange x))).symm
+
+theorem Graph.linearize_words (g : Graph n) (order : List (Fin n))
+    (h : order.Perm (List.finRange n)) (p : Fin n) :
+    (g.linearize order h).words p =
+      g.words (order.get (Fin.cast (h.length_eq.trans List.length_finRange).symm p)) :=
+  rfl
+
+/-! ### Arc length and the dependent's phrase -/
+
+/-- An arc to the far end of the dependent's own phrase is at least as long as the phrase:
+    when every position the dependent dominates lies between the head and the dependent, the
+    arc's length bounds their number. Direction is free for a one-word phrase and costly for a
+    long one. -/
+theorem Graph.ncard_dominated_le_dist (g : Graph n) {v w : Fin n} (hv : v ∉ g.dominated w)
+    (h : ∀ x ∈ g.dominated w, x ∈ Set.uIcc v w) : (g.dominated w).ncard ≤ Nat.dist v w := by
+  have hsub : g.dominated w ⊆ Set.uIcc v w \ {v} := Set.subset_sdiff_singleton h hv
+  refine (Set.ncard_le_ncard hsub).trans (le_of_eq ?_)
+  rw [Set.ncard_sdiff_singleton_of_mem Set.left_mem_uIcc, ← Finset.coe_uIcc, Set.ncard_coe_finset,
+    Fin.card_uIcc, Nat.add_sub_cancel]
+  simp only [Nat.dist]
+  omega
 
 end DependencyGrammar

@@ -1,4 +1,3 @@
-import Linglib.Studies.Gibson2025
 import Linglib.Data.UD.DependencyLength.FutrellEtAl2020
 
 /-!
@@ -19,52 +18,6 @@ are ×1000 integer encodings.
 -/
 
 namespace LevshinaEtAl2023
-
-open Gibson2025
-
--- ============================================================================
--- §1: Gradient Measures on Existing CrossTab Data
--- ============================================================================
-
-/-- Proportion of harmonic languages × 1000 (integer permille). -/
-def harmonicProportion1000 (t : CrossTab) : Nat :=
-  t.harmonicCount * 1000 / t.totalCount
-
-/-- Proportion of disharmonic languages × 1000. -/
-def disharmonicProportion1000 (t : CrossTab) : Nat :=
-  t.disharmonicCount * 1000 / t.totalCount
-
-/-- Proportion of head-initial languages × 1000 (hihi + hihf cells). -/
-def hiProportion1000 (t : CrossTab) : Nat :=
-  (t.hihi.count + t.hihf.count) * 1000 / t.totalCount
-
-/-- Table 1: 94.3% harmonic (VO × Adposition). -/
-theorem voAdposition_harmonic_proportion :
-    harmonicProportion1000 voAdposition = 943 := by decide
-
-/-- Table 2: 86.1% harmonic (VO × Subordinator). -/
-theorem voSubordinator_harmonic_proportion :
-    harmonicProportion1000 voSubordinator = 861 := by decide
-
-/-- Table 3: 82.2% harmonic (VO × Relative clause). -/
-theorem voRelativeClause_harmonic_proportion :
-    harmonicProportion1000 voRelativeClause = 822 := by decide
-
-/-- Harmonic proportion decreases with construction complexity:
-    adposition > subordinator > relative clause.
-
-    Levshina et al.'s point: not all constructions are equally categorical.
-    Even the "best" universal (VO ↔ preposition) is only 94.3% harmonic. -/
-theorem harmony_decreases_with_complexity :
-    harmonicProportion1000 voAdposition > harmonicProportion1000 voSubordinator ∧
-    harmonicProportion1000 voSubordinator > harmonicProportion1000 voRelativeClause := by
-  constructor <;> decide
-
-/-- Gradient and categorical measures agree: harmonicProportion1000 > 500 ↔ IsHarmonicDominant.
-    The gradient measure refines, not contradicts, the binary one. -/
-theorem categorical_consistent_with_gradient :
-    ∀ t ∈ allTables, (harmonicProportion1000 t > 500) ↔ t.IsHarmonicDominant := by
-  decide
 
 -- ============================================================================
 -- §2: Gradient Language Profile (OSF Dataset1.txt + Dataset3.txt)
@@ -259,20 +212,6 @@ theorem so_proportion_is_continuous :
 -- ============================================================================
 -- §4: Bridges to Existing Data
 -- ============================================================================
-
--- Bridge 1: Gradient harmony ↔ categorical harmony (Typology.lean)
-
-/-- For all three WALS tables, harmonicProportion1000 > 500 → IsHarmonicDominant. -/
-theorem gradient_implies_categorical :
-    ∀ t ∈ allTables, harmonicProportion1000 t > 500 → t.IsHarmonicDominant := by
-  decide
-
-/-- The three tables have different harmonic proportions (943 vs 861 vs 822),
-    showing harmony is a matter of degree, not a binary universal. -/
-theorem harmony_is_gradient_not_binary :
-    harmonicProportion1000 voAdposition ≠ harmonicProportion1000 voSubordinator ∧
-    harmonicProportion1000 voSubordinator ≠ harmonicProportion1000 voRelativeClause := by
-  constructor <;> decide
 
 -- Bridge 3: Head-final proportion ↔ SO proportion (Data/UD/DependencyLength/FutrellEtAl2020)
 
