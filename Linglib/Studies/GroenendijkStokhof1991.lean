@@ -1,571 +1,626 @@
 import Linglib.Logic.CylindricAlgebra
 import Linglib.Semantics.Dynamic.DPL
-import Linglib.Semantics.Dynamic.Transition
 
 /-!
-# Groenendijk & Stokhof (1991): Dynamic Predicate Logic
-[groenendijk-stokhof-1991]
+# Groenendijk and Stokhof (1991): Dynamic Predicate Logic
 
-Dynamic Predicate Logic. *Linguistics and Philosophy* 14(1): 39–100.
-The DPL substrate (`DPL.Rel`, Definition 2) lives in
-`Semantics/Dynamic/DPL.lean`; this file proves the paper's claims about
-it.
+This file formalizes the logical facts of [groenendijk-stokhof-1991], "Dynamic predicate
+logic", about the system of its `Semantics/Dynamic/DPL.lean` substrate, where a formula
+denotes a relation between assignments, conjunction is composition, and the existential is a
+random reset. The notions of section 3.2 come first: s-equivalence and p-equivalence, which
+equivalence implies but which together do not imply it, and the tests, on which all three
+coincide. Section 3.4 then supplies the laws. The connectives are definable from negation,
+conjunction, and the existential but not conversely, since a negation is a test and an
+existential is one only over a contradictory scope (`isTest_exists_iff`); double negation,
+commutativity, and idempotency of conjunction hold exactly of tests, while contraposition,
+currying, and the de Morgan laws hold outright; an existential binds without limit to its
+right (`scope_extension`) and has universal force in an antecedent (`donkey_equivalence`).
+Section 3.5's dynamic entailment (`Entails`) satisfies the deduction theorem and reduces
+s-entailment to entailment from the closed premiss, and it is neither reflexive nor
+transitive, by the paper's own counterexamples. The satisfaction-set computations in the
+proof of Fact 19 are stated in the library's cylindric vocabulary.
 
-## Main results
+## Implementation notes
 
-- `scope_extension`, `donkey_equivalence`: the two central equivalences —
-  existentials bind across conjunction (`∃xφ ∧ ψ ≃ ∃x[φ ∧ ψ]`), and get
-  universal force in conditional antecedents (`∃xφ → ψ ≃ ∀x[φ → ψ]`),
-  both unconditional (they are the normal-binding-form equivalences of
-  Fact 17, §3.6).
-- Blocking (§2.5): `neg`, `impl`, `disj`, `forall_` are tests — no
-  binding escapes.
-- §3.4's logical facts: `conj_assoc`, `conj_not_comm`,
-  `close_eq_neg_neg` (`♦φ ≃ ¬¬φ`), the restricted double-negation law
-  `neg_neg_eq_self_iff_isTest` (`¬¬φ ≃ φ` iff `φ` is a test), its
-  anaphoric consequence `dne_fails_anaphora`, and the
-  interdefinability of `→`, `∨`, `∀` from `¬`, `∧`, `∃`.
-- `closure_exists_eq_cylindrify` and friends: the satisfaction-set
-  computations from Fact 19's proof (§3.6), in cylindric-algebra
-  vocabulary.
-- The indexed reading: DPL's generators as context-extension arrows
-  (`testTransition`, `Transition.randomAssign`), with clause 4 as
-  transition composition and clause 7 factoring through the
-  random-assignment arrow.
+The paper quantifies over models; `DPL.Rel E` fixes one, so its equivalence is equality of
+relations, its contradiction is `⊥`, and its counterexamples are stated over a domain with two
+individuals, `[Nontrivial E]`. Tests are the substrate's `Update.IsTest` through the embedding
+`toDRS`. The paper lists idempotency of disjunction as unconditional, but a disjunction is a
+test by Definition 2, so `φ ∨ φ` is the closure of `φ` (`disj_self`) and the law holds exactly
+of tests.
+
+## References
+
+* [groenendijk-stokhof-1991]
+* [henkin-monk-tarski-1971]
+
+## TODO
+
+The laws with side conditions on active quantifiers and free variables, Facts 8, 9, and 13 to
+16, the leftward scope extension, alphabetic variance, and the normal binding form of section
+4.1 with Facts 17 to 24 need a syntax for DPL formulas, which the substrate lacks.
 -/
 
 namespace GroenendijkStokhof1991
 
-open DPL
-open DynamicSemantics (Update)
+open DPL DynamicSemantics.Update
 
-/-! ### Scope extension (§2.1, §2.3) -/
+variable {E : Type*} (x : ℕ) (φ ψ χ : Rel E)
 
-/-! "A man walks in the park. He whistles."
+/-! ### Meaning, truth, and equivalence, section 3.2 -/
 
-DPL translation: `∃x[man(x) ∧ walk(x)] ∧ whistle(x)`. Scope extension
-makes this equal to `∃x[man(x) ∧ walk(x) ∧ whistle(x)]`: the
-existential binds across conjunction, unconditionally — a later conjunct
-with free `x` is simply captured. This accounts for
-`Heim1982.Examples.indefinite_persists`. -/
+/-- Validity and contradictoriness, Definitions 4 and 5: true, or false, with respect to
+every assignment. -/
+def Valid : Prop := ∀ g, φ.trueAt g
 
-variable {E : Type*}
+def Contradiction : Prop := ∀ g, ¬ φ.trueAt g
 
-/-- Scope extension: `∃xφ ∧ ψ ≃ ∃x[φ ∧ ψ]` — one of the four
-normal-binding-form equivalences in Fact 17's proof (§3.6), and the
-formal content of cross-sentential anaphora (§2.1). -/
-theorem scope_extension (x : ℕ) (φ ψ : DPL.Rel E) :
-    DPL.Rel.exists_ x (DPL.Rel.conj φ ψ) = DPL.Rel.conj (DPL.Rel.exists_ x φ) ψ := by
+/-- s-equivalence, Definition 7: the same satisfaction set. -/
+def SEquiv : Prop := φ.satisfactionSet = ψ.satisfactionSet
+
+/-- p-equivalence, Definition 10: the same production set. -/
+def PEquiv : Prop := φ.productionSet = ψ.productionSet
+
+/-- Facts 1 and 2: equivalent formulas are s-equivalent and p-equivalent. -/
+theorem SEquiv.of_eq {φ ψ : Rel E} (h : φ = ψ) : SEquiv φ ψ := h ▸ rfl
+
+theorem PEquiv.of_eq {φ ψ : Rel E} (h : φ = ψ) : PEquiv φ ψ := h ▸ rfl
+
+/-- Fact 3: s-equivalence and p-equivalence together do not give equivalence. The paper's
+witnesses are the tautologies `Px ∨ ¬Px` and `∃x[Px ∨ ¬Px]`: a trivial test and its
+existential closure have the total satisfaction and production sets and differ as relations. -/
+theorem exists_sEquiv_pEquiv_ne [Nontrivial E] :
+    ∃ φ ψ : Rel E, SEquiv φ ψ ∧ PEquiv φ ψ ∧ φ ≠ ψ := by
+  refine ⟨Rel.atom λ _ => True, Rel.exists_ 0 (Rel.atom λ _ => True), ?_, ?_, λ h => ?_⟩
+  · ext g
+    simp [Rel.satisfactionSet, Rel.atom, Rel.exists_]
+  · ext g
+    simp only [Rel.productionSet, Rel.atom, Rel.exists_, and_true, Set.mem_ofPred_eq, exists_eq,
+      true_iff]
+    exact ⟨g, g 0, funext λ n => by split_ifs with hn <;> simp [hn]⟩
+  · obtain ⟨a, b, hab⟩ := exists_pair_ne E
+    have hb : Rel.exists_ 0 (Rel.atom λ _ => True) (λ _ => a) (λ n => if n = 0 then b else a) :=
+      ⟨b, rfl, trivial⟩
+    rw [← h] at hb
+    exact hab (by simpa using congr_fun hb.1 0)
+
+/-- Definition 12 and Fact 5: atomic formulas, negations, disjunctions, implications, and
+universals are tests in the sense of Definition 11, and tests are closed under conjunction; so
+is the closure of Definition 17. -/
+theorem isTest_atom (p : (ℕ → E) → Prop) : IsTest (toDRS (Rel.atom p)) := λ _ _ h => h.1
+
+theorem isTest_neg : IsTest (toDRS φ.neg) := λ _ _ h => h.1
+
+theorem isTest_disj : IsTest (toDRS (φ.disj ψ)) := λ _ _ h => h.1
+
+theorem isTest_impl : IsTest (toDRS (φ.impl ψ)) := λ _ _ h => h.1
+
+theorem isTest_forall : IsTest (toDRS (Rel.forall_ x φ)) := λ _ _ h => h.1
+
+theorem isTest_close : IsTest (toDRS φ.close) := λ _ _ h => h.1
+
+theorem isTest_conj {φ ψ : Rel E} (hφ : IsTest (toDRS φ)) (hψ : IsTest (toDRS ψ)) :
+    IsTest (toDRS (φ.conj ψ)) :=
+  λ _ _ ⟨_, h₁, h₂⟩ => (hφ h₁).trans (hψ h₂)
+
+/-- A test's outputs are its inputs: its production set is its satisfaction set. -/
+theorem productionSet_eq_satisfactionSet {φ : Rel E} (h : IsTest (toDRS φ)) :
+    φ.productionSet = φ.satisfactionSet :=
+  Set.ext λ g => ⟨λ ⟨_, hk⟩ => ⟨g, h hk ▸ hk⟩, λ ⟨_, hk⟩ => ⟨g, (h hk).symm ▸ hk⟩⟩
+
+/-- Fact 4: on tests, equivalence, s-equivalence, and p-equivalence coincide. -/
+theorem sEquiv_iff_eq_of_isTest {φ ψ : Rel E} (hφ : IsTest (toDRS φ))
+    (hψ : IsTest (toDRS ψ)) : SEquiv φ ψ ↔ φ = ψ :=
+  ⟨λ h => (hφ.eq_test_closure.trans (congrArg test h)).trans hψ.eq_test_closure.symm, .of_eq⟩
+
+theorem pEquiv_iff_eq_of_isTest {φ ψ : Rel E} (hφ : IsTest (toDRS φ))
+    (hψ : IsTest (toDRS ψ)) : PEquiv φ ψ ↔ φ = ψ := by
+  rw [PEquiv, productionSet_eq_satisfactionSet hφ, productionSet_eq_satisfactionSet hψ]
+  exact sEquiv_iff_eq_of_isTest hφ hψ
+
+/-! ### Some logical facts, section 3.4 -/
+
+/-- Implication, disjunction, and the universal are definable from negation, conjunction,
+and the existential in the usual way. -/
+theorem impl_eq_neg_conj_neg : φ.impl ψ = (φ.conj ψ.neg).neg := by
   funext g h
-  simp only [DPL.Rel.exists_, DPL.Rel.conj, eq_iff_iff]
-  exact ⟨fun ⟨d, k, hφ, hψ⟩ => ⟨k, ⟨d, hφ⟩, hψ⟩,
-    fun ⟨k, ⟨d, hφ⟩, hψ⟩ => ⟨d, k, hφ, hψ⟩⟩
-
-/-! ### Donkey sentences (§2.4) -/
-
-/-! "If a farmer owns a donkey, he beats it."
-
-DPL translation: `∃x[farmer(x) ∧ ∃y[donkey(y) ∧ own(x,y)]] → beat(x,y)`.
-By `donkey_equivalence` (twice), this equals
-`∀x∀y[farmer(x) ∧ donkey(y) ∧ own(x,y) → beat(x,y)]` — the universal
-"strong" reading recorded for `Geach1962.Examples.donkey_classic` and
-`Heim1982.Examples.conditional_donkey`. -/
-
-/-- The donkey equivalence: `∃xφ → ψ ≃ ∀x[φ → ψ]`. An existential in the
-antecedent of an implication has universal force — donkey sentences are
-compositional without stipulating wide-scope `∀`. -/
-theorem donkey_equivalence (x : ℕ) (φ ψ : DPL.Rel E) :
-    DPL.Rel.impl (DPL.Rel.exists_ x φ) ψ =
-    DPL.Rel.forall_ x (DPL.Rel.impl φ ψ) := by
-  funext g h
-  simp only [DPL.Rel.impl, DPL.Rel.exists_, DPL.Rel.forall_, eq_iff_iff]
+  simp only [Rel.impl, Rel.neg, Rel.conj, eq_iff_iff]
   constructor
   · rintro ⟨rfl, hall⟩
-    refine ⟨rfl, fun d => ⟨_, rfl, fun k hφ => hall k ⟨d, hφ⟩⟩⟩
-  · rintro ⟨rfl, hall⟩
-    refine ⟨rfl, fun k ⟨d, hφ⟩ => ?_⟩
-    obtain ⟨m, rfl, himpl⟩ := hall d
-    exact himpl k hφ
+    exact ⟨rfl, λ ⟨_, _, hφ, rfl, hnψ⟩ => hnψ (hall _ hφ)⟩
+  · rintro ⟨rfl, hneg⟩
+    exact ⟨rfl, λ k hφ => by_contra λ hne => hneg ⟨k, k, hφ, rfl, hne⟩⟩
 
-/-- `¬∃xφ ≃ ∀x¬φ`: negation commutes with the quantifier switch, since
-negation turns anything into a test. -/
-theorem neg_exists_eq_forall_neg (x : ℕ) (φ : DPL.Rel E) :
-    DPL.Rel.neg (DPL.Rel.exists_ x φ) = DPL.Rel.forall_ x (DPL.Rel.neg φ) := by
+theorem disj_eq_neg_conj_neg_neg : φ.disj ψ = (φ.neg.conj ψ.neg).neg := by
   funext g h
-  simp only [DPL.Rel.neg, DPL.Rel.exists_, DPL.Rel.forall_, eq_iff_iff]
+  simp only [Rel.disj, Rel.neg, Rel.conj, eq_iff_iff]
+  constructor
+  · rintro ⟨rfl, k, hφψ⟩
+    refine ⟨rfl, ?_⟩
+    rintro ⟨_, _, ⟨rfl, hnφ⟩, rfl, hnψ⟩
+    exact hφψ.elim (λ hφ => hnφ ⟨k, hφ⟩) (λ hψ => hnψ ⟨k, hψ⟩)
+  · rintro ⟨rfl, hneg⟩
+    refine ⟨rfl, by_contra λ hne => ?_⟩
+    push Not at hne
+    exact hneg ⟨g, g, ⟨rfl, λ ⟨j, hφ⟩ => (hne j).1 hφ⟩, rfl, λ ⟨j, hψ⟩ => (hne j).2 hψ⟩
+
+theorem forall_eq_neg_exists_neg : Rel.forall_ x φ = (Rel.exists_ x φ.neg).neg := by
+  funext g h
+  simp only [Rel.forall_, Rel.neg, Rel.exists_, eq_iff_iff]
+  constructor
+  · rintro ⟨rfl, hall⟩
+    exact ⟨rfl, λ ⟨_, d, rfl, hneg⟩ => hneg (hall d)⟩
+  · rintro ⟨rfl, hneg⟩
+    exact ⟨rfl, λ d => by_contra λ hne => hneg ⟨_, d, rfl, hne⟩⟩
+
+/-- Disjunction is definable from implication, `φ ∨ ψ ≃ ¬φ → ψ`; the converse fails below. -/
+theorem disj_eq_neg_impl : φ.disj ψ = φ.neg.impl ψ := by
+  funext g h
+  simp only [Rel.disj, Rel.neg, Rel.impl, eq_iff_iff]
+  refine and_congr_right λ _ => ⟨λ ⟨k, hk⟩ _ ⟨rfl, hn⟩ => hk.elim (λ h => (hn ⟨k, h⟩).elim)
+    (⟨k, ·⟩), λ h => ?_⟩
+  by_cases hφ : ∃ k, φ g k
+  · exact hφ.imp λ _ => Or.inl
+  · exact (h g ⟨rfl, hφ⟩).imp λ _ => Or.inr
+
+/-- `¬∃xφ ≃ ∀x¬φ` holds unconditionally, negation turning anything into a test. -/
+theorem neg_exists_eq_forall_neg : (Rel.exists_ x φ).neg = Rel.forall_ x φ.neg := by
+  funext g h
+  simp only [Rel.neg, Rel.exists_, Rel.forall_, eq_iff_iff]
   constructor
   · rintro ⟨rfl, hneg⟩
-    refine ⟨rfl, fun d => ⟨_, rfl, fun ⟨k, hφ⟩ => hneg ⟨k, d, hφ⟩⟩⟩
+    exact ⟨rfl, λ d => ⟨_, rfl, λ ⟨k, hφ⟩ => hneg ⟨k, d, hφ⟩⟩⟩
   · rintro ⟨rfl, hall⟩
-    refine ⟨rfl, ?_⟩
-    rintro ⟨k, d, hφ⟩
-    obtain ⟨m, rfl, hneg⟩ := hall d
-    exact hneg ⟨k, hφ⟩
+    exact ⟨rfl, λ ⟨k, d, hφ⟩ => (hall d).elim λ _ ⟨_, hneg⟩ => hneg ⟨k, hφ⟩⟩
 
-/-! ### Blocking: the externally static constants (§2.5) -/
+/-! #### Closure and double negation, Definition 17 -/
 
-/-! "Every man walked in. *He sat down." / "John didn't see a bird.
-*It was singing."
-
-Negation, implication, disjunction, and the universal are *tests*: they
-force output = input, so no binding escapes them. This accounts for
-`Heim1982.Examples.universal_blocks`, `standard_negation_blocks`, and
-`conditional_antecedent`. -/
-
-/-- Negation is a test. -/
-theorem neg_isTest (φ : DPL.Rel E) : Update.IsTest (toDRS (DPL.Rel.neg φ)) :=
-  fun _ _ hn => hn.1
-
-/-- Implication is a test: antecedent bindings do not escape. -/
-theorem impl_isTest (φ ψ : DPL.Rel E) : Update.IsTest (toDRS (DPL.Rel.impl φ ψ)) :=
-  fun _ _ hi => hi.1
-
-/-- Disjunction is a test: no anaphora across or out of disjuncts. -/
-theorem disj_isTest (φ ψ : DPL.Rel E) : Update.IsTest (toDRS (DPL.Rel.disj φ ψ)) :=
-  fun _ _ hd => hd.1
-
-/-- The universal quantifier is a test: it introduces no referents. -/
-theorem forall_isTest (x : ℕ) (φ : DPL.Rel E) : Update.IsTest (toDRS (DPL.Rel.forall_ x φ)) :=
-  fun _ _ hfa => hfa.1
-
-/-! ### Logical facts (§3.4) -/
-
-/-- Conjunction is associative — despite the increased binding power of
-the existential (§3.4). -/
-theorem conj_assoc (φ ψ χ : DPL.Rel E) :
-    DPL.Rel.conj (DPL.Rel.conj φ ψ) χ = DPL.Rel.conj φ (DPL.Rel.conj ψ χ) := by
+/-- The closure operator is double negation. -/
+theorem close_eq_neg_neg : φ.close = φ.neg.neg := by
   funext g h
-  simp only [DPL.Rel.conj, eq_iff_iff]
-  exact ⟨fun ⟨k, ⟨j, hj, hjk⟩, hk⟩ => ⟨j, hj, k, hjk, hk⟩,
-    fun ⟨j, hj, k, hjk, hk⟩ => ⟨k, ⟨j, hj, hjk⟩, hk⟩⟩
-
-/-- Conjunction is not commutative: binding is left-to-right (§3.4). -/
-theorem conj_not_comm [Nontrivial E] :
-    ∃ (φ ψ : DPL.Rel E), DPL.Rel.conj φ ψ ≠ DPL.Rel.conj ψ φ := by
-  obtain ⟨e₁, e₂, hne⟩ := exists_pair_ne E
-  refine ⟨DPL.Rel.exists_ 0 (fun g h => g = h),
-    DPL.Rel.atom (fun g => g 0 = e₁), fun heq => ?_⟩
-  have hfwd : (DPL.Rel.conj (DPL.Rel.exists_ 0 (fun g h => g = h))
-      (DPL.Rel.atom (fun g => g 0 = e₁))) (fun _ => e₂)
-      (fun n => if n = 0 then e₁ else e₂) := by
-    refine ⟨fun n => if n = 0 then e₁ else e₂, ⟨e₁, ?_⟩, rfl, ?_⟩
-    · funext n; simp
-    · simp
-  rw [heq] at hfwd
-  obtain ⟨k, ⟨rfl, hk0⟩, -⟩ := hfwd
-  simp at hk0
-  exact hne hk0.symm
-
-/-- `♦φ ≃ ¬¬φ`: closure is double negation (§3.4). -/
-theorem close_eq_neg_neg (φ : DPL.Rel E) :
-    DPL.Rel.close φ = DPL.Rel.neg (DPL.Rel.neg φ) := by
-  funext g h
-  simp only [DPL.Rel.close, DPL.Rel.neg, eq_iff_iff]
+  simp only [Rel.close, Rel.neg, eq_iff_iff]
   constructor
   · rintro ⟨rfl, k, hφ⟩
-    exact ⟨rfl, fun ⟨_, rfl, hneg⟩ => hneg ⟨k, hφ⟩⟩
+    exact ⟨rfl, λ ⟨_, rfl, hneg⟩ => hneg ⟨k, hφ⟩⟩
   · rintro ⟨rfl, hneg⟩
-    exact ⟨rfl, by_contra fun hne => hneg ⟨g, rfl, hne⟩⟩
+    exact ⟨rfl, by_contra λ hne => hneg ⟨g, rfl, hne⟩⟩
 
-/-- Closure fixes exactly the tests: `♦φ ≃ φ` iff `φ` is a test (§3.4). -/
-theorem close_eq_self_iff_isTest (φ : DPL.Rel E) :
-    DPL.Rel.close φ = φ ↔ ∀ g h, φ g h → g = h := by
+/-- Closure fixes exactly the tests. -/
+theorem close_eq_self_iff_isTest : φ.close = φ ↔ IsTest (toDRS φ) := by
   constructor
   · intro h g k hφ
     rw [← h] at hφ
     exact hφ.1
   · intro htest
     funext g h
-    simp only [DPL.Rel.close, eq_iff_iff]
+    simp only [Rel.close, eq_iff_iff]
     constructor
     · rintro ⟨rfl, k, hk⟩
-      obtain rfl := htest g k hk
+      obtain rfl := htest hk
       exact hk
-    · exact fun hφ => ⟨htest g h hφ, h, hφ⟩
+    · exact λ hφ => ⟨htest hφ, h, hφ⟩
 
-/-- The paper's restricted double-negation law (§3.4): `¬¬φ ≃ φ` exactly
-when `φ` is a test. -/
-theorem neg_neg_eq_self_iff_isTest (φ : DPL.Rel E) :
-    DPL.Rel.neg (DPL.Rel.neg φ) = φ ↔ ∀ g h, φ g h → g = h :=
+/-- The restricted law of double negation: `¬¬φ ≃ φ` exactly when `φ` is a test. -/
+theorem neg_neg_eq_self_iff_isTest : φ.neg.neg = φ ↔ IsTest (toDRS φ) :=
   close_eq_neg_neg φ ▸ close_eq_self_iff_isTest φ
 
-/-- DNE fails for anaphora: `¬¬∃xφ ≠ ∃xφ`, since the existential is not
-a test. The anaphoric consequence — doubly negated indefinites should
-not license anaphora — underpredicts
-(`ElliottSudo2025.Examples.ex_52b` is acceptable); the
-divergence theorem lives with the comparing paper, in
-`Studies/ElliottSudo2025.lean`. -/
-theorem dne_fails_anaphora [Nontrivial E] :
-    ∃ (x : ℕ) (φ : DPL.Rel E),
-      DPL.Rel.neg (DPL.Rel.neg (DPL.Rel.exists_ x φ)) ≠ DPL.Rel.exists_ x φ := by
-  obtain ⟨e₁, e₂, hne⟩ := exists_pair_ne E
-  refine ⟨0, fun g h => g = h, fun heq => ?_⟩
-  have hrhs : (DPL.Rel.exists_ 0 (fun (g h : ℕ → E) => g = h))
-      (fun _ => e₁) (fun n => if n = 0 then e₂ else e₁) :=
-    ⟨e₂, rfl⟩
-  rw [← heq] at hrhs
-  have h_eq := congr_fun hrhs.1 0
-  simp at h_eq
-  exact hne h_eq
+/-- `◇φ ≃ ◇ψ` iff `φ ≃ₛ ψ`: closure retains exactly the truth conditions. -/
+theorem close_eq_close_iff_sEquiv : φ.close = ψ.close ↔ SEquiv φ ψ := by
+  refine ⟨λ h => Set.ext λ g => ?_, λ h => funext λ g => funext λ k => ?_⟩
+  · simpa [Rel.close, Rel.satisfactionSet] using congr_fun (congr_fun h g) g
+  · simp only [Rel.close]
+    exact propext (and_congr_right λ _ => Set.ext_iff.mp h g)
 
-/-! ### Interdefinability (§3.4)
+theorem close_close : φ.close.close = φ.close :=
+  (close_eq_self_iff_isTest _).mpr (isTest_close φ)
 
-`→`, `∨`, `∀` are definable from `¬`, `∧`, `∃` — but not conversely:
-the latter contains the only externally dynamic constants
-(`conj_not_comm` separates `∧` from any test). -/
+theorem close_neg : φ.neg.close = φ.neg := (close_eq_self_iff_isTest _).mpr (isTest_neg φ)
 
-/-- `φ → ψ ≃ ¬[φ ∧ ¬ψ]`. -/
-theorem impl_interdefinable (φ ψ : DPL.Rel E) :
-    DPL.Rel.impl φ ψ = DPL.Rel.neg (DPL.Rel.conj φ (DPL.Rel.neg ψ)) := by
+theorem neg_close : φ.close.neg = φ.neg := by
   funext g h
-  simp only [DPL.Rel.impl, DPL.Rel.neg, DPL.Rel.conj, eq_iff_iff]
-  constructor
-  · rintro ⟨rfl, hall⟩
-    refine ⟨rfl, fun ⟨k, m, hφ, hmk, hnψ⟩ => ?_⟩
-    subst hmk; exact hnψ (hall m hφ)
-  · rintro ⟨rfl, hneg⟩
-    exact ⟨rfl, fun k hφ => by_contra fun hne => hneg ⟨k, k, hφ, rfl, hne⟩⟩
+  simp [Rel.neg, Rel.close]
 
-/-- `φ ∨ ψ ≃ ¬[¬φ ∧ ¬ψ]`. -/
-theorem disj_interdefinable (φ ψ : DPL.Rel E) :
-    DPL.Rel.disj φ ψ = DPL.Rel.neg (DPL.Rel.conj (DPL.Rel.neg φ) (DPL.Rel.neg ψ)) := by
+/-- `φ ≃ₛ ¬¬φ`: double negation keeps the truth conditions. -/
+theorem sEquiv_neg_neg : SEquiv φ φ.neg.neg :=
+  (close_eq_close_iff_sEquiv _ _).mp (by rw [close_neg, close_eq_neg_neg])
+
+/-- The restricted interdefinability of the constants, stated through closure. -/
+theorem close_conj : (φ.conj ψ).close = (φ.impl ψ.neg).neg := by
   funext g h
-  simp only [DPL.Rel.disj, DPL.Rel.neg, DPL.Rel.conj, eq_iff_iff]
-  constructor
-  · rintro ⟨rfl, k, hφψ⟩
-    refine ⟨rfl, ?_⟩
-    rintro ⟨_, m, ⟨rfl, hnφ⟩, rfl, hnψ⟩
-    cases hφψ with
-    | inl hφ => exact hnφ ⟨k, hφ⟩
-    | inr hψ => exact hnψ ⟨k, hψ⟩
-  · rintro ⟨rfl, hneg⟩
-    refine ⟨rfl, by_contra fun hne => ?_⟩
+  simp only [Rel.close, Rel.conj, Rel.impl, Rel.neg, eq_iff_iff]
+  refine and_congr_right λ _ => ⟨?_, ?_⟩
+  · rintro ⟨_, m, hφ, hψ⟩ ⟨_, rfl, hall⟩
+    obtain ⟨_, rfl, hnψ⟩ := hall m hφ
+    exact hnψ ⟨_, hψ⟩
+  · intro hn
+    by_contra hne
     push Not at hne
-    exact hneg ⟨g, g, ⟨rfl, fun ⟨j, hφ⟩ => (hne j).1 hφ⟩,
-      rfl, fun ⟨j, hψ⟩ => (hne j).2 hψ⟩
+    exact hn ⟨g, rfl, λ m hφ => ⟨m, rfl, λ ⟨k, hψ⟩ => hne k m hφ hψ⟩⟩
 
-/-- `∀xφ ≃ ¬∃x¬φ`. -/
-theorem forall_interdefinable (x : ℕ) (φ : DPL.Rel E) :
-    DPL.Rel.forall_ x φ = DPL.Rel.neg (DPL.Rel.exists_ x (DPL.Rel.neg φ)) := by
+theorem close_conj_close : φ.close.conj ψ.close = (φ.neg.disj ψ.neg).neg := by
   funext g h
-  simp only [DPL.Rel.forall_, DPL.Rel.neg, DPL.Rel.exists_, eq_iff_iff]
+  simp only [Rel.close, Rel.conj, Rel.disj, Rel.neg, eq_iff_iff]
+  constructor
+  · rintro ⟨_, ⟨rfl, hφ⟩, rfl, hψ⟩
+    refine ⟨rfl, ?_⟩
+    rintro ⟨_, rfl, _, ⟨-, hn⟩ | ⟨-, hn⟩⟩
+    exacts [hn hφ, hn hψ]
+  · rintro ⟨rfl, hn⟩
+    refine ⟨g, ⟨rfl, ?_⟩, rfl, ?_⟩
+    · by_contra hφ
+      exact hn ⟨g, rfl, g, .inl ⟨rfl, hφ⟩⟩
+    · by_contra hψ
+      exact hn ⟨g, rfl, g, .inr ⟨rfl, hψ⟩⟩
+
+theorem close_exists : (Rel.exists_ x φ).close = (Rel.forall_ x φ.neg).neg := by
+  rw [close_eq_neg_neg, neg_exists_eq_forall_neg]
+
+theorem close_impl : φ.close.impl ψ = φ.neg.disj ψ := by
+  funext g h
+  simp only [Rel.close, Rel.impl, Rel.neg, Rel.disj, eq_iff_iff]
+  refine and_congr_right λ _ => ?_
+  constructor
+  · intro hall
+    by_cases hφ : ∃ k, φ g k
+    · exact (hall g ⟨rfl, hφ⟩).imp λ _ => Or.inr
+    · exact ⟨g, .inl ⟨rfl, hφ⟩⟩
+  · rintro ⟨k, hk⟩ _ ⟨rfl, hφ⟩
+    exact hk.elim (λ h => (h.2 hφ).elim) (⟨k, ·⟩)
+
+/-! #### What the static constants cannot define -/
+
+/-- An existential is a test only over a contradictory scope, given two individuals to reset
+between: this is why the externally dynamic constants are not definable from the universal
+and a static connective. -/
+theorem isTest_exists_iff [Nontrivial E] :
+    IsTest (toDRS (Rel.exists_ x φ)) ↔ Contradiction φ := by
+  refine ⟨λ h g ⟨k, hφ⟩ => ?_, λ hc _ _ ⟨_, hφ⟩ => (hc _ ⟨_, hφ⟩).elim⟩
+  have hg : ∀ g' : ℕ → E, (∀ n, n ≠ x → g' n = g n) → g' = k := λ g' hg' =>
+    h (show toDRS (Rel.exists_ x φ) g' k from ⟨g x, by
+      rwa [show (λ n => if n = x then g x else g' n) = g from
+        funext λ n => by by_cases hn : n = x <;> simp [hn, hg']]⟩)
+  obtain ⟨e, he⟩ := exists_ne (g x)
+  have := congr_fun ((hg (λ n => if n = x then e else g n) λ _ hn => if_neg hn).trans
+    (hg g λ _ _ => rfl).symm) x
+  exact he (by simpa using this)
+
+/-- `∃xφ ≃ ¬∀x¬φ` exactly when `∃xφ` is a test, so only over a contradictory scope; the two
+are always s-equivalent. -/
+theorem exists_eq_neg_forall_neg_iff [Nontrivial E] :
+    Rel.exists_ x φ = (Rel.forall_ x φ.neg).neg ↔ Contradiction φ := by
+  rw [← isTest_exists_iff]
+  refine ⟨λ h => h ▸ isTest_neg _, λ h => ?_⟩
+  rw [← (close_eq_self_iff_isTest _).mpr h, close_exists]
+
+theorem sEquiv_exists_neg_forall_neg : SEquiv (Rel.exists_ x φ) (Rel.forall_ x φ.neg).neg :=
+  (close_eq_close_iff_sEquiv _ _).mp (by rw [close_exists, close_neg])
+
+/-- `φ ∧ ψ ≃ ¬[φ → ¬ψ]` exactly when `φ ∧ ψ` is a test; the two are always s-equivalent. -/
+theorem conj_eq_neg_impl_neg_iff :
+    φ.conj ψ = (φ.impl ψ.neg).neg ↔ IsTest (toDRS (φ.conj ψ)) := by
+  rw [← close_conj, eq_comm, close_eq_self_iff_isTest]
+
+theorem sEquiv_conj_neg_impl_neg : SEquiv (φ.conj ψ) (φ.impl ψ.neg).neg :=
+  (close_eq_close_iff_sEquiv _ _).mp (by rw [close_conj, close_neg])
+
+/-- The restricted law of double negation fails for the existential unless its scope is
+contradictory; so a doubly negated indefinite licenses no anaphora. -/
+theorem neg_neg_exists_eq_iff [Nontrivial E] :
+    (Rel.exists_ x φ).neg.neg = Rel.exists_ x φ ↔ Contradiction φ :=
+  (neg_neg_eq_self_iff_isTest _).trans (isTest_exists_iff x φ)
+
+theorem dne_fails_anaphora [Nontrivial E] :
+    ∃ (x : ℕ) (φ : Rel E), (Rel.exists_ x φ).neg.neg ≠ Rel.exists_ x φ :=
+  ⟨0, Rel.atom λ _ => True, λ h =>
+    (neg_neg_exists_eq_iff 0 _).mp h (λ _ => Classical.arbitrary E) ⟨_, rfl, trivial⟩⟩
+
+/-- Disjunction, being internally static, does not define conjunction or implication even up
+to truth conditions: `φ ∧ ψ ≄ₛ ¬[¬φ ∨ ¬ψ]` and `φ → ψ ≄ₛ ¬φ ∨ ψ`, with `P` and `Q` true of one
+individual and `φ` the existential `∃xPx`. -/
+theorem not_sEquiv_conj_neg_disj_neg [Nontrivial E] :
+    ∃ φ ψ : Rel E, ¬ SEquiv (φ.conj ψ) (φ.neg.disj ψ.neg).neg := by
+  obtain ⟨a, b, hab⟩ := exists_pair_ne E
+  refine ⟨Rel.exists_ 0 (Rel.atom (· 0 = a)), Rel.atom (· 0 = a), λ h => ?_⟩
+  have hb : (λ _ => b) ∈ ((Rel.exists_ 0 (Rel.atom (· 0 = a))).conj
+      (Rel.atom (· 0 = a))).satisfactionSet := by
+    refine ⟨_, _, ⟨a, rfl, ?_⟩, rfl, ?_⟩ <;> simp
+  rw [SEquiv] at h
+  rw [h] at hb
+  obtain ⟨_, -, hn⟩ := hb
+  refine hn ⟨_, rfl, _, .inr ⟨rfl, ?_⟩⟩
+  rintro ⟨_, -, hb⟩
+  exact hab (by simpa using hb.symm)
+
+theorem not_sEquiv_impl_neg_disj [Nontrivial E] :
+    ∃ φ ψ : Rel E, ¬ SEquiv (φ.impl ψ) (φ.neg.disj ψ) := by
+  obtain ⟨a, b, hab⟩ := exists_pair_ne E
+  refine ⟨Rel.exists_ 0 (Rel.atom (· 0 = a)), Rel.atom (· 0 = a), λ h => ?_⟩
+  have hb : (λ _ => b) ∈ ((Rel.exists_ 0 (Rel.atom (· 0 = a))).impl
+      (Rel.atom (· 0 = a))).satisfactionSet := by
+    refine ⟨_, rfl, ?_⟩
+    rintro _ ⟨_, rfl, hd⟩
+    exact ⟨_, rfl, hd⟩
+  rw [SEquiv] at h
+  rw [h] at hb
+  obtain ⟨_, -, _, ⟨-, hn⟩ | ⟨-, hb⟩⟩ := hb
+  · exact hn ⟨_, a, rfl, by simp⟩
+  · exact hab (by simpa using hb.symm)
+
+/-! #### Conjunction and disjunction -/
+
+/-- Conjunction is associative despite the binding power of the existential: the rightmost
+active occurrence of a quantifier is the one that binds. -/
+theorem conj_assoc : (φ.conj ψ).conj χ = φ.conj (ψ.conj χ) := by
+  funext g h
+  simp only [Rel.conj, eq_iff_iff]
+  exact ⟨λ ⟨k, ⟨j, hj, hjk⟩, hk⟩ => ⟨j, hj, k, hjk, hk⟩,
+    λ ⟨j, hj, k, hjk, hk⟩ => ⟨k, ⟨j, hj, hjk⟩, hk⟩⟩
+
+/-- Tests commute, and a test is idempotent, under conjunction. -/
+theorem conj_comm_of_isTest {φ ψ : Rel E} (hφ : IsTest (toDRS φ)) (hψ : IsTest (toDRS ψ)) :
+    φ.conj ψ = ψ.conj φ := by
+  have key : ∀ {φ ψ : Rel E}, IsTest (toDRS φ) → IsTest (toDRS ψ) → φ.conj ψ ≤ ψ.conj φ :=
+    λ hφ hψ _ _ ⟨_, h₁, h₂⟩ => by
+      obtain rfl := hφ h₁
+      obtain rfl := hψ h₂
+      exact ⟨_, h₂, h₁⟩
+  exact le_antisymm (key hφ hψ) (key hψ hφ)
+
+theorem conj_self_of_isTest {φ : Rel E} (hφ : IsTest (toDRS φ)) : φ.conj φ = φ := by
+  funext g h
+  simp only [Rel.conj, eq_iff_iff]
+  exact ⟨λ ⟨_, h₁, h₂⟩ => hφ h₁ ▸ h₂, λ h => ⟨_, h, hφ h ▸ h⟩⟩
+
+/-- Conjunction is neither commutative nor idempotent in general: `∃xPx ∧ Qx` differs from
+`Qx ∧ ∃xPx`, and the latter from its self-conjunction, binding being left to right. -/
+theorem conj_not_comm [Nontrivial E] : ∃ φ ψ : Rel E, φ.conj ψ ≠ ψ.conj φ := by
+  obtain ⟨a, b, hab⟩ := exists_pair_ne E
+  refine ⟨Rel.exists_ 0 (Rel.atom λ _ => True), Rel.atom (· 0 = a), λ h => ?_⟩
+  have hb : (Rel.exists_ 0 (Rel.atom λ _ => True)).conj (Rel.atom (· 0 = a)) (λ _ => b)
+      (λ n => if n = 0 then a else b) := by
+    refine ⟨_, ⟨a, rfl, trivial⟩, rfl, ?_⟩
+    simp
+  rw [h] at hb
+  obtain ⟨_, ⟨rfl, hb⟩, -⟩ := hb
+  exact hab (by simpa using hb.symm)
+
+theorem conj_not_idem [Nontrivial E] : ∃ φ : Rel E, φ.conj φ ≠ φ := by
+  obtain ⟨a, b, hab⟩ := exists_pair_ne E
+  refine ⟨(Rel.atom (· 0 = a)).conj (Rel.exists_ 0 (Rel.atom (· 0 = b))), λ h => ?_⟩
+  have hb : (Rel.atom (· 0 = a)).conj (Rel.exists_ 0 (Rel.atom (· 0 = b))) (λ _ => a)
+      (λ n => if n = 0 then b else a) := by
+    refine ⟨_, ⟨rfl, rfl⟩, b, rfl, ?_⟩
+    simp
+  rw [← h] at hb
+  obtain ⟨_, ⟨_, ⟨rfl, -⟩, _, rfl, hd⟩, _, ⟨-, hk⟩, -⟩ := hb
+  exact hab (hk.symm.trans hd)
+
+/-- Disjunction, static in both directions, is commutative and associative; its
+self-disjunction is the closure of the disjunct. -/
+theorem disj_self : φ.disj φ = φ.close := by
+  funext g h
+  simp [Rel.disj, Rel.close]
+
+theorem disj_comm : φ.disj ψ = ψ.disj φ := by
+  funext g h
+  simp only [Rel.disj, or_comm]
+
+theorem disj_assoc : (φ.disj ψ).disj χ = φ.disj (ψ.disj χ) := by
+  funext g h
+  simp only [Rel.disj, eq_iff_iff]
+  refine and_congr_right λ _ => ⟨?_, ?_⟩
+  · rintro ⟨k, ⟨rfl, j, hj⟩ | hχ⟩
+    · exact hj.elim (λ hφ => ⟨j, .inl hφ⟩) (λ hψ => ⟨g, .inr ⟨rfl, j, .inl hψ⟩⟩)
+    · exact ⟨g, .inr ⟨rfl, k, .inr hχ⟩⟩
+  · rintro ⟨k, hφ | ⟨rfl, j, hj⟩⟩
+    · exact ⟨g, .inl ⟨rfl, k, .inl hφ⟩⟩
+    · exact hj.elim (λ hψ => ⟨g, .inl ⟨rfl, j, .inr hψ⟩⟩) (λ hχ => ⟨j, .inr hχ⟩)
+
+/-- The de Morgan laws DPL validates, the second an instance of distribution when the
+disjunct binds nothing in the conjunction. -/
+theorem close_conj_disj :
+    (φ.conj (ψ.disj χ)).close = (φ.conj ψ).disj (φ.conj χ) := by
+  funext g h
+  simp only [Rel.close, Rel.conj, Rel.disj, eq_iff_iff]
+  refine and_congr_right λ _ => ⟨?_, ?_⟩
+  · rintro ⟨_, k, hφ, rfl, j, hj⟩
+    exact ⟨j, hj.imp (⟨k, hφ, ·⟩) (⟨k, hφ, ·⟩)⟩
+  · rintro ⟨j, ⟨k, hφ, hj⟩ | ⟨k, hφ, hj⟩⟩
+    · exact ⟨k, k, hφ, rfl, j, .inl hj⟩
+    · exact ⟨k, k, hφ, rfl, j, .inr hj⟩
+
+theorem disj_close_conj :
+    φ.disj (ψ.close.conj χ) = (φ.disj ψ).conj (φ.disj χ) := by
+  funext g h
+  simp only [Rel.disj, Rel.close, Rel.conj, eq_iff_iff]
+  constructor
+  · rintro ⟨rfl, k, hφ | ⟨_, ⟨rfl, j, hψ⟩, hχ⟩⟩
+    · exact ⟨g, ⟨rfl, k, .inl hφ⟩, rfl, k, .inl hφ⟩
+    · exact ⟨g, ⟨rfl, j, .inr hψ⟩, rfl, k, .inr hχ⟩
+  · rintro ⟨_, ⟨rfl, j, hj⟩, rfl, k, hk⟩
+    refine ⟨rfl, ?_⟩
+    rcases hj with hφ | hψ
+    · exact ⟨j, .inl hφ⟩
+    rcases hk with hφ | hχ
+    · exact ⟨k, .inl hφ⟩
+    · exact ⟨k, .inr ⟨g, ⟨rfl, j, hψ⟩, hχ⟩⟩
+
+/-! #### Implication -/
+
+/-- Contraposition holds outright for a negated antecedent, and for a closed one against a
+negated consequent; the general law needs a binding condition. -/
+theorem neg_impl_comm : φ.neg.impl ψ = ψ.neg.impl φ := by
+  funext g h
+  simp only [Rel.impl, Rel.neg, eq_iff_iff]
+  refine and_congr_right λ _ => ⟨?_, ?_⟩ <;>
+  · rintro hall _ ⟨rfl, hn⟩
+    by_contra hne
+    exact hn (hall _ ⟨rfl, hne⟩)
+
+theorem close_impl_eq_neg_impl_neg : φ.close.impl ψ = ψ.neg.impl φ.neg := by
+  funext g h
+  simp only [Rel.impl, Rel.close, Rel.neg, eq_iff_iff]
+  refine and_congr_right λ _ => ⟨?_, ?_⟩
+  · rintro hall _ ⟨rfl, hn⟩
+    exact ⟨g, rfl, λ hφ => hn (hall g ⟨rfl, hφ⟩)⟩
+  · rintro hall _ ⟨rfl, hφ⟩
+    by_contra hn
+    obtain ⟨_, rfl, hnφ⟩ := hall g ⟨rfl, hn⟩
+    exact hnφ hφ
+
+/-- An implication is a test and turns its consequent into one, and it curries. -/
+theorem impl_close_right : φ.impl ψ.close = φ.impl ψ := by
+  funext g h
+  simp [Rel.impl, Rel.close]
+
+theorem impl_impl : φ.impl (ψ.impl χ) = (φ.conj ψ).impl χ := by
+  funext g h
+  simp only [Rel.impl, Rel.conj, eq_iff_iff]
+  refine and_congr_right λ _ => ⟨?_, λ hall k hφ => ⟨k, rfl, λ _ hψ => hall _ ⟨k, hφ, hψ⟩⟩⟩
+  rintro hall _ ⟨k, hφ, hψ⟩
+  obtain ⟨_, rfl, hk⟩ := hall k hφ
+  exact hk _ hψ
+
+/-! #### Quantifiers and connectives -/
+
+/-- Scope extension, `∃xφ ∧ ψ ≃ ∃x[φ ∧ ψ]`: the binding power of the existential extends
+without limit to the right, which is what represents anaphora across sentences. -/
+theorem scope_extension : (Rel.exists_ x φ).conj ψ = Rel.exists_ x (φ.conj ψ) := by
+  funext g h
+  simp only [Rel.exists_, Rel.conj, eq_iff_iff]
+  exact ⟨λ ⟨k, ⟨d, hφ⟩, hψ⟩ => ⟨d, k, hφ, hψ⟩, λ ⟨d, k, hφ, hψ⟩ => ⟨k, ⟨d, hφ⟩, hψ⟩⟩
+
+/-- The donkey equivalence, `∃xφ → ψ ≃ ∀x[φ → ψ]`: an existential in an antecedent binds
+into the consequent with universal force. -/
+theorem donkey_equivalence : (Rel.exists_ x φ).impl ψ = Rel.forall_ x (φ.impl ψ) := by
+  funext g h
+  simp only [Rel.impl, Rel.exists_, Rel.forall_, eq_iff_iff]
   constructor
   · rintro ⟨rfl, hall⟩
-    refine ⟨rfl, ?_⟩
-    rintro ⟨k, d, rfl, hneg⟩
-    exact hneg (hall d)
-  · rintro ⟨rfl, hneg⟩
-    refine ⟨rfl, fun d => by_contra fun hne => hneg ⟨_, d, rfl, hne⟩⟩
+    exact ⟨rfl, λ d => ⟨_, rfl, λ k hφ => hall k ⟨d, hφ⟩⟩⟩
+  · rintro ⟨rfl, hall⟩
+    exact ⟨rfl, λ k ⟨d, hφ⟩ => (hall d).elim λ _ ⟨hm, himpl⟩ => himpl k (hm ▸ hφ)⟩
 
-/-! ### Equivalence notions and conditions (§3.2, §3.4) -/
+/-! ### Entailment, section 3.5 -/
 
-section Metatheory
+/-- s-entailment, Definition 18: truth is preserved from premiss to conclusion. -/
+def SEntails : Prop := ∀ g, φ.trueAt g → ψ.trueAt g
 
-open DynamicSemantics DynamicSemantics.Update
+/-- Dynamic entailment, Definition 20: every output of the premiss is an input on which the
+conclusion succeeds. -/
+def Entails : Prop := ∀ ⦃g h⦄, φ g h → ψ.trueAt h
 
-/-- s-equivalence (Definition 7) at a fixed model: same satisfaction
-set. The paper quantifies over models; `DPL.Rel` fixes one. -/
-def sEquiv (φ ψ : DPL.Rel E) : Prop :=
-  φ.satisfactionSet = ψ.satisfactionSet
+/-- Fact 10: meaning inclusion, Definition 19, which is `≤` on relations, implies
+s-entailment; the converse fails, as `∃xPx ⊨ₛ ∃xPx → Px` with `∃xPx ≰ Px` shows. -/
+theorem SEntails.of_le {φ ψ : Rel E} (h : φ ≤ ψ) : SEntails φ ψ :=
+  λ _ ⟨k, hk⟩ => ⟨k, h _ _ hk⟩
 
-/-- p-equivalence (Definition 10): same production set. -/
-def pEquiv (φ ψ : DPL.Rel E) : Prop :=
-  φ.productionSet = ψ.productionSet
+/-- Fact 11, the deduction theorem: `φ ⊨ ψ` iff `φ → ψ` is valid. -/
+theorem entails_iff_valid_impl : Entails φ ψ ↔ Valid (φ.impl ψ) :=
+  ⟨λ h g => ⟨g, rfl, λ _ hk => h hk⟩, λ h _ _ hgk => (h _).elim λ _ hi => hi.2 _ hgk⟩
 
-/-- Facts 1–2: equivalence implies s-equivalence and p-equivalence. -/
-theorem sEquiv_of_eq {φ ψ : DPL.Rel E} (h : φ = ψ) : sEquiv φ ψ := h ▸ rfl
+/-- Fact 12: s-entailment is dynamic entailment from the closed premiss. -/
+theorem sEntails_iff_entails_close : SEntails φ ψ ↔ Entails φ.close ψ :=
+  ⟨λ h _ _ ⟨hg, hc⟩ => hg ▸ h _ hc, λ h _ hg => h ⟨rfl, hg⟩⟩
 
-theorem pEquiv_of_eq {φ ψ : DPL.Rel E} (h : φ = ψ) : pEquiv φ ψ := h ▸ rfl
-
-/-- Fact 3: joint s- and p-equivalence does not imply equivalence — the
-trivial test and the total relation agree on both sets. -/
-theorem sEquiv_pEquiv_ne [Nontrivial E] :
-    ∃ φ ψ : DPL.Rel E, sEquiv φ ψ ∧ pEquiv φ ψ ∧ φ ≠ ψ := by
-  obtain ⟨e₁, e₂, hne⟩ := exists_pair_ne E
-  refine ⟨DPL.Rel.atom (fun _ => True), fun _ _ => True, ?_, ?_, fun heq => ?_⟩
-  · ext g
-    simp [DPL.Rel.satisfactionSet, DPL.Rel.atom]
-  · ext h
-    simp [DPL.Rel.productionSet, DPL.Rel.atom]
-  · have h2 : DPL.Rel.atom (fun _ => True) (fun _ => e₁) (fun _ => e₂) := by
-      rw [heq]; trivial
-    exact hne (congr_fun h2.1 0)
-
-/-- Definition 12's semantic core, clause 2: a conjunction of tests is a
-test. With the static constants (`neg_isTest`, ..., Fact 5) this closes
-the conditions under the semantics. -/
-theorem conj_isTest {φ ψ : DPL.Rel E} (hφ : Update.IsTest (toDRS φ))
-    (hψ : Update.IsTest (toDRS ψ)) : Update.IsTest (toDRS (DPL.Rel.conj φ ψ)) :=
-  fun _ _ ⟨_, h1, h2⟩ => (hφ h1).trans (hψ h2)
-
-/-- Fact 4: for tests, s-equivalence coincides with equivalence — a test
-is determined by its truth conditions (`IsTest.eq_test_closure`, the
-semantic form of Fact 6). -/
-theorem sEquiv_iff_eq_of_isTest {φ ψ : DPL.Rel E}
-    (hφ : Update.IsTest (toDRS φ)) (hψ : Update.IsTest (toDRS ψ)) :
-    sEquiv φ ψ ↔ φ = ψ := by
-  refine ⟨fun h => ?_, sEquiv_of_eq⟩
-  have hc : closure (toDRS φ) = closure (toDRS ψ) :=
-    funext fun g => congrArg (fun s => g ∈ s) h
-  have h1 := hφ.eq_test_closure
-  rw [hc] at h1
-  exact h1.trans hψ.eq_test_closure.symm
-
-/-! ### Entailment (§3.5)
-
-The paper's two entailment notions, stated over the spine's carrier
-(`Update S`) at full generality. Facts 13–16 — the restricted
-reflexivity and transitivity laws — carry syntactic `AQV/FV` side
-conditions and await the syntax stratum. -/
-
-section Entailment
-
-variable {S : Type*}
-
-/-- An `Update` is valid iff satisfiable (`closure`) at every input. -/
-def valid (D : Update S) : Prop := ∀ i, closure D i
-
-/-- Dynamic entailment (Definition 20): every output of `D₁` can be
-extended by `D₂`. -/
-def entails (D₁ D₂ : Update S) : Prop :=
-  ∀ i j, D₁ i j → closure D₂ j
-
-scoped notation D₁ " ⊨ " D₂ => entails D₁ D₂
-
-/-- s-entailment (Definition 18): truth is preserved from premiss to
-conclusion. Unlike `⊨`, it sees no binding between them. -/
-def sEntails (D₁ D₂ : Update S) : Prop :=
-  ∀ i, closure D₁ i → closure D₂ i
-
-scoped notation D₁ " ⊨ₛ " D₂ => sEntails D₁ D₂
-
-/-- Meaning inclusion implies s-entailment (Fact 10); the converse
-fails. -/
-theorem sEntails_of_subset {D₁ D₂ : Update S}
-    (h : ∀ ⦃i j⦄, D₁ i j → D₂ i j) : D₁ ⊨ₛ D₂ :=
-  fun _ ⟨j, hj⟩ => ⟨j, h hj⟩
-
-/-- The deduction theorem (Fact 11) in spine vocabulary: entailment is
-validity of the implication test. -/
-theorem entails_iff_valid_test_impl (D₁ D₂ : Update S) :
-    (D₁ ⊨ D₂) ↔ valid (test (impl D₁ D₂)) := by
-  constructor
-  · intro h i
-    exact ⟨i, rfl, h i⟩
-  · rintro h i j hij
-    obtain ⟨k, rfl, hd⟩ := h i
-    exact hd j hij
-
-/-- Fact 12, in closure form: s-entailment is entailment from the
-closed premiss. -/
-theorem sEntails_iff_test_closure_entails (D₁ D₂ : Update S) :
-    (D₁ ⊨ₛ D₂) ↔ (test (closure D₁) ⊨ D₂) :=
-  ⟨fun h _ j ⟨_, hc⟩ => h j hc, fun h i hc => h i i ⟨rfl, hc⟩⟩
-
-end Entailment
-
-/-- The deduction theorem (Fact 11): `φ ⊨ ψ` iff `⊨ φ → ψ` — DPL
-implication is the test of dynamic implication, so this is the generic
-deduction theorem read through the Ty2 embedding. -/
-theorem deduction (φ ψ : DPL.Rel E) :
-    (toDRS φ ⊨ toDRS ψ) ↔ valid (toDRS (DPL.Rel.impl φ ψ)) := by
-  rw [toDRS_impl]
-  exact entails_iff_valid_test_impl (toDRS φ) (toDRS ψ)
-
-/-- Fact 12: s-entailment is dynamic entailment from the closed premiss
-`♦φ`. -/
-theorem sEntails_iff_close_entails (φ ψ : DPL.Rel E) :
-    (toDRS φ ⊨ₛ toDRS ψ) ↔ (toDRS (DPL.Rel.close φ) ⊨ toDRS ψ) := by
-  rw [toDRS_close]
-  exact sEntails_iff_test_closure_entails (toDRS φ) (toDRS ψ)
-
-/-- The flagship dynamic entailment (§3.5): `∃xPx ⊨ Px` — the premiss's
-output binds the conclusion's free variable ("A man came in. So, he wore
-a hat."). Not an s-entailment. -/
-theorem exists_atom_entails_atom (x : ℕ) (p : E → Prop) :
-    toDRS (DPL.Rel.exists_ x (DPL.Rel.atom fun g => p (g x)))
-      ⊨ toDRS (DPL.Rel.atom fun g => p (g x)) := by
-  rintro g h ⟨d, rfl, hp⟩
+/-- `∃xPx ⊨ Px`, the paper's *A man came in wearing a hat. So, he wore a hat*: the premiss's
+output binds the free variable of the conclusion. -/
+theorem entails_exists_atom (p : E → Prop) :
+    Entails (Rel.exists_ x (Rel.atom λ g => p (g x))) (Rel.atom λ g => p (g x)) := by
+  rintro _ _ ⟨_, rfl, hp⟩
   exact ⟨_, rfl, hp⟩
 
-/-- Conversely `Px ⊨ ∃xPx` — so the pair entail each other, yet are not
-equivalent (the atom is a test, the existential is not): mutual dynamic
-entailment is weaker than equivalence (§3.5). -/
-theorem atom_entails_exists (x : ℕ) (p : E → Prop) :
-    toDRS (DPL.Rel.atom fun g => p (g x))
-      ⊨ toDRS (DPL.Rel.exists_ x (DPL.Rel.atom fun g => p (g x))) := by
-  rintro g h ⟨rfl, hp⟩
-  exact ⟨_, g x, rfl, by simpa using hp⟩
+/-- `Px ⊨ ∃xPx` as well, so the two entail each other yet are not equivalent, the atom being
+a test and the existential not: mutual entailment is weaker than equivalence. -/
+theorem entails_atom_exists (p : E → Prop) :
+    Entails (Rel.atom λ g => p (g x)) (Rel.exists_ x (Rel.atom λ g => p (g x))) :=
+  λ _ h ⟨hgh, hp⟩ => ⟨_, h x, rfl, by simpa using hgh ▸ hp⟩
 
-/-- Dynamic entailment is not reflexive (§3.5): `Px ∧ ∃xQx` does not
-entail itself — its outputs forget that the input satisfied `Px`. The
-restricted law (Fact 15) needs `AQV(φ) ∩ FV(φ) = ∅`. -/
-theorem entails_not_refl [Nontrivial E] :
-    ∃ φ : DPL.Rel E, ¬(toDRS φ ⊨ toDRS φ) := by
-  obtain ⟨e₁, e₂, hne⟩ := exists_pair_ne E
-  refine ⟨DPL.Rel.conj (DPL.Rel.atom fun g => g 0 = e₁)
-    (DPL.Rel.exists_ 0 (DPL.Rel.atom fun _ => True)), fun h => ?_⟩
-  have hstep : (DPL.Rel.conj (DPL.Rel.atom fun g => g 0 = e₁)
-      (DPL.Rel.exists_ 0 (DPL.Rel.atom fun _ => True)))
-      (fun _ => e₁) (fun n => if n = 0 then e₂ else e₁) :=
-    ⟨fun _ => e₁, ⟨rfl, rfl⟩, e₂, rfl, trivial⟩
-  obtain ⟨k, m, ⟨-, h0⟩, -⟩ := h _ _ hstep
-  simp only [reduceIte] at h0
-  exact hne h0.symm
+/-- `∃xPx ⊭ₛ Px`: s-entailment sees no binding from premiss to conclusion. -/
+theorem not_sEntails_exists_atom [Nontrivial E] :
+    ∃ p : E → Prop,
+      ¬ SEntails (Rel.exists_ 0 (Rel.atom λ g => p (g 0))) (Rel.atom λ g => p (g 0)) := by
+  obtain ⟨a, b, hab⟩ := exists_pair_ne E
+  refine ⟨(· = a), λ h => ?_⟩
+  obtain ⟨_, -, hb⟩ := h (λ _ => b) ⟨_, a, rfl, by simp⟩
+  exact hab (by simpa using hb.symm)
 
-end Metatheory
+/-- Dynamic entailment is not reflexive: `Px ∧ ∃xQx` does not entail itself, its outputs
+having forgotten that the input satisfied `Px`. Fact 15 restores reflexivity when no active
+quantifier of the formula binds a free variable of it. -/
+theorem not_entails_self [Nontrivial E] : ∃ φ : Rel E, ¬ Entails φ φ := by
+  obtain ⟨a, b, hab⟩ := exists_pair_ne E
+  refine ⟨(Rel.atom (· 0 = a)).conj (Rel.exists_ 0 (Rel.atom λ _ => True)), λ h => ?_⟩
+  have hb : (Rel.atom (· 0 = a)).conj (Rel.exists_ 0 (Rel.atom λ _ => True)) (λ _ => a)
+      (λ n => if n = 0 then b else a) :=
+    ⟨_, ⟨rfl, rfl⟩, b, rfl, trivial⟩
+  obtain ⟨_, _, ⟨-, hb⟩, -⟩ := h hb
+  exact hab (by simpa using hb.symm)
 
-/-! ### Satisfaction sets and PL (§3.6) -/
+/-- A closed or doubly negated formula entails the formula. -/
+theorem entails_close_self : Entails φ.close φ := λ _ _ ⟨hg, hk⟩ => hg ▸ hk
 
-/-! Fact 19 (§3.6) relates DPL to PL through satisfaction sets: for
-formulas in normal binding form, `\φ\` is the PL meaning. Its proof
-computes `\∃xψ\ = {g | ∃k: k[x]g ∧ k ∈ \ψ\}` — cylindrification of the
-satisfaction set. Under `closure` (`= satisfactionSet`, Definition 6)
-these computations are algebraic identities in the cylindric set algebra
-([henkin-monk-tarski-1971]). -/
+theorem entails_neg_neg_self : Entails φ.neg.neg φ :=
+  close_eq_neg_neg φ ▸ entails_close_self φ
+
+/-- Dynamic entailment is not transitive: `¬¬∃xPx ⊨ ∃xPx` and `∃xPx ⊨ Px`, but `¬¬∃xPx ⊭ Px`,
+the doubly negated premiss binding nothing. Fact 16 restores transitivity when the premiss
+fixes every variable the middle formula binds in the conclusion. -/
+theorem not_entails_trans [Nontrivial E] :
+    ∃ p : E → Prop, ¬ Entails (Rel.exists_ 0 (Rel.atom λ g => p (g 0))).neg.neg
+      (Rel.atom λ g => p (g 0)) := by
+  obtain ⟨a, b, hab⟩ := exists_pair_ne E
+  refine ⟨(· = a), λ h => ?_⟩
+  have hn : (Rel.exists_ 0 (Rel.atom λ g => g 0 = a)).neg.neg (λ _ => b) (λ _ => b) :=
+    ⟨rfl, λ ⟨_, _, hno⟩ => hno ⟨_, a, rfl, by simp⟩⟩
+  obtain ⟨_, -, hb⟩ := h hn
+  exact hab (by simpa using hb.symm)
+
+/-- Nor is it monotone in its premisses: `∃xPx ⊨ Px`, but a further premiss `∃xQx` resets
+the binding, `∃xPx, ∃xQx ⊭ Px`, a sequence of premisses being their conjunction. -/
+theorem not_entails_conj_exists [Nontrivial E] :
+    ∃ p : E → Prop, ¬ Entails ((Rel.exists_ 0 (Rel.atom λ g => p (g 0))).conj
+      (Rel.exists_ 0 (Rel.atom λ _ => True))) (Rel.atom λ g => p (g 0)) := by
+  obtain ⟨a, b, hab⟩ := exists_pair_ne E
+  refine ⟨(· = a), λ h => ?_⟩
+  have hc : (Rel.exists_ 0 (Rel.atom λ g => g 0 = a)).conj (Rel.exists_ 0 (Rel.atom λ _ => True))
+      (λ _ => b) (λ _ => b) :=
+    ⟨_, ⟨a, rfl, by simp⟩, b, funext λ n => by split_ifs with hn <;> simp [hn], trivial⟩
+  obtain ⟨_, -, hb⟩ := h hc
+  exact hab (by simpa using hb.symm)
+
+/-! ### Satisfaction sets and predicate logic, section 4.1
+
+The proof of Fact 19 computes the satisfaction set of an existential as
+`{g | ∃k: k[x]g & k ∈ \φ\}`, which is cylindrification of the satisfaction set in the cylindric
+set algebra of [henkin-monk-tarski-1971]; the identity test is a diagonal element and negation
+complements. -/
 
 section SatisfactionSets
 
 open CylindricAlgebra
-open DynamicSemantics.Update (closure)
 
-/-- **DPL existential = cylindrification**: `\∃xφ\ = cₓ\φ\` — the
-existential case of Fact 19's computation. -/
-theorem closure_exists_eq_cylindrify (x : ℕ) (φ : DPL.Rel E) :
-    closure (toDRS (DPL.Rel.exists_ x φ)) =
-    cylindrify x (closure (toDRS φ)) := by
+theorem closure_exists_eq_cylindrify :
+    closure (toDRS (Rel.exists_ x φ)) = cylindrify x (closure (toDRS φ)) := by
   have hup : ∀ (g : Assignment E) (d : E),
-      (fun n => if n = x then d else g n) = Function.update g x d := fun g d => by
-    funext n; simp [Function.update_apply]
-  ext g; simp only [closure, toDRS, DPL.Rel.exists_, cylindrify]
-  exact ⟨fun ⟨h, d, hφ⟩ => ⟨d, h, hup g d ▸ hφ⟩,
-         fun ⟨d, h, hφ⟩ => ⟨h, d, (hup g d).symm ▸ hφ⟩⟩
+      (λ n => if n = x then d else g n) = Function.update g x d := λ g d => by
+    funext n
+    simp [Function.update_apply]
+  ext g
+  simp only [closure, toDRS, Rel.exists_, cylindrify]
+  exact ⟨λ ⟨h, d, hφ⟩ => ⟨d, h, hup g d ▸ hφ⟩, λ ⟨d, h, hφ⟩ => ⟨h, d, (hup g d).symm ▸ hφ⟩⟩
 
-/-- **DPL identity test = diagonal element**: `\x = y\ = Dxy`. -/
-theorem closure_identity_eq_diagonal (x y : Nat) :
-    closure (toDRS (DPL.Rel.atom (fun g : Assignment E => g x = g y))) =
-    @diagonal E x y := by
-  ext g; simp only [closure, toDRS, DPL.Rel.atom, diagonal]
-  exact ⟨fun ⟨_, rfl, h⟩ => h, fun h => ⟨g, rfl, h⟩⟩
+theorem closure_identity_eq_diagonal (y : ℕ) :
+    closure (toDRS (Rel.atom λ g : Assignment E => g x = g y)) = @diagonal E x y := by
+  ext g
+  simp only [closure, toDRS, Rel.atom, diagonal]
+  exact ⟨λ ⟨_, rfl, h⟩ => h, λ h => ⟨g, rfl, h⟩⟩
 
-/-- DPL negation complements the satisfaction set: `\¬φ\ = ∁\φ\`. -/
-theorem closure_neg_eq (φ : DPL.Rel E) :
-    closure (toDRS (DPL.Rel.neg φ)) =
-    fun g => ¬ closure (toDRS φ) g := by
-  ext g; simp only [closure, toDRS, DPL.Rel.neg]
-  exact ⟨fun ⟨_, rfl, h⟩ => h, fun h => ⟨g, rfl, h⟩⟩
+theorem closure_neg_eq : closure (toDRS φ.neg) = λ g => ¬ closure (toDRS φ) g := by
+  ext g
+  simp only [closure, toDRS, Rel.neg]
+  exact ⟨λ ⟨_, rfl, h⟩ => h, λ h => ⟨g, rfl, h⟩⟩
 
 end SatisfactionSets
-
-/-! ### The indexed reading: DPL generators as context extension -/
-
-/-! DPL meanings are relations on total assignments (Definition 2); the
-indexed substrate (`Transition.lean`) types them by the contexts they
-read and write, via the total–typed bridge `Transition.ofTotal`. Tests
-(clauses 1–3, 5, 6, 8 are all of this shape) become `testTransition`s
-`X ⟶ X` — the predecessor's `DependsOn` guard dissolved with the
-typing — and the random reset of clause 7 is `Transition.randomAssign :
-X ⟶ insert x X`. Sequencing is clause 4 (`toTransition_comp`), and the
-existential factors through the category *unconditionally*
-(`randomAssign_comp_toTransition`) — a DPL formula's indexed meaning is
-a composite of the generating arrows of `DynamicSemantics.Ctx`. -/
-
-section IndexedReading
-
-open DynamicSemantics DynamicSemantics.Update
-
-variable {W : Type*} {X Y : Set ℕ}
-
-/-- A DPL relation as a transition at contexts, worlds inert, via the
-substrate's total–typed bridge. -/
-def toTransition (h : X ⊆ Y) (φ : DPL.Rel E) : Transition W E X Y :=
-  Transition.ofTotal h fun _ => φ
-
-/-- A DPL test as a transition: a condition on the context, checked
-without changing the environment. Clauses 1–3, 5, 6, and 8 of
-Definition 2 are all of this form. -/
-def testTransition (X : Set ℕ) (C : (X → E) → Prop) :
-    Transition W E X X where
-  rel _ e e' := e = e' ∧ C e
-  grow := subset_rfl
-
-/-- Applying a test filters the fiber — the indexed form of
-Definition 2's test clauses. -/
-theorem testTransition_apply {C : (X → E) → Prop}
-    (T : Set (W × (X → E))) :
-    (testTransition X C).apply T = {e ∈ T | C e.2} := by
-  ext ⟨w, e⟩
-  constructor
-  · rintro ⟨e₀, he₀, heq, hC⟩
-    cases heq
-    exact ⟨he₀, hC⟩
-  · rintro ⟨hT, hC⟩
-    exact ⟨e, hT, rfl, hC⟩
-
-/-- Clause 4 is transition composition: with the second conjunct reading
-within its context, typed sequencing is DPL conjunction. -/
-theorem toTransition_comp {Z : Set ℕ} (h₁ : X ⊆ Y) (h₂ : Y ⊆ Z)
-    {φ ψ : DPL.Rel E}
-    (hψ : Transition.ReadsAt (W := W) Y fun _ => ψ) :
-    (toTransition (W := W) h₁ φ).comp (toTransition h₂ ψ) =
-      toTransition (h₁.trans h₂) (φ.conj ψ) :=
-  Transition.ofTotal_comp hψ
-
-/-- Clause 7 factors through the category, unconditionally: composing the
-random-assignment arrow with a typed scope is the existential. The
-scope's transition reads only `insert x X`, which is what lets the
-reset's underspecification off `x` collapse to Definition 2's `∃d`. -/
-theorem randomAssign_comp_toTransition {x : ℕ} (h : insert x X ⊆ Y)
-    (φ : DPL.Rel E) :
-    (Transition.randomAssign X x).comp (toTransition (W := W) h φ) =
-      toTransition ((Set.subset_insert x X).trans h)
-        (DPL.Rel.exists_ x φ) := by
-  ext w e e''
-  constructor
-  · rintro ⟨e', hmid, f, g, hf, hg, hφ⟩
-    by_cases hx : x ∈ X
-    · refine ⟨Function.update f x (e ⟨x, hx⟩), g, funext fun v => ?_, hg,
-        f x, ?_⟩
-      · rcases eq_or_ne v.1 x with hvx | hvx
-        · show Function.update f x (e ⟨x, hx⟩) v.1 = e v
-          rw [show v = ⟨x, hx⟩ from Subtype.ext hvx]
-          exact Function.update_self ..
-        · show Function.update f x (e ⟨x, hx⟩) v.1 = e v
-          rw [Function.update_of_ne hvx]
-          have h1 : f v.1 = e' ⟨v.1, Set.mem_insert_of_mem x v.2⟩ :=
-            congrFun hf ⟨v.1, Set.mem_insert_of_mem x v.2⟩
-          rw [h1]
-          exact (hmid v.1 v.2 hvx).symm
-      · have hff : (fun n => if n = x then f x
-            else Function.update f x (e ⟨x, hx⟩) n) = f := funext fun n => by
-          rcases eq_or_ne n x with rfl | hn
-          · simp
-          · simp [Function.update_of_ne hn, if_neg hn]
-        show φ _ g
-        rw [hff]
-        exact hφ
-    · refine ⟨f, g, funext fun v => ?_, hg, f x, ?_⟩
-      · show f v.1 = e v
-        have h1 : f v.1 = e' ⟨v.1, Set.mem_insert_of_mem x v.2⟩ :=
-          congrFun hf ⟨v.1, Set.mem_insert_of_mem x v.2⟩
-        rw [h1]
-        exact (hmid v.1 v.2 fun hvx => hx (hvx ▸ v.2)).symm
-      · have hff : (fun n => if n = x then f x else f n) = f :=
-          funext fun n => by
-            rcases eq_or_ne n x with rfl | hn
-            · simp
-            · simp [if_neg hn]
-        show φ _ g
-        rw [hff]
-        exact hφ
-  · rintro ⟨F, g, hF, hg, d, hφ⟩
-    refine ⟨(↑(insert x X) : Set ℕ).restrict fun n => if n = x then d else F n,
-      fun v hv hvx => ?_, (fun n => if n = x then d else F n), g,
-      rfl, hg, hφ⟩
-    show e ⟨v, hv⟩ = if v = x then d else F v
-    rw [if_neg hvx]
-    exact (congrFun hF ⟨v, hv⟩).symm
-
-end IndexedReading
 
 end GroenendijkStokhof1991
