@@ -212,7 +212,6 @@ import Linglib.Logic.Team.QBSML.Properties
 import Linglib.Logic.Orthologic
 import Linglib.Logic.Orthologic.FrameSemantics
 import Linglib.Logic.RankingFunction
-import Linglib.Logic.SystemZ
 import Linglib.Logic.Team.Algebra
 import Linglib.Logic.Team.Atoms
 import Linglib.Logic.Team.Closure
@@ -224,7 +223,6 @@ import Linglib.Core.Data.Trivalent
 import Linglib.Core.Data.UnorderedTree.Basic
 import Linglib.Core.Order.Bilattice.Kleene
 import Linglib.Logic.Trivalent.Prop3
-import Linglib.Logic.TweetyNixon
 import Linglib.Logic.Trivalent.Propositional
 import Linglib.Core.Optimization.Decoder
 import Linglib.Core.Optimization.Dequantization.LogSumExp.Basic
