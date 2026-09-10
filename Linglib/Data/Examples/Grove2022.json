@@ -1,0 +1,255 @@
+[
+  {
+    "id": "grove2022_1",
+    "source": {"bibkey": "grove-2022", "paperLabel": "(1)"},
+    "language": "stan1293",
+    "primaryText": "If Theo has a brother, he'll bring his wetsuit.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "presupposes that Theo has a wetsuit", "judgment": "acceptable"},
+      {"name": "presupposes that Theo has a wetsuit if he has a brother", "judgment": "questionable"}
+    ],
+    "paperFeatures": [
+      ["section", "2.1"],
+      ["phenomenon", "provisoProblem"],
+      ["trigger", "his wetsuit"],
+      ["filter", "conditional"]
+    ],
+    "comment": "What one tends to accommodate is the unconditional presupposition; the satisfaction account predicts the conditional one."
+  },
+  {
+    "id": "grove2022_2",
+    "source": {"bibkey": "grove-2022", "paperLabel": "(2)"},
+    "language": "stan1293",
+    "primaryText": "If Theo is a scuba diver, he'll bring his wetsuit.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "presupposes that Theo has a wetsuit if he is a scuba diver", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "2"],
+      ["phenomenon", "provisoProblem"],
+      ["trigger", "his wetsuit"],
+      ["filter", "conditional"]
+    ],
+    "comment": "The conditional presupposition is relatively clear here."
+  },
+  {
+    "id": "grove2022_6",
+    "source": {"bibkey": "heim-1992", "paperLabel": "(6)"},
+    "reportedIn": {"bibkey": "grove-2022", "paperLabel": "(6)"},
+    "language": "stan1293",
+    "primaryText": "John: I am already in bed. Mary: My parents think I am also in bed.",
+    "discourseSegments": [
+      "John: I am already in bed.",
+      "Mary: My parents think I am also in bed."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "presupposes that John is in bed", "judgment": "acceptable"},
+      {"name": "presupposes that Mary's parents think John is in bed", "judgment": "questionable"}
+    ],
+    "paperFeatures": [
+      ["section", "2.1"],
+      ["phenomenon", "trappedTrigger"],
+      ["trigger", "also"],
+      ["filter", "think"]
+    ],
+    "comment": "Heim's (1992) example: the utterance is consistent with the parents' ignorance of John's claim."
+  },
+  {
+    "id": "grove2022_7",
+    "source": {"bibkey": "grove-2022", "paperLabel": "(7)"},
+    "language": "stan1293",
+    "primaryText": "John was limping earlier; I don't know why. Maybe he has a stress fracture. I don't know if he plays any sports, but if he has a stress fracture, then he'll stop running cross-country now.",
+    "discourseSegments": [
+      "John was limping earlier; I don't know why.",
+      "Maybe he has a stress fracture.",
+      "I don't know if he plays any sports, but if he has a stress fracture, then he'll stop running cross-country now."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.2"],
+      ["phenomenon", "provisoProblem"],
+      ["trigger", "stop"],
+      ["filter", "conditional"]
+    ],
+    "comment": "Mandelkern's judgment: odd because the unconditional presupposition that John runs cross-country conflicts with the assertion of ignorance."
+  },
+  {
+    "id": "grove2022_8",
+    "source": {"bibkey": "grove-2022", "paperLabel": "(8)"},
+    "language": "stan1293",
+    "primaryText": "I saw John limping earlier. If he has a stress fracture, then I assume that he runs cross-country. Indeed, if he has a stress fracture, then he'll stop running cross-country now.",
+    "discourseSegments": [
+      "I saw John limping earlier.",
+      "If he has a stress fracture, then I assume that he runs cross-country.",
+      "Indeed, if he has a stress fracture, then he'll stop running cross-country now."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.2"],
+      ["phenomenon", "conditionalReadingContext"],
+      ["trigger", "stop"],
+      ["filter", "conditional"]
+    ],
+    "comment": "Felicitous and does not imply that John runs cross-country: the conditional presupposition is available in context."
+  },
+  {
+    "id": "grove2022_9",
+    "source": {"bibkey": "grove-2022", "paperLabel": "(9)"},
+    "language": "stan1293",
+    "primaryText": "We're going scuba diving later, and I don't know if Theo owns a wetsuit. But it seems that everyone who has a brother got a wetsuit for Christmas. So, if Theo has a brother, he'll bring his wetsuit.",
+    "discourseSegments": [
+      "We're going scuba diving later, and I don't know if Theo owns a wetsuit.",
+      "But it seems that everyone who has a brother got a wetsuit for Christmas.",
+      "So, if Theo has a brother, he'll bring his wetsuit."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.2"],
+      ["phenomenon", "conditionalReadingContext"],
+      ["trigger", "his wetsuit"],
+      ["filter", "conditional"]
+    ],
+    "comment": "A context in which (1) is understood with the conditional inference."
+  },
+  {
+    "id": "grove2022_22",
+    "source": {"bibkey": "grove-2022", "paperLabel": "(22)"},
+    "language": "stan1293",
+    "primaryText": "Theo believes he lost his wetsuit.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "presupposes that Theo has a wetsuit, his wetsuit de re", "judgment": "acceptable"},
+      {"name": "presupposes that Theo believes he has a wetsuit, his wetsuit de dicto", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "4.2"],
+      ["phenomenon", "attitude"],
+      ["trigger", "his wetsuit"],
+      ["filter", "believe"]
+    ],
+    "comment": "The global presupposition coincides with the de re reading and the local one with the de dicto reading."
+  },
+  {
+    "id": "grove2022_23",
+    "source": {"bibkey": "grove-2022", "paperLabel": "(23)"},
+    "language": "stan1293",
+    "primaryText": "Theo believes he has a wetsuit, and he believes he lost his wetsuit.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.2"],
+      ["phenomenon", "attitude"],
+      ["trigger", "his wetsuit"],
+      ["filter", "believe"]
+    ],
+    "comment": "Most easily understood as presupposition-free: the local presupposition is satisfied."
+  },
+  {
+    "id": "grove2022_24",
+    "source": {"bibkey": "grove-2022", "paperLabel": "(24)"},
+    "language": "stan1293",
+    "primaryText": "Theo believes he has a wetsuit. He hopes his wetsuit is dry.",
+    "discourseSegments": [
+      "Theo believes he has a wetsuit.",
+      "He hopes his wetsuit is dry."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.2"],
+      ["phenomenon", "attitude"],
+      ["trigger", "his wetsuit"],
+      ["filter", "hope"]
+    ],
+    "comment": "The second sentence's presupposition of belief is satisfied by the first."
+  },
+  {
+    "id": "grove2022_25",
+    "source": {"bibkey": "grove-2022", "paperLabel": "(25)"},
+    "language": "stan1293",
+    "primaryText": "Theo has a wetsuit, and he believes he lost his wetsuit.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.2"],
+      ["phenomenon", "attitude"],
+      ["trigger", "his wetsuit"],
+      ["filter", "believe"]
+    ],
+    "comment": "The presupposition of (22) is satisfied by a context in which Theo has a wetsuit."
+  },
+  {
+    "id": "grove2022_26",
+    "source": {"bibkey": "grove-2022", "paperLabel": "(26)"},
+    "language": "stan1293",
+    "primaryText": "Theo has a wetsuit. He hopes his wetsuit is dry.",
+    "discourseSegments": [
+      "Theo has a wetsuit.",
+      "He hopes his wetsuit is dry."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.2"],
+      ["phenomenon", "attitude"],
+      ["trigger", "his wetsuit"],
+      ["filter", "hope"]
+    ],
+    "comment": "The presupposition of the second sentence of (24) is satisfied by a context in which Theo has a wetsuit."
+  }
+]
