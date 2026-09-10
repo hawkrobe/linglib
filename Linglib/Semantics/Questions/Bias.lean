@@ -1,3 +1,5 @@
+import Mathlib.Tactic.DeriveFintype
+
 /-!
 # Polar Question Bias — vocabulary
 [romero-2024] [romero-han-2004] [ladd-1981] [buring-gunlogson-2000]
@@ -35,7 +37,7 @@ inductive PQForm where
   /-- High negation question: [n't p?]. "Isn't Jane coming?"
       In Czech: interrogative (VSO) word order. -/
   | HiNQ
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- Original speaker bias: belief or expectation that p is true, based on the
 speaker's epistemic state *prior to* the current situation and exchange. -/
