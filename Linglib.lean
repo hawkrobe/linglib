@@ -1420,7 +1420,6 @@ import Linglib.Phonology.Tone.Surfacing
 import Linglib.Pragmatics.AsymmetricCommunication
 import Linglib.Pragmatics.BToM
 import Linglib.Pragmatics.BToMCredence
-import Linglib.Pragmatics.Bias
 import Linglib.Pragmatics.Bidirectional
 import Linglib.Pragmatics.DecisionTheoretic.Also
 import Linglib.Pragmatics.DecisionTheoretic.Basic
@@ -2556,7 +2555,6 @@ import Linglib.Studies.RobertsOzyildiz2025
 import Linglib.Studies.RobertsSimons2024
 import Linglib.Studies.RohdeEtAl2022
 import Linglib.Studies.Rolle2018
-import Linglib.Studies.Romero2024
 import Linglib.Studies.RomeroHan2004
 import Linglib.Studies.Ronai2024
 import Linglib.Studies.RonderosEtAl2024

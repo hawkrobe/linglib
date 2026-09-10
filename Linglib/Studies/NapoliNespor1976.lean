@@ -1,243 +1,248 @@
-import Linglib.Pragmatics.Bias
 import Linglib.Fragments.Italian.PolarityItems
 import Linglib.Semantics.Mood.Defs
+import Linglib.Features.Acceptability
 
 /-!
 # Napoli & Nespor (1976): Negatives in Comparatives
 
-Italian *non* appears in some comparative clauses without truth-conditional
-effect: *Maria è più intelligente di quanto non sia Carlo* 'Maria is more
-intelligent than Carlo (is)'. Earlier accounts treated this *non₂* as a
-pleonastic element ([antinucci-puglielli-1971]) or as surface evidence that
-*than*-clauses are underlyingly negative ([seuren-1969]).
-[napoli-nespor-1976] (*Language* 52(4), 811–838) reject both: *non₂* is real
-negation, licensed by a discourse condition — the speaker presupposes that the
-assertion contradicts a prior belief, the move is assertive, the matrix is
-unnegated, and neither the contradicted belief nor the construction involves
-precise knowledge. The licensing predicate is formalized once as
-`Pragmatics.Bias.BiasLicensingProfile.licenses`; this file is its first
-historical attestation, applied to the paper's Italian data. The paper's own
-implementation — a Generative Semantics abstract higher clause hosting *non₂*,
-optionally deleted — is historical; only the licensing predicate and its
-surface diagnostics are preserved.
+This file formalizes [napoli-nespor-1976]'s account of the Italian *non* that appears in
+comparative clauses without reversing truth conditions, *Maria è più intelligente di quanto non
+sia Carlo* 'Maria is more intelligent than Carlo is'. Against [antinucci-puglielli-1971]'s
+pleonastic element and [seuren-1969]'s underlyingly negative *than*-clause, the paper takes this
+*non₂* to be real negation licensed by the discourse move: the speaker presupposes that the
+assertion contradicts a belief inferred from the interlocutor's prior discourse, the move is an
+assertion, the matrix clause is not negated, and the construction does not demand precise
+knowledge of the compared degrees (`Move.Licensed`). The acceptability paradigm of dialogues
+between Dario and Paolo, comparative constructions, and an indirect question records the facts
+of each move with the reported judgment, and `paradigm_licensed_iff` shows the four conditions
+reproduce every judgment. Six morphosyntactic diagnostics witness the underlying negation:
+subjunctive mood and non-specific indefinites in the *than*-clause, the complementizer *che*, the
+predicative clitic *lo*, *neanche*-conjunction, and the weak NPI *pur*, whose contrast with
+*affatto* is read off the Italian Fragment's licensing registry (`pur_admissible`,
+`affatto_blocked`).
 
-## Main declarations
+## Implementation notes
 
-* `Non2Datum`, `paradigm`: the paper's acceptability paradigm — dialogue
-  contexts, comparative environments, and indirect questions, each pairing a
-  bias profile with the reported judgment for *non₂*;
-* `paradigm_licenses_iff_non2Ok`: the licensing predicate reproduces every
-  judgment in the paradigm;
-* `predictedMood`, `predictedSpecificity`, `complementizerAdmissible`,
-  `cliticAdmissible`, `neancheConjunctionAdmissible`, `weakNPIAdmissible`:
-  morphosyntactic diagnostics for underlying negation.
+The paper's own implementation, a Generative Semantics abstract higher clause hosting *non₂* and
+optionally deleted, is not formalized; only the licensing conditions and their surface
+diagnostics are. The paper's condition on precision splits into two facts of a move: whether the
+contradicted belief was inferred or stated explicitly, and whether the construction, an equality
+comparative or an explicit degree modifier, demands precise knowledge of the degrees.
+
+## References
+
+* [napoli-nespor-1976]
+* [antinucci-puglielli-1971]
+* [seuren-1969]
+
+## TODO
+
+The paradigm's moves are typed from the paper's descriptions of its contexts; the dialogues
+themselves await the paper as `Data/Examples/NapoliNespor1976.json` rows.
 -/
 
 namespace NapoliNespor1976
 
-open Pragmatics.Bias
-open Italian.PolarityItems
-open Polarity (Item)
+open Italian.PolarityItems Polarity Mood Features
+
+/-! ### The licensing condition -/
+
+/-- The speaker's relation to the belief the assertion contradicts. -/
+inductive PriorBelief where
+  /-- The interlocutor's prior discourse implies a contrary belief. -/
+  | inferred
+  /-- The interlocutor stated the contrary belief explicitly. -/
+  | explicit
+  /-- No contrary belief is in play. -/
+  | absent
+  deriving DecidableEq, Repr
+
+/-- The constructions hosting a *non₂* candidate. -/
+inductive Construction where
+  /-- *più … di quanto*. -/
+  | piu
+  /-- *meno … di quanto*. -/
+  | meno
+  /-- The equality comparative *tanto … quanto*. -/
+  | equality
+  /-- A comparative with an explicit degree modifier, *molto più*, *due metri più*. -/
+  | explicitDegree
+  /-- An indirect question, *chissà se*. -/
+  | indirectQuestion
+  deriving DecidableEq, Repr
+
+/-- The construction demands precise knowledge of the compared degrees. -/
+def Construction.Precise (c : Construction) : Prop := c = .equality ∨ c = .explicitDegree
+
+instance (c : Construction) : Decidable c.Precise := inferInstanceAs (Decidable (_ ∨ _))
+
+/-- The polarity of the matrix clause. -/
+inductive Matrix where
+  | affirmative
+  | negated
+  deriving DecidableEq, Repr
+
+/-- A discourse move hosting a *non₂* candidate. -/
+structure Move where
+  priorBelief : PriorBelief
+  force : Illocutionary
+  matrix : Matrix
+  construction : Construction
+  deriving DecidableEq, Repr
+
+/-- The licensing condition on *non₂*: the assertion contradicts a belief the speaker inferred
+from the interlocutor's discourse, the move is an assertion, the matrix is affirmative, and the
+construction does not demand precision. -/
+def Move.Licensed (m : Move) : Prop :=
+  m.priorBelief = .inferred ∧ m.force = .declarative ∧ m.matrix = .affirmative ∧
+    ¬ m.construction.Precise
+
+instance (m : Move) : Decidable m.Licensed := inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _))
 
 /-! ### The acceptability paradigm
 
-The licensing conditions are established through an acceptability paradigm.
-Four dialogues between Dario and Paolo vary the speaker's epistemic state:
-*non₂* is felicitous exactly when the assertion contradicts a belief
-*inferred* from the interlocutor's prior discourse. Construction-level
-environments then isolate the remaining conditions (equality and
-explicit-degree comparatives both fail the precision condition;
-*meno*-comparatives are the positive control), and indirect questions show
-the condition is a property of the discourse move, not of comparative
+Four dialogues between Dario and Paolo vary the speaker's epistemic state, comparative
+constructions isolate the remaining conditions, with *meno*-comparatives as the positive control,
+and an indirect question shows the condition is a property of the move rather than of comparative
 syntax. -/
 
-/-- One row of the acceptability paradigm: a dialogue context or
-construction, its bias-licensing profile, and the reported acceptability of
-*non₂*. -/
-structure Non2Datum where
-  profile : BiasLicensingProfile
-  /-- Whether the paper reports *non₂* as felicitous. -/
-  non2Ok : Bool
-  deriving Repr
+/-- A row of the paradigm: the move and the reported acceptability of *non₂*. -/
+structure Row where
+  move : Move
+  judgment : Judgment
+  deriving DecidableEq, Repr
 
-/-- Dario gives no opinion of Maria or Carlo; Paolo asserts Maria > Carlo:
-no prior belief to contradict. -/
-def noOpinionContext : Non2Datum :=
-  { profile := noContradictionProfile, non2Ok := false }
+/-- An assertion of *Maria è più intelligente di quanto non sia Carlo* against a prior belief of
+the given status. -/
+def assertion (b : PriorBelief) : Move := ⟨b, .declarative, .affirmative, .piu⟩
 
-/-- Dario implies Carlo would beat Maria at chess; Paolo asserts Maria is
-more intelligent: the contradicted belief is inferred. -/
-def chessContext : Non2Datum :=
-  { profile := licensedProfile, non2Ok := true }
+/-- Dario gives no opinion of Maria or Carlo; Paolo asserts that Maria is more intelligent. -/
+def noOpinionContext : Row := ⟨assertion .absent, .unacceptable⟩
 
-/-- Dario explicitly calls Maria stupid; Paolo disagrees: the contradicted
-belief is explicitly stated rather than inferred, failing the
-imprecise/inferred condition. -/
-def explicitCriticismContext : Non2Datum :=
-  { profile := preciseProfile, non2Ok := false }
+/-- Dario implies Carlo would beat Maria at chess; Paolo asserts that Maria is more
+intelligent. -/
+def chessContext : Row := ⟨assertion .inferred, .acceptable⟩
 
-/-- Dario's complaint implies he expects Maria cannot help; Paolo asserts
-she is smart enough to ask: the contradicted belief is inferred. -/
-def complaintContext : Non2Datum :=
-  { profile := licensedProfile, non2Ok := true }
+/-- Dario calls Maria stupid in so many words; Paolo disagrees. -/
+def explicitCriticismContext : Row := ⟨assertion .explicit, .unacceptable⟩
 
-/-- *È più intelligente di quanto non sia Carlo?* 'Is she more intelligent
-than Carlo?': questioning is non-assertive. -/
-def questionedComparative : Non2Datum :=
-  { profile := questionedProfile, non2Ok := false }
+/-- Dario's complaint implies he expects Maria cannot help; Paolo asserts she is smart enough
+to ask. -/
+def complaintContext : Row := ⟨assertion .inferred, .acceptable⟩
 
-/-- *Maria non è più intelligente di quanto non sia Carlo*: the matrix is
-negated. -/
-def matrixNegatedComparative : Non2Datum :=
-  { profile := matrixNegatedProfile, non2Ok := false }
+/-- *È più intelligente di quanto non sia Carlo?*: the move is a question. -/
+def questionedComparative : Row :=
+  ⟨⟨.inferred, .interrogative, .affirmative, .piu⟩, .unacceptable⟩
 
-/-- Equality comparatives (*Maria è tanto intelligente quanto è Carlo*)
-demand explicit, precise knowledge of the compared degrees, while *non₂*
-demands inferred, imprecise knowledge. -/
-def equalityComparative : Non2Datum :=
-  { profile := preciseProfile, non2Ok := false }
+/-- *Maria non è più intelligente di quanto non sia Carlo*: the matrix is negated. -/
+def matrixNegatedComparative : Row :=
+  ⟨⟨.inferred, .declarative, .negated, .piu⟩, .unacceptable⟩
 
-/-- Explicit degree modifiers (*molto più intelligente*, *due metri più
-alta*) require precise knowledge of the degree gap. -/
-def precisionComparative : Non2Datum :=
-  { profile := preciseProfile, non2Ok := false }
+/-- *Maria è tanto intelligente quanto è Carlo*: an equality comparative demands precise
+knowledge of the compared degrees. -/
+def equalityComparative : Row :=
+  ⟨⟨.inferred, .declarative, .affirmative, .equality⟩, .unacceptable⟩
 
-/-- *Maria è meno intelligente di quanto tu non creda* 'Maria is less
-intelligent than you think': *meno*-comparatives admit *non₂* under the same
-contextual conditions as *più*. Negated equality comparatives are
-semantically close to *meno*-comparatives yet reject *non₂*, so the equality
-restriction cannot reduce to equality linking two similar things (contra
-[seuren-1969] and [antinucci-puglielli-1971]); it follows from matrix
-negation and the precision condition. -/
-def menoComparative : Non2Datum :=
-  { profile := licensedProfile, non2Ok := true }
+/-- *Molto più intelligente*, *due metri più alta*: an explicit degree modifier demands precise
+knowledge of the gap. -/
+def precisionComparative : Row :=
+  ⟨⟨.inferred, .declarative, .affirmative, .explicitDegree⟩, .unacceptable⟩
 
-/-- *Chissà se non vale la pena di comprarlo* 'Who knows if it's (not) worth
-buying it': an indirect question whose negated proposition the speaker
-presupposes to be contrary to expectation, licensed by the same profile as
-the comparatives. -/
-def chissaSeNon : Non2Datum :=
-  { profile := licensedProfile, non2Ok := true }
+/-- *Maria è meno intelligente di quanto tu non creda*: a *meno*-comparative admits *non₂* under
+the same conditions as *più*, while a negated equality comparative, semantically close to it,
+rejects *non₂*, so the equality restriction cannot reduce to equality linking two similar things
+(contra [seuren-1969] and [antinucci-puglielli-1971]). -/
+def menoComparative : Row :=
+  ⟨⟨.inferred, .declarative, .affirmative, .meno⟩, .acceptable⟩
+
+/-- *Chissà se non vale la pena di comprarlo*: an indirect question whose negated proposition the
+speaker presupposes to be contrary to expectation. -/
+def chissaSeNon : Row :=
+  ⟨⟨.inferred, .declarative, .affirmative, .indirectQuestion⟩, .acceptable⟩
 
 /-- The paper's acceptability paradigm. -/
-def paradigm : List Non2Datum :=
-  [ noOpinionContext, chessContext, explicitCriticismContext, complaintContext
-  , questionedComparative, matrixNegatedComparative, equalityComparative
-  , precisionComparative, menoComparative, chissaSeNon ]
+def paradigm : List Row :=
+  [noOpinionContext, chessContext, explicitCriticismContext, complaintContext,
+    questionedComparative, matrixNegatedComparative, equalityComparative, precisionComparative,
+    menoComparative, chissaSeNon]
 
-/-- The licensing predicate reproduces the paper's judgment on every row of
-the paradigm. -/
-theorem paradigm_licenses_iff_non2Ok :
-    ∀ d ∈ paradigm, (d.profile.licenses ↔ d.non2Ok = true) := by decide
+/-- The four conditions reproduce the paper's judgment on every row, each condition failing on
+its own row. -/
+theorem paradigm_licensed_iff : ∀ r ∈ paradigm, r.move.Licensed ↔ r.judgment = .acceptable := by
+  decide
 
 /-! ### Morphosyntactic diagnostics for underlying negation
 
-Six surface diagnostics witness underlying negation in the comparative
-clause. Two are forced choices — mood morphology and indefinite specificity.
-Four are admissibility asymmetries — complementizer *che*, predicative clitic
-*lo*, the weak NPI *pur*, and *neanche*-conjunction: the bias-marked
-alternant is possible only under licensed *non₂*, while the default
-(*di quanto*, clitic-less repetition) remains available throughout. The NPI
-diagnostics are derived from the Italian Fragment's `licensingContexts`
-registry. -/
+Two diagnostics are forced choices in the *than*-clause, mood and the specificity of indefinites;
+four are admissibility asymmetries, in which the marked alternant (the complementizer *che*, the
+predicative clitic *lo*, *neanche*-conjunction, the weak NPI *pur*) is possible only under
+licensed *non₂* while the default (*di quanto*, a repeated predicate, plain conjunction) remains
+available throughout. -/
 
 /-- Specificity of indefinites embedded in the *than*-clause. -/
 inductive SpecificityProfile where
-  /-- Both [+specific] and [−specific] readings available. -/
+  /-- Both specific and non-specific readings are available. -/
   | unrestricted
-  /-- Restricted to [−specific] under the scope of underlying negation. -/
+  /-- Only the non-specific reading, under the scope of underlying negation. -/
   | nonspecificOnly
   deriving DecidableEq, Repr
 
 /-- The Italian comparative complementizers. -/
-inductive ComplementizerChoice where
+inductive Complementizer where
   /-- The default *than*-complementizer. -/
   | diQuanto
   /-- The alternant admissible only under *non₂*. -/
   | che
   deriving DecidableEq, Repr
 
-/-- Presence of the predicative clitic *lo* substituting for a repeated
-predicate adjective in the *than*-clause. -/
-inductive CliticPresence where
+/-- Whether the predicative clitic *lo* substitutes for a repeated predicate adjective in the
+*than*-clause. -/
+inductive Clitic where
   | present
   | absent
   deriving DecidableEq, Repr
 
-/-- Mood of the *than*-clause: subjunctive exactly when *non₂* is underlyingly
-present, indicative otherwise (lexical mood control by *credere* etc. is
-abstracted away). Surface subjunctive without *non* is derived by the paper's
-optional deletion of an underlying *non₂*. -/
-def predictedMood (p : BiasLicensingProfile) : Mood.Grammatical :=
-  if p.licenses then .subjunctive else .indicative
+/-- Mood of the *than*-clause: subjunctive exactly under licensed *non₂*, the paper's optional
+deletion of *non₂* deriving surface subjunctive without *non*; lexical mood control by *credere*
+and its kin is abstracted away. -/
+def predictedMood (m : Move) : Grammatical := if m.Licensed then .subjunctive else .indicative
 
-/-- Embedded indefinites are restricted to [−specific] under licensed *non₂*
-and unrestricted otherwise. -/
-def predictedSpecificity (p : BiasLicensingProfile) : SpecificityProfile :=
-  if p.licenses then .nonspecificOnly else .unrestricted
+/-- Embedded indefinites are restricted to the non-specific reading under licensed *non₂*. -/
+def predictedSpecificity (m : Move) : SpecificityProfile :=
+  if m.Licensed then .nonspecificOnly else .unrestricted
 
-/-- Complementizer admissibility: *di quanto* occurs in comparatives with and
-without *non₂*; *che* only with it. -/
-def complementizerAdmissible (p : BiasLicensingProfile) :
-    ComplementizerChoice → Prop
+/-- *Di quanto* occurs with and without *non₂*; *che* only with it. -/
+def complementizerAdmissible (m : Move) : Complementizer → Prop
   | .diQuanto => True
-  | .che => p.licenses
+  | .che => m.Licensed
 
-/-- Clitic admissibility: clitic-less comparatives are always available; *lo*
-is possible only under *non₂*, and optional there. -/
-def cliticAdmissible (p : BiasLicensingProfile) : CliticPresence → Prop
-  | .present => p.licenses
+/-- A clitic-less comparative is always available; *lo* only under *non₂*, and optionally. -/
+def cliticAdmissible (m : Move) : Clitic → Prop
+  | .present => m.Licensed
   | .absent => True
 
-/-- *Neanche*-conjunction ('and not even …') is admissible iff its host
-clause is negated at some underlying level — in a comparative, iff *non₂* is
-licensed. The negation requirement is the Fragment registry fact that
-*neanche* lists `.negation` among its licensing contexts. -/
-def neancheConjunctionAdmissible (p : BiasLicensingProfile) : Prop :=
-  p.licenses ∧ .negation ∈ neanche.licensingContexts
+/-- *Neanche*-conjunction is admissible iff its host clause is negated at some level, in a
+comparative iff *non₂* is licensed; the negation requirement is the Fragment's registry entry
+for *neanche*. -/
+def neancheConjunctionAdmissible (m : Move) : Prop :=
+  m.Licensed ∧ .negation ∈ neanche.licensingContexts
 
-/-- The mood diagnostic tracks the licensing predicate: the *than*-clause is
-subjunctive exactly on licensed profiles. -/
-theorem predictedMood_eq_subjunctive_iff (p : BiasLicensingProfile) :
-    predictedMood p = .subjunctive ↔ p.licenses := by
-  by_cases h : p.licenses <;> simp [predictedMood, h]
+/-- A weak NPI is admissible in a *non₂*-comparative iff its registry lists the clausal
+comparative slot and the move licenses *non₂*. -/
+def weakNPIAdmissible (m : Move) (npi : Item) : Prop :=
+  m.Licensed ∧ .clausalComparative ∈ npi.licensingContexts
 
-/-- The specificity diagnostic tracks the licensing predicate. -/
-theorem predictedSpecificity_eq_nonspecificOnly_iff (p : BiasLicensingProfile) :
-    predictedSpecificity p = .nonspecificOnly ↔ p.licenses := by
-  by_cases h : p.licenses <;> simp [predictedSpecificity, h]
+/-- *Neanche*-conjunction is admissible in the chess dialogue. -/
+theorem neanche_admissible : neancheConjunctionAdmissible chessContext.move :=
+  ⟨by decide, by decide⟩
 
-/-- *Neanche*-conjunction is admissible under licensed *non₂*; the second
-conjunct is the Fragment's registry datum. -/
-theorem neanche_conjunction_with_non2 :
-    neancheConjunctionAdmissible licensedProfile :=
-  ⟨licensed_licenses, by decide⟩
+/-- *Pur* is admissible wherever *non₂* is licensed. -/
+theorem pur_admissible {m : Move} (h : m.Licensed) : weakNPIAdmissible m pur :=
+  ⟨h, pur_licensed_in_comparative⟩
 
-/-! ### The pur / affatto contrast
-
-The weak NPI *pur* is licensed in *non₂*-comparatives; the weak NPI *affatto*
-is blocked, because *affatto* requires precise knowledge of the contradicted
-belief — incompatible with the imprecise/inferred licensing condition (a
-footnote observation of [napoli-nespor-1976]). The contrast is witnessed at
-the lexical layer: `pur.licensingContexts` lists the clausal-comparative slot
-`.clausalComparative` while `affatto`'s does not, so the predictions below
-are derived from the Fragment registry. -/
-
-/-- A weak NPI is admissible in a bias-conditioned comparative iff its
-registry lists the clausal-comparative slot (surface phrasal comparatives are
-not NPI environments) and the profile licenses *non₂*. -/
-def weakNPIAdmissible (p : BiasLicensingProfile) (npi : Item) : Prop :=
-  p.licenses ∧ .clausalComparative ∈ npi.licensingContexts
-
-/-- *Pur* is admissible wherever *non₂* is licensed; the registry conjunct is
-the Fragment's `pur_licensed_in_comparative`. -/
-theorem pur_admissible_with_non2 : weakNPIAdmissible licensedProfile pur :=
-  ⟨licensed_licenses, pur_licensed_in_comparative⟩
-
-/-- *Affatto* is inadmissible in *non₂*-comparatives whatever the bias
-profile: the block is registered in the lexical entry itself. -/
-theorem affatto_blocked_in_non2 (p : BiasLicensingProfile) :
-    ¬ weakNPIAdmissible p affatto :=
+/-- *Affatto* is inadmissible in *non₂*-comparatives whatever the move: it requires precise
+knowledge of the contradicted belief, and the block is registered in its lexical entry. -/
+theorem affatto_blocked (m : Move) : ¬ weakNPIAdmissible m affatto :=
   λ ⟨_, h⟩ => affatto_not_licensed_in_comparative h
 
 end NapoliNespor1976
