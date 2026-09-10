@@ -23,8 +23,8 @@ not for p, so no chain reaches B(a)(p)) — the gap follows
 B(a)(¬p) is fine). Weak contrafactives like Mandarin yǐwéi escape:
 their falsity inference is a postsupposition about the output context
 ([glass-2025]), not a presupposition inside the same eventuality, so
-the PLC does not apply. `presupClassIsValid_eq_via_plc` derives
-[glass-2025]'s attestation table from the causal account.
+the PLC does not apply. `attested_iff_plc` derives [glass-2025]'s
+attestation table from the causal account.
 
 The belief-formation model is a deterministic `BoolSEM` over the
 `Causation` substrate; the PLC check runs `developDetOn` over a
@@ -141,23 +141,23 @@ theorem contrafactive_gap_is_structural :
     class: factives pair `p` with `B(a)(p)`, contrafactives `¬p` with
     `B(a)(p)`; the PLC does not apply to nonfactives (no
     presupposition) or postsuppositional profiles. -/
-def presupClassToCausalVars : PresupClass → Option (BeliefVar × BeliefVar)
+def presupClassToCausalVars : Profile → Option (BeliefVar × BeliefVar)
   | .factive => some (.p, .B_a_p)
-  | .contrafactive => some (.not_p, .B_a_p)
+  | .strongContrafactive => some (.not_p, .B_a_p)
   | .nonfactive => none
-  | .other => none
+  | .weakContrafactive => none
 
 /-- PLC verdict per class: `none` where the PLC does not apply. -/
-noncomputable def presupClassSatisfiesPLC (pc : PresupClass) : Option Bool :=
+noncomputable def presupClassSatisfiesPLC (pc : Profile) : Option Bool :=
   match presupClassToCausalVars pc with
   | none => none
   | some (presup, atIssue) => some (decide (SatisfiesPLC presup atIssue))
 
-/-- [glass-2025]'s attestation table is derived from the PLC: a class
+/-- [glass-2025]'s attestation table is derived from the PLC: a profile
     is attested iff it satisfies the PLC or the PLC does not apply. -/
-theorem presupClassIsValid_eq_via_plc (pc : PresupClass) :
-    presupClassIsValid pc = (presupClassSatisfiesPLC pc).getD true := by
-  cases pc <;> simp [presupClassIsValid, presupClassSatisfiesPLC,
+theorem attested_iff_plc (pc : Profile) :
+    pc.Attested ↔ (presupClassSatisfiesPLC pc).getD true = true := by
+  cases pc <;> simp [Profile.Attested, presupClassSatisfiesPLC,
     presupClassToCausalVars]
   · exact factive_satisfies_plc
   · exact strong_contrafactive_violates_plc

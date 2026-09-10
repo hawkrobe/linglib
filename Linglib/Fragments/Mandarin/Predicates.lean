@@ -65,6 +65,14 @@ def yiwei : MandarinVerbEntry := .mk' {
   opaqueContext := true
   attitude := some (.doxastic .nonVeridical) }
 
+/-- 认为 "rènwéi" — think, hold the view that: the neutral nonveridical doxastic verb. -/
+def renwei : MandarinVerbEntry := .mk' {
+  form := "renwei"
+  frames := [Frame.finiteClause]
+  passivizable := false
+  opaqueContext := true
+  attitude := some (.doxastic .nonVeridical) }
+
 /-! ## Liu & Yip 2026 complement-taking predicates
 
 Seven additional Mandarin CTPs cited by [liu-yip-2026] (lists in (18)
@@ -133,7 +141,7 @@ def shefa : MandarinVerbEntry := .mk' {
   opaqueContext := false }
 
 def allVerbs : List MandarinVerbEntry :=
-  [qidai, danxin, xiwang, haipa, yiwei,
+  [qidai, danxin, xiwang, haipa, yiwei, renwei,
    xiang, rang, xiangxin, quan, bi, dasuan, shefa]
 
 def lookup (form : String) : Option MandarinVerbEntry :=
