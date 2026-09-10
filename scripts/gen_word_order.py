@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
-"""Generate typed basic-order-typology samples from canonical per-paper JSON.
+"""Generate typed word order samples from canonical per-paper JSON.
 
 A paper's classification of its language sample by dominant clause order, adposition type,
 noun-dependent orders, and the further per-language properties it records, together with its
 table of order types and the languages attesting each, is canonical JSON at
-`Linglib/Data/OrderTypology/<Paper>.json`; this emits the kernel-reducible typed Lean module
-`Linglib/Data/OrderTypology/<Paper>.lean` (`<Paper>.sample`, `<Paper>.types`). Mirrors
+`Linglib/Data/WordOrder/<Paper>.json`; this emits the kernel-reducible typed Lean module
+`Linglib/Data/WordOrder/<Paper>.lean` (`<Paper>.sample`, `<Paper>.types`). Mirrors
 `gen_ud_deplength.py`: the generated Lean is never hand-edited — edit the JSON and re-run.
 
-    python3 scripts/gen_order_typology.py Greenberg1963      # (re)generate
-    python3 scripts/gen_order_typology.py --check [<Paper>]  # verify, no writes (CI)
-    python3 scripts/gen_order_typology.py --all              # every JSON
+    python3 scripts/gen_word_order.py Greenberg1963      # (re)generate
+    python3 scripts/gen_word_order.py --check [<Paper>]  # verify, no writes (CI)
+    python3 scripts/gen_word_order.py --all              # every JSON
 """
 import sys, json, textwrap
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-DATA_DIR = ROOT / "Linglib" / "Data" / "OrderTypology"
+DATA_DIR = ROOT / "Linglib" / "Data" / "WordOrder"
 
 SAMPLE_FIELDS = [
     ("verbPosition", "VerbPosition"), ("adposition", "Adposition"), ("genitive", "NounOrder"),
@@ -65,22 +65,22 @@ def render(paper: str, data: dict) -> str:
     sample = ",\n".join(sample_row(r) for r in data["sample"])
     types = ",\n".join(type_row(t) for t in data["types"])
     description = textwrap.fill(data["description"], width=100)
-    return f"""import Linglib.Data.OrderTypology.Schema
+    return f"""import Linglib.Data.WordOrder.Schema
 
 /-!
-# {paper} — basic order typology sample (generated)
+# {paper} — word order sample (generated)
 [{data['bibkey']}]
 
-Auto-generated from `Linglib/Data/OrderTypology/{paper}.json` by
-`scripts/gen_order_typology.py`. **Do not edit by hand** — edit the JSON and
+Auto-generated from `Linglib/Data/WordOrder/{paper}.json` by
+`scripts/gen_word_order.py`. **Do not edit by hand** — edit the JSON and
 re-run the generator.
 
 {description}
 -/
 
-namespace Data.OrderTypology.{paper}
+namespace Data.WordOrder.{paper}
 
-open Data.OrderTypology
+open Data.WordOrder
 
 /-- The paper's language sample. -/
 def sample : List SampleRow := [
@@ -90,7 +90,7 @@ def sample : List SampleRow := [
 def types : List OrderType := [
 {types}]
 
-end Data.OrderTypology.{paper}
+end Data.WordOrder.{paper}
 """
 
 
