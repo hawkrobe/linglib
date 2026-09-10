@@ -1,0 +1,930 @@
+[
+  {
+    "id": "hacquard2010_ex11",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(11)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary had to take the train to go to Paris.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "root: given Mary's circumstances then, a past necessity to take the train then",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "root evaluated now: given her circumstances now, a necessity to have taken the train then",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "phenomenon",
+        "tense"
+      ]
+    ],
+    "comment": "A root modal is evaluated at the time tense provides."
+  },
+  {
+    "id": "hacquard2010_ex12",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(12)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary had to be home (at the time of the crime).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Evidence gathered a week ago pointed to Mary being home at the time of the murder; yesterday Poirot debunked her alibi.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "epistemic over past: given what is known now, it is necessary that Mary was home",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "past over epistemic: given what was known then, it was necessary that Mary was home",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "phenomenon",
+        "tense"
+      ]
+    ],
+    "comment": "False in the scenario: an epistemic cannot describe a past epistemic state without an attitude, indirect discourse, or an overt background."
+  },
+  {
+    "id": "hacquard2010_ex13a",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(13a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Two days ago, Poirot thought that Mary had to be home.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Evidence gathered a week ago pointed to Mary being home at the time of the murder; yesterday Poirot debunked her alibi.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "phenomenon",
+        "tense"
+      ]
+    ],
+    "comment": "The modal's time of evaluation is Poirot's thinking time; the past morpheme is sequence of tense."
+  },
+  {
+    "id": "hacquard2010_ex13b",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(13b)"
+    },
+    "language": "stan1293",
+    "primaryText": "This didn't make sense, thought Poirot... Mary had to be home.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Evidence gathered a week ago pointed to Mary being home at the time of the murder; yesterday Poirot debunked her alibi.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "phenomenon",
+        "tense"
+      ]
+    ],
+    "comment": "An indirect discourse past tense."
+  },
+  {
+    "id": "hacquard2010_ex13c",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(13c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Given what Poirot knew then, Mary had to be home.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Evidence gathered a week ago pointed to Mary being home at the time of the murder; yesterday Poirot debunked her alibi.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "phenomenon",
+        "tense"
+      ]
+    ],
+    "comment": "An overt conversational background performs the event anchoring itself."
+  },
+  {
+    "id": "hacquard2010_ex14a",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(14a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Gianni può aver parlato a Maria.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Gianni",
+        "Gianni"
+      ],
+      [
+        "può",
+        "can"
+      ],
+      [
+        "aver",
+        "have"
+      ],
+      [
+        "parlato",
+        "talked"
+      ],
+      [
+        "a",
+        "to"
+      ],
+      [
+        "Maria.",
+        "Maria."
+      ]
+    ],
+    "translation": "Gianni may have talked to Maria.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "epistemic",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "deontic or ability",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "phenomenon",
+        "tense"
+      ]
+    ],
+    "comment": "The complement is backshifted with respect to the modal: only the epistemic reading.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hacquard2010_ex14b",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(14b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Gianni ha potuto parlare a Maria.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Gianni",
+        "Gianni"
+      ],
+      [
+        "ha",
+        "has"
+      ],
+      [
+        "potuto",
+        "could"
+      ],
+      [
+        "parlare",
+        "talk"
+      ],
+      [
+        "a",
+        "to"
+      ],
+      [
+        "Maria.",
+        "Maria."
+      ]
+    ],
+    "translation": "Gianni was able to talk to Maria.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "deontic or ability",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "epistemic",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "phenomenon",
+        "tense"
+      ]
+    ],
+    "comment": "Tense and aspect morphology on the modal put it in the scope of tense: no epistemic reading.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hacquard2010_ex16",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(16)"
+    },
+    "language": "stan1290",
+    "primaryText": "Mary put soulever cette table, mais elle ne la souleva pas.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Mary",
+        "Mary"
+      ],
+      [
+        "put",
+        "could-PFV"
+      ],
+      [
+        "soulever",
+        "lift"
+      ],
+      [
+        "cette",
+        "this"
+      ],
+      [
+        "table,",
+        "table,"
+      ],
+      [
+        "mais",
+        "but"
+      ],
+      [
+        "elle",
+        "she"
+      ],
+      [
+        "ne",
+        "NE"
+      ],
+      [
+        "la",
+        "it"
+      ],
+      [
+        "souleva",
+        "lifted"
+      ],
+      [
+        "pas.",
+        "not."
+      ]
+    ],
+    "translation": "Mary was able to lift this table, but she didn't lift it.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "actualityEntailment"
+      ]
+    ],
+    "comment": "The continuation contradicts the actuality entailment of the perfective root modal.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hacquard2010_ex17",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(17)"
+    },
+    "language": "stan1290",
+    "primaryText": "John put prendre le train, bien qu'il soit possible qu'il ne l'ait pas pris.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John may have taken the train, even though it's possible he didn't.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "epistemic",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "root: John managed to take the train, but it is possible he didn't",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "actualityEntailment"
+      ]
+    ],
+    "comment": "No contradiction on the epistemic reading: tense and aspect are interpreted below the modal."
+  },
+  {
+    "id": "hacquard2010_ex18_19",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(18)"
+    },
+    "language": "stan1290",
+    "primaryText": "Mary put prendre le train.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary may have taken the train / was able to take the train.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "epistemic over aspect: some world compatible with what is known holds a past train-taking by Mary",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "aspect over root: an actual past event which in some circumstantial world is a train-taking by Mary",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "actualityEntailment"
+      ]
+    ],
+    "comment": "(18) and (19): the two LFs; only the second forces the event into the actual world."
+  },
+  {
+    "id": "hacquard2010_ex22",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(22)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary had to take the train.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "given Mary's circumstances then, she had to take the train then",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "given Mary's circumstances now, she had to take the train",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2"
+      ],
+      [
+        "phenomenon",
+        "individualTimePair"
+      ]
+    ],
+    "comment": "Relativized to the subject, the modal is keyed to the time tense gives."
+  },
+  {
+    "id": "hacquard2010_ex23",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(23)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary had to be home.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "given what I know now, it must be the case that Mary was home then",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "given what I knew then, Mary had to be home",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2"
+      ],
+      [
+        "phenomenon",
+        "individualTimePair"
+      ]
+    ],
+    "comment": "Relativized to the speaker, the modal is keyed to the speech time."
+  },
+  {
+    "id": "hacquard2010_ex24",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(24)"
+    },
+    "language": "stan1293",
+    "primaryText": "John thought that Mary might be home.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "given what John knew at his thinking time, it was possible Mary was home",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "given what John knows now, it was possible Mary was home",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2"
+      ],
+      [
+        "phenomenon",
+        "individualTimePair"
+      ]
+    ],
+    "comment": "Relativized to the attitude holder, the modal is keyed to the attitude time."
+  },
+  {
+    "id": "hacquard2010_ex25",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(25)"
+    },
+    "language": "stan1293",
+    "primaryText": "John thought yesterday that Mary had taken the train the day before.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2"
+      ],
+      [
+        "phenomenon",
+        "locality"
+      ]
+    ],
+    "comment": "Three events: the speech event, John's thinking yesterday, and Mary's train-taking the day before."
+  },
+  {
+    "id": "hacquard2010_ex26",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(26)"
+    },
+    "language": "stan1293",
+    "primaryText": "John might have thought yesterday that Mary had taken the train the day before.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "speech event: given what I know now, it is possible that John thought Mary had taken the train",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2"
+      ],
+      [
+        "phenomenon",
+        "locality"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "hacquard2010_ex27",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(27)"
+    },
+    "language": "stan1293",
+    "primaryText": "John thought yesterday that Mary might have taken the train the day before.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "attitude event: given what John thought yesterday, it was possible that Mary had taken the train",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "speech event: John thought yesterday that it was possible, given what I know, that Mary took the train",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2"
+      ],
+      [
+        "phenomenon",
+        "locality"
+      ]
+    ],
+    "comment": "The modal must be keyed to the closest event."
+  },
+  {
+    "id": "hacquard2010_ex28",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(28)"
+    },
+    "language": "stan1293",
+    "primaryText": "John thought yesterday that Mary had to take the train the day before.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "VP event: given Mary's circumstances the day before yesterday, it was necessary that she take the train",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "speech event: John thought that it was necessary given what I know that Mary took the train",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2"
+      ],
+      [
+        "phenomenon",
+        "locality"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "hacquard2010_ex45a",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(45a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John is the murderer.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.3.2"
+      ],
+      [
+        "phenomenon",
+        "speechEvent"
+      ]
+    ],
+    "comment": "True in all of the speaker's doxastic alternatives, the content of the asserting event."
+  },
+  {
+    "id": "hacquard2010_ex50",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(50)"
+    },
+    "language": "stan1293",
+    "primaryText": "John believes it might be raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "rain is compatible with what John believes",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ],
+      [
+        "phenomenon",
+        "embeddedEpistemic"
+      ]
+    ],
+    "comment": "The epistemic quantifies directly over the worlds the attitude provides, avoiding the problem of introspection."
+  },
+  {
+    "id": "hacquard2010_ex55",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(55)"
+    },
+    "language": "stan1293",
+    "primaryText": "It must be raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1.2"
+      ],
+      [
+        "phenomenon",
+        "matrixEpistemic"
+      ]
+    ],
+    "comment": "In all worlds compatible with the content of the speech event it is raining; the ordering source makes it weaker than the bare assertion."
+  },
+  {
+    "id": "hacquard2010_ex58a",
+    "source": {
+      "bibkey": "yalcin-2007",
+      "paperLabel": "(58a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Suppose that it is raining and that it might not be raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1.3"
+      ],
+      [
+        "phenomenon",
+        "yalcin"
+      ]
+    ],
+    "comment": "Lack of rain cannot be compatible with one's suppositions if one already supposes that it is raining.",
+    "reportedIn": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(58a)"
+    }
+  },
+  {
+    "id": "hacquard2010_ex59",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(59)"
+    },
+    "language": "stan1293",
+    "primaryText": "Last night Mary had to take the train to go to Paris.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "epistemic for the subject: it was necessary, last night, given what Mary knew, that she took the train",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1.4"
+      ],
+      [
+        "phenomenon",
+        "contentLicensing"
+      ]
+    ],
+    "comment": "Anchored to the VP event, which has no content, the modal cannot be epistemic."
+  },
+  {
+    "id": "hacquard2010_ex60a",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(60a)"
+    },
+    "language": "stan1295",
+    "primaryText": "John konnte sehen/merken, dass Mary nett war.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John could see/notice that Mary was nice.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "epistemic for the subject: Mary being nice was compatible with what John came to know",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1.4"
+      ],
+      [
+        "phenomenon",
+        "contentLicensing"
+      ]
+    ],
+    "comment": "The complement is an attitude event with content, so the low modal can be epistemic. Credited to I. Heim."
+  },
+  {
+    "id": "hacquard2010_ex60b",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(60b)"
+    },
+    "language": "stan1290",
+    "primaryText": "John a pu voir/remarquer que Mary était gentille.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John could see/notice that Mary was nice.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "epistemic for the subject: Mary being nice was compatible with what John came to know",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1.4"
+      ],
+      [
+        "phenomenon",
+        "contentLicensing"
+      ]
+    ],
+    "comment": "The low position is shown by the actuality entailment."
+  },
+  {
+    "id": "hacquard2010_ex62",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(62)"
+    },
+    "language": "stan1293",
+    "primaryText": "Last night Mary had to take the train to go to Paris.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2"
+      ],
+      [
+        "phenomenon",
+        "circumstantial"
+      ]
+    ],
+    "comment": "Obligatorily circumstantial: the circumstances of the train-taking, Mary's need to go to Paris, her car breaking down, the timetable."
+  },
+  {
+    "id": "hacquard2010_ex63",
+    "source": {
+      "bibkey": "hacquard-2010",
+      "paperLabel": "(63)"
+    },
+    "language": "stan1293",
+    "primaryText": "A lot of people can jump in this pool.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2"
+      ],
+      [
+        "phenomenon",
+        "circumstantial"
+      ]
+    ],
+    "comment": "A circumstantial reading with no agentive subject: the circumstances highlight properties of the location. Credited to Hackl (1998)."
+  }
+]

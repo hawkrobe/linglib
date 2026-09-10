@@ -1,329 +1,198 @@
-import Linglib.Fragments.Italian.Modals
 import Linglib.Semantics.Modality.EventRelativity
+import Linglib.Data.Examples.Hacquard2010
 
 /-!
-# Event-Relative Modality
-[hacquard-2010] [kratzer-1981] [cinque-1999] [cinque-2004] [rizzi-1978]
+# Hacquard (2010): On the Event Relativity of Modal Auxiliaries
 
-## Part I: Italian Restructuring
+This file formalizes [hacquard-2010]'s event-relative semantics for modal auxiliaries. A modal's
+modal base is a function of an event rather than a world (29), `must` and `can`, and its event
+variable is bound by the closest binder (37), (38): the speech event for a high modal in a matrix
+clause, the attitude event for a high modal in a complement, and the VP event for a low modal
+(48), which `Semantics/Modality/EventRelativity.lean` records as the binders of
+`Modality.ModalPosition`. Speech and attitude events carry propositional content and embed a
+proposition under universal quantification over it (41), (44), `attitude`; the epistemic modal
+base is the content of the event the modal is anchored to (51), `canEpis` and `mustEpis`, so it
+is undefined where a low modal is anchored to a contentless VP event (59),
+`not_canEpis_of_content_eq_none`, and defined again when the complement is itself an attitude
+(60). Anchored to the event that embeds it, an epistemic modal quantifies over the same worlds as
+that event, so the outer layer of quantification is vacuous, (53) to (57),
+`attitude_canEpis_iff` and `attitude_mustEpis_iff`, the possibility case once the information
+state is consistent; and Yalcin's supposition (58) is incoherent because the modal quantifies
+over the supposition's own content, `not_attitude_suppose`. Cinque's puzzle (section 3) is that
+[cinque-1999]'s hierarchy fixes the epistemic head above tense and the root head below aspect,
+`CinqueHead`, where a single flavor-neutral entry should suffice; the paper derives the same
+matrix correlation from the content of the binding event, `epistemic_high_iff`. The paper's
+examples are the rows of `Data.Examples.Hacquard2010`.
 
-Connects the Italian restructuring data (Fragments/Italian/Modals) to
-[hacquard-2010]'s content licensing theory (EventRelativity §8).
+## Implementation notes
 
-### The Argument
+The content of an event is its set of compatible worlds, `⋂CON(e)`, an `Option` undefined for
+contentless events; the descriptive part of an attitude or asserting event, `Exp(e, x)` and
+`belief'(e, w)` or `Assert'(e₀, w)`, is an abstract predicate. Ordering sources are omitted, as
+in the paper's derivations, and the circumstantial modal base (61), whose event dependence the
+paper leaves open, is not defined. The individual and time a modal is keyed to (section 4) enter
+only through the binding event; the Italian restructuring evidence belongs to [hacquard-2006].
 
-1. Italian *potere*/*dovere* can restructure (appear below AspP).
-2. When restructured, these modals lose epistemic readings.
-3. Content licensing explains WHY: restructured modals are bound to the
-   VP event (by aspect), and VP events lack propositional content, so
-   epistemic modal bases cannot be projected.
-4. When non-restructured (above AspP), the modal binds to the speech
-   event (or attitude event), which IS contentful → epistemic available.
+## References
 
-This is the key empirical argument for event-relative modality: the same
-lexical modal (*potere*) shows different flavor availability depending
-purely on its syntactic position, explained by content licensing.
-
-## Part II: Event Projection and Unattested Pairs
-
-[hacquard-2010], §4.2: modals are keyed to (individual, time) pairs,
-but not all combinations are attested. A modal must be keyed to the
-participants and running time of the MOST LOCAL event. Event projection
-(holder(e), τ(e)) derives the correct pair for each event binder,
-explaining why certain pairs are systematically absent.
-
-## Part III: Against Cartographic Stipulation
-
-[cinque-1999] builds the position–flavor correlation into a universal
-hierarchy of dedicated functional heads; Hacquard derives it from content
-licensing. The accounts agree extensionally on matrix clauses
-(`matrix_clause_equivalence`) and come apart in embedded contexts
-(`embedded_epistemic_derived`).
+* [hacquard-2010]
+* [cinque-1999]
+* [yalcin-2007]
 -/
 
 namespace Hacquard2010
 
 open Modality
-open Modality (ModalFlavor)
 
--- ============================================================================
--- Part I: Italian Restructuring
--- ============================================================================
+variable {E W : Type*}
 
-open Italian.Modals
+/-! ### Event-relative modals, section 5 -/
 
--- ============================================================================
--- § 1: Restructuring = Low Position
--- ============================================================================
+/-- (29): a necessity modal quantifies over the worlds its event-relative modal base returns. -/
+def must (f : E → Set W) (q : W → Prop) (e : E) : Prop := ∀ w' ∈ f e, q w'
 
-/-- Restructuring forces the modal below AspP. This maps to
-`ModalPosition.belowAsp` in the EventRelativity framework. -/
-def restructuredPosition : ModalPosition := .belowAsp
+/-- (29): a possibility modal over the event-relative modal base. -/
+def can (f : E → Set W) (q : W → Prop) (e : E) : Prop := ∃ w' ∈ f e, q w'
 
-/-- Non-restructured modals sit above AspP. -/
-def nonRestructuredPosition : ModalPosition := .aboveAsp
+/-- (41) and (44): a contentful event, an attitude or the speech event, embeds a proposition
+under universal quantification over its content; `holds e w` is the event's descriptive part. -/
+def attitude (con : E → Option (Set W)) (holds : E → W → Prop) (e : E) (p : W → Prop)
+    (w : W) : Prop :=
+  holds e w ∧ ∃ C, con e = some C ∧ ∀ w' ∈ C, p w'
 
--- ============================================================================
--- § 2: Content Licensing Predicts the Pattern
--- ============================================================================
+/-- (51): the epistemic modal base is the content of the event the modal is anchored to, so an
+epistemic possibility is defined only for a contentful event. -/
+def canEpis (con : E → Option (Set W)) (q : W → Prop) (e : E) : Prop :=
+  ∃ C, con e = some C ∧ ∃ w' ∈ C, q w'
 
-/-- Content licensing predicts that restructured (low) modals cannot be
-epistemic: they are bound to the VP event, which lacks content.
+/-- (51): epistemic necessity over the content of the anchoring event. -/
+def mustEpis (con : E → Option (Set W)) (q : W → Prop) (e : E) : Prop :=
+  ∃ C, con e = some C ∧ ∀ w' ∈ C, q w'
 
-This single theorem explains ALL the restructuring data:
-- potere_high: epistemic ✓ because high modal → speech act → content
-- potere_low_clitic: epistemic ✗ because low modal → VP event → no content
-- dovere_high: epistemic ✓ (same reasoning)
-- dovere_low_aux: epistemic ✗ (same reasoning) -/
-theorem content_licensing_explains_restructuring :
-    -- Restructured (low): VP event binder, no content → no epistemic
-    restructuredPosition.defaultBinder = .vpEvent ∧
-    restructuredPosition.defaultBinder.hasContent = false ∧
-    restructuredPosition.defaultBinder.canProjectEpistemic = false ∧
-    -- Non-restructured (high): speech act binder, content → epistemic
-    nonRestructuredPosition.defaultBinder = .speechAct ∧
-    nonRestructuredPosition.defaultBinder.hasContent = true ∧
-    nonRestructuredPosition.defaultBinder.canProjectEpistemic = true :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+variable {con : E → Option (Set W)} {holds : E → W → Prop} {e : E} {q : W → Prop} {w : W}
+  {C : Set W}
 
--- ============================================================================
--- § 3: Data ↔ Theory (Italian)
--- ============================================================================
+/-! ### Content licensing, section 6.1 -/
 
-/-- The empirical data matches the theoretical prediction for *potere*.
+/-- (49e) and (59): an event without content licenses no epistemic modal base, so a low modal
+anchored to a train-taking cannot report what its subject knew. -/
+theorem not_canEpis_of_content_eq_none (h : con e = none) : ¬ canEpis con q e :=
+  λ ⟨_, hC, _⟩ => by simp [h] at hC
 
-The high/low flavor sets in the fragment entry align with the
-event binder's available flavors at each position. -/
-theorem potere_data_matches_theory :
-    -- High: entry says epistemic available; theory agrees
-    (.epistemic ∈ potere.highFlavors) ∧
-    nonRestructuredPosition.defaultBinder.canProjectEpistemic = true ∧
-    -- Low: entry says no epistemic; theory agrees
-    (.epistemic ∉ potere.lowFlavors) ∧
-    restructuredPosition.defaultBinder.canProjectEpistemic = false := by
-  refine ⟨?_, rfl, ?_, rfl⟩ <;> decide
+theorem not_mustEpis_of_content_eq_none (h : con e = none) : ¬ mustEpis con q e :=
+  λ ⟨_, hC, _⟩ => by simp [h] at hC
 
-/-- Same bridge for *dovere*. -/
-theorem dovere_data_matches_theory :
-    (.epistemic ∈ dovere.highFlavors) ∧
-    nonRestructuredPosition.defaultBinder.canProjectEpistemic = true ∧
-    (.epistemic ∉ dovere.lowFlavors) ∧
-    restructuredPosition.defaultBinder.canProjectEpistemic = false := by
-  refine ⟨?_, rfl, ?_, rfl⟩ <;> decide
+/-- (60): when the complement is itself an attitude, the aspect-bound modal's event has content,
+and the modal expresses a possibility given what the subject came to know. -/
+theorem canEpis_of_content_eq_some (hC : con e = some C) {w' : W} (hw' : w' ∈ C) (hq : q w') :
+    canEpis con q e :=
+  ⟨C, hC, w', hw', hq⟩
 
--- ============================================================================
--- § 4: The Same Modal, Two Positions
--- ============================================================================
+/-- (53) and (57): a possibility modal anchored to the event that embeds it quantifies over the
+same worlds as that event, so the outer universal layer is vacuous whenever the content is
+consistent. -/
+theorem attitude_canEpis_iff :
+    attitude con holds e (λ _ => canEpis con q e) w ↔
+      holds e w ∧ ∃ C, con e = some C ∧ (C.Nonempty → ∃ w' ∈ C, q w') := by
+  simp only [attitude, canEpis]
+  refine and_congr_right λ _ => exists_congr λ C => and_congr_right λ hC => ⟨?_, ?_⟩
+  · rintro h ⟨w₀, hw₀⟩
+    obtain ⟨C', hC', hex⟩ := h w₀ hw₀
+    rw [hC] at hC'
+    cases hC'
+    exact hex
+  · exact λ h w₀ hw₀ => ⟨C, hC, h ⟨w₀, hw₀⟩⟩
 
-/-- Both *potere* and *dovere* are single lexical items: the same verb
-appears high (with epistemic) and low (without epistemic). This rules
-out lexical ambiguity as an explanation — the flavor restriction follows
-from structural position alone.
+/-- (54): with a consistent content, an embedded epistemic possibility says that `q` is
+compatible with the content of the embedding event, the speaker's beliefs under `ASSERT` or the
+attitude holder's under `believe`. -/
+theorem attitude_canEpis_iff_of_nonempty (hC : con e = some C) (hne : C.Nonempty) :
+    attitude con holds e (λ _ => canEpis con q e) w ↔ holds e w ∧ ∃ w' ∈ C, q w' := by
+  rw [attitude_canEpis_iff]
+  refine and_congr_right λ _ => ⟨λ ⟨C', hC', h⟩ => ?_, λ h => ⟨C, hC, λ _ => h⟩⟩
+  rw [hC] at hC'
+  cases hC'
+  exact h hne
 
-[hacquard-2010], §1: Italian *potere* and *dovere* express both
-epistemic and root modality with the same lexical item, and the
-availability of epistemic readings tracks the syntactic position. -/
-theorem same_lexical_items :
-    -- potere: same form in both positions
-    potere.form = "potere" ∧
-    -- but different flavor availability
-    (.epistemic ∈ potere.highFlavors) ∧
-    (.epistemic ∉ potere.lowFlavors) ∧
-    -- dovere: same form in both positions
-    dovere.form = "dovere" ∧
-    -- but different flavor availability
-    (.epistemic ∈ dovere.highFlavors) ∧
-    (.epistemic ∉ dovere.lowFlavors) := by
-  refine ⟨rfl, ?_, ?_, rfl, ?_, ?_⟩ <;> decide
+/-- (55) and (57): an embedded epistemic necessity is necessity over the embedding event's
+content, the outer layer again vacuous. -/
+theorem attitude_mustEpis_iff :
+    attitude con holds e (λ _ => mustEpis con q e) w ↔ holds e w ∧ mustEpis con q e := by
+  simp only [attitude, mustEpis]
+  refine and_congr_right λ _ => ⟨?_, ?_⟩
+  · rintro ⟨C, hC, h⟩
+    refine ⟨C, hC, λ w'' hw'' => ?_⟩
+    obtain ⟨C', hC', hall⟩ := h w'' hw''
+    rw [hC] at hC'
+    cases hC'
+    exact hall w'' hw''
+  · rintro ⟨C, hC, h⟩
+    exact ⟨C, hC, λ _ _ => ⟨C, hC, h⟩⟩
 
--- ============================================================================
--- § 5: Why Not Lexical Ambiguity?
--- ============================================================================
+/-- (58), [yalcin-2007]'s puzzle: supposing that it is raining and that it might not be raining
+is incoherent, since the epistemic quantifies over the supposition's own content and no
+consistent content satisfies both. -/
+theorem not_attitude_suppose {rain : W → Prop} (hC : con e = some C) (hne : C.Nonempty) :
+    ¬ attitude con holds e (λ w' => rain w' ∧ canEpis con (λ w'' => ¬ rain w'') e) w := by
+  rintro ⟨-, C', hC', h⟩
+  rw [hC] at hC'
+  cases hC'
+  obtain ⟨w₀, hw₀⟩ := hne
+  obtain ⟨-, C'', hC'', w₁, hw₁, hnr⟩ := h w₀ hw₀
+  rw [hC] at hC''
+  cases hC''
+  exact hnr (h w₁ hw₁).1
 
-/-- If epistemic/root were lexically distinct modals (as in some
-analyses of English *can*_epis vs *can*_root), we would expect no
-syntactic correlation. But Italian shows that ONE lexical item
-exhibits the restriction purely based on position. Content licensing
-explains this without positing ambiguity.
+/-! ### Cinque's puzzle, section 3 -/
 
-Furthermore, the restriction is PRODUCTIVE: any restructuring modal
-loses epistemic in the restructured position. The theory predicts this
-for ALL restructuring modals — it's not a per-item stipulation. -/
-theorem both_modals_restructure :
-    potere.canRestructure = true ∧ dovere.canRestructure = true := ⟨rfl, rfl⟩
-
--- ============================================================================
--- Part II: Event Projection and Unattested Pairs
--- ============================================================================
-
--- ============================================================================
--- § 6: The Unattested Pairs Restriction
--- ============================================================================
-
-/-! [hacquard-2010], §4.2: modals are keyed to (individual, time)
-pairs, but not all combinations of individuals and times are attested.
-
-| Individual | Time | Attested? | Example |
-|-----------|------|-----------|---------|
-| speaker | speech time | ✓ | epistemic *have to* |
-| attitude holder | attitude time | ✓ | embedded epistemic |
-| VP participant | VP time | ✓ | root *have to* |
-| speaker | VP time | ✗ | — |
-| VP participant | speech time | ✗ | — |
-
-The missing diagonal pairs (speaker + VP time, subject + speech time)
-are explained by event projection: each event binder projects a FIXED
-(individual, time) pair. There is no event that pairs the speaker with
-the VP time, or the subject with the speech time. -/
-
-/-- The three event binders each project a specific (individual, time)
-pair. This is why not all combinations are attested — pairs not
-projected by any event are systematically absent.
-
-[hacquard-2010], §4.2: "a modal seems to be relative to an
-individual and a time, but not all time/individual pairs are attested.
-Instead, the modal has to be keyed to the participants and running
-time of the most local event." -/
-theorem event_projection_constrains_pairs :
-    -- Speech event → speaker-oriented, speech time
-    ModalPosition.aboveAsp.defaultBinder = .speechAct ∧
-    -- Attitude event → attitude holder, attitude time
-    ModalPosition.aboveAsp.withAttitude = .attitude ∧
-    -- VP event → VP participant, VP time
-    ModalPosition.belowAsp.defaultBinder = .vpEvent :=
-  ⟨rfl, rfl, rfl⟩
-
--- ============================================================================
--- § 7: Content Licensing Derives Position–Flavor Correlation
--- ============================================================================
-
-/-- The paper's central claim: the position → flavor correlation
-is DERIVED from content licensing, not stipulated.
-
-High modals (above AspP) bind to contentful events → epistemic
-available. Low modals (below AspP) bind by aspect to the VP event →
-no content → no epistemic. This dissolves [cinque-1999]'s puzzle
-without dedicated functional heads for each modal flavor.
-
-[hacquard-2010], §6.3: "high modals tend to be epistemic and
-low modals circumstantial, without having to stipulate two separate
-entries for each modal." -/
-theorem position_flavor_derived_not_stipulated :
-    -- Low: VP event is contentless → no epistemic (content licensing)
-    ModalPosition.belowAsp.defaultBinder.hasContent = false ∧
-    ModalPosition.belowAsp.defaultBinder.canProjectEpistemic = false ∧
-    -- High: speech act is contentful → epistemic available
-    ModalPosition.aboveAsp.defaultBinder.hasContent = true ∧
-    ModalPosition.aboveAsp.defaultBinder.canProjectEpistemic = true ∧
-    -- Embedded high: attitude is contentful → epistemic still available
-    ModalPosition.aboveAsp.withAttitude.hasContent = true ∧
-    ModalPosition.aboveAsp.withAttitude.canProjectEpistemic = true :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
-
--- ============================================================================
--- § 8: Events Carry More Than (Individual, Time) Pairs
--- ============================================================================
-
-/-- Events carry propositional content that (individual, time) pairs
-do not. This is the key advantage of event-relative modality over
-pair-relative modality: the content licensing predicate `hasContent`
-discriminates events even when they project to similar pairs.
-
-[hacquard-2010], §6: "what sets speech and attitude events
-apart from ordinary events is (what I am calling) their associated
-propositional 'content', which I take to be crucial for licensing
-epistemic modal bases." -/
-theorem events_richer_than_pairs :
-    -- Content licensing discriminates event binders
-    EventBinder.speechAct.hasContent = true ∧
-    EventBinder.attitude.hasContent = true ∧
-    EventBinder.vpEvent.hasContent = false ∧
-    -- Yet speech acts and attitudes yield the SAME available flavors
-    -- (both are contentful). Pairs would lose this shared structure.
-    EventBinder.speechAct.availableFlavors =
-      EventBinder.attitude.availableFlavors :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
--- ============================================================================
--- Part III: Against Cartographic Stipulation ([cinque-1999])
--- ============================================================================
-
-/-! [cinque-1999] proposes a universal hierarchy of functional projections
-with dedicated heads for each modal flavor
-(Mod_epistemic > Mod_irrealis > … > Mod_root > Mod_ability): epistemic
-modals are high because an epistemic head sits above TP, root modals low
-because root/ability heads sit below AspP. The position–flavor correlation
-is stipulated in the head inventory. Content licensing (§7) derives the
-same matrix-clause correlation from a single predicate, and additionally
-predicts the embedded pattern — a high modal under an attitude verb binds
-the (contentful) attitude event, so the epistemic state reported is the
-attitude holder's — which the cartographic account must re-stipulate. -/
-
-/-- A [cinque-1999] functional head for modality: each modal flavor
-occupies a dedicated syntactic position. -/
-inductive CinqueModHead where
-  /-- Mod_epistemic: above TP (high) -/
+/-- [cinque-1999]'s hierarchy at the granularity the paper uses: an epistemic head above tense,
+a root head below aspect. -/
+inductive CinqueHead
   | modEpistemic
-  /-- Mod_irrealis: above TP (high) -/
-  | modIrrealis
-  /-- Mod_root: below AspP (low) -/
+  | tense
+  | aspect
   | modRoot
-  /-- Mod_ability: below AspP (low) -/
-  | modAbility
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
-/-- Cinque's stipulated flavor for each head. -/
-def CinqueModHead.flavor : CinqueModHead → ModalFlavor
-  | .modEpistemic => .epistemic
-  | .modIrrealis => .epistemic
-  | .modRoot => .circumstantial
-  | .modAbility => .circumstantial
+namespace CinqueHead
 
-/-- Cinque's stipulated height for each head. -/
-def CinqueModHead.isHigh : CinqueModHead → Bool
-  | .modEpistemic => true
-  | .modIrrealis => true
-  | .modRoot => false
-  | .modAbility => false
+/-- Height in the hierarchy, the topmost head highest. -/
+def height : CinqueHead → ℕ
+  | .modEpistemic => 3
+  | .tense => 2
+  | .aspect => 1
+  | .modRoot => 0
 
-/-- In [cinque-1999]'s system, high = epistemic by stipulation: the
-correlation is built into the functional-head inventory. -/
-theorem cinque_high_epistemic (h : CinqueModHead) :
-    h.isHigh = (h.flavor == .epistemic) := by
-  cases h <;> rfl
+/-- `h` sits above `h'` in the hierarchy. -/
+def Above (h h' : CinqueHead) : Prop := h'.height < h.height
 
-/-- On matrix clauses the two accounts are extensionally equivalent:
-high modals are epistemic, low modals circumstantial. The difference is
-explanatory depth — Cinque stipulates the correlation, content licensing
-derives it. -/
-theorem matrix_clause_equivalence :
-    -- Cinque: high heads are epistemic
-    (∀ h : CinqueModHead, h.isHigh = true → h.flavor = .epistemic) ∧
-    -- Hacquard: high position → epistemic available
-    (ModalPosition.aboveAsp.defaultBinder.canProjectEpistemic = true) ∧
-    -- Cinque: low heads are circumstantial
-    (∀ h : CinqueModHead, h.isHigh = false → h.flavor = .circumstantial) ∧
-    -- Hacquard: low position → only circumstantial
-    (ModalPosition.belowAsp.defaultBinder.availableFlavors = [.circumstantial]) := by
-  refine ⟨?_, rfl, ?_, rfl⟩ <;> (intro h hh; cases h <;> simp_all [CinqueModHead.isHigh, CinqueModHead.flavor])
+instance : DecidableRel Above := λ h h' => inferInstanceAs (Decidable (h'.height < h.height))
 
-/-- Embedded contexts are where the accounts diverge: content licensing
-predicts that a high modal under an attitude verb binds the attitude
-event, which is contentful, so the epistemic reading tracks the attitude
-holder; a low embedded modal still binds the VP event and stays
-non-epistemic. The cartographic account must re-stipulate an embedded
-Mod_epistemic head and has no structural answer to whose epistemic state
-the modal reports. -/
-theorem embedded_epistemic_derived :
-    -- Attitude events are contentful
-    EventBinder.attitude.hasContent = true ∧
-    -- High embedded modal binds to attitude event
-    ModalPosition.aboveAsp.withAttitude = .attitude ∧
-    -- Attitude event licenses epistemic
-    ModalPosition.aboveAsp.withAttitude.canProjectEpistemic = true ∧
-    -- Low embedded modal still binds to VP event → no epistemic
-    ModalPosition.belowAsp.withAttitude = .vpEvent ∧
-    ModalPosition.belowAsp.withAttitude.canProjectEpistemic = false :=
-  ⟨rfl, rfl, rfl, rfl, rfl⟩
+/-- A high head sits above tense. -/
+def IsHigh (h : CinqueHead) : Prop := h.Above .tense
+
+instance : DecidablePred IsHigh := λ h => inferInstanceAs (Decidable (h.Above .tense))
+
+/-- The flavor the hierarchy stipulates for each modal head. -/
+def flavor : CinqueHead → Option ModalFlavor
+  | .modEpistemic => some .epistemic
+  | .modRoot => some .circumstantial
+  | _ => none
+
+/-- In the hierarchy the correlation of height and flavor is built in: the high modal head is the
+epistemic one, and the root head is below aspect. -/
+theorem isHigh_iff (h : CinqueHead) : h.IsHigh ↔ h.flavor = some .epistemic := by
+  cases h <;> decide
+
+theorem aspect_above_modRoot : CinqueHead.aspect.Above .modRoot := by decide
+
+end CinqueHead
+
+/-- Section 6.3: the same matrix correlation derived from one flavor-neutral entry. A modal
+above tense is bound by the speech event, which has content, and a modal below aspect by the VP
+event, which has none, so an epistemic modal base is available exactly in the high position. -/
+theorem epistemic_high_iff (pos : ModalPosition) :
+    pos.defaultBinder.canProjectEpistemic = true ↔ pos = .aboveAsp := by
+  cases pos <;> decide
 
 end Hacquard2010

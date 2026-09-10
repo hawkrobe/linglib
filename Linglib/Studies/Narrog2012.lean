@@ -352,12 +352,12 @@ theorem langacker_stages_monotone :
     differently. -/
 theorem three_way_agreement_epistemic_above_root :
     -- Cinque: epistemic heads are high
-    Hacquard2010.CinqueModHead.modEpistemic.isHigh = true ∧
+    Hacquard2010.CinqueHead.modEpistemic.IsHigh ∧
     -- Hacquard: high position licenses epistemic
     ModalPosition.aboveAsp.defaultBinder.canProjectEpistemic = true ∧
     -- Narrog: epistemic has higher scope level than dynamic
     GramCategory.dynamicModality < GramCategory.epistemic1 := by
-  exact ⟨rfl, rfl, by decide⟩
+  exact ⟨by decide, rfl, by decide⟩
 
 -- ============================================================================
 -- §8. Deriving Orientation from Flavor (ModalItem Bridge)
