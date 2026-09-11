@@ -1,242 +1,200 @@
-import Linglib.Semantics.Definiteness.Description
 import Linglib.Semantics.Definiteness.Interpret
-import Linglib.Semantics.Definiteness.Maximality
-import Linglib.Syntax.Category.Pronoun.Demonstrative
+import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+import Linglib.Data.Examples.Hanink2021
+import Mathlib.Data.Prod.Lex
 
 /-!
-# Hanink (2021): DP Structure and Internally Headed Relatives in Wášiw
-[hanink-2021]
+# Hanink (2021): DP Structure and Internally Headed Relatives in Washo
 
-The architectural claim of [hanink-2021] (developing the framework
-of Hanink 2018) is that the resource situation evaluating a definite
-description's restrictor is a *bound variable* in the syntactic
-structure — a "situation pronoun" — rather than a free contextual
-parameter handed to the interpretation function. The resource
-situation is selected by an index inside DP, not by the matrix
-context, and that index can be bound by higher operators.
+This file formalizes [hanink-2021]'s argument that indices are syntactic objects of their own, a
+head idx below D that Washo pronounces as *gi ~ ge*: in third-person pronouns (1), in
+demonstratives (2), and at the edge of internally headed relative clauses (3), which are DPs
+over a nominalized CP (40). The index has two meanings (80): as a variable it is the property of
+being the antecedent, so a familiar DP is D's ι over the restriction modified by the index (15),
+which is the substrate's anaphoric description, `interpret_anaphoric_eq_russellIota`, with the
+deixis of *hádi* and *wídi* a presupposition on D (34); as a binder it turns the open proposition
+of the embedded clause, whose semantic head is a restricted variable (69), into a property
+without movement, the substrate's abstraction `lambdaAbsG`, so that the relative denotes what an
+externally headed relative denotes by raising and intersection, `russellIota_idxBind`, (72) and
+(60). The Prohibition against Vacuous Binding (86) leaves the binder meaning to complements with
+a free variable: under a perception verb the nominalization has none, so the index is a
+variable and the clause a familiar DP over a property of events (106). Washo relatives are
+island-insensitive (50) and restrictive, with existential readings (53) and stacking (54), the
+profile of a language with articles (49) and (52), and idx bears no φ-features of the head (91),
+so its relation to the head is binding, not Agree (section 4.5). The exponence of idx (119) is
+*gi*, *ge* under dependent case, and null before an overt NP, and that of D (130) is null,
+*hádi*, or *wídi*; with contextual specificity ranked above the Elsewhere Principle (118), the
+Vocabulary derives the whole distribution, `idxExponent`: overt in pronouns, whose NP is elided
+(113), in relatives (114), and in demonstratives, whose complement is RP (129), null in
+anaphoric bare definites (115) even under dependent case (22). The examples are the rows of
+`Data.Examples.Hanink2021`.
 
-## What this file tests
+## Implementation notes
 
-The IL substrate operationalizes this in two parallel pieces:
+The index is the substrate's assignment index, so the variable meaning is `idxVar` and the
+binder meaning `lambdaAbsG`; D's ι is `russellIota`, whose `∃!` presupposition is (34a)'s.
+The R head of demonstratives (35) is the identity relation, so it is not represented. Ellipsis
+of a pronoun's NP is recorded as the complement lacking the feature that makes an NP overt
+(section 6.3). The quantified heads of section 5.1 and the German relative-clause parallel of
+section 4.4 are recorded as data and prose only.
 
-- **`SitAssignment W := Nat → W`** in `Semantics.Composition`
-  is the situation-pronoun assignment, parallel to the entity
-  assignment.
-- **`Description.unique R sIdx`** in `Definiteness.Description`
-  carries a `situationIdx : Nat` recording *which* situation pronoun
-  the description is bound to.
+## TODO
 
-The empirical payoff is that the *same* description can pick out
-different referents under different situation assignments. We test
-this with a two-room frame where "the table" picks out different
-tables depending on which resource situation the structure is bound
-to.
+* Quantified heads (98) to (103): [matthewson-2001]'s *all* over an index-hosting DP, and the
+  relative-internal scope it predicts.
 
-We additionally verify:
+## References
 
-1. **Restrictor sensitivity to the situation assignment** — a
-   restrictor that consults `interpSitPronoun` returns different
-   extensions under different `gs`.
-2. **Index-record discipline** — the surface interpretation function
-   ignores the index (it just records *which* pronoun is bound, the
-   `gs` does the work), but the `DescriptionKind.UsesSituationPronoun` classifier
-   correctly flags `unique` and `demonstrative` as the binders.
-3. **Anaphoric vs. unique split** — anaphoric definites consult the
-   *entity* assignment (the antecedent index), so the situation
-   assignment is irrelevant for them. This contrasts with `unique`,
-   matching the Schwarz weak/strong split.
+* [hanink-2021]
+* [schwarz-2009]
+* [elbourne-2005]
+* [heim-kratzer-1998]
+* [kratzer-2009]
+* [arregi-nevins-2012]
+* [jacobsen-1964]
+* [matthewson-2001]
 -/
 
 namespace Hanink2021
 
-open Semantics.Composition
-open Semantics.Composition
-open Definiteness
-open Definiteness
+open Semantics.Composition Definiteness DistributedMorphology Morphology.Exponence
+open scoped Assignment
 
--- ════════════════════════════════════════════════════════════════
--- §1: A two-room frame for the resource-situation diagnostic
--- ════════════════════════════════════════════════════════════════
+variable {E W : Type}
 
-/-- Two tables, one in each room. The "the table" diagnostic in
-    [hanink-2021]'s style: shifting the bound resource situation
-    flips the referent. -/
-inductive Item where
-  | tableKitchen
-  | tableLiving
+/-! ### The two meanings of the index, (80) -/
+
+/-- (80a), (14): the index as a variable, the property of being its value. -/
+def idxVar (n : ℕ) : DenotG E W .et := λ g x => x = g n
+
+/-- (80b): the index as a binder, taking the open proposition of its complement to the property
+of the values of the variable that verify it: the substrate's abstraction over `n`, achieved
+without movement. -/
+abbrev idxBind (n : ℕ) (φ : DenotG E W .t) : DenotG E W .et := lambdaAbsG n φ
+
+/-- (15), (35b), (97), and (106): a familiar DP, D's ι over the restriction modified by the index
+as a variable, is the substrate's anaphoric description: the antecedent, if it satisfies the
+restriction. -/
+theorem interpret_anaphoric_eq_russellIota (R : DenotGS E W .et) (d : ℕ) (g : Assignment E)
+    (gs : SitAssignment W) :
+    interpret (.anaphoric R d) g gs = russellIota (λ x => R g gs x ∧ idxVar d g x) := by
+  rw [interpret_anaphoric]
+  split_ifs with h
+  · exact ((russellIota_eq_some_iff _ _).mpr ⟨⟨h, rfl⟩, λ _ hx => hx.2⟩).symm
+  · refine (Option.eq_none_iff_forall_ne_some.mpr λ e he => h ?_).symm
+    obtain ⟨⟨hR, rfl⟩, -⟩ := (russellIota_eq_some_iff _ _).mp he
+    exact hR
+
+/-- (34b), (34c): the demonstrative D heads *hádi* and *wídi* add a deictic presupposition and
+otherwise contribute ι, so a demonstrative refers as the anaphoric DP does. -/
+theorem interpret_demonstrative_eq_russellIota (R : DenotGS E W .et)
+    (deictic : Features.Deixis.Feature) (sIdx d : ℕ) (g : Assignment E) (gs : SitAssignment W) :
+    interpret (.demonstrative R deictic sIdx d) g gs =
+      russellIota (λ x => R g gs x ∧ idxVar d g x) :=
+  (interpret_demonstrative_eq_anaphoric R deictic sIdx d g gs).trans
+    (interpret_anaphoric_eq_russellIota R d g gs)
+
+/-! ### Internally headed relatives, section 4 -/
+
+/-- (69), (70): the embedded clause of an internally headed relative, an open proposition whose
+semantic head is the restricted variable `n`: the restriction `P` holds of its value, and the
+clause `ψ` says the rest of it. -/
+def openClause (n : ℕ) (P : E → Prop) (ψ : DenotG E W .t) : DenotG E W .t :=
+  λ g => P (g n) ∧ ψ g
+
+/-- (71) is (59): the index binding the restricted variable in situ yields the property an
+externally headed relative builds by abstracting over the trace and intersecting with the
+head noun. -/
+theorem idxBind_openClause (n : ℕ) (P : E → Prop) (ψ : DenotG E W .t) (g : Assignment E) :
+    idxBind n (openClause n P ψ) g = λ x => P x ∧ lambdaAbsG n ψ g x := by
+  funext x
+  simp only [idxBind, lambdaAbsG, openClause, Function.update_self]
+
+/-- (72) is (60): the silent D over the bound clause refers to what the definite over the
+externally headed relative refers to, the same meaning by different steps. -/
+theorem russellIota_idxBind (n : ℕ) (P : E → Prop) (ψ : DenotG E W .t) (g : Assignment E) :
+    russellIota (idxBind n (openClause n P ψ) g) =
+      russellIota (λ x => P x ∧ lambdaAbsG n ψ g x) := by
+  rw [idxBind_openClause]
+
+/-- The index has a free occurrence in `φ`: some value of the variable changes its truth. -/
+def BindsIn (n : ℕ) (φ : DenotG E W .t) : Prop := ∃ g x, ¬ (φ (g[n ↦ x]) ↔ φ g)
+
+/-- (86), the Prohibition against Vacuous Binding: without a free occurrence of the index the
+binder meaning is constant and binds nothing, so only the variable meaning survives, which is
+why a perception nominalization (106), a property of events with no open variable, is a
+familiar DP. -/
+theorem idxBind_eq_const_of_not_bindsIn {n : ℕ} {φ : DenotG E W .t} (h : ¬ BindsIn n φ)
+    (g : Assignment E) : idxBind n φ g = λ _ => φ g := by
+  funext x
+  simp only [BindsIn, not_exists, not_not] at h
+  exact propext (h g x)
+
+/-! ### The exponence of idx and D, section 6 -/
+
+/-- The features Vocabulary Insertion reads at idx and D and on their complements: the index
+head, dependent (accusative) case, the D head with its deixis, and the complement's category, an
+overt NP, a CP, an RP, or a nominal under ellipsis, which lacks the phonological features that
+make an NP overt (section 6.3). -/
+inductive Feat where
+  | idx | dep | np | cp | rp | elided
+  | d | deixis (f : Features.Deixis.Feature)
   deriving DecidableEq, Repr
 
-/-- Two rooms, each its own situation. -/
-inductive Room where
-  | kitchen
-  | living
-  deriving DecidableEq, Repr
+/-- (119), (131): the Vocabulary entries for idx, *gi* elsewhere, *ge* under dependent case, and
+null before an overt NP. -/
+def idxItems : List (VocabularyItem Feat String) :=
+  [[Feat.idx] ⟷ "gi", [Feat.idx, .dep] ⟷ "ge", ⟨⟨[.idx], [], [[.np]]⟩, ""⟩]
 
-/-- "Table-in-room": the predicate is true at exactly one item per room.
-    Encodes the [hanink-2021] resource-situation idea — what counts
-    as "the table" depends on the situation we evaluate at. -/
-def tableIn : Room → Item → Prop
-  | .kitchen, .tableKitchen => True
-  | .kitchen, _             => False
-  | .living,  .tableLiving  => True
-  | .living,  _             => False
+/-- (130): the Vocabulary entries for D, null elsewhere, *hádi* distal, *wídi* proximal. -/
+def dItems : List (VocabularyItem Feat String) :=
+  [[Feat.d] ⟷ "", [Feat.d, .deixis .distal] ⟷ "hádi", [Feat.d, .deixis .proximal] ⟷ "wídi"]
 
-/-- The restrictor *the table at the situation pointed to by pronoun 0*:
-    a `DenotGS` that consults `interpSitPronoun 0` to fetch the resource
-    situation, then evaluates `tableIn` at that situation.
+/-- (118): contextual specificity takes precedence over the Elsewhere Principle, the ordering of
+[arregi-nevins-2012]: an item is ranked first by the features it demands of the context and
+then by those it spells out. -/
+def contextualSpecificity (i : VocabularyItem Feat String) : ℕ ×ₗ ℕ :=
+  toLex ((i.site.leftCtx ++ i.site.rightCtx).flatten.length, i.site.focus.length)
 
-    This is the [hanink-2021] situation-pronoun pattern: the
-    structural index `0` selects which situation in `gs` to use. -/
-def tableAtSit0 : DenotGS Item Room .et :=
-  fun _g gs x => tableIn (interpSitPronoun 0 gs) x
+/-- The exponent of idx in a neighborhood. -/
+def idxExponent (n : Neighborhood (List Feat)) : Option String :=
+  realize contextualSpecificity idxItems n
 
--- ════════════════════════════════════════════════════════════════
--- §2: Bi-assignment scaffolding
--- ════════════════════════════════════════════════════════════════
+/-- The exponent of D in a neighborhood. -/
+def dExponent (n : Neighborhood (List Feat)) : Option String :=
+  realize contextualSpecificity dItems n
 
-/-- A trivial entity assignment. Entity binding is not exercised here. -/
-def g₀ : Assignment Item := fun _ => Item.tableKitchen
+/-- The distribution of *gi ~ ge* (108) to (115) and (127) to (129): overt in pronouns, whose NP
+is elided (113), at the edge of clausal nominalizations (114), and in demonstratives, whose
+complement is RP (129), each alternating for case ((44), (45)); null before the overt NP of an
+anaphoric bare definite (115), and still null under dependent case (22), where the contextual
+entry outranks the case entry. -/
+theorem idxExponent_distribution :
+    idxExponent ⟨[.idx], [], [[.elided]]⟩ = some "gi" ∧
+      idxExponent ⟨[.idx, .dep], [], [[.elided]]⟩ = some "ge" ∧
+      idxExponent ⟨[.idx], [], [[.cp]]⟩ = some "gi" ∧
+      idxExponent ⟨[.idx, .dep], [], [[.cp]]⟩ = some "ge" ∧
+      idxExponent ⟨[.idx], [[.d, .deixis .distal]], [[.rp]]⟩ = some "gi" ∧
+      idxExponent ⟨[.idx], [], [[.np]]⟩ = some "" ∧
+      idxExponent ⟨[.idx, .dep], [], [[.np]]⟩ = some "" := by
+  decide
 
-/-- Situation assignment with pronoun 0 ↦ kitchen. -/
-def gsKitchen : SitAssignment Room := fun _ => Room.kitchen
+/-- Under the Elsewhere score alone the case entry and the contextual entry tie on the accusative
+bare definite and vocabulary order decides for *ge*; the paper's ordering (118) is what makes
+the null entry win. -/
+theorem subsetPrinciple_accusative_bare :
+    subsetPrinciple idxItems ⟨[.idx, .dep], [], [[.np]]⟩ = some "ge" := by
+  decide
 
-/-- Situation assignment with pronoun 0 ↦ living. -/
-def gsLiving : SitAssignment Room := fun _ => Room.living
-
--- ════════════════════════════════════════════════════════════════
--- §3: The same description picks different referents (the payoff)
--- ════════════════════════════════════════════════════════════════
-
-/-- Restrictor uniqueness in the kitchen situation: only `tableKitchen`
-    satisfies `tableAtSit0`. -/
-theorem tableAtSit0_existsUnique_kitchen :
-    ∃! x : Item, tableAtSit0 g₀ gsKitchen x := by
-  refine ⟨Item.tableKitchen, trivial, ?_⟩
-  intro y hy
-  cases y <;> simp_all [tableAtSit0, tableIn, interpSitPronoun, gsKitchen]
-
-/-- Restrictor uniqueness in the living-room situation: only
-    `tableLiving` satisfies `tableAtSit0`. -/
-theorem tableAtSit0_existsUnique_living :
-    ∃! x : Item, tableAtSit0 g₀ gsLiving x := by
-  refine ⟨Item.tableLiving, trivial, ?_⟩
-  intro y hy
-  cases y <;> simp_all [tableAtSit0, tableIn, interpSitPronoun, gsLiving]
-
-/-- Witness extraction for the kitchen case: the unique satisfier is
-    `tableKitchen`. -/
-theorem theTable_kitchen :
-    interpret (E := Item) (W := Room) (.unique tableAtSit0 0) g₀ gsKitchen
-      = some Item.tableKitchen :=
-  interpret_unique_eq_some_of_existsUnique _ 0 g₀ gsKitchen Item.tableKitchen trivial
-    (fun y hy => by cases y <;> simp_all [tableAtSit0, tableIn, interpSitPronoun, gsKitchen])
-
-/-- Witness extraction for the living-room case: the unique satisfier
-    is `tableLiving`. -/
-theorem theTable_living :
-    interpret (E := Item) (W := Room) (.unique tableAtSit0 0) g₀ gsLiving
-      = some Item.tableLiving :=
-  interpret_unique_eq_some_of_existsUnique _ 0 g₀ gsLiving Item.tableLiving trivial
-    (fun y hy => by cases y <;> simp_all [tableAtSit0, tableIn, interpSitPronoun, gsLiving])
-
-/-- The Hanink payoff: the *same* `.unique` description picks out
-    different referents under different situation assignments. The
-    description is one syntactic object; the resource situation is a
-    bound variable, not a free parameter. -/
-theorem same_description_different_referents :
-    interpret (E := Item) (W := Room) (.unique tableAtSit0 0) g₀ gsKitchen
-      ≠ interpret (E := Item) (W := Room) (.unique tableAtSit0 0) g₀ gsLiving := by
-  rw [theTable_kitchen, theTable_living]
-  intro h
-  cases (Option.some_inj.mp h)
-
--- ════════════════════════════════════════════════════════════════
--- §4: Index-record discipline
--- ════════════════════════════════════════════════════════════════
-
-/-- The index argument to `.unique` does not select among situations at
-    the interpretation layer — the restrictor `R` already takes the full
-    situation assignment, and the index records *which* pronoun is
-    bound. (`Definiteness.interpret_unique_index_irrelevant` makes this
-    explicit.) The Hanink claim is recovered via the restrictor calling
-    `interpSitPronoun sIdx`, not via the interpreter inspecting `sIdx`. -/
-theorem unique_index_does_not_alter_referent_directly :
-    interpret (E := Item) (W := Room) (.unique tableAtSit0 0) g₀ gsKitchen
-      = interpret (E := Item) (W := Room) (.unique tableAtSit0 7) g₀ gsKitchen :=
-  interpret_unique_index_irrelevant _ _ _ _ _
-
-/-- Among description kinds, exactly `unique` and `demonstrative` are
-    flagged as binding a structural situation pronoun. Anaphoric definites
-    do not — they consult the entity assignment for an antecedent, not the
-    situation assignment. -/
-theorem situation_binders_classified :
-    DescriptionKind.unique.UsesSituationPronoun ∧
-    DescriptionKind.demonstrative.UsesSituationPronoun ∧
-    ¬ DescriptionKind.anaphoric.UsesSituationPronoun ∧
-    ¬ DescriptionKind.bare.UsesSituationPronoun ∧
-    ¬ DescriptionKind.indefinite.UsesSituationPronoun := by decide
-
--- ════════════════════════════════════════════════════════════════
--- §5: Anaphoric vs. unique — orthogonal binding
--- ════════════════════════════════════════════════════════════════
-
-/-- Anaphoric definites consult the entity assignment for the
-    antecedent. When the restrictor itself is situation-insensitive
-    (`R g₀ gsKitchen = R g₀ gsLiving`), the anaphoric reading is
-    invariant under the resource-situation assignment — its referent
-    is determined by the entity slot `g₀ d`. This is the orthogonality
-    of entity-assignment binding and situation-assignment binding in
-    [hanink-2021]'s architecture: the *anaphoric* layer reads from
-    `g`, the *unique* layer reads from `gs`. -/
-theorem anaphoric_independent_of_situation
-    (R : DenotGS Item Room .et) (d : Nat)
-    (hgs : R g₀ gsKitchen = R g₀ gsLiving) :
-    interpret (E := Item) (W := Room) (.anaphoric R d) g₀ gsKitchen =
-    interpret (E := Item) (W := Room) (.anaphoric R d) g₀ gsLiving := by
-  rw [interpret_anaphoric, interpret_anaphoric, hgs]
-
-/-- Concrete instance: with a constant restrictor (the antecedent is
-    self-identifying, no situation needed), anaphoric definites are
-    insensitive to the resource-situation assignment. -/
-theorem anaphoric_const_restrictor_situation_insensitive (d : Nat) :
-    interpret (E := Item) (W := Room) (.anaphoric (DenotGS.const (fun _ => True)) d) g₀ gsKitchen =
-    interpret (E := Item) (W := Room) (.anaphoric (DenotGS.const (fun _ => True)) d) g₀ gsLiving :=
-  anaphoric_independent_of_situation _ _ rfl
-
--- ════════════════════════════════════════════════════════════════
--- §6: Grounding the Pronoun API — `DemonstrativePronoun` denotes via `demonstrative`
--- ════════════════════════════════════════════════════════════════
-
-/-! [hanink-2021] is the theory hub for the demonstrative pronoun (`Syntax/Category/Pronoun/Demonstrative`):
-a demonstrative is the bare anaphoric `idx` (Hanink's Washo *gí*; [elbourne-2005]
-pronouns-as-definites) plus a deictic feature realized as a presupposition on D. The lexical
-`DemonstrativePronoun` supplies its proximal/distal deixis via the `Demonstrative` capability; the
-restrictor and indices come from context. -/
-
-/-- The denotation of a demonstrative pronoun: `Description.demonstrative` over a context restrictor,
-    with the pronoun's deictic feature as the presupposition on D ([hanink-2021] (34)/(35)). -/
-def demDescription {E W : Type} (p : DemonstrativePronoun)
-    (R : DenotGS E W .et) (sIdx d : Nat) : Description E W :=
-  .demonstrative R p.deixis sIdx d
-
-/-- A demonstrative pronoun picks the *same referent* as a plain anaphoric definite: its deixis is a
-    presupposition filter, not a referent selector ([hanink-2021]). The Pronoun-API capability
-    `Demonstrative.deixis` is exactly the presupposition that drops out of referent selection. -/
-theorem demDescription_eq_anaphoric {E W : Type} (p : DemonstrativePronoun)
-    (R : DenotGS E W .et) (sIdx d : Nat) (g : Assignment E) (gs : SitAssignment W) :
-    interpret (demDescription p R sIdx d) g gs = interpret (.anaphoric R d) g gs :=
-  interpret_demonstrative_eq_anaphoric R p.deixis sIdx d g gs
-
-/-- [patel-grosz-grosz-2017]'s orthogonality, now grounded in *meaning* (and stated in the later
-    study, per chronology): German *der* — the strong-article personal pronoun, an **anaphoric**
-    definite with no deixis — and a demonstrative pronoun pick the **same referent** (both anaphoric
-    over `d`), yet only the demonstrative carries a deictic feature. Article-strength ⊥
-    demonstrativehood: PG&G's "*der* is not a `Demonstrative`" is a semantic fact, not just typing. -/
-theorem der_strong_vs_demonstrative {E W : Type} (p : DemonstrativePronoun)
-    (hdist : (Demonstrative.deixis p).EncodesDistance)
-    (R : DenotGS E W .et) (sIdx d : Nat) (g : Assignment E) (gs : SitAssignment W) :
-    interpret (demDescription p R sIdx d) g gs = interpret (.anaphoric R d) g gs
-      ∧ (Demonstrative.deixis p).EncodesDistance :=
-  ⟨demDescription_eq_anaphoric p R sIdx d g gs, hdist⟩
+/-- (25), (127): the demonstratives *hádigi* and *wídigi* decompose as the D exponent followed by
+the idx exponent. -/
+theorem demonstrative_forms :
+    (dExponent ⟨[.d, .deixis .distal], [], [[.idx]]⟩).bind
+        (λ a => (idxExponent ⟨[.idx], [[.d, .deixis .distal]], [[.rp]]⟩).map (a ++ ·)) =
+      some "hádigi" ∧
+    (dExponent ⟨[.d, .deixis .proximal], [], [[.idx]]⟩).bind
+        (λ a => (idxExponent ⟨[.idx], [[.d, .deixis .proximal]], [[.rp]]⟩).map (a ++ ·)) =
+      some "wídigi" := by
+  decide
 
 end Hanink2021

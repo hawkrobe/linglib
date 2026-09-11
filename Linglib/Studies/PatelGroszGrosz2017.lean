@@ -167,8 +167,9 @@ partial-identity view of φ in `Semantics/Presupposition/PhiFeatures`, after Coo
 The PER series is the **weak** article (uniqueness); the marked DEM series the **strong**
 (familiarity, `der_er_can_diverge` above) — article-strength is *per-series*, not a per-element slot
 (like deficiency, unlike the demonstrative's deixis). The load-bearing parallel to the demonstrative
-grounding (`Studies/Hanink2021`): there `deixis` filled `Description.demonstrative`'s slot; here the
-`HasPhi.phi` **gender** supplies the restrictor's presupposition. -/
+grounding (`Studies/Hanink2021`): there the demonstrative's deixis is a presupposition on D, the
+deictic slot of `Description.demonstrative`; here the `HasPhi.phi` **gender** supplies the
+restrictor's presupposition. -/
 
 open Presupposition.PhiFeatures
 
