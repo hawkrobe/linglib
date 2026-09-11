@@ -1762,7 +1762,6 @@ import Linglib.Semantics.Plurality.Reciprocal.Scope
 import Linglib.Semantics.Plurality.Trivalent
 import Linglib.Semantics.Polarity.CzechNegation
 import Linglib.Semantics.Polarity.ExpletiveNegation
-import Linglib.Semantics.Polarity.ScalarModel
 import Linglib.Semantics.Polarity.Strength
 import Linglib.Semantics.Polarity.Item
 import Linglib.Semantics.Polarity.Licensing

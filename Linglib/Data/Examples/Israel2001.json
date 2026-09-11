@@ -1,0 +1,2056 @@
+[
+  {
+    "id": "israel2001_s1a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(1a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Monica isn't the least bit interested in Kosovo.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "0"
+      ],
+      [
+        "item",
+        "the least bit"
+      ],
+      [
+        "type",
+        "NPI"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s1b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(1b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Monica is the least bit interested in Kosovo.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "0"
+      ],
+      [
+        "item",
+        "the least bit"
+      ],
+      [
+        "type",
+        "NPI"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s2a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(2a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Bill's new tie is rather attractive.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "0"
+      ],
+      [
+        "item",
+        "rather"
+      ],
+      [
+        "type",
+        "PPI"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s2b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(2b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Bill's new tie isn't rather attractive.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "0"
+      ],
+      [
+        "item",
+        "rather"
+      ],
+      [
+        "type",
+        "PPI"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s3a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(3a)"
+    },
+    "language": "stan1293",
+    "primaryText": "If you're the least bit nervous we can skip the sky-diving.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "0"
+      ],
+      [
+        "item",
+        "the least bit"
+      ],
+      [
+        "context",
+        "antecedent of a conditional"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s3b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(3b)"
+    },
+    "language": "stan1293",
+    "primaryText": "If you're rather nervous we can skip the sky-diving.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "0"
+      ],
+      [
+        "item",
+        "rather"
+      ],
+      [
+        "context",
+        "antecedent of a conditional"
+      ]
+    ],
+    "comment": "Marked ??.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s4a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(4a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Is Monica the least bit worried about the investigation?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "0"
+      ],
+      [
+        "item",
+        "the least bit"
+      ],
+      [
+        "context",
+        "interrogative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s4b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(4b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Is Monica rather worried about the investigation?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "0"
+      ],
+      [
+        "item",
+        "rather"
+      ],
+      [
+        "context",
+        "interrogative"
+      ]
+    ],
+    "comment": "Marked ??.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s5a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(5a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Anyone who is the least bit interested in verbal periphrasis will want to read this book.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "0"
+      ],
+      [
+        "item",
+        "the least bit"
+      ],
+      [
+        "context",
+        "restriction of a universal"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s5b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(5b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Anyone who is rather interested in verbal periphrasis will want to read this book.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "0"
+      ],
+      [
+        "item",
+        "rather"
+      ],
+      [
+        "context",
+        "restriction of a universal"
+      ]
+    ],
+    "comment": "Marked ??.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s6a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(6a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I'd sooner die than make you the least bit uncomfortable.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "0"
+      ],
+      [
+        "item",
+        "the least bit"
+      ],
+      [
+        "context",
+        "standard of a comparative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s6b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(6b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I'd sooner die than make you rather uncomfortable.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "0"
+      ],
+      [
+        "item",
+        "rather"
+      ],
+      [
+        "context",
+        "standard of a comparative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s7a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(7a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I didn't sleep a wink.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "item",
+        "a wink"
+      ],
+      [
+        "cell",
+        "emphatic NPI, low value"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s7b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(7b)"
+    },
+    "language": "stan1293",
+    "primaryText": "We are not the least bit amused.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "item",
+        "the least bit"
+      ],
+      [
+        "cell",
+        "emphatic NPI, low value"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s7c",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(7c)"
+    },
+    "language": "stan1293",
+    "primaryText": "She didn't budge an inch.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "item",
+        "an inch"
+      ],
+      [
+        "cell",
+        "emphatic NPI, low value"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s8a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(8a)"
+    },
+    "language": "stan1293",
+    "primaryText": "She didn't sleep much.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "item",
+        "much"
+      ],
+      [
+        "cell",
+        "attenuating NPI, high value"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s8b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(8b)"
+    },
+    "language": "stan1293",
+    "primaryText": "He's not all that clever.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "item",
+        "all that"
+      ],
+      [
+        "cell",
+        "attenuating NPI, high value"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s8c",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(8c)"
+    },
+    "language": "stan1293",
+    "primaryText": "This won't take long.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "item",
+        "long"
+      ],
+      [
+        "cell",
+        "attenuating NPI, high value"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s9a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(9a)"
+    },
+    "language": "stan1293",
+    "primaryText": "She is insanely good-looking, and outrageously cruel.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "item",
+        "insanely"
+      ],
+      [
+        "cell",
+        "emphatic PPI, high value"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s9b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(9b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The test was way too hard. I was utterly depressed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "item",
+        "utterly"
+      ],
+      [
+        "cell",
+        "emphatic PPI, high value"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s9c",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(9c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Boy, are you in a heap of trouble!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "item",
+        "a heap"
+      ],
+      [
+        "cell",
+        "emphatic PPI, high value"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s10a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(10a)"
+    },
+    "language": "stan1293",
+    "primaryText": "She's sorta clever.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "item",
+        "sorta"
+      ],
+      [
+        "cell",
+        "attenuating PPI, low value"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s10b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(10b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I was rather pleased.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "item",
+        "rather"
+      ],
+      [
+        "cell",
+        "attenuating PPI, low value"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s10c",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(10c)"
+    },
+    "language": "stan1293",
+    "primaryText": "They're somewhat worried.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "item",
+        "somewhat"
+      ],
+      [
+        "cell",
+        "attenuating PPI, low value"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s11a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(11a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Wild horses couldn't keep me away.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Wild horses could keep me away.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "item",
+        "wild horses"
+      ],
+      [
+        "cell",
+        "maximizing NPI"
+      ],
+      [
+        "role",
+        "facilitating: stimulus"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s11b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(11b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I wouldn't do it for all the tea in China.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "I would do it for all the tea in China.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "item",
+        "all the tea in China"
+      ],
+      [
+        "cell",
+        "maximizing NPI"
+      ],
+      [
+        "role",
+        "facilitating: reward"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s11c",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(11c)"
+    },
+    "language": "stan1293",
+    "primaryText": "I wouldn't touch it with a ten-foot pole.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "item",
+        "a ten-foot pole"
+      ],
+      [
+        "cell",
+        "maximizing NPI"
+      ],
+      [
+        "role",
+        "facilitating: instrument"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s12a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(12a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Godfrey is scared of his own shadow.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Godfrey is not scared of his own shadow.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "item",
+        "his own shadow"
+      ],
+      [
+        "cell",
+        "minimizing PPI"
+      ],
+      [
+        "role",
+        "facilitating: stimulus"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s12b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(12b)"
+    },
+    "language": "stan1293",
+    "primaryText": "She would betray us at the drop of a hat.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "She would not betray us at the drop of a hat.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "item",
+        "at the drop of a hat"
+      ],
+      [
+        "cell",
+        "minimizing PPI"
+      ],
+      [
+        "role",
+        "facilitating: stimulus"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s12c",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(12c)"
+    },
+    "language": "stan1293",
+    "primaryText": "You could have knocked me over with a feather.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "item",
+        "with a feather"
+      ],
+      [
+        "cell",
+        "minimizing PPI"
+      ],
+      [
+        "role",
+        "facilitating: instrument"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s13a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(13a)"
+    },
+    "language": "stan1293",
+    "primaryText": "We haven't heard from you in a coon's age!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "We have heard from you in a coon's age!",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "item",
+        "in a coon's age"
+      ],
+      [
+        "cell",
+        "inverted NPI, large time span"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s13b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(13b)"
+    },
+    "language": "stan1293",
+    "primaryText": "You'll never in a million years guess who I saw last night.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "You'll in a million years guess who I saw last night.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "item",
+        "in a million years"
+      ],
+      [
+        "cell",
+        "inverted NPI, large time span"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s14a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(14a)"
+    },
+    "language": "stan1293",
+    "primaryText": "We will be back in a jiffy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "We will not be back in a jiffy.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "item",
+        "in a jiffy"
+      ],
+      [
+        "cell",
+        "inverted PPI, minimal span"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s14b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(14b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I would marry that woman in a New York minute.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "I wouldn't marry that woman in a New York minute.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "item",
+        "in a New York minute"
+      ],
+      [
+        "cell",
+        "inverted PPI, minimal span"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s15a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(15a)"
+    },
+    "language": "stan1293",
+    "primaryText": "He won't spend a red cent on your wedding.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "item",
+        "a red cent"
+      ],
+      [
+        "cell",
+        "canonical NPI"
+      ],
+      [
+        "role",
+        "resource"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s15b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(15b)"
+    },
+    "language": "stan1293",
+    "primaryText": "She wouldn't kiss him for all the tea in China.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "item",
+        "all the tea in China"
+      ],
+      [
+        "cell",
+        "inverted NPI"
+      ],
+      [
+        "role",
+        "reward"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s16a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(16a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Julio spent a king's ransom on the party.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "item",
+        "a king's ransom"
+      ],
+      [
+        "cell",
+        "canonical PPI"
+      ],
+      [
+        "role",
+        "resource"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s16b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(16b)"
+    },
+    "language": "stan1293",
+    "primaryText": "But he somehow got Madonna to play for peanuts.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "item",
+        "for peanuts"
+      ],
+      [
+        "cell",
+        "inverted PPI"
+      ],
+      [
+        "role",
+        "reward"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s17a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(17a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I won't be half a minute.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "I will be half a minute.",
+        "judgment": "questionable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "item",
+        "half a minute"
+      ],
+      [
+        "role",
+        "duration: impeding"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s17b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(17b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I cannot for a second believe she would do that.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "I can for a second believe she would do that.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "item",
+        "for a second"
+      ],
+      [
+        "role",
+        "duration: impeding"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s18a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(18a)"
+    },
+    "language": "stan1293",
+    "primaryText": "It has always been so, time out of mind.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "item",
+        "time out of mind"
+      ],
+      [
+        "role",
+        "duration: impeding"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s18b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(18b)"
+    },
+    "language": "stan1293",
+    "primaryText": "They've been married for ages.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "item",
+        "for ages"
+      ],
+      [
+        "role",
+        "duration: impeding"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s19",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(19)"
+    },
+    "language": "stan1293",
+    "primaryText": "You'd never get a poor man to wash a car for $2 in bad times, let alone a rich man to wax a truck for $1 in prosperous times.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "source",
+        "Fillmore, Kay and O'Connor 1988"
+      ],
+      [
+        "scales",
+        "five coordinated scales"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s20a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(20a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Stella can calculate an eigen vector in the blink of an eye.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "scales",
+        "solvers, problems, time spans"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s20b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(20b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Even Dim could solve this puzzle in a minute.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "scales",
+        "solvers, problems, time spans"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s20c",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(20c)"
+    },
+    "language": "stan1293",
+    "primaryText": "With that much time even I could do the Sunday crossword.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "scales",
+        "solvers, problems, time spans"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s21a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(21a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Dim can't even count to two in less than an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "scales",
+        "solvers, problems, time spans"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s21b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(21b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Even Stella couldn't solve this puzzle after a year of trying.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "scales",
+        "solvers, problems, time spans"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s21c",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(21c)"
+    },
+    "language": "stan1293",
+    "primaryText": "It all happened faster than Einstein could say E=MC2.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "scales",
+        "solvers, problems, time spans"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s22a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(22a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Eve didn't hear even the faintest noise.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "scale",
+        "existential"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s22b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(22b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Eve didn't hear even the loudest noise.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "scale",
+        "perceptual ability"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s22c",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(22c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Eve didn't hear any noise.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "paraphrase",
+        "of both (22a) and (22b)"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s23a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(23a)"
+    },
+    "language": "stan1293",
+    "primaryText": "There wasn't even the faintest noise to be heard.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "scale",
+        "existential"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s23b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(23b)"
+    },
+    "language": "stan1293",
+    "primaryText": "There wasn't even the loudest noise to be heard.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "scale",
+        "perceptual ability"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s24a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(24a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Eve heard even the faintest noise.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "scale",
+        "perceptual ability"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s24b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(24b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Eve heard even the loudest noise.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "scale",
+        "existential"
+      ]
+    ],
+    "comment": "Marked ??.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s25a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(25a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Eve didn't hear so much as the faintest noise.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "scale",
+        "existential"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s25b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(25b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Eve didn't hear so much as the loudest noise.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "scale",
+        "perceptual ability"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s26a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(26a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I can't see the most distant connection between your argument and your conclusion.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "verb",
+        "see"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s26b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(26b)"
+    },
+    "language": "stan1293",
+    "primaryText": "With this telescope you can see the most distant galaxies.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "verb",
+        "see"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s27a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(27a)"
+    },
+    "language": "stan1293",
+    "primaryText": "She couldn't detect the slightest emotion on his face.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "verb",
+        "detect"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s27b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(27b)"
+    },
+    "language": "stan1293",
+    "primaryText": "This device can detect even the slightest facial movement.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "verb",
+        "detect"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s28a",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(28a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Holmes didn't find the tiniest shred of evidence to support his theory.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "verb",
+        "find"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "israel2001_s28b",
+    "source": {
+      "bibkey": "israel-2001",
+      "paperLabel": "(28b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Holmes can find even the tiniest clues left at a crime scene.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "verb",
+        "find"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  }
+]

@@ -9,9 +9,9 @@ English polarity items, typed by `Polarity.Item`: weak NPIs
 (*wild horses*, *all the tea in China*), and PPIs both plain (*some*,
 *already*, *somewhat*) and idiomatic (*at the drop of a hat*, *for a
 pittance*). Entries carry licensing parameters, attested contexts, and
-scalar direction; the [israel-2001] scalar-model classifications
-(value, canonicity, likelihood effect) live with their consuming study
-in `Studies/Israel2001.lean` as `ScalarItem`s over these entries.
+scalar direction; the [israel-2001] classifications by quantity and
+propositional role live with their consuming study in
+`Studies/Israel2001.lean`.
 
 ## References
 
