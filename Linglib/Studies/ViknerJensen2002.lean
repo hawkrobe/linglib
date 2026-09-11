@@ -7,7 +7,7 @@ import Linglib.Semantics.Possession.Basic
 genitive: the genitive always combines with a *relational* noun — a
 non-relational head is coerced via Barker's `π`, the relation type supplied by
 the noun's qualia (`availableRelations`, §3.1.2). The genitive clitic itself
-(`clitic`, their (16)) embeds a narrow-scope definite: the worked examples
+(`clitic`, (16)) embeds a narrow-scope definite: the worked examples
 prove `∃!` uniqueness of the possessee.
 -/
 

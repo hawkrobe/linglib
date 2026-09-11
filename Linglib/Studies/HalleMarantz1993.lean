@@ -5,8 +5,8 @@ import Linglib.Data.Examples.HalleMarantz1993
 # Halle and Marantz (1993): Distributed Morphology and the Pieces of Inflection
 
 This file formalizes the English verb inflection of [halle-marantz-1993], section 3.1. The
-seven suffixes of their (8) compete under the Subset Principle for the fused Tns–Agr node,
-`vocabulary`, and the principal parts of their (7) fall out, `principal_parts`. The node's
+seven suffixes of (8) compete under the Subset Principle for the fused Tns–Agr node,
+`vocabulary`, and the principal parts of (7) fall out, `principal_parts`. The node's
 features are the binary `[±past]` and `[±participle]`, the `[3sg]` agreement complex, and the
 stem the node is inserted next to, the paper's contextual feature; Agr is added at MS to
 `[−participle]` Tns nodes and fuses with Tns before insertion, `tnsAgrFusion`, so a participial

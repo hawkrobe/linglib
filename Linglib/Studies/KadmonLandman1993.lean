@@ -17,7 +17,7 @@ free-choice *any* is the same item with a generic interpretation.
 Strengthening subsumes [ladusaw-1979]'s DE condition — widening an existential
 strengthens exactly when the context is DE — but K&L stress it is necessary,
 not sufficient: *each* and comparative *more often than* are DE yet resist
-*any* because widening must also make pragmatic sense (their §3.2).
+*any* because widening must also make pragmatic sense (§3.2).
 
 ## Main declarations
 
@@ -265,7 +265,7 @@ theorem widening_satisfies_conditional_strengthening {Case : Type*}
 
 K&L §3.4, contra [linebarger-1987]: `not because [S_]` is not DE (*because
 [S_]* is not UE, so negating it yields no DE context), while `not because of
-[NP_]` is DE and licenses *any* freely — their (122)/(123) need no negative
+[NP_]` is DE and licenses *any* freely — (122)/(123) need no negative
 implication. In `because [S_]`, *any* is licensed only metalinguistically:
 the negation denies *because*'s factive presupposition, and *any* strengthens
 that denial. Merely implying the denial is not enough — the rhetorical
@@ -342,7 +342,7 @@ K&L's component (FC): PS *any* is a regular indefinite, FC *any* a generic
 indefinite; the apparent universal force of FC *any* emerges from genericity
 plus widening (§4.3). The episodic/generic split below is projected from the
 substrate's mechanism classification. K&L themselves analyze only plain
-generics like their (10) and tentatively extend to modals; routing
+generics like (10) and tentatively extend to modals; routing
 imperatives and free relatives through the generic mechanism follows the
 substrate, not K&L's text (they explicitly defer directives to later work and
 never discuss free relatives). -/
@@ -502,7 +502,7 @@ theorem widenAlong_precise_eq_empty {Property : Type*}
 /-! ### Generic quantification as vague universality
 
 K&L §4.1.1: a generic is a universal restricted by a vague property set —
-"An owl hunts mice" is ∀ ↾ X_owl(Owl)(Hunts mice), their (159). The
+"An owl hunts mice" is ∀ ↾ X_owl(Owl)(Hunts mice), (159). The
 traditional GEN operator's hidden normalcy parameter
 (`Semantics/Genericity/Generics.lean`) is, on this view, a choice of
 precisification; exception tolerance is the freedom to choose another. -/

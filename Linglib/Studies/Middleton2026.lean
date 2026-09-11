@@ -179,7 +179,7 @@ must precede a syntagmatic one and one cannot guarantee the strict
 block ordering ([middleton-2026] §4.2.5).
 -/
 
-/-- The Arregi & Nevins postsyntax (their Fig. 1, simplified to the two
+/-- The Arregi & Nevins postsyntax (Fig. 1, simplified to the two
     contested layers): paradigmatic Impoverishment, then syntagmatic
     Impoverishment, then Metathesis. Exponence Conversion and
     Morphological Concord are abstracted away — their internal ordering

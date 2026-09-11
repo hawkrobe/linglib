@@ -227,7 +227,7 @@ theorem czechPQForm_consistent_with_pqForm :
   intro pos; cases pos <;> rfl
 
 /-- Czech refines [romero-2024]'s LoNQ: inner and medial share the LoNQ
-form but differ in evidential bias strength and in their Table 1
+form but differ in evidential bias strength and in Table 1
 signatures. -/
 theorem czech_refines_loNQ :
     Position.inner.toPQForm = Position.medial.toPQForm ∧

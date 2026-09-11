@@ -14,7 +14,7 @@ import Linglib.Semantics.Presupposition.PhiFeatures
 core makeup** — both a null NP plus a definite determiner — and differ only in that
 DEM adds an **anaphoric index**: DEM is the [schwarz-2009] *strong* article,
 PER the *weak* article ("the latter are anaphoric in a way that the former are
-not"). The extra layer is that index, **not** spatial deixis — their footnote 1
+not"). The extra layer is that index, **not** spatial deixis — footnote 1
 stresses "it is far from clear that there is anything truly 'demonstrative' about"
 German DEMs. So here *der/die/das* are **strong-article `PersonalPronoun`s**, not a
 separate demonstrative type. The genuinely deictic objects are a different matter: the

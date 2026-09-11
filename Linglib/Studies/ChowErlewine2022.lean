@@ -29,8 +29,8 @@ disjunctive antecedent places the necessity operator below surface-scope *also* 
 
 ## Implementation notes
 
-The trigger moved to subject position, their (7), reconstructs semantically, with movement
-reflected only in the site calculus; the embedding verb of their (28) is opaque to interpretation
+The trigger moved to subject position, (7), reconstructs semantically, with movement
+reflected only in the site calculus; the embedding verb of (28) is opaque to interpretation
 and matters only to the site calculus; and the presupposition of parse (35) is taken from the
 paper's display, since they defer its derivation to [marty-romoli-2021]. The *again* data of their
 section 2.4 replicate the *also* pattern and are not modeled separately.
@@ -372,7 +372,7 @@ students the focus individual met. -/
 /-- The rows (14) vs (26a) of the *sm* vs *SOME* minimal pair, on the same base clause: the
 `[uexh*]` of unstressed *sm* forces *exh* below *also* (whence (14a)'s infelicity with an *all*
 antecedent), while the `[uexh]` of stressed *SOME* also allows the site above *also* (whence
-(26a)'s felicity). Bare numerals pattern with *sm* on the same base, their (13). -/
+(26a)'s felicity). Bare numerals pattern with *sm* on the same base, (13). -/
 theorem sm_below_also_SOME_free :
     SITrigger.unstressedSome.feature.allowedSites Individual.other teachOr = {1}
     ∧ 0 ∈ SITrigger.stressedSome.feature.allowedSites Individual.other teachOr := by decide
@@ -463,7 +463,7 @@ def ignoranceScope : Finset Doxa :=
     (altsFromPreds [(·.must Taught.onlyArabic), (·.must Taught.onlyBasque)])
     (predToFinset (·.must Taught.exactlyOne))
 
-/-- Their (31): the derived meaning is the scalar implicature plus speaker ignorance about each
+/-- (31): the derived meaning is the scalar implicature plus speaker ignorance about each
 disjunct — the state supports exactly-one while leaving each disjunct's falsity open. -/
 theorem ignorance_scope_eq :
     ignoranceScope =
@@ -523,7 +523,7 @@ inductive IgnOp where
 
 /-- Parse (37a): *also* > *exh* > □ > *exh*. The necessity operator sits below *also*, which
 occupies its surface vP-adjoined position, so once this parse is needed the ignorance-deriving □
-is available clause-medially, their (38) against [meyer-2013]'s Matrix K theory. -/
+is available clause-medially, (38) against [meyer-2013]'s Matrix K theory. -/
 def parse37a : List IgnOp := [.also, .ignExh, .nec, .siExh]
 
 /-- Parse (37b): *exh* > □ > *also* > *exh*. -/

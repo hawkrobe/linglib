@@ -38,7 +38,7 @@ Scalar implicatures interact asymmetrically with logical operators:
 The key innovation is **lexical uncertainty**: L1 marginalizes over possible
 lexica (refinements of "some") rather than using a fixed literal semantics.
 This file formalizes the paper's **neo-Gricean refinement** model variant
-(their (19d), refining only "some" to the two-element set
+(the paper's (19d), refining only "some" to the two-element set
 `{⟦some⟧, ⟦some and not all⟧}` of (14)) — *not* their unconstrained-refinement
 model (19c), whose listener marginalizes over the full refinement lattice
 `℘(⟦some⟧) ∖ ∅`. The two refinements are:

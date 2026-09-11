@@ -13,7 +13,7 @@ universalist claims: that focus is always marked, and that the position of a foc
 its pragmatic interpretation. Focus is realized in situ or ex situ, and the paper's §3.2 matrix
 crosses the two strategies with four pragmatic uses, new-information, corrective, contrastive and
 selective, every cell of which is licensed (`hzMatrix`); `strategy_does_not_determine_pragType`
-refutes the Meaning-Structure Mapping Hypothesis of their (21), the label following
+refutes the Meaning-Structure Mapping Hypothesis of (21), the label following
 [vallduvi-vilkuna-1998], stated as a failure of `Function.FactorsThroughOn`, so that the
 Hungarian and Hausa verdicts differ on one set-theoretic predicate. In-situ new-information
 focus carries no morphosyntactic reflex, and the §5 pilot finds no prosodic one either, so
@@ -38,7 +38,7 @@ prepublication manuscript of the chapter.
 
 * The Kiss-side semantic interpretation of exhaustive focus (obligatory covert *only*) for the
   like-for-like contrast with Hungarian, which needs a semantic layer in `Kiss1998.lean`.
-* §2.3 multiple foci: one ex-situ focus with in-situ foci (their (18a–c)).
+* §2.3 multiple foci: one ex-situ focus with in-situ foci (18a–c).
 * §4 focus pied-piping and partial focus movement, and the final Ex-Situ Generalisation of their
   (47), which need a structured-meaning overlap predicate.
 * §5 prosodic pilot data and §6.1 emphasis motivation are quantitative tendencies, in prose only.
@@ -115,7 +115,7 @@ theorem ctx_resolves (u : Use) :
     (ctx u).Resolves answer.ordinary answer.alternatives :=
   use_model_resolves (d := Alt.ans) (d' := Alt.alt) nofun u
 
-/-! ## Exhaustive focus (§3.2, their (32))
+/-! ## Exhaustive focus (§3.2, (32))
 
 Exhaustivity is not structurally encoded: it is induced by focus
 particles (*kawài* 'only'; *nee/cee* per the paper's fn. 3) over the

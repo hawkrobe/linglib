@@ -52,7 +52,7 @@ open Semantics.Composition.TypeShifting Quantification
 /-! ### The number and the modifier views
 
 Pluralities are finite sets of atoms and `#` is cardinality. The modifier view of a numeral is the
-counting operator applied to its number (their (11), (22), (23)): the two views differ only in
+counting operator applied to its number (11), (22), (23): the two views differ only in
 whether the counting is built into the numeral or supplied by an operator, which is why the survey
 can state their equivalence as an identity. -/
 
@@ -94,7 +94,7 @@ theorem iota_BE_exactly [DecidableEq ℕ] (domain : List ℕ) (n : ℕ)
   rw [BE_exactly]
   exact iota_ident domain n hmem hnd
 
-/-! ### The survey's proposal (their (52)–(54))
+/-! ### The survey's proposal (52)–(54)
 
 The gap the three views leave is a numeral denoting the degree properties that merely hold of it —
 `individual n`, the Montague lift of the number view, which is the survey's (52). An operator

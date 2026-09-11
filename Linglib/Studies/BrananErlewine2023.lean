@@ -9,7 +9,7 @@ logical focus — in over sixty languages from over forty language
 groups, and proposes that focus particles are morphosyntactic flags
 for abstract operators, severing the particle's pronounced position
 from the position of its semantic contribution. This file formalizes
-the introductory paradigm (their (1)–(8)): Japanese *mo* placement and
+the introductory paradigm (1)–(8): Japanese *mo* placement and
 Hungarian focus movement each attest exact targeting, pied-piping, and
 anti-pied-piping, stated over the host–focus containment relations of
 `Morphology/Reflex.lean`.
@@ -26,9 +26,9 @@ anti-pied-piping, stated over the host–focus containment relations of
 
 ## TODO
 
-* The leftmost-targeting generalization of their §3 (requires linear
+* The leftmost-targeting generalization of §3 (requires linear
   order on constituents).
-* The particle-phrase theory of their §4 and the cross-linguistic
+* The particle-phrase theory of §4 and the cross-linguistic
   appendix as `Data/Examples` rows.
 -/
 
@@ -67,31 +67,31 @@ instance : DecidableLT Node := fun a b =>
 
 /-! ### The introductory paradigm
 
-Their (1)–(8): Japanese additive *mo* and Hungarian focus movement in
+(1)–(8): Japanese additive *mo* and Hungarian focus movement in
 all three host–focus configurations. -/
 
-/-- Their (2): Hanako-wa [hon]F*-mo* katta — *mo* on the focused object
+/-- (2): Hanako-wa [hon]F*-mo* katta — *mo* on the focused object
 itself. -/
 def moExact : Marking Node := ⟨.obj, [.morpheme .obj]⟩
 
-/-- Their (4): Hanako-wa [[hon]F-o kai]*-mo* — *mo* on the VP properly
+/-- (4): Hanako-wa [[hon]F-o kai]*-mo* — *mo* on the VP properly
 containing the focused object (Kuroda's pied-piping datum). -/
 def moPiedPiped : Marking Node := ⟨.obj, [.morpheme .vp]⟩
 
-/-- Their (8): [[Ame]*-mo* furu]F — sentence focus with *mo* on the
+/-- (8): [[Ame]*-mo* furu]F — sentence focus with *mo* on the
 subject properly contained in it (Nagano's anti-pied-piping datum). -/
 def moAntiPiedPiped : Marking Node := ⟨.s, [.morpheme .sbj]⟩
 
-/-- Their (1): Hungarian movement of exactly the focused argument to
+/-- (1): Hungarian movement of exactly the focused argument to
 the immediately preverbal focus position. -/
 def movementExact : Marking Node := ⟨.obj, [.displacement .obj]⟩
 
-/-- Their (3): [a [használt]F autót] adta el — the whole object DP moves
+/-- (3): [a [használt]F autót] adta el — the whole object DP moves
 for a focus on the attributive adjective (Kenesei's pied-piping
 datum). -/
 def movementPiedPiped : Marking Node := ⟨.att, [.displacement .obj]⟩
 
-/-- Their (7): Péter [a Hamletet] [olvasta fel _ a kertben]F — predicate
+/-- (7): Péter [a Hamletet] [olvasta fel _ a kertben]F — predicate
 focus with movement of the object properly contained in it (Kenesei's
 anti-pied-piping datum). -/
 def movementAntiPiedPiped : Marking Node := ⟨.vp, [.displacement .obj]⟩
@@ -99,13 +99,13 @@ def movementAntiPiedPiped : Marking Node := ⟨.vp, [.displacement .obj]⟩
 /-! ### All three relations, in both processes -/
 
 /-- Japanese *mo* placement attests all three host–focus relations
-(their (2)/(4)/(8)). -/
+(2)/(4)/(8). -/
 theorem mo_attests_all_relations :
     moExact.ExactlyTargets ∧ moPiedPiped.PiedPipes ∧
     moAntiPiedPiped.AntiPiedPipes := by decide
 
 /-- Hungarian focus movement attests all three host–focus relations
-(their (1)/(3)/(7)). -/
+(1)/(3)/(7). -/
 theorem movement_attests_all_relations :
     movementExact.ExactlyTargets ∧ movementPiedPiped.PiedPipes ∧
     movementAntiPiedPiped.AntiPiedPipes := by decide

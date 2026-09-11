@@ -10,15 +10,15 @@ interpretation ([ranta-1994]), argue that only the latter is compatible with
 the subtyping needed for copredication ((5), after [asher-2011]: "John picked
 up and mastered three books in the library"), and propose *predicational
 forms* of judgemental interpretations: a trivial predicate `p_A` for the
-judgement `a : A` (their Definition 1), a negation operator `NOT` with logical
+judgement `a : A` (Definition 1), a negation operator `NOT` with logical
 laws (L1)/(L2) for negated sentences like "John is not a man", and `P_A`
-(Definition 2) for hypothetical judgements in conditionals. Their §4 checks
+(Definition 2) for hypothetical judgements in conditionals. §4 checks
 the account in Coq; this file replays those experiments in Lean against the
 same law set, and adds a concrete witness for the laws (the chapter
 axiomatizes `NOT` via Coq `Parameter`/`Variable`s without exhibiting a model).
 
-Their §5 handles gradable nouns with indexed types: `Idiot` is the Σ-type
-`Σ i : Idiocy. Human(i) × (i > STND)` (their (62)), and *small idiot* is
+§5 handles gradable nouns with indexed types: `Idiot` is the Σ-type
+`Σ i : Idiocy. Human(i) × (i > STND)` (62), and *small idiot* is
 deviant because *small* demands a degree below the standard that *idiot*
 demands exceeding — formalized here from mathlib's order classes (the
 chapter's grade axioms are `LinearOrder` plus `DenselyOrdered`).
@@ -73,7 +73,7 @@ variable {Obj : Type u}
 
 /-- Coercive subtyping `A ≤ B` between CNs: a coercion commuting with the
 embeddings into `Obj` (the chapter's `Man < Human < Animal < Object` chain,
-declared as Coq `Coercion` axioms in their Appendix B). -/
+declared as Coq `Coercion` axioms in Appendix B). -/
 structure Sub (A B : CN Obj) where
   /-- The coercion -/
   ι : A.carrier → B.carrier
@@ -106,7 +106,7 @@ structure NegOperator (Obj : Type u) where
 /-- **Definition 2** (predicate `P_A`): the predicational form of a
 hypothetical judgement — `P_A(x) = ¬ NOT(p_A, x̄)`, used to interpret
 conditionals like "If John is a student, he is happy" as
-`P_Student(j) ⟹ happy(j)` (their (22)). -/
+`P_Student(j) ⟹ happy(j)` (22). -/
 def NegOperator.bigP (N : NegOperator Obj) (A : CN Obj) (o : Obj) : Prop :=
   ¬ N.not A (p A) o
 
@@ -144,7 +144,7 @@ theorem not_not_man (j : Man.carrier) :
 `{rt :> Table; _ : Red rt}` with the first projection as coercion; the
 entailment is pure coercion transport, no `NOT`-laws needed (matching the
 chapter's `unfold`/`intros`/`apply` proof). `talk` lives on `Human`, as in
-their Appendix B. -/
+Appendix B. -/
 theorem tables_dont_talk_red (Red : Obj → Prop) (talk : Human.carrier → Prop)
     (h : ∀ x : Table.carrier, N.not Human talk (Table.embed x)) :
     ∀ y : {x : Table.carrier // Red (Table.embed x)},
@@ -216,7 +216,7 @@ end Copredication
 
 /-! ### §5: gradable nouns via indexed types
 
-CNs may be families indexed by grades (their (58): `Human : Height → CN`).
+CNs may be families indexed by grades (58): `Human : Height → CN`.
 The chapter's grade axioms — reflexivity, anti-symmetry, transitivity,
 totality, density — are mathlib's `LinearOrder` plus `DenselyOrdered`. -/
 
