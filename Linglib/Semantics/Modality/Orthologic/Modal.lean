@@ -11,11 +11,10 @@ and the box/diamond operators whose ortholattice instance validates
 Wittgenstein's Law (`¬A ∩ ◇A = ∅`) for epistemic compatibility frames.
 
 This file is the substrate — only general substrate-level definitions
-and theorems live here. Concrete paper instantiations (the Epistemic Scale
-over `Poss5`, Wittgenstein-sentence verifications, free-choice / orthomodularity
-/ pseudocomplementation failures, level-wise classicality theorems, lifting
-from W={0,1}) live in
-`Studies/HollidayMandelkern2024.lean`.
+and theorems live here. The epistemic frame of a Boolean algebra is
+`Orthologic/Lifting.lean`; the paper's Epistemic Scale and the failures of
+distributivity, disjunctive syllogism, orthomodularity and
+pseudocomplementation on it live in `Studies/HollidayMandelkern2024.lean`.
 
 ## What's here
 
@@ -111,22 +110,41 @@ theorem T_axiom_general {S : Type*}
 -- § 3. R-Regularity, Knowability, Epistemic Frames
 -- ════════════════════════════════════════════════════
 
-/-- R-regularity: if `x R y'` and `y' ◇ y`, then there is some `x'`
-    with `x ◇ x'` and some `y'' ◇ x'` refining `y`. Loose reading: "if
-    `x` can epistemically access a possibility compatible with `y`, then
-    `x` is compatible with a possibility according to which `y` might obtain."
-    [holliday-mandelkern-2024] Definition 4.20 / Definition 4.26
-    (R-regularity clause), page 866 of the published JPL version. -/
+/-- R-regularity: if `x R y'` and `y' ◇ y`, then `x` is compatible with some `x'` according
+    to which `y` might obtain, i.e. every `x''` compatible with `x'` accesses some `y''`
+    compatible with `y`. Loose reading: "if `x` can epistemically access a possibility
+    compatible with `y`, then `x` is compatible with a possibility according to which `y`
+    might obtain." [holliday-mandelkern-2024] Definition 4.20 in the diamond-free form of
+    Lemma 4.21. -/
 def IsRRegular {S : Type*} (F : ModalCompatFrame S) : Prop :=
   ∀ x y' y : S, F.access x y' → F.toCompatFrame.compat y' y →
     ∃ x' : S, F.toCompatFrame.compat x x' ∧
-      ∃ y'' : S, F.toCompatFrame.compat x' y'' ∧
-        refines F.toCompatFrame y'' y
+      ∀ x'' : S, F.toCompatFrame.compat x' x'' →
+        ∃ y'' : S, F.access x'' y'' ∧ F.toCompatFrame.compat y'' y
 
 instance {S : Type*} [Fintype S] (F : ModalCompatFrame S)
     [DecidableRel F.toCompatFrame.compat] [DecidableRel F.access] :
     Decidable (IsRRegular F) := by
   unfold IsRRegular; infer_instance
+
+/-- On an R-regular frame, `□A` is a proposition whenever `A` is: if `x ∉ □A` then some
+accessible `y ∉ A`, regularity of `A` gives `z ≬ y` settling `¬A`, and R-regularity gives the
+`x' ≬ x` every neighbour of which accesses something compatible with `z`, hence outside `A`.
+[holliday-mandelkern-2024] Proposition 4.22. -/
+theorem box_isRegular {S : Type*} {F : ModalCompatFrame S} (hR : IsRRegular F) {A : Set S}
+    (hA : IsRegular F.toCompatFrame A) : IsRegular F.toCompatFrame (box F A) := by
+  intro x
+  by_cases hx : x ∈ box F A
+  · exact Or.inl hx
+  · right
+    simp only [mem_box, not_forall] at hx
+    obtain ⟨y, hxy, hyA⟩ := hx
+    rcases hA y with hyA' | ⟨z, hyz, hz⟩
+    · exact absurd hyA' hyA
+    · obtain ⟨x', hxx', hx'⟩ := hR x y z hxy hyz
+      refine ⟨x', hxx', λ x'' hx'x'' hbox => ?_⟩
+      obtain ⟨y'', hy'', hy''z⟩ := hx' x'' hx'x''
+      exact hz y'' hy''z.symm (hbox y'' hy'')
 
 /-- Knowability: for every possibility `x` there is some `y` such that
     every R-successor of `y` refines `x`. Loose reading: "there is a

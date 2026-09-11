@@ -5,7 +5,6 @@ import Linglib.Semantics.Evidential.Source
 import Linglib.Discourse.Roles
 import Linglib.Semantics.Questions.Hamblin
 import Linglib.Studies.Faller2019
-import Linglib.Studies.Hohle1992
 
 /-!
 # Martínez Vera (2026): Verum, contrast, and evidentiality in Saraguro Kichwa
@@ -51,9 +50,6 @@ Three empirical signatures:
 * The headline contrast (paper exx. 47–50): `=mi` is felicitous after
   `present` (reportative `-shka`) and infelicitous after `assert`
   (direct `-rka`). Proofs project from substrate.
-* `mi_polar_iff_verumFelicitous` — the cross-paper bridge theorem
-  showing MV's polar-reduction `miFelicitous` is equivalent to Höhle's
-  `verumFelicitous` on the same input.
 * `mv_partition_neq_romeroHan_partition` — the cross-framework
   divergence theorem showing MV's polar partition `{p, pᶜ}` is in
   general distinct from Romero & Han's verum partition
@@ -413,74 +409,6 @@ theorem mi_infelicitous_after_assert
   have := hsub hw
   simp [BiLayered.ofProp] at this
   exact absurd hw this
-
-/-! ### § 5. Cross-paper bridge: Höhle 1992 ↔ MV 2026 (polar reduction)
-
-For the polar alternative-set case `{β.atIssue, β.atIssueᶜ}`, MV's
-`miFelicitous` reduces to Höhle's `verumFelicitous`: both demand that
-`¬β.atIssue` be highlighted in the context. This makes the agreement
-between the focus-on-polarity (Höhle) and focus-marker (MV) accounts
-explicit at the type level. The disagreement with [romero-han-2004]'s
-CommonGround-modal verum surfaces as the partition divergence in §6 below.
--/
-
-/-- For the polar alternative-set case **with contingent scope**, MV's
-    `miFelicitous` reduces to Höhle's `verumFelicitous`: both predicates
-    demand that `¬β.atIssue` (the scope's complement) be highlighted.
-    The contingency hypothesis `hne : ∃ w, β.atIssue w` rules out the
-    degenerate empty-scope case where every q ⊆ qᶜ vacuously and the
-    bridge would require Highlighted c univ from Highlighted c ∅ — not
-    generally derivable.
-
-    The `mp` direction: of the two polar alternatives, only `β.atIssueᶜ`
-    can satisfy `q ⊆ β.atIssueᶜ` non-trivially (given contingent scope).
-    The `mpr` direction packages the highlighted complement directly. -/
-theorem mi_polar_iff_verumFelicitous
-    (c : HighlightingContext W) (β : BiLayered W) (hne : ∃ w, β.atIssue w) :
-    miFelicitous c ({{ w | β.atIssue w }, ({ w | β.atIssue w } : Set W)ᶜ}) β ↔
-      Hohle1992.verumFelicitous c β := by
-  constructor
-  · rintro ⟨q, hq, hhighlighted, hsub⟩
-    rcases hq with h | h
-    · -- q = {w | β.atIssue w}, so q ⊆ qᶜ forces q = ∅, contradicting `hne`
-      exfalso
-      obtain ⟨w, hw⟩ := hne
-      have hwq : w ∈ q := by rw [h]; exact hw
-      have : w ∉ ({ w | β.atIssue w } : Set W) := hsub hwq
-      exact this hw
-    · -- q = {w | β.atIssue w}ᶜ — the desired case
-      simp only [Set.mem_singleton_iff] at h
-      rw [h] at hhighlighted
-      exact hhighlighted
-  · -- mpr: Hohle's verumFelicitous gives Highlighted c (β.atIssueᶜ)
-    intro h
-    refine ⟨({ w | β.atIssue w } : Set W)ᶜ, by simp, h, ?_⟩
-    intro _ hw
-    exact hw
-
-/-- The MV `=mi` denotation packaged as a `VerumOperator` over the polar
-    alternative set `{β.atIssue, β.atIssueᶜ}`. The shared abstraction lets
-    `mi_polar_iff_verumFelicitous` (above) be re-stated as a felicity
-    equivalence between two `VerumOperator W` instances. -/
-def miAsVerumOperatorPolar : Hohle1992.VerumOperator W :=
-  { felicitous := fun c β =>
-      miFelicitous c ({{w | β.atIssue w}, ({w | β.atIssue w} : Set W)ᶜ}) β }
-
-@[simp] theorem miAsVerumOperatorPolar_apply (c : HighlightingContext W)
-    (β : BiLayered W) :
-    miAsVerumOperatorPolar.felicitous c β =
-      miFelicitous c ({{w | β.atIssue w}, ({w | β.atIssue w} : Set W)ᶜ}) β := rfl
-
-/-- Cross-paper bridge restated at the `VerumOperator` level: under
-    contingent scope, MV's polar-reduction operator and Höhle's
-    verum-focus operator are extensionally equivalent. -/
-theorem mi_eq_hohle_as_verumOperator
-    (c : HighlightingContext W) (β : BiLayered W) (hne : ∃ w, β.atIssue w) :
-    miAsVerumOperatorPolar.felicitous c β ↔
-      Hohle1992.hohleAsVerumOperator.felicitous c β := by
-  simp only [miAsVerumOperatorPolar_apply,
-    Hohle1992.hohleAsVerumOperator_apply]
-  exact mi_polar_iff_verumFelicitous c β hne
 
 /-! ### § 6. Cross-framework divergence: MV's partition vs R&H's verum partition
 

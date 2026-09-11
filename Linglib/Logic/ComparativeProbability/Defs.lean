@@ -124,5 +124,27 @@ instance : ComparativeProbability.IsNontrivial m.inducedGe :=
 
 end
 
+/-! Likewise for qualitatively additive measures, whose induced order is the `ge` of
+`QualAddMeasure.toQualitativeProbability`. -/
+
+section
+
+variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] {W : Type*}
+  (m : QualAddMeasure K W)
+
+instance : ComparativeProbability.IsLikelihoodMono m.inducedGe :=
+  ⟨m.toQualitativeProbability.mono'⟩
+
+instance : IsTrans (Set W) m.inducedGe :=
+  ⟨λ _ _ _ hab hbc => m.toQualitativeProbability.trans hbc hab⟩
+
+instance : ComparativeProbability.IsQualitativeAdditive m.inducedGe :=
+  ⟨λ A B => m.toQualitativeProbability.additive B A⟩
+
+instance : ComparativeProbability.IsNontrivial m.inducedGe :=
+  ⟨m.toQualitativeProbability.nonTrivial⟩
+
+end
+
 
 end ComparativeProbability

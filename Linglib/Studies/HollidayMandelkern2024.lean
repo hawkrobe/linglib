@@ -1,828 +1,277 @@
-import Linglib.Semantics.Modality.Orthologic.Frames
-import Linglib.Semantics.Modality.Orthologic.Modal
+import Linglib.Semantics.Modality.Orthologic.Lifting
 import Linglib.Semantics.Modality.Orthologic.RegularProp
-import Linglib.Semantics.Dynamic.UpdateSemantics.Basic
-import Linglib.Studies.Yalcin2007
-import Linglib.Studies.Mandelkern2019
-import Linglib.Studies.KlinedinstRothschild2012
+import Mathlib.Data.Fintype.Powerset
+import Mathlib.Data.Fintype.Prod
+import Mathlib.Tactic.DeriveFintype
 
 /-!
-# [holliday-mandelkern-2024]: Possibility-Semantics Case Studies
+# Holliday and Mandelkern (2024): The orthologic of epistemic modals
 
-[holliday-mandelkern-2024]
+This file formalizes [holliday-mandelkern-2024]'s possibility semantics for epistemic modals on
+the paper's running example, the Epistemic Scale: the epistemic frame of the two-world Boolean
+algebra of a coin flip (Example 5.3), whose five possibilities `x1`–`x5` run from knowing `p`
+through settling `p`, full uncertainty and settling `¬p` to knowing `¬p`. The frame is built by
+the general construction `Orthologic.epistemicFrame`, so the compatibility path of Figure 7 and
+the accessibility relation of Figure 12 are derived rather than stipulated (`compat_iff`,
+`access_iff`), and the truth values of Figure 13 follow by decision. On this model the desiderata
+of §2 hold: Wittgenstein sentences are contradictions in both orders, while `◇¬p` does not
+entail `¬p` and `p` does not entail `□p`; distributivity, disjunctive syllogism, orthomodularity
+and pseudocomplementation fail at the point of full uncertainty `x3`, as the algebraic
+Example 3.20 predicts; De Morgan's laws hold and `□¬p ∨ □p` is not a logical truth, the
+contrasts (29) and (30) with state-based semantics. Levelwise classicality (Example 4.42) is
+checked through the criterion of Proposition 4.39: within the Boolean level and within the modal
+level `Level1`, compatible witnesses of two propositions always yield a common witness
+(`stratified_level1`), while across levels `p` and `◇¬p` have compatible witnesses but no common
+one.
 
-Concrete instantiations and paper-specific theorems from H&M 2024
-"The Orthologic of Epistemic Modals" (JPL 2024). The general substrate
-(compatibility frames, ortholattice of regular sets, modal compat frames,
-T/epistemic frames) lives in
-`Linglib/Semantics/Modality/Orthologic/{Frames,Modal}.lean`
-(plus `Linglib/Core/Order/Ortholattice.lean` for the abstract typeclass);
-this file collects the paper's worked examples and the decide-checked
-predictions that depend on them.
+## Implementation notes
 
-## What's formalized
+* The Boolean algebra is `Finset (Fin 2)`, so every claim about the Scale is decidable; the
+  general Lemma 5.4 is the substrate's `mem_box_embed` and `mem_diamond_embed`, and
+  Theorem 5.7.4 is instantiated as `diamond_P_not_subset`.
+* The paper contrasts its symmetric Wittgenstein's Law with the order asymmetry of dynamic
+  semantics (§6); the update-semantic side is `UpdateSemantics.might_order_matters`, and no
+  theorem here conjoins the two.
+* The Epistemic Grid (Example 4.34), the logics EO and EO+ together with the completeness
+  theorems for them, and the remaining principles of Proposition 5.12 are not formalized.
 
-- The five-possibility path frame `Poss5` (Example 4.11, Figure 7).
-- The Epistemic Scale `epistemicScale` over `Poss5` (Example 4.30, Figure 12;
-  Example 4.33, Figure 13).
-- Ortholattice properties of the path-frame regular subsets:
-  De Morgan-style negations, double negation, excluded middle,
-  non-contradiction, the canonical distributivity failure at x₃.
-- Epistemic-scale predictions for `p`, `□p`, `◇p` and their negations.
-- Wittgenstein's Law instantiated on the Epistemic Scale (Proposition 4.27).
-- Disjunctive-syllogism failure, orthomodularity failure,
-  pseudocomplementation failure (paper §2 desiderata, §3.2 algebraic
-  counterexamples — Example 3.20 in particular — re-derived in
-  possibility semantics).
-- Within-level Boolean classicality vs. cross-level failure (§3.2.4).
-- Lifting from the two-world Boolean model `W = {0, 1}, V(p) = {0}`
-  (Example 5.3, Lemma 5.4): `worldlyA0`/`worldlyA1`/`worldlyI0`/`worldlyI1`
-  + agreement of derived compat/access with `pathFrame`/`epistemicScale`
-  + truth of `p`/`□p`/`◇p` from world membership in `A`/`I`.
+## References
 
-## Out of scope (deferred)
-
-- General lifting from arbitrary Boolean algebra `B` (Definition 5.1).
-  The current file specializes `B = ℘({0, 1})`; the construction
-  `B^e = ⟨S, ◇, R⟩` for arbitrary `B` is unformalized and would belong
-  in `Semantics/Modality/Orthologic/Lifting.lean` once added.
-- Theorem 5.7 (the embedding `e_B : B → O(B^e)` is a Boolean-algebra
-  homomorphism into an epistemic ortholattice).
-- Lemma 5.8 (algebraic counterpart of Lemma 5.4 for arbitrary `B`).
-- Proposition 5.12 (the five inheritance principles for the image of
-  `e_B`, including the Inheritance principle relevant to free choice).
-- Modal ortho-Boolean lattice typeclasses (Definitions 3.15-3.32) that
-  would let `within_level_distrib` derive from the algebraic structure
-  rather than `decide` on `Poss5`.
-- The Epistemic Grid for two propositional variables (Example 4.34,
-  Figure 14) — natural sequel for engaging Hawke & Steinert-Threlkeld
-  2021 and Aloni-Incurvati-Schlöder 2023 on Inheritance.
-- Comparison theorems against the free-choice studies
-  (the orthogonal phenomenon HM 2024 also addresses; HM's account
-  predicts free-choice failure at x₁ — `free_choice_fails_at_x1` — but
-  the cross-paper agreement bridge is unwritten).
+* [holliday-mandelkern-2024]
 -/
 
 namespace HollidayMandelkern2024
 
-open Orthologic
+open Orthologic Orthologic.Possibility
 
--- ════════════════════════════════════════════════════
--- § 1. The Five-Possibility Path Frame (Example 4.11, Figure 7)
--- ════════════════════════════════════════════════════
+/-- The two-world Boolean algebra of the coin flip, Example 5.3. -/
+abbrev Coin := Finset (Fin 2)
 
-/-- Five possibilities arranged in a path: x₁—x₂—x₃—x₄—x₅.
-    The canonical 5-possibility example used by H&M for epistemic-modal
-    applications. Note: Example 4.12 (Figure 9) shows two distinct
-    4-element frames realizing the smaller non-Boolean ortholattices
-    O₆ and MO₂ from Figure 1 — the path frame is the canonical
-    illustrative example, not the smallest non-Boolean instance.
-    [holliday-mandelkern-2024] Example 4.11, Figure 7. -/
-inductive Poss5 where
-  | x1 | x2 | x3 | x4 | x5
-  deriving DecidableEq, Repr, Inhabited
+/-- The possibilities of the epistemic frame of `Coin`. -/
+abbrev Poss := Possibility Coin
 
-instance : Fintype Poss5 where
-  elems := {.x1, .x2, .x3, .x4, .x5}
-  complete := fun w => by cases w <;> simp
+/-- The Epistemic Scale's modal compatibility frame. -/
+abbrev scale : ModalCompatFrame Poss := (epistemicFrame Coin).toModalCompatFrame
 
-/-- Compatibility on the path frame: a possibility is compatible with itself
-    and with each of its two neighbors. -/
-def Poss5.compat : Poss5 → Poss5 → Prop
-  | .x1, .x1 | .x1, .x2 | .x2, .x1
-  | .x2, .x2 | .x2, .x3 | .x3, .x2
-  | .x3, .x3 | .x3, .x4 | .x4, .x3
-  | .x4, .x4 | .x4, .x5 | .x5, .x4
-  | .x5, .x5 => True
-  | _, _ => False
+/-- The Epistemic Scale's compatibility frame. -/
+abbrev frame : CompatFrame Poss := scale.toCompatFrame
 
-instance : DecidableRel Poss5.compat := fun a b => by
-  cases a <;> cases b <;> simp only [Poss5.compat] <;> infer_instance
+instance : DecidableRel scale.access := inferInstanceAs (DecidableRel (access (B := Coin)))
 
-/-- The path compatibility frame: adjacent possibilities are compatible. -/
-def pathFrame : CompatFrame Poss5 where
-  compat := Poss5.compat
-  compat_refl := ⟨fun x => by cases x <;> simp [Poss5.compat]⟩
-  compat_symm := ⟨fun x y => by cases x <;> cases y <;> simp [Poss5.compat]⟩
+instance : DecidableRel frame.compat := inferInstanceAs (DecidableRel (compat (B := Coin)))
 
-instance : DecidableRel pathFrame.compat :=
-  inferInstanceAs (DecidableRel Poss5.compat)
+instance : DecidableRel scale.compat := inferInstanceAs (DecidableRel (compat (B := Coin)))
 
--- Propositions in the path frame ortholattice (typed as Set so substrate
--- Decidable instances `[DecidablePred (· ∈ A)]` resolve cleanly).
-private def pLeft : Set Poss5 := fun x => match x with | .x1 | .x2 => True | _ => False
-private def pRight : Set Poss5 := fun x => match x with | .x4 | .x5 => True | _ => False
-private def pMid : Set Poss5 := fun x => match x with | .x3 => True | _ => False
+/-- Knows `p`: `({0}, {0})`. -/
+def x1 : Poss := ⟨({0}, {0}), by decide⟩
 
-private instance pLeft_dec : DecidablePred pLeft := fun x => by
-  cases x <;> (unfold pLeft; first | exact isTrue trivial | exact isFalse id)
-private instance pRight_dec : DecidablePred pRight := fun x => by
-  cases x <;> (unfold pRight; first | exact isTrue trivial | exact isFalse id)
-private instance pMid_dec : DecidablePred pMid := fun x => by
-  cases x <;> (unfold pMid; first | exact isTrue trivial | exact isFalse id)
+/-- Settles `p` without knowing it: `({0}, {0, 1})`. -/
+def x2 : Poss := ⟨({0}, {0, 1}), by decide⟩
 
--- ════════════════════════════════════════════════════
--- § 2. Path-Frame Ortholattice Properties
--- ════════════════════════════════════════════════════
+/-- Full uncertainty: `({0, 1}, {0, 1})`. -/
+def x3 : Poss := ⟨({0, 1}, {0, 1}), by decide⟩
 
+/-- Settles `¬p` without knowing it: `({1}, {0, 1})`. -/
+def x4 : Poss := ⟨({1}, {0, 1}), by decide⟩
 
-/-- Negation: ¬{x₁,x₂} = {x₄,x₅}. -/
-theorem neg_left (x : Poss5) : orthoNeg pathFrame pLeft x ↔ pRight x := by
-  cases x <;> decide
+/-- Knows `¬p`: `({1}, {1})`. -/
+def x5 : Poss := ⟨({1}, {1}), by decide⟩
 
-/-- Negation: ¬{x₄,x₅} = {x₁,x₂}. -/
-theorem neg_right (x : Poss5) : orthoNeg pathFrame pRight x ↔ pLeft x := by
-  cases x <;> decide
+/-- Two worlds give five possibilities, the first row of Table 1. -/
+theorem card_poss : Fintype.card Poss = 5 := by decide
 
-/-- Negation: ¬{x₃} = {x₁,x₅}. The "partial" possibility x₃ has a
-    non-trivial negation — neither left nor right, but the two endpoints. -/
-private def pEndpoints : Set Poss5 := fun x =>
-    match x with | .x1 | .x5 => True | _ => False
-
-private instance pEndpoints_dec : DecidablePred pEndpoints := fun x => by
-  cases x <;> (unfold pEndpoints; first | exact isTrue trivial | exact isFalse id)
-
-theorem neg_mid (x : Poss5) : orthoNeg pathFrame pMid x ↔ pEndpoints x := by
-  cases x <;> decide
-
-/-- Double negation: ¬¬A = A (involutive on regular sets). -/
-theorem doubleNeg_left (x : Poss5) :
-    orthoNeg pathFrame (orthoNeg pathFrame pLeft) x ↔ pLeft x := by
-  cases x <;> decide
-
-/-- Excluded middle: A ∨ ¬A = S (every possibility verifies it). -/
-theorem excludedMiddle_left (x : Poss5) :
-    disj pathFrame pLeft (orthoNeg pathFrame pLeft) x := by
-  cases x <;> decide
-
-/-- Non-contradiction: A ∧ ¬A = ∅ (no possibility verifies it). -/
-theorem nonContradiction_left (x : Poss5) :
-    ¬ conj pLeft (orthoNeg pathFrame pLeft) x := by
-  cases x <;> decide
-
-/-- **Distributivity failure.** The key result of possibility semantics.
-    C ∧ (A ∨ B) ≠ (C ∧ A) ∨ (C ∧ B), where C = {x₃}, A = {x₁,x₂}, B = {x₄,x₅}.
-    Possibility x₃ is compatible with both A and B worlds, so it makes
-    A ∨ B true; but it doesn't commit to either disjunct, so neither
-    C ∧ A nor C ∧ B is non-empty.
-    [holliday-mandelkern-2024] Example 4.33 (the path-frame
-    instantiation; the algebraic version is Example 3.20, Figure 3).
-    Figure 8 enumerates the ten ◇-regular subsets of `pathFrame`;
-    the distributivity discussion appears in the prose following
-    Proposition 4.27. -/
-theorem distributivity_failure :
-    conj pMid (disj pathFrame pLeft pRight) .x3 ∧
-    ¬ disj pathFrame (conj pMid pLeft) (conj pMid pRight) .x3 := by decide
-
-/-- The LHS of distributivity at x₃: true (x₃ makes C ∧ (A ∨ B) true). -/
-theorem distrib_lhs_at_x3 :
-    conj pMid (disj pathFrame pLeft pRight) .x3 := by decide
-
-/-- The RHS of distributivity at x₃: false (x₃ fails (C∧A) ∨ (C∧B)). -/
-theorem distrib_rhs_at_x3 :
-    ¬ disj pathFrame (conj pMid pLeft) (conj pMid pRight) .x3 := by decide
-
--- ════════════════════════════════════════════════════
--- § 3. Worlds and Regularity on the Path Frame
--- ════════════════════════════════════════════════════
-
-/-- x₁ is a world (maximal possibility). -/
-theorem x1_is_world : IsWorld pathFrame .x1 := by decide
-
-/-- x₅ is a world. -/
-theorem x5_is_world : IsWorld pathFrame .x5 := by decide
-
-/-- x₃ is NOT a world — it's a partial possibility, compatible with
-    possibilities on both sides without being a refinement of either. -/
-theorem x3_not_world : ¬ IsWorld pathFrame .x3 := by decide
-
-/-- All propositions in the ortholattice are regular. -/
-theorem regular_left : IsRegular pathFrame pLeft := by decide
-theorem regular_right : IsRegular pathFrame pRight := by decide
-theorem regular_mid : IsRegular pathFrame pMid := by decide
-
-theorem regular_empty : IsRegular pathFrame (∅ : Set Poss5) := empty_isRegular pathFrame
-theorem regular_full : IsRegular pathFrame (Set.univ : Set Poss5) := univ_isRegular pathFrame
-
-/-! ### Lifting to regular propositions (typeclass-level reasoning) -/
-
-/-! Pack the path-frame regular sets as `pathFrame.Regular` elements
-    and demonstrate that the abstract `OrthocomplementedLattice` instance
-    immediately delivers the De Morgan / excluded-middle / non-contradiction
-    laws that are otherwise proved pointwise via `decide`. The set-membership
-    theorems above remain available as the user-facing API; the `…Reg`
-    versions below are the same propositions phrased in lattice notation. -/
-
-/-- `{x₁, x₂}` packaged as a regular proposition. -/
-def pLeftReg : pathFrame.Regular := pathFrame.regOf pLeft regular_left
-
-/-- `{x₄, x₅}` packaged as a regular proposition. -/
-def pRightReg : pathFrame.Regular := pathFrame.regOf pRight regular_right
-
-/-- `{x₃}` packaged as a regular proposition. -/
-def pMidReg : pathFrame.Regular := pathFrame.regOf pMid regular_mid
-
-section TypeclassLevel
-open OrthocomplementedLattice LatticeWithInvolution
-
-/-- Double negation on `pLeftReg` from the typeclass: `(pLeftReg)ᶜᶜ = pLeftReg`.
-    Replaces the pointwise `doubleNeg_left` proof — abstract typeclass result,
-    no `decide` on Poss5. -/
-theorem pLeftReg_compl_compl : (pLeftRegᶜ)ᶜ = pLeftReg :=
-  compl_compl pLeftReg
-
-/-- Excluded middle on `pLeftReg` from the typeclass: `pLeftReg ⊔ pLeftRegᶜ = ⊤`.
-    Replaces the pointwise `excludedMiddle_left` proof. -/
-theorem pLeftReg_sup_compl : pLeftReg ⊔ pLeftRegᶜ = ⊤ :=
-  sup_compl_eq_top pLeftReg
-
-/-- Non-contradiction on `pLeftReg` from the typeclass: `pLeftReg ⊓ pLeftRegᶜ = ⊥`.
-    Replaces the pointwise `nonContradiction_left` proof. -/
-theorem pLeftReg_inf_compl : pLeftReg ⊓ pLeftRegᶜ = ⊥ :=
-  inf_compl_eq_bot pLeftReg
-
-end TypeclassLevel
-
-/-- The orthocomplement of `pLeftReg` is `pRightReg`: `(pLeftReg)ᶜ = pRightReg`.
-    Lattice-level statement of the pointwise `neg_left` theorem. -/
-theorem pLeftReg_compl_eq : pLeftRegᶜ = pRightReg := by
-  apply SetLike.coe_injective
-  simp only [CompatFrame.Regular.coe_compl, CompatFrame.coe_regOf]
-  ext x
-  exact neg_left x
-
--- ════════════════════════════════════════════════════
--- § 4. The Epistemic Scale (Examples 4.30, 4.33)
--- ════════════════════════════════════════════════════
-
-/-! The Epistemic Scale is constructed from a 2-world model W = {0, 1}
-    with V(p) = {0}. The possibilities are pairs (A, I) where
-    ∅ ≠ A ⊆ I ⊆ W:
-    - x₁ = ({0}, {0})     — settled that p, knows p
-    - x₂ = ({0}, {0,1})   — settled that p, doesn't know
-    - x₃ = ({0,1}, {0,1}) — nothing settled (full uncertainty)
-    - x₄ = ({1}, {0,1})   — settled that ¬p, doesn't know
-    - x₅ = ({1}, {1})     — settled that ¬p, knows ¬p
-
-    Compatibility: (a,i) ◇ (a',i') iff a ∩ a' ≠ ∅ ∧ a ⊆ i' ∧ a' ⊆ i.
-    Accessibility: (a,i) R (a',i') iff a ⊆ a' ∧ i' ⊆ i.
-    [holliday-mandelkern-2024] Definition 5.1, Example 5.3. -/
-
-/-- Epistemic accessibility for the Epistemic Scale.
-    R(x₁) = {x₁}, R(x₂) = {x₁,x₂,x₃}, R(x₃) = {x₃},
-    R(x₄) = {x₃,x₄,x₅}, R(x₅) = {x₅}.
-    Note: Figure 12 shows dotted arrows that look symmetric on adjacents,
-    but R as encoded here is the *unique* relation satisfying R-regularity,
-    Reflexivity, and Knowability on the path compatibility frame — verified
-    operationally by every Figure-13 truth-value matching `decide`. -/
-def Poss5.epistAccess : Poss5 → Poss5 → Prop
-  | .x1, .x1
-  | .x2, .x1 | .x2, .x2 | .x2, .x3
-  | .x3, .x3
-  | .x4, .x3 | .x4, .x4 | .x4, .x5
-  | .x5, .x5 => True
-  | _, _ => False
-
-instance : DecidableRel Poss5.epistAccess := fun a b => by
-  cases a <;> cases b <;> simp only [Poss5.epistAccess] <;> infer_instance
-
-/-- The epistemic scale frame. Compatibility is the path graph;
-    accessibility captures epistemic access (refining information).
-    [holliday-mandelkern-2024] Example 4.30, Example 4.33. -/
-def epistemicScale : ModalCompatFrame Poss5 where
-  toCompatFrame := pathFrame
-  access := Poss5.epistAccess
-  access_refl := ⟨fun x => by cases x <;> simp [Poss5.epistAccess]⟩
-
-instance : DecidableRel epistemicScale.access :=
-  inferInstanceAs (DecidableRel Poss5.epistAccess)
-
-instance : DecidableRel epistemicScale.toCompatFrame.compat :=
-  inferInstanceAs (DecidableRel Poss5.compat)
-
-/-! ### Witnessing the epistemic-frame conditions
-
-`epistemicScale` satisfies all three conditions of HM 2024 Definition 4.26
-(Reflexivity is in the structure; R-regularity and Knowability are
-decide-checked here). Bundled as `epistemicCompatFrame`, so
-`HollidayMandelkern2024.wittgenstein_p` and
-`wittgenstein_neg_p` collapse to one-line corollaries of the substrate
-`Orthologic.wittgensteinLaw` (Proposition 4.27). -/
-
-/-- `epistemicScale` is R-regular (Definition 4.20 / 4.26 clause). -/
-theorem epistemicScale_rRegular : IsRRegular epistemicScale := by decide
-
-/-- `epistemicScale` is knowable (Definition 4.26 clause). -/
-theorem epistemicScale_knowable : IsKnowable epistemicScale := by decide
-
-/-- The Epistemic Scale as an `EpistemicCompatFrame` — all three
-    Definition 4.26 conditions assembled. -/
-def epistemicCompatFrame : EpistemicCompatFrame Poss5 where
-  toModalCompatFrame := epistemicScale
-  rRegular := epistemicScale_rRegular
-  knowable := epistemicScale_knowable
-
--- The proposition p: true at x₁ and x₂ (those with A ⊆ V(p) = {0}).
-def propP : Set Poss5 := fun x => match x with | .x1 | .x2 => True | _ => False
-
-instance propP_dec : DecidablePred propP := fun x => by
-  cases x <;> (unfold propP; first | exact isTrue trivial | exact isFalse id)
-
--- ════════════════════════════════════════════════════
--- § 5. Epistemic Scale Predictions (Example 4.33)
--- ════════════════════════════════════════════════════
-
-/-! Verification of the truth values listed in Example 4.33 / Figure 13. -/
-
-private def boxP : Set Poss5 := fun x => match x with | .x1 => True | _ => False
-private def negP : Set Poss5 := fun x => match x with | .x4 | .x5 => True | _ => False
-private def boxNegP : Set Poss5 := fun x => match x with | .x5 => True | _ => False
-private def diamP : Set Poss5 := fun x => match x with | .x1 | .x2 | .x3 => True | _ => False
-private def diamNegP : Set Poss5 := fun x => match x with | .x3 | .x4 | .x5 => True | _ => False
-
-private instance boxP_dec : DecidablePred boxP := fun x => by
-  cases x <;> (unfold boxP; first | exact isTrue trivial | exact isFalse id)
-private instance negP_dec : DecidablePred negP := fun x => by
-  cases x <;> (unfold negP; first | exact isTrue trivial | exact isFalse id)
-private instance boxNegP_dec : DecidablePred boxNegP := fun x => by
-  cases x <;> (unfold boxNegP; first | exact isTrue trivial | exact isFalse id)
-private instance diamP_dec : DecidablePred diamP := fun x => by
-  cases x <;> (unfold diamP; first | exact isTrue trivial | exact isFalse id)
-private instance diamNegP_dec : DecidablePred diamNegP := fun x => by
-  cases x <;> (unfold diamNegP; first | exact isTrue trivial | exact isFalse id)
-
-/-- □p = {x₁}: only x₁ knows p (R(x₁) = {x₁} ⊆ V(p)). -/
-@[simp] theorem box_p (x : Poss5) : box epistemicScale propP x ↔ boxP x := by
-  cases x <;> decide
-
-/-- ¬p = {x₄, x₅}: the orthocomplement of V(p). -/
-@[simp] theorem neg_p (x : Poss5) : orthoNeg pathFrame propP x ↔ negP x := by
-  cases x <;> decide
-
-/-- □¬p = {x₅}: only x₅ knows ¬p. -/
-@[simp] theorem box_neg_p (x : Poss5) : box epistemicScale (orthoNeg pathFrame propP) x ↔ boxNegP x := by
-  cases x <;> decide
-
-/-- ◇p = {x₁, x₂, x₃}: p might be true at x₁, x₂, and x₃. -/
-@[simp] theorem diamond_p (x : Poss5) : diamond epistemicScale propP x ↔ diamP x := by
-  cases x <;> decide
-
-/-- ◇¬p = {x₃, x₄, x₅}: ¬p might be true at x₃, x₄, and x₅. -/
-@[simp] theorem diamond_neg_p (x : Poss5) :
-    diamond epistemicScale (orthoNeg pathFrame propP) x ↔ diamNegP x := by
-  cases x <;> decide
-
-/-- ◇p ∧ ◇¬p = {x₃}: only the point of full uncertainty. -/
-theorem uncertainty_at_x3 :
-    conj (diamond epistemicScale propP)
-         (diamond epistemicScale (orthoNeg pathFrame propP)) .x3 := by decide
-
--- ════════════════════════════════════════════════════
--- § 6. Core Epistemic Failures
--- ════════════════════════════════════════════════════
-
-/-! The motivating examples from §1–2 of the paper: epistemic possibility
-    does not collapse to classical negation, and truth does not collapse
-    to knowledge. -/
-
-/-- ◇¬p does NOT entail ¬p: x₃ makes "it might not be raining" true
-    but does not settle "it's not raining." This is the core motivation
-    for the entire paper — in classical logic, ◇¬p → ¬p, but this fails
-    in possibility semantics. [holliday-mandelkern-2024] §1. -/
-theorem diamond_neg_not_entail_neg :
-    diamond epistemicScale (orthoNeg pathFrame propP) .x3 ∧
-    ¬ orthoNeg pathFrame propP .x3 := by decide
-
-/-- p does NOT entail □p: x₂ makes p true without knowing p. "It's
-    raining" does not mean "It must be raining." Failure of necessitation
-    for non-logical truths. [holliday-mandelkern-2024] §2. -/
-theorem p_not_entail_box_p :
-    propP .x2 ∧ ¬ box epistemicScale propP .x2 := by decide
-
--- ════════════════════════════════════════════════════
--- § 7. Wittgenstein Sentences (Proposition 4.27)
--- ════════════════════════════════════════════════════
-
-/-! **Wittgenstein's Law**: ¬A ∩ ◇A = ∅.
-    "It's raining and it might not be raining" is contradictory.
-    In possibility semantics, if x settles ¬A (all compatible possibilities
-    fail A), then x cannot also make ◇A true (which requires a compatible
-    possibility in □¬A's complement).
-    [holliday-mandelkern-2024] Proposition 4.27.
-
-    Both theorems below are **structural corollaries** of the substrate
-    `wittgensteinLaw` on epistemic compatibility frames — no per-frame
-    `decide` is needed. The Poss5-specific content was reduced (above) to
-    `epistemicCompatFrame`'s `decide`-checked R-regularity + Knowability;
-    the algebraic identity itself comes from substrate. -/
-
-/-- ¬p ∧ ◇p = ∅: "p is false and p might be true" is contradictory.
-    One-line corollary of `EpistemicCompatFrame.wittgensteinLaw` applied
-    to `propP`. -/
-theorem wittgenstein_p (x : Poss5) :
-    ¬ conj (orthoNeg pathFrame propP) (diamond epistemicScale propP) x :=
-  Set.eq_empty_iff_forall_notMem.mp
-    (epistemicCompatFrame.wittgensteinLaw propP) x
-
-/-- p ∧ ◇¬p = ∅: "p is true and ¬p might be true" is contradictory.
-    One-line corollary: take `A := orthoNeg pathFrame propP` in
-    `EpistemicCompatFrame.wittgensteinLaw`. -/
-theorem wittgenstein_neg_p (x : Poss5) :
-    ¬ conj (orthoNeg pathFrame (orthoNeg pathFrame propP))
-           (diamond epistemicScale (orthoNeg pathFrame propP)) x :=
-  Set.eq_empty_iff_forall_notMem.mp
-    (epistemicCompatFrame.wittgensteinLaw (orthoNeg pathFrame propP)) x
-
--- ════════════════════════════════════════════════════
--- § 8. Epistemic Distributivity Failure (Example 4.33)
--- ════════════════════════════════════════════════════
-
-/-- Distributivity fails across epistemic levels: (p ∨ ¬p) ∧ (◇p ∧ ◇¬p)
-    is true at x₃, but (p ∧ ◇p ∧ ◇¬p) ∨ (¬p ∧ ◇p ∧ ◇¬p) is not.
-    The partial possibility x₃ verifies the disjunction without
-    committing to either disjunct — both disjuncts are empty by
-    Wittgenstein's Law (p ∧ ◇¬p = ∅ and ¬p ∧ ◇p = ∅).
-    [holliday-mandelkern-2024] Example 3.20 (algebraic), Example 4.33
-    (possibility-semantic instantiation). -/
-theorem epistemic_distrib_failure :
-    let pDisj := disj pathFrame propP (orthoNeg pathFrame propP)
-    let uncertainty := conj (diamond epistemicScale propP)
-                            (diamond epistemicScale (orthoNeg pathFrame propP))
-    let lhs := conj pDisj uncertainty
-    let rhs := disj pathFrame
-      (conj propP uncertainty)
-      (conj (orthoNeg pathFrame propP) uncertainty)
-    lhs .x3 ∧ ¬ rhs .x3 := by decide
-
--- ════════════════════════════════════════════════════
--- § 9. Free Choice
--- ════════════════════════════════════════════════════
-
-/-! **Free choice disjunction**: ◇(A ∨ B) entails ◇A ∧ ◇B.
-
-    HM 2024 do not aim to predict free choice — see footnote 33 (page 890):
-    "We will not try to adjudicate that complicated topic here." The closest
-    paper-anchored result is the **Inheritance principle**
-    (Proposition 5.12.3, page 885): `(U ∨ ◇V) ∧ □V ⊆ ◇(U ∨ V)`.
-
-    On the Epistemic Scale, full free choice fails because the path frame
-    is non-Boolean. The pattern derivable here is partial: it holds at x₃
-    (full uncertainty, where both p and ¬p remain epistemically possible)
-    but fails at x₁ (knows p, where ◇(p ∨ ¬p) is trivially true but
-    ◇¬p is false).
-
-    For a deontic-modal account where free choice DOES emerge — via
-    pragmatic enrichment in BSML — see `Studies/Aloni2022.lean`.
-    The contrast is *modal-flavor-dependent* rather than directly contradictory:
-    Aloni 2022 derives FC for permission-flavored ◇, HM 2024 predicts FC failure
-    for epistemic-flavored ◇. -/
-
-/-- Free choice holds at x₃: ◇(p ∨ ¬p) → ◇p ∧ ◇¬p. -/
-theorem free_choice_at_x3 :
-    diamond epistemicScale (disj pathFrame propP (orthoNeg pathFrame propP)) .x3 →
-    conj (diamond epistemicScale propP)
-         (diamond epistemicScale (orthoNeg pathFrame propP)) .x3 := by
+/-- Figure 7 and Example 5.3: compatibility is the path `x1 — x2 — x3 — x4 — x5`. -/
+theorem compat_iff : ∀ x y : Poss, frame.compat x y ↔ x = y ∨
+    (x, y) ∈ [(x1, x2), (x2, x1), (x2, x3), (x3, x2), (x3, x4), (x4, x3), (x4, x5), (x5, x4)] := by
   decide
 
-/-- Free choice FAILS at x₁: ◇(p ∨ ¬p) is true but ◇¬p is false.
-    x₁ knows p, so while the disjunction is trivially possible, the
-    individual disjunct ¬p is not epistemically accessible. -/
-theorem free_choice_fails_at_x1 :
-    diamond epistemicScale (disj pathFrame propP (orthoNeg pathFrame propP)) .x1 ∧
-    ¬ conj (diamond epistemicScale propP)
-           (diamond epistemicScale (orthoNeg pathFrame propP)) .x1 := by
+/-- Figure 12 and Example 5.3: `x2` accesses `x1` and `x3`, `x4` accesses `x3` and `x5`, and
+every possibility accesses itself. -/
+theorem access_iff : ∀ x y : Poss, scale.access x y ↔ x = y ∨
+    (x, y) ∈ [(x2, x1), (x2, x3), (x4, x3), (x4, x5)] := by
   decide
 
--- ════════════════════════════════════════════════════
--- § 10. T Axiom
--- ════════════════════════════════════════════════════
+/-- The proposition that the coin lands `0`, the embedded `{0}`. -/
+abbrev P : Set Poss := embed ({0} : Coin)
 
-/-- T axiom: □A entails A (knowledge is factive).
-    [holliday-mandelkern-2024] Proposition 4.25. -/
-theorem T_axiom_p (x : Poss5) :
-    box epistemicScale propP x → propP x := by
-  cases x <;> decide
+/-- `¬p`. -/
+abbrev nP : Set Poss := orthoNeg frame P
 
-/-- □p entails ◇p (knowledge implies epistemic possibility). -/
-theorem box_implies_diamond (x : Poss5) :
-    box epistemicScale propP x → diamond epistemicScale propP x := by
-  cases x <;> decide
+/-- `□p`. -/
+abbrev bP : Set Poss := box scale P
 
--- ════════════════════════════════════════════════════
--- § 11. Disjunctive Syllogism Failure
--- ════════════════════════════════════════════════════
+/-- `□¬p`. -/
+abbrev bnP : Set Poss := box scale nP
 
-/-! **Disjunctive syllogism** ({p ∨ q, ¬q} ⊨ p) fails for epistemic modals:
-    "Either the dog is inside or it must be outside; it's not the case that
-    it must be outside; therefore it is inside." The tautological first
-    premise carries no information.
-    [holliday-mandelkern-2024] §2.3. -/
+/-- `◇p`. -/
+abbrev dP : Set Poss := diamond scale P
 
-/-- Disjunctive syllogism fails: p ∨ □¬p and ¬□¬p both hold at x₃
-    (full uncertainty) but p does not. -/
-theorem disjSyllogism_fails :
-    let mustNotP := box epistemicScale (orthoNeg pathFrame propP)
-    let pOrMustNotP := disj pathFrame propP mustNotP
-    let notMustNotP := orthoNeg pathFrame mustNotP
-    pOrMustNotP .x3 ∧ notMustNotP .x3 ∧ ¬ propP .x3 := by
+/-- `◇¬p`. -/
+abbrev dnP : Set Poss := diamond scale nP
+
+instance : DecidablePred (· ∈ P) := inferInstance
+instance : DecidablePred (· ∈ nP) := inferInstance
+instance : DecidablePred (· ∈ bP) := inferInstance
+instance : DecidablePred (· ∈ bnP) := inferInstance
+instance : DecidablePred (· ∈ dP) := inferInstance
+instance : DecidablePred (· ∈ dnP) := inferInstance
+
+/-! ### Example 4.33: the truth values of Figure 13 -/
+
+theorem mem_P : ∀ x : Poss, x ∈ P ↔ x = x1 ∨ x = x2 := by decide
+
+theorem mem_nP : ∀ x : Poss, x ∈ nP ↔ x = x4 ∨ x = x5 := by decide
+
+theorem mem_bP : ∀ x : Poss, x ∈ bP ↔ x = x1 := by decide
+
+theorem mem_bnP : ∀ x : Poss, x ∈ bnP ↔ x = x5 := by decide
+
+theorem mem_dP : ∀ x : Poss, x ∈ dP ↔ x = x1 ∨ x = x2 ∨ x = x3 := by decide
+
+theorem mem_dnP : ∀ x : Poss, x ∈ dnP ↔ x = x3 ∨ x = x4 ∨ x = x5 := by decide
+
+/-- `◇p ∧ ◇¬p` holds only at the point of full uncertainty. -/
+theorem mem_dP_inter_dnP : ∀ x : Poss, x ∈ dP ∩ dnP ↔ x = x3 := by decide
+
+/-- `□p ∨ □¬p` holds exactly where something is known. -/
+theorem mem_bP_disj_bnP : ∀ x : Poss, x ∈ disj frame bP bnP ↔ x = x1 ∨ x = x5 := by decide
+
+instance (s : Finset Poss) : DecidablePred (· ∈ (↑s : Set Poss)) :=
+  λ x => inferInstanceAs (Decidable (x ∈ s))
+
+/-- Example 4.11: the compatibility frame has ten regular subsets. -/
+theorem card_regular :
+    ((Finset.univ : Finset (Finset Poss)).filter
+      λ s : Finset Poss => IsRegular frame (↑s : Set Poss)).card = 10 := by
   decide
 
--- ════════════════════════════════════════════════════
--- § 12. Orthomodularity Failure
--- ════════════════════════════════════════════════════
+/-! ### The desiderata of §2 on the Scale -/
 
-/-! **Orthomodularity** (if φ ⊨ ψ then ψ ⊨ φ ∨ (¬φ ∧ ψ)) fails.
-    Since p ⊨ ◇p, orthomodularity would give ◇p ⊨ p ∨ (¬p ∧ ◇p).
-    But ¬p ∧ ◇p = ⊥ by Wittgenstein's Law, so this collapses to
-    ◇p ⊨ p — absurd.
-    [holliday-mandelkern-2024] §2.4. -/
+/-- (2) and (3): Wittgenstein sentences of both orders are contradictions, by Proposition 4.27
+applied to `p` and to `¬p`, using that `¬¬p = p` for the regular `p`. -/
+theorem wittgenstein : nP ∩ dP = ∅ ∧ P ∩ dnP = ∅ :=
+  ⟨(epistemicFrame Coin).wittgensteinLaw P,
+    by simpa only [orthoNeg_orthoNeg_of_isRegular frame (embed_isRegular _)] using
+      (epistemicFrame Coin).wittgensteinLaw nP⟩
 
-/-- p entails ◇p: truth implies epistemic possibility.
-    Follows from T (`T_axiom_general`) + duality (per HM 2024 §2.4 p. 839,
-    derivable in their full system). -/
-theorem p_entails_diamond (x : Poss5) (h : propP x) :
-    diamond epistemicScale propP x := by
-  revert h; cases x <;> decide
+/-- §1: `◇¬p` does not entail `¬p`, and §2: `p` does not entail `□p`, the coin whose outcome is
+unknown. -/
+theorem diamond_neg_not_entail_neg : x3 ∈ dnP ∧ x3 ∉ nP := by decide
 
-/-- Orthomodularity fails: ◇p holds at x₃ but p ∨ (¬p ∧ ◇p) does not
-    (since ¬p ∧ ◇p = ⊥ by Wittgenstein, this reduces to p). -/
+theorem not_entail_box : x2 ∈ P ∧ x2 ∉ bP := by decide
+
+/-- (10) and Example 4.33: `(p ∨ ¬p) ∧ (◇p ∧ ◇¬p)` holds at `x3` but its distribution
+`(p ∧ ◇¬p) ∨ (¬p ∧ ◇p)` does not. -/
+theorem distributivity_fails :
+    x3 ∈ disj frame P nP ∩ (dP ∩ dnP) ∧ x3 ∉ disj frame (P ∩ dnP) (nP ∩ dP) := by
+  decide
+
+/-- (13): `p ∨ □¬p` is a logical truth and `¬□¬p` holds at `x3`, yet `p` does not. -/
+theorem disjunctive_syllogism_fails :
+    (∀ x : Poss, x ∈ disj frame P bnP) ∧ x3 ∈ orthoNeg frame bnP ∧ x3 ∉ P := by
+  decide
+
+/-- (21) and Example 3.20: `p` entails `◇p`, but `◇p` does not entail `p ∨ (¬p ∧ ◇p)`. -/
 theorem orthomodularity_fails :
-    let diamP := diamond epistemicScale propP
-    let rhs := disj pathFrame propP (conj (orthoNeg pathFrame propP) diamP)
-    diamP .x3 ∧ ¬ rhs .x3 := by decide
+    (∀ x : Poss, x ∈ P → x ∈ dP) ∧ x3 ∈ dP ∧ x3 ∉ disj frame P (nP ∩ dP) := by
+  decide
 
--- ════════════════════════════════════════════════════
--- § 13. Pseudocomplementation Failure
--- ════════════════════════════════════════════════════
+/-- Example 3.20: `p ∧ ◇¬p = ⊥` although `◇¬p ≰ ¬p`, so orthonegation is not
+pseudocomplementation. -/
+theorem pseudocomplementation_fails : P ∩ dnP = ∅ ∧ x3 ∈ dnP ∧ x3 ∉ nP :=
+  ⟨wittgenstein.2, by decide, by decide⟩
 
-/-! **Pseudocomplementation** (a ∧ b = 0 → b ≤ ¬a) fails. In a Boolean
-    algebra, ¬a is the greatest element disjoint from a. In an ortholattice
-    this need not hold: p ∧ ◇¬p = ⊥ (Wittgenstein) but ◇¬p ≰ ¬p.
-    This is the algebraic root of why ◇¬p ≠ ¬p.
-    [holliday-mandelkern-2024] Lemma 3.6 (algebraic statement),
-    Example 3.20 (concrete failure). -/
+/-- (29): `◇p ∧ ◇¬p` is equivalent to `¬(□¬p ∨ □p)`, De Morgan's law. -/
+theorem deMorgan : ∀ x : Poss, x ∈ dP ∩ dnP ↔ x ∈ orthoNeg frame (disj frame bnP bP) := by
+  decide
 
-/-- Pseudocomplementation fails: p ∧ ◇¬p = ⊥ but ◇¬p ≰ ¬p.
-    x₃ witnesses ◇¬p (might not be raining) without witnessing ¬p. -/
-theorem pseudocomplementation_fails :
-    let negP := orthoNeg pathFrame propP
-    let diamNegP := diamond epistemicScale negP
-    (∀ x : Poss5, ¬ conj propP diamNegP x) ∧
-    (diamNegP .x3 ∧ ¬ negP .x3) := by
-  exact ⟨by decide, by decide⟩
+/-- (30): `□¬p ∨ □p` is not a logical truth. -/
+theorem not_known_either : x3 ∉ disj frame bnP bP := by decide
 
--- ════════════════════════════════════════════════════
--- § 14. Level-wise Boolean Classicality (§3.2.4)
--- ════════════════════════════════════════════════════
+/-- Theorem 5.7.4: the diamond of `p` does not collapse to `p`. -/
+theorem diamond_P_not_subset : ¬ dP ⊆ P :=
+  not_diamond_embed_subset (by decide) (by decide)
 
-/-! **Level-wise classicality**: classical reasoning is safe *within*
-    an epistemic level but dangerous *across* levels. The subortholattice
-    B₀ = {⊥, p, ¬p, ⊤} is a four-element Boolean algebra; B₁ (generated
-    by applying □ and ◇ to B₀) is an eight-element Boolean algebra.
-    Distributivity only fails when mixing levels.
-    [holliday-mandelkern-2024] §3.2.4. -/
+/-! ### Example 4.42: levelwise classicality -/
 
-/-- Within-level distributivity (B₁): ◇p ∧ (◇¬p ∨ ◇p) = (◇p ∧ ◇¬p) ∨ (◇p ∧ ◇p).
-    All operands from the same epistemic level → distributivity holds. -/
-theorem within_level_distrib (x : Poss5) :
-    let dp := diamond epistemicScale propP
-    let dnp := diamond epistemicScale (orthoNeg pathFrame propP)
-    conj dp (disj pathFrame dnp dp) x ↔
-    disj pathFrame (conj dp dnp) (conj dp dp) x := by
-  cases x <;> decide
+/-- The Boolean level `B0 = {∅, p, ¬p, ⊤}`. -/
+inductive Level0
+  | bot
+  | p
+  | np
+  | top
+  deriving DecidableEq, Fintype
 
-/-- Cross-level failure: ◇p ∧ (p ∨ ¬p) ≠ (◇p ∧ p) ∨ (◇p ∧ ¬p).
-    ◇p is from B₁ but p, ¬p are from B₀. At x₃ the LHS is true
-    (◇p and excluded middle both hold) but the RHS is false (both
-    disjuncts are empty by Wittgenstein's Law). -/
-theorem cross_level_distrib_fails :
-    let dp := diamond epistemicScale propP
-    let negP := orthoNeg pathFrame propP
-    let lhs := conj dp (disj pathFrame propP negP)
-    let rhs := disj pathFrame (conj dp propP) (conj dp negP)
-    lhs .x3 ∧ ¬ rhs .x3 := by decide
+/-- The propositions of `B0`. -/
+def Level0.set : Level0 → Set Poss
+  | .bot => ∅
+  | .p => P
+  | .np => nP
+  | .top => Set.univ
 
--- ════════════════════════════════════════════════════
--- § 15. Lifting from W = {0, 1} (Definition 5.1, Example 5.3)
--- ════════════════════════════════════════════════════
+instance : ∀ l : Level0, DecidablePred (· ∈ l.set)
+  | .bot => inferInstanceAs (DecidablePred (· ∈ (∅ : Set Poss)))
+  | .p => inferInstanceAs (DecidablePred (· ∈ P))
+  | .np => inferInstanceAs (DecidablePred (· ∈ nP))
+  | .top => inferInstanceAs (DecidablePred (· ∈ (Set.univ : Set Poss)))
 
-/-! Lifting construction specialized to the two-world Boolean algebra
-    `B = ℘({0, 1})` with valuation `V(p) = {0}`. The five possibilities
-    are pairs `(A, I)` with `∅ ≠ A ⊆ I ⊆ W`:
+/-- The modal level `B1`, the eight propositions of Example 3.33. -/
+inductive Level1
+  | bot
+  | bp
+  | dnp
+  | dp
+  | bnp
+  | knownEither
+  | uncertain
+  | top
+  deriving DecidableEq, Fintype
 
-    - x₁ = ({0}, {0})     — knows p
-    - x₂ = ({0}, {0,1})   — settled p, doesn't know
-    - x₃ = ({0,1}, {0,1}) — full uncertainty
-    - x₄ = ({1}, {0,1})   — settled ¬p, doesn't know
-    - x₅ = ({1}, {1})     — knows ¬p
+/-- The propositions of `B1`. -/
+def Level1.set : Level1 → Set Poss
+  | .bot => ∅
+  | .bp => bP
+  | .dnp => dnP
+  | .dp => dP
+  | .bnp => bnP
+  | .knownEither => disj frame bP bnP
+  | .uncertain => dP ∩ dnP
+  | .top => Set.univ
 
-    Compatibility: (A,I) ◇ (A',I') iff A ∩ A' ≠ ∅ ∧ A ⊆ I' ∧ A' ⊆ I.
-    Accessibility: (A,I) R (A',I') iff A ⊆ A' ∧ I' ⊆ I.
+instance : ∀ l : Level1, DecidablePred (· ∈ l.set)
+  | .bot => inferInstanceAs (DecidablePred (· ∈ (∅ : Set Poss)))
+  | .bp => inferInstanceAs (DecidablePred (· ∈ bP))
+  | .dnp => inferInstanceAs (DecidablePred (· ∈ dnP))
+  | .dp => inferInstanceAs (DecidablePred (· ∈ dP))
+  | .bnp => inferInstanceAs (DecidablePred (· ∈ bnP))
+  | .knownEither => inferInstanceAs (DecidablePred (· ∈ disj frame bP bnP))
+  | .uncertain => inferInstanceAs (DecidablePred (· ∈ dP ∩ dnP))
+  | .top => inferInstanceAs (DecidablePred (· ∈ (Set.univ : Set Poss)))
 
-    The general lifting from an arbitrary Boolean algebra `B` (Def 5.1)
-    is unformalized; this section verifies the agreement of the derived
-    `liftedCompat`/`liftedAccess` with the stipulated `pathFrame`/
-    `epistemicScale` for the W={0,1} case. -/
+/-- `B1` is closed under orthonegation and meet, and its members are regular. -/
+theorem level1_closed :
+    (∀ l : Level1, IsRegular frame l.set) ∧
+    (∀ l : Level1, ∃ m : Level1, ∀ x, x ∈ orthoNeg frame l.set ↔ x ∈ m.set) ∧
+    (∀ l m : Level1, ∃ n : Level1, ∀ x, x ∈ l.set ∩ m.set ↔ x ∈ n.set) := by
+  refine ⟨by decide, by decide, by decide⟩
 
-/-- World 0 (the p-world) is in the actuality set A(x). -/
-def worldlyA0 : Poss5 → Bool
-  | .x1 | .x2 | .x3 => true
-  | .x4 | .x5 => false
+/-- Proposition 4.39's criterion within `B0`: compatible witnesses of two propositions yield a
+common witness, so `B0` is Boolean. -/
+theorem stratified_level0 :
+    ∀ l m : Level0, (∃ x ∈ l.set, ∃ y ∈ m.set, frame.compat x y) →
+      ∃ z, z ∈ l.set ∧ z ∈ m.set := by
+  decide
 
-/-- World 1 (the ¬p-world) is in the actuality set A(x). -/
-def worldlyA1 : Poss5 → Bool
-  | .x3 | .x4 | .x5 => true
-  | .x1 | .x2 => false
+/-- Proposition 4.39's criterion within `B1`, so `B1` is an eight-element Boolean algebra. -/
+theorem stratified_level1 :
+    ∀ l m : Level1, (∃ x ∈ l.set, ∃ y ∈ m.set, frame.compat x y) →
+      ∃ z, z ∈ l.set ∧ z ∈ m.set := by
+  decide
 
-/-- World 0 is in the information set I(x). -/
-def worldlyI0 : Poss5 → Bool
-  | .x1 | .x2 | .x3 | .x4 => true
-  | .x5 => false
-
-/-- World 1 is in the information set I(x). -/
-def worldlyI1 : Poss5 → Bool
-  | .x2 | .x3 | .x4 | .x5 => true
-  | .x1 => false
-
-/-- Compatibility derived from lifting: (A,I) ◇ (A',I') iff
-    A ∩ A' ≠ ∅ ∧ A ⊆ I' ∧ A' ⊆ I.
-    [holliday-mandelkern-2024] Definition 5.1.2. -/
-def liftedCompat (x y : Poss5) : Bool :=
-  -- A ∩ A' ≠ ∅ (share at least one actual world)
-  ((worldlyA0 x && worldlyA0 y) || (worldlyA1 x && worldlyA1 y)) &&
-  -- A ⊆ I' (x's actual worlds are in y's information)
-  ((!worldlyA0 x || worldlyI0 y) && (!worldlyA1 x || worldlyI1 y)) &&
-  -- A' ⊆ I (y's actual worlds are in x's information)
-  ((!worldlyA0 y || worldlyI0 x) && (!worldlyA1 y || worldlyI1 x))
-
-/-- Accessibility derived from lifting: (A,I) R (A',I') iff
-    A ⊆ A' ∧ I' ⊆ I (refining = expanding actuality, shrinking information).
-    [holliday-mandelkern-2024] Definition 5.1.3. -/
-def liftedAccess (x y : Poss5) : Bool :=
-  -- A ⊆ A' (y's actuality contains x's)
-  ((!worldlyA0 x || worldlyA0 y) && (!worldlyA1 x || worldlyA1 y)) &&
-  -- I' ⊆ I (y's information is contained in x's)
-  ((!worldlyI0 y || worldlyI0 x) && (!worldlyI1 y || worldlyI1 x))
-
-/-- The epistemic scale's compatibility matches the lifting construction. -/
-theorem compat_from_lifting (x y : Poss5) :
-    epistemicScale.compat x y ↔ liftedCompat x y = true := by
-  cases x <;> cases y <;> decide
-
-/-- The epistemic scale's accessibility matches the lifting construction. -/
-theorem access_from_lifting (x y : Poss5) :
-    epistemicScale.access x y ↔ liftedAccess x y = true := by
-  cases x <;> cases y <;> decide
-
--- ════════════════════════════════════════════════════
--- § 16. Truth from Worlds (Lemma 5.4)
--- ════════════════════════════════════════════════════
-
-/-! [holliday-mandelkern-2024] Lemma 5.4: truth at a possibility
-    reduces to truth at worlds via the A and I sets.
-
-    - propP x = true  iff  world 1 ∉ A(x)  (all actual worlds satisfy p)
-    - □p x = true     iff  world 1 ∉ I(x)  (all information-accessible worlds satisfy p)
-    - ◇p x = true     iff  world 0 ∈ A(x)  (some actual world satisfies p)
--/
-
-/-- Truth from worlds: p holds at x iff the ¬p-world is not actual. -/
-@[simp] theorem boolean_truth_from_worlds (x : Poss5) :
-    propP x ↔ worldlyA1 x = false := by
-  cases x <;> decide
-
-/-- Box truth from worlds: □p holds at x iff the ¬p-world is not
-    information-accessible. -/
-@[simp] theorem box_truth_from_worlds (x : Poss5) :
-    box epistemicScale propP x ↔ worldlyI1 x = false := by
-  cases x <;> decide
-
-/-- Diamond truth from worlds: ◇p holds at x iff the p-world is actual. -/
-@[simp] theorem diamond_truth_from_worlds (x : Poss5) :
-    diamond epistemicScale propP x ↔ worldlyA0 x = true := by
-  cases x <;> decide
-
--- ════════════════════════════════════════════════════
--- § 17. Cross-Paper Agreement Bridges
--- ════════════════════════════════════════════════════
-
-/-! HM 2024's formal predictions agree with the empirical patterns recorded
-    in the prior literature. These bridges close the loop between Yalcin's
-    embedding diagnostic, Mandelkern's distributivity-failure intuition,
-    Klinedinst & Rothschild's disjunctive-syllogism failure, and HM's
-    formal theorems on the Epistemic Scale.
-
-    Each agreement bundles **two** components: (i) the proof-bearing
-    structural witness from this file, exhibiting the prediction as a
-    Lean theorem, and (ii) the literal `:= rfl` over the sibling's Bool
-    table, serving as a drift sentry — if either side later changes, the
-    `rfl` will fail loudly. -/
-
-/-- HM 2024 predicts that Wittgenstein sentences are infelicitous —
-    matching Yalcin (2007). Witnesses: `wittgenstein_p` (¬p ∧ ◇p = ∅) and
-    `wittgenstein_neg_p` (p ∧ ◇¬p = ∅), both reducing to substrate
-    `wittgensteinLaw` (Proposition 4.27). -/
-theorem hm_predicts_wittgenstein_infelicitous :
-    (∀ x : Poss5,
-      ¬ conj (orthoNeg pathFrame propP) (diamond epistemicScale propP) x ∧
-      ¬ conj (orthoNeg pathFrame (orthoNeg pathFrame propP))
-             (diamond epistemicScale (orthoNeg pathFrame propP)) x) ∧
-    Yalcin2007.felicitousUnderEmbedding
-      .wittgenstein = false :=
-  ⟨fun x => ⟨wittgenstein_p x, wittgenstein_neg_p x⟩, rfl⟩
-
-/-- HM 2024 predicts that classical contradictions are infelicitous —
-    matching Yalcin (2007). Witness: `p ∧ ¬p = ∅` on the Epistemic Scale,
-    structurally guaranteed by the `inf_compl_eq_bot` ortholattice axiom
-    on `pathFrame.Regular`. -/
-theorem hm_predicts_classical_infelicitous :
-    (∀ x : Poss5, ¬ conj propP (orthoNeg pathFrame propP) x) ∧
-    Yalcin2007.felicitousUnderEmbedding
-      .classical = false :=
-  ⟨fun x => by cases x <;> decide, rfl⟩
-
-/-- HM 2024 predicts Mandelkern (2019)'s distributivity-failure pattern:
-    LHS felicitous, RHS infelicitous. Witness: `epistemic_distrib_failure`
-    (§8) — proves `(p ∨ ¬p) ∧ (◇p ∧ ◇¬p)` true at x₃ but
-    `(p ∧ ◇p ∧ ◇¬p) ∨ (¬p ∧ ◇p ∧ ◇¬p)` false at x₃. -/
-theorem hm_predicts_distrib_failure :
-    (let pDisj := disj pathFrame propP (orthoNeg pathFrame propP)
-     let uncertainty := conj (diamond epistemicScale propP)
-                             (diamond epistemicScale (orthoNeg pathFrame propP))
-     let lhs := conj pDisj uncertainty
-     let rhs := disj pathFrame
-       (conj propP uncertainty)
-       (conj (orthoNeg pathFrame propP) uncertainty)
-     lhs .x3 ∧ ¬ rhs .x3) ∧
-    Mandelkern2019.distribFailure.lhsFelicitous = true ∧
-    Mandelkern2019.distribFailure.rhsFelicitous = false :=
-  ⟨epistemic_distrib_failure, rfl, rfl⟩
-
-/-- HM 2024 predicts Klinedinst & Rothschild (2012)'s disjunctive-syllogism
-    failure: from `p ∨ □¬p` and `¬□¬p`, the conclusion `p` does not follow.
-    Witness: `disjSyllogism_fails` (§11) exhibits x₃ as the joint witness
-    where both premises hold but the conclusion fails. -/
-theorem hm_predicts_disjSyll_failure :
-    (let mustNotP := box epistemicScale (orthoNeg pathFrame propP)
-     let pOrMustNotP := disj pathFrame propP mustNotP
-     let notMustNotP := orthoNeg pathFrame mustNotP
-     pOrMustNotP .x3 ∧ notMustNotP .x3 ∧ ¬ propP .x3) ∧
-    KlinedinstRothschild2012.disjSyllFailure.valid = false :=
-  ⟨disjSyllogism_fails, rfl⟩
-
--- ════════════════════════════════════════════════════
--- § 18. vs Veltman 1996 (Update Semantics)
--- ════════════════════════════════════════════════════
-
-/-! HM 2024's `wittgenstein_p` and `wittgenstein_neg_p` (§7) jointly say that
-    BOTH `¬p ∧ ◇p` and `p ∧ ◇¬p` are infelicitous on every state of the
-    Epistemic Scale — Wittgenstein's Law is **symmetric** in possibility
-    semantics.
-
-    Veltman 1996's update semantics predicts the opposite: order MATTERS.
-    `UpdateSemantics.Basic.might_order_matters`
-    proves that `p ∧ might ¬p` collapses to ∅ but `might ¬p ∧ p` does not,
-    on any state with `Nontrivial W`.
-
-    Both files acknowledge this divergence in prose; the theorem below
-    makes the structural contradiction Lean-checkable — a
-    cross-framework contradiction stated at theorem level.
-    Per linglib's mission: theoretical incompatibilities should be visible
-    at theorem level, not docstring level. -/
-
-/-- HM 2024 predicts Wittgenstein collapse SYMMETRICALLY: both orderings
-    are infelicitous at every Poss5 state. Bundles `wittgenstein_p` and
-    `wittgenstein_neg_p` from §7. -/
-theorem hm_wittgenstein_symmetric (x : Poss5) :
-    (¬ conj (orthoNeg pathFrame propP) (diamond epistemicScale propP) x) ∧
-    (¬ conj (orthoNeg pathFrame (orthoNeg pathFrame propP))
-            (diamond epistemicScale (orthoNeg pathFrame propP)) x) :=
-  ⟨wittgenstein_p x, wittgenstein_neg_p x⟩
-
-/-- **Cross-framework contradiction** (HM 2024 vs Veltman 1996): HM predicts
-    that both Wittgenstein orderings collapse to ∅ on every Poss5 state
-    (`hm_wittgenstein_symmetric`), while Veltman predicts that on any
-    `Nontrivial W` there is a state where `p ∧ might ¬p` collapses but
-    `might ¬p ∧ p` survives (`might_order_matters`). The two frameworks
-    disagree at the theorem level on whether Wittgenstein's Law is
-    symmetric — instantiated at `W := Bool`. -/
-theorem hm_veltman_disagree_on_wittgenstein_symmetry :
-    -- HM side: every Poss5 state collapses both orderings symmetrically.
-    (∀ x : Poss5,
-      (¬ conj (orthoNeg pathFrame propP) (diamond epistemicScale propP) x) ∧
-      (¬ conj (orthoNeg pathFrame (orthoNeg pathFrame propP))
-              (diamond epistemicScale (orthoNeg pathFrame propP)) x)) ∧
-    -- Veltman side: some Bool state distinguishes the two orderings.
-    (∃ p : Bool → Prop, ∃ _ : DecidablePred p,
-       ∃ s : UpdateSemantics.State Bool,
-       UpdateSemantics.Update.conj
-         (UpdateSemantics.Update.prop p)
-         (UpdateSemantics.Update.might
-           (UpdateSemantics.Update.prop (fun w => ¬ p w))) s = ∅ ∧
-       (UpdateSemantics.Update.conj
-         (UpdateSemantics.Update.might
-           (UpdateSemantics.Update.prop (fun w => ¬ p w)))
-         (UpdateSemantics.Update.prop p) s).Nonempty) :=
-  ⟨hm_wittgenstein_symmetric, UpdateSemantics.might_order_matters⟩
+/-- Across levels the criterion fails: `x2` settles `p`, `x3` settles `◇¬p`, the two are
+compatible, and nothing settles both. -/
+theorem not_stratified_across_levels :
+    x2 ∈ P ∧ x3 ∈ dnP ∧ frame.compat x2 x3 ∧ ∀ z : Poss, z ∉ P ∩ dnP := by
+  decide
 
 end HollidayMandelkern2024
