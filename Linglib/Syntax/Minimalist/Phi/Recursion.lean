@@ -493,7 +493,7 @@ For first and second person, [±additive] applied without [±atomic] or
 atom (the speaker, closed under join with itself) and any [+additive]
 first-person plural, there must lie a [−additive] first-person paucal.
 This nonconvex cut violates the general requirement that basic meanings
-be convex ([gaerdenfors-2004]).
+be convex ([gardenfors-2004]).
 
 Convexity here is mathlib's `Set.OrdConnected`: a region is convex iff it
 is a fixed point of `ordConnectedHull`
