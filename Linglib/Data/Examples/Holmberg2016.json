@@ -1,48 +1,2413 @@
 [
   {
-    "id": "holmberg2016_english_yes_to_neg",
-    "source": {"bibkey": "holmberg-2016", "paperLabel": "yes answering a negative question (English, polarity-based)"},
+    "id": "holmberg2016_en_neutral_yes",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§1.1"
+    },
     "language": "stan1293",
-    "primaryText": "Doesn't John drink? — Yes.",
+    "primaryText": "Is John coming? — Yes.",
     "discourseSegments": [
-      "Doesn't John drink?",
+      "Is John coming?",
       "Yes."
     ],
     "glossedTokens": [],
-    "translation": "Doesn't John drink? — Yes.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["question_polarity", "negative"],
-      ["particle", "yes"],
-      ["answer_polarity", "positive"],
-      ["system", "polarityBased"]
+      [
+        "section",
+        "1.1"
+      ],
+      [
+        "question",
+        "neutral"
+      ],
+      [
+        "answer",
+        "yes"
+      ],
+      [
+        "confirms",
+        "p"
+      ]
     ],
-    "comment": "Migrated from Phenomena/Questions/PolarAnswerStructure.lean english_yes_to_neg; the prior Lean file's chapter pointers are stripped here. In the polarity-based English system, 'Yes' answering the negative question means 'John drinks': the particle assigns positive polarity to the elided answer clause."
+    "comment": "The answer is the elided sentence Yes [John is coming].",
+    "lgrConformance": ""
   },
   {
-    "id": "holmberg2016_japanese_hai_to_neg",
-    "source": {"bibkey": "holmberg-2016", "paperLabel": "hai answering a negative question (Japanese, truth-based)"},
-    "language": "nucl1643",
-    "primaryText": "Kare-wa nomanai no? — Hai.",
+    "id": "holmberg2016_en_neutral_no",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§1.1"
+    },
+    "language": "stan1293",
+    "primaryText": "Is John coming? — No.",
     "discourseSegments": [
-      "Kare-wa nomanai no?",
-      "Hai."
+      "Is John coming?",
+      "No."
     ],
     "glossedTokens": [],
-    "translation": "Doesn't he drink? — Yes (= he doesn't drink).",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["question_polarity", "negative"],
-      ["particle", "hai"],
-      ["answer_polarity", "negative"],
-      ["system", "truthBased"]
+      [
+        "section",
+        "1.1"
+      ],
+      [
+        "question",
+        "neutral"
+      ],
+      [
+        "answer",
+        "no"
+      ],
+      [
+        "confirms",
+        "not p"
+      ]
     ],
-    "comment": "Migrated from Phenomena/Questions/PolarAnswerStructure.lean japanese_hai_to_neg; the prior Lean file's chapter pointers are stripped here. In the truth-based Japanese system, 'Hai' affirms the question's negative proposition: it means 'He doesn't drink' — the opposite answer polarity from English 'Yes' to the same negative question."
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_fi_verb_echo",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§1.2"
+    },
+    "language": "finn1318",
+    "primaryText": "Tul-i-vat-ko lapset kotiin? — Tul-i-vat.",
+    "discourseSegments": [
+      "Tul-i-vat-ko lapset kotiin?",
+      "Tul-i-vat."
+    ],
+    "glossedTokens": [],
+    "translation": "Did the children come home? — Yes.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.2"
+      ],
+      [
+        "question",
+        "neutral"
+      ],
+      [
+        "answer",
+        "verb echo"
+      ],
+      [
+        "confirms",
+        "p"
+      ]
+    ],
+    "comment": "The echoed verb is inflected for tense and agreement, so a sentence is present.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_sv_neg_nej",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§1.3"
+    },
+    "language": "swed1254",
+    "primaryText": "Dricker Johan inte kaffe? — Nej.",
+    "discourseSegments": [
+      "Dricker Johan inte kaffe?",
+      "Nej."
+    ],
+    "glossedTokens": [],
+    "translation": "Does Johan not drink coffee? — No (he doesn't drink coffee).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.3"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "negation",
+        "middle"
+      ],
+      [
+        "answer",
+        "nej"
+      ],
+      [
+        "confirms",
+        "not p"
+      ],
+      [
+        "system",
+        "polarityBased"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_yue_neg_hai",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§1.3"
+    },
+    "language": "cant1236",
+    "primaryText": "John m jam gaafe? — hai",
+    "discourseSegments": [
+      "John m jam gaafe?",
+      "hai"
+    ],
+    "glossedTokens": [],
+    "translation": "Does John not drink coffee? — yes (John does not drink coffee).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.3"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "negation",
+        "low"
+      ],
+      [
+        "answer",
+        "hai"
+      ],
+      [
+        "confirms",
+        "not p"
+      ],
+      [
+        "system",
+        "truthBased"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_neg_yes_bare",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§1.3"
+    },
+    "language": "stan1293",
+    "primaryText": "Does he not drink coffee? — Yes.",
+    "discourseSegments": [
+      "Does he not drink coffee?",
+      "Yes."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.3"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "answer",
+        "yes"
+      ],
+      [
+        "intended",
+        "p"
+      ]
+    ],
+    "comment": "Marked # for the intended reading that he does drink coffee: bare yes conveys that he does not, or is unclear.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_neg_yes_long",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§1.3"
+    },
+    "language": "stan1293",
+    "primaryText": "Does he not drink coffee? — Yes he does.",
+    "discourseSegments": [
+      "Does he not drink coffee?",
+      "Yes he does."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.3"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "answer",
+        "yes + VP-ellipsis"
+      ],
+      [
+        "confirms",
+        "p"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_sv_neutral_ja",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§1.3"
+    },
+    "language": "swed1254",
+    "primaryText": "Vill han ha kaffe? — Ja.",
+    "discourseSegments": [
+      "Vill han ha kaffe?",
+      "Ja."
+    ],
+    "glossedTokens": [],
+    "translation": "Does he want coffee? — Yes.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.3"
+      ],
+      [
+        "question",
+        "neutral"
+      ],
+      [
+        "answer",
+        "ja"
+      ],
+      [
+        "confirms",
+        "p"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_sv_neg_ja",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§1.3"
+    },
+    "language": "swed1254",
+    "primaryText": "Vill han inte ha kaffe? — Ja.",
+    "discourseSegments": [
+      "Vill han inte ha kaffe?",
+      "Ja."
+    ],
+    "glossedTokens": [],
+    "translation": "Does he not want coffee? — Yes.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.3"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "negation",
+        "middle"
+      ],
+      [
+        "answer",
+        "ja"
+      ],
+      [
+        "intended",
+        "p"
+      ]
+    ],
+    "comment": "Ill formed under either reading: the middle negation values the polarity head, clashing with ja.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_sv_neg_jo",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§1.3"
+    },
+    "language": "swed1254",
+    "primaryText": "Vill han inte ha kaffe? — Jo.",
+    "discourseSegments": [
+      "Vill han inte ha kaffe?",
+      "Jo."
+    ],
+    "glossedTokens": [],
+    "translation": "Does he not want coffee? — Yes.REV (he does want coffee).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.3"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "negation",
+        "middle"
+      ],
+      [
+        "answer",
+        "jo"
+      ],
+      [
+        "confirms",
+        "p"
+      ],
+      [
+        "particle",
+        "polarity reversing"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_yue_neg_hai_intended_p",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§1.3"
+    },
+    "language": "cant1236",
+    "primaryText": "keoi m jam gaafe? — hai",
+    "discourseSegments": [
+      "keoi m jam gaafe?",
+      "hai"
+    ],
+    "glossedTokens": [],
+    "translation": "Does he not want coffee? — yes.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.3"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "answer",
+        "hai"
+      ],
+      [
+        "intended",
+        "p"
+      ]
+    ],
+    "comment": "The affirmative particle confirms the negative alternative instead.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_yue_neg_mhai",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§1.3"
+    },
+    "language": "cant1236",
+    "primaryText": "keoi m jam gaafe? — m hai",
+    "discourseSegments": [
+      "keoi m jam gaafe?",
+      "m hai"
+    ],
+    "glossedTokens": [],
+    "translation": "Does he not want coffee? — not yes (he does want coffee).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.3"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "negation",
+        "low"
+      ],
+      [
+        "answer",
+        "m hai"
+      ],
+      [
+        "confirms",
+        "p"
+      ],
+      [
+        "system",
+        "truthBased"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_tell_me",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§2.1"
+    },
+    "language": "stan1293",
+    "primaryText": "Tell me which of the following alternative statements is true: You want tea or you do not want tea. — Yes.",
+    "discourseSegments": [
+      "Tell me which of the following alternative statements is true: You want tea or you do not want tea.",
+      "Yes."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "question",
+        "explicit disjunction"
+      ],
+      [
+        "answer",
+        "yes"
+      ]
+    ],
+    "comment": "Only a question containing the polarity variable can be answered yes or no.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_tea_or_not",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§2.1"
+    },
+    "language": "stan1293",
+    "primaryText": "Do you want tea or do you not want tea? — Yes.",
+    "discourseSegments": [
+      "Do you want tea or do you not want tea?",
+      "Yes."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "question",
+        "explicit disjunction"
+      ],
+      [
+        "answer",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_tea",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§2.1"
+    },
+    "language": "stan1293",
+    "primaryText": "Do you want tea? — Yes.",
+    "discourseSegments": [
+      "Do you want tea?",
+      "Yes."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "question",
+        "neutral"
+      ],
+      [
+        "answer",
+        "yes"
+      ],
+      [
+        "confirms",
+        "p"
+      ]
+    ],
+    "comment": "Yes assigns [+Pol] to the question variable: you [+Pol] want tea.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_maybe",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§3.1"
+    },
+    "language": "stan1293",
+    "primaryText": "Does John like this book? — Maybe.",
+    "discourseSegments": [
+      "Does John like this book?",
+      "Maybe."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "question",
+        "neutral"
+      ],
+      [
+        "answer",
+        "modified polarity"
+      ]
+    ],
+    "comment": "The adverb modifies a positive polarity head: [Pol maybe [+Pol]].",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_maybe_not",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§3.1"
+    },
+    "language": "stan1293",
+    "primaryText": "Does John like this book? — Maybe not.",
+    "discourseSegments": [
+      "Does John like this book?",
+      "Maybe not."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "question",
+        "neutral"
+      ],
+      [
+        "answer",
+        "modified polarity"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_fi_luin",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§3.1"
+    },
+    "language": "finn1318",
+    "primaryText": "Lui-t-ko sinä tämän kirjan? — Lui-n.",
+    "discourseSegments": [
+      "Lui-t-ko sinä tämän kirjan?",
+      "Lui-n."
+    ],
+    "glossedTokens": [],
+    "translation": "Did you read this book? — Yes.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "question",
+        "neutral"
+      ],
+      [
+        "answer",
+        "verb echo"
+      ],
+      [
+        "confirms",
+        "p"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_fi_en",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§3.1"
+    },
+    "language": "finn1318",
+    "primaryText": "Lui-t-ko sinä tämän kirjan? — E-n (lukenut).",
+    "discourseSegments": [
+      "Lui-t-ko sinä tämän kirjan?",
+      "E-n (lukenut)."
+    ],
+    "glossedTokens": [],
+    "translation": "Did you read this book? — No.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "question",
+        "neutral"
+      ],
+      [
+        "answer",
+        "inflected negation"
+      ],
+      [
+        "confirms",
+        "not p"
+      ]
+    ],
+    "comment": "The negation is inflected for agreement, so it is the sentential negation, not a particle.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_not_pass",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§3.2"
+    },
+    "language": "stan1293",
+    "primaryText": "Did John not pass the exam? — No.",
+    "discourseSegments": [
+      "Did John not pass the exam?",
+      "No."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "answer",
+        "no"
+      ]
+    ],
+    "comment": "Ellipsis requires lexical identity: the answer cannot take the PolP of Did John fail the exam? as antecedent although the two mutually entail each other.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_fi_hajotti",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§3.2"
+    },
+    "language": "finn1318",
+    "primaryText": "Hajoti-ko Marja ruukun? — Hajotti.",
+    "discourseSegments": [
+      "Hajoti-ko Marja ruukun?",
+      "Hajotti."
+    ],
+    "glossedTokens": [],
+    "translation": "Did Marja break the pot? — Yes.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "question",
+        "neutral"
+      ],
+      [
+        "answer",
+        "verb echo"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_fi_rikkoi",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§3.2"
+    },
+    "language": "finn1318",
+    "primaryText": "Hajoti-ko Marja ruukun? — Rikkoi.",
+    "discourseSegments": [
+      "Hajoti-ko Marja ruukun?",
+      "Rikkoi."
+    ],
+    "glossedTokens": [],
+    "translation": "Did Marja break the pot? — Yes.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "question",
+        "neutral"
+      ],
+      [
+        "answer",
+        "verb echo with a synonym"
+      ]
+    ],
+    "comment": "A synonymous verb cannot echo the question: the elided PolP must share the question's numeration.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_coffee_not_yes",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§3.3"
+    },
+    "language": "stan1293",
+    "primaryText": "Do you not drink coffee? — Yes.",
+    "discourseSegments": [
+      "Do you not drink coffee?",
+      "Yes."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "answer",
+        "yes"
+      ],
+      [
+        "intended",
+        "p"
+      ]
+    ],
+    "comment": "Marked (??) for the reading that I do drink coffee.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_coffee_not_yes_i_do",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§3.3"
+    },
+    "language": "stan1293",
+    "primaryText": "Do you not drink coffee? — Yes, I do.",
+    "discourseSegments": [
+      "Do you not drink coffee?",
+      "Yes, I do."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "answer",
+        "yes + VP-ellipsis"
+      ],
+      [
+        "confirms",
+        "p"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_fi_juo",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§3.3"
+    },
+    "language": "finn1318",
+    "primaryText": "Ei-kö Jussi juo kahvia? — Juo.",
+    "discourseSegments": [
+      "Ei-kö Jussi juo kahvia?",
+      "Juo."
+    ],
+    "glossedTokens": [],
+    "translation": "Does Jussi not drink coffee? — Yes he does.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "answer",
+        "bare verb echo"
+      ],
+      [
+        "intended",
+        "p"
+      ]
+    ],
+    "comment": "A bare verb does not suffice to confirm the positive alternative.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_fi_juo_se",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§3.3"
+    },
+    "language": "finn1318",
+    "primaryText": "Ei-kö Jussi juo kahvia? — Juo se.",
+    "discourseSegments": [
+      "Ei-kö Jussi juo kahvia?",
+      "Juo se."
+    ],
+    "glossedTokens": [],
+    "translation": "Does Jussi not drink coffee? — Yes he does.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "answer",
+        "verb echo + subject"
+      ],
+      [
+        "confirms",
+        "p"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_fr_oui",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§3.3"
+    },
+    "language": "stan1290",
+    "primaryText": "Tu es fatigué? — Oui.",
+    "discourseSegments": [
+      "Tu es fatigué?",
+      "Oui."
+    ],
+    "glossedTokens": [],
+    "translation": "Are you tired? — Yes.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "question",
+        "neutral"
+      ],
+      [
+        "answer",
+        "oui"
+      ],
+      [
+        "confirms",
+        "p"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_fr_neg_oui",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§3.3"
+    },
+    "language": "stan1290",
+    "primaryText": "Tu n'es pas fatigué? — Oui.",
+    "discourseSegments": [
+      "Tu n'es pas fatigué?",
+      "Oui."
+    ],
+    "glossedTokens": [],
+    "translation": "Are you not tired? — Yes.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "negation",
+        "middle"
+      ],
+      [
+        "answer",
+        "oui"
+      ],
+      [
+        "intended",
+        "p"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_fr_neg_si",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§3.3"
+    },
+    "language": "stan1290",
+    "primaryText": "Tu n'es pas fatigué? — Si.",
+    "discourseSegments": [
+      "Tu n'es pas fatigué?",
+      "Si."
+    ],
+    "glossedTokens": [],
+    "translation": "Are you not tired? — Yes.REV.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "negation",
+        "middle"
+      ],
+      [
+        "answer",
+        "si"
+      ],
+      [
+        "confirms",
+        "p"
+      ],
+      [
+        "particle",
+        "polarity reversing"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_ja_neutral",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.1"
+    },
+    "language": "nucl1643",
+    "primaryText": "Kimi tukarete? — Un. / Uun.",
+    "discourseSegments": [
+      "Kimi tukarete?",
+      "Un. / Uun."
+    ],
+    "glossedTokens": [],
+    "translation": "Are you tired? — Yes. / No.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "question",
+        "neutral"
+      ],
+      [
+        "answer",
+        "un / uun"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_ja_neg_un",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.1"
+    },
+    "language": "nucl1643",
+    "primaryText": "Kimi tukarete nai? — Un (tukarete nai).",
+    "discourseSegments": [
+      "Kimi tukarete nai?",
+      "Un (tukarete nai)."
+    ],
+    "glossedTokens": [],
+    "translation": "Are you not tired? — Yes (I'm not tired).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "negation",
+        "low"
+      ],
+      [
+        "answer",
+        "un"
+      ],
+      [
+        "confirms",
+        "not p"
+      ],
+      [
+        "system",
+        "truthBased"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_ja_neg_uun",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.1"
+    },
+    "language": "nucl1643",
+    "primaryText": "Kare-wa koohii-o noma nai no? — Uun, nomu yo.",
+    "discourseSegments": [
+      "Kare-wa koohii-o noma nai no?",
+      "Uun, nomu yo."
+    ],
+    "glossedTokens": [],
+    "translation": "Does he not drink coffee? — No, he drinks (coffee).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "negation",
+        "low"
+      ],
+      [
+        "answer",
+        "uun"
+      ],
+      [
+        "confirms",
+        "p"
+      ],
+      [
+        "system",
+        "truthBased"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_sv_neg_tired_nej",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.1"
+    },
+    "language": "swed1254",
+    "primaryText": "Är du inte trött? — Nej (jag är inte trött).",
+    "discourseSegments": [
+      "Är du inte trött?",
+      "Nej (jag är inte trött)."
+    ],
+    "glossedTokens": [],
+    "translation": "Are you not tired? — No (I'm not tired).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "negation",
+        "middle"
+      ],
+      [
+        "answer",
+        "nej"
+      ],
+      [
+        "confirms",
+        "not p"
+      ],
+      [
+        "system",
+        "polarityBased"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_neg_coffee_yes_he_does",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.1"
+    },
+    "language": "stan1293",
+    "primaryText": "Does he not drink coffee? — Yes he does.",
+    "discourseSegments": [
+      "Does he not drink coffee?",
+      "Yes he does."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "answer",
+        "yes + VP-ellipsis"
+      ],
+      [
+        "confirms",
+        "p"
+      ],
+      [
+        "system",
+        "polarityBased"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_not_yes_low",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.3"
+    },
+    "language": "stan1293",
+    "primaryText": "Does he not drink coffee? — Yes.",
+    "discourseSegments": [
+      "Does he not drink coffee?",
+      "Yes."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "negation",
+        "low"
+      ],
+      [
+        "answer",
+        "yes"
+      ],
+      [
+        "confirms",
+        "not p"
+      ],
+      [
+        "variety",
+        "low reading of not"
+      ]
+    ],
+    "comment": "Said when observing John decline coffee: for many speakers the bare yes means that he does not drink coffee, the truth-based pattern.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_not_no",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.3"
+    },
+    "language": "stan1293",
+    "primaryText": "Does he not drink coffee? — No.",
+    "discourseSegments": [
+      "Does he not drink coffee?",
+      "No."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "negation",
+        "middle"
+      ],
+      [
+        "answer",
+        "no"
+      ],
+      [
+        "confirms",
+        "not p"
+      ]
+    ],
+    "comment": "Kramer and Rawlins's negative neutralization: yes and no mean the same.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_isnt_either",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.3"
+    },
+    "language": "stan1293",
+    "primaryText": "Isn't John coming, either? — ",
+    "discourseSegments": [
+      "Isn't John coming, either?",
+      ""
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "negation",
+        "-n't with NPI"
+      ],
+      [
+        "variety",
+        "tolerant"
+      ]
+    ],
+    "comment": "Marked %: grammatical in the tolerant variety, where -n't can be interpreted in the middle position, ungrammatical in the restrictive one.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_sometimes_yes",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.3"
+    },
+    "language": "stan1293",
+    "primaryText": "Does John sometimes not show up on time for work? — Yes.",
+    "discourseSegments": [
+      "Does John sometimes not show up on time for work?",
+      "Yes."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "negation",
+        "middle behind an adverb"
+      ],
+      [
+        "answer",
+        "yes"
+      ],
+      [
+        "confirms",
+        "not p"
+      ]
+    ],
+    "comment": "An adverb scoping over not forces the truth-based answer for all speakers.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_sometimes_no",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.3"
+    },
+    "language": "stan1293",
+    "primaryText": "Does John sometimes not show up on time for work? — No.",
+    "discourseSegments": [
+      "Does John sometimes not show up on time for work?",
+      "No."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "negation",
+        "middle behind an adverb"
+      ],
+      [
+        "answer",
+        "no"
+      ],
+      [
+        "confirms",
+        "p"
+      ]
+    ],
+    "comment": "Double negation: John is always on time.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_purposely",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.3"
+    },
+    "language": "stan1293",
+    "primaryText": "Did you purposely not dress up for that occasion? — Yes.",
+    "discourseSegments": [
+      "Did you purposely not dress up for that occasion?",
+      "Yes."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "negation",
+        "middle behind an adverb"
+      ],
+      [
+        "answer",
+        "yes"
+      ],
+      [
+        "confirms",
+        "not p"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_two_negations",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.3"
+    },
+    "language": "stan1293",
+    "primaryText": "You can't not like her. — ",
+    "discourseSegments": [
+      "You can't not like her.",
+      ""
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "negation",
+        "middle and low"
+      ]
+    ],
+    "comment": "English has a middle and a low negation position.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_two_middle",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.3"
+    },
+    "language": "stan1293",
+    "primaryText": "Cats don't not typically like rotten food. — ",
+    "discourseSegments": [
+      "Cats don't not typically like rotten food.",
+      ""
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "negation",
+        "two middle negations"
+      ]
+    ],
+    "comment": "There cannot be two negations taking sentential scope.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_is_not_coming_yes",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.3"
+    },
+    "language": "stan1293",
+    "primaryText": "Is John not coming? — Yes.",
+    "discourseSegments": [
+      "Is John not coming?",
+      "Yes."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "answer",
+        "yes"
+      ],
+      [
+        "confirms",
+        "not p"
+      ]
+    ],
+    "comment": "Marked %: well formed with the low reading of not, ill formed with the middle reading.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_no_he_is",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.3"
+    },
+    "language": "stan1293",
+    "primaryText": "Is he not coming? — No, he is.",
+    "discourseSegments": [
+      "Is he not coming?",
+      "No, he is."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "answer",
+        "no + clause"
+      ],
+      [
+        "confirms",
+        "p"
+      ]
+    ],
+    "comment": "Two collocated sentences: no with PolP ellipsis reads as double negation, he is with VP ellipsis.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_delicious_no_it_is",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.3"
+    },
+    "language": "stan1293",
+    "primaryText": "Isn't this cake delicious? — No, it is.",
+    "discourseSegments": [
+      "Isn't this cake delicious?",
+      "No, it is."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "question",
+        "positive bias"
+      ],
+      [
+        "negation",
+        "high"
+      ],
+      [
+        "answer",
+        "no + clause"
+      ]
+    ],
+    "comment": "The double-negation answer is possible only when the question expects a negative answer.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_sv_kommit_ja",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.5"
+    },
+    "language": "swed1254",
+    "primaryText": "Har Johan inte kommit? — Ja.",
+    "discourseSegments": [
+      "Har Johan inte kommit?",
+      "Ja."
+    ],
+    "glossedTokens": [],
+    "translation": "Has Johan not arrived? — Yes.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.5"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "negation",
+        "middle"
+      ],
+      [
+        "answer",
+        "ja"
+      ]
+    ],
+    "comment": "No ambiguity or speaker variation: ja can confirm neither alternative, since Swedish negation is exclusively middle.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_sv_kommit_nej",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.5"
+    },
+    "language": "swed1254",
+    "primaryText": "Har Johan inte kommit? — Nej.",
+    "discourseSegments": [
+      "Har Johan inte kommit?",
+      "Nej."
+    ],
+    "glossedTokens": [],
+    "translation": "Has Johan not arrived? — No (he has not arrived).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.5"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "negation",
+        "middle"
+      ],
+      [
+        "answer",
+        "nej"
+      ],
+      [
+        "confirms",
+        "not p"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_sv_inte_inte",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.5"
+    },
+    "language": "swed1254",
+    "primaryText": "Du kan inte inte gå i kyrkan. — ",
+    "discourseSegments": [
+      "Du kan inte inte gå i kyrkan.",
+      ""
+    ],
+    "glossedTokens": [],
+    "translation": "You cannot not go to church.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.5"
+      ],
+      [
+        "negation",
+        "double"
+      ]
+    ],
+    "comment": "Swedish has no VP-scope negation, so double negation is impossible.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_sv_nangang_ja",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.5"
+    },
+    "language": "swed1254",
+    "primaryText": "Har Johan nångång inte kommit i tid? — Ja.",
+    "discourseSegments": [
+      "Har Johan nångång inte kommit i tid?",
+      "Ja."
+    ],
+    "glossedTokens": [],
+    "translation": "Has Johan ever not come on time? — Yes (he has sometimes not come on time).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.5"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "negation",
+        "middle behind an adverb"
+      ],
+      [
+        "answer",
+        "ja"
+      ],
+      [
+        "confirms",
+        "not p"
+      ]
+    ],
+    "comment": "The scope-taking adverb prevents the negation from valuing the polarity head, a Relativized Minimality effect.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_sv_nangang_nej",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.5"
+    },
+    "language": "swed1254",
+    "primaryText": "Har Johan nångång inte kommit i tid? — Nej.",
+    "discourseSegments": [
+      "Har Johan nångång inte kommit i tid?",
+      "Nej."
+    ],
+    "glossedTokens": [],
+    "translation": "Has Johan ever not come on time? — No (he has always been on time).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.5"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "negation",
+        "middle behind an adverb"
+      ],
+      [
+        "answer",
+        "nej"
+      ],
+      [
+        "confirms",
+        "p"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_sv_kommit_jo",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.5"
+    },
+    "language": "swed1254",
+    "primaryText": "Har Johan inte kommit? — Jo.",
+    "discourseSegments": [
+      "Har Johan inte kommit?",
+      "Jo."
+    ],
+    "glossedTokens": [],
+    "translation": "Has Johan not arrived? — Yes.REV (he has).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.5"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "negation",
+        "middle"
+      ],
+      [
+        "answer",
+        "jo"
+      ],
+      [
+        "confirms",
+        "p"
+      ],
+      [
+        "particle",
+        "polarity reversing"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_nl_jawel",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.5"
+    },
+    "language": "dutc1256",
+    "primaryText": "Is je broer niet naar Parijs gegaan? — Jawel.",
+    "discourseSegments": [
+      "Is je broer niet naar Parijs gegaan?",
+      "Jawel."
+    ],
+    "glossedTokens": [],
+    "translation": "Did your brother not go to Paris? — Yes he did.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.5"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "answer",
+        "jawel"
+      ],
+      [
+        "confirms",
+        "p"
+      ],
+      [
+        "particle",
+        "affirmative plus particle"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_fi_tulee",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.4"
+    },
+    "language": "finn1318",
+    "primaryText": "Ei-kö Jussi tule-kaan mukaan? — Ei, kyllä se tulee.",
+    "discourseSegments": [
+      "Ei-kö Jussi tule-kaan mukaan?",
+      "Ei, kyllä se tulee."
+    ],
+    "glossedTokens": [],
+    "translation": "Isn't Jussi coming, after all? — No, he is.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.4"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "answer",
+        "no + clause"
+      ],
+      [
+        "confirms",
+        "p"
+      ]
+    ],
+    "comment": "The double-negation answer in a language without low negation: the interpretable no.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_sv_road_ambiguous",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.8"
+    },
+    "language": "swed1254",
+    "primaryText": "Är det här inte vägen till Lund? — ",
+    "discourseSegments": [
+      "Är det här inte vägen till Lund?",
+      ""
+    ],
+    "glossedTokens": [],
+    "translation": "Is this not the road to Lund? / Isn't this the road to Lund?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.8"
+      ],
+      [
+        "question",
+        "negative or positive bias"
+      ]
+    ],
+    "comment": "Ambiguous between the two biases out of context.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_sv_road_high",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.8"
+    },
+    "language": "swed1254",
+    "primaryText": "Är inte det här vägen till Lund? — ",
+    "discourseSegments": [
+      "Är inte det här vägen till Lund?",
+      ""
+    ],
+    "glossedTokens": [],
+    "translation": "Isn't this the road to Lund?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.8"
+      ],
+      [
+        "question",
+        "positive bias"
+      ],
+      [
+        "negation",
+        "high"
+      ]
+    ],
+    "comment": "With the negation preceding the subject, only the positive-bias reading survives.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_road_not",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.8"
+    },
+    "language": "stan1293",
+    "primaryText": "Is this not the road to Lund? — ",
+    "discourseSegments": [
+      "Is this not the road to Lund?",
+      ""
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.8"
+      ],
+      [
+        "question",
+        "negative bias"
+      ],
+      [
+        "negation",
+        "middle"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_road_isnt",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.8"
+    },
+    "language": "stan1293",
+    "primaryText": "Isn't this the road to Lund? — ",
+    "discourseSegments": [
+      "Isn't this the road to Lund?",
+      ""
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.8"
+      ],
+      [
+        "question",
+        "positive bias"
+      ],
+      [
+        "negation",
+        "high"
+      ]
+    ],
+    "comment": "Only the positive-bias reading in the restrictive variety; ambiguous in the tolerant one.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_road_so_it_is",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.8"
+    },
+    "language": "stan1293",
+    "primaryText": "Is this the road to Lund? — So it is.",
+    "discourseSegments": [
+      "Is this the road to Lund?",
+      "So it is."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.8"
+      ],
+      [
+        "question",
+        "neutral"
+      ],
+      [
+        "answer",
+        "agreement"
+      ]
+    ],
+    "comment": "Agreement indicators need a polarity-valued clause as antecedent, which a neutral question lacks.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_tag_so_it_is",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.8"
+    },
+    "language": "stan1293",
+    "primaryText": "This is the road to Lund, isn't it? — So it is.",
+    "discourseSegments": [
+      "This is the road to Lund, isn't it?",
+      "So it is."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.8"
+      ],
+      [
+        "question",
+        "tag"
+      ],
+      [
+        "answer",
+        "agreement"
+      ]
+    ],
+    "comment": "The tag question contains a valued PolP, so the agreement indicator is natural.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_tag_at_all",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.8"
+    },
+    "language": "stan1293",
+    "primaryText": "This is reasonable at all, isn't it? — ",
+    "discourseSegments": [
+      "This is reasonable at all, isn't it?",
+      ""
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.8"
+      ],
+      [
+        "question",
+        "tag"
+      ],
+      [
+        "NPI",
+        "at all"
+      ]
+    ],
+    "comment": "The content clause has positive polarity and excludes the NPI.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "holmberg2016_en_statement_no",
+    "source": {
+      "bibkey": "holmberg-2016",
+      "paperLabel": "§4.8"
+    },
+    "language": "stan1293",
+    "primaryText": "This is the road to Lund. — No.",
+    "discourseSegments": [
+      "This is the road to Lund.",
+      "No."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.8"
+      ],
+      [
+        "question",
+        "statement"
+      ],
+      [
+        "answer",
+        "no"
+      ]
+    ],
+    "comment": "Bare no cannot respond to a positively valued statement, which provides no polarity variable.",
+    "lgrConformance": ""
   }
 ]
