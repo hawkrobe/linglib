@@ -1,410 +1,246 @@
 import Linglib.Semantics.Root.Defs
-import Linglib.Semantics.Root.PropertyConcept
-import Linglib.Studies.KoontzGarboden2009
-import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 import Linglib.Semantics.Possession.Relationalizer
+import Linglib.Semantics.ArgumentStructure.VerbDenotation
+import Linglib.Fragments.Washo.PropertyConcepts
+import Linglib.Data.Examples.HaninkKoontzGarboden2025
 
 /-!
-# Variation in the lexical semantics of property concept roots
-[hanink-koontz-garboden-2025]
+# Hanink and Koontz-Garboden (2025): Variation in the Lexical Semantics of Property Concept Roots
 
-Hanink, E.A. & Koontz-Garboden, A. (2025). Variation in the lexical
-semantics of property concept roots: Evidence from Wá·šiw. *Natural
-Language & Linguistic Theory* 43, 2727–2769.
+This file formalizes [hanink-koontz-garboden-2025]'s argument, from Washo, that property concept
+roots vary in meaning within a language, against [menon-pancheva-2014]'s universal
+quality-denoting root. Washo property concepts are verbs of three shapes (Table 1): a bare root
+inflected like any intransitive, a bound root with the suffix *-iʔ*, and a reduplicated bound
+root flanked by *ʔil-* and *-iʔ*, `Washo.PropertyConcepts.Shape`. The paper reads the morphology
+at face value: *-iʔ* is the possessive light verb of ordinary possession (31), the existential
+closure of Barker's relationalizer at the possessum type, `vHave`, which takes a predicate of
+states (34); so a root that needs it denotes a quality, a predicate of states (33), while a bare
+root denotes a relation between individuals and states (27). The reduplicated roots denote
+relations too, since they alone serve as bare finals of resultative bipartite verbs (38), whose
+change-of-state head takes a relation (43a); being bound, they reach *-iʔ* through *ʔil-*, which
+returns the range of a relation (57), `nabla`, a Duke-of-York derivation that gives back the
+root's own predication when possessing a state is holding it, `vHave_nabla_iff`. One assignment
+of types to shapes, `RootType.ofShape`, then derives the morphology of each shape as its shortest
+well-typed verbalization, `derivation_minimal`, and the bipartite gap for the suffixed roots
+(49), `wellTyped_become_iff`. The change-of-state head is [beavers-koontz-garboden-2020]'s
+inchoative operator, and the resultative entails the result state of its theme (46). The
+seventy stems of the appendix are the rows of `Washo.PropertyConcepts.all`, on which
+[dixon-1982]'s categories predict the shape only for color; the examples are the rows of
+`Data.Examples.HaninkKoontzGarboden2025`.
 
-## Core contribution
+## Implementation notes
 
-Property concept (PC) roots in Wá·šiw come in two semantic types:
+Types are the substrate's `Ty` with `.s` for the paper's state sort, and the composability
+claims are stated at the type level, since Lean's own typing enforces them in the semantic
+definitions. Possession relates a possessor to a possessum of any type, so ordinary possession
+(67) and the possession of a state (35) are one operator. The model of causation and change is
+the substrate's `Verb.CosModel`, whose effector stands for the paper's AGENT.
 
-- **Individual/state relations** (Class 1, Class 3): `λx_e λs_v[P(x)(s)]`
-  These relate an individual to a state (e.g., √IHUK' 'dry': λx λs[dry(x)(s)]).
-  Type: `⟨e,⟨s,t⟩⟩` (`Semantics.Composition.Ty`: `.e ⇒ .s ⇒ .t`).
+## References
 
-- **Quality predicates** (Class 2): `λs_v[P(s)]`
-  These are predicates of states with no individual argument
-  (e.g., √I:YEL 'big': λs[big(s)]). Type: `⟨s,t⟩` (`.s ⇒ .t`).
-
-## Three morphological classes
-
-| Class | ATTR ʔil- | Reduplication | v_HAVE -iʔ | Example    |
-|-------|-----------|---------------|-------------|------------|
-| 1     | *         | *             | *           | yasaŋ 'hot'|
-| 2     | *         | *             | ✓           | i:yel 'big'|
-| 3     | ✓         | ✓             | ✓           | kaykay 'tall'|
-
-## Key mechanisms
-
-1. **-iʔ as v_have** (possessive light verb / categorizer):
-   `⟦-iʔ⟧ = λP_⟨e,t⟩ λx_e ∃y_e[P(y) & π(x, y)]`
-   Verbalizes quality-denoting roots (Class 2) by introducing possessive
-   semantics. Also functions as v_have in ordinary possession.
-
-2. **ʔil- as ∇** (type-shifter):
-   `⟦ʔil-⟧ = λP_⟨e,⟨v,t⟩⟩ λs_v[∇(λx λs'[P(x)(s')])(s)]`
-   Converts individual/state relations (Class 3) to quality-type predicates,
-   which then feed into -iʔ.
-
-3. **Type mismatch prediction**: v_become requires `⟨e,⟨s,t⟩⟩` as input.
-   Class 2 roots are `⟨s,t⟩` (no individual argument), so they CANNOT
-   appear as finals in resultative bipartite verb constructions.
-   Class 1 and 3 roots CAN (their type takes an individual first).
-
-## Connections
-
-- Both -iʔ and ʔil- ADD semantic content (possession, ∇) — monotonic
-  operations consistent with the MH ([koontz-garboden-2009]).
-- π is Barker's relationalizer from possessive NP semantics, reused
-  inside the verbal categorizer's denotation.
-- Against [menon-pancheva-2014]'s universalist claim: not all PC
-  roots have the same meaning.
-- All Wá·šiw PC roots are `Root.Kinds.propertyConcept` (+S −M −R −C)
-  per [beavers-koontz-garboden-2020] — the variation is in *semantic
-  type*, not in structural entailments.
+* [hanink-koontz-garboden-2025]
+* [menon-pancheva-2014]
+* [francez-koontz-garboden-2017]
+* [beavers-koontz-garboden-2020]
+* [dixon-1982]
+* [jacobsen-1980]
 -/
 
 namespace HaninkKoontzGarboden2025
 
-open Verb Semantics Semantics.Root
-open KoontzGarboden2009.Monotonicity
-open DistributedMorphology (Categorizer)
-open Possession (π)
+open Semantics Semantics.Composition Possession Washo.PropertyConcepts
 
--- ════════════════════════════════════════════════════
--- § 1. Morphological Classes and Semantic Types
--- ════════════════════════════════════════════════════
+/-! ### The two root meanings, section 4 -/
 
-/-- Morphological class of PC verbs in Wá·šiw (Table 2). -/
-inductive MorphClass where
-  | class1  -- bare root predication (yasaŋ 'hot', ihuk' 'dry')
-  | class2  -- root + -iʔ (i:yel 'big', kakt 'quiet')
-  | class3  -- ʔil- + reduplication + root + -iʔ (kaykay 'tall', ši:šip 'straight')
+/-- The meanings a property concept root can have: a relation between individuals and states
+(27), or a predicate of states alone, [francez-koontz-garboden-2017]'s quality (33). -/
+inductive RootType where
+  | relation
+  | quality
   deriving DecidableEq, Repr
 
-/-- The semantic type of roots in each morphological class.
+/-- The semantic type of each meaning. -/
+def RootType.ty : RootType → Ty
+  | .relation => .e ⇒ .s ⇒ .t
+  | .quality => .s ⇒ .t
 
-    Derived from the paper's analysis (§§4–5):
-    - Class 1/3: individual/state relations ⟨e,⟨s,t⟩⟩
-    - Class 2: quality predicates ⟨v, t⟩ -/
-def MorphClass.denotationType : MorphClass → Semantics.Composition.Ty
-  | .class1 => .e ⇒ .s ⇒ .t
-  | .class2 => .s ⇒ .t
-  | .class3 => .e ⇒ .s ⇒ .t
+/-- The analysis (sections 4 and 5): bare and prefixed roots denote relations, suffixed roots
+qualities. -/
+def RootType.ofShape : Shape → RootType
+  | .bare => .relation
+  | .suffixed => .quality
+  | .prefixed => .relation
 
--- ════════════════════════════════════════════════════
--- § 2. Bipartite Verb Composability (derived from the semantic type)
--- ════════════════════════════════════════════════════
+/-- The two meanings are distinguished within Washo: the existence proof against a universal
+root meaning (section 7). -/
+theorem exists_rootType_ne :
+    ∃ e₁ ∈ all, ∃ e₂ ∈ all, RootType.ofShape e₁.shape ≠ RootType.ofShape e₂.shape :=
+  ⟨ihuk, by decide, iyel, by decide, by decide⟩
 
-/-- Whether a semantic type takes an individual argument first — computed
-    from the type's structure (an `.e ⇒ _` arrow head), not stipulated
-    per class. -/
-def tyHasIndivArg : Semantics.Composition.Ty → Bool
-  | .fn .e _ => true
-  | _ => false
+/-! ### The verbalizing heads and their types -/
 
-/-- v_become requires an individual/state relation ⟨e,⟨s,t⟩⟩.
-    A root can serve as a bipartite verb "final" (result component) iff
-    its semantic type takes an individual argument — derived from the
-    type structure. -/
-def MorphClass.canBeResultFinal (mc : MorphClass) : Bool :=
-  tyHasIndivArg mc.denotationType
+/-- The heads that build a verb from a root: zero categorization, which keeps a relation
+(section 4.1); the possessive light verb *-iʔ*, which takes a predicate of states (34); the
+prefix *ʔil-*, which takes a relation to a predicate of states (57); and the change-of-state head
+of a bipartite verb, which takes a relation (43a). -/
+inductive Head where
+  | zero
+  | possess
+  | attr
+  | become
+  deriving DecidableEq, Repr
 
-/-- Class 1 roots can appear as bipartite verb finals (e.g., √IHUK' 'dry'
-    in resultative 'dry by wiping'). -/
-theorem class1_can_be_final :
-    MorphClass.class1.canBeResultFinal = true := rfl
+/-- The type a head takes. -/
+def Head.input : Head → Ty
+  | .zero => .e ⇒ .s ⇒ .t
+  | .possess => .s ⇒ .t
+  | .attr => .e ⇒ .s ⇒ .t
+  | .become => .e ⇒ .s ⇒ .t
 
-/-- Class 3 roots can appear as bipartite verb finals (e.g., √ŠI:ŠIP
-    'straight' in resultative 'straighten by pulling'). -/
-theorem class3_can_be_final :
-    MorphClass.class3.canBeResultFinal = true := rfl
+/-- The type a head returns: a predicate of individuals and states for the verbalizers, a
+predicate of states for *ʔil-*, and a relation to events of change for the bipartite head. -/
+def Head.output : Head → Ty
+  | .zero => .e ⇒ .s ⇒ .t
+  | .possess => .e ⇒ .s ⇒ .t
+  | .attr => .s ⇒ .t
+  | .become => .e ⇒ .v ⇒ .t
 
-/-- Class 2 roots CANNOT appear as bipartite verb finals — type mismatch
-    with v_become because ⟨s,t⟩ has no individual argument
-    (their analysis of the *ʔil-* prefix, §5.2). -/
-theorem class2_cannot_be_final :
-    MorphClass.class2.canBeResultFinal = false := rfl
+/-- A sequence of heads composes with a type when each takes what the last returns. -/
+def WellTyped : Ty → List Head → Prop
+  | _, [] => True
+  | τ, h :: hs => h.input = τ ∧ WellTyped h.output hs
 
-/-- The bipartite verb gap follows from semantic type: exactly the
-    quality-type roots (those lacking an individual argument) are excluded. -/
-theorem bipartite_gap_iff_no_indiv_arg (mc : MorphClass) :
-    mc.canBeResultFinal = false ↔ mc = .class2 := by
-  cases mc <;> decide
+instance decWellTyped : (τ : Ty) → (hs : List Head) → Decidable (WellTyped τ hs)
+  | _, [] => isTrue trivial
+  | τ, h :: hs =>
+    haveI := decWellTyped h.output hs
+    inferInstanceAs (Decidable (h.input = τ ∧ WellTyped h.output hs))
 
--- ════════════════════════════════════════════════════
--- § 3. Possessive Verbalizer -iʔ (v_have)
--- ════════════════════════════════════════════════════
+/-- The type a sequence of heads returns. -/
+def output (τ : Ty) : List Head → Ty
+  | [] => τ
+  | h :: hs => output h.output hs
 
-variable {Entity State : Type}
+/-- A verbalization of a root: at least one head, well-typed, returning a stative predicate,
+with zero categorization open only to a free root (section 5.2). -/
+def Verbalizes (sh : Shape) (hs : List Head) : Prop :=
+  hs ≠ [] ∧ WellTyped (RootType.ofShape sh).ty hs ∧
+    output (RootType.ofShape sh).ty hs = (.e ⇒ .s ⇒ .t) ∧ (Head.zero ∈ hs → sh = .bare)
 
-/-- Denotation of -iʔ as v_have ([hanink-koontz-garboden-2025] (34)):
-    `⟦-iʔ⟧ = λP λx ∃y[P(y) & π(x, y)]`
+instance (sh : Shape) (hs : List Head) : Decidable (Verbalizes sh hs) := by
+  unfold Verbalizes; infer_instance
 
-    Takes a one-place predicate P (the quality/state) and a possession
-    relation R, returning a predicate of individuals who possess
-    something satisfying P. Quantification over the possessum y is
-    modeled via `List.any` over a finite entity domain. -/
-def vHave (entities : List Entity)
-    (P : Entity → State → Prop) (R : Entity → Entity → State → Prop)
-    (x : Entity) (s : State) : Prop :=
-  ∃ y ∈ entities, P y s ∧ R x y s
+/-- The morphology of each shape (Table 1): the bare root, the root with *-iʔ*, and the root
+with *ʔil-* and then *-iʔ*. -/
+def derivation : Shape → List Head
+  | .bare => [.zero]
+  | .suffixed => [.possess]
+  | .prefixed => [.attr, .possess]
 
-/-- v_have is Barker's π composed with existential closure:
-    `vHave entities P R x s ↔ ∃y ∈ entities, (π P R) x y s` -/
-theorem vHave_is_ex_pi (entities : List Entity)
-    (P : Entity → State → Prop) (R : Entity → Entity → State → Prop)
-    (x : Entity) (s : State) :
-    vHave entities P R x s ↔ ∃ y ∈ entities, (π P R) x y s := by
-  simp only [vHave, π]
+theorem derivation_verbalizes : ∀ sh, Verbalizes sh (derivation sh) := by decide
 
--- ════════════════════════════════════════════════════
--- § 4. Type-Shifter ∇ (ʔil-)
--- ════════════════════════════════════════════════════
+/-- (36), (56): *-iʔ* composes directly with a root only if the root is a suffixed one, whose
+meaning is a quality. -/
+theorem wellTyped_possess_iff (sh : Shape) :
+    WellTyped (RootType.ofShape sh).ty [.possess] ↔ sh = .suffixed := by
+  cases sh <;> decide
 
-/-- The ∇ operator (ʔil-): type-shifts an individual/state relation to
-    a quality predicate ([hanink-koontz-garboden-2025] (57)).
+/-- (49): the change-of-state head of a bipartite verb composes with a root iff the root is not a
+suffixed one, the gap in the resultative bipartite verbs. -/
+theorem wellTyped_become_iff (sh : Shape) :
+    WellTyped (RootType.ofShape sh).ty [.become] ↔ sh ≠ .suffixed := by
+  cases sh <;> decide
 
-    `⟦ʔil-⟧ = λP_⟨e,⟨v,t⟩⟩ λs_v[∇P(s)]` (the paper's own sort labels)
+/-- Each shape's morphology is a shortest verbalization of its root: the prefixed roots need
+two heads, being bound relations that neither zero categorization nor *-iʔ* alone can take
+(section 5.2). -/
+theorem derivation_minimal (sh : Shape) (hs : List Head) (h : Verbalizes sh hs) :
+    (derivation sh).length ≤ hs.length := by
+  cases sh
+  · exact List.length_pos_of_ne_nil h.1
+  · exact List.length_pos_of_ne_nil h.1
+  · rcases hs with _ | ⟨h₁, _ | ⟨h₂, t⟩⟩
+    · exact absurd rfl h.1
+    · cases h₁ <;> simp [Verbalizes, WellTyped, output, Head.input, Head.output,
+        RootType.ofShape, RootType.ty] at h
+    · show 2 ≤ t.length + 1 + 1
+      omega
 
-    Takes a relation P between individuals and states, and returns the
-    set of states that underly P's range — i.e., states s such that
-    some individual bears P to s. -/
-def nabla [BEq Entity] (entities : List Entity)
-    (P : Entity → State → Bool) (s : State) : Bool :=
-  entities.any (λ x => P x s)
+/-! ### The operators -/
 
-/-- ∇ produces a quality-type predicate: its output depends only on the
-    state, with the individual argument existentially closed.
-    This matches the Class 2 type ⟨s,t⟩. -/
-theorem nabla_closes_indiv_arg [BEq Entity] (entities : List Entity)
-    (P : Entity → State → Bool) (s₁ s₂ : State)
-    (h : ∀ x, P x s₁ = P x s₂) :
-    nabla entities P s₁ = nabla entities P s₂ := by
-  unfold nabla
-  congr 1; ext x; exact h x
+variable {E Y St S : Type*}
 
--- ════════════════════════════════════════════════════
--- § 5. Possessive Morphology ↔ Semantic Type
--- ════════════════════════════════════════════════════
+/-- (34): the possessive light verb *-iʔ*, the existential closure of Barker's relationalizer:
+the possessor `x` stands in `R` to some possessum satisfying `P`, ordinary possession when the
+possessum is an entity (67) and the possession of a state when it is a quality (35). -/
+def vHave (P : Y → S → Prop) (R : E → Y → S → Prop) : E → S → Prop :=
+  Ex (π P R)
 
-/-- Whether a morphological class requires the possessive verbalizer -iʔ.
-    Derived from the root's denotation type: roots without an individual
-    argument MUST go through v_have; roots with one MAY (Class 3) or
-    may not (Class 1). -/
-def MorphClass.requiresVHave : MorphClass → Bool
-  | .class1 => false  -- bare root predication (has indiv arg, can predicate directly)
-  | .class2 => true   -- root + -iʔ (no indiv arg, needs v_have)
-  | .class3 => true   -- ʔil- + reduplication + root + -iʔ
+theorem vHave_apply (P : Y → S → Prop) (R : E → Y → S → Prop) (x : E) (s : S) :
+    vHave P R x s ↔ ∃ y, P y s ∧ R x y s :=
+  Iff.rfl
 
-/-- Whether a morphological class requires the ʔil- prefix (∇ type-shift). -/
-def MorphClass.requiresNabla : MorphClass → Bool
-  | .class1 => false
-  | .class2 => false
-  | .class3 => true
+/-- (57): the prefix *ʔil-*, the range of a relation: the states some individual bears it to. -/
+def nabla (P : E → St → Prop) : St → Prop := λ s => ∃ x, P x s
 
-/-- Class 1 roots are the only class that can be zero-categorized
-    as verbs — they predicate directly without v_have
-    ([hanink-koontz-garboden-2025] §4.3 / Table 1; reaffirmed §7 Table 2). -/
-theorem only_class1_zero_categorizes (mc : MorphClass) :
-    mc.requiresVHave = false ↔ mc = .class1 := by
-  cases mc <;> decide
+/-- (60): the prefixed root under *-iʔ*, the possession of a state in the relation's range. -/
+theorem vHave_nabla_apply (P : E → St → Prop) (R : E → St → S → Prop) (x : E) (s : S) :
+    vHave (λ y _ => nabla P y) R x s ↔ ∃ y, (∃ x', P x' y) ∧ R x y s :=
+  Iff.rfl
 
-/-- Quality-type roots (those without an individual argument) always
-    require possessive morphology. This is the paper's central claim:
-    the type mismatch between ⟨s,t⟩ and predication of individuals
-    FORCES v_have. -/
-theorem no_indiv_arg_forces_vhave :
-    tyHasIndivArg MorphClass.class2.denotationType = false ∧
-    MorphClass.class2.requiresVHave = true := ⟨rfl, rfl⟩
+/-- The Duke-of-York derivation of section 5.2: when possessing a state is holding it, the
+prefixed root under *ʔil-* and *-iʔ* predicates what the bare relation does (28), the meaning
+its bipartite uses show it to have. -/
+theorem vHave_nabla_iff (P : E → St → Prop) (R : E → St → S → Prop)
+    (h : ∀ x y s, R x y s ↔ P x y) (x : E) (s : S) :
+    vHave (λ y _ => nabla P y) R x s ↔ ∃ y, P x y := by
+  simp only [vHave_nabla_apply, h]
+  exact ⟨λ ⟨y, _, hxy⟩ => ⟨y, hxy⟩, λ ⟨y, hy⟩ => ⟨y, ⟨x, hy⟩, hy⟩⟩
 
-/-- ʔil- always co-occurs with -iʔ: Class 3 has both. ∇ type-shifts
-    the root to quality-type, which then needs v_have. -/
-theorem nabla_implies_vhave (mc : MorphClass) :
-    mc.requiresNabla = true → mc.requiresVHave = true := by
-  cases mc <;> decide
+/-! ### Resultative bipartite verbs, section 5.1 -/
 
--- ════════════════════════════════════════════════════
--- § 6. Monotonicity Hypothesis Consistency
--- ════════════════════════════════════════════════════
+variable {T : Type*} [LinearOrder T] (M : Verb.CosModel E St T)
 
-/-- Operators in Wá·šiw PC verb derivation.
-    Modeled as abstract labels for MH checking; compositional semantics
-    is given by `vHave` and `nabla` above. -/
-inductive PCOp where
-  | root       -- the root meaning
-  | possess    -- possessive semantics (from -iʔ / v_have)
-  | nabla      -- ∇ type-shift (from ʔil-)
-  | redupMorph -- reduplication morphology (semantically vacuous per §5.2)
-  deriving DecidableEq, Repr, BEq
+/-- (43a): the change-of-state head over a relation root, an event of change into a state the
+theme bears the relation to. -/
+def vBecome (P : E → St → Prop) : E → Event T → Prop :=
+  λ x e => ∃ s, M.become s e ∧ P x s
 
-/-- Operators present in each morphological class.
-    Class 1: just the root.
-    Class 2: root + possession (from -iʔ).
-    Class 3: root + ∇ + reduplication + possession. -/
-def MorphClass.operators : MorphClass → List PCOp
-  | .class1 => [.root]
-  | .class2 => [.root, .possess]
-  | .class3 => [.root, .nabla, .redupMorph, .possess]
+/-- (43b): the causative head, with the initial's manner on the caused event. -/
+def vCause (Q : Event T → Prop) : E → Event T → Prop :=
+  λ y v => ∃ e, M.effector y v ∧ M.cause v e ∧ Q e
 
-/-- All three derivational relationships are monotonic — none remove
-    operators from the LSR. Uses `isMonotonic` from `KoontzGarboden2009.lean`
-    (the originating paper for the Monotonicity Hypothesis). -/
-theorem all_derivations_monotonic :
-    isMonotonic MorphClass.class1.operators MorphClass.class2.operators = true ∧
-    isMonotonic MorphClass.class1.operators MorphClass.class3.operators = true ∧
-    isMonotonic MorphClass.class2.operators MorphClass.class3.operators = true :=
-  ⟨by decide, by decide, by decide⟩
+/-- The change-of-state head over a verb's root is [beavers-koontz-garboden-2020]'s inchoative
+operator. -/
+theorem vBecome_rootState (r : Verb) : vBecome M (M.rootState r) = M.inchoative r := rfl
 
--- ════════════════════════════════════════════════════
--- § 7. Against Universalist Root Meaning
--- ════════════════════════════════════════════════════
+/-- (46): a resultative bipartite verb entails the result state of its theme, the bare
+predication (28) of the final's root. -/
+theorem exists_state_of_vCause {P : E → St → Prop} {manner : Event T → Prop} {x y : E}
+    {v : Event T} (h : vCause M (λ e => manner e ∧ vBecome M P x e) y v) : ∃ s, P x s :=
+  let ⟨_, _, _, _, s, _, hs⟩ := h
+  ⟨s, hs⟩
 
-/-- [menon-pancheva-2014] claim all PC roots have the same semantic
-    type crosslinguistically. [hanink-koontz-garboden-2025] refutes this
-    with language-internal evidence: Wá·šiw has PC roots of BOTH denotation
-    types, correlated with different morphosyntax. -/
-theorem within_language_variation :
-    ∃ (c₁ c₂ : MorphClass),
-      c₁.denotationType ≠ c₂.denotationType ∧
-      c₁.requiresVHave ≠ c₂.requiresVHave ∧
-      c₁.canBeResultFinal ≠ c₂.canBeResultFinal :=
-  ⟨.class1, .class2, by decide, by decide, by decide⟩
+/-! ### The stems of the appendix -/
 
--- ════════════════════════════════════════════════════
--- § 8. Wá·šiw PC Root Data (Table A1, sample)
--- ════════════════════════════════════════════════════
+/-- The semantic root of a stem: one state atom, no core arguments, and the type of its
+meaning; every Washo property concept is a property-concept root of
+[beavers-koontz-garboden-2020]'s typology. -/
+def toRoot (e : Entry) : Root :=
+  { name := e.stem, entailments := {.state e.gloss}, valency := some ∅,
+    denotationType := some (RootType.ofShape e.shape).ty }
 
-/-- A Wá·šiw property concept root entry.
+theorem toRoot_kinds (e : Entry) : (toRoot e).kinds = Root.Kinds.propertyConcept := by
+  simp [toRoot, Root.kinds, Root.Kinds.propertyConcept, Root.Entailment.kind]
 
-    The semantic root is a *derived projection* `toRoot` rather than a stored
-    field, since every PC root names one state, has empty valency, and has the
-    semantic type its morph class fixes. -/
-structure WasiwPCRoot where
-  stem : String
-  gloss : String
-  morphClass : MorphClass
-  dixonCat : PropertyConcept.Class
-  deriving Repr
+/-- The only category whose members share a shape is color, all of whose stems are prefixed
+(appendix). -/
+theorem color_prefixed : ∀ e ∈ all, e.category = .color → e.shape = .prefixed := by decide
 
-/-- The semantic root of a Wá·šiw PC root: one state atom, so its change type is
-    `propertyConcept`, empty valency, and the semantic type of its morph class. -/
-def WasiwPCRoot.toRoot (w : WasiwPCRoot) : Semantics.Root :=
-  { name := w.stem, entailments := {.state w.gloss}, valency := some ∅,
-    denotationType := some w.morphClass.denotationType }
-
-/-- Convenience constructor — kept stable for `sampleRoots` literals. -/
-def mkWasiwRoot (stem gloss : String) (mc : MorphClass) (cat : PropertyConcept.Class) :
-    WasiwPCRoot :=
-  { stem, gloss, morphClass := mc, dixonCat := cat }
-
-/-- Selected sample of Wá·šiw PC roots from [hanink-koontz-garboden-2025]'s
-    Table A1 (Appendix). The full table reports 30 Class 1, 15 Class 2, and 35
-    Class 3 roots; the 36-root sample below covers ~13/11/12 from each class
-    plus the 5 attested color roots (all Class 3 per §7), so proportions are
-    not preserved — Class 2 is overrepresented and Class 1 undersampled
-    relative to the corpus. -/
-def sampleRoots : List WasiwPCRoot := [
-  -- Class 1: Physical property
-  mkWasiwRoot "ihuk'" "dry" .class1 .physicalProperty,
-  mkWasiwRoot "yasaŋ" "hot" .class1 .physicalProperty,
-  mkWasiwRoot "mosot" "wet" .class1 .physicalProperty,
-  mkWasiwRoot "wihl"  "cold" .class1 .physicalProperty,
-  mkWasiwRoot "ibik'" "ripe" .class1 .physicalProperty,
-  -- Class 1: Dimension
-  mkWasiwRoot "beheziŋ" "small" .class1 .dimension,
-  mkWasiwRoot "wgohat"  "wide" .class1 .dimension,
-  mkWasiwRoot "ʔudaw"   "tall (of object)" .class1 .dimension,
-  -- Class 1: Value
-  mkWasiwRoot "ʔaŋaw" "good" .class1 .value,
-  -- Class 1: Age
-  mkWasiwRoot "MiLe"  "old" .class1 .age,
-  -- Class 1: Human propensity
-  mkWasiwRoot "bišapuʔ" "hungry" .class1 .humanPropensity,
-  mkWasiwRoot "Lokaš"   "afraid" .class1 .humanPropensity,
-  mkWasiwRoot "yaha"    "sick/hurt" .class1 .humanPropensity,
-  -- Class 2: Physical property
-  mkWasiwRoot "guc'u"       "torn" .class2 .physicalProperty,
-  mkWasiwRoot "kakt"        "quiet" .class2 .physicalProperty,
-  mkWasiwRoot "Loyaw"       "dark" .class2 .physicalProperty,
-  mkWasiwRoot "nu'uš"       "stinky" .class2 .physicalProperty,
-  mkWasiwRoot "gumbeyéc'ik" "closed" .class2 .physicalProperty,
-  -- Class 2: Dimension
-  mkWasiwRoot "i:yel"  "big" .class2 .dimension,
-  -- Class 2: Value
-  mkWasiwRoot "mu:ʔaŋ" "tasty" .class2 .value,
-  mkWasiwRoot "ʔnu:š"  "poor condition" .class2 .value,
-  -- Class 2: Human propensity
-  mkWasiwRoot "gumsut'im" "brave" .class2 .humanPropensity,
-  mkWasiwRoot "musiw"     "generous" .class2 .humanPropensity,
-  -- Class 2: Age
-  mkWasiwRoot "ešlut'" "young" .class2 .age,
-  -- Class 3: Color (all color roots are Class 3)
-  mkWasiwRoot "leleg"     "red" .class3 .color,
-  mkWasiwRoot "p'ilp'il"  "blue" .class3 .color,
-  mkWasiwRoot "popo"      "white" .class3 .color,
-  mkWasiwRoot "šošoŋ"     "brown" .class3 .color,
-  mkWasiwRoot "ʔyiŋʔyiŋ"  "varicolored" .class3 .color,
-  -- Class 3: Physical property
-  mkWasiwRoot "k'awk'aw" "closed" .class3 .physicalProperty,
-  mkWasiwRoot "k'unk'un" "bent" .class3 .physicalProperty,
-  mkWasiwRoot "kaykay"   "tall" .class3 .physicalProperty,
-  mkWasiwRoot "ši:šip"   "straight" .class3 .physicalProperty,
-  mkWasiwRoot "lotlot"   "soft" .class3 .physicalProperty,
-  -- Class 3: Dimension
-  mkWasiwRoot "hamham" "light (in weight)" .class3 .dimension,
-  mkWasiwRoot "šišiš"  "heavy" .class3 .dimension
-]
-
--- ════════════════════════════════════════════════════
--- § 9. Per-Root Sample Properties
--- ════════════════════════════════════════════════════
-
-/-! Every Wá·šiw PC root is property-concept, valency-free, and typed by its morph
-    class by construction of `WasiwPCRoot.toRoot`, so the theorems below test the
-    sample's composition rather than its constructor. -/
-
-/-- All color roots are Class 3 — the only fully predictable Dixon
-    category ([hanink-koontz-garboden-2025] §7, Appendix). -/
-theorem color_roots_are_class3 :
-    (sampleRoots.filter (·.dixonCat == .color)).all
-      (·.morphClass == .class3) = true := by decide
-
-/-- Distribution across the sample (13/11/12 for Class 1/2/3). -/
-theorem class_distribution :
-    (sampleRoots.filter (·.morphClass == .class1)).length = 13 ∧
-    (sampleRoots.filter (·.morphClass == .class2)).length = 11 ∧
-    (sampleRoots.filter (·.morphClass == .class3)).length = 12 := by decide
-
--- ════════════════════════════════════════════════════
--- § 10. Bridge Theorems
--- ════════════════════════════════════════════════════
-
-/-- ⟨s,t⟩ is the only class type without an individual argument — it is
-    the type that forces possessive morphology. -/
-theorem statePred_unique_no_indiv :
-    ∀ mc : MorphClass, tyHasIndivArg mc.denotationType = false ↔
-      mc.denotationType = (.s ⇒ .t) := by
-  intro mc; cases mc <;> decide
-
-/-- Class 1 and Class 3 share denotation type (both ⟨e,⟨s,t⟩⟩). -/
-theorem class1_class3_same_denotation :
-    MorphClass.class1.denotationType = MorphClass.class3.denotationType := rfl
-
-/-- Class 2 is the only class with `statePred` denotation type. -/
-theorem class2_unique_statePred (mc : MorphClass) :
-    mc.denotationType = (.s ⇒ .t) ↔ mc = .class2 := by
-  cases mc <;> decide
-
-/-- The three key predictions form a single biconditional over
-    morphological class, all derived from `hasIndivArg`:
-
-    mc = Class 2 ↔ statePred ↔ can't be bipartite final ↔ requires v_have
-
-    (The last implication is one-directional: Class 3 also requires v_have
-    despite having indivStatePred, because ∇ converts it to quality-type
-    before -iʔ applies.) -/
-theorem class2_characterization (mc : MorphClass) :
-    mc.denotationType = (.s ⇒ .t) ↔
-    (mc.canBeResultFinal = false ∧ mc = .class2) := by
-  cases mc <;> decide
+/-- [dixon-1982]'s categories do not predict the shape: the antonyms *MiLe* 'old' and *ešlut’*
+'young' differ. -/
+theorem category_not_predictive :
+    ∃ e₁ ∈ all, ∃ e₂ ∈ all, e₁.category = e₂.category ∧ e₁.shape ≠ e₂.shape :=
+  ⟨MiLe, by decide, ešlut, by decide, rfl, by decide⟩
 
 end HaninkKoontzGarboden2025

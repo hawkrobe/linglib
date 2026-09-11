@@ -1,0 +1,1333 @@
+[
+  {
+    "id": "haninkkoontzgarboden2025_ex20a",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(20a)"
+    },
+    "language": "wash1253",
+    "primaryText": "di-bókoŋ-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "di-bókoŋ-i",
+        "1-snore-IND"
+      ]
+    ],
+    "translation": "I'm snoring.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "intransitive"
+      ]
+    ],
+    "comment": "An ordinary intransitive verb: subject agreement and mood only.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex20b",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(20b)"
+    },
+    "language": "wash1253",
+    "primaryText": "ʔum-sí:dim-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ʔum-sí:dim-i",
+        "2-cheat-IND"
+      ]
+    ],
+    "translation": "You're cheating.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "intransitive"
+      ]
+    ],
+    "comment": "Washo Archive. An ordinary intransitive verb.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex20c",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(20c)"
+    },
+    "language": "wash1253",
+    "primaryText": "daʔmóʔmoʔ ʔélšɨm-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "daʔmóʔmoʔ",
+        "woman"
+      ],
+      [
+        "ʔélšɨm-i",
+        "3.sleep-IND"
+      ]
+    ],
+    "translation": "The woman is sleeping.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "intransitive"
+      ]
+    ],
+    "comment": "An ordinary intransitive verb with a third-person subject.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex21a",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(21a)"
+    },
+    "language": "wash1253",
+    "primaryText": "di-yásaŋ-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "di-yásaŋ-i",
+        "1-be.warm-IND"
+      ]
+    ],
+    "translation": "I'm hot.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "class1"
+      ],
+      [
+        "stem",
+        "yasaŋ"
+      ]
+    ],
+    "comment": "A Class 1 property concept: the bare root inflects like an intransitive verb.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex21b",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(21b)"
+    },
+    "language": "wash1253",
+    "primaryText": "ʔum-bišápu-hé:š-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ʔum-bišápu-hé:š-i",
+        "2-be.hungry-Q-IND"
+      ]
+    ],
+    "translation": "Are you hungry?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "class1"
+      ],
+      [
+        "stem",
+        "bišapuʔ"
+      ]
+    ],
+    "comment": "Washo Archive. A Class 1 property concept.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex21c",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(21c)"
+    },
+    "language": "wash1253",
+    "primaryText": "wá:laš ʔíhuk’-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "wá:laš",
+        "bread"
+      ],
+      [
+        "ʔíhuk’-i",
+        "3.be.dry-IND"
+      ]
+    ],
+    "translation": "The bread is dry.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "class1"
+      ],
+      [
+        "stem",
+        "ihuk’"
+      ]
+    ],
+    "comment": "Washo Archive. A Class 1 property concept.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex22a",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(22a)"
+    },
+    "language": "wash1253",
+    "primaryText": "di-tamugáyʔl-iʔ-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "di-tamugáyʔl-iʔ-i",
+        "1-bored-VHAVE-IND"
+      ]
+    ],
+    "translation": "I'm bored.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "class2"
+      ],
+      [
+        "stem",
+        "tamugayʔl"
+      ]
+    ],
+    "comment": "Washo Archive. A Class 2 property concept: bound root plus -iʔ.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex22b",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(22b)"
+    },
+    "language": "wash1253",
+    "primaryText": "daláʔak ʔí:yel-iʔ-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "daláʔak",
+        "mountain"
+      ],
+      [
+        "ʔí:yel-iʔ-i",
+        "3.big-VHAVE-IND"
+      ]
+    ],
+    "translation": "The mountain is big.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "class2"
+      ],
+      [
+        "stem",
+        "i:yel"
+      ]
+    ],
+    "comment": "Washo Archive. A Class 2 property concept.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex22c",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(22c)"
+    },
+    "language": "wash1253",
+    "primaryText": "ʔum-mók’oʔ ʔnú:š-iʔ-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ʔum-mók’oʔ",
+        "2-shoe"
+      ],
+      [
+        "ʔnú:š-iʔ-i",
+        "3.poor.condition-VHAVE-IND"
+      ]
+    ],
+    "translation": "Your shoes are in poor condition.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "class2"
+      ],
+      [
+        "stem",
+        "ʔnu:š"
+      ]
+    ],
+    "comment": "A Class 2 property concept.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex23",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(23)"
+    },
+    "language": "wash1253",
+    "primaryText": "daláʔak ʔí:yel-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "daláʔak",
+        "mountain"
+      ],
+      [
+        "ʔí:yel-i",
+        "3.big-IND"
+      ]
+    ],
+    "translation": "The mountain is big.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "class2"
+      ],
+      [
+        "stem",
+        "i:yel"
+      ]
+    ],
+    "comment": "A Class 2 root without -iʔ is ill-formed.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex24a",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(24a)"
+    },
+    "language": "wash1253",
+    "primaryText": "dilwítwidiʔi láhɨla",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "di-ʔil-witwit-iʔ-i",
+        "1-ATTR-stiff.R-VHAVE-IND"
+      ],
+      [
+        "lᵉ-ahɨl-a",
+        "1-leg-OBL"
+      ]
+    ],
+    "translation": "I have a stiff leg.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "class3"
+      ],
+      [
+        "stem",
+        "witwit"
+      ]
+    ],
+    "comment": "Washo Archive. A Class 3 property concept: ʔil-, reduplication, -iʔ.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex24b",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(24b)"
+    },
+    "language": "wash1253",
+    "primaryText": "ʔitgumbáŋa ∅-ʔil-k’áwk’aw-iʔ-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ʔitgumbáŋa",
+        "table"
+      ],
+      [
+        "∅-ʔil-k’áwk’aw-iʔ-i",
+        "3-ATTR-hard.R-VHAVE-IND"
+      ]
+    ],
+    "translation": "The table is hard.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "class3"
+      ],
+      [
+        "stem",
+        "k’awk’aw"
+      ]
+    ],
+    "comment": "Washo Archive. A Class 3 property concept.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex24c",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(24c)"
+    },
+    "language": "wash1253",
+    "primaryText": "t’é:liwhu ∅-ʔil-káykay-iʔ-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "t’é:liwhu",
+        "man"
+      ],
+      [
+        "∅-ʔil-káykay-iʔ-i",
+        "3-ATTR-tall.R-VHAVE-IND"
+      ]
+    ],
+    "translation": "The man is tall.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "class3"
+      ],
+      [
+        "stem",
+        "kaykay"
+      ]
+    ],
+    "comment": "Washo Archive. A Class 3 property concept.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex25a",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(25a)"
+    },
+    "language": "wash1253",
+    "primaryText": "t’é:liwhu ∅-káykay-iʔ-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "t’é:liwhu",
+        "man"
+      ],
+      [
+        "∅-káykay-iʔ-i",
+        "3-tall.R-VHAVE-IND"
+      ]
+    ],
+    "translation": "The man is tall.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "class3"
+      ],
+      [
+        "stem",
+        "kaykay"
+      ]
+    ],
+    "comment": "A Class 3 root with -iʔ but without ʔil- is ill-formed.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex25b",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(25b)"
+    },
+    "language": "wash1253",
+    "primaryText": "t’é:liwhu ∅-ʔil-káykay-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "t’é:liwhu",
+        "man"
+      ],
+      [
+        "∅-ʔil-káykay-i",
+        "3-ATTR-tall.R-IND"
+      ]
+    ],
+    "translation": "The man is tall.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "class3"
+      ],
+      [
+        "stem",
+        "kaykay"
+      ]
+    ],
+    "comment": "A Class 3 root with ʔil- but without -iʔ is ill-formed.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex31",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(31)"
+    },
+    "language": "wash1253",
+    "primaryText": "di-gúšuʔ-iʔ-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "di-gúšuʔ-iʔ-i",
+        "1-pet-VHAVE-IND"
+      ]
+    ],
+    "translation": "I have a pet/pets.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2"
+      ],
+      [
+        "phenomenon",
+        "possession"
+      ]
+    ],
+    "comment": "The attributive-agentive suffix -iʔ on a noun expresses possession.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex32",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(32)"
+    },
+    "language": "wash1253",
+    "primaryText": "ʔum-wí:git’áyab-iʔ-he:š-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ʔum-wí:git’áyab-iʔ-he:š-i",
+        "2-eyeglasses-VHAVE-Q-IND"
+      ]
+    ],
+    "translation": "Do you have/wear glasses?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2"
+      ],
+      [
+        "phenomenon",
+        "possession"
+      ]
+    ],
+    "comment": "The suffix -iʔ on a noun expresses possession.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex38",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(38)"
+    },
+    "language": "wash1253",
+    "primaryText": "diyú:šibhi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "di-yᵘ-i:šip-hi",
+        "1-pull-straight-OPT"
+      ]
+    ],
+    "translation": "I'll straighten it out [by pulling].",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "phenomenon",
+        "bipartite"
+      ],
+      [
+        "stem",
+        "ši:šip"
+      ]
+    ],
+    "comment": "A Class 3 root as the final of a resultative bipartite verb, bare and unreduplicated.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex39",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(39)"
+    },
+    "language": "wash1253",
+    "primaryText": "geliwípnebi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "gᵉ-liw-ipnep-i",
+        "3/3-press-flat-IND"
+      ]
+    ],
+    "translation": "He's flattening it out [by pressing].",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "phenomenon",
+        "bipartite"
+      ]
+    ],
+    "comment": "Washo Archive. A property-concept final with a manner initial.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex41",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(41)"
+    },
+    "language": "wash1253",
+    "primaryText": "díʔyuya pá:šida dópoši",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "díʔyu-a",
+        "fire-OBL"
+      ],
+      [
+        "∅-p-a:š-i-∅-da",
+        "3-fall-into-IND-SS-and"
+      ],
+      [
+        "∅-d-ópoš-i",
+        "3-burn-gray-IND"
+      ]
+    ],
+    "translation": "He fell in the fire and burned.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "phenomenon",
+        "bipartite"
+      ]
+    ],
+    "comment": "Washo Archive. An intransitive change-of-state bipartite verb: causation comes from the construction.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex47",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(47)"
+    },
+    "language": "wash1253",
+    "primaryText": "ỹᵘ-i:yel-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ỹᵘ-i:yel-i",
+        "3.pull-big-IND"
+      ]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "phenomenon",
+        "bipartite"
+      ],
+      [
+        "stem",
+        "i:yel"
+      ]
+    ],
+    "comment": "Hypothetical and unattested: a Class 2 root as a bipartite final, a type mismatch with v_become.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex50a",
+    "source": {
+      "bibkey": "jacobsen-1980",
+      "paperLabel": "p. 86"
+    },
+    "language": "wash1253",
+    "primaryText": "léhuk’",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "lᵉ-ihuk’",
+        "wipe-be.dry"
+      ]
+    ],
+    "translation": "dry by wiping/wipe dry",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "phenomenon",
+        "bipartite"
+      ],
+      [
+        "stem",
+        "ihuk’"
+      ]
+    ],
+    "comment": "A Class 1 root as a resultative bipartite final.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(50a)"
+    }
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex50b",
+    "source": {
+      "bibkey": "bochnak-rhomieux-2013",
+      "paperLabel": "p. 257"
+    },
+    "language": "wash1253",
+    "primaryText": "geséhuk’i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "gᵉ-sᵉ-ihuk’-i",
+        "3/3-heat-be.dry-IND"
+      ]
+    ],
+    "translation": "She dried it outside [by heat/in the sun].",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "phenomenon",
+        "bipartite"
+      ],
+      [
+        "stem",
+        "ihuk’"
+      ]
+    ],
+    "comment": "A Class 1 root as a resultative bipartite final.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(50b)"
+    }
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex51a",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(51a)"
+    },
+    "language": "wash1253",
+    "primaryText": "máʔak ʔilší:šibiʔi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "maʔak",
+        "stick"
+      ],
+      [
+        "∅-ʔil-ši:šip-iʔ-i",
+        "3-ATTR-straight.R-VHAVE-IND"
+      ]
+    ],
+    "translation": "The stick is straight.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "phenomenon",
+        "class3"
+      ],
+      [
+        "stem",
+        "ši:šip"
+      ]
+    ],
+    "comment": "Washo Archive. The Class 3 root reduplicated under ʔil-.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex52a",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(52a)"
+    },
+    "language": "wash1253",
+    "primaryText": "máʔak ʔilk’únk’uniʔi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "maʔak",
+        "stick"
+      ],
+      [
+        "∅-ʔil-k’unk’un-iʔ-i",
+        "3-ATTR-bent.R-VHAVE-IND"
+      ]
+    ],
+    "translation": "The stick is bent.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "phenomenon",
+        "class3"
+      ],
+      [
+        "stem",
+        "k’unk’un"
+      ]
+    ],
+    "comment": "Washo Archive. The Class 3 root reduplicated under ʔil-.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex52b",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(52b)"
+    },
+    "language": "wash1253",
+    "primaryText": "dilénk’unášaʔi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "di-lᵉ-unk’un-ašaʔ-i",
+        "1-push-bent-PROSP-IND"
+      ]
+    ],
+    "translation": "I will bend it [by pushing].",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "phenomenon",
+        "bipartite"
+      ],
+      [
+        "stem",
+        "k’unk’un"
+      ]
+    ],
+    "comment": "Washo Archive. The same root bare as a bipartite final.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex61a",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(61a)"
+    },
+    "language": "wash1253",
+    "primaryText": "l-éyeg-iʔ-é:s-i-gi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "l-éyeg-iʔ-é:s-i-gi",
+        "1-teeth-VHAVE-NEG-IND-NMLZ"
+      ]
+    ],
+    "translation": "I don't have teeth.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ],
+      [
+        "phenomenon",
+        "possession"
+      ]
+    ],
+    "comment": "Washo Archive. Ordinary possession with -iʔ.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex61c",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(61c)"
+    },
+    "language": "wash1253",
+    "primaryText": "ʔum-ŋamóʔmoʔ-iʔ-he:š-i-∅-gi M-éʔ-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ʔum-ŋamóʔmoʔ-iʔ-he:š-i-∅-gi",
+        "2-daughter.R-VHAVE-Q-IND-SS-NMLZ"
+      ],
+      [
+        "M-éʔ-i",
+        "2.UN-COP-IND"
+      ]
+    ],
+    "translation": "Do you have daughters?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ],
+      [
+        "phenomenon",
+        "possession"
+      ]
+    ],
+    "comment": "Inalienable possession with -iʔ.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex64",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(64)"
+    },
+    "language": "wash1253",
+    "primaryText": "gúšuʔ di-iʔ-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "gúšuʔ",
+        "pet"
+      ],
+      [
+        "di-iʔ-i",
+        "1-VHAVE-IND"
+      ]
+    ],
+    "translation": "I have a pet/pets.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ],
+      [
+        "phenomenon",
+        "possession"
+      ]
+    ],
+    "comment": "The suffix -iʔ cannot stand as a verb on its own: a light verb requiring incorporation.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex65a",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(65a)"
+    },
+    "language": "wash1253",
+    "primaryText": "hélmeʔ gumʔé:be",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "hélmeʔ",
+        "three"
+      ],
+      [
+        "gumʔé:be",
+        "days"
+      ]
+    ],
+    "translation": "three days",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ],
+      [
+        "phenomenon",
+        "concord"
+      ]
+    ],
+    "comment": "Washo Archive. No plural concord on an inanimate noun's numeral.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex65b",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "p. 545"
+    },
+    "language": "wash1253",
+    "primaryText": "hélme-w di-wic’úc’uk",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "hélme-w",
+        "three-ANIM.PL"
+      ],
+      [
+        "di-wic’úc’uk",
+        "1-younger.sister.R"
+      ]
+    ],
+    "translation": "my three younger sisters",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ],
+      [
+        "phenomenon",
+        "concord"
+      ]
+    ],
+    "comment": "Animate plural concord on the numeral.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(65b)"
+    }
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex65c",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(65c)"
+    },
+    "language": "wash1253",
+    "primaryText": "hélmeʔ-w di-ʔísaʔ-iʔ-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "hélmeʔ-w",
+        "three-ANIM.PL"
+      ],
+      [
+        "di-ʔísaʔ-iʔ-i",
+        "1-older.sister-VHAVE-IND"
+      ]
+    ],
+    "translation": "I have three older sisters.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ],
+      [
+        "phenomenon",
+        "possession"
+      ]
+    ],
+    "comment": "A stranded numeral with animate concord: the noun incorporates into v_have.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex70",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(70)"
+    },
+    "language": "wash1253",
+    "primaryText": "Herman gúšuʔ-iʔ-ašaʔ-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Herman",
+        "Herman"
+      ],
+      [
+        "gúšuʔ-iʔ-ašaʔ-i",
+        "3.pet-VHAVE-PROSP-IND"
+      ]
+    ],
+    "translation": "Herman is going to have a pet.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2"
+      ],
+      [
+        "phenomenon",
+        "possession"
+      ]
+    ],
+    "comment": "The suffix -iʔ sits inside aspectual morphology.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex71",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(71)"
+    },
+    "language": "wash1253",
+    "primaryText": "dewdíʔiš ʔil-c’ác’im-iʔ-étiʔ-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "dewdíʔiš",
+        "tree"
+      ],
+      [
+        "ʔil-c’ác’im-iʔ-étiʔ-i",
+        "3.ATTR-green.R-VHAVE-INCH-IND"
+      ]
+    ],
+    "translation": "The tree is getting green.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2"
+      ],
+      [
+        "phenomenon",
+        "class3"
+      ]
+    ],
+    "comment": "Washo Archive. The suffix -iʔ sits inside the inchoative.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haninkkoontzgarboden2025_ex72",
+    "source": {
+      "bibkey": "hanink-koontz-garboden-2025",
+      "paperLabel": "(72)"
+    },
+    "language": "wash1253",
+    "primaryText": "ge-ʔil-šíšib-iʔ-eti-ha",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ge-ʔil-šíšib-iʔ-eti-ha",
+        "IMP-ATTR-straight.R-VHAVE-INCH-CAUS"
+      ]
+    ],
+    "translation": "Straighten it out!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2"
+      ],
+      [
+        "phenomenon",
+        "class3"
+      ],
+      [
+        "stem",
+        "ši:šip"
+      ]
+    ],
+    "comment": "Washo Archive. Stacked light verbs: v_have, v_become, v_cause.",
+    "lgrConformance": "WORD_ALIGNED"
+  }
+]
