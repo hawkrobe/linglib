@@ -102,7 +102,7 @@ theorem en_negators_are_standard :
 
 /-- A glossed EN example from Zarma-Sonrai. -/
 structure ENExample where
-  triggerClass : String
+  triggerClass : _root_.Negation.ENConcept
   triggerForm : String
   triggerGloss : String
   sentence : String
@@ -114,7 +114,7 @@ structure ENExample where
 
 /-- DELAY trigger: *batu* 'delay' ([jin-koenig-2021], ex. 22). -/
 def delayExample : ENExample where
-  triggerClass := "DELAY"
+  triggerClass := .delay
   triggerForm := "batu"
   triggerGloss := "delay"
   sentence := "a batu a mana graduate manang"
@@ -126,7 +126,7 @@ def delayExample : ENExample where
 /-- CANNOT WAIT trigger: *si batu* 'cannot wait'
     ([jin-koenig-2021], Table 5, ex. 25). -/
 def cannotWaitExample : ENExample where
-  triggerClass := "CANNOT WAIT"
+  triggerClass := .cannotWait
   triggerForm := "si batu"
   triggerGloss := "IPFV.NEG wait"
   sentence := "ey si batu a ma si ka"
@@ -143,7 +143,7 @@ def cannotWaitExample : ENExample where
     outside the aspect-based EN negator selection system formalized in
     `enNegatorForAspect`. The `.ipfv` classification here is approximate. -/
 def hideExample : ENExample where
-  triggerClass := "HIDE"
+  triggerClass := .hide
   triggerForm := "tugu"
   triggerGloss := "hide"
   sentence := "a tugu ey se kang a sinda sida"

@@ -1,5 +1,4 @@
 import Linglib.Semantics.Degree.Basic
-import Linglib.Studies.JinKoenig2021
 import Linglib.Semantics.Polarity.ExpletiveNegation
 import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Fragments.Italian.Negation
@@ -401,19 +400,19 @@ sense. The shared underlying property is *negative valence* in the
 [villalta-2008] sense.
 
 The conceptual chain — `Preferential.fear.valence = .negative` →
-`negativeValenceEntailsDual` → `ENConstruction.isAmbidirectional .fear`
+negative valence → `ENConstruction.isAmbidirectional .fear`
 — is asserted in the literature but **not formalized end-to-end here**:
 the link from valence to dual inference is empirical (J&K survey data),
 not a theorem of preferential attitude semantics. The `fear` case of
 `isAmbidirectional` is therefore stipulated rather than derived; the
-link to `negativeValenceEntailsDual` is at the docstring level. -/
+link to negative valence is at the docstring level. -/
 
-open JinKoenig2021 (LicensingCondition TriggerSubclass)
+open Negation (ENTriggerClass)
 
 /-- Subclass classification: FEAR is a propositional-attitude licenser.
     Defines the encoding rather than proving content. -/
 theorem fear_licensing_condition :
-    TriggerSubclass.fear.licensingCondition = .propositionalAttitude := rfl
+    ENTriggerClass.fear.licensing = .propositionalAttitude := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 4. Scale Type → EN Licensing in Comparatives

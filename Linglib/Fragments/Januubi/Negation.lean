@@ -83,7 +83,7 @@ theorem en_negator_is_standard : enNegator.isStandardNeg = true := rfl
 
 /-- A glossed EN example from Januubi. -/
 structure ENExample where
-  triggerClass : String
+  triggerClass : _root_.Negation.ENConcept
   triggerForm : String
   triggerGloss : String
   sentence : String
@@ -94,7 +94,7 @@ structure ENExample where
 
 /-- BEFORE trigger: *gabl* 'before' ([jin-koenig-2021], ex. 24). -/
 def beforeExample : ENExample where
-  triggerClass := "BEFORE"
+  triggerClass := .before
   triggerForm := "gabl"
   triggerGloss := "before"
   sentence := "gabl maa atzawaʒ ʕisht maʕa ahl-ii"
@@ -105,7 +105,7 @@ def beforeExample : ENExample where
 /-- BARELY trigger: *b-il-guwah* 'by force / barely'
     ([jin-koenig-2021], ex. 23). -/
 def barelyExample : ENExample where
-  triggerClass := "BARELY"
+  triggerClass := .barely
   triggerForm := "b-il-guwah"
   triggerGloss := "with-DET-force"
   sentence := "ta-kallam-na maʕaa-h tˤawaal il-lail wallah b-il-guwah maa waafag"
