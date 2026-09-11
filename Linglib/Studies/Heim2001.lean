@@ -1,6 +1,6 @@
 import Linglib.Data.Examples.Heim2001
 import Linglib.Semantics.Degree.Quantifier
-import Linglib.Syntax.Minimalist.Movement.DegreeMovement
+import Linglib.Syntax.Minimalist.Movement.HeimKennedy
 import Mathlib.Data.Fintype.Lattice
 import Mathlib.Data.Set.Card
 import Mathlib.Data.Set.Finite.Basic
@@ -55,7 +55,7 @@ for *-est*, (59), uses its complement twice and is the absolute superlative
 
 namespace Heim2001
 
-open Set Degree Minimalist.DegreeMovement Data.Examples
+open Set Degree Minimalist Data.Examples
 
 variable {Entity D : Type*} [LinearOrder D]
 
@@ -220,11 +220,11 @@ theorem less_high_not_low : HighLess univ heights 50 ∧ ¬ LowLess univ heights
   ⟨⟨49, isGreatest_heights, by decide⟩, λ h => absurd (h 1 (mem_univ _)) (by simp [heights])⟩
 
 /-- Kennedy's generalization, (27): the scope of a quantificational DP that contains the trace of
-a DegP contains the DegP, the Heim–Kennedy constraint of the substrate; a DegP scoping above a DP
-that binds into it is illicit. -/
-theorem kennedy_generalization (degH qpH : ℕ) (h : degH < qpH) :
-    ¬ IsHeimKennedy ⟨degH, qpH, qpH, true⟩ :=
-  not_isHeimKennedy_QP_above_bound_DegP degH qpH h
+a DegP contains the DegP, the Heim–Kennedy constraint of the substrate; the LF it excludes is the
+one where the DP's scope contains the trace but not the DegP, (22c). -/
+theorem kennedy_generalization {Node : Type*} {C : Set (Node × Node)} {q δ t : Node} :
+    ¬ IsHeimKennedy C q δ t ↔ (q, t) ∈ C ∧ (q, δ) ∉ C :=
+  not_isHeimKennedy_iff
 
 /-! ### Intensional verbs -/
 

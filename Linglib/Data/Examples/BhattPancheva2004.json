@@ -1,0 +1,1386 @@
+[
+  {
+    "id": "bp2004_22",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(22)"
+    },
+    "language": "stan1293",
+    "primaryText": "Every girl is exactly 1 inch taller than that.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "John is 4 feet tall.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "every > -er",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "-er > every",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "claim",
+        "the reading (22b), -er over every, is unavailable"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_23a",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(23a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary set every post exactly 2 feet deeper than that.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The frostline is 3 and a half feet deep.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "every > -er",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "-er > every",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_23b",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(23b)"
+    },
+    "language": "stan1293",
+    "primaryText": "?Mary was less impressed with every candidate than that.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "John gave every candidate an A.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "every > -er",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "-er > every",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_27a",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(27a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The paper is required to be exactly 5 pages longer than that.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "This draft is 10 pages long.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "-er > require",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "require > -er",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2"
+      ],
+      [
+        "verb",
+        "require"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_27b",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(27b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The paper is allowed to be exactly 5 pages longer than that.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "This draft is 10 pages long.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "-er > allow",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "allow > -er",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2"
+      ],
+      [
+        "verb",
+        "allow"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_27c",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(27c)"
+    },
+    "language": "stan1293",
+    "primaryText": "The paper is required to be less long than that.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "This draft is 10 pages long.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "-er > require",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "require > -er",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2"
+      ],
+      [
+        "verb",
+        "require"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_27d",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(27d)"
+    },
+    "language": "stan1293",
+    "primaryText": "The paper is allowed to be less long than that.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "This draft is 10 pages long.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "-er > allow",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "allow > -er",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2"
+      ],
+      [
+        "verb",
+        "allow"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_30a",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(30a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The paper is required to be longer than that.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The draft is 10 pages long.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "-er > require",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "require > -er",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2"
+      ],
+      [
+        "verb",
+        "require"
+      ],
+      [
+        "claim",
+        "the two scopes are truth-conditionally equivalent"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_30b",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(30b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The paper is allowed to be longer than that.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The draft is 10 pages long.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "-er > allow",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "allow > -er",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2"
+      ],
+      [
+        "verb",
+        "allow"
+      ],
+      [
+        "claim",
+        "the two scopes are truth-conditionally equivalent"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_34a",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(34a)"
+    },
+    "language": "stan1293",
+    "primaryText": "??I will tell him a sillier rumor (about Ann) than Mary told John.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "coreference",
+        "him = John"
+      ],
+      [
+        "claim",
+        "string-vacuous high attachment is blocked by minimal attachment"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_34b",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(34b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I will tell him a sillier rumor (about Ann) tomorrow than Mary told John.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "coreference",
+        "him = John"
+      ],
+      [
+        "claim",
+        "the degree clause is merged late outside the pronoun's c-command domain"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_35",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(35)"
+    },
+    "language": "stan1293",
+    "primaryText": "*I will tell him a silly rumor tomorrow that Mary likes John.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "coreference",
+        "him = John"
+      ],
+      [
+        "claim",
+        "the complement of a nominal cannot be merged late"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_40",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(40)"
+    },
+    "language": "stan1293",
+    "primaryText": "I read every book before you did.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "before > every",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "every > before",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_41",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(41)"
+    },
+    "language": "stan1293",
+    "primaryText": "I read every book that John had recommended before you did.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "before > every",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "every > before",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "site",
+        "low"
+      ],
+      [
+        "mover",
+        "DP"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_42",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(42)"
+    },
+    "language": "stan1293",
+    "primaryText": "I read every book before you did that John had recommended.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "before > every",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "every > before",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "site",
+        "high"
+      ],
+      [
+        "mover",
+        "DP"
+      ],
+      [
+        "narrow_scope",
+        "unavailable"
+      ],
+      [
+        "wide_scope",
+        "available"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_43",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(43)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary climbed higher than 1,000 feet before you did.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "before > -er",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "-er > before",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "site",
+        "low"
+      ],
+      [
+        "mover",
+        "DegP"
+      ],
+      [
+        "narrow_scope",
+        "available"
+      ],
+      [
+        "wide_scope",
+        "unavailable"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_44",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(44)"
+    },
+    "language": "stan1293",
+    "primaryText": "*Mary climbed higher before you did than 1,000 feet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "site",
+        "high"
+      ],
+      [
+        "mover",
+        "DegP"
+      ],
+      [
+        "claim",
+        "the position of the degree clause presupposes high scope for -er, which the Heim-Kennedy Constraint excludes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_45",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(45)"
+    },
+    "language": "stan1293",
+    "primaryText": "John read more books than Mary published in her life before you did.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "before > -er d-many books",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "-er d-many books > before",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "-er > before > d-many books",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "site",
+        "low"
+      ],
+      [
+        "mover",
+        "DP"
+      ],
+      [
+        "narrow_scope",
+        "available"
+      ],
+      [
+        "wide_scope",
+        "available"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_46",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(46)"
+    },
+    "language": "stan1293",
+    "primaryText": "John read more books before you did than Mary published in her life.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "before > -er d-many books",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "-er d-many books > before",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "-er > before > d-many books",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "site",
+        "high"
+      ],
+      [
+        "mover",
+        "DP"
+      ],
+      [
+        "narrow_scope",
+        "unavailable"
+      ],
+      [
+        "wide_scope",
+        "available"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_48a",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(48a)"
+    },
+    "language": "stan1293",
+    "primaryText": "So many people ate faster yesterday [than we had expected] [that we were all done by 9 p.m.].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "claim",
+        "the two degree abstractions need not cross"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_48b",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(48b)"
+    },
+    "language": "stan1293",
+    "primaryText": "*So many people ate faster yesterday [that we were all done by 9 p.m.] [than we had expected].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "claim",
+        "result clauses follow comparative clauses"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_50a",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(50a)"
+    },
+    "language": "stan1293",
+    "primaryText": "???/*More people ate so fast yesterday [than we had expected] [that we were all done by 9 p.m.].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "claim",
+        "crossing degree abstractions, excluded by the Heim-Kennedy Constraint"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_50b",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(50b)"
+    },
+    "language": "stan1293",
+    "primaryText": "*More people ate so fast yesterday [that we were all done by 9 p.m.] [than we had expected].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "claim",
+        "result clauses follow comparative clauses"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_53a",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(53a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John is required [to publish fewer papers this year [than that number] in a major journal] [to get tenure].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "required > fewer",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "fewer > required",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "site",
+        "low"
+      ],
+      [
+        "mover",
+        "DegP"
+      ],
+      [
+        "narrow_scope",
+        "available"
+      ],
+      [
+        "wide_scope",
+        "unavailable"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_53b",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(53b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John is required [to publish fewer papers this year in a major journal] [to get tenure] [than that number].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "required > fewer",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "fewer > required",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "site",
+        "high"
+      ],
+      [
+        "mover",
+        "DegP"
+      ],
+      [
+        "narrow_scope",
+        "unavailable"
+      ],
+      [
+        "wide_scope",
+        "available"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_54a",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(54a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John is required [to publish exactly 5 more papers this year [than that number] in a major journal] [to get tenure].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "required > exactly 5 more",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "exactly 5 more > required",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "site",
+        "low"
+      ],
+      [
+        "mover",
+        "DegP"
+      ],
+      [
+        "narrow_scope",
+        "available"
+      ],
+      [
+        "wide_scope",
+        "unavailable"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_54b",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(54b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John is required [to publish exactly 5 more papers this year in a major journal] [to get tenure] [than that number].",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "required > exactly 5 more",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "exactly 5 more > required",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "site",
+        "high"
+      ],
+      [
+        "mover",
+        "DegP"
+      ],
+      [
+        "narrow_scope",
+        "unavailable"
+      ],
+      [
+        "wide_scope",
+        "available"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_60",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(60)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary's father tells her to work harder than her boss does.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "tell > -er, elided VP: work d-hard",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "tell > -er, elided VP: tell her to work d-hard",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "-er > tell, elided VP: work d-hard",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "-er > tell, elided VP: tell her to work d-hard",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_61",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(61)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary's father tells her to work harder than her boss tells her to.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "tell > -er, elided VP: work d-hard",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "-er > tell, elided VP: work d-hard",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_63",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(63)"
+    },
+    "language": "stan1293",
+    "primaryText": "Her father tells her_i to work harder than Mary_i's boss does.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "tell > -er, elided VP: work d-hard",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "tell > -er, elided VP: tell her to work d-hard",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "-er > tell, elided VP: work d-hard",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "-er > tell, elided VP: tell her to work d-hard",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2"
+      ],
+      [
+        "coreference",
+        "her = Mary"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_64a",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(64a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Her father tells her_i to work harder than Mary's_i boss tells her to.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "tell > -er",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "-er > tell",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2"
+      ],
+      [
+        "coreference",
+        "her = Mary"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_64b",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(64b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Her father tells Mary_i to work harder than her_i boss tells her to.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "tell > -er",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "-er > tell",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2"
+      ],
+      [
+        "coreference",
+        "her = Mary"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_85",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(85)"
+    },
+    "language": "stan1293",
+    "primaryText": "John is taller than Bill is.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.2"
+      ],
+      [
+        "claim",
+        "the set of degrees to which Bill is tall is a proper subset of the set to which John is tall"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_91a",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(91a)"
+    },
+    "language": "stan1293",
+    "primaryText": "??Which rumor that John_i liked Mary did he_i later deny?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.4"
+      ],
+      [
+        "coreference",
+        "he = John"
+      ],
+      [
+        "claim",
+        "the complement of rumor cannot be merged late"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_91b",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(91b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I will tell him_i a sillier rumor (about Ann) tomorrow than Mary told John_i.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.4"
+      ],
+      [
+        "coreference",
+        "him = John"
+      ],
+      [
+        "claim",
+        "the complement of -er can be merged late"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_93a",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(93a)"
+    },
+    "language": "stan1293",
+    "primaryText": "*John desires that more people than I do take syntax.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "8"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bp2004_93b",
+    "source": {
+      "bibkey": "bhatt-pancheva-2004",
+      "paperLabel": "(93b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John desires that more people take syntax than I do.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "8"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  }
+]
