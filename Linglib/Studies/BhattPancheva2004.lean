@@ -1,209 +1,220 @@
-import Linglib.Studies.Hoeksema1983
-import Linglib.Semantics.Polarity.Licensing
+import Linglib.Data.Examples.BhattPancheva2004
 import Linglib.Studies.Heim2001
-import Linglib.Syntax.Minimalist.Movement.DegreeMovement
-import Mathlib.Order.Interval.Set.LinearOrder
-import Linglib.Semantics.Polarity.Item
+import Linglib.Syntax.Minimalist.Movement.HeimKennedy
+import Linglib.Syntax.Tree.Basic
+import Linglib.Core.Order.Branching
+import Linglib.Semantics.Quantification.Defs
 
 /-!
-# Bhatt & Pancheva 2004: Late Merger of Degree Clauses
-[bhatt-pancheva-2004] [heim-2000] [williams-1974]
-[lebeaux-1988] [takahashi-hulsey-2009] [hoeksema-1983]
-[bresnan-1973]
+# Bhatt and Pancheva (2004): Late Merger of Degree Clauses
 
-Rajesh Bhatt and Roumyana Pancheva. Late Merger of Degree Clauses.
-*Linguistic Inquiry* 35(1): 1–45.
+This file formalizes [bhatt-pancheva-2004], the proposal that a degree clause, the *than*- or
+*as*-phrase, is merged countercyclically as the complement of the degree head after the head has
+raised to its scope position, so that the surface site of the clause marks the scope of the
+comparison. The Heim–Kennedy constraint of [heim-2000] filters the LFs of degree movement, (24):
+the reading (22b) it excludes has the universal quantifier between the DegP and its trace
+(`hkc_22`), and without an *exactly*-differential or *less* the movement over *require* and
+*allow* has no truth-conditional effect, (30), the monotone collapse of [heim-2000]. The
+Extraposition-Scope Generalization, (39), refines [williams-1974]: the scope of the degree head
+is at least as high as the site of its clause, by countercyclic merger, and exactly as high
+(`at_least_as_high`, `exactly_as_high`); the reading of (43) with *-er* over the *before*-clause
+puts the clause between the DegP and its trace (`hkc_43`), so (44), whose clause site puts the
+DegP above the *before*-clause, is out. Merger at the scope position derives the Ellipsis-Scope
+Generalization, (59), on the four LFs of (62), and the Condition C–Scope Generalization on the
+LFs of (69): the pronoun c-commands the name in the degree clause exactly when the comparison
+scopes below the matrix predicate (`conditionC_scope`). Section 7 derives late merger and its
+"exactly as high" half from Trace Conversion and the nonconservativity of *-er*, (84): the
+converted lower copy intersects the degree clause into the second argument, harmless for a
+conservative quantifier, (82), but a contradiction for *-er*, (86) (`erSem_not_conservative`), so
+the clause merges only at the DegP's ultimate scope position, (90).
 
-## What this file is and isn't
+## Implementation notes
 
-This file is a paper-faithful study of B&P 2004. It does **not** define
-late merger or the Heim-Kennedy Constraint — those live in the
-syntax–semantics interface module
-`Syntax/Minimalist/DegreeMovement.lean`,
-which itself imports `Syntax/Minimalism/LateMerger.lean`
-(generic late merger, polymorphic in admissibility) and
-`Semantics/Degree/Comparative.lean` (set-of-degrees comparative
-operator). What this file *does* is instantiate that infrastructure for
-the empirical claims of B&P, and bridge to neighbouring studies.
+* LFs are category-free trees at the paper's bracketing, `Syntax.Tree Unit String`, with
+  non-branching and elided material written as one leaf; scope is `Branching.cCommandAt` and the
+  constraint `Minimalist.IsHeimKennedy` on it.
+* The comparative of (84) is `erSem`, proper inclusion of degree sets, and (85) is its value on
+  [kennedy-1999]'s positive extents; Trace Conversion itself is not formalized, only the second
+  argument it hands `-er`.
+* Section 4.2 is [heim-2000]'s result and is `Heim2001.forall_collapse`; the ordering constraint
+  between *than*- and result clauses, (48) and (50), and the ellipsis resolution of Section 6.3
+  are recorded as rows.
 
-## B&P's claims, mapped to this file
+## References
 
-- **§3** Late merger of degree clauses. The degree clause is a
-  comparative-deletion construction that merges countercyclically with
-  DegP after movement. We instantiate `LateMergerBleeds` at the
-  degree-specific admissibility predicate and witness the Condition C
-  bleeding profile via `degree_lm_bleeds_iff_scope_position_above`.
-- **§4.1** Heim-Kennedy Constraint. We use `IsHeimKennedy` from the
-  interface module and witness B&P's characteristic prohibition.
-- **§5.1** Late merger of degree clauses bleeds Condition C. Captured
-  by `degree_lm_bleeds_iff_scope_position_above` (§ 1 below).
-- **§4.2, §5.2** The intensional-verb scope data and the Extraposition-Scope
-  Generalization ((39): "at least as high" from countercyclic merger, "exactly as high"
-  from §7). We bridge to [heim-2001]'s intensional-verb table via
-  `bp_hkc_matches_heim_intensional_data` (§ 3 below).
-- **§7** Nonconservativity ((84), (86)) makes early merger contradictory, deriving (90):
-  degree clauses merge only at their ultimate scope position —
-  `erSem_inter_contradictory`, `erSem_not_conservative`.
-- **Hoeksema link** (this file's bridge — B&P do not cite [hoeksema-1983]; §3.9 is
-  Hoeksema's section): `thanClause_reduces_to_max` connects B&P's clausal-source
-  denotation to the `Studies/Hoeksema1983.lean` registry in one line of order plumbing.
-- **§1.1, fn. 4** B&P adopt the essence of [bresnan-1973]'s -er-decomposition
-  (more = -er + many); fn. 4 declines only much-insertion in synthetic forms, and
-  §1.1.1 leaves the ellipsis analysis of phrasal "than NP" open (see the closing
-  note).
-
-## Polarity remarks
-
-A naive worry: if the surface NP-comparative reduces to an underlying
-S-source, does Hoeksema's polarity asymmetry collapse? No. The
-reduction is at the level of *values*, not *signatures*: NP-comparative
-is a Boolean homomorphism over GQs (signature `.mono`), S-comparative
-is anti-additive over degree sets (signature `.antiAdd`). The
-licensing-context registry tracks this distinction, and
-`reduction_preserves_polarity_signatures` witnesses that B&P's
-syntactic uniformity claim does not unify Hoeksema's two algebraic
-types.
-
+* [bhatt-pancheva-2004]
+* [heim-2000]
+* [williams-1974]
+* [lebeaux-1988]
+* [kennedy-1999]
 -/
 
 namespace BhattPancheva2004
 
-open Hoeksema1983
-open Minimalist (ChainPosition)
-open Minimalist.DegreeMovement
-  (DegreeClauseLateMergerBleeds scopeOK_above_binder_bleeds
-   ScopeBinding IsHeimKennedy not_isHeimKennedy_QP_above_bound_DegP
-   isHeimKennedy_no_dependency isHeimKennedy_dependency_requires_high_DegP
-   williams_scope_correlation williams_exempt_when_no_binding)
-open Degree
+open Core.Order Core.Order.Branching Data.Examples Degree Minimalist Set Syntax Syntax.Tree
 
-variable {Entity : Type*}
+/-! ### The Heim–Kennedy constraint (Section 4.1) -/
 
-/-! ### Late merger of degree clauses (B&P §3, §5.1) -/
+/-- The LF (22a) of *every girl is exactly 1 inch taller than that*, the quantifier over the
+DegP: `[every girl [λx [[DegP exactly 1 inch -er than that] [λd [x is d-tall]]]]]`. -/
+def lf22a : Tree Unit String :=
+  bin (leaf "every girl") (binder 1 (bin (bin (leaf "exactly 1 inch -er") (leaf "than that"))
+    (binder 2 (bin (leaf "x is") (bin (tr 2) (leaf "tall"))))))
 
-/-- Instantiation of the generic WLM bleeding profile at the
-    degree-clause admissibility predicate (`scopeOK`): a scope-licit
-    chain position strictly above the pronoun binder bleeds
-    Condition C for late-merged degree clauses. The substantive §5.1
-    content — that degree-clause late merger *exhibits* the same
-    Cond-C-bleeding asymmetry as adjuncts and NP restrictors — is the
-    *use* of this theorem against minimal pairs, which would require
-    encoding the §5.1 stimulus contrasts. We do not formalize those
-    contrasts here. -/
-theorem degree_lm_bleeds_iff_scope_position_above
-    (chain : List ChainPosition) (binderHeight h : ℕ) (hgt : binderHeight < h) :
-    DegreeClauseLateMergerBleeds (⟨h, true⟩ :: chain) binderHeight :=
-  scopeOK_above_binder_bleeds hgt
+/-- The LF (22b), the DegP over the quantifier:
+`[[DegP exactly 1 inch -er than that] [λd [every girl [λx [x is d-tall]]]]]`. -/
+def lf22b : Tree Unit String :=
+  bin (bin (leaf "exactly 1 inch -er") (leaf "than that"))
+    (binder 2 (bin (leaf "every girl") (binder 1 (bin (leaf "x is") (bin (tr 2) (leaf "tall"))))))
 
-/-! ### Heim-Kennedy Constraint (B&P §4.1) -/
+/-- (24) admits (22a) and excludes (22b), where the quantifier's scope contains the degree trace
+but not the DegP, the configuration (25). -/
+theorem hkc_22 :
+    IsHeimKennedy (cCommandAt lf22a) ⟨[0]⟩ ⟨[1, 0, 0]⟩ ⟨[1, 0, 1, 0, 1, 0]⟩ ∧
+      ¬ IsHeimKennedy (cCommandAt lf22b) ⟨[1, 0, 0]⟩ ⟨[0]⟩ ⟨[1, 0, 1, 0, 1, 0]⟩ := by
+  constructor <;> decide
 
-/-- B&P §4.1: HKC's characteristic prohibition. A QP whose trace is
-    in the DegP's restrictor cannot scope strictly above the DegP at
-    LF. Direct application of the interface lemma. -/
-theorem hkc_blocks_QP_above_bound_DegP
-    (degH qpH : Nat) (h : degH < qpH) :
-    ¬ IsHeimKennedy ⟨degH, qpH, qpH, true⟩ :=
-  not_isHeimKennedy_QP_above_bound_DegP degH qpH h
+/-! ### The Extraposition-Scope Generalization (Section 5.2) -/
 
-/-! ### Williams 1974 derived (B&P §5.2) -/
+/-- The LF (43a) of *Mary climbed higher than 1,000 feet before you did*, the *before*-clause over
+the DegP: `[[Mary [[climbed [t high]] [DegP -er than 1,000 feet]]] [before you did]]`. -/
+def lf43a : Tree Unit String :=
+  bin (bin (leaf "Mary") (bin (bin (leaf "climbed") (bin (tr 1) (leaf "high")))
+    (bin (leaf "-er") (leaf "than 1,000 feet")))) (leaf "before you did")
 
-/-- B&P's analytic hypothesis about the intensional-verb data: a verb
-    is in the high-DegP-blocking class iff its (raised) subject binds
-    into the DegP's restrictor. This function packages the hypothesis
-    as a `ScopeBinding` per datum, parameterized by the LF heights of
-    the DegP and the intensional verb.
+/-- The LF (43b), the DegP over the *before*-clause:
+`[[[Mary [climbed [t high]]] [before you did]] [DegP -er than 1,000 feet]]`. -/
+def lf43b : Tree Unit String :=
+  bin (bin (bin (leaf "Mary") (bin (leaf "climbed") (bin (tr 1) (leaf "high"))))
+    (leaf "before you did")) (bin (leaf "-er") (leaf "than 1,000 feet"))
 
-    UNVERIFIED: B&P do not state this as a single equation; the claim
-    is reconstructed from B&P §5.2's discussion of Williams 1974 plus
-    Heim 2001's observation about which verbs admit the DegP-high
-    reading. -/
-def bpHypothesizedBinding (d : Heim2001.Row)
-    (degHeight intHeight : Nat) : ScopeBinding :=
-  ⟨degHeight, intHeight, intHeight, !d.highDegP⟩
+/-- (43) has the reading with the *before*-clause over the comparison and not the reading with the
+comparison over the *before*-clause, in which the *before*-clause's scope contains the degree
+trace but not the DegP; (44), whose clause is merged above the *before*-clause, has only the LF
+(43b). -/
+theorem hkc_43 :
+    IsHeimKennedy (cCommandAt lf43a) ⟨[1]⟩ ⟨[0, 1, 1]⟩ ⟨[0, 1, 0, 1, 0]⟩ ∧
+      ¬ IsHeimKennedy (cCommandAt lf43b) ⟨[0, 1]⟩ ⟨[1]⟩ ⟨[0, 0, 1, 1, 0]⟩ := by
+  constructor <;> decide
 
-/-- Non-vacuous bridge to [heim-2001]: under B&P's hypothesis
-    (`bpHypothesizedBinding`) that high-DegP-blocking iff binding-tail,
-    the Heim-Kennedy Constraint reproduces Heim's 4-vs-4 pattern
-    *exactly* on the DegP-low LF (where the matrix DegP scopes below
-    the intensional verb): HKC permits the LF iff the verb allows
-    high-DegP.
+/-- The site of an extraposed clause relative to the operator the comparison may scope over. -/
+inductive Site
+  | low
+  | high
+  deriving DecidableEq, Repr
 
-    This theorem is *not* a constant — both sides depend on the
-    row's `highDegP` field. The empirical content is that
-    B&P's binding hypothesis correctly predicts Heim's per-verb
-    blocking pattern. -/
-theorem bp_hkc_matches_heim_intensional_data :
-    ∀ d ∈ Heim2001.rows,
-      IsHeimKennedy (bpHypothesizedBinding d 0 1) ↔ d.highDegP = true := by
-  intro d _
-  cases h : d.highDegP <;>
-    simp [bpHypothesizedBinding, IsHeimKennedy, h]
+/-- An extraposition datum: the clause's site, whether its associate is the bare DegP rather than a
+comparative DP, and whether the comparison's narrow and wide scope readings are available. -/
+structure Row where
+  site : Site
+  degP : Bool
+  narrow : Bool
+  wide : Bool
+  deriving DecidableEq, Repr
 
-/-! ### Reduction to the Hoeksema registry ([hoeksema-1983] §3.9)
+/-- A row from the paper's features. -/
+def Row.ofExample (e : LinguisticExample) : Option Row := do
+  let site ← match e.feature? "site" with
+    | some "low" => some Site.low
+    | some "high" => some Site.high
+    | _ => none
+  let mover ← e.feature? "mover"
+  let narrow ← e.feature? "narrow_scope"
+  let wide ← e.feature? "wide_scope"
+  some ⟨site, mover = "DegP", narrow = "available", wide = "available"⟩
 
-This bridge is the file's, not the paper's: B&P do not cite Hoeksema. -/
+/-- The extraposition data of Section 5.2, (41) to (46) and (53) to (54). -/
+def rows : List Row := Examples.all.filterMap Row.ofExample
 
-/-- B&P's clausal-source than-clause denotation `{d | d ≤ μ b}` (the
-    standard's positive extent `Set.Iic (μ b)`) collapses to the singleton
-    `{μ b}` when fed to the S-comparative. Direct corollary of
-    `gtOverSet_eq_singleton_of_isGreatest` instantiated at the
-    than-clause's greatest element (`isGreatest_Iic`). -/
-theorem thanClause_reduces_to_max
-    {D : Type*} [Preorder D] (μ : Entity → D) (b : Entity) :
-    Comparison.gt.overSet μ (Set.Iic (μ b)) =
-      Comparison.gt.overSet μ ({μ b} : Set D) :=
-  gtOverSet_eq_singleton_of_isGreatest μ isGreatest_Iic
+/-- (38), the half of (39) countercyclic merger derives: a clause merged above an operator leaves
+the comparison no scope below it, (42), (44), (46), (53b) and (54b). -/
+theorem at_least_as_high : ∀ r ∈ rows, r.site = .high → r.narrow = false := by decide
 
-/-- Combining [hoeksema-1983] §3.9 (the principal-ultrafilter /
-    singleton-degree-set equivalence) with the B&P reduction:
-    Hoeksema's NP-comparative GQ on `Q_b` equals the S-comparative on
-    the *full* clausal-source than-clause denotation — the coextensiveness of
-    "than NP" and "than [NP is Adj]" for proper-name standards, which §1.1.1's
-    comparative-ellipsis remark presupposes. -/
-theorem npGQ_principal_eq_sComp_thanClause
-    {D : Type*} [Preorder D] (μ : Entity → D) (b : Entity) :
-    npComparativeGQ μ (principalUltrafilter b) =
-      Comparison.gt.overSet μ (Set.Iic (μ b)) := by
-  rw [npComparativeGQ_principal_eq_gtOverSet_singleton,
-      ← thanClause_reduces_to_max]
+/-- The other half of (39): a bare DegP whose clause is merged below an operator has no scope
+above it, (43), (53a) and (54a), whereas a comparative DP raises with its clause, (41) and
+(45). -/
+theorem exactly_as_high :
+    (∀ r ∈ rows, r.degP = true → r.site = .low → r.wide = false) ∧
+      ∀ r ∈ rows, r.degP = false → r.site = .low → r.wide = true := by
+  decide
 
-/-! ### Nonconservativity forces late merger (B&P §7)
+/-! ### Ellipsis and Condition C mark the scope of the comparison (Section 6) -/
 
-Trace Conversion turns the lower copy of a moved [-er + degree clause] into a definite
-over the standard set, so early merger feeds `-er` its own first argument intersected
-into the second ((87)). For a conservative quantifier this is harmless ((82)); for `-er`
-— standard ⊊ target ((84)) — it is a contradiction ((86)), and further covert movement
-of [-er + degree clause] recreates it. Hence (90): degree clauses are merged only in
-their ultimate scope position — the "exactly as high" half of the Extraposition-Scope
-Generalization ((39)). -/
+/-- An LF of *her father tells her to work harder than Mary's boss does*, (62) and (69): the tree
+and the positions of the DegP, the degree clause, the pronoun, the matrix predicate and the
+matrix and embedded VPs. -/
+structure TellLF where
+  tree : Tree Unit String
+  degP : TreePath
+  clause : TreePath
+  pronoun : TreePath
+  tells : TreePath
+  matrixVP : TreePath
+  embeddedVP : TreePath
 
-/-- The comparative degree quantifier over degree sets ((84)): the standard is a proper
-    subset of the target. -/
-def erSem {D : Type*} (A B : Set D) : Prop := A ⊂ B
+/-- The clause merged low, at the embedded clause, (69a):
+`[her father [tells [her [[λd PRO to work d-hard] [-er than Mary's boss does]]]]]`. -/
+def low : TellLF where
+  tree := bin (leaf "her father") (bin (leaf "tells") (bin (leaf "her")
+    (bin (binder 1 (bin (leaf "PRO to work") (bin (tr 1) (leaf "hard"))))
+      (bin (leaf "-er") (leaf "than Mary's boss does")))))
+  degP := ⟨[1, 1, 1, 1]⟩
+  clause := ⟨[1, 1, 1, 1, 1]⟩
+  pronoun := ⟨[1, 1, 0]⟩
+  tells := ⟨[1, 0]⟩
+  matrixVP := ⟨[1]⟩
+  embeddedVP := ⟨[1, 1, 1, 0, 0]⟩
 
-/-- Early merger is contradictory ((86), (87)): after Trace Conversion the second
-    argument is intersected with the first, and `A ⊂ A ∩ B` is unsatisfiable. -/
-theorem erSem_inter_contradictory {D : Type*} (A B : Set D) : ¬ erSem A (A ∩ B) :=
-  fun h => h.not_subset Set.inter_subset_left
+/-- The clause merged high, at the matrix clause, (69c):
+`[[λd her father tells her to work d-hard] [-er than Mary's boss does]]`. -/
+def high : TellLF where
+  tree := bin (binder 1 (bin (leaf "her father") (bin (leaf "tells") (bin (leaf "her")
+    (bin (leaf "PRO to work") (bin (tr 1) (leaf "hard")))))))
+    (bin (leaf "-er") (leaf "than Mary's boss does"))
+  degP := ⟨[1]⟩
+  clause := ⟨[1, 1]⟩
+  pronoun := ⟨[0, 0, 1, 1, 0]⟩
+  tells := ⟨[0, 0, 1, 0]⟩
+  matrixVP := ⟨[0, 0, 1]⟩
+  embeddedVP := ⟨[0, 0, 1, 1, 1]⟩
 
-/-- `-er` is not conservative ((82) vs (86)): on a nonempty degree domain no equivalence
-    `Q A B ↔ Q A (A ∩ B)` can hold for it. -/
-theorem erSem_not_conservative {D : Type*} [Nonempty D] :
-    ¬ ∀ A B : Set D, erSem A B ↔ erSem A (A ∩ B) :=
-  fun h => erSem_inter_contradictory (∅ : Set D) Set.univ
-    ((h ∅ Set.univ).mp (Set.empty_ssubset.mpr Set.univ_nonempty))
+/-- The Ellipsis-Scope Generalization, (59), on the LFs of (62): the scope of the DegP contains
+the embedded VP at either site and the matrix VP only at the high site, so the reading (62b),
+the clause merged low with the matrix VP elided, is the one missing. -/
+theorem ellipsisScope :
+    (∀ lf ∈ [low, high], (lf.degP, lf.embeddedVP) ∈ cCommandAt lf.tree) ∧
+      (low.degP, low.matrixVP) ∉ cCommandAt low.tree ∧
+      (high.degP, high.matrixVP) ∈ cCommandAt high.tree := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
-/- ## Note on the Bresnan 1973 relationship (B&P §1.1, fn. 4)
+/-- The Condition C–Scope Generalization, (69) and (70): the pronoun c-commands the name in the
+degree clause exactly when the comparison does not scope over the matrix predicate. -/
+theorem conditionC_scope :
+    ∀ lf ∈ [low, high],
+      (lf.pronoun, lf.clause) ∈ cCommandAt lf.tree ↔ (lf.degP, lf.tells) ∉ cCommandAt lf.tree := by
+  decide
 
-B&P adopt "the essence of Bresnan's analysis" of comparative determiners (more = -er +
-many/much, less = -er + little, fewer = -er + few; §1.1); fn. 4's departure concerns
-only much-insertion in synthetic adjectival forms such as happier. On phrasal "than NP"
-the 2004 text takes no stand: §1.1.1 notes that the phrasal (12) can be assimilated to
-the clausal (11) via comparative ellipsis, leaving the clausal-source question open.
+/-! ### Nonconservativity forces late merger (Section 7) -/
 
-[bhatt-takahashi-2011] cite the 2004 paper only for the Late Merge of the *than*-phrase and
-credit the reduction verdict for English to [lechner-2004], so no disagreement between the
-two papers is on record. The extensional agreement for proper-name standards is
-`npGQ_principal_eq_sComp_thanClause` above. -/
+variable {Entity D : Type*}
+
+/-- The comparative degree quantifier, (84): its first argument, the degree clause, is a proper
+subset of its second. -/
+def erSem (A B : Set D) : Prop := A ⊂ B
+
+/-- (85): on [kennedy-1999]'s positive extents `-er` compares the measures. -/
+theorem erSem_Iic_iff [LinearOrder D] (μ : Entity → D) (a b : Entity) :
+    erSem (Iic (μ b)) (Iic (μ a)) ↔ comparativeSem μ a b .positive :=
+  (comparative_iff_Iic_ssubset μ a b).symm
+
+/-- (86) and (87): Trace Conversion of an early-merged degree clause intersects it into the second
+argument, and `A ⊂ A ∩ B` is a contradiction. -/
+theorem erSem_inter_contradictory (A B : Set D) : ¬ erSem A (A ∩ B) :=
+  λ h => h.not_subset inter_subset_left
+
+/-- (82) against (86): a conservative quantifier is unaffected by the intersection, and `-er` is
+not conservative. -/
+theorem erSem_not_conservative [Nonempty D] : ¬ Quantification.Conservative (erSem (D := D)) :=
+  λ h => erSem_inter_contradictory ∅ univ ((h (∅ : Set D) univ).1 (empty_ssubset.2 univ_nonempty))
 
 end BhattPancheva2004

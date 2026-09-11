@@ -1,6 +1,8 @@
 import Linglib.Data.Examples.BhattTakahashi2011
 import Linglib.Studies.Lechner2004
-import Linglib.Syntax.Minimalist.Movement.DegreeMovement
+import Linglib.Syntax.Minimalist.Movement.HeimKennedy
+import Linglib.Syntax.Tree.Basic
+import Linglib.Core.Order.Branching
 
 /-!
 # Bhatt and Takahashi (2011): Reduced and unreduced phrasal comparatives
@@ -20,8 +22,9 @@ crosslinguistically, their distribution fixed by what *than*, *yori* and *-se* c
 ## Implementation notes
 
 The binding rows are read into [lechner-2004]'s `BindingDatum` schema and the scope rows into
-`Minimalist.DegreeMovement.ScopeBinding` by a canonical configuration for whether the
-quantifier's base position c-commands the degree trace. The Single Standard Restriction and
+the reduced *than*-clause LFs of (43a) and (43b), on which the Heim–Kennedy constraint
+(`Minimalist.IsHeimKennedy`) at the quantifier's base position decides than-phrase-internal
+scope. The Single Standard Restriction and
 the Precedence Constraint of §3, which need a linear-order interface, and the derivation of
 Japanese's analyses from *yori*'s subcategorization are not formalized; the Japanese cell is
 stated.
@@ -36,7 +39,8 @@ stated.
 
 namespace BhattTakahashi2011
 
-open Data.Examples Features Lechner2004 Minimalist.DegreeMovement
+open Core.Order Core.Order.Branching Data.Examples Features Lechner2004 Minimalist Syntax
+open Syntax.Tree
 
 /-! ### The rows -/
 
@@ -84,19 +88,43 @@ theorem hindi_urdu_binding :
 
 /-! ### The scope diagnostic (§4) -/
 
-/-- A scope row's configuration: the quantifier's base position either c-commands the
-than-phrase-internal degree trace or sits at its height. -/
-def scopeBindingOf (e : LinguisticExample) : Option ScopeBinding :=
+/-- A reduced *than*-clause LF: the tree, the quantifier's base position and the degree trace. -/
+structure ThanClause where
+  tree : Tree Unit String
+  qp : TreePath
+  trace : TreePath
+
+/-- The reduced *than*-clause of (43a), *than Craige assigned every second year student d-many
+papers*, in a VP shell: the quantifier's base position c-commands the degree trace. -/
+def thanClause43a : ThanClause where
+  tree := binder 1 (bin (leaf "Craige") (bin (leaf "assigned")
+    (bin (leaf "every second year student") (bin (leaf "t") (bin (tr 1) (leaf "many papers"))))))
+  qp := ⟨[0, 1, 1, 0]⟩
+  trace := ⟨[0, 1, 1, 1, 1, 0]⟩
+
+/-- The reduced *than*-clause of (43b), *than Craige assigned d-many students every paper by
+Klein*: the quantifier's base position does not c-command the degree trace. -/
+def thanClause43b : ThanClause where
+  tree := binder 1 (bin (leaf "Craige") (bin (leaf "assigned")
+    (bin (bin (tr 1) (leaf "many students")) (bin (leaf "t") (leaf "every paper by Klein")))))
+  qp := ⟨[0, 1, 1, 1, 1]⟩
+  trace := ⟨[0, 1, 1, 0, 0]⟩
+
+/-- A scope row's *than*-clause: the configuration of (43a) when the quantifier's base position
+c-commands the degree trace and that of (43b) when it does not. -/
+def thanClauseOf (e : LinguisticExample) : Option ThanClause :=
   match e.feature? "qp_base_c_commands_degree_trace" with
-  | some "yes" => some ⟨1, 2, 2, true⟩
-  | some "no" => some ⟨1, 1, 1, false⟩
+  | some "yes" => some thanClause43a
+  | some "no" => some thanClause43b
   | _ => none
 
-/-- (43): under reduction, than-phrase-internal scope is available exactly when the base
-position does not c-command the degree trace. -/
+/-- (43): under reduction, than-phrase-internal scope is available exactly when the quantifier in
+its base position satisfies the Heim–Kennedy constraint against the degree abstraction at the
+root of the *than*-clause. -/
 def RAPredictsScope (e : LinguisticExample) : Prop :=
-  ∀ b ∈ scopeBindingOf e,
-    (IsBhattTakahashiScopeLicit b ↔ e.feature? "than_internal_scope" = some "available")
+  ∀ c ∈ thanClauseOf e,
+    (IsHeimKennedy (cCommandAt c.tree) c.qp ⊥ c.trace ↔
+      e.feature? "than_internal_scope" = some "available")
 
 instance (e : LinguisticExample) : Decidable (RAPredictsScope e) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
