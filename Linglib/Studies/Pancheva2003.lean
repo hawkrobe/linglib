@@ -4,7 +4,7 @@ import Linglib.Studies.Kiparsky2002
 import Linglib.Data.Examples.Pancheva2003
 
 /-!
-# [pancheva-2003]: The aspectual makeup of Perfect participles and the interpretations of the Perfect
+# Pancheva (2003): The Aspectual Makeup of Perfect Participles
 [pancheva-2003] [kiparsky-2002] [iatridou-anagnostopoulou-izvorski-2001]
 
 Pancheva (in *Perfect Explorations*, Alexiadou-Rathert-von Stechow
@@ -43,24 +43,66 @@ inside the participial VP.
   Kiparsky's 4-reading enum (Kiparsky adds present-state, which
   Pancheva does not distinguish).
 
-The Lean substrate `Semantics/Aspect/Core.lean` already
-provides `PerfectType` (Pancheva's 3-type enum) plus the
-`universalPerfect` / `experientialPerfect` / `resultativePerfect`
-operators built on `PERF_P` over `UNBOUNDED` / `INIT_OVERLAP` /
-`BOUNDED` aspect; these are the general substrate Pancheva's
-analysis uses.
+The operators of (7b) and (9b), the inner viewpoints NEUTRAL (`INIT_OVERLAP`)
+and BOUNDED and the interval-level PERFECT (`PERF_P`), and the three perfect
+readings they compose to (`universalPerfect`, `experientialPerfect`,
+`resultativePerfect`), are this file's; the non-strict imperfective UNBOUNDED
+is shared substrate, `Aspect.UNBOUNDED`.
 
 -/
 
 namespace Pancheva2003
 
 open Data.Examples (LinguisticExample)
-open Aspect (PerfectType)
+open Aspect
 open Kiparsky2002 (PerfectReading)
 
--- ════════════════════════════════════════════════════════════════
--- § Pancheva → Kiparsky bridge (moved from Studies/Kiparsky2002.lean)
--- ════════════════════════════════════════════════════════════════
+/-! ### The aspectual makeup of the participle, (7) and (9) -/
+
+variable {T : Type*} [LinearOrder T] {W : Type*}
+
+/-- The neutral inner viewpoint of (7b), p. 282: the reference interval overlaps the beginning
+of the event, which may extend beyond it. -/
+def INIT_OVERLAP (P : W → Event T → Prop) : IntervalPred W T :=
+  λ w t => ∃ e : Event T, t.initialOverlap e.τ ∧ P w e
+
+/-- The bounded inner viewpoint of (7b): the run time of the event is properly contained in the
+reference interval. -/
+def BOUNDED (P : W → Event T → Prop) : IntervalPred W T :=
+  λ w t => ∃ e : Event T, e.τ < t ∧ P w e
+
+/-- The interval-level PERFECT of (9b), p. 284: some perfect time span of which the reference
+interval is a final subinterval satisfies the predicate. -/
+def PERF_P (p : IntervalPred W T) : IntervalPred W T :=
+  λ w i => ∃ pts : NonemptyInterval T, i.finalSubinterval pts ∧ p w pts
+
+/-- The point-based `Aspect.PERF` is `PERF_P` at a degenerate reference interval. -/
+theorem perf_p_pure_iff_perf (p : IntervalPred W T) (w : W) (t : T) :
+    PERF_P p w (NonemptyInterval.pure t) ↔ PERF p ⟨w, t⟩ := by
+  constructor
+  · intro ⟨pts, hFin, hp⟩
+    exact ⟨pts, hFin.2.symm, hp⟩
+  · intro ⟨pts, hRB, hp⟩
+    exact ⟨pts, ⟨⟨le_trans pts.fst_le_snd (le_of_eq hRB), le_of_eq hRB.symm⟩, hRB.symm⟩, hp⟩
+
+/-- The three readings of the perfect, (1). -/
+inductive PerfectType
+  | universal
+  | experiential
+  | resultative
+  deriving DecidableEq, Repr
+
+/-- The universal perfect, (11): PERFECT over UNBOUNDED. -/
+abbrev universalPerfect (P : W → Event T → Prop) : IntervalPred W T := PERF_P (UNBOUNDED P)
+
+/-- The experiential perfect, (12): PERFECT over NEUTRAL. -/
+abbrev experientialPerfect (P : W → Event T → Prop) : IntervalPred W T :=
+  PERF_P (INIT_OVERLAP P)
+
+/-- The resultative perfect, (15): PERFECT over BOUNDED, without the result state of p. 288. -/
+abbrev resultativePerfect (P : W → Event T → Prop) : IntervalPred W T := PERF_P (BOUNDED P)
+
+/-! ### The readings in Kiparsky's terms -/
 
 /-- Map [pancheva-2003]'s perfect types to Kiparsky's readings.
     - experiential → existential (Pancheva's EXP and Kiparsky's

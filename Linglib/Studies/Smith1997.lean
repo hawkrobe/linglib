@@ -12,11 +12,9 @@ a situation type (`VendlerClass`) and a viewpoint (`ViewpointType`), freely
 combinable.
 
 The four visibility properties Smith tabulates for viewpoints (§4.1) are not
-restated here as a stipulated lookup — they live in `Semantics/Aspect/Basic.lean`
-as `Prop`-valued predicates derived from the TT–TSit interval relation
-`ViewpointType.ttTSitRelation`. Smith's Table 1 then re-emerges as the four
-substrate iff theorems (`showsInitialPoint_iff`, etc.); this file only
-re-packages those into the row-wise groupings Smith uses prose-side.
+restated as a stipulated lookup: they are `Prop`-valued predicates derived from the substrate's
+TT–TSit interval relation `ViewpointType.ttTSitRelation`, and Smith's Table 1 re-emerges as
+four iff theorems (`showsInitialPoint_iff`, etc.), regrouped row-wise below.
 
 ## Main declarations
 
@@ -31,9 +29,10 @@ re-packages those into the row-wise groupings Smith uses prose-side.
 
 ## Implementation notes
 
-`VendlerClass`, `Telicity`, `ViewpointType` and its visibility predicates live in
-`Semantics/Aspect/Basic.lean`; compositional rules (`composeWithNP`, `overrideTelicity`) in
-`Semantics/Aspect/Composition.lean`; `HasInternalStages` is this file's.
+`VendlerClass`, `Telicity` and `ViewpointType` live in `Semantics/Aspect/Basic.lean`;
+compositional rules (`composeWithNP`, `overrideTelicity`) in
+`Semantics/Aspect/Composition.lean`; the visibility predicates and `HasInternalStages` are this
+file's.
 
 ## References
 
@@ -43,59 +42,214 @@ re-packages those into the row-wise groupings Smith uses prose-side.
 open Aspect Aspect.Composition
 namespace Smith1997
 
-/-! ### Visibility ([smith-1997] §4.1 Table 1) — row-wise groupings -/
+/-! ### Visibility
 
-/-- Perfective makes both endpoints visible and presents the situation as closed
-    ([smith-1997] §4.1, Table 1). -/
-theorem perfective_closed :
-    ViewpointType.perfective.ShowsInitialPoint ∧
-    ViewpointType.perfective.ShowsFinalPoint ∧
-    ViewpointType.perfective.IsClosed :=
-  ⟨(ViewpointType.showsInitialPoint_iff _).mpr (Or.inl rfl),
-   (ViewpointType.showsFinalPoint_iff _).mpr rfl,
-   (ViewpointType.isClosed_iff _).mpr (Or.inl rfl)⟩
+The four visibility properties Table 1 of Section 4.1 tabulates per viewpoint, whether the
+initial and the final point of the situation are asserted, whether the viewpoint presents the
+situation as closed, and whether it focuses an interval strictly inside the situation, the source
+of the preliminary-stage reading of punctuals, Section 4.2.2, are interval geometry over
+`ViewpointType.ttTSitRelation`, and Table 1 is recovered as four iff theorems. -/
 
-/-- Imperfective makes neither endpoint visible and is not closed
-    ([smith-1997] §4.1, Table 1). -/
-theorem imperfective_open :
-    ¬ ViewpointType.imperfective.ShowsInitialPoint ∧
-    ¬ ViewpointType.imperfective.ShowsFinalPoint ∧
-    ¬ ViewpointType.imperfective.IsClosed := by
-  rw [ViewpointType.showsInitialPoint_iff, ViewpointType.showsFinalPoint_iff,
-      ViewpointType.isClosed_iff]
+/-- The viewpoint asserts the initial point of the situation. -/
+def ShowsInitialPoint (v : ViewpointType) : Prop :=
+  ∀ {T : Type} [LinearOrder T] {tt tsit : NonemptyInterval T},
+    v.ttTSitRelation tt tsit → tsit.fst ∈ tt
+
+/-- The viewpoint asserts the final point of the situation. -/
+def ShowsFinalPoint (v : ViewpointType) : Prop :=
+  ∀ {T : Type} [LinearOrder T] {tt tsit : NonemptyInterval T},
+    v.ttTSitRelation tt tsit → tsit.snd ∈ tt
+
+/-- The viewpoint presents the situation as closed: the topic time reaches its final point. -/
+def PresentsClosed (v : ViewpointType) : Prop :=
+  ∀ {T : Type} [LinearOrder T] {tt tsit : NonemptyInterval T},
+    v.ttTSitRelation tt tsit → tsit.snd ≤ tt.snd
+
+/-- The viewpoint focuses a topic time strictly inside the situation. -/
+def FocusesPreliminaryStages (v : ViewpointType) : Prop :=
+  ∀ {T : Type} [LinearOrder T] {tt tsit : NonemptyInterval T},
+    v.ttTSitRelation tt tsit → tt < tsit
+
+private theorem rel_imperfective :
+    ViewpointType.imperfective.ttTSitRelation (⟨⟨1, 2⟩, by omega⟩ : NonemptyInterval ℤ)
+      ⟨⟨0, 3⟩, by omega⟩ := by
   decide
 
-/-- Neutral is intermediate: initial point visible (like perfective), final
-    point not asserted (like imperfective), not closed
-    ([smith-1997] §4.2.3, p. 80). -/
-theorem neutral_intermediate :
-    ViewpointType.neutral.ShowsInitialPoint ∧
-    ¬ ViewpointType.neutral.ShowsFinalPoint ∧
-    ¬ ViewpointType.neutral.IsClosed := by
-  refine ⟨?_, ?_, ?_⟩
-  · exact (ViewpointType.showsInitialPoint_iff _).mpr (Or.inr rfl)
-  · rw [ViewpointType.showsFinalPoint_iff]; decide
-  · rw [ViewpointType.isClosed_iff]; decide
+private theorem rel_perfect :
+    ViewpointType.perfect.ttTSitRelation (⟨⟨3, 4⟩, by omega⟩ : NonemptyInterval ℤ)
+      ⟨⟨0, 2⟩, by omega⟩ := by
+  decide
 
-/-- Only the imperfective focuses preliminary stages; neutral does not — the
-    discriminator between neutral and imperfective ([smith-1997] §4.2.3,
-    p. 80, ex. 41). -/
-theorem neutral_no_preliminary_stages :
-    ¬ ViewpointType.neutral.FocusesPreliminaryStages ∧
-    ViewpointType.imperfective.FocusesPreliminaryStages := by
+private theorem rel_prospective :
+    ViewpointType.prospective.ttTSitRelation (⟨⟨0, 1⟩, by omega⟩ : NonemptyInterval ℤ)
+      ⟨⟨2, 3⟩, by omega⟩ := by
+  decide
+
+private theorem rel_neutral_short :
+    ViewpointType.neutral.ttTSitRelation (⟨⟨0, 1⟩, by omega⟩ : NonemptyInterval ℤ)
+      ⟨⟨0, 5⟩, by omega⟩ := by
+  decide
+
+private theorem rel_neutral_wide :
+    ViewpointType.neutral.ttTSitRelation (⟨⟨0, 10⟩, by omega⟩ : NonemptyInterval ℤ)
+      ⟨⟨0, 5⟩, by omega⟩ := by
+  decide
+
+private theorem rel_perfective_refl :
+    ViewpointType.perfective.ttTSitRelation (⟨⟨0, 1⟩, by omega⟩ : NonemptyInterval ℤ)
+      ⟨⟨0, 1⟩, by omega⟩ := by
+  decide
+
+/-- Table 1, the initial point: the perfective and the neutral viewpoint assert it. -/
+theorem showsInitialPoint_iff (v : ViewpointType) :
+    ShowsInitialPoint v ↔ v = .perfective ∨ v = .neutral := by
   refine ⟨?_, ?_⟩
-  · rw [ViewpointType.focusesPreliminaryStages_iff]; decide
-  · exact (ViewpointType.focusesPreliminaryStages_iff _).mpr rfl
+  · intro h
+    cases v with
+    | perfective => exact Or.inl rfl
+    | neutral => exact Or.inr rfl
+    | imperfective =>
+        exfalso
+        have hC := @h ℤ _ _ _ rel_imperfective
+        have : (1 : ℤ) ≤ 0 := hC.1
+        omega
+    | perfect =>
+        exfalso
+        have hC := @h ℤ _ _ _ rel_perfect
+        have : (3 : ℤ) ≤ 0 := hC.1
+        omega
+    | prospective =>
+        exfalso
+        have hC := @h ℤ _ _ _ rel_prospective
+        have : (2 : ℤ) ≤ 1 := hC.2
+        omega
+  · rintro (rfl | rfl)
+    · intro _ _ tt tsit h
+      exact ⟨h.1, le_trans tsit.fst_le_snd h.2⟩
+    · intro _ _ _ _ h
+      exact h.2
 
-/-- Neutral's initial-point visibility matches perfective's (both hold), while
-    its final-point visibility matches imperfective's (both fail). -/
+/-- Table 1, the final point: only the perfective asserts it. -/
+theorem showsFinalPoint_iff (v : ViewpointType) : ShowsFinalPoint v ↔ v = .perfective := by
+  refine ⟨?_, ?_⟩
+  · intro h
+    cases v with
+    | perfective => rfl
+    | imperfective =>
+        exfalso
+        have hC := @h ℤ _ _ _ rel_imperfective
+        have : (3 : ℤ) ≤ 2 := hC.2
+        omega
+    | perfect =>
+        exfalso
+        have hC := @h ℤ _ _ _ rel_perfect
+        have : (3 : ℤ) ≤ 2 := hC.1
+        omega
+    | prospective =>
+        exfalso
+        have hC := @h ℤ _ _ _ rel_prospective
+        have : (3 : ℤ) ≤ 1 := hC.2
+        omega
+    | neutral =>
+        exfalso
+        have hC := @h ℤ _ _ _ rel_neutral_short
+        have : (5 : ℤ) ≤ 1 := hC.2
+        omega
+  · rintro rfl
+    intro _ _ tt tsit h
+    exact ⟨le_trans h.1 tsit.fst_le_snd, h.2⟩
+
+/-- Table 1, closure: the perfective and the perfect present the situation as closed. -/
+theorem presentsClosed_iff (v : ViewpointType) :
+    PresentsClosed v ↔ v = .perfective ∨ v = .perfect := by
+  refine ⟨?_, ?_⟩
+  · intro h
+    cases v with
+    | perfective => exact Or.inl rfl
+    | perfect => exact Or.inr rfl
+    | imperfective =>
+        exfalso
+        have : (3 : ℤ) ≤ 2 := @h ℤ _ _ _ rel_imperfective
+        omega
+    | prospective =>
+        exfalso
+        have : (3 : ℤ) ≤ 1 := @h ℤ _ _ _ rel_prospective
+        omega
+    | neutral =>
+        exfalso
+        have : (5 : ℤ) ≤ 1 := @h ℤ _ _ _ rel_neutral_short
+        omega
+  · rintro (rfl | rfl)
+    · intro _ _ _ _ h
+      exact h.2
+    · intro _ _ tt _ h
+      exact le_trans h tt.fst_le_snd
+
+/-- Table 1, preliminary stages: only the imperfective places the topic time strictly inside
+the situation. -/
+theorem focusesPreliminaryStages_iff (v : ViewpointType) :
+    FocusesPreliminaryStages v ↔ v = .imperfective := by
+  refine ⟨?_, ?_⟩
+  · intro h
+    cases v with
+    | imperfective => rfl
+    | perfective =>
+        exfalso
+        exact lt_irrefl _ (@h ℤ _ _ _ rel_perfective_refl)
+    | perfect =>
+        exfalso
+        have hC := @h ℤ _ _ _ rel_perfect
+        have : (4 : ℤ) ≤ 2 := hC.1.2
+        omega
+    | prospective =>
+        exfalso
+        have hC := @h ℤ _ _ _ rel_prospective
+        have : (2 : ℤ) ≤ 0 := hC.1.1
+        omega
+    | neutral =>
+        exfalso
+        have hC := @h ℤ _ _ _ rel_neutral_wide
+        have : (10 : ℤ) ≤ 5 := hC.1.2
+        omega
+  · rintro rfl
+    intro _ _ _ _ h
+    exact h
+
+/-- The perfective makes both endpoints visible and presents the situation as closed. -/
+theorem perfective_closed :
+    ShowsInitialPoint .perfective ∧ ShowsFinalPoint .perfective ∧ PresentsClosed .perfective :=
+  ⟨(showsInitialPoint_iff _).mpr (Or.inl rfl), (showsFinalPoint_iff _).mpr rfl,
+    (presentsClosed_iff _).mpr (Or.inl rfl)⟩
+
+/-- The imperfective makes neither endpoint visible and is open. -/
+theorem imperfective_open :
+    ¬ ShowsInitialPoint .imperfective ∧ ¬ ShowsFinalPoint .imperfective ∧
+      ¬ PresentsClosed .imperfective := by
+  rw [showsInitialPoint_iff, showsFinalPoint_iff, presentsClosed_iff]
+  decide
+
+/-- The neutral viewpoint is intermediate, Section 4.2.3: the initial point visible as under the
+perfective, the final point unasserted as under the imperfective, and open. -/
+theorem neutral_intermediate :
+    ShowsInitialPoint .neutral ∧ ¬ ShowsFinalPoint .neutral ∧ ¬ PresentsClosed .neutral := by
+  refine ⟨(showsInitialPoint_iff _).mpr (Or.inr rfl), ?_, ?_⟩
+  · rw [showsFinalPoint_iff]; decide
+  · rw [presentsClosed_iff]; decide
+
+/-- Only the imperfective focuses preliminary stages, the discriminator between the neutral
+viewpoint and the imperfective, Section 4.2.3, (41). -/
+theorem neutral_no_preliminary_stages :
+    ¬ FocusesPreliminaryStages .neutral ∧ FocusesPreliminaryStages .imperfective := by
+  refine ⟨?_, (focusesPreliminaryStages_iff _).mpr rfl⟩
+  rw [focusesPreliminaryStages_iff]; decide
+
+/-- The neutral viewpoint sides with the perfective on the initial point and with the
+imperfective on the final point. -/
 theorem neutral_between_perf_imperf :
-    (ViewpointType.neutral.ShowsInitialPoint ↔
-        ViewpointType.perfective.ShowsInitialPoint) ∧
-    (ViewpointType.neutral.ShowsFinalPoint ↔
-        ViewpointType.imperfective.ShowsFinalPoint) :=
+    (ShowsInitialPoint .neutral ↔ ShowsInitialPoint .perfective) ∧
+      (ShowsFinalPoint .neutral ↔ ShowsFinalPoint .imperfective) :=
   ⟨iff_of_true neutral_intermediate.1 perfective_closed.1,
-   iff_of_false neutral_intermediate.2.1 imperfective_open.2.1⟩
+    iff_of_false neutral_intermediate.2.1 imperfective_open.2.1⟩
 
 /-! ### Independence of situation type and viewpoint ([smith-1997] §4.3) -/
 
