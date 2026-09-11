@@ -1,3 +1,6 @@
+import Mathlib.Order.Fin.Basic
+import Mathlib.Tactic.DeriveFintype
+
 /-!
 # Features.Acceptability — Linguistic Acceptability Diacritics
 
@@ -17,9 +20,10 @@ linguistically substantive distinctions, not just gradient acceptability;
 this is why the type is a labeled enum rather than a Likert-style ordinal.
 
 `Judgment` is the ordinal cousin: the Schütze/Sprouse five-level
-acceptability scale, ordered worst-to-last so that "rated worse than"
-comparisons come from the derived `Ord`. It is the judgment type carried
-by `Linglib/Data/Examples/Schema.lean`'s `LinguisticExample` and by the
+acceptability scale, a `LinearOrder` with `ungrammatical` at the bottom
+and `acceptable` at the top, so that `≤` reads "rated at most as
+acceptable as". It is the judgment type carried by
+`Linglib/Data/Examples/Schema.lean`'s `LinguisticExample` and by the
 minimal-pair vocabulary in `Linglib/Features/MinimalPairs.lean`. For
 factorial-design machinery over experimental ratings (difference-in-
 differences scores etc.), see `Linglib/Studies/SprouseEtAl2012.lean`.
@@ -44,9 +48,8 @@ inductive Acceptability where
   deriving Repr, DecidableEq
 
 /-- Acceptability / felicity judgment on the Schütze/Sprouse five-level
-    scale. Constructor order encodes "worse" (`acceptable` is best,
-    `ungrammatical` worst); the derived `Ord` makes "this paper rates X
-    worse than Y" comparisons available without an extra wrapper.
+    scale, ordered by acceptability: `ungrammatical` is the least and
+    `acceptable` the greatest judgment.
 
     Use `.acceptable` for clean grammatical/felicitous data; reserve
     `.ungrammatical` for hard star judgments and `.unacceptable` for
@@ -57,6 +60,16 @@ inductive Judgment where
   | questionable
   | unacceptable
   | ungrammatical
-  deriving DecidableEq, BEq, Repr, Inhabited, Ord
+  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+
+/-- The position on the scale, `ungrammatical` lowest. -/
+def Judgment.rank : Judgment → Fin 5
+  | .ungrammatical => 0
+  | .unacceptable => 1
+  | .questionable => 2
+  | .marginal => 3
+  | .acceptable => 4
+
+instance : LinearOrder Judgment := LinearOrder.lift' Judgment.rank (by decide)
 
 end Features
