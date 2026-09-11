@@ -1,132 +1,296 @@
-import Linglib.Semantics.Presupposition.ContentLayer
+import Linglib.Syntax.Tree.Basic
 import Linglib.Semantics.Questions.Highlighting
 
 /-!
-# Höhle (1992): *Verum-Fokus im Deutschen*
-[hohle-1992] [romero-han-2004] [rooth-1992]
-[repp-2013] [gutzmann-hartmann-matthewson-2020]
-[martinez-vera-2026]
+# Höhle (1992): Über Verum-Fokus im Deutschen
 
-Höhle's seminal proposal: pitch accent on the finite verb (or negation
-particle) in German is *verum focus* — focus on the assertion operator,
-emphasising the polarity/truth of the prejacent rather than its content.
+This file formalizes [hohle-1992]'s analysis of *verum focus*: the accent on a German finite
+verb in initial position, or on a subordinating particle such as *daß*, that highlights a meaning
+element VERUM paraphrasable as "it is true that", as in *Karl SCHREIBT ein Drehbuch* replying to
+the claim that Karl is writing a screenplay. The paper's argument runs from assumption (13), that
+VERUM is assigned to the accented word and highlighted as a semantic focus, to a rejection of the
+reading of VERUM as an illocution-type operator: verum focus occurs in embedded verb-second
+clauses and on complementizers, and in *er HÖRT ihr nicht zu* VERUM lies in the scope of the
+negation, so it must be a truth predicate whose scope follows from the syntax.
 
-The classic minimal pair (Höhle 1992: 116):
+The scope rule (60) lets the meaning element of a constituent `K₁` lie in the scope of that of
+`K₂` iff `K₁` stands in a structural relation SR to `K₂`; `SR` reads it as c-command with
+reconstruction of a fronted finite verb to its trace. On the peripheral structure of (76), a
+clause `[Φ Π]` whose position Φ is filled by a complementizer or by a finite verb binding a trace
+in Π, the negation in Π c-commands the verb's trace but not Φ, so `Scoping.negOverVerum` is
+admissible for verum focus on the finite verb and not for verum focus on *daß*. The felicity
+condition is that the background thought, the argument of VERUM, is known from the context
+(`Appropriate`); this derives the contrast of (55): after *ich hoffe, daß Karl ihr zuhört*, the
+verb-second reply is appropriate and the *daß* reply is not. `IntroducesVerum` is the
+non-segmental rule (97) of the final section, which introduces VERUM over any bare Π next to a
+non-empty sister; it decides which accents yield verum focus across complementizers, fronted
+verbs, relative and interrogative pronouns without a particle, and verb-final verbs.
 
-* "Karl HAT das Buch gelesen." — VF on auxiliary, emphatic affirmation
-* "Karl hat das BUCH gelesen." — content focus on object
+## Implementation notes
 
-The two share truth-conditional content but differ in what they
-contribute to the discourse: VF requires a salient ¬p (or salient
-suspension of p) and serves to settle that prior issue.
+* Clauses are `Syntax.Tree`s over the labels of (76) and (97), with Π flat inside; the trace
+  bindings that reconstruction respects are given as an explicit list, footnote 7's
+  pseudo-reconstruction, and Höhle's relation SR is left open in the paper.
+* VERUM is the identity on propositions, so the two scopings of (56) have the same content
+  (`content_focusBackground`) and differ only in what is background.
+* "Known from the context" is membership in the salient set of a `HighlightingContext`; the
+  question under discussion plays no role.
+* The assumption of §7 that there is no verum focus on a verb-final finite verb, and the
+  copula and full-verb judgments of (71) and (72), are recorded in the example rows only.
 
-## What this study formalises
+## References
 
-* A minimal `verumFocusOp` on `BiLayered W` that highlights the
-  prejacent's polarity in the context's salient set (the Höhle move:
-  focus on the assertion operator).
-* A felicity condition aligning with the cross-linguistic
-  generalisation: VF is licensed exactly when the prejacent's negation
-  is highlighted in the prior context.
-* `VerumOperator`, the shared felicity-condition signature that
-  verum-marker analyses across the literature instantiate, so that
-  cross-paper agreement / divergence theorems can be stated uniformly.
-
-## Relation to other studies
-
-* `Studies/MartinezVera2026.lean` — the same
-  highlighting + ⟨A, N⟩ machinery applied to Saraguro Kichwa `=mi`.
-  Höhle's German VF and Martínez Vera's `=mi` exemplify the same
-  paper-(60) prediction about the focus-account of verum.
-* `Studies/RomeroHan2004.lean` — VERUM as a CommonGround
-  operator (rather than as focus on the assertion operator).
-  R&H's `verum` is the alternative-line analysis that Höhle's
-  focus-account contrasts with (paper §6's FAT vs. LOT debate).
+* [hohle-1992]
 -/
 
 namespace Hohle1992
 
-open Presupposition
-open Semantics.Highlighting (HighlightingContext Highlighted addSalient)
+open Core.Order Core.Order.Branching Syntax Semantics.Highlighting
+
+/-! ### The peripheral structure of (76) -/
+
+/-- Constituent labels: the clause, the position in front of Φ holding a Vorfeld constituent or
+a relative or interrogative phrase, the peripheral position Φ of (76), its complement Π
+(Mittelfeld, verbal complex and Nachfeld), and inside Π the negation particle, the verb position
+and other material. -/
+inductive Node
+  | clause
+  | front
+  | phi
+  | pi
+  | neg
+  | verb
+  | other
+  deriving DecidableEq, Repr
+
+/-- (55a) *er HÖRT ihr nicht zu*: the finite verb fills Φ and binds a trace in Π. -/
+def fClause : Tree Node String :=
+  .node .clause [.terminal .front "er",
+    .node .clause [.terminal .phi "hört",
+      .node .pi [.terminal .other "ihr", .terminal .neg "nicht", .terminal .other "zu",
+        .trace 1 .verb]]]
+
+/-- (55b) *daß er ihr nicht zuhört*: the complementizer fills Φ and binds nothing. -/
+def cClause : Tree Node String :=
+  .node .clause [.terminal .phi "daß",
+    .node .pi [.terminal .other "er", .terminal .other "ihr", .terminal .neg "nicht",
+      .terminal .verb "zuhört"]]
+
+/-- (81) *WER hat den Hund getreten*: an interrogative pronoun in front of a filled Φ. -/
+def whClause : Tree Node String :=
+  .node .clause [.terminal .front "wer",
+    .node .clause [.terminal .phi "hat",
+      .node .pi [.terminal .other "den", .terminal .other "Hund", .terminal .other "getreten",
+        .trace 1 .verb]]]
+
+/-- (82a) *DER das Buch gelesen hat*: a relative pronoun in front of an empty Φ (91ii). -/
+def rwClause : Tree Node String :=
+  .node .clause [.terminal .front "der",
+    .node .clause [.node .phi [],
+      .node .pi [.terminal .other "das", .terminal .other "Buch", .terminal .other "gelesen",
+        .terminal .verb "hat"]]]
+
+/-- (77a) and (80a) *der WO das Buch gelesen hat*: a relative pronoun in front of a Φ filled by
+the dialectal relative particle. -/
+def woClause : Tree Node String :=
+  .node .clause [.terminal .front "der",
+    .node .clause [.terminal .phi "wo",
+      .node .pi [.terminal .other "das", .terminal .other "Buch", .terminal .other "gelesen",
+        .terminal .verb "hat"]]]
+
+/-- (68b) *daß sie damit aufHÖRT*: the finite verb stays in final position inside Π. -/
+def finalClause : Tree Node String :=
+  .node .clause [.terminal .phi "daß",
+    .node .pi [.terminal .other "sie", .terminal .other "damit", .terminal .other "auf",
+      .terminal .verb "hört"]]
+
+/-! ### The scope rule (60) -/
+
+/-- The relation SR of (60), read as c-command with reconstruction (footnote 7): `k₁` stands
+in SR to `k₂` in `t` when `k₂` c-commands `k₁` or a trace that `k₁` binds. -/
+def SR (t : Tree Node String) (binds : List (TreePath × TreePath)) (k₁ k₂ : TreePath) : Prop :=
+  (k₂, k₁) ∈ cCommandAt t ∨ ∃ b ∈ binds, b.1 = k₁ ∧ (k₂, b.2) ∈ cCommandAt t
+
+instance (t : Tree Node String) (binds : List (TreePath × TreePath)) (k₁ k₂ : TreePath) :
+    Decidable (SR t binds k₁ k₂) := by
+  unfold SR; infer_instance
+
+/-- A negated clause with verum focus: its tree, the trace bindings, the position of the
+accented word carrying VERUM and the position of the negation particle. -/
+structure Configuration where
+  tree : Tree Node String
+  binds : List (TreePath × TreePath)
+  focus : TreePath
+  neg : TreePath
+
+/-- (55a): verum focus on the fronted finite verb, reconstructed to its trace. -/
+def negatedF : Configuration := ⟨fClause, [(⟨[1, 0]⟩, ⟨[1, 1, 3]⟩)], ⟨[1, 0]⟩, ⟨[1, 1, 1]⟩⟩
+
+/-- (55b): verum focus on the complementizer. -/
+def negatedC : Configuration := ⟨cClause, [], ⟨[0]⟩, ⟨[1, 2]⟩⟩
+
+/-- The two scopings of VERUM relative to the negation, paraphrased in (56a) and (56b). -/
+inductive Scoping
+  | negOverVerum
+  | verumOverNeg
+  deriving DecidableEq
+
+/-- (60) applied to VERUM and the negation: VERUM may lie in the scope of the negation iff the
+accented constituent stands in SR to the negation particle, and conversely. -/
+def Scoping.Admissible (c : Configuration) : Scoping → Prop
+  | .negOverVerum => SR c.tree c.binds c.focus c.neg
+  | .verumOverNeg => SR c.tree c.binds c.neg c.focus
+
+instance (c : Configuration) (s : Scoping) : Decidable (s.Admissible c) := by
+  cases s <;> unfold Scoping.Admissible <;> infer_instance
+
+/-- The negation of (55a) c-commands the trace of the fronted verb, so VERUM may lie in its
+scope. -/
+theorem negOverVerum_admissible_negatedF : Scoping.negOverVerum.Admissible negatedF := by decide
+
+theorem verumOverNeg_admissible_negatedF : Scoping.verumOverNeg.Admissible negatedF := by decide
+
+/-- The complementizer of (55b) neither is c-commanded by the negation nor binds a trace, so
+VERUM cannot lie in the negation's scope. -/
+theorem not_negOverVerum_admissible_negatedC : ¬ Scoping.negOverVerum.Admissible negatedC := by
+  decide
+
+theorem verumOverNeg_admissible_negatedC : Scoping.verumOverNeg.Admissible negatedC := by decide
+
+/-! ### Focus–background structure and appropriateness -/
+
+/-- Höhle's class WF of meaning elements by which a speaker signals an attitude to the truth of
+a thought, each occurring as `E(p)` and recursively embeddable; the scope data use VERUM, a
+truth predicate, and the negation. -/
+inductive WF
+  | verum
+  | neg
 
 variable {W : Type*}
 
-/-- Höhle's verum-focus operator. Applied to a prejacent `β`, it returns
-    the same at-issue content (`β.atIssue`) — VF is truth-conditionally
-    transparent — and adds a not-at-issue conjunct that the prejacent's
-    polarity is the highlighted one. The not-at-issue contribution is
-    Höhle's reading of pitch accent on the finite verb / negation as
-    targeting the assertion operator rather than the propositional
-    content. -/
-def verumFocusOp (β : BiLayered W) : BiLayered W :=
-  { atIssue := β.atIssue
-  , notAtIssue := fun w => β.notAtIssue w ∧ β.atIssue w }
+/-- The extension of a WF element: VERUM is a truth predicate, so it maps a thought to itself. -/
+def WF.apply : WF → Set W → Set W
+  | .verum, p => p
+  | .neg, p => pᶜ
 
-/-- VF preserves the at-issue layer (truth-conditional transparency). -/
-@[simp] theorem verumFocusOp_atIssue (β : BiLayered W) :
-    (verumFocusOp β).atIssue = β.atIssue := rfl
+/-- A focus–background structure: the highlighted chain of WF elements, outermost first, and the
+background thought they apply to. -/
+structure FocusBackground (W : Type*) where
+  focus : List WF
+  background : Set W
 
-@[simp] theorem verumFocusOp_notAtIssue (β : BiLayered W) :
-    (verumFocusOp β).notAtIssue = fun w => β.notAtIssue w ∧ β.atIssue w := rfl
+/-- The content expressed by a focus–background structure. -/
+def FocusBackground.content (s : FocusBackground W) : Set W :=
+  s.focus.foldr WF.apply s.background
 
-/-- Höhle's licensing condition: a verum-focus utterance is felicitous in
-    context `c` iff the prejacent's *negation* is highlighted in `c`.
+/-- (56): with VERUM in the scope of the negation, the negation joins the highlighted part and
+the background is the thought `p` itself; with VERUM above the negation, the background is the
+negated thought. -/
+def Scoping.focusBackground (p : Set W) : Scoping → FocusBackground W
+  | .negOverVerum => ⟨[.neg, .verum], p⟩
+  | .verumOverNeg => ⟨[.verum], pᶜ⟩
 
-    This is the cross-linguistic verum signature: the marker requires
-    that ¬p be salient (asserted earlier, contextually inferable, or
-    raised by a biased question). Without this, VF is infelicitous
-    out-of-the-blue (Höhle 1992; [romero-han-2004];
-    [gutzmann-hartmann-matthewson-2020]). -/
-def verumFelicitous (c : HighlightingContext W) (β : BiLayered W) : Prop :=
-  Highlighted c {w | ¬ β.atIssue w}
+/-- VERUM is truth-conditionally inert, so the two scopings of (56) express the same content and
+differ only in what is background. -/
+theorem content_focusBackground (p : Set W) (s : Scoping) :
+    (s.focusBackground p).content = pᶜ := by
+  cases s <;> rfl
 
-/-- VF is felicitous after a context that has highlighted ¬p. The witness:
-    `addSalient c {w | ¬ β.atIssue w}` makes ¬p salient; if the QUD is
-    set up to be addressed by ¬p (as it is in the standard biased-question
-    or asserted-¬p discourse), then `Highlighted` holds. -/
-theorem verumFelicitous_after_highlighting_neg
-    (c : HighlightingContext W) (β : BiLayered W)
-    (h : Semantics.Highlighting.AddressesQUD c.qud {w | ¬ β.atIssue w}) :
-    verumFelicitous (addSalient c {w | ¬ β.atIssue w}) β := by
-  refine ⟨?_, h⟩
-  simp [addSalient]
+/-- Höhle's condition on verum focus: the background thought is known from the context. A
+negated clause expressing the thought `p` is appropriate in `ctx` when some scoping that (60)
+admits has its background among the propositions `ctx` has made salient. -/
+def Appropriate (ctx : HighlightingContext W) (c : Configuration) (p : Set W) : Prop :=
+  ∃ s : Scoping, s.Admissible c ∧ (s.focusBackground p).background ∈ ctx.salient
 
-/-- A verum operator: a function from a discourse context and a layered
-    proposition to a felicity proposition.
+/-- Verum focus on the fronted verb is appropriate whenever the thought or its negation is
+known. -/
+theorem appropriate_negatedF_iff (ctx : HighlightingContext W) (p : Set W) :
+    Appropriate ctx negatedF p ↔ p ∈ ctx.salient ∨ pᶜ ∈ ctx.salient := by
+  constructor
+  · rintro ⟨s, -, hs⟩
+    cases s
+    · exact Or.inl hs
+    · exact Or.inr hs
+  · rintro (h | h)
+    · exact ⟨.negOverVerum, negOverVerum_admissible_negatedF, h⟩
+    · exact ⟨.verumOverNeg, verumOverNeg_admissible_negatedF, h⟩
 
-    A "verum marker" is any morphological, prosodic, or syntactic device
-    whose felicitous use requires that the truth of its scope proposition
-    be at issue in a way that excludes (or strongly contrasts with) its
-    negation. Theories disagree on the *mechanism* — focus over polarity
-    ([hohle-1992], [repp-2013], [goodhue-2022a]), a dedicated operator on
-    the common ground ([romero-han-2004],
-    [gutzmann-hartmann-matthewson-2020]), or discourse management
-    ([matthewson-2021], [martinez-vera-2026]) — but agree on the licensing
-    profile. Inhabitants of this structure formalise the competing
-    analyses:
+/-- Verum focus on the complementizer is appropriate only if the negated thought is known. -/
+theorem appropriate_negatedC_iff (ctx : HighlightingContext W) (p : Set W) :
+    Appropriate ctx negatedC p ↔ pᶜ ∈ ctx.salient := by
+  constructor
+  · rintro ⟨s, hs, hb⟩
+    cases s
+    · exact absurd hs not_negOverVerum_admissible_negatedC
+    · exact hb
+  · exact λ h => ⟨.verumOverNeg, verumOverNeg_admissible_negatedC, h⟩
 
-    * `hohleAsVerumOperator` (paired with `verumFelicitous`) — Höhle's
-      polarity-focus account.
-    * `MartinezVera2026.miAsVerumOperatorPolar` — MV's focus-marker
-      account, equivalent to Höhle's on the polar reduction (see
-      `mi_polar_iff_verumFelicitous` in that file).
+/-- (55a) after (55c): *ich hoffe, daß Karl ihr zuhört* makes the thought known, and the
+verb-second reply *er HÖRT ihr nicht zu* is appropriate. -/
+theorem appropriate_negatedF_singleton (p : Set W) : Appropriate (singleton p) negatedF p :=
+  (appropriate_negatedF_iff _ p).2 (Or.inl rfl)
 
-    The shared signature lets cross-paper bridge / refutation theorems
-    be stated uniformly: "instance A and instance B agree on input X"
-    or "instance A and instance B differ on input Y." -/
-structure VerumOperator (W : Type*) where
-  /-- The felicity condition: when does the verum-marker license the
-      utterance in this discourse context for this layered prejacent? -/
-  felicitous : HighlightingContext W → BiLayered W → Prop
+/-- (55b) after (55c): the reply *daß er ihr nicht zuhört* is inappropriate, since the negated
+thought its *daß* must take as background is not known. -/
+theorem not_appropriate_negatedC_singleton [Nonempty W] (p : Set W) :
+    ¬ Appropriate (singleton p) negatedC p := by
+  rw [appropriate_negatedC_iff, salient_singleton, Set.mem_singleton_iff]
+  intro h
+  obtain ⟨w⟩ := ‹Nonempty W›
+  by_cases hw : w ∈ p
+  · have hw' := hw
+    rw [← h] at hw'
+    exact hw' hw
+  · have hw' : w ∈ pᶜ := hw
+    rw [h] at hw'
+    exact hw hw'
 
-/-- Höhle's verum-focus operator packaged as a `VerumOperator`, so that
-    cross-paper bridge / refutation theorems can be stated against other
-    inhabitants of the same shared structure. -/
-def hohleAsVerumOperator : VerumOperator W :=
-  { felicitous := fun c β => verumFelicitous c β }
+/-! ### The non-segmental introduction of VERUM (97) -/
 
-@[simp] theorem hohleAsVerumOperator_apply (c : HighlightingContext W)
-    (β : BiLayered W) :
-    hohleAsVerumOperator.felicitous c β = verumFelicitous c β := rfl
+/-- Phonologically empty: no word-bearing terminal. -/
+def PhonEmpty (t : Tree Node String) : Prop := t.leafCount = 0
+
+instance (t : Tree Node String) : Decidable (PhonEmpty t) := by unfold PhonEmpty; infer_instance
+
+/-- A constituent of the form `[σ Π σ]` with `σ` phonologically empty: a `Π` itself, or a node
+among whose daughters is a `Π` and the others are phonologically empty. -/
+def IsBarePi (t : Tree Node String) : Prop :=
+  t.cat = .pi ∨ ∃ c ∈ children t, c.cat = .pi ∧ ∀ d ∈ children t, d.cat ≠ .pi → PhonEmpty d
+
+instance (t : Tree Node String) : Decidable (IsBarePi t) := by unfold IsBarePi; infer_instance
+
+/-- (97): in a local tree `[Kₖ Kⱼ Kᵢ]` whose second daughter is a bare `Π` and whose first
+daughter is not phonologically empty, VERUM is introduced over the translation of `Kᵢ`; by (98ii)
+it is assigned to `Kⱼ`, so an accent on `Kⱼ` yields verum focus. -/
+def IntroducesVerum (t : Tree Node String) (kj : TreePath) : Prop :=
+  match kj.toList.getLast?, subtreeAt t kj.toList.dropLast with
+  | some 0, some (.node _ [a, b]) => ¬ PhonEmpty a ∧ IsBarePi b
+  | _, _ => False
+
+instance (t : Tree Node String) (kj : TreePath) : Decidable (IntroducesVerum t kj) := by
+  unfold IntroducesVerum; split <;> infer_instance
+
+/-- The fronted finite verb of (55a) is the non-empty sister of Π. -/
+theorem introducesVerum_fClause_phi : IntroducesVerum fClause ⟨[1, 0]⟩ := by decide
+
+/-- The complementizer of (55b) is the non-empty sister of Π. -/
+theorem introducesVerum_cClause_phi : IntroducesVerum cClause ⟨[0]⟩ := by decide
+
+/-- (77a): the relative particle *wo* filling Φ carries VERUM. -/
+theorem introducesVerum_woClause_phi : IntroducesVerum woClause ⟨[1, 0]⟩ := by decide
+
+/-- (82a): the relative pronoun in front of an empty Φ carries VERUM, the RW-verum focus of §9. -/
+theorem introducesVerum_rwClause_front : IntroducesVerum rwClause ⟨[0]⟩ := by decide
+
+/-- (80a): with the particle *wo* filling Φ, the relative pronoun's sister is not a bare Π, so its
+accent yields no verum focus. -/
+theorem not_introducesVerum_woClause_front : ¬ IntroducesVerum woClause ⟨[0]⟩ := by decide
+
+/-- (81): the interrogative pronoun in front of a fronted verb yields no verum focus. -/
+theorem not_introducesVerum_whClause_front : ¬ IntroducesVerum whClause ⟨[0]⟩ := by decide
+
+/-- (68b): the verb-final finite verb inside Π yields no verum focus. -/
+theorem not_introducesVerum_finalClause_verb : ¬ IntroducesVerum finalClause ⟨[1, 3]⟩ := by
+  decide
 
 end Hohle1992

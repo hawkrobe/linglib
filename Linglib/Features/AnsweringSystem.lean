@@ -1,4 +1,7 @@
 import Linglib.Features.Polarity
+import Mathlib.Data.Set.Basic
+import Mathlib.Order.BooleanAlgebra.Set
+import Mathlib.Tactic.TypeStar
 
 /-!
 # Answering System Typology
@@ -87,45 +90,25 @@ theorem answering_systems_diverge_on_negative :
     AnsweringSystem.truthBased.yesToNegativeQuestion ≠
     AnsweringSystem.polarityBased.yesToNegativeQuestion := by decide
 
-/-! ## Negation Height and Answering System Derivation
+/-! ## The valuation of the polarity head
 
-[holmberg-2016] Ch 4.3-4.7 derives the answering system from whether
-the negation in the question can assign value to the polarity variable [±Pol].
-The crucial factor is structural accessibility: if negation is close enough to
-[±Pol] to value it, the focused answer particle clashes with the inherited
-negative value → polarity-based. If negation is too distant or not in a
-c-command relation with [±Pol], the particle freely assigns value → truth-based.
-
-- **Low negation** (VP-internal, below PolP scope): negation cannot reach [±Pol].
-  "Yes" affirms the (negative) proposition → truth-based.
-  Examples: Japanese, Mandarin Chinese, Thai.
-
-- **Middle negation** (NegP between TP and PolP, or merged with Pol): negation
-  values [Pol] as [-Pol], creating a feature clash with an affirmative particle.
-  "Yes" assigns [+Pol] → polarity-based.
-  Examples: English (default), Swedish (§4.5), Finnish (§4.6, higher variety
-  of middle), German.
-
-- **High negation** (C-domain, above PolP scope): negation scopes over [±Pol]
-  rather than valuing it. Used in positively-biased negative questions where
-  the negation eliminates the negative alternative.
-  Examples: English *-n't* in positively-biased readings (§4.8), English
-  outer negation (§4.3).
-
-This is the book's deepest explanatory contribution: the binary answering-system
-parameter is not stipulated but derived from independently motivated syntactic
-variation in negation height. -/
-
-/-! ## Answer particles
-
-An answer particle assigns a value to the question's [±Pol] variable
-and is lexically restricted to antecedent contexts of certain
-polarities. Reversal-hood is derived, not stored. Answer particles are
-pro-sentential — deliberately outside the host-associated
-`Syntax/Category/Particle` core. -/
+[holmberg-2016]'s explanation of the two systems (Chapter 4): every finite clause has a
+polarity head, merged unvalued and moved to the C-domain in a question, so that the question
+denotes the set of its two valuations. An answer merges a focused valued polarity feature,
+spelled out by a particle or an echoed verb, with the PolP inherited from the question, and
+values the head unless a negation inside that PolP is close enough to value it first. A
+*middle* negation, in a local c-command relation to the head, values it negative, so an
+affirmative particle clashes with it and only a negative particle, agreeing with the negation,
+or a polarity-reversing particle, which eliminates it, is well formed: the polarity-based
+system. A *low*, VP-internal negation, or a middle one screened off by an adverb scoping over
+it, is out of reach, so the particle values the head itself and the affirmative answer confirms
+the negative alternative: the truth-based system. A *high* negation sits outside the PolP,
+and the question is answered like a neutral one. -/
 
 /-- An answer particle: assigns a polarity, responds to antecedent
-contexts of the recorded polarities. -/
+contexts of the recorded polarities. Answer particles are pro-sentential, deliberately
+outside the host-associated `Syntax/Category/Particle` core; reversal-hood is derived, not
+stored. -/
 structure AnswerParticle where
   /-- Citation form. -/
   form : String
@@ -142,43 +125,153 @@ def AnswerParticle.IsReversal (p : AnswerParticle) : Prop :=
   p.assigns = .positive ∧ p.respondsTo = [.negative]
 
 instance : DecidablePred AnswerParticle.IsReversal :=
-  fun _ => inferInstanceAs (Decidable (_ ∧ _))
+  λ _ => inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Structural height of sentential negation relative to PolP.
-
-    Note: this classifies *constructions*, not languages. A single language
-    may have multiple negation heights (e.g., English has middle by default,
-    low when scoped under an adverb, and high in positively-biased questions). -/
+/-- Structural height of a sentential negation relative to the polarity head. The height
+classifies constructions, not languages: English has middle negation by default, low negation
+under a scoping adverb, and high negation in positive-bias questions. -/
 inductive NegationHeight where
-  /-- Negation below PolP — VP-internal (Japanese, Mandarin, Thai) -/
+  /-- Negation below the reach of the polarity head, VP-internal (Japanese, Mandarin, Thai). -/
   | low
-  /-- Negation at PolP level — NegP between TP and PolP, or merged with Pol
-      (English default, Swedish, Finnish, German) -/
+  /-- Negation in a local c-command relation to the polarity head (English by default, Swedish,
+  Finnish, German). -/
   | middle
-  /-- Negation above PolP — C-domain, scoping over [±Pol]
-      (English *-n't* in positively-biased questions) -/
+  /-- Negation above the polarity head, in the C-domain (English *-n't* in positive-bias
+  questions). -/
   | high
   deriving DecidableEq, Repr
 
-/-- Derive the answering system from negation height.
+/-- The PolP an answer inherits from a yes–no question: the proposition below the negation,
+the negation's height (`none` for a neutral question), and whether an adverb scoping over a
+middle negation keeps it from valuing the polarity head. -/
+structure PolP (W : Type*) where
+  /-- The proposition below the negation. -/
+  prejacent : Set W
+  /-- The height of the negation, if any. -/
+  negation : Option NegationHeight := none
+  /-- An adverb scoping over a middle negation, as in Swedish *nångång inte*. -/
+  intervener : Bool := false
 
-    Low negation → truth-based: negation scopes below [±Pol], so the
-    question's primary proposition includes negation. "Yes" affirms
-    the (negative) proposition.
+namespace PolP
 
-    Middle/high negation → polarity-based: negation is at or above [±Pol],
-    so "yes" values [±Pol] as [+Pol] regardless of negation. -/
+variable {W : Type*} (q : PolP W)
+
+/-- The negation sits inside the PolP, so that both alternatives of the question contain it. -/
+def NegationInside : Prop := q.negation = some .low ∨ q.negation = some .middle
+
+instance : Decidable q.NegationInside := inferInstanceAs (Decidable (_ ∨ _))
+
+/-- The proposition the PolP expresses under positive polarity, the primary alternative of the
+question: the negated prejacent when the negation is inside the PolP. -/
+def content : Set W := if q.NegationInside then q.prejacentᶜ else q.prejacent
+
+/-- The negation values the polarity head: a middle negation not screened off by an adverb. -/
+def ValuedByNegation : Prop := q.negation = some .middle ∧ q.intervener = false
+
+instance : Decidable q.ValuedByNegation := inferInstanceAs (Decidable (_ ∧ _))
+
+/-- The proposition an answer particle expresses, or `none` when the answer is ill formed: if
+the negation values the head, a negative particle agrees with it and confirms the negative
+alternative, a reversing particle eliminates it, and any other affirmative particle clashes;
+otherwise the particle values the head and the answer is the primary alternative or its
+negation. -/
+def answer (a : AnswerParticle) : Option (Set W) :=
+  if q.ValuedByNegation then
+    if a.assigns = .negative then some q.content
+    else if a.IsReversal then some q.prejacent else none
+  else if a.assigns = .positive then some q.content else some q.contentᶜ
+
+variable {q} {a : AnswerParticle}
+
+theorem content_of_low (hq : q.negation = some .low) : q.content = q.prejacentᶜ := by
+  simp [content, NegationInside, hq]
+
+theorem content_of_middle (hq : q.negation = some .middle) : q.content = q.prejacentᶜ := by
+  simp [content, NegationInside, hq]
+
+theorem content_of_high (hq : q.negation = some .high) : q.content = q.prejacent := by
+  simp [content, NegationInside, hq]
+
+theorem content_of_neutral (hq : q.negation = none) : q.content = q.prejacent := by
+  simp [content, NegationInside, hq]
+
+/-- Without a negation valuing the head, the particle values it: the affirmative particle
+expresses the primary alternative and the negative one its negation. -/
+theorem answer_of_not_valued (h : ¬ q.ValuedByNegation) :
+    q.answer a = if a.assigns = .positive then some q.content else some q.contentᶜ := by
+  simp [answer, h]
+
+/-- Without a negation valuing the head, every particle yields a well-formed answer, so a
+truth-based configuration has no need of a reversing particle. -/
+theorem answer_ne_none_of_not_valued (h : ¬ q.ValuedByNegation) : q.answer a ≠ none := by
+  rw [answer_of_not_valued h]; split <;> simp
+
+/-- Low negation, affirmative particle: the negative alternative is confirmed. -/
+theorem answer_low_positive (hq : q.negation = some .low) (ha : a.assigns = .positive) :
+    q.answer a = some q.prejacentᶜ := by
+  simp [answer, ValuedByNegation, content, NegationInside, hq, ha]
+
+/-- Low negation, negative particle: double negation confirms the positive alternative. -/
+theorem answer_low_negative (hq : q.negation = some .low) (ha : a.assigns = .negative) :
+    q.answer a = some q.prejacent := by
+  simp [answer, ValuedByNegation, content, NegationInside, hq, ha, compl_compl]
+
+/-- Middle negation, plain affirmative particle: a feature clash, no well-formed answer. -/
+theorem answer_middle_positive (hq : q.negation = some .middle) (hi : q.intervener = false)
+    (ha : a.assigns = .positive) (hr : ¬ a.IsReversal) : q.answer a = none := by
+  simp [answer, ValuedByNegation, hq, hi, ha, hr]
+
+/-- Middle negation, reversing particle: the negation is eliminated and the positive
+alternative confirmed. -/
+theorem answer_middle_reversal (hq : q.negation = some .middle) (hi : q.intervener = false)
+    (hr : a.IsReversal) : q.answer a = some q.prejacent := by
+  simp [answer, ValuedByNegation, hq, hi, hr, hr.1]
+
+/-- Middle negation, negative particle: negative concord confirms the negative alternative. -/
+theorem answer_middle_negative (hq : q.negation = some .middle) (hi : q.intervener = false)
+    (ha : a.assigns = .negative) : q.answer a = some q.prejacentᶜ := by
+  simp [answer, ValuedByNegation, content, NegationInside, hq, hi, ha]
+
+/-- A middle negation behind an intervening adverb behaves like a low one. -/
+theorem answer_intervened (hq : q.negation = some .middle) (hi : q.intervener = true) :
+    q.answer a = if a.assigns = .positive then some q.prejacentᶜ else some q.prejacent := by
+  simp [answer, ValuedByNegation, content, NegationInside, hq, hi, compl_compl]
+
+/-- A neutral question: the affirmative particle confirms the prejacent, the negative one its
+negation. -/
+theorem answer_neutral (hq : q.negation = none) :
+    q.answer a = if a.assigns = .positive then some q.prejacent else some q.prejacentᶜ := by
+  simp [answer, ValuedByNegation, content, NegationInside, hq]
+
+/-- A high negation sits outside the PolP, so the question is answered like a neutral one. -/
+theorem answer_high (hq : q.negation = some .high) :
+    q.answer a = if a.assigns = .positive then some q.prejacent else some q.prejacentᶜ := by
+  simp [answer, ValuedByNegation, content, NegationInside, hq]
+
+end PolP
+
+/-- The answering system a negative-bias question exhibits at each height of its negation:
+truth-based for the low negation, polarity-based otherwise. -/
 def NegationHeight.predictedSystem : NegationHeight → AnsweringSystem
   | .low    => .truthBased
   | .middle => .polarityBased
   | .high   => .polarityBased
 
-/-- Middle and high negation both predict polarity-based systems. -/
-theorem middle_high_same_prediction :
-    NegationHeight.middle.predictedSystem = NegationHeight.high.predictedSystem := rfl
-
-/-- Low negation predicts a different system from middle negation. -/
-theorem low_differs_from_middle :
-    NegationHeight.low.predictedSystem ≠ NegationHeight.middle.predictedSystem := by decide
+/-- The classification is read off the mechanism: a height is truth-based iff a plain
+affirmative particle confirms the negative alternative of every question with that negation. -/
+theorem NegationHeight.predictedSystem_eq_truthBased_iff {W : Type*} [Nonempty W]
+    (h : NegationHeight) {a : AnswerParticle} (ha : a.assigns = .positive)
+    (hr : ¬ a.IsReversal) :
+    h.predictedSystem = .truthBased ↔
+      ∀ p : Set W, (⟨p, some h, false⟩ : PolP W).answer a = some pᶜ := by
+  cases h
+  · simp only [predictedSystem, true_iff]
+    exact λ p => PolP.answer_low_positive rfl ha
+  · simp only [predictedSystem, reduceCtorEq, false_iff, not_forall]
+    exact ⟨∅, by rw [PolP.answer_middle_positive rfl rfl ha hr]; simp⟩
+  · simp only [predictedSystem, reduceCtorEq, false_iff, not_forall]
+    refine ⟨∅, ?_⟩
+    rw [PolP.answer_high rfl]
+    simp [ha, Set.compl_empty, Set.empty_ne_univ]
 
 end Features
