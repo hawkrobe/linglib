@@ -1,62 +1,4210 @@
 [
   {
-    "id": "jablonska2004_fn21",
-    "source": {"bibkey": "jablonska-2004", "paperLabel": "fn. 21"},
+    "id": "jablonska2004_3a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(3a)"
+    },
     "language": "poli1260",
-    "primaryText": "po-siedzieć",
+    "primaryText": "po-siwi-e-ć",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["po-siedzieć", "PO-sit"]
-    ],
-    "translation": "sit for a while",
-    "context": "Delimitative po- attaching to a stative verb, contra Młynarczyk's claim that it cannot; her fn. 21 also gives po-wisieć 'hang for a while' and po-cierpieć 'suffer for a while'.",
+    "glossedTokens": [],
+    "translation": "turn grey",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [],
-    "comment": "Delimitative reading of po- on a stative (high-verbalizer) stem.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "verbalizer",
+        "low -ej-"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
   },
   {
-    "id": "jablonska2004_54a",
-    "source": {"bibkey": "jablonska-2004", "paperLabel": "(54a)"},
+    "id": "jablonska2004_3b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(3b)"
+    },
     "language": "poli1260",
-    "primaryText": "po-kochać",
+    "primaryText": "po-jaśni-e-ć",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["po-kochać", "PO-love"]
-    ],
-    "translation": "start loving",
-    "context": "po- fixing the left boundary of a state: an inceptive reading of the same prefix that yields delimitative readings elsewhere — her verbalizer-sensitivity thesis.",
+    "glossedTokens": [],
+    "translation": "get bright",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [],
-    "comment": "Her (54a); (54b) po-lubić 'start liking' is parallel.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "verbalizer",
+        "low -ej-"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_3c",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(3c)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-czerwieni-e-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "get red",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "verbalizer",
+        "low -ej-"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_3d",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(3d)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-smutni-e-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "get sad",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "verbalizer",
+        "low -ej-"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_4a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(4a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The soup cooled for an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "claim",
+        "degree achievements pass both telicity tests"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_4b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(4b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The soup cooled in an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "claim",
+        "degree achievements pass both telicity tests"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_8a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(8a)"
+    },
+    "language": "poli1260",
+    "primaryText": "drożeć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "get expensive",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "scale",
+        "open"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_9a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(9a)"
+    },
+    "language": "poli1260",
+    "primaryText": "zielenieć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "get green",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "scale",
+        "closed"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_10a_po",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(10a)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-ciem-ni-e-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "get dark",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "verbalizer",
+        "low -ej-"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ],
+      [
+        "reading",
+        "considerable change"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_10a_z",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(10a)"
+    },
+    "language": "poli1260",
+    "primaryText": "z-ciem-ni-e-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "get dark",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "verbalizer",
+        "low -ej-"
+      ],
+      [
+        "layers",
+        "purely perfectivizing prefix in Asp2"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_10b_po",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(10b)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-droż-e-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "get expensive",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "verbalizer",
+        "low -ej-"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ],
+      [
+        "reading",
+        "considerable change"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_10b_z",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(10b)"
+    },
+    "language": "poli1260",
+    "primaryText": "z-droż-e-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "get expensive",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "verbalizer",
+        "low -ej-"
+      ],
+      [
+        "layers",
+        "purely perfectivizing prefix in Asp2"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_10c_po",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(10c)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-starz-e-ć się",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "get old",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "verbalizer",
+        "low -ej-"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ],
+      [
+        "reading",
+        "considerable change"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_10c_z",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(10c)"
+    },
+    "language": "poli1260",
+    "primaryText": "ze-starz-e-ć się",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "get old",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "verbalizer",
+        "low -ej-"
+      ],
+      [
+        "layers",
+        "purely perfectivizing prefix in Asp2"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_11a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(11a)"
+    },
+    "language": "poli1260",
+    "primaryText": "Marek po-siwi-a-ł w dwa lata.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Marek got greyer in two years.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "reading",
+        "considerable change"
+      ],
+      [
+        "claim",
+        "upward entailing to (11b)"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_11b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(11b)"
+    },
+    "language": "poli1260",
+    "primaryText": "Marek po-siwi-a-ł w rok.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Marek got greyer in a year.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "reading",
+        "considerable change"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_12a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(12a)"
+    },
+    "language": "poli1260",
+    "primaryText": "Marek po-spacerował przez dwie godziny.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Marek walked for two hours.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "reading",
+        "delimitative"
+      ],
+      [
+        "claim",
+        "entails (12b) only by varying the vague 'while'"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_12b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(12b)"
+    },
+    "language": "poli1260",
+    "primaryText": "Marek po-spacerował przez godzinę.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Marek walked for an hour.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "reading",
+        "delimitative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_14a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(14a)"
+    },
+    "language": "poli1260",
+    "primaryText": "kop-ną-ć kogoś w sekundę",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "kick somebody once in a second",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "verbalizer",
+        "semelfactive"
+      ],
+      [
+        "claim",
+        "no process part"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_14b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(14b)"
+    },
+    "language": "poli1260",
+    "primaryText": "rdze-wi-e-ć w pół roku",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "rust in half a year",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "verbalizer",
+        "low -ej-"
+      ],
+      [
+        "claim",
+        "no process part"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_14c",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(14c)"
+    },
+    "language": "poli1260",
+    "primaryText": "ufać w pół roku",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "trust in half a year",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "verbalizer",
+        "stative"
+      ],
+      [
+        "claim",
+        "no change of state"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_14d",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(14d)"
+    },
+    "language": "poli1260",
+    "primaryText": "kopać w pół roku",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "dig in half a year",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "verbalizer",
+        "high -aj-"
+      ],
+      [
+        "claim",
+        "no change of state"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_17",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(17)"
+    },
+    "language": "stan1293",
+    "primaryText": "The icicle lengthened by 3 centimeters (*for two days).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "claim",
+        "an overt degree quantizes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_23a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(23a)"
+    },
+    "language": "poli1260",
+    "primaryText": "Ci mężczyźni po-babi-e-li jednocześnie.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "These men got effeminated simultaneously.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "verbalizer",
+        "low -ej-"
+      ],
+      [
+        "reading",
+        "distributive"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_23b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(23b)"
+    },
+    "language": "poli1260",
+    "primaryText": "Nagle wszyscy po-smut-ni-e-li.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Suddenly everyone got sad.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "verbalizer",
+        "low -ej-"
+      ],
+      [
+        "reading",
+        "distributive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_24a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(24a)"
+    },
+    "language": "poli1260",
+    "primaryText": "Po-prze-czyt-∅-ywa-łem wszystkie książki.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I read all the books.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "verbalizer",
+        "high -aj-"
+      ],
+      [
+        "layers",
+        "lexical prefix, Secondary Imperfective, po- in Asp3"
+      ],
+      [
+        "reading",
+        "distributive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_24b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(24b)"
+    },
+    "language": "poli1260",
+    "primaryText": "Po-prze-czyt-a-łem wszystkie książki.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I read all the books.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "verbalizer",
+        "high -aj-"
+      ],
+      [
+        "layers",
+        "lexical prefix, po-"
+      ],
+      [
+        "claim",
+        "po- selects a [-Perf] predicate (25)"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_27a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(27a)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-czyt-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "read for a while",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "verbalizer",
+        "high processual"
+      ],
+      [
+        "reading",
+        "delimitative"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_27b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(27b)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-gr-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "play for a while",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "verbalizer",
+        "high processual"
+      ],
+      [
+        "reading",
+        "delimitative"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_27c",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(27c)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-chodz-i-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "walk for a while",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "verbalizer",
+        "high processual"
+      ],
+      [
+        "reading",
+        "delimitative"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_27d",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(27d)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-pal-i-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "smoke for a while",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "verbalizer",
+        "high processual"
+      ],
+      [
+        "reading",
+        "delimitative"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_28a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(28a)"
+    },
+    "language": "poli1260",
+    "primaryText": "Maria po-chowa-ła (wszystkie) zabawki.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Maria has hidden (all) the toys distributively / for a while.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "verbalizer",
+        "high -aj-"
+      ],
+      [
+        "reading",
+        "distributive or delimitative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_28b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(28b)"
+    },
+    "language": "poli1260",
+    "primaryText": "Maria po-prze-pis-ywa-ła (wszystkie) listy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Maria distributively / for a while rewrote (all) the letters.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "layers",
+        "lexical prefix, Secondary Imperfective, po- in Asp3"
+      ],
+      [
+        "reading",
+        "distributive or delimitative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_28c",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(28c)"
+    },
+    "language": "poli1260",
+    "primaryText": "Chłopcy po-śpiewa-li.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The boys sang for a while.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "reading",
+        "delimitative only: the external argument is outside the scope of po-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_28d",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(28d)"
+    },
+    "language": "poli1260",
+    "primaryText": "Ludzie po-w-chodzi-li (przez chwilę, a potem przestali).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "People entered distributively (for a while and then stopped).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "reading",
+        "distributive or delimitative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_28e",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(28e)"
+    },
+    "language": "poli1260",
+    "primaryText": "Marek po-o-mawia-ł swój doktorat na każdej konferencji w tym roku.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Marek discussed his dissertation at every conference this year.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "reading",
+        "distributive with singular subject and object"
+      ]
+    ],
+    "comment": "S-summing needs overlapping subevents, (36).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_30",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(30)"
+    },
+    "language": "poli1260",
+    "primaryText": "prze-pisać",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "rewrite",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "layers",
+        "lexical prefix valuing Asp1: RT after ET"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_31a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(31a)"
+    },
+    "language": "poli1260",
+    "primaryText": "prze-pis-ywa-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "be rewriting",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "layers",
+        "lexical prefix, Secondary Imperfective"
+      ],
+      [
+        "reading",
+        "progressive: RT within ET"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_32a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(32a)"
+    },
+    "language": "poli1260",
+    "primaryText": "rob-i-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "verbalizer",
+        "high -i-"
+      ],
+      [
+        "layers",
+        "Secondary Imperfective on a bare stem"
+      ],
+      [
+        "claim",
+        "SI needs a delimited interval (66)"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_32b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(32b)"
+    },
+    "language": "poli1260",
+    "primaryText": "gwizd-∅-ywa-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "layers",
+        "Secondary Imperfective on a bare stem"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_33a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(33a)"
+    },
+    "language": "poli1260",
+    "primaryText": "zacząć po-prze-pis-ywa-ć listy",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "begin rewriting the letters distributively / for a while",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "claim",
+        "po- above SI yields a perfective: no phasal complement"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_33b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(33b)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-prze-pis-uj-e-sz listy",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you will copy the letters distributively / for a while",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "claim",
+        "no present-tense interpretation"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_34a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(34a)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-prze-pis-ywa-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "rewrite for a while",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "layers",
+        "lexical prefix, Secondary Imperfective, po- in Asp3"
+      ],
+      [
+        "reading",
+        "delimitative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_34b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(34b)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-prze-pis-ywa-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "rewrite distributively",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "layers",
+        "lexical prefix, Secondary Imperfective, po- in Asp3"
+      ],
+      [
+        "reading",
+        "distributive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_39a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(39a)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-marz-ną-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "freeze distributively",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "verbalizer",
+        "low inchoative -n-"
+      ],
+      [
+        "reading",
+        "distributive"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_39b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(39b)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-głuch-ną-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "go deaf distributively",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "verbalizer",
+        "low inchoative -n-"
+      ],
+      [
+        "reading",
+        "distributive"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_39c",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(39c)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-więd-ną-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "wither distributively",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "verbalizer",
+        "low inchoative -n-"
+      ],
+      [
+        "reading",
+        "distributive"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_39d",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(39d)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-ślep-ną-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "go blind distributively",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "verbalizer",
+        "low inchoative -n-"
+      ],
+      [
+        "reading",
+        "distributive"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_42a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(42)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-s-tracić",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "layers",
+        "po- over a lexical prefix without SI"
+      ],
+      [
+        "claim",
+        "a single Agree with Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_42b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(42)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-ob-kopać",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "layers",
+        "po- over a lexical prefix without SI"
+      ],
+      [
+        "claim",
+        "a single Agree with Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_42c",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(42)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-wy-rzucić",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "layers",
+        "po- over a lexical prefix without SI"
+      ],
+      [
+        "claim",
+        "a single Agree with Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_43a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(43)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-ob-kop-ywa-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "dig around distributively / for a while",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "layers",
+        "lexical prefix, Secondary Imperfective, po- in Asp3"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_43b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(43)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-wy-rzuc-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "throw out distributively / for a while",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "layers",
+        "lexical prefix, Secondary Imperfective, po- in Asp3"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_44",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(44)"
+    },
+    "language": "poli1260",
+    "primaryText": "Okna zostały po-za-myk-a-n-e.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The windows have been closed.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "claim",
+        "the SI morpheme sits below Voice: a verbal passive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_45a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(45)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-wark-ną-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3.1"
+      ],
+      [
+        "verbalizer",
+        "semelfactive"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ],
+      [
+        "claim",
+        "no continuum to measure"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_45b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(45)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-kop-ną-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3.1"
+      ],
+      [
+        "verbalizer",
+        "semelfactive"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ],
+      [
+        "claim",
+        "no continuum to measure"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_45c",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(45)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-mach-ną-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3.1"
+      ],
+      [
+        "verbalizer",
+        "semelfactive"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ],
+      [
+        "claim",
+        "no continuum to measure"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_46a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(46a)"
+    },
+    "language": "poli1260",
+    "primaryText": "Marek zaczął mach-ną-ć.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Marek began to wave once.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3.1"
+      ],
+      [
+        "claim",
+        "semelfactives are perfective: no phasal complement"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_46b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(46b)"
+    },
+    "language": "poli1260",
+    "primaryText": "Zaraz mach-ni-e-sz.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You will wave once soon.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3.1"
+      ],
+      [
+        "claim",
+        "semelfactives are perfective: no present reading"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_48",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(48)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-wark-n-ywa-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3.1"
+      ],
+      [
+        "verbalizer",
+        "semelfactive"
+      ],
+      [
+        "layers",
+        "Secondary Imperfective"
+      ],
+      [
+        "claim",
+        "no interval for SI"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_50a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(50a)"
+    },
+    "language": "poli1260",
+    "primaryText": "pó-jść",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "go away",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "verbalizer",
+        "directed motion"
+      ],
+      [
+        "reading",
+        "centrifugal"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_50b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(50b)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-biec",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "run away",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "verbalizer",
+        "directed motion"
+      ],
+      [
+        "reading",
+        "centrifugal"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_50c",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(50c)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-lecieć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "fly away",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "verbalizer",
+        "directed motion"
+      ],
+      [
+        "reading",
+        "centrifugal"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_50d",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(50d)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-ciągnąć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "drag a bit",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "verbalizer",
+        "directed motion"
+      ],
+      [
+        "reading",
+        "centrifugal"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_51a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(51a)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-chodzić",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "walk for a while",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "verbalizer",
+        "non-directed motion"
+      ],
+      [
+        "reading",
+        "delimitative"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_51b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(51b)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-biegać",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "run for a while",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "verbalizer",
+        "non-directed motion"
+      ],
+      [
+        "reading",
+        "delimitative"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_51c",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(51c)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-latać",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "fly for a while",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "verbalizer",
+        "non-directed motion"
+      ],
+      [
+        "reading",
+        "delimitative"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_51d",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(51d)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-ciągać",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "drag for a while",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "verbalizer",
+        "non-directed motion"
+      ],
+      [
+        "reading",
+        "delimitative"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_52",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(52)"
+    },
+    "language": "poli1260",
+    "primaryText": "Natychmiast po-biegnię-to po lekarza.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Someone immediately ran away to bring a doctor.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "claim",
+        "impersonal passive: unergative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
   },
   {
     "id": "jablonska2004_53",
-    "source": {"bibkey": "jablonska-2004", "paperLabel": "(53)"},
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(53)"
+    },
     "language": "poli1260",
     "primaryText": "za-jaś-ni-e-ć",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["za-jaś-ni-e-ć", "incp-bright-adj-V-inf"]
-    ],
+    "glossedTokens": [],
     "translation": "to start being bright",
-    "context": "Inceptive za- on a low -ej- verbalizer stem: the reading is inchoation of a state, not of a transitional dynamic eventuality.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [
-      {"name": "inchoation of state ('start being bright')", "judgment": "acceptable"},
-      {"name": "inchoation of becoming ('start becoming bright')", "judgment": "unacceptable"}
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "verbalizer",
+        "low -ej-"
+      ],
+      [
+        "reading",
+        "inceptive of a state, not of a becoming"
+      ]
     ],
-    "paperFeatures": [],
-    "comment": "Her (53): the available reading tracks the embedded verbalizer, her central verbalizer-sensitivity claim.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_54a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(54a)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-kochać",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "start loving",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "verbalizer",
+        "stative"
+      ],
+      [
+        "reading",
+        "inceptive"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_54b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(54b)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-lubić",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "start liking",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "verbalizer",
+        "stative"
+      ],
+      [
+        "reading",
+        "inceptive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_fn21",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "fn. 21"
+    },
+    "language": "poli1260",
+    "primaryText": "po-siedzieć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "sit for a while",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "verbalizer",
+        "stative"
+      ],
+      [
+        "reading",
+        "delimitative"
+      ],
+      [
+        "layers",
+        "po- in Asp1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_56a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(56a)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-czyt-∅-ywa-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "from time to time read for a while",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "layers",
+        "po- in Asp1, Secondary Imperfective"
+      ],
+      [
+        "reading",
+        "attenuative-frequentative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_56b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(56b)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-gr-∅-ywa-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "from time to time play for a while",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "layers",
+        "po- in Asp1, Secondary Imperfective"
+      ],
+      [
+        "reading",
+        "attenuative-frequentative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_56c",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(56c)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-chadz-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "from time to time walk for a while",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "layers",
+        "po- in Asp1, Secondary Imperfective"
+      ]
+    ],
+    "comment": "Not productive; the paper offers no rule.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_56d",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(56d)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-pal-∅-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "from time to time smoke for a while",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "layers",
+        "po- in Asp1, Secondary Imperfective"
+      ],
+      [
+        "reading",
+        "attenuative-frequentative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_57a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(57a)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-płak-∅-iwa-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "cry a bit from time to time",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "verbalizer",
+        "-a-"
+      ],
+      [
+        "layers",
+        "po- in Asp1, Secondary Imperfective"
+      ],
+      [
+        "reading",
+        "attenuative-frequentative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_57b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(57b)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-kasł-∅-ywa-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "cough a bit from time to time",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "verbalizer",
+        "-aj-"
+      ],
+      [
+        "layers",
+        "po- in Asp1, Secondary Imperfective"
+      ],
+      [
+        "reading",
+        "attenuative-frequentative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_57c",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(57c)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-miauk-∅-iwa-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "meow a bit from time to time",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "verbalizer",
+        "-e-"
+      ],
+      [
+        "layers",
+        "po- in Asp1, Secondary Imperfective"
+      ],
+      [
+        "reading",
+        "attenuative-frequentative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_57d",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(57d)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-gwizd-∅-ywa-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "whistle a bit from time to time",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "verbalizer",
+        "-a-"
+      ],
+      [
+        "layers",
+        "po- in Asp1, Secondary Imperfective"
+      ],
+      [
+        "reading",
+        "attenuative-frequentative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_58a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(58a)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-krocz-∅-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "verbalizer",
+        "-i-"
+      ],
+      [
+        "layers",
+        "po- in Asp1, Secondary Imperfective"
+      ]
+    ],
+    "comment": "Not productive; the paper offers no rule.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_58b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(58b)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-tańcz-∅-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "verbalizer",
+        "-i-"
+      ],
+      [
+        "layers",
+        "po- in Asp1, Secondary Imperfective"
+      ]
+    ],
+    "comment": "Not productive; the paper offers no rule.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_58c",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(58c)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-koch-∅-iwa-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "verbalizer",
+        "-aj-"
+      ],
+      [
+        "layers",
+        "po- in Asp1, Secondary Imperfective"
+      ]
+    ],
+    "comment": "Not productive; the paper offers no rule.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_59a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(59a)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-siwi-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "be getting grey considerably",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "verbalizer",
+        "low -ej-"
+      ],
+      [
+        "layers",
+        "po- in Asp1, Secondary Imperfective"
+      ],
+      [
+        "claim",
+        "low verbalizers denote no interval"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_60_bare",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(60)"
+    },
+    "language": "poli1260",
+    "primaryText": "gr-ywa-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "play regularly",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "layers",
+        "Secondary Imperfective"
+      ],
+      [
+        "claim",
+        "exceptional: SI without a prefix, fn. 23"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_60_po",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(60)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-gr-ywa-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "play from time to time for a while",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "layers",
+        "po- in Asp1, Secondary Imperfective"
+      ],
+      [
+        "claim",
+        "the attenuative impression comes from delimitative po- under SI (64)"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_61a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(61a)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-po-gr-ywa-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "for some time play irregularly from time to time",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "layers",
+        "po- in Asp1, Secondary Imperfective, po- in Asp3"
+      ],
+      [
+        "claim",
+        "the iterated delimited events are not S-summable (36)"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_61b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(61b)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-po-pal-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "for some time smoke from time to time",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "layers",
+        "po- in Asp1, Secondary Imperfective, po- in Asp3"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_62a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(62a)"
+    },
+    "language": "poli1260",
+    "primaryText": "pod-jeść",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "eat at low intensity",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "layers",
+        "lexical attenuative prefix pod-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_62b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(62b)"
+    },
+    "language": "poli1260",
+    "primaryText": "pod-jad-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "eat at low intensity",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "layers",
+        "lexical prefix, Secondary Imperfective"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_63a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(63a)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-palić",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "smoke at low intensity",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "claim",
+        "no attenuative reading without SI"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_63b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(63b)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-miauk-ną-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "meow once at low intensity",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "verbalizer",
+        "semelfactive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_65a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(65a)"
+    },
+    "language": "poli1260",
+    "primaryText": "Maria po-dmuch-iwa-ła na zupę, kiedy wszedł Jan.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Maria was in the process of blowing at the soup for a short time when Jan entered.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "reading",
+        "progressive of an attenuative-frequentative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_65b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(65b)"
+    },
+    "language": "poli1260",
+    "primaryText": "Maria gr-ywa-ła na wyścigach kiedy przyjechał Jan.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Maria had a habit of gambling at the races when Jan came.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "reading",
+        "habitual only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_67a_pf",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(67a)"
+    },
+    "language": "poli1260",
+    "primaryText": "s-trac-i-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "lose",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "layers",
+        "purely perfectivizing prefix in Asp2"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_67a_si",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(67a)"
+    },
+    "language": "poli1260",
+    "primaryText": "s-trac-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "layers",
+        "purely perfectivizing prefix, Secondary Imperfective"
+      ],
+      [
+        "claim",
+        "no SI of a purely perfectivized stem (68)"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_67b_pf",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(67b)"
+    },
+    "language": "poli1260",
+    "primaryText": "z-rob-i-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "make",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "layers",
+        "purely perfectivizing prefix in Asp2"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_67b_si",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(67b)"
+    },
+    "language": "poli1260",
+    "primaryText": "z-rab-i-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "layers",
+        "purely perfectivizing prefix, Secondary Imperfective"
+      ],
+      [
+        "claim",
+        "no SI of a purely perfectivized stem (68)"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_67c_pf",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(67c)"
+    },
+    "language": "poli1260",
+    "primaryText": "s-chow-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "hide",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "layers",
+        "purely perfectivizing prefix in Asp2"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_67c_si",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(67c)"
+    },
+    "language": "poli1260",
+    "primaryText": "s-chow-ywa-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "layers",
+        "purely perfectivizing prefix, Secondary Imperfective"
+      ],
+      [
+        "claim",
+        "no SI of a purely perfectivized stem (68)"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_69a_pf",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(69a)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-brudzić",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "dirty",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "layers",
+        "po- as a purely perfectivizing prefix in Asp2"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_69a_si",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(69a)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-brudz-∅-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "layers",
+        "po- as a purely perfectivizing prefix, Secondary Imperfective"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_69b_pf",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(69b)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-bić",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "beat up",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "layers",
+        "po- as a purely perfectivizing prefix in Asp2"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_69b_si",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(69b)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-bij-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "layers",
+        "po- as a purely perfectivizing prefix, Secondary Imperfective"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_69c_pf",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(69c)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-chwalić",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "praise",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "layers",
+        "po- as a purely perfectivizing prefix in Asp2"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_69c_si",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(69c)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-chwal-∅-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "layers",
+        "po- as a purely perfectivizing prefix, Secondary Imperfective"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_71a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(71a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The situation is worsening.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "claim",
+        "English degree achievements take the progressive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_73a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(73a)"
+    },
+    "language": "poli1260",
+    "primaryText": "z-dzicz-∅-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "verbalizer",
+        "low -ej-"
+      ],
+      [
+        "layers",
+        "purely perfectivizing prefix, Secondary Imperfective"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_74",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(74)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-siw-∅-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "be getting considerably grey",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "verbalizer",
+        "low -ej-"
+      ],
+      [
+        "layers",
+        "po- in Asp1, Secondary Imperfective"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_75a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(75a)"
+    },
+    "language": "poli1260",
+    "primaryText": "wy-gas-ną-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "expire",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "verbalizer",
+        "low inchoative -n-"
+      ],
+      [
+        "layers",
+        "lexical prefix"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_75b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(75b)"
+    },
+    "language": "poli1260",
+    "primaryText": "z-gas-ną-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "go out",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "verbalizer",
+        "low inchoative -n-"
+      ],
+      [
+        "layers",
+        "purely perfectivizing prefix"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_76",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(76)"
+    },
+    "language": "poli1260",
+    "primaryText": "wy-gas-n-(yw)a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "verbalizer",
+        "low inchoative -n-"
+      ],
+      [
+        "layers",
+        "lexical prefix, Secondary Imperfective"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_77",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(77)"
+    },
+    "language": "poli1260",
+    "primaryText": "wy-gas-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "be expiring",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "claim",
+        "the root shifts to the high -aj- class under SI"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_78",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(78)"
+    },
+    "language": "poli1260",
+    "primaryText": "z-gas-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "layers",
+        "purely perfectivizing prefix, Secondary Imperfective"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_79a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(79a)"
+    },
+    "language": "poli1260",
+    "primaryText": "pod-szep-ną-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "make a quiet suggestion",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "verbalizer",
+        "semelfactive"
+      ],
+      [
+        "layers",
+        "lexical prefix"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_79b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(79b)"
+    },
+    "language": "poli1260",
+    "primaryText": "pod-szep-n-ywa-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "verbalizer",
+        "semelfactive"
+      ],
+      [
+        "layers",
+        "lexical prefix, Secondary Imperfective"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_79c",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(79c)"
+    },
+    "language": "poli1260",
+    "primaryText": "szept-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "whisper",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "verbalizer",
+        "-a-"
+      ],
+      [
+        "claim",
+        "the non-semelfactive stem of the same root"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_79d",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(79d)"
+    },
+    "language": "poli1260",
+    "primaryText": "pod-szept-∅-ywa-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "be making quiet suggestions",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "claim",
+        "SI from the non-semelfactive -a- stem of the same root"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_80a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(80a)"
+    },
+    "language": "poli1260",
+    "primaryText": "Maria do-płynie do brzegu.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary will reach the bank by swimming.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "verbalizer",
+        "directed motion"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_80b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(80b)"
+    },
+    "language": "poli1260",
+    "primaryText": "Maria zawsze/właśnie do-pływa do brzegu.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Maria always reaches / is just now reaching the bank by swimming.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "claim",
+        "SI only through the non-directed stem"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_81a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(81a)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-niż-y-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "humiliate",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "verbalizer",
+        "high -i-"
+      ],
+      [
+        "layers",
+        "lexical po-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_81b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(81b)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-ciesz-y-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "console",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "verbalizer",
+        "high -i-"
+      ],
+      [
+        "layers",
+        "lexical po-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_81c",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(81c)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-równ-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "compare",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "verbalizer",
+        "high -aj-"
+      ],
+      [
+        "layers",
+        "lexical po-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_81d",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(81d)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-zw-ać",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "sue",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "verbalizer",
+        "-C-"
+      ],
+      [
+        "layers",
+        "lexical po-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_81e",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(81e)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-le-c",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "die in a battle",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "verbalizer",
+        "-C- or inchoative"
+      ],
+      [
+        "layers",
+        "lexical po-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_81f",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(81f)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-grzybi-e-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "verbalizer",
+        "low -ej-"
+      ],
+      [
+        "layers",
+        "lexical po-"
+      ],
+      [
+        "claim",
+        "an adjectival base has no Result phrase"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_82a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(82a)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-niż-∅-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "layers",
+        "lexical po-, Secondary Imperfective"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_82b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(82b)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-ciesz-∅-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "layers",
+        "lexical po-, Secondary Imperfective"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_82c",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(82c)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-równ-∅-ywa-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "layers",
+        "lexical po-, Secondary Imperfective"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_82d",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(82d)"
+    },
+    "language": "poli1260",
+    "primaryText": "po-zyw-a-ć",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "layers",
+        "lexical po-, Secondary Imperfective"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_83a",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(83a)"
+    },
+    "language": "poli1260",
+    "primaryText": "Kiedy wreszcie po-po-równ-ywa-li-śmy wszystkie prace, mogliśmy przystąpić do wydawania ocen.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "When we finally finished comparing all the works, we could proceed to giving marks.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "layers",
+        "lexical po-, Secondary Imperfective, po- in Asp3"
+      ],
+      [
+        "reading",
+        "distributive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jablonska2004_83b",
+    "source": {
+      "bibkey": "jablonska-2004",
+      "paperLabel": "(83b)"
+    },
+    "language": "poli1260",
+    "primaryText": "Czy wszyscy uczestnicy po-po-twierdz-a-li już swój udział?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Have all the participants confirmed their (respective) participation?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "layers",
+        "lexical po-, Secondary Imperfective, po- in Asp3"
+      ],
+      [
+        "reading",
+        "distributive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
   }
 ]
