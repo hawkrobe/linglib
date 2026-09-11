@@ -1,213 +1,210 @@
+import Linglib.Data.Examples.Herce2023
 import Linglib.Morphology.Paradigm.Morphome
 import Mathlib.Data.Fintype.Prod
-import Mathlib.Data.Fintype.Option
-import Mathlib.Data.Finset.Card
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# The typological diversity of morphomes
-[herce-2023] [aronoff-1994]
+# Herce (2023): The Typological Diversity of Morphomes
 
-Two paradigm fragments from [herce-2023] (*The Typological Diversity of
-Morphomes*, OUP) instantiate `Morphology.IsMorphome`: the Spanish
-**L-morphome** and a Darma agreement syncretism. Each is a systematic
-syncretism whose cell set is captured by no feature-value conjunction — the
-book's operationalization of "unnatural" (a natural class is one
-"coextensive with a value or conjunction of values", §1.4). Naturalness is
-supplied here as the value-or-conjunction predicate, the canonical
-instantiation of `Morphology`'s `Natural` parameter.
+This file formalizes two morphomes of [herce-2023] as instances of `Morphology.IsMorphome`,
+the book's working definition of a morphome as a systematic syncretism that is not a natural
+class (§1.4), with a natural class one coextensive with a value or conjunction of values,
+`Morphology.IsValueConjunction`. The Spanish L-morphome of Table 1.2, the first person
+singular of the present indicative together with the whole present subjunctive, is the
+syncretism class of the velar stems of *venir* and *nacer* and of the suppletive stem of
+*caber* (`venir_morphome`); the Darma syncretism of Table 4.32, the first person plural with
+the second person, is the class of the non-past suffix *-he-n* and of the past suffix *-n-su*
+of *ra* 'come' (`nonpast_morphome`). Each class is a value conjunction of none of its
+paradigm's features (`Lset_not_natural`), and its recurrence under distinct exponents is the
+systematicity the definition asks for.
 
-Systematicity — recurrence under more than one exponent — is what
-distinguishes a morphome from an accidental homophony: the Spanish set
-recurs across three lexemes with three different stem alternations, the
-Darma set across two voice allomorphs.
+## Implementation notes
 
-## Source caveat
+* The paradigms are Table 1.2 and Table 4.32 as printed, stems and suffixes typed as the
+  tables segment them: *venir* has the diphthongized stem in the second and third singular
+  and third plural of the indicative, the optional final *-i* of the Darma second person
+  plural non-past is dropped, and the transitive allomorph *-de* is prose.
+* The definition also returns the past-tense class of *-ju*, the elsewhere form, the
+  limitation the substrate records.
 
-The book's paradigm tables are images, so only cell sets and exponent labels
-recoverable from the surrounding prose are encoded (verbatim quotes cited
-below); full form-per-cell grids are not reproduced. Location cites are
-source-verified: Spanish §1.3 / Table 1.2, pp. 7-8; the definition §1.4,
-pp. 10-11; Darma §4.2.2.4, p. 149 (data from Willis 2007).
+## References
 
-## Main declarations
-
-* `Herce2023.spanishL_morphome_venir` / `_nacer` / `_caber` — the L-morphome
-  is a morphome under three distinct stem alternations
-* `Herce2023.darma_morphome_intr` / `_tr` — the Darma 1PL/2 syncretism is a
-  morphome under both voice allomorphs
+* [herce-2023]
+* [aronoff-1994]
 -/
 
 namespace Herce2023
 
 open Morphology
 
-/-! ### Morphome from a kernel-class `Finset`
+/-! ### The Spanish L-morphome (Table 1.2) -/
 
-A reusable bridge: a nontrivial ker-class `Finset` that coincides with no
-`Natural` class is a `Morphology.IsMorphome`. -/
+/-- The moods of the present tense. -/
+inductive Mood where
+  | ind
+  | sbjv
+  deriving DecidableEq, Fintype
 
-section Bridge
+/-- Grammatical person. -/
+inductive Per where
+  | first
+  | second
+  | third
+  deriving DecidableEq, Fintype
 
-variable {Cell S : Type*} [Fintype Cell] [DecidableEq S]
+/-- Grammatical number. -/
+inductive Num where
+  | sg
+  | pl
+  deriving DecidableEq, Fintype
 
-/-- A nontrivial syncretism class, as the `Finset` of cells a form realizes, that equals no
-natural class is a morphome. -/
-theorem isMorphome_of_kerClass (f : Cell → S) (a : Cell) (X : Finset Cell)
-    (Natural : Set Cell → Prop) (hker : formCells f (f a) = X)
-    (hnt : 1 < X.card) (hnat : ¬ Natural ↑X) :
-    IsMorphome f Natural ↑X := by
-  refine ⟨?_, Finset.nontrivial_coe.mpr (Finset.one_lt_card_iff_nontrivial.mp hnt), hnat⟩
-  have hX : (↑X : Set Cell) = syncretismClass f a := by rw [← hker, coe_formCells]
-  rw [hX]; exact syncretismClass_mem_classes f a
-
-end Bridge
-
-/-! ### Spanish L-morphome (§1.3, Table 1.2, pp. 7-8)
-
-Verbatim (p. 7): the pattern "encompasses the 1SG present indicative and all
-the present subjunctive cells". The present-tense paradigm coordinates below
-are local slices (indicative/subjunctive × three persons × two numbers). -/
-
-inductive Mood | ind | sbjv deriving DecidableEq, Fintype, Repr
-inductive Per | first | second | third deriving DecidableEq, Fintype, Repr
-inductive Num | sg | pl deriving DecidableEq, Fintype, Repr
-
-/-- A present-tense cell: mood, person, number. -/
+/-- A present-tense cell: mood, person and number. -/
 abbrev SpCell := Mood × Per × Num
 
-/-- The L-morphome cell set: 1SG present indicative together with all six
-present subjunctive cells (7 cells). -/
-def Lset : Finset SpCell :=
-  insert (.ind, .first, .sg) (Finset.univ.filter (fun c => c.1 = .sbjv))
+/-- The features of a present-tense cell. -/
+inductive SpFeature where
+  | mood
+  | person
+  | number
+  deriving DecidableEq, Fintype
 
-/-- *venir* 'come': velar /g/ stem in the L-cells (vengo, venga…), base
-elsewhere. Defined by position, not by `Lset` — the syncretism is derived. -/
-def venirStem : SpCell → String
-  | (.ind, .first, .sg) => "veng"
-  | (.sbjv, _, _)       => "veng"
-  | _                   => "ven"
+/-- The partition of the present-tense cells a feature induces. -/
+def spFeatures : SpFeature → Setoid SpCell
+  | .mood => Setoid.ker Prod.fst
+  | .person => Setoid.ker λ c => c.2.1
+  | .number => Setoid.ker λ c => c.2.2
 
-/-- *nacer* 'be born': velar /k/ stem in the L-cells (nazco, nazca…). -/
-def nacerStem : SpCell → String
-  | (.ind, .first, .sg) => "naθk"
-  | (.sbjv, _, _)       => "naθk"
-  | _                   => "naθ"
+instance (i : SpFeature) : DecidableRel (spFeatures i) := by
+  cases i <;> exact Setoid.ker.decidableRel _
 
-/-- *caber* 'fit': suppletive stem in the L-cells (quepo, quepa…). -/
-def caberStem : SpCell → String
-  | (.ind, .first, .sg) => "kep"
-  | (.sbjv, _, _)       => "kep"
-  | _                   => "kab"
+/-- The stems of Table 1.2: *venir* with /ven/, diphthongized /vjen/ and velar /veng/; *nacer*
+with /naθ/ and velar /naθk/; *caber* with /kab/ and weakly suppletive /kep/. -/
+inductive Stem where
+  | ven
+  | vjen
+  | veng
+  | naθ
+  | naθk
+  | kab
+  | kep
+  deriving DecidableEq, Fintype
 
-/-- A feature specification: each feature is fixed to a value or left open.
-A **natural class** is the set of cells matching some spec (coextensive with
-a value or conjunction of values, [herce-2023] §1.4). -/
-abbrev SpSpec := Option Mood × Option Per × Option Num
+/-- The stem of *venir* 'come' in each present-tense cell. -/
+def venir : SpCell → Stem
+  | (.ind, .first, .sg) => .veng
+  | (.ind, .second, .sg) => .vjen
+  | (.ind, .third, .sg) => .vjen
+  | (.ind, .third, .pl) => .vjen
+  | (.ind, _, .pl) => .ven
+  | (.sbjv, _, _) => .veng
 
-/-- Does cell `c` match spec `s` (open features vacuously match)? -/
-def spMatches (s : SpSpec) (c : SpCell) : Bool :=
-  (match s.1 with | none => true | some m => decide (m = c.1)) &&
-  (match s.2.1 with | none => true | some p => decide (p = c.2.1)) &&
-  (match s.2.2 with | none => true | some n => decide (n = c.2.2))
+/-- The stem of *nacer* 'be born' in each present-tense cell. -/
+def nacer : SpCell → Stem
+  | (.ind, .first, .sg) => .naθk
+  | (.sbjv, _, _) => .naθk
+  | _ => .naθ
 
-/-- The cells matching spec `s`. -/
-def spNaturalClass (s : SpSpec) : Finset SpCell :=
-  Finset.univ.filter (fun c => spMatches s c = true)
+/-- The stem of *caber* 'fit' in each present-tense cell. -/
+def caber : SpCell → Stem
+  | (.ind, .first, .sg) => .kep
+  | (.sbjv, _, _) => .kep
+  | _ => .kab
 
-/-- Naturalness for the Spanish space: coextensive with some feature-value
-conjunction. -/
-def SpNatural (X : Set SpCell) : Prop := ∃ s : SpSpec, ↑(spNaturalClass s) = X
+/-- The cells of the L-morphome: the first person singular of the present indicative and the
+whole present subjunctive. -/
+def Lset : Finset SpCell := insert (.ind, .first, .sg) (Finset.univ.filter (·.1 = .sbjv))
 
-theorem venir_kerClass : formCells venirStem (venirStem (.ind, .first, .sg)) = Lset := by decide
-theorem nacer_kerClass : formCells nacerStem (nacerStem (.ind, .first, .sg)) = Lset := by decide
-theorem caber_kerClass : formCells caberStem (caberStem (.ind, .first, .sg)) = Lset := by decide
+theorem venir_formCells : formCells venir .veng = Lset := by decide
 
-theorem Lset_card : 1 < Lset.card := by decide
+theorem nacer_formCells : formCells nacer .naθk = Lset := by decide
 
-/-- No feature-value conjunction is coextensive with the L-set: it crosses
-the indicative/subjunctive divide, so it is unnatural. -/
-theorem Lset_no_natural_class : ∀ s : SpSpec, spNaturalClass s ≠ Lset := by decide
+theorem caber_formCells : formCells caber .kep = Lset := by decide
 
-theorem Lset_not_SpNatural : ¬ SpNatural ↑Lset := by
-  rintro ⟨s, hs⟩; exact Lset_no_natural_class s (Finset.coe_inj.mp hs)
+/-- The L-morphome is a value conjunction of no features: it crosses the moods without
+exhausting either. -/
+theorem Lset_not_natural : ¬ IsValueConjunction spFeatures ↑Lset := by
+  rw [isValueConjunction_coe_iff]
+  decide
 
-/-- The L-morphome under *venir*'s velar /g/ alternation. -/
-theorem spanishL_morphome_venir : IsMorphome venirStem SpNatural ↑Lset :=
-  isMorphome_of_kerClass venirStem (.ind, .first, .sg) Lset SpNatural
-    venir_kerClass Lset_card Lset_not_SpNatural
+/-- The L-morphome under the velar /g/ stem of *venir*. -/
+theorem venir_morphome : IsMorphome venir (IsValueConjunction spFeatures) ↑Lset :=
+  isMorphome_of_formCells venir (.ind, .first, .sg) _ venir_formCells (by decide)
+    Lset_not_natural
 
-/-- The same cell set under *nacer*'s velar /k/ alternation — recurrence
-across a distinct exponent is what makes it systematic. -/
-theorem spanishL_morphome_nacer : IsMorphome nacerStem SpNatural ↑Lset :=
-  isMorphome_of_kerClass nacerStem (.ind, .first, .sg) Lset SpNatural
-    nacer_kerClass Lset_card Lset_not_SpNatural
+/-- The L-morphome under the velar /k/ stem of *nacer*: the same cells under a distinct
+exponent. -/
+theorem nacer_morphome : IsMorphome nacer (IsValueConjunction spFeatures) ↑Lset :=
+  isMorphome_of_formCells nacer (.ind, .first, .sg) _ nacer_formCells (by decide)
+    Lset_not_natural
 
-/-- The same cell set under *caber*'s stem suppletion. -/
-theorem spanishL_morphome_caber : IsMorphome caberStem SpNatural ↑Lset :=
-  isMorphome_of_kerClass caberStem (.ind, .first, .sg) Lset SpNatural
-    caber_kerClass Lset_card Lset_not_SpNatural
+/-- The L-morphome under the suppletive stem of *caber*. -/
+theorem caber_morphome : IsMorphome caber (IsValueConjunction spFeatures) ↑Lset :=
+  isMorphome_of_formCells caber (.ind, .first, .sg) _ caber_formCells (by decide)
+    Lset_not_natural
 
-/-! ### Darma 1PL/2 syncretism (§4.2.2.4, p. 149; Willis 2007)
+/-! ### The Darma first person plural and second person (§4.2.2.4, Table 4.32) -/
 
-Verbatim: "verbal agreement is characterized by a syncretism of 1PL and 2 …
-The formal affinity … is, therefore, morphomic." The shared n-based suffix
-is *-he* in intransitive verbs, *-de* in transitive verbs. Only the attested
-three-cell set and the two allomorph labels are encoded; the full grid is an
-image (see the source caveat). -/
-
-/-- The two voice allomorphs of the n-suffix (-he intr, -de tr). -/
-inductive Voice | intr | tr deriving DecidableEq, Fintype, Repr
-
-/-- A Darma agreement cell: person, number. -/
+/-- A Darma agreement cell: person and number. -/
 abbrev DCell := Per × Num
 
-/-- The syncretic set: 1PL, 2SG, 2PL (three cells). -/
+/-- The features of an agreement cell. -/
+inductive DFeature where
+  | person
+  | number
+  deriving DecidableEq, Fintype
+
+/-- The partition of the agreement cells a feature induces. -/
+def dFeatures : DFeature → Setoid DCell
+  | .person => Setoid.ker Prod.fst
+  | .number => Setoid.ker Prod.snd
+
+instance (i : DFeature) : DecidableRel (dFeatures i) := by
+  cases i <;> exact Setoid.ker.decidableRel _
+
+/-- The agreement suffixes of *ra* 'come' in Table 4.32: non-past *-hi*, *-he-n* and *-ni*,
+past *-ju* and *-n-su*. -/
+inductive Suffix where
+  | hi
+  | hen
+  | ni
+  | ju
+  | nsu
+  deriving DecidableEq, Fintype
+
+/-- The non-past suffix of each agreement cell. -/
+def nonpast : DCell → Suffix
+  | (.first, .sg) => .hi
+  | (.first, .pl) => .hen
+  | (.second, _) => .hen
+  | (.third, _) => .ni
+
+/-- The past suffix of each agreement cell. -/
+def past : DCell → Suffix
+  | (.first, .pl) => .nsu
+  | (.second, _) => .nsu
+  | _ => .ju
+
+/-- The syncretic cells: the first person plural and the second person. -/
 def Dset : Finset DCell := {(.first, .pl), (.second, .sg), (.second, .pl)}
 
-/-- The n-based agreement suffix, keyed by voice: the syncretic cells bear
-it (value = the voice allomorph), other cells are left uncharacterized
-(`none`), since the full grid is not recoverable. Defined by position. -/
-def darmaAgr (v : Voice) : DCell → Option Voice
-  | (.first, .pl)  => some v
-  | (.second, _)   => some v
-  | _              => none
+theorem nonpast_formCells : formCells nonpast .hen = Dset := by decide
 
-/-- A Darma feature spec (person × number). -/
-abbrev DSpec := Option Per × Option Num
+theorem past_formCells : formCells past .nsu = Dset := by decide
 
-def dMatches (s : DSpec) (c : DCell) : Bool :=
-  (match s.1 with | none => true | some p => decide (p = c.1)) &&
-  (match s.2 with | none => true | some n => decide (n = c.2))
+/-- The syncretic cells are a value conjunction of no features: they cross the persons and
+fix no number. -/
+theorem Dset_not_natural : ¬ IsValueConjunction dFeatures ↑Dset := by
+  rw [isValueConjunction_coe_iff]
+  decide
 
-def dNaturalClass (s : DSpec) : Finset DCell :=
-  Finset.univ.filter (fun c => dMatches s c = true)
+/-- The syncretism under the non-past suffix *-he-n*. -/
+theorem nonpast_morphome : IsMorphome nonpast (IsValueConjunction dFeatures) ↑Dset :=
+  isMorphome_of_formCells nonpast (.second, .sg) _ nonpast_formCells (by decide)
+    Dset_not_natural
 
-def DNatural (X : Set DCell) : Prop := ∃ s : DSpec, ↑(dNaturalClass s) = X
-
-theorem darma_kerClass_intr :
-    formCells (darmaAgr .intr) (darmaAgr .intr (.second, .sg)) = Dset := by decide
-theorem darma_kerClass_tr :
-    formCells (darmaAgr .tr) (darmaAgr .tr (.second, .sg)) = Dset := by decide
-
-theorem Dset_card : 1 < Dset.card := by decide
-
-/-- {1PL, 2SG, 2PL} crosses persons 1 and 2 and fixes no number, so no
-feature-value conjunction is coextensive with it. -/
-theorem Dset_no_natural_class : ∀ s : DSpec, dNaturalClass s ≠ Dset := by decide
-
-theorem Dset_not_DNatural : ¬ DNatural ↑Dset := by
-  rintro ⟨s, hs⟩; exact Dset_no_natural_class s (Finset.coe_inj.mp hs)
-
-/-- The 1PL/2 syncretism is a morphome under the intransitive allomorph -he. -/
-theorem darma_morphome_intr : IsMorphome (darmaAgr .intr) DNatural ↑Dset :=
-  isMorphome_of_kerClass (darmaAgr .intr) (.second, .sg) Dset DNatural
-    darma_kerClass_intr Dset_card Dset_not_DNatural
-
-/-- …and under the transitive allomorph -de: recurrence across the two
-allomorphs establishes systematicity. -/
-theorem darma_morphome_tr : IsMorphome (darmaAgr .tr) DNatural ↑Dset :=
-  isMorphome_of_kerClass (darmaAgr .tr) (.second, .sg) Dset DNatural
-    darma_kerClass_tr Dset_card Dset_not_DNatural
+/-- The syncretism under the past suffix *-n-su*: the same cells under a distinct exponent,
+across tenses. -/
+theorem past_morphome : IsMorphome past (IsValueConjunction dFeatures) ↑Dset :=
+  isMorphome_of_formCells past (.second, .sg) _ past_formCells (by decide) Dset_not_natural
 
 end Herce2023
