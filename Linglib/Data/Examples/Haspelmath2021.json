@@ -1,0 +1,4553 @@
+[
+  {
+    "id": "haspelmath2021_ex1a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(1a)"
+    },
+    "language": "taka1261",
+    "primaryText": "ŋa:-Ø la: ŋa-səih-ke",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I killed a leopard.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "A"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "prominence",
+        "locuphoric"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "First person A, no ergative flag.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex1b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(1b)"
+    },
+    "language": "taka1261",
+    "primaryText": "no:-ye la: səih-ke-o",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He killed a leopard.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "A"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "prominence",
+        "aliophoric"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "Third person A with the ergative flag -ye.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex2a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(2a)"
+    },
+    "language": "yaku1245",
+    "primaryText": "Masha türgennik salamaat-Ø sie-te.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Masha ate porridge quickly.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "P"
+      ],
+      [
+        "scale",
+        "definiteness"
+      ],
+      [
+        "prominence",
+        "indefinite"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex2b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(2b)"
+    },
+    "language": "yaku1245",
+    "primaryText": "Masha salamaat-y türgennik sie-te.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Masha ate the porridge quickly.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "P"
+      ],
+      [
+        "scale",
+        "definiteness"
+      ],
+      [
+        "prominence",
+        "definite"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "Definite P with the accusative -y.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex3a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(3a)"
+    },
+    "language": "teop1238",
+    "primaryText": "Enaa paa dee ma=u e guu.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I have brought a pig.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "P"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "scenario",
+        "1 > 3"
+      ],
+      [
+        "kind",
+        "downstream"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex3b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(3b)"
+    },
+    "language": "teop1238",
+    "primaryText": "A beiko tenaa paa asun=u ben-e guu.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "My child has killed the pig.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "P"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "scenario",
+        "3 > 3"
+      ],
+      [
+        "kind",
+        "balanced"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "The object marker ben- is required.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex4a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(4a)"
+    },
+    "language": "stan1293",
+    "primaryText": "She gave Kim the money.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "scenario",
+        "N > N"
+      ],
+      [
+        "kind",
+        "balanced"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "The prepositional dative 'She gave the money to Kim' is also possible.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex4b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(4b)"
+    },
+    "language": "stan1293",
+    "primaryText": "She gave him it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "scenario",
+        "pers > pers"
+      ],
+      [
+        "kind",
+        "balanced"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "The prepositional dative 'She gave it to him' is also possible.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex4c",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(4c)"
+    },
+    "language": "stan1293",
+    "primaryText": "*She gave Kim it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {
+        "form": "She gave it to Kim.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "scenario",
+        "N > pers"
+      ],
+      [
+        "kind",
+        "upstream"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "Only the prepositional dative is possible.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex17a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(17a)"
+    },
+    "language": "nuor1238",
+    "primaryText": "a mortu a Serbadore",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He killed Salvatore.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.1"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "P"
+      ],
+      [
+        "scale",
+        "animacy"
+      ],
+      [
+        "prominence",
+        "human"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex17b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(17b)"
+    },
+    "language": "nuor1238",
+    "primaryText": "a mortu su lupu",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He killed the wolf.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.1"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "P"
+      ],
+      [
+        "scale",
+        "animacy"
+      ],
+      [
+        "prominence",
+        "nonhuman"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex18a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(18a)"
+    },
+    "language": "panj1256",
+    "primaryText": "Kataab vekho.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Look at a book.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.2"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "P"
+      ],
+      [
+        "scale",
+        "definiteness"
+      ],
+      [
+        "prominence",
+        "indefinite"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex18b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(18b)"
+    },
+    "language": "panj1256",
+    "primaryText": "Kataab nũũ vekho.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Look at the book.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.2"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "P"
+      ],
+      [
+        "scale",
+        "definiteness"
+      ],
+      [
+        "prominence",
+        "definite"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "Definite P with the accusative postposition nũũ.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex19a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(19a)"
+    },
+    "language": "west2369",
+    "primaryText": "man ketâb-râ xarid-am.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I bought the book.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.4"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "P"
+      ],
+      [
+        "scale",
+        "givenness"
+      ],
+      [
+        "prominence",
+        "given"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex19b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(19b)"
+    },
+    "language": "west2369",
+    "primaryText": "man sib-i xord-am.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I ate an apple.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.4"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "P"
+      ],
+      [
+        "scale",
+        "givenness"
+      ],
+      [
+        "prominence",
+        "new"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "The accusative flag -râ is not allowed on a nontopical P.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex19c",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(19c)"
+    },
+    "language": "west2369",
+    "primaryText": "ki mašin-i-râ did?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Who saw a car?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.4"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "P"
+      ],
+      [
+        "scale",
+        "givenness"
+      ],
+      [
+        "prominence",
+        "given"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "The accusative flag -râ is required on a topical P.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex20a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(20a)"
+    },
+    "language": "neap1235",
+    "primaryText": "So vistə a mme / a tte.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I have seen myself/you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.5"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "P"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "prominence",
+        "locuphoric"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex20b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(20b)"
+    },
+    "language": "neap1235",
+    "primaryText": "Semə vistə a nnu / a vvu.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "We have seen us/you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.5"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "P"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "prominence",
+        "locuphoric"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex20c",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(20c)"
+    },
+    "language": "neap1235",
+    "primaryText": "*So vistə a Marije / a jissə / a quillə.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I have seen Maria/them.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.5"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "P"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "prominence",
+        "aliophoric"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "The preposition a is impossible on an aliophoric P.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex23a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(23a)"
+    },
+    "language": "warr1255",
+    "primaryText": "ngana-Ø gaga-ma",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "We will go.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2.2"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "S"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "prominence",
+        "personForm"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "No flag on the S argument.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex23b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(23b)"
+    },
+    "language": "warr1255",
+    "primaryText": "ngana-Ø ngulmburu-Ø ngunda-lma",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "We will see the woman.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2.2"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "A"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "prominence",
+        "personForm"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex23c",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(23c)"
+    },
+    "language": "warr1255",
+    "primaryText": "maal-du ngulmburu-Ø ngunda-lma",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The man will see the woman.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2.2"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "A"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "prominence",
+        "fullNominal"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "Ergative flag -du on the full nominal A.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex24a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(24a)"
+    },
+    "language": "mang1381",
+    "primaryText": "Ṇa-ŋugu ñim ŋan-ga-ŋiñ.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Water covered/submerged me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2.3"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "A"
+      ],
+      [
+        "scale",
+        "animacy"
+      ],
+      [
+        "prominence",
+        "inanimate"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "Ergative prefix on the inanimate (neuter) A.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex24b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(24b)"
+    },
+    "language": "mang1381",
+    "primaryText": "Buyʔ ñan-wu-na ŋaḷa-bugbugʔ.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Did the old woman show you (to him)?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2.3"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "A"
+      ],
+      [
+        "scale",
+        "animacy"
+      ],
+      [
+        "prominence",
+        "animate"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex25a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(25a)"
+    },
+    "language": "cent2346",
+    "primaryText": "khōng khāla' so-kiyo:re'",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He prepares the meals.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2.4"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "A"
+      ],
+      [
+        "scale",
+        "focus"
+      ],
+      [
+        "prominence",
+        "background"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "No flag on the topical A.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex25b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(25b)"
+    },
+    "language": "cent2346",
+    "primaryText": "khōng-ki' khāla' so-kiyo:re'",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "HE prepares the meals.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2.4"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "A"
+      ],
+      [
+        "scale",
+        "focus"
+      ],
+      [
+        "prominence",
+        "focus"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "Ergative flag -ki' on the focused A.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex29a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(29a)"
+    },
+    "language": "telk1238",
+    "primaryText": "wəl-lə pārə ta xa-məskenɒ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He gave money to a certain poor person.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1.2"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "prominence",
+        "fullNominal"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "Dative preposition ta on the full-nominal R.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex29b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(29b)"
+    },
+    "language": "telk1238",
+    "primaryText": "kəm-yāwəl-lə ta məskenɒ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He gave it to a poor person.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1.2"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "prominence",
+        "fullNominal"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex29c",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(29c)"
+    },
+    "language": "telk1238",
+    "primaryText": "kəm-yāwəl-lə hadiynɒ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He gave him a present.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1.2"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "prominence",
+        "personForm"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "The R is an index on the verb.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex29d",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(29d)"
+    },
+    "language": "telk1238",
+    "primaryText": "kəm-yāwəl-lux-ila",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He gave them to you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1.2"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "prominence",
+        "personForm"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex30a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(30a)"
+    },
+    "language": "yakk1236",
+    "primaryText": "ka nniŋda photo-ci ham-biʔ-meʔ-nenin=ha",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I distribute the photos to you all.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1.3"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "animacy"
+      ],
+      [
+        "prominence",
+        "animate"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "Animate R in the zero-coded absolutive.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex30b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(30b)"
+    },
+    "language": "yakk1236",
+    "primaryText": "sarkar=ŋa yaŋ tenten=be ŋ-hapsu-bi-ci=ha",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The government distributed the money to the villages.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1.3"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "animacy"
+      ],
+      [
+        "prominence",
+        "inanimate"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "Inanimate R in the locative.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex31a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(31a)"
+    },
+    "language": "nucl1347",
+    "primaryText": "Jox naa xale bu jigéén ji benn velo.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I gave the girl a bicycle.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1.4"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "definiteness"
+      ],
+      [
+        "prominence",
+        "definite"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex31b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(31b)"
+    },
+    "language": "nucl1347",
+    "primaryText": "*Jox naa benn xale bu jigéén velo bi.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I gave a girl the bicycle.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1.4"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "definiteness"
+      ],
+      [
+        "prominence",
+        "indefinite"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "An indefinite R cannot be unflagged.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex31c",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(31c)"
+    },
+    "language": "nucl1347",
+    "primaryText": "Jox naa velo bi ci benn xale bu jigéen.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I gave the bicycle to a girl.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1.4"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "definiteness"
+      ],
+      [
+        "prominence",
+        "indefinite"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "Dative preposition ci on the indefinite R.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex32a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(32a)"
+    },
+    "language": "ewee1241",
+    "primaryText": "Kosí ná ga lá nyɔ́nuví-á.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Kosi gave the money to the girl.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2.1"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "T"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "prominence",
+        "fullNominal"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex32b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(32b)"
+    },
+    "language": "ewee1241",
+    "primaryText": "*Kosí ná-e Amí.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Kosi gave it to Ami.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2.1"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "T"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "prominence",
+        "personForm"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "The flagless construction is ungrammatical with a person-form T.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex32c",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(32c)"
+    },
+    "language": "ewee1241",
+    "primaryText": "Kosí tsɔ́-e ná Amí.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Kosi gave it to Ami.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2.1"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "T"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "prominence",
+        "personForm"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "Person-form T flagged with the serial verb tsɔ́ 'take'.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex33a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(33a)"
+    },
+    "language": "akan1250",
+    "primaryText": "Kofi ma-a abofra no akokɔ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Kofi gave the child a chicken.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2.2"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "T"
+      ],
+      [
+        "scale",
+        "definiteness"
+      ],
+      [
+        "prominence",
+        "indefinite"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex33b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(33b)"
+    },
+    "language": "akan1250",
+    "primaryText": "*Kofi ma-a abofra no akokɔ no",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Kofi gave the child the chicken.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2.2"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "T"
+      ],
+      [
+        "scale",
+        "definiteness"
+      ],
+      [
+        "prominence",
+        "definite"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "A definite T is impossible in the simple double object construction.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex33c",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(33c)"
+    },
+    "language": "akan1250",
+    "primaryText": "Kofi de akokɔ no ma-a abofra no",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Kofi gave the chicken to the child.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2.2"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "T"
+      ],
+      [
+        "scale",
+        "definiteness"
+      ],
+      [
+        "prominence",
+        "definite"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "Definite T flagged with the serial verb de 'take'.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex34a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(34a)"
+    },
+    "language": "nucl1302",
+    "primaryText": "Vano-m Anzor-i še-Ø-adara Givi-s.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Vano compared Anzori to Givi.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2.3"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "T"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "prominence",
+        "aliophoric"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex34b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(34b)"
+    },
+    "language": "nucl1302",
+    "primaryText": "*Vano-m (šen) še-g-adara Givi-s.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Vano compared you to Givi.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2.3"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "T"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "prominence",
+        "locuphoric"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "A locuphoric pronoun cannot appear in its ordinary form as T.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex34c",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(34c)"
+    },
+    "language": "nucl1302",
+    "primaryText": "Vano-m šen-i tav-i še-Ø-adara Givi-s.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Vano compared you to Givi.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2.3"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "T"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "prominence",
+        "locuphoric"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "The reinforced form šeni tavi 'your self'.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex35a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(35a)"
+    },
+    "language": "sout2750",
+    "primaryText": "met es'ie tet pulut-kele kudede-m",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "My father has killed your husband.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "P"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "scenario",
+        "3 > 3"
+      ],
+      [
+        "kind",
+        "balanced"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "A is third person: special accusative flag.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex35b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(35b)"
+    },
+    "language": "sout2750",
+    "primaryText": "met tolow kudede",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I killed a deer.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "P"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "scenario",
+        "1 > 3"
+      ],
+      [
+        "kind",
+        "downstream"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "A is locuphoric: no P flagging.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex36a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(36a)"
+    },
+    "language": "saha1240",
+    "primaryText": "ku=š i-q'ínun-a tílaaki-nɨm",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "And the woman saw me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "A"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "scenario",
+        "3 > 1"
+      ],
+      [
+        "kind",
+        "upstream"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "P is locuphoric: special ergative flag.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex36b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(36b)"
+    },
+    "language": "saha1240",
+    "primaryText": "ku i-q'ínun-a áswan-Ø tílaaki-na",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "And the boy saw the woman.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "A"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "scenario",
+        "3 > 3"
+      ],
+      [
+        "kind",
+        "balanced"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "P is third person: no A flagging.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex37a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(37a)"
+    },
+    "language": "east2774",
+    "primaryText": "Mä t'əkäjəɣlämnä ula mənɣäləm.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I went to pick berries with my younger sister.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.3"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "A"
+      ],
+      [
+        "scale",
+        "definiteness"
+      ],
+      [
+        "scenario",
+        "def > indef"
+      ],
+      [
+        "kind",
+        "downstream"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "P is nonspecific: no A flagging.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex37b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(37b)"
+    },
+    "language": "east2774",
+    "primaryText": "Mə-ŋən ləɣə əllə juɣ kanŋa aməɣaloɣ.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "We put them (pots of berries) beside a big tree.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.3"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "A"
+      ],
+      [
+        "scale",
+        "definiteness"
+      ],
+      [
+        "scenario",
+        "def > def"
+      ],
+      [
+        "kind",
+        "balanced"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "P is specific: special ergative flag.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex38",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(38)"
+    },
+    "language": "stan1288",
+    "primaryText": "En esta receta, la leche puede sustituir a-l huevo.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "In this recipe, milk can replace the egg.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.4"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "P"
+      ],
+      [
+        "scale",
+        "animacy"
+      ],
+      [
+        "scenario",
+        "inanimate > inanimate"
+      ],
+      [
+        "kind",
+        "balanced"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "The preposition a on P with an inanimate A.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex39a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(39a)"
+    },
+    "language": "bulg1262",
+    "primaryText": "Az im ja preporâčvam.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I recommend her to them.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.1"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "scenario",
+        "3 > 3"
+      ],
+      [
+        "kind",
+        "balanced"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex39b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(39b)"
+    },
+    "language": "bulg1262",
+    "primaryText": "*Az im te preporâčvam.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I recommend you to them.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.1"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "scenario",
+        "3 > 2"
+      ],
+      [
+        "kind",
+        "upstream"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "Two clitics are impossible with a locuphoric T.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex39c",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(39c)"
+    },
+    "language": "bulg1262",
+    "primaryText": "Az te preporâčvam na tjah.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I recommend you to them.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.1"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "scenario",
+        "3 > 2"
+      ],
+      [
+        "kind",
+        "upstream"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "The dative preposition na on the R.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex40a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(40a)"
+    },
+    "language": "sham1280",
+    "primaryText": "A-za-m-ni-et-ea.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "S/he has brought him/her to me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.1"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "scenario",
+        "1 > 3"
+      ],
+      [
+        "kind",
+        "downstream"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex40b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(40b)"
+    },
+    "language": "sham1280",
+    "primaryText": "*A-za-ni-mw-et-ea.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "S/he has brought me to him/her.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.1"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "scenario",
+        "3 > 1"
+      ],
+      [
+        "kind",
+        "upstream"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "Two indexes are impossible in the upstream scenario.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex40c",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(40c)"
+    },
+    "language": "sham1280",
+    "primaryText": "A-za-ni-eta kwa yeye.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "S/he has brought me to him/her.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.1"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "scenario",
+        "3 > 1"
+      ],
+      [
+        "kind",
+        "upstream"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "The preposition kwa on the R.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex43a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(43a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim showed me his house.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.2"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "scenario",
+        "pers > N"
+      ],
+      [
+        "kind",
+        "downstream"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex43b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(43b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Lee showed her brother her new house.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.2"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "scenario",
+        "N > N"
+      ],
+      [
+        "kind",
+        "balanced"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex44a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(44a)"
+    },
+    "language": "stan1293",
+    "primaryText": "*Pat showed him it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {
+        "form": "Pat showed it to him.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.2"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "scenario",
+        "pers > pers"
+      ],
+      [
+        "kind",
+        "balanced"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "Unacceptable in the American varieties.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex44b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(44b)"
+    },
+    "language": "stan1293",
+    "primaryText": "*Pat showed his wife it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {
+        "form": "Pat showed it to his wife.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.2"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "scenario",
+        "N > pers"
+      ],
+      [
+        "kind",
+        "upstream"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "Unacceptable in all varieties.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex45a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(45a)"
+    },
+    "language": "mode1248",
+    "primaryText": "Tu to éðose.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He gave it to him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.3"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "T"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "scenario",
+        "3 > 3"
+      ],
+      [
+        "kind",
+        "balanced"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex45b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(45b)"
+    },
+    "language": "mode1248",
+    "primaryText": "*Tu me éðose.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He gave me to him.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.3"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "T"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "scenario",
+        "3 > 1"
+      ],
+      [
+        "kind",
+        "upstream"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "The T proclitic is impossible in the upstream scenario.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex45c",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(45c)"
+    },
+    "language": "mode1248",
+    "primaryText": "Tu éðose eména.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He gave me to him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.3"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "T"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "scenario",
+        "3 > 1"
+      ],
+      [
+        "kind",
+        "upstream"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "The independent pronoun eména as T.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex46a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(46a)"
+    },
+    "language": "icel1247",
+    "primaryText": "Hann kynnti mér þessa gerð skáldsagna.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He introduced this type of fiction to me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.4"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "animacy"
+      ],
+      [
+        "scenario",
+        "animate > inanimate"
+      ],
+      [
+        "kind",
+        "downstream"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "Dative case on the R.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex46b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(46b)"
+    },
+    "language": "icel1247",
+    "primaryText": "Ég mun kynna þig fyrir henni.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I will introduce you to her.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.4"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "animacy"
+      ],
+      [
+        "scenario",
+        "animate > animate"
+      ],
+      [
+        "kind",
+        "balanced"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "The preposition fyrir on the R with an animate T.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex48a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(48a)"
+    },
+    "language": "kash1277",
+    "primaryText": "bI chu-s-ath tsI parInaavaan",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I am teaching you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "8"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "P"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "scenario",
+        "1 > 2"
+      ],
+      [
+        "kind",
+        "downstream"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "Absolutive P.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex48b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(48b)"
+    },
+    "language": "kash1277",
+    "primaryText": "tsI chi-h-an su parInaavaan",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You are teaching him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "8"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "P"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "scenario",
+        "2 > 3"
+      ],
+      [
+        "kind",
+        "downstream"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "Absolutive P.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex48c",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(48c)"
+    },
+    "language": "kash1277",
+    "primaryText": "su chu-y ts-e parInaavaan",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He is teaching you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "8"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "P"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "scenario",
+        "3 > 2"
+      ],
+      [
+        "kind",
+        "upstream"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "Dative P.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex48d",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(48d)"
+    },
+    "language": "kash1277",
+    "primaryText": "su chu tə-mis parInaavaan",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He is teaching him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "8"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "P"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "scenario",
+        "3 > 3"
+      ],
+      [
+        "kind",
+        "balanced"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "Dative P.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex50a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(50a)"
+    },
+    "language": "baou1238",
+    "primaryText": "Kuàkú klè-lì Kòfí wɔ́ suǎʼn.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Kouakou showed your house to Kofi.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "8"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "T"
+      ],
+      [
+        "scale",
+        "nominal type"
+      ],
+      [
+        "scenario",
+        "prop > common"
+      ],
+      [
+        "kind",
+        "downstream"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex50b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(50b)"
+    },
+    "language": "baou1238",
+    "primaryText": "Kuàkú klè-lì mín Ákísí.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Kouakou showed me Akissi.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "8"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "T"
+      ],
+      [
+        "scale",
+        "nominal type"
+      ],
+      [
+        "scenario",
+        "pers > prop"
+      ],
+      [
+        "kind",
+        "downstream"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex51a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(51a)"
+    },
+    "language": "baou1238",
+    "primaryText": "*Kuàkú klè-lì Ákísí mín.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Kouakou showed me to Akissi.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "8"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "T"
+      ],
+      [
+        "scale",
+        "nominal type"
+      ],
+      [
+        "scenario",
+        "prop > pers"
+      ],
+      [
+        "kind",
+        "upstream"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex51b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(51b)"
+    },
+    "language": "baou1238",
+    "primaryText": "Kuàkú fà-lì mín klè-lì Ákísí.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Kouakou showed me to Akissi.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "8"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "T"
+      ],
+      [
+        "scale",
+        "nominal type"
+      ],
+      [
+        "scenario",
+        "prop > pers"
+      ],
+      [
+        "kind",
+        "upstream"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "T flagged with the serial verb fà.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex52a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(52a)"
+    },
+    "language": "baou1238",
+    "primaryText": "*Kuàkú klè-lì mín bé.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Kouakou showed them to me.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "8"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "T"
+      ],
+      [
+        "scale",
+        "nominal type"
+      ],
+      [
+        "scenario",
+        "pers > pers"
+      ],
+      [
+        "kind",
+        "balanced"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex52b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(52b)"
+    },
+    "language": "baou1238",
+    "primaryText": "Kuàkú fà-lì bé klè-lì mín.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Kouakou showed them to me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "8"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "T"
+      ],
+      [
+        "scale",
+        "nominal type"
+      ],
+      [
+        "scenario",
+        "pers > pers"
+      ],
+      [
+        "kind",
+        "balanced"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex53a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(53a)"
+    },
+    "language": "baou1238",
+    "primaryText": "*Kuàkú klè-lì Kòfí Ákísí.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Kouakou showed Akissi to Kofi.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "8"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "T"
+      ],
+      [
+        "scale",
+        "nominal type"
+      ],
+      [
+        "scenario",
+        "prop > prop"
+      ],
+      [
+        "kind",
+        "balanced"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex53b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(53b)"
+    },
+    "language": "baou1238",
+    "primaryText": "Kuàkú fà-lì Ákísí klè-lì Kòfí.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Kouakou showed Akissi to Kofi.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "8"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "T"
+      ],
+      [
+        "scale",
+        "nominal type"
+      ],
+      [
+        "scenario",
+        "prop > prop"
+      ],
+      [
+        "kind",
+        "balanced"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex55a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(55a)"
+    },
+    "language": "iton1250",
+    "primaryText": "ke'-sewane",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you (F) see him/her",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "9"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "verb"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "scenario",
+        "2 > 3"
+      ],
+      [
+        "kind",
+        "downstream"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "Direct form.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex55b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(55b)"
+    },
+    "language": "iton1250",
+    "primaryText": "ka'-k'i-kamo",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "he hit you (F) in the face",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "9"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "verb"
+      ],
+      [
+        "scale",
+        "person"
+      ],
+      [
+        "scenario",
+        "3 > 2"
+      ],
+      [
+        "kind",
+        "upstream"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "Inverse prefix k'i-.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex56a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(56a)"
+    },
+    "language": "maka1311",
+    "primaryText": "La-ku-sare-ko doe'.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I'll give you some money.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "9"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "T"
+      ],
+      [
+        "scale",
+        "definiteness"
+      ],
+      [
+        "prominence",
+        "indefinite"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "The underived verb sare with an indefinite T.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex56b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(56b)"
+    },
+    "language": "maka1311",
+    "primaryText": "La-ku-saré-ang-ko doe-kku",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I'll give you my money.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "9"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "T"
+      ],
+      [
+        "scale",
+        "definiteness"
+      ],
+      [
+        "prominence",
+        "definite"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "The applicative suffix -ang with a definite T.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex56c",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(56c)"
+    },
+    "language": "maka1311",
+    "primaryText": "La-ku-saré-ang-ko.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I'll give it to you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "9"
+      ],
+      [
+        "split",
+        "single-argument"
+      ],
+      [
+        "role",
+        "T"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "prominence",
+        "personForm"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "The applicative suffix -ang with a person-form T.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex58a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(58a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The woman sold the house.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "10.1"
+      ],
+      [
+        "alternation",
+        "passive"
+      ],
+      [
+        "alternant",
+        "active"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex58b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(58b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The house was sold by the woman.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "10.1"
+      ],
+      [
+        "alternation",
+        "passive"
+      ],
+      [
+        "alternant",
+        "passive"
+      ]
+    ],
+    "comment": "Special verb coding and the preposition by on the A.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex59a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(59a)"
+    },
+    "language": "chuk1273",
+    "primaryText": "ətlʔa-ta məčəkw-ən tən-nin",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The mother sewed the shirt.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "10.1"
+      ],
+      [
+        "alternation",
+        "antipassive"
+      ],
+      [
+        "alternant",
+        "ergative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex59b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(59b)"
+    },
+    "language": "chuk1273",
+    "primaryText": "ətlʔa-Ø ine-nn-gʔi məčəkw-ən",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The mother sewed the shirt.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "10.1"
+      ],
+      [
+        "alternation",
+        "antipassive"
+      ],
+      [
+        "alternant",
+        "antipassive"
+      ]
+    ],
+    "comment": "The antipassive prefix ine- and the instrumental on the P.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex60a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(60a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The girl gave the boy the pen.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "10.1"
+      ],
+      [
+        "alternation",
+        "dative"
+      ],
+      [
+        "alternant",
+        "double object"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex60b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(60b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The girl gave the pen to the boy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "10.1"
+      ],
+      [
+        "alternation",
+        "dative"
+      ],
+      [
+        "alternant",
+        "prepositional dative"
+      ]
+    ],
+    "comment": "The extra dative preposition to.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex64a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(64a)"
+    },
+    "language": "lumm1243",
+    "primaryText": "x̣čit-s cə swəyʔqəʔ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He knows the man.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "10.2"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "A"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "scenario",
+        "pers > N"
+      ],
+      [
+        "kind",
+        "downstream"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "Active only; not 'The man knows him'.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex64b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(64b)"
+    },
+    "language": "lumm1243",
+    "primaryText": "x̣čit-s",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He knows it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "10.2"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "A"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "scenario",
+        "pers > pers"
+      ],
+      [
+        "kind",
+        "balanced"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "Active only.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex64c",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(64c)"
+    },
+    "language": "lumm1243",
+    "primaryText": "x̣čit-ŋ ə cə swəyʔqəʔ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He is known by the man.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "10.2"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "A"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "scenario",
+        "N > pers"
+      ],
+      [
+        "kind",
+        "upstream"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "The passive with the suffix -ŋ and the oblique A is obligatory.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex65a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(65a)"
+    },
+    "language": "lumm1243",
+    "primaryText": "x̣čit-s cə swəyʔqəʔ cə swiʔqoʔəɫ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The man knows the boy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "10.2"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "A"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "scenario",
+        "N > N"
+      ],
+      [
+        "kind",
+        "balanced"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "Either the active or the passive can be used.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex65b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(65b)"
+    },
+    "language": "lumm1243",
+    "primaryText": "x̣čit-ŋ cə swiʔqóʔəɫ ə cə swəyʔqəʔ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The boy is known by the man.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "10.2"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "A"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "scenario",
+        "N > N"
+      ],
+      [
+        "kind",
+        "balanced"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "Either the active or the passive can be used.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex66a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(66a)"
+    },
+    "language": "koyr1240",
+    "primaryText": "Ay noo ga woy di se.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I gave it to the woman.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "10.2"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "scenario",
+        "N > pers"
+      ],
+      [
+        "kind",
+        "upstream"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "The postpositional dative construction is the only possibility.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex66b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(66b)"
+    },
+    "language": "koyr1240",
+    "primaryText": "Ay noo woy di se hari.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I gave the woman some water.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "10.2"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "scenario",
+        "N > N"
+      ],
+      [
+        "kind",
+        "balanced"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "The postpositional dative construction is the only possibility.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex66c",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(66c)"
+    },
+    "language": "koyr1240",
+    "primaryText": "No-o noo ga i se.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You give it to them.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "10.2"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "scenario",
+        "pers > pers"
+      ],
+      [
+        "kind",
+        "balanced"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "The postpositional dative construction is the only possibility.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex66d",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(66d)"
+    },
+    "language": "koyr1240",
+    "primaryText": "No-o noo gi njerfu.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You give them some money.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "10.2"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "scenario",
+        "pers > N"
+      ],
+      [
+        "kind",
+        "downstream"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "The double object construction.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex67a",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(67a)"
+    },
+    "language": "koyr1240",
+    "primaryText": "Yer o har i se i ma noo yer se idumbo.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "We tell them to give us a piece.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "10.2"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "scenario",
+        "pers > N"
+      ],
+      [
+        "kind",
+        "downstream"
+      ],
+      [
+        "coding",
+        "special"
+      ]
+    ],
+    "comment": "The postpositional dative construction is also possible in the downstream scenario.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2021_ex67b",
+    "source": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(67b)"
+    },
+    "language": "koyr1240",
+    "primaryText": "boro kul kaa hin ka noo yer a wane fahaamey di",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "anyone who can give us information about it",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "10.2"
+      ],
+      [
+        "split",
+        "scenario"
+      ],
+      [
+        "role",
+        "R"
+      ],
+      [
+        "scale",
+        "nominality"
+      ],
+      [
+        "scenario",
+        "pers > N"
+      ],
+      [
+        "kind",
+        "downstream"
+      ],
+      [
+        "coding",
+        "zero"
+      ]
+    ],
+    "comment": "The double object construction in the downstream scenario.",
+    "lgrConformance": ""
+  }
+]

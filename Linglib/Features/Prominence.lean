@@ -19,9 +19,9 @@ marking, and the marking grids over them.
   marked; the `MonotoneP`/`MonotoneA` staircases, cutoff constructors, and
   `monotoneP_iff_isUpperSet`.
 
-Paper-specific apparatus lives with its papers: the scenario machinery and
-frequency proxies in `Studies/Haspelmath2021.lean`, the OT typology in
-`Studies/Aissen2003.lean`, the indexing survey in `Studies/Just2024.lean`.
+Paper-specific apparatus lives with its papers: the scenario universals in
+`Studies/Haspelmath2021.lean`, the OT typology in `Studies/Aissen2003.lean`,
+the indexing survey in `Studies/Just2024.lean`.
 
 ## References
 
