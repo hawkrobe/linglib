@@ -1,431 +1,488 @@
-import Linglib.Core.Probability.Hypergeometric
-import Linglib.Core.Probability.Posterior
-import Linglib.Core.Probability.JointPosterior
 import Linglib.Core.InformationTheory.Hellinger
+import Linglib.Core.Probability.Kernel.OfWeights
+import Linglib.Core.Probability.Kernel.Posterior
+import Linglib.Data.Examples.HerbstrittFranke2019
+import Linglib.Pragmatics.RSA.Basic
 import Mathlib.InformationTheory.KullbackLeibler.Basic
-import Mathlib.Probability.Distributions.Uniform
 
 /-!
-# [herbstritt-franke-2019]: complex probability expressions via RSA on `PMF`
+# Herbstritt and Franke (2019): Complex probability expressions and higher-order uncertainty
 
-Compositional threshold semantics plus an RSA model over an urn scenario
-(`N = 10` balls), formalised on mathlib's `PMF` in the same key as
-`Studies/LassiterGoodman2017.lean`. Cognition 186 (2019) 50–71.
+This file formalizes the rational speech act model of [herbstritt-franke-2019] for a speaker
+who has drawn some balls from an urn of ten and tells a listener how likely the next draw is
+to be red. The speaker's belief of (12) is the posterior over the number of red balls given
+her observation, `belief`, the Bayesian inverse of the hypergeometric observation kernel;
+a simple expression holds at a state by the threshold semantics of (13) and (14),
+`Thresholds.meaning`, and the literal listener of (15) conditions the prior on the extension.
+The speaker of (16) and (17), `speaker`, is the softmax of the negative Hellinger distance
+between her belief and the literal listener's, and the pragmatic listener of (18) inverts her
+against the joint prior over states, observations and accesses, whose marginals are (19) and
+(20). A complex expression holds at an observation by (23) when the belief it induces gives
+the inner expression's extension more than the outer threshold, `ComplexThresholds.complex`.
 
-The architectural novelty is a Hellinger-distance speaker utility (Eq. 16) in
-place of KL divergence. The literal listener `P_LL(s|m) ∝ ⟦m⟧(s) · P_prior(s)`
-puts zero mass outside a meaning's extension, so `KL(P_rat.bel ‖ P_LL) = ∞`
-whenever the speaker's belief has support outside it — a strictly probabilistic
-speaker could never say "certainly RED" at 9/10. Hellinger distance is bounded
-by 1, so the speaker can assert it with bounded disutility.
+Because the Hellinger distance is bounded, every message is used with positive probability
+at every observation (`speaker_apply_singleton_ne_zero`), where the Kullback–Leibler speaker
+of [goodman-stuhlmuller-2013] never uses a message whose extension misses a state of
+positive belief, the paper's *probably red* after three red balls of four. With complete
+access the belief is a point mass, so a true message beats a false one, and among true
+messages the one whose extension carries less prior mass wins, the scalar implicature of
+the paper's introductory example; the pragmatic listener never rules a state out entirely;
+and with complete access an outer modifier below one is vacuous.
 
-## Main definitions
+## Implementation notes
 
-* `obsKernel`, `speakerBelief` — belief formation (Eq. 12) as `PMF.posterior`
-  of the hypergeometric observation kernel, with `ℚ`-valued mirrors
-  `hypergeoQ` / `speakerBeliefQ` for finite-arithmetic checks.
-* `SimpleExpr.meaning`, `complexMeaning` — threshold semantics for simple
-  (Eq. 13-14) and nested (Eq. 22-23) probability expressions.
-* `literalListener`, `pragmaticListener` — the RSA literal listener (uniform on
-  a meaning extension, Eq. 15) and the pragmatic listener as a joint
-  `PMF.posterior` (Eq. 18).
+* The observation kernel normalizes the hypergeometric weight `C(s, o) C(10 − s, a − o)`
+  row by row, and the priors over states and accesses are arbitrary measures where the paper
+  fits beta-binomials; the thresholds are parameters, the paper's fitted values (Tables 6
+  and 9) being prose. The bare copula of Experiment 3 is the simple expression.
+* The Kullback–Leibler speaker is stated to make the contrast of the paper's footnote on
+  utilities a theorem; the paper does not run it.
 
-## Main results
+## TODO
 
-* `hellinger_admits_what_KL_excludes` — on the witness pair `(dirac 9, dirac 10)`,
-  `KL = ∞` but `HD ≤ 1`: the formal content of the Hellinger-vs-KL divergence,
-  via `InformationTheory.klDiv_of_not_ac` and `InformationTheory.hellingerDist_le_one`.
-* `statePosterior_apply`, `accessPosterior_apply`, `statePosterior_lt_iff` —
-  marginalisations (Eq. 19-20) of the joint posterior, direct corollaries of
-  `Core/Probability/JointPosterior`.
-* `certainly_subset_probably`, `probably_subset_possibly` — nesting of the
-  inferred meaning extensions.
+* The complex utility of (26) and (27) and the complex speaker and listener of (28) and (29).
+* The posterior predictive checks and the modal concord reading of *might be possible* (§6).
 
-The cross-paper contrast with [goodman-stuhlmuller-2013] makes the
-speaker-utility divergence (KL vs Hellinger) visible at theorem level. The paper's
-posterior-predictive evaluation (JAGS fits, the model–data correlations of
-Tables 6-10) is statistical, not structural, and is not formalised here.
+## References
+
+* [herbstritt-franke-2019]
+* [goodman-stuhlmuller-2013]
+* [fagin-halpern-1994]
+* [frank-goodman-2012]
+* [zeijlstra-2007]
 -/
 
 namespace HerbstrittFranke2019
 
+open MeasureTheory ProbabilityTheory RSA InformationTheory
 open scoped ENNReal
 
-/-! ### Domain types -/
+/-- A state: how many of the ten balls in the urn are red. -/
+abbrev State := Fin 11
 
-/-- Urn state: number of red balls in the urn (0..10). -/
-abbrev UrnState := Fin 11
+/-- The speaker's access: how many balls she draws. -/
+abbrev Access := Fin 11
 
-/-- The proportion of red balls: `s/10`. First-order probability of
-    drawing a red ball, and the measure function for simple expressions. -/
-def proportion (s : UrnState) : ℚ := s.val / 10
-
-/-- Observation count (zero-padded for `access < 10`): obs > access have
-    probability 0 in the kernel. -/
+/-- An observation: how many of the drawn balls are red. -/
 abbrev Obs := Fin 11
 
-/-! ### Belief formation via the hypergeometric kernel
+/-- The probability of drawing a red ball in a state. -/
+noncomputable def proportion (s : State) : ℝ := (s : ℕ) / 10
 
-The observation kernel is the hypergeometric distribution from
-`Core/Probability/Hypergeometric.lean`, embedded into the padded
-`Obs := Fin 11` via `PMF.map`. The speaker's posterior belief is then
-just `PMF.posterior` of this kernel against the uniform world prior. -/
+/-! ### Belief formation, (12) -/
 
-/-- **Observation kernel**: `P(obs | access, state)`. The hypergeometric
-    PMF on `Fin (access + 1)` embedded into `Fin 11` (zero on
-    `obs > access`). Uses `PMF.hypergeometric` from `Core/Probability`. -/
-noncomputable def obsKernel (access : ℕ) (h_a : access ≤ 10) (s : UrnState) :
-    PMF Obs :=
-  (PMF.hypergeometric 10 s.val access h_a (Nat.le_of_lt_succ s.isLt)).map
-    (fun o => ⟨o.val, by have := o.isLt; omega⟩)
+/-- The hypergeometric weight of observing `o` red among `a` balls drawn without replacement
+from ten of which `s` are red, `C(s, o) C(10 − s, a − o)`; the row's normalization is
+`C(10, a)`. -/
+def hyper (a : Access) (s : State) (o : Obs) : ℕ :=
+  if o ≤ a then s.val.choose o.val * (10 - s.val).choose (a.val - o.val) else 0
 
-/-- **Speaker's posterior belief** `P_rat.bel(·|o, a)` (Eq. 12).
-    With uniform world prior, this is `PMF.posterior` of the
-    hypergeometric kernel. -/
-noncomputable def speakerBelief (access : ℕ) (h_a : access ≤ 10)
-    (obs : Obs) (h_marg : PMF.marginal (obsKernel access h_a)
-                                       (PMF.uniformOfFintype UrnState) obs ≠ 0) :
-    PMF UrnState :=
-  PMF.posterior (obsKernel access h_a) (PMF.uniformOfFintype UrnState) obs h_marg
+/-- The observation kernel `Hypergeometric(o | a, s, 10)`. -/
+noncomputable def obs (a : Access) : Kernel State Obs :=
+  Kernel.ofWeights λ s o => (hyper a s o : ℝ≥0∞)
 
-/-! ### `ℚ`-valued speaker belief for finite-arithmetic verification
+instance (a : Access) : IsFiniteKernel (obs a) :=
+  inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
 
-Mirrors the existing file's `speakerBeliefQ` for `norm_num` checks. Bridge
-to the PMF version: both reduce to the same hypergeometric ratio. -/
+theorem obs_apply_singleton (a : Access) (s : State) (o : Obs) :
+    obs a s {o} = (hyper a s o : ℝ≥0∞) / ∑ o', (hyper a s o' : ℝ≥0∞) :=
+  Kernel.ofWeights_apply_singleton _ _ _
 
-/-- Hypergeometric weight at `(N=10, K=s, n=access, k=obs)` as ℚ. -/
-def hypergeoQ (access obs : ℕ) (s : UrnState) : ℚ :=
-  if obs ≤ access then
-    ((s.val.choose obs * (10 - s.val).choose (access - obs) : ℕ) : ℚ) /
-      ((10 : ℕ).choose access : ℕ)
-  else 0
+/-- An observation is possible at a state exactly when its hypergeometric weight is. -/
+theorem obs_apply_singleton_ne_zero_iff (a : Access) (s : State) (o : Obs) :
+    obs a s {o} ≠ 0 ↔ hyper a s o ≠ 0 := by
+  rw [obs_apply_singleton, ne_eq, ENNReal.div_eq_zero_iff, not_or, Nat.cast_eq_zero]
+  exact ⟨And.left, λ h => ⟨h, ENNReal.sum_ne_top.mpr λ _ _ => ENNReal.natCast_ne_top _⟩⟩
 
-/-- ℚ-valued speaker belief — Bayes' rule over the hypergeometric kernel
-    with uniform world prior. -/
-def speakerBeliefQ (access obs : ℕ) (s : UrnState) : ℚ :=
-  let num := hypergeoQ access obs s
-  let denom := (Finset.univ : Finset UrnState).sum
-                 (fun s' => hypergeoQ access obs s')
-  if denom = 0 then 0 else num / denom
+/-- Drawing every ball reveals the state. -/
+theorem hyper_full (s : State) (o : Obs) : hyper 10 s o = if s = o then 1 else 0 := by
+  revert s o; decide +kernel
 
--- ── Belief formation: model behaviour checks ──
+/-- Drawing nothing is possible at every state. -/
+theorem hyper_zero (s : State) : hyper 0 s 0 ≠ 0 := by
+  revert s; decide +kernel
 
-/-- Full access (a=10): belief concentrates on the observed state. -/
-example : speakerBeliefQ 10 5 ⟨5, by omega⟩ = 1 := by
-  simp only [speakerBeliefQ, hypergeoQ]
-  norm_num [Finset.sum_fin_eq_sum_range, Finset.sum_range_succ, Nat.choose]
+theorem obs_full (s : State) (o : Obs) : obs 10 s {o} = if s = o then 1 else 0 := by
+  simp only [obs_apply_singleton, hyper_full, Nat.cast_ite, Nat.cast_one, Nat.cast_zero,
+    Finset.sum_ite_eq, Finset.mem_univ, if_true, div_one]
 
-/-- Full access: states other than the observed one get probability 0. -/
-example : speakerBeliefQ 10 5 ⟨3, by omega⟩ = 0 := by
-  simp only [speakerBeliefQ, hypergeoQ]
-  norm_num [Finset.sum_fin_eq_sum_range, Finset.sum_range_succ, Nat.choose]
+section Belief
 
-/-- Partial access (a=4, o=1): belief spreads across feasible states. -/
-example : speakerBeliefQ 4 1 ⟨5, by omega⟩ = 25/231 := by
-  simp only [speakerBeliefQ, hypergeoQ]
-  norm_num [Finset.sum_fin_eq_sum_range, Finset.sum_range_succ, Nat.choose]
+variable (P : Measure State) [IsFiniteMeasure P]
 
-/-! ### Simple expression semantics -/
+/-- The speaker's rational belief of (12): the posterior over states given an observation at
+an access, against the prior. -/
+noncomputable def belief (a : Access) : Kernel Obs State := (obs a)†P
 
-/-- Semantic threshold for "possibly" (posterior mean from Table 6). -/
-def θ_possibly  : ℚ := 247/1000
+instance (a : Access) : IsMarkovKernel (belief P a) := inferInstanceAs (IsMarkovKernel ((obs a)†P))
 
-/-- Semantic threshold for "probably" (posterior mean from Table 6). -/
-def θ_probably  : ℚ := 549/1000
+theorem belief_apply_singleton {a : Access} {o : Obs} (h : (obs a ∘ₘ P) {o} ≠ 0) (s : State) :
+    belief P a o {s} = P {s} * obs a s {o} / (obs a ∘ₘ P) {o} :=
+  posterior_apply_singleton _ _ h s
 
-/-- Semantic threshold for "certainly" (posterior mean from Table 6). -/
-def θ_certainly : ℚ := 949/1000
+/-- A state of positive prior at which the observation is possible keeps positive belief. -/
+theorem belief_apply_singleton_ne_zero {a : Access} {o : Obs} {s : State} (hP : P {s} ≠ 0)
+    (h : hyper a s o ≠ 0) : belief P a o {s} ≠ 0 := by
+  have ho := (obs_apply_singleton_ne_zero_iff a s o).2 h
+  rw [belief_apply_singleton P (comp_apply_singleton_ne_zero _ _ hP ho)]
+  exact (ENNReal.div_pos_iff.2 ⟨mul_ne_zero hP ho, measure_ne_top _ _⟩).ne'
 
-/-- The inferred threshold ordering matches the theoretical prediction:
-    certainly > probably > possibly. -/
-theorem inferred_threshold_ordering :
-    θ_possibly < θ_probably ∧ θ_probably < θ_certainly := by
-  refine ⟨?_, ?_⟩
-  · show (247 / 1000 : ℚ) < 549 / 1000; norm_num
-  · show (549 / 1000 : ℚ) < 949 / 1000; norm_num
+/-- With complete access the belief is the point mass at the observed state. -/
+theorem belief_full {o : Obs} (hP : P {o} ≠ 0) : belief P 10 o = Measure.dirac o := by
+  have hcomp : (obs 10 ∘ₘ P) {o} = P {o} := by
+    rw [Measure.comp_apply_singleton]
+    simp only [obs_full, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  refine Measure.ext_of_singleton λ s => ?_
+  rw [belief_apply_singleton P (by rw [hcomp]; exact hP), hcomp, obs_full, Measure.dirac_apply,
+    Set.indicator_apply, Pi.one_apply]
+  by_cases hs : s = o
+  · subst hs
+    simp [ENNReal.div_self hP (measure_ne_top _ _)]
+  · simp [hs, Ne.symm hs]
 
-/-- The five simple expressions from Experiments 2 and 3. -/
+end Belief
+
+/-! ### Simple expressions, (13) to (15) -/
+
+/-- The five simple expressions of Experiment 2. -/
 inductive SimpleExpr where
-  | certainlyNot | probablyNot | possibly | probably | certainly
-  deriving DecidableEq, Repr, Inhabited, Fintype
+  | certainlyNot
+  | probablyNot
+  | possibly
+  | probably
+  | certainly
+  deriving DecidableEq, Fintype, Nonempty
 
-/-- Simple expression meaning using inferred thresholds.
-    Eq. 13: ⟦X(RED)⟧ = {s | s/10 > θ_X}     (positive)
-    Eq. 14: ⟦X not(RED)⟧ = {s | s/10 < 1 − θ_X}  (negated) -/
-def SimpleExpr.meaning : SimpleExpr → UrnState → Bool
-  | .certainly    => fun s => decide (proportion s > θ_certainly)
-  | .probably     => fun s => decide (proportion s > θ_probably)
-  | .possibly     => fun s => decide (proportion s > θ_possibly)
-  | .probablyNot  => fun s => decide (proportion s < 1 - θ_probably)
-  | .certainlyNot => fun s => decide (proportion s < 1 - θ_certainly)
+instance : MeasurableSpace SimpleExpr := ⊤
 
--- ── Simple expression behaviour checks ──
+/-- The semantic thresholds of the three uncertainty expressions, free parameters of the
+model. -/
+structure Thresholds where
+  /-- The threshold of *certainly*. -/
+  certainly : ℝ
+  /-- The threshold of *probably*. -/
+  probably : ℝ
+  /-- The threshold of *possibly*. -/
+  possibly : ℝ
 
-example : SimpleExpr.meaning .certainly ⟨10, by omega⟩ = true := by
-  simp only [SimpleExpr.meaning, proportion, θ_certainly]; norm_num
-example : SimpleExpr.meaning .certainly ⟨9, by omega⟩ = false := by
-  simp only [SimpleExpr.meaning, proportion, θ_certainly]; norm_num
-example : SimpleExpr.meaning .probably ⟨6, by omega⟩ = true := by
-  simp only [SimpleExpr.meaning, proportion, θ_probably]; norm_num
-example : SimpleExpr.meaning .probably ⟨5, by omega⟩ = false := by
-  simp only [SimpleExpr.meaning, proportion, θ_probably]; norm_num
-example : SimpleExpr.meaning .possibly ⟨3, by omega⟩ = true := by
-  simp only [SimpleExpr.meaning, proportion, θ_possibly]; norm_num
-example : SimpleExpr.meaning .possibly ⟨2, by omega⟩ = false := by
-  simp only [SimpleExpr.meaning, proportion, θ_possibly]; norm_num
-example : SimpleExpr.meaning .certainlyNot ⟨0, by omega⟩ = true := by
-  simp only [SimpleExpr.meaning, proportion, θ_certainly]; norm_num
-example : SimpleExpr.meaning .certainlyNot ⟨1, by omega⟩ = false := by
-  simp only [SimpleExpr.meaning, proportion, θ_certainly]; norm_num
-example : SimpleExpr.meaning .probablyNot ⟨4, by omega⟩ = true := by
-  simp only [SimpleExpr.meaning, proportion, θ_probably]; norm_num
-example : SimpleExpr.meaning .probablyNot ⟨5, by omega⟩ = false := by
-  simp only [SimpleExpr.meaning, proportion, θ_probably]; norm_num
+namespace Thresholds
 
-/-- Simple expression extensions are nested: certainly ⊂ probably ⊂ possibly. -/
-theorem certainly_subset_probably :
-    ∀ s : UrnState, SimpleExpr.meaning .certainly s = true →
-    SimpleExpr.meaning .probably s = true := by
-  intro s; fin_cases s <;>
-    simp only [SimpleExpr.meaning, proportion, θ_certainly, θ_probably] <;> norm_num
+variable (θ : Thresholds)
 
-theorem probably_subset_possibly :
-    ∀ s : UrnState, SimpleExpr.meaning .probably s = true →
-    SimpleExpr.meaning .possibly s = true := by
-  intro s; fin_cases s <;>
-    simp only [SimpleExpr.meaning, proportion, θ_probably, θ_possibly] <;> norm_num
+/-- The threshold semantics of (13) and (14): a positive expression holds where the
+proportion of red balls exceeds its threshold, a negated one where the proportion falls below
+one less the threshold. -/
+def meaning : SimpleExpr → State → Prop
+  | .certainly, s => θ.certainly < proportion s
+  | .probably, s => θ.probably < proportion s
+  | .possibly, s => θ.possibly < proportion s
+  | .probablyNot, s => proportion s < 1 - θ.probably
+  | .certainlyNot, s => proportion s < 1 - θ.certainly
 
-/-! ### Compositional complex-expression semantics -/
+/-- The extension of a simple expression. -/
+def ext (m : SimpleExpr) : Set State := {s | θ.meaning m s}
 
-/-- Posterior probability that an urn-state proposition φ holds, given
-    the speaker's observation. ℚ-valued for decidable verification.
+/-- *Certainly* entails *probably* when its threshold is the higher. -/
+theorem ext_certainly_subset (h : θ.probably ≤ θ.certainly) :
+    θ.ext .certainly ⊆ θ.ext .probably := λ _ hs => lt_of_le_of_lt h hs
 
-    `posteriorProb(access, obs, φ) = Σ_{s ∈ ⟦φ⟧} P_rat.bel(s | obs, access)` -/
-def posteriorProb (access obs : ℕ) (φ : UrnState → Bool) : ℚ :=
-  ((Finset.univ : Finset UrnState).filter (φ · = true)).sum
-    (speakerBeliefQ access obs)
+/-- *Probably* entails *possibly* when its threshold is the higher. -/
+theorem ext_probably_subset (h : θ.possibly ≤ θ.probably) :
+    θ.ext .probably ⊆ θ.ext .possibly := λ _ hs => lt_of_le_of_lt h hs
 
-/-- The three inner expressions from Experiment 3 (Eq. 22). Footnote 18:
-    `θ_probably` from the simple model maps to `θ_likely` of the inner
-    expressions in the complex model. -/
-inductive InnerExpr where
-  | likely | possible | unlikely
-  deriving DecidableEq, Repr
+/-- *Certainly not* entails *probably not* when the threshold of *certainly* is the higher. -/
+theorem ext_certainlyNot_subset (h : θ.probably ≤ θ.certainly) :
+    θ.ext .certainlyNot ⊆ θ.ext .probablyNot := λ s hs => by
+  simp only [ext, meaning, Set.mem_ofPred_eq] at hs ⊢
+  linarith
 
-/-- Inner expression meaning (Eq. 22). -/
-def InnerExpr.meaning : InnerExpr → UrnState → Bool
-  | .likely   => fun s => decide (proportion s > θ_probably)
-  | .possible => fun s => decide (proportion s > θ_possibly)
-  | .unlikely => fun s => decide (proportion s < 1 - θ_probably)
+end Thresholds
 
-/-- The four outer modifiers from Experiment 3. -/
-inductive OuterMod where
-  | is_ | isCertainly | isProbably | mightBe
-  deriving DecidableEq, Repr
+section Listener
 
-/-- Outer modifier threshold (Table 9, complex model). -/
-def OuterMod.threshold : OuterMod → ℚ
-  | .mightBe      => 332/1000   -- Table 9: θ_might
-  | .is_          => θ_probably  -- bare copula: matches inner θ_likely
-  | .isProbably   => 690/1000   -- Table 9: θ_probably
-  | .isCertainly  => 982/1000   -- Table 9: θ_certainly
+variable (θ : Thresholds) (P : Measure State)
 
-/-- Complex expression Y(X(RED)) (Eq. 23):
-    ⟦Y(X(RED))⟧(⟨o, a⟩) ⟺ Σ_{s∈⟦X(RED)⟧} P_rat.bel(s|o, a) > θ_Y -/
-def complexMeaning (outer : OuterMod) (inner : InnerExpr)
-    (access obs : ℕ) : Bool :=
-  decide (posteriorProb access obs inner.meaning > outer.threshold)
+/-- The literal listener of (15): the prior conditioned on the expression's extension. -/
+noncomputable def L0 : Kernel SimpleExpr State := literalListener P λ m => (θ.ext m).indicator 1
 
--- ── Complex expression behaviour checks ──
+theorem L0_apply_singleton_of_notMem {m : SimpleExpr} {s : State} (h : s ∉ θ.ext m) :
+    L0 θ P m {s} = 0 :=
+  literalListener_indicator_apply_singleton_of_notMem P θ.ext h
 
-example : complexMeaning .isCertainly .likely 10 8 = true := by
-  simp only [complexMeaning, posteriorProb, InnerExpr.meaning, OuterMod.threshold,
-    proportion, θ_probably, speakerBeliefQ, hypergeoQ]
-  norm_num [Finset.sum_filter, Finset.sum_fin_eq_sum_range, Finset.sum_range_succ, Nat.choose]
-example : complexMeaning .isCertainly .likely 10 5 = false := by
-  simp only [complexMeaning, posteriorProb, InnerExpr.meaning, OuterMod.threshold,
-    proportion, θ_probably, speakerBeliefQ, hypergeoQ]
-  norm_num [Finset.sum_filter, Finset.sum_fin_eq_sum_range, Finset.sum_range_succ, Nat.choose]
-example : complexMeaning .isCertainly .possible 4 2 = false := by
-  simp only [complexMeaning, posteriorProb, InnerExpr.meaning, OuterMod.threshold,
-    proportion, θ_possibly, speakerBeliefQ, hypergeoQ]
-  norm_num [Finset.sum_filter, Finset.sum_fin_eq_sum_range, Finset.sum_range_succ, Nat.choose]
-example : complexMeaning .mightBe .possible 4 2 = true := by
-  simp only [complexMeaning, posteriorProb, InnerExpr.meaning, OuterMod.threshold,
-    proportion, θ_possibly, speakerBeliefQ, hypergeoQ]
-  norm_num [Finset.sum_filter, Finset.sum_fin_eq_sum_range, Finset.sum_range_succ, Nat.choose]
+theorem L0_apply_singleton_of_mem {m : SimpleExpr} {s : State} (h : s ∈ θ.ext m) :
+    L0 θ P m {s} = (P (θ.ext m))⁻¹ * P {s} :=
+  literalListener_indicator_apply_singleton P θ.ext h
 
-/-- For HF's specific thresholds, strict `>` and non-strict `≥` give the
-    same extension on `UrnState` — no proportion s/10 (s ∈ {0,...,10})
-    exactly equals any threshold. Justifies using `>` (paper Eq. 13) even
-    where [fagin-halpern-1994]'s probability formulas use `≥`. -/
-theorem strict_threshold_equiv_ge :
-    (∀ s : UrnState, proportion s > θ_certainly ↔ proportion s ≥ θ_certainly) ∧
-    (∀ s : UrnState, proportion s > θ_probably ↔ proportion s ≥ θ_probably) ∧
-    (∀ s : UrnState, proportion s > θ_possibly ↔ proportion s ≥ θ_possibly) := by
-  refine ⟨?_, ?_, ?_⟩ <;> intro s <;> fin_cases s <;>
-    simp only [proportion, θ_certainly, θ_probably, θ_possibly] <;> norm_num
+theorem L0_real_of_notMem {m : SimpleExpr} {s : State} (h : s ∉ θ.ext m) :
+    (L0 θ P m).real {s} = 0 := by
+  rw [measureReal_def, L0_apply_singleton_of_notMem θ P h, ENNReal.toReal_zero]
 
-/-! ### RSA model on PMF
+theorem L0_real_of_mem {m : SimpleExpr} {s : State} (h : s ∈ θ.ext m) :
+    (L0 θ P m).real {s} = P.real {s} / P.real (θ.ext m) := by
+  rw [measureReal_def, L0_apply_singleton_of_mem θ P h, ENNReal.toReal_mul, ENNReal.toReal_inv,
+    div_eq_inv_mul, measureReal_def, measureReal_def]
 
-The literal listener `P_LL(s|m) ∝ ⟦m⟧(s) · P_prior(s)` is the uniform
-distribution on the meaning extension (Eq. 15, with uniform prior). The
-speaker normalises softmax-Hellinger scores (Eq. 16-17). The pragmatic
-listener is `PMF.posterior` over the joint `(state × obs × access)` (Eq. 18). -/
+end Listener
 
-/-- **Literal listener** (Eq. 15) for a meaning with non-empty extension:
-    uniform on the extension. -/
-noncomputable def literalListener (φ : UrnState → Bool)
-    (h_nonempty : ((Finset.univ : Finset UrnState).filter (φ · = true)).Nonempty) :
-    PMF UrnState :=
-  PMF.uniformOfFinset ((Finset.univ : Finset UrnState).filter (φ · = true)) h_nonempty
+/-! ### The speaker, (16) and (17) -/
 
-/-- All five simple expressions have non-empty extensions under HF's
-    inferred thresholds — every meaning admits a literal listener. -/
-theorem simple_meaning_nonempty (u : SimpleExpr) :
-    ((Finset.univ : Finset UrnState).filter (u.meaning · = true)).Nonempty := by
-  cases u
-  · exact ⟨⟨0, by omega⟩, by simp only [Finset.mem_filter, Finset.mem_univ, true_and,
-      SimpleExpr.meaning, proportion, θ_certainly]; norm_num⟩  -- certainlyNot
-  · exact ⟨⟨0, by omega⟩, by simp only [Finset.mem_filter, Finset.mem_univ, true_and,
-      SimpleExpr.meaning, proportion, θ_probably]; norm_num⟩  -- probablyNot
-  · exact ⟨⟨10, by omega⟩, by simp only [Finset.mem_filter, Finset.mem_univ, true_and,
-      SimpleExpr.meaning, proportion, θ_possibly]; norm_num⟩  -- possibly
-  · exact ⟨⟨10, by omega⟩, by simp only [Finset.mem_filter, Finset.mem_univ, true_and,
-      SimpleExpr.meaning, proportion, θ_probably]; norm_num⟩  -- probably
-  · exact ⟨⟨10, by omega⟩, by simp only [Finset.mem_filter, Finset.mem_univ, true_and,
-      SimpleExpr.meaning, proportion, θ_certainly]; norm_num⟩  -- certainly
+section Speaker
 
-/-! ### Joint posterior marginalisations
+variable (lam : ℝ) (θ : Thresholds) (P : Measure State) [IsFiniteMeasure P]
 
-The pragmatic listener is `P_PL(s, o, a | m)`; its marginals `P(s, o | m)`
-(over access) and `P(s, a | m)` (over obs) are direct corollaries of
-`Core/Probability/JointPosterior.lean`'s marginalisation theorems applied to
-the joint posterior.
+/-- The expected utility of (16): the negative Hellinger distance between the speaker's belief
+after her observation and the literal listener's belief after the message. -/
+noncomputable def utility (x : Obs × Access) (m : SimpleExpr) : ℝ :=
+  -hellingerDist (belief P x.2 x.1) (L0 θ P m)
 
-The structural form here works for *any* speaker kernel `S` and joint
-prior over `(state × access)` — paper-specific instantiation is the
-softmax-Hellinger speaker, which lives in the Hellinger-vs-KL section below. -/
+/-- The speaker of (17): the softmax of the utility at the rationality `lam`. -/
+noncomputable def speaker : Kernel (Obs × Access) SimpleExpr :=
+  speakerOfScore λ x m => ((lam * utility θ P x m : ℝ) : EReal)
 
-section JointPosterior
+/-- The Hellinger utility is finite, so every message is used with positive probability at
+every observation: pragmatically true-enough messages can be sent. -/
+theorem speaker_apply_singleton_ne_zero (x : Obs × Access) (m : SimpleExpr) :
+    speaker lam θ P x {m} ≠ 0 :=
+  speakerOfScore_apply_singleton_ne_zero (EReal.coe_ne_bot _) λ _ => EReal.coe_ne_top _
 
-variable {Access : Type*} [Fintype Access]
+instance : IsMarkovKernel (speaker lam θ P) :=
+  isMarkovKernel_speakerOfScore (λ _ => ⟨.possibly, EReal.coe_ne_bot _⟩)
+    λ _ _ => EReal.coe_ne_top _
 
-/-- **HF Eq. 18: pragmatic listener as joint posterior**.
-    `P_PL(s, a | m) ∝ S(m | s, a) · P(s, a)`.
+/-- The speaker prefers the message whose literal listener lies closer to her belief. -/
+theorem speaker_real_lt_iff (hlam : 0 < lam) (x : Obs × Access) (m m' : SimpleExpr) :
+    (speaker lam θ P x).real {m} < (speaker lam θ P x).real {m'} ↔
+      hellingerDist (belief P x.2 x.1) (L0 θ P m') <
+        hellingerDist (belief P x.2 x.1) (L0 θ P m) := by
+  rw [speaker, speakerOfScore_real_singleton_lt_iff
+    (score := λ x m => ((lam * utility θ P x m : ℝ) : EReal)) (w := x) (λ _ => EReal.coe_ne_top _)
+    ⟨m, EReal.coe_ne_bot _⟩, EReal.coe_lt_coe_iff, mul_lt_mul_iff_of_pos_left hlam, utility,
+    utility, neg_lt_neg_iff]
 
-    Just `PMF.posterior` at α := UrnState × Access. The marginalisation
-    theorems below are direct instantiations of `posterior_fst_apply` /
-    `posterior_snd_apply`. -/
-noncomputable def pragmaticListener
-    (S : (UrnState × Access) → PMF SimpleExpr)
-    (joint : PMF (UrnState × Access))
-    (m : SimpleExpr)
-    (h_marg : PMF.marginal S joint m ≠ 0) :
-    PMF (UrnState × Access) :=
-  PMF.posterior S joint m h_marg
+/-- The speaker of [goodman-stuhlmuller-2013], with the Kullback–Leibler divergence in place
+of the Hellinger distance (the paper's footnote on utilities). -/
+noncomputable def klSpeaker : Kernel (Obs × Access) SimpleExpr :=
+  speakerOfScore λ x m => -((lam : EReal) * (klDiv (belief P x.2 x.1) (L0 θ P m) : EReal))
 
-/-- **HF Eq. 19/20 (marginal over `Access`): per-state marginal posterior**.
-    `P(s | m) = ∑_a P_PL(s, a | m) = (∑_a P(s, a) · S(m | s, a)) / Z` -/
-theorem statePosterior_apply
-    (S : (UrnState × Access) → PMF SimpleExpr)
-    (joint : PMF (UrnState × Access))
-    (m : SimpleExpr)
-    (h_marg : PMF.marginal S joint m ≠ 0) (s : UrnState) :
-    (pragmaticListener S joint m h_marg).fst s
-      = (∑ a : Access, joint (s, a) * S (s, a) m)
-          / PMF.marginal S joint m :=
-  PMF.posterior_fst_apply S joint m h_marg s
+/-- The Kullback–Leibler speaker never uses a message whose literal listener misses a state of
+positive belief. -/
+theorem klSpeaker_apply_singleton_eq_zero (hlam : 0 < lam) {x : Obs × Access} {m : SimpleExpr}
+    (h : ¬ belief P x.2 x.1 ≪ L0 θ P m) : klSpeaker lam θ P x {m} = 0 :=
+  speakerOfScore_apply_singleton_eq_zero
+    (by rw [klDiv_of_not_ac h, EReal.coe_ennreal_top, EReal.coe_mul_top_of_pos hlam, EReal.neg_top])
 
-/-- **HF marginal over `UrnState`: per-access marginal posterior**.
-    Companion of `statePosterior_apply` for the `Access` component. -/
-theorem accessPosterior_apply [DecidableEq Access]
-    (S : (UrnState × Access) → PMF SimpleExpr)
-    (joint : PMF (UrnState × Access))
-    (m : SimpleExpr)
-    (h_marg : PMF.marginal S joint m ≠ 0) (a : Access) :
-    (pragmaticListener S joint m h_marg).snd a
-      = (∑ s : UrnState, joint (s, a) * S (s, a) m)
-          / PMF.marginal S joint m :=
-  PMF.posterior_snd_apply S joint m h_marg a
+/-- The paper's example: after three red balls of four, *probably* excludes a state of three
+red balls that keeps positive belief, so the Kullback–Leibler speaker never says it. -/
+theorem klSpeaker_probably_eq_zero (hlam : 0 < lam) (hθ : 3 / 10 ≤ θ.probably)
+    (hP : P {3} ≠ 0) : klSpeaker lam θ P (3, 4) {.probably} = 0 := by
+  refine klSpeaker_apply_singleton_eq_zero lam θ P hlam λ hac => ?_
+  have h0 : L0 θ P .probably {3} = 0 :=
+    L0_apply_singleton_of_notMem θ P (not_lt.2 (by simpa [proportion] using hθ))
+  exact belief_apply_singleton_ne_zero P hP (a := 4) (o := 3) (s := 3) (by decide +kernel) (hac h0)
 
-/-- **Comparison decomposition for the per-state marginal posterior**.
-    L1 favours state `s₂` over `s₁` after `m` iff the conditional joint
-    sums favour it. Direct corollary of `posterior_fst_lt_iff`. -/
-theorem statePosterior_lt_iff
-    (S : (UrnState × Access) → PMF SimpleExpr)
-    (joint : PMF (UrnState × Access))
-    (m : SimpleExpr)
-    (h_marg : PMF.marginal S joint m ≠ 0) (s₁ s₂ : UrnState) :
-    (pragmaticListener S joint m h_marg).fst s₁
-      < (pragmaticListener S joint m h_marg).fst s₂
-      ↔ (∑ a : Access, joint (s₁, a) * S (s₁, a) m)
-          < ∑ a : Access, joint (s₂, a) * S (s₂, a) m :=
-  PMF.posterior_fst_lt_iff S joint m h_marg s₁ s₂
+end Speaker
 
-end JointPosterior
+/-! ### Complete access: informativity from the Hellinger distance -/
 
-/-! ### Hellinger vs KL: the architectural divergence point
+section FullAccess
 
-HF's central methodological choice: KL divergence makes any message whose
-extension fails to cover the speaker's belief support have infinite
-disutility (`InformationTheory.klDiv_of_not_ac`), so the speaker can never
-consider it; the Hellinger distance is bounded by `1`
-(`InformationTheory.hellingerDist_le_one`), so every message has bounded
-disutility. The witness below makes the divergence visible at theorem level:
-a `(P, Q)` pair where KL-utility excludes `Q` as a message choice but
-Hellinger-utility admits it. -/
+variable {lam : ℝ} (θ : Thresholds) (P : Measure State) [IsFiniteMeasure P] {s : State}
 
-open InformationTheory MeasureTheory in
-/-- **The architectural divergence (concrete)**: for `P = dirac 9` (the speaker's
-    degenerate belief at 9/10 red) and `Q = dirac 10` (the literal listener for
-    `certainly`), `KL(P ‖ Q) = ∞` but `HD(P, Q) ≤ 1`. Under KL the speaker can
-    never say "certainly"; under Hellinger she considers it with bounded
-    disutility — HF's key architectural claim. -/
-theorem hellinger_admits_what_KL_excludes :
-    klDiv (Measure.dirac (⟨9, by omega⟩ : UrnState)) (Measure.dirac ⟨10, by omega⟩) = ∞ ∧
-    hellingerDist (Measure.dirac (⟨9, by omega⟩ : UrnState)) (Measure.dirac ⟨10, by omega⟩)
-      ≤ 1 := by
-  refine ⟨klDiv_of_not_ac fun h => ?_, hellingerDist_le_one _ _⟩
-  have := h (s := {⟨9, by omega⟩}) (by simp)
-  simp at this
+/-- With complete access the utility of a message is minus the Hellinger distance of the
+point mass at the state from the literal listener. -/
+theorem utility_full (hP : P {s} ≠ 0) (m : SimpleExpr) :
+    utility θ P (s, 10) m = -√(1 - √((L0 θ P m).real {s})) := by
+  rw [utility, belief_full P hP, hellingerDist_dirac_left]
 
-/-!
-### Architectural contrast with [goodman-stuhlmuller-2013]
+/-- A false message has the worst utility, minus one. -/
+theorem utility_full_of_notMem (hP : P {s} ≠ 0) {m : SimpleExpr} (h : s ∉ θ.ext m) :
+    utility θ P (s, 10) m = -1 := by
+  rw [utility_full θ P hP, L0_real_of_notMem θ P h, Real.sqrt_zero, sub_zero, Real.sqrt_one]
 
-This model and G&S 2013 share the hypergeometric observation kernel
-(both use `PMF.hypergeometric` with N=10 and N=3 respectively) and the
-RSA architecture (literal listener, softmax speaker, posterior pragmatic
-listener). The only architectural difference is the speaker utility:
+/-- With complete access a true message beats a false one. -/
+theorem speaker_full_lt_of_notMem_of_mem (hlam : 0 < lam) (hP : P {s} ≠ 0) {m m' : SimpleExpr}
+    (h : s ∉ θ.ext m) (h' : s ∈ θ.ext m') :
+    (speaker lam θ P (s, 10)).real {m} < (speaker lam θ P (s, 10)).real {m'} := by
+  rw [speaker_real_lt_iff lam θ P hlam, belief_full P hP, hellingerDist_dirac_left,
+    hellingerDist_dirac_left, L0_real_of_notMem θ P h, L0_real_of_mem θ P h', Real.sqrt_zero,
+    sub_zero, Real.sqrt_one, Real.sqrt_lt' one_pos, one_pow, sub_lt_self_iff, Real.sqrt_pos]
+  have hs : 0 < P.real {s} := ENNReal.toReal_pos hP (measure_ne_top _ _)
+  exact div_pos hs (hs.trans_le (measureReal_mono (Set.singleton_subset_iff.2 h')))
 
-| Component | G&S 2013 | HF 2019 |
-|-----------|----------|---------|
-| State space | `Fin 4` (objects) | `Fin 11` (red balls) |
-| Observation | hypergeometric | hypergeometric |
-| Utility | `-KL(bel ‖ L0)` | `-HD(bel, L0)` |
-| Admits "true enough"? | NO (KL = ∞ on zero-support) | YES (HD ≤ 1) |
+/-- With complete access, among true messages the one whose extension carries less prior
+mass is preferred: the more informative one. -/
+theorem speaker_full_lt_iff_of_mem (hlam : 0 < lam) (hP : P {s} ≠ 0) {m m' : SimpleExpr}
+    (h : s ∈ θ.ext m) (h' : s ∈ θ.ext m') :
+    (speaker lam θ P (s, 10)).real {m} < (speaker lam θ P (s, 10)).real {m'} ↔
+      P.real (θ.ext m') < P.real (θ.ext m) := by
+  have hs : 0 < P.real {s} := ENNReal.toReal_pos hP (measure_ne_top _ _)
+  have hE : 0 < P.real (θ.ext m) := hs.trans_le (measureReal_mono (Set.singleton_subset_iff.2 h))
+  have hE' : 0 < P.real (θ.ext m') :=
+    hs.trans_le (measureReal_mono (Set.singleton_subset_iff.2 h'))
+  have hle : √(P.real {s} / P.real (θ.ext m')) ≤ 1 :=
+    Real.sqrt_le_one.2 ((div_le_one hE').2 (measureReal_mono (Set.singleton_subset_iff.2 h')))
+  rw [speaker_real_lt_iff lam θ P hlam, belief_full P hP, hellingerDist_dirac_left,
+    hellingerDist_dirac_left, L0_real_of_mem θ P h, L0_real_of_mem θ P h',
+    Real.sqrt_lt_sqrt_iff (by linarith), sub_lt_sub_iff_left,
+    Real.sqrt_lt_sqrt_iff (div_nonneg hs.le hE.le), div_lt_div_iff_of_pos_left hs hE hE']
 
-`hellinger_admits_what_KL_excludes` makes this difference visible:
-the same speaker belief `pure 9` paired with the literal listener for
-`certainly` (`pure 10`) yields `KL = ∞` but `HD ≤ 1`. Under G&S 2013's
-KL utility this speaker would be excluded from saying "certainly RED";
-under HF's Hellinger utility she can. The empirical evidence (HF's
-production data, Section 5) shows speakers DO say "certainly" at 9/10.
+/-- The scalar implicature of the introductory example: with complete access and a prior
+positive on every state, a message strictly entailing another is preferred to it whenever
+both are true. -/
+theorem speaker_full_lt_of_ssubset (hlam : 0 < lam) (hP : ∀ s, P {s} ≠ 0) {m m' : SimpleExpr}
+    (hsub : θ.ext m ⊂ θ.ext m') (h : s ∈ θ.ext m) :
+    (speaker lam θ P (s, 10)).real {m'} < (speaker lam θ P (s, 10)).real {m} := by
+  obtain ⟨hle, x, hx, hxm⟩ := Set.ssubset_iff_exists.1 hsub
+  rw [speaker_full_lt_iff_of_mem θ P hlam (hP s) (hle h) h]
+  have hx0 : 0 < P.real {x} := ENNReal.toReal_pos (hP x) (measure_ne_top _ _)
+  calc P.real (θ.ext m) < P.real (θ.ext m) + P.real {x} := by linarith
+    _ = P.real (θ.ext m ∪ {x}) := by
+        rw [measureReal_union₀ MeasurableSet.of_discrete.nullMeasurableSet
+      (Set.disjoint_singleton_right.2 hxm).aedisjoint]
+    _ ≤ P.real (θ.ext m') :=
+        measureReal_mono (Set.union_subset hle (Set.singleton_subset_iff.2 hx))
 
-The Bretagnolle–Huber inequality `2 · H² ≤ KL` gives the formal direction
-on the *finite* side: where KL is finite, H² is too, and bounded.
-Hellinger is the strictly weaker (more permissive) divergence — exactly
-what HF wants for the speaker utility. -/
+end FullAccess
 
-/-! ### Modal concord and `might be possible`
+/-! ### The pragmatic listener, (18) to (20) -/
 
-The paper finds that the compositional model **underpredicts** how often
-speakers choose "might be possible": although its truth condition is weak
-(posterior probability of "possible" exceeds `θ_might = 0.332`), the pragmatic
-speaker prefers logically stronger messages and so assigns the doubly-hedged
-form a low choice rate — yet participants select it far more often than
-predicted. A **modal concord** reading, collapsing the two modals to a single
-"possible" [zeijlstra-2007], would close the gap. Qualitative; not formalised
-here. -/
+section PragmaticListener
+
+variable (lam : ℝ) (θ : Thresholds) (P : Measure State) (A : Measure Access)
+
+/-- The joint prior of (18) over states, observations and accesses: the state prior, the
+access prior, and the observation given both. -/
+noncomputable def joint : Measure (State × (Obs × Access)) :=
+  ∑ x, (P {x.1} * A {x.2.2} * obs x.2.2 x.1 {x.2.1}) • Measure.dirac x
+
+theorem joint_apply_singleton (x : State × (Obs × Access)) :
+    joint P A {x} = P {x.1} * A {x.2.2} * obs x.2.2 x.1 {x.2.1} := by
+  simp only [joint, Measure.coe_finsetSum, Finset.sum_apply, Measure.coe_smul, Pi.smul_apply,
+    smul_eq_mul, Measure.dirac_apply, Set.indicator_apply, Set.mem_singleton_iff, Pi.one_apply,
+    mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+
+variable [IsFiniteMeasure P] [IsFiniteMeasure A]
+
+instance : IsFiniteMeasure (joint P A) :=
+  ⟨by
+    rw [← Finset.coe_univ, ← sum_measure_singleton]
+    exact ENNReal.sum_lt_top.2 λ x _ => by
+      rw [joint_apply_singleton]
+      exact ENNReal.mul_lt_top (ENNReal.mul_lt_top (measure_lt_top _ _) (measure_lt_top _ _))
+        (measure_lt_top _ _)⟩
+
+/-- The speaker as the listener models her: her choice depends on the observation and the
+access alone. -/
+noncomputable def jointSpeaker : Kernel (State × (Obs × Access)) SimpleExpr :=
+  Kernel.ofFunOfCountable λ x => speaker lam θ P x.2
+
+instance : IsMarkovKernel (jointSpeaker lam θ P) :=
+  ⟨λ x => by rw [jointSpeaker, Kernel.ofFunOfCountable_apply]; infer_instance⟩
+
+/-- The pragmatic listener of (18): the Bayesian inverse of the speaker against the joint
+prior; its first marginal is the state listener of (19), its second the observation listener
+of (20). -/
+noncomputable def listener : Kernel SimpleExpr (State × (Obs × Access)) :=
+  (jointSpeaker lam θ P)†(joint P A)
+
+/-- No state is ruled out by any message: a state of positive prior keeps positive posterior
+whenever drawing nothing has positive prior, since the speaker who drew nothing may send
+any message. -/
+theorem listener_fst_apply_singleton_ne_zero {s : State} (hP : P {s} ≠ 0) (hA : A {0} ≠ 0)
+    (m : SimpleExpr) : (listener lam θ P A m).fst {s} ≠ 0 := by
+  have hj : joint P A {(s, (0, 0))} ≠ 0 := by
+    rw [joint_apply_singleton]
+    exact mul_ne_zero (mul_ne_zero hP hA)
+      ((obs_apply_singleton_ne_zero_iff 0 s 0).2 (hyper_zero s))
+  have hs : jointSpeaker lam θ P (s, (0, 0)) {m} ≠ 0 := speaker_apply_singleton_ne_zero lam θ P _ m
+  have hu : (jointSpeaker lam θ P ∘ₘ joint P A) {m} ≠ 0 :=
+    comp_apply_singleton_ne_zero _ _ hj hs
+  rw [Measure.fst_apply_singleton]
+  refine ne_of_gt (lt_of_lt_of_le ?_ (Finset.single_le_sum (λ _ _ => zero_le)
+    (Finset.mem_univ (0, 0))))
+  rw [listener, posterior_apply_singleton _ _ hu]
+  exact ENNReal.div_pos_iff.2 ⟨mul_ne_zero hj hs, measure_ne_top _ _⟩
+
+end PragmaticListener
+
+/-! ### Complex expressions, (22) to (25) -/
+
+/-- The inner expressions of Experiment 3. -/
+inductive Inner where
+  | likely
+  | possible
+  | unlikely
+  deriving DecidableEq, Fintype
+
+instance : MeasurableSpace Inner := ⊤
+
+/-- The outer modifiers of Experiment 3; the bare copula is the simple expression. -/
+inductive Outer where
+  | certainly
+  | probably
+  | might
+  deriving DecidableEq, Fintype
+
+instance : MeasurableSpace Outer := ⊤
+
+/-- The semantic thresholds of Experiment 3's inner and outer expressions. -/
+structure ComplexThresholds where
+  /-- The threshold of the inner *likely*. -/
+  likely : ℝ
+  /-- The threshold of the inner *possible*. -/
+  possible : ℝ
+  /-- The threshold of the outer *certainly*. -/
+  certainly : ℝ
+  /-- The threshold of the outer *probably*. -/
+  probably : ℝ
+  /-- The threshold of the outer *might*. -/
+  might : ℝ
+
+namespace ComplexThresholds
+
+variable (θ : ComplexThresholds)
+
+/-- The threshold semantics of the inner expressions (22), *unlikely* the negation of
+*likely*. -/
+def inner : Inner → State → Prop
+  | .likely, s => θ.likely < proportion s
+  | .possible, s => θ.possible < proportion s
+  | .unlikely, s => proportion s < 1 - θ.likely
+
+/-- The threshold of an outer modifier. -/
+def outer : Outer → ℝ
+  | .certainly => θ.certainly
+  | .probably => θ.probably
+  | .might => θ.might
+
+/-- The extension of an inner expression. -/
+def innerExt (X : Inner) : Set State := {s | θ.inner X s}
+
+variable (P : Measure State) [IsFiniteMeasure P]
+
+/-- The compositional semantics of (23): a complex expression holds at an observation exactly
+when the belief it induces gives the inner expression's extension more than the outer
+threshold. -/
+def complex (Y : Outer) (X : Inner) : Set (Obs × Access) :=
+  {x | θ.outer Y < (belief P x.2 x.1).real (θ.innerExt X)}
+
+/-- With complete access the belief is a point mass, so an outer modifier of threshold below
+one is vacuous: the complex expression holds exactly where the inner one does. -/
+theorem mem_complex_full {s : State} (hP : P {s} ≠ 0) {Y : Outer} (h0 : 0 ≤ θ.outer Y)
+    (X : Inner) : (s, 10) ∈ θ.complex P Y X ↔ s ∈ θ.innerExt X ∧ θ.outer Y < 1 := by
+  classical
+  simp only [complex, Set.mem_ofPred_eq, belief_full P hP, measureReal_def,
+    Measure.dirac_apply' _ (MeasurableSet.of_discrete), Set.indicator_apply, Pi.one_apply]
+  split_ifs with hs
+  · simp [hs]
+  · simpa [hs] using h0
+
+/-- The literal listener for complex expressions of (25): the observation prior of (24), the
+marginal of the joint prior, conditioned on the expression's extension. -/
+noncomputable def complexL0 (A : Measure Access) [IsFiniteMeasure A] :
+    Kernel (Outer × Inner) (Obs × Access) :=
+  literalListener (joint P A).snd λ m : Outer × Inner => (θ.complex P m.1 m.2).indicator 1
+
+end ComplexThresholds
 
 end HerbstrittFranke2019
