@@ -1,16 +1,28 @@
 import Linglib.Discourse.Commitment.Frame
 
 /-!
-# Hintikka (1962): Doxastic indefensibility of Moore's sentence
-[hintikka-1962]
+# Hintikka (1962): Knowledge and Belief
 
-[hintikka-1962] Ch. 4 analysis of Moore's paradox. The sentence
-"p but I do not believe that p" is not self-contradictory — there are
-worlds where `p` holds while the speaker fails to believe `p`. But its
-would-be-believed form `B_a (p ∧ ¬ B_a p)` is *indefensible* in any KD4
-doxastic model: the `box_not_moore` reductio below, specialised to the
-agent-indexed belief accessibility of `Frame`. The knowledge
-analogue specialises the same reductio to epistemic accessibility.
+This file formalizes [hintikka-1962]'s analysis of Moore's sentence, "p but I do not believe
+that p", in the doxastic logic of Chapter 4. The sentence is consistent,
+`true_mem_mooreContent` exhibiting a model in which it holds, but its believed form is not:
+`box_not_moore` shows that no world of a serial transitive frame satisfies the belief that p
+holds and is not believed, and `mooreContent_doxasticallyIndefensible` states this as the
+doxastic indefensibility of the sentence's content for any agent of a `Commitment.Frame`, the
+book's notion restricted to propositional contents. The same reductio gives the knowledge
+analogue, that one cannot know that p holds and is unknown (`knowledge_unknowable`), and,
+under sincerity, that no assertion leaves a commitment to the Moore content behind, the
+state-theoretic residue of the book's account of the sentence as a performatory rather than a
+logical failure.
+
+## Implementation notes
+
+* Indefensibility is stated for a set of worlds where the book defines it over finite sets of
+  sentences.
+
+## References
+
+* [hintikka-1962]
 -/
 
 namespace Hintikka1962
@@ -21,72 +33,62 @@ open ModalLogic.Epistemic (knows)
 
 variable {W A : Type*}
 
-/-- **Moore reductio for KD4** ([hintikka-1962] Ch. 4): no world satisfies
-    `□(p ∧ ¬□p)` over a serial transitive relation — the content is
-    satisfiable; boxing it is not. -/
+/-- The Moore reductio: no world satisfies `□(p ∧ ¬□p)` over a serial transitive relation.
+The content is satisfiable; boxing it is not. -/
 theorem box_not_moore {R : W → W → Prop} {p : W → Prop} {w : W}
     [hS : IsSerial R] [IsTrans W R] :
-    ¬ box R (fun v => p v ∧ ¬ box R p v) w := fun h =>
+    ¬ box R (λ v => p v ∧ ¬ box R p v) w := λ h =>
   have ⟨v, hv⟩ := hS.serial w
-  (h v hv).2 (box_four (fun u hu => (h u hu).1) v hv)
+  (h v hv).2 (box_four (λ u hu => (h u hu).1) v hv)
 
-/-- The Moore content for speaker `s` and proposition `p`: worlds where
-    `p` holds and `s` does not believe `p`. -/
+/-- The Moore content for the speaker `s` and the proposition `p`: the worlds where `p` holds
+and `s` does not believe `p`. -/
 def mooreContent (c : Frame W A) (s : A) (p : Set W) : Set W :=
   { w | w ∈ p ∧ ¬ c.Believes s p w }
 
-/-- Doxastic indefensibility of a propositional content for an agent in
-    a given commitment state: `a` does not believe `P` at any world.
-    Restricted to set-valued contents; Hintikka §4.8's general
-    definition ranges over finite *sets of sentences*. -/
+/-- Doxastic indefensibility of a content for an agent in a commitment frame: the agent
+believes it at no world. -/
 def DoxasticallyIndefensible (c : Frame W A) (a : A) (P : Set W) : Prop :=
   ∀ w, ¬ c.Believes a P w
 
-/-- **The Moore-paradox theorem**: under KD4 belief, no agent can
-    believe the Moore content at any world. -/
+/-- Under KD4 belief no agent can believe the Moore content at any world. -/
 theorem mooreContent_doxasticallyIndefensible
     (c : Frame W A) (a : A) (p : Set W) :
     DoxasticallyIndefensible c a (mooreContent c a p) :=
-  fun _ => box_not_moore
+  λ _ => box_not_moore
 
-/-- A two-world KD4 frame: every world treats only `false` as belief-
-    accessible. Used as a witness for `true_mem_mooreContent`. -/
+/-- A two-world KD4 frame in which every world treats only `false` as belief-accessible. -/
 def mooreWitness : Frame Bool Unit where
   belief _ _ v := v = false
   commitment _ _ _ _ := True
-  belief_kd45 _ := { serial := fun _ => ⟨false, rfl⟩
-                     trans := fun _ _ _ _ h => h
-                     eucl := fun _ _ _ _ h => h }
-  commitment_k45 _ _ := { trans := fun _ _ _ _ _ => trivial
-                          eucl := fun _ _ _ _ _ => trivial }
+  belief_kd45 _ := { serial := λ _ => ⟨false, rfl⟩
+                     trans := λ _ _ _ _ h => h
+                     eucl := λ _ _ _ _ h => h }
+  commitment_k45 _ _ := { trans := λ _ _ _ _ _ => trivial
+                          eucl := λ _ _ _ _ _ => trivial }
 
-/-- **Satisfiability of the Moore sentence**: with `p := {true}` over
-    `mooreWitness`, the world `true` lies in `mooreContent`. The
-    propositional content `p ∧ ¬B_a p` is consistent — contrast with
-    `p ∧ ¬p`, which has no models; only the *believed* form fails. -/
+/-- The Moore sentence is satisfiable: with `p := {true}` over `mooreWitness`, the world `true`
+lies in the Moore content. Only the believed form fails. -/
 theorem true_mem_mooreContent :
     true ∈ mooreContent mooreWitness () {true} :=
-  ⟨rfl, fun h => Bool.false_ne_true (h false rfl)⟩
+  ⟨rfl, λ h => Bool.false_ne_true (h false rfl)⟩
 
-/-- **Epistemic analogue** (Hintikka §4.11): under KD4 knowledge,
-    "p but I don't know whether p" is unknowable. Direct corollary of
-    `box_not_moore` for `knows`. -/
+/-- The knowledge analogue: under KD4 knowledge, "p but I don't know whether p" cannot be
+known. -/
 theorem knowledge_unknowable
     {E : Type*} (Rs : E → W → W → Prop) (i : E)
     [IsSerial (Rs i)] [IsTrans W (Rs i)]
     (p : W → Prop) (w : W) :
-    ¬ knows Rs i (fun v => p v ∧ ¬ knows Rs i p v) w :=
+    ¬ knows Rs i (λ v => p v ∧ ¬ knows Rs i p v) w :=
   box_not_moore
 
-/-- **Performatory corollary** (state-theoretic restatement of Hintikka
-    §4.10): under sincerity, no commitment state hosts a self-commitment
-    to the Moore content. Hintikka's performatoriness claim is about the
-    *act* of asserting; this is the resulting constraint on states a
-    sincere assertion could leave behind. -/
+/-- Under sincerity no commitment state hosts a self-commitment to the Moore content: the
+constraint on states that the book's performatory account of asserting the sentence leaves
+behind. -/
 theorem not_committed_mooreContent_of_sincere
     (c : Frame W A) (hsin : c.Sincere)
     (s b : A) (p : Set W) (w : W) :
-    ¬ c.Committed s b (mooreContent c s p) w := fun hcom =>
+    ¬ c.Committed s b (mooreContent c s p) w := λ hcom =>
   mooreContent_doxasticallyIndefensible c s p w
     (hsin.believes_of_committed hcom)
 

@@ -1,173 +1,335 @@
-import Mathlib.Logic.Relation
-import Linglib.Syntax.WordGrammar.Inheritance.Basic
+import Linglib.Syntax.WordGrammar.Inheritance.Choice
+import Linglib.Syntax.WordGrammar.Inheritance.Default
 import Linglib.Syntax.WordGrammar.Inheritance.Order
-import Linglib.Syntax.WordGrammar.Network
-
-open Morphology (Word)
+import Mathlib.Logic.Relation
 
 /-!
-# Hudson 2010: kinship as an inheritance network [hudson-2010]
+# Hudson (2010): An Introduction to Word Grammar
 
-The "one network" thesis: Word Grammar models all conceptual knowledge —
-linguistic and non-linguistic alike — as a single inheritance network of
-isA links and labelled property relations. The kinship system is Hudson's
-running non-linguistic example (§3.2 with Fig 3.7, cross-referenced from
-§7.2.6 "Syntactic triangles" on p. 160) and serves as the foil for the
-syntactic triangle of Figure 7.6 (p. 161, "A triangle in syntax and in
-kinship").
+This file formalizes the worked examples of Part I of [hudson-2010] on the inheritance-network
+substrate of `WordGrammar.Inheritance`. Default inheritance is the book's engine: an exemplar
+inherits every property of the concepts above it in the isA taxonomy except those overridden
+lower down, so a penguin exemplar inherits *lays eggs* from *bird* but *doesn't fly* from
+*penguin* (Figure 2.8, `e2_flight`), and a diesel car exemplar runs on diesel rather than the
+default petrol (Figure 3.18, `e_fuel`). Multiple inheritance can leave a conflict with no
+resolution, the Nixon diamond of Figure 2.7; the substrate's search resolves it by the order
+of the isA links (`nixon_war`, `nixon_war_swapped`), and only Nixon's own choice, a copy of
+*accepts war* at his node, settles it independently of order (`nixon_resolved`). Choice sets
+prevent such conflicts from arising (`choiceSet_sex`).
 
-This study file is the demonstration that the *same*
-`WordGrammar.Inheritance.Network` infrastructure used by `WordGrammar.englishAuxNet`
-also supports a kinship hierarchy. Two demos:
+Relational concepts are defined in terms of existing ones: *parent* merges *mother* and
+*father*, *grandmother* is the mother of a parent, and *ancestor* is the recursive closure of
+*parent* (Section 3.2.7, `ancestor`). The definition of *grandmother* is a relational
+`Triangle`, one node's two relations converging on a third, and the same triangle is the
+syntactic pattern of raising: an auxiliary's subject is also its valent's subject
+(Figure 7.6). Closing the asserted subjects under the triangle along the valent chain
+(`raise`) makes *he* the subject of every verb in *He keeps seeming to have forgotten to go*
+(Figure 7.12, `he_subject_of_go`).
 
-1. A small kinship taxonomy as a `Network`, with isA links
-   (`mother isA parent`, `parent isA ancestor`), described by the same
-   propositional `IsA` relation and the same `parents`/`ancestors`
-   computational helpers used by `WordGrammar.englishAuxNet`.
-2. The Fig 7.6 triangle pattern: `grandparentOf` is the relational
-   composition `parentOf ∘r parentOf` (mathlib's `Relation.Comp`) — the
-   same shape Hudson uses for syntactic raising (HAVE's subject is also
-   the subject of HAVE's valent).
+## Implementation notes
 
-The point is structural: a single `Network α R` type carries both the
-syntactic word-class hierarchy of `WordGrammar.englishAuxNet` (over
-nodes typed by linguistic categories) and the kinship taxonomy below
-(over nodes typed by `KinRole`). No Bridge theorem is needed — the
-identity is by construction at the level of the type `Network`.
+* Properties are `prop` links to value nodes, so that two values of one relation compete as
+  Section 3.5.3 requires; the sample networks are stated directly rather than drawn from a
+  fragment.
+* The kinship system of Figure 8.16 is built from `mother` and `father` on an arbitrary type
+  of people, with sex as predicates; the compositions are mathlib's `Relation.Comp` and
+  `Relation.TransGen`.
+
+## References
+
+* [hudson-2010]
 -/
 
 namespace Hudson2010
 
-
 open WordGrammar.Inheritance
 
--- ============================================================================
--- Kinship roles and a small inheritance taxonomy
--- ============================================================================
+/-! ### Default inheritance -/
 
-/-- Atomic kinship roles. The taxonomy: `grandmother` and `grandfather`
-are `grandparent`s; `mother` and `father` are `parent`s; `parent`s and
-`grandparent`s are `ancestor`s. -/
-inductive KinRole where
-  | mother | father
-  | parent
-  | grandmother | grandfather
-  | grandparent
-  | ancestor
-  deriving Repr, DecidableEq
+/-- The taxonomy of Figure 2.8: birds, the typical sparrow, the exceptional penguin, an
+exemplar of each, and the property values. -/
+inductive Bird where
+  | bird
+  | sparrow
+  | penguin
+  | e1
+  | e2
+  | flies
+  | doesntFly
+  | laysEggs
+  deriving DecidableEq, Repr
 
-/-- A small kinship inheritance network. All links are isA edges; the
-taxonomy is `mother / father → parent`, `grandmother / grandfather →
-grandparent`, and `parent / grandparent → ancestor`. The relation-label
-type is `Empty`: there are no `prop` links here, only the `isA` backbone,
-so no labels are reachable. The Fig 7.6 triangle below uses an abstract
-`ParentRel α` rather than a network `prop` link, so no kinship-specific
-label type is needed. -/
-def kinshipNet : Network KinRole Empty where
+/-- The relations of Figure 2.8: how a bird moves and how it reproduces. -/
+inductive BirdRel where
+  | flight
+  | reproduction
+  deriving DecidableEq, Repr
+
+def birdNet : Network Bird BirdRel where
   links :=
-    [ ⟨.isA, .mother,      .parent,      none⟩
-    , ⟨.isA, .father,      .parent,      none⟩
-    , ⟨.isA, .grandmother, .grandparent, none⟩
-    , ⟨.isA, .grandfather, .grandparent, none⟩
-    , ⟨.isA, .parent,      .ancestor,    none⟩
-    , ⟨.isA, .grandparent, .ancestor,    none⟩
-    ]
+    [ ⟨.prop, .bird, .laysEggs, some .reproduction⟩
+    , ⟨.prop, .bird, .flies, some .flight⟩
+    , ⟨.isA, .sparrow, .bird, none⟩
+    , ⟨.isA, .penguin, .bird, none⟩
+    , ⟨.prop, .penguin, .doesntFly, some .flight⟩
+    , ⟨.isA, .e1, .sparrow, none⟩
+    , ⟨.isA, .e2, .penguin, none⟩ ]
 
--- ============================================================================
--- Demo 1: the network's isA traversal works the same way it does for syntax
--- ============================================================================
+theorem e2_IsA_bird : IsA birdNet .e2 .bird := by decide
 
-/-- A `mother` is a `parent` (one step). -/
-theorem mother_IsA_parent : IsA kinshipNet .mother .parent := by decide
+theorem sparrow_not_IsA_penguin : ¬ IsA birdNet .sparrow .penguin := by decide
 
-/-- A `mother` is an `ancestor` (two steps via `parent`). -/
-theorem mother_IsA_ancestor : IsA kinshipNet .mother .ancestor := by decide
+/-- A sparrow exemplar inherits the defaults of *bird*. -/
+theorem e1_flight : inherited birdNet .e1 .flight = [.flies] := by decide
 
-/-- A `grandmother` is an `ancestor` (two steps via `grandparent`). -/
-theorem grandmother_IsA_ancestor : IsA kinshipNet .grandmother .ancestor := by decide
+/-- A penguin exemplar inherits *doesn't fly*, the lower of the competing properties
+(Section 2.5.3). -/
+theorem e2_flight : inherited birdNet .e2 .flight = [.doesntFly] := by decide
 
-/-- A `mother` is **not** a `grandmother` — the taxonomy doesn't conflate the
-two, even though both are `ancestor`s. Now stated as the full propositional
-`¬ IsA kinshipNet .mother .grandmother`, decidable thanks to path compression
-landed in `WordGrammar.Inheritance.Basic`. -/
-theorem mother_not_IsA_grandmother :
-    ¬ IsA kinshipNet .mother .grandmother := by decide
+/-- The override leaves the other defaults intact. -/
+theorem e2_reproduction : inherited birdNet .e2 .reproduction = [.laysEggs] := by decide
 
-/-- Sanity: reflexive case. `IsA.refl` gives this directly, but exercising the
-`Decidable` instance on it confirms the reflexive disjunct fires. -/
-example : IsA kinshipNet .mother .mother := by decide
+/-- Figure 3.18: petrol is the default car fuel and diesel the exception. -/
+inductive Car where
+  | car
+  | dieselCar
+  | e
+  | e'
+  | petrol
+  | diesel
+  deriving DecidableEq, Repr
 
-/-- Sanity: `ancestor` has no proper ancestors, so `¬ IsA ancestor mother`
-follows. Exercises the BFS-side of the decision procedure (no chain exists). -/
-example : ¬ IsA kinshipNet .ancestor .mother := by decide
+inductive CarRel where
+  | fuel
+  deriving DecidableEq, Repr
 
-/-- The `ancestor` node sits at the top: nothing is its ancestor. -/
-theorem ancestor_has_no_proper_ancestors :
-    ancestors kinshipNet .ancestor = [] := by decide
+def carNet : Network Car CarRel where
+  links :=
+    [ ⟨.prop, .car, .petrol, some .fuel⟩
+    , ⟨.isA, .dieselCar, .car, none⟩
+    , ⟨.prop, .dieselCar, .diesel, some .fuel⟩
+    , ⟨.isA, .e, .dieselCar, none⟩
+    , ⟨.isA, .e', .car, none⟩ ]
 
--- ----------------------------------------------------------------------------
--- The mathlib `≤` view: with `IsAOrder net`'s `Preorder` instance in place,
--- every preorder lemma applies to the kinship taxonomy (e.g. `le_trans`,
--- `LowerSet`/`UpperSet`).
--- ----------------------------------------------------------------------------
+/-- The diesel car exemplar inherits the link to *diesel* before it reaches *petrol*. -/
+theorem e_fuel : inherited carNet .e .fuel = [.diesel] := by decide
 
-/-- The same fact as `mother_IsA_ancestor` via mathlib's `≤`. The `IsAOrder.mk`
-wrapper tags the nodes as inhabiting the preorder view of `kinshipNet`, so
-instance search picks up the `Preorder (IsAOrder kinshipNet)` instance instead
-of unfolding to `KinRole` and looking for the (nonexistent) `LE KinRole`. -/
-theorem mother_le_ancestor :
-    IsAOrder.mk kinshipNet .mother ≤ IsAOrder.mk kinshipNet .ancestor :=
-  mother_IsA_ancestor
+theorem e'_fuel : inherited carNet .e' .fuel = [.petrol] := by decide
 
--- ============================================================================
--- Demo 2: the Fig 7.6 triangle — grandparent as parent ∘ parent
--- ============================================================================
+/-! ### The Nixon diamond and choice sets -/
 
-/-- The "parent of" relation between people. Modelled abstractly as a
-binary relation over an arbitrary type of individuals. -/
-abbrev ParentRel (α : Type) : Type := α → α → Prop
+/-- Figure 2.7: Nixon is both a Republican and a Quaker, and the two disagree about war. -/
+inductive Person where
+  | person
+  | republican
+  | quaker
+  | nixon
+  | acceptsWar
+  | rejectsWar
+  deriving DecidableEq, Repr
 
-/-- `grandparentOf` is the relational composition of `parentOf` with itself —
-the kinship side of [hudson-2010]'s Figure 7.6 (p. 161): "my grandmother
-is someone who is the mother of one of my parents". This is mathlib's
-`Relation.Comp`, not a fresh definition. -/
-abbrev grandparentOf {α : Type} (parentOf : ParentRel α) : α → α → Prop :=
-  Relation.Comp parentOf parentOf
+inductive PersonRel where
+  | war
+  deriving DecidableEq, Repr
 
-/-! Hudson's kinship instance of Fig 7.6: the triangle commutes by definition,
-since `grandparentOf` *is* `parentOf ∘r parentOf`. -/
-section KinshipTriangle
+def nixonNet : Network Person PersonRel where
+  links :=
+    [ ⟨.isA, .republican, .person, none⟩
+    , ⟨.isA, .quaker, .person, none⟩
+    , ⟨.prop, .republican, .acceptsWar, some .war⟩
+    , ⟨.prop, .quaker, .rejectsWar, some .war⟩
+    , ⟨.isA, .nixon, .republican, none⟩
+    , ⟨.isA, .nixon, .quaker, none⟩ ]
 
-variable {α : Type} (parentOf : ParentRel α)
+/-- The same diamond with Nixon's two isA links in the other order. -/
+def nixonNetSwapped : Network Person PersonRel where
+  links :=
+    [ ⟨.isA, .republican, .person, none⟩
+    , ⟨.isA, .quaker, .person, none⟩
+    , ⟨.prop, .republican, .acceptsWar, some .war⟩
+    , ⟨.prop, .quaker, .rejectsWar, some .war⟩
+    , ⟨.isA, .nixon, .quaker, none⟩
+    , ⟨.isA, .nixon, .republican, none⟩ ]
 
-/-- The triangle for kinship commutes by definition. This is the formal
-counterpart of Hudson's prose on p. 160 (§7.2.6): "my grandmother is
-someone who is the mother of one of my parents". -/
-theorem kinship_triangle_commutes :
-    ∀ a c, grandparentOf parentOf a c ↔ ∃ b, parentOf a b ∧ parentOf b c :=
-  fun _ _ => Iff.rfl
+theorem nixon_IsA_republican : IsA nixonNet .nixon .republican := by decide
 
-/-- Given an apex grandparent `a`, an intermediate parent `b`, and a base
-person `c`, the composition witness exists. -/
-theorem kinship_triangle_witness (a b c : α)
-    (h1 : parentOf a b) (h2 : parentOf b c) : grandparentOf parentOf a c :=
-  ⟨b, h1, h2⟩
+theorem nixon_IsA_quaker : IsA nixonNet .nixon .quaker := by decide
 
-end KinshipTriangle
+/-- The book leaves the diamond without a recognized resolution; the substrate's search
+returns whichever parent's value it meets first, so the answer turns on the order of the
+links. -/
+theorem nixon_war : inherited nixonNet .nixon .war = [.acceptsWar] := by decide
 
--- ============================================================================
--- The "one network" thesis: same `Network` type, two domains
--- ============================================================================
+theorem nixon_war_swapped : inherited nixonNetSwapped .nixon .war = [.rejectsWar] := by decide
 
-/-- Witness that `WordGrammar.Inheritance.Network` accommodates both the syntactic
-word-class hierarchy (`WordGrammar.englishAuxNet`) and the kinship taxonomy
-(`kinshipNet`) by inhabiting the *same* parameterized type. The structural
-identity is at the type level — no Bridge theorem needed.
+/-- Nixon's resolution (Section 2.4.2): a copy of *accepts war* at his own node wins by the
+Best Fit Principle whatever the order of the links. -/
+def nixonResolved : Network Person PersonRel where
+  links := ⟨.prop, .nixon, .acceptsWar, some .war⟩ :: nixonNetSwapped.links
 
-This is the formal counterpart of Hudson's §7.7 ("Syntax without modules",
-p. 189): linguistic and non-linguistic conceptual knowledge live in one
-network. -/
-example : Network WordGrammar.WGNode WordGrammar.WGRel × Network KinRole Empty :=
-  (WordGrammar.englishAuxNet, kinshipNet)
+theorem nixon_resolved : inherited nixonResolved .nixon .war = [.acceptsWar] :=
+  bestFit_local _ _ _ (by decide)
+
+/-- Figure 3.8: sex is a choice between *male* and *female*, which prevents a person from
+inheriting both. -/
+inductive Sex where
+  | sex
+  | male
+  | female
+  deriving DecidableEq, Repr
+
+def sexNet : Network Sex Empty where
+  links := [⟨.or, .male, .sex, none⟩, ⟨.or, .female, .sex, none⟩]
+
+theorem choiceSet_sex : choiceSet sexNet .sex = [.male, .female] := by decide
+
+/-! ### Relational concepts -/
+
+section Kinship
+
+variable {α : Type*} (mother father : α → α → Prop) (male female : α → Prop)
+
+/-- Figure 8.16 (a): a person's parent is either their mother or their father. -/
+def parent (x p : α) : Prop := mother x p ∨ father x p
+
+/-- Figure 8.16 (b): a person's child is anyone whose parent they are. -/
+def child (x c : α) : Prop := parent mother father c x
+
+/-- Figure 3.7: a grandmother is the mother of a parent, a relational triangle. -/
+def grandmother : α → α → Prop := Relation.Comp (parent mother father) mother
+
+/-- Figure 3.17: a grandparent is a parent's parent. -/
+def grandparent : α → α → Prop := Relation.Comp (parent mother father) (parent mother father)
+
+/-- Figure 3.17: a great-grandparent is a grandparent's parent, and the Recycling Principle
+of Section 3.5.2 builds it on *grandparent* rather than as the parent of a parent of a
+parent, to which it is nonetheless equal. -/
+theorem comp_grandparent_parent :
+    Relation.Comp (grandparent mother father) (parent mother father) =
+      Relation.Comp (parent mother father)
+        (Relation.Comp (parent mother father) (parent mother father)) :=
+  Relation.comp_assoc
+
+/-- Section 3.2.7: a person's ancestor is either their parent or an ancestor of their
+parent, the recursive definition. -/
+def ancestor : α → α → Prop := Relation.TransGen (parent mother father)
+
+theorem ancestor_iff (x a : α) :
+    ancestor mother father x a ↔
+      parent mother father x a ∨ ∃ p, parent mother father x p ∧ ancestor mother father p a := by
+  constructor
+  · intro h
+    obtain ⟨p, hxp, hpa⟩ := Relation.TransGen.head'_iff.1 h
+    rcases Relation.reflTransGen_iff_eq_or_transGen.1 hpa with rfl | hpa
+    · exact Or.inl hxp
+    · exact Or.inr ⟨p, hxp, hpa⟩
+  · rintro (h | ⟨p, hxp, hpa⟩)
+    · exact Relation.TransGen.single h
+    · exact Relation.TransGen.head hxp hpa
+
+/-- A grandparent is an ancestor. -/
+theorem ancestor_of_grandparent {x g : α} (h : grandparent mother father x g) :
+    ancestor mother father x g :=
+  let ⟨_, hxp, hpg⟩ := h
+  Relation.TransGen.head hxp (Relation.TransGen.single hpg)
+
+/-- Figure 8.16 (c): brothers and sisters are the sons and daughters of a parent. -/
+def brother (x b : α) : Prop := Relation.Comp (parent mother father) (child mother father) x b ∧
+  male b ∧ x ≠ b
+
+def sister (x s : α) : Prop := Relation.Comp (parent mother father) (child mother father) x s ∧
+  female s ∧ x ≠ s
+
+/-- Figure 8.16 (d): uncles and aunts are the brothers and sisters of a parent. -/
+def uncle : α → α → Prop := Relation.Comp (parent mother father) (brother mother father male)
+
+def aunt : α → α → Prop := Relation.Comp (parent mother father) (sister mother father female)
+
+/-- A parent's brother is an uncle, though not conversely once Figure 8.16 (e) extends the
+relation to the husbands of aunts. -/
+theorem uncle_of_parent_brother {x p u : α} (hp : parent mother father x p)
+    (hb : brother mother father male p u) : uncle mother father male x u :=
+  ⟨p, hp, hb⟩
+
+end Kinship
+
+/-! ### Triangles in kinship and in syntax -/
+
+section Triangle
+
+variable {α : Type*}
+
+/-- The triangle of Figure 7.6: a node's `r₁` value and `r₂` value stand in `r₃`. -/
+def Triangle (r₁ r₂ r₃ : α → α → Prop) : Prop := ∀ x y z, r₁ x y → r₂ x z → r₃ y z
+
+/-- In kinship: a person's mother is their child's grandmother. -/
+theorem triangle_grandmother (mother father : α → α → Prop) :
+    Triangle (child mother father) mother (grandmother mother father) :=
+  λ x _ _ hc hm => ⟨x, hc, hm⟩
+
+variable (valent subj : α → α → Prop)
+
+/-- Raising, the syntactic triangle: a word's subject is also its valent's subject. -/
+def Raising : Prop := Triangle valent subj subj
+
+/-- The subjects derived from the asserted ones by closing under the triangle along the
+valent chain. -/
+def raise (v s : α) : Prop := ∃ h, subj h s ∧ Relation.ReflTransGen valent h v
+
+theorem subj_le_raise : ∀ x s, subj x s → raise valent subj x s :=
+  λ x _ h => ⟨x, h, Relation.ReflTransGen.refl⟩
+
+/-- The derived subjects satisfy the triangle. -/
+theorem raising_raise : Raising valent (raise valent subj) :=
+  λ _ _ _ hv ⟨h, hs, hchain⟩ => ⟨h, hs, hchain.tail hv⟩
+
+/-- Any subject relation containing the asserted subjects and closed under the triangle
+contains the derived subjects: `raise` is the least closure. -/
+theorem raise_le_of_raising {S : α → α → Prop} (hS : Raising valent S)
+    (hsubj : ∀ x s, subj x s → S x s) : ∀ v s, raise valent subj v s → S v s := by
+  rintro v s ⟨h, hs, hchain⟩
+  induction hchain with
+  | refl => exact hsubj _ _ hs
+  | tail _ hv ih => exact hS _ _ _ hv ih
+
+/-- Section 7.2.6: the subject is shared down a chain of valents, however long, the
+recursion of Figure 7.12. -/
+theorem raise_of_transGen {h v s : α} (hs : subj h s) (hchain : Relation.TransGen valent h v) :
+    raise valent subj v s :=
+  ⟨h, hs, hchain.to_reflTransGen⟩
+
+end Triangle
+
+/-! ### Figure 7.12 -/
+
+/-- The words of *He keeps seeming to have forgotten to go*. -/
+inductive W where
+  | he
+  | keeps
+  | seeming
+  | to₁
+  | have
+  | forgotten
+  | to₂
+  | go
+  deriving DecidableEq, Repr
+
+/-- The valent chain of Figure 7.12, each verb's valent the next. -/
+def valent : W → W → Prop
+  | .keeps, .seeming | .seeming, .to₁ | .to₁, .have | .have, .forgotten
+  | .forgotten, .to₂ | .to₂, .go => True
+  | _, _ => False
+
+/-- The one asserted subject: *he* is the subject of *keeps*. -/
+def asserted : W → W → Prop
+  | .keeps, .he => True
+  | _, _ => False
+
+/-- *He* is the subject of *go*, six triangles down the chain. -/
+theorem he_subject_of_go : raise valent asserted .go .he := by
+  refine ⟨.keeps, trivial, ?_⟩
+  exact (((((Relation.ReflTransGen.refl.tail (c := W.seeming) trivial).tail (c := W.to₁)
+    trivial).tail (c := W.have) trivial).tail (c := W.forgotten) trivial).tail (c := W.to₂)
+    trivial).tail (c := W.go) trivial
 
 end Hudson2010
