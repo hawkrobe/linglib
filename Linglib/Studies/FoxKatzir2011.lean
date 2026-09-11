@@ -1,5 +1,5 @@
 import Linglib.Semantics.Alternatives.Symmetric
-import Linglib.Semantics.Alternatives.Structural
+import Linglib.Studies.Katzir2007
 import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Logic.Modal.Defs
 import Linglib.Data.Examples.FoxKatzir2011
@@ -77,7 +77,8 @@ theorem mem_formalAlternatives_of_salient {ψ : Tree C V} (hψ : ψ ∈ salient)
 /-- The symmetric *some but not all* is not a structural alternative of *some*, but it becomes a
 formal alternative once it is salient. -/
 theorem someButNotAll_mem_formalAlternatives :
-    someButNotAllSentence ∈ formalAlternatives exLexicon someSentence [someButNotAllSentence] :=
+    Katzir2007.someButNotAllSentence ∈ formalAlternatives Katzir2007.lexicon
+      Katzir2007.someSentence [Katzir2007.someButNotAllSentence] :=
   mem_formalAlternatives_of_salient _ _ _ (List.mem_singleton_self _) rfl
 
 end Formal
