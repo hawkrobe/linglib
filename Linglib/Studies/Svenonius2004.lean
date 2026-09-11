@@ -64,9 +64,9 @@ open Verb (Stem)
 
 /-- Aspectual subtypes of the superlexical class — the labels recurring
     in [svenonius-2004] §4 (his Bulgarian ordering (57)) and in
-    [istratkova-2004]'s prefix-by-prefix taxonomy. A selection, not a
-    closed set: excessive, terminative, and perdurative also occur in
-    the literature. -/
+    [istratkova-2004]'s prefix-by-prefix taxonomy, with her terminative
+    *do-* and excessive *raz-*. A selection, not a closed set: perdurative
+    also occurs in the literature. -/
 inductive SuperlexicalSubtype
   | delimitative
   | cumulative
@@ -75,6 +75,8 @@ inductive SuperlexicalSubtype
   | inceptive
   | distributive
   | attenuative
+  | terminative
+  | excessive
   deriving DecidableEq
 
 /-- [svenonius-2004]'s lexical / superlexical split as a single ADT —
@@ -102,11 +104,11 @@ end PrefixClass
     one — [svenonius-2004] §1: "the superlexical prefix always appears
     outside the lexical prefix". -/
 def WellStacked (prefixes : List (Morph × PrefixClass)) : Prop :=
-  prefixes.Pairwise fun outer inner =>
+  prefixes.Pairwise λ outer inner =>
     inner.2.IsSuperlexical → outer.2.IsSuperlexical
 
-instance : DecidablePred WellStacked := fun prefixes =>
-  inferInstanceAs (Decidable (prefixes.Pairwise fun outer inner =>
+instance : DecidablePred WellStacked := λ prefixes =>
+  inferInstanceAs (Decidable (prefixes.Pairwise λ outer inner =>
     inner.2.IsSuperlexical → outer.2.IsSuperlexical))
 
 /-- An analysis of an attested example: the fragment stem it is built on
@@ -125,7 +127,7 @@ namespace Analysis
 /-- The word-formation tree: the prefix morphs folded, innermost-last,
     over the stem root. -/
 def tree (a : Analysis) : Tree Morph :=
-  a.prefixes.foldr (fun p t => .prefixed p.1 t)
+  a.prefixes.foldr (λ p t => .prefixed p.1 t)
     (.root (Morph.root a.stem.form))
 
 /-- Every analysis tree is concatenative: prefixation only. -/
@@ -142,7 +144,7 @@ def MatchesSegmentation (a : Analysis) : Prop :=
   a.ex.primaryText =
     String.intercalate "-" (a.prefixes.map (·.1.form) ++ [a.stem.form])
 
-instance : DecidablePred MatchesSegmentation := fun _ =>
+instance : DecidablePred MatchesSegmentation := λ _ =>
   decEq _ _
 
 end Analysis
