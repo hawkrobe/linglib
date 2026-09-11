@@ -1,0 +1,2248 @@
+[
+  {
+    "id": "imanishi2020_s1a",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(1a)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "y-in-ajin che [ki-k'ul-ïk ak'wal-a'].",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "y-in-ajin",
+        "IPFV-B1SG-PROG"
+      ],
+      [
+        "che",
+        "PREP"
+      ],
+      [
+        "ki-k'ul-ïk",
+        "A3PL-meet-NMLZ"
+      ],
+      [
+        "ak'wal-a'",
+        "child-PL"
+      ]
+    ],
+    "translation": "I am meeting children.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "alignment",
+        "S/A = set B on ajin, O = set A on the nominalized verb"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s1b",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(1b)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "y-in-ajin che [atin-ïk].",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "y-in-ajin",
+        "IPFV-B1SG-PROG"
+      ],
+      [
+        "che",
+        "PREP"
+      ],
+      [
+        "atin-ïk",
+        "bathe-NMLZ"
+      ]
+    ],
+    "translation": "I am bathing.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "alignment",
+        "S = set B on ajin, no set A on the nominalized verb"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s2a",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(2a)"
+    },
+    "language": "chol1282",
+    "primaryText": "Choñkol-ø [i-jats'-oñ].",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Choñkol-ø",
+        "PROG-B3SG"
+      ],
+      [
+        "i-jats'-oñ",
+        "A3SG-hit-B1SG"
+      ]
+    ],
+    "translation": "She's hitting me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "source",
+        "Coon 2013a:11"
+      ],
+      [
+        "alignment",
+        "A = set A, O = set B inside the nominalized clause"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s2b",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(2b)"
+    },
+    "language": "chol1282",
+    "primaryText": "Choñkol-ø [i-majl-el].",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Choñkol-ø",
+        "PROG-B3SG"
+      ],
+      [
+        "i-majl-el",
+        "A3SG-go-NMLZ"
+      ]
+    ],
+    "translation": "She's going.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "source",
+        "Coon 2013a:11"
+      ],
+      [
+        "alignment",
+        "S = set A"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s3a",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(3a)"
+    },
+    "language": "qanj1241",
+    "primaryText": "lanan-ø [hach w-il-on-i].",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "lanan-ø",
+        "PROG-B3SG"
+      ],
+      [
+        "hach",
+        "B2SG"
+      ],
+      [
+        "w-il-on-i",
+        "A1SG-see-DM-INTR"
+      ]
+    ],
+    "translation": "I am seeing you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "source",
+        "Mateo Pedro 2009"
+      ],
+      [
+        "alignment",
+        "A = set A, O = set B, the suffix -on supplying object Case"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s3b",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(3b)"
+    },
+    "language": "qanj1241",
+    "primaryText": "lanan-ø [ha-way-i].",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "lanan-ø",
+        "PROG-B3SG"
+      ],
+      [
+        "ha-way-i",
+        "A2SG-sleep-INTR"
+      ]
+    ],
+    "translation": "You are sleeping.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "source",
+        "Mateo Pedro 2009"
+      ],
+      [
+        "alignment",
+        "S = set A"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s62",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(62)"
+    },
+    "language": "mode1248",
+    "primaryText": "i katastrofi tis polis apo tus varvarus mesa se tris meres",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "i",
+        "the"
+      ],
+      [
+        "katastrofi",
+        "destruction"
+      ],
+      [
+        "tis",
+        "the"
+      ],
+      [
+        "polis",
+        "city-GEN"
+      ],
+      [
+        "apo",
+        "by"
+      ],
+      [
+        "tus",
+        "the"
+      ],
+      [
+        "varvarus",
+        "barbarians"
+      ],
+      [
+        "mesa",
+        "within"
+      ],
+      [
+        "se",
+        "in"
+      ],
+      [
+        "tris",
+        "three"
+      ],
+      [
+        "meres",
+        "days"
+      ]
+    ],
+    "translation": "The destruction of the city by the barbarians within three days",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "source",
+        "Alexiadou 2001:76"
+      ],
+      [
+        "nominalization",
+        "process nominal without an external argument"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s64",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(64)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "ri ru-k'at-ïk ri tinamït [ri x-ø-b'än/x-ø-u-b'än ri a Juan] x-ø-xib'i-n.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "ru-k'at-ïk",
+        "A3SG-burn-NMLZ"
+      ],
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "tinamït",
+        "city"
+      ],
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "x-ø-b'än/x-ø-u-b'än",
+        "PFV-B3SG-do/PFV-B3SG-A3SG-do"
+      ],
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "a",
+        "CL"
+      ],
+      [
+        "Juan",
+        "Juan"
+      ],
+      [
+        "x-ø-xib'i-n",
+        "PFV-B3SG-scare-ANTIP"
+      ]
+    ],
+    "translation": "The burning of the city that Juan did was scary.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "nominalization",
+        "the external argument appears in a relative clause"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s65",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(65)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "ri ru-k'at-ïk ri tinamït r-oma ri a Juan x-ø-xib'i-n.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "ru-k'at-ïk",
+        "A3SG-burn-NMLZ"
+      ],
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "tinamït",
+        "city"
+      ],
+      [
+        "r-oma",
+        "A3SG-because.of"
+      ],
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "a",
+        "CL"
+      ],
+      [
+        "Juan",
+        "Juan"
+      ],
+      [
+        "x-ø-xib'i-n",
+        "PFV-B3SG-scare-ANTIP"
+      ]
+    ],
+    "translation": "(intended) The burning of the city by Juan was scary.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "nominalization",
+        "the by-phrase counterpart is degraded"
+      ]
+    ],
+    "comment": "Marked ?*.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s66",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(66)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "nu-ki-k'ul-ïk / ki-nu-k'ul-ïk ak'wal-a'",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "nu-ki-k'ul-ïk",
+        "A1SG-A3PL-meet-NMLZ"
+      ],
+      [
+        "ak'wal-a'",
+        "child-PL"
+      ]
+    ],
+    "translation": "(intended) my meeting children",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "nominalization",
+        "two set A markers impossible in either order"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s67",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(67)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "ru-k'at-ïk ri a Juan x-ø-xib'i-n.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ru-k'at-ïk",
+        "A3SG-burn-NMLZ"
+      ],
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "a",
+        "CL"
+      ],
+      [
+        "Juan",
+        "Juan"
+      ],
+      [
+        "x-ø-xib'i-n",
+        "PFV-B3SG-scare-ANTIP"
+      ]
+    ],
+    "translation": "Juan's burning was scary. (That Juan was burned; not: that Juan burned something.)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "nominalization",
+        "a sole argument is the internal argument"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s68a",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(68a)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "nu-b'iyïn-ïk",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "nu-b'iyïn-ïk",
+        "A1SG-walk-NMLZ"
+      ]
+    ],
+    "translation": "(intended) my walking",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "nominalization",
+        "unergative nominalization excludes its external argument"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s68b",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(68b)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "ru-tzopin-ïk ri xta Maria",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ru-tzopin-ïk",
+        "A3SG-jump-NMLZ"
+      ],
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "xta",
+        "CL"
+      ],
+      [
+        "Maria",
+        "Maria"
+      ]
+    ],
+    "translation": "(intended) Maria's jumping",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "nominalization",
+        "unergative nominalization excludes its external argument"
+      ]
+    ],
+    "comment": "Marked ?*.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s69",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(69)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "ri ru-tzaq-ïk ri a Juan ütz.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "ru-tzaq-ïk",
+        "A3SG-fall-NMLZ"
+      ],
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "a",
+        "CL"
+      ],
+      [
+        "Juan",
+        "Juan"
+      ],
+      [
+        "ütz",
+        "good"
+      ]
+    ],
+    "translation": "Juan's falling is good.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "nominalization",
+        "unaccusative nominalized in subject position; the internal argument takes genitive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s70",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(70)"
+    },
+    "language": "chol1282",
+    "primaryText": "Mach uts'aty [a-jats'-oñ].",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Mach",
+        "NEG"
+      ],
+      [
+        "uts'aty",
+        "good"
+      ],
+      [
+        "a-jats'-oñ",
+        "A2SG-hit-B1SG"
+      ]
+    ],
+    "translation": "Your hitting me isn't good.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "source",
+        "Coon 2013a:141"
+      ],
+      [
+        "nominalization",
+        "external and internal argument both inside"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s71",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(71)"
+    },
+    "language": "qanj1241",
+    "primaryText": "[h-il-on ø] kawal watx'.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "h-il-on",
+        "A2SG-see-DM"
+      ],
+      [
+        "ø",
+        "B3SG"
+      ],
+      [
+        "kawal",
+        "very"
+      ],
+      [
+        "watx'",
+        "good"
+      ]
+    ],
+    "translation": "Your seeing him/her/it is very good.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "source",
+        "p.c. Pedro Mateo Pedro"
+      ],
+      [
+        "nominalization",
+        "external argument inside the nominalized clause"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s76a",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(76a)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "x-ø-in-k'ul oxi' ak'wal-a'.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "x-ø-in-k'ul",
+        "PFV-B3SG-A1SG-meet"
+      ],
+      [
+        "oxi'",
+        "three"
+      ],
+      [
+        "ak'wal-a'",
+        "child-PL"
+      ]
+    ],
+    "translation": "I met three children.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.1"
+      ],
+      [
+        "voice",
+        "active root transitive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s76b",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(76b)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "Oxi' ak'wal-a' x-e-k'ul r-oma ri Ana.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Oxi'",
+        "three"
+      ],
+      [
+        "ak'wal-a'",
+        "child-PL"
+      ],
+      [
+        "x-e-k'ul",
+        "PFV-B3PL-meet"
+      ],
+      [
+        "r-oma",
+        "A3SG-because.of"
+      ],
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "Ana",
+        "Ana"
+      ]
+    ],
+    "translation": "Three children were met by Ana.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.1"
+      ],
+      [
+        "voice",
+        "passive root transitive without overt passive morphology"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s78a",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(78a)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "röj x-e-qa-tïk k'iy k'otz'i'j pa jardin.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "röj",
+        "we"
+      ],
+      [
+        "x-e-qa-tïk",
+        "PFV-B3PL-A1PL-plant"
+      ],
+      [
+        "k'iy",
+        "many"
+      ],
+      [
+        "k'otz'i'j",
+        "flower"
+      ],
+      [
+        "pa",
+        "PREP"
+      ],
+      [
+        "jardin",
+        "garden"
+      ]
+    ],
+    "translation": "We planted many flowers in the garden.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.1"
+      ],
+      [
+        "voice",
+        "active, lax vowel"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s78b",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(78b)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "k'iy k'otz'i'j x-e-tik pa jardin.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "k'iy",
+        "many"
+      ],
+      [
+        "k'otz'i'j",
+        "flower"
+      ],
+      [
+        "x-e-tik",
+        "PFV-B3PL-plant.PASS"
+      ],
+      [
+        "pa",
+        "PREP"
+      ],
+      [
+        "jardin",
+        "garden"
+      ]
+    ],
+    "translation": "Many flowers were planted in the garden.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.1"
+      ],
+      [
+        "voice",
+        "passive, tensed vowel"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s80a",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(80a)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "röj x-ø-qa-chäp ru-tik-ïk jun k'otz'i'j.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "röj",
+        "we"
+      ],
+      [
+        "x-ø-qa-chäp",
+        "PFV-B3SG-A1PL-begin"
+      ],
+      [
+        "ru-tik-ïk",
+        "A3SG-plant.PASS-NMLZ"
+      ],
+      [
+        "jun",
+        "one"
+      ],
+      [
+        "k'otz'i'j",
+        "flower"
+      ]
+    ],
+    "translation": "We began to plant one flower.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.1"
+      ],
+      [
+        "voice",
+        "tensed vowel: the nominalized verb is passivized"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s80b",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(80b)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "y-oj-ajin che ru-tik-ïk jun k'otz'i'j.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "y-oj-ajin",
+        "IPFV-B1PL-PROG"
+      ],
+      [
+        "che",
+        "PREP"
+      ],
+      [
+        "ru-tik-ïk",
+        "A3SG-plant.PASS-NMLZ"
+      ],
+      [
+        "jun",
+        "one"
+      ],
+      [
+        "k'otz'i'j",
+        "flower"
+      ]
+    ],
+    "translation": "We are planting one flower.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.1"
+      ],
+      [
+        "voice",
+        "tensed vowel: the nominalized verb is passivized"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s82a",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(82a)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "röj x-e-qa-q'ete-j ri ak'wal-a'.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "röj",
+        "we"
+      ],
+      [
+        "x-e-qa-q'ete-j",
+        "PFV-B3PL-A1PL-hug-TR"
+      ],
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "ak'wal-a'",
+        "child-PL"
+      ]
+    ],
+    "translation": "We hugged the children.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.1"
+      ],
+      [
+        "voice",
+        "active derived transitive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s82b",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(82b)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "ri ak'wal-a' x-e-q'ete-x.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "ak'wal-a'",
+        "child-PL"
+      ],
+      [
+        "x-e-q'ete-x",
+        "PFV-B3PL-hug-PASS"
+      ]
+    ],
+    "translation": "The children were hugged.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.1"
+      ],
+      [
+        "voice",
+        "passive suffix -x replaces -j"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s83a",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(83a)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "röj x-ø-qa-chäp ki-q'ete-x-ïk ri ak'wal-a'.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "röj",
+        "we"
+      ],
+      [
+        "x-ø-qa-chäp",
+        "PFV-B3SG-A1PL-begin"
+      ],
+      [
+        "ki-q'ete-x-ïk",
+        "A3PL-hug-PASS-NMLZ"
+      ],
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "ak'wal-a'",
+        "child-PL"
+      ]
+    ],
+    "translation": "We began to hug the children.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.1"
+      ],
+      [
+        "voice",
+        "passive morpheme under nominalization"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s83b",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(83b)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "röj y-oj-ajin che ki-q'ete-x-ïk ri ak'wal-a'.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "röj",
+        "we"
+      ],
+      [
+        "y-oj-ajin",
+        "IPFV-B1PL-PROG"
+      ],
+      [
+        "che",
+        "PREP"
+      ],
+      [
+        "ki-q'ete-x-ïk",
+        "A3PL-hug-PASS-NMLZ"
+      ],
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "ak'wal-a'",
+        "child-PL"
+      ]
+    ],
+    "translation": "We are hugging the children.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.1"
+      ],
+      [
+        "voice",
+        "passive morpheme under nominalization"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s85",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(85)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "ri ixöq n-ø-ajin [che ki-k'ul-ïk ak'wal-a'].",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "ixöq",
+        "woman"
+      ],
+      [
+        "n-ø-ajin",
+        "IPFV-B3SG-PROG"
+      ],
+      [
+        "che",
+        "PREP"
+      ],
+      [
+        "ki-k'ul-ïk",
+        "A3PL-meet-NMLZ"
+      ],
+      [
+        "ak'wal-a'",
+        "child-PL"
+      ]
+    ],
+    "translation": "The woman is meeting children.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.2"
+      ],
+      [
+        "derivation",
+        "object genitive from D, subject absolutive from the matrix Infl"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s90",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(90)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "y-in-ajin che jun b'ix.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "y-in-ajin",
+        "IPFV-B1SG-PROG"
+      ],
+      [
+        "che",
+        "PREP"
+      ],
+      [
+        "jun",
+        "INDF"
+      ],
+      [
+        "b'ix",
+        "song"
+      ]
+    ],
+    "translation": "I am singing a song. (lit. I'm engaged in a song)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.2"
+      ],
+      [
+        "theta",
+        "ajin assigns an agentive θ-role to its subject"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s91",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(91)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "y-in-ajin che [atin-ïk].",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "y-in-ajin",
+        "IPFV-B1SG-PROG"
+      ],
+      [
+        "che",
+        "PREP"
+      ],
+      [
+        "atin-ïk",
+        "bathe-NMLZ"
+      ]
+    ],
+    "translation": "I am bathing.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.2"
+      ],
+      [
+        "derivation",
+        "unergative base: no DP inside, no genitive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s92",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(92)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "ri a Juan n-ø-ajin che (ru-)tzaq-ïk.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "a",
+        "CL"
+      ],
+      [
+        "Juan",
+        "Juan"
+      ],
+      [
+        "n-ø-ajin",
+        "IPFV-B3SG-PROG"
+      ],
+      [
+        "che",
+        "PREP"
+      ],
+      [
+        "(ru-)tzaq-ïk",
+        "(A3SG-)fall-NMLZ"
+      ]
+    ],
+    "translation": "(intended) Juan is falling.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.2"
+      ],
+      [
+        "control",
+        "unaccusative base resists nominalization under ajin"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s93a",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(93a)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "ri a Juan n-ø-ajin n-ø-tzaq.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "a",
+        "CL"
+      ],
+      [
+        "Juan",
+        "Juan"
+      ],
+      [
+        "n-ø-ajin",
+        "IPFV-B3SG-PROG"
+      ],
+      [
+        "n-ø-tzaq",
+        "IPFV-B3SG-fall"
+      ]
+    ],
+    "translation": "Juan is falling.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.2"
+      ],
+      [
+        "control",
+        "the unaccusative appears as a finite verb under ajin"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s93b",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(93b)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "ri a Juan n-ø-tzaq.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "a",
+        "CL"
+      ],
+      [
+        "Juan",
+        "Juan"
+      ],
+      [
+        "n-ø-tzaq",
+        "IPFV-B3SG-fall"
+      ]
+    ],
+    "translation": "Juan is falling.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.2"
+      ],
+      [
+        "control",
+        "simple imperfective"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s94",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(94)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "ri wäy y-e-ajin che (ru/ki)-chaq'irse-x-ïk.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "wäy",
+        "tortilla"
+      ],
+      [
+        "y-e-ajin",
+        "IPFV-B3PL-PROG"
+      ],
+      [
+        "che",
+        "PREP"
+      ],
+      [
+        "(ru/ki)-chaq'irse-x-ïk",
+        "A3SG/A3PL-dry-PASS-NMLZ"
+      ]
+    ],
+    "translation": "(intended) The tortillas are being cooked (by being dried).",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.2"
+      ],
+      [
+        "control",
+        "passive base resists nominalization under ajin"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s95",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(95)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "ri wäy y-e-chaq'irse-x.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "wäy",
+        "tortilla"
+      ],
+      [
+        "y-e-chaq'irse-x",
+        "IPFV-B3PL-dry-PASS"
+      ]
+    ],
+    "translation": "The tortillas are being cooked (by being dried).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.2"
+      ],
+      [
+        "control",
+        "simple imperfective passive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s96a",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(96a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I was engaged in falling.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.2"
+      ],
+      [
+        "source",
+        "Coon 2010a:104"
+      ],
+      [
+        "control",
+        "engage in resists an unaccusative gerund"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s96b",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(96b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I was engaged in being attacked.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.2"
+      ],
+      [
+        "source",
+        "Coon 2010a:104"
+      ],
+      [
+        "control",
+        "engage in resists a passive gerund"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s97",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(97)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "n-ø-ajin jun nimaq'ij.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "n-ø-ajin",
+        "IPFV-B3SG-PROG"
+      ],
+      [
+        "jun",
+        "INDF"
+      ],
+      [
+        "nimaq'ij",
+        "celebration"
+      ]
+    ],
+    "translation": "A festival is taking place.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.2"
+      ],
+      [
+        "source",
+        "Macario et al. 1998"
+      ],
+      [
+        "case",
+        "no preposition when a single DP takes absolutive from Infl"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s98a",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(98a)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "röj x-ø-qa-chäp [ki-k'ul-ïk rje'].",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "röj",
+        "we"
+      ],
+      [
+        "x-ø-qa-chäp",
+        "PFV-B3SG-A1PL-begin"
+      ],
+      [
+        "ki-k'ul-ïk",
+        "A3PL-meet-NMLZ"
+      ],
+      [
+        "rje'",
+        "they"
+      ]
+    ],
+    "translation": "We began to meet them.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.3"
+      ],
+      [
+        "alignment",
+        "subject inherent ergative from transitive v, object genitive: both set A"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s98b",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(98b)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "rat x-ø-a-chäp [atin-ïk].",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "rat",
+        "you"
+      ],
+      [
+        "x-ø-a-chäp",
+        "PFV-B3SG-A2SG-begin"
+      ],
+      [
+        "atin-ïk",
+        "bathe-NMLZ"
+      ]
+    ],
+    "translation": "You began to bathe.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.3"
+      ],
+      [
+        "alignment",
+        "subject set A on chäp, no genitive inside"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s100",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(100)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "x-ø-u-chäp [q'et-e-n-ik] r-ichin ri ak'wal",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "x-ø-u-chäp",
+        "PFV-B3SG-A3SG-begin"
+      ],
+      [
+        "q'et-e-n-ik",
+        "hug-BV-ANTIP-NMLZ"
+      ],
+      [
+        "r-ichin",
+        "A3SG-RN"
+      ],
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "ak'wal",
+        "child"
+      ]
+    ],
+    "translation": "He began to hug the child.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3.1"
+      ],
+      [
+        "source",
+        "García Matzar and Rodríguez Guaján 1997:457"
+      ],
+      [
+        "strategy",
+        "antipassive: object oblique under the relational noun"
+      ]
+    ],
+    "comment": "Not accepted by the paper's consultants; attributed to dialectal difference.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s102",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(102)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "röj y-oj-ajin che [choy-oj che'].",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "röj",
+        "we"
+      ],
+      [
+        "y-oj-ajin",
+        "IPFV-B1PL-PROG"
+      ],
+      [
+        "che",
+        "PREP"
+      ],
+      [
+        "choy-oj",
+        "cut-NMLZ"
+      ],
+      [
+        "che'",
+        "tree"
+      ]
+    ],
+    "translation": "We are cutting trees.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3.2"
+      ],
+      [
+        "strategy",
+        "incorporating -oj nominalization, no set A"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s103",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(103)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "x-ø-qa-chäp (ri) [choy-oj che'].",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "x-ø-qa-chäp",
+        "PFV-B3SG-A1PL-begin"
+      ],
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "choy-oj",
+        "cut-NMLZ"
+      ],
+      [
+        "che'",
+        "tree"
+      ]
+    ],
+    "translation": "We began to cut tree(s).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3.2"
+      ],
+      [
+        "strategy",
+        "incorporating -oj nominalization under chäp"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s104",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(104)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "x-ø-qa-chäp ru/ki-choy-oj che'.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "x-ø-qa-chäp",
+        "PFV-B3SG-A1PL-begin"
+      ],
+      [
+        "ru/ki-choy-oj",
+        "A3SG/A3PL-cut-NMLZ"
+      ],
+      [
+        "che'",
+        "tree"
+      ]
+    ],
+    "translation": "(intended) We began to cut tree(s).",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3.2"
+      ],
+      [
+        "strategy",
+        "set A impossible on the -oj nominalization"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s107",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(107)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "x-ø-qa-chäp ri choy-oj ri che'.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "x-ø-qa-chäp",
+        "PFV-B3SG-A1PL-begin"
+      ],
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "choy-oj",
+        "cut-NMLZ"
+      ],
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "che'",
+        "tree"
+      ]
+    ],
+    "translation": "(intended) We began to cut the tree(s).",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3.2"
+      ],
+      [
+        "incorporation",
+        "a determiner-marked object cannot be incorporated"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s109",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(109)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "x-ø-qa-chäp ri choy-oj oxi' che'.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "x-ø-qa-chäp",
+        "PFV-B3SG-A1PL-begin"
+      ],
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "choy-oj",
+        "cut-NMLZ"
+      ],
+      [
+        "oxi'",
+        "three"
+      ],
+      [
+        "che'",
+        "tree"
+      ]
+    ],
+    "translation": "(intended) We began to cut three tree(s).",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3.2"
+      ],
+      [
+        "incorporation",
+        "a numeral-marked object cannot be incorporated"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s112",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(112)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "x-ø-qa-chäp ri choy-oj a-che'.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "x-ø-qa-chäp",
+        "PFV-B3SG-A1PL-begin"
+      ],
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "choy-oj",
+        "cut-NMLZ"
+      ],
+      [
+        "a-che'",
+        "A2SG-tree"
+      ]
+    ],
+    "translation": "(intended) We began to cut your tree(s).",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3.2"
+      ],
+      [
+        "incorporation",
+        "a possessed object cannot be incorporated"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s113",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(113)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "Achike x-ø-a-chäp (ri) choy-oj?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Achike",
+        "what"
+      ],
+      [
+        "x-ø-a-chäp",
+        "PFV-B3SG-A2SG-begin"
+      ],
+      [
+        "ri",
+        "DET"
+      ],
+      [
+        "choy-oj",
+        "cut-NMLZ"
+      ]
+    ],
+    "translation": "(intended) What did you begin to cut?",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3.2"
+      ],
+      [
+        "incorporation",
+        "no wh-extraction of the incorporated object"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imanishi2020_s114",
+    "source": {
+      "bibkey": "imanishi-2020",
+      "paperLabel": "(114)"
+    },
+    "language": "kaqc1270",
+    "primaryText": "Achike x-ø-a-chäp ru-ch'ey-ïk?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Achike",
+        "what"
+      ],
+      [
+        "x-ø-a-chäp",
+        "PFV-B3SG-A2SG-begin"
+      ],
+      [
+        "ru-ch'ey-ïk",
+        "A3SG-hit-NMLZ"
+      ]
+    ],
+    "translation": "What did you begin to hit?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3.2"
+      ],
+      [
+        "incorporation",
+        "wh-extraction from the -ïk nominalization"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  }
+]

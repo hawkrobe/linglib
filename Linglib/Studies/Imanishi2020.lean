@@ -1,393 +1,306 @@
-import Linglib.Studies.CoonMateoPedroPreminger2014
-import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Features.Case.Basic
-import Linglib.Syntax.Case.Alignment
-import Linglib.Fragments.Mayan.Kaqchikel.Agreement
-import Linglib.Fragments.Mayan.Chol.Agreement
-import Linglib.Fragments.Mayan.Qanjobal.Agreement
+import Linglib.Studies.Imanishi2014
 
 /-!
 # Imanishi (2020): Parameterizing Split Ergativity in Mayan
-[imanishi-2020]
 
-Explains the alignment puzzle in the accusative (non-perfective) side of
-Mayan split-ergative systems.
+This file formalizes [imanishi-2020], the journal account of the alignment puzzle of
+[imanishi-2014]: the non-perfective clause of Kaqchikel, Chol and Q'anjob'al is an aspectual
+predicate embedding a nominalized clause, yet Kaqchikel cross-references the subject with the
+set B marker and the transitive object with set A, (4), where Chol and Q'anjob'al do the
+reverse, (5). The Restriction on Nominalization (63), that nominalized verbs lack a
+syntactically projected external argument, is the dissertation's requirement
+(`Imanishi2014.URN`) restated as a selectional property of the nominalizing head. Under it a
+transitive base must be independently intransitivized, by passivization, antipassivization or
+(pseudo) noun incorporation (`Strategy`), and the subject is base-generated as the argument of
+the matrix predicate (`Matrix`): absolutive from Infl under the intransitive *ajin*, inherent
+ergative from transitive v under *chäp* 'begin'. A `Clause` records these choices, and
+`Clause.subject` and `Clause.object` say what licenses each argument (`Licensing`): genitive
+from the D of the nominalized clause goes to its highest Case-less DP, absolutive to the object
+from Voice or from the Q'anjob'al suffix *-on*. `Clause.WellFormed` collects the conditions the
+derivations rely on, among them the semantic control of the matrix subject into an external
+θ-role of the base, which excludes unaccusative and passive bases under *ajin*, (92) and (94).
+The summary (117) is `subjectMarker_setB_iff` and `objectMarker_setA_iff`, and `case_eq_caseOf`
+shows that the progressive derivations assign the dissertation's Cases.
 
-## The Alignment Puzzle
+## Implementation notes
 
-Kaqchikel, Chol, and Q'anjob'al all have (nearly) identical biclausal
-structures for non-perfective clauses — an aspectual predicate embedding
-a nominalized clause `[Asp ... [vP_NMLZ]]`. Yet:
+* That nominalized verbs of Kaqchikel must be intransitivized is not derived from the
+  restriction, as the paper conjectures it may be; it is a clause of `WellFormed`.
+* The closing generalization, that the restriction fails exactly when the verbal domain of the
+  nominalized clause has a structural Case assigner, is not stated: in the dissertation's survey
+  Tojolabal is low absolutive yet subject to the requirement, so the criterion cannot be read
+  off `Mayan.ABSPosition`.
+* The Case-licensing of the relational noun by the preposition *chi*, (87) and (88), and the
+  third person set B marker for the nominalized clause on the aspectual predicate are outside
+  the model.
 
-- **Kaqchikel**: S/A = ABS (set B), O = ERG/GEN (set A)
-- **Chol/Q'anjob'al**: S/A = ERG/GEN (set A), O = ABS (set B)
+## References
 
-## The Analysis
-
-Two parameters explain the contrast:
-
-1. **Restriction on Nominalization (RON)**: The nominalizing head *n* in
-   Kaqchikel obligatorily selects a vP lacking an external argument.
-   In Chol and Q'anjob'al, *n* does not impose this restriction.
-
-2. **Mayan Absolutive Parameter** ([coon-mateo-pedro-preminger-2014]):
-   High absolutive languages (Kaqchikel, Q'anjob'al) have Infl as the
-   locus of absolutive Case; low absolutive languages (Chol) have Voice.
-
-The RON alone determines the alignment type: it controls which argument
-is the highest DP inside the nominalized clause and thus which receives
-genitive Case from D.
-
-## Intransitivization Strategies
-
-The RON forces nominalized verbs in Kaqchikel to be intransitive.
-Three strategies satisfy this:
-- **Passivization**: Voice[PASSIVE] suppresses the external argument
-- **Antipassivization**: internal argument demoted to oblique
-- **Pseudo noun incorporation**: object Case-licensed by adjacency
+* [imanishi-2020]
+* [imanishi-2014]
+* [coon-mateo-pedro-preminger-2014]
+* [alexiadou-2001]
 -/
 
 namespace Imanishi2020
 
-open Minimalist Minimalist.Voice
-open Mayan (MarkerSet ABSPosition)
+open Imanishi2014 Mayan
 
--- ============================================================================
--- § 0: Accusative-Side Alignment Patterns
--- ============================================================================
+/-- The base verb of a nominalization, by the arguments it projects. -/
+inductive Base
+  | transitive
+  | unergative
+  | unaccusative
+  | passive
+  deriving DecidableEq
 
-/-- Alignment pattern in the accusative (non-perfective) side of the Mayan
-    split. Records which marker set cross-references S (= A on the
-    accusative side) and which cross-references O.
+/-- The base has an external θ-role for the matrix subject to control into (Section 3.2.2); a
+passive base has it suppressed. -/
+def Base.HasExternal (b : Base) : Prop := b = .transitive ∨ b = .unergative
 
-    **Kaqchikel type** (S = ABS, O = ERG/GEN): S and A are
-    cross-referenced by absolutive (set B) markers; the transitive object
-    by ergative/genitive (set A). **Chol/Q'anjob'al type**: the mirror
-    image. -/
-structure AccSidePattern where
-  /-- Marker set cross-referencing S (intransitive subject) and
-      A (transitive subject) — these pattern together on the accusative side. -/
-  sMarker : MarkerSet
-  /-- Marker set cross-referencing O (transitive object). -/
-  oMarker : MarkerSet
-  deriving DecidableEq, Repr
+/-- How a transitive base is intransitivized under the restriction (Sections 3.2.1 and 3.3):
+passivization leaves the object as the only DP of the nominalized clause, antipassivization
+demotes it to an oblique under a relational noun, and (pseudo) noun incorporation Case-licenses
+it under adjacency. -/
+inductive Strategy
+  | passive
+  | antipassive
+  | incorporation
+  deriving DecidableEq
 
-/-- Kaqchikel-type accusative alignment: S/A = set B (ABS), O = set A (ERG/GEN). -/
-def kaqchikelPattern : AccSidePattern :=
-  { sMarker := .setB, oMarker := .setA }
+/-- The predicate embedding the nominalized clause: the intransitive aspectual predicate *ajin*
+of the Kaqchikel progressive, whose subject sits in its specifier, the transitive verb *chäp*
+'begin', or an aspectual predicate such as Chol *choñkol* and Q'anjob'al *lanan* that takes the
+nominalized clause as its sole argument. -/
+inductive Matrix
+  | ajin
+  | chap
+  | aspectual
+  deriving DecidableEq
 
-/-- Chol/Q'anjob'al-type accusative alignment: S/A = set A (ERG/GEN), O = set B (ABS). -/
-def cholPattern : AccSidePattern :=
-  { sMarker := .setA, oMarker := .setB }
+/-- What licenses an argument of the nominalized verb: genitive from the D of the nominalized
+clause, absolutive from Voice or the suffix inside it, absolutive from the matrix Infl,
+inherent ergative from the transitive matrix v, genitive from a relational noun, or (pseudo)
+noun incorporation. -/
+inductive Licensing
+  | gen
+  | absVoice
+  | absInfl
+  | ergV
+  | oblique
+  | incorporated
+  deriving DecidableEq
 
-/-- The two accusative-side patterns are distinct. -/
-theorem patterns_distinct : kaqchikelPattern ≠ cholPattern := by decide
+/-- The Case an argument receives, if any. -/
+def Licensing.case : Licensing → Option Case
+  | .gen | .oblique => some .gen
+  | .absVoice | .absInfl => some .abs
+  | .ergV => some .erg
+  | .incorporated => none
 
-/-- The two patterns are mirror images: the marker sets are swapped. -/
-theorem patterns_mirror :
-    kaqchikelPattern.sMarker = cholPattern.oMarker ∧
-    kaqchikelPattern.oMarker = cholPattern.sMarker := ⟨rfl, rfl⟩
+/-- The agreement set cross-referencing the argument on the verbal complex, ergative and
+genitive both spelled out as set A. An oblique is cross-referenced on its relational noun and an
+incorporated object not at all. -/
+def Licensing.marker : Licensing → Option MarkerSet
+  | .gen | .ergV => some .setA
+  | .absVoice | .absInfl => some .setB
+  | .oblique | .incorporated => none
 
--- ============================================================================
--- § 1: The Restriction on Nominalization (RON)
--- ============================================================================
+/-- A nominalized clause: the language's nominalization parameters, the base verb, the
+intransitivizing strategy if any, and the embedding predicate, `none` for a nominalized clause
+in argument position, (64)–(71). -/
+structure Clause where
+  lang : Nominalization
+  base : Base
+  strategy : Option Strategy
+  matrix : Option Matrix
 
-/-- The Restriction on Nominalization (RON):
-    "Nominalized verbs must lack a syntactically projected external argument."
+namespace Clause
 
-    A property of the nominalizing head *n* in a given language. When active,
-    *n* obligatorily selects for a vP without an external argument (i.e., no
-    specifier of VoiceP projected inside the nominalized clause). -/
-structure RON where
-  active : Bool
-  deriving DecidableEq, Repr
+variable (c : Clause)
 
--- ============================================================================
--- § 2: Mayan Absolutive Parameter
--- ============================================================================
+/-- The restriction bans the base's external argument from the nominalized clause. -/
+def Restricted : Prop := c.lang.urn = .required ∧ c.base.HasExternal
 
--- Reuses `Mayan.ABSPosition` from `Fragments/Mayan/Params.lean` directly.
+instance : Decidable c.Restricted := by unfold Restricted Base.HasExternal; infer_instance
 
--- ============================================================================
--- § 3: Language Parameterization
--- ============================================================================
+/-- Licensing of the subject, the external argument or the internal argument of an unaccusative
+or passive base. Under the restriction it is base-generated as the argument of the matrix
+predicate and licensed there; otherwise it is the highest DP of the nominalized clause and
+receives genitive from D. -/
+def subject : Option Licensing :=
+  if c.Restricted then
+    match c.matrix with
+    | some .ajin => some .absInfl
+    | some .chap => some .ergV
+    | some .aspectual | none => none
+  else some .gen
 
-/-- Parameters for a Mayan language's split-ergative system. -/
-structure MayanParams where
-  ron : RON
-  absPos : ABSPosition
-  deriving DecidableEq, Repr
+/-- Licensing of the object of a transitive base: by the intransitivizing strategy under the
+restriction, and otherwise by the Case assigner in the verbal domain of the nominalized clause,
+Voice of a low absolutive language or the suffix, if there is one. -/
+def object : Option Licensing :=
+  if c.base = .transitive then
+    match c.strategy with
+    | some .passive => some .gen
+    | some .antipassive => some .oblique
+    | some .incorporation => some .incorporated
+    | none => if c.lang.absPos = .low ∨ c.lang.suffix then some .absVoice else none
+  else none
 
-/-- Kaqchikel: RON active, high absolutive. -/
-def kaqchikelParams : MayanParams :=
-  { ron := ⟨true⟩, absPos := .high }
+/-- The agreement set cross-referencing the subject. -/
+def subjectMarker : Option MarkerSet := c.subject.bind Licensing.marker
 
-/-- Chol: RON inactive, low absolutive. -/
-def cholParams : MayanParams :=
-  { ron := ⟨false⟩, absPos := .low }
+/-- The agreement set cross-referencing the object. -/
+def objectMarker : Option MarkerSet := c.object.bind Licensing.marker
 
-/-- Q'anjob'al: RON inactive, high absolutive. -/
-def qanjobalParams : MayanParams :=
-  { ron := ⟨false⟩, absPos := .high }
+/-- The conditions the derivations rely on: a transitive base is intransitivized exactly under
+the restriction (Section 3.1), the subject of *ajin* and *chäp* semantically controls an
+external θ-role of the base (Section 3.2.2), an embedded clause licenses its subject, and a
+transitive object is licensed. -/
+def WellFormed : Prop :=
+  (c.strategy ≠ none ↔ c.Restricted ∧ c.base = .transitive) ∧
+  (c.matrix = some .ajin ∨ c.matrix = some .chap → c.base.HasExternal) ∧
+  (c.subject ≠ none ∨ c.matrix = none) ∧ (c.base = .transitive → c.object ≠ none)
 
--- ============================================================================
--- § 4: Nominalized Clause Structure
--- ============================================================================
+instance : Decidable c.WellFormed := by unfold WellFormed Base.HasExternal; infer_instance
 
-/-- Structure of the nominalized clause embedded under the aspectual
-    predicate on the accusative side. The clause is
-    `[DP [nP [vP [VoiceP [VP]]]]]` — verbal projections dominated by
-    nominal projections.
+/-- The Kaqchikel progressive of a transitive, (85): a passive nominalization under *ajin*. -/
+def kaqchikelProgressive : Clause := ⟨.kaqchikel, .transitive, some .passive, some .ajin⟩
 
-    The key structural variable: whether an external argument is
-    syntactically projected inside the nominalized clause.
-    Determined by the RON. -/
-structure NomClause where
-  hasExternalArg : Bool
-  hasInternalArg : Bool
-  deriving DecidableEq, Repr
+/-- The Kaqchikel progressive of an unergative, (91). -/
+def kaqchikelUnergative : Clause := ⟨.kaqchikel, .unergative, none, some .ajin⟩
 
-/-- Build the nominalized clause from the RON and transitivity. -/
-def nomClauseFromRON (ron : RON) (transitive : Bool) : NomClause :=
-  { hasExternalArg := !ron.active && transitive
-  , hasInternalArg := transitive }
+/-- The Kaqchikel progressive of an unaccusative, (92). -/
+def kaqchikelUnaccusative : Clause := ⟨.kaqchikel, .unaccusative, none, some .ajin⟩
 
--- ============================================================================
--- § 5: Deriving the Accusative-Side Alignment
--- ============================================================================
+/-- The Kaqchikel progressive of a passive verb, (94). -/
+def kaqchikelPassive : Clause := ⟨.kaqchikel, .passive, none, some .ajin⟩
 
-/-- Derive the accusative-side alignment pattern from language parameters.
+/-- A nominalized unaccusative in subject position, (69). -/
+def kaqchikelSubjectNominal : Clause := ⟨.kaqchikel, .unaccusative, none, none⟩
 
-    The D head of the nominalized clause assigns genitive Case to the
-    structurally closest (highest) DP. Since ERG and GEN are homophonous
-    in Mayan (both realized as set A markers), the DP receiving GEN is
-    cross-referenced by set A.
+/-- A passive nominalization under *chäp* 'begin', (98). -/
+def kaqchikelBegin : Clause := ⟨.kaqchikel, .transitive, some .passive, some .chap⟩
 
-    - RON active → no external arg → internal arg is highest DP → set A on O
-    - RON inactive → external arg present → external arg is highest → set A on S -/
-def deriveAccPattern (params : MayanParams) : AccSidePattern :=
-  let nc := nomClauseFromRON params.ron true
-  match nc.hasExternalArg with
-  | true  => { sMarker := .setA, oMarker := .setB }
-  | false => { sMarker := .setB, oMarker := .setA }
+/-- An antipassive nominalization under *chäp*, (100). -/
+def kaqchikelAntipassive : Clause := ⟨.kaqchikel, .transitive, some .antipassive, some .chap⟩
 
--- ============================================================================
--- § 6: Correctness Theorems
--- ============================================================================
+/-- The incorporating *-oj* nominalization under *ajin*, (102). -/
+def kaqchikelIncorporation : Clause :=
+  ⟨.kaqchikel, .transitive, some .incorporation, some .ajin⟩
 
-/-- Kaqchikel's parameters derive the Kaqchikel alignment pattern. -/
-theorem kaqchikel_alignment :
-    deriveAccPattern kaqchikelParams = kaqchikelPattern := rfl
+/-- The Chol progressive of a transitive, (60a). -/
+def cholProgressive : Clause := ⟨.chol, .transitive, none, some .aspectual⟩
 
-/-- Chol's parameters derive the Chol alignment pattern. -/
-theorem chol_alignment :
-    deriveAccPattern cholParams = cholPattern := rfl
+/-- The Chol progressive of an intransitive, (60b). -/
+def cholIntransitive : Clause := ⟨.chol, .unaccusative, none, some .aspectual⟩
 
-/-- Q'anjob'al's parameters derive the Chol pattern (same as Chol). -/
-theorem qanjobal_alignment :
-    deriveAccPattern qanjobalParams = cholPattern := rfl
+/-- The Q'anjob'al progressive of a transitive, (73a), the object licensed by *-on*. -/
+def qanjobalProgressive : Clause := ⟨.qanjobal, .transitive, none, some .aspectual⟩
 
-/-- The RON alone determines the alignment type, regardless of ABSPosition.
-    This is the paper's central result: the alignment puzzle reduces to
-    a single binary parameter on the nominalizing head. -/
-theorem ron_determines_alignment (abs : ABSPosition) :
-    deriveAccPattern { ron := ⟨true⟩, absPos := abs } = kaqchikelPattern ∧
-    deriveAccPattern { ron := ⟨false⟩, absPos := abs } = cholPattern :=
-  ⟨rfl, rfl⟩
+/-- The Kaqchikel-type alignment (4): set B on the subject, set A on the object, from a
+passive nominalization whose subject is the argument of *ajin*. -/
+theorem kaqchikelProgressive_markers :
+    kaqchikelProgressive.WellFormed ∧ kaqchikelProgressive.subjectMarker = some .setB ∧
+      kaqchikelProgressive.objectMarker = some .setA := by
+  decide
 
-/-- Q'anjob'al and Kaqchikel share ABSPosition but differ in alignment —
-    confirming that ABSPosition alone does not determine the accusative-side
-    alignment. -/
-theorem absPos_insufficient :
-    kaqchikelParams.absPos = qanjobalParams.absPos ∧
-    deriveAccPattern kaqchikelParams ≠ deriveAccPattern qanjobalParams :=
-  ⟨rfl, by decide⟩
+/-- The unergative progressive, (91): set B on the subject, no genitive assigned inside. -/
+theorem kaqchikelUnergative_markers :
+    kaqchikelUnergative.WellFormed ∧ kaqchikelUnergative.subjectMarker = some .setB ∧
+      kaqchikelUnergative.objectMarker = none := by
+  decide
 
--- ============================================================================
--- § 7: RON and Intransitivization
--- ============================================================================
+/-- Unaccusative and passive bases cannot be embedded under *ajin*, (92) and (94): there is no
+external θ-role for its subject to control. -/
+theorem not_wellFormed_unaccusative_passive :
+    ¬ kaqchikelUnaccusative.WellFormed ∧ ¬ kaqchikelPassive.WellFormed := by
+  decide
 
-/-- Passive Voice satisfies the RON: no θ-role assignment means no
-    external argument is projected. -/
-theorem passive_satisfies_ron :
-    ¬ passive.AssignsTheta := by decide
+/-- In argument position the same unaccusative nominalizes, (69), its internal argument taking
+genitive from D. -/
+theorem kaqchikelSubjectNominal_subject :
+    kaqchikelSubjectNominal.WellFormed ∧ kaqchikelSubjectNominal.subject = some .gen := by
+  decide
 
-/-- Agentive Voice violates the RON: it projects an external argument. -/
-theorem agentive_violates_ron :
-    agentive.AssignsTheta := by decide
+/-- Under *chäp*, (98), the subject takes inherent ergative from the transitive matrix v, so
+subject and object alike are cross-referenced by set A. -/
+theorem kaqchikelBegin_markers :
+    kaqchikelBegin.WellFormed ∧ kaqchikelBegin.subjectMarker = some .setA ∧
+      kaqchikelBegin.objectMarker = some .setA := by
+  decide
 
-/-- A Voice head is compatible with the RON iff it does not assign a
-    θ-role (and hence does not project an external argument). -/
-def RonCompatibleVoice (v : Head) : Prop :=
-  ¬ v.AssignsTheta
+/-- Antipassive and incorporating nominalizations, (100) and (102), leave no DP for D to license,
+so no set A marker appears on the nominalized verb, (104). -/
+theorem no_gen_antipassive_incorporation :
+    kaqchikelAntipassive.WellFormed ∧ kaqchikelAntipassive.objectMarker = none ∧
+      kaqchikelIncorporation.WellFormed ∧ kaqchikelIncorporation.objectMarker = none := by
+  decide
 
-instance (v : Head) : Decidable (RonCompatibleVoice v) := by
-  unfold RonCompatibleVoice; infer_instance
+/-- The Chol/Q'anjob'al-type alignment (5): the subject, the highest DP of the nominalized
+clause, takes genitive from D, and the object absolutive from Voice or the suffix. -/
+theorem chol_qanjobal_markers :
+    cholProgressive.WellFormed ∧ cholProgressive.subjectMarker = some .setA ∧
+      cholProgressive.objectMarker = some .setB ∧
+    cholIntransitive.WellFormed ∧ cholIntransitive.subjectMarker = some .setA ∧
+    qanjobalProgressive.WellFormed ∧ qanjobalProgressive.subjectMarker = some .setA ∧
+      qanjobalProgressive.objectMarker = some .setB := by
+  decide
 
-theorem passive_ron_compatible : RonCompatibleVoice passive := by decide
+/-- The external argument never takes genitive from D under the restriction, (66) and (68). -/
+theorem subject_ne_gen (h : c.Restricted) : c.subject ≠ some .gen := by
+  simp only [subject, if_pos h]
+  split <;> simp
 
-theorem agentive_ron_incompatible : ¬ RonCompatibleVoice agentive := by decide
+/-- The non-finiteness diagnostic of (59) and (60): a set B marker inside the nominalized clause
+needs a Case assigner in its verbal domain, so it survives only in a low absolutive language or
+with the suffix. -/
+theorem absPos_low_or_suffix_of_object (h : c.object = some .absVoice) :
+    c.lang.absPos = .low ∨ c.lang.suffix := by
+  unfold object at h
+  split at h
+  · split at h <;> simp_all
+    exact or_iff_not_imp_left.2 h
+  · simp at h
 
-theorem anticausative_ron_compatible :
-    RonCompatibleVoice anticausative := by decide
+/-- (117): under a progressive predicate the subject is cross-referenced by set B exactly when
+the restriction holds. -/
+theorem subjectMarker_setB_iff (h : c.WellFormed) (hb : c.base.HasExternal)
+    (hm : c.matrix = some .ajin ∨ c.matrix = some .aspectual) :
+    c.subjectMarker = some .setB ↔ c.lang.urn = .required := by
+  obtain ⟨-, -, hs, -⟩ := h
+  rcases c with ⟨⟨urn, absPos, suffix⟩, base, strategy, matrix⟩
+  cases urn <;> rcases hm with hm | hm <;> subst hm <;>
+    simp_all [subjectMarker, subject, Restricted, Licensing.marker]
 
--- ============================================================================
--- § 8: Bridge to Existing Fragments
--- ============================================================================
+/-- (117): the object of a passive nominalization or of an unrestricted transitive is
+cross-referenced by set A exactly when the restriction holds. -/
+theorem objectMarker_setA_iff (h : c.WellFormed) (ht : c.base = .transitive)
+    (ha : c.strategy ≠ some .antipassive) (hi : c.strategy ≠ some .incorporation) :
+    c.objectMarker = some .setA ↔ c.lang.urn = .required := by
+  obtain ⟨hst, -, -, ho⟩ := h
+  rcases c with ⟨⟨urn, absPos, suffix⟩, base, strategy, matrix⟩
+  subst ht
+  cases urn <;> cases absPos <;> rcases strategy with _ | (_ | _ | _) <;> by_cases hs : suffix <;>
+    simp_all [objectMarker, object, Restricted, Base.HasExternal, Licensing.marker]
 
-/-- Kaqchikel's perfective (ergative) case assignment from the existing
-    fragment: A = ERG, S = P = ABS. Confirms the ergative side is
-    shared across all three languages. -/
-theorem kaqchikel_perfective_bridge :
-    (Mayan.caseKaqchikel .Perf) .A = .erg ∧
-    (Mayan.caseKaqchikel .Perf) .P = .abs ∧
-    (Mayan.caseKaqchikel .Perf) .S = .abs :=
-  ⟨Kaqchikel.A_case, Kaqchikel.P_case, Kaqchikel.S_case⟩
+/-- The progressive derivations assign the dissertation's Cases: absolutive to the subject and
+genitive to the object under the restriction, and the reverse without it. -/
+theorem case_eq_caseOf (h : c.WellFormed) (ht : c.base = .transitive)
+    (hm : c.matrix = some .ajin ∨ c.matrix = some .aspectual)
+    (ha : c.strategy ≠ some .antipassive) (hi : c.strategy ≠ some .incorporation) :
+    c.subject.bind Licensing.case = c.lang.caseOf .A ∧
+      c.object.bind Licensing.case = c.lang.caseOf .P := by
+  obtain ⟨hst, -, hs, ho⟩ := h
+  rcases c with ⟨⟨urn, absPos, suffix⟩, base, strategy, matrix⟩
+  subst ht
+  cases urn <;> cases absPos <;> rcases strategy with _ | (_ | _ | _) <;> by_cases hs : suffix <;>
+    rcases hm with hm | hm <;> subst hm <;>
+    simp_all [subject, object, Restricted, Base.HasExternal, Licensing.case,
+      Nominalization.caseOf, Nominalization.phaseHead, Nominalization.caseless,
+      Nominalization.VerbAssignsAbs]
 
-/-- Chol's perfective alignment matches the same ergative pattern. -/
-theorem chol_perfective_bridge :
-    (Mayan.caseChol .Perf) .A = .erg ∧
-    (Mayan.caseChol .Perf) .P = .abs ∧
-    (Mayan.caseChol .Perf) .S = .abs := ⟨rfl, rfl, rfl⟩
-
-/-- Q'anjob'al's perfective alignment matches the same ergative pattern. -/
-theorem qanjobal_perfective_bridge :
-    (Mayan.caseQanjobalan .Perf) .A = .erg ∧
-    (Mayan.caseQanjobalan .Perf) .P = .abs ∧
-    (Mayan.caseQanjobalan .Perf) .S = .abs := ⟨rfl, rfl, rfl⟩
-
-/-- All three languages share ergative alignment in the perfective. -/
-theorem shared_ergative :
-    (Mayan.caseKaqchikel .Perf) .A =
-      (Mayan.caseChol .Perf) .A ∧
-    (Mayan.caseChol .Perf) .A =
-      (Mayan.caseQanjobalan .Perf) .A := ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 9: Case-to-Marker Bridge
--- ============================================================================
-
-/-- Map Minimalist case values to the Mayan marker set that realizes them.
-    ERG and GEN are both realized by set A (they are homophonous in Mayan).
-    ABS is realized by set B. The wildcard maps non-Mayan cases (NOM, ACC,
-    DAT, etc.) to set A — these should never appear in Mayan fragments. -/
-def caseToMarker : Case → MarkerSet
-  | .erg => .setA
-  | .gen => .setA
-  | .abs => .setB
-  | _    => .setA
-
-/-- ERG/GEN homophony: both map to set A. -/
-theorem erg_gen_homophonous :
-    caseToMarker .erg = caseToMarker .gen := rfl
-
-/-- Chol's fragment case values, mapped through the Mayan marker bridge,
-    yield the predicted accusative-side pattern. -/
-theorem chol_case_to_marker_bridge :
-    caseToMarker ((Mayan.caseChol .Imp) .A) = cholPattern.sMarker ∧
-    caseToMarker ((Mayan.caseChol .Imp) .P) = cholPattern.oMarker :=
-  ⟨rfl, rfl⟩
-
-/-- Q'anjob'al's fragment case values yield the same pattern as Chol. -/
-theorem qanjobal_case_to_marker_bridge :
-    caseToMarker ((Mayan.caseQanjobalan .Prog) .A) = cholPattern.sMarker ∧
-    caseToMarker ((Mayan.caseQanjobalan .Prog) .P) = cholPattern.oMarker :=
-  ⟨rfl, rfl⟩
-
-/-- Kaqchikel's fragment accusative-side case values, mapped through the
-    Mayan marker bridge, yield the predicted Kaqchikel alignment pattern. -/
-theorem kaqchikel_case_to_marker_bridge :
-    caseToMarker ((Mayan.caseKaqchikel .Prog) .A) = kaqchikelPattern.sMarker ∧
-    caseToMarker ((Mayan.caseKaqchikel .Prog) .P) = kaqchikelPattern.oMarker :=
-  ⟨rfl, rfl⟩
-
-/-- The accusative-side case contrast between Kaqchikel and Chol is a
-    true mirror image: agent and patient cases are swapped. -/
-theorem acc_case_mirror :
-    (Mayan.caseKaqchikel .Prog) .A =
-      (Mayan.caseChol .Imp) .P ∧
-    (Mayan.caseKaqchikel .Prog) .P =
-      (Mayan.caseChol .Imp) .A := ⟨rfl, rfl⟩
-
-/-- End-to-end: for all three languages, the fragment case data (mapped
-    through the marker bridge) matches the parametrically derived pattern.
-    This closes the argumentation chain from parameters → alignment → case → markers. -/
-theorem end_to_end_all_languages :
-    -- Kaqchikel: fragment cases match derived pattern
-    (caseToMarker ((Mayan.caseKaqchikel .Prog) .A) =
-      (deriveAccPattern kaqchikelParams).sMarker ∧
-     caseToMarker ((Mayan.caseKaqchikel .Prog) .P) =
-      (deriveAccPattern kaqchikelParams).oMarker) ∧
-    -- Chol: fragment cases match derived pattern
-    (caseToMarker ((Mayan.caseChol .Imp) .A) =
-      (deriveAccPattern cholParams).sMarker ∧
-     caseToMarker ((Mayan.caseChol .Imp) .P) =
-      (deriveAccPattern cholParams).oMarker) ∧
-    -- Q'anjob'al: fragment cases match derived pattern
-    (caseToMarker ((Mayan.caseQanjobalan .Prog) .A) =
-      (deriveAccPattern qanjobalParams).sMarker ∧
-     caseToMarker ((Mayan.caseQanjobalan .Prog) .P) =
-      (deriveAccPattern qanjobalParams).oMarker) :=
-  ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
-
--- ============================================================================
--- § 10: Split Ergativity as Aspect-Conditioned
--- ============================================================================
-
-/-- The Mayan split is aspect-conditioned: perfective → ergative,
-    non-perfective → accusative. Instantiates the same `SplitErgativity`
-    infrastructure as the Hindi example in `Alignment.SplitErgativity`. -/
-def mayanSplit : Alignment.SplitErgativity Alignment.Aspect :=
-  { ergCondition := λ a => a == .perfective }
-
-theorem mayan_perfective_erg :
-    mayanSplit.alignment .perfective = .ergative := rfl
-
-theorem mayan_imperfective_acc :
-    mayanSplit.alignment .imperfective = .accusative := rfl
-
-/-- Mayan and Hindi have the same aspect-conditioned split direction:
-    perfective triggers ergativity in both language families. -/
-theorem mayan_hindi_same_split : mayanSplit = Alignment.hindiSplit := rfl
-
--- ============================================================================
--- § 11: Cross-Study Bridge ([coon-mateo-pedro-preminger-2014])
--- ============================================================================
-
-open Mayan (toCaseLocus)
-
-open CoonMateoPedroPreminger2014 in
-/-- Imanishi's RON determines the accusative-side alignment (this study),
-    while CMP2014's CaseLocus determines syntactic ergativity (ergative side).
-    Together they form the full Mayan parameterization: RON for the
-    accusative side, ABSPosition→CaseLocus for the ergative side. -/
-theorem cmp2014_ergativity_from_params (p : MayanParams) :
-    SyntacticallyErgative (toCaseLocus p.absPos) ↔ p.absPos = .high := by
-  rw [syntacticallyErgative_iff]; cases p.absPos <;> simp [toCaseLocus]
-
-open CoonMateoPedroPreminger2014 in
-/-- The two studies agree on Kaqchikel: RON active + HIGH-ABS = syntactic
-    ergativity + Kaqchikel-type accusative alignment. -/
-theorem kaqchikel_full_profile :
-    deriveAccPattern kaqchikelParams = kaqchikelPattern ∧
-    SyntacticallyErgative (toCaseLocus kaqchikelParams.absPos) :=
-  ⟨rfl, by decide⟩
-
-open CoonMateoPedroPreminger2014 in
-/-- The two studies agree on Chol: RON inactive + LOW-ABS = no syntactic
-    ergativity + Chol-type accusative alignment. -/
-theorem chol_full_profile :
-    deriveAccPattern cholParams = cholPattern ∧
-    ¬ SyntacticallyErgative (toCaseLocus cholParams.absPos) :=
-  ⟨rfl, by decide⟩
-
-open CoonMateoPedroPreminger2014 in
-/-- Q'anjob'al shows that the two dimensions are independent: HIGH-ABS
-    (like Kaqchikel) but RON inactive (like Chol). Syntactic ergativity
-    yes, but Chol-type accusative alignment. -/
-theorem qanjobal_cross_cutting :
-    SyntacticallyErgative (toCaseLocus qanjobalParams.absPos) ∧
-    deriveAccPattern qanjobalParams = cholPattern :=
-  ⟨by decide, rfl⟩
+end Clause
 
 end Imanishi2020
