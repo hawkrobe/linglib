@@ -1,5 +1,4 @@
 import Linglib.Pragmatics.RSA.Basic
-import Mathlib.Probability.ProbabilityMassFunction.Basic
 
 /-!
 # QUD-projected listeners
@@ -80,60 +79,3 @@ theorem projListener_apply_singleton_of_injective (h : Function.Injective (proje
 end ProjListener
 
 end RSA
-
-/-! ### QUD-projected aggregation of weights
-
-The finite-sum form of the projection over weight functions, consumed by the studies not yet
-on the kernel pipeline. -/
-
-namespace RSA.QUD
-
-/-- QUD-projected aggregation: sum of `weight w'` over the
-QUD-equivalence class of `w` under projection `project g`. -/
-noncomputable def proj {W G β : Type*} [Fintype W] [DecidableEq β]
-    (project : G → W → β) (weight : W → ℝ≥0∞) (g : G) (w : W) : ℝ≥0∞ :=
-  ∑ w' ∈ (Finset.univ : Finset W).filter (fun w' => project g w' = project g w),
-    weight w'
-
-variable {W G β : Type*} [Fintype W] [DecidableEq β]
-  (project : G → W → β) (weight : W → ℝ≥0∞) (g : G) (w : W)
-
-/-- The world `w` is in its own QUD-equivalence class, so its weight
-provides a lower bound on the QUD-projected aggregation. -/
-theorem self_le_proj : weight w ≤ proj project weight g w :=
-  Finset.single_le_sum (f := weight) (fun _ _ => zero_le)
-    (Finset.mem_filter.mpr ⟨Finset.mem_univ _, rfl⟩)
-
-/-- The QUD-projected aggregation is positive iff some world in the same QUD-equivalence class
-has positive weight. -/
-theorem proj_pos_iff_exists_class_member :
-    0 < proj project weight g w ↔
-      ∃ w' ∈ (Finset.univ : Finset W).filter
-              (fun w' => project g w' = project g w),
-        0 < weight w' :=
-  Finset.sum_pos_iff_of_nonneg (fun _ _ => zero_le)
-
-/-- The QUD-projected aggregation is bounded by the total weight. -/
-theorem proj_le_total : proj project weight g w ≤ ∑ w' : W, weight w' :=
-  Finset.sum_le_sum_of_subset (Finset.filter_subset _ _)
-
-end RSA.QUD
-
-namespace RSA.QUD
-
-variable {W G β : Type*} [Fintype W] [DecidableEq β]
-  (project : G → W → β) (p : PMF W) (g : G) (w : W)
-
-/-- When the weight is a PMF, the QUD-projected aggregation is bounded
-by 1 (the equivalence class is a subset of the support). -/
-theorem proj_le_one_of_pmf : proj project (⇑p) g w ≤ 1 := by
-  calc proj project (⇑p) g w
-      ≤ ∑ w' : W, p w' := proj_le_total project (⇑p) g w
-    _ = ∑' w' : W, p w' := (tsum_fintype _).symm
-    _ = 1 := p.tsum_coe
-
-/-- When the weight is a PMF, the QUD-projected aggregation is finite. -/
-theorem proj_ne_top_of_pmf : proj project (⇑p) g w ≠ ⊤ :=
-  (lt_of_le_of_lt (proj_le_one_of_pmf project p g w) ENNReal.one_lt_top).ne
-
-end RSA.QUD
