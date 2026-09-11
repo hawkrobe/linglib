@@ -1,0 +1,766 @@
+[
+  {
+    "id": "hayes1995_katabt",
+    "source": {
+      "bibkey": "hayes-1995",
+      "paperLabel": "(12a)"
+    },
+    "language": "egyp1253",
+    "primaryText": "katábt",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I wrote",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.3"
+      ],
+      [
+        "weights",
+        "L S"
+      ],
+      [
+        "stress",
+        "final"
+      ],
+      [
+        "register",
+        "colloquial Cairene"
+      ],
+      [
+        "source",
+        "Harrell 1957, 15"
+      ]
+    ],
+    "comment": "Superheavy final, heavy after Consonant Extrametricality.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1995_hajjaan",
+    "source": {
+      "bibkey": "hayes-1995",
+      "paperLabel": "(12a)"
+    },
+    "language": "egyp1253",
+    "primaryText": "hajjá:n",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "pilgrimages",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.3"
+      ],
+      [
+        "weights",
+        "H S"
+      ],
+      [
+        "stress",
+        "final"
+      ],
+      [
+        "register",
+        "Cairene Classical"
+      ],
+      [
+        "source",
+        "Mitchell 1975, 77"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1995_gatoo",
+    "source": {
+      "bibkey": "hayes-1995",
+      "paperLabel": "(12a)"
+    },
+    "language": "egyp1253",
+    "primaryText": "gató:",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "cake",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.3"
+      ],
+      [
+        "weights",
+        "L S"
+      ],
+      [
+        "stress",
+        "final"
+      ],
+      [
+        "register",
+        "colloquial Cairene"
+      ],
+      [
+        "source",
+        "Mitchell 1975, 81"
+      ]
+    ],
+    "comment": "Final CV: counts as heavy in colloquial forms.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1995_beetak",
+    "source": {
+      "bibkey": "hayes-1995",
+      "paperLabel": "(12b)"
+    },
+    "language": "egyp1253",
+    "primaryText": "bé:tak",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "your (m.sg.) house",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.3"
+      ],
+      [
+        "weights",
+        "H L"
+      ],
+      [
+        "stress",
+        "penult"
+      ],
+      [
+        "register",
+        "colloquial Cairene"
+      ],
+      [
+        "source",
+        "Harrell 1957, 15"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1995_katabta",
+    "source": {
+      "bibkey": "hayes-1995",
+      "paperLabel": "(12b)"
+    },
+    "language": "egyp1253",
+    "primaryText": "katábta",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you (m.sg.) wrote",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.3"
+      ],
+      [
+        "weights",
+        "L H L"
+      ],
+      [
+        "stress",
+        "penult"
+      ],
+      [
+        "register",
+        "Cairene Classical"
+      ],
+      [
+        "source",
+        "Mitchell 1975, 78"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1995_mudarris",
+    "source": {
+      "bibkey": "hayes-1995",
+      "paperLabel": "(12b)"
+    },
+    "language": "egyp1253",
+    "primaryText": "mudárris",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "teacher",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.3"
+      ],
+      [
+        "weights",
+        "L H L"
+      ],
+      [
+        "stress",
+        "penult"
+      ],
+      [
+        "register",
+        "colloquial Cairene"
+      ],
+      [
+        "source",
+        "McCarthy 1979a, 446"
+      ]
+    ],
+    "comment": "Final CVC demoted to light; (15b), (16b).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1995_haadaani",
+    "source": {
+      "bibkey": "hayes-1995",
+      "paperLabel": "(12b)"
+    },
+    "language": "egyp1253",
+    "primaryText": "ha:ðá:ni",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "these (m.dual)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.3"
+      ],
+      [
+        "weights",
+        "H H L"
+      ],
+      [
+        "stress",
+        "penult"
+      ],
+      [
+        "register",
+        "Cairene Classical"
+      ],
+      [
+        "source",
+        "Mitchell 1975, 77"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1995_qattaala",
+    "source": {
+      "bibkey": "hayes-1995",
+      "paperLabel": "(12c.i.A)"
+    },
+    "language": "egyp1253",
+    "primaryText": "qattála",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "he killed",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.3"
+      ],
+      [
+        "weights",
+        "H L L"
+      ],
+      [
+        "stress",
+        "penult"
+      ],
+      [
+        "register",
+        "Cairene Classical"
+      ],
+      [
+        "source",
+        "Mitchell 1975, 77"
+      ],
+      [
+        "parity",
+        "even from the preceding heavy"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1995_mudarrisit",
+    "source": {
+      "bibkey": "hayes-1995",
+      "paperLabel": "(12c.i.A)"
+    },
+    "language": "egyp1253",
+    "primaryText": "mudarrísit",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "teacher (f. construct)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.3"
+      ],
+      [
+        "weights",
+        "L H L L"
+      ],
+      [
+        "stress",
+        "penult"
+      ],
+      [
+        "register",
+        "colloquial Cairene"
+      ],
+      [
+        "source",
+        "McCarthy 1979a, 446"
+      ],
+      [
+        "parity",
+        "even from the preceding heavy"
+      ]
+    ],
+    "comment": "(15c), (16c).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1995_Padwiyatuhu",
+    "source": {
+      "bibkey": "hayes-1995",
+      "paperLabel": "(12c.i.A)"
+    },
+    "language": "egyp1253",
+    "primaryText": "ʔadwiyatúhu",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "his drugs (nom.)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.3"
+      ],
+      [
+        "weights",
+        "H L L L L"
+      ],
+      [
+        "stress",
+        "penult"
+      ],
+      [
+        "register",
+        "Cairene Classical"
+      ],
+      [
+        "source",
+        "Mitchell 1975, 79"
+      ],
+      [
+        "parity",
+        "even from the preceding heavy"
+      ]
+    ],
+    "comment": "(15c), (16c).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1995_fihim",
+    "source": {
+      "bibkey": "hayes-1995",
+      "paperLabel": "(12c.i.B)"
+    },
+    "language": "egyp1253",
+    "primaryText": "fíhim",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "he understood",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.3"
+      ],
+      [
+        "weights",
+        "L L"
+      ],
+      [
+        "stress",
+        "penult"
+      ],
+      [
+        "register",
+        "colloquial Cairene"
+      ],
+      [
+        "source",
+        "Kenstowicz 1980, 42"
+      ],
+      [
+        "parity",
+        "even from the word beginning"
+      ]
+    ],
+    "comment": "(15c), (16c).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1995_sajaratun",
+    "source": {
+      "bibkey": "hayes-1995",
+      "paperLabel": "(12c.i.B)"
+    },
+    "language": "egyp1253",
+    "primaryText": "šajarátun",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "tree (nom.)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.3"
+      ],
+      [
+        "weights",
+        "L L L L"
+      ],
+      [
+        "stress",
+        "penult"
+      ],
+      [
+        "register",
+        "Cairene Classical"
+      ],
+      [
+        "source",
+        "Mitchell 1975, 78"
+      ],
+      [
+        "parity",
+        "even from the word beginning"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1995_katabitu",
+    "source": {
+      "bibkey": "hayes-1995",
+      "paperLabel": "(12c.i.B)"
+    },
+    "language": "egyp1253",
+    "primaryText": "katabítu",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "she wrote it (m.)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.3"
+      ],
+      [
+        "weights",
+        "L L L L"
+      ],
+      [
+        "stress",
+        "penult"
+      ],
+      [
+        "register",
+        "colloquial Cairene"
+      ],
+      [
+        "source",
+        "Harrell 1957, 15"
+      ],
+      [
+        "parity",
+        "even from the word beginning"
+      ]
+    ],
+    "comment": "(15c), (16c).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1995_sajaratuhuma",
+    "source": {
+      "bibkey": "hayes-1995",
+      "paperLabel": "(12c.i.B)"
+    },
+    "language": "egyp1253",
+    "primaryText": "šajaratuhúma:",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "their (dual) tree (nom.)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.3"
+      ],
+      [
+        "weights",
+        "L L L L L L"
+      ],
+      [
+        "stress",
+        "penult"
+      ],
+      [
+        "register",
+        "Cairene Classical"
+      ],
+      [
+        "source",
+        "Mitchell 1975, 79"
+      ],
+      [
+        "parity",
+        "even from the word beginning"
+      ]
+    ],
+    "comment": "Final CV: light by Mora Extrametricality; (15c), (16c).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1995_Pinkasara",
+    "source": {
+      "bibkey": "hayes-1995",
+      "paperLabel": "(12c.ii.A)"
+    },
+    "language": "egyp1253",
+    "primaryText": "ʔinkásara",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "it got broken",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.3"
+      ],
+      [
+        "weights",
+        "H L L L"
+      ],
+      [
+        "stress",
+        "antepenult"
+      ],
+      [
+        "register",
+        "Cairene Classical"
+      ],
+      [
+        "source",
+        "Mitchell 1975, 77"
+      ],
+      [
+        "parity",
+        "odd from the preceding heavy"
+      ]
+    ],
+    "comment": "(15d), (16d).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1995_Padwiyatuhuma",
+    "source": {
+      "bibkey": "hayes-1995",
+      "paperLabel": "(12c.ii.A)"
+    },
+    "language": "egyp1253",
+    "primaryText": "ʔadwiyatúhuma:",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "their (dual) drugs",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.3"
+      ],
+      [
+        "weights",
+        "H L L L L L"
+      ],
+      [
+        "stress",
+        "antepenult"
+      ],
+      [
+        "register",
+        "Cairene Classical"
+      ],
+      [
+        "source",
+        "Mitchell 1975, 79"
+      ],
+      [
+        "parity",
+        "odd from the preceding heavy"
+      ]
+    ],
+    "comment": "(15d), (16d).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1995_kataba",
+    "source": {
+      "bibkey": "hayes-1995",
+      "paperLabel": "(12c.ii.B)"
+    },
+    "language": "egyp1253",
+    "primaryText": "kátaba",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "he wrote",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.3"
+      ],
+      [
+        "weights",
+        "L L L"
+      ],
+      [
+        "stress",
+        "antepenult"
+      ],
+      [
+        "register",
+        "Cairene Classical"
+      ],
+      [
+        "source",
+        "Mitchell 1975, 77"
+      ],
+      [
+        "parity",
+        "odd from the word beginning"
+      ]
+    ],
+    "comment": "(15d), (16d), (17): the stray final light cannot be promoted.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1995_sajaratuhu",
+    "source": {
+      "bibkey": "hayes-1995",
+      "paperLabel": "(12c.ii.B)"
+    },
+    "language": "egyp1253",
+    "primaryText": "šajarátuhu",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "his tree (nom.)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1.3"
+      ],
+      [
+        "weights",
+        "L L L L L"
+      ],
+      [
+        "stress",
+        "antepenult"
+      ],
+      [
+        "register",
+        "Cairene Classical"
+      ],
+      [
+        "source",
+        "Mitchell 1975, 80"
+      ],
+      [
+        "parity",
+        "odd from the word beginning"
+      ]
+    ],
+    "comment": "(15d), (16d).",
+    "lgrConformance": ""
+  }
+]
