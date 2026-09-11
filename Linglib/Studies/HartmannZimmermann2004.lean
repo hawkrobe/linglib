@@ -14,47 +14,45 @@ import Linglib.Fragments.Tangale.Phonology
 import Linglib.Data.Examples.HartmannZimmermann2004
 
 /-!
-# Tangale focus strategies
+# Hartmann and Zimmermann (2004): Focus strategies in Chadic
 
-Formalises [hartmann-zimmermann-2004]: Tangale marks focus by four
-different devices conditioned on subjecthood, aspect, and transitivity —
-obligatory postverbal movement for subjects, the suffix *-i* for
-intransitive predicate focus, a prosodic boundary (vowel elision and
-left-line delinking blocked) for perfective transitive foci, and
-*nothing at all* in the progressive. The boundary underdetermines the
-focus extent (V-, VP-, and OBJ-focus are string- and pitch-identical),
-and the particle *núm* 'only' associates with any of the three extents
-from one fixed DP-adjacent position — association is anaphoric, not
-structural. The boundary itself is derived: [truckenbrodt-1999]-style
-focus alignment dominating phrasal economy places the φ-edge exactly
-in the focused cells, and [kidda-1985]'s elision cascade makes it
-audible.
+This file formalizes [hartmann-zimmermann-2004]'s account of Tangale, which marks focus by four
+devices conditioned on subjecthood, aspect and transitivity: obligatory postverbal movement for
+subjects, the suffix *-i* for intransitive predicate focus, a prosodic boundary, audible as
+blocked vowel elision and left-line delinking, for perfective transitive foci, and nothing at
+all in the progressive. `realize` gives each configuration its reflexes, so focus marking is not
+obligatory, and the boundary underdetermines the focus extent
+(`boundary_underdetermines_extent`): verb, VP and object focus are string- and pitch-identical,
+and the particle *núm* 'only' associates with any of the three from one fixed DP-adjacent
+position, three contrast-set resolutions of one string (`num_readings_injOn`). The boundary
+itself is derived: focus alignment dominating phrasal economy, after [truckenbrodt-1999], places
+the φ-edge exactly in the focused cells (`focused_parse_separates`), and [kidda-1985]'s elision
+cascade makes it audible.
 
 ## Implementation notes
 
-Realisation uses the shared `Features.Marking` vocabulary
-(reflex lists; the paper's strategy labels are read off the reflex
-shape in the data linkage). Configurations carry the fragment's
-tense–aspect type directly (`Tangale.TAM`): the perfective rows are
-[kidda-1985]'s singular perfective and the paper's progressive is the
-fragment's continuous (preposed *né*, transcribed *n* by the paper),
-with the paradigm restriction in `Config.WF`; `marking_matches_rows`
-pins the identification to the data rows. The *núm* readings use the strong-theory
-`Focus.onlyVia`: one string, three contrast-set resolutions.
-
-The paper's fn. 6 notes the suffix *-i* does not occur with all
-intransitive verbs; `realize` idealises it as the intransitive
-perfective strategy. The boundary diagnosis is grounded in
-`Fragments/Tangale/Phonology.lean`: `prosodic_reflex_audible` cites
-[kidda-1985]'s elision cascade as what makes the boundary reflex
-perceptible.
+Realisation uses the shared `Features.Marking` reflex vocabulary, and the paper's strategy
+labels are read off the reflex shape where `marking_matches_rows` pins the configurations to the
+data rows. Configurations carry the fragment's tense–aspect type: the perfective rows are
+[kidda-1985]'s singular perfective and the paper's progressive is the fragment's continuous
+(preposed *né*, transcribed *n* by the paper), with the paradigm restriction in the
+well-formedness predicate. The paper's fn. 6 notes that *-i* does not occur with all
+intransitive verbs; the realisation idealises it as the intransitive perfective strategy. The
+example numbers and sections were checked against the journal version of the paper,
+[hartmann-zimmermann-2007-tangale].
 
 ## TODO
 
-* The interleaved elision-feeding-tone-shift derivations of
-  [kidda-1985] (34) on lexical forms.
-* The paper's two solutions (§6): the prosodic-boundary account vs the
-  subjects-vs-non-subjects account as rival `Predict`-style theories.
+* The interleaved elision-feeding-tone-shift derivations of [kidda-1985] (34) on lexical forms.
+* The paper's two solutions (§6): the prosodic-boundary account against the subjects-versus-
+  non-subjects account as rival theories.
+
+## References
+
+* [hartmann-zimmermann-2004]
+* [hartmann-zimmermann-2007-tangale]
+* [truckenbrodt-1999]
+* [kidda-1985]
 -/
 
 namespace HartmannZimmermann2004
@@ -120,20 +118,20 @@ theorem progressive_nonsubject_unmarked (c : Config)
 with no overt reflex — (32a), object focus in the progressive. -/
 theorem focus_marking_not_obligatory :
     ∃ c : Config, c.WF ∧ ¬ (realize c).IsOvert :=
-  ⟨⟨.object, .continuous, true⟩, ⟨fun _ => rfl, Or.inr rfl⟩, fun h => h rfl⟩
+  ⟨⟨.object, .continuous, true⟩, ⟨λ _ => rfl, Or.inr rfl⟩, λ h => h rfl⟩
 
 /-- Tangale refutes the universalist claim that every focus receives an
 overt reflex — the Tangale side of the counterexample the Hausa
 chapter states against the Basic Focus Rule. -/
 theorem tangale_refutes_perceptibility :
     ¬ EveryTargetOvert realize :=
-  fun h => h ⟨.object, .continuous, true⟩ rfl
+  λ h => h ⟨.object, .continuous, true⟩ rfl
 
 /-- The boundary underdetermines the focus extent: on the transitive
 perfective non-subject cells, `focused` does not factor through the
 reflexes — (25a–c) are string- and pitch-identical. -/
 theorem boundary_underdetermines_extent :
-    ¬ Function.FactorsThroughOn Config.focused (fun c => (realize c).reflexes)
+    ¬ Function.FactorsThroughOn Config.focused (λ c => (realize c).reflexes)
         {c | c.tam = .perfective ∧ c.transitive ∧ c.focused ≠ .subject} :=
   Function.not_factorsThroughOn_iff_exists_witness.mpr
     ⟨⟨.verb, .perfective, true⟩, ⟨.object, .perfective, true⟩,
@@ -162,11 +160,11 @@ private def separated : Prosody.Tree :=
 /-- ALIGN-Focus: violated when no φ-edge sits at the focus's left edge
 (leaf offset 1, the object). -/
 private def alignFocus : Constraint Prosody.Tree :=
-  .binary (fun t => ¬ ∃ s ∈ RoseTree.spansOf Prosody.Constituent.isPh t, s.1 = 1)
+  .binary (λ t => ¬ ∃ s ∈ RoseTree.spansOf Prosody.Constituent.isPh t, s.1 = 1)
 
 /-- Phrasal economy: one violation per φ. -/
 private def starPhi : Constraint Prosody.Tree :=
-  fun t => (RoseTree.spansOf Prosody.Constituent.isPh t).length
+  λ t => (RoseTree.spansOf Prosody.Constituent.isPh t).length
 
 /-- Object focus: alignment dominates economy, and the separated parse
 wins — the derived φ-edge after the verb. -/
@@ -223,11 +221,11 @@ fail — one world per free Boolean field. -/
 theorem alt_irredundant : Irredundant alt := by
   intro i
   fin_cases i
-  · exact ⟨⟨true, false, false⟩, rfl, fun j hj => by
+  · exact ⟨⟨true, false, false⟩, rfl, λ j hj => by
       fin_cases j <;> first | exact absurd rfl hj | exact Bool.false_ne_true⟩
-  · exact ⟨⟨false, true, false⟩, rfl, fun j hj => by
+  · exact ⟨⟨false, true, false⟩, rfl, λ j hj => by
       fin_cases j <;> first | exact absurd rfl hj | exact Bool.false_ne_true⟩
-  · exact ⟨⟨false, false, true⟩, rfl, fun j hj => by
+  · exact ⟨⟨false, false, true⟩, rfl, λ j hj => by
       fin_cases j <;> first | exact absurd rfl hj | exact Bool.false_ne_true⟩
 
 /-- The contrast sets by association extent: object ((36a),
