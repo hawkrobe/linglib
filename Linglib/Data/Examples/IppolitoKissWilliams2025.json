@@ -1,26 +1,410 @@
 [
   {
-    "id": "ippolitokisswilliams2025_ex2",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(2)"},
+    "id": "ippolitokisswilliams2025_s1",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(1)"
+    },
     "language": "stan1293",
-    "primaryText": "The house is beautiful, only it's too expensive.",
+    "primaryText": "Silvia only visited Paris.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "The house is beautiful, only it's too expensive.",
-    "context": "Plausible QUD (per the paper's section 5.1 discussion of this example): Should we buy the house?",
+    "translation": "",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "declarative"],
-      ["position", "right"],
-      ["particle", "only"]
+      [
+        "section",
+        "1"
+      ],
+      [
+        "use",
+        "exclusive only, focus on Paris"
+      ]
     ],
-    "comment": "The paper's basic English discourse-only example; repeated as (4) and (17)."
+    "comment": "",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex6a",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(6a)"},
+    "id": "ippolitokisswilliams2025_s2",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(2)"
+    },
+    "language": "stan1293",
+    "primaryText": "The house is beautiful, only it's too expensive.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Plausible QUD: Should we buy the house?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "clauseType",
+        "declarative"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s3a",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(3a)"
+    },
+    "language": "stan1293",
+    "primaryText": "He is a nice man, only he talks too much.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "source",
+        "Jespersen 1954"
+      ],
+      [
+        "clauseType",
+        "declarative"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s3b",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(3b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Fine, I'll go to Oleana with you, only where is it?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "source",
+        "von Fintel and Iatridou 2019"
+      ],
+      [
+        "clauseType",
+        "canonicalWhQ"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s3c",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(3c)"
+    },
+    "language": "stan1293",
+    "primaryText": "It's raining, only don't use that as an excuse to skip class!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "source",
+        "von Fintel and Iatridou 2019"
+      ],
+      [
+        "clauseType",
+        "imperative"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s3d",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(3d)"
+    },
+    "language": "stan1293",
+    "primaryText": "The house is beautiful, only what a neighborhood!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "clauseType",
+        "exclamative"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s5a",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(5a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The house is beautiful, only has it been renovated recently?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Plausible QUD: Should we buy the house?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "clauseType",
+        "canonicalPolarQ"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s5b",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(5b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The house is beautiful, only wasn't it sold just now?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Plausible QUD: Should we buy the house?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "clauseType",
+        "highNegPolarQ"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s5c",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(5c)"
+    },
+    "language": "stan1293",
+    "primaryText": "The house is beautiful, only when was it renovated?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Plausible QUD: Should we buy the house?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "clauseType",
+        "canonicalWhQ"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s5d",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(5d)"
+    },
+    "language": "stan1293",
+    "primaryText": "The house is beautiful, only who would buy it for 2 million dollars?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Plausible QUD: Should we buy the house?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "clauseType",
+        "negRhetoricalWhQ"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s5e",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(5e)"
+    },
+    "language": "stan1293",
+    "primaryText": "The house is beautiful, only who will pay for it? (Me, of course, because you can't afford it.)",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Plausible QUD: Should we buy the house?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "clauseType",
+        "posRhetoricalWhQ"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s6a",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(6a)"
+    },
     "language": "stan1293",
     "primaryText": "Is this house beautiful? #Only it's expensive.",
     "discourseSegments": [
@@ -28,21 +412,38 @@
       "#Only it's expensive."
     ],
     "glossedTokens": [],
-    "translation": "Is this house beautiful? Only it's expensive.",
-    "context": "",
+    "translation": "",
+    "context": "Plausible QUD: Should we buy the house?",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "canonicalPolarQ"],
-      ["position", "left"],
-      ["particle", "only"]
+      [
+        "section",
+        "2"
+      ],
+      [
+        "clauseType",
+        "canonicalPolarQ"
+      ],
+      [
+        "position",
+        "left"
+      ],
+      [
+        "particle",
+        "only"
+      ]
     ],
-    "comment": "Canonical info-seeking polar question as left argument: # in the paper. The speaker believes no answer, so S cannot support any QUD answer."
+    "comment": "The speaker believes no answer, so the left argument supports nothing.",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex6b",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(6b)"},
+    "id": "ippolitokisswilliams2025_s6b",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(6b)"
+    },
     "language": "stan1293",
     "primaryText": "Isn't this house beautiful? Only it's expensive.",
     "discourseSegments": [
@@ -50,22 +451,42 @@
       "Only it's expensive."
     ],
     "glossedTokens": [],
-    "translation": "Isn't this house beautiful? Only it's expensive.",
-    "context": "",
+    "translation": "",
+    "context": "Plausible QUD: Should we buy the house?",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "highNegPolarQ"],
-      ["position", "left"],
-      ["particle", "only"],
-      ["interpretation", "committed"]
+      [
+        "section",
+        "2"
+      ],
+      [
+        "clauseType",
+        "highNegPolarQ"
+      ],
+      [
+        "position",
+        "left"
+      ],
+      [
+        "particle",
+        "only"
+      ],
+      [
+        "interpretation",
+        "committed"
+      ]
     ],
-    "comment": "Repeated as (21). Felicitous because this high-negation polar question is interpreted rhetorically: the speaker is fully committed to the house being beautiful. Contrast (22)."
+    "comment": "",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex6c",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(6c)"},
+    "id": "ippolitokisswilliams2025_s6c",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(6c)"
+    },
     "language": "stan1293",
     "primaryText": "When was this house renovated? #Only it's expensive.",
     "discourseSegments": [
@@ -73,21 +494,38 @@
       "#Only it's expensive."
     ],
     "glossedTokens": [],
-    "translation": "When was this house renovated? Only it's expensive.",
-    "context": "",
+    "translation": "",
+    "context": "Plausible QUD: Should we buy the house?",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "canonicalWhQ"],
-      ["position", "left"],
-      ["particle", "only"]
+      [
+        "section",
+        "2"
+      ],
+      [
+        "clauseType",
+        "canonicalWhQ"
+      ],
+      [
+        "position",
+        "left"
+      ],
+      [
+        "particle",
+        "only"
+      ]
     ],
-    "comment": "Canonical info-seeking wh-question as left argument: # in the paper."
+    "comment": "",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex6d",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(6d)"},
+    "id": "ippolitokisswilliams2025_s6d",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(6d)"
+    },
     "language": "stan1293",
     "primaryText": "Who wouldn't want this beautiful house? Only it's expensive.",
     "discourseSegments": [
@@ -95,46 +533,596 @@
       "Only it's expensive."
     ],
     "glossedTokens": [],
-    "translation": "Who wouldn't want this beautiful house? Only it's expensive.",
-    "context": "",
+    "translation": "",
+    "context": "Plausible QUD: Should we buy the house?",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "negRhetoricalWhQ"],
-      ["position", "left"],
-      ["particle", "only"],
-      ["interpretation", "committed"]
+      [
+        "section",
+        "2"
+      ],
+      [
+        "clauseType",
+        "negRhetoricalWhQ"
+      ],
+      [
+        "position",
+        "left"
+      ],
+      [
+        "particle",
+        "only"
+      ],
+      [
+        "interpretation",
+        "committed"
+      ]
     ],
-    "comment": "Repeated as (20). The speaker takes it to be true that everyone would want the house, so S supports an answer to the QUD."
+    "comment": "",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex6e",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(6e)"},
+    "id": "ippolitokisswilliams2025_s6e",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(6e)"
+    },
     "language": "stan1293",
     "primaryText": "Stop saying that I have financial difficulties. After all, who bought this house? Only I don't advertize it.",
     "discourseSegments": [
-      "Stop saying that I have financial difficulties.",
-      "After all, who bought this house?",
+      "Stop saying that I have financial difficulties. After all, who bought this house?",
       "Only I don't advertize it."
     ],
     "glossedTokens": [],
-    "translation": "Stop saying that I have financial difficulties. After all, who bought this house? Only I don't advertize it.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "posRhetoricalWhQ"],
-      ["position", "left"],
-      ["particle", "only"],
-      ["interpretation", "committed"]
+      [
+        "section",
+        "2"
+      ],
+      [
+        "clauseType",
+        "posRhetoricalWhQ"
+      ],
+      [
+        "position",
+        "left"
+      ],
+      [
+        "particle",
+        "only"
+      ],
+      [
+        "interpretation",
+        "committed"
+      ]
     ],
-    "comment": "Rhetorical question suggesting a positive answer ('I did'); the speaker is committed to that answer."
+    "comment": "",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex22",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(22)"},
+    "id": "ippolitokisswilliams2025_s7a",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(7a)"
+    },
+    "language": "stan1293",
+    "primaryText": "You are welcome to take my metro pass, only don't lose it!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "clauseType",
+        "imperative"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s7b",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(7b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Go take my metro pass, only I may need it tomorrow.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "clauseType",
+        "imperative"
+      ],
+      [
+        "position",
+        "left"
+      ],
+      [
+        "particle",
+        "only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s7c",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(7c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Go take my metro pass, only don't lose it!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "clauseType",
+        "imperative"
+      ],
+      [
+        "position",
+        "both"
+      ],
+      [
+        "particle",
+        "only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s8a",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(8a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The house is beautiful, only what a neighborhood!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Plausible QUD: Should we buy the house?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "clauseType",
+        "exclamative"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s8b",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(8b)"
+    },
+    "language": "stan1293",
+    "primaryText": "What a beautiful house! Only it's expensive.",
+    "discourseSegments": [
+      "What a beautiful house!",
+      "Only it's expensive."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Plausible QUD: Should we buy the house?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "clauseType",
+        "exclamative"
+      ],
+      [
+        "position",
+        "left"
+      ],
+      [
+        "particle",
+        "only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s8c",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(8c)"
+    },
+    "language": "stan1293",
+    "primaryText": "What a beautiful house! Only, what a sketchy neighborhood!",
+    "discourseSegments": [
+      "What a beautiful house!",
+      "Only, what a sketchy neighborhood!"
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Plausible QUD: Should we buy the house?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "clauseType",
+        "exclamative"
+      ],
+      [
+        "position",
+        "both"
+      ],
+      [
+        "particle",
+        "only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s9a",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(9a)"
+    },
+    "language": "stan1293",
+    "primaryText": "He is a nice man, but he talks too much.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "particle",
+        "but"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s9b",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(9b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The house is beautiful, but it's too expensive.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Plausible QUD: Should we buy the house?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "particle",
+        "but"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s17",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(17)"
+    },
+    "language": "stan1293",
+    "primaryText": "The house is beautiful, only it's too expensive.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Plausible QUD: Should we buy the house?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "clauseType",
+        "declarative"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "only"
+      ]
+    ],
+    "comment": "Both arguments answer subquestions of the QUD; the implicature holds with buying the house as the answer beauty supports and expense does not.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s18",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(18)"
+    },
+    "language": "stan1293",
+    "primaryText": "The house is beautiful, only can we afford it?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Plausible QUD: Should we buy the house?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "clauseType",
+        "canonicalPolarQ"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "only"
+      ]
+    ],
+    "comment": "The canonical question supports nothing, so the arguments merely do not agree.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s19a",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(19a)"
+    },
+    "language": "stan1293",
+    "primaryText": "She has an outstanding publication record, only is she a good enough teacher?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Will you hire Tea?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "clauseType",
+        "canonicalPolarQ"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s19b",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(19b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Does she have an outstanding publication record? Only she is (not) a good enough teacher.",
+    "discourseSegments": [
+      "Does she have an outstanding publication record?",
+      "Only she is (not) a good enough teacher."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Will you hire Tea?",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "clauseType",
+        "canonicalPolarQ"
+      ],
+      [
+        "position",
+        "left"
+      ],
+      [
+        "particle",
+        "only"
+      ]
+    ],
+    "comment": "An information-seeking left argument cannot support any answer to the QUD.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s20",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(20)"
+    },
+    "language": "stan1293",
+    "primaryText": "Who wouldn't want this beautiful house? Only it's expensive.",
+    "discourseSegments": [
+      "Who wouldn't want this beautiful house?",
+      "Only it's expensive."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Plausible QUD: Should we buy the house?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "clauseType",
+        "negRhetoricalWhQ"
+      ],
+      [
+        "position",
+        "left"
+      ],
+      [
+        "particle",
+        "only"
+      ],
+      [
+        "interpretation",
+        "committed"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s21",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(21)"
+    },
+    "language": "stan1293",
+    "primaryText": "Isn't this house beautiful? Only it's expensive.",
+    "discourseSegments": [
+      "Isn't this house beautiful?",
+      "Only it's expensive."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Plausible QUD: Should we buy the house?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "clauseType",
+        "highNegPolarQ"
+      ],
+      [
+        "position",
+        "left"
+      ],
+      [
+        "particle",
+        "only"
+      ],
+      [
+        "interpretation",
+        "committed"
+      ]
+    ],
+    "comment": "A rhetorical negative polar question, the speaker committed to the house's beauty.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s22",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(22)"
+    },
     "language": "stan1293",
     "primaryText": "Isn't the door open? #Only it's stifling inside.",
     "discourseSegments": [
@@ -142,22 +1130,344 @@
       "#Only it's stifling inside."
     ],
     "glossedTokens": [],
-    "translation": "Isn't the door open? Only it's stifling inside.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "highNegPolarQ"],
-      ["position", "left"],
-      ["particle", "only"],
-      ["interpretation", "infoSeeking"]
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "clauseType",
+        "highNegPolarQ"
+      ],
+      [
+        "position",
+        "left"
+      ],
+      [
+        "particle",
+        "only"
+      ],
+      [
+        "interpretation",
+        "infoSeeking"
+      ]
     ],
-    "comment": "A genuinely biased but still information-seeking high-negation polar question (Romero & Han 2002 type). Bias short of full speaker commitment does not license the left-argument position; minimal pair with (21) = (6b)."
+    "comment": "A genuinely biased but still information-seeking question does not commit the speaker to an answer.",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex29a",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(29a)"},
+    "id": "ippolitokisswilliams2025_s23a",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(23a)"
+    },
+    "language": "stan1293",
+    "primaryText": "You are welcome to take my metro pass, only don't lose it!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Plausible QUD: Is the addressee allowed to take the speaker's metro pass?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.3"
+      ],
+      [
+        "clauseType",
+        "imperative"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s23b",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(23b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The house is beautiful, only what a sketchy neighborhood!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Plausible QUD: Should we buy the house?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.3"
+      ],
+      [
+        "clauseType",
+        "exclamative"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s24a",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(24a)"
+    },
+    "language": "stan1293",
+    "primaryText": "This house is in a nice neighbourhood, but/only it's dilapidated.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Fiore and Agata are looking for a house.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "particle",
+        "but/only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s24b",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(24b)"
+    },
+    "language": "stan1293",
+    "primaryText": "This house is dilapidated, but/#only it's in a nice neighbourhood.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Fiore and Agata are looking for a house.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "particle",
+        "but/only"
+      ]
+    ],
+    "comment": "Acceptable with but, marked # with only.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s25",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(25)"
+    },
+    "language": "stan1293",
+    "primaryText": "A: This house looks bad! B: I know, the house is dilapidated, only it's all we can afford at the moment.",
+    "discourseSegments": [
+      "This house looks bad!",
+      "I know, the house is dilapidated, only it's all we can afford at the moment."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "particle",
+        "only"
+      ]
+    ],
+    "comment": "The left argument of only need not be positive.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s26",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(26)"
+    },
+    "language": "stan1293",
+    "primaryText": "A: Will you put Fiore on your shortlist? B: He hasn't published anything in the last 5 years, only he is such an amazing teacher that it'd be hard not to shortlist him.",
+    "discourseSegments": [
+      "Will you put Fiore on your shortlist?",
+      "He hasn't published anything in the last 5 years, only he is such an amazing teacher that it'd be hard not to shortlist him."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "particle",
+        "only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s27a",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(27a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Let's buy it! The house is in a nice neighbourhood, #but/only it's in need of repair.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Fiore and Agata found a house to buy. Fiore, who really wants to buy it, tries to convince Agata:",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "particle",
+        "but/only"
+      ]
+    ],
+    "comment": "Acceptable with only, marked # with but: more weight on the left argument with only.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s27b",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(27b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Let's buy it! The house is in need of repair, but/#only it's all we can afford.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Fiore and Agata found a house to buy. Fiore, who really wants to buy it, tries to convince Agata:",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "particle",
+        "but/only"
+      ]
+    ],
+    "comment": "Acceptable with but, marked # with only.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s28a",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(28a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Let's not buy it! The house is in a nice neighbourhood, but/#only it's in need of repair.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Fiore and Agata found a house to buy. Agata, who really doesn't want to buy it, tries to convince Fiore:",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "particle",
+        "but/only"
+      ]
+    ],
+    "comment": "Acceptable with but, marked # with only.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s28b",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(28b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Let's not buy it! The house is in need of repair, #but/(#)only it's all we can afford.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Fiore and Agata found a house to buy. Agata, who really doesn't want to buy it, tries to convince Fiore:",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "particle",
+        "but/only"
+      ]
+    ],
+    "comment": "Marked # with but and (#) with only.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ippolitokisswilliams2025_s29a",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(29a)"
+    },
     "language": "ital1282",
     "primaryText": "La casa è bella, solo che è costosissima.",
     "discourseSegments": [],
@@ -168,15 +1478,32 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "declarative"],
-      ["position", "right"],
-      ["particle", "solo che"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "declarative"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "solo che"
+      ]
     ],
-    "comment": ""
+    "comment": "",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex29b",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(29b)"},
+    "id": "ippolitokisswilliams2025_s29b",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(29b)"
+    },
     "language": "russ1263",
     "primaryText": "Dom krasivyj, tol'ko ochen' dorogoj.",
     "discourseSegments": [],
@@ -187,15 +1514,32 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "declarative"],
-      ["position", "right"],
-      ["particle", "tol'ko"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "declarative"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "tol'ko"
+      ]
     ],
-    "comment": ""
+    "comment": "",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex29c",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(29c)"},
+    "id": "ippolitokisswilliams2025_s29c",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(29c)"
+    },
     "language": "hung1274",
     "primaryText": "Szép ez a ház, csak nagyon drága.",
     "discourseSegments": [],
@@ -206,15 +1550,32 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "declarative"],
-      ["position", "right"],
-      ["particle", "csak"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "declarative"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "csak"
+      ]
     ],
-    "comment": ""
+    "comment": "",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex29d",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(29d)"},
+    "id": "ippolitokisswilliams2025_s29d",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(29d)"
+    },
     "language": "mand1415",
     "primaryText": "Zhège fángzi hěn piàoliang, zhǐshì yǒudiǎr guì.",
     "discourseSegments": [],
@@ -225,15 +1586,32 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "declarative"],
-      ["position", "right"],
-      ["particle", "zhǐshì"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "declarative"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "zhǐshì"
+      ]
     ],
-    "comment": ""
+    "comment": "",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex30a",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(30a)"},
+    "id": "ippolitokisswilliams2025_s30a",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(30a)"
+    },
     "language": "russ1263",
     "primaryText": "Dom krasivyj, tol'ko byl li on otremontirovan?",
     "discourseSegments": [],
@@ -244,15 +1622,32 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "canonicalPolarQ"],
-      ["position", "right"],
-      ["particle", "tol'ko"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "canonicalPolarQ"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "tol'ko"
+      ]
     ],
-    "comment": ""
+    "comment": "",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex30b",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(30b)"},
+    "id": "ippolitokisswilliams2025_s30b",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(30b)"
+    },
     "language": "russ1263",
     "primaryText": "Dom krasivyj, tol'ko ne bylo li tam problemy s kryshoj?",
     "discourseSegments": [],
@@ -263,15 +1658,32 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "highNegPolarQ"],
-      ["position", "right"],
-      ["particle", "tol'ko"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "highNegPolarQ"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "tol'ko"
+      ]
     ],
-    "comment": ""
+    "comment": "",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex30c",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(30c)"},
+    "id": "ippolitokisswilliams2025_s30c",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(30c)"
+    },
     "language": "russ1263",
     "primaryText": "Dom krasivyj, tol'ko kogda on byl otremontirovan?",
     "discourseSegments": [],
@@ -282,15 +1694,32 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "canonicalWhQ"],
-      ["position", "right"],
-      ["particle", "tol'ko"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "canonicalWhQ"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "tol'ko"
+      ]
     ],
-    "comment": ""
+    "comment": "",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex30d",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(30d)"},
+    "id": "ippolitokisswilliams2025_s30d",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(30d)"
+    },
     "language": "russ1263",
     "primaryText": "Dom krasivyj, tol'ko kto za nego zaplatit dva milliona?",
     "discourseSegments": [],
@@ -301,56 +1730,104 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "negRhetoricalWhQ"],
-      ["position", "right"],
-      ["particle", "tol'ko"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "negRhetoricalWhQ"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "tol'ko"
+      ]
     ],
-    "comment": "Rhetorical: the speaker is committed to the answer 'nobody', so the prejacent supports the negative QUD answer rather than failing to support anything."
+    "comment": "",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex30e",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(30e)"},
+    "id": "ippolitokisswilliams2025_s30e",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(30e)"
+    },
     "language": "russ1263",
     "primaryText": "Voz'mi moj projezdnoj na metro, tol'ko ne poteryaj ego.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Take my metro pass, only don't lose it.",
-    "context": "QUD per the paper's section 5.3 discussion: Is the addressee allowed to take the speaker's metro pass?",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "imperative"],
-      ["position", "right"],
-      ["particle", "tol'ko"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "imperative"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "tol'ko"
+      ]
     ],
-    "comment": ""
+    "comment": "",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex30f",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(30f)"},
+    "id": "ippolitokisswilliams2025_s30f",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(30f)"
+    },
     "language": "russ1263",
     "primaryText": "Kakoj krasivyj dom! Tol'ko vot rajon uzhasnyj!",
-    "discourseSegments": [
-      "Kakoj krasivyj dom!",
-      "Tol'ko vot rajon uzhasnyj!"
-    ],
+    "discourseSegments": [],
     "glossedTokens": [],
     "translation": "What a beautiful house! Only, what a terrible neighborhood!",
-    "context": "Plausible QUD: Should we buy the house?",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "exclamative"],
-      ["position", "right"],
-      ["particle", "tol'ko"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "exclamative"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "tol'ko"
+      ]
     ],
-    "comment": ""
+    "comment": "",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex31a",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(31a)"},
+    "id": "ippolitokisswilliams2025_s31a",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(31a)"
+    },
     "language": "hung1274",
     "primaryText": "Szép ez a ház, csak fel van újítva?",
     "discourseSegments": [],
@@ -359,19 +1836,39 @@
     "context": "Plausible QUD: Should we buy the house?",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Szép ez a ház, csakhogy fel van újítva?", "judgment": "ungrammatical"}
+      {
+        "form": "Szép ez a ház, csakhogy fel van újítva?",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "canonicalPolarQ"],
-      ["position", "right"],
-      ["particle", "csak"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "canonicalPolarQ"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "csak"
+      ]
     ],
-    "comment": "Csakhogy alternative constructed per the paper's section 7 prose ('unacceptable in any of the example sentences in (31)'); the substituted form is not printed in the paper."
+    "comment": "The csakhogy variant, with its wired-in complementizer, is unacceptable.",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex31b",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(31b)"},
+    "id": "ippolitokisswilliams2025_s31b",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(31b)"
+    },
     "language": "hung1274",
     "primaryText": "Szép ez a ház, csak nem ezt adták el az előbb?",
     "discourseSegments": [],
@@ -380,19 +1877,39 @@
     "context": "Plausible QUD: Should we buy the house?",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Szép ez a ház, csakhogy nem ezt adták el az előbb?", "judgment": "ungrammatical"}
+      {
+        "form": "Szép ez a ház, csakhogy nem ezt adták el az előbb?",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "highNegPolarQ"],
-      ["position", "right"],
-      ["particle", "csak"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "highNegPolarQ"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "csak"
+      ]
     ],
-    "comment": "Csakhogy alternative constructed per the paper's section 7 prose ('unacceptable in any of the example sentences in (31)'); the substituted form is not printed in the paper."
+    "comment": "The csakhogy variant, with its wired-in complementizer, is unacceptable.",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex31c",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(31c)"},
+    "id": "ippolitokisswilliams2025_s31c",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(31c)"
+    },
     "language": "hung1274",
     "primaryText": "Szép ez a ház, csak mikor lett felújítva?",
     "discourseSegments": [],
@@ -401,19 +1918,39 @@
     "context": "Plausible QUD: Should we buy the house?",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Szép ez a ház, csakhogy mikor lett felújítva?", "judgment": "ungrammatical"}
+      {
+        "form": "Szép ez a ház, csakhogy mikor lett felújítva?",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "canonicalWhQ"],
-      ["position", "right"],
-      ["particle", "csak"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "canonicalWhQ"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "csak"
+      ]
     ],
-    "comment": "Csakhogy alternative constructed per the paper's section 7 prose ('unacceptable in any of the example sentences in (31)'); the substituted form is not printed in the paper."
+    "comment": "The csakhogy variant, with its wired-in complementizer, is unacceptable.",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex31d",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(31d)"},
+    "id": "ippolitokisswilliams2025_s31d",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(31d)"
+    },
     "language": "hung1274",
     "primaryText": "Szép ez a ház, csak ki fizetne érte 2 milliót?",
     "discourseSegments": [],
@@ -422,64 +1959,121 @@
     "context": "Plausible QUD: Should we buy the house?",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Szép ez a ház, csakhogy ki fizetne érte 2 milliót?", "judgment": "ungrammatical"}
+      {
+        "form": "Szép ez a ház, csakhogy ki fizetne érte 2 milliót?",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "negRhetoricalWhQ"],
-      ["position", "right"],
-      ["particle", "csak"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "negRhetoricalWhQ"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "csak"
+      ]
     ],
-    "comment": "Rhetorical: the speaker is committed to the answer 'nobody'. Csakhogy alternative constructed per the paper's section 7 prose ('unacceptable in any of the example sentences in (31)'); the substituted form is not printed in the paper."
+    "comment": "The csakhogy variant, with its wired-in complementizer, is unacceptable.",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex31e",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(31e)"},
+    "id": "ippolitokisswilliams2025_s31e",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(31e)"
+    },
     "language": "hung1274",
     "primaryText": "Vidd el a bérletem, csak ne hagyd el!",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Take my metro pass, only don't lose it.",
-    "context": "QUD per the paper's section 5.3 discussion: Is the addressee allowed to take the speaker's metro pass?",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Vidd el a bérletem, csakhogy ne hagyd el!", "judgment": "ungrammatical"}
+      {
+        "form": "Vidd el a bérletem, csakhogy ne hagyd el!",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "imperative"],
-      ["position", "right"],
-      ["particle", "csak"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "imperative"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "csak"
+      ]
     ],
-    "comment": "Csakhogy alternative constructed per the paper's section 7 prose ('unacceptable in any of the example sentences in (31)'); the substituted form is not printed in the paper."
+    "comment": "The csakhogy variant, with its wired-in complementizer, is unacceptable.",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex31f",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(31f)"},
+    "id": "ippolitokisswilliams2025_s31f",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(31f)"
+    },
     "language": "hung1274",
     "primaryText": "Milyen szép ház! Csak micsoda környék!",
-    "discourseSegments": [
-      "Milyen szép ház!",
-      "Csak micsoda környék!"
-    ],
+    "discourseSegments": [],
     "glossedTokens": [],
     "translation": "What a beautiful house! Only what a terrible neighborhood!",
     "context": "Plausible QUD: Should we buy the house?",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Milyen szép ház! Csakhogy micsoda környék!", "judgment": "ungrammatical"}
+      {
+        "form": "Milyen szép ház! Csakhogy micsoda környék!",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "exclamative"],
-      ["position", "right"],
-      ["particle", "csak"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "exclamative"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "csak"
+      ]
     ],
-    "comment": "Csakhogy alternative constructed per the paper's section 7 prose ('unacceptable in any of the example sentences in (31)'); the substituted form is not printed in the paper."
+    "comment": "The csakhogy variant, with its wired-in complementizer, is unacceptable.",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex32a",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(32a)"},
+    "id": "ippolitokisswilliams2025_s32a",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(32a)"
+    },
     "language": "mand1415",
     "primaryText": "Zhège fángzi hěn piàoliang, zhǐshì zhuāngxīu le ma?",
     "discourseSegments": [],
@@ -490,15 +2084,32 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "canonicalPolarQ"],
-      ["position", "right"],
-      ["particle", "zhǐshì"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "canonicalPolarQ"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "zhǐshì"
+      ]
     ],
-    "comment": "The paper marks the prejacent with % (speaker-variable acceptability); the five-level Judgment scale has no dialect-variation case, so % is encoded as marginal."
+    "comment": "Marked % in the paper: speaker-variable acceptability.",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex32b",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(32b)"},
+    "id": "ippolitokisswilliams2025_s32b",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(32b)"
+    },
     "language": "mand1415",
     "primaryText": "Zhège fángzi hěn piàoliang, zhǐshì tā bú shì diànlì xìtǒng chū le wèntí ma?",
     "discourseSegments": [],
@@ -509,15 +2120,32 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "highNegPolarQ"],
-      ["position", "right"],
-      ["particle", "zhǐshì"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "highNegPolarQ"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "zhǐshì"
+      ]
     ],
-    "comment": ""
+    "comment": "",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex32c",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(32c)"},
+    "id": "ippolitokisswilliams2025_s32c",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(32c)"
+    },
     "language": "mand1415",
     "primaryText": "Zhège fángzi hěn piàoliang, zhǐshì tā (shì) shénme shíhou zhuāngxīu de (ne)?",
     "discourseSegments": [],
@@ -528,15 +2156,32 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "canonicalWhQ"],
-      ["position", "right"],
-      ["particle", "zhǐshì"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "canonicalWhQ"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "zhǐshì"
+      ]
     ],
-    "comment": "Parenthesized shì and ne are the paper's own optionality marks."
+    "comment": "",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex32d",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(32d)"},
+    "id": "ippolitokisswilliams2025_s32d",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(32d)"
+    },
     "language": "mand1415",
     "primaryText": "Zhège fángzi hěn piàoliang, zhǐshì (yǒu) shéi huì fù liǎngbǎiwàn mǎi ne?",
     "discourseSegments": [],
@@ -547,56 +2192,104 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "negRhetoricalWhQ"],
-      ["position", "right"],
-      ["particle", "zhǐshì"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "negRhetoricalWhQ"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "zhǐshì"
+      ]
     ],
-    "comment": "Rhetorical: the speaker is committed to the answer 'nobody'. Parenthesized yǒu is the paper's optionality mark."
+    "comment": "",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex32e",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(32e)"},
+    "id": "ippolitokisswilliams2025_s32e",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(32e)"
+    },
     "language": "mand1415",
     "primaryText": "Yòng wǒ de jiāotōngkǎ ba, zhǐshì bié diū le.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Use my metro pass, only don't lose it.",
-    "context": "QUD per the paper's section 5.3 discussion: Is the addressee allowed to take the speaker's metro pass?",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "imperative"],
-      ["position", "right"],
-      ["particle", "zhǐshì"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "imperative"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "zhǐshì"
+      ]
     ],
-    "comment": ""
+    "comment": "",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex32f",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(32f)"},
+    "id": "ippolitokisswilliams2025_s32f",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(32f)"
+    },
     "language": "mand1415",
     "primaryText": "Duōme piàoliang de fángzi a! #Zhǐshì nàme chà de shèqū huánjìng!",
-    "discourseSegments": [
-      "Duōme piàoliang de fángzi a!",
-      "#Zhǐshì nàme chà de shèqū huánjìng!"
-    ],
+    "discourseSegments": [],
     "glossedTokens": [],
     "translation": "What a beautiful house! Only, what a terrible neighborhood!",
-    "context": "Plausible QUD: Should we buy the house?",
+    "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "exclamative"],
-      ["position", "right"],
-      ["particle", "zhǐshì"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "exclamative"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "zhǐshì"
+      ]
     ],
-    "comment": "# in the paper: pragmatic anomaly. Mandarin zhǐshì uniquely blocks exclamative prejacents in the four-language sample."
+    "comment": "Mandarin zhǐshì cannot take an exclamative prejacent.",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex33a",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(33a)"},
+    "id": "ippolitokisswilliams2025_s33a",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(33a)"
+    },
     "language": "ital1282",
     "primaryText": "La casa è bella, solo che è costosissima.",
     "discourseSegments": [],
@@ -607,15 +2300,32 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "declarative"],
-      ["position", "right"],
-      ["particle", "solo che"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "declarative"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "solo che"
+      ]
     ],
-    "comment": ""
+    "comment": "",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex33b",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(33b)"},
+    "id": "ippolitokisswilliams2025_s33b",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(33b)"
+    },
     "language": "ital1282",
     "primaryText": "La casa è bella, solo che è stata ristrutturata?",
     "discourseSegments": [],
@@ -626,15 +2336,32 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "canonicalPolarQ"],
-      ["position", "right"],
-      ["particle", "solo che"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "canonicalPolarQ"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "solo che"
+      ]
     ],
-    "comment": "* in the paper. Italian solo che obligatorily cooccurs with the wired-in declarative complementizer che, which blocks all non-declarative prejacents (section 7)."
+    "comment": "Solo che carries a wired-in complementizer and takes only declarative prejacents.",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex33c",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(33c)"},
+    "id": "ippolitokisswilliams2025_s33c",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(33c)"
+    },
     "language": "ital1282",
     "primaryText": "La casa è bella, solo che quando è stata ristrutturata?",
     "discourseSegments": [],
@@ -645,15 +2372,32 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "canonicalWhQ"],
-      ["position", "right"],
-      ["particle", "solo che"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "canonicalWhQ"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "solo che"
+      ]
     ],
-    "comment": "* in the paper; see (33b)."
+    "comment": "Solo che carries a wired-in complementizer and takes only declarative prejacents.",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex33d",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(33d)"},
+    "id": "ippolitokisswilliams2025_s33d",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(33d)"
+    },
     "language": "ital1282",
     "primaryText": "La casa è bella, solo che non comprarla adesso.",
     "discourseSegments": [],
@@ -664,15 +2408,32 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "imperative"],
-      ["position", "right"],
-      ["particle", "solo che"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "imperative"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "solo che"
+      ]
     ],
-    "comment": "* in the paper; see (33b)."
+    "comment": "Solo che carries a wired-in complementizer and takes only declarative prejacents.",
+    "lgrConformance": ""
   },
   {
-    "id": "ippolitokisswilliams2025_ex33e",
-    "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(33e)"},
+    "id": "ippolitokisswilliams2025_s33e",
+    "source": {
+      "bibkey": "ippolito-kiss-williams-2025",
+      "paperLabel": "(33e)"
+    },
     "language": "ital1282",
     "primaryText": "La casa è bella, solo che che vicini!",
     "discourseSegments": [],
@@ -683,10 +2444,24 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["clauseType", "exclamative"],
-      ["position", "right"],
-      ["particle", "solo che"]
+      [
+        "section",
+        "7"
+      ],
+      [
+        "clauseType",
+        "exclamative"
+      ],
+      [
+        "position",
+        "right"
+      ],
+      [
+        "particle",
+        "solo che"
+      ]
     ],
-    "comment": "* in the paper; see (33b)."
+    "comment": "Solo che carries a wired-in complementizer and takes only declarative prejacents.",
+    "lgrConformance": ""
   }
 ]

@@ -46,11 +46,10 @@ canonical one).
 * `Question.Resolves` / `Question.MentionAll` (`Resolution.lean`) over
   `Set W → Question W`. Each is a candidate `Support` instance for the
   inquisitive substrate.
-* `Studies/IppolitoKissWilliams2022.lean` — IKW
-  evidential SUPPORT (introduced in [ippolito-kiss-williams-2022],
-  reused by [ippolito-kiss-williams-2025]): doxastic +
-  probabilistic. Prior-parameterised, so it does **not** fit this
-  typeclass; see that file's `Supports` directly.
+* `Studies/IppolitoKissWilliams2022.lean` — the evidential support of
+  [ippolito-kiss-williams-2022], reused by [ippolito-kiss-williams-2025]:
+  doxastic, and parameterised by a context's evidence relation, so it
+  does **not** fit this typeclass; see that file's `Context.QSupports`.
 -/
 
 namespace Question

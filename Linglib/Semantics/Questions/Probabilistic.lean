@@ -33,14 +33,6 @@ conjunction of alternatives, in the inquisitive sense of
 
 - `evidencesResolutionMore μ 𝒜 R R'` — resolution-level analogue of
   `evidencesMore`. [thomas-2026] Def 63.
-
-## Note on relocated apparatus
-
-The doxastic `Supports` / `Agree` / `Disagree` predicates previously
-lived here; they have been moved to
-`Studies/IppolitoKissWilliams2022.lean` (the paper
-that introduced them) since their only consumer is the IKW 2025
-discourse-*only* study file.
 -/
 
 namespace Question
@@ -79,10 +71,8 @@ instance : Trans (evidencesMore μ A) (evidencesMore μ A) (evidencesMore μ A) 
 
 The atomic Bayesian-evidence relation: conditioning on `R` raises the
 probability of `A`. The pointwise version of `IsResolutionEvidencedBy`'s
-`raises_prob` field, factored out so consumers
-([thomas-2026] §1.2, the IKW 2022 `Supports` predicate in
-`Studies/IppolitoKissWilliams2022.lean`) can refer to
-it directly. -/
+`raises_prob` field, factored out so that consumers such as
+[thomas-2026] can refer to it directly. -/
 
 /-- `R` provides **positive evidence** for `A`: conditioning on `R`
     raises the probability of `A`. -/
