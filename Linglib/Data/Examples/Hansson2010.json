@@ -1,0 +1,835 @@
+[
+  {
+    "id": "hansson2010_ex3a-i",
+    "source": {
+      "bibkey": "sapir-hoijer-1967",
+      "paperLabel": ""
+    },
+    "language": "nava1243",
+    "primaryText": "ʃiłį́ːʔ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "my horse",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.1"
+      ],
+      [
+        "phenomenon",
+        "sibilantHarmony"
+      ],
+      [
+        "underlying",
+        "ʃi-łį́ːʔ"
+      ],
+      [
+        "directionality",
+        "anticipatory"
+      ]
+    ],
+    "comment": "No sibilant in the stem: the prefix surfaces in its underlying postalveolar shape.",
+    "lgrConformance": "",
+    "reportedIn": {
+      "bibkey": "hansson-2010",
+      "paperLabel": "(3a)"
+    }
+  },
+  {
+    "id": "hansson2010_ex3a-ii",
+    "source": {
+      "bibkey": "sapir-hoijer-1967",
+      "paperLabel": ""
+    },
+    "language": "nava1243",
+    "primaryText": "ʃitaːʔ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "my father",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.1"
+      ],
+      [
+        "phenomenon",
+        "sibilantHarmony"
+      ],
+      [
+        "underlying",
+        "ʃi-taːʔ"
+      ],
+      [
+        "directionality",
+        "anticipatory"
+      ]
+    ],
+    "comment": "No sibilant in the stem: the prefix surfaces in its underlying postalveolar shape.",
+    "lgrConformance": "",
+    "reportedIn": {
+      "bibkey": "hansson-2010",
+      "paperLabel": "(3a)"
+    }
+  },
+  {
+    "id": "hansson2010_ex3b",
+    "source": {
+      "bibkey": "sapir-hoijer-1967",
+      "paperLabel": ""
+    },
+    "language": "nava1243",
+    "primaryText": "ʃítʃį́ːh",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "my nose",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.1"
+      ],
+      [
+        "phenomenon",
+        "sibilantHarmony"
+      ],
+      [
+        "underlying",
+        "ʃí-tʃį́ːh"
+      ],
+      [
+        "directionality",
+        "anticipatory"
+      ]
+    ],
+    "comment": "A postalveolar stem sibilant: the prefix keeps its postalveolar.",
+    "lgrConformance": "",
+    "reportedIn": {
+      "bibkey": "hansson-2010",
+      "paperLabel": "(3b)"
+    }
+  },
+  {
+    "id": "hansson2010_ex3c-i",
+    "source": {
+      "bibkey": "sapir-hoijer-1967",
+      "paperLabel": ""
+    },
+    "language": "nava1243",
+    "primaryText": "sitsʼaːʔ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "my basket",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.1"
+      ],
+      [
+        "phenomenon",
+        "sibilantHarmony"
+      ],
+      [
+        "underlying",
+        "ʃi-tsʼaːʔ"
+      ],
+      [
+        "directionality",
+        "anticipatory"
+      ]
+    ],
+    "comment": "An alveolar stem sibilant: the prefix sibilant assimilates to it.",
+    "lgrConformance": "",
+    "reportedIn": {
+      "bibkey": "hansson-2010",
+      "paperLabel": "(3c)"
+    }
+  },
+  {
+    "id": "hansson2010_ex3c-ii",
+    "source": {
+      "bibkey": "sapir-hoijer-1967",
+      "paperLabel": ""
+    },
+    "language": "nava1243",
+    "primaryText": "sizid",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "my scar",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.1"
+      ],
+      [
+        "phenomenon",
+        "sibilantHarmony"
+      ],
+      [
+        "underlying",
+        "ʃi-zid"
+      ],
+      [
+        "directionality",
+        "anticipatory"
+      ]
+    ],
+    "comment": "An alveolar stem sibilant: the prefix sibilant assimilates to it.",
+    "lgrConformance": "",
+    "reportedIn": {
+      "bibkey": "hansson-2010",
+      "paperLabel": "(3c)"
+    }
+  },
+  {
+    "id": "hansson2010_ex4a",
+    "source": {
+      "bibkey": "hansson-2010",
+      "paperLabel": "(4a)"
+    },
+    "language": "nava1243",
+    "primaryText": "dʒidibáːh",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "he (4th person) starts off to war",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.1"
+      ],
+      [
+        "phenomenon",
+        "sibilantHarmony"
+      ],
+      [
+        "underlying",
+        "dʒi-di-báːh"
+      ],
+      [
+        "directionality",
+        "anticipatory"
+      ]
+    ],
+    "comment": "No sibilant follows: the fourth-person prefix surfaces as postalveolar /dʒi-/.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hansson2010_ex4b",
+    "source": {
+      "bibkey": "hansson-2010",
+      "paperLabel": "(4b)"
+    },
+    "language": "nava1243",
+    "primaryText": "dziztʼį́",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "he (4th person) is lying",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.1"
+      ],
+      [
+        "phenomenon",
+        "sibilantHarmony"
+      ],
+      [
+        "underlying",
+        "dʒi-s-tʼį́"
+      ],
+      [
+        "directionality",
+        "anticipatory"
+      ]
+    ],
+    "comment": "The perfective /s-/, voiced to [z] here, makes the preceding prefix alveolar.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hansson2010_ex4c",
+    "source": {
+      "bibkey": "hansson-2010",
+      "paperLabel": "(4c)"
+    },
+    "language": "nava1243",
+    "primaryText": "dʒiʒɣiʃ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "he (4th person) is stooped over",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.1"
+      ],
+      [
+        "phenomenon",
+        "sibilantHarmony"
+      ],
+      [
+        "underlying",
+        "dʒi-s-ɣiːʃ"
+      ],
+      [
+        "directionality",
+        "anticipatory"
+      ]
+    ],
+    "comment": "The stem sibilant determines both prefix sibilants; the intervening [ɣ] is transparent.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hansson2010_ex6a-i",
+    "source": {
+      "bibkey": "mcdonough-1991",
+      "paperLabel": ""
+    },
+    "language": "nava1243",
+    "primaryText": "jismas",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I'm rolling along",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4.1.1"
+      ],
+      [
+        "phenomenon",
+        "sibilantHarmony"
+      ],
+      [
+        "underlying",
+        "j-iʃ-mas"
+      ],
+      [
+        "directionality",
+        "anticipatory"
+      ]
+    ],
+    "comment": "The root sibilant makes the first-person subject prefix alveolar.",
+    "lgrConformance": "",
+    "reportedIn": {
+      "bibkey": "hansson-2010",
+      "paperLabel": "(6a)"
+    }
+  },
+  {
+    "id": "hansson2010_ex6a-ii",
+    "source": {
+      "bibkey": "mcdonough-1991",
+      "paperLabel": ""
+    },
+    "language": "nava1243",
+    "primaryText": "ʃidʒéːʔ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "they lie (slender stiff objects)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4.1.1"
+      ],
+      [
+        "phenomenon",
+        "sibilantHarmony"
+      ],
+      [
+        "underlying",
+        "si-dʒéːʔ"
+      ],
+      [
+        "directionality",
+        "anticipatory"
+      ]
+    ],
+    "comment": "The root sibilant makes the prefix sibilant postalveolar.",
+    "lgrConformance": "",
+    "reportedIn": {
+      "bibkey": "hansson-2010",
+      "paperLabel": "(6a)"
+    }
+  },
+  {
+    "id": "hansson2010_ex6b-i",
+    "source": {
+      "bibkey": "mcdonough-1991",
+      "paperLabel": ""
+    },
+    "language": "nava1243",
+    "primaryText": "sisná",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "he carried me",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4.1.1"
+      ],
+      [
+        "phenomenon",
+        "sibilantHarmony"
+      ],
+      [
+        "underlying",
+        "ʃ-is-ná"
+      ],
+      [
+        "directionality",
+        "anticipatory"
+      ]
+    ],
+    "comment": "A prefix sibilant triggers assimilation in the prefix sibilant before it.",
+    "lgrConformance": "",
+    "reportedIn": {
+      "bibkey": "hansson-2010",
+      "paperLabel": "(6b)"
+    }
+  },
+  {
+    "id": "hansson2010_ex6b-ii",
+    "source": {
+      "bibkey": "mcdonough-1991",
+      "paperLabel": ""
+    },
+    "language": "nava1243",
+    "primaryText": "dʒiʃtaːl",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I kick him [below the belt]",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4.1.1"
+      ],
+      [
+        "phenomenon",
+        "sibilantHarmony"
+      ],
+      [
+        "underlying",
+        "dz-iʃ-l-taːl"
+      ],
+      [
+        "directionality",
+        "anticipatory"
+      ]
+    ],
+    "comment": "A prefix sibilant triggers assimilation in the prefix sibilant before it.",
+    "lgrConformance": "",
+    "reportedIn": {
+      "bibkey": "hansson-2010",
+      "paperLabel": "(6b)"
+    }
+  },
+  {
+    "id": "hansson2010_ex6c",
+    "source": {
+      "bibkey": "mcdonough-1991",
+      "paperLabel": ""
+    },
+    "language": "nava1243",
+    "primaryText": "dzistsʼin",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I hit him [below the belt]",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4.1.1"
+      ],
+      [
+        "phenomenon",
+        "sibilantHarmony"
+      ],
+      [
+        "underlying",
+        "dz-iʃ-l-tsʼin"
+      ],
+      [
+        "directionality",
+        "anticipatory"
+      ]
+    ],
+    "comment": "The root sibilant determines both prefix sibilants.",
+    "lgrConformance": "",
+    "reportedIn": {
+      "bibkey": "hansson-2010",
+      "paperLabel": "(6c)"
+    }
+  },
+  {
+    "id": "hansson2010_ex11a-i",
+    "source": {
+      "bibkey": "mcdonough-1991",
+      "paperLabel": ""
+    },
+    "language": "nava1243",
+    "primaryText": "dzizdá",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "he sat down",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1.2"
+      ],
+      [
+        "phenomenon",
+        "sibilantHarmony"
+      ],
+      [
+        "underlying",
+        "dʒ-i-z-dá"
+      ],
+      [
+        "directionality",
+        "anticipatory"
+      ]
+    ],
+    "comment": "The perfective prefix triggers harmony in the earlier fourth-person prefix.",
+    "lgrConformance": "",
+    "reportedIn": {
+      "bibkey": "hansson-2010",
+      "paperLabel": "(11a)"
+    }
+  },
+  {
+    "id": "hansson2010_ex11a-ii",
+    "source": {
+      "bibkey": "mcdonough-1991",
+      "paperLabel": ""
+    },
+    "language": "nava1243",
+    "primaryText": "dʒiʃhaːl",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I tumble into the water (imperfective)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1.2"
+      ],
+      [
+        "phenomenon",
+        "sibilantHarmony"
+      ],
+      [
+        "underlying",
+        "dz-iʃ-ł-haːl"
+      ],
+      [
+        "directionality",
+        "anticipatory"
+      ]
+    ],
+    "comment": "The first-person subject prefix triggers harmony in the earlier adverbial prefix.",
+    "lgrConformance": "",
+    "reportedIn": {
+      "bibkey": "hansson-2010",
+      "paperLabel": "(11a)"
+    }
+  },
+  {
+    "id": "hansson2010_ex11b",
+    "source": {
+      "bibkey": "mcdonough-1991",
+      "paperLabel": ""
+    },
+    "language": "nava1243",
+    "primaryText": "dzistsʼin",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I hit him below [the belt]",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1.2"
+      ],
+      [
+        "phenomenon",
+        "sibilantHarmony"
+      ],
+      [
+        "underlying",
+        "dz-iʃ-ł-tsʼin"
+      ],
+      [
+        "directionality",
+        "anticipatory"
+      ]
+    ],
+    "comment": "The stem sibilant affects all preceding prefix sibilants.",
+    "lgrConformance": "",
+    "reportedIn": {
+      "bibkey": "hansson-2010",
+      "paperLabel": "(11b)"
+    }
+  },
+  {
+    "id": "hansson2010_ex12",
+    "source": {
+      "bibkey": "faltz-1998",
+      "paperLabel": "p. 74"
+    },
+    "language": "nava1243",
+    "primaryText": "sis-",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "first-person singular subject, s-perfective",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "ʃiʃ-",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1.2"
+      ],
+      [
+        "phenomenon",
+        "sibilantHarmony"
+      ],
+      [
+        "underlying",
+        "s-iʃ-"
+      ],
+      [
+        "directionality",
+        "perseveratory"
+      ]
+    ],
+    "comment": "The conjugation marker /s(i)-/ makes the following first-person /(i)ʃ-/ alveolar: perseveratory assimilation rather than the expected anticipatory harmony.",
+    "lgrConformance": "",
+    "reportedIn": {
+      "bibkey": "hansson-2010",
+      "paperLabel": "(12)"
+    }
+  },
+  {
+    "id": "hansson2010_ex13",
+    "source": {
+      "bibkey": "faltz-1998",
+      "paperLabel": "p. 383"
+    },
+    "language": "nava1243",
+    "primaryText": "ʃiʃ-",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "first-person singular subject, s-imperfective",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1.2"
+      ],
+      [
+        "phenomenon",
+        "sibilantHarmony"
+      ],
+      [
+        "underlying",
+        "s-iʃ-"
+      ],
+      [
+        "directionality",
+        "anticipatory"
+      ]
+    ],
+    "comment": "In the imperfective paradigm the same prefix sequence harmonizes anticipatorily.",
+    "lgrConformance": "",
+    "reportedIn": {
+      "bibkey": "hansson-2010",
+      "paperLabel": "(13)"
+    }
+  },
+  {
+    "id": "hansson2010_ex14-i",
+    "source": {
+      "bibkey": "mcdonough-1991",
+      "paperLabel": ""
+    },
+    "language": "nava1243",
+    "primaryText": "sisxé",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I'm killing it (imperfective)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1.2"
+      ],
+      [
+        "phenomenon",
+        "sibilantHarmony"
+      ],
+      [
+        "underlying",
+        "s-iʃ-ł-jé"
+      ],
+      [
+        "directionality",
+        "perseveratory"
+      ]
+    ],
+    "comment": "The s-destruct prefix makes the following first-person prefix alveolar.",
+    "lgrConformance": "",
+    "reportedIn": {
+      "bibkey": "hansson-2010",
+      "paperLabel": "(14)"
+    }
+  },
+  {
+    "id": "hansson2010_ex14-ii",
+    "source": {
+      "bibkey": "mcdonough-1991",
+      "paperLabel": ""
+    },
+    "language": "nava1243",
+    "primaryText": "sisdlí",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I froze to death (perfective)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1.2"
+      ],
+      [
+        "phenomenon",
+        "sibilantHarmony"
+      ],
+      [
+        "underlying",
+        "s-iʃ-dlí"
+      ],
+      [
+        "directionality",
+        "perseveratory"
+      ]
+    ],
+    "comment": "The s-destruct prefix makes the following first-person prefix alveolar.",
+    "lgrConformance": "",
+    "reportedIn": {
+      "bibkey": "hansson-2010",
+      "paperLabel": "(14)"
+    }
+  },
+  {
+    "id": "hansson2010_ex15",
+    "source": {
+      "bibkey": "mcdonough-1991",
+      "paperLabel": ""
+    },
+    "language": "nava1243",
+    "primaryText": "ʃiʃʒeːʔ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1.2"
+      ],
+      [
+        "phenomenon",
+        "sibilantHarmony"
+      ],
+      [
+        "underlying",
+        "s-iʃ-l-ʒeːʔ"
+      ],
+      [
+        "directionality",
+        "anticipatory"
+      ]
+    ],
+    "comment": "Anticipatory harmony from the root overrides the perseveratory prefix assimilation of (12) and (14).",
+    "lgrConformance": "",
+    "reportedIn": {
+      "bibkey": "hansson-2010",
+      "paperLabel": "(15)"
+    }
+  }
+]

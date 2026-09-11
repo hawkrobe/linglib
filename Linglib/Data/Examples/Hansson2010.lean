@@ -1,0 +1,396 @@
+import Linglib.Data.Examples.Schema
+
+/-!
+# `Hansson2010` — typed example data
+
+Auto-generated from `Linglib/Data/Examples/Hansson2010.json` by
+`scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
+the generator. Consumers (the paper's study file, test-suite hubs) import
+this module; declarations live in `namespace Hansson2010.Examples`.
+-/
+
+namespace Hansson2010.Examples
+
+open Data.Examples
+
+def ex3a_i : LinguisticExample :=
+  { id := "hansson2010_ex3a-i"
+    source := ⟨"sapir-hoijer-1967", ""⟩
+    reportedIn := some ⟨"hansson-2010", "(3a)"⟩
+    language := "nava1243"
+    primaryText := "ʃiłį́ːʔ"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "my horse"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "ʃi-łį́ːʔ"), ("directionality", "anticipatory")]
+    comment := "No sibilant in the stem: the prefix surfaces in its underlying postalveolar shape."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex3a_ii : LinguisticExample :=
+  { id := "hansson2010_ex3a-ii"
+    source := ⟨"sapir-hoijer-1967", ""⟩
+    reportedIn := some ⟨"hansson-2010", "(3a)"⟩
+    language := "nava1243"
+    primaryText := "ʃitaːʔ"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "my father"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "ʃi-taːʔ"), ("directionality", "anticipatory")]
+    comment := "No sibilant in the stem: the prefix surfaces in its underlying postalveolar shape."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex3b : LinguisticExample :=
+  { id := "hansson2010_ex3b"
+    source := ⟨"sapir-hoijer-1967", ""⟩
+    reportedIn := some ⟨"hansson-2010", "(3b)"⟩
+    language := "nava1243"
+    primaryText := "ʃítʃį́ːh"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "my nose"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "ʃí-tʃį́ːh"), ("directionality", "anticipatory")]
+    comment := "A postalveolar stem sibilant: the prefix keeps its postalveolar."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex3c_i : LinguisticExample :=
+  { id := "hansson2010_ex3c-i"
+    source := ⟨"sapir-hoijer-1967", ""⟩
+    reportedIn := some ⟨"hansson-2010", "(3c)"⟩
+    language := "nava1243"
+    primaryText := "sitsʼaːʔ"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "my basket"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "ʃi-tsʼaːʔ"), ("directionality", "anticipatory")]
+    comment := "An alveolar stem sibilant: the prefix sibilant assimilates to it."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex3c_ii : LinguisticExample :=
+  { id := "hansson2010_ex3c-ii"
+    source := ⟨"sapir-hoijer-1967", ""⟩
+    reportedIn := some ⟨"hansson-2010", "(3c)"⟩
+    language := "nava1243"
+    primaryText := "sizid"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "my scar"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "ʃi-zid"), ("directionality", "anticipatory")]
+    comment := "An alveolar stem sibilant: the prefix sibilant assimilates to it."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex4a : LinguisticExample :=
+  { id := "hansson2010_ex4a"
+    source := ⟨"hansson-2010", "(4a)"⟩
+    reportedIn := none
+    language := "nava1243"
+    primaryText := "dʒidibáːh"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "he (4th person) starts off to war"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "dʒi-di-báːh"), ("directionality", "anticipatory")]
+    comment := "No sibilant follows: the fourth-person prefix surfaces as postalveolar /dʒi-/."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex4b : LinguisticExample :=
+  { id := "hansson2010_ex4b"
+    source := ⟨"hansson-2010", "(4b)"⟩
+    reportedIn := none
+    language := "nava1243"
+    primaryText := "dziztʼį́"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "he (4th person) is lying"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "dʒi-s-tʼį́"), ("directionality", "anticipatory")]
+    comment := "The perfective /s-/, voiced to [z] here, makes the preceding prefix alveolar."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex4c : LinguisticExample :=
+  { id := "hansson2010_ex4c"
+    source := ⟨"hansson-2010", "(4c)"⟩
+    reportedIn := none
+    language := "nava1243"
+    primaryText := "dʒiʒɣiʃ"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "he (4th person) is stooped over"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "dʒi-s-ɣiːʃ"), ("directionality", "anticipatory")]
+    comment := "The stem sibilant determines both prefix sibilants; the intervening [ɣ] is transparent."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex6a_i : LinguisticExample :=
+  { id := "hansson2010_ex6a-i"
+    source := ⟨"mcdonough-1991", ""⟩
+    reportedIn := some ⟨"hansson-2010", "(6a)"⟩
+    language := "nava1243"
+    primaryText := "jismas"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "I'm rolling along"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "2.4.1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "j-iʃ-mas"), ("directionality", "anticipatory")]
+    comment := "The root sibilant makes the first-person subject prefix alveolar."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex6a_ii : LinguisticExample :=
+  { id := "hansson2010_ex6a-ii"
+    source := ⟨"mcdonough-1991", ""⟩
+    reportedIn := some ⟨"hansson-2010", "(6a)"⟩
+    language := "nava1243"
+    primaryText := "ʃidʒéːʔ"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "they lie (slender stiff objects)"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "2.4.1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "si-dʒéːʔ"), ("directionality", "anticipatory")]
+    comment := "The root sibilant makes the prefix sibilant postalveolar."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex6b_i : LinguisticExample :=
+  { id := "hansson2010_ex6b-i"
+    source := ⟨"mcdonough-1991", ""⟩
+    reportedIn := some ⟨"hansson-2010", "(6b)"⟩
+    language := "nava1243"
+    primaryText := "sisná"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "he carried me"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "2.4.1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "ʃ-is-ná"), ("directionality", "anticipatory")]
+    comment := "A prefix sibilant triggers assimilation in the prefix sibilant before it."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex6b_ii : LinguisticExample :=
+  { id := "hansson2010_ex6b-ii"
+    source := ⟨"mcdonough-1991", ""⟩
+    reportedIn := some ⟨"hansson-2010", "(6b)"⟩
+    language := "nava1243"
+    primaryText := "dʒiʃtaːl"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "I kick him [below the belt]"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "2.4.1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "dz-iʃ-l-taːl"), ("directionality", "anticipatory")]
+    comment := "A prefix sibilant triggers assimilation in the prefix sibilant before it."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex6c : LinguisticExample :=
+  { id := "hansson2010_ex6c"
+    source := ⟨"mcdonough-1991", ""⟩
+    reportedIn := some ⟨"hansson-2010", "(6c)"⟩
+    language := "nava1243"
+    primaryText := "dzistsʼin"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "I hit him [below the belt]"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "2.4.1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "dz-iʃ-l-tsʼin"), ("directionality", "anticipatory")]
+    comment := "The root sibilant determines both prefix sibilants."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex11a_i : LinguisticExample :=
+  { id := "hansson2010_ex11a-i"
+    source := ⟨"mcdonough-1991", ""⟩
+    reportedIn := some ⟨"hansson-2010", "(11a)"⟩
+    language := "nava1243"
+    primaryText := "dzizdá"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "he sat down"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3.1.2"), ("phenomenon", "sibilantHarmony"), ("underlying", "dʒ-i-z-dá"), ("directionality", "anticipatory")]
+    comment := "The perfective prefix triggers harmony in the earlier fourth-person prefix."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex11a_ii : LinguisticExample :=
+  { id := "hansson2010_ex11a-ii"
+    source := ⟨"mcdonough-1991", ""⟩
+    reportedIn := some ⟨"hansson-2010", "(11a)"⟩
+    language := "nava1243"
+    primaryText := "dʒiʃhaːl"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "I tumble into the water (imperfective)"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3.1.2"), ("phenomenon", "sibilantHarmony"), ("underlying", "dz-iʃ-ł-haːl"), ("directionality", "anticipatory")]
+    comment := "The first-person subject prefix triggers harmony in the earlier adverbial prefix."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex11b : LinguisticExample :=
+  { id := "hansson2010_ex11b"
+    source := ⟨"mcdonough-1991", ""⟩
+    reportedIn := some ⟨"hansson-2010", "(11b)"⟩
+    language := "nava1243"
+    primaryText := "dzistsʼin"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "I hit him below [the belt]"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3.1.2"), ("phenomenon", "sibilantHarmony"), ("underlying", "dz-iʃ-ł-tsʼin"), ("directionality", "anticipatory")]
+    comment := "The stem sibilant affects all preceding prefix sibilants."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex12 : LinguisticExample :=
+  { id := "hansson2010_ex12"
+    source := ⟨"faltz-1998", "p. 74"⟩
+    reportedIn := some ⟨"hansson-2010", "(12)"⟩
+    language := "nava1243"
+    primaryText := "sis-"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "first-person singular subject, s-perfective"
+    context := ""
+    judgment := .acceptable
+    alternatives := [("ʃiʃ-", .unacceptable)]
+    readings := []
+    paperFeatures := [("section", "3.1.2"), ("phenomenon", "sibilantHarmony"), ("underlying", "s-iʃ-"), ("directionality", "perseveratory")]
+    comment := "The conjugation marker /s(i)-/ makes the following first-person /(i)ʃ-/ alveolar: perseveratory assimilation rather than the expected anticipatory harmony."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex13 : LinguisticExample :=
+  { id := "hansson2010_ex13"
+    source := ⟨"faltz-1998", "p. 383"⟩
+    reportedIn := some ⟨"hansson-2010", "(13)"⟩
+    language := "nava1243"
+    primaryText := "ʃiʃ-"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "first-person singular subject, s-imperfective"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3.1.2"), ("phenomenon", "sibilantHarmony"), ("underlying", "s-iʃ-"), ("directionality", "anticipatory")]
+    comment := "In the imperfective paradigm the same prefix sequence harmonizes anticipatorily."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex14_i : LinguisticExample :=
+  { id := "hansson2010_ex14-i"
+    source := ⟨"mcdonough-1991", ""⟩
+    reportedIn := some ⟨"hansson-2010", "(14)"⟩
+    language := "nava1243"
+    primaryText := "sisxé"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "I'm killing it (imperfective)"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3.1.2"), ("phenomenon", "sibilantHarmony"), ("underlying", "s-iʃ-ł-jé"), ("directionality", "perseveratory")]
+    comment := "The s-destruct prefix makes the following first-person prefix alveolar."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex14_ii : LinguisticExample :=
+  { id := "hansson2010_ex14-ii"
+    source := ⟨"mcdonough-1991", ""⟩
+    reportedIn := some ⟨"hansson-2010", "(14)"⟩
+    language := "nava1243"
+    primaryText := "sisdlí"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "I froze to death (perfective)"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3.1.2"), ("phenomenon", "sibilantHarmony"), ("underlying", "s-iʃ-dlí"), ("directionality", "perseveratory")]
+    comment := "The s-destruct prefix makes the following first-person prefix alveolar."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex15 : LinguisticExample :=
+  { id := "hansson2010_ex15"
+    source := ⟨"mcdonough-1991", ""⟩
+    reportedIn := some ⟨"hansson-2010", "(15)"⟩
+    language := "nava1243"
+    primaryText := "ʃiʃʒeːʔ"
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3.1.2"), ("phenomenon", "sibilantHarmony"), ("underlying", "s-iʃ-l-ʒeːʔ"), ("directionality", "anticipatory")]
+    comment := "Anticipatory harmony from the root overrides the perseveratory prefix assimilation of (12) and (14)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def all : List LinguisticExample := [ex3a_i, ex3a_ii, ex3b, ex3c_i, ex3c_ii, ex4a, ex4b, ex4c, ex6a_i, ex6a_ii, ex6b_i, ex6b_ii, ex6c, ex11a_i, ex11a_ii, ex11b, ex12, ex13, ex14_i, ex14_ii, ex15]
+
+end Hansson2010.Examples
