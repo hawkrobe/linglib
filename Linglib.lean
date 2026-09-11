@@ -1428,9 +1428,7 @@ import Linglib.Pragmatics.DecisionTheoretic.Even
 import Linglib.Pragmatics.DecisionTheoretic.PartitionAdjunction
 import Linglib.Pragmatics.DecisionTheoretic.ScalarImplicature
 import Linglib.Pragmatics.Efficiency
-import Linglib.Pragmatics.Emotion
 import Linglib.Pragmatics.Expressives.Basic
-import Linglib.Pragmatics.GameTheory
 import Linglib.Pragmatics.GriceanMaxims
 import Linglib.Pragmatics.Implicature.Diagnostics
 import Linglib.Pragmatics.Implicature.SomeAll
