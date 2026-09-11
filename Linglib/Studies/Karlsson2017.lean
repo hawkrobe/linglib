@@ -1,217 +1,139 @@
+import Linglib.Data.Examples.Karlsson2017
 import Linglib.Features.Case.Basic
 import Linglib.Semantics.Aspect.Basic
-import Linglib.Morphology.Morphotactics.RelevanceHierarchy
 
 /-!
-# Finnish Case System [karlsson-2017]
-[krifka-1989]
+# Karlsson (2017): Finnish: A Comprehensive Grammar
 
-The Finnish partitive case is the primary formal link between case marking
-and aspectual interpretation in the language ([karlsson-2017], Chs. 9, 12–13).
-The case of the direct object determines — or reflects — the telicity of
-the VP:
+This file formalizes the object-case rules of [karlsson-2017], the alternation between the
+partitive and the total object in Finnish. The grammar orders the rules: the object is partitive
+if the sentence is negative, the action irresultative, or the quantity indefinite
+(section 12.2.2); only otherwise does it take a total-object case, the accusative for a personal
+pronoun, the nominative for a plural nominal or a numeral head, and for a singular nominal the
+genitive, or the nominative under an imperative, a passive, an obligation, or an infinitive
+phrase acting as subject (section 13.3.2). `Object.case` is that procedure, and the grammar's
+examples, as rows, agree with it (`rows_agree`).
 
-- **Accusative/genitive object** → telic (bounded, resultative):
-  *Luin kirja-n.* 'I read the book (completely).'
+The partitive is the stronger object case (`case_eq_part_iff`), and in an affirmative sentence
+about a definite quantity the object is partitive exactly when the action is irresultative
+(`part_iff_atelic`), the case marking of aspect the grammar describes.
 
-- **Partitive object** → atelic (unbounded, irresultative):
-  *Luin kirja-a.* 'I read the book / was reading the book (partially).'
+## Implementation notes
 
-The partitive also appears obligatorily under negation:
-  *En lukenut kirja-a.* 'I didn't read the book.'
+Resultative and irresultative action are read as the telic and atelic values of
+`Aspect.Telicity`. The grammar lists the constructions under which a singular total object
+drops its ending rather than unifying them; `Clause` lists them likewise.
 
-This is the first bridge in linglib connecting `Case` to
-`Aspect.Telicity`, making the case–aspect
-interaction formally verifiable.
+## References
 
-## Theoretical significance
-
-Finnish partitive is evidence for the **Incremental Theme** hypothesis: the object's referential properties (bounded vs.
-unbounded) compose with the verb's event structure to determine VP-level
-telicity. The case morphology makes this composition visible.
-
+* [karlsson-2017]
 -/
+
+open Data.Examples Aspect
 
 namespace Karlsson2017
 
-open Aspect
-
--- ============================================================================
--- § 1: Case–Aspect Mapping
--- ============================================================================
-
-/-- The case of the Finnish direct object maps to VP telicity.
-    Accusative/genitive → telic; partitive → atelic. -/
-def objectCaseToTelicity : Case → Option Telicity
-  | .acc | .gen => some .telic     -- bounded object → telic VP
-  | .part      => some .atelic    -- unbounded object → atelic VP
-  | _          => none            -- not an object case
-
-/-- Context in which partitive case is obligatory (Karlsson §12.3). -/
-inductive PartitiveLicensor where
-  /-- Negation: *en lukenut kirja-a* -/
-  | negation
-  /-- Unbounded quantity: *join vettä* ('I drank water') -/
-  | unboundedQuantity
-  /-- Irresultative action: *luin kirjaa* ('I was reading the book') -/
-  | irresultative
+/-- The kind of nominal serving as object, as the total-object endings of section 13.3.2 read
+it. -/
+inductive Nominal
+  | personalPronoun | plural | numeral | singular
   deriving DecidableEq, Repr
 
-/-- A partitive licensing datum: object case + licensing context + telicity. -/
-structure PartitiveDatum where
-  finnish : String
-  gloss : String
-  objectCase : Case
-  licensor : Option PartitiveLicensor
-  vpTelicity : Telicity
-  deriving Repr, BEq
-
--- ============================================================================
--- § 2: Data
--- ============================================================================
-
-/-- Accusative object, telic VP: 'I read the book (completely).' -/
-def readBookComplete : PartitiveDatum :=
-  { finnish := "Luin kirjan"
-  , gloss := "I read the book (completely)"
-  , objectCase := .acc
-  , licensor := none
-  , vpTelicity := .telic }
-
-/-- Partitive object, atelic VP (irresultative): 'I was reading the book.' -/
-def readBookPartial : PartitiveDatum :=
-  { finnish := "Luin kirjaa"
-  , gloss := "I was reading the book (partially)"
-  , objectCase := .part
-  , licensor := some .irresultative
-  , vpTelicity := .atelic }
-
-/-- Partitive under negation: 'I didn't read the book.' -/
-def readBookNegated : PartitiveDatum :=
-  { finnish := "En lukenut kirjaa"
-  , gloss := "I didn't read the book"
-  , objectCase := .part
-  , licensor := some .negation
-  , vpTelicity := .atelic }
-
-/-- Partitive with mass noun (unbounded quantity): 'I drank water.' -/
-def drankWater : PartitiveDatum :=
-  { finnish := "Join vettä"
-  , gloss := "I drank (some) water"
-  , objectCase := .part
-  , licensor := some .unboundedQuantity
-  , vpTelicity := .atelic }
-
-def allData : List PartitiveDatum :=
-  [readBookComplete, readBookPartial, readBookNegated, drankWater]
-
--- ============================================================================
--- § 3: Bridge Theorems
--- ============================================================================
-
-/-- Accusative object maps to telic VP. -/
-theorem acc_telic : objectCaseToTelicity .acc = some .telic := rfl
-
-/-- Partitive object maps to atelic VP. -/
-theorem part_atelic : objectCaseToTelicity .part = some .atelic := rfl
-
-/-- Genitive object (used for total objects in some environments) maps
-    to telic, same as accusative. -/
-theorem gen_telic : objectCaseToTelicity .gen = some .telic := rfl
-
-/-- For every datum, the `objectCaseToTelicity` mapping agrees with the
-    annotated `vpTelicity`. -/
-theorem mapping_agrees_with_data :
-    allData.all (fun d =>
-      objectCaseToTelicity d.objectCase == some d.vpTelicity) = true := by
-  native_decide
-
-/-- All partitive data have atelic VP interpretation. -/
-theorem partitive_implies_atelic :
-    (allData.filter (·.objectCase == .part)).all
-      (·.vpTelicity == .atelic) = true := by native_decide
-
-/-- All accusative data have telic VP interpretation. -/
-theorem accusative_implies_telic :
-    (allData.filter (·.objectCase == .acc)).all
-      (·.vpTelicity == .telic) = true := by native_decide
-
-/-- Every partitive datum has a licensor (negation, quantity, or aspect). -/
-theorem partitive_has_licensor :
-    (allData.filter (·.objectCase == .part)).all
-      (fun d => d.licensor.isSome) = true := by native_decide
-
--- ============================================================================
--- Part II: Suffix Order vs. Bybee's Relevance Hierarchy
--- ============================================================================
-
-open Morphology (MorphCategory RespectsRelevanceHierarchy)
-
--- ============================================================================
--- § 5: Finnish Nominal Suffix Slots
--- ============================================================================
-
-/-- A morpheme slot in Finnish nominal morphology. -/
-inductive NominalSlot where
-  | stem
-  | number      -- plural marker -i-, -j-
-  | case_       -- 15 case suffixes
-  | possessive  -- -ni, -si, -nsA, -mme, -nne
-  | clitic      -- -kin, -kAAn, -pA, -hAn
+/-- The clause types, the last four being those under which a singular total object is in the
+nominative (section 13.3.2, rule 4). -/
+inductive Clause
+  | finite | imperative | passive | obligation | infinitival
   deriving DecidableEq, Repr
 
-/-- Finnish nominal suffix order (Karlsson §7.1). -/
-def finnishNominalOrder : List NominalSlot :=
-  [.stem, .number, .case_, .possessive, .clitic]
+/-- An object and the factors the grammar's rules read: the polarity of the sentence, the
+resultativity of the action, the definiteness of the quantity, the kind of nominal, and the
+clause type. -/
+structure Object where
+  negated : Bool
+  telicity : Telicity
+  definite : Bool
+  nominal : Nominal
+  clause : Clause
+  deriving DecidableEq, Repr
 
--- ============================================================================
--- § 6: Mapping to Bybee Categories
--- ============================================================================
+namespace Object
 
-/-- Map nominal slots to Bybee `MorphCategory` where possible.
-    Case has no Bybee equivalent — this is the gap. -/
-def slotToBybeeCat : NominalSlot → Option MorphCategory
-  | .stem       => some .stem
-  | .number     => some .number
-  | .case_      => none          -- no Bybee category for case
-  | .possessive => some (.agreement .poss)
-  | .clitic     => none          -- clitics are outside Bybee's scope
+/-- The partitive conditions of section 12.2.2: negation, irresultative action, indefinite
+quantity. -/
+def IsPartitive (o : Object) : Prop := o.negated ∨ o.telicity = .atelic ∨ ¬ o.definite
 
-/-- The Bybee-mappable subset of Finnish nominal slots, in suffix order. -/
-def bybeeSlots : List MorphCategory :=
-  finnishNominalOrder.filterMap slotToBybeeCat
+instance : DecidablePred IsPartitive := λ _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
--- ============================================================================
--- § 7: Suffix Order Verification
--- ============================================================================
+/-- The total-object ending of section 13.3.2. -/
+def totalCase (o : Object) : Case :=
+  match o.nominal with
+  | .personalPronoun => .acc
+  | .plural | .numeral => .nom
+  | .singular => if o.clause = .finite then .gen else .nom
 
-/-- Finnish nominal morphology has exactly 5 suffix slots. -/
-theorem five_slots : finnishNominalOrder.length = 5 := by decide
+/-- The case of the object: partitive under any partitive condition, else the total-object
+ending (section 13.3.1). -/
+def case (o : Object) : Case := if o.IsPartitive then .part else o.totalCase
 
-/-- Only 3 of 5 nominal slots have Bybee equivalents (stem, number, agreement). -/
-theorem three_bybee_mappable : bybeeSlots.length = 3 := by decide
+theorem totalCase_ne_part (o : Object) : o.totalCase ≠ .part := by
+  unfold totalCase
+  split <;> first | decide | split <;> decide
 
-/-- The Bybee-mappable slots are: stem, number, agreement. -/
-theorem bybee_slots_are :
-    bybeeSlots = [.stem, .number, .agreement .poss] := by decide
+/-- The partitive is the stronger object case: the object is partitive exactly under a
+partitive condition. -/
+theorem case_eq_part_iff (o : Object) : o.case = .part ↔ o.IsPartitive := by
+  unfold case
+  split_ifs with h
+  · exact iff_of_true rfl h
+  · exact iff_of_false (totalCase_ne_part o) h
 
-/-- The Bybee-mappable nominal slots respect the relevance hierarchy:
-    stem (0) < number (3) < agreement (8). -/
-theorem nominal_respects_bybee :
-    RespectsRelevanceHierarchy bybeeSlots := by decide
+/-- In an affirmative sentence about a definite quantity, the object is partitive exactly when
+the action is irresultative: the case marks the aspect. -/
+theorem part_iff_atelic {o : Object} (hn : ¬ o.negated) (hd : o.definite) :
+    o.case = .part ↔ o.telicity = .atelic := by
+  rw [case_eq_part_iff, IsPartitive]
+  simp [hn, hd]
 
-/-- Case has no Bybee category — this is the gap that Finnish nominal
-    morphology reveals in Bybee's verb-centric hierarchy. -/
-theorem case_no_bybee_category :
-    slotToBybeeCat .case_ = none := rfl
+/-- A negated sentence has a partitive object whatever the nominal. -/
+theorem case_eq_part_of_negated {o : Object} (h : o.negated) : o.case = .part :=
+  (case_eq_part_iff o).mpr (Or.inl h)
 
-/-- Clitic is also outside Bybee's scope. -/
-theorem clitic_no_bybee_category :
-    slotToBybeeCat .clitic = none := rfl
+/-- A personal pronoun is a total object in the accusative alone. -/
+theorem case_of_personalPronoun {o : Object} (h : o.nominal = .personalPronoun)
+    (hp : ¬ o.IsPartitive) : o.case = .acc := by
+  rw [case, if_neg hp, totalCase, h]
 
-/-- Number (rank 3) is more stem-relevant than possessive agreement (rank 8),
-    consistent with number appearing closer to the stem in Finnish. -/
-theorem number_closer_than_agreement :
-    MorphCategory.RelevanceLT .number (.agreement .poss) := by decide
+end Object
+
+/-- A row: the object and the case the grammar gives it. -/
+structure Row where
+  object : Object
+  case : Case
+
+private def nominalOf : List (String × Nominal) :=
+  [("personalPronoun", .personalPronoun), ("plural", .plural), ("numeral", .numeral),
+    ("singular", .singular)]
+
+private def clauseOf : List (String × Clause) :=
+  [("finite", .finite), ("imperative", .imperative), ("passive", .passive),
+    ("obligation", .obligation), ("infinitival", .infinitival)]
+
+private def caseOf : List (String × Case) :=
+  [("part", .part), ("acc", .acc), ("nom", .nom), ("gen", .gen)]
+
+/-- A row from the grammar's features. -/
+def Row.ofExample (e : LinguisticExample) : Option Row := do
+  let n ← e.parse? "nominal" nominalOf
+  let cl ← e.parse? "clause" clauseOf
+  let c ← e.parse? "case" caseOf
+  some ⟨⟨e.feature? "negated" == some "yes",
+    if e.feature? "aspect" == some "resultative" then .telic else .atelic,
+    e.feature? "quantity" == some "definite", n, cl⟩, c⟩
+
+/-- The object-case examples of sections 12.2.2 and 13.3. -/
+def rows : List Row := Examples.all.filterMap Row.ofExample
+
+/-- The grammar's examples take the case its rules assign. -/
+theorem rows_agree : ∀ r ∈ rows, r.object.case = r.case := by decide
 
 end Karlsson2017
