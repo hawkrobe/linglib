@@ -1,0 +1,1588 @@
+[
+  {
+    "id": "hanink2021_ex1",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(1)"
+    },
+    "language": "wash1253",
+    "primaryText": "gí: pélew ʔ-íʔiw-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "gí:",
+        "3.NOM"
+      ],
+      [
+        "pélew",
+        "jackrabbit"
+      ],
+      [
+        "ʔ-íʔiw-i",
+        "3/3-eat-IND"
+      ]
+    ],
+    "translation": "He's eating the jackrabbit.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "phenomenon",
+        "pronoun"
+      ],
+      [
+        "idxForm",
+        "gi"
+      ],
+      [
+        "case",
+        "nominative"
+      ]
+    ],
+    "comment": "The independent third-person pronoun, nominative gí:.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex2",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(2)"
+    },
+    "language": "wash1253",
+    "primaryText": "hádi-gi pélew Mú:biʔ-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "hádi-gi",
+        "DIST-IDX.NOM"
+      ],
+      [
+        "pélew",
+        "jackrabbit"
+      ],
+      [
+        "Mú:biʔ-i",
+        "3.run-IND"
+      ]
+    ],
+    "translation": "That jackrabbit ran.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "phenomenon",
+        "demonstrative"
+      ],
+      [
+        "idxForm",
+        "gi"
+      ]
+    ],
+    "comment": "The distal demonstrative decomposes as hádi plus gi.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex3",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(3)"
+    },
+    "language": "wash1253",
+    "primaryText": "t'é:liwhu šáwlamhu ʔló:t ʔ-í:gi-yi-š-gi ʔwáʔ ʔ-éʔ-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "t'é:liwhu",
+        "man"
+      ],
+      [
+        "šáwlamhu",
+        "girl"
+      ],
+      [
+        "ʔló:t",
+        "yesterday"
+      ],
+      [
+        "ʔ-í:gi-yi-š-gi",
+        "3-see-IND-DS-IDX.NOM"
+      ],
+      [
+        "ʔwáʔ",
+        "here"
+      ],
+      [
+        "ʔ-éʔ-i",
+        "3-be-IND"
+      ]
+    ],
+    "translation": "The girl that the man saw yesterday is here.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "phenomenon",
+        "internallyHeadedRelative"
+      ],
+      [
+        "idxForm",
+        "gi"
+      ],
+      [
+        "case",
+        "nominative"
+      ]
+    ],
+    "comment": "The nominalized relative clause, subject of the matrix verb, ends in nominative -gi.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex19",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(19)"
+    },
+    "language": "wash1253",
+    "primaryText": "mušé:gew ʔ-lémiʔ-giš-uwaʔ-ášaʔ-aʔ",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mušé:gew",
+        "bear"
+      ],
+      [
+        "ʔ-lémiʔ-giš-uwaʔ-ášaʔ-aʔ",
+        "3-gather.food-DUR-hence-PROSP-DEP"
+      ]
+    ],
+    "translation": "A bear was about to go gathering food.",
+    "context": "First line of the story, setting the scene.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "phenomenon",
+        "bareNoun"
+      ],
+      [
+        "reading",
+        "indefinite"
+      ]
+    ],
+    "comment": "Bear and Deer Story. A bare noun introducing a novel referent: the indefinite reading.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex20",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(20)"
+    },
+    "language": "wash1253",
+    "primaryText": "dí:be wa-dášiw-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "dí:be",
+        "sun"
+      ],
+      [
+        "wa-dášiw-i",
+        "STAT-shine-IND"
+      ]
+    ],
+    "translation": "The sun is shining bright.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "phenomenon",
+        "bareNoun"
+      ],
+      [
+        "reading",
+        "unique"
+      ]
+    ],
+    "comment": "A bare noun with a unique definite reading.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex21",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(21)"
+    },
+    "language": "wash1253",
+    "primaryText": "lák'aʔ t'é:liwhu ʔwáʔ ʔ-éʔ-i t'é:liwhu ʔ-émlu-yé:biʔ-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "lák'aʔ",
+        "one"
+      ],
+      [
+        "t'é:liwhu",
+        "man"
+      ],
+      [
+        "ʔwáʔ",
+        "here"
+      ],
+      [
+        "ʔ-éʔ-i",
+        "3-be-IND"
+      ],
+      [
+        "t'é:liwhu",
+        "man"
+      ],
+      [
+        "ʔ-émlu-yé:biʔ-i",
+        "3-eat-come-IND"
+      ]
+    ],
+    "translation": "One man is here. The man came to eat.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "phenomenon",
+        "bareNoun"
+      ],
+      [
+        "reading",
+        "anaphoric"
+      ],
+      [
+        "idxForm",
+        "null"
+      ]
+    ],
+    "comment": "A bare noun anaphoric to an indefinite antecedent: idx present but unpronounced before an overt NP.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex22",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(22)"
+    },
+    "language": "wash1253",
+    "primaryText": "ʔlót súkuʔ l-í:gi-yi Adele gí:-saʔ súkuʔ ʔ-í:gi-yi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ʔlót",
+        "yesterday"
+      ],
+      [
+        "súkuʔ",
+        "dog"
+      ],
+      [
+        "l-í:gi-yi",
+        "1/3-see-IND"
+      ],
+      [
+        "Adele",
+        "Adele"
+      ],
+      [
+        "gí:-saʔ",
+        "3.PRO-also"
+      ],
+      [
+        "súkuʔ",
+        "dog"
+      ],
+      [
+        "ʔ-í:gi-yi",
+        "3/3-see-IND"
+      ]
+    ],
+    "translation": "I saw a dog yesterday. Adele also saw the dog.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "phenomenon",
+        "bareNoun"
+      ],
+      [
+        "reading",
+        "anaphoric"
+      ],
+      [
+        "idxForm",
+        "null"
+      ],
+      [
+        "case",
+        "accusative"
+      ]
+    ],
+    "comment": "An anaphoric bare noun in object position: idx stays null under dependent case.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex23",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(23)"
+    },
+    "language": "wash1253",
+    "primaryText": "hádigi daláʔak behéziŋ k'-éʔ-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "hádigi",
+        "that"
+      ],
+      [
+        "daláʔak",
+        "mountain"
+      ],
+      [
+        "behéziŋ",
+        "small"
+      ],
+      [
+        "k'-éʔ-i",
+        "3-be-IND"
+      ]
+    ],
+    "translation": "That mountain is small.",
+    "context": "Pointing at the mountain.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "phenomenon",
+        "demonstrative"
+      ]
+    ],
+    "comment": "Washo Archive. The distal demonstrative with a gesture.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex25a",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(25a)"
+    },
+    "language": "wash1253",
+    "primaryText": "hádi-gi pélew Mú:biʔ-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "hádi-gi",
+        "DIST-GI"
+      ],
+      [
+        "pélew",
+        "jackrabbit"
+      ],
+      [
+        "Mú:biʔ-i",
+        "3.come.running-IND"
+      ]
+    ],
+    "translation": "That jackrabbit came running.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "phenomenon",
+        "demonstrative"
+      ],
+      [
+        "deixis",
+        "distal"
+      ]
+    ],
+    "comment": "Distal hádi with the suffix gi.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex25b",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(25b)"
+    },
+    "language": "wash1253",
+    "primaryText": "wídi-gi pélew Mú:biʔ-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "wídi-gi",
+        "PROX-GI"
+      ],
+      [
+        "pélew",
+        "jackrabbit"
+      ],
+      [
+        "Mú:biʔ-i",
+        "3.come.running-IND"
+      ]
+    ],
+    "translation": "This jackrabbit came running.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "phenomenon",
+        "demonstrative"
+      ],
+      [
+        "deixis",
+        "proximal"
+      ]
+    ],
+    "comment": "Proximal wídi with the suffix gi.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex27",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(27)"
+    },
+    "language": "wash1253",
+    "primaryText": "Eddy ʔwáʔ ʔ-éʔ-é:s-i ʔi-š-ŋa gé: l-í:gi k'-éʔ-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Eddy",
+        "Eddy"
+      ],
+      [
+        "ʔwáʔ",
+        "here"
+      ],
+      [
+        "ʔ-éʔ-é:s-i",
+        "3-be-NEG-IND"
+      ],
+      [
+        "ʔi-š-ŋa",
+        "IND-DS-but"
+      ],
+      [
+        "gé:",
+        "3.ACC"
+      ],
+      [
+        "l-í:gi",
+        "1/3-see"
+      ],
+      [
+        "k'-éʔ-i",
+        "3-be-IND"
+      ]
+    ],
+    "translation": "Eddy isn't here but I need to see him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "phenomenon",
+        "pronoun"
+      ],
+      [
+        "idxForm",
+        "ge"
+      ],
+      [
+        "case",
+        "accusative"
+      ]
+    ],
+    "comment": "The accusative independent pronoun gé:.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex41",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(41)"
+    },
+    "language": "wash1253",
+    "primaryText": "dáwligaŋa m-í:gi-aʔy-i-š-ge lé:-saʔ l-í:gi-yi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "dáwligaŋa",
+        "movie"
+      ],
+      [
+        "m-í:gi-aʔy-i-š-ge",
+        "2/3-see-INT.PST-IND-DS-IDX.ACC"
+      ],
+      [
+        "lé:-saʔ",
+        "1.PRO-also"
+      ],
+      [
+        "l-í:gi-yi",
+        "1/3-see-IND"
+      ]
+    ],
+    "translation": "I also saw the movie that you saw.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "phenomenon",
+        "internallyHeadedRelative"
+      ],
+      [
+        "idxForm",
+        "ge"
+      ],
+      [
+        "case",
+        "accusative"
+      ]
+    ],
+    "comment": "The embedded clause carries tense, independent mood, and switch reference: a full CP.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex45",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(45)"
+    },
+    "language": "wash1253",
+    "primaryText": "mé:hu géwe ʔ-í:gi-yi-š-ge lé:-saʔ l-í:gi-yi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mé:hu",
+        "boy"
+      ],
+      [
+        "géwe",
+        "coyote"
+      ],
+      [
+        "ʔ-í:gi-yi-š-ge",
+        "3/3-see-IND-DS-IDX.ACC"
+      ],
+      [
+        "lé:-saʔ",
+        "1.PRO-also"
+      ],
+      [
+        "l-í:gi-yi",
+        "1-see-IND"
+      ]
+    ],
+    "translation": "I also saw the coyote that the boy saw.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "phenomenon",
+        "internallyHeadedRelative"
+      ],
+      [
+        "idxForm",
+        "ge"
+      ],
+      [
+        "case",
+        "accusative"
+      ]
+    ],
+    "comment": "Reported from Hanink (2016). The relative is the object of the matrix verb and takes accusative -ge.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex46",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(46)"
+    },
+    "language": "wash1253",
+    "primaryText": "di-tulíc'ik-lu di-gum-c'í:ge-yi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "di-tulíc'ik-lu",
+        "1-finger-INST"
+      ],
+      [
+        "di-gum-c'í:ge-yi",
+        "1-REFL-scratch-IND"
+      ]
+    ],
+    "translation": "I'm scratching myself with my finger.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "phenomenon",
+        "postposition"
+      ]
+    ],
+    "comment": "Washo Archive. The instrumental postposition -lu on a DP.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex47",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(47)"
+    },
+    "language": "wash1253",
+    "primaryText": "gó:beʔ l-émeʔ-áŋaw-i-∅-ge-lu di-p'ím-eweʔ-giš-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "gó:beʔ",
+        "coffee"
+      ],
+      [
+        "l-émeʔ-áŋaw-i-∅-ge-lu",
+        "1-drink-well-IND-SS-IDX.ACC-INST"
+      ],
+      [
+        "di-p'ím-eweʔ-giš-i",
+        "1-go.out-hence-DUR-IND"
+      ]
+    ],
+    "translation": "With all the coffee I drank, I keep going out.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "phenomenon",
+        "postposition"
+      ],
+      [
+        "idxForm",
+        "ge"
+      ]
+    ],
+    "comment": "The same postposition selects an internally headed relative: the relative is a DP.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex50",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(50)"
+    },
+    "language": "wash1253",
+    "primaryText": "t'ánu démlu sú:biʔ-i-š-ge di-sú:dɨm-i-š-gi wayúʔuš-áŋaw-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "t'ánu",
+        "people"
+      ],
+      [
+        "démlu",
+        "food"
+      ],
+      [
+        "sú:biʔ-i-š-ge",
+        "3/3.bring-IND-DS-IDX.ACC"
+      ],
+      [
+        "di-sú:dɨm-i-š-gi",
+        "1/3-look.at-IND-DS-IDX.NOM"
+      ],
+      [
+        "wayúʔuš-áŋaw-i",
+        "3.smell-good-IND"
+      ]
+    ],
+    "translation": "The food I'm looking at the people who brought smells good.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "islandInsensitivity"
+      ]
+    ],
+    "comment": "The higher semantic head 'food' sits inside the lower relative clause: no island effect.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex51",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(51)"
+    },
+    "language": "wash1253",
+    "primaryText": "daʔmóʔmoʔ gó:beʔ ʔ-ímeʔ-i-š-ge l-í:gi-yi-∅-ge lé:-saʔ l-émeʔ-ašaʔ-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "daʔmóʔmoʔ",
+        "woman"
+      ],
+      [
+        "gó:beʔ",
+        "coffee"
+      ],
+      [
+        "ʔ-ímeʔ-i-š-ge",
+        "drink-IND-DS-IDX.ACC"
+      ],
+      [
+        "l-í:gi-yi-∅-ge",
+        "1/3-see-IND-SS-IDX.ACC"
+      ],
+      [
+        "lé:-saʔ",
+        "1.PRO-also"
+      ],
+      [
+        "l-émeʔ-ašaʔ-i",
+        "1/3-drink-PROSP-IND"
+      ]
+    ],
+    "translation": "I also want to drink the coffee the woman I saw drank.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "islandInsensitivity"
+      ]
+    ],
+    "comment": "The higher semantic head 'coffee' sits inside the lower relative clause: no island effect.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex53",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(53)"
+    },
+    "language": "wash1253",
+    "primaryText": "k'ák'aʔ dá: gé:gel-i-š-ge yá:m-aʔ",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "k'ák'aʔ",
+        "heron"
+      ],
+      [
+        "dá:",
+        "there"
+      ],
+      [
+        "gé:gel-i-š-ge",
+        "3.sit-IND-DS-IDX.ACC"
+      ],
+      [
+        "yá:m-aʔ",
+        "3/3.speak-DEP"
+      ]
+    ],
+    "translation": "She spoke to a heron who was sitting there.",
+    "context": "A bear is looking for her cubs, and comes to a river.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "restrictiveness"
+      ],
+      [
+        "reading",
+        "existential"
+      ]
+    ],
+    "comment": "Bear and Deer Story. An internally headed relative with an existential interpretation.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex54",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(54)"
+    },
+    "language": "wash1253",
+    "primaryText": "súkuʔ baŋáya ʔ-éʔ-i-š-ge daʔmóʔmoʔ bóŋi-yi-š-gi p'á:š-ug-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "súkuʔ",
+        "dog"
+      ],
+      [
+        "baŋáya",
+        "outside"
+      ],
+      [
+        "ʔ-éʔ-i-š-ge",
+        "3-be-IND-DS-IDX.ACC"
+      ],
+      [
+        "daʔmóʔmoʔ",
+        "woman"
+      ],
+      [
+        "bóŋi-yi-š-gi",
+        "3/3.call-IND-DS-IDX.NOM"
+      ],
+      [
+        "p'á:š-ug-i",
+        "3.enter-hither-IND"
+      ]
+    ],
+    "translation": "The dog that was outside that the woman called came in.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "restrictiveness"
+      ]
+    ],
+    "comment": "Two relative clauses stacked on one semantic head.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex56",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(56)"
+    },
+    "language": "wash1253",
+    "primaryText": "Adele gawá:yɨʔ gaʔlám-i-š-gi Múʔuš-úweʔ-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Adele",
+        "Adele"
+      ],
+      [
+        "gawá:yɨʔ",
+        "horse"
+      ],
+      [
+        "gaʔlám-i-š-gi",
+        "3/3.like-IND-DS-IDX.NOM"
+      ],
+      [
+        "Múʔuš-úweʔ-i",
+        "3.run-hence-IND"
+      ]
+    ],
+    "translation": "The horse Adele likes is running away.",
+    "context": "You ask what is going on. Someone responds.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "phenomenon",
+        "internallyHeadedRelative"
+      ]
+    ],
+    "comment": "An internally headed relative uttered out of the blue: idx contributes no familiarity.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex91",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(91)"
+    },
+    "language": "wash1253",
+    "primaryText": "daʔmoʔmóʔmoʔ p'á:š-ug-i-š-ge di-sú:dɨm-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "daʔmoʔmóʔmoʔ",
+        "woman.R"
+      ],
+      [
+        "p'á:š-ug-i-š-ge",
+        "3.enter-hither-IND-DS-IDX.ACC"
+      ],
+      [
+        "di-sú:dɨm-i",
+        "1/3-look.at-IND"
+      ]
+    ],
+    "translation": "I'm looking at the women who came in.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "daʔmoʔmóʔmoʔ p'á:š-ug-i-š-ge-w di-sú:dɨm-i",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.5"
+      ],
+      [
+        "phenomenon",
+        "noFeatureTransmission"
+      ]
+    ],
+    "comment": "A plural semantic head leaves idx invariant: no number suffix on -ge, so no agreement with the head.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex96",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(96)"
+    },
+    "language": "wash1253",
+    "primaryText": "ʔló:t Adele hádi-gi mé:hu ʔ-í:gi-yi-š-gi ʔwáʔ ʔ-éʔ-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ʔló:t",
+        "yesterday"
+      ],
+      [
+        "Adele",
+        "Adele"
+      ],
+      [
+        "hádi-gi",
+        "DIST-IDX.NOM"
+      ],
+      [
+        "mé:hu",
+        "boy"
+      ],
+      [
+        "ʔ-í:gi-yi-š-gi",
+        "3/3-see-IND-DS-IDX.NOM"
+      ],
+      [
+        "ʔwáʔ",
+        "here"
+      ],
+      [
+        "ʔ-éʔ-i",
+        "3-be-IND"
+      ]
+    ],
+    "translation": "That boy that Adele saw yesterday is here.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "phenomenon",
+        "indefinitenessRestriction"
+      ]
+    ],
+    "comment": "A demonstrative semantic head: Washo does not obey the indefiniteness restriction.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex98",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(98)"
+    },
+    "language": "wash1253",
+    "primaryText": "dak'uláŋaʔ míʔle-w gawá:yɨʔ baŋáya gúm-úweʔ-i-š-ge di-sú:dɨm-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "dak'uláŋaʔ",
+        "cowboy"
+      ],
+      [
+        "míʔle-w",
+        "all-AN.PL"
+      ],
+      [
+        "gawá:yɨʔ",
+        "horse"
+      ],
+      [
+        "baŋáya",
+        "outside"
+      ],
+      [
+        "gúm-úweʔ-i-š-ge",
+        "3/3.take.out-hence-IND-DS-IDX.ACC"
+      ],
+      [
+        "di-sú:dɨm-i",
+        "1/3-look.at-IND"
+      ]
+    ],
+    "translation": "We're looking at all the horses that the cowboy brought outside.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "phenomenon",
+        "quantifiedHead"
+      ]
+    ],
+    "comment": "A quantified semantic head; the quantifier scopes inside the relative: 'all the horses such that the cowboy brought all the horses outside'.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex102",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(102)"
+    },
+    "language": "wash1253",
+    "primaryText": "ʔiŋa baŋáya gawá:yɨʔ míʔle-w-ŋa gúm-úweʔ-é:s-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ʔiŋa",
+        "but"
+      ],
+      [
+        "baŋáya",
+        "outside"
+      ],
+      [
+        "gawá:yɨʔ",
+        "horse"
+      ],
+      [
+        "míʔle-w-ŋa",
+        "all-PL-NC"
+      ],
+      [
+        "gúm-úweʔ-é:s-i",
+        "3/3.take.out-hence-NEG-IND"
+      ]
+    ],
+    "translation": "... but he didn't take all the horses outside.",
+    "context": "Uttered after (98).",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "phenomenon",
+        "quantifiedHead"
+      ]
+    ],
+    "comment": "Infelicitous as a follow-up to (98): the relative already says all the horses were brought out.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex103",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(103)"
+    },
+    "language": "wash1253",
+    "primaryText": "míʔle-w dak'uláŋaʔ gawá:yɨʔ baŋáya gúm-úweʔ-i-š-ge di-sú:dɨm-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "míʔle-w",
+        "all-AN.PL"
+      ],
+      [
+        "dak'uláŋaʔ",
+        "cowboy"
+      ],
+      [
+        "gawá:yɨʔ",
+        "horse"
+      ],
+      [
+        "baŋáya",
+        "outside"
+      ],
+      [
+        "gúm-úweʔ-i-š-ge",
+        "3/3.take.out-hence-IND-DS-IDX.ACC"
+      ],
+      [
+        "di-sú:dɨm-i",
+        "1/3-look.at-IND"
+      ]
+    ],
+    "translation": "We're looking at all the horses that the cowboy brought outside.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "phenomenon",
+        "quantifiedHead"
+      ]
+    ],
+    "comment": "The quantifier outside the relative takes the whole nominalization as its restriction.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex104",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(104)"
+    },
+    "language": "wash1253",
+    "primaryText": "ʔum-wagayáyʔ-i-š-ge di-dámal-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ʔum-wagayáyʔ-i-š-ge",
+        "2-talk-IND-DS-IDX.ACC"
+      ],
+      [
+        "di-dámal-i",
+        "1/3-hear-IND"
+      ]
+    ],
+    "translation": "I hear you talking.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "phenomenon",
+        "perceptionReading"
+      ]
+    ],
+    "comment": "A clausal nominalization under a perception verb refers to an event, with idx as a variable.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex105",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(105)"
+    },
+    "language": "wash1253",
+    "primaryText": "w-álag-éweʔ-i-š-ge l-í:gi-yi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "w-álag-éweʔ-i-š-ge",
+        "STAT-shine-hence-IND-DS-IDX.ACC"
+      ],
+      [
+        "l-í:gi-yi",
+        "1/3-see-IND"
+      ]
+    ],
+    "translation": "I see it (=the sun) shining.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "phenomenon",
+        "perceptionReading"
+      ]
+    ],
+    "comment": "A clausal nominalization under a perception verb refers to an event, with idx as a variable.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex120a",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(120a)"
+    },
+    "language": "wash1253",
+    "primaryText": "gé-ši l-í:gi-yi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "gé-ši",
+        "IDX.ACC-DU"
+      ],
+      [
+        "l-í:gi-yi",
+        "1-see-IND"
+      ]
+    ],
+    "translation": "I saw them [= two ducks].",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.3"
+      ],
+      [
+        "phenomenon",
+        "pronounConcord"
+      ],
+      [
+        "number",
+        "dual"
+      ]
+    ],
+    "comment": "The dual suffix -ši on the independent pronoun.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex120b",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(120b)"
+    },
+    "language": "wash1253",
+    "primaryText": "gé-w l-í:gi-yi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "gé-w",
+        "IDX.ACC-PL"
+      ],
+      [
+        "l-í:gi-yi",
+        "1-see-IND"
+      ]
+    ],
+    "translation": "I saw them [= a plurality of ducks].",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.3"
+      ],
+      [
+        "phenomenon",
+        "pronounConcord"
+      ],
+      [
+        "number",
+        "plural"
+      ]
+    ],
+    "comment": "The plural suffix -w on the independent pronoun.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex121a",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(121a)"
+    },
+    "language": "wash1253",
+    "primaryText": "míʔle-ši t'elí:liwhu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "míʔle-ši",
+        "all-DU"
+      ],
+      [
+        "t'elí:liwhu",
+        "man.R"
+      ]
+    ],
+    "translation": "both men",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.3"
+      ],
+      [
+        "phenomenon",
+        "modifierConcord"
+      ],
+      [
+        "number",
+        "dual"
+      ]
+    ],
+    "comment": "Dual concord on a modifier of an animate noun, plural by reduplication.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex121b",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(121b)"
+    },
+    "language": "wash1253",
+    "primaryText": "hésgil-ši di-ʔisá:sa",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "hésgil-ši",
+        "two-DU"
+      ],
+      [
+        "di-ʔisá:sa",
+        "1-older.sister.R"
+      ]
+    ],
+    "translation": "my two older sisters",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.3"
+      ],
+      [
+        "phenomenon",
+        "modifierConcord"
+      ],
+      [
+        "number",
+        "dual"
+      ]
+    ],
+    "comment": "Dual concord on a numeral.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex122a",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(122a)"
+    },
+    "language": "wash1253",
+    "primaryText": "t'é:k'e-w dílek",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "t'é:k'e-w",
+        "many-PL"
+      ],
+      [
+        "dílek",
+        "duck"
+      ]
+    ],
+    "translation": "many ducks",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.3"
+      ],
+      [
+        "phenomenon",
+        "modifierConcord"
+      ],
+      [
+        "number",
+        "plural"
+      ]
+    ],
+    "comment": "Plural concord on a modifier; the noun itself is unmarked.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hanink2021_ex122b",
+    "source": {
+      "bibkey": "hanink-2021",
+      "paperLabel": "(122b)"
+    },
+    "language": "wash1253",
+    "primaryText": "hélme-w di-wic'úc'uk",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "hélme-w",
+        "three-PL"
+      ],
+      [
+        "di-wic'úc'uk",
+        "1.POSS-younger.sister"
+      ]
+    ],
+    "translation": "my three younger sisters",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.3"
+      ],
+      [
+        "phenomenon",
+        "modifierConcord"
+      ],
+      [
+        "number",
+        "plural"
+      ]
+    ],
+    "comment": "Plural concord on a numeral.",
+    "lgrConformance": "WORD_ALIGNED"
+  }
+]
