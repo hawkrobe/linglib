@@ -266,8 +266,7 @@ theorem horizontal_unrealized :
 
 /-- Ditransitive alignment: how R (recipient) and T (theme) are coded relative
     to monotransitive P — the ditransitive analogue of the monotransitive
-    alignment above, hence co-located with it (used by `Dixon1994` and
-    `Haspelmath2021`). -/
+    alignment above, hence co-located with it. -/
 inductive DitransitiveAlignment where
   /-- R = T = P: no distinction among non-agent arguments. -/
   | neutral
