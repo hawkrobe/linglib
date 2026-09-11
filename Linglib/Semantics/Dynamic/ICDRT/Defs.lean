@@ -126,6 +126,28 @@ def updateIndivConst (g : Assignment W E) (v : IVar) (e : Entity E) : Assignment
 def updateProp (g : Assignment W E) (p : PVar) (s : Set W) : Assignment W E :=
   { g with prop := Function.update g.prop p s }
 
+@[simp] theorem updateProp_prop_self (g : Assignment W E) (p : PVar) (s : Set W) :
+    (g.updateProp p s).prop p = s := by
+  simp [updateProp]
+
+@[simp] theorem updateProp_prop_of_ne (g : Assignment W E) {p q : PVar} (h : q ≠ p) (s : Set W) :
+    (g.updateProp p s).prop q = g.prop q := by
+  simp [updateProp, Function.update_of_ne h]
+
+@[simp] theorem updateProp_indiv (g : Assignment W E) (p : PVar) (s : Set W) :
+    (g.updateProp p s).indiv = g.indiv := rfl
+
+@[simp] theorem updateIndiv_prop (g : Assignment W E) (v : IVar) (e : W → Entity E) :
+    (g.updateIndiv v e).prop = g.prop := rfl
+
+@[simp] theorem updateIndiv_indiv_self (g : Assignment W E) (v : IVar) (e : W → Entity E) :
+    (g.updateIndiv v e).indiv v = e := by
+  simp [updateIndiv]
+
+@[simp] theorem updateIndiv_indiv_of_ne (g : Assignment W E) {v u : IVar} (h : u ≠ v)
+    (e : W → Entity E) : (g.updateIndiv v e).indiv u = g.indiv u := by
+  simp [updateIndiv, Function.update_of_ne h]
+
 end Assignment
 
 end DynamicSemantics.ICDRT
