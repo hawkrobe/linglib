@@ -1,164 +1,138 @@
-import Linglib.Semantics.Questions.Basic
 import Linglib.Semantics.Questions.Hamblin
-import Linglib.Semantics.Questions.Resolution
 import Linglib.Semantics.Questions.Exhaustivity
 
 /-!
-# [karttunen-1977]: Syntax and Semantics of Questions
+# Karttunen (1977): Syntax and Semantics of Questions
 
-Single-paper formalisation of [karttunen-1977], "Syntax and
-Semantics of Questions", *Linguistics and Philosophy* 1(1):3–44.
-The paper introduces the **set-of-true-alternatives** denotation for
-questions: a question denotes the set of propositions that are true
-and constitute an answer.
+This file formalizes the semantics of [karttunen-1977]: an indirect question denotes the set
+of its true answers, the propositions among its alternatives that hold at the world of
+evaluation, which is `Question.trueAnswers` of the question's Hamblin set. The yes/no rule
+(26) gives *whether p* the alternatives `p` and its negation, so that at each world the
+question denotes the singleton of the true one (`trueAnswers_pair`); the WH-quantification
+rule (33) gives *which girl sleeps* one alternative per girl, so that the question denotes the
+propositions that a sleeping girl sleeps, (34), and the empty set when no girl sleeps
+(`trueAnswers_image_eq_empty_iff`), the existential implicature the paper leaves to
+[karttunen-peters-1976] in its footnote 13. Since every member of the denotation is true, a
+verb like *tell* is veridical with an indirect question where it is not with a *that*-clause,
+(19) (`told_true`).
 
-## Substrate identification
+Footnote 11's meaning postulate relates the question-embedding *know* to the
+proposition-embedding one: an agent knows a question when she knows each of its true answers,
+and knows that it has none when it has none (`Knows`). The first conjunct is the substrate's
+`Question.KnowsAnswer`, knowledge of the intersection of the true answers, and the second is
+what keeps knowledge of an empty question from being trivial (`knows_iff_of_no_witness`).
+Knowing *whether p* is knowing `p` where it holds and its negation elsewhere
+(`knows_pair_iff`).
 
-[karttunen-1977]'s denotation is exactly
-`Exhaustivity.trueAnswers (alt Q) w` — the set of `Q`-alternatives
-true at `w`. The "complete answer" Karttunen ascribes via the
-meaning postulate (§2.4 fn 11) for `know` is exactly
-`Exhaustivity.weakAnswer (alt Q) w` — the conjunction (intersection) of
-all true alternatives.
+## Implementation notes
 
-The substrate joints (`alt_polar_iff`, `resolves_polar_iff`,
-`trueAnswers_polar_of_pos`, `trueAnswers_polar_of_neg`,
-`weakAnswer_polar_of_pos`, `weakAnswer_polar_of_neg`) live in
-`Question.Hamblin`, `Resolution.lean`, and `Exhaustivity.lean`. This
-file uses them to prove Karttunen's stated observations directly.
+The substrate's `Question` is a downward-closed set of propositions whose alternatives
+`Question.alt` are its maximal members, so `Question.polar` and `Question.which` reproduce
+the paper's alternative sets only up to maximality: the polar identification holds for a
+non-trivial proposition (`trueAnswers_alt_polar`) and the wh one when the answers form an
+antichain (`trueAnswers_alt_which`). The paper's syntax, the proto-questions and the rules
+building questions from them, is not represented, nor are the multiple-wh and scope
+ambiguities of its later sections.
 
-## Outline
+## References
 
-* **karttunenDenotation** (§2.1, §2.5): the set of true alternatives.
-* **karttunenCompleteAnswer** (§2.4 fn 11): the conjunction of true alts.
-* **§2.3 yes/no observation**: `whether p` denotes `{p}` or `{pᶜ}`
-  depending on which is true.
-* **§2.4 know-meaning postulate**: a state σ supports every true alt
-  iff σ ⊆ karttunenCompleteAnswer Q w.
-* **§2.5 footnote 13**: the existential presupposition for wh-questions
-  is *not* derived in this paper (deferred to [dayal-1996]).
-
-## What this file does NOT replicate
-
-Karttunen's syntactic apparatus (proto-questions, the WH-Quantification
-rule, the AQ rule, the YNQ rule) is **encoding machinery**, not
-empirical content. We formalise the **denotational consequences** of
-those rules. The Hamblin-shaped constructors `Question.polar` and
-`Question.which` from `Question.Hamblin` already produce the
-right semantic objects.
-
-The §2.10 multiple-wh ambiguity (Baker's observation) and §2.12
-quantifier-scope asymmetry require lifted-type machinery and are
-deferred to a future Karttunen-1977-extended file once the lifting
-substrate is in place.
+* [karttunen-1977]
+* [hamblin-1973b], [karttunen-peters-1976]
 -/
+
+open Question
 
 namespace Karttunen1977
 
-open Question
-open Question
+variable {W : Type*} (w : W)
 
-variable {W : Type*}
+/-! ### The denotation -/
 
-/-! ### Karttunen's denotation (§2.1, §2.5) -/
+/-- (26): *whether p* has the alternatives `p` and its negation, and at a `p`-world denotes
+the singleton of `p`. -/
+theorem trueAnswers_pair_of_mem {p : Set W} (h : w ∈ p) : trueAnswers {p, pᶜ} w = {p} := by
+  ext q
+  simp only [mem_trueAnswers, Set.mem_insert_iff, Set.mem_singleton_iff]
+  constructor
+  · rintro ⟨rfl | rfl, hq⟩
+    · rfl
+    · exact absurd h hq
+  · rintro rfl
+    exact ⟨Or.inl rfl, h⟩
 
-/-- [karttunen-1977] §2.1: the **Karttunen denotation** of
-    question `Q` at world `w` is the set of true alternatives.
-    Definitionally equal to `Exhaustivity.trueAnswers`. -/
-def karttunenDenotation (Q : Question W) (w : W) : Set (Set W) :=
-  trueAnswers (alt Q) w
+/-- At a world where `p` fails, *whether p* denotes the singleton of the negation. -/
+theorem trueAnswers_pair_of_notMem {p : Set W} (h : w ∉ p) :
+    trueAnswers {p, pᶜ} w = {pᶜ} := by
+  ext q
+  simp only [mem_trueAnswers, Set.mem_insert_iff, Set.mem_singleton_iff]
+  constructor
+  · rintro ⟨rfl | rfl, hq⟩
+    · exact absurd hq h
+    · rfl
+  · rintro rfl
+    exact ⟨Or.inr rfl, h⟩
 
-@[simp] theorem karttunenDenotation_eq_trueAnswers
-    (Q : Question W) (w : W) :
-    karttunenDenotation Q w = trueAnswers (alt Q) w := rfl
+/-- The substrate's polar question of a non-trivial proposition has the paper's
+alternatives. -/
+theorem trueAnswers_alt_polar {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
+    trueAnswers (alt (polar p)) w = trueAnswers {p, pᶜ} w := by
+  rw [alt_polar_of_nontrivial hne hnu]
 
-/-! ### The complete-answer view (§2.4 footnote 11) -/
+variable {E : Type*} (D : Set E) (P : E → Set W)
 
-/-- [karttunen-1977] §2.4 fn 11: the **complete answer** to `Q`
-    at `w` — the proposition the agent must believe to count as
-    knowing `Q`. Equal to `weakAnswer (alt Q) w`. -/
-def karttunenCompleteAnswer (Q : Question W) (w : W) : Set W :=
-  weakAnswer (alt Q) w
+/-- (34): *which girl sleeps*, with one alternative per girl, denotes the propositions that a
+sleeping girl sleeps. -/
+theorem mem_trueAnswers_image_iff (q : Set W) :
+    q ∈ trueAnswers (P '' D) w ↔ ∃ e ∈ D, w ∈ P e ∧ q = P e := by
+  simp only [mem_trueAnswers, Set.mem_image]
+  constructor
+  · rintro ⟨⟨e, he, rfl⟩, hw⟩
+    exact ⟨e, he, hw, rfl⟩
+  · rintro ⟨e, he, hw, rfl⟩
+    exact ⟨⟨e, he, rfl⟩, hw⟩
 
-@[simp] theorem karttunenCompleteAnswer_eq_weakAnswer
-    (Q : Question W) (w : W) :
-    karttunenCompleteAnswer Q w = weakAnswer (alt Q) w := rfl
+/-- When no girl sleeps, the question denotes the empty set: the existential implicature of
+footnote 13 is not part of the denotation. -/
+theorem trueAnswers_image_eq_empty_iff :
+    trueAnswers (P '' D) w = ∅ ↔ ∀ e ∈ D, w ∉ P e := by
+  simp only [Set.eq_empty_iff_forall_notMem, mem_trueAnswers_image_iff, not_exists, not_and]
+  exact ⟨λ h e he hw => h (P e) e he hw rfl, λ h _ e he hw _ => h e he hw⟩
 
-/-- The complete answer at `w` always contains `w` itself: every true
-    alternative contains `w` by definition. -/
-theorem mem_karttunenCompleteAnswer_self (Q : Question W) (w : W) :
-    w ∈ karttunenCompleteAnswer Q w :=
-  self_mem_weakAnswer _ w
+/-- The substrate's wh-question has the paper's alternatives when the answers form an
+antichain. -/
+theorem trueAnswers_alt_which (hD : D.Nonempty) (hne : ∀ e ∈ D, (P e).Nonempty)
+    (hA : IsAntichain (· ⊆ ·) (P '' D)) :
+    trueAnswers (alt (which D P)) w = trueAnswers (P '' D) w := by
+  rw [alt_which_of_antichain hD hne hA]
 
-/-- The complete answer is the intersection of the Karttunen
-    denotation. -/
-theorem karttunenCompleteAnswer_eq_sInter (Q : Question W) (w : W) :
-    karttunenCompleteAnswer Q w = ⋂₀ (karttunenDenotation Q w) := rfl
+/-- (19): what is told with an indirect question is true, as what is told with a
+*that*-clause need not be. -/
+theorem told_true {H : Set (Set W)} {p : Set W} (hp : p ∈ trueAnswers H w) : w ∈ p := hp.2
 
-/-! ### §2.3 yes/no observation
+/-! ### Knowing a question (footnote 11) -/
 
-`whether Mary cooks` denotes `{[Mary cooks]}` if Mary cooks, else
-`{[Mary doesn't cook]}`. Falls out of the substrate
-`trueAnswers_polar_of_pos`/`trueAnswers_polar_of_neg` joints. -/
+variable {A : Type*} (R : A → W → W → Prop) (x : A) (H : Set (Set W))
 
-/-- [karttunen-1977] §2.3: at a `p`-true world, the polar
-    question denotes `{p}`. -/
-theorem karttunen_polar_pos (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
-    (w : W) (hwp : w ∈ p) :
-    karttunenDenotation (Question.polar p) w = {p} :=
-  trueAnswers_polar_of_pos hne hnu hwp
+/-- Footnote 11's meaning postulate, with the proposition-embedding *know* read through the
+accessibility relation `R`: the agent knows every true answer, and, when there is none,
+knows that there is none. -/
+def Knows : Prop :=
+  KnowsAnswer H w R x ∧ (trueAnswers H w = ∅ → ∀ v, R x w v → trueAnswers H v = ∅)
 
-/-- [karttunen-1977] §2.3: at a `p`-false world, the polar
-    question denotes `{pᶜ}`. -/
-theorem karttunen_polar_neg (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
-    (w : W) (hwp : w ∉ p) :
-    karttunenDenotation (Question.polar p) w = {pᶜ} :=
-  trueAnswers_polar_of_neg hne hnu hwp
+/-- Knowing *whether p* is knowing `p` at a `p`-world and its negation at another, (31). -/
+theorem knows_pair_iff (p : Set W) :
+    Knows w R x {p, pᶜ} ↔ ∀ v, R x w v → (v ∈ p ↔ w ∈ p) := by
+  by_cases h : w ∈ p
+  · simp [Knows, KnowsAnswer, weakAnswer, trueAnswers_pair_of_mem w h, h]
+  · simp [Knows, KnowsAnswer, weakAnswer, trueAnswers_pair_of_notMem w h, h]
 
-/-- §2.4 corollary: the complete answer to `whether p` at a `p`-true
-    world is just `p`. -/
-theorem karttunenCompleteAnswer_polar_pos {p : Set W}
-    (hne : p ≠ ∅) (hnu : p ≠ Set.univ) {w : W} (hwp : w ∈ p) :
-    karttunenCompleteAnswer (Question.polar p) w = p :=
-  weakAnswer_polar_of_pos hne hnu hwp
-
-/-- §2.4 corollary: the complete answer to `whether p` at a `p`-false
-    world is `pᶜ`. -/
-theorem karttunenCompleteAnswer_polar_neg {p : Set W}
-    (hne : p ≠ ∅) (hnu : p ≠ Set.univ) {w : W} (hwp : w ∉ p) :
-    karttunenCompleteAnswer (Question.polar p) w = pᶜ :=
-  weakAnswer_polar_of_neg hne hnu hwp
-
-/-! ### §2.4 know-meaning postulate
-
-[karttunen-1977] §2.4 footnote 11 provides
-
-    know'_{IV/Q}(x, P) ↔ ∀p [P(p) → know'_t(x, p)]
-
-— knowing a question means knowing each of its true alternatives.
-The substrate-level invariant: a state σ supports every true
-alternative of `Q` at `w` iff σ ⊆ karttunenCompleteAnswer Q w. -/
-
-theorem subset_karttunenCompleteAnswer_iff (σ : Set W) (Q : Question W) (w : W) :
-    σ ⊆ karttunenCompleteAnswer Q w ↔
-      ∀ p ∈ alt Q, w ∈ p → σ ⊆ p :=
-  ⟨fun h p hp hwp _ hv => (mem_weakAnswer _ w).1 (h hv) p hp hwp,
-   fun h _ hv => (mem_weakAnswer _ w).2 fun p hp hwp => h p hp hwp hv⟩
-
-/-! ### §2.5 fn 13: empty-denotation observation for wh-questions
-
-When no `e ∈ D` satisfies `P e` at `w`, every Karttunen alternative is
-empty (paper p. 20 fn 13). The existential presupposition is *not*
-captured at this stage; [dayal-1996] adds it. -/
-
-theorem karttunen_which_no_witness {E : Type*} (D : Set E) (P : E → Set W) (w : W)
-    (h : ∀ e ∈ D, w ∉ P e) :
-    ∀ q ∈ karttunenDenotation (Question.which D P) w, q = ∅ := by
-  intro q hq
-  obtain ⟨hq, hwq⟩ := hq
-  have hq_mem : q ∈ Question.which D P := alt_subset_props _ hq
-  rcases Question.mem_which.mp hq_mem with hempty | ⟨e, heD, hqe⟩
-  · exact hempty
-  · exact absurd (hqe hwq) (h e heD)
+/-- A question with no true answer is known exactly when the agent knows that it has none:
+the second conjunct of the postulate, without which the empty question would be known
+trivially. -/
+theorem knows_iff_of_no_witness (h : ∀ e ∈ D, w ∉ P e) :
+    Knows w R x (P '' D) ↔ ∀ v, R x w v → ∀ e ∈ D, v ∉ P e := by
+  have h0 : trueAnswers (P '' D) w = ∅ := (trueAnswers_image_eq_empty_iff w D P).mpr h
+  simp only [Knows, KnowsAnswer, weakAnswer, h0, Set.sInter_empty, Set.mem_univ, imp_true_iff,
+    true_and, true_imp_iff, trueAnswers_image_eq_empty_iff]
 
 end Karttunen1977
