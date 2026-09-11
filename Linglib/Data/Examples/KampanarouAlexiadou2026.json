@@ -1,0 +1,1719 @@
+[
+  {
+    "id": "ka2026_5a",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(5a)"
+    },
+    "language": "stan1295",
+    "primaryText": "episkevasame to pomolo apo tin porta",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "We fixed the handle of the door.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "tis portas",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "group",
+        "possessive"
+      ],
+      [
+        "relation",
+        "partWhole"
+      ],
+      [
+        "possessor",
+        "common"
+      ],
+      [
+        "animate",
+        "no"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "modified",
+        "no"
+      ],
+      [
+        "gap",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_5b",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(5b)"
+    },
+    "language": "stan1295",
+    "primaryText": "vrasame to nero apo tin piji",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "We boiled the water of the spring.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "tis pijis",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "group",
+        "possessive"
+      ],
+      [
+        "relation",
+        "source"
+      ],
+      [
+        "possessor",
+        "common"
+      ],
+      [
+        "animate",
+        "no"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "modified",
+        "no"
+      ],
+      [
+        "gap",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_5c",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(5c)"
+    },
+    "language": "stan1295",
+    "primaryText": "?blextike i ura apo to aloɣo",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The tail of the horse tangled.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [
+      {
+        "form": "tu aloɣu",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "group",
+        "possessive"
+      ],
+      [
+        "relation",
+        "partWhole"
+      ],
+      [
+        "possessor",
+        "common"
+      ],
+      [
+        "animate",
+        "yes"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "modified",
+        "no"
+      ],
+      [
+        "gap",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_6a",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(6a)"
+    },
+    "language": "stan1295",
+    "primaryText": "#kalesame ton aðerfo apo ta koritsja",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "We invited the brother of the girls.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "group",
+        "possessive"
+      ],
+      [
+        "relation",
+        "kinship"
+      ],
+      [
+        "possessor",
+        "common"
+      ],
+      [
+        "animate",
+        "yes"
+      ],
+      [
+        "number",
+        "pl"
+      ],
+      [
+        "modified",
+        "no"
+      ],
+      [
+        "gap",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_6b",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(6b)"
+    },
+    "language": "stan1295",
+    "primaryText": "#eksisa to molivi apo ti ðaskala",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I sharpened the pencil of the teacher.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "group",
+        "possessive"
+      ],
+      [
+        "relation",
+        "ownership"
+      ],
+      [
+        "possessor",
+        "common"
+      ],
+      [
+        "animate",
+        "yes"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "modified",
+        "no"
+      ],
+      [
+        "gap",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_9a_book",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(9a)"
+    },
+    "language": "stan1295",
+    "primaryText": "#evapsa to vivlio apo sena",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I painted your book.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "group",
+        "possessive"
+      ],
+      [
+        "relation",
+        "ownership"
+      ],
+      [
+        "possessor",
+        "pronoun"
+      ],
+      [
+        "animate",
+        "yes"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "modified",
+        "no"
+      ],
+      [
+        "gap",
+        "no"
+      ]
+    ],
+    "comment": "Acceptable only if apo sena denotes the book's sender or donor.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_9a_eyes",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(9a)"
+    },
+    "language": "stan1295",
+    "primaryText": "#evapsa ta matja apo sena",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I painted your eyes.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "group",
+        "possessive"
+      ],
+      [
+        "relation",
+        "partWhole"
+      ],
+      [
+        "possessor",
+        "pronoun"
+      ],
+      [
+        "animate",
+        "yes"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "modified",
+        "no"
+      ],
+      [
+        "gap",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_10a_shoulder",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(10a)"
+    },
+    "language": "stan1295",
+    "primaryText": "#travmatistike o omos apo ti Fani",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Fani's shoulder got injured.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "group",
+        "possessive"
+      ],
+      [
+        "relation",
+        "partWhole"
+      ],
+      [
+        "possessor",
+        "properName"
+      ],
+      [
+        "animate",
+        "yes"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "modified",
+        "no"
+      ],
+      [
+        "gap",
+        "no"
+      ]
+    ],
+    "comment": "Acceptable only with apo ti Fani read as a by-phrase.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_10a_mom",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(10a)"
+    },
+    "language": "stan1295",
+    "primaryText": "#travmatistike i mama apo ti Fani",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Fani's mom got hurt.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "group",
+        "possessive"
+      ],
+      [
+        "relation",
+        "kinship"
+      ],
+      [
+        "possessor",
+        "properName"
+      ],
+      [
+        "animate",
+        "yes"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "modified",
+        "no"
+      ],
+      [
+        "gap",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_11a",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(11a)"
+    },
+    "language": "stan1295",
+    "primaryText": "??alaksa to xalaki apo tin porta",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I changed the small mat of the door.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "group",
+        "possessive"
+      ],
+      [
+        "relation",
+        "association"
+      ],
+      [
+        "possessor",
+        "common"
+      ],
+      [
+        "animate",
+        "no"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "modified",
+        "no"
+      ],
+      [
+        "gap",
+        "no"
+      ]
+    ],
+    "comment": "The relation between a mat and a door is not part-whole.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_11b",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(11b)"
+    },
+    "language": "stan1295",
+    "primaryText": "alaksa to xalaki apo tis portes",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I changed the small mat of the doors.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "group",
+        "possessive"
+      ],
+      [
+        "relation",
+        "association"
+      ],
+      [
+        "possessor",
+        "common"
+      ],
+      [
+        "animate",
+        "no"
+      ],
+      [
+        "number",
+        "pl"
+      ],
+      [
+        "modified",
+        "no"
+      ],
+      [
+        "gap",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_fn5",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "fn. 5 (i)"
+    },
+    "language": "stan1295",
+    "primaryText": "alaksa to xalaki apo tin brostini porta",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I changed the small mat of the front door.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "group",
+        "possessive"
+      ],
+      [
+        "relation",
+        "association"
+      ],
+      [
+        "possessor",
+        "common"
+      ],
+      [
+        "animate",
+        "no"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "modified",
+        "yes"
+      ],
+      [
+        "gap",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_14a",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(14a)"
+    },
+    "language": "stan1295",
+    "primaryText": "i epikalipsi apo ta sokolatakia",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the coating of chocolates",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "group",
+        "possessive"
+      ],
+      [
+        "relation",
+        "partWhole"
+      ],
+      [
+        "possessor",
+        "common"
+      ],
+      [
+        "animate",
+        "no"
+      ],
+      [
+        "number",
+        "pl"
+      ],
+      [
+        "modified",
+        "no"
+      ],
+      [
+        "gap",
+        "yes"
+      ]
+    ],
+    "comment": "The genitive sokolatakion is a paradigm gap.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_14b",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(14b)"
+    },
+    "language": "stan1295",
+    "primaryText": "to trixoma apo to katsikaki",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the little goat's fur",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "group",
+        "possessive"
+      ],
+      [
+        "relation",
+        "partWhole"
+      ],
+      [
+        "possessor",
+        "common"
+      ],
+      [
+        "animate",
+        "yes"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "modified",
+        "no"
+      ],
+      [
+        "gap",
+        "yes"
+      ]
+    ],
+    "comment": "The genitive katsikakiu is a paradigm gap.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_15a",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(15a)"
+    },
+    "language": "stan1295",
+    "primaryText": "#petai psila to baloni apo to aɣoraki",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The little boy's balloon flies high.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "group",
+        "possessive"
+      ],
+      [
+        "relation",
+        "ownership"
+      ],
+      [
+        "possessor",
+        "common"
+      ],
+      [
+        "animate",
+        "yes"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "modified",
+        "no"
+      ],
+      [
+        "gap",
+        "yes"
+      ]
+    ],
+    "comment": "The genitive aɣorakiu is a paradigm gap.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_15b",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(15b)"
+    },
+    "language": "stan1295",
+    "primaryText": "#efije o babas apo to peðaki",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The little kid's dad left.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "group",
+        "possessive"
+      ],
+      [
+        "relation",
+        "kinship"
+      ],
+      [
+        "possessor",
+        "common"
+      ],
+      [
+        "animate",
+        "yes"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "modified",
+        "no"
+      ],
+      [
+        "gap",
+        "yes"
+      ]
+    ],
+    "comment": "The genitive peðakiu is a paradigm gap.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_28",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(28)"
+    },
+    "language": "stan1295",
+    "primaryText": "o babas apo to isixo peðaki ðen ipe pola",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The father of the quiet kid didn't say much.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "group",
+        "possessive"
+      ],
+      [
+        "relation",
+        "kinship"
+      ],
+      [
+        "possessor",
+        "common"
+      ],
+      [
+        "animate",
+        "yes"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "modified",
+        "yes"
+      ],
+      [
+        "gap",
+        "no"
+      ]
+    ],
+    "comment": "Reported as more acceptable for some speakers, including a reviewer; unmarked in the paper.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_25a",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(25a)"
+    },
+    "language": "stan1295",
+    "primaryText": "episkevasa to stiriɣma tu poðju tu trapezju",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I fixed the table's leg support.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "group",
+        "stacking"
+      ],
+      [
+        "inner",
+        "genitive"
+      ],
+      [
+        "outer",
+        "genitive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_25b",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(25b)"
+    },
+    "language": "stan1295",
+    "primaryText": "???episkevasa to stiriɣma apo to poði apo to trapezi",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I fixed the support of the leg of the table.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "group",
+        "stacking"
+      ],
+      [
+        "inner",
+        "apo"
+      ],
+      [
+        "outer",
+        "apo"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_27a",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(27a)"
+    },
+    "language": "stan1295",
+    "primaryText": "episkevasa to stiriɣma apo to poði tu trapezju",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I fixed the support of the table's leg.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "group",
+        "stacking"
+      ],
+      [
+        "inner",
+        "apo"
+      ],
+      [
+        "outer",
+        "genitive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_27b",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(27b)"
+    },
+    "language": "stan1295",
+    "primaryText": "???episkevasa to stiriɣma tu poðju apo to trapezi",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I fixed the support of the leg of the table.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "group",
+        "stacking"
+      ],
+      [
+        "inner",
+        "genitive"
+      ],
+      [
+        "outer",
+        "apo"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_7a",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(7a)"
+    },
+    "language": "stan1295",
+    "primaryText": "xriazode tria lepta ja to vrasimo apo ta zimarika",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Three minutes are needed for the boiling of the pasta.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "ton zimarikon",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "none"
+      ],
+      [
+        "aspectual",
+        "no"
+      ]
+    ],
+    "comment": "Degraded for some speakers, including one author and one reviewer.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_8a",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(8a)"
+    },
+    "language": "stan1295",
+    "primaryText": "i metafrasi tu miθistorimatos apo to Jani",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The novel's translation by John",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "genitive"
+      ],
+      [
+        "agent",
+        "apo"
+      ],
+      [
+        "aspectual",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_8b",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(8b)"
+    },
+    "language": "stan1295",
+    "primaryText": "i metafrasi apo to miθistorima",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The translation of the novel",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "none"
+      ],
+      [
+        "aspectual",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_8c",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(8c)"
+    },
+    "language": "stan1295",
+    "primaryText": "#i metafrasi apo to miθistorima tu Jani",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The translation of John's novel",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "genitive"
+      ],
+      [
+        "aspectual",
+        "no"
+      ]
+    ],
+    "comment": "Acceptable only with John as the novel's author.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_8d",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(8d)"
+    },
+    "language": "stan1295",
+    "primaryText": "*i metafrasi apo to miθistorima apo to Jani",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The translation of the novel of John",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "apo"
+      ],
+      [
+        "aspectual",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_12",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(12)"
+    },
+    "language": "",
+    "primaryText": "i piriɣrafi ap tun ðimarxu ap ta piðja",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the description of the mayor of the kids",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "grevena"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "apo"
+      ],
+      [
+        "aspectual",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_30a",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(30a)"
+    },
+    "language": "stan1295",
+    "primaryText": "i katastrofi tis polis apo tus varvarus",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the destruction of the city by the barbarians",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "genitive"
+      ],
+      [
+        "agent",
+        "apo"
+      ],
+      [
+        "aspectual",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_33b",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(33b)"
+    },
+    "language": "stan1295",
+    "primaryText": "?to kolibi apo tus aθlites",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the swimming of the athletes",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [
+      {
+        "form": "ton aθliton",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "none"
+      ],
+      [
+        "aspectual",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_34a",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(34a)"
+    },
+    "language": "stan1295",
+    "primaryText": "*i kinisi apo tus planites ja ekatomiria xronja",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the movement of the planets for millions of years",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "none"
+      ],
+      [
+        "aspectual",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_35a",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(35a)"
+    },
+    "language": "stan1295",
+    "primaryText": "i kinisi ton planiton ja ekatomiria xronja",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the planets' movement for millions of years",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "genitive"
+      ],
+      [
+        "agent",
+        "none"
+      ],
+      [
+        "aspectual",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_36a",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(36a)"
+    },
+    "language": "stan1295",
+    "primaryText": "meletun tis kinisis apo tus planites",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "They study the movements of the planets.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "group",
+        "derived"
+      ],
+      [
+        "variety",
+        "smg"
+      ],
+      [
+        "theme",
+        "apo"
+      ],
+      [
+        "agent",
+        "none"
+      ],
+      [
+        "aspectual",
+        "no"
+      ]
+    ],
+    "comment": "The pluralized head nominal diagnoses the result reading.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_38a",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(38a)"
+    },
+    "language": "stan1295",
+    "primaryText": "espase ena poði kaθe trapezju",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A leg of each table broke.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "surface",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "inverse",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "7"
+      ],
+      [
+        "group",
+        "scope"
+      ],
+      [
+        "marking",
+        "genitive"
+      ],
+      [
+        "relation",
+        "partWhole"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_38b",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(38b)"
+    },
+    "language": "stan1295",
+    "primaryText": "espase ena pexniði kaθe peðju",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A toy of each kid broke.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "surface",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "inverse",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "7"
+      ],
+      [
+        "group",
+        "scope"
+      ],
+      [
+        "marking",
+        "genitive"
+      ],
+      [
+        "relation",
+        "ownership"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_39a",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(39a)"
+    },
+    "language": "stan1295",
+    "primaryText": "espase ena poði apo kaθe trapezi",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A leg of each table broke.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "surface",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "inverse",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "7"
+      ],
+      [
+        "group",
+        "scope"
+      ],
+      [
+        "marking",
+        "apo"
+      ],
+      [
+        "relation",
+        "partWhole"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ka2026_39b",
+    "source": {
+      "bibkey": "kampanarou-alexiadou-2026",
+      "paperLabel": "(39b)"
+    },
+    "language": "stan1295",
+    "primaryText": "espase ena pexniði apo kaθe peði",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A toy of each kid broke.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "surface",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "inverse",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "7"
+      ],
+      [
+        "group",
+        "scope"
+      ],
+      [
+        "marking",
+        "apo"
+      ],
+      [
+        "relation",
+        "ownership"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  }
+]
