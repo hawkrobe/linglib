@@ -1,72 +1,51 @@
 import Linglib.Semantics.Plurality.Reciprocal
 import Linglib.Semantics.Plurality.Algebra
+import Linglib.Data.Examples.HeimLasnikMay1991
 
 /-!
-# Heim, Lasnik & May (1991): Reciprocity and Plurality
+# Heim, Lasnik and May (1991): Reciprocity and Plurality
 
-[heim-lasnik-may-1991]
+This file formalizes the quantificational analysis of reciprocals in [heim-lasnik-may-1991]:
+*each other* decomposes at LF into a distributor, *each*, which moves to the antecedent NP,
+and a reciprocator, *e other*, each keeping the semantics of its non-reciprocal use, so that
+"the men saw each other" is `[[the men]₁ each₂] saw [e₂ other]₃` ((8), (20)). The pieces
+`other` (16), `reciprocator` (18), and `distributor` (19)/(28) compose to `eachOtherLF`,
+which is Strong Reciprocity (`eachOtherLF_iff_strongReciprocity`), is vacuous on a
+singleton, and is contradictory over an asymmetric relation ((68)). The grain problem of
+§3, that (43) is three-ways ambiguous under a single indexing, is resolved by the range and
+distribution indices of plural NPs: the four construals of an embedded pronoun (49) yield
+the four readings, with the *I* and *you* readings bound variables and the *we* readings
+coreference, which a preposed adjunct (60) filters. The scope puzzle of §4 is the attachment
+site of *each* (67): narrow scope forces coreference and broad scope a bound variable,
+because distributors need sum-denoting hosts and do not iterate (72) and the trace of
+*each* must be bound (74).
 
-Linguistic Inquiry 22(1): 63–101.
+## Implementation notes
 
-The quantificational analysis of reciprocals: *each other* is not a
-simplex anaphor but decomposes at LF into a **distributor** (*each*,
-moved to the antecedent NP) and a **reciprocator** (*e other*), each
-inheriting its semantics from its non-reciprocal use. The LF of
-"the men saw each other" is
-`[[the men]₁ each₂] saw [e₂ other]₃` — a four-part structure
-*group antecedent – distributor – reciprocator – predicate* (9).
-This is the quantificational arm of the comparison drawn in
-`Semantics/Plurality/Reciprocal/Scope.lean`, and the decomposed counterpart of
-Link's holistic `Algebra.DJR` operator.
+Pluralities are `Finset`s of atoms and proper atomic parthood is membership, matching the
+substrate's `Reciprocal`. The reciprocator has universal force, as the paper adopts while
+considering groups of two, where universal and existential force coincide; the weaker
+schemes for larger groups are [dalrymple-et-al-1998]'s. The grain and scope solutions are
+stated over the finite construal and attachment types, with readings and anaphora
+types derived; the syntactic derivation of *each*-movement itself is not represented.
 
-Two puzzles drive the paper (both from [higginbotham-1985] and
-[higginbotham-1980]): the **grain problem** — "John and Mary told each
-other that they should leave" is three-ways ambiguous (I/you/we readings)
-though binding theory allows only one indexing — and the **scope
-puzzle** — embedded reciprocals allow broad and narrow construals. Both
-resolve through the double indexing of plural NPs (range + distribution
-indices, (26)–(29)): the pronoun construals bound by the
-quantificational *each*/*other* indices are singular bound variables
-(I/you readings), those coindexed with the referential range index are
-coreference anaphora (we readings), and scope covaries with anaphora type
-because distributors are undefined on atoms and cannot iterate.
+## TODO
 
-## Main declarations
+* §4.2 long-distance reciprocals and the Specified Subject Condition effects of §4.3.
 
-* `other` (16), `reciprocator` (18), `distributor` (19)/(28) — the
-  compositional pieces; the distributor is the `Finset`-level,
-  world-free form of `Plurality.distMaximal` and `Algebra.D`.
-* `eachOtherLF` + `eachOtherLF_iff_strongReciprocity` — the keystone:
-  the each∘other composition derives `StrongReciprocity` (21),
-  plugging the LF analysis into the DKMPK entailment lattice.
-* `eachOtherLF_singleton` — distribution over a singleton is vacuous:
-  the semantic shadow of the definedness restriction that derives the
-  plural-antecedent requirement (\**Mary saw each other*).
-* `eachOtherLF_asymmetric_contradictory` — (68) "they are taller than
-  each other" is contradictory on any genuine plurality.
-* `PronounConstrual`, `GrainReading`, `AnaphoraType` — the grain
-  solution (29)/(49): four construals, four readings, I/you = bound
-  variable vs we = coreference.
-* `EachAttachment`, `scopeWellFormed` — the scope solution (67):
-  narrow ⇔ coreference and broad ⇔ bound variable, derived from the
-  sum-host requirement on distributors and Principle A on the trace
-  of *each*.
+## References
 
-## Todo
-
-* §4.2 long-distance reciprocals (Specified Subject Condition evasion
-  via broad scope) and the *each … the other* variant constructions.
-* Weaker-than-universal force: HLM restrict attention to two-membered
-  groups (the footnote on (18)); connecting the composition to the weaker
-  DKMPK schemes for larger groups is rival territory
-  ([dalrymple-et-al-1998]).
+* [heim-lasnik-may-1991]
+* [higginbotham-1980]
+* [higginbotham-1985]
+* [dalrymple-et-al-1998]
 -/
 
 namespace HeimLasnikMay1991
 
 open Reciprocal
 
-variable {A : Type*} [DecidableEq A]
+variable {A : Type*}
 
 /-! ### The compositional pieces (§2.2)
 
@@ -84,10 +63,9 @@ membership, matching the `(R, X)` signature of
 def other (contrast : A) (range : Finset A) (z : A) : Prop :=
   z ∈ range ∧ z ≠ contrast
 
-/-- (18): the reciprocator `[e other]` with universal force — `x` stands
-    in `ζ` to every *other* atomic part of the range. (HLM adopt
-    universal force while restricting attention to two-membered groups,
-    where universal and existential force coincide.) -/
+/-- (18): the reciprocator `[e other]` with universal force: `x` stands in `ζ` to every
+    *other* atomic part of the range. The paper adopts universal force while considering
+    groups of two, where universal and existential force coincide. -/
 def reciprocator (range : Finset A) (ζ : A → A → Prop) (x : A) : Prop :=
   ∀ z, other x range z → ζ x z
 
@@ -207,32 +185,37 @@ def PronounConstrual.anaphoraType : PronounConstrual → AnaphoraType
 
 /-- A bound-variable construal ranges over atoms; a coreferential one
     denotes the antecedent's sum (§2.4). -/
-def PronounConstrual.denotesAtom (c : PronounConstrual) : Bool :=
-  c.anaphoraType == .boundVariable
+def PronounConstrual.DenotesAtom (c : PronounConstrual) : Prop :=
+  c.anaphoraType = .boundVariable
 
-/-- Whether the construal places the pronoun under a distributor of its
-    own ((49d)). -/
-def PronounConstrual.hostsDistributor : PronounConstrual → Bool
-  | .rangeDistributed => true
-  | _                 => false
+/-- The construal places the pronoun under a distributor of its own ((49d)). -/
+def PronounConstrual.HostsDistributor : PronounConstrual → Prop
+  | .rangeDistributed => True
+  | _                 => False
 
 /-- Preposed adjuncts block bound-variable anaphora ((61): a quantifier
     cannot bind into a preposed adjunct), so "After they had left the
     room, the candidates criticized each other" (60) keeps only the *we*
     construals, while the postposed (57) is fully ambiguous. -/
-def PronounConstrual.availableInPreposedAdjunct (c : PronounConstrual) : Bool :=
-  c.anaphoraType == .coreference
+def PronounConstrual.AvailableInPreposedAdjunct (c : PronounConstrual) : Prop :=
+  c.anaphoraType = .coreference
+
+instance : DecidablePred PronounConstrual.DenotesAtom := λ c =>
+  inferInstanceAs (Decidable (c.anaphoraType = .boundVariable))
+
+instance : DecidablePred PronounConstrual.HostsDistributor
+  | .rangeDistributed => isTrue trivial
+  | .range | .distributor | .reciprocator => isFalse id
+
+instance : DecidablePred PronounConstrual.AvailableInPreposedAdjunct := λ c =>
+  inferInstanceAs (Decidable (c.anaphoraType = .coreference))
 
 /-- The preposed-adjunct diagnostic isolates exactly the bound-variable
     construals: what (60) loses relative to (57) is the I and you
     readings. -/
-theorem preposed_adjunct_blocks_bound_variables :
-    ∀ c : PronounConstrual,
-      c.availableInPreposedAdjunct = false ↔
-        c.reading = .I ∨ c.reading = .you := by
-  intro c
-  cases c <;> simp [PronounConstrual.availableInPreposedAdjunct,
-    PronounConstrual.anaphoraType, PronounConstrual.reading]
+theorem not_availableInPreposedAdjunct_iff (c : PronounConstrual) :
+    ¬ c.AvailableInPreposedAdjunct ↔ c.reading = .I ∨ c.reading = .you := by
+  cases c <;> decide
 
 /-! ### The scope puzzle (§4)
 
@@ -258,31 +241,30 @@ inductive EachAttachment where
     do not iterate), and under matrix attachment the pronoun must carry
     the distribution index so that the trace of *each* is A-bound
     (Principle A, (74)). -/
-def scopeWellFormed : EachAttachment → PronounConstrual → Prop
-  | .embedded, c =>
-      c.denotesAtom = false ∧ c.hostsDistributor = false
+def ScopeWellFormed : EachAttachment → PronounConstrual → Prop
+  | .embedded, c => ¬ c.DenotesAtom ∧ ¬ c.HostsDistributor
   | .matrix, c => c = .distributor
 
 /-- Narrow scope forces a coreferential pronoun ((67a)). -/
 theorem narrow_forces_coreference (c : PronounConstrual)
-    (h : scopeWellFormed .embedded c) :
+    (h : ScopeWellFormed .embedded c) :
     c.anaphoraType = .coreference := by
-  cases c <;> simp_all [scopeWellFormed, PronounConstrual.denotesAtom,
+  cases c <;> simp_all [ScopeWellFormed, PronounConstrual.DenotesAtom,
     PronounConstrual.anaphoraType]
 
 /-- Broad scope forces a bound-variable pronoun ((67b)): scope and
     anaphora type covary, the paper's answer to Williams's nonscope
     alternative (§4.1). -/
 theorem broad_forces_bound_variable (c : PronounConstrual)
-    (h : scopeWellFormed .matrix c) :
+    (h : ScopeWellFormed .matrix c) :
     c.anaphoraType = .boundVariable := by
-  cases c <;> simp_all [scopeWellFormed, PronounConstrual.anaphoraType]
+  cases c <;> simp_all [ScopeWellFormed, PronounConstrual.anaphoraType]
 
 /-- Under embedded attachment exactly one construal survives: plain
     range coreference — (67a)'s indexing is forced. -/
 theorem embedded_unique_construal (c : PronounConstrual) :
-    scopeWellFormed .embedded c ↔ c = .range := by
-  cases c <;> simp [scopeWellFormed, PronounConstrual.denotesAtom,
-    PronounConstrual.anaphoraType, PronounConstrual.hostsDistributor]
+    ScopeWellFormed .embedded c ↔ c = .range := by
+  cases c <;> simp [ScopeWellFormed, PronounConstrual.DenotesAtom,
+    PronounConstrual.anaphoraType, PronounConstrual.HostsDistributor]
 
 end HeimLasnikMay1991
