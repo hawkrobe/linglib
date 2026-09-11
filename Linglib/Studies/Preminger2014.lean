@@ -494,7 +494,7 @@ theorem ch7_arg5_zulu_parallel :
     ¬ Halpert2012.LicensingOk [⟨1, true⟩, ⟨5, false⟩] ∧
     -- both probes' failures converge with default morphology
     afMarker (.pn .third .Sing) (.pn .third .Sing) = some "∅" ∧
-    Halpert2012.lSpellout [] = "ya-" := by
+    Halpert2012.lSpellout [] = .disjoint := by
   decide
 
 end Preminger2014
