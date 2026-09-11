@@ -1,31 +1,294 @@
 [
   {
+    "id": "chierchia2006_ex2a",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(2a)"
+    },
+    "language": "stan1293",
+    "primaryText": "*There is any student (in that building).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "npiFci"
+      ],
+      [
+        "environment",
+        "episodic"
+      ]
+    ],
+    "comment": "Widening the domain of an existential in a positive context yields a weaker statement.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex2b",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(2b)"
+    },
+    "language": "stan1293",
+    "primaryText": "There isn't any student (in that building).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "npiFci"
+      ],
+      [
+        "environment",
+        "negation"
+      ]
+    ],
+    "comment": "Within the scope of negation the wider domain gives the stronger statement.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex3",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(3)"
+    },
+    "language": "stan1295",
+    "primaryText": "Ich werde irgendeinen Doktor heiraten.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I will marry any doctor.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "existential",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "existentialNpiFci"
+      ],
+      [
+        "environment",
+        "future"
+      ]
+    ],
+    "comment": "Existential, with the speaker not choosy about which doctor.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex4",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(4)"
+    },
+    "language": "stan1295",
+    "primaryText": "Gestern hat irgendein Student für dich angerufen.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Yesterday a student (I don't know/don't care who) called for you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "existential",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "existentialNpiFci"
+      ],
+      [
+        "environment",
+        "episodic"
+      ]
+    ],
+    "comment": "An episodic sentence that still requires a covert epistemic modal for its interpretation.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex5",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(5)"
+    },
+    "language": "stan1293",
+    "primaryText": "Yesterday Mary saw any student that wanted to see her.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "universal",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "npiFci"
+      ],
+      [
+        "environment",
+        "episodicSubtrigged"
+      ]
+    ],
+    "comment": "Episodic, universal, and inviting counterfactual conclusions.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex6",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(6)"
+    },
+    "language": "stan1293",
+    "primaryText": "To continue, push any key.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "existential",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "npiFci"
+      ],
+      [
+        "environment",
+        "imperative"
+      ]
+    ],
+    "comment": "Not an instruction to push all keys.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex8a",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(8a)"
+    },
+    "language": "ital1282",
+    "primaryText": "?Sono uscito in strada e mi sono messo a bussare come un matto ad una porta qualsiasi con i battenti in legno.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I went out on the street and started knocking like a madman at a door whatever with wooden shutters.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "existential",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "existentialPureFci"
+      ],
+      [
+        "environment",
+        "episodic"
+      ]
+    ],
+    "comment": "Slightly marginal out of the blue; existential in a semimodalized context.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex8b",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(8b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Sono uscito in strada e mi son messo a bussare come un matto a qualsiasi porta con i battenti in legno.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I went out on the street and started knocking like a madman at whatever door with wooden shutters.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "universal",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "pureFci"
+      ],
+      [
+        "environment",
+        "episodicSubtrigged"
+      ]
+    ],
+    "comment": "Universal, with the modifier construed restrictively.",
+    "lgrConformance": ""
+  },
+  {
     "id": "chierchia2006_ex10a",
     "source": {
       "bibkey": "chierchia-2006",
       "paperLabel": "(10a)"
     },
     "language": "ital1282",
-    "primaryText": "Domani interrogherò qualsiasi studente",
+    "primaryText": "Domani interrogherò qualsiasi studente che mi capiterà a tiro.",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Tomorrow I will examine any student",
+    "translation": "Tomorrow I will interrogate whatever student that I will lay my eyes on.",
     "context": "",
     "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "universal",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "existential",
+        "judgment": "acceptable"
+      }
+    ],
     "paperFeatures": [
       [
-        "fciType",
-        "universal"
+        "item",
+        "pureFci"
       ],
       [
         "environment",
         "future"
-      ],
-      [
-        "force",
-        "ambiguous"
       ]
     ],
-    "comment": "Both ∀ and ∃ readings available."
+    "comment": "Under a modal the universal free-choice item also admits an existential reading.",
+    "lgrConformance": ""
   },
   {
     "id": "chierchia2006_ex10b",
@@ -34,26 +297,31 @@
       "paperLabel": "(10b)"
     },
     "language": "ital1282",
-    "primaryText": "Domani interrogherò uno studente qualsiasi",
+    "primaryText": "Domani interrogherò uno studente qualsiasi.",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Tomorrow I will examine any one student",
+    "translation": "Tomorrow I will interrogate a student whatever.",
     "context": "",
     "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "existential",
+        "judgment": "acceptable"
+      }
+    ],
     "paperFeatures": [
       [
-        "fciType",
-        "existential"
+        "item",
+        "existentialPureFci"
       ],
       [
         "environment",
         "future"
-      ],
-      [
-        "force",
-        "existential"
       ]
     ],
-    "comment": "Only the ∃ reading."
+    "comment": "",
+    "lgrConformance": ""
   },
   {
     "id": "chierchia2006_ex10c",
@@ -62,26 +330,35 @@
       "paperLabel": "(10c)"
     },
     "language": "ital1282",
-    "primaryText": "Prendi qualunque dolce",
+    "primaryText": "Prendi qualunque dolce.",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Take any sweet",
+    "translation": "Take any sweet.",
     "context": "",
     "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "universal",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "existential",
+        "judgment": "acceptable"
+      }
+    ],
     "paperFeatures": [
       [
-        "fciType",
-        "universal"
+        "item",
+        "pureFci"
       ],
       [
         "environment",
         "imperative"
-      ],
-      [
-        "force",
-        "ambiguous"
       ]
     ],
-    "comment": "Both ∀ and ∃ readings available."
+    "comment": "The ambiguity is very clear with imperatives.",
+    "lgrConformance": ""
   },
   {
     "id": "chierchia2006_ex10d",
@@ -90,26 +367,171 @@
       "paperLabel": "(10d)"
     },
     "language": "ital1282",
-    "primaryText": "Prendi un dolce qualunque",
+    "primaryText": "Prendi un dolce qualunque.",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Take any one sweet",
+    "translation": "Take a sweet whatever.",
     "context": "",
     "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "existential",
+        "judgment": "acceptable"
+      }
+    ],
     "paperFeatures": [
       [
-        "fciType",
-        "existential"
+        "item",
+        "existentialPureFci"
       ],
       [
         "environment",
         "imperative"
-      ],
-      [
-        "force",
-        "existential"
       ]
     ],
-    "comment": "Only the ∃ reading."
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex10e",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(10e)"
+    },
+    "language": "ital1282",
+    "primaryText": "Puoi prendere qualunque dolce.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You can take any sweet.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "universal",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "existential",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "pureFci"
+      ],
+      [
+        "environment",
+        "possibility"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex10f",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(10f)"
+    },
+    "language": "ital1282",
+    "primaryText": "Puoi prendere un dolce qualunque.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You can take a sweet whatever.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "existential",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "existentialPureFci"
+      ],
+      [
+        "environment",
+        "possibility"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex10g",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(10g)"
+    },
+    "language": "ital1282",
+    "primaryText": "Devi prendere qualunque dolce con il liquore.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You must take any sweet with liquor.",
+    "context": "If you go to Naples, you must go to Scaturchio.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "universal",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "existential",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "pureFci"
+      ],
+      [
+        "environment",
+        "necessity"
+      ]
+    ],
+    "comment": "The universal reading is favored; the existential one needs a special context.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex10h",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(10h)"
+    },
+    "language": "ital1282",
+    "primaryText": "Devi prendere un dolce qualunque con il liquore.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You must take a sweet whatever with liquor.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "existential",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "existentialPureFci"
+      ],
+      [
+        "environment",
+        "necessity"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
   },
   {
     "id": "chierchia2006_ex11a",
@@ -118,26 +540,26 @@
       "paperLabel": "(11a)"
     },
     "language": "ital1282",
-    "primaryText": "Ieri ho parlato con un qualsiasi filosofo",
+    "primaryText": "??Ieri ho parlato con un qualsiasi filosofo.",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Yesterday I spoke with any one philosopher",
+    "translation": "Yesterday I spoke with a philosopher (I don't know/don't care who).",
     "context": "",
     "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
     "paperFeatures": [
       [
-        "fciType",
-        "existential"
+        "item",
+        "existentialPureFci"
       ],
       [
         "environment",
-        "episodicBare"
-      ],
-      [
-        "force",
-        "existential"
+        "episodic"
       ]
     ],
-    "comment": "Marginal without a modifier."
+    "comment": "Marginal out of the blue.",
+    "lgrConformance": ""
   },
   {
     "id": "chierchia2006_ex11b",
@@ -146,26 +568,26 @@
       "paperLabel": "(11b)"
     },
     "language": "ital1282",
-    "primaryText": "Ieri ho parlato con un qualsiasi filosofo che fosse interessato",
+    "primaryText": "??Ieri ho parlato con un qualsiasi filosofo che fosse interessato a parlarmi.",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Yesterday I spoke with any one philosopher who was interested",
+    "translation": "Yesterday I spoke with a philosopher (I don't know/don't care who) that was interested in speaking with me.",
     "context": "",
     "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
     "paperFeatures": [
       [
-        "fciType",
-        "existential"
+        "item",
+        "existentialPureFci"
       ],
       [
         "environment",
         "episodicSubtrigged"
-      ],
-      [
-        "force",
-        "existential"
       ]
     ],
-    "comment": "Still marginal: a relative clause does not rescue an existential free-choice item."
+    "comment": "The relative clause, if anything, makes things worse.",
+    "lgrConformance": ""
   },
   {
     "id": "chierchia2006_ex11c",
@@ -174,26 +596,26 @@
       "paperLabel": "(11c)"
     },
     "language": "ital1282",
-    "primaryText": "Ieri ho parlato con qualsiasi filosofo",
+    "primaryText": "??Ieri ho parlato con qualsiasi filosofo.",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Yesterday I spoke with any philosopher",
+    "translation": "Yesterday I spoke with any philosopher.",
     "context": "",
     "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
     "paperFeatures": [
       [
-        "fciType",
-        "universal"
+        "item",
+        "pureFci"
       ],
       [
         "environment",
-        "episodicBare"
-      ],
-      [
-        "force",
-        "universal"
+        "episodic"
       ]
     ],
-    "comment": "Marginal without a modifier."
+    "comment": "Marginal unless a special context is provided.",
+    "lgrConformance": ""
   },
   {
     "id": "chierchia2006_ex11d",
@@ -202,26 +624,31 @@
       "paperLabel": "(11d)"
     },
     "language": "ital1282",
-    "primaryText": "Ieri ho parlato con qualsiasi filosofo che fosse interessato",
+    "primaryText": "Ieri ho parlato con qualsiasi filosofo che fosse interessato a parlarmi.",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Yesterday I spoke with any philosopher who was interested",
+    "translation": "Yesterday I spoke with any philosopher that was interested in speaking with me.",
     "context": "",
     "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "universal",
+        "judgment": "acceptable"
+      }
+    ],
     "paperFeatures": [
       [
-        "fciType",
-        "universal"
+        "item",
+        "pureFci"
       ],
       [
         "environment",
         "episodicSubtrigged"
-      ],
-      [
-        "force",
-        "universal"
       ]
     ],
-    "comment": "Subtrigging rescues the universal free-choice item."
+    "comment": "The relative clause restores full acceptability: subtrigging.",
+    "lgrConformance": ""
   },
   {
     "id": "chierchia2006_ex12",
@@ -230,53 +657,771 @@
       "paperLabel": "(12)"
     },
     "language": "ital1282",
-    "primaryText": "Non leggerò qualunque libro",
+    "primaryText": "Non leggerò qualunque libro.",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "I will not read any book",
+    "translation": "I won't read (just) any book.",
     "context": "",
     "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "rhetorical",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "negativePolarity",
+        "judgment": "unacceptable"
+      }
+    ],
     "paperFeatures": [
       [
-        "fciType",
-        "universal"
+        "item",
+        "pureFci"
       ],
       [
         "environment",
-        "negationBare"
-      ],
-      [
-        "force",
-        "universal"
+        "negation"
       ]
     ],
-    "comment": "Only the rhetorical ¬∀ reading, not the ¬∃ reading of a negative-polarity item. Also numbered (73a)."
+    "comment": "Acceptable only with the intonation of the rhetorical reading, not every book.",
+    "lgrConformance": ""
   },
   {
-    "id": "chierchia2006_ex73b",
+    "id": "chierchia2006_ex13",
     "source": {
       "bibkey": "chierchia-2006",
-      "paperLabel": "(73b)"
+      "paperLabel": "(13)"
     },
     "language": "ital1282",
-    "primaryText": "Non leggerò qualunque libro che mi consiglierà Gianni",
+    "primaryText": "Non leggerò qualunque libro che mi consiglierà Gianni.",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "I will not read any book that Gianni recommends to me",
+    "translation": "I won't read any book that Gianni will recommend to me.",
     "context": "",
     "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "rhetorical",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "negativePolarity",
+        "judgment": "acceptable"
+      }
+    ],
     "paperFeatures": [
       [
-        "fciType",
-        "universal"
+        "item",
+        "pureFci"
       ],
       [
         "environment",
         "negationSubtrigged"
-      ],
-      [
-        "force",
-        "ambiguous"
       ]
     ],
-    "comment": "With a relative clause under negation the ∀¬ and ¬∃ readings become available."
+    "comment": "The rhetorical reading remains and a negative-polarity reading, no book at all, appears.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex14",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(14)"
+    },
+    "language": "ital1282",
+    "primaryText": "Non leggerò un libro qualunque (che mi consiglierà Gianni).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I won't read a book whatever (that Gianni will recommend to me).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "rhetorical",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "negativePolarity",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "existentialPureFci"
+      ],
+      [
+        "environment",
+        "negation"
+      ]
+    ],
+    "comment": "Only the rhetorical reading, unlike German irgendein.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex47a",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(47a)"
+    },
+    "language": "stan1293",
+    "primaryText": "*I saw any boy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "npiFci"
+      ],
+      [
+        "environment",
+        "episodic"
+      ]
+    ],
+    "comment": "With large domain alternatives the even-like implicature is inconsistent: every alternative is stronger than the statement.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex49a",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(49a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I didn't see any boy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "npiFci"
+      ],
+      [
+        "environment",
+        "negation"
+      ]
+    ],
+    "comment": "Under negation the widest domain gives the strongest statement and the implicature is consistent.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex55a",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(55a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Any cat meows.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "universal",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "npiFci"
+      ],
+      [
+        "environment",
+        "generic"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex55b",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(55b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Yesterday, any student that was around dropped by.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "universal",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "npiFci"
+      ],
+      [
+        "environment",
+        "episodicSubtrigged"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex64a",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(64a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I didn't see any student (that wanted to see me).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "rhetorical",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "negativePolarity",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "npiFci"
+      ],
+      [
+        "environment",
+        "negation"
+      ]
+    ],
+    "comment": "Negation over the freezing operator gives the rhetorical reading; freezing over negation the negative-polarity reading, whose implicature the assertion entails.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex67a",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(67a)"
+    },
+    "language": "stan1293",
+    "primaryText": "*I saw any student.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "npiFci"
+      ],
+      [
+        "environment",
+        "episodic"
+      ]
+    ],
+    "comment": "Universal over every possible student: too strong for an episodic statement.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex68a",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(68a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I saw any student that wanted to see me.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "universal",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "npiFci"
+      ],
+      [
+        "environment",
+        "episodicSubtrigged"
+      ]
+    ],
+    "comment": "The relative clause anchors the possible students to actual ones.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex69a",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(69a)"
+    },
+    "language": "ital1282",
+    "primaryText": "(?)Non ho visto qualunque studente.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I didn't see just any student.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "rhetorical",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "negativePolarity",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "pureFci"
+      ],
+      [
+        "environment",
+        "negation"
+      ]
+    ],
+    "comment": "Awkward out of the blue unless intonation or context warrants the rhetorical reading.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex71a",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(71a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Vedrò qualunque studente.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I will see whatever student.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "universal",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "pureFci"
+      ],
+      [
+        "environment",
+        "future"
+      ]
+    ],
+    "comment": "In a positive context adding the implicature properly strengthens the assertion.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex77c",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(77c)"
+    },
+    "language": "ital1282",
+    "primaryText": "Avrei dovuto discuterne con un qualunque filosofo.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I should have discussed it with a whatever philosopher.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "existential",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "existentialPureFci"
+      ],
+      [
+        "environment",
+        "necessity"
+      ]
+    ],
+    "comment": "An overt modality rescues an existential free-choice item.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex79a",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(79a)"
+    },
+    "language": "ital1282",
+    "primaryText": "??Ho sposato un qualsiasi dottore.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I have married a whatsoever doctor.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "existentialPureFci"
+      ],
+      [
+        "environment",
+        "episodic"
+      ]
+    ],
+    "comment": "The free-choice implicature clashes with the uniqueness implicature.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex83a",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(83a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Posso sposare un qualsiasi dottore.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I can marry a whatsoever doctor.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "existential",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "existentialPureFci"
+      ],
+      [
+        "environment",
+        "possibility"
+      ]
+    ],
+    "comment": "The doctors distribute across the accessible worlds.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex86a",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(86a)"
+    },
+    "language": "ital1282",
+    "primaryText": "(??)Un linguista ha sposato un qualunque dottore.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A linguist has married a whatever doctor.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "existentialPureFci"
+      ],
+      [
+        "environment",
+        "episodic"
+      ]
+    ],
+    "comment": "A quantified DP between the freezing operator and the item does not rescue it: intervention.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex88a",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(88a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Un qualsiasi cittadino può sollevare una qualsiasi questione.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A whatever citizen can raise a whatever question.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "existential",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "existentialPureFci"
+      ],
+      [
+        "environment",
+        "possibility"
+      ]
+    ],
+    "comment": "One modal licenses two existential free-choice items.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex90a",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(90a)"
+    },
+    "language": "stan1295",
+    "primaryText": "Niemand musste irgendjemand einladen.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "No one had to invite anybody.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "negativePolarity",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "rhetorical",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "existentialNpiFci"
+      ],
+      [
+        "environment",
+        "negationNecessity"
+      ]
+    ],
+    "comment": "The negative-polarity reading is preferred; the rhetorical one needs contrastive intonation.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex90b",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(90b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Nessuno è costretto ad invitare una persona qualsiasi.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "No one had to invite just anybody.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "rhetorical",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "negativePolarity",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "existentialPureFci"
+      ],
+      [
+        "environment",
+        "negationNecessity"
+      ]
+    ],
+    "comment": "Only the rhetorical reading.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex92a",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(92a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Taste any doughnut.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "existential",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "universal",
+        "judgment": "marginal"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "npiFci"
+      ],
+      [
+        "environment",
+        "imperative"
+      ]
+    ],
+    "comment": "Freezing inside the imperative gives the existential reading with free choice over doughnuts.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex92b",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(92b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Assaggia qualsiasi doughnut.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Taste any doughnut.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "existential",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "universal",
+        "judgment": "marginal"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "pureFci"
+      ],
+      [
+        "environment",
+        "imperative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_ex115",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "(115)"
+    },
+    "language": "ital1282",
+    "primaryText": "Devo sposare un dottore qualunque.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I must marry a doctor whatever.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "existential",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "existentialPureFci"
+      ],
+      [
+        "environment",
+        "necessity"
+      ]
+    ],
+    "comment": "Appendix A4: the free-choice implicature with a universal modal.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "chierchia2006_fn42i",
+    "source": {
+      "bibkey": "chierchia-2006",
+      "paperLabel": "fn. 42 (i)"
+    },
+    "language": "stan1295",
+    "primaryText": "Er könnte irgendwas tun.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He could do something or other.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "existential",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "universal",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "item",
+        "existentialNpiFci"
+      ],
+      [
+        "environment",
+        "possibility"
+      ]
+    ],
+    "comment": "Cannot mean that he could do anything: freezing below the modal is contradictory.",
+    "lgrConformance": ""
   }
 ]
