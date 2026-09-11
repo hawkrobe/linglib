@@ -61,7 +61,6 @@ open Tense
 
 namespace Kiparsky2002
 
-open Features
 open Aspect
 open Aspect.SubeventStructure
 

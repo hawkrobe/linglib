@@ -45,7 +45,6 @@ consumable by IMPF/PRFV/PERF. Key results:
 
 namespace Aspect.SubeventStructure
 
-open Features
 
 /-! ### Subevent Phases -/
 
