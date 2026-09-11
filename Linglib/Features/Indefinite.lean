@@ -64,6 +64,22 @@ def HaspelmathFunction.all : List HaspelmathFunction :=
   [ .specificKnown, .specificUnknown, .irrealis, .question
   , .conditional, .indirectNeg, .directNeg, .comparative, .freeChoice ]
 
+theorem HaspelmathFunction.mem_all (f : HaspelmathFunction) : f ∈ HaspelmathFunction.all := by
+  cases f <;> simp [HaspelmathFunction.all]
+
+/-- The book's numbering of the functions: the positions on the map, in which it states the
+distribution of a series. -/
+def HaspelmathFunction.number : HaspelmathFunction → Nat
+  | .specificKnown => 1
+  | .specificUnknown => 2
+  | .irrealis => 3
+  | .question => 4
+  | .conditional => 5
+  | .indirectNeg => 6
+  | .directNeg => 7
+  | .comparative => 8
+  | .freeChoice => 9
+
 /-- Adjacency on [haspelmath-1997]'s implicational map (Fig. 4.4, verified
     against the book): two-dimensional, with the specificity chain feeding
     parallel question and conditional tracks.
@@ -152,7 +168,7 @@ def HaspelmathFunction.bfsReachable
     | 0,         _       => visited
     | _,         []      => visited
     | fuel + 1, f :: rest =>
-      let neighbors := f.adjacent.filter (fun g =>
+      let neighbors := f.adjacent.filter (λ g =>
         funcs.contains g && !visited.contains g)
       go (rest ++ neighbors) (visited ++ neighbors) fuel
   go [start] [start] fuel
