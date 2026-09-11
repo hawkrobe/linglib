@@ -3,17 +3,17 @@ import Linglib.Logic.Modal.Defs
 import Mathlib.Data.Fintype.Basic
 
 /-!
-# Karttunen (1973): presuppositions of compound sentences
+# Karttunen (1973): Presuppositions of Compound Sentences
 
-[karttunen-1973] asks how the presuppositions of a compound sentence are determined by
-those of its parts. Complement-taking predicates are *plugs* (verbs of saying: nothing
-projects), *holes* (factives, aspectuals, implicatives: everything projects), or
-*filters*; the connectives are filters with asymmetric conditions — `if A then B` (13)
-and `A and B` (17) presuppose what `A` presupposes and what `B` presupposes unless `A`
-entails it, while `A or B` (24) filters what the negation of `A` entails. §9 relativizes
-the entailment to a set `X` of background assumptions, (24b′), and `Entails X A C` is
-that relation; `cond`, `conj`, `disj` are the relativized rules, with `X = Set.univ` the
-absolute ones.
+This file formalizes [karttunen-1973], which asks how the presuppositions of a compound
+sentence are determined by those of its parts. Complement-taking predicates are *plugs*
+(verbs of saying: nothing projects), *holes* (factives, aspectuals, implicatives: everything
+projects), or *filters*; the connectives are filters with asymmetric conditions — `if A then
+B` (13) and `A and B` (17) presuppose what `A` presupposes and what `B` presupposes unless
+`A` entails it, while `A or B` (24) filters what the negation of `A` entails. §9 relativizes
+the entailment to a set `X` of background assumptions, (24b′), and `Entails X A C` is that
+relation; `cond`, `conj`, `disj` are the relativized rules, with `X = Set.univ` the absolute
+ones.
 
 §8 derives the coincidence of (13) and (17) from three principles Harman supplied —
 internal negation preserves presuppositions, logically equivalent sentences share them,
@@ -30,6 +30,11 @@ equivalence (38) lets the hole treatment of *believe* survive (37) by re-collect
 conjunction inside the attitude (`hole_conj_presup`, `hole_conj_assertion_iff`), but not
 (42), where *believe* and *hope* cannot be re-collected — hence the tentative verdict that
 the class are plugs (`conj_plug_plug_presup`).
+
+## References
+
+* [karttunen-1973]
+* [hintikka-1962]
 -/
 
 namespace Karttunen1973
@@ -51,20 +56,20 @@ instance [Fintype W] [DecidablePred (· ∈ X)] (A C : W → Prop) [DecidablePre
 /-- (13), relativized by (24b′): `if A then B` presupposes what `A` presupposes, and what
 `B` presupposes unless `A` entails it given `X`. -/
 def cond : PartialProp W :=
-  ⟨fun w => p.presup w ∧ (¬ Entails X p.assertion q.presup → q.presup w),
-   fun w => p.assertion w → q.assertion w⟩
+  ⟨λ w => p.presup w ∧ (¬ Entails X p.assertion q.presup → q.presup w),
+   λ w => p.assertion w → q.assertion w⟩
 
 /-- (17), relativized: `A and B` presupposes what `A` presupposes, and what `B` presupposes
 unless `A` entails it given `X`. -/
 def conj : PartialProp W :=
-  ⟨fun w => p.presup w ∧ (¬ Entails X p.assertion q.presup → q.presup w),
-   fun w => p.assertion w ∧ q.assertion w⟩
+  ⟨λ w => p.presup w ∧ (¬ Entails X p.assertion q.presup → q.presup w),
+   λ w => p.assertion w ∧ q.assertion w⟩
 
 /-- (24), relativized: `A or B` presupposes what `A` presupposes, and what `B` presupposes
 unless the negation of `A` entails it given `X`. -/
 def disj : PartialProp W :=
-  ⟨fun w => p.presup w ∧ (¬ Entails X (fun w => ¬ p.assertion w) q.presup → q.presup w),
-   fun w => p.assertion w ∨ q.assertion w⟩
+  ⟨λ w => p.presup w ∧ (¬ Entails X (λ w => ¬ p.assertion w) q.presup → q.presup w),
+   λ w => p.assertion w ∨ q.assertion w⟩
 
 /-! ### Harman's derivation (§8) -/
 
@@ -80,8 +85,8 @@ theorem cond_neg_presup : (cond X (PartialProp.neg p) q).presup = (disj X p q).p
 `PartialProp.andFilter`. -/
 theorem conj_presup_iff_andFilter (hX : w ∈ X) (h : p.assertion w) :
     (conj X p q).presup w ↔ (PartialProp.andFilter p q).presup w :=
-  and_congr_right fun _ =>
-    ⟨fun hc _ => by_contra fun hq => hq (hc fun he => hq (he w hX h)), fun hq _ => hq h⟩
+  and_congr_right λ _ =>
+    ⟨λ hc _ => by_contra λ hq => hq (hc λ he => hq (he w hX h)), λ hq _ => hq h⟩
 
 /-! ### Background assumptions (§9) -/
 
@@ -104,7 +109,7 @@ abbrev allMormonsWorn : Set Geraldine := {Geraldine.mormonUnworn}ᶜ
 
 /-- `She has given up wearing her holy underwear`: presupposes (27); the assertion is
 idealized. -/
-def givenUp : PartialProp Geraldine := ⟨(· ∈ worn), fun _ => True⟩
+def givenUp : PartialProp Geraldine := ⟨(· ∈ worn), λ _ => True⟩
 
 /-- (25) `Either Geraldine is not a Mormon or she has given up wearing her holy underwear`,
 relative to the background `X`. -/
@@ -136,7 +141,7 @@ abbrev capitalParis : Set France := {.parisKing, .parisNoKing}
 abbrev hasKing : Set France := {.parisKing, .marseilleKing}
 
 /-- `The king of France is bald`: presupposes a king; baldness is idealized. -/
-def kingBald : PartialProp France := ⟨(· ∈ hasKing), fun _ => True⟩
+def kingBald : PartialProp France := ⟨(· ∈ hasKing), λ _ => True⟩
 
 /-- (35a) `Paris is the capital of France, and the king of France is bald` and (35b) with
 `Marseilles` both presuppose a king under (17): neither capital claim entails one. -/
@@ -177,7 +182,7 @@ def hole (att : (W → Prop) → W → Prop) (φ : PartialProp W) : PartialProp 
 
 /-- A plug blocks them. -/
 def plug (att : (W → Prop) → W → Prop) (φ : PartialProp W) : PartialProp W :=
-  ⟨fun _ => True, att φ.assertion⟩
+  ⟨λ _ => True, att φ.assertion⟩
 
 /-- (37) `Bill believes that Fred has been beating Zelda, and furthermore, Bill believes that
 Fred has stopped beating Zelda` under the hole treatment presupposes `A` unless the first
@@ -192,7 +197,7 @@ theorem conj_hole_hole_presup :
 stopped`: the filter applies inside the complement and nothing is presupposed, whatever the
 verb's status. -/
 theorem hole_conj_presup : (hole att (conj Set.univ (.ofProp A) ⟨A, C⟩)).presup w :=
-  ⟨trivial, fun h => (h fun _ _ hv => hv).elim⟩
+  ⟨trivial, λ h => (h λ _ _ hv => hv).elim⟩
 
 /-- (38): (37) and (39) assert the same thing ([hintikka-1962]), so the hole treatment
 survives (37) only by letting the equivalence do the filtering. -/
@@ -205,7 +210,7 @@ theorem hole_conj_assertion_iff :
 outright — K's tentative verdict for the whole class. -/
 theorem conj_plug_plug_presup :
     (conj Set.univ (plug att₁ (.ofProp A)) (plug att₂ ⟨A, C⟩)).presup w :=
-  ⟨trivial, fun _ => trivial⟩
+  ⟨trivial, λ _ => trivial⟩
 
 end Attitudes
 

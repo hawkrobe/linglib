@@ -2,25 +2,28 @@ import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.Presupposition.Basic
 
 /-!
-# Karttunen (1971): implicative verbs
+# Karttunen (1971): Implicative Verbs
 
-[karttunen-1971] identifies a class of complement-taking verbs — *manage*, *remember*,
-*bother*, *dare*, *happen*, … (his (2)) — whose assertion commits the speaker to the
-complement and whose negation commits the speaker to its negation, and analyzes such a
-sentence as a presupposition–proposition pair: the proposition `v(S)` is what is asserted,
-negated, or questioned, and the presupposition says what condition `v(S)` is for the
-complement `S`. Schema (37) makes `v(S)` necessary and sufficient for `S` (*manage*); (41)
-necessary and sufficient for `¬S` (*fail*, *forget*); (54) necessary only (*be able*, *be
-possible*); (59) sufficient only (*force*, *cause*); non-implicatives (*hope*, *want*,
-*try*) carry no such presupposition and are plain `PartialProp.ofProp`. `Condition` is the
-presupposed condition, `Schema` pairs it with the polarity of the complement, and
-`Schema.sentence` is the presupposition–proposition pair as a `PartialProp`. The paper's
-entailment facts follow: an affirmative assertion entails the (polarity-adjusted)
-complement when the condition is sufficient (`holds_imp`), a negated one entails its
-negation when the condition is necessary (`neg_holds_imp`), double negation cancels, his
-(13) (`manage_neg_neg_holds_imp`), and the one-way cells and the non-implicatives leave the
-other direction open (`force_neg_not_entails`, `beAble_not_entails`,
-`ofProp_not_entails`).
+This file formalizes [karttunen-1971], which identifies a class of complement-taking verbs,
+*manage*, *remember*, *bother*, *dare*, *happen* and others listed in (2), whose assertion
+commits the speaker to the complement and whose negation commits the speaker to its negation,
+and analyzes such a sentence as a presupposition–proposition pair: the proposition `v(S)` is
+what is asserted, negated, or questioned, and the presupposition says what condition `v(S)` is
+for the complement `S`. Schema (37) makes `v(S)` necessary and sufficient for `S` (*manage*);
+(41) necessary and sufficient for `¬S` (*fail*, *forget*); (54) necessary only (*be able*,
+*be possible*); (59) sufficient only (*force*, *cause*); the non-implicatives *hope*, *want*
+and *try* carry no such presupposition and are plain `PartialProp.ofProp`.
+
+`Condition` is the presupposed condition, `Schema` pairs it with the polarity of the
+complement, and `Schema.sentence` is the presupposition–proposition pair as a `PartialProp`.
+The paper's entailment facts follow: an affirmative assertion entails the polarity-adjusted
+complement when the condition is sufficient (`holds_imp`), a negated one entails its negation
+when the condition is necessary (`neg_holds_imp`), double negation cancels as in (13), and the
+one-way cells and the non-implicatives leave the other direction open.
+
+## References
+
+* [karttunen-1971]
 -/
 
 namespace Karttunen1971
@@ -108,7 +111,7 @@ def implied (S : Prop) : Prop :=
 variable {W : Type*} (v S : W → Prop) (w : W)
 
 /-- The sentence `v(S)`: the schema's presupposition, and `v` as the proposition. -/
-def sentence : PartialProp W := ⟨fun w => k.condition.presup (v w) (k.implied (S w)), v⟩
+def sentence : PartialProp W := ⟨λ w => k.condition.presup (v w) (k.implied (S w)), v⟩
 
 /-- An affirmative assertion commits the speaker to the complement when `v(S)` is
 presupposed sufficient. -/
@@ -120,23 +123,23 @@ theorem holds_imp (h : k.condition.IsSufficient) (hs : (k.sentence v S).holds w)
 is presupposed necessary. -/
 theorem neg_holds_imp (h : k.condition.IsNecessary)
     (hs : (PartialProp.neg (k.sentence v S)).holds w) : ¬ k.implied (S w) :=
-  fun hS => hs.2 (Condition.presup_imp_rev h hs.1 hS)
+  λ hS => hs.2 (Condition.presup_imp_rev h hs.1 hS)
 
 /-- Double negation cancels, (13): `John didn't remember not to lock his door` commits the
 speaker to `John locked his door`. -/
 theorem manage_neg_neg_holds_imp
-    (hs : (PartialProp.neg (manage.sentence v fun w => ¬ S w)).holds w) : S w :=
+    (hs : (PartialProp.neg (manage.sentence v λ w => ¬ S w)).holds w) : S w :=
   not_not.mp (neg_holds_imp manage v _ w trivial hs)
 
 /-- (58): `John didn't force Mary to stay home` leaves open whether she stayed. -/
 theorem force_neg_not_entails :
     ∃ (v S : Unit → Prop), (PartialProp.neg (force.sentence v S)).holds () ∧ S () :=
-  ⟨fun _ => False, fun _ => True, ⟨fun _ => trivial, id⟩, trivial⟩
+  ⟨λ _ => False, λ _ => True, ⟨λ _ => trivial, id⟩, trivial⟩
 
 /-- (55): `John was able to come` leaves open whether he came. -/
 theorem beAble_not_entails :
     ∃ (v S : Unit → Prop), (beAble.sentence v S).holds () ∧ ¬ S () :=
-  ⟨fun _ => True, fun _ => False, ⟨fun h => h.elim, trivial⟩, id⟩
+  ⟨λ _ => True, λ _ => False, ⟨λ h => h.elim, trivial⟩, id⟩
 
 end Schema
 
@@ -145,7 +148,7 @@ about its complement in either polarity. -/
 theorem ofProp_not_entails :
     (∃ (v S : Unit → Prop), (PartialProp.ofProp v).holds () ∧ ¬ S ()) ∧
       ∃ (v S : Unit → Prop), (PartialProp.neg (PartialProp.ofProp v)).holds () ∧ S () :=
-  ⟨⟨fun _ => True, fun _ => False, ⟨trivial, trivial⟩, id⟩,
-   ⟨fun _ => False, fun _ => True, ⟨trivial, id⟩, trivial⟩⟩
+  ⟨⟨λ _ => True, λ _ => False, ⟨trivial, trivial⟩, id⟩,
+   ⟨λ _ => False, λ _ => True, ⟨trivial, id⟩, trivial⟩⟩
 
 end Karttunen1971
