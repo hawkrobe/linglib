@@ -29,7 +29,7 @@ every operation computable.
 * `Path.adjacent`: endpoint-sharing spatial adjacency ([krifka-1998]), the
   spatial half of the movement relations in `Studies/Krifka1998.lean`.
 * `Path.Directionality`: the source/goal/route trichotomy of directional
-  prepositions ([zwarts-2005]); paired with `Features.Telicity` at use sites
+  prepositions ([zwarts-2005]); paired with `Aspect.Telicity` at use sites
   — the paper's two independent classificatory axes.
 -/
 
@@ -186,7 +186,7 @@ theorem IsConcat.adjacent {p q r : Path Loc} (h : IsConcat p q r) :
     p(1), route prepositions (*over*, *through*, *via*) an interior point.
     Independent of prepositional aspect — *to* is goal-directed telic,
     *towards* goal-directed atelic — so consumers pair it with
-    `Features.Telicity`; the aspect axis is grounded in
+    `Aspect.Telicity`; the aspect axis is grounded in
     `Studies/Zwarts2005.lean`. -/
 inductive Directionality where
   | source

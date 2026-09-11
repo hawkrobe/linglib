@@ -272,12 +272,12 @@ theorem fragment_range :
 /-- The default telicity the fragment derives for a degree achievement is the telicity of the
     unmodified reading in a context whose only salient bound is the scale's maximum, when it
     has one. -/
-theorem defaultTelicity_iff (s : DegreeAchievement.DegreeAchievementScale) (i top : ℚ)
+theorem defaultTelicity_iff (s : Aspect.DegreeAchievement.DegreeAchievementScale) (i top : ℚ)
     (hi : i < top) :
     s.defaultTelicity = .telic ↔
       HasTelic ⟨if s.scaleBoundedness.HasMax then some top else none, none⟩ i .none := by
   have key : s.defaultTelicity = .telic ↔ s.scaleBoundedness.HasMax := by
-    rw [DegreeAchievement.DegreeAchievementScale.defaultTelicity,
+    rw [Aspect.DegreeAchievement.DegreeAchievementScale.defaultTelicity,
       ScalarDimension.defaultTelicity_telic_iff_hasGreatest]
     exact Boundedness.hasGreatest_degreeShape_iff _
   rw [key]

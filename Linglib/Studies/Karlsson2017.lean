@@ -1,5 +1,5 @@
 import Linglib.Features.Case.Basic
-import Linglib.Features.Aktionsart
+import Linglib.Semantics.Aspect.Basic
 import Linglib.Morphology.Morphotactics.RelevanceHierarchy
 
 /-!
@@ -21,7 +21,7 @@ The partitive also appears obligatorily under negation:
   *En lukenut kirja-a.* 'I didn't read the book.'
 
 This is the first bridge in linglib connecting `Case` to
-`Features.Telicity`, making the case–aspect
+`Aspect.Telicity`, making the case–aspect
 interaction formally verifiable.
 
 ## Theoretical significance
@@ -34,8 +34,7 @@ telicity. The case morphology makes this composition visible.
 
 namespace Karlsson2017
 
-open Features
-open Features
+open Aspect
 
 -- ============================================================================
 -- § 1: Case–Aspect Mapping

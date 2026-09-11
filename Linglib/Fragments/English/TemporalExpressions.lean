@@ -1,4 +1,4 @@
-import Linglib.Features.Aktionsart
+import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Tense.TemporalAdverbials
 import Linglib.Semantics.Polarity.Item
 import Linglib.Fragments.English.FunctionWords
@@ -33,6 +33,7 @@ in `Determiners.lean`):
 namespace English.TemporalExpressions
 
 open Features
+open Aspect
 open Tense.TemporalAdverbials (AdverbialType)
 open Polarity
 

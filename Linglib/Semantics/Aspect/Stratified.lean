@@ -1,6 +1,6 @@
 import Linglib.Semantics.Mereology
 import Linglib.Semantics.Events.Basic
-import Linglib.Features.Aktionsart
+import Linglib.Semantics.Aspect.Basic
 
 /-!
 # Stratified Reference [champollion-2017]
@@ -91,7 +91,6 @@ property.
 namespace Aspect.Stratified
 
 open _root_.Mereology
-open Features
 
 /-! ### Stratified Reference ([champollion-2017] eq. 16/17) -/
 

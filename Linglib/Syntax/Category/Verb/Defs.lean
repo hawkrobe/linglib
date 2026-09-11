@@ -2,7 +2,7 @@ import Linglib.Syntax.Clause.Complementation
 import Linglib.Syntax.Category.Verb.Complement.Basic
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Features.Aktionsart
+import Linglib.Semantics.Aspect.Basic
 import Linglib.Features.Attitudes
 import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.ArgumentStructure.LevinClass
@@ -47,6 +47,7 @@ primitive fields in `Syntax/Category/Verb/Basic.lean`, not stipulated as an enum
 [bale-schwarz-2026] [dayal-2025] [heim-1992] [icard-2012] [kennedy-2007] [maier-2015] [qing-uegaki-2025] [rappaport-hovav-levin-2024] [solstad-bott-2024] [rappaport-hovav-levin-1998]
 -/
 
+open Aspect
 open Presupposition
 open Features
 open ArgumentStructure
@@ -54,7 +55,7 @@ open Features.ChangeOfState
 open NaturalLogic (Signature)
 open Causation.Psych (CausalSource)
 open ArgumentStructure (EntailmentProfile)
-open Features.DegreeAchievement (DegreeAchievementScale)
+open Aspect.DegreeAchievement (DegreeAchievementScale)
 open Aspect.Incremental (VerbIncClass)
 open ArgumentStructure
 

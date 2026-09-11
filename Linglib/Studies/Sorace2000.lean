@@ -1,5 +1,5 @@
 import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
-import Linglib.Features.Aktionsart
+import Linglib.Semantics.Aspect.Basic
 
 /-!
 # Sorace (2000): Auxiliary Selection × Vendler Aspect Classes
@@ -7,7 +7,7 @@ import Linglib.Features.Aktionsart
 
 Connects the auxiliary selection substrate in
 `AuxiliarySelection` to Vendler's aspectual
-classification from `Features.Aktionsart`.
+classification from `Semantics/Aspect/Basic.lean`.
 
 ## Known gaps
 
@@ -23,7 +23,7 @@ classification from `Features.Aktionsart`.
 
 namespace Sorace2000
 
-open Features
+open Aspect
 open ArgumentStructure.AuxiliarySelection
 
 /-- Vendler's achievement class (telic, punctual) typically corresponds to

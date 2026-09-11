@@ -1,6 +1,6 @@
 import Linglib.Studies.Anscombe1964
 import Linglib.Semantics.Degree.Basic
-import Linglib.Features.Aktionsart
+import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Studies.Karttunen1974
 import Linglib.Studies.Heinamaki1974

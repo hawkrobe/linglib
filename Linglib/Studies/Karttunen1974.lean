@@ -1,5 +1,5 @@
 import Linglib.Studies.Heinamaki1974
-import Linglib.Features.Aktionsart
+import Linglib.Semantics.Aspect.Basic
 import Linglib.Data.Examples.Karttunen1974
 
 /-!
@@ -73,6 +73,7 @@ theorem notUntil_iff_when_of_presupposition (a b : T)
 /-! ### The durative selectional restriction -/
 
 open Features Data.Examples
+open Aspect
 
 /-- Durative *until* selects a durative, atelic main clause — the classes with the
 subinterval property. -/

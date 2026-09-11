@@ -4,7 +4,7 @@ import Linglib.Semantics.Plurality.Algebra
 import Linglib.Semantics.ArgumentStructure.Thematic.Mereology
 import Linglib.Semantics.Aspect.Incremental
 import Linglib.Semantics.Aspect.Cumulativity
-import Linglib.Features.Aktionsart
+import Linglib.Semantics.Aspect.Basic
 
 /-!
 # [krifka-1989] "Nominal Reference, Temporal Constitution and Quantification"
@@ -54,7 +54,7 @@ on abstract domains.
   `VerbIncClass`; the K89 → K98 refinement bridge in § 4 makes the
   connection explicit).
 * Not a *for*-X / *in*-X diagnostic study (that's
-  `Features/Aktionsart.lean`).
+  `Semantics/Aspect/Basic.lean`).
 * Not a critique of K89's binary CUM/QUA (that's `Studies/Filip2012.lean`,
   which proves the three-way classification's middle ground stable).
 
@@ -73,9 +73,6 @@ open Plurality.Algebra (Materialization)
 open ArgumentStructure (UP)
 open Aspect.Incremental (SINC VerbIncClass IsSincVerb)
 open Aspect.Cumulativity (VP qua_propagation)
-open Features
-  (forXPrediction inXPrediction DiagnosticResult)
-
 /-- Reference type as a lexical tag: cumulative or quantized. The algebraic content is
 `Mereology.CUM`/`Mereology.QUA`. -/
 inductive RefType

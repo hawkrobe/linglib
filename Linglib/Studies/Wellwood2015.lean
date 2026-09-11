@@ -4,7 +4,7 @@ import Linglib.Semantics.Degree.Quantifier
 import Linglib.Semantics.Mereology
 import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 import Linglib.Semantics.Genericity.MeaningPreservation
-import Linglib.Features.Aktionsart
+import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Degree.Boundedness
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Predicates.Verbal
@@ -59,6 +59,7 @@ namespace Wellwood2015
 
 open ArgumentStructure (ThematicFrame)
 open Features
+open Aspect
 open Degree
 open Semantics.Kinds.MeaningPreservation (NumberFeature)
 

@@ -1,6 +1,6 @@
 import Linglib.Semantics.Degree.Boundedness
 import Linglib.Features.ScalarDimension
-import Linglib.Features.Aktionsart
+import Linglib.Semantics.Aspect.Basic
 
 /-!
 # Degree Achievements
@@ -21,11 +21,9 @@ open, mΔ is unbounded → atelic (activity).
 This module derives `VendlerClass` from `Boundedness`.
 -/
 
-namespace Features.DegreeAchievement
+namespace Aspect.DegreeAchievement
 
 open Degree (Boundedness)
-open Features
-open Features
 
 /-- A degree achievement's base scale structure.
 
@@ -105,4 +103,4 @@ theorem telicity_vendler_agree (s : DegreeAchievementScale) :
   cases s.dimension.boundedness <;> simp [VendlerClass.telicity]
 
 
-end Features.DegreeAchievement
+end Aspect.DegreeAchievement

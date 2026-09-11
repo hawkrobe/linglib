@@ -2,7 +2,7 @@ import Linglib.Semantics.Reference.Context.Index
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Fragments.Romance.French.Predicates
 import Linglib.Semantics.ArgumentStructure.Affectedness
-import Linglib.Features.Aktionsart
+import Linglib.Semantics.Aspect.Basic
 import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
@@ -61,6 +61,7 @@ open Presupposition
 open French.Predicates
 open ArgumentStructure
 open Features
+open Aspect
 open Minimalist Minimalist.Voice
 
 -- ============================================================================

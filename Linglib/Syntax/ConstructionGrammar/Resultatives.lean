@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
-import Linglib.Features.Aktionsart
+import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.Linking
 
@@ -32,6 +32,7 @@ namespace ConstructionGrammar.Resultatives
 open ConstructionGrammar
 open ArgumentStructure
 open Features
+open Aspect
 
 /-! ## Core types -/
 

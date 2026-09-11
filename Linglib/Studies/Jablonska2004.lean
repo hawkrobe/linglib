@@ -79,7 +79,7 @@ namespace Verbalizer
 /-- The Aktionsart profile of a bare stem: atelic, lacking a right boundary, Section 2.3;
 punctual for the semelfactive, Section 2.3.1; stative for the statives, which lack a left
 boundary, Section 5. -/
-def profile : Verbalizer → Features.AspectualProfile
+def profile : Verbalizer → Aspect.AspectualProfile
   | semelfactive => ⟨.atelic, .punctual, .dynamic⟩
   | stative => ⟨.atelic, .durative, .stative⟩
   | _ => ⟨.atelic, .durative, .dynamic⟩

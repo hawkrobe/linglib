@@ -133,7 +133,7 @@ theorem hasClosedSubintervalProp_iff_witnesses {P : W → Event T → Prop} :
     the extensional imperfective entails the perfective, and for telic ones
     it need not.
 
-    `Features/Aktionsart.lean` carries the VendlerClass enum used to
+    `Semantics/Aspect/Basic.lean` carries the VendlerClass enum used to
     state the consumer-side facts (`c = .state ∨ c = .activity` for
     SUB-having classes). Here we prove the operator-level consequences:
 
@@ -144,7 +144,6 @@ theorem hasClosedSubintervalProp_iff_witnesses {P : W → Event T → Prop} :
     3. **IMPF ⊢ PRFV ⟺ CSUB**: the extensional imperfective entails the
        perfective iff the predicate has the closed subinterval property. -/
 
-open Features
 
 /-- **Activity entailment** ([dowty-1979]; [bennett-partee-1972]):
     if an activity predicate `P` has the closed subinterval property and
