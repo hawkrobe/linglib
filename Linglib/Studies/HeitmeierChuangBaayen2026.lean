@@ -3,41 +3,33 @@ import Linglib.Processing.DiscriminativeLexicon.Training
 import Mathlib.LinearAlgebra.Basis.VectorSpace
 
 /-!
-# Heitmeier, Chuang and Baayen 2026: linearity and regularity
+# Heitmeier, Chuang and Baayen (2026): The Discriminative Lexicon
 
-The book's linear production maps handle inflectional systems with irregular forms: trained on
-empirical embeddings, its English past-tense model produces 94% of the regular and 74% of the
-irregular training verbs (§12.9). Meanings can instead be *constructed*, the meaning of *walked*
-as the meaning of *walk* plus a past-tense vector (Table 12.7; conceptualization is vector
-addition, eq. 5.3, §16.3), which regularizes a system into "a reasonable approximation of a truly
-regular system, and for such a system, linear mappings appear to work quite well" (§16.6,
-Table 16.2); but with the meanings of held-out verbs reconstructed this way, "none of the
-irregular verbs was produced correctly" (§12.9). This file states why, in word-and-paradigm
-terms (`Morphology.IsAnalogicallyRegular`), on the `Morphology.Realization` interface
-(`DiscriminativeLexicon.Linear.paradigm`). Over imputed semantics, a lexeme vector plus an
-inflectional-function vector (`imputed`; §16.6 says "imputed embeddings for stems and exponents"),
-a linear map's form table satisfies proportional analogy by construction, so a table violating
-analogy is the paradigm of no linear DLM and forces positive training loss, and when the lexeme
-and function vectors are jointly independent a table is the paradigm of some linear DLM iff it is
-analogically regular. Over word-specific embeddings, by contrast, any table is the paradigm of
-some linear DLM as soon as the embeddings are linearly independent, which fills the
-irregular-linear cell of Table 16.2. The English past tense at the book's letter-trigram coding
-(§12.9, `cueVector`) is the irregular table: *walk, walked* against *go, went*.
-
-## Main results
-
-* `not_exists_paradigm_eq_of_not_regular`, `pos_weightedLoss_of_not_regular`: an irregular
-  table is the paradigm of no linear DLM over imputed semantics and forces positive loss.
-* `exists_paradigm_imputed_eq_iff`: over jointly independent lexeme and function vectors, a
-  table is the paradigm of some linear DLM iff it is analogically regular.
-* `exists_paradigm_eq_of_linearIndependent`: over independent word-specific embeddings every
-  table is the paradigm of some linear DLM.
-* `pastTense_not_regular`: *walk, walked, go, went* violates analogy.
+This file formalizes the relation between linearity and regularity in [heitmeier-chuang-baayen-2026]
+(§16.6). The book's linear production maps handle inflectional systems with irregular forms:
+trained on empirical embeddings, its English past-tense model produces 94% of the regular
+and 74% of the irregular training verbs (§12.9). Meanings can instead be constructed, the
+meaning of *walked* as the meaning of *walk* plus a past-tense vector (Table 12.7;
+conceptualization is vector addition, (5.3), §16.3), which regularizes a system into "a
+reasonable approximation of a truly regular system, and for such a system, linear mappings
+appear to work quite well" (§16.6, Table 16.2); but with the meanings of held-out verbs
+reconstructed this way, "none of the irregular verbs was produced correctly" (§12.9). The
+file states why, in word-and-paradigm terms (`Morphology.IsAnalogicallyRegular`), on the
+`Morphology.Realization` interface: over imputed semantics, a lexeme vector plus an
+inflectional-function vector (`imputed`, the "imputed embeddings for stems and exponents" of
+§16.6), a linear map's form table satisfies proportional analogy by construction, so a table
+violating analogy is the paradigm of no linear DLM (`not_exists_paradigm_eq_of_not_regular`)
+and forces positive training loss (`pos_weightedLoss_of_not_regular`), and when the lexeme
+and function vectors are jointly independent a table is the paradigm of some linear DLM iff
+it is analogically regular (`exists_paradigm_imputed_eq_iff`). Over word-specific
+embeddings, by contrast, any table is the paradigm of some linear DLM as soon as the
+embeddings are linearly independent (`exists_paradigm_eq_of_linearIndependent`), which
+fills the irregular-linear cell of Table 16.2. The English past tense at the book's
+letter-trigram coding (§12.9) is the irregular table: *walk, walked* against *go, went*.
 
 ## References
 
-* [M. Heitmeier, Y.-Y. Chuang and R. H. Baayen, *The Discriminative Lexicon*
-  (2026)][heitmeier-chuang-baayen-2026]
+* [heitmeier-chuang-baayen-2026]
 -/
 
 namespace HeitmeierChuangBaayen2026
@@ -65,7 +57,7 @@ theorem exists_linear_of_linearIndependent {ι : Type*} {v : ι → MeaningVec d
     (hv : LinearIndependent ℝ v) (w : ι → FormVec n) :
     ∃ G : MeaningVec d →ₗ[ℝ] FormVec n, ∀ i, G (v i) = w i := by
   obtain ⟨G, hG⟩ := LinearMap.exists_extend ((Module.Basis.span hv).constr ℝ w)
-  refine ⟨G, fun i => ?_⟩
+  refine ⟨G, λ i => ?_⟩
   have h := LinearMap.congr_fun hG (Module.Basis.span hv i)
   rwa [LinearMap.comp_apply, Submodule.subtype_apply, Module.Basis.constr_basis,
     Module.Basis.span_apply] at h
@@ -77,7 +69,7 @@ theorem exists_paradigm_eq_of_linearIndependent {s : Lexeme → Cell → Meaning
     (hs : LinearIndependent ℝ (Function.uncurry s)) (f : Lexeme → Cell → FormVec n) :
     ∃ D : Linear ℝ (FormVec n) (MeaningVec d), D.paradigm s = f :=
   let ⟨G, hG⟩ := exists_linear_of_linearIndependent hs (Function.uncurry f)
-  ⟨⟨0, G⟩, funext fun l => funext fun c => hG (l, c)⟩
+  ⟨⟨0, G⟩, funext λ l => funext λ c => hG (l, c)⟩
 
 /-- When the lexeme and inflectional-function vectors are jointly linearly independent, a table
 is the paradigm of some linear DLM over imputed semantics **iff** it is analogically regular: for
@@ -86,10 +78,10 @@ theorem exists_paradigm_imputed_eq_iff [Nonempty Lexeme] [Nonempty Cell]
     (hind : LinearIndependent ℝ (Sum.elim σ ε)) (f : Lexeme → Cell → FormVec n) :
     (∃ D : Linear ℝ (FormVec n) (MeaningVec d), D.paradigm (imputed σ ε) = f) ↔
       IsAnalogicallyRegular f := by
-  refine ⟨fun ⟨D, hD⟩ => hD ▸ D.isAnalogicallyRegular_paradigm_imputed σ ε, fun hreg => ?_⟩
+  refine ⟨λ ⟨D, hD⟩ => hD ▸ D.isAnalogicallyRegular_paradigm_imputed σ ε, λ hreg => ?_⟩
   obtain ⟨a, b, hab⟩ := isAnalogicallyRegular_iff_exists_add.1 hreg
   obtain ⟨G, hG⟩ := exists_linear_of_linearIndependent hind (Sum.elim a b)
-  refine ⟨⟨0, G⟩, funext fun l => funext fun c => ?_⟩
+  refine ⟨⟨0, G⟩, funext λ l => funext λ c => ?_⟩
   have hσ : G (σ l) = a l := hG (Sum.inl l)
   have hε : G (ε c) = b c := hG (Sum.inr c)
   simp [hσ, hε, hab]
@@ -131,7 +123,7 @@ def pastTense (v : Verb) (t : Tense) : FormVec 13 := cueVector 3 trigram (form v
 *went* adds nothing to *go*. So no linear DLM produces it from constructed meanings
 (`not_exists_paradigm_eq_of_not_regular`), while independent embeddings realise it
 (`exists_paradigm_eq_of_linearIndependent`), as in §12.9. -/
-theorem pastTense_not_regular : ¬ IsAnalogicallyRegular pastTense := fun h => by
+theorem pastTense_not_regular : ¬ IsAnalogicallyRegular pastTense := λ h => by
   have := congrFun (isAnalogicallyRegular_iff.1 h .walk .go .past .base) 6
   simp +decide [pastTense, cueVector, multiHot] at this
 
@@ -143,9 +135,9 @@ variable [Fintype Lexeme] [Fintype Cell]
 table as the form matrix. -/
 noncomputable def paradigmExperience (f : Lexeme → Cell → FormVec n) :
     TrainingExperience (Fintype.card (Lexeme × Cell)) n d where
-  S := Matrix.of fun i => imputed σ ε ((Fintype.equivFin (Lexeme × Cell)).symm i).1
+  S := Matrix.of λ i => imputed σ ε ((Fintype.equivFin (Lexeme × Cell)).symm i).1
     ((Fintype.equivFin (Lexeme × Cell)).symm i).2
-  C := Matrix.of fun i => f ((Fintype.equivFin (Lexeme × Cell)).symm i).1
+  C := Matrix.of λ i => f ((Fintype.equivFin (Lexeme × Cell)).symm i).1
     ((Fintype.equivFin (Lexeme × Cell)).symm i).2
 
 open Matrix in
@@ -155,10 +147,10 @@ theorem pos_weightedLoss_of_not_regular {f : Lexeme → Cell → FormVec n}
     (hf : ¬ IsAnalogicallyRegular f) {q : FrequencyVector (Fintype.card (Lexeme × Cell))}
     (hq : ∀ i, 0 < q i) (G : Matrix (Fin d) (Fin n) ℝ) :
     0 < weightedLoss (paradigmExperience σ ε f) q G := by
-  refine lt_of_le_of_ne (weightedLoss_nonneg _ _ _) (Ne.symm fun h0 => ?_)
+  refine lt_of_le_of_ne (weightedLoss_nonneg _ _ _) (Ne.symm λ h0 => ?_)
   have hint := (weightedLoss_eq_zero_iff _ _ _ hq).1 h0
   refine not_exists_paradigm_eq_of_not_regular σ ε hf
-    ⟨⟨0, Matrix.toLin' Gᵀ⟩, funext fun l => funext fun c => funext fun j => ?_⟩
+    ⟨⟨0, Matrix.toLin' Gᵀ⟩, funext λ l => funext λ c => funext λ j => ?_⟩
   have h := congrFun (congrFun hint ((Fintype.equivFin (Lexeme × Cell)) (l, c))) j
   simpa [paradigmExperience, Linear.paradigm, Matrix.toLin'_apply, Matrix.mulVec_transpose,
     Matrix.mul_apply, Matrix.vecMul, dotProduct] using h
