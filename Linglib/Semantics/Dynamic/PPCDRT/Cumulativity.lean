@@ -39,12 +39,12 @@ variable {E : Type*}
     there is `b ∈ y` with `a = b`, so `a ∈ y`; and symmetrically.
     ⊇ direction: if `x = y`, every element witnesses itself. -/
 theorem cumulative_eq_iff_finset_eq (x y : Finset E) :
-    Cumulative (fun a b : E => a = b) x y ↔ x = y := by
+    Cumulative (λ a b : E => a = b) x y ↔ x = y := by
   constructor
   · rintro ⟨hLR, hRL⟩
     apply Finset.ext
     intro a
-    refine ⟨fun hax => ?_, fun hay => ?_⟩
+    refine ⟨λ hax => ?_, λ hay => ?_⟩
     · obtain ⟨b, hby, hab⟩ := hLR a hax
       rw [hab]; exact hby
     · obtain ⟨b, hbx, hba⟩ := hRL a hay
@@ -75,15 +75,17 @@ theorem groupIdentityCond_iff_cumulative_eq
     (hxa : ∀ d, d ∈ xa ↔ d ∈ PluralAssign.sumDref S uAnaph)
     (hxb : ∀ d, d ∈ xb ↔ d ∈ PluralAssign.sumDref S uAnt) :
     groupIdentityCond uAnaph uAnt S ∅ ↔
-    Cumulative (fun a b : E => a = b) xa xb := by
-  rw [cumulative_eq_iff_finset_eq]
-  unfold groupIdentityCond
+    Cumulative (λ a b : E => a = b) xa xb := by
+  rw [cumulative_eq_iff_finset_eq, groupIdentityCond_empty]
   constructor
   · intro h
     apply Finset.ext
     intro d
-    rw [hxa d, hxb d, h]
-  · intro h
+    rw [hxa d, hxb d]
+    rcases S.eq_empty_or_nonempty with rfl | hS
+    · simp [PluralAssign.sumDref]
+    · rw [h hS]
+  · intro h _
     apply Set.ext
     intro d
     rw [← hxa d, ← hxb d, h]
