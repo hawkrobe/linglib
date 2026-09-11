@@ -86,25 +86,29 @@ theorem regularizedObjective_replicate_le_iff (con : CON (I × O) n) (w w' : Fin
     regularizedObjective_replicate con w' data hr hσ h]
   exact mul_le_mul_iff_right₀ (Nat.cast_pos.mpr hr)
 
+/-- With the other weights held fixed, the probability of an observation is the softmax of an
+affine function of weight j: the negated violations of constraint j as the score, the other
+constraints' harmony as the offset. -/
+theorem gjProb_update (con : CON (I × O) n) (w : Fin n → ℝ) (j : Fin n) (i : I) (o : O) (t : ℝ) :
+    gjProb con (Function.update w j t) i o =
+      softmax (t • (λ o' => -((con j (i, o') : ℕ) : ℝ)) +
+        λ o' => -∑ k ∈ ({j}ᶜ : Finset (Fin n)), w k * (con k (i, o') : ℝ)) o := by
+  unfold gjProb
+  congr 1
+  funext o'
+  simp only [harmonyScore_eq_neg_sum, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+  rw [Fintype.sum_eq_add_sum_compl j, Function.update_self,
+    Finset.sum_congr rfl (g := λ k => w k * (con k (i, o') : ℝ)) λ k hk => by
+      rw [Function.update_of_ne (Finset.notMem_singleton.mp (Finset.mem_compl.mp hk))]]
+  ring
+
 /-- Footnote 4: with the other weights held fixed, the log probability of an observation is
 concave in weight j, since the harmony is then affine in that weight and the log-partition
 function convex. -/
 theorem concaveOn_log_gjProb_update (con : CON (I × O) n) (w : Fin n → ℝ) (j : Fin n) (i : I)
     (o : O) : ConcaveOn ℝ Set.univ λ t => log (gjProb con (Function.update w j t) i o) := by
   have : Nonempty O := ⟨o⟩
-  have key : ∀ t, gjProb con (Function.update w j t) i o =
-      softmax (t • (λ o' => -((con j (i, o') : ℕ) : ℝ)) +
-        λ o' => -∑ k ∈ ({j}ᶜ : Finset (Fin n)), w k * (con k (i, o') : ℝ)) o := by
-    intro t
-    unfold gjProb
-    congr 1
-    funext o'
-    simp only [harmonyScore_eq_neg_sum, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
-    rw [Fintype.sum_eq_add_sum_compl j, Function.update_self,
-      Finset.sum_congr rfl (g := λ k => w k * (con k (i, o') : ℝ)) λ k hk => by
-        rw [Function.update_of_ne (Finset.notMem_singleton.mp (Finset.mem_compl.mp hk))]]
-    ring
-  simp_rw [key]
+  simp_rw [gjProb_update]
   exact concaveOn_log_softmax _ _ o
 
 /-- The log pseudo-likelihood of a corpus is concave in each weight, as a sum of concave terms. -/
