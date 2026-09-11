@@ -1,379 +1,454 @@
-/-
-Copyright (c) 2026 Robert Hawkins. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Robert Hawkins
--/
+import Linglib.Data.Examples.JackendoffAudring2020
 import Linglib.Morphology.Construction.Sister
 import Linglib.Morphology.Construction.SameExcept
 import Linglib.Morphology.Construction.Inheritance
 import Linglib.Morphology.Paradigm.Linkage
 import Linglib.Morphology.Paradigm.Morphome
 import Linglib.Core.Order.Flat
+import Mathlib.Data.Fintype.Prod
 
 /-!
-# Relational Morphology: the sister-schema engine and its divergences
-[jackendoff-audring-2020]
+# Jackendoff and Audring (2020): The Texture of the Lexicon
 
-[jackendoff-audring-2020]'s Relational Morphology explicates morphological
-motivation as *shared structure* recorded by nondirectional relational links,
-rather than by directed inheritance. This file instantiates the
-`Morphology/Construction/` substrate as that engine and states its three
-divergences from rival accounts, each verified against the book.
+This file formalizes the Relational Morphology of [jackendoff-audring-2020], in which
+morphological motivation is shared structure recorded by nondirectional relational links
+between fully specified lexical entries, not inheritance from an abstract base. The
+mixed-direction pairs of Objection 10 to inheritance, Section 3.4.4, are the test: *assassin*
+and *assassinate* build the second on the first in phonology and the first on the second in
+semantics, so no acyclic inheritance hierarchy holds both demands (`assassin_cycle`), while a
+sister link with a coindex per shared part carries both, (41) (`assassin_pairs`), and reads the
+same transposed (`assassin_pairs_symm`). Bumped up a level, Section 4.8.2, the link between the
+*-ism* and *-ist* schemas, (47), pairs every ideology's noun with its adherent's, whatever the
+base and the ideology (`ismist_pairs`), the open-ended relation the book illustrates with
+*Trumpism*. Ablaut, Section 5.3, is a sister link off the syllabic nucleus: the general schema
+(25) pairs exactly the stems and pasts that are the same except at the nucleus
+(`ablaut_pairs_iff`), the *sing*/*sang* subschema (26) is a special case of it
+(`ablaut_pairs_of_nucleusSister_pairs`) whose pairs are nucleus contrasts
+(`contrast_of_nucleusSister_pairs`), and the German present-tense schema (45) has the same
+phonological shape. The cells (45) serves, the second and third singular present, are a
+morphome, Section 5.4.4: the syncretism class of the special stem of *sprechen* is a value
+conjunction of no feature of the paradigm (`spricht_morphome`). The Same Verb Problem, Section
+5.6, is a shared morphosyntax-phonology pivot without a shared semantics: two lexemes selecting
+the same pivot inflect alike at every cell (`realize_eq_of_sameVerb`), which pairs the two
+*draw*s of (60) and *take* with *take part*, (57) to (59), and separates the homophones *ring*
+and *wring*.
 
-The linked-variable coindices `α` (phonology) and `β` (semantics) of the
-`[X-ism]`/`[X-ist]` sister schemas are rendered as a shared coindex space; the
-English and German verb paradigms use the syncretism (`Setoid.ker`) and ablaut
-(`SameExcept`) substrate. The **Same Verb** flagship lifts
-`Linkage.realize_eq_of_corr_eq_lexeme`: two lexemes sharing a morphosyntactic-form
-correspondent inflect alike, evading the lexical-index accounts of
-[spencer-2013]. The **cycle** flagship instantiates `Hierarchy.parent_asymm`:
-Objection 10's `assassin`/`assassinate`, whose form and meaning planes demand
-opposite parent orientations, cannot both be edges of one acyclic hierarchy,
-while a symmetric sister link carries both by construction.
+## Implementation notes
 
-## Main results
+* Lexical entries and schemas are slot-indexed descriptions over a flat carrier, a constant
+  above `⊥` and a variable at `⊥`; a relational coindex is a link between slots that a paired
+  instantiation must fill alike (`Morphology.Construction.Sister.Pairs`). The containment of
+  the semantics of *assassinate* in that of *assassin*, (41), is rendered as a shared slot.
+* The zero exponence of the present and the infinitive of *walk*, (19), the double
+  coindexation of Section 4.3, appears as a syncretism of the paradigm (`walk_syncretism`).
+* The cycle theorem renders the paradox of Objection 10 through the well-foundedness of an
+  inheritance hierarchy; the book argues from the above-and-below paradox and makes no
+  well-foundedness claim.
 
-* `behaviorism_pairs`, `trumpism_pairs` — the `[X-ism]`/`[X-ist]` sister schema
-  and its open-endedness, as `Sister.Pairs` on linked coindices
-* `walk_syncretisms`, `spricht_morphome` — English and German verb syncretisms /
-  the morphomic 2/3-sg-present pattern via `syncretismClass`
-* `singSang_contrast`, `stringStrung_contrast`, `ablaut_generality` — ablaut
-  classes as `SameExcept` contrasts at the nucleus, under the general schema
-* `draw_same_verb`, `ring_wring_distinct` — the Same Verb flagship and its
-  homophony negative control
-* `assassin_cycle`, `assassin_sister_pairs` — the cycle flagship: inheritance
-  forces a 2-cycle where a sister link does not
+## References
+
+* [jackendoff-audring-2020]
+* [booij-2010]
+* [aronoff-1994]
+* [spencer-2013]
 -/
 
 namespace JackendoffAudring2020
 
 open Morphology Morphology.Construction
 
-/-- The linked-variable coindices of [jackendoff-audring-2020]'s sister schemas:
-`alpha` the phonological link, `beta` the semantic link. -/
-inductive Coindex | alpha | beta
-  deriving DecidableEq, Fintype
+/-! ### Sister words -/
 
-/-! ### Sister schemas: `[X-ism]` and `[X-ist]`
+/-- The parts of the entries (41): the shared phonology and the shared predicate MURDER, the
+person that *assassin* adds and the affix that *assassinate* adds. -/
+inductive Part
+  | asasin
+  | murder
+  | person
+  | ate
+  deriving DecidableEq
 
-[jackendoff-audring-2020] §4.8.2, formalizing the second-order schema
-[booij-2010] observed: a noun in `-ism` denoting an ideology is paired with a
-noun in `-ist` denoting an adherent, correlated on the shared phonological base
-(coindex `α`) and the shared ideology (coindex `β`). The relation is stated once
-between the schemas and holds of every attested pair, and is open-ended — a new
-ideology (`Trumpism`) has its adherents (`Trumpists`) without hesitation. -/
+/-- The slots of *assassin*: its phonology, the predicate it contains, and the person. -/
+inductive AssassinSlot
+  | phon
+  | murder
+  | person
+  deriving DecidableEq
 
-/-- Phonological bases and ideology values the `-ism`/`-ist` schemas range over. -/
-inductive Sym | behavior | commun | trump | behaviorismSem | communismSem | trumpismSem
-  deriving DecidableEq, Fintype
+/-- The slots of *assassinate*: its base, its affix, and its predicate. -/
+inductive AssassinateSlot
+  | base
+  | affix
+  | murder
+  deriving DecidableEq
 
-/-- The two variables of the `-ism` schema: a phonological base and an ideology. -/
-inductive IsmVar | base | ideology
-  deriving DecidableEq, Fintype
+/-- The entry (41a), fully specified. -/
+def assassin : Schema AssassinSlot (Flat Part) :=
+  ⟨λ | .phon => ↑Part.asasin | .murder => ↑Part.murder | .person => ↑Part.person, ∅⟩
 
-/-- The two variables of the `-ist` schema. -/
-inductive IstVar | base | ideology
-  deriving DecidableEq, Fintype
+/-- The entry (41b), fully specified. -/
+def assassinate : Schema AssassinateSlot (Flat Part) :=
+  ⟨λ | .base => ↑Part.asasin | .affix => ↑Part.ate | .murder => ↑Part.murder, ∅⟩
 
-def ismCoindex : IsmVar → Coindex
-  | .base => .alpha
-  | .ideology => .beta
+/-- The sister link of (41): coindex 2 identifies the phonology of *assassin* with the base of
+*assassinate*, coindex 1 the predicate of *assassinate* with the one inside *assassin*. -/
+def assassinSister : Sister AssassinSlot AssassinateSlot (Flat Part) where
+  fst := assassin
+  snd := assassinate
+  link
+    | .phon, .base => True
+    | .murder, .murder => True
+    | _, _ => False
 
-def istCoindex : IstVar → Coindex
-  | .base => .alpha
-  | .ideology => .beta
+/-- The two entries are a paired instantiation of their sister link: they share the base
+phonology and the predicate, and neither contains all of the other. -/
+theorem assassin_pairs : assassinSister.Pairs assassin.body assassinate.body :=
+  ⟨le_rfl, le_rfl, λ v₁ v₂ h => by
+    cases v₁ <;> cases v₂ <;> simp_all [assassinSister, assassin, assassinate]⟩
 
-def ismSchema : Schema IsmVar (Flat Sym) := ⟨fun _ => ⊥, Set.univ⟩
+/-- The link is nondirectional: neither word is derived from the other. -/
+theorem assassin_pairs_symm : assassinSister.swap.Pairs assassinate.body assassin.body :=
+  Sister.pairs_swap.2 assassin_pairs
 
-def istSchema : Schema IstVar (Flat Sym) := ⟨fun _ => ⊥, Set.univ⟩
+/-- The pair as nodes of an inheritance hierarchy. -/
+inductive Pair
+  | assassin
+  | assassinate
+  deriving DecidableEq
 
-/-- The `[X-ism]`/`[X-ist]` sister schema: variables sharing a coindex are linked. -/
-def ismistSister : Sister IsmVar IstVar (Flat Sym) where
+/-- Objection 10: the phonology demands that *assassinate* inherit from *assassin* and the
+semantics that *assassin* inherit from *assassinate*; no acyclic hierarchy holds both. -/
+theorem assassin_cycle (h : Hierarchy Pair) (hphon : h.parent .assassinate = some .assassin)
+    (hsem : h.parent .assassin = some .assassinate) : False :=
+  h.parent_asymm hphon hsem
+
+/-! ### Sister schemas -/
+
+/-- The material of the schemas (47) over bases `B` and ideologies `I`: a base, an ideology,
+the two affixes, and the relation ADHERENT. -/
+inductive Atom (B I : Type*)
+  | base (b : B)
+  | ideology (i : I)
+  | ism
+  | ist
+  | adherent
+
+/-- The slots of the *-ism* schema: base, affix, semantics. -/
+inductive IsmSlot
+  | base
+  | affix
+  | sem
+  deriving DecidableEq
+
+/-- The slots of the *-ist* schema: base, affix, the relation ADHERENT, and its ideology. -/
+inductive IstSlot
+  | base
+  | affix
+  | relation
+  | ideology
+  deriving DecidableEq
+
+variable {B I : Type*}
+
+/-- (47a): the affix pinned to *-ism*, the base and the ideology open. -/
+def ismSchema : Schema IsmSlot (Flat (Atom B I)) :=
+  ⟨λ | .affix => ↑(Atom.ism : Atom B I) | _ => ⊥, {.base, .sem}⟩
+
+/-- (47b): the affix pinned to *-ist* and the semantics to ADHERENT of an open ideology. -/
+def istSchema : Schema IstSlot (Flat (Atom B I)) :=
+  ⟨λ | .affix => ↑(Atom.ist : Atom B I) | .relation => ↑(Atom.adherent : Atom B I) | _ => ⊥,
+    {.base, .ideology}⟩
+
+/-- The linked variable coindices of (47): `α` identifies the bases, `β` the ideology. -/
+def ismist : Sister IsmSlot IstSlot (Flat (Atom B I)) where
   fst := ismSchema
   snd := istSchema
-  link v₁ v₂ := ismCoindex v₁ = istCoindex v₂
+  link
+    | .base, .base => True
+    | .sem, .ideology => True
+    | _, _ => False
 
-def behaviorismW : IsmVar → Flat Sym
-  | .base => ↑Sym.behavior
-  | .ideology => ↑Sym.behaviorismSem
+/-- The *-ism* noun on base `b` denoting the ideology `i`. -/
+def ismWord (b : B) (i : I) : IsmSlot → Flat (Atom B I)
+  | .base => ↑(Atom.base b : Atom B I)
+  | .affix => ↑(Atom.ism : Atom B I)
+  | .sem => ↑(Atom.ideology i : Atom B I)
 
-def behavioristW : IstVar → Flat Sym
-  | .base => ↑Sym.behavior
-  | .ideology => ↑Sym.behaviorismSem
+/-- The *-ist* noun on base `b` denoting an adherent of `i`. -/
+def istWord (b : B) (i : I) : IstSlot → Flat (Atom B I)
+  | .base => ↑(Atom.base b : Atom B I)
+  | .affix => ↑(Atom.ist : Atom B I)
+  | .relation => ↑(Atom.adherent : Atom B I)
+  | .ideology => ↑(Atom.ideology i : Atom B I)
 
-def trumpismW : IsmVar → Flat Sym
-  | .base => ↑Sym.trump
-  | .ideology => ↑Sym.trumpismSem
+/-- The relation is open-ended: for any base and any ideology, *X-ism* and *X-ist* are a paired
+instantiation of the sister schemas, *Trumpism* and *Trumpist* included. -/
+theorem ismist_pairs (b : B) (i : I) : ismist.Pairs (ismWord b i) (istWord b i) := by
+  refine ⟨λ v => ?_, λ v => ?_, λ v₁ v₂ h => ?_⟩
+  · cases v <;> simp [ismist, ismSchema, ismWord]
+  · cases v <;> simp [ismist, istSchema, istWord]
+  · cases v₁ <;> cases v₂ <;> simp_all [ismist, ismWord, istWord]
 
-def trumpistW : IstVar → Flat Sym
-  | .base => ↑Sym.trump
-  | .ideology => ↑Sym.trumpismSem
+/-! ### Ablaut as a link off the nucleus -/
 
-/-- `behaviorism`/`behaviorist` is a paired instantiation of the sister schema:
-both share the base phonology (`α`) and the ideology (`β`) — the attested pair
-`(44a)`. -/
-theorem behaviorism_pairs : ismistSister.Pairs behaviorismW behavioristW := by
-  refine ⟨fun _ => bot_le, fun _ => bot_le, ?_⟩
-  intro v₁ v₂ hlink
-  cases v₁ <;> cases v₂ <;>
-    simp_all [ismistSister, ismCoindex, istCoindex, behaviorismW, behavioristW]
-
-/-- The relation is open-ended: `Trumpism`/`Trumpist` pairs by the same schema
-with no listed precedent (§4.8.2). -/
-theorem trumpism_pairs : ismistSister.Pairs trumpismW trumpistW := by
-  refine ⟨fun _ => bot_le, fun _ => bot_le, ?_⟩
-  intro v₁ v₂ hlink
-  cases v₁ <;> cases v₂ <;>
-    simp_all [ismistSister, ismCoindex, istCoindex, trumpismW, trumpistW]
-
-/-! ### English and German verb syncretisms
-
-The English verb repertoire `(16)` is six cells. For `walk`, present equals
-infinitive (bare stem) and past equals past participle (`-ed`): these are
-*syncretisms* ([jackendoff-audring-2020]: "We would like the grammar to express
-these syncretisms"), coincidences in the realization map read off `syncretismClass`
-(`Setoid.ker`). The German present-tense `2/3-sg` stem ablaut (`spricht`) is a
-*morphome* ([aronoff-1994]): the cells it groups do not form a natural class. -/
-
-/-- The six English finite/nonfinite verb cells `(16)`. -/
-inductive VCell | pres | pres3sg | past | inf | prespt | ptcp
-  deriving DecidableEq, Fintype
-
-/-- The phonological reflex of `walk` in each cell: bare stem, `-s`, `-ed`, `-ing`. -/
-inductive VForm | bare | s | ed | ing
+/-- Syllable positions. -/
+inductive Pos
+  | onset
+  | nucleus
+  | coda
   deriving DecidableEq
 
-/-- `walk`'s realization `(19)`: present and infinitive are bare, past and past
-participle both `-ed`. -/
-def walkForm : VCell → VForm
-  | .pres => .bare
-  | .inf => .bare
+/-- Phonological material of the verbs cited: the onsets *s-*, *str-*, *spr-*, the nuclei /ɪ/,
+/æ/, /ʌ/, /ɛ/, /a/ and the codas /ŋ/, /x/. -/
+inductive Seg
+  | s
+  | str
+  | shpr
+  | ih
+  | ae
+  | uh
+  | eh
+  | ah
+  | ng
+  | x
+  deriving DecidableEq
+
+/-- A monosyllable: its onset, nucleus and coda. -/
+def syllable (o n c : Seg) : Pos → Flat Seg
+  | .onset => ↑o
+  | .nucleus => ↑n
+  | .coda => ↑c
+
+/-- Two schemas over a syllable linked at every position but the nucleus, whose bodies pin
+the nuclei `v` and `w`, `⊥` for an open nucleus: the shape of the ablaut schemas (25) and (26)
+and of the German present-tense schema (45). -/
+def nucleusSister (v w : Flat Seg) : Sister Pos Pos (Flat Seg) where
+  fst := ⟨λ | .nucleus => v | _ => ⊥, {.onset, .coda}⟩
+  snd := ⟨λ | .nucleus => w | _ => ⊥, {.onset, .coda}⟩
+  link p q := p = q ∧ p ≠ .nucleus
+
+/-- The general ablaut schema (25): both nuclei open. -/
+def ablaut : Sister Pos Pos (Flat Seg) := nucleusSister ⊥ ⊥
+
+/-- The *sing*/*sang* subschema (26): /ɪ/ in the stem, /æ/ in the past. -/
+def singSang : Sister Pos Pos (Flat Seg) := nucleusSister ↑Seg.ih ↑Seg.ae
+
+/-- The *string*/*strung* subschema, (26) with /ʌ/ for /æ/. -/
+def stringStrung : Sister Pos Pos (Flat Seg) := nucleusSister ↑Seg.ih ↑Seg.uh
+
+/-- A paired instantiation of a nucleus sister is a pair that is the same except at the
+nucleus, with the pinned nuclei. -/
+theorem nucleusSister_pairs_iff {v w : Flat Seg} {s p : Pos → Flat Seg} :
+    (nucleusSister v w).Pairs s p ↔
+      v ≤ s .nucleus ∧ w ≤ p .nucleus ∧ SameExcept s p {.nucleus} := by
+  simp only [Sister.Pairs, nucleusSister, Schema.Instantiates, SameExcept, Set.EqOn,
+    Set.mem_compl_iff, Set.mem_singleton_iff, Pi.le_def]
+  constructor
+  · rintro ⟨h₁, h₂, hl⟩
+    exact ⟨h₁ .nucleus, h₂ .nucleus, λ q hq => hl ⟨rfl, hq⟩⟩
+  · rintro ⟨hv, hw, hs⟩
+    refine ⟨λ q => ?_, λ q => ?_, ?_⟩
+    · cases q <;> simp [hv]
+    · cases q <;> simp [hw]
+    · rintro q₁ q₂ ⟨rfl, hq⟩
+      exact hs hq
+
+/-- (25) pairs exactly the stems and pasts that are the same except at the nucleus. -/
+theorem ablaut_pairs_iff {s p : Pos → Flat Seg} :
+    ablaut.Pairs s p ↔ SameExcept s p {.nucleus} := by
+  simp [ablaut, nucleusSister_pairs_iff]
+
+/-- A subschema with pinned nuclei is a special case of the general ablaut schema: every pair
+of (26) is a pair of (25). -/
+theorem ablaut_pairs_of_nucleusSister_pairs {v w : Flat Seg} {s p : Pos → Flat Seg}
+    (h : (nucleusSister v w).Pairs s p) : ablaut.Pairs s p :=
+  ablaut_pairs_iff.2 (nucleusSister_pairs_iff.1 h).2.2
+
+/-- A pair under a subschema with distinct pinned nuclei is a nucleus contrast: the same
+except at the nucleus, where both are present and differ. -/
+theorem contrast_of_nucleusSister_pairs {v w : Seg} (hvw : v ≠ w) {s p : Pos → Flat Seg}
+    (h : (nucleusSister ↑v ↑w).Pairs s p) : Contrast s p {.nucleus} := by
+  obtain ⟨hv, hw, hs⟩ := nucleusSister_pairs_iff.1 h
+  rw [Flat.coe_le_iff] at hv hw
+  refine ⟨hs, λ q hq => ?_⟩
+  rw [Set.mem_singleton_iff] at hq
+  subst hq
+  rw [hv, hw]
+  exact ⟨Option.some_ne_none v, Option.some_ne_none w, λ h => hvw (Flat.coe_injective h)⟩
+
+/-- Two syllables differing only in their nucleus are a paired instantiation of the subschema
+pinning those nuclei. -/
+theorem syllable_pairs (o v w c : Seg) :
+    (nucleusSister ↑v ↑w).Pairs (syllable o v c) (syllable o w c) := by
+  rw [nucleusSister_pairs_iff]
+  refine ⟨le_rfl, le_rfl, λ q hq => ?_⟩
+  simp only [Set.mem_compl_iff, Set.mem_singleton_iff] at hq
+  cases q <;> simp_all [syllable]
+
+/-- *sing*/*sang*, (24), under (26); *string*/*strung* under its subschema; and the German
+*sprech-*/*sprich-* of (43) under the shape of (45). -/
+example : singSang.Pairs (syllable .s .ih .ng) (syllable .s .ae .ng) ∧
+    stringStrung.Pairs (syllable .str .ih .ng) (syllable .str .uh .ng) ∧
+    ablaut.Pairs (syllable .shpr .eh .x) (syllable .shpr .ih .x) :=
+  ⟨syllable_pairs .., syllable_pairs ..,
+    ablaut_pairs_of_nucleusSister_pairs (syllable_pairs .shpr .eh .ih .x)⟩
+
+/-! ### The present-tense cells of (45) as a morphome -/
+
+/-- Person. -/
+inductive Person
+  | first
+  | second
+  | third
+  deriving DecidableEq, Fintype
+
+/-- Number. -/
+inductive Number
+  | sg
+  | pl
+  deriving DecidableEq, Fintype
+
+/-- The present-tense cells of the paradigm (41). -/
+abbrev GCell := Person × Number
+
+/-- The two present-tense stems of *sprechen*, (41) to (43). -/
+inductive GStem
+  | sprech
+  | sprich
+  deriving DecidableEq
+
+/-- The stem of each present-tense cell of *sprechen*, (41). -/
+def sprechen : GCell → GStem
+  | (.second, .sg) | (.third, .sg) => .sprich
+  | _ => .sprech
+
+/-- The features of the paradigm. -/
+inductive GFeature
+  | person
+  | number
+  deriving DecidableEq, Fintype
+
+/-- The partitions the features induce. -/
+def gFeatures : GFeature → Setoid GCell
+  | .person => Setoid.ker Prod.fst
+  | .number => Setoid.ker Prod.snd
+
+instance (i : GFeature) : DecidableRel (gFeatures i) := by
+  cases i <;> exact Setoid.ker.decidableRel _
+
+/-- The cells of the special stem: second and third singular. -/
+def specialCells : Finset GCell := {(.second, .sg), (.third, .sg)}
+
+theorem sprechen_formCells : formCells sprechen .sprich = specialCells := by decide
+
+/-- The special cells are a value conjunction of neither feature. -/
+theorem specialCells_not_natural : ¬ IsValueConjunction gFeatures ↑specialCells := by
+  rw [isValueConjunction_coe_iff]
+  decide
+
+/-- The pattern (45) is morphomic, as the book says citing [aronoff-1994]: the cells the special
+stem serves are a syncretism class and no natural class of the paradigm. -/
+theorem spricht_morphome : IsMorphome sprechen (IsValueConjunction gFeatures) ↑specialCells :=
+  isMorphome_of_formCells sprechen (.second, .sg) _ sprechen_formCells (by decide)
+    specialCells_not_natural
+
+/-! ### The Same Verb Problem -/
+
+/-- The lexemes of Section 5.6: main verb *take* and *take part*, (57) to (59); the two *draw*s
+of (60) and *withdraw*, (62); and the homophones *ring*, *wring* and *ring* 'encircle'. -/
+inductive Lexeme
+  | take
+  | takePart
+  | drawPicture
+  | drawElicit
+  | withdraw
+  | ring
+  | wring
+  | ringCity
+  deriving DecidableEq, Fintype
+
+/-- The morphosyntax-phonology pivots, one per relational coindex shared across lexemes. -/
+inductive Pivot
+  | take
+  | draw
+  | ring
+  | wring
+  | ringCity
+  deriving DecidableEq, Fintype
+
+/-- Tense. -/
+inductive Tense
+  | pres
+  | past
+  deriving DecidableEq, Fintype
+
+/-- The paradigm linkage: each lexeme selects its pivot in every cell, with the cell's own
+property set. -/
+def linkage : Linkage Lexeme Pivot Tense where
+  stems
+    | .take, _ | .takePart, _ => {.take}
+    | .drawPicture, _ | .drawElicit, _ | .withdraw, _ => {.draw}
+    | .ring, _ => {.ring}
+    | .wring, _ => {.wring}
+    | .ringCity, _ => {.ringCity}
+  pm _ σ := σ
+
+/-- Two lexemes are the same verb when they share their form correspondents at every cell:
+the relational coindex 23 of (60), a shared morphosyntax and phonology with no shared
+semantics. -/
+def SameVerb (l₁ l₂ : Lexeme) : Prop := ∀ σ, linkage.corr l₁ σ = linkage.corr l₂ σ
+
+instance : DecidableRel SameVerb := λ l₁ l₂ =>
+  inferInstanceAs (Decidable (∀ σ, linkage.corr l₁ σ = linkage.corr l₂ σ))
+
+/-- Same verbs inflect alike at every cell, whatever their semantics: (57) to (61). -/
+theorem realize_eq_of_sameVerb {W : Type*} [DecidableEq W] (rf : Pivot → Tense → W)
+    {l₁ l₂ : Lexeme} (h : SameVerb l₁ l₂) (σ : Tense) :
+    linkage.realize rf l₁ σ = linkage.realize rf l₂ σ :=
+  linkage.realize_eq_of_corr_eq_lexeme rf (h σ)
+
+/-- Sameness of verb is nondirectional: no use is the basic one, Section 3.6. -/
+theorem SameVerb.symm {l₁ l₂ : Lexeme} (h : SameVerb l₁ l₂) : SameVerb l₂ l₁ :=
+  λ σ => (h σ).symm
+
+/-- The two *draw*s, (60), *take* with *take part*, (58), and *withdraw* with *draw*, (62), are
+the same verb; the homophones *ring*, *wring* and *ring* 'encircle' are not. -/
+example : SameVerb .drawPicture .drawElicit ∧ SameVerb .take .takePart ∧
+    SameVerb .withdraw .drawPicture ∧ ¬ SameVerb .ring .wring ∧ ¬ SameVerb .ring .ringCity := by
+  decide
+
+/-! ### The regular paradigm -/
+
+/-- The six cells of (16). -/
+inductive VCell
+  | pres
+  | pres3sg
+  | past
+  | inf
+  | prespt
+  | ptcp
+  deriving DecidableEq, Fintype
+
+/-- The exponents of the regular paradigm (19): none for the present and the infinitive, whose
+phonology is coindexed with the stem's. -/
+inductive Exponent
+  | bare
+  | s
+  | t
+  | ing
+  deriving DecidableEq
+
+/-- The paradigm of *walk*, (19). -/
+def walk : VCell → Exponent
+  | .pres | .inf => .bare
   | .pres3sg => .s
-  | .past => .ed
-  | .ptcp => .ed
+  | .past | .ptcp => .t
   | .prespt => .ing
 
-/-- `walk`'s two syncretisms: present with infinitive, past with past participle;
-present and past are not syncretic. -/
-theorem walk_syncretisms :
-    VCell.inf ∈ syncretismClass walkForm .pres ∧
-    VCell.ptcp ∈ syncretismClass walkForm .past ∧
-    VCell.past ∉ syncretismClass walkForm .pres :=
-  ⟨rfl, rfl, fun h => absurd h (show walkForm .past ≠ walkForm .pres by decide)⟩
-
-/-- The six present-tense person/number cells of a German strong verb. -/
-inductive GCell | s1 | s2 | s3 | p1 | p2 | p3
-  deriving DecidableEq, Fintype
-
-/-- The present-tense stem vowel of `sprechen`: the special ablauted `/ɪ/` in
-`2/3-sg`, the default `/ɛ/` elsewhere `(43)`, `(45)`. -/
-inductive GVowel | eLax | iLax
-  deriving DecidableEq
-
-def sprechenStemVowel : GCell → GVowel
-  | .s2 => .iLax
-  | .s3 => .iLax
-  | _ => .eLax
-
-/-- The morphomic `2/3-sg`-present pattern: `2-sg` and `3-sg` share the special
-stem vowel, and `1-sg` does not — the cells group as a class with no natural
-(feature-conjunction) characterization ([aronoff-1994]). -/
-theorem spricht_morphome :
-    GCell.s3 ∈ syncretismClass sprechenStemVowel .s2 ∧
-    GCell.s1 ∉ syncretismClass sprechenStemVowel .s2 :=
-  ⟨rfl, fun h => absurd h (show sprechenStemVowel .s1 ≠ sprechenStemVowel .s2 by decide)⟩
-
-/-! ### Ablaut as same-except contrast
-
-Table 5.1's ablaut classes are `SameExcept` contrasts at the syllabic nucleus: a
-stem and its past tense are phonologically identical except for the nucleus
-vowel. Over the vowel tier (only the nucleus bears a vowel), the `sing`/`sang`
-pattern (ten verbs) and the `string`/`strung` pattern (thirteen) are contrasts;
-the German `singen`/`sang`/`gesungen` three-sister (eighteen members) is a pair
-of nucleus contrasts. The general ablaut schema `(25)` leaves the nucleus an open
-variable, and the `sing`/`sang` subschema `(26)` instantiates it. -/
-
-/-- The nucleus vowels the ablaut classes use: `sing` `/ɪ/`, `sang` `/æ/`,
-`sung`/`strung` `/ʌ/`, German past `/a/`. -/
-inductive Vowel | iLax | ae | uh | ah
-  deriving DecidableEq, Fintype
-
-/-- Syllable positions: only the nucleus carries a vowel on this tier. -/
-inductive Pos | onset | nucleus | coda
-  deriving DecidableEq, Fintype
-
-/-- The vowel melody of a monosyllable: the vowel at the nucleus, `⊥` elsewhere. -/
-def melody (v : Vowel) : Pos → Flat Vowel
-  | .nucleus => ↑v
-  | _ => ⊥
-
-/-- Two melodies differing only in their nucleus vowel are a nucleus contrast. -/
-theorem melody_contrast {v w : Vowel} (h : v ≠ w) :
-    Contrast (melody v) (melody w) {Pos.nucleus} := by
-  refine ⟨fun p hp => ?_, fun p hp => ?_⟩
-  · simp only [Set.mem_compl_iff, Set.mem_singleton_iff] at hp
-    cases p <;> simp_all [melody]
-  · simp only [Set.mem_singleton_iff] at hp
-    subst hp
-    exact ⟨by simp [melody], by simp [melody], fun hh => h (Flat.coe_injective hh)⟩
-
-/-- `sing`/`sang`: identical except at the nucleus (`/ɪ/` vs `/æ/`) — a contrast. -/
-theorem singSang_contrast : Contrast (melody .iLax) (melody .ae) {Pos.nucleus} :=
-  melody_contrast (by decide)
-
-/-- `string`/`strung`: identical except at the nucleus (`/ɪ/` vs `/ʌ/`). -/
-theorem stringStrung_contrast : Contrast (melody .iLax) (melody .uh) {Pos.nucleus} :=
-  melody_contrast (by decide)
-
-/-- German `singen`/`sang`/`gesungen`: the three sisters differ pairwise only at
-the nucleus (`/ɪ/`, `/a/`, the back-vowel `/ʌ/`). -/
-theorem singen_three_sister :
-    Contrast (melody .iLax) (melody .ah) {Pos.nucleus} ∧
-    Contrast (melody .ah) (melody .uh) {Pos.nucleus} :=
-  ⟨melody_contrast (by decide), melody_contrast (by decide)⟩
-
-/-- The general ablaut schema `(25)`: the nucleus is an open variable, all
-positions otherwise unconstrained. -/
-def ablautSchema : Schema Pos (Flat Vowel) where
-  body := fun _ => ⊥
-  opens := {Pos.nucleus}
-
-/-- The `sing`/`sang` subschema `(26)` instantiates the general ablaut schema
-`(25)`: the general schema's open nucleus is filled by `/ɪ/`. -/
-theorem ablaut_generality : ablautSchema.Instantiates (melody .iLax) := by
-  intro _; exact bot_le
-
-/-! ### The Same Verb flagship
-
-[jackendoff-audring-2020] §5.6: many verbs share an irregular paradigm across
-distinct meanings — `draw` a picture and `draw` praise both have past `drew` —
-where lexical-index accounts ([spencer-2013]) individuate every item. RM shares a
-single morphosyntactic-form correspondent (the pivot; phonology is derived
-through the shared morphosyntax↔phonology link), and one lift covers both the
-containment case (`take`/`took part`) and the sister case (the two `draw`s
-differing only in semantics). J&A flag "three (perhaps minor) issues" with the
-index account (idioms, profligacy, mentalistic construal), not a knockdown
-objection. The negative control is homophony without shared paradigm:
-`ring`/`wring`/`ringed` are distinct verbs whose correspondents differ. -/
-
-/-- The `draw` readings and the homophonous `ring`/`wring`. -/
-inductive DrawLex | drawPicture | drawElicit | ring | wring
-  deriving DecidableEq, Fintype
-
-/-- The form correspondents: the two `draw`s share one, `ring` and `wring` differ. -/
-inductive DrawStem | drawZ | ringZ | wringZ
-  deriving DecidableEq, Fintype
-
-inductive Tense | pres | past
-  deriving DecidableEq, Fintype
-
-/-- The paradigm linkage: both `draw` readings select the same stem, so they share
-every correspondent; `ring` and `wring` select distinct stems. -/
-def drawLinkage : Linkage DrawLex DrawStem Tense where
-  stems
-    | .drawPicture, _ => {.drawZ}
-    | .drawElicit, _ => {.drawZ}
-    | .ring, _ => {.ringZ}
-    | .wring, _ => {.wringZ}
-  pm := fun _ σ => σ
-
-/-- **Same Verb**: the two `draw` readings, sharing a form correspondent, realize
-identically at every cell — `drew` is forced, whatever their distinct semantics.
-Instantiates `Linkage.realize_eq_of_corr_eq_lexeme`. -/
-theorem draw_same_verb {W : Type*} [DecidableEq W] (rf : DrawStem → Tense → W)
-    (σ : Tense) :
-    drawLinkage.realize rf .drawPicture σ = drawLinkage.realize rf .drawElicit σ :=
-  drawLinkage.realize_eq_of_corr_eq_lexeme rf rfl
-
-/-- The negative control: `ring` and `wring` are homophonous but have distinct
-correspondents, so nothing forces a shared past — `rang` vs `wrung`. -/
-theorem ring_wring_distinct :
-    drawLinkage.corr .ring .past ≠ drawLinkage.corr .wring .past := by decide
-
-/-! ### The cycle flagship: inheritance vs relational linking
-
-[jackendoff-audring-2020]'s Objection 10 (§3.4.4): in pairs like
-`assassin`/`assassinate`, the form plane builds the second on the first
-(`assassinate` from `assassin`), while the meaning plane builds the first on the
-second (an assassin is one who assassinates). "`assassin` is both 'above' and
-'below' `assassinate`." Demanding a single directed inheritance relation realize
-both orientations forces a 2-cycle, refuted by `Hierarchy.parent_asymm` (the
-well-foundedness rendering is ours; the above-and-below paradox is J&A's). The
-symmetric sister link carries both plane-links by construction, nondirectionally
-— the divergence runs the other way from the default-override win of
-[booij-2010]'s `werkbaar`. -/
-
-/-- The mixed-direction pair. -/
-inductive AsPair | assassin | assassinate
-  deriving DecidableEq, Fintype
-
-/-- **Cycle**: no acyclic hierarchy realizes both orientation demands. The form
-plane demands `assassinate`'s parent be `assassin`; the meaning plane demands
-`assassin`'s parent be `assassinate`; together they are a 2-cycle. -/
-theorem assassin_cycle (h : Hierarchy AsPair)
-    (hform : h.parent .assassinate = some .assassin)
-    (hmean : h.parent .assassin = some .assassinate) : False :=
-  h.parent_asymm hform hmean
-
-/-- The two variables of a lexical entry that a sister link relates: phonological
-base (`α`) and semantics (`β`). -/
-inductive AsVar | phon | sem
-  deriving DecidableEq, Fintype
-
-def asCoindex : AsVar → Coindex
-  | .phon => .alpha
-  | .sem => .beta
-
-/-- The shared material of the `assassin`/`assassinate` entries `(41)`. -/
-inductive AsAtom | asasin | murderSem
-  deriving DecidableEq, Fintype
-
-def asSchema : Schema AsVar (Flat AsAtom) := ⟨fun _ => ⊥, Set.univ⟩
-
-/-- The symmetric sister link between `assassin` and `assassinate`: they share the
-phonological base (`α`) and part of the semantics (`β`), neither derived from the
-other. -/
-def assassinSister : Sister AsVar AsVar (Flat AsAtom) where
-  fst := asSchema
-  snd := asSchema
-  link v₁ v₂ := asCoindex v₁ = asCoindex v₂
-
-def assassinW : AsVar → Flat AsAtom
-  | .phon => ↑AsAtom.asasin
-  | .sem => ↑AsAtom.murderSem
-
-def assassinateW : AsVar → Flat AsAtom
-  | .phon => ↑AsAtom.asasin
-  | .sem => ↑AsAtom.murderSem
-
-/-- The sister link satisfies both plane-demands at once — the shared base and
-shared semantics — where the directed hierarchy could not. -/
-theorem assassin_sister_pairs : assassinSister.Pairs assassinW assassinateW := by
-  refine ⟨fun _ => bot_le, fun _ => bot_le, ?_⟩
-  intro v₁ v₂ hlink
-  cases v₁ <;> cases v₂ <;>
-    simp_all [assassinSister, asCoindex, assassinW, assassinateW]
-
-/-- Nondirectionality: the sister relation reads the same transposed, so neither
-member is "the base". -/
-theorem assassin_sister_symm : assassinSister.swap.Pairs assassinateW assassinW :=
-  Sister.pairs_swap.mpr assassin_sister_pairs
-
-/-! ### Storage versus computation, and scope (prose)
-
-**Storage vs computation.** [jackendoff-audring-2020] treat a paradigm as stored
-schemas that operate nondirectionally, so no form is uniformly "derived" — a
-lexical-strength gradient plays the role a rule/computation weight plays in
-probabilistic grammars ([odonnell-2015]). No Lean content follows without a
-concrete measure, so this stays prose.
-
-**Scope.** The rival-framings above are [jackendoff-audring-2020]'s own claims,
-stated as theirs: that inheritance cannot state horizontal links is contested in
-the DATR literature. `Word.Tree`'s ordered constructors and RM's order-free
-morphosyntax (§4.7) are latent rivals — a documented stance difference, changing
-nothing. RM independently vindicates the no-zero-morphs analysis (§4.3
-double-coindexation): the past tense and infinitive of `walk` add no phonological
-content, coindexed to the base rather than to a zero affix — a convergence noted
-here, not in `Morph.lean`. -/
+/-- The double coindexation of Section 4.3 as a syncretism: the present and the infinitive
+share the stem's phonology, and the past the past participle's. -/
+theorem walk_syncretism :
+    formCells walk .bare = {.pres, .inf} ∧ formCells walk .t = {.past, .ptcp} := by
+  decide
 
 end JackendoffAudring2020
