@@ -9,6 +9,7 @@ status from event structure, theta-role linking, and so on. Verb classification
 is computed here, not stipulated as enum fields on `Verb`.
 -/
 
+open Aspect
 open Presupposition
 open Features
 open ArgumentStructure
@@ -16,7 +17,7 @@ open Features.ChangeOfState
 open NaturalLogic (Signature)
 open Causation.Psych (CausalSource)
 open ArgumentStructure (EntailmentProfile)
-open Features.DegreeAchievement (DegreeAchievementScale)
+open Aspect.DegreeAchievement (DegreeAchievementScale)
 open Aspect.Incremental (VerbIncClass)
 open ArgumentStructure
 

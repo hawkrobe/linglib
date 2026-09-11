@@ -1,5 +1,5 @@
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
-import Linglib.Features.Aktionsart
+import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Semantics.Root.Defs
 
@@ -29,6 +29,7 @@ at `Studies/RappaportHovavLevin2024.lean`.
 
 namespace ArgumentStructure.EventStructure
 open Features
+open Aspect
 
 /-! ### Event structure templates -/
 

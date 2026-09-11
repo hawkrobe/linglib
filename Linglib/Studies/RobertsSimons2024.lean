@@ -1,6 +1,6 @@
 import Linglib.Semantics.Presupposition.Aboutness
 import Linglib.Semantics.Aspect.ChangeOfState
-import Linglib.Features.Aktionsart
+import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Presupposition.ProjectiveContent
 
 /-!
@@ -33,7 +33,7 @@ non-anaphoric presupposition. *Linguistics and Philosophy* 47(4):703–748.
 This study file imports and bridges:
 - `Events.Phase` / `Presupposition.Aboutness` (EventPhase, entailment classification)
 - `ChangeOfState.Theory` (CoS presuppositions)
-- `Features.Aktionsart` (Vendler classes, telicity)
+- `Semantics/Aspect/Basic.lean` (Vendler classes, telicity)
 - `ProjectiveContent` (Tonhauser taxonomy: all three verb classes are Class C)
 -/
 
@@ -41,6 +41,7 @@ namespace RobertsSimons2024
 
 open Presupposition.Aboutness
 open Features.ChangeOfState
+open Aspect
 open Features
 open Presupposition.ProjectiveContent
 

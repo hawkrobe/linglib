@@ -1,7 +1,7 @@
 import Linglib.Syntax.Minimalist.Verbal.Aspect
 import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
-import Linglib.Features.Aktionsart
+import Linglib.Semantics.Aspect.Basic
 import Linglib.Fragments.Mandarin.Predicates
 import Linglib.Fragments.Cantonese.Aspect
 import Linglib.Fragments.Cantonese.Particles

@@ -1,4 +1,4 @@
-import Linglib.Features.Aktionsart
+import Linglib.Semantics.Aspect.Basic
 import Linglib.Data.UD.Basic
 import Linglib.Features.MassCount
 
@@ -33,7 +33,6 @@ temporal feature clashes with the verb constellation's, the adverbial wins.
 
 namespace Aspect.Composition
 
-open Features
 open _root_ (MassCount)
 
 -- ════════════════════════════════════════════════════
@@ -184,7 +183,7 @@ theorem override_absorbs_composition (v : AspectualProfile) (np : MassCount)
 
 /-! [smith-1997] §3.2.2, §3.2.5: semelfactives shift to activities
     under duration. This is the same shift captured by `duratize_semelfactive`
-    in `Features/Aktionsart.lean`, but here derived compositionally via
+    in `Semantics/Aspect/Basic.lean`, but here derived compositionally via
     external override of the duration feature. -/
 
 /-- Semelfactive + durative adverbial → activity (multiple-event reading).
@@ -193,7 +192,7 @@ theorem override_absorbs_composition (v : AspectualProfile) (np : MassCount)
 theorem semelfactive_durative_is_activity :
     (overrideDuration semelfactiveProfile .durative).toVendlerClass = .activity := rfl
 
-/-- This matches the existing `Features/Aktionsart` shift operator. -/
+/-- The override agrees with the shift `AspectualProfile.duratize`. -/
 theorem override_agrees_with_shift :
     (overrideDuration semelfactiveProfile .durative).toVendlerClass =
     semelfactiveProfile.duratize.toVendlerClass := rfl

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Events.Path
-import Linglib.Features.Aktionsart
+import Linglib.Semantics.Aspect.Basic
 
 /-!
 # Dutch adpositions
@@ -18,7 +18,7 @@ the path each directional reading describes.
 namespace Dutch.Adpositions
 
 open Spatial (Path)
-open Features (Telicity)
+open Aspect
 
 /-- The complement types Dutch adpositions are attested with. -/
 inductive PComplementType where

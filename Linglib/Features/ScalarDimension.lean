@@ -1,6 +1,6 @@
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Semantics.Degree.Boundedness
-import Linglib.Features.Aktionsart
+import Linglib.Semantics.Aspect.Basic
 import Linglib.Features.PropertyDomain
 import Linglib.Semantics.Degree.Measure.Dimension
 
@@ -27,6 +27,8 @@ telicity defaults, endpoint licensing) is in
 -/
 
 namespace Features
+
+open Aspect
 
 open Degree (Boundedness)
 

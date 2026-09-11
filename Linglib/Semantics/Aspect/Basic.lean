@@ -1,64 +1,205 @@
-/-
-# Viewpoint Aspect Operators
-
-[klein-1994] viewpoint aspect formalized as interval relations between
-Topic Time (TT) and Situation Time (TSit), with compositional operators
-following [knick-sharf-2026].
-
-## Klein's Aspect Definitions (Chapter 6, p. 108)
-
-| # | Relation | Name | Intuition |
-|---|----------|------|-----------|
-| 1 | TT INCL TSit | IMPERFECTIVE | TT fully inside TSit |
-| 2 | TT AT TSit | PERFECTIVE | TSit within/overlapping TT |
-| 3a | TT AFTER TSit | PERFECT | TT in posttime of TSit |
-| 3b | TT BEFORE TSit | PROSPECTIVE | TT in pretime of TSit |
-
-## Compositional Architecture
-
-```
-Event T → Prop ──[IMPF/PRFV]──▷ IntervalPred ──[PERF]──▷ PointPred ──[TENSE]──▷ Prop
-```
-
-Equations (verified against the [knick-sharf-2026] proceedings PDF):
-
-- (25) ⟦IMPF⟧^g = λP.λt.∃e[t ⊂ τ(e) ∧ P(e)]
-- (28) ⟦PRFV⟧^g = λP.λt.∃e[τ(e) ⊆ t ∧ P(e)]
-- (22b) standard XN: ⟦PERF⟧^g = λp_it.λt.∃t_PTS.[RB(t_PTS, t) ∧ p(t)]
-- (23b) K&S revision: ⟦PERF⟧^g = λp_it.λt.∃t_PTS.∃t_LB ⊆ tᵣ
-                                  [LB(t_LB, t_PTS) ∧ RB(t_PTS, t) ∧ p(t)]
-
-Note on `p(t)` (vs the more obvious `p(t_PTS)`): the paper writes p applied
-to the outer reference time t, with the convention (paper §4.2.1, sentence
-following eq. 25) that "when the imperfective appears beneath the perfect,
-t corresponds to the PTS." The IMPF's own λt is bound to t_PTS at composition
-time, so beta-reduction yields the equivalent `∃e[t_PTS ⊂ τ(e) ∧ P(e)]` —
-see (26) for K&S's own worked composition.
-
-Note on (22b) vs (23b) labeling: both equations are labeled ⟦PERF⟧^g in the
-paper. (22b) is K&S's transcription of the standard Iatridou-style XN entry
-(no LB); (23b) is K&S's own revision adding an LB existential bounded by the
-domain restriction t_r. The variant named `PERF_XN` here in the past was
-backwards — fixed to follow K&S's own conventions.
-
-The constraint `t_LB ⊆ t_r` (subset) was previously transcribed as `∈`
-(membership). Fixed.
-
--/
-
 import Linglib.Semantics.Reference.Context.Index
 import Linglib.Core.Order.Interval
-import Linglib.Features.Aktionsart
 import Linglib.Semantics.Events.Basic
 
--- ════════════════════════════════════════════════════
--- § Main Module
--- ════════════════════════════════════════════════════
+/-!
+# Aspect
+
+This file is the root of the aspect API: situation type and viewpoint, the two components of
+[smith-1997]. Situation type is the lexical classification of an eventuality by the three binary
+features telicity, duration and dynamicity (`Telicity`, `Duration`, `Dynamicity`, bundled as an
+`AspectualProfile`), projected onto the five classes of [vendler-1957] and [smith-1997]
+(`VendlerClass`), with the aspectual shifts of compositional coercion (`AspectualProfile.telicize`
+and its siblings) and the adverbial and progressive diagnostics of [dowty-1979] derived from the
+features (`forXPrediction`, `inXPrediction`, `progressivePrediction`). Viewpoint aspect follows
+[klein-1994]: a viewpoint relates Topic Time to Situation Time (`ViewpointType`), and the
+compositional operators of [knick-sharf-2026] take an event predicate to an interval predicate
+(`IMPF`, `PRFV`, `PROSP`), an interval predicate to a point predicate (`PERF`, `PERF_XN`), and
+on to tense.
+
+## Implementation notes
+
+* Klein's four relations: TT INCL TSit is the imperfective, TT AT TSit the perfective, TT AFTER
+  TSit the perfect and TT BEFORE TSit the prospective.
+* The operator equations follow [knick-sharf-2026]: IMPF is λP λt ∃e, t ⊂ τ(e) ∧ P e; PRFV is
+  λP λt ∃e, τ(e) ⊆ t ∧ P e; the standard extended-now PERF is λp λt ∃t_PTS, RB t_PTS t ∧ p t,
+  and the paper's revision adds a left boundary drawn from a domain restriction tᵣ,
+  λp λt ∃t_PTS ∃t_LB ⊆ tᵣ, LB t_LB t_PTS ∧ RB t_PTS t ∧ p t. The predicate applies to the outer
+  reference time, under the paper's convention that beneath the perfect it corresponds to the
+  perfect time span.
+* `Event T` and event predicates come from `Semantics/Events/Basic.lean`; tense-aspect
+  composition does not reference the event sort.
+
+## References
+
+* [smith-1997]
+* [vendler-1957]
+* [dowty-1979]
+* [klein-1994]
+* [knick-sharf-2026]
+* [pancheva-2003]
+-/
 
 namespace Aspect
 
 open Semantics.Context (Index)
-open Features
+
+/-! ### Situation type -/
+
+/-- Whether an eventuality has a natural endpoint. -/
+inductive Telicity
+  | telic
+  | atelic
+  deriving DecidableEq, Repr, Inhabited
+
+/-- Whether an eventuality takes time or is instantaneous. -/
+inductive Duration
+  | durative
+  | punctual
+  deriving DecidableEq, Repr, Inhabited
+
+/-- Whether an eventuality involves change. -/
+inductive Dynamicity
+  | dynamic
+  | stative
+  deriving DecidableEq, Repr, Inhabited
+
+/-- The five situation types: the four classes of [vendler-1957] and the semelfactives of
+[smith-1997]. -/
+inductive VendlerClass
+  | state
+  | activity
+  | achievement
+  | accomplishment
+  | semelfactive
+  deriving DecidableEq, Repr, Inhabited
+
+namespace VendlerClass
+
+/-- The telicity of a situation type. -/
+def telicity : VendlerClass → Telicity
+  | state | activity | semelfactive => .atelic
+  | achievement | accomplishment => .telic
+
+/-- The duration of a situation type. -/
+def duration : VendlerClass → Duration
+  | state | activity | accomplishment => .durative
+  | achievement | semelfactive => .punctual
+
+/-- The dynamicity of a situation type. -/
+def dynamicity : VendlerClass → Dynamicity
+  | state => .stative
+  | activity | achievement | accomplishment | semelfactive => .dynamic
+
+end VendlerClass
+
+/-- The three features of a situation type, bundled. -/
+structure AspectualProfile where
+  telicity : Telicity
+  duration : Duration
+  dynamicity : Dynamicity
+  deriving DecidableEq, Repr
+
+namespace AspectualProfile
+
+/-- The situation type of a profile. -/
+@[simp] def toVendlerClass (p : AspectualProfile) : VendlerClass :=
+  match p.dynamicity, p.duration, p.telicity with
+  | .stative, _, _ => .state
+  | .dynamic, .durative, .atelic => .activity
+  | .dynamic, .punctual, .telic => .achievement
+  | .dynamic, .durative, .telic => .accomplishment
+  | .dynamic, .punctual, .atelic => .semelfactive
+
+/-- Add a natural endpoint. -/
+def telicize (p : AspectualProfile) : AspectualProfile := { p with telicity := .telic }
+
+/-- Remove the natural endpoint, the effect of the progressive. -/
+def atelicize (p : AspectualProfile) : AspectualProfile := { p with telicity := .atelic }
+
+/-- Stretch a punctual eventuality over time, the iterative reading. -/
+def duratize (p : AspectualProfile) : AspectualProfile := { p with duration := .durative }
+
+/-- Read as a state. -/
+def statify (p : AspectualProfile) : AspectualProfile := { p with dynamicity := .stative }
+
+end AspectualProfile
+
+/-- The canonical profile of a situation type. -/
+@[simp] def VendlerClass.toProfile (c : VendlerClass) : AspectualProfile :=
+  ⟨c.telicity, c.duration, c.dynamicity⟩
+
+/-- The canonical profile of a state. -/
+def stateProfile : AspectualProfile := ⟨.atelic, .durative, .stative⟩
+
+/-- The canonical profile of an activity. -/
+def activityProfile : AspectualProfile := ⟨.atelic, .durative, .dynamic⟩
+
+/-- The canonical profile of an achievement. -/
+def achievementProfile : AspectualProfile := ⟨.telic, .punctual, .dynamic⟩
+
+/-- The canonical profile of an accomplishment. -/
+def accomplishmentProfile : AspectualProfile := ⟨.telic, .durative, .dynamic⟩
+
+/-- The canonical profile of a semelfactive. -/
+def semelfactiveProfile : AspectualProfile := ⟨.atelic, .punctual, .dynamic⟩
+
+@[simp] theorem VendlerClass.toProfile_toVendlerClass (c : VendlerClass) :
+    c.toProfile.toVendlerClass = c := by
+  cases c <;> rfl
+
+/-- Telicizing an activity gives an accomplishment. -/
+theorem telicize_activity : activityProfile.telicize.toVendlerClass = .accomplishment := rfl
+
+/-- Duratizing a semelfactive gives an activity, the iterative reading. -/
+theorem duratize_semelfactive : semelfactiveProfile.duratize.toVendlerClass = .activity := rfl
+
+/-! ### Diagnostics
+
+The adverbial and progressive tests of [dowty-1979], as functions of the three features: a
+*for*-adverbial measures an atelic durative eventuality and coerces a telic or punctual one into
+repetition or iteration; an *in*-adverbial needs a culmination; the progressive needs internal
+stages, reads an achievement through its preliminary stages and a semelfactive as iterated. -/
+
+/-- The outcome of a diagnostic: acceptable, unacceptable, degraded, or acceptable under a
+meaning shift. -/
+inductive DiagnosticResult
+  | accept
+  | reject
+  | marginal
+  | coerced
+  deriving DecidableEq, Repr
+
+/-- The *for*-adverbial test. -/
+def forXPrediction (c : VendlerClass) : DiagnosticResult :=
+  match c.telicity, c.duration with
+  | .atelic, .durative => .accept
+  | .telic, .punctual => .reject
+  | _, _ => .coerced
+
+/-- The *in*-adverbial test. -/
+def inXPrediction (c : VendlerClass) : DiagnosticResult :=
+  if c.telicity = .telic then .accept else .reject
+
+/-- The progressive test. -/
+def progressivePrediction (c : VendlerClass) : DiagnosticResult :=
+  match c.dynamicity, c.duration, c.telicity with
+  | .stative, _, _ => .reject
+  | .dynamic, .durative, _ => .accept
+  | .dynamic, .punctual, .telic => .marginal
+  | .dynamic, .punctual, .atelic => .coerced
+
+theorem inXPrediction_eq_accept_iff (c : VendlerClass) :
+    inXPrediction c = .accept ↔ c.telicity = .telic := by
+  cases c <;> decide
+
+theorem forXPrediction_eq_accept_iff (c : VendlerClass) :
+    forXPrediction c = .accept ↔ c.telicity = .atelic ∧ c.duration = .durative := by
+  cases c <;> decide
+
+theorem progressivePrediction_eq_accept_iff (c : VendlerClass) :
+    progressivePrediction c = .accept ↔ c.duration = .durative ∧ c.dynamicity = .dynamic := by
+  cases c <;> decide
 
 -- ════════════════════════════════════════════════════
 -- § Core Types

@@ -32,7 +32,7 @@ sense, non-state) has largely collapsed in current practice —
 generically with sort/aktionsart as an inherent attribute. Tense-aspect
 code that doesn't care about sort simply doesn't reference `.sort`;
 sortless construction sites default to `.action`. The lexical feature
-`Features.Dynamicity` labels verb entries; the sort here is the ontological
+`Aspect.Dynamicity` labels verb entries; the sort here is the ontological
 attribute of a token.
 
 ## References

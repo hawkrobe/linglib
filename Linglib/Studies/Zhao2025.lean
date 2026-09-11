@@ -1,4 +1,4 @@
-import Linglib.Features.Aktionsart
+import Linglib.Semantics.Aspect.Basic
 import Linglib.Fragments.Mandarin.AspectComparison
 import Linglib.Semantics.Tense.Perspective
 import Linglib.Fragments.English.TemporalDeictic
@@ -62,7 +62,6 @@ acceptable, an exception the paper leaves open.)
 
 namespace Zhao2025
 
-open Features
 open Mandarin.AspectComparison
 open Aspect
 

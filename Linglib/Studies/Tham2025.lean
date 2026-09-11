@@ -89,7 +89,7 @@ open Degree (Boundedness)
 open Degree (DimensionBindingType GradableAdjective conjunctiveBinding disjunctiveBinding)
 open Degree.Aggregation (weightedScore boolMeasures
   spatialNormalizedScore spatialNormalizedBinding)
-open Features.DegreeAchievement (DegreeAchievementScale)
+open Aspect.DegreeAchievement (DegreeAchievementScale)
 open ArgumentStructure
 open English.Predicates
 

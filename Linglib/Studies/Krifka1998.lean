@@ -1,7 +1,7 @@
 import Linglib.Semantics.Aspect.Cumulativity
 import Linglib.Semantics.Events.Adjacency
 import Linglib.Semantics.Events.SpatialTrace
-import Linglib.Features.Aktionsart
+import Linglib.Semantics.Aspect.Basic
 import Linglib.Data.Examples.Krifka1998
 import Mathlib.Data.Finset.Basic
 
@@ -48,6 +48,7 @@ This file inlines the §4 movement-relation predicates (formerly in
 
 namespace Krifka1998
 
+open Aspect
 open Features
 open _root_.Mereology
 open ArgumentStructure (IsCumThetaVerb)

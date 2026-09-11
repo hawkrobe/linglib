@@ -48,6 +48,7 @@ and the three attested language types.
 
 namespace BeaversEtAl2021
 
+open Aspect
 open Semantics Semantics.Root ArgumentStructure ArgumentStructure.EventStructure Features
 
 /-! ### Root meanings and subclasses ((5)–(6))

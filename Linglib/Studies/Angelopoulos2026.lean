@@ -43,7 +43,7 @@ namespace Angelopoulos2026
 
 open Greek.StandardModern.Complementizers Data.Examples
 open Bondarenko2022 (NominalSort CompositionPath)
-open Features (VendlerClass)
+open Aspect
 open Anchor (existsClosure)
 
 /-! ### Sorts and aspectual selection -/

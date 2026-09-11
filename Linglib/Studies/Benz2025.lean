@@ -41,7 +41,7 @@ namespace Benz2025
 
 open DistributedMorphology DistributedMorphology.Allosemy Data.Examples German.Predicates
   ArgumentStructure
-open Features (VendlerClass)
+open Aspect
 
 /-- The fragment entry of a verb form named in a row. -/
 def entryOf (form : String) : Option GermanVerbEntry := allVerbs.find? (·.form = form)

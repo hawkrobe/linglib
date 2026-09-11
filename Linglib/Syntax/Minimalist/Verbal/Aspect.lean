@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Syntax.Minimalist.Features
-import Linglib.Features.Aktionsart
+import Linglib.Semantics.Aspect.Basic
 
 /-!
 # Aspect Heads (Outer / Inner Split)
@@ -36,8 +36,8 @@ unchanged.
   `[+D]` does two distinct jobs: (a) a property of the *predicate*
   (Aktionsart-derived), (b) a *selectional requirement* on AspO to combine
   with a dynamic complement. We model only (b) here, by exposing
-  `selectsDynamicity : Option Features.Dynamicity`. The predicate-side
-  property already lives in `Features/Aktionsart.lean` (`Dynamicity`); this
+  `selectsDynamicity : Option Aspect.Dynamicity`. The predicate-side
+  property already lives in `Semantics/Aspect/Basic.lean` (`Dynamicity`); this
   field on AspHead encodes which value (if any) the head requires.
 
 - [liu-yip-2026]'s Cantonese -faan does NOT carry the dynamicity
@@ -58,6 +58,8 @@ unchanged.
 -/
 
 namespace Minimalist
+
+open Aspect
 
 -- ============================================================================
 -- § 1. Aspect Flavors
@@ -132,7 +134,7 @@ def AspFlavor.defaultFLevel : AspFlavor → Nat
     AspO that licenses -guo).
 
     The `selectsDynamicity` field separates *selectional* dynamicity
-    (head-borne) from *predicate* dynamicity (Features.Dynamicity,
+    (head-borne) from *predicate* dynamicity (Aspect.Dynamicity,
     Aktionsart-derived). A head with `selectsDynamicity := some .dynamic`
     requires its complement to be a dynamic predicate; a head with
     `selectsDynamicity := none` is indifferent. -/
@@ -143,7 +145,7 @@ structure AspHead where
       `none` = no requirement (compatible with stative or dynamic complements);
       `some .dynamic` = requires dynamic complement ([lin-liu-2009]'s [+D]);
       `some .stative` = requires stative complement (rare; defensive default). -/
-  selectsDynamicity : Option Features.Dynamicity := none
+  selectsDynamicity : Option Aspect.Dynamicity := none
   /-- Optional probe profile: populated when the head triggers Agree.
       The probe's `probeHead` is conventionally `.Asp`; the flavor field on
       `AspHead` disambiguates outer-vs-inner at the analytical level. -/
@@ -185,7 +187,7 @@ def AspHead.isProbeBearing (h : AspHead) : Bool := h.probe.isSome
     dynamicity. A head with no requirement (`selectsDynamicity = none`)
     licenses any complement; otherwise the complement's dynamicity must
     match. -/
-def AspHead.licensesDynamicity (h : AspHead) (d : Features.Dynamicity) : Bool :=
+def AspHead.licensesDynamicity (h : AspHead) (d : Aspect.Dynamicity) : Bool :=
   match h.selectsDynamicity with
   | none => true
   | some required => required = d
@@ -199,7 +201,7 @@ theorem bareInner_no_dyn_req :
     AspHead.bareInner.selectsDynamicity = none := rfl
 
 /-- A `bareOuter` head licenses both dynamic and stative complements. -/
-theorem bareOuter_licenses_all (d : Features.Dynamicity) :
+theorem bareOuter_licenses_all (d : Aspect.Dynamicity) :
     AspHead.bareOuter.licensesDynamicity d = true := by
   simp [AspHead.licensesDynamicity, AspHead.bareOuter]
 

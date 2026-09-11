@@ -1,4 +1,3 @@
-import Linglib.Features.Aktionsart
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Aspect.Composition
 import Linglib.Data.WALS.Features.F65A
@@ -32,22 +31,16 @@ re-packages those into the row-wise groupings Smith uses prose-side.
 
 ## Implementation notes
 
-`VendlerClass`, `Telicity`, and the project's project-canonical
-`VendlerClass.HasInternalStages` live in `Features/Aktionsart.lean`.
-`ViewpointType` and its derived visibility predicates live in
-`Semantics/Aspect/Basic.lean`. Compositional rules (`composeWithNP`,
-`overrideTelicity`) live in `Semantics/Aspect/Composition.lean`.
+`VendlerClass`, `Telicity`, `ViewpointType` and its visibility predicates live in
+`Semantics/Aspect/Basic.lean`; compositional rules (`composeWithNP`, `overrideTelicity`) in
+`Semantics/Aspect/Composition.lean`; `HasInternalStages` is this file's.
 
 ## References
 
 * [smith-1997] Smith, *The Parameter of Aspect* (2nd ed., 1997).
 -/
 
-open Features
-open Aspect (ViewpointType)
-open Aspect.Composition
-open Features (DiagnosticResult)
-
+open Aspect Aspect.Composition
 namespace Smith1997
 
 /-! ### Visibility ([smith-1997] §4.1 Table 1) — row-wise groupings -/
@@ -297,12 +290,17 @@ theorem completion_iff_telic (c : VendlerClass) :
 
 /-! ### Progressive requires internal stages -/
 
-/-- The progressive accepts exactly the dynamic-durative classes — i.e.
-    those with internal stages ([smith-1997] Ch. 4). Smith's claim factored
-    through the substrate's `VendlerClass.HasInternalStages`. -/
+/-- A situation type has internal stages when it is dynamic and durative, Chapter 4. -/
+def HasInternalStages (c : VendlerClass) : Prop :=
+  c.dynamicity = .dynamic ∧ c.duration = .durative
+
+instance (c : VendlerClass) : Decidable (HasInternalStages c) :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
+/-- The progressive accepts exactly the dynamic-durative classes, those with internal stages,
+Chapter 4. -/
 theorem progressive_requires_HasInternalStages (c : VendlerClass) :
-    Features.progressivePrediction c = .accept ↔
-    c.HasInternalStages := by
+    Aspect.progressivePrediction c = .accept ↔ HasInternalStages c := by
   cases c <;> decide
 
 /-! ### Compositional rule verification ([smith-1997] §3.2.5, §3.3) -/
@@ -326,7 +324,7 @@ theorem krifka_smith_agreement :
 theorem semelfactive_coercion_three_ways :
     semelfactiveProfile.duratize.toVendlerClass = .activity ∧
     (overrideDuration semelfactiveProfile .durative).toVendlerClass = .activity ∧
-    Features.forXPrediction .semelfactive = .coerced :=
+    Aspect.forXPrediction .semelfactive = .coerced :=
   ⟨rfl, rfl, rfl⟩
 
 end Smith1997

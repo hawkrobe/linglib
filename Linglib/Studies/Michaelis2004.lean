@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Syntax.ConstructionGrammar.Composition
-import Linglib.Features.Aktionsart
+import Linglib.Semantics.Aspect.Basic
 
 /-!
 # [michaelis-2004]: Type Shifting in Construction Grammar
@@ -35,7 +35,7 @@ explicitly (Table 3).
 namespace Michaelis2004
 
 open ConstructionGrammar
-open Features
+open Aspect
 
 /-! ### Reconciliation operators
 

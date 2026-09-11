@@ -7,7 +7,7 @@ import Linglib.Semantics.Focus.Interpretation
 import Linglib.Studies.Ross1967
 import Linglib.Studies.HofmeisterSag2010
 import Linglib.Studies.Sag2010
-import Linglib.Features.Aktionsart
+import Linglib.Semantics.Aspect.Basic
 import Linglib.Features.Attitudes
 import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.ArgumentStructure.LevinClass
