@@ -1,0 +1,1373 @@
+[
+  {
+    "id": "halperthammerly2026_ex8a",
+    "source": {
+      "bibkey": "wasike-2006",
+      "paperLabel": "p. 235"
+    },
+    "language": "buku1249",
+    "primaryText": "Naliaka a-li mu-nju",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Naliaka",
+        "1Naliaka"
+      ],
+      [
+        "a-li",
+        "1SM-be"
+      ],
+      [
+        "mu-nju",
+        "18-house"
+      ]
+    ],
+    "translation": "Naliaka is in the house.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "alternativeAgreement"
+      ],
+      [
+        "class",
+        "1"
+      ]
+    ],
+    "comment": "The standard class 1 subject marker a- in a declarative.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(8a)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex8b",
+    "source": {
+      "bibkey": "wasike-2006",
+      "paperLabel": "p. 236"
+    },
+    "language": "buku1249",
+    "primaryText": "Naani o-o-li mu-nju",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Naani",
+        "1who"
+      ],
+      [
+        "o-o-li",
+        "1C-1AA-be"
+      ],
+      [
+        "mu-nju",
+        "18-house"
+      ]
+    ],
+    "translation": "Who is in the house?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "alternativeAgreement"
+      ],
+      [
+        "class",
+        "1"
+      ]
+    ],
+    "comment": "A-bar extraction of a class 1 subject takes the alternative agreement marker o-.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(8b)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex8c",
+    "source": {
+      "bibkey": "diercks-2010",
+      "paperLabel": "p. 133"
+    },
+    "language": "buku1249",
+    "primaryText": "Nise/niwe o-w-onak-e ku-mu-lyango kuno",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Nise/niwe",
+        "1SG.PRO/2SG.PRO"
+      ],
+      [
+        "o-w-onak-e",
+        "1C-1AA-damage-PST"
+      ],
+      [
+        "ku-mu-lyango",
+        "3-3-door"
+      ],
+      [
+        "kuno",
+        "3-DEM"
+      ]
+    ],
+    "translation": "It is I/you who damaged the door.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "alternativeAgreement"
+      ],
+      [
+        "person",
+        "local"
+      ]
+    ],
+    "comment": "Extracted singular local persons flatten to the same alternative agreement marker as class 1.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(8c)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex9a",
+    "source": {
+      "bibkey": "diercks-2010",
+      "paperLabel": "p. 117"
+    },
+    "language": "buku1249",
+    "primaryText": "si-si-ndu sy-a-kwa",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "si-si-ndu",
+        "7-7-thing"
+      ],
+      [
+        "sy-a-kwa",
+        "7SM-PST-fall"
+      ]
+    ],
+    "translation": "The thing fell.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "alternativeAgreement"
+      ],
+      [
+        "class",
+        "7"
+      ]
+    ],
+    "comment": "Class 7 subject marker in a declarative.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(9a)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex9b",
+    "source": {
+      "bibkey": "diercks-2010",
+      "paperLabel": "p. 117"
+    },
+    "language": "buku1249",
+    "primaryText": "si-si-ndu si-sy-a-kwa",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "si-si-ndu",
+        "7-7-thing"
+      ],
+      [
+        "si-sy-a-kwa",
+        "7C-7SM-PST-fall"
+      ]
+    ],
+    "translation": "The thing which fell.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "alternativeAgreement"
+      ],
+      [
+        "class",
+        "7"
+      ]
+    ],
+    "comment": "Class 7 keeps its subject marker under A-bar extraction: no alternative agreement outside class 1.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(9b)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex10a",
+    "source": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(10a)"
+    },
+    "language": "zulu1248",
+    "primaryText": "Yi-mina o-khuluma-yo",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Yi-mina",
+        "COP-1SG.PRO"
+      ],
+      [
+        "o-khuluma-yo",
+        "1SM.REL-speak-DJ.REL"
+      ]
+    ],
+    "translation": "It's me who's speaking.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "personReduction"
+      ],
+      [
+        "class",
+        "1"
+      ]
+    ],
+    "comment": "A first-person singular relative-clause subject takes class 1 subject marking.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "halperthammerly2026_ex10b",
+    "source": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(10b)"
+    },
+    "language": "zulu1248",
+    "primaryText": "Nina ni-ba-hle",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Nina",
+        "2PL.PRO"
+      ],
+      [
+        "ni-ba-hle",
+        "2PL-2SM-good"
+      ]
+    ],
+    "translation": "You (pl) are good.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "personReduction"
+      ],
+      [
+        "class",
+        "2"
+      ]
+    ],
+    "comment": "A second-person plural subject of an adjectival predicate takes class 2 marking.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "halperthammerly2026_ex11a",
+    "source": {
+      "bibkey": "riedel-taji-2022",
+      "paperLabel": "(28)"
+    },
+    "language": "yaoo1241",
+    "primaryText": "Chi-lundamisi nga-ni-a-lila",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Chi-lundamisi",
+        "7-last.initiate"
+      ],
+      [
+        "nga-ni-a-lila",
+        "NEG-PST-1SM-cry"
+      ]
+    ],
+    "translation": "The last initiate did not cry.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "animacyAgreement"
+      ],
+      [
+        "class",
+        "7"
+      ],
+      [
+        "core",
+        "human"
+      ]
+    ],
+    "comment": "A human noun in class 7 triggers obligatory class 1 subject agreement.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(11a)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex11b",
+    "source": {
+      "bibkey": "riedel-taji-2022",
+      "paperLabel": "(28)"
+    },
+    "language": "yaoo1241",
+    "primaryText": "Chi-lundamisi nga-ni-chi-lila",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Chi-lundamisi",
+        "7-last.initiate"
+      ],
+      [
+        "nga-ni-chi-lila",
+        "NEG-PST-7SM-cry"
+      ]
+    ],
+    "translation": "The last initiate did not cry.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "animacyAgreement"
+      ],
+      [
+        "class",
+        "7"
+      ],
+      [
+        "core",
+        "human"
+      ]
+    ],
+    "comment": "Grammatical class 7 agreement with a human class 7 noun is ungrammatical.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(11b)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex12a",
+    "source": {
+      "bibkey": "riedel-taji-2022",
+      "paperLabel": "(35)"
+    },
+    "language": "yaoo1241",
+    "primaryText": "A-ku-m-l-isy-a mbaka jwao",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "A-ku-m-l-isy-a",
+        "1SM-PRES-1OM-eat-CAUS-FV"
+      ],
+      [
+        "mbaka",
+        "9cat"
+      ],
+      [
+        "jwao",
+        "1POSS.3SG"
+      ]
+    ],
+    "translation": "He/she is feeding his/her/their cat.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "animacyAgreement"
+      ],
+      [
+        "class",
+        "9"
+      ],
+      [
+        "core",
+        "animal"
+      ]
+    ],
+    "comment": "A class 9 animal optionally takes class 1 object marking and concord.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(12a)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex12b",
+    "source": {
+      "bibkey": "riedel-taji-2022",
+      "paperLabel": "(35)"
+    },
+    "language": "yaoo1241",
+    "primaryText": "A-ku-ji-l-isy-a mbaka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "A-ku-ji-l-isy-a",
+        "1SM-PRES-9OM-eat-CAUS-FV"
+      ],
+      [
+        "mbaka",
+        "9cat"
+      ]
+    ],
+    "translation": "He/she is feeding a/the cat.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "animacyAgreement"
+      ],
+      [
+        "class",
+        "9"
+      ],
+      [
+        "core",
+        "animal"
+      ]
+    ],
+    "comment": "The same class 9 animal with its grammatical class 9 object marker.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(12b)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex13a",
+    "source": {
+      "bibkey": "contini-morava-2008",
+      "paperLabel": "(1)"
+    },
+    "language": "swah1253",
+    "primaryText": "Ki-su ch-ake ki-meanguka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ki-su",
+        "7-knife"
+      ],
+      [
+        "ch-ake",
+        "7-1SG.POSS"
+      ],
+      [
+        "ki-meanguka",
+        "7SM-has.fallen"
+      ]
+    ],
+    "translation": "My knife has fallen.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "animacyAgreement"
+      ],
+      [
+        "class",
+        "7"
+      ],
+      [
+        "core",
+        "inanimate"
+      ]
+    ],
+    "comment": "An inanimate class 7 noun controls class 7 concord and subject agreement.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(13a)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex13b",
+    "source": {
+      "bibkey": "contini-morava-2008",
+      "paperLabel": "(1)"
+    },
+    "language": "swah1253",
+    "primaryText": "Ki-ongozi w-ake a-meanguka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ki-ongozi",
+        "7-leader"
+      ],
+      [
+        "w-ake",
+        "1-1SG.POSS"
+      ],
+      [
+        "a-meanguka",
+        "1SM-has.fallen"
+      ]
+    ],
+    "translation": "My leader has fallen.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "animacyAgreement"
+      ],
+      [
+        "class",
+        "7"
+      ],
+      [
+        "core",
+        "human"
+      ]
+    ],
+    "comment": "A human class 7 noun controls class 1 concord and subject agreement: animacy override.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(13b)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex14a",
+    "source": {
+      "bibkey": "hualde-1989",
+      "paperLabel": "p. 182"
+    },
+    "language": "nyat1246",
+    "primaryText": "N-a-mυ-onaa mwalimu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "N-a-mυ-onaa",
+        "1SM-PAST1-1OM-see"
+      ],
+      [
+        "mwalimu",
+        "1teacher"
+      ]
+    ],
+    "translation": "I saw the teacher.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "objectDoubling"
+      ],
+      [
+        "core",
+        "human"
+      ]
+    ],
+    "comment": "Object doubling with an overt animate object.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(14a)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex14b",
+    "source": {
+      "bibkey": "hualde-1989",
+      "paperLabel": "p. 182"
+    },
+    "language": "nyat1246",
+    "primaryText": "N-a-kI-onaa kItabu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "N-a-kI-onaa",
+        "1SM-PAST1-7OM-see"
+      ],
+      [
+        "kItabu",
+        "7book"
+      ]
+    ],
+    "translation": "I saw the book.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "phenomenon",
+        "objectDoubling"
+      ],
+      [
+        "core",
+        "inanimate"
+      ]
+    ],
+    "comment": "Object doubling with an overt inanimate object is ungrammatical.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(14b)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex15",
+    "source": {
+      "bibkey": "taraldsen-et-al-2018",
+      "paperLabel": "p. 1345"
+    },
+    "language": "xhos1239",
+    "primaryText": "U-m-ntwana no-m-fazi ba-ya-dlala",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "U-m-ntwana",
+        "1-1-child"
+      ],
+      [
+        "no-m-fazi",
+        "and.1-1-woman"
+      ],
+      [
+        "ba-ya-dlala",
+        "SM2-DJ-play"
+      ]
+    ],
+    "translation": "The child and the woman are playing.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "phenomenon",
+        "conjunctAgreement"
+      ],
+      [
+        "class",
+        "1"
+      ],
+      [
+        "core",
+        "human"
+      ]
+    ],
+    "comment": "Two conjoined class 1 nouns take the expected class 2 subject marker.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(15)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex16",
+    "source": {
+      "bibkey": "taraldsen-et-al-2018",
+      "paperLabel": "p. 1346"
+    },
+    "language": "xhos1239",
+    "primaryText": "U-m-Xhosa no-m-Zulu ba-sebenza ndawonye",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "U-m-Xhosa",
+        "1-1-Xhosa"
+      ],
+      [
+        "no-m-Zulu",
+        "and.1-1-Zulu"
+      ],
+      [
+        "ba-sebenza",
+        "SM2-work"
+      ],
+      [
+        "ndawonye",
+        "together"
+      ]
+    ],
+    "translation": "A Xhosa and a Zulu work together.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "U-m-Xhosa no-m-Zulu a-sebenza ndawonye.",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "phenomenon",
+        "conjunctAgreement"
+      ],
+      [
+        "class",
+        "1"
+      ],
+      [
+        "core",
+        "human"
+      ]
+    ],
+    "comment": "Class 1 nouns with class 6 plurals converge to class 2, not class 6, under conjunction.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(16)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex17",
+    "source": {
+      "bibkey": "taraldsen-et-al-2018",
+      "paperLabel": "p. 1347"
+    },
+    "language": "xhos1239",
+    "primaryText": "I-li-tye ne-qanda zi-khataza i-n-taka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "I-li-tye",
+        "5-5-stone"
+      ],
+      [
+        "ne-qanda",
+        "and.5-egg"
+      ],
+      [
+        "zi-khataza",
+        "SM8.10-annoy"
+      ],
+      [
+        "i-n-taka",
+        "9-9-bird"
+      ]
+    ],
+    "translation": "The stone and the egg annoy the bird.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "I-li-tye ne-qanda a-khataza i-n-taka",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "phenomenon",
+        "conjunctAgreement"
+      ],
+      [
+        "class",
+        "5"
+      ],
+      [
+        "core",
+        "inanimate"
+      ]
+    ],
+    "comment": "Two inanimate class 5 nouns converge to class 8/10 zi-, not the expected class 6.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(17)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex20a",
+    "source": {
+      "bibkey": "msaka-2019",
+      "paperLabel": "p. 74"
+    },
+    "language": "nyan1308",
+    "primaryText": "gonth-a",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "gonth-a",
+        "deaf-VFV"
+      ]
+    ],
+    "translation": "be deaf",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "phenomenon",
+        "finalVowel"
+      ],
+      [
+        "vowel",
+        "a"
+      ]
+    ],
+    "comment": "The verbalizing final vowel -a.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(20a)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex20b",
+    "source": {
+      "bibkey": "msaka-2019",
+      "paperLabel": "p. 74"
+    },
+    "language": "nyan1308",
+    "primaryText": "gónth-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "gónth-i",
+        "deaf-NFV"
+      ]
+    ],
+    "translation": "deaf person",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "phenomenon",
+        "finalVowel"
+      ],
+      [
+        "vowel",
+        "i"
+      ]
+    ],
+    "comment": "The nominalizing final vowel -i.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(20b)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex21a",
+    "source": {
+      "bibkey": "mletshe-2019",
+      "paperLabel": ""
+    },
+    "language": "xhos1239",
+    "primaryText": "u-m-thiml-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "u-m-thiml-i",
+        "CL1-CL1-sneeze-NFV.ANIM"
+      ]
+    ],
+    "translation": "A person who sneezes",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "phenomenon",
+        "finalVowel"
+      ],
+      [
+        "vowel",
+        "i"
+      ],
+      [
+        "class",
+        "1"
+      ]
+    ],
+    "comment": "The animate nominalizing final vowel -i with the class 1 prefix.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(21a)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex21b",
+    "source": {
+      "bibkey": "mletshe-2019",
+      "paperLabel": ""
+    },
+    "language": "xhos1239",
+    "primaryText": "u-m-thiml-o",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "u-m-thiml-o",
+        "CL3-CL3-sneeze-NFV.INAN"
+      ]
+    ],
+    "translation": "A manner of sneezing",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "phenomenon",
+        "finalVowel"
+      ],
+      [
+        "vowel",
+        "o"
+      ],
+      [
+        "class",
+        "3"
+      ]
+    ],
+    "comment": "The inanimate nominalizing final vowel -o with the class 3 prefix.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(21b)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex23",
+    "source": {
+      "bibkey": "mletshe-2019",
+      "paperLabel": ""
+    },
+    "language": "xhos1239",
+    "primaryText": "i-si-thiml-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "i-si-thiml-i",
+        "CL7-CL7-sneeze-NFV.ANIM"
+      ]
+    ],
+    "translation": "A severely sneezing person",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "phenomenon",
+        "finalVowel"
+      ],
+      [
+        "vowel",
+        "i"
+      ],
+      [
+        "class",
+        "7"
+      ]
+    ],
+    "comment": "The animate final vowel -i with a class 7 prefix: core and prefixal class diverge.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(23)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex24a",
+    "source": {
+      "bibkey": "dechaine-et-al-2014",
+      "paperLabel": ""
+    },
+    "language": "shon1251",
+    "primaryText": "mu-kómáná",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mu-kómáná",
+        "CL1-boy"
+      ]
+    ],
+    "translation": "boy",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "phenomenon",
+        "stacking"
+      ],
+      [
+        "class",
+        "1"
+      ]
+    ],
+    "comment": "The class 1 noun before diminutivization.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(24a)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex24b",
+    "source": {
+      "bibkey": "dechaine-et-al-2014",
+      "paperLabel": ""
+    },
+    "language": "shon1251",
+    "primaryText": "ka-mu-kómáná",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ka-mu-kómáná",
+        "CL12-CL1-boy"
+      ]
+    ],
+    "translation": "tiny boy",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "phenomenon",
+        "stacking"
+      ],
+      [
+        "class",
+        "12"
+      ]
+    ],
+    "comment": "The class 12 diminutive prefix stacks on the class 1 prefix.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(24b)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex27a",
+    "source": {
+      "bibkey": "mletshe-2019",
+      "paperLabel": ""
+    },
+    "language": "xhos1239",
+    "primaryText": "u-m-khohlel-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "u-m-khohlel-i",
+        "CL1-CL1-cough-NFV.ANIM"
+      ]
+    ],
+    "translation": "a coughing person",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "phenomenon",
+        "stacking"
+      ],
+      [
+        "vowel",
+        "i"
+      ],
+      [
+        "class",
+        "1"
+      ]
+    ],
+    "comment": "Animate final vowel and class 1 prefix aligned.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(27a)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex27b",
+    "source": {
+      "bibkey": "mletshe-2019",
+      "paperLabel": ""
+    },
+    "language": "xhos1239",
+    "primaryText": "i-si-khohlel-i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "i-si-khohlel-i",
+        "CL7-CL7-cough-NFV.ANIM"
+      ]
+    ],
+    "translation": "a coughing person (presumably pejorative)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "phenomenon",
+        "stacking"
+      ],
+      [
+        "vowel",
+        "i"
+      ],
+      [
+        "class",
+        "7"
+      ]
+    ],
+    "comment": "Animate final vowel under a class 7 prefix: the secondary n bears its own class feature (28).",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(27b)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_ex27c",
+    "source": {
+      "bibkey": "mletshe-2019",
+      "paperLabel": ""
+    },
+    "language": "xhos1239",
+    "primaryText": "i-si-khohlel-a",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "i-si-khohlel-a",
+        "CL7-CL7-cough-NFV.INAN"
+      ]
+    ],
+    "translation": "phlegm",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "phenomenon",
+        "stacking"
+      ],
+      [
+        "vowel",
+        "a"
+      ],
+      [
+        "class",
+        "7"
+      ]
+    ],
+    "comment": "Inanimate final vowel and class 7 prefix aligned.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(27c)"
+    }
+  },
+  {
+    "id": "halperthammerly2026_exfn14i",
+    "source": {
+      "bibkey": "xala-1996",
+      "paperLabel": "p. 50"
+    },
+    "language": "zulu1248",
+    "primaryText": "ubu-n-ja",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ubu-n-ja",
+        "14-9-dog"
+      ]
+    ],
+    "translation": "dog-like behavior, despicable act",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "phenomenon",
+        "stacking"
+      ],
+      [
+        "class",
+        "14"
+      ]
+    ],
+    "comment": "A noun derived from class 9 to class 14 keeping both prefixes.",
+    "lgrConformance": "WORD_ALIGNED",
+    "reportedIn": {
+      "bibkey": "halpert-hammerly-2026",
+      "paperLabel": "(fn. 14 (i))"
+    }
+  }
+]
