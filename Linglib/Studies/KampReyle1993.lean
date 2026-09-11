@@ -1,29 +1,37 @@
 import Linglib.Semantics.Dynamic.DRS.Dynamics
-import Mathlib.Data.Fin.VecNotation
+import Linglib.Core.Data.Fin.VecNotation
 
 /-!
-# Kamp & Reyle (1993) [kamp-reyle-1993]
+# Kamp and Reyle (1993): From Discourse to Logic
 
-*From Discourse to Logic* interprets discourse by DRS construction and verifies DRSs by
-embeddings into a model. This file evaluates the book's worked examples through the
-substrate denotation `DRS.trueRel` (`Semantics/Dynamic/DRS/`; [muskens-1996]'s
-relational truth, the existential closure of Def. 1.4.5): "Jones owns Ulysses. It
-fascinates him." (1.1) is true of a single owning pair, its pronoun equations adding no
-quantificational force (`ulysses_tc`); "Jones does not own a Porsche." (1.56) is the
-non-existence of a verifying extension (`porsche_tc`), the referent under `¬` being
-inaccessible from the top level while the outer referent stays visible inside
-(`porsche_referent_inaccessible`, `outer_referent_accessible`); and "If a farmer owns a
-donkey he beats it." (2.47) receives the universal reading through the `⇒` verification
-clause of (2.31)/Def. 2.1.4 (`donkey_universal_reading`), the pronoun-completed
-(2.45)-style variant having the same truth conditions (`donkeyPronoun_agree`).
+This file formalizes the worked examples of [kamp-reyle-1993], the textbook presentation of
+Discourse Representation Theory: a discourse is interpreted by constructing a discourse
+representation structure (DRS), and a DRS is verified by an embedding of its referents into a
+model. The examples are evaluated through the substrate denotation `DRS.trueRel`, the relational
+truth of [muskens-1996], which is the existential closure of the book's Definition 1.4.5.
 
-The structural facts — subordination of the donkey boxes (Def. 1.4.10/2.1.2), the
-accessibility asymmetry ([geurts-beaver-maier-2024] §4.2: the antecedent is accessible
-to the consequent, not conversely), properness, truth in concrete models — are proved
-by evaluation or by cases on the geometry; the truth-conditions are claims over
-arbitrary models, proved by unfolding the verifying-embedding semantics. Sequencing a discourse is `DRS.merge`, whose
-dynamics is the substrate Merging Lemma `DRS.toRel_merge`, so merged-vs-compositional
-equalities are definitional.
+"Jones owns Ulysses. It fascinates him." (1.1) is true of a single owning pair, the pronoun
+equations of the construction algorithm adding no quantificational force (`ulysses_tc`). "Jones
+does not own a Porsche." (1.56) is the non-existence of a verifying extension (`porsche_tc`);
+the referent under the negation is inaccessible from the top level while the outer referent
+stays accessible inside, the asymmetry of Definition 2.1.3. "If a farmer owns a donkey he beats
+it." (2.47) receives its universal reading from the verification clause for `⇒` of (2.31)
+(`donkey_universal_reading`), with or without a referent and equation of its own for the
+pronoun. The subordination and accessibility geometry of the donkey conditional (Definitions
+1.4.10 and 2.1.2; [geurts-beaver-maier-2024] on the asymmetry of `⇒`) is proved by cases, and
+the conditional is evaluated in a verifying and in a falsifying model.
+
+## Implementation notes
+
+The truth conditions are claims over arbitrary models, proved by unfolding the verifying
+embeddings; sequencing a discourse is `DRS.merge`, whose dynamics is the Merging Lemma
+`DRS.toRel_merge`. Names enter a DRS as the unary conditions the construction algorithm writes
+for them.
+
+## References
+
+* [kamp-reyle-1993]
+* [muskens-1996], [geurts-beaver-maier-2024]
 -/
 
 open FirstOrder FirstOrder.Language
@@ -38,7 +46,7 @@ inductive KRRel : ℕ → Type
   | owns : KRRel 2 | fascinates : KRRel 2 | beats : KRRel 2
 
 /-- The first-order language of the examples (no functions). -/
-def krLang : Language := ⟨fun _ => Empty, KRRel⟩
+def krLang : Language := ⟨λ _ => Empty, KRRel⟩
 
 open DRT
 
@@ -47,22 +55,6 @@ variable {M : Type*} [krLang.Structure M]
 /-- `RelMap` with the language pinned (a relation symbol alone does not determine
 `L`). Lets truth-conditions read as `rm .farmer ![e]`. -/
 abbrev rm {n} (R : krLang.Relations n) (x : Fin n → M) : Prop := Structure.RelMap R x
-
-/-- Reindex a composed vector argument componentwise: with `comp_vecEmpty`, folds
-`fun i => v (![k₁, …] i)` to `![v k₁, …]`, so truth-condition proofs work with the
-atoms' assigned values directly. Point-ful because `Embedding.verifies_rel` produces
-the eta-expanded form, which the point-free mathlib lemmas (`Fin.comp_cons`,
-`FinVec.map_eq`) do not match. -/
-private theorem comp_vecCons {α β : Type*} (v : α → β) (k : α) {n : ℕ} (t : Fin n → α) :
-    (fun i => v (Matrix.vecCons k t i)) = Matrix.vecCons (v k) (fun i => v (t i)) := by
-  funext i
-  cases i using Fin.cases <;> rfl
-
-/-- Base case of `comp_vecCons`. -/
-private theorem comp_vecEmpty {α β : Type*} (v : α → β) :
-    (fun i => v (Matrix.vecEmpty i)) = (![] : Fin 0 → β) := by
-  funext i
-  exact i.elim0
 
 /-! ### Names and pronouns: "Jones owns Ulysses. It fascinates him." (1.1) -/
 
@@ -83,15 +75,15 @@ theorem ulysses_tc (a : ℕ → M) :
         rm .fascinates ![y, x] := by
   simp only [DRS.trueRel_iff, ulyssesDiscourse, DRS.toRel_iff, Box.Extends,
     Embedding.verifies_mk, List.forall_mem_cons, List.not_mem_nil, false_implies,
-    implies_true, Embedding.verifies_rel, Embedding.verifies_eq, comp_vecCons,
-    comp_vecEmpty, and_true]
+    implies_true, Embedding.verifies_rel, Embedding.verifies_eq, Matrix.comp_vecCons,
+    Matrix.comp_vecEmpty, and_true]
   constructor
   · rintro ⟨a', -, hj, hu, ho, h32, h41, hf⟩
     rw [h32, h41] at hf
     exact ⟨a' 1, a' 2, hj, hu, ho, hf⟩
   · rintro ⟨x, y, hj, hu, ho, hf⟩
-    exact ⟨fun n => match n with | 1 => x | 2 => y | 3 => y | 4 => x | n => a n,
-      fun z hz => by dsimp only; split <;> simp_all, hj, hu, ho, rfl, rfl, hf⟩
+    exact ⟨λ n => match n with | 1 => x | 2 => y | 3 => y | 4 => x | n => a n,
+      λ z hz => by dsimp only; split <;> simp_all, hj, hu, ho, rfl, rfl, hf⟩
 
 /-- The completed (1.1) DRS is proper (Def. 1.4.2–1.4.3): every referent the conditions
 use is introduced by the discourse itself. -/
@@ -114,16 +106,16 @@ theorem porsche_tc (a : ℕ → M) :
       ∃ x : M, rm .jones ![x] ∧ ¬ ∃ y : M, rm .porsche ![y] ∧ rm .owns ![x, y] := by
   simp only [DRS.trueRel_iff, porscheDiscourse, porscheNeg, DRS.toRel_iff, Box.Extends,
     Embedding.verifies_mk, List.forall_mem_cons, List.not_mem_nil, false_implies,
-    implies_true, Embedding.verifies_neg, Embedding.verifies_rel, comp_vecCons,
-    comp_vecEmpty, and_true]
+    implies_true, Embedding.verifies_neg, Embedding.verifies_rel, Matrix.comp_vecCons,
+    Matrix.comp_vecEmpty, and_true]
   constructor
   · rintro ⟨a', -, hj, hneg⟩
-    exact ⟨a' 1, hj, fun ⟨y, hp, ho⟩ => hneg
-      ⟨fun n => match n with | 2 => y | n => a' n,
-        fun z hz => by dsimp only; split <;> simp_all, hp, ho⟩⟩
+    exact ⟨a' 1, hj, λ ⟨y, hp, ho⟩ => hneg
+      ⟨λ n => match n with | 2 => y | n => a' n,
+        λ z hz => by dsimp only; split <;> simp_all, hp, ho⟩⟩
   · rintro ⟨x, hj, hn⟩
-    refine ⟨fun n => match n with | 1 => x | n => a n,
-      fun z hz => by dsimp only; split <;> simp_all, hj, fun ⟨g, hag, hp, ho⟩ => hn ⟨g 2, hp, ?_⟩⟩
+    refine ⟨λ n => match n with | 1 => x | n => a n,
+      λ z hz => by dsimp only; split <;> simp_all, hj, λ ⟨g, hag, hp, ho⟩ => hn ⟨g 2, hp, ?_⟩⟩
     rw [hag 1 (by simp)] at ho
     exact ho
 
@@ -165,15 +157,15 @@ theorem donkey_universal_reading (a : ℕ → M) :
   simp only [DRS.trueRel_iff, donkey, donkeyAnte, donkeyCons, DRS.toRel_iff, Box.Extends,
     Embedding.verifies_mk, List.forall_mem_cons, List.not_mem_nil,
     false_implies, implies_true, Embedding.verifies_imp, Embedding.verifies_rel,
-    comp_vecCons, comp_vecEmpty, and_true]
+    Matrix.comp_vecCons, Matrix.comp_vecEmpty, and_true]
   constructor
   · rintro ⟨a', -, himp⟩ e₁ e₂ ⟨hf, hd, ho⟩
-    obtain ⟨v'', hag, hb⟩ := himp (fun n => match n with | 1 => e₁ | 2 => e₂ | n => a' n)
-      (fun z hz => by split <;> simp_all) ⟨hf, hd, ho⟩
+    obtain ⟨v'', hag, hb⟩ := himp (λ n => match n with | 1 => e₁ | 2 => e₂ | n => a' n)
+      (λ z hz => by split <;> simp_all) ⟨hf, hd, ho⟩
     simpa [hag 1 (by simp), hag 2 (by simp)] using hb
   · intro hall
-    exact ⟨a, fun _ _ => rfl, fun v' _ ⟨hf, hd, ho⟩ =>
-      ⟨v', fun _ _ => rfl, hall (v' 1) (v' 2) ⟨hf, hd, ho⟩⟩⟩
+    exact ⟨a, λ _ _ => rfl, λ v' _ ⟨hf, hd, ho⟩ =>
+      ⟨v', λ _ _ => rfl, hall (v' 1) (v' 2) ⟨hf, hd, ho⟩⟩⟩
 
 /-- The donkey DRS is proper: the consequent's referents are supplied by the
 antecedent — the `⇒`-accessibility in the free-variable computation. -/
@@ -195,21 +187,20 @@ theorem donkeyPronoun_tc (a : ℕ → M) :
   simp only [DRS.trueRel_iff, donkeyPronoun, donkeyAnte, donkeyPronounCons, DRS.toRel_iff,
     Box.Extends, Embedding.verifies_mk, List.forall_mem_cons, List.not_mem_nil,
     false_implies, implies_true, Embedding.verifies_imp, Embedding.verifies_rel,
-    Embedding.verifies_eq, comp_vecCons, comp_vecEmpty, and_true]
+    Embedding.verifies_eq, Matrix.comp_vecCons, Matrix.comp_vecEmpty, and_true]
   constructor
   · rintro ⟨a', -, himp⟩ e₁ e₂ ⟨hf, hd, ho⟩
-    obtain ⟨v'', hag, h32, hb⟩ := himp (fun n => match n with | 1 => e₁ | 2 => e₂ | n => a' n)
-      (fun z hz => by split <;> simp_all) ⟨hf, hd, ho⟩
+    obtain ⟨v'', hag, h32, hb⟩ := himp (λ n => match n with | 1 => e₁ | 2 => e₂ | n => a' n)
+      (λ z hz => by split <;> simp_all) ⟨hf, hd, ho⟩
     rw [h32] at hb
     simpa [hag 1 (by simp), hag 2 (by simp)] using hb
   · intro hall
-    exact ⟨a, fun _ _ => rfl, fun v' _ ⟨hf, hd, ho⟩ =>
-      ⟨fun n => match n with | 3 => v' 2 | n => v' n,
-        fun z hz => by dsimp only; split <;> simp_all, rfl, hall (v' 1) (v' 2) ⟨hf, hd, ho⟩⟩⟩
+    exact ⟨a, λ _ _ => rfl, λ v' _ ⟨hf, hd, ho⟩ =>
+      ⟨λ n => match n with | 3 => v' 2 | n => v' n,
+        λ z hz => by dsimp only; split <;> simp_all, rfl, hall (v' 1) (v' 2) ⟨hf, hd, ho⟩⟩⟩
 
-/-- (2.44) vs (2.45), for the donkey conditional: completing the pronoun directly or by
-referent-plus-equation gives the same truth conditions — the book's "clearly identical
-truth conditions" (p. 167). -/
+/-- Completing the pronoun directly or by a referent and an equation gives the donkey
+conditional the same truth conditions, as the book observes of (2.44) and (2.45). -/
 theorem donkeyPronoun_agree (a : ℕ → M) :
     DRS.trueRel donkeyPronoun a ↔ DRS.trueRel donkey a :=
   (donkeyPronoun_tc a).trans (donkey_universal_reading a).symm
@@ -272,11 +263,11 @@ domain where the owning pair goes unbeaten falsifies the conditional. -/
 instance : krLang.Structure (Fin 2) where
   funMap {_} f _ := f.elim
   RelMap {n} R := match n, R with
-    | 1, .farmer => fun args => args 0 = 0
-    | 1, .donkey => fun args => args 0 = 1
-    | 2, .owns => fun args => args 0 = 0 ∧ args 1 = 1
-    | 2, .beats => fun args => args 0 = 0 ∧ args 1 = 1
-    | _, _ => fun _ => False
+    | 1, .farmer => λ args => args 0 = 0
+    | 1, .donkey => λ args => args 0 = 1
+    | 2, .owns => λ args => args 0 = 0 ∧ args 1 = 1
+    | 2, .beats => λ args => args 0 = 0 ∧ args 1 = 1
+    | _, _ => λ _ => False
 
 /-- The donkey conditional is true in this model: the only owning pair is `(0,1)`,
 which `beats` holds of. -/
@@ -288,15 +279,15 @@ theorem donkey_true_in_model (a : ℕ → Fin 2) : DRS.trueRel donkey a := by
 instance : krLang.Structure Bool where
   funMap {_} f _ := f.elim
   RelMap {n} R := match n, R with
-    | 1, .farmer => fun args => args 0 = false
-    | 1, .donkey => fun args => args 0 = true
-    | 2, .owns => fun args => args 0 = false ∧ args 1 = true
-    | _, _ => fun _ => False
+    | 1, .farmer => λ args => args 0 = false
+    | 1, .donkey => λ args => args 0 = true
+    | 2, .owns => λ args => args 0 = false ∧ args 1 = true
+    | _, _ => λ _ => False
 
 /-- The donkey conditional is false when the owning pair goes unbeaten: farmer `false`
 owns donkey `true` but `beats` is empty. -/
 theorem donkey_false_in_model (a : ℕ → Bool) : ¬ DRS.trueRel donkey a := by
   rw [donkey_universal_reading]
-  exact fun h => h false true ⟨rfl, rfl, rfl, rfl⟩
+  exact λ h => h false true ⟨rfl, rfl, rfl, rfl⟩
 
 end KampReyle1993
