@@ -1,246 +1,167 @@
 import Linglib.Syntax.ConstructionGrammar.Idiom
 import Linglib.Syntax.ConstructionGrammar.Licensing
-import Linglib.Semantics.Presupposition.Basic
-import Linglib.Pragmatics.Expressives.Basic
-import Linglib.Semantics.Questions.Exhaustivity
-import Linglib.Syntax.Minimalist.LeftPeriphery
 
 /-!
-# [kay-fillmore-1999]: *What's X Doing Y?*
+# Kay and Fillmore (1999): The What's X Doing Y? Construction
 
-"Grammatical Constructions and Linguistic Generalizations: The *What's X
-doing Y?* Construction" (Language 75(1):1–33). WXDY has interrogative
-*form* but expressive *function* on the incredulity reading; the
-form–function mismatch is derived rather than stipulated: the literal
-reading is a genuine question (speaker-ignorance satisfies the PerspP
-presupposition), the incredulity reading a blocked one (speaker knowledge
-contradicts it), with the presupposed proposition and the incongruity CI
-typed via `PartialProp`/`TwoDimProp`. §2.3's morphosyntactic judgments
-are derived by running the licensing recognizer over minimal-pair
-tokens.
+This file formalizes the construction of [kay-fillmore-1999], *What's X doing Y?*, whose
+interrogative form conventionally conveys that someone judges the scene `Y(X)` incongruous
+(their gloss (39)), a meaning the paper argues is neither a conversational implicature of an
+innocent question (Section 2.2) nor a proposition that negation could apply to
+(Section 4.6). The construction is `wxdyConstruction`, the flat rendering of the paper's
+Figure 12: BE and *doing* are fixed heads, *what* is a fixed, left-isolated and nonreferential
+object, `X` is a referential subject coinstantiated with the subject of the predicate phrase
+`Y`, and *doing* may not be negated, a stipulation the paper reports being unable to deduce.
 
-The paper's own inheritance hierarchy — WXDY inheriting from the
-left-isolation, subject–aux-inversion, and wh-interrogative constructions
-of its unification-based grammar — is recorded here only as prose;
-assembling it as a checked network awaits verification of the paper's
-figures.
+The grammatical evidence for the construction in Section 2.3 is derived by the licensing
+recognizer over the paper's minimal pairs: the canonical (3a) and the stative (14a) are
+licensed, while the bare-stem *do* of (12a), *doing* as complement of *keep* in (13a),
+*what else* in (15f), and the negated *doing* of (17b) are not, negation inside `Y` in (17c)
+being fine. The coinstantiation construction of Figure 13 is recorded as a fully abstract form
+with one coreference group.
 
-## Main declarations
+## Implementation notes
 
-- `KayFillmore1999.wxdyConstruction`: the construction, typed form per
-  Figure 12
-- `KayFillmore1999.wxdy_rejects_bare_stem` (and companions): §2.3's
-  morphosyntactic judgments derived by the licensing recognizer
-- `KayFillmore1999.perspP_disambiguates_wxdy`: the two readings derived
-- `KayFillmore1999.wxdyPresup`, `wxdyTwoDim`: typed pragmatics
+The paper's semantics, the incongruity-judgment frame of Figure 12 with a contextually
+anchored judge, is not represented beyond the construction's pragmatic point; its inheritance
+from the left-isolation, subject–auxiliary inversion and wh-interrogative constructions of the
+paper's unification grammar is recorded in prose only.
+
+## References
+
+* [kay-fillmore-1999]
+* [fillmore-kay-oconnor-1988]
 -/
 
 namespace KayFillmore1999
 
-/-! ### The construction -/
-
 open ConstructionGrammar
 
-/-- The WXDY construction, as the flat projection of Figure 12's
-hierarchical AVM: X and Y share a coreference index (coinstantiation,
-Figure 13); WXDY-*what* is left-isolated ([loc -]) and nonreferential
-([ref ∅]); *doing* cannot be negated ([neg -] — a stipulation the paper
-reports being unable to deduce, §4.6). X is constrained semantically, as
-a referential argument of the predicate Y (§4.7), and Y is a predicate
-phrase of any category. -/
+/-! ### The construction (Figure 12) -/
+
+/-- The WXDY construction, the flat rendering of Figure 12: `X` and `Y` share a coreference
+index (coinstantiation, Figure 13); WXDY-*what* is left-isolated and nonreferential;
+*doing* cannot be negated (Section 4.6). `X` is a referential argument of the predicate `Y`
+(Section 4.7), a predicate phrase of any category. -/
 def wxdyConstruction : Construction Unit :=
   { name := "What's X doing Y?"
   , form :=
-      [ { filler := .semantic "referential"
-        , gf := some .subj, refIdx := some 2 }
+      [ { filler := .semantic "referential", gf := some .subj, refIdx := some 2 }
       , { filler := .headed "be" .AUX, isHead := true }
-      , { filler := .headed "doing" .VERB, gf := some .comp
-        , constraints := [.negMinus] }
-      , { filler := .fixed "what", gf := some .obj
-        , constraints := [.locMinus, .refEmpty] }
-      , { filler := .phrasal, gf := some .pred
-        , refIdx := some 2 } ]
+      , { filler := .headed "doing" .VERB, gf := some .comp, constraints := [.negMinus] }
+      , { filler := .fixed "what", gf := some .obj, constraints := [.locMinus, .refEmpty] }
+      , { filler := .phrasal, gf := some .pred, refIdx := some 2 } ]
   , meaning := ()
   , pragmaticPoint := true }
 
-/-! ### Coreference (Figure 12) -/
+/-- The form has exactly one coreference group, the `X`–`Y` coinstantiation. -/
+theorem wxdy_coreference_count : refGroupCount wxdyConstruction.form = 1 := by decide
 
-/-- WXDY's form has exactly one coreference group: the X–Y
-coinstantiation. -/
-theorem wxdy_coreference_count : refGroupCount wxdyConstruction.form = 1 := by
-  decide
-
-/-- X (the first slot) and Y (the last slot) share a coreference index:
-X is the understood subject of the Y predicate. -/
+/-- `X`, the first slot, and `Y`, the last, share a coreference index: `X` is the understood
+subject of the predicate `Y`. -/
 theorem wxdy_coinstantiation :
     wxdyConstruction.form.head?.bind (·.refIdx) = some 2 ∧
-    wxdyConstruction.form.getLast?.bind (·.refIdx) = some 2 := by decide
+      wxdyConstruction.form.getLast?.bind (·.refIdx) = some 2 := by
+  decide
 
-/-! ### Morphosyntactic constraints derived (§2.3)
+/-- WXDY is a formal idiom: the `X` and `Y` slots are open. -/
+theorem wxdy_formal_idiom : wxdyConstruction.IsFormalIdiom := rfl
 
-The paper's idiosyncratic constraints, run through the licensing
-recognizer: tokens are daughter sequences in the AVM slot order
-(X, BE, *doing*, *what*, Y), with lemma-level words. -/
+/-- It is properly partial: BE, *doing* and *what* are fixed while `X` and `Y` are open. -/
+theorem wxdy_partially_open : wxdyConstruction.specificity = .partiallyOpen := rfl
 
-/-- POS assignments for the fixed heads. -/
+/-! ### The grammatical evidence (Section 2.3)
+
+The paper's minimal pairs run through the licensing recognizer: tokens are daughter sequences
+in the slot order `X`, BE, *doing*, *what*, `Y`, with lemma-level words. -/
+
+/-- The parts of speech of the fixed heads. -/
 def wxdyPOS : String → Option UD.UPOS
   | "be" => some .AUX
   | "doing" => some .VERB
   | _ => none
 
-/-- Ex. 3a, "What's this scratch doing on the table?". -/
+/-- (3a) *What's this scratch doing on the table?* -/
 def scratchTokens : List Token :=
-  [ .word "scratch", .node [.word "be"], .node [.word "doing"]
-  , .word "what", .node [.word "on", .word "table"] ]
+  [ .word "scratch", .node [.word "be"], .node [.word "doing"], .word "what",
+    .node [.word "on", .word "table"] ]
 
-/-- Ex. 14a, "What's he doing knowing the answer?" — a stative
-complement. -/
+/-- (14a) *What's he doing knowing the answer?*, a stative complement. -/
 def stativeTokens : List Token :=
-  [ .word "he", .node [.word "be"], .node [.word "doing"]
-  , .word "what", .node [.word "knowing", .word "answer"] ]
+  [ .word "he", .node [.word "be"], .node [.word "doing"], .word "what",
+    .node [.word "knowing", .word "answer"] ]
 
-/-- Ex. 12a, "What does this scratch do on the table?" (ungrammatical):
-bare-stem *do*. -/
+/-- (12a) *What does this scratch do on the table?*, with bare-stem *do*. -/
 def bareStemTokens : List Token :=
-  [ .word "scratch", .node [.word "do"], .node [.word "do"]
-  , .word "what", .node [.word "on", .word "table"] ]
+  [ .word "scratch", .node [.word "do"], .node [.word "do"], .word "what",
+    .node [.word "on", .word "table"] ]
 
-/-- Ex. 13a, "What did he keep doing in the tool shed?" — *doing* as
-complement of *keep* rather than of copular BE; a fine sentence, but not
-an instance of the construction. -/
+/-- (13a) *What did he keep doing in the tool shed?*, *doing* as complement of *keep* rather
+than of copular BE: a fine sentence, but not an instance of the construction. -/
 def nonCopulaTokens : List Token :=
-  [ .word "he", .node [.word "keep"], .node [.word "doing"]
-  , .word "what", .node [.word "in", .word "shed"] ]
+  [ .word "he", .node [.word "keep"], .node [.word "doing"], .word "what",
+    .node [.word "in", .word "shed"] ]
 
-/-- Ex. 15f, "What else are you doing eating cold pizza?"
-(ungrammatical): *else* on WXDY-*what*. -/
+/-- (15f) *What else are you doing eating cold pizza?*, with *else* on WXDY-*what*. -/
 def whatElseTokens : List Token :=
-  [ .word "you", .node [.word "be"], .node [.word "doing"]
-  , .node [.word "what", .word "else"]
-  , .node [.word "eating", .word "pizza"] ]
+  [ .word "you", .node [.word "be"], .node [.word "doing"], .node [.word "what", .word "else"],
+    .node [.word "eating", .word "pizza"] ]
 
-/-- Ex. 17b, "What are my brushes not doing soaking in water?"
-(ungrammatical): negated *doing*. -/
+/-- (17b) *What are my brushes not doing soaking in water?*, with negated *doing*. -/
 def negatedDoingTokens : List Token :=
-  [ .word "brushes", .node [.word "be"], .node [.word "not", .word "doing"]
-  , .word "what", .node [.word "soaking", .word "water"] ]
+  [ .word "brushes", .node [.word "be"], .node [.word "not", .word "doing"], .word "what",
+    .node [.word "soaking", .word "water"] ]
 
-/-- Ex. 17c, "What are my brushes doing not soaking in water?": negation
-inside the complement. -/
+/-- (17c) *What are my brushes doing not soaking in water?*, negation inside `Y`. -/
 def negatedComplementTokens : List Token :=
-  [ .word "brushes", .node [.word "be"], .node [.word "doing"]
-  , .word "what", .node [.word "not", .word "soaking", .word "water"] ]
+  [ .word "brushes", .node [.word "be"], .node [.word "doing"], .word "what",
+    .node [.word "not", .word "soaking", .word "water"] ]
 
-/-- The construction licenses the canonical example (ex. 3a) and stative
-complements (ex. 14a): WXDY does not encode progressive aspect. -/
+/-- The construction licenses the canonical (3a) and the stative (14a): WXDY does not encode
+progressive aspect. -/
 theorem wxdy_matches_canonical :
     formMatches wxdyPOS wxdyConstruction.form scratchTokens = true ∧
-    formMatches wxdyPOS wxdyConstruction.form stativeTokens = true := by
+      formMatches wxdyPOS wxdyConstruction.form stativeTokens = true := by
   decide
 
-/-- The present participle is frozen: bare-stem *do* is rejected
-(ex. 12a). -/
+/-- The present participle is frozen: bare-stem *do* is rejected, (12a). -/
 theorem wxdy_rejects_bare_stem :
     formMatches wxdyPOS wxdyConstruction.form bareStemTokens = false := by
   decide
 
-/-- *doing* must complement copular BE (ex. 13): *keep doing* is not an
-instance of the construction. -/
+/-- *doing* must complement copular BE: *keep doing* is no instance, (13a). -/
 theorem wxdy_rejects_non_copula :
     formMatches wxdyPOS wxdyConstruction.form nonCopulaTokens = false := by
   decide
 
-/-- WXDY-*what* does not accept *else* (ex. 15f): the *what* slot is
-lexically fixed. -/
+/-- WXDY-*what* does not accept *else*, (15f): the slot is lexically fixed. -/
 theorem wxdy_rejects_what_else :
     formMatches wxdyPOS wxdyConstruction.form whatElseTokens = false := by
   decide
 
-/-- Negation of *doing* is rejected by [neg -] (ex. 17b), while negation
-inside the complement is licensed (ex. 17c). -/
+/-- Negation of *doing* is rejected, (17b), while negation inside `Y` is licensed, (17c). -/
 theorem wxdy_negation_contrast :
     formMatches wxdyPOS wxdyConstruction.form negatedDoingTokens = false ∧
-    formMatches wxdyPOS wxdyConstruction.form negatedComplementTokens = true := by
+      formMatches wxdyPOS wxdyConstruction.form negatedComplementTokens = true := by
   decide
 
-/-! ### Coinstantiation (Figure 13, §4.2) -/
+/-! ### Coinstantiation (Figure 13, Section 4.2) -/
 
-/-- The coinstantiation construction (Figure 13): unifies the intrinsic
-value of an unfulfilled valence requirement of a predicator with the
-subject requirement of its controlled complement, covering both raising
-and control. It figures twice in every WXDY clause — the flat rendering
-here unifies a predicator's subject with its complement's subject via a
-shared `refIdx`. -/
+/-- The coinstantiation construction, which unifies the intrinsic value of an unfulfilled
+valence requirement of a predicator with the subject requirement of its controlled
+complement, covering raising and control alike; it figures twice in every WXDY clause. The
+flat rendering unifies a predicator's subject with its complement's subject through a shared
+index. -/
 def coinstantiationForm : TypedForm String :=
-  [ { filler := .open_ .NOUN, gf := some .subj
-    , refIdx := some 1 }
+  [ { filler := .open_ .NOUN, gf := some .subj, refIdx := some 1 }
   , { filler := .open_ .VERB, isHead := true }
-  , { filler := .open_ .VERB, gf := some .comp
-    , refIdx := some 1 } ]
+  , { filler := .open_ .VERB, gf := some .comp, refIdx := some 1 } ]
 
 /-- Coinstantiation is fully abstract: every slot is open. -/
 theorem coinstantiation_specificity :
     derivedSpecificity coinstantiationForm = .fullyAbstract := by decide
 
-/-- Coinstantiation carries exactly one coreference group (predicator
-subject = complement subject). -/
-theorem coinstantiation_coreference :
-    refGroupCount coinstantiationForm = 1 := by decide
-
-/-! ### Formal idiomhood -/
-
-/-- WXDY is a formal idiom: the X and Y slots are open. -/
-theorem wxdy_formal_idiom : wxdyConstruction.IsFormalIdiom := rfl
-
-/-- WXDY is properly partial: BE, *doing*, and *what* are fixed while X
-and Y are open. -/
-theorem wxdy_partially_open :
-    wxdyConstruction.specificity = .partiallyOpen := rfl
-
-/-! ### Presupposition (§2.1) -/
-
-open Presupposition
-
-/-- The incredulity reading presupposes the embedded proposition and has
-trivial assertion: ex. 4's diner presupposes that there is a fly in the
-soup — the point of the utterance is the incongruity judgment. -/
-def wxdyPresup {W : Type*} (embeddedProp : W → Prop) : PartialProp W where
-  presup := embeddedProp
-  assertion _ := True
-
-/-! ### Two-dimensional semantics (§2.2, §4.6) -/
-
-open Pragmatics.Expressives
-
-/-- The incredulity reading as a two-dimensional meaning: the embedded
-proposition at issue, the incongruity judgment as a CI. The incongruity
-is conventional, not conversationally implicated (§2.2, exx. 7–10). -/
-def wxdyTwoDim {W : Type*} (embeddedProp incongruity : W → Prop) :
-    TwoDimProp W :=
-  TwoDimProp.withCI embeddedProp incongruity
-
-/-- Negating a WXDY utterance cannot target the incongruity judgment
-(§4.6, exx. 38–41): the CI survives negation of the at-issue content. -/
-theorem wxdy_incongruity_survives_negation {W : Type*}
-    (embeddedProp incongruity : W → Prop) :
-    (TwoDimProp.neg (wxdyTwoDim embeddedProp incongruity)).ci = incongruity := by
-  simp [wxdyTwoDim, TwoDimProp.withCI, TwoDimProp.neg]
-
-/-! ### The two readings (§2.1) -/
-
-open Question
-
-/-- PerspP status separates the two readings of ex. 4: a speaker whose only doxastic
-alternative is the evaluation world (the diner sees the fly) cannot be possibly ignorant
-of the answer, so the utterance is not a genuine question; a speaker with every world
-open is, whenever the answer is not trivial. -/
-theorem perspP_disambiguates_wxdy {W : Type*} (H : Set (Set W)) (w : W)
-    (hH : Question.weakAnswer H w ≠ Set.univ) :
-    ¬ PossiblyIgnorant H {w} (fun (_ : Unit) w v => v = w) () ∧
-      PossiblyIgnorant H {w} (fun (_ : Unit) _ _ => True) () :=
-  ⟨fun ⟨_, hv, hk⟩ => by
-      obtain rfl := Set.mem_singleton_iff.1 hv
-      exact hk knowsAnswer_of_eq,
-   ⟨w, Set.mem_singleton w, fun h => hH (knowsAnswer_top_iff.1 h)⟩⟩
+/-- It carries exactly one coreference group, the predicator's subject with the complement's. -/
+theorem coinstantiation_coreference : refGroupCount coinstantiationForm = 1 := by decide
 
 end KayFillmore1999
