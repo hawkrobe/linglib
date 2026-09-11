@@ -78,6 +78,9 @@ def BinaryGivenness.rank : BinaryGivenness → Nat
   | .given => 1
   | .new   => 0
 
+/-- `new < given`: the givenness scale, ordered by rank. -/
+instance : LinearOrder BinaryGivenness := LinearOrder.lift' BinaryGivenness.rank (by decide)
+
 /-- GHZ-6 given–new coarsening: identifiable tiers ↦ `given`, indefinite
     tiers ↦ `new`. Makes the module docstring's cut true by construction. -/
 def GivennessStatus.toBinary : GivennessStatus → BinaryGivenness
