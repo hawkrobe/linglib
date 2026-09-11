@@ -1,0 +1,282 @@
+[
+  {
+    "id": "hudson2010_ch7_11",
+    "source": {
+      "bibkey": "hudson-2010",
+      "paperLabel": "(11)"
+    },
+    "language": "stan1293",
+    "primaryText": "He has swum.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.2.6"
+      ],
+      [
+        "triangle",
+        "he is the subject of has and of swum"
+      ],
+      [
+        "verb",
+        "HAVE"
+      ]
+    ],
+    "comment": "The swimmer is he, so he depends as subject on swum as well as on has.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hudson2010_ch7_12",
+    "source": {
+      "bibkey": "hudson-2010",
+      "paperLabel": "(12)"
+    },
+    "language": "stan1293",
+    "primaryText": "There was an accident.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.2.6"
+      ],
+      [
+        "subject",
+        "meaningless there"
+      ],
+      [
+        "verb",
+        "BE"
+      ]
+    ],
+    "comment": "Meaningless there is licensed only by the valency of BE.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hudson2010_ch7_13",
+    "source": {
+      "bibkey": "hudson-2010",
+      "paperLabel": "(13)"
+    },
+    "language": "stan1293",
+    "primaryText": "Was there an accident?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.2.6"
+      ],
+      [
+        "subject",
+        "there"
+      ],
+      [
+        "construction",
+        "inversion test for subjecthood"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hudson2010_ch7_14",
+    "source": {
+      "bibkey": "hudson-2010",
+      "paperLabel": "(14)"
+    },
+    "language": "stan1293",
+    "primaryText": "There has been an accident.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.2.6"
+      ],
+      [
+        "triangle",
+        "there is the subject of has and of been"
+      ],
+      [
+        "verb",
+        "HAVE"
+      ]
+    ],
+    "comment": "Syntactic evidence for the triangle: there must be the subject of a form of BE.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hudson2010_ch7_8",
+    "source": {
+      "bibkey": "hudson-2010",
+      "paperLabel": "(8)"
+    },
+    "language": "stan1293",
+    "primaryText": "He keeps talking.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.4.4"
+      ],
+      [
+        "triangle",
+        "he is the subject of keeps and of talking"
+      ],
+      [
+        "landmark",
+        "keeps"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hudson2010_ch7_9",
+    "source": {
+      "bibkey": "hudson-2010",
+      "paperLabel": "(9)"
+    },
+    "language": "stan1293",
+    "primaryText": "Keeps he talking.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.4.4"
+      ],
+      [
+        "landmark",
+        "talking"
+      ],
+      [
+        "rule",
+        "a verb's subject stands just before it"
+      ]
+    ],
+    "comment": "The subject's landmark is the higher verb keeps, not talking.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hudson2010_ch7_10",
+    "source": {
+      "bibkey": "hudson-2010",
+      "paperLabel": "(10)"
+    },
+    "language": "stan1293",
+    "primaryText": "He never keeps talking.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.4.4"
+      ],
+      [
+        "adverb",
+        "never between the subject and its landmark verb"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hudson2010_ch7_11b",
+    "source": {
+      "bibkey": "hudson-2010",
+      "paperLabel": "(11)"
+    },
+    "language": "stan1293",
+    "primaryText": "He keeps never talking.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.4.4"
+      ],
+      [
+        "adverb",
+        "never between the subject and the lower verb"
+      ]
+    ],
+    "comment": "Section 7.4.4's second (11), the adverb test for the landmark.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hudson2010_fig7_12",
+    "source": {
+      "bibkey": "hudson-2010",
+      "paperLabel": "Figure 7.12"
+    },
+    "language": "stan1293",
+    "primaryText": "He keeps seeming to have forgotten to go.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.4.4"
+      ],
+      [
+        "triangle",
+        "he is the subject of every verb in the valent chain"
+      ],
+      [
+        "recursion",
+        "triangles multiplied freely"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  }
+]
