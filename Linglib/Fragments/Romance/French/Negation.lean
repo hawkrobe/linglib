@@ -141,21 +141,21 @@ def enMarker : String := neClitic
 /-- EN trigger-negator pairings from [jin-koenig-2021], Table 5
     and §6.1–6.4. -/
 def enTriggerNegators : List ExpletiveTrigger :=
-  [ { triggerClass := "FEAR", triggerForm := "avoir peur"
+  [ { triggerClass := .fear, triggerForm := "avoir peur"
     , negatorForm := "ne", highEntrenchment := some true }
-  , { triggerClass := "AVOID", triggerForm := "éviter"
+  , { triggerClass := .avoid, triggerForm := "éviter"
     , negatorForm := "ne", highEntrenchment := some true }
-  , { triggerClass := "BEFORE", triggerForm := "avant que"
+  , { triggerClass := .before, triggerForm := "avant que"
     , negatorForm := "ne", highEntrenchment := some true }
-  , { triggerClass := "UNLESS", triggerForm := "à moins que"
+  , { triggerClass := .unless, triggerForm := "à moins que"
     , negatorForm := "ne", highEntrenchment := some true }
-  , { triggerClass := "DENY", triggerForm := "nier"
+  , { triggerClass := .deny, triggerForm := "nier"
     , negatorForm := "ne", highEntrenchment := some true }
-  , { triggerClass := "COMPARATIVES", triggerForm := "que (than)"
+  , { triggerClass := .moreThan, triggerForm := "que (than)"
     , negatorForm := "ne", highEntrenchment := some true }
-  , { triggerClass := "REGRET", triggerForm := "regretter"
+  , { triggerClass := .regret, triggerForm := "regretter"
     , negatorForm := "ne (pas)", highEntrenchment := some false }
-  , { triggerClass := "FORGET", triggerForm := "oublier"
+  , { triggerClass := .forget, triggerForm := "oublier"
     , negatorForm := "ne pas", highEntrenchment := some false } ]
 
 /-- High-entrenchment EN uses the dedicated *ne* alone;

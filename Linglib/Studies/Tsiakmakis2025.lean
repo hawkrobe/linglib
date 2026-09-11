@@ -1,4 +1,4 @@
-import Linglib.Studies.JinKoenig2021
+import Linglib.Semantics.Polarity.ExpletiveNegation
 import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Fragments.Greek.StandardModern.Negation
@@ -83,8 +83,7 @@ by host:
 
 namespace Tsiakmakis2025
 
-open JinKoenig2021
-  (LicensingCondition TriggerSubclass DualInferenceProfile negativeValenceEntailsDual)
+open _root_.Negation
 open Modality.Kratzer
   (bestWorlds necessity necessity_iff_all ModalBase OrderingSource)
 open Modality (ModalFlavor)
@@ -244,7 +243,7 @@ construction, not by bridge theorem. -/
     correspond to any EN host in [tsiakmakis-2025]'s inventory:
     - FORGET: semantically heterogeneous (§6.1.4 of [jin-koenig-2021])
     - RARELY/IMPOSSIBLE: not listed as EN hosts in §5.12 -/
-@[reducible] def triggerToHost : TriggerSubclass → Option ENHostCategory
+@[reducible] def triggerToHost : ENTriggerClass → Option ENHostCategory
   -- Propositional attitude triggers → NEG₂ hosts
   | .fear       => some .emotiveDoxasticPredicates  -- §5.1
   | .regret     => some .emotiveDoxasticPredicates  -- §5.1
@@ -270,7 +269,7 @@ construction, not by bridge theorem. -/
     When a trigger maps to a host category, its negator type is the host's.
     Unmapped triggers (forget, rarely, impossible) default to NEG₁ — all
     involve standard negation, not modal semantics. -/
-@[reducible] def negatorType (t : TriggerSubclass) : NegatorType :=
+@[reducible] def negatorType (t : ENTriggerClass) : NegatorType :=
   match triggerToHost t with
   | some h => h.negatorType
   | none   => .neg1
@@ -437,32 +436,32 @@ conditions. -/
     negator-type classification aligns with the licensing-condition
     classification for the modal (NEG₂) cases. -/
 theorem neg2_triggers_are_propositional_attitude :
-    [TriggerSubclass.fear, .regret, .deny].all
-      (λ t => negatorType t == .neg2 && t.licensingCondition == .propositionalAttitude)
+    [ENTriggerClass.fear, .regret, .deny].all
+      (λ t => negatorType t == .neg2 && t.licensing == .propositionalAttitude)
     = true := rfl
 
 /-- All temporal triggers are NEG₁. -/
 theorem temporal_triggers_are_neg1 :
-    [TriggerSubclass.before, .cannotWait, .since, .rarely].all
+    [ENTriggerClass.before, .cannotWait, .since, .rarely].all
       (fun t => negatorType t == .neg1) = true := rfl
 
 /-- All logical operator triggers are NEG₁. -/
 theorem logical_triggers_are_neg1 :
-    [TriggerSubclass.impossible, .without, .unless].all
+    [ENTriggerClass.impossible, .without, .unless].all
       (fun t => negatorType t == .neg1) = true := rfl
 
 /-- All comparative triggers are NEG₁. -/
 theorem comparative_triggers_are_neg1 :
-    [TriggerSubclass.moreThan, .differentThan, .tooTo].all
+    [ENTriggerClass.moreThan, .differentThan, .tooTo].all
       (fun t => negatorType t == .neg1) = true := rfl
 
 /-- NEG₁ triggers are exactly the non-propositional-attitude triggers
     plus FORGET (the heterogeneous attitude class). -/
-theorem neg1_iff_not_core_attitude (t : TriggerSubclass) :
+theorem neg1_iff_not_core_attitude (t : ENTriggerClass) :
     negatorType t = .neg1 ↔
-    (t.licensingCondition ≠ .propositionalAttitude ∨ t = .forget) := by
+    (t.licensing ≠ .propositionalAttitude ∨ t = .forget) := by
   cases t <;> simp [negatorType, ENHostCategory.negatorType,
-    TriggerSubclass.licensingCondition]
+    ENTriggerClass.licensing]
 
 -- ════════════════════════════════════════════════════
 -- § 7. NEG₂ Ordering Sources by Host
@@ -627,16 +626,14 @@ to the negator-type classification. -/
 
 /-- Fear predicates: the full chain from negative valence to NEG₂.
 
-    1. `negativeValenceEntailsDual .negative = true` (valence → dual inference)
-    2. `fear.licensingCondition = .propositionalAttitude` (J&K licensing)
+    2. `fear.licensing = .propositionalAttitude` (J&K licensing)
     3. `negatorType .fear = .neg2` (Tsiakmakis classification)
     4. `emotiveDoxasticPredicates.orderingFlavor = some .deontic` (modal flavor) -/
 theorem fear_neg2_from_negative_valence :
-    negativeValenceEntailsDual .negative = true ∧
-    TriggerSubclass.fear.licensingCondition = .propositionalAttitude ∧
+    ENTriggerClass.fear.licensing = .propositionalAttitude ∧
     negatorType .fear = .neg2 ∧
     ENHostCategory.emotiveDoxasticPredicates.orderingFlavor = some .deontic :=
-  ⟨rfl, rfl, rfl, rfl⟩
+  ⟨rfl, rfl, rfl⟩
 
 /-- Deny predicates: NEG₂ with deontic ordering.
 
@@ -646,7 +643,7 @@ theorem fear_neg2_from_negative_valence :
     (the speaker's beliefs about what the denier believes). -/
 theorem deny_neg2_with_deontic_ordering :
     negatorType .deny = .neg2 ∧
-    TriggerSubclass.deny.licensingCondition = .propositionalAttitude ∧
+    ENTriggerClass.deny.licensing = .propositionalAttitude ∧
     ENHostCategory.negativePredicates.orderingFlavor = some .deontic :=
   ⟨rfl, rfl, rfl⟩
 
@@ -662,19 +659,19 @@ theorem data_consistent_with_classification :
 
 /-- Every trigger subclass is classified (total function check). -/
 theorem negatorType_total :
-    [TriggerSubclass.fear, .regret, .deny, .forget,
+    [ENTriggerClass.fear, .regret, .deny, .forget,
      .before, .cannotWait, .since, .rarely,
      .impossible, .without, .unless,
      .moreThan, .differentThan, .tooTo].length = 14 := rfl
 
 /-- The 14 trigger subclasses split 3 NEG₂ + 11 NEG₁. -/
 theorem negatorType_counts :
-    ([TriggerSubclass.fear, .regret, .deny, .forget,
+    ([ENTriggerClass.fear, .regret, .deny, .forget,
       .before, .cannotWait, .since, .rarely,
       .impossible, .without, .unless,
       .moreThan, .differentThan, .tooTo].filter
         (fun t => negatorType t == .neg2)).length = 3 ∧
-    ([TriggerSubclass.fear, .regret, .deny, .forget,
+    ([ENTriggerClass.fear, .regret, .deny, .forget,
       .before, .cannotWait, .since, .rarely,
       .impossible, .without, .unless,
       .moreThan, .differentThan, .tooTo].filter
