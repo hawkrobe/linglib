@@ -151,13 +151,17 @@ inductive DiachronicSource where
   | other
   deriving DecidableEq, BEq, Repr
 
-/-- Haspelmath's link between diachronic source and structural syndesis.
-    Returns the syndesis pattern expected from the source pathway; `none`
-    for `.other` since we make no prediction there. -/
-def DiachronicSource.expectedSyndesis : DiachronicSource → Option Syndesis
-  | .comitative    => some .monosyndetic
-  | .focusParticle => some .bisyndetic
-  | .other         => none
+/-- The binary pattern a source construction has, [haspelmath-2007] §1.2: a comitative
+    modifier 'A with B' is A-co B in a language with postpositions and A co-B in one with
+    prepositions, and an additive focus particle marks the second conjunct, 'A, B too'
+    giving A B-co and 'A, also B' giving A co-B. No source construction has the pattern
+    co-A B. -/
+def DiachronicSource.pattern : DiachronicSource → CoordinatorPosition → Option CoordPattern
+  | .comitative, .postpositive => some .a'co_b
+  | .comitative, .prepositive => some .a_co_b
+  | .focusParticle, .postpositive => some .a_b'co
+  | .focusParticle, .prepositive => some .a_co_b
+  | .other, _ => none
 
 /-! ### Stassen 2000 AND/WITH classification -/
 
