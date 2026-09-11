@@ -1,936 +1,325 @@
+import Linglib.Data.Examples.KalinBjorkmanEtAl2026
 import Linglib.Studies.ZwickyPullum1983
-import Linglib.Studies.ZwickyPullum1983
-import Linglib.Morphology.Exponence.Containment.Contiguity
-import Linglib.Morphology.Paradigm.Linkage
-
-open Morphology (Word)
-
--- ============================================================================
--- § 0b: PFM Substrate (was Morphology/PFM/Core.lean,
---      relocated 0.230.455 — sole consumer is this study file; PFM dir dissolves)
--- ============================================================================
-
-/-! Paradigm Function Morphology ([stump-2001]) — a lexicalist,
-parallel, process-based, realizational theory used by K-B 2026 §2.2 as
-one of the four positions in the theory space. -/
-
-namespace Morphology.PFM
-
-
-structure MorphPropertySet (Feature : Type) where
-  features : List Feature
-  deriving DecidableEq, Repr, BEq
-
-structure Lexeme where
-  name : String
-  category : String
-  stem : String
-  deriving DecidableEq, Repr
-
-structure RealizationRule (Feature : Type) where
-  context : List Feature
-  category : String
-  realize : String → String
-  specificity : Nat := 0
-
-def RealizationRule.matches {Feature : Type} [BEq Feature]
-    (rr : RealizationRule Feature)
-    (σ : MorphPropertySet Feature)
-    (lex : Lexeme) : Bool :=
-  lex.category == rr.category &&
-  rr.context.all (σ.features.contains ·)
-
-structure RuleBlock (Feature : Type) where
-  label : String
-  rules : List (RealizationRule Feature)
-
-def RuleBlock.apply {Feature : Type} [BEq Feature]
-    (block : RuleBlock Feature)
-    (σ : MorphPropertySet Feature)
-    (lex : Lexeme)
-    (stem : String) : Option String :=
-  let matching := block.rules.filter (·.matches σ lex)
-  let best := matching.foldl (init := none) fun acc rr =>
-    match acc with
-    | none => some rr
-    | some prev =>
-      if rr.specificity > prev.specificity then some rr
-      else some prev
-  best.map (·.realize stem)
-
-structure ParadigmFunction (Feature : Type) where
-  blocks : List (RuleBlock Feature)
-
-def ParadigmFunction.apply {Feature : Type} [BEq Feature]
-    (pf : ParadigmFunction Feature)
-    (σ : MorphPropertySet Feature)
-    (lex : Lexeme) : String :=
-  pf.blocks.foldl (init := lex.stem) fun stem block =>
-    (block.apply σ lex stem).getD stem
-
-structure RuleOfReferral (Feature : Type) where
-  source : MorphPropertySet Feature
-  target : MorphPropertySet Feature
-
-def RuleOfReferral.apply {Feature : Type} [BEq Feature]
-    (ref : RuleOfReferral Feature)
-    (pf : ParadigmFunction Feature)
-    (σ : MorphPropertySet Feature)
-    (lex : Lexeme) : Option String :=
-  if σ == ref.source then
-    some (pf.apply ref.target lex)
-  else
-    none
-
-def derive {Feature : Type} [BEq Feature]
-    (pf : ParadigmFunction Feature)
-    (referrals : List (RuleOfReferral Feature))
-    (σ : MorphPropertySet Feature)
-    (lex : Lexeme) : String :=
-  match referrals.findSome? (·.apply pf σ lex) with
-  | some form => form
-  | none => pf.apply σ lex
-
-/-- PFM's paradigm function is the word form of the [stump-2016] realized
-paradigm under the **canonical** linkage: taking each lexeme as its own single
-stem and the identity property mapping, `PF(⟨lex, σ⟩) = PF(Corr(⟨lex, σ⟩))`
-recovers `pf.apply σ lex`. PFM's realization is thus the mismatch-free case —
-deponency or heteroclisis would require a non-identity `pm` or multiple stems
-(`Morphology/Paradigm/Linkage.lean`, `Studies/Stump2016.lean`). -/
-theorem ParadigmFunction.apply_eq_linkage_realize {Feature : Type} [BEq Feature]
-    (pf : ParadigmFunction Feature) (lex : Lexeme)
-    (σ : MorphPropertySet Feature) :
-    ((Morphology.Linkage.canonical (Z := Lexeme)
-          (P := MorphPropertySet Feature) id).realize
-        (fun l τ => pf.apply τ l) lex σ).image Prod.fst
-      = {pf.apply σ lex} := by
-  simp
-
-/-- The linkage PFM instantiates is canonical ([stump-2016] §7.1): identity
-property mapping and one stem per lexeme. -/
-theorem paradigmFunction_linkage_isCanonical {Feature : Type} :
-    (Morphology.Linkage.canonical (L := Lexeme) (Z := Lexeme)
-      (P := MorphPropertySet Feature) id).IsCanonical :=
-  Morphology.Linkage.canonical_isCanonical _
-
-end Morphology.PFM
-
--- ============================================================================
--- § 0a: Wordhood Typology (was Morphology/Wordhood.lean,
---      inlined as sole consumer per CLAUDE.md anchoring rules)
--- ============================================================================
-
-/-! [kalin-bjorkman-etal-2026] (§3.2) argue that solving the wordhood
-problem requires distinguishing at minimum two notions of "word":
-
-- **ms-word** (morphosyntactic/grammatical word): a constituent containing
-  one or more morphemes, contained in a morphosyntactic phrase. Identified
-  by cohesiveness, fixed internal order, selectivity, and domainhood
-  for morphological operations (§3.2.1).
-
-- **p-word** (phonological/prosodic word): a constituent containing one or
-  more syllables grouped into feet, contained in a phonological phrase.
-  Identified by phonotactic bounding and edge phenomena (§3.2.2).
-
-Crossing ms-boundedness (bound vs free) with p-boundedness yields a
-four-way typology of morpheme attachment (Table 3). -/
-
-namespace Morphology.Wordhood
-
-/-- Morphosyntactic boundedness. [kalin-bjorkman-etal-2026] §3.2.1. -/
-inductive MSBoundedness where
-  | free   -- independent ms-word (can stand alone, be reordered, etc.)
-  | bound  -- must be internal to a host ms-word
-  deriving DecidableEq, Repr
-
-/-- Phonological/prosodic boundedness. [kalin-bjorkman-etal-2026] §3.2.2. -/
-inductive PBoundedness where
-  | free   -- forms its own p-word
-  | bound  -- must be internal to a host p-word
-  deriving DecidableEq, Repr
-
-/-- A morpheme's wordhood profile. [kalin-bjorkman-etal-2026] Table 3. -/
-structure WordhoodProfile where
-  ms : MSBoundedness
-  p  : PBoundedness
-  deriving DecidableEq, Repr
-
-/-- The four-way classification of morpheme attachment.
-    [kalin-bjorkman-etal-2026] §3.2.3. -/
-inductive WordhoodClass where
-  /-- ms-free, p-free: an independent word by both criteria. -/
-  | canonicalWord
-  /-- ms-free, p-bound: syntactically independent but phonologically
-      dependent. [zwicky-1977a] -/
-  | simpleClitic
-  /-- ms-bound, p-free: morphosyntactically part of a word but
-      phonologically independent. -/
-  | nonCoheringAffix
-  /-- ms-bound, p-bound: part of a word by both criteria. -/
-  | canonicalAffix
-  deriving DecidableEq, Repr
-
-/-- Classify a wordhood profile into the four-way typology. -/
-def WordhoodProfile.classify : WordhoodProfile → WordhoodClass
-  | ⟨.free,  .free⟩  => .canonicalWord
-  | ⟨.free,  .bound⟩ => .simpleClitic
-  | ⟨.bound, .free⟩  => .nonCoheringAffix
-  | ⟨.bound, .bound⟩ => .canonicalAffix
-
-theorem canonicalWord_is_doubly_free :
-    (WordhoodProfile.mk .free .free).classify = .canonicalWord := rfl
-
-theorem simpleClitic_is_ms_free_p_bound :
-    (WordhoodProfile.mk .free .bound).classify = .simpleClitic := rfl
-
-theorem nonCoheringAffix_is_ms_bound_p_free :
-    (WordhoodProfile.mk .bound .free).classify = .nonCoheringAffix := rfl
-
-theorem canonicalAffix_is_doubly_bound :
-    (WordhoodProfile.mk .bound .bound).classify = .canonicalAffix := rfl
-
-/-- The four classes are exhaustive. -/
-theorem classify_total (w : WordhoodProfile) :
-    w.classify = .canonicalWord ∨
-    w.classify = .simpleClitic ∨
-    w.classify = .nonCoheringAffix ∨
-    w.classify = .canonicalAffix := by
-  cases w with | mk ms p => cases ms <;> cases p <;> simp [WordhoodProfile.classify]
-
-/-- The four classes are mutually exclusive. -/
-theorem classify_injective (w₁ w₂ : WordhoodProfile)
-    (h : w₁.classify = w₂.classify) :
-    w₁ = w₂ := by
-  cases w₁ with | mk ms₁ p₁ =>
-  cases w₂ with | mk ms₂ p₂ =>
-  cases ms₁ <;> cases p₁ <;> cases ms₂ <;> cases p₂ <;>
-    simp [WordhoodProfile.classify] at h <;> rfl
-
-end Morphology.Wordhood
-
--- ============================================================================
--- § 0: Wordhood ↔ Clitic/Affix Diagnostic Bridge
---     (was Morphology/Core/WordhoodBridge.lean — Bridge anti-pattern;
---     relocated 0.230.455 to its sole consumer per CLAUDE.md "no Bridges")
--- ============================================================================
-
-/-! Connects two independent formalizations:
-- **Wordhood typology** (`Morphology.Wordhood`): K-B 2026 §3.2 two-
-  dimensional classification (ms-boundedness × p-boundedness → 4 wordhood
-  classes).
-- **Clitic vs. affix diagnostics** (`Morphology.Diagnostics`): [zwicky-pullum-1983]'s
-  six criteria for affix-vs-clitic.
-
-The bridge: ZP's criteria diagnose **ms-boundedness**. The p-boundedness
-dimension is orthogonal (determined by prosodic diagnostics). -/
-
-namespace Morphology.WordhoodBridge
-
-open Morphology.Wordhood
-open Morphology.Diagnostics (MorphStatus)
-open Morphology.Diagnostics (CliticAffixProfile)
-
-/-- Map a morpheme's morphological status to its ms-boundedness. -/
-def morphStatusToMSBound : MorphStatus → MSBoundedness
-  | .freeWord      => .free
-  | .simpleClitic  => .free
-  | .specialClitic => .free
-  | .inflAffix     => .bound
-  | .derivAffix    => .bound
-
-theorem freeWord_is_ms_free :
-    morphStatusToMSBound .freeWord = .free := rfl
-theorem simpleClitic_is_ms_free :
-    morphStatusToMSBound .simpleClitic = .free := rfl
-theorem inflAffix_is_ms_bound :
-    morphStatusToMSBound .inflAffix = .bound := rfl
-theorem derivAffix_is_ms_bound :
-    morphStatusToMSBound .derivAffix = .bound := rfl
-
-theorem zpAffix_implies_ms_bound (p : CliticAffixProfile)
-    (h : p.classify = .inflAffix) :
-    morphStatusToMSBound p.classify = .bound := by
-  simp [h, morphStatusToMSBound]
-
-theorem zpClitic_implies_ms_free (p : CliticAffixProfile)
-    (h : p.classify = .simpleClitic) :
-    morphStatusToMSBound p.classify = .free := by
-  simp [h, morphStatusToMSBound]
-
-/-- Construct a wordhood profile from MorphStatus + prosodic boundedness. -/
-def wordhoodProfile (status : MorphStatus) (prosody : PBoundedness) :
-    WordhoodProfile :=
-  ⟨morphStatusToMSBound status, prosody⟩
-
-theorem simpleClitic_p_bound_is_simpleClitic :
-    (wordhoodProfile .simpleClitic .bound).classify = .simpleClitic := rfl
-theorem inflAffix_p_bound_is_canonicalAffix :
-    (wordhoodProfile .inflAffix .bound).classify = .canonicalAffix := rfl
-theorem inflAffix_p_free_is_nonCoheringAffix :
-    (wordhoodProfile .inflAffix .free).classify = .nonCoheringAffix := rfl
-theorem freeWord_p_free_is_canonicalWord :
-    (wordhoodProfile .freeWord .free).classify = .canonicalWord := rfl
-
-theorem morphStatus_exhaustive (s : MorphStatus) :
-    morphStatusToMSBound s = .free ∨ morphStatusToMSBound s = .bound := by
-  cases s <;> simp [morphStatusToMSBound]
-
-theorem affix_iff_ms_bound (s : MorphStatus) :
-    s.IsAffix ↔ morphStatusToMSBound s = .bound := by
-  cases s <;> simp [MorphStatus.IsAffix, morphStatusToMSBound]
-
-theorem clitic_implies_ms_free (s : MorphStatus) (h : s.IsClitic) :
-    morphStatusToMSBound s = .free := by
-  cases s <;> simp_all [MorphStatus.IsClitic, morphStatusToMSBound]
-
-/-- Map Word membership to p-boundedness. -/
-def prWdMembershipToPBound (isPrWdInternal : Bool) : PBoundedness :=
-  if isPrWdInternal then .bound else .free
-
-end Morphology.WordhoodBridge
 
 /-!
-# [kalin-bjorkman-etal-2026]: The Morphology/Syntax Interface
-[kalin-bjorkman-etal-2026]
+# Kalin et al. (2026): The Morphology/Syntax Interface
 
-This study file verifies the core contributions of
-[kalin-bjorkman-etal-2026]'s *Elements in Generative Syntax*
-survey against Linglib's independent formalizations of DM, PFM,
-Nanosyntax, and the Wordhood typology.
+This file formalizes [kalin-bjorkman-etal-2026], the Element's map of the morphology/syntax
+interface. Section 2 sets out the dimensions along which theories vary: whether the morphology
+is a component separate from the syntax, lexicalism; the timing of the two computations, an
+architecture that is parallel or pre-syntactic exactly in the lexicalist theories and syntactic
+or post-syntactic in the non-lexicalist ones, (4); whether complex forms arise from pieces or
+from processes, which implicates lexicalism; and whether exponents are independent of the
+features they realize, realizational, or built up with them, incremental. Table 2 places seven
+theories in the space of lexicalism, mapping and exponence, and its two empty cells are exactly
+the non-lexicalist process-based ones (`unattested_iff`), the four representative theories'
+architectures agreeing with their lexicalism (`architecture_lexicalism`). Section 3 separates
+the morphosyntactic word, diagnosed by cohesiveness, fixed order, selectivity and domainhood,
+from the phonological word, and crosses the two kinds of boundness into Table 3's cells
+(`WordhoodProfile.classify`, `rows_cells`); [zwicky-pullum-1983]'s diagnostics place the English
+plural affix in the canonical-affix cell and the auxiliary clitic in the simple-clitic cell
+(`plural_s_canonicalAffix`). Section 4 distinguishes seven form-meaning mappings and Table 4
+records how each representative theory treats each; the theories that treat some non-one-to-one
+mapping as genuine are exactly the realizational ones (`handlesNatively_iff_realizational`), the
+purely syntactic Morphology as Syntax reanalyses every one (`mas_reanalyses`), and no theory
+treats morphological gaps natively (`no_theory_handles_gaps`).
 
-## Structure
+## Implementation notes
 
-- **§1**: Theory space (§2 of the Element) — verify that Linglib's
-  theory-specific modules occupy the correct positions in the
-  4-dimensional classification, and that impossible combinations
-  are ruled out.
-- **§2**: Wordhood (§3) — verify the two-dimensional typology and
-  its connection to ZP diagnostics and ProsodicWord.
-- **§3**: Form-meaning mapping (§4) — verify coverage of the seven
-  descriptive types.
-- **§4**: Cross-module integration — theorems connecting the
-  independent formalizations.
+* Table 4 is the Element's own classification of the theories, carried as data; the theorems
+  over it are the Element's readings of the table, and the cross-table theorem relates it to
+  Table 2.
+* The p-boundness of an element is not derived; the wordhood rows carry both boundnesses and
+  the cell, and only the morphosyntactic side of the English affix and clitic is read off
+  [zwicky-pullum-1983]'s profiles.
+
+## References
+
+* [kalin-bjorkman-etal-2026]
+* [zwicky-pullum-1983]
+* [stump-2001]
+* [halle-marantz-1993]
 -/
 
 namespace KalinBjorkmanEtAl2026
 
--- ============================================================================
--- §0c: Theory-space substrate (demoted from Morphology/TheorySpace.lean;
---      sole consumer is this study — the four positions of [kalin-bjorkman-etal-2026]
---      §2. Study-local so `Exponence` resolves here, not to `Morphology.Exponence`.)
--- ============================================================================
+open Data.Examples Morphology.Diagnostics
 
--- ============================================================================
--- §0c.1: Dimensions
--- ============================================================================
+/-! ### The dimensions of the interface (Section 2.1) -/
 
-/-- Whether the Morphology is a dedicated component separate from the
-    Syntax (lexicalist) or uses the same computational system
-    (non-lexicalist). [kalin-bjorkman-etal-2026] §2.1.1. -/
-inductive Lexicalism where
-  /-- Morphology is a separate component; the Lexical Integrity Hypothesis
-      holds (syntax cannot manipulate sub-word pieces). -/
+/-- Whether the morphology is a component separate from the syntax, Section 2.1.1. -/
+inductive Lexicalism
   | lexicalist
-  /-- Morphological and syntactic computation operate with the same
-      kinds of principles and processes. -/
   | nonLexicalist
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
-/-- The relative ordering of morphological and syntactic computation.
-    [kalin-bjorkman-etal-2026] §2.1.2.
-
-    Lexicalist theories use `preSyntactic` or `parallel` architectures.
-    Non-lexicalist theories use `syntactic` or `postSyntactic`. -/
-inductive Architecture where
-  /-- Morphology feeds the Syntax (input to syntactic computation).
-      Lexicalist. -/
-  | preSyntactic
-  /-- Morphology and Syntax run independently, mapping to each other.
-      Lexicalist. -/
-  | parallel
-  /-- Morphology *is* the Syntax (no separate morphological component).
-      Non-lexicalist. -/
+/-- The timing of morphology and syntax, (4). -/
+inductive Architecture
   | syntactic
-  /-- Syntax feeds the Morphology (morphology operates on syntactic
-      output). Non-lexicalist. -/
+  | parallel
+  | preSyntactic
   | postSyntactic
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
-/-- Whether complex morphological forms result from combining discrete
-    stored pieces (Item-and-Arrangement) or from applying rules to stems
-    (Item-and-Process). [kalin-bjorkman-etal-2026] §2.1.3. -/
-inductive Exponence where
-  /-- Complex words = combination of discrete, independently-stored
-      morphemes. Traditional morphemes are primitive. -/
+/-- An architecture's lexicalism, Section 2.1.2: the parallel and pre-syntactic architectures
+are inherently lexicalist, the syntactic and post-syntactic ones inherently not. -/
+def Architecture.lexicalism : Architecture → Lexicalism
+  | .parallel | .preSyntactic => .lexicalist
+  | .syntactic | .postSyntactic => .nonLexicalist
+
+/-- Whether complex forms arise from the concatenation of stored pieces or from processes
+applied to a stem, Section 2.1.3. -/
+inductive Exponence
   | pieceBased
-  /-- Complex words = result of applying (morpho)phonological
-      modifications (processes) to a stem. Morphemes are not primitive;
-      affixation is one possible output of a rule. -/
   | processBased
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
-/-- Whether phonological exponents are independent of or unified with
-    the meanings/functions they realize.
-    [kalin-bjorkman-etal-2026] §2.1.4. -/
-inductive Mapping where
-  /-- Features/meanings precede or are independent of phonological
-      exponents. Exponents *realize* already-present features. Late
-      Insertion is the prototypical realizational mechanism. -/
+/-- Whether exponents realize features given in advance or are built up with them, Section
+2.1.4. -/
+inductive Mapping
   | realizational
-  /-- Form and meaning are built up in lockstep. A morpheme is a
-      pairing of form and meaning; adding it adds both simultaneously. -/
   | incremental
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
--- ============================================================================
--- §0c.2: Theory Classification
--- ============================================================================
+/-- A cell of Table 2. -/
+structure Cell where
+  lexicalism : Lexicalism
+  mapping : Mapping
+  exponence : Exponence
+  deriving DecidableEq, Repr, Fintype
 
-/-- A position in the four-dimensional theory space.
-    [kalin-bjorkman-etal-2026] Table 2. -/
-structure TheoryPosition where
-  lexicalism   : Lexicalism
-  architecture : Architecture
-  exponence    : Exponence
-  mapping      : Mapping
-  deriving DecidableEq, Repr
+/-- The seven theories Table 2 places. -/
+inductive Theory
+  | harmonicSerialismMorphology
+  | distributedMorphology
+  | nanosyntax
+  | paradigmFunctionMorphology
+  | minimalistMorphology
+  | morphologyAsSyntax
+  | articulatedMorphology
+  deriving DecidableEq, Repr, Fintype
 
-/-- Distributed Morphology ([halle-marantz-1993]).
-    Non-lexicalist, post-syntactic, piece-based, realizational. -/
-def dm : TheoryPosition :=
-  { lexicalism   := .nonLexicalist
-    architecture := .postSyntactic
-    exponence    := .pieceBased
-    mapping      := .realizational }
+/-- Table 2. -/
+def Theory.cell : Theory → Cell
+  | .harmonicSerialismMorphology => ⟨.lexicalist, .realizational, .pieceBased⟩
+  | .distributedMorphology | .nanosyntax => ⟨.nonLexicalist, .realizational, .pieceBased⟩
+  | .paradigmFunctionMorphology => ⟨.lexicalist, .realizational, .processBased⟩
+  | .minimalistMorphology => ⟨.lexicalist, .incremental, .pieceBased⟩
+  | .morphologyAsSyntax => ⟨.nonLexicalist, .incremental, .pieceBased⟩
+  | .articulatedMorphology => ⟨.lexicalist, .incremental, .processBased⟩
 
-/-- Paradigm Function Morphology ([stump-2001]).
-    Lexicalist, parallel, process-based, realizational. -/
-def pfm : TheoryPosition :=
-  { lexicalism   := .lexicalist
-    architecture := .parallel
-    exponence    := .processBased
-    mapping      := .realizational }
+/-- Table 2's empty cells are exactly the non-lexicalist process-based ones, Section 2.4: a
+process-based morphology computes unlike the syntax, Section 2.1.3. -/
+theorem unattested_iff (c : Cell) :
+    (∀ t : Theory, t.cell ≠ c) ↔ c.lexicalism = .nonLexicalist ∧ c.exponence = .processBased := by
+  revert c; decide
 
-/-- Nanosyntax ([starke-2009]).
-    Non-lexicalist, post-syntactic, piece-based, realizational.
-    Shares DM's position on all four dimensions; differs in the
-    *size* of spellout (phrasal, not terminal). -/
-def nanosyntax : TheoryPosition :=
-  { lexicalism   := .nonLexicalist
-    architecture := .postSyntactic
-    exponence    := .pieceBased
-    mapping      := .realizational }
+/-- Distributed Morphology and Nanosyntax share a cell; they differ in mechanism, phrasal against
+terminal spellout, not in these dimensions. -/
+theorem dm_nanosyntax_cell :
+    Theory.distributedMorphology.cell = Theory.nanosyntax.cell := rfl
 
-/-- Morphology as Syntax ([collins-kayne-2023]).
-    Non-lexicalist, syntactic (integrated), piece-based, incremental. -/
-def mas : TheoryPosition :=
-  { lexicalism   := .nonLexicalist
-    architecture := .syntactic
-    exponence    := .pieceBased
-    mapping      := .incremental }
+/-- The four theories Sections 2.2 and 2.3 present in detail and Table 4 compares. -/
+inductive Representative
+  | pfm
+  | mas
+  | nanosyntax
+  | dm
+  deriving DecidableEq, Repr, Fintype
 
--- ============================================================================
--- §0c.3: Structural constraints between dimensions
--- ============================================================================
+/-- The theory a column of Table 4 names. -/
+def Representative.theory : Representative → Theory
+  | .pfm => .paradigmFunctionMorphology
+  | .mas => .morphologyAsSyntax
+  | .nanosyntax => .nanosyntax
+  | .dm => .distributedMorphology
 
-/-- A theory position is **well-formed** if its dimension values respect
-    the structural dependencies identified by
-    [kalin-bjorkman-etal-2026]:
-    - Process-based → lexicalist (syntax is piece-based)
-    - Syntactic/post-syntactic architecture → non-lexicalist
-    - Pre-syntactic/parallel architecture → lexicalist -/
-def TheoryPosition.wellFormed (t : TheoryPosition) : Bool :=
-  -- process-based requires lexicalism
-  (t.exponence != .processBased || t.lexicalism == .lexicalist) &&
-  -- syntactic/postSyntactic architecture requires non-lexicalism
-  (t.architecture != .syntactic     || t.lexicalism == .nonLexicalist) &&
-  (t.architecture != .postSyntactic || t.lexicalism == .nonLexicalist) &&
-  -- preSyntactic/parallel architecture requires lexicalism
-  (t.architecture != .preSyntactic  || t.lexicalism == .lexicalist) &&
-  (t.architecture != .parallel      || t.lexicalism == .lexicalist)
+/-- The architectures of Sections 2.2 and 2.3: Paradigm Function Morphology is parallel, Morphology
+as Syntax syntactic, Distributed Morphology and Nanosyntax post-syntactic. -/
+def Representative.architecture : Representative → Architecture
+  | .pfm => .parallel
+  | .mas => .syntactic
+  | .nanosyntax | .dm => .postSyntactic
 
-theorem dm_wellFormed : dm.wellFormed = true := rfl
-theorem pfm_wellFormed : pfm.wellFormed = true := rfl
-theorem nanosyntax_wellFormed : nanosyntax.wellFormed = true := rfl
-theorem mas_wellFormed : mas.wellFormed = true := rfl
+/-- Each representative theory's architecture has the lexicalism of its Table 2 cell. -/
+theorem architecture_lexicalism (r : Representative) :
+    r.architecture.lexicalism = r.theory.cell.lexicalism := by
+  cases r <;> rfl
 
--- ============================================================================
--- §0c.4: Distinguishing properties
--- ============================================================================
+/-! ### Wordhood (Section 3.2) -/
 
-/-- DM and Nanosyntax agree on all four dimensions. -/
-theorem dm_eq_nanosyntax : dm = nanosyntax := rfl
+/-- Morphosyntactic boundness, Section 3.2.1: necessarily internal to a morphosyntactic word. -/
+inductive MSBoundness
+  | free
+  | bound
+  deriving DecidableEq, Repr, Fintype
 
-/-- DM and PFM agree only on mapping (both realizational). -/
-theorem dm_pfm_share_mapping :
-    dm.mapping = pfm.mapping := rfl
+/-- Phonological boundness, Section 3.2.2: necessarily internal to a phonological word. -/
+inductive PBoundness
+  | free
+  | bound
+  deriving DecidableEq, Repr, Fintype
 
-theorem dm_pfm_differ_lexicalism :
-    dm.lexicalism ≠ pfm.lexicalism := by decide
+/-- An element's two boundnesses. -/
+structure WordhoodProfile where
+  ms : MSBoundness
+  p : PBoundness
+  deriving DecidableEq, Repr, Fintype
 
-theorem dm_pfm_differ_exponence :
-    dm.exponence ≠ pfm.exponence := by decide
+/-- The cells of Table 3. -/
+inductive WordhoodClass
+  | canonicalWord
+  | simpleClitic
+  | nonCoheringAffix
+  | canonicalAffix
+  deriving DecidableEq, Repr, Fintype
 
-/-- DM and MaS agree only on lexicalism and exponence. -/
-theorem dm_mas_share_lexicalism :
-    dm.lexicalism = mas.lexicalism := rfl
+/-- Table 3: crossing the two boundnesses. -/
+def WordhoodProfile.classify : WordhoodProfile → WordhoodClass
+  | ⟨.free, .free⟩ => .canonicalWord
+  | ⟨.free, .bound⟩ => .simpleClitic
+  | ⟨.bound, .free⟩ => .nonCoheringAffix
+  | ⟨.bound, .bound⟩ => .canonicalAffix
 
-theorem dm_mas_share_exponence :
-    dm.exponence = mas.exponence := rfl
+/-- The boundnesses of a cell. -/
+def WordhoodClass.profile : WordhoodClass → WordhoodProfile
+  | .canonicalWord => ⟨.free, .free⟩
+  | .simpleClitic => ⟨.free, .bound⟩
+  | .nonCoheringAffix => ⟨.bound, .free⟩
+  | .canonicalAffix => ⟨.bound, .bound⟩
 
-theorem dm_mas_differ_architecture :
-    dm.architecture ≠ mas.architecture := by decide
+/-- Table 3 is a bijection between profiles and cells. -/
+def classifyEquiv : WordhoodProfile ≃ WordhoodClass where
+  toFun := WordhoodProfile.classify
+  invFun := WordhoodClass.profile
+  left_inv := by decide
+  right_inv := by decide
 
-theorem dm_mas_differ_mapping :
-    dm.mapping ≠ mas.mapping := by decide
+/-- A morphosyntactic status of [zwicky-pullum-1983]'s diagnostics is a boundness, Section
+3.2.3: a clitic is a morphosyntactically free element, an affix a bound one. -/
+def msBoundness : MorphStatus → MSBoundness
+  | .freeWord | .simpleClitic | .specialClitic => .free
+  | .inflAffix | .derivAffix => .bound
 
-/-- PFM is the only major theory that is process-based. -/
-theorem pfm_unique_processBased :
-    pfm.exponence = .processBased ∧
-    dm.exponence = .pieceBased ∧
-    nanosyntax.exponence = .pieceBased ∧
-    mas.exponence = .pieceBased := ⟨rfl, rfl, rfl, rfl⟩
+theorem msBoundness_eq_bound_iff (s : MorphStatus) : msBoundness s = .bound ↔ s.IsAffix := by
+  cases s <;> simp [msBoundness, MorphStatus.IsAffix]
 
-/-- MaS is the only major theory that is incremental. -/
-theorem mas_unique_incremental :
-    mas.mapping = .incremental ∧
-    dm.mapping = .realizational ∧
-    nanosyntax.mapping = .realizational ∧
-    pfm.mapping = .realizational := ⟨rfl, rfl, rfl, rfl⟩
+/-- The English plural is a canonical affix and the auxiliary clitic a simple clitic: their
+morphosyntactic side from [zwicky-pullum-1983]'s profiles, both phonologically bound. -/
+theorem plural_s_canonicalAffix :
+    (WordhoodProfile.mk (msBoundness ZwickyPullum1983.affixPluralS.classify) .bound).classify =
+        .canonicalAffix ∧
+      (WordhoodProfile.mk (msBoundness ZwickyPullum1983.cliticS.classify) .bound).classify =
+        .simpleClitic := by
+  decide
 
--- ============================================================================
--- §0c.5: Structural impossibility
--- ============================================================================
+/-- A row of Table 3: the two boundnesses and the cell. -/
+structure WordhoodRow where
+  profile : WordhoodProfile
+  cell : WordhoodClass
+  deriving DecidableEq
 
-/-- A non-lexicalist, process-based theory is ill-formed: syntax is
-    piece-based, so non-lexicalist morphology (which shares the syntactic
-    computation) must also be piece-based. -/
-theorem nonLexicalist_processBased_illFormed :
-    ∀ (a : Architecture) (m : Mapping),
-    (TheoryPosition.mk .nonLexicalist a .processBased m).wellFormed = false := by
-  intro a m; cases a <;> cases m <;> rfl
+private def msOf : String → Option MSBoundness
+  | "free" => some .free
+  | "bound" => some .bound
+  | _ => none
 
-/-- A lexicalist theory cannot have syntactic architecture (morphology
-    *is* syntax contradicts morphology being separate). -/
-theorem lexicalist_syntactic_illFormed :
-    ∀ (e : Exponence) (m : Mapping),
-    (TheoryPosition.mk .lexicalist .syntactic e m).wellFormed = false := by
-  intro e m; cases e <;> cases m <;> rfl
+private def pOf : String → Option PBoundness
+  | "free" => some .free
+  | "bound" => some .bound
+  | _ => none
 
+private def cellOf : String → Option WordhoodClass
+  | "canonicalWord" => some .canonicalWord
+  | "simpleClitic" => some .simpleClitic
+  | "nonCoheringAffix" => some .nonCoheringAffix
+  | "canonicalAffix" => some .canonicalAffix
+  | _ => none
 
+/-- A row from the paper's features. -/
+def WordhoodRow.ofExample (e : LinguisticExample) : Option WordhoodRow := do
+  let ms ← (e.feature? "ms").bind msOf
+  let p ← (e.feature? "p").bind pOf
+  let c ← (e.feature? "cell").bind cellOf
+  some ⟨⟨ms, p⟩, c⟩
 
--- ============================================================================
--- §1: Theory Space (Element §2)
--- ============================================================================
+/-- The Element's examples of the four cells: *cat*, plural *-s*, possessive *'s* and the Dutch
+prefixes. -/
+def wordhoodRows : List WordhoodRow := Examples.all.filterMap WordhoodRow.ofExample
 
+/-- Each example sits in the cell its boundnesses give. -/
+theorem rows_cells : ∀ r ∈ wordhoodRows, r.profile.classify = r.cell := by decide
 
-/-! ### 1a. The four major theories occupy correct positions -/
+/-! ### Form-meaning mappings (Section 4) -/
 
-/-- DM is non-lexicalist, post-syntactic, piece-based, realizational. -/
-theorem dm_position :
-    dm.lexicalism = .nonLexicalist ∧
-    dm.architecture = .postSyntactic ∧
-    dm.exponence = .pieceBased ∧
-    dm.mapping = .realizational := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- PFM is lexicalist, parallel, process-based, realizational. -/
-theorem pfm_position :
-    pfm.lexicalism = .lexicalist ∧
-    pfm.architecture = .parallel ∧
-    pfm.exponence = .processBased ∧
-    pfm.mapping = .realizational := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- MaS is non-lexicalist, syntactic, piece-based, incremental. -/
-theorem mas_position :
-    mas.lexicalism = .nonLexicalist ∧
-    mas.architecture = .syntactic ∧
-    mas.exponence = .pieceBased ∧
-    mas.mapping = .incremental := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- All four theories are well-formed (satisfy structural constraints). -/
-theorem all_theories_wellFormed :
-    dm.wellFormed = true ∧
-    pfm.wellFormed = true ∧
-    nanosyntax.wellFormed = true ∧
-    mas.wellFormed = true := ⟨rfl, rfl, rfl, rfl⟩
-
-/-! ### 1b. DM and Nanosyntax are indistinguishable on these dimensions
-
-[kalin-bjorkman-etal-2026] §2: DM and Nanosyntax agree on all four
-dimensions. Their differences (Subset vs Superset Principle, terminal vs
-phrasal spellout) are mechanism-level, not dimension-level. -/
-
-/-- DM and Nanosyntax occupy the same position in the theory space.
-    Their differences are in mechanism, not architecture. -/
-theorem dm_nanosyntax_same_position : dm = nanosyntax := rfl
-
-/-! ### 1c. Structural impossibilities
-
-[kalin-bjorkman-etal-2026] §2.1: not all 2⁴ = 16 combinations
-are possible. Process-based theories must be lexicalist (syntax is
-piece-based). -/
-
-/-- No non-lexicalist, process-based theory is well-formed. -/
-theorem no_nonLexicalist_processBased :
-    ∀ (a : Architecture) (m : Mapping),
-    (TheoryPosition.mk .nonLexicalist a .processBased m).wellFormed = false :=
-  nonLexicalist_processBased_illFormed
-
-/-- No lexicalist theory can have syntactic architecture. -/
-theorem no_lexicalist_syntactic :
-    ∀ (e : Exponence) (m : Mapping),
-    (TheoryPosition.mk .lexicalist .syntactic e m).wellFormed = false :=
-  lexicalist_syntactic_illFormed
-
-/-! ### 1d. Distinguishing features of each theory -/
-
-/-- PFM is the only process-based theory among the four. -/
-theorem pfm_uniquely_processBased :
-    pfm.exponence = .processBased ∧
-    dm.exponence ≠ .processBased ∧
-    mas.exponence ≠ .processBased := by
-  exact ⟨rfl, by decide, by decide⟩
-
-/-- MaS is the only incremental theory among the four. -/
-theorem mas_uniquely_incremental :
-    mas.mapping = .incremental ∧
-    dm.mapping ≠ .incremental ∧
-    pfm.mapping ≠ .incremental := by
-  exact ⟨rfl, by decide, by decide⟩
-
--- ============================================================================
--- §2: Wordhood Typology (Element §3)
--- ============================================================================
-
-open Morphology.Wordhood
-open Morphology.WordhoodBridge
-
-/-! ### 2a. The 2×2 wordhood typology is exhaustive and injective -/
-
-/-- Every combination of ms- and p-boundedness yields a wordhood class. -/
-theorem wordhood_exhaustive (w : WordhoodProfile) :
-    w.classify = .canonicalWord ∨
-    w.classify = .simpleClitic ∨
-    w.classify = .nonCoheringAffix ∨
-    w.classify = .canonicalAffix :=
-  classify_total w
-
-/-- Distinct profiles yield distinct classes. -/
-theorem wordhood_injective (w₁ w₂ : WordhoodProfile)
-    (h : w₁.classify = w₂.classify) : w₁ = w₂ :=
-  classify_injective w₁ w₂ h
-
-/-! ### 2b. ZP diagnostics determine ms-boundedness
-
-[kalin-bjorkman-etal-2026] §3.2.1: the six criteria from
-[zwicky-pullum-1983] diagnose whether a morpheme is ms-bound.
-This is formalized in `WordhoodBridge`. -/
-
-/-- Affixhood (in MorphStatus) is equivalent to ms-boundedness. -/
-theorem affix_iff_msbound (s : Morphology.Diagnostics.MorphStatus) :
-    s.IsAffix ↔ morphStatusToMSBound s = .bound :=
-  affix_iff_ms_bound s
-
-/-- Clitichood implies ms-freedom. -/
-theorem clitic_implies_msfree (s : Morphology.Diagnostics.MorphStatus)
-    (h : s.IsClitic) : morphStatusToMSBound s = .free :=
-  clitic_implies_ms_free s h
-
-/-! ### 2c. Word diagnostics determine p-boundedness
-
-[kalin-bjorkman-etal-2026] §3.2.2: prosodic diagnostics (vowel
-harmony scope, minimal word constraints, hiatus resolution) diagnose
-p-boundedness. This is formalized via the ProsodicWord bridge. -/
-
-/-- An inflectional suffix (Word-internal) combined with ms-boundedness
-    from the ZP criteria yields canonical affix. -/
-theorem zpAffix_plus_prWdInternal :
-    (wordhoodProfile .inflAffix
-      (prWdMembershipToPBound true)).classify = .canonicalAffix := rfl
-
-/-- A clitic (ms-free) that is Word-internal (p-bound) yields
-    simple clitic — the canonical configuration for Romance clitics. -/
-theorem zpClitic_plus_prWdInternal :
-    (wordhoodProfile .simpleClitic
-      (prWdMembershipToPBound true)).classify = .simpleClitic := rfl
-
-/-- An affix (ms-bound) that is Word-external (p-free) yields
-    non-cohering affix — the configuration for Dutch non-cohering
-    prefixes. -/
-theorem zpAffix_plus_prWdExternal :
-    (wordhoodProfile .inflAffix
-      (prWdMembershipToPBound false)).classify = .nonCoheringAffix := rfl
-
--- ============================================================================
--- §3: Form-Meaning Mapping (Element §4)
---     (Inlined from former Morphology/FormMeaningMapping.lean.)
--- ============================================================================
-
-/-! §4 of [kalin-bjorkman-etal-2026] identifies seven descriptive types
-of form-meaning mapping — the relationships between phonological exponents
-and morphosyntactic features/functions. -/
-
-namespace Morphology.FormMeaningMapping
-
-/-- The seven descriptive types of form-meaning mapping.
-    [kalin-bjorkman-etal-2026] §4. -/
-inductive MappingType where
-  /-- One meaning/function ↔ one exponent, invariant.
-      Example: root *cat* is always `\/kæt\/`. -/
+/-- The seven descriptive form-meaning mappings of Section 4: abundance on the form side,
+allomorphy and multiple exponence; on the meaning side, syncretism and portmanteaux; and
+absence on either, gaps and empty morphs. -/
+inductive MappingType
   | oneToOne
-  /-- One meaning/function → multiple *competing* exponents
-      (context-sensitive selection).
-      Example: English plural *-z, -s, -ɪz, -ən, ∅*. §4.1. -/
   | allomorphy
-  /-- One meaning/function → multiple *co-occurring* exponents
-      (non-competing, simultaneous expression).
-      Example: Amharic *k'al-at-otʃtʃ* 'words' (two plural markers). §4.2. -/
   | multipleExponence
-  /-- Multiple related meanings/functions → one exponent
-      (non-co-occurring contexts share a form).
-      Example: English *-ed* for past tense and past participle. §4.3. -/
   | syncretism
-  /-- Multiple co-occurring meanings/functions → one exponent
-      (bundled into a single form).
-      Example: French *du* = *de* + *le*. §4.4. -/
   | portmanteau
-  /-- A meaning/function has no corresponding form — the paradigm
-      cell is empty.
-      Example: English *stride* lacks a standard past participle. §4.5.1. -/
   | morphologicalGap
-  /-- A form has no corresponding meaning/function.
-      Example: Romance theme vowels, compound linkers. §4.5.2. -/
   | emptyMorph
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
-end Morphology.FormMeaningMapping
-
-open Morphology.FormMeaningMapping
-
-/-! ### 3a. The seven descriptive types
-
-[kalin-bjorkman-etal-2026] §4 identifies seven form-meaning
-mapping types. Any theory of morphology must account for all of them. -/
-
-/-- The seven types are mutually exclusive. -/
-theorem mappingTypes_distinct :
-    MappingType.oneToOne ≠ MappingType.allomorphy ∧
-    MappingType.allomorphy ≠ MappingType.syncretism ∧
-    MappingType.syncretism ≠ MappingType.portmanteau ∧
-    MappingType.portmanteau ≠ MappingType.multipleExponence ∧
-    MappingType.multipleExponence ≠ MappingType.morphologicalGap ∧
-    MappingType.morphologicalGap ≠ MappingType.emptyMorph := by
-  exact ⟨by decide, by decide, by decide, by decide, by decide, by decide⟩
-
--- ============================================================================
--- §4: Cross-Module Integration
--- ============================================================================
-
-/-! ### 4a. *ABA impossibility (Nanosyntax contribution)
-
-[caha-2009]: the fseq-based Superset Principle derives the *ABA
-constraint. If entry β beats entry α for case Y, β also beats α
-for all cases below Y on the fseq —
-`Morphology.Containment.isContiguous_spellout` in general. -/
-
-open _root_.Morphology Morphology.Containment in
-/-- An attempted ABA lexicon — "A" sized for the bottom grade, "B" for
-    the top — produces ABB instead: the larger entry also wins the
-    middle grade, and its pattern is contiguous by
-    `isContiguous_spellout`. -/
-theorem starABA_verified :
-    spellout [(⟨"A", 0, none⟩ : SpanRule 3 String), ⟨"B", 2, none⟩] 0
-      = some "A" ∧
-    spellout [(⟨"A", 0, none⟩ : SpanRule 3 String), ⟨"B", 2, none⟩] 1
-      = some "B" ∧
-    spellout [(⟨"A", 0, none⟩ : SpanRule 3 String), ⟨"B", 2, none⟩] 2
-      = some "B" ∧
-    IsContiguous (spellout
-      [(⟨"A", 0, none⟩ : SpanRule 3 String), ⟨"B", 2, none⟩]) :=
-  ⟨by decide, by decide, by decide, isContiguous_spellout (by decide)⟩
-
-/-! ### 4b. PFM's Paradigm Function architecture
-
-[stump-2001]: PFM is the only major theory that is both
-process-based and parallel in architecture. This combination is
-well-formed because process-based requires lexicalism, and parallel
-is a lexicalist architecture. -/
-
-/-- PFM's combination of process-based exponence and parallel
-    architecture is well-formed precisely because both are lexicalist. -/
-theorem pfm_processBased_parallel_consistent :
-    pfm.exponence = .processBased ∧
-    pfm.architecture = .parallel ∧
-    pfm.wellFormed = true := ⟨rfl, rfl, rfl⟩
-
--- ============================================================================
--- §5: Form-meaning mapping coverage (Table 4, §4.6)
--- ============================================================================
-
-/-! ### 5. Theory × mapping-type matrix
-
-[kalin-bjorkman-etal-2026] Table 4 captures the culminating insight
-of the Element: different theories handle form-meaning mapping complexities
-differently, and simplification in theory trades off against empirical
-coverage. Each cell records whether a theory handles a mapping type:
-- **yes**: natively, via basic mechanisms
-- **no**: must reanalyze as a different phenomenon
-- **extra**: can handle, but requires an additional mechanism
-
-Key mechanisms referenced:
-- **DM**: VI (allomorphy), Impoverishment (metasyncretism), Fission
-  (multiple exponence), Fusion (portmanteau), Dissociated nodes (empty morphs)
-- **PFM**: Rules of Referral (metasyncretism), rule blocks spanning
-  (portmanteau), morphomic class indices (empty morphs)
-- **Nanosyntax**: Superset Principle + containment (syncretism),
-  phrasal spellout (portmanteau)
-- **MaS**: strict one-to-one; all non-one-to-one phenomena must be
-  reanalyzed as involving distinct morphemes or features -/
-
-/-- How a morphological theory handles a form-meaning mapping type.
-    [kalin-bjorkman-etal-2026] Table 4. -/
-inductive Coverage where
-  /-- Handled natively by the theory's basic mechanisms. -/
+/-- How a theory treats a mapping in Table 4: as a genuine non-one-to-one mapping by its basic
+mechanisms, by reanalysis as another mapping, or by an extra mechanism. -/
+inductive Coverage
   | yes
-  /-- Must be reanalyzed as a different phenomenon. -/
   | no
-  /-- Requires an extra mechanism beyond the basics. -/
   | extra
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr, Fintype
 
-/-- The four named theories from [kalin-bjorkman-etal-2026]. -/
-inductive TheoryName where
-  | pfm | mas | nanosyntax | dm
-  deriving DecidableEq, Repr, BEq
-
-/-- Map a named theory to its position in the theory space. -/
-def TheoryName.position : TheoryName → TheoryPosition
-  | .pfm => KalinBjorkmanEtAl2026.pfm
-  | .mas => KalinBjorkmanEtAl2026.mas
-  | .nanosyntax => KalinBjorkmanEtAl2026.nanosyntax
-  | .dm => KalinBjorkmanEtAl2026.dm
-
-/-- [kalin-bjorkman-etal-2026] Table 4: for each (mapping type,
-    theory) pair, the coverage verdicts across subcases.
-
-    Multiple values indicate different subcases receive different
-    verdicts. For example, DM handles some portmanteaux natively
-    (pre-syntactic feature bundling), must reanalyze others
-    (allomorphy in disguise), and needs Fusion for the rest. -/
-def table4 : MappingType → TheoryName → List Coverage
-  -- One-to-one: all theories handle natively
+/-- Table 4, a list where the subcases of a mapping receive different verdicts. -/
+def table4 : MappingType → Representative → List Coverage
   | .oneToOne, _ => [.yes]
-  -- Allomorphy: only DM (VI with contextual conditioning)
   | .allomorphy, .dm => [.yes]
   | .allomorphy, _ => [.no]
-  -- Multiple exponence: PFM natively (independent rule blocks);
-  -- DM needs Fission (extra); MaS and Nanosyntax reanalyze
   | .multipleExponence, .pfm => [.yes]
   | .multipleExponence, .dm => [.no, .extra]
   | .multipleExponence, _ => [.no]
-  -- Syncretism: PFM yes (underspec) + extra (Rules of Referral);
-  -- Nanosyntax yes (containment) + extra (pointers);
-  -- DM yes (underspec/Impoverishment); MaS no
-  | .syncretism, .pfm => [.yes, .extra]
-  | .syncretism, .nanosyntax => [.yes, .extra]
+  | .syncretism, .pfm | .syncretism, .nanosyntax => [.yes, .extra]
   | .syncretism, .dm => [.yes]
   | .syncretism, .mas => [.no]
-  -- Portmanteaux: PFM yes + extra (rule blocks spanning);
-  -- Nanosyntax yes (phrasal spellout); DM yes + no + extra
-  -- (bundling / reanalysis / Fusion); MaS no
   | .portmanteau, .pfm => [.yes, .extra]
   | .portmanteau, .nanosyntax => [.yes]
   | .portmanteau, .dm => [.yes, .no, .extra]
   | .portmanteau, .mas => [.no]
-  -- Morphological gaps: no theory handles natively
   | .morphologicalGap, _ => [.no]
-  -- Empty morphs: PFM yes (morphomic) + no (phonological);
-  -- DM no + extra (Dissociated nodes); MaS/Nano no
   | .emptyMorph, .pfm => [.yes, .no]
   | .emptyMorph, .dm => [.no, .extra]
   | .emptyMorph, _ => [.no]
 
-/-- Whether a theory natively handles a mapping type (has at least
-    one `yes` verdict across subcases). -/
-def handlesNatively (m : MappingType) (t : TheoryName) : Bool :=
-  (table4 m t).any (· == .yes)
+/-- A theory treats a mapping natively when some subcase is a genuine mapping for it. -/
+def HandlesNatively (m : MappingType) (r : Representative) : Prop := .yes ∈ table4 m r
 
-/-! ### 5a. All theories agree on one-to-one -/
+instance (m : MappingType) (r : Representative) : Decidable (HandlesNatively m r) :=
+  inferInstanceAs (Decidable (_ ∈ _))
 
-/-- Every theory handles one-to-one mappings natively. -/
-theorem all_handle_oneToOne (t : TheoryName) :
-    table4 .oneToOne t = [.yes] := by cases t <;> rfl
-
-/-! ### 5b. DM is uniquely suited for allomorphy
-
-Only DM handles allomorphy natively, via Vocabulary Insertion with
-contextual conditioning. PFM subsumes it under multiple exponence;
-Nanosyntax reanalyzes structurally; MaS treats allomorphs as
-distinct morphemes. -/
-
-/-- DM is the only theory that handles allomorphy natively. -/
-theorem only_dm_handles_allomorphy :
-    handlesNatively .allomorphy .dm = true ∧
-    handlesNatively .allomorphy .pfm = false ∧
-    handlesNatively .allomorphy .mas = false ∧
-    handlesNatively .allomorphy .nanosyntax = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
-/-! ### 5c. PFM is uniquely suited for multiple exponence
-
-PFM's process-based, ordered rule-block architecture means
-independent blocks can reference the same feature, producing
-multiple exponence without any special mechanism. -/
-
-/-- PFM is the only theory that handles multiple exponence natively. -/
-theorem only_pfm_handles_multipleExponence :
-    handlesNatively .multipleExponence .pfm = true ∧
-    handlesNatively .multipleExponence .dm = false ∧
-    handlesNatively .multipleExponence .mas = false ∧
-    handlesNatively .multipleExponence .nanosyntax = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
-/-! ### 5d. Morphological gaps are universally problematic -/
-
-/-- No theory handles morphological gaps natively. -/
-theorem no_theory_handles_gaps (t : TheoryName) :
-    table4 .morphologicalGap t = [.no] := by cases t <;> rfl
-
-/-! ### 5e. MaS is the most restrictive theory
-
-MaS's incremental mapping (form and meaning built in lockstep)
-forces strict one-to-one correspondence. Every apparent
-non-one-to-one mapping must be reanalyzed. -/
-
-/-- MaS says "no" to every non-one-to-one mapping type. -/
-theorem mas_rejects_all_complex (m : MappingType)
-    (h : m ≠ .oneToOne) :
-    table4 m .mas = [.no] := by
+/-- Morphology as Syntax denies every non-one-to-one mapping, reanalysing each, Section 4.6. -/
+theorem mas_reanalyses (m : MappingType) (h : m ≠ .oneToOne) : table4 m .mas = [.no] := by
   cases m <;> first | exact absurd rfl h | rfl
 
-/-! ### 5f. Realizational vs incremental split
+/-- No theory treats a morphological gap natively. -/
+theorem no_theory_handles_gaps (r : Representative) : table4 .morphologicalGap r = [.no] := by
+  cases r <;> rfl
 
-[kalin-bjorkman-etal-2026] §4.6: realizational theories handle
-at least some non-one-to-one mappings natively, because separating
-features from exponents makes mismatches structurally possible.
-Incremental theories (MaS) must reanalyze all of them. -/
+/-- The theories that treat some non-one-to-one mapping as genuine are exactly the
+realizational ones of Table 2: separating exponents from features is what makes a mismatch
+possible, Section 4.6. -/
+theorem handlesNatively_iff_realizational (r : Representative) :
+    (∃ m, m ≠ .oneToOne ∧ HandlesNatively m r) ↔ r.theory.cell.mapping = .realizational := by
+  revert r; decide
 
-/-- The three realizational theories all handle syncretism natively.
-    MaS (incremental) cannot. -/
-theorem syncretism_splits_on_realizational :
-    handlesNatively .syncretism .dm = true ∧
-    handlesNatively .syncretism .pfm = true ∧
-    handlesNatively .syncretism .nanosyntax = true ∧
-    handlesNatively .syncretism .mas = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
-/-- The realizational/incremental split matches the theory space:
-    DM, PFM, and Nanosyntax are realizational; MaS is incremental. -/
-theorem syncretism_matches_mapping_dimension :
-    dm.mapping = Mapping.realizational ∧
-    pfm.mapping = Mapping.realizational ∧
-    nanosyntax.mapping = Mapping.realizational ∧
-    mas.mapping = Mapping.incremental :=
-  ⟨rfl, rfl, rfl, rfl⟩
+/-- Distributed Morphology alone treats allomorphy natively, by contextual Vocabulary
+Insertion, and Paradigm Function Morphology alone multiple exponence, by independent rule
+blocks, Sections 4.1 and 4.2. -/
+theorem allomorphy_multipleExponence (r : Representative) :
+    (HandlesNatively .allomorphy r ↔ r = .dm) ∧
+      (HandlesNatively .multipleExponence r ↔ r = .pfm) := by
+  revert r; decide
 
 end KalinBjorkmanEtAl2026
