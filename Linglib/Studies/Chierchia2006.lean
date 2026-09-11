@@ -106,14 +106,14 @@ def efciPureFci : PSIProfile :=
 /-! ### Eligible regions on the implicational map -/
 
 /-- The functions of the implicational map a class is eligible for, from its parameters and
-the monotonicity of the functions: a plain indefinite needs neither downward-entailing nor
-free-choice licensing; even-like enrichment over large alternatives is informative only in a
+the monotonicity of the functions: a plain indefinite needs no licensing and is eligible
+everywhere; even-like enrichment over large alternatives is informative only in a
 downward-entailing context, and never together with proper strengthening; fine alternatives
 under weak σ are vacuously exhaustified in a downward-entailing context and antiexhaustified
 under a modal, irrealis included; under σ̃ only the free-choice functions remain. -/
 def PSIProfile.predictedFunctions (p : PSIProfile) : List HaspelmathFunction :=
   HaspelmathFunction.all.filter λ f =>
-    if !p.obligatoryDomainAlts then !f.isDE && !f.isFC
+    if !p.obligatoryDomainAlts then true
     else match p.grain, p.requiresProperStrengthening with
       | .max, false => f.isDE
       | .max, true => false
@@ -150,12 +150,11 @@ private def plainIndefinite : PSIProfile :=
 /-- Every series in the sample covers a subset of the region its class predicts. -/
 theorem sample_series_within_predicted :
     ∀ p ∈ [(seriesFunctions italian "nessuno", pureNPI),
-        (seriesFunctions italian "qualunque/qualsiasi", pureFCI),
+        (seriesFunctions italian "chiunque", pureFCI),
         (seriesFunctions italian "qualcuno", plainIndefinite),
-        (seriesFunctions english "any- (NPI)", npiFCI),
-        (seriesFunctions english "any- (FC)", npiFCI),
+        (seriesFunctions english "any-", npiFCI),
         ((seriesFunctions german "irgendwer").filter (· != .specificUnknown), efciNpiFci),
-        (seriesFunctions mandarin "shéi (谁, non-interrog.)", npiFCI)],
+        (seriesFunctions mandarin "shéi", npiFCI)],
       ∀ f ∈ p.1, f ∈ p.2.predictedFunctions := by
   decide
 
@@ -202,7 +201,8 @@ theorem fragment_entries_match_profiles :
         (Italian.PolarityItems.qualunque, pureFCI),
         (Italian.PolarityItems.uno_qualsiasi, efciPureFci),
         (German.PolarityItems.irgendein, efciNpiFci)],
-      e.1.licensor = e.2.predictedLicensor ∧ (e.1.freeChoice = true ↔ e.2.PredictsFreeChoice) := by
+      e.1.licensor = e.2.predictedLicensor ∧
+        (e.1.freeChoice = true ↔ e.2.PredictsFreeChoice) := by
   decide
 
 /-! ### Proper strengthening and downward entailment -/
