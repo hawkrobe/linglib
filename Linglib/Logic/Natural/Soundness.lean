@@ -305,6 +305,25 @@ theorem _root_.NaturalLogic.Relation.Holds.of_le
     | exact le_of_eq h
     | exact le_of_eq (Eq.symm h)
 
+/-- A relation between functions holds pointwise. -/
+theorem _root_.NaturalLogic.Relation.Holds.apply {ι : Type*} {R : Relation} {f g : ι → β}
+    (h : R.Holds f g) (i : ι) : R.Holds (f i) (g i) := by
+  cases R with
+  | equiv => exact congrFun h i
+  | forward | reverse => exact h i
+  | negation =>
+    exact isCompl_iff.2 ⟨disjoint_iff.2 (congrFun (disjoint_iff.1 h.disjoint) i),
+      codisjoint_iff.2 (congrFun (codisjoint_iff.1 h.codisjoint) i)⟩
+  | alternation => exact disjoint_iff.2 (congrFun (disjoint_iff.1 h) i)
+  | cover => exact codisjoint_iff.2 (congrFun (codisjoint_iff.1 h) i)
+  | independent => trivial
+
+/-- A signature sound for a two-place function is sound for it at any fixed second
+argument, the lattice operations on functions being pointwise. -/
+theorem Signature.SoundFor.apply {ι : Type*} {σ : Signature} {f : α → ι → β}
+    (h : σ.SoundFor f) (i : ι) : σ.SoundFor (f · i) :=
+  fun R x y hR => (h R x y hR).apply i
+
 /-- Projection is monotone in the signature order: a more specific
 signature projects every relation at least as informatively. -/
 theorem Signature.project_mono (R : Relation) :
