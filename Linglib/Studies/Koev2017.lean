@@ -494,8 +494,8 @@ theorem assertion_is_scope (s : LearningScenario ℤ) {W : Type*} (p : W → Pro
     true given evidence e" — a DIFFERENT proposition from p.
 
     This is a simplified stub; the full Kratzer-grounded version is
-    `Izvorski1997.Bridge.izvorskiEv`, which uses `necessity f g p` as
-    the assertion and `!(accessibleWorlds f w).isEmpty` as the presup. -/
+    `Izvorski1997.Ev`, which uses `necessity f g p` as the assertion and
+    the existence of indirect evidence for `p` as the presupposition. -/
 def modalEvidential {W : Type*} (evidence : Bool) (must_p : W → Prop) : PartialProp W where
   presup := fun _ => evidence
   assertion := must_p
