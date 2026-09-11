@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Semantics.Quantification.Numerals.Roundness
 import Linglib.Core.Algebra.Order.ToIntervalMod
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Pragmatic halo and precision modes
@@ -18,7 +19,7 @@ pragmatic halo, [krifka-2007]'s approximate interpretation.
 - `PrecisionMode`, `projectPrecision`, `roundToNearest`: the two meaning
   projections `f_e(s) = s` and `f_a(s) = Round(s)` of
   [kao-etal-2014-hyperbole], with `Round` = round-to-nearest-multiple.
-  `Studies/KaoEtAl2014PMFHyperbole.lean` grounds its goal projections in these.
+  `Studies/KaoWuEtAl2014.lean` grounds its goal projections in these.
 - `haloWidth`, `withinHalo`, `inferPrecisionMode`: halo width, halo
   membership, and precision mode as
   functions of the k-ness score (`Roundness.roundnessScore`). Only the
@@ -37,7 +38,7 @@ inductive PrecisionMode where
   | exact
   /-- Approximate interpretation, `f_a(s) = Round(s)`. -/
   | approximate
-  deriving Repr, DecidableEq
+  deriving Repr, DecidableEq, Fintype
 
 /-- Round a rational to the nearest multiple of `base` —
 [kao-etal-2014-hyperbole]'s `Round` at the default `base = 10`, the
