@@ -1,0 +1,1849 @@
+[
+  {
+    "id": "hewett2026_ex1a",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(1a)"
+    },
+    "language": "stan1293",
+    "primaryText": "They apologized for/*to/*of their behavior.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "root",
+        "apologi"
+      ],
+      [
+        "category",
+        "V"
+      ],
+      [
+        "prep",
+        "for"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex1b",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(1b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Their apology for/*to/*of their behavior was half-hearted.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "root",
+        "apologi"
+      ],
+      [
+        "category",
+        "N"
+      ],
+      [
+        "prep",
+        "for"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex1c",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(1c)"
+    },
+    "language": "stan1293",
+    "primaryText": "They are apologetic for/*to/*of their behavior.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "root",
+        "apologi"
+      ],
+      [
+        "category",
+        "A"
+      ],
+      [
+        "prep",
+        "for"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex2a",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(2a)"
+    },
+    "language": "nort3139",
+    "primaryText": "bftaxir b-/*ʕala/*min zakaʔ-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "bftaxir",
+        "be.proud.1.SG"
+      ],
+      [
+        "b-/*ʕala/*min",
+        "in-/*over/*from"
+      ],
+      [
+        "zakaʔ-i",
+        "intelligence-my"
+      ]
+    ],
+    "translation": "I pride myself on my intelligence.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "root",
+        "fxr"
+      ],
+      [
+        "category",
+        "V"
+      ],
+      [
+        "prep",
+        "b-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex2b",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(2b)"
+    },
+    "language": "nort3139",
+    "primaryText": "ʕand-i faxr b-/*ʕala/*min zakaʔ-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ʕand-i",
+        "at-me"
+      ],
+      [
+        "faxr",
+        "pride"
+      ],
+      [
+        "b-/*ʕala/*min",
+        "in-/*over/*from"
+      ],
+      [
+        "zakaʔ-i",
+        "intelligence-my"
+      ]
+    ],
+    "translation": "I have pride in my intelligence.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "root",
+        "fxr"
+      ],
+      [
+        "category",
+        "N"
+      ],
+      [
+        "prep",
+        "b-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex2c",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(2c)"
+    },
+    "language": "nort3139",
+    "primaryText": "ʔana faxur b-/*ʕala/*min zakaʔ-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ʔana",
+        "I"
+      ],
+      [
+        "faxur",
+        "proud"
+      ],
+      [
+        "b-/*ʕala/*min",
+        "in-/*over/*from"
+      ],
+      [
+        "zakaʔ-i",
+        "intelligence-my"
+      ]
+    ],
+    "translation": "I am proud of my intelligence.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "root",
+        "fxr"
+      ],
+      [
+        "category",
+        "A"
+      ],
+      [
+        "prep",
+        "b-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex5a",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(5a)"
+    },
+    "language": "stan1293",
+    "primaryText": "She prides herself on/*in/*of her thoroughness.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "root",
+        "prd"
+      ],
+      [
+        "category",
+        "V"
+      ],
+      [
+        "prep",
+        "on"
+      ]
+    ],
+    "comment": "From Merchant (2019).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex5b",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(5b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Her pride in/*on/*of her thoroughness is understandable.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "root",
+        "prd"
+      ],
+      [
+        "category",
+        "N"
+      ],
+      [
+        "prep",
+        "in"
+      ]
+    ],
+    "comment": "From Merchant (2019).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex5c",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(5c)"
+    },
+    "language": "stan1293",
+    "primaryText": "She is proud of/*on/*in her thoroughness.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "root",
+        "prd"
+      ],
+      [
+        "category",
+        "A"
+      ],
+      [
+        "prep",
+        "of"
+      ]
+    ],
+    "comment": "From Merchant (2019).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex6a",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(6a)"
+    },
+    "language": "nort3139",
+    "primaryText": "barako-ni b-/*ʕa(la) l-walad.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "barako-ni",
+        "congratulated.3.PL-me"
+      ],
+      [
+        "b-/*ʕa(la)",
+        "in-/*over"
+      ],
+      [
+        "l-walad",
+        "the-baby"
+      ]
+    ],
+    "translation": "They congratulated me on the baby.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "root",
+        "brk"
+      ],
+      [
+        "category",
+        "V"
+      ],
+      [
+        "prep",
+        "b-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex6b",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(6b)"
+    },
+    "language": "nort3139",
+    "primaryText": "baʕtu-li mbarake ʕa(la)/*b- l-walad.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "baʕtu-li",
+        "sent.3.PL-to.me"
+      ],
+      [
+        "mbarake",
+        "congratulations"
+      ],
+      [
+        "ʕa(la)/*b-",
+        "over/*in-"
+      ],
+      [
+        "l-walad",
+        "the-baby"
+      ]
+    ],
+    "translation": "They sent me congratulations on the baby.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "root",
+        "brk"
+      ],
+      [
+        "category",
+        "N"
+      ],
+      [
+        "prep",
+        "ʕala"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex11a",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(11a)"
+    },
+    "language": "tuni1259",
+    "primaryText": "xaf min l-ʔasad.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "xaf",
+        "feared.3.M.SG"
+      ],
+      [
+        "min",
+        "from"
+      ],
+      [
+        "l-ʔasad",
+        "the-lion"
+      ]
+    ],
+    "translation": "He was afraid of the lion.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "root",
+        "xwf"
+      ],
+      [
+        "template",
+        "XaYaZ"
+      ],
+      [
+        "prep",
+        "min"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex11b",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(11b)"
+    },
+    "language": "tuni1259",
+    "primaryText": "xawwəf-u min l-ʔasad.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "xawwəf-u",
+        "made.afraid.3.M.SG-him"
+      ],
+      [
+        "min",
+        "from"
+      ],
+      [
+        "l-ʔasad",
+        "the-lion"
+      ]
+    ],
+    "translation": "He made him afraid of the lion.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "root",
+        "xwf"
+      ],
+      [
+        "template",
+        "XaYYaZ"
+      ],
+      [
+        "prep",
+        "min"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex13ai",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(13a.i)"
+    },
+    "language": "tuni1259",
+    "primaryText": "kraht (*fi) Sami.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "kraht",
+        "hate.1.SG"
+      ],
+      [
+        "(*fi)",
+        "(*in)"
+      ],
+      [
+        "Sami",
+        "Sami"
+      ]
+    ],
+    "translation": "I hate Sami.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "krh"
+      ],
+      [
+        "template",
+        "XaYaZ"
+      ],
+      [
+        "prep",
+        "none"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex13aii",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(13a.ii)"
+    },
+    "language": "tuni1259",
+    "primaryText": "karraht-ha *(fi) Sami.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "karraht-ha",
+        "made.hate.1.SG-her"
+      ],
+      [
+        "*(fi)",
+        "*(in)"
+      ],
+      [
+        "Sami",
+        "Sami"
+      ]
+    ],
+    "translation": "I made her hate Sami.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "krh"
+      ],
+      [
+        "template",
+        "XaYYaZ"
+      ],
+      [
+        "prep",
+        "fi"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex13bi",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(13b.i)"
+    },
+    "language": "tuni1259",
+    "primaryText": "l-ħnaʃ daːr biː-/*ʕliː-k.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "l-ħnaʃ",
+        "the-snake"
+      ],
+      [
+        "daːr",
+        "encircled.3.M.SG"
+      ],
+      [
+        "biː-/*ʕliː-k",
+        "in-/*over-you"
+      ]
+    ],
+    "translation": "The snake encircled you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "dwr"
+      ],
+      [
+        "template",
+        "XaYaZ"
+      ],
+      [
+        "prep",
+        "bi-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex13bii",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(13b.ii)"
+    },
+    "language": "tuni1259",
+    "primaryText": "dawwart l-ħnaʃ ʕliː-/*biː-k.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "dawwart",
+        "encircled.1.SG"
+      ],
+      [
+        "l-ħnaʃ",
+        "the-snake"
+      ],
+      [
+        "ʕliː-/*biː-k",
+        "over-/*in-you"
+      ]
+    ],
+    "translation": "I made the snake encircle you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "dwr"
+      ],
+      [
+        "template",
+        "XaYYaZ"
+      ],
+      [
+        "prep",
+        "ʕla"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex14a",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(14a)"
+    },
+    "language": "nort3139",
+    "primaryText": "ħakam ʕalej-o b-s-siʤn.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ħakam",
+        "sentenced.3.M.SG"
+      ],
+      [
+        "ʕalej-o",
+        "over-him"
+      ],
+      [
+        "b-s-siʤn",
+        "in-the-jail"
+      ]
+    ],
+    "translation": "He sentenced him to jail.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "ħkm"
+      ],
+      [
+        "template",
+        "XaYaZ"
+      ],
+      [
+        "prep",
+        "ʕala"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex14b",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(14b)"
+    },
+    "language": "nort3139",
+    "primaryText": "ħakkam (*ʕala/*b-) (l-mubaːreː).",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ħakkam",
+        "refereed.3.M.SG"
+      ],
+      [
+        "(*ʕala/*b-)",
+        "(*over/*in-)"
+      ],
+      [
+        "(l-mubaːreː)",
+        "(the-match)"
+      ]
+    ],
+    "translation": "He refereed (the match).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "ħkm"
+      ],
+      [
+        "template",
+        "XaYYaZ"
+      ],
+      [
+        "prep",
+        "none"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex15a_active",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(15a)"
+    },
+    "language": "nort3139",
+    "primaryText": "wasaʔ b- NP",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "trusted in NP",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "wsʔ"
+      ],
+      [
+        "template",
+        "XaYaZ"
+      ],
+      [
+        "prep",
+        "b-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex15a_nonactive",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(15a)"
+    },
+    "language": "nort3139",
+    "primaryText": "nwasaʔ b- NP",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(lit.) it was trusted in NP",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "wsʔ"
+      ],
+      [
+        "template",
+        "nXaYaZ"
+      ],
+      [
+        "prep",
+        "b-"
+      ]
+    ],
+    "comment": "An impersonal passive keeping the preposition.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex15b_active",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(15b)"
+    },
+    "language": "nort3139",
+    "primaryText": "ʤaðab NP1 la-/ʕala NP2",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "attracted NP1 to NP2",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "ʤðb"
+      ],
+      [
+        "template",
+        "XaYaZ"
+      ],
+      [
+        "prep",
+        "la-/ʕala"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex15b_nonactive",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(15b)"
+    },
+    "language": "nort3139",
+    "primaryText": "nʤaðab la-/??ʕala NP2",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "was attracted to NP2",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "ʤðb"
+      ],
+      [
+        "template",
+        "nXaYaZ"
+      ],
+      [
+        "prep",
+        "la-"
+      ]
+    ],
+    "comment": "The passivizing alternation changes the preposition.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex15c_active",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(15c)"
+    },
+    "language": "nort3139",
+    "primaryText": "ʃaka NP1 la- NP2",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "tattled on NP1 to NP2",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "ʃkw"
+      ],
+      [
+        "template",
+        "XaYaZ"
+      ],
+      [
+        "prep",
+        "la-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex15c_nonactive",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(15c)"
+    },
+    "language": "nort3139",
+    "primaryText": "nʃaka ʕala NP",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "NP was complained about",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "ʃkw"
+      ],
+      [
+        "template",
+        "nXaYaZ"
+      ],
+      [
+        "prep",
+        "ʕala"
+      ]
+    ],
+    "comment": "A semantically opaque alternation changing the preposition.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex16a_active",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(16a)"
+    },
+    "language": "nort3139",
+    "primaryText": "dawwar ʕala NP",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "looked for NP",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "dwr"
+      ],
+      [
+        "template",
+        "XaYYaZ"
+      ],
+      [
+        "prep",
+        "ʕala"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex16a_nonactive",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(16a)"
+    },
+    "language": "nort3139",
+    "primaryText": "ddawwar ʕala NP",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(lit.) it was looked for NP",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "dwr"
+      ],
+      [
+        "template",
+        "tXaYYaZ"
+      ],
+      [
+        "prep",
+        "ʕala"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex16b_active",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(16b)"
+    },
+    "language": "nort3139",
+    "primaryText": "ʃawwaʔ NP2 ʕala/*la- NP1",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "excited NP2 for NP1",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "ʃwq"
+      ],
+      [
+        "template",
+        "XaYYaZ"
+      ],
+      [
+        "prep",
+        "ʕala"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex16b_nonactive",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(16b)"
+    },
+    "language": "nort3139",
+    "primaryText": "tʃawwaʔ ʕala/la- NP1",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "was excited for NP1",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "ʃwq"
+      ],
+      [
+        "template",
+        "tXaYYaZ"
+      ],
+      [
+        "prep",
+        "ʕala/la-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex16c_active",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(16c)"
+    },
+    "language": "nort3139",
+    "primaryText": "ħakkam",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "was a referee",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "ħkm"
+      ],
+      [
+        "template",
+        "XaYYaZ"
+      ],
+      [
+        "prep",
+        "none"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex16c_nonactive",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(16c)"
+    },
+    "language": "nort3139",
+    "primaryText": "tħakkam b- NP",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "controlled NP",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "ħkm"
+      ],
+      [
+        "template",
+        "tXaYYaZ"
+      ],
+      [
+        "prep",
+        "b-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex17a",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(17a)"
+    },
+    "language": "hebr1245",
+    "primaryText": "tipel be- NP1",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "tipel",
+        "treated"
+      ],
+      [
+        "be-",
+        "in-"
+      ],
+      [
+        "NP1",
+        "NP1"
+      ]
+    ],
+    "translation": "treated NP1",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "tpl"
+      ],
+      [
+        "template",
+        "XiYeZ"
+      ],
+      [
+        "prep",
+        "be-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex17b",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(17b)"
+    },
+    "language": "hebr1245",
+    "primaryText": "NP1 tupal (al jedej NP2)",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "NP1",
+        "NP1"
+      ],
+      [
+        "tupal",
+        "was.treated"
+      ],
+      [
+        "(al jedej NP2)",
+        "(by NP2)"
+      ]
+    ],
+    "translation": "NP1 was treated (by NP2)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "tpl"
+      ],
+      [
+        "template",
+        "XuYaZ"
+      ],
+      [
+        "prep",
+        "none"
+      ]
+    ],
+    "comment": "The passive template suppresses the l-selected preposition and licenses a by-phrase.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex18a",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(18a)"
+    },
+    "language": "hebr1245",
+    "primaryText": "hiʃpia al NP1",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "hiʃpia",
+        "influenced"
+      ],
+      [
+        "al",
+        "over"
+      ],
+      [
+        "NP1",
+        "NP1"
+      ]
+    ],
+    "translation": "influenced NP1",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "ʃpʕ"
+      ],
+      [
+        "template",
+        "hiXYiZ"
+      ],
+      [
+        "prep",
+        "al"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex18b",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(18b)"
+    },
+    "language": "hebr1245",
+    "primaryText": "NP1 huʃpa (al jedej NP2)",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "NP1",
+        "NP1"
+      ],
+      [
+        "huʃpa",
+        "was.influenced"
+      ],
+      [
+        "(al jedej NP2)",
+        "(by NP2)"
+      ]
+    ],
+    "translation": "NP1 was influenced (by NP2)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "ʃpʕ"
+      ],
+      [
+        "template",
+        "huXYaZ"
+      ],
+      [
+        "prep",
+        "none"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex19a",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(19a)"
+    },
+    "language": "hebr1245",
+    "primaryText": "serev le- NP1",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "serev",
+        "rejected"
+      ],
+      [
+        "le-",
+        "to-"
+      ],
+      [
+        "NP1",
+        "NP1"
+      ]
+    ],
+    "translation": "rejected NP1",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "srb"
+      ],
+      [
+        "template",
+        "XiYeZ"
+      ],
+      [
+        "prep",
+        "le-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex19b",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(19b)"
+    },
+    "language": "hebr1245",
+    "primaryText": "*NP1 surav (al jedej NP2)",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "NP1 was rejected (by NP2)",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "srb"
+      ],
+      [
+        "template",
+        "XuYaZ"
+      ]
+    ],
+    "comment": "Whether a root undergoes preposition-suppressing passivization is lexically specified.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex20a",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(20a)"
+    },
+    "language": "hebr1245",
+    "primaryText": "hirbic le- NP1",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "hirbic",
+        "hit"
+      ],
+      [
+        "le-",
+        "to-"
+      ],
+      [
+        "NP1",
+        "NP1"
+      ]
+    ],
+    "translation": "hit NP1",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "rbc"
+      ],
+      [
+        "template",
+        "hiXYiZ"
+      ],
+      [
+        "prep",
+        "le-"
+      ]
+    ],
+    "comment": "Adapted from Berman (1978).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex20b",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(20b)"
+    },
+    "language": "hebr1245",
+    "primaryText": "*NP1 hurbac (al jedej NP2)",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "NP1 was hit (by NP2)",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "rbc"
+      ],
+      [
+        "template",
+        "huXYaZ"
+      ]
+    ],
+    "comment": "Adapted from Berman (1978).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex21a",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(21a)"
+    },
+    "language": "stan1293",
+    "primaryText": "That kind of tumor can be operated on by experienced doctors.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "oper"
+      ],
+      [
+        "construction",
+        "pseudopassive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex21b",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(21b)"
+    },
+    "language": "stan1293",
+    "primaryText": "That kind of tumor is operable (*on) (*by experienced doctors).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "oper"
+      ],
+      [
+        "construction",
+        "-able"
+      ]
+    ],
+    "comment": "Adjectivalizing -able suppresses the l-selected preposition and rejects a by-phrase.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex21c",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(21c)"
+    },
+    "language": "stan1293",
+    "primaryText": "*That kind of tumor operates on easily/quickly (by experienced doctors).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "oper"
+      ],
+      [
+        "construction",
+        "middle"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex22a",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(22a)"
+    },
+    "language": "stan1293",
+    "primaryText": "That kind of tumor can be treated by experienced doctors.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "treat"
+      ],
+      [
+        "construction",
+        "passive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex22b",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(22b)"
+    },
+    "language": "stan1293",
+    "primaryText": "That kind of tumor is treatable by experienced doctors.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "treat"
+      ],
+      [
+        "construction",
+        "-able"
+      ]
+    ],
+    "comment": "A root that does not l-select permits the by-phrase under -able.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hewett2026_ex22c",
+    "source": {
+      "bibkey": "hewett-2026",
+      "paperLabel": "(22c)"
+    },
+    "language": "stan1293",
+    "primaryText": "(?)That kind of tumor treats easily/quickly (*by experienced doctors).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "root",
+        "treat"
+      ],
+      [
+        "construction",
+        "middle"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  }
+]
