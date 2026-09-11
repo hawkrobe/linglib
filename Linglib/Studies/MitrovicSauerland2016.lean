@@ -1,4 +1,10 @@
-import Linglib.Studies.Haspelmath2007
+import Linglib.Syntax.Coordination
+import Linglib.Fragments.English.Coordination
+import Linglib.Fragments.Japanese.Coordination
+import Linglib.Fragments.Hungarian.Coordination
+import Linglib.Fragments.Georgian.Coordination
+import Linglib.Fragments.Latin.Coordination
+import Linglib.Fragments.Korean.Coordination
 
 /-!
 # Mitrović & Sauerland (2016): Two conjunctions are better than one
@@ -38,10 +44,11 @@ heads are overtly pronounced; the predictions are:
 
 ## Implementation notes
 
-* Language records (`english`, `japanese`, `hungarian`, `georgian`, `latin`,
-  `korean`, `slovenian`) are defined in `Studies/Haspelmath2007.lean` and
-  reused here unchanged. Triadic-exponency classification of Georgian
-  follows [mitrovic-2021]; [mitrovic-sauerland-2016] itself
+* The language records (`english`, `japanese`, `hungarian`, `georgian`, `latin`,
+  `korean`, `slovenian`) carry the J/μ classification of each language's
+  conjunction morphemes; the morphemes are the Fragment entries. The
+  triadic-exponency classification of Georgian and the Korean and Slovenian
+  records follow [mitrovic-2021]; [mitrovic-sauerland-2016] itself
   does not include Georgian.
 * The original paper's languages SE Macedonian, Avar, and SerBo-Croatian
   are not yet in the sample.
@@ -50,7 +57,97 @@ heads are overtly pronounced; the predictions are:
 namespace MitrovicSauerland2016
 
 open Syntax.Coordination
-open Haspelmath2007
+
+/-! ### The language records -/
+
+/-- English only has J ("and"). "Both...and" is sometimes analyzed as J-MU,
+    but "both" is not productively used as an additive particle (*"John both
+    slept") and English lacks MU-only conjunction (*"John both Mary both slept"). -/
+def english : ConjunctionSystem :=
+  { language := "English"
+  , morphemes := [ { entry := English.Coordination.and_ } ]
+  , strategies := [.jOnly]
+  , patterns := [.a_co_b]
+  , iso := "eng" }
+
+/-- Japanese conjunction uses "to" (J) and "mo" (MU).
+    "to" derives from the comitative marker. "mo" is also the additive particle. -/
+def japanese : ConjunctionSystem :=
+  { language := "Japanese"
+  , morphemes :=
+    [ { entry := Japanese.Coordination.to_
+      , source := some .comitative }
+    , { entry := Japanese.Coordination.mo
+      , source := some .focusParticle } ]
+  , strategies := [.jOnly, .muOnly]
+  , patterns := [.a'co_b, .a'co_b'co]
+  , iso := "jpn" }
+
+/-- Hungarian: "és" (J, free, prepositive), "is" (MU, free, postpositive).
+    "is" is also the additive focus particle ("also"). One of the languages
+    exhibiting triadic exponency, all three of two μ heads and a J head,
+    [mitrovic-sauerland-2016] (28). -/
+def hungarian : ConjunctionSystem :=
+  { language := "Hungarian"
+  , morphemes :=
+    [ { entry := Hungarian.Coordination.es }
+    , { entry := Hungarian.Coordination.is_
+      , source := some .focusParticle } ]
+  , strategies := [.jOnly, .muOnly, .jMu]
+  , patterns := [.a_co_b, .a'co_b'co]
+  , iso := "hun" }
+
+/-- Georgian: "da" (J, free), "-c" (MU, bound clitic).
+    "-c" is also the additive/focus particle. Classified as exhibiting all
+    three strategies per [mitrovic-2021]; [mitrovic-sauerland-2016]
+    itself uses SE Macedonian, Hungarian, and Avar as the triadic-exponency
+    languages. -/
+def georgian : ConjunctionSystem :=
+  { language := "Georgian"
+  , morphemes :=
+    [ { entry := Georgian.Coordination.da }
+    , { entry := Georgian.Coordination.c_
+      , source := some .focusParticle } ]
+  , strategies := [.jOnly, .muOnly, .jMu]
+  , patterns := [.a_co_b, .a'co_b'co]
+  , iso := "kat" }
+
+/-- Latin: "et" (J, free, prepositive) and "-que" (MU, bound enclitic, postpositive).
+    Three patterns: A et B, A B-que, et A B-que. -/
+def latin : ConjunctionSystem :=
+  { language := "Latin"
+  , morphemes :=
+    [ { entry := Latin.Coordination.et }
+    , { entry := Latin.Coordination.que
+      , source := some .focusParticle } ]
+  , strategies := [.jOnly, .muOnly]
+  , patterns := [.a_co_b, .a_b'co, .co'a_b'co]
+  , iso := "lat" }
+
+/-- Korean: "-(i)rang" (J, bound, postpositive) and "-to" (MU, bound, additive);
+    classification follows [mitrovic-2021]. -/
+def korean : ConjunctionSystem :=
+  { language := "Korean"
+  , morphemes :=
+    [ { entry := Korean.Coordination.irang }
+    , { entry := Korean.Coordination.to_
+      , source := some .focusParticle } ]
+  , strategies := [.jOnly, .muOnly]
+  , patterns := [.a'co_b, .a'co_b'co]
+  , iso := "kor" }
+
+/-- Slovenian: "in" (J, free, prepositive). Primarily J-only. -/
+def slovenian : ConjunctionSystem :=
+  { language := "Slovenian"
+  , morphemes :=
+    [ { entry := { form := "in", gloss := "and", role := .j, kind := .free } } ]
+  , strategies := [.jOnly]
+  , patterns := [.a_co_b]
+  , iso := "slv" }
+
+/-- The seven-language sample. -/
+def msLanguages : List ConjunctionSystem :=
+  [english, japanese, hungarian, georgian, latin, korean, slovenian]
 
 /-! ### Triadic-exponency predicate -/
 
@@ -70,7 +167,7 @@ instance (sys : ConjunctionSystem) : Decidable (hasAllThreeStrategies sys) := by
     §3). MU is a single lexical item with subset semantics that appears in
     both conjunction and additive contexts. -/
 theorem mu_additive_generalization :
-    ∀ sys ∈ allLanguages,
+    ∀ sys ∈ msLanguages,
       (∃ m ∈ sys.morphemes, m.entry.role = .mu) → sys.muIsAdditive := by
   decide
 
@@ -79,12 +176,12 @@ theorem mu_additive_generalization :
 theorem j_is_universal : ∀ sys ∈ msLanguages, sys.hasStrategy .jOnly := by
   decide
 
-/-- **Triadic exponency is rare.** Within the 19-language sample, the only
+/-- **Triadic exponency is rare.** Within the seven-language sample, the only
     languages exhibiting all three M&S strategies (J, MU, J-MU) are Hungarian
     and Georgian (iso codes "hun", "kat"). The biconditional pins which
     languages have the rare pattern and which do not. -/
 theorem all_three_is_rare :
-    ∀ sys ∈ allLanguages,
+    ∀ sys ∈ msLanguages,
       hasAllThreeStrategies sys ↔ sys.iso = "kat" ∨ sys.iso = "hun" := by
   decide
 

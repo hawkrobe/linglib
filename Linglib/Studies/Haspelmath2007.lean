@@ -1,16 +1,9 @@
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Tactic.DeriveFintype
 import Linglib.Syntax.Coordination
 import Linglib.Fragments.English.Coordination
-import Linglib.Fragments.Farsi.Coordination
-import Linglib.Fragments.Finnish.Coordination
-import Linglib.Fragments.Georgian.Coordination
-import Linglib.Fragments.German.Coordination
 import Linglib.Fragments.Hausa.Coordination
-import Linglib.Fragments.HindiUrdu.Coordination
-import Linglib.Fragments.Hungarian.Coordination
-import Linglib.Fragments.Irish.Coordination
-import Linglib.Fragments.Japanese.Coordination
 import Linglib.Fragments.Kannada.Coordination
-import Linglib.Fragments.Korean.Coordination
 import Linglib.Fragments.Lango.Coordination
 import Linglib.Fragments.Latin.Coordination
 import Linglib.Fragments.Tibetan.Coordination
@@ -18,316 +11,283 @@ import Linglib.Fragments.Turkish.Coordination
 import Linglib.Fragments.Yoruba.Coordination
 
 /-!
-# Haspelmath (2007): Coordination — structural typology
-[haspelmath-2007] [stassen-2000] [noonan-1992] [schwartz-1989]
-[rowlands-1969] [sridhar-1990] [dench-1995] [beyer-1992]
-[kornfilt-1997]
+# Haspelmath (2007): Coordination
 
-Martin Haspelmath. "Coordination." In *Language Typology and Syntactic
-Description, Vol. II*, ed. T. Shopen, 2007.
-
-Cross-linguistic typology of coordination — restricted here to **conjunctive**
-coordination. The chapter as a whole covers four semantic types (conjunction,
-disjunction, adversative, causal) plus emphatic and emphatic-negative variants;
-the formalisation below engages only conjunction (§1 *Types and positions of
-coordinators*, §5.1 *Diachronic sources*). Disjunction (§4), adversative,
-causal, ellipsis (§6), and subordination diagnostics (§7) are out of scope.
-
-The companion file `Studies/MitrovicSauerland2016.lean` consumes the
-language sample below to formalise the J-μ predictions; the `iso` and
-`patterns` data sets are shared.
-
-## Main declarations
-
-* `allLanguages` — 19-language sample (Haspelmath structural exemplars + M&S
-  focus languages).
-* `msLanguages` — M&S-focused sub-sample of 7 languages; consumed by
-  `MitrovicSauerland2016.lean`.
-* `coAB_unattested` — Haspelmath's structural generalisation that the
-  monosyndetic pattern `co-A B` (prepositive on first coordinand only) is
-  typologically absent (cf. [stassen-2000], n=260).
-* `comitative_source_monosyndetic`, `focus_particle_source_bisyndetic` —
-  the two diachronic-source / syndesis correlations Haspelmath proposes
-  in §5.1.
+This file formalizes the typology of coordinators in [haspelmath-2007]: the patterns of
+coordinator placement in binary coordination, (17), and the two derivations built on them. The
+first is diachronic, §1.2: a conjunctive coordinator descends from a comitative modifier 'A with
+B' or from an additive focus particle 'A, also B', `DiachronicSource.pattern` gives the pattern
+of each source construction, and `coAB_unsourced` derives that the one logically possible
+monosyndetic pattern no language attests, co-A B, is the one no source yields. The second is
+Table 1.1, §1.4: the full n-ary pattern repeats the binary marking on every coordinand but the
+one bare in the binary construction (`full`) and coordinator omission keeps only the last
+coordinator (`omitted`); `table_1_1` recovers the table's five rows. `attestations` are the
+constructions the chapter cites with their patterns, over which `bisyndetic_normal_postpositive`
+states the observation of §1.3 and §2.1 that non-emphatic bisyndesis is postpositive with two
+coordinators of the same shape and `prepositive_bisyndetic_emphatic` Stassen's, that
+prepositive bisyndesis is an emphatic variant. The emphatic correlatives of (45) are classified
+from their forms by `CorrelativeShape.classify`, and Payne's implicational sequence of
+coordinand types, §3, is `Contiguous`, with Tinrin the counterexample the chapter records.
+The chapter's examples are the rows of `Data/Examples/Haspelmath2007.json`.
 
 ## Implementation notes
 
-* Records use the `ConjunctionSystem` struct from
-  `Typology/Coordination.lean`. All morphemes reference Fragment entries
-  except for Slovenian (*in*) and Martuthunira (*-thurti*), which remain
-  inline since the project has no `Fragments/{Slovenian,Martuthunira}/`
-  directory and creating one for a single morpheme is overkill.
-* Pattern data follow the cited primary sources, *not* the M&S analyses
-  layered on top — e.g., Turkish *de* is monosyndetic postpositive per
-  [haspelmath-2007] (23), not bisyndetic.
+The chapter's exemplar languages with Fragment coordination entries use them; the others
+carry their coordinator inline. Whether a construction is emphatic is recorded only where the
+chapter says so, and a diachronic source only where the chapter states one, so Classical
+Tibetan *-daŋ*, "a former case-marker", has none. The word-order half of the comitative
+derivation, adposition order following modifier order, is taken as the `CoordinatorPosition`
+argument of `DiachronicSource.pattern`. The comitative-sourced attestations include Tauya
+*-sou*, doubled on both conjuncts, the extension §5.1 notes, so `comitative_patterns` admits
+the postpositive bisyndetic pattern beside the two source patterns.
+
+## References
+
+* [haspelmath-2007]
+* [stassen-2000]
 -/
 
 namespace Haspelmath2007
 
 open Syntax.Coordination
-/-! ### M&S focus languages -/
 
-/-- English only has J ("and"). "Both...and" is sometimes analyzed as J-MU,
-    but "both" is not productively used as an additive particle (*"John both
-    slept") and English lacks MU-only conjunction (*"John both Mary both slept"). -/
-def english : ConjunctionSystem :=
-  { language := "English"
-  , morphemes := [ { entry := English.Coordination.and_ } ]
-  , strategies := [.jOnly]
-  , patterns := [.a_co_b]
-  , iso := "eng" }
+/-! ### Binary patterns, (17) -/
 
-/-- German uses "und" (J, free word), like English "and". J-only strategy. -/
-def german : ConjunctionSystem :=
-  { language := "German"
-  , morphemes :=
-    [ { entry := German.Coordination.und } ]
-  , strategies := [.jOnly]
-  , patterns := [.a_co_b]
-  , iso := "deu" }
+/-- The marking of a coordinand: bare, or carrying a prepositive or a postpositive
+coordinator. -/
+inductive Slot where
+  | bare
+  | pre
+  | post
+  deriving DecidableEq, Repr
 
-/-- Japanese conjunction uses "to" (J) and "mo" (MU).
-    "to" derives from the comitative marker. "mo" is also the additive particle. -/
-def japanese : ConjunctionSystem :=
-  { language := "Japanese"
-  , morphemes :=
-    [ { entry := Japanese.Coordination.to_
-      , source := some .comitative }
-    , { entry := Japanese.Coordination.mo
-      , source := some .focusParticle } ]
-  , strategies := [.jOnly, .muOnly]
-  , patterns := [.a'co_b, .a'co_b'co]
-  , iso := "jpn" }
+/-- The markings of the two coordinands in a binary pattern, (17). -/
+def slots : CoordPattern → Slot × Slot
+  | .a_co_b => (.bare, .pre)
+  | .a'co_b => (.post, .bare)
+  | .a_b'co => (.bare, .post)
+  | .co'a_b => (.pre, .bare)
+  | .co'a_co'b => (.pre, .pre)
+  | .a'co_b'co => (.post, .post)
+  | .a'co_co'b => (.post, .pre)
+  | .co'a_b'co => (.pre, .post)
 
-/-- Hungarian: "és" (J, free, prepositive), "is" (MU, free, postpositive).
-    "is" is also the additive focus particle ("also").
-    One of the languages in the M&S 2016 sample exhibiting triadic exponency
-    (all three of two μ heads + J head) — see [mitrovic-sauerland-2016]
-    (28). -/
-def hungarian : ConjunctionSystem :=
-  { language := "Hungarian"
-  , morphemes :=
-    [ { entry := Hungarian.Coordination.es }
-    , { entry := Hungarian.Coordination.is_
-      , source := some .focusParticle } ]
-  , strategies := [.jOnly, .muOnly, .jMu]
-  , patterns := [.a_co_b, .a'co_b'co]
-  , iso := "hun" }
+/-- Monosyndetic coordination is universally asymmetric, §1.2: one coordinand is bare. -/
+theorem monosyndetic_bare (p : CoordPattern) (h : p.syndesis = .monosyndetic) :
+    (slots p).1 = .bare ∨ (slots p).2 = .bare := by
+  cases p <;> first | decide | exact absurd h (by decide)
 
-/-- Georgian: "da" (J, free), "-c" (MU, bound clitic).
-    "-c" is also the additive/focus particle. Classified as exhibiting all
-    three M&S strategies per [mitrovic-2021]; [mitrovic-sauerland-2016]
-    itself uses SE Macedonian, Hungarian, and Avar as the triadic-exponency
-    languages — Georgian's inclusion here is from the later literature. -/
-def georgian : ConjunctionSystem :=
-  { language := "Georgian"
-  , morphemes :=
-    [ { entry := Georgian.Coordination.da }
-    , { entry := Georgian.Coordination.c_
-      , source := some .focusParticle } ]
-  , strategies := [.jOnly, .muOnly, .jMu]
-  , patterns := [.a_co_b, .a'co_b'co]
-  , iso := "kat" }
+/-- No source construction has the pattern co-A B, §1.2: the explanation of its absence in
+[stassen-2000]'s sample of 260 languages. -/
+theorem coAB_unsourced (s : DiachronicSource) (pos : CoordinatorPosition) :
+    DiachronicSource.pattern s pos ≠ some .co'a_b := by
+  cases s <;> cases pos <;> decide
 
-/-- Latin: "et" (J, free, prepositive) and "-que" (MU, bound enclitic, postpositive).
-    "-que" is the classic bound MU particle. Three patterns: A et B,
-    A B-que, et A B-que. -/
-def latin : ConjunctionSystem :=
-  { language := "Latin"
-  , morphemes :=
-    [ { entry := Latin.Coordination.et }
-    , { entry := Latin.Coordination.que
-      , source := some .focusParticle } ]
-  , strategies := [.jOnly, .muOnly]
-  , patterns := [.a_co_b, .a_b'co, .co'a_b'co]
-  , iso := "lat" }
+/-! ### Multiple coordination, Table 1.1 -/
 
-/-- Korean: "-(i)rang" (J, bound, postpositive) and "-to" (MU, bound, additive).
-    Not discussed in [haspelmath-2007]; classification follows
-    [mitrovic-2021]. -/
-def korean : ConjunctionSystem :=
-  { language := "Korean"
-  , morphemes :=
-    [ { entry := Korean.Coordination.irang }
-    , { entry := Korean.Coordination.to_
-      , source := some .focusParticle } ]
-  , strategies := [.jOnly, .muOnly]
-  , patterns := [.a'co_b, .a'co_b'co]
-  , iso := "kor" }
+/-- The full n-ary pattern, §1.4: a bisyndetic pattern of one shape marks every coordinand,
+and a monosyndetic pattern leaves bare the coordinand bare in the binary construction and
+marks every other one as its marked coordinand is marked; the mixed patterns have no full
+pattern in the chapter. -/
+def full (p : CoordPattern) (n : ℕ) : Option (List Slot) :=
+  match slots p with
+  | (.bare, s) => some (.bare :: List.replicate (n - 1) s)
+  | (s, .bare) => some (List.replicate (n - 1) s ++ [.bare])
+  | (s, t) => if s = t then some (List.replicate n s) else none
 
-/-- Slovenian: "in" (J, free, prepositive). Primarily J-only. -/
-def slovenian : ConjunctionSystem :=
-  { language := "Slovenian"
-  , morphemes :=
-    [ { entry := { form := "in", gloss := "and", role := .j, kind := .free } } ]
-  , strategies := [.jOnly]
-  , patterns := [.a_co_b]
-  , iso := "slv" }
+/-- Keep the last coordinator of a construction read from the end. -/
+def keepLastRev : List Slot → List Slot
+  | [] => []
+  | .bare :: l => .bare :: keepLastRev l
+  | s :: l => s :: l.map λ _ => .bare
 
-/-! ### Haspelmath 2007 structural exemplars -/
+/-- Coordinator omission, §1.4: all but the last coordinator are eliminated. -/
+def omitted (p : CoordPattern) (n : ℕ) : Option (List Slot) :=
+  (full p n).map λ l => (keepLastRev l.reverse).reverse
 
-/-- Lango (Nilotic, Uganda): "kèdè" is a comitative marker that also serves
-    as coordinator. Classic AND-language with comitative source giving
-    monosyndetic A co-B ([noonan-1992]:163, [haspelmath-2007] (20)). -/
-def lango : ConjunctionSystem :=
-  { language := "Lango"
-  , morphemes :=
-    [ { entry := Lango.Coordination.kede
-      , source := some .comitative } ]
-  , strategies := [.jOnly]
-  , patterns := [.a_co_b]
-  , iso := "laj" }
-
-/-- Hausa (Chadic, Nigeria): "da" means both "with" (comitative) and "and"
-    (conjunction) ([schwartz-1989]:32,36; [haspelmath-2007] (12)). -/
-def hausa : ConjunctionSystem :=
-  { language := "Hausa"
-  , morphemes :=
-    [ { entry := Hausa.da
-      , source := some .comitative } ]
-  , strategies := [.jOnly]
-  , patterns := [.a_co_b]
-  , iso := "hau" }
-
-/-- Yoruba (Kwa, Nigeria): "àtí" in "àtí A àtí B" — canonical prepositive
-    bisyndetic coordination ([rowlands-1969]:201ff, [haspelmath-2007] (25)). -/
-def yoruba : ConjunctionSystem :=
-  { language := "Yoruba"
-  , morphemes := [ { entry := Yoruba.Coordination.ati } ]
-  , strategies := [.jOnly]
-  , patterns := [.co'a_co'b]
-  , iso := "yor" }
-
-/-- Kannada (Dravidian): postpositive "-u" on each coordinand gives A-co B-co
-    ([sridhar-1990]:106, [haspelmath-2007] (5)). "-u" is also the
-    Dravidian additive/focus particle. -/
-def kannada : ConjunctionSystem :=
-  { language := "Kannada"
-  , morphemes :=
-    [ { entry := Kannada.Coordination.u
-      , source := some .focusParticle } ]
-  , strategies := [.muOnly]
-  , patterns := [.a'co_b'co]
-  , iso := "kan" }
-
-/-- Martuthunira (Pama-Nyungan, W. Australia): "-thurti" on each coordinand
-    gives A-co B-co ([dench-1995]:98, [haspelmath-2007] (26)). -/
-def martuthunira : ConjunctionSystem :=
-  { language := "Martuthunira"
-  , morphemes :=
-    -- UNVERIFIED: attachment — postpositive on each coordinand ([dench-1995]); clitic vs affix not stated here
-    [ { entry := { form := "-thurti", gloss := "and", role := .j, kind := .bound .after .clitic } } ]
-  , strategies := [.jOnly]
-  , patterns := [.a'co_b'co]
-  , iso := "vma" }
-
-/-- Classical Tibetan: "-daŋ" is postpositive on first coordinand, giving A-co B.
-    Derives from comitative source ([beyer-1992]:240, [haspelmath-2007] (21)). -/
-def classicalTibetan : ConjunctionSystem :=
-  { language := "Classical Tibetan"
-  , morphemes :=
-    [ { entry := Tibetan.Coordination.dang
-      , source := some .comitative } ]
-  , strategies := [.jOnly]
-  , patterns := [.a'co_b]
-  , iso := "xct" }
-
-/-- Hindi-Urdu: "aur" (J, free, prepositive) and "bhii" (MU, free, additive).
-    Pattern: A aur B (monosyndetic), A bhii B bhii (bisyndetic postpositive). -/
-def hindiUrdu : ConjunctionSystem :=
-  { language := "Hindi-Urdu"
-  , morphemes :=
-    [ { entry := HindiUrdu.Coordination.aur }
-    , { entry := HindiUrdu.Coordination.bhii
-      , source := some .focusParticle } ]
-  , strategies := [.jOnly, .muOnly]
-  , patterns := [.a_co_b, .a'co_b'co]
-  , iso := "hin" }
-
-/-- Turkish: "ve" (J, free, prepositive) and "de" (MU, bound enclitic,
-    postpositive on first word of second coordinand).
-    Per [haspelmath-2007] (23) citing [kornfilt-1997]:120, *de* is
-    monosyndetic postpositive (A B-co); *de…de* bisyndetic also exists as a
-    marked emphatic variant. -/
-def turkish : ConjunctionSystem :=
-  { language := "Turkish"
-  , morphemes :=
-    [ { entry := Turkish.Coordination.ve }
-    , { entry := Turkish.Coordination.de
-      , source := some .focusParticle } ]
-  , strategies := [.jOnly, .muOnly]
-  , patterns := [.a_co_b, .a_b'co, .a'co_b'co]
-  , iso := "tur" }
-
-/-- Irish: "agus" (J, free, prepositive). Pattern: A agus B (monosyndetic medial). -/
-def irish : ConjunctionSystem :=
-  { language := "Irish"
-  , morphemes :=
-    [ { entry := Irish.Coordination.agus } ]
-  , strategies := [.jOnly]
-  , patterns := [.a_co_b]
-  , iso := "gle" }
-
-/-- Persian: "va" (J, free, prepositive) and "ham" (MU, free, additive). -/
-def persian : ConjunctionSystem :=
-  { language := "Persian"
-  , morphemes :=
-    [ { entry := Farsi.Coordination.va }
-    , { entry := Farsi.Coordination.ham
-      , source := some .focusParticle } ]
-  , strategies := [.jOnly, .muOnly]
-  , patterns := [.a_co_b, .a'co_b'co]
-  , iso := "fas" }
-
-/-- Finnish: "ja" (J, free, prepositive) and "-kin" (MU, bound, additive).
-    *koira-kin kissa-kin* 'dog-too cat-too' = 'both the dog and the cat'. -/
-def finnish : ConjunctionSystem :=
-  { language := "Finnish"
-  , morphemes :=
-    [ { entry := Finnish.Coordination.ja }
-    , { entry := Finnish.Coordination.kin
-      , source := some .focusParticle } ]
-  , strategies := [.jOnly, .muOnly]
-  , patterns := [.a_co_b, .a'co_b'co]
-  , iso := "fin" }
-
-/-! ### Sample bundles -/
-
-/-- All 19 `ConjunctionSystem` profiles. -/
-def allLanguages : List ConjunctionSystem :=
-  [ english, german, japanese, hungarian, georgian, latin, korean, slovenian
-  , lango, hausa, yoruba, kannada, martuthunira, classicalTibetan
-  , hindiUrdu, turkish, irish, persian, finnish ]
-
-/-- M&S focus languages — the sub-sample consumed by
-    `Studies/MitrovicSauerland2016.lean`. -/
-def msLanguages : List ConjunctionSystem :=
-  [english, japanese, hungarian, georgian, latin, korean, slovenian]
-
-/-! ### Structural / diachronic generalisations -/
-
-/-- [haspelmath-2007]'s key structural generalisation: the monosyndetic
-    pattern `co-A B` (prepositive on first coordinand only) is unattested for
-    conjunction, per [stassen-2000]'s 260-language sample. Verified over
-    the 19-language sample via `List.contains`, which uses the `BEq` instance
-    to sidestep `∈`'s `LawfulBEq` requirement. -/
-theorem coAB_unattested :
-    allLanguages.all (fun sys => ! sys.patterns.contains .co'a_b) := by decide
-
-/-- Every language with a known comitative-sourced morpheme has at least
-    one monosyndetic structural pattern. Confirms: comitative "with" →
-    monosyndetic A co-B / A-co B. Languages: Lango, Hausa, Japanese,
-    Classical Tibetan. -/
-theorem comitative_source_monosyndetic :
-    ∀ sys ∈ allLanguages, sys.hasSource .comitative → sys.hasMonosyndetic := by
+/-- Table 1.1 for four coordinands: the full pattern and the pattern with coordinator omission
+of each of the five binary patterns the table lists. -/
+theorem table_1_1 :
+    full .a_co_b 4 = some [.bare, .pre, .pre, .pre] ∧
+      omitted .a_co_b 4 = some [.bare, .bare, .bare, .pre] ∧
+    full .a'co_b 4 = some [.post, .post, .post, .bare] ∧
+      omitted .a'co_b 4 = some [.bare, .bare, .post, .bare] ∧
+    full .a'co_b'co 4 = some [.post, .post, .post, .post] ∧
+      omitted .a'co_b'co 4 = some [.bare, .bare, .bare, .post] ∧
+    full .co'a_co'b 4 = some [.pre, .pre, .pre, .pre] ∧
+      omitted .co'a_co'b 4 = some [.bare, .bare, .bare, .pre] ∧
+    full .a_b'co 4 = some [.bare, .post, .post, .post] ∧
+      omitted .a_b'co 4 = some [.bare, .bare, .bare, .post] := by
   decide
 
-/-- Every language with a known focus-particle-sourced morpheme has at least
-    one bisyndetic structural pattern. Confirms: additive focus particle
-    "also" → bisyndetic A-co B-co. Languages: Japanese, Hungarian, Georgian,
-    Latin, Korean, Kannada. -/
-theorem focus_particle_source_bisyndetic :
-    ∀ sys ∈ allLanguages, sys.hasSource .focusParticle → sys.hasBisyndetic := by
+/-! ### The chapter's attestations -/
+
+/-- A coordinate construction the chapter cites: its coordinator, the second coordinator of a
+mixed pattern, the binary pattern, whether the chapter presents the construction as emphatic,
+and the diachronic source when the chapter states one. -/
+structure Attestation where
+  language : String
+  coordinator : Coordinator
+  second : Option Coordinator := none
+  pattern : CoordPattern
+  emphatic : Option Bool := none
+  source : Option DiachronicSource := none
+  deriving Repr
+
+/-- A conjunctive coordinator with no Fragment entry. -/
+private def co (form : String) (kind : Morphology.Morph.Kind) : Coordinator :=
+  { form, gloss := "and", role := .j, kind }
+
+/-- The constructions of (5), (6), (12), (20)–(37), (59), (77)–(79) and (85). -/
+def attestations : List Attestation :=
+  [ { language := "Kannada", coordinator := Kannada.Coordination.u, pattern := .a'co_b'co,
+      emphatic := some false },
+    { language := "English", coordinator := English.Coordination.and_, pattern := .a_co_b,
+      emphatic := some false },
+    { language := "English", coordinator := co "both" .free,
+      second := some English.Coordination.and_, pattern := .co'a_co'b, emphatic := some true },
+    { language := "Hausa", coordinator := Hausa.da, pattern := .a_co_b, emphatic := some false,
+      source := some .comitative },
+    { language := "Lango", coordinator := Lango.Coordination.kede, pattern := .a_co_b,
+      emphatic := some false, source := some .comitative },
+    { language := "Classical Tibetan", coordinator := Tibetan.Coordination.dang,
+      pattern := .a'co_b, emphatic := some false },
+    { language := "Latin", coordinator := Latin.Coordination.que, pattern := .a_b'co,
+      emphatic := some false },
+    { language := "Turkish", coordinator := Turkish.Coordination.de, pattern := .a_b'co },
+    { language := "Kanuri", coordinator := co "-a" (.bound .after .affix),
+      pattern := .a'co_b'co, emphatic := some false },
+    { language := "Yoruba", coordinator := Yoruba.Coordination.ati, pattern := .co'a_co'b,
+      emphatic := some true },
+    { language := "Yoruba", coordinator := Yoruba.Coordination.ati, pattern := .a_co_b,
+      emphatic := some false },
+    { language := "Martuthunira", coordinator := co "-thurti" (.bound .after .affix),
+      pattern := .a'co_b'co, emphatic := some false },
+    { language := "Homeric Greek", coordinator := co "te" (.bound .after .clitic),
+      second := some (co "kaì" .free), pattern := .a'co_co'b },
+    { language := "Latin", coordinator := Latin.Coordination.et,
+      second := some Latin.Coordination.que, pattern := .co'a_b'co, emphatic := some true },
+    { language := "Nivkh", coordinator := co "-γo" (.bound .after .affix),
+      pattern := .a'co_b'co, emphatic := some false },
+    { language := "Polish", coordinator := co "i" .free, pattern := .a_co_b,
+      emphatic := some false },
+    { language := "Lezgian", coordinator := co "-ni" (.bound .after .affix),
+      pattern := .a'co_b, emphatic := some false },
+    { language := "West Greenlandic", coordinator := co "=lu" (.bound .after .clitic),
+      pattern := .a_b'co, emphatic := some false },
+    { language := "Amharic", coordinator := co "-nna" (.bound .after .affix),
+      pattern := .a'co_b, emphatic := some false },
+    { language := "Ponapean", coordinator := co "oh" .free, pattern := .a_co_b,
+      emphatic := some false },
+    { language := "Samoan", coordinator := co "ma" .free, pattern := .a_co_b,
+      source := some .comitative },
+    { language := "Retuarã", coordinator := co "-ka" (.bound .after .affix),
+      pattern := .a'co_b, source := some .comitative },
+    { language := "Russian", coordinator := co "s" .free, pattern := .a_co_b,
+      source := some .comitative },
+    { language := "Tauya", coordinator := co "-sou" (.bound .after .affix),
+      pattern := .a'co_b'co, emphatic := some false, source := some .comitative } ]
+
+/-- The pattern co-A B is absent from the chapter's attestations, as from Stassen's sample. -/
+theorem attested_ne_coAB : ∀ a ∈ attestations, a.pattern ≠ .co'a_b := by decide
+
+/-- Where bisyndesis is the normal, non-emphatic construction, the coordinators are
+postpositive and of the same shape, §1.3 and §2.1. -/
+theorem bisyndetic_normal_postpositive :
+    ∀ a ∈ attestations, a.pattern.syndesis = .bisyndetic → a.emphatic = some false →
+      a.pattern = .a'co_b'co ∧ a.second = none := by
   decide
+
+/-- Prepositive bisyndesis occurs only as an emphatic variant of prepositive monosyndesis,
+§1.3 after [stassen-2000]. -/
+theorem prepositive_bisyndetic_emphatic :
+    ∀ a ∈ attestations, a.pattern = .co'a_co'b → a.emphatic = some true := by
+  decide
+
+/-- A comitative-sourced coordinator has one of the two source patterns of §1.2 or, doubled on
+each conjunct as §5.1 describes, the postpositive bisyndetic one. -/
+theorem comitative_patterns :
+    ∀ a ∈ attestations, a.source = some .comitative →
+      a.pattern = .a_co_b ∨ a.pattern = .a'co_b ∨ a.pattern = .a'co_b'co := by
+  decide
+
+/-! ### Emphatic correlatives, (45) -/
+
+/-- The shape of a pair of correlative coordinators against the single coordinator, (45):
+both identical to it, only the second identical to it, identical to each other but not to it,
+or all three different. -/
+inductive CorrelativeShape where
+  | bothSingle
+  | secondSingle
+  | sameNotSingle
+  | allDifferent
+  deriving DecidableEq, Repr
+
+/-- The shape of a correlative pair, read off the forms. -/
+def CorrelativeShape.classify (first second single : String) : CorrelativeShape :=
+  if first = single ∧ second = single then .bothSingle
+  else if second = single then .secondSingle
+  else if first = second then .sameNotSingle
+  else .allDifferent
+
+/-- A language's emphatic correlative pair and its single coordinator. -/
+structure Correlative where
+  language : String
+  first : String
+  second : String
+  single : String
+  deriving Repr
+
+/-- The conjunctive rows of (45), with the letter the chapter files each under. -/
+def correlatives : List (Correlative × CorrelativeShape) :=
+  [ (⟨"Russian", "i", "i", "i"⟩, .bothSingle), (⟨"Italian", "e", "e", "e"⟩, .bothSingle),
+    (⟨"Modern Greek", "ke", "ke", "ke"⟩, .bothSingle),
+    (⟨"Albanian", "edhe", "edhe", "edhe"⟩, .bothSingle),
+    (⟨"English", "both", "and", "and"⟩, .secondSingle),
+    (⟨"Irish", "idir", "agus", "agus"⟩, .secondSingle),
+    (⟨"Hungarian", "mind", "mind", "és"⟩, .sameNotSingle),
+    (⟨"Korean", "-to", "-to", "-hako"⟩, .sameNotSingle),
+    (⟨"German", "sowohl", "als auch", "und"⟩, .allDifferent),
+    (⟨"Polish", "jak", "tak (i)", "i"⟩, .allDifferent),
+    (⟨"Finnish", "sekä", "että", "ja"⟩, .allDifferent),
+    (⟨"Indonesian", "baik", "maupun", "dan"⟩, .allDifferent) ]
+
+/-- The letters of (45) are the shapes the forms give. -/
+theorem correlatives_classified :
+    ∀ c ∈ correlatives, CorrelativeShape.classify c.1.first c.1.second c.1.single = c.2 := by
+  decide
+
+/-! ### Payne's implicational sequence, §3 -/
+
+/-- The coordinand types of the sequence S – VP – AP – PP – NP. -/
+inductive CoordinandType where
+  | s
+  | vp
+  | ap
+  | pp
+  | np
+  deriving DecidableEq, Fintype, Repr
+
+/-- Position on the sequence. -/
+def CoordinandType.rank : CoordinandType → ℕ
+  | .s => 0
+  | .vp => 1
+  | .ap => 2
+  | .pp => 3
+  | .np => 4
+
+/-- A coordinator's range is a contiguous stretch of the sequence. -/
+def Contiguous (r : Finset CoordinandType) : Prop :=
+  ∀ a ∈ r, ∀ b ∈ r, ∀ c, a.rank ≤ c.rank → c.rank ≤ b.rank → c ∈ r
+
+instance : DecidablePred Contiguous := λ _ => by unfold Contiguous; infer_instance
+
+/-- The NP against event split of Korean *-(k)wa* and *-ko*, (57), and Turkish *-la* and
+*-ıp*, (58): two contiguous ranges. -/
+theorem np_event_contiguous : Contiguous {.np} ∧ Contiguous {.vp, .s} := by decide
+
+/-- Tinrin *mê* coordinates sentences and NPs but not VPs, the counterexample to the sequence
+the chapter notes. -/
+theorem tinrin_not_contiguous : ¬ Contiguous {.s, .np} := by decide
 
 end Haspelmath2007
