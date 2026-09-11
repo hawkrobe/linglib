@@ -1,0 +1,714 @@
+[
+  {
+    "id": "heimlasnikmay1991_ex1",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(1)"
+    },
+    "language": "stan1293",
+    "primaryText": "The spies suspected each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex2",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(2)"
+    },
+    "language": "stan1293",
+    "primaryText": "John and Mary told each other that they should leave.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "readings",
+        "I; you; we"
+      ]
+    ],
+    "comment": "The grain problem: three-ways ambiguous under one indexing.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex4",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(4)"
+    },
+    "language": "stan1293",
+    "primaryText": "John and Mary think they like each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "readings",
+        "narrow; broad"
+      ]
+    ],
+    "comment": "The scope puzzle.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex5",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(5)"
+    },
+    "language": "stan1293",
+    "primaryText": "Each of John and Mary thinks that s/he likes the other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "reading",
+        "broad"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex6",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(6)"
+    },
+    "language": "stan1293",
+    "primaryText": "John and Mary think that I like each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ]
+    ],
+    "comment": "A Specified Subject Condition violation.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex7",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(7)"
+    },
+    "language": "stan1293",
+    "primaryText": "The men saw each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "lf",
+        "[[the men]₁ each₂] saw [e₂ other]₃"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex24",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(24)"
+    },
+    "language": "stan1293",
+    "primaryText": "They cramped each other's style.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex27",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(27)"
+    },
+    "language": "stan1293",
+    "primaryText": "The men each left.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "distributor",
+        "floated each"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex30",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(30)"
+    },
+    "language": "stan1293",
+    "primaryText": "John and Mary argue that they will win $100.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "readings",
+        "we; each"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex36",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(36)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary and Sally introduced themselves to each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "reading",
+        "distributive only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex38",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(38)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary and Sally each introduced themselves to the other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex39b",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(39b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Each of the women introduced themselves to the other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex40a",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(40a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The women convinced each other that they should leave.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ]
+    ],
+    "comment": "A singular pronoun is out: the reciprocator licenses a dependent plural.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex42a",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(42a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The doctors each gave the other a new nose.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex43",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(43)"
+    },
+    "language": "stan1293",
+    "primaryText": "John and Mary told each other that they should leave.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "readings",
+        "I; you; we together; we separately"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex45",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(45)"
+    },
+    "language": "stan1293",
+    "primaryText": "John and Mary persuaded each other to leave.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "reading",
+        "you"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex46",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(46)"
+    },
+    "language": "stan1293",
+    "primaryText": "John and Mary promised each other to leave.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "reading",
+        "I"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex57",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(57)"
+    },
+    "language": "stan1293",
+    "primaryText": "The candidates criticized each other after they had left the room.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "readings",
+        "I; you; we"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex60",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(60)"
+    },
+    "language": "stan1293",
+    "primaryText": "After they had left the room, the candidates criticized each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "readings",
+        "we"
+      ]
+    ],
+    "comment": "A preposed adjunct blocks bound-variable anaphora (61).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex61a",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(61a)"
+    },
+    "language": "stan1293",
+    "primaryText": "They criticized every candidate after he had left the room.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex64",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(64)"
+    },
+    "language": "stan1293",
+    "primaryText": "John and Mary think that they like each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "readings",
+        "narrow (65); broad (66)"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex68",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(68)"
+    },
+    "language": "stan1293",
+    "primaryText": "They are taller than each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "reading",
+        "contradictory"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex69",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(69)"
+    },
+    "language": "stan1293",
+    "primaryText": "They think they are taller than each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "readings",
+        "noncontradictory broad; contradictory narrow"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex71",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(71)"
+    },
+    "language": "stan1293",
+    "primaryText": "They each think they are taller than each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "reading",
+        "contradictory narrow only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex72",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(72)"
+    },
+    "language": "stan1293",
+    "primaryText": "They each examined each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ]
+    ],
+    "comment": "A distributor cannot apply to an already distributed NP.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex73",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(73)"
+    },
+    "language": "stan1293",
+    "primaryText": "They think they each are taller than each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimlasnikmay1991_ex77",
+    "source": {
+      "bibkey": "heim-lasnik-may-1991",
+      "paperLabel": "(77)"
+    },
+    "language": "stan1293",
+    "primaryText": "They each think they are sick.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  }
+]

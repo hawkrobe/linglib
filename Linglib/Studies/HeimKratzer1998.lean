@@ -1,5 +1,4 @@
 import Linglib.Syntax.Tree.Cat
-import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Semantics.Composition.Tree
 import Linglib.Semantics.Composition.Assignment
 import Linglib.Fragments.English.Toy
@@ -7,52 +6,37 @@ import Linglib.Semantics.Composition.Reduction
 import Linglib.Semantics.Composition.LexEntry
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Quantification.Polyadic
+import Linglib.Data.Examples.HeimKratzer1998
 
 /-!
-# [heim-kratzer-1998]: Type-Driven Composition of Quantifiers
+# Heim and Kratzer (1998): Semantics in Generative Grammar
 
-End-to-end verification that the H&K engine (`Composition/Tree.lean`)
-composes quantificational sentences as advertised in Ch. 5: lexicon →
-QR-syntax tree (with traces and binders) → truth conditions. The engine
-implements TN/NN/FA/IFA/PM/PA; this file feeds it the textbook examples
-and checks the predictions over a toy model.
+This file formalizes the treatment of quantifiers in Chapter 7 of [heim-kratzer-1998]: a
+quantificational DP in object position creates a type mismatch (§7.1) that Quantifier
+Raising repairs by movement (§7.3), leaving a trace interpreted by the Traces and Pronouns
+Rule (Ch. 5 (9)) and a binder index interpreted by Predicate Abstraction (§5.2.3, as revised
+in Chapter 7), so that the raised quantifier takes the abstracted predicate as its scope.
+The substrate's composition engine implements those rules; here it is fed QR trees over the
+toy fragment and its output is checked: "every student sleeps" and "some student sleeps"
+compose to the expected truth conditions, and the two QR derivations of a doubly
+quantified sentence, the book's (2) "Some publisher offended every linguist", compute the
+two scope readings of `Quantification.Polyadic`, which differ in the toy model
+(`scope_ambiguity_computed`) and are nested (`inverse_entails_surface`). The trees also
+compile to first-order formulas, so the engine's truth conditions are model-theoretic
+realization (`interp_eq_realize`) and first-order consequence transfers
+(`conj_entails_first`).
 
-## H&K Pipeline (Ch. 5)
+## Implementation notes
 
-After Quantifier Raising moves a DP to a higher position, it leaves a
-trace `tₙ` and creates a binder node `n`. Predicate Abstraction (PA)
-converts the binder + body into `λx. ⟦body⟧^{g[n↦x]}`, producing a
-predicate that the raised quantifier takes as its scope argument.
+The toy fragment's "every person sees some person" stands in for the book's (2); the
+readings are the surface and inverse iterations of `Quantification.Polyadic`. With
+`interpTy .t = Prop` the engine produces `Prop`-valued truth conditions, verified at the
+`Prop` level rather than by evaluation. The categorised tree `synTree_everyStudentSleeps`
+carries UD categories that the engine ignores.
 
-"Every student sleeps" after QR:
-```
-[S [DP [D every] [N student]] [1 [S [t₁] [VP sleeps]]]]
-```
+## References
 
-Evaluated as:
-1. `⟦t₁⟧^g = g(1)` (Traces rule)
-2. `⟦sleeps⟧ = sleeps'` (TN)
-3. `⟦[t₁ sleeps]⟧^g = sleeps'(g(1))` (FA)
-4. `⟦[1 [t₁ sleeps]]⟧^g = λx. sleeps'(x)` (PA)
-5. `⟦every student⟧ = every'(student')` (FA)
-6. `⟦S⟧ = every'(student')(λx. sleeps'(x))` (FA)
-
-## Scope ambiguity
-
-"Every person sees some person" yields two readings from two QR structures —
-surface scope (∀>∃) and inverse scope (∃>∀) — that differ only in which
-quantifier is raised higher. The readings are the two linear readings of
-`Quantification.Polyadic`, shared with the quantifying-in analysis of
-`Studies/Montague1973`; `scope_readings_differ` certifies that the two trees
-compute genuinely distinct propositions in the toy model, and
-`inverse_entails_surface` that they are nested rather than independent.
-
-## Note on `Prop`-valued `.t`
-
-With `interpTy .t = Prop`, the engine produces `Prop`-valued truth
-conditions directly. Theorems verify these at the `Prop` level rather
-than via `evalTree` (which would demand a blanket
-`Decidable (∀ p : Prop, p)` instance).
+* [heim-kratzer-1998]
 -/
 
 namespace HeimKratzer1998
@@ -66,7 +50,6 @@ open Quantification.Quantifier
 open Quantification
 open Quantification.Polyadic (surfaceScope inverseScope iterate_every_some_of_some_every)
 open Semantics.Montague.ToyLexicon (student_sem person_sem)
-open Minimalist.SyntacticObject
 
 /-! ### Model and lexicon -/
 
@@ -142,11 +125,11 @@ def tree_inverse : Tree Unit String :=
 
 /-- The surface-scope reading, `∀ > ∃`: `every` over `some`, with `x sees y`. -/
 abbrev surfaceScopeProp : Prop :=
-  surfaceScope every_sem some_sem person_sem person_sem fun x y => ToyLexicon.sees_sem y x
+  surfaceScope every_sem some_sem person_sem person_sem λ x y => ToyLexicon.sees_sem y x
 
 /-- The inverse-scope reading, `∃ > ∀`. -/
 abbrev inverseScopeProp : Prop :=
-  inverseScope every_sem some_sem person_sem person_sem fun x y => ToyLexicon.sees_sem y x
+  inverseScope every_sem some_sem person_sem person_sem λ x y => ToyLexicon.sees_sem y x
 
 /-- Surface scope is true in the toy model.
 (John sees Mary and Mary sees John — each person sees some person.) -/
@@ -197,7 +180,8 @@ theorem interp_computes_inverse :
 /-- Scope ambiguity, stated about the engine: the two QR derivations interpret to
 genuinely different meanings. -/
 theorem scope_ambiguity_computed :
-    interp ToyEntity Unit quantLex g₀ tree_surface ≠ interp ToyEntity Unit quantLex g₀ tree_inverse := by
+    interp ToyEntity Unit quantLex g₀ tree_surface ≠
+      interp ToyEntity Unit quantLex g₀ tree_inverse := by
   rw [interp_computes_surface, interp_computes_inverse]
   intro h
   have : surfaceScopeProp = inverseScopeProp := by injection h with h'; injection h'
@@ -261,125 +245,10 @@ theorem conj_entails_first (g : Assignment ToyEntity) :
         (.bin (.leaf "John") (.leaf "sleeps")) :=
   holdsAt_of_models toyModel {} toyNaming () FOWords.nodup_default
     toyNaming_freshFor toyNaming_disjoint rfl rfl
-    (fun _ S v h => by
-      letI := S
+    (λ _ S v h => by
+      let _inst := S
       exact (FirstOrder.Language.Formula.realize_inf.mp h).1) g
 
 end Reduction
-
-/-! ### Minimalist trace interpretation (relocated from Minimalist/TraceInterpretation.lean)
-
-Traces left by movement are interpreted as variables bound by
-λ-abstraction at the landing site (H&K Ch. 5, 7).
-
-#### Rules
-
-1. Trace Interpretation: a trace t_n is interpreted as g(n)
-   ⟦t_n⟧^g = g(n)
-
-2. Predicate Abstraction (the λ-abstraction at the landing site) and the
-   relative-clause denotation it feeds are framework-neutral composition rules,
-   so they live in `Semantics/Composition/Abstraction.lean`; this section is the
-   Minimalist trace machinery that applies them.
-
-#### Trace convention
-
-On the `SyntacticObject` carrier ([marcolli-chomsky-berwick-2025] Def 1.2.1) a trace is here the
-bare trace leaf `SyntacticObject.trace`, recognized by `SyntacticObject.isTrace`. The semantic
-trace *index* `n` is not carried by the leaf: it is supplied by the binder (λ-abstraction) at the
-landing site, exactly as in the H&K rule ⟦t_n⟧^g = g(n). The interpretation functions below
-therefore take the index as an explicit argument. -/
-
--- ============================================================================
--- Trace Interpretation (H&K Ch. 5, 7)
--- ============================================================================
-
-/-- Interpret a trace as a variable: ⟦t_n⟧^g = g(n).
-
-    Heim and Kratzer's trace interpretation rule: traces and pronouns
-    are semantically identical, looked up via the assignment function.
-    The trace index n matches the binder (λ-abstraction) at the
-    landing site of movement.
-
-    `abbrev` because trace interpretation IS pronoun interpretation —
-    the only difference is the syntactic source. -/
-abbrev interpTrace {E : Type} (n : ℕ) : DenotG E Unit .e :=
-  interpPronoun n
-
--- ============================================================================
--- Composition of Movement Chains
--- ============================================================================
-
-/--
-Interpret a simple movement configuration:
-- A trace t_n in some position
-- An operator binding that trace from a higher position
-
-Returns the predicate λx. ⟦body(t_n := x)⟧
--/
-def interpMovement {E W : Type} (n : ℕ)
-    (bodyWithTrace : DenotG E W .t) : DenotG E W (.e ⇒ .t) :=
-  lambdaAbsG n bodyWithTrace
-
--- ============================================================================
--- Connection to Syntactic Objects
--- ============================================================================
-
-/--
-A semantic interpretation context pairs a model with an assignment.
--/
-structure InterpContext (E : Type) where
-  assignment : Assignment E
-
-/--
-The semantic type corresponding to a syntactic object.
-
-- A trace leaf has type e (it denotes an entity)
-- Other SOs need lexical lookup
--/
-def soSemanticType (so : Minimalist.SyntacticObject) : Option Ty :=
-  if isTrace so then some .e else none
-
-/--
-Interpret a trace leaf in a syntactic object at a given index.
-
-The bare trace leaf carries no index; the binder at
-the landing site supplies `n` (H&K's ⟦t_n⟧^g = g(n)). Returns `none` when `so`
-is not the trace leaf.
--/
-def interpSOTrace {E : Type} (n : ℕ) (so : Minimalist.SyntacticObject) :
-    Option (DenotG E Unit .e) :=
-  if isTrace so then some (interpTrace n) else none
-
-/-- The trace leaf is recognized as type `e`. -/
-@[simp] theorem soSemanticType_trace :
-    soSemanticType trace = some .e := rfl
-
-/-- A lexical leaf is not a trace, so it gets no carrier-level type. -/
-@[simp] theorem soSemanticType_leaf (tok : Minimalist.LIToken) :
-    soSemanticType (leaf tok) = none := by
-  have hne : ¬ isTrace (leaf tok) := not_isTrace_leaf tok
-  simp only [soSemanticType, if_neg hne]
-
--- ============================================================================
--- Theorems about Movement Interpretation
--- ============================================================================
-
-/-- Different indices yield independent interpretations. -/
-theorem trace_indices_independent {E : Type} (n₁ n₂ : ℕ) (h : n₁ ≠ n₂)
-    (x : E) (g : Assignment E)
-    : interpTrace n₁ (g[n₂ ↦ x]) = interpTrace n₁ g := by
-  simp only [interpTrace, interpPronoun]
-  exact Function.update_of_ne h x g
-
-/--
-Predicate abstraction creates the right binding:
-the abstracted variable is bound, other variables are free.
--/
-theorem abstraction_binds_correct_variable {E : Type} (n : ℕ)
-    (g : Assignment E) (x : E)
-    : interpTrace n (g[n ↦ x]) = x := by
-  simp only [interpTrace, interpPronoun]
-  exact Function.update_self n x g
 
 end HeimKratzer1998

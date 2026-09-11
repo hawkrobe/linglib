@@ -1,0 +1,86 @@
+[
+  {
+    "id": "heimkratzer1998_ch7_1a",
+    "source": {
+      "bibkey": "heim-kratzer-1998",
+      "paperLabel": "Ch. 7 (1a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Every linguist offended John.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.1"
+      ],
+      [
+        "quantifier",
+        "subject"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimkratzer1998_ch7_1b",
+    "source": {
+      "bibkey": "heim-kratzer-1998",
+      "paperLabel": "Ch. 7 (1b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John offended every linguist.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.1"
+      ],
+      [
+        "quantifier",
+        "object"
+      ]
+    ],
+    "comment": "The type mismatch in object position that Quantifier Raising repairs (§7.3).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heimkratzer1998_ch7_2",
+    "source": {
+      "bibkey": "heim-kratzer-1998",
+      "paperLabel": "Ch. 7 (2)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some publisher offended every linguist.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.1"
+      ],
+      [
+        "readings",
+        "some > every; every > some"
+      ]
+    ],
+    "comment": "Scope ambiguity: two Quantifier Raising derivations.",
+    "lgrConformance": ""
+  }
+]
