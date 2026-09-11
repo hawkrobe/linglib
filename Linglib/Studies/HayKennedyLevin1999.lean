@@ -1,356 +1,290 @@
-import Linglib.Semantics.Aspect.DegreeAchievement
+import Mathlib.Order.Interval.Set.Basic
+import Mathlib.Algebra.Order.Group.Defs
+import Mathlib.Algebra.Order.Field.Rat
 import Linglib.Semantics.Degree.Measure.Temporal
-import Linglib.Semantics.Degree.Boundedness
+import Linglib.Semantics.Aspect.DegreeAchievement
 import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Data.Examples.HayKennedyLevin1999
 
 /-!
-# [hay-kennedy-levin-1999]: Scalar Structure Underlies Telicity in DAs
-[hay-kennedy-levin-1999]
+# Hay, Kennedy and Levin (1999): Scalar Structure Underlies Telicity in "Degree Achievements"
 
-HKL 1999's central claim (p.3): *"when the scalar structure associated
-with the base adjective has a natural bound, the derived verb is telic;
-when the adjective's scalar structure has no such bound, the verb is
-atelic."*
+This file formalizes the analysis of degree achievements in [hay-kennedy-levin-1999]: the
+verb-forming morpheme contributes `INCREASE` (16), true of an event when the affected
+argument's degree on the base adjective's scale at the end of the event is its degree at the
+start plus a *difference value*, and the predicate is telic exactly when the difference value
+is bounded: when it specifies a positive lower bound on the change (§3.1). The sources of a
+bound are derived in turn: a measure phrase or `completely` (§3.1), `significantly` against
+`slightly` (the monotone increasing and decreasing modifiers), the maximal value of a
+closed-range base adjective (§3.2), and a conventional bound supplied by context (§3.3). A
+bound that is only implicated can be cancelled and one supplied by overt material cannot
+(`someAmount_cancellable`, `completely_not_cancellable`), which is why the adverbial duality
+of (34) disappears in (35). The paper's closed-range and open-range classes are checked
+against the English fragment's scale dimensions, and its examples are the rows.
 
-The thesis applies specifically to **degree achievements** (verbs derived
-from gradable adjectives — *lengthen, cool, straighten*). The mechanism is
-the **INCREASE** function (eq 16), whose **difference value** drives
-telicity: bounded difference → telic; unbounded difference → atelic.
+## Implementation notes
 
-## Sections
+Degrees form a densely ordered abelian group: the paper's degree addition (15) is the group's,
+its maximal scale value is a degree `top` rather than a top element, and density is what
+makes "some amount" and `slightly` unbounded (a smaller positive change is always
+available). The readings of a description are the admissible difference values: overt
+material fixes one; with none, the literal "some amount" and, when a maximal or conventional
+value is salient, the implicated bounded value, since the paper derives the bound by
+conversational implicature. The in-adverbial and for-adverbial tests are read as the
+existence of a bounded and of an unbounded reading. The `almost` test and the causative
+component of transitive degree achievements (footnote 2) are not modelled.
 
-- §1 — HKL's `INCREASE` operator (eq 16) + bridge note to K&L 2008's
-  `measureOfChange` substrate (`Semantics/Degree/Measure/Temporal.lean`).
-- §2 — Central matrix prediction (HKL §3.2): closed-range adjective →
-  telic DA verb; open-range adjective → atelic DA verb. Verified against
-  fragment `degreeAchievementScale` annotations on *straighten* (closed →
-  accomplishment) vs *lengthen, widen, cool, warm* (open → activity).
-- §3 — Specifying the difference value (HKL §3.1): measure phrases,
-  *completely*, *significantly*/*slightly* data.
-- §4 — Context-dependent telicity (HKL §3.3): defeasibility-via-implicature
-  data.
-- §5 — Beyond DAs (HKL §4.1): brief connection to consumption / motion /
-  creation that the analysis extends to.
+## TODO
 
-## Relation to KennedyLevin2008.lean
+* The parallel with the mass–count distinction and the redefinition of the incremental
+  theme as the difference value (§4.2), which want a shared substrate with [krifka-1989]'s
+  cumulativity.
 
-K&L 2008 is the mature successor of HKL 1999. The K&L `measureOfChange`
-function (eq 25, in `Measure/Temporal.lean`) refines HKL's INCREASE with
-explicit clamping at the initial degree (`differenceFunction`, K&L eq 23).
-Per-verb derivation of `vendlerClass` from
-`degreeAchievementScale.scaleBoundedness` is in
-`Studies/KennedyLevin2008.lean`. This file focuses
-on what's specific to HKL 1999: the original INCREASE operator, the §3
-data, and the closed/open-range vocabulary HKL introduced (the same
-distinction Kennedy & McNally 2005 later canonicalized as
-"closed scale"/"open scale").
+## References
 
-## Anchoring discipline
-
-§7 of `Studies/Krifka1989.lean` (added in 0.230.429)
-explicitly cites HKL 1999 as the source of the *defeasible*
-closed-scale → telic-verb bridge for **degree achievements specifically**.
-This file makes that bridge a Lean-checkable matrix on fragment data
-rather than docstring prose.
+* [hay-kennedy-levin-1999]
+* [kennedy-mcnally-2005]
+* [dowty-1979]
+* [krifka-1989]
 -/
 
 namespace HayKennedyLevin1999
 
-open Degree (Boundedness)
+open Data.Examples Degree Features
 open English.Predicates.Verbal
 
--- ════════════════════════════════════════════════════
--- § 1. HKL's INCREASE operator (eq 16)
--- ════════════════════════════════════════════════════
+/-! ### The difference value (§2) -/
 
-/-- HKL eq 11: `[long(x)(t)] = the degree to which x is long at time t`.
-    A gradable adjective denotes a time-indexed measure function — the
-    same shape as K&L 2008's `TemporalMeasure α δ T` in
-    `Semantics/Degree/Measure/Temporal.lean`. -/
-abbrev TimedAdjective (α δ T : Type*) := α → T → δ
+section Semantics
 
-/-- HKL eq 16, the INCREASE function:
-    `INCREASE(φ)(x)(d)(e) = 1 iff φ(x)(SPO(e)) + d = φ(x)(EPO(e))`.
+variable {α δ T : Type*}
 
-    True iff `x`'s degree at the end of an event equals its degree at the
-    start plus `d`. The "difference value" `d` is HKL's central object;
-    its boundedness drives telicity (HKL §3 thesis).
+/-- `INCREASE` (16): `x` increases in `φ`-ness by the difference value `d` over an event that
+    begins at `t₀` and ends at `t₁`. -/
+def Increase [Add δ] (φ : TemporalMeasure α δ T) (x : α) (d : δ) (t₀ t₁ : T) : Prop :=
+  φ x t₀ + d = φ x t₁
 
-    K&L 2008 reformulates this as a measure-valued function
-    `measureOfChange m x initT finT : δ` with explicit
-    `differenceFunction` clamping at the initial degree (K&L eq 23).
-    The two coincide on monotone-increase events with `d ≥ 0`; HKL's
-    `Prop`-valued INCREASE is sufficient for the §3 data and avoids
-    the clamping bookkeeping. -/
-def INCREASE {α δ T : Type*} [Add δ]
-    (φ : TimedAdjective α δ T) (x : α) (d : δ)
-    (startT finT : T) : Prop :=
-  φ x startT + d = φ x finT
+/-- A description whose difference value is only known to lie in `D`: (17a) with the positive
+    degrees, (17b) with `{5 inches}`. -/
+def Describes [Add δ] (φ : TemporalMeasure α δ T) (x : α) (D : Set δ) (t₀ t₁ : T) :
+    Prop :=
+  ∃ d ∈ D, Increase φ x d t₀ t₁
 
-/-- Zero-duration events (start = end) carry zero difference value. -/
-theorem increase_self {α δ T : Type*} [AddZeroClass δ]
-    (φ : TimedAdjective α δ T) (x : α) (t : T) :
-    INCREASE φ x 0 t t := by
-  simp [INCREASE]
-
-/-- HKL §3 thesis at the type level: when the difference value `d` is
-    given, the end degree is **uniquely determined** by the start degree
-    — the structural source of telic interpretations. -/
-theorem increase_unique_end {α δ T : Type*} [Add δ]
-    (φ : TimedAdjective α δ T) (x : α) (d : δ) (startT finT₁ finT₂ : T)
-    (h₁ : INCREASE φ x d startT finT₁) (h₂ : INCREASE φ x d startT finT₂) :
-    φ x finT₁ = φ x finT₂ :=
+/-- With the difference value given, the degree at the end of the event is determined by the
+    degree at its start: the source of an identifiable endpoint (§3). -/
+theorem Increase.end_unique [Add δ] {φ : TemporalMeasure α δ T} {x : α} {d : δ}
+    {t₀ t₁ t₂ : T} (h₁ : Increase φ x d t₀ t₁) (h₂ : Increase φ x d t₀ t₂) :
+    φ x t₁ = φ x t₂ :=
   h₁.symm.trans h₂
 
--- ════════════════════════════════════════════════════
--- § 2. Central matrix: scalar structure → default telicity (HKL §3.2)
--- ════════════════════════════════════════════════════
+variable [AddCommGroup δ] [LinearOrder δ]
 
-/-! HKL §3.2 (p. 135): **closed-range adjectives** (*full, empty, straight,
-    dry*) map to bounded scales; **open-range adjectives** (*long, wide,
-    short*) map to unbounded scales. The DA verbs derived from each class
-    default to telic vs atelic respectively (HKL eqs 26-27).
+/-- §3.1: a difference value is **bounded** when it specifies a positive lower bound on the
+    change; once that much change has happened the truth conditions are met, so the event has
+    an endpoint, and the predicate is telic. -/
+def IsBounded (D : Set δ) : Prop := ∃ b, 0 < b ∧ b ∈ lowerBounds D
 
-    Linglib's fragment encodes this directly via `degreeAchievementScale`
-    annotations on each DA verb:
+/-- The implicit difference value "some amount" of (9a): any positive degree. -/
+def someAmount : Set δ := Set.Ioi 0
 
-    | Verb        | Base adjective | scaleBoundedness | vendlerClass     |
-    |-------------|----------------|------------------|------------------|
-    | straighten  | straight       | `.closed`        | `.accomplishment`|
-    | lengthen    | long           | `.open_`         | `.activity`      |
-    | widen       | wide           | `.open_`         | `.activity`      |
-    | cool        | cool           | `.open_`         | `.activity`      |
-    | warm        | warm           | `.open_`         | `.activity`      |
+/-- A measure phrase (18): exactly `m`. -/
+def measurePhrase (m : δ) : Set δ := {m}
 
-    The theorems below verify HKL's matrix prediction on each fragment
-    entry. K&L 2008's `KennedyLevin2008.lean` study file proves the
-    per-verb derivation of `vendlerClass` from `scaleBoundedness`
-    structurally; this file checks HKL's specific predictions on the
-    central exemplars. -/
+/-- `completely` (21): the change that takes the initial degree `i` to the scale's maximal
+    value `top`. -/
+def completely (top i : δ) : Set δ := {top - i}
 
-/-- HKL eq 26 (closed-range default): "straighten" — a scale with a maximum,
-    accomplishment (telic). -/
-theorem straighten_closed_accomplishment :
-    (straighten.toVerb.degreeAchievementScale.get!).scaleBoundedness.HasMax ∧
-    straighten.toVerb.vendlerClass = some .accomplishment := ⟨trivial, rfl⟩
+/-- `significantly` (23): at least the contextual standard `s`, a monotone increasing
+    modifier. -/
+def significantly (s : δ) : Set δ := Set.Ici s
 
-/-- HKL eq 27 (open-range default): "lengthen" — open scale, activity
-    (atelic). -/
-theorem lengthen_open_activity :
-    lengthen.toVerb.degreeAchievementScale.map (·.scaleBoundedness) =
-      some Boundedness.open_ ∧
-    lengthen.toVerb.vendlerClass = some .activity := ⟨rfl, rfl⟩
+/-- `slightly` (24): a positive change of at most `s`, a monotone decreasing modifier: part of a
+    slight increase is a slight increase. -/
+def slightly (s : δ) : Set δ := Set.Ioc 0 s
 
-/-- HKL §3.1 default: "widen" — open scale, activity (made telic only by
-    overt measure phrase, see §3 below). -/
-theorem widen_open_activity :
-    widen.toVerb.degreeAchievementScale.map (·.scaleBoundedness) =
-      some Boundedness.open_ ∧
-    widen.toVerb.vendlerClass = some .activity := ⟨rfl, rfl⟩
+theorem isBounded_measurePhrase {m : δ} (hm : 0 < m) : IsBounded (measurePhrase m) :=
+  ⟨m, hm, λ _ hd => (Set.mem_singleton_iff.1 hd).ge⟩
 
-/-- HKL §3.1 default: "cool" — open scale, activity (made telic only by
-    overt measure phrase or contextual bound). -/
-theorem cool_open_activity :
-    cool.toVerb.degreeAchievementScale.map (·.scaleBoundedness) =
-      some Boundedness.open_ ∧
-    cool.toVerb.vendlerClass = some .activity := ⟨rfl, rfl⟩
+theorem isBounded_completely [IsOrderedAddMonoid δ] {top i : δ} (hi : i < top) :
+    IsBounded (completely top i) :=
+  ⟨top - i, sub_pos.2 hi, λ _ hd => (Set.mem_singleton_iff.1 hd).ge⟩
 
-/-- HKL §3.1 default: "warm" — open scale, activity. -/
-theorem warm_open_activity :
-    warm.toVerb.degreeAchievementScale.map (·.scaleBoundedness) =
-      some Boundedness.open_ ∧
-    warm.toVerb.vendlerClass = some .activity := ⟨rfl, rfl⟩
+theorem isBounded_significantly {s : δ} (hs : 0 < s) : IsBounded (significantly s) :=
+  ⟨s, hs, λ _ hd => hd⟩
 
--- ════════════════════════════════════════════════════
--- § 3. Specifying the difference value (HKL §3.1)
--- ════════════════════════════════════════════════════
+/-- A difference value that admits arbitrarily small positive changes specifies no bound. -/
+theorem not_isBounded_of_forall {D : Set δ} (h : ∀ b, 0 < b → ∃ d ∈ D, d < b) :
+    ¬ IsBounded D := by
+  rintro ⟨b, hb, hlow⟩
+  obtain ⟨d, hd, hdb⟩ := h b hb
+  exact absurd (hlow hd) (not_le.2 hdb)
 
-/-! HKL §3.1: when the difference value is bounded by overt linguistic
-    material, the predicate is telic regardless of the base adjective's
-    scalar structure. Three modifier classes:
+theorem not_isBounded_slightly [DenselyOrdered δ] {s : δ} (hs : 0 < s) :
+    ¬ IsBounded (slightly s) :=
+  not_isBounded_of_forall λ b hb => by
+    obtain ⟨c, hc₀, hc⟩ := exists_between (lt_min hb hs)
+    exact ⟨c, ⟨hc₀, (lt_min_iff.1 hc).2.le⟩, (lt_min_iff.1 hc).1⟩
 
-    1. **Measure phrases** (HKL eqs 18-20): *widened the road 5 m*,
-       *cooled 4 degrees* — telic.
-    2. **Completely** (HKL eqs 21-22): *straightened completely*,
-       *dried completely* — telic. Forces `d` to a maximum.
-    3. **Significantly** (HKL eq 23) — telic (lower bound from
-       monotone-increasing modifier); contrasts with **slightly**
-       (HKL eq 24) — atelic (no lower bound). -/
+theorem not_isBounded_someAmount [DenselyOrdered δ] : ¬ IsBounded (someAmount (δ := δ)) :=
+  not_isBounded_of_forall λ b hb => by
+    obtain ⟨c, hc₀, hc⟩ := exists_between hb
+    exact ⟨c, hc₀, hc⟩
 
-/-- An HKL §3.1 modifier-class datum: a sentence + its modifier-class +
-    HKL's predicted telicity + the paper-equation tag. -/
-structure HKLModifierDatum where
-  sentence : String
-  modifier : String
-  expectedTelic : Bool
-  paperEq : String
-  deriving Repr
+/-! ### Readings (§3.2–§3.4) -/
 
-def widenedRoad5m : HKLModifierDatum :=
-  { sentence := "They widened the road 5 m.", modifier := "5 m",
-    expectedTelic := true, paperEq := "HKL eq 18a (telic per eq 19a)" }
+/-- The overt material that can fix a difference value. -/
+inductive Modifier (δ : Type*)
+  | none
+  | measure (m : δ)
+  | completely
+  | significantly (s : δ)
+  | slightly (s : δ)
 
-def lakeCooled4Deg : HKLModifierDatum :=
-  { sentence := "The lake cooled 4 degrees.", modifier := "4 degrees",
-    expectedTelic := true, paperEq := "HKL eq 18b (telic per eq 19b)" }
+/-- What can bound the difference value when nothing overt does: the maximal value of a
+    closed-range base adjective's scale (§3.2), or a conventional maximum for the affected
+    object (§3.3). -/
+structure Context (δ : Type*) where
+  scaleMax : Option δ
+  conventionalMax : Option δ
 
-def straightenedCompletely : HKLModifierDatum :=
-  { sentence := "They straightened the rope completely.",
-    modifier := "completely",
-    expectedTelic := true, paperEq := "HKL eq 21a (telic per eq 22a)" }
+/-- The salient bound, if any. -/
+def Context.bound (c : Context δ) : Option δ := c.scaleMax <|> c.conventionalMax
 
-def driedCompletely : HKLModifierDatum :=
-  { sentence := "The clothes dried completely.", modifier := "completely",
-    expectedTelic := true, paperEq := "HKL eq 21b (telic per eq 22b)" }
+/-- The admissible difference values of a description whose affected argument starts at
+    degree `i`: overt material fixes one; with none, the literal "some amount" and, when a
+    bound is salient, the value the most informative interpretation implicates. -/
+def readings (c : Context δ) (i : δ) : Modifier δ → Set (Set δ)
+  | .none => {someAmount} ∪ (c.bound.map λ m => {completely m i}).getD ∅
+  | .measure m => {measurePhrase m}
+  | .completely => (c.scaleMax.map λ m => {completely m i}).getD ∅
+  | .significantly s => {significantly s}
+  | .slightly s => {slightly s}
 
-def broadenedSignificantly : HKLModifierDatum :=
-  { sentence := "The IC broadened the investigation significantly.",
-    modifier := "significantly",
-    expectedTelic := true, paperEq := "HKL eq 23a (telic per 23b/c)" }
+/-- A telic reading: an admissible bounded difference value, what an in-adverbial needs. -/
+def HasTelic (c : Context δ) (i : δ) (m : Modifier δ) : Prop :=
+  ∃ D ∈ readings c i m, IsBounded D
 
-def broadenedSlightly : HKLModifierDatum :=
-  { sentence := "The IC broadened the investigation slightly.",
-    modifier := "slightly",
-    expectedTelic := false, paperEq := "HKL eq 24a (atelic per 24b/c)" }
+/-- An atelic reading: an admissible unbounded difference value, what a for-adverbial
+    needs. -/
+def HasAtelic (c : Context δ) (i : δ) (m : Modifier δ) : Prop :=
+  ∃ D ∈ readings c i m, ¬ IsBounded D
 
-def hklSection3_1Data : List HKLModifierDatum :=
-  [widenedRoad5m, lakeCooled4Deg, straightenedCompletely, driedCompletely,
-   broadenedSignificantly, broadenedSlightly]
+variable {c : Context δ} {i : δ}
 
-/-- Modifier-class licensing prediction (HKL §3.1): measure phrases,
-    `completely`, and `significantly` each induce telicity by bounding
-    the difference value below; `slightly` does not. Cf. K&M 2005's
-    later modifier-class matrix at scale-structure level. -/
-def modifierLicensesTelic : String → Bool
-  | "completely" => true
-  | "significantly" => true
-  | "slightly" => false
-  | _ => true  -- measure phrases (default for unrecognized modifier strings)
+/-- (18)–(20): a measure phrase makes the predicate telic, whatever the base adjective. -/
+theorem hasTelic_measure {m : δ} (hm : 0 < m) : HasTelic c i (.measure m) :=
+  ⟨_, rfl, isBounded_measurePhrase hm⟩
 
-/-- HKL §3.1 matrix: all six §3.1 data points agree with the
-    modifier-class prediction. -/
-theorem hklSection3_1Data_consistent :
-    hklSection3_1Data.all (fun d =>
-      modifierLicensesTelic d.modifier == d.expectedTelic) = true := by
-  decide
+theorem not_hasAtelic_measure {m : δ} (hm : 0 < m) : ¬ HasAtelic c i (.measure m) :=
+  λ ⟨_, hD, h⟩ => h (Set.mem_singleton_iff.1 hD ▸ isBounded_measurePhrase hm)
 
--- ════════════════════════════════════════════════════
--- § 4. Context-dependent telicity (HKL §3.3)
--- ════════════════════════════════════════════════════
+/-- (21)–(22), (35): `completely` makes the predicate telic and leaves no atelic reading. -/
+theorem hasTelic_completely [IsOrderedAddMonoid δ] {top : δ} (hc : c.scaleMax = some top)
+    (hi : i < top) :
+    HasTelic c i .completely :=
+  ⟨_, by simp [readings, hc], isBounded_completely hi⟩
 
-/-! HKL §3.3: when no overt linguistic material specifies the difference
-    value, real-world knowledge can supply a bound, producing a
-    **defeasible** telic interpretation that is **cancellable** because
-    it arises through conversational implicature.
+theorem not_hasAtelic_completely [IsOrderedAddMonoid δ] {top : δ} (hc : c.scaleMax = some top)
+    (hi : i < top) :
+    ¬ HasAtelic c i .completely := by
+  rintro ⟨D, hD, h⟩
+  simp only [readings, hc, Option.map_some, Option.getD_some, Set.mem_singleton_iff] at hD
+  exact h (hD ▸ isBounded_completely hi)
 
-    The contrast (HKL eqs 28 vs 30): pants/blinds have a conventional
-    maximum → telic (eq 28); commute/heat have no conventional bound →
-    atelic (eq 30). Eq 32 confirms the eq-28 telicity is cancellable
-    (*lengthened my pants, but not completely* is felicitous). Eq 33
-    confirms linguistically-supplied bounds (eq 21's *completely*) are
-    NOT cancellable (*#straightened completely, but not completely*). -/
+/-- (25b): `completely` has no reading on an open-range base. -/
+theorem readings_completely_open (hc : c.scaleMax = none) : readings c i .completely = ∅ := by
+  simp [readings, hc]
 
-/-- An HKL §3.3 context-dependent telicity datum. -/
-structure HKLContextDatum where
-  sentence : String
-  contextProvidesBound : Bool
-  expectedTelic : Bool
-  cancellable : Bool
-  paperEq : String
-  deriving Repr
+/-- (23): `significantly` makes the predicate telic. -/
+theorem hasTelic_significantly {s : δ} (hs : 0 < s) : HasTelic c i (.significantly s) :=
+  ⟨_, rfl, isBounded_significantly hs⟩
 
-def tailorLengthened : HKLContextDatum :=
-  { sentence := "The tailor lengthened my pants.",
-    contextProvidesBound := true, expectedTelic := true, cancellable := true,
-    paperEq := "HKL eq 28a (telic per 29a, cancellable per 32a)" }
+/-- (24): `slightly` leaves the predicate atelic. -/
+theorem hasAtelic_slightly [DenselyOrdered δ] {s : δ} (hs : 0 < s) :
+    HasAtelic c i (.slightly s) :=
+  ⟨_, rfl, not_isBounded_slightly hs⟩
 
-def kimLowered : HKLContextDatum :=
-  { sentence := "Kim lowered the blind.",
-    contextProvidesBound := true, expectedTelic := true, cancellable := true,
-    paperEq := "HKL eq 28b (telic per 29b)" }
+theorem not_hasTelic_slightly [DenselyOrdered δ] {s : δ} (hs : 0 < s) :
+    ¬ HasTelic c i (.slightly s) :=
+  λ ⟨_, hD, h⟩ => not_isBounded_slightly hs (Set.mem_singleton_iff.1 hD ▸ h)
 
-def trafficLengthened : HKLContextDatum :=
-  { sentence := "The traffic lengthened my commute.",
-    contextProvidesBound := false, expectedTelic := false, cancellable := false,
-    paperEq := "HKL eq 30a (atelic per 31a)" }
+/-- (26), (28), (34a): with a salient bound, from a closed-range base or from convention, an
+    unmodified degree achievement has a telic reading. -/
+theorem hasTelic_of_bound [IsOrderedAddMonoid δ] {b : δ} (hb : c.bound = some b) (hi : i < b) :
+    HasTelic c i .none :=
+  ⟨completely b i, by simp [readings, hb], isBounded_completely hi⟩
 
-def kimLoweredHeat : HKLContextDatum :=
-  { sentence := "Kim lowered the heat.",
-    contextProvidesBound := false, expectedTelic := false, cancellable := false,
-    paperEq := "HKL eq 30b (atelic per 31b)" }
+/-- (32), (34b): the literal reading is always there, so the implicated bound can be cancelled
+    and the for-adverbial is felicitous. -/
+theorem hasAtelic_none [DenselyOrdered δ] : HasAtelic c i .none :=
+  ⟨someAmount, by simp [readings], not_isBounded_someAmount⟩
 
-def hklSection3_3Data : List HKLContextDatum :=
-  [tailorLengthened, kimLowered, trafficLengthened, kimLoweredHeat]
+/-- (27), (30), (31): without a salient bound, an unmodified degree achievement has only the
+    atelic reading. -/
+theorem not_hasTelic_none [DenselyOrdered δ] (hb : c.bound = none) : ¬ HasTelic c i .none := by
+  rintro ⟨D, hD, h⟩
+  simp only [readings, hb, Option.map_none, Option.getD_none, Set.union_empty,
+    Set.mem_singleton_iff] at hD
+  exact not_isBounded_someAmount (hD ▸ h)
 
-/-- HKL §3.3 matrix prediction: contextual bound ⟺ (defeasible) telicity;
-    when telic via context, the inference is cancellable; when no
-    context-bound, the interpretation is robustly atelic. -/
-theorem hklSection3_3Data_matrix :
-    hklSection3_3Data.all (fun d =>
-      d.contextProvidesBound == d.expectedTelic &&
-      d.contextProvidesBound == d.cancellable) = true := by
-  decide
+/-! ### Cancellability (§3.3, (32)–(33)) -/
 
--- ════════════════════════════════════════════════════
--- § 5. Beyond degree achievements (HKL §4.1) — data only
--- ════════════════════════════════════════════════════
+/-- (33): a bound supplied by overt material is not cancellable: if the rope was straightened
+    completely, it is completely straight. -/
+theorem completely_not_cancellable {φ : TemporalMeasure α δ T} {x : α} {top : δ}
+    {t₀ t₁ : T} (h : Describes φ x (completely top (φ x t₀)) t₀ t₁) :
+    ¬ φ x t₁ < top := by
+  obtain ⟨d, hd, hinc⟩ := h
+  rw [Set.mem_singleton_iff.1 hd, Increase, add_sub_cancel] at hinc
+  intro hlt
+  rw [← hinc] at hlt
+  exact lt_irrefl _ hlt
 
-/-! HKL §4.1 extends the analysis to **consumption** (*eat the sandwich*,
-    eqs 36-37), **motion** (*run a mile*, *descend 1000m*, eqs 38-42),
-    and **creation** (*draw a house*, eq 39) — the "classically telic"
-    verbs of [krifka-1989]'s incremental-theme tradition. Their
-    telicity ALSO depends on the boundedness of a difference value:
-    bounded → telic, unbounded → atelic. The difference value is "the
-    measure of change along a path of motion, in spatial extent, or in
-    some other scalar property" (HKL §4.2).
+/-- (32): a bound that is only implicated is cancellable: the literal "some amount" is
+    consistent with the maximal value not having been reached. -/
+theorem someAmount_cancellable [IsOrderedAddMonoid δ] [DenselyOrdered δ] {i top : δ}
+    (hi : i < top) :
+    ∃ φ : TemporalMeasure Unit δ Bool,
+      Describes φ () someAmount false true ∧ φ () true < top := by
+  obtain ⟨j, hij, hjt⟩ := exists_between hi
+  exact ⟨λ _ t => if t then j else i, ⟨j - i, sub_pos.2 hij, by simp [Increase]⟩, by simpa⟩
 
-    HKL uses this generalization to argue against Dowty 1991's
-    "incremental theme as argument" view: the incremental theme is
-    properly construed as a *property of an argument*, not the
-    argument itself (HKL §4.2). That argument is recorded as data here
-    but not further formalized — the K89 quantization framework
-    (`Semantics/Events/Krifka1989.lean`) is the substrate for
-    the consumption/creation cases, and `Studies/Krifka1989.lean`
-    §1-§4 cover the same ground via Krifka's QUA/CUM apparatus. -/
+end Semantics
 
-/-- A datum from HKL §4.1's beyond-DA generalization. -/
-structure HKLBeyondDADatum where
-  sentence : String
-  verbClass : String
-  bounded : Bool
-  expectedTelic : Bool
-  paperEq : String
-  deriving Repr
+/-! ### The English degree achievements (§3.2, (25)) -/
 
-def ateSandwich5min : HKLBeyondDADatum :=
-  { sentence := "She ate the sandwich in 5 minutes.",
-    verbClass := "consumption",
-    bounded := true, expectedTelic := true,
-    paperEq := "HKL eq 36 / 37a" }
+/-- The closed-range adjectives the paper names: *straight*, *empty*, *dry* ((25a)) and
+    *flat*. -/
+def closedRange : List String := ["straight", "empty", "dry", "flat"]
 
-def ranMile : HKLBeyondDADatum :=
-  { sentence := "She ran a mile.", verbClass := "motion",
-    bounded := true, expectedTelic := true,
-    paperEq := "HKL eq 38a (negation infelicitous)" }
+/-- The open-range adjectives the paper names: *long*, *wide*, *short* ((25b)). -/
+def openRange : List String := ["long", "wide", "short"]
 
-def ranRace : HKLBeyondDADatum :=
-  { sentence := "She ran a race.", verbClass := "motion",
-    bounded := true, expectedTelic := true,
-    paperEq := "HKL eq 38b" }
+/-- The fragment's degree achievements agree with the paper's classification: a verb whose base
+    adjective is closed-range has a scale with a maximum, and one whose base is open-range has
+    not. -/
+theorem fragment_range :
+    ∀ v ∈ allVerbs, ∀ s ∈ v.degreeAchievementScale, ∀ a ∈ s.baseAdjective,
+      (a ∈ closedRange → s.scaleBoundedness.HasMax) ∧
+        (a ∈ openRange → ¬ s.scaleBoundedness.HasMax) := by
+  decide +kernel
 
-def planeDescended20min : HKLBeyondDADatum :=
-  { sentence := "The plane descended in 20 minutes.",
-    verbClass := "directed motion",
-    bounded := true, expectedTelic := true,
-    paperEq := "HKL eq 41a (cancellable per 41b)" }
-
-def hklSection4Data : List HKLBeyondDADatum :=
-  [ateSandwich5min, ranMile, ranRace, planeDescended20min]
-
-/-- HKL §4.1 generalization: across consumption, motion, and directed
-    motion, bounded difference value ⟺ telic interpretation. -/
-theorem hklSection4Data_bounded_iff_telic :
-    hklSection4Data.all (fun d => d.bounded == d.expectedTelic) = true := by
-  decide
+/-- The default telicity the fragment derives for a degree achievement is the telicity of the
+    unmodified reading in a context whose only salient bound is the scale's maximum, when it
+    has one. -/
+theorem defaultTelicity_iff (s : DegreeAchievement.DegreeAchievementScale) (i top : ℚ)
+    (hi : i < top) :
+    s.defaultTelicity = .telic ↔
+      HasTelic ⟨if s.scaleBoundedness.HasMax then some top else none, none⟩ i .none := by
+  have key : s.defaultTelicity = .telic ↔ s.scaleBoundedness.HasMax := by
+    rw [DegreeAchievement.DegreeAchievementScale.defaultTelicity,
+      ScalarDimension.defaultTelicity_telic_iff_hasGreatest]
+    exact Boundedness.hasGreatest_degreeShape_iff _
+  rw [key]
+  by_cases hmax : s.scaleBoundedness.HasMax
+  · rw [if_pos hmax]
+    exact iff_of_true hmax (hasTelic_of_bound rfl hi)
+  · rw [if_neg hmax]
+    exact iff_of_false hmax (not_hasTelic_none rfl)
 
 end HayKennedyLevin1999
