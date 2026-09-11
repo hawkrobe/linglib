@@ -1,0 +1,2082 @@
+[
+  {
+    "id": "harrispotts2009_ex2a",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(2a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Lucille Gorman, an 84-year-old Chicago housewife, has become amazingly immune to stock-market jolts.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "construction",
+        "nominalAppositive"
+      ]
+    ],
+    "comment": "Treebank corpus.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_ex2b",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(2b)"
+    },
+    "language": "stan1293",
+    "primaryText": "uh, she starts a new job tomorrow, which should take her out of the house about four days a week.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "construction",
+        "appositiveRelative"
+      ]
+    ],
+    "comment": "Switchboard corpus.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_ex2c",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(2c)"
+    },
+    "language": "stan1293",
+    "primaryText": "In traffic so heavy that there is no way for the jerk to pass, I might pull over, as if to look for a street number or name, (still ignoring the jerk) just to get the jerk off my tail.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "construction",
+        "epithet"
+      ]
+    ],
+    "comment": "20 newsgroups corpus.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_ex3a",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(3a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I think it would concern me even more if I had children, which I don't, [...]",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "construction",
+        "appositiveRelative"
+      ]
+    ],
+    "comment": "Switchboard corpus: the appositive scopes out of the conditional antecedent.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_ex4",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(4)"
+    },
+    "language": "stan1293",
+    "primaryText": "In front of Ralph stand two women. Ralph believes that the woman on the left, who is smiling, is Bea, and the woman on the right, who is frowning, is Ann. As a matter of fact, exactly the opposite is the case.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "construction",
+        "appositiveRelative"
+      ],
+      [
+        "embedded",
+        "yes"
+      ],
+      [
+        "orientation",
+        "speaker"
+      ]
+    ],
+    "comment": "Aloni's passage: speakers choose the situation in which only the names are reversed, so the appositives are not interpreted inside Ralph's belief.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_ex5",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(5)"
+    },
+    "language": "stan1293",
+    "primaryText": "In front of Ralph stand two women. Ralph believes that the woman on the left is smiling and is Bea, and the woman on the right is frowning and is Ann. As a matter of fact, exactly the opposite is the case.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "construction",
+        "conjunction"
+      ],
+      [
+        "embedded",
+        "yes"
+      ],
+      [
+        "orientation",
+        "subject"
+      ]
+    ],
+    "comment": "The control: with conjunction in place of the appositives, everything is reversed.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_ex6",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(6)"
+    },
+    "language": "stan1293",
+    "primaryText": "The complaint says that the idiot filled in a box labeled “default CPC bid” but left blank the box labeled “content CPC bid (optional)”.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "construction",
+        "epithet"
+      ],
+      [
+        "embedded",
+        "yes"
+      ],
+      [
+        "orientation",
+        "speaker"
+      ]
+    ],
+    "comment": "Weblog post: the epithet is the author's dismissive opinion of the plaintiff, not part of what the complaint says.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_ex7",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(7)"
+    },
+    "language": "stan1293",
+    "primaryText": "Far out on the grassy knoll of sexology, there is a cult of prochastity researchers who claim that the late Alfred Kinsey was a secret sex criminal, a Hoosier Dr. Mengele, who bent his numbers toward the bisexual and the bizarre in a grand conspiracy to queer the nation and usher in an era of free sex with kids.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "construction",
+        "nominalAppositive"
+      ],
+      [
+        "embedded",
+        "yes"
+      ],
+      [
+        "orientation",
+        "subject"
+      ]
+    ],
+    "comment": "20 newsgroups corpus: the appositive is intended inside the complement of ‘claim’.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_ex8",
+    "source": {
+      "bibkey": "amaral-roberts-smith-2007",
+      "paperLabel": ""
+    },
+    "language": "stan1293",
+    "primaryText": "Joan believes that her chip, which was installed last month, has a twelve year guarantee.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Joan is crazy. She's hallucinating that some geniuses in Silicon Valley have invented a new brain chip that's been installed in her left temporal lobe and permits her to speak any of a number of languages she's never studied.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "construction",
+        "appositiveRelative"
+      ],
+      [
+        "embedded",
+        "yes"
+      ],
+      [
+        "orientation",
+        "subject"
+      ]
+    ],
+    "comment": "A definite anchor with a full relative clause, embedded under ‘believes’.",
+    "lgrConformance": "",
+    "reportedIn": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(8)"
+    }
+  },
+  {
+    "id": "harrispotts2009_ex9",
+    "source": {
+      "bibkey": "amaral-roberts-smith-2007",
+      "paperLabel": ""
+    },
+    "language": "stan1293",
+    "primaryText": "Well, in fact Monty said to me this very morning that he hates to mow the friggin lawn.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "We know that Bob loves to do yard work and is very proud of his lawn, but also that he has a son Monty who hates to do yard chores. So Bob could say (perhaps in response to his partner's suggestion that Monty be asked to mow the lawn while he is away on business):",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "construction",
+        "expressiveAdjective"
+      ],
+      [
+        "embedded",
+        "yes"
+      ],
+      [
+        "orientation",
+        "subject"
+      ]
+    ],
+    "comment": "Bob, proud of his lawn, reports Monty's attitude.",
+    "lgrConformance": "",
+    "reportedIn": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(9)"
+    }
+  },
+  {
+    "id": "harrispotts2009_ex11",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(11)"
+    },
+    "language": "stan1293",
+    "primaryText": "Why humor people, especially poor people, by listening to their idiotic theories of social justice?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I was struck by the willingness of almost everybody in the room — the senators as eagerly as the witnesses — to exchange their civil liberties for an illusory state of perfect security. They seemed to think that democracy was just a fancy word for corporate capitalism, and that the society would be a lot better off if it stopped its futile and unremunerative dithering about constitutional rights.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "construction",
+        "expressiveAdjective"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "orientation",
+        "subject"
+      ]
+    ],
+    "comment": "Lewis Lapham, Harper's Magazine, July 1995: the adjective conveys the senators' view, and it is not embedded at all.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_ex12",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(12)"
+    },
+    "language": "stan1293",
+    "primaryText": "Steve Jobs and the rest of the Apple cronies must be lying.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "While shopping at one of my local Apple stores the other day, I overheard an earnest conversation about safeguarding Mac computers against things like viruses and trojans. The customer and companion were new to Mac life and were convinced that they should be very worried about viruses. The Apple salesperson on the floor repeatedly assured them that they would not need extra antivirus protection for their Mac. The customer then argued that Symantec makes an antivirus program for Macs, therefore, it must truly be a credible threat, otherwise there would be no such products. Some antivirus products are even sold in Apple stores. I've heard similar arguments before: if companies like Symantec or McAfee make antivirus applications for the Mac, then Macs must truly be vulnerable somehow, somewhere.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "construction",
+        "epithet"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "orientation",
+        "subject"
+      ]
+    ],
+    "comment": "Digital Trends: the whole sentence, epistemic modal included, is evaluated from the customer's perspective; unembedded.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exA1-embedded",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(A.1)"
+    },
+    "language": "stan1293",
+    "primaryText": "The other day, she told me that we need to watch out for the mailman, a possible government spy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I am increasingly worried about my roommate. She seems to be growing paranoid.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "construction",
+        "nominalAppositive"
+      ],
+      [
+        "embedded",
+        "yes"
+      ],
+      [
+        "experiment",
+        "1"
+      ],
+      [
+        "item",
+        "1"
+      ]
+    ],
+    "comment": "Experiment 1, item 1, embedded condition: whose view is the appositive content?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exA1-unembedded",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(A.1)"
+    },
+    "language": "stan1293",
+    "primaryText": "The other day, she refused to talk with the mailman, a possible government spy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I am increasingly worried about my roommate. She seems to be growing paranoid.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "construction",
+        "nominalAppositive"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "1"
+      ],
+      [
+        "item",
+        "1"
+      ]
+    ],
+    "comment": "Experiment 1, item 1, unembedded condition: whose view is the appositive content?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exA2-embedded",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(A.2)"
+    },
+    "language": "stan1293",
+    "primaryText": "He told me that the lottery ticket he bought yesterday, a sure winner, is the key to his financial independence.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My friend Sal is absurdly optimistic.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "construction",
+        "nominalAppositive"
+      ],
+      [
+        "embedded",
+        "yes"
+      ],
+      [
+        "experiment",
+        "1"
+      ],
+      [
+        "item",
+        "2"
+      ]
+    ],
+    "comment": "Experiment 1, item 2, embedded condition: whose view is the appositive content?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exA2-unembedded",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(A.2)"
+    },
+    "language": "stan1293",
+    "primaryText": "All he could talk about at dinner was the lottery ticket he bought yesterday, a sure winner.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My friend Sal is absurdly optimistic.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "construction",
+        "nominalAppositive"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "1"
+      ],
+      [
+        "item",
+        "2"
+      ]
+    ],
+    "comment": "Experiment 1, item 2, unembedded condition: whose view is the appositive content?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exA3-embedded",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(A.3)"
+    },
+    "language": "stan1293",
+    "primaryText": "She says that dentists, who are only in it for the money anyway, are not to be trusted at all.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My aunt is extremely skeptical of doctors in general.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "construction",
+        "appositiveRelative"
+      ],
+      [
+        "embedded",
+        "yes"
+      ],
+      [
+        "experiment",
+        "1"
+      ],
+      [
+        "item",
+        "3"
+      ]
+    ],
+    "comment": "Experiment 1, item 3, embedded condition: whose view is the appositive content?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exA3-unembedded",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(A.3)"
+    },
+    "language": "stan1293",
+    "primaryText": "Dentists, who are only in it for the money anyway, are not to be trusted at all.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My aunt is extremely skeptical of doctors in general.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "construction",
+        "appositiveRelative"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "1"
+      ],
+      [
+        "item",
+        "3"
+      ]
+    ],
+    "comment": "Experiment 1, item 3, unembedded condition: whose view is the appositive content?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exA4-embedded",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(A.4)"
+    },
+    "language": "stan1293",
+    "primaryText": "She says that rock-n-roll, a degenerate genre, is no better than elevator music.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My friend Ellen is a huge snob about music.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "construction",
+        "nominalAppositive"
+      ],
+      [
+        "embedded",
+        "yes"
+      ],
+      [
+        "experiment",
+        "1"
+      ],
+      [
+        "item",
+        "4"
+      ]
+    ],
+    "comment": "Experiment 1, item 4, embedded condition: whose view is the appositive content?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exA4-unembedded",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(A.4)"
+    },
+    "language": "stan1293",
+    "primaryText": "According to her, rock-n-roll, a degenerate genre, is no better than elevator music.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My friend Ellen is a huge snob about music.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "construction",
+        "nominalAppositive"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "1"
+      ],
+      [
+        "item",
+        "4"
+      ]
+    ],
+    "comment": "Experiment 1, item 4, unembedded condition: whose view is the appositive content?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exA5-embedded",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(A.5)"
+    },
+    "language": "stan1293",
+    "primaryText": "She now claims that her apartment was bugged by the Feds, who are listening to her every word.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Poor Joan seems to have grown crazier than ever.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "construction",
+        "appositiveRelative"
+      ],
+      [
+        "embedded",
+        "yes"
+      ],
+      [
+        "experiment",
+        "1"
+      ],
+      [
+        "item",
+        "5"
+      ]
+    ],
+    "comment": "Experiment 1, item 5, embedded condition: whose view is the appositive content?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exA5-unembedded",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(A.5)"
+    },
+    "language": "stan1293",
+    "primaryText": "Her apartment was bugged by the Feds, who are listening to her every word.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Poor Joan seems to have grown crazier than ever.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "construction",
+        "appositiveRelative"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "1"
+      ],
+      [
+        "item",
+        "5"
+      ]
+    ],
+    "comment": "Experiment 1, item 5, unembedded condition: whose view is the appositive content?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exA6-embedded",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(A.6)"
+    },
+    "language": "stan1293",
+    "primaryText": "He says that he puts off his homework, a complete waste of time, to the last minute.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My brother Sid hates school.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "construction",
+        "nominalAppositive"
+      ],
+      [
+        "embedded",
+        "yes"
+      ],
+      [
+        "experiment",
+        "1"
+      ],
+      [
+        "item",
+        "6"
+      ]
+    ],
+    "comment": "Experiment 1, item 6, embedded condition: whose view is the appositive content?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exA6-unembedded",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(A.6)"
+    },
+    "language": "stan1293",
+    "primaryText": "He puts off his homework, a complete waste of time, to the last minute.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My brother Sid hates school.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "construction",
+        "nominalAppositive"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "1"
+      ],
+      [
+        "item",
+        "6"
+      ]
+    ],
+    "comment": "Experiment 1, item 6, unembedded condition: whose view is the appositive content?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exA7-embedded",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(A.7)"
+    },
+    "language": "stan1293",
+    "primaryText": "He told me that modern theater, which has been on the decline for years, is near its end.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I talked to an outlandish theater critic at a party.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "construction",
+        "appositiveRelative"
+      ],
+      [
+        "embedded",
+        "yes"
+      ],
+      [
+        "experiment",
+        "1"
+      ],
+      [
+        "item",
+        "7"
+      ]
+    ],
+    "comment": "Experiment 1, item 7, embedded condition: whose view is the appositive content?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exA7-unembedded",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(A.7)"
+    },
+    "language": "stan1293",
+    "primaryText": "According to him, modern theater, which has been on the decline for years, is near its end.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I talked to an outlandish theater critic at a party.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "construction",
+        "appositiveRelative"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "1"
+      ],
+      [
+        "item",
+        "7"
+      ]
+    ],
+    "comment": "Experiment 1, item 7, unembedded condition: whose view is the appositive content?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exA8-embedded",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(A.8)"
+    },
+    "language": "stan1293",
+    "primaryText": "She says that a good graphic novel, man's greatest achievement, can keep her up reading until dawn.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My kid sister Loni is obsessed with comic books.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "construction",
+        "nominalAppositive"
+      ],
+      [
+        "embedded",
+        "yes"
+      ],
+      [
+        "experiment",
+        "1"
+      ],
+      [
+        "item",
+        "8"
+      ]
+    ],
+    "comment": "Experiment 1, item 8, embedded condition: whose view is the appositive content?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exA8-unembedded",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(A.8)"
+    },
+    "language": "stan1293",
+    "primaryText": "A good graphic novel, man's greatest achievement, can keep her up reading until dawn.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My kid sister Loni is obsessed with comic books.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "construction",
+        "nominalAppositive"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "1"
+      ],
+      [
+        "item",
+        "8"
+      ]
+    ],
+    "comment": "Experiment 1, item 8, unembedded condition: whose view is the appositive content?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exB1-positive",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(B.1)"
+    },
+    "language": "stan1293",
+    "primaryText": "The jerk always favors long papers.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My classmate Sheila said that her history professor gave her a (really) high grade.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "construction",
+        "epithet"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "2"
+      ],
+      [
+        "item",
+        "1"
+      ],
+      [
+        "contextPolarity",
+        "positive"
+      ],
+      [
+        "epithet",
+        "the jerk"
+      ]
+    ],
+    "comment": "Experiment 2, item 1, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is jerk?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exB1-negative",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(B.1)"
+    },
+    "language": "stan1293",
+    "primaryText": "The jerk always favors long papers.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My classmate Sheila said that her history professor gave her a (really) low grade.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "construction",
+        "epithet"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "2"
+      ],
+      [
+        "item",
+        "1"
+      ],
+      [
+        "contextPolarity",
+        "negative"
+      ],
+      [
+        "epithet",
+        "the jerk"
+      ]
+    ],
+    "comment": "Experiment 2, item 1, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is jerk?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exB2-positive",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(B.2)"
+    },
+    "language": "stan1293",
+    "primaryText": "The idiot never stops talking.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My neighbor Maria said that her roommate has the (absolute) best sense of humor.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "construction",
+        "epithet"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "2"
+      ],
+      [
+        "item",
+        "2"
+      ],
+      [
+        "contextPolarity",
+        "positive"
+      ],
+      [
+        "epithet",
+        "the idiot"
+      ]
+    ],
+    "comment": "Experiment 2, item 2, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is idiot?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exB2-negative",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(B.2)"
+    },
+    "language": "stan1293",
+    "primaryText": "The idiot never stops talking.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My neighbor Maria said that her roommate has the (absolute) worst sense of humor.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "construction",
+        "epithet"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "2"
+      ],
+      [
+        "item",
+        "2"
+      ],
+      [
+        "contextPolarity",
+        "negative"
+      ],
+      [
+        "epithet",
+        "the idiot"
+      ]
+    ],
+    "comment": "Experiment 2, item 2, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is idiot?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exB3-positive",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(B.3)"
+    },
+    "language": "stan1293",
+    "primaryText": "The stooge can never get through a single one of them without giggling.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My roommate Glen said that his uncle tells the (absolute) funniest jokes.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "construction",
+        "epithet"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "2"
+      ],
+      [
+        "item",
+        "3"
+      ],
+      [
+        "contextPolarity",
+        "positive"
+      ],
+      [
+        "epithet",
+        "the stooge"
+      ]
+    ],
+    "comment": "Experiment 2, item 3, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is stooge?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exB3-negative",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(B.3)"
+    },
+    "language": "stan1293",
+    "primaryText": "The stooge can never get through a single one of them without giggling.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My roommate Glen said that his uncle tells the (absolute) lamest jokes.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "construction",
+        "epithet"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "2"
+      ],
+      [
+        "item",
+        "3"
+      ],
+      [
+        "contextPolarity",
+        "negative"
+      ],
+      [
+        "epithet",
+        "the stooge"
+      ]
+    ],
+    "comment": "Experiment 2, item 3, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is stooge?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exB4-positive",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(B.4)"
+    },
+    "language": "stan1293",
+    "primaryText": "The idiot spent a lot of money to impress her.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My sister Trudy said that her blind date showed up wearing an (incredibly) expensive suit.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "construction",
+        "epithet"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "2"
+      ],
+      [
+        "item",
+        "4"
+      ],
+      [
+        "contextPolarity",
+        "positive"
+      ],
+      [
+        "epithet",
+        "the idiot"
+      ]
+    ],
+    "comment": "Experiment 2, item 4, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is idiot?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exB4-negative",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(B.4)"
+    },
+    "language": "stan1293",
+    "primaryText": "The idiot spent a lot of money to impress her.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My sister Trudy said that her blind date showed up wearing an (incredibly) tasteless suit.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "construction",
+        "epithet"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "2"
+      ],
+      [
+        "item",
+        "4"
+      ],
+      [
+        "contextPolarity",
+        "negative"
+      ],
+      [
+        "epithet",
+        "the idiot"
+      ]
+    ],
+    "comment": "Experiment 2, item 4, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is idiot?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exB5-positive",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(B.5)"
+    },
+    "language": "stan1293",
+    "primaryText": "The twerp never takes a night off.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My buddy Steve said that his landlord plays the trumpet (very) well.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "construction",
+        "epithet"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "2"
+      ],
+      [
+        "item",
+        "5"
+      ],
+      [
+        "contextPolarity",
+        "positive"
+      ],
+      [
+        "epithet",
+        "the twerp"
+      ]
+    ],
+    "comment": "Experiment 2, item 5, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is twerp?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exB5-negative",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(B.5)"
+    },
+    "language": "stan1293",
+    "primaryText": "The twerp never takes a night off.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My buddy Steve said that his landlord plays the trumpet (very) badly.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "construction",
+        "epithet"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "2"
+      ],
+      [
+        "item",
+        "5"
+      ],
+      [
+        "contextPolarity",
+        "negative"
+      ],
+      [
+        "epithet",
+        "the twerp"
+      ]
+    ],
+    "comment": "Experiment 2, item 5, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is twerp?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exB6-positive",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(B.6)"
+    },
+    "language": "stan1293",
+    "primaryText": "The skinflint has always treated the pretty ones better.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My co-worker Miranda said that our boss gave her a (super) generous Christmas bonus.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "construction",
+        "epithet"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "2"
+      ],
+      [
+        "item",
+        "6"
+      ],
+      [
+        "contextPolarity",
+        "positive"
+      ],
+      [
+        "epithet",
+        "the skinflint"
+      ]
+    ],
+    "comment": "Experiment 2, item 6, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is skinflint?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exB6-negative",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(B.6)"
+    },
+    "language": "stan1293",
+    "primaryText": "The skinflint has always treated the pretty ones better.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My co-worker Miranda said that our boss gave her a (super) stingy Christmas bonus.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "construction",
+        "epithet"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "2"
+      ],
+      [
+        "item",
+        "6"
+      ],
+      [
+        "contextPolarity",
+        "negative"
+      ],
+      [
+        "epithet",
+        "the skinflint"
+      ]
+    ],
+    "comment": "Experiment 2, item 6, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is skinflint?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exB7-positive",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(B.7)"
+    },
+    "language": "stan1293",
+    "primaryText": "The jerk is always nicer when he's paid in advance.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My brother Ken said that his math tutor has been in (such) a great mood lately.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "construction",
+        "epithet"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "2"
+      ],
+      [
+        "item",
+        "7"
+      ],
+      [
+        "contextPolarity",
+        "positive"
+      ],
+      [
+        "epithet",
+        "the jerk"
+      ]
+    ],
+    "comment": "Experiment 2, item 7, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is jerk?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exB7-negative",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(B.7)"
+    },
+    "language": "stan1293",
+    "primaryText": "The jerk is always nicer when he's paid in advance.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My brother Ken said that his math tutor has been in (such) a terrible mood lately.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "construction",
+        "epithet"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "2"
+      ],
+      [
+        "item",
+        "7"
+      ],
+      [
+        "contextPolarity",
+        "negative"
+      ],
+      [
+        "epithet",
+        "the jerk"
+      ]
+    ],
+    "comment": "Experiment 2, item 7, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is jerk?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exB8-positive",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(B.8)"
+    },
+    "language": "stan1293",
+    "primaryText": "The cretin always invites a lot of people.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My friend Mike said that his housemate threw a (totally) fantastic party last weekend.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "construction",
+        "epithet"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "2"
+      ],
+      [
+        "item",
+        "8"
+      ],
+      [
+        "contextPolarity",
+        "positive"
+      ],
+      [
+        "epithet",
+        "the cretin"
+      ]
+    ],
+    "comment": "Experiment 2, item 8, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is cretin?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exB8-negative",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(B.8)"
+    },
+    "language": "stan1293",
+    "primaryText": "The cretin always invites a lot of people.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My friend Mike said that his housemate threw a (totally) horrible party last weekend.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "construction",
+        "epithet"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "2"
+      ],
+      [
+        "item",
+        "8"
+      ],
+      [
+        "contextPolarity",
+        "negative"
+      ],
+      [
+        "epithet",
+        "the cretin"
+      ]
+    ],
+    "comment": "Experiment 2, item 8, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is cretin?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exB9-positive",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(B.9)"
+    },
+    "language": "stan1293",
+    "primaryText": "The creep tried to seduce her in the past.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My aide Sandy said that the good-looking bike messenger is always (so) sweet to her.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "construction",
+        "epithet"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "2"
+      ],
+      [
+        "item",
+        "9"
+      ],
+      [
+        "contextPolarity",
+        "positive"
+      ],
+      [
+        "epithet",
+        "the creep"
+      ]
+    ],
+    "comment": "Experiment 2, item 9, positive context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is creep?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_exB9-negative",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(B.9)"
+    },
+    "language": "stan1293",
+    "primaryText": "The creep tried to seduce her in the past.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "My aide Sandy said that the good-looking bike messenger is always (so) rude to her.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "construction",
+        "epithet"
+      ],
+      [
+        "embedded",
+        "no"
+      ],
+      [
+        "experiment",
+        "2"
+      ],
+      [
+        "item",
+        "9"
+      ],
+      [
+        "contextPolarity",
+        "negative"
+      ],
+      [
+        "epithet",
+        "the creep"
+      ]
+    ],
+    "comment": "Experiment 2, item 9, negative context (the intensifier in parentheses is the other manipulation): whose view is it that the referent is creep?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_ex17",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(17)"
+    },
+    "language": "stan1293",
+    "primaryText": "Hartzenberg said he would ask Terre'Blanche, who heads the extremist Afrikaner Resistance Movement (AWB), if he would meet Mandela.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "construction",
+        "appositiveRelative"
+      ],
+      [
+        "embedded",
+        "yes"
+      ]
+    ],
+    "comment": "The target configuration of the corpus study: an appositive relative in the complement of a speech predicate.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_ex22a",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(22a)"
+    },
+    "language": "stan1293",
+    "primaryText": "A government prosecutor said Wednesday he plans to drop vandalism charges against a Malaysian teenager allegedly involved in a spate of spray painting cars with a young American, Michael Fay, who was caned recently.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "construction",
+        "appositiveRelative"
+      ],
+      [
+        "embedded",
+        "yes"
+      ],
+      [
+        "orientation",
+        "speaker"
+      ]
+    ],
+    "comment": "Text-level (speaker-oriented) by textual evidence: a later sentence elaborates on Fay's punishment.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_ex23a",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(23a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Israel says Arad was captured by Dirani, who may have then sold him to Iran.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "construction",
+        "appositiveRelative"
+      ],
+      [
+        "embedded",
+        "yes"
+      ],
+      [
+        "orientation",
+        "subject"
+      ]
+    ],
+    "comment": "Embedded (non-speaker-oriented) by textual evidence: ‘then’ and the epistemic modal are anchored to Israel; one of two such cases among the 34 with three-way agreement.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_ex25a",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(25a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The king said that he and his wife were “greatly saddened” by the death of Onassis, widow of former US president John Kennedy, who was assassinated in Dallas in November 1963.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "construction",
+        "appositiveRelative"
+      ],
+      [
+        "embedded",
+        "yes"
+      ]
+    ],
+    "comment": "No textual evidence, though intended as text-level.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "harrispotts2009_ex25b",
+    "source": {
+      "bibkey": "harris-potts-2009",
+      "paperLabel": "(25b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Texas Air Corp said it named Norman McInnis as president of its Britt Airways unit, succeeding Bill Britt, who retired March one.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "construction",
+        "appositiveRelative"
+      ],
+      [
+        "embedded",
+        "yes"
+      ]
+    ],
+    "comment": "No textual evidence, though intended as text-level.",
+    "lgrConformance": ""
+  }
+]
