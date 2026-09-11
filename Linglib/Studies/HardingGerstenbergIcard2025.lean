@@ -1,664 +1,552 @@
-import Mathlib.Data.Rat.Defs
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Linglib.Pragmatics.RSA.Uniform
+import Linglib.Core.Probability.Kernel.Posterior
 import Linglib.Semantics.Causation.SEM.Bool
 import Linglib.Semantics.Causation.SEM.Counterfactual
 import Linglib.Semantics.Causation.CCSelection
+import Mathlib.Analysis.SpecialFunctions.Sigmoid
 
 /-!
-# A Communication-First Account of Explanation
-[halpern-pearl-2005] [harding-gerstenberg-icard-2025] [sumers-etal-2023] [frank-goodman-2012]
+# Harding, Gerstenberg, and Icard (2025): A Communication-First Account of Explanation
 
-Formalization of [harding-gerstenberg-icard-2025] §3:
-"why FACT?" / "FACT because X = x" modeled as an RSA communication
-game where the literal listener interprets via Halpern-Pearl actual
-causation, the speaker reasons about a downstream decision problem
-(the *manipulation game* of Def 3), and Goodness (eq. 8) is Δ expected
-utility under the pragmatic listener.
+This file formalizes the model of [harding-gerstenberg-icard-2025], on which an answer to "why
+FACT?" is a message in a Rational Speech Act game ([frank-goodman-2012]) whose literal meaning
+is actual causation and whose speaker is useful rather than informative, after
+[sumers-etal-2023]. The literal listener conditions a prior over causal situations on the
+message (2), the substrate's `RSA.uniformListener`; the listener acts in a decision problem by
+the softmax of expected reward (3), `policy`, the substrate's `RSA.speakerOfScore`; the speaker
+maximizes the reward of the listener's action less the message's cost (4), (6), `speaker`; the
+pragmatic listener is the posterior of the speaker at the prior (7); and the goodness of an
+explanation is the gain in expected reward over acting on the prior alone (8), `goodness`.
+When the listener's interests are unknown the decision problem is the manipulation game
+(Definition 2), whose reward for a variable is the probability over contexts that intervening
+on it changes FACT, `manipulationReward`. In the roof example (Example 2) citing the thatched
+roof and citing the drought are equally informative but not equally useful, since only the
+former bears on replacing a roof (Table 1), so at any rationality the listener replaces the roof
+more readily after the former, `RoofReplacement.policy_replace_lt`. In the late-meeting example
+(Example 3) citing the tardiness is worth giving although the listener already knows it: the
+speaker cites the birthday exactly in the conjunctive world, so the pragmatic listener infers
+from her not doing so that tardiness alone is the cause, and the goodness of the message is
+positive, `LateMeeting.goodness_pos`. In the milk example (Example 4) citing both culprits is
+worth more than citing one, but a sufficient cost difference makes the speaker prefer the
+shorter message, `MilkTheft.speaker_prefers_short`. The interpretation sets are the paper's,
+and for the late meeting the positive memberships are derived from actual causation in the
+worlds' structural causal models.
 
-## The framework (paper §3)
+## Implementation notes
 
-- **Worlds**: pairs `(M, u)` of a structural causal model with an
-  exogenous context. `K` is a finite set of such pairs (the listener's
-  epistemic state).
-- **Messages**: "FACT because X = x". Semantic value is `actualCause`
-  at `(M, u)`. We use a simple existential-witness form (paper p. 8
-  licenses any extant actual-cause account); the existential ranges
-  over Boolean valuations and reduces structurally on the concrete
-  scenarios. UNVERIFIED: the full HP definition with off-pathway
-  W-witnesses is stronger; for the disjunctive Milk-Theft case the
-  two definitions agree on which messages are true.
-- **L0** (eq. 2): `P_{L0}(M, u | m) ∝ Prior(M, u) · 1_{(M,u) ⊨ m}`.
-- **Manipulation Game** (Def 3): action set `A` = endogenous variables
-  other than FACT; reward `R(X, M, u) = E_{u'}[Manipulates(X, FACT | M, u')]`
-  built from `BoolSEM.manipulates`.
-- **Speaker** (eqs. 3-5): `π_{L0}(a | m) ∝ exp(β_L · E_{P_{L0}}[R(a, M, u)])`,
-  `U_S(m, M, u) = Σ_a π_{L0}(a | m) · R(a, M, u)`,
-  `P_S(m | M, u) ∝ exp(β_S · U_S(m, M, u))`.
-- **Pragmatic Listener** (eq. 7): `P_L(M, u | m) ∝ Prior(M, u) · P_S(m | M, u)`.
-- **Goodness** (eq. 8): `Σ_a π_L(a | m) · R(a, M, u) - Σ_a π_Prior(a) · R(a, M, u)`.
+The agents are kept at finite rationality, where the paper takes the limit, and each claim is
+stated for the rationalities it needs. Actual causation is the witness form of the
+Halpern–Pearl definition, `actualCause`, which the paper leaves open to any extant account; the
+negative memberships are not derived. Priors are uniform, as in the examples.
 
-We work in the β → ∞ regime the paper adopts most often ("agents are
-maximizing"): policies become argmax over expected reward, and the
-softmax collapses. This makes the worked theorems exact-rational and
-kernel-decidable.
+## TODO
 
-## Scenarios
+* Table 4, the manipulation-game rewards of Example 2, from the four structural models and a
+  product prior over the contexts; the roof and milk interpretation sets from actual causation.
 
-Each scenario lives in its own namespace with a per-scenario `World`
-type, `ExplanationGame` instance, message inventory, and worked
-predictions:
+## References
 
-- **Late Meeting** (Example 5, p. 13): K = {M_T, M_∧} × {u = (T=1, B=1)}.
-  Predicts: citing T (tardiness) is the unique best explanation under M_T;
-  citing B fails the manipulation game in M_T because B doesn't manipulate
-  C there.
-- **Roof Replacement** (Example 3, p. 10): K = 4 structures × {u = (R=1, D=1)}.
-  Predicts: citing R (thatched roof) and citing D (drought) have the same
-  manipulation reward profile under the manipulation game, but a
-  decision-relevant downstream task (e.g., "what to repair") breaks the tie
-  toward R.
-- **Milk Theft** (Example 4, p. 11): K = {M_∨} × {u_C, u_D, u_{C,D}}.
-  Predicts: in u_{C,D} (overdetermination), neither single-cite uniquely
-  manipulates; the conjoint message "Ch and Da" gets a higher Goodness.
+* [harding-gerstenberg-icard-2025]
+* [halpern-pearl-2005]
+* [sumers-etal-2023]
+* [frank-goodman-2012]
 -/
 
 namespace HardingGerstenbergIcard2025
 
+open MeasureTheory ProbabilityTheory RSA
+open scoped ENNReal
+
+/-! ### The communication game, section 3 -/
+
+section Framework
+
+variable {W M A : Type*} [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpace W]
+  [Fintype M] [MeasurableSpace M] [DiscreteMeasurableSpace M]
+  [Fintype A] [MeasurableSpace A] [DiscreteMeasurableSpace A]
+
+/-- The expected reward of an action under the listener's belief given the message, the sum
+of (3). -/
+noncomputable def expectedReward (L : Kernel M W) (R : A → W → ℝ) (m : M) (a : A) : ℝ :=
+  ∑ w, (L m).real {w} * R a w
+
+/-- The score of an action for the listener: rationality times expected reward. -/
+noncomputable def policyScore (β : ℝ) (L : Kernel M W) (R : A → W → ℝ) (m : M) (a : A) :
+    EReal :=
+  ((β * expectedReward L R m a : ℝ) : EReal)
+
+/-- (3): the listener's policy, the softmax of expected reward at rationality `β`. -/
+noncomputable def policy (β : ℝ) (L : Kernel M W) (R : A → W → ℝ) : Kernel M A :=
+  speakerOfScore (policyScore β L R)
+
+/-- (4): the speaker's utility of a message at a world, the expected reward of the action the
+listener's policy chooses. -/
+noncomputable def utility (π : Kernel M A) (R : A → W → ℝ) (m : M) (w : W) : ℝ :=
+  ∑ a, (π m).real {a} * R a w
+
+/-- The score of a message for the speaker: rationality times utility, less cost. -/
+noncomputable def speakerScore (β : ℝ) (cost : M → ℝ) (π : Kernel M A) (R : A → W → ℝ)
+    (w : W) (m : M) : EReal :=
+  ((β * utility π R m w - cost m : ℝ) : EReal)
+
+/-- (6): the speaker, the softmax of utility less cost at rationality `β`. -/
+noncomputable def speaker (β : ℝ) (cost : M → ℝ) (π : Kernel M A) (R : A → W → ℝ) :
+    Kernel W M :=
+  speakerOfScore (speakerScore β cost π R)
+
+/-- (8): the goodness of a message at a world, the listener's expected reward after the
+message less what acting on the prior alone would have earned. -/
+noncomputable def goodness (πL πPrior : Kernel M A) (R : A → W → ℝ) (m : M) (w : W) : ℝ :=
+  utility πL R m w - utility πPrior R m w
+
+variable (β : ℝ) (L : Kernel M W) (R : A → W → ℝ) (cost : M → ℝ) (π : Kernel M A)
+
+instance : IsFiniteKernel (policy β L R) := inferInstanceAs (IsFiniteKernel (speakerOfScore _))
+
+instance : IsFiniteKernel (speaker β cost π R) :=
+  inferInstanceAs (IsFiniteKernel (speakerOfScore _))
+
+instance [Nonempty A] : IsMarkovKernel (policy β L R) :=
+  isMarkovKernel_speakerOfScore (λ _ => ⟨Classical.arbitrary A, EReal.coe_ne_bot _⟩)
+    (λ _ _ => EReal.coe_ne_top _)
+
+instance [Nonempty M] : IsMarkovKernel (speaker β cost π R) :=
+  isMarkovKernel_speakerOfScore (λ _ => ⟨Classical.arbitrary M, EReal.coe_ne_bot _⟩)
+    (λ _ _ => EReal.coe_ne_top _)
+
+variable {β} {m m' : M} {a a' : A} {w : W}
+
+/-- Row preference of the policy is comparison of expected reward. -/
+theorem policy_real_lt_iff (hβ : 0 < β) :
+    (policy β L R m).real {a} < (policy β L R m).real {a'} ↔
+      expectedReward L R m a < expectedReward L R m a' := by
+  rw [policy, speakerOfScore_real_singleton_lt_iff (score := policyScore β L R) (w := m)
+    (λ _ => EReal.coe_ne_top _) ⟨a, EReal.coe_ne_bot _⟩, policyScore, policyScore,
+    EReal.coe_lt_coe_iff]
+  exact mul_lt_mul_iff_right₀ hβ
+
+/-- With two actions, the policy's share of one is the logistic function of the scaled
+difference in expected reward. -/
+theorem policy_real_of_pair (haa' : a ≠ a') (hall : ∀ c, c = a ∨ c = a') :
+    (policy β L R m).real {a} =
+      Real.sigmoid (β * (expectedReward L R m a - expectedReward L R m a')) := by
+  rw [policy, speakerOfScore_real_singleton_of_pair (score := policyScore β L R) (w := m) haa'
+    (EReal.coe_ne_bot _) (EReal.coe_ne_bot _) (λ _ => EReal.coe_ne_top _) (λ c _ => hall c),
+    policyScore, policyScore, EReal.toReal_coe, EReal.toReal_coe]
+  ring_nf
+
+/-- With two actions, utility is the reward of the first weighted by its share and of the second
+by the rest. -/
+theorem utility_of_pair [IsMarkovKernel π] (haa' : a ≠ a') (hall : ∀ c, c = a ∨ c = a') :
+    utility π R m w = (π m).real {a} * R a w + (1 - (π m).real {a}) * R a' w := by
+  rw [utility, Fintype.sum_eq_add a a' haa' (λ c hc => absurd (hall c) (not_or.mpr hc)),
+    ← measureReal_singleton_add_singleton_of_pair (π m) haa' (λ c _ => hall c)]
+  ring
+
+/-- Row preference of the speaker is comparison of utility less cost. -/
+theorem speaker_real_lt_iff (hβ : 0 < β) :
+    (speaker β cost π R w).real {m} < (speaker β cost π R w).real {m'} ↔
+      β * utility π R m w - cost m < β * utility π R m' w - cost m' := by
+  rw [speaker, speakerOfScore_real_singleton_lt_iff (score := speakerScore β cost π R) (w := w)
+    (λ _ => EReal.coe_ne_top _) ⟨m, EReal.coe_ne_bot _⟩, speakerScore, speakerScore,
+    EReal.coe_lt_coe_iff]
+
+/-- With two messages, the speaker's share of one is the logistic function of the scaled
+difference in utility less the difference in cost. -/
+theorem speaker_real_of_pair (hmm' : m ≠ m') (hall : ∀ c, c = m ∨ c = m') :
+    (speaker β cost π R w).real {m} =
+      Real.sigmoid (β * (utility π R m w - utility π R m' w) - (cost m - cost m')) := by
+  rw [speaker, speakerOfScore_real_singleton_of_pair (score := speakerScore β cost π R) (w := w)
+    hmm' (EReal.coe_ne_bot _) (EReal.coe_ne_bot _) (λ _ => EReal.coe_ne_top _) (λ c _ => hall c),
+    speakerScore, speakerScore, EReal.toReal_coe, EReal.toReal_coe]
+  ring_nf
+
+end Framework
+
+/-! ### The manipulation game, Definition 2 -/
+
+section ManipulationGame
+
+open Causation Causation.SEM
+
+variable {V Ctx : Type*} [Fintype V] [DecidableEq V] [Fintype Ctx]
+
+/-- The reward of intervening on `X` in a model (Definition 2): the probability over contexts
+that some intervention on `X` changes FACT. -/
+noncomputable def manipulationReward (P : Ctx → ℝ) (ctx : Ctx → Valuation (λ _ : V => Bool))
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M] (X fact : V) : ℝ :=
+  ∑ u, P u * (haveI := Classical.dec (BoolSEM.manipulates M (ctx u) X fact)
+    if BoolSEM.manipulates M (ctx u) X fact then 1 else 0)
+
+end ManipulationGame
+
+/-! ### Actual causation, the literal meaning of "because" -/
+
 open Causation Causation.Mechanism Causation.SEM
-open BoolSEM (manipulates)
 
-/-! ## §3 Substrate: ExplanationGame -/
+/-- Actual causation in witness form: the cause and the effect hold at the actual world, and
+at some witness valuation the cause is but-for the effect
+(`CCSelection.completesForEffect`), [halpern-pearl-2005]'s definition without the contingency
+clause the paper leaves to any extant account. -/
+def actualCause {V : Type*} [Fintype V] [DecidableEq V] (M : BoolSEM V)
+    [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M] (u : Valuation (λ _ : V => Bool))
+    (cause effect : V) : Prop :=
+  u.hasValue cause true ∧ (M.developDet u).hasValue effect true ∧
+    ∃ s' : Valuation (λ _ : V => Bool), CCSelection.completesForEffect M s' cause true false effect true
 
-/-- A configuration for the explanation framework: a finite world space
-    of causal-situation pairs `(M, u)`, with prior, plus a designated
-    explanandum variable. -/
-structure ExplanationGame (V W : Type*)
-    [Fintype V] [DecidableEq V] [Fintype W] [DecidableEq W] where
-  /-- World w → its structural causal model. -/
-  modelOf : W → BoolSEM V
-  /-- World w → its exogenous context (a partial valuation over V). -/
-  contextOf : W → Valuation (fun _ : V => Bool)
-  /-- Each world's model is deterministic. -/
-  isDet : ∀ w, SEM.IsDeterministic (modelOf w)
-  /-- Each world's graph is acyclic. -/
-  isDag : ∀ w, CausalGraph.IsDAG (modelOf w).graph
-  /-- Unnormalized world prior. -/
-  prior : W → ℚ
-  prior_nonneg : ∀ w, 0 ≤ prior w
-  /-- The explanandum FACT (single variable, value = true assumed). -/
-  factVar : V
-
-/-! ### Actual causation (literal meaning of "because")
-
-Simplified Halpern-Pearl: `cause` is an actual cause of `effect`
-under `(M, u)` iff there exists a witness valuation under which
-`cause = true` is but-for `effect = true` (sufficiency + non-redundance).
-
-This collapses to plain but-for when `u` itself is the witness, and
-extends to overdetermination cases via off-actual witnesses (see
-Milk-Theft Example 4). -/
-
-/-- Halpern-Pearl-style actual causation, simplified to existential
-    Boolean witness. AC1: `cause` and `effect` both fired at `(M, u)`.
-    AC2 (witness form): some valuation `s'` makes `cause` but-for
-    `effect` via `CCSelection.completesForEffect`. -/
-noncomputable def actualCause {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
-    (u : Valuation (fun _ : V => Bool)) (cause effect : V) : Prop :=
-  u.hasValue cause true ∧
-  (M.developDet u).hasValue effect true ∧
-  ∃ s' : Valuation (fun _ : V => Bool),
-    CCSelection.completesForEffect M s' cause true false effect true
-
-noncomputable instance {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
-    (u : Valuation (fun _ : V => Bool)) (cause effect : V) :
-    Decidable (actualCause M u cause effect) := Classical.dec _
-
-/-! ### Messages and meaning -/
-
-/-- A "FACT because X = x" message. Restricts to the Boolean case where
-    the cited cause-value and explanandum-value are both `true` (paper's
-    convention for the worked examples). -/
-structure Message (V : Type*) where
-  cause : V
-  deriving DecidableEq, Repr
-
-section ExplanationGameMethods
-variable {V W : Type*} [Fintype V] [DecidableEq V] [Fintype W] [DecidableEq W]
-
-/-- Whether `m` is true at world `w`: `actualCause` of `factVar` by `m.cause`. -/
-noncomputable def ExplanationGame.meaning (G : ExplanationGame V W)
-    (m : Message V) (w : W) : Prop :=
-  haveI := G.isDet w
-  haveI := G.isDag w
-  actualCause (G.modelOf w) (G.contextOf w) m.cause G.factVar
-
-noncomputable instance ExplanationGame.meaning_decidable
-    (G : ExplanationGame V W) (m : Message V) (w : W) :
-    Decidable (G.meaning m w) := Classical.dec _
-
-/-! ### §3.1 L0 posterior
-
-`P_{L0}(w | m) ∝ Prior(w) · 1_{w ⊨ m}` (eq. 2). We provide both the
-unnormalized score and the normalized posterior. -/
-
-/-- Unnormalized L0 weight: prior × meaning indicator. -/
-noncomputable def ExplanationGame.l0Score (G : ExplanationGame V W)
-    (m : Message V) (w : W) : ℚ :=
-  if G.meaning m w then G.prior w else 0
-
-/-- Normalizer: sum of L0 scores over the world fintype. -/
-noncomputable def ExplanationGame.l0Z (G : ExplanationGame V W)
-    (m : Message V) : ℚ :=
-  ∑ w : W, G.l0Score m w
-
-/-- Normalized L0 posterior. Returns 0 when the normalizer is 0
-    (vacuous message). -/
-noncomputable def ExplanationGame.l0 (G : ExplanationGame V W)
-    (m : Message V) (w : W) : ℚ :=
-  if G.l0Z m = 0 then 0 else G.l0Score m w / G.l0Z m
-
-/-! ### §3.3 Manipulation Game (Def 3)
-
-`R(X, M, u') = 1` iff X manipulates FACT in `(M, u')` (some Boolean
-intervention on X flips FACT). Aggregated reward over the world space:
-`R(X, w) = E_{w'}[1_{Manipulates(X, FACT | M_{w'}, u_{w'})}]` weighted
-by prior on `w'`.
-
-Note: paper's Def 3 averages over `u'` for fixed M; here we average
-over the entire world `w'` (including model uncertainty), matching the
-formalization choices made for the listener's epistemic state. -/
-
-/-- Whether action variable `X` manipulates FACT at world `w`. -/
-noncomputable def ExplanationGame.worldManipulates (G : ExplanationGame V W)
-    (X : V) (w : W) : Prop :=
-  haveI := G.isDet w
-  haveI := G.isDag w
-  manipulates (G.modelOf w) (G.contextOf w) X G.factVar
-
-noncomputable instance (G : ExplanationGame V W) (X : V) (w : W) :
-    Decidable (G.worldManipulates X w) := Classical.dec _
-
-/-- Manipulation-game reward for action `X`: prior-weighted indicator
-    of `X` manipulating FACT across worlds. -/
-noncomputable def ExplanationGame.reward (G : ExplanationGame V W) (X : V) : ℚ :=
-  ∑ w : W, G.prior w * (if G.worldManipulates X w then 1 else 0)
-
-/-- Conditional reward: prior-weighted manipulation under L0's posterior. -/
-noncomputable def ExplanationGame.condReward (G : ExplanationGame V W)
-    (X : V) (m : Message V) : ℚ :=
-  ∑ w : W, G.l0 m w * (if G.worldManipulates X w then 1 else 0)
-
-/-! ### §3.2 Speaker (β = ∞ specialization)
-
-In the β → ∞ regime, `π_{L0}(a | m)` puts all mass on
-`argmax_a condReward(a, m)`. We expose the argmax as a predicate
-`isBestAction` (any action whose conditional reward dominates all
-others); when the argmax is unique, `uS` reduces to that action's
-actual-world reward. -/
-
-/-- An action `X` is L0's best response to message `m`:
-    its conditional reward dominates every other action. -/
-noncomputable def ExplanationGame.isBestAction (G : ExplanationGame V W)
-    (m : Message V) (X : V) : Prop :=
-  ∀ Y : V, G.condReward Y m ≤ G.condReward X m
-
-noncomputable instance (G : ExplanationGame V W) (m : Message V) (X : V) :
-    Decidable (G.isBestAction m X) := Classical.dec _
-
-/-- Speaker utility (β = ∞) at world `w`, given an L0 best response
-    `bestAction` selected by the caller (typically a witness for
-    `isBestAction m bestAction`): the reward of `bestAction` at `w`. -/
-noncomputable def ExplanationGame.uS (G : ExplanationGame V W)
-    (bestAction : V) (w : W) : ℚ :=
-  haveI := G.isDet w
-  haveI := G.isDag w
-  if manipulates (G.modelOf w) (G.contextOf w) bestAction G.factVar then 1 else 0
-
-/-! ### §3.4 Pragmatic Listener and Goodness (eq. 8)
-
-In the β → ∞ regime, `P_S` puts all mass on argmax-utility messages,
-and `π_L` behaves like `π_{L0}` after Bayesian inversion against the
-speaker's choice. We collapse Goodness (eq. 8) to a single comparable
-scalar at the actual world `w*`: post-explanation reward of the chosen
-best action minus the prior-best action's reward. Positive Goodness
-means the explanation strictly improved the listener's expected
-outcome at `w*`. -/
-
-/-- Goodness of message `m` at the actual world `w*`, given the
-    pre-explanation prior-best action (`priorBest`) and the post-
-    explanation L0-best action (`postBest`). Δ expected utility at
-    the actual world (β = ∞). -/
-noncomputable def ExplanationGame.goodness (G : ExplanationGame V W)
-    (priorBest postBest : V) (wStar : W) : ℚ :=
-  G.uS postBest wStar - G.uS priorBest wStar
-
-end ExplanationGameMethods
-
--- ════════════════════════════════════════════════════
--- § Example 5: Late Meeting (paper p. 13)
--- ════════════════════════════════════════════════════
-
-/-! Bob is late (T = 1) and forgot Charlie's birthday (B = 1); Charlie
-    is cross (C = 1). K = {(M_T, u), (M_∧, u)} where M_T has C ← T and
-    M_∧ has C ← T ∧ B. Actual world is M_T. -/
+/-! ### Example 3: the late meeting -/
 
 namespace LateMeeting
 
-/-- Endogenous variables. -/
+/-- The endogenous variables: Bob's tardiness, his forgetting the birthday, Charlie's
+crossness. -/
 inductive V | T | B | C
   deriving DecidableEq, Fintype, Repr
 
-def lmVarList : List V := [.T, .B, .C]
+def vars : List V := [.T, .B, .C]
 
-def graphT : CausalGraph V :=
-  ⟨fun | .T => ∅ | .B => ∅ | .C => {.T}⟩
+def graphT : CausalGraph V := ⟨λ | .T => ∅ | .B => ∅ | .C => {.T}⟩
 
-def graphConj : CausalGraph V :=
-  ⟨fun | .T => ∅ | .B => ∅ | .C => {.T, .B}⟩
+def graphConj : CausalGraph V := ⟨λ | .T => ∅ | .B => ∅ | .C => {.T, .B}⟩
 
+/-- The model in which tardiness alone causes crossness. -/
 noncomputable def semT : BoolSEM V :=
   { graph := graphT
-    mech := fun v => match v with
+    mech := λ v => match v with
       | .T => const (G := graphT) false
       | .B => const (G := graphT) false
-      | .C => deterministic (fun ρ => ρ ⟨.T, by simp [graphT]⟩) }
+      | .C => deterministic (λ ρ => ρ ⟨.T, by simp [graphT]⟩) }
+
+/-- The conjunctive model, in which both are needed. -/
+noncomputable def semConj : BoolSEM V :=
+  { graph := graphConj
+    mech := λ v => match v with
+      | .T => const (G := graphConj) false
+      | .B => const (G := graphConj) false
+      | .C => deterministic (λ ρ => ρ ⟨.T, by simp [graphConj]⟩ && ρ ⟨.B, by simp [graphConj]⟩) }
 
 noncomputable instance : SEM.IsDeterministic semT where
   mech_det v := match v with
     | .T | .B => inferInstanceAs (Mechanism.IsDeterministic (const _))
     | .C => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
-instance : CausalGraph.IsDAG semT.graph :=
-  CausalGraph.IsDAG.of_depth _ (fun | .T => 0 | .B => 0 | .C => 1) <| by
-    intro u v h; cases v <;> simp_all [graphT, semT]
-
-noncomputable def semConj : BoolSEM V :=
-  { graph := graphConj
-    mech := fun v => match v with
-      | .T => const (G := graphConj) false
-      | .B => const (G := graphConj) false
-      | .C => deterministic (fun ρ =>
-          ρ ⟨.T, by simp [graphConj]⟩ && ρ ⟨.B, by simp [graphConj]⟩) }
-
 noncomputable instance : SEM.IsDeterministic semConj where
   mech_det v := match v with
     | .T | .B => inferInstanceAs (Mechanism.IsDeterministic (const _))
     | .C => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
+instance : CausalGraph.IsDAG semT.graph :=
+  CausalGraph.IsDAG.of_depth _ (λ | .T => 0 | .B => 0 | .C => 1) <| by
+    intro u v h; cases v <;> simp_all [graphT, semT]
+
 instance : CausalGraph.IsDAG semConj.graph :=
-  CausalGraph.IsDAG.of_depth _ (fun | .T => 0 | .B => 0 | .C => 1) <| by
+  CausalGraph.IsDAG.of_depth _ (λ | .T => 0 | .B => 0 | .C => 1) <| by
     intro u v h; cases v <;> simp_all [graphConj, semConj]
     rcases h with rfl | rfl <;> decide
 
-/-- Single shared exogenous context: T = 1, B = 1. -/
-def lateBg : Valuation (fun _ : V => Bool) :=
+/-- The context Bob knows: he was late and forgot the birthday. -/
+def context : Valuation (λ _ : V => Bool) :=
   Valuation.empty.extend .T true |>.extend .B true
 
-/-- World enum: which structural alternative (single shared context). -/
-inductive World | mT | mConj
-  deriving DecidableEq, Fintype, Repr
+/-- "Because T" is true in both worlds and "because B" in the conjunctive world: the
+interpretation sets of Example 3, derived from actual causation. -/
+theorem actualCause_T_semT : actualCause semT context .T .C := by
+  refine ⟨by decide, ?_, context, ?_⟩
+  · exact SEM.developDet_hasValue_of_developDetOn_hasValue (vs := vars) (n := 1) (by decide)
+  · exact CCSelection.completesForEffect_of_developDetOn vars 1 (by decide) (by decide)
 
-/-- Per-world structural model (pattern match unfolds by iota). -/
-@[reducible] noncomputable def modelOf : World → BoolSEM V
-  | .mT => semT
-  | .mConj => semConj
+theorem actualCause_T_semConj : actualCause semConj context .T .C := by
+  refine ⟨by decide, ?_, context, ?_⟩
+  · exact SEM.developDet_hasValue_of_developDetOn_hasValue (vs := vars) (n := 1) (by decide)
+  · exact CCSelection.completesForEffect_of_developDetOn vars 1 (by decide) (by decide)
 
-noncomputable instance (w : World) : SEM.IsDeterministic (modelOf w) := by
-  cases w <;> infer_instance
+theorem actualCause_B_semConj : actualCause semConj context .B .C := by
+  refine ⟨by decide, ?_, context, ?_⟩
+  · exact SEM.developDet_hasValue_of_developDetOn_hasValue (vs := vars) (n := 1) (by decide)
+  · exact CCSelection.completesForEffect_of_developDetOn vars 1 (by decide) (by decide)
 
-instance (w : World) : CausalGraph.IsDAG (modelOf w).graph := by
-  cases w <;> infer_instance
+/-- In the tardiness-only world the birthday is not but-for crossness at the actual context:
+crossness reads tardiness alone. -/
+theorem not_completesForEffect_B_semT :
+    ¬ CCSelection.completesForEffect semT context .B true false .C true :=
+  λ ⟨_, hb⟩ => hb (SEM.developDet_hasValue_of_developDetOn_hasValue (vs := vars) (n := 1)
+    (by decide))
 
-noncomputable def game : ExplanationGame V World where
-  modelOf := modelOf
-  contextOf _ := lateBg
-  isDet w := inferInstance
-  isDag w := inferInstance
-  prior _ := 1  -- uniform
-  prior_nonneg _ := by norm_num
-  factVar := V.C
+/-- The worlds: `0` the tardiness-only model, `1` the conjunctive model. -/
+abbrev World := Fin 2
 
-/-- Tardiness manipulates crossness in the actual world (M_T). -/
-theorem T_manipulates_in_mT : game.worldManipulates V.T .mT := by
-  unfold ExplanationGame.worldManipulates
-  show BoolSEM.manipulates semT lateBg V.T V.C
-  exact BoolSEM.manipulates_of_developDetOn_ne semT
-    (vs := [V.T, V.B, V.C]) (n := 3) true false (by decide) (by decide) (by decide)
+/-- The messages: `0` "because T", `1` "because B". -/
+abbrev Msg := Fin 2
 
-/-- Forgotten birthday does NOT manipulate crossness in M_T (B doesn't
-    appear in C's mechanism in M_T). -/
-theorem B_doesnt_manipulate_in_mT : ¬ game.worldManipulates V.B .mT := by
-  unfold ExplanationGame.worldManipulates
-  show ¬ BoolSEM.manipulates semT lateBg V.B V.C
-  exact BoolSEM.not_manipulates_of_developDetOn_eq semT
-    (vs := [V.T, V.B, V.C]) (n := 3) (y := true) (by decide) (by decide)
+/-- The actions of Table 3: `0` apologize for the tardiness alone, `1` for both. -/
+abbrev Act := Fin 2
 
-/-- Tardiness manipulates crossness in M_∧ (with B = 1 fixed by `lateBg`). -/
-theorem T_manipulates_in_mConj : game.worldManipulates V.T .mConj := by
-  unfold ExplanationGame.worldManipulates
-  show BoolSEM.manipulates semConj lateBg V.T V.C
-  exact BoolSEM.manipulates_of_developDetOn_ne semConj
-    (vs := [V.T, V.B, V.C]) (n := 3) true false (by decide) (by decide) (by decide)
+/-- The interpretation sets (Example 3). -/
+def sem : Msg → Finset World := ![{0, 1}, {1}]
 
-/-- Forgotten birthday manipulates crossness in M_∧ (with T = 1 fixed
-    by `lateBg`, flipping B flips C from `true` to `false`). -/
-theorem B_manipulates_in_mConj : game.worldManipulates V.B .mConj := by
-  unfold ExplanationGame.worldManipulates
-  show BoolSEM.manipulates semConj lateBg V.B V.C
-  exact BoolSEM.manipulates_of_developDetOn_ne semConj
-    (vs := [V.T, V.B, V.C]) (n := 3) true false (by decide) (by decide) (by decide)
+/-- Table 3: apologizing for what is the cause earns 1, otherwise −1. -/
+def reward : Act → World → ℝ := λ a w => if a = w then 1 else -1
 
-/-- The "because T" message is true at the actual world M_T:
-    T = 1 is an actual cause of C = 1 there. -/
-theorem msg_T_true_in_mT : game.meaning ⟨V.T⟩ .mT := by
-  unfold ExplanationGame.meaning actualCause
-  refine ⟨by decide, ?_, lateBg, ?_⟩
-  · -- AC1b: develops C = true
-    show (semT.developDet lateBg).hasValue V.C true
-    exact SEM.developDet_hasValue_of_developDetOn_hasValue
-      (vs := lmVarList) (n := 1) (by decide)
-  · -- witness: but-for completion at lateBg
-    show CCSelection.completesForEffect semT lateBg V.T true false V.C true
-    exact CCSelection.completesForEffect_of_developDetOn lmVarList 1
-      (by decide) (by decide)
+/-- The literal listener at the uniform prior (2). -/
+noncomputable abbrev L0 : Kernel Msg World := uniformListener sem
 
-/-- The "because T" message is also true at M_∧: T = 1 is an actual
-    cause of C = 1 (with B = 1 fixed by lateBg, flipping T flips C). -/
-theorem msg_T_true_in_mConj : game.meaning ⟨V.T⟩ .mConj := by
-  unfold ExplanationGame.meaning actualCause
-  refine ⟨by decide, ?_, lateBg, ?_⟩
-  · show (semConj.developDet lateBg).hasValue V.C true
-    exact SEM.developDet_hasValue_of_developDetOn_hasValue
-      (vs := lmVarList) (n := 1) (by decide)
-  · show CCSelection.completesForEffect semConj lateBg V.T true false V.C true
-    exact CCSelection.completesForEffect_of_developDetOn lmVarList 1
-      (by decide) (by decide)
+/-- The prior as a listener who has heard nothing. -/
+noncomputable abbrev prior : Kernel Msg World := uniformListener λ _ => Finset.univ
 
-/-- B is not but-for C in M_T even at the actual context `lateBg`:
-    flipping B from 1 to 0 leaves C at `true`, since semT's mechanism
-    for C reads only T — the but-for half of `completesForEffect` fails.
-    (The full `¬ meaning ⟨B⟩ mT` claim — that NO witness valuation makes
-    B but-for C — requires a witness-irrelevance lemma about C's parent
-    set; deferred.) -/
-theorem B_not_butFor_at_lateBg :
-    ¬ CCSelection.completesForEffect semT lateBg V.B true false V.C true :=
-  fun ⟨_, hb⟩ => hb (SEM.developDet_hasValue_of_developDetOn_hasValue
-    (vs := lmVarList) (n := 1) (by decide))
+/-- The uniform prior over the worlds. -/
+noncomputable abbrev μ : Measure World := uniformOn Set.univ
+
+theorem prior_apply (m : Msg) : prior m = μ := by
+  rw [uniformListener_apply, Finset.coe_univ]
+
+theorem expectedReward_L0 (a : Act) :
+    expectedReward L0 reward 0 a = 0 ∧
+      expectedReward L0 reward 1 a = if a = 1 then 1 else -1 := by
+  fin_cases a <;> simp [expectedReward, Fin.sum_univ_two, uniformListener_apply_singleton,
+    measureReal_def, sem, reward] <;> norm_num
+
+theorem expectedReward_prior (m : Msg) (a : Act) : expectedReward prior reward m a = 0 := by
+  fin_cases a <;> simp [expectedReward, Fin.sum_univ_two, uniformListener_apply_singleton,
+    measureReal_def, reward] <;> norm_num
+
+variable {βL βS : ℝ}
+
+/-- After "because B" the listener apologizes for both with a share above one half, and after
+"because T" with exactly one half. -/
+theorem policy_L0_both :
+    (policy βL L0 reward 1).real {1} = Real.sigmoid (2 * βL) ∧
+      (policy βL L0 reward 0).real {1} = 1 / 2 := by
+  constructor
+  · rw [policy_real_of_pair L0 reward (m := 1) (a := 1) (a' := 0) (by decide) (by decide),
+      (expectedReward_L0 1).2, (expectedReward_L0 0).2]
+    norm_num
+    ring
+  · rw [policy_real_of_pair L0 reward (m := 0) (a := 1) (a' := 0) (by decide) (by decide),
+      (expectedReward_L0 1).1, (expectedReward_L0 0).1]
+    simp [Real.sigmoid_zero]
+
+theorem policy_prior_half (m : Msg) : (policy βL prior reward m).real {1} = 1 / 2 := by
+  rw [policy_real_of_pair prior reward (m := m) (a := 1) (a' := 0) (by decide) (by decide),
+    expectedReward_prior, expectedReward_prior]
+  simp [Real.sigmoid_zero]
+
+/-- The speaker's utilities (4): "because T" is worth nothing in either world, "because B" less
+than nothing in the tardiness-only world and more in the conjunctive one. -/
+theorem utility_L0 :
+    utility (policy βL L0 reward) reward 0 0 = 0 ∧ utility (policy βL L0 reward) reward 0 1 = 0 ∧
+      utility (policy βL L0 reward) reward 1 0 = 1 - 2 * Real.sigmoid (2 * βL) ∧
+      utility (policy βL L0 reward) reward 1 1 = 2 * Real.sigmoid (2 * βL) - 1 := by
+  have h := policy_L0_both (βL := βL)
+  refine ⟨?_, ?_, ?_, ?_⟩ <;>
+    rw [utility_of_pair reward (policy βL L0 reward) (a := 1) (a' := 0) (by decide) (by decide)]
+  · rw [h.2]; simp [reward]; norm_num
+  · rw [h.2]; simp [reward]; norm_num
+  · rw [h.1]; simp [reward]; ring
+  · rw [h.1]; simp [reward]; ring
+
+theorem half_lt_sigmoid (hβ : 0 < βL) : 1 / 2 < Real.sigmoid (2 * βL) := by
+  have := Real.sigmoid_lt (show (0 : ℝ) < 2 * βL by linarith)
+  rwa [Real.sigmoid_zero, inv_eq_one_div] at this
+
+/-- The speaker cites the birthday exactly in the conjunctive world (equal costs). -/
+theorem speaker_cites_B_iff (hβL : 0 < βL) (hβS : 0 < βS) (c : ℝ) :
+    (speaker βS (λ _ => c) (policy βL L0 reward) reward 0).real {1} <
+        (speaker βS (λ _ => c) (policy βL L0 reward) reward 0).real {0} ∧
+      (speaker βS (λ _ => c) (policy βL L0 reward) reward 1).real {0} <
+        (speaker βS (λ _ => c) (policy βL L0 reward) reward 1).real {1} := by
+  obtain ⟨h00, h01, h10, h11⟩ := utility_L0 (βL := βL)
+  have hs := half_lt_sigmoid hβL
+  constructor
+  · rw [speaker_real_lt_iff reward (λ _ => c) (policy βL L0 reward) (w := 0) (m := 1) (m' := 0)
+      hβS, h00, h10]
+    nlinarith
+  · rw [speaker_real_lt_iff reward (λ _ => c) (policy βL L0 reward) (w := 1) (m := 0) (m' := 1)
+      hβS, h01, h11]
+    nlinarith
+
+theorem μ_singleton (w : World) : μ {w} ≠ 0 ∧ μ.real {w} = 1 / 2 := by
+  rw [← prior_apply 0, uniformListener_apply_singleton, measureReal_def,
+    uniformListener_apply_singleton]
+  simp
+
+/-- The speaker of Example 3 at equal costs `c`. -/
+noncomputable def S (βL βS c : ℝ) : Kernel World Msg :=
+  speaker βS (λ _ => c) (policy βL L0 reward) reward
+
+instance (βL βS c : ℝ) : IsFiniteKernel (S βL βS c) :=
+  inferInstanceAs (IsFiniteKernel (speaker _ _ _ _))
+
+instance (βL βS c : ℝ) : IsMarkovKernel (S βL βS c) :=
+  inferInstanceAs (IsMarkovKernel (speaker _ _ _ _))
+
+theorem S_apply_ne_zero (βL βS c : ℝ) (w : World) (m : Msg) : S βL βS c w {m} ≠ 0 :=
+  speakerOfScore_apply_singleton_ne_zero
+    (score := speakerScore βS (λ _ => c) (policy βL L0 reward) reward) (EReal.coe_ne_bot _)
+    (λ _ => EReal.coe_ne_top _)
+
+theorem comp_S_ne_zero (βL βS c : ℝ) : (S βL βS c ∘ₘ μ) {0} ≠ 0 := by
+  rw [Measure.comp_apply_singleton]
+  intro h
+  exact mul_ne_zero (μ_singleton 0).1 (S_apply_ne_zero βL βS c 0 0)
+    (Finset.sum_eq_zero_iff.mp h 0 (Finset.mem_univ _))
+
+/-- "Because T" is likelier from the tardiness-only world than from the conjunctive one. -/
+theorem S_real_lt (hβL : 0 < βL) (hβS : 0 < βS) (c : ℝ) :
+    (S βL βS c 1).real {0} < (S βL βS c 0).real {0} := by
+  obtain ⟨h00, h01, h10, h11⟩ := utility_L0 (βL := βL)
+  have hs := half_lt_sigmoid hβL
+  unfold S
+  rw [speaker_real_of_pair reward (λ _ => c) (policy βL L0 reward) (w := 1) (m := 0) (m' := 1)
+    (by decide) (by decide), speaker_real_of_pair reward (λ _ => c) (policy βL L0 reward)
+    (w := 0) (m := 0) (m' := 1) (by decide) (by decide), h00, h01, h10, h11]
+  exact Real.sigmoid_lt (by nlinarith)
+
+/-- The pragmatic listener (7). -/
+noncomputable def PL (βL βS c : ℝ) : Kernel Msg World := (S βL βS c)†μ
+
+instance (βL βS c : ℝ) : IsMarkovKernel (PL βL βS c) :=
+  inferInstanceAs (IsMarkovKernel ((S βL βS c)†μ))
+
+/-- The pragmatic listener hearing "because T" raises the tardiness-only world above its prior:
+the speaker would have cited the birthday in the conjunctive world. -/
+theorem pragmatic_T (hβL : 0 < βL) (hβS : 0 < βS) (c : ℝ) :
+    μ.real {0} < (PL βL βS c 0).real {0} := by
+  rw [PL, real_lt_posterior_real_singleton_iff_of_pair (S βL βS c) μ (ω := 0) (ω' := 1)
+    (by decide) (λ w _ => by fin_cases w <;> simp) (comp_S_ne_zero βL βS c) (μ_singleton 0).1
+    (μ_singleton 1).1]
+  exact S_real_lt hβL hβS c
+
+/-- Goodness (8): citing the tardiness is worth giving, although Bob already knew it. -/
+theorem goodness_pos (hβL : 0 < βL) (hβS : 0 < βS) (c : ℝ) :
+    0 < goodness (policy βL (PL βL βS c) reward) (policy βL prior reward) reward 0 0 := by
+  have hpost : μ.real {0} < (PL βL βS c 0).real {0} := pragmatic_T hβL hβS c
+  have hsum : (PL βL βS c 0).real {0} + (PL βL βS c 0).real {1} = 1 :=
+    measureReal_singleton_add_singleton_of_pair (PL βL βS c 0) (ω := 0) (ω' := 1) (by decide)
+      (λ w _ => by fin_cases w <;> simp)
+  have hE : expectedReward (PL βL βS c) reward 0 0 - expectedReward (PL βL βS c) reward 0 1 =
+      2 * ((PL βL βS c 0).real {0} - (PL βL βS c 0).real {1}) := by
+    simp [expectedReward, Fin.sum_univ_two, reward]
+    ring
+  have hpos : 0 < βL * (expectedReward (PL βL βS c) reward 0 0 -
+      expectedReward (PL βL βS c) reward 0 1) := by
+    rw [hE]
+    have := (μ_singleton 0).2
+    nlinarith
+  rw [goodness, utility_of_pair reward (policy βL (PL βL βS c) reward) (a := 0) (a' := 1)
+    (by decide) (by decide), utility_of_pair reward (policy βL prior reward) (a := 0) (a' := 1)
+    (by decide) (by decide), policy_real_of_pair (PL βL βS c) reward (m := 0) (a := 0) (a' := 1)
+    (by decide) (by decide), policy_real_of_pair prior reward (m := 0) (a := 0) (a' := 1)
+    (by decide) (by decide), expectedReward_prior, expectedReward_prior]
+  have hσ := Real.sigmoid_lt hpos
+  rw [Real.sigmoid_zero] at hσ
+  simp only [reward, Fin.isValue, ↓reduceIte, Fin.one_eq_zero_iff, mul_one, mul_neg, sub_zero,
+    mul_zero, Real.sigmoid_zero]
+  norm_num at hσ ⊢
+  linarith
 
 end LateMeeting
 
--- ════════════════════════════════════════════════════
--- § Example 3: Roof Replacement (paper p. 10)
--- ════════════════════════════════════════════════════
-
-/-! Two potential causes (R = thatched roof, D = drought) of one effect
-    (F = fire). K = {(M_R, u), (M_D, u), (M_∧, u), (M_∨, u)} where
-    u = (R = 1, D = 1). The framework predicts that under the actual
-    structure M_R, citing R "tracks" F's manipulation more reliably
-    than citing D — even though both are equally informative under the
-    bare manipulation game (a downstream-relevant decision such as
-    "what to repair" breaks the tie). -/
+/-! ### Example 2: the roof replacement -/
 
 namespace RoofReplacement
 
-inductive V | R | D | F
-  deriving DecidableEq, Fintype, Repr
+/-- The worlds: `0` the roof-only model, `1` the drought-only model, `2` conjunctive, `3`
+disjunctive, all at the context where the roof is thatched and there was a drought. -/
+abbrev World := Fin 4
 
-def roofVarList : List V := [.R, .D, .F]
+/-- The messages: `0` "because R", `1` "because D". -/
+abbrev Msg := Fin 2
 
-def graphR : CausalGraph V := ⟨fun | .R => ∅ | .D => ∅ | .F => {.R}⟩
-def graphD : CausalGraph V := ⟨fun | .R => ∅ | .D => ∅ | .F => {.D}⟩
-def graphRD : CausalGraph V := ⟨fun | .R => ∅ | .D => ∅ | .F => {.R, .D}⟩
+/-- The actions of Table 1: `0` replace the roof, `1` do not. -/
+abbrev Act := Fin 2
 
-noncomputable def semR : BoolSEM V :=
-  { graph := graphR
-    mech := fun
-      | .R => const (G := graphR) false
-      | .D => const (G := graphR) false
-      | .F => deterministic (fun ρ => ρ ⟨.R, by simp [graphR]⟩) }
+/-- The interpretation sets of Example 2. -/
+def sem : Msg → Finset World := ![{0, 2, 3}, {1, 2, 3}]
 
-noncomputable def semD : BoolSEM V :=
-  { graph := graphD
-    mech := fun
-      | .R => const (G := graphD) false
-      | .D => const (G := graphD) false
-      | .F => deterministic (fun ρ => ρ ⟨.D, by simp [graphD]⟩) }
+/-- Table 1: replacing earns 0 everywhere; not replacing earns 1 in the drought-only world and
+−1 elsewhere. -/
+def reward : Act → World → ℝ := λ a w => if a = 0 then 0 else if w = 1 then 1 else -1
 
-noncomputable def semConj : BoolSEM V :=
-  { graph := graphRD
-    mech := fun
-      | .R => const (G := graphRD) false
-      | .D => const (G := graphRD) false
-      | .F => deterministic (fun ρ =>
-          ρ ⟨.R, by simp [graphRD]⟩ && ρ ⟨.D, by simp [graphRD]⟩) }
+noncomputable abbrev L0 : Kernel Msg World := uniformListener sem
 
-noncomputable def semDisj : BoolSEM V :=
-  { graph := graphRD
-    mech := fun
-      | .R => const (G := graphRD) false
-      | .D => const (G := graphRD) false
-      | .F => deterministic (fun ρ =>
-          ρ ⟨.R, by simp [graphRD]⟩ || ρ ⟨.D, by simp [graphRD]⟩) }
+/-- Equally informative: the conjunctive world is as likely after either message. -/
+theorem L0_conj_eq : (L0 0).real {2} = (L0 1).real {2} := by
+  simp [uniformListener_apply_singleton, measureReal_def, sem]
 
-noncomputable instance : SEM.IsDeterministic semR where
-  mech_det v := match v with
-    | .R | .D => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .F => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-noncomputable instance : SEM.IsDeterministic semD where
-  mech_det v := match v with
-    | .R | .D => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .F => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-noncomputable instance : SEM.IsDeterministic semConj where
-  mech_det v := match v with
-    | .R | .D => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .F => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-noncomputable instance : SEM.IsDeterministic semDisj where
-  mech_det v := match v with
-    | .R | .D => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .F => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+theorem expectedReward_L0 :
+    expectedReward L0 reward 0 0 = 0 ∧ expectedReward L0 reward 0 1 = -1 ∧
+      expectedReward L0 reward 1 0 = 0 ∧ expectedReward L0 reward 1 1 = -1 / 3 := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;>
+    simp [expectedReward, Fin.sum_univ_four, uniformListener_apply_singleton, measureReal_def, sem,
+      reward] <;> norm_num
 
-private def depth : V → Nat | .R => 0 | .D => 0 | .F => 1
-
-instance : CausalGraph.IsDAG semR.graph :=
-  CausalGraph.IsDAG.of_depth _ depth <| by
-    intro u v h; cases v <;> simp_all [graphR, semR, depth]
-instance : CausalGraph.IsDAG semD.graph :=
-  CausalGraph.IsDAG.of_depth _ depth <| by
-    intro u v h; cases v <;> simp_all [graphD, semD, depth]
-instance : CausalGraph.IsDAG semConj.graph :=
-  CausalGraph.IsDAG.of_depth _ depth <| by
-    intro u v h; cases v <;> simp_all [graphRD, semConj, depth]
-    rcases h with rfl | rfl <;> decide
-instance : CausalGraph.IsDAG semDisj.graph :=
-  CausalGraph.IsDAG.of_depth _ depth <| by
-    intro u v h; cases v <;> simp_all [graphRD, semDisj, depth]
-    rcases h with rfl | rfl <;> decide
-
-def roofBg : Valuation (fun _ : V => Bool) :=
-  Valuation.empty.extend .R true |>.extend .D true
-
-inductive World | mR | mD | mConj | mDisj
-  deriving DecidableEq, Fintype, Repr
-
-@[reducible] noncomputable def modelOf : World → BoolSEM V
-  | .mR => semR | .mD => semD | .mConj => semConj | .mDisj => semDisj
-
-noncomputable instance (w : World) : SEM.IsDeterministic (modelOf w) := by
-  cases w <;> infer_instance
-instance (w : World) : CausalGraph.IsDAG (modelOf w).graph := by
-  cases w <;> infer_instance
-
-noncomputable def game : ExplanationGame V World where
-  modelOf := modelOf
-  contextOf _ := roofBg
-  isDet w := inferInstance
-  isDag w := inferInstance
-  prior _ := 1
-  prior_nonneg _ := by norm_num
-  factVar := V.F
-
-/-- R manipulates F in M_R (the actual structure). -/
-theorem R_manipulates_in_mR : game.worldManipulates V.R .mR := by
-  unfold ExplanationGame.worldManipulates
-  show BoolSEM.manipulates semR roofBg V.R V.F
-  exact BoolSEM.manipulates_of_developDetOn_ne semR
-    (vs := [V.R, V.D, V.F]) (n := 3) true false (by decide) (by decide) (by decide)
-
-/-- R does NOT manipulate F in M_D (only D matters there). -/
-theorem R_doesnt_manipulate_in_mD : ¬ game.worldManipulates V.R .mD := by
-  unfold ExplanationGame.worldManipulates
-  show ¬ BoolSEM.manipulates semD roofBg V.R V.F
-  exact BoolSEM.not_manipulates_of_developDetOn_eq semD
-    (vs := [V.R, V.D, V.F]) (n := 3) (y := true) (by decide) (by decide)
-
-/-- R manipulates F in M_∧ (both are needed; with D = 1 fixed, R is but-for). -/
-theorem R_manipulates_in_mConj : game.worldManipulates V.R .mConj := by
-  unfold ExplanationGame.worldManipulates
-  show BoolSEM.manipulates semConj roofBg V.R V.F
-  exact BoolSEM.manipulates_of_developDetOn_ne semConj
-    (vs := [V.R, V.D, V.F]) (n := 3) true false (by decide) (by decide) (by decide)
-
-/-- R does NOT manipulate F in M_∨ at the actual context (overdetermination:
-    D = 1 alone fires F regardless of R). -/
-theorem R_doesnt_manipulate_in_mDisj :
-    ¬ game.worldManipulates V.R .mDisj := by
-  unfold ExplanationGame.worldManipulates
-  show ¬ BoolSEM.manipulates semDisj roofBg V.R V.F
-  exact BoolSEM.not_manipulates_of_developDetOn_eq semDisj
-    (vs := [V.R, V.D, V.F]) (n := 3) (y := true) (by decide) (by decide)
-
-/-- D manipulates F in M_D (the symmetric case). -/
-theorem D_manipulates_in_mD : game.worldManipulates V.D .mD := by
-  unfold ExplanationGame.worldManipulates
-  show BoolSEM.manipulates semD roofBg V.D V.F
-  exact BoolSEM.manipulates_of_developDetOn_ne semD
-    (vs := [V.R, V.D, V.F]) (n := 3) true false (by decide) (by decide) (by decide)
+/-- Not equally useful: at any rationality the listener replaces the roof more readily after
+"because R" than after "because D". -/
+theorem policy_replace_lt {βL : ℝ} (hβ : 0 < βL) :
+    (policy βL L0 reward 1).real {0} < (policy βL L0 reward 0).real {0} := by
+  obtain ⟨h00, h01, h10, h11⟩ := expectedReward_L0
+  rw [policy_real_of_pair L0 reward (m := 1) (a := 0) (a' := 1) (by decide) (by decide),
+    policy_real_of_pair L0 reward (m := 0) (a := 0) (a' := 1) (by decide) (by decide), h00, h01,
+    h10, h11]
+  exact Real.sigmoid_lt (by nlinarith)
 
 end RoofReplacement
 
--- ════════════════════════════════════════════════════
--- § Example 4: Milk Theft (paper p. 11)
--- ════════════════════════════════════════════════════
-
-/-! Single causal model M_∨: M ← Ch ∨ Da. K varies over the exogenous
-    context: u_C (Charlie alone), u_D (Dana alone), u_{C,D} (both).
-    Actual world: u_{C,D}. Predicts overdetermination: in u_{C,D},
-    neither single variable manipulates M. The conjunctive message
-    "Ch ∧ Da" would be needed to manipulate M as a joint intervention —
-    the action set must include subsets of V; deferred. -/
+/-! ### Example 4: the milk theft -/
 
 namespace MilkTheft
 
-inductive V | Ch | Da | M
-  deriving DecidableEq, Fintype, Repr
+/-- The worlds: the contexts in which Charlie alone (`0`), Dana alone (`1`), or both (`2`) drank
+the milk, in the disjunctive model. -/
+abbrev World := Fin 3
 
-def milkVarList : List V := [.Ch, .Da, .M]
+/-- The messages: `0` "because C", `1` "because D", `2` "because C and D". -/
+abbrev Msg := Fin 3
 
-def milkGraph : CausalGraph V := ⟨fun | .Ch => ∅ | .Da => ∅ | .M => {.Ch, .Da}⟩
+/-- The actions of Table 5: confront Charlie (`0`), Dana (`1`), or both (`2`). -/
+abbrev Act := Fin 3
 
-noncomputable def semDisj : BoolSEM V :=
-  { graph := milkGraph
-    mech := fun
-      | .Ch => const (G := milkGraph) false
-      | .Da => const (G := milkGraph) false
-      | .M => deterministic (fun ρ =>
-          ρ ⟨.Ch, by simp [milkGraph]⟩ || ρ ⟨.Da, by simp [milkGraph]⟩) }
+/-- The interpretation sets of Example 4. -/
+def sem : Msg → Finset World := ![{0, 2}, {1, 2}, {2}]
 
-noncomputable instance : SEM.IsDeterministic semDisj where
-  mech_det v := match v with
-    | .Ch | .Da => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .M => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+/-- Table 5. -/
+def reward : Act → World → ℝ :=
+  ![![1, -1, 0], ![-1, 1, 0], ![0, 0, 1]]
 
-instance : CausalGraph.IsDAG semDisj.graph :=
-  CausalGraph.IsDAG.of_depth _ (fun | .Ch => 0 | .Da => 0 | .M => 1) <| by
-    intro u v h; cases v <;> simp_all [milkGraph, semDisj]
-    rcases h with rfl | rfl <;> decide
+noncomputable abbrev L0 : Kernel Msg World := uniformListener sem
 
-def bgC : Valuation (fun _ : V => Bool) :=
-  Valuation.empty.extend .Ch true |>.extend .Da false
-def bgD : Valuation (fun _ : V => Bool) :=
-  Valuation.empty.extend .Ch false |>.extend .Da true
-def bgBoth : Valuation (fun _ : V => Bool) :=
-  Valuation.empty.extend .Ch true |>.extend .Da true
+theorem expectedReward_L0_conj (a : Act) :
+    expectedReward L0 reward 2 a = if a = 2 then 1 else 0 := by
+  fin_cases a <;> simp [expectedReward, Fin.sum_univ_three, uniformListener_apply_singleton,
+    measureReal_def, sem, reward]
 
-inductive World | uC | uD | uBoth
-  deriving DecidableEq, Fintype, Repr
+theorem expectedReward_L0_C :
+    expectedReward L0 reward 0 0 = 1 / 2 ∧ expectedReward L0 reward 0 1 = -1 / 2 ∧
+      expectedReward L0 reward 0 2 = 1 / 2 := by
+  refine ⟨?_, ?_, ?_⟩ <;>
+    simp [expectedReward, Fin.sum_univ_three, uniformListener_apply_singleton, measureReal_def,
+      sem, reward] <;> norm_num
 
-@[reducible] noncomputable def modelOf : World → BoolSEM V := fun _ => semDisj
+/-- After "because C and D" confronting both is the strictly preferred action; after
+"because C" it is tied with confronting Charlie. -/
+theorem policy_L0 {βL : ℝ} (hβ : 0 < βL) :
+    (policy βL L0 reward 2).real {0} < (policy βL L0 reward 2).real {2} ∧
+      ¬ (policy βL L0 reward 0).real {0} < (policy βL L0 reward 0).real {2} := by
+  constructor
+  · rw [policy_real_lt_iff L0 reward (m := 2) hβ, expectedReward_L0_conj, expectedReward_L0_conj]
+    simp
+  · rw [policy_real_lt_iff L0 reward (m := 0) hβ, expectedReward_L0_C.1, expectedReward_L0_C.2.2]
+    simp
 
-@[reducible] def contextOf : World → Valuation (fun _ : V => Bool)
-  | .uC => bgC | .uD => bgD | .uBoth => bgBoth
-
-noncomputable instance (w : World) : SEM.IsDeterministic (modelOf w) := by
-  cases w <;> infer_instance
-instance (w : World) : CausalGraph.IsDAG (modelOf w).graph := by
-  cases w <;> infer_instance
-
-noncomputable def game : ExplanationGame V World where
-  modelOf := modelOf
-  contextOf := contextOf
-  isDet w := inferInstance
-  isDag w := inferInstance
-  prior _ := 1
-  prior_nonneg _ := by norm_num
-  factVar := V.M
-
-/-- Charlie manipulates M when only Charlie drank (u_C). -/
-theorem Ch_manipulates_in_uC : game.worldManipulates V.Ch .uC := by
-  unfold ExplanationGame.worldManipulates
-  show BoolSEM.manipulates semDisj bgC V.Ch V.M
-  exact BoolSEM.manipulates_of_developDetOn_ne semDisj
-    (vs := [V.Ch, V.Da, V.M]) (n := 3) true false (by decide) (by decide) (by decide)
-
-/-- Dana does NOT manipulate M when only Charlie drank (Dana = 0 in u_C). -/
-theorem Da_doesnt_manipulate_in_uC : ¬ game.worldManipulates V.Da .uC := by
-  unfold ExplanationGame.worldManipulates
-  show ¬ BoolSEM.manipulates semDisj bgC V.Da V.M
-  exact BoolSEM.not_manipulates_of_developDetOn_eq semDisj
-    (vs := [V.Ch, V.Da, V.M]) (n := 3) (y := true) (by decide) (by decide)
-
-/-- Overdetermination: Charlie does NOT manipulate M when both drank
-    (Da = 1 still fires M regardless of Ch). The paper's Milk-Theft
-    point. -/
-theorem Ch_doesnt_manipulate_in_uBoth : ¬ game.worldManipulates V.Ch .uBoth := by
-  unfold ExplanationGame.worldManipulates
-  show ¬ BoolSEM.manipulates semDisj bgBoth V.Ch V.M
-  exact BoolSEM.not_manipulates_of_developDetOn_eq semDisj
-    (vs := [V.Ch, V.Da, V.M]) (n := 3) (y := true) (by decide) (by decide)
-
-/-- Symmetric overdetermination: Dana does NOT manipulate M when both drank. -/
-theorem Da_doesnt_manipulate_in_uBoth : ¬ game.worldManipulates V.Da .uBoth := by
-  unfold ExplanationGame.worldManipulates
-  show ¬ BoolSEM.manipulates semDisj bgBoth V.Da V.M
-  exact BoolSEM.not_manipulates_of_developDetOn_eq semDisj
-    (vs := [V.Ch, V.Da, V.M]) (n := 3) (y := true) (by decide) (by decide)
-
-/-- "Charlie because M" is true at u_C: Charlie's drinking actually caused
-    M (sole cause; lateBg-as-witness suffices). -/
-theorem msg_Ch_true_in_uC : game.meaning ⟨V.Ch⟩ .uC := by
-  unfold ExplanationGame.meaning actualCause
-  refine ⟨by decide, ?_, bgC, ?_⟩
-  · show (semDisj.developDet bgC).hasValue V.M true
-    exact SEM.developDet_hasValue_of_developDetOn_hasValue
-      (vs := milkVarList) (n := 1) (by decide)
-  · show CCSelection.completesForEffect semDisj bgC V.Ch true false V.M true
-    exact CCSelection.completesForEffect_of_developDetOn milkVarList 1
-      (by decide) (by decide)
-
-/-- HP-style actual cause via off-actual witness: Charlie IS an actual
-    cause of M at u_{C,D} despite not being but-for there. Witness:
-    `bgC` (sets Da = false off-actual), where Charlie becomes but-for. -/
-theorem msg_Ch_true_in_uBoth : game.meaning ⟨V.Ch⟩ .uBoth := by
-  unfold ExplanationGame.meaning actualCause
-  refine ⟨by decide, ?_, bgC, ?_⟩
-  · show (semDisj.developDet bgBoth).hasValue V.M true
-    exact SEM.developDet_hasValue_of_developDetOn_hasValue
-      (vs := milkVarList) (n := 1) (by decide)
-  · show CCSelection.completesForEffect semDisj bgC V.Ch true false V.M true
-    exact CCSelection.completesForEffect_of_developDetOn milkVarList 1
-      (by decide) (by decide)
+/-- With a sufficient cost difference the speaker prefers the shorter message although it is
+less useful: the redundancy trade-off of section 4.4.1. -/
+theorem speaker_prefers_short {βL βS : ℝ} (hβS : 0 < βS) (cost : Msg → ℝ)
+    (h : βS * (utility (policy βL L0 reward) reward 2 2 - utility (policy βL L0 reward) reward 0 2)
+      < cost 2 - cost 0) :
+    (speaker βS cost (policy βL L0 reward) reward 2).real {2} <
+      (speaker βS cost (policy βL L0 reward) reward 2).real {0} := by
+  rw [speaker_real_lt_iff reward cost (policy βL L0 reward) (w := 2) (m := 2) (m' := 0) hβS]
+  linarith
 
 end MilkTheft
 
