@@ -53,7 +53,8 @@ salient-polarity property is stated as a Lean theorem in
 `Studies/MaticNikolaeva2018.lean`. The substrate
 keeps the form-class enum because (a) it has 8 cross-language
 consumers via TBD2014, (b) M&N's framework is one alternative among
-several — alongside [hohle-1992]'s verum-as-illocutionary-operator
+several — alongside [hohle-1992]'s verum focus, VERUM as a truth
+predicate scoped by the syntax of the finite verb
 (`Studies/Hohle1992.lean`),
 [romero-han-2004]'s epistemic-CONJ FOR-SURE-CommonGround
 (`Studies/RomeroHan2004.lean`), and
