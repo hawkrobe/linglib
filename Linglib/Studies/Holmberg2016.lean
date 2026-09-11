@@ -1,455 +1,184 @@
 import Linglib.Features.AnsweringSystem
 import Linglib.Semantics.Questions.Hamblin
-import Linglib.Syntax.Minimalist.Features
-import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
-import Linglib.Semantics.Mood.Defs
-import Linglib.Features.Polarity
 import Linglib.Fragments.Swedish.AnswerParticles
 import Linglib.Fragments.German.PolarityMarking
-import Linglib.Data.Examples.Holmberg2016
 
 /-!
 # Holmberg (2016): The Syntax of Yes and No
-[holmberg-2016]
 
-## Core Contribution
+This file formalizes [holmberg-2016]'s account of answers to yes–no questions. A question
+contains an unvalued polarity head whose two values yield the Hamblin set of the question
+(`questionSet`), and an answer is a full sentence: a focused valued polarity feature, spelled
+out by a particle or an echoed verb, merged with the PolP inherited from the question and
+eliding it. The two systems for answering negative questions follow from the syntax of
+negation: a middle negation values the polarity head before the particle can, so a plain
+affirmative clashes and the negative particle confirms the negative alternative (the
+polarity-based system of Swedish, Finnish and English with the middle reading of *not*), while a
+low negation is out of reach, so *yes* confirms the negative alternative and *no* denies it
+(the truth-based system of Japanese, Cantonese, Thai and English with the low reading). English
+speakers who read *not* low and those who read it middle both take a bare answer to *Is John
+not coming?* to mean that he is not coming (`negative_neutralization`), an adverb scoping over
+the negation forces the low reading (`adverb_forces_truth_based`) even in Swedish, which has no
+low negation, and confirming the positive alternative of a negative question needs a
+polarity-reversing particle such as Swedish *jo* or French *si* (`jo_reverses`) or the double
+negation of *No, he is*. Positive-bias questions carry a high negation outside the PolP and are
+answered like neutral questions (`high_answers_like_neutral`).
 
-A cross-linguistic typology of polar question answering. The central
-parameter is the **answering system**: truth-based vs polarity-based.
+## Implementation notes
 
-## Answers as Elliptical Clauses
+* The valuation mechanism is the substrate `Features.PolP.answer`; the study instantiates it
+  with the particles of the fragments and the negation heights the book assigns to each
+  construction. The book's Table 4.2 of reversing particles and the global survey of Section
+  4.2 are not encoded.
+* Verb-echo answers, the structure of Finnish and Thai answers (Chapter 3) and the Chinese
+  question types (Section 4.9) are not formalized.
 
-Yes/no answers are elliptical full clauses, not general fragments:
+## References
 
-    [FocP yes/no Foc⁰ [PolP ... [±Pol] ... ]]
-
-The PolP is elided under identity with the question's PolP; the particle
-sits in Spec-FocP and values the [±Pol] feature. This is distinct from
-wh-fragment answers, which fill an argument slot of a wh-question
-(cf. `Studies/BergenGoodman2015.lean`).
-
-## Key Claims Formalized
-
-1. **Hamblin ↔ [±Pol]**: Hamblin's `polar p` yields exactly two answer
-   cells, corresponding to [+Pol] and [-Pol] valuations.
-
-2. **Answering system divergence**: Truth-based and polarity-based systems
-   give opposite answers to negative questions.
-
-3. **Polarity reversal**: Languages like Swedish (*jo*), German (*doch*),
-   and French (*si*) have a dedicated particle that assigns [+Pol] while
-   contradicting a negative context.
-
-## Connection to Existing Infrastructure
-
-- `Question.polar` (substrate-level inquisitive polar question)
-- `PolFeature` (syntactic [±Pol] feature; relocated from `Minimalist/Polarity.lean`)
-- `AnsweringSystem` (typological parameter)
-- `NegationHeight` → `predictedSystem` (negation height derives answering system)
-- `PolarAnswerProfile` (per-language classification)
-- `VerumFocus.lean` ([romero-han-2004]): complementary analysis — VERUM
-  explains structural source of bias, Holmberg explains cross-linguistic
-  answer variation. Both derive unbalanced partitions for negative questions.
+* [holmberg-2016]
 -/
 
 namespace Holmberg2016
 
-open Question
-open Features (AnsweringSystem PolarAnswerProfile)
-open Minimalist
-open Mood (ClauseType Grammatical Illocutionary)
-
-/-! ### Syntactic polarity: PolP and [±Pol] (relocated from Minimalist/Polarity.lean)
-
-Syntactic polarity as a formal feature on the PolP functional head,
-connecting [laka-1990]'s ΣP and [holmberg-2016]'s analysis
-of yes/no answers.
-
-## Key Claims
-
-1. Every finite clause has a polarity head (Pol⁰) projecting PolP in the IP domain
-2. In declaratives, [±Pol] is valued: [+Pol] for affirmative, [-Pol] for negative
-3. In polar questions, [±Pol] is unvalued — the answer values it
-4. "Yes"/"No" are focus-movement remnants of PolP ellipsis under identity
-
-## Connection to Features.Polarity
-
-`Features.Polarity` provides the semantic type (`.positive` / `.negative`).
-This file provides the syntactic feature `[±Pol]` that participates in
-Agree and maps to `Features.Polarity` at LF.
-
-## Connection to Cat.Pol
-
-`Minimalist.Cat.Pol` is the categorial label for the polarity head.
-This file adds the feature infrastructure for what that head carries.
--/
-
-/-- The polarity feature on Pol⁰, which may be valued or unvalued.
-
-    In declaratives: valued [+Pol] or [-Pol]
-    In polar questions: unvalued [uPol] — waiting for an answer to value it -/
-inductive PolFeature where
-  /-- Valued polarity: [+Pol] (affirmative) or [-Pol] (negative) -/
-  | valued : Features.Polarity → PolFeature
-  /-- Unvalued polarity: the feature in polar questions that the answer resolves -/
-  | unvalued : PolFeature
-  deriving DecidableEq, Repr
-
-/-- Convert a `PolFeature` to a `FeatureVal` for use in the Agree system.
-    [+Pol] maps to `.pol true`, [-Pol] maps to `.pol false`. -/
-def PolFeature.toFeatureVal : PolFeature → GramFeature
-  | .valued .positive => .valued (.pol true)
-  | .valued .negative => .valued (.pol false)
-  | .unvalued         => .unvalued (.pol true)  -- placeholder value for type matching
-
-/-- Recover `Features.Polarity` from a valued syntactic [±Pol] feature. -/
-def PolFeature.toPolarity : PolFeature → Option Features.Polarity
-  | .valued p => some p
-  | .unvalued => none
-
-/-- A Pol⁰ head: the functional head projecting PolP.
-
-    In [holmberg-2016]'s analysis, every finite clause has a Pol⁰
-    bearing a [±Pol] feature. The head's category is `Cat.Pol`. -/
-structure PolHead where
-  /-- The polarity feature on this head -/
-  feature : PolFeature
-  /-- Is this in a question context (unvalued [±Pol])? -/
-  inQuestion : Bool := feature matches .unvalued
-  deriving Repr
-
-/-- An affirmative declarative Pol⁰: [+Pol] -/
-def PolHead.affirmative : PolHead :=
-  { feature := .valued .positive }
-
-/-- A negative declarative Pol⁰: [-Pol] -/
-def PolHead.negative : PolHead :=
-  { feature := .valued .negative }
-
-/-- A polar question Pol⁰: [uPol] -/
-def PolHead.question : PolHead :=
-  { feature := .unvalued }
-
-/-- Value an unvalued [±Pol] feature — the core operation in answering
-    a polar question. The answer provides a `Features.Polarity` that values
-    the feature.
-
-    Returns `none` if the feature is already valued (nothing to do). -/
-def PolFeature.value (f : PolFeature) (p : Features.Polarity) : Option PolFeature :=
-  match f with
-  | .unvalued => some (.valued p)
-  | .valued _ => none  -- already valued
-
-/-- Valuing an unvalued feature always succeeds. -/
-theorem value_unvalued (p : Features.Polarity) :
-    PolFeature.unvalued.value p = some (.valued p) := rfl
-
-/-- Valuing a valued feature always fails. -/
-theorem value_valued (p q : Features.Polarity) :
-    (PolFeature.valued p).value q = none := rfl
-
-/-- Round-trip: valuing then extracting polarity recovers the answer. -/
-theorem value_then_toPolarity (p : Features.Polarity) :
-    (PolFeature.unvalued.value p).bind PolFeature.toPolarity = some p := rfl
-
-/-- The [±Pol] feature matches itself in the Agree system. -/
-theorem pol_feature_matches :
-    FeatureVal.sameType (.pol true) (.pol false) = true := rfl
-
-/-- [±Pol] is distinct from [±neg]: polarity and negation are
-    separate features on separate heads (PolP vs NegP). -/
-theorem pol_ne_neg :
-    FeatureVal.sameType (.pol true) (.neg true) = false := rfl
-
-/-! ### Question syntax: ForceP/FinP/PolP (relocated from Minimalist/Question.lean)
-
-Syntactic projections involved in question formation.
-
-## Clause Structure for Polar Questions
-
-[rizzi-1997]'s split-CP and [holmberg-2016]'s PolP analysis
-give the following structure for a polar question:
-
-    [ForceP Force⁰[+Q] [FinP Fin⁰[+finite] [PolP Pol⁰[uPol] [TP ...]]]]
-
-- **ForceP**: Clause-typing head. Force⁰ bears [+Q] for interrogatives,
-  [-Q] for declaratives. Corresponds to `Cat.Force` and `FeatureVal.q`.
-- **FinP**: Finiteness head. Fin⁰ bears [±finite]. Corresponds to `Cat.Fin`
-  and `FeatureVal.finite`.
-- **PolP**: Polarity head. Pol⁰ bears valued [±Pol] in declaratives,
-  unvalued [uPol] in polar questions. Corresponds to `Cat.Pol` and
-  `FeatureVal.pol`. See `Minimalist.Polarity` for the Agree infrastructure.
-
-## Connection to Semantic Questions
-
-`Syntax/Minimalist/LeftPeriphery.lean` defines `Minimalist.WHFeature` (±WH on C) —
-the semantic clause-typing feature. The syntactic `FeatureVal.q` corresponds
-to the semantic `WHFeature`:
-- `FeatureVal.q true` ↔ `WHFeature.plusWH`
-- `FeatureVal.q false` ↔ `WHFeature.minusWH`
-
-## Cross-framework: clause-typing locus is contested
-
-This file places clause-typing at `Force⁰[+Q]` per [rizzi-1997]. Two
-sibling analyses in linglib place it elsewhere:
-
-- **[dayal-2025]** (`Studies/Dayal2025.lean`):
-  clause-typing locus is `C` for CP-typed languages (English, Italian) and
-  `PerspP` for PerspP-typed languages (Hindi-Urdu).
-- **[holmberg-2016]** (`Studies/Holmberg2016.lean`):
-  the answering-system parameter places polar-Q-typing at `Pol⁰` via
-  `Features/AnsweringSystem.lean`.
-
-The bridge theorems (Force⁰[+Q] ↔ C[+WH], Force⁰[+Q] ↔ Pol⁰[uPol]) are
-unformalized — silent divergences, not committed disagreements.
-
-## Connection to ClauseType
-
-A clause's `Mood.ClauseType` (force × mood) is determined by
-the syntactic projections:
-- Force⁰[+Q] → `Illocutionary.interrogative`
-- Force⁰[-Q] → `Illocutionary.declarative`
-- Mood is determined lower (by T/Fin morphology), not by ForceP.
--/
-
-/-- The Q-feature on Force⁰: [+Q] for interrogatives, [-Q] for declaratives. -/
-inductive QFeature where
-  | plusQ   -- interrogative
-  | minusQ  -- declarative
-  deriving DecidableEq, Repr
-
-/-- Map the Q-feature to a `FeatureVal` for the Agree system. -/
-def QFeature.toFeatureVal : QFeature → FeatureVal
-  | .plusQ  => .q true
-  | .minusQ => .q false
-
-/-- Map the Q-feature to illocutionary force. -/
-def QFeature.toForce : QFeature → Illocutionary
-  | .plusQ  => .interrogative
-  | .minusQ => .declarative
-
-/-- The clause spine for a polar question: V ... T ... Pol ... Fin ... Force.
-
-    This is the full IP-to-CP spine with the projections relevant to
-    [holmberg-2016]'s analysis. The Pol head is between T and Fin. -/
-def polarQuestionSpine : ClauseSpine :=
-  ⟨[.V, .v, .Voice, .T, .Pol, .Neg, .Fin, .Force], by decide⟩
-
-/-- A declarative spine has the same projections. -/
-def declarativeSpine : ClauseSpine :=
-  ⟨[.V, .v, .Voice, .T, .Pol, .Neg, .Fin, .Force], by decide⟩
-
-/-- PolP is projected in both declaratives and polar questions. -/
-theorem polP_always_projected :
-    polarQuestionSpine.projects .Pol = true ∧
-    declarativeSpine.projects .Pol = true := ⟨rfl, rfl⟩
-
-/-- Derive `ClauseType` from the syntactic features on Force⁰ and T⁰/Fin⁰.
-
-    The Q-feature on Force determines illocutionary force; mood is
-    determined by the morphological properties of the verb (indicative
-    vs subjunctive), independent of Force. -/
-def clauseType (q : QFeature) (m : Grammatical) : ClauseType :=
-  { force := q.toForce, mood := m }
-
-/-- A polar question with indicative mood. -/
-theorem polar_question_is_interrogative_indicative :
-    clauseType .plusQ .indicative = ClauseType.polarQuestion := rfl
-
-/-- A declarative with indicative mood. -/
-theorem declarative_is_decl_ind :
-    clauseType .minusQ .indicative = ClauseType.declInd := rfl
-
-/-- Force and mood are independently set by different heads. -/
-theorem force_from_forceP_mood_from_fin :
-    (clauseType .plusQ .indicative).force = .interrogative ∧
-    (clauseType .plusQ .subjunctive).force = .interrogative ∧
-    (clauseType .plusQ .indicative).mood = .indicative ∧
-    (clauseType .plusQ .subjunctive).mood = .subjunctive := ⟨rfl, rfl, rfl, rfl⟩
-
--- ════════════════════════════════════════════════════════════════
--- § 1. Bridge: Hamblin polar ↔ [±Pol] variable
--- ════════════════════════════════════════════════════════════════
-
-/-! A polar question `?p = {p, pᶜ}` (substrate `Question.polar`)
-    corresponds to an unvalued [±Pol] feature. Each alternative cell
-    values the feature:
-    - `p` → [+Pol] (affirmative)
-    - `pᶜ` → [-Pol] (negative)
-
-    The two alternatives are the "positive cell" and "negative cell"
-    of the partition induced by the question. -/
-
-/-- Both alternatives `p` and `pᶜ` lie in `alt (polar p)` (under
-    nontriviality). Substrate identification of the two-cell answer
-    partition. -/
-theorem both_alternatives_in_polar {W : Type*}
-    {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
-    p ∈ alt (polar p) ∧ pᶜ ∈ alt (polar p) :=
-  ⟨(mem_alt_polar_of_nontrivial hne hnu p).mpr (Or.inl rfl),
-   (mem_alt_polar_of_nontrivial hne hnu pᶜ).mpr (Or.inr rfl)⟩
-
-/-- The positive answer maps to [+Pol] (valued positive). -/
-def positiveToPolFeature : PolFeature := .valued .positive
-
-/-- The negative answer maps to [-Pol] (valued negative). -/
-def negativeToPolFeature : PolFeature := .valued .negative
-
-/-- Valuing [uPol] as positive gives [+Pol]. -/
-theorem positive_valuation :
-    PolFeature.unvalued.value .positive = some positiveToPolFeature := rfl
-
-/-- Valuing [uPol] as negative gives [-Pol]. -/
-theorem negative_valuation :
-    PolFeature.unvalued.value .negative = some negativeToPolFeature := rfl
-
--- ════════════════════════════════════════════════════════════════
--- § 2. Answering system predictions
--- ════════════════════════════════════════════════════════════════
-
-/-- The central diagnostic: "Doesn't he drink?" → "Yes" means...
-    - Truth-based: "He doesn't drink" (negative polarity)
-    - Polarity-based: "He does drink" (positive polarity) -/
-theorem diagnostic_prediction :
-    AnsweringSystem.truthBased.yesToNegativeQuestion = .negative ∧
-    AnsweringSystem.polarityBased.yesToNegativeQuestion = .positive := ⟨rfl, rfl⟩
-
--- ════════════════════════════════════════════════════════════════
--- § 3. Cross-linguistic profiles
--- ════════════════════════════════════════════════════════════════
-
-/-- English polar answer profile (polarity-based, particle). -/
-def englishProfile : PolarAnswerProfile :=
-  { system := .polarityBased, strategy := .particle, hasPolarityReversal := false }
-
-/-- Japanese polar answer profile (truth-based, particle). -/
-def japaneseProfile : PolarAnswerProfile :=
-  { system := .truthBased, strategy := .particle, hasPolarityReversal := false }
-
-/-- Swedish polar answer profile (three-way: *ja*/*nej*/*jo*).
-    Derived from `Swedish.AnswerParticles.profile`. -/
-def swedishProfile : PolarAnswerProfile :=
-  Swedish.AnswerParticles.profile
-
-/-- The cross-linguistic polarity-reversal class: Swedish *jo* and
-    German *doch* have the same assign/respond profile — [+Pol]
-    assignment restricted to negative antecedent contexts. Holmberg's
-    class membership derived from the fragments' profiles rather than
-    stipulated. -/
-theorem reversal_class :
-    Swedish.AnswerParticles.jo.IsReversal ∧
-    German.PolarityMarking.dochAnswer.IsReversal := by decide
-
-/-- Finnish polar answer profile (mixed: verb echo + *kyllä*, polarity-based). -/
-def finnishProfile : PolarAnswerProfile :=
-  { system := .polarityBased, strategy := .mixed, hasPolarityReversal := false }
-
-/-- Mandarin polar answer profile (mixed: V-not-V + *shì/bú shì*, truth-based). -/
-def mandarinProfile : PolarAnswerProfile :=
-  { system := .truthBased, strategy := .mixed, hasPolarityReversal := false }
-
-/-- English and Swedish are both polarity-based. -/
-theorem english_swedish_same_system :
-    englishProfile.system = swedishProfile.system := rfl
-
-/-- Japanese and Mandarin are both truth-based. -/
-theorem japanese_mandarin_same_system :
-    japaneseProfile.system = mandarinProfile.system := rfl
-
-/-- English and Japanese differ in answering system. -/
-theorem english_japanese_differ :
-    englishProfile.system ≠ japaneseProfile.system := by decide
-
-/-- Swedish has polarity reversal; English does not. -/
-theorem swedish_reversal_english_not :
-    swedishProfile.hasPolarityReversal = true ∧
-    englishProfile.hasPolarityReversal = false := ⟨rfl, rfl⟩
-
-/-- The answering system and answer strategy are orthogonal:
-    both truth-based and polarity-based systems can use particles. -/
-theorem system_strategy_orthogonal :
-    englishProfile.strategy = japaneseProfile.strategy ∧
-    englishProfile.system ≠ japaneseProfile.system := ⟨rfl, by decide⟩
-
--- ════════════════════════════════════════════════════════════════
--- § 4. Negation height → answering system derivation
--- ════════════════════════════════════════════════════════════════
-
-open Features (NegationHeight)
-
-/-- Japanese has low negation → truth-based predicted, matches actual profile. -/
-theorem japanese_negation_height_predicts :
-    NegationHeight.low.predictedSystem = japaneseProfile.system := rfl
-
-/-- Mandarin has low negation → truth-based predicted, matches actual profile. -/
-theorem mandarin_negation_height_predicts :
-    NegationHeight.low.predictedSystem = mandarinProfile.system := rfl
-
-/-- English has middle negation → polarity-based predicted, matches actual profile. -/
-theorem english_negation_height_predicts :
-    NegationHeight.middle.predictedSystem = englishProfile.system := rfl
-
-/-- Swedish has middle negation (exclusively, no low negation; §4.5) →
-    polarity-based predicted, matches actual profile. -/
-theorem swedish_negation_height_predicts :
-    NegationHeight.middle.predictedSystem = swedishProfile.system := rfl
-
-/-- Finnish has middle negation (higher variety of middle; §4.6, p178:
-    "still technically a middle negation position") →
-    polarity-based predicted, matches actual profile. -/
-theorem finnish_negation_height_predicts :
-    NegationHeight.middle.predictedSystem = finnishProfile.system := rfl
-
--- ════════════════════════════════════════════════════════════════
--- § 5. End-to-end chains: negation height → specific answer data
--- ════════════════════════════════════════════════════════════════
-
-/-- The `paperFeatures` encoding of a `Features.Polarity` value, matching
-    the `answer_polarity` key in `Holmberg2016.Examples`. -/
-def polarityFeature : Features.Polarity → String
-  | .positive => "positive"
-  | .negative => "negative"
-
-/-- End-to-end: Japanese low negation → truth-based → "yes" to negative question
-    has negative polarity → matches the Japanese *hai* datum's
-    `answer_polarity` annotation. -/
-theorem japanese_endtoend :
-    Examples.japanese_hai_to_neg.paperFeatures.lookup "answer_polarity" =
-      some (polarityFeature NegationHeight.low.predictedSystem.yesToNegativeQuestion) := rfl
-
-/-- End-to-end: English middle negation → polarity-based → "yes" to negative
-    question has positive polarity → matches the English "yes" datum's
-    `answer_polarity` annotation. -/
-theorem english_endtoend :
-    Examples.english_yes_to_neg.paperFeatures.lookup "answer_polarity" =
-      some (polarityFeature NegationHeight.middle.predictedSystem.yesToNegativeQuestion) := rfl
-
-/-- The end-to-end chains for Japanese and English yield opposite polarities,
-    as predicted by their different negation heights. -/
-theorem endtoend_diverge :
-    NegationHeight.low.predictedSystem.yesToNegativeQuestion ≠
-    NegationHeight.middle.predictedSystem.yesToNegativeQuestion := by decide
-
--- ════════════════════════════════════════════════════════════════
--- § 6. Polarity reversal ↔ polarity-based correlation
--- ════════════════════════════════════════════════════════════════
-
-/-! [holmberg-2016] §4.13: languages with a polarity-reversing particle
-    (Swedish *jo*, German *doch*, French *si*) are correlated with the
-    polarity-based system. Truth-based languages do not need a reversing
-    particle because they can always use "no" to disconfirm the negative
-    alternative of a negative question. -/
-
-/-- Truth-based languages do not have polarity reversal in our profiles.
-    (Japanese and Mandarin both lack a reversing particle.) -/
-theorem truthBased_no_reversal :
-    japaneseProfile.hasPolarityReversal = false ∧
-    mandarinProfile.hasPolarityReversal = false := ⟨rfl, rfl⟩
-
-/-- Among polarity-based languages, reversal is attested but not universal:
-    Swedish has it, English does not. -/
-theorem polarityBased_reversal_variation :
-    swedishProfile.hasPolarityReversal = true ∧
-    englishProfile.hasPolarityReversal = false := ⟨rfl, rfl⟩
+open Features Question
+
+variable {W : Type*}
+
+/-! ### The question variable -/
+
+/-- The Hamblin set of the question: the primary alternative and its negation. -/
+def questionSet (q : PolP W) : Question W := polar q.content
+
+/-- A yes–no question with nontrivial content offers exactly two alternatives, the two values
+of its polarity variable. -/
+theorem alt_question (q : PolP W) (hne : q.content ≠ ∅) (hnu : q.content ≠ Set.univ) :
+    alt (questionSet q) = {q.content, q.contentᶜ} :=
+  alt_polar_of_nontrivial hne hnu
+
+/-- A neutral question. -/
+def neutral (p : Set W) : PolP W := ⟨p, none, false⟩
+
+/-- A negative-bias question whose negation has the given height. -/
+def negative (h : NegationHeight) (p : Set W) : PolP W := ⟨p, some h, false⟩
+
+/-- The negative question with a low negation. -/
+abbrev negLow (p : Set W) : PolP W := negative .low p
+
+/-- The negative question with a middle negation. -/
+abbrev negMiddle (p : Set W) : PolP W := negative .middle p
+
+/-- A negative question denotes the same Hamblin set as its neutral counterpart, as Hamblin
+noted; the two differ in which alternative is primary (`PolP.content`). -/
+theorem negative_question_eq_neutral (h : NegationHeight) (p : Set W) :
+    questionSet (negative h p) = questionSet (neutral p) := by
+  unfold questionSet
+  cases h <;> simp [PolP.content, PolP.NegationInside, negative, neutral]
+
+/-! ### English (Section 4.3) -/
+
+/-- English *yes*: assigns positive polarity in any context. -/
+def yes : AnswerParticle := ⟨"yes", .positive, [.positive, .negative]⟩
+
+/-- English *no*: assigns negative polarity in any context. -/
+def no : AnswerParticle := ⟨"no", .negative, [.positive, .negative]⟩
+
+/-- Negative neutralization: speakers who read *not* low take *yes* to confirm that John is not
+coming, speakers who read it middle take *no* to, so the two answers mean the same. -/
+theorem negative_neutralization (p : Set W) :
+    (negLow p).answer yes = some pᶜ ∧ (negMiddle p).answer no = some pᶜ :=
+  ⟨PolP.answer_low_positive rfl rfl, PolP.answer_middle_negative rfl rfl rfl⟩
+
+/-- With the middle reading of *not*, bare *yes* is not a well-formed answer. -/
+theorem yes_ill_formed_middle (p : Set W) : (negMiddle p).answer yes = none :=
+  PolP.answer_middle_positive rfl rfl rfl (by decide)
+
+/-- With the low reading, *no* is a double negation confirming the positive alternative, the
+first clause of *No, he is*. -/
+theorem no_double_negation (p : Set W) : (negLow p).answer no = some p :=
+  PolP.answer_low_negative rfl rfl
+
+/-- *Does John sometimes not show up on time?*: an adverb scoping over the negation keeps it from
+valuing the polarity head, so every speaker answers truth-based. -/
+theorem adverb_forces_truth_based (p : Set W) :
+    (⟨p, some .middle, true⟩ : PolP W).answer yes = some pᶜ ∧
+      (⟨p, some .middle, true⟩ : PolP W).answer no = some p := by
+  simp [PolP.answer_intervened, yes, no]
+
+/-! ### Swedish (Section 4.5) and the reversing particles -/
+
+open Swedish.AnswerParticles in
+/-- Swedish has only a middle negation: to *Har Johan inte kommit?* the plain affirmative *ja* is
+ill formed, *nej* confirms that he has not come, and the reversing *jo* confirms that he has. -/
+theorem swedish_negative_question (p : Set W) :
+    (negMiddle p).answer ja = none ∧ (negMiddle p).answer nej = some pᶜ ∧
+      (negMiddle p).answer jo = some p :=
+  ⟨PolP.answer_middle_positive rfl rfl rfl ja_not_reversal,
+    PolP.answer_middle_negative rfl rfl rfl, PolP.answer_middle_reversal rfl rfl jo_is_reversal⟩
+
+open Swedish.AnswerParticles in
+/-- *Har Johan nångång inte kommit i tid?*: the adverb intervening between the negation and the
+polarity head lets *ja* confirm the negative alternative, although Swedish has no low
+negation. -/
+theorem swedish_adverb (p : Set W) :
+    (⟨p, some .middle, true⟩ : PolP W).answer ja = some pᶜ ∧
+      (⟨p, some .middle, true⟩ : PolP W).answer nej = some p := by
+  simp [PolP.answer_intervened, ja, nej]
+
+/-- The reversing particles of Swedish and German, read off the fragments. -/
+theorem jo_reverses :
+    Swedish.AnswerParticles.jo.IsReversal ∧ German.PolarityMarking.dochAnswer.IsReversal := by
+  decide
+
+/-- French *si*: the reversing affirmative that *oui* cannot replace after a negative question. -/
+def si : AnswerParticle := ⟨"si", .positive, [.negative]⟩
+
+/-- French *oui*. -/
+def oui : AnswerParticle := ⟨"oui", .positive, [.positive]⟩
+
+theorem french_negative_question (p : Set W) :
+    (negMiddle p).answer oui = none ∧ (negMiddle p).answer si = some p :=
+  ⟨PolP.answer_middle_positive rfl rfl rfl (by decide),
+    PolP.answer_middle_reversal rfl rfl (by decide)⟩
+
+/-- Reversing particles are only needed where a negation values the polarity head: in a
+truth-based configuration every particle yields a well-formed answer, which is why the
+languages of Table 4.2 are polarity-based. -/
+theorem no_reversal_needed_truth_based (p : Set W) (a : AnswerParticle) :
+    (negLow p).answer a ≠ none :=
+  PolP.answer_ne_none_of_not_valued (by simp [PolP.ValuedByNegation, negLow, negative])
+
+/-! ### Japanese and Cantonese (Sections 1.3 and 4.1) -/
+
+/-- Japanese *un*. -/
+def un : AnswerParticle := ⟨"un", .positive, [.positive, .negative]⟩
+
+/-- Japanese *uun*. -/
+def uun : AnswerParticle := ⟨"uun", .negative, [.positive, .negative]⟩
+
+/-- With Japanese's low negation, *un* confirms that he does not drink coffee and *uun* that he
+does. -/
+theorem japanese_negative_question (p : Set W) :
+    (negLow p).answer un = some pᶜ ∧ (negLow p).answer uun = some p :=
+  ⟨PolP.answer_low_positive rfl rfl, PolP.answer_low_negative rfl rfl⟩
+
+/-! ### Positive-bias questions (Section 4.8) -/
+
+/-- A positive-bias negative question, with the negation in the C-domain above the polarity
+head, is answered like a neutral question. -/
+theorem high_answers_like_neutral (p : Set W) (a : AnswerParticle) :
+    (negative .high p).answer a = (neutral p).answer a := by
+  rw [PolP.answer_high rfl, PolP.answer_neutral rfl]; rfl
+
+/-- A positive-bias question differs from the negative-bias one in its primary alternative,
+which is the prejacent rather than its negation. -/
+theorem content_high_ne_content_middle [Nonempty W] (p : Set W) :
+    (negative .high p).content ≠ (negMiddle p).content := by
+  rw [PolP.content_of_high rfl, PolP.content_of_middle rfl]
+  show p ≠ pᶜ
+  intro h
+  obtain ⟨w⟩ := ‹Nonempty W›
+  by_cases hw : w ∈ p
+  · exact (h ▸ hw : w ∈ pᶜ) hw
+  · exact hw (h ▸ hw : w ∈ p)
 
 end Holmberg2016
