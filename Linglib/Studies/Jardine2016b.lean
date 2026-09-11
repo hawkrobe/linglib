@@ -4,40 +4,40 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Autosegmental.Correspondence
+import Linglib.Data.Examples.Jardine2016b
 
 /-!
 # Jardine (2016): intervocalic voicing as a local string relation
 
-[jardine-2016b] (Ch. 7) presents a phonological process as a **relation** between input and
-output strings: a set of correspondence graphs, carved out of GEN by banned-subgraph
-constraints. §7.2 runs the idea on intervocalic voicing, (7.1). Over Σ = ∆ = {a, b, p} the
-primitives Γ = {aa, pb, pp, bb} of (7.14) — an input symbol over its output — generate
-GEN = CG(Γ) by concatenation ((7.15); `g`), and five banned subgraphs cut the voicing
-relation out of it: φ_apa (7.19) forbids a surface `apa`, and the four of (7.21) forbid a
-`p` surfacing as `b` word-initially, word-finally, after a `p`, and before a `p`. The
-grammar is φ_apba (7.22), and the relation it presents is R(CG(φ_apba)) (Def. 25).
+This file formalizes chapter 7 of [jardine-2016b], which presents a phonological process as a
+relation between input and output strings: a set of correspondence graphs, carved out of GEN by
+banned-subgraph constraints. Section 7.2 runs the idea on intervocalic voicing, (7.1), whose
+relation over `a`, `b` and `p` is `Rvoice`, (7.5). The primitives Γ of (7.14), an input symbol
+over its output, generate GEN by concatenation, (7.15) (`g`), and five banned subgraphs cut the
+voicing relation out of it: φ_apa, (7.19), forbids a surface `apa`, and the four of (7.21) forbid
+a `p` surfacing as `b` word-initially, word-finally, after a `p` and before a `p`. The grammar is
+φ_apba, (7.22), and the relation it presents is `R(CG(φ_apba))`, Definition 25 (`voicing`): a
+pair is in it iff the Γ-string spelling it, which is unique, is free of the grammar
+(`voicing_iff_spell`), so membership decides, and on the pairs of (7.5) and (7.17) the relation
+agrees with `Rvoice` (`rows_agree`). The identity `R(CG(φ_apba)) = Rvoice` that the text leaves
+to the reader fails: no subgraph of (7.22) mentions a `b` beside the target, so the grammar admits
+`bpa ↦ bba`, which the rule (7.1) does not (`voicing_ne_voiceRule`).
 
-## Main definitions
+## Implementation notes
 
-* `Pair`, `g`, `gen` — Γ with the boundary primitives, Jardine's `g : Γ* → CG(Γ)`, and a
-  Γ-string's graph wrapped in the boundaries ⋊, ⋉ that (7.21) reads.
-* `voicingGrammar` — φ_apba, the five banned subgraphs of (7.22).
-* `voicing` — R(CG(φ_apba)) on boundary-augmented strings.
+* Correspondence graphs are `Autosegmental.Correspondence.Rep`; the word boundaries ⋊ and ⋉
+  that (7.21) reads are symbols of the alphabet, and a Γ-string's graph is wrapped in them.
+* `Rvoice` is written as the rule (7.1) applied pointwise, `voiceRule`, a `p` between two `a`s
+  surfacing as `b`.
 
-## Main results
+## References
 
-* `voicing_iff` — Def. 25 unwound: `(w, v)` is in the relation iff some Γ-string spells
-  both and its graph is free of the grammar — after which each data point decides.
-* The data of (7.5), (7.17) and (7.20): `apa ↦ aba` and `pa ↦ pa` are in; `apa ↦ apa`,
-  `pa ↦ ba` and `appa ↦ abpa` are out.
-* `voicing_bpa_bba` — the grammar also admits `bpa ↦ bba`: no subgraph of (7.22) mentions
-  a `b` beside the target, so the identity R(CG(φ_apba)) = Rvoice that the text leaves to
-  the reader holds only on inputs with no `b` adjacent to a `p`.
+* [jardine-2016b]
 -/
 
 namespace Jardine2016b
 
-open Autosegmental Correspondence
+open Autosegmental Correspondence Data.Examples
 
 /-- Σ = ∆ = {a, b, p} of (7.1), with the word boundaries ⋊ (`lb`) and ⋉ (`rb`) that the
 subgraphs of (7.21) read. -/
@@ -75,7 +75,59 @@ theorem map_injective {γs γs' : List Pair} (hi : γs.map input = γs'.map inpu
       simp only [List.map_cons, List.cons.injEq] at hi ho
       rw [ext hi.1 ho.1, ih hi.2 ho.2]
 
+/-- The primitive spelling an input symbol over an output symbol, if any. -/
+def ofSegs : Seg → Seg → Option Pair
+  | .a, .a => some aa
+  | .p, .b => some pb
+  | .p, .p => some pp
+  | .b, .b => some bb
+  | .lb, .lb => some lb
+  | .rb, .rb => some rb
+  | _, _ => none
+
+theorem ofSegs_eq_some_iff {i o : Seg} {γ : Pair} :
+    ofSegs i o = some γ ↔ γ.input = i ∧ γ.output = o := by
+  cases i <;> cases o <;> cases γ <;> simp [ofSegs, input, output]
+
+theorem ofSegs_input_output (γ : Pair) : ofSegs γ.input γ.output = some γ := by
+  cases γ <;> rfl
+
 end Pair
+
+/-- The Γ-string spelling an input and an output string, if any. -/
+def spell : List Seg → List Seg → Option (List Pair)
+  | [], [] => some []
+  | i :: w, o :: v =>
+    match Pair.ofSegs i o, spell w v with
+    | some γ, some γs => some (γ :: γs)
+    | _, _ => none
+  | _, _ => none
+
+theorem spell_map (γs : List Pair) : spell (γs.map Pair.input) (γs.map Pair.output) = some γs := by
+  induction γs with
+  | nil => rfl
+  | cons γ γs ih => simp [spell, ih, Pair.ofSegs_input_output]
+
+theorem spell_eq_some {w v : List Seg} {γs : List Pair} (h : spell w v = some γs) :
+    γs.map Pair.input = w ∧ γs.map Pair.output = v := by
+  induction w generalizing v γs with
+  | nil => cases v <;> cases γs <;> simp_all [spell]
+  | cons i w ih =>
+    cases v with
+    | nil => simp [spell] at h
+    | cons o v =>
+      rw [spell] at h
+      split at h
+      · next γ γs' hγ hγs =>
+        obtain rfl := Option.some.inj h
+        obtain ⟨rfl, rfl⟩ := Pair.ofSegs_eq_some_iff.1 hγ
+        simp [ih hγs]
+      · exact absurd h (by simp)
+
+/-- A pair is spelled by a Γ-string exactly when it is the string's input and output. -/
+theorem spell_eq_some_iff {w v : List Seg} {γs : List Pair} :
+    spell w v = some γs ↔ γs.map Pair.input = w ∧ γs.map Pair.output = v :=
+  ⟨spell_eq_some, λ ⟨hw, hv⟩ => hw ▸ hv ▸ spell_map γs⟩
 
 /-- Jardine's `g` on Γ-strings ((7.15)): the correspondence graph spelling the input and
 output symbols position by position. -/
@@ -88,19 +140,19 @@ abbrev gen (γs : List Pair) : Rep Seg Seg := g (.lb :: γs ++ [.rb])
 /-! ### The grammar φ_apba -/
 
 /-- φ_apa (7.19): a surface `apa` — output-only, the markedness constraint *VTV. -/
-abbrev banApa : Rep Seg Seg := Rep.ofWords [] [.a, .p, .a] fun _ _ => False
+abbrev banApa : Rep Seg Seg := Rep.ofWords [] [.a, .p, .a] λ _ _ => False
 
 /-- φ_⋊pb (7.21): a `p` surfacing as `b` word-initially. -/
-abbrev banInitialPb : Rep Seg Seg := Rep.ofWords [.p] [.lb, .b] fun i o => i = 0 ∧ o = 1
+abbrev banInitialPb : Rep Seg Seg := Rep.ofWords [.p] [.lb, .b] λ i o => i = 0 ∧ o = 1
 
 /-- φ_pb⋉ (7.21): a `p` surfacing as `b` word-finally. -/
-abbrev banFinalPb : Rep Seg Seg := Rep.ofWords [.p] [.b, .rb] fun i o => i = 0 ∧ o = 0
+abbrev banFinalPb : Rep Seg Seg := Rep.ofWords [.p] [.b, .rb] λ i o => i = 0 ∧ o = 0
 
 /-- φ_ppb (7.21): a `p` surfacing as `b` after a surface `p`. -/
-abbrev banPbAfterP : Rep Seg Seg := Rep.ofWords [.p] [.p, .b] fun i o => i = 0 ∧ o = 1
+abbrev banPbAfterP : Rep Seg Seg := Rep.ofWords [.p] [.p, .b] λ i o => i = 0 ∧ o = 1
 
 /-- φ_pbp (7.21): a `p` surfacing as `b` before a surface `p`. -/
-abbrev banPbBeforeP : Rep Seg Seg := Rep.ofWords [.p] [.b, .p] fun i o => i = 0 ∧ o = 0
+abbrev banPbBeforeP : Rep Seg Seg := Rep.ofWords [.p] [.b, .p] λ i o => i = 0 ∧ o = 0
 
 /-- φ_apba (7.22). -/
 def voicingGrammar : List (Rep Seg Seg) :=
@@ -138,37 +190,59 @@ theorem voicing_iff {w v : List Seg} :
   · rintro ⟨γs, rfl, rfl, hφ⟩
     exact ⟨gen γs, ⟨⟨γs, rfl⟩, hφ⟩, by simp [Pair.input], by simp [Pair.output]⟩
 
-/-! ### The data of (7.5), (7.17) and (7.20) -/
+/-- Definition 25 by spelling: the Γ-string spelling the pair is unique, so `(w, v)` is in the
+relation iff that string exists and its graph is free of the grammar. -/
+theorem voicing_iff_spell {w v : List Seg} :
+    voicing w v ↔ ∃ γs, spell w v = some γs ∧ specifiedByRep voicingGrammar (gen γs) := by
+  simp only [voicing_iff, spell_eq_some_iff, and_assoc]
 
-/-- An intervocalic `p` voices: `apa ↦ aba` ((7.18a)). -/
-theorem voicing_apa_aba : voicing [.a, .p, .a] [.a, .b, .a] :=
-  voicing_iff.mpr ⟨[.aa, .pb, .aa], rfl, rfl, by decide⟩
+instance (w v : List Seg) : Decidable (voicing w v) :=
+  decidable_of_iff _ voicing_iff_spell.symm
 
-/-- It must: the faithful `apa ↦ apa` contains φ_apa ((7.18b)). -/
-theorem not_voicing_apa_apa : ¬ voicing [.a, .p, .a] [.a, .p, .a] := fun h => by
-  obtain ⟨γs, hi, ho, hφ⟩ := voicing_iff.mp h
-  obtain rfl := Pair.map_injective (γs' := [.aa, .pp, .aa]) hi ho
-  exact absurd hφ (by decide)
+/-! ### The data of (7.5) and (7.17) -/
 
-/-- A non-intervocalic `p` stays: `pa ↦ pa`. -/
-theorem voicing_pa_pa : voicing [.p, .a] [.p, .a] :=
-  voicing_iff.mpr ⟨[.pp, .aa], rfl, rfl, by decide⟩
+/-- A segment from its spelling. -/
+def segOf : Char → Seg
+  | 'a' => .a
+  | 'b' => .b
+  | _ => .p
 
-/-- And may not voice: `pa ↦ ba` contains φ_⋊pb ((7.20a)). -/
-theorem not_voicing_pa_ba : ¬ voicing [.p, .a] [.b, .a] := fun h => by
-  obtain ⟨γs, hi, ho, hφ⟩ := voicing_iff.mp h
-  obtain rfl := Pair.map_injective (γs' := [.pb, .aa]) hi ho
-  exact absurd hφ (by decide)
+/-- A row: an input and an output string, and whether the pair is in `Rvoice`. -/
+structure Row where
+  input : List Seg
+  output : List Seg
+  inRvoice : Bool
+  deriving DecidableEq
 
-/-- `appa ↦ abpa` contains φ_pbp ((7.20b)). -/
-theorem not_voicing_appa_abpa : ¬ voicing [.a, .p, .p, .a] [.a, .b, .p, .a] := fun h => by
-  obtain ⟨γs, hi, ho, hφ⟩ := voicing_iff.mp h
-  obtain rfl := Pair.map_injective (γs' := [.aa, .pb, .pp, .aa]) hi ho
-  exact absurd hφ (by decide)
+/-- A row from the paper's features. -/
+def Row.ofExample (e : LinguisticExample) : Option Row := do
+  let i ← e.feature? "input"
+  let o ← e.feature? "output"
+  let m ← e.feature? "in_rvoice"
+  some ⟨i.toList.map segOf, o.toList.map segOf, m = "yes"⟩
 
-/-- The grammar also admits `bpa ↦ bba`: none of the subgraphs of (7.22) mentions a `b`
-beside the target, so Rvoice's `bpa ↦ bpa` is not the only image of `bpa`. -/
-theorem voicing_bpa_bba : voicing [.b, .p, .a] [.b, .b, .a] :=
-  voicing_iff.mpr ⟨[.bb, .pb, .aa], rfl, rfl, by decide⟩
+/-- The pairs of `Rvoice`, (7.5), and the pairs of GEN outside it, (7.17). -/
+def rows : List Row := Examples.all.filterMap Row.ofExample
+
+/-- On the paper's pairs the grammar's relation agrees with `Rvoice`: the pairs of (7.5) are in
+it and those of (7.17) outside `Rvoice`, (7.18b) and (7.20), are excluded. -/
+theorem rows_agree : ∀ r ∈ rows, voicing r.input r.output ↔ r.inRvoice = true := by decide
+
+/-- The rule (7.1) pointwise: a `p` between two `a`s surfaces as `b`. -/
+def voiceRule (w : List Seg) : List Seg :=
+  w.mapIdx λ i x =>
+    if x = .p ∧ w[i - 1]? = some .a ∧ i ≠ 0 ∧ w[i + 1]? = some .a then .b else x
+
+/-- `Rvoice` is the rule's graph on the paper's pairs. -/
+theorem voiceRule_rows : ∀ r ∈ rows, voiceRule r.input = r.output ↔ r.inRvoice = true := by
+  decide
+
+/-- The grammar admits `bpa ↦ bba`: no subgraph of (7.22) mentions a `b` beside the target. -/
+theorem voicing_bpa_bba : voicing [.b, .p, .a] [.b, .b, .a] := by decide
+
+/-- So the identity `R(CG(φ_apba)) = Rvoice` that the text leaves to the reader fails: the
+rule (7.1) leaves `bpa` unchanged. -/
+theorem voicing_ne_voiceRule : ¬ ∀ w v, voicing w v ↔ voiceRule w = v :=
+  λ h => absurd ((h _ _).1 voicing_bpa_bba) (by decide)
 
 end Jardine2016b

@@ -1,0 +1,326 @@
+[
+  {
+    "id": "jardine2016b_7_5_pa",
+    "source": {
+      "bibkey": "jardine-2016b",
+      "paperLabel": "(7.5)"
+    },
+    "language": "",
+    "primaryText": "pa → pa",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.2"
+      ],
+      [
+        "input",
+        "pa"
+      ],
+      [
+        "output",
+        "pa"
+      ],
+      [
+        "in_rvoice",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jardine2016b_7_5_aaa",
+    "source": {
+      "bibkey": "jardine-2016b",
+      "paperLabel": "(7.5)"
+    },
+    "language": "",
+    "primaryText": "aaa → aaa",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.2"
+      ],
+      [
+        "input",
+        "aaa"
+      ],
+      [
+        "output",
+        "aaa"
+      ],
+      [
+        "in_rvoice",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jardine2016b_7_5_apa",
+    "source": {
+      "bibkey": "jardine-2016b",
+      "paperLabel": "(7.5)"
+    },
+    "language": "",
+    "primaryText": "apa → aba",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.2"
+      ],
+      [
+        "input",
+        "apa"
+      ],
+      [
+        "output",
+        "aba"
+      ],
+      [
+        "in_rvoice",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jardine2016b_7_5_aba",
+    "source": {
+      "bibkey": "jardine-2016b",
+      "paperLabel": "(7.5)"
+    },
+    "language": "",
+    "primaryText": "aba → aba",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.2"
+      ],
+      [
+        "input",
+        "aba"
+      ],
+      [
+        "output",
+        "aba"
+      ],
+      [
+        "in_rvoice",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jardine2016b_7_5_appa",
+    "source": {
+      "bibkey": "jardine-2016b",
+      "paperLabel": "(7.5)"
+    },
+    "language": "",
+    "primaryText": "appa → appa",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.2"
+      ],
+      [
+        "input",
+        "appa"
+      ],
+      [
+        "output",
+        "appa"
+      ],
+      [
+        "in_rvoice",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jardine2016b_7_5_aapaaapa",
+    "source": {
+      "bibkey": "jardine-2016b",
+      "paperLabel": "(7.5)"
+    },
+    "language": "",
+    "primaryText": "aapaaapa → aabaaaba",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.2"
+      ],
+      [
+        "input",
+        "aapaaapa"
+      ],
+      [
+        "output",
+        "aabaaaba"
+      ],
+      [
+        "in_rvoice",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jardine2016b_7_17_pa_ba",
+    "source": {
+      "bibkey": "jardine-2016b",
+      "paperLabel": "(7.17)"
+    },
+    "language": "",
+    "primaryText": "pa → ba",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.2"
+      ],
+      [
+        "input",
+        "pa"
+      ],
+      [
+        "output",
+        "ba"
+      ],
+      [
+        "in_rvoice",
+        "no"
+      ]
+    ],
+    "comment": "A non-intervocalic p voiced, (7.20a): excluded by φ⋊pb.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jardine2016b_7_17_apa_apa",
+    "source": {
+      "bibkey": "jardine-2016b",
+      "paperLabel": "(7.17)"
+    },
+    "language": "",
+    "primaryText": "apa → apa",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.2"
+      ],
+      [
+        "input",
+        "apa"
+      ],
+      [
+        "output",
+        "apa"
+      ],
+      [
+        "in_rvoice",
+        "no"
+      ]
+    ],
+    "comment": "An intervocalic p unvoiced, (7.18b): excluded by φapa.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jardine2016b_7_17_appa_abpa",
+    "source": {
+      "bibkey": "jardine-2016b",
+      "paperLabel": "(7.17)"
+    },
+    "language": "",
+    "primaryText": "appa → abpa",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7.2"
+      ],
+      [
+        "input",
+        "appa"
+      ],
+      [
+        "output",
+        "abpa"
+      ],
+      [
+        "in_rvoice",
+        "no"
+      ]
+    ],
+    "comment": "A p voiced before a p, (7.20b): excluded by φpbp.",
+    "lgrConformance": ""
+  }
+]

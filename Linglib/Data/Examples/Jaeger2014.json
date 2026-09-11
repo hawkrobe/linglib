@@ -1,0 +1,413 @@
+[
+  {
+    "id": "jaeger2014_1a",
+    "source": {
+      "bibkey": "jaeger-2014",
+      "paperLabel": "(1a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some boys came in.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not all boys came in",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "heuristic",
+        "Q"
+      ],
+      [
+        "implicature",
+        "Not all boys came in."
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jaeger2014_1b",
+    "source": {
+      "bibkey": "jaeger-2014",
+      "paperLabel": "(1b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Three boys came in.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "exactly three boys came in",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "heuristic",
+        "Q"
+      ],
+      [
+        "implicature",
+        "Exactly three boys came in."
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jaeger2014_3a",
+    "source": {
+      "bibkey": "jaeger-2014",
+      "paperLabel": "(3a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John's book is good.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "the book that John is reading or that he has written is good",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "heuristic",
+        "I"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jaeger2014_3b",
+    "source": {
+      "bibkey": "jaeger-2014",
+      "paperLabel": "(3b)"
+    },
+    "language": "stan1293",
+    "primaryText": "a secretary",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "a female secretary",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "heuristic",
+        "I"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jaeger2014_3c",
+    "source": {
+      "bibkey": "jaeger-2014",
+      "paperLabel": "(3c)"
+    },
+    "language": "stan1293",
+    "primaryText": "road",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "hard-surfaced road",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "heuristic",
+        "I"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jaeger2014_4a",
+    "source": {
+      "bibkey": "jaeger-2014",
+      "paperLabel": "(4a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John stopped the car.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "John stopped the car in a regular way, using the foot brake",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "heuristic",
+        "M"
+      ],
+      [
+        "signal",
+        "f"
+      ],
+      [
+        "cost",
+        "0"
+      ],
+      [
+        "world",
+        "w1"
+      ]
+    ],
+    "comment": "The cheap synonym of Example 6, read as the frequent world.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jaeger2014_4b",
+    "source": {
+      "bibkey": "jaeger-2014",
+      "paperLabel": "(4b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John made the car stop.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "John stopped the car in an abnormal way",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "heuristic",
+        "M"
+      ],
+      [
+        "signal",
+        "f'"
+      ],
+      [
+        "cost",
+        "1"
+      ],
+      [
+        "world",
+        "w2"
+      ]
+    ],
+    "comment": "The costly synonym of Example 6, read as the rare world.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jaeger2014_5",
+    "source": {
+      "bibkey": "jaeger-2014",
+      "paperLabel": "(5)"
+    },
+    "language": "stan1293",
+    "primaryText": "John brought the car to a stop.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "John stopped the car in a non-stereotypical way",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "heuristic",
+        "M"
+      ]
+    ],
+    "comment": "A third, still more complex form; pragmatic rationalizability predicts no further specialization between (4b) and (5), unlike bidirectional OT.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jaeger2014_6a",
+    "source": {
+      "bibkey": "jaeger-2014",
+      "paperLabel": "(6a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The distance is one hundred meter.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "vague, between 90 and 110 meter",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "precise",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "principle",
+        "RN/RI"
+      ],
+      [
+        "precision",
+        "low"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jaeger2014_6b",
+    "source": {
+      "bibkey": "jaeger-2014",
+      "paperLabel": "(6b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The distance is one hundred and one meter.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "precise, with a slack of at most 50 cm",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "principle",
+        "RN/RI"
+      ],
+      [
+        "precision",
+        "high"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jaeger2014_7",
+    "source": {
+      "bibkey": "jaeger-2014",
+      "paperLabel": "(7)"
+    },
+    "language": "stan1293",
+    "primaryText": "The distance is exactly one hundred meter.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "precise",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "principle",
+        "RN/RI"
+      ],
+      [
+        "precision",
+        "high"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  }
+]
