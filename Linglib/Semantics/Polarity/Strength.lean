@@ -45,7 +45,7 @@ inductive DEStrength where
   | weak
   | antiAdditive
   | antiMorphic
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- Rank in the Zwarts chain `weak < antiAdditive < antiMorphic`. -/
 def DEStrength.toNat : DEStrength → Nat
