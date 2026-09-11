@@ -272,9 +272,8 @@ example (dox bestOf : Fin 4 → Set (Fin 4)) :
 reading that `gladFull_isUE` cannot capture. -/
 theorem bridge_lahiri_glad_settle_overgeneration :
     Lahiri1998.Examples.ex31b.judgment = .acceptable ∧
-    KadmonLandman1993.settleGladAnybody.grammatical = true ∧
-    KadmonLandman1993.settleGladTickets.grammatical = true :=
-  ⟨rfl, rfl, rfl⟩
+    ∀ r ∈ KadmonLandman1993.rows, r.settleForLess = true → r.grammatical = true :=
+  ⟨rfl, by decide⟩
 
 /-- [hoeksema-1983]'s S-comparative is anti-additive, hence Strawson-DE
 with classical AA to spare (it licenses strong NPIs). -/
