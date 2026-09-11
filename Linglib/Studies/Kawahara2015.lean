@@ -5,17 +5,22 @@ import Linglib.Phonology.Constraints.Defs
 import Linglib.Fragments.Japanese.Prosody
 
 /-!
-# Kawahara (2015) [kawahara-2015]
+# Kawahara (2015): The Phonology of Japanese Accent
 
-*The phonology of Japanese accent* surveys Tokyo Japanese pitch accent: a
-single lexical accent per word determines the surface tone contour, and its
-location is predictable in loanwords, compounds, and affixed words. This
-file formalizes the survey's core generalizations — the Table 1 comparison
-of the antepenultimate accent rule ([mccawley-1968]) with the Latin Stress
-Rule ([hayes-1995]), the accent-to-tone derivation and its culminativity
-(`accentToTones_culminative`), and NonFinality ([prince-smolensky-1993]) in
-compound accent. The §6 affix accent lexicon lives in
-`Fragments/Japanese/Prosody.lean`.
+This file formalizes the core generalizations of [kawahara-2015], a survey of Tokyo Japanese
+pitch accent: a single lexical accent per word determines the surface tone contour, and its
+location is predictable in loanwords, compounds, and affixed words. The Table 1 comparison of
+the antepenultimate accent rule ([mccawley-1968]) with the Latin Stress Rule ([hayes-1995])
+is decided on the eight trisyllabic weight profiles, the accent-to-tone derivation of
+Section 1.4 is proved culminative for every accent location and word length
+(`accentToTones_culminative`), and the compound accent rules of Section 4 never yield a final
+accent, the NonFinality of [prince-smolensky-1993]. The affix accent lexicon of Section 6
+lives in `Fragments/Japanese/Prosody.lean`.
+
+## References
+
+* [kawahara-2015]
+* [mccawley-1968], [hayes-1995], [prince-smolensky-1993], [kubozono-2006]
 -/
 
 namespace Kawahara2015
@@ -56,7 +61,7 @@ def trisyllabicConditions : List (List Syllable.Weight) :=
 /-- The AAR and the LSR agree on six of the eight trisyllabic weight
     conditions and diverge exactly on HLH and LLH (Table 1). -/
 theorem aar_lsr_mismatches :
-    trisyllabicConditions.filter (fun w => defaultAccentAAR w != latinStressRule w) =
+    trisyllabicConditions.filter (λ w => defaultAccentAAR w != latinStressRule w) =
       [[.heavy, .light, .heavy], [.light, .light, .heavy]] := by decide
 
 /-- On HLH the AAR accents σ₂, the syllable containing the antepenultimate
@@ -154,7 +159,7 @@ def toneSpec (accentMora : Option ℕ) (i : ℕ) : Option LevelTone :=
     the most recent specified tone rightward ((7)–(9)). The seed is never
     consulted, since mora 0 is always specified. -/
 def accentToTones (accentMora : Option ℕ) (nMorae : ℕ) : List LevelTone :=
-  (((List.range nMorae).map (toneSpec accentMora)).scanl (fun t o => o.getD t) .H).tail
+  (((List.range nMorae).map (toneSpec accentMora)).scanl (λ t o => o.getD t) .H).tail
 
 /-- Unaccented *ame(+ga)* 'candy' surfaces LHH by initial rise and
     spreading ((6b)). -/
@@ -214,7 +219,7 @@ theorem hlFallCount_cons_self (t : LevelTone) (l : List LevelTone) :
 /-- Spreading is fall-invariant, since copying a tone neither creates nor
     destroys an HL fall. -/
 theorem hlFallCount_cons_scanl (spec : List (Option LevelTone)) (x t : LevelTone) :
-    hlFallCount (x :: spec.scanl (fun t o => o.getD t) t) =
+    hlFallCount (x :: spec.scanl (λ t o => o.getD t) t) =
       hlFallCount (x :: t :: spec.reduceOption) := by
   induction spec generalizing x t with
   | nil => rfl
@@ -247,9 +252,9 @@ theorem count_L_toneSpec_dense (a : Option ℕ) (l : List ℕ) (hnd : l.Nodup)
     (l.filterMap (toneSpec a)).count .L ≤ 1 := by
   rw [List.count_filterMap]
   rcases a with _ | p
-  · rw [List.countP_eq_zero.mpr fun j hj => by simp [toneSpec_eq_L (hpos j hj)]]
+  · rw [List.countP_eq_zero.mpr λ j hj => by simp [toneSpec_eq_L (hpos j hj)]]
     exact Nat.zero_le _
-  · rw [List.countP_congr (q := (· == p + 1)) fun j hj => by
+  · rw [List.countP_congr (q := (· == p + 1)) λ j hj => by
         simp only [beq_iff_eq, toneSpec_eq_L (hpos j hj), Option.map_some,
           Option.some.injEq]
         omega,
@@ -264,7 +269,7 @@ theorem accentToTones_culminative (a : Option ℕ) (n : ℕ) :
   · exact Nat.zero_le _
   · obtain ⟨t₀, ht₀⟩ : ∃ t, toneSpec a 0 = some t := ⟨_, toneSpec_zero a⟩
     have hpeel : accentToTones a (m + 1) =
-        (((List.range m).map Nat.succ).map (toneSpec a)).scanl (fun t o => o.getD t) t₀ := by
+        (((List.range m).map Nat.succ).map (toneSpec a)).scanl (λ t o => o.getD t) t₀ := by
       simp only [accentToTones, List.range_succ_eq_map, List.map_cons, ht₀,
         List.scanl_cons, List.tail_cons, Option.getD_some]
     rw [hpeel, ← hlFallCount_L_cons, hlFallCount_cons_scanl, hlFallCount_L_cons]
@@ -273,7 +278,7 @@ theorem accentToTones_culminative (a : Option ℕ) (n : ℕ) :
     simp only [List.reduceOption]
     rw [List.filterMap_map, Function.id_comp]
     exact count_L_toneSpec_dense a _ (List.nodup_range.map Nat.succ_injective)
-      fun j hj => by simp only [List.mem_map] at hj; omega
+      λ j hj => by simp only [List.mem_map] at hj; omega
 
 /-! ### Compound accent (§4)
 
@@ -304,7 +309,7 @@ def longN2CompoundAccent (n1Morae n2Morae : ℕ) (n2Accent : Option ℕ) : Optio
     once when the accent sits on the final mora ([prince-smolensky-1993];
     §4.1 invokes it for the loss of final accent in compounds). -/
 def nonFinality : Constraint (Option ℕ × ℕ) :=
-  Constraint.binary fun an => an.1.map (· + 1) = some an.2
+  Constraint.binary λ an => an.1.map (· + 1) = some an.2
 
 /-- In *fa'asuto+ki'su → faasuto+ki'su* 'first kiss', the short N2 retains
     its accent on *ki* ((21a)). -/
