@@ -1,0 +1,232 @@
+[
+  {
+    "id": "imelguost2026_s1a",
+    "source": {
+      "bibkey": "imel-guo-steinert-threlkeld-2026",
+      "paperLabel": "(1a)"
+    },
+    "language": "stan1293",
+    "primaryText": "It must be raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A friend walks in and shakes off a wet umbrella. You say:",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "Modality"
+      ],
+      [
+        "force",
+        "strong"
+      ],
+      [
+        "flavor",
+        "epistemic"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imelguost2026_s1b",
+    "source": {
+      "bibkey": "imel-guo-steinert-threlkeld-2026",
+      "paperLabel": "(1b)"
+    },
+    "language": "stan1293",
+    "primaryText": "You must upload your homework as a PDF.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "You are reading the specifications of a homework assignment. It partially reads:",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "Modality"
+      ],
+      [
+        "force",
+        "strong"
+      ],
+      [
+        "flavor",
+        "deontic"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imelguost2026_s2a",
+    "source": {
+      "bibkey": "imel-guo-steinert-threlkeld-2026",
+      "paperLabel": "(2a)"
+    },
+    "language": "stan1293",
+    "primaryText": "It may be raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A friend is leaving and grabs an umbrella on the way out, saying:",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "Modality"
+      ],
+      [
+        "force",
+        "weak"
+      ],
+      [
+        "flavor",
+        "epistemic"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imelguost2026_s2b",
+    "source": {
+      "bibkey": "imel-guo-steinert-threlkeld-2026",
+      "paperLabel": "(2b)"
+    },
+    "language": "stan1293",
+    "primaryText": "You may have a cookie.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A mother offers a treat to a child for finishing an assignment:",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "Modality"
+      ],
+      [
+        "force",
+        "weak"
+      ],
+      [
+        "flavor",
+        "deontic"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imelguost2026_s3a",
+    "source": {
+      "bibkey": "imel-guo-steinert-threlkeld-2026",
+      "paperLabel": "(3a)"
+    },
+    "language": "lill1248",
+    "primaryText": "nilh k'a lh(el)-(t)-en-s-wá(7)-(a) ptinus-em-sút",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "nilh",
+        "FOC"
+      ],
+      [
+        "k'a",
+        "INFER"
+      ],
+      [
+        "lh(el)-(t)-en-s-wá(7)-(a)",
+        "from-DET-1SG.POSS-NOM-IMPF-DET"
+      ],
+      [
+        "ptinus-em-sút",
+        "think-MID-OOC"
+      ]
+    ],
+    "translation": "It must be from my worrying.",
+    "context": "You have a headache that won't go away, so you go to the doctor. All the tests show negative. There is nothing wrong, so it must just be tension.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "Modality"
+      ],
+      [
+        "source",
+        "Rullmann et al. 2008:321, (5c)"
+      ],
+      [
+        "force",
+        "strong"
+      ],
+      [
+        "flavor",
+        "epistemic"
+      ]
+    ],
+    "comment": "Variable-force k'a used with strong force.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "imelguost2026_s3b",
+    "source": {
+      "bibkey": "imel-guo-steinert-threlkeld-2026",
+      "paperLabel": "(3b)"
+    },
+    "language": "lill1248",
+    "primaryText": "plan k'a qwatsáts",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "plan",
+        "already"
+      ],
+      [
+        "k'a",
+        "INFER"
+      ],
+      [
+        "qwatsáts",
+        "leave"
+      ]
+    ],
+    "translation": "Maybe he's already gone.",
+    "context": "His car isn't there.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "Modality"
+      ],
+      [
+        "source",
+        "Rullmann et al. 2008:321, (5e)"
+      ],
+      [
+        "force",
+        "weak"
+      ],
+      [
+        "flavor",
+        "epistemic"
+      ]
+    ],
+    "comment": "Variable-force k'a used with weak force.",
+    "lgrConformance": ""
+  }
+]
