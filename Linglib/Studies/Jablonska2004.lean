@@ -45,12 +45,7 @@ the starred ones excluded (`starred_not_wellFormed`).
 
 namespace Jablonska2004
 
-open Data.Examples (LinguisticExample)
-open Features (AspectualProfile)
-open Morphology (Morph)
-open Verb (Stem)
-open Svenonius2004 (PrefixClass WellStacked)
-open Polish.Verbs
+open Morphology Polish.Verbs
 
 /-! ### Verbalizers -/
 
@@ -84,7 +79,7 @@ namespace Verbalizer
 /-- The Aktionsart profile of a bare stem: atelic, lacking a right boundary, Section 2.3;
 punctual for the semelfactive, Section 2.3.1; stative for the statives, which lack a left
 boundary, Section 5. -/
-def profile : Verbalizer → AspectualProfile
+def profile : Verbalizer → Features.AspectualProfile
   | semelfactive => ⟨.atelic, .punctual, .dynamic⟩
   | stative => ⟨.atelic, .durative, .stative⟩
   | _ => ⟨.atelic, .durative, .dynamic⟩
@@ -328,10 +323,10 @@ theorem not_perfective_of_getLast_si (h : WellFormed v ls) (hl : ls.getLast? = s
 /-- The prefix sequence of a derivation, outermost first, under any classification `f` that
 agrees with the lexical/superlexical split, is well-stacked in the sense of [svenonius-2004]:
 the superlexical prefix is always outside the lexical one. -/
-theorem wellStacked (h : WellFormed v ls) (f : Layer → PrefixClass)
+theorem wellStacked (h : WellFormed v ls) (f : Layer → Svenonius2004.PrefixClass)
     (hf : ∀ l, (f l).IsSuperlexical ↔ ¬ l.IsLexical) :
-    WellStacked (ls.reverse.filterMap λ l => l.prefix?.map (·, f l)) := by
-  shapes h <;> simp_all [WellStacked, Layer.prefix?, Layer.IsLexical]
+    Svenonius2004.WellStacked (ls.reverse.filterMap λ l => l.prefix?.map (·, f l)) := by
+  shapes h <;> simp_all [Svenonius2004.WellStacked, Layer.prefix?, Layer.IsLexical]
 
 end Generalizations
 
@@ -427,8 +422,8 @@ theorem not_asp1Reading_distributive (v : Verbalizer) : ¬ Asp1Reading v false .
 innermost first, the plurality of the internal argument, and the paper's readings of the
 superlexical *po-*, if any. -/
 structure Analysis where
-  ex : LinguisticExample
-  stem : Stem
+  ex : Data.Examples.LinguisticExample
+  stem : Verb.Stem
   verbalizer : Verbalizer
   layers : List Layer
   plural : Bool
