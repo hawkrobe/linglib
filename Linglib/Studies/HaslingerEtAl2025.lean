@@ -1,242 +1,146 @@
-/-
-# [haslinger-etal-2025]: Distributivity ≠ Maximality
-
-Empirical data from "On the relation between distributivity and maximality"
-(Semantics & Pragmatics 18, Article 1, doi:10.3765/sp.18.1).
-
-## Main Finding
-
-German *jeweils* is obligatorily distributive but permits non-maximal
-interpretations for some speakers, while *jeder* requires maximality.
-This demonstrates that distributivity and maximality are independent.
-
-## Theoretical Connection
-
-The theory in `Semantics/Lexical/Plural/Distributivity.lean` predicts:
-- *jeder* uses `distMaximal` (identity tolerance)
-- *jeweils* uses `distTolerant` (context-sensitive tolerance)
-- *alle* universally binds the tolerance parameter (`allViaForallH`)
-
-The atom-vacuity theorem (`distMaximal_singleton`) explains WHY `each`/`jeder`
-forces maximality: when P is distributed to atoms, there's no plurality for
-tolerance to weaken.
-
-## Connection to Imprecision
-
-[haslinger-2025-diss] argues that non-maximality (= imprecision in the plural
-domain) is an "unmarked default" that functional items like `all`/`each` can remove.
-The tolerance relation ≤ is the formal locus: predicates introduce it by default,
-`all` binds it universally, `each` renders it vacuous on atoms, and `jeweils`
-preserves it at the operator level. See `Studies/Haslinger2025.lean`.
-
--/
-
-import Linglib.Semantics.Plurality.Distributivity
-import Linglib.Semantics.Plurality.Trivalent
 import Linglib.Fragments.German.Distributives
+import Linglib.Data.Examples.HaslingerEtAl2025
+
+/-!
+# Haslinger, Rosina, Schmitt and Wurm (2025): On the relation between distributivity and maximality
+
+This file formalizes [haslinger-etal-2025]'s answer to whether every obligatorily distributive
+operator blocks non-maximal construals of its associate plural. German *jed-* is distributive and
+exception-intolerant in both its determiner and its distance use, *alle* and numeral indefinites
+are exception-intolerant but not distributive, and definite plurals are neither (their (5)); the
+distance distributor *jeweils* fills the remaining cell, since some speakers accept it in
+scenarios whose question under discussion makes an exception irrelevant, where DP-*jeder* is
+rejected and distance *jeder* mostly rejected (their §3). `Item.class` is the classification,
+read off the German fragment where it has an entry and off the paper's truth-value judgments in
+the scenarios of their (3) for the rest, and `jeweils_answers_Q` is the negative answer. In
+[kriz-spector-2021]'s parameter semantics the contrast is a maximal distributive operator against
+a tolerant one with a contextually supplied tolerance: `jeweils_accepts_magnets` runs the magnets
+scenario of their (23), where the tolerance identifies the pluralities the explosion question does
+not distinguish, and the speakers who reject *jeweils* there are those for whom the tolerance is
+the identity. The same tools define the hypothetical determiner *jeder\** of their (27), which
+accepts the scenario as well (`jederStar_accepts_magnets`), so the framework does not predict the
+absence of exception-tolerant distributive determiners; the paper relates *jeweils*'s
+permissiveness to its lacking a determiner use instead (`determiner_maximal`).
+
+## Implementation notes
+
+The questionnaire's ratings are prose: DP-*jeder* was overwhelmingly rejected, *jeweils* judged
+bimodally, distance *jeder* mostly rejected, and 15 of 18 participants rated the *jeweils* member
+of a minimal pair above its distance-*jeder* counterpart. The paper's examples and scenarios are
+the rows of `Data/Examples/HaslingerEtAl2025.json`; the (3) judgments classify an item as
+distributive when it is false in the cumulative scenario (3b) and as maximal when it is false in
+the exception scenario (3c), which for *jeweils* out of the blue gives the maximal cell, the
+non-maximal construal needing the questionnaire's contexts. The tolerance of the magnets scenario
+tolerates every nonempty subplurality of the boxes, since one box with two magnets already
+answers the explosion question.
+
+## References
+
+* [haslinger-etal-2025]
+* [kriz-spector-2021]
+-/
 
 namespace HaslingerEtAl2025
 
-open Plurality
-open Plurality.Distributivity
-open Plurality.Trivalent
+open Plurality Plurality.Distributivity German.Distributives Data.Examples
 
--- German Distributive Lexical Items
+/-- The expressions of their (5) and (22): the distance distributor *jeweils* beside the
+determiner and distance uses of *jed-*, *alle*, numeral indefinites and definite plurals. -/
+inductive Item where
+  | definitePlural
+  | numeralIndefinite
+  | alle
+  | jederDP
+  | jederDistance
+  | jeweils
+  deriving DecidableEq, Repr, Fintype
 
-/-- Syntactic distribution of a distributive element -/
-inductive SyntacticUse where
-  | dpInternal   -- "jeder Hund" (every dog)
-  | distance     -- "Die Hunde haben jeweils/jeder..."
-  deriving DecidableEq, Repr
+/-- Whether the item is a determiner. -/
+def Item.IsDeterminer : Item → Prop
+  | .jederDP | .alle | .numeralIndefinite => True
+  | .definitePlural | .jederDistance | .jeweils => False
 
-/-- A German distributive item with its properties -/
-structure LexicalItem where
-  form : String
-  gloss : String
-  uses : List SyntacticUse
-  semanticClass : DistMaxClass
-  deriving Repr
+instance : DecidablePred Item.IsDeterminer
+  | .jederDP | .alle | .numeralIndefinite => isTrue trivial
+  | .definitePlural | .jederDistance | .jeweils => isFalse not_false
 
-/-- Derive a `LexicalItem` from the German distributive Fragment entry, so the
-form/gloss/classification are read off `Fragments/German/Distributives.lean`
-rather than restated here (the fragment is anchored to this same paper). -/
-def LexicalItem.ofEntry (e : German.Distributives.DistributiveEntry) : LexicalItem :=
-  { form := e.form
-  , gloss := e.gloss
-  , uses := (if e.hasDPUse then [.dpInternal] else []) ++
-            (if e.hasDistanceUse then [.distance] else [])
-  , semanticClass := e.distMaxClass }
+/-- The two properties of their (5), obligatory distributivity and exception intolerance, read
+off the German fragment where it has an entry. -/
+def Item.class : Item → DistMaxClass
+  | .definitePlural => .nonDistNonMax
+  | .numeralIndefinite => .nonDistMax
+  | .alle => alleEntry.distMaxClass
+  | .jederDP | .jederDistance => jederEntry.distMaxClass
+  | .jeweils => jeweilsEntry.distMaxClass
 
-/-- jeder (DP-internal and distance): +distributive, +maximal. Derived from the
-German fragment's `jederEntry`. -/
-def jeder : LexicalItem := .ofEntry German.Distributives.jederEntry
+/-- Their question Q answered in the negative: an obligatorily distributive item that permits
+exceptions. -/
+theorem jeweils_answers_Q :
+    Item.jeweils.class.isDistributive ∧ ¬ Item.jeweils.class.isMaximal := by decide
 
-/-- jeweils (distance only): +distributive, -maximal. Derived from `jeweilsEntry`. -/
-def jeweils : LexicalItem := .ofEntry German.Distributives.jeweilsEntry
+/-- Every cell of the classification is filled, the fourth by *jeweils*. -/
+theorem four_cells : ∀ c : DistMaxClass, ∃ i : Item, i.class = c
+  | .distMax => ⟨.jederDP, rfl⟩
+  | .distNonMax => ⟨.jeweils, rfl⟩
+  | .nonDistMax => ⟨.alle, rfl⟩
+  | .nonDistNonMax => ⟨.definitePlural, rfl⟩
 
-/-- alle (DP-internal): -distributive, +maximal. Derived from `alleEntry`. -/
-def alle : LexicalItem := .ofEntry German.Distributives.alleEntry
+/-- Their §4 observation: among the attested items, every determiner is exception-intolerant. -/
+theorem determiner_maximal : ∀ i : Item, i.IsDeterminer → i.class.isMaximal := by decide
 
-/-- Definite plurals: -distributive, -maximal -/
-def definitePlural : LexicalItem :=
-  { form := "die NPs"
-  , gloss := "the NPs"
-  , uses := [.dpInternal]
-  , semanticClass := .nonDistNonMax }
+/-! ### The scenarios of their (3) -/
 
--- Experimental Data (Section 3)
+/-- The classification an example row's judgments in their (3) determine: distributive if false
+in the cumulative scenario (3b), maximal if false in the exception scenario (3c). -/
+def classOfExample (ex : LinguisticExample) : Option DistMaxClass := do
+  let b ← ex.feature? "trueIn3b"
+  let c ← ex.feature? "trueIn3c"
+  pure <| match b == "no", c == "no" with
+    | true, true => .distMax
+    | true, false => .distNonMax
+    | false, true => .nonDistMax
+    | false, false => .nonDistNonMax
 
-/-- Context for testing non-maximality (QUD makes exceptions irrelevant) -/
-structure NonMaxContext where
-  description : String
-  totalItems : Nat
-  exceptions : Nat
-  implicitQUD : String
-  deriving Repr
+/-- The rows of their (1), (2), (4) and (22a) classify the items as their (5) does, *jeweils* out
+of the blue included. -/
+theorem class_of_rows :
+    ∀ p ∈ [(Item.jederDP, Examples.ex1), (.jederDistance, Examples.ex2), (.alle, Examples.ex4a),
+      (.numeralIndefinite, Examples.ex4b), (.definitePlural, Examples.ex4c)],
+      classOfExample p.2 = some p.1.class := by
+  decide
 
-/-- Magnets scenario (example 23): 5 boxes, 4 have 2 magnets, 1 has 1 -/
-def magnetsContext : NonMaxContext :=
-  { description := "Magnets that shouldn't be stored together"
-  , totalItems := 5
-  , exceptions := 1
-  , implicitQUD := "Is there explosion risk?" }
+theorem jeweils_maximal_out_of_the_blue : classOfExample Examples.ex22a = some .distMax := by
+  decide
 
-/-- Volunteers scenario (example 24): 5 volunteers, 4 have 2 dogs, 1 has 1 -/
-def volunteersContext : NonMaxContext :=
-  { description := "Attack dogs that shouldn't be walked together"
-  , totalItems := 5
-  , exceptions := 1
-  , implicitQUD := "Is there a dog fight risk?" }
+/-! ### The magnets scenario of their (23) -/
 
-/-- Experimental observation -/
-structure Observation where
-  item : LexicalItem
-  context : NonMaxContext
-  /-- Qualitative acceptance pattern from Figures 1-2 -/
-  pattern : String
-  deriving Repr
+/-- The five boxes of their (23a). -/
+abbrev Box := Fin 5
 
-/-- DP-jeder overwhelmingly rejected in non-maximal contexts (Figure 1) -/
-def dpJederInNonMax : Observation :=
-  { item := jeder
-  , context := magnetsContext
-  , pattern := "overwhelmingly rejected (modal rating 1)" }
+/-- Box `b` contains two magnets: all but the fifth. -/
+def hasTwoMagnets (b : Box) (_ : Unit) : Prop := b < 4
 
-/-- jeweils shows mixed judgments across speakers (Figure 1) -/
-def jeweilsInNonMax : Observation :=
-  { item := jeweils
-  , context := magnetsContext
-  , pattern := "mixed: some speakers accept, some reject (bimodal distribution)" }
+instance (b : Box) (u : Unit) : Decidable (hasTwoMagnets b u) := inferInstanceAs (Decidable (b < 4))
 
-/-- Distance jeder mostly rejected, less categorically than DP-jeder (Figure 2) -/
-def distanceJederInNonMax : Observation :=
-  { item := { jeder with uses := [.distance] }
-  , context := volunteersContext
-  , pattern := "mostly rejected but less categorically than DP-jeder" }
+/-- DP-*jeder* and distance *jeder*, `distMaximal`: false, since one box has one magnet. -/
+theorem jeder_rejects_magnets : ¬ distMaximal hasTwoMagnets Finset.univ () := by decide
 
--- Key Empirical Generalizations
+/-- *jeweils* with the tolerance the explosion question induces, every nonempty subplurality:
+true, witnessed by the four boxes with two magnets. -/
+theorem jeweils_accepts_magnets : distTolerant hasTwoMagnets Tolerance.trivial Finset.univ () := by
+  decide
 
-/-- The independence claim: same distributivity, different maximality -/
-theorem independence_attested :
-    (jeder.semanticClass.isDistributive ↔ jeweils.semanticClass.isDistributive) ∧
-    jeder.semanticClass ≠ jeweils.semanticClass := by
-  refine ⟨?_, ?_⟩ <;> decide
+/-- The speakers who reject *jeweils* in the scenario are those whose tolerance is the identity,
+for whom it coincides with *jeder*. -/
+theorem jeweils_identity_rejects_magnets :
+    ¬ distTolerant hasTwoMagnets Tolerance.identity Finset.univ () :=
+  λ h => jeder_rejects_magnets
+    ((distMaximal_iff_identity hasTwoMagnets Finset.univ () Finset.univ_nonempty).mpr h)
 
-/-- Correlation (Section 4): No DP use ↔ permits non-maximality? -/
-def hasDPUse (item : LexicalItem) : Bool :=
-  item.uses.contains .dpInternal
-
--- jeder has DP use and requires maximality
-example : hasDPUse jeder = true := rfl
-example : jeder.semanticClass = .distMax := rfl
-
--- jeweils lacks DP use and permits non-maximality
-example : hasDPUse jeweils = false := rfl
-example : jeweils.semanticClass = .distNonMax := rfl
-
-/-- The typological table (5) from the paper, extended with jeweils -/
-def typologyTable : List (String × DistMaxClass) :=
-  [ ("definite DP",      .nonDistNonMax)
-  , ("alle",             .nonDistMax)
-  , ("numeral indef",    .nonDistMax)
-  , ("jeder (DP)",       .distMax)
-  , ("jeder (distance)", .distMax)
-  , ("jeweils",          .distNonMax)   -- KEY: +dist, -max
-  ]
-
-/-- All four cells of the 2×2 are populated -/
-theorem all_four_cells_populated :
-    (∃ e ∈ typologyTable, e.2 = .distMax) ∧
-    (∃ e ∈ typologyTable, e.2 = .distNonMax) ∧
-    (∃ e ∈ typologyTable, e.2 = .nonDistMax) ∧
-    (∃ e ∈ typologyTable, e.2 = .nonDistNonMax) :=
-  ⟨⟨("jeder (DP)", .distMax), by simp [typologyTable], rfl⟩,
-   ⟨("jeweils", .distNonMax), by simp [typologyTable], rfl⟩,
-   ⟨("alle", .nonDistMax), by simp [typologyTable], rfl⟩,
-   ⟨("definite DP", .nonDistNonMax), by simp [typologyTable], rfl⟩⟩
-
--- ============================================================================
--- Finite Model: Magnets Scenario (Section 3, example 23)
--- ============================================================================
-
-/-! Demonstrate the jeder/jeweils contrast on a concrete model.
-
-5 boxes, predicate "contains two magnets":
-- Boxes 1-4: contain 2 magnets (satisfy P)
-- Box 5: contains 1 magnet (exception)
-
-QUD: "Is there explosion risk?" — any box with 2 magnets is dangerous,
-so the exception in box 5 is irrelevant.
-
-- `distMaximal` rejects: not all boxes have 2 magnets
-- `distTolerant` with a tolerance that accepts 4/5 sub-plurality: accepts -/
-
-section MagnetsModel
-
-inductive Box where | b1 | b2 | b3 | b4 | b5
-  deriving DecidableEq, Repr
-
-instance : Fintype Box where
-  elems := {.b1, .b2, .b3, .b4, .b5}
-  complete := by intro x; cases x <;> simp
-
-/-- World with 4 of 5 boxes containing 2 magnets -/
-inductive MWorld where | actual
-  deriving DecidableEq, Repr
-
-instance : Fintype MWorld where
-  elems := {.actual}
-  complete := by intro x; cases x; simp
-
-/-- "This box contains two magnets" -/
-def hasTwoMagnets : Box → MWorld → Prop
-  | .b1, _ => True
-  | .b2, _ => True
-  | .b3, _ => True
-  | .b4, _ => True
-  | .b5, _ => False  -- exception: only 1 magnet
-
-instance hasTwoMagnets.instDecidable : ∀ b w, Decidable (hasTwoMagnets b w) := by
-  intro b w; cases b <;> unfold hasTwoMagnets <;> infer_instance
-
-def allBoxes : Finset Box := Finset.univ
-
-/-- jeder rejects: not all boxes have 2 magnets -/
-theorem jeder_rejects_magnets :
-    ¬ distMaximal hasTwoMagnets allBoxes .actual := by decide
-
-/-- jeweils accepts: there exists a sub-plurality where all boxes have 2 magnets.
-    We use trivial tolerance (any subset is tolerant) — the 4-box subset
-    {b1,b2,b3,b4} witnesses truth because all four satisfy `hasTwoMagnets`. -/
-theorem jeweils_accepts_magnets :
-    distTolerant hasTwoMagnets Tolerance.trivial allBoxes .actual := by decide
-
-/-- The atom-vacuity principle in action: distributing to individual boxes,
-    maximality follows because each singleton has no room for tolerance. -/
-theorem each_box_maximal (b : Box) :
-    distMaximal hasTwoMagnets {b} .actual ↔ hasTwoMagnets b .actual :=
-  distMaximal_singleton hasTwoMagnets b .actual
-
-end MagnetsModel
+/-- The hypothetical determiner *jeder\** of their (27) accepts the scenario as *jeweils* does:
+the framework's tools do not predict its absence. -/
+theorem jederStar_accepts_magnets :
+    distTolerantQuant (λ _ _ => True) hasTwoMagnets Tolerance.trivial Finset.univ () :=
+  ⟨{0, 1, 2, 3}, by decide, by decide, by decide, λ _ _ => trivial, by decide⟩
 
 end HaslingerEtAl2025

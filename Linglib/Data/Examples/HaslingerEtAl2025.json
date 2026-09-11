@@ -1,0 +1,996 @@
+[
+  {
+    "id": "haslingeretal2025_ex1",
+    "source": {
+      "bibkey": "haslinger-etal-2025",
+      "paperLabel": "(1)"
+    },
+    "language": "stan1295",
+    "primaryText": "Jeder Hund hat gerade insgesamt drei Würste gegessen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Jeder",
+        "each"
+      ],
+      [
+        "Hund",
+        "dog"
+      ],
+      [
+        "hat",
+        "aux"
+      ],
+      [
+        "gerade",
+        "just"
+      ],
+      [
+        "insgesamt",
+        "in.total"
+      ],
+      [
+        "drei",
+        "three"
+      ],
+      [
+        "Würste",
+        "sausages"
+      ],
+      [
+        "gegessen.",
+        "eaten"
+      ]
+    ],
+    "translation": "Each dog just ate a total of three sausages.",
+    "context": "Three dogs: Abe, Bert, Carl. (3a) Abe ate three sausages, Bert ate three sausages, Carl ate three sausages. (3b) Abe ate one sausage, Bert ate one sausage, Carl ate one sausage. (3c) Abe ate three sausages, Bert ate three sausages, Carl didn't eat any sausages.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "item",
+        "jederDP"
+      ],
+      [
+        "trueIn3a",
+        "yes"
+      ],
+      [
+        "trueIn3b",
+        "no"
+      ],
+      [
+        "trueIn3c",
+        "no"
+      ]
+    ],
+    "comment": "DP-internal jeder: obligatorily distributive, no exceptions.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haslingeretal2025_ex2",
+    "source": {
+      "bibkey": "haslinger-etal-2025",
+      "paperLabel": "(2)"
+    },
+    "language": "stan1295",
+    "primaryText": "Die Hunde haben gerade jeder insgesamt drei Würste gegessen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Die",
+        "the"
+      ],
+      [
+        "Hunde",
+        "dogs"
+      ],
+      [
+        "haben",
+        "aux"
+      ],
+      [
+        "gerade",
+        "just"
+      ],
+      [
+        "jeder",
+        "each"
+      ],
+      [
+        "insgesamt",
+        "in.total"
+      ],
+      [
+        "drei",
+        "three"
+      ],
+      [
+        "Würste",
+        "sausages"
+      ],
+      [
+        "gegessen.",
+        "eaten"
+      ]
+    ],
+    "translation": "The dogs just each ate a total of three sausages.",
+    "context": "Three dogs: Abe, Bert, Carl. (3a) Abe ate three sausages, Bert ate three sausages, Carl ate three sausages. (3b) Abe ate one sausage, Bert ate one sausage, Carl ate one sausage. (3c) Abe ate three sausages, Bert ate three sausages, Carl didn't eat any sausages.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "item",
+        "jederDistance"
+      ],
+      [
+        "trueIn3a",
+        "yes"
+      ],
+      [
+        "trueIn3b",
+        "no"
+      ],
+      [
+        "trueIn3c",
+        "no"
+      ]
+    ],
+    "comment": "Distance-distributive jeder: the same semantic effects.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haslingeretal2025_ex4a",
+    "source": {
+      "bibkey": "haslinger-etal-2025",
+      "paperLabel": "(4a)"
+    },
+    "language": "stan1295",
+    "primaryText": "Alle Hunde haben gerade insgesamt drei Würste gegessen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Alle",
+        "all"
+      ],
+      [
+        "Hunde",
+        "dogs"
+      ],
+      [
+        "haben",
+        "aux"
+      ],
+      [
+        "gerade",
+        "just"
+      ],
+      [
+        "insgesamt",
+        "in.total"
+      ],
+      [
+        "drei",
+        "three"
+      ],
+      [
+        "Würste",
+        "sausages"
+      ],
+      [
+        "gegessen.",
+        "eaten"
+      ]
+    ],
+    "translation": "All the dogs just ate a total of three sausages.",
+    "context": "Three dogs: Abe, Bert, Carl. (3a) Abe ate three sausages, Bert ate three sausages, Carl ate three sausages. (3b) Abe ate one sausage, Bert ate one sausage, Carl ate one sausage. (3c) Abe ate three sausages, Bert ate three sausages, Carl didn't eat any sausages.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "item",
+        "alle"
+      ],
+      [
+        "trueIn3a",
+        "yes"
+      ],
+      [
+        "trueIn3b",
+        "yes"
+      ],
+      [
+        "trueIn3c",
+        "no"
+      ]
+    ],
+    "comment": "Not obligatorily distributive, but no exceptions.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haslingeretal2025_ex4b",
+    "source": {
+      "bibkey": "haslinger-etal-2025",
+      "paperLabel": "(4b)"
+    },
+    "language": "stan1295",
+    "primaryText": "Drei Hunde haben gerade insgesamt drei Würste gegessen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Drei",
+        "three"
+      ],
+      [
+        "Hunde",
+        "dogs"
+      ],
+      [
+        "haben",
+        "aux"
+      ],
+      [
+        "gerade",
+        "just"
+      ],
+      [
+        "insgesamt",
+        "in.total"
+      ],
+      [
+        "drei",
+        "three"
+      ],
+      [
+        "Würste",
+        "sausages"
+      ],
+      [
+        "gegessen.",
+        "eaten"
+      ]
+    ],
+    "translation": "Three dogs just ate a total of three sausages.",
+    "context": "Three dogs: Abe, Bert, Carl. (3a) Abe ate three sausages, Bert ate three sausages, Carl ate three sausages. (3b) Abe ate one sausage, Bert ate one sausage, Carl ate one sausage. (3c) Abe ate three sausages, Bert ate three sausages, Carl didn't eat any sausages.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "item",
+        "numeralIndefinite"
+      ],
+      [
+        "trueIn3a",
+        "yes"
+      ],
+      [
+        "trueIn3b",
+        "yes"
+      ],
+      [
+        "trueIn3c",
+        "no"
+      ]
+    ],
+    "comment": "A numeral-modified indefinite: like alle.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haslingeretal2025_ex4c",
+    "source": {
+      "bibkey": "haslinger-etal-2025",
+      "paperLabel": "(4c)"
+    },
+    "language": "stan1295",
+    "primaryText": "Die Hunde haben gerade insgesamt drei Würste gegessen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Die",
+        "the"
+      ],
+      [
+        "Hunde",
+        "dogs"
+      ],
+      [
+        "haben",
+        "aux"
+      ],
+      [
+        "gerade",
+        "just"
+      ],
+      [
+        "insgesamt",
+        "in.total"
+      ],
+      [
+        "drei",
+        "three"
+      ],
+      [
+        "Würste",
+        "sausages"
+      ],
+      [
+        "gegessen.",
+        "eaten"
+      ]
+    ],
+    "translation": "The dogs just ate a total of three sausages.",
+    "context": "Three dogs: Abe, Bert, Carl. (3a) Abe ate three sausages, Bert ate three sausages, Carl ate three sausages. (3b) Abe ate one sausage, Bert ate one sausage, Carl ate one sausage. (3c) Abe ate three sausages, Bert ate three sausages, Carl didn't eat any sausages.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "item",
+        "definitePlural"
+      ],
+      [
+        "trueIn3a",
+        "yes"
+      ],
+      [
+        "trueIn3b",
+        "yes"
+      ],
+      [
+        "trueIn3c",
+        "yes"
+      ]
+    ],
+    "comment": "A definite plural: neither distributive nor exception-intolerant; true in (3c) given an adequate context.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haslingeretal2025_ex22a",
+    "source": {
+      "bibkey": "haslinger-etal-2025",
+      "paperLabel": "(22a)"
+    },
+    "language": "stan1295",
+    "primaryText": "Die Hunde haben gerade jeweils drei Würste gegessen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Die",
+        "the"
+      ],
+      [
+        "Hunde",
+        "dogs"
+      ],
+      [
+        "haben",
+        "aux"
+      ],
+      [
+        "gerade",
+        "just"
+      ],
+      [
+        "jeweils",
+        "each"
+      ],
+      [
+        "drei",
+        "three"
+      ],
+      [
+        "Würste",
+        "sausages"
+      ],
+      [
+        "gegessen.",
+        "eaten"
+      ]
+    ],
+    "translation": "The dogs have just eaten three sausages each.",
+    "context": "Three dogs: Abe, Bert, Carl. (3a) Abe ate three sausages, Bert ate three sausages, Carl ate three sausages. (3b) Abe ate one sausage, Bert ate one sausage, Carl ate one sausage. (3c) Abe ate three sausages, Bert ate three sausages, Carl didn't eat any sausages.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "item",
+        "jeweils"
+      ],
+      [
+        "trueIn3a",
+        "yes"
+      ],
+      [
+        "trueIn3b",
+        "no"
+      ],
+      [
+        "trueIn3c",
+        "no"
+      ]
+    ],
+    "comment": "Distance-distributive jeweils, out of the blue: distributive, and apparently maximal without a context that makes a non-maximal construal salient.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haslingeretal2025_ex22b",
+    "source": {
+      "bibkey": "haslinger-etal-2025",
+      "paperLabel": "(22b)"
+    },
+    "language": "stan1295",
+    "primaryText": "Jeder Hund hat gerade drei Würste gegessen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Jeder",
+        "each"
+      ],
+      [
+        "Hund",
+        "dog"
+      ],
+      [
+        "hat",
+        "aux"
+      ],
+      [
+        "gerade",
+        "just"
+      ],
+      [
+        "drei",
+        "three"
+      ],
+      [
+        "Würste",
+        "sausages"
+      ],
+      [
+        "gegessen.",
+        "eaten"
+      ]
+    ],
+    "translation": "Every dog just ate three sausages.",
+    "context": "Three dogs: Abe, Bert, Carl. (3a) Abe ate three sausages, Bert ate three sausages, Carl ate three sausages. (3b) Abe ate one sausage, Bert ate one sausage, Carl ate one sausage. (3c) Abe ate three sausages, Bert ate three sausages, Carl didn't eat any sausages.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "item",
+        "jederDP"
+      ],
+      [
+        "trueIn3a",
+        "yes"
+      ],
+      [
+        "trueIn3b",
+        "no"
+      ],
+      [
+        "trueIn3c",
+        "no"
+      ]
+    ],
+    "comment": "DP-jeder.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haslingeretal2025_ex22c",
+    "source": {
+      "bibkey": "haslinger-etal-2025",
+      "paperLabel": "(22c)"
+    },
+    "language": "stan1295",
+    "primaryText": "Die Hunde haben gerade jeder drei Würste gegessen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Die",
+        "the"
+      ],
+      [
+        "Hunde",
+        "dogs"
+      ],
+      [
+        "haben",
+        "aux"
+      ],
+      [
+        "gerade",
+        "just"
+      ],
+      [
+        "jeder",
+        "each"
+      ],
+      [
+        "drei",
+        "three"
+      ],
+      [
+        "Würste",
+        "sausages"
+      ],
+      [
+        "gegessen.",
+        "eaten"
+      ]
+    ],
+    "translation": "The dogs have just eaten three sausages each.",
+    "context": "Three dogs: Abe, Bert, Carl. (3a) Abe ate three sausages, Bert ate three sausages, Carl ate three sausages. (3b) Abe ate one sausage, Bert ate one sausage, Carl ate one sausage. (3c) Abe ate three sausages, Bert ate three sausages, Carl didn't eat any sausages.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "item",
+        "jederDistance"
+      ],
+      [
+        "trueIn3a",
+        "yes"
+      ],
+      [
+        "trueIn3b",
+        "no"
+      ],
+      [
+        "trueIn3c",
+        "no"
+      ]
+    ],
+    "comment": "Distance jeder.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haslingeretal2025_ex23b",
+    "source": {
+      "bibkey": "haslinger-etal-2025",
+      "paperLabel": "(23b)"
+    },
+    "language": "stan1295",
+    "primaryText": "In den Boxen sind jeweils zwei Magnete!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "In",
+        "in"
+      ],
+      [
+        "den",
+        "the"
+      ],
+      [
+        "Boxen",
+        "boxes"
+      ],
+      [
+        "sind",
+        "are"
+      ],
+      [
+        "jeweils",
+        "each"
+      ],
+      [
+        "zwei",
+        "two"
+      ],
+      [
+        "Magnete!",
+        "magnets"
+      ]
+    ],
+    "translation": "There are two magnets in each of the boxes!",
+    "context": "Anna distributed 9 strong magnets, which should not be stored together, in 5 boxes. Four boxes contain two magnets, the fifth contains one. On the way home, Anna's co-driver reads the instructions to her. They say: ‘Each magnet absolutely needs to be stored separately, even just two magnets in the same box can trigger a horrible explosion.’ Anna exclaims: Oh no, we have to turn around ...",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "item",
+        "jeweils"
+      ],
+      [
+        "scenario",
+        "nonMaximal"
+      ],
+      [
+        "questionnaire",
+        "yes"
+      ]
+    ],
+    "comment": "Questionnaire item in the magnets scenario: true only on a non-maximal construal, which the explosion QUD makes salient; judgments were mixed across speakers (Figure 1).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haslingeretal2025_ex23c",
+    "source": {
+      "bibkey": "haslinger-etal-2025",
+      "paperLabel": "(23c)"
+    },
+    "language": "stan1295",
+    "primaryText": "In jeder Box sind zwei Magnete!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "In",
+        "in"
+      ],
+      [
+        "jeder",
+        "every"
+      ],
+      [
+        "Box",
+        "box"
+      ],
+      [
+        "sind",
+        "are"
+      ],
+      [
+        "zwei",
+        "two"
+      ],
+      [
+        "Magnete!",
+        "magnets"
+      ]
+    ],
+    "translation": "There are two magnets in every box!",
+    "context": "Anna distributed 9 strong magnets, which should not be stored together, in 5 boxes. Four boxes contain two magnets, the fifth contains one. On the way home, Anna's co-driver reads the instructions to her. They say: ‘Each magnet absolutely needs to be stored separately, even just two magnets in the same box can trigger a horrible explosion.’ Anna exclaims: Oh no, we have to turn around ...",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "item",
+        "jederDP"
+      ],
+      [
+        "scenario",
+        "nonMaximal"
+      ],
+      [
+        "questionnaire",
+        "yes"
+      ]
+    ],
+    "comment": "Questionnaire item in the magnets scenario: overwhelmingly rejected (Figure 1).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haslingeretal2025_ex24b",
+    "source": {
+      "bibkey": "haslinger-etal-2025",
+      "paperLabel": "(24b)"
+    },
+    "language": "stan1295",
+    "primaryText": "Die Freiwilligen haben jeweils zwei Hunde an der Leine!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Die",
+        "the"
+      ],
+      [
+        "Freiwilligen",
+        "volunteers"
+      ],
+      [
+        "haben",
+        "have"
+      ],
+      [
+        "jeweils",
+        "each"
+      ],
+      [
+        "zwei",
+        "two"
+      ],
+      [
+        "Hunde",
+        "dogs"
+      ],
+      [
+        "an",
+        "on"
+      ],
+      [
+        "der",
+        "the"
+      ],
+      [
+        "Leine!",
+        "leash"
+      ]
+    ],
+    "translation": "The volunteers have two dogs each on their leash.",
+    "context": "At the animal shelter, there is a section for attack dogs with 9 dogs. Today, 5 volunteers showed up to walk the dogs. Billie gives the first four volunteers two dogs each; the fifth gets just one dog. Afterwards, Billie learns that one should under no circumstances let someone walk more than one of the dogs, because the dogs will have terrible fights. Billie: Good heavens ...",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "item",
+        "jeweils"
+      ],
+      [
+        "scenario",
+        "nonMaximal"
+      ],
+      [
+        "questionnaire",
+        "yes"
+      ]
+    ],
+    "comment": "Jeweils with a subject associate: accepted by some speakers in the non-maximal scenario (Figure 2).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haslingeretal2025_ex24c",
+    "source": {
+      "bibkey": "haslinger-etal-2025",
+      "paperLabel": "(24c)"
+    },
+    "language": "stan1295",
+    "primaryText": "Die Freiwilligen haben jeder zwei Hunde an der Leine!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Die",
+        "the"
+      ],
+      [
+        "Freiwilligen",
+        "volunteers"
+      ],
+      [
+        "haben",
+        "have"
+      ],
+      [
+        "jeder",
+        "every"
+      ],
+      [
+        "zwei",
+        "two"
+      ],
+      [
+        "Hunde",
+        "dogs"
+      ],
+      [
+        "an",
+        "on"
+      ],
+      [
+        "der",
+        "the"
+      ],
+      [
+        "Leine!",
+        "leash"
+      ]
+    ],
+    "translation": "The volunteers have two dogs each on their leash.",
+    "context": "At the animal shelter, there is a section for attack dogs with 9 dogs. Today, 5 volunteers showed up to walk the dogs. Billie gives the first four volunteers two dogs each; the fifth gets just one dog. Afterwards, Billie learns that one should under no circumstances let someone walk more than one of the dogs, because the dogs will have terrible fights. Billie: Good heavens ...",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "item",
+        "jederDistance"
+      ],
+      [
+        "scenario",
+        "nonMaximal"
+      ],
+      [
+        "questionnaire",
+        "yes"
+      ]
+    ],
+    "comment": "Distance jeder: mostly rejected, less categorically than DP-jeder (Figure 2); 15 of 18 participants rated the jeweils minimal-pair sentence higher (Figure 3).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haslingeretal2025_ex24d",
+    "source": {
+      "bibkey": "haslinger-etal-2025",
+      "paperLabel": "(24d)"
+    },
+    "language": "stan1295",
+    "primaryText": "Jeder Freiwillige hat zwei Hunde an der Leine!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Jeder",
+        "every"
+      ],
+      [
+        "Freiwillige",
+        "volunteer"
+      ],
+      [
+        "hat",
+        "has"
+      ],
+      [
+        "zwei",
+        "two"
+      ],
+      [
+        "Hunde",
+        "dogs"
+      ],
+      [
+        "an",
+        "on"
+      ],
+      [
+        "der",
+        "the"
+      ],
+      [
+        "Leine!",
+        "leash"
+      ]
+    ],
+    "translation": "Every volunteer has two dogs on their leash.",
+    "context": "At the animal shelter, there is a section for attack dogs with 9 dogs. Today, 5 volunteers showed up to walk the dogs. Billie gives the first four volunteers two dogs each; the fifth gets just one dog. Afterwards, Billie learns that one should under no circumstances let someone walk more than one of the dogs, because the dogs will have terrible fights. Billie: Good heavens ...",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "item",
+        "jederDP"
+      ],
+      [
+        "scenario",
+        "nonMaximal"
+      ],
+      [
+        "questionnaire",
+        "yes"
+      ]
+    ],
+    "comment": "DP-jeder: rejected in the non-maximal scenario (Figure 2).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haslingeretal2025_ex26",
+    "source": {
+      "bibkey": "haslinger-etal-2025",
+      "paperLabel": "(26)"
+    },
+    "language": "stan1295",
+    "primaryText": "Fünf Freiwillige haben (jeweils) zwei Hunde an der Leine!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Fünf",
+        "five"
+      ],
+      [
+        "Freiwillige",
+        "volunteers"
+      ],
+      [
+        "haben",
+        "have"
+      ],
+      [
+        "(jeweils)",
+        "(each)"
+      ],
+      [
+        "zwei",
+        "two"
+      ],
+      [
+        "Hunde",
+        "dogs"
+      ],
+      [
+        "an",
+        "on"
+      ],
+      [
+        "der",
+        "the"
+      ],
+      [
+        "Leine!",
+        "leash"
+      ]
+    ],
+    "translation": "Five volunteers have two dogs (each) on their leash.",
+    "context": "At the animal shelter, there is a section for attack dogs with 9 dogs. Today, 5 volunteers showed up to walk the dogs. Billie gives the first four volunteers two dogs each; the fifth gets just one dog. Afterwards, Billie learns that one should under no circumstances let someone walk more than one of the dogs, because the dogs will have terrible fights. Billie: Good heavens ...",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "item",
+        "numeralIndefinite"
+      ],
+      [
+        "scenario",
+        "nonMaximal"
+      ]
+    ],
+    "comment": "A quantificational subject binds the tolerance parameter on its scope, so jeweils cannot add exception tolerance here.",
+    "lgrConformance": "WORD_ALIGNED"
+  }
+]
