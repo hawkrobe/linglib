@@ -2,52 +2,37 @@ import Linglib.Features.Phi.Geometry
 import Linglib.Data.Examples.HarleyRitter2002
 
 /-!
-# Person and number in pronouns: a feature-geometric analysis
+# Harley and Ritter (2002): Person and number in pronouns
 
-[harley-ritter-2002]: the person and number features of pronouns form a
-dependency geometry — Participant with Speaker and Addressee, Individuation
-with Group, Minimal, and its dependent Augmented — and a pronoun's content is
-a subtree containing the root, so that a complex geometry implies its simpler
-subgeometries. The active inventories of Daga, Kalihna, Tonkawa, Chinook,
-Yimas, and Boumaa Fijian (§2.3–2.8) give every attested person–number cell a
-distinct geometry within the inventory, and the person-only languages Pirahã,
-Maxakalí, and Kwakiutl (§4) realize exactly the geometries their inventories
-license — at most four first- and second-person pronouns. Pruning a dependent
-from a licensed geometry leaves a licensed geometry, whence no dual without
-plural, no paucal without dual, no inclusive without second person ((18)), and
-no gender in the plural without gender in the singular (Greenberg's Universals
-37 and 45, §6.3); Universal 36, gender implies number, is the dependency of
-Class on Individuation. Markedness is node count: third person is least marked
-and the Fijian first inclusive paucal uses all eight nodes. Acquisition builds
-structure top-down, so first person precedes second and singular precedes
-plural ((20)).
+This file formalizes [harley-ritter-2002]'s feature geometry for the person and number of
+pronouns: Participant with its dependents Speaker and Addressee, Individuation with Group,
+Minimal and Minimal's dependent Augmented, and a pronoun's content a subtree containing the
+root, so that a complex geometry implies its simpler subgeometries. The inventory each of the
+nine languages activates is read off its pronoun table (`active_of_rows`); every attested cell
+is licensed by its language's inventory and distinct cells receive distinct geometries
+(`licenses_rows`); and the person-only languages Pirahã, Maxakalí and Kwakiutl realize exactly
+the geometries their inventories license, at most four first- and second-person pronouns
+(`person_only_exhaust`). Pruning a dependent from a licensed geometry leaves a licensed
+geometry, whence the implicational universals of their (18), no dual without plural, no paucal
+without dual, no inclusive without second person (`dual_needs_plural` and its siblings), and
+Greenberg's Universals 37 and 45 on gender; Universal 36, gender implies number, is the
+dependency of Class on Individuation. Markedness is node count and acquisition builds structure
+top-down, so third person is least marked, the Fijian first inclusive paucal uses all eight
+nodes, and first person precedes second and singular plural (their (20)).
 
-## Main definitions
+## Implementation notes
 
-* `Lang`, `Lang.active`: the nine languages and the nodes each activates.
-* `Row`, `rows`: the pronoun tables, from the paper's example pool.
-
-## Main results
-
-* `active_of_rows`: each inventory is read off its paradigm's contrasts.
-* `licenses_rows`, `cell_nodup`: every attested cell is licensed by its
-  language's inventory, distinct cells by distinct geometries.
-* `person_only_exhaust`, `card_participant_geometries`: Pirahã, Maxakalí, and
-  Kwakiutl realize exactly the licensed geometries; the Participant node
-  yields four.
-* `dual_needs_plural`, `paucal_needs_dual`, `inclusive_needs_second`: (18).
-* `gender_needs_number`, `gendered_plural_needs_gendered_singular`,
-  `no_gender_only_in_plural`: Universals 36, 37, and 45.
-* `third_least_marked`, `fijian_inclusive_paucal`: node-count markedness.
-* `first_before_second`, `singular_before_plural`: the acquisition order (20a).
-* `maxakali_coopts`: bare Participant and Participant with Speaker fill to the
-  same content yet are distinct geometries (§4.1).
+The pronoun tables (their Tables 3–8 and 13–15) are the rows of
+`Data/Examples/HarleyRitter2002.json`, read off by the tables' person and number labels; the
+inventories of their (12)–(17), (25) and (27) are stated as `Lang.active` and then shown to be
+what the rows determine. The default Speaker and Minimal nodes do not count toward markedness,
+so the Daga first singular is less marked than the first plural.
 
 ## References
 
-* [J. H. Greenberg, *Some universals of grammar*][greenberg-1963]
-* [F. Plank and W. Schellinger, *The uneven distribution of genders over
-  numbers*][plank-schellinger-1997]
+* [harley-ritter-2002]
+* [greenberg-1963]
+* [plank-schellinger-1997]
 -/
 
 namespace HarleyRitter2002
@@ -181,7 +166,7 @@ variable {A : Finset Node} {p : Person} {n : Number}
 
 /-- Plural is dual with Minimal pruned ((32a)). -/
 theorem cell_plural_eq (A : Finset Node) (p : Person) :
-    cell A p .plural = (cell A p .dual).map (·.filter fun b => ¬ Node.minimal ≤ b) := by
+    cell A p .plural = (cell A p .dual).map (·.filter λ b => ¬ Node.minimal ≤ b) := by
   cases p <;> by_cases hi : Node.individuation ∈ A <;>
     simp only [cell, personNodes, numberNodes, Option.bind_eq_bind, Option.pure_def, Option.bind,
       hi, ↓reduceIte] <;> decide
@@ -189,14 +174,14 @@ theorem cell_plural_eq (A : Finset Node) (p : Person) :
 /-- Singular is dual with Group pruned, in an inventory with a contrastive
 Minimal ((32a)). -/
 theorem cell_singular_eq (h : Node.minimal ∈ A) (p : Person) :
-    cell A p .singular = (cell A p .dual).map (·.filter fun b => ¬ Node.group ≤ b) := by
+    cell A p .singular = (cell A p .dual).map (·.filter λ b => ¬ Node.group ≤ b) := by
   cases p <;> by_cases hi : Node.individuation ∈ A <;>
     simp only [cell, personNodes, numberNodes, Option.bind_eq_bind, Option.pure_def, Option.bind,
       hi, h, ↓reduceIte] <;> decide
 
 /-- Dual is paucal with Augmented pruned. -/
 theorem cell_dual_eq (A : Finset Node) (p : Person) :
-    cell A p .dual = (cell A p .paucal).map (·.filter fun b => ¬ Node.augmented ≤ b) := by
+    cell A p .dual = (cell A p .paucal).map (·.filter λ b => ¬ Node.augmented ≤ b) := by
   cases p <;> by_cases hi : Node.individuation ∈ A <;>
     simp only [cell, personNodes, numberNodes, Option.bind_eq_bind, Option.pure_def, Option.bind,
       hi, ↓reduceIte] <;> decide
@@ -204,15 +189,15 @@ theorem cell_dual_eq (A : Finset Node) (p : Person) :
 /-- Second person is inclusive with Speaker pruned, exclusive inclusive with
 Addressee pruned ((32b)). -/
 theorem cell_second_eq (A : Finset Node) (n : Number) :
-    cell A .second n = (cell A .firstInclusive n).map (·.filter fun b => ¬ Node.speaker ≤ b) ∧
+    cell A .second n = (cell A .firstInclusive n).map (·.filter λ b => ¬ Node.speaker ≤ b) ∧
       cell A .firstExclusive n =
-        (cell A .firstInclusive n).map (·.filter fun b => ¬ Node.addressee ≤ b) := by
+        (cell A .firstInclusive n).map (·.filter λ b => ¬ Node.addressee ≤ b) := by
   cases n <;> by_cases hi : Node.individuation ∈ A <;> by_cases hm : Node.minimal ∈ A <;>
     simp only [cell, personNodes, numberNodes, Option.bind_eq_bind, Option.pure_def, Option.bind,
       hi, hm, ↓reduceIte] <;> decide
 
 theorem licenses_of_map_filter {n' : Number} {p' : Person} {a : Node}
-    (h : cell A p' n' = (cell A p n).map (·.filter fun b => ¬ a ≤ b)) (hl : Licenses A p n) :
+    (h : cell A p' n' = (cell A p n).map (·.filter λ b => ¬ a ≤ b)) (hl : Licenses A p n) :
     Licenses A p' n' := by
   obtain ⟨g, hg, hsub⟩ := hl
   exact ⟨_, h ▸ Option.mem_map_of_mem _ hg, (Finset.filter_subset _ _).trans hsub⟩
@@ -228,7 +213,8 @@ theorem paucal_needs_dual (h : Licenses A p .paucal) : Licenses A p .dual :=
 /-- **(18c)** No inclusive without second person — nor without exclusive. -/
 theorem inclusive_needs_second (h : Licenses A .firstInclusive n) :
     Licenses A .second n ∧ Licenses A .firstExclusive n :=
-  ⟨licenses_of_map_filter (cell_second_eq A n).1 h, licenses_of_map_filter (cell_second_eq A n).2 h⟩
+  ⟨licenses_of_map_filter (cell_second_eq A n).1 h,
+    licenses_of_map_filter (cell_second_eq A n).2 h⟩
 
 /-! ### Gender (§6.3) -/
 
@@ -241,16 +227,16 @@ theorem gender_needs_number (hA : IsLowerSet (↑A : Set Node)) (h : Node.nounCl
 gendered one without, so gender in the plural implies gender in the singular. -/
 theorem gendered_plural_needs_gendered_singular {g : Finset Node} (hg : g ∈ A.lowerSubsets)
     (hc : Node.nounClass ∈ g) :
-    (g.filter fun b => ¬ Node.group ≤ b) ∈ A.lowerSubsets ∧
-      Node.nounClass ∈ (g.filter fun b => ¬ Node.group ≤ b) ∧
-      Node.group ∉ (g.filter fun b => ¬ Node.group ≤ b) :=
+    (g.filter λ b => ¬ Node.group ≤ b) ∈ A.lowerSubsets ∧
+      Node.nounClass ∈ (g.filter λ b => ¬ Node.group ≤ b) ∧
+      Node.group ∉ (g.filter λ b => ¬ Node.group ≤ b) :=
   ⟨Finset.filter_not_le_mem_lowerSubsets hg _, Finset.mem_filter.2 ⟨hc, by decide⟩, by simp⟩
 
 /-- The system (45) — gender only in nonsingular numbers — is impossible: an
 inventory whose every gendered geometry has Group has no gendered geometry. -/
 theorem no_gender_only_in_plural
     (hall : ∀ g ∈ A.lowerSubsets, Node.nounClass ∈ g → Node.group ∈ g) :
-    ∀ g ∈ A.lowerSubsets, Node.nounClass ∉ g := fun _ hg hc =>
+    ∀ g ∈ A.lowerSubsets, Node.nounClass ∉ g := λ _ hg hc =>
   have ⟨hg', hc', hng⟩ := gendered_plural_needs_gendered_singular hg hc
   hng (hall _ hg' hc')
 
@@ -269,8 +255,8 @@ theorem third_least_marked {g g' : Finset Node} (h : cell A .third n = some g)
 /-- In Daga, the first singular is less marked than the first plural — the
 default Speaker and Minimal nodes are not counted (§2.3). -/
 theorem daga_first_singular_lt_plural :
-    ∀ g ∈ cell Lang.daga.active .first .singular, ∀ g' ∈ cell Lang.daga.active .first .plural,
-      g.card < g'.card := by
+    ∀ g ∈ cell Lang.daga.active .first .singular,
+      ∀ g' ∈ cell Lang.daga.active .first .plural, g.card < g'.card := by
   decide
 
 /-- The most marked pronoun, the Fijian first inclusive paucal, uses all eight
@@ -301,8 +287,8 @@ theorem singular_before_plural (hm : Node.minimal ∉ A) (hi : Node.individuatio
 /-- Second person and third plural are incomparable, so their order varies
 ((20b)). -/
 theorem second_third_plural_incomparable :
-    ∀ g ∈ cell Lang.daga.active .second .singular, ∀ g' ∈ cell Lang.daga.active .third .plural,
-      ¬ g ⊆ g' ∧ ¬ g' ⊆ g := by
+    ∀ g ∈ cell Lang.daga.active .second .singular,
+      ∀ g' ∈ cell Lang.daga.active .third .plural, ¬ g ⊆ g' ∧ ¬ g' ⊆ g := by
   decide
 
 /-! ### Empty paradigm space (§4.1) -/
