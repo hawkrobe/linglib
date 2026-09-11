@@ -1,0 +1,1174 @@
+[
+  {
+    "id": "itomester2009_s20a",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(20a)"
+    },
+    "language": "stan1293",
+    "primaryText": "[φ [ω the] [ω dinosaurs]]",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "site",
+        "full-ω"
+      ],
+      [
+        "violates",
+        "FtBin"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s20b",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(20b)"
+    },
+    "language": "stan1293",
+    "primaryText": "[ω the dinosaurs]",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "site",
+        "amalgamated"
+      ],
+      [
+        "violates",
+        "Lex-to-ω"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s20c",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(20c)"
+    },
+    "language": "stan1293",
+    "primaryText": "[ω the [ω dinosaurs]]",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "site",
+        "ω-adjoined"
+      ],
+      [
+        "violates",
+        "No-Recursion"
+      ]
+    ],
+    "comment": "The structure argued for, against Selkirk's φ-attachment.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s20d",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(20d)"
+    },
+    "language": "stan1293",
+    "primaryText": "[φ the [ω dinosaurs]]",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "site",
+        "φ-attached"
+      ],
+      [
+        "violates",
+        "Parse-into-ω"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s24a",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(24)"
+    },
+    "language": "dani1285",
+    "primaryText": "til Rhodos",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to Rhodes",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "claim",
+        "the function word is prosodically subordinated to its lexical host"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s24b",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(24)"
+    },
+    "language": "stan1290",
+    "primaryText": "à Rhodes",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to Rhodes",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "claim",
+        "the function word is prosodically subordinated to its lexical host"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s24c",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(24)"
+    },
+    "language": "ital1282",
+    "primaryText": "a Rodi",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to Rhodes",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "claim",
+        "the function word is prosodically subordinated to its lexical host"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s24d",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(24)"
+    },
+    "language": "dutc1256",
+    "primaryText": "naar Rhodos",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to Rhodes",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "claim",
+        "the function word is prosodically subordinated to its lexical host"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s24e",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(24)"
+    },
+    "language": "stan1295",
+    "primaryText": "nach Rhodos",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to Rhodes",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "claim",
+        "the function word is prosodically subordinated to its lexical host"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s24f",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(24)"
+    },
+    "language": "nucl1643",
+    "primaryText": "rodosu-e",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to Rhodes",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "claim",
+        "the function word is prosodically subordinated to its lexical host"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s24g",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(24)"
+    },
+    "language": "stan1293",
+    "primaryText": "to Rhodes",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to Rhodes",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "claim",
+        "the function word is prosodically subordinated to its lexical host"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s24h",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(24)"
+    },
+    "language": "mode1248",
+    "primaryText": "eis Rodou",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to Rhodes",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "claim",
+        "the function word is prosodically subordinated to its lexical host"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s24i",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(24)"
+    },
+    "language": "stan1288",
+    "primaryText": "a Rhodos",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to Rhodes",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "claim",
+        "the function word is prosodically subordinated to its lexical host"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s26",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(26)"
+    },
+    "language": "stan1295",
+    "primaryText": "(Willste) 'ne Zigarette?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(Would you like) a cigarette?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "tableau",
+        "the four sites, unranked"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s28a1",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(28a)"
+    },
+    "language": "stan1293",
+    "primaryText": "[ə('ledʒ)] allege",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "claim",
+        "a single pretonic syllable stays unfooted"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s28a2",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(28a)"
+    },
+    "language": "stan1293",
+    "primaryText": "[bə('nænə)] banana",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "claim",
+        "a single pretonic syllable stays unfooted"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s28b1",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(28b)"
+    },
+    "language": "stan1295",
+    "primaryText": "[a('drɛsə)] Adresse",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the address",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "claim",
+        "a single pretonic syllable stays unfooted"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s28b2",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(28b)"
+    },
+    "language": "stan1295",
+    "primaryText": "[ma('ʃiːnə)] Maschine",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the machine",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "claim",
+        "a single pretonic syllable stays unfooted"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s30a1",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(30a)"
+    },
+    "language": "stan1293",
+    "primaryText": "ˌalleˈgation",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "claim",
+        "secondary stress on the initial syllable, cf. allege"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s30a2",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(30a)"
+    },
+    "language": "stan1293",
+    "primaryText": "ˌphoneˈtician",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "claim",
+        "secondary stress on the initial syllable, cf. phonetics"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s30b1",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(30b)"
+    },
+    "language": "stan1295",
+    "primaryText": "ˌadresˈsieren",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to address",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "claim",
+        "secondary stress on the initial syllable, cf. Adresse"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s30b2",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(30b)"
+    },
+    "language": "stan1295",
+    "primaryText": "ˌprotesˈtieren",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to protest",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "claim",
+        "secondary stress on the initial syllable, cf. Protest"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s32a1",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(32a)"
+    },
+    "language": "stan1293",
+    "primaryText": "[ə lə('guːnə)] a laguna",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "claim",
+        "an initial lapse: the subminimal function word plus the unfooted initial syllable"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s32a2",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(32a)"
+    },
+    "language": "stan1293",
+    "primaryText": "[ə mə('ʃiːn)] a machine",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "claim",
+        "an initial lapse: the subminimal function word plus the unfooted initial syllable"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s32a3",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(32a)"
+    },
+    "language": "stan1293",
+    "primaryText": "[ə mə('sɑːʒ)] a massage",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "claim",
+        "an initial lapse: the subminimal function word plus the unfooted initial syllable"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s32a4",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(32a)"
+    },
+    "language": "stan1293",
+    "primaryText": "[ə bə('kwɛst)] a bequest",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "claim",
+        "an initial lapse: the subminimal function word plus the unfooted initial syllable"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s32b1",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(32b)"
+    },
+    "language": "stan1295",
+    "primaryText": "[nə lə('guːnə)] 'ne Lagune",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a laguna",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "claim",
+        "an initial lapse: the subminimal function word plus the unfooted initial syllable"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s32b2",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(32b)"
+    },
+    "language": "stan1295",
+    "primaryText": "[nə ma('ʃiːnə)] 'ne Maschine",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a machine",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "claim",
+        "an initial lapse: the subminimal function word plus the unfooted initial syllable"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s32b3",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(32b)"
+    },
+    "language": "stan1295",
+    "primaryText": "[nə ma('saːʒə)] 'ne Massage",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a massage",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "claim",
+        "an initial lapse: the subminimal function word plus the unfooted initial syllable"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s32b4",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(32b)"
+    },
+    "language": "stan1295",
+    "primaryText": "[nə bə('dɪŋʊŋ)] 'ne Bedingung",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a condition",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "claim",
+        "an initial lapse: the subminimal function word plus the unfooted initial syllable"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s33",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(33)"
+    },
+    "language": "stan1293",
+    "primaryText": "a laguna",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "tableau",
+        "FtBin, Lex-to-ω(L), Parse-into-f: the ω-adjoined and φ-attached candidates tie"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s34",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(34)"
+    },
+    "language": "stan1295",
+    "primaryText": "'ne Maschine",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a machine",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "tableau",
+        "FtBin, Lex-to-ω(L), Parse-into-f: the ω-adjoined and φ-attached candidates tie"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s36a1",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(36a)"
+    },
+    "language": "stan1295",
+    "primaryText": "(hat) geˈpredigt",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(has) preached",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "claim",
+        "ge- appears before main stress"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s36a2",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(36a)"
+    },
+    "language": "stan1295",
+    "primaryText": "(hat) geˈkiebitzt",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(has) spied",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "claim",
+        "ge- appears before main stress"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s36b1",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(36b)"
+    },
+    "language": "stan1295",
+    "primaryText": "(hat) stuˈdiert",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(has) studied",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "claim",
+        "ge- absent before an unstressed syllable"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s36b2",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(36b)"
+    },
+    "language": "stan1295",
+    "primaryText": "(hat) schmaˈrotzt",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(has) sponged",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "claim",
+        "ge- absent before an unstressed syllable"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s36c",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(36c)"
+    },
+    "language": "stan1295",
+    "primaryText": "(hat) geˈliebkost / ˌliebˈkost",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(has) caressed",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "claim",
+        "ge- tracks the location of main stress"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s37a",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(37a)"
+    },
+    "language": "stan1293",
+    "primaryText": "[ω fnc [ω lex]]",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "site",
+        "ω-adjoined"
+      ],
+      [
+        "violates",
+        "No-Recursion"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s37b",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(37b)"
+    },
+    "language": "stan1293",
+    "primaryText": "[φ fnc [ω lex]]",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "site",
+        "φ-attached"
+      ],
+      [
+        "violates",
+        "Parse-into-ω"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s39",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(39)"
+    },
+    "language": "stan1293",
+    "primaryText": "Take Grey [ɾ]o London.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "claim",
+        "function-word initial t flapped: Selkirk's argument for φ-attachment"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "itomester2009_s40a",
+    "source": {
+      "bibkey": "ito-mester-2009",
+      "paperLabel": "(40a)"
+    },
+    "language": "stan1293",
+    "primaryText": "[ι [tʰ]o London.]",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "claim",
+        "aspiration at the left edge of an initial function-word complex"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  }
+]
