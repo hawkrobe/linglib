@@ -1,0 +1,514 @@
+[
+  {
+    "id": "hartshorneetal2016_fear",
+    "source": {
+      "bibkey": "hartshorne-etal-2016",
+      "paperLabel": "§1.2"
+    },
+    "language": "stan1293",
+    "primaryText": "Agnes feared Bartholomew.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.2"
+      ],
+      [
+        "phenomenon",
+        "fearType"
+      ],
+      [
+        "verbType",
+        "fear"
+      ],
+      [
+        "subject",
+        "experiencer"
+      ]
+    ],
+    "comment": "A fear-type verb: the experiencer is the subject, the stimulus the object.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hartshorneetal2016_frighten",
+    "source": {
+      "bibkey": "hartshorne-etal-2016",
+      "paperLabel": "§1.2"
+    },
+    "language": "stan1293",
+    "primaryText": "Agnes frightened Bartholomew.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.2"
+      ],
+      [
+        "phenomenon",
+        "frightenType"
+      ],
+      [
+        "verbType",
+        "frighten"
+      ],
+      [
+        "subject",
+        "stimulus"
+      ]
+    ],
+    "comment": "A frighten-type verb: the stimulus is the subject, the experiencer the object.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hartshorneetal2016_episode",
+    "source": {
+      "bibkey": "hartshorne-etal-2016",
+      "paperLabel": "§2.1"
+    },
+    "language": "stan1293",
+    "primaryText": "The bats swooped out of the cave and frightened Agnes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "The bats swooped out of the cave and Agnes feared them.",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "phenomenon",
+        "frightenType"
+      ],
+      [
+        "verbType",
+        "frighten"
+      ]
+    ],
+    "comment": "A frighten-type verb describes a specific instance in which an emotional state occurs.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hartshorneetal2016_stageLevel",
+    "source": {
+      "bibkey": "hartshorne-etal-2016",
+      "paperLabel": "§1.2"
+    },
+    "language": "stan1293",
+    "primaryText": "Agnes concerned Bartholomew yesterday in the kitchen.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Agnes feared Bartholomew yesterday in the kitchen.",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.2"
+      ],
+      [
+        "phenomenon",
+        "frightenType"
+      ],
+      [
+        "verbType",
+        "frighten"
+      ]
+    ],
+    "comment": "The paper's rendering of the observation that frighten-type verbs describe states bound to a time and place, and fear-type verbs do not.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hartshorneetal2016_exp1",
+    "source": {
+      "bibkey": "hartshorne-etal-2016",
+      "paperLabel": "§2.1.1"
+    },
+    "language": "stan1293",
+    "primaryText": "Sally frightened Mary.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1.1"
+      ],
+      [
+        "phenomenon",
+        "durationRating"
+      ],
+      [
+        "experiment",
+        "1"
+      ]
+    ],
+    "comment": "Experiment 1 stimulus shape: how long is the mental state likely to have lasted (seconds to years)?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hartshorneetal2016_exp2",
+    "source": {
+      "bibkey": "hartshorne-etal-2016",
+      "paperLabel": "§2.2.1"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary frightened Sally.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2.1"
+      ],
+      [
+        "phenomenon",
+        "causationJudgment"
+      ],
+      [
+        "experiment",
+        "2"
+      ]
+    ],
+    "comment": "Experiment 2 stimulus shape: in a court case in which causing an emotion is illegal, who if anyone is guilty?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hartshorneetal2016_2a",
+    "source": {
+      "bibkey": "hartshorne-etal-2016",
+      "paperLabel": "(2a)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Taro-wa koomori-o kowagat-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Taro-wa",
+        "Taro-TOPIC"
+      ],
+      [
+        "koomori-o",
+        "bat-ACC"
+      ],
+      [
+        "kowagat-ta",
+        "fear-PAST"
+      ]
+    ],
+    "translation": "Taro feared bats.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "phenomenon",
+        "fearType"
+      ],
+      [
+        "verbType",
+        "fear"
+      ]
+    ],
+    "comment": "Japanese fear-type verb, unaffixed.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hartshorneetal2016_2b",
+    "source": {
+      "bibkey": "hartshorne-etal-2016",
+      "paperLabel": "(2b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Koomori-wa Taro-o kowagar-ase-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Koomori-wa",
+        "bat-TOPIC"
+      ],
+      [
+        "Taro-o",
+        "Taro-ACC"
+      ],
+      [
+        "kowagar-ase-ta",
+        "fear-CAUS-PAST"
+      ]
+    ],
+    "translation": "Bats frightened Taro.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "phenomenon",
+        "frightenType"
+      ],
+      [
+        "verbType",
+        "frighten"
+      ],
+      [
+        "causativeAffix",
+        "sase"
+      ]
+    ],
+    "comment": "Japanese frighten-type verb: the causative affix -(s)ase- on the fear-type stem.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "hartshorneetal2016_3a",
+    "source": {
+      "bibkey": "hartshorne-etal-2016",
+      "paperLabel": "(3a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Ken douyos the unexpected exam.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1.1"
+      ],
+      [
+        "phenomenon",
+        "novelVerb"
+      ],
+      [
+        "experiment",
+        "5"
+      ],
+      [
+        "syntax",
+        "fear"
+      ]
+    ],
+    "comment": "Experiment 5: the novel verb *douyo* 'uneasiness' with fear-type, experiencer-subject syntax.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hartshorneetal2016_3b",
+    "source": {
+      "bibkey": "hartshorne-etal-2016",
+      "paperLabel": "(3b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The unexpected exam douyos Ken.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1.1"
+      ],
+      [
+        "phenomenon",
+        "novelVerb"
+      ],
+      [
+        "experiment",
+        "5"
+      ],
+      [
+        "syntax",
+        "frighten"
+      ]
+    ],
+    "comment": "Experiment 5: the novel verb *douyo* with frighten-type, experiencer-object syntax.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hartshorneetal2016_5",
+    "source": {
+      "bibkey": "hartshorne-etal-2016",
+      "paperLabel": "(5)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some people wixter each other. Do you know what wixter is? Wixter is when you want something that somebody else has. Or maybe you think somebody else is so cool you wish you were just like them. That means you feel wixter.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "phenomenon",
+        "novelVerb"
+      ],
+      [
+        "experiment",
+        "9"
+      ],
+      [
+        "semanticType",
+        "attitude"
+      ]
+    ],
+    "comment": "Experiment 9: the habitual-attitude definition of a novel verb, based on envy.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hartshorneetal2016_6",
+    "source": {
+      "bibkey": "hartshorne-etal-2016",
+      "paperLabel": "(6)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some people gorfin each other. Do you know what gorfin is? You feel gorfin when you see something really, really gross. Or if you had to hold something really slimy, you might feel gorfin.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "phenomenon",
+        "novelVerb"
+      ],
+      [
+        "experiment",
+        "9"
+      ],
+      [
+        "semanticType",
+        "episode"
+      ]
+    ],
+    "comment": "Experiment 9: the emotional-episode definition of a novel verb, based on disgust.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hartshorneetal2016_exp9q",
+    "source": {
+      "bibkey": "hartshorne-etal-2016",
+      "paperLabel": "§4.1"
+    },
+    "language": "stan1293",
+    "primaryText": "Who did Bear wixter?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "phenomenon",
+        "novelVerb"
+      ],
+      [
+        "experiment",
+        "9"
+      ]
+    ],
+    "comment": "Experiment 9 test question: a fear-type linking picks the character Bear had the attitude about, a frighten-type linking the character Bear affected.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hartshorneetal2016_7",
+    "source": {
+      "bibkey": "hartshorne-etal-2016",
+      "paperLabel": "(7)"
+    },
+    "language": "stan1293",
+    "primaryText": "The newspaper frightened John about the housing bubble.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.4.3"
+      ],
+      [
+        "phenomenon",
+        "frightenType"
+      ],
+      [
+        "verbType",
+        "frighten"
+      ]
+    ],
+    "comment": "The unattested target of a caused emotional episode, which the Fig. 11 structures do not exclude.",
+    "lgrConformance": ""
+  }
+]
