@@ -1,0 +1,394 @@
+[
+  {
+    "id": "icard2012_squid_t",
+    "source": {
+      "bibkey": "icard-2012",
+      "paperLabel": "Section 3.2, t"
+    },
+    "language": "stan1293",
+    "primaryText": "Every job that involves a giant squid is dangerous.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "relation",
+        "⊑ t'"
+      ],
+      [
+        "derivation",
+        "three substitutions and two compositions"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "icard2012_squid_t2",
+    "source": {
+      "bibkey": "icard-2012",
+      "paperLabel": "Section 3.2, t'"
+    },
+    "language": "stan1293",
+    "primaryText": "Not every job that involves a giant squid is safe.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "relation",
+        "⊒ t"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "icard2012_squid_u",
+    "source": {
+      "bibkey": "icard-2012",
+      "paperLabel": "Section 3.2, u"
+    },
+    "language": "stan1293",
+    "primaryText": "Every job that involves a giant squid is safe.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "relation",
+        "t | u, by safe | dangerous under ⊞"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "icard2012_squid_v",
+    "source": {
+      "bibkey": "icard-2012",
+      "paperLabel": "Section 3.2, v"
+    },
+    "language": "stan1293",
+    "primaryText": "Every job that involves a cephalopod is safe.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "relation",
+        "u ⊒ v, by giant squid ⊑ cephalopod under ◇; v ^ t'"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "icard2012_mono",
+    "source": {
+      "bibkey": "icard-2012",
+      "paperLabel": "Section 3.2"
+    },
+    "language": "stan1293",
+    "primaryText": "every cephalopod ⊑ every giant squid",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "relation",
+        "a monotonicity inference from giant squid ⊑ cephalopod under ◇"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "icard2012_no_notevery",
+    "source": {
+      "bibkey": "icard-2012",
+      "paperLabel": "Section 3.2"
+    },
+    "language": "stan1293",
+    "primaryText": "no ⊑ not every",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "relation",
+        "derived from no | every and every ^ not every, | ⋈ ^ = ⊑"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "icard2012_confluence",
+    "source": {
+      "bibkey": "icard-2012",
+      "paperLabel": "Section 3.3"
+    },
+    "language": "stan1293",
+    "primaryText": "some squid ⊑ some cephalopod",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "relation",
+        "derivable in one substitution; lost after substituting octopus for squid, which yields #"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "icard2012_s4_1",
+    "source": {
+      "bibkey": "icard-2012",
+      "paperLabel": "(1)"
+    },
+    "language": "stan1293",
+    "primaryText": "Not everyone is here yet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "npi",
+        "yet, weak"
+      ],
+      [
+        "context",
+        "not every, antitone"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "icard2012_s4_2",
+    "source": {
+      "bibkey": "icard-2012",
+      "paperLabel": "(2)"
+    },
+    "language": "stan1293",
+    "primaryText": "Few students are here yet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "npi",
+        "yet, weak"
+      ],
+      [
+        "context",
+        "few, antitone"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "icard2012_s4_3",
+    "source": {
+      "bibkey": "icard-2012",
+      "paperLabel": "(3)"
+    },
+    "language": "stan1293",
+    "primaryText": "Few scholars have written about it in years.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "npi",
+        "in years, strong"
+      ],
+      [
+        "context",
+        "few, not anti-additive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "icard2012_s4_4",
+    "source": {
+      "bibkey": "icard-2012",
+      "paperLabel": "(4)"
+    },
+    "language": "stan1293",
+    "primaryText": "No scholar has written about it in years.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "npi",
+        "in years, strong"
+      ],
+      [
+        "context",
+        "no, anti-additive in its second argument"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "icard2012_s4_5",
+    "source": {
+      "bibkey": "icard-2012",
+      "paperLabel": "(5)"
+    },
+    "language": "stan1293",
+    "primaryText": "No customer was a tad bit happy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "npi",
+        "a tad bit, superstrong"
+      ],
+      [
+        "context",
+        "no, not anti-multiplicative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "icard2012_s4_6",
+    "source": {
+      "bibkey": "icard-2012",
+      "paperLabel": "(6)"
+    },
+    "language": "stan1293",
+    "primaryText": "The manager was not a tad bit happy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "npi",
+        "a tad bit, superstrong"
+      ],
+      [
+        "context",
+        "not, anti-additive and anti-multiplicative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  }
+]
