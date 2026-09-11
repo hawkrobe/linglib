@@ -1,682 +1,443 @@
-import Linglib.Pragmatics.RSA.Operators
-import Linglib.Pragmatics.RSA.LatentOperators
-import Linglib.Core.Probability.Posterior
-import Linglib.Semantics.Modification.Basic
-import Mathlib.Probability.Distributions.Uniform
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Tactic.DeriveFintype
+import Linglib.Pragmatics.RSA.Basic
 
 /-!
-# [hawkins-gweon-goodman-2021]: the division of labor in communication
+# Hawkins, Gweon and Goodman (2021): The division of labor in communication
 
-A resource-rational extension of RSA for perspective-taking in the
-[keysar-etal-2003] director–matcher reference game. Perspective-taking is costly,
-so each agent allocates effort via a mixture weight `w ∈ [0,1]`, and the optimal
-effort depends on the partner's expected effort.
+This file formalizes the resource-rational model of perspective-taking of
+[hawkins-gweon-goodman-2021] for the director–matcher task. A `Game` fixes the target, the
+shared context, the graded meaning of Eq. 1 (a false description keeps a small mass `ε`)
+and the prior over the object hidden behind an occluder. The egocentric speaker utility
+`Game.egoUtility` (Eq. 3) rewards informativity for the literal listener over the shared
+context; the asymmetry-aware utility `Game.asymUtility` (Eq. 2) averages it over the hidden
+object; `Game.mixUtility` (Eq. 5) interpolates with the weight `wS`, and `Game.mixSpeaker`
+is the corresponding score speaker of the kernel pipeline. On the listener's side
+`Game.mixListener` (Eq. 6) mixes the literal listener over the speaker's view with the one
+over the listener's own view, and `Game.rrSpeakerUtility` is the resource-rational
+trade-off of Eq. 10 between the accuracy the best utterance earns and the linear cost of
+perspective-taking.
 
-Two PMF reference games formalize the task, built on the canonical operators
-(`RSA.L0OfPred`, `RSA.S1Belief`, `PMF.posterior`):
-* egocentric (`egoL0`/`egoS1`/`egoL1`) — three visible objects, shape alone
-  identifies the target.
-* asymmetric (`asymL0`/`asymS1`/`asymL1`) — a hidden object behind an occlusion,
-  whose feature-match profile is the latent variable (`latentPrior`), marginalized
-  via `RSA.marginalizeKernel`; the speaker hedges with more specific utterances.
+`Game.gain_eq` decomposes the extra preference of the asymmetric over the egocentric
+utility for a more specific description into a sum over hidden objects, from which
+Appendix A's Theorem 1 follows when the two descriptions are equally informative over
+the shared context (`Game.gain_pos_of_tie`), together with the preference of every mixture
+speaker with `wS > 0` (`Game.mixSpeaker_prefers`). `Game.gain_neg_of_shared_hidden`
+records that the theorem's premise cannot be dropped: a hidden object satisfying both
+descriptions weakens the asymmetric speaker's relative preference.
 
-The mixture model and resource-rational optimization sit outside the RSA loop, in
-ℝ, grounded in the PMF literal listener.
+## Implementation notes
 
-## Main declarations
+* The literal listener `Game.L0` is the uniform prior on a finite context reweighted by the
+  meaning of Eq. 1, and the speakers are `RSA.speakerOfScore` over the single state of the
+  fixed target.
+* Appendix A's proof treats a hidden object that satisfies both descriptions as leaving
+  the listener unchanged, which holds only when the two descriptions have the same mass
+  over the shared context; `Game.gain_eq` makes the residual term explicit and
+  `Game.gain_neg_of_shared_hidden` exhibits the failure. The paper's simulations, with a
+  target that shape alone identifies in the shared context, satisfy the tie
+  (`stimulus_tie`).
+* The nested weights of Eqs. 7–9 and the listener's resource-rational utility over the
+  pragmatic listener are not formalized; the speaker's Eq. 10 uses the literal listener of
+  Eq. 6 with a discrete uniform prior over the listener weight, whose expectation is the
+  midpoint (`Game.rrSpeakerUtility_eq`).
 
-* `egoL1`, `asymL1` — the two pragmatic-listener posteriors.
-* `MontaguGrounding.grounding_ego_meaning` — the literal semantics is intersective
-  predicate modification (`Modifier.intersective`).
-* `asym_S1_prefers_specificity_when_shape_matches` — under asymmetry, the speaker
-  prefers a more specific utterance when the hidden object shares a feature.
-* `mixUtility`, `rrUtilityFull` — log-space mixture utility and resource-rational
-  utility over the perspective-taking weight.
-* `no_cost_prefers_full_pt`, `high_cost_penalizes_full_pt` — full perspective-taking
-  is worth its cost only when the cost is low.
+## TODO
 
-## Empirical anchors
+* Eqs. 7–9: agents reasoning about the partner's weight, and the interior optimum of §2.4.
+* Appendix B: the listener's posterior over the speaker's weight from observed utterances.
 
-Experiment 1 (83 dyads, 2×2 occlusion × distractor): speakers used more words under
-occlusion (+1.3 words) and under a same-shape distractor (+0.6 words). Experiment 2
-(116 dyads, a [keysar-etal-2003] replication): scripted directors elicited ~51%
-critical errors vs. ~20% for naive directors, listeners adapted from 43% to 30%
-errors over four critical trials, and informativity predicted accuracy (ρ = −0.81).
-The eight critical items are the [keysar-etal-2003] materials (the paper's Table 1).
-Effect sizes and model fits: [hawkins-gweon-goodman-2021].
+## References
+
+* [hawkins-gweon-goodman-2021]
+* [keysar-etal-2003]
 -/
 
 namespace HawkinsGweonGoodman2021
 
-/-! ## The RSA model
-
-The egocentric game (`egoL0`/`egoS1`/`egoL1`) is over three visible objects with
-a belief-based `α = 2` speaker. The asymmetric game adds a hidden object whose
-feature-match profile is the latent variable, each feature matching the target
-independently with probability `1/4`. Utterance semantics are intersective
-predicate modification (see `MontaguGrounding`).
-
-### Finite types -/
-
-/-- The 3 visible objects in the example display.
-
-    target: shape=0, color=0, texture=0
-    d1:     shape=1, color=0, texture=0 (shares color+texture with target)
-    d2:     shape=2, color=1, texture=1 (differs on all features) -/
-inductive VisObj where
-  | target | d1 | d2
-  deriving DecidableEq, Repr, Inhabited, Fintype
-
-/-- The 4 objects in the asymmetric display (3 visible + 1 behind occlusion) -/
-inductive AsymObj where
-  | target | d1 | d2 | hidden
-  deriving DecidableEq, Repr, Inhabited, Fintype
-
-/-- Utterance: which features to mention (2³ = 8 possible utterances) -/
-inductive Utt where
-  | null  -- mention nothing
-  | s     -- shape only: "the square"
-  | c     -- color only: "the blue one"
-  | t     -- texture only: "the checked one"
-  | sc    -- shape + color: "the blue square"
-  | st    -- shape + texture: "the checked square"
-  | ct    -- color + texture: "the blue checked one"
-  | sct   -- all three: "the blue checked square"
-  deriving DecidableEq, Repr, Inhabited, Fintype
-
-instance : Nonempty VisObj := ⟨.target⟩
-instance : Nonempty AsymObj := ⟨.target⟩
-instance : Nonempty Utt := ⟨.null⟩
-
-/-- Utterance cost: number of features mentioned -/
-def Utt.cost : Utt → ℕ
-  | .null => 0 | .s | .c | .t => 1 | .sc | .st | .ct => 2 | .sct => 3
-
-/-! ### Literal semantics -/
-
-/-- Does utterance apply to an entity with given feature-match profile?
-    For each feature the utterance mentions, the entity must match the target. -/
-def Utt.applies (u : Utt) (shapeOk colorOk textureOk : Prop) : Prop :=
-  let s := match u with | .s | .sc | .st | .sct => shapeOk | _ => True
-  let c := match u with | .c | .sc | .ct | .sct => colorOk | _ => True
-  let t := match u with | .t | .st | .ct | .sct => textureOk | _ => True
-  s ∧ c ∧ t
-
-instance (u : Utt) (p q r : Prop) [Decidable p] [Decidable q] [Decidable r] :
-    Decidable (u.applies p q r) := by
-  cases u <;> exact inferInstanceAs (Decidable (_ ∧ _ ∧ _))
-
-/-- Egocentric literal meaning: does utterance apply to visible object?
-    Target matches on all features. d1 differs only on shape. d2 differs on all. -/
-def egoMeaning (u : Utt) (w : VisObj) : Prop :=
-  match w with
-  | .target => True
-  | .d1 => u.applies False True True
-  | .d2 => u.applies False False False
-
-instance : ∀ u, DecidablePred (egoMeaning u)
-  | _, .target => .isTrue trivial
-  | u, .d1 => inferInstanceAs (Decidable (u.applies False True True))
-  | u, .d2 => inferInstanceAs (Decidable (u.applies False False False))
-
-/-- Asymmetric literal meaning: includes hidden object behind occlusion.
-    The hidden object's match profile is the latent variable `l = (matchShape, matchColor, matchTexture)`.
-    Each feature independently matches target with P = 1/4. -/
-def asymMeaning (l : Bool × Bool × Bool) (u : Utt) (w : AsymObj) : Prop :=
-  match w with
-  | .target => True
-  | .d1 => u.applies False True True
-  | .d2 => u.applies False False False
-  | .hidden => u.applies l.1 l.2.1 l.2.2
-
-instance (l : Bool × Bool × Bool) : ∀ u, DecidablePred (asymMeaning l u)
-  | _, .target => .isTrue trivial
-  | u, .d1 => inferInstanceAs (Decidable (u.applies False True True))
-  | u, .d2 => inferInstanceAs (Decidable (u.applies False False False))
-  | u, .hidden => inferInstanceAs (Decidable (u.applies l.1 l.2.1 l.2.2))
-
-/-! ### Model
-
-Both configurations use the canonical PMF reference-game operators
-(`RSA.L0OfPred`, `RSA.S1Belief`, `PMF.posterior`), as in
-`Studies/TesslerFranke2020PMF`: `L0` is
-uniform on an utterance's extension, `S1` is the belief-based speaker with
-`α = 2` and no cost, and `L1` is the Bayesian posterior under a uniform world
-prior. The asymmetric model marginalizes the hidden-object profile via
-`RSA.marginalizeKernel`. -/
-
+open MeasureTheory ProbabilityTheory Finset
 open scoped ENNReal
 
-/-! #### Egocentric model -/
+/-! ### The model (§2) -/
 
-/-- Every utterance applies to the target (it matches on all features), so each
-extension is non-empty. -/
-theorem egoExtension_nonempty (u : Utt) : (RSA.extensionOf egoMeaning u).Nonempty :=
-  ⟨.target, RSA.mem_extensionOf.mpr trivial⟩
+/-- A director–matcher game: utterances `U` describe objects `O`; the speaker refers to
+`target` in the shared `context`, with the listener possibly seeing one more object drawn
+from `hidden`. -/
+structure Game (O U : Type*) where
+  /-- Whether an utterance is true of an object. -/
+  applies : U → O → Prop
+  /-- The target of reference. -/
+  target : O
+  /-- The shared context: the objects both agents see. -/
+  context : Finset O
+  /-- The prior over the object hidden behind an occluder. -/
+  hidden : O → ℝ
+  /-- The production cost of an utterance. -/
+  cost : U → ℝ
+  /-- The mass a false description keeps in Eq. 1. -/
+  ε : ℝ
 
-/-- Literal listener: uniform on the extension of `egoMeaning u`. -/
-noncomputable def egoL0 (u : Utt) : PMF VisObj :=
-  RSA.L0OfPred egoMeaning u (egoExtension_nonempty u)
+namespace Game
 
-theorem egoL0_apply_of_false {u : Utt} {w : VisObj} (h : ¬ egoMeaning u w) :
-    egoL0 u w = 0 :=
-  RSA.L0OfPred_apply_of_not_mem _ h
+variable {O U : Type*} (g : Game O U) [∀ u, DecidablePred (g.applies u)]
 
-theorem egoL0_apply_of_true {u : Utt} {w : VisObj} (h : egoMeaning u w) :
-    egoL0 u w = ((RSA.extensionOf egoMeaning u).card : ℝ≥0∞)⁻¹ :=
-  RSA.L0OfPred_apply_of_mem _ h
+/-- The graded meaning of Eq. 1: `1` where the utterance is true, `ε` where it is false. -/
+noncomputable def meaning (u : U) (o : O) : ℝ := if g.applies u o then 1 else g.ε
 
-theorem egoL0_ne_zero_of_applies {u : Utt} {w : VisObj} (h : egoMeaning u w) :
-    egoL0 u w ≠ 0 := by
-  rw [← PMF.mem_support_iff, egoL0, RSA.mem_support_L0OfPred_iff]; exact h
+/-- The total meaning mass of an utterance over a context. -/
+noncomputable def mass (S : Finset O) (u : U) : ℝ := ∑ o ∈ S, g.meaning u o
 
-theorem egoL0_null_ne_zero (w : VisObj) : egoL0 .null w ≠ 0 :=
-  egoL0_ne_zero_of_applies (by cases w <;> decide)
+/-- The literal listener over a context (Eq. 1): the uniform prior on the context
+reweighted by the meaning. -/
+noncomputable def L0 (S : Finset O) (u : U) (o : O) : ℝ := g.meaning u o / g.mass S u
 
-private theorem egoScore_tsum_ne_zero (w : VisObj) :
-    ∑' u, (egoL0 u w : ℝ≥0∞) ^ (2 : ℝ) * (1 : ℝ≥0∞) ≠ 0 := by
-  refine ENNReal.summable.tsum_ne_zero_iff.mpr ⟨.null, ?_⟩
-  rw [mul_one]
-  exact (not_congr (ENNReal.rpow_eq_zero_iff_of_pos (by norm_num))).mpr (egoL0_null_ne_zero w)
+/-- (3): the egocentric speaker utility, informativity for the literal listener over the
+shared context less cost. -/
+noncomputable def egoUtility (u : U) : ℝ := Real.log (g.L0 g.context u g.target) - g.cost u
 
-private theorem egoScore_tsum_ne_top (w : VisObj) :
-    ∑' u, (egoL0 u w : ℝ≥0∞) ^ (2 : ℝ) * (1 : ℝ≥0∞) ≠ ∞ :=
-  ENNReal.tsum_ne_top_of_fintype fun u => by
-    rw [mul_one]; exact ENNReal.rpow_ne_top_of_nonneg (by norm_num) (PMF.apply_ne_top _ _)
+theorem meaning_pos (hε : 0 < g.ε) (u : U) (o : O) : 0 < g.meaning u o := by
+  unfold meaning; split_ifs <;> linarith
 
-/-- Belief-based speaker: `S1(u | w) ∝ L0(w | u)^2`, no cost (`α = 2`). -/
-noncomputable def egoS1 (w : VisObj) : PMF Utt :=
-  RSA.S1Belief egoL0 (fun _ => 1) 2 w (egoScore_tsum_ne_zero w) (egoScore_tsum_ne_top w)
+theorem meaning_le_one (hε1 : g.ε ≤ 1) (u : U) (o : O) : g.meaning u o ≤ 1 := by
+  unfold meaning; split_ifs <;> linarith
 
-theorem egoS1_eq_zero_of_not_applies {u : Utt} {w : VisObj} (h : ¬ egoMeaning u w) :
-    egoS1 w u = 0 := by
-  rw [egoS1, RSA.S1Belief_apply, egoL0_apply_of_false h, ENNReal.zero_rpow_of_pos (by norm_num)]
+theorem mass_pos (hε : 0 < g.ε) {S : Finset O} (hS : S.Nonempty) (u : U) : 0 < g.mass S u :=
+  sum_pos (λ o _ => g.meaning_pos hε u o) hS
+
+/-- A more specific utterance has pointwise smaller meaning. -/
+theorem meaning_le_of_specific (hε1 : g.ε ≤ 1) {u₀ u₁ : U}
+    (hspec : ∀ o, g.applies u₀ o → g.applies u₁ o) (o : O) :
+    g.meaning u₀ o ≤ g.meaning u₁ o := by
+  unfold meaning
+  by_cases h₀ : g.applies u₀ o
+  · simp [h₀, hspec o h₀]
+  · split_ifs <;> linarith
+
+/-- Two utterances true of the same objects of a context have the same mass there. -/
+theorem mass_congr {S : Finset O} {u₀ u₁ : U}
+    (h : ∀ o ∈ S, g.applies u₀ o ↔ g.applies u₁ o) : g.mass S u₀ = g.mass S u₁ :=
+  sum_congr rfl λ o ho => by simp [meaning, h o ho]
+
+section Listener
+
+variable [DecidableEq O]
+
+/-- (6): the listener mixing the literal listener over the speaker's view (the
+asymmetry-aware listener, which discounts its private object `h`) with the one over its own
+view, with weight `wL`. -/
+noncomputable def mixListener (h : O) (wL : ℝ) (u : U) (o : O) : ℝ :=
+  wL * g.L0 g.context u o + (1 - wL) * g.L0 (insert h g.context) u o
+
+theorem mass_insert_of_notMem {S : Finset O} {h : O} (hh : h ∉ S) (u : U) :
+    g.mass (insert h S) u = g.meaning u h + g.mass S u :=
+  sum_insert hh
+
+/-- The literal listener's share of the target drops when an object enters the context. -/
+theorem L0_insert_le (hε : 0 < g.ε) (u : U) (o h : O) (hh : h ∉ g.context)
+    (hc : g.context.Nonempty) : g.L0 (insert h g.context) u o ≤ g.L0 g.context u o := by
+  unfold L0
+  rw [g.mass_insert_of_notMem hh]
+  exact div_le_div_of_nonneg_left (g.meaning_pos hε u o).le (g.mass_pos hε hc u)
+    (le_add_of_nonneg_left (g.meaning_pos hε u h).le)
+
+/-- Listener accuracy is monotone in the listener's perspective-taking weight. -/
+theorem mixListener_target_mono (hε : 0 < g.ε) (u : U) (h : O) (hh : h ∉ g.context)
+    (hc : g.context.Nonempty) : Monotone λ wL => g.mixListener h wL u g.target := by
+  intro a b hab
+  simp only [mixListener]
+  nlinarith [g.L0_insert_le hε u g.target h hh hc]
+
+end Listener
+
+variable [Fintype O]
+
+/-- (2): the asymmetry-aware speaker utility, informativity averaged over the object the
+listener may see behind the occluder. -/
+noncomputable def asymUtility (u : U) : ℝ :=
+  ∑ h, g.hidden h * Real.log (g.meaning u g.target / (g.meaning u h + g.mass g.context u)) -
+    g.cost u
+
+/-- (5): the mixture utility with perspective-taking weight `wS`. -/
+noncomputable def mixUtility (wS : ℝ) (u : U) : ℝ :=
+  wS * g.asymUtility u + (1 - wS) * g.egoUtility u
+
+theorem mixUtility_zero (u : U) : g.mixUtility 0 u = g.egoUtility u := by simp [mixUtility]
+
+theorem mixUtility_one (u : U) : g.mixUtility 1 u = g.asymUtility u := by simp [mixUtility]
+
+/-! ### Appendix A -/
+
+/-- The extra preference of the asymmetric over the egocentric utility for `u₀` against
+`u₁`, decomposed over the hidden object: each hidden object contributes the log-ratio of
+how much it dilutes the two descriptions. -/
+theorem gain_eq (hε : 0 < g.ε) (hc : g.context.Nonempty) (hsum : ∑ h, g.hidden h = 1)
+    (u₀ u₁ : U) :
+    (g.asymUtility u₀ - g.asymUtility u₁) - (g.egoUtility u₀ - g.egoUtility u₁) =
+      ∑ h, g.hidden h *
+        (Real.log (1 + g.meaning u₁ h / g.mass g.context u₁) -
+          Real.log (1 + g.meaning u₀ h / g.mass g.context u₀)) := by
+  have hm : ∀ u o, g.meaning u o ≠ 0 := λ u o => (g.meaning_pos hε u o).ne'
+  have hS : ∀ u, g.mass g.context u ≠ 0 := λ u => (g.mass_pos hε hc u).ne'
+  have hd : ∀ u h, g.meaning u h + g.mass g.context u ≠ 0 := λ u h =>
+    (add_pos (g.meaning_pos hε u h) (g.mass_pos hε hc u)).ne'
+  have key : ∀ u h, Real.log (g.meaning u g.target / (g.meaning u h + g.mass g.context u)) =
+      Real.log (g.L0 g.context u g.target) -
+        Real.log (1 + g.meaning u h / g.mass g.context u) := by
+    intro u h
+    have hpos1 : 1 + g.meaning u h / g.mass g.context u ≠ 0 :=
+      (add_pos one_pos (div_pos (g.meaning_pos hε u h) (g.mass_pos hε hc u))).ne'
+    have e : g.meaning u g.target / (g.meaning u h + g.mass g.context u) =
+        g.meaning u g.target / g.mass g.context u / (1 + g.meaning u h / g.mass g.context u) := by
+      field_simp [hS u, hd u h]
+      rw [add_comm (g.mass g.context u), mul_div_assoc, div_self (hd u h), mul_one]
+    rw [e, L0, Real.log_div (div_ne_zero (hm u g.target) (hS u)) hpos1]
+  have expand : ∀ u, g.asymUtility u = Real.log (g.L0 g.context u g.target) -
+      (∑ h, g.hidden h * Real.log (1 + g.meaning u h / g.mass g.context u)) - g.cost u := by
+    intro u
+    simp only [asymUtility, key, mul_sub, sum_sub_distrib, ← sum_mul, hsum, one_mul]
+  rw [expand, expand]
+  simp only [egoUtility, mul_sub, sum_sub_distrib]
+  ring
+
+/-- Appendix A, Theorem 1, under the tie that makes its proof go through: if `u₀` is more
+specific than `u₁`, the two are equally informative over the shared context, and some
+hidden object of positive prior satisfies `u₁` but not `u₀`, then the asymmetric utility
+favours `u₀` over `u₁` strictly more than the egocentric utility does. -/
+theorem gain_pos_of_tie (hε : 0 < g.ε) (hε1 : g.ε < 1) (hc : g.context.Nonempty)
+    (hp : ∀ h, 0 ≤ g.hidden h) (hsum : ∑ h, g.hidden h = 1) {u₀ u₁ : U}
+    (hspec : ∀ o, g.applies u₀ o → g.applies u₁ o)
+    (htie : g.mass g.context u₀ = g.mass g.context u₁)
+    (hstar : ∃ h, g.applies u₁ h ∧ ¬ g.applies u₀ h ∧ 0 < g.hidden h) :
+    g.egoUtility u₀ - g.egoUtility u₁ < g.asymUtility u₀ - g.asymUtility u₁ := by
+  rw [← sub_pos, gain_eq g hε hc hsum, htie]
+  obtain ⟨h₀, h₁, h₂, hpos⟩ := hstar
+  have hS := g.mass_pos hε hc u₁
+  have hpos' : ∀ u h, 0 < 1 + g.meaning u h / g.mass g.context u₁ := λ u h =>
+    add_pos one_pos (div_pos (g.meaning_pos hε u h) hS)
+  have hterm : ∀ h, 0 ≤ g.hidden h *
+      (Real.log (1 + g.meaning u₁ h / g.mass g.context u₁) -
+        Real.log (1 + g.meaning u₀ h / g.mass g.context u₁)) := λ h =>
+    mul_nonneg (hp h) (sub_nonneg.2 (Real.log_le_log (hpos' u₀ h)
+      (by gcongr; exact g.meaning_le_of_specific hε1.le hspec h)))
+  refine lt_of_lt_of_le ?_ (single_le_sum (λ h _ => hterm h) (mem_univ h₀))
+  refine mul_pos hpos (sub_pos.2 (Real.log_lt_log (hpos' u₀ h₀) ?_))
+  have : g.meaning u₀ h₀ < g.meaning u₁ h₀ := by simp [meaning, h₁, h₂, hε1]
+  gcongr
+
+/-- The premise of Appendix A cannot be dropped: when every hidden object of positive prior
+satisfies both descriptions and `u₀` is strictly more specific over the shared context, the
+asymmetric utility favours `u₀` over `u₁` strictly less than the egocentric utility does,
+since the shared hidden object dilutes the narrower description more. -/
+theorem gain_neg_of_shared_hidden (hε : 0 < g.ε) (hc : g.context.Nonempty)
+    (hp : ∀ h, 0 ≤ g.hidden h) (hsum : ∑ h, g.hidden h = 1) {u₀ u₁ : U}
+    (hshared : ∀ h, 0 < g.hidden h → g.applies u₀ h ∧ g.applies u₁ h)
+    (hlt : g.mass g.context u₀ < g.mass g.context u₁) :
+    g.asymUtility u₀ - g.asymUtility u₁ < g.egoUtility u₀ - g.egoUtility u₁ := by
+  rw [← sub_neg, gain_eq g hε hc hsum]
+  have hS₀ := g.mass_pos hε hc u₀
+  have hS₁ := g.mass_pos hε hc u₁
+  have hterm : ∀ h, g.hidden h *
+      (Real.log (1 + g.meaning u₁ h / g.mass g.context u₁) -
+        Real.log (1 + g.meaning u₀ h / g.mass g.context u₀)) ≤ 0 := by
+    intro h
+    rcases (hp h).lt_or_eq with hpos | hzero
+    · obtain ⟨h₀, h₁⟩ := hshared h hpos
+      have hm : g.meaning u₀ h = 1 := by simp [meaning, h₀]
+      have hm' : g.meaning u₁ h = 1 := by simp [meaning, h₁]
+      rw [hm, hm']
+      refine mul_nonpos_of_nonneg_of_nonpos hpos.le (sub_nonpos.2 (Real.log_le_log
+        (add_pos one_pos (div_pos one_pos hS₁)) ?_))
+      gcongr
+    · rw [← hzero, zero_mul]
+  obtain ⟨h₀, hpos⟩ : ∃ h, 0 < g.hidden h := by
+    by_contra hnone
+    have : ∑ h, g.hidden h = 0 :=
+      sum_eq_zero λ h _ => le_antisymm (not_lt.1 λ hlt => hnone ⟨h, hlt⟩) (hp h)
+    linarith
+  obtain ⟨hh₀, hh₁⟩ := hshared h₀ hpos
+  have hneg : g.hidden h₀ *
+      (Real.log (1 + g.meaning u₁ h₀ / g.mass g.context u₁) -
+        Real.log (1 + g.meaning u₀ h₀ / g.mass g.context u₀)) < 0 := by
+    have hm : g.meaning u₀ h₀ = 1 := by simp [meaning, hh₀]
+    have hm' : g.meaning u₁ h₀ = 1 := by simp [meaning, hh₁]
+    rw [hm, hm']
+    refine mul_neg_of_pos_of_neg hpos (sub_neg.2 (Real.log_lt_log
+      (add_pos one_pos (div_pos one_pos hS₁)) ?_))
+    gcongr
+  exact (sum_lt_sum (λ h _ => hterm h) ⟨h₀, mem_univ _, hneg⟩).trans_eq sum_const_zero
+
+/-! ### The resource-rational speaker (§2.4) -/
+
+section ResourceRational
+
+variable [DecidableEq O]
+
+/-- The expected accuracy of an utterance for a listener of weight `wL`, averaged over the
+hidden object. -/
+noncomputable def accuracy (u : U) (wL : ℝ) : ℝ :=
+  ∑ h, g.hidden h * g.mixListener h wL u g.target
+
+/-- Accuracy is affine in the listener weight. -/
+theorem accuracy_eq (u : U) (wL : ℝ) :
+    g.accuracy u wL = wL * (∑ h, g.hidden h * g.L0 g.context u g.target) +
+      (1 - wL) * ∑ h, g.hidden h * g.L0 (insert h g.context) u g.target := by
+  simp only [accuracy, mixListener, mul_sum]
+  rw [← sum_add_distrib]
+  exact sum_congr rfl λ h _ => by ring
+
+variable [Fintype U] [Nonempty U]
+
+/-- The utterance the mixture speaker of weight `wS` prefers, `u*` of Eq. 10. -/
+noncomputable def best (wS : ℝ) : U :=
+  Classical.choose (exists_max_image univ (g.mixUtility wS) univ_nonempty)
+
+omit [DecidableEq O] in
+theorem best_isMax (wS : ℝ) (u : U) : g.mixUtility wS u ≤ g.mixUtility wS (g.best wS) :=
+  (Classical.choose_spec (exists_max_image univ (g.mixUtility wS) univ_nonempty)).2 u
+    (mem_univ u)
+
+/-- (10): the speaker's resource-rational utility, the accuracy of its preferred utterance
+under a listener weight drawn uniformly from the five-point grid, less the linear cost
+`β · wS` of perspective-taking. -/
+noncomputable def rrSpeakerUtility (β wS : ℝ) : ℝ :=
+  (1 / 5 : ℝ) * ∑ k ∈ range 5, g.accuracy (g.best wS) ((k : ℝ) / 4) - β * wS
+
+/-- Accuracy is affine in the listener weight, so its average over the grid is its value at
+the midpoint. -/
+theorem rrSpeakerUtility_eq (β wS : ℝ) :
+    g.rrSpeakerUtility β wS = g.accuracy (g.best wS) (1 / 2) - β * wS := by
+  simp only [rrSpeakerUtility, accuracy_eq, sum_range_succ, sum_range_zero]
+  push_cast
+  ring
+
+end ResourceRational
+
+/-! ### Speakers of the kernel pipeline -/
+
+variable [Fintype U] [MeasurableSpace U] [MeasurableSingletonClass U]
+
+/-- (1), (5): the mixture speaker with rationality `α` and perspective-taking weight `wS`,
+a score speaker over the single state of the fixed target. -/
+noncomputable def mixSpeaker (α wS : ℝ) : Kernel Unit U :=
+  RSA.speakerOfScore λ _ u => ((α * g.mixUtility wS u : ℝ) : EReal)
+
+theorem mixSpeaker_lt_iff {α : ℝ} (hα : 0 < α) (wS : ℝ) {u u' : U} :
+    (g.mixSpeaker α wS ()).real {u} < (g.mixSpeaker α wS ()).real {u'} ↔
+      g.mixUtility wS u < g.mixUtility wS u' := by
+  rw [mixSpeaker, RSA.speakerOfScore_real_singleton_lt_iff
+    (score := λ _ u => ((α * g.mixUtility wS u : ℝ) : EReal)) (λ _ => EReal.coe_ne_top _)
+    ⟨u, EReal.coe_ne_bot _⟩, EReal.coe_lt_coe_iff]
+  exact ⟨λ h => lt_of_mul_lt_mul_left h hα.le, λ h => mul_lt_mul_of_pos_left h hα⟩
+
+/-- Appendix A's corollary: whenever the egocentric speaker does not disprefer the more
+specific description, every mixture speaker with `wS > 0` prefers it, under the tie of
+`gain_pos_of_tie`. -/
+theorem mixSpeaker_prefers (hε : 0 < g.ε) (hε1 : g.ε < 1) (hc : g.context.Nonempty)
+    (hp : ∀ h, 0 ≤ g.hidden h) (hsum : ∑ h, g.hidden h = 1) {u₀ u₁ : U}
+    (hspec : ∀ o, g.applies u₀ o → g.applies u₁ o)
+    (htie : g.mass g.context u₀ = g.mass g.context u₁)
+    (hstar : ∃ h, g.applies u₁ h ∧ ¬ g.applies u₀ h ∧ 0 < g.hidden h)
+    (hego : g.egoUtility u₁ ≤ g.egoUtility u₀) {α wS : ℝ} (hα : 0 < α) (hw : 0 < wS) :
+    (g.mixSpeaker α wS ()).real {u₁} < (g.mixSpeaker α wS ()).real {u₀} := by
+  rw [g.mixSpeaker_lt_iff hα]
+  have := g.gain_pos_of_tie hε hε1 hc hp hsum hspec htie hstar
+  simp only [mixUtility]
+  nlinarith
+
+end Game
+
+/-! ### The stimulus of §2.4 -/
+
+/-- The three features of the objects. -/
+inductive Feature where
+  | shape
+  | color
+  | texture
+  deriving DecidableEq, Fintype, Repr
+
+/-- An object as its profile of matches with the target on each feature. -/
+abbrev Obj := Feature → Bool
+
+/-- An utterance mentions a set of features. -/
+abbrev Utt := Finset Feature
+
+instance : MeasurableSpace Utt := ⊤
+instance : MeasurableSingletonClass Utt := ⟨λ _ => trivial⟩
+
+/-- The target matches itself on every feature. -/
+def target : Obj := λ _ => true
+
+/-- The distractor sharing the target's color and texture. -/
+def d1 : Obj := λ f => decide (f ≠ .shape)
+
+/-- The distractor matching the target on nothing. -/
+def d2 : Obj := λ _ => false
+
+/-- The prior over the hidden object's profile when each of the four values of a feature is
+equally likely: a match on each feature with probability `1/4`, independently. -/
+noncomputable def hiddenPrior (o : Obj) : ℝ :=
+  ∏ f, if o f then (1 / 4 : ℝ) else 3 / 4
+
+/-- The game of §2.4: the target with the two distractors of Fig. 1 in view, a hidden object
+drawn from `hiddenPrior`, cost `c` per mentioned feature, and `ε = 1/100`. -/
+noncomputable def stimulus (c : ℝ) : Game Obj Utt where
+  applies u o := ∀ f ∈ u, o f = true
+  target := target
+  context := {target, d1, d2}
+  hidden := hiddenPrior
+  cost u := c * u.card
+  ε := 1 / 100
+
+instance (c : ℝ) : ∀ u, DecidablePred ((stimulus c).applies u) := λ u o =>
+  inferInstanceAs (Decidable (∀ f ∈ u, o f = true))
+
+theorem stimulus_hidden (c : ℝ) : (stimulus c).hidden = hiddenPrior := rfl
+
+theorem hiddenPrior_pos (o : Obj) : 0 < hiddenPrior o :=
+  prod_pos λ f _ => by split_ifs <;> norm_num
+
+theorem hiddenPrior_nonneg (o : Obj) : 0 ≤ hiddenPrior o := (hiddenPrior_pos o).le
+
+theorem sum_hiddenPrior : ∑ o : Obj, hiddenPrior o = 1 := by
+  unfold hiddenPrior
+  rw [← Fintype.prod_sum
+    (f := λ (_ : Feature) (b : Bool) => if b = true then (1 / 4 : ℝ) else 3 / 4)]
   simp
-
-theorem egoS1_ne_zero_of_applies {u : Utt} {w : VisObj} (h : egoMeaning u w) :
-    egoS1 w u ≠ 0 :=
-  RSA.S1Belief_apply_ne_zero_of_pos _ _ _ _ _ _ (egoL0_ne_zero_of_applies h) one_ne_zero
-
-/-- Uniform world prior over the three visible objects. -/
-noncomputable def egoWorldPrior : PMF VisObj := PMF.uniformOfFintype VisObj
-
-theorem egoMarginal_ne_zero (u : Utt) : PMF.marginal egoS1 egoWorldPrior u ≠ 0 :=
-  PMF.marginal_ne_zero _ _ _
-    ((egoWorldPrior.mem_support_iff .target).mp (PMF.mem_support_uniformOfFintype _))
-    (egoS1_ne_zero_of_applies trivial)
-
-/-- Pragmatic listener: Bayesian posterior of `egoS1` under the uniform prior. -/
-noncomputable def egoL1 (u : Utt) : PMF VisObj :=
-  PMF.posterior egoS1 egoWorldPrior u (egoMarginal_ne_zero u)
-
-/-- An utterance applying only to the target makes the listener certain: the
-posterior puts full mass on the target. -/
-theorem egoL1_eq_one_of_unique {u : Utt}
-    (h : ∀ w, w ≠ .target → ¬ egoMeaning u w) : egoL1 u .target = 1 := by
-  rw [egoL1]
-  exact PMF.posterior_eq_one_of_singleton_score_support _ _ _ _ _
-    (fun w' hne => Or.inr (egoS1_eq_zero_of_not_applies (h w' hne)))
-
-/-! #### Asymmetric model
-
-The hidden object's feature-match profile is the latent variable `Profile`,
-with prior weight `1` for a match and `3` for a non-match on each feature (each
-feature matches the target with probability `1/4`). The speaker is conditioned
-on the latent; the listener marginalizes it via `RSA.marginalizeKernel`. -/
-
-/-- Whether the hidden object matches the target on (shape, color, texture). -/
-abbrev Profile := Bool × Bool × Bool
-
-theorem asymExtension_nonempty (l : Profile) (u : Utt) :
-    (RSA.extensionOf (asymMeaning l) u).Nonempty :=
-  ⟨.target, RSA.mem_extensionOf.mpr trivial⟩
-
-/-- Literal listener under hidden profile `l`. -/
-noncomputable def asymL0 (l : Profile) (u : Utt) : PMF AsymObj :=
-  RSA.L0OfPred (asymMeaning l) u (asymExtension_nonempty l u)
-
-theorem asymL0_apply_of_false {l : Profile} {u : Utt} {w : AsymObj}
-    (h : ¬ asymMeaning l u w) : asymL0 l u w = 0 :=
-  RSA.L0OfPred_apply_of_not_mem _ h
-
-theorem asymL0_apply_of_true {l : Profile} {u : Utt} {w : AsymObj}
-    (h : asymMeaning l u w) :
-    asymL0 l u w = ((RSA.extensionOf (asymMeaning l) u).card : ℝ≥0∞)⁻¹ :=
-  RSA.L0OfPred_apply_of_mem _ h
-
-theorem asymL0_ne_zero_of_applies {l : Profile} {u : Utt} {w : AsymObj}
-    (h : asymMeaning l u w) : asymL0 l u w ≠ 0 := by
-  rw [← PMF.mem_support_iff, asymL0, RSA.mem_support_L0OfPred_iff]; exact h
-
-theorem asymL0_null_ne_zero (l : Profile) (w : AsymObj) : asymL0 l .null w ≠ 0 :=
-  asymL0_ne_zero_of_applies (by cases w <;> trivial)
-
-private theorem asymScore_tsum_ne_zero (l : Profile) (w : AsymObj) :
-    ∑' u, (asymL0 l u w : ℝ≥0∞) ^ (2 : ℝ) * (1 : ℝ≥0∞) ≠ 0 := by
-  refine ENNReal.summable.tsum_ne_zero_iff.mpr ⟨.null, ?_⟩
-  rw [mul_one]
-  exact (not_congr (ENNReal.rpow_eq_zero_iff_of_pos (by norm_num))).mpr (asymL0_null_ne_zero l w)
-
-private theorem asymScore_tsum_ne_top (l : Profile) (w : AsymObj) :
-    ∑' u, (asymL0 l u w : ℝ≥0∞) ^ (2 : ℝ) * (1 : ℝ≥0∞) ≠ ∞ :=
-  ENNReal.tsum_ne_top_of_fintype fun u => by
-    rw [mul_one]; exact ENNReal.rpow_ne_top_of_nonneg (by norm_num) (PMF.apply_ne_top _ _)
-
-/-- Speaker conditioned on the hidden-object profile. -/
-noncomputable def asymS1 (l : Profile) (w : AsymObj) : PMF Utt :=
-  RSA.S1Belief (asymL0 l) (fun _ => 1) 2 w (asymScore_tsum_ne_zero l w) (asymScore_tsum_ne_top l w)
-
-theorem asymS1_eq_zero_of_not_applies {l : Profile} {u : Utt} {w : AsymObj}
-    (h : ¬ asymMeaning l u w) : asymS1 l w u = 0 := by
-  rw [asymS1, RSA.S1Belief_apply, asymL0_apply_of_false h, ENNReal.zero_rpow_of_pos (by norm_num)]
-  simp
-
-theorem asymS1_ne_zero_of_applies {l : Profile} {u : Utt} {w : AsymObj}
-    (h : asymMeaning l u w) : asymS1 l w u ≠ 0 :=
-  RSA.S1Belief_apply_ne_zero_of_pos _ _ _ _ _ _ (asymL0_ne_zero_of_applies h) one_ne_zero
-
-/-- Latent prior weight: `1` per matching feature, `3` per non-match. -/
-noncomputable def profileWeight (l : Profile) : ℝ≥0∞ :=
-  (if l.1 then 1 else 3) * (if l.2.1 then 1 else 3) * (if l.2.2 then 1 else 3)
-
-theorem profileWeight_ne_zero (l : Profile) : profileWeight l ≠ 0 := by
-  unfold profileWeight
-  exact mul_ne_zero (mul_ne_zero (by split <;> simp) (by split <;> simp)) (by split <;> simp)
-
-theorem profileWeight_ne_top (l : Profile) : profileWeight l ≠ ∞ := by
-  unfold profileWeight
-  exact ENNReal.mul_ne_top (ENNReal.mul_ne_top (by split <;> simp) (by split <;> simp))
-    (by split <;> simp)
-
-private theorem profileWeight_tsum_ne_zero : ∑' l, profileWeight l ≠ 0 :=
-  ENNReal.summable.tsum_ne_zero_iff.mpr ⟨(true, true, true), profileWeight_ne_zero _⟩
-
-private theorem profileWeight_tsum_ne_top : ∑' l, profileWeight l ≠ ∞ :=
-  ENNReal.tsum_ne_top_of_fintype profileWeight_ne_top
-
-/-- Prior over hidden-object profiles. -/
-noncomputable def latentPrior : PMF Profile :=
-  PMF.normalize profileWeight profileWeight_tsum_ne_zero profileWeight_tsum_ne_top
-
-theorem latentPrior_ne_zero (l : Profile) : latentPrior l ≠ 0 := by
-  rw [← PMF.mem_support_iff, latentPrior, PMF.mem_support_normalize_iff]
-  exact profileWeight_ne_zero l
-
-/-- Listener's marginal speaker: hidden profile integrated out. -/
-noncomputable def asymMarginalSpeaker (w : AsymObj) : PMF Utt :=
-  RSA.marginalizeKernel latentPrior asymS1 w
-
-theorem asymMarginalSpeaker_eq_zero_of_not_applies {u : Utt} {w : AsymObj}
-    (h : ∀ l, ¬ asymMeaning l u w) : asymMarginalSpeaker w u = 0 := by
-  rw [asymMarginalSpeaker, RSA.marginalizeKernel_apply, ENNReal.tsum_eq_zero]
-  exact fun l => by rw [asymS1_eq_zero_of_not_applies (h l), mul_zero]
-
-theorem asymMarginalSpeaker_ne_zero_of_applies {l : Profile} {u : Utt} {w : AsymObj}
-    (h : asymMeaning l u w) : asymMarginalSpeaker w u ≠ 0 := by
-  rw [← PMF.mem_support_iff, asymMarginalSpeaker, RSA.mem_support_marginalizeKernel_iff]
-  exact ⟨l, latentPrior_ne_zero l, asymS1_ne_zero_of_applies h⟩
-
-/-- Uniform world prior over the four objects (three visible + hidden). -/
-noncomputable def asymWorldPrior : PMF AsymObj := PMF.uniformOfFintype AsymObj
-
-theorem asymMarginal_ne_zero (u : Utt) :
-    PMF.marginal asymMarginalSpeaker asymWorldPrior u ≠ 0 :=
-  PMF.marginal_ne_zero _ _ _
-    ((asymWorldPrior.mem_support_iff .target).mp (PMF.mem_support_uniformOfFintype _))
-    (asymMarginalSpeaker_ne_zero_of_applies (l := (true, true, true)) trivial)
-
-/-- Pragmatic listener: posterior of the latent-marginalized speaker. -/
-noncomputable def asymL1 (u : Utt) : PMF AsymObj :=
-  PMF.posterior asymMarginalSpeaker asymWorldPrior u (asymMarginal_ne_zero u)
-
-
-/-! ## Compositional grounding
-
-The literal semantics is intersective predicate modification [heim-kratzer-1998]:
-each mentioned feature is an intersective adjective — `Modifier.intersective`
-applied to a feature property — and `grounding_ego_meaning` shows `egoMeaning`
-is exactly their iterated conjunction, grounding the RSA meaning in the
-project-canonical modifier rather than a local copy. -/
-
-namespace MontaguGrounding
-
-open Modifier (intersective)
-
-/-- Shape adjective: holds of the target (the only shape-0 object). -/
-def shapeP (w : VisObj) : Prop := w = .target
-
-/-- Color adjective: holds of the objects sharing the target's color (target, d1). -/
-def colorP (w : VisObj) : Prop := w = .target ∨ w = .d1
-
-/-- Texture adjective: holds of the objects sharing the target's texture (target, d1). -/
-def textureP (w : VisObj) : Prop := w = .target ∨ w = .d1
-
-/-- Compositional utterance denotation: each mentioned feature is an intersective
-adjective (`Modifier.intersective`), composed over the trivial base property. -/
-def compositionalMeaning : Utt → VisObj → Prop
-  | .null => fun _ => True
-  | .s    => intersective shapeP (fun _ => True)
-  | .c    => intersective colorP (fun _ => True)
-  | .t    => intersective textureP (fun _ => True)
-  | .sc   => intersective colorP (intersective shapeP (fun _ => True))
-  | .st   => intersective textureP (intersective shapeP (fun _ => True))
-  | .ct   => intersective textureP (intersective colorP (fun _ => True))
-  | .sct  => intersective textureP (intersective colorP (intersective shapeP (fun _ => True)))
-
-/-- **Grounding**: the RSA literal meaning `egoMeaning` holds exactly when the
-intersective predicate modification of the mentioned feature adjectives does. -/
-theorem grounding_ego_meaning (u : Utt) (w : VisObj) :
-    egoMeaning u w ↔ compositionalMeaning u w := by
-  cases u <;> cases w <;>
-    simp only [compositionalMeaning, Modifier.intersective_apply, shapeP, colorP, textureP] <;>
-    decide
-
-end MontaguGrounding
-
-
-/-! ## Predictions
-
-The egocentric model captures the no-occlusion case; the asymmetric model
-captures occlusion. Predictions are structural PMF proofs over the canonical
-operators (no interval reflection). -/
-
-/-! ### Egocentric predictions -/
-
-/-- Shape-only uniquely identifies the target among visible objects: it applies
-to no other visible object, so the listener concentrates on the target. -/
-theorem ego_shape_identifies_target : egoL1 .s .target > egoL1 .s .d1 := by
-  rw [gt_iff_lt]
-  unfold egoL1 egoWorldPrior
-  rw [PMF.posterior_lt_iff_kernel_lt_of_uniform,
-      egoS1_eq_zero_of_not_applies (by decide : ¬ egoMeaning .s .d1)]
-  exact pos_iff_ne_zero.mpr (egoS1_ne_zero_of_applies trivial)
-
-/-- The listener is equally confident about the target whether hearing
-shape-only or the full description: both apply only to the target among visible
-objects, so each makes the listener certain. -/
-theorem ego_shape_as_good_as_full : ¬(egoL1 .sct .target > egoL1 .s .target) := by
-  rw [egoL1_eq_one_of_unique (u := .sct) (by decide),
-      egoL1_eq_one_of_unique (u := .s) (by decide)]
-  exact lt_irrefl 1
-
-/-- The speaker is indifferent between shape-only and full description at the
-target: both apply only to the target, so both have `L0 = 1` and equal score. -/
-theorem ego_S1_indifferent : ¬(egoS1 .target .sct > egoS1 .target .s) := by
-  rw [gt_iff_lt, not_lt, egoS1, RSA.S1Belief_apply_le_iff_score_le]
-  have h : egoL0 .sct .target = egoL0 .s .target := by
-    rw [egoL0_apply_of_true (by decide : egoMeaning .sct .target),
-        egoL0_apply_of_true (by decide : egoMeaning .s .target),
-        show (RSA.extensionOf egoMeaning .sct).card = 1 from by decide,
-        show (RSA.extensionOf egoMeaning .s).card = 1 from by decide]
-  exact le_of_eq (by rw [h])
-
-/-! ### Asymmetric predictions -/
-
-/-- **Paper prediction**: when the hidden object matches the target's shape but
-not its color or texture, the speaker prefers the full description over
-shape-only — shape-only fails to distinguish the target from the hidden object
-(`L0 = 1/2`), while the full description succeeds (`L0 = 1`). -/
-theorem asym_S1_prefers_specificity_when_shape_matches :
-    asymS1 (true, false, false) .target .sct > asymS1 (true, false, false) .target .s := by
-  rw [gt_iff_lt, asymS1, RSA.S1Belief_apply_lt_iff_score_lt, mul_one, mul_one]
-  apply ENNReal.rpow_lt_rpow _ (by norm_num : (0 : ℝ) < 2)
-  rw [asymL0_apply_of_true (by decide : asymMeaning (true, false, false) .s .target),
-      asymL0_apply_of_true (by decide : asymMeaning (true, false, false) .sct .target),
-      show (RSA.extensionOf (asymMeaning (true, false, false)) .s).card = 2 from by decide,
-      show (RSA.extensionOf (asymMeaning (true, false, false)) .sct).card = 1 from by decide]
   norm_num
 
-/-- When the hidden object matches no features, the speaker is indifferent:
-both shape-only and the full description apply only to the target (`L0 = 1`). -/
-theorem asym_S1_indifferent_when_no_match :
-    ¬(asymS1 (false, false, false) .target .sct >
-      asymS1 (false, false, false) .target .s) := by
-  rw [gt_iff_lt, not_lt, asymS1, RSA.S1Belief_apply_le_iff_score_le]
-  have h : asymL0 (false, false, false) .sct .target = asymL0 (false, false, false) .s .target := by
-    rw [asymL0_apply_of_true (by decide : asymMeaning (false, false, false) .sct .target),
-        asymL0_apply_of_true (by decide : asymMeaning (false, false, false) .s .target),
-        show (RSA.extensionOf (asymMeaning (false, false, false)) .sct).card = 1 from by decide,
-        show (RSA.extensionOf (asymMeaning (false, false, false)) .s).card = 1 from by decide]
-  exact le_of_eq (by rw [h])
+/-- In the shared context shape alone identifies the target, so the full description and
+the bare shape have the same mass there. -/
+theorem stimulus_tie (c : ℝ) :
+    (stimulus c).mass (stimulus c).context {.shape, .color, .texture} =
+      (stimulus c).mass (stimulus c).context {.shape} :=
+  (stimulus c).mass_congr λ o ho => by
+    simp only [stimulus, mem_insert, mem_singleton] at ho
+    rcases ho with rfl | rfl | rfl
+    · show (∀ f ∈ ({.shape, .color, .texture} : Finset Feature), target f = true) ↔
+        ∀ f ∈ ({.shape} : Finset Feature), target f = true
+      decide
+    · show (∀ f ∈ ({.shape, .color, .texture} : Finset Feature), d1 f = true) ↔
+        ∀ f ∈ ({.shape} : Finset Feature), d1 f = true
+      decide
+    · show (∀ f ∈ ({.shape, .color, .texture} : Finset Feature), d2 f = true) ↔
+        ∀ f ∈ ({.shape} : Finset Feature), d2 f = true
+      decide
 
-/-- Even under asymmetry, the listener identifies the target over `d1`: `s`
-applies to no `d1` profile (it differs in shape), so the speaker never produces
-`s` at `d1`, and the marginal speaker puts zero mass there. -/
-theorem asym_L1_identifies_target : asymL1 .s .target > asymL1 .s .d1 := by
-  rw [gt_iff_lt]
-  unfold asymL1 asymWorldPrior
-  rw [PMF.posterior_lt_iff_kernel_lt_of_uniform,
-      asymMarginalSpeaker_eq_zero_of_not_applies (by decide : ∀ l, ¬ asymMeaning l .s .d1)]
-  exact pos_iff_ne_zero.mpr
-    (asymMarginalSpeaker_ne_zero_of_applies (l := (false, false, false)) trivial)
-
-/-- **Paper prediction**: under asymmetry, the full description yields a higher
-listener posterior for the target than shape-only — the hidden object can match
-individual features, so a more specific utterance is more reliably informative.
-
-TODO: this compares two *latent-marginalized* posteriors at different
-conditioning utterances (`L1 .sct` vs `L1 .s`), with distinct normalizing
-constants. It reduces to a finite `ℝ≥0∞` comparison over the eight hidden
-profiles but is beyond hand-discharge; it awaits the planned `pmf_score_compare`
-tactic (cf. `Studies/TesslerFranke2020PMF`). -/
-theorem asym_full_desc_better_reference : asymL1 .sct .target > asymL1 .s .target := by
-  sorry
-
-/-- Shape+color also beats shape-only: each additional feature narrows the set
-of possible hidden distractors.
-
-TODO: same shape as `asym_full_desc_better_reference` (cross-utterance
-latent-marginalized posterior comparison); awaits `pmf_score_compare`. -/
-theorem asym_shape_color_beats_shape : asymL1 .sc .target > asymL1 .s .target := by
-  sorry
-
-
-/-! ## Resource-rational extensions
-
-The mixture model and resource-rational optimization sit outside the standard
-RSA loop. They are defined in ℝ, grounded in the PMF literal listener (`egoL0`,
-`asymL0`, via `.toReal`) and the hidden-profile prior `latentPrior`.
-
-The mixture operates in log-space (over utilities, not probabilities): the
-mixture speaker uses a weighted geometric mean of L0 values,
-`exp(w_S · E[log L0^asym] + (1 − w_S) · log L0^ego)`. The model uses `α = 2` and
-a uniform cost that cancels in the S1 normalization. See
-[hawkins-gweon-goodman-2021] for the asymmetric/egocentric speaker utilities,
-the mixture, and the resource-rational utility. -/
-
-open scoped BigOperators
-
-/-! ### L0 success rates -/
-
-/-- Egocentric L0 success rate: the literal listener's target probability given
-`u`, read off `egoL0`. -/
-noncomputable def egoInfR (u : Utt) : ℝ := (egoL0 u .target).toReal
-
-/-- Asymmetric L0 success rate: the literal listener's target probability
-averaged over hidden profiles, weighted by `latentPrior`. -/
-noncomputable def asymInfR (u : Utt) : ℝ :=
-  ∑ l : Profile, (latentPrior l).toReal * (asymL0 l u .target).toReal
-
-/-! ### Log-space mixture utilities -/
-
-/-- Expected log-L0 under the asymmetric model (the asymmetric-utility
-component): `E_l[log P_L0(target | u, l)]`. By Jensen's inequality this is
-`≤ log (asymInfR u)`. -/
-noncomputable def asymLogInfR (u : Utt) : ℝ :=
-  ∑ l : Profile, (latentPrior l).toReal * Real.log (asymL0 l u .target).toReal
-
-/-- Mixture speaker utility (Eq. 5):
-    U^mix(u; w_S) = w_S · E_h[log P_L0^asym(target|u,h)]
-                   + (1−w_S) · log P_L0^ego(target|u)
-    Uniform cost (0.03) omitted: it cancels in S1 normalization. -/
-noncomputable def mixUtility (u : Utt) (wS : ℝ) : ℝ :=
-  wS * asymLogInfR u + (1 - wS) * Real.log (egoInfR u)
-
-/-- Mixture S1 score: P_S1^mix(u | target, w_S) ∝ exp(α · U^mix(u; w_S)).
-    Paper Eq. 1 with the mixture utility from Eq. 5. -/
-noncomputable def mixS1Score (u : Utt) (wS α : ℝ) : ℝ :=
-  Real.exp (α * mixUtility u wS)
-
-/-! ### Full resource-rational model
-
-The full model marginalizes over listener perspective-taking weight w_L.
-
-    The simplified model (Eqs 2–5) treats w_L as fixed at 1. The full model
-    (Eqs 7–9) has the speaker consider a range of listener weights, and the
-    resource-rational analysis (Eq. 10) measures accuracy averaged over w_L.
-
-    **Mixture L0** (Eq. 8): P_{L_0}^{mix}(target|u, l, w_L) =
-      w_L · P_{L_0}^{asym}(target|u, l) + (1−w_L) · P_{L_0}^{ego}(target|u).
-    At w_L = 0, the listener ignores hidden objects. At w_L = 1, the listener
-    accounts for all potential hidden distractors.
-
-    **Marginalized S1** (Eq. 9): the speaker's utility integrates over w_L,
-    discretized to 5 grid points {0, 1/4, 1/2, 3/4, 1} with uniform weight.
-
-    **Accuracy** (Eq. 10): since listener accuracy is linear in w_L,
-    E_{uniform w_L}[accuracy] = (egoInfR + asymInfR) / 2. -/
-
-/-- Mixture L0 accuracy: probability the mixture listener at weight w_L
-correctly identifies the target, given hidden object profile `l`. -/
-noncomputable def mixL0Target (u : Utt) (l : Profile) (wL : ℝ) : ℝ :=
-  wL * (asymL0 l u .target).toReal + (1 - wL) * egoInfR u
-
-/-- Asymmetric speaker utility at a specific listener weight:
-`U^asym(u; w_L) = Σ_l P(l) · log P_L0^mix(target | u, l, w_L)`. -/
-noncomputable def asymUtilityAtWL (u : Utt) (wL : ℝ) : ℝ :=
-  ∑ l : Profile, (latentPrior l).toReal * Real.log (mixL0Target u l wL)
-
-/-- Mixed speaker utility at specific (w_S, w_L) (Eq. 8). -/
-noncomputable def mixUtilityFull (u : Utt) (wS wL : ℝ) : ℝ :=
-  wS * asymUtilityAtWL u wL + (1 - wS) * Real.log (egoInfR u)
-
-/-- W_L-marginalized speaker utility (Eq. 9 inside the exp).
-    Discretized: 5 uniform grid points at w_L ∈ {0, 1/4, 1/2, 3/4, 1}. -/
-noncomputable def mixUtilityMarg (u : Utt) (wS : ℝ) : ℝ :=
-  (1 / 5 : ℝ) * ∑ k : Fin 5, mixUtilityFull u wS (↑k / 4)
-
-/-- Full S1 score with w_L marginalization (Eq. 9). -/
-noncomputable def mixS1ScoreFull (u : Utt) (wS α : ℝ) : ℝ :=
-  Real.exp (α * mixUtilityMarg u wS)
-
-/-- Listener accuracy averaged over uniform w_L (for Eq. 10).
-    Since accuracy(u, w_L) = w_L·asymInfR(u) + (1−w_L)·egoInfR(u) is linear
-    in w_L, the expectation under uniform P(w_L) is the midpoint. -/
-noncomputable def avgListenerAccuracy (u : Utt) : ℝ :=
-  (egoInfR u + asymInfR u) / 2
-
-/-- Full expected accuracy (Eq. 10) with w_L marginalization.
-    Uses the w_L-marginalized S1 for speaker production and the
-    w_L-averaged listener accuracy for evaluation. -/
-noncomputable def expectedAccuracyFull (wS α : ℝ) : ℝ :=
-  let Z := ∑ u' : Utt, mixS1ScoreFull u' wS α
-  if Z = 0 then 0
-  else ∑ u : Utt, (mixS1ScoreFull u wS α / Z) * avgListenerAccuracy u
-
-/-- Full resource-rational utility (Eqs 10–11).
-    U_RR(w_S) = ExpAccuracy_full(w_S) − β · w_S -/
-noncomputable def rrUtilityFull (wS α β : ℝ) : ℝ :=
-  expectedAccuracyFull wS α - β * wS
-
-/-! ### Structural properties -/
-
-/-- At w_S = 0, the simplified mixture utility reduces to egocentric log-L0. -/
-theorem mixUtility_at_zero (u : Utt) :
-    mixUtility u 0 = Real.log (egoInfR u) := by
-  unfold mixUtility; ring
-
-/-- At w_S = 1, the simplified mixture utility reduces to asymmetric expected log-L0. -/
-theorem mixUtility_at_one (u : Utt) :
-    mixUtility u 1 = asymLogInfR u := by
-  unfold mixUtility; ring
-
-/-! ### Resource-rational predictions
-
-These three are transcendental ℝ inequalities over `Real.exp`/`Real.log` of the
-L0 success rates. The retired interval-reflection tactic discharged them with its
-numeric/interval backend; the PMF migration has no equivalent, so they are
-stated with `sorry` per CLAUDE.md "prefer `sorry` over weakening". They reduce
-to finite real arithmetic and await real-analysis/interval lemmas (or a
-`pmf_score_compare`-style numeric tactic). -/
-
-/-- **Paper prediction (β = 0)**: when perspective-taking is free, full PT
-(w_S = 1) achieves higher expected accuracy than no PT (w_S = 0) — the
-asymmetric speaker produces more specific utterances, improving listener
-accuracy.
-
-TODO: transcendental ℝ inequality (exp/log of L0 rates); awaits numeric tactic. -/
-theorem no_cost_prefers_full_pt :
-    rrUtilityFull 1 2 0 > rrUtilityFull 0 2 0 := by
-  sorry
-
-/-- **Paper prediction (high β)**: when perspective-taking is costly, the cost
-term `β · w_S` dominates, making w_S = 0 preferable to w_S = 1.
-
-TODO: transcendental ℝ inequality (exp/log of L0 rates); awaits numeric tactic. -/
-theorem high_cost_penalizes_full_pt :
-    rrUtilityFull 0 2 (1/2) > rrUtilityFull 1 2 (1/2) := by
-  sorry
-
-/-- **Interior-optimum limitation**: the paper's central result is that at
-moderate cost (β = 0.2) an intermediate weight `w*_S ≈ 0.36` outperforms both
-extremes. This 3+1-object reference game is too simple to produce that effect:
-shape alone identifies the target among visible objects (`egoInfR .s = 1`), so
-the egocentric baseline accuracy is near-ceiling and the marginal gain from
-perspective-taking is far below the β = 0.2 cost. So instead no-PT beats full-PT
-for all tested β ≥ 1/50.
-
-TODO: transcendental ℝ inequality (exp/log of L0 rates); awaits numeric tactic. -/
-theorem simplified_game_no_interior_optimum :
-    rrUtilityFull 0 2 (1/50) > rrUtilityFull 1 2 (1/50) := by
-  sorry
-
-/-! ### Listener belief adaptation -/
-
-/-- Listener's belief about speaker's perspective-taking weight.
-    Over time, listeners update their expectation of w_S based on
-    observed utterance informativity. -/
-structure ListenerBeliefs where
-  wS_expectation : ℝ   -- E[w_S]
-  observations : ℕ      -- Number of observed utterances
-
-/-- Initial uniform belief: E[w_S] = 1/2 -/
-noncomputable def initialBeliefs : ListenerBeliefs :=
-  { wS_expectation := 1/2, observations := 0 }
-
-/-- Update beliefs after observing utterance informativity.
-    Short/uninformative utterances → lower w_S estimate;
-    long/informative utterances → higher w_S estimate. -/
-noncomputable def updateBeliefs (beliefs : ListenerBeliefs) (shortUtterance : Bool) :
-    ListenerBeliefs :=
-  let newObs := beliefs.observations + 1
-  let update : ℝ := if shortUtterance then -1/10 else 1/10
-  let newExpectation := max 0 (min 1 (beliefs.wS_expectation + update / newObs))
-  { wS_expectation := newExpectation, observations := newObs }
-
-/-- After seeing short utterances, listener expects lower w_S -/
-noncomputable def beliefsAfterShortUtterances : ListenerBeliefs :=
-  updateBeliefs (updateBeliefs (updateBeliefs initialBeliefs true) true) true
-
-/-- **Paper prediction** ([hawkins-gweon-goodman-2021] §2.4.1):
-    Listeners infer low speaker effort from under-informative utterances. -/
-theorem listener_infers_low_wS_from_short_utterances :
-    beliefsAfterShortUtterances.wS_expectation < initialBeliefs.wS_expectation := by
-  unfold beliefsAfterShortUtterances updateBeliefs initialBeliefs
-  simp only [ite_true, min_def, max_def]
-  split_ifs <;> linarith
-
-/-- Optimal listener weight: compensate for low speaker effort.
-    When the speaker uses low w_S, the listener should increase their own
-    perspective-taking to compensate. -/
-noncomputable def optimalListenerWeight (speakerWS β : ℝ) : ℝ :=
-  min 1 (max 0 (1 - speakerWS + β))
-
-/-- **Paper prediction** ([hawkins-gweon-goodman-2021] §2.4.1):
-    Listener increases effort when speaker decreases theirs. -/
-theorem listener_compensates_for_low_speaker_effort :
-    optimalListenerWeight (3/10) (2/10) > optimalListenerWeight (7/10) (2/10) := by
-  unfold optimalListenerWeight
-  simp only [min_def, max_def]
-  split_ifs <;> linarith
+/-- §2.4.1, first prediction: on the stimulus, a mixture speaker with any `wS > 0` prefers
+the full description to the bare shape whenever the cost does not already make the
+egocentric speaker prefer the shape, since a hidden object matching the shape alone has
+positive prior. -/
+theorem stimulus_prefers_full {c α wS : ℝ} (hα : 0 < α) (hw : 0 < wS)
+    (hego : (stimulus c).egoUtility {.shape} ≤
+      (stimulus c).egoUtility {.shape, .color, .texture}) :
+    ((stimulus c).mixSpeaker α wS ()).real {({.shape} : Utt)} <
+      ((stimulus c).mixSpeaker α wS ()).real {({.shape, .color, .texture} : Utt)} := by
+  refine (stimulus c).mixSpeaker_prefers (by norm_num [stimulus]) (by norm_num [stimulus])
+    ⟨target, by simp [stimulus]⟩ hiddenPrior_nonneg sum_hiddenPrior
+    (λ o h f hf => h f (by simp only [mem_singleton] at hf; simp [hf])) (stimulus_tie c)
+    ⟨λ f => decide (f = .shape), ?_, ?_, ?_⟩ hego hα hw
+  · intro f hf; simp at hf; simp [hf]
+  · intro h; have := h .color (by simp); simp at this
+  · rw [stimulus_hidden]; exact hiddenPrior_pos _
 
 end HawkinsGweonGoodman2021
