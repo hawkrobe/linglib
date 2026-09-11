@@ -1,0 +1,862 @@
+[
+  {
+    "id": "hayes1989_ex12b1",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(12b)"
+    },
+    "language": "lati1261",
+    "primaryText": "*kasnus > kaːnus",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "gray",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "type",
+        "classical"
+      ]
+    ],
+    "comment": "Coda s-deletion before an anterior sonorant lengthens the preceding vowel.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex12b2",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(12b)"
+    },
+    "language": "lati1261",
+    "primaryText": "*kosmis > koːmis",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "courteous",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "type",
+        "classical"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex12b3",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(12b)"
+    },
+    "language": "lati1261",
+    "primaryText": "*fideslia > fideːlia",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "pot",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "type",
+        "classical"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex14a",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(14)"
+    },
+    "language": "lati1261",
+    "primaryText": "*smereoː > mereoː",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "deserve, 1sg present",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "type",
+        "onset deletion"
+      ]
+    ],
+    "comment": "Word-initial s-deletion strands no mora: no lengthening.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex14b",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(14)"
+    },
+    "language": "lati1261",
+    "primaryText": "*snurus > nurus",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "daughter-in-law",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "type",
+        "onset deletion"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex14c",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(14)"
+    },
+    "language": "lati1261",
+    "primaryText": "*sluːbrikus > luːbrikus",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "slippery",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "type",
+        "onset deletion"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex19a",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(19)"
+    },
+    "language": "anci1242",
+    "primaryText": "*woikos > oikos",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "house",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "type",
+        "onset deletion"
+      ]
+    ],
+    "comment": "East Ionic: initial w-deletion without lengthening.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex19b",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(19)"
+    },
+    "language": "anci1242",
+    "primaryText": "*newos > neos",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "new",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "type",
+        "onset deletion"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex19c",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(19)"
+    },
+    "language": "anci1242",
+    "primaryText": "*odwos > oːdos",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "threshold",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "type",
+        "double flop"
+      ]
+    ],
+    "comment": "The vowel that lengthens is not adjacent to the deleted consonant.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_tale",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "§4.2"
+    },
+    "language": "midd1317",
+    "primaryText": "talə > taːl",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "tale",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2"
+      ],
+      [
+        "type",
+        "vowel loss"
+      ]
+    ],
+    "comment": "Minkova (1982): the stressed penult lengthens just when the final schwa drops.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex27a1",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(27a)"
+    },
+    "language": "ilok1237",
+    "primaryText": "luto ~ luttw-en",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to cook ~ cook, goal focus",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3.1"
+      ],
+      [
+        "type",
+        "glide formation"
+      ],
+      [
+        "consonant",
+        "obstruent"
+      ],
+      [
+        "gemination",
+        "usual"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex27a4",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(27a)"
+    },
+    "language": "ilok1237",
+    "primaryText": "bagi ~ baggy-en",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "body, self ~ to have as one's own",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3.1"
+      ],
+      [
+        "type",
+        "glide formation"
+      ],
+      [
+        "consonant",
+        "obstruent"
+      ],
+      [
+        "gemination",
+        "usual"
+      ]
+    ],
+    "comment": "The derivation of (38)–(40): glide formation, Parasitic Delinking, spreading from the right.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex27b1",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(27b)"
+    },
+    "language": "ilok1237",
+    "primaryText": "damo ~ damw-en, ?dammw-en",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the first time ~ to be new to something",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3.1"
+      ],
+      [
+        "type",
+        "glide formation"
+      ],
+      [
+        "consonant",
+        "nasal"
+      ],
+      [
+        "gemination",
+        "sporadic"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex27c2",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(27c)"
+    },
+    "language": "ilok1237",
+    "primaryText": "karo ~ karw-an",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "intense ~ to intensify",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3.1"
+      ],
+      [
+        "type",
+        "glide formation"
+      ],
+      [
+        "consonant",
+        "r"
+      ],
+      [
+        "gemination",
+        "never"
+      ]
+    ],
+    "comment": "Degemination (41) removes the geminate created by lengthening.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex27d1",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(27d)"
+    },
+    "language": "ilok1237",
+    "primaryText": "sakdo ~ pag-sakdw-an",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to fetch water ~ place where water is fetched",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3.1"
+      ],
+      [
+        "type",
+        "glide formation"
+      ],
+      [
+        "consonant",
+        "cluster"
+      ],
+      [
+        "gemination",
+        "never"
+      ]
+    ],
+    "comment": "Neither member of a cluster geminates: the first half cannot be syllabified and is erased.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex28",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(28)"
+    },
+    "language": "ilok1237",
+    "primaryText": "botelya",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "bottle",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3.1"
+      ],
+      [
+        "gemination",
+        "never"
+      ]
+    ],
+    "comment": "An underlying glide: consonants do not geminate before glides in general.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex42",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(42)"
+    },
+    "language": "ilok1237",
+    "primaryText": "punno ~ punnwan, punwan",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to fill",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3.1"
+      ],
+      [
+        "degemination",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex46",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(46)"
+    },
+    "language": "stan1293",
+    "primaryText": "patience: pasiəns > paːsyəns",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "patience",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3.2"
+      ],
+      [
+        "type",
+        "glide formation"
+      ]
+    ],
+    "comment": "Managerial Lengthening as compensatory lengthening from the left.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex55a",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(55a)"
+    },
+    "language": "gand1255",
+    "primaryText": "aika > akka",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1.7"
+      ],
+      [
+        "type",
+        "inverse"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex57",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(57)"
+    },
+    "language": "lati1261",
+    "primaryText": "#sa, osa: no #a:, oa:, o:a",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2.1"
+      ],
+      [
+        "type",
+        "onset deletion"
+      ]
+    ],
+    "comment": "Schematic: lengthening from onset loss is unattested.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_turkish1",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "§5.2.1"
+    },
+    "language": "nucl1301",
+    "primaryText": "savmak > saːmak",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to get rid of",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2.1"
+      ],
+      [
+        "type",
+        "classical"
+      ]
+    ],
+    "comment": "Sezer (1986): coda v-deletion before a labial lengthens.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_turkish2",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "§5.2.1"
+    },
+    "language": "nucl1301",
+    "primaryText": "davul > daul, not *daːul",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "drum",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2.1"
+      ],
+      [
+        "type",
+        "onset deletion"
+      ]
+    ],
+    "comment": "Onset v-deletion does not lengthen.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex61",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(61)"
+    },
+    "language": "lati1261",
+    "primaryText": "#ala: no #laː",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2.2"
+      ],
+      [
+        "type",
+        "vowel loss"
+      ]
+    ],
+    "comment": "Schematic: a deleted vowel never lengthens the vowel to its right.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex73a",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "§7"
+    },
+    "language": "komi1268",
+    "primaryText": "sul.ta.li > suːtali",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I stood up",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7"
+      ],
+      [
+        "type",
+        "vowel loss"
+      ]
+    ],
+    "comment": "Komi Izma: l-loss lengthens when the l has its own mora.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex73b",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(73)"
+    },
+    "language": "komi1268",
+    "primaryText": "sult.ni > sutni",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to stand up",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7"
+      ],
+      [
+        "type",
+        "no lengthening"
+      ]
+    ],
+    "comment": "In a doubly closed syllable the deleted consonant shares a mora and strands nothing.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex74",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(74)"
+    },
+    "language": "germ1287",
+    "primaryText": "*θaŋxta > θaːxta",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "thought",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7"
+      ],
+      [
+        "type",
+        "classical"
+      ],
+      [
+        "trimoraic",
+        "yes"
+      ]
+    ],
+    "comment": "Proto-Germanic: lengthening in a doubly closed syllable requires a trimoraic syllable.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex76a",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(76a)"
+    },
+    "language": "stan1295",
+    "primaryText": "*sprikst > sprekst",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "speak, 2sg",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7"
+      ],
+      [
+        "length",
+        "V"
+      ]
+    ],
+    "comment": "Dithmarschen/Stavenhagen German, after Hock (1986).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex76b",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(76b)"
+    },
+    "language": "stan1295",
+    "primaryText": "*sprekn > spreːkn",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "speak, 1pl",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7"
+      ],
+      [
+        "length",
+        "Vː"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hayes1989_ex76c",
+    "source": {
+      "bibkey": "hayes-1989",
+      "paperLabel": "(76c)"
+    },
+    "language": "stan1295",
+    "primaryText": "*sprekə > spreːkə > spreːːk",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "speak, 1sg",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7"
+      ],
+      [
+        "length",
+        "Vːː"
+      ],
+      [
+        "type",
+        "vowel loss"
+      ]
+    ],
+    "comment": "Schwa loss with lengthening yields the three-way length contrast.",
+    "lgrConformance": ""
+  }
+]
