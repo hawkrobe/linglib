@@ -1,0 +1,578 @@
+[
+  {
+    "id": "jardine2016a_8_kikopo",
+    "source": {
+      "bibkey": "jardine-2016a",
+      "paperLabel": "(8)"
+    },
+    "language": "gand1255",
+    "primaryText": "kikópo",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "cup",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "underlying_form",
+        "/ki-kópo/"
+      ],
+      [
+        "underlying",
+        "OHO"
+      ],
+      [
+        "surface",
+        "OHO"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jardine2016a_8_kisiki",
+    "source": {
+      "bibkey": "jardine-2016a",
+      "paperLabel": "(8)"
+    },
+    "language": "gand1255",
+    "primaryText": "kisikî",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "log",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "underlying_form",
+        "/ki-sikí/"
+      ],
+      [
+        "underlying",
+        "OOH"
+      ],
+      [
+        "surface",
+        "OOH"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jardine2016a_8_kitabo",
+    "source": {
+      "bibkey": "jardine-2016a",
+      "paperLabel": "(8)"
+    },
+    "language": "gand1255",
+    "primaryText": "kitabo",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "book",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "underlying_form",
+        "/ki-tabo/"
+      ],
+      [
+        "underlying",
+        "OOO"
+      ],
+      [
+        "surface",
+        "OOO"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jardine2016a_8_mutunda",
+    "source": {
+      "bibkey": "jardine-2016a",
+      "paperLabel": "(8)"
+    },
+    "language": "gand1255",
+    "primaryText": "mutunda",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "seller",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "underlying_form",
+        "/mu-tund-a/"
+      ],
+      [
+        "underlying",
+        "OOO"
+      ],
+      [
+        "surface",
+        "OOO"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jardine2016a_8_mutema",
+    "source": {
+      "bibkey": "jardine-2016a",
+      "paperLabel": "(8)"
+    },
+    "language": "gand1255",
+    "primaryText": "mutéma",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "chopper",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "underlying_form",
+        "/mu-tém-a/"
+      ],
+      [
+        "underlying",
+        "OHO"
+      ],
+      [
+        "surface",
+        "OHO"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jardine2016a_9a",
+    "source": {
+      "bibkey": "jardine-2016a",
+      "paperLabel": "(9a)"
+    },
+    "language": "gand1255",
+    "primaryText": "mutunda-bikópo",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "cup-seller",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "underlying_form",
+        "/mu-tund-a+bi-kópo/"
+      ],
+      [
+        "underlying",
+        "OOOOHO"
+      ],
+      [
+        "surface",
+        "OOOOHO"
+      ]
+    ],
+    "comment": "A toneless noun and a H-toned noun are pronounced as in isolation.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jardine2016a_9b",
+    "source": {
+      "bibkey": "jardine-2016a",
+      "paperLabel": "(9b)"
+    },
+    "language": "gand1255",
+    "primaryText": "mutémá-bísíkî",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "log-chopper",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "underlying_form",
+        "/mu-tém-a+bi-sikí/"
+      ],
+      [
+        "underlying",
+        "OHOOOH"
+      ],
+      [
+        "surface",
+        "OHHHHH"
+      ]
+    ],
+    "comment": "A plateau over three unspecified TBUs.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jardine2016a_10b",
+    "source": {
+      "bibkey": "jardine-2016a",
+      "paperLabel": "(10b)"
+    },
+    "language": "gand1255",
+    "primaryText": "tw-áá-láb-wá wálúsimbi",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we were seen by Walusimbi",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "underlying_form",
+        "/tw-áa-láb-w-a walúsimbi/"
+      ],
+      [
+        "underlying",
+        "HHHOOHOO"
+      ],
+      [
+        "surface",
+        "HHHHHHOO"
+      ]
+    ],
+    "comment": "The noun and the verb form a phonological phrase, criterion (6c).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jardine2016a_12a",
+    "source": {
+      "bibkey": "jardine-2016a",
+      "paperLabel": "(12a)"
+    },
+    "language": "gand1255",
+    "primaryText": "tw-áá-láb-á byáá-wálúsimbi",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we saw those of Walusimbi",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "underlying_form",
+        "/tw-áa-láb-a byaa=walúsimbi/"
+      ],
+      [
+        "underlying",
+        "HHHOOOOHOO"
+      ],
+      [
+        "surface",
+        "HHHHHHHHOO"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jardine2016a_12b",
+    "source": {
+      "bibkey": "jardine-2016a",
+      "paperLabel": "(12b)"
+    },
+    "language": "gand1255",
+    "primaryText": "tw-áá-génd-á ná=byáá=bá=wálúsimbi",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we went with those of Walusimbi",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "underlying_form",
+        "/tw-áa-génd-a na=byaa=ba=walúsimbi/"
+      ],
+      [
+        "underlying",
+        "HHHOOOOOOHOO"
+      ],
+      [
+        "surface",
+        "HHHHHHHHHHOO"
+      ]
+    ],
+    "comment": "A six-TBU span of toneless TBUs, triggers five TBUs from their targets on each side.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jardine2016a_18b",
+    "source": {
+      "bibkey": "jardine-2016a",
+      "paperLabel": "(18b)"
+    },
+    "language": "zulu1248",
+    "primaryText": "ámákhósꜜánà",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "underlying_form",
+        "/ámàkhòsánà/"
+      ],
+      [
+        "underlying",
+        "HOOHO"
+      ],
+      [
+        "surface",
+        "HHHHO"
+      ]
+    ],
+    "comment": "The two Hs do not fuse; the second is downstepped.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jardine2016a_21a",
+    "source": {
+      "bibkey": "jardine-2016a",
+      "paperLabel": "(21a)"
+    },
+    "language": "sara1340",
+    "primaryText": "dí hánsò sëmbë",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the handsome person",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "underlying_form",
+        "/dí hánso sëmbë/"
+      ],
+      [
+        "underlying",
+        "HHOOO"
+      ],
+      [
+        "surface",
+        "HHOOO"
+      ]
+    ],
+    "comment": "No second H: the final /o/ of /hánso/ stays low.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jardine2016a_21b",
+    "source": {
+      "bibkey": "jardine-2016a",
+      "paperLabel": "(21b)"
+    },
+    "language": "sara1340",
+    "primaryText": "dí hánsó wómì",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the handsome man",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "underlying_form",
+        "/dí hánso wómi/"
+      ],
+      [
+        "underlying",
+        "HHOHO"
+      ],
+      [
+        "surface",
+        "HHHHO"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jardine2016a_21c",
+    "source": {
+      "bibkey": "jardine-2016a",
+      "paperLabel": "(21c)"
+    },
+    "language": "sara1340",
+    "primaryText": "dí hánsó mújêë",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the handsome woman",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "underlying_form",
+        "/dí hánso mujêE/"
+      ],
+      [
+        "underlying",
+        "HHOOHO"
+      ],
+      [
+        "surface",
+        "HHHHHO"
+      ]
+    ],
+    "comment": "Plateauing over two TBUs.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jardine2016a_21d",
+    "source": {
+      "bibkey": "jardine-2016a",
+      "paperLabel": "(21d)"
+    },
+    "language": "sara1340",
+    "primaryText": "dí wájámáká=dé á óbo",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the iguana there has eggs",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "underlying_form",
+        "/dí wajamáka=dé á óbo/"
+      ],
+      [
+        "underlying",
+        "HOOHOHHHO"
+      ],
+      [
+        "surface",
+        "HHHHHHHHO"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jardine2016a_21e",
+    "source": {
+      "bibkey": "jardine-2016a",
+      "paperLabel": "(21e)"
+    },
+    "language": "sara1340",
+    "primaryText": "tàángá ámêêká wómì",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(the) strong American man",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "underlying_form",
+        "/taánga amEEká wómi/"
+      ],
+      [
+        "underlying",
+        "OHOOOOHHO"
+      ],
+      [
+        "surface",
+        "OHHHHHHHO"
+      ]
+    ],
+    "comment": "The domain from /taánga/: a plateau over four TBUs, the final /a/ of /taánga/ and the first three vowels of /amEEká/; the determiner /dí/ precedes it outside the domain.",
+    "lgrConformance": ""
+  }
+]
