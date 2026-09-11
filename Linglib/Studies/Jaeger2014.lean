@@ -441,123 +441,143 @@ end
 
 noncomputable section
 
-/-! ### Support-restricted belief helpers -/
+/-! ### Beliefs on a singleton and on a pair
 
-section BeliefHelpers
+A full-support belief on one strategy is its point mass, and on a pair of strategies a mixture
+with weights `t` and `1 - t` for some `0 < t < 1`; sums against such beliefs collapse to the
+support. -/
 
-variable {M : Type*} [Fintype M]
+section Support
 
-theorem IsFullDistOn.singleton_eq_one {r₀ : M} {ρ : M → ℝ}
-    (h : IsFullDistOn {r₀} ρ) : ρ r₀ = 1 := by
-  have hsum := h.2.2
-  rwa [Finset.sum_eq_single r₀ (λ b _ hb => h.2.1 b (by simp [hb]))
-    (λ hb => absurd (Finset.mem_univ _) hb)] at hsum
+variable {M : Type*} [Fintype M] [DecidableEq M] {a b : M} {ρ : M → ℝ}
 
-/-- A sum against a belief supported on a single strategy collapses to the
-value at that strategy. -/
-theorem sum_mul_of_fullDistOn_singleton {r₀ : M} {ρ : M → ℝ}
-    (h : IsFullDistOn {r₀} ρ) (X : M → ℝ) :
-    ∑ r, ρ r * X r = X r₀ := by
-  rw [Finset.sum_eq_single r₀ (λ b _ hb => by rw [h.2.1 b (by simp [hb]), zero_mul])
-    (λ hb => absurd (Finset.mem_univ _) hb), h.singleton_eq_one, one_mul]
+/-- The mixture of two point masses with weight `t` on `a`. -/
+def mix (a b : M) (t : ℝ) : M → ℝ := λ r => if r = a then t else if r = b then 1 - t else 0
 
-/-- A sum against a belief supported on a pair collapses to the two terms. -/
-theorem sum_mul_of_fullDistOn_pair [DecidableEq M] {a b : M} (hab : a ≠ b)
-    {ρ : M → ℝ} (h : IsFullDistOn {a, b} ρ) (X : M → ℝ) :
-    ∑ r, ρ r * X r = ρ a * X a + ρ b * X b :=
-  ((Finset.sum_subset (Finset.subset_univ _) λ x _ hx => by
-    rw [h.2.1 x (by simpa using hx), zero_mul]).symm).trans
-    (Finset.sum_pair hab)
+theorem isFullDistOn_singleton_iff : IsFullDistOn {a} ρ ↔ ρ = Pi.single a 1 := by
+  constructor
+  · rintro ⟨hpos, hzero, hsum⟩
+    have h1 : ρ a = 1 := by
+      rwa [Finset.sum_eq_single a (λ b _ hb => hzero b hb) (λ h => absurd (Finset.mem_univ _) h)]
+        at hsum
+    funext r
+    by_cases hr : r = a
+    · subst hr; simp [h1]
+    · simp [hr, hzero r hr]
+  · rintro rfl
+    refine ⟨λ x hx => ?_, λ x hx => ?_, ?_⟩
+    · rw [Set.mem_singleton_iff.1 hx]; simp
+    · simp [Set.mem_singleton_iff.not.1 hx]
+    · simp
 
-/-- The pair of weights of a full-support belief on a pair sums to 1, with
-both weights positive. -/
-theorem IsFullDistOn.pair_props [DecidableEq M] {a b : M} (hab : a ≠ b)
-    {ρ : M → ℝ} (h : IsFullDistOn {a, b} ρ) :
-    0 < ρ a ∧ 0 < ρ b ∧ ρ a + ρ b = 1 := by
-  refine ⟨h.1 a (by simp), h.1 b (by simp), ?_⟩
-  have hsum := h.2.2
+theorem isFullDistOn_pair_iff (hab : a ≠ b) :
+    IsFullDistOn {a, b} ρ ↔ ∃ t, 0 < t ∧ t < 1 ∧ ρ = mix a b t := by
+  constructor
+  · rintro ⟨hpos, hzero, hsum⟩
+    have ha := hpos a (by simp)
+    have hb := hpos b (by simp)
+    rw [← Finset.sum_subset (Finset.subset_univ ({a, b} : Finset M))
+      (λ x _ hx => hzero x (by simpa using hx)), Finset.sum_pair hab] at hsum
+    refine ⟨ρ a, ha, by linarith, funext λ r => ?_⟩
+    simp only [mix]
+    split_ifs with h₁ h₂
+    · rw [h₁]
+    · rw [h₂]; linarith
+    · exact hzero r (by simp [h₁, h₂])
+  · rintro ⟨t, h0, h1, rfl⟩
+    refine ⟨λ x hx => ?_, λ x hx => ?_, ?_⟩
+    · rcases hx with rfl | hx
+      · simp [mix, h0]
+      · rw [Set.mem_singleton_iff.1 hx]; simp [mix, Ne.symm hab]; linarith
+    · simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at hx
+      simp [mix, hx.1, hx.2]
+    · rw [← Finset.sum_subset (Finset.subset_univ ({a, b} : Finset M))
+        (λ x _ hx => by simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hx
+                        simp [mix, hx.1, hx.2]),
+        Finset.sum_pair hab]
+      simp [mix, Ne.symm hab]
+
+theorem sum_mul_single (X : M → ℝ) : ∑ r, (Pi.single a 1 : M → ℝ) r * X r = X a := by
+  simp [Pi.single_apply]
+
+theorem sum_mul_mix (hab : a ≠ b) (t : ℝ) (X : M → ℝ) :
+    ∑ r, mix a b t r * X r = t * X a + (1 - t) * X b := by
   rw [← Finset.sum_subset (Finset.subset_univ ({a, b} : Finset M))
-    (λ x _ hx => h.2.1 x (by simpa using hx)), Finset.sum_pair hab] at hsum
-  exact hsum
+    (λ x _ hx => by simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hx
+                    simp [mix, hx.1, hx.2]),
+    Finset.sum_pair hab]
+  simp [mix, Ne.symm hab]
 
-/-- The point mass on `r₀` has full support on `{r₀}`. -/
-theorem isFullDistOn_pointMass [DecidableEq M] (r₀ : M) :
-    IsFullDistOn {r₀} (λ r => if r = r₀ then (1 : ℝ) else 0) :=
-  ⟨λ x hx => by simp [Set.mem_singleton_iff.mp hx],
-   λ x hx => by simp [Set.mem_singleton_iff] at hx; simp [hx],
-   by rw [Finset.sum_ite_eq' Finset.univ r₀ λ _ => (1 : ℝ)]
-      exact if_pos (Finset.mem_univ _)⟩
+end Support
 
-/-- The uniform belief on a pair has full support on it. -/
-theorem isFullDistOn_pairUniform [DecidableEq M] {a b : M} (hab : a ≠ b) :
-    IsFullDistOn {a, b}
-      (λ r => if r = a then (1 : ℝ)/2 else if r = b then 1/2 else 0) := by
-  refine ⟨λ x hx => ?_, λ x hx => ?_, ?_⟩
-  · dsimp only
-    rcases hx with rfl | hx
-    · norm_num
-    · rw [if_neg (by rintro rfl; exact hab (Set.mem_singleton_iff.mp hx)),
-        if_pos (Set.mem_singleton_iff.mp hx)]
-      norm_num
-  · simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at hx
-    dsimp only
-    rw [if_neg hx.1, if_neg hx.2]
-  · rw [← Finset.sum_subset (Finset.subset_univ ({a, b} : Finset M)) (λ x _ hx => by
-      simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hx
-      rw [if_neg hx.1, if_neg hx.2]), Finset.sum_pair hab]
-    rw [if_pos rfl, if_neg (Ne.symm hab), if_pos rfl]
-    norm_num
+/-- Over a single context the only full-support belief is certainty. -/
+theorem isFullDist_unit_iff {q : Unit → ℝ} : IsFullDist q ↔ q = λ _ => 1 := by
+  constructor
+  · rintro ⟨-, h⟩; funext u; cases u; simpa using h
+  · rintro rfl; exact ⟨λ _ => one_pos, by simp⟩
 
-/-- A weighted belief on a pair, with weight `t` on `a` and `1 - t` on `b`,
-has full support on the pair whenever `0 < t < 1`. -/
-theorem isFullDistOn_pairWeighted [DecidableEq M] {a b : M} (hab : a ≠ b)
-    {t : ℝ} (h0 : 0 < t) (h1 : t < 1) :
-    IsFullDistOn {a, b}
-      (λ r => if r = a then t else if r = b then 1 - t else 0) := by
-  refine ⟨λ x hx => ?_, λ x hx => ?_, ?_⟩
-  · dsimp only
-    rcases hx with rfl | hx
-    · rw [if_pos rfl]; exact h0
-    · rw [if_neg (by rintro rfl; exact hab (Set.mem_singleton_iff.mp hx)),
-        if_pos (Set.mem_singleton_iff.mp hx)]
-      linarith
-  · simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at hx
-    dsimp only
-    rw [if_neg hx.1, if_neg hx.2]
-  · rw [← Finset.sum_subset (Finset.subset_univ ({a, b} : Finset M)) (λ x _ hx => by
-      simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hx
-      rw [if_neg hx.1, if_neg hx.2]), Finset.sum_pair hab]
-    rw [if_pos rfl, if_neg (Ne.symm hab), if_pos rfl]
-    ring
+namespace SemanticGame
 
-omit [Fintype M] in
-/-- The weight of a `isFullDistOn_pairWeighted` belief on its second point. -/
-theorem pairWeighted_apply_right [DecidableEq M] {a b : M} (hab : a ≠ b) {t : ℝ} :
-    (if b = a then t else if b = b then 1 - t else 0) = 1 - t := by
-  rw [if_neg (Ne.symm hab), if_pos rfl]
+variable {C W F A : Type*} [Fintype C] [Fintype W] [Fintype F] [Fintype A]
+  [DecidableEq C] [DecidableEq W] [DecidableEq F] (g : SemanticGame C W F A)
 
-/-- The constant-one function is a full-support distribution over `Unit`. -/
-theorem isFullDist_unitOne : IsFullDist (λ _ : Unit => (1 : ℝ)) :=
-  ⟨λ _ => one_pos, by simp⟩
+/-- Cautious responses of the sender, pointwise. -/
+theorem mem_senderCR_iff {R : Set (C → F → A)} {s : C → W → F} :
+    s ∈ g.senderCR R ↔ ∃ ρ q, IsFullDistOn R ρ ∧ IsFullDist q ∧
+      ∀ c w, s c w ∈ Finset.univ.argmax (g.senderEU ρ q c w) := by
+  simp only [senderCR, Set.mem_ofPred_eq, mem_senderBR_iff]
 
-theorem IsFullDist.unit_eq_one {q : Unit → ℝ} (h : IsFullDist q) : q () = 1 := by
-  have := h.2
-  simpa using this
+/-- Cautious responses of the receiver, pointwise. -/
+theorem mem_receiverCR_iff {S : Set (C → W → F)} {r : C → F → A} :
+    r ∈ g.receiverCR S ↔ ∃ σ q, IsFullDistOn S σ ∧ IsFullDist q ∧
+      ∀ c f, r c f ∈ Finset.univ.argmax (g.receiverEU σ q c f) := by
+  simp only [receiverCR, Set.mem_ofPred_eq, mem_receiverBR_iff]
 
-end BeliefHelpers
+omit [DecidableEq W] in
+/-- The sender's expected utility against a single receiver strategy. -/
+theorem senderEU_single [DecidableEq A] (r₀ : C → F → A) (q : C → ℝ) (c : C) (w : W) (f : F) :
+    g.senderEU (Pi.single r₀ 1) q c w f = ∑ c', q c' * g.uS c w f (r₀ c' f) :=
+  sum_mul_single _
 
-/-! ### Horn's division of pragmatic labor ([jaeger-2014] §5, Example 6)
+omit [DecidableEq W] in
+/-- The sender's expected utility against a mixture of two receiver strategies. -/
+theorem senderEU_mix [DecidableEq A] {r₀ r₁ : C → F → A} (h : r₀ ≠ r₁) (t : ℝ) (q : C → ℝ)
+    (c : C) (w : W) (f : F) :
+    g.senderEU (mix r₀ r₁ t) q c w f =
+      t * ∑ c', q c' * g.uS c w f (r₀ c' f) + (1 - t) * ∑ c', q c' * g.uS c w f (r₁ c' f) :=
+  sum_mul_mix h t _
 
-Two worlds (world `0` frequent with prior `3/4`, world `1` rare), two
-semantically *equivalent* signals (both tautologies), with signal `1`
-costlier by one util; matching utilities scaled by 5; a single context.
-The ICR trace R₀ … S₂ reaches a fixed point at the Horn convention: the
-cheap form marks the frequent world, the costly form the rare one — both
-PRS sets are the identity strategies. -/
+omit [Fintype A] in
+/-- The receiver's expected utility against a single sender strategy. -/
+theorem receiverEU_single (s₀ : C → W → F) (q : C → ℝ) (c : C) (f : F) (a : A) :
+    g.receiverEU (Pi.single s₀ 1) q c f a =
+      ∑ c', q c' * ∑ w, g.prior w * (if s₀ c' w = f then g.uR c w a else 0) :=
+  sum_mul_single _
+
+omit [Fintype A] in
+/-- The receiver's expected utility against a mixture of two sender strategies. -/
+theorem receiverEU_mix {s₀ s₁ : C → W → F} (h : s₀ ≠ s₁) (t : ℝ) (q : C → ℝ) (c : C) (f : F)
+    (a : A) :
+    g.receiverEU (mix s₀ s₁ t) q c f a =
+      t * ∑ c', q c' * ∑ w, g.prior w * (if s₀ c' w = f then g.uR c w a else 0) +
+        (1 - t) * ∑ c', q c' * ∑ w, g.prior w * (if s₁ c' w = f then g.uR c w a else 0) :=
+  sum_mul_mix h t _
+
+end SemanticGame
+
+/-! ### Horn's division of pragmatic labor (Section 5, Example 6)
+
+Two worlds, the first three times as likely as the second, two synonymous signals, both
+tautologies, the second costing one unit more, matching utilities of 5, one context. The
+sequence runs `R₀ = {0}`, `S₀ = {0}`, `R₁ = {r | r 0 = 0}`, `S₁ = {s | s 0 = 0}`,
+`R₂ = S₂ = {id}` and stays there; each stage is an argmax over `Fin 2` against a belief on the
+one or two strategies of the previous stage. -/
 
 namespace Horn
 
-/-- Example 6's semantic game. -/
+open Data.Examples
+
+/-- Example 6's semantic game, Table 10. -/
 def game : SemanticGame Unit (Fin 2) (Fin 2) (Fin 2) where
   prior := λ w => if w = 0 then 3/4 else 1/4
   prior_pos := by intro w; fin_cases w <;> norm_num
@@ -567,136 +587,13 @@ def game : SemanticGame Unit (Fin 2) (Fin 2) (Fin 2) where
   cost := λ f => if f = 0 then 0 else 1
   uR := λ _ w a => if w = a then 5 else 0
 
-/-- The credulous stage: both signals are tautologies, so the receiver
-answers with the a-priori most likely world's action. -/
-private theorem icrR_zero : game.icrR 0 = {λ _ _ => 0} := by
-  have hopt : ∀ (c : Unit) (f : Fin 2),
-      game.optimalActions c (game.extension f) game.prior = {0} := by
-    intro c f
-    ext a
-    simp only [SemanticGame.optimalActions, SemanticGame.extension,
-      Finset.mem_argmax, Finset.mem_univ, true_and, true_implies,
-      Finset.mem_singleton]
-    rw [show (Finset.univ.filter λ w => game.meaning f w) = Finset.univ from by
-      simp [game]]
-    constructor
-    · intro h
-      fin_cases a
-      · rfl
-      · exfalso
-        have h0 := h 0
-        rw [Fin.sum_univ_two, Fin.sum_univ_two] at h0
-        simp only [game] at h0
-        norm_num at h0
-    · rintro rfl b
-      rw [Fin.sum_univ_two, Fin.sum_univ_two]
-      fin_cases b <;> simp only [game] <;> norm_num
-  ext r
-  simp only [SemanticGame.icrR, Set.mem_ofPred_eq, Set.mem_singleton_iff]
-  constructor
-  · intro h
-    funext c f
-    have := h c f
-    rw [hopt] at this
-    simpa using this
-  · rintro rfl c f
-    rw [hopt]
-    exact Finset.mem_singleton_self _
+/-- The constant strategy and the identity: the only strategies the sequence visits. -/
+private theorem zero_ne_id : (λ _ _ => 0 : Unit → Fin 2 → Fin 2) ≠ (λ _ x => x) := λ h =>
+  absurd (congrFun (congrFun h ()) 1) (by decide)
 
-/-! ### Evaluating the ICR trace
-
-Both signals are tautologous, the context is trivial, and only two
-strategies ever occur — `λ _ _ => 0` and `λ _ x => x` — so every stage
-reduces to a pair of argmaxes over `Fin 2` against a belief whose support
-is a singleton or that pair. -/
-
-/-- Both signals mean `True`, so every signal's extension is all worlds. -/
-private theorem extension_eq (f : Fin 2) : game.extension f = Finset.univ := by
-  simp [SemanticGame.extension, game]
-
-/-- With a trivial context, the sender's expected utility collapses to the
-belief-weighted receiver response. -/
-private theorem senderEU_eq {ρ : (Unit → Fin 2 → Fin 2) → ℝ} {q : Unit → ℝ}
-    (hq : IsFullDist q) (w f : Fin 2) :
-    game.senderEU ρ q () w f = ∑ r, ρ r * game.uS () w f (r () f) := by
-  simp only [SemanticGame.senderEU]
-  exact Finset.sum_congr rfl λ r _ => by simp [hq.unit_eq_one]
-
-/-- With a trivial context, the receiver's per-signal expected utility
-collapses to the belief-weighted prior mass. -/
-private theorem receiverEU_eq {σ : (Unit → Fin 2 → Fin 2) → ℝ} {q : Unit → ℝ}
-    (hq : IsFullDist q) (f a : Fin 2) :
-    game.receiverEU σ q () f a =
-      ∑ s, σ s * ∑ w, game.prior w * (if s () w = f then game.uR () w a else 0) := by
-  simp only [SemanticGame.receiverEU]
-  exact Finset.sum_congr rfl λ s _ => by simp [hq.unit_eq_one]
-
-/-- An argmax over `Fin 2` is pinned down by the two pointwise comparisons. -/
-private theorem mem_argmax_fin2 (V : Fin 2 → ℝ) (x : Fin 2) :
-    x ∈ Finset.univ.argmax V ↔ V 0 ≤ V x ∧ V 1 ≤ V x := by
-  simp only [Finset.mem_argmax, Finset.mem_univ, true_and, true_implies]
-  exact ⟨λ h => ⟨h 0, h 1⟩, λ ⟨h0, h1⟩ b => by fin_cases b <;> assumption⟩
-
-/-- Either action can be made optimal for an unexpected signal by a suitably
-skewed posterior — the belief-revision clause of `icrR` is always
-satisfiable. -/
-private theorem optimalActions_witness (x : Fin 2) :
-    ∃ p, IsFullDist p ∧ x ∈ game.optimalActions () Finset.univ p := by
-  refine ⟨λ w => if w = x then 2/3 else 1/3,
-    ⟨λ w => by dsimp only; split_ifs <;> norm_num, by
-      rw [Fin.sum_univ_two]; fin_cases x <;> simp <;> norm_num⟩, ?_⟩
-  simp only [SemanticGame.optimalActions, mem_argmax_fin2]
-  constructor <;> · rw [Fin.sum_univ_two, Fin.sum_univ_two]
-                    fin_cases x <;> simp only [game] <;> norm_num
-
-/-! ### Expected-utility values against the trace's beliefs -/
-
-/-- Sender expected utility against a belief pinned to a single receiver. -/
-private theorem senderEU_singleton {r₀ : Unit → Fin 2 → Fin 2}
-    {ρ : (Unit → Fin 2 → Fin 2) → ℝ} {q : Unit → ℝ}
-    (hρ : IsFullDistOn {r₀} ρ) (hq : IsFullDist q) (w f : Fin 2) :
-    game.senderEU ρ q () w f = game.uS () w f (r₀ () f) := by
-  rw [senderEU_eq hq, sum_mul_of_fullDistOn_singleton hρ]
-
-/-- Sender expected utility against a belief supported on two receivers. -/
-private theorem senderEU_pair {a b : Unit → Fin 2 → Fin 2} (hab : a ≠ b)
-    {ρ : (Unit → Fin 2 → Fin 2) → ℝ} {q : Unit → ℝ}
-    (hρ : IsFullDistOn {a, b} ρ) (hq : IsFullDist q) (w f : Fin 2) :
-    game.senderEU ρ q () w f =
-      ρ a * game.uS () w f (a () f) + ρ b * game.uS () w f (b () f) := by
-  rw [senderEU_eq hq, sum_mul_of_fullDistOn_pair hab hρ]
-
-/-- Receiver expected utility against a belief pinned to a single sender. -/
-private theorem receiverEU_singleton {s₀ : Unit → Fin 2 → Fin 2}
-    {σ : (Unit → Fin 2 → Fin 2) → ℝ} {q : Unit → ℝ}
-    (hσ : IsFullDistOn {s₀} σ) (hq : IsFullDist q) (f a : Fin 2) :
-    game.receiverEU σ q () f a =
-      ∑ w, game.prior w * (if s₀ () w = f then game.uR () w a else 0) := by
-  rw [receiverEU_eq hq, sum_mul_of_fullDistOn_singleton hσ]
-
-/-- Receiver expected utility against a belief supported on two senders. -/
-private theorem receiverEU_pair {s₀ s₁ : Unit → Fin 2 → Fin 2} (hs : s₀ ≠ s₁)
-    {σ : (Unit → Fin 2 → Fin 2) → ℝ} {q : Unit → ℝ}
-    (hσ : IsFullDistOn {s₀, s₁} σ) (hq : IsFullDist q) (f a : Fin 2) :
-    game.receiverEU σ q () f a =
-      σ s₀ * (∑ w, game.prior w * (if s₀ () w = f then game.uR () w a else 0)) +
-        σ s₁ * (∑ w, game.prior w * (if s₁ () w = f then game.uR () w a else 0)) := by
-  rw [receiverEU_eq hq, sum_mul_of_fullDistOn_pair hs hσ]
-
-/-! ### The two recurring strategies
-
-`λ _ _ => 0` and `λ _ x => x` are the only functions in the trace; the
-support sets `{h | h () 0 = 0}` and `{h | h () 0 = 0 ∧ h () 1 = 1}` are their
-pair and their common identity element. -/
-
-private theorem zero_ne_id :
-    (λ _ _ => 0 : Unit → Fin 2 → Fin 2) ≠ (λ _ x => x) := λ h =>
-  absurd (congrFun (congrFun h ()) 1) (by norm_num)
-
-/-- The senders (or receivers) fixing coordinate `0` are exactly the pair. -/
+/-- The strategies fixing coordinate `0` are the constant and the identity. -/
 private theorem pair_eq :
-    {h : Unit → Fin 2 → Fin 2 | h () 0 = 0} =
-      {(λ _ _ => 0), (λ _ x => x)} := by
+    {h : Unit → Fin 2 → Fin 2 | h () 0 = 0} = {(λ _ _ => 0), (λ _ x => x)} := by
   ext h
   simp only [Set.mem_ofPred_eq, Set.mem_insert_iff, Set.mem_singleton_iff]
   constructor
@@ -706,386 +603,215 @@ private theorem pair_eq :
     · right; funext c x; cases c; fin_cases x <;> simp_all
   · rintro (rfl | rfl) <;> rfl
 
-/-- The identity is the only strategy fixing both coordinates. -/
-private theorem singleton_eq :
-    {h : Unit → Fin 2 → Fin 2 | h () 0 = 0 ∧ h () 1 = 1} = {λ _ x => x} := by
-  ext h
-  simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff]
-  constructor
-  · rintro ⟨h0, h1⟩; funext c x; cases c; fin_cases x <;> assumption
-  · rintro rfl; exact ⟨rfl, rfl⟩
+/-- An argmax over `Fin 2` is the index of the strictly larger value, or everything on a tie. -/
+private theorem argmax_fin2_zero {V : Fin 2 → ℝ} (h : V 1 < V 0) :
+    Finset.univ.argmax V = {0} := by
+  ext x; fin_cases x <;> simp [Finset.mem_argmax, Fin.forall_fin_two] <;> linarith
 
-/-! ### The sender stages S₀ and S₂
+private theorem argmax_fin2_one {V : Fin 2 → ℝ} (h : V 0 < V 1) :
+    Finset.univ.argmax V = {1} := by
+  ext x; fin_cases x <;> simp [Finset.mem_argmax, Fin.forall_fin_two] <;> linarith
 
-Against a receiver who ignores the signal (`λ _ _ => 0`) the sender always
-prefers the cheap form; against the literal receiver (`λ _ x => x`) the
-sender matches signal to world — the Horn convention. -/
+private theorem argmax_fin2_univ {V : Fin 2 → ℝ} (h : V 0 = V 1) :
+    Finset.univ.argmax V = Finset.univ := by
+  ext x; fin_cases x <;> simp [Finset.mem_argmax, Fin.forall_fin_two, h.le, h.ge]
 
-/-- Against the constant receiver, the cheap form is uniquely optimal. -/
-private theorem argmax_sender_z {ρ : (Unit → Fin 2 → Fin 2) → ℝ} {q : Unit → ℝ}
-    (hρ : IsFullDistOn {(λ _ _ => 0 : Unit → Fin 2 → Fin 2)} ρ) (hq : IsFullDist q)
-    (w : Fin 2) : Finset.univ.argmax (game.senderEU ρ q () w) = {0} := by
-  ext x
-  rw [Finset.mem_singleton, mem_argmax_fin2]
-  simp only [senderEU_singleton hρ hq]
-  fin_cases w <;> fin_cases x <;> simp only [game, SemanticGame.uS] <;> norm_num
+/-- The stage-`n + 1` receiver set, unfolded. -/
+private theorem icrR_succ (n : ℕ) :
+    game.icrR (n + 1) = {r ∈ game.receiverCR (game.senderCR (game.icrR n)) |
+      ∀ f, SemanticGame.Unexpected (game.senderCR (game.icrR n)) f →
+        ∀ c, ∃ p, IsFullDist p ∧ r c f ∈ game.optimalActions c (game.extension f) p} :=
+  rfl
 
-/-- Against the literal receiver, the sender matches signal to world. -/
-private theorem argmax_sender_e {ρ : (Unit → Fin 2 → Fin 2) → ℝ} {q : Unit → ℝ}
-    (hρ : IsFullDistOn {(λ _ x => x : Unit → Fin 2 → Fin 2)} ρ) (hq : IsFullDist q)
-    (w : Fin 2) : Finset.univ.argmax (game.senderEU ρ q () w) = {w} := by
-  ext x
-  rw [Finset.mem_singleton, mem_argmax_fin2]
-  simp only [senderEU_singleton hρ hq]
-  fin_cases w <;> fin_cases x <;> simp only [game, SemanticGame.uS] <;> norm_num
+private theorem extension_eq (f : Fin 2) : game.extension f = Finset.univ := by
+  simp [SemanticGame.extension, game]
 
-/-- S₀: the cautious responses to the credulous receiver send the cheap
-form at both worlds. -/
+/-- The credulous stage: both signals are tautologies, so the receiver plays the frequent
+world's action on either. -/
+private theorem icrR_zero : game.icrR 0 = {λ _ _ => 0} := by
+  have h : ∀ (c : Unit) (f : Fin 2),
+      game.optimalActions c (game.extension f) game.prior = {0} := λ c f => by
+    rw [SemanticGame.optimalActions, extension_eq]
+    exact argmax_fin2_zero (by simp [game]; norm_num)
+  ext r
+  simp only [SemanticGame.icrR, Set.mem_ofPred_eq, Set.mem_singleton_iff, h,
+    Finset.mem_singleton]
+  exact ⟨λ hr => funext λ c => funext (hr c), λ hr c f => by subst hr; rfl⟩
+
+/-- `S₀`: against the credulous receiver the cheap form is uniquely optimal at both worlds. -/
 private theorem icrS_zero : game.icrS 0 = {λ _ _ => 0} := by
-  show game.senderCR (game.icrR 0) = _
-  rw [icrR_zero]
+  have e : ∀ w : Fin 2,
+      Finset.univ.argmax (game.senderEU (Pi.single (λ _ _ => 0) 1) (λ _ => 1) () w) = {0} :=
+    λ w => argmax_fin2_zero (by
+      fin_cases w <;> simp [SemanticGame.senderEU_single, game, SemanticGame.uS])
   ext s
-  simp only [SemanticGame.senderCR, Set.mem_ofPred_eq, Set.mem_singleton_iff]
+  rw [SemanticGame.icrS, icrR_zero, SemanticGame.mem_senderCR_iff, Set.mem_singleton_iff]
   constructor
   · rintro ⟨ρ, q, hρ, hq, hBR⟩
-    rw [game.mem_senderBR_iff] at hBR
+    rw [isFullDistOn_singleton_iff] at hρ
+    rw [isFullDist_unit_iff] at hq
+    subst hρ hq
     funext c w; cases c
-    have := hBR () w
-    rw [argmax_sender_z hρ hq, Finset.mem_singleton] at this
-    exact this
+    simpa [e] using hBR () w
   · rintro rfl
-    refine ⟨_, _, isFullDistOn_pointMass _, isFullDist_unitOne, ?_⟩
-    rw [game.mem_senderBR_iff]
-    intro c w; cases c
-    rw [argmax_sender_z (isFullDistOn_pointMass _) isFullDist_unitOne]
-    exact Finset.mem_singleton_self _
+    exact ⟨_, _, isFullDistOn_singleton_iff.2 rfl, isFullDist_unit_iff.2 rfl,
+      λ c w => by cases c; simp [e]⟩
 
-/-! ### The receiver stages R₁, R₂ and R₃
+/-- Either action is optimal on a tautologous signal under a belief skewed to its world. -/
+private theorem optimalActions_witness (x : Fin 2) :
+    ∃ p, IsFullDist p ∧ x ∈ game.optimalActions () Finset.univ p := by
+  refine ⟨λ w => if w = x then 2/3 else 1/3,
+    ⟨λ w => by dsimp only; split_ifs <;> norm_num, by
+      rw [Fin.sum_univ_two]; fin_cases x <;> simp <;> norm_num⟩, ?_⟩
+  rw [SemanticGame.optimalActions]
+  fin_cases x
+  · rw [argmax_fin2_zero (by simp [game]; norm_num)]; simp
+  · rw [argmax_fin2_one (by simp [game]; norm_num)]; simp
 
-The credulous stage sends the cheap form at both worlds, so the cheap form's
-receiver is pinned to world `0` while the costly form is unexpected (any
-action survives, but the belief-revision clause is vacuously satisfiable).
-Once the sender separates, both forms are expected and the receiver reads
-each literally. -/
-
-/-- Against the sender who always sends the cheap form, the receiver reads
-the cheap form as the frequent world. -/
-private theorem argmax_receiver_z0 {σ : (Unit → Fin 2 → Fin 2) → ℝ} {q : Unit → ℝ}
-    (hσ : IsFullDistOn {(λ _ _ => 0 : Unit → Fin 2 → Fin 2)} σ) (hq : IsFullDist q) :
-    Finset.univ.argmax (game.receiverEU σ q () 0) = {0} := by
-  ext a
-  rw [Finset.mem_singleton, mem_argmax_fin2]
-  simp only [receiverEU_singleton hσ hq, Fin.sum_univ_two]
-  fin_cases a <;> simp [game] <;> norm_num
-
-/-- The costly form is never sent, so every action ties — the receiver is
-unconstrained there. -/
-private theorem argmax_receiver_z1 {σ : (Unit → Fin 2 → Fin 2) → ℝ} {q : Unit → ℝ}
-    (hσ : IsFullDistOn {(λ _ _ => 0 : Unit → Fin 2 → Fin 2)} σ) (hq : IsFullDist q) :
-    Finset.univ.argmax (game.receiverEU σ q () 1) = Finset.univ := by
-  have h : game.receiverEU σ q () 1 = λ _ => 0 := by
-    funext a
-    rw [receiverEU_singleton hσ hq, Fin.sum_univ_two]
-    simp [game]
-  rw [h, Finset.argmax_const]
-
-/-- R₁: the cautious responses to S₀ read the cheap form as the frequent
-world and leave the unexpected costly form unconstrained. -/
+/-- `R₁`: the cheap form, the only one sent, is read as the frequent world; the costly form is
+unexpected, so any action survives on it and some skewed belief makes it optimal. -/
 private theorem icrR_one : game.icrR 1 = {r | r () 0 = 0} := by
-  have hS0 : game.senderCR (game.icrR 0) = {λ _ _ => 0} := icrS_zero
-  have hunfold : game.icrR 1 =
-      {r ∈ game.receiverCR (game.senderCR (game.icrR 0)) |
-        ∀ f, SemanticGame.Unexpected (game.senderCR (game.icrR 0)) f →
-          ∀ c, ∃ p, IsFullDist p ∧ r c f ∈ game.optimalActions c (game.extension f) p} :=
-    rfl
-  rw [hunfold, hS0]
+  have e0 : Finset.univ.argmax
+      (game.receiverEU (Pi.single (λ _ _ => 0) 1) (λ _ => 1) () 0) = {0} :=
+    argmax_fin2_zero (by simp [SemanticGame.receiverEU_single, game]; norm_num)
+  have e1 : Finset.univ.argmax
+      (game.receiverEU (Pi.single (λ _ _ => 0) 1) (λ _ => 1) () 1) = Finset.univ :=
+    argmax_fin2_univ (by simp [SemanticGame.receiverEU_single, game])
   ext r
-  simp only [Set.mem_ofPred_eq]
+  rw [icrR_succ, show game.senderCR (game.icrR 0) = {λ _ _ => 0} from icrS_zero, Set.mem_ofPred_eq,
+    Set.mem_ofPred_eq, SemanticGame.mem_receiverCR_iff]
   constructor
   · rintro ⟨⟨σ, q, hσ, hq, hBR⟩, -⟩
-    rw [game.mem_receiverBR_iff] at hBR
-    have := hBR () 0
-    rw [argmax_receiver_z0 hσ hq, Finset.mem_singleton] at this
-    exact this
-  · intro hr0
-    refine ⟨⟨_, _, isFullDistOn_pointMass _, isFullDist_unitOne, ?_⟩, ?_⟩
-    · rw [game.mem_receiverBR_iff]
-      intro c f; cases c
-      rcases (show f = 0 ∨ f = 1 by omega) with rfl | rfl
-      · rw [argmax_receiver_z0 (isFullDistOn_pointMass _) isFullDist_unitOne]
-        rwa [Finset.mem_singleton]
-      · rw [argmax_receiver_z1 (isFullDistOn_pointMass _) isFullDist_unitOne]
-        exact Finset.mem_univ _
-    · intro f _ c; cases c
-      rw [extension_eq]
-      exact optimalActions_witness _
+    rw [isFullDistOn_singleton_iff] at hσ
+    rw [isFullDist_unit_iff] at hq
+    subst hσ hq
+    simpa [e0] using hBR () 0
+  · intro hr
+    refine ⟨⟨_, _, isFullDistOn_singleton_iff.2 rfl, isFullDist_unit_iff.2 rfl,
+      λ c => ?_⟩, λ f _ c => ?_⟩
+    · cases c; rw [Fin.forall_fin_two]
+      exact ⟨by rw [e0]; simp [hr], by rw [e1]; simp⟩
+    · cases c; rw [extension_eq]; exact optimalActions_witness _
 
-/-! ### The sender stage S₁
-
-Against a belief mixing the two receivers, the frequent world still fixes the
-cheap form, but the rare world's optimal form depends on how much mass the
-literal receiver carries — so both `s () 1 = 0` and `s () 1 = 1` survive,
-giving `{s | s () 0 = 0}`. -/
-
-section PairSender
-variable {ρ : (Unit → Fin 2 → Fin 2) → ℝ} {q : Unit → ℝ}
-  (hρ : IsFullDistOn {(λ _ _ => 0), (λ _ x => x)} ρ) (hq : IsFullDist q)
-include hρ hq
-
-/-- At the frequent world the cheap form is optimal against any receiver mix. -/
-private theorem sender_pair_w0_eq_zero {x : Fin 2}
-    (hx : x ∈ Finset.univ.argmax (game.senderEU ρ q () 0)) : x = 0 := by
-  rw [mem_argmax_fin2] at hx
-  obtain ⟨hz, he, hsum⟩ := hρ.pair_props zero_ne_id
-  by_contra hne
-  have hx1 : x = 1 := by omega
-  subst hx1
-  obtain ⟨h0, -⟩ := hx
-  rw [senderEU_pair zero_ne_id hρ hq, senderEU_pair zero_ne_id hρ hq] at h0
-  simp only [game, SemanticGame.uS, if_true, if_false, Fin.reduceEq] at h0
-  linarith
-
-/-- Membership witness at the frequent world. -/
-private theorem zero_mem_sender_pair_w0 :
-    (0 : Fin 2) ∈ Finset.univ.argmax (game.senderEU ρ q () 0) := by
-  rw [mem_argmax_fin2]
-  obtain ⟨hz, he, hsum⟩ := hρ.pair_props zero_ne_id
-  refine ⟨le_refl _, ?_⟩
-  rw [senderEU_pair zero_ne_id hρ hq, senderEU_pair zero_ne_id hρ hq]
-  simp only [game, SemanticGame.uS, if_true, if_false, Fin.reduceEq]; linarith
-
-/-- When the literal receiver is light, the cheap form is optimal at the rare
-world too. -/
-private theorem zero_mem_sender_pair_w1 (hle : ρ (λ _ x => x) ≤ 1/5) :
-    (0 : Fin 2) ∈ Finset.univ.argmax (game.senderEU ρ q () 1) := by
-  rw [mem_argmax_fin2]
-  obtain ⟨hz, he, hsum⟩ := hρ.pair_props zero_ne_id
-  refine ⟨le_refl _, ?_⟩
-  rw [senderEU_pair zero_ne_id hρ hq, senderEU_pair zero_ne_id hρ hq]
-  simp only [game, SemanticGame.uS, if_true, if_false, Fin.reduceEq]; linarith
-
-/-- When the literal receiver is heavy, the costly form is optimal at the rare
-world. -/
-private theorem one_mem_sender_pair_w1 (hge : 1/5 ≤ ρ (λ _ x => x)) :
-    (1 : Fin 2) ∈ Finset.univ.argmax (game.senderEU ρ q () 1) := by
-  rw [mem_argmax_fin2]
-  obtain ⟨hz, he, hsum⟩ := hρ.pair_props zero_ne_id
-  refine ⟨?_, le_refl _⟩
-  rw [senderEU_pair zero_ne_id hρ hq, senderEU_pair zero_ne_id hρ hq]
-  simp only [game, SemanticGame.uS, if_true, if_false, Fin.reduceEq]; linarith
-
-end PairSender
-
-/-- S₁: the cautious responses to R₁ still fix the cheap form at the frequent
-world; the rare world is free. -/
+/-- `S₁`: against a mixture of the two receivers the frequent world still takes the cheap form,
+while the rare world takes the costly form exactly when the literal receiver weighs at least
+`1/5`, so both signals survive there. -/
 private theorem icrS_one : game.icrS 1 = {s | s () 0 = 0} := by
-  show game.senderCR (game.icrR 1) = _
-  rw [icrR_one]
-  conv_lhs => rw [pair_eq]
+  have e0 : ∀ t : ℝ, 0 < t → t < 1 → Finset.univ.argmax
+      (game.senderEU (mix (λ _ _ => 0) (λ _ x => x) t) (λ _ => 1) () 0) = {0} :=
+    λ t _ _ => argmax_fin2_zero (by
+      simp only [game.senderEU_mix zero_ne_id]; simp [game, SemanticGame.uS]; linarith)
+  have e1 : ∀ t : ℝ, t < 4/5 → Finset.univ.argmax
+      (game.senderEU (mix (λ _ _ => 0) (λ _ x => x) t) (λ _ => 1) () 1) = {1} :=
+    λ t h => argmax_fin2_one (by
+      simp only [game.senderEU_mix zero_ne_id]; simp [game, SemanticGame.uS]; linarith)
+  have e1' : ∀ t : ℝ, 4/5 < t → Finset.univ.argmax
+      (game.senderEU (mix (λ _ _ => 0) (λ _ x => x) t) (λ _ => 1) () 1) = {0} :=
+    λ t h => argmax_fin2_zero (by
+      simp only [game.senderEU_mix zero_ne_id]; simp [game, SemanticGame.uS]; linarith)
   ext s
-  simp only [SemanticGame.senderCR, Set.mem_ofPred_eq]
+  rw [SemanticGame.icrS, icrR_one.trans pair_eq, SemanticGame.mem_senderCR_iff, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨ρ, q, hρ, hq, hBR⟩
-    rw [game.mem_senderBR_iff] at hBR
-    exact sender_pair_w0_eq_zero hρ hq (hBR () 0)
-  · intro hs0
-    have hmem : s = (λ _ _ => 0) ∨ s = (λ _ x => x) := by
-      have hs : s ∈ ({(λ _ _ => 0), (λ _ x => x)} : Set (Unit → Fin 2 → Fin 2)) := by
-        rw [← pair_eq]; exact hs0
-      simpa [Set.mem_insert_iff] using hs
-    rcases hmem with rfl | rfl
-    · have hfull := isFullDistOn_pairWeighted zero_ne_id
-        (show (0 : ℝ) < 9/10 by norm_num) (by norm_num)
-      refine ⟨_, _, hfull, isFullDist_unitOne, ?_⟩
-      rw [game.mem_senderBR_iff]
-      intro c w; cases c
-      rcases (show w = 0 ∨ w = 1 by omega) with rfl | rfl
-      · exact zero_mem_sender_pair_w0 hfull isFullDist_unitOne
-      · exact zero_mem_sender_pair_w1 hfull isFullDist_unitOne
-          (by rw [pairWeighted_apply_right zero_ne_id]; norm_num)
-    · have hfull := isFullDistOn_pairWeighted zero_ne_id
-        (show (0 : ℝ) < 1/2 by norm_num) (by norm_num)
-      refine ⟨_, _, hfull, isFullDist_unitOne, ?_⟩
-      rw [game.mem_senderBR_iff]
-      intro c w; cases c
-      rcases (show w = 0 ∨ w = 1 by omega) with rfl | rfl
-      · exact zero_mem_sender_pair_w0 hfull isFullDist_unitOne
-      · exact one_mem_sender_pair_w1 hfull isFullDist_unitOne
-          (by rw [pairWeighted_apply_right zero_ne_id]; norm_num)
+    rw [isFullDistOn_pair_iff zero_ne_id] at hρ
+    rw [isFullDist_unit_iff] at hq
+    obtain ⟨t, h0, h1, rfl⟩ := hρ
+    subst hq
+    simpa [e0 t h0 h1] using hBR () 0
+  · intro hs
+    rcases (by omega : s () 1 = 0 ∨ s () 1 = 1) with h1 | h1
+    · refine ⟨mix _ _ (9/10), _, (isFullDistOn_pair_iff zero_ne_id).2 ⟨9/10, by norm_num,
+        by norm_num, rfl⟩, isFullDist_unit_iff.2 rfl, λ c => ?_⟩
+      cases c; rw [Fin.forall_fin_two]
+      exact ⟨by rw [e0 (9/10) (by norm_num) (by norm_num)]; simp [hs],
+        by rw [e1' (9/10) (by norm_num)]; simp [h1]⟩
+    · refine ⟨mix _ _ (1/2), _, (isFullDistOn_pair_iff zero_ne_id).2 ⟨1/2, by norm_num,
+        by norm_num, rfl⟩, isFullDist_unit_iff.2 rfl, λ c => ?_⟩
+      cases c; rw [Fin.forall_fin_two]
+      exact ⟨by rw [e0 (1/2) (by norm_num) (by norm_num)]; simp [hs],
+        by rw [e1 (1/2) (by norm_num)]; simp [h1]⟩
 
-/-! ### The receiver stage R₂
-
-Once the sender separates the worlds, both forms are expected and each is
-read literally: the cheap form as the frequent world, the costly form as the
-rare one. No signal is unexpected, so the belief-revision clause is vacuous. -/
-
-section PairReceiver
-variable {σ : (Unit → Fin 2 → Fin 2) → ℝ} {q : Unit → ℝ}
-  (hσ : IsFullDistOn {(λ _ _ => 0), (λ _ x => x)} σ) (hq : IsFullDist q)
-include hσ hq
-
-/-- The cheap form is read as the frequent world against the separating mix. -/
-private theorem receiver_pair_f0_eq_zero {x : Fin 2}
-    (hx : x ∈ Finset.univ.argmax (game.receiverEU σ q () 0)) : x = 0 := by
-  rw [mem_argmax_fin2] at hx
-  obtain ⟨hz, he, hsum⟩ := hσ.pair_props zero_ne_id
-  by_contra hne
-  have hx1 : x = 1 := by omega
-  subst hx1
-  obtain ⟨h0, -⟩ := hx
-  rw [receiverEU_pair zero_ne_id hσ hq, receiverEU_pair zero_ne_id hσ hq] at h0
-  simp only [Fin.sum_univ_two, game, if_true, if_false, Fin.reduceEq] at h0
-  linarith
-
-/-- Membership witness reading the cheap form as the frequent world. -/
-private theorem zero_mem_receiver_pair_f0 :
-    (0 : Fin 2) ∈ Finset.univ.argmax (game.receiverEU σ q () 0) := by
-  rw [mem_argmax_fin2]
-  obtain ⟨hz, he, hsum⟩ := hσ.pair_props zero_ne_id
-  refine ⟨le_refl _, ?_⟩
-  rw [receiverEU_pair zero_ne_id hσ hq, receiverEU_pair zero_ne_id hσ hq]
-  simp only [Fin.sum_univ_two, game, if_true, if_false, Fin.reduceEq]; linarith
-
-/-- The costly form is read as the rare world against the separating mix. -/
-private theorem receiver_pair_f1_eq_one {x : Fin 2}
-    (hx : x ∈ Finset.univ.argmax (game.receiverEU σ q () 1)) : x = 1 := by
-  rw [mem_argmax_fin2] at hx
-  obtain ⟨hz, he, hsum⟩ := hσ.pair_props zero_ne_id
-  by_contra hne
-  have hx0 : x = 0 := by omega
-  subst hx0
-  obtain ⟨-, h1⟩ := hx
-  rw [receiverEU_pair zero_ne_id hσ hq, receiverEU_pair zero_ne_id hσ hq] at h1
-  simp only [Fin.sum_univ_two, game, if_true, if_false, Fin.reduceEq] at h1
-  linarith
-
-/-- Membership witness reading the costly form as the rare world. -/
-private theorem one_mem_receiver_pair_f1 :
-    (1 : Fin 2) ∈ Finset.univ.argmax (game.receiverEU σ q () 1) := by
-  rw [mem_argmax_fin2]
-  obtain ⟨hz, he, hsum⟩ := hσ.pair_props zero_ne_id
-  refine ⟨?_, le_refl _⟩
-  rw [receiverEU_pair zero_ne_id hσ hq, receiverEU_pair zero_ne_id hσ hq]
-  simp only [Fin.sum_univ_two, game, if_true, if_false, Fin.reduceEq]; linarith
-
-end PairReceiver
-
-/-- R₂: the cautious responses to S₁ read both forms literally — the Horn
-convention's receiver. Both signals are expected, so the filter is vacuous. -/
+/-- `R₂`: once the sender separates the worlds, each form is read literally, and no signal is
+unexpected. -/
 private theorem icrR_two : game.icrR 2 = {λ _ f => f} := by
-  have hS1 : game.senderCR (game.icrR 1) = {(λ _ _ => 0), (λ _ x => x)} := by
-    have h := icrS_one; rw [pair_eq] at h; exact h
-  have hunfold : game.icrR 2 =
-      {r ∈ game.receiverCR (game.senderCR (game.icrR 1)) |
-        ∀ f, SemanticGame.Unexpected (game.senderCR (game.icrR 1)) f →
-          ∀ c, ∃ p, IsFullDist p ∧ r c f ∈ game.optimalActions c (game.extension f) p} :=
-    rfl
-  rw [hunfold, hS1]
-  conv_rhs => rw [← singleton_eq]
+  have e0 : ∀ t : ℝ, t < 1 → Finset.univ.argmax
+      (game.receiverEU (mix (λ _ _ => 0) (λ _ x => x) t) (λ _ => 1) () 0) = {0} :=
+    λ t h => argmax_fin2_zero (by
+      simp only [game.receiverEU_mix zero_ne_id]; simp [game]; linarith)
+  have e1 : ∀ t : ℝ, t < 1 → Finset.univ.argmax
+      (game.receiverEU (mix (λ _ _ => 0) (λ _ x => x) t) (λ _ => 1) () 1) = {1} :=
+    λ t h => argmax_fin2_one (by
+      simp only [game.receiverEU_mix zero_ne_id]; simp [game]; linarith)
   ext r
-  simp only [Set.mem_ofPred_eq]
+  rw [icrR_succ, show game.senderCR (game.icrR 1) = {(λ _ _ => 0), (λ _ x => x)} from
+    icrS_one.trans pair_eq, Set.mem_ofPred_eq, SemanticGame.mem_receiverCR_iff,
+    Set.mem_singleton_iff]
   constructor
   · rintro ⟨⟨σ, q, hσ, hq, hBR⟩, -⟩
-    rw [game.mem_receiverBR_iff] at hBR
-    exact ⟨receiver_pair_f0_eq_zero hσ hq (hBR () 0),
-      receiver_pair_f1_eq_one hσ hq (hBR () 1)⟩
-  · rintro ⟨hr0, hr1⟩
-    refine ⟨⟨_, _, isFullDistOn_pairUniform zero_ne_id, isFullDist_unitOne, ?_⟩, ?_⟩
-    · rw [game.mem_receiverBR_iff]
-      intro c f; cases c
-      rcases (show f = 0 ∨ f = 1 by omega) with rfl | rfl
-      · rw [hr0]; exact zero_mem_receiver_pair_f0 (isFullDistOn_pairUniform zero_ne_id)
-          isFullDist_unitOne
-      · rw [hr1]; exact one_mem_receiver_pair_f1 (isFullDistOn_pairUniform zero_ne_id)
-          isFullDist_unitOne
-    · intro f hf c
-      exact absurd rfl (hf (λ _ x => x) (Set.mem_insert_of_mem _ rfl) () f)
+    rw [isFullDistOn_pair_iff zero_ne_id] at hσ
+    rw [isFullDist_unit_iff] at hq
+    obtain ⟨t, -, h1, rfl⟩ := hσ
+    subst hq
+    funext c f; cases c; revert f; rw [Fin.forall_fin_two]
+    exact ⟨by simpa [e0 t h1] using hBR () 0, by simpa [e1 t h1] using hBR () 1⟩
+  · rintro rfl
+    refine ⟨⟨mix _ _ (1/2), _, (isFullDistOn_pair_iff zero_ne_id).2 ⟨1/2, by norm_num,
+      by norm_num, rfl⟩, isFullDist_unit_iff.2 rfl, λ c => ?_⟩, λ f hf c => ?_⟩
+    · cases c; rw [Fin.forall_fin_two]
+      exact ⟨by rw [e0 (1/2) (by norm_num)]; simp, by rw [e1 (1/2) (by norm_num)]; simp⟩
+    · exact absurd rfl (hf (λ _ x => x) (Set.mem_insert_of_mem _ rfl) () f)
 
-/-- S₂: the cautious responses to the literal receiver match signal to world
-— the Horn convention's sender. -/
+/-- `S₂`: against the literal receiver the sender matches signal to world. -/
 private theorem icrS_two : game.icrS 2 = {λ _ w => w} := by
-  show game.senderCR (game.icrR 2) = _
-  rw [icrR_two]
+  have e : ∀ w : Fin 2,
+      Finset.univ.argmax (game.senderEU (Pi.single (λ _ x => x) 1) (λ _ => 1) () w) = {w} := by
+    rw [Fin.forall_fin_two]
+    exact ⟨argmax_fin2_zero (by
+        simp [SemanticGame.senderEU_single, game, SemanticGame.uS]; norm_num),
+      argmax_fin2_one (by simp [SemanticGame.senderEU_single, game, SemanticGame.uS])⟩
   ext s
-  simp only [SemanticGame.senderCR, Set.mem_ofPred_eq, Set.mem_singleton_iff]
+  rw [SemanticGame.icrS, icrR_two, SemanticGame.mem_senderCR_iff, Set.mem_singleton_iff]
   constructor
   · rintro ⟨ρ, q, hρ, hq, hBR⟩
-    rw [game.mem_senderBR_iff] at hBR
+    rw [isFullDistOn_singleton_iff] at hρ
+    rw [isFullDist_unit_iff] at hq
+    subst hρ hq
     funext c w; cases c
-    have := hBR () w
-    rw [argmax_sender_e hρ hq, Finset.mem_singleton] at this
-    exact this
+    simpa [e] using hBR () w
   · rintro rfl
-    refine ⟨_, _, isFullDistOn_pointMass _, isFullDist_unitOne, ?_⟩
-    rw [game.mem_senderBR_iff]
-    intro c w; cases c
-    rw [argmax_sender_e (isFullDistOn_pointMass _) isFullDist_unitOne]
-    exact Finset.mem_singleton_self _
+    exact ⟨_, _, isFullDistOn_singleton_iff.2 rfl, isFullDist_unit_iff.2 rfl,
+      λ c w => by cases c; simp [e]⟩
 
-/-! ### The fixed point R₃ = R₂
-
-The separating sender is now stable: the receiver's cautious responses to it
-again read both forms literally, reproducing R₂. -/
-
-/-- Against the literal sender the cheap form is read as the frequent world. -/
-private theorem argmax_receiver_e0 {σ : (Unit → Fin 2 → Fin 2) → ℝ} {q : Unit → ℝ}
-    (hσ : IsFullDistOn {(λ _ x => x : Unit → Fin 2 → Fin 2)} σ) (hq : IsFullDist q) :
-    Finset.univ.argmax (game.receiverEU σ q () 0) = {0} := by
-  ext a
-  rw [Finset.mem_singleton, mem_argmax_fin2]
-  simp only [receiverEU_singleton hσ hq, Fin.sum_univ_two]
-  fin_cases a <;> simp [game]
-
-/-- Against the literal sender the costly form is read as the rare world. -/
-private theorem argmax_receiver_e1 {σ : (Unit → Fin 2 → Fin 2) → ℝ} {q : Unit → ℝ}
-    (hσ : IsFullDistOn {(λ _ x => x : Unit → Fin 2 → Fin 2)} σ) (hq : IsFullDist q) :
-    Finset.univ.argmax (game.receiverEU σ q () 1) = {1} := by
-  ext a
-  rw [Finset.mem_singleton, mem_argmax_fin2]
-  simp only [receiverEU_singleton hσ hq, Fin.sum_univ_two]
-  fin_cases a <;> simp [game]
-
-/-- R₃ reproduces R₂: the ICR sequence has reached its fixed point. -/
-private theorem icrR_fixed : game.icrR 3 = game.icrR 2 := by
+/-- `R₃ = R₂`: the separating sender is stable. -/
+private theorem icrR_three : game.icrR 3 = game.icrR 2 := by
+  have e : ∀ f : Fin 2,
+      Finset.univ.argmax (game.receiverEU (Pi.single (λ _ x => x) 1) (λ _ => 1) () f) = {f} := by
+    rw [Fin.forall_fin_two]
+    exact ⟨argmax_fin2_zero (by simp [SemanticGame.receiverEU_single, game]),
+      argmax_fin2_one (by simp [SemanticGame.receiverEU_single, game])⟩
   rw [icrR_two]
-  have hS2 : game.senderCR (game.icrR 2) = {λ _ w => w} := icrS_two
-  have hunfold : game.icrR 3 =
-      {r ∈ game.receiverCR (game.senderCR (game.icrR 2)) |
-        ∀ f, SemanticGame.Unexpected (game.senderCR (game.icrR 2)) f →
-          ∀ c, ∃ p, IsFullDist p ∧ r c f ∈ game.optimalActions c (game.extension f) p} :=
-    rfl
-  rw [hunfold, hS2]
-  conv_rhs => rw [← singleton_eq]
   ext r
-  simp only [Set.mem_ofPred_eq]
+  rw [icrR_succ, show game.senderCR (game.icrR 2) = {λ _ w => w} from icrS_two, Set.mem_ofPred_eq,
+    SemanticGame.mem_receiverCR_iff, Set.mem_singleton_iff]
   constructor
   · rintro ⟨⟨σ, q, hσ, hq, hBR⟩, -⟩
-    rw [game.mem_receiverBR_iff] at hBR
-    have h0 := hBR () 0
-    have h1 := hBR () 1
-    rw [argmax_receiver_e0 hσ hq, Finset.mem_singleton] at h0
-    rw [argmax_receiver_e1 hσ hq, Finset.mem_singleton] at h1
-    exact ⟨h0, h1⟩
-  · rintro ⟨hr0, hr1⟩
-    refine ⟨⟨_, _, isFullDistOn_pointMass _, isFullDist_unitOne, ?_⟩, ?_⟩
-    · rw [game.mem_receiverBR_iff]
-      intro c f; cases c
-      rcases (show f = 0 ∨ f = 1 by omega) with rfl | rfl
-      · rw [hr0, argmax_receiver_e0 (isFullDistOn_pointMass _) isFullDist_unitOne]
-        exact Finset.mem_singleton_self _
-      · rw [hr1, argmax_receiver_e1 (isFullDistOn_pointMass _) isFullDist_unitOne]
-        exact Finset.mem_singleton_self _
-    · intro f hf c
-      exact absurd rfl (hf (λ _ x => x) rfl () f)
+    rw [isFullDistOn_singleton_iff] at hσ
+    rw [isFullDist_unit_iff] at hq
+    subst hσ hq
+    funext c f; cases c
+    simpa [e] using hBR () f
+  · rintro rfl
+    refine ⟨⟨_, _, isFullDistOn_singleton_iff.2 rfl, isFullDist_unit_iff.2 rfl,
+      λ c f => by cases c; simp [e]⟩, λ f hf c => ?_⟩
+    exact absurd rfl (hf (λ _ w => w) rfl () f)
 
 /-- Horn's division of pragmatic labor, Example 6: the pragmatically rationalizable strategies
 are the convention on which the cheap form marks the frequent world and the costly form the rare
 one, the identity strategies on both sides. -/
 theorem division_of_pragmatic_labor :
-    game.prsS = {λ _ w => w} ∧ game.prsR = {λ _ f => f} := by
-  have hfix : game.icrR (2 + 1) = game.icrR 2 := icrR_fixed
-  exact ⟨(game.prsS_eq_of_fixed hfix).trans icrS_two,
-    (game.prsR_eq_of_fixed hfix).trans icrR_two⟩
+    game.prsS = {λ _ w => w} ∧ game.prsR = {λ _ f => f} :=
+  ⟨(game.prsS_eq_of_fixed icrR_three).trans icrS_two,
+    (game.prsR_eq_of_fixed icrR_three).trans icrR_two⟩
 
 /-- The costly form is not credible: at the stage `S₁` the sender may still use the cheap form at
 the rare world, where the costly form is true; pragmatic rationalizability nevertheless fixes its
@@ -1100,7 +826,7 @@ structure Row where
   deriving DecidableEq
 
 /-- A row from the paper's features. -/
-def Row.ofExample (e : Data.Examples.LinguisticExample) : Option Row := do
+def Row.ofExample (e : LinguisticExample) : Option Row := do
   let signal : Fin 2 ← match e.feature? "signal" with
     | some "f" => some 0
     | some "f'" => some 1
