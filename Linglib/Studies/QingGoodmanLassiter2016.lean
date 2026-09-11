@@ -41,7 +41,7 @@ lower) and do not affect the qualitative predictions.
 ## TODO
 
 Prove the structural equivalence with [scontras-tonhauser-2025] (factives;
-latent = "private assumptions", their fn. 10: the difference from QGL's
+latent = "private assumptions", fn. 10: the difference from QGL's
 "common ground" is interpretive, not computational) and [warstadt-2022]
 (genus-species) — all three compute `L1(w, C | u, Q) ∝ S1(u | w, C, Q) ·
 P(w) · P(C)` over different domains. Blocked on `ScontrasTonhauser2025.lean`

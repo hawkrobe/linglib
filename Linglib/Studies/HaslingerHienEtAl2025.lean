@@ -26,7 +26,7 @@ universal generalized quantifier (`QForall_eq_every_sem`).
 
 The quantifier, the ONE heads and the generalization's two halves live in
 `Semantics/Quantification/UnifiedUniversal.lean` and `ONEModifiers.lean`; the study instantiates
-them on finite models and records the paper's survey. The survey rows (their Tables 1 and 2)
+them on finite models and records the paper's survey. The survey rows (Tables 1 and 2)
 are study-local data, with the English and German forms read off the determiner fragments; the
 distributive readings that plural forms additionally allow come from a VP-level distributivity
 operator ([link-1987]), not from the quantifier, and stay outside the models. The S&P paper of
@@ -45,7 +45,7 @@ namespace HaslingerHienEtAl2025
 
 open Quantification.UnifiedUniversal Quantification.ONEModifiers Mereology
 
-/-! ### The survey (their Tables 1 and 2) -/
+/-! ### The survey (Tables 1 and 2) -/
 
 /-- Whether a language has one universal-quantifier lexeme whose reading the complement's
 number fixes, or two lexemes, one distributive and one not. -/
@@ -65,7 +65,7 @@ structure UQProfile where
   nonDistForm : String := ""
   deriving Repr, DecidableEq
 
-/-- The fifteen languages of their Tables 1 and 2; the English and German forms are the
+/-- The fifteen languages of Tables 1 and 2; the English and German forms are the
 fragments'. -/
 def typologicalSample : List UQProfile :=
   [ ⟨"Dagara", "Mabia", .oneForm, "'hà", ""⟩,
@@ -143,7 +143,7 @@ theorem dng_pl_concrete (Q : Finset Student → Prop) :
 
 end FiniteModels
 
-/-! ### The English decomposition (their (79)) -/
+/-! ### The English decomposition (79) -/
 
 section EnglishDecomposition
 

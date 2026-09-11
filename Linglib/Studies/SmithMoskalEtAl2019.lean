@@ -410,7 +410,7 @@ the paper discusses:
   **non-oblique** domain; DAT in the **oblique** domain. The boundary
   is the Unmarked-Dependent vs Oblique split of the paper's own
   3-cell structure (§3.1: "[ [ [ UNMARKED ] DEPENDENT ] OBLIQUE ]",
-  their fn. 20) — derived from `Case.IsOblique`, not stipulated on
+  fn. 20) — derived from `Case.IsOblique`, not stipulated on
   indices.
 
 - **Number partition (`numberDomainPartition`)**: SG + PL in the

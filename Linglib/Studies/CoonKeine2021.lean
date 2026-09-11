@@ -132,7 +132,7 @@ def Goal.toPhiGoal (g : Goal) : PhiGoal :=
   let cell := Agreement.Cell.pn g.person.toUD (if g.plural then .Plur else .Sing)
   if g.encapsulated then .valued .dat cell else .unvalued cell
 
-/-! ### Segment-based Agree and gluttony (their (14)–(16)) -/
+/-! ### Segment-based Agree and gluttony (14)–(16) -/
 
 section Agree
 
@@ -225,7 +225,7 @@ theorem not_gluttonous_of_length_le_one (h : goals.length ≤ 1) : ¬ Gluttonous
   | [], _ => exact nomatch ht'
   | [_], _ => exact hne ((List.mem_singleton.1 ht').trans (List.mem_singleton.1 hu').symm)
 
-/-- A single-segment probe never gluttons (their fn. 21). -/
+/-- A single-segment probe never gluttons (fn. 21). -/
 theorem not_gluttonous_singleton : ¬ Gluttonous geo [s] goals := by
   rintro ⟨t, ht, u, hu, hne⟩
   simp only [mem_agreed, List.mem_singleton, exists_eq_left] at ht hu
@@ -255,17 +255,17 @@ instance (P : Probe.Articulation) (b : Bool) (io do_ : Person) :
     Decidable (PCCViolation P b io do_) :=
   inferInstanceAs (Decidable (Gluttonous _ _ _))
 
-/-- [uPERS [uPART]], their (39a): the Weak PCC, and the person probe of German and Icelandic T
+/-- [uPERS [uPART]], (39a): the Weak PCC, and the person probe of German and Icelandic T
 ((55), (79)). -/
 abbrev weakProbe : Probe.Articulation := partialProbe
 
-/-- [uPERS [uPART [uSPKR]]], their (39b): the Ultrastrong PCC. -/
+/-- [uPERS [uPART [uSPKR]]], (39b): the Ultrastrong PCC. -/
 abbrev ultrastrongProbe : Probe.Articulation := fullProbeStd
 
-/-- [uPERS [uSPKR]], their (39c): the Me-First PCC, with a missing intermediate segment. -/
+/-- [uPERS [uSPKR]], (39c): the Me-First PCC, with a missing intermediate segment. -/
 def meFirstProbe : Probe.Articulation := [.pi, .speaker]
 
-/-- [uPERS [uPART [uSPKR] [uADDR]]], their fn. 22 (i): the Strong PCC over transparent datives,
+/-- [uPERS [uPART [uSPKR] [uADDR]]], fn. 22 (i): the Strong PCC over transparent datives,
 and Slovenian's reversible Strong PCC (fn. 26). -/
 def branchingProbe : Probe.Articulation := [.pi, .participant, .speaker, .addressee]
 
@@ -363,8 +363,8 @@ theorem reverse_pcc :
 
 /-! ### Against licensing (§2.3) -/
 
-/-- The Person Licensing Condition of [preminger-2011], their (9): the condition of
-[bejar-rezac-2003], their (6), restricted to clauses with a person probe. -/
+/-- The Person Licensing Condition of [preminger-2011], (9): the condition of
+[bejar-rezac-2003], (6), restricted to clauses with a person probe. -/
 def RevisedPLC (cycles : List (List PhiGoal)) (args : List PhiGoal) : Prop :=
   cycles ≠ [] → BejarRezac2003.PLCOk cycles args
 
@@ -412,7 +412,7 @@ theorem no_number_case_constraint {P : Probe.Articulation} (hpi : Segment.pi ∈
       decide_false, Bool.false_eq_true, ↓reduceIte, List.length_map]
     exact (List.length_filter_le _ _).trans (by simpa using h)
 
-/-- With a third accessible DP, their (43): the number probe sees two goals after doubling and
+/-- With a third accessible DP, (43): the number probe sees two goals after doubling and
 gluttons over SG > PL. -/
 theorem three_goal_number :
     Gluttonous Goal.numberSegments (numberProbe weakProbe)
@@ -471,21 +471,21 @@ the Icelandic past mediopassive (81), *líka* and *þykja* of (76b) and (78), th
 and past copula ((51), (52), fn. 32), the Hindi-Urdu present and past copula ((68), (69),
 fn. 34) and the Brazilian Portuguese copula (70). -/
 inductive Paradigm where
-  /-- Icelandic past mediopassive, their (81). -/
+  /-- Icelandic past mediopassive, (81). -/
   | icelandicMediopassivePast
-  /-- Icelandic *líka* 'like' in the past, their (73) and (76b). -/
+  /-- Icelandic *líka* 'like' in the past, (73) and (76b). -/
   | icelandicLikaPast
-  /-- Icelandic *þykja* 'think' in the present, their (78). -/
+  /-- Icelandic *þykja* 'think' in the present, (78). -/
   | icelandicThykjaPresent
-  /-- German present copula, their (51)–(52). -/
+  /-- German present copula, (51)–(52). -/
   | germanPresent
-  /-- German past copula, their fn. 32. -/
+  /-- German past copula, fn. 32. -/
   | germanPast
-  /-- Hindi-Urdu present copula, their (68)–(69). -/
+  /-- Hindi-Urdu present copula, (68)–(69). -/
   | hindiPresent
-  /-- Hindi-Urdu past copula, their fn. 34. -/
+  /-- Hindi-Urdu past copula, fn. 34. -/
   | hindiPast
-  /-- Brazilian Portuguese present copula, their (70). -/
+  /-- Brazilian Portuguese present copula, (70). -/
   | portuguesePresent
   deriving DecidableEq, Repr
 

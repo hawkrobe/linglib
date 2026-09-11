@@ -15,7 +15,7 @@ Lechner Ch 2 §2.1 ("Disjoint reference effects") establishes that the
 comparative-deletion site is reconstructed at LF and is therefore
 visible to Principle C. Lechner's diagnostic is the *source* of
 [bhatt-takahashi-2011]'s English binding battery; B&T fn. 4
-explicitly says their (11)–(13) are modelled on this work.
+explicitly says (11)–(13) are modelled on this work.
 
 This file owns the diagnostic schema (`BindingDatum`), the two
 analyses' structural predictions (`RAPredictsCoref` /

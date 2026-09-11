@@ -15,13 +15,13 @@ Formalizes the core of:
 
 ## The account
 
-Lexical entries are tripartite (their (33)): a basic predicate (`baspred`,
+Lexical entries are tripartite (33): a basic predicate (`baspred`,
 number-neutral conceptual content), a counting base (`cbase`), and an
 extension. Two mechanisms mediate between them: the **object identifying
-function** 𝒪 (their (30)), which selects the perceptually/functionally
+function** 𝒪 (30), which selects the perceptually/functionally
 salient units if the concept specifies any, and **individuation schemas**
 𝒮ᵢ, which select a maximally disjoint subset of those units; the **null
-schema** 𝒮₀ (their (32)) instead unions *all* maximally disjoint subsets.
+schema** 𝒮₀ (32) instead unions *all* maximally disjoint subsets.
 Grammatical counting requires a disjoint counting base, so:
 
 * count = `[+O, +S]` (a specific schema over identified objects — *cat*,
@@ -36,7 +36,7 @@ salient, *disjoint* grains, yet `#three rices` cannot mean 'three grains of
 rice' (only container/subkind readings). On this account the grains live in
 `baspred` but are not passed to `cbase` — and an *implicit* unit-extracting
 shift would be a generalized `[−O,−S] → [+O,+S]` operation, incompatible
-with a lexicalized mass/count distinction (their §9.5.4; Yudja, which
+with a lexicalized mass/count distinction (§9.5.4; Yudja, which
 lacks one, counts everything — cf. `Grimm2018.yudjaClassify`).
 
 ## Main declarations
@@ -84,11 +84,11 @@ namespace SuttonFilip2021
 
 /-! ### Overlap, disjointness, and individuation schemas
 
-Their (16)–(18): the schema machinery (`Mereology.OverlapPred`,
-`Mereology.IsMaxDisjointIn`, `Mereology.nullSchema` for `𝒮₀`, their (32))
+(16)–(18): the schema machinery (`Mereology.OverlapPred`,
+`Mereology.IsMaxDisjointIn`, `Mereology.nullSchema` for `𝒮₀`, (32))
 lives in `Semantics/Mereology.lean`, shared with [landman-2020]
 (`Studies/Landman2020.lean`), whose disjointness thesis it packages.
-A predicate is *overlapping* if two distinct members overlap (their (17)
+A predicate is *overlapping* if two distinct members overlap (the paper's (17)
 omits the distinctness, under which any inhabited predicate self-overlaps
 via `x ∘ x`; the substrate states the intended reading). -/
 
@@ -101,7 +101,7 @@ open Mereology (OverlapPred DisjointPred IsMaxDisjointIn nullSchema
 `[+S]`: it is interpreted under a specific schema `𝒮ᵢ` rather than `𝒮₀`.
 Count nouns are `[+O, +S]`; mass nouns are `[−S]`. -/
 
-/-- The two binary features classifying counting bases (their §9.4.4). -/
+/-- The two binary features classifying counting bases (§9.4.4). -/
 structure Categorization where
   /-- The counting base contains the object identifying function 𝒪. -/
   hasObjectFn : Bool
@@ -158,7 +158,7 @@ theorem variable_classes :
 /-! ### A concrete model: furniture and rice
 
 Carrier: nonempty subsets of a small atom domain, overlap = nonempty
-intersection. *Furniture* (their §9.4.2–9.4.3): a table `t`, a mirror `m`,
+intersection. *Furniture* (§9.4.2–9.4.3): a table `t`, a mirror `m`,
 and the vanity `t ⊔ m` are all functional units, so `𝒪(furniture)`
 overlaps — two individuation perspectives exist (count the vanity as one,
 or the table and mirror as two). *Rice*: the basic predicate knows the
@@ -238,7 +238,7 @@ theorem furniture_two_perspectives :
 
 /-- *Rice* on a three-grain domain: the basic predicate contains the
     grains and their aggregates (its `extension = unit ∨ collection`,
-    their (29)). -/
+    (29)). -/
 def riceBaspred : Set (Finset (Fin 3)) := {s | s.Nonempty}
 
 instance : DecidablePred (· ∈ riceBaspred) := fun s =>

@@ -111,7 +111,7 @@ def region (ns : List Nat) : List HaspelmathFunction :=
 /-- The middle of the map: question, conditional, indirect negation, comparative. -/
 def middle : List HaspelmathFunction := region [4, 5, 6, 8]
 
-/-- Their Principle 1: a series confined to the middle of the map covers at least three
+/-- Principle 1: a series confined to the middle of the map covers at least three
 functions. -/
 def Principle1 (l : List HaspelmathFunction) : Prop :=
   (∀ f ∈ l, f ∈ middle) → 3 ≤ l.length
@@ -119,7 +119,7 @@ def Principle1 (l : List HaspelmathFunction) : Prop :=
 instance (l : List HaspelmathFunction) : Decidable (Principle1 l) :=
   inferInstanceAs (Decidable (_ → _))
 
-/-- Their Principle 2: the comparative and free-choice functions are never combined with
+/-- Principle 2: the comparative and free-choice functions are never combined with
 specific-known. -/
 def Principle2 (l : List HaspelmathFunction) : Prop :=
   .specificKnown ∈ l → .comparative ∉ l ∧ .freeChoice ∉ l

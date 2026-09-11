@@ -14,7 +14,7 @@ moved to the antecedent NP) and a **reciprocator** (*e other*), each
 inheriting its semantics from its non-reciprocal use. The LF of
 "the men saw each other" is
 `[[the men]₁ each₂] saw [e₂ other]₃` — a four-part structure
-*group antecedent – distributor – reciprocator – predicate* (their (9)).
+*group antecedent – distributor – reciprocator – predicate* (9).
 This is the quantificational arm of the comparison drawn in
 `Semantics/Plurality/Reciprocal/Scope.lean`, and the decomposed counterpart of
 Link's holistic `Algebra.DJR` operator.
@@ -25,7 +25,7 @@ other that they should leave" is three-ways ambiguous (I/you/we readings)
 though binding theory allows only one indexing — and the **scope
 puzzle** — embedded reciprocals allow broad and narrow construals. Both
 resolve through the double indexing of plural NPs (range + distribution
-indices, their (26)–(29)): the pronoun construals bound by the
+indices, (26)–(29)): the pronoun construals bound by the
 quantificational *each*/*other* indices are singular bound variables
 (I/you readings), those coindexed with the referential range index are
 coreference anaphora (we readings), and scope covaries with anaphora type
@@ -37,7 +37,7 @@ because distributors are undefined on atoms and cannot iterate.
   compositional pieces; the distributor is the `Finset`-level,
   world-free form of `Plurality.distMaximal` and `Algebra.D`.
 * `eachOtherLF` + `eachOtherLF_iff_strongReciprocity` — the keystone:
-  the each∘other composition derives `StrongReciprocity` (their (21)),
+  the each∘other composition derives `StrongReciprocity` (21),
   plugging the LF analysis into the DKMPK entailment lattice.
 * `eachOtherLF_singleton` — distribution over a singleton is vacuous:
   the semantic shadow of the definedness restriction that derives the
@@ -57,7 +57,7 @@ because distributors are undefined on atoms and cannot iterate.
 * §4.2 long-distance reciprocals (Specified Subject Condition evasion
   via broad scope) and the *each … the other* variant constructions.
 * Weaker-than-universal force: HLM restrict attention to two-membered
-  groups (their fn. on (18)); connecting the composition to the weaker
+  groups (the footnote on (18)); connecting the composition to the weaker
   DKMPK schemes for larger groups is rival territory
   ([dalrymple-et-al-1998]).
 -/
@@ -98,14 +98,14 @@ def reciprocator (range : Finset A) (ζ : A → A → Prop) (x : A) : Prop :=
 def distributor (np : Finset A) (φ : A → Prop) : Prop :=
   ∀ x ∈ np, φ x
 
-/-- The LF of "np V each other" after *each*-movement (their (8)/(20)):
+/-- The LF of "np V each other" after *each*-movement (8)/(20):
     the distributor scopes over the reciprocated predicate, with the
     reciprocator's range and contrast both anaphoric to the derived
     antecedent. -/
 def eachOtherLF (np : Finset A) (R : A → A → Prop) : Prop :=
   distributor np (reciprocator np R)
 
-/-! ### The keystone (their (21)) -/
+/-! ### The keystone (21) -/
 
 /-- The compositional each∘other analysis derives Strong Reciprocity:
     HLM's truth conditions "coincide with those of the standard semantic
@@ -257,7 +257,7 @@ inductive EachAttachment where
     sum-denoting host that is not already distributed ((72): distributors
     do not iterate), and under matrix attachment the pronoun must carry
     the distribution index so that the trace of *each* is A-bound
-    (Principle A, their (74)). -/
+    (Principle A, (74)). -/
 def scopeWellFormed : EachAttachment → PronounConstrual → Prop
   | .embedded, c =>
       c.denotesAtom = false ∧ c.hostsDistributor = false

@@ -8,16 +8,16 @@ import Linglib.Data.Examples.Haslinger2025
 
 This file formalizes the two constraints of [haslinger-2025-diss], on which the availability of
 imprecise construals is regulated not in the lexicon but by alternatives. No Needless Manner
-Violations (their Ch. 3, (57)–(59)) combines two Manner preferences, for lower structural
+Violations (Ch. 3, (57)–(59)) combines two Manner preferences, for lower structural
 complexity and for less potential for imprecision, as Pareto dominance, and blocks a sentence
 that a potentially p-equivalent alternative dominates; `lt_complexity_of_lt_potential` derives the
 form–meaning correlation that motivates it, that an unblocked expression more imprecise than a
 competitor must be strictly simpler, which is why *the doors* and *all the doors* coexist while a
-definite built by adding structure to a universal quantifier, their (8), is unattested. Inference
-Preservation (their Ch. 6 (31), final form Ch. 7 (18)) blocks an imprecise construal of a
+definite built by adding structure to a universal quantifier, (8), is unattested. Inference
+Preservation (Ch. 6 (31), final form Ch. 7 (18)) blocks an imprecise construal of a
 subexpression that loses an inference, entailment or incompatibility, that its precise construal
 licenses about a scalar or structural alternative. `Violates` is that constraint for one
-alternative, and with alternatives the numerals at least as round (their (79a)) it derives the
+alternative, and with alternatives the numerals at least as round (79a) it derives the
 round–non-round asymmetry from [woodin-etal-2023]'s roundness score alone: the halo of *99* meets
 that of its alternative *100* as soon as it admits any deviation (`ninetyNine_blocked`), whereas
 the nearest alternative of *100* below a thousand is *200*, so deviations under fifty are
@@ -30,7 +30,7 @@ The Manner orderings are read off two natural-number measures on an abstract sen
 potential p-equivalence a relation parameter, since the dissertation's (68) quantifies over
 contexts that differ only in the issue parameter. Degree expressions are construals over `ℚ`, the
 precise interpretation the exact value and the imprecise one the halo of a contextual deviation
-`m`, their (69)–(70); the roundness score of `Numerals.Roundness` stands in for the
+`m`, (69)–(70); the roundness score of `Numerals.Roundness` stands in for the
 conventionalized scales, and `score_ge_six_lt_thousand` is the finite computation behind the
 asymmetry. The dissertation's examples are the rows of `Data/Examples/Haslinger2025.json`; its
 Ch. 5 extensions to presupposition and redundancy and the collective exceptions of Ch. 7 are not
@@ -53,10 +53,10 @@ section Manner
 variable {S : Type*} (complexity potential : S → ℕ) (PotEquiv : S → S → Prop)
 
 /-- The Manner profile of a sentence: its structural complexity and its potential for
-imprecision, the two orderings of their (58), combined by the product order as in their (57). -/
+imprecision, the two orderings of (58), combined by the product order as in (57). -/
 def manner (φ : S) : ℕ × ℕ := (complexity φ, potential φ)
 
-/-- Their (59): a cooperative speaker will not use `ψ` when a potentially p-equivalent `φ` is at
+/-- (59): a cooperative speaker will not use `ψ` when a potentially p-equivalent `φ` is at
 least as good on both orderings and better on one. -/
 def Blocked (ψ : S) : Prop :=
   ∃ φ, PotEquiv φ ψ ∧ manner complexity potential φ < manner complexity potential ψ
@@ -71,7 +71,7 @@ theorem lt_complexity_of_lt_potential {φ ψ : S} (h : PotEquiv φ ψ)
 
 end Manner
 
-/-- Their (6) and (8): the definite plural, the universal quantifier that contains it, and the
+/-- (6) and (8): the definite plural, the universal quantifier that contains it, and the
 hypothetical definite that would contain the quantifier. -/
 inductive Plural where
   | the
@@ -92,7 +92,7 @@ def Plural.potential : Plural → ℕ
   | .all => 0
   | .defAll => 1
 
-/-- Their (60): *the doors* and *all the doors* are incomparable, each better on one ordering, so
+/-- (60): *the doors* and *all the doors* are incomparable, each better on one ordering, so
 neither blocks the other. -/
 theorem the_all_incomparable :
     ¬ manner Plural.complexity Plural.potential .the <
@@ -101,7 +101,7 @@ theorem the_all_incomparable :
         manner Plural.complexity Plural.potential .the := by
   simp [manner, Prod.lt_iff, Plural.complexity, Plural.potential]
 
-/-- Their (8): a definite built on the quantifier is dominated by the quantifier, so it is
+/-- (8): a definite built on the quantifier is dominated by the quantifier, so it is
 blocked wherever the two are potentially p-equivalent. -/
 theorem defAll_blocked (PotEquiv : Plural → Plural → Prop) (h : PotEquiv .all .defAll) :
     Blocked Plural.complexity Plural.potential PotEquiv .defAll :=
@@ -124,7 +124,7 @@ instance {D : Type*} (P : D → Prop) [DecidablePred P] (p : Bool) (d : D) :
     Decidable (valued P p d) := by
   cases p <;> simp only [valued] <;> infer_instance
 
-/-- Their (18), for one alternative `ψ` of the subexpression `φ`: the use is blocked when, for
+/-- (18), for one alternative `ψ` of the subexpression `φ`: the use is blocked when, for
 some truth value, the precise truth of `φ` entails that status of `ψ`, the precise falsity of `φ`
 does not, but the imprecise truth of `φ` fails to entail the imprecise status of `ψ`. -/
 def Violates {D : Type*} (φ ψ : Construal D) : Prop :=
@@ -132,17 +132,17 @@ def Violates {D : Type*} (φ ψ : Construal D) : Prop :=
     ¬ (∀ d, ¬ φ.precise d → valued ψ.precise p d) ∧
     ¬ (∀ d, φ.imprecise d → valued ψ.imprecise p d)
 
-/-! #### Degree expressions (their Ch. 6) -/
+/-! #### Degree expressions (Ch. 6) -/
 
 open Numerals.Roundness
 
-/-- A bare numeral read with deviation at most `m`: their (69a) and (70a). -/
+/-- A bare numeral read with deviation at most `m`: (69a) and (70a). -/
 def numeral (n : ℕ) (m : ℚ) : Construal ℚ := ⟨λ d => d = n, λ d => |d - n| ≤ m⟩
 
-/-- *more than n* read with deviation at most `m`: their (69b) and (70b). -/
+/-- *more than n* read with deviation at most `m`: (69b) and (70b). -/
 def moreThan (n : ℕ) (m : ℚ) : Construal ℚ := ⟨λ d => n < d, λ d => (n : ℚ) - m < d⟩
 
-/-- The scalar alternatives of a numeral for Inference Preservation, their (79a): the other
+/-- The scalar alternatives of a numeral for Inference Preservation, (79a): the other
 numerals at least as round. -/
 def IsAlternative (n n' : ℕ) : Prop := n' ≠ n ∧ roundnessScore n ≤ roundnessScore n'
 
@@ -228,9 +228,9 @@ theorem moreThan_blocked (n : ℕ) {m : ℚ} (hm : 0 < m) :
   · exact hall (n : ℚ) (by show (n : ℚ) - m < n; linarith)
       (by show |(n : ℚ) - n| ≤ m; simp; linarith)
 
-/-! #### Conjunctions (their Ch. 7) -/
+/-! #### Conjunctions (Ch. 7) -/
 
-/-- Their (19)–(20): *Bert, Claire and Dora were there* over the worlds recording who was there,
+/-- (19)–(20): *Bert, Claire and Dora were there* over the worlds recording who was there,
 precisely maximal, imprecisely non-maximal. -/
 def conjunction : Construal (Fin 3 → Bool) :=
   ⟨λ w => ∀ i, w i = true, λ w => ∃ i, w i = true⟩

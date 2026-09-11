@@ -12,10 +12,10 @@ Japanese *osore*, Turkish *kork-*) take questions canonically,
 because the [uegaki-sudo-2019] triviality needs both distributivity
 and the positive-valence Threshold Significance Presupposition
 (`Studies/UegakiSudo2019.lean`). `PredicateClass` and `classify`
-render the classification (their Table 1); the observations record
+render the classification (Table 1); the observations record
 the paper's cross-linguistic acceptability judgments over English,
 Mandarin, Japanese, and Turkish. Apparent *hope* + question cases are
-analyzed as non-canonical adjunction-style composition (their §4),
+analyzed as non-canonical adjunction-style composition (§4),
 with the highlighting analysis considered and dispreferred.
 -/
 

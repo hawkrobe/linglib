@@ -108,7 +108,7 @@ theorem gap_and_presumption_consistent :
 
 The classical and consistent subspaces are Fitting's (`Evidential.IsClassical`,
 `Evidential.Consistent`); the designated and semi-designated subspaces are the
-paper's, with their footnote characterizations `DES = {x | t ≤ₖ x}` and
+paper's, with its footnote characterizations `DES = {x | t ≤ₖ x}` and
 `SEMI = {x | ¬x ≤ x, U <ₖ x}` proved as order-theoretic facts. -/
 
 section Partitions
