@@ -1,0 +1,396 @@
+import Linglib.Data.Examples.Schema
+
+/-!
+# `Harley2014` — typed example data
+
+Auto-generated from `Linglib/Data/Examples/Harley2014.json` by
+`scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
+the generator. Consumers (the paper's study file, test-suite hubs) import
+this module; declarations live in `namespace Harley2014.Examples`.
+-/
+
+namespace Harley2014.Examples
+
+open Data.Examples
+
+def ex3a : LinguisticExample :=
+  { id := "harley2014_ex3a"
+    source := ⟨"harley-2014", "(3a)"⟩
+    reportedIn := none
+    language := "yaqu1251"
+    primaryText := "vuite~tenne"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "run.sg~run.pl"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "2.1"), ("phenomenon", "rootSuppletion"), ("singularForm", "vuite"), ("pluralForm", "tenne"), ("conditioner", "subject")]
+    comment := "A suppletive main verb, conditioned by subject number."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex3b : LinguisticExample :=
+  { id := "harley2014_ex3b"
+    source := ⟨"harley-2014", "(3b)"⟩
+    reportedIn := none
+    language := "yaqu1251"
+    primaryText := "siika~saka"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "go.sg~go.pl"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "2.1"), ("phenomenon", "rootSuppletion"), ("singularForm", "siika"), ("pluralForm", "saka"), ("conditioner", "subject")]
+    comment := "A suppletive main verb, conditioned by subject number."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex3c : LinguisticExample :=
+  { id := "harley2014_ex3c"
+    source := ⟨"harley-2014", "(3c)"⟩
+    reportedIn := none
+    language := "yaqu1251"
+    primaryText := "weama~rehte"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "wander.sg~wander.pl"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "2.1"), ("phenomenon", "rootSuppletion"), ("singularForm", "weama"), ("pluralForm", "rehte"), ("conditioner", "subject")]
+    comment := "A suppletive main verb, conditioned by subject number."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex3d : LinguisticExample :=
+  { id := "harley2014_ex3d"
+    source := ⟨"harley-2014", "(3d)"⟩
+    reportedIn := none
+    language := "yaqu1251"
+    primaryText := "kivake~kiime"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "enter.sg~enter.pl"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "2.1"), ("phenomenon", "rootSuppletion"), ("singularForm", "kivake"), ("pluralForm", "kiime"), ("conditioner", "subject")]
+    comment := "A suppletive main verb, conditioned by subject number."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex3e : LinguisticExample :=
+  { id := "harley2014_ex3e"
+    source := ⟨"harley-2014", "(3e)"⟩
+    reportedIn := none
+    language := "yaqu1251"
+    primaryText := "vo'e~to'e"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "lie.sg~lie.pl"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "2.1"), ("phenomenon", "rootSuppletion"), ("singularForm", "vo'e"), ("pluralForm", "to'e"), ("conditioner", "subject")]
+    comment := "A suppletive main verb, conditioned by subject number."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex3f : LinguisticExample :=
+  { id := "harley2014_ex3f"
+    source := ⟨"harley-2014", "(3f)"⟩
+    reportedIn := none
+    language := "yaqu1251"
+    primaryText := "weye~kaate"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "walk.sg~walk.pl"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "2.1"), ("phenomenon", "rootSuppletion"), ("singularForm", "weye"), ("pluralForm", "kaate"), ("conditioner", "subject")]
+    comment := "A suppletive main verb, conditioned by subject number."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex3g : LinguisticExample :=
+  { id := "harley2014_ex3g"
+    source := ⟨"harley-2014", "(3g)"⟩
+    reportedIn := none
+    language := "yaqu1251"
+    primaryText := "mea~sua"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "kill.sgObj~kill.plObj"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "2.1"), ("phenomenon", "rootSuppletion"), ("singularForm", "mea"), ("pluralForm", "sua"), ("conditioner", "object")]
+    comment := "A suppletive main verb, conditioned by object number."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex6a : LinguisticExample :=
+  { id := "harley2014_ex6a"
+    source := ⟨"harley-2014", "(6a)"⟩
+    reportedIn := none
+    language := "yaqu1251"
+    primaryText := "Aapo aman vuite-k."
+    discourseSegments := []
+    glossedTokens := [("Aapo", "3sg"), ("aman", "there"), ("vuite-k.", "run.sg-prf")]
+    translation := "He ran over there."
+    context := ""
+    judgment := .acceptable
+    alternatives := [("Vempo aman vuite-k.", .unacceptable)]
+    readings := []
+    paperFeatures := [("section", "2.1"), ("phenomenon", "rootSuppletion"), ("subjectNumber", "singular")]
+    comment := "The singular form with a singular subject; the plural subject is excluded."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def ex6b : LinguisticExample :=
+  { id := "harley2014_ex6b"
+    source := ⟨"harley-2014", "(6b)"⟩
+    reportedIn := none
+    language := "yaqu1251"
+    primaryText := "Vempo aman tenne-k"
+    discourseSegments := []
+    glossedTokens := [("Vempo", "3pl"), ("aman", "there"), ("tenne-k", "run.pl-prf")]
+    translation := "They ran over there."
+    context := ""
+    judgment := .acceptable
+    alternatives := [("Aapo aman tenne-k.", .unacceptable)]
+    readings := []
+    paperFeatures := [("section", "2.1"), ("phenomenon", "rootSuppletion"), ("subjectNumber", "plural")]
+    comment := "The plural form with a plural subject; the singular subject is excluded."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def ex26a : LinguisticExample :=
+  { id := "harley2014_ex26a"
+    source := ⟨"harley-2014", "(26a)"⟩
+    reportedIn := none
+    language := "yaqu1251"
+    primaryText := "Aapo weye"
+    discourseSegments := []
+    glossedTokens := [("Aapo", "3sg"), ("weye", "walk.sg")]
+    translation := "He/she/it is walking."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3.3"), ("phenomenon", "rootSuppletion"), ("subjectNumber", "singular")]
+    comment := "An intransitive conditioned by subject number."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def ex26b : LinguisticExample :=
+  { id := "harley2014_ex26b"
+    source := ⟨"harley-2014", "(26b)"⟩
+    reportedIn := none
+    language := "yaqu1251"
+    primaryText := "Vempo kaate"
+    discourseSegments := []
+    glossedTokens := [("Vempo", "3pl"), ("kaate", "walk.pl")]
+    translation := "They are walking."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3.3"), ("phenomenon", "rootSuppletion"), ("subjectNumber", "plural")]
+    comment := "An intransitive conditioned by subject number."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def ex27a : LinguisticExample :=
+  { id := "harley2014_ex27a"
+    source := ⟨"harley-2014", "(27a)"⟩
+    reportedIn := none
+    language := "yaqu1251"
+    primaryText := "Aapo/Vempo uka koowi-ta mea-k"
+    discourseSegments := []
+    glossedTokens := [("Aapo/Vempo", "3sg/3pl"), ("uka", "the.sg"), ("koowi-ta", "pig-ACC.sg"), ("mea-k", "kill.sg-PRF")]
+    translation := "He/They killed the pig."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3.3"), ("phenomenon", "rootSuppletion"), ("objectNumber", "singular")]
+    comment := "A transitive conditioned by object number, whatever the subject's."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def ex27b : LinguisticExample :=
+  { id := "harley2014_ex27b"
+    source := ⟨"harley-2014", "(27b)"⟩
+    reportedIn := none
+    language := "yaqu1251"
+    primaryText := "Aapo/Vempo ume kowi-m sua-k"
+    discourseSegments := []
+    glossedTokens := [("Aapo/Vempo", "3sg/3pl"), ("ume", "the.pl"), ("kowi-m", "pig-pl"), ("sua-k", "kill.pl-PRF")]
+    translation := "He/They killed the pigs."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3.3"), ("phenomenon", "rootSuppletion"), ("objectNumber", "plural")]
+    comment := "A transitive conditioned by object number, whatever the subject's."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def ex29a : LinguisticExample :=
+  { id := "harley2014_ex29a"
+    source := ⟨"harley-2014", "(29a)"⟩
+    reportedIn := none
+    language := "yaqu1251"
+    primaryText := "Hoan Maria-ta vicha-k"
+    discourseSegments := []
+    glossedTokens := [("Hoan", "Juan.nom"), ("Maria-ta", "Maria-acc"), ("vicha-k", "see-prf")]
+    translation := "Juan saw Maria"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3.3"), ("phenomenon", "case")]
+    comment := "Accusative on the object of a transitive."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def ex29b : LinguisticExample :=
+  { id := "harley2014_ex29b"
+    source := ⟨"harley-2014", "(29b)"⟩
+    reportedIn := none
+    language := "yaqu1251"
+    primaryText := "Maria aman vicha-wa-k"
+    discourseSegments := []
+    glossedTokens := [("Maria", "Maria.nom"), ("aman", "there"), ("vicha-wa-k", "see-pass-prf")]
+    translation := "Maria was seen there"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3.3"), ("phenomenon", "case")]
+    comment := "The accusative is structural: nominative under passivization."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def ex30a : LinguisticExample :=
+  { id := "harley2014_ex30a"
+    source := ⟨"harley-2014", "(30a)"⟩
+    reportedIn := none
+    language := "yaqu1251"
+    primaryText := "U'u maaso uusi-m yi'i-ria-k"
+    discourseSegments := []
+    glossedTokens := [("U'u", "the"), ("maaso", "deer.dancer"), ("uusi-m", "children-pl"), ("yi'i-ria-k", "dance-APPL-PRF")]
+    translation := "The deer dancer danced for the children."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "unergative")]
+    comment := "The high applicative on an unergative intransitive."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def ex30b : LinguisticExample :=
+  { id := "harley2014_ex30b"
+    source := ⟨"harley-2014", "(30b)"⟩
+    reportedIn := none
+    language := "yaqu1251"
+    primaryText := "Inepo Hose-ta pueta-ta eta-ria-k"
+    discourseSegments := []
+    glossedTokens := [("Inepo", "1sg"), ("Hose-ta", "Jose-ACC"), ("pueta-ta", "door-ACC"), ("eta-ria-k", "close-APPL-PRF")]
+    translation := "I closed the door for Jose"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "transitive")]
+    comment := "The applicative on a transitive."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def ex31 : LinguisticExample :=
+  { id := "harley2014_ex31"
+    source := ⟨"harley-2014", "(31)"⟩
+    reportedIn := none
+    language := "yaqu1251"
+    primaryText := "Uu tasa Maria-ta hamte-ria-k"
+    discourseSegments := []
+    glossedTokens := [("Uu", "the"), ("tasa", "cup.nom"), ("Maria-ta", "Maria-ACC"), ("hamte-ria-k", "break.intr-APPL-PRF")]
+    translation := "The cup broke for/on Maria"
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "unaccusative")]
+    comment := "No applicative on an unaccusative."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def ex32a : LinguisticExample :=
+  { id := "harley2014_ex32a"
+    source := ⟨"harley-2014", "(32a)"⟩
+    reportedIn := none
+    language := "yaqu1251"
+    primaryText := "Santos Maria-ta San Xavierle-u weye-ria"
+    discourseSegments := []
+    glossedTokens := [("Santos", "Santos"), ("Maria-ta", "Maria-ACC"), ("San", "San"), ("Xavierle-u", "Xavier-to"), ("weye-ria", "go-APPL")]
+    translation := "Santos is going/walking to San Xavier for Maria"
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "suppletiveIntransitive")]
+    comment := "No applicative on a suppletive intransitive: the suppletive intransitives are unaccusative, as the locality of conditioning predicts."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def ex32b : LinguisticExample :=
+  { id := "harley2014_ex32b"
+    source := ⟨"harley-2014", "(32b)"⟩
+    reportedIn := none
+    language := "yaqu1251"
+    primaryText := "Santos Maria-ta vetchi'ivo San Xavierle-u weye"
+    discourseSegments := []
+    glossedTokens := [("Santos", "Santos"), ("Maria-ta", "Maria-ACC"), ("vetchi'ivo", "for"), ("San", "San"), ("Xavierle-u", "Xavier-to"), ("weye", "go")]
+    translation := "Santos is going/walking to San Xavier for Maria"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "suppletiveIntransitive")]
+    comment := "The periphrastic benefactive instead."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def exfn33_i : LinguisticExample :=
+  { id := "harley2014_exfn33-i"
+    source := ⟨"harley-2014", "(fn33-i)"⟩
+    reportedIn := none
+    language := "yaqu1251"
+    primaryText := "Santos Hose-ta koowi-ta/koowi-m mea/sua-ria-k."
+    discourseSegments := []
+    glossedTokens := [("Santos", "Santos"), ("Hose-ta", "Jose-ACC"), ("koowi-ta/koowi-m", "pig-ACC/pig-PL"), ("mea/sua-ria-k.", "kill.sg/kill.pl-APPL-PRF")]
+    translation := "Santos killed a pig/pigs for Jose."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3.3"), ("phenomenon", "applicative"), ("verbClass", "suppletiveTransitive")]
+    comment := "The applicative on a suppletive transitive; suppletion still follows the thematic object, not the applied object."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def all : List LinguisticExample := [ex3a, ex3b, ex3c, ex3d, ex3e, ex3f, ex3g, ex6a, ex6b, ex26a, ex26b, ex27a, ex27b, ex29a, ex29b, ex30a, ex30b, ex31, ex32a, ex32b, exfn33_i]
+
+end Harley2014.Examples
