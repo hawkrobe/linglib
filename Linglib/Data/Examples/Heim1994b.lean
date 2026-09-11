@@ -1,20 +1,20 @@
 import Linglib.Data.Examples.Schema
 
 /-!
-# `Heim1994` — typed example data
+# `Heim1994b` — typed example data
 
-Auto-generated from `Linglib/Data/Examples/Heim1994.json` by
+Auto-generated from `Linglib/Data/Examples/Heim1994b.json` by
 `scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
 the generator. Consumers (the paper's study file, test-suite hubs) import
-this module; declarations live in `namespace Heim1994.Examples`.
+this module; declarations live in `namespace Heim1994b.Examples`.
 -/
 
-namespace Heim1994.Examples
+namespace Heim1994b.Examples
 
 open Data.Examples
 
 def ex1 : LinguisticExample :=
-  { id := "heim1994_ex1"
+  { id := "heim1994b_ex1"
     source := ⟨"heim-1994", "(1)"⟩
     reportedIn := none
     language := "stan1293"
@@ -32,7 +32,7 @@ def ex1 : LinguisticExample :=
     lgrConformance := "" }
 
 def ex6 : LinguisticExample :=
-  { id := "heim1994_ex6"
+  { id := "heim1994b_ex6"
     source := ⟨"heim-1994", "(6)"⟩
     reportedIn := none
     language := "stan1293"
@@ -50,7 +50,7 @@ def ex6 : LinguisticExample :=
     lgrConformance := "" }
 
 def ex17 : LinguisticExample :=
-  { id := "heim1994_ex17"
+  { id := "heim1994b_ex17"
     source := ⟨"heim-1994", "(17)"⟩
     reportedIn := none
     language := "stan1293"
@@ -68,7 +68,7 @@ def ex17 : LinguisticExample :=
     lgrConformance := "" }
 
 def ex18 : LinguisticExample :=
-  { id := "heim1994_ex18"
+  { id := "heim1994b_ex18"
     source := ⟨"heim-1994", "(18)"⟩
     reportedIn := none
     language := "stan1293"
@@ -86,7 +86,7 @@ def ex18 : LinguisticExample :=
     lgrConformance := "" }
 
 def ex19 : LinguisticExample :=
-  { id := "heim1994_ex19"
+  { id := "heim1994b_ex19"
     source := ⟨"heim-1994", "(19)"⟩
     reportedIn := none
     language := "stan1293"
@@ -104,7 +104,7 @@ def ex19 : LinguisticExample :=
     lgrConformance := "" }
 
 def ex20a : LinguisticExample :=
-  { id := "heim1994_ex20a"
+  { id := "heim1994b_ex20a"
     source := ⟨"heim-1994", "(20a)"⟩
     reportedIn := none
     language := "stan1293"
@@ -122,7 +122,7 @@ def ex20a : LinguisticExample :=
     lgrConformance := "" }
 
 def ex20b : LinguisticExample :=
-  { id := "heim1994_ex20b"
+  { id := "heim1994b_ex20b"
     source := ⟨"heim-1994", "(20b)"⟩
     reportedIn := none
     language := "stan1293"
@@ -140,7 +140,7 @@ def ex20b : LinguisticExample :=
     lgrConformance := "" }
 
 def ex21 : LinguisticExample :=
-  { id := "heim1994_ex21"
+  { id := "heim1994b_ex21"
     source := ⟨"heim-1994", "(21)"⟩
     reportedIn := none
     language := "stan1293"
@@ -158,7 +158,7 @@ def ex21 : LinguisticExample :=
     lgrConformance := "" }
 
 def ex24 : LinguisticExample :=
-  { id := "heim1994_ex24"
+  { id := "heim1994b_ex24"
     source := ⟨"heim-1994", "(24)"⟩
     reportedIn := none
     language := "stan1293"
@@ -177,4 +177,4 @@ def ex24 : LinguisticExample :=
 
 def all : List LinguisticExample := [ex1, ex6, ex17, ex18, ex19, ex20a, ex20b, ex21, ex24]
 
-end Heim1994.Examples
+end Heim1994b.Examples

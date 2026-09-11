@@ -12,7 +12,7 @@ a time-concept (`TimeConcept`) — a way of identifying a time from the holder's
 centered context — together with a base-world condition, the temporal instance of
 [lewis-1979-attitudes]'s de se reduction as generalized by
 [cresswell-vonstechow-1982]. Paper-anchored theorems live in
-`Studies/HeimComments1994.lean` and `Studies/Abusch1997.lean`.
+`Studies/Heim1994a.lean` and `Studies/Abusch1997.lean`.
 
 ## Implementation notes
 

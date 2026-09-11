@@ -1,0 +1,698 @@
+[
+  {
+    "id": "heim1994a_s2",
+    "source": {
+      "bibkey": "heim-1994-comments",
+      "paperLabel": "(2)"
+    },
+    "language": "stan1293",
+    "primaryText": "John cried.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "lf",
+        "John PAST1 cry"
+      ],
+      [
+        "presupposition",
+        "g(1) < t_c"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1994a_s5",
+    "source": {
+      "bibkey": "heim-1994-comments",
+      "paperLabel": "(5)"
+    },
+    "language": "stan1293",
+    "primaryText": "John was in Paris at some time.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "lf",
+        "(6): (at) some time λ3 [John PAST3 be in Paris]"
+      ],
+      [
+        "presupposition",
+        "every time in the restriction precedes t_c"
+      ]
+    ],
+    "comment": "The bound tense's presupposition projects universally through the quantifier.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1994a_s11",
+    "source": {
+      "bibkey": "heim-1994-comments",
+      "paperLabel": "(11)"
+    },
+    "language": "stan1293",
+    "primaryText": "John believed Bill to be asleep.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "lf",
+        "(12): John PAST1 believe λ0 [Bill to0 be asleep]"
+      ],
+      [
+        "reading",
+        "simultaneous only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1994a_s13a",
+    "source": {
+      "bibkey": "heim-1994-comments",
+      "paperLabel": "(13a)"
+    },
+    "language": "stan1293",
+    "primaryText": "When she was in her twenties, she thought she was unhappy on her 40th birthday.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "ulc",
+        "cannot describe the situation of (13b)"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1994a_s13b",
+    "source": {
+      "bibkey": "heim-1994-comments",
+      "paperLabel": "(13b)"
+    },
+    "language": "stan1293",
+    "primaryText": "When she was in her twenties, she thought she would be unhappy on her 40th birthday.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1994a_s14a",
+    "source": {
+      "bibkey": "heim-1994-comments",
+      "paperLabel": "(14a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John said that he had never been in Paris yet, but that he went there at some time in his life.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "ulc",
+        "cannot describe the situation of (14b)"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1994a_s14b",
+    "source": {
+      "bibkey": "heim-1994-comments",
+      "paperLabel": "(14b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John said that he had never been in Paris yet, but that he would go there at some time in his life.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1994a_s19",
+    "source": {
+      "bibkey": "heim-1994-comments",
+      "paperLabel": "(19)"
+    },
+    "language": "stan1293",
+    "primaryText": "John believed that Bill was happy on his 40th birthday.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "lf",
+        "(20): John PAST1 believe λ0 [his 40th birthday λ2 [Bill PAST2 be happy]]"
+      ],
+      [
+        "presupposition",
+        "(i) John believed the birthday to precede t_c; (ii) he located himself at or after it"
+      ]
+    ],
+    "comment": "Inappropriate if John is known to have thought Bill was 39; (i) is unwelcome and is removed in Section 3.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1994a_s22",
+    "source": {
+      "bibkey": "heim-1994-comments",
+      "paperLabel": "(22)"
+    },
+    "language": "stan1293",
+    "primaryText": "John thought that Bill was only 39, and he wondered whether he was happy on his 40th birthday.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ]
+    ],
+    "comment": "Incoherent: the ULC presupposition (ii) of (19) is violated.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1994a_s23",
+    "source": {
+      "bibkey": "heim-1994-comments",
+      "paperLabel": "(23)"
+    },
+    "language": "stan1293",
+    "primaryText": "John thought that Bill was only 39, and he wondered whether he would be happy on his 40th birthday.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1994a_s24",
+    "source": {
+      "bibkey": "heim-1994-comments",
+      "paperLabel": "(24)"
+    },
+    "language": "stan1293",
+    "primaryText": "John will cry.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "lf",
+        "(25): PRES1 woll λ0 [John INF0 cry]"
+      ],
+      [
+        "entry",
+        "(26): woll shifts the evaluation time forward"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1994a_s27",
+    "source": {
+      "bibkey": "heim-1994-comments",
+      "paperLabel": "(27)"
+    },
+    "language": "stan1293",
+    "primaryText": "She will marry a man who loves her.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "lf",
+        "PRES1 woll λ0 [a man who PRES0 love her λ2 [she INF0 marry t2]]"
+      ]
+    ],
+    "comment": "Shows why woll must shift the evaluation time: otherwise the ULC would exclude future loving.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1994a_s28",
+    "source": {
+      "bibkey": "heim-1994-comments",
+      "paperLabel": "(28)"
+    },
+    "language": "stan1293",
+    "primaryText": "John believed that Bill was asleep.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "lf",
+        "(29) simultaneous, John PAST1 believe λ0 [Bill PAST0 be asleep]; (32) back-shifted through res-movement"
+      ],
+      [
+        "readings",
+        "simultaneous; back-shifted"
+      ]
+    ],
+    "comment": "LFs (30) and (31) with a free lower past attribute to John beliefs about his own location in time and are set aside.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1994a_s34",
+    "source": {
+      "bibkey": "heim-1994-comments",
+      "paperLabel": "(34)"
+    },
+    "language": "stan1293",
+    "primaryText": "When I woke up, I was convinced I had overslept. I wondered what happened at six when the alarm went off. I figured I probably turned it off in my sleep. Then I realized it was only five o'clock.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "lf",
+        "(35): a de re report about six o'clock with g_c(1) = 5 o'clock, g_c(2) = 6 o'clock"
+      ]
+    ],
+    "comment": "If de re, a belief about a time later than the believing time reported with a past, as the ULC but not the descriptive generalization allows.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1994a_s36",
+    "source": {
+      "bibkey": "heim-1994-comments",
+      "paperLabel": "(36)"
+    },
+    "language": "stan1293",
+    "primaryText": "John thought Mary is pregnant.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "lf",
+        "(38): John PAST1 think PRES2 λ3 λ0 [Mary t3 be pregnant]"
+      ],
+      [
+        "reading",
+        "double access"
+      ]
+    ],
+    "comment": "Presuppositions (i)–(iv); reportable for the belief 'she is pregnant today' on the same day only, never for 'she was pregnant a year ago'.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1994a_s39",
+    "source": {
+      "bibkey": "heim-1994-comments",
+      "paperLabel": "(39)"
+    },
+    "language": "stan1293",
+    "primaryText": "He will think that he is sick.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "counterexample",
+        "PRES overlapping t_c"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1994a_s40",
+    "source": {
+      "bibkey": "heim-1994-comments",
+      "paperLabel": "(40)"
+    },
+    "language": "stan1293",
+    "primaryText": "He will think that he was sick.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "counterexample",
+        "PAST preceding t_c"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1994a_s41",
+    "source": {
+      "bibkey": "heim-1994-comments",
+      "paperLabel": "(41)"
+    },
+    "language": "stan1293",
+    "primaryText": "I will use an iron that is hot.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1994a_s42",
+    "source": {
+      "bibkey": "heim-1994-comments",
+      "paperLabel": "(42)"
+    },
+    "language": "stan1293",
+    "primaryText": "I will charge you whatever time it took.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1994a_s43",
+    "source": {
+      "bibkey": "heim-1994-comments",
+      "paperLabel": "(43)"
+    },
+    "language": "stan1293",
+    "primaryText": "He decided a week ago that in ten days he would say to his mother that they were having their last meal together.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "source",
+        "Abusch 1988"
+      ],
+      [
+        "lf",
+        "(51)"
+      ],
+      [
+        "licensing",
+        "the lowest PAST licensed non-locally by <-decide"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1994a_s44",
+    "source": {
+      "bibkey": "heim-1994-comments",
+      "paperLabel": "(44)"
+    },
+    "language": "stan1293",
+    "primaryText": "He said he would buy a fish that was still alive.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "source",
+        "Ogihara 1989"
+      ],
+      [
+        "lf",
+        "(52)"
+      ],
+      [
+        "licensing",
+        "the lowest PAST licensed non-locally by <-say"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1994a_s45",
+    "source": {
+      "bibkey": "heim-1994-comments",
+      "paperLabel": "(45)"
+    },
+    "language": "stan1293",
+    "primaryText": "He decided to jump before they fired.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "source",
+        "A. Santisteban, p.c."
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1994a_s54",
+    "source": {
+      "bibkey": "heim-1994-comments",
+      "paperLabel": "(54)"
+    },
+    "language": "stan1293",
+    "primaryText": "John was looking for a man who lives next door.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "lf",
+        "(55): the object NP raised out of the argument of <-be looking for"
+      ],
+      [
+        "reading",
+        "transparent only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1994a_s59",
+    "source": {
+      "bibkey": "heim-1994-comments",
+      "paperLabel": "(59)"
+    },
+    "language": "stan1293",
+    "primaryText": "John met the man who lived next door.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "lf",
+        "(60): John PAST1 <-meet [the man who PAST2 ¬<-live next door]"
+      ]
+    ],
+    "comment": "Licensed under definition (53) with the unattested reading where PAST2 is the utterance time; excluded once the object is an extensional argument, (61).",
+    "lgrConformance": ""
+  }
+]
