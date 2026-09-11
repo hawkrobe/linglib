@@ -1,0 +1,1122 @@
+[
+  {
+    "id": "haspelmath2001_articles_en",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.1"
+    },
+    "language": "stan1293",
+    "primaryText": "the book / a book",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "articles"
+      ],
+      [
+        "value",
+        "sae"
+      ]
+    ],
+    "comment": "Both a definite and an indefinite article.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_relpro_en",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.2"
+    },
+    "language": "stan1293",
+    "primaryText": "the suspicious woman whom I described",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "relativePronouns"
+      ],
+      [
+        "value",
+        "sae"
+      ]
+    ],
+    "comment": "Postnominal, an inflecting relative pronoun introducing the clause and resuming the head's role.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_relparticle_en",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.2"
+    },
+    "language": "stan1293",
+    "primaryText": "the radio that I bought",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "relativePronouns"
+      ],
+      [
+        "value",
+        "particle"
+      ]
+    ],
+    "comment": "The postnominal relative clause introduced by a relative particle, the other widespread European type.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_haveperf_en",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.3"
+    },
+    "language": "stan1293",
+    "primaryText": "I have written",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "havePerfect"
+      ],
+      [
+        "value",
+        "sae"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_haveperf_sv",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.3"
+    },
+    "language": "swed1254",
+    "primaryText": "jag har skrivit",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I have written",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "havePerfect"
+      ],
+      [
+        "value",
+        "sae"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_haveperf_es",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.3"
+    },
+    "language": "stan1288",
+    "primaryText": "he escrito",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I have written",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "havePerfect"
+      ],
+      [
+        "value",
+        "sae"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_perf_fi",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.3"
+    },
+    "language": "finn1318",
+    "primaryText": "olen saanut",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I have received",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "havePerfect"
+      ],
+      [
+        "value",
+        "participialCopula"
+      ]
+    ],
+    "comment": "An active participle with the copula, the Slavic, Finno-Ugrian and Armenian type.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_perf_cy",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.3"
+    },
+    "language": "wels1247",
+    "primaryText": "wedi",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "after",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "havePerfect"
+      ],
+      [
+        "value",
+        "prepositional"
+      ]
+    ],
+    "comment": "The Welsh perfect is formed with the preposition 'after'.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_nomexp_en",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.4"
+    },
+    "language": "stan1293",
+    "primaryText": "I like it",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "nominativeExperiencers"
+      ],
+      [
+        "value",
+        "generalizing"
+      ]
+    ],
+    "comment": "The experiencer coded as a nominative subject.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_invexp_en",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.4"
+    },
+    "language": "stan1293",
+    "primaryText": "It pleases me",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "nominativeExperiencers"
+      ],
+      [
+        "value",
+        "inverting"
+      ]
+    ],
+    "comment": "The stimulus coded as the nominative subject.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_getpass_cy",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.5"
+    },
+    "language": "wels1247",
+    "primaryText": "Terry got his hitting by a snowball",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Terry got hit by a snowball",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "participialPassive"
+      ],
+      [
+        "value",
+        "getPassive"
+      ]
+    ],
+    "comment": "The Welsh 'get'-passive rendered word for word.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_caus_mn",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.6"
+    },
+    "language": "halh1238",
+    "primaryText": "xajl-uul-",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "melt (transitive)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "anticausativeProminence"
+      ],
+      [
+        "value",
+        "causative"
+      ]
+    ],
+    "comment": "A causative derived from the inchoative xajl- 'melt (intransitive)'.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_anticaus_ru",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.6"
+    },
+    "language": "russ1263",
+    "primaryText": "izmenit'-sja",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "change (intransitive)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "anticausativeProminence"
+      ],
+      [
+        "value",
+        "anticausative"
+      ]
+    ],
+    "comment": "An anticausative derived from the causative izmenit' 'change (transitive)'.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_datposs_de",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.7"
+    },
+    "language": "stan1295",
+    "primaryText": "Die Mutter wäscht dem Kind die Haare.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The mother is washing the child's hair.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "dativeExternalPossessors"
+      ],
+      [
+        "value",
+        "dative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_locposs_sv",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.7"
+    },
+    "language": "swed1254",
+    "primaryText": "Någon bröt armen på honom.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Someone broke his arm (lit. on him).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "dativeExternalPossessors"
+      ],
+      [
+        "value",
+        "locative"
+      ]
+    ],
+    "comment": "The North Germanic and Balto-Finnic locative external possessor.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_vni_de",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.8"
+    },
+    "language": "stan1295",
+    "primaryText": "Niemand kommt.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Nobody comes.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "negativeIndefinitesWithoutVerbalNegation"
+      ],
+      [
+        "value",
+        "sae"
+      ]
+    ],
+    "comment": "V + NI: the negative indefinite without verbal negation.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_nvni_el",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.8"
+    },
+    "language": "mode1248",
+    "primaryText": "Kanénas dhen érxete.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Nobody (lit. not) comes.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "negativeIndefinitesWithoutVerbalNegation"
+      ],
+      [
+        "value",
+        "negatedVerb"
+      ]
+    ],
+    "comment": "NV + NI: the negated verb with the negative indefinite.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_mixed_it_pre",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.8"
+    },
+    "language": "ital1282",
+    "primaryText": "Nessuno viene.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Nobody comes.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "negativeIndefinitesWithoutVerbalNegation"
+      ],
+      [
+        "value",
+        "mixed"
+      ]
+    ],
+    "comment": "The preverbal negative indefinite takes no verbal negation.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_mixed_it_post",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.8"
+    },
+    "language": "ital1282",
+    "primaryText": "Non ho visto nessuno.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Not I have seen nobody.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "negativeIndefinitesWithoutVerbalNegation"
+      ],
+      [
+        "value",
+        "mixed"
+      ]
+    ],
+    "comment": "The postverbal negative indefinite cooccurs with verbal negation.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_equative_ca",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.10"
+    },
+    "language": "stan1289",
+    "primaryText": "tan Z com X",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "as Z as X",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "relativeBasedEquative"
+      ],
+      [
+        "value",
+        "sae"
+      ]
+    ],
+    "comment": "com is an adverbial relative pronoun and tan a correlative demonstrative.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_equative_pt",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.10"
+    },
+    "language": "port1283",
+    "primaryText": "tão Z como X",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "as Z as X",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "relativeBasedEquative"
+      ],
+      [
+        "value",
+        "sae"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_equative_de",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.10"
+    },
+    "language": "stan1295",
+    "primaryText": "so Z wie X",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "as Z as X",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "relativeBasedEquative"
+      ],
+      [
+        "value",
+        "sae"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_equative_ru",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.10"
+    },
+    "language": "russ1263",
+    "primaryText": "tak(oj) že Z kak X",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "as Z as X",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "relativeBasedEquative"
+      ],
+      [
+        "value",
+        "sae"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_equative_hu",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.10"
+    },
+    "language": "hung1274",
+    "primaryText": "olyan Z mint X",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "as Z as X",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "relativeBasedEquative"
+      ],
+      [
+        "value",
+        "sae"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_equative_fi",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.10"
+    },
+    "language": "finn1318",
+    "primaryText": "niin Z kuin X",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "as Z as X",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "relativeBasedEquative"
+      ],
+      [
+        "value",
+        "sae"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_equative_ka",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.10"
+    },
+    "language": "nucl1302",
+    "primaryText": "isetive Z rogorc X",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "as Z as X",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "relativeBasedEquative"
+      ],
+      [
+        "value",
+        "sae"
+      ]
+    ],
+    "comment": "Listed in §2.10 although Map 107.10 leaves Georgian outside the isogloss.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_equative_bg",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.10"
+    },
+    "language": "bulg1262",
+    "primaryText": "xubava kato tebe",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "as pretty as you",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "relativeBasedEquative"
+      ],
+      [
+        "value",
+        "sae"
+      ]
+    ],
+    "comment": "No correlative demonstrative, but a standard marker of relative-pronoun origin.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_equative_ga",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.10"
+    },
+    "language": "iris1253",
+    "primaryText": "chomh Z le X",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "EQUATIVE Z with X",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "relativeBasedEquative"
+      ],
+      [
+        "value",
+        "special"
+      ]
+    ],
+    "comment": "The Celtic special marker on the adjective.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_equative_sv",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.10"
+    },
+    "language": "swed1254",
+    "primaryText": "lika Z som X",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "equally Z as X",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "relativeBasedEquative"
+      ],
+      [
+        "value",
+        "equally"
+      ]
+    ],
+    "comment": "The Scandinavian 'equally' on the adjective.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_agr_bg",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.11"
+    },
+    "language": "bulg1262",
+    "primaryText": "vie rabotite / rabotite",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you (pl.) work",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "strictAgreement"
+      ],
+      [
+        "value",
+        "referential"
+      ]
+    ],
+    "comment": "The subject suffix can have a referential function on its own.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_agr_de",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.11"
+    },
+    "language": "stan1295",
+    "primaryText": "ihr arbeit-et",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you work",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "strictAgreement"
+      ],
+      [
+        "value",
+        "sae"
+      ]
+    ],
+    "comment": "The agreement suffix has no referential function, so the pronoun cannot be omitted.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_nopro_sv",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.11"
+    },
+    "language": "swed1254",
+    "primaryText": "jag biter / du biter / han biter",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I/you/he bite(s)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "strictAgreement"
+      ],
+      [
+        "value",
+        "obligatoryPronouns"
+      ]
+    ],
+    "comment": "Obligatory subject pronouns with no agreement distinctions on the verb.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_intref_de",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.12"
+    },
+    "language": "stan1295",
+    "primaryText": "sich / selbst",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "reflexive / intensifier",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "intensifierReflexiveDifferentiation"
+      ],
+      [
+        "value",
+        "sae"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_intref_ru",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.12"
+    },
+    "language": "russ1263",
+    "primaryText": "sebja / sam",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "reflexive / intensifier",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "intensifierReflexiveDifferentiation"
+      ],
+      [
+        "value",
+        "sae"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_intref_it",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.12"
+    },
+    "language": "ital1282",
+    "primaryText": "si / stesso",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "reflexive / intensifier",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "intensifierReflexiveDifferentiation"
+      ],
+      [
+        "value",
+        "sae"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_intref_el",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.12"
+    },
+    "language": "mode1248",
+    "primaryText": "eaftó / ídhjos",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "reflexive / intensifier",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "intensifierReflexiveDifferentiation"
+      ],
+      [
+        "value",
+        "sae"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_intref_fa",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§2.12"
+    },
+    "language": "west2369",
+    "primaryText": "Hušang xodaš-rā did",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Hushang saw himself",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "intensifierReflexiveDifferentiation"
+      ],
+      [
+        "value",
+        "undifferentiated"
+      ]
+    ],
+    "comment": "The intensifier xod-aš 'himself' doubles as the reflexive.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_comparative_ja",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§3.2"
+    },
+    "language": "nucl1643",
+    "primaryText": "inu-ga neko yori ookii",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "the dog is bigger than the cat",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "comparativeMarking"
+      ],
+      [
+        "value",
+        "standardMarkerOnly"
+      ]
+    ],
+    "comment": "The comparative semantics carried by the standard marker alone.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_with_en",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§3.4"
+    },
+    "language": "stan1293",
+    "primaryText": "with her husband / with the hammer",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "comitativeInstrumentalSyncretism"
+      ],
+      [
+        "value",
+        "sae"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2001_negcoord_nl",
+    "source": {
+      "bibkey": "haspelmath-2001",
+      "paperLabel": "§3.6"
+    },
+    "language": "dutc1256",
+    "primaryText": "noch A noch B",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "neither A nor B",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "feature",
+        "negativeCoordination"
+      ],
+      [
+        "value",
+        "sae"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  }
+]
