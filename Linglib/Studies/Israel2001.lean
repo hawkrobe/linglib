@@ -1,278 +1,240 @@
-import Linglib.Semantics.Polarity.ScalarModel
-import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Fragments.English.PolarityItems
+import Mathlib.Order.Monotone.Basic
 
 /-!
-# [israel-2001]: Minimizers, Maximizers, and the Rhetoric of Scalar Reasoning
+# Israel (2001): Minimizers, Maximizers and the Rhetoric of Scalar Reasoning
 
-Israel's Scalar Model classifies polarity items by scalar value ×
-rhetorical force (Figure 1) and explains the *inverted* items — maximizer
-NPIs (*wild horses*) and minimizer PPIs (*for peanuts*) — by
-propositional role (§4): facilitating roles produce inverted items,
-impeding roles canonical ones. The pecuniary paradox dissolves: *a red
-cent* (resource, impeding) and *for peanuts* (reward, facilitating)
-share a low monetary value but occupy different roles, hence opposite
-canonicity. The paper's items are `ScalarItem`s
-(`Semantics/Polarity/ScalarModel.lean`); the classifications of the
-`Fragments/English/PolarityItems.lean` entries live here in
-`classifiedLexicon`, with the theory that consumes them.
+This file formalizes the Scalar Model of polarity sensitivity of [israel-2001]. A scalar model,
+after [fillmore-kay-oconnor-1988], is a propositional function over an ordered scale whose
+values pragmatically entail one another;
+a polarity item encodes a quantity relative to the scalar norm and a rhetorical force, emphatic
+when the proposition it expresses entails the norm's and attenuating when it is entailed by it
+(`Emphatic`, `Attenuating`). Scale preserving contexts are the strictly monotone maps on
+propositions and scale reversing ones the strictly antitone maps, and the direction of the
+expressed propositional function decides which quantities are emphatic (`emphatic_iff_of_strictMono`
+and its dual). The four cells of Figure 1 follow: emphatic items with low values and attenuating
+items with high values need reversing contexts, the negative polarity items, the other two cells
+preserving contexts. The inverted items of Section 3, maximizing NPIs like *wild horses* and
+minimizing PPIs like *for peanuts*, follow from the thematic logic of Section 4: a propositional
+role either impedes the eventuality, so that the function is antitone in quantity, or
+facilitates it, so that it is monotone (`Role`), and composing role with context gives the
+licensing context of any item (`licensingContext`, `felicitous_iff`). The pecuniary paradox
+dissolves because a resource is impeding and a reward facilitating, and the ambiguous
+superlatives of Section 6 are the same composition with an existential and a
+perceptual-ability scale.
 
-## Main results
+## Implementation notes
 
-* `pecuniary_paradox` — same value and direction, different roles,
-  opposite canonicity.
-* `paperItems`/`classifiedLexicon` consistency — every classification
-  agrees with `predictCanonicity`.
-* `suggestedLikelihoodEffect` — the §4 fn. 6 bridge from [dowty-1991]
-  proto-role entailments to likelihood effect.
+* Pragmatic entailment between the propositions of a scalar model is modelled as inclusion of
+  sets of worlds; the paper's point that the relevant inferences may be pragmatic rather than
+  logical is not represented.
+* The paper's classifications of the English items of `Fragments/English/PolarityItems.lean`
+  by quantity and role live here (`classified`); the force comes from the fragment's scalar
+  direction, and the derived licensing context is checked against the fragment's record of
+  each item as an NPI or PPI.
+
+## References
+
+* [israel-2001]
+* [israel-1996]
+* [fillmore-kay-oconnor-1988]
+* [fauconnier-1975]
+* [ladusaw-1979]
 -/
 
 namespace Israel2001
 
-open Polarity
-open English.PolarityItems
+open Polarity English.PolarityItems
 
-/-! ### Canonical items (Figure 1)
+variable {α W : Type*} [LinearOrder α]
 
-The basic Scalar Model predicts four cells:
+/-- Rhetorical force: the expressed proposition is more informative than the scalar norm, or
+less. -/
+inductive Force
+  | emphatic
+  | attenuating
+  deriving DecidableEq
 
-| | **Emphatic** | **Attenuating** |
-|---------|----------------------|----------------------|
-| **NPI** | low: *a wink, inch* | high: *much, long* |
-| **PPI** | high: *tons, utterly*| low: *sorta, rather* |
+/-- The force of a fragment entry, from its scalar direction. -/
+def Force.ofDirection : ScalarDirection → Option Force
+  | .strengthening => some .emphatic
+  | .attenuating => some .attenuating
+  | .nonScalar => none
 
-Emphatic items license maximally informative interpretations,
-attenuating items minimally informative ones; NPI contexts are
-scale-reversing (DE), PPI contexts scale-preserving (UE). -/
+/-- Quantity relative to the norm: the size, amount or degree the item denotes. -/
+inductive Quantity
+  | small
+  | large
+  deriving DecidableEq
 
-/-- *a wink* — canonical emphatic NPI (low, impeding): *I didn't sleep a
-    wink.* -/
-def aWink : ScalarItem :=
-  { form := "a wink"
-  , licensor := some .weak, baseForce := .degree
-  , licensingContexts := [.negation]
-  , scalarDirection := some .strengthening
-  , scalarValue := .low, canonicity := .canonical
-  , likelihoodEffect := some .impeding
-  , morphology := .idiomatic }
+/-- A quantity `x` stands to the norm `n` as the item's quantity says. -/
+def Quantity.Rel : Quantity → α → α → Prop
+  | .small, x, n => x < n
+  | .large, x, n => n < x
 
-/-- *insanely* — canonical emphatic PPI (high): *She is insanely
-    good-looking.* -/
-def insanely : ScalarItem :=
-  { form := "insanely"
-  , ppi := true, baseForce := .degree
-  , licensingContexts := []
-  , scalarDirection := some .strengthening
-  , scalarValue := .high, canonicity := .canonical }
+/-- The effect of a propositional role on the likelihood of the eventuality (Section 4): a
+patient, theme, increment, expense or duration impedes it, the bigger the less likely, and an
+agent, stimulus, reward, instrument or interval facilitates it. -/
+inductive Role
+  | impeding
+  | facilitating
+  deriving DecidableEq
 
-/-- *sorta* — canonical attenuating PPI (low): *She's sorta clever.* -/
-def sorta : ScalarItem :=
-  { form := "sorta"
-  , ppi := true, baseForce := .degree
-  , licensingContexts := []
-  , scalarDirection := some .attenuating
-  , scalarValue := .low, canonicity := .canonical }
+/-- The propositional function of a role: strictly antitone in quantity for an impeding role,
+so that bigger values entail smaller ones, strictly monotone for a facilitating one. -/
+def Role.Directed : Role → (α → Set W) → Prop
+  | .impeding, P => StrictAnti P
+  | .facilitating, P => StrictMono P
 
-/-- *all that* — canonical attenuating NPI (high): *He's not all that
-    clever.* -/
-def allThat : ScalarItem :=
-  { form := "all that"
-  , licensor := some .weak, baseForce := .degree
-  , licensingContexts := [.negation]
-  , scalarDirection := some .attenuating
-  , scalarValue := .high, canonicity := .canonical
-  , likelihoodEffect := some .impeding }
+/-- A context is scale preserving when it keeps the entailments of the model and scale
+reversing when it reverses them (Section 1). -/
+inductive ContextType
+  | preserving
+  | reversing
+  deriving DecidableEq
 
-/-! ### Inverted items (Figure 3)
+/-- The maps on propositions of each context type. -/
+def ContextType.Directed : ContextType → (Set W → Set W) → Prop
+  | .preserving, f => StrictMono f
+  | .reversing, f => StrictAnti f
 
-Inverted items break the simple correlation between scalar value and
-polarity type; propositional role (§4) explains them. -/
+/-- The proposition expressed with quantity `x` is emphatic when it pragmatically entails the
+proposition at the norm. -/
+def Emphatic (Q : α → Set W) (n x : α) : Prop := Q x < Q n
 
-/-- *his own shadow* — inverted emphatic PPI (low, facilitating):
-    *Godfrey is scared of his own shadow.* -/
-def ownShadow : ScalarItem :=
-  { form := "his own shadow"
-  , ppi := true, baseForce := .degree
-  , licensingContexts := []
-  , scalarDirection := some .strengthening
-  , scalarValue := .low, canonicity := .inverted
-  , likelihoodEffect := some .facilitating
-  , morphology := .idiomatic }
+/-- It is attenuating when the proposition at the norm entails it. -/
+def Attenuating (Q : α → Set W) (n x : α) : Prop := Q n < Q x
 
-/-- *with a feather* — inverted emphatic PPI (low, facilitating): *You
-    could have knocked me over with a feather.* -/
-def withAFeather : ScalarItem :=
-  { form := "with a feather"
-  , ppi := true, baseForce := .degree
-  , licensingContexts := []
-  , scalarDirection := some .strengthening
-  , scalarValue := .low, canonicity := .inverted
-  , likelihoodEffect := some .facilitating
-  , morphology := .idiomatic }
+/-- An item of a given force is felicitous when the proposition expressed has that force. -/
+def Felicitous : Force → (α → Set W) → α → α → Prop
+  | .emphatic, Q, n, x => Emphatic Q n x
+  | .attenuating, Q, n, x => Attenuating Q n x
 
-/-! ### The pecuniary paradox
+variable {Q : α → Set W} {n x : α}
 
-Both *a red cent* and *for peanuts* denote small monetary values (§3,
-examples 15–16), but the first is an NPI and the second a PPI: they
-occupy different propositional roles — resource (what you spend,
-impeding) vs reward (what you gain, facilitating). -/
+/-- When the expressed function is strictly monotone, inferences run from low values to high
+ones and the emphatic propositions are the ones below the norm. -/
+theorem emphatic_iff_of_strictMono (h : StrictMono Q) (hx : x ≠ n) : Emphatic Q n x ↔ x < n :=
+  ⟨λ hE => (lt_or_gt_of_ne hx).resolve_right λ hn => lt_asymm (h hn) hE, λ hxn => h hxn⟩
 
-/-- *a red cent* — canonical NPI, resource role: *He won't spend a red
-    cent on your wedding.* -/
-def redCent : ScalarItem :=
-  { form := "a red cent"
-  , licensor := some .weak, baseForce := .degree
-  , licensingContexts := [.negation]
-  , scalarDirection := some .strengthening
-  , scalarValue := .low, canonicity := .canonical
-  , likelihoodEffect := some .impeding
-  , morphology := .idiomatic }
+/-- When it is strictly antitone, inferences run from high values to low ones and the emphatic
+propositions are the ones above the norm. -/
+theorem emphatic_iff_of_strictAnti (h : StrictAnti Q) (hx : x ≠ n) : Emphatic Q n x ↔ n < x :=
+  ⟨λ hE => (lt_or_gt_of_ne hx).resolve_left λ hn => lt_asymm (h hn) hE, λ hxn => h hxn⟩
 
-/-- *for peanuts* — inverted PPI, reward role: *He got Madonna to play
-    for peanuts.* -/
-def forPeanuts : ScalarItem :=
-  { form := "for peanuts"
-  , ppi := true, baseForce := .degree
-  , licensingContexts := []
-  , scalarDirection := some .strengthening
-  , scalarValue := .low, canonicity := .inverted
-  , likelihoodEffect := some .facilitating
-  , morphology := .idiomatic }
+theorem attenuating_iff_of_strictMono (h : StrictMono Q) (hx : x ≠ n) :
+    Attenuating Q n x ↔ n < x :=
+  ⟨λ hA => (lt_or_gt_of_ne hx).resolve_left λ hn => lt_asymm (h hn) hA, λ hxn => h hxn⟩
 
-/-- The paradox dissolved: the same low value and emphatic direction,
-    but different propositional roles and hence opposite canonicity. -/
-theorem pecuniary_paradox :
-    redCent.scalarValue = forPeanuts.scalarValue ∧
-    redCent.scalarDirection = forPeanuts.scalarDirection ∧
-    redCent.likelihoodEffect ≠ forPeanuts.likelihoodEffect ∧
-    redCent.canonicity ≠ forPeanuts.canonicity := by decide
+theorem attenuating_iff_of_strictAnti (h : StrictAnti Q) (hx : x ≠ n) :
+    Attenuating Q n x ↔ x < n :=
+  ⟨λ hA => (lt_or_gt_of_ne hx).resolve_right λ hn => lt_asymm (h hn) hA, λ hxn => h hxn⟩
+
+/-- Under a strictly monotone expressed function an emphatic item needs a low value and an
+attenuating one a high value. -/
+theorem felicitous_iff_of_strictMono (h : StrictMono Q) (hx : x ≠ n) (d : Force) :
+    Felicitous d Q n x ↔ (d = .emphatic ↔ x < n) := by
+  cases d
+  · simp [Felicitous, emphatic_iff_of_strictMono h hx]
+  · rw [Felicitous, attenuating_iff_of_strictMono h hx]
+    simp only [reduceCtorEq, false_iff, not_lt]
+    exact ⟨le_of_lt, λ h => lt_of_le_of_ne h hx.symm⟩
+
+/-- Under a strictly antitone one the values are reversed. -/
+theorem felicitous_iff_of_strictAnti (h : StrictAnti Q) (hx : x ≠ n) (d : Force) :
+    Felicitous d Q n x ↔ (d = .emphatic ↔ n < x) := by
+  cases d
+  · simp [Felicitous, emphatic_iff_of_strictAnti h hx]
+  · rw [Felicitous, attenuating_iff_of_strictAnti h hx]
+    simp only [reduceCtorEq, false_iff, not_lt]
+    exact ⟨le_of_lt, λ h => lt_of_le_of_ne h hx⟩
+
+/-- The context type in which an item of a given force, quantity and role is felicitous, the
+scalar logic of Sections 1 and 4: emphatic small items in impeding roles and emphatic large
+items in facilitating roles are NPIs, needing scale reversal, as are attenuating items of the
+opposite quantities; the remaining cells are PPIs. -/
+def licensingContext (d : Force) (q : Quantity) (r : Role) : ContextType :=
+  if (d = .emphatic) = ((q = .small) = (r = .impeding)) then .reversing else .preserving
+
+/-- A quantity standing to the norm as the item says is below it exactly for a small item. -/
+theorem Quantity.lt_iff_of_rel {q : Quantity} (hq : q.Rel x n) : x < n ↔ q = .small := by
+  cases q
+  · exact iff_of_true hq rfl
+  · exact iff_of_false (lt_asymm hq) (by decide)
+
+/-- And above it exactly for a large item. -/
+theorem Quantity.gt_iff_of_rel {q : Quantity} (hq : q.Rel x n) : n < x ↔ q = .large := by
+  cases q
+  · exact iff_of_false (lt_asymm hq) (by decide)
+  · exact iff_of_true hq rfl
+
+/-- Figures 1 and 3: an item is felicitous exactly in contexts of its licensing type, for any
+scalar model of its role and any quantity standing to the norm as the item says. -/
+theorem felicitous_iff {P : α → Set W} {f : Set W → Set W} {r : Role} {c : ContextType}
+    {d : Force} {q : Quantity} (hr : r.Directed P) (hc : c.Directed f) (hq : q.Rel x n) :
+    Felicitous d (f ∘ P) n x ↔ c = licensingContext d q r := by
+  have hx : x ≠ n := by
+    cases q
+    · exact ne_of_lt (hq : x < n)
+    · exact (ne_of_lt (hq : n < x)).symm
+  cases r <;> cases c <;> simp only [Role.Directed, ContextType.Directed] at hr hc
+  · rw [felicitous_iff_of_strictAnti (hc.comp_strictAnti hr) hx, Quantity.gt_iff_of_rel hq]
+    cases d <;> cases q <;> decide
+  · rw [felicitous_iff_of_strictMono (hc.comp hr) hx, Quantity.lt_iff_of_rel hq]
+    cases d <;> cases q <;> decide
+  · rw [felicitous_iff_of_strictMono (hc.comp hr) hx, Quantity.lt_iff_of_rel hq]
+    cases d <;> cases q <;> decide
+  · rw [felicitous_iff_of_strictAnti (hc.comp_strictMono hr) hx, Quantity.gt_iff_of_rel hq]
+    cases d <;> cases q <;> decide
+
+/-- The pecuniary paradox, (15) and (16): the same small amount is emphatic under negation as a
+resource, *a red cent*, and not as a reward, *for peanuts*, which is emphatic in the affirmative
+instead. -/
+theorem pecuniary_paradox {res rew : α → Set W} {f : Set W → Set W} (hres : StrictAnti res)
+    (hrew : StrictMono rew) (hf : StrictAnti f) (hx : x < n) :
+    Emphatic (f ∘ res) n x ∧ ¬ Emphatic (f ∘ rew) n x ∧ Emphatic rew n x ∧ ¬ Emphatic res n x :=
+  ⟨(emphatic_iff_of_strictMono (hf.comp hres) (ne_of_lt hx)).2 hx,
+    λ h => lt_asymm hx ((emphatic_iff_of_strictAnti (hf.comp_strictMono hrew) (ne_of_lt hx)).1 h),
+    (emphatic_iff_of_strictMono hrew (ne_of_lt hx)).2 hx,
+    λ h => lt_asymm hx ((emphatic_iff_of_strictAnti hres (ne_of_lt hx)).1 h)⟩
+
+/-- Ambiguous superlatives, (22): under negation the same frame is emphatic at the bottom of an
+existential scale, *the faintest noise*, and at the top of a perceptual-ability scale, *the
+loudest noise*, the stimulus impeding its own existence and facilitating its perception. -/
+theorem superlative_ambiguity {exist ability : α → Set W} {f : Set W → Set W}
+    (hex : StrictAnti exist) (hab : StrictMono ability) (hf : StrictAnti f) {lo hi : α}
+    (hlo : lo < n) (hhi : n < hi) : Emphatic (f ∘ exist) n lo ∧ Emphatic (f ∘ ability) n hi :=
+  ⟨(emphatic_iff_of_strictMono (hf.comp hex) (ne_of_lt hlo)).2 hlo,
+    (emphatic_iff_of_strictAnti (hf.comp_strictMono hab) (ne_of_lt hhi).symm).2 hhi⟩
 
 /-! ### The classified lexicon -/
 
-/-- The paper's own example items. -/
-def paperItems : List ScalarItem :=
-  [aWink, insanely, sorta, allThat, ownShadow, withAFeather,
-   redCent, forPeanuts]
+/-- A fragment entry with the paper's classification by quantity and role. -/
+structure Classified where
+  item : Item
+  quantity : Quantity
+  role : Role
 
-/-- The paper's classifications of the
-    `Fragments/English/PolarityItems.lean` entries (Figure 1 cells; §3
-    inverted items; §4 roles where the paper gives them). -/
-def classifiedLexicon : List ScalarItem :=
-  [ { toItem := any, scalarValue := .low, canonicity := .canonical
-    , likelihoodEffect := some .impeding }
-  , { toItem := ever, scalarValue := .low, canonicity := .canonical }
-  , { toItem := atAll, scalarValue := .low, canonicity := .canonical }
-  , { toItem := liftAFinger, scalarValue := .low, canonicity := .canonical
-    , likelihoodEffect := some .impeding }
-  , { toItem := budgeAnInch, scalarValue := .low, canonicity := .canonical
-    , likelihoodEffect := some .impeding }
-  , { toItem := wildHorses, scalarValue := .high, canonicity := .inverted
-    , likelihoodEffect := some .facilitating }
-  , { toItem := allTheTeaInChina, scalarValue := .high, canonicity := .inverted
-    , likelihoodEffect := some .facilitating }
-  , { toItem := aTenFootPole, scalarValue := .high, canonicity := .inverted
-    , likelihoodEffect := some .facilitating }
-  , { toItem := inAMillionYears, scalarValue := .high, canonicity := .inverted
-    , likelihoodEffect := some .facilitating }
-  , { toItem := atTheDropOfAHat, scalarValue := .low, canonicity := .inverted
-    , likelihoodEffect := some .facilitating }
-  , { toItem := inAJiffy, scalarValue := .low, canonicity := .inverted
-    , likelihoodEffect := some .facilitating }
-  , { toItem := forAPittance, scalarValue := .low, canonicity := .inverted
-    , likelihoodEffect := some .facilitating }
-  , { toItem := forASong, scalarValue := .low, canonicity := .inverted
-    , likelihoodEffect := some .facilitating }
-  , { toItem := some_ppi, scalarValue := .low, canonicity := .canonical }
-  , { toItem := somewhat, scalarValue := .low, canonicity := .canonical }
-  , { toItem := rather, scalarValue := .low, canonicity := .canonical }
-  , { toItem := tonsOf, scalarValue := .high, canonicity := .canonical }
-  , { toItem := utterly, scalarValue := .high, canonicity := .canonical } ]
+/-- The paper's classifications of the fragment's items: the canonical minimizers of Section 4
+and the degree items of Figure 1 in impeding roles, the maximizing NPIs and minimizing PPIs of
+Section 3 in facilitating roles. -/
+def classified : List Classified :=
+  [⟨atAll, .small, .impeding⟩, ⟨liftAFinger, .small, .impeding⟩,
+   ⟨budgeAnInch, .small, .impeding⟩, ⟨somewhat, .small, .impeding⟩,
+   ⟨rather, .small, .impeding⟩, ⟨tonsOf, .large, .impeding⟩, ⟨utterly, .large, .impeding⟩,
+   ⟨wildHorses, .large, .facilitating⟩, ⟨allTheTeaInChina, .large, .facilitating⟩,
+   ⟨aTenFootPole, .large, .facilitating⟩, ⟨inAMillionYears, .large, .facilitating⟩,
+   ⟨atTheDropOfAHat, .small, .facilitating⟩, ⟨inAJiffy, .small, .facilitating⟩,
+   ⟨forAPittance, .small, .facilitating⟩, ⟨forASong, .small, .facilitating⟩]
 
-/-- Every classification agrees with the role-likelihood prediction. -/
-example : ∀ p ∈ paperItems ++ classifiedLexicon, p.canonicityConsistent := by
+/-- The context type the fragment records an item as sensitive to. -/
+def Item.contextType (e : Item) : Option ContextType :=
+  if e.ppi then some .preserving else if e.licensor.isSome then some .reversing else none
+
+/-- Every classified item's derived licensing context is the one the fragment records. -/
+theorem classified_licensingContext :
+    ∀ c ∈ classified, ∀ d, c.item.scalarDirection.bind Force.ofDirection = some d →
+      Item.contextType c.item = some (licensingContext d c.quantity c.role) := by
   decide
-
-/-! ### The proto-role bridge (§4, fn. 6) -/
-
-/-- The suggestion of [dowty-1991] proto-role entailments for likelihood
-    effect: Proto-Agent dominance suggests a facilitating role,
-    Proto-Patient dominance an impeding one, and a tie suggests nothing —
-    a heuristic, not a theorem: the pecuniary paradox shows propositional
-    role can diverge from proto-role counts, which is why
-    `LikelihoodEffect` is an independent concept rather than a function
-    of theta labels. -/
-def suggestedLikelihoodEffect (p : ArgumentStructure.EntailmentProfile) :
-    Option LikelihoodEffect :=
-  if p.pPatientScore < p.pAgentScore then some .facilitating
-  else if p.pAgentScore < p.pPatientScore then some .impeding
-  else none
-
--- A pure agent facilitates; a pure patient impedes; a balanced
--- experiencer profile requires propositional analysis.
-example : suggestedLikelihoodEffect
-    { volition := true, sentience := true, causation := true
-    , movement := true, independentExistence := true } =
-      some .facilitating := rfl
-example : suggestedLikelihoodEffect
-    { changeOfState := true, incrementalTheme := true
-    , causallyAffected := true, stationary := true
-    , dependentExistence := true } = some .impeding := rfl
-example : suggestedLikelihoodEffect
-    { sentience := true, causallyAffected := true } = none := rfl
-
-/-! ### Ambiguous superlatives (§6)
-
-Perception verbs allow dual scalar readings (Fauconnier 1975b): *Eve
-didn't hear even the faintest noise* ranks stimuli by likely existence,
-*… even the loudest noise* ranks experiencers by acuity. Perception is
-bicausal — it depends on the stimulus's salience and the perceiver's
-acuity — and the scale type fixes the role. -/
-
-/-- The two scales a negated perception superlative can invoke. -/
-inductive PerceptionScaleType where
-  /-- Stimuli ranked by likely existence (*faintest*). -/
-  | existential
-  /-- Experiencers ranked by perceptual acuity (*loudest*). -/
-  | perceptualAbility
-  deriving DecidableEq, Repr
-
-/-- The scale type fixes the propositional role: existential scales
-    impede (if larger things exist, smaller ones do too), ability scales
-    facilitate (missing the most perceptible means missing
-    everything). -/
-def PerceptionScaleType.role : PerceptionScaleType → LikelihoodEffect
-  | .existential => .impeding
-  | .perceptualAbility => .facilitating
-
-/-! ### Scale-reversing = DE, scale-preserving = UE
-
-§2 connects the Scalar Model to the Fauconnier–Ladusaw tradition:
-scale-reversing contexts are the downward-entailing ones, and
-scale-preserving contexts the upward-entailing ones, except that the
-relevant inferences may be pragmatic entailments within a scalar model
-rather than strictly logical — which is why the Scalar Model handles
-cases pure monotonicity misses. -/
-
-/-- Israel's scale directions: reversing (= DE, NPI-licensing) and
-    preserving (= UE, PPI-licensing). -/
-inductive ScaleDirection where
-  | reversing
-  | preserving
-  deriving DecidableEq, Repr
-
-/-- Expected scale direction in licensing contexts, from the item's
-    parameters: strength-licensed items need scale reversal (= DE), PPIs
-    scale preservation (= UE), pure FCIs neither (non-veridicality). -/
-def expectedScaleDirection (e : Item) : Option ScaleDirection :=
-  if e.ppi then some .preserving
-  else if e.licensor.isSome then some .reversing
-  else none
-
-/-- Non-PPI NPIs need scale-reversing contexts. -/
-example : ∀ e : Item, e.isNPI → expectedScaleDirection e = some .reversing ∨
-    e.ppi = true := by
-  intro e h
-  simp only [expectedScaleDirection, Item.isNPI] at *
-  split <;> simp_all
 
 end Israel2001

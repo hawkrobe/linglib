@@ -27,10 +27,9 @@ relation `LicensingContext.licenses` lives in
 `Semantics/Polarity/Licensing.lean`.
 
 The record also carries the [israel-1996] scalar direction and the
-[lahiri-1998]-style morphological-composition typology. The full
-[israel-2001] scalar-model classification is the extension bundle
-`ScalarItem` in `Semantics/Polarity/ScalarModel.lean`, built only for
-items that have one.
+[lahiri-1998]-style morphological-composition typology. The
+[israel-2001] classification of items by quantity and propositional
+role lives with that paper in `Studies/Israel2001.lean`.
 
 ## Main declarations
 
