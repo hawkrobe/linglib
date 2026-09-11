@@ -1,7 +1,10 @@
 [
   {
     "id": "iatridou2000_ex1a",
-    "source": {"bibkey": "iatridou-2000", "paperLabel": "(1a)"},
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(1a)"
+    },
     "language": "stan1293",
     "primaryText": "I wish I had a car.",
     "discourseSegments": [],
@@ -11,11 +14,20 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "present-CF (car absent now)", "judgment": "acceptable"}
+      {
+        "name": "present-CF (car absent now)",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
-      ["construction", "wish"],
-      ["cf_type", "presCF"]
+      [
+        "construction",
+        "wish"
+      ],
+      [
+        "cf_type",
+        "presCF"
+      ]
     ],
     "comment": "Iatridou 2000 ex (1a), Linguistic Inquiry 31(2) p. 232. First of the (1a)/(1b) wishes pair. The grammatical past-tense morpheme contributes counterfactuality (about the present), not temporal precedence — Iatridou's central exclusion-feature claim.",
     "metaLanguage": "stan1293",
@@ -23,7 +35,10 @@
   },
   {
     "id": "iatridou2000_ex1b",
-    "source": {"bibkey": "iatridou-2000", "paperLabel": "(1b)"},
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(1b)"
+    },
     "language": "stan1293",
     "primaryText": "I wish I had had a car when I was a student.",
     "discourseSegments": [],
@@ -33,11 +48,20 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "past-CF (no car as student)", "judgment": "acceptable"}
+      {
+        "name": "past-CF (no car as student)",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
-      ["construction", "wish"],
-      ["cf_type", "pastCF"]
+      [
+        "construction",
+        "wish"
+      ],
+      [
+        "cf_type",
+        "pastCF"
+      ]
     ],
     "comment": "Iatridou 2000 ex (1b), p. 232. Second of the wishes pair. The contrast (1a)/(1b) motivates separating the counterfactuality-marking past morpheme from the temporal past morpheme.",
     "metaLanguage": "stan1293",
@@ -45,7 +69,10 @@
   },
   {
     "id": "iatridou2000_ex2a",
-    "source": {"bibkey": "iatridou-2000", "paperLabel": "(2a)"},
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(2a)"
+    },
     "language": "stan1293",
     "primaryText": "If he were smart, he would be rich.",
     "discourseSegments": [],
@@ -55,11 +82,20 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "present-CF (he is not smart and not rich)", "judgment": "acceptable"}
+      {
+        "name": "present-CF (he is not smart and not rich)",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
-      ["construction", "conditional"],
-      ["cf_type", "presCF"]
+      [
+        "construction",
+        "conditional"
+      ],
+      [
+        "cf_type",
+        "presCF"
+      ]
     ],
     "comment": "Iatridou 2000 ex (2a), p. 232. Canonical present counterfactual conditional. Iatridou's own (2a) uses `If he were smart`; the generic `If John were here` / `If John were taller` form is widely cited but not verbatim from the paper.",
     "metaLanguage": "stan1293",
@@ -67,7 +103,10 @@
   },
   {
     "id": "iatridou2000_ex2b",
-    "source": {"bibkey": "iatridou-2000", "paperLabel": "(2b)"},
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(2b)"
+    },
     "language": "stan1293",
     "primaryText": "If he had been smart, he would have been rich.",
     "discourseSegments": [],
@@ -77,11 +116,20 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "past-CF (he was not smart and not rich)", "judgment": "acceptable"}
+      {
+        "name": "past-CF (he was not smart and not rich)",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
-      ["construction", "conditional"],
-      ["cf_type", "pastCF"]
+      [
+        "construction",
+        "conditional"
+      ],
+      [
+        "cf_type",
+        "pastCF"
+      ]
     ],
     "comment": "Iatridou 2000 ex (2b), p. 232. Past-CF counterpart to (2a). The (2a)/(2b) contrast — like (1a)/(1b) — diagnostics the exclusion-feature analysis: one past morpheme for counterfactuality (excludes the actual world), a second past morpheme for past tense (excludes the present).",
     "metaLanguage": "stan1293",
@@ -89,7 +137,10 @@
   },
   {
     "id": "iatridou2000_en_flv",
-    "source": {"bibkey": "iatridou-2000", "paperLabel": "(62a)"},
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(62a)"
+    },
     "language": "stan1293",
     "primaryText": "If he took the syrup, he would get better.",
     "discourseSegments": [],
@@ -100,11 +151,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "conditional"],
-      ["cf_type", "flv"],
-      ["past_layers", "1"],
-      ["impf", "no"],
-      ["subj", "no"]
+      [
+        "construction",
+        "conditional"
+      ],
+      [
+        "cf_type",
+        "flv"
+      ],
+      [
+        "past_layers",
+        "1"
+      ],
+      [
+        "impf",
+        "no"
+      ],
+      [
+        "subj",
+        "no"
+      ]
     ],
     "comment": "Iatridou 2000 ex (62a), p. 250. English FLV: simple past in the antecedent, `would` in the consequent. No imperfective morphology (English lacks it).",
     "metaLanguage": "stan1293",
@@ -112,7 +178,10 @@
   },
   {
     "id": "iatridou2000_en_presCF",
-    "source": {"bibkey": "iatridou-2000", "paperLabel": "(61)"},
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(61)"
+    },
     "language": "stan1293",
     "primaryText": "If I believed in ghosts, I would be afraid now.",
     "discourseSegments": [],
@@ -123,11 +192,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "conditional"],
-      ["cf_type", "presCF"],
-      ["past_layers", "1"],
-      ["impf", "no"],
-      ["subj", "no"]
+      [
+        "construction",
+        "conditional"
+      ],
+      [
+        "cf_type",
+        "presCF"
+      ],
+      [
+        "past_layers",
+        "1"
+      ],
+      [
+        "impf",
+        "no"
+      ],
+      [
+        "subj",
+        "no"
+      ]
     ],
     "comment": "Iatridou 2000 ex (61), p. 249. English PresCF, morphologically identical to the FLV (62a). The contrast is in predicate type, not morphology.",
     "metaLanguage": "stan1293",
@@ -135,7 +219,10 @@
   },
   {
     "id": "iatridou2000_en_pastCF",
-    "source": {"bibkey": "iatridou-2000", "paperLabel": "(48c)"},
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(48c)"
+    },
     "language": "stan1293",
     "primaryText": "If Napoleon had been tall, he would have defeated Wellington.",
     "discourseSegments": [],
@@ -146,11 +233,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "conditional"],
-      ["cf_type", "pastCF"],
-      ["past_layers", "2"],
-      ["impf", "no"],
-      ["subj", "no"]
+      [
+        "construction",
+        "conditional"
+      ],
+      [
+        "cf_type",
+        "pastCF"
+      ],
+      [
+        "past_layers",
+        "2"
+      ],
+      [
+        "impf",
+        "no"
+      ],
+      [
+        "subj",
+        "no"
+      ]
     ],
     "comment": "Iatridou 2000 ex (48c), p. 245. English PastCF: pluperfect antecedent (`had been`), `would have` consequent. Two past layers distinguish PastCF from FLV/PresCF.",
     "metaLanguage": "stan1293",
@@ -158,13 +260,46 @@
   },
   {
     "id": "iatridou2000_gr_flv",
-    "source": {"bibkey": "iatridou-2000", "paperLabel": "(8)"},
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(8)"
+    },
     "language": "mode1248",
     "primaryText": "An eperne afto to siropi tha yinotan kala.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["An", "if"], ["eperne", "take.PST.IPFV"], ["afto", "this"], ["to", "the"],
-      ["siropi", "syrup"], ["tha", "FUT"], ["yinotan", "become.PST.IPFV"], ["kala", "well"]
+      [
+        "An",
+        "if"
+      ],
+      [
+        "eperne",
+        "take.PST.IPFV"
+      ],
+      [
+        "afto",
+        "this"
+      ],
+      [
+        "to",
+        "the"
+      ],
+      [
+        "siropi",
+        "syrup"
+      ],
+      [
+        "tha",
+        "FUT"
+      ],
+      [
+        "yinotan",
+        "become.PST.IPFV"
+      ],
+      [
+        "kala",
+        "well"
+      ]
     ],
     "translation": "If he took this syrup, he would get better.",
     "context": "Modern Greek FLV with a telic predicate. The verbs carry past + imperfective morphology, both fake (future-oriented reading). Contrasts with the FNV (7), which has nonpast + perfective.",
@@ -172,11 +307,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "conditional"],
-      ["cf_type", "flv"],
-      ["past_layers", "1"],
-      ["impf", "yes"],
-      ["subj", "no"]
+      [
+        "construction",
+        "conditional"
+      ],
+      [
+        "cf_type",
+        "flv"
+      ],
+      [
+        "past_layers",
+        "1"
+      ],
+      [
+        "impf",
+        "yes"
+      ],
+      [
+        "subj",
+        "no"
+      ]
     ],
     "comment": "Iatridou 2000 ex (8), p. 234. Modern Greek FLV: antecedent `an + past + impf`, consequent `tha + past + impf`. Greek FLV and PresCF are morphologically identical, distinguished by predicate type.",
     "metaLanguage": "stan1293",
@@ -184,13 +334,50 @@
   },
   {
     "id": "iatridou2000_gr_pastCF",
-    "source": {"bibkey": "iatridou-2000", "paperLabel": "(5)"},
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(5)"
+    },
     "language": "mode1248",
     "primaryText": "An ixe pari to siropi tha ixe yini kala.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["An", "if"], ["ixe", "had"], ["pari", "take.PFV"], ["to", "the"], ["siropi", "syrup"],
-      ["tha", "FUT"], ["ixe", "had"], ["yini", "become.PFV"], ["kala", "well"]
+      [
+        "An",
+        "if"
+      ],
+      [
+        "ixe",
+        "had"
+      ],
+      [
+        "pari",
+        "take.PFV"
+      ],
+      [
+        "to",
+        "the"
+      ],
+      [
+        "siropi",
+        "syrup"
+      ],
+      [
+        "tha",
+        "FUT"
+      ],
+      [
+        "ixe",
+        "had"
+      ],
+      [
+        "yini",
+        "become.PFV"
+      ],
+      [
+        "kala",
+        "well"
+      ]
     ],
     "translation": "If he had taken the syrup, he would have gotten better.",
     "context": "Modern Greek PastCF. Like English, MG uses the pluperfect in the antecedent of a PastCF; the future is an undeclinable particle (tha), so the highest verb (the perfect auxiliary) carries past morphology.",
@@ -198,11 +385,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "conditional"],
-      ["cf_type", "pastCF"],
-      ["past_layers", "2"],
-      ["impf", "yes"],
-      ["subj", "no"]
+      [
+        "construction",
+        "conditional"
+      ],
+      [
+        "cf_type",
+        "pastCF"
+      ],
+      [
+        "past_layers",
+        "2"
+      ],
+      [
+        "impf",
+        "yes"
+      ],
+      [
+        "subj",
+        "no"
+      ]
     ],
     "comment": "Iatridou 2000 ex (5), p. 233. Modern Greek PastCF: the pluperfect (ixe + participle) adds a second past layer over the PresCF/FLV.",
     "metaLanguage": "stan1293",
@@ -210,14 +412,54 @@
   },
   {
     "id": "iatridou2000_fr_flv",
-    "source": {"bibkey": "iatridou-2000", "paperLabel": "(100)"},
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(100)"
+    },
     "language": "stan1290",
     "primaryText": "Si Pierre partait demain, il arriverait là-bas la semaine prochaine.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Si", "if"], ["Pierre", "Pierre"], ["partait", "leave.IPFV"], ["demain", "tomorrow"],
-      ["il", "he"], ["arriverait", "arrive.COND"], ["là-bas", "there"], ["la", "the"],
-      ["semaine", "week"], ["prochaine", "next"]
+      [
+        "Si",
+        "if"
+      ],
+      [
+        "Pierre",
+        "Pierre"
+      ],
+      [
+        "partait",
+        "leave.IPFV"
+      ],
+      [
+        "demain",
+        "tomorrow"
+      ],
+      [
+        "il",
+        "he"
+      ],
+      [
+        "arriverait",
+        "arrive.COND"
+      ],
+      [
+        "là-bas",
+        "there"
+      ],
+      [
+        "la",
+        "the"
+      ],
+      [
+        "semaine",
+        "week"
+      ],
+      [
+        "prochaine",
+        "next"
+      ]
     ],
     "translation": "If Pierre left tomorrow, he would arrive there next week.",
     "context": "French FLV: imparfait in the antecedent, conditionnel in the consequent. Iatridou argues the conditionnel is imparfait morphology on a future stem (ExclF + Imp over a future), not a separate `conditional mood`.",
@@ -225,11 +467,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "conditional"],
-      ["cf_type", "flv"],
-      ["past_layers", "1"],
-      ["impf", "yes"],
-      ["subj", "no"]
+      [
+        "construction",
+        "conditional"
+      ],
+      [
+        "cf_type",
+        "flv"
+      ],
+      [
+        "past_layers",
+        "1"
+      ],
+      [
+        "impf",
+        "yes"
+      ],
+      [
+        "subj",
+        "no"
+      ]
     ],
     "comment": "Iatridou 2000 ex (100), p. 266. French FLV with imparfait/conditionnel. French uses the past indicative, not the (lost productive) past subjunctive.",
     "metaLanguage": "stan1293",
@@ -237,14 +494,54 @@
   },
   {
     "id": "iatridou2000_fr_presCF",
-    "source": {"bibkey": "iatridou-2000", "paperLabel": "(101)"},
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(101)"
+    },
     "language": "stan1290",
     "primaryText": "Si je savais que c'était du chocolat, je le mangerais.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Si", "if"], ["je", "I"], ["savais", "know.IPFV"], ["que", "that"],
-      ["c'était", "it.be.IPFV"], ["du", "of.the"], ["chocolat", "chocolate"], ["je", "I"],
-      ["le", "it"], ["mangerais", "eat.COND"]
+      [
+        "Si",
+        "if"
+      ],
+      [
+        "je",
+        "I"
+      ],
+      [
+        "savais",
+        "know.IPFV"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "c'était",
+        "it.be.IPFV"
+      ],
+      [
+        "du",
+        "of.the"
+      ],
+      [
+        "chocolat",
+        "chocolate"
+      ],
+      [
+        "je",
+        "I"
+      ],
+      [
+        "le",
+        "it"
+      ],
+      [
+        "mangerais",
+        "eat.COND"
+      ]
     ],
     "translation": "If I knew that this were chocolate, I would eat it.",
     "context": "French PresCF: morphologically identical to the FLV (imparfait/conditionnel); the PresCF reading arises from the individual-level stative predicate.",
@@ -252,11 +549,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "conditional"],
-      ["cf_type", "presCF"],
-      ["past_layers", "1"],
-      ["impf", "yes"],
-      ["subj", "no"]
+      [
+        "construction",
+        "conditional"
+      ],
+      [
+        "cf_type",
+        "presCF"
+      ],
+      [
+        "past_layers",
+        "1"
+      ],
+      [
+        "impf",
+        "yes"
+      ],
+      [
+        "subj",
+        "no"
+      ]
     ],
     "comment": "Iatridou 2000 ex (101), p. 266. French PresCF, same morphology as the FLV (100).",
     "metaLanguage": "stan1293",
@@ -264,13 +576,42 @@
   },
   {
     "id": "iatridou2000_fr_pastCF",
-    "source": {"bibkey": "iatridou-2000", "paperLabel": "(102)"},
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(102)"
+    },
     "language": "stan1290",
     "primaryText": "Si Pierre était venu, je l'aurais vu.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Si", "if"], ["Pierre", "Pierre"], ["était", "be.IPFV"], ["venu", "come.PTCP"], ["je", "I"],
-      ["l'aurais", "it.have.COND"], ["vu", "see.PTCP"]
+      [
+        "Si",
+        "if"
+      ],
+      [
+        "Pierre",
+        "Pierre"
+      ],
+      [
+        "était",
+        "be.IPFV"
+      ],
+      [
+        "venu",
+        "come.PTCP"
+      ],
+      [
+        "je",
+        "I"
+      ],
+      [
+        "l'aurais",
+        "it.have.COND"
+      ],
+      [
+        "vu",
+        "see.PTCP"
+      ]
     ],
     "translation": "If Pierre had come, I would have seen him.",
     "context": "French PastCF: plus-que-parfait in the antecedent, conditionnel passé in the consequent. Two past layers.",
@@ -278,14 +619,1555 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "conditional"],
-      ["cf_type", "pastCF"],
-      ["past_layers", "2"],
-      ["impf", "yes"],
-      ["subj", "no"]
+      [
+        "construction",
+        "conditional"
+      ],
+      [
+        "cf_type",
+        "pastCF"
+      ],
+      [
+        "past_layers",
+        "2"
+      ],
+      [
+        "impf",
+        "yes"
+      ],
+      [
+        "subj",
+        "no"
+      ]
     ],
     "comment": "Iatridou 2000 ex (102), p. 266. French PastCF: plus-que-parfait/conditionnel passé.",
     "metaLanguage": "stan1293",
     "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "iatridou2000_ex7",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(7)"
+    },
+    "language": "mode1248",
+    "primaryText": "An pari afto to siropi tha yini kala.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "An",
+        "if"
+      ],
+      [
+        "pari",
+        "take.NPST.PFV"
+      ],
+      [
+        "afto",
+        "this"
+      ],
+      [
+        "to",
+        "the"
+      ],
+      [
+        "siropi",
+        "syrup"
+      ],
+      [
+        "tha",
+        "FUT"
+      ],
+      [
+        "yini",
+        "become.NPST.PFV"
+      ],
+      [
+        "kala",
+        "well"
+      ]
+    ],
+    "translation": "If he takes this syrup, he will get better.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "construction",
+        "conditional"
+      ],
+      [
+        "cf_type",
+        "fnv"
+      ],
+      [
+        "past_layers",
+        "0"
+      ],
+      [
+        "impf",
+        "no"
+      ]
+    ],
+    "comment": "The future neutral vivid: nonpast and perfective, usable as an instruction to a caretaker.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex10a",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(10a)"
+    },
+    "language": "stan1293",
+    "primaryText": "If John comes to the party, and I think he will, we will have a great time.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "cf_type",
+        "fnv"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex10b",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(10b)"
+    },
+    "language": "stan1293",
+    "primaryText": "If John came to the party, and I think he will, we would have a great time.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "cf_type",
+        "flv"
+      ],
+      [
+        "implicature",
+        "the actual world is more likely to become a not-p world"
+      ]
+    ],
+    "comment": "The FLV's unlikelihood implicature clashes with the parenthetical.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex11",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(11)"
+    },
+    "language": "stan1293",
+    "primaryText": "It is not the case that if he took the syrup, he would get better.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "cf_type",
+        "flv"
+      ],
+      [
+        "implicature",
+        "survives negation"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex13b",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(13b)"
+    },
+    "language": "mode1248",
+    "primaryText": "An efevyes avrio tha eftanes eki tin ali evdomada.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "An",
+        "if"
+      ],
+      [
+        "efevyes",
+        "leave.PST.IPFV"
+      ],
+      [
+        "avrio",
+        "tomorrow"
+      ],
+      [
+        "tha",
+        "FUT"
+      ],
+      [
+        "eftanes",
+        "arrive.PST.IPFV"
+      ],
+      [
+        "eki",
+        "there"
+      ],
+      [
+        "tin",
+        "the"
+      ],
+      [
+        "ali",
+        "other"
+      ],
+      [
+        "evdomada",
+        "week"
+      ]
+    ],
+    "translation": "If you left tomorrow, you would get there next week.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "cf_type",
+        "flv"
+      ],
+      [
+        "adverbial",
+        "future-oriented"
+      ],
+      [
+        "impf",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex20",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(20)"
+    },
+    "language": "mode1248",
+    "primaryText": "An ipxe afto to siropi tha eyine kala.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "An",
+        "if"
+      ],
+      [
+        "ipxe",
+        "drink.PST.PFV"
+      ],
+      [
+        "afto",
+        "this"
+      ],
+      [
+        "to",
+        "the"
+      ],
+      [
+        "siropi",
+        "syrup"
+      ],
+      [
+        "tha",
+        "MOD"
+      ],
+      [
+        "eyine",
+        "become.PST.PFV"
+      ],
+      [
+        "kala",
+        "well"
+      ]
+    ],
+    "translation": "If he drank the syrup, he must be better.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "construction",
+        "epistemic conditional"
+      ],
+      [
+        "past_layers",
+        "1 real"
+      ],
+      [
+        "impf",
+        "no"
+      ]
+    ],
+    "comment": "With perfective aspect the past is real: an epistemic conditional about past events.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex21b",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(21b)"
+    },
+    "language": "mode1248",
+    "primaryText": "An efiye avrio tha eftase tin ali evdomada.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "An",
+        "if"
+      ],
+      [
+        "efiye",
+        "leave.PST.PFV"
+      ],
+      [
+        "avrio",
+        "tomorrow"
+      ],
+      [
+        "tha",
+        "FUT"
+      ],
+      [
+        "eftase",
+        "arrive.PST.PFV"
+      ],
+      [
+        "tin",
+        "the"
+      ],
+      [
+        "ali",
+        "other"
+      ],
+      [
+        "evdomada",
+        "week"
+      ]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "adverbial",
+        "future-oriented"
+      ],
+      [
+        "impf",
+        "no"
+      ]
+    ],
+    "comment": "Past perfective cannot be fake, so a future adverbial clashes with its past orientation.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex21c",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(21c)"
+    },
+    "language": "mode1248",
+    "primaryText": "An efiye proxtes tha eftase xthes.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "An",
+        "if"
+      ],
+      [
+        "efiye",
+        "leave.PST.PFV"
+      ],
+      [
+        "proxtes",
+        "day.before.yesterday"
+      ],
+      [
+        "tha",
+        "MOD"
+      ],
+      [
+        "eftase",
+        "arrive.PST.PFV"
+      ],
+      [
+        "xthes",
+        "yesterday"
+      ]
+    ],
+    "translation": "If he left the day before yesterday, he must have arrived yesterday.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "adverbial",
+        "past-oriented"
+      ],
+      [
+        "impf",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex47a",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(47a)"
+    },
+    "language": "stan1293",
+    "primaryText": "If Fred was drunk, he would be louder.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "cf_type",
+        "presCF"
+      ],
+      [
+        "aktionsart",
+        "stage-level stative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex47b",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(47b)"
+    },
+    "language": "stan1293",
+    "primaryText": "If Mary knew the answer, she would be the only one.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "cf_type",
+        "presCF"
+      ],
+      [
+        "aktionsart",
+        "individual-level stative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex47d",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(47d)"
+    },
+    "language": "stan1293",
+    "primaryText": "If I had green eyes, I would be prettier.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "cf_type",
+        "presCF"
+      ],
+      [
+        "aktionsart",
+        "individual-level stative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex48a",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(48a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Napoleon had been tall.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "pluperfect",
+        "temporal"
+      ]
+    ],
+    "comment": "Ungrammatical on the usual reading of being tall.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex48b",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(48b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Napoleon was tall.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "past",
+        "temporal"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex53",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(53)"
+    },
+    "language": "stan1293",
+    "primaryText": "She walked into the room and saw a table. It was wooden.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "past",
+        "topic time precedes utterance time"
+      ],
+      [
+        "situation",
+        "may include utterance time"
+      ]
+    ],
+    "comment": "The past relates the topic time, not the situation time, to the utterance time.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex54",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(54)"
+    },
+    "language": "stan1293",
+    "primaryText": "She walked into the room and saw Peter lying on the floor. He was drunk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "past",
+        "topic time precedes utterance time"
+      ],
+      [
+        "situation",
+        "stage-level, not extended"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex59",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(59)"
+    },
+    "language": "stan1293",
+    "primaryText": "John was in the classroom. In fact, he still is.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "past",
+        "topic time excludes utterance time"
+      ],
+      [
+        "situation",
+        "includes both"
+      ]
+    ],
+    "comment": "The temporal analogue of cancelling counterfactuality.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex60a",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(60a)"
+    },
+    "language": "stan1293",
+    "primaryText": "If he took that syrup, he would get better.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "cf_type",
+        "flv"
+      ],
+      [
+        "reading",
+        "feature over worlds"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex60b",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(60b)"
+    },
+    "language": "stan1293",
+    "primaryText": "If he took that syrup, he must be better now.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "construction",
+        "epistemic conditional"
+      ],
+      [
+        "reading",
+        "feature over times"
+      ]
+    ],
+    "comment": "The same antecedent with the feature interpreted temporally.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex62b",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(62b)"
+    },
+    "language": "stan1293",
+    "primaryText": "If you gave him that book, he would read it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "cf_type",
+        "flv"
+      ],
+      [
+        "aktionsart",
+        "telic"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex63a",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(63a)"
+    },
+    "language": "stan1293",
+    "primaryText": "If I knew this were chocolate, I would eat it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "cf_type",
+        "presCF"
+      ],
+      [
+        "aktionsart",
+        "individual-level stative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex63b",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(63b)"
+    },
+    "language": "stan1293",
+    "primaryText": "If I were tall, I would be able to reach the ceiling.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "cf_type",
+        "presCF"
+      ],
+      [
+        "aktionsart",
+        "individual-level stative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex64a",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(64a)"
+    },
+    "language": "stan1293",
+    "primaryText": "If he were drunk at next week's meeting, the boss would be really angry.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "cf_type",
+        "flv"
+      ],
+      [
+        "aktionsart",
+        "stage-level stative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex64b",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(64b)"
+    },
+    "language": "stan1293",
+    "primaryText": "If he were drunk, he would be louder.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "cf_type",
+        "presCF"
+      ],
+      [
+        "aktionsart",
+        "stage-level stative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex65",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(65)"
+    },
+    "language": "stan1293",
+    "primaryText": "If he takes the syrup, ...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "tense",
+        "present"
+      ],
+      [
+        "aktionsart",
+        "telic"
+      ],
+      [
+        "evaluation",
+        "future"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex66",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(66)"
+    },
+    "language": "stan1293",
+    "primaryText": "If he is tall, ...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "tense",
+        "present"
+      ],
+      [
+        "aktionsart",
+        "individual-level stative"
+      ],
+      [
+        "evaluation",
+        "now"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex67a",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(67a)"
+    },
+    "language": "stan1293",
+    "primaryText": "If he is drunk next week, ...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "tense",
+        "present"
+      ],
+      [
+        "aktionsart",
+        "stage-level stative"
+      ],
+      [
+        "evaluation",
+        "future"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex67b",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(67b)"
+    },
+    "language": "stan1293",
+    "primaryText": "If he is drunk, we should not let him drive.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "tense",
+        "present"
+      ],
+      [
+        "aktionsart",
+        "stage-level stative"
+      ],
+      [
+        "evaluation",
+        "now"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex68a",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(68a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I don't know if he will come, but if he came, he would have a great time.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "cf_type",
+        "flv"
+      ],
+      [
+        "speaker",
+        "agnostic about the antecedent"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex69b",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(69b)"
+    },
+    "language": "stan1293",
+    "primaryText": "He's not rich. Too bad, because if he were rich, he would be popular with that crowd.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "cf_type",
+        "presCF"
+      ],
+      [
+        "speaker",
+        "believes the antecedent false"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex74",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(74)"
+    },
+    "language": "mode1248",
+    "primaryText": "An ton ayapuse avrio, tha imun poli eftixismeni.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "An",
+        "if"
+      ],
+      [
+        "ton",
+        "him"
+      ],
+      [
+        "ayapuse",
+        "love.IPFV.PST"
+      ],
+      [
+        "avrio",
+        "tomorrow"
+      ],
+      [
+        "tha",
+        "FUT"
+      ],
+      [
+        "imun",
+        "be.PST.1SG"
+      ],
+      [
+        "poli",
+        "very"
+      ],
+      [
+        "eftixismeni",
+        "happy"
+      ]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "impf",
+        "yes"
+      ],
+      [
+        "reading",
+        "stage-level stative, not inchoative"
+      ]
+    ],
+    "comment": "Fake imperfective does not yield the inchoative reading a perfective would.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex75",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(75)"
+    },
+    "language": "mode1248",
+    "primaryText": "An ton ayapuse, tha itan poli eftixismeni.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "An",
+        "if"
+      ],
+      [
+        "ton",
+        "him"
+      ],
+      [
+        "ayapuse",
+        "love.IPFV.PST"
+      ],
+      [
+        "tha",
+        "FUT"
+      ],
+      [
+        "itan",
+        "be.PST.3SG"
+      ],
+      [
+        "poli",
+        "very"
+      ],
+      [
+        "eftixismeni",
+        "happy"
+      ]
+    ],
+    "translation": "If she loved him, she would be very happy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "cf_type",
+        "presCF"
+      ],
+      [
+        "impf",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex79",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(79)"
+    },
+    "language": "mode1248",
+    "primaryText": "An avrio kata tin diarkia tis teletis diavazes tin efimerida, tha se apelian.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "An",
+        "if"
+      ],
+      [
+        "avrio",
+        "tomorrow"
+      ],
+      [
+        "kata",
+        "during"
+      ],
+      [
+        "tin",
+        "the"
+      ],
+      [
+        "diarkia",
+        "duration"
+      ],
+      [
+        "tis",
+        "the"
+      ],
+      [
+        "teletis",
+        "ceremony"
+      ],
+      [
+        "diavazes",
+        "read.IPFV.PST"
+      ],
+      [
+        "tin",
+        "the"
+      ],
+      [
+        "efimerida",
+        "newspaper"
+      ],
+      [
+        "tha",
+        "FUT"
+      ],
+      [
+        "se",
+        "you"
+      ],
+      [
+        "apelian",
+        "fire.PST.IPFV"
+      ]
+    ],
+    "translation": "If you were reading the newspaper during the ceremony tomorrow, you would get fired.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "cf_type",
+        "flv"
+      ],
+      [
+        "impf",
+        "yes"
+      ],
+      [
+        "reading",
+        "ongoing"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex97a",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(97a)"
+    },
+    "language": "stan1288",
+    "primaryText": "Dudo que Maria esté enferma.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Dudo",
+        "doubt.1SG"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "Maria",
+        "Maria"
+      ],
+      [
+        "esté",
+        "be.PRS.SBJV"
+      ],
+      [
+        "enferma",
+        "sick"
+      ]
+    ],
+    "translation": "I doubt that Maria is sick.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Dudo que Maria estuviera enferma.",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "Dudo que Maria está enferma.",
+        "judgment": "ungrammatical"
+      },
+      {
+        "form": "Dudo que Maria estaba enferma.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ],
+      [
+        "mood",
+        "dubitative subjunctive"
+      ],
+      [
+        "paradigm",
+        "past and present subjunctive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex98",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(98)"
+    },
+    "language": "stan1290",
+    "primaryText": "Je doute que Marie ait un parapluie rouge.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Je",
+        "I"
+      ],
+      [
+        "doute",
+        "doubt.1SG"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "Marie",
+        "Marie"
+      ],
+      [
+        "ait",
+        "have.PRS.SBJV"
+      ],
+      [
+        "un",
+        "a"
+      ],
+      [
+        "parapluie",
+        "umbrella"
+      ],
+      [
+        "rouge",
+        "red"
+      ]
+    ],
+    "translation": "I doubt that Marie has a red umbrella.",
+    "context": "A: Marie avait un parapluie rouge.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Je doute que Marie a un parapluie rouge.",
+        "judgment": "ungrammatical"
+      },
+      {
+        "form": "Je doute que Marie avait un parapluie rouge.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ],
+      [
+        "mood",
+        "dubitative subjunctive"
+      ],
+      [
+        "paradigm",
+        "nonpast subjunctive only"
+      ]
+    ],
+    "comment": "Under doubt the subjunctive wins over loyalty to the tense of the original sentence.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iatridou2000_ex99",
+    "source": {
+      "bibkey": "iatridou-2000",
+      "paperLabel": "(99)"
+    },
+    "language": "stan1290",
+    "primaryText": "Si Marie avait un parapluie rouge, ...",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Si",
+        "if"
+      ],
+      [
+        "Marie",
+        "Marie"
+      ],
+      [
+        "avait",
+        "have.PST.IND"
+      ],
+      [
+        "un",
+        "a"
+      ],
+      [
+        "parapluie",
+        "umbrella"
+      ],
+      [
+        "rouge",
+        "red"
+      ]
+    ],
+    "translation": "If Marie had a red umbrella, ...",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Si Marie ait un parapluie rouge, ...",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ],
+      [
+        "mood",
+        "past indicative"
+      ],
+      [
+        "paradigm",
+        "nonpast subjunctive only"
+      ]
+    ],
+    "comment": "In the counterfactual the exclusion feature wins over the nonpast subjunctive.",
+    "lgrConformance": ""
   }
 ]

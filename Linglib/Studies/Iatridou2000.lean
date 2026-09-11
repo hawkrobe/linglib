@@ -1,318 +1,222 @@
 import Linglib.Semantics.Modality.Exclusion
 import Linglib.Semantics.Mood.Defs
-import Linglib.Data.Examples.Iatridou2000
-import Linglib.Fragments.English.Conditionals
-import Mathlib.Data.Finset.Basic
+import Mathlib.Data.Set.Basic
+import Mathlib.Data.Finset.Image
+import Mathlib.Order.Disjoint
 
 /-!
-# Iatridou (2000): The Grammatical Ingredients of Counterfactuality [iatridou-2000]
+# Iatridou (2000): The grammatical ingredients of counterfactuality
 
-Theory-neutral cross-linguistic data and the ExclF analysis from [iatridou-2000]
-"The Grammatical Ingredients of Counterfactuality", *Linguistic Inquiry* 31(2):
-231–270.
+This file formalizes [iatridou-2000]'s account of the past morphology of counterfactuals as
+an exclusion feature. The feature's skeletal meaning (49) is that the topic excludes what,
+for all the speaker knows, is the speaker's: over times the topic time excludes the utterance
+time, temporal past, and over worlds the topic worlds exclude the actual worlds,
+counterfactuality (`Excludes`). What is asserted is a relation to the topic, not to the
+situation, so the counterfactual inference is cancellable and *John was in the classroom; in
+fact he still is* is consistent (`Claim.consistent_with_inclusion`). The library's
+`Modality.Exclusion.ExclF` on context towers is the feature at a point-sized topic
+(`exclF_iff_excludes`).
 
-Iatridou's central claim: the morphology we call "past tense" provides a skeletal
-*exclusion feature* (ExclF), `T(x) excludes C(x)` — the topic `x` excludes the
-speaker's `x`. Over times it yields temporal past; over worlds it yields
-counterfactuality. A counterfactual is built from ExclF, an aspectual component
-(imperfective in some languages), and mood.
+One feature over worlds leaves the rest of the antecedent to be evaluated as with present
+tense, so the future less vivid and the present counterfactual readings are the future and
+present evaluation times of the predicate's Aktionsart: Table 1 is Table 2 (`readings`), and
+the pluperfect's second layer makes a past counterfactual whatever the predicate. Aspect and
+mood are not ingredients: the imperfective of Greek and French is absent from English
+(`imperfective_not_universal`), and the subjunctive appears in a counterfactual only where a
+past subjunctive paradigm lets it co-occur with the feature, so French, having lost its past
+subjunctive, keeps the past indicative (`antecedent_french`).
 
-## Key empirical generalizations
+## Implementation notes
 
-1. **Past morphology is uniform**: FLV, PresCF, and PastCF all use past
-   morphology, differing in the *number* of ExclF layers (1, 1, 2).
-2. **Imperfective is not universal**: languages with imperfective (Greek, French)
-   use it in CFs; languages without it (English) omit it.
-3. **Subjunctive mirrors past-subjunctive availability** (§6.1): a CF uses
-   subjunctive only in languages with a past-subjunctive paradigm — German and
-   Italian do; French and Indo-Aryan have only a nonpast subjunctive and don't.
+* Exclusion is disjointness of sets of times or worlds, the speaker's coordinate being a set
+  of epistemically accessible alternatives; the *before* of temporal past is `TemporalPast`.
+* The counterfactual types keep the name `CounterfactualType`, which `Mizuno2024` refers to.
 
-## See also
+## References
 
-- `Studies/CarianiSantorio2018.lean` — selectional account where past morphology
-  shifts the modal parameter rather than introducing a separate CF operator.
+* [iatridou-2000]
 -/
 
 namespace Iatridou2000
 
 open Modality.Exclusion
-open Semantics.Context
+open Semantics.Context (KContext ContextTower temporalShift)
 open Mood (subjShift)
-open Data.Examples (LinguisticExample)
 
-/-! ### Iatridou's counterfactual typology -/
+/-! ### The exclusion feature -/
 
-/-- [iatridou-2000]'s three counterfactual conditional types, distinguished by the
-    number of ExclFs and (in the one-ExclF cases) the predicate's Aktionsart. -/
+variable {X : Type*}
+
+/-- (49): the topic excludes the speaker's, as sets of times or of worlds. -/
+def Excludes (topic speaker : Set X) : Prop := Disjoint topic speaker
+
+/-- Footnote 19: temporal past is exclusion augmented by *before*. -/
+def TemporalPast [Preorder X] (topic speaker : Set X) : Prop :=
+  ∀ t ∈ topic, ∀ u ∈ speaker, t < u
+
+theorem excludes_of_temporalPast [Preorder X] {topic speaker : Set X}
+    (h : TemporalPast topic speaker) : Excludes topic speaker :=
+  Set.disjoint_left.2 λ t ht hu => lt_irrefl t (h t ht t hu)
+
+/-- What the feature contributes to an assertion: the situation, the p-worlds or the
+situation time, holds throughout a topic that excludes the speaker's. -/
+structure Claim (X : Type*) where
+  topic : Set X
+  speaker : Set X
+  situation : Set X
+  topic_subset : topic ⊆ situation
+  excludes : Excludes topic speaker
+
+/-- (58)–(59): the claim leaves open whether the situation includes the speaker's worlds or
+times, so the counterfactual inference is an implicature and *in fact, he still is* is
+consistent. -/
+theorem Claim.consistent_with_inclusion :
+    ∃ c : Claim Bool, c.speaker ⊆ c.situation ∧ c.topic.Nonempty ∧ c.speaker.Nonempty :=
+  ⟨⟨{true}, {false}, Set.univ, Set.subset_univ _, by simp [Excludes]⟩,
+    Set.subset_univ _, Set.singleton_nonempty _, Set.singleton_nonempty _⟩
+
+/-- The situation itself excludes the speaker's only when the speaker's coordinate lies
+outside it, which the feature does not assert. -/
+theorem Claim.excludes_situation_iff (c : Claim X) :
+    Excludes c.situation c.speaker ↔ ∀ x ∈ c.speaker, x ∉ c.situation :=
+  Set.disjoint_right
+
+/-- The library's exclusion feature on a context tower is the feature at a point-sized topic:
+the innermost coordinate against the origin's. -/
+theorem exclF_iff_excludes {W E P T : Type*} (tower : ContextTower (KContext W E P T)) :
+    (ExclF .temporal tower ↔ Excludes {tower.innermost.time} {tower.origin.time}) ∧
+      (ExclF .modal tower ↔ Excludes {tower.innermost.world} {tower.origin.world}) :=
+  ⟨Set.disjoint_singleton.symm, Set.disjoint_singleton.symm⟩
+
+/-! ### The three counterfactuals -/
+
+/-- The counterfactual conditionals of the paper: future less vivid, present counterfactual
+and past counterfactual. -/
 inductive CounterfactualType where
-  /-- Future Less Vivid: one ExclF (over worlds) + telic/activity predicate. -/
   | flv
-  /-- Present Counterfactual: one ExclF (over worlds) + individual-level stative. -/
   | presCF
-  /-- Past Counterfactual: two ExclFs — one over worlds, one over times. -/
   | pastCF
   deriving DecidableEq, Repr
 
-/-- ExclF count per type. PresCF/FLV have one (over worlds); PastCF has two — the
-    pluperfect's two past layers, one fake (modal) and one real (temporal)
-    ([iatridou-2000] §4, p. 252). -/
-def CounterfactualType.exclFCount : CounterfactualType → Nat
-  | .flv | .presCF => 1
-  | .pastCF => 2
+/-- The dimensions the exclusion features of a counterfactual range over: one over worlds,
+and for the past counterfactual the pluperfect's second layer over times. -/
+def CounterfactualType.dimensions : CounterfactualType → Finset ExclDimension
+  | .flv | .presCF => {.modal}
+  | .pastCF => {.modal, .temporal}
 
-/-- Predicate Aktionsart relevant to the FLV/PresCF split ([iatridou-2000],
-    Tables 1–2). The individual-level vs stage-level distinction among statives
-    is *not* recoverable from Vendler class (both are "states"), so it is encoded
-    directly rather than derived from a `VendlerClass`. -/
-inductive IatridouPredType where
-  /-- Telic: arrive, build a house (evaluated in the future → FLV). -/
+/-- The Aktionsart of the antecedent's predicate: telic, activity (footnote 24),
+individual-level stative or stage-level stative. -/
+inductive Aktionsart where
   | telic
-  /-- Activity: run, push the cart — patterns with telics ([iatridou-2000], fn 24). -/
   | activity
-  /-- Individual-level stative: be tall, know French (holds also now → PresCF). -/
-  | ilp
-  /-- Stage-level stative: be sick, be drunk (future *or* now → FLV *or* PresCF). -/
-  | slp
+  | ilStative
+  | slStative
   deriving DecidableEq, Repr
 
-/-- Classify a counterfactual from its ExclF configuration and predicate type,
-    returning the *set* of licensed CF readings (`∅` if there is no modal ExclF).
-
-    Faithful to [iatridou-2000] Table 1: with one (modal) ExclF, a telic or
-    activity predicate yields FLV, an individual-level stative yields PresCF, and
-    a stage-level stative yields *both* (FLV with a future adverbial, PresCF
-    otherwise — ex (64)). Two ExclFs yield PastCF regardless of predicate. -/
-def classifyCounterfactual : Bool → Bool → IatridouPredType → Finset CounterfactualType
-  | false, _,     _         => ∅
-  | true,  true,  _         => {.pastCF}
-  | true,  false, .telic    => {.flv}
-  | true,  false, .activity => {.flv}
-  | true,  false, .ilp      => {.presCF}
-  | true,  false, .slp      => {.flv, .presCF}
-
-/-- Telic + one modal ExclF → FLV. -/
-theorem telic_one_exclF : classifyCounterfactual true false .telic = {.flv} := rfl
-
-/-- Activity + one modal ExclF → FLV ([iatridou-2000], fn 24). -/
-theorem activity_one_exclF : classifyCounterfactual true false .activity = {.flv} := rfl
-
-/-- Individual-level stative + one modal ExclF → PresCF only. -/
-theorem ilp_one_exclF : classifyCounterfactual true false .ilp = {.presCF} := rfl
-
-/-- Stage-level stative + one modal ExclF → *both* FLV and PresCF
-    ([iatridou-2000], Table 1, ex (64)): "If he were drunk at next week's
-    meeting" (FLV) vs "If he were drunk, he would be louder" (PresCF). -/
-theorem slp_one_exclF : classifyCounterfactual true false .slp = {.flv, .presCF} := rfl
-
-/-- Two ExclFs → PastCF, regardless of predicate type. -/
-theorem two_exclFs_pastCF (pred : IatridouPredType) :
-    classifyCounterfactual true true pred = {.pastCF} := by cases pred <;> rfl
-
-/-- No modal ExclF → not a counterfactual. -/
-theorem no_modal_not_cf (temporalExcl : Bool) (pred : IatridouPredType) :
-    classifyCounterfactual false temporalExcl pred = ∅ := by cases temporalExcl <;> rfl
-
-/-- [iatridou-2000]'s subjunctive prediction (§6.1, p. 264): a CF uses subjunctive
-    only in languages that have a past-subjunctive paradigm.
-
-    The paper states it one-directionally (uses → has); we encode the
-    biconditional, which all languages in the data satisfy: English, Greek, and
-    French lack a productive past subjunctive and use none in CFs; Italian has
-    one and requires it. -/
-def iatridouSubjGeneralization (hasPastSubj requiresSubj : Bool) : Prop :=
-  requiresSubj = hasPastSubj
-
-/-- All three CF types collapse to the framework-agnostic
-    `Mood.SubjunctiveType.counterfactual` tag. -/
-def CounterfactualType.toSubjunctiveType (_ : CounterfactualType) :
-    Mood.SubjunctiveType := .counterfactual
-
-theorem all_counterfactuals_are_counterfactual (t : CounterfactualType) :
-    t.toSubjunctiveType = .counterfactual := by cases t <;> rfl
-
-/-- A PastCF tower has depth 2 — the two past morpheme layers (one fake/modal,
-    one real/temporal). -/
-theorem pastCF_tower_depth {W E P T : Type*} (c : KContext W E P T)
-    (w' : W) (t' t'' : T) :
-    (((ContextTower.root c).push (subjShift w' t')).push
-      (temporalShift t'')).depth = 2 := by
-  simp [ContextTower.push, ContextTower.depth, ContextTower.root]
-
-/-! ### Datum structures -/
-
-/-- Whether a language requires subjunctive in CFs, and whether it has a distinct
-    past subjunctive. -/
-structure SubjRequirementDatum where
-  language : String
-  hasPastSubjunctive : Bool
-  cfRequiresSubjunctive : Bool
-  deriving Repr
-
-/-! ### Per-language imperfective ([iatridou-2000], generalization 2)
-
-The CF-type *layer counts* (generalization 1) are language-neutral properties of
-`CounterfactualType.exclFCount` — see the data theorems below — so there is no
-per-(language × CF-type) morphology table. The one morphological ingredient that varies
-cross-linguistically is the imperfective: a per-language fact. -/
-
-/-- The languages [iatridou-2000] draws CF morphology from. -/
-inductive CFLanguage where
-  | english | greek | french
+/-- The times at which an antecedent can be evaluated. -/
+inductive Evaluation where
+  | future
+  | now
   deriving DecidableEq, Repr
 
-/-- Whether a language uses imperfective morphology in counterfactuals: Greek and French
-    do, English does not. Uniform across CF types within a language. Grounded in the
-    `impf` tags of `Data/Examples/Iatridou2000.json` by `imperfective_grounded` below. -/
-def usesImperfectiveInCF : CFLanguage → Bool
-  | .english => false
-  | .greek => true
-  | .french => true
+/-- Table 2: the earliest evaluation of a present-tense antecedent by the predicate's
+Aktionsart, (65)–(67). -/
+def Aktionsart.evaluation : Aktionsart → Finset Evaluation
+  | .telic | .activity => {.future}
+  | .ilStative => {.now}
+  | .slStative => {.future, .now}
 
--- The conditional connective used by the English CF data is `if`, which marks both
--- hypothetical and premise conditionals. The connective is the theory-neutral,
--- Fragment-level lexical fact (cf. Mizuno's use of Japanese `eba` / Mandarin `ruguo`);
--- the CF-type morphology classification below is [iatridou-2000]'s analysis (this study).
-#guard English.Conditionals.if_.markerType ==
-  Conditionals.ConditionalMarkerType.both
+/-- After one feature has set up the topic worlds, evaluation in the future is the future
+less vivid and evaluation now the present counterfactual. -/
+def Evaluation.reading : Evaluation → CounterfactualType
+  | .future => .flv
+  | .now => .presCF
 
-/-! ### Subjunctive-requirement data ([iatridou-2000], §6.1) -/
+/-- Table 1, derived from Table 2: the readings of a conditional with one exclusion feature
+on a predicate of the given Aktionsart. -/
+def readings (a : Aktionsart) : Finset CounterfactualType := a.evaluation.image Evaluation.reading
 
-/-- English: no productive past subjunctive (vestigial *were* aside), none required. -/
-def english_subj : SubjRequirementDatum where
-  language := "English"; hasPastSubjunctive := false; cfRequiresSubjunctive := false
+theorem readings_telic : readings .telic = {.flv} := by decide
 
-/-- Greek: na-clauses are not CF subjunctive ([iatridou-2000], fn 37); none required. -/
-def greek_subj : SubjRequirementDatum where
-  language := "Greek"; hasPastSubjunctive := false; cfRequiresSubjunctive := false
+theorem readings_ilStative : readings .ilStative = {.presCF} := by decide
 
-/-- French: no productive past subjunctive (only the dubitative); CFs use the past
-    indicative ([iatridou-2000], §6.1, ex (99)). -/
-def french_subj : SubjRequirementDatum where
-  language := "French"; hasPastSubjunctive := false; cfRequiresSubjunctive := false
+/-- (64): a stage-level stative yields either reading. -/
+theorem readings_slStative : readings .slStative = {.flv, .presCF} := by decide
 
-/-- Italian: has a past subjunctive (congiuntivo trapassato) and requires it in
-    CFs — a positive case for [iatridou-2000]'s §6.1 prediction. -/
-def italian_subj : SubjRequirementDatum where
-  language := "Italian"; hasPastSubjunctive := true; cfRequiresSubjunctive := true
+/-- A single feature never yields the past counterfactual. -/
+theorem pastCF_notMem_readings (a : Aktionsart) : .pastCF ∉ readings a := by
+  cases a <;> decide
 
-/-- All subjunctive-requirement data. -/
-def allSubjData : List SubjRequirementDatum :=
-  [english_subj, greek_subj, french_subj, italian_subj]
+/-- The one-feature conditionals: a subjunctive shift alone excludes on worlds and, keeping
+the time, not on times. -/
+theorem one_feature {W E P T : Type*} (c : KContext W E P T) {w' : W} (hw : w' ≠ c.world) :
+    ExclF .modal ((ContextTower.root c).push (subjShift w' c.time)) ∧
+      ¬ ExclF .temporal ((ContextTower.root c).push (subjShift w' c.time)) :=
+  ⟨subjShift_produces_modal_exclF c w' c.time hw, λ h => h rfl⟩
 
-/-! ### Data theorems -/
+/-- The pluperfect's two layers: a subjunctive shift and a temporal shift exclude on both
+dimensions, the past counterfactual. -/
+theorem two_features {W E P T : Type*} (c : KContext W E P T) {w' : W} {t' : T}
+    (hw : w' ≠ c.world) (ht : t' ≠ c.time) :
+    ExclF .modal (((ContextTower.root c).push (subjShift w' c.time)).push (temporalShift t')) ∧
+      ExclF .temporal
+        (((ContextTower.root c).push (subjShift w' c.time)).push (temporalShift t')) :=
+  two_shifts_two_exclFs c w' c.time t' hw ht
 
-/-- Generalization 1 ([iatridou-2000]): every CF type carries past morphology — it has at
-    least one ExclF (past) layer. A property of the `CounterfactualType` taxonomy, not a
-    per-row stipulation. -/
-theorem cf_has_past_layer (t : CounterfactualType) : 1 ≤ t.exclFCount := by
-  cases t <;> decide
+/-! ### Aspect and mood -/
 
-/-- The pluperfect's extra layer ([iatridou-2000] §3): PastCF carries strictly more ExclF
-    layers than the one-layer FLV and PresCF. -/
-theorem flv_presCF_fewer_layers :
-    CounterfactualType.flv.exclFCount < CounterfactualType.pastCF.exclFCount ∧
-    CounterfactualType.presCF.exclFCount < CounterfactualType.pastCF.exclFCount := by decide
+/-- The grammatical aspect a language requires in its counterfactuals (Section 5): the
+imperfective, none, or either. -/
+inductive CFAspect where
+  | imperfective
+  | none
+  | either
+  deriving DecidableEq, Repr
 
-/-- Generalization 2 ([iatridou-2000]): the imperfective is not a universal ingredient of
-    counterfactuality — some languages use it, others do not. -/
-theorem imperfective_not_universal :
-    (∃ l, usesImperfectiveInCF l = true) ∧ (∃ l, usesImperfectiveInCF l = false) :=
-  ⟨⟨.greek, rfl⟩, ⟨.english, rfl⟩⟩
+/-- The languages whose counterfactual morphology Section 5 compares. -/
+inductive AspectLanguage where
+  | greek
+  | french
+  | english
+  | polish
+  deriving DecidableEq, Repr
 
-/-- Each language satisfies [iatridou-2000]'s subjunctive generalization (§6.1). -/
-theorem subj_generalization :
-    ∀ d ∈ allSubjData,
-      iatridouSubjGeneralization d.hasPastSubjunctive d.cfRequiresSubjunctive := by
-  unfold iatridouSubjGeneralization; decide
+/-- Greek and French require the imperfective, English has no such requirement, and Polish
+allows either aspect. -/
+def AspectLanguage.cfAspect : AspectLanguage → CFAspect
+  | .greek | .french => .imperfective
+  | .english => .none
+  | .polish => .either
 
-/-! ### Grounding in the glossed stimuli
+/-- The imperfective is not an ingredient of counterfactuality. -/
+theorem imperfective_not_universal : ¬ ∀ l, AspectLanguage.cfAspect l = .imperfective :=
+  λ h => absurd (h .english) (by decide)
 
-The generalizations are grounded in the verified glossed sentences of
-`Data/Examples/Iatridou2000.json` (generated `Iatridou2000.Examples`): all three CF types
-are attested, and the per-language imperfective fact matches the examples' `impf` tags. -/
+/-- Whether a language has a past subjunctive paradigm (Section 6.1). -/
+inductive SubjunctiveParadigm where
+  | past
+  | nonpastOnly
+  | none
+  deriving DecidableEq, Repr
 
-/-- The `impf` tag read as a Bool. -/
-def impfTag (e : LinguisticExample) : Option Bool :=
-  match e.feature? "impf" with
-  | some "yes" => some true
-  | some "no"  => some false
-  | _          => none
+/-- The form of a counterfactual antecedent: the feature on the subjunctive when a past
+subjunctive exists, else on the indicative; a nonpast subjunctive never expresses the feature,
+so it loses to the past indicative, the French choice of (99). -/
+def antecedentForm : SubjunctiveParadigm → Mood.SubjunctiveType ⊕ Unit
+  | .past => Sum.inl .counterfactual
+  | .nonpastOnly | .none => Sum.inr ()
 
-/-- All three CF types are attested in the English stimuli. -/
-theorem cf_types_attested :
-    Examples.en_flv.feature? "cf_type" = some "flv" ∧
-    Examples.en_presCF.feature? "cf_type" = some "presCF" ∧
-    Examples.en_pastCF.feature? "cf_type" = some "pastCF" := by decide
+/-- Section 6.1: a counterfactual carries the subjunctive only in a language with a past
+subjunctive paradigm. -/
+theorem subjunctive_of_antecedentForm {p : SubjunctiveParadigm} {s : Mood.SubjunctiveType}
+    (h : antecedentForm p = Sum.inl s) : p = .past := by
+  cases p <;> simp_all [antecedentForm]
 
-/-- `usesImperfectiveInCF` matches the example `impf` tags — English (no), Greek (yes),
-    French (yes). Flipping a JSON tag or the generalization breaks this. -/
-theorem imperfective_grounded :
-    impfTag Examples.en_flv = some (usesImperfectiveInCF .english) ∧
-    impfTag Examples.gr_flv = some (usesImperfectiveInCF .greek) ∧
-    impfTag Examples.fr_flv = some (usesImperfectiveInCF .french) := by decide
+/-- French has only a nonpast subjunctive, so its counterfactual antecedents carry the past
+indicative, (99). -/
+theorem antecedent_french : antecedentForm .nonpastOnly = Sum.inr () := rfl
 
-/-! ### ContextTower bridge -/
-
-abbrev CFCtx := KContext Bool Unit Unit ℤ
-
-/-- The actual context: world = true (actual), time = 0 (now). -/
-def actualCtx : CFCtx :=
-  { world := true, agent := (), addressee := (), time := 0, position := () }
-
-/-- Root tower: the actual speech-act context, depth 0. -/
-def actualTower : ContextTower CFCtx := ContextTower.root actualCtx
-
-/-- FLV/PresCF: one subjunctive shift to a counterfactual world (false ≠ true). -/
-def presCFTower : ContextTower CFCtx :=
-  actualTower.push (subjShift false 0)
-
-/-- The tower has depth 1 — matching one past morpheme layer. -/
-theorem presCF_depth : presCFTower.depth = 1 := rfl
-
-/-- Modal ExclF holds: the counterfactual world ≠ the actual world. -/
-theorem presCF_modal_exclF : ExclF .modal presCFTower :=
-  subjShift_produces_modal_exclF actualCtx false 0 Bool.false_ne_true
-
-/-- Temporal ExclF does *not* hold: the time is unchanged (0 = 0). -/
-theorem presCF_no_temporal_exclF : ¬ ExclF .temporal presCFTower := by
-  unfold ExclF presCFTower actualTower actualCtx subjShift; decide
-
-/-- Tower depth (1) matches the PresCF ExclF-layer count (1). -/
-theorem presCF_depth_matches_data :
-    presCFTower.depth = CounterfactualType.presCF.exclFCount := rfl
-
-/-- PastCF: a modal shift (subjunctive, world) plus a temporal shift (an extra
-    past layer, time → -5). -/
-def pastCFTower : ContextTower CFCtx :=
-  presCFTower.push (temporalShift (-5))
-
-/-- The tower has depth 2 — matching two past morpheme layers. -/
-theorem pastCF_depth : pastCFTower.depth = 2 := rfl
-
-/-- Modal ExclF holds: the counterfactual world ≠ the actual world. The
-    modal+temporal pair is the substrate's PastCF configuration
-    (`two_shifts_two_exclFs`). -/
-theorem pastCF_modal_exclF : ExclF .modal pastCFTower :=
-  (two_shifts_two_exclFs actualCtx false 0 (-5) Bool.false_ne_true (by decide)).1
-
-/-- Temporal ExclF holds: the shifted time (-5) ≠ the speech time (0). -/
-theorem pastCF_temporal_exclF : ExclF .temporal pastCFTower :=
-  (two_shifts_two_exclFs actualCtx false 0 (-5) Bool.false_ne_true (by decide)).2
-
-/-- Tower depth (2) matches the PastCF ExclF-layer count (2). -/
-theorem pastCF_depth_matches_data :
-    pastCFTower.depth = CounterfactualType.pastCF.exclFCount := rfl
-
-/-- Even in a PastCF tower (depth 2), the origin context is preserved. -/
-theorem pastCF_origin_preserved : pastCFTower.origin = actualCtx := rfl
-
-/-- The present/past-CF ExclF diagnostics are witnessed by Iatridou's (2a)/(2b): (2a) is
-    a PresCF (one modal ExclF, tower depth 1), (2b) a PastCF (two ExclFs, depth 2). Ties
-    the glossed (2)-stimuli to the ContextTower model. -/
-theorem cf_diagnostics_examples :
-    Examples.ex2a.feature? "cf_type" = some "presCF" ∧
-    Examples.ex2b.feature? "cf_type" = some "pastCF" ∧
-    presCFTower.depth = 1 ∧ pastCFTower.depth = 2 :=
-  ⟨by decide, by decide, rfl, rfl⟩
+/-- German and Italian have a past subjunctive and use it. -/
+theorem antecedent_german : antecedentForm .past = Sum.inl .counterfactual := rfl
 
 end Iatridou2000
