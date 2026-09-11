@@ -1,3 +1,4 @@
+import Linglib.Core.Algebra.Order.Chebyshev
 import Linglib.Core.MeasureTheory.Measure.Prod
 import Mathlib.Probability.Kernel.Posterior
 import Mathlib.MeasureTheory.Measure.Real
@@ -17,6 +18,8 @@ product parameter space, to comparisons of prior-weighted likelihood sums.
 * `ProbabilityTheory.posterior_deterministic_eq_cond` — a deterministic observation's posterior
   is the prior conditioned on the observation's fibre.
 * `ProbabilityTheory.posterior_real_finset_lt_iff` — event comparison of the posterior.
+* `ProbabilityTheory.sum_real_mul_le_sum_posterior_real_mul` — conditioning on an observation
+  raises the expectation of a statistic that monovaries with the observation's likelihood.
 * `ProbabilityTheory.posterior_fst_real_lt_iff`, `posterior_snd_real_lt_iff` — marginal
   comparison over a product parameter space.
 -/
@@ -144,6 +147,47 @@ theorem posterior_real_singleton_lt_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 
   have hm : 0 < (κ ∘ₘ μ).real {x} := ENNReal.toReal_pos hx (measure_ne_top _ _)
   have hμ : 0 < μ.real {ω} := ENNReal.toReal_pos hω (measure_ne_top _ _)
   rw [posterior_real_singleton κ μ hx, div_lt_iff₀ hm, mul_lt_mul_iff_of_pos_left hμ]
+
+/-! ### Expectations under the posterior
+
+Bayes' rule reweights the prior by the likelihood, so the posterior expectation of a statistic
+compares with its prior expectation as the statistic's covariance with the likelihood: the
+weighted Chebyshev sum inequality. -/
+
+section Expectation
+
+variable [Fintype Ω] [IsProbabilityMeasure μ] {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) {f : Ω → ℝ}
+include hx
+
+/-- Conditioning on an observation raises the expectation of a statistic that monovaries with
+the observation's likelihood. -/
+theorem sum_real_mul_le_sum_posterior_real_mul (hf : Monovary f λ ω => (κ ω).real {x}) :
+    ∑ ω, μ.real {ω} * f ω ≤ ∑ ω, ((κ†μ) x).real {ω} * f ω := by
+  have hm : 0 < (κ ∘ₘ μ).real {x} := ENNReal.toReal_pos hx (measure_ne_top _ _)
+  have h1 : ∑ ω, μ.real {ω} = 1 := by
+    rw [sum_measureReal_singleton, Finset.coe_univ, probReal_univ]
+  have h := hf.sum_mul_mul_sum_mul_le_sum_mul_sum_mul_mul (w := λ ω => μ.real {ω})
+    λ _ => measureReal_nonneg
+  rw [h1, one_mul] at h
+  simp_rw [posterior_real_singleton κ μ hx, div_mul_eq_mul_div, ← Finset.sum_div,
+    le_div_iff₀ hm, Measure.comp_real_singleton]
+  exact h.trans (le_of_eq (Finset.sum_congr rfl λ ω _ => by ring))
+
+/-- Conditioning on an observation lowers the expectation of a statistic that antivaries with
+the observation's likelihood. -/
+theorem sum_posterior_real_mul_le_sum_real_mul (hf : Antivary f λ ω => (κ ω).real {x}) :
+    ∑ ω, ((κ†μ) x).real {ω} * f ω ≤ ∑ ω, μ.real {ω} * f ω := by
+  have hm : 0 < (κ ∘ₘ μ).real {x} := ENNReal.toReal_pos hx (measure_ne_top _ _)
+  have h1 : ∑ ω, μ.real {ω} = 1 := by
+    rw [sum_measureReal_singleton, Finset.coe_univ, probReal_univ]
+  have h := hf.sum_mul_sum_mul_mul_le_sum_mul_mul_sum_mul (w := λ ω => μ.real {ω})
+    λ _ => measureReal_nonneg
+  rw [h1, one_mul] at h
+  simp_rw [posterior_real_singleton κ μ hx, div_mul_eq_mul_div, ← Finset.sum_div,
+    div_le_iff₀ hm, Measure.comp_real_singleton]
+  exact (le_of_eq (Finset.sum_congr rfl λ ω _ => by ring)).trans h
+
+end Expectation
 
 /-! ### Priors carried by two atoms
 

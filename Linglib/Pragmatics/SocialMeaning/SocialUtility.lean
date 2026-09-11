@@ -1,129 +1,108 @@
-import Mathlib.Data.Rat.Defs
+import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.Linarith
 import Mathlib.Order.MinMax
 
 /-!
-# Social Utility: Fehr-Schmidt Inequity Aversion
-[fehr-schmidt-1999] [houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023]
+# Social utility: Fehr–Schmidt inequity aversion
 
-[fehr-schmidt-1999] model agents who care about fairness, not just
-material payoff. An agent's utility depends on the difference between
-their own payoff and others' payoffs:
+[fehr-schmidt-1999] model agents who care about fairness and not only about material payoff:
+an agent's utility is the agent's own payoff less a penalty for each direction of inequality
+with the other agent,
 
-    U_i = v_i − α · max(0, v_j − v_i) − β · max(0, v_i − v_j)
+    U = v_self − α · max(0, v_other − v_self) − β · max(0, v_self − v_other),
 
-where α ≥ 0 captures **disadvantageous inequity aversion** (DIA — disliking
-getting less than others) and β captures **advantageous inequity aversion**
-(AIA — disliking getting more than others).
+where `α` weights *disadvantageous* inequity aversion (DIA, disliking getting less than the
+other) and `β` weights *advantageous* inequity aversion (AIA, disliking getting more).
+[houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023] use the two inequities as the social base
+features of an inverse planning model whose observers infer the weights from a single choice.
 
-[houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023] use this as the
-base utility in their inverse planning model of emotion prediction.
-Observers infer agents' α and β weights from observed choices, then
-use those inferred social preferences to compute emotion appraisals.
+## Implementation notes
 
-## Connection to RSA
+* The utility is generic over an ordered field, so that it serves both exact rational
+  computations and real-valued models with a value function.
 
-In politeness models ([yoon-etal-2020]), the "social utility" term is
-a primitive kindness weight φ. Fehr-Schmidt decomposes social utility into
-two structurally distinct components (AIA, DIA), each with its own
-behavioral signature. This decomposition predicts which emotions arise:
-DIA-weighted appraisals drive *envy*; AIA-weighted appraisals drive *guilt*.
+## References
+
+* [fehr-schmidt-1999]
+* [houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023]
 -/
 
 namespace Core
 
-/-! ### Core Utility Function -/
+section Field
 
-/-- Fehr-Schmidt inequity aversion utility.
-
-    U = v_self − α · max(0, v_other − v_self) − β · max(0, v_self − v_other)
-
-- `α` (DIA): penalty for disadvantageous inequality (I got less)
-- `β` (AIA): penalty for advantageous inequality (I got more)
-
-Typically 0 ≤ β ≤ α: people dislike being behind more than being ahead. -/
-def fehrSchmidt (vSelf vOther : ℚ) (α β : ℚ) : ℚ :=
-  vSelf - α * max 0 (vOther - vSelf) - β * max 0 (vSelf - vOther)
+variable {K : Type*} [Field K] [LinearOrder K]
 
 /-- Disadvantageous inequality: how much worse off I am than the other. -/
-def disadvantageousInequality (vSelf vOther : ℚ) : ℚ :=
-  max 0 (vOther - vSelf)
+def disadvantageousInequality (vSelf vOther : K) : K := max 0 (vOther - vSelf)
 
 /-- Advantageous inequality: how much better off I am than the other. -/
-def advantageousInequality (vSelf vOther : ℚ) : ℚ :=
-  max 0 (vSelf - vOther)
+def advantageousInequality (vSelf vOther : K) : K := max 0 (vSelf - vOther)
 
-/-- Fehr-Schmidt decomposes into three additive terms. -/
-theorem fehrSchmidt_decompose (vSelf vOther α β : ℚ) :
-    fehrSchmidt vSelf vOther α β =
-    vSelf - α * disadvantageousInequality vSelf vOther
-          - β * advantageousInequality vSelf vOther := rfl
+/-- Fehr–Schmidt inequity-aversion utility with disadvantageous weight `α` and advantageous
+weight `β`. -/
+def fehrSchmidt (vSelf vOther α β : K) : K :=
+  vSelf - α * disadvantageousInequality vSelf vOther - β * advantageousInequality vSelf vOther
 
-/-! ### Special Cases -/
+variable (vSelf vOther α β : K)
 
-/-- A purely selfish agent (α = β = 0) maximizes own payoff. -/
-theorem fehrSchmidt_selfish (vSelf vOther : ℚ) :
-    fehrSchmidt vSelf vOther 0 0 = vSelf := by
-  unfold fehrSchmidt; ring
+@[simp] theorem disadvantageousInequality_self (v : K) : disadvantageousInequality v v = 0 := by
+  simp [disadvantageousInequality]
 
-/-- Equal payoffs produce no inequity penalty. -/
-theorem fehrSchmidt_equal (v α β : ℚ) :
-    fehrSchmidt v v α β = v := by
-  unfold fehrSchmidt
-  simp [sub_self, max_self]
+@[simp] theorem advantageousInequality_self (v : K) : advantageousInequality v v = 0 := by
+  simp [advantageousInequality]
 
-/-- When payoffs are equal, DI = 0. -/
-theorem di_zero_when_equal (v : ℚ) :
-    disadvantageousInequality v v = 0 := by
-  unfold disadvantageousInequality; simp [sub_self, max_self]
+theorem disadvantageousInequality_nonneg : 0 ≤ disadvantageousInequality vSelf vOther :=
+  le_max_left _ _
 
-/-- When payoffs are equal, AI = 0. -/
-theorem ai_zero_when_equal (v : ℚ) :
-    advantageousInequality v v = 0 := by
-  unfold advantageousInequality; simp [sub_self, max_self]
+theorem advantageousInequality_nonneg : 0 ≤ advantageousInequality vSelf vOther :=
+  le_max_left _ _
 
-/-- DI and AI are complementary: exactly one is positive. -/
-theorem di_ai_complementary (vSelf vOther : ℚ) :
-    disadvantageousInequality vSelf vOther = 0 ∨
-    advantageousInequality vSelf vOther = 0 := by
-  unfold disadvantageousInequality advantageousInequality
-  rcases le_total vSelf vOther with h | h
-  · right; simp [max_eq_left (by linarith : (0 : ℚ) ≥ vSelf - vOther)]
-  · left; simp [max_eq_left (by linarith : (0 : ℚ) ≥ vOther - vSelf)]
+/-- A purely selfish agent maximizes the agent's own payoff. -/
+theorem fehrSchmidt_zero_zero : fehrSchmidt vSelf vOther 0 0 = vSelf := by
+  simp [fehrSchmidt]
 
-/-! ### Monotonicity -/
+/-- Equal payoffs carry no inequity penalty. -/
+theorem fehrSchmidt_self (v : K) : fehrSchmidt v v α β = v := by
+  simp [fehrSchmidt]
 
-/-- Higher α increases DIA penalty (weakly). -/
-theorem fehrSchmidt_mono_α (vSelf vOther α₁ α₂ β : ℚ)
-    (hα : α₁ ≤ α₂) :
+end Field
+
+variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] (vSelf vOther α β : K)
+
+theorem disadvantageousInequality_of_le (h : vOther ≤ vSelf) :
+    disadvantageousInequality vSelf vOther = 0 :=
+  max_eq_left (sub_nonpos.2 h)
+
+theorem advantageousInequality_of_le (h : vSelf ≤ vOther) :
+    advantageousInequality vSelf vOther = 0 :=
+  max_eq_left (sub_nonpos.2 h)
+
+theorem disadvantageousInequality_of_ge (h : vSelf ≤ vOther) :
+    disadvantageousInequality vSelf vOther = vOther - vSelf :=
+  max_eq_right (sub_nonneg.2 h)
+
+theorem advantageousInequality_of_ge (h : vOther ≤ vSelf) :
+    advantageousInequality vSelf vOther = vSelf - vOther :=
+  max_eq_right (sub_nonneg.2 h)
+
+/-- At most one direction of inequality is positive. -/
+theorem disadvantageousInequality_eq_zero_or_advantageousInequality_eq_zero :
+    disadvantageousInequality vSelf vOther = 0 ∨ advantageousInequality vSelf vOther = 0 :=
+  ((le_total vSelf vOther).imp (advantageousInequality_of_le _ _)
+    (disadvantageousInequality_of_le _ _)).symm
+
+/-- Utility is antitone in the disadvantageous weight. -/
+theorem fehrSchmidt_anti_left {α₁ α₂ : K} (h : α₁ ≤ α₂) :
     fehrSchmidt vSelf vOther α₂ β ≤ fehrSchmidt vSelf vOther α₁ β := by
   unfold fehrSchmidt
-  have h : 0 ≤ max 0 (vOther - vSelf) := le_max_left 0 _
-  nlinarith
+  nlinarith [disadvantageousInequality_nonneg vSelf vOther]
 
-/-- Higher β increases AIA penalty (weakly). -/
-theorem fehrSchmidt_mono_β (vSelf vOther α β₁ β₂ : ℚ)
-    (hβ : β₁ ≤ β₂) :
+/-- Utility is antitone in the advantageous weight. -/
+theorem fehrSchmidt_anti_right {β₁ β₂ : K} (h : β₁ ≤ β₂) :
     fehrSchmidt vSelf vOther α β₂ ≤ fehrSchmidt vSelf vOther α β₁ := by
   unfold fehrSchmidt
-  have h : 0 ≤ max 0 (vSelf - vOther) := le_max_left 0 _
-  nlinarith
-
-/-! ### Value Function
-
-[houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023] apply a value function ν
-to raw monetary payoffs to capture diminishing marginal utility.
-For their purposes, ν is a sign-adjusted logarithm. We keep the
-utility function generic over any monotone transform. -/
-
-/-- Composed Fehr-Schmidt: apply a value function to raw payoffs
-before computing inequity penalties. -/
-def fehrSchmidtV (ν : ℚ → ℚ) (vSelf vOther : ℚ) (α β : ℚ) : ℚ :=
-  fehrSchmidt (ν vSelf) (ν vOther) α β
-
-/-- When ν is the identity, fehrSchmidtV reduces to fehrSchmidt. -/
-theorem fehrSchmidtV_id (vSelf vOther α β : ℚ) :
-    fehrSchmidtV id vSelf vOther α β = fehrSchmidt vSelf vOther α β := rfl
+  nlinarith [advantageousInequality_nonneg vSelf vOther]
 
 end Core

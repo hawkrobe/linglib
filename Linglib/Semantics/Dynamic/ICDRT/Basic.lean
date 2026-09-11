@@ -157,6 +157,16 @@ def multiVarUp (ps : List PVar) (vs : List IVar)
   (∀ p : PVar, p ∉ ps → j.prop p = i.prop p) ∧
   (∀ v : IVar, v ∉ vs → j.indiv v = i.indiv v)
 
+/-- Updating a propositional variable is a propositional variable update. -/
+theorem propVarUp_updateProp (p : PVar) (i : Assignment W E) (s : Set W) :
+    propVarUp p i (i.updateProp p s) :=
+  ⟨λ _ hq => Assignment.updateProp_prop_of_ne i hq s, λ _ => rfl⟩
+
+/-- Updating an individual variable is an individual variable update. -/
+theorem indivVarUp_updateIndiv (v : IVar) (i : Assignment W E) (e : W → Entity E) :
+    indivVarUp v i (i.updateIndiv v e) :=
+  ⟨λ _ => rfl, λ _ hu => Assignment.updateIndiv_indiv_of_ne i hu e⟩
+
 /-- Relative variable update: `i[φ : v]j`.
 
 `j` differs from `i` at most in `v`, AND for every world `w`,
