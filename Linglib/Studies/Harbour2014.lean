@@ -5,72 +5,46 @@ import Linglib.Features.Number.Decomposition
 import Linglib.Syntax.Minimalist.Phi.Recursion
 
 /-!
-# Harbour (2014) — Paucity, Abundance, and the Theory of Number
-[harbour-2014]
+# Harbour (2014): Paucity, Abundance, and the Theory of Number
 
-Formalizes the central results of:
+This file formalizes [harbour-2014]'s account of the approximative numbers, paucal and greater
+plural, by a feature [±additive] of additive closure, over the library's [±atomic, ±minimal]
+decomposition and its activation and recursion parameters (`Features/Number/Decomposition.lean`,
+`Syntax/Minimalist/Phi/Recursion.lean`). The convexity condition (32) asks basic meanings to be
+convex regions of the number lattice, and its definition of convexity (33) is `Set.OrdConnected`,
+`ordConnected_iff_convexity_def`; on the first-person lattice the [+additive] region is not
+convex, since between the speaker atom and any [+additive] plurality lies a [−additive] paucity
+(section 4.5, Figure 8), `firstPerson_additive_not_ordConnected`, which is why [±additive] alone
+is never a language's number feature while [±atomic] or [±minimal] alone can be. Feature bundles
+being sets (27), a doubly negative specification of a feature is its maximal one, so there is no
+dyad augmented (25) or quadral (26), `axiom_of_extension`. The Greenberg-style implications of
+Table 1 hold across the well-formed parameter space, `table1_implications_generated`, every
+attested system of Table 3 satisfies them, and the unattested setting {±additive, ±minimal*}
+would violate the implication from unit augmented to augmented, so the universals are contingent
+on the typology's gaps (section 5.1). In Mele-Fila (Table 4) the plural is [+additive] relative
+to the lower of two conventionalized cuts and [−additive] relative to the upper, so it belongs
+both to the class the article *a* realizes and to the class the pronoun *raateu* realizes
+(section 5.2).
 
-  Harbour, D. (2014). Paucity, abundance, and the theory of number.
-  *Language* 90(1). 185–229.
+## Implementation notes
 
-The paper's substrate is already the library's: the [±atomic, ±minimal]
-decomposition and the [±additive] join-completeness feature live in
-`Features/Number/Decomposition.lean` (his (10), (20), (21), conditions (11)
-complement completeness and (12) fungibility), and the parameter space —
-activation (22) and feature recursion (23) — with the lower-set derivation
-of the implicational universals lives in `Syntax/Minimalist/Phi/Recursion.lean`.
-This file consumes that substrate and states the paper's own claims.
+The first-person lattice is modeled on a four-element carrier, the speaker and three others,
+with the conventional cut at triads. The critique of privative geometries (section 6) is the
+argument behind the containment filter of `Features/ContainmentPair.lean`, which Harbour
+rejects. Table 1 (p. 186), Table 3 (p. 214), Table 4 (p. 216), (27), (32), (33), and Figure 8
+were verified against the publication.
 
-## Main results
+## References
 
-1. **The convexity disparity** (§4.5): `{±atomic}` and `{±minimal}` can be a
-   language's sole number feature; `{±additive}` cannot. His (33) defines
-   lattice convexity — *verbatim* mathlib's `Set.OrdConnected`, the same
-   predicate as [grimm-2018]'s scale-segment condition and the fixed points
-   of `ordConnectedHull` — and the first-person lattice makes the
-   [+additive] value region nonconvex: between the speaker atom and any
-   [+additive] plurality lies a [−additive] paucity (`firstPerson_additive_
-   not_ordConnected`, the previously prose-only claim). By the convexity
-   condition (32), `{±additive}` alone is illicit.
-
-2. **The axiom of extension** (§4.2, (27)): feature bundles are sets, so
-   `[+F −F]` is the maximal specification of a single feature — there is no
-   dyad augmented (25) or quadral (26), and trial/unit augmented are the
-   highest exact numbers.
-
-3. **Greenberg-style implications as corollaries** (§5.1, (34) and Table 1):
-   every *attested* Table 3 system satisfies all Table 1 universals
-   (`table3_systems_wellFormed`), via `HarbourConfig.toSystem` — the typed
-   bridge from the generative inventory to `Number.System`. The named
-   implications TR → DU, DU → SG, SG → PL, PC → PL, GR.PC → PC hold across
-   the whole well-formed parameter space (`tr_du` etc.).
-
-4. **Universals are about attested systems**: the unattested setting
-   `{±additive, ±minimal*}` would generate minimal–unit-augmented–paucal–
-   plural (Table 3's lacuna row), which *violates* U.AUG → AUG
-   (`lacuna_violates_uaug`) — Table 1 is contingent on the typology's gaps,
-   which Harbour argues are themselves contingent (pp. 214–215).
-
-5. **Composed number** (§5.2, Table 4): Mele-Fila's article and pronoun
-   syncretisms track the two values of [±additive] — plural belongs to both
-   natural classes because the feature classifies it both ways relative to
-   the two cuts.
-
-## Connections
-
-* The §6 critique of privative feature geometries (Harley & Ritter 2002) —
-  bivalence affords `[+F −F]` and the three-way `[+F]`/`[−F]`/absent
-  contrast that privativity cannot — is the same argument that re-grounded
-  the φ-skeleton as `Features/ContainmentPair.lean` (containment filters are
-  the geometric tradition; Harbour rejects them).
-* Verified against the publication: Table 1 (p. 186), Table 3 (p. 214; the
-  `{±minimal, ±atomic}` exemplar is Kiowa), Table 4 (p. 216), (27), (32),
-  (33), Figure 8 and the §4.5 argument (pp. 210–212).
+* [harbour-2014]
+* [gardenfors-2004]
+* [grimm-2018]
+* [corbett-2000]
 -/
 
 namespace Harbour2014
 
-open Minimalist.Phi.Recursion (HarbourConfig harbour2014Table3)
+open Minimalist.Phi.Recursion
 
 /-! ### Convexity (§4.5): (33) is `Set.OrdConnected` -/
 
@@ -85,7 +59,7 @@ theorem ordConnected_iff_convexity_def {α : Type*} [Preorder α] (L : Set α) :
   · intro h a ha b hb c hac hcb
     exact h.out ha hb ⟨hac, hcb⟩
   · intro h
-    exact ⟨fun a ha b hb c hc => h a ha b hb c hc.1 hc.2⟩
+    exact ⟨λ a ha b hb c hc => h a ha b hb c hc.1 hc.2⟩
 
 /-- The first-person(-exclusive) lattice over the ontology
     {i, o, o′, o″} (`0` = the speaker atom i): every element contains i
@@ -100,7 +74,7 @@ def firstPerson : Set (Finset (Fin 4)) := {s | 0 ∈ s}
 def firstPersonAdditive : Set (Finset (Fin 4)) :=
   {s | 0 ∈ s ∧ (s.card = 1 ∨ 3 ≤ s.card)}
 
-instance : DecidablePred (· ∈ firstPersonAdditive) := fun s =>
+instance : DecidablePred (· ∈ firstPersonAdditive) := λ s =>
   decidable_of_iff (0 ∈ s ∧ (s.card = 1 ∨ 3 ≤ s.card)) Iff.rfl
 
 /-- Both parts of the [+additive] region are genuinely join-complete
@@ -120,7 +94,7 @@ theorem firstPersonAdditive_parts_joinComplete :
     first-person plural, there must lie a [−additive] first-person paucal"
     (p. 212). Witness: i ⊑ io ⊑ ioo′, with the dyad io in the paucal gap.
     By the convexity condition (32) — basic meanings must be convex
-    ([gaerdenfors-2004]) — `{±additive}` cannot be a language's sole
+    ([gardenfors-2004]) — `{±additive}` cannot be a language's sole
     number feature, while `{±atomic}` and `{±minimal}` (whose cuts are
     single horizontal lines) can. -/
 theorem firstPerson_additive_not_ordConnected :
@@ -175,8 +149,7 @@ theorem table1_implications_generated :
     (`Number.System.WellFormed`). The generative inventory and the
     descriptive inventory agree. -/
 theorem table3_systems_wellFormed :
-    harbour2014Table3.all
-      (fun e => decide (e.config.toSystem).WellFormed) = true := by decide
+    ∀ e ∈ harbour2014Table3, (e.config.toSystem).WellFormed := by decide
 
 /-! ### The lacunae (§5.1, pp. 214–215)
 
@@ -218,24 +191,33 @@ conventionalized cuts, it is [−additive] relative to the high cut and
 def meleFilaValues : List Number :=
   [.singular, .dual, .paucal, .plural, .greaterPlural]
 
-/-- The [±additive] signs a Mele-Fila value carries (Table 4, bottom row):
-    plural carries both. -/
-def additiveSigns : Number → List Bool
-  | .singular => [false]
-  | .dual => [false]
-  | .paucal => [false]
-  | .plural => [false, true]
-  | .greaterPlural => [true]
-  | _ => []
+/-- The position of a value on Mele-Fila's scale. -/
+def rank (v : Number) : ℕ := meleFilaValues.idxOf v
 
-/-- The article *a* realizes exactly the (+additive) values, the pronoun
-    *raateu* exactly the (−additive) ones; plural is in both classes —
-    the featural content of Table 4's syncretisms. -/
+/-- [+additive] relative to a cut of the scale: the values at the cut and above it. -/
+def Additive (cut : ℕ) (v : Number) : Prop := cut ≤ rank v
+
+instance (cut : ℕ) : DecidablePred (Additive cut) := λ _ => Nat.decLe _ _
+
+/-- The two conventionalized cuts of [±additive] (Table 4): the lower between paucal and
+plural, the upper between plural and greater plural. -/
+def lowerCut : ℕ := 3
+
+def upperCut : ℕ := 4
+
+/-- The plural is [+additive] relative to the lower cut and [−additive] relative to the upper:
+the two signs of Table 4's bottom row. -/
+theorem plural_additive_lower_not_upper :
+    Additive lowerCut .plural ∧ ¬ Additive upperCut .plural := by decide
+
+/-- The article *a* realizes the values [+additive] relative to the lower cut, plural and
+greater plural; the pronoun *raateu* the non-minimal values [−additive] relative to the upper
+cut, paucal and plural; plural is in both classes. -/
 theorem meleFila_syncretism_classes :
-    (meleFilaValues.filter (fun v => (additiveSigns v).contains true)
-      = [.plural, .greaterPlural]) ∧
-    (meleFilaValues.filter (fun v => (additiveSigns v).contains false)
-      = [.singular, .dual, .paucal, .plural]) := by decide
+    meleFilaValues.filter (λ v => decide (Additive lowerCut v)) = [.plural, .greaterPlural] ∧
+      meleFilaValues.filter (λ v => decide (2 ≤ rank v ∧ ¬ Additive upperCut v)) =
+        [.paucal, .plural] := by
+  decide
 
 /-- Mele-Fila's inventory satisfies the Table 1 universals. -/
 theorem meleFila_wellFormed :
