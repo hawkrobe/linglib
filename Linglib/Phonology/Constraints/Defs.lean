@@ -125,38 +125,42 @@ def CON.joint {n : ℕ} (inputs : ι → I) (con : CON (I × O) n) : CON (ι →
 
 /-! ### Harmony (Harmonic Grammar)
 
-A Harmonic Grammar weights each constraint in `CON` by a real number; the
-**harmony** of a candidate is the negated weighted sum of its violations,
-`H(c) = -Σⱼ wⱼ · Cⱼ(c)` ([smolensky-legendre-2006]) — a real linear functional of
-the candidate's raw violation vector. The weight vector `w : Fin n → ℝ` is the
-*grammar's* parameter (the HG twin of an OT `Ranking n`); both act on one `CON`. -/
+A Harmonic Grammar weights each constraint in `CON` by a number, real in the usual
+statement; the **harmony** of a candidate is the negated weighted sum of its violations,
+`H(c) = -Σⱼ wⱼ · Cⱼ(c)` ([smolensky-legendre-2006]) — a linear functional of
+the candidate's raw violation vector. The weight vector `w : Fin n → R` is the
+*grammar's* parameter (the HG twin of an OT `Ranking n`); both act on one `CON`. The
+weight ring is a parameter so that a grammar with rational or integer weights keeps its
+scores exactly computable. -/
 
-variable {n : ℕ}
+variable {n : ℕ} {R : Type*}
 
 /-- The **weighted violation sum** `Σⱼ wⱼ · Cⱼ(c)` of a raw violation vector under
-weight vector `w`: a real linear functional of the counts. The positive part of
+weight vector `w`: a linear functional of the counts. The positive part of
 harmony (`harmonyScore = -weightedViolations …`); weight-monotonicity and the
 HG→OT exponential-separation results are stated on this. -/
-def weightedViolations (w : Fin n → ℝ) (v : Fin n → ℕ) : ℝ :=
-  ∑ j, w j * (v j : ℝ)
+def weightedViolations [Semiring R] (w : Fin n → R) (v : Fin n → ℕ) : R :=
+  ∑ j, w j * (v j : R)
 
 /-- Harmony `H(c) = -Σⱼ wⱼ · Cⱼ(c)` ([smolensky-legendre-2006]): the negated
 weighted sum of a candidate's violations under the grammar's weight vector `w`;
 higher is more grammatical. The HG reading of a constraint set `con` weighted by
 `w` — the twin of *ranking* `con` in OT. -/
-def harmonyScore (con : CON C n) (w : Fin n → ℝ) (c : C) : ℝ :=
-  -weightedViolations w (fun j => con j c)
+def harmonyScore [Ring R] (con : CON C n) (w : Fin n → R) (c : C) : R :=
+  -weightedViolations w (λ j => con j c)
 
 /-- `harmonyScore` as a negated `Finset.sum` (unfolding lemma for rewriting). -/
-theorem harmonyScore_eq_neg_sum (con : CON C n) (w : Fin n → ℝ) (c : C) :
-    harmonyScore con w c = -∑ j, w j * (con j c : ℝ) := rfl
+theorem harmonyScore_eq_neg_sum [Ring R] (con : CON C n) (w : Fin n → R) (c : C) :
+    harmonyScore con w c = -∑ j, w j * (con j c : R) := rfl
 
 /-- `a` outranks `b` in harmony: `H(a) > H(b)`, the pullback of `>` along
-`harmonyScore con w` (`Order.Preimage`); inherits `IsStrictOrder` from ℝ's `>`. -/
-def harmonyDominates (con : CON C n) (w : Fin n → ℝ) : C → C → Prop :=
+`harmonyScore con w` (`Order.Preimage`); inherits `IsStrictOrder` from the weight
+ring's `>`. -/
+def harmonyDominates [Ring R] [LT R] (con : CON C n) (w : Fin n → R) : C → C → Prop :=
   harmonyScore con w ⁻¹'o (· > ·)
 
-@[simp] theorem harmonyDominates_iff (con : CON C n) (w : Fin n → ℝ) (a b : C) :
-    harmonyDominates con w a b ↔ harmonyScore con w b < harmonyScore con w a := Iff.rfl
+@[simp] theorem harmonyDominates_iff [Ring R] [LT R] (con : CON C n) (w : Fin n → R)
+    (a b : C) : harmonyDominates con w a b ↔ harmonyScore con w b < harmonyScore con w a :=
+  Iff.rfl
 
 end Constraints

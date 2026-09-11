@@ -57,7 +57,8 @@ variable {C : Type*} {n : ℕ}
     funext (Fin.cases rfl fun _ => rfl)
   rw [harmonyScore, h, weightedViolations_cons, neg_add, harmonyScore]
 
-@[simp] theorem harmonyScore_zero_weight (con : CON C n) (x : C) : harmonyScore con 0 x = 0 := by
+@[simp] theorem harmonyScore_zero_weight (con : CON C n) (x : C) :
+    harmonyScore con (0 : Fin n → ℝ) x = 0 := by
   simp [harmonyScore, weightedViolations]
 
 /-- Harmony depends only on the violation profile. -/
