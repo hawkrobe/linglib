@@ -144,16 +144,15 @@ theorem bare_relational_iff_lexical :
       row.feature? "bridging_type" = some "relational" →
       (row.judgment = .acceptable ↔ row.feature? "noun_arity" = some "relational") := by decide
 
-/-- Index! ranks the indexed form strictly above the bare one whenever an antecedent is
-available, predicting complementary distribution; the bare noun is nonetheless acceptable with
-every relational noun in the relational-bridging rows. -/
+/-- Index! excludes the bare noun from relational bridging, predicting complementary
+distribution; the bare noun is nonetheless acceptable with every relational noun in the
+relational-bridging rows. -/
 theorem index_contradicted_by_bare_relational :
-    Jenks2018.indexConstraint ⟨true, true⟩ < Jenks2018.indexConstraint ⟨false, true⟩ ∧
+    ¬ Jenks2018.BareLicit Mandarin.Determiners.inventory .producerBridging .none ∧
     ∀ row ∈ Examples.all, row.feature? "definite_form" = some "bare" →
       row.feature? "bridging_type" = some "relational" →
       row.feature? "noun_arity" = some "relational" → row.judgment = .acceptable :=
-  ⟨Jenks2018.index_prefers_indexed_when_available,
-   fun row h h₁ h₂ => (bare_relational_iff_lexical row h h₁ h₂).2⟩
+  ⟨by decide, fun row h h₁ h₂ => (bare_relational_iff_lexical row h h₁ h₂).2⟩
 
 /-- English *that* is never fully acceptable in a bridging row, while its deferred deictic use
 is. -/
