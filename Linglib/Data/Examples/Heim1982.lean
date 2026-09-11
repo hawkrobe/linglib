@@ -15,7 +15,7 @@ open Data.Examples
 
 def indefinite_persists : LinguisticExample :=
   { id := "heim1982_indefinite_persists"
-    source := ⟨"heim-1982", "Ch. I (9)"⟩
+    source := ⟨"heim-1982", "Ch. I §1 (9)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "A dog came in. It lay down under the table."
@@ -33,7 +33,7 @@ def indefinite_persists : LinguisticExample :=
 
 def universal_blocks : LinguisticExample :=
   { id := "heim1982_universal_blocks"
-    source := ⟨"heim-1982", "Ch. I (16)"⟩
+    source := ⟨"heim-1982", "Ch. I §1 (16)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Every dog came in. It lay down under the table."
@@ -51,7 +51,7 @@ def universal_blocks : LinguisticExample :=
 
 def negative_blocks : LinguisticExample :=
   { id := "heim1982_negative_blocks"
-    source := ⟨"heim-1982", "Ch. I (17)"⟩
+    source := ⟨"heim-1982", "Ch. I §1 (17)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "No dog came in. It lay down under the table."
@@ -67,63 +67,9 @@ def negative_blocks : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def most_blocks : LinguisticExample :=
-  { id := "heim1982_most_blocks"
-    source := ⟨"heim-1982", ""⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "Most men walked in. He sat down."
-    discourseSegments := ["Most men walked in.", "He sat down."]
-    glossedTokens := []
-    translation := "Most men walked in. He sat down."
-    context := ""
-    judgment := .unacceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("antecedent_type", "proportional_quant"), ("context", "none")]
-    comment := "Not among the dissertation's examples; its 'most' data concern the proportion problem (Ch. I (32)–(33)). Retained for KeshetAbney2024."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
-
-def conditional_antecedent : LinguisticExample :=
-  { id := "heim1982_conditional_antecedent"
-    source := ⟨"heim-1982", ""⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "If a man walks in, he sits down. He orders coffee."
-    discourseSegments := ["If a man walks in, he sits down.", "He orders coffee."]
-    glossedTokens := []
-    translation := "If a man walks in, he sits down. He orders coffee."
-    context := ""
-    judgment := .unacceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("antecedent_type", "indefinite"), ("context", "conditional_antecedent")]
-    comment := "Not among the dissertation's examples; the prediction follows from rule (III) leaving the domain of the file unchanged."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
-
-def standard_negation_blocks : LinguisticExample :=
-  { id := "heim1982_standard_negation_blocks"
-    source := ⟨"heim-1982", ""⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "John didn't see a bird. It was singing."
-    discourseSegments := ["John didn't see a bird.", "It was singing."]
-    glossedTokens := []
-    translation := "John didn't see a bird. It was singing."
-    context := ""
-    judgment := .unacceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("antecedent_type", "indefinite"), ("context", "negation")]
-    comment := "Not among the dissertation's examples; the prediction follows from rule (IV) leaving the domain of the file unchanged. Retained for KeshetAbney2024."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
-
 def definite_reference : LinguisticExample :=
   { id := "heim1982_definite_reference"
-    source := ⟨"heim-1982", "Ch. III (2) of §5.1"⟩
+    source := ⟨"heim-1982", "Ch. III §5.1 (2)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "There is a cat behind you. The cat is hungry."
@@ -141,7 +87,7 @@ def definite_reference : LinguisticExample :=
 
 def conditional_donkey : LinguisticExample :=
   { id := "heim1982_conditional_donkey"
-    source := ⟨"heim-1982", "Ch. I (2)"⟩
+    source := ⟨"heim-1982", "Ch. I §2 (2)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "If a man owns a donkey, he beats it."
@@ -159,7 +105,7 @@ def conditional_donkey : LinguisticExample :=
 
 def relative_donkey : LinguisticExample :=
   { id := "heim1982_relative_donkey"
-    source := ⟨"heim-1982", "Ch. I (3)"⟩
+    source := ⟨"heim-1982", "Ch. I §2 (3)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Every man who owns a donkey beats it."
@@ -177,7 +123,7 @@ def relative_donkey : LinguisticExample :=
 
 def soldier_gun : LinguisticExample :=
   { id := "heim1982_soldier_gun"
-    source := ⟨"heim-1982", "Ch. II (6)/(6a) of §5.2"⟩
+    source := ⟨"heim-1982", "Ch. II §5.2 (6)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Every soldier has a gun. He will shoot."
@@ -195,7 +141,7 @@ def soldier_gun : LinguisticExample :=
 
 def cat_door : LinguisticExample :=
   { id := "heim1982_cat_door"
-    source := ⟨"heim-1982", "Ch. II (3) of §3.3"⟩
+    source := ⟨"heim-1982", "Ch. II §3.3 (3)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "A cat was at the door. It wanted to be fed."
@@ -213,7 +159,7 @@ def cat_door : LinguisticExample :=
 
 def woman_dog : LinguisticExample :=
   { id := "heim1982_woman_dog"
-    source := ⟨"heim-1982", "Ch. III (5) of §2.5"⟩
+    source := ⟨"heim-1982", "Ch. III §2.4 (5)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "A woman was bitten by a dog. She hit him."
@@ -231,7 +177,7 @@ def woman_dog : LinguisticExample :=
 
 def woman_dog_definite : LinguisticExample :=
   { id := "heim1982_woman_dog_definite"
-    source := ⟨"heim-1982", "Ch. III (4) of §3.2"⟩
+    source := ⟨"heim-1982", "Ch. III §3.2 (4)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "She is a woman. He is a dog. She was bitten by him."
@@ -249,7 +195,7 @@ def woman_dog_definite : LinguisticExample :=
 
 def pretzel : LinguisticExample :=
   { id := "heim1982_pretzel"
-    source := ⟨"heim-1982", "Ch. III (2) of §4.1"⟩
+    source := ⟨"heim-1982", "Ch. III §4.1 (2)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Everyone bought a pretzel and ate it."
@@ -267,7 +213,7 @@ def pretzel : LinguisticExample :=
 
 def flea_collar : LinguisticExample :=
   { id := "heim1982_flea_collar"
-    source := ⟨"heim-1982", "Ch. III (7) of §4.3"⟩
+    source := ⟨"heim-1982", "Ch. III §4.3 (7)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "If a cat is well cared for, it always has a flea collar."
@@ -285,7 +231,7 @@ def flea_collar : LinguisticExample :=
 
 def dog_bite : LinguisticExample :=
   { id := "heim1982_dog_bite"
-    source := ⟨"heim-1982", "Ch. III (3) of §5.2"⟩
+    source := ⟨"heim-1982", "Ch. III §5.2 (3)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Watch out, the dog will bite you."
@@ -303,7 +249,7 @@ def dog_bite : LinguisticExample :=
 
 def king_of_france : LinguisticExample :=
   { id := "heim1982_king_of_france"
-    source := ⟨"heim-1982", "Ch. III (10) of §5.2"⟩
+    source := ⟨"heim-1982", "Ch. III §5.2 (10)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Mary didn't have lunch with the king of France (because France doesn't have a king)."
@@ -319,6 +265,6 @@ def king_of_france : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def all : List LinguisticExample := [indefinite_persists, universal_blocks, negative_blocks, most_blocks, conditional_antecedent, standard_negation_blocks, definite_reference, conditional_donkey, relative_donkey, soldier_gun, cat_door, woman_dog, woman_dog_definite, pretzel, flea_collar, dog_bite, king_of_france]
+def all : List LinguisticExample := [indefinite_persists, universal_blocks, negative_blocks, definite_reference, conditional_donkey, relative_donkey, soldier_gun, cat_door, woman_dog, woman_dog_definite, pretzel, flea_collar, dog_bite, king_of_france]
 
 end Heim1982.Examples
