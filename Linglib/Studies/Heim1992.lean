@@ -5,39 +5,39 @@ import Linglib.Logic.Modal.Epistemic
 import Mathlib.Data.Set.Lattice
 
 /-!
-# Heim (1992): presupposition projection in attitude reports
+# Heim (1992): Presupposition Projection and the Semantics of Attitude Verbs
 
-[heim-1992] derives Karttunen's generalization — if the complement of an
-attitude report presupposes `p`, the report presupposes that the attitude
-holder believes `p` ([karttunen-1974-presupposition]) — from context change potentials for
-the attitude predicates. The belief rule (18) makes `c + a believes φ`
-defined iff `Dox_a(w) + φ` is defined for every `w ∈ c`, and then keeps the
-worlds whose doxastic state `φ` maps to itself; `believes` is that rule as a
-`CCP.Partial` combinator, with the doxastic accessibility assignment
-`Dox : E → W → Set W` of (11)–(12). On atomic complements its definedness
-condition is Karttunen's rule (3) taken on the union of the doxastic states
-(`admits_believes_iff_iUnion`) and the local-context condition of
-[schlenker-2009] (`admits_believes_iff_presupAttributedToHolder`). The
-paper's derivations follow: the *too*-discourse (20) presupposes nothing
-(`believes_too_admits`), while its *doubt* variant (25) is admitted only by
-contexts its first conjunct reduces to the absurd context
-(`doubt_too_admits_iff`). The factive rule for *know* from footnote 47
-(`knows`) demands `c + φ = c` outright, so a *know* report projects its
-complement's presupposition transparently
-(`transparentProjection_of_admits_knows`); a belief report does so only when
-`Dox` is veridical (`transparentProjection_of_admits_believes`), and
-`believes_admits_not_knows` is the two-world witness on Patrick's cello (2).
+This file formalizes the context change potentials that [heim-1992] gives the attitude
+predicates and the projection behaviour they determine. The belief rule (18) is `believes`, a
+`CCP.Partial` combinator over the doxastic accessibility assignment of (11)–(12): the report
+is defined iff the complement is defined on each doxastic state, so that a complement
+presupposing `p` yields a report presupposing that its holder believes `p`, Karttunen's
+generalization; on atomic complements the condition is Karttunen's rule (3) on the union of
+the doxastic states and the local-context condition of [schlenker-2009]. The paper's
+calculations follow: the *too*-discourse (20) presupposes nothing and its *doubt* variant
+(25) is admitted only by contexts its first conjunct reduces to the absurd context; the
+factive rule for *know* of footnote 47 (`knows`) projects the complement's presupposition
+transparently, a belief report only when the doxastic assignment is veridical, and Patrick's
+cello (2) separates the two. The desire half replaces the Hintikka-style rule (27) with the
+comparative-belief semantics (31), the similarity semantics of [stalnaker-1968] and
+[lewis-1973] on the library's `Desire.Conditional.Want`, with a four-world model on the shape
+of [asher-1987]'s Concorde case (32) and the amendment (40) blocking `want p ∧ want ¬p`.
 
-The desire half (§4) replaces the Hintikka-style rule (27) with the
-comparative-belief semantics (31): `a wants φ` holds iff each doxastic
-alternative's closest `φ`-worlds are more desirable than its closest
-`¬φ`-worlds, on [stalnaker-1968] / [lewis-1973] similarity. The substrate is
-`Semantics/Attitudes/Desire/Conditional.lean` (`Frame`, `Want`, `Defined`). The four-world
-model below shows the
-naive rule failing on the shape of [asher-1987]'s Concorde case (32) and the
-(40) amendment blocking simultaneous `want p ∧ want ¬p`. Stalnaker's get-well
-/ have-been-sick contrast ([stalnaker-1984], Heim's three-world model on
-p. 195) needs a non-trivial similarity ordering and is not formalized.
+## Implementation notes
+
+* The three-world model of Section 4.1 for Stalnaker's get-well and have-been-sick contrast
+  ([stalnaker-1984]) needs a non-trivial similarity ordering and is not formalized; the
+  four-world model here uses the trivial ordering.
+
+## References
+
+* [heim-1992]
+* [karttunen-1974-presupposition]
+* [schlenker-2009]
+* [asher-1987]
+* [stalnaker-1984]
+* [stalnaker-1968]
+* [lewis-1973]
 -/
 
 namespace Heim1992
@@ -57,12 +57,6 @@ variable {W E : Type*} (Dox : E → W → Set W) (a : E) (φ : CCP.Partial W) (p
 and then equals `{w ∈ c | Dox_a(w) + φ = Dox_a(w)}`. -/
 def believes : CCP.Partial W :=
   λ c => ⟨∀ w ∈ c, φ.admits (Dox a w), λ _ => {w ∈ c | Dox a w ∈ φ (Dox a w)}⟩
-
-theorem admits_believes : (believes Dox a φ).admits c ↔ ∀ w ∈ c, φ.admits (Dox a w) :=
-  Iff.rfl
-
-@[simp] theorem believes_get (h : (believes Dox a φ).admits c) :
-    (believes Dox a φ c).get h = {w ∈ c | Dox a w ∈ φ (Dox a w)} := rfl
 
 /-- Karttunen's generalization: if `φ` presupposes `p`, then `a believes φ` presupposes that
 `a` believes `p`. -/
