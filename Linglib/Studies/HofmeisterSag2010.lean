@@ -1,260 +1,175 @@
-import Linglib.Studies.Ross1967
+import Linglib.Data.Examples.HofmeisterSag2010
 import Linglib.Processing.Cost.Profile
 
 /-!
-# Cognitive Constraints and Island Effects
-[hofmeister-sag-2010]
+# Hofmeister and Sag (2010): Cognitive Constraints and Island Effects
 
-[hofmeister-sag-2010] argue that island effects are gradient along
-multiple dimensions and that acceptability varies systematically with
-nonstructural manipulations (filler complexity, referential load) that
-leave island configurations intact. This challenges every categorical
-island constraint proposed: Subjacency, Complex NP Constraint, Barriers,
-and the Minimal Link Condition.
+This file formalizes [hofmeister-sag-2010]'s processing account of island effects on the
+Pareto profiles of `Processing/Cost/Profile`. The paper's four factors, the length of the
+filler–gap dependency (§3.1), the referential load of the material it spans (§3.2), the clause
+boundaries it crosses (§3.3) and the complexity of the filler (§3.4), are read off a
+`Stimulus`, the filler and the words between it and the gap, by `Stimulus.profile`; the items
+of Experiments 1 and 2, (48) and (49), are such stimuli. Pareto dominance then predicts the
+paper's contrasts: whatever the dependency, a which-N filler is easier than a bare one
+(`which_easier`), a bare-filler island is harder than its non-island baseline, the complex-NP
+island of Experiment 1 is harder than its baseline even with the richer filler, and the
+which-N wh-island of Experiment 2 is incomparable with its bare baseline
+(`whIsland_which_incomparable`), where the experiment found no reading-time difference
+after the embedded verb.
 
-## Key findings
+## Implementation notes
 
-1. More complex fillers (*which*-N phrases) improve acceptability inside
-   islands relative to bare wh-words (*who*, *what*) — counterintuitively,
-   richer representations resist interference and aid memory retrieval.
-2. Indefinite/plural island NPs improve acceptability relative to definite
-   NPs, consistent with lower referential processing cost.
-3. Even the best island condition remains below non-island baselines:
-   islands are ameliorated, not eliminated.
+* Each factor is ordinal: a word's referential load follows the accessibility scale of §3.2,
+  pronouns below indefinites below definites and names; a clause boundary's cost follows §3.3,
+  a declarative complement below an interrogative one; a filler's ease is its complexity; and
+  the dependency's length counts the words it spans. No rating or reading time enters a
+  theorem, and the paper's acceptability and reading-time results are prose.
+* The NP-type factor of Experiment 1 was weak and local in reading times and not significant
+  in acceptability; the profiles predict its direction (`cnpc_definite_harder`), not a size.
 
-The cross-theory comparison (competence vs. performance vs. discourse) lives in
-`LuPanDegen2025`, which integrates these findings
-with [lu-pan-degen-2025]'s discourse-based account.
+## References
+
+* [hofmeister-sag-2010]
+* [gibson-1998]
+* [lewis-vasishth-2005]
+* [deane-1991]
+* [sprouse-2007]
 -/
 
 namespace HofmeisterSag2010
 
 open ProcessingModel
 
--- ============================================================================
--- §1. Processing factors
--- ============================================================================
+/-! ### Stimuli and profiles -/
 
-/-- Processing factors that independently contribute to the difficulty of
-filler-gap dependencies inside islands. -/
-inductive ProcessingFactor where
-  /-- Distance between filler and gap increases memory load (section 3.1).
-  Confirmed by processing studies. -/
-  | locality
-  /-- Referential processing of intervening constituents depletes resources (section 3.2).
-  Definites trigger referent search; proper names > definites > indefinites > pronouns
-  in processing cost. -/
-  | referentialLoad
-  /-- Clause boundaries impose processing cost independent of extraction (section 3.3).
-  Even in yes-no questions, different complementizers elicit different neurological
-  responses and acceptability. -/
-  | clauseBoundary
-  /-- Syntactic/semantic complexity of the filler phrase affects retrieval (section 3.4).
-  Counterintuitively, MORE complex fillers REDUCE processing difficulty
-  because richer representations resist interference and aid retrieval. -/
-  | fillerComplexity
-  deriving Repr, DecidableEq
-
--- ============================================================================
--- §2. Experimental condition types
--- ============================================================================
-
-/-- Complexity of the displaced wh-phrase.
-More complex fillers (*which*-N phrases) facilitate processing inside islands,
-because richer representations aid memory retrieval (section 3.4). -/
-inductive FillerType where
-  /-- Bare wh-word: *who*, *what* -/
+/-- The filler of a dependency: a bare wh-word or a which-N phrase. -/
+inductive Filler where
   | bare
-  /-- Complex wh-phrase: *which convict*, *which employee* -/
   | whichN
-  deriving Repr, DecidableEq
+  deriving DecidableEq
 
-/-- Type of the island-forming NP (Experiment 1 only).
-Definite NPs trigger referent search and presupposition accommodation,
-consuming resources needed for dependency resolution (section 3.2). -/
-inductive IslandNPType where
-  /-- Definite singular: *the report* -/
-  | definite
-  /-- Indefinite plural: *reports* -/
-  | plural
-  /-- Indefinite singular: *a report* -/
+/-- A word between the filler and the gap, as the four factors see it: a discourse reference
+of some accessibility, a clause boundary of some kind, or other material. -/
+inductive Word where
+  | pronoun
   | indefinite
-  deriving Repr, DecidableEq
+  | definite
+  | name
+  | that
+  | whether
+  | other
+  deriving DecidableEq
 
-/-- An experimental condition from [hofmeister-sag-2010].
-Acceptability stored as Nat (judgment ratio x 100, so 78 means 0.78). -/
-structure IslandCondition where
-  island : ConstraintType
-  filler : FillerType
-  npType : Option IslandNPType
-  /-- Mean judgment ratio x 100 -/
-  acceptability : Nat
-  citation : String
-  deriving Repr
+/-- The referential load of a word (§3.2): a pronoun refers to an old referent, an indefinite
+creates one, a definite or a name searches for one. -/
+def Word.load : Word → ℕ
+  | .indefinite => 1
+  | .definite => 2
+  | .name => 2
+  | _ => 0
 
--- ============================================================================
--- §3. Experimental data
--- ============================================================================
+/-- The cost of the clause boundary a word opens (§3.3): a declarative complement, or an
+interrogative one whose alternatives must be considered as well. -/
+def Word.boundary : Word → ℕ
+  | .that => 1
+  | .whether => 2
+  | _ => 0
 
-/-- Experiment 1: CNPC violations (section 5). 36 items, (2 x 3) + 1 design.
-Acceptability ratings on 1-8 scale, normalized as ratio of subject mean.
-Data from Figure 3 (p. 393). -/
-def cnpcAcceptability : List IslandCondition := [
-  { island := .complexNP, filler := .bare, npType := some .definite,
-    acceptability := 60, citation := "H&S 2010, Exp 1, Fig. 3" },
-  { island := .complexNP, filler := .bare, npType := some .indefinite,
-    acceptability := 65, citation := "H&S 2010, Exp 1, Fig. 3" },
-  { island := .complexNP, filler := .bare, npType := some .plural,
-    acceptability := 62, citation := "H&S 2010, Exp 1, Fig. 3" },
-  { island := .complexNP, filler := .whichN, npType := some .definite,
-    acceptability := 78, citation := "H&S 2010, Exp 1, Fig. 3" },
-  { island := .complexNP, filler := .whichN, npType := some .indefinite,
-    acceptability := 82, citation := "H&S 2010, Exp 1, Fig. 3" },
-  { island := .complexNP, filler := .whichN, npType := some .plural,
-    acceptability := 85, citation := "H&S 2010, Exp 1, Fig. 3" }
-]
+/-- The retrieval ease a filler affords (§3.4): the richer filler resists interference and
+rules out early integration sites. -/
+def Filler.ease : Filler → ℕ
+  | .bare => 0
+  | .whichN => 1
 
-/-- Experiment 2: Wh-island violations (section 6). 24 items, 2 + 1 design.
-Acceptability on 1-7 scale, normalized.
-Data from Figure 5 (p. 397).
-Key finding: F1(1,15)=15.964, p=0.001; F2(1,19)=14.428, p=0.001. -/
-def whIslandAcceptability : List IslandCondition := [
-  { island := .embeddedQuestion, filler := .bare, npType := none,
-    acceptability := 57, citation := "H&S 2010, Exp 2, Fig. 5" },
-  { island := .embeddedQuestion, filler := .whichN, npType := none,
-    acceptability := 76, citation := "H&S 2010, Exp 2, Fig. 5" }
-]
+/-- A filler–gap dependency as the factors describe it: its filler and the words it spans. -/
+structure Stimulus where
+  /-- The filler. -/
+  filler : Filler
+  /-- The words between the filler and the gap. -/
+  span : List Word
 
-/-- Non-island baseline acceptability (CNPC experiment, Figure 3). -/
-def cnpcBaseline : Nat := 108
+/-- The processing profile of a stimulus: the length of the span, the boundaries it crosses,
+the references it holds, and the filler's ease. -/
+def Stimulus.profile (s : Stimulus) : ProcessingProfile where
+  locality := s.span.length
+  boundaries := (s.span.map Word.boundary).sum
+  referentialLoad := (s.span.map Word.load).sum
+  ease := s.filler.ease
 
--- ============================================================================
--- §4. Key empirical generalizations
--- ============================================================================
+instance : HasProcessingProfile Stimulus := ⟨Stimulus.profile⟩
 
-/-- Average acceptability for a filler type across a set of conditions. -/
-def avgAcceptability (conditions : List IslandCondition) (f : FillerType) : Nat :=
-  let filtered := conditions.filter (·.filler == f)
-  if filtered.isEmpty then 0
-  else filtered.foldl (· + ·.acceptability) 0 / filtered.length
+/-- Whatever the span, the which-N filler is easier than the bare one: the profiles agree on
+every cost and differ on ease alone. -/
+theorem which_easier (span : List Word) :
+    (Stimulus.mk .bare span).profile.compare (Stimulus.mk .whichN span).profile = .harder := by
+  rw [ProcessingProfile.compare_eq_harder, lt_iff_le_and_ne]
+  exact ⟨by simp [ProcessingProfile.le_def, Stimulus.profile, Filler.ease],
+    by simp [Stimulus.profile, Filler.ease]⟩
 
-/-- **Filler complexity effect in CNPC**: which-N > bare wh (section 5.2).
-F1(1,20)=48.741, p<0.0001; F2(1,35)=39.494, p<0.0001.
-The structure is identical -- only the filler changes. -/
-theorem cnpc_whichN_gt_bare :
-    avgAcceptability cnpcAcceptability .whichN >
-    avgAcceptability cnpcAcceptability .bare := by decide
+/-! ### Experiment 1: the complex-NP island (48) -/
 
-/-- **Filler complexity effect in wh-islands**: which-N > bare wh (section 6.2).
-F1(1,15)=15.964, p=0.001. -/
-theorem whIsland_whichN_gt_bare :
-    avgAcceptability whIslandAcceptability .whichN >
-    avgAcceptability whIslandAcceptability .bare := by decide
+/-- The island-forming NP of (48): definite, indefinite plural, or indefinite singular. -/
+inductive IslandNP where
+  | definite
+  | plural
+  | indefinite
+  deriving DecidableEq
 
-/-- **NP type effect**: indefinite > definite across both filler types (section 5.2).
-Consistent with lower referential processing cost for indefinites. -/
-theorem cnpc_indefinite_gt_definite :
-    let indef := cnpcAcceptability.filter (·.npType == some .indefinite)
-    let def_ := cnpcAcceptability.filter (·.npType == some .definite)
-    indef.foldl (· + ·.acceptability) 0 >
-    def_.foldl (· + ·.acceptability) 0 := by decide
+/-- The island-forming NP as a word of the span. -/
+def IslandNP.word : IslandNP → Word
+  | .definite => .definite
+  | .plural => .indefinite
+  | .indefinite => .indefinite
 
-/-- Even the best island condition (which-PL, 85) remains below the
-non-island baseline (108). Islands are ameliorated, not eliminated. -/
-theorem best_island_lt_baseline :
-    (85 : Nat) < cnpcBaseline := by decide
+/-- The complex-NP island of (48): *Emma doubted [the report] that we had captured __*. -/
+def cnpc (f : Filler) (np : IslandNP) : Stimulus :=
+  ⟨f, [.name, .other, np.word, .that, .pronoun, .other, .other]⟩
 
--- ============================================================================
--- §5. Pareto-comparable processing profiles
--- ============================================================================
+/-- The baseline of (48), with the which-N filler: *Emma doubted that we had captured __*. -/
+def cnpcBaseline : Stimulus := ⟨.whichN, [.name, .other, .that, .pronoun, .other, .other]⟩
 
-/-! Pareto profiles re-encode H&S's key conditions in the format used by
-`Processing.Cost.Profile`, supporting weight-free ordinal
-comparison via Pareto dominance. -/
+/-- A which-N filler eases the complex-NP island for every island NP (§5.2). -/
+theorem cnpc_which_easier (np : IslandNP) :
+    (cnpc .bare np).profile.compare (cnpc .whichN np).profile = .harder :=
+  which_easier _
 
-/-- Bare wh + definite island-forming NP: worst CNPC condition.
-"I saw **who** Emma doubted **the report** that we had captured ___" -/
-def cnpcBareDefProfile : ProcessingProfile :=
-  { locality := 8, boundaries := 1, referentialLoad := 2, ease := 0 }
+/-- Every island condition is harder than the baseline, the which-N ones too: the island adds
+a reference and a word to the span (§5.3). -/
+theorem cnpc_harder_than_baseline (f : Filler) (np : IslandNP) :
+    (cnpc f np).profile.compare cnpcBaseline.profile = .harder := by
+  cases f <;> cases np <;> decide
 
-/-- Which-N + indefinite island-forming NP: best CNPC condition.
-"I saw **which convict** Emma doubted **a report** that we had captured ___" -/
-def cnpcWhichIndefProfile : ProcessingProfile :=
-  { locality := 8, boundaries := 1, referentialLoad := 1, ease := 2 }
+/-- A definite island NP is harder than an indefinite one, the direction of the local reading-
+time effects at the complementizer and the verb (§5.2). -/
+theorem cnpc_definite_harder (f : Filler) :
+    (cnpc f .definite).profile.compare (cnpc f .indefinite).profile = .harder := by
+  cases f <;> decide
 
-/-- Non-island baseline (no extraction): "I saw who Emma doubted that ___" -/
-def cnpcBaselineProfile : ProcessingProfile :=
-  { locality := 5, boundaries := 0, referentialLoad := 0, ease := 0 }
+/-- The plural and singular indefinites carry the same load. -/
+theorem cnpc_plural_eq_indefinite (f : Filler) :
+    (cnpc f .plural).profile = (cnpc f .indefinite).profile := rfl
 
-/-- Bare wh into wh-island: "**Who** did Albert learn whether they dismissed ___" -/
-def whIslandBareProfile : ProcessingProfile :=
-  { locality := 7, boundaries := 1, referentialLoad := 1, ease := 0 }
+/-! ### Experiment 2: the wh-island (49) -/
 
-/-- Which-N into wh-island: "**Which employee** did Albert learn whether they dismissed ___" -/
-def whIslandWhichProfile : ProcessingProfile :=
-  { locality := 7, boundaries := 1, referentialLoad := 1, ease := 2 }
+/-- The wh-island of (49): *did Albert learn whether they dismissed __*. -/
+def whIsland (f : Filler) : Stimulus := ⟨f, [.other, .name, .other, .whether, .pronoun, .other]⟩
 
-/-- Conditions tagged for use with `OrderingPrediction`. -/
-inductive ProcessingCondition where
-  | cnpcBareDef
-  | cnpcWhichIndef
-  | cnpcBaseline
-  | whIslandBare
-  | whIslandWhich
-  deriving Repr, DecidableEq
+/-- The baseline of (49), with the bare filler: *did Albert learn that they dismissed __*. -/
+def whIslandBaseline : Stimulus := ⟨.bare, [.other, .name, .other, .that, .pronoun, .other]⟩
 
-instance : HasProcessingProfile ProcessingCondition where
-  profile
-    | .cnpcBareDef    => cnpcBareDefProfile
-    | .cnpcWhichIndef => cnpcWhichIndefProfile
-    | .cnpcBaseline   => cnpcBaselineProfile
-    | .whIslandBare   => whIslandBareProfile
-    | .whIslandWhich  => whIslandWhichProfile
+/-- A which-N filler eases the wh-island (§6.2). -/
+theorem whIsland_which_easier :
+    (whIsland .bare).profile.compare (whIsland .whichN).profile = .harder :=
+  which_easier _
 
-/-- Complex fillers reduce processing difficulty in CNPC.
-Pareto: cnpcWhichIndefProfile is easier than cnpcBareDefProfile because
-referentialLoad is lower (1 < 2) and ease is higher (2 > 0); locality and
-boundaries are equal. -/
-theorem filler_reduces_cnpc_cost :
-    cnpcBareDefProfile.compare cnpcWhichIndefProfile = .harder := by decide
+/-- The bare wh-island is harder than its baseline: it crosses an interrogative boundary. -/
+theorem whIsland_bare_harder_than_baseline :
+    (whIsland .bare).profile.compare whIslandBaseline.profile = .harder := by decide
 
-/-- Complex fillers reduce processing difficulty in wh-islands.
-Pareto: whIslandWhichProfile is easier than whIslandBareProfile because
-ease is higher (2 > 0) with all other dimensions equal. -/
-theorem filler_reduces_whIsland_cost :
-    whIslandBareProfile.compare whIslandWhichProfile = .harder := by decide
-
-/-- Worst CNPC condition is harder than baseline.
-Pareto: cnpcBareDefProfile dominates on locality (8 > 5), boundaries (1 > 0),
-and referentialLoad (2 > 0); ease is equal. -/
-theorem bare_def_harder_than_baseline :
-    cnpcBareDefProfile.compare cnpcBaselineProfile = .harder := by decide
-
-/-- Worst CNPC condition (bare-def) is strictly harder than best (which-indef). -/
-theorem bare_def_harder_than_which_indef :
-    cnpcBareDefProfile.compare cnpcWhichIndefProfile = .harder := by decide
-
-/-- Which-indef CNPC vs baseline is incomparable under Pareto: which-indef is
-worse on locality (8 > 5), boundaries (1 > 0), and referentialLoad (1 > 0)
-but better on ease (2 > 0). The trade-off is genuine — Pareto reports it as
-`incomparable` rather than forcing a cardinal aggregate. -/
-theorem which_indef_vs_baseline_incomparable :
-    cnpcWhichIndefProfile.compare cnpcBaselineProfile = .incomparable := by decide
-
-/-- Pareto-orderable predictions over the H&S conditions.
-Which-indef CNPC vs baseline is omitted because it is incomparable under
-Pareto (see `which_indef_vs_baseline_incomparable`). -/
-def islandOrderingPredictions : List (OrderingPrediction ProcessingCondition) := [
-  { harder := .cnpcBareDef, easier := .cnpcWhichIndef,
-    description := "Bare-def CNPC harder than which-indef CNPC" },
-  { harder := .cnpcBareDef, easier := .cnpcBaseline,
-    description := "Bare-def CNPC harder than baseline" },
-  { harder := .whIslandBare, easier := .whIslandWhich,
-    description := "Bare wh-island harder than which-N wh-island" }
-]
-
-/-- Every Pareto-orderable prediction is verified by the data. -/
-theorem all_ordering_predictions_verified :
-    islandOrderingPredictions.all verifyOrdering = true := by decide
+/-- The which-N wh-island against the bare baseline is a trade-off, the interrogative boundary
+against the richer filler, which Pareto dominance leaves undecided: the experiment found the
+two read alike after the embedded verb. -/
+theorem whIsland_which_incomparable :
+    (whIsland .whichN).profile.compare whIslandBaseline.profile = .incomparable := by decide
 
 end HofmeisterSag2010

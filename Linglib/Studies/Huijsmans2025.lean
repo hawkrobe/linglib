@@ -1,210 +1,283 @@
+import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Tense.Evidential
-import Linglib.Semantics.Modality.ModalTypes
 
 /-!
-# Huijsmans (2025) [huijsmans-2025]
+# Huijsmans (2025): Timing of evidence and epistemic modal claims
 
-*Timing of evidence and epistemic modal claims.* Natural Language Semantics
-33: 207–254.
+This file formalizes [huijsmans-2025]'s account of the ʔayʔaǰuθəm future clitic *səm* and
+inferential *č̓ɛ* and of English *will* and *must* as strong epistemic necessity modals that
+differ in a presupposition on the timing of the evidence. The modal base is a set of
+propositions each with an earliest moment at which it holds (`IsEarliest`); *səm* and *will*
+presuppose that every modal-base proposition holds before the earliest moment of the
+prejacent (`FuturePresup`), *č̓ɛ* that at least one holds at or after it
+(`InferentialPresup`), and *must* presupposes nothing. Where the earliest moments exist, the
+two presuppositions are complementary (`futurePresup_iff_not_inferentialPresup`), which is
+the distribution of Section 4: contexts with all the evidence in place before the prejacent
+take *səm* and *will*, and contexts with evidence arising at or after it take *č̓ɛ*, with
+*must* felicitous in both. An empty modal base falsifies the inferential's presupposition
+(`not_inferentialPresup_empty`), the prediction the paper checks against the cat that has
+gone missing.
 
-The future morphemes *səm* (ʔayʔaǰuθəm; Central Salish) and *will* (English)
-pattern with strong epistemic modals like *ćε* (ʔayʔaǰuθəm inferential) and
-*must*, but their distributions diverge in inferences about non-future
-eventualities. Huijsmans argues the difference is **temporal**, not modal
-strength: *səm/will* presuppose the modal base is established **prior** to
-the earliest moment the prejacent is claimed to hold, while *ćε* requires
-at least one modal-base proposition to hold **at or following** that moment.
+The rival analysis in terms of an evidence acquisition time relates that time to the event
+time on the library's `Tense.Evidential.EvidentialFrame`. Evidence that has become true can
+be acquired only afterwards, so the inferential's presupposition entails downstream evidence
+(`downstream_of_inferentialPresup`); the converse fails, and the contexts where the speaker
+learns of rain or of a night's clam-digging after the wetting or the cold are the wedge:
+the modal-base timing licenses *will*, and the acquisition timing does not
+(`felipe_future`, `felipe_not_eatFuture`).
 
-## Structural claim
+## Implementation notes
 
-The temporal-presupposition partition is structurally identical to the
-EP-condition partition in `Semantics/Tense/Evidential.lean`,
-but indexed on **MBT** (modal-base time) rather than **EAT** (evidence
-acquisition time). `EPCondition` is reused under the slot reinterpretation
-`MBT ↦ acquisitionTime`, `PrejT ↦ eventTime`. The bridge is
-`MBTProfile.licenses_iff_EP`.
+* The earliest moment of a proposition is taken in the evaluation world rather than in a
+  maximally similar one, and the modal-base propositions are already shifted to untensed
+  ones, so the reference-time index and the abstraction rule are not represented.
+* The contexts of Section 4 are stated by the onset times of the eventualities, following
+  the remark that a proposition describing an eventuality holds forever after it; the at-issue
+  content is Kratzer necessity over the best worlds with the non-past orientation of the
+  future morphemes.
 
-## Empirical wedge
+## References
 
-Most of Huijsmans's stimuli (cooking, Daniel-home, poison) satisfy
-`MBT < PrejT ∧ EAT < ET` — both analyses agree. The Felipe-rain stimulus
-(ex. 46-49) and clam-digging stimulus (ex. 48-49) have `MBT < PrejT` but
-`ET < EAT` — Huijsmans's MBT analysis correctly licenses *will/must*; an
-EAT analysis (with the same partition reinterpreted) does not.
-`MBT_vs_EAT_diverge_on_felipe` is the load-bearing theorem.
-
-## At-issue content
-
-The at-issue content is Kratzer strong necessity over the modal base,
-shared across all four lexical entries (modulo modal-base type). It is
-not formalized in this file; consumers wanting full denotations should
-combine `ModalLogic.flavor` with `Modality.Kratzer.necessity`.
+* [huijsmans-2025]
+* [kratzer-1981]
+* [condoravdi-2002]
+* [beaver-condoravdi-2003]
 -/
 
 namespace Huijsmans2025
 
-open Tense.Evidential (EPCondition EvidentialFrame)
+open Modality.Kratzer Tense.Evidential
 
--- ════════════════════════════════════════════════════
--- § 1. Stimulus: temporal anchors testable by both analyses
--- ════════════════════════════════════════════════════
+variable {T W : Type*} [LinearOrder T]
 
-/-- A stimulus context, supplying the four temporal anchors needed to
-    state both Huijsmans's MBT predictions and the EAT predictions she
-    is contrasted against. The MBT/EAT split lives in *which* pair of
-    anchors a profile reads. -/
-structure Stimulus (T : Type) where
-  /-- ⌜MBT⌝ — the maximum over `q ∈ MB` of `EARLIEST(SHIFT q)`, i.e.
-      the latest "earliest moment" required by the modal base. -/
-  earliestMBT   : T
-  /-- ⌜PrejT⌝ — `EARLIEST(p)` for the prejacent `p`. -/
-  earliestPrejT : T
-  /-- The (Cumming/Hirayama-Matthewson) evidence-acquisition time. -/
-  eat           : T
-  /-- The event time of the prejacent. -/
-  et            : T
-  deriving Repr
+/-! ### Earliest moments and the presuppositions -/
 
--- ════════════════════════════════════════════════════
--- § 2. MBT-presupposition profiles
--- ════════════════════════════════════════════════════
+/-- The earliest moment at which an untensed proposition holds in a world, the function of
+(63): a time at which it holds that precedes every other. -/
+def IsEarliest (p : T → W → Prop) (w : W) (m : T) : Prop := p m w ∧ ∀ t, p t w → m ≤ t
 
-/-- The three MBT-presupposition profiles Huijsmans's four lexical items
-    instantiate. A domain-flavored selector over the tense-cell
-    partition (cf. `EPCondition` in `Tense/Evidential.lean`, which
-    selects from the same partition for the EAT/ET slot pair). Only
-    three of the cells name a Huijsmans modal; the others are unused
-    here. -/
-inductive MBTProfile where
-  /-- `MBT < PrejT`. Modal base established strictly before the prejacent's
-      earliest moment. *səm*, *will*. Eq. (35). -/
-  | strictPrior
-  /-- `PrejT ≤ MBT`. At least one MB proposition becomes true at or after the
-      prejacent's earliest moment. *ćε*. Eq. (36). -/
-  | nonProspective
-  /-- No temporal restriction. *must*. -/
-  | unrestricted
-  deriving DecidableEq, Repr
+theorem IsEarliest.unique {p : T → W → Prop} {w : W} {m m' : T} (h : IsEarliest p w m)
+    (h' : IsEarliest p w m') : m = m' :=
+  le_antisymm (h.2 _ h'.1) (h'.2 _ h.1)
 
-/-- Underlying comparison cell: the slot pair is `(earliestMBT, earliestPrejT)`,
-    and each profile picks one cell (`Tense/Defs.lean`). Mirrors
-    `EPCondition.toRelation` in `Tense/Evidential.lean`. -/
-def MBTProfile.toRelation : MBTProfile → Finset Ordering
-  | .strictPrior    => Tense.past
-  | .nonProspective => Tense.nonpast               -- PrejT ≤ MBT, i.e. MBT ≥ PrejT
-  | .unrestricted   => ⊤
+/-- (65): the presupposition of *səm* and *will*, that every modal-base proposition has its
+earliest moment before the earliest moment of the prejacent. -/
+def FuturePresup (mb : Set (T → W → Prop)) (p : T → W → Prop) (w : W) : Prop :=
+  ∀ q ∈ mb, ∃ mq mp, IsEarliest q w mq ∧ IsEarliest p w mp ∧ mq < mp
 
-/-- The MBT-licensing predicate, derived from the abstract partition. -/
-def MBTProfile.licenses {T : Type} [LinearOrder T]
-    (c : MBTProfile) (s : Stimulus T) : Prop :=
-  compare s.earliestMBT s.earliestPrejT ∈ c.toRelation
+/-- (87): the presupposition of *č̓ɛ*, that some modal-base proposition has its earliest
+moment at or after the earliest moment of the prejacent. -/
+def InferentialPresup (mb : Set (T → W → Prop)) (p : T → W → Prop) (w : W) : Prop :=
+  ∃ q ∈ mb, ∃ mq mp, IsEarliest q w mq ∧ IsEarliest p w mp ∧ mp ≤ mq
 
-instance {T : Type} [LinearOrder T] [DecidableEq T] (c : MBTProfile)
-    (s : Stimulus T) : Decidable (c.licenses s) := by
-  unfold MBTProfile.licenses; infer_instance
+/-- Where the earliest moments exist, the two presuppositions are complementary: the contexts
+of Section 4 split between *səm* and *č̓ɛ*. -/
+theorem futurePresup_iff_not_inferentialPresup {mb : Set (T → W → Prop)} {p : T → W → Prop}
+    {w : W} (hmb : ∀ q ∈ mb, ∃ m, IsEarliest q w m) (hp : ∃ m, IsEarliest p w m) :
+    FuturePresup mb p w ↔ ¬ InferentialPresup mb p w := by
+  obtain ⟨mp, hmp⟩ := hp
+  constructor
+  · rintro h ⟨q, hq, mq, mp', hmq, hmp', hle⟩
+    obtain ⟨mq', mp'', hmq', hmp'', hlt⟩ := h q hq
+    rw [hmq.unique hmq', hmp'.unique hmp''] at hle
+    exact absurd hlt (not_lt.2 hle)
+  · intro h q hq
+    obtain ⟨mq, hmq⟩ := hmb q hq
+    refine ⟨mq, mp, hmq, hmp, not_le.1 λ hle => h ⟨q, hq, mq, mp, hmq, hmp, hle⟩⟩
 
--- ════════════════════════════════════════════════════
--- § 3. Lexical entries
--- ════════════════════════════════════════════════════
+/-- An inference from no evidence cannot be an inferential: (56). -/
+theorem not_inferentialPresup_empty (p : T → W → Prop) (w : W) :
+    ¬ InferentialPresup (∅ : Set (T → W → Prop)) p w := by
+  rintro ⟨q, hq, _⟩
+  exact hq
 
-/-- A modal in the Huijsmans typology: a label, a (possibly underspecified)
-    modal-flavor, and an MBT-presupposition profile. All four entries in
-    this paper are necessity modals; force is omitted. -/
-structure Modal where
-  label   : String
-  /-- Modal flavor, or `none` for underspecified (Huijsmans p. 218). -/
-  flavor  : Option Modality.ModalFlavor
-  profile : MBTProfile
-  deriving Repr
+/-! ### The at-issue content -/
 
-/-- ʔayʔaǰuθəm future clitic *səm*. Underspecified for modal base
-    (epistemic and circumstantial uses; Huijsmans §2.3). -/
-def sem  : Modal := ⟨"səm",  none,            .strictPrior⟩
+/-- The modal base at a reference time, as the world-propositions of the untensed ones. -/
+def modalBaseAt (mb : List (T → W → Prop)) (t : T) : ModalBase W :=
+  λ _ => mb.map λ q w => q t w
 
-/-- English future auxiliary *will*. Underspecified for modal base
-    (epistemic in non-future-eventuality uses, circumstantial in
-    future-eventuality uses; Huijsmans §2.4). -/
-def will : Modal := ⟨"will", none,            .strictPrior⟩
+/-- (62): the at-issue content of *səm* and *will*, that the prejacent holds at or after the
+reference time in every best world. -/
+def futureClaim (mb : List (T → W → Prop)) (h : OrderingSource W) (p : T → W → Prop)
+    (t : T) (w : W) : Prop :=
+  necessity (modalBaseAt mb t) h (λ w' => ∃ t', t ≤ t' ∧ p t' w') w
 
-/-- ʔayʔaǰuθəm inferential clitic *ćε*. Epistemic only. -/
-def che  : Modal := ⟨"ćε",   some .epistemic, .nonProspective⟩
+/-- (87) and (96): the at-issue content of *č̓ɛ* and *must*, that the prejacent holds at the
+reference time in every best world. -/
+def necessityClaim (mb : List (T → W → Prop)) (h : OrderingSource W) (p : T → W → Prop)
+    (t : T) (w : W) : Prop :=
+  necessity (modalBaseAt mb t) h (λ w' => p t w') w
 
-/-- English necessity modal *must*. Underspecified for modal base; this
-    paper only treats epistemic uses. -/
-def must : Modal := ⟨"must", none,            .unrestricted⟩
+/-- Present orientation is a case of the future morphemes' non-past orientation. -/
+theorem futureClaim_of_necessityClaim {mb : List (T → W → Prop)} {h : OrderingSource W}
+    {p : T → W → Prop} {t : T} {w : W} (hc : necessityClaim mb h p t w) :
+    futureClaim mb h p t w :=
+  λ w' hw' => ⟨t, le_rfl, hc w' hw'⟩
 
--- ════════════════════════════════════════════════════
--- § 4. Empirical contrasts (one Stimulus per Huijsmans table row)
--- ════════════════════════════════════════════════════
+/-! ### The evidence acquisition time -/
 
-/-- (40) Cooking. The fish-cooking stimulus: MB props (fish in oven,
-    typical cook time) hold prior to PrejT (it is cooked).
-    Both MBT and EAT analyses predict *səm/will/must* ✓, *ćε* ✗. -/
-def cooking : Stimulus Int :=
-  { earliestMBT := 0, earliestPrejT := 2, eat := 0, et := 2 }
+/-- (39): the rival analysis, on which the future morphemes require the evidence to be
+acquired before the event and the inferential at or after it, the frame's `Downstream`. -/
+def EatFuture (f : EvidentialFrame T) : Prop := f.acquisitionTime < f.eventTime
 
-theorem cooking_table :
-    will.profile.licenses cooking ∧
-    sem.profile.licenses  cooking ∧
-    must.profile.licenses cooking ∧
-    ¬ che.profile.licenses cooking := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
+instance (f : EvidentialFrame T) : Decidable (EatFuture f) :=
+  inferInstanceAs (Decidable (_ < _))
 
-/-- (46) Felipe-rain. The wedge case. MB props (it is raining, Felipe has
-    no rain jacket) become true earlier than PrejT (Felipe is wet), but
-    the speaker only acquires the evidence later (sees the rain at 6pm,
-    after Felipe has already gotten wet at 5pm). So `MBT < PrejT` but
-    `ET < EAT`. Huijsmans correctly licenses *will/must*; an EAT analysis
-    incorrectly rejects *will*. -/
-def felipeRain : Stimulus Int :=
-  { earliestMBT := 0, earliestPrejT := 1, eat := 3, et := 1 }
+/-- A modal-base proposition can be acquired only once it holds. -/
+def AcquiredAfterOnset (mb : Set (T → W → Prop)) (w : W) (f : EvidentialFrame T) : Prop :=
+  ∀ q ∈ mb, ∀ m, IsEarliest q w m → m ≤ f.acquisitionTime
 
-theorem felipe_table :
-    will.profile.licenses felipeRain ∧
-    must.profile.licenses felipeRain ∧
-    ¬ che.profile.licenses felipeRain := by
-  refine ⟨?_, ?_, ?_⟩ <;> decide
+/-- The inferential's presupposition entails downstream evidence when the prejacent's earliest
+moment is the event time, the remark of Section 4.2 that the two analyses agree on *č̓ɛ* in
+one direction. -/
+theorem downstream_of_inferentialPresup {mb : Set (T → W → Prop)} {p : T → W → Prop} {w : W}
+    {f : EvidentialFrame T} (hacq : AcquiredAfterOnset mb w f)
+    (hev : IsEarliest p w f.eventTime) (h : InferentialPresup mb p w) : f.Downstream := by
+  obtain ⟨q, hq, mq, mp, hmq, hmp, hle⟩ := h
+  rw [hmp.unique hev] at hle
+  exact hle.trans (hacq q hq mq hmq)
 
-/-- (50) Smell-of-fish. The smell coincides with PrejT: at least one MB
-    proposition (the fish smells cooked) holds at the moment the prejacent
-    holds. *ćε/must* ✓, *səm/will* ✗. -/
-def smellOfFish : Stimulus Int :=
-  { earliestMBT := 1, earliestPrejT := 1, eat := 1, et := 1 }
+/-! ### The contexts of Section 4 -/
 
-theorem smell_table :
-    che.profile.licenses  smellOfFish ∧
-    must.profile.licenses smellOfFish ∧
-    ¬ will.profile.licenses smellOfFish ∧
-    ¬ sem.profile.licenses  smellOfFish := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
+/-- A proposition describing an eventuality holds from its onset on. -/
+def from' (o : ℤ) : ℤ → Unit → Prop := λ t _ => o ≤ t
 
--- ════════════════════════════════════════════════════
--- § 5. The MBT-vs-EAT divergence theorem
--- ════════════════════════════════════════════════════
+theorem isEarliest_from' (o : ℤ) : IsEarliest (from' o) () o :=
+  ⟨le_rfl, λ _ h => h⟩
 
-/-- The EAT-indexed analogue of `MBTProfile.licenses` — applies the same
-    partition shape to `(eat, et)` instead of `(earliestMBT, earliestPrejT)`.
-    Defined inline rather than imported from a (not-yet-existent)
-    Hirayama-Matthewson study file. -/
-def MBTProfile.eatLicenses {T : Type} [LinearOrder T] :
-    MBTProfile → Stimulus T → Prop
-  | .strictPrior,    s => s.eat < s.et
-  | .nonProspective, s => s.et ≤ s.eat
-  | .unrestricted,   _ => True
+theorem isEarliest_from'_iff {o m : ℤ} : IsEarliest (from' o) () m ↔ m = o :=
+  ⟨λ h => h.unique (isEarliest_from' o), λ h => h ▸ isEarliest_from' o⟩
 
-instance {T : Type} [LinearOrder T] [DecidableEq T] (c : MBTProfile)
-    (s : Stimulus T) : Decidable (c.eatLicenses s) := by
-  cases c <;> simp [MBTProfile.eatLicenses] <;> infer_instance
+/-- A context: the onsets of the modal-base eventualities, the onset of the prejacent
+eventuality, and the times of the evidence's acquisition and of the utterance. -/
+structure Context where
+  onsets : List ℤ
+  prejacent : ℤ
+  acquisition : ℤ
+  speech : ℤ
 
-/-- **The empirical wedge** (Huijsmans (46)–(49)).
+namespace Context
 
-    On the Felipe-rain stimulus the MBT and EAT analyses disagree on
-    *will*: the MBT-analysis licenses it (matching the judgment), the
-    EAT-analysis rejects it (mispredicting). This is the entire empirical
-    content of Huijsmans's argument compressed to a single `decide`. -/
-theorem MBT_vs_EAT_diverge_on_felipe :
-      will.profile.licenses    felipeRain
-    ∧ ¬ will.profile.eatLicenses felipeRain := by
-  refine ⟨?_, ?_⟩ <;> decide
+variable (c : Context)
+
+def mb : Set (ℤ → Unit → Prop) := {q | ∃ o ∈ c.onsets, q = from' o}
+
+def frame : EvidentialFrame ℤ :=
+  { speechTime := c.speech, referenceTime := c.speech, perspectiveTime := c.speech,
+    eventTime := c.prejacent, acquisitionTime := c.acquisition }
+
+/-- (35) in the form of the diagrams: every onset precedes the prejacent's. -/
+theorem futurePresup_iff :
+    FuturePresup c.mb (from' c.prejacent) () ↔ ∀ o ∈ c.onsets, o < c.prejacent := by
+  constructor
+  · intro h o ho
+    obtain ⟨mq, mp, hmq, hmp, hlt⟩ := h (from' o) ⟨o, ho, rfl⟩
+    rwa [isEarliest_from'_iff.1 hmq, isEarliest_from'_iff.1 hmp] at hlt
+  · rintro h q ⟨o, ho, rfl⟩
+    exact ⟨o, c.prejacent, isEarliest_from' o, isEarliest_from' _, h o ho⟩
+
+/-- (36) in the form of the diagrams: some onset is at or after the prejacent's. -/
+theorem inferentialPresup_iff :
+    InferentialPresup c.mb (from' c.prejacent) () ↔ ∃ o ∈ c.onsets, c.prejacent ≤ o := by
+  constructor
+  · rintro ⟨q, ⟨o, ho, rfl⟩, mq, mp, hmq, hmp, hle⟩
+    exact ⟨o, ho, by rwa [isEarliest_from'_iff.1 hmq, isEarliest_from'_iff.1 hmp] at hle⟩
+  · rintro ⟨o, ho, hle⟩
+    exact ⟨from' o, ⟨o, ho, rfl⟩, o, c.prejacent, isEarliest_from' o, isEarliest_from' _, hle⟩
+
+instance : Decidable (FuturePresup c.mb (from' c.prejacent) ()) :=
+  decidable_of_iff _ c.futurePresup_iff.symm
+
+instance : Decidable (InferentialPresup c.mb (from' c.prejacent) ()) :=
+  decidable_of_iff _ c.inferentialPresup_iff.symm
+
+end Context
+
+/-- (40)–(41): the fish went into the oven and past occasions are known before it is cooked;
+the watch is checked before the cooking is complete. -/
+def cooking : Context := ⟨[0, 0], 2, 1, 2⟩
+
+/-- (42)–(43): Daniel's leaving and the length of the trip precede his getting home. -/
+def daniel : Context := ⟨[0, 0], 2, 1, 3⟩
+
+/-- (44)–(45): the poisoning precedes the death. -/
+def poison : Context := ⟨[0, 0], 2, 0, 3⟩
+
+/-- (46)–(47): the rain and the coat left behind precede Felipe's wetting at five, but the
+speaker sees the rain only at six. -/
+def felipe : Context := ⟨[4, 0], 5, 6, 6⟩
+
+/-- (48)–(49): the cold night and the clam-digging precede the friend's getting cold, and the
+speaker learns of the clam-digging the next day. -/
+def clamDigging : Context := ⟨[0, 0], 1, 2, 2⟩
+
+/-- (50)–(51): the smell of the fish arises as it is cooked. -/
+def smell : Context := ⟨[1], 1, 1, 1⟩
+
+/-- (52)–(53) and (83): the car is in the driveway from the arrival home on. -/
+def driveway : Context := ⟨[1], 1, 2, 2⟩
+
+/-- (54)–(55): the bear stops moving as it dies. -/
+def bear : Context := ⟨[1], 1, 2, 2⟩
+
+/-- (57)–(58): evidence both before and at the prejacent, the time of day and the car and
+lights, is taken together. -/
+def homeFromWork : Context := ⟨[0, 1, 1], 1, 2, 2⟩
+
+/-- (59)–(60): twenty minutes in the oven and the smell; the smell may be set aside. -/
+def ovenAndSmell : Context := ⟨[0, 1], 1, 1, 1⟩
+
+def ovenOnly : Context := ⟨[0], 1, 1, 1⟩
+
+/-- (56): no evidence at all. -/
+def missingCat : Context := ⟨[], 1, 0, 0⟩
+
+theorem cooking_future : FuturePresup cooking.mb (from' cooking.prejacent) () := by decide
+
+theorem cooking_not_inferential : ¬ InferentialPresup cooking.mb (from' cooking.prejacent) () := by
+  decide
+
+theorem felipe_future : FuturePresup felipe.mb (from' felipe.prejacent) () := by decide
+
+theorem felipe_not_inferential : ¬ InferentialPresup felipe.mb (from' felipe.prejacent) () := by
+  decide
+
+/-- The wedge: the evidence is acquired after the event, so the acquisition analysis rejects
+*will* and *səm* here, against the judgments. -/
+theorem felipe_not_eatFuture : ¬ EatFuture felipe.frame := by decide
+
+theorem felipe_downstream : felipe.frame.Downstream := by decide
+
+theorem clamDigging_future : FuturePresup clamDigging.mb (from' clamDigging.prejacent) () := by
+  decide
+
+theorem clamDigging_not_eatFuture : ¬ EatFuture clamDigging.frame := by decide
+
+theorem smell_inferential : InferentialPresup smell.mb (from' smell.prejacent) () := by decide
+
+theorem smell_not_future : ¬ FuturePresup smell.mb (from' smell.prejacent) () := by decide
+
+theorem driveway_inferential : InferentialPresup driveway.mb (from' driveway.prejacent) () := by
+  decide
+
+theorem bear_not_future : ¬ FuturePresup bear.mb (from' bear.prejacent) () := by decide
+
+/-- (57): evidence on both sides of the prejacent forces the inferential. -/
+theorem homeFromWork_inferential :
+    InferentialPresup homeFromWork.mb (from' homeFromWork.prejacent) () := by decide
+
+theorem homeFromWork_not_future :
+    ¬ FuturePresup homeFromWork.mb (from' homeFromWork.prejacent) () := by decide
+
+/-- (59)–(60): with the smell in the modal base the inferential is licensed, and with it set
+aside the future is. -/
+theorem ovenAndSmell_inferential :
+    InferentialPresup ovenAndSmell.mb (from' ovenAndSmell.prejacent) () := by decide
+
+theorem ovenOnly_future : FuturePresup ovenOnly.mb (from' ovenOnly.prejacent) () := by decide
+
+theorem missingCat_not_inferential :
+    ¬ InferentialPresup missingCat.mb (from' missingCat.prejacent) () := by decide
 
 end Huijsmans2025

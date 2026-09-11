@@ -1,22 +1,43 @@
-/-
-Copyright (c) 2026 Robert Hawkins. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Robert Hawkins
--/
+import Linglib.Fragments.Japanese.Prosody
+import Linglib.Phonology.Prosody.Grid
 import Linglib.Phonology.Tone.Basic
+import Mathlib.Data.Finset.Card
 
 /-!
-# Hyman (2006): word-prosodic typology
+# Hyman (2006): Word-prosodic typology
 
-[hyman-2006] cuts word-prosodic systems along two independent properties rather than into
-three types: **tone** — pitch enters the lexical realization of some morphemes (definition
-(3)) — and **stress accent** — words carry an obligatory, culminative metrical head
-(definition (5)); "pitch accent" is no third prototype but a pick-and-choose of properties
-from the two, and its classic cases are reclassified as tonal. Since the two properties are
-independent, all four combinations occur (Table I); restricted-H systems attest all four
-combinations of obligatoriness and culminativity (Table II), and the deepest typological cut
-is OBLHEAD, obligatoriness of the metrical head (§7). The profile `Tone.WordProsody`
-records the two dimensions.
+This file formalizes [hyman-2006]'s two prototypes of word prosody and the argument that
+pitch accent is no third. A language has tone when an indication of pitch enters the lexical
+realization of some morpheme, definition (3) (`Tonal`); it has stress accent when word-level
+metrical structure marks a head syllable in every lexical word, definition (5), which separates
+into obligatoriness, at least one head (`Obligatory`), and culminativity, at most one
+(`Culminative`), the pair that the usual *one and only one* conflates
+(`obligatory_and_culminative_iff`). Obligatoriness is the definitional criterion, OBLHEAD,
+and it targets syllables: a language whose words may lack syllables cannot have stress
+accent (`not_obligatory_of_no_units`, Bella Coola), and an obligatory H assigned by mora is
+restricted tone rather than stress accent (`kinga_not_stressAccent`).
+
+The four combinations of the two criteria are all attested among restricted-H systems, Table
+II: Kinga's antepenultimate-mora H is obligatory and culminative, Creek's tonal accent
+obligatory but not culminative, Tokyo Japanese's accent culminative but not obligatory,
+read off the accent lexicon of the Japanese fragment (`tokyo_not_obligatory`), and Seneca's
+trochaic H neither, derived from the analysis of (21) (`seneca_not_obligatory`). So neither
+criterion implies the other, no hierarchical typology can cut first by one and then by the
+other, and the cut by OBLHEAD and the reviewer's cut by culminativity of Section 7 classify
+Creek and Tokyo Japanese oppositely (`cuts_differ`).
+
+## Implementation notes
+
+* A `Marking` records, for each lexical word, its units and the units bearing the mark, the
+  primary stress or the restricted tone; the tone-bearing unit is `Tone.TBUKind`. Tone is
+  stated on a lexicon of morphemes with an optional pitch specification.
+* Table I's quadrants remain the two Boolean dimensions of `Tone.WordProsody`, which the
+  Drubea fragment and [lionnet-2025] instantiate; the languages of Table I are not listed.
+
+## References
+
+* [hyman-2006]
+* [lionnet-2025]
 -/
 
 namespace Hyman2006
@@ -25,7 +46,67 @@ open Tone
 
 /-! ### The two prototypes -/
 
-/-- The four cells of Table I. -/
+/-- Definition (3): a lexicon is tonal when an indication of pitch enters the lexical
+realization of at least one morpheme. -/
+def Tonal {M P : Type*} (pitch : M → Option P) : Prop := ∃ μ, (pitch μ).isSome
+
+/-- A word-level marking: the units of each lexical word and those bearing the mark, the
+highest degree of metrical prominence or the restricted tone, on units of a kind. -/
+structure Marking (Word U : Type*) where
+  units : Word → Finset U
+  marked : Word → Finset U
+  marked_subset : ∀ w, marked w ⊆ units w
+  tbu : TBUKind
+
+variable {Word U : Type*}
+
+/-- (5a): every lexical word has at least one marked unit, OBLHEAD. -/
+def Obligatory (m : Marking Word U) : Prop := ∀ w, (m.marked w).Nonempty
+
+/-- (5b): every lexical word has at most one marked unit. -/
+def Culminative (m : Marking Word U) : Prop := ∀ w, (m.marked w).card ≤ 1
+
+/-- Definition (5): stress accent is an obligatory, culminative marking of syllables. -/
+def StressAccent (m : Marking Word U) : Prop :=
+  m.tbu = .syllable ∧ Obligatory m ∧ Culminative m
+
+/-- The two criteria together are the *one and only one* head of McCarthy's HEAD(PWd), which
+(5) separates. -/
+theorem obligatory_and_culminative_iff (m : Marking Word U) :
+    Obligatory m ∧ Culminative m ↔ ∀ w, (m.marked w).card = 1 := by
+  simp only [Obligatory, Culminative, ← Finset.card_pos, ← forall_and]
+  exact forall_congr' λ w => by omega
+
+/-- The metrical grid's culminativity, exactly one peak, is the same conflation. -/
+theorem grid_isCulminative_iff (g : Prosody.Grid) :
+    Prosody.Grid.IsCulminative g ↔
+      1 ≤ g.countP (· == Prosody.Grid.peak g) ∧ g.countP (· == Prosody.Grid.peak g) ≤ 1 := by
+  unfold Prosody.Grid.IsCulminative; omega
+
+/-- A marking assigned by a rule that names one unit of every word is obligatory and
+culminative. -/
+def Marking.ofRule (units : Word → Finset U) (pos : Word → U) (h : ∀ w, pos w ∈ units w)
+    (tbu : TBUKind) : Marking Word U :=
+  ⟨units, λ w => {pos w}, λ w => Finset.singleton_subset_iff.2 (h w), tbu⟩
+
+theorem obligatory_ofRule (units : Word → Finset U) (pos : Word → U) (h : ∀ w, pos w ∈ units w)
+    (tbu : TBUKind) : Obligatory (Marking.ofRule units pos h tbu) :=
+  λ _ => Finset.singleton_nonempty _
+
+theorem culminative_ofRule (units : Word → Finset U) (pos : Word → U)
+    (h : ∀ w, pos w ∈ units w) (tbu : TBUKind) : Culminative (Marking.ofRule units pos h tbu) :=
+  λ _ => (Finset.card_singleton _).le
+
+/-- Section 4: a word without units of the marked kind, Bella Coola's syllable-less [ktskʷ]
+or Gokana's words, can bear no head, so the language fails OBLHEAD. -/
+theorem not_obligatory_of_no_units {m : Marking Word U} {w : Word} (h : m.units w = ∅) :
+    ¬ Obligatory m := λ ho =>
+  (ho w).ne_empty (Finset.subset_empty.1 (h ▸ m.marked_subset w))
+
+theorem not_stressAccent_of_no_units {m : Marking Word U} {w : Word} (h : m.units w = ∅) :
+    ¬ StressAccent m := λ hs => not_obligatory_of_no_units h hs.2.1
+
+/-- Table I's four cells. -/
 inductive ProsodicQuadrant where
   | toneAndStress
   | toneOnly
@@ -41,183 +122,164 @@ def quadrant (p : WordProsody) : ProsodicQuadrant :=
   | false, true => .stressOnly
   | false, false => .neither
 
-/-- The two definitional criteria of stress accent (definition (5)): obligatoriness — every
-lexical word has a primary stress — and culminativity — at most one. Obligatoriness is the
-definitional one (p. 232); culminativity fails in some alleged pitch-accent systems. -/
-structure StressAccentCriteria where
-  obligatoriness : Bool
-  culminativity : Bool
+/-! ### Tokyo Japanese -/
+
+open Japanese.Prosody in
+/-- The accent of Tokyo Japanese as a marking of moras: the accented mora of each lexical
+entry of the fragment, or none. -/
+def tokyo : Marking ProsodicEntry ℕ where
+  units e := Finset.range e.nMorae
+  marked e := (Finset.range e.nMorae).filter (e.accentMora = some ·)
+  marked_subset _ := Finset.filter_subset _ _
+  tbu := .mora
+
+open Japanese.Prosody in
+/-- The accent is an indication of pitch in the lexical realization of *a'me* 'rain', so
+Tokyo Japanese is tonal by (3). -/
+theorem tokyo_tonal : Tonal (λ e : ProsodicEntry => e.accentMora) := ⟨ameRain, rfl⟩
+
+/-- At most one accent per word. -/
+theorem tokyo_culminative : Culminative tokyo := λ e => by
+  refine (Finset.card_le_one.2 λ a ha b hb => ?_)
+  simp only [tokyo, Finset.mem_filter] at ha hb
+  exact Option.some.inj (ha.2.symm.trans hb.2)
+
+open Japanese.Prosody in
+/-- *ame* 'candy' is unaccented, so the accent is not obligatory. -/
+theorem tokyo_not_obligatory : ¬ Obligatory tokyo := λ h =>
+  (h ameCandy).ne_empty (by decide)
+
+/-- Section 5.2: the classic pitch-accent language is tonal without stress accent. -/
+theorem tokyo_not_stressAccent : ¬ StressAccent tokyo := λ h => tokyo_not_obligatory h.2.1
+
+/-! ### Kinga -/
+
+/-- The words of (18b). -/
+inductive KingaWord where
+  | ukuheka
+  | ukuvala
+  | ukugeenda
+  | ukugeendelela
+  | ukuhwaanana
   deriving DecidableEq, Repr
 
-/-- A prototypical stress-accent system meets both criteria. -/
-def StressAccentCriteria.isPrototypicalSA (c : StressAccentCriteria) : Bool :=
-  c.obligatoriness && c.culminativity
+/-- The mora counts of the words. -/
+def KingaWord.nMorae : KingaWord → ℕ
+  | .ukuheka => 4
+  | .ukuvala => 4
+  | .ukugeenda => 5
+  | .ukugeendelela => 7
+  | .ukuhwaanana => 6
 
-/-- Properties that cluster with the stress-accent prototype without defining it (p. 234):
-privativity, subordination, demarcation, rhythmicity. -/
-structure ClusteringProperties where
-  privativity : Bool
-  subordination : Bool
-  demarcation : Bool
-  rhythmicity : Bool
+/-- Kinga's obligatory H falls on the antepenultimate mora, (18b). -/
+def kinga : Marking KingaWord ℕ :=
+  Marking.ofRule (λ w => Finset.range w.nMorae) (λ w => w.nMorae - 3)
+    (λ w => by cases w <;> decide) .mora
+
+theorem kinga_obligatory : Obligatory kinga := obligatory_ofRule _ _ _ _
+
+theorem kinga_culminative : Culminative kinga := culminative_ofRule _ _ _ _
+
+/-- Section 5.2: assigned by mora, the obligatory H of Kinga is restricted tone, not stress
+accent. -/
+theorem kinga_not_stressAccent : ¬ StressAccent kinga := λ h => absurd h.1 (by decide)
+
+/-! ### Creek -/
+
+/-- The words of (20) and the fixed-accent /náfka:kís/ of Section 5.3. -/
+inductive CreekWord where
+  | hicita
+  | ahicita
+  | caalo
+  | sokca
+  | nafkaakis
   deriving DecidableEq, Repr
 
-/-- The prototype shows all four. -/
-def prototypicalSACluster : ClusteringProperties :=
-  { privativity := true, subordination := true, demarcation := true, rhythmicity := true }
+def CreekWord.nSyllables : CreekWord → ℕ
+  | .hicita => 3
+  | .ahicita => 4
+  | .caalo => 2
+  | .sokca => 2
+  | .nafkaakis => 3
 
-/-! ### Table I -/
+/-- The tonal accents: the last even-numbered light syllable (20a), a heavy penult (20b), and
+the two fixed accents of /náfka:kís/. -/
+def CreekWord.accents : CreekWord → Finset ℕ
+  | .hicita => {1}
+  | .ahicita => {3}
+  | .caalo => {0}
+  | .sokca => {0}
+  | .nafkaakis => {0, 2}
 
-/-- A language of Table I (p. 237) with its profile. -/
-structure TypologyEntry where
-  name : String
-  profile : WordProsody
-  deriving Repr
+def creek : Marking CreekWord ℕ where
+  units w := Finset.range w.nSyllables
+  marked := CreekWord.accents
+  marked_subset w := by cases w <;> decide
+  tbu := .syllable
 
-/-- Table I. -/
-def tableI : List TypologyEntry :=
-  [ ⟨"Ma'ya", ⟨true, true⟩⟩, ⟨"Usarufa", ⟨true, true⟩⟩, ⟨"Fasu", ⟨true, true⟩⟩,
-    ⟨"Serbo-Croatian", ⟨true, true⟩⟩, ⟨"Swedish-Norwegian", ⟨true, true⟩⟩,
-    ⟨"Ayutla Mixtec", ⟨true, true⟩⟩,
-    ⟨"Yoruba", ⟨true, false⟩⟩, ⟨"Igbo", ⟨true, false⟩⟩, ⟨"Kuki-Thaadow", ⟨true, false⟩⟩,
-    ⟨"Skou", ⟨true, false⟩⟩,
-    ⟨"English", ⟨false, true⟩⟩, ⟨"Russian", ⟨false, true⟩⟩, ⟨"Turkish", ⟨false, true⟩⟩,
-    ⟨"Finnish", ⟨false, true⟩⟩,
-    ⟨"Bella Coola", ⟨false, false⟩⟩, ⟨"French", ⟨false, false⟩⟩, ⟨"Tamazight", ⟨false, false⟩⟩,
-    ⟨"Bengali", ⟨false, false⟩⟩ ]
+/-- Creek obeys OBLHEAD. -/
+theorem creek_obligatory : Obligatory creek := λ w => by cases w <;> decide
 
-/-- All four cells are attested. -/
-theorem all_quadrants_attested :
-    ∀ q ∈ [ProsodicQuadrant.toneAndStress, .toneOnly, .stressOnly, .neither],
-      ∃ e ∈ tableI, quadrant e.profile = q := by
-  decide
+/-- /náfka:kís/ carries two H tones. -/
+theorem creek_not_culminative : ¬ Culminative creek := λ h => absurd (h .nafkaakis) (by decide)
 
-/-! ### Table II -/
+/-! ### Seneca -/
 
-/-- A restricted-H system of Table II (p. 245) with its criteria. -/
-structure RestrictedHToneEntry where
-  name : String
-  criteria : StressAccentCriteria
-  deriving Repr
+/-- The trochaic analysis of (21): the first syllable is extrametrical, disyllabic trochees are
+built left to right, and a trochee's initial syllable takes H when the trochee contains a
+closed syllable. A word is its syllables' closedness. -/
+def senecaH (closed : List Bool) : Finset ℕ :=
+  ((List.range closed.length).filter λ i =>
+    1 ≤ i ∧ (i - 1) % 2 = 0 ∧ i + 1 < closed.length ∧
+      (closed.getD i false || closed.getD (i + 1) false)).toFinset
 
-/-- Table II. -/
-def tableII : List RestrictedHToneEntry :=
-  [ ⟨"Kinga", ⟨true, true⟩⟩, ⟨"Creek", ⟨true, false⟩⟩, ⟨"Somali", ⟨false, true⟩⟩,
-    ⟨"Seneca", ⟨false, false⟩⟩ ]
-
-/-- Obligatoriness and culminativity are independent: all four combinations occur. -/
-theorem all_oblig_culm_combos :
-    ∀ c ∈ [(⟨true, true⟩ : StressAccentCriteria), ⟨true, false⟩, ⟨false, true⟩, ⟨false, false⟩],
-      ∃ e ∈ tableII, e.criteria = c := by
-  decide
-
-/-- Only Kinga meets both criteria. -/
-theorem only_kinga_prototypical_sa :
-    ∀ e ∈ tableII, e.criteria.isPrototypicalSA = true ↔ e.name = "Kinga" := by
-  decide
-
-/-! ### Pitch accent is not a type -/
-
-/-- The three properties that have been called pitch accent, (13): none defines a prototype
-parallel to (3) and (5). -/
-inductive PALikeProperty where
-  /-- (13a) An underlying prosody abstractly different from its surface realizations. -/
-  | abstractDifferent
-  /-- (13b) A system combining tone and stress. -/
-  | combinesToneAndStress
-  /-- (13c) Restricted, sparse or privative tone. -/
-  | restrictedTone
+/-- The words of (23), with a closed syllable marked `true`. -/
+inductive SenecaWord where
+  | willing
+  | busy
+  | necktie
   deriving DecidableEq, Repr
 
-/-- The classic pitch-accent languages, reclassified: pitch enters lexical realization, so
-they are tonal, and without stress accent. -/
-def tokyoJapanese : WordProsody := ⟨true, false⟩
-def somali : WordProsody := ⟨true, false⟩
-def westernBasque : WordProsody := ⟨true, false⟩
+def SenecaWord.closed : SenecaWord → List Bool
+  | .willing => [false, false, false, true, true]
+  | .busy => [false, false, true, false, false, true, true]
+  | .necktie => [false, false, false, false, false, true]
 
-theorem pa_languages_are_tonal :
-    quadrant tokyoJapanese = .toneOnly ∧ quadrant somali = .toneOnly ∧
-      quadrant westernBasque = .toneOnly := ⟨rfl, rfl, rfl⟩
+def seneca : Marking SenecaWord ℕ where
+  units w := Finset.range w.closed.length
+  marked w := senecaH w.closed
+  marked_subset w := by cases w <;> decide
+  tbu := .syllable
 
-/-! ### The two dimensions read off WALS
+/-- (23a): one H, obligatory and culminative for this word. -/
+theorem seneca_willing : seneca.marked .willing = {3} := by decide
 
-WALS 13A ([maddieson-2013]) codes tone by the size of the level inventory — the partition
-Hyman's functional definition replaces — and WALS 14A ([goedemans-van-der-hulst-2013])
-codes fixed stress location, presupposing an obligatory head. Both map onto the two
-dimensions, with a known loss on the stress side. -/
+/-- (23b): two H tones. -/
+theorem seneca_busy : seneca.marked .busy = {1, 5} := by decide
 
-/-- WALS 13A. -/
-inductive WalsToneSystem where
-  | none | simple | complex
-  deriving DecidableEq, Repr
+/-- (23c): no H, the footed syllables all open. -/
+theorem seneca_necktie : seneca.marked .necktie = ∅ := by decide
 
-/-- WALS 14A. -/
-inductive StressLocation where
-  | noFixed | initial | second | third | antepenultimate | penultimate | ultimate
-  deriving DecidableEq, Repr
+theorem seneca_not_obligatory : ¬ Obligatory seneca := λ h =>
+  (h .necktie).ne_empty seneca_necktie
 
-/-- The profile of a WALS coding: any tone system is tone; any 14A value — fixed or free
-stress — is stress accent, and absence from 14A is read as no stress accent. -/
-def ofWals (t : WalsToneSystem) (s : Option StressLocation) : WordProsody :=
-  ⟨t ≠ .none, s.isSome⟩
+theorem seneca_not_culminative : ¬ Culminative seneca := λ h => absurd (h .busy) (by decide)
 
-def english : WordProsody := ofWals .none (some .noFixed)
-def german : WordProsody := ofWals .none (some .noFixed)
-def finnish : WordProsody := ofWals .none (some .initial)
-def turkish : WordProsody := ofWals .none (some .ultimate)
-def russian : WordProsody := ofWals .none (some .noFixed)
-def french : WordProsody := ofWals .none (some .noFixed)
-def spanish : WordProsody := ofWals .none (some .penultimate)
-def japanese : WordProsody := ofWals .simple none
-def mandarin : WordProsody := ofWals .complex (some .noFixed)
-def hindi : WordProsody := ofWals .none (some .noFixed)
-def georgian : WordProsody := ofWals .none (some .initial)
-def hungarian : WordProsody := ofWals .none (some .initial)
-def swahili : WordProsody := ofWals .none (some .penultimate)
-def yoruba : WordProsody := ofWals .complex none
-def maori : WordProsody := ofWals .none (some .initial)
-def zulu : WordProsody := ofWals .simple (some .penultimate)
+/-! ### The cuts of Section 7 -/
 
-theorem english_stress_only : quadrant english = .stressOnly := by decide
-theorem finnish_stress_only : quadrant finnish = .stressOnly := by decide
-theorem yoruba_tone_only : quadrant yoruba = .toneOnly := by decide
-theorem japanese_tone_only : quadrant japanese = .toneOnly := by decide
-theorem mandarin_tone_and_stress : quadrant mandarin = .toneAndStress := by decide
-theorem zulu_tone_and_stress : quadrant zulu = .toneAndStress := by decide
+/-- The four restricted-H systems of Table II attest every combination of the two criteria:
+no hierarchical typology can take one criterion as its first cut and the other as its second.
+-/
+theorem tableII :
+    (Obligatory kinga ∧ Culminative kinga) ∧ (Obligatory creek ∧ ¬ Culminative creek) ∧
+      (¬ Obligatory tokyo ∧ Culminative tokyo) ∧ (¬ Obligatory seneca ∧ ¬ Culminative seneca) :=
+  ⟨⟨kinga_obligatory, kinga_culminative⟩, ⟨creek_obligatory, creek_not_culminative⟩,
+    ⟨tokyo_not_obligatory, tokyo_culminative⟩, ⟨seneca_not_obligatory, seneca_not_culminative⟩⟩
 
-/-- WALS reaches three cells: 14A codes stress location, not its absence, so the −T−SA
-cell never appears from WALS alone. -/
-theorem wals_covers_three_quadrants :
-    ∀ q ∈ [ProsodicQuadrant.toneAndStress, .toneOnly, .stressOnly],
-      ∃ p ∈ [english, german, finnish, turkish, russian, french, spanish, japanese, mandarin,
-        hindi, georgian, hungarian, swahili, yoruba, maori, zulu], quadrant p = q := by
-  decide
-
-/-- French is −T−SA in Table I but has free stress in WALS 14A, which reads as +SA: 14A
-does not distinguish free word stress from no word stress (French's is phrase-final). The
-−SA classification needs language-specific analysis beyond WALS. -/
-theorem french_wals_mismatch :
-    quadrant french = .stressOnly ∧
-      ∀ e ∈ tableI, e.name = "French" → quadrant e.profile = .neither := by
-  decide
-
-/-! ### OBLHEAD as the deepest cut -/
-
-/-- The most significant cut (§7): whether every word obligatorily carries a metrical head.
-Stress-accent systems, with or without tone, are OBLHEAD systems; tone-only and −T−SA
-systems (Bella Coola, which lacks syllables) are not. -/
-def IsOblHeadSystem (p : WordProsody) : Prop := p.stressAccent = true
-
-instance (p : WordProsody) : Decidable (IsOblHeadSystem p) := inferInstanceAs (Decidable (_ = _))
-
-/-- OBLHEAD separates stress accent, with or without tone, from its absence. -/
-theorem isOblHeadSystem_iff (p : WordProsody) : IsOblHeadSystem p ↔ p.stressAccent = true :=
-  Iff.rfl
-
-/-- OBLHEAD partitions Table I along the stress-accent dimension alone. -/
-theorem oblhead_partitions_tableI :
-    ∀ e ∈ tableI, IsOblHeadSystem e.profile ↔
-      quadrant e.profile = .toneAndStress ∨ quadrant e.profile = .stressOnly := by
-  decide
+/-- The most significant cut, by OBLHEAD, and the reviewer's alternative, by culminativity,
+sort Creek and Tokyo Japanese oppositely. -/
+theorem cuts_differ :
+    (Obligatory creek ∧ ¬ Obligatory tokyo) ∧ (Culminative tokyo ∧ ¬ Culminative creek) :=
+  ⟨⟨creek_obligatory, tokyo_not_obligatory⟩, ⟨tokyo_culminative, creek_not_culminative⟩⟩
 
 end Hyman2006

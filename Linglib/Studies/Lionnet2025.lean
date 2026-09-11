@@ -292,8 +292,7 @@ theorem drubea_register_only : ∀ e ∈ allStems, IsRegisterOnly e.specs := by 
 
 /-- Tonal by definition (3), without stress accent: +T, −SA, the cell of Yoruba. -/
 theorem drubea_tone_only :
-    wordProsody.tone = true ∧ Hyman2006.quadrant wordProsody = .toneOnly ∧
-      Hyman2006.quadrant wordProsody = Hyman2006.quadrant Hyman2006.yoruba := ⟨rfl, rfl, rfl⟩
+    wordProsody.tone = true ∧ Hyman2006.quadrant wordProsody = .toneOnly := ⟨rfl, rfl⟩
 
 /-- Register culminativity holds while stress accent, hence Hyman's culminativity, is
 absent. -/
