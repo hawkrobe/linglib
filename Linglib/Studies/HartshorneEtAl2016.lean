@@ -1,389 +1,193 @@
+import Mathlib.Data.List.MinMax
+import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Studies.Pesetsky1995
-import Linglib.Semantics.Causation.Psych
-import Linglib.Semantics.Causation.PsychLink
 
 /-!
-# [hartshorne-etal-2016] — Empirical Data
+# Hartshorne et al. (2016): Psych verbs, the linking problem, and the acquisition of language
 
-[hartshorne-etal-2016]
+This file formalizes [hartshorne-etal-2016]'s resolution of the psych-verb linking problem.
+Fear-type verbs (*Agnes feared Bartholomew*) and frighten-type verbs (*Bartholomew frightened
+Agnes*) describe the same emotions with reversed linking, the strongest apparent case against
+systematic mappings from meaning to form. The paper's proposal is that they lexicalize two
+conceptualizations of emotion, a habitual attitude of an experiencer directed at a target and an
+episode in which a stimulus causes an experiencer to be in an emotional state, and nine
+experiments show the distinction to be systematic (fear-type states are rated longer-lasting and
+the subject of a frighten-type verb is judged causally responsible, in Mandarin and Korean as in
+English), productive (adults in English, Japanese and Russian give novel verbs with attitude
+meanings experiencer-subject syntax and those with episode meanings experiencer-object syntax)
+and early (four- and five-year-olds do the same). The linking itself follows from one principle
+over the semantic structures of their Fig. 11, prominence preservation: `Sem.subject` is the
+least embedded argument of such a structure, and since the causer of CAUSE and the holder of BE
+are highest whatever they embed (`subject_cause`), the experiencer heads the attitude and the
+stimulus the episode (`attitude_subject`, `episode_subject`), while the causation judgments
+answer to whether the structure contains CAUSE at all. The linking agrees with
+[belletti-rizzi-1988]'s Class I and Class II as recorded in `Pesetsky1995` and with
+[levin-1993]'s admire and amuse classes (`agrees_with_levin`).
 
-Psych verbs, the linking problem, and the acquisition of language.
-Cognition 157: 268–288.
+## Implementation notes
 
-## Core empirical claim
+The structures follow the prose of their §5.4.1 rather than the figures: BE takes the entity in
+a state and the state, the state of an attitude is the root directed at a target, and CAUSE takes
+the causer and the caused BE, with no BECOME. Duration is not encoded in the structures, and the
+experiments' rates stay in prose: fear-type verbs were rated longer-lasting than frighten-type
+verbs, with 42 percent of the former above every one of the latter; causal responsibility fell on
+the subject for 214 of 216 frighten-type verbs and on no consistent participant for fear-type
+verbs; and frighten-type syntax was chosen for novel episode verbs over novel attitude verbs by
+adults (68 against 38 percent in English) and by children (66 against 33 percent at ages four to
+five). The paper's examples are the rows of `Data/Examples/HartshorneEtAl2016.json`.
 
-The experiencer-subject / experiencer-object split maps onto a semantic
-distinction between **habitual attitudes** and **caused emotional episodes**:
+## TODO
 
-| Verb class | Semantic type | Example |
-|-----------|---------------|---------|
-| Fear-type (Class I, exp-subj) | Habitual attitude | "Mary fears spiders" |
-| Frighten-type (Class II, exp-obj) | Caused emotional episode | "Spiders frighten Mary" |
+* Their §5.4.3: the Fig. 11 structures admit a target in the episode (`episodeWithTarget`),
+  predicting the unattested (7); the mental-possession alternative that would exclude it.
 
-This is diagnosed by three empirical properties:
-1. **Duration**: attitudes are longer-lasting than episodes
-2. **Causation**: episodes encode causal responsibility of stimulus; attitudes do not
-3. **Cross-linguistic**: the mapping holds in English, Mandarin, Korean, Japanese
+## References
 
-## Semantic structures (Fig. 11)
-
-- Attitudes: BE(experiencer, emotional_state ABOUT target)
-- Episodes: CAUSE(stimulus, BECOME(experiencer, emotional_state))
-
-## Linking mechanism (Section 5.4.1)
-
-**Prominence preservation**: the highest argument in the semantic structure
-maps to subject. For attitudes, experiencer is the argument of BE (the main
-predicate), so it is highest → subject. For episodes, stimulus is the argument
-of CAUSE (the outermost predicate), so it is highest → subject.
-
-## Studies
-
-| Study | Language | Population | Finding |
-|-------|----------|-----------|---------|
-| 1 | English | Adults | Fear-type rated longer duration |
-| 2–4 | English, Mandarin, Korean, Japanese | Adults | Frighten-type rated higher causation |
-| 5 | English | Adults (novel verbs) | Generalization to nonce verbs |
-| 6–7 | Japanese | Adults (novel verbs) | Generalization + morphological cue |
-| 8 | Russian | Adults (novel verbs) | Generalization cross-linguistically |
-| 9 | English | Children (4–5 y.o.) | Early emergence of the distinction |
+* [hartshorne-etal-2016]
+* [belletti-rizzi-1988]
+* [levin-1993]
+* [levin-rappaport-hovav-2005]
 -/
 
 namespace HartshorneEtAl2016
 
-open Pesetsky1995.PsychVerbs (PsychVerbClass ClassIIReading SubjectRole)
+open ArgumentStructure
 
--- ════════════════════════════════════════════════════
--- § 1. Semantic Type Distinction
--- ════════════════════════════════════════════════════
-
-/-- The two semantic types for psych verbs ([hartshorne-etal-2016], Fig. 11).
-
-    This is the paper's central theoretical claim: psych verb classes
-    correspond to distinct semantic types, not merely different linking
-    patterns. -/
-inductive SemanticType where
-  /-- BE(experiencer, emotional_state ABOUT target).
-      Enduring psychological state directed at a target. -/
-  | habitualAttitude
-  /-- CAUSE(stimulus, BECOME(experiencer, emotional_state)).
-      Specific instance where a stimulus causes an emotion. -/
-  | causedEpisode
+/-- The argument positions of their Fig. 11: the experiencer, the target an attitude is directed
+at, and the stimulus that causes an episode. -/
+inductive Participant where
+  | experiencer
+  | target
+  | stimulus
   deriving DecidableEq, Repr
 
-/-- Map B&R class to Hartshorne et al.'s semantic type. -/
-def PsychVerbClass.toSemanticType : PsychVerbClass → Option SemanticType
-  | .classI => some .habitualAttitude
-  | .classII => some .causedEpisode
-  | .classIII => none
-
-/-- Map Class II reading to semantic type.
-    Eventive Class II = caused episode (clear mapping).
-    Stative Class II does not cleanly map to either Hartshorne category:
-    stative frighten-type verbs ("concern", "bore") still encode stimulus
-    causation (unlike attitudes) but have longer duration than eventive
-    Class II (p. 273: avg 3.7 vs 2.9 vs fear-type 5.2). -/
-def ClassIIReading.toSemanticType : ClassIIReading → Option SemanticType
-  | .eventive => some .causedEpisode
-  | .stative => none
-
--- ════════════════════════════════════════════════════
--- § 2. Empirical Properties
--- ════════════════════════════════════════════════════
-
-/-- Properties that distinguish the two semantic types empirically. -/
-structure SemanticTypeProfile where
-  /-- Does the verb encode longer duration?
-      Attitudes = true (enduring), episodes = false (transient). -/
-  longerDuration : Bool
-  /-- Does the verb encode causal responsibility of the stimulus?
-      Episodes = true (CAUSE), attitudes = false (no CAUSE). -/
-  stimulusCausal : Bool
-  /-- Does the verb involve a transition (BECOME)?
-      Episodes = true (BECOME), attitudes = false (BE). -/
-  involvesBecome : Bool
+/-- A semantic structure (their §5.4.1, Figs. 10–11): primitive predicates embedding one another,
+variables marking argument positions and the verbal root modifying a state. -/
+inductive Sem (α : Type) where
+  /-- An argument position. -/
+  | var (x : α)
+  /-- The verbal root: the kind of emotion. -/
+  | root
+  /-- BE(x, s): `x` is in the state `s`. -/
+  | be (x s : Sem α)
+  /-- CAUSE(x, e): `x` brings about `e`. -/
+  | cause (x e : Sem α)
+  /-- The state `s` directed at `y`. -/
+  | about (s y : Sem α)
   deriving DecidableEq, Repr
 
-/-- Profile for habitual attitudes (fear-type).
-    Long duration, no causal responsibility, no transition. -/
-def attitudeProfile : SemanticTypeProfile :=
-  { longerDuration := true
-    stimulusCausal := false
-    involvesBecome := false }
+variable {α : Type}
 
-/-- Profile for caused emotional episodes (frighten-type).
-    Short duration, causal responsibility, involves transition. -/
-def episodeProfile : SemanticTypeProfile :=
-  { longerDuration := false
-    stimulusCausal := true
-    involvesBecome := true }
+namespace Sem
 
-/-- The two profiles differ on every dimension. -/
-theorem profiles_differ_on_all :
-    attitudeProfile.longerDuration ≠ episodeProfile.longerDuration ∧
-    attitudeProfile.stimulusCausal ≠ episodeProfile.stimulusCausal ∧
-    attitudeProfile.involvesBecome ≠ episodeProfile.involvesBecome := by
-  exact ⟨by decide, by decide, by decide⟩
+/-- The argument positions of a structure with their depth of embedding, left to right. -/
+def vars : Sem α → List (α × ℕ)
+  | var x => [(x, 0)]
+  | root => []
+  | be x s => (x.vars ++ s.vars).map λ p => (p.1, p.2 + 1)
+  | cause x e => (x.vars ++ e.vars).map λ p => (p.1, p.2 + 1)
+  | about s y => (s.vars ++ y.vars).map λ p => (p.1, p.2 + 1)
 
-/-- Map semantic type to its expected profile. -/
-def SemanticType.expectedProfile : SemanticType → SemanticTypeProfile
-  | .habitualAttitude => attitudeProfile
-  | .causedEpisode => episodeProfile
+/-- Prominence preservation: the least embedded argument position becomes the subject. -/
+def subject (s : Sem α) : Option α := (s.vars.argmin Prod.snd).map Prod.fst
 
--- ════════════════════════════════════════════════════
--- § 3. Prominence-Based Linking (Section 5.4.1)
--- ════════════════════════════════════════════════════
+/-- Whether the structure contains CAUSE. -/
+def HasCause : Sem α → Prop
+  | var _ => False
+  | root => False
+  | be x s => x.HasCause ∨ s.HasCause
+  | cause _ _ => True
+  | about s y => s.HasCause ∨ y.HasCause
 
-/-- The structurally prominent role in each semantic type (Section 5.4.1).
+instance : DecidablePred (HasCause (α := α))
+  | var _ => inferInstanceAs (Decidable False)
+  | root => inferInstanceAs (Decidable False)
+  | be x s => @instDecidableOr _ _ (instDecidablePredHasCause x) (instDecidablePredHasCause s)
+  | cause _ _ => inferInstanceAs (Decidable True)
+  | about s y => @instDecidableOr _ _ (instDecidablePredHasCause s) (instDecidablePredHasCause y)
 
-    In the attitude structure BE(experiencer, state ABOUT target),
-    experiencer is the highest argument (argument of the main predicate BE).
+theorem one_le_snd_of_mem_vars_map {l : List (α × ℕ)} {q : α × ℕ}
+    (hq : q ∈ l.map λ p : α × ℕ => (p.1, p.2 + 1)) : 1 ≤ q.2 := by
+  obtain ⟨p, -, rfl⟩ := List.mem_map.mp hq
+  exact Nat.le_add_left 1 p.2
 
-    In the episode structure CAUSE(stimulus, BECOME(experiencer, state)),
-    stimulus is the highest argument (argument of the outermost predicate
-    CAUSE).
+private theorem argmin_cons_of_le {p : α × ℕ} {l : List (α × ℕ)}
+    (h : ∀ q ∈ l, p.2 ≤ q.2) : (p :: l).argmin Prod.snd = some p := by
+  rw [List.argmin_cons]
+  rcases hl : l.argmin Prod.snd with _ | q
+  · rfl
+  · simp [not_lt.mpr (h q (List.argmin_mem hl))]
 
-    This determines linking via prominence preservation: the highest
-    argument maps to subject position. -/
-def SemanticType.prominentRole : SemanticType → SubjectRole
-  | .habitualAttitude => .experiencer
-  | .causedEpisode => .stimulus
+/-- The causer of CAUSE is the subject whatever it brings about. -/
+theorem subject_cause (x : α) (e : Sem α) : (cause (var x) e).subject = some x := by
+  simp only [subject, vars, List.singleton_append, List.map_cons]
+  rw [argmin_cons_of_le λ _ hq => one_le_snd_of_mem_vars_map hq]
+  rfl
 
-/-- Prominence preservation ([hartshorne-etal-2016], Section 5.4.1):
-    the most prominent argument in the semantic decomposition becomes the
-    subject. This is the paper's central theoretical claim about HOW
-    semantic type determines argument structure.
+/-- The holder of BE is the subject whatever state it is in. -/
+theorem subject_be (x : α) (s : Sem α) : (be (var x) s).subject = some x := by
+  simp only [subject, vars, List.singleton_append, List.map_cons]
+  rw [argmin_cons_of_le λ _ hq => one_le_snd_of_mem_vars_map hq]
+  rfl
 
-    The predicted subject role from prominence matches the observed
-    Belletti & Rizzi class pattern: Class I → experiencer-subject,
-    Class II → stimulus-subject. -/
-theorem prominence_determines_linking (c : PsychVerbClass) (t : SemanticType)
-    (h : PsychVerbClass.toSemanticType c = some t) :
-    PsychVerbClass.expectedSubjectRole c = some (SemanticType.prominentRole t) := by
-  cases c <;> simp [PsychVerbClass.toSemanticType] at h <;> subst h <;> rfl
+end Sem
 
--- ════════════════════════════════════════════════════
--- § 4. Cross-Linguistic Data
--- ════════════════════════════════════════════════════
+open Sem Participant
 
-/-- Languages tested in [hartshorne-etal-2016]. -/
-inductive Language where
-  | english | mandarin | korean | japanese | russian
-  deriving DecidableEq, Repr
+/-- Their Fig. 11a, the habitual attitude: the experiencer is in the emotional state the root
+names, directed at the target. -/
+def attitude : Sem Participant := be (var experiencer) (about root (var target))
 
-/-- Cross-linguistic replication datum: the attitude/episode distinction
-    holds in each language tested. -/
-structure CrossLinguisticDatum where
-  language : Language
-  /-- Do fear-type verbs rate higher on duration than frighten-type? -/
-  fearLongerDuration : Bool
-  /-- Do frighten-type verbs rate higher on causation than fear-type? -/
-  frightenMoreCausal : Bool
-  deriving BEq, Repr
+/-- Their Fig. 11b, the caused emotional episode: the stimulus causes the experiencer to be in
+the emotional state. -/
+def episode : Sem Participant := cause (var stimulus) (be (var experiencer) root)
 
-/-- Cross-linguistic data: all four languages show the same pattern.
-    Experiments 1–4, summarized in Fig. 7–8. -/
-def crossLinguisticData : List CrossLinguisticDatum := [
-  ⟨.english,  true, true⟩,  -- Experiment 1
-  ⟨.mandarin, true, true⟩,  -- Experiment 2
-  ⟨.korean,   true, true⟩,  -- Experiment 3
-  ⟨.japanese, true, true⟩   -- Experiment 4
-]
+/-- Fear-type verbs map the experiencer onto the subject. -/
+theorem attitude_subject : attitude.subject = some experiencer := subject_be _ _
 
-/-- The attitude/episode distinction is universal across tested languages. -/
-theorem crosslinguistic_universal :
-    crossLinguisticData.all (fun d => d.fearLongerDuration && d.frightenMoreCausal)
-      = true := by native_decide
+/-- Frighten-type verbs map the stimulus onto the subject. -/
+theorem episode_subject : episode.subject = some stimulus := subject_cause _ _
 
--- ════════════════════════════════════════════════════
--- § 5. Generalization & Acquisition
--- ════════════════════════════════════════════════════
+/-- The episode encodes the stimulus as a cause, the attitude encodes no cause: the structural
+content behind the causation judgments of their Experiments 2–4. -/
+theorem episode_hasCause_attitude_not : episode.HasCause ∧ ¬ attitude.HasCause := by decide
 
-/-- A generalization experiment: does the semantic type distinction
-    guide argument structure assignment for novel (nonce) verbs? -/
-structure GeneralizationDatum where
-  language : Language
-  isChildPopulation : Bool
-  /-- Attitude semantics → experiencer-subject preference? -/
-  attitudePredictExpSubj : Bool
-  /-- Episode semantics → experiencer-object preference? -/
-  episodePredictExpObj : Bool
-  deriving BEq, Repr
+/-- Their §5.4.3: the structures admit a target in the episode, still headed by the stimulus,
+which predicts the unattested (7). -/
+def episodeWithTarget : Sem Participant :=
+  cause (var stimulus) (be (var experiencer) (about root (var target)))
 
-/-- Generalization data from Experiments 5–9.
-    Adults and children use the semantic type distinction to determine
-    argument structure for novel verbs across languages. -/
-def generalizationData : List GeneralizationDatum := [
-  ⟨.english,  false, true, true⟩,  -- Experiment 5: English adults
-  ⟨.japanese, false, true, true⟩,  -- Experiments 6–7: Japanese adults
-  ⟨.russian,  false, true, true⟩,  -- Experiment 8: Russian adults
-  ⟨.english,  true,  true, true⟩   -- Experiment 9: English children (4–5 y.o.)
-]
+theorem episodeWithTarget_subject : episodeWithTarget.subject = some stimulus := subject_cause _ _
 
-/-- All generalization experiments show the predicted pattern. -/
-theorem generalization_universal :
-    generalizationData.all (fun d => d.attitudePredictExpSubj && d.episodePredictExpObj)
-      = true := by native_decide
+/-! ### Agreement with the classifications the paper builds on -/
 
-/-- The distinction emerges early in development (4–5 y.o.). -/
-theorem children_generalize :
-    (generalizationData.filter (·.isChildPopulation)).all
-      (fun d => d.attitudePredictExpSubj && d.episodePredictExpObj) = true := by native_decide
+/-- The subject role of [belletti-rizzi-1988]'s classes, as `Pesetsky1995` records it. -/
+def Participant.toSubjectRole : Participant → Option Pesetsky1995.PsychVerbs.SubjectRole
+  | experiencer => some .experiencer
+  | stimulus => some .stimulus
+  | target => none
 
--- ════════════════════════════════════════════════════
--- § 6. Verb-Level Data
--- ════════════════════════════════════════════════════
-
-/-- A psych verb datum from Hartshorne et al.'s norming studies. -/
-structure VerbDatum where
-  verb : String
-  semanticType : SemanticType
-  brClass : PsychVerbClass
-  deriving BEq, Repr
-
-/-- Representative verb data from [hartshorne-etal-2016].
-    Fear-type verbs are habitual attitudes, frighten-type are caused episodes. -/
-def verbData : List VerbDatum := [
-  -- Fear-type (exp-subject, habitual attitude)
-  ⟨"fear", .habitualAttitude, .classI⟩,
-  ⟨"like", .habitualAttitude, .classI⟩,
-  ⟨"love", .habitualAttitude, .classI⟩,
-  ⟨"hate", .habitualAttitude, .classI⟩,
-  ⟨"enjoy", .habitualAttitude, .classI⟩,
-  ⟨"dread", .habitualAttitude, .classI⟩,
-  ⟨"admire", .habitualAttitude, .classI⟩,
-  ⟨"respect", .habitualAttitude, .classI⟩,
-  -- Frighten-type (exp-object, caused episode)
-  ⟨"frighten", .causedEpisode, .classII⟩,
-  ⟨"amuse", .causedEpisode, .classII⟩,
-  ⟨"bore", .causedEpisode, .classII⟩,
-  ⟨"scare", .causedEpisode, .classII⟩,
-  ⟨"surprise", .causedEpisode, .classII⟩,
-  ⟨"shock", .causedEpisode, .classII⟩,
-  ⟨"irritate", .causedEpisode, .classII⟩,
-  ⟨"annoy", .causedEpisode, .classII⟩
-]
-
-/-- All fear-type verbs in the data are habitual attitudes. -/
-theorem fear_type_are_attitudes :
-    (verbData.filter (·.brClass == .classI)).all
-      (·.semanticType == .habitualAttitude) = true := by native_decide
-
-/-- All frighten-type verbs in the data are caused episodes. -/
-theorem frighten_type_are_episodes :
-    (verbData.filter (·.brClass == .classII)).all
-      (·.semanticType == .causedEpisode) = true := by native_decide
-
-/-- The class–type mapping is perfect: no verb has a mismatched type. -/
-theorem class_type_alignment :
-    verbData.all (fun d =>
-      match d.brClass with
-      | .classI => d.semanticType == .habitualAttitude
-      | .classII => d.semanticType == .causedEpisode
-      | .classIII => true  -- not tested
-    ) = true := by native_decide
-
--- ════════════════════════════════════════════════════
--- § Bridge: SemanticType ↔ CausalSource
--- ════════════════════════════════════════════════════
-
-open Causation.Psych (CausalSource)
-open Causation.PsychLink (PsychCausalLink eventiveLink maintenanceLink
-  CausalSource.toLink)
-
-/-- Map Hartshorne et al.'s semantic type to Kim's CausalSource.
-    Habitual attitudes = internal (mental representation maintains state);
-    caused episodes = external (percept triggers state change). -/
-def semanticTypeToCausalSource : SemanticType → CausalSource
-  | .habitualAttitude => .internal
-  | .causedEpisode => .external
-
-/-- Map Kim's CausalSource back to semantic type. -/
-def causalSourceToSemanticType : CausalSource → SemanticType
-  | .internal => .habitualAttitude
-  | .external => .causedEpisode
-
-/-- Roundtrip: SemanticType → CausalSource → SemanticType. -/
-theorem semanticType_source_roundtrip (t : SemanticType) :
-    causalSourceToSemanticType (semanticTypeToCausalSource t) = t := by
-  cases t <;> rfl
-
-/-- Roundtrip: CausalSource → SemanticType → CausalSource. -/
-theorem source_semanticType_roundtrip (s : CausalSource) :
-    semanticTypeToCausalSource (causalSourceToSemanticType s) = s := by
-  cases s <;> rfl
-
--- ════════════════════════════════════════════════════
--- § Deriving Empirical Properties from CausalSource
--- ════════════════════════════════════════════════════
-
-/-- Derive the expected empirical profile from CausalSource.
-
-    - External: short duration (episode), causal stimulus, involves BECOME
-    - Internal: long duration (attitude), no causal stimulus, no BECOME -/
-def causalSourceToProfile : CausalSource → SemanticTypeProfile
-  | .external => episodeProfile
-  | .internal => attitudeProfile
-
-/-- Duration: internal source → longer duration (enduring attitude). -/
-theorem internal_longer_duration :
-    (causalSourceToProfile .internal).longerDuration = true := rfl
-
-/-- Duration: external source → shorter duration (transient episode). -/
-theorem external_shorter_duration :
-    (causalSourceToProfile .external).longerDuration = false := rfl
-
-/-- Causation: external source → stimulus is causal. -/
-theorem external_stimulus_causal :
-    (causalSourceToProfile .external).stimulusCausal = true := rfl
-
-/-- Causation: internal source → stimulus not causal. -/
-theorem internal_stimulus_not_causal :
-    (causalSourceToProfile .internal).stimulusCausal = false := rfl
-
-/-- Transition: external source → involves BECOME. -/
-theorem external_involves_become :
-    (causalSourceToProfile .external).involvesBecome = true := rfl
-
-/-- Transition: internal source → no BECOME. -/
-theorem internal_no_become :
-    (causalSourceToProfile .internal).involvesBecome = false := rfl
-
-/-- The two causal sources predict opposite empirical profiles. -/
-theorem sources_differ_on_all :
-    causalSourceToProfile .external ≠ causalSourceToProfile .internal := by
+/-- The prominence subjects are the Class I and Class II subjects. -/
+theorem agrees_with_belletti_rizzi :
+    attitude.subject.bind Participant.toSubjectRole =
+        Pesetsky1995.PsychVerbs.PsychVerbClass.expectedSubjectRole .classI ∧
+      episode.subject.bind Participant.toSubjectRole =
+        Pesetsky1995.PsychVerbs.PsychVerbClass.expectedSubjectRole .classII := by
   decide
 
--- ════════════════════════════════════════════════════
--- § Consistency with SemanticType.expectedProfile
--- ════════════════════════════════════════════════════
+/-- The argument positions as the shared role labels. -/
+def Participant.thetaRole : Participant → ThetaRole
+  | experiencer => .experiencer
+  | stimulus => .stimulus
+  | target => .goal
 
-/-- The profile derived via CausalSource agrees with the profile derived
-    directly from SemanticType. This is non-trivial: we defined the two
-    mappings independently and they agree. -/
-theorem profile_agreement (t : SemanticType) :
-    causalSourceToProfile (semanticTypeToCausalSource t) =
-      t.expectedProfile := by
-  cases t <;> rfl
-
--- ════════════════════════════════════════════════════
--- § Temporal Predictions via PsychCausalLink
--- ════════════════════════════════════════════════════
-
-/-- External source predicts transition (BECOME). -/
-theorem external_predicts_transition (T : Type*) [LinearOrder T] :
-    (CausalSource.toLink T .external).involvesTransition = true := rfl
-
-/-- Internal source predicts no transition. -/
-theorem internal_predicts_no_transition (T : Type*) [LinearOrder T] :
-    (CausalSource.toLink T .internal).involvesTransition = false := rfl
-
-/-- Consistency: PsychCausalLink's transition prediction agrees with the
-    empirical profile derived from SemanticType.
-    Both are derived independently — the agreement is a genuine check. -/
-theorem transition_prediction_consistent (t : SemanticType) (T : Type*) [LinearOrder T] :
-    (CausalSource.toLink T (semanticTypeToCausalSource t)).involvesTransition =
-      (causalSourceToProfile (semanticTypeToCausalSource t)).involvesBecome := by
-  cases t <;> rfl
+/-- The prominence subjects are the subject roles of [levin-1993]'s admire and amuse classes,
+read off their entailment profiles. -/
+theorem agrees_with_levin :
+    attitude.subject.map Participant.thetaRole =
+        (LevinClass.subjectProfile .admire).bind EntailmentProfile.toRole ∧
+      episode.subject.map Participant.thetaRole =
+        (LevinClass.subjectProfile .amuse).bind EntailmentProfile.toRole := by
+  decide
 
 end HartshorneEtAl2016
