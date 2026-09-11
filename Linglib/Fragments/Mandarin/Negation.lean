@@ -176,19 +176,19 @@ def bugaiParticle : String := "bùgāi"
 /-- EN trigger-negator pairings (pinyin forms) from [jin-koenig-2021],
     Table 5 and §6.1–6.4. -/
 def enTriggerNegators : List ExpletiveTrigger :=
-  [ { triggerClass := "FEAR", triggerForm := "pà"
+  [ { triggerClass := .fear, triggerForm := "pà"
     , negatorForm := "bié", negatorGloss := some "don't (imperative)" }
-  , { triggerClass := "AVOID", triggerForm := "bìmiǎn"
+  , { triggerClass := .avoid, triggerForm := "bìmiǎn"
     , negatorForm := "bù/méi(yǒu)", negatorGloss := some "NEG (general/perfective)" }
-  , { triggerClass := "REGRET", triggerForm := "hòuhuǐ"
+  , { triggerClass := .regret, triggerForm := "hòuhuǐ"
     , negatorForm := "bùgāi", negatorGloss := some "shouldn't (deontic)" }
-  , { triggerClass := "COMPLAIN", triggerForm := "bàoyuan"
+  , { triggerClass := .complain, triggerForm := "bàoyuan"
     , negatorForm := "bùgāi", negatorGloss := some "shouldn't (deontic)" }
-  , { triggerClass := "DENY", triggerForm := "fǒurèn"
+  , { triggerClass := .deny, triggerForm := "fǒurèn"
     , negatorForm := "bù", negatorGloss := some "NEG (general)" }
-  , { triggerClass := "BEFORE", triggerForm := "yǐqián"
+  , { triggerClass := .before, triggerForm := "yǐqián"
     , negatorForm := "bù", negatorGloss := some "NEG (general)" }
-  , { triggerClass := "ALMOST", triggerForm := "chàdiǎnr"
+  , { triggerClass := .almost, triggerForm := "chàdiǎnr"
     , negatorForm := "méi", negatorGloss := some "NEG (perfective)" } ]
 
 /-- FEAR triggers use imperative negators, not the standard
@@ -196,7 +196,7 @@ def enTriggerNegators : List ExpletiveTrigger :=
     fear activates desire for ¬p, and imperative negation lexicalizes
     prohibition ([jin-koenig-2021], §6.1.1, ex. 14). -/
 theorem fear_uses_imperative_neg :
-    (enTriggerNegators.filter (·.triggerClass == "FEAR")).all
+    (enTriggerNegators.filter (·.triggerClass == .fear)).all
       (·.negatorForm == "bié") = true := by decide
 
 /-- REGRET/COMPLAIN triggers use the deontic negator *bùgāi* 'shouldn't'.
@@ -205,7 +205,7 @@ theorem fear_uses_imperative_neg :
     ([jin-koenig-2021], §6.1.2). -/
 theorem regret_uses_deontic_neg :
     (enTriggerNegators.filter (fun e =>
-      e.triggerClass == "REGRET" || e.triggerClass == "COMPLAIN")).all
+      e.triggerClass == .regret || e.triggerClass == .complain)).all
       (·.negatorForm == "bùgāi") = true := by decide
 
 end Mandarin.Negation

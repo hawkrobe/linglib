@@ -3,6 +3,7 @@ import Linglib.Data.WALS.Features.F114A
 import Linglib.Syntax.Category.Auxiliary.Constructions
 import Linglib.Features.Grammaticalization
 import Linglib.Morphology.Morph
+import Linglib.Semantics.Polarity.ExpletiveNegation
 
 /-!
 # Standard negation
@@ -40,12 +41,6 @@ separate an emphasis subtype the atlas does not encode, live in
 
 Polarity-sensitive items (n-words, NPIs, free-choice items) are not
 marker-side data; they live in `Fragments/{Lang}/PolarityItems.lean`.
-
-## TODO
-
-* `ExpletiveTrigger.triggerClass` is free text. The taxonomy it
-  approximates is `JinKoenig2021.TriggerSubclass`, whose cases the
-  Fragment labels do not currently match.
 
 ## References
 
@@ -90,8 +85,8 @@ def asymmetrySubtypeOfISO (iso : String) :
 /-- A lexical trigger of expletive negation together with the negator it
 licenses: Italian *prima che … non*, Mandarin *pà … bié*. -/
 structure ExpletiveTrigger where
-  /-- The trigger's semantic class. -/
-  triggerClass : String
+  /-- The trigger's concept in [jin-koenig-2021]'s taxonomy. -/
+  triggerClass : _root_.Negation.ENConcept
   /-- The triggering lexical item. -/
   triggerForm : String
   /-- The negator appearing under the trigger. -/
