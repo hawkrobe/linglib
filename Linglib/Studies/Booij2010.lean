@@ -29,8 +29,9 @@ unification (`on-` prefixation composed with `V-baar`).
   Head Rule) yet override locally (NN allows a recursive modifier, AN does not)
 * `werkbaar_overrides` — the CxM default-inheritance demand site: `werkbaar`
   overrides the `-baar` schema's transitivity default
-* `onbaar_unifies` — two word-formation schemas unify into `on-V-baar`, no listed
-  intermediate required
+* `onbaar_unifies`, `onbaarSchema_instantiates_iff` — two word-formation schemas
+  unify into `on-V-baar`, whose instances are exactly their common instances, no
+  listed intermediate required
 -/
 
 namespace Booij2010
@@ -97,16 +98,16 @@ theorem carlessness_unifies :
 /-- The stored `-ness` nouns, feeding the schema's two roles. -/
 def nessLexicon : Set (NessSlot → Flat Atom) := {baldness, awareness}
 
-/-- The schema licenses the novel coin `carlessness`: the open base slot takes
-the unlisted adjective, and the pinned affix slot takes only its attested
-filler `-ness`. The affix slot is not open, so this is `Generates`, not full
-productivity. -/
-theorem carlessness_generates : nessSchema.Generates nessLexicon carlessness := by
-  refine ⟨ness_instantiates rfl, ?_⟩
-  intro v hv
-  cases v with
-  | base => exact absurd rfl hv
-  | affix => exact ⟨baldness, Set.mem_insert _ _, ness_instantiates rfl, rfl⟩
+/-- The `-ness` schema is productive: its one variable, the base slot, is open. -/
+theorem nessSchema_isProductive : nessSchema.IsProductive := by
+  rintro (_ | _) h
+  exacts [Set.mem_singleton _, absurd h (by decide)]
+
+/-- The schema licenses the novel coin `carlessness` over the stored nouns: the
+open base slot takes the unlisted adjective, and the affix slot is a constant.
+Being productive, the schema generates every instance whatever is stored. -/
+theorem carlessness_generates : nessSchema.Generates nessLexicon carlessness :=
+  nessSchema_isProductive.generates_iff.2 carlessness_instantiates
 
 /-- The relational role over the same schema: `awareness` is listed and
 instantiates it — the paper's two functions of a schema, expressing the
@@ -216,27 +217,40 @@ inductive BaarAtom | on | baar
 inductive OnbaarSlot | pre | base | suf
   deriving DecidableEq, Fintype
 
-/-- The `on-A` schema body: prefix pinned to `on-`, base open. -/
-def onBody : OnbaarSlot → Flat BaarAtom
-  | .pre => ↑BaarAtom.on
-  | .base => ⊥
-  | .suf => ⊥
+/-- The `on-A` schema: prefix pinned to `on-`, base open. -/
+def onSchema : Schema OnbaarSlot (Flat BaarAtom) where
+  body
+    | .pre => ↑BaarAtom.on
+    | .base => ⊥
+    | .suf => ⊥
+  opens := {.base}
 
-/-- The `V-baar` schema body: suffix pinned to `-baar`, base open. -/
-def baarBody : OnbaarSlot → Flat BaarAtom
-  | .pre => ⊥
-  | .base => ⊥
-  | .suf => ↑BaarAtom.baar
+/-- The `V-baar` schema: suffix pinned to `-baar`, base open. -/
+def baarSchema : Schema OnbaarSlot (Flat BaarAtom) where
+  body
+    | .pre => ⊥
+    | .base => ⊥
+    | .suf => ↑BaarAtom.baar
+  opens := {.base}
 
-/-- The unified `on-V-baar` schema body: both affixes pinned, base open. -/
-def onbaarBody : OnbaarSlot → Flat BaarAtom
-  | .pre => ↑BaarAtom.on
-  | .base => ⊥
-  | .suf => ↑BaarAtom.baar
+/-- The unified `on-V-baar` schema: both affixes pinned, base open. -/
+def onbaarSchema : Schema OnbaarSlot (Flat BaarAtom) where
+  body
+    | .pre => ↑BaarAtom.on
+    | .base => ⊥
+    | .suf => ↑BaarAtom.baar
+  opens := {.base}
 
-/-- The `on-` and `V-baar` schema bodies unify into the `on-V-baar` body — the
+/-- The `on-` and `V-baar` descriptions unify into the `on-V-baar` description — the
 schema unification `(16)`, with no intermediate `V-baar` word required. -/
-theorem onbaar_unifies : PartialUnify.unify onBody baarBody = some onbaarBody := by decide
+theorem onbaar_unifies :
+    PartialUnify.unify onSchema.body baarSchema.body = some onbaarSchema.body := by decide
+
+/-- The unified schema's instances are exactly the words that are at once `on-`
+prefixed and `-baar` suffixed: the content of coining `onbedwingbaar` directly. -/
+theorem onbaarSchema_instantiates_iff {w : OnbaarSlot → Flat BaarAtom} :
+    onbaarSchema.Instantiates w ↔ onSchema.Instantiates w ∧ baarSchema.Instantiates w :=
+  Schema.instantiates_iff_of_unify_eq_some onbaar_unifies
 
 /-! ### Further constructional phenomena (prose)
 
