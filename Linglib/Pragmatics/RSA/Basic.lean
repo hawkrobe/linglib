@@ -529,6 +529,17 @@ theorem familyListener_apply_singleton_eq_zero (L : Λ → Kernel U W) (α : ℝ
     (hp : speaker α cost (L p.2) p.1 {u} = 0) : familyListener L α cost μ u {p} = 0 := by
   rw [familyListener_apply_singleton L α cost hu, hp, mul_zero, ENNReal.zero_div]
 
+/-- The state marginal of the family listener is positive at a state exactly when some latent
+pairs a positive prior with a positively produced utterance. -/
+theorem familyListener_fst_apply_singleton_ne_zero_iff [Fintype Λ] (L : Λ → Kernel U W) (α : ℝ)
+    (cost : U → ℝ≥0∞) {u : U} (hu : (familySpeaker L α cost ∘ₘ μ) {u} ≠ 0) (w : W) :
+    (familyListener L α cost μ u).fst {w} ≠ 0
+      ↔ ∃ l, μ {(w, l)} ≠ 0 ∧ speaker α cost (L l) w {u} ≠ 0 := by
+  rw [Measure.fst_apply_singleton, ne_eq, Finset.sum_eq_zero_iff]
+  simp only [Finset.mem_univ, true_implies, familyListener_apply_singleton L α cost hu,
+    ENNReal.div_eq_zero_iff, mul_eq_zero, not_forall, not_or]
+  exact ⟨λ ⟨l, h⟩ => ⟨l, h.1⟩, λ ⟨l, h⟩ => ⟨l, h, measure_ne_top _ _⟩⟩
+
 /-- Event comparison for the family listener reduces to prior-weighted member speaker
 sums. -/
 theorem familyListener_real_lt_iff (L : Λ → Kernel U W) (α : ℝ) (cost : U → ℝ≥0∞) {u : U}

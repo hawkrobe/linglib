@@ -1,46 +1,92 @@
+import Linglib.Pragmatics.RSA.Basic
 import Mathlib.Probability.ProbabilityMassFunction.Basic
 
 /-!
-# QUD-projected aggregation for RSA pragmatic models
+# QUD-projected listeners
 
-A Question Under Discussion (QUD) partitions worlds via a projection
-`project : G → W → β` — two worlds are QUD-equivalent under goal `g`
-iff they project to the same value. The QUD-projected aggregation of
-a non-negative weight function sums the weight over the equivalence class.
+A communicative goal projects the meaning space onto the topic under discussion, and a speaker
+with that goal is informative about the listener's mass on the cell of the intended meaning
+rather than on the meaning itself: the projected literal listener of [kao-etal-2014-metaphor]
+(eq. 1), [kao-etal-2014-hyperbole] (eq. 6) and [kao-goodman-2015]. `RSA.projListener` is that
+listener as a kernel, so that with the goal as a state-side latent the goal-indexed speaker is
+`RSA.familySpeaker` of the projected listeners and the listener who marginalizes the goal is
+`RSA.familyListener` ([kao-etal-2014-hyperbole] eq. 10).
 
-This is the architectural primitive shared by all Kao-family RSA models
-(metaphor, hyperbole, irony): the speaker's "informativeness" along a
-QUD dimension is the projected weight at the literally-true world. A
-literally-false utterance can have positive QUD-projected mass at a
-world `w` iff some QUD-equivalent world `w'` is literally true — this
-is the **architectural mechanism for nonliteral interpretation**.
+A literally false utterance projects positive mass onto a meaning exactly when the meaning's
+cell contains a literally true one (`RSA.projListener_apply_singleton_ne_zero_iff`), the
+mechanism of nonliteral interpretation; a goal that projects injectively leaves the literal
+listener unchanged (`RSA.projListener_apply_singleton_of_injective`).
 
-## Main definition
+## References
 
-* `RSA.QUD.proj project weight g w` — sum of `weight w'` over all `w'`
-  with `project g w' = project g w`.
-
-## Main theorems
-
-* `RSA.QUD.self_le_proj` — the world is in its own equivalence class,
-  so `weight w ≤ proj project weight g w`.
-* `RSA.QUD.proj_pos_iff_exists_class_member` — positive iff some
-  equivalence-class member has positive weight (the headline lemma for
-  nonliteral interpretation).
-* `RSA.QUD.proj_le_total` — bounded by the total weight.
-* `RSA.QUD.proj_le_one_of_pmf` — when the weight is a PMF, bounded by 1.
-
-## Anchoring
-
-QUD-projection in RSA was introduced by [goodman-stuhlmueller-2013]
-and is used by [kao-bergen-goodman-2014] (metaphor),
-[kao-wu-bergen-goodman-2014] (hyperbole), [kao-goodman-2015]
-(irony), and the broader Kao family.
+* [kao-etal-2014-metaphor], [kao-etal-2014-hyperbole], [kao-goodman-2015]
 -/
 
-namespace RSA.QUD
-
+open MeasureTheory ProbabilityTheory
 open scoped ENNReal
+
+namespace RSA
+
+section ProjListener
+
+variable {W U G X : Type*} [MeasurableSpace W] [MeasurableSpace U] [Countable U]
+  [MeasurableSingletonClass U] [Fintype W] [MeasurableSingletonClass W]
+
+/-- The QUD-projected listener: at each meaning, the listener's mass on the meaning's cell under
+the goal's projection. It is not normalized; the speaker's best response reads only its
+weights. -/
+noncomputable def projListener (project : G → W → X) (L : Kernel U W) (g : G) : Kernel U W :=
+  Kernel.ofFunOfCountable λ u => ∑ w, L u (project g ⁻¹' {project g w}) • Measure.dirac w
+
+variable (project : G → W → X) (L : Kernel U W) (g : G) (u : U) (w : W)
+
+@[simp] theorem projListener_apply_singleton :
+    projListener project L g u {w} = L u (project g ⁻¹' {project g w}) := by
+  rw [projListener, Kernel.ofFunOfCountable_apply]
+  exact Measure.sum_smul_dirac_apply_singleton (λ w' => L u (project g ⁻¹' {project g w'})) w
+
+/-- The cell's mass is the sum of the listener's masses over the cell. -/
+theorem projListener_apply_singleton_eq_sum [DecidableEq X] :
+    projListener project L g u {w}
+      = ∑ w' ∈ Finset.univ.filter (λ w' => project g w' = project g w), L u {w'} := by
+  rw [projListener_apply_singleton, sum_measure_singleton]
+  congr 1
+  ext w'
+  simp
+
+/-- The meaning lies in its own cell. -/
+theorem apply_singleton_le_projListener : L u {w} ≤ projListener project L g u {w} := by
+  rw [projListener_apply_singleton]
+  exact measure_mono (Set.singleton_subset_iff.mpr rfl)
+
+/-- The projected listener is a subprobability wherever the listener is. -/
+theorem projListener_apply_singleton_le_one (h : ∀ u s, L u s ≤ 1) :
+    projListener project L g u {w} ≤ 1 := by
+  rw [projListener_apply_singleton]
+  exact h u _
+
+/-- A meaning receives positive projected mass exactly when its cell contains a meaning of
+positive literal mass. -/
+theorem projListener_apply_singleton_ne_zero_iff [DecidableEq X] :
+    projListener project L g u {w} ≠ 0 ↔ ∃ w', project g w' = project g w ∧ L u {w'} ≠ 0 := by
+  rw [projListener_apply_singleton_eq_sum, ne_eq, Finset.sum_eq_zero_iff]
+  simp
+
+/-- A goal that projects injectively leaves the literal listener unchanged. -/
+theorem projListener_apply_singleton_of_injective (h : Function.Injective (project g)) :
+    projListener project L g u {w} = L u {w} := by
+  rw [projListener_apply_singleton, ← Set.image_singleton, h.preimage_image]
+
+end ProjListener
+
+end RSA
+
+/-! ### QUD-projected aggregation of weights
+
+The finite-sum form of the projection over weight functions, consumed by the studies not yet
+on the kernel pipeline. -/
+
+namespace RSA.QUD
 
 /-- QUD-projected aggregation: sum of `weight w'` over the
 QUD-equivalence class of `w` under projection `project g`. -/
@@ -58,14 +104,8 @@ theorem self_le_proj : weight w ≤ proj project weight g w :=
   Finset.single_le_sum (f := weight) (fun _ _ => zero_le)
     (Finset.mem_filter.mpr ⟨Finset.mem_univ _, rfl⟩)
 
-/-- **Headline lemma**: the QUD-projected aggregation is positive iff
-some world in the same QUD-equivalence class has positive weight.
-
-This is the architectural mechanism for nonliteral interpretation
-across the Kao family (metaphor, hyperbole, irony): a literally-false
-utterance has positive projected mass at world `w` iff there exists a
-QUD-equivalent world `w'` (potentially differing on non-QUD dimensions)
-that IS literally true. -/
+/-- The QUD-projected aggregation is positive iff some world in the same QUD-equivalence class
+has positive weight. -/
 theorem proj_pos_iff_exists_class_member :
     0 < proj project weight g w ↔
       ∃ w' ∈ (Finset.univ : Finset W).filter
