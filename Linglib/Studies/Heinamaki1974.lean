@@ -1,20 +1,24 @@
 import Linglib.Studies.Anscombe1964
 
 /-!
-# Heinämäki (1974): English temporal connectives
+# Heinämäki (1974): Semantics of English Temporal Connectives
 
-[heinamaki-1974] gives truth conditions for the English temporal connectives in terms of
-the times at which the two clauses hold. On run-time denotations they are relations between
-the clauses' time traces: *A when B* asserts that the two hold at a common time (`when_`),
-*A while B* that every time of `A` is a time of `B` (`while_`), *A whenever B* the converse
-containment (`whenever`), *A since B* that some time of `B` lies at or before every time of
-`A` (`since`), and *A by B* that some time of `A` lies at or before every time of `B`
-(`by_`). *Since* and *by* are the non-strict counterparts of [anscombe-1964]'s quantificational
-*before*, with the roles of the clauses exchanged, so *before ever* entails *by* but not
-conversely (`before_by`, `by_not_before`). The existential connectives commit the speaker to both
-clauses (`when_veridical_complement`, `since_veridical_complement`, `by_veridical_main`);
-the universal ones do so only given the clause they quantify over
-(`while_veridical_complement`), and are not symmetric (`while_not_symm`).
+This file formalizes the truth conditions [heinamaki-1974] gives for the English temporal
+connectives in terms of the times at which the two clauses hold. On run-time denotations
+they are relations between the clauses' time traces: *A when B* asserts that the two hold at
+a common time (`when_`), *A while B* that every time of `A` is a time of `B` (`while_`),
+*A whenever B* the converse containment (`whenever`), *A since B* that some time of `B` lies
+at or before every time of `A` (`since`), and *A by B* that some time of `A` lies at or
+before every time of `B` (`by_`). *Since* and *by* are the non-strict counterparts of
+[anscombe-1964]'s quantificational *before*, with the roles of the clauses exchanged, so
+*before ever* entails *by* but not conversely (`before_by`, `by_not_before`). The
+existential connectives commit the speaker to both clauses; the universal ones do so only
+given the clause they quantify over, and are not symmetric (`while_not_symm`).
+
+## References
+
+* [heinamaki-1974]
+* [anscombe-1964]
 -/
 
 namespace Heinamaki1974
@@ -39,31 +43,31 @@ def since : Prop := ∃ t ∈ timeTrace B, ∀ t' ∈ timeTrace A, t ≤ t'
 def by_ : Prop := ∃ t ∈ timeTrace A, ∀ t' ∈ timeTrace B, t ≤ t'
 
 theorem when_comm : when_ A B ↔ when_ B A :=
-  ⟨fun ⟨t, h₁, h₂⟩ => ⟨t, h₂, h₁⟩, fun ⟨t, h₁, h₂⟩ => ⟨t, h₂, h₁⟩⟩
+  ⟨λ ⟨t, h₁, h₂⟩ => ⟨t, h₂, h₁⟩, λ ⟨t, h₁, h₂⟩ => ⟨t, h₂, h₁⟩⟩
 
 theorem when_veridical_complement : when_ A B → ∃ t, t ∈ timeTrace B :=
-  fun ⟨t, _, ht⟩ => ⟨t, ht⟩
+  λ ⟨t, _, ht⟩ => ⟨t, ht⟩
 
-theorem when_veridical_main : when_ A B → ∃ t, t ∈ timeTrace A := fun ⟨t, ht, _⟩ => ⟨t, ht⟩
+theorem when_veridical_main : when_ A B → ∃ t, t ∈ timeTrace A := λ ⟨t, ht, _⟩ => ⟨t, ht⟩
 
 theorem while_veridical_complement (hne : ∃ t, t ∈ timeTrace A) :
     while_ A B → ∃ t, t ∈ timeTrace B :=
-  fun hw => hne.imp fun _ ht => hw _ ht
+  λ hw => hne.imp λ _ ht => hw _ ht
 
 theorem when_of_while (hne : ∃ t, t ∈ timeTrace A) : while_ A B → when_ A B :=
-  fun hw => hne.imp fun _ ht => ⟨ht, hw _ ht⟩
+  λ hw => hne.imp λ _ ht => ⟨ht, hw _ ht⟩
 
 theorem when_of_whenever (hne : ∃ t, t ∈ timeTrace B) : whenever A B → when_ A B :=
-  fun hw => hne.imp fun _ ht => ⟨hw _ ht, ht⟩
+  λ hw => hne.imp λ _ ht => ⟨hw _ ht, ht⟩
 
 theorem since_veridical_complement : since A B → ∃ t, t ∈ timeTrace B :=
-  fun ⟨t, ht, _⟩ => ⟨t, ht⟩
+  λ ⟨t, ht, _⟩ => ⟨t, ht⟩
 
-theorem by_veridical_main : by_ A B → ∃ t, t ∈ timeTrace A := fun ⟨t, ht, _⟩ => ⟨t, ht⟩
+theorem by_veridical_main : by_ A B → ∃ t, t ∈ timeTrace A := λ ⟨t, ht, _⟩ => ⟨t, ht⟩
 
 /-- *Before ever* is strict *by*. -/
 theorem before_by : Anscombe.beforeEver A B → by_ A B :=
-  fun ⟨t, ht, h⟩ => ⟨t, ht, fun t' ht' => (h t' ht').le⟩
+  λ ⟨t, ht, h⟩ => ⟨t, ht, λ t' ht' => (h t' ht').le⟩
 
 /-- *A before B* by the reference point: some time of `A` precedes `B`'s first time `lb`. -/
 def before (A : RunTimes T) (lb : T) : Prop := ∃ t ∈ timeTrace A, t < lb
@@ -105,7 +109,7 @@ theorem by_not_before :
   have h5 : (pure 5 : NonemptyInterval ℤ).fst = 5 ∧ (pure 5 : NonemptyInterval ℤ).snd = 5 :=
     ⟨rfl, rfl⟩
   obtain ⟨t, ⟨i, hi, h1, h2⟩, hall⟩ := h {pure 5} {pure 5}
-    ⟨5, ⟨pure 5, rfl, le_rfl, le_rfl⟩, fun _ ⟨j, hj, hts, _⟩ => by
+    ⟨5, ⟨pure 5, rfl, le_rfl, le_rfl⟩, λ _ ⟨j, hj, hts, _⟩ => by
       rw [Set.mem_singleton_iff] at hj; subst hj; exact hts⟩
   rw [Set.mem_singleton_iff] at hi; subst hi
   have := hall 5 ⟨pure 5, rfl, le_rfl, le_rfl⟩
