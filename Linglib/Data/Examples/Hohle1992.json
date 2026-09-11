@@ -1,0 +1,1890 @@
+[
+  {
+    "id": "hohle1992_ex1b",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(1b)"
+    },
+    "language": "stan1295",
+    "primaryText": "(das stimmt) Karl schreibt ein DREHbuch",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(that's right) Karl is writing a screenplay",
+    "context": "ich habe Hanna gefragt, was Karl grade macht, und sie hat die alberne Behauptung aufgestellt, daß er ein DREHbuch schreibt",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "focus",
+        "content"
+      ],
+      [
+        "accent",
+        "object"
+      ]
+    ],
+    "comment": "B repeats A's constituent accent, presenting a known thought as new.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex2b",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(2b)"
+    },
+    "language": "stan1295",
+    "primaryText": "(das stimmt) Karl SCHREIBT ein Drehbuch",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(that's right) Karl IS writing a screenplay",
+    "context": "ich habe Hanna gefragt, was Karl grade macht, und sie hat die alberne Behauptung aufgestellt, daß er ein DREHbuch schreibt",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "verbPosition",
+        "second"
+      ]
+    ],
+    "comment": "Paraphrase (3): es trifft zu / ist wahr, daß Karl ein Drehbuch schreibt.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex4a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(4a)"
+    },
+    "language": "stan1295",
+    "primaryText": "(nein) Karl HAT nicht gelogen",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(no) Karl did NOT lie",
+    "context": "Karl hat BESTIMMT nicht gelogen",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "verbPosition",
+        "second"
+      ],
+      [
+        "verbContent",
+        "temporal auxiliary"
+      ]
+    ],
+    "comment": "Paraphrase (4c): es ist wahr, daß Karl nicht gelogen hat.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex5a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(5a)"
+    },
+    "language": "stan1295",
+    "primaryText": "(doch) ich HÖRE mal auf",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(yes I do) I WILL stop",
+    "context": "hörst du denn NIE auf?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "verbPosition",
+        "second"
+      ],
+      [
+        "verbContent",
+        "particle verb"
+      ]
+    ],
+    "comment": "Paraphrase (5c): es ist sicher, daß ich mal aufhöre. Content focus on the particle verb would accent auf.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex6a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(6a)"
+    },
+    "language": "stan1295",
+    "primaryText": "(aber ja) sie MACHT ihm den Garaus",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(oh yes) she WILL finish him off",
+    "context": "ich kann mir nicht vorstellen, daß sie ihn wirklich umbringen will",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "verbPosition",
+        "second"
+      ],
+      [
+        "verbContent",
+        "idiom"
+      ]
+    ],
+    "comment": "Paraphrase (6c): es ist wirklich so, daß sie ihm den Garaus macht.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex7a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(7a)"
+    },
+    "language": "stan1295",
+    "primaryText": "HÖRT sie denn damit auf?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "IS she going to stop?",
+    "context": "ich habe Hanna gebeten, damit AUFzuhören",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "clauseType",
+        "polar interrogative"
+      ]
+    ],
+    "comment": "Paraphrase (7c): ist es denn wahr, daß sie damit aufhört?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex8a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(8a)"
+    },
+    "language": "stan1295",
+    "primaryText": "HAT er den Hund denn getreten?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "DID he kick the dog?",
+    "context": "es heißt, daß Karl den HUND getreten hat",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "clauseType",
+        "polar interrogative"
+      ]
+    ],
+    "comment": "Paraphrase (8c): ist es denn wahr, daß er den Hund getreten hat?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex9a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(9a)"
+    },
+    "language": "stan1295",
+    "primaryText": "(und?) LESEN Sie ihm die Leviten?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(well?) ARE you going to read him the riot act?",
+    "context": "ich habe Karl gedroht, daß ich ihm die LEVITEN lesen werde",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "clauseType",
+        "polar interrogative"
+      ]
+    ],
+    "comment": "Paraphrase (9c): ist es wahr, daß Sie ihm die Leviten lesen?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex10a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(10a)"
+    },
+    "language": "stan1295",
+    "primaryText": "wann HÖRT sie denn damit auf?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "when IS she going to stop?",
+    "context": "ich habe Hanna gebeten, damit AUFzuhören",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "clauseType",
+        "wh-interrogative"
+      ]
+    ],
+    "comment": "Paraphrase (10c): für welche x ist es denn zutreffend, daß sie zum Zeitpunkt x damit aufhört?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex11a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(11a)"
+    },
+    "language": "stan1295",
+    "primaryText": "wer HAT den Hund denn getreten?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "who DID kick the dog?",
+    "context": "ich habe den Hund nicht getreten, und Karl hat es auch nicht getan",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "clauseType",
+        "wh-interrogative"
+      ]
+    ],
+    "comment": "Paraphrase (11c): für welches x ist es denn zutreffend, daß die Person x den Hund getreten hat?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex12a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(12a)"
+    },
+    "language": "stan1295",
+    "primaryText": "warum NIMMT er denn nicht teil?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "why ISN'T he taking part?",
+    "context": "daß Karl nicht teilnimmt, hat nichts mit seiner Kurzsichtigkeit zu tun",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "clauseType",
+        "wh-interrogative"
+      ],
+      [
+        "negation",
+        "in background"
+      ]
+    ],
+    "comment": "Paraphrase (12c): für welches x ist es denn zutreffend, daß er wegen x nicht teilnimmt? The negation belongs to the known thought.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex45a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(45a)"
+    },
+    "language": "stan1295",
+    "primaryText": "wenn Hanna meint, Karl schreibt ein DREHBUCH, (dann sollte sie sich schon mal um einen Produzenten kümmern)",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "if Hanna thinks Karl is writing a SCREENPLAY, (then she should start looking for a producer)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "focus",
+        "content"
+      ],
+      [
+        "embedded",
+        "verb-second"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex45b",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(45b)"
+    },
+    "language": "stan1295",
+    "primaryText": "wenn Hanna meint, Karl SCHREIBT ein Drehbuch, (dann …)",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "if Hanna thinks Karl IS writing a screenplay, (then …)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "embedded",
+        "verb-second"
+      ]
+    ],
+    "comment": "Paraphrase (46): wenn Hanna meint, daß es wahr ist, daß Karl ein Drehbuch schreibt. Embedded verum focus is incompatible with reading VERUM as an illocution-type operator.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex47a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(47a)"
+    },
+    "language": "stan1295",
+    "primaryText": "daß Karl behauptet, sie HÖRT damit auf, wundert mich überhaupt nicht",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "that Karl claims she IS stopping doesn't surprise me at all",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "embedded",
+        "verb-second"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex47b",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(47b)"
+    },
+    "language": "stan1295",
+    "primaryText": "jemand, der denkt, sie LIEST uns die Leviten, kann sie nicht sehr gut kennen",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "someone who thinks she IS going to read us the riot act can't know her very well",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "embedded",
+        "verb-second"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex48a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(48a)"
+    },
+    "language": "stan1295",
+    "primaryText": "ich bin sicher, DAß sie mal in Rom war (aber ob das KÜRZLICH war, weiß ich nicht)",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I'm sure that she WAS in Rome at some point (but whether that was recently I don't know)",
+    "context": "weißt du, ob Hanna kürzlich in ROM war?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "complementizer"
+      ],
+      [
+        "verumType",
+        "C"
+      ]
+    ],
+    "comment": "Paraphrase (49a): ich bin sicher, daß es der Fall ist, daß sie mal in Rom war. The continuation in parentheses can hardly be omitted.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex48b",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(48b)"
+    },
+    "language": "stan1295",
+    "primaryText": "ich weiß nicht, OB sie in Rom war (aber WENN das der Fall ist, muß es vor kurzer ZEIT gewesen sein)",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I don't know whether she WAS in Rome (but if she was, it must have been recently)",
+    "context": "weißt du, ob Hanna kürzlich in ROM war?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "complementizer"
+      ],
+      [
+        "verumType",
+        "C"
+      ]
+    ],
+    "comment": "Paraphrase (49b): ich weiß nicht, ob es der Fall ist, daß sie in Rom war.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex50a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(50a)"
+    },
+    "language": "stan1295",
+    "primaryText": "(ja) ich denke, er HÖRT damit auf",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(yes) I think he IS stopping",
+    "context": "vielleicht hört Karl damit AUF",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "verumType",
+        "F"
+      ]
+    ],
+    "comment": "Same effect as (50b): the thought that Karl is stopping is highlighted as true.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex50b",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(50b)"
+    },
+    "language": "stan1295",
+    "primaryText": "(ja) ich denke, DAß er damit aufhört",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(yes) I think that he IS stopping",
+    "context": "vielleicht hört Karl damit AUF",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "complementizer"
+      ],
+      [
+        "verumType",
+        "C"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex51a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(51a)"
+    },
+    "language": "stan1295",
+    "primaryText": "aber Hanna meint, DAß er gelogen hat",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "but Hanna thinks that he DID lie",
+    "context": "Karl hat BESTIMMT nicht gelogen",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "complementizer"
+      ],
+      [
+        "verumType",
+        "C"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex51b",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(51b)"
+    },
+    "language": "stan1295",
+    "primaryText": "aber Hanna meint, er HAT gelogen",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "but Hanna thinks he DID lie",
+    "context": "Karl hat BESTIMMT nicht gelogen",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "verumType",
+        "F"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex52a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(52a)"
+    },
+    "language": "stan1295",
+    "primaryText": "ich bin sicher, sie WAR mal in Rom (aber ob das KÜRZLICH war, weiß ich nicht)",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I'm sure she WAS in Rome at some point (but whether that was recently I don't know)",
+    "context": "weißt du, ob Hanna kürzlich in ROM war?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "verumType",
+        "F"
+      ]
+    ],
+    "comment": "The verb-second variant of (48a), with the same need for the continuation.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex55a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(55a)"
+    },
+    "language": "stan1295",
+    "primaryText": "aber Hanna denkt, er HÖRT ihr nicht zu",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "but Hanna thinks he is NOT listening to her",
+    "context": "ich hoffe, daß Karl ihr ZUhört",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "verumType",
+        "F"
+      ],
+      [
+        "negation",
+        "in focus"
+      ],
+      [
+        "scoping",
+        "negation over VERUM"
+      ]
+    ],
+    "comment": "Paraphrase (56a): Hanna denkt, daß es nicht zutrifft, daß er ihr zuhört. The negation joins the highlighted part; the background thought is known from the context.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex55b",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(55b)"
+    },
+    "language": "stan1295",
+    "primaryText": "aber Hanna denkt, DAß er ihr nicht zuhört",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "but Hanna thinks that he is NOT listening to her",
+    "context": "ich hoffe, daß Karl ihr ZUhört",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "complementizer"
+      ],
+      [
+        "verumType",
+        "C"
+      ],
+      [
+        "negation",
+        "in background"
+      ],
+      [
+        "scoping",
+        "VERUM over negation"
+      ]
+    ],
+    "comment": "Marked # in the paper: contextually inappropriate. Paraphrase (56b): Hanna denkt, daß es zutrifft, daß er ihr nicht zuhört; the negated thought is not known from the context, and VERUM on daß cannot scope under the negation.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex57a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(57a)"
+    },
+    "language": "stan1295",
+    "primaryText": "aber Karl HAT kein Drehbuch geschrieben",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "but Karl did NOT write a screenplay",
+    "context": "es heißt, daß Karl ein DREHBUCH geschrieben hat",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "verumType",
+        "F"
+      ],
+      [
+        "negation",
+        "in focus"
+      ],
+      [
+        "scoping",
+        "negation over VERUM"
+      ]
+    ],
+    "comment": "Paraphrase (57c): aber es trifft nicht zu, daß Karl ein Drehbuch geschrieben hat.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex58a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(58a)"
+    },
+    "language": "stan1295",
+    "primaryText": "(aber nein) sie MACHT mir nicht den Garaus",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(oh no) she is NOT going to finish me off",
+    "context": "Hanna macht dir bestimmt den GARAUS",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "verumType",
+        "F"
+      ],
+      [
+        "negation",
+        "in focus"
+      ],
+      [
+        "scoping",
+        "negation over VERUM"
+      ]
+    ],
+    "comment": "Paraphrase (58c): es ist nicht der Fall, daß sie mir den Garaus macht.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex59a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(59a)"
+    },
+    "language": "stan1295",
+    "primaryText": "(wieso lächerlich?) HÖRT sie denn nicht damit auf?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(why ridiculous?) ISN'T she going to stop?",
+    "context": "Karl hat die lächerliche Behauptung aufgestellt, daß sie damit AUFhört",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "verumType",
+        "F"
+      ],
+      [
+        "negation",
+        "in focus"
+      ],
+      [
+        "scoping",
+        "negation over VERUM"
+      ],
+      [
+        "clauseType",
+        "polar interrogative"
+      ]
+    ],
+    "comment": "Paraphrase (59c): trifft es denn nicht zu, daß sie damit aufhört?",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex62a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(62a)"
+    },
+    "language": "stan1295",
+    "primaryText": "aber Hanna denkt, er hört ihr NICHT zu",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "but Hanna thinks he is NOT listening to her",
+    "context": "ich hoffe, daß Karl ihr ZUhört",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2"
+      ],
+      [
+        "focus",
+        "negation"
+      ],
+      [
+        "accent",
+        "negation particle"
+      ]
+    ],
+    "comment": "Also appropriate in the context of (55c), but only the negation is highlighted, not the negated truth predicate.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex64a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(64a)"
+    },
+    "language": "stan1295",
+    "primaryText": "(ja) er HÖRT ihr zu",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(yes) he IS listening to her",
+    "context": "ich hoffe, er hört ihr ZU",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.3"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex64b",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(64b)"
+    },
+    "language": "stan1295",
+    "primaryText": "(nein) er hört ihr NICHT zu",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(no) he is NOT listening to her",
+    "context": "ich hoffe, er hört ihr ZU",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.3"
+      ],
+      [
+        "focus",
+        "negation"
+      ],
+      [
+        "accent",
+        "negation particle"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex64c",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(64c)"
+    },
+    "language": "stan1295",
+    "primaryText": "(nein) er HÖRT ihr nicht zu",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(no) he is NOT listening to her",
+    "context": "ich hoffe, er hört ihr ZU",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.3"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "negation",
+        "in focus"
+      ]
+    ],
+    "comment": "VERUM and the negation are highlighted together, as in the paraphrase (65): es ist nicht der Fall, daß er ihr zuhört. Hence VERUM and negation are not mutually exclusive alternatives; the alternatives are the combinations of WF elements.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex68a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(68a)"
+    },
+    "language": "stan1295",
+    "primaryText": "ich hoffe, sie HÖRT damit auf",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I hope she IS stopping",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "verbPosition",
+        "second"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex68b",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(68b)"
+    },
+    "language": "stan1295",
+    "primaryText": "ich hoffe, daß sie damit aufHÖRT",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I hope that she is stopping",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7"
+      ],
+      [
+        "focus",
+        "none"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "verbPosition",
+        "final"
+      ]
+    ],
+    "comment": "No verum focus with the finite verb in final position; at most a form focus, possible as a reply to (69) du hoffst wohl, daß sie damit AUFhören.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex68c",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(68c)"
+    },
+    "language": "stan1295",
+    "primaryText": "ich hoffe, daß sie damit AUFhört",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I hope that she is stopping",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7"
+      ],
+      [
+        "focus",
+        "content"
+      ],
+      [
+        "accent",
+        "verb particle"
+      ],
+      [
+        "verbPosition",
+        "final"
+      ]
+    ],
+    "comment": "Focus projection over the particle-verb complex, never verum focus.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex70a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(70a)"
+    },
+    "language": "stan1295",
+    "primaryText": "Hanna fürchtet, er LIEST ihr die Leviten",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Hanna fears he IS going to read her the riot act",
+    "context": "ich kann mir nicht vorstellen, daß er Hanna die LEVITEN liest",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "verbPosition",
+        "second"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex70b",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(70b)"
+    },
+    "language": "stan1295",
+    "primaryText": "Hanna fürchtet, daß er ihr die Leviten LIEST",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Hanna fears that he is going to read her the riot act",
+    "context": "ich kann mir nicht vorstellen, daß er Hanna die LEVITEN liest",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7"
+      ],
+      [
+        "focus",
+        "none"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "verbPosition",
+        "final"
+      ]
+    ],
+    "comment": "Marked # in the paper: the verb-final form has no verum-focus effect and is inappropriate in the context of (70c).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex71a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(71a)"
+    },
+    "language": "stan1295",
+    "primaryText": "Karl meint, sie IST in Rom",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Karl thinks she IS in Rome",
+    "context": "ich möchte wissen, ob sie in ROM ist",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "copula"
+      ],
+      [
+        "verbPosition",
+        "second"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex71b",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(71b)"
+    },
+    "language": "stan1295",
+    "primaryText": "Karl meint, daß sie in Rom IST",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Karl thinks that she IS in Rome",
+    "context": "ich möchte wissen, ob sie in ROM ist",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "copula"
+      ],
+      [
+        "verbPosition",
+        "final"
+      ]
+    ],
+    "comment": "Many speakers find no noteworthy difference from (71a): the copula behaves unlike full verbs, presumably for lexical reasons.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex72a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(72a)"
+    },
+    "language": "stan1295",
+    "primaryText": "Hanna meint, er SCHREIBT ein Drehbuch",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Hanna thinks he IS writing a screenplay",
+    "context": "ich möchte wissen, ob Karl ein DREHBUCH schreibt",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "verbPosition",
+        "second"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex72b",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(72b)"
+    },
+    "language": "stan1295",
+    "primaryText": "Hanna meint, daß er ein Drehbuch SCHREIBT",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Hanna thinks that he is writing a screenplay",
+    "context": "ich möchte wissen, ob Karl ein DREHBUCH schreibt",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "finite verb"
+      ],
+      [
+        "verbPosition",
+        "final"
+      ]
+    ],
+    "comment": "Judgments diverge: many speakers find the verb-final form inappropriate as verum focus, others find it halfway possible. The paper proceeds on the assumption that there is no verum focus on a verb-final finite verb.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex77a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(77a)"
+    },
+    "language": "stan1295",
+    "primaryText": "aber jeder, der WO das Buch gelesen hat, ist davon begeistert",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "but everyone who HAS read the book is enthusiastic about it",
+    "context": "ich kenne nur wenige Leute, die (wo) dieses Buch gelesen haben",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "9.1"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "relative particle"
+      ],
+      [
+        "verumType",
+        "C"
+      ],
+      [
+        "variety",
+        "dialect with relative particle"
+      ]
+    ],
+    "comment": "Paraphrase (77c): jeder x für den gilt, daß es zutrifft, daß x das Buch gelesen hat.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex78a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(78a)"
+    },
+    "language": "stan1295",
+    "primaryText": "jetzt möchte ich wissen, mit wem DAß du getanzt hast",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "now I want to know who you DID dance with",
+    "context": "du hast mir erzählt, mit wem (daß) du NICHT getanzt hast",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "9.1"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "complementizer"
+      ],
+      [
+        "verumType",
+        "C"
+      ],
+      [
+        "variety",
+        "dialect with interrogative particle"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex79a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(79a)"
+    },
+    "language": "stan1295",
+    "primaryText": "jetzt möchte ich wissen, wen DAß du reingelegt hast",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "now I want to know who you DID trick",
+    "context": "du hast mir erzählt, wen (daß) du NICHT reingelegt hast",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "9.1"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "complementizer"
+      ],
+      [
+        "verumType",
+        "C"
+      ],
+      [
+        "variety",
+        "dialect with interrogative particle"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex80a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(80a)"
+    },
+    "language": "stan1295",
+    "primaryText": "jeder, DER wo das Buch gelesen hat, ist davon begeistert",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "everyone who has read the book is enthusiastic about it",
+    "context": "ich kenne nur wenige Leute, die (wo) dieses Buch gelesen haben",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "9.1"
+      ],
+      [
+        "focus",
+        "none"
+      ],
+      [
+        "accent",
+        "relative pronoun"
+      ],
+      [
+        "variety",
+        "dialect with relative particle"
+      ]
+    ],
+    "comment": "With the particle present, accent on the pronoun has no verum-focus effect and is probably inappropriate in the context of (77b), as (76) predicts.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex81",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(81)"
+    },
+    "language": "stan1295",
+    "primaryText": "WER hat den Hund (denn) getreten?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "WHO kicked the dog?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "9.1"
+      ],
+      [
+        "focus",
+        "none"
+      ],
+      [
+        "accent",
+        "interrogative pronoun"
+      ],
+      [
+        "verbPosition",
+        "second"
+      ]
+    ],
+    "comment": "No verum focus on the pronoun in front of a fronted finite verb; with denn the example is not fully acceptable ((29) in §3.2).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex82a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(82a)"
+    },
+    "language": "stan1295",
+    "primaryText": "aber jeder, DER das Buch gelesen hat, ist davon begeistert",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "but everyone who HAS read the book is enthusiastic about it",
+    "context": "ich kenne nur wenige Leute, die dieses Buch gelesen haben",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "9.2"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "relative pronoun"
+      ],
+      [
+        "verumType",
+        "RW"
+      ]
+    ],
+    "comment": "The standard German counterpart of (77a) with exactly the same highlighting effect, triggered by accent on the relative pronoun.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex83a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(83a)"
+    },
+    "language": "stan1295",
+    "primaryText": "jetzt möchte ich wissen, WEN du reingelegt hast",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "now I want to know who you DID trick",
+    "context": "du hast mir erzählt, wen du NICHT reingelegt hast",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "9.2"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "interrogative pronoun"
+      ],
+      [
+        "verumType",
+        "RW"
+      ]
+    ],
+    "comment": "Paraphrase (83c): wissen, für welches x es zutrifft, daß du die Person x reingelegt hast.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex84a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(84a)"
+    },
+    "language": "stan1295",
+    "primaryText": "aber die paar Leute, mit DENEN sie getanzt hat, sind völlig hingerissen",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "but the few people she DID dance with are completely enthralled",
+    "context": "Hanna tanzt nur ganz selten",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "9.2"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "relative phrase"
+      ],
+      [
+        "verumType",
+        "RW"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex85a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(85a)"
+    },
+    "language": "stan1295",
+    "primaryText": "jetzt möchte ich wissen, mit WEM du getanzt hast",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "now I want to know who you DID dance with",
+    "context": "du hast mir erzählt, mit wem du NICHT getanzt hast",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "9.2"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "interrogative phrase"
+      ],
+      [
+        "verumType",
+        "RW"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex86a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(86a)"
+    },
+    "language": "stan1295",
+    "primaryText": "aber ein Autor, DESSEN Werk ich gelesen habe, ist Chr. Morgenstern",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "but one author whose work I HAVE read is Chr. Morgenstern",
+    "context": "ich habe von den meisten Schriftstellern so gut wie nichts gelesen",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "9.2"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "relative phrase"
+      ],
+      [
+        "verumType",
+        "RW"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hohle1992_ex87a",
+    "source": {
+      "bibkey": "hohle-1992",
+      "paperLabel": "(87a)"
+    },
+    "language": "stan1295",
+    "primaryText": "nun sag doch mal, WESSEN Aufsatz du gelesen hast",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "now tell me whose paper you DID read",
+    "context": "du hast also weder Karls noch Hannas Aufsatz gelesen",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "9.2"
+      ],
+      [
+        "focus",
+        "verum"
+      ],
+      [
+        "accent",
+        "interrogative phrase"
+      ],
+      [
+        "verumType",
+        "RW"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  }
+]

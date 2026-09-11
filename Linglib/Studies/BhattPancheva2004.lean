@@ -77,7 +77,6 @@ open Minimalist.DegreeMovement
    isHeimKennedy_no_dependency isHeimKennedy_dependency_requires_high_DegP
    williams_scope_correlation williams_exempt_when_no_binding)
 open Degree
-open Polarity (LicensingContext)
 
 variable {Entity : Type*}
 
@@ -168,22 +167,6 @@ theorem npGQ_principal_eq_sComp_thanClause
       Comparison.gt.overSet μ (Set.Iic (μ b)) := by
   rw [npComparativeGQ_principal_eq_gtOverSet_singleton,
       ← thanClause_reduces_to_max]
-
-/-! ### Polarity asymmetry preserved -/
-
-/-- The B&P reduction is a coincidence of *values*, not of *signatures*.
-    The licensing-context registry continues to classify the
-    NP-comparative slot as `.mono` (Boolean hom over GQs) and the
-    S-comparative slot as `.antiAdd` (over degree sets). The reduction
-    cannot be used to argue that NP-comparatives are NPI environments,
-    because the reduction's range is the S-comparative's degree-set
-    domain, not the NP-comparative's GQ domain. The proof packages
-    Hoeksema's two registry theorems so that any future change to
-    either signature surfaces here as a recompile failure. -/
-theorem reduction_preserves_polarity_signatures :
-    LicensingContext.phrasalComparative.properties.strawsonSignature = .mono ∧
-    LicensingContext.clausalComparative.properties.strawsonSignature = .antiAdd :=
-  ⟨comparativeNP_signature_monotone, comparativeS_signature_anti_additive⟩
 
 /-! ### Nonconservativity forces late merger (B&P §7)
 
