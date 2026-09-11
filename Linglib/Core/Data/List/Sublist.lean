@@ -65,4 +65,27 @@ theorem pair_sublist_iff_idxOf_lt (hnd : l.Nodup) :
   ⟨fun h => ⟨h.subset (by simp), h.subset (by simp), idxOf_lt_of_pair_sublist hnd h⟩,
    fun ⟨ha, hb, hlt⟩ => pair_sublist_of_idxOf_lt ha hb hlt⟩
 
+/-- On a `Nodup` list, an element positioned between two elements of an infix belongs to the
+infix. -/
+theorem IsInfix.mem_of_idxOf_le_of_le {m : List α} {z : α} (hm : m <:+: l) (hnd : l.Nodup)
+    (ha : a ∈ m) (hb : b ∈ m) (hz : z ∈ l) (haz : l.idxOf a ≤ l.idxOf z)
+    (hzb : l.idxOf z ≤ l.idxOf b) : z ∈ m := by
+  obtain ⟨s, t, rfl⟩ := hm
+  rw [nodup_append, nodup_append] at hnd
+  obtain ⟨⟨_, _, hsm⟩, _, hst⟩ := hnd
+  have has : a ∉ s := λ h => hsm a h a ha rfl
+  have hbs : b ∉ s := λ h => hsm b h b hb rfl
+  rw [idxOf_append_of_mem (mem_append_right _ ha), idxOf_append_of_notMem has] at haz
+  rw [idxOf_append_of_mem (mem_append_right _ hb), idxOf_append_of_notMem hbs] at hzb
+  rcases mem_append.mp hz with hzsm | hzt
+  · rcases mem_append.mp hzsm with hzs | hzm
+    · have := idxOf_lt_length_iff.mpr hzs
+      rw [idxOf_append_of_mem hzsm, idxOf_append_of_mem hzs] at haz
+      omega
+    · exact hzm
+  · have hzsm : z ∉ s ++ m := λ h => hst z h z hzt rfl
+    have := idxOf_lt_length_iff.mpr hb
+    rw [idxOf_append_of_notMem hzsm, length_append] at hzb
+    omega
+
 end List

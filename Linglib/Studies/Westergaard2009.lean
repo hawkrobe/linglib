@@ -367,10 +367,12 @@ def de_decl : V2Datum :=
     +Fin° in Table 3.1) but not to C, surfacing clause-finally because
     Westergaard tacitly assumes a head-final FinP for German embedded
     clauses (Vikner-style V-to-I where the I-position itself is final).
-    Alternative analyses (Haider 2010; [harizanov-gribanova-2019])
-    derive the same surface order without V-to-Fin, leaving the verb
-    in its base position. The codebase records the Westergaard +Fin°
-    side; see `HarizanovGribanova2019.lean` for the formal contrast. -/
+    [haider-2010] derives the same surface order without V-to-Fin,
+    leaving the verb in its base position, and for
+    [harizanov-gribanova-2019] T and V unify by postsyntactic
+    amalgamation rather than syntactic movement (see
+    `HarizanovGribanova2019.lean`). The codebase records the
+    Westergaard +Fin° side. -/
 def de_emb : V2Datum :=
   { sentence := "... dass die Kinder diesen Film gesehen haben"
     language := "German"
