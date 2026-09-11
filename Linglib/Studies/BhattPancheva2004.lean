@@ -69,7 +69,6 @@ types.
 namespace BhattPancheva2004
 
 open Hoeksema1983
-open Heim2001 (IntensionalVerbDatum intensionalVerbData)
 open Minimalist (ChainPosition)
 open Minimalist.DegreeMovement
   (DegreeClauseLateMergerBleeds scopeOK_above_binder_bleeds
@@ -118,9 +117,9 @@ theorem hkc_blocks_QP_above_bound_DegP
     is reconstructed from B&P §5.2's discussion of Williams 1974 plus
     Heim 2001's observation about which verbs admit the DegP-high
     reading. -/
-def bpHypothesizedBinding (d : IntensionalVerbDatum)
+def bpHypothesizedBinding (d : Heim2001.Row)
     (degHeight intHeight : Nat) : ScopeBinding :=
-  ⟨degHeight, intHeight, intHeight, !d.highDegPAvailable⟩
+  ⟨degHeight, intHeight, intHeight, !d.highDegP⟩
 
 /-- Non-vacuous bridge to [heim-2001]: under B&P's hypothesis
     (`bpHypothesizedBinding`) that high-DegP-blocking iff binding-tail,
@@ -130,14 +129,14 @@ def bpHypothesizedBinding (d : IntensionalVerbDatum)
     high-DegP.
 
     This theorem is *not* a constant — both sides depend on the
-    datum's `highDegPAvailable` field. The empirical content is that
+    row's `highDegP` field. The empirical content is that
     B&P's binding hypothesis correctly predicts Heim's per-verb
     blocking pattern. -/
 theorem bp_hkc_matches_heim_intensional_data :
-    ∀ d ∈ intensionalVerbData,
-      IsHeimKennedy (bpHypothesizedBinding d 0 1) ↔ d.highDegPAvailable = true := by
+    ∀ d ∈ Heim2001.rows,
+      IsHeimKennedy (bpHypothesizedBinding d 0 1) ↔ d.highDegP = true := by
   intro d _
-  cases h : d.highDegPAvailable <;>
+  cases h : d.highDegP <;>
     simp [bpHypothesizedBinding, IsHeimKennedy, h]
 
 /-! ### Reduction to the Hoeksema registry ([hoeksema-1983] §3.9)

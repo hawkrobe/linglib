@@ -1,366 +1,309 @@
+import Linglib.Data.Examples.Heim2001
 import Linglib.Semantics.Degree.Quantifier
 import Linglib.Syntax.Minimalist.Movement.DegreeMovement
-import Mathlib.Order.ConditionallyCompleteLattice.Basic
-import Mathlib.Order.Interval.Set.Disjoint
+import Mathlib.Data.Fintype.Lattice
+import Mathlib.Data.Set.Card
+import Mathlib.Data.Set.Finite.Basic
+import Mathlib.Order.Bounds.Basic
+import Mathlib.Tactic.FinCases
 
 /-!
-# Heim 2001: Degree Operators and Scope
-[heim-2001] [heim-1999] [kennedy-1999] [percus-2000]
-[von-stechow-1984] [fox-hackl-2006] [schwarzschild-wilkinson-2002]
-[beck-2001] [kennedy-mcnally-2005] [szabolcsi-1986]
+# Heim (2001): Degree Operators and Scope
 
-Irene Heim. Degree Operators and Scope. In C. Féry & W. Sternefeld (eds.),
-*Audiatur Vox Sapientiae*, Akademie Verlag, pp. 214–239.
+This file formalizes [heim-2001], the question of how far a degree phrase moves at LF, put to
+the max semantics of the comparative, (5) and (6): *-er than t* applies to a degree predicate
+and says that its greatest degree exceeds *t*. Over a monotone adjective the degree predicate a
+quantified subject yields is the set of degrees at which the quantifier holds of the entities
+reaching them (`degreeSet`), so the high-DegP LF (10b) asserts that its maximum exceeds the
+standard (`HighDegP`) and the low-DegP LF (10a) that the quantifier holds of the entities
+exceeding the standard (`LowDegP`). Section 2.1 shows the two coincide for every monotone
+increasing quantifier over individuals or worlds, (8) to (16), whenever the maxima are defined,
+fn. 6: the high LF entails the low one (`lowDegP_of_highDegP`), and the converse holds on a finite
+domain (`highDegP_of_lowDegP`), the shortest or tallest girl attaining the maximum. Under a
+monotone decreasing operator the degree set is an upper set and has no maximum, (17) to (19), so
+the high LF is a presupposition failure (`not_isGreatest_degreeSet_of_antitone`); under *exactly
+two* the maximum exists but is that of *at least two*, (20)
+(`isGreatest_atLeast_of_isGreatest_exactly`). Section 2.2 finds the cases where the LFs differ:
+with an *exactly*-differential or *less* the high LF of a universal subject is true and the
+sentence false when the shortest girl meets the standard and the others exceed it, (22) and
+(24) (`exactly_high_not_low`, `less_high_not_low`), which the constraint (27), Kennedy's
+generalization, excludes (`kennedy_generalization`). Section 2.3 finds intensional verbs
+ambiguous, (28) to (32), except epistemic *might* and the neg-raising verbs, (33) and (34)
+(`rows`); for the latter the maximum redefined as the greatest lower bound of the degrees at
+which the predicate is false, (35), which agrees with (6) in the bivalent case (`isGLB_compl_Iic`),
+makes the high LF equivalent to the low one, (36) (`negRaising_collapse`). Section 3.2's entry
+for *-est*, (59), uses its complement twice and is the absolute superlative
+(`est_iff_absoluteSuperlative`).
 
-## Headline
+## Implementation notes
 
-Heim's central §2.1 observation — that the high-DegP and low-DegP LFs for
-↑monotone operators are truth-conditionally equivalent — reduces to two
-lattice identities:
+* A quantifier is a predicate on sets of entities, monotone increasing or decreasing; a
+  quantifier over worlds is the same object over a type of worlds, which is how the intensional
+  cases (15), (16), (28) to (31) fall under the theorems.
+* The maximum of (6) is `IsGreatest`, so a high-DegP truth condition carries its definedness
+  presupposition as an existence conjunct; the paper's undefined maxima are the negations of
+  those conjuncts.
+* Section 2.4's de re and de dicto than-clauses, (37) to (42), are recorded as rows; the
+  diagnosis is [von-stechow-1984]'s and is formalized in `Studies/VonStechow1984.lean`.
 
-* `sSup (⋃ᵢ Iic (μ i)) = ⨆ᵢ μ i`   (mathlib's `sSup_iUnion_Iic`)
-* `sSup (⋂ᵢ Iic (μ i)) = ⨅ᵢ μ i`   (`sSup_iInter_Iic_eq_iInf` below)
+## References
 
-Heim's max-set semantics for `-er` (paper exs. (5)–(6)) computes the high-DegP
-truth condition as `sSup (matrixSet) > threshold`. The lattice identities
-reduce this to the low-DegP threshold form (with an attainment caveat for
-the ∀ direction; see `heim_collapse_forall_low_to_high`, paper fn. 6).
-
-For the negation case (paper exs. 17–19), `no_isGreatest_Ioi_of_noMaxOrder`
-shows the high-DegP LF is undefined: the negated degree set `Ioi (μ a)` has
-no greatest element on any `NoMaxOrder` scale. This is the same mechanism
-behind [fox-hackl-2006] negative islands.
-
-Kennedy's generalization (paper ex. (27)) is formalized via the
-Heim-Kennedy Constraint substrate
-(`Syntax/Minimalist/DegreeMovement.lean`),
-re-exported below.
-
-## Section map
-
-| Paper                                | This file                                    |
-|--------------------------------------|----------------------------------------------|
-| §2.1 monotone collapse (8–16)        | `heim_collapse_exists`, `heim_collapse_forall_*` |
-| §2.1 negation (17–19)                | `no_isGreatest_Ioi_of_noMaxOrder`, `negation_high_DegP_undefined` |
-| §2.2 Kennedy's generalization (20–27) | `nonMonotone_blocked_by_HKC`                |
-| §2.3 intensional verbs (28–36)       | `intensionalVerbData` + `BhattPancheva2004` HKC bridge |
-| §2.4 Russell ambiguity (37–42)       | docstring only — see `VonStechow1984.lean`   |
-| §3.2 semantic ellipsis (58–64)       | reference to `Degree.absoluteSuperlative` |
-
-## What this file does NOT formalize
-
-- **Heim's free-world-variable implementation of de re/de dicto**
-  (paper §2.4, ex. (40); Percus-style binding per [percus-2000] and
-  Abusch 1994 — paper fn. 16). The alternative ACTUALLY-operator
-  implementation (von Stechow 1984) is formalized in
-  `VonStechow1984.lean` over the substrate's
-  `Semantics/Reference/Rigidity.lean`. The two implementations agree on the diagnosis
-  (Russell ambiguity is de re/de dicto, not DegP-scope) but differ on the
-  LF mechanism.
-- **Typed ⟨dt,t⟩ DegP-as-generalized-quantifier denotations** over
-  arbitrary degree predicates. For monotone adjectives the max-set
-  computation reduces to the substrate's measure-function comparative
-  `Degree.comparativeSem` (via `isGreatest_Iic`).
-
-## Recent literature this file does not engage
-
-- [schwarzschild-wilkinson-2002] interval semantics, which Heim's
-  own fn. 21 flags as work that may force her to revise basic assumptions
-- [beck-2001] intervention effects, parallel to Kennedy's generalization
-- [kennedy-mcnally-2005] closed-scale adjective behavior under negation
-
+* [heim-2001]
+* [von-stechow-1984]
+* [heim-1999]
 -/
 
 namespace Heim2001
 
-open Set
-open Degree (comparativeSem)
-open Minimalist.DegreeMovement
-  (IsHeimKennedy ScopeBinding not_isHeimKennedy_QP_above_bound_DegP)
+open Set Degree Minimalist.DegreeMovement Data.Examples
 
-/-! ### Degree-scope configurations
+variable {Entity D : Type*} [LinearOrder D]
 
-Heim's DegP-scope LFs for quantified subjects, and the §2.1 monotone
-collapse arguments. -/
+/-! ### The two LFs of a quantified comparative -/
 
-/-- Low-DegP for ∀ ("every girl is taller than 4ft"): each restrictor
-entity exceeds the threshold. -/
-def lowDegP_forall {Entity D : Type*} [LinearOrder D]
-    (restrictor : Entity → Prop) (μ : Entity → D) (threshold : D) : Prop :=
-  ∀ x, restrictor x → μ x > threshold
+/-- The degree predicate of a quantifier `Q` over a monotone adjective with measure `μ`: the
+degrees `d` such that `Q` holds of the entities reaching `d`, the set of (10b) and (12b). -/
+def degreeSet (Q : Set Entity → Prop) (μ : Entity → D) : Set D := {d | Q {x | d ≤ μ x}}
 
-/-- High-DegP for ∀: the maximal degree to which every restrictor entity
-measures exceeds the threshold. -/
-def highDegP_forall {Entity D : Type*} [LinearOrder D]
-    (restrictor : Entity → Prop) (μ : Entity → D) (threshold : D) : Prop :=
-  ∃ d, (∀ x, restrictor x → μ x ≥ d) ∧ d > threshold
+/-- The low-DegP LF, (10a): the quantifier holds of the entities exceeding the standard. -/
+def LowDegP (Q : Set Entity → Prop) (μ : Entity → D) (t : D) : Prop := Q {x | t < μ x}
 
-/-- Low-DegP for ∃: some restrictor entity exceeds the threshold. -/
-def lowDegP_exists {Entity D : Type*} [LinearOrder D]
-    (restrictor : Entity → Prop) (μ : Entity → D) (threshold : D) : Prop :=
-  ∃ x, restrictor x ∧ μ x > threshold
+/-- The high-DegP LF, (10b): the maximum of the degree set is defined and exceeds the standard. -/
+def HighDegP (Q : Set Entity → Prop) (μ : Entity → D) (t : D) : Prop :=
+  ∃ m, IsGreatest (degreeSet Q μ) m ∧ t < m
 
-/-- High-DegP for ∃: some degree above the threshold is reached by some
-restrictor entity. -/
-def highDegP_exists {Entity D : Type*} [LinearOrder D]
-    (restrictor : Entity → Prop) (μ : Entity → D) (threshold : D) : Prop :=
-  ∃ d, (∃ x, restrictor x ∧ μ x ≥ d) ∧ d > threshold
+/-- The degree set of a monotone increasing quantifier is a lower set. -/
+theorem degreeSet_mem_of_le {Q : Set Entity → Prop} (hQ : Monotone Q) {μ : Entity → D}
+    {d d' : D} (hd : d ∈ degreeSet Q μ) (h : d' ≤ d) : d' ∈ degreeSet Q μ :=
+  hQ (λ _ hx => le_trans h hx) hd
 
-/-- Monotone collapse (§2.1), ∀ + more: high-DegP entails low-DegP. -/
-theorem forall_more_high_to_low {Entity D : Type*} [LinearOrder D]
-    (restrictor : Entity → Prop) (μ : Entity → D) (threshold : D) :
-    highDegP_forall restrictor μ threshold →
-    lowDegP_forall restrictor μ threshold := by
-  rintro ⟨d, hall, hgt⟩ x hR
-  exact lt_of_lt_of_le hgt (hall x hR)
+/-- Section 2.1: the high LF entails the low one for every monotone increasing quantifier. -/
+theorem lowDegP_of_highDegP {Q : Set Entity → Prop} (hQ : Monotone Q) {μ : Entity → D} {t : D}
+    (h : HighDegP Q μ t) : LowDegP Q μ t := by
+  obtain ⟨m, hm, htm⟩ := h
+  exact hQ (λ _ hx => lt_of_lt_of_le htm hx) hm.1
 
-/-- Monotone collapse (§2.1), ∀ + more: low-DegP entails high-DegP given
-a minimal witness. -/
-theorem forall_more_low_to_high {Entity D : Type*} [LinearOrder D]
-    (restrictor : Entity → Prop) (μ : Entity → D) (threshold : D)
-    (w : Entity) (hw : restrictor w)
-    (hmin : ∀ x, restrictor x → μ x ≥ μ w) :
-    lowDegP_forall restrictor μ threshold →
-    highDegP_forall restrictor μ threshold := by
-  intro hlow
-  exact ⟨μ w, hmin, hlow w hw⟩
+/-- Section 2.1, fn. 6: the low LF entails the high one when the maxima are defined, as on a
+finite domain, where the shortest girl of (10) and the tallest girl of (12) attain them. -/
+theorem highDegP_of_lowDegP [Finite Entity] {Q : Set Entity → Prop} (hQ : Monotone Q)
+    (hQ₀ : ¬ Q ∅) {μ : Entity → D} {t : D} (h : LowDegP Q μ t) : HighDegP Q μ t := by
+  classical
+  -- every degree in the set is bounded by a measured degree in the set
+  have step : ∀ d ∈ degreeSet Q μ, ∃ x, d ≤ μ x ∧ μ x ∈ degreeSet Q μ := by
+    intro d hd
+    have hne : ∃ x, d ≤ μ x := by
+      by_contra hno
+      exact hQ₀ (by
+        have hd' : Q {x | d ≤ μ x} := hd
+        rwa [eq_empty_of_forall_notMem (s := {x | d ≤ μ x}) λ x hx => hno ⟨x, hx⟩] at hd')
+    have : Nonempty {x // d ≤ μ x} := ⟨⟨hne.choose, hne.choose_spec⟩⟩
+    obtain ⟨⟨x₀, hx₀⟩, hmin⟩ := Finite.exists_min (λ x : {x // d ≤ μ x} => μ x.1)
+    refine ⟨x₀, hx₀, ?_⟩
+    have : {x | μ x₀ ≤ μ x} = {x | d ≤ μ x} := by
+      ext x
+      exact ⟨λ hx => le_trans hx₀ hx, λ hx => hmin ⟨x, hx⟩⟩
+    show Q {x | μ x₀ ≤ μ x}
+    rw [this]
+    exact hd
+  -- the low LF puts the least exceeding measure into the degree set
+  have hne : ∃ x, t < μ x := by
+    by_contra hno
+    exact hQ₀ (by
+      have h' : Q {x | t < μ x} := h
+      rwa [eq_empty_of_forall_notMem (s := {x | t < μ x}) λ x hx => hno ⟨x, hx⟩] at h')
+  have : Nonempty {x // t < μ x} := ⟨⟨hne.choose, hne.choose_spec⟩⟩
+  obtain ⟨⟨x₀, hx₀⟩, hmin⟩ := Finite.exists_min (λ x : {x // t < μ x} => μ x.1)
+  have hd₀ : μ x₀ ∈ degreeSet Q μ := hQ (λ x hx => hmin ⟨x, hx⟩) h
+  -- the greatest measured degree in the set is its maximum
+  have : Nonempty {x // μ x ∈ degreeSet Q μ} := ⟨⟨x₀, hd₀⟩⟩
+  obtain ⟨⟨m, hm⟩, hmax⟩ := Finite.exists_max (λ x : {x // μ x ∈ degreeSet Q μ} => μ x.1)
+  refine ⟨μ m, ⟨hm, λ d hd => ?_⟩, lt_of_lt_of_le hx₀ (hmax ⟨x₀, hd₀⟩)⟩
+  obtain ⟨y, hdy, hy⟩ := step d hd
+  exact le_trans hdy (hmax ⟨y, hy⟩)
 
-/-- Monotone collapse, ∃ + more: the two scope readings coincide. -/
-theorem exists_more_scope_collapse {Entity D : Type*} [LinearOrder D]
-    (restrictor : Entity → Prop) (μ : Entity → D) (threshold : D) :
-    lowDegP_exists restrictor μ threshold ↔
-    highDegP_exists restrictor μ threshold := by
-  constructor
-  · rintro ⟨x, hR, hgt⟩
-    exact ⟨μ x, ⟨x, hR, le_refl _⟩, hgt⟩
-  · rintro ⟨d, ⟨x, hR, hge⟩, hgt⟩
-    exact ⟨x, hR, lt_of_lt_of_le hgt hge⟩
+/-- The universal subject of (8) and the necessity operator of (15a) as quantifiers. -/
+def forallOver (R : Set Entity) : Set Entity → Prop := λ S => R ⊆ S
 
-/-- The negated degree predicate `{d : ¬(μ(a) ≥ d)}` — the degrees `a`
-lacks (p. 220); extensionally `Set.Ioi (μ a)`. -/
-def negatedDegreePredicate {Entity D : Type*} [Preorder D]
-    (μ : Entity → D) (a : Entity) (d : D) : Prop :=
-  ¬ (μ a ≥ d)
+/-- The existential subject of (11) and the possibility operator of (15b). -/
+def existsOver (R : Set Entity) : Set Entity → Prop := λ S => (R ∩ S).Nonempty
 
-/-- The negated degree set is `Set.Ioi (μ a)`. -/
-theorem negatedDegreePredicate_eq {Entity D : Type*} [LinearOrder D]
-    (μ : Entity → D) (a : Entity) (d : D) :
-    negatedDegreePredicate μ a d ↔ d > μ a := by
-  simp [negatedDegreePredicate, not_le]
+theorem forallOver_monotone (R : Set Entity) : Monotone (forallOver R) :=
+  λ _ _ h hR => hR.trans h
 
-/-! ### Lattice substrate (the Galois identity) -/
+theorem existsOver_monotone (R : Set Entity) : Monotone (existsOver R) :=
+  λ _ _ h ⟨x, hx⟩ => ⟨x, hx.1, h hx.2⟩
 
-/-- The intersection of principal downsets is the principal downset of the
-infimum. Pure order-theoretic fact, dual to mathlib's `iUnion_Iic`. -/
-private theorem iInter_Iic_eq_Iic_iInf {α : Type*} [CompleteLattice α]
-    {ι : Type*} (f : ι → α) :
-    ⋂ i, Iic (f i) = Iic (⨅ i, f i) := by
-  ext x; simp [le_iInf_iff]
+/-- (10): on a finite domain with a nonempty restrictor, the two LFs of *every girl is taller
+than 4 feet* coincide. -/
+theorem forall_collapse [Finite Entity] {R : Set Entity} (hR : R.Nonempty) (μ : Entity → D)
+    (t : D) : LowDegP (forallOver R) μ t ↔ HighDegP (forallOver R) μ t :=
+  ⟨highDegP_of_lowDegP (forallOver_monotone R) (λ h => hR.ne_empty (subset_empty_iff.1 h)),
+    lowDegP_of_highDegP (forallOver_monotone R)⟩
 
-/-- **`sSup ∘ ⋂ ∘ Iic = ⨅`** on a `CompleteLinearOrder`. The dual of
-mathlib's `sSup_iUnion_Iic`. Heim's high-DegP-over-∀ truth condition
-reduces to this two-step calculation (`⋂Iic = Iic ⨅`, then `csSup_Iic`). -/
-theorem sSup_iInter_Iic_eq_iInf {α : Type*} [CompleteLinearOrder α]
-    {ι : Type*} (f : ι → α) :
-    sSup (⋂ i, Iic (f i)) = ⨅ i, f i := by
-  rw [iInter_Iic_eq_Iic_iInf]; exact csSup_Iic
+/-- (12): likewise for *some girl*. -/
+theorem exists_collapse [Finite Entity] (R : Set Entity) (μ : Entity → D) (t : D) :
+    LowDegP (existsOver R) μ t ↔ HighDegP (existsOver R) μ t :=
+  ⟨highDegP_of_lowDegP (existsOver_monotone R) (λ ⟨_, _, h⟩ => h),
+    lowDegP_of_highDegP (existsOver_monotone R)⟩
 
-/-! ### Heim §2.1: monotone collapse (exs 8–16) -/
+/-! ### Monotone decreasing and non-monotone operators -/
 
-/-- **Heim §2.1, ∃-side**: high-DegP and low-DegP collapse for existentially
-quantified subjects ("Some girl is taller than 4 feet"). Re-export of the
-substrate identity; the underlying lattice content is `sSup_iUnion_Iic`:
-`sSup (⋃ᵢ Iic (μ i)) > t ↔ ∃ i, μ i > t`. -/
-theorem heim_collapse_exists {α D : Type*} [LinearOrder D]
-    (R : α → Prop) (μ : α → D) (t : D) :
-    lowDegP_exists R μ t ↔ highDegP_exists R μ t :=
-  exists_more_scope_collapse R μ t
-
-/-- **Heim §2.1, ∀-side, lattice form**: the high-DegP-over-∀ max-set
-`{d | ∀ i, d ≤ μ i}` has truth condition `(⨅ᵢ μ i) > t`. -/
-theorem highDegP_forall_lattice {α : Type*} [CompleteLinearOrder α]
-    {ι : Type*} (μ : ι → α) (t : α) :
-    sSup {d | ∀ i, d ≤ μ i} > t ↔ ⨅ i, μ i > t := by
-  have h : {d : α | ∀ i, d ≤ μ i} = ⋂ i, Iic (μ i) := by ext; simp
-  rw [h, sSup_iInter_Iic_eq_iInf]
-
-/-- **Heim §2.1, ∀-side collapse, forward direction** (paper p. 218,
-discussion of ex. (10)): high-DegP entails low-DegP. Always holds.
-Substrate re-export. -/
-theorem heim_collapse_forall_high_to_low {α D : Type*} [LinearOrder D]
-    (R : α → Prop) (μ : α → D) (t : D) :
-    highDegP_forall R μ t → lowDegP_forall R μ t :=
-  forall_more_high_to_low R μ t
-
-/-- **Heim §2.1, ∀-side collapse, reverse direction** (paper fn. 6: holds
-"whenever these maxima are defined"): low-DegP entails high-DegP given an
-attaining witness — the "shortest girl" of Heim's prose. Substrate
-re-export. -/
-theorem heim_collapse_forall_low_to_high {α D : Type*} [LinearOrder D]
-    (R : α → Prop) (μ : α → D) (t : D) (w : α)
-    (hw : R w) (hmin : ∀ x, R x → μ x ≥ μ w) :
-    lowDegP_forall R μ t → highDegP_forall R μ t :=
-  forall_more_low_to_high R μ t w hw hmin
-
-/-! ### Heim §2.1: negation (exs 17–19) -/
-
-/-- **The lattice fact behind Heim's negation argument**: on any
-`NoMaxOrder` linear order, the strict upper interval `Ioi a` has no
-greatest element. This is the same mechanism behind [fox-hackl-2006]
-negative islands. -/
-theorem no_isGreatest_Ioi_of_noMaxOrder {α : Type*} [LinearOrder α]
-    [NoMaxOrder α] (a : α) :
-    ¬ ∃ m, IsGreatest (Ioi a) m := by
+/-- Under a monotone decreasing operator the degree set is an upper set, so on a scale without a
+top it has no maximum: the high LFs (17c), (18c) and (19c) are presupposition failures. -/
+theorem not_isGreatest_degreeSet_of_antitone [NoMaxOrder D] {Q : Set Entity → Prop}
+    (hQ : Antitone Q) (μ : Entity → D) : ¬ ∃ m, IsGreatest (degreeSet Q μ) m := by
   rintro ⟨m, hm, hub⟩
-  obtain ⟨n, hn⟩ := exists_gt m
-  exact absurd (hub (lt_trans hm hn)) (not_le.mpr hn)
+  obtain ⟨m', hmm'⟩ := exists_gt m
+  have : m' ∈ degreeSet Q μ := hQ (λ _ hx => le_trans hmm'.le hx) hm
+  exact absurd (hub this) (not_le.2 hmm')
 
-/-- **Heim §2.1, ex. (17c)**: the high-DegP LF for "Mary isn't taller than
-4 feet" computes `max{d | ¬ tall(m,d)} > 4` = `max(Ioi (μ m)) > 4`, which
-is undefined on any `NoMaxOrder` scale. The high-DegP LF is therefore
-ruled out by presupposition failure.
+/-- Negation, (17c): the degrees to which Mary is not tall. -/
+theorem negation_high_undefined [NoMaxOrder D] (μ : Entity → D) (a : Entity) :
+    ¬ ∃ m, IsGreatest (degreeSet (λ S => a ∉ S) μ) m :=
+  not_isGreatest_degreeSet_of_antitone (Q := λ S => a ∉ S) (λ _ _ h hT hS => hT (h hS)) μ
 
-Heim p. 220 generalizes this to `at most n` (ex. 18) and to implicitly
-negative verbs like `refuse` (ex. 19) — both classified as
-"implicitly negative or monotone decreasing operators", not as
-neg-raising verbs (which are §2.3, exs (34)–(36)). -/
-theorem negation_high_DegP_undefined {Entity D : Type*} [LinearOrder D]
-    [NoMaxOrder D] (μ : Entity → D) (a : Entity) :
-    ¬ ∃ m, IsGreatest {d | negatedDegreePredicate μ a d} m := by
-  have h : {d | negatedDegreePredicate μ a d} = Ioi (μ a) := by
-    ext d
-    rw [mem_ofPred_eq, negatedDegreePredicate_eq]
-    rfl
-  rw [h]; exact no_isGreatest_Ioi_of_noMaxOrder (μ a)
+/-- *Exactly n* of the entities. -/
+def exactly (n : ℕ) : Set Entity → Prop := λ S => S.ncard = n
 
-/-! ### Heim §2.2: Kennedy's generalization (exs 20–27) -/
+/-- *At least n* of the entities. -/
+def atLeast (n : ℕ) : Set Entity → Prop := λ S => n ≤ S.ncard
 
-/-- **Kennedy's generalization** (paper ex. (27)): "If the scope of a
-quantificational DP contains the trace of a DegP, it also contains that
-DegP itself." Equivalently: a high-DegP LF in which the QP binds into
-the DegP's restrictor is illicit.
+/-- (20): the maximal degree to which exactly two girls are tall, when defined, is the maximal
+degree to which at least two girls are tall, so the high LF (20c) means *at least two*. -/
+theorem isGreatest_atLeast_of_isGreatest_exactly [Finite Entity] {n : ℕ} {μ : Entity → D}
+    {m : D} (h : IsGreatest (degreeSet (exactly n) μ) m) :
+    IsGreatest (degreeSet (atLeast n) μ) m := by
+  refine ⟨h.1.ge, λ d hd => ?_⟩
+  by_contra hdm
+  have hdm' : m < d := not_le.1 hdm
+  have hsub : {x | d ≤ μ x} ⊆ {x | m ≤ μ x} := λ x hx => le_trans hdm'.le hx
+  have hcard : {x | d ≤ μ x}.ncard ≤ {x | m ≤ μ x}.ncard := ncard_le_ncard hsub (toFinite _)
+  have hm : {x | m ≤ μ x}.ncard = n := h.1
+  have hd' : d ∈ degreeSet (exactly n) μ := le_antisymm (hm ▸ hcard) hd
+  exact absurd (h.2 hd') hdm
 
-Re-export of `not_isHeimKennedy_QP_above_bound_DegP` from the
-Minimalism–degree-semantics interface substrate. The exemplar binding
-`⟨degHeight := 0, qpHeight := 1, qpBindsDeg := true⟩` covers Heim's
-§2.2 examples uniformly: `exactly`-differentials (exs 20, 22),
-`less`-comparatives (24), and object-position quantifiers (25).
-[bhatt-pancheva-2004] §4 is the dedicated formalization; see
-`BhattPancheva2004.bp_hkc_matches_heim_intensional_data`. -/
-theorem nonMonotone_blocked_by_HKC (degH qpH : Nat) (h : degH < qpH) :
+/-! ### Exactly-differentials and less: the scope-sensitive cases -/
+
+/-- (22b): every girl is exactly the standard's height. -/
+def LowExactly (R : Set Entity) (μ : Entity → D) (t : D) : Prop := ∀ x ∈ R, μ x = t
+
+/-- (22c): the maximal degree to which every girl is tall is the standard. -/
+def HighExactly (R : Set Entity) (μ : Entity → D) (t : D) : Prop :=
+  IsGreatest (degreeSet (forallOver R) μ) t
+
+/-- (24b): every girl is less tall than the standard. -/
+def LowLess (R : Set Entity) (μ : Entity → D) (t : D) : Prop := ∀ x ∈ R, μ x < t
+
+/-- (24c): the maximal degree to which every girl is tall is below the standard. -/
+def HighLess (R : Set Entity) (μ : Entity → D) (t : D) : Prop :=
+  ∃ m, IsGreatest (degreeSet (forallOver R) μ) m ∧ m < t
+
+/-- Two girls, one exactly the standard's height in inches and one taller. -/
+private def heights : Fin 2 → ℕ
+  | 0 => 49
+  | 1 => 50
+
+private theorem isGreatest_heights : IsGreatest (degreeSet (forallOver univ) heights) 49 :=
+  ⟨λ x _ => by fin_cases x <;> simp [heights],
+    λ d hd => by simpa [heights] using (hd (mem_univ 0) : d ≤ heights 0)⟩
+
+/-- (22): the high LF is true and the low LF false when the shortest girl is exactly 4'1'' and
+another is taller, so *every girl is exactly 1'' taller than that* is false there and (22c) is no
+reading of it. -/
+theorem exactly_high_not_low :
+    HighExactly univ heights 49 ∧ ¬ LowExactly univ heights 49 :=
+  ⟨isGreatest_heights, λ h => by have := h 1 (mem_univ _); simp [heights] at this⟩
+
+/-- (24): the high LF of *every girl is less tall than that* says only that the shortest girl is,
+and is true where the sentence is false. -/
+theorem less_high_not_low : HighLess univ heights 50 ∧ ¬ LowLess univ heights 50 :=
+  ⟨⟨49, isGreatest_heights, by decide⟩, λ h => absurd (h 1 (mem_univ _)) (by simp [heights])⟩
+
+/-- Kennedy's generalization, (27): the scope of a quantificational DP that contains the trace of
+a DegP contains the DegP, the Heim–Kennedy constraint of the substrate; a DegP scoping above a DP
+that binds into it is illicit. -/
+theorem kennedy_generalization (degH qpH : ℕ) (h : degH < qpH) :
     ¬ IsHeimKennedy ⟨degH, qpH, qpH, true⟩ :=
   not_isHeimKennedy_QP_above_bound_DegP degH qpH h
 
-/-- The §2.2 examples instantiate `nonMonotone_blocked_by_HKC` at the
-exemplar binding `⟨0, 1, 1, true⟩` (high-DegP attempted; QP binds DegP). -/
-example : ¬ IsHeimKennedy ⟨0, 1, 1, true⟩ :=
-  nonMonotone_blocked_by_HKC 0 1 (by omega)
+/-! ### Intensional verbs -/
 
-/-! ### Heim §2.3: intensional verb data (exs 28–36) -/
-
-/-- Heim's classification of intensional verbs by whether they admit the
-high-DegP reading with `exactly`-differentials or `less`. Heim presents
-this 4-vs-4 split as descriptive, **not** explanatory: paper p. 226
-("I am unable to spell out any concrete explanations for the unambiguity
-of (33–36), and it is only a hope that it will follow without specific
-stipulations about DegP-movement").
-
-[bhatt-pancheva-2004] §5.2 derives the split from the Heim-Kennedy
-Constraint plus the assumption that intensional subjects bind into the
-degree predicate; see `BhattPancheva2004.bp_hkc_matches_heim_intensional_data`. -/
-inductive IntensionalVerbClass where
-  /-- Necessity / requirement modals. Heim §2.3 (28), (32b). -/
+/-- The intensional verbs of Section 2.3: deontic and possibility verbs allow the high-DegP
+reading, epistemic *might* and the neg-raising verbs do not, (33) and (34). -/
+inductive IntensionalClass
   | deontic
-  /-- Possibility / ability modals. Heim §2.3 (29), (32a). -/
   | possibility
-  /-- Epistemic modals: high-DegP unavailable. Heim §2.3 (33). -/
   | epistemic
-  /-- Neg-raising verbs (`should`, `supposed-to`, `want`): high-DegP
-      unavailable. Heim §2.3 (34)–(36), citing von Fintel & Iatridou
-      2001 in fn. 14. (Note: `refuse` from Heim §2.1 ex. (19) is
-      *implicitly negative*, **not** neg-raising.) -/
   | negRaising
   deriving DecidableEq, Repr
 
-/-- Per `IntensionalVerbClass`, predict whether high-DegP is admitted. -/
-def IntensionalVerbClass.admitsHighDegP : IntensionalVerbClass → Bool
-  | .deontic | .possibility => true
-  | .epistemic | .negRaising => false
-
-/-- A row of Heim's §2.3 intensional-verb table. -/
-structure IntensionalVerbDatum where
-  sentence : String
+/-- A row of Section 2.3: the verb, its class, and whether the high-DegP reading is attested. -/
+structure Row where
   verb : String
-  verbClass : IntensionalVerbClass
-  /-- Does the high-DegP reading exist for this verb (with `exactly` or
-      `less`)? Determined by `verbClass` (see `verbClass_predicts_highDegPAvailable`). -/
-  highDegPAvailable : Bool
-  deriving Repr
+  cls : IntensionalClass
+  highDegP : Bool
 
-/-- Heim §2.3, exs. (28)–(36). The 4-vs-4 split is by `verbClass`;
-`deontic` and `possibility` admit high-DegP, `epistemic` and `negRaising`
-block it. -/
-def intensionalVerbData : List IntensionalVerbDatum :=
-  [ ⟨"The paper is required to be exactly 5 pages longer than that",
-     "require", .deontic, true⟩
-  , ⟨"The paper is allowed to be exactly 5 pages longer than that",
-     "allow", .possibility, true⟩
-  , ⟨"John is able to run less fast than that",
-     "be able", .possibility, true⟩
-  , ⟨"The paper needs to be exactly 5 pp longer than that",
-     "need", .deontic, true⟩
-  , ⟨"The paper might be less long than that",
-     "might", .epistemic, false⟩
-  , ⟨"The paper should be less long than that",
-     "should", .negRaising, false⟩
-  , ⟨"The paper is supposed to be less long than that",
-     "supposed to", .negRaising, false⟩
-  , ⟨"I want the paper to be less long than that",
-     "want", .negRaising, false⟩
-  ]
+/-- The class named in a row's features. -/
+def IntensionalClass.parse : String → Option IntensionalClass
+  | "deontic" => some .deontic
+  | "possibility" => some .possibility
+  | "epistemic" => some .epistemic
+  | "negRaising" => some .negRaising
+  | _ => none
 
-/-- Per-row drift sentry: each datum's `highDegPAvailable` flag matches
-its `verbClass`. Adding/removing a row keeps the witness localized.
-Replaces the previous aggregate-count theorem (`length = 4 ∧ length = 4`),
-which would silently go stale on any data edit. -/
-theorem verbClass_predicts_highDegPAvailable :
-    ∀ d ∈ intensionalVerbData,
-      d.highDegPAvailable = d.verbClass.admitsHighDegP := by
-  intro d hd
-  simp only [intensionalVerbData, List.mem_cons, List.not_mem_nil, or_false] at hd
-  rcases hd with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> rfl
+/-- The Section 2.3 row of an example, if it classifies its verb. -/
+def Row.ofExample (e : LinguisticExample) : Option Row := do
+  let verb ← e.feature? "verb"
+  let cls ← (e.feature? "class").bind IntensionalClass.parse
+  let hd ← e.feature? "highDegP"
+  some ⟨verb, cls, hd = "yes"⟩
 
-/-! ### Heim §2.4: Russell ambiguity ≠ DegP-scope (exs 37–42) -/
+/-- The verbs of (28) to (34). -/
+def rows : List Row := Examples.all.filterMap Row.ofExample
 
--- Heim follows von Stechow 1984's diagnosis: the Russell ambiguity in
--- "John thinks the yacht is longer than it is" arises from de re vs de
--- dicto interpretation of the than-clause, NOT from DegP-movement over
--- `think`.
---
--- Heim's *implementation* of the de re / de dicto distinction (paper
--- exs. (40a/b), p. 228) uses **free world-variables** on than-clause
--- predicates (`long_w'` vs `long_w`), citing [percus-2000] and
--- Abusch 1994 (paper fn. 16). This is distinct from von Stechow 1984's
--- own ACTUALLY-operator implementation, formalized in
--- `VonStechow1984.lean` over the substrate's
--- `Semantics/Reference/Rigidity.lean`.
---
--- The two implementations agree on the diagnosis but differ on the LF
--- mechanism. Heim's free-world-variable implementation is not currently
--- in the linglib substrate.
+/-- The maximum of (35): the greatest lower bound of the degrees at which the predicate is false.
+In the bivalent case, on a dense scale, it is the maximum of (6): the greatest element of a
+principal lower set is the greatest lower bound of its complement. -/
+theorem isGLB_compl_Iic [DenselyOrdered D] (m : D) : IsGLB (Iic m)ᶜ m := by
+  rw [compl_Iic]
+  exact isGLB_Ioi
 
-/-! ### Heim §3.2: superlative semantic ellipsis (exs 58–64) -/
+/-- (36): the desires determinate outside a middle zone, *I want the paper to be d-long* is
+false exactly above every desired length, so the high LF, that the greatest lower bound of those
+lengths, the maximal tolerated length, is below the standard, is equivalent to the low LF, that
+every desired length is. -/
+theorem negRaising_collapse {W : Type*} [Finite W] [Nonempty W] [DenselyOrdered D] (ℓ : W → D)
+    (t : D) : (∀ w, ℓ w < t) ↔ ∃ m, IsGLB {d | ∀ w, ℓ w < d} m ∧ m < t := by
+  obtain ⟨w₀, hw₀⟩ := Finite.exists_max ℓ
+  have hset : {d | ∀ w, ℓ w < d} = Ioi (ℓ w₀) := by
+    ext d
+    exact ⟨λ h => h w₀, λ h w => lt_of_le_of_lt (hw₀ w) h⟩
+  rw [hset]
+  constructor
+  · intro h
+    exact ⟨ℓ w₀, isGLB_Ioi, h w₀⟩
+  · rintro ⟨m, hm, hmt⟩ w
+    rw [hm.unique isGLB_Ioi] at hmt
+    exact lt_of_le_of_lt (hw₀ w) hmt
 
--- Heim §3.2 argues that `-est` in "John screamed (the) loudest" uses its
--- complement `R` twice in the semantic calculation (paper ex. (59)),
--- giving evidence for DegP-movement independent of VP-ellipsis. The
--- semantic decomposition `λR. λx. max{d : R(x,d)} > max{d : ∃y ≠ x. R(y,d)}`
--- is formalized as `Degree.absoluteSuperlative`;
--- consumers should reference the substrate definition directly.
---
--- The contrast "Kim climbed the highest mountain" / "KIM climbed the
--- highest mountain" (focus-sensitive relative reading) is from
--- [szabolcsi-1986] / [heim-1999] — *not* from Heim 2001 — and
--- belongs in a future `Heim1999.lean` study file.
+/-! ### The superlative -/
+
+/-- (59a): *-est* uses its complement twice, once for the subject and once for the others; over a
+monotone adjective and a comparison class with someone else in it, it is the absolute
+superlative. -/
+theorem est_iff_absoluteSuperlative [Finite Entity] (μ : Entity → D) (C : Set Entity) (x : Entity)
+    (hx : x ∈ C) (hC : ∃ y ∈ C, y ≠ x) :
+    (∃ m, IsGreatest {d | ∃ y ∈ C, y ≠ x ∧ d ≤ μ y} m ∧ m < μ x) ↔ absoluteSuperlative μ C x := by
+  classical
+  have : Nonempty {y // y ∈ C ∧ y ≠ x} := let ⟨y, hy, hyx⟩ := hC; ⟨⟨y, hy, hyx⟩⟩
+  obtain ⟨⟨y₀, hy₀⟩, hmax⟩ := Finite.exists_max (λ y : {y // y ∈ C ∧ y ≠ x} => μ y.1)
+  have hset : IsGreatest {d | ∃ y ∈ C, y ≠ x ∧ d ≤ μ y} (μ y₀) :=
+    ⟨⟨y₀, hy₀.1, hy₀.2, le_rfl⟩, λ d ⟨y, hy, hyx, hd⟩ => le_trans hd (hmax ⟨y, hy, hyx⟩)⟩
+  constructor
+  · rintro ⟨m, hm, hmx⟩
+    rw [hm.unique hset] at hmx
+    exact ⟨hx, λ y hy hyx => lt_of_le_of_lt (hmax ⟨y, hy, hyx⟩) hmx⟩
+  · intro h
+    exact ⟨μ y₀, hset, h.2 y₀ hy₀.1 hy₀.2⟩
 
 end Heim2001
