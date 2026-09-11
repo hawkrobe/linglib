@@ -87,7 +87,7 @@ variable {V₁ V₂ α : Type*}
 
 /-- Two schemas with coindexed variables: `link v₁ v₂` marks a variable of `fst`
 as the same as a variable of `snd`. -/
-structure Sister (V₁ V₂ α : Type*) [PartialOrder α] where
+structure Sister (V₁ V₂ α : Type*) where
   /-- The first schema. -/
   fst : Schema V₁ α
   /-- The second schema. -/

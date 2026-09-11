@@ -3,36 +3,27 @@ import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Studies.FillmoreKayOConnor1988
 
 /-!
-# [kay-michaelis-2019]: Constructional Meaning and Compositionality
+# Kay and Michaelis (2019): Constructional Meaning and Compositionality
 
-The survey chapter's two formal claims. First (§1, §4): rules of semantic
-combination are construction-relative — a construction "specifies how the
-semantics of the daughters are combined to produce the semantics of the
-mother, and what additional semantics, if any, is contributed by the
-construction itself". `CompositionRule` and `Constructicon.interps` give
-that architecture computational content over the licensing layer's local
-trees: a token's readings are whatever the syntactically matching
-constructions' rules produce from its daughters' readings. The chapter's
-opening contrast — *purple plum* composes by intersection, *alleged thief*
-by operator application, under one syntactic configuration — falls out as
-two constructions sharing a `TypedForm` whose rules accept disjoint
-daughter-denotation shapes, so each token gets exactly one reading.
+This file formalizes the two formal claims of the survey chapter [kay-michaelis-2019]. First,
+rules of semantic combination are construction-relative: a construction specifies how the
+semantics of the daughters combine into the semantics of the mother and what the construction
+itself adds (Sections 1 and 4). The substrate's `CompositionRule` and `Constructicon.interps`
+give that architecture content over the licensing layer's local trees, a token's readings being
+whatever the syntactically matching constructions' rules produce from its daughters' readings;
+the chapter's opening contrast, *purple plum* composed by intersection and *alleged thief* by
+operator application under one syntactic configuration, falls out as two constructions sharing
+a typed form whose rules accept disjoint daughter denotations, so that each token gets exactly
+one reading (`purple_plum_intersective`, `alleged_thief_operator`). Second, the kinds of
+meaning a construction contributes, truth-conditional content, argument structure, conventional
+implicature, illocutionary force, metalinguistic comment and information flow (Sections 3 and
+9), are `MeaningKind`, instantiated on the chapter's own cases already in the library: caused
+motion, *let alone* and the incredulity response.
 
-Second (§3): the kinds of meaning constructions contribute —
-truth-conditional content, argument structure, conventional implicature,
-special illocutionary forces, metalinguistic comments, information flow
-(§9) — as `MeaningKind`, instantiated on the chapter's own cases already
-in the library (caused motion §5, *let alone* §6, the incredulity type
-§7).
+## References
 
-## Main declarations
-
-- `KayMichaelis2019.MeaningKind`: §3's classification (+ §9)
-- `KayMichaelis2019.CompositionRule`, `Constructicon.interps`: §4's
-  daughters-to-mother composition, all readings of a token
-- `KayMichaelis2019.purple_plum_intersective`,
-  `alleged_thief_operator`, `same_form`: the §1 contrast
-- `KayMichaelis2019.chapterCases`: §§5–7 instantiated
+* [kay-michaelis-2019]
+* [fillmore-kay-oconnor-1988]
 -/
 
 namespace KayMichaelis2019
@@ -175,7 +166,7 @@ meaning each contributes. -/
 (§6, ex. 32), and the incredulity type (§7, ex. 14, *Him get first
 prize?!*). -/
 def chapterCases : List (Construction Unit × MeaningKind) :=
-  [ (causedMotion.map fun _ => (), .argumentStructure)
+  [ (causedMotion.map λ _ => (), .argumentStructure)
   , (_root_.FillmoreKayOConnor1988.letAloneConstruction, .conventionalImplicature)
   , (_root_.FillmoreKayOConnor1988.incredulityResponse, .illocutionaryForce) ]
 
