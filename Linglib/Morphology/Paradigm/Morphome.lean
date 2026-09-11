@@ -20,7 +20,9 @@ here. [herce-2023] operationalizes a natural class as one "coextensive with
 a value (e.g. SG) or conjunction of values (e.g. 1SG)" and treats
 naturalness as *gradient*, so `Natural` is best read as a threshold slice of
 that scale; the value-or-conjunction predicate is its canonical
-instantiation, supplied by the consumer (see `Studies/Herce2023.lean`).
+instantiation, `IsValueConjunction`: the cells agreeing with some cell on
+some of the paradigm's features, each feature given as the partition of
+cells it induces.
 Systematicity — recurrence of the pattern under more than one exponent or
 allomorph — is a separate criterion the consumer establishes.
 
@@ -45,6 +47,8 @@ jargon, and "metasyncretism" does not appear in the book.
 * `Morphology.syncretismClass` — the class (fiber) of a given cell
 * `Morphology.formCells` — the cells a form realizes, the `Finset` face of the class
 * `Morphology.IsMorphome` — a nontrivial syncretism class failing `Natural`
+* `Morphology.IsValueConjunction` — the cells agreeing with a witness on a set of features,
+  [herce-2023]'s natural class
 -/
 
 namespace Morphology
@@ -100,6 +104,39 @@ theorem isMorphome_syncretismClass (p : Cell → F) (Natural : Set Cell → Prop
     (hnat : ¬ Natural (syncretismClass p a)) :
     IsMorphome p Natural (syncretismClass p a) :=
   ⟨syncretismClass_mem_classes p a, hnt, hnat⟩
+
+/-- The `Finset` face of `isMorphome_syncretismClass`: the cells a form realizes are a
+morphome once there are at least two of them and they are not a natural class. -/
+theorem isMorphome_of_formCells [Fintype Cell] [DecidableEq F] (p : Cell → F) (a : Cell)
+    (Natural : Set Cell → Prop) {X : Finset Cell} (hX : formCells p (p a) = X)
+    (hnt : 1 < X.card) (hnat : ¬ Natural ↑X) : IsMorphome p Natural ↑X := by
+  have hX' : (↑X : Set Cell) = syncretismClass p a := by rw [← hX, coe_formCells]
+  rw [hX']
+  exact isMorphome_syncretismClass p Natural a
+    (hX' ▸ Finset.nontrivial_coe.mpr (Finset.one_lt_card_iff_nontrivial.mp hnt)) (hX' ▸ hnat)
+
+/-! ### Natural classes as value conjunctions
+
+[herce-2023] takes a natural class to be one "coextensive with a value or conjunction of
+values". A paradigm's features are the partitions of its cells they induce, the kernels of
+the feature projections; a value conjunction is then the set of cells agreeing with some cell
+on some of the features. -/
+
+variable {ι : Type*}
+
+/-- A set of cells is a **value conjunction** for the features `feats` when it consists of
+the cells agreeing with some cell on some of the features. -/
+def IsValueConjunction (feats : ι → Setoid Cell) (X : Set Cell) : Prop :=
+  ∃ (S : Finset ι) (c₀ : Cell), X = {c | ∀ i ∈ S, feats i c c₀}
+
+/-- On a finite paradigm, being a value conjunction is a finite search over the features and
+the witness cell. -/
+theorem isValueConjunction_coe_iff [Fintype Cell] [DecidableEq Cell] (feats : ι → Setoid Cell)
+    [∀ i, DecidableRel (feats i)] (X : Finset Cell) :
+    IsValueConjunction feats ↑X ↔
+      ∃ (S : Finset ι) (c₀ : Cell), Finset.univ.filter (λ c => ∀ i ∈ S, feats i c c₀) = X := by
+  simp only [IsValueConjunction, ← Finset.coe_inj, Finset.coe_filter, Finset.mem_univ, true_and,
+    eq_comm]
 
 /-! ### Shared exponents in segmented realizations
 
