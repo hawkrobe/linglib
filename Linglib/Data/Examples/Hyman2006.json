@@ -1,0 +1,170 @@
+[
+  {
+    "id": "hyman2006_makura",
+    "source": {
+      "bibkey": "hyman-2006",
+      "paperLabel": "(4)"
+    },
+    "language": "nucl1643",
+    "primaryText": "makura ga",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "makura",
+        "pillow"
+      ],
+      [
+        "ga",
+        "NOM"
+      ]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "output",
+        "mákùrà gà"
+      ],
+      [
+        "accent",
+        "initial mora"
+      ]
+    ],
+    "comment": "Analysed accentually, with a drop after the accented mora, and tonally, with a prelinked H.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hyman2006_kokoro",
+    "source": {
+      "bibkey": "hyman-2006",
+      "paperLabel": "(4)"
+    },
+    "language": "nucl1643",
+    "primaryText": "kokoro ga",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "kokoro",
+        "heart"
+      ],
+      [
+        "ga",
+        "NOM"
+      ]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "output",
+        "kókórò gà"
+      ],
+      [
+        "accent",
+        "second mora"
+      ]
+    ],
+    "comment": "Analysed accentually, with a drop after the accented mora, and tonally, with a prelinked H.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hyman2006_atama",
+    "source": {
+      "bibkey": "hyman-2006",
+      "paperLabel": "(4)"
+    },
+    "language": "nucl1643",
+    "primaryText": "atama ga",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "atama",
+        "head"
+      ],
+      [
+        "ga",
+        "NOM"
+      ]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "output",
+        "átámá gà"
+      ],
+      [
+        "accent",
+        "final mora"
+      ]
+    ],
+    "comment": "Analysed accentually, with a drop after the accented mora, and tonally, with a prelinked H.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hyman2006_sakana",
+    "source": {
+      "bibkey": "hyman-2006",
+      "paperLabel": "(4)"
+    },
+    "language": "nucl1643",
+    "primaryText": "sakana ga",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "sakana",
+        "fish"
+      ],
+      [
+        "ga",
+        "NOM"
+      ]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "output",
+        "sákáná gá"
+      ],
+      [
+        "accent",
+        "none"
+      ],
+      [
+        "note",
+        "unaccented: no pitch drop"
+      ]
+    ],
+    "comment": "Analysed accentually, with a drop after the accented mora, and tonally, with a prelinked H.",
+    "lgrConformance": ""
+  }
+]
