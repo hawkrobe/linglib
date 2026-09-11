@@ -1,0 +1,666 @@
+[
+  {
+    "id": "hofmeistersag2010_ex42a",
+    "source": {
+      "bibkey": "hofmeister-sag-2010",
+      "paperLabel": "(42a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Which man saw the girl in the bar on California Avenue?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "factor",
+        "locality"
+      ],
+      [
+        "dependency",
+        "subject"
+      ]
+    ],
+    "comment": "Judged more acceptable than the object question (42b): the filler integrates at the next word.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hofmeistersag2010_ex42b",
+    "source": {
+      "bibkey": "hofmeister-sag-2010",
+      "paperLabel": "(42b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Which man did the girl in the bar on California Avenue see?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "factor",
+        "locality"
+      ],
+      [
+        "dependency",
+        "object"
+      ]
+    ],
+    "comment": "Three discourse referents are identified while the filler is held in memory.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hofmeistersag2010_ex43",
+    "source": {
+      "bibkey": "hofmeister-sag-2010",
+      "paperLabel": "(43)"
+    },
+    "language": "stan1293",
+    "primaryText": "The consultant who (we/Donald Trump/the chairman/a chairman) called advised wealthy companies.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "factor",
+        "referential load"
+      ]
+    ],
+    "comment": "Warren and Gibson's contrast: definite NPs and names inside the dependency slow reading at the retrieval site relative to pronouns.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hofmeistersag2010_ex44a",
+    "source": {
+      "bibkey": "hofmeister-sag-2010",
+      "paperLabel": "(44a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Has she forgotten that he dragged her to a movie on Christmas Eve?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "factor",
+        "clause boundary"
+      ],
+      [
+        "complementizer",
+        "that"
+      ]
+    ],
+    "comment": "Kluender and Kutas's contrast: the declarative complement is rated highest.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hofmeistersag2010_ex44b",
+    "source": {
+      "bibkey": "hofmeister-sag-2010",
+      "paperLabel": "(44b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Has she forgotten if he dragged her to a movie on Christmas Eve?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "factor",
+        "clause boundary"
+      ],
+      [
+        "complementizer",
+        "if"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hofmeistersag2010_ex44c",
+    "source": {
+      "bibkey": "hofmeister-sag-2010",
+      "paperLabel": "(44c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Has she forgotten who he dragged to a movie on Christmas Eve?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "factor",
+        "clause boundary"
+      ],
+      [
+        "complementizer",
+        "who"
+      ]
+    ],
+    "comment": "The interrogative complement is rated lowest, with no filler crossing the boundary.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hofmeistersag2010_ex45a",
+    "source": {
+      "bibkey": "hofmeister-sag-2010",
+      "paperLabel": "(45a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The diplomat contacted the dictator who the activist looking for more contributions encouraged to preserve natural habitats and resources.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4"
+      ],
+      [
+        "factor",
+        "filler complexity"
+      ],
+      [
+        "filler",
+        "simple"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hofmeistersag2010_ex45b",
+    "source": {
+      "bibkey": "hofmeister-sag-2010",
+      "paperLabel": "(45b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The diplomat contacted the ruthless military dictator who the activist looking for more contributions encouraged to preserve natural habitats and resources.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4"
+      ],
+      [
+        "factor",
+        "filler complexity"
+      ],
+      [
+        "filler",
+        "complex"
+      ]
+    ],
+    "comment": "Hofmeister's finding: the richer filler is read faster from the subcategorizing verb on.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hofmeistersag2010_ex46",
+    "source": {
+      "bibkey": "hofmeister-sag-2010",
+      "paperLabel": "(46)"
+    },
+    "language": "stan1293",
+    "primaryText": "Which politician did you read reports that we had impeached?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.5"
+      ],
+      [
+        "island",
+        "complexNP"
+      ]
+    ],
+    "comment": "A dependency into a complex NP processes three nominal references and crosses a clause boundary.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hofmeistersag2010_ex48_bareDef",
+    "source": {
+      "bibkey": "hofmeister-sag-2010",
+      "paperLabel": "(48)"
+    },
+    "language": "stan1293",
+    "primaryText": "I saw who Emma doubted the report that we had captured in the nationwide FBI manhunt.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "experiment",
+        "1"
+      ],
+      [
+        "island",
+        "complexNP"
+      ],
+      [
+        "filler",
+        "bare"
+      ],
+      [
+        "islandNP",
+        "definite"
+      ]
+    ],
+    "comment": "Experiment 1 item; the which-N conditions are read faster from the complementizer on and rated higher, and NP type has only weak, local effects.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hofmeistersag2010_ex48_barePl",
+    "source": {
+      "bibkey": "hofmeister-sag-2010",
+      "paperLabel": "(48)"
+    },
+    "language": "stan1293",
+    "primaryText": "I saw who Emma doubted reports that we had captured in the nationwide FBI manhunt.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "experiment",
+        "1"
+      ],
+      [
+        "island",
+        "complexNP"
+      ],
+      [
+        "filler",
+        "bare"
+      ],
+      [
+        "islandNP",
+        "plural"
+      ]
+    ],
+    "comment": "Experiment 1 item; the which-N conditions are read faster from the complementizer on and rated higher, and NP type has only weak, local effects.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hofmeistersag2010_ex48_bareIndef",
+    "source": {
+      "bibkey": "hofmeister-sag-2010",
+      "paperLabel": "(48)"
+    },
+    "language": "stan1293",
+    "primaryText": "I saw who Emma doubted a report that we had captured in the nationwide FBI manhunt.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "experiment",
+        "1"
+      ],
+      [
+        "island",
+        "complexNP"
+      ],
+      [
+        "filler",
+        "bare"
+      ],
+      [
+        "islandNP",
+        "indefinite"
+      ]
+    ],
+    "comment": "Experiment 1 item; the which-N conditions are read faster from the complementizer on and rated higher, and NP type has only weak, local effects.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hofmeistersag2010_ex48_whichDef",
+    "source": {
+      "bibkey": "hofmeister-sag-2010",
+      "paperLabel": "(48)"
+    },
+    "language": "stan1293",
+    "primaryText": "I saw which convict Emma doubted the report that we had captured in the nationwide FBI manhunt.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "experiment",
+        "1"
+      ],
+      [
+        "island",
+        "complexNP"
+      ],
+      [
+        "filler",
+        "whichN"
+      ],
+      [
+        "islandNP",
+        "definite"
+      ]
+    ],
+    "comment": "Experiment 1 item; the which-N conditions are read faster from the complementizer on and rated higher, and NP type has only weak, local effects.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hofmeistersag2010_ex48_whichPl",
+    "source": {
+      "bibkey": "hofmeister-sag-2010",
+      "paperLabel": "(48)"
+    },
+    "language": "stan1293",
+    "primaryText": "I saw which convict Emma doubted reports that we had captured in the nationwide FBI manhunt.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "experiment",
+        "1"
+      ],
+      [
+        "island",
+        "complexNP"
+      ],
+      [
+        "filler",
+        "whichN"
+      ],
+      [
+        "islandNP",
+        "plural"
+      ]
+    ],
+    "comment": "Experiment 1 item; the which-N conditions are read faster from the complementizer on and rated higher, and NP type has only weak, local effects.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hofmeistersag2010_ex48_whichIndef",
+    "source": {
+      "bibkey": "hofmeister-sag-2010",
+      "paperLabel": "(48)"
+    },
+    "language": "stan1293",
+    "primaryText": "I saw which convict Emma doubted a report that we had captured in the nationwide FBI manhunt.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "experiment",
+        "1"
+      ],
+      [
+        "island",
+        "complexNP"
+      ],
+      [
+        "filler",
+        "whichN"
+      ],
+      [
+        "islandNP",
+        "indefinite"
+      ]
+    ],
+    "comment": "Experiment 1 item; the which-N conditions are read faster from the complementizer on and rated higher, and NP type has only weak, local effects.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hofmeistersag2010_ex48_baseline",
+    "source": {
+      "bibkey": "hofmeister-sag-2010",
+      "paperLabel": "(48)"
+    },
+    "language": "stan1293",
+    "primaryText": "I saw which convict Emma doubted that we had captured in the nationwide FBI manhunt.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "experiment",
+        "1"
+      ],
+      [
+        "island",
+        "none"
+      ],
+      [
+        "filler",
+        "whichN"
+      ]
+    ],
+    "comment": "The non-island baseline of Experiment 1, rated higher than every island condition.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hofmeistersag2010_ex49_bare",
+    "source": {
+      "bibkey": "hofmeister-sag-2010",
+      "paperLabel": "(49)"
+    },
+    "language": "stan1293",
+    "primaryText": "Who did Albert learn whether they dismissed after the annual performance review?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Albert learned that the managers dismissed the employee with poor sales after the annual performance review.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ],
+      [
+        "experiment",
+        "2"
+      ],
+      [
+        "island",
+        "embeddedQuestion"
+      ],
+      [
+        "filler",
+        "bare"
+      ]
+    ],
+    "comment": "Experiment 2 item; the which-N question is read as fast as the baseline after the embedded verb, the bare one slower.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hofmeistersag2010_ex49_which",
+    "source": {
+      "bibkey": "hofmeister-sag-2010",
+      "paperLabel": "(49)"
+    },
+    "language": "stan1293",
+    "primaryText": "Which employee did Albert learn whether they dismissed after the annual performance review?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Albert learned that the managers dismissed the employee with poor sales after the annual performance review.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ],
+      [
+        "experiment",
+        "2"
+      ],
+      [
+        "island",
+        "embeddedQuestion"
+      ],
+      [
+        "filler",
+        "whichN"
+      ]
+    ],
+    "comment": "Experiment 2 item; the which-N question is read as fast as the baseline after the embedded verb, the bare one slower.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hofmeistersag2010_ex49_baseline",
+    "source": {
+      "bibkey": "hofmeister-sag-2010",
+      "paperLabel": "(49)"
+    },
+    "language": "stan1293",
+    "primaryText": "Who did Albert learn that they dismissed after the annual performance review?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Albert learned that the managers dismissed the employee with poor sales after the annual performance review.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ],
+      [
+        "experiment",
+        "2"
+      ],
+      [
+        "island",
+        "none"
+      ],
+      [
+        "filler",
+        "bare"
+      ]
+    ],
+    "comment": "Experiment 2 item; the which-N question is read as fast as the baseline after the embedded verb, the bare one slower.",
+    "lgrConformance": ""
+  }
+]
