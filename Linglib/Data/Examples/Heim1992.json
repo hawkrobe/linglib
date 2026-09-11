@@ -1,0 +1,942 @@
+[
+  {
+    "id": "heim1992_s1",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(1)"
+    },
+    "language": "stan1293",
+    "primaryText": "Patrick wants to sell his cello.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "presupposition",
+        "Patrick believes he owns a cello"
+      ]
+    ],
+    "comment": "Karttunen: the report presupposes the belief, not the fact.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s2",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(2)"
+    },
+    "language": "stan1293",
+    "primaryText": "Patrick is under the misconception that he owns a cello, and he wants to sell his cello.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "presupposition",
+        "none as a whole"
+      ]
+    ],
+    "comment": "The first conjunct supplies the belief the second conjunct's complement presupposes.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s10",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(10)"
+    },
+    "language": "stan1293",
+    "primaryText": "John believes that it is raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "rule",
+        "(13): true in w iff it rains in every world of Dox_J(w)"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s19",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(19)"
+    },
+    "language": "stan1293",
+    "primaryText": "John believes that Mary is here, and he believes that Susan is here too.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "lf",
+        "(20): too_i coindexed with Mary_i, Susan focused"
+      ],
+      [
+        "presupposition",
+        "none as a whole"
+      ]
+    ],
+    "comment": "The proof after (24): the intermediate context satisfies the too-clause's requirement.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s25",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(25)"
+    },
+    "language": "stan1293",
+    "primaryText": "John doubts that Mary is here and/but believes that Susan is here too.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "presupposition",
+        "guaranteed undefined after the first conjunct"
+      ]
+    ],
+    "comment": "Doubt as not-believe leaves every Dox_J(w) failing to entail that Mary is here.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s26",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(26)"
+    },
+    "language": "stan1293",
+    "primaryText": "John doubts that Mary is here. He believes that if Susan were here too, there would be dancing.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "presupposition",
+        "undefined; the conditional inherits its antecedent's presupposition"
+      ]
+    ],
+    "comment": "Deviant although the second complement's content is compatible with Mary's absence.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s28",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(28)"
+    },
+    "language": "stan1293",
+    "primaryText": "Patrick and Ann both dream of winning cellos. Ann would like one for her own use. Patrick wants to sell his cello for a profit.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "presupposition",
+        "none as a whole"
+      ]
+    ],
+    "comment": "A want-want sequence filters the presupposition, as (27) but not Karttunen's (3) predicts.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s29",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(29)"
+    },
+    "language": "stan1293",
+    "primaryText": "John wants Fred to come, and he wants Jim to come too.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "presupposition",
+        "none as a whole"
+      ]
+    ],
+    "comment": "Filtered under (27); a presupposition failure under (39), Section 4.3.4.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s30",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(30)"
+    },
+    "language": "stan1293",
+    "primaryText": "John believes that Mary is coming, and he wants Susan to come too.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "presupposition",
+        "none as a whole"
+      ]
+    ],
+    "comment": "A believe-want sequence: Karttunen's generalization, not (27), filters it.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s32a",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(32a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Nicholas wants a free trip on the Concorde.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Nicholas would love to fly on the Concorde for free but is not willing to pay the $3,000 he believes it would cost.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "truth",
+        "true"
+      ],
+      [
+        "source",
+        "Asher 1987"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s32b",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(32b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Nicholas wants a trip on the Concorde.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Nicholas would love to fly on the Concorde for free but is not willing to pay the $3,000 he believes it would cost.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "truth",
+        "false"
+      ],
+      [
+        "source",
+        "Asher 1987"
+      ]
+    ],
+    "comment": "(31) blocks the inference from (32a): the likely belief-worlds where he flies and pays are worse than similar worlds where he does not fly.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s33",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(33)"
+    },
+    "language": "stan1293",
+    "primaryText": "I want to teach Tuesdays and Thursdays next semester.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "truth",
+        "true under (31), false under (27)"
+      ]
+    ],
+    "comment": "In the worlds compatible with everything the speaker desires she does not teach at all.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s41",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(41)"
+    },
+    "language": "stan1293",
+    "primaryText": "(John hired a babysitter because) he wants to go to the movies tonight.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2.3"
+      ],
+      [
+        "status",
+        "no doubt about where John will be"
+      ]
+    ],
+    "comment": "A threat to the (40) amendment; want here reads like intend, with the accessibility function F_a of (43).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s42",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(42)"
+    },
+    "language": "stan1293",
+    "primaryText": "I want this weekend to last forever. (But I know, of course, that it will be over in a few hours.)",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2.3"
+      ],
+      [
+        "status",
+        "wanting what one is convinced will not happen"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s44",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(44)"
+    },
+    "language": "stan1293",
+    "primaryText": "Patrick intends to sell his cello (right now).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2.3"
+      ],
+      [
+        "presupposition",
+        "Patrick believes he has a cello independently of what he does"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s46",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(46)"
+    },
+    "language": "stan1293",
+    "primaryText": "Patrick wants me to buy him a cello, although he believes that his cello is going to take up a lot of space.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2.4"
+      ],
+      [
+        "presupposition",
+        "not filtered: want before believe"
+      ]
+    ],
+    "comment": "A bit less good than (2) or (28).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s47a",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(47a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Fred believes that his wife will buy him a car. He hopes that it will be a Porsche.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2.4"
+      ],
+      [
+        "source",
+        "Asher 1987"
+      ],
+      [
+        "anaphora",
+        "it as the car his wife will buy him"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s47b",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(47b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Fred hopes that he will get a Porsche. He believes that his wife will buy it for him.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2.4"
+      ],
+      [
+        "source",
+        "Asher 1987"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s47c",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(47c)"
+    },
+    "language": "stan1293",
+    "primaryText": "John wants to have a Porsche. He believes his mother will buy it for him.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2.4"
+      ],
+      [
+        "source",
+        "Asher 1987"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s48",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(48)"
+    },
+    "language": "stan1293",
+    "primaryText": "John wants a woman to marry him. He believes he can make her happy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2.4"
+      ],
+      [
+        "source",
+        "Asher 1987"
+      ],
+      [
+        "reading",
+        "the belief as an implicit conditional"
+      ]
+    ],
+    "comment": "Accommodation by modal subordination.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s49",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(49)"
+    },
+    "language": "stan1293",
+    "primaryText": "Susan wants a pet. She believes she will look after it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2.4"
+      ],
+      [
+        "source",
+        "Cresswell 1988"
+      ],
+      [
+        "reading",
+        "the belief as an implicit conditional"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s50",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(50)"
+    },
+    "language": "stan1293",
+    "primaryText": "I want Gabriela to have won.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The speaker missed the last set of the Wimbledon women's final and does not know who won, though the game is over and decided.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2.4"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s51",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(51)"
+    },
+    "language": "stan1293",
+    "primaryText": "... and I am sure that it made Steffi cry hard.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2.4"
+      ]
+    ],
+    "comment": "A strange continuation of (50), though it should be another way of saying that Steffi cried if Gabriela won.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s52",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(52)"
+    },
+    "language": "stan1293",
+    "primaryText": "John wishes he would teach on Tuesdays.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "modal base",
+        "not doxastic: John may be certain he will not teach Tuesdays"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s53",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(53)"
+    },
+    "language": "stan1293",
+    "primaryText": "John believes that Mary is the only one here, and he wishes Susan were here too.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "presupposition",
+        "none as a whole"
+      ]
+    ],
+    "comment": "As felicitous as (30), yet (39) with (40) would leave the wish-clause undefined.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s54",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(54)"
+    },
+    "language": "stan1293",
+    "primaryText": "John is glad he will teach on Tuesdays.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "presupposition",
+        "John believes he will teach on Tuesdays"
+      ]
+    ],
+    "comment": "A factive desire predicate; (39) would trivialize its truth conditions.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s55",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(55)"
+    },
+    "language": "stan1293",
+    "primaryText": "John thought he was late and was glad that Bill was late too.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "presupposition",
+        "satisfied in the belief-worlds"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s56a",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(56a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John believes Mary is coming, and he is glad Susan is coming too.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "presupposition",
+        "none as a whole"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s56b",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(56b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John believes Mary is coming, and he wishes Susan were coming too.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "presupposition",
+        "none as a whole"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s57a",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(57a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Patrick is glad he sold his cello.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "presupposition",
+        "accommodated: Patrick believes he sold his cello"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s57b",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(57b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Patrick wishes he had sold his cello.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "presupposition",
+        "accommodated: Patrick believes he did not sell his cello"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s59",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(59)"
+    },
+    "language": "stan1293",
+    "primaryText": "If John attended too, ...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "It is already in the common ground that Mary attended.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3.1"
+      ],
+      [
+        "presupposition",
+        "someone else attended, in the common ground"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1992_s60",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(60)"
+    },
+    "language": "stan1293",
+    "primaryText": "If John had attended too, ...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "It is already in the common ground that Mary attended.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3.1"
+      ],
+      [
+        "presupposition",
+        "someone else attended, in the common ground"
+      ]
+    ],
+    "comment": "Licensed under the same condition as (59): the revision (61) keeps the antecedent's presuppositions.",
+    "lgrConformance": ""
+  }
+]
