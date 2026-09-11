@@ -18,8 +18,7 @@ Accessibility Hierarchy. Mirrors `Case` for case inventories.
 ## Main declarations
 
 * `RelativeClause.AHPosition` — grammatical positions on the
-  [keenan-comrie-1977] Accessibility Hierarchy, with `rank` and the
-  `contiguousOnAH` segment predicate (HC₂).
+  [keenan-comrie-1977] Accessibility Hierarchy, linearly ordered by `rank`.
 * `RelativeClause.RCPosition` — position of the relative clause with respect
   to the head noun (post-nominal, pre-nominal, internally-headed, correlative).
 * `RelativeClause.NPRelType` — what occupies the relativized position
@@ -32,13 +31,11 @@ Accessibility Hierarchy. Mirrors `Case` for case inventories.
 
 ## Implementation notes
 
-The contiguity machinery (`contiguousOnAH`, `AHPosition.rank`) mirrors
-`Core.validInventory` for the case hierarchy ([blake-1994]); the
-`contiguousOnAH : Bool` kernel with a `ContiguousOnAH : Prop` wrapper is the
-load-bearing form for the decide-checked case analyses in
-`Studies/KeenanComrie1977.lean`. Coverage predicates (`Covers`, `IsContinuous`,
-`IsPrimary`) are stated as `Prop` with `Decidable` instances — no parallel
-`Bool` projections.
+The accessibility order is the linear order lifted from `AHPosition.rank`, the subject its
+top, so that continuity of a strategy (HC₂) is order-connectedness of the set it covers and
+the Primary Relativization Constraint is the upper-set property, as `Studies/KeenanComrie1977`
+derives. Coverage predicates (`Covers`, `IsContinuous`, `IsPrimary`) are stated as `Prop` with
+`Decidable` instances.
 -/
 
 namespace RelativeClause
@@ -88,7 +85,7 @@ def AHPosition.rank : AHPosition → Nat
     bespoke rank arithmetic. -/
 instance : LinearOrder AHPosition :=
   LinearOrder.lift' AHPosition.rank
-    (fun a b h => by cases a <;> cases b <;> simp_all [AHPosition.rank])
+    (λ a b h => by cases a <;> cases b <;> simp_all [AHPosition.rank])
 
 /-- Position p1 is at least as accessible as p2 on the hierarchy. -/
 def AHPosition.atLeastAsAccessible (p1 p2 : AHPosition) : Prop :=
@@ -261,45 +258,17 @@ instance (m : Marker) (p : AHPosition) : Decidable (m.Covers p) :=
 
 /-! ### Accessibility-Hierarchy contiguity (HC₂) -/
 
-/-- Whether a list of AH positions contains at least one position at rank r. -/
-def hasAHRank (positions : List AHPosition) (r : Nat) : Bool :=
-  positions.any fun p => p.rank == r
-
-/-- A set of AH positions forms a contiguous segment on the hierarchy:
-    for every pair of positions in the set, every intermediate rank
-    is also represented.
-
-    Mirrors `Core.validInventory` for the case hierarchy ([blake-1994]).
-
-    This formalizes HC₂ of [keenan-comrie-1977]: "Any RC-forming
-    strategy must apply to a continuous segment of the AH." -/
-def contiguousOnAH (positions : List AHPosition) : Bool :=
-  positions.all fun p1 =>
-    positions.all fun p2 =>
-      if p2.rank > p1.rank then
-        let lo := p1.rank
-        let hi := p2.rank
-        List.range hi |>.all fun r =>
-          if r > lo && r < hi then hasAHRank positions r
-          else true
-      else true
-
-/-- Prop wrapper around `contiguousOnAH`. The `Bool`-shaped definition
-    is structural and load-bearing for the PRC general-proof case-analysis
-    in `Studies/KeenanComrie1977.lean`; this Prop version is the canonical
-    user-facing predicate. -/
-def ContiguousOnAH (positions : List AHPosition) : Prop :=
-  contiguousOnAH positions = true
-
-instance (positions : List AHPosition) : Decidable (ContiguousOnAH positions) :=
-  inferInstanceAs (Decidable (_ = _))
-
-/-- A marker's positions form a contiguous segment of the AH. -/
-def Marker.IsContinuous (m : Marker) : Prop :=
-  ContiguousOnAH m.positions
+/-- A marker's positions form a contiguous segment of the AH, the second Hierarchy Constraint
+of [keenan-comrie-1977]: the set it covers is order-connected in the accessibility order. -/
+def Marker.IsContinuous (m : Marker) : Prop := Set.OrdConnected {p | m.Covers p}
 
 instance (m : Marker) : Decidable m.IsContinuous :=
-  inferInstanceAs (Decidable (ContiguousOnAH _))
+  decidable_of_iff (∀ x ∈ m.positions, ∀ y ∈ m.positions, ∀ z, x ≤ z → z ≤ y → z ∈ m.positions)
+    (by
+      simp only [Marker.IsContinuous, Set.ordConnected_iff, Set.subset_def, Set.mem_Icc,
+        Set.mem_ofPred_eq, Marker.Covers, and_imp]
+      exact ⟨λ h x hx y hy _ z hxz hzy => h x hx y hy z hxz hzy,
+        λ h x hx y hy z hxz hzy => h x hx y hy (hxz.trans hzy) z hxz hzy⟩)
 
 /-- A marker is **primary** in [keenan-comrie-1977]'s sense if it can be
     used to relativize subjects. HC₁ requires every language to have at
