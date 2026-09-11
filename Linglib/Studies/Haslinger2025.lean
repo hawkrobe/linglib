@@ -1,610 +1,252 @@
-import Linglib.Semantics.Quantification.Numerals.Roundness
+import Mathlib.Order.Basic
+import Mathlib.Tactic.FinCases
+import Linglib.Semantics.Quantification.Numerals.Precision
+import Linglib.Data.Examples.Haslinger2025
 
 /-!
-# [haslinger-2025-diss]: Imprecision and homogeneity
+# Haslinger (2025): Pragmatic constraints on imprecision and homogeneity
 
-Empirical data from Nina Haslinger (2025), "Pragmatic constraints on imprecision
-and homogeneity," Doctoral Dissertation, Georg-August-Universität Göttingen
-(doi:10.53846/goediss-11395). The Sinn und Bedeutung 28 paper [haslinger-2024]
-is the published version of dissertation chapters 3 and 5.
+This file formalizes the two constraints of [haslinger-2025-diss], on which the availability of
+imprecise construals is regulated not in the lexicon but by alternatives. No Needless Manner
+Violations (their Ch. 3, (57)–(59)) combines two Manner preferences, for lower structural
+complexity and for less potential for imprecision, as Pareto dominance, and blocks a sentence
+that a potentially p-equivalent alternative dominates; `lt_complexity_of_lt_potential` derives the
+form–meaning correlation that motivates it, that an unblocked expression more imprecise than a
+competitor must be strictly simpler, which is why *the doors* and *all the doors* coexist while a
+definite built by adding structure to a universal quantifier, their (8), is unattested. Inference
+Preservation (their Ch. 6 (31), final form Ch. 7 (18)) blocks an imprecise construal of a
+subexpression that loses an inference, entailment or incompatibility, that its precise construal
+licenses about a scalar or structural alternative. `Violates` is that constraint for one
+alternative, and with alternatives the numerals at least as round (their (79a)) it derives the
+round–non-round asymmetry from [woodin-etal-2023]'s roundness score alone: the halo of *99* meets
+that of its alternative *100* as soon as it admits any deviation (`ninetyNine_blocked`), whereas
+the nearest alternative of *100* below a thousand is *200*, so deviations under fifty are
+preserved (`hundred_preserved`); *more than 100* is blocked by bare *100* at any deviation, and
+a conjunction read non-maximally loses the entailment of its conjuncts (`conjunction_violates`).
 
-## Two constraints
+## Implementation notes
 
-1. **NO NEEDLESS MANNER VIOLATIONS** (Ch 3-4): a tradeoff between structural
-   complexity and semantic precision — more complex expressions must be more
-   precise. The competition relation is **potential p-equivalence** (def (68),
-   §3.3.3): two sentences compete iff there is *some* choice of issue
-   parameter making their p-truth conditions equivalent.
+The Manner orderings are read off two natural-number measures on an abstract sentence type, with
+potential p-equivalence a relation parameter, since the dissertation's (68) quantifies over
+contexts that differ only in the issue parameter. Degree expressions are construals over `ℚ`, the
+precise interpretation the exact value and the imprecise one the halo of a contextual deviation
+`m`, their (69)–(70); the roundness score of `Numerals.Roundness` stands in for the
+conventionalized scales, and `score_ge_six_lt_thousand` is the finite computation behind the
+asymmetry. The dissertation's examples are the rows of `Data/Examples/Haslinger2025.json`; its
+Ch. 5 extensions to presupposition and redundancy and the collective exceptions of Ch. 7 are not
+modelled.
 
-2. **INFERENCE PRESERVATION** (Ch 6-7): an imprecise construal of φ must
-   preserve the inferential relations between φ and its alternatives that hold
-   on the precise construal.
+## References
 
-## Sub-namespaces
-
-- `Numerals` (Ch 2, Ch 4) — round/non-round asymmetry, `exactly`/`approximately`
-  modifiers, the German game-show paradigm.
-- `FormMeaning` (Ch 3) — complexity-precision pairs: the/all-the, and/both,
-  100/exactly-100, blue/completely-blue.
-- `InferencePreservation` (Ch 6, 7) — alternative-set blocking for non-round
-  numerals, conjunctions, and numeral definites.
-
+* [haslinger-2025-diss]
+* [haslinger-2024]
+* [kriz-spector-2021]
+* [woodin-etal-2023]
 -/
 
 namespace Haslinger2025
 
--- ============================================================================
--- §1. Numeral Imprecision
--- ============================================================================
+/-! ### No Needless Manner Violations -/
 
-namespace Numerals
+section Manner
+
+variable {S : Type*} (complexity potential : S → ℕ) (PotEquiv : S → S → Prop)
+
+/-- The Manner profile of a sentence: its structural complexity and its potential for
+imprecision, the two orderings of their (58), combined by the product order as in their (57). -/
+def manner (φ : S) : ℕ × ℕ := (complexity φ, potential φ)
+
+/-- Their (59): a cooperative speaker will not use `ψ` when a potentially p-equivalent `φ` is at
+least as good on both orderings and better on one. -/
+def Blocked (ψ : S) : Prop :=
+  ∃ φ, PotEquiv φ ψ ∧ manner complexity potential φ < manner complexity potential ψ
+
+/-- The form–meaning correlation: an unblocked sentence with more potential for imprecision than a
+potentially p-equivalent competitor is strictly simpler than it. -/
+theorem lt_complexity_of_lt_potential {φ ψ : S} (h : PotEquiv φ ψ)
+    (hp : potential φ < potential ψ) (hb : ¬ Blocked complexity potential PotEquiv ψ) :
+    complexity ψ < complexity φ := by
+  by_contra hc
+  exact hb ⟨φ, h, Prod.lt_iff.mpr (Or.inr ⟨not_lt.mp hc, hp⟩)⟩
+
+end Manner
+
+/-- Their (6) and (8): the definite plural, the universal quantifier that contains it, and the
+hypothetical definite that would contain the quantifier. -/
+inductive Plural where
+  | the
+  | all
+  | defAll
+  deriving DecidableEq, Repr
+
+/-- Structural complexity: *all the doors* contains *the doors*, and the hypothetical (8a)
+contains *all doors*. -/
+def Plural.complexity : Plural → ℕ
+  | .the => 1
+  | .all => 2
+  | .defAll => 3
+
+/-- Potential for imprecision: the definites have it, the universal quantifier does not. -/
+def Plural.potential : Plural → ℕ
+  | .the => 1
+  | .all => 0
+  | .defAll => 1
+
+/-- Their (60): *the doors* and *all the doors* are incomparable, each better on one ordering, so
+neither blocks the other. -/
+theorem the_all_incomparable :
+    ¬ manner Plural.complexity Plural.potential .the <
+        manner Plural.complexity Plural.potential .all ∧
+      ¬ manner Plural.complexity Plural.potential .all <
+        manner Plural.complexity Plural.potential .the := by
+  simp [manner, Prod.lt_iff, Plural.complexity, Plural.potential]
+
+/-- Their (8): a definite built on the quantifier is dominated by the quantifier, so it is
+blocked wherever the two are potentially p-equivalent. -/
+theorem defAll_blocked (PotEquiv : Plural → Plural → Prop) (h : PotEquiv .all .defAll) :
+    Blocked Plural.complexity Plural.potential PotEquiv .defAll :=
+  ⟨.all, h, by simp [manner, Prod.lt_iff, Plural.complexity, Plural.potential]⟩
+
+/-! ### Inference Preservation -/
+
+/-- A subexpression's precise and imprecise interpretations in a context, as predicates over a
+domain of degrees or worlds. -/
+structure Construal (D : Type*) where
+  precise : D → Prop
+  imprecise : D → Prop
+
+/-- `[X]^p`: the truth set of a predicate for `p = true`, its falsity set for `p = false`. -/
+def valued {D : Type*} (P : D → Prop) : Bool → D → Prop
+  | true => P
+  | false => λ d => ¬ P d
+
+instance {D : Type*} (P : D → Prop) [DecidablePred P] (p : Bool) (d : D) :
+    Decidable (valued P p d) := by
+  cases p <;> simp only [valued] <;> infer_instance
+
+/-- Their (18), for one alternative `ψ` of the subexpression `φ`: the use is blocked when, for
+some truth value, the precise truth of `φ` entails that status of `ψ`, the precise falsity of `φ`
+does not, but the imprecise truth of `φ` fails to entail the imprecise status of `ψ`. -/
+def Violates {D : Type*} (φ ψ : Construal D) : Prop :=
+  ∃ p : Bool, (∀ d, φ.precise d → valued ψ.precise p d) ∧
+    ¬ (∀ d, ¬ φ.precise d → valued ψ.precise p d) ∧
+    ¬ (∀ d, φ.imprecise d → valued ψ.imprecise p d)
+
+/-! #### Degree expressions (their Ch. 6) -/
 
 open Numerals.Roundness
 
-/--
-Numeral imprecision datum: context-dependent exactness.
--/
-structure NumeralImprecisionDatum where
-  /-- The numeral -/
-  numeral : Nat
-  /-- Roundness grade (from `Numerals.Roundness`) -/
-  roundness : RoundnessGrade
-  /-- Sentence frame -/
-  sentenceFrame : String
-  /-- Context favoring exact reading -/
-  exactContext : String
-  /-- Context favoring inexact reading -/
-  inexactContext : String
-  /-- Actual value in scenario -/
-  actualValue : Nat
-  /-- Acceptable in exact context? -/
-  acceptableExact : Bool
-  /-- Acceptable in inexact context? -/
-  acceptableInexact : Bool
-  deriving Repr
-
-/--
-The cars scenario from [haslinger-2025-diss] Ch 2.1.2 ex. (19) `CARS(EXACT)`
-and ex. (20) `CARS(INEXACT)`, pp. 71-72.
--/
-def carsExact : NumeralImprecisionDatum :=
-  { numeral := 100
-  , roundness := .high       -- score 6 (all 6 k-ness properties)
-  , sentenceFrame := "This guy owns _ cars."
-  , exactContext := "Tax rate depends on owning exactly 100+ cars"
-  , inexactContext := "Discussing extreme wealth (exact count irrelevant)"
-  , actualValue := 98
-  , acceptableExact := false   -- misleading about tax status
-  , acceptableInexact := true  -- 98 ≈ 100 for wealth signaling
-  }
-
-def carsNonRound : NumeralImprecisionDatum :=
-  { numeral := 99
-  , roundness := .none        -- score 0 (no k-ness properties)
-  , sentenceFrame := "This guy owns _ cars."
-  , exactContext := "Tax rate depends on owning exactly 100+ cars"
-  , inexactContext := "Discussing extreme wealth (exact count irrelevant)"
-  , actualValue := 98
-  , acceptableExact := false
-  , acceptableInexact := false  -- 99 requires exact reading even here
-  }
-
-
-/--
-Minimal pair showing round/non-round asymmetry.
--/
-structure RoundnessAsymmetryDatum where
-  /-- Round numeral -/
-  roundNumeral : Nat
-  /-- Non-round numeral -/
-  nonRoundNumeral : Nat
-  /-- Context (same for both) -/
-  context : String
-  /-- Actual value -/
-  actualValue : Nat
-  /-- Round numeral acceptable? -/
-  roundAcceptable : Bool
-  /-- Non-round acceptable? -/
-  nonRoundAcceptable : Bool
-  deriving Repr
-
-def hundredVsNinetyNine : RoundnessAsymmetryDatum :=
-  { roundNumeral := 100
-  , nonRoundNumeral := 99
-  , context := "Casual conversation about someone's car collection"
-  , actualValue := 98
-  , roundAcceptable := true    -- "100 cars" OK when actual is 98
-  , nonRoundAcceptable := false -- "99 cars" requires exactly 99
-  }
-
-def fiftyVsFortyNine : RoundnessAsymmetryDatum :=
-  { roundNumeral := 50
-  , nonRoundNumeral := 49
-  , context := "Estimating crowd size at event"
-  , actualValue := 47
-  , roundAcceptable := true
-  , nonRoundAcceptable := false
-  }
-
-
-/--
-The game show scenario tests for homogeneity gaps.
-
-Context makes both exact and inexact readings relevant.
-If numerals had gaps like plurals, neither sentence should be clearly true.
-
-Source: [haslinger-2025-diss] Ch 2.4.1 ex. (164), p. 72.
--/
-structure GameShowDatum where
-  /-- The sentence -/
-  sentence : String
-  /-- Scenario description -/
-  scenario : String
-  /-- Exact reading true? -/
-  exactReadingTrue : Bool
-  /-- Inexact reading true? -/
-  inexactReadingTrue : Bool
-  /-- Judgment: is sentence acceptable? -/
-  acceptable : Bool
-  /-- Do speakers agree? -/
-  speakersAgree : Bool
-  /-- Notes -/
-  notes : String
-  deriving Repr
-
-def gameShowPositive : GameShowDatum :=
-  { sentence := "Bei diesem Spiel hat heute jeder 200 Münzen gesammelt."
-              -- "In this game, everyone collected 200 coins today."
-  , scenario := "Game: collect exactly 200 coins → €250 prize; approximately 200 → €50. All participants collected amounts like 195, 198, 203, 205 (close but not exact). All won €50."
-  , exactReadingTrue := false   -- no one got exactly 200
-  , inexactReadingTrue := true  -- everyone got approximately 200
-  , acceptable := true          -- some speakers accept (inexact reading)
-  , speakersAgree := false      -- speakers disagree on judgment
-  , notes := "Unlike plurals, speakers don't report 'neither true nor false' - they pick exact or inexact reading"
-  }
-
-def gameShowNegative : GameShowDatum :=
-  { sentence := "Bei diesem Spiel hat heute niemand 200 Münzen gesammelt."
-              -- "In this game, nobody collected 200 coins today."
-  , scenario := "Same as above"
-  , exactReadingTrue := true    -- no one got exactly 200
-  , inexactReadingTrue := false -- everyone got approximately 200
-  , acceptable := true          -- some speakers accept (exact reading)
-  , speakersAgree := false
-  , notes := "Complementary to positive - one is true depending on reading"
-  }
-
-
-/--
-"Exactly" removes imprecision, parallel to "all" for plurals.
-
-Source: [haslinger-2025-diss] Ch 4.2.1 ex. (4) and (9), pp. 174-176.
--/
-structure ExactlyModifierDatum where
-  /-- Bare numeral sentence -/
-  bareSentence : String
-  /-- Modified sentence -/
-  exactlySentence : String
-  /-- Context -/
-  context : String
-  /-- Actual value -/
-  actualValue : Nat
-  /-- Bare acceptable? -/
-  bareAcceptable : Bool
-  /-- Exactly acceptable? -/
-  exactlyAcceptable : Bool
-  deriving Repr
-
-def exactlyRemovesImprecision : ExactlyModifierDatum :=
-  { bareSentence := "Ann owns 100 cars."
-  , exactlySentence := "Ann owns exactly 100 cars."
-  , context := "Casual conversation about wealth"
-  , actualValue := 98
-  , bareAcceptable := true     -- imprecise reading available
-  , exactlyAcceptable := false -- "exactly" forces precise reading
-  }
-
-
-/--
-"Approximately" reduces imprecision by binding out the exact reading: bare
-`100` has both exact and inexact readings; `approximately 100` has only
-inexact, so the set of available construals shrinks.
-
-Source: [haslinger-2025-diss] §4.2.1 ex. (4) and (10), p. 174-176;
-non-round case developed in §4.2.2 ex. (25)-(26).
--/
-structure ApproximatelyDatum where
-  /-- Bare sentence -/
-  bareSentence : String
-  /-- Approximately sentence -/
-  approxSentence : String
-  /-- Roundness grade (from `Numerals.Roundness`) -/
-  roundness : RoundnessGrade
-  /-- Is approximately acceptable with this numeral? -/
-  approxNatural : Bool
-  /-- Notes -/
-  notes : String
-  deriving Repr
-
-def approximatelyWithRound : ApproximatelyDatum :=
-  { bareSentence := "Ann owns 100 cars."
-  , approxSentence := "Ann owns approximately 100 cars."
-  , roundness := .high       -- 100: score 6
-  , approxNatural := true
-  , notes := "Natural: makes existing imprecision explicit"
-  }
-
-def approximatelyWithNonRound : ApproximatelyDatum :=
-  { bareSentence := "Ann owns 99 cars."
-  , approxSentence := "Ann owns approximately 99 cars."
-  , roundness := .none      -- 99: score 0
-  , approxNatural := false  -- or at least marked
-  , notes := "Odd/marked: why approximate to a non-round number?"
-  }
-
-
-/--
-Core empirical generalizations about numeral imprecision.
--/
-structure Generalizations where
-  /-- Round numerals permit imprecision -/
-  roundPermitsImprecision : Bool
-  /-- Non-round require exactness -/
-  nonRoundRequiresExact : Bool
-  /-- "Exactly" removes imprecision -/
-  exactlyRemoves : Bool
-  /-- Negation requires polar questions -/
-  negationRequiresPolar : Bool
-  /-- No clear homogeneity gaps (unlike plurals) -/
-  noHomogeneityGaps : Bool
-  /-- Imprecision is context-sensitive -/
-  contextSensitive : Bool
-  deriving Repr
-
-def generalizations : Generalizations :=
-  { roundPermitsImprecision := true
-  , nonRoundRequiresExact := true
-  , exactlyRemoves := true
-  , negationRequiresPolar := true
-  , noHomogeneityGaps := true  -- disputed, but apparent
-  , contextSensitive := true
-  }
-
--- Collections
-
-def carsExamples : List NumeralImprecisionDatum :=
-  [carsExact, carsNonRound]
-
-def roundnessAsymmetryExamples : List RoundnessAsymmetryDatum :=
-  [hundredVsNinetyNine, fiftyVsFortyNine]
-
-def gameShowExamples : List GameShowDatum :=
-  [gameShowPositive, gameShowNegative]
-
-end Numerals
-
-
--- ============================================================================
--- §2. Form/Meaning Correspondences
--- ============================================================================
-
-namespace FormMeaning
-
-/--
-A pair of expressions showing the complexity-precision tradeoff.
-
-The `potentiallyPEquivalent` field encodes Haslinger's notion of **potential
-p-equivalence** (definition (68), §3.3.3): two sentences count as competitors
-for NO NEEDLESS MANNER VIOLATIONS iff there exists *some* choice of issue
-parameter making their p-truth conditions equivalent. This is weaker than raw
-truth-conditional equivalence and is **not transitive** (footnote on p. 88).
--/
-structure ComplexityPrecisionPair where
-  /-- Less complex expression -/
-  lessComplexExpr : String
-  /-- More complex expression -/
-  moreComplexExpr : String
-  /-- What makes it more complex -/
-  complexitySource : String
-  /-- Does less complex permit imprecision? -/
-  lessComplexImprecise : Bool
-  /-- Does more complex permit imprecision? -/
-  moreComplexImprecise : Bool
-  /-- Potential p-equivalence (Haslinger def 68): some issue-parameter choice
-      makes the two p-truth-conditionally equivalent. NOT TC-equivalence. -/
-  potentiallyPEquivalent : Bool
-  /-- Construction type -/
-  constructionType : String
-  deriving Repr
-
-/--
-Plural definites: "the doors" vs "all the doors". The German parallel
-(`die Türen` / `alle Türen`) holds, and §3.2.2 (Table 3.1) surveys 12+
-language families showing the absence of the inverse pattern.
-
-Source: [haslinger-2025-diss] Ch 3.1.1 ex. (3), p. 86; gap-removal
-contrast ex. (4).
--/
-def doorsAllDoors : ComplexityPrecisionPair :=
-  { lessComplexExpr := "The doors are open."
-  , moreComplexExpr := "All the doors are open."
-  , complexitySource := "Addition of 'all'"
-  , lessComplexImprecise := true   -- permits non-maximal
-  , moreComplexImprecise := false  -- requires maximal
-  , potentiallyPEquivalent := true  -- §3.3.3 def (68); some issue-param assignment makes p-truth-conditions match
-  , constructionType := "Plural definites"
-  }
-
-/--
-Conjunctions: "Ann and Bert" vs "both Ann and Bert"
-
-Source: [haslinger-2025-diss] Ch 3.3 ex. (48), p. 104; further developed
-in §3.5.1 (p. 126).
--/
-def andBoth : ComplexityPrecisionPair :=
-  { lessComplexExpr := "Ann and Bert have red hair."
-  , moreComplexExpr := "Both Ann and Bert have red hair."
-  , complexitySource := "Addition of 'both'"
-  , lessComplexImprecise := true   -- has homogeneity gap
-  , moreComplexImprecise := false  -- gap-less
-  , potentiallyPEquivalent := true  -- §3.3.3 def (68)
-  , constructionType := "Conjunctions"
-  }
-
-/--
-Numerals: "100 cars" vs "exactly 100 cars"
-
-Source: [haslinger-2025-diss] Ch 4.2 ex. (4), p. 174 + ex. (9), p. 176
-(`CARS(EXACT)` scenario).
--/
-def numeralExactly : ComplexityPrecisionPair :=
-  { lessComplexExpr := "Ann owns 100 cars."
-  , moreComplexExpr := "Ann owns exactly 100 cars."
-  , complexitySource := "Addition of 'exactly'"
-  , lessComplexImprecise := true   -- permits inexact
-  , moreComplexImprecise := false  -- requires exact
-  , potentiallyPEquivalent := true  -- §3.3.3 def (68)
-  , constructionType := "Numerals"
-  }
-
-/--
-Summative predicates: "blue" vs "completely blue"
-
-Source: [haslinger-2025-diss] on summative predicates.
--/
-def blueCompletely : ComplexityPrecisionPair :=
-  { lessComplexExpr := "The flag is blue."
-  , moreComplexExpr := "The flag is completely blue."
-  , complexitySource := "Addition of 'completely'"
-  , lessComplexImprecise := true   -- permits partial coverage
-  , moreComplexImprecise := false  -- requires full coverage
-  , potentiallyPEquivalent := true  -- §2.4.1 ex. (169a), summative singular predication
-  , constructionType := "Summative predicates"
-  }
-
-def attestedPairs : List ComplexityPrecisionPair :=
-  [doorsAllDoors, andBoth, numeralExactly, blueCompletely]
-
-end FormMeaning
-
-
--- ============================================================================
--- §3. Inference Preservation
--- ============================================================================
-
-namespace InferencePreservation
-
-/-- Inference relation between expression and alternative. -/
-inductive InferenceRelation where
-  | entails         -- φ |= ψ
-  | contradicts     -- φ |= ¬ψ
-  | independent     -- neither
-  deriving Repr, DecidableEq
-
-
-
-/--
-Numeral alternative blocking datum.
-
-The alternatives of a numeral n include nearby numerals.
-If n contradicts m on precise reading, imprecise construal can't
-be compatible with m.
-
-Source: [haslinger-2025-diss] Chapter 6, [sauerland-stateva-2007]
--/
-structure NumeralBlockingDatum where
-  /-- The numeral -/
-  numeral : Nat
-  /-- Is it round? -/
-  round : Bool
-  /-- Key alternative -/
-  alternative : Nat
-  /-- Is alternative in the alternative set? -/
-  alternativeInSet : Bool
-  /-- Inference relation (precise reading) -/
-  inferenceRelation : InferenceRelation
-  /-- Is imprecision blocked? -/
-  imprecisionBlocked : Bool
-  /-- Explanation -/
-  explanation : String
-  deriving Repr
-
-def ninetyNineBlocked : NumeralBlockingDatum :=
-  { numeral := 99
-  , round := false
-  , alternative := 100
-  , alternativeInSet := true
-  , inferenceRelation := .independent
-  , imprecisionBlocked := true
-  , explanation := "100 is obligatorily in 99's alternative set; an imprecise construal of '99 cars' that included 100 would fail Inference Preservation."
-  }
-
-def hundredNotBlocked : NumeralBlockingDatum :=
-  { numeral := 100
-  , round := true
-  , alternative := 99
-  , alternativeInSet := false
-  , inferenceRelation := .independent
-  , imprecisionBlocked := false
-  , explanation := "100's coarse-scale alternative set {50, 200, 500, 1000} excludes 99; no alternative to fail against."
-  }
-
-/--
-The asymmetry depends on conventionalized alternative sets.
-
-Round numbers have "coarse" alternative sets.
-Non-round numbers have "fine" alternative sets that include round neighbors.
-
-Source: [haslinger-2025-diss] Chapter 6
--/
-structure AlternativeSetAsymmetry where
-  /-- Round numeral -/
-  roundNumeral : Nat
-  /-- Its alternative set (simplified) -/
-  roundAlternatives : List Nat
-  /-- Non-round numeral -/
-  nonRoundNumeral : Nat
-  /-- Its alternative set (simplified) -/
-  nonRoundAlternatives : List Nat
-  /-- Asymmetry explanation -/
-  explanation : String
-  deriving Repr
-
-def hundredNinetyNineAsymmetry : AlternativeSetAsymmetry :=
-  { roundNumeral := 100
-  , roundAlternatives := [50, 200, 500, 1000]  -- other round numbers
-  , nonRoundNumeral := 99
-  , nonRoundAlternatives := [100, 98, 97, 101]  -- includes neighboring round
-  , explanation := "100's alternatives are other round numbers (coarse scale). 99's alternatives include 100 (the nearest round number). This asymmetry in alternative sets explains why 99 must be exact."
-  }
-
-
-/--
-Conjunction blocking datum.
-
-Conjunctions have conjuncts as alternatives.
-"A and B are P" entails "A is P" and "B is P".
-Non-maximal reading would fail to preserve these entailments.
-
-Source: [haslinger-2025-diss] Chapter 7
--/
-structure ConjunctionBlockingDatum where
-  /-- The conjunction sentence -/
-  sentence : String
-  /-- The conjuncts -/
-  conjuncts : List String
-  /-- Alternatives (the conjuncts as sentences) -/
-  alternatives : List String
-  /-- Entailment holds on precise reading? -/
-  entailmentHolds : Bool
-  /-- Would non-max preserve entailment? -/
-  nonMaxPreservesEntailment : Bool
-  /-- Is non-max blocked? -/
-  nonMaxBlocked : Bool
-  /-- Explanation -/
-  explanation : String
-  deriving Repr
-
-def annBertConjunction : ConjunctionBlockingDatum :=
-  { sentence := "Ann and Bert have red hair."
-  , conjuncts := ["Ann", "Bert"]
-  , alternatives := ["Ann has red hair.", "Bert has red hair."]
-  , entailmentHolds := true  -- "A and B have P" |= "A has P", "B has P"
-  , nonMaxPreservesEntailment := false  -- "only Ann has P" wouldn't entail both
-  , nonMaxBlocked := true
-  , explanation := "If 'Ann and Bert have red hair' could be true when only Ann has red hair, it would fail to entail 'Bert has red hair', violating inference preservation."
-  }
-
-def threeStudentsConjunction : ConjunctionBlockingDatum :=
-  { sentence := "Bert, Claire, and Dora went there."
-  , conjuncts := ["Bert", "Claire", "Dora"]
-  , alternatives := ["Bert went there.", "Claire went there.", "Dora went there."]
-  , entailmentHolds := true
-  , nonMaxPreservesEntailment := false
-  , nonMaxBlocked := true
-  , explanation := "Same pattern: explicit list of conjuncts creates entailments that non-maximal reading would violate."
-  }
-
-
-/--
-Numeral-modified definites: "the four doors"
-
-These have homogeneity gaps but resist non-maximality.
-The structural alternative is the numeral *indefinite* (not sub-numerals).
-
-Source: [haslinger-2025-diss] §7.2.3, eq. (11)-(16), p. 305; ftn. 7 p. 309
-on the numeral indefinite's lack of homogeneity gap.
--/
-structure NumeralDefiniteBlockingDatum where
-  /-- The sentence -/
-  sentence : String
-  /-- The numeral -/
-  numeral : Nat
-  /-- The structural alternative (numeral indefinite, no definite article) -/
-  indefiniteAlternative : String
-  /-- Does precise definite reading entail the indefinite alternative? -/
-  entailsIndefiniteAlternative : Bool
-  /-- Would non-max definite reading entail the indefinite alternative? -/
-  nonMaxEntailsAlternative : Bool
-  /-- Is non-max blocked? -/
-  nonMaxBlocked : Bool
-  /-- Explanation -/
-  explanation : String
-  deriving Repr
-
-def fourDoorsBlocking : NumeralDefiniteBlockingDatum :=
-  { sentence := "The four doors are open."
-  , numeral := 4
-  , indefiniteAlternative := "Four doors are open."
-  , entailsIndefiniteAlternative := true   -- precise definite ⇒ indefinite
-  , nonMaxEntailsAlternative := false      -- 3-of-4 doesn't entail it
-  , nonMaxBlocked := true
-  , explanation := "Numeral indefinite alternative has no homogeneity gap (covert ∃ binds it); precise definite entails it but non-maximal definite would not."
-  }
-
-
-/--
-Collective and cumulative predicates sometimes permit non-maximality
-even with conjunctions.
-
-This is an exception that inference preservation needs to handle.
-
-Source: [haslinger-2025-diss] Chapter 7
--/
-structure CollectiveCumulativeException where
-  /-- The sentence -/
-  sentence : String
-  /-- Predicate type -/
-  predicateType : String  -- "collective" or "cumulative"
-  /-- Is non-max possible? -/
-  nonMaxPossible : Bool
-  /-- Why? -/
-  explanation : String
-  deriving Repr
-
-def collectiveMeetException : CollectiveCumulativeException :=
-  { sentence := "Ann, Bert, and Claire met."
-  , predicateType := "collective"
-  , nonMaxPossible := true
-  , explanation := "'A, B, C met' doesn't entail 'A met' (meeting needs ≥2 participants), so the entailment pattern Inference Preservation tracks does not arise."
-  }
-
-def cumulativeCarryException : CollectiveCumulativeException :=
-  { sentence := "Ann, Bert, and Claire carried the piano upstairs."
-  , predicateType := "cumulative"
-  , nonMaxPossible := true
-  , explanation := "Many-to-many cumulative readings have weaker entailment patterns than distributive readings."
-  }
-
-def numeralBlockingExamples : List NumeralBlockingDatum :=
-  [ninetyNineBlocked, hundredNotBlocked]
-
-def conjunctionBlockingExamples : List ConjunctionBlockingDatum :=
-  [annBertConjunction, threeStudentsConjunction]
-
-def collectiveExceptions : List CollectiveCumulativeException :=
-  [collectiveMeetException, cumulativeCarryException]
-
-end InferencePreservation
+/-- A bare numeral read with deviation at most `m`: their (69a) and (70a). -/
+def numeral (n : ℕ) (m : ℚ) : Construal ℚ := ⟨λ d => d = n, λ d => |d - n| ≤ m⟩
+
+/-- *more than n* read with deviation at most `m`: their (69b) and (70b). -/
+def moreThan (n : ℕ) (m : ℚ) : Construal ℚ := ⟨λ d => n < d, λ d => (n : ℚ) - m < d⟩
+
+/-- The scalar alternatives of a numeral for Inference Preservation, their (79a): the other
+numerals at least as round. -/
+def IsAlternative (n n' : ℕ) : Prop := n' ≠ n ∧ roundnessScore n ≤ roundnessScore n'
+
+instance (n n' : ℕ) : Decidable (IsAlternative n n') := inferInstanceAs (Decidable (_ ∧ _))
+
+/-- Two distinct bare numerals whose halos meet violate Inference Preservation: incompatible
+precisely, compatible imprecisely. -/
+theorem numeral_violates_of_le {n n' : ℕ} (h : n ≠ n') {m : ℚ}
+    (hd : |(n : ℚ) - n'| ≤ 2 * m) : Violates (numeral n m) (numeral n' m) := by
+  refine ⟨false, λ d hd' hn' => ?_, λ hall => ?_, λ hall => ?_⟩
+  · exact h (Nat.cast_injective (hd'.symm.trans hn'))
+  · exact (hall (n' : ℚ) (by simp only [numeral]; exact_mod_cast h.symm)) rfl
+  · refine hall (((n : ℚ) + n') / 2) ?_ ?_
+    · simp only [numeral]
+      rw [show ((n : ℚ) + n') / 2 - n = (n' - n) / 2 by ring, abs_div,
+        abs_of_pos (by norm_num : (0 : ℚ) < 2), abs_sub_comm]
+      linarith
+    · show |((n : ℚ) + n') / 2 - n'| ≤ m
+      rw [show ((n : ℚ) + n') / 2 - n' = (n - n') / 2 by ring, abs_div,
+        abs_of_pos (by norm_num : (0 : ℚ) < 2)]
+      linarith
+
+/-- Distinct bare numerals whose halos are apart preserve every inference. -/
+theorem not_numeral_violates_of_lt {n n' : ℕ} (h : n ≠ n') {m : ℚ}
+    (hd : 2 * m < |(n : ℚ) - n'|) : ¬ Violates (numeral n m) (numeral n' m) := by
+  rintro ⟨p, ha, -, hc⟩
+  cases p with
+  | true =>
+    have := ha n rfl
+    simp only [numeral, valued] at this
+    exact h (by exact_mod_cast this)
+  | false =>
+    refine hc λ d hdn hdn' => ?_
+    have hdn : |d - n| ≤ m := hdn
+    have hdn' : |d - n'| ≤ m := hdn'
+    have := abs_sub_le (n : ℚ) d n'
+    rw [abs_sub_comm (n : ℚ) d] at this
+    linarith
+
+/-- *100* is an alternative of *99*, which has no roundness. -/
+theorem isAlternative_ninetyNine_hundred : IsAlternative 99 100 := by decide
+
+/-- *99* is blocked by its alternative *100* as soon as it admits half a unit of deviation:
+non-round numerals must be exact. -/
+theorem ninetyNine_blocked {m : ℚ} (hm : 1 / 2 ≤ m) : Violates (numeral 99 m) (numeral 100 m) :=
+  numeral_violates_of_le (by decide) (by norm_num; linarith)
+
+/-- Below two hundred, only *100* itself carries the full roundness score. -/
+theorem score_ge_six_lt_two_hundred : ∀ n < 200, 6 ≤ roundnessScore n → n = 100 := by
+  intro n hn h6
+  unfold roundnessScore at h6
+  split_ifs at h6 with h5 h10 h20 h25 h50 hk10 <;> try omega
+  have h50d := h50.dvd
+  have h20d := h20.dvd
+  have hpos : 0 < n := by
+    obtain ⟨b, m, hm1, -, rfl⟩ := h50
+    exact Nat.mul_pos (Nat.mul_pos hm1 (by norm_num)) (Nat.pow_pos (by norm_num))
+  omega
+
+/-- *100* keeps every alternative at bay under deviations below fifty: its nearest alternative at
+least as round, *200*, lies a hundred away. -/
+theorem hundred_preserved {m : ℚ} (hm : m < 50) {n' : ℕ} (h : IsAlternative 100 n') :
+    ¬ Violates (numeral 100 m) (numeral n' m) := by
+  refine not_numeral_violates_of_lt (Ne.symm h.1) ?_
+  by_contra hle
+  have hlt : n' < 200 := by
+    by_contra hge
+    have : (200 : ℚ) ≤ n' := by exact_mod_cast not_lt.mp hge
+    rw [not_lt, abs_le] at hle
+    simp only [Nat.cast_ofNat] at hle
+    linarith [hle.1]
+  exact h.1 (score_ge_six_lt_two_hundred n' hlt (le_trans (by decide) h.2))
+
+/-- *more than n* is blocked by its alternative bare *n* at any positive deviation, their
+(69)–(70): the imprecise comparative overlaps the exact value it is precisely incompatible
+with. -/
+theorem moreThan_blocked (n : ℕ) {m : ℚ} (hm : 0 < m) :
+    Violates (moreThan n m) (numeral n m) := by
+  refine ⟨false, λ d hd => ?_, λ hall => ?_, λ hall => ?_⟩
+  · simp only [moreThan, numeral, valued] at hd ⊢
+    exact ne_of_gt hd
+  · exact (hall (n : ℚ) (lt_irrefl _)) rfl
+  · exact hall (n : ℚ) (by show (n : ℚ) - m < n; linarith)
+      (by show |(n : ℚ) - n| ≤ m; simp; linarith)
+
+/-! #### Conjunctions (their Ch. 7) -/
+
+/-- Their (19)–(20): *Bert, Claire and Dora were there* over the worlds recording who was there,
+precisely maximal, imprecisely non-maximal. -/
+def conjunction : Construal (Fin 3 → Bool) :=
+  ⟨λ w => ∀ i, w i = true, λ w => ∃ i, w i = true⟩
+
+/-- A conjunct alternative, *Bert was there*, with no potential for imprecision. -/
+def conjunct (i : Fin 3) : Construal (Fin 3 → Bool) :=
+  ⟨λ w => w i = true, λ w => w i = true⟩
+
+/-- The non-maximal construal of the conjunction loses the entailment of each conjunct that the
+precise construal licenses, so only the maximal construal survives Inference Preservation. -/
+theorem conjunction_violates (i : Fin 3) : Violates conjunction (conjunct i) := by
+  refine ⟨true, λ w hw => hw i, λ hall => ?_, λ hall => ?_⟩
+  · exact Bool.false_ne_true (hall (λ _ => false) (by simp [conjunction]))
+  · have hw : conjunction.imprecise (λ j => decide (j ≠ i)) :=
+      ⟨if i = 0 then 1 else 0, by fin_cases i <;> decide⟩
+    have := hall _ hw
+    simp [conjunct, valued] at this
 
 end Haslinger2025
