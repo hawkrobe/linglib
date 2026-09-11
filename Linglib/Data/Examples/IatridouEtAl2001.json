@@ -1,0 +1,1715 @@
+[
+  {
+    "id": "iai2001_ex1",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(1)"
+    },
+    "language": "stan1293",
+    "primaryText": "Petros has visited Thailand.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "reading",
+        "anteriority"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex2a",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(2a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I have been sick since 1990.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "reading",
+        "universal"
+      ],
+      [
+        "adverbial",
+        "since"
+      ],
+      [
+        "predicate",
+        "stative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex3a",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(3a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I have read Principia Mathematica five times.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "reading",
+        "experiential"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex4",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(4)"
+    },
+    "language": "stan1293",
+    "primaryText": "I have lost my glasses.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "reading",
+        "perfect of result"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex5",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(5)"
+    },
+    "language": "stan1293",
+    "primaryText": "He has just graduated from college.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "reading",
+        "perfect of recent past"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex6a",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(6a)"
+    },
+    "language": "stan1293",
+    "primaryText": "She has been sick at least since 1990 but she is fine now.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "reading",
+        "universal"
+      ],
+      [
+        "point",
+        "RB included by assertion"
+      ]
+    ],
+    "comment": "A contradiction: the universal perfect asserts the eventuality at the right boundary.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex6b",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(6b)"
+    },
+    "language": "stan1293",
+    "primaryText": "She has always lived here but she doesn't anymore.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "reading",
+        "universal"
+      ],
+      [
+        "point",
+        "RB included by assertion"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex7",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(7)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary visited Peter last week. A strange bug had bitten him a week before and he had been very sick since then. Mary will visit Peter again in two weeks. At that point, he will have been sick for a month.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "reading",
+        "universal"
+      ],
+      [
+        "tense",
+        "past and future perfect"
+      ],
+      [
+        "point",
+        "RB set by tense"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex8",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(8)"
+    },
+    "language": "stan1293",
+    "primaryText": "He has had brown eyes since he was born.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "He has had brown eyes.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.1"
+      ],
+      [
+        "predicate",
+        "individual-level stative"
+      ],
+      [
+        "adverbial",
+        "required"
+      ]
+    ],
+    "comment": "An individual-level stative in the perfect needs an adverbial.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex9",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(9)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary has been sick.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.1"
+      ],
+      [
+        "predicate",
+        "stage-level stative"
+      ],
+      [
+        "reading",
+        "not universal"
+      ]
+    ],
+    "comment": "Silent about the utterance time: a perfect of recent past with a covert lately.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex11",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(11)"
+    },
+    "language": "stan1293",
+    "primaryText": "She has been sick lately.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.1"
+      ],
+      [
+        "reading",
+        "perfect of recent past"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex13B",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(13B)"
+    },
+    "language": "bulg1262",
+    "primaryText": "Tja e bila bolna.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Tja",
+        "she"
+      ],
+      [
+        "e",
+        "is"
+      ],
+      [
+        "bila",
+        "been"
+      ],
+      [
+        "bolna",
+        "sick"
+      ]
+    ],
+    "translation": "She has been sick.",
+    "context": "A: I haven't seen Mary in a while. Where is she?",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.1"
+      ],
+      [
+        "reading",
+        "no perfect of recent past"
+      ]
+    ],
+    "comment": "Bulgarian has a universal perfect but no perfect of recent past.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex14a",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(14a)"
+    },
+    "language": "stan1293",
+    "primaryText": "She has been sick lately.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "She was sick lately.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.1"
+      ],
+      [
+        "adverbial",
+        "lately takes the present perfect"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex14d",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(14d)"
+    },
+    "language": "bulg1262",
+    "primaryText": "Tja beshe bolna naposleduk.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Tja",
+        "she"
+      ],
+      [
+        "beshe",
+        "was"
+      ],
+      [
+        "bolna",
+        "sick"
+      ],
+      [
+        "naposleduk",
+        "lately"
+      ]
+    ],
+    "translation": "She was sick lately.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Tja e bila bolna naposleduk.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.1"
+      ],
+      [
+        "adverbial",
+        "lately takes the past in Bulgarian"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex15",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(15)"
+    },
+    "language": "stan1293",
+    "primaryText": "I have been cooking.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.1"
+      ],
+      [
+        "predicate",
+        "progressive"
+      ],
+      [
+        "reading",
+        "not universal"
+      ]
+    ],
+    "comment": "Can be continued by but I'm done now.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex17a",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(17a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I have been sick since yesterday.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "I am sick since yesterday.",
+        "judgment": "ungrammatical"
+      },
+      {
+        "form": "I was sick since 1990.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.2"
+      ],
+      [
+        "adverbial",
+        "since is perfect-level"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex18a",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(18a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Since 1990 I have been sick.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.2"
+      ],
+      [
+        "adverbial",
+        "since"
+      ],
+      [
+        "readings",
+        "universal and existential"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex19a",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(19a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Since 1990, I have read The Book of Sand five times.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.2"
+      ],
+      [
+        "adverbial",
+        "since"
+      ],
+      [
+        "readings",
+        "existential only"
+      ]
+    ],
+    "comment": "The eventuality is not homogeneous, so durative since finds no universal reading.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex20a",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(20a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I have been sick for five days.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.2"
+      ],
+      [
+        "adverbial",
+        "for, sentence-final"
+      ],
+      [
+        "readings",
+        "universal and existential"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex20b",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(20b)"
+    },
+    "language": "stan1293",
+    "primaryText": "For five days, I have been sick.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.2"
+      ],
+      [
+        "adverbial",
+        "for, sentence-initial"
+      ],
+      [
+        "readings",
+        "universal only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex21a",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(21a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Since 1970, I have been sick for five days.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.2"
+      ],
+      [
+        "adverbial",
+        "eventuality-level for under perfect-level since"
+      ],
+      [
+        "reading",
+        "existential"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex22a",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(22a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I have lived in Thessaloniki for ten years.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.2"
+      ],
+      [
+        "adverbial",
+        "for"
+      ],
+      [
+        "readings",
+        "universal if perfect-level, existential if eventuality-level"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex23a",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(23a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John has been in Boston for two weeks.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.2"
+      ],
+      [
+        "adverbial",
+        "for, sentence-final"
+      ],
+      [
+        "readings",
+        "ambiguous"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex23b",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(23b)"
+    },
+    "language": "stan1293",
+    "primaryText": "For two weeks, John has been in Boston.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.2"
+      ],
+      [
+        "adverbial",
+        "for, sentence-initial"
+      ],
+      [
+        "readings",
+        "universal only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex24",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(24)"
+    },
+    "language": "stan1293",
+    "primaryText": "Since 1990, I have read The Book of Sand five times.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.2"
+      ],
+      [
+        "adverbial",
+        "since, sentence-initial"
+      ],
+      [
+        "reading",
+        "existential"
+      ]
+    ],
+    "comment": "A sentence-initial adverbial can yield an existential perfect.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex25a",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(25a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Emma has always been tall.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Emma is always tall.",
+        "judgment": "ungrammatical"
+      },
+      {
+        "form": "Emma was always tall.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.2"
+      ],
+      [
+        "adverbial",
+        "perfect-level always"
+      ],
+      [
+        "predicate",
+        "individual-level"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex26",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(26)"
+    },
+    "language": "stan1293",
+    "primaryText": "Since 1990, I have always been tall.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.2"
+      ],
+      [
+        "adverbial",
+        "always with since"
+      ],
+      [
+        "predicate",
+        "individual-level"
+      ]
+    ],
+    "comment": "Perfect-level always leaves no room for another perfect-level adverbial.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex27c",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(27c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Since 1990, I have always been sick when he has visited me.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.2"
+      ],
+      [
+        "adverbial",
+        "eventuality-level always"
+      ],
+      [
+        "predicate",
+        "stage-level"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex28",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(28)"
+    },
+    "language": "stan1293",
+    "primaryText": "Since 1991, I have been to Cape Cod only once, namely, in the fall of 1993.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "point",
+        "PTS is not the E-R interval"
+      ],
+      [
+        "LB",
+        "1991"
+      ],
+      [
+        "event",
+        "fall 1993"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex30",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(30)"
+    },
+    "language": "mode1248",
+    "primaryText": "Exo panta zisi stin Athina.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Exo",
+        "have.1SG"
+      ],
+      [
+        "panta",
+        "always"
+      ],
+      [
+        "zisi",
+        "lived"
+      ],
+      [
+        "stin",
+        "in.the"
+      ],
+      [
+        "Athina",
+        "Athens"
+      ]
+    ],
+    "translation": "I have always lived in Athens.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4"
+      ],
+      [
+        "reading",
+        "universal unavailable"
+      ],
+      [
+        "participle",
+        "perfective"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex31",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(31)"
+    },
+    "language": "mode1248",
+    "primaryText": "Extisa ena spiti mesa se ena xrono.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Extisa",
+        "build.PST.PFV.1SG"
+      ],
+      [
+        "ena",
+        "a"
+      ],
+      [
+        "spiti",
+        "house"
+      ],
+      [
+        "mesa",
+        "in"
+      ],
+      [
+        "se",
+        "in"
+      ],
+      [
+        "ena",
+        "one"
+      ],
+      [
+        "xrono",
+        "year"
+      ]
+    ],
+    "translation": "I built a house in a year.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Extisa ena spiti ya ena xrono.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4"
+      ],
+      [
+        "aspect",
+        "perfective, bounded"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex32",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(32)"
+    },
+    "language": "mode1248",
+    "primaryText": "Extiza to spiti ya ena xrono.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Extiza",
+        "build.PST.IPFV.1SG"
+      ],
+      [
+        "to",
+        "the"
+      ],
+      [
+        "spiti",
+        "house"
+      ],
+      [
+        "ya",
+        "for"
+      ],
+      [
+        "ena",
+        "one"
+      ],
+      [
+        "xrono",
+        "year"
+      ]
+    ],
+    "translation": "I was building the house for a year.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Extiza to spiti mesa se ena xrono.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4"
+      ],
+      [
+        "aspect",
+        "imperfective, unbounded"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex33",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(33)"
+    },
+    "language": "mode1248",
+    "primaryText": "O Yiannis ayapise tin Maria to 1981.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "O",
+        "the"
+      ],
+      [
+        "Yiannis",
+        "Yiannis"
+      ],
+      [
+        "ayapise",
+        "love.PST.PFV.3SG"
+      ],
+      [
+        "tin",
+        "the"
+      ],
+      [
+        "Maria",
+        "Maria"
+      ],
+      [
+        "to",
+        "in"
+      ],
+      [
+        "1981",
+        "1981"
+      ]
+    ],
+    "translation": "John fell in love with Mary in 1981.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4.1"
+      ],
+      [
+        "aspect",
+        "perfective on a stative is inchoative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex34",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(34)"
+    },
+    "language": "mode1248",
+    "primaryText": "O Yiannis exi ayapisi tin Maria.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "O",
+        "the"
+      ],
+      [
+        "Yiannis",
+        "Yiannis"
+      ],
+      [
+        "exi",
+        "has.3SG"
+      ],
+      [
+        "ayapisi",
+        "loved"
+      ],
+      [
+        "tin",
+        "the"
+      ],
+      [
+        "Maria",
+        "Maria"
+      ]
+    ],
+    "translation": "John has fallen in love with Mary.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4.1"
+      ],
+      [
+        "reading",
+        "existential only"
+      ],
+      [
+        "participle",
+        "perfective"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex35",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(35)"
+    },
+    "language": "bulg1262",
+    "primaryText": "Marija e obiknala Ivan.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Marija",
+        "Maria"
+      ],
+      [
+        "e",
+        "is"
+      ],
+      [
+        "obiknala",
+        "love.PFV.PTCP"
+      ],
+      [
+        "Ivan",
+        "Ivan"
+      ]
+    ],
+    "translation": "Maria has fallen in love with Ivan.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Marija vinagi e obiknala Ivan.",
+        "judgment": "ungrammatical"
+      },
+      {
+        "form": "Marija e obiknala Ivan ot 1980 nasam.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4.2"
+      ],
+      [
+        "reading",
+        "existential only"
+      ],
+      [
+        "participle",
+        "perfective"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex36",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(36)"
+    },
+    "language": "bulg1262",
+    "primaryText": "Marija vinagi e obicala Ivan.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Marija",
+        "Maria"
+      ],
+      [
+        "vinagi",
+        "always"
+      ],
+      [
+        "e",
+        "is"
+      ],
+      [
+        "obicala",
+        "love.IPFV.PTCP"
+      ],
+      [
+        "Ivan",
+        "Ivan"
+      ]
+    ],
+    "translation": "Maria has always loved Ivan.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4.2"
+      ],
+      [
+        "reading",
+        "universal"
+      ],
+      [
+        "participle",
+        "imperfective"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex39",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(39)"
+    },
+    "language": "bulg1262",
+    "primaryText": "Az sum pila vinoto ot sutrinta nasam.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Az",
+        "I"
+      ],
+      [
+        "sum",
+        "am"
+      ],
+      [
+        "pila",
+        "drink.NEUT.PTCP"
+      ],
+      [
+        "vinoto",
+        "the.wine"
+      ],
+      [
+        "ot",
+        "from"
+      ],
+      [
+        "sutrinta",
+        "this.morning"
+      ],
+      [
+        "nasam",
+        "towards.now"
+      ]
+    ],
+    "translation": "I have been drinking the wine since this morning.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4.2"
+      ],
+      [
+        "reading",
+        "universal"
+      ],
+      [
+        "participle",
+        "neutral"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex40",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(40)"
+    },
+    "language": "stan1293",
+    "primaryText": "He has read the book but he didn't finish it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4.3"
+      ],
+      [
+        "aspect",
+        "the English perfect of a telic is bounded"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex41a",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(41a)"
+    },
+    "language": "stan1293",
+    "primaryText": "He has danced ever since this morning.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4.3"
+      ],
+      [
+        "predicate",
+        "activity, nonprogressive"
+      ],
+      [
+        "reading",
+        "universal unavailable"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex41b",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(41b)"
+    },
+    "language": "stan1293",
+    "primaryText": "He has drawn a circle ever since this morning.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4.3"
+      ],
+      [
+        "predicate",
+        "telic, nonprogressive"
+      ],
+      [
+        "reading",
+        "universal unavailable"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex45",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(45)"
+    },
+    "language": "mode1248",
+    "primaryText": "Exi kivernisi apo to 1990 mexri tora.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Exi",
+        "has.3SG"
+      ],
+      [
+        "kivernisi",
+        "governed"
+      ],
+      [
+        "apo",
+        "from"
+      ],
+      [
+        "to",
+        "the"
+      ],
+      [
+        "1990",
+        "1990"
+      ],
+      [
+        "mexri",
+        "until"
+      ],
+      [
+        "tora",
+        "now"
+      ]
+    ],
+    "translation": "She has governed from 1990 to now.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4.4"
+      ],
+      [
+        "reading",
+        "throughout with a bounded activity ending at RB"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex47",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(47)"
+    },
+    "language": "stan1293",
+    "primaryText": "John was asleep when I arrived.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "test",
+        "Vlach's stativity test"
+      ],
+      [
+        "feature",
+        "unbounded"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex48",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(48)"
+    },
+    "language": "stan1293",
+    "primaryText": "John was lifting weights when I arrived.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "test",
+        "Vlach's stativity test passed by a progressive"
+      ],
+      [
+        "feature",
+        "unbounded"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "iai2001_ex49a",
+    "source": {
+      "bibkey": "iatridou-anagnostopoulou-izvorski-2001",
+      "paperLabel": "(49a)"
+    },
+    "language": "bulg1262",
+    "primaryText": "Ivan pisa pismoto kogato Maria vleze v stajata.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ivan",
+        "Ivan"
+      ],
+      [
+        "pisa",
+        "write.NEUT.PST"
+      ],
+      [
+        "pismoto",
+        "the.letter"
+      ],
+      [
+        "kogato",
+        "when"
+      ],
+      [
+        "Maria",
+        "Maria"
+      ],
+      [
+        "vleze",
+        "entered"
+      ],
+      [
+        "v",
+        "in"
+      ],
+      [
+        "stajata",
+        "the.room"
+      ]
+    ],
+    "translation": "Ivan was writing the letter when Maria entered the room.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {
+        "form": "Ivan pisheshe pismoto kogato Maria vleze v stajata.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "test",
+        "the neutral fails Vlach's test"
+      ],
+      [
+        "feature",
+        "unbounded"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  }
+]
