@@ -19,11 +19,11 @@ per-connective local contexts are substrate
   context at φ is x's belief state.
 - `negation_projects` / `conditional_filters`: the projection asymmetry
   between negation and conditionals.
-- `king_conditional_filters`: "If the king exists, the king is bald"
-  filters the existence presupposition.
-- `king_accounts_agree`: the local-context prediction agrees with the
-  Karttunen filtering connective (`PartialProp.impFilter`) on the king
-  example.
+- `king_conditional_filters`: "If the king has a son, the king's son is bald"
+  filters the consequent's presupposition in a context that entails a king.
+- `local_contexts_agree_impFilter` / `king_accounts_agree`: the local-context
+  prediction agrees with the Karttunen filtering connective
+  (`PartialProp.impFilter`), on the King example and in general.
 -/
 
 namespace Schlenker2009
@@ -50,23 +50,31 @@ theorem conditional_filters (c : Set W) (p q : PartialProp W)
     presupSatisfied (localCtxConsequent c p) q :=
   conditional_filters_when_entailed c p q h
 
-/-- "If the king exists, the king is bald": the local context at
-"the king is bald" is `c` + [king exists], which entails the existence
-presupposition, so it is filtered. -/
-theorem king_conditional_filters (c : Set KingWorld) :
-    presupSatisfied (localCtxConsequent c kingExists) kingBald := by
-  intro w hw
-  obtain ⟨-, hw_assert⟩ := hw
-  cases w with
-  | kingExists => exact trivial
-  | noKing => exact hw_assert.elim
+/-- "If the king has a son, the king's son is bald" ([heim-1983]'s (3)): in a context that
+entails a king, the local context of the consequent, the context plus the antecedent's
+assertion, entails the consequent's presupposition, so it is filtered. -/
+theorem king_conditional_filters {c : Set W} {king son bald : W → Prop}
+    (hc : ∀ w ∈ c, king w) :
+    presupSatisfied (localCtxConsequent c (kingHasSon king son))
+      (kingsSonBald king son bald) :=
+  λ w hw => ⟨hc w hw.1, hw.2⟩
 
-/-- On the king example, the local-context account and the Karttunen
-filtering connective agree: both pronounce the conditional
-presuppositionless. -/
-theorem king_accounts_agree (c : Set KingWorld) :
-    presupSatisfied (localCtxConsequent c kingExists) kingBald ∧
-    ifKingThenBald.presup = (λ _ => True) :=
-  ⟨king_conditional_filters c, ifKingThenBald_no_presup⟩
+/-- The local-context account and the Karttunen filtering connective agree: a context
+satisfies the antecedent's presupposition and the consequent's in its local context iff it
+satisfies the presupposition of `PartialProp.impFilter`. -/
+theorem local_contexts_agree_impFilter (c : Set W) (p q : PartialProp W) :
+    presupSatisfied c p ∧ presupSatisfied (localCtxConsequent c p) q ↔
+      presupSatisfied c (PartialProp.impFilter p q) :=
+  ⟨λ ⟨hp, hq⟩ _ hw => ⟨hp hw, λ ha => hq ⟨hw, ha⟩⟩,
+   λ h => ⟨λ _ hw => (h hw).1, λ _ hw => (h hw.1).2 hw.2⟩⟩
+
+/-- On the King example both accounts make the conditional presuppose exactly that there is
+a king. -/
+theorem king_accounts_agree (c : Set W) {king son bald : W → Prop} :
+    presupSatisfied c (kingHasSon king son) ∧
+        presupSatisfied (localCtxConsequent c (kingHasSon king son))
+          (kingsSonBald king son bald) ↔
+      ∀ w ∈ c, king w :=
+  ⟨λ h => h.1, λ hc => ⟨hc, king_conditional_filters hc⟩⟩
 
 end Schlenker2009
