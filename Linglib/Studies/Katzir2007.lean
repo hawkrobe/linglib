@@ -1,177 +1,248 @@
-import Linglib.Syntax.Tree.Cat
-import Linglib.Semantics.Composition.Tree
-import Linglib.Fragments.English.Toy
-import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Alternatives.Structural
+import Linglib.Semantics.Alternatives.Competition
 
 /-!
-# Katzir 2007: Structurally-Defined Alternatives (End-to-End)
-[katzir-2007]
+# Katzir (2007): Structurally-Defined Alternatives
 
-Katzir, R. (2007). Structurally-defined alternatives.
-Linguistics and Philosophy, 30(6), 669–690.
+This file formalizes the worked examples of [katzir-2007], which replaces the Horn scales of
+neo-Gricean pragmatics by alternatives defined on parse trees: the alternatives of a sentence
+are the trees obtainable from it by deletion, contraction, and substitution of constituents by
+same-category items of the substitution source, the lexicon together with the sentence's own
+subtrees (its definitions (19) to (21) and (41), the substrate `Alternatives.Structural`).
+The conversational principle (21) then forbids asserting a sentence when a structural
+alternative is strictly stronger and weakly assertable, the substrate's
+`Alternatives.violatesConversationalPrinciple` at the source `katzirSource`.
 
-## Unified Tree Demonstration
+The examples are the paper's Section 4 and 5 sentences over a small lexicon. For (25),
+*all of the cake* is an alternative of the same complexity as *some of the cake*
+(`all_mem_alternatives`), so a speaker obeying (21) implicates that it is not weakly assertable
+(`primary_implicature_some`), while the symmetric *some but not all* is no alternative, since no
+operation introduces the conjunction it needs (`someButNotAll_not_mem_alternatives`). For the
+disjunction (26), the conjunction and each disjunct are alternatives (`and_mem_alternatives`,
+`leftDisjunct_mem_alternatives`, `rightDisjunct_mem_alternatives`), which yields the primary
+inferences (28) without the L and R connectives of [sauerland-2004]
+(`primary_inferences_or`). Deleting a modifier gives a strictly simpler alternative, (29)
+(`justMan_mem_alternatives`), and the subtree clause of the substitution source (41) makes
+*a little bit more than warm* substitutable for *warm* in (40), so that the more complex
+sentence is an alternative of the simpler (`moreThanWarmYesterday_mem_alternatives`).
 
-This file demonstrates that a single `Tree Cat String` supports both:
-- **Structural operations** (PF-level): `leafSubst` generates scalar
-  alternatives by same-category word substitution
-- **Compositional interpretation** (LF-level): `evalTree` computes
-  truth conditions via FA, PM, and Predicate Abstraction
+## Implementation notes
 
-One tree, two interfaces — the Y-model made concrete.
+The truth conditions the paper takes for granted enter as meaning functions on three-way and
+four-way world types; trees the paper does not interpret denote the contradiction, which
+never witnesses the principle. Determiners inside the noun phrases are omitted from the trees,
+and the symmetric alternative places the conjunction of quantifiers at the determiner.
 
-## The Argument
+## References
 
-1. Build φ = "some student sleeps" as `Tree Cat String` with QR
-2. Generate φ' = "every student sleeps" via `leafSubst` and prove it is a
-   genuine structural alternative (`φ' ∈ structuralAlternatives`) through
-   the `Alternatives.Structural` substrate
-3. Interpret both: ⟦φ⟧ = true, ⟦φ'⟧ = false → asserting φ implicates ¬φ'
-4. Prove the symmetric "some but not all" (a ConjP) is NOT a structural
-   alternative via the substrate's `category_preservation`
-
-This is Katzir's solution to the symmetry problem: structural
-constraints on alternatives prevent the symmetric alternative
-from being generated, licensing the scalar implicature. The
-alternative-generation and exclusion claims are stated about the
-canonical `Alternatives.Structural` operators, not re-derived locally.
+* [katzir-2007]
+* [sauerland-2004], [kroch-1972]
 -/
+
+open Syntax Alternatives Alternatives.Structural
 
 namespace Katzir2007
 
-open Syntax
-open Semantics.Composition.Tree
-open Alternatives.Structural
-open Semantics.Montague (ToyEntity)
-open Semantics.Montague.ToyLexicon (sleeps_sem student_sem)
-open Quantification (some_sem every_sem)
+/-- The vocabulary of the paper's examples. -/
+inductive Word
+  | john | ate | some_ | all_ | cake | apple | pear | or_ | and_ | but_ | not_ | tall | man
+  | it | was | is | warm | yesterday | today | aLittleBitMoreThan
+  deriving DecidableEq, Repr
 
--- ════════════════════════════════════════════════════════════════════
--- § Source Tree
--- ════════════════════════════════════════════════════════════════════
+/-- The lexicon: the terminal items available for substitution. -/
+def lexicon : List (Tree Cat Word) :=
+  [.terminal .N .john, .terminal .V .ate, .terminal .Det .some_, .terminal .Det .all_,
+    .terminal .N .cake, .terminal .N .apple, .terminal .N .pear, .terminal .Conj .or_,
+    .terminal .Conj .and_, .terminal .Adj .tall, .terminal .N .man, .terminal .Pron .it,
+    .terminal .Aux .was, .terminal .Aux .is, .terminal .Adj .warm, .terminal .Adv .yesterday,
+    .terminal .Adv .today]
 
-/-- "Some student sleeps" after QR, with UD-grounded categories:
-```
-[S [DP [Det some] [N student]] [₁ [S [t₁:NP] [VP [V sleeps]]]]]
-``` -/
-def φ : Tree Cat String :=
+/-! ### Some, all, some but not all (Section 4.1) -/
+
+/-- (25a) *John ate some of the cake*. -/
+def someSentence : Tree Cat Word :=
+  .node .S [.terminal .N .john,
+    .node .VP [.terminal .V .ate, .terminal .Det .some_, .terminal .N .cake]]
+
+/-- (25b) *John ate all of the cake*. -/
+def allSentence : Tree Cat Word :=
+  .node .S [.terminal .N .john,
+    .node .VP [.terminal .V .ate, .terminal .Det .all_, .terminal .N .cake]]
+
+/-- (25c) *John ate some but not all of the cake*, the symmetric alternative. -/
+def someButNotAllSentence : Tree Cat Word :=
+  .node .S [.terminal .N .john,
+    .node .VP [.terminal .V .ate,
+      .node .ConjP [.terminal .Det .some_, .terminal .Conj .but_,
+        .node .NegP [.terminal .Neg .not_, .terminal .Det .all_]],
+      .terminal .N .cake]]
+
+/-- (25b) is (25a) with *all* substituted for *some*. -/
+theorem leafSubst_some_all : someSentence.leafSubst .some_ .all_ .Det = allSentence := rfl
+
+/-- (25b) is a structural alternative of (25a): the determiners are same-category items of the
+lexicon. -/
+theorem all_mem_alternatives : allSentence ∈ structuralAlternatives lexicon someSentence :=
+  leafSubst_some_all ▸ horn_alternatives_are_structural lexicon someSentence .some_ .all_ .Det
+    (by simp [lexicon]) (by simp [lexicon])
+
+/-- The two are of equal complexity: each is one substitution from the other. -/
+theorem some_all_equalComplexity :
+    equalComplexity (substitutionSource lexicon someSentence) someSentence allSentence := by
+  constructor <;>
+  · apply Relation.ReflTransGen.single
+    apply StructOp.inChild ⟨1, by simp⟩
+    apply StructOp.inChild ⟨1, by simp⟩
+    apply StructOp.subst
+    · rfl
+    · simp [substitutionSource, lexicon]
+
+/-- No item of the substitution source of (25a) contains a conjunction phrase. -/
+theorem source_lacks_conjP :
+    ∀ t ∈ substitutionSource lexicon someSentence, ¬ t.ContainsCat Cat.ConjP := by decide
+
+/-- The symmetric alternative is no structural alternative: the operations never introduce
+the conjunction phrase it needs, so the symmetry problem does not arise. -/
+theorem someButNotAll_not_mem_alternatives :
+    someButNotAllSentence ∉ structuralAlternatives lexicon someSentence := λ h =>
+  category_preservation _ Cat.ConjP someSentence someButNotAllSentence source_lacks_conjP
+    (by decide) h (by decide)
+
+/-- How much of the cake John ate. -/
+inductive Cake
+  | none | part | whole
+  deriving DecidableEq, Repr
+
+/-- The truth conditions the paper assumes for (25): *some* holds of any eating, *all* of the
+whole, *some but not all* of a part; the other trees are not interpreted. -/
+def cakeMeaning (t : Tree Cat Word) (c : Cake) : Prop :=
+  (t = someSentence ∧ c ≠ .none) ∨ (t = allSentence ∧ c = .whole) ∨
+    (t = someButNotAllSentence ∧ c = .part)
+
+/-- If *all* is weakly assertable, asserting *some* violates the conversational principle. -/
+theorem violates_of_weaklyAssertable_all {wa : Tree Cat Word → Prop} (h : wa allSentence) :
+    violatesConversationalPrinciple (katzirSource lexicon) cakeMeaning someSentence wa :=
+  ⟨allSentence, all_mem_alternatives,
+    λ c hc => by simp_all [cakeMeaning, someSentence, allSentence, someButNotAllSentence],
+    ⟨.part, by simp [cakeMeaning], by simp [cakeMeaning, someSentence, allSentence,
+      someButNotAllSentence]⟩, h⟩
+
+/-- The primary implicature of (25a): a speaker who obeys the principle has *all* not weakly
+assertable; the symmetric alternative, being no alternative, licenses nothing. -/
+theorem primary_implicature_some {wa : Tree Cat Word → Prop}
+    (h : ¬ violatesConversationalPrinciple (katzirSource lexicon) cakeMeaning someSentence wa) :
+    ¬ wa allSentence :=
+  λ hwa => h (violates_of_weaklyAssertable_all hwa)
+
+/-! ### Disjunction (Section 4.2) -/
+
+/-- (26a) *John ate the apple or the pear*. -/
+def orSentence : Tree Cat Word :=
   .node .S [
-    .node .DP [.terminal .Det "some", .terminal .N "student"],
-    .bind 1 .S
-      (.node .S [.trace 1 .NP, .node .VP [.terminal .V "sleeps"]])]
+    .node .S [.terminal .N .john, .node .VP [.terminal .V .ate, .terminal .N .apple]],
+    .terminal .Conj .or_,
+    .node .S [.terminal .N .john, .node .VP [.terminal .V .ate, .terminal .N .pear]]]
 
--- ════════════════════════════════════════════════════════════════════
--- § Structural Alternative Generation
--- ════════════════════════════════════════════════════════════════════
-
-/-- Scalar alternative: substitute "some" → "every" at Det position.
-This is Katzir's core operation (def 19, substitution): replace a
-terminal with a same-category item from the substitution source.
-Both "some" and "every" are Det terminals in the lexicon. -/
-def φ' : Tree Cat String := φ.leafSubst "some" "every" .Det
-
-/-- The lexicon for this fragment: the Det scale-mates plus the content
-words of φ, as `Tree Cat String` terminals. Feeds the substitution
-source `L(φ) = katzirLex ∪ subtrees(φ)`. -/
-def katzirLex : List (Tree Cat String) :=
-  [.terminal .Det "some", .terminal .Det "every",
-   .terminal .N "student", .terminal .V "sleeps"]
-
-/-- φ' is a genuine **structural** alternative to φ, derived through the
-[katzir-2007] substrate (`Alternatives.Structural`): leaf substitution of
-the Det scale-mate "every" (in `katzirLex`) is a chain of `StructOp.subst`
-steps, so `φ' ∈ A_str(φ)` by `horn_alternatives_are_structural`. This
-states the study's alternative-generation claim about the canonical
-`structuralAlternatives`, not a local re-encoding. -/
-theorem φ'_is_structural_alternative :
-    φ' ∈ structuralAlternatives katzirLex φ :=
-  horn_alternatives_are_structural katzirLex φ "some" "every" .Det
-    (by simp [katzirLex]) (by simp [katzirLex])
-
--- ════════════════════════════════════════════════════════════════════
--- § Compositional Interpretation (on the same trees)
--- ════════════════════════════════════════════════════════════════════
-
-/-- "Some student sleeps" is true: John is a student and sleeps.
-
-    With `interpTy .t = Prop`, we state the truth condition directly at
-    the Prop level rather than via `evalTree` (which requires a blanket
-    `Decidable` instance for all propositions). -/
-theorem some_student_sleeps :
-    some_sem student_sem sleeps_sem :=
-  ⟨ToyEntity.john, trivial, trivial⟩
-
-/-- The scalar alternative "every student sleeps" is false:
-Mary is a student but doesn't sleep. -/
-theorem every_student_sleeps :
-    ¬ every_sem student_sem sleeps_sem := by
-  intro h; exact h ToyEntity.mary trivial
-
-/-- The two readings differ: genuine scalar inference.
-Asserting "some" when "every" was available implicates ¬"every".
-The asymmetry is witnessed: "some" is satisfiable (John), while
-"every" is refuted (Mary is a student who doesn't sleep). -/
-theorem readings_differ :
-    some_sem student_sem sleeps_sem ∧
-    ¬ every_sem student_sem sleeps_sem :=
-  ⟨some_student_sleeps, every_student_sleeps⟩
-
--- ════════════════════════════════════════════════════════════════════
--- § Symmetry Breaking
--- ════════════════════════════════════════════════════════════════════
-
-/-! The symmetry problem: for any stronger alternative φ' = "every",
-there exists a symmetric alternative φ'' = "some but not all" which
-is also stronger. Naïve exhaustivity would predict no implicature.
-
-Katzir's solution: φ'' requires ConjP and NegP structure, which
-cannot be generated from L(φ) = lexicon ∪ subtrees(φ) because
-the source tree φ contains neither category. We discharge this through
-the substrate's `category_preservation`, not by raw `containsCat`
-assertions — the same mechanism that proves
-`Alternatives.Structural.symmetry_problem_solved`, here on the
-QR-structured `Tree Cat String`. -/
-
-/-- The symmetric alternative φ'' = "some but not all student sleeps",
-with the Det position filled by a ConjP. -/
-def φ'' : Tree Cat String :=
+/-- (26b) *John ate the apple and the pear*. -/
+def andSentence : Tree Cat Word :=
   .node .S [
-    .node .DP [
-      .node .ConjP [
-        .terminal .Det "some",
-        .terminal .Conj "but",
-        .node .NegP [.terminal .Neg "not", .terminal .Det "every"]],
-      .terminal .N "student"],
-    .bind 1 .S
-      (.node .S [.trace 1 .NP, .node .VP [.terminal .V "sleeps"]])]
+    .node .S [.terminal .N .john, .node .VP [.terminal .V .ate, .terminal .N .apple]],
+    .terminal .Conj .and_,
+    .node .S [.terminal .N .john, .node .VP [.terminal .V .ate, .terminal .N .pear]]]
 
-/-- φ contains no ConjP anywhere in its structure. -/
-theorem no_conjp : ¬ φ.ContainsCat Cat.ConjP := by decide
+/-- (27a) *John ate the apple*, the left disjunct. -/
+def leftDisjunct : Tree Cat Word :=
+  .node .S [.terminal .N .john, .node .VP [.terminal .V .ate, .terminal .N .apple]]
 
-/-- φ contains no NegP anywhere in its structure. -/
-theorem no_negp : ¬ φ.ContainsCat Cat.NegP := by decide
+/-- (27b) *John ate the pear*, the right disjunct. -/
+def rightDisjunct : Tree Cat Word :=
+  .node .S [.terminal .N .john, .node .VP [.terminal .V .ate, .terminal .N .pear]]
 
-/-- No item in `L(φ) = katzirLex ∪ subtrees(φ)` contains ConjP: the
-lexicon is flat Det/N/V terminals and φ's subtrees are ConjP-free. -/
-theorem source_lacks_conjp :
-    ∀ t ∈ substitutionSource katzirLex φ, ¬ t.ContainsCat Cat.ConjP := by decide
+theorem leafSubst_or_and : orSentence.leafSubst .or_ .and_ .Conj = andSentence := rfl
 
-/-- φ'' does contain ConjP. -/
-theorem φ''_has_conjp : φ''.ContainsCat Cat.ConjP := by decide
+/-- The conjunction is an alternative of the disjunction by substitution. -/
+theorem and_mem_alternatives : andSentence ∈ structuralAlternatives lexicon orSentence :=
+  leafSubst_or_and ▸ horn_alternatives_are_structural lexicon orSentence .or_ .and_ .Conj
+    (by simp [lexicon]) (by simp [lexicon])
 
-/-- **The symmetry problem, solved through the substrate.** φ'' is NOT a
-structural alternative to φ: by `category_preservation`, every tree in
-`A_str(φ)` lacks ConjP (no source item introduces it), but φ'' contains
-ConjP. So the scalar implicature ¬"every" is licensed — no symmetric
-alternative blocks it. This consumes
-`Alternatives.Structural.category_preservation` rather than re-deriving
-the argument from `containsCat`. -/
-theorem symmetric_not_structural :
-    φ'' ∉ structuralAlternatives katzirLex φ := by
-  intro h
-  exact category_preservation
-    (substitutionSource katzirLex φ) Cat.ConjP φ φ''
-    source_lacks_conjp no_conjp h φ''_has_conjp
+/-- The left disjunct is an alternative of the disjunction: delete the right disjunct and the
+connective, then contract; the effect of the L connective of [sauerland-2004]. -/
+theorem leftDisjunct_mem_alternatives :
+    leftDisjunct ∈ structuralAlternatives lexicon orSentence := by
+  refine Relation.ReflTransGen.head (StructOp.delete ⟨2, by simp⟩) ?_
+  refine Relation.ReflTransGen.head (StructOp.delete ⟨1, by simp [List.eraseIdx]⟩) ?_
+  exact Relation.ReflTransGen.single (StructOp.contract (List.Mem.head _) rfl)
+
+/-- The right disjunct likewise, the effect of R. -/
+theorem rightDisjunct_mem_alternatives :
+    rightDisjunct ∈ structuralAlternatives lexicon orSentence := by
+  refine Relation.ReflTransGen.head (StructOp.delete ⟨0, by simp⟩) ?_
+  refine Relation.ReflTransGen.head (StructOp.delete ⟨0, by simp [List.eraseIdx]⟩) ?_
+  exact Relation.ReflTransGen.single (StructOp.contract (List.Mem.head _) rfl)
+
+/-- Which of the two fruits John ate. -/
+abbrev Fruits := Bool × Bool
+
+/-- The truth conditions of (26) and (27): the disjunction, the conjunction, and each
+disjunct. -/
+def fruitMeaning (t : Tree Cat Word) (f : Fruits) : Prop :=
+  (t = orSentence ∧ (f.1 ∨ f.2)) ∨ (t = andSentence ∧ f.1 ∧ f.2) ∨
+    (t = leftDisjunct ∧ f.1) ∨ (t = rightDisjunct ∧ f.2)
+
+/-- The primary inferences (28): a speaker of the disjunction who obeys the principle has the
+conjunction and each disjunct not weakly assertable. -/
+theorem primary_inferences_or {wa : Tree Cat Word → Prop}
+    (h : ¬ violatesConversationalPrinciple (katzirSource lexicon) fruitMeaning orSentence wa) :
+    ¬ wa andSentence ∧ ¬ wa leftDisjunct ∧ ¬ wa rightDisjunct := by
+  refine ⟨λ hwa => h ⟨andSentence, and_mem_alternatives, ?_, ⟨(true, false), ?_, ?_⟩, hwa⟩,
+    λ hwa => h ⟨leftDisjunct, leftDisjunct_mem_alternatives, ?_, ⟨(false, true), ?_, ?_⟩, hwa⟩,
+    λ hwa => h ⟨rightDisjunct, rightDisjunct_mem_alternatives, ?_, ⟨(true, false), ?_, ?_⟩,
+      hwa⟩⟩ <;>
+  simp_all [fruitMeaning, orSentence, andSentence, leftDisjunct, rightDisjunct]
+
+/-! ### Strictly simpler alternatives (Section 4.3) -/
+
+/-- (29a) *a tall man*, without its determiner. -/
+def tallMan : Tree Cat Word := .node .NP [.terminal .Adj .tall, .terminal .N .man]
+
+/-- (29b) *a man*. -/
+def justMan : Tree Cat Word := .node .NP [.terminal .N .man]
+
+/-- Deleting the modifier gives an alternative, strictly simpler; in an upward-entailing
+context it is entailed and yields no inference, under a downward-entailing operator it does,
+(30) to (32). -/
+theorem justMan_mem_alternatives : justMan ∈ structuralAlternatives lexicon tallMan :=
+  Relation.ReflTransGen.single (StructOp.delete ⟨0, by simp⟩)
+
+/-! ### The subtrees of the sentence as substitution source (Section 5) -/
+
+/-- *a little bit more than warm*, an adjective phrase. -/
+def moreThanWarm : Tree Cat Word :=
+  .node .AdjP [.terminal .Adv .aLittleBitMoreThan, .terminal .Adj .warm]
+
+/-- *it is a little bit more than warm today*. -/
+def moreThanWarmToday : Tree Cat Word :=
+  .node .S [.terminal .Pron .it, .terminal .Aux .is, moreThanWarm, .terminal .Adv .today]
+
+/-- (40a) *It was warm yesterday, and it is a little bit more than warm today*. -/
+def warmYesterday : Tree Cat Word :=
+  .node .S [
+    .node .S [.terminal .Pron .it, .terminal .Aux .was, .node .AdjP [.terminal .Adj .warm],
+      .terminal .Adv .yesterday],
+    .terminal .Conj .and_, moreThanWarmToday]
+
+/-- (40b) *It was a little bit more than warm yesterday, and it is a little bit more than warm
+today*. -/
+def moreThanWarmYesterday : Tree Cat Word :=
+  .node .S [
+    .node .S [.terminal .Pron .it, .terminal .Aux .was, moreThanWarm, .terminal .Adv .yesterday],
+    .terminal .Conj .and_, moreThanWarmToday]
+
+/-- Matsumoto's (40b) is an alternative of (40a) although more complex: the adjective phrase it
+needs is a subtree of (40a), hence in the substitution source (41). -/
+theorem moreThanWarmYesterday_mem_alternatives :
+    moreThanWarmYesterday ∈ structuralAlternatives lexicon warmYesterday :=
+  Relation.ReflTransGen.single (StructOp.inChild ⟨0, by simp⟩
+    (StructOp.inChild ⟨2, by simp⟩ (StructOp.subst rfl (by decide))))
 
 end Katzir2007
