@@ -18,9 +18,8 @@ This file defines the **condition** type `PPDRSCond` used by
 `reciprocityCond` predicates and by `Cumulativity.lean` for the bridge to
 `Plurality.Cumulativity.Cumulative`. A PPDRS condition takes the (output)
 plural state plus the distribution context `Δ` (the set of drefs being
-distributed over); the Δ argument is used by distribution machinery
-(`δ_u`, paper eq 14) but ignored by the present
-binding/group-identity/reciprocity conditions — see `Anaphora.lean`.
+distributed over), which group identity reads through the equivalence
+classes of eq 26 — see `Anaphora.lean`.
 
 ## Anchoring
 
@@ -38,12 +37,10 @@ namespace PPCDRT
 /-- A PPDRS condition: takes the (output) plural state and the
     distribution context `Δ`. [haug-dalrymple-2020] eq 27.
 
-    The Δ argument is part of the eq-25 three-place DRS shape but is
-    ignored by the present `bindingCond` / `groupIdentityCond` /
-    `reciprocityCond` (which are evaluated at the unrelativized layer
-    Δ = ∅). It is preserved in the type so consumers that DO need
-    distribution (e.g. a future Dotlačil 2013 study file) can plug in
-    without changing this signature. -/
+    The Δ argument is the set of discourse referents distributed over in
+    the three-place DRS of eq 25; `groupIdentityCond` sums the anaphor over
+    the equivalence class it induces (eq 26), while `bindingCond` is
+    pointwise and ignores it (eq 30). -/
 abbrev PPDRSCond (E : Type*) := PluralAssign ℕ E → Set Nat → Prop
 
 end PPCDRT

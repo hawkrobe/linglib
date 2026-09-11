@@ -1,0 +1,1894 @@
+[
+  {
+    "id": "haugdalrymple2020_ex1",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(1)"
+    },
+    "language": "stan1293",
+    "primaryText": "Two girls saw each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ]
+    ],
+    "comment": "Distribution vs. polyadic quantification.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex2",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(2)"
+    },
+    "language": "stan1293",
+    "primaryText": "Two girls thought that they saw each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "narrow: each thought 'we saw each other'",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "wide: each thought 'I saw her'",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex4",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(4)"
+    },
+    "language": "stan1293",
+    "primaryText": "Two girls thought that they would win.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "group identity: each thought 'we will win'",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "bound: each thought 'I will win'",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ]
+    ],
+    "comment": "Williams's ambiguity, the same as (2)'s on the relational analysis.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex8",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(8a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Cats appeared.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex10",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(10a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Two cats appeared.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ]
+    ],
+    "comment": "Plurality by summing across assignments.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex11",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(11a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Two cats met.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ]
+    ],
+    "comment": "Collective predicate on the sum.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex12",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(12a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Two cats ate three mice.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "cumulative",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "distributive: three mice each",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex17",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(17a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Chris was happy. He had won.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex22",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(22a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Tracy and Chris were happy. They had won.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex23",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(23)"
+    },
+    "language": "stan1293",
+    "primaryText": "The lawyers hired a secretary they liked.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "each lawyer hired a secretary she liked",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "each lawyer hired a secretary all the lawyers liked",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ]
+    ],
+    "comment": "The second reading needs the antecedent to escape distribution.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex40",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(40a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Two girls saw each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ]
+    ],
+    "comment": "Dotlačil's reciprocal (39) and the PPCDRT (41).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex45",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(45)"
+    },
+    "language": "stan1293",
+    "primaryText": "Two boys told their parents that they loved them.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ]
+    ],
+    "comment": "Quantificational dependencies carry over to each doxastic alternative.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex47",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(47a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Two girls thought that they would win.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "each thought 'we will win'",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex50",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(50a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Two girls thought that they would win.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "each thought 'I will win'",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex52",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(52a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Two girls thought that they saw each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "each thought 'we saw each other'",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex54",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(54a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Two girls thought that they saw each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "each thought 'I saw her'",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex57",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(57)"
+    },
+    "language": "stan1293",
+    "primaryText": "Jennifer Lawrence & Emma Stone Reveal They Thought They Catfished Each Other & More in Hilarious Joint Interview",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "crossed",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ]
+    ],
+    "comment": "Attested crossed reading.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex58",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(58)"
+    },
+    "language": "stan1293",
+    "primaryText": "Sometimes they are hesitant to become romantically involved because they believe that they do not like each other, because one of them already has a partner, or because of social pressures.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "crossed",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ]
+    ],
+    "comment": "Attested crossed reading, Wikipedia.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex59",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(59)"
+    },
+    "language": "stan1293",
+    "primaryText": "Tracy and Chris thought they were sick.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "crossed",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ]
+    ],
+    "comment": "Crossed readings are hard without a reciprocal.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex60",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(60)"
+    },
+    "language": "stan1293",
+    "primaryText": "Romney and Obama thought they would win.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "crossed",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex61",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(61)"
+    },
+    "language": "stan1293",
+    "primaryText": "They both thought they died and have thought of each other all this time.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "crossed",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ]
+    ],
+    "comment": "The one attested crossed reading found without a reciprocal.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex62",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(62)"
+    },
+    "language": "stan1293",
+    "primaryText": "Someone has thought that Tracy and Chris like each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "someone > each other",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "each other > someone",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4"
+      ]
+    ],
+    "comment": "The reciprocal never scopes above the highest binder of its antecedent.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex63",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(63)"
+    },
+    "language": "stan1293",
+    "primaryText": "Tracy and Chris may beat everyone to the finish line.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "every > may",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "may > every",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex64",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(64)"
+    },
+    "language": "stan1293",
+    "primaryText": "#Tracy and Chris may beat each other to the finish line.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "each other > may",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "may > each other",
+        "judgment": "marginal"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4"
+      ]
+    ],
+    "comment": "Each accessible world contains both directions of beat.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex65",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(65)"
+    },
+    "language": "stan1293",
+    "primaryText": "Someone has thought that they like each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex71",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(71)"
+    },
+    "language": "stan1293",
+    "primaryText": "Everyone thinks that two girls like each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "a particular pair",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "cumulative",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex72",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(72)"
+    },
+    "language": "stan1293",
+    "primaryText": "Everyone likes two girls.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "cumulative",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex73a",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(73a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Chris and Joseph will open a bottle if they beat each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "narrow",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex73b",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(73b)"
+    },
+    "language": "stan1293",
+    "primaryText": "We rejected the claim that we are taller than each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "narrow",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex74a",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(74a)"
+    },
+    "language": "stan1293",
+    "primaryText": "It isn't necessary for Israelis and Palestinians to get misty-eyed when they imagine each other's suffering (though that might help).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "long distance",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4"
+      ]
+    ],
+    "comment": "NOW corpus; a long-distance reading across an adjunct clause.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex74b",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(74b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Tribes use rape to show that they are stronger than each other, to humiliate each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "long distance",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4"
+      ]
+    ],
+    "comment": "NOW corpus.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex78",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(78)"
+    },
+    "language": "chey1247",
+    "primaryText": "Ka'ėškóne-ho é-axeen-ȧhtse-o'o",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Some children scratched themselves/each other.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "reflexive: some children scratched themselves",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "reciprocal: some children scratched each other",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "mixed",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4.2"
+      ]
+    ],
+    "comment": "Cheyenne, Murray 2008: the underspecified affix.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex80a",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(80a)"
+    },
+    "language": "stan1293",
+    "primaryText": "They gave every patient a new nose.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ]
+    ],
+    "comment": "#new noses.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex80b",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(80b)"
+    },
+    "language": "stan1293",
+    "primaryText": "They gave the patients new noses.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ]
+    ],
+    "comment": "#a new nose.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex80c",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(80c)"
+    },
+    "language": "stan1293",
+    "primaryText": "They gave each other new noses.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ]
+    ],
+    "comment": "#a new nose: reciprocals pattern with plurals.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex81a",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(81a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Two children gave their parents six presents.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "cumulative",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex81b",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(81b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Two children gave each other six presents.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "cumulative",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex81c",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(81c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Two children gave every classmate six presents.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "cumulative",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex84",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(84)"
+    },
+    "language": "stan1293",
+    "primaryText": "Tracy and Chris gave each other pictures of each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "both reciprocals anteceded by the subject",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "the second anteceded by the first",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4.4"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex88a",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(88a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The gravitational fields of the Earth, the Sun and the Moon cancel each other out.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.5"
+      ]
+    ],
+    "comment": "Each field against the combined remainder.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex88b",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(88b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The forks are propped against each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.5"
+      ]
+    ],
+    "comment": "Each fork against a group of others.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex91",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(91)"
+    },
+    "language": "stan1293",
+    "primaryText": "I think the ones who've grown up surrounded by each other … they end up having Indian accents almost",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.5"
+      ]
+    ],
+    "comment": "Each surrounded by some, not necessarily all, of the others.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex94",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(94)"
+    },
+    "language": "stan1293",
+    "primaryText": "The sailors have worked together on each other's ships.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.6"
+      ]
+    ],
+    "comment": "Collective antecedent; no discernible reciprocity.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex95a",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(95a)"
+    },
+    "language": "stan1293",
+    "primaryText": "They have rarely appeared together on each other's social media accounts and in paparazzi shots.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.6"
+      ]
+    ],
+    "comment": "NOW corpus.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex95b",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(95b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The Craft Cottage was born in 1967, when local artists would gather in each other's homes to feed off their colleagues' inspiration",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.6"
+      ]
+    ],
+    "comment": "NOW corpus.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex100",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(100)"
+    },
+    "language": "stan1293",
+    "primaryText": "This is a quiet street, most people know each other and say hello when you walk by.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "reference set",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ]
+    ],
+    "comment": "NOW corpus; the reciprocal ranges over the reference set.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex103",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(103)"
+    },
+    "language": "stan1293",
+    "primaryText": "Its members are so class conscious that few have spoken to each other, lest they accidentally commit a social faux pas.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "maximal set",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ]
+    ],
+    "comment": "Dalrymple et al. 1998; the reciprocal ranges over the maximal set.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex106",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(106)"
+    },
+    "language": "stan1293",
+    "primaryText": "Most members of this club know each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "reference set",
+        "judgment": "questionable"
+      },
+      {
+        "name": "maximal set",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ]
+    ],
+    "comment": "Kamp and Reyle's unclear truth conditions.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex107a",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(107a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The members of this club know each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex107b",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(107b)"
+    },
+    "language": "stan1293",
+    "primaryText": "More than half of the members of this club know the chairman.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex107c",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(107c)"
+    },
+    "language": "stan1293",
+    "primaryText": "More than half of the members of this club know each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex112",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(112)"
+    },
+    "language": "stan1293",
+    "primaryText": "He added that current radio stations have unimaginative programming, and most stations copy each other and use basic programming formulas.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ]
+    ],
+    "comment": "NOW corpus; judged true in an intermediate scenario.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex113",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(113)"
+    },
+    "language": "stan1293",
+    "primaryText": "As recently as the 1990s, most scientists found each other's work by cracking open a journal that their university subscribed to and reading the articles in print.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ]
+    ],
+    "comment": "NOW corpus; judged true in an intermediate scenario.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex114",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(114)"
+    },
+    "language": "stan1293",
+    "primaryText": "Cheryl comes to me for advice — all mums ask each other for advice and share stories about their babies.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ]
+    ],
+    "comment": "NOW corpus; a weak reading with all.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex118",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(118)"
+    },
+    "language": "stan1293",
+    "primaryText": "Most members of parliament refer to each other indirectly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.3"
+      ]
+    ],
+    "comment": "Szymanik 2016.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex119",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(119)"
+    },
+    "language": "stan1293",
+    "primaryText": "The children pointed at each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "weak reciprocity",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex120",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(120)"
+    },
+    "language": "stan1293",
+    "primaryText": "The men know each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "strong reciprocity",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex121",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(121)"
+    },
+    "language": "stan1293",
+    "primaryText": "Five Boston pitchers sat next to each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "intermediate",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex122",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(122)"
+    },
+    "language": "stan1293",
+    "primaryText": "\"The captain!\" said the pirates, staring at each other in surprise.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ]
+    ],
+    "comment": "Dalrymple et al.'s one-way weak reciprocity; weak reciprocity under a cover for Beck.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex123",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(123)"
+    },
+    "language": "stan1293",
+    "primaryText": "The plates are stacked on top of each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ]
+    ],
+    "comment": "Inclusive alternative ordering.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex125",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(125a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The boys know each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "strong",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ]
+    ],
+    "comment": "Maximize Anaphora selects (126b) over the minimal (126a).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex129",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(129a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Harry owns some sheep. John vaccinates them.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ]
+    ],
+    "comment": "Anaphora is exhaustive.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex130",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(130)"
+    },
+    "language": "stan1293",
+    "primaryText": "Its members are so class conscious that few have spoken to each other, lest they accidentally commit a social faux pas.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex131",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(131)"
+    },
+    "language": "stan1293",
+    "primaryText": "No one even chats to each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex132",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(132)"
+    },
+    "language": "stan1293",
+    "primaryText": "If the team members knew each other in advance, they won.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ]
+    ],
+    "comment": "Sauerland 2012: the Strongest Meaning Hypothesis at the matrix level gives the wrong reading.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex133",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(133)"
+    },
+    "language": "stan1293",
+    "primaryText": "No team whose members knew each other in advance lost.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex134",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(134)"
+    },
+    "language": "stan1293",
+    "primaryText": "The classmates gave each other pictures of each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "pairwise maximal",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "all triples",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "6.2"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex135",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(135)"
+    },
+    "language": "stan1293",
+    "primaryText": "Tracy, Matty and Chris think they praised each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "narrow",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "wide: each believes she praised the two others",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "6.3"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haugdalrymple2020_ex137",
+    "source": {
+      "bibkey": "haug-dalrymple-2020",
+      "paperLabel": "(137)"
+    },
+    "language": "stan1293",
+    "primaryText": "Tracy believes that the team members held hands with each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6.3"
+      ]
+    ],
+    "comment": "Maximization at the local relation gives the weaker reading.",
+    "lgrConformance": ""
+  }
+]
