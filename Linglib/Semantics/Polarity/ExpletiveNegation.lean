@@ -63,4 +63,89 @@ def ENStrength.licensed : ENStrength → Finset PolarityClass
   | .weak => {.weakNPI, .nWord}
   | .strong => ∅
 
+/-- The four semantic licensing conditions on expletive-negation triggers of [jin-koenig-2021],
+(13): the trigger's meaning entails its argument and the argument's negation in distinct sets of
+worlds, at distinct times, contains negation outright, or predicates a degree of distinct
+entities. -/
+inductive ENLicensing where
+  | propositionalAttitude
+  | temporal
+  | logical
+  | comparative
+  deriving DecidableEq, Repr, Fintype
+
+/-- The trigger classes of [jin-koenig-2021] Table 5, each named by a representative concept. -/
+inductive ENTriggerClass where
+  | fear
+  | regret
+  | deny
+  | forget
+  | before
+  | cannotWait
+  | since
+  | rarely
+  | impossible
+  | without
+  | unless
+  | moreThan
+  | differentThan
+  | tooTo
+  deriving DecidableEq, Repr, Fintype
+
+/-- The licensing condition of a trigger class, [jin-koenig-2021] Section 6. -/
+def ENTriggerClass.licensing : ENTriggerClass → ENLicensing
+  | .fear | .regret | .deny | .forget => .propositionalAttitude
+  | .before | .cannotWait | .since | .rarely => .temporal
+  | .impossible | .without | .unless => .logical
+  | .moreThan | .differentThan | .tooTo => .comparative
+
+/-- The trigger concepts of [jin-koenig-2021] Table 6, one representative per subclass. -/
+inductive ENConcept where
+  | fear
+  | avoid
+  | regret
+  | complain
+  | adviseAgainst
+  | deny
+  | hide
+  | despair
+  | forget
+  | delay
+  | refuse
+  | stop
+  | prevent
+  | almost
+  | barely
+  | before
+  | cannotWait
+  | since
+  | rarely
+  | impossible
+  | difficult
+  | without
+  | unless
+  | onlyDependsOn
+  | moreThan
+  | lessThan
+  | differentThan
+  | tooTo
+  deriving DecidableEq, Repr, Fintype
+
+/-- The class of a concept. -/
+def ENConcept.cls : ENConcept → ENTriggerClass
+  | .fear | .avoid => .fear
+  | .regret | .complain | .adviseAgainst => .regret
+  | .deny | .hide | .despair => .deny
+  | .forget | .delay | .refuse | .stop | .prevent | .almost | .barely => .forget
+  | .before => .before
+  | .cannotWait => .cannotWait
+  | .since => .since
+  | .rarely => .rarely
+  | .impossible | .difficult => .impossible
+  | .without => .without
+  | .unless | .onlyDependsOn => .unless
+  | .moreThan | .lessThan => .moreThan
+  | .differentThan => .differentThan
+  | .tooTo => .tooTo
+
 end Negation

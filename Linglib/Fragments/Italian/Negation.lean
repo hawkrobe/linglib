@@ -61,24 +61,24 @@ DOUBT (*dubitare*) but, unlike French, no FEAR class.
 /-- EN trigger-negator pairings from [jin-koenig-2021] Table 3
     (Italic section). -/
 def enTriggerNegators : List ExpletiveTrigger :=
-  [ { triggerClass := "BEFORE", triggerForm := "prima che"
+  [ { triggerClass := .before, triggerForm := "prima che"
     , negatorForm := "non" }
-  , { triggerClass := "DOUBT", triggerForm := "dubitare"
+  , { triggerClass := .deny, triggerForm := "dubitare"
     , negatorForm := "non" }
-  , { triggerClass := "HARDLY", triggerForm := "appena"
+  , { triggerClass := .barely, triggerForm := "appena"
     , negatorForm := "non" }
-  , { triggerClass := "NEARLY", triggerForm := "per poco"
+  , { triggerClass := .almost, triggerForm := "per poco"
     , negatorForm := "non" }
-  , { triggerClass := "THAN", triggerForm := "di quanto"
+  , { triggerClass := .moreThan, triggerForm := "di quanto"
     , negatorForm := "non" }
-  , { triggerClass := "UNLESS", triggerForm := "a meno che"
+  , { triggerClass := .unless, triggerForm := "a meno che"
     , negatorForm := "non" }
-  , { triggerClass := "UNTIL", triggerForm := "finché, fino a"
+  , { triggerClass := .before, triggerForm := "finché, fino a"
     , negatorForm := "non" }
     -- J&K Table 3 prints the WITHOUT trigger as "senza que" (a typo
     -- carried from their source, per their fn. 5); *senza che* is the
     -- Italian form.
-  , { triggerClass := "WITHOUT", triggerForm := "senza che"
+  , { triggerClass := .without, triggerForm := "senza che"
     , negatorForm := "non" } ]
 
 /-- Every Italian EN environment uses the standard negator: the EN
