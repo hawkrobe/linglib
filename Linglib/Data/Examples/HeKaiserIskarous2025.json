@@ -1,0 +1,258 @@
+[
+  {
+    "id": "hekaiseriskarous2025_house_no_bathroom",
+    "source": {
+      "bibkey": "he-kaiser-iskarous-2025",
+      "paperLabel": "§1"
+    },
+    "language": "stan1293",
+    "primaryText": "The house doesn't have a bathroom.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "statePrior",
+        "low"
+      ]
+    ],
+    "comment": "A negative sentence about a low-prior state: houses usually have bathrooms.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hekaiseriskarous2025_house_ballroom",
+    "source": {
+      "bibkey": "he-kaiser-iskarous-2025",
+      "paperLabel": "§1"
+    },
+    "language": "stan1293",
+    "primaryText": "The house has a ballroom.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "polarity",
+        "positive"
+      ],
+      [
+        "statePrior",
+        "low"
+      ]
+    ],
+    "comment": "A positive sentence about a low-prior state, similarly informative to the negative one but cheaper under the standard model.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hekaiseriskarous2025_house_no_ballroom",
+    "source": {
+      "bibkey": "he-kaiser-iskarous-2025",
+      "paperLabel": "§1"
+    },
+    "language": "stan1293",
+    "primaryText": "The house doesn't have a ballroom.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "statePrior",
+        "high"
+      ]
+    ],
+    "comment": "Presupposes the possibility of a ballroom, which the listener must accommodate before the update.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hekaiseriskarous2025_exp1_pos",
+    "source": {
+      "bibkey": "he-kaiser-iskarous-2025",
+      "paperLabel": "§3.2"
+    },
+    "language": "stan1293",
+    "primaryText": "The house has a bathroom.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Emma visited a friend's house yesterday.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "polarity",
+        "positive"
+      ],
+      [
+        "experiment",
+        "1"
+      ]
+    ],
+    "comment": "Experiment 1 item: participants rated how likely Emma would be to mention the fact.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hekaiseriskarous2025_exp1_neg",
+    "source": {
+      "bibkey": "he-kaiser-iskarous-2025",
+      "paperLabel": "§3.2"
+    },
+    "language": "stan1293",
+    "primaryText": "The house doesn't have a bathroom.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Emma visited a friend's house yesterday.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "experiment",
+        "1"
+      ]
+    ],
+    "comment": "Experiment 1 item, the negative counterpart of the same part-whole relation.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hekaiseriskarous2025_classroom_no_board",
+    "source": {
+      "bibkey": "he-kaiser-iskarous-2025",
+      "paperLabel": "§3.2"
+    },
+    "language": "stan1293",
+    "primaryText": "The classroom doesn't have a board.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "statePrior",
+        "low"
+      ]
+    ],
+    "comment": "A low-prior negative-polarity situation, rated more likely to be communicated than a positive one of similar prior.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hekaiseriskarous2025_classroom_stove",
+    "source": {
+      "bibkey": "he-kaiser-iskarous-2025",
+      "paperLabel": "§3.2"
+    },
+    "language": "stan1293",
+    "primaryText": "The classroom has a stove.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "polarity",
+        "positive"
+      ],
+      [
+        "statePrior",
+        "low"
+      ]
+    ],
+    "comment": "A low-prior positive-polarity situation, rated less likely to be communicated than the negative one above.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hekaiseriskarous2025_exp2",
+    "source": {
+      "bibkey": "he-kaiser-iskarous-2025",
+      "paperLabel": "§3.3"
+    },
+    "language": "stan1293",
+    "primaryText": "“The house has a bathroom,” Emma told her partner.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "polarity",
+        "positive"
+      ],
+      [
+        "experiment",
+        "2"
+      ]
+    ],
+    "comment": "Experiment 2 item: the fact statement in direct speech; participants rated how typical a house the house is.",
+    "lgrConformance": ""
+  }
+]
