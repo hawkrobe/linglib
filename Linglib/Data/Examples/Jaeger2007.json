@@ -1,0 +1,362 @@
+[
+  {
+    "id": "jaeger2007_t1_cv",
+    "source": {
+      "bibkey": "jaeger-2007",
+      "paperLabel": "Table 1"
+    },
+    "language": "dutc1256",
+    "primaryText": "CV",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "onset",
+        "1"
+      ],
+      [
+        "coda",
+        "0"
+      ],
+      [
+        "frequency",
+        "44.81"
+      ],
+      [
+        "permyriad",
+        "4481"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jaeger2007_t1_cvc",
+    "source": {
+      "bibkey": "jaeger-2007",
+      "paperLabel": "Table 1"
+    },
+    "language": "dutc1256",
+    "primaryText": "CVC",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "onset",
+        "1"
+      ],
+      [
+        "coda",
+        "1"
+      ],
+      [
+        "frequency",
+        "32.05"
+      ],
+      [
+        "permyriad",
+        "3205"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jaeger2007_t1_vc",
+    "source": {
+      "bibkey": "jaeger-2007",
+      "paperLabel": "Table 1"
+    },
+    "language": "dutc1256",
+    "primaryText": "VC",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "onset",
+        "0"
+      ],
+      [
+        "coda",
+        "1"
+      ],
+      [
+        "frequency",
+        "11.99"
+      ],
+      [
+        "permyriad",
+        "1199"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jaeger2007_t1_v",
+    "source": {
+      "bibkey": "jaeger-2007",
+      "paperLabel": "Table 1"
+    },
+    "language": "dutc1256",
+    "primaryText": "V",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "onset",
+        "0"
+      ],
+      [
+        "coda",
+        "0"
+      ],
+      [
+        "frequency",
+        "3.85"
+      ],
+      [
+        "permyriad",
+        "385"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jaeger2007_t1_cvcc",
+    "source": {
+      "bibkey": "jaeger-2007",
+      "paperLabel": "Table 1"
+    },
+    "language": "dutc1256",
+    "primaryText": "CVCC",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "onset",
+        "1"
+      ],
+      [
+        "coda",
+        "2"
+      ],
+      [
+        "frequency",
+        "3.25"
+      ],
+      [
+        "permyriad",
+        "325"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jaeger2007_t1_ccvc",
+    "source": {
+      "bibkey": "jaeger-2007",
+      "paperLabel": "Table 1"
+    },
+    "language": "dutc1256",
+    "primaryText": "CCVC",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "onset",
+        "2"
+      ],
+      [
+        "coda",
+        "1"
+      ],
+      [
+        "frequency",
+        "1.98"
+      ],
+      [
+        "permyriad",
+        "198"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jaeger2007_t1_ccv",
+    "source": {
+      "bibkey": "jaeger-2007",
+      "paperLabel": "Table 1"
+    },
+    "language": "dutc1256",
+    "primaryText": "CCV",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "onset",
+        "2"
+      ],
+      [
+        "coda",
+        "0"
+      ],
+      [
+        "frequency",
+        "1.38"
+      ],
+      [
+        "permyriad",
+        "138"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jaeger2007_t1_vcc",
+    "source": {
+      "bibkey": "jaeger-2007",
+      "paperLabel": "Table 1"
+    },
+    "language": "dutc1256",
+    "primaryText": "VCC",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "onset",
+        "0"
+      ],
+      [
+        "coda",
+        "2"
+      ],
+      [
+        "frequency",
+        "0.42"
+      ],
+      [
+        "permyriad",
+        "42"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "jaeger2007_t1_ccvcc",
+    "source": {
+      "bibkey": "jaeger-2007",
+      "paperLabel": "Table 1"
+    },
+    "language": "dutc1256",
+    "primaryText": "CCVCC",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "onset",
+        "2"
+      ],
+      [
+        "coda",
+        "2"
+      ],
+      [
+        "frequency",
+        "0.26"
+      ],
+      [
+        "permyriad",
+        "26"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  }
+]

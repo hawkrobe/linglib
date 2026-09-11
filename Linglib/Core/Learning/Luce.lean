@@ -282,22 +282,25 @@ def sgaUpdate (r_j η observed_j expected_j : ℝ) : ℝ :=
   r_j + η * (observed_j - expected_j)
 
 /-- The Gradual Learning Algorithm ([boersma-1998]) update for a single
-weight: adjust by the signed difference between the observed violation count
-and the violation count of a hypothesis sampled from the current grammar. -/
+rank, on binary constraints: raise the rank by the excess of the violations of a
+hypothesis sampled from the current grammar over those of the observation, so that
+a constraint favoring the observation rises and one favoring the hypothesis falls. -/
 def glaUpdate (r_j η : ℝ) (c_j_observed c_j_hypothesis : ℕ) : ℝ :=
-  r_j + η * ((c_j_observed : ℝ) - (c_j_hypothesis : ℝ))
+  r_j + η * ((c_j_hypothesis : ℝ) - (c_j_observed : ℝ))
 
-/-- **GLA = SGA**: the Gradual Learning Algorithm is Stochastic Gradient
-Ascent with single-sample estimates of both observed and expected feature
-values. The update rules are identical by definition. -/
+/-- **GLA = SGA** ([jaeger-2007]): the Gradual Learning Algorithm is Stochastic
+Gradient Ascent with single-sample estimates of both the observed and the expected
+feature value, once violation counts are read as the non-positive features of the
+log-linear model. -/
 theorem gla_eq_sga (r_j η : ℝ) (obs hyp : ℕ) :
-    glaUpdate r_j η obs hyp = sgaUpdate r_j η obs hyp := rfl
+    glaUpdate r_j η obs hyp = sgaUpdate r_j η (-obs) (-hyp) := by
+  simp only [glaUpdate, sgaUpdate]; ring
 
 /-- SGA converges to the global maximum of a concave objective.
 
 For MaxEnt log-likelihood, the per-weight objective is concave
-(`concaveOn_log_softmax`), so SGA is guaranteed to converge. This is the key advantage of MaxEnt over Stochastic OT,
-where convergence of the GLA is not generally proved. -/
+(`concaveOn_log_softmax`), so SGA is guaranteed to converge. This is the key advantage of
+MaxEnt over Stochastic OT, where convergence of the GLA is not generally proved. -/
 theorem sga_uses_correct_gradient {ι : Type*} [Fintype ι] [Nonempty ι]
     (s r : ι → ℝ) (y : ι) (wⱼ : ℝ) :
     HasDerivAt (fun w => log (softmax (w • s + r) y))

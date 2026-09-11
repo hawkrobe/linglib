@@ -1,202 +1,208 @@
+import Linglib.Data.Examples.Jaeger2007
 import Linglib.Core.Learning.Luce
-import Linglib.Core.Probability.SoftmaxTheory
-import Linglib.Phonology.HarmonicGrammar.Expressivity
+import Linglib.Studies.GoldwaterJohnson2003
+import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
+import Mathlib.Data.Sign.Basic
 
 /-!
-# [jaeger-2007]: Maximum Entropy Models and Stochastic Optimality Theory
-[jaeger-2007]
+# Jäger (2007): Maximum Entropy Models and Stochastic Optimality Theory
 
-[jaeger-2007] demonstrates that [boersma-1998]'s Gradual Learning
-Algorithm (GLA) for Stochastic OT is mathematically identical to Stochastic
-Gradient Ascent (SGA) for Maximum Entropy models. This unifies two traditions:
+This file formalizes [jaeger-2007], the demonstration that the Gradual Learning Algorithm of
+[boersma-1998] for Stochastic Optimality Theory is Stochastic Gradient Ascent on the
+log-likelihood of a maximum entropy model of the kind [goldwater-johnson-2003] propose. The GLA
+raises the rank of a constraint by the plasticity times the sign of the excess of a sampled
+hypothesis's violations over the observation's, Section 2, which on binary constraints is the
+plain excess (`glaSign_eq_glaUpdate`); its expected adjustment is the plasticity times the excess
+of the expected violations over the observed, (1) (`expected_glaUpdate`), and the learner is at
+rest exactly when the two agree (`expected_glaUpdate_eq_self_iff`), the convergence criterion of
+Section 4. The per-weight gradient of the log-likelihood of an observation under the log-linear
+model is the observed feature less its expectation, (2) (`hasDerivAt_log_gjProb_update`), so the
+GLA step is the stochastic gradient step once violations are read as non-positive features
+(`Core.gla_eq_sga`); the log-likelihood is concave
+(`GoldwaterJohnson2003.concaveOn_log_gjProb_update`), so the maximum entropy learner reaches its
+global maximum, the guarantee Stochastic OT lacks. Section 5 reruns the acquisition simulation of
+Boersma and Levelt over the five syllable-structure constraints (`con`): a ranking produces an
+input faithfully exactly when every markedness constraint the input violates is ranked below FAITH
+(`faithful_iff`), so the stages at which FAITH overtakes the markedness constraints one by one,
+from *CODA to *COMPLEXONSET, produce the syllable types in the nested order CV, CVC, {V, VC},
+{CVCC, VCC}, {CCV, CCVC, CCVCC} (`produced_stages`); and a learner producing CV, the initial state,
+lowers each markedness rank by the plasticity times the observation's violations
+(`initial_glaUpdate`), so over the corpus of Table 1 the ranks fall in the order of their violation
+rates, *CODA first and *COMPLEXONSET last (`corpusRate_order`), the order in which the simulation
+has FAITH overtake them.
 
-- **StOT** (Boersma): adds Gaussian noise to constraint ranks, learns via
-  the GLA (online, cognitively plausible)
-- **MaxEnt** ([goldwater-johnson-2003]): log-linear model over
-  constraint violations, learns via batch gradient ascent or SGA
+## Implementation notes
 
-## Key contributions formalized here
+* The maximum entropy probabilities are `GoldwaterJohnson2003.gjProb`; the sampled estimate of
+  the expected violations is stated over an arbitrary distribution on the candidates.
+* Table 1 is the paper's data, in permyriad; the initial ranks, 0 for FAITH and 10 for the
+  markedness constraints, the learning rate 0.1 and the trajectory of Figure 1 are reported, not
+  derived. The simulation's acquisition order refines the stages' ties by frequency, placing
+  CVCC before VCC; the stages alone leave them tied.
 
-1. **GLA = SGA** (§4): The GLA update rule is SGA with single-sample
-   estimates. Both adjust each weight by `η · (observed − expected)`.
-   This is `gla_eq_sga` from `Core.Agent.Learning`.
+## References
 
-2. **Correct gradient** (§4, eq (2)): The per-weight gradient of MaxEnt
-   log-likelihood is `E_emp[cⱼ] − E_r̄[cⱼ]` — observed minus expected
-   feature value. This is `hasDerivAt_logConditional` from
-   `Core.Probability.Choice.RationalAction`, instantiated as `gradient` in
-   [goldwater-johnson-2003].
-
-3. **Convergence guarantee** (§4): SGA converges to the global maximum
-   because log-likelihood is concave (`logConditional_concaveOn`). StOT's
-   GLA has no such guarantee — this is the main formal advantage of MaxEnt.
-
-4. **Ganging-up** (§3): Both MaxEnt and StOT admit ganging-up effects
-   (multiple weak constraints overriding a strong one), unlike classical OT.
-   This is `Ganging` from `OTLimit.lean`.
-
-5. **Dutch syllable acquisition** (§5): Replication of Boersma & Levelt
-   (2000) with MaxEnt+SGA produces the same acquisition order as the GLA,
-   consistent with child language data.
+* [jaeger-2007]
+* [boersma-1998]
+* [goldwater-johnson-2003]
 -/
 
 namespace Jaeger2007
 
-open Core Core.Optimization Constraints HarmonicGrammar Real
+open Core Constraints OptimalityTheory Finset Real Data.Examples GoldwaterJohnson2003
 
--- ============================================================================
--- § 1: GLA = SGA (Main Theorem)
--- ============================================================================
+/-! ### The Gradual Learning Algorithm as Stochastic Gradient Ascent -/
 
-/-- The main theorem of [jaeger-2007]: the Gradual Learning Algorithm
-    is Stochastic Gradient Ascent by definition.
+/-- The GLA update of Section 2 on a single rank: the plasticity times the sign of the excess of
+the sampled hypothesis's violations over the observation's. -/
+noncomputable def glaSign (r η : ℝ) (obs hyp : ℕ) : ℝ :=
+  r + η * SignType.sign ((hyp : ℝ) - obs)
 
-    Both update weight j by `η · (c_j(observed) − c_j(hypothesis))`.
-    For MaxEnt, this is an unbiased estimate of the log-likelihood gradient
-    `E_emp[c_j] − E_r̄[c_j]` (see `sga_uses_correct_gradient`). -/
-theorem gla_is_sga (r_j η : ℝ) (obs hyp : ℕ) :
-    glaUpdate r_j η obs hyp = sgaUpdate r_j η obs hyp :=
-  gla_eq_sga r_j η obs hyp
+/-- On binary constraints the sign is idle: the GLA update is the plain excess
+(`Core.glaUpdate`). -/
+theorem glaSign_eq_glaUpdate (r η : ℝ) {obs hyp : ℕ} (ho : obs ≤ 1) (hh : hyp ≤ 1) :
+    glaSign r η obs hyp = glaUpdate r η obs hyp := by
+  unfold glaSign glaUpdate
+  interval_cases obs <;> interval_cases hyp <;> norm_num [sign_apply]
 
--- ============================================================================
--- § 2: Convergence Advantage of MaxEnt
--- ============================================================================
+variable {O : Type*} [Fintype O]
 
-/-- **MaxEnt convergence guarantee**: the per-weight log-likelihood is concave,
-    so gradient-based learning converges to the unique global maximum.
+/-- (1): over a distribution on the hypotheses, the expected GLA update of a rank is the plasticity
+times the excess of the expected violations over the observed. -/
+theorem expected_glaUpdate (p : O → ℝ) (hp : ∑ h, p h = 1) (c : O → ℕ) (o : O) (r η : ℝ) :
+    ∑ h, p h * glaUpdate r η (c o) (c h) = r + η * (∑ h, p h * c h - c o) := by
+  have key : ∀ h, p h * glaUpdate r η (c o) (c h) = p h * r + η * (p h * c h) - η * (p h * c o) :=
+    λ h => by simp only [glaUpdate]; ring
+  simp only [key, sum_add_distrib, sum_sub_distrib, ← sum_mul, ← mul_sum, hp]
+  ring
 
-    [jaeger-2007] §4: "The log-likelihood has the desirable property
-    of being convex [sic — concave], which means that it does not have local
-    maxima. Gradient Ascent is thus guaranteed to find the global maximum."
+/-- The learner is at rest exactly when the expected and the observed violations agree: the
+convergence criterion of Section 4, shared by the GLA and Stochastic Gradient Ascent. -/
+theorem expected_glaUpdate_eq_self_iff (p : O → ℝ) (hp : ∑ h, p h = 1) (c : O → ℕ) (o : O)
+    (r : ℝ) {η : ℝ} (hη : η ≠ 0) :
+    ∑ h, p h * glaUpdate r η (c o) (c h) = r ↔ ∑ h, p h * c h = c o := by
+  rw [expected_glaUpdate p hp c o r η]
+  constructor
+  · intro h
+    have h' : η * (∑ h, p h * c h - c o) = 0 := by linarith
+    rcases mul_eq_zero.1 h' with h0 | h0
+    · exact absurd h0 hη
+    · linarith
+  · intro h
+    rw [h, sub_self, mul_zero, add_zero]
 
-    StOT's GLA lacks this guarantee — no proof of convergence exists for the
-    general case ([jaeger-2007] §2, fn. 1). -/
-theorem maxent_convergence_guarantee {ι : Type*} [Fintype ι] [Nonempty ι]
-    (s r : ι → ℝ) (y : ι) :
-    ConcaveOn ℝ Set.univ (fun wⱼ : ℝ => log (softmax (wⱼ • s + r) y)) :=
-  concaveOn_log_softmax s r y
+variable {I : Type*} {n : ℕ}
 
--- ============================================================================
--- § 3: Ganging-Up (§3 — shared by MaxEnt and StOT)
--- ============================================================================
+/-- (2): with the other weights held fixed, the derivative of the log probability of an
+observation in weight j is its expected violations of constraint j less the observed ones, the
+observed feature less its expectation once violations are read as non-positive features. -/
+theorem hasDerivAt_log_gjProb_update (con : CON (I × O) n) (w : Fin n → ℝ) (j : Fin n) (i : I)
+    (o : O) (t : ℝ) :
+    HasDerivAt (λ t => log (gjProb con (Function.update w j t) i o))
+      (∑ o', gjProb con (Function.update w j t) i o' * con j (i, o') - con j (i, o)) t := by
+  have : Nonempty O := ⟨o⟩
+  simp_rw [gjProb_update]
+  convert hasDerivAt_log_softmax _ _ o t using 1
+  simp only [mul_neg, sum_neg_distrib]
+  ring
 
-/-- Both MaxEnt and StOT admit ganging-up: two weak constraints can jointly
-    override a strong one. Classical OT precludes this when weights are
-    exponentially separated (`exponential_separation_precludes_ganging`).
+/-! ### The Dutch syllable types of Table 1 -/
 
-    [jaeger-2007]: "Both StOT and ME diverge from classical OT in
-    admitting ganging-up effects." -/
-theorem ganging_possible_without_separation :
-    Ganging (1 : ℝ) 1 (3/2) := by
-  refine ⟨by norm_num, by norm_num, by norm_num, by norm_num, by norm_num, by norm_num⟩
+/-- A syllable type: the number of consonants in its onset and in its coda, at most two each. -/
+abbrev Syl := Fin 3 × Fin 3
 
--- ============================================================================
--- § 4: Dutch Syllable Acquisition Data (§5, Table 1)
--- ============================================================================
+/-- The nine types of Table 1. -/
+def cv : Syl := (1, 0)
+def cvc : Syl := (1, 1)
+def vc : Syl := (0, 1)
+def v : Syl := (0, 0)
+def cvcc : Syl := (1, 2)
+def ccvc : Syl := (2, 1)
+def ccv : Syl := (2, 0)
+def vcc : Syl := (0, 2)
+def ccvcc : Syl := (2, 2)
 
-/-- Dutch syllable types from [jaeger-2007] Table 1
-    (Boersma & Levelt 2000, data from Joost van de Weijer). -/
-inductive DutchSyllable
-  | CV | CVC | VC | V | CVCC | CCVC | CCV | VCC | CCVCC
-  deriving DecidableEq, Repr
+/-- A row of Table 1: the syllable type and its frequency in permyriad. -/
+def Row.ofExample (e : LinguisticExample) : Option (Syl × ℕ) := do
+  let on ← e.nat? "onset"
+  let co ← e.nat? "coda"
+  let f ← e.nat? "permyriad"
+  if h : on < 3 ∧ co < 3 then some ((⟨on, h.1⟩, ⟨co, h.2⟩), f) else none
 
-open DutchSyllable
+/-- Table 1. -/
+def rows : List (Syl × ℕ) := Examples.all.filterMap Row.ofExample
 
--- UNVERIFIED: exact frequency values from Table 1
-/-- Frequency of Dutch syllable types in child-directed speech (%). -/
-def syllableFreq : DutchSyllable → ℚ
-  | CV    => 4481/100  -- 44.81%
-  | CVC   => 3205/100  -- 32.05%
-  | VC    => 1199/100  -- 11.99%
-  | V     => 385/100   -- 3.85%
-  | CVCC  => 325/100   -- 3.25%
-  | CCVC  => 198/100   -- 1.98%
-  | CCV   => 138/100   -- 1.38%
-  | VCC   => 42/100    -- 0.42%
-  | CCVCC => 26/100    -- 0.26%
+/-! ### The constraints of Section 5 -/
 
-/-- Constraints for Dutch syllable structure (§5). -/
-inductive SyllableConstraint
-  | starCoda        -- *CODA: violated by -C and -CC syllables
-  | onset           -- ONSET: violated by V-initial syllables
-  | starComplexCoda -- *COMPLEXCODA: violated by -CC syllables
-  | starComplexOnset -- *COMPLEXONSET: violated by CC- syllables
-  | faith           -- FAITH: violated when input ≠ output
-  deriving DecidableEq, Repr
+/-- *CODA: no coda. -/
+def starCoda : Constraint (Syl × Syl) := Constraint.binary λ c => 1 ≤ c.2.2
 
-open SyllableConstraint
+/-- ONSET: no vowel-initial syllable. -/
+def onset : Constraint (Syl × Syl) := Constraint.binary λ c => c.2.1 = 0
 
-/-- Violation count: how many times each constraint is violated by each
-    syllable type (assuming faithful mapping, so FAITH = 0). -/
-def violations : SyllableConstraint → DutchSyllable → ℕ
-  | starCoda,        CV    => 0 | starCoda,        CVC   => 1
-  | starCoda,        VC    => 1 | starCoda,        V     => 0
-  | starCoda,        CVCC  => 1 | starCoda,        CCVC  => 1
-  | starCoda,        CCV   => 0 | starCoda,        VCC   => 1
-  | starCoda,        CCVCC => 1
-  | onset,           CV    => 0 | onset,           CVC   => 0
-  | onset,           VC    => 1 | onset,           V     => 1
-  | onset,           CVCC  => 0 | onset,           CCVC  => 0
-  | onset,           CCV   => 0 | onset,           VCC   => 1
-  | onset,           CCVCC => 0
-  | starComplexCoda, CV    => 0 | starComplexCoda, CVC   => 0
-  | starComplexCoda, VC    => 0 | starComplexCoda, V     => 0
-  | starComplexCoda, CVCC  => 1 | starComplexCoda, CCVC  => 0
-  | starComplexCoda, CCV   => 0 | starComplexCoda, VCC   => 1
-  | starComplexCoda, CCVCC => 1
-  | starComplexOnset, CV   => 0 | starComplexOnset, CVC  => 0
-  | starComplexOnset, VC   => 0 | starComplexOnset, V    => 0
-  | starComplexOnset, CVCC => 0 | starComplexOnset, CCVC => 1
-  | starComplexOnset, CCV  => 1 | starComplexOnset, VCC  => 0
-  | starComplexOnset, CCVCC => 1
-  | faith,           _     => 0  -- faithful mapping assumed
+/-- *COMPLEXCODA: no complex coda. -/
+def starComplexCoda : Constraint (Syl × Syl) := Constraint.binary λ c => c.2.2 = 2
 
-/-- CV violates no markedness constraints. -/
-theorem cv_no_violations (c : SyllableConstraint) : violations c CV = 0 := by
-  cases c <;> rfl
+/-- *COMPLEXONSET: no complex onset. -/
+def starComplexOnset : Constraint (Syl × Syl) := Constraint.binary λ c => c.2.1 = 2
 
-/-- CCVCC violates three markedness constraints (*Coda, *ComplexCoda, *ComplexOnset). -/
-theorem ccvcc_three_violations :
-    violations starCoda CCVCC + violations starComplexCoda CCVCC +
-    violations starComplexOnset CCVCC = 3 := by native_decide
+/-- FAITH: the output is the input. -/
+def faith : Constraint (Syl × Syl) := Constraint.binary λ c => c.1 ≠ c.2
 
--- ============================================================================
--- § 5: Acquisition Order Predictions
--- ============================================================================
+/-- The constraint set, in the order of the converged ranking FAITH ≫ *COMPLEXONSET ≫
+*COMPLEXCODA ≫ ONSET ≫ *CODA. -/
+def con : CON (Syl × Syl) 5 := ![faith, starComplexOnset, starComplexCoda, onset, starCoda]
 
-/-- The converged constraint ranking from §5:
-    FAITH ≫ *COMPLEXONSET ≫ *COMPLEXCODA ≫ ONSET ≫ *CODA
+/-- Violation profiles. -/
+def vp (i o : Syl) (k : Fin 5) : ℕ := con k (i, o)
 
-    We represent this as learned weights (higher weight = higher priority).
-    The exact values are from Jäger's simulation (Fig. 1). -/
--- UNVERIFIED: exact converged weight values from Fig. 1
-def convergedWeights : SyllableConstraint → ℝ
-  | faith            => 13
-  | starComplexOnset => 8
-  | starComplexCoda  => 7
-  | onset            => 5
-  | starCoda         => 0
+/-- Every syllable type is a candidate output for every input. -/
+def cands : Syl → Finset Syl := λ _ => univ
 
-/-- FAITH outranks all markedness constraints at convergence. -/
-theorem faith_highest : ∀ c : SyllableConstraint,
-    c ≠ faith → convergedWeights c < convergedWeights faith := by
-  intro c hc; cases c <;> simp_all [convergedWeights] <;> norm_num
+/-- A ranking produces an input faithfully exactly when every markedness constraint the input
+violates is ranked below FAITH. -/
+theorem faithful_iff (σ : Ranking 5) (i : Syl) :
+    PicksAt cands vp σ i i ↔ ∀ k, vp i i k = 1 → σ.Dominates 0 k := by
+  revert σ i; decide +kernel
 
-/-- The markedness constraints are ranked in the predicted order. -/
-theorem markedness_ranking :
-    convergedWeights starCoda < convergedWeights onset ∧
-    convergedWeights onset < convergedWeights starComplexCoda ∧
-    convergedWeights starComplexCoda < convergedWeights starComplexOnset := by
-  simp [convergedWeights]; norm_num
+/-- The syllable types produced faithfully once the markedness constraints in `S` are below
+FAITH: those violating no other markedness constraint. -/
+def produced (S : Finset (Fin 5)) : Finset Syl := univ.filter λ i => ∀ k, vp i i k = 1 → k ∈ S
 
-/-- Simpler syllables (fewer violations) are acquired first because they have
-    higher harmony. CV has harmony 0 (no violations), while CCVCC has the
-    lowest harmony (3 violations). -/
-theorem cv_dominates_ccvcc :
-    violations starCoda CV + violations onset CV +
-    violations starComplexCoda CV + violations starComplexOnset CV <
-    violations starCoda CCVCC + violations onset CCVCC +
-    violations starComplexCoda CCVCC + violations starComplexOnset CCVCC := by
-  native_decide
+/-- The types a ranking produces faithfully are those of the stage it is at. -/
+theorem mem_produced_iff (σ : Ranking 5) (i : Syl) :
+    i ∈ produced (univ.filter (σ.Dominates 0)) ↔ PicksAt cands vp σ i i := by
+  simp [produced, faithful_iff]
+
+/-- The stages at which FAITH overtakes *CODA, ONSET, *COMPLEXCODA and *COMPLEXONSET in turn:
+the syllable types come in the nested order CV; CVC; V, VC; CVCC, VCC; CCV, CCVC, CCVCC. -/
+theorem produced_stages :
+    produced ∅ = {cv} ∧ produced {4} = {cv, cvc} ∧ produced {4, 3} = {cv, cvc, v, vc} ∧
+    produced {4, 3, 2} = {cv, cvc, v, vc, cvcc, vcc} ∧ produced {4, 3, 2, 1} = univ := by
+  decide
+
+/-- CV violates no markedness constraint. -/
+theorem cv_unmarked : ∀ i : Syl, ∀ k : Fin 5, k ≠ 0 → vp i cv k = 0 := by decide
+
+/-- A learner producing CV with certainty, the initial state with FAITH at 0 and the markedness
+constraints at 10, lowers each markedness rank by the plasticity times the observation's
+violations, (1). -/
+theorem initial_glaUpdate (r η : ℝ) (o : Syl) (k : Fin 5) (hk : k ≠ 0) :
+    ∑ h, Pi.single (M := λ _ => ℝ) cv 1 h * glaUpdate r η (vp o o k) (vp o h k) =
+      r - η * vp o o k := by
+  have h := expected_glaUpdate (Pi.single (M := λ _ => ℝ) cv 1) (by simp) (λ h => vp o h k) o r η
+  rw [h]
+  simp [Pi.single_apply, cv_unmarked o k hk]
+  ring
+
+/-- The violation rate of a constraint in the corpus of Table 1, in permyriad. -/
+def corpusRate (k : Fin 5) : ℕ := (rows.map λ r => r.2 * vp r.1 r.1 k).sum
+
+/-- FAITH is never violated in the corpus, and the markedness ranks fall fastest for *CODA, then
+ONSET, *COMPLEXCODA and *COMPLEXONSET: the order in which FAITH overtakes them. -/
+theorem corpusRate_order :
+    corpusRate 0 = 0 ∧ corpusRate 1 < corpusRate 2 ∧ corpusRate 2 < corpusRate 3 ∧
+    corpusRate 3 < corpusRate 4 := by
+  decide
 
 end Jaeger2007
