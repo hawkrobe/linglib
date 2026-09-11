@@ -1,0 +1,2518 @@
+[
+  {
+    "id": "haykennedylevin1999_ex2a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(2a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim is lengthening the rope. ⇒ Kim has lengthened the rope.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "test",
+        "progressive"
+      ],
+      [
+        "verb",
+        "lengthen"
+      ],
+      [
+        "telic",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex2b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(2b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim is straightening the rope. ⇏ Kim has straightened the rope.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "test",
+        "progressive"
+      ],
+      [
+        "verb",
+        "straighten"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex4a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(4a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The soup cooled for an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "test",
+        "for"
+      ],
+      [
+        "verb",
+        "cool"
+      ],
+      [
+        "telic",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex4b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(4b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The soup cooled in an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "test",
+        "in"
+      ],
+      [
+        "verb",
+        "cool"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex6a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(6a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The tailor almost lengthened my pants.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "test",
+        "almost"
+      ],
+      [
+        "verb",
+        "lengthen"
+      ],
+      [
+        "telic",
+        "yes"
+      ],
+      [
+        "boundSource",
+        "context"
+      ]
+    ],
+    "comment": "Ambiguous: real-world knowledge about pants supplies a bound.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex6b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(6b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The teacher almost lengthened the exam.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "test",
+        "almost"
+      ],
+      [
+        "verb",
+        "lengthen"
+      ],
+      [
+        "telic",
+        "no"
+      ],
+      [
+        "boundSource",
+        "none"
+      ]
+    ],
+    "comment": "Unambiguous: no bound on the length of an exam.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex8a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(8a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim lengthened the rope.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "verb",
+        "lengthen"
+      ],
+      [
+        "differenceValue",
+        "some amount"
+      ],
+      [
+        "telic",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex8b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(8b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim lengthened the rope 5 inches.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "verb",
+        "lengthen"
+      ],
+      [
+        "differenceValue",
+        "5 inches"
+      ],
+      [
+        "boundSource",
+        "measure"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex10",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(10)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim is lengthening the rope 5 in. ⇏ Kim has lengthened the rope 5 in.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "test",
+        "progressive"
+      ],
+      [
+        "verb",
+        "lengthen"
+      ],
+      [
+        "boundSource",
+        "measure"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex18a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(18a)"
+    },
+    "language": "stan1293",
+    "primaryText": "They widened the road 5 m.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "verb",
+        "widen"
+      ],
+      [
+        "boundSource",
+        "measure"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex18b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(18b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The lake cooled 4 degrees.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "verb",
+        "cool"
+      ],
+      [
+        "boundSource",
+        "measure"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex19a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(19a)"
+    },
+    "language": "stan1293",
+    "primaryText": "They are widening the road 5 m. ⇏ They have widened the road 5 m.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "test",
+        "progressive"
+      ],
+      [
+        "verb",
+        "widen"
+      ],
+      [
+        "boundSource",
+        "measure"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex19b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(19b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The lake is cooling 4 degrees. ⇏ The lake has cooled 4 degrees.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "test",
+        "progressive"
+      ],
+      [
+        "verb",
+        "cool"
+      ],
+      [
+        "boundSource",
+        "measure"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex20a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(20a)"
+    },
+    "language": "stan1293",
+    "primaryText": "They almost widened the road 5 m.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "test",
+        "almost"
+      ],
+      [
+        "verb",
+        "widen"
+      ],
+      [
+        "boundSource",
+        "measure"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "Ambiguous.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex20b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(20b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The lake almost cooled 4 degrees.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "test",
+        "almost"
+      ],
+      [
+        "verb",
+        "cool"
+      ],
+      [
+        "boundSource",
+        "measure"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "Ambiguous.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex21a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(21a)"
+    },
+    "language": "stan1293",
+    "primaryText": "They straightened the rope completely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "verb",
+        "straighten"
+      ],
+      [
+        "modifier",
+        "completely"
+      ],
+      [
+        "boundSource",
+        "completely"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex21b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(21b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The clothes dried completely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "verb",
+        "dry"
+      ],
+      [
+        "modifier",
+        "completely"
+      ],
+      [
+        "boundSource",
+        "completely"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex22a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(22a)"
+    },
+    "language": "stan1293",
+    "primaryText": "They are straightening the rope completely. ⇏ They have straightened the rope completely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "test",
+        "progressive"
+      ],
+      [
+        "verb",
+        "straighten"
+      ],
+      [
+        "modifier",
+        "completely"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex22b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(22b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The sun is drying the clothes completely. ⇏ The sun has dried the clothes completely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "test",
+        "progressive"
+      ],
+      [
+        "verb",
+        "dry"
+      ],
+      [
+        "modifier",
+        "completely"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex23a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(23a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The independent counsel broadened the investigation significantly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "verb",
+        "broaden"
+      ],
+      [
+        "modifier",
+        "significantly"
+      ],
+      [
+        "boundSource",
+        "significantly"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "A monotone increasing modifier: the change must reach a contextual standard.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex23b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(23b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The IC almost broadened the investigation significantly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "test",
+        "almost"
+      ],
+      [
+        "verb",
+        "broaden"
+      ],
+      [
+        "modifier",
+        "significantly"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "Ambiguous.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex23c",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(23c)"
+    },
+    "language": "stan1293",
+    "primaryText": "The IC is broadening the investigation significantly. ⇏ The IC has broadened the investigation significantly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "test",
+        "progressive"
+      ],
+      [
+        "verb",
+        "broaden"
+      ],
+      [
+        "modifier",
+        "significantly"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex24a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(24a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The independent counsel broadened the investigation slightly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "verb",
+        "broaden"
+      ],
+      [
+        "modifier",
+        "slightly"
+      ],
+      [
+        "boundSource",
+        "none"
+      ],
+      [
+        "telic",
+        "no"
+      ]
+    ],
+    "comment": "A monotone decreasing modifier: part of a slight increase is a slight increase.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex24b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(24b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The independent counsel almost broadened the investigation slightly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "test",
+        "almost"
+      ],
+      [
+        "verb",
+        "broaden"
+      ],
+      [
+        "modifier",
+        "slightly"
+      ],
+      [
+        "telic",
+        "no"
+      ]
+    ],
+    "comment": "Unambiguous.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex24c",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(24c)"
+    },
+    "language": "stan1293",
+    "primaryText": "The independent counsel is broadening the investigation slightly. ⇒ The independent counsel has broadened the investigation slightly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.1"
+      ],
+      [
+        "test",
+        "progressive"
+      ],
+      [
+        "verb",
+        "broaden"
+      ],
+      [
+        "modifier",
+        "slightly"
+      ],
+      [
+        "telic",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex25a_straight",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(25a)"
+    },
+    "language": "stan1293",
+    "primaryText": "completely straight",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "adjective",
+        "straight"
+      ],
+      [
+        "range",
+        "closed"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex25a_empty",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(25a)"
+    },
+    "language": "stan1293",
+    "primaryText": "completely empty",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "adjective",
+        "empty"
+      ],
+      [
+        "range",
+        "closed"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex25a_dry",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(25a)"
+    },
+    "language": "stan1293",
+    "primaryText": "completely dry",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "adjective",
+        "dry"
+      ],
+      [
+        "range",
+        "closed"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex25b_long",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(25b)"
+    },
+    "language": "stan1293",
+    "primaryText": "completely long",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "adjective",
+        "long"
+      ],
+      [
+        "range",
+        "open"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex25b_wide",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(25b)"
+    },
+    "language": "stan1293",
+    "primaryText": "completely wide",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "adjective",
+        "wide"
+      ],
+      [
+        "range",
+        "open"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex25b_short",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(25b)"
+    },
+    "language": "stan1293",
+    "primaryText": "completely short",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "adjective",
+        "short"
+      ],
+      [
+        "range",
+        "open"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex26a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(26a)"
+    },
+    "language": "stan1293",
+    "primaryText": "They are straightening the rope. ⇏ They have straightened the rope.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "test",
+        "progressive"
+      ],
+      [
+        "verb",
+        "straighten"
+      ],
+      [
+        "range",
+        "closed"
+      ],
+      [
+        "boundSource",
+        "scale"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex26b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(26b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The clothes are drying. ⇏ The clothes have dried.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "test",
+        "progressive"
+      ],
+      [
+        "verb",
+        "dry"
+      ],
+      [
+        "range",
+        "closed"
+      ],
+      [
+        "boundSource",
+        "scale"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex27a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(27a)"
+    },
+    "language": "stan1293",
+    "primaryText": "They are lengthening the rope. ⇒ They have lengthened the rope.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "test",
+        "progressive"
+      ],
+      [
+        "verb",
+        "lengthen"
+      ],
+      [
+        "range",
+        "open"
+      ],
+      [
+        "boundSource",
+        "none"
+      ],
+      [
+        "telic",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex27b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(27b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The snow is slowing. ⇒ The snow has slowed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "test",
+        "progressive"
+      ],
+      [
+        "verb",
+        "slow"
+      ],
+      [
+        "range",
+        "open"
+      ],
+      [
+        "boundSource",
+        "none"
+      ],
+      [
+        "telic",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex28a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(28a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The tailor lengthened my pants.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "verb",
+        "lengthen"
+      ],
+      [
+        "boundSource",
+        "context"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "A conventional maximal length for pants supplies the bound.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex28b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(28b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim lowered the blind.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "verb",
+        "lower"
+      ],
+      [
+        "boundSource",
+        "context"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex29a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(29a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The tailor is lengthening my pants. ⇏ The tailor has lengthened my pants.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "test",
+        "progressive"
+      ],
+      [
+        "verb",
+        "lengthen"
+      ],
+      [
+        "boundSource",
+        "context"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex29b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(29b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim is lowering the blind. ⇏ Kim has lowered the blind.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "test",
+        "progressive"
+      ],
+      [
+        "verb",
+        "lower"
+      ],
+      [
+        "boundSource",
+        "context"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex30a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(30a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The traffic lengthened my commute.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "verb",
+        "lengthen"
+      ],
+      [
+        "boundSource",
+        "none"
+      ],
+      [
+        "telic",
+        "no"
+      ]
+    ],
+    "comment": "No bounded length for a commute.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex30b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(30b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim lowered the heat.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "verb",
+        "lower"
+      ],
+      [
+        "boundSource",
+        "none"
+      ],
+      [
+        "telic",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex31a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(31a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The traffic is lengthening my commute. ⇒ The traffic has lengthened my commute.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "test",
+        "progressive"
+      ],
+      [
+        "verb",
+        "lengthen"
+      ],
+      [
+        "boundSource",
+        "none"
+      ],
+      [
+        "telic",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex31b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(31b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Kim is lowering the heat. ⇒ Kim has lowered the heat.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "test",
+        "progressive"
+      ],
+      [
+        "verb",
+        "lower"
+      ],
+      [
+        "boundSource",
+        "none"
+      ],
+      [
+        "telic",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex32a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(32a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The tailor lengthened my pants, but not completely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "test",
+        "cancellation"
+      ],
+      [
+        "verb",
+        "lengthen"
+      ],
+      [
+        "boundSource",
+        "context"
+      ],
+      [
+        "cancellable",
+        "yes"
+      ]
+    ],
+    "comment": "The bound arises by conversational implicature and can be cancelled.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex32b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(32b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I straightened the rope, but not completely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "test",
+        "cancellation"
+      ],
+      [
+        "verb",
+        "straighten"
+      ],
+      [
+        "boundSource",
+        "scale"
+      ],
+      [
+        "cancellable",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex33a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(33a)"
+    },
+    "language": "stan1293",
+    "primaryText": "They straightened the rope completely, but the rope isn't completely straight.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "test",
+        "cancellation"
+      ],
+      [
+        "verb",
+        "straighten"
+      ],
+      [
+        "boundSource",
+        "completely"
+      ],
+      [
+        "cancellable",
+        "no"
+      ]
+    ],
+    "comment": "A bound supplied by overt material is not cancellable.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex33b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(33b)"
+    },
+    "language": "stan1293",
+    "primaryText": "They widened the road 5 m, but the road didn't increase in width by 5 m.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "test",
+        "cancellation"
+      ],
+      [
+        "verb",
+        "widen"
+      ],
+      [
+        "boundSource",
+        "measure"
+      ],
+      [
+        "cancellable",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex34a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(34a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The soup cooled in an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "test",
+        "in"
+      ],
+      [
+        "verb",
+        "cool"
+      ],
+      [
+        "boundSource",
+        "context"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "Room temperature is a salient bound; compare ?The lake cooled in an hour.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex34b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(34b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The soup cooled for an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "test",
+        "for"
+      ],
+      [
+        "verb",
+        "cool"
+      ],
+      [
+        "boundSource",
+        "none"
+      ],
+      [
+        "telic",
+        "no"
+      ]
+    ],
+    "comment": "The durative adverbial cancels the telicity implicature.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex35a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(35a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The soup completely cooled in an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "test",
+        "in"
+      ],
+      [
+        "verb",
+        "cool"
+      ],
+      [
+        "modifier",
+        "completely"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex35b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(35b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The soup completely cooled for an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "test",
+        "for"
+      ],
+      [
+        "verb",
+        "cool"
+      ],
+      [
+        "modifier",
+        "completely"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "Telicity from overt material cannot be cancelled by the durative adverbial.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex36",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(36)"
+    },
+    "language": "stan1293",
+    "primaryText": "She ate the sandwich but as usual she left a few bites.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "test",
+        "cancellation"
+      ],
+      [
+        "verb",
+        "eat"
+      ],
+      [
+        "verbClass",
+        "consumption"
+      ],
+      [
+        "cancellable",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex37a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(37a)"
+    },
+    "language": "stan1293",
+    "primaryText": "She ate the sandwich in 5 minutes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "test",
+        "in"
+      ],
+      [
+        "verb",
+        "eat"
+      ],
+      [
+        "verbClass",
+        "consumption"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex37b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(37b)"
+    },
+    "language": "stan1293",
+    "primaryText": "She ate the sandwich for 5 minutes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "test",
+        "for"
+      ],
+      [
+        "verb",
+        "eat"
+      ],
+      [
+        "verbClass",
+        "consumption"
+      ],
+      [
+        "telic",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex38a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(38a)"
+    },
+    "language": "stan1293",
+    "primaryText": "She ran a mile, but didn't quite finish it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "test",
+        "cancellation"
+      ],
+      [
+        "verb",
+        "run"
+      ],
+      [
+        "verbClass",
+        "motion"
+      ],
+      [
+        "boundSource",
+        "measure"
+      ],
+      [
+        "cancellable",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex38b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(38b)"
+    },
+    "language": "stan1293",
+    "primaryText": "She ran a race, but didn't quite finish it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "test",
+        "cancellation"
+      ],
+      [
+        "verb",
+        "run"
+      ],
+      [
+        "verbClass",
+        "motion"
+      ],
+      [
+        "boundSource",
+        "context"
+      ],
+      [
+        "cancellable",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex39a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(39a)"
+    },
+    "language": "stan1293",
+    "primaryText": "She drew a 2cm line, but it wasn't quite 2cm long.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "test",
+        "cancellation"
+      ],
+      [
+        "verb",
+        "draw"
+      ],
+      [
+        "verbClass",
+        "creation"
+      ],
+      [
+        "boundSource",
+        "measure"
+      ],
+      [
+        "cancellable",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex39b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(39b)"
+    },
+    "language": "stan1293",
+    "primaryText": "She drew a house, but it was missing a door.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "test",
+        "cancellation"
+      ],
+      [
+        "verb",
+        "draw"
+      ],
+      [
+        "verbClass",
+        "creation"
+      ],
+      [
+        "boundSource",
+        "context"
+      ],
+      [
+        "cancellable",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex40a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(40a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The plane descended 1000 meters.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "verb",
+        "descend"
+      ],
+      [
+        "verbClass",
+        "directed motion"
+      ],
+      [
+        "boundSource",
+        "measure"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex40b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(40b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The water level rose 4 feet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "verb",
+        "rise"
+      ],
+      [
+        "verbClass",
+        "directed motion"
+      ],
+      [
+        "boundSource",
+        "measure"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex41a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(41a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The plane descended in 20 minutes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "test",
+        "in"
+      ],
+      [
+        "verb",
+        "descend"
+      ],
+      [
+        "verbClass",
+        "directed motion"
+      ],
+      [
+        "boundSource",
+        "context"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex41b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(41b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The plane descended for 20 minutes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "test",
+        "for"
+      ],
+      [
+        "verb",
+        "descend"
+      ],
+      [
+        "verbClass",
+        "directed motion"
+      ],
+      [
+        "boundSource",
+        "none"
+      ],
+      [
+        "telic",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex42a",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(42a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The submarine is rising. ⇏ The submarine has risen.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "test",
+        "progressive"
+      ],
+      [
+        "verb",
+        "rise"
+      ],
+      [
+        "verbClass",
+        "directed motion"
+      ],
+      [
+        "boundSource",
+        "context"
+      ],
+      [
+        "telic",
+        "yes"
+      ]
+    ],
+    "comment": "Sea level is a maximal value for the ascent.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haykennedylevin1999_ex42b",
+    "source": {
+      "bibkey": "hay-kennedy-levin-1999",
+      "paperLabel": "(42b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The water level is rising. ⇒ The water level has risen.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.1"
+      ],
+      [
+        "test",
+        "progressive"
+      ],
+      [
+        "verb",
+        "rise"
+      ],
+      [
+        "verbClass",
+        "directed motion"
+      ],
+      [
+        "boundSource",
+        "none"
+      ],
+      [
+        "telic",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  }
+]
