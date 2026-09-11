@@ -12,17 +12,24 @@ alternative set is a complete join semilattice. This yields
 Formally: `O⁻_C(p) = p ∧ ∀q ∈ C. q` (the assertion together with every
 alternative being true).
 
-The key use: when `C = D`-variants (subdomain alternatives) of an
-existential `∃x∈D.P(x)`, asserting all `D`-variants gives `∀D'⊆D.
-∃x∈D'.P(x)` — a distribution requirement across subdomains, i.e.,
-universal force.
+The key use: when `C` is the set of D-variants of an existential
+`∃x∈D.P(x)` over the subdomains that stand a chance, asserting all of them
+gives `∀D'⊆D. ∃x∈D'.P(x)` — a distribution requirement across subdomains,
+i.e., universal force over the possible witnesses.
 
 ## Deriving Universal Force from Antiexhaustive Enrichment
 
 [chierchia-2006] §5.1: When `O⁻` is applied to an existential
-`∃x∈D.P(x)` with `D-MIN` alternatives (all subdomains), the enriched
-meaning requires the existential to hold over every subdomain — equivalent
-to universal force. The formal engine behind FCI universal readings.
+`∃x∈D.P(x)` with `D-MIN` alternatives (the subdomains containing a possible
+witness, (61b)), the enriched meaning requires the existential to hold over
+every such subdomain — equivalent to universal force over the possible
+witnesses in `D`, (63d). The formal engine behind FCI universal readings.
+
+## Implementation notes
+
+An alternative domain must contain a possible witness, (61b): without that
+restriction the empty subdomain would be an alternative, its existential the
+empty proposition, and `O⁻` contradictory everywhere.
 -/
 
 namespace Exhaustification
@@ -55,6 +62,15 @@ theorem oMinus_entails_alt (C : Set (Set World)) (p : Set World) (q : Set World)
     (hq : q ∈ C) : oMinus C p ⊆ q :=
   λ _ ⟨_, hall⟩ => hall q hq
 
+/-- Under an antitone embedding, alternatives that each entail the prejacent are all
+entailed by the embedded prejacent, so antiexhaustive enrichment is vacuous: the
+free-choice implicature of an item under negation disappears, [chierchia-2006] (65)–(66). -/
+theorem oMinus_image_antitone_eq {C : Set World → Set World} (hC : Antitone C)
+    {A : Set (Set World)} {p : Set World} (hA : ∀ q ∈ A, q ⊆ p) :
+    oMinus (C '' A) (C p) = C p :=
+  Set.Subset.antisymm (oMinus_entails _ _)
+    (λ _ hw => ⟨hw, by rintro _ ⟨q, hq, rfl⟩; exact hC (hA q hq) hw⟩)
+
 section UniversalFromAntiexh
 
 variable {Entity : Type*}
@@ -63,31 +79,53 @@ variable {Entity : Type*}
 def existsIn (D : List Entity) (P : Entity → Set World) : Set World :=
   λ w => ∃ x ∈ D, P x w
 
-/-- `D-MIN` alternatives: existentials over all sublists (subdomains). -/
+/-- A subdomain existential entails the existential over the whole domain. -/
+theorem existsIn_subset (D : List Entity) (P : Entity → Set World) {D' : List Entity}
+    (h : ∀ x ∈ D', x ∈ D) : existsIn D' P ⊆ existsIn D P := by
+  rintro w ⟨x, hx, hPx⟩
+  exact ⟨x, h x hx, hPx⟩
+
+/-- The `D`-variants of a domain-dependent proposition, [chierchia-2006] (96): its values on the
+subdomains of `D` that stand a chance, those containing a `possible` member, (61b). -/
+def dVariants (F : List Entity → Set World) (D : List Entity) (possible : Entity → Prop) :
+    Set (Set World) :=
+  {q | ∃ D' : List Entity, (∀ x ∈ D', x ∈ D) ∧ (∃ x ∈ D', possible x) ∧ q = F D'}
+
+/-- `D-MIN` alternatives: existentials over the subdomains with a possible witness. -/
 def dMinAlts (D : List Entity) (P : Entity → Set World) : Set (Set World) :=
-  {q | ∃ D' : List Entity, (∀ x ∈ D', x ∈ D) ∧ q = existsIn D' P}
+  dVariants (existsIn · P) D (λ x => ∃ v, P x v)
+
+/-- **Antiexhaustiveness is universal force over the possible witnesses.**
+
+    `O⁻` applied to `∃x∈D.P(x)` with `D-MIN` alternatives holds exactly when every
+    possible witness in `D` is an actual one, [chierchia-2006] (63c)–(63d). -/
+theorem oMinus_dMinAlts_iff (D : List Entity) (P : Entity → Set World) (w : World)
+    (hD : ∃ a ∈ D, ∃ v, P a v) :
+    oMinus (dMinAlts D P) (existsIn D P) w ↔ ∀ a ∈ D, (∃ v, P a v) → P a w := by
+  constructor
+  · rintro ⟨_, hall⟩ a ha hpos
+    obtain ⟨x, hx, hPx⟩ :=
+      hall _ ⟨[a], by simpa using ha, ⟨a, List.mem_singleton_self a, hpos⟩, rfl⟩
+    obtain rfl := List.mem_singleton.1 hx
+    exact hPx
+  · intro h
+    obtain ⟨a, ha, hpos⟩ := hD
+    refine ⟨⟨a, ha, h a ha hpos⟩, ?_⟩
+    rintro _ ⟨D', hD', ⟨b, hb, hbpos⟩, rfl⟩
+    exact ⟨b, hb, h b (hD' b hb) hbpos⟩
 
 /-- **Antiexhaustiveness yields universal distribution.**
-
-    `O⁻` applied to `∃x∈D.P(x)` with `D-MIN` alternatives entails that for
-    every individual `a ∈ D`, `P(a)` holds — i.e., universal force.
 
     Chierchia 2006's key formal result: the "birth of universal readings"
     (§5.1) from antiexhaustive enrichment of an existential base. -/
 theorem antiexh_yields_universal
     (D : List Entity) (P : Entity → Set World) (w : World)
     (h : oMinus (dMinAlts D P) (existsIn D P) w) :
-    ∀ a ∈ D, P a w := by
-  intro a ha
-  obtain ⟨_, hall⟩ := h
-  have hmem : existsIn [a] P ∈ dMinAlts D P := by
-    unfold dMinAlts
-    exact ⟨[a], λ x hx => by simp only [List.mem_singleton] at hx; rw [hx]; exact ha, rfl⟩
-  have := hall _ hmem
-  unfold existsIn at this
-  obtain ⟨x, hx, hPx⟩ := this
-  simp only [List.mem_singleton] at hx
-  rw [hx] at hPx
+    ∀ a ∈ D, (∃ v, P a v) → P a w := by
+  rintro a ha hpos
+  obtain ⟨x, hx, hPx⟩ :=
+    h.2 _ ⟨[a], by simpa using ha, ⟨a, List.mem_singleton_self a, hpos⟩, rfl⟩
+  obtain rfl := List.mem_singleton.1 hx
   exact hPx
 
 end UniversalFromAntiexh

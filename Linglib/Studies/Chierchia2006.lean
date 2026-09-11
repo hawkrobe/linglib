@@ -1,279 +1,273 @@
+import Linglib.Semantics.Exhaustification.Antiexhaustive
+import Linglib.Semantics.Exhaustification.PreExhaustified
+import Linglib.Logic.Modal.Basic
 import Linglib.Studies.Haspelmath1997
-import Linglib.Semantics.Polarity.Item
-import Linglib.Fragments.English.PolarityItems
-import Linglib.Fragments.Italian.PolarityItems
-import Linglib.Fragments.German.PolarityItems
-import Linglib.Data.Examples.Chierchia2006
+
 /-!
 # Chierchia (2006): Broaden your views
 
-This file formalizes the parametric decomposition of polarity-sensitive items in
-[chierchia-2006]. An item's distribution follows from two things about its alternatives: how
-fine-grained the domain alternatives are, and whether exhaustification over them must strictly
-strengthen. Together with whether domain alternatives are obligatory and whether the item has
-scalar alternatives, these fix a class, pure negative-polarity item, negative-polarity and
-free-choice item, pure free-choice item, and their existential-free-choice counterparts, and
-each class's eligible region turns out to be a contiguous stretch of [haspelmath-1997]'s
-implicational map, which is why indefinite series cover contiguous function ranges. The
-proper-strengthening parameter separates Italian *qualsiasi* from English *any* under negation:
-exhaustification of *any* in a downward-entailing context is vacuous, which its weak
-alternative set tolerates, so the negative-polarity reading survives, while *qualsiasi* requires
-proper strengthening, which a downward-entailing context cannot supply, so only the rhetorical
-¬∀ reading remains. The Italian judgments are rows, and the theorems derive the regions, the
-contrast under negation, the Fragment entries' parameters and the judgments from the profiles.
+This file formalizes the theory of polarity-sensitive items in [chierchia-2006]: all of them are
+existentials that activate domain alternatives, [kadmon-landman-1993]'s domain widening, and the
+alternatives are factored into meaning by an enrichment operation whose result an
+implicature-freezing operator σ locks in place. The items differ in two respects, (94): the size
+of the alternatives, large subdomains (MAX) enriched by the even-like `evenEnrich`, or every
+subdomain that stands a chance (MIN) enriched by the antiexhaustive `Exhaustification.oMinus`;
+and whether σ presupposes proper strengthening. Pure negative-polarity items (*mai*, *ever*) are
+MAX; *any* is MIN with the plain σ, a negative-polarity item under negation and a universal
+free-choice item elsewhere; Italian *qualsiasi* is MIN with the presuppositional σ, a pure
+free-choice item; the existential free-choice items (*irgendein*, *uno N qualsiasi*) add the
+uniqueness implicature of their indefinite morphology and distribute over the worlds of a modal,
+after [kratzer-shimoyama-2002].
+
+The theorems derive the distributions from the operators. `evenEnrich_eq_or_eq_empty` makes
+even-like enrichment vacuous or contradictory, so a MAX item is confined to the positions where
+its alternatives are entailed (`evenEnrich_image_antitone_eq`) and can never meet the
+presupposition of the strong σ, footnote 33. `oMinus_dMinAlts_iff` is the universal reading
+(63d); `not_properlyStrengthens_oMinus_antitone` is why *qualsiasi* has no negative-polarity
+construal, (70)–(72), while `properlyStrengthens_oMinus` is the positive case (71).
+`oMinus_exactlyOne_eq_empty` is the clash of the uniqueness and free-choice implicatures that
+keeps an existential free-choice item out of episodic sentences, (82), and
+`exactlyOne_consistent_under_possibility` exhibits the distribution over worlds that a
+possibility modal restores, (84)–(85). The typological observation the paper opens with, that
+*any* does double duty while *mai* and *qualunque* do not, is read off [haspelmath-1997]'s
+Italian and English series. The paper's examples are the rows of
+`Data/Examples/Chierchia2006.json`.
+
+## Implementation notes
+
+The relation "stronger relative to the common ground" in the definition of E, (50a), is taken
+as entailment. Enrichment operations apply to propositions, sets of worlds; the freezing
+operator σ and the recursive computation of enriched meanings (appendix A3) are not represented,
+so an LF's two scopes for σ and negation appear as the two compositions of an enrichment with
+an antitone context. MAX alternatives are any family of subdomain existentials; MIN alternatives
+are `Exhaustification.dMinAlts`, the subdomains containing a possible witness, (61b).
 
 ## TODO
 
-* The German *irgend*-series is checked without `specificUnknown`, the [kratzer-shimoyama-2002]
-  ignorance reading, which `PSIProfile.predictedFunctions` does not generate.
+* The intervention effect (86)–(87), a DP between σ and the item, is a syntactic stipulation in
+  the paper and is not formalized.
 
 ## References
 
 * [chierchia-2006]
-* [haspelmath-1997]
+* [kadmon-landman-1993]
 * [kratzer-shimoyama-2002]
+* [haspelmath-1997]
 -/
 
 namespace Chierchia2006
 
-open Haspelmath1997 Indefinite Data.Examples
+open Exhaustification ModalLogic Indefinite
 
-/-! ### The parameters -/
+/-! ### The lexicon of polarity-sensitive items, (94) -/
 
-/-- The grain of an item's domain alternatives: only large subdomains, which trigger the
-even-like enrichment of the pure negative-polarity items *alcuno*, *mai*, *ever*, or every
-subdomain down to the singletons, which trigger the antiexhaustive enrichment of the free-choice
-items *any*, *qualsiasi*, *irgendein*. -/
-inductive DomainAltGrain where
+/-- The domain alternatives an item activates: the large subdomains, (46), or every subdomain
+that stands a chance, (56) and (61b). -/
+inductive DomainAlternatives where
   | max
   | min
   deriving DecidableEq, Repr
 
-/-- The parameters that fix a polarity-sensitive item's class: the grain of its domain
-alternatives, whether they are obligatorily active, whether exhaustification over them must
-properly strengthen, the presupposition of the operator σ̃, and whether scalar alternatives are
-active too. -/
+/-- The parameters of a polarity-sensitive item in (94): the size of its domain alternatives,
+whether indefinite morphology adds the uniqueness implicature, and whether the freezing
+operator σ it selects presupposes proper strengthening, (72). -/
 structure PSIProfile where
-  grain : DomainAltGrain
-  obligatoryDomainAlts : Bool
-  requiresProperStrengthening : Bool
-  hasScalarAlts : Bool
+  alternatives : DomainAlternatives
+  scalar : Bool
+  presuppositional : Bool
   deriving DecidableEq, Repr
 
-/-! ### The five classes -/
+/-- Pure negative-polarity items, *mai*, *ever*, *alcuno*: σ[D-MAX]. -/
+def pureNPI : PSIProfile := ⟨.max, false, false⟩
 
-/-- The pure negative-polarity items *alcuno*, *mai*, *ever*: large domain alternatives,
-obligatory, weak σ, no scalar alternatives. -/
-def pureNPI : PSIProfile :=
-  { grain := .max
-  , obligatoryDomainAlts := true
-  , requiresProperStrengthening := false
-  , hasScalarAlts := false }
+/-- *Any*: σ[D-MIN], a negative-polarity item under negation and a universal free-choice item
+elsewhere. -/
+def npiFci : PSIProfile := ⟨.min, false, false⟩
 
-/-- English *any*, a negative-polarity item in downward-entailing contexts, where
-exhaustification is vacuous, and a free-choice item under modals: every domain alternative,
-obligatory, weak σ, no scalar alternatives. -/
-def npiFCI : PSIProfile :=
-  { grain := .min
-  , obligatoryDomainAlts := true
-  , requiresProperStrengthening := false
-  , hasScalarAlts := false }
+/-- The pure universal free-choice items *qualsiasi*, *qualunque*: the presuppositional σ over
+MIN alternatives. -/
+def pureFci : PSIProfile := ⟨.min, false, true⟩
 
-/-- The pure free-choice items *qualsiasi* and *qualunque*: every domain alternative,
-obligatory, the presuppositional σ̃, no scalar alternatives. -/
-def pureFCI : PSIProfile :=
-  { grain := .min
-  , obligatoryDomainAlts := true
-  , requiresProperStrengthening := true
-  , hasScalarAlts := false }
+/-- German *irgendein*: σ[MIN, SCAL], an existential free-choice item with negative-polarity
+uses. -/
+def existentialNpiFci : PSIProfile := ⟨.min, true, false⟩
 
-/-- German *irgendein*, an existential free-choice item: like *any* with scalar alternatives
-active. -/
-def efciNpiFci : PSIProfile :=
-  { grain := .min
-  , obligatoryDomainAlts := true
-  , requiresProperStrengthening := false
-  , hasScalarAlts := true }
+/-- Italian *uno N qualsiasi*: the presuppositional σ over MIN alternatives with the uniqueness
+implicature. -/
+def existentialPureFci : PSIProfile := ⟨.min, true, true⟩
 
-/-- Italian *uno qualsiasi*, an existential pure free-choice item: like *qualsiasi* with
-scalar alternatives active. -/
-def efciPureFci : PSIProfile :=
-  { grain := .min
-  , obligatoryDomainAlts := true
-  , requiresProperStrengthening := true
-  , hasScalarAlts := true }
+/-! ### Even-like enrichment of large alternatives, §4 -/
 
-/-! ### Eligible regions on the implicational map -/
+section Even
 
-/-- The functions of the implicational map a class is eligible for, from its parameters and
-the monotonicity of the functions: a plain indefinite needs no licensing and is eligible
-everywhere; even-like enrichment over large alternatives is informative only in a
-downward-entailing context, and never together with proper strengthening; fine alternatives
-under weak σ are vacuously exhaustified in a downward-entailing context and antiexhaustified
-under a modal, irrealis included; under σ̃ only the free-choice functions remain. -/
-def PSIProfile.predictedFunctions (p : PSIProfile) : List HaspelmathFunction :=
-  HaspelmathFunction.all.filter λ f =>
-    if !p.obligatoryDomainAlts then true
-    else match p.grain, p.requiresProperStrengthening with
-      | .max, false => f.isDE
-      | .max, true => false
-      | .min, false => f.isDE || f.isFC || f == .irrealis
-      | .min, true => f.isFC
+variable {W : Type*}
 
-/-- The five classes. -/
-def classes : List PSIProfile := [pureNPI, npiFCI, pureFCI, efciNpiFci, efciPureFci]
+/-- Even-like enrichment `E`, (50a) and (108b): the prejacent, which is at least as strong as
+every alternative. -/
+def evenEnrich (C : Set (Set W)) (p : Set W) : Set W := {w | w ∈ p ∧ ∀ q ∈ C, p ⊆ q}
 
-/-- Every class's eligible region is a contiguous stretch of the implicational map, which is
-why an indefinite series covers a contiguous range of functions. -/
-theorem classes_contiguous :
-    ∀ p ∈ classes, HaspelmathFunction.isContiguous p.predictedFunctions = true := by
+theorem evenEnrich_subset (C : Set (Set W)) (p : Set W) : evenEnrich C p ⊆ p := λ _ h => h.1
+
+/-- The even-like implicature is a condition on the alternatives, not on the world: enrichment
+is vacuous or a contradiction. -/
+theorem evenEnrich_eq_or_eq_empty (C : Set (Set W)) (p : Set W) :
+    evenEnrich C p = p ∨ evenEnrich C p = ∅ := by
+  by_cases h : ∀ q ∈ C, p ⊆ q
+  · exact .inl (Set.ext λ w => ⟨λ hw => hw.1, λ hw => ⟨hw, h⟩⟩)
+  · exact .inr (Set.eq_empty_of_forall_notMem λ _ hw => h hw.2)
+
+/-- An alternative the prejacent does not entail makes even-like enrichment a contradiction: the
+deviance of a pure negative-polarity item at its existential, (47)–(48) and (52). -/
+theorem evenEnrich_eq_empty_of_not_subset {C : Set (Set W)} {p q : Set W} (hq : q ∈ C)
+    (h : ¬ p ⊆ q) : evenEnrich C p = ∅ :=
+  Set.eq_empty_of_forall_notMem λ _ hw => h (hw.2 q hq)
+
+/-- Under an antitone embedding, alternatives that each entail the prejacent are entailed by the
+embedded prejacent, so even-like enrichment is vacuous: domain widening comes to fruition in a
+downward-entailing context, (49) and (53). -/
+theorem evenEnrich_image_antitone_eq {C : Set W → Set W} (hC : Antitone C) {A : Set (Set W)}
+    {p : Set W} (hA : ∀ q ∈ A, q ⊆ p) : evenEnrich (C '' A) (C p) = C p :=
+  Set.Subset.antisymm (evenEnrich_subset _ _)
+    (λ _ hw => ⟨hw, by rintro _ ⟨q, hq, rfl⟩; exact hC (hA q hq)⟩)
+
+/-- Footnote 33: an item triggering the even-like implicature can meet the presupposition of the
+strong σ only by a contradiction, so pure negative-polarity items select the plain σ. -/
+theorem eq_empty_of_properlyStrengthens_evenEnrich {C : Set (Set W)} {p : Set W}
+    (h : ProperlyStrengthens (· ∈ evenEnrich C p) (· ∈ p)) : evenEnrich C p = ∅ :=
+  (evenEnrich_eq_or_eq_empty C p).resolve_left λ heq =>
+    not_properlyStrengthens_of_iff (λ w => by rw [heq]) h
+
+end Even
+
+/-! ### Antiexhaustiveness, §5 -/
+
+section Antiexhaustive
+
+variable {W E : Type*} (D : List E) (P : E → Set W)
+
+/-- A subdomain existential with a witness outside another subdomain is not entailed by it: the
+premise of (48), that every large alternative is stronger than the widest statement. -/
+theorem existsIn_not_subset {D' : List E} {a : E} {w : W} (ha : a ∈ D) (hPa : P a w)
+    (hD' : ∀ x ∈ D', ¬ P x w) : ¬ existsIn D P ⊆ existsIn D' P :=
+  λ h => let ⟨x, hx, hPx⟩ := h ⟨a, ha, hPa⟩; hD' x hx hPx
+
+/-- Negation over σ: the rhetorical reading of *any* and *qualunque* under negation, (64) and
+(69), denies the universal. -/
+theorem compl_oMinus_dMinAlts_iff (w : W) (hD : ∃ a ∈ D, ∃ v, P a v) :
+    w ∈ (oMinus (dMinAlts D P) (existsIn D P))ᶜ ↔
+      ¬ ∀ a ∈ D, (∃ v, P a v) → P a w := by
+  rw [Set.mem_compl_iff, ← oMinus_dMinAlts_iff D P w hD]
+  rfl
+
+/-- σ over negation: under an antitone context the free-choice implicature is entailed by the
+assertion and vanishes, so *any* acts as a negative-polarity item, (65)–(66). -/
+theorem oMinus_dMinAlts_antitone_eq {C : Set W → Set W} (hC : Antitone C) :
+    oMinus (C '' dMinAlts D P) (C (existsIn D P)) = C (existsIn D P) :=
+  oMinus_image_antitone_eq hC (by rintro _ ⟨D', hD', -, rfl⟩; exact existsIn_subset D P hD')
+
+/-- The presupposition of the strong σ, (72), fails under an antitone context, since the
+enrichment coincides with the plain statement: *qualunque* has no negative-polarity construal,
+(70). -/
+theorem not_properlyStrengthens_oMinus_antitone {C : Set W → Set W} (hC : Antitone C) :
+    ¬ ProperlyStrengthens (· ∈ oMinus (C '' dMinAlts D P) (C (existsIn D P)))
+      (· ∈ C (existsIn D P)) :=
+  not_properlyStrengthens_of_iff λ w => by rw [oMinus_dMinAlts_antitone_eq D P hC]
+
+/-- In a positive context the antiexhaustive enrichment properly strengthens the statement,
+(71): a world where one possible witness is actual and another is not satisfies the statement
+but not its enrichment. -/
+theorem properlyStrengthens_oMinus {a b : E} {w : W} (ha : a ∈ D) (hb : b ∈ D) (hPa : P a w)
+    (hbpos : ∃ v, P b v) (hnb : ¬ P b w) :
+    ProperlyStrengthens (· ∈ oMinus (dMinAlts D P) (existsIn D P)) (· ∈ existsIn D P) :=
+  ⟨λ _ h => h.1, w, ⟨a, ha, hPa⟩,
+    λ h => hnb (antiexh_yields_universal D P w h b hb hbpos)⟩
+
+/-- Under a possibility modal, the antiexhaustive enrichment is the free-choice distribution:
+some possible witness is possible, and every possible witness is a possibility, (93c)–(93d). -/
+theorem oMinus_diamond_dMinAlts_iff (R : W → W → Prop) (w : W) :
+    oMinus ((◇[R] ·) '' dMinAlts D P) (◇[R] (existsIn D P)) w ↔
+      ◇[R] (existsIn D P) w ∧ ∀ a ∈ D, (∃ v, P a v) → ◇[R] (P a) w := by
+  constructor
+  · rintro ⟨hp, hall⟩
+    refine ⟨hp, λ a ha hpos => ?_⟩
+    obtain ⟨v, hv, x, hx, hPx⟩ :=
+      hall _ ⟨_, ⟨[a], by simpa using ha, ⟨a, List.mem_singleton_self a, hpos⟩, rfl⟩,
+        rfl⟩
+    obtain rfl := List.mem_singleton.1 hx
+    exact ⟨v, hv, hPx⟩
+  · rintro ⟨hp, h⟩
+    refine ⟨hp, ?_⟩
+    rintro _ ⟨_, ⟨D', hD', ⟨b, hb, hbpos⟩, rfl⟩, rfl⟩
+    obtain ⟨v, hv, hPb⟩ := h b (hD' b hb) hbpos
+    exact ⟨v, hv, b, hb, hPb⟩
+
+end Antiexhaustive
+
+/-! ### Existential free-choice items, §6 -/
+
+section Existential
+
+variable {W E : Type*} (D : List E) (P : E → Set W)
+
+/-- The exhaustified indefinite, (81b): exactly one member of the domain is a witness. -/
+def exactlyOne (D : List E) : Set W := {w | ∃ x ∈ D, P x w ∧ ∀ y ∈ D, P y w → y = x}
+
+/-- The D-variants of the exhaustified indefinite, (81c). -/
+def exactlyOneAlts : Set (Set W) := dVariants (exactlyOne P) D (λ x => ∃ v, P x v)
+
+/-- The clash of the uniqueness and free-choice implicatures, (82): with two possible witnesses,
+exactly one member of each singleton subdomain and of their pair cannot all be witnesses, so an
+existential free-choice item in an episodic sentence is contradictory. -/
+theorem oMinus_exactlyOne_eq_empty {a b : E} (ha : a ∈ D) (hb : b ∈ D) (hab : a ≠ b)
+    (hapos : ∃ v, P a v) (hbpos : ∃ v, P b v) :
+    oMinus (exactlyOneAlts D P) (exactlyOne P D) = ∅ := by
+  refine Set.eq_empty_of_forall_notMem λ w ⟨_, hall⟩ => ?_
+  obtain ⟨x, hx, hPx, -⟩ :=
+    hall _ ⟨[a], by simpa using ha, ⟨a, List.mem_singleton_self a, hapos⟩, rfl⟩
+  obtain rfl := List.mem_singleton.1 hx
+  obtain ⟨y, hy, hPy, -⟩ :=
+    hall _ ⟨[b], by simpa using hb, ⟨b, List.mem_singleton_self b, hbpos⟩, rfl⟩
+  obtain rfl := List.mem_singleton.1 hy
+  obtain ⟨z, -, -, huniq⟩ :=
+    hall _ ⟨[x, y], by simp [ha, hb], ⟨x, by simp, hapos⟩, rfl⟩
+  exact hab ((huniq x (by simp) hPx).trans (huniq y (by simp) hPy).symm)
+
+/-- The worlds accessible from the evaluation world `0` in the model of (85). -/
+private def accessible : Fin 3 → Fin 3 → Prop := λ w v => w = 0 ∧ v ≠ 0
+
+/-- Doctor `d` is married exactly in world `d + 1`, the distribution of (85). -/
+private def married : Fin 2 → Set (Fin 3) := λ d w => w = d.succ
+
+/-- The rescue by a possibility modal, (84)–(85): two doctors, each married in one accessible
+world, satisfy the modalized statement together with every modalized alternative. -/
+theorem exactlyOne_consistent_under_possibility :
+    oMinus ((◇[accessible] ·) '' exactlyOneAlts [0, 1] married)
+      (◇[accessible] (exactlyOne married [0, 1])) 0 := by
+  refine ⟨⟨1, ⟨rfl, by decide⟩, 0, by simp, rfl, λ y _ hy => ?_⟩, ?_⟩
+  · exact Fin.succ_injective _ (hy.symm.trans (by decide : (1 : Fin 3) = Fin.succ 0))
+  rintro _ ⟨_, ⟨D', hD', ⟨d, hd, -⟩, rfl⟩, rfl⟩
+  exact ⟨d.succ, ⟨rfl, Fin.succ_ne_zero d⟩, d, hd, rfl,
+    λ y _ hy => (Fin.succ_injective _ hy).symm⟩
+
+end Existential
+
+/-! ### Double duty on the implicational map -/
+
+/-- Roughly half of the languages in [haspelmath-1997]'s survey use one series for negative
+polarity and free choice, English among them: the *any*-series covers direct negation and free
+choice. -/
+theorem any_double_duty :
+    ∃ e ∈ Haspelmath1997.english.forms,
+      e.covers .directNeg = true ∧ e.covers .freeChoice = true := by
   decide
 
-/-- Large domain alternatives with proper strengthening is an empty cell: even-like enrichment
-needs a downward-entailing context, which is where strengthening fails. -/
-theorem dMax_presuppositional_empty :
-    (PSIProfile.mk .max true true false).predictedFunctions = [] := rfl
-
-/-! ### The sampled series -/
-
-/-- The functions a named form of a paradigm covers. -/
-private def seriesFunctions (profile : IndefiniteParadigm) (form : String) :
-    List HaspelmathFunction :=
-  ((profile.forms.find? (·.form == form)).map (·.functionList)).getD []
-
-/-- The plain indefinite profile: no obligatory domain alternatives and no proper-strengthening
-requirement. -/
-private def plainIndefinite : PSIProfile :=
-  { grain := .max, obligatoryDomainAlts := false,
-    requiresProperStrengthening := false, hasScalarAlts := false }
-
-/-- Every series in the sample covers a subset of the region its class predicts. -/
-theorem sample_series_within_predicted :
-    ∀ p ∈ [(seriesFunctions italian "nessuno", pureNPI),
-        (seriesFunctions italian "chiunque", pureFCI),
-        (seriesFunctions italian "qualcuno", plainIndefinite),
-        (seriesFunctions english "any-", npiFCI),
-        ((seriesFunctions german "irgendwer").filter (· != .specificUnknown), efciNpiFci),
-        (seriesFunctions mandarin "shéi", npiFCI)],
-      ∀ f ∈ p.1, f ∈ p.2.predictedFunctions := by
+/-- The other half separate the two, as Romance does: no Italian series covering direct
+negation covers free choice, and the free-choice series *-unque* covers no negation function. -/
+theorem italian_separates_uses :
+    ∀ e ∈ Haspelmath1997.italian.forms,
+      (e.covers .directNeg = true → e.covers .freeChoice = false) ∧
+        (e.covers .freeChoice = true →
+          e.covers .directNeg = false ∧ e.covers .indirectNeg = false) := by
   decide
-
-/-! ### *qualsiasi* and *any* under negation -/
-
-/-- A pure negative-polarity item is eligible in every downward-entailing function and in no
-free-choice function: even-like enrichment is informative only under downward entailment, and
-large alternatives give no antiexhaustive enrichment. -/
-theorem pureNPI_region :
-    ∀ f ∈ HaspelmathFunction.all,
-      (f.isDE = true → f ∈ pureNPI.predictedFunctions) ∧
-        (f.isFC = true → f ∉ pureNPI.predictedFunctions) := by
-  decide
-
-/-- The contrast between *any* and *qualsiasi*: with every domain alternative active, each
-downward-entailing function is eligible under weak σ, where exhaustification is vacuous, and
-ineligible under σ̃, whose proper strengthening the context cannot supply, leaving *qualsiasi*
-under negation only the rhetorical ¬∀ reading. -/
-theorem dMin_sigma_determines_de :
-    ∀ f ∈ HaspelmathFunction.all, f.isDE = true →
-      f ∈ npiFCI.predictedFunctions ∧ f ∉ pureFCI.predictedFunctions := by
-  decide
-
-/-! ### The Fragment entries -/
-
-/-- The licensor strength a profile predicts: an item whose obligatory alternatives are
-exhaustified under weak σ is licensed by any downward-entailing operator, since vacuous
-exhaustification is tolerated there, and no other item is licensed by strength. -/
-def PSIProfile.predictedLicensor (p : PSIProfile) : Option Polarity.DEStrength :=
-  if p.obligatoryDomainAlts && !p.requiresProperStrengthening then some .weak else none
-
-/-- A profile predicts free-choice licensing when its obligatory alternatives are fine. -/
-def PSIProfile.PredictsFreeChoice (p : PSIProfile) : Prop :=
-  p.obligatoryDomainAlts = true ∧ p.grain = .min
-
-instance : DecidablePred PSIProfile.PredictsFreeChoice :=
-  λ _ => inferInstanceAs (Decidable (_ ∧ _))
-
-/-- Each Fragment entry's licensor and free-choice fields are what its class predicts. -/
-theorem fragment_entries_match_profiles :
-    ∀ e ∈ [(English.PolarityItems.any, npiFCI), (English.PolarityItems.ever, pureNPI),
-        (Italian.PolarityItems.mai, pureNPI), (Italian.PolarityItems.alcuno, pureNPI),
-        (Italian.PolarityItems.nessuno, pureNPI), (Italian.PolarityItems.qualsiasi, pureFCI),
-        (Italian.PolarityItems.qualunque, pureFCI),
-        (Italian.PolarityItems.uno_qualsiasi, efciPureFci),
-        (German.PolarityItems.irgendein, efciNpiFci)],
-      e.1.licensor = e.2.predictedLicensor ∧
-        (e.1.freeChoice = true ↔ e.2.PredictsFreeChoice) := by
-  decide
-
-/-! ### Proper strengthening and downward entailment -/
-
-section Strengthening
-
-variable {World : Type*}
-
-/-- The presupposition of σ̃: the enriched meaning is strictly stronger than the plain one. -/
-def ProperlyStrengthens (plain enriched : World → Prop) : Prop :=
-  (∀ w, enriched w → plain w) ∧ ¬ ∀ w, plain w → enriched w
-
-/-- The presupposition fails in a downward-entailing context: an enrichment that properly
-strengthens at the base is reversed there, so the enriched meaning is the weaker one. This is
-what keeps *qualsiasi* out of negative-polarity positions. -/
-theorem not_properlyStrengthens_of_de (C : (World → Prop) → (World → Prop))
-    (hDE : ∀ p q : World → Prop, (∀ w, p w → q w) → ∀ w, C q w → C p w)
-    (plain enriched : World → Prop) (h : ∀ w, enriched w → plain w) :
-    ¬ ProperlyStrengthens (C plain) (C enriched) :=
-  λ ⟨_, hnotrev⟩ => hnotrev (hDE enriched plain h)
-
-/-- A scalar implicature is vacuous in a downward-entailing context: the weak alternative never
-holds there while the strong one fails, which is why even-like enrichment is informative only
-outside such contexts. -/
-theorem dMax_enrichment_vacuous_in_de (C : (World → Prop) → (World → Prop))
-    (hDE : ∀ p q : World → Prop, (∀ w, p w → q w) → ∀ w, C q w → C p w)
-    (weak strong : World → Prop) (h : ∀ w, strong w → weak w) :
-    ∀ w, ¬ (C weak w ∧ ¬ C strong w) :=
-  λ w ⟨hCw, hnCs⟩ => hnCs (hDE strong weak h w hCw)
-
-end Strengthening
-
-/-! ### The Italian free-choice data -/
-
-/-- The two constructions differ in force outside negation: the universal free-choice item admits
-both readings and the existential one only the existential reading. -/
-theorem force_tracks_construction :
-    (∀ e ∈ Examples.all, e.feature? "environment" = some "future" ∨
-        e.feature? "environment" = some "imperative" →
-        e.feature? "fciType" = some "universal" → e.feature? "force" = some "ambiguous") ∧
-      (∀ e ∈ Examples.all, e.feature? "fciType" = some "existential" →
-        e.feature? "force" = some "existential") := by decide
-
-/-- Subtrigging rescues a universal free-choice item in an episodic context: bare it is marginal,
-with a relative clause it is acceptable. -/
-theorem subtrigging_rescues_universal :
-    (∀ e ∈ Examples.all, e.feature? "fciType" = some "universal" →
-        e.feature? "environment" = some "episodicBare" → e.judgment = .marginal) ∧
-      (∀ e ∈ Examples.all, e.feature? "fciType" = some "universal" →
-        e.feature? "environment" = some "episodicSubtrigged" → e.judgment = .acceptable) := by
-  decide
-
-/-- It does nothing for an existential one, which stays marginal in an episodic context with or
-without a relative clause. -/
-theorem subtrigging_does_not_rescue_existential :
-    (∀ e ∈ Examples.all, e.feature? "fciType" = some "existential" →
-        e.feature? "environment" = some "episodicBare" ∨
-          e.feature? "environment" = some "episodicSubtrigged" → e.judgment = .marginal) ∧
-      (∃ e ∈ Examples.all, e.feature? "environment" = some "episodicBare" ∧
-        e.feature? "fciType" = some "existential") ∧
-      (∃ e ∈ Examples.all, e.feature? "environment" = some "episodicSubtrigged" ∧
-        e.feature? "fciType" = some "existential") := by decide
-
-/-- Under bare negation the universal free-choice item has only the universal (rhetorical ¬∀)
-reading; adding a relative clause makes the other readings available again. This is the
-*qualsiasi*/*any* contrast: *qualsiasi* under negation is not a negative-polarity item. -/
-theorem negation_rhetorical_only :
-    (∀ e ∈ Examples.all, e.feature? "environment" = some "negationBare" →
-        e.feature? "force" = some "universal") ∧
-      (∀ e ∈ Examples.all, e.feature? "environment" = some "negationSubtrigged" →
-        e.feature? "force" = some "ambiguous") ∧
-      (∃ e ∈ Examples.all, e.feature? "environment" = some "negationBare") := by decide
 
 end Chierchia2006

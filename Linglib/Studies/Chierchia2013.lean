@@ -106,7 +106,8 @@ variable {W E : Type*} (D : List E) (P : E → Set W)
 
 /-- The exhaustification operator, the covert counterpart of *only*: the prejacent, with every
 alternative it does not entail negated. -/
-def exh (C : Set (Set W)) (p : Set W) : Set W := {w | w ∈ p ∧ ∀ q ∈ C, ¬ p ⊆ q → w ∉ q}
+def exh (C : Set (Set W)) (p : Set W) : Set W :=
+  {w | w ∈ p ∧ ∀ q ∈ C, ¬ p ⊆ q → w ∉ q}
 
 theorem exh_subset (C : Set (Set W)) (p : Set W) : exh C p ⊆ p := λ _ h => h.1
 
@@ -115,16 +116,11 @@ entails every alternative. -/
 theorem exh_eq_self {C : Set (Set W)} {p : Set W} (h : ∀ q ∈ C, p ⊆ q) : exh C p = p :=
   (exh_subset C p).antisymm λ _ hw => ⟨hw, λ q hq hnq => absurd (h q hq) hnq⟩
 
-/-- A subdomain existential entails the existential over the whole domain. -/
-theorem existsIn_subset {D' : List E} (h : ∀ x ∈ D', x ∈ D) : existsIn D' P ⊆ existsIn D P := by
-  rintro w ⟨x, hx, hPx⟩
-  exact ⟨x, h x hx, hPx⟩
-
 /-- Under an antitone context the existential entails each of its subdomain alternatives, so
 *any* in a downward-entailing position is exhaustified vacuously: a plain existential. -/
 theorem exh_antitone_eq {C : Set W → Set W} (hC : Antitone C) :
     exh (C '' dMinAlts D P) (C (existsIn D P)) = C (existsIn D P) :=
-  exh_eq_self (by rintro _ ⟨_, ⟨D', hD', rfl⟩, rfl⟩; exact hC (existsIn_subset D P hD'))
+  exh_eq_self (by rintro _ ⟨_, ⟨D', hD', -, rfl⟩, rfl⟩; exact hC (existsIn_subset D P hD'))
 
 /-- At the existential itself, where no witness is entailed, exhaustifying the obligatory
 alternatives negates every singleton alternative and is a contradiction: the source of the
@@ -132,7 +128,9 @@ deviance of *any* in a positive episodic sentence. -/
 theorem exh_dMinAlts_eq_empty (h : ∀ a ∈ D, ¬ existsIn D P ⊆ P a) :
     exh (dMinAlts D P) (existsIn D P) = ∅ := by
   refine Set.eq_empty_of_forall_notMem λ w ⟨⟨a, ha, hPa⟩, hall⟩ => ?_
-  refine hall (existsIn [a] P) ⟨[a], by simpa using ha, rfl⟩ (λ hsub => h a ha λ v hv => ?_)
+  refine hall (existsIn [a] P)
+    ⟨[a], by simpa using ha, ⟨a, List.mem_singleton_self a, w, hPa⟩, rfl⟩
+    (λ hsub => h a ha λ v hv => ?_)
     ⟨a, List.mem_singleton_self a, hPa⟩
   obtain ⟨x, hx, hPx⟩ := hsub hv
   obtain rfl := List.mem_singleton.1 hx
