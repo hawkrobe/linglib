@@ -1,268 +1,127 @@
-import Linglib.Semantics.Evidential.Source
 import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Semantics.Tense.Evidential
-import Linglib.Fragments.Slavic.Bulgarian.Evidentials
-import Mathlib.Data.Set.Basic
-import Mathlib.Data.Fin.Basic
 
 /-!
-# [izvorski-1997]: The Present Perfect as an Epistemic Modal — Data [izvorski-1997]
+# Izvorski (1997): The Present Perfect as an Epistemic Modal
 
-Empirical data from [izvorski-1997]. In Bulgarian, Turkish, Norwegian,
-and other languages, present perfect morphology doubles as an indirect evidential
-(the "Perfect of Evidentiality" = PE). The paper's central proposal (8):
+This file formalizes [izvorski-1997], the analysis of the perfect of evidentiality, the
+indirect evidential that present perfect morphology expresses in Bulgarian, Turkish, Norwegian
+and other languages, (1). The evidential is an epistemic modal, (8): it asserts that the
+proposition holds in every accessible world closest to the speaker's beliefs about the evidence,
+in the possible-worlds semantics of [kratzer-1991] with a modal base of indirect evidence and
+an ordering source of beliefs about it, (17) to (19), and it presupposes that the speaker has
+indirect evidence for the proposition, evidence that exists and does not establish it (`Ev`).
+Epistemic *must* has the same force and no such presupposition (`must`), which is why an
+avowal of having no evidence, (12) and (13), or of having witnessed the event, (14), is
+consistent with *must* and not with the evidential; the presupposition projects through
+negation, (15), so that a denial targets the proposition, (16). The variability between the
+report and inference readings comes from the ordering source (`necessity_of_beliefs`), and the
+evidential does not entail its prejacent, as *must* does not, (9). Section 5 derives the
+presupposition from the present perfect: the consequent state of the event is known at speech
+time, giving the evidence, and the event itself is not, giving its indirectness
+(`presup_of_perfect`), and the domain of quantification lies within the epistemically accessible
+worlds, so that unlike the counterfactual inference of the past the evidential meaning is no
+implicature (`bestWorlds_subset_accessible`).
 
-> The indirect evidential Event is an epistemic modal which:
-> (i) has universal quantificational force,
-> (ii) has a presupposition that the evidence for the core proposition is indirect.
+## Implementation notes
 
-The key empirical contrasts establishing (8):
+* The presupposition "speaker has indirect evidence for `p`" is rendered as a nonempty
+  evidence background whose worlds do not all verify `p`; the report and inference readings
+  are not distinguished in the operator, as the paper intends.
+* Section 4's temporal and aspectual diagnostics, (20) to (24), are recorded as rows; the
+  evidential takes the temporal interpretation of the indicative, which the operator does not
+  represent.
 
-1. **Event vs. must** ((10)–(13)): Both are epistemic necessity modals (same □
-   force), but Event restricts the modal base to *indirect* evidence only. Must
-   allows any epistemic base. The difference is in the *base*, not the force.
-2. **Presupposition diagnostics** ((14)–(16)): The indirect-evidence requirement
-   is a *presupposition* (not an implicature) — it resists cancellation (14),
-   projects past negation (15), and denial targets the assertion (16).
+## References
 
+* [izvorski-1997]
+* [kratzer-1991]
 -/
 
 namespace Izvorski1997
 
-open Evidential
+open Modality.Kratzer Presupposition
 
-/-! ### Languages with PE -/
+variable {W : Type*}
 
-/-- Languages exhibiting the Perfect of Evidentiality ([izvorski-1997], fn. 1).
-    The paper's body text discusses Bulgarian, Turkish, and Norwegian;
-    footnote 1 lists ~25 languages across 6 families. -/
-inductive PELanguage where
-  | bulgarian | turkish | norwegian | macedonian | albanian
-  deriving DecidableEq, Repr
+/-- The speaker knows `p` relative to the background `f`: `p` holds throughout the worlds
+compatible with it. -/
+def Known (f : ModalBase W) (w : W) (p : W → Prop) : Prop := ∀ u ∈ accessibleWorlds f w, p u
 
-/-! ### Event vs. Must: same force, different base -/
+/-- (8) and (17) to (19): the indirect evidential. `f` assigns each world the propositions the
+speaker counts as indirect evidence and `g` the speaker's beliefs about that evidence; the
+presupposition is that there is such evidence and that it does not establish `p`, the assertion
+that `p` holds in every accessible world closest to the beliefs. -/
+def Ev (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) : PartialProp W where
+  presup w := f w ≠ [] ∧ ¬ Known f w p
+  assertion w := necessity f g p w
 
-/-- A data point from the Event/must paradigm. The contrast variable is
-    the coarse evidence source; Izvorski's binary direct/indirect cut is
-    `CoarseSource.IsIndirect`. The paper argues that Event and must have
-    the same quantificational force (□) but differ in whether the modal
-    base is restricted to indirect evidence only.
-    The paper's argument (§3, pp. 227–229):
-    - (10)–(11): With indirect evidence, both Event and must are felicitous
-    - (12)–(13): Event + "I have no evidence" → contradictory;
-      must + "I have no evidence" → acceptable (must doesn't presuppose
-      indirect evidence)
-    - Prose (p. 228): With direct evidence (speaker witnessed the event),
-      Event is infelicitous; must is fine -/
-structure EvMustDatum where
-  evidenceBasis : CoarseSource
-  evFelicitous : Bool
-  mustFelicitous : Bool
-  label : String
-  deriving Repr, BEq
+/-- Epistemic *must*: the same necessity over what is known, with no presupposition about the
+kind of evidence. -/
+def must (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) : PartialProp W where
+  presup _ := True
+  assertion w := necessity f g p w
 
-/-- Indirect evidence context: both Event and must felicitous.
-    Paper (10)–(11): "Knowing how much John likes wine..." — inference
-    from general knowledge. -/
-def evMust_indirect : EvMustDatum where
-  evidenceBasis := .inference
-  evFelicitous := true
-  mustFelicitous := true
-  label := "(10)–(11): indirect evidence context"
+variable {f f' : ModalBase W} {g : OrderingSource W} {p : W → Prop} {w : W}
 
-/-- Direct evidence context: Event infelicitous, must fine.
-    Paper prose (p. 228): when speaker has direct evidence (witnessed
-    the event), PE is infelicitous but must is acceptable. -/
-def evMust_direct : EvMustDatum where
-  evidenceBasis := .direct
-  evFelicitous := false
-  mustFelicitous := true
-  label := "prose p.228: direct evidence context"
+/-- (8a): the evidential and *must* assert the same universal claim. -/
+theorem ev_assertion_eq_must : (Ev f g p).assertion = (must f g p).assertion := rfl
 
-/-- All Event/must data points. -/
-def evMustData : List EvMustDatum := [evMust_indirect, evMust_direct]
+/-- *must* quantifies over what is known, a background at least as rich as the indirect
+evidence, so its accessible worlds are among the evidential's, (10) and (11). -/
+theorem accessible_must_subset (h : f w ⊆ f' w) : accessibleWorlds f' w ⊆ accessibleWorlds f w :=
+  accessibleWorlds_anti h
 
-/-! ### Presupposition diagnostics ((14)–(16)) -/
+/-- (12) and (13): with no evidence the evidential is undefined where *must* is not. -/
+theorem not_presup_of_no_evidence (h : f w = []) : ¬ (Ev f g p).presup w :=
+  λ hp => hp.1 h
 
-/-- Standard presupposition diagnostics applied to the evidential. -/
-inductive PresupDiagnostic where
-  | cancellation | projection | denial
-  deriving DecidableEq, Repr
+/-- (14): evidence establishing `p`, as witnessing it does, is not indirect. -/
+theorem not_presup_of_known (h : Known f w p) : ¬ (Ev f g p).presup w :=
+  λ hp => hp.2 h
 
-/-- A presupposition diagnostic datum. -/
-structure PresupDiagnosticDatum where
-  diagnostic : PresupDiagnostic
-  evidentialSurvives : Bool
-  label : String
-  deriving Repr, BEq
-
-/-- (14): Cancellation fails — "Maria apparently kissed Ivan. # I witnessed it."
-    The indirect-evidence requirement cannot be cancelled, so it is a
-    presupposition, not an implicature. -/
-def presup_cancellation : PresupDiagnosticDatum where
-  diagnostic := .cancellation
-  evidentialSurvives := true
-  label := "(14): Event + 'I witnessed it' → contradictory"
-
-/-- (15): Projection under negation — "Apparently, Ivan didn't pass the exam."
-    The indirect-evidence requirement projects past negation: the speaker
-    still has indirect evidence; what's negated is that Ivan passed. -/
-def presup_projection : PresupDiagnosticDatum where
-  diagnostic := .projection
-  evidentialSurvives := true
-  label := "(15): not-Event-p still presupposes indirect evidence"
-
-/-- (16): Denial targets assertion — "Ivan passed-PE the exam. That's not true."
-    The denial targets p (Ivan passed), not the evidential content (that the
-    speaker has indirect evidence). -/
-def presup_denial : PresupDiagnosticDatum where
-  diagnostic := .denial
-  evidentialSurvives := true
-  label := "(16): denial targets p, not evidence"
-
-/-- All presupposition diagnostic data. -/
-def presupData : List PresupDiagnosticDatum :=
-  [presup_cancellation, presup_projection, presup_denial]
-
-/-! ### Generalizations -/
-
-/-- Event requires indirect evidence: felicitous exactly when the evidence
-    basis is `CoarseSource.IsIndirect`. This captures (8ii). -/
-def EvRequiresIndirect (d : EvMustDatum) : Prop :=
-  d.evFelicitous ↔ d.evidenceBasis.IsIndirect
-
-instance : DecidablePred EvRequiresIndirect := fun _ =>
-  inferInstanceAs (Decidable (_ ↔ _))
-
-/-- All data points satisfy the indirect-evidence generalization. -/
-theorem all_evRequiresIndirect : ∀ d ∈ evMustData, EvRequiresIndirect d := by
-  decide
-
-/-- Must allows both evidence bases — no presupposition on evidence type. -/
-theorem all_mustAllowsBoth : ∀ d ∈ evMustData, d.mustFelicitous := by decide
-
-/-- All diagnostics confirm presupposition status (not implicature). -/
-theorem all_evidentialSurvives : ∀ d ∈ presupData, d.evidentialSurvives := by
-  decide
-
-/-! ### Bridge: EV operator and modal semantics -/
-
-open Modality.Kratzer
-open Presupposition
-open Tense.Evidential
-open Bulgarian.Evidentials
-
-abbrev World := Fin 4
-
-def allWorlds : List World := [0, 1, 2, 3]
-
-/-- Izvorski's EV operator (formalization of (17)–(19) + (8ii)). -/
-def izvorskiEv (f : ModalBase World) (g : OrderingSource World)
-    (p : World → Prop) : PartialProp World where
-  presup := λ w => (accessibleWorlds f w).Nonempty
-  assertion := λ w => necessity f g p w
-
-def johnDrank : World → Prop
-  | 0 => True
-  | 1 => True
-  | 2 => False
-  | 3 => False
-
-instance : DecidablePred johnDrank := fun w =>
-  match w with
-  | 0 => inferInstanceAs (Decidable True)
-  | 1 => inferInstanceAs (Decidable True)
-  | 2 => inferInstanceAs (Decidable False)
-  | 3 => inferInstanceAs (Decidable False)
-
-def bottlesEmpty : World → Prop
-  | 0 => True
-  | 1 => False
-  | 2 => True
-  | 3 => False
-
-instance : DecidablePred bottlesEmpty := fun w =>
-  match w with
-  | 0 => inferInstanceAs (Decidable True)
-  | 1 => inferInstanceAs (Decidable False)
-  | 2 => inferInstanceAs (Decidable True)
-  | 3 => inferInstanceAs (Decidable False)
-
-def evBase : ModalBase World := λ _ => [bottlesEmpty]
-
-def mustBase : ModalBase World := λ _ => [bottlesEmpty, johnDrank]
-
-def beliefOrdering : OrderingSource World := λ _ => [johnDrank]
-
-theorem ev_presup_satisfied (w : World) :
-    (izvorskiEv evBase beliefOrdering johnDrank).presup w := by
-  -- ⋂evBase = {w0, w2}; both are accessible
-  refine ⟨(0 : World), ?_⟩
-  intro p hp
-  simp only [evBase, List.mem_singleton] at hp
-  rw [hp]
-  trivial
-
-theorem must_accessible_subset_ev (w w' : World)
-    (hw' : w' ∈ accessibleWorlds mustBase w) :
-    w' ∈ accessibleWorlds evBase w := by
-  intro p hp
-  simp only [evBase, List.mem_singleton] at hp
-  subst hp
-  exact hw' bottlesEmpty (by simp [mustBase])
-
-theorem restricted_base_enlarges_access
-    (f_ev f_must : ModalBase World)
-    (h : ∀ w p, p ∈ f_ev w → p ∈ f_must w)
-    (w w' : World)
-    (hw' : w' ∈ accessibleWorlds f_must w) :
-    w' ∈ accessibleWorlds f_ev w :=
-  fun p hp => hw' p (h w p hp)
-
-private def pOnlyW0 : World → Prop
-  | 0 => True
-  | _ => False
-
-instance : DecidablePred pOnlyW0 := fun w =>
-  match w with
-  | 0 => inferInstanceAs (Decidable True)
-  | 1 => inferInstanceAs (Decidable False)
-  | 2 => inferInstanceAs (Decidable False)
-  | 3 => inferInstanceAs (Decidable False)
-
-/-- The izvorski operator can diverge from the bare prejacent: at `w0`,
-    `pOnlyW0 w0 = True`, but the necessity claim is False (since `w1, w2, w3`
-    are also accessible under universal access and don't satisfy `pOnlyW0`). -/
-theorem izvorski_koev_diverge :
-    ∃ (f : ModalBase World) (g : OrderingSource World) (p : World → Prop) (w : World),
-      ¬ (izvorskiEv f g p).assertion w ∧ p w := by
-  refine ⟨emptyBackground, emptyBackground, pOnlyW0, (0 : World), ?_, trivial⟩
-  intro h
-  simp only [izvorskiEv] at h
-  rw [necessity_iff_all] at h
-  have hAcc : (1 : World) ∈ accessibleWorlds (emptyBackground (W := World)) (0 : World) := by
-    rw [empty_base_universal_access]; exact Set.mem_univ _
-  have hBest : (1 : World) ∈ bestWorlds emptyBackground emptyBackground (W := World) (0 : World) := by
-    rw [empty_ordering_emptyBackground]; exact hAcc
-  exact (h (1 : World) hBest : pOnlyW0 (1 : World))
-
-theorem izvorski_collapses_to_koev_when_realistic
-    (f : ModalBase World) (p : World → Prop) (w : World)
-    (hTotal : accessibleWorlds f w = {w}) :
-    (izvorskiEv f emptyBackground p).assertion w ↔ p w := by
-  simp only [izvorskiEv]
-  rw [necessity_iff_all, empty_ordering_emptyBackground, hTotal]
-  constructor
-  · intro h; exact h w (Set.mem_singleton_iff.mpr rfl)
-  · intro h w' hw'
-    rw [Set.mem_singleton_iff.mp hw']
-    exact h
-
-theorem izvorski_projection (f : ModalBase World) (g : OrderingSource World) (p : World → Prop) :
-    (PartialProp.neg (izvorskiEv f g p)).presup = (izvorskiEv f g p).presup :=
+/-- (15) and (16): the presupposition projects through negation, so negating or denying an
+evidential statement targets the proposition and not the evidence. -/
+theorem neg_presup : (PartialProp.neg (Ev f g p)).presup = (Ev f g p).presup :=
   PartialProp.neg_presup _
 
-theorem nfutL_compatible_with_izvorski : nfutL.ep = .downstream := rfl
+/-- The force of the evidential is set by the beliefs about the evidence: when some accessible
+world verifies every belief and all such worlds verify `p`, the assertion holds. A reliable
+report or a sound inference makes the reading close to universal, an unreliable source leaves
+it weak. -/
+theorem necessity_of_beliefs (hex : ∃ u ∈ accessibleWorlds f w, ∀ q ∈ g w, q u)
+    (h : ∀ u ∈ accessibleWorlds f w, (∀ q ∈ g w, q u) → p u) : necessity f g p w := by
+  rw [necessity_iff_all]
+  intro u hu
+  rw [bestWorlds, kratzerNormality, Core.Order.Normality.fromProps,
+    Core.Order.Normality.optimal_ofCriteria_eq hex] at hu
+  exact h u hu.1 hu.2
+
+/-- Section 5.3: the domain of quantification lies within the epistemically accessible worlds,
+where the counterfactual's lies outside them; the evidential meaning is therefore asserted of
+the actual epistemic state and is no implicature. -/
+theorem bestWorlds_subset_accessible : bestWorlds f g w ⊆ accessibleWorlds f w :=
+  Core.Order.Normality.optimal_subset _ _
+
+/-- Section 5.2: the present perfect supplies the presupposition. The consequent state of the
+event holding at speech time is a proposition the speaker knows, the indirect evidence; the
+event not holding at speech time is `p` not being known. -/
+theorem presup_of_perfect {p' : W → Prop} (hp' : p' ∈ f w) (hnot : ¬ Known f w p) :
+    (Ev f g p).presup w :=
+  ⟨List.ne_nil_of_mem hp', hnot⟩
+
+/-- (9): like *must*, the evidential does not entail its prejacent. A two-world model: the
+evidence excludes nothing, the speaker's beliefs single out the world where `p` holds, and the
+evidential is defined and true at the other world. -/
+theorem ev_not_entails :
+    ∃ (f : ModalBase (Fin 2)) (g : OrderingSource (Fin 2)) (p : Fin 2 → Prop) (w : Fin 2),
+      (Ev f g p).presup w ∧ (Ev f g p).assertion w ∧ ¬ p w := by
+  refine ⟨λ _ => [λ _ => True], λ _ => [λ u => u = 1], (· = 1), 0, ⟨by simp, ?_⟩, ?_, by decide⟩
+  · intro h
+    exact absurd (h 0 (λ q hq => by simp at hq; exact hq ▸ trivial)) (by decide)
+  · refine necessity_of_beliefs ⟨1, λ q hq => by simp at hq; exact hq ▸ trivial, ?_⟩ ?_
+    · simp
+    · intro u _ hu
+      exact hu _ (List.mem_singleton_self _)
 
 end Izvorski1997

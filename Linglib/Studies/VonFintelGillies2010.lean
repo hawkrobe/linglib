@@ -1,7 +1,6 @@
 import Linglib.Semantics.Evidential.Source
 import Linglib.Semantics.Modality.Kernel
 import Linglib.Data.Examples.VonFintelGillies2010
-import Linglib.Studies.Izvorski1997
 
 /-!
 # von Fintel & Gillies (2010): *Must* ... Stay! Strong!
@@ -29,8 +28,6 @@ must not directly settle the prejacent.
   *can't* rows, derived from the previous theorem
 - `must_entails_prejacent`: every minimal pair records prejacent
   entailment — including the infelicitous direct-evidence rows
-- `must_evidence_matches_izvorski_ev`: *must* imposes the same
-  indirect-evidence restriction as [izvorski-1997]'s Bulgarian EV
 - `entailment_settling_gap`: B_K can entail φ without K directly settling
   it — the gap that makes the evidential presupposition non-trivial
 - `subjectMatter`, `settlesByPartition`: the paper's second implementation
@@ -110,17 +107,6 @@ theorem cant_patterns_with_must :
       row.judgment = .acceptable ↔
         ∀ e ∈ evidenceOf row, e.toCoarseSource.IsIndirect :=
   fun row hrow => must_felicitous_iff_indirect row (List.mem_filter.mp hrow).1
-
-/-- Felicity of the modalized member tracks `CoarseSource.IsIndirect` in
-    VF&G's *must* rows exactly as in [izvorski-1997]'s Bulgarian EV paradigm:
-    the two epistemic operators presuppose the same coarse indirect-evidence
-    basis. -/
-theorem must_evidence_matches_izvorski_ev :
-    (∀ row ∈ mustPairs,
-      row.judgment = .acceptable ↔
-        ∀ e ∈ evidenceOf row, e.toCoarseSource.IsIndirect) ∧
-    ∀ d ∈ Izvorski1997.evMustData, Izvorski1997.EvRequiresIndirect d :=
-  ⟨must_felicitous_iff_indirect, Izvorski1997.all_evRequiresIndirect⟩
 
 /-! ### Must is strong -/
 

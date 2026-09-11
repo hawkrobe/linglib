@@ -1,0 +1,1345 @@
+[
+  {
+    "id": "izvorski1997_s1a",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(1a)"
+    },
+    "language": "nucl1301",
+    "primaryText": "Gel-miş-im.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Gel",
+        "come"
+      ],
+      [
+        "-miş",
+        "PERF"
+      ],
+      [
+        "-im",
+        "1SG"
+      ]
+    ],
+    "translation": "I have come / I apparently came.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "reading",
+        "perfect of evidentiality only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s1b",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(1b)"
+    },
+    "language": "bulg1262",
+    "primaryText": "Az săm došăl.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Az",
+        "I"
+      ],
+      [
+        "săm",
+        "be-1SG.PRES"
+      ],
+      [
+        "došăl",
+        "come-P.PART"
+      ]
+    ],
+    "translation": "I have come / I apparently came.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "reading",
+        "ambiguous: present perfect or perfect of evidentiality"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s1c",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(1c)"
+    },
+    "language": "norw1258",
+    "primaryText": "Jeg har kommet.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Jeg",
+        "I"
+      ],
+      [
+        "har",
+        "have-1SG.PRES"
+      ],
+      [
+        "kommet",
+        "come-P.PART"
+      ]
+    ],
+    "translation": "I have come / I apparently came.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "reading",
+        "ambiguous: present perfect or perfect of evidentiality"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s2a",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(2a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John is an apparent/supposed/alleged/reported thief.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "claim",
+        "lexical evidentials keep their meaning in every configuration"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s2b",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(2b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John is apparently/supposedly/allegedly/reportedly a thief.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s2c",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(2c)"
+    },
+    "language": "stan1293",
+    "primaryText": "John appears/is supposed/is alleged/is reported to be a thief.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s2d",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(2d)"
+    },
+    "language": "stan1293",
+    "primaryText": "For it to appear that John is a thief one would have to tell a lot of lies.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s3",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(3)"
+    },
+    "language": "nucl1301",
+    "primaryText": "ol-müş adam",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ol",
+        "die"
+      ],
+      [
+        "-müş",
+        "PERF"
+      ],
+      [
+        "adam",
+        "man"
+      ]
+    ],
+    "translation": "dead man",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "claim",
+        "no evidential reading of the adjectival participle"
+      ]
+    ],
+    "comment": "From Slobin and Aksu 1982; the reading 'a man who is apparently dead' is unavailable.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s4",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(4)"
+    },
+    "language": "nucl1301",
+    "primaryText": "Gel-miş-tim.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Gel",
+        "come"
+      ],
+      [
+        "-miş",
+        "PERF"
+      ],
+      [
+        "-tim",
+        "1SG.PAST"
+      ]
+    ],
+    "translation": "I had come.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "claim",
+        "no evidential reading of the past perfect"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s5",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(5)"
+    },
+    "language": "nucl1301",
+    "primaryText": "Gel-miş ol-acak-ım.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Gel",
+        "come"
+      ],
+      [
+        "-miş",
+        "PERF"
+      ],
+      [
+        "ol",
+        "be"
+      ],
+      [
+        "-acak",
+        "FUT"
+      ],
+      [
+        "-ım",
+        "1SG"
+      ]
+    ],
+    "translation": "I will have come.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "claim",
+        "no evidential reading of the future perfect"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s6",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(6)"
+    },
+    "language": "nucl1301",
+    "primaryText": "Kitap yaz-mış ol-mak büyük bir başarı.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Kitap",
+        "book"
+      ],
+      [
+        "yaz",
+        "write"
+      ],
+      [
+        "-mış",
+        "PERF"
+      ],
+      [
+        "ol",
+        "be"
+      ],
+      [
+        "-mak",
+        "INF"
+      ],
+      [
+        "büyük",
+        "big"
+      ],
+      [
+        "bir",
+        "a"
+      ],
+      [
+        "başarı",
+        "achievement"
+      ]
+    ],
+    "translation": "To have written a book is a big achievement.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "claim",
+        "no evidential reading in non-finite clauses"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s7a",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(7a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I saw/heard John singing.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "evidence",
+        "direct: visual/auditory"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s7b",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(7b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I see/hear (that) John was singing.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "evidence",
+        "indirect: inference/report"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s7c",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(7c)"
+    },
+    "language": "stan1293",
+    "primaryText": "John was apparently singing.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "evidence",
+        "indirect: inference or report"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s9a",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(9a)"
+    },
+    "language": "stan1293",
+    "primaryText": "She climbed Mount Toby.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "source",
+        "Kratzer 1991"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s9b",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(9b)"
+    },
+    "language": "stan1293",
+    "primaryText": "She must have climbed Mount Toby.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "source",
+        "Kratzer 1991"
+      ],
+      [
+        "claim",
+        "weaker than (9a): no entailment of p"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s10a",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(10a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Knowing how much John likes wine, he must have drunk all the wine yesterday.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "claim",
+        "general knowledge justifies must"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s10b",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(10b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Knowing how much John likes wine, he apparently drank all the wine yesterday.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "claim",
+        "general knowledge is no indirect evidence"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s11a",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(11a)"
+    },
+    "language": "bulg1262",
+    "primaryText": "Znaejki kolko Ivan običa vino, toj trjabva da e izpil vsičkoto vino včera.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "toj",
+        "he"
+      ],
+      [
+        "trjabva",
+        "must"
+      ],
+      [
+        "da",
+        "to"
+      ],
+      [
+        "e",
+        "is"
+      ],
+      [
+        "izpil",
+        "drunk"
+      ],
+      [
+        "vsičkoto",
+        "all-the"
+      ],
+      [
+        "vino",
+        "wine"
+      ],
+      [
+        "včera",
+        "yesterday"
+      ]
+    ],
+    "translation": "Knowing how much Ivan likes wine, he must have drunk all the wine yesterday.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s11b",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(11b)"
+    },
+    "language": "bulg1262",
+    "primaryText": "Znaejki kolko Ivan običa vino, toj izpil vsičkoto vino včera.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "toj",
+        "he"
+      ],
+      [
+        "izpil",
+        "drunk-PE"
+      ],
+      [
+        "vsičkoto",
+        "all-the"
+      ],
+      [
+        "vino",
+        "wine"
+      ],
+      [
+        "včera",
+        "yesterday"
+      ]
+    ],
+    "translation": "Knowing how much Ivan likes wine, he apparently drank all the wine yesterday.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s12",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(12)"
+    },
+    "language": "stan1293",
+    "primaryText": "A: John must have drunk all the wine. A': But I have no evidence for that.",
+    "discourseSegments": [
+      "John must have drunk all the wine.",
+      "But I have no evidence for that."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "claim",
+        "must does not presuppose evidence"
+      ]
+    ],
+    "comment": "The continuation 'But I have no reason for believing that' is marked #.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s13",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(13)"
+    },
+    "language": "bulg1262",
+    "primaryText": "A: Ivan izpil vsičkoto vino včera. A': But I have no evidence for that.",
+    "discourseSegments": [
+      "Ivan izpil vsičkoto vino včera.",
+      "But I have no evidence for that."
+    ],
+    "glossedTokens": [
+      [
+        "Ivan",
+        "Ivan"
+      ],
+      [
+        "izpil",
+        "drunk-PE"
+      ],
+      [
+        "vsičkoto",
+        "all-the"
+      ],
+      [
+        "vino",
+        "wine"
+      ],
+      [
+        "včera",
+        "yesterday"
+      ]
+    ],
+    "translation": "A: Ivan apparently drank all the wine yesterday. A': But I have no evidence for that.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "claim",
+        "the evidential presupposes evidence"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s14",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(14)"
+    },
+    "language": "bulg1262",
+    "primaryText": "A: Maria celunala Ivan. A': (Actually) I witnessed it.",
+    "discourseSegments": [
+      "Maria celunala Ivan.",
+      "(Actually) I witnessed it."
+    ],
+    "glossedTokens": [
+      [
+        "Maria",
+        "Maria"
+      ],
+      [
+        "celunala",
+        "kiss-PE"
+      ],
+      [
+        "Ivan",
+        "Ivan"
+      ]
+    ],
+    "translation": "A: Maria apparently kissed Ivan. A': (Actually) I witnessed it.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "claim",
+        "the evidence must be indirect and cannot be cancelled"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s15a",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(15a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Apparently, Ivan didn't pass the exam.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "claim",
+        "negation targets the proposition, not the evidence"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s15b",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(15b)"
+    },
+    "language": "bulg1262",
+    "primaryText": "Ivan ne izkaral izpita.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ivan",
+        "Ivan"
+      ],
+      [
+        "ne",
+        "not"
+      ],
+      [
+        "izkaral",
+        "passed-PE"
+      ],
+      [
+        "izpita",
+        "the-exam"
+      ]
+    ],
+    "translation": "Ivan didn't pass the exam (it is said / I infer).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "claim",
+        "negation targets the proposition, not the evidence"
+      ]
+    ],
+    "comment": "The reading 'it is not the case that it is said / I infer that Ivan passed' is unavailable.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s16",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(16)"
+    },
+    "language": "bulg1262",
+    "primaryText": "A: Ivan izkaral izpita. B: This isn't true.",
+    "discourseSegments": [
+      "Ivan izkaral izpita.",
+      "This isn't true."
+    ],
+    "glossedTokens": [
+      [
+        "Ivan",
+        "Ivan"
+      ],
+      [
+        "izkaral",
+        "passed-PE"
+      ],
+      [
+        "izpita",
+        "the-exam"
+      ]
+    ],
+    "translation": "A: Apparently, Ivan passed the exam. B: This isn't true.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "claim",
+        "denial targets the proposition"
+      ]
+    ],
+    "comment": "The reading 'it is not true that it is said / you infer that Ivan passed' is unavailable.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s20a",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(20a)"
+    },
+    "language": "bulg1262",
+    "primaryText": "Te sa došli (??včera)/(??snošti)/(??točno v 3 časa).",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Te",
+        "they"
+      ],
+      [
+        "sa",
+        "are"
+      ],
+      [
+        "došli",
+        "come-P.PART"
+      ]
+    ],
+    "translation": "They have come yesterday / last night / exactly at 3 o'clock.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "claim",
+        "the present perfect rejects past-time adverbials"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s20b",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(20b)"
+    },
+    "language": "bulg1262",
+    "primaryText": "Te došli včera/snošti/točno v 3 časa.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Te",
+        "they"
+      ],
+      [
+        "došli",
+        "come-PE"
+      ]
+    ],
+    "translation": "They apparently came yesterday / last night / exactly at 3 o'clock.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "claim",
+        "the evidential aorist accepts past-time adverbials"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s21a",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(21a)"
+    },
+    "language": "bulg1262",
+    "primaryText": "Toj e pisel pismo (*točno sega)/(*točno v tozi moment).",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Toj",
+        "he"
+      ],
+      [
+        "e",
+        "is"
+      ],
+      [
+        "pisel",
+        "written-P.PART"
+      ],
+      [
+        "pismo",
+        "letter"
+      ]
+    ],
+    "translation": "He has written a letter right now / at this very moment.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "claim",
+        "the present perfect rejects speech-time adverbials"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s21b",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(21b)"
+    },
+    "language": "bulg1262",
+    "primaryText": "Toj pisel pismo točno sega/točno v tozi moment.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Toj",
+        "he"
+      ],
+      [
+        "pisel",
+        "written-PE"
+      ],
+      [
+        "pismo",
+        "letter"
+      ]
+    ],
+    "translation": "He is apparently writing a letter right now / at this very moment.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "claim",
+        "the evidential present accepts speech-time adverbials"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s22",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(22)"
+    },
+    "language": "bulg1262",
+    "primaryText": "Dve pljus dve (*e) bilo ravno na četiri.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Dve",
+        "two"
+      ],
+      [
+        "pljus",
+        "plus"
+      ],
+      [
+        "dve",
+        "two"
+      ],
+      [
+        "e",
+        "be-3SG"
+      ],
+      [
+        "bilo",
+        "been"
+      ],
+      [
+        "ravno",
+        "equal"
+      ],
+      [
+        "na",
+        "to"
+      ],
+      [
+        "četiri",
+        "four"
+      ]
+    ],
+    "translation": "Two plus two apparently equals four. (*Two plus two has equaled four.)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "claim",
+        "individual-level predicates take the evidential, not the perfect"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s23a",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(23a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Einstein has visited Princeton.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "claim",
+        "current relevance fails with a dead topic"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s23b",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(23b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Einstein visited Princeton.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s24",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(24)"
+    },
+    "language": "bulg1262",
+    "primaryText": "Ajnštajn (#e) posetil Prinstăn.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ajnštajn",
+        "Einstein"
+      ],
+      [
+        "e",
+        "be-3SG"
+      ],
+      [
+        "posetil",
+        "visited"
+      ],
+      [
+        "Prinstăn",
+        "Princeton"
+      ]
+    ],
+    "translation": "Einstein apparently visited Princeton. (#Einstein has visited Princeton.)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "claim",
+        "the evidential lacks the temporal interpretation of the present perfect"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s25",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(25)"
+    },
+    "language": "stan1293",
+    "primaryText": "(There was a book on the table.) The book was in Russian.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "source",
+        "Klein 1994"
+      ],
+      [
+        "claim",
+        "past tense locates the topic time, not the situation"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "izvorski1997_s27",
+    "source": {
+      "bibkey": "izvorski-1997",
+      "paperLabel": "(27)"
+    },
+    "language": "stan1293",
+    "primaryText": "The book has been in Russian.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "claim",
+        "the present perfect requires the eventuality not to hold at speech time"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  }
+]
