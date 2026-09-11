@@ -30,8 +30,8 @@ iteration of the one before. `value_eq_calculate` states the unification;
 `calculate_succ_iterate` states the iteration ladder its complexity
 ordering rests on.
 
-Consumers: `Studies/IoninMatushansky2006.lean` (their §3.3 adopts
-Hurford's cardinals-as-nouns; their §4.3 order conventions constrain
+Consumers: `Studies/IoninMatushansky2006.lean` (whose Section 3.3 adopts
+Hurford's cardinals-as-nouns and whose Section 4.3 order conventions constrain
 which of these structures surface) and `Studies/JansenPollmann2001.lean`
 (10-ness as digit×M expressibility).
 
