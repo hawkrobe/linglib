@@ -499,8 +499,8 @@ inductive DurationKind where
     `Determiners.lean`).
 
     Cross-references for *in years* (the NPI-gap entry):
-    - `Studies/IatridouZeijlstra2021.lean :: inYears` — Iatridou-Zeijlstra
-      2021 boundary-adverbial projection (PTS-tradition apparatus).
+    - `Studies/IatridouZeijlstra2021.lean :: Widened` — Iatridou-Zeijlstra
+      2021 domain-widening boundary adverbial (PTS-tradition apparatus).
     - `Fragments/English/PolarityItems.lean :: inYears` — polarity-theoretic
       projection (Israel 1996 / 2001 scalar model).
     Consolidating the three views into a single canonical entry plus
