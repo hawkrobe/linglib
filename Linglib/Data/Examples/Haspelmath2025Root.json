@@ -1,0 +1,1098 @@
+[
+  {
+    "id": "haspelmath2025root_yomaseru",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "§2"
+    },
+    "language": "nucl1643",
+    "primaryText": "yom-ase(ru)",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "make (someone) read",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "form",
+        "ase"
+      ],
+      [
+        "contentful",
+        "yes"
+      ],
+      [
+        "root",
+        "no"
+      ]
+    ],
+    "comment": "The causative suffix denotes an action but never occurs without another contentful morph.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_geology",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "§2"
+    },
+    "language": "stan1293",
+    "primaryText": "geo-logy",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "geology",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "form",
+        "geo"
+      ],
+      [
+        "contentful",
+        "yes"
+      ],
+      [
+        "root",
+        "no"
+      ]
+    ],
+    "comment": "A neoclassical combining form: contentful, always with another contentful morph.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_hello",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "fn. 10"
+    },
+    "language": "stan1293",
+    "primaryText": "hello",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "form",
+        "hello"
+      ],
+      [
+        "contentful",
+        "no"
+      ],
+      [
+        "root",
+        "no"
+      ]
+    ],
+    "comment": "A free form without a lexemic meaning.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_zona",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "§3"
+    },
+    "language": "uppe1395",
+    "primaryText": "žon-a",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "wife (nominative)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "form",
+        "žon"
+      ],
+      [
+        "contentful",
+        "yes"
+      ],
+      [
+        "root",
+        "yes"
+      ],
+      [
+        "bound",
+        "yes"
+      ]
+    ],
+    "comment": "The root always occurs with an inflectional affix.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_zony",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "§3"
+    },
+    "language": "uppe1395",
+    "primaryText": "žon-y",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "wife (genitive)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "form",
+        "žon"
+      ],
+      [
+        "contentful",
+        "yes"
+      ],
+      [
+        "root",
+        "yes"
+      ],
+      [
+        "bound",
+        "yes"
+      ]
+    ],
+    "comment": "The root always occurs with an inflectional affix.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_zonu",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "§3"
+    },
+    "language": "uppe1395",
+    "primaryText": "žon-u",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "wife (accusative)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "form",
+        "žon"
+      ],
+      [
+        "contentful",
+        "yes"
+      ],
+      [
+        "root",
+        "yes"
+      ],
+      [
+        "bound",
+        "yes"
+      ]
+    ],
+    "comment": "The root always occurs with an inflectional affix.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex5a",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(5)"
+    },
+    "language": "stan1295",
+    "primaryText": "ich lauf-e",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I run",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "root",
+        "lauf"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex5b",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(5)"
+    },
+    "language": "stan1295",
+    "primaryText": "wir lauf-en",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we run",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "root",
+        "lauf"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex5c",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(5)"
+    },
+    "language": "stan1295",
+    "primaryText": "lauf!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "run!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "root",
+        "lauf"
+      ]
+    ],
+    "comment": "No zero morph in the imperative.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex5d",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(5)"
+    },
+    "language": "stan1295",
+    "primaryText": "ich bin ge-lauf-en",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I have run",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "root",
+        "lauf"
+      ]
+    ],
+    "comment": "A prefix and a suffix, not a circumfix.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex5e",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(5)"
+    },
+    "language": "stan1295",
+    "primaryText": "sie lief",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "she ran",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "root",
+        "lief"
+      ]
+    ],
+    "comment": "A different root related by ablaut, not a replacive morph.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex6a",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(6)"
+    },
+    "language": "stan1318",
+    "primaryText": "katab-naa",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we wrote",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "root",
+        "katab"
+      ],
+      [
+        "skeleton",
+        "k-t-b"
+      ]
+    ],
+    "comment": "One of four roots sharing the consonantal skeleton, which is not itself a root.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex6b",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(6)"
+    },
+    "language": "stan1318",
+    "primaryText": "na-ktub-u",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we write",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "root",
+        "ktub"
+      ],
+      [
+        "skeleton",
+        "k-t-b"
+      ]
+    ],
+    "comment": "One of four roots sharing the consonantal skeleton, which is not itself a root.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex6c",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(6)"
+    },
+    "language": "stan1318",
+    "primaryText": "kaatib",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "writer",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "root",
+        "kaatib"
+      ],
+      [
+        "skeleton",
+        "k-t-b"
+      ]
+    ],
+    "comment": "One of four roots sharing the consonantal skeleton, which is not itself a root.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex6d",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(6)"
+    },
+    "language": "stan1318",
+    "primaryText": "kitaab",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "book",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ],
+      [
+        "root",
+        "kitaab"
+      ],
+      [
+        "skeleton",
+        "k-t-b"
+      ]
+    ],
+    "comment": "One of four roots sharing the consonantal skeleton, which is not itself a root.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex8a1",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(8)"
+    },
+    "language": "malt1254",
+    "primaryText": "kanta",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "sing",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "rootClass",
+        "action"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex8a2",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(8)"
+    },
+    "language": "malt1254",
+    "primaryText": "fetaħ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "open",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "rootClass",
+        "action"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex8a3",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(8)"
+    },
+    "language": "malt1254",
+    "primaryText": "ħataf",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "snatch",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "rootClass",
+        "action"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex8b1",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(8)"
+    },
+    "language": "malt1254",
+    "primaryText": "siġra",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "tree",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "rootClass",
+        "object"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex8b2",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(8)"
+    },
+    "language": "malt1254",
+    "primaryText": "għasfur",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "bird",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "rootClass",
+        "object"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex8b3",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(8)"
+    },
+    "language": "malt1254",
+    "primaryText": "borża",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "bag",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "rootClass",
+        "object"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex8c1",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(8)"
+    },
+    "language": "malt1254",
+    "primaryText": "tajjeb",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "good",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "rootClass",
+        "property"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex8c2",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(8)"
+    },
+    "language": "malt1254",
+    "primaryText": "żgħir",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "small",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "rootClass",
+        "property"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex8c3",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(8)"
+    },
+    "language": "malt1254",
+    "primaryText": "għani",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "rich",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "rootClass",
+        "property"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex12a",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(12a)"
+    },
+    "language": "stan1293",
+    "primaryText": "hammer",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(the) hammer (i.e. an instrument)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "rootClass",
+        "object"
+      ],
+      [
+        "heterosemy",
+        "sisterRoot"
+      ]
+    ],
+    "comment": "One of a heterosemous root pair: same shape, related meanings, two roots.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex12b",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(12b)"
+    },
+    "language": "stan1293",
+    "primaryText": "hammer",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(to) hammer (i.e. hit with a hammer)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "rootClass",
+        "action"
+      ],
+      [
+        "heterosemy",
+        "sisterRoot"
+      ]
+    ],
+    "comment": "One of a heterosemous root pair: same shape, related meanings, two roots.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex13a",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(13a)"
+    },
+    "language": "ital1282",
+    "primaryText": "strega",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(the) witch",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "rootClass",
+        "object"
+      ],
+      [
+        "heterosemy",
+        "sisterRoot"
+      ]
+    ],
+    "comment": "One of a heterosemous root pair: same shape, related meanings, two roots.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex13b",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(13b)"
+    },
+    "language": "ital1282",
+    "primaryText": "strega(-re)",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(to) bewitch",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "rootClass",
+        "action"
+      ],
+      [
+        "heterosemy",
+        "sisterRoot"
+      ]
+    ],
+    "comment": "One of a heterosemous root pair: same shape, related meanings, two roots.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex14a",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(14a)"
+    },
+    "language": "stan1290",
+    "primaryText": "combat",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(the) fight",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "rootClass",
+        "object"
+      ],
+      [
+        "heterosemy",
+        "sisterRoot"
+      ]
+    ],
+    "comment": "One of a heterosemous root pair: same shape, related meanings, two roots.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex14b",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(14b)"
+    },
+    "language": "stan1290",
+    "primaryText": "combatt(-re)",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(to) fight",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "rootClass",
+        "action"
+      ],
+      [
+        "heterosemy",
+        "sisterRoot"
+      ]
+    ],
+    "comment": "One of a heterosemous root pair: same shape, related meanings, two roots.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex15a",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(15a)"
+    },
+    "language": "russ1263",
+    "primaryText": "rabota",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(the) work",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "rootClass",
+        "object"
+      ],
+      [
+        "heterosemy",
+        "sisterRoot"
+      ]
+    ],
+    "comment": "One of a heterosemous root pair: same shape, related meanings, two roots.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex15b",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(15b)"
+    },
+    "language": "russ1263",
+    "primaryText": "rabota(-t')",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(to) work",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "rootClass",
+        "action"
+      ],
+      [
+        "heterosemy",
+        "sisterRoot"
+      ]
+    ],
+    "comment": "One of a heterosemous root pair: same shape, related meanings, two roots.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex18a",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(18a)"
+    },
+    "language": "stan1293",
+    "primaryText": "ambition",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "semantics",
+        "DESIRE"
+      ],
+      [
+        "morphosyntax",
+        "N-aff"
+      ]
+    ],
+    "comment": "Sister word of ambitious: shared meaning index and shape index.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_ex18b",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "(18b)"
+    },
+    "language": "stan1293",
+    "primaryText": "ambitious",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "semantics",
+        "HAVING (DESIRE)"
+      ],
+      [
+        "morphosyntax",
+        "A-aff"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath2025root_laudab",
+    "source": {
+      "bibkey": "haspelmath-2025-root",
+      "paperLabel": "fn. 6"
+    },
+    "language": "lati1261",
+    "primaryText": "laud-ab-",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "imperfect stem of 'praise'",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "stem",
+        "yes"
+      ]
+    ],
+    "comment": "A root and a tense suffix that combine with person suffixes.",
+    "lgrConformance": ""
+  }
+]
