@@ -93,111 +93,24 @@ def ofMorae (onset : List Segment) (ms : List Mora) (h : ms ≠ [] := by simp) :
   ⟨onset, ms.head h, ms.tail⟩
 
 /-- Build a syllable from a segmental onset–nucleus–coda string. Each nucleus segment
-    projects a mora (the first is the nucleus head); a coda segment projects its own
-    mora iff Weight-by-Position is active ([hayes-1989]), else it rides the last nucleus
-    mora (a non-moraic coda). A non-empty nucleus is required. -/
+    projects a mora (the first is the nucleus head). Under Weight by Position
+    ([hayes-1989]) the first coda segment projects its own mora and any further coda
+    segments ride it, so the syllable stays at most bimoraic; without it the coda rides
+    the last nucleus mora. A non-empty nucleus is required. -/
 def ofCV (onset nucleus coda : List Segment) (wbp : Bool := true)
     (hn : nucleus ≠ [] := by simp) : Syllable :=
   match nucleus, hn with
   | [], h => (h rfl).elim
   | n₀ :: ns, _ =>
-    if wbp then ⟨onset, Mora.of n₀, ns.map Mora.of ++ coda.map Mora.of⟩
-    else match (ns.map Mora.of).reverse with
+    match wbp, coda with
+    | true, c :: cs => ⟨onset, Mora.of n₀, ns.map Mora.of ++ [(Mora.of c).attach cs]⟩
+    | _, _ =>
+      match (ns.map Mora.of).reverse with
       | last :: rest => ⟨onset, Mora.of n₀, rest.reverse ++ [last.attach coda]⟩
       | []           => ⟨onset, (Mora.of n₀).attach coda, []⟩
 
 /-- The segment string (yield) of a syllable: onset followed by the moraic melody. -/
 def yield (σ : Syllable) : List Segment := σ.onset ++ σ.morae.flatMap (·.dominates)
-
-/-! ### Moraic operations (stranding and re-licensing)
-
-The moraic-syllabification operations of [hayes-1989]: segment deletion strands a μ
-(an empty prosodic position), which is then re-licensed by re-association ([ito-1986]'s
-Prosodic Licensing) or else erased. This is the mechanism of compensatory lengthening —
-"CL" the phenomenon is a *composition* of these operations, documented per-language in
-`Studies/Hayes1989`. Mora count is conserved by construction (the μ survives deletion). -/
-
-/-- Delete the segment under mora `i`, leaving the μ **stranded** (it survives,
-    dominating nothing) — the engine of compensatory lengthening. -/
-def strand (σ : Syllable) (i : Nat) : Syllable :=
-  match i with
-  | 0     => ⟨σ.onset, Mora.stranded, σ.tail⟩
-  | i + 1 => ⟨σ.onset, σ.head, σ.tail.set i Mora.stranded⟩
-
-/-- Delete an onset segment. Onsets are non-moraic, so this strands no μ — the
-    onset-deletion asymmetry: it cannot feed compensatory lengthening ([hayes-1989]). -/
-def deleteOnset (σ : Syllable) (i : Nat) : Syllable :=
-  { σ with onset := σ.onset.eraseIdx i }
-
-/-- The number of stranded (segmentally unaffiliated) morae. -/
-def strandedCount (σ : Syllable) : Nat := σ.morae.countP (fun μ => decide μ.IsStranded)
-
-private def relink : List Segment → List Mora → List Mora
-  | _,   []      => []
-  | mel, μ :: ms =>
-    if μ.dominates.isEmpty then ⟨mel⟩ :: relink mel ms
-    else μ :: relink μ.dominates ms
-
-private theorem relink_length (mel : List Segment) (ms : List Mora) :
-    (relink mel ms).length = ms.length := by
-  induction ms generalizing mel with
-  | nil => rfl
-  | cons μ ms ih => simp only [relink]; split <;> simp [ih]
-
-private theorem relink_ne_nil (mel : List Segment) {ms : List Mora} (h : ms ≠ []) :
-    relink mel ms ≠ [] := by
-  rw [← List.length_pos_iff_ne_nil, relink_length]
-  exact List.length_pos_iff_ne_nil.mpr h
-
-private def rebuild (σ : Syllable) (ms : List Mora) (h : ms ≠ []) : Syllable :=
-  ⟨σ.onset, ms.head h, ms.tail⟩
-
-private theorem rebuild_morae (σ : Syllable) (ms : List Mora) (h : ms ≠ []) :
-    (rebuild σ ms h).morae = ms := by simp [rebuild, morae]
-
-/-- **Tautosyllabic re-licensing** ([ito-1986]): re-associate σ's stranded morae to the
-    nucleus, within σ. Length-preserving on the spine, so weight is conserved. -/
-def relicense (σ : Syllable) : Syllable :=
-  rebuild σ (relink [] σ.morae) (relink_ne_nil [] (by simp [morae]))
-
-/-- **Heterosyllabic re-licensing** (Parasitic Delinking, [hayes-1989]): a stranded
-    nucleus μ delinks — the syllable, now nucleus-less, is deleted (`none`), and its μ
-    migrates onto the preceding `host`'s nucleus, lengthening it (the host vowel spans
-    two morae). A no-op if the target's nucleus is not stranded. -/
-def relicenseLeft (host target : Syllable) : Syllable × Option Syllable :=
-  if target.head.IsStranded ∧ target.tail = [] then
-    (⟨host.onset, host.head, host.tail ++ [⟨host.head.dominates⟩]⟩, none)
-  else (host, some target)
-
-/-! Mora conservation, by construction. -/
-
-theorem strand_moraCount (σ : Syllable) (i : Nat) :
-    (strand σ i).moraCount = σ.moraCount := by
-  cases i with
-  | zero => rfl
-  | succ n => simp [strand, moraCount, morae, List.length_set]
-
-theorem deleteOnset_moraCount (σ : Syllable) (i : Nat) :
-    (deleteOnset σ i).moraCount = σ.moraCount := rfl
-
-/-- The onset-deletion asymmetry ([hayes-1989]): deleting an onset strands no μ. -/
-theorem deleteOnset_strandedCount (σ : Syllable) (i : Nat) :
-    (deleteOnset σ i).strandedCount = σ.strandedCount := rfl
-
-theorem relicense_moraCount (σ : Syllable) :
-    σ.relicense.moraCount = σ.moraCount := by
-  simp only [Syllable.moraCount, relicense, rebuild_morae, relink_length]
-
-/-- Heterosyllabic re-licensing conserves the total mora count across the boundary:
-    the migrated μ leaves the (deleted) target and is gained by the host. -/
-theorem relicenseLeft_conserves (host target : Syllable)
-    (h : target.head.IsStranded) (hmono : target.tail = []) :
-    (host.relicenseLeft target).1.moraCount
-      + ((host.relicenseLeft target).2.map Syllable.moraCount).getD 0
-      = host.moraCount + target.moraCount := by
-  unfold relicenseLeft
-  rw [if_pos ⟨h, hmono⟩]
-  simp [moraCount, morae, hmono, List.length_append]
 
 end Syllable
 
