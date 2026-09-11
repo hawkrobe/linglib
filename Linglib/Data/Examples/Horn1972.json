@@ -1,0 +1,1942 @@
+[
+  {
+    "id": "horn1972_ex1_58b_more",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(1.58b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John has 3 children, and indeed he may have more.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.21"
+      ],
+      [
+        "scale",
+        "cardinal"
+      ],
+      [
+        "construction",
+        "suspension of the upper bound"
+      ]
+    ],
+    "comment": "The upper bound of a cardinal is an implicature and can be suspended.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex1_58b_fewer",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(1.58b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John has 3 children, and indeed he may have fewer.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.21"
+      ],
+      [
+        "scale",
+        "cardinal"
+      ],
+      [
+        "construction",
+        "suspension of the lower bound"
+      ]
+    ],
+    "comment": "The lower bound is asserted and cannot be suspended.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex1_59a",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(1.59a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John has 3 children.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.21"
+      ],
+      [
+        "scale",
+        "cardinal"
+      ],
+      [
+        "asserts",
+        "at least 3"
+      ],
+      [
+        "implicates",
+        "at most 3"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex1_59b",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(1.59b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John doesn't have 3 children.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.21"
+      ],
+      [
+        "scale",
+        "cardinal"
+      ],
+      [
+        "negation",
+        "of the lower bound"
+      ]
+    ],
+    "comment": "Negation contradicts the lower bound, not the putative upper bound: fewer than three.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex1_60a",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(1.60a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I have 3 children: in fact I have (even) more.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.21"
+      ],
+      [
+        "scale",
+        "cardinal"
+      ],
+      [
+        "construction",
+        "cancelling the upper bound"
+      ]
+    ],
+    "comment": "Logically consistent, so the upper bound is not an entailment.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex1_60b",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(1.60b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I have only 3 children: in fact I don't (even) have that many.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.21"
+      ],
+      [
+        "scale",
+        "cardinal"
+      ],
+      [
+        "construction",
+        "contradicting the assertion of only"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex1_63b",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(1.63)"
+    },
+    "language": "stan1293",
+    "primaryText": "Does John have three children? — Yes, (in fact) he has four.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.21"
+      ],
+      [
+        "scale",
+        "cardinal"
+      ],
+      [
+        "reading",
+        "at least"
+      ]
+    ],
+    "comment": "With the upper bound not implicated, the question is answered yes.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex1_63c",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(1.63)"
+    },
+    "language": "stan1293",
+    "primaryText": "Does John have three children? — No, he has four.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.21"
+      ],
+      [
+        "scale",
+        "cardinal"
+      ],
+      [
+        "reading",
+        "exact"
+      ]
+    ],
+    "comment": "With the upper bound implicated by the question, the answer is no.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex1_72a_fact",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(1.72a)"
+    },
+    "language": "stan1293",
+    "primaryText": "It's warm; in fact, it's hot.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.22"
+      ],
+      [
+        "scale",
+        "warm–hot"
+      ],
+      [
+        "construction",
+        "contradicting the implicature"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex1_72a_susp",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(1.72a)"
+    },
+    "language": "stan1293",
+    "primaryText": "It's warm, if not hot.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.22"
+      ],
+      [
+        "scale",
+        "warm–hot"
+      ],
+      [
+        "construction",
+        "suspension"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex1_72b_cold",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(1.72b)"
+    },
+    "language": "stan1293",
+    "primaryText": "It's cool, if not cold.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.22"
+      ],
+      [
+        "scale",
+        "cool–cold"
+      ],
+      [
+        "construction",
+        "suspension"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex1_72b_warm",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(1.72b)"
+    },
+    "language": "stan1293",
+    "primaryText": "It's cool, if not warm.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.22"
+      ],
+      [
+        "scale",
+        "cool–cold"
+      ],
+      [
+        "construction",
+        "suspension across scales"
+      ]
+    ],
+    "comment": "Cool and warm are not on one scale: cool asserts the negation of warm.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex1_73c_hot_warm",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(1.73c)"
+    },
+    "language": "stan1293",
+    "primaryText": "It's hot, if not warm.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.22"
+      ],
+      [
+        "scale",
+        "warm–hot"
+      ],
+      [
+        "construction",
+        "suspension by a weaker member"
+      ]
+    ],
+    "comment": "No suspension of the asserted lower bound is possible.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex1_73a",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(1.73a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Dolores is pretty but not beautiful.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.22"
+      ],
+      [
+        "scale",
+        "pretty–beautiful"
+      ],
+      [
+        "construction",
+        "asserting the implicature"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex1_73b",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(1.73b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Dolores is not only pretty, she's beautiful.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.22"
+      ],
+      [
+        "scale",
+        "pretty–beautiful"
+      ],
+      [
+        "construction",
+        "contradicting the implicature"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex1_82a",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(1.82a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Dolores is pretty, if not beautiful.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.22"
+      ],
+      [
+        "scale",
+        "pretty–beautiful"
+      ],
+      [
+        "construction",
+        "suspension"
+      ],
+      [
+        "intonation",
+        "rising"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex1_82b",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(1.82b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Dolores is pretty, if not intelligent.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.22"
+      ],
+      [
+        "construction",
+        "concession"
+      ],
+      [
+        "intonation",
+        "falling"
+      ]
+    ],
+    "comment": "A concessive if-not clause, not a suspension: intelligent is not on the scale of pretty.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex1_85a",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(1.85a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Dolores is pretty if not downright beautiful.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.22"
+      ],
+      [
+        "construction",
+        "suspension"
+      ],
+      [
+        "polarity item",
+        "positive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex1_85b",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(1.85b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Dolores is pretty if not exactly beautiful.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.22"
+      ],
+      [
+        "construction",
+        "concession"
+      ],
+      [
+        "polarity item",
+        "negative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex1_93_ok",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(1.93)"
+    },
+    "language": "stan1293",
+    "primaryText": "seriously if not critically wounded",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.23"
+      ],
+      [
+        "scale",
+        "seriously–critically–fatally wounded"
+      ],
+      [
+        "construction",
+        "suspension"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex1_93_bad",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(1.93)"
+    },
+    "language": "stan1293",
+    "primaryText": "critically if not seriously wounded",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.23"
+      ],
+      [
+        "scale",
+        "seriously–critically–fatally wounded"
+      ],
+      [
+        "construction",
+        "suspension by a weaker member"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex2_1a_some_all",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(2.1a)"
+    },
+    "language": "stan1293",
+    "primaryText": "some if not all",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.11"
+      ],
+      [
+        "scale",
+        "quantifier"
+      ],
+      [
+        "construction",
+        "suspension"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex2_1a_all_some",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(2.1a)"
+    },
+    "language": "stan1293",
+    "primaryText": "all if not some",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.11"
+      ],
+      [
+        "scale",
+        "quantifier"
+      ],
+      [
+        "construction",
+        "suspension by a weaker member"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex2_1a_many_most",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(2.1a)"
+    },
+    "language": "stan1293",
+    "primaryText": "many if not most",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.11"
+      ],
+      [
+        "scale",
+        "quantifier"
+      ],
+      [
+        "construction",
+        "suspension"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex2_1b",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(2.1b)"
+    },
+    "language": "stan1293",
+    "primaryText": "sometimes if not often / usually / always",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.11"
+      ],
+      [
+        "scale",
+        "quantificational adverb"
+      ],
+      [
+        "construction",
+        "suspension"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex2_1e_few",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(2.1e)"
+    },
+    "language": "stan1293",
+    "primaryText": "few if any",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.11"
+      ],
+      [
+        "scale",
+        "negative quantifier"
+      ],
+      [
+        "construction",
+        "suspension"
+      ]
+    ],
+    "comment": "Derived by double negation from few and possibly not any.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex2_3c",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(2.3c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Desdemona is pretty or even beautiful, or both.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.11"
+      ],
+      [
+        "construction",
+        "or both after a suspender disjunction"
+      ]
+    ],
+    "comment": "Suspender disjunctions are not true disjunctions, so or both cannot be appended.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex2_3a",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(2.3a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Desdemona loves Othello or Cassio, or both.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.11"
+      ],
+      [
+        "construction",
+        "or both after a true disjunction"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex2_24a_somebody",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(2.24a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Somebody left, in fact everyone did.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.11"
+      ],
+      [
+        "scale",
+        "quantifier"
+      ],
+      [
+        "construction",
+        "cancelling the implicature"
+      ]
+    ],
+    "comment": "Consistent, against treating some as entailing or presupposing not all.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex2_24b_some_not_all",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(2.24b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some but not all of my best friends are women.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.11"
+      ],
+      [
+        "scale",
+        "quantifier"
+      ],
+      [
+        "construction",
+        "asserting the implicature"
+      ]
+    ],
+    "comment": "Non-redundant by the test (2.12), so not all is not entailed by some.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex2_25a",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(2.25a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Few of the arrows hit the target, but some did.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.11"
+      ],
+      [
+        "scale",
+        "negative quantifier"
+      ],
+      [
+        "construction",
+        "asserting the implicature"
+      ]
+    ],
+    "comment": "Against a presupposition of some by few.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex2_28a",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(2.28a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I don't have three friends.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.11"
+      ],
+      [
+        "scale",
+        "cardinal"
+      ],
+      [
+        "negation",
+        "of the lower bound"
+      ]
+    ],
+    "comment": "Fewer than three friends.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex2_28b",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(2.28b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I don't have three friends... but four.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.11"
+      ],
+      [
+        "scale",
+        "cardinal"
+      ],
+      [
+        "negation",
+        "external"
+      ]
+    ],
+    "comment": "With contrastive intonation the exceptional reading: more than three.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex2_40a",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(2.40a)"
+    },
+    "language": "stan1293",
+    "primaryText": "All (of) the boys didn't go.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.13"
+      ],
+      [
+        "ambiguity",
+        "NEG-V vs NEG-Q"
+      ]
+    ],
+    "comment": "Comma intonation forces the NEG-Q reading not all, which implicates some.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex2_43a",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(2.43a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some of the boys didn't go.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.13"
+      ],
+      [
+        "reading",
+        "NEG-V only"
+      ]
+    ],
+    "comment": "Existentials, like disjunctions, lack the NEG-Q reading.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex2_46",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(2.46)"
+    },
+    "language": "stan1293",
+    "primaryText": "John left and Bill left. / John left or Bill left.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.13"
+      ],
+      [
+        "scale",
+        "connective"
+      ],
+      [
+        "entails",
+        "and entails or"
+      ],
+      [
+        "implicates",
+        "or implicates not and"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex2_47",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(2.47)"
+    },
+    "language": "stan1293",
+    "primaryText": "If you see John or Bill, let me know. — I saw both John and Bill.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.13"
+      ],
+      [
+        "scale",
+        "connective"
+      ],
+      [
+        "context",
+        "conditional"
+      ]
+    ],
+    "comment": "The classical entailment holds: seeing both is no excuse.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex2_49b",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(2.49b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Claude will major in linguistics or necromancy, if not both.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.13"
+      ],
+      [
+        "scale",
+        "connective"
+      ],
+      [
+        "construction",
+        "suspension of exclusivity"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex2_51a",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(2.51a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some Americans smoke cigars.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.14"
+      ],
+      [
+        "scale",
+        "quantifier"
+      ],
+      [
+        "status",
+        "understatement"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex2_51d",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(2.51d)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some Americans are earthlings.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.14"
+      ],
+      [
+        "scale",
+        "quantifier"
+      ],
+      [
+        "status",
+        "anomaly"
+      ]
+    ],
+    "comment": "Using some with the knowledge of all is anomalous, not mere understatement.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex2_52a",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(2.52a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some men are mortal.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.14"
+      ],
+      [
+        "scale",
+        "quantifier"
+      ],
+      [
+        "status",
+        "anomaly"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex2_55c",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(2.55c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some natural numbers are integers.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.14"
+      ],
+      [
+        "scale",
+        "quantifier"
+      ],
+      [
+        "status",
+        "anomaly"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex2_58a",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(2.58a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Almost all men are mammals.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.14"
+      ],
+      [
+        "scale",
+        "quantifier"
+      ],
+      [
+        "status",
+        "anomaly"
+      ]
+    ],
+    "comment": "Worse than some used with the knowledge of almost all: the violation is not merely quantitative.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex2_58c",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(2.58c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some Austrians speak German.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.14"
+      ],
+      [
+        "scale",
+        "quantifier"
+      ],
+      [
+        "status",
+        "understatement"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex4_49a",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(4.49a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John isn't tall, and he isn't handsome. / John isn't tall, nor is he handsome.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.23"
+      ],
+      [
+        "connective",
+        "and"
+      ],
+      [
+        "lexicalization",
+        "nor = and~"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex4_49a_prime",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(4.49a')"
+    },
+    "language": "stan1293",
+    "primaryText": "John isn't tall or he isn't handsome. / *John isn't tall nand is he handsome.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.23"
+      ],
+      [
+        "connective",
+        "or"
+      ],
+      [
+        "lexicalization",
+        "*nand = or~"
+      ]
+    ],
+    "comment": "No lexical item nand corresponds to or with a lower negation.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex4_50a",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(4.50a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John and Mary came in, but neither of them stayed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.23"
+      ],
+      [
+        "connective",
+        "both"
+      ],
+      [
+        "lexicalization",
+        "neither = both~"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex4_50a_prime",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(4.50a')"
+    },
+    "language": "stan1293",
+    "primaryText": "John and Mary came in, but *noth of them stayed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.23"
+      ],
+      [
+        "connective",
+        "either"
+      ],
+      [
+        "lexicalization",
+        "*noth = not both"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex4_56a",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(4.56a)"
+    },
+    "language": "stan1293",
+    "primaryText": "All the eggs broke, and all of them didn't.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.24"
+      ],
+      [
+        "quantifier",
+        "all"
+      ],
+      [
+        "compatibility",
+        "incompatible with a lower negation"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex4_56b",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(4.56b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Most of the eggs broke, and most of them didn't.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.24"
+      ],
+      [
+        "quantifier",
+        "most"
+      ],
+      [
+        "compatibility",
+        "incompatible with a lower negation"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex4_56c",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(4.56c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Half of the eggs broke, and half of them didn't.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.24"
+      ],
+      [
+        "quantifier",
+        "half"
+      ],
+      [
+        "compatibility",
+        "compatible with a lower negation"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex4_56e",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(4.56e)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some of the eggs broke, and some of them didn't.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.24"
+      ],
+      [
+        "quantifier",
+        "some"
+      ],
+      [
+        "compatibility",
+        "compatible with a lower negation"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex4_57a",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(4.57a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Many of the eggs broke and many didn't.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.24"
+      ],
+      [
+        "quantifier",
+        "many"
+      ],
+      [
+        "compatibility",
+        "compatible with a lower negation"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex4_57a_prime",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(4.57a')"
+    },
+    "language": "stan1293",
+    "primaryText": "Not many of the eggs broke and not many didn't.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.24"
+      ],
+      [
+        "quantifier",
+        "not many"
+      ],
+      [
+        "compatibility",
+        "incompatible with a lower negation"
+      ]
+    ],
+    "comment": "The contradictory of a quantifier below the midpoint is above the midpoint of the negative scale.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex4_60a",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(4.60a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some have greatness thrust upon them.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "quantifier",
+        "some"
+      ],
+      [
+        "implicates",
+        "not all"
+      ],
+      [
+        "lexicalization",
+        "~some = none; some~ unlexicalized"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex4_60b",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(4.60b)"
+    },
+    "language": "stan1293",
+    "primaryText": "It's possible for aardvarks to eat spiders.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "modal",
+        "possible"
+      ],
+      [
+        "implicates",
+        "not necessary"
+      ],
+      [
+        "lexicalization",
+        "~possible = impossible; possible~ unlexicalized"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex4_60f",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(4.60f)"
+    },
+    "language": "stan1293",
+    "primaryText": "Either Yvonne or Yvette will marry Sam.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "connective",
+        "either...or"
+      ],
+      [
+        "implicates",
+        "not both"
+      ],
+      [
+        "lexicalization",
+        "~(either...or) = neither...nor"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex4_66a",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(4.66a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I allow you to leave and I allow you to stay.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "predicate",
+        "allow"
+      ],
+      [
+        "compatibility",
+        "compatible"
+      ],
+      [
+        "lexicalization",
+        "~allow = disallow"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex4_66b",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(4.66b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I proved that you left and I proved that you stayed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "predicate",
+        "prove"
+      ],
+      [
+        "compatibility",
+        "incompatible"
+      ],
+      [
+        "lexicalization",
+        "prove~ = disprove"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "horn1972_ex4_75",
+    "source": {
+      "bibkey": "horn-1972",
+      "paperLabel": "(4.75)"
+    },
+    "language": "stan1293",
+    "primaryText": "It's true that this is the last example, and it's true that it isn't.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "predicate",
+        "true"
+      ],
+      [
+        "compatibility",
+        "incompatible"
+      ],
+      [
+        "lexicalization",
+        "true~ = false; ~true = untrue"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  }
+]
