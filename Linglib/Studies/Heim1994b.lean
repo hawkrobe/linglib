@@ -1,6 +1,6 @@
 import Linglib.Logic.Modal.Epistemic
 import Linglib.Semantics.Questions.Exhaustivity
-import Linglib.Data.Examples.Heim1994
+import Linglib.Data.Examples.Heim1994b
 
 /-!
 # Heim (1994): Interrogative Semantics and Karttunen's Semantics for *know*
@@ -38,7 +38,7 @@ is a subset (`strongAnswer_subset_ans₂`); the ambiguity of *answer* in (17)–
 * [groenendijk-stokhof-1984]
 -/
 
-namespace Heim1994
+namespace Heim1994b
 
 open ModalLogic.Epistemic Question
 
@@ -312,4 +312,4 @@ theorem strongAnswer_subset_ans₂ (H : Set (Set W)) (w : W) : strongAnswer H w 
   simp only [mem_weakAnswer]
   exact ⟨λ h p hp hwp => h p hp ((hv p hp).1 hwp), λ h p hp hvp => h p hp ((hv p hp).2 hvp)⟩
 
-end Heim1994
+end Heim1994b
