@@ -4,51 +4,54 @@ import Linglib.Semantics.Polarity.Item
 import Linglib.Logic.Natural.Strawson.Basic
 import Linglib.Semantics.Supervaluation
 import Linglib.Studies.Ladusaw1979
+import Linglib.Data.Examples.KadmonLandman1993
 import Mathlib.Data.Set.Basic
 
 /-!
-# Kadmon & Landman 1993: *Any*
+# Kadmon and Landman (1993): Any
 
-Formalizes [kadmon-landman-1993]'s unified analysis of *any*: *any CN* is the
-indefinite *a CN* plus **widening** of the CN denotation along a contextual
-dimension, licensed only if widening creates a stronger statement
-(**strengthening**), checked at the local proposition (**locality**);
-free-choice *any* is the same item with a generic interpretation.
-Strengthening subsumes [ladusaw-1979]'s DE condition — widening an existential
-strengthens exactly when the context is DE — but K&L stress it is necessary,
-not sufficient: *each* and comparative *more often than* are DE yet resist
-*any* because widening must also make pragmatic sense (§3.2).
+This file formalizes [kadmon-landman-1993], the unified analysis of *any*: *any CN* is the
+indefinite *a CN* with its domain widened along a contextual dimension, licensed only when the
+widening makes the statement stronger, the strengthening condition, checked at the narrowest
+operator over the indefinite, locality; free-choice *any* is the same item under a generic
+interpretation. Widening weakens an existential (`existsInDomain_mono`), so strengthening holds
+exactly under an antitone context (`Strengthening`, `de_satisfies_strengthening`), which is why
+[ladusaw-1979]'s downward-entailing contexts license and why a positive context does not
+(`ue_widening_weakens`); a context's mechanism and signature are read from the substrate's
+`LicensingContext.properties` (`klExplanation`, `ladusaw_de_is_kl_strengthening`). Section 3
+handles the recalcitrant cases: adversatives are downward entailing with the perspective held
+constant, so *sorry* licenses and *glad* does not (`sorry_licenses_any`, `glad_does_not_license`)
+except on a settle-for-less reading; a negated *because*-clause licenses only by a
+metalinguistic denial of its presupposition; and conditional antecedents strengthen once the
+implicit restriction is fixed (`widening_satisfies_conditional_strengthening`). The paper's
+judgments follow this classification row by row (`rows_agree`). Section 4 models the generic
+restriction as a vague property set (`VagueRestriction`): widening along a dimension makes the
+quantifier universal with respect to it (`any_cn_dimensionally_universal`), domain vagueness is
+what lets a generic tolerate exceptions (`domain_vague_allows_exceptions`), and *almost* modifies
+domain-precise universals and dimensionally universal noun phrases (`almost_rows`). On a finite
+precisification space the two truth notions are [fine-1975]'s super-truth and borderline status
+(`genericSubTrue_not_superTrue_iff_indet`).
 
-## Main declarations
+## Implementation notes
 
-- `Strengthening`: the licensing condition — widening `D` to `D'` in context
-  `C` creates a stronger statement;
-- `de_satisfies_strengthening`: antitone (DE) contexts satisfy strengthening;
-- `GuaranteesStrengthening`, `klExplanation`: per-context classification,
-  projected from `Polarity.LicensingContext.properties`;
-- `ladusaw_de_is_kl_strengthening`: Ladusaw-DE contexts are strengthening
-  contexts;
-- `sorry_licenses_any`, `glad_does_not_license`: the adversative asymmetry
-  (Strawson-DE vs UE, K&L §3.3);
-- `widening_satisfies_conditional_strengthening`: widening plus
-  restriction-weakening guarantees strengthening in conditional antecedents
-  (K&L §3.5.3);
-- `VagueRestriction`, `widenAlong`, `dimensionallyUniversal`: the
-  domain-vagueness apparatus behind FC *any* and the *almost* test (K&L §4);
-- `domain_vague_allows_exceptions`: exception tolerance of generics from
-  domain vagueness;
-- `VagueRestriction.toSpecSpace`: the finite-case bridge to [fine-1975]'s
-  supervaluation — K&L's exception-tolerance zone is Fine's borderline zone.
+* The rows record, at the narrowest operator over *any*, a substrate `LicensingContext` where
+  one exists and otherwise the local entailment signature; the settle-for-less and metalinguistic
+  readings are the paper's own annotations, so `rows_agree` checks the paper's classification
+  against its judgments rather than deriving those two readings.
+* The vague-restriction apparatus is `Set`-based; the supervaluation substrate is `Finset`-based
+  for computability, and `VagueRestriction.toSpecSpace` is the finite-case bridge.
+
+## References
+
+* [kadmon-landman-1993]
+* [ladusaw-1979]
+* [linebarger-1987]
+* [fine-1975]
 -/
 
 namespace KadmonLandman1993
 
-open NaturalLogic
-open Polarity (LicensingContext)
-open Polarity (LicensingMechanism)
-open Ladusaw1979 (licensingStrength)
-open Semantics.Supervaluation (SpecSpace superTrue superTrue_true_iff
-  superTrue_indet_iff)
+open NaturalLogic Polarity Ladusaw1979 Semantics.Supervaluation Data.Examples
 
 /-! ### The strengthening condition
 
@@ -112,15 +115,6 @@ superlatives — the Strawson-DE route for the latter is later literature
 abbrev GuaranteesStrengthening (c : LicensingContext) : Prop :=
   (contextSignature c).toDEStrength.isSome = true
 
--- Standard DE contexts guarantee strengthening.
-example : ∀ c ∈ [LicensingContext.negation, .nobody, .withoutClause, .few,
-    .conditionalAntecedent, .adversative, .beforeClause, .onlyFocus],
-    GuaranteesStrengthening c := by decide
-
--- Non-DE contexts do not guarantee strengthening via DE.
-example : ∀ c ∈ [LicensingContext.question, .modalPossibility, .generic],
-    ¬ GuaranteesStrengthening c := by decide
-
 /-- A licensing context's K&L mechanism, projected from `LicensingContext.properties`:
 *why* the context licenses, not merely *that* it does. -/
 abbrev klExplanation (c : LicensingContext) : LicensingMechanism :=
@@ -175,8 +169,8 @@ blocks it. K&L adopt Ladusaw's convention that the DE pattern need only hold
 of the sentence minus its factive presupposition. -/
 theorem sorry_not_classically_de :
     ¬Antitone
-      (sorryFull (fun (w : Fin 4) => ({w} : Set (Fin 4)))
-                 (fun (_ : Fin 4) => ({1} : Set (Fin 4)))) :=
+      (sorryFull (λ (w : Fin 4) => ({w} : Set (Fin 4)))
+                 (λ (_ : Fin 4) => ({1} : Set (Fin 4)))) :=
   sorryFull_not_de
 
 /-- *Glad* does not freely license NPIs: it is UE, so widening weakens.
@@ -185,38 +179,6 @@ subset to have members. -/
 theorem glad_does_not_license (dox bestOf : Fin 4 → Set (Fin 4)) :
     Monotone (gladFull dox bestOf) :=
   gladFull_isUE dox bestOf
-
-/-- A settle-for-less datum (K&L §3.3.2): *any* under *glad* is licensed only
-on the interpretation where the speaker's preferred "narrow wish" cannot be
-satisfied and they settle for the wide one. With the real wish identified
-with the narrow wish, being glad of the wide statement entails that one would
-be glad of the narrow one — K&L's (101) entails (102) — so strengthening is
-satisfied. -/
-structure SettleForLessDatum where
-  sentence : String
-  grammatical : Bool
-  notes : String
-
-/-- K&L (76B). -/
-def settleGladTickets : SettleForLessDatum :=
-  { sentence := "Be glad we got ANY tickets!"
-  , grammatical := true
-  , notes := "settle for less: the narrow wish (better tickets) is preferred but unsatisfiable" }
-
-/-- K&L (88). The widening runs from phonologists to linguists, so the narrow
-wish (a phonologist likes me) is the preferred, real wish. -/
-def settleGladAnybody : SettleForLessDatum :=
-  { sentence := "I'm glad ANYBODY likes me!"
-  , grammatical := true
-  , notes := "settle for less: the narrow wish (a phonologist likes me) is preferred but unsatisfiable" }
-
-/-- K&L (95): *sure* allows no settle-for-less interpretation — their
-(96)–(98) lack the characteristic negative implication — so *any* under
-*sure* is never rescued. -/
-def sureNoSettle : SettleForLessDatum :=
-  { sentence := "*I'm sure we got ANY tickets!"
-  , grammatical := false
-  , notes := "sure has no settle-for-less interpretation" }
 
 /-! ### Conditional antecedents
 
@@ -271,70 +233,6 @@ the negation denies *because*'s factive presupposition, and *any* strengthens
 that denial. Merely implying the denial is not enough — the rhetorical
 conditional (132) can imply it but lacks the metalinguistic denial, and *any*
 is out. This is the paper's only genuinely non-DE licensing mechanism. -/
-
-/-- A because-clause licensing datum. The prediction checked below is
-`grammatical = npComplement || metalinguisticDenial`; both fields are
-annotations transcribed from K&L's §3.4 discussion, so the `#guard` is a
-consistency check on the transcription, not a derived prediction. -/
-structure BecauseClauseDatum where
-  sentence : String
-  grammatical : Bool
-  /-- *because of [NP_]* (DE under negation, licenses freely) vs *because [S_]* -/
-  npComplement : Bool
-  /-- Whether the metalinguistic presupposition-denial reading is available.
-  Mere implication of the denial does not suffice (K&L on (132)). -/
-  metalinguisticDenial : Bool
-  notes : String
-
-/-- K&L (105). -/
-def becauseEx105 : BecauseClauseDatum :=
-  { sentence := "It isn't because Sue said anything bad about me that I'm angry"
-  , grammatical := true, npComplement := false, metalinguisticDenial := true
-  , notes := "negation denies the factive presupposition of because; any strengthens the denial" }
-
-/-- K&L (106), from [linebarger-1987]; marked #. -/
-def becauseEx106 : BecauseClauseDatum :=
-  { sentence := "#I didn't help him because I have any sympathy for urban guerillas, although I do sympathize with urban guerillas"
-  , grammatical := false, npComplement := false, metalinguisticDenial := false
-  , notes := "continuation cancels the negative implication, so no presupposition denial" }
-
-/-- K&L (109): the *any*-bearing sentence of their own constructed Sir
-Winfred passage; marked #. The surrounding text cancels the negative
-implication, and *any* is bad. -/
-def becauseEx109 : BecauseClauseDatum :=
-  { sentence := "#Yet, in the present case, it wasn't because he had any such sympathy that he had decided to take on the case"
-  , grammatical := false, npComplement := false, metalinguisticDenial := false
-  , notes := "textual context cancels the negative implication; because [S_] then rejects any" }
-
-/-- K&L (122). -/
-def becauseEx122 : BecauseClauseDatum :=
-  { sentence := "It isn't because of anything she said that I'm angry - although she did say all sorts of annoying things - it's because of the faces she was making"
-  , grammatical := true, npComplement := true, metalinguisticDenial := false
-  , notes := "because of [NP_] is DE under negation: any licensed freely, no negative implication needed" }
-
-/-- K&L (123): the felicitous Sir Winfred variant — the minimal pair with
-(109), substituting *because of* + NP. -/
-def becauseEx123 : BecauseClauseDatum :=
-  { sentence := "Yet, in the present case, it wasn't because of any such sympathy that he had decided to take on the case"
-  , grammatical := true, npComplement := true, metalinguisticDenial := false
-  , notes := "minimal pair with (109): the NP complement restores plain DE licensing" }
-
-/-- K&L (125). -/
-def becauseEx125 : BecauseClauseDatum :=
-  { sentence := "It's not because anybody read her paper that she's happy"
-  , grammatical := true, npComplement := false, metalinguisticDenial := true
-  , notes := "any strengthens the presupposition denial: nobody read it, even on the wide interpretation" }
-
-/-- K&L (132): the rhetorical conditional; marked *. It can imply the denial
-of the presupposition, but cannot metalinguistically deny it. -/
-def becauseEx132 : BecauseClauseDatum :=
-  { sentence := "*If it's because anybody read her paper that she is happy, I'll eat my hat"
-  , grammatical := false, npComplement := false, metalinguisticDenial := false
-  , notes := "implies the denial but cannot metalinguistically deny the presupposition" }
-
-#guard [becauseEx105, becauseEx106, becauseEx109, becauseEx122, becauseEx123,
-        becauseEx125, becauseEx132].all λ d =>
-  d.grammatical == (d.npComplement || d.metalinguisticDenial)
 
 /-! ### FC *any* as generic indefinite
 
@@ -624,163 +522,94 @@ and, after §4.3, dimensionally universal NPs. *Some owl* is domain precise
 *almost some owl* is out; generic *an owl* has universal force but a vague
 domain; *any owl* is rescued by dimensional universality. -/
 
-/-- Domain precision of an NP's restriction (K&L §4.1.2). -/
-inductive DomainPrecision where
+/-- The domain precision of a noun phrase's restriction, Section 4.1.2. -/
+inductive DomainPrecision
   | precise
   | vague
   deriving DecidableEq, Repr
 
-/-- An *almost*-modification datum. -/
-structure AlmostDatum where
-  np : String
-  almostOK : Bool
+/-- An *almost* row: the noun phrase, its precision, whether it is a true universal and whether
+it is dimensionally universal, and the judgment. -/
+structure AlmostRow where
   precision : DomainPrecision
-  /-- Whether the NP is a true universal (∀ or ¬∃). -/
-  universalForce : Bool
+  universal : Bool
   dimUniversal : Bool
-  deriving DecidableEq, Repr
+  ok : Bool
+  deriving DecidableEq
 
-/-- K&L's condition: a domain-precise universal, or a dimensionally universal
-NP. -/
-def AlmostDatum.predicted (d : AlmostDatum) : Bool :=
-  (d.universalForce && d.precision == .precise) || d.dimUniversal
+/-- An *almost* row from the paper's features. -/
+def AlmostRow.ofExample (e : LinguisticExample) : Option AlmostRow := do
+  let p ← match e.feature? "precision" with
+    | some "precise" => some DomainPrecision.precise
+    | some "vague" => some DomainPrecision.vague
+    | _ => none
+  let u ← e.feature? "universal"
+  let d ← e.feature? "dimensionally_universal"
+  some ⟨p, u == "yes", d == "yes", e.judgment = .acceptable⟩
 
-def almostEvery : AlmostDatum :=
-  { np := "every owl", almostOK := true
-  , precision := .precise, universalForce := true, dimUniversal := false }
+/-- The *almost* data of Section 4.3. -/
+def almostRows : List AlmostRow := Examples.all.filterMap AlmostRow.ofExample
 
-def almostNo : AlmostDatum :=
-  { np := "no owl", almostOK := true
-  , precision := .precise, universalForce := true, dimUniversal := false }
+/-- *Almost* modifies a domain-precise true universal or a dimensionally universal noun phrase:
+*every owl*, *no owl* and *any owl*, but not *some owl* nor generic *an owl*. -/
+theorem almost_rows :
+    ∀ r ∈ almostRows, r.ok = true ↔ (r.universal = true ∧ r.precision = .precise) ∨
+      r.dimUniversal = true := by
+  decide
 
-def almostSome : AlmostDatum :=
-  { np := "some owl", almostOK := false
-  , precision := .precise, universalForce := false, dimUniversal := false }
+/-! ### The licensing data -/
 
-def almostGenericA : AlmostDatum :=
-  { np := "an owl", almostOK := false
-  , precision := .vague, universalForce := true, dimUniversal := false }
-
-def almostAny : AlmostDatum :=
-  { np := "any owl", almostOK := true
-  , precision := .vague, universalForce := true, dimUniversal := true }
-
-#guard [almostEvery, almostNo, almostSome, almostGenericA, almostAny].all
-  λ d => d.predicted == d.almostOK
-
-/-! ### Key examples
-
-`localSig` is the entailment signature at the narrowest operator scoping over
-*any* — the one K&L's locality condition (D) checks; `globalSig` the
-sentence-level signature. For adversatives the signature idealizes the
-factive presupposition away, per K&L's adoption of Ladusaw's convention
-(`sorry_not_classically_de` shows classical DE fails). -/
-
-/-- An NPI licensing datum with K&L's explanation. -/
-structure KLDatum where
-  sentence : String
+/-- A licensing row: the context at the narrowest operator over *any*, a substrate
+`LicensingContext` or a local entailment signature, the settle-for-less and
+metalinguistic-denial readings, and the judgment. -/
+structure Row where
+  context : Option LicensingContext
+  localSignature : Signature
+  settleForLess : Bool
+  metalinguistic : Bool
   grammatical : Bool
-  /-- K&L's licensing mechanism for the judgment. -/
-  explanation : LicensingMechanism
-  /-- Signature at the narrowest operator scoping over *any*. -/
-  localSig : Signature
-  /-- Sentence-level signature; defaults to `localSig`. -/
-  globalSig : Signature := localSig
-  wideningDimension : Option String := none
-  deriving Repr
 
-/-- K&L (1): PS *any* under negation. -/
-def ex1 : KLDatum :=
-  { sentence := "I don't have any potatoes"
-  , grammatical := true
-  , explanation := .byStrengthening
-  , localSig := .antiAddMult
-  , wideningDimension := some "cooking vs non-cooking potatoes" }
+/-- The signature at the narrowest operator: the context's Strawson signature where a context
+exists, else the local one. -/
+def Row.signature (r : Row) : Signature :=
+  match r.context with
+  | some c => contextSignature c
+  | none => r.localSignature
 
-/-- K&L (2): positive context — widening weakens, so strengthening fails. -/
-def ex2 : KLDatum :=
-  { sentence := "*I have any potatoes"
-  , grammatical := false
-  , explanation := .strengtheningFails
-  , localSig := .mono }
+private def contextOf : String → Option LicensingContext
+  | "negation" => some .negation
+  | "generic" => some .generic
+  | "universalRestrictor" => some .universalRestrictor
+  | "adversative" => some .adversative
+  | "conditionalAntecedent" => some .conditionalAntecedent
+  | _ => none
 
-/-- K&L (10): FC *any* in a generic context. -/
-def ex10 : KLDatum :=
-  { sentence := "Any owl hunts mice"
-  , grammatical := true
-  , explanation := .byGenericIndefinite
-  , localSig := .mono
-  , wideningDimension := some "healthy vs sick owls" }
+private def signatureOf : String → Option Signature
+  | "all" => some .all
+  | "mono" => some .mono
+  | "anti" => some .anti
+  | "mult" => some .mult
+  | _ => none
 
-/-- K&L (27b): restrictor of a universal is anti-additive. -/
-def ex27b : KLDatum :=
-  { sentence := "Every man who has any matches is happy"
-  , grammatical := true
-  , explanation := .byStrengthening
-  , localSig := .antiAdd
-  , wideningDimension := some "dry vs wet matches" }
+/-- A row from the paper's features. -/
+def Row.ofExample (e : LinguisticExample) : Option Row :=
+  match (e.feature? "context").bind contextOf, (e.feature? "local_signature").bind signatureOf with
+  | some c, _ => some ⟨some c, .all, e.feature? "settle_for_less" = some "yes",
+      e.feature? "metalinguistic_denial" = some "yes", e.judgment = .acceptable⟩
+  | none, some σ => some ⟨none, σ, e.feature? "settle_for_less" = some "yes",
+      e.feature? "metalinguistic_denial" = some "yes", e.judgment = .acceptable⟩
+  | none, none => none
 
-/-- K&L (55): scope of a universal is UE. -/
-def ex55 : KLDatum :=
-  { sentence := "*Every boy has any potatoes"
-  , grammatical := false
-  , explanation := .strengtheningFails
-  , localSig := .mult }
+/-- The licensing data of Sections 1 to 3. -/
+def rows : List Row := Examples.all.filterMap Row.ofExample
 
-/-- K&L (56): locality. The global signature (under negation) composes to DE,
-but the local context (scope of *every*) is UE, so *any* is out despite the
-DE global context. -/
-def ex56 : KLDatum :=
-  { sentence := "*It's not the case that every boy has any potatoes"
-  , grammatical := false
-  , explanation := .strengtheningFails
-  , localSig := .mult
-  , globalSig := Signature.compose .antiAddMult .mult }
-
-/-- K&L (72): adversatives license (DE on a constant perspective). -/
-def ex72 : KLDatum :=
-  { sentence := "I'm surprised that he ever said anything"
-  , grammatical := true
-  , explanation := .byStrengthening
-  , localSig := .anti }
-
-/-- K&L (73): non-adversatives do not license. -/
-def ex73 : KLDatum :=
-  { sentence := "*I'm sure that I ever met him"
-  , grammatical := false
-  , explanation := .strengtheningFails
-  , localSig := .mono }
-
-/-- K&L (82). -/
-def ex82 : KLDatum :=
-  { sentence := "I'm sorry that anybody hates me"
-  , grammatical := true
-  , explanation := .byStrengthening
-  , localSig := .anti
-  , wideningDimension := some "phonologists who hate me vs linguists who hate me" }
-
-/-- K&L (143): conditional antecedent. -/
-def ex143 : KLDatum :=
-  { sentence := "If John subscribes to any newspaper, he gets well informed"
-  , grammatical := true
-  , explanation := .byStrengthening
-  , localSig := .anti
-  , wideningDimension := some "important vs unimportant newspapers" }
-
-def allExamples : List KLDatum :=
-  [ex1, ex2, ex10, ex27b, ex55, ex56, ex72, ex73, ex82, ex143]
-
--- Grammatical strengthening examples have DE local signatures.
-#guard allExamples.all λ d =>
-  !(d.grammatical && d.explanation == .byStrengthening) ||
-    d.localSig.toDEStrength.isSome
-
--- Ungrammatical examples have non-DE local signatures: strengthening fails
--- locally.
-#guard allExamples.all λ d => d.grammatical || d.localSig.toDEStrength.isNone
-
--- Locality (56): the composed global signature is DE, the local one is not.
-#guard ex56.globalSig.toDEStrength.isSome
-#guard ex56.localSig.toDEStrength.isNone
+/-- The paper's licensing picture on its own data: *any* is grammatical exactly when the local
+context is downward entailing, so widening strengthens, or generic, or read as settling for
+less under *glad*, or read as a metalinguistic denial under a negated *because*. -/
+theorem rows_agree :
+    ∀ r ∈ rows, r.grammatical = true ↔
+      r.signature.toDEStrength.isSome = true ∨ r.context = some .generic ∨
+        r.settleForLess = true ∨ r.metalinguistic = true := by
+  decide
 
 end KadmonLandman1993

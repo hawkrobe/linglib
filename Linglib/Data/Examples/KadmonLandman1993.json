@@ -1,0 +1,798 @@
+[
+  {
+    "id": "kl1993_1",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "(1)"
+    },
+    "language": "stan1293",
+    "primaryText": "I don't have any potatoes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "context",
+        "negation"
+      ],
+      [
+        "widening",
+        "cooking potatoes to any potatoes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "kl1993_2",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "(2)"
+    },
+    "language": "stan1293",
+    "primaryText": "*I have any potatoes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "local_signature",
+        "mono"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "kl1993_10",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "(10)"
+    },
+    "language": "stan1293",
+    "primaryText": "Any owl hunts mice.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "context",
+        "generic"
+      ],
+      [
+        "widening",
+        "healthy owls to any owl"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "kl1993_27b",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "(27b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Every man who has any matches is happy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "context",
+        "universalRestrictor"
+      ],
+      [
+        "widening",
+        "dry matches to any matches"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "kl1993_55",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "(55)"
+    },
+    "language": "stan1293",
+    "primaryText": "*Every boy has any potatoes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "local_signature",
+        "mult"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "kl1993_56",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "(56)"
+    },
+    "language": "stan1293",
+    "primaryText": "*It's not the case that every boy has any potatoes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.6"
+      ],
+      [
+        "local_signature",
+        "mult"
+      ]
+    ],
+    "comment": "Locality: the sentence-level context under negation is DE, the local scope of every is not.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "kl1993_72",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "(72)"
+    },
+    "language": "stan1293",
+    "primaryText": "I'm surprised that he ever said anything.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "context",
+        "adversative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "kl1993_73",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "(73)"
+    },
+    "language": "stan1293",
+    "primaryText": "*I'm sure that I ever met him.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "local_signature",
+        "mono"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "kl1993_76B",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "(76B)"
+    },
+    "language": "stan1293",
+    "primaryText": "Be glad we got ANY tickets!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "local_signature",
+        "mono"
+      ],
+      [
+        "settle_for_less",
+        "yes"
+      ]
+    ],
+    "comment": "Settle for less: the narrow wish, better tickets, is preferred but unsatisfiable.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "kl1993_82",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "(82)"
+    },
+    "language": "stan1293",
+    "primaryText": "I'm sorry that anybody hates me.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "context",
+        "adversative"
+      ],
+      [
+        "widening",
+        "phonologists who hate me to linguists who hate me"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "kl1993_88",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "(88)"
+    },
+    "language": "stan1293",
+    "primaryText": "I'm glad ANYBODY likes me!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "local_signature",
+        "mono"
+      ],
+      [
+        "settle_for_less",
+        "yes"
+      ]
+    ],
+    "comment": "Settle for less: the narrow wish, that a phonologist likes me, is preferred but unsatisfiable.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "kl1993_95",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "(95)"
+    },
+    "language": "stan1293",
+    "primaryText": "*I'm sure we got ANY tickets!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.3"
+      ],
+      [
+        "local_signature",
+        "mono"
+      ]
+    ],
+    "comment": "sure has no settle-for-less interpretation, (96) to (98).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "kl1993_105",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "(105)"
+    },
+    "language": "stan1293",
+    "primaryText": "It isn't because Sue said anything bad about me that I'm angry.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4"
+      ],
+      [
+        "local_signature",
+        "all"
+      ],
+      [
+        "metalinguistic_denial",
+        "yes"
+      ]
+    ],
+    "comment": "The negation denies the factive presupposition of because; any strengthens the denial.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "kl1993_106",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "(106)"
+    },
+    "language": "stan1293",
+    "primaryText": "#I didn't help him because I have any sympathy for urban guerillas, although I do sympathize with urban guerillas.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4"
+      ],
+      [
+        "local_signature",
+        "all"
+      ]
+    ],
+    "comment": "The continuation cancels the negative implication, so there is no denial.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "kl1993_109",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "(109)"
+    },
+    "language": "stan1293",
+    "primaryText": "#Yet, in the present case, it wasn't because he had any such sympathy that he had decided to take on the case.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4"
+      ],
+      [
+        "local_signature",
+        "all"
+      ]
+    ],
+    "comment": "The surrounding text cancels the negative implication.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "kl1993_122",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "(122)"
+    },
+    "language": "stan1293",
+    "primaryText": "It isn't because of anything she said that I'm angry.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4"
+      ],
+      [
+        "local_signature",
+        "anti"
+      ]
+    ],
+    "comment": "because of NP under negation is downward entailing: any is licensed without a negative implication.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "kl1993_123",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "(123)"
+    },
+    "language": "stan1293",
+    "primaryText": "Yet, in the present case, it wasn't because of any such sympathy that he had decided to take on the case.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4"
+      ],
+      [
+        "local_signature",
+        "anti"
+      ]
+    ],
+    "comment": "The minimal pair with (109): the NP complement restores DE licensing.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "kl1993_125",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "(125)"
+    },
+    "language": "stan1293",
+    "primaryText": "It's not because anybody read her paper that she's happy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4"
+      ],
+      [
+        "local_signature",
+        "all"
+      ],
+      [
+        "metalinguistic_denial",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "kl1993_132",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "(132)"
+    },
+    "language": "stan1293",
+    "primaryText": "*If it's because anybody read her paper that she is happy, I'll eat my hat.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.4"
+      ],
+      [
+        "local_signature",
+        "all"
+      ]
+    ],
+    "comment": "Implies the denial of the presupposition but cannot metalinguistically deny it.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "kl1993_143",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "(143)"
+    },
+    "language": "stan1293",
+    "primaryText": "If John subscribes to any newspaper, he gets well informed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.5"
+      ],
+      [
+        "context",
+        "conditionalAntecedent"
+      ],
+      [
+        "widening",
+        "important newspapers to any newspaper"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "kl1993_almost_every",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "4.3"
+    },
+    "language": "stan1293",
+    "primaryText": "almost every owl",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "np",
+        "every owl"
+      ],
+      [
+        "precision",
+        "precise"
+      ],
+      [
+        "universal",
+        "yes"
+      ],
+      [
+        "dimensionally_universal",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "kl1993_almost_no",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "4.3"
+    },
+    "language": "stan1293",
+    "primaryText": "almost no owl",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "np",
+        "no owl"
+      ],
+      [
+        "precision",
+        "precise"
+      ],
+      [
+        "universal",
+        "yes"
+      ],
+      [
+        "dimensionally_universal",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "kl1993_almost_some",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "4.3"
+    },
+    "language": "stan1293",
+    "primaryText": "almost some owl",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "np",
+        "some owl"
+      ],
+      [
+        "precision",
+        "precise"
+      ],
+      [
+        "universal",
+        "no"
+      ],
+      [
+        "dimensionally_universal",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "kl1993_almost_an",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "4.3"
+    },
+    "language": "stan1293",
+    "primaryText": "almost an owl",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "np",
+        "an owl"
+      ],
+      [
+        "precision",
+        "vague"
+      ],
+      [
+        "universal",
+        "yes"
+      ],
+      [
+        "dimensionally_universal",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "kl1993_almost_any",
+    "source": {
+      "bibkey": "kadmon-landman-1993",
+      "paperLabel": "4.3"
+    },
+    "language": "stan1293",
+    "primaryText": "almost any owl",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3"
+      ],
+      [
+        "np",
+        "any owl"
+      ],
+      [
+        "precision",
+        "vague"
+      ],
+      [
+        "universal",
+        "yes"
+      ],
+      [
+        "dimensionally_universal",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  }
+]
