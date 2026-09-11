@@ -6,53 +6,50 @@ import Linglib.Features.Reflex
 import Linglib.Data.Examples.HartmannZimmermann2007
 
 /-!
-# Hausa focus strategies and pragmatic types
+# Hartmann and Zimmermann (2007): In place, out of place: Focus in Hausa
 
-Formalises the [hartmann-zimmermann-2007] argument that Hausa is a
-counterexample to the universalist claims that focus marking is
-obligatory and that focus position determines pragmatic
-interpretation.
+This file formalizes [hartmann-zimmermann-2007]'s argument that Hausa is a counterexample to two
+universalist claims: that focus is always marked, and that the position of a focus determines
+its pragmatic interpretation. Focus is realized in situ or ex situ, and the paper's §3.2 matrix
+crosses the two strategies with four pragmatic uses, new-information, corrective, contrastive and
+selective, every cell of which is licensed (`hzMatrix`); `strategy_does_not_determine_pragType`
+refutes the Meaning-Structure Mapping Hypothesis of their (21), the label following
+[vallduvi-vilkuna-1998], stated as a failure of `Function.FactorsThroughOn`, so that the
+Hungarian and Hausa verdicts differ on one set-theoretic predicate. In-situ new-information
+focus carries no morphosyntactic reflex, and the §5 pilot finds no prosodic one either, so
+`hausa_falsifies_UniversalBFR` refutes the Basic Focus Rule of [selkirk-1995]; focused subjects,
+by contrast, always front (§2.2.2). Exhaustivity is not structural: the particle *kawài* 'only'
+exhaustifies over the resolved contrast set in either position.
 
 ## Implementation notes
 
-The paper states the hypothesis it refutes as (21) "Meaning-Structure
-Mapping Hypothesis" (§3.1), the label following
-[vallduvi-vilkuna-1998]'s phrase "the meaning-structure mapping"; the
-shared schema is `Function.FactorsThroughOn`
-(`Core.Relation.FactorsThroughOn`), making the Hungarian/Hausa contrast
-a difference of verdict on a single set-theoretic predicate. The §1.2
-control taxonomy (`Antecedent`, `Use`) and its factor-through theorems
-live in `Semantics/Focus/Control.lean`.
-
-Subject foci in TAMs lacking a Relative form (future, habitual,
-subjunctive) are "syntactically and morphologically unmarked" (p. 4);
-the paper analyses them as string-vacuously ex-situ, so
-`IsHausaLicensed` bans in-situ subjects unconditionally and
-`exSitu_subject_subjunctive` is licensed yet reflex-free.
-
-§3.3's corpus tendencies stay prose: answers to *wh*-questions are
-mostly in-situ (99 vs 25) while selective/corrective/contrastive foci
-are >90% ex-situ (154 vs 12), but "none of the discussed instances of
-focus is categorically excluded from occurring either in situ or ex
-situ" — only the categorical no-determination claim is a theorem.
+The §1.2 control taxonomy of uses and its factor-through theorems live in
+`Semantics/Focus/Control.lean`, and each cell's pragmatic type is computed from its controlling
+context rather than tagged. Subject foci in TAMs lacking a Relative form (future, habitual,
+subjunctive) are syntactically and morphologically unmarked, which the paper analyses as
+string-vacuous fronting, so the licensing predicate bans in-situ subjects unconditionally and the
+subjunctive subject focus is licensed yet reflex-free. The §3.3 corpus tendencies stay in prose:
+answers to *wh*-questions are mostly in situ (99 against 25) and selective, corrective and
+contrastive foci mostly ex situ (154 against 12), but no use is categorically excluded from
+either position, and only that categorical claim is a theorem. Locators follow the authors'
+prepublication manuscript of the chapter.
 
 ## TODO
 
-* The Kiss-side semantic interpretation of `FocusType.IsExhaustive`
-  (obligatory covert `onlyVia`) for the like-for-like §3.2.5 contrast —
-  needs a semantic layer in `Kiss1998.lean`.
-* §2.3 multiple foci: co-occurrence of one ex-situ focus with in-situ
-  foci (18a-c).
-* §4 focus pied-piping / partial focus movement and the (47) "Ex-Situ
-  Generalisation, final version" need a structured-meaning overlap
-  predicate.
-* §5 prosodic pilot data and §6.1 emphasis motivation are quantitative
-  tendencies, currently in docstring prose only.
+* The Kiss-side semantic interpretation of exhaustive focus (obligatory covert *only*) for the
+  like-for-like contrast with Hungarian, which needs a semantic layer in `Kiss1998.lean`.
+* §2.3 multiple foci: one ex-situ focus with in-situ foci (their (18a–c)).
+* §4 focus pied-piping and partial focus movement, and the final Ex-Situ Generalisation of their
+  (47), which need a structured-meaning overlap predicate.
+* §5 prosodic pilot data and §6.1 emphasis motivation are quantitative tendencies, in prose only.
 
 ## References
 
-* [hartmann-zimmermann-2007], [newman-2000], [uhmann-1991],
-  [selkirk-1995], [vallduvi-vilkuna-1998].
+* [hartmann-zimmermann-2007]
+* [newman-2000]
+* [uhmann-1991]
+* [selkirk-1995]
+* [vallduvi-vilkuna-1998]
 -/
 
 namespace HartmannZimmermann2007
@@ -118,7 +115,7 @@ theorem ctx_resolves (u : Use) :
     (ctx u).Resolves answer.ordinary answer.alternatives :=
   use_model_resolves (d := Alt.ans) (d' := Alt.alt) nofun u
 
-/-! ## Exhaustive focus (§3.2.5)
+/-! ## Exhaustive focus (§3.2, their (32))
 
 Exhaustivity is not structurally encoded: it is induced by focus
 particles (*kawài* 'only'; *nee/cee* per the paper's fn. 3) over the
@@ -132,7 +129,7 @@ private def exhAnswer (u : Use) : Set Alt :=
 
 /-- The exhaustified answer computes to the bare true answer, uniformly
 across the four uses: exhaustification consumes the resolved contrast
-set and prejacent, never the strategy — the §3.2.5 point that
+set and prejacent, never the strategy — the §3.2 point that
 exhaustive readings are available in both positions. -/
 theorem exhAnswer_eq (u : Use) : exhAnswer u = {Alt.ans} := by
   have key : onlyVia ({{Alt.ans}, {Alt.alt}} : Focus.Interpretation.PropFocusValue Alt)
@@ -172,22 +169,22 @@ private def mkInSituUtt (pac : PAC) (g : Gender) (sg : Bool)
 
 /-- Ex-situ new-information focus ((22), `Examples.ex22`). -/
 def exSitu_newInfo : FocusUtterance :=
-  mkExSituUtt cont_3sf_R .masculine true true (fun _ => rfl) (ctx .newInfo)
+  mkExSituUtt cont_3sf_R .masculine true true (λ _ => rfl) (ctx .newInfo)
 
 /-- Ex-situ corrective focus on a feminine subject ((24),
 `Examples.ex24`). -/
 def exSitu_corrective : FocusUtterance :=
-  mkExSituUtt cmp_3sf_R .feminine true true (fun _ => rfl) (ctx .corrective) .subject
+  mkExSituUtt cmp_3sf_R .feminine true true (λ _ => rfl) (ctx .corrective) .subject
 
 /-- Ex-situ selective focus, no stabilizer ((29), `Examples.ex29`). -/
 def exSitu_selective : FocusUtterance :=
-  mkExSituUtt cont_1sg_R .masculine true false (fun _ => rfl) (ctx .selective)
+  mkExSituUtt cont_1sg_R .masculine true false (λ _ => rfl) (ctx .selective)
 
 /-- Ex-situ contrastive focus, no stabilizer ((27), `Examples.ex27`);
 the paper's 4sg impersonal *akèe* is approximated with the 3sg.M
 Relative continuous. -/
 def exSitu_contrastive : FocusUtterance :=
-  mkExSituUtt cont_3sm_R .masculine true false (fun _ => rfl) (ctx .contrastive)
+  mkExSituUtt cont_3sm_R .masculine true false (λ _ => rfl) (ctx .contrastive)
 
 /-- In-situ new-information focus ((23), `Examples.ex23`). -/
 def inSitu_newInfo : FocusUtterance := mkInSituUtt cmp_1sg_G .masculine true (ctx .newInfo)
@@ -221,7 +218,7 @@ types. -/
 theorem strategy_does_not_determine_pragType :
     ¬ Function.FactorsThroughOn
         FocusUtterance.pragType
-        (fun u : FocusUtterance => u.cfg.strategy)
+        (λ u : FocusUtterance => u.cfg.strategy)
         {u | u.IsHausaLicensed} := by
   rw [Function.not_factorsThroughOn_iff_exists_witness]
   exact ⟨exSitu_newInfo, exSitu_corrective,
@@ -232,7 +229,7 @@ theorem strategy_does_not_determine_pragType :
 theorem strategy_underdetermines_pragType_inSitu :
     ¬ Function.FactorsThroughOn
         FocusUtterance.pragType
-        (fun u : FocusUtterance => u.cfg.strategy)
+        (λ u : FocusUtterance => u.cfg.strategy)
         {u | u.IsHausaLicensed ∧ u.cfg.strategy = .inSitu} := by
   rw [Function.not_factorsThroughOn_iff_exists_witness]
   exact ⟨inSitu_newInfo, inSitu_corrective,
@@ -255,7 +252,7 @@ theorem starred_inSitu_subject_not_IsHausaLicensed :
 
 /-- The grammatical ex-situ subject focus ((17 A1), `Examples.ex17a1`). -/
 def licensed_exSitu_subject : FocusUtterance :=
-  mkExSituUtt cont_3sm_R .masculine true true (fun _ => rfl) (ctx .newInfo) .subject
+  mkExSituUtt cont_3sm_R .masculine true true (λ _ => rfl) (ctx .newInfo) .subject
 
 theorem licensed_exSitu_subject_IsHausaLicensed :
     licensed_exSitu_subject.IsHausaLicensed := by decide
@@ -290,7 +287,7 @@ def UniversalBFR : Prop :=
 /-- (23) is licensed and reflex-free; the §5 pilot finds no prosodic
 reflex either. -/
 theorem hausa_falsifies_UniversalBFR : ¬ UniversalBFR :=
-  fun h => absurd (h inSitu_newInfo (by decide)) (by decide)
+  λ h => absurd (h inSitu_newInfo (by decide)) (by decide)
 
 /-- The subject-side counterexample (the (8) pattern). -/
 theorem exSitu_subject_subjunctive_no_reflex :
@@ -321,9 +318,9 @@ receives an overt reflex — the same `EveryTargetOvert` shape
 Tangale refutes in `HartmannZimmermann2004.lean`. -/
 theorem hausa_refutes_perceptibility :
     ¬ Features.EveryTargetOvert
-        (fun u : {u : FocusUtterance // u.IsHausaLicensed} =>
+        (λ u : {u : FocusUtterance // u.IsHausaLicensed} =>
           Marking.mk u.1.focused u.1.reflexes) :=
-  fun h => absurd
+  λ h => absurd
     ((hasMorphosyntacticReflex_iff inSitu_newInfo).mpr
       (h ⟨inSitu_newInfo, by decide⟩))
     (by decide)
