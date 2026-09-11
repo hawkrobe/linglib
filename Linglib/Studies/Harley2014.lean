@@ -11,52 +11,36 @@ import Linglib.Syntax.Clause.Arguments
 import Linglib.Studies.Marantz1991
 
 /-!
-# On the identity of roots
+# Harley (2014): On the identity of roots
 
-[harley-2014] argues that a root terminal of List 1 is individuated neither by
-its form nor by its meaning but by an index. Hiaki root suppletion (√322:
-*vuite*~*tenne* 'run') shows that roots must already be distinct when their
-Vocabulary Items compete, and that phonologically individuated roots would
-turn suppletion into rewriting; caboodle items (*cahoot*) show that List-3
-interpretation can be bound to one frame with no Elsewhere, so a root is not
-a concept either. What remains is the index, on which List 2 and List 3 are
-both keyed.
-
-## Main definitions
-
-* `site`: a suppletive root's insertion site in a clause
-  (`Clause.Arguments Number`) — its index and the number of the internal
-  argument, the local conditioning environment of §3.3.
-* `vocabulary`: the Hiaki items of (3a), (3f), (3g): a singular-conditioned
-  form and an Elsewhere form per root ((14), fn. 16).
-* `cahootLF`: the List-3 entry of (16), one frame and no Elsewhere.
-* `realization`: List 2 as a `Morphology.Realization`.
-
-## Main results
-
-* `run_isProperlySuppletive`, `run_hasSuppletiveCore`: one index, two
-  unrelated forms — individuation is not phonological (§2.2).
-* `cahoot_interp_gap`: interpreted in its frame, uninterpreted elsewhere —
-  individuation is not semantic (§2.3).
-* `suppletion_not_agreement`: conditioning by the internal argument is an
-  ergative–absolutive pattern in a nominative–accusative language, which
-  [bobaljik-2008]'s generalization rules out for agreement, so it is local
-  Vocabulary-Item competition rather than agreement (§3.3).
-* `index_local`: a suppletive item blocks nothing at another index — the
-  thought experiment of §2.1.
-* `unergative_elsewhere`: an intransitive whose sole argument is external is
-  spelled out by the Elsewhere form whatever its number — the paper's
-  prediction that the intransitive suppletive verbs are unaccusative.
+This file formalizes [harley-2014]'s argument that a root of List 1 is individuated neither by
+its form nor by its meaning but by an index, on which the Vocabulary Items of List 2 and the
+interpretations of List 3 are both keyed. Hiaki root suppletion (√322, *vuite* ~ *tenne* 'run')
+shows that roots must already be distinct when their items compete, since an item conditioned
+by number would otherwise block every less specified root, and that phonologically individuated
+roots would turn suppletion into rewriting; the caboodle item *cahoot* shows an interpretation
+bound to one frame with no Elsewhere, so a root is not a concept either. `spellout` realizes a
+root at its insertion site, the index with the number of the internal argument below, by the
+Subset Principle over the Hiaki vocabulary; `run_isProperlySuppletive` and `cahoot_interp_gap`
+are the two flanks. `suppletion_not_agreement` is §3.3's argument that conditioning by the
+internal argument, an ergative–absolutive pattern in a nominative–accusative language, is
+Vocabulary-Item competition rather than agreement, and `unergative_elsewhere` its prediction
+that the suppletive intransitives are unaccusative.
 
 ## Implementation notes
 
-Footnote 16 settles the Elsewhere direction: the impersonal passive, whose
-argument is syntactically absent, surfaces as *tenne*, so *tenne* is the
-Elsewhere form and *vuite* is conditioned by a singular internal argument;
-(7) is the paper's first pass with the roles reversed. The paper indexes only
-√322 and √548; the other indices here are arbitrary distinct ones. The
-caboodle frame of (16), `[in [[√ n]nP -PL]DP]PP`, is recorded by its
-categorizing head.
+Footnote 16 settles the Elsewhere direction: the impersonal passive, whose argument is
+syntactically absent, surfaces as *tenne*, so *tenne* is the Elsewhere form and *vuite* is
+conditioned by a singular internal argument, as in the paper's (14); its (7) is a first pass with
+the roles reversed. The paper indexes only √322 and √548, the other indices here are arbitrary
+distinct ones, and the caboodle frame of (16) is recorded by its categorizing head. Example
+numbers follow the revised manuscript (LingBuzz 001527); the paper's Hiaki examples are the rows
+of `Data/Examples/Harley2014.json`.
+
+## References
+
+* [harley-2014]
+* [bobaljik-2008]
 -/
 
 namespace Harley2014
@@ -95,7 +79,7 @@ inductive SiteFeature where
 internal argument is the terminal below; the external argument is not in the
 local environment (§3.3). -/
 def site (c : Arguments Number) (r : Root) : Neighborhood (List SiteFeature) :=
-  ⟨[.root r], ((c .internal).map fun n => ([.internal n] : List SiteFeature)).toList, []⟩
+  ⟨[.root r], ((c .internal).map λ n => ([.internal n] : List SiteFeature)).toList, []⟩
 
 /-! ### List 2: the suppletive Vocabulary Items -/
 
@@ -214,7 +198,7 @@ List-3 map. -/
 /-- List 2 as a `Realization`: a root's Elsewhere-selected exponent as a
 singleton fiber, `∅` at an index with no item. -/
 def realization : Morphology.Realization Root (Arguments Number) String :=
-  ⟨fun r c => (spellout c r).elim ∅ ({·})⟩
+  ⟨λ r c => (spellout c r).elim ∅ ({·})⟩
 
 /-- √322 realizes two nonempty, distinct fibers across two licensed clauses —
 the *go*/*went* case the predicate names (§2.2). -/
@@ -232,7 +216,7 @@ theorem run_isProperlySuppletive : realization.IsProperlySuppletive run := by
 /-- Under the identity core-extraction, *vuite*/*tenne* alternate at the core
 itself — `Morphology.Root.HasSuppletiveCore`, suppletion proper rather than
 affixal inflection. -/
-theorem run_hasSuppletiveCore : Morphology.Root.HasSuppletiveCore realization (fun s => {s}) run :=
+theorem run_hasSuppletiveCore : Morphology.Root.HasSuppletiveCore realization (λ s => {s}) run :=
   (Morphology.Root.hasSuppletiveCore_singleton realization run).mpr
     (realization.isSuppletive_iff.mpr (Or.inr run_isProperlySuppletive))
 
