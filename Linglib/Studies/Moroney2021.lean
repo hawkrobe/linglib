@@ -20,7 +20,7 @@ typology had no slot for. Because Shan has no articles, no covert type-shift is 
 only add spatial content. The cell is derived from `Shan.Determiners.inventory`, the
 bare-noun reading distribution from `MeaningPreservation.selectShift` over
 `Shan.Nouns.blocking`, and the refutation is stated against
-`Jenks2018.jenksAttestedStrategies`.
+`Jenks2018.attested`.
 
 Her comparison of Shan and English bare nouns (Table 2.3) finds them alike on the
 low-scope existential, kind and generic readings, alike in lacking a high-scope existential,
@@ -137,7 +137,7 @@ theorem english_german_anaphoric_realized :
 /-- Shan's derived strategy falls outside [jenks-2018]'s attested set — the fourth,
 unmarked cell. -/
 theorem shan_refutes_jenks_typology :
-    Shan.Determiners.inventory.markingStrategy ∉ Jenks2018.jenksAttestedStrategies := by
+    Shan.Determiners.inventory.markingStrategy ∉ Jenks2018.attested := by
   rw [Shan.Determiners.marking]; decide
 
 /-! ### Shan count nouns are cumulative but not homogeneous -/
