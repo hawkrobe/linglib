@@ -16,522 +16,214 @@ import Linglib.Fragments.Romance.French.Relativization
 import Linglib.Fragments.Slavic.Russian.Relativization
 import Linglib.Fragments.Tagalog.Relativization
 import Linglib.Fragments.Turkish.Relativization
-import Linglib.Fragments.Yoruba.Relativization
 
 /-!
-# Keenan & Comrie (1977) [keenan-comrie-1977]
+# Keenan and Comrie (1977): Noun Phrase Accessibility and Universal Grammar
 
-Noun Phrase Accessibility and Universal Grammar. Linguistic Inquiry 8(1): 63–99.
+This file formalizes the Hierarchy Constraints of [keenan-comrie-1977] on the Accessibility
+Hierarchy of grammatical positions, subject > direct object > indirect object > oblique >
+genitive > object of comparison: a language must relativize subjects, every relative-clause
+strategy applies to a continuous segment of the hierarchy, and a strategy may cease at any
+lower point (Section 1.2). A strategy is primary when it relativizes subjects, and the paper's
+Primary Relativization Constraint, that a primary strategy reaching a low position reaches
+every higher one, follows from continuity: the positions a continuous primary strategy covers
+form an upper set of the hierarchy order (`isUpperSet_of_isContinuous`, `prc_of_hc2`).
 
-Formalizes the three **Hierarchy Constraints** (HCs) and the derived
-**Primary Relativization Constraint** (PRC) from [keenan-comrie-1977],
-verified against a subset of the paper's Table 1 data (pp. 76-79).
+The constraints are then checked on the seventeen languages of Table 1 whose relativization
+markers the fragments record (`hc1_verified`, `hc2_verified`); each position from subject to
+genitive is attested as the cut-off of a primary strategy, the paper's Section 1.3 argument for
+the third constraint (`each_upper_cutoff_attested`); and Toba Batak's gap at direct object
+between two continuous strategies shows why the constraints are stated per strategy rather than
+per language (`toba_batak_do_gap`). The per-language theorems read Table 1 off the fragments.
 
-## Architecture
+## Implementation notes
 
-This file derives K&C's typological theorems **directly from**
-`Fragments.{Lang}.relMarkers : List Marker`, the per-language
-data layer encoding actual linguistic markers (particles, pronouns,
-verbal suffixes). No intermediate `KCProfile`/`StrategyEntry` schema —
-predicates and aggregations are stated over `List Marker`
-directly, projecting through `Marker.{positions,
-bearsCaseMarking, rcPosition}` as needed.
+The hierarchy order is the substrate's `AHPosition` linear order, the subject its top; a
+strategy is a fragment `Marker` with the positions it covers, and its continuity is
+`Marker.IsContinuous`, order-connectedness of the covered set. Modern Standard Arabic
+contributes the two markers Table 1 records rather than the fragment's full inventory, and the
+languages the fragments add after 1977 are not consulted.
 
-The Fragment files cite [keenan-comrie-1979] (the per-language
-exemplification appendix originally intended for publication with K&C
-1977 — Language 55(2): 333–351) inline where its sentence-level examples
-back the descriptive marker data.
+## References
 
-## Hierarchy Constraints
-
-The paper proposes three constraints on how languages form relative clauses,
-building on the Accessibility Hierarchy (AH):
-
-    SU > DO > IO > OBL > GEN > OCOMP
-
-- **HC₁** (p. 67): A language must be able to relativize subjects.
-- **HC₂ (Continuity)** (p. 67): Any RC-forming strategy must apply to a
-  continuous segment of the AH.
-- **HC₃ (Cut-off)** (p. 67): Strategies that apply at one point may cease
-  at any lower point.
-
-From HC₁ + HC₂, the **Primary Relativization Constraint** (p. 68)
-follows: if a language's primary strategy (one that covers subjects) can
-apply to a low position N, it can apply to all positions above N.
-Non-primary strategies need not satisfy this — they may cover a continuous
-segment that excludes subjects (e.g., the +case strategy covering IO–OCOMP
-but not SU–DO in Welsh and Arabic, p. 70 + Table 1 p. 76).
-
-## Multi-Strategy Profiles
-
-The paper's key empirical contribution is showing that languages typically
-have multiple relativization strategies, each covering a different contiguous
-segment of the AH. The ±case distinction (whether the relative element bears
-case marking) is the primary parameter distinguishing strategies.
-
-## Sample
-
-Seventeen of the paper's Table 1 languages plus Yoruba (post-1977) cover
-the key patterns: gap-to-resumptive split (Welsh, Hebrew, Arabic, Toba
-Batak; prenominal and reaching OCOMP in Mandarin; below a participial
-cut-off in Turkish), multi-strategy with prenominal RCs (Korean, Finnish,
-Japanese, German), single-strategy (Malagasy, Basque, French, Russian),
-subject-only with voice-mediated promotion (Malagasy, Tagalog),
-correlative (Hindi), and per-position strategy split with
-serial-verb-mediated obliques (Yoruba). Every AH position from SU to GEN
-is attested as a primary cut-off (`each_upper_cutoff_attested`).
+* [keenan-comrie-1977]
 -/
 
 namespace KeenanComrie1977
 
 open RelativeClause
 
--- ============================================================================
--- § 1: Predicates over List Marker
--- ============================================================================
+/-! ### The Hierarchy Constraints (Section 1.2) -/
 
-/-- HC₁: a language can relativize subjects iff some marker covers SU. -/
-def SatisfiesHC1 (markers : List Marker) : Prop :=
-  ∃ m ∈ markers, m.Covers .subject
+/-- HC₁: some strategy relativizes subjects. -/
+def SatisfiesHC1 (markers : List Marker) : Prop := ∃ m ∈ markers, m.IsPrimary
 
-instance (markers : List Marker) : Decidable (SatisfiesHC1 markers) := by
-  unfold SatisfiesHC1; infer_instance
+instance (markers : List Marker) : Decidable (SatisfiesHC1 markers) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- HC₂: every marker covers a contiguous segment of the AH. -/
-def SatisfiesHC2 (markers : List Marker) : Prop :=
-  ∀ m ∈ markers, m.IsContinuous
+/-- HC₂: every strategy covers a continuous segment of the hierarchy. -/
+def SatisfiesHC2 (markers : List Marker) : Prop := ∀ m ∈ markers, m.IsContinuous
 
-instance (markers : List Marker) : Decidable (SatisfiesHC2 markers) := by
-  unfold SatisfiesHC2; infer_instance
+instance (markers : List Marker) : Decidable (SatisfiesHC2 markers) :=
+  inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
-/-- PRC: every primary marker is upward-closed on the AH. If marker `m`
-    is primary and covers position `pos`, then `m` covers every position
-    above `pos`. This is the paper's Primary Relativization Constraint
-    (p. 68), which follows from HC₂ for primary strategies (see
-    `prc_from_hc2` below for the general derivation). -/
+/-- The Primary Relativization Constraint: a primary strategy covers an upper set of the
+hierarchy, every position above one it reaches. -/
 def SatisfiesPRC (markers : List Marker) : Prop :=
-  ∀ m ∈ markers, m.IsPrimary →
-    ∀ pos ∈ AHPosition.all, m.Covers pos →
-      ∀ above ∈ AHPosition.all, above.rank > pos.rank → m.Covers above
+  ∀ m ∈ markers, m.IsPrimary → IsUpperSet {p | m.Covers p}
 
-instance (markers : List Marker) : Decidable (SatisfiesPRC markers) := by
-  unfold SatisfiesPRC; infer_instance
+/-- The subject is the top of the hierarchy. -/
+theorem le_subject (p : AHPosition) : p ≤ .subject := by cases p <;> decide
 
-/-- The lowest AH position covered by any marker in the list (i.e., the
-    deepest the language can reach). Returns `.subject` if even SU is
-    uncovered (vacuously, since HC₁ would be violated). -/
-def lowestCovered (markers : List Marker) : AHPosition :=
-  let coversAny (pos : AHPosition) := markers.any (fun m => decide (m.Covers pos))
-  if coversAny .objComparison then .objComparison
-  else if coversAny .genitive then .genitive
-  else if coversAny .oblique then .oblique
-  else if coversAny .indirectObject then .indirectObject
-  else if coversAny .directObject then .directObject
-  else .subject
+/-- A continuous strategy that relativizes subjects covers an upper set: from a covered
+position up to the subject everything is covered. -/
+theorem isUpperSet_of_isContinuous {m : Marker} (hc : m.IsContinuous) (hp : m.IsPrimary) :
+    IsUpperSet {p | m.Covers p} :=
+  λ _ b hab ha => hc.out ha hp ⟨hab, le_subject b⟩
 
--- ============================================================================
--- § 2: Sample (per-language Fragment data)
--- ============================================================================
+/-- The Primary Relativization Constraint follows from HC₂ and the definition of primary, as
+the paper derives it. -/
+theorem prc_of_hc2 {markers : List Marker} (h : SatisfiesHC2 markers) : SatisfiesPRC markers :=
+  λ m hm hp => isUpperSet_of_isContinuous (h m hm) hp
 
-/-! Per-language abbrevs over Fragment marker lists. The original
-17-language sample from the paper plus Yoruba (added later via
-[awobuluyi-1978] + [keenan-comrie-1979]). -/
+/-- The lowest position a strategy reaches, its cut-off. -/
+def cutoff (m : Marker) : Option AHPosition := m.positions.min?
 
-abbrev english   := English.relMarkers
-abbrev welsh     := Welsh.relMarkers
-/- The two MSA markers [keenan-comrie-1977] Table 1 records: the
-   definite-headed pair (`relAlladhi` + `relResumptive`). MSA additionally
-   has indefinite-headed asyndetic markers per [ryding-2005] §14.3,
-   §14.4.2, exposed in the Fragment as `relAsyndeticGap` and
-   `relAsyndeticResumptive` — but K&C 1977 does not record them, so this
-   study works with the K&C-documented subset. -/
-abbrev arabic    : List Marker :=
-  [Arabic.ModernStandard.relAlladhi,
-   Arabic.ModernStandard.relResumptive]
-abbrev hebrew    := Hebrew.relMarkers
+/-- The lowest position any strategy of a language reaches. -/
+def lowestCovered (markers : List Marker) : Option AHPosition :=
+  (markers.flatMap (·.positions)).min?
+
+/-! ### The sample (Table 1)
+
+The seventeen languages of Table 1 whose markers the fragments record. -/
+
+abbrev english := English.relMarkers
+abbrev welsh := Welsh.relMarkers
+/-- The two Modern Standard Arabic markers Table 1 records, the definite-headed relative
+pronoun with a gap and with a resumptive; the fragment's indefinite-headed asyndetic markers
+are not in the paper. -/
+abbrev arabic : List Marker :=
+  [Arabic.ModernStandard.relAlladhi, Arabic.ModernStandard.relResumptive]
+abbrev hebrew := Hebrew.relMarkers
 abbrev tobaBatak := TobaBatak.relMarkers
-abbrev korean    := Korean.relMarkers
-abbrev finnish   := Finnish.relMarkers
-abbrev malagasy  := Malagasy.relMarkers
-/-- K&C's "Chinese (spoken Pekingese)" (Table 1 pp. 76-79). -/
-abbrev mandarin  := Mandarin.relMarkers
-abbrev basque    := Basque.relMarkers
-abbrev french    := French.relMarkers
-abbrev german    := German.relMarkers
-/-- Table 1's "Hindi". -/
-abbrev hindi     := HindiUrdu.relMarkers
-abbrev japanese  := Japanese.relMarkers
-abbrev russian   := Russian.relMarkers
-abbrev tagalog   := Tagalog.relMarkers
-abbrev turkish   := Turkish.relMarkers
-abbrev yoruba    := Yoruba.relMarkers
+abbrev korean := Korean.relMarkers
+abbrev finnish := Finnish.relMarkers
+abbrev malagasy := Malagasy.relMarkers
+/-- Table 1's Chinese, spoken Pekingese. -/
+abbrev mandarin := Mandarin.relMarkers
+abbrev basque := Basque.relMarkers
+abbrev french := French.relMarkers
+abbrev german := German.relMarkers
+/-- Table 1's Hindi. -/
+abbrev hindi := HindiUrdu.relMarkers
+abbrev japanese := Japanese.relMarkers
+abbrev russian := Russian.relMarkers
+abbrev tagalog := Tagalog.relMarkers
+abbrev turkish := Turkish.relMarkers
 
-/-- The 17-language sub-sample from the original paper Table 1 (pp. 76-79). -/
-def originalSample : List (List Marker) :=
-  [english, welsh, arabic, hebrew, tobaBatak, korean, finnish, malagasy, mandarin,
-   basque, french, german, hindi, japanese, russian, tagalog, turkish]
+/-- The sample. -/
+def sample : List (List Marker) :=
+  [english, welsh, arabic, hebrew, tobaBatak, korean, finnish, malagasy, mandarin, basque,
+    french, german, hindi, japanese, russian, tagalog, turkish]
 
-/-- The original 17-language sample plus Yoruba (the only post-1977
-    addition; refutes one of the paper's implicit ±case generalizations
-    — see `yoruba_refutes_minus_case_covers_subjects` below). -/
-def allSamples : List (List Marker) :=
-  originalSample ++ [yoruba]
+/-- HC₁ holds of every language in the sample. -/
+theorem hc1_verified : ∀ markers ∈ sample, SatisfiesHC1 markers := by decide
 
-theorem sample_size : allSamples.length = 18 := by decide
+/-- HC₂ holds of every strategy in the sample. -/
+theorem hc2_verified : ∀ markers ∈ sample, SatisfiesHC2 markers := by decide
 
--- ============================================================================
--- § 3: Hierarchy Constraint Verification on Sample
--- ============================================================================
+/-- Hence so does the Primary Relativization Constraint. -/
+theorem prc_verified : ∀ markers ∈ sample, SatisfiesPRC markers :=
+  λ _ h => prc_of_hc2 (hc2_verified _ h)
 
-/-- **HC₁** holds: every language in the sample can relativize subjects. -/
-theorem hc1_verified :
-    ∀ markers ∈ allSamples, SatisfiesHC1 markers := by decide
-
-/-- **HC₂** holds: every marker in every sampled language covers a
-    contiguous AH segment. -/
-theorem hc2_verified :
-    ∀ markers ∈ allSamples, SatisfiesHC2 markers := by decide
-
-/-- **PRC** holds: every primary marker satisfies upward closure on the AH. -/
-theorem prc_verified :
-    ∀ markers ∈ allSamples, SatisfiesPRC markers := by decide
-
-/-- Restating HC₁ in terms of `Marker.IsPrimary`: every language
-    has at least one primary marker. -/
-theorem every_language_has_primary :
-    ∀ markers ∈ allSamples, ∃ m ∈ markers, m.IsPrimary := by decide
-
-/-- **The PRC is order upward-closure**: in any PRC-satisfying language, a
-    primary marker's coverage is an `IsUpperSet` on the `AHPosition` scale
-    order. Keenan & Comrie's Primary Relativization Constraint *is* the
-    order-theoretic "upper set" property — the same `IsUpperSet` that
-    `Core.Order.Markedness` uses for differential-marking cutoffs — rather
-    than a bespoke rank predicate. -/
-theorem isUpperSet_of_satisfiesPRC {markers : List Marker} (h : SatisfiesPRC markers)
-    {m : Marker} (hm : m ∈ markers) (hp : m.IsPrimary) :
-    IsUpperSet {p : AHPosition | m.Covers p} := by
-  intro a b hab ha
-  rcases eq_or_lt_of_le hab with rfl | hlt
-  · exact ha
-  · exact h m hm hp a (by cases a <;> decide) ha b (by cases b <;> decide) hlt
-
--- ============================================================================
--- § 4: Cross-Linguistic Patterns
--- ============================================================================
-
-/-- In the original 17-language sub-sample, every -case marker covers
-    subjects. The -case (gap/deletion) strategy is always primary when
-    present in those languages.
-
-    **REFUTED by Yoruba** — see `yoruba_refutes_minus_case_covers_subjects`
-    below: Yoruba has gap markers for DO and OBL that do not cover SU
-    because subject relativization independently uses pronoun retention
-    (`ó`, per [awobuluyi-1978] §6.19). -/
-theorem minus_case_covers_subjects_in_original_sample :
-    ∀ markers ∈ originalSample,
-      ∀ m ∈ markers, m.bearsCaseMarking = false → m.Covers .subject := by
-  decide
-
-/-- [keenan-comrie-1979] effectively documents Yoruba as a refutation
-    of the gap-implies-subject correlation. Yoruba's IO/OBL relativization
-    is mediated by serial-verb DO recasting (K&C 1979 p. 349), producing
-    -case markers that do not cover SU. SU relativization independently
-    uses pronoun retention (`ó`, K&C 1979 p. 350 analyzes as verb
-    agreement; descriptive surface form per [awobuluyi-1978] §6.19). -/
-theorem yoruba_refutes_minus_case_covers_subjects :
-    ∃ m ∈ yoruba, m.bearsCaseMarking = false ∧ ¬ m.Covers .subject := by
-  decide
-
-/-- Most languages in the sample use more than one marker, with markers
-    covering different segments. -/
-theorem most_have_multiple_strategies :
-    (allSamples.filter (·.length > 1)).length ≥ 5 := by decide
-
-/-- +case markers that are non-primary (don't cover SU) never cover SU
-    in our sample. This reflects the typological generalization that
-    pronoun retention is used for lower, not higher, AH positions.
-    Holds across all 18 languages including Yoruba. -/
-theorem plus_case_secondary_excludes_su :
-    ∀ markers ∈ allSamples,
-      ∀ m ∈ markers, m.bearsCaseMarking = true → ¬ m.IsPrimary →
-        ¬ m.Covers .subject := by decide
-
-/-- Every AH position from SU down to GEN is attested in the sample as
-    the cut-off of some primary marker — the paper's §1.3 justification
-    of HC₃ (each point on the AH is a possible cut-off point). The
-    paper's OCOMP-cutoff witnesses (Czech, Slovenian, Urhobo) are not in
-    the encoded sample. -/
+/-- Every position from subject to genitive is the cut-off of some primary strategy in the
+sample, the Section 1.3 argument that each point of the hierarchy is a possible cut-off; the
+paper's witnesses for the object of comparison are not among the fragments. -/
 theorem each_upper_cutoff_attested :
-    ∀ p ∈ [AHPosition.subject, .directObject, .indirectObject,
-           .oblique, .genitive],
-      ∃ markers ∈ allSamples, ∃ m ∈ markers,
-        m.IsPrimary ∧ lowestCovered [m] = p := by decide
+    ∀ p ∈ [AHPosition.subject, .directObject, .indirectObject, .oblique, .genitive],
+      ∃ markers ∈ sample, ∃ m ∈ markers, m.IsPrimary ∧ cutoff m = some p := by
+  decide
 
--- ============================================================================
--- § 5: Toba Batak DO Gap (paper p. 68-69, canonical example)
--- ============================================================================
+/-! ### Toba Batak (Section 1.2.2) -/
 
-/-- Toba Batak has a genuine gap at DO: neither marker can relativize
-    direct objects. This is consistent with the HCs because each
-    individual marker is contiguous — the gap exists *between* markers,
-    not within one. The paper notes this explicitly (p. 68-69: "direct
-    objects cannot be relativized using this or any other strategy in
-    Toba"). -/
-theorem toba_batak_do_gap :
-    ∀ m ∈ tobaBatak, ¬ m.Covers .directObject := by decide
+/-- Toba Batak relativizes subjects by one strategy and indirect objects through genitives by
+another, but direct objects by neither: the gap lies between two continuous strategies, which
+is why the constraints govern strategies rather than languages. -/
+theorem toba_batak_do_gap : ∀ m ∈ tobaBatak, ¬ m.Covers .directObject := by decide
 
-/-- Despite the DO gap, Toba Batak satisfies HC₂: both individual markers
-    are contiguous (SU alone; IO–GEN alone). -/
 theorem toba_batak_hc2 : SatisfiesHC2 tobaBatak := by decide
 
--- ============================================================================
--- § 6: Per-Language Verification (Table 1 data, pp. 76-79)
--- ============================================================================
+/-! ### Table 1 by language -/
 
-/-- English (Table 1 p. 76): -case `that/∅` covers SU/DO (2 positions);
-    +case `who/whom` covers IO/OBL/GEN/OCOMP (4 positions). -/
-theorem english_full_coverage :
-    (english.map (·.positions.length)) = [2, 4] := by decide
+/-- English: the case-free *that* and gap cover subject and direct object, the case-marked
+*who*/*whom* the four lower positions. -/
+theorem english_full_coverage : english.map (·.positions.length) = [2, 4] := by decide
 
-/-- Welsh (Table 1 p. 76; paper §1.3.2 p. 70): markers split at DO/IO.
-    -case (particle *a*) covers SU/DO; +case (particle *y* + resumptive)
-    covers IO/OBL/GEN/OCOMP. -/
+/-- Welsh (Section 1.3.2): the particle *a* covers subject and direct object, the particle *y*
+with a resumptive the lower four. -/
 theorem welsh_strategy_split :
-    welsh.length = 2 ∧
-    (welsh.map (fun m => decide (m.Covers .subject)))        = [true, false] ∧
-    (welsh.map (fun m => decide (m.Covers .directObject)))   = [true, false] ∧
-    (welsh.map (fun m => decide (m.Covers .indirectObject))) = [false, true] ∧
-    (welsh.map (fun m => decide (m.Covers .objComparison)))  = [false, true] := by decide
+    welsh.map (λ m => decide (m.Covers .subject)) = [true, false] ∧
+      welsh.map (λ m => decide (m.Covers .indirectObject)) = [false, true] := by
+  decide
 
-/-- Arabic (MSA) (Table 1 p. 76): the relative pronoun *alladhī/allatii*
-    used alone (-case strategy) covers SU only; *alladhī/allatii* with a
-    resumptive pronoun (+case strategy) covers DO–OCOMP. -/
+/-- Modern Standard Arabic: the relative pronoun alone covers the subject only, with a
+resumptive the positions below. -/
 theorem arabic_primary_su_only :
-    (arabic.map (fun m => decide (m.Covers .subject)))      = [true, false] ∧
-    (arabic.map (fun m => decide (m.Covers .directObject))) = [false, true] := by decide
+    arabic.map (λ m => decide (m.Covers .subject)) = [true, false] ∧
+      arabic.map (λ m => decide (m.Covers .directObject)) = [false, true] := by
+  decide
 
-/-- Malagasy (Table 1 p. 78; paper §1.3.1 p. 69-70): single marker, SU only. -/
-theorem malagasy_su_only :
-    malagasy.length = 1 ∧
-    (malagasy.map (fun m => decide (m.Covers .subject)))      = [true] ∧
-    (malagasy.map (fun m => decide (m.Covers .directObject))) = [false] := by decide
+/-- Malagasy (Section 1.3.1): a single strategy, subjects only. -/
+theorem malagasy_su_only : lowestCovered malagasy = some .subject := by decide
 
-/-- Korean (Table 1 p. 78; paper §1.3.4 p. 74): -case adnominal verb
-    suffix covers SU/DO/IO/OBL but not GEN; +case genitive marker covers
-    GEN only. -/
+/-- Korean (Section 1.3.4): the adnominal verb suffix covers subject through oblique, a
+genitive marker the genitive only. -/
 theorem korean_primary_su_to_obl :
-    (korean.map (fun m => decide (m.Covers .subject)))  = [true, false] ∧
-    (korean.map (fun m => decide (m.Covers .oblique)))  = [true, false] ∧
-    (korean.map (fun m => decide (m.Covers .genitive))) = [false, true] := by decide
+    korean.map cutoff = [some .oblique, some .genitive] := by decide
 
-/-- Mandarin — K&C's "Chinese (spoken Pekingese)" (Table 1 pp. 76-79):
-    -case gap covers SU/DO; +case retention covers DO–OCOMP. The two
-    strategies overlap at DO (retention optional there, Table 2), and
-    retention reaches the hierarchy floor despite the prenominal RC. -/
+/-- Mandarin: the gap covers subject and direct object, retention direct object through object
+of comparison, the two overlapping at direct object. -/
 theorem mandarin_retention_reaches_ocomp :
-    (mandarin.map (fun m => decide (m.Covers .subject)))      = [true, false] ∧
-    (mandarin.map (fun m => decide (m.Covers .directObject))) = [true, true] ∧
-    lowestCovered mandarin = .objComparison := by decide
+    lowestCovered mandarin = some .objComparison ∧
+      mandarin.map (λ m => decide (m.Covers .directObject)) = [true, true] := by
+  decide
 
-/-- Basque (Table 1 p. 76; §1.3.3 p. 72): single -case strategy covering
-    SU/DO/IO — the sample's witness that IO is a possible primary
-    cut-off. -/
+/-- Basque (Section 1.3.3): a single strategy cutting off at indirect object. -/
 theorem basque_cutoff_at_io :
-    basque.length = 1 ∧ lowestCovered basque = .indirectObject := by decide
+    basque.length = 1 ∧ lowestCovered basque = some .indirectObject := by decide
 
-/-- French (Table 1 p. 76): the single +case relative pronoun system
-    covers SU–GEN (OCOMP blank). -/
+/-- French: the single relative pronoun system covers subject through genitive. -/
 theorem french_single_strategy_to_gen :
-    french.length = 1 ∧ lowestCovered french = .genitive := by decide
+    french.length = 1 ∧ lowestCovered french = some .genitive := by decide
 
-/-- German (Table 1 p. 77; §1.1 exx. (1)-(2), §1.3.1 p. 70): the +case
-    relative pronoun covers SU–GEN; the -case participial strategy
-    covers SU only. -/
-theorem german_participial_su_only :
-    (german.map (fun m => decide (m.Covers .subject))) = [true, true] ∧
-    (german.map (·.positions.length)) = [5, 1] := by decide
+/-- German ((1) and (2), Section 1.3.1): the relative pronoun covers subject through genitive,
+the participial strategy subjects only. -/
+theorem german_participial_su_only : german.map (·.positions.length) = [5, 1] := by decide
 
-/-- Hindi (Table 1 p. 77): both +case strategies (postnominal *jo*, the
-    correlative coded "internal" there) are primary and cover SU–GEN;
-    OCOMP is treated as an oblique. -/
+/-- Hindi: both strategies are primary and reach the genitive. -/
 theorem hindi_both_strategies_primary :
-    ∀ m ∈ hindi, m.IsPrimary ∧ lowestCovered [m] = .genitive := by decide
+    ∀ m ∈ hindi, m.IsPrimary ∧ cutoff m = some .genitive := by decide
 
-/-- Japanese (Table 1 p. 77): the -case gap strategy reaches GEN (OBL
-    and GEN only for some NPs); retention appears only at GEN. -/
-theorem japanese_gap_to_gen :
-    lowestCovered japanese = .genitive ∧
-    (japanese.map (fun m => decide (m.Covers .genitive))) = [true, true] := by decide
+/-- Japanese: the gap reaches the genitive. -/
+theorem japanese_gap_to_gen : lowestCovered japanese = some .genitive := by decide
 
-/-- Russian (Table 1 p. 78): the single declining relative pronoun
-    *kotoryj* covers SU–GEN (OCOMP blank). -/
+/-- Russian: the single declining relative pronoun covers subject through genitive. -/
 theorem russian_single_strategy_to_gen :
-    russian.length = 1 ∧ lowestCovered russian = .genitive := by decide
+    russian.length = 1 ∧ lowestCovered russian = some .genitive := by decide
 
-/-- Tagalog (Table 1 p. 79; §1.3.1 p. 70): two -case strategies
-    (postnominal and prenominal linker), each covering SU only. -/
-theorem tagalog_su_only :
-    ∀ m ∈ tagalog, m.positions = [.subject] := by decide
+/-- Tagalog (Section 1.3.1): two strategies, each subjects only. -/
+theorem tagalog_su_only : ∀ m ∈ tagalog, m.positions = [.subject] := by decide
 
-/-- Turkish (Table 1 p. 79): -case participles cover SU–OBL; +case
-    retention covers GEN and (marginally) OCOMP — the Korean pattern
-    plus retention below the participial cut-off. -/
+/-- Turkish: participles cover subject through oblique, retention the positions below. -/
 theorem turkish_retention_below_participles :
-    lowestCovered turkish = .objComparison ∧
-    (turkish.map (fun m => decide (m.Covers .oblique)))  = [true, false] ∧
-    (turkish.map (fun m => decide (m.Covers .genitive))) = [false, true] := by decide
+    lowestCovered turkish = some .objComparison ∧
+      turkish.map cutoff = [some .oblique, some .objComparison] := by
+  decide
 
-/-- Finnish (Table 1 p. 76; paper §1.3.2 p. 70-71): the +case marker
-    *joka* is the broader/primary one (covers SU–GEN); the -case
-    participial marker also covers SU but is narrower (SU/DO only). -/
+/-- Finnish (Section 1.3.2): the case-marked *joka* is the broader strategy, the participle
+covering subject and direct object only, both primary. -/
 theorem finnish_plus_case_is_primary :
-    (finnish.map (·.bearsCaseMarking)) = [true, false] ∧
-    (finnish.map (fun m => decide m.IsPrimary))        = [true, true] := by decide
-
-/-- Yoruba: 4 per-position markers. relTiSubject (-case, primary, only
-    SU); relTiObject (-case, NOT primary, only DO); relTiOblique (-case,
-    NOT primary, IO/OBL); relTiGenitive (+case, NOT primary, GEN only).
-    All 4 individually contiguous on the AH, so HC₂ holds. -/
-theorem yoruba_strategy_breakdown :
-    yoruba.length = 4 ∧
-    (yoruba.map (·.bearsCaseMarking)) = [false, false, false, true] ∧
-    (yoruba.map (fun m => decide m.IsPrimary))        = [true, false, false, false] := by decide
-
--- ============================================================================
--- § 7: Contiguity Examples (HC₂ instances)
--- ============================================================================
-
-/-! HC₂ ("any RC-forming strategy must apply to a continuous segment of the
-AH") is a paper-anchored claim. The contiguity machinery (`contiguousOnAH`,
-`AHPosition.rank`) lives in `Typology/RelativeClause/Basic.lean` because it
-mirrors `Features/Case/Basic.lean`'s `IsValidInventory` and is genuinely
-framework-agnostic. The specific contiguous-segment witnesses below
-exemplify HC₂ on the AH and are part of [keenan-comrie-1977]'s core
-argumentation. -/
-
-/-- The full hierarchy [SU, DO, IO, OBL, GEN, OCOMP] is contiguous. -/
-theorem full_ah_contiguous :
-    contiguousOnAH AHPosition.all = true := rfl
-
-/-- A single position is trivially contiguous. -/
-theorem singleton_contiguous :
-    contiguousOnAH [AHPosition.subject] = true := rfl
-
-/-- [SU, DO] is contiguous. -/
-theorem su_do_contiguous :
-    contiguousOnAH [AHPosition.subject, .directObject] = true := rfl
-
-/-- [IO, OBL, GEN] is contiguous (a non-primary segment). -/
-theorem io_obl_gen_contiguous :
-    contiguousOnAH [AHPosition.indirectObject, .oblique, .genitive] = true := rfl
-
-/-- [SU, DO, OBL] is NOT contiguous (skips IO at rank 4). -/
-theorem su_do_obl_not_contiguous :
-    contiguousOnAH [AHPosition.subject, .directObject, .oblique] = false := rfl
-
--- ============================================================================
--- § 8: Primary Relativization Constraint (General Proof)
--- ============================================================================
-
-/-! The PRC is the paper's main derivation: it follows from HC₁ + HC₂ rather
-than being an independent stipulation. The general proof lives here (paper
-content), not in `Typology/RelativeClause/Basic.lean` (substrate). -/
-
-/-- BEq agrees with propositional equality for AH positions. -/
-private theorem ah_beq_iff (a b : AHPosition) :
-    (a == b) = true ↔ a = b := by
-  cases a <;> cases b <;> decide
-
-/-- Nat BEq equality implies propositional equality. -/
-private theorem nat_beq_to_eq {n m : Nat} (h : (n == m) = true) : n = m := by
-  cases n <;> cases m <;> simp_all [BEq.beq]
-
-/-- If `hasAHRank` finds a position at rank `a.rank`, that position is `a`
-    (since rank is injective). -/
-private theorem hasAHRank_implies_any
-    (positions : List AHPosition) (a : AHPosition)
-    (h : hasAHRank positions a.rank = true) :
-    positions.any (· == a) = true := by
-  unfold hasAHRank at h
-  rw [List.any_eq_true] at h ⊢
-  obtain ⟨b, hb_mem, hb_rank⟩ := h
-  have hrank : b.rank = a.rank := nat_beq_to_eq hb_rank
-  have heq : b = a := ah_rank_injective b a hrank
-  exact ⟨a, heq ▸ hb_mem, by rw [ah_beq_iff]⟩
-
-/-- If `contiguousOnAH positions = true` and `p1`, `p2` are both in the list
-    with `p1.rank < p2.rank`, then every intermediate rank `r` with
-    `p1.rank < r < p2.rank` is represented in the list. -/
-private theorem contiguous_intermediate
-    (positions : List AHPosition)
-    (h_contig : contiguousOnAH positions = true)
-    (p1 p2 : AHPosition)
-    (hp1 : positions.any (· == p1) = true)
-    (hp2 : positions.any (· == p2) = true)
-    (hlt : p1.rank < p2.rank)
-    (r : Nat) (hlo : p1.rank < r) (hhi : r < p2.rank) :
-    hasAHRank positions r = true := by
-  rw [List.any_eq_true] at hp1 hp2
-  obtain ⟨a1, ha1_mem, ha1_eq⟩ := hp1
-  obtain ⟨a2, ha2_mem, ha2_eq⟩ := hp2
-  rw [ah_beq_iff] at ha1_eq ha2_eq
-  have hp1_mem : p1 ∈ positions := ha1_eq ▸ ha1_mem
-  have hp2_mem : p2 ∈ positions := ha2_eq ▸ ha2_mem
-  unfold contiguousOnAH at h_contig
-  rw [List.all_eq_true] at h_contig
-  have h1 := h_contig p1 hp1_mem
-  rw [List.all_eq_true] at h1
-  have h2 := h1 p2 hp2_mem
-  simp only [hlt, ↓reduceIte] at h2
-  rw [List.all_eq_true] at h2
-  have h3 := h2 r (List.mem_range.mpr hhi)
-  simp only [hlo, hhi, Bool.and_self] at h3
-  exact h3
-
-/-- **Primary Relativization Constraint (general proof).**
-
-    If a list of AH positions is contiguous (HC₂) and contains `.subject`
-    (i.e., the strategy is primary), then the list is upward-closed:
-    for any covered position `p`, all positions above `p` on the AH
-    are also covered.
-
-    This proves that the PRC is a logical consequence of HC₂ + being primary,
-    not an independent constraint — the paper's core derivation
-    ([keenan-comrie-1977] p. 68: "PRC₂ follows directly from HC₂
-    and the definition of primary"). -/
-theorem prc_from_hc2 (positions : List AHPosition)
-    (h_contig : contiguousOnAH positions = true)
-    (h_su : positions.any (· == AHPosition.subject) = true)
-    (p above : AHPosition)
-    (hp : positions.any (· == p) = true)
-    (habove : above.rank > p.rank) :
-    positions.any (· == above) = true := by
-  by_cases h_eq : above = AHPosition.subject
-  · subst h_eq; exact h_su
-  · have h_above_lt : above.rank < 6 := by
-      cases above <;> simp [AHPosition.rank] at h_eq ⊢
-    have h_su_rank : AHPosition.subject.rank = 6 := rfl
-    have h_p_lt_su : p.rank < AHPosition.subject.rank := by
-      rw [h_su_rank]; omega
-    have h_inter := contiguous_intermediate positions h_contig p .subject hp h_su
-      h_p_lt_su above.rank habove (by rw [h_su_rank]; omega)
-    exact hasAHRank_implies_any positions above h_inter
-
-/-- All 6 canonical primary strategy segments are upward-closed.
-    These are the only possible contiguous segments containing `.subject`. -/
-theorem prc_all_primary_segments :
-    let segs := [
-      [AHPosition.subject],
-      [.subject, .directObject],
-      [.subject, .directObject, .indirectObject],
-      [.subject, .directObject, .indirectObject, .oblique],
-      [.subject, .directObject, .indirectObject, .oblique, .genitive],
-      [.subject, .directObject, .indirectObject, .oblique, .genitive, .objComparison] ]
-    segs.all (λ seg =>
-      contiguousOnAH seg &&
-      seg.any (· == .subject) &&
-      seg.all (λ p => AHPosition.all.all (λ above =>
-        if above.rank > p.rank then seg.any (· == above) else true))) = true := by
+    finnish.map (·.bearsCaseMarking) = [true, false] ∧ ∀ m ∈ finnish, m.IsPrimary := by
   decide
 
 end KeenanComrie1977
