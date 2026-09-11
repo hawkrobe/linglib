@@ -1,0 +1,226 @@
+[
+  {
+    "id": "herbstrittfranke2019_ex1a",
+    "source": {
+      "bibkey": "herbstritt-franke-2019",
+      "paperLabel": "(1a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The next ball drawn from this urn is probably red.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "expression",
+        "probably"
+      ]
+    ],
+    "comment": "Suggests (1b): otherwise the speaker would have uttered (1c).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "herbstrittfranke2019_ex1b",
+    "source": {
+      "bibkey": "herbstritt-franke-2019",
+      "paperLabel": "(1b)"
+    },
+    "language": "stan1293",
+    "primaryText": "It is not certain that the next ball drawn from this urn is red.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "expression",
+        "not certain"
+      ]
+    ],
+    "comment": "The scalar implicature of (1a).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "herbstrittfranke2019_ex1c",
+    "source": {
+      "bibkey": "herbstritt-franke-2019",
+      "paperLabel": "(1c)"
+    },
+    "language": "stan1293",
+    "primaryText": "The next ball drawn from this urn is certainly red.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "expression",
+        "certainly"
+      ]
+    ],
+    "comment": "The stronger alternative to (1a).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "herbstrittfranke2019_ex2",
+    "source": {
+      "bibkey": "herbstritt-franke-2019",
+      "paperLabel": "(2)"
+    },
+    "language": "stan1293",
+    "primaryText": "Liem is definitely likely to be wearing green.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Eric has seen Liem wear green on 5 of 8 days spread over the year.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "expression",
+        "definitely likely"
+      ]
+    ],
+    "comment": "Moss's example: a complex expression a speaker with much evidence can assert.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "herbstrittfranke2019_ex3",
+    "source": {
+      "bibkey": "herbstritt-franke-2019",
+      "paperLabel": "(3)"
+    },
+    "language": "stan1293",
+    "primaryText": "It might be probable that Liem is wearing green.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Madeleine has seen Liem wear green on 5 of 8 consecutive days.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "expression",
+        "might be probable"
+      ]
+    ],
+    "comment": "Moss's example: the same proportion with less evidence licenses only the hedged complex expression.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "herbstrittfranke2019_ex5a",
+    "source": {
+      "bibkey": "herbstritt-franke-2019",
+      "paperLabel": "(5a)"
+    },
+    "language": "stan1293",
+    "primaryText": "It is probable that the next ball drawn from this urn will be red.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "expression",
+        "probable"
+      ]
+    ],
+    "comment": "A simple probability expression: true where the speaker's credence in RED exceeds the threshold of *probable*.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "herbstrittfranke2019_ex6a",
+    "source": {
+      "bibkey": "herbstritt-franke-2019",
+      "paperLabel": "(6a)"
+    },
+    "language": "stan1293",
+    "primaryText": "It is certainly probable that the next ball drawn from this urn will be red.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "expression",
+        "certainly probable"
+      ]
+    ],
+    "comment": "A complex probability expression: true where the speaker's credence in *probably RED* exceeds the threshold of *certainly*.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "herbstrittfranke2019_ex11",
+    "source": {
+      "bibkey": "herbstritt-franke-2019",
+      "paperLabel": "(11)"
+    },
+    "language": "stan1293",
+    "primaryText": "The next ball will [...] be red.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "expression",
+        "frame"
+      ]
+    ],
+    "comment": "The message frame of the production task; the sender fills in one of certainly, probably, possibly, probably not, certainly not.",
+    "lgrConformance": ""
+  }
+]
