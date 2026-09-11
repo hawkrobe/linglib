@@ -1,235 +1,387 @@
-import Linglib.Semantics.Tense.DeRe
-import Linglib.Semantics.Reference.Acquaintance
+import Linglib.Core.Order.Interval
+import Linglib.Semantics.Reference.Context.Index
+import Linglib.Semantics.Tense.Embedding
 
 /-!
-# [heim-1994-comments]: Comments on Abusch's Theory of Tense
-[heim-1994-comments] [abusch-1997] [lewis-1979-attitudes]
+# Heim (1994): Comments on Abusch's Theory of Tense
 
-Single-paper formalisation of [heim-1994-comments] ("Comments on
-Abusch's theory of tense", in Kamp ed. *Ellipsis, Tense and Questions*,
-Dyana-2 R2.2.B; pp. 143–162). Heim's contribution: "more concrete
-formulations of some of the sketchier portions" of [abusch-1997]'s
-sequence-of-tense + temporal de re analysis. Three substrate-relevant
-contributions:
+This file formalizes the implementation that [heim-1994-comments] gives [abusch-1997]'s
+sequence-of-tense analysis: tenses are time variables whose distinctive content is a
+presupposition, attitude verbs quantify over the world–time pairs compatible with the holder's
+beliefs, and the Upper Limit Constraint is the presupposition (16) that no tense denotes a
+time after the local evaluation time, the distinguished variable `0` rebound by the abstractor
+in Comp. `LF` is the fragment of the paper's logical forms and `Def` its presuppositions under
+the tense entries (4) of Sections 1 and 2, so that the calculations of Section 2 are theorems:
+the presuppositions of the de dicto past under a past (20), of the simultaneous (29) and free
+(30) construals of *John believed that Bill was asleep*, and the four presuppositions of the
+double-access (38) through res-movement and time-concepts (33), with the consequence that
+the res concept must overlap the utterance time and so cannot be backshifting. Section 3's
+zero affixes `<` and `¬<` carry the ordering presuppositions instead, `Def'`, and the Tense
+Licensing Condition `TLC` with the definition (67) of "in the domain of" licenses (50), (51),
+(56), (63) and (65) and excludes (57), (62) and (66).
 
-1. **§1 (pp. 143–148)** — tense-as-pronoun + presupposition formulation
-   of constraints; doxastic-alternatives quantification for `believe`
-   (eq 9). The substrate's `IsRigidAcrossAlternatives` quantifies
-   over the same alternative-set.
+## Implementation notes
 
-2. **§2 (pp. 148–157)** — Heim's central contribution. Two pieces:
-   - **ULC as presupposition** (eq 16, p. 149): "If α_i is a tense,
-     then [[α_i]]^g,c is only defined if `g(i)` does-not-follow `g(0)`."
-     The substrate's `Tense.upperLimitConstraint` (in `Tense/Embedding.lean`)
-     IS this presupposition, already typed at `[LE T]` and credited
-     to [heim-1994-comments] in its docstring; this study file
-     proves the felicity-to-ULC bridge through the substrate primitive.
-   - **Time-concept** (p. 155): "By a 'time-concept' I mean a function
-     from world-time pairs to times. Think of these as the meanings
-     of descriptions which a thinker might represent a time to herself."
-     **This is precisely `Index W T → T`** — one
-     coordinate fewer than the substrate's
-     `TimeConcept := Intension (KContext W E P T) T` (which adds the
-     Speas-Tenny agent slot).
-   - **"Suitable" qualification** (p. 155): "meant to exclude
-     descriptions by which one might pick out a time without being
-     sufficiently acquainted with it; see Abusch and Lewis." Maps to
-     the substrate's `Acquaintance.Cover` filter at
-     `Idx := Index W T`, `Res := T`.
+* Times are nonempty intervals, so that `<` is `NonemptyInterval.precedes`, `o` is
+  `NonemptyInterval.overlaps` and "does not follow" is `NotAfter`, the endpoint form of the
+  library's `Tense.upperLimitConstraint`.
+* Predicates carry their subjects, de dicto descriptions are atomic and always defined, and
+  the presuppositions of the nuclear scopes of `woll` and of res-moved `believe` project
+  universally, the law the paper invokes for `some` and `believe`. The time-concept is
+  supplied by the context, as in footnote 26.
+* Relative clauses and the extensional NP argument of (59)–(60) are outside the fragment, so
+  (52) is taken without its relative clause and the contrast between the definitions (53) and
+  (61) of "in the domain of" is carried by the res-moved (62)–(66).
 
-3. **§3 (pp. 158–162)** — "Tense Licensing Condition" (TLC, eq 49,
-   p. 161): an alternative framework using covert `<` and `≺` zero
-   affixes plus an LF-distribution constraint. Out of substrate scope
-   (would require Tree-rewrite operators on `Tree C W`, deferred
-   per `Tense/DeRe.lean` docstring). Cited but not formalised here.
+## References
 
-## Substrate identification
-
-Heim's `time-concept` framework is a **proper coordinate-projection**
-of the substrate's: Heim works at `Index W T → T`
-(world + time → time), the substrate at
-`KContext W E P T → T` (agent + addressee + world + time +
-position → time). The pullback `toSubstrate := (· ∘ KContext.toIndex)` carries Heim's
-framework into the substrate by pre-composing with the forgetful projection. The image is exactly the
-**agent-blind** substrate concepts (universal property below). Rigidity
-preservation, set-relativized rigidity preservation, and
-exhaustiveness preservation all factor through the substrate's
-`IsRigid.precomp`/`IsRigidOn.precomp` (`Semantics/Reference/Rigidity.lean`).
-
-## What's not formalised
-
-- **§3 TLC**: covert affix + LF-distribution constraint. Requires
-  modelling tense morphemes as elements of a `Tree C W` LF and
-  defining "in the domain of" on tree contexts. The substrate
-  exposes only the `output` of res-movement (no Tree-rewrite
-  operators). Heim's TLC IS a substrate-orthogonal proposal —
-  it makes claims about LF distribution (syntactic side), not about
-  the centered-world content (semantic side) the substrate captures.
-- **Heim's de se PRO analysis** (eq 11–12, p. 147): de se reading
-  via Comp-binding of an i-typed variable. The substrate's
-  `holderContext.agent` is structurally Heim's de se anchor, but
-  the LF-binding mechanism is deferred along with §3 TLC.
-- **Heim's "back-shifted" reading via res-movement** (eq 32–33,
-  pp. 154–155): res-moved tense + Lewis acquaintance-relation lexical
-  entry for `believe`. Substrate's `TemporalDeReReading` IS the
-  output-level encoding of this; the Tree-rewrite syntactic
-  operation that produces it is deferred.
-
+* [heim-1994-comments]
+* [abusch-1997]
 -/
 
 namespace HeimComments1994
 
 open Semantics.Context (Index)
-open Reference (IsRigid IsRigidOn)
-open Semantics.Context (KContext)
-open Tense.DeRe (TemporalDeReReading)
+open NonemptyInterval
 
--- ════════════════════════════════════════════════════════════════
--- § Heim's "time-concept" (p. 155)
--- ════════════════════════════════════════════════════════════════
+variable {T : Type*} [LinearOrder T]
 
-/-- [heim-1994-comments] (p. 155): "By a 'time-concept' I mean
-    a function from world-time pairs to times." This is the Lewis-style
-    centered-world intension at one coordinate less than the substrate's
-    `Tense.DeRe.TimeConcept` (which adds a Speas-Tenny agent
-    slot). Definitionally `Index W T → T`. -/
-abbrev TimeConcept (W T : Type*) := (Index W T) → T
+/-! ### Times -/
 
--- ════════════════════════════════════════════════════════════════
--- § Bridge: Heim TimeConcept ↔ Substrate TimeConcept
--- ════════════════════════════════════════════════════════════════
+/-- `t` does not follow `t₀`, the relation `¬>` of (16). -/
+def NotAfter (t t₀ : NonemptyInterval T) : Prop := ¬ t₀.precedes t
 
-/-- **Substrate-level pullback** of a Heim time-concept along the
-    forgetful projection `Semantics.Context.KContext.toIndex`: pre-composition, whose
-    structural properties transport from `IsRigid.precomp`/`IsRigidOn.precomp`
-    (`Semantics/Reference/Rigidity.lean`). -/
-def toSubstrate {W E P T : Type*} (c : TimeConcept W T) :
-    Tense.DeRe.TimeConcept W E P T :=
-  c ∘ KContext.toIndex
+/-- Not following is the library's Upper Limit Constraint on the endpoints. -/
+theorem notAfter_iff_upperLimitConstraint (t t₀ : NonemptyInterval T) :
+    NotAfter t t₀ ↔ Tense.upperLimitConstraint t.fst t₀.snd :=
+  not_lt
 
-/-- **Pullback preserves rigidity**: a rigid Heim time-concept lifts to
-    a rigid substrate `TimeConcept`. Direct application of substrate's
-    `IsRigid.precomp` at `g := KContext.toIndex`. -/
-theorem toSubstrate_isRigid {W E P T : Type*}
-    {c : TimeConcept W T} (h : IsRigid c) :
-    IsRigid (toSubstrate (E := E) (P := P) c) :=
-  h.precomp KContext.toIndex
+theorem notAfter_self (t : NonemptyInterval T) : NotAfter t t := precedes_irrefl t
 
-/-- **Pullback preserves set-relativized rigidity**: rigidity on a set
-    `S : Set (Index W T)` of Heim alternatives lifts to
-    rigidity on the preimage `Set.preimage KContext.toIndex S` of
-    substrate alternatives. Direct application of substrate's
-    `IsRigidOn.precomp` at `g := KContext.toIndex`.
+theorem notAfter_of_precedes {t t₀ : NonemptyInterval T} (h : t.precedes t₀) : NotAfter t t₀ :=
+  precedes_asymm h
 
-    This is the last-mile companion to `toSubstrate_isRigid` that
-    closes the substrate's `IsRigidAcrossAlternatives` family
-    (in `Tense/DeRe.lean`) under the Heim quotient — Heim time-concepts
-    that are rigid across a doxastic alternative set lift to substrate
-    concepts rigid across the corresponding pulled-back alternative
-    set. -/
-theorem toSubstrate_isRigidOn {W E P T : Type*}
-    {c : TimeConcept W T} {S : Set (Index W T)}
-    (h : IsRigidOn c S) :
-    IsRigidOn (toSubstrate (E := E) (P := P) c)
-      (Set.preimage KContext.toIndex S) :=
-  h.precomp KContext.toIndex
+theorem notAfter_of_overlaps {t t₀ : NonemptyInterval T} (h : t.overlaps t₀) : NotAfter t t₀ :=
+  λ h' => precedes_not_overlaps h' (overlaps_symm h)
 
-/-- **Universal property of the pullback** (the deep structural
-    claim): a substrate `TimeConcept` `k` arises as the pullback of
-    some Heim time-concept iff `k` is **agent-blind** (factors
-    through `KContext.toIndex`).
+/-! ### Logical forms -/
 
-    This characterises Heim's framework as the *quotient* of the
-    substrate's framework by agent variation — Heim works at the
-    ⟨world, time⟩ resolution; the substrate adds a ⟨agent,
-    addressee, position⟩ refinement. The pullback-image is precisely
-    the substrate concepts that "don't see" the refinement.
+/-- Time variables; `0` is the distinguished evaluation-time variable of Section 1. -/
+abbrev Var := ℕ
 
-    The witness construction in the backward direction uses
-    `Classical.arbitrary` on the agent / position coordinates, so
-    the theorem requires `Nonempty E` and `Nonempty P` (otherwise
-    `KContext W E P T` is empty and the universal property is
-    degenerate). -/
-theorem toSubstrate_factors_iff_agent_blind {W E P T : Type*}
-    [Nonempty E] [Nonempty P]
-    (k : Tense.DeRe.TimeConcept W E P T) :
-    (∃ c : TimeConcept W T, k = toSubstrate c) ↔
-    (∀ c₁ c₂ : KContext W E P T,
-      c₁.toIndex = c₂.toIndex → k c₁ = k c₂) := by
-  constructor
-  · rintro ⟨c, rfl⟩ k₁ k₂ heq
-    show c k₁.toIndex = c k₂.toIndex
-    rw [heq]
-  · intro h
-    refine ⟨fun s => k ⟨Classical.arbitrary E, Classical.arbitrary E,
-                          s.world, s.time, Classical.arbitrary P⟩, ?_⟩
-    funext k₀
-    apply h
-    rfl
+/-- Assignments of times to variables. -/
+abbrev Assignment (T : Type*) [LinearOrder T] := Var → NonemptyInterval T
 
--- ════════════════════════════════════════════════════════════════
--- § ULC as presupposition (eq 16, p. 149)
--- ════════════════════════════════════════════════════════════════
+/-- What occupies a tense position: a tense morpheme (1), the infinitival marker bound from
+Comp (12), (25), or the trace of a res-moved tense (32). -/
+inductive TenseNode
+  | PAST (i : Var)
+  | PRES (i : Var)
+  | INF (i : Var)
+  | trace (i : Var)
+  deriving DecidableEq
 
-/-- [heim-1994-comments] eq (16) p. 149: "If α_i is a tense, then
-    [[α_i]]^g,c is only defined if `g(i)` does-not-follow `g(0)`."
-    Heim's presuppositional construal of [abusch-1997]'s Upper
-    Limit Constraint is already encoded in the substrate as
-    `Tense.upperLimitConstraint` (typed `[LE T]`,
-    anchored to [heim-1994-comments] in its docstring). This
-    bridge theorem projects the substrate's `TemporalDeReReading`
-    `IsFelicitousWith .past` (strict `<`) onto the substrate's ULC
-    primitive (weak `≤`), via `le_of_lt`.
+/-- The variable a tense position denotes (1). -/
+def TenseNode.var : TenseNode → Var
+  | PAST i | PRES i | INF i | trace i => i
 
-    The implication is one-way: substrate `.past` is strict precedence,
-    Heim's ULC is non-strict, the converse fails on the simultaneous
-    boundary case. The substrate's `.present` constraint (which Heim
-    handles separately as a tense-pronoun resolution) covers the
-    boundary case. -/
-theorem isFelicitousWith_past_imp_upperLimitConstraint
-    {W E P T : Type*} [LinearOrder T]
-    (dr : TemporalDeReReading W E P T)
-    (h : dr.IsFelicitousWith Tense.past) :
-    Tense.upperLimitConstraint
-      dr.actualRes dr.holderContext.time :=
-  le_of_lt ((Tense.compare_mem_past dr.actualRes dr.holderContext.time).mp h)
+/-- The zero affixes of Section 3, `<` (past) and `¬<` (non-past). -/
+inductive Affix
+  | past
+  | nonpast
+  deriving DecidableEq
 
--- ════════════════════════════════════════════════════════════════
--- § Acquaintance: Heim's "suitable" qualification (p. 155)
--- ════════════════════════════════════════════════════════════════
+/-- Logical forms: a predicate with its event-time argument and affix; a de dicto description
+binding a variable, as *his 40th birthday λ2* in (20); `x believe [λ0 φ]` (10); `x believe
+t_res [λj λ0 φ]` with a res-moved tense (32); and `woll [λ0 φ]` (25). -/
+inductive LF (V D A : Type*)
+  | pred (v : V) (τ : TenseNode) (a : Affix)
+  | bind (d : D) (j : Var) (φ : LF V D A)
+  | believe (x : A) (τ : TenseNode) (a : Affix) (φ : LF V D A)
+  | believeRes (x : A) (τ : TenseNode) (a : Affix) (res : TenseNode) (j : Var) (φ : LF V D A)
+  | woll (τ : TenseNode) (a : Affix) (φ : LF V D A)
 
-/-- [heim-1994-comments] (p. 155): "the qualification 'suitable'
-    is meant to exclude descriptions by which one might pick out a time
-    without being sufficiently acquainted with it; see Abusch and
-    Lewis."
+/-- A model: the extensions of the predicates (3), the values of the de dicto descriptions,
+and the world–time pairs compatible with a holder's beliefs at a world and time (9). -/
+structure Model (V D A W T : Type*) [LinearOrder T] where
+  ext : V → NonemptyInterval T → W → Prop
+  desc : D → W → NonemptyInterval T
+  dox : A → W → NonemptyInterval T → Set (Index W (NonemptyInterval T))
 
-    Heim's "suitable" set of time-concepts IS the substrate's
-    `Reference.Acquaintance.Cover` at the appropriate
-    instantiation `Idx := Index W T`, `Res := T`. Membership
-    `c ∈ cov` is the suitability predicate directly — no separate
-    `IsSuitable` wrapper is needed. -/
-abbrev SuitableTimeCover (W T : Type*) :=
-  Reference.Acquaintance.Cover (Index W T) T
+/-- A context: its world and utterance time and the suitable time-concept it supplies (33), a
+function from world–time pairs to times. -/
+structure Context (W T : Type*) [LinearOrder T] where
+  world : W
+  time : NonemptyInterval T
+  concept : Index W (NonemptyInterval T) → NonemptyInterval T
 
-/-- **Pullback preserves cover exhaustiveness**: if `cov` is a
-    suitability cover for Heim time-concepts that exhaustively
-    identifies values in `dom : Set T` at every Heim
-    `Index`, then the lifted cover `toSubstrate '' cov`
-    exhaustively identifies the same `dom` at every substrate
-    `KContext`. This is the substantive content of "Heim's
-    acquaintance qualification carries through to the substrate
-    framework": the agent-blind quotient does not weaken
-    exhaustiveness, because every substrate context projects to a
-    Heim index where the cover is exhaustive. -/
-theorem toSubstrate_image_isExhaustiveOn {W E P T : Type*}
-    {cov : SuitableTimeCover W T} {dom : Set T}
-    (h : cov.isExhaustiveOn dom) :
-    Reference.Acquaintance.Cover.isExhaustiveOn
-      ((fun c : TimeConcept W T =>
-        toSubstrate (E := E) (P := P) c) '' cov) dom := by
-  intro k r hr
-  obtain ⟨c, hcov, hcr⟩ := h k.toIndex hr
-  refine ⟨toSubstrate (E := E) (P := P) c, ⟨c, hcov, rfl⟩, ?_⟩
-  exact hcr
+variable {V D A W : Type*} (M : Model V D A W T) (c : Context W T)
+
+/-! ### Sections 1 and 2: the tense entries (4) and the Upper Limit Constraint -/
+
+/-- The lexical presuppositions (4) of the tense morphemes, precedence of and overlap with
+the utterance time, together with the Upper Limit Constraint (18) on every tense position. -/
+def TenseNode.Def (c : Context W T) (g : Assignment T) : TenseNode → Prop
+  | PAST i => (g i).precedes c.time ∧ NotAfter (g i) (g 0)
+  | PRES i => (g i).overlaps c.time ∧ NotAfter (g i) (g 0)
+  | INF i => NotAfter (g i) (g 0)
+  | trace i => NotAfter (g i) (g 0)
+
+/-- Definedness: the presuppositions of a logical form at an assignment and world. Attitude
+verbs project the presuppositions of their complement to every doxastic alternative (21), a
+res-moved tense is the context's concept at the holder's world and time (33), and `woll`
+projects to every later time. -/
+def Def : LF V D A → Assignment T → W → Prop
+  | .pred _ τ _, g, _ => τ.Def c g
+  | .bind d j φ, g, w => Def φ (Function.update g j (M.desc d w)) w
+  | .believe x τ _ φ, g, w =>
+    τ.Def c g ∧ ∀ s ∈ M.dox x w (g τ.var), Def φ (Function.update g 0 s.time) s.world
+  | .believeRes x τ _ res j φ, g, w =>
+    τ.Def c g ∧ res.Def c g ∧ c.concept ⟨w, g τ.var⟩ = g res.var ∧
+      ∀ s ∈ M.dox x w (g τ.var),
+        Def φ (Function.update (Function.update g 0 s.time) j (c.concept s)) s.world
+  | .woll τ _ φ, g, w => τ.Def c g ∧ ∀ t, (g τ.var).precedes t → Def φ (Function.update g 0 t) w
+
+/-- Truth: (3), (9), (26) and (33). -/
+def Sat : LF V D A → Assignment T → W → Prop
+  | .pred v τ _, g, w => M.ext v (g τ.var) w
+  | .bind d j φ, g, w => Sat φ (Function.update g j (M.desc d w)) w
+  | .believe x τ _ φ, g, w => ∀ s ∈ M.dox x w (g τ.var), Sat φ (Function.update g 0 s.time) s.world
+  | .believeRes x τ _ _ j φ, g, w =>
+    ∀ s ∈ M.dox x w (g τ.var),
+      Sat φ (Function.update (Function.update g 0 s.time) j (c.concept s)) s.world
+  | .woll τ _ φ, g, w => ∃ t, (g τ.var).precedes t ∧ Sat φ (Function.update g 0 t) w
+
+variable (x : A) (v : V) (d : D) (g : Assignment T) (w : W)
+
+/-- (20): the de dicto past under a past presupposes, at every doxastic alternative of the
+holder, that the described time precedes the utterance time, (i), and does not follow the
+alternative's time, (ii). -/
+theorem def_bind_past :
+    Def M c (.believe x (.PAST 1) .past (.bind d 2 (.pred v (.PAST 2) .nonpast))) g w ↔
+      (TenseNode.PAST 1).Def c g ∧ ∀ s ∈ M.dox x w (g 1),
+        (M.desc d s.world).precedes c.time ∧ NotAfter (M.desc d s.world) s.time := by
+  simp [Def, TenseNode.Def, TenseNode.var, Function.update_of_ne]
+
+/-- (29): with the lower past bound from Comp, the Upper Limit Constraint is innocuous and
+only the lexical presupposition of PAST remains, that every doxastic alternative time precedes
+the utterance time, footnote 23. -/
+theorem def_simultaneous :
+    Def M c (.believe x (.PAST 1) .past (.pred v (.PAST 0) .nonpast)) g w ↔
+      (TenseNode.PAST 1).Def c g ∧ ∀ s ∈ M.dox x w (g 1), s.time.precedes c.time := by
+  simp [Def, TenseNode.Def, TenseNode.var, NotAfter, precedes_irrefl]
+
+/-- (30): with the lower past free and coindexed with the matrix tense, the Upper Limit
+Constraint projects the presupposition that the holder located himself at or after the matrix
+time. -/
+theorem def_free_coindexed :
+    Def M c (.believe x (.PAST 1) .past (.pred v (.PAST 1) .nonpast)) g w ↔
+      (TenseNode.PAST 1).Def c g ∧
+        ∀ s ∈ M.dox x w (g 1), (g 1).precedes c.time ∧ NotAfter (g 1) s.time := by
+  simp [Def, TenseNode.Def, TenseNode.var, Function.update_of_ne]
+
+/-- (32): res-movement of the lower past. The context's concept yields the res at the
+holder's world and time, and the Upper Limit Constraint on the trace requires the concept to
+imply simultaneity or anteriority across the holder's alternatives. -/
+theorem def_res :
+    Def M c (.believeRes x (.PAST 1) .past (.PAST 2) 3 (.pred v (.trace 3) .nonpast)) g w ↔
+      (TenseNode.PAST 1).Def c g ∧ (TenseNode.PAST 2).Def c g ∧ c.concept ⟨w, g 1⟩ = g 2 ∧
+        ∀ s ∈ M.dox x w (g 1), NotAfter (c.concept s) s.time := by
+  simp [Def, TenseNode.Def, TenseNode.var, Function.update_of_ne]
+
+/-- A concept that locates a later time at some alternative, as "the next time the lights go
+out" does, fails the presupposition of (32). -/
+theorem not_def_res_of_precedes {s : Index W (NonemptyInterval T)} (hs : s ∈ M.dox x w (g 1))
+    (h : s.time.precedes (c.concept s)) :
+    ¬ Def M c (.believeRes x (.PAST 1) .past (.PAST 2) 3 (.pred v (.trace 3) .nonpast)) g w :=
+  λ hd => ((def_res M c x v g w).1 hd).2.2.2 s hs h
+
+/-- The double-access LF (38): a present under a past through res-movement. -/
+def doubleAccess : LF V D A :=
+  .believeRes x (.PAST 1) .past (.PRES 2) 3 (.pred v (.trace 3) .nonpast)
+
+/-- The four presuppositions of (38): (i) the believing time precedes the utterance time,
+(ii) the res overlaps it, (iii) the concept does not follow the alternative's time at any
+doxastic alternative, and (iv) the concept yields the res at the holder's world and time. -/
+theorem def_doubleAccess (h0 : g 0 = c.time) :
+    Def M c (doubleAccess x v) g w ↔
+      (g 1).precedes c.time ∧ (g 2).overlaps c.time ∧
+        (∀ s ∈ M.dox x w (g 1), NotAfter (c.concept s) s.time) ∧ c.concept ⟨w, g 1⟩ = g 2 := by
+  simp only [doubleAccess, Def, TenseNode.Def, TenseNode.var, h0,
+    Function.update_of_ne (show (0 : ℕ) ≠ 3 by decide), Function.update_self]
+  exact ⟨λ ⟨⟨h₁, _⟩, ⟨h₂, _⟩, h₄, h₃⟩ => ⟨h₁, h₂, h₃, h₄⟩,
+    λ ⟨h₁, h₂, h₃, h₄⟩ => ⟨⟨h₁, notAfter_of_precedes h₁⟩, ⟨h₂, notAfter_of_overlaps h₂⟩, h₄, h₃⟩⟩
+
+/-- (ii) and (iv) together: the concept, at the holder's actual world and time, overlaps the
+utterance time, so that "she is pregnant today" is reportable by (38) on the same day only. -/
+theorem overlaps_of_def_doubleAccess (h0 : g 0 = c.time) (h : Def M c (doubleAccess x v) g w) :
+    (c.concept ⟨w, g 1⟩).overlaps c.time := by
+  obtain ⟨_, h₂, _, h₄⟩ := (def_doubleAccess M c x v g w h0).1 h
+  exact h₄ ▸ h₂
+
+/-- With (i), the res must outlast the believing time: its end lies strictly after the end of
+the believing time, as the day of a "today" or the duration of a pregnancy does. -/
+theorem snd_lt_of_def_doubleAccess (h0 : g 0 = c.time) (h : Def M c (doubleAccess x v) g w) :
+    (g 1).snd < (c.concept ⟨w, g 1⟩).snd :=
+  lt_of_lt_of_le ((def_doubleAccess M c x v g w h0).1 h).1
+    (overlaps_of_def_doubleAccess M c x v g w h0 h).2
+
+/-- A backshifting concept, one whose value precedes its argument as "a year ago" does,
+cannot satisfy (i), (ii) and (iv): (38) can never report such a belief. -/
+theorem not_def_doubleAccess_of_backshifting (h0 : g 0 = c.time)
+    (hf : ∀ s, (c.concept s).precedes s.time) : ¬ Def M c (doubleAccess x v) g w := λ h =>
+  precedes_not_overlaps (precedes_trans (hf ⟨w, g 1⟩) ((def_doubleAccess M c x v g w h0).1 h).1)
+    (overlaps_of_def_doubleAccess M c x v g w h0 h)
+
+/-! ### Section 3: the affixes and the Tense Licensing Condition -/
+
+/-- The presuppositions of the affixed predicates (46)–(48): the event time precedes, or does
+not precede, the evaluation time. -/
+def Affix.Def (g : Assignment T) (t : NonemptyInterval T) : Affix → Prop
+  | past => t.precedes (g 0)
+  | nonpast => ¬ t.precedes (g 0)
+
+/-- The tense entries of Section 3: PAST a bare variable (1a), PRES with the presupposition
+(64) of overlapping the evaluation time, and the Upper Limit Constraint on every position. -/
+def TenseNode.Def' (g : Assignment T) : TenseNode → Prop
+  | PAST i => NotAfter (g i) (g 0)
+  | PRES i => (g i).overlaps (g 0) ∧ NotAfter (g i) (g 0)
+  | INF i => NotAfter (g i) (g 0)
+  | trace i => NotAfter (g i) (g 0)
+
+/-- Definedness under the entries of Section 3, every predicate affixed. -/
+def Def' : LF V D A → Assignment T → W → Prop
+  | .pred _ τ a, g, _ => τ.Def' g ∧ a.Def g (g τ.var)
+  | .bind d j φ, g, w => Def' φ (Function.update g j (M.desc d w)) w
+  | .believe x τ a φ, g, w =>
+    τ.Def' g ∧ a.Def g (g τ.var) ∧
+      ∀ s ∈ M.dox x w (g τ.var), Def' φ (Function.update g 0 s.time) s.world
+  | .believeRes x τ a res j φ, g, w =>
+    τ.Def' g ∧ a.Def g (g τ.var) ∧ res.Def' g ∧ c.concept ⟨w, g τ.var⟩ = g res.var ∧
+      ∀ s ∈ M.dox x w (g τ.var),
+        Def' φ (Function.update (Function.update g 0 s.time) j (c.concept s)) s.world
+  | .woll τ a φ, g, w =>
+    τ.Def' g ∧ a.Def g (g τ.var) ∧ ∀ t, (g τ.var).precedes t → Def' φ (Function.update g 0 t) w
+
+/-- Whether a tense is licensed at a position, (49) with (67): a PAST must have its host
+predicate `<`-affixed or sit inside an intensional argument of a `<`-affixed predicate
+(`above`), a PRES must have neither. -/
+def TenseNode.Licensed (host : Affix) (above : Bool) : TenseNode → Prop
+  | PAST _ => host = .past ∨ above = true
+  | PRES _ => host = .nonpast ∧ above = false
+  | INF _ => True
+  | trace _ => True
+
+/-- The affix of the predicate whose event-time argument is the trace of variable `j`, the
+host of a res-moved tense under (67). -/
+def traceHost (j : Var) : LF V D A → Option Affix
+  | .pred _ (.trace i) a => if i = j then some a else none
+  | .pred _ _ _ => none
+  | .bind _ _ φ => traceHost j φ
+  | .believe _ (.trace i) a φ => if i = j then some a else traceHost j φ
+  | .believe _ _ _ φ => traceHost j φ
+  | .believeRes _ (.trace i) a _ _ φ => if i = j then some a else traceHost j φ
+  | .believeRes _ _ _ _ _ φ => traceHost j φ
+  | .woll (.trace i) a φ => if i = j then some a else traceHost j φ
+  | .woll _ _ φ => traceHost j φ
+
+/-- The Tense Licensing Condition (49) under the definition (67) of "in the domain of":
+`above` records whether the position is contained in an intensional argument, the complement
+of an attitude verb or of `woll`, of a `<`-affixed predicate; a res-moved tense is licensed
+through the host of its trace, its own position being an extensional argument. -/
+def TLC : Bool → LF V D A → Prop
+  | above, .pred _ τ a => τ.Licensed a above
+  | above, .bind _ _ φ => TLC above φ
+  | above, .believe _ τ a φ => τ.Licensed a above ∧ TLC (above || decide (a = .past)) φ
+  | above, .believeRes _ τ a res j φ =>
+    τ.Licensed a above ∧ (∃ h, traceHost j φ = some h ∧ res.Licensed h above) ∧
+      TLC (above || decide (a = .past)) φ
+  | above, .woll τ a φ => τ.Licensed a above ∧ TLC (above || decide (a = .past)) φ
+
+/-- An unembedded PAST conveys anteriority: the condition forces the `<`-affix, whose
+presupposition is that the event time precedes the utterance time. -/
+theorem precedes_of_tlc {i : Var} {a : Affix} (h : TLC false (.pred v (.PAST i) a : LF V D A))
+    (hd : Def' M c (.pred v (.PAST i) a) g w) : (g i).precedes (g 0) := by
+  rcases h with h | h
+  · subst h; exact hd.2
+  · exact absurd h Bool.false_ne_true
+
+/-- (50): *John PAST₁ <-cry* is licensed. -/
+theorem tlc_cry : TLC false (LF.pred v (.PAST 1) .past : LF V D A) := Or.inl rfl
+
+/-- (51): *he PAST₁ <-decide [λ0 PRO to₀ ¬<-tell [λ0 they PAST₀ ¬<-be having ...]]*, the
+lower PAST licensed non-locally by *<-decide*. -/
+theorem tlc_decide (y : A) (having : V) :
+    TLC false (.believe x (.PAST 1) .past (.believe y (.INF 0) .nonpast
+      (.pred having (.PAST 0) .nonpast)) : LF V D A) :=
+  ⟨Or.inl rfl, trivial, Or.inr rfl⟩
+
+/-- (52) without its relative clause: *he PAST₁ <-say [λ0 PAST₀ ¬<-woll [λ0 he INF₀ ¬<-buy]]*,
+the PAST of *woll* licensed by *<-say* across the non-past future. -/
+theorem tlc_say (buy : V) :
+    TLC false (.believe x (.PAST 1) .past (.woll (.PAST 0) .nonpast
+      (.pred buy (.INF 0) .nonpast)) : LF V D A) :=
+  ⟨Or.inl rfl, Or.inr rfl, trivial⟩
+
+/-- (56): the simultaneous LF of (28) with its affixes, *John PAST₁ <-believe [λ0 Bill PAST₀
+¬<-be asleep]*, is licensed. -/
+theorem tlc_simultaneous :
+    TLC false (.believe x (.PAST 1) .past (.pred v (.PAST 0) .nonpast) : LF V D A) :=
+  ⟨Or.inl rfl, Or.inr rfl⟩
+
+/-- Under the entries of Section 3, (56) presupposes only that the believing time precedes
+the utterance time: the presupposition of footnote 23 is gone. -/
+theorem def'_simultaneous (h0 : g 0 = c.time) :
+    Def' M c (.believe x (.PAST 1) .past (.pred v (.PAST 0) .nonpast)) g w ↔
+      (g 1).precedes c.time := by
+  simp only [Def', TenseNode.Def', TenseNode.var, Affix.Def, h0, Function.update_self]
+  exact ⟨λ h => h.2.1,
+    λ h => ⟨notAfter_of_precedes h, h, λ _ _ => ⟨notAfter_self _, precedes_irrefl _⟩⟩⟩
+
+/-- (57): a present bound from Comp under a `<`-affixed attitude verb violates clause (ii). -/
+theorem not_tlc_present_under_past :
+    ¬ TLC false (.believe x (.PAST 1) .past (.pred v (.PRES 0) .nonpast) : LF V D A) :=
+  λ h => Bool.noConfusion h.2.2
+
+/-- The res-moved LFs of (36) and (28) with their affixes, (62), (63), (65), (66): the res
+tense `res` and the affix `a` of the embedded predicate hosting its trace. -/
+def resMoved (res : TenseNode) (a : Affix) : LF V D A :=
+  .believeRes x (.PAST 1) .past res 3 (.pred v (.trace 3) a)
+
+/-- (63) is licensed: the res-moved PRES is in the domain of *¬<-be pregnant* alone. -/
+theorem tlc_63 : TLC false (resMoved x v (.PRES 2) .nonpast : LF V D A) :=
+  ⟨Or.inl rfl, ⟨.nonpast, rfl, rfl, rfl⟩, trivial⟩
+
+/-- (62) is excluded: the res-moved PRES is in the domain of *<-be pregnant*. -/
+theorem not_tlc_62 : ¬ TLC false (resMoved x v (.PRES 2) .past : LF V D A) := by
+  rintro ⟨_, ⟨h, hh, hl⟩, _⟩
+  cases Option.some.inj (hh : some Affix.past = some h)
+  exact absurd hl.1 (by decide)
+
+/-- (65) is licensed: the back-shifted reading, the res-moved PAST hosted by *<-be asleep*. -/
+theorem tlc_65 : TLC false (resMoved x v (.PAST 2) .past : LF V D A) :=
+  ⟨Or.inl rfl, ⟨.past, rfl, Or.inl rfl⟩, trivial⟩
+
+/-- (66) is excluded: the res-moved PAST is in the domain of no `<`-affixed predicate. -/
+theorem not_tlc_66 : ¬ TLC false (resMoved x v (.PAST 2) .nonpast : LF V D A) := by
+  rintro ⟨_, ⟨h, hh, hl⟩, _⟩
+  cases Option.some.inj (hh : some Affix.nonpast = some h)
+  rcases hl with hl | hl
+  · exact absurd hl (by decide)
+  · exact Bool.false_ne_true hl
+
+/-- The presuppositions of (63): (i) from the `<` on the matrix verb, (ii) from (64), (iv) from
+(33), and at every doxastic alternative (iii) from the Upper Limit Constraint on the trace and
+(vi) from the `¬<` on the embedded predicate, that the concept neither follows nor precedes
+the alternative's time. -/
+theorem def'_63 (h0 : g 0 = c.time) :
+    Def' M c (resMoved x v (.PRES 2) .nonpast) g w ↔
+      (g 1).precedes c.time ∧ (g 2).overlaps c.time ∧ c.concept ⟨w, g 1⟩ = g 2 ∧
+        ∀ s ∈ M.dox x w (g 1),
+          NotAfter (c.concept s) s.time ∧ ¬ (c.concept s).precedes s.time := by
+  simp only [resMoved, Def', TenseNode.Def', TenseNode.var, Affix.Def, h0,
+    Function.update_of_ne (show (0 : ℕ) ≠ 3 by decide), Function.update_self]
+  exact ⟨λ ⟨_, h₁, ⟨h₂, _⟩, h₄, h₆⟩ => ⟨h₁, h₂, h₄, h₆⟩,
+    λ ⟨h₁, h₂, h₄, h₆⟩ => ⟨notAfter_of_precedes h₁, h₁, ⟨h₂, notAfter_of_overlaps h₂⟩, h₄, h₆⟩⟩
 
 end HeimComments1994
