@@ -1,38 +1,38 @@
 import Linglib.Syntax.Minimalist.Probe.Basic
 
 /-!
-# [halpert-2019]: Raising, unphased
+# Halpert (2019): Raising, Unphased
 
-Halpert derives cross-linguistic variation in raising-to-subject
-**without the Phase Impenetrability Condition**. Two clause-and-language
-properties do the work:
+This file formalizes [halpert-2019]'s derivation of cross-linguistic variation in
+raising-to-subject without the Phase Impenetrability Condition. Two properties of a clausal
+complement do the work, `Clause`: whether it is a φ-goal that matrix T interacts with, and
+whether it can satisfy the EPP by moving to Spec,TP, together with whether T has an EPP at all.
+The engine is `Syntax/Minimalist/Probe/Basic.lean`'s `Probe`: [deal-2015a-nels]'s interaction
+is `Probe.vis`, the search halting on a φ-bearing clause, and satisfaction is `Probe.act`, the
+goal being able to occupy Spec,TP, so the matrix-T EPP probe is `eppProbe` and the derivation it
+drives is `raisingOutcome`. When the closest clause interacts but cannot satisfy the EPP it
+absorbs the probe, and T probes a second time ([rackowski-richards-2005]), reaching the embedded
+subject, hyper-raising, when it genuinely Agreed with the clause (section 4.3), and stalling in
+defective intervention when it did not, the English `that`-clause of section 5.3. The attested
+profiles follow from the engine: English, `english_profile`; Zulu, `zulu_profile`; Uyghur,
+`uyghur_profile` (section 4.5); and Makhuwa and Matengo, which lack the EPP, `makhuwa_no_raising`
+(section 5.1). Phasehood is thereby relativized to φ-probes rather than a fixed condition
+(`Syntax/Minimalist/Phase.lean`): finite CPs and nonfinite TPs of the same size get opposite
+raising outcomes across languages, `finite_cp_outcome_not_size_driven` and
+`nonfinite_tp_outcome_not_size_driven`.
 
-1. whether a clausal complement is a **φ-goal** matrix T interacts with;
-2. whether that clause can **satisfy the EPP** (move to Spec,TP);
+## Implementation notes
 
-plus whether T has an EPP at all. The engine is the canonical `Probe`
-(`Probe/Basic.lean`): Deal's ([deal-2015a-nels]) *interaction* is `Probe.vis`
-(the search halts on a φ-bearing clause — an A-over-A intervener) and
-*satisfaction* is `Probe.act` (the goal can occupy Spec,TP). When the
-closest clause interacts but cannot satisfy the EPP it absorbs the probe
-(`Probe.agree_eq_none_of_inactive`); T then probes a second time
-([rackowski-richards-2005]), reaching the embedded subject —
-hyper-raising — when it genuinely Agreed with the clause, and stalling
-(defective intervention) when it did not.
+`raisingOutcome` is deterministic, so the optionality of Zulu hyper-raising out of a finite
+clause, where an expletive non-raising variant coexists with it, is abstracted over, as are the
+`tend`, `happen`, and `keep` selection matrix and the adjectival versus verbal small-clause split
+of English.
 
-This **relativizes phasehood to φ-probes** rather than positing a fixed
-PIC (`phaseImpenetrable`, `Syntax/Minimalist/Phase.lean`): finite CPs and
-nonfinite TPs of the *same size* get opposite raising outcomes across
-languages, so the split cannot be size/phase-driven
-(`finite_cp_outcome_not_size_driven`, `nonfinite_tp_outcome_not_size_driven`).
+## References
 
-## Main declarations
-
-- `Clause` — a complement by its three probe-relevant properties.
-- `eppProbe` / `raisingOutcome` — the matrix-T EPP probe and the
-  derivation it drives, run through `Probe.agree`.
-- `english_profile`, `zulu_profile`, `uyghur_profile`,
-  `makhuwa_no_raising` — the attested profiles, derived from the engine.
+* [halpert-2019]
+* [deal-2015a-nels]
+* [rackowski-richards-2005]
 -/
 
 namespace Halpert2019
