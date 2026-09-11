@@ -1,0 +1,194 @@
+[
+  {
+    "id": "hollidayicard2013_ex1",
+    "source": {
+      "bibkey": "holliday-icard-2013",
+      "paperLabel": "(1)"
+    },
+    "language": "stan1293",
+    "primaryText": "It is at least as likely that one of Brazil or Qatar will win the World Cup as it is that one of the U.S. or Qatar will win the World Cup.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7"
+      ],
+      [
+        "axiom",
+        "A"
+      ],
+      [
+        "form",
+        "(φ ∨ χ) ⩾ (ψ ∨ χ)"
+      ]
+    ],
+    "comment": "Intuitively equivalent to (2): the motivation for qualitative additivity, the axiom A of the logic FA.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidayicard2013_ex2",
+    "source": {
+      "bibkey": "holliday-icard-2013",
+      "paperLabel": "(2)"
+    },
+    "language": "stan1293",
+    "primaryText": "It is at least as likely that Brazil will win the World Cup as it is that the U.S. will win the World Cup.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "7"
+      ],
+      [
+        "axiom",
+        "A"
+      ],
+      [
+        "form",
+        "φ ⩾ ψ"
+      ]
+    ],
+    "comment": "The shared disjunct Qatar cancels; a preliminary Mechanical Turk study found unanimous agreement with the equivalence (footnote 14).",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidayicard2013_ex3",
+    "source": {
+      "bibkey": "holliday-icard-2013",
+      "paperLabel": "(3)"
+    },
+    "language": "stan1293",
+    "primaryText": "It is more likely that one of Argentina or England will win the World Cup than it is that one of China or Denmark will win.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "10.1"
+      ],
+      [
+        "axiom",
+        "Scott4"
+      ],
+      [
+        "form",
+        "{a, e} ≻ {c, d}"
+      ]
+    ],
+    "comment": "One of the four Kraft–Pratt–Seidenberg comparisons: jointly consistent with FA but with no finitely additive measure. The paper doubts that speakers find the combination inconsistent.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidayicard2013_ex4",
+    "source": {
+      "bibkey": "holliday-icard-2013",
+      "paperLabel": "(4)"
+    },
+    "language": "stan1293",
+    "primaryText": "It is more likely that one of Brazil or China will win than it is that one of Argentina or Denmark will win.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "10.1"
+      ],
+      [
+        "axiom",
+        "Scott4"
+      ],
+      [
+        "form",
+        "{b, c} ≻ {a, d}"
+      ]
+    ],
+    "comment": "One of the four Kraft–Pratt–Seidenberg comparisons: jointly consistent with FA but with no finitely additive measure. The paper doubts that speakers find the combination inconsistent.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidayicard2013_ex5",
+    "source": {
+      "bibkey": "holliday-icard-2013",
+      "paperLabel": "(5)"
+    },
+    "language": "stan1293",
+    "primaryText": "It is more likely that Denmark will win than it is that one of Argentina or China will win.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "10.1"
+      ],
+      [
+        "axiom",
+        "Scott4"
+      ],
+      [
+        "form",
+        "{d} ≻ {a, c}"
+      ]
+    ],
+    "comment": "One of the four Kraft–Pratt–Seidenberg comparisons: jointly consistent with FA but with no finitely additive measure. The paper doubts that speakers find the combination inconsistent.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidayicard2013_ex6",
+    "source": {
+      "bibkey": "holliday-icard-2013",
+      "paperLabel": "(6)"
+    },
+    "language": "stan1293",
+    "primaryText": "It is more likely that one of Argentina, China, or Denmark will win than it is that one of Brazil or England will win.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "10.1"
+      ],
+      [
+        "axiom",
+        "Scott4"
+      ],
+      [
+        "form",
+        "{a, c, d} ≻ {b, e}"
+      ]
+    ],
+    "comment": "One of the four Kraft–Pratt–Seidenberg comparisons: jointly consistent with FA but with no finitely additive measure. The paper doubts that speakers find the combination inconsistent.",
+    "lgrConformance": ""
+  }
+]

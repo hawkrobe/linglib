@@ -1,101 +1,40 @@
 import Mathlib.Order.Hom.BoundedLattice
-import Linglib.Semantics.Polarity.Licensing
 import Mathlib.Order.Hom.CompleteLattice
 import Mathlib.Order.Heyting.Hom
 import Linglib.Core.Order.SetPreimage
 import Linglib.Logic.Natural.Additivity
 import Linglib.Semantics.Degree.Quantifier
-import Linglib.Semantics.Polarity.Item
 
 /-!
 # Hoeksema (1983): Negative Polarity and the Comparative
-[hoeksema-1983]
 
-## The asymmetry
+This file formalizes the Boolean-algebraic account of [hoeksema-1983] of the two comparatives.
+The NP-comparative *Adj-er than NP* takes a generalized quantifier and is the Boolean
+homomorphism of (22), here the preimage hom `npComparativeGQ` of the threshold function
+`npThreshold`; as a homomorphism it is monotone increasing (Fact 3), so it is not a negative
+polarity environment, and it is the only ordering-preserving homomorphism in the sense of
+Definition 4 (`npComparativeGQ_uniqueness`, Facts 1 and 2). The S-comparative *Adj-er than S*
+takes a set of degrees, `Degree.Comparison.gt.overSet` of Definition 7, and is anti-additive
+(Fact 4, in the substrate) without being a homomorphism, which makes it a negative polarity
+environment. On a proper name and the singleton of its degree the two coincide
+(`npComparativeGQ_principal_eq_gtOverSet_singleton`, §3.9).
 
-[hoeksema-1983] (NLLT 1: 403–434) advances a Boolean-algebraic
-account of comparatives that distinguishes two distinctly typed
-*than*-arguments, each with a different polarity-environment signature.
-The empirical hook is that English / Dutch comparatives sometimes
-license NPIs and sometimes do not — the type distinction predicts which.
+## Implementation notes
 
-- **NP-comparative** `[Adj-er than NP]` (§3.6, Eq 22): the than-argument
-  is a generalized quantifier; ⟦than NP⟧ : Set (Set U) → Set U is a
-  *Boolean homomorphism*. By Fact 3 it is monotone *increasing* in its
-  GQ argument, and (§3.6) **not a negative polarity environment**.
-  Surface NPIs in "than NP" arise (by hypothesis) from a covert
-  clausal source.
+* The homomorphism preserves arbitrary suprema and infima, `CompleteLatticeHom`, where the
+  paper states finite preservation; Fact 2 is proved for complete lattice homomorphisms from
+  the atom decomposition of a set of sets.
 
-- **S-comparative** `[Adj-er than S]` (§3.8, Def 7): the than-clause
-  ranges over degrees; ⟦than S⟧ : Set D → Set U is anti-additive but
-  *not* a Boolean homomorphism, hence an NPI environment by Zwarts.
+## References
 
-## Formalization
-
-`npComparativeGQ` is mathlib's `CompleteLatticeHom.setPreimage` applied
-to a *threshold function* `npThreshold μ y = {x | μ x < μ y}`. All
-Boolean-algebra preservation properties — finite `∩`/`∪`/`ᶜ`/`⊤`/`⊥`
-and arbitrary `sSup`/`sInf` (strengthening Hoeksema's finitary claim)
-— are inherited from the bundled hom via the standard mathlib
-`map_inf` / `map_sup` / `map_compl` / `map_top` / `map_bot` /
-`OrderHomClass.mono` API. `BoundedLatticeHomClass.toBiheytingHomClass`
-gives complement preservation for free on `BooleanAlgebra → BooleanAlgebra`
-homs.
-
-The S-comparative is `Degree.Comparison.gt.overSet μ` (originally
-[hoeksema-1983] §3.8 Def 7); its anti-additivity (Fact 4,
-`gtOverSet_isAntiAdditive`) lives in `Semantics/Degree/Comparative.lean`
-as the natural generalization of `comparativeSem` from a binary comparator
-to a degree-set comparator. This file imports them from there.
-
-## Hoeksema's algebraic spine: Definitions 4–8 and Facts 1–4
-
-The §3 algebraic content is formalized in five layers:
-- **Definition 4** (`IsOrderingPreserving`): the abstract property
-  `μ b < μ a ↔ a ∈ f Q_b`, where `Q_b = {X | b ∈ X}` is the principal
-  ultrafilter at `b` (`principalUltrafilter`).
-- **Definition 7/8** (`Comparison.gt.overSet μ`, from
-  `Semantics/Degree/Comparative.lean`): the S-comparative as
-  a set-of-degrees operator.
-- **Fact 1** (`fact1_agree_on_atoms`): two `>`-preserving functions
-  coincide on every principal ultrafilter — a one-line chain of the
-  Definition 4 biconditionals.
-- **Fact 2** (`fact2_unique_from_atoms`): a `CompleteLatticeHom` on
-  `Set (Set Entity) → Set Entity` is determined by its values on the
-  principal-ultrafilter generators `Q_b`. Combined with Fact 1, this
-  gives `npComparativeGQ_uniqueness`: two `>`-preserving complete
-  Boolean homs are equal.
-- **Fact 3** (`npComparativeGQ_monotone`): every Boolean hom is
-  monotone increasing — disqualifies the NP-comparative as a Ladusaw
-  NPI environment.
-- **Fact 4** (`gtOverSet_isAntiAdditive` in
-  `Semantics/Degree/Comparative.lean`, cited from
-  `NaturalLogic.IsAntiAdditive.antitone`): every
-  anti-additive function is antitone — hence the S-comparative
-  qualifies as an NPI environment.
-- **§3.9 NP↔S equivalence** (`npComparativeGQ_principal_eq_gtOverSet_singleton`):
-  on principal ultrafilters / singleton degree sets, the two
-  constructions deliver the same predicate.
-
-## Registry connection
-
-The licensing-context registry `Core/Lexical/PolarityItem.lean` records
-this paper's central asymmetry as a structural invariant:
-- `.phrasalComparative` has signature `.mono` (Boolean hom is monotone, not DE)
-- `.clausalComparative` has signature `.antiAdd`
-
-The `comparativeNP_signature_monotone` and
-`comparativeS_signature_anti_additive` theorems below witness the
-agreement between this study file's mathematical statements and the
-registry's classification, by `rfl`.
+* [hoeksema-1983]
+* [ladusaw-1979]
+* [zwarts-1998]
 -/
 
 namespace Hoeksema1983
 
-open Polarity
-
 open Degree
-open Polarity (LicensingContext)
 
 variable {Entity : Type*} {D : Type*} [Preorder D]
 
@@ -252,10 +191,10 @@ theorem singleton_eq_iInf_principalUltrafilter (X : Set Entity) :
              Set.iInf_eq_iInter, Set.mem_iInter,
              Set.mem_compl_iff, principalUltrafilter, Set.mem_ofPred_eq]
   refine ⟨?_, ?_⟩
-  · rintro rfl; exact ⟨fun _ ha => ha, fun _ ha => ha⟩
+  · rintro rfl; exact ⟨λ _ ha => ha, λ _ ha => ha⟩
   · rintro ⟨h1, h2⟩
     ext a
-    exact ⟨fun hY => by_contra fun hX => h2 a hX hY, fun hX => h1 a hX⟩
+    exact ⟨λ hY => by_contra λ hX => h2 a hX hY, λ hX => h1 a hX⟩
 
 /-- Any `Q : Set (Set Entity)` is the `⨆` of its singleton members.
     Stated with `⨆` rather than `⋃` so that the consumer
@@ -287,13 +226,13 @@ theorem fact2_unique_from_atoms
     apply DFunLike.ext
     intro Q
     rw [eq_iSup_singletons Q, map_iSup₂ f, map_iSup₂ g]
-    exact iSup_congr (fun Y => iSup_congr (fun _ => h_singletons Y))
+    exact iSup_congr λ Y => iSup_congr λ _ => h_singletons Y
   intro Y
   rw [singleton_eq_iInf_principalUltrafilter, map_inf f, map_inf g,
       map_iInf₂ f, map_iInf₂ g, map_iInf₂ f, map_iInf₂ g]
   congr 1
-  · exact iInf_congr (fun a => iInf_congr (fun _ => hagree a))
-  · refine iInf_congr (fun a => iInf_congr (fun _ => ?_))
+  · exact iInf_congr λ a => iInf_congr λ _ => hagree a
+  · refine iInf_congr λ a => iInf_congr λ _ => ?_
     rw [map_compl, map_compl, hagree a]
 
 /-- Combining Fact 1 and Fact 2: two `>`-preserving complete-lattice
@@ -321,26 +260,5 @@ theorem npComparativeGQ_principal_eq_gtOverSet_singleton
   unfold npComparativeGQ principalUltrafilter npThreshold
   simp only [CompleteLatticeHom.coe_setPreimage, Set.mem_preimage, Set.mem_ofPred_eq,
              Comparison.overSet_singleton, Comparison.mem_over, Comparison.rel, gt_iff_lt]
-
-/-! ## Connection to the licensing-context registry -/
-
-/-- The `.phrasalComparative` registry slot is monotone, matching
-    `npComparativeGQ_monotone`. This is the registry-level encoding of
-    Hoeksema's central asymmetry: the NP-comparative is monotone
-    *increasing* and therefore not an NPI environment. -/
-theorem comparativeNP_signature_monotone :
-    LicensingContext.phrasalComparative.properties.strawsonSignature = .mono := rfl
-
-/-- The `.clausalComparative` registry slot is anti-additive, matching
-    `gtOverSet_isAntiAdditive`. -/
-theorem comparativeS_signature_anti_additive :
-    LicensingContext.clausalComparative.properties.strawsonSignature = .antiAdd := rfl
-
-/-- Both registry slots cite Hoeksema 1983, anchoring the registry's
-    classification to this study file. -/
-theorem both_comparatives_cite_hoeksema :
-    "hoeksema-1983" ∈ LicensingContext.phrasalComparative.properties.citations ∧
-    "hoeksema-1983" ∈ LicensingContext.clausalComparative.properties.citations := by
-  refine ⟨?_, ?_⟩ <;> decide
 
 end Hoeksema1983

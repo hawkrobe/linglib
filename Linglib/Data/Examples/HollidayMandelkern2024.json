@@ -1,0 +1,2094 @@
+[
+  {
+    "id": "hollidaymandelkern2024_ex1a",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(1a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The butler is the murderer, but he might not be.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "form",
+        "p ∧ ◇¬p"
+      ],
+      [
+        "environment",
+        "matrix"
+      ]
+    ],
+    "comment": "An epistemic contradiction, infelicitous unembedded.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex1b",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(1b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Suppose that the butler is the murderer, but he might not be.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "form",
+        "p ∧ ◇¬p"
+      ],
+      [
+        "environment",
+        "suppose"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex1c",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(1c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Everyone who is tall might not be tall.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "form",
+        "p ∧ ◇¬p"
+      ],
+      [
+        "environment",
+        "quantifier restrictor"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex2a",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(2a)"
+    },
+    "language": "stan1293",
+    "primaryText": "It's raining, but it might not be.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "form",
+        "Wittgenstein sentence"
+      ],
+      [
+        "environment",
+        "matrix"
+      ]
+    ],
+    "comment": "Wittgenstein sentences of both orders are unassertable.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex2b",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(2b)"
+    },
+    "language": "stan1293",
+    "primaryText": "It might be raining, but it isn't.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "form",
+        "Wittgenstein sentence"
+      ],
+      [
+        "environment",
+        "matrix"
+      ]
+    ],
+    "comment": "Wittgenstein sentences of both orders are unassertable.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex2c",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(2c)"
+    },
+    "language": "stan1293",
+    "primaryText": "The cat might be under the bed, but she is on the couch.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "form",
+        "Wittgenstein sentence"
+      ],
+      [
+        "environment",
+        "matrix"
+      ]
+    ],
+    "comment": "Wittgenstein sentences of both orders are unassertable.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex2d",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(2d)"
+    },
+    "language": "stan1293",
+    "primaryText": "I'll make lasagna, but I might not make lasagna.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "form",
+        "Wittgenstein sentence"
+      ],
+      [
+        "environment",
+        "matrix"
+      ]
+    ],
+    "comment": "Wittgenstein sentences of both orders are unassertable.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex2e",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(2e)"
+    },
+    "language": "stan1293",
+    "primaryText": "Sue isn't the winner but she might be.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "form",
+        "Wittgenstein sentence"
+      ],
+      [
+        "environment",
+        "matrix"
+      ]
+    ],
+    "comment": "Wittgenstein sentences of both orders are unassertable.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex3a",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(3a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Suppose Sue is the winner but I don't know it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "type",
+        "Moore sentence"
+      ],
+      [
+        "environment",
+        "suppose"
+      ]
+    ],
+    "comment": "The embedded Moore sentence is felicitous: its unassertability is pragmatic.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex3b",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(3b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Suppose Sue is the winner but she might not be.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "type",
+        "Wittgenstein sentence"
+      ],
+      [
+        "environment",
+        "suppose"
+      ]
+    ],
+    "comment": "The embedded Wittgenstein sentence patterns with the contradiction, not the Moore sentence.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex3c",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(3c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Suppose Sue is the winner and isn't the winner.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "type",
+        "classical contradiction"
+      ],
+      [
+        "environment",
+        "suppose"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex4a",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(4a)"
+    },
+    "language": "stan1293",
+    "primaryText": "If Sue is the winner but I don't know it, I will chastise her for not telling me.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "type",
+        "Moore sentence"
+      ],
+      [
+        "environment",
+        "conditional antecedent"
+      ]
+    ],
+    "comment": "The embedded Moore sentence is felicitous: its unassertability is pragmatic.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex4b",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(4b)"
+    },
+    "language": "stan1293",
+    "primaryText": "If Sue is the winner but she might not be, I will chastise her for not telling me.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "type",
+        "Wittgenstein sentence"
+      ],
+      [
+        "environment",
+        "conditional antecedent"
+      ]
+    ],
+    "comment": "The embedded Wittgenstein sentence patterns with the contradiction, not the Moore sentence.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex4c",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(4c)"
+    },
+    "language": "stan1293",
+    "primaryText": "If Sue is the winner and isn't the winner, I will chastise her for not telling me.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "type",
+        "classical contradiction"
+      ],
+      [
+        "environment",
+        "conditional antecedent"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex5a",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(5a)"
+    },
+    "language": "stan1293",
+    "primaryText": "It could be that Sue is the winner but I don't know it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "type",
+        "Moore sentence"
+      ],
+      [
+        "environment",
+        "could"
+      ]
+    ],
+    "comment": "The embedded Moore sentence is felicitous: its unassertability is pragmatic.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex5b",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(5b)"
+    },
+    "language": "stan1293",
+    "primaryText": "It could be that Sue is the winner and might not be.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "type",
+        "Wittgenstein sentence"
+      ],
+      [
+        "environment",
+        "could"
+      ]
+    ],
+    "comment": "The embedded Wittgenstein sentence patterns with the contradiction, not the Moore sentence.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex5c",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(5c)"
+    },
+    "language": "stan1293",
+    "primaryText": "It could be that Sue is the winner and isn't the winner.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "type",
+        "classical contradiction"
+      ],
+      [
+        "environment",
+        "could"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex6a",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(6a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Either Sue is the winner but I don't know it, or she isn't the winner but I don't know it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "type",
+        "Moore sentence"
+      ],
+      [
+        "environment",
+        "disjunction"
+      ]
+    ],
+    "comment": "The embedded Moore sentence is felicitous: its unassertability is pragmatic.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex6b",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(6b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Either Sue is the winner but might not be, or she isn't the winner but might be.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "type",
+        "Wittgenstein sentence"
+      ],
+      [
+        "environment",
+        "disjunction"
+      ]
+    ],
+    "comment": "The embedded Wittgenstein sentence patterns with the contradiction, not the Moore sentence.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex6c",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(6c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Either Sue is the winner and isn't the winner, or she isn't the winner and is the winner.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "type",
+        "classical contradiction"
+      ],
+      [
+        "environment",
+        "disjunction"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex7a",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(7a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The winner is, for all I know, not the winner.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "type",
+        "Moore sentence"
+      ],
+      [
+        "environment",
+        "definite description"
+      ]
+    ],
+    "comment": "The embedded Moore sentence is felicitous: its unassertability is pragmatic.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex7b",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(7b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The winner might not be the winner.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "type",
+        "Wittgenstein sentence"
+      ],
+      [
+        "environment",
+        "definite description"
+      ]
+    ],
+    "comment": "The embedded Wittgenstein sentence patterns with the contradiction, not the Moore sentence.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex7c",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(7c)"
+    },
+    "language": "stan1293",
+    "primaryText": "The winner isn't the winner.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "type",
+        "classical contradiction"
+      ],
+      [
+        "environment",
+        "definite description"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex8a",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(8a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Someone is the winner and for all I know isn't the winner.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "type",
+        "Moore sentence"
+      ],
+      [
+        "environment",
+        "existential quantifier"
+      ]
+    ],
+    "comment": "The embedded Moore sentence is felicitous: its unassertability is pragmatic.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex8b",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(8b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Someone is the winner and might not be the winner.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "type",
+        "Wittgenstein sentence"
+      ],
+      [
+        "environment",
+        "existential quantifier"
+      ]
+    ],
+    "comment": "The embedded Wittgenstein sentence patterns with the contradiction, not the Moore sentence.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex8c",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(8c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Someone is the winner and isn't the winner.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "type",
+        "classical contradiction"
+      ],
+      [
+        "environment",
+        "existential quantifier"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex9a",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(9a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Liam believes that Sue is the winner. Liam also believes that Sue might not be the winner.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "type",
+        "Wittgenstein sentence"
+      ],
+      [
+        "environment",
+        "distributed attitude ascriptions"
+      ]
+    ],
+    "comment": "The conjuncts are jointly inconsistent even when distributed across attitude ascriptions.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex9b",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(9b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Suppose that Sue is the winner. Suppose, further, that Sue might not be the winner.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "type",
+        "Wittgenstein sentence"
+      ],
+      [
+        "environment",
+        "distributed suppositions"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex9c",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(9c)"
+    },
+    "language": "stan1293",
+    "primaryText": "I hope Susie wins. I also hope she might not win.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.1"
+      ],
+      [
+        "type",
+        "Wittgenstein sentence"
+      ],
+      [
+        "environment",
+        "distributed attitude ascriptions"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex10a",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(10a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Sue might be the winner and she might not be, and either she is the winner or she isn't.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "form",
+        "(◇p ∧ ◇¬p) ∧ (p ∨ ¬p)"
+      ]
+    ],
+    "comment": "A long-winded avowal of ignorance; true at the point of full uncertainty.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex10b",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(10b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Sue might not be the winner and she is the winner, or else Sue might be the winner and she isn't the winner.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "form",
+        "(◇¬p ∧ p) ∨ (◇p ∧ ¬p)"
+      ]
+    ],
+    "comment": "The distribution of (10a): a disjunction of Wittgenstein sentences, so distributivity is invalid.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex11",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(11)"
+    },
+    "language": "stan1293",
+    "primaryText": "Every ticket might not be a winning ticket.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "form",
+        "∧ᵢ ◇¬W(tᵢ)"
+      ]
+    ],
+    "comment": "True of a fair lottery whose result is unknown.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex12",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(12)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some winning ticket might not be a winning ticket.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.2"
+      ],
+      [
+        "form",
+        "∨ᵢ (W(tᵢ) ∧ ◇¬W(tᵢ))"
+      ]
+    ],
+    "comment": "Would follow from (11) and the disjunction of the winners by distributivity.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex13a",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(13a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Either the dog is inside or it must be outside.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "form",
+        "p ∨ □¬p"
+      ],
+      [
+        "role",
+        "premise"
+      ]
+    ],
+    "comment": "A logical truth in any E-logic with De Morgan's laws.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex13b",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(13b)"
+    },
+    "language": "stan1293",
+    "primaryText": "It's not the case that the dog must be outside.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "form",
+        "¬□¬p"
+      ],
+      [
+        "role",
+        "premise"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex13c",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(13c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Therefore, the dog is inside.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "form",
+        "p"
+      ],
+      [
+        "role",
+        "conclusion"
+      ]
+    ],
+    "comment": "The disjunctive-syllogism inference from (13a) and (13b) is intuitively invalid.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex14",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(14)"
+    },
+    "language": "stan1293",
+    "primaryText": "The dog is inside or outside.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "form",
+        "p ∨ ¬p"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex15a",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(15a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Either Fatima is home or else she must be somewhere else.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "form",
+        "p ∨ □¬p"
+      ]
+    ],
+    "comment": "Feels like the corresponding tautology.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex15b",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(15b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Either John must be the culprit or else it isn't him.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.3"
+      ],
+      [
+        "form",
+        "□p ∨ ¬p"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex16",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(16)"
+    },
+    "language": "stan1293",
+    "primaryText": "Either John is home or he is at work. So he might be at home or he might be at work.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "form",
+        "p ∨ q ⊨ ◇p ∨ ◇q"
+      ],
+      [
+        "evidence",
+        "p entails ◇p"
+      ]
+    ],
+    "comment": "Proof by cases, footnote 5.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex17",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(17)"
+    },
+    "language": "stan1293",
+    "primaryText": "It's raining, but I don't know whether it might be raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "form",
+        "p ∧ ¬K◇p"
+      ],
+      [
+        "evidence",
+        "p entails ◇p"
+      ]
+    ],
+    "comment": "Footnote 5: Moorean, explained if p entails ◇p.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex18a",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(18a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The butler did it. … I'm not sure whether the butler might have done it, but what I said earlier is true.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "evidence",
+        "p entails ◇p"
+      ],
+      [
+        "type",
+        "retraction"
+      ]
+    ],
+    "comment": "Footnote 5.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex18b",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(18b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The butler did it. … I only said that the butler did it, not that he might have done it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "evidence",
+        "p entails ◇p"
+      ],
+      [
+        "type",
+        "retraction"
+      ]
+    ],
+    "comment": "Footnote 5.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex19",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(19)"
+    },
+    "language": "stan1293",
+    "primaryText": "John knows that Sue is at the party. So, John knows that Sue might be at the party.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "evidence",
+        "p entails ◇p"
+      ],
+      [
+        "environment",
+        "know"
+      ]
+    ],
+    "comment": "Footnote 5.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex20",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(20)"
+    },
+    "language": "stan1293",
+    "primaryText": "If you might be sick, please let me know.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "evidence",
+        "p entails ◇p"
+      ],
+      [
+        "environment",
+        "conditional antecedent"
+      ]
+    ],
+    "comment": "Footnote 5: someone who is sick is obligated by modus ponens to tell.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex21a",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(21a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Either it isn't the butler but it might be, or else it's the butler.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "form",
+        "(¬p ∧ ◇p) ∨ p"
+      ]
+    ],
+    "comment": "Sounds infelicitous, as a disjunction with a contradictory disjunct, yet feels equivalent to (21b); orthomodularity would make ◇p entail it.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex21b",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(21b)"
+    },
+    "language": "stan1293",
+    "primaryText": "It's the butler.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2.4"
+      ],
+      [
+        "form",
+        "p"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex22a",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(22a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John might possibly win.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.3"
+      ],
+      [
+        "form",
+        "◇◇p"
+      ],
+      [
+        "evidence",
+        "against 4"
+      ]
+    ],
+    "comment": "Moss's nested modals seem increasingly strong, against the collapse principles.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex22b",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(22b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John might win.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.3"
+      ],
+      [
+        "form",
+        "◇p"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex22c",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(22c)"
+    },
+    "language": "stan1293",
+    "primaryText": "John certainly might win.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.3"
+      ],
+      [
+        "form",
+        "□◇p"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex23a",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(23a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John must be the winner, but maybe he might not be the winner.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.3"
+      ],
+      [
+        "form",
+        "□p ∧ ¬□□p"
+      ],
+      [
+        "evidence",
+        "violation of 4 inconsistent"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex23b",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(23b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John might be the winner, but it might be that he must not be the winner.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.3"
+      ],
+      [
+        "form",
+        "◇p ∧ ¬□◇p"
+      ],
+      [
+        "evidence",
+        "violation of 5 inconsistent"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex23c",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(23c)"
+    },
+    "language": "stan1293",
+    "primaryText": "John is the winner, but it might be that he must not be the winner.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.3"
+      ],
+      [
+        "form",
+        "p ∧ ¬□◇p"
+      ],
+      [
+        "evidence",
+        "violation of B inconsistent"
+      ]
+    ],
+    "comment": "Inconsistent although 4, 5 and B are invalid: negation is not pseudocomplementation.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex24a",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(24a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Either the window is open or the window is closed, and it might be raining in France.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "form",
+        "(U₁ ∨ U₂) ∧ ◇V"
+      ],
+      [
+        "principle",
+        "restricted diamond distributivity"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex24b",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(24b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Therefore, either the window is open and it might be raining in France, or the window is closed and it might be raining in France.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5"
+      ],
+      [
+        "form",
+        "(U₁ ∧ ◇V) ∨ (U₂ ∧ ◇V)"
+      ],
+      [
+        "principle",
+        "restricted diamond distributivity"
+      ]
+    ],
+    "comment": "Intuitively reasonable given that both conjunctions might hold; Proposition 5.12.1.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex25",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(25)"
+    },
+    "language": "stan1293",
+    "primaryText": "Sue believes that it is raining and that it isn't raining. Her beliefs are inconsistent!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "environment",
+        "believe"
+      ],
+      [
+        "type",
+        "classical contradiction"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex26",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(26)"
+    },
+    "language": "stan1293",
+    "primaryText": "Sue believes that either it's raining and might not be, or it isn't raining and might be.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "environment",
+        "believe"
+      ],
+      [
+        "type",
+        "disjoined Wittgenstein sentence"
+      ]
+    ],
+    "comment": "Ascribes incoherent beliefs, like (25); a pragmatic supposability rule cannot explain this.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex27",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(27)"
+    },
+    "language": "stan1293",
+    "primaryText": "Sue believes that it might be that it's raining and might not be raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "environment",
+        "believe"
+      ],
+      [
+        "type",
+        "modalized Wittgenstein sentence"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex28a",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(28a)"
+    },
+    "language": "stan1293",
+    "primaryText": "If it might be raining but it isn't, we don't need rainjackets.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "form",
+        "(◇p ∧ ¬p) → q"
+      ],
+      [
+        "comparison",
+        "dynamic semantics"
+      ]
+    ],
+    "comment": "As bad as the reverse order, against the dynamic prediction that the left-modal variant is coherent.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex28b",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(28b)"
+    },
+    "language": "stan1293",
+    "primaryText": "It might be raining, but if it isn't, we don't need rainjackets.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "form",
+        "◇p ∧ (¬p → q)"
+      ],
+      [
+        "comparison",
+        "dynamic semantics"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex29a",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(29a)"
+    },
+    "language": "stan1293",
+    "primaryText": "It might be raining and it might not be raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "form",
+        "◇p ∧ ◇¬p"
+      ],
+      [
+        "comparison",
+        "state-based semantics"
+      ]
+    ],
+    "comment": "Equivalent to (29b) by De Morgan's laws, contrary to Hawke and Steinert-Threlkeld.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex29b",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(29b)"
+    },
+    "language": "stan1293",
+    "primaryText": "It's not the case that it must not be raining or must be raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "form",
+        "¬(□¬p ∨ □p)"
+      ],
+      [
+        "comparison",
+        "state-based semantics"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex30",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(30)"
+    },
+    "language": "stan1293",
+    "primaryText": "It must not be raining or it must be raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "form",
+        "□¬p ∨ □p"
+      ],
+      [
+        "comparison",
+        "state-based semantics"
+      ]
+    ],
+    "comment": "Not a logical truth: more committal than the disjunction of p and ¬p.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex31a",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(31a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The coin must have landed heads.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "form",
+        "□p"
+      ],
+      [
+        "topic",
+        "probability"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex31b",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(31b)"
+    },
+    "language": "stan1293",
+    "primaryText": "That has a .5 probability of being true.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "topic",
+        "probability"
+      ]
+    ],
+    "comment": "Makes sense where there is a .5 chance the coin was double-headed.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex32",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(32)"
+    },
+    "language": "stan1293",
+    "primaryText": "There is .5 probability that the coin must have landed heads.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "topic",
+        "probability"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "hollidaymandelkern2024_ex33",
+    "source": {
+      "bibkey": "holliday-mandelkern-2024",
+      "paperLabel": "(33)"
+    },
+    "language": "stan1293",
+    "primaryText": "The treasure is buried in Alaska, but Blackbeard doesn't even know it might be there—he's sure it's at sea.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "form",
+        "p ∧ ¬K◇p"
+      ],
+      [
+        "comparison",
+        "expressivism"
+      ]
+    ],
+    "comment": "p does not entail that one knows ◇p.",
+    "lgrConformance": ""
+  }
+]
