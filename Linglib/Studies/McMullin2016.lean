@@ -39,7 +39,7 @@ is formalised here.
 
 namespace McMullin2016
 
-open Subregular Phonology.Studies.Hansson2010
+open Subregular Hansson2010
 
 /-! ### Transparent harmony: Navajo is SP_2 as well as TSL_2 -/
 
@@ -48,24 +48,24 @@ language `Studies/Hansson2010.lean` builds as TSL_2, not a parallel SP stipulati
 the two classifications are of one stringset by construction. -/
 theorem navajoSibilantHarmony_lang_isSP2 :
     navajoSibilantHarmony.language.IsStrictlyPiecewise 2 :=
-  TierStrictlyLocalGrammar.agree_language_isStrictlyPiecewise NSeg.onTier
+  TierStrictlyLocalGrammar.agree_language_isStrictlyPiecewise Sibilant.onTier
 
 /-- The tier-based and subsequence-based grammars for Navajo generate the same
-language — the instance at `NSeg.onTier` of `TierStrictlyLocalGrammar.agree_language_eq_sp`. -/
+language — the instance at `Sibilant.onTier` of `TierStrictlyLocalGrammar.agree_language_eq_sp`. -/
 theorem navajoSibilantHarmony_language_eq_sp :
-    navajoSibilantHarmony.language = (StrictlyPiecewiseGrammar.agree NSeg.onTier).language 2 :=
-  TierStrictlyLocalGrammar.agree_language_eq_sp NSeg.onTier
+    navajoSibilantHarmony.language = (StrictlyPiecewiseGrammar.agree Sibilant.onTier).language 2 :=
+  TierStrictlyLocalGrammar.agree_language_eq_sp Sibilant.onTier
 
 /-- [hansson-2010]'s minimal pair under the SP_2 description: the pre-harmony
 /si-dʒéːʔ/ is rejected and the surface [ʃidʒéːʔ] accepted. Both transfer along the
 equality of languages rather than being recomputed. -/
-theorem preSiDze_violates_sp :
-    preSiDze ∉ (StrictlyPiecewiseGrammar.agree NSeg.onTier).language 2 :=
-  navajoSibilantHarmony_language_eq_sp ▸ preSiDze_violates
+theorem ur_ex6a_ii_violates_sp :
+    ur Examples.ex6a_ii ∉ (StrictlyPiecewiseGrammar.agree Sibilant.onTier).language 2 :=
+  navajoSibilantHarmony_language_eq_sp ▸ ur_ex6a_ii_violates
 
-theorem postShiDze_legal_sp :
-    postShiDze ∈ (StrictlyPiecewiseGrammar.agree NSeg.onTier).language 2 :=
-  navajoSibilantHarmony_language_eq_sp ▸ postShiDze_legal
+theorem sr_ex6a_ii_legal_sp :
+    sr Examples.ex6a_ii ∈ (StrictlyPiecewiseGrammar.agree Sibilant.onTier).language 2 :=
+  navajoSibilantHarmony_language_eq_sp ▸ sr_ex6a_ii_legal
 
 /-! ### Opaque harmony: blocking is strictly piecewise at no width -/
 
