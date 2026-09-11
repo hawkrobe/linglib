@@ -9,52 +9,45 @@ import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 import Linglib.Core.Order.Argmax
+import Linglib.Data.Examples.Jaeger2014
 
 /-!
-# Jäger 2014: Rationalizable Signaling
+# Jäger (2014): Rationalizable Signaling
 
-[jaeger-2014]'s iterated cautious response (ICR) model of game-theoretic
-pragmatics — the journal-mature version of [jaeger-ebert-2009]'s pragmatic
-rationalizability. A *semantic game* equips a signaling game with contexts
-(higher-order uncertainty about preferences), an exogenous interpretation
-function, and cost-separable sender utilities. Rational interlocutors
-iterate *cautious responses* (best responses to some full-support belief,
-following Pearce's rationalizability program) starting from the credulous
-receiver; the *pragmatically rationalizable strategies* are those recurring
-arbitrarily late in the iteration.
+This file formalizes [jaeger-2014], the iterated cautious response model of game-theoretic
+pragmatics. A semantic game equips a signaling game with contexts, the players' uncertainty about
+each other's preferences, an interpretation function and cost-separable sender utilities
+(`SemanticGame`). Following Pearce's rationalizability, a cautious response to a set of the
+opponent's strategies is a best response to some belief giving every member of the set positive
+probability, Definitions 2 and 3; the iterated cautious response sequence, Definition 4, starts
+from the credulous receiver, who acts on the literal meaning of each signal, and alternates
+cautious responses, the receiver reading an unexpected signal as true under some revised belief.
+The pragmatically rationalizable strategies are those recurring arbitrarily late in the sequence,
+Definition 5. Theorem 1, `prs_rationalizable`: they are rationalizable in the classical sense,
+Definition 6, since the sequence is a deterministic dynamical system on a finite space and so
+eventually periodic, its late stages lying inside the recurrence sets that witness
+rationalizability. The best responses of Definition 2 reduce to pointwise argmaxes
+(`mem_senderBR_iff`, `mem_receiverBR_iff`), the form in which Section 5 computes the examples,
+and at a fixed point the recurrence sets are the fixed stage (`prsR_eq_of_fixed`). Example 6,
+Horn's division of pragmatic labor, (4): with two synonymous signals, the costlier by one unit,
+and a 3:1 prior, the sequence reaches its fixed point at the convention that the cheap form marks
+the frequent world and the costly form the rare one (`Horn.division_of_pragmatic_labor`), the
+costly form being read as the rare world although, in the sense of Rabin's credibility recast in
+Section 7, it is not credible.
 
-Main formalized results:
-- `SemanticGame`, `optimalActions` (Def. 1, via `Finset.argmax`),
-  `senderBR`/`receiverBR` (Def. 2), `senderCR`/`receiverCR` (Def. 3),
-  the ICR sequence `icrR`/`icrS` (Def. 4), `prsS`/`prsR` (Def. 5),
-  `IsRationalizable` (Def. 6).
-- `prs_rationalizable` (**the paper's Theorem 1**): pragmatically
-  rationalizable strategy pairs are rationalizable in the classical sense.
-  The proof follows the paper — the ICR sequence is deterministic on a
-  finite space, hence eventually periodic; beyond the periodic threshold
-  every ICR stage lies inside the recurrence sets, so the recurrence sets
-  themselves witness rationalizability.
+## Implementation notes
 
-- Best-response *characterizations*: `mem_senderBR_iff` and
-  `mem_receiverBR_iff` reduce the function-space argmaxes of Def. 2 to
-  pointwise argmaxes (per context/world for the sender; per context/signal
-  against posterior-weighted masses for the receiver), via
-  `Finset.mem_argmax_comp_surjective` and `Finset.mem_argmax_pi_sum`.
-- `prsS_eq_of_fixed`/`prsR_eq_of_fixed`: at a fixed point of the ICR step
-  the recurrence sets collapse to the fixed stage.
-- `Credible` — Rabin-style message credibility (§4): a signal is credible
-  iff all pragmatically rationalizable senders use it literally.
-- **`division_of_pragmatic_labor`** (§5, Example 6): in the two-synonyms
-  game with a costly marked form and a 3:1 prior, the pragmatically
-  rationalizable strategies are exactly the Horn convention — the cheap
-  form marks the frequent world and the costly form the rare one (both
-  PRS sets are the identity strategies) — and both signals are credible.
+* Beliefs are functions to `ℝ`; `Δ(M)` is mathlib's `stdSimplex ℝ M`, and the full-support and
+  support-restricted variants `int(Δ(M))` and `Δ(P)` are stated locally, the relative interior of
+  the simplex having no lightweight mathlib form.
+* Examples 1 to 5 and 7 to 10, including the comparison with [franke-2011]'s iterated best
+  response in Section 6, are not formalized; Section 5's linguistic examples are rows.
 
-The comparison with [franke-2011]'s IBR model (the paper's §6: Franke's
-games are the type-matching specialization, and the models differ exactly
-in belief selection — uniform via the Principle of Insufficient Reason
-vs. all full-support beliefs) is a planned follow-up, along with the
-remaining §5 examples.
+## References
+
+* [jaeger-2014]
+* [jaeger-ebert-2009]
+* [franke-2011]
 -/
 
 namespace Jaeger2014
@@ -87,14 +80,14 @@ def IsFullDistOn [Fintype M] (P : Set M) (q : M → ℝ) : Prop :=
 
 theorem IsFullDist.mem_stdSimplex [Fintype M] {q : M → ℝ} (h : IsFullDist q) :
     q ∈ stdSimplex ℝ M :=
-  ⟨fun x => (h.1 x).le, h.2⟩
+  ⟨λ x => (h.1 x).le, h.2⟩
 
 /-- A full-support-on-`P` distribution is supported inside any superset. -/
 theorem IsFullDistOn.isDistOn [Fintype M] {P P' : Set M} {q : M → ℝ}
     (h : IsFullDistOn P q) (hPP' : P ⊆ P') : IsDistOn P' q :=
-  ⟨⟨fun x => (em (x ∈ P)).elim (fun hx => (h.1 x hx).le) (fun hx => (h.2.1 x hx).ge),
+  ⟨⟨λ x => (em (x ∈ P)).elim (λ hx => (h.1 x hx).le) (λ hx => (h.2.1 x hx).ge),
     h.2.2⟩,
-   fun x hx => h.2.1 x (fun hxP => hx (hPP' hxP))⟩
+   λ x hx => h.2.1 x (λ hxP => hx (hPP' hxP))⟩
 
 /-! ### Semantic games -/
 
@@ -140,7 +133,7 @@ def extension (f : F) : Finset W :=
 is updated with the proposition `φ` — the argmax of `p`-expected receiver
 utility over `φ`. -/
 def optimalActions (c : C) (φ : Finset W) (p : W → ℝ) : Finset A :=
-  Finset.univ.argmax (fun a => ∑ w ∈ φ, p w * g.uR c w a)
+  Finset.univ.argmax (λ a => ∑ w ∈ φ, p w * g.uR c w a)
 
 /-! ### Best responses and cautious responses
 
@@ -154,14 +147,14 @@ full-support belief. -/
 in every own-context `c` it maximizes expected utility against the sender
 strategy distribution `σ`, context distribution `q`, and the prior. -/
 def receiverBR (σ : (C → W → F) → ℝ) (q : C → ℝ) : Set (C → F → A) :=
-  {r' | ∀ c, r' ∈ Finset.univ.argmax (fun r : C → F → A =>
+  {r' | ∀ c, r' ∈ Finset.univ.argmax (λ r : C → F → A =>
     ∑ s, σ s * ∑ c', q c' * ∑ w, g.prior w * g.uR c w (r c (s c' w)))}
 
 /-- Def. 2 (sender): `s'` is a best response to the belief `(ρ, q)` iff at
 every context/world pair it maximizes expected utility against the
 receiver strategy distribution `ρ` and context distribution `q`. -/
 def senderBR (ρ : (C → F → A) → ℝ) (q : C → ℝ) : Set (C → W → F) :=
-  {s' | ∀ c w, s' ∈ Finset.univ.argmax (fun s : C → W → F =>
+  {s' | ∀ c w, s' ∈ Finset.univ.argmax (λ s : C → W → F =>
     ∑ r, ρ r * ∑ c', q c' * g.uS c w (s c w) (r c' (s c w)))}
 
 /-- Def. 3: cautious responses of the sender to a set `R` of receiver
@@ -330,8 +323,8 @@ context/world it picks a signal maximizing expected utility. -/
 theorem mem_senderBR_iff (ρ : (C → F → A) → ℝ) (q : C → ℝ) (s' : C → W → F) :
     s' ∈ g.senderBR ρ q ↔
       ∀ c w, s' c w ∈ Finset.univ.argmax (g.senderEU ρ q c w) := by
-  have he : ∀ (c : C) (w : W), Function.Surjective (fun s : C → W → F => s c w) :=
-    fun c w f₀ => ⟨fun _ _ => f₀, rfl⟩
+  have he : ∀ (c : C) (w : W), Function.Surjective (λ s : C → W → F => s c w) :=
+    λ c w f₀ => ⟨λ _ _ => f₀, rfl⟩
   constructor <;> intro h c w
   · exact (Finset.mem_argmax_comp_surjective (he c w) (g.senderEU ρ q c w)).mp (h c w)
   · exact (Finset.mem_argmax_comp_surjective (he c w) (g.senderEU ρ q c w)).mpr (h c w)
@@ -349,19 +342,19 @@ private theorem receiverBR_objective_eq (σ : (C → W → F) → ℝ) (q : C �
       ∑ f, g.receiverEU σ q c f (r c f) := by
   unfold receiverEU
   conv_rhs => rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun s _ => ?_
+  refine Finset.sum_congr rfl λ s _ => ?_
   conv_rhs => rw [← Finset.mul_sum]
   congr 1
   conv_rhs => rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun c' _ => ?_
+  refine Finset.sum_congr rfl λ c' _ => ?_
   conv_rhs => rw [← Finset.mul_sum]
   congr 1
   conv_rhs => rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun w _ => ?_
+  refine Finset.sum_congr rfl λ w _ => ?_
   conv_rhs => rw [← Finset.mul_sum]
   congr 1
   exact ((Finset.sum_ite_eq Finset.univ (s c' w)
-    (fun f => g.uR c w (r c f))).trans (if_pos (Finset.mem_univ _))).symm
+    (λ f => g.uR c w (r c f))).trans (if_pos (Finset.mem_univ _))).symm
 
 /-- Receiver best responses, pointwise: `r'` is a best response iff at
 every context and signal it picks an action maximizing posterior-weighted
@@ -369,25 +362,25 @@ expected utility. -/
 theorem mem_receiverBR_iff (σ : (C → W → F) → ℝ) (q : C → ℝ) (r' : C → F → A) :
     r' ∈ g.receiverBR σ q ↔
       ∀ c f, r' c f ∈ Finset.univ.argmax (g.receiverEU σ q c f) := by
-  have he : ∀ c : C, Function.Surjective (fun r : C → F → A => r c) :=
-    fun c ρ₀ => ⟨fun _ => ρ₀, rfl⟩
-  have hobj : ∀ c, (fun r : C → F → A =>
+  have he : ∀ c : C, Function.Surjective (λ r : C → F → A => r c) :=
+    λ c ρ₀ => ⟨λ _ => ρ₀, rfl⟩
+  have hobj : ∀ c, (λ r : C → F → A =>
       ∑ s, σ s * ∑ c', q c' * ∑ w, g.prior w * g.uR c w (r c (s c' w))) =
-      (fun ρ : F → A => ∑ f, g.receiverEU σ q c f (ρ f)) ∘ (fun r => r c) := by
+      (λ ρ : F → A => ∑ f, g.receiverEU σ q c f (ρ f)) ∘ (λ r => r c) := by
     intro c; funext r; exact g.receiverBR_objective_eq σ q c r
   constructor <;> intro h
   · intro c f
     have h1 := h c
-    rw [show (fun r : C → F → A =>
+    rw [show (λ r : C → F → A =>
         ∑ s, σ s * ∑ c', q c' * ∑ w, g.prior w * g.uR c w (r c (s c' w))) =
-        (fun ρ : F → A => ∑ f, g.receiverEU σ q c f (ρ f)) ∘ (fun r => r c)
+        (λ ρ : F → A => ∑ f, g.receiverEU σ q c f (ρ f)) ∘ (λ r => r c)
       from hobj c] at h1
     exact (Finset.mem_argmax_pi_sum _).mp
       ((Finset.mem_argmax_comp_surjective (he c) _).mp h1) f
   · intro c
-    rw [show (fun r : C → F → A =>
+    rw [show (λ r : C → F → A =>
         ∑ s, σ s * ∑ c', q c' * ∑ w, g.prior w * g.uR c w (r c (s c' w))) =
-        (fun ρ : F → A => ∑ f, g.receiverEU σ q c f (ρ f)) ∘ (fun r => r c)
+        (λ ρ : F → A => ∑ f, g.receiverEU σ q c f (ρ f)) ∘ (λ r => r c)
       from hobj c]
     exact (Finset.mem_argmax_comp_surjective (he c) _).mpr
       ((Finset.mem_argmax_pi_sum _).mpr (h c))
@@ -437,11 +430,10 @@ theorem prsS_eq_of_fixed {n : ℕ} (hfix : g.icrR (n + 1) = g.icrR n) :
 
 /-! ### Message credibility -/
 
-/-- Rabin-style message credibility ([jaeger-2014] §4): a signal is
-credible iff every pragmatically rationalizable sender strategy uses it
-according to its literal meaning. -/
+/-- Rabin's message credibility recast in Section 7: a signal is credible iff at every stage every
+sender strategy uses it wherever it is true, `⟦f⟧ ⊆ s⁻¹(f)`. -/
 def Credible (f : F) : Prop :=
-  ∀ s ∈ g.prsS, ∀ c w, s c w = f → g.meaning f w
+  ∀ n, ∀ s ∈ g.icrS n, ∀ c w, g.meaning f w → s c w = f
 
 end SemanticGame
 
@@ -458,22 +450,22 @@ variable {M : Type*} [Fintype M]
 theorem IsFullDistOn.singleton_eq_one {r₀ : M} {ρ : M → ℝ}
     (h : IsFullDistOn {r₀} ρ) : ρ r₀ = 1 := by
   have hsum := h.2.2
-  rwa [Finset.sum_eq_single r₀ (fun b _ hb => h.2.1 b (by simp [hb]))
-    (fun hb => absurd (Finset.mem_univ _) hb)] at hsum
+  rwa [Finset.sum_eq_single r₀ (λ b _ hb => h.2.1 b (by simp [hb]))
+    (λ hb => absurd (Finset.mem_univ _) hb)] at hsum
 
 /-- A sum against a belief supported on a single strategy collapses to the
 value at that strategy. -/
 theorem sum_mul_of_fullDistOn_singleton {r₀ : M} {ρ : M → ℝ}
     (h : IsFullDistOn {r₀} ρ) (X : M → ℝ) :
     ∑ r, ρ r * X r = X r₀ := by
-  rw [Finset.sum_eq_single r₀ (fun b _ hb => by rw [h.2.1 b (by simp [hb]), zero_mul])
-    (fun hb => absurd (Finset.mem_univ _) hb), h.singleton_eq_one, one_mul]
+  rw [Finset.sum_eq_single r₀ (λ b _ hb => by rw [h.2.1 b (by simp [hb]), zero_mul])
+    (λ hb => absurd (Finset.mem_univ _) hb), h.singleton_eq_one, one_mul]
 
 /-- A sum against a belief supported on a pair collapses to the two terms. -/
 theorem sum_mul_of_fullDistOn_pair [DecidableEq M] {a b : M} (hab : a ≠ b)
     {ρ : M → ℝ} (h : IsFullDistOn {a, b} ρ) (X : M → ℝ) :
     ∑ r, ρ r * X r = ρ a * X a + ρ b * X b :=
-  ((Finset.sum_subset (Finset.subset_univ _) fun x _ hx => by
+  ((Finset.sum_subset (Finset.subset_univ _) λ x _ hx => by
     rw [h.2.1 x (by simpa using hx), zero_mul]).symm).trans
     (Finset.sum_pair hab)
 
@@ -485,22 +477,22 @@ theorem IsFullDistOn.pair_props [DecidableEq M] {a b : M} (hab : a ≠ b)
   refine ⟨h.1 a (by simp), h.1 b (by simp), ?_⟩
   have hsum := h.2.2
   rw [← Finset.sum_subset (Finset.subset_univ ({a, b} : Finset M))
-    (fun x _ hx => h.2.1 x (by simpa using hx)), Finset.sum_pair hab] at hsum
+    (λ x _ hx => h.2.1 x (by simpa using hx)), Finset.sum_pair hab] at hsum
   exact hsum
 
 /-- The point mass on `r₀` has full support on `{r₀}`. -/
 theorem isFullDistOn_pointMass [DecidableEq M] (r₀ : M) :
-    IsFullDistOn {r₀} (fun r => if r = r₀ then (1 : ℝ) else 0) :=
-  ⟨fun x hx => by simp [Set.mem_singleton_iff.mp hx],
-   fun x hx => by simp [Set.mem_singleton_iff] at hx; simp [hx],
-   by rw [Finset.sum_ite_eq' Finset.univ r₀ fun _ => (1 : ℝ)]
+    IsFullDistOn {r₀} (λ r => if r = r₀ then (1 : ℝ) else 0) :=
+  ⟨λ x hx => by simp [Set.mem_singleton_iff.mp hx],
+   λ x hx => by simp [Set.mem_singleton_iff] at hx; simp [hx],
+   by rw [Finset.sum_ite_eq' Finset.univ r₀ λ _ => (1 : ℝ)]
       exact if_pos (Finset.mem_univ _)⟩
 
 /-- The uniform belief on a pair has full support on it. -/
 theorem isFullDistOn_pairUniform [DecidableEq M] {a b : M} (hab : a ≠ b) :
     IsFullDistOn {a, b}
-      (fun r => if r = a then (1 : ℝ)/2 else if r = b then 1/2 else 0) := by
-  refine ⟨fun x hx => ?_, fun x hx => ?_, ?_⟩
+      (λ r => if r = a then (1 : ℝ)/2 else if r = b then 1/2 else 0) := by
+  refine ⟨λ x hx => ?_, λ x hx => ?_, ?_⟩
   · dsimp only
     rcases hx with rfl | hx
     · norm_num
@@ -510,7 +502,7 @@ theorem isFullDistOn_pairUniform [DecidableEq M] {a b : M} (hab : a ≠ b) :
   · simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at hx
     dsimp only
     rw [if_neg hx.1, if_neg hx.2]
-  · rw [← Finset.sum_subset (Finset.subset_univ ({a, b} : Finset M)) (fun x _ hx => by
+  · rw [← Finset.sum_subset (Finset.subset_univ ({a, b} : Finset M)) (λ x _ hx => by
       simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hx
       rw [if_neg hx.1, if_neg hx.2]), Finset.sum_pair hab]
     rw [if_pos rfl, if_neg (Ne.symm hab), if_pos rfl]
@@ -521,8 +513,8 @@ has full support on the pair whenever `0 < t < 1`. -/
 theorem isFullDistOn_pairWeighted [DecidableEq M] {a b : M} (hab : a ≠ b)
     {t : ℝ} (h0 : 0 < t) (h1 : t < 1) :
     IsFullDistOn {a, b}
-      (fun r => if r = a then t else if r = b then 1 - t else 0) := by
-  refine ⟨fun x hx => ?_, fun x hx => ?_, ?_⟩
+      (λ r => if r = a then t else if r = b then 1 - t else 0) := by
+  refine ⟨λ x hx => ?_, λ x hx => ?_, ?_⟩
   · dsimp only
     rcases hx with rfl | hx
     · rw [if_pos rfl]; exact h0
@@ -532,7 +524,7 @@ theorem isFullDistOn_pairWeighted [DecidableEq M] {a b : M} (hab : a ≠ b)
   · simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at hx
     dsimp only
     rw [if_neg hx.1, if_neg hx.2]
-  · rw [← Finset.sum_subset (Finset.subset_univ ({a, b} : Finset M)) (fun x _ hx => by
+  · rw [← Finset.sum_subset (Finset.subset_univ ({a, b} : Finset M)) (λ x _ hx => by
       simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hx
       rw [if_neg hx.1, if_neg hx.2]), Finset.sum_pair hab]
     rw [if_pos rfl, if_neg (Ne.symm hab), if_pos rfl]
@@ -545,8 +537,8 @@ theorem pairWeighted_apply_right [DecidableEq M] {a b : M} (hab : a ≠ b) {t : 
   rw [if_neg (Ne.symm hab), if_pos rfl]
 
 /-- The constant-one function is a full-support distribution over `Unit`. -/
-theorem isFullDist_unitOne : IsFullDist (fun _ : Unit => (1 : ℝ)) :=
-  ⟨fun _ => one_pos, by simp⟩
+theorem isFullDist_unitOne : IsFullDist (λ _ : Unit => (1 : ℝ)) :=
+  ⟨λ _ => one_pos, by simp⟩
 
 theorem IsFullDist.unit_eq_one {q : Unit → ℝ} (h : IsFullDist q) : q () = 1 := by
   have := h.2
@@ -567,17 +559,17 @@ namespace Horn
 
 /-- Example 6's semantic game. -/
 def game : SemanticGame Unit (Fin 2) (Fin 2) (Fin 2) where
-  prior := fun w => if w = 0 then 3/4 else 1/4
+  prior := λ w => if w = 0 then 3/4 else 1/4
   prior_pos := by intro w; fin_cases w <;> norm_num
   prior_sum := by rw [Fin.sum_univ_two]; norm_num
-  meaning := fun _ _ => True
-  vS := fun _ w a => if w = a then 5 else 0
-  cost := fun f => if f = 0 then 0 else 1
-  uR := fun _ w a => if w = a then 5 else 0
+  meaning := λ _ _ => True
+  vS := λ _ w a => if w = a then 5 else 0
+  cost := λ f => if f = 0 then 0 else 1
+  uR := λ _ w a => if w = a then 5 else 0
 
 /-- The credulous stage: both signals are tautologies, so the receiver
 answers with the a-priori most likely world's action. -/
-private theorem icrR_zero : game.icrR 0 = {fun _ _ => 0} := by
+private theorem icrR_zero : game.icrR 0 = {λ _ _ => 0} := by
   have hopt : ∀ (c : Unit) (f : Fin 2),
       game.optimalActions c (game.extension f) game.prior = {0} := by
     intro c f
@@ -585,7 +577,7 @@ private theorem icrR_zero : game.icrR 0 = {fun _ _ => 0} := by
     simp only [SemanticGame.optimalActions, SemanticGame.extension,
       Finset.mem_argmax, Finset.mem_univ, true_and, true_implies,
       Finset.mem_singleton]
-    rw [show (Finset.univ.filter fun w => game.meaning f w) = Finset.univ from by
+    rw [show (Finset.univ.filter λ w => game.meaning f w) = Finset.univ from by
       simp [game]]
     constructor
     · intro h
@@ -614,7 +606,7 @@ private theorem icrR_zero : game.icrR 0 = {fun _ _ => 0} := by
 /-! ### Evaluating the ICR trace
 
 Both signals are tautologous, the context is trivial, and only two
-strategies ever occur — `fun _ _ => 0` and `fun _ x => x` — so every stage
+strategies ever occur — `λ _ _ => 0` and `λ _ x => x` — so every stage
 reduces to a pair of argmaxes over `Fin 2` against a belief whose support
 is a singleton or that pair. -/
 
@@ -628,7 +620,7 @@ private theorem senderEU_eq {ρ : (Unit → Fin 2 → Fin 2) → ℝ} {q : Unit 
     (hq : IsFullDist q) (w f : Fin 2) :
     game.senderEU ρ q () w f = ∑ r, ρ r * game.uS () w f (r () f) := by
   simp only [SemanticGame.senderEU]
-  exact Finset.sum_congr rfl fun r _ => by simp [hq.unit_eq_one]
+  exact Finset.sum_congr rfl λ r _ => by simp [hq.unit_eq_one]
 
 /-- With a trivial context, the receiver's per-signal expected utility
 collapses to the belief-weighted prior mass. -/
@@ -637,21 +629,21 @@ private theorem receiverEU_eq {σ : (Unit → Fin 2 → Fin 2) → ℝ} {q : Uni
     game.receiverEU σ q () f a =
       ∑ s, σ s * ∑ w, game.prior w * (if s () w = f then game.uR () w a else 0) := by
   simp only [SemanticGame.receiverEU]
-  exact Finset.sum_congr rfl fun s _ => by simp [hq.unit_eq_one]
+  exact Finset.sum_congr rfl λ s _ => by simp [hq.unit_eq_one]
 
 /-- An argmax over `Fin 2` is pinned down by the two pointwise comparisons. -/
 private theorem mem_argmax_fin2 (V : Fin 2 → ℝ) (x : Fin 2) :
     x ∈ Finset.univ.argmax V ↔ V 0 ≤ V x ∧ V 1 ≤ V x := by
   simp only [Finset.mem_argmax, Finset.mem_univ, true_and, true_implies]
-  exact ⟨fun h => ⟨h 0, h 1⟩, fun ⟨h0, h1⟩ b => by fin_cases b <;> assumption⟩
+  exact ⟨λ h => ⟨h 0, h 1⟩, λ ⟨h0, h1⟩ b => by fin_cases b <;> assumption⟩
 
 /-- Either action can be made optimal for an unexpected signal by a suitably
 skewed posterior — the belief-revision clause of `icrR` is always
 satisfiable. -/
 private theorem optimalActions_witness (x : Fin 2) :
     ∃ p, IsFullDist p ∧ x ∈ game.optimalActions () Finset.univ p := by
-  refine ⟨fun w => if w = x then 2/3 else 1/3,
-    ⟨fun w => by dsimp only; split_ifs <;> norm_num, by
+  refine ⟨λ w => if w = x then 2/3 else 1/3,
+    ⟨λ w => by dsimp only; split_ifs <;> norm_num, by
       rw [Fin.sum_univ_two]; fin_cases x <;> simp <;> norm_num⟩, ?_⟩
   simp only [SemanticGame.optimalActions, mem_argmax_fin2]
   constructor <;> · rw [Fin.sum_univ_two, Fin.sum_univ_two]
@@ -693,18 +685,18 @@ private theorem receiverEU_pair {s₀ s₁ : Unit → Fin 2 → Fin 2} (hs : s�
 
 /-! ### The two recurring strategies
 
-`fun _ _ => 0` and `fun _ x => x` are the only functions in the trace; the
+`λ _ _ => 0` and `λ _ x => x` are the only functions in the trace; the
 support sets `{h | h () 0 = 0}` and `{h | h () 0 = 0 ∧ h () 1 = 1}` are their
 pair and their common identity element. -/
 
 private theorem zero_ne_id :
-    (fun _ _ => 0 : Unit → Fin 2 → Fin 2) ≠ (fun _ x => x) := fun h =>
+    (λ _ _ => 0 : Unit → Fin 2 → Fin 2) ≠ (λ _ x => x) := λ h =>
   absurd (congrFun (congrFun h ()) 1) (by norm_num)
 
 /-- The senders (or receivers) fixing coordinate `0` are exactly the pair. -/
 private theorem pair_eq :
     {h : Unit → Fin 2 → Fin 2 | h () 0 = 0} =
-      {(fun _ _ => 0), (fun _ x => x)} := by
+      {(λ _ _ => 0), (λ _ x => x)} := by
   ext h
   simp only [Set.mem_ofPred_eq, Set.mem_insert_iff, Set.mem_singleton_iff]
   constructor
@@ -716,7 +708,7 @@ private theorem pair_eq :
 
 /-- The identity is the only strategy fixing both coordinates. -/
 private theorem singleton_eq :
-    {h : Unit → Fin 2 → Fin 2 | h () 0 = 0 ∧ h () 1 = 1} = {fun _ x => x} := by
+    {h : Unit → Fin 2 → Fin 2 | h () 0 = 0 ∧ h () 1 = 1} = {λ _ x => x} := by
   ext h
   simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff]
   constructor
@@ -725,13 +717,13 @@ private theorem singleton_eq :
 
 /-! ### The sender stages S₀ and S₂
 
-Against a receiver who ignores the signal (`fun _ _ => 0`) the sender always
-prefers the cheap form; against the literal receiver (`fun _ x => x`) the
+Against a receiver who ignores the signal (`λ _ _ => 0`) the sender always
+prefers the cheap form; against the literal receiver (`λ _ x => x`) the
 sender matches signal to world — the Horn convention. -/
 
 /-- Against the constant receiver, the cheap form is uniquely optimal. -/
 private theorem argmax_sender_z {ρ : (Unit → Fin 2 → Fin 2) → ℝ} {q : Unit → ℝ}
-    (hρ : IsFullDistOn {(fun _ _ => 0 : Unit → Fin 2 → Fin 2)} ρ) (hq : IsFullDist q)
+    (hρ : IsFullDistOn {(λ _ _ => 0 : Unit → Fin 2 → Fin 2)} ρ) (hq : IsFullDist q)
     (w : Fin 2) : Finset.univ.argmax (game.senderEU ρ q () w) = {0} := by
   ext x
   rw [Finset.mem_singleton, mem_argmax_fin2]
@@ -740,7 +732,7 @@ private theorem argmax_sender_z {ρ : (Unit → Fin 2 → Fin 2) → ℝ} {q : U
 
 /-- Against the literal receiver, the sender matches signal to world. -/
 private theorem argmax_sender_e {ρ : (Unit → Fin 2 → Fin 2) → ℝ} {q : Unit → ℝ}
-    (hρ : IsFullDistOn {(fun _ x => x : Unit → Fin 2 → Fin 2)} ρ) (hq : IsFullDist q)
+    (hρ : IsFullDistOn {(λ _ x => x : Unit → Fin 2 → Fin 2)} ρ) (hq : IsFullDist q)
     (w : Fin 2) : Finset.univ.argmax (game.senderEU ρ q () w) = {w} := by
   ext x
   rw [Finset.mem_singleton, mem_argmax_fin2]
@@ -749,7 +741,7 @@ private theorem argmax_sender_e {ρ : (Unit → Fin 2 → Fin 2) → ℝ} {q : U
 
 /-- S₀: the cautious responses to the credulous receiver send the cheap
 form at both worlds. -/
-private theorem icrS_zero : game.icrS 0 = {fun _ _ => 0} := by
+private theorem icrS_zero : game.icrS 0 = {λ _ _ => 0} := by
   show game.senderCR (game.icrR 0) = _
   rw [icrR_zero]
   ext s
@@ -779,7 +771,7 @@ each literally. -/
 /-- Against the sender who always sends the cheap form, the receiver reads
 the cheap form as the frequent world. -/
 private theorem argmax_receiver_z0 {σ : (Unit → Fin 2 → Fin 2) → ℝ} {q : Unit → ℝ}
-    (hσ : IsFullDistOn {(fun _ _ => 0 : Unit → Fin 2 → Fin 2)} σ) (hq : IsFullDist q) :
+    (hσ : IsFullDistOn {(λ _ _ => 0 : Unit → Fin 2 → Fin 2)} σ) (hq : IsFullDist q) :
     Finset.univ.argmax (game.receiverEU σ q () 0) = {0} := by
   ext a
   rw [Finset.mem_singleton, mem_argmax_fin2]
@@ -789,9 +781,9 @@ private theorem argmax_receiver_z0 {σ : (Unit → Fin 2 → Fin 2) → ℝ} {q 
 /-- The costly form is never sent, so every action ties — the receiver is
 unconstrained there. -/
 private theorem argmax_receiver_z1 {σ : (Unit → Fin 2 → Fin 2) → ℝ} {q : Unit → ℝ}
-    (hσ : IsFullDistOn {(fun _ _ => 0 : Unit → Fin 2 → Fin 2)} σ) (hq : IsFullDist q) :
+    (hσ : IsFullDistOn {(λ _ _ => 0 : Unit → Fin 2 → Fin 2)} σ) (hq : IsFullDist q) :
     Finset.univ.argmax (game.receiverEU σ q () 1) = Finset.univ := by
-  have h : game.receiverEU σ q () 1 = fun _ => 0 := by
+  have h : game.receiverEU σ q () 1 = λ _ => 0 := by
     funext a
     rw [receiverEU_singleton hσ hq, Fin.sum_univ_two]
     simp [game]
@@ -800,7 +792,7 @@ private theorem argmax_receiver_z1 {σ : (Unit → Fin 2 → Fin 2) → ℝ} {q 
 /-- R₁: the cautious responses to S₀ read the cheap form as the frequent
 world and leave the unexpected costly form unconstrained. -/
 private theorem icrR_one : game.icrR 1 = {r | r () 0 = 0} := by
-  have hS0 : game.senderCR (game.icrR 0) = {fun _ _ => 0} := icrS_zero
+  have hS0 : game.senderCR (game.icrR 0) = {λ _ _ => 0} := icrS_zero
   have hunfold : game.icrR 1 =
       {r ∈ game.receiverCR (game.senderCR (game.icrR 0)) |
         ∀ f, SemanticGame.Unexpected (game.senderCR (game.icrR 0)) f →
@@ -837,7 +829,7 @@ giving `{s | s () 0 = 0}`. -/
 
 section PairSender
 variable {ρ : (Unit → Fin 2 → Fin 2) → ℝ} {q : Unit → ℝ}
-  (hρ : IsFullDistOn {(fun _ _ => 0), (fun _ x => x)} ρ) (hq : IsFullDist q)
+  (hρ : IsFullDistOn {(λ _ _ => 0), (λ _ x => x)} ρ) (hq : IsFullDist q)
 include hρ hq
 
 /-- At the frequent world the cheap form is optimal against any receiver mix. -/
@@ -864,7 +856,7 @@ private theorem zero_mem_sender_pair_w0 :
 
 /-- When the literal receiver is light, the cheap form is optimal at the rare
 world too. -/
-private theorem zero_mem_sender_pair_w1 (hle : ρ (fun _ x => x) ≤ 1/5) :
+private theorem zero_mem_sender_pair_w1 (hle : ρ (λ _ x => x) ≤ 1/5) :
     (0 : Fin 2) ∈ Finset.univ.argmax (game.senderEU ρ q () 1) := by
   rw [mem_argmax_fin2]
   obtain ⟨hz, he, hsum⟩ := hρ.pair_props zero_ne_id
@@ -874,7 +866,7 @@ private theorem zero_mem_sender_pair_w1 (hle : ρ (fun _ x => x) ≤ 1/5) :
 
 /-- When the literal receiver is heavy, the costly form is optimal at the rare
 world. -/
-private theorem one_mem_sender_pair_w1 (hge : 1/5 ≤ ρ (fun _ x => x)) :
+private theorem one_mem_sender_pair_w1 (hge : 1/5 ≤ ρ (λ _ x => x)) :
     (1 : Fin 2) ∈ Finset.univ.argmax (game.senderEU ρ q () 1) := by
   rw [mem_argmax_fin2]
   obtain ⟨hz, he, hsum⟩ := hρ.pair_props zero_ne_id
@@ -897,8 +889,8 @@ private theorem icrS_one : game.icrS 1 = {s | s () 0 = 0} := by
     rw [game.mem_senderBR_iff] at hBR
     exact sender_pair_w0_eq_zero hρ hq (hBR () 0)
   · intro hs0
-    have hmem : s = (fun _ _ => 0) ∨ s = (fun _ x => x) := by
-      have hs : s ∈ ({(fun _ _ => 0), (fun _ x => x)} : Set (Unit → Fin 2 → Fin 2)) := by
+    have hmem : s = (λ _ _ => 0) ∨ s = (λ _ x => x) := by
+      have hs : s ∈ ({(λ _ _ => 0), (λ _ x => x)} : Set (Unit → Fin 2 → Fin 2)) := by
         rw [← pair_eq]; exact hs0
       simpa [Set.mem_insert_iff] using hs
     rcases hmem with rfl | rfl
@@ -929,7 +921,7 @@ rare one. No signal is unexpected, so the belief-revision clause is vacuous. -/
 
 section PairReceiver
 variable {σ : (Unit → Fin 2 → Fin 2) → ℝ} {q : Unit → ℝ}
-  (hσ : IsFullDistOn {(fun _ _ => 0), (fun _ x => x)} σ) (hq : IsFullDist q)
+  (hσ : IsFullDistOn {(λ _ _ => 0), (λ _ x => x)} σ) (hq : IsFullDist q)
 include hσ hq
 
 /-- The cheap form is read as the frequent world against the separating mix. -/
@@ -980,8 +972,8 @@ end PairReceiver
 
 /-- R₂: the cautious responses to S₁ read both forms literally — the Horn
 convention's receiver. Both signals are expected, so the filter is vacuous. -/
-private theorem icrR_two : game.icrR 2 = {fun _ f => f} := by
-  have hS1 : game.senderCR (game.icrR 1) = {(fun _ _ => 0), (fun _ x => x)} := by
+private theorem icrR_two : game.icrR 2 = {λ _ f => f} := by
+  have hS1 : game.senderCR (game.icrR 1) = {(λ _ _ => 0), (λ _ x => x)} := by
     have h := icrS_one; rw [pair_eq] at h; exact h
   have hunfold : game.icrR 2 =
       {r ∈ game.receiverCR (game.senderCR (game.icrR 1)) |
@@ -1007,11 +999,11 @@ private theorem icrR_two : game.icrR 2 = {fun _ f => f} := by
       · rw [hr1]; exact one_mem_receiver_pair_f1 (isFullDistOn_pairUniform zero_ne_id)
           isFullDist_unitOne
     · intro f hf c
-      exact absurd rfl (hf (fun _ x => x) (Set.mem_insert_of_mem _ rfl) () f)
+      exact absurd rfl (hf (λ _ x => x) (Set.mem_insert_of_mem _ rfl) () f)
 
 /-- S₂: the cautious responses to the literal receiver match signal to world
 — the Horn convention's sender. -/
-private theorem icrS_two : game.icrS 2 = {fun _ w => w} := by
+private theorem icrS_two : game.icrS 2 = {λ _ w => w} := by
   show game.senderCR (game.icrR 2) = _
   rw [icrR_two]
   ext s
@@ -1037,7 +1029,7 @@ again read both forms literally, reproducing R₂. -/
 
 /-- Against the literal sender the cheap form is read as the frequent world. -/
 private theorem argmax_receiver_e0 {σ : (Unit → Fin 2 → Fin 2) → ℝ} {q : Unit → ℝ}
-    (hσ : IsFullDistOn {(fun _ x => x : Unit → Fin 2 → Fin 2)} σ) (hq : IsFullDist q) :
+    (hσ : IsFullDistOn {(λ _ x => x : Unit → Fin 2 → Fin 2)} σ) (hq : IsFullDist q) :
     Finset.univ.argmax (game.receiverEU σ q () 0) = {0} := by
   ext a
   rw [Finset.mem_singleton, mem_argmax_fin2]
@@ -1046,7 +1038,7 @@ private theorem argmax_receiver_e0 {σ : (Unit → Fin 2 → Fin 2) → ℝ} {q 
 
 /-- Against the literal sender the costly form is read as the rare world. -/
 private theorem argmax_receiver_e1 {σ : (Unit → Fin 2 → Fin 2) → ℝ} {q : Unit → ℝ}
-    (hσ : IsFullDistOn {(fun _ x => x : Unit → Fin 2 → Fin 2)} σ) (hq : IsFullDist q) :
+    (hσ : IsFullDistOn {(λ _ x => x : Unit → Fin 2 → Fin 2)} σ) (hq : IsFullDist q) :
     Finset.univ.argmax (game.receiverEU σ q () 1) = {1} := by
   ext a
   rw [Finset.mem_singleton, mem_argmax_fin2]
@@ -1056,7 +1048,7 @@ private theorem argmax_receiver_e1 {σ : (Unit → Fin 2 → Fin 2) → ℝ} {q 
 /-- R₃ reproduces R₂: the ICR sequence has reached its fixed point. -/
 private theorem icrR_fixed : game.icrR 3 = game.icrR 2 := by
   rw [icrR_two]
-  have hS2 : game.senderCR (game.icrR 2) = {fun _ w => w} := icrS_two
+  have hS2 : game.senderCR (game.icrR 2) = {λ _ w => w} := icrS_two
   have hunfold : game.icrR 3 =
       {r ∈ game.receiverCR (game.senderCR (game.icrR 2)) |
         ∀ f, SemanticGame.Unexpected (game.senderCR (game.icrR 2)) f →
@@ -1084,17 +1076,51 @@ private theorem icrR_fixed : game.icrR 3 = game.icrR 2 := by
       · rw [hr1, argmax_receiver_e1 (isFullDistOn_pointMass _) isFullDist_unitOne]
         exact Finset.mem_singleton_self _
     · intro f hf c
-      exact absurd rfl (hf (fun _ x => x) rfl () f)
+      exact absurd rfl (hf (λ _ x => x) rfl () f)
 
-/-- **Horn's division of pragmatic labor** ([jaeger-2014] §5, Example 6):
-in the two-synonyms game, the pragmatically rationalizable strategies are
-exactly the Horn convention — the cheap form marks the frequent world and
-the costly form the rare one; both PRS sets are the identity strategies. -/
+/-- Horn's division of pragmatic labor, Example 6: the pragmatically rationalizable strategies
+are the convention on which the cheap form marks the frequent world and the costly form the rare
+one, the identity strategies on both sides. -/
 theorem division_of_pragmatic_labor :
-    game.prsS = {fun _ w => w} ∧ game.prsR = {fun _ f => f} := by
+    game.prsS = {λ _ w => w} ∧ game.prsR = {λ _ f => f} := by
   have hfix : game.icrR (2 + 1) = game.icrR 2 := icrR_fixed
   exact ⟨(game.prsS_eq_of_fixed hfix).trans icrS_two,
     (game.prsR_eq_of_fixed hfix).trans icrR_two⟩
+
+/-- The costly form is not credible: at the stage `S₁` the sender may still use the cheap form at
+the rare world, where the costly form is true; pragmatic rationalizability nevertheless fixes its
+reading. -/
+theorem not_credible_costly : ¬ game.Credible 1 :=
+  λ h => absurd (h 1 (λ _ _ => 0) (by rw [icrS_one]; rfl) () 1 trivial) (by decide)
+
+/-- A row of (4): the signal of Example 6 the sentence realizes and the world it is read as. -/
+structure Row where
+  signal : Fin 2
+  world : Fin 2
+  deriving DecidableEq
+
+/-- A row from the paper's features. -/
+def Row.ofExample (e : Data.Examples.LinguisticExample) : Option Row := do
+  let signal : Fin 2 ← match e.feature? "signal" with
+    | some "f" => some 0
+    | some "f'" => some 1
+    | _ => none
+  let world : Fin 2 ← match e.feature? "world" with
+    | some "w1" => some 0
+    | some "w2" => some 1
+    | _ => none
+  some ⟨signal, world⟩
+
+/-- The two synonyms of (4). -/
+def rows : List Row := Examples.all.filterMap Row.ofExample
+
+/-- Every pragmatically rationalizable receiver reads each form of (4) as the world the paper
+reports: the regular stop for the cheap form, the abnormal one for the costly form. -/
+theorem readings_of_4 : ∀ r ∈ rows, ∀ ρ ∈ game.prsR, ρ () r.signal = r.world := by
+  intro r hr ρ hρ
+  rw [division_of_pragmatic_labor.2, Set.mem_singleton_iff] at hρ
+  subst hρ
+  revert r; decide
 
 end Horn
 
