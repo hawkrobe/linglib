@@ -15,10 +15,12 @@ and formalized in [haug-dalrymple-2020]:
   across the plural state. Requires c-command in the syntax.
   [haug-dalrymple-2020] eq 30.
 
-- **Group identity** (`∪u_anaph = ∪u_ant`): the *summed* set of values
-  across the plural state is identical. The pronoun denotes the same
-  plurality as its antecedent. No c-command required.
-  [haug-dalrymple-2020] §2.3.
+- **Group identity** (`∪u_anaph → ∪u_ant`): the values of the anaphor
+  summed over each state's equivalence class under distribution (`eqClass`,
+  [haug-dalrymple-2020] (26)) equal the values of the antecedent summed over
+  the whole state, so the antecedent escapes distribution ((29), (38)). The
+  pronoun denotes the same plurality as its antecedent. No c-command
+  required.
 
 - **Reciprocity** (group identity + `∂(u ≠ u')`): same plurality, plus
   per-state distinctness. The semantic core of *each other*.
@@ -46,6 +48,20 @@ namespace PPCDRT
 variable {E : Type*}
 variable (uAnaph uAnt : Nat) (S : PluralAssign ℕ E) (Δ : Set Nat)
 
+/-! ### Equivalence classes under distribution -/
+
+/-- The equivalence class of `s` under distribution over `Δ`
+    ([haug-dalrymple-2020] (26)): the states of `S` agreeing with `s` on
+    every discourse referent in `Δ`. -/
+def eqClass (s : PartialAssign ℕ E) : PluralAssign ℕ E :=
+  {t ∈ S | ∀ u ∈ Δ, t u = s u}
+
+@[simp] theorem eqClass_empty (s : PartialAssign ℕ E) : eqClass S ∅ s = S := by
+  ext t; simp [eqClass]
+
+theorem mem_eqClass {s t : PartialAssign ℕ E} :
+    t ∈ eqClass S Δ s ↔ t ∈ S ∧ ∀ u ∈ Δ, t u = s u := Iff.rfl
+
 /-! ### Binding -/
 
 /-- Binding (`u_anaph = u_ant`): pointwise dref equality across the plural
@@ -63,13 +79,20 @@ def bindingCond : PPDRSCond E := λ S _Δ =>
 
 /-! ### Group identity -/
 
-/-- Group identity (`∪u_anaph = ∪u_ant`): the value-sets of the two
-    drefs across the plural state are equal.
+/-- Group identity (`∪u_anaph → ∪u_ant`, [haug-dalrymple-2020] (29), (38)):
+    in every state, the values of the anaphor summed over that state's
+    equivalence class under distribution equal the values of the antecedent
+    summed over the whole state. With `Δ = ∅` both sums range over the whole
+    state (`groupIdentityCond_empty`), the symmetric `∂(∪u = ∪𝒜(u))` of
+    (41). -/
+def groupIdentityCond : PPDRSCond E := λ S Δ =>
+  ∀ s ∈ S, PluralAssign.sumDref (eqClass S Δ s) uAnaph = PluralAssign.sumDref S uAnt
 
-    [haug-dalrymple-2020] eq 41 stipulates `∂(∪u = ∪𝒜(u))` for *each
-    other* — exactly this symmetric equality on sum-drefs. -/
-def groupIdentityCond : PPDRSCond E := λ S _Δ =>
-  PluralAssign.sumDref S uAnaph = PluralAssign.sumDref S uAnt
+theorem groupIdentityCond_empty :
+    groupIdentityCond uAnaph uAnt S ∅ ↔
+      (S.Nonempty → PluralAssign.sumDref S uAnaph = PluralAssign.sumDref S uAnt) := by
+  simp only [groupIdentityCond, eqClass_empty]
+  exact ⟨λ h ⟨s, hs⟩ => h s hs, λ h s hs => h ⟨s, hs⟩⟩
 
 /-! ### Reciprocity -/
 
@@ -90,11 +113,15 @@ def underspecifiedCond : PPDRSCond E :=
 
 /-! ### Implication lattice -/
 
-/-- Binding implies group identity: pointwise `Option` equality of dref
-    values yields equality of value-sets. [haug-dalrymple-2020] fig 1. -/
-theorem binding_implies_groupIdentity (h : bindingCond uAnaph uAnt S Δ) :
-    groupIdentityCond uAnaph uAnt S Δ :=
-  Set.ext λ _ => exists_congr λ g => and_congr_right λ hgS => by rw [h g hgS]
+/-- Binding implies group identity without distribution: pointwise `Option`
+    equality of dref values yields equality of value-sets over the whole
+    state. Under distribution the two come apart ([haug-dalrymple-2020] (24)
+    against (31)). -/
+theorem binding_implies_groupIdentity (h : bindingCond uAnaph uAnt S ∅) :
+    groupIdentityCond uAnaph uAnt S ∅ := by
+  intro s hs
+  rw [eqClass_empty]
+  exact Set.ext λ _ => exists_congr λ g => and_congr_right λ hgS => by rw [h g hgS]
 
 /-- Reciprocity excludes binding *when there is some state where both
     drefs are defined*: per-state distinctness then contradicts pointwise
