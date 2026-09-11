@@ -11,29 +11,29 @@ This file formalizes [farkas-roelofsen-2017]'s account of falling and rising dec
 polar interrogatives and tag interrogatives: their inquisitive semantics, the single basic
 convention of use that replaces the Fregean force operators, and the special discourse effects
 of the marked forms. A sentence form is a clause-type marker with an intonation, or a declarative
-anchor with a tag (`Form`, their §4.1); the markers are interpreted by the projection operators
-of inquisitive semantics (their (31), (34), (36)): `dec` is the non-inquisitive projection
+anchor with a tag (`Form`, §4.1); the markers are interpreted by the projection operators
+of inquisitive semantics (31), (34), (36): `dec` is the non-inquisitive projection
 `Question.bang`, `int` the non-informative projection `Question.query` applied only to a
 non-inquisitive argument, falling intonation is vacuous and rising intonation is `Question.query`
-again. `Form.interpret` composes them as in their (37)–(40): a falling declarative expresses
+again. `Form.interpret` composes them as in (37)–(40): a falling declarative expresses
 `!P` and every other form `?!P`, so that with a non-inquisitive radical the rising declarative,
 the polar interrogatives and the tag interrogatives express one and the same inquisitive
 proposition (`interpret_declarative_falling`, `interpret_marked`, `interpret_interrogative_ofSet`,
-`isInquisitive_interpret_ofSet`; their (41) and (43)). Among the forms for that content the polar
-interrogatives are optimal and the rest marked (`Form.IsMarked`, their (47)).
+`isInquisitive_interpret_ofSet`; (41) and (43)). Among the forms for that content the polar
+interrogatives are optimal and the rest marked (`Form.IsMarked`, (47)).
 
 A discourse context is a stack of propositions, a commitment state, and for each participant the
-possibilities she has signalled evidence for with a credence interval (their (22) and §3.2;
+possibilities she has signalled evidence for with a credence interval (the paper's (22) and §3.2;
 `Context`, `Context.cs`, `Context.cg`, `Context.CommonlyDecided`). The basic convention of use
 `Context.basic` puts the proposition on the table and commits the speaker to its informative
-content (their (48)); a falling declarative thereby commits her to the radical and the inquisitive
+content (48); a falling declarative thereby commits her to the radical and the inquisitive
 forms commit her to nothing (`cs_basic_declarative_falling`, `cs_basic_of_isInquisitive`; their
 (49) and (50)). The special effects of the marked forms add the highlighted alternative to the
-speaker's evidence with the credence interval of their (52), (56) and (58), `[zero, low]` for the
+speaker's evidence with the credence interval of (52), (56) and (58), `[zero, low]` for the
 rising declarative, `[moderate, high]` for the rising tag and `[high]` for the falling tag
 (`Form.specialEffect`); `Context.utter` is the full conventional effect, and
-`utter_eq_basic_of_not_isMarked` is the division of labor principle (their (21)): the discourse
-effects of the unmarked forms are the basic convention alone. Their §6 tests the account in
+`utter_eq_basic_of_not_isMarked` is the division of labor principle (21): the discourse
+effects of the unmarked forms are the basic convention alone. §6 tests the account in
 contexts that fix the speaker's evidence and credence; `Felicitous` renders the reasoning of that
 section on a `Situation`, and `rows_felicitous` checks it against all sixty judgments of
 (53)–(77).
@@ -42,8 +42,8 @@ section on a `Situation`, and `rows_felicitous` checks it against all sixty judg
 
 * The felicity conditions of §6 are the paper's prose reasoning made explicit: a commitment to
   the radical needs high credence to be possible in the context; an inquisitive proposition on
-  the table needs an addressee who is not neutral (their (61)); an unmarked inquisitive form
-  presents the speaker as neutral, which needs low credence to be possible (their (63) against
+  the table needs an addressee who is not neutral (61); an unmarked inquisitive form
+  presents the speaker as neutral, which needs low credence to be possible (the paper's (63) against
   (65) and (67)); a marked form needs evidence for the highlighted alternative and a credence
   the context allows within the form's interval.
 * The paper's `⟨?⟩` is a classical case split on inquisitiveness, so `Form.interpret` is
@@ -68,13 +68,13 @@ open Commitment Data.Examples Question
 
 /-! ### Sentence forms and their semantics -/
 
-/-- Rising or falling intonation, the markers `open` and `closed` of their (26b). -/
+/-- Rising or falling intonation, the markers `open` and `closed` of (26b). -/
 inductive Intonation
   | falling
   | rising
   deriving DecidableEq, Repr
 
-/-- The six sentence forms of their (3)–(8): a declarative or interrogative clause with its
+/-- The six sentence forms of (3)–(8): a declarative or interrogative clause with its
 intonation, or a falling declarative anchor with a reverse-polarity tag carrying the
 intonation. -/
 inductive Form
@@ -156,7 +156,7 @@ theorem isInquisitive_interpret_ofSet {α : Set W} (h₁ : α ≠ Set.univ) (h�
 
 /-! ### Credence and discourse contexts -/
 
-/-- The four credence levels of their §3.2: `zero` when the highlighted alternative is not
+/-- The four credence levels of §3.2: `zero` when the highlighted alternative is not
 considered more likely than its complement, `high` when much more likely. -/
 inductive CredenceLevel
   | zero
@@ -177,7 +177,7 @@ instance : LinearOrder CredenceLevel := LinearOrder.lift' toNat (by decide)
 
 end CredenceLevel
 
-/-- A discourse context (their (22), enriched in §3.2): the propositions proposed so far, the
+/-- A discourse context (22), enriched in §3.2: the propositions proposed so far, the
 participants' commitments, and for each participant the possibilities she has signalled
 evidence for, each with a credence interval. -/
 structure Context (A W : Type*) where
@@ -212,7 +212,7 @@ def special [DecidableEq A] (α : Set W) (I : Set CredenceLevel) : Context A W :
 
 end Context
 
-/-- The credence interval a marked form signals for the highlighted alternative: their (52),
+/-- The credence interval a marked form signals for the highlighted alternative: (52),
 (56) and (58). -/
 def Form.specialEffect : Form → Option (CredenceLevel × CredenceLevel)
   | .declarative .rising => some (.zero, .low)
@@ -231,7 +231,7 @@ noncomputable def utter (f : Form) (α : Set W) : Context A W :=
   | none => K.basic x (f.interpret (ofSet α))
   | some I => (K.basic x (f.interpret (ofSet α))).special x α (Set.Icc I.1 I.2)
 
-/-- The division of labor principle, their (21a): an unmarked form's discourse effects are the
+/-- The division of labor principle, (21a): an unmarked form's discourse effects are the
 basic convention of use alone. -/
 theorem utter_eq_basic_of_not_isMarked {f : Form} (h : ¬ f.IsMarked) (α : Set W) :
     K.utter x f α = K.basic x (f.interpret (ofSet α)) := by

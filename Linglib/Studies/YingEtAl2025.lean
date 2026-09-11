@@ -11,7 +11,7 @@ Mind", TACL 13) interpret epistemic vocabulary — attitude verbs,
 modal verbs, and modal adjectives — as threshold functions over agent
 credence, with credence computed by Bayesian theory-of-mind inference
 from observed actions. `EpistemicEntry` renders their lexical entries
-(their Table 1): a credence threshold plus a factivity flag, with the
+(Table 1): a credence threshold plus a factivity flag, with the
 threshold values the paper's grid-search best fits against human
 plausibility ratings in a Doors, Keys & Gems gridworld — the ordering
 is the theoretical commitment, the specific values are empirical
@@ -300,7 +300,7 @@ theorem might_eq_could : EpistemicEntry.might.θ = EpistemicEntry.could.θ := rf
 [herbstritt-franke-2019] (Cognition 186) independently infer a
 credence threshold for *probably* by Bayesian fitting against
 urn-production data, reporting a posterior mean of 0.549 with 95% HDI
-[0.500, 0.594] (their Table 6). The fitted threshold for *likely*
+[0.500, 0.594] (Table 6). The fitted threshold for *likely*
 here (0.70) lies above that interval's upper bound, so the two
 parameter-fitted accounts disagree at the 95%-credibility level.
 Candidate explanations: lexical (*probably* ≠ *likely*), task (urn

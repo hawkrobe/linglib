@@ -125,7 +125,7 @@ def CliticAffixProfile.cliticScore (p : CliticAffixProfile) : Nat :=
 the paper's: all six affix-like is an inflectional affix, all six
 clitic-like a simple clitic. The middle branch is a conservative default
 beyond the paper — [zwicky-pullum-1983] define special clitics
-distributionally (their §5), not as an intermediate criteria score. -/
+distributionally (§5), not as an intermediate criteria score. -/
 def CliticAffixProfile.classify (p : CliticAffixProfile) : MorphStatus :=
   if p.affixScore == 6 then .inflAffix
   else if p.cliticScore == 6 then .simpleClitic

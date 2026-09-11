@@ -18,7 +18,7 @@ root's class and no other, `articulatorFree_mem_naturalClass_iff`, Soft Palate i
 Place, `nasal_notMem_place`, and Place is exactly the three oral articulators, `place_eq_union`.
 Designated articulators are unary terminal features rather than nodes (section 1.2.2), so the
 labiovelar [k͡p] carries both [labial] and [dorsal] while the labialised [kʷ] carries [dorsal]
-beside [+round], their (4), `kp` and `kw`, and only the first is a complex segment,
+beside [+round], (4), `kp` and `kw`, and only the first is a complex segment,
 `isComplex_kp` and `not_isComplex_kw`. Spreading operates on terminal features (section 1.2.3),
 so a rule may spread any subset of a node's features and the tree only names the natural sets:
 Irish Nasal Place Assimilation spreads the Place class and so carries each oral articulator's

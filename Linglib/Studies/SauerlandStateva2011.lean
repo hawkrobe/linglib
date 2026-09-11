@@ -16,18 +16,18 @@ numerals, *6 o'clock* — interpreted at a contextual granularity, following
 [krifka-2007]) and **epistemic** (*heap*, *Beef Stroganoff* — extension
 varies across indistinguishable worlds). Scalar approximators (*exactly*,
 *approximately*, *completely*, *more or less*) are granularity *setters*:
-their (19) resets the context's granularity parameter to the finest
+(19) resets the context's granularity parameter to the finest
 (*exactly*) or coarsest (*approximately*) available level — here
 `Degree.Granularity.finestWidth`/`coarsestWidth`. Epistemic approximators
 (*definitely*, *maybe*) quantify over worlds instead, which is why the two
-classes distribute complementarily (their §6.2, §6.4) — the argument the
-distribution table below reproduces. Their §6.3.5: stacked scalar
+classes distribute complementarily (§6.2, §6.4) — the argument the
+distribution table below reproduces. §6.3.5: stacked scalar
 approximators are vacuous, since the first reset leaves a singleton
 granularity set — `second_reset_vacuous`.
 
 Within the scalar class, endpoint-approximators (*absolutely*,
 *completely*, *more or less*) combine only with scale endpoints, blocking
-plain *exactly*/*approximately* there (their §6.4, (32), (35)–(45)).
+plain *exactly*/*approximately* there (§6.4, (32), (35)–(45)).
 
 ## Main definitions
 
@@ -43,9 +43,9 @@ plain *exactly*/*approximately* there (their §6.4, (32), (35)–(45)).
 - `classification_predicts_distribution`: the two-type theory reproduces
   every cited judgment
 - `exactly_narrowest`, `approximately_widest`: the reset targets bound all
-  available interpretations (their (19), via `finestWidth_le`/
+  available interpretations (the paper's (19), via `finestWidth_le`/
   `le_coarsestWidth` and `finer_contained`)
-- `second_reset_vacuous`: approximator stacking is vacuous (their §6.3.5)
+- `second_reset_vacuous`: approximator stacking is vacuous (§6.3.5)
 - `fragment_setter_directions`: the `English.NumeralModifiers` entries
   carry the setter classification
 -/
@@ -54,7 +54,7 @@ namespace SauerlandStateva2011
 
 open Degree.Granularity
 
-/-! ### The two-vagueness classification (their §6.3) -/
+/-! ### The two-vagueness classification (§6.3) -/
 
 /-- Their example expressions ((4)–(6), (35), (37), (44)–(45)). -/
 inductive Item where
@@ -92,7 +92,7 @@ inductive Approximator where
 
 /-- The item class each approximator selects: plain scalar approximators
 take non-endpoints, the specialized endpoint approximators take endpoints
-(their §6.4, (32): *absolutely*/*completely*/*more or less* make endpoints
+(§6.4, (32): *absolutely*/*completely*/*more or less* make endpoints
 more or less precise and block *exactly*/*approximately* there). -/
 def Approximator.selects : Approximator → ItemClass
   | .exactly | .approximately => .scalarNonEndpoint
@@ -133,38 +133,38 @@ theorem classification_predicts_distribution :
     ∀ j ∈ Judgment.rows, (compatible j.approximator j.item ↔ j.acceptable) := by
   decide
 
-/-! ### Granularity setting (their (18)–(19))
+/-! ### Granularity setting (18)–(19)
 
 Scalar approximators reset the context's granularity parameter:
 *exactly* to the finest available level, *approximately* to the coarsest.
 The reset targets bound every available interpretation — at the finest
-width the denotation interval (their (12)–(13), `mkGranInterval`) is
+width the denotation interval (12)–(13), `mkGranInterval` is
 contained in all others. -/
 
 variable (𝒢 : Finset ℚ) (h𝒢 : 𝒢.Nonempty)
 
-/-- Their (19a): *exactly* yields the narrowest available interpretation —
+/-- (19a): *exactly* yields the narrowest available interpretation —
 its denotation interval sits inside every available one. -/
 theorem exactly_narrowest {ε : ℚ} (hε : ε ∈ 𝒢) (d : ℚ) :
     (mkGranInterval ε d).lo ≤ (mkGranInterval (finestWidth 𝒢 h𝒢) d).lo ∧
     (mkGranInterval (finestWidth 𝒢 h𝒢) d).hi ≤ (mkGranInterval ε d).hi :=
   finer_contained _ _ d (finestWidth_le 𝒢 h𝒢 hε)
 
-/-- Their (19b): *approximately* yields the widest available
+/-- (19b): *approximately* yields the widest available
 interpretation. -/
 theorem approximately_widest {ε : ℚ} (hε : ε ∈ 𝒢) (d : ℚ) :
     (mkGranInterval (coarsestWidth 𝒢 h𝒢) d).lo ≤ (mkGranInterval ε d).lo ∧
     (mkGranInterval ε d).hi ≤ (mkGranInterval (coarsestWidth 𝒢 h𝒢) d).hi :=
   finer_contained _ _ d (le_coarsestWidth 𝒢 h𝒢 hε)
 
--- Their (12): at grain ½ m, *5 meters* denotes [4.50 m, 5.50 m]; at the
+-- (12): at grain ½ m, *5 meters* denotes [4.50 m, 5.50 m]; at the
 -- finer grain 0.05 m, [4.95 m, 5.05 m].
 example : mkGranInterval (1/2 : ℚ) 5 = ⟨9/2, 11/2⟩ := by
   simp only [mkGranInterval]; norm_num
 example : mkGranInterval (1/20 : ℚ) 5 = ⟨99/20, 101/20⟩ := by
   simp only [mkGranInterval]; norm_num
 
-/-- Their §6.3.5: a second scalar approximator is vacuous — the first reset
+/-- §6.3.5: a second scalar approximator is vacuous — the first reset
 leaves a singleton granularity set, on which resetting (in either
 direction) returns the same width. Hence `#exactly approximately 30`. -/
 theorem second_reset_vacuous (ε : ℚ) :

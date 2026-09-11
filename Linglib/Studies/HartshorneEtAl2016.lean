@@ -16,7 +16,7 @@ the subject of a frighten-type verb is judged causally responsible, in Mandarin 
 English), productive (adults in English, Japanese and Russian give novel verbs with attitude
 meanings experiencer-subject syntax and those with episode meanings experiencer-object syntax)
 and early (four- and five-year-olds do the same). The linking itself follows from one principle
-over the semantic structures of their Fig. 11, prominence preservation: `Sem.subject` is the
+over the semantic structures of Fig. 11, prominence preservation: `Sem.subject` is the
 least embedded argument of such a structure, and since the causer of CAUSE and the holder of BE
 are highest whatever they embed (`subject_cause`), the experiencer heads the attitude and the
 stimulus the episode (`attitude_subject`, `episode_subject`), while the causation judgments
@@ -26,7 +26,7 @@ answer to whether the structure contains CAUSE at all. The linking agrees with
 
 ## Implementation notes
 
-The structures follow the prose of their §5.4.1 rather than the figures: BE takes the entity in
+The structures follow the prose of §5.4.1 rather than the figures: BE takes the entity in
 a state and the state, the state of an attitude is the root directed at a target, and CAUSE takes
 the causer and the caused BE, with no BECOME. Duration is not encoded in the structures, and the
 experiments' rates stay in prose: fear-type verbs were rated longer-lasting than frighten-type
@@ -38,7 +38,7 @@ five). The paper's examples are the rows of `Data/Examples/HartshorneEtAl2016.js
 
 ## TODO
 
-* Their §5.4.3: the Fig. 11 structures admit a target in the episode (`episodeWithTarget`),
+* §5.4.3: the Fig. 11 structures admit a target in the episode (`episodeWithTarget`),
   predicting the unattested (7); the mental-possession alternative that would exclude it.
 
 ## References
@@ -53,7 +53,7 @@ namespace HartshorneEtAl2016
 
 open ArgumentStructure
 
-/-- The argument positions of their Fig. 11: the experiencer, the target an attitude is directed
+/-- The argument positions of Fig. 11: the experiencer, the target an attitude is directed
 at, and the stimulus that causes an episode. -/
 inductive Participant where
   | experiencer
@@ -61,7 +61,7 @@ inductive Participant where
   | stimulus
   deriving DecidableEq, Repr
 
-/-- A semantic structure (their §5.4.1, Figs. 10–11): primitive predicates embedding one another,
+/-- A semantic structure (§5.4.1, Figs. 10–11): primitive predicates embedding one another,
 variables marking argument positions and the verbal root modifying a state. -/
 inductive Sem (α : Type) where
   /-- An argument position. -/
@@ -134,11 +134,11 @@ end Sem
 
 open Sem Participant
 
-/-- Their Fig. 11a, the habitual attitude: the experiencer is in the emotional state the root
+/-- Fig. 11a, the habitual attitude: the experiencer is in the emotional state the root
 names, directed at the target. -/
 def attitude : Sem Participant := be (var experiencer) (about root (var target))
 
-/-- Their Fig. 11b, the caused emotional episode: the stimulus causes the experiencer to be in
+/-- Fig. 11b, the caused emotional episode: the stimulus causes the experiencer to be in
 the emotional state. -/
 def episode : Sem Participant := cause (var stimulus) (be (var experiencer) root)
 
@@ -152,7 +152,7 @@ theorem episode_subject : episode.subject = some stimulus := subject_cause _ _
 content behind the causation judgments of their Experiments 2–4. -/
 theorem episode_hasCause_attitude_not : episode.HasCause ∧ ¬ attitude.HasCause := by decide
 
-/-- Their §5.4.3: the structures admit a target in the episode, still headed by the stimulus,
+/-- §5.4.3: the structures admit a target in the episode, still headed by the stimulus,
 which predicts the unattested (7). -/
 def episodeWithTarget : Sem Participant :=
   cause (var stimulus) (be (var experiencer) (about root (var target)))

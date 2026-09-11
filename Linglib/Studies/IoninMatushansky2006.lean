@@ -15,43 +15,43 @@ import Linglib.Syntax.Category.Numeral.Composition
 
 [ionin-matushansky-2006] argue that complex cardinals are composed
 entirely in the syntax and interpreted by ordinary composition: simplex
-cardinals are modifiers of type ⟨⟨e,t⟩,⟨e,t⟩⟩ — their (5),
+cardinals are modifiers of type ⟨⟨e,t⟩,⟨e,t⟩⟩ — (5),
 `⟦n⟧ = λP λx. ∃S [Π(S)(x) ∧ |S| = n ∧ ∀s∈S P(s)]` (here `cardMod`) —
 so *two hundred books* is iterative complementation `[two [hundred
 [books]]]`, and multiplication needs no dedicated rule:
 `cardMod_cardMod_atoms` shows iterated modification computes the product,
 matching [hurford-1975]'s PHRASE projection rule
 (`iterated_matches_phrase`). Determiner and predicate types for cardinals
-are ruled out by complex cardinals (their §2.2): under predicate
-conjunction *two hundred books* is either contradictory (their (12),
+are ruled out by complex cardinals (§2.2): under predicate
+conjunction *two hundred books* is either contradictory (the paper's (12),
 `predicate_conjunction_contradictory`) or satisfied by a plurality of
 just 100 — here scaled to *two four* satisfied by 4
-(`predicate_theory_undershoots`, their (13)).
+(`predicate_theory_undershoots`, (13)).
 
-Addition is xNP coordination (their §4, (44)/(52)): *twenty-two books* =
+Addition is xNP coordination (§4, (44)/(52)): *twenty-two books* =
 *[twenty books] and [two books]* with the split reading
 `⟦A and B⟧ = λx. ∃y z [x = y⊕z ∧ A(y) ∧ B(z)]`; under the full split
-(no overlap — pragmatic, their §4.2.1 Gricean manner) coordination
+(no overlap — pragmatic, §4.2.1 Gricean manner) coordination
 computes the sum (`coord_card`). The joint reading is semantically
-impossible for distinct cardinals (`no_joint_reading`, their (56a)).
+impossible for distinct cardinals (`no_joint_reading`, (56a)).
 
-Their (23) countability presupposition — a cardinal's complement must
+(23) countability presupposition — a cardinal's complement must
 denote equicardinal pluralities — is `Equicardinal`; the keystone
 `card_of_cardMod` is exactly the definedness cascade it feeds: `n` cells
 of uniform size `k` make `n·k`.
 
-Their §3.3 adopts [hurford-1975]'s thesis that most cardinals are
+§3.3 adopts [hurford-1975]'s thesis that most cardinals are
 singular nouns; the syntax here is his grammar
 (`Syntax/Category/Numeral/Composition.lean`).
 
 ## Main definitions
 
-- `IsPart`: their (6) partition (Finset counterpart of
+- `IsPart`: (6) partition (Finset counterpart of
   `Plurality.Cover.IsPartition`, chosen for cardinality
   counting)
-- `cardMod`: their (5) cardinal-as-modifier
-- `Equicardinal`: their (23) countability presupposition
-- `coordSem`: their (52) coordination
+- `cardMod`: (5) cardinal-as-modifier
+- `Equicardinal`: (23) countability presupposition
+- `coordSem`: (52) coordination
 
 ## Main results
 
@@ -59,7 +59,7 @@ singular nouns; the syntax here is his grammar
 - `cardMod_cardMod_atoms`: iterated modification multiplies — and
   `iterated_matches_phrase` aligns it with the PHRASE projection rule
 - `predicate_conjunction_contradictory` / `predicate_theory_undershoots`:
-  their §2.2 refutation of non-modifier types
+  §2.2 refutation of non-modifier types
 - `coord_card` / `no_joint_reading`: coordination adds; joint readings
   clash
 -/
@@ -68,26 +68,26 @@ namespace IoninMatushansky2006
 
 variable {α : Type*} [DecidableEq α]
 
-/-! ### Partitions and the cardinal modifier (their (5)–(7)) -/
+/-! ### Partitions and the cardinal modifier (5)–(7) -/
 
-/-- Their (6): `S` is a partition of `x` — nonempty, pairwise-disjoint
+/-- (6): `S` is a partition of `x` — nonempty, pairwise-disjoint
 cells whose union is `x`. Finset counterpart of
 `Plurality.Cover.IsPartition`. -/
 def IsPart (S : Finset (Finset α)) (x : Finset α) : Prop :=
   (∀ s ∈ S, s ≠ ∅) ∧ (S : Set (Finset α)).PairwiseDisjoint id ∧
     S.sup id = x
 
-/-- Their (5): `⟦n⟧ = λP λx. ∃S [Π(S)(x) ∧ |S| = n ∧ ∀s∈S P(s)]` — the
+/-- (5): `⟦n⟧ = λP λx. ∃S [Π(S)(x) ∧ |S| = n ∧ ∀s∈S P(s)]` — the
 cardinal as an ⟨⟨e,t⟩,⟨e,t⟩⟩ modifier. -/
 def cardMod (n : ℕ) (P : Finset α → Prop) (x : Finset α) : Prop :=
   ∃ S : Finset (Finset α), IsPart S x ∧ S.card = n ∧ ∀ s ∈ S, P s
 
 /-- The atomic complement: singleton pluralities of `P`-individuals —
-what their §3.1 atomicity requirement makes the lexical xNP denote. -/
+what §3.1 atomicity requirement makes the lexical xNP denote. -/
 def IsAtomOf (P : α → Prop) (s : Finset α) : Prop :=
   ∃ a, P a ∧ s = {a}
 
-/-- Their (23) countability presupposition: all pluralities in the
+/-- (23) countability presupposition: all pluralities in the
 complement's denotation have the same cardinality. -/
 def Equicardinal (P : Finset α → Prop) (k : ℕ) : Prop :=
   ∀ s, P s → s.card = k
@@ -96,7 +96,7 @@ theorem equicardinal_atoms (P : α → Prop) : Equicardinal (IsAtomOf P) 1 :=
   fun _ ⟨_, _, hs⟩ => hs ▸ Finset.card_singleton _
 
 /-- **Keystone**: `n` cells of uniform size `k` make a plurality of
-`n·k` — the definedness cascade their (23) presupposition feeds. -/
+`n·k` — the definedness cascade (23) presupposition feeds. -/
 theorem card_of_cardMod {P : Finset α → Prop} {k n : ℕ} {x : Finset α}
     (hP : Equicardinal P k) (h : cardMod n P x) : x.card = n * k := by
   obtain ⟨S, ⟨-, hdisj, hsup⟩, hcard, hall⟩ := h
@@ -105,7 +105,7 @@ theorem card_of_cardMod {P : Finset α → Prop} {k n : ℕ} {x : Finset α}
   simp only [id_eq]
   rw [Finset.sum_const_nat fun s hs => hP s (hall s hs), hcard]
 
-/-! ### Simple and iterated modification (their (8)–(9)) -/
+/-! ### Simple and iterated modification (8)–(9) -/
 
 /-- Partition into singletons: the canonical witness for atomic
 complements. -/
@@ -124,7 +124,7 @@ private theorem cardMod_atoms_of {P : α → Prop} {x : Finset α}
     rintro s ⟨a, ha, rfl⟩
     exact ⟨a, hx a ha, rfl⟩
 
-/-- Their (8): *hundred books* denotes the 100-atom pluralities of
+/-- (8): *hundred books* denotes the 100-atom pluralities of
 books — `cardMod` over an atomic complement counts atoms. -/
 theorem cardMod_atoms_iff (n : ℕ) (P : α → Prop) (x : Finset α) :
     cardMod n (IsAtomOf P) x ↔ x.card = n ∧ ∀ a ∈ x, P a := by
@@ -191,7 +191,7 @@ private theorem cardMod_of_card {P : Finset α → Prop} {k : ℕ} (hk : 1 ≤ k
       · exact hsub s htx ht
       · exact hall s hs
 
-/-- **Their (9): iterated modification multiplies.** *two hundred books*
+/-- **(9): iterated modification multiplies.** *two hundred books*
 = `⟦two⟧(⟦hundred⟧(⟦books⟧))` denotes the `2 × 100`-atom pluralities —
 complex cardinals need no semantic rule beyond ordinary composition. -/
 theorem cardMod_cardMod_atoms {m : ℕ} (hm : 1 ≤ m) (n : ℕ) (P : α → Prop)
@@ -218,7 +218,7 @@ theorem iterated_matches_phrase (n : Syntax.Numeral.Number)
       x.card = (Syntax.Numeral.Phrase.mk n m).value ∧ ∀ a ∈ x, P a :=
   cardMod_cardMod_atoms m.value_pos n.value P x
 
-/-! ### Ruling out the predicate theory (their §2.2, (12)–(13)) -/
+/-! ### Ruling out the predicate theory (§2.2, (12)–(13)) -/
 
 private theorem isPart_of {S : Finset (Finset α)} {x : Finset α}
     (h1 : ∀ s ∈ S, s ≠ ∅) (h2 : ∀ s ∈ S, ∀ t ∈ S, s ≠ t → Disjoint s t)
@@ -226,12 +226,12 @@ private theorem isPart_of {S : Finset (Finset α)} {x : Finset α}
   ⟨h1, fun s hs t ht hst =>
     h2 s (Finset.mem_coe.mp hs) t (Finset.mem_coe.mp ht) hst, h3⟩
 
-/-- Their (12): under bare predicate conjunction *two hundred books* is
+/-- (12): under bare predicate conjunction *two hundred books* is
 self-contradictory — nothing has cardinality 2 and 100 at once. -/
 theorem predicate_conjunction_contradictory (x : Finset α) :
     ¬ (x.card = 2 ∧ x.card = 100) := by omega
 
-/-- Their (13), scaled to *two four*: with partition-based predicate
+/-- (13), scaled to *two four*: with partition-based predicate
 meanings *conjoined* instead of composed, a plurality of just 4 satisfies
 both conjuncts — where the modifier reading demands 2 × 4 = 8. -/
 theorem predicate_theory_undershoots :
@@ -245,15 +245,15 @@ theorem predicate_theory_undershoots :
       by decide, fun _ _ => trivial⟩,
     by decide⟩
 
-/-! ### Addition as coordination (their §4, (52)) -/
+/-! ### Addition as coordination (§4, (52)) -/
 
-/-- Their (52): coordinated xNPs split the plurality —
+/-- (52): coordinated xNPs split the plurality —
 `⟦A and B⟧ = λx. ∃y z [x = y⊕z ∧ A(y) ∧ B(z)]`. -/
 def coordSem (A B : Finset α → Prop) (x : Finset α) : Prop :=
   ∃ y z, x = y ∪ z ∧ A y ∧ B z
 
-/-- Under the full split (their (56b); overlap excluded pragmatically by
-Gricean manner, their §4.2.1), coordination computes addition:
+/-- Under the full split (the paper's (56b); overlap excluded pragmatically by
+Gricean manner, §4.2.1), coordination computes addition:
 *twenty-two books* counts 20 + 2 atoms. -/
 theorem coord_card {P : α → Prop} {n m : ℕ} {x : Finset α}
     (h : ∃ y z, Disjoint y z ∧ x = y ∪ z ∧
@@ -266,7 +266,7 @@ theorem coord_card {P : α → Prop} {n m : ℕ} {x : Finset α}
   rcases Finset.mem_union.mp ha with h | h
   exacts [hyP a h, hzP a h]
 
-/-- Their (56a): the joint reading is semantically impossible for
+/-- (56a): the joint reading is semantically impossible for
 distinct cardinals — no plurality is 20 atoms and 2 atoms at once. -/
 theorem no_joint_reading {P : α → Prop} {n m : ℕ} (hnm : n ≠ m)
     (x : Finset α) :

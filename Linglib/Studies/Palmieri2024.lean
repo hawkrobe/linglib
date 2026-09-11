@@ -29,11 +29,11 @@ with some construction where a reciprocal interpretation emerges without
 *se* or any other reciprocity element.
 
 The semantic diagnostic is **pseudo-reciprocity** (§4.3): grammatical
-reciprocity accumulates unidirectional events (their (50)), while
+reciprocity accumulates unidirectional events (50), while
 lexical reciprocals denote a single collective event, subsuming
 [winter-2018]'s plain reciprocals (symmetric bases, 'meet') and
 non-plain ones — 'divorce' fails the collective-to-unidirectional
-direction (their (53)) and 'kiss' the converse (their (54)), matching
+direction (53) and 'kiss' the converse (54), matching
 Winter's Table 3 rows (`divorce_agrees_with_winter`,
 `kiss_agrees_with_winter`). Without *se* only the pseudo-reciprocal
 reading survives; *se*-clauses with lexical reciprocals are three-ways
@@ -65,14 +65,14 @@ open Reciprocal
 /-- Table 2.1: the three classes of Romance verbs. -/
 inductive VerbClass where
   /-- 'chat' (It. *chiacchierare*): no transitive entry, cannot combine
-      with *se*, invariably reciprocal by itself (their (31)). -/
+      with *se*, invariably reciprocal by itself (31). -/
   | reciprocalIntransitive
   /-- 'describe': unambiguously transitive; reciprocity only through the
-      grammatical *se* strategy (their (32)). -/
+      grammatical *se* strategy (32). -/
   | plainTransitive
   /-- 'hug': a transitive entry that combines with *se*, plus a lexical
       reciprocal entry that surfaces without *se* in the Table 2.2
-      environments (their (34), (38), (40), (42)). -/
+      environments (34), (38), (40), (42). -/
   | reciprocalTransitive
   deriving DecidableEq, Repr
 
@@ -121,12 +121,12 @@ inductive Language where
 /-- The syntactic environments where class-3 verbs may express
     reciprocity without *se* (§3). -/
 inductive Environment where
-  /-- Finite clauses (their (34): BP *Mary e Lisa abraçaram*). -/
+  /-- Finite clauses (34): BP *Mary e Lisa abraçaram*. -/
   | finiteClause
-  /-- Analytic causatives (their (38b), (40): Sp. *hice abrazar*,
+  /-- Analytic causatives (the paper's (38b), (40): Sp. *hice abrazar*,
       It. *ho fatto abbracciare*). -/
   | analyticCausative
-  /-- Absolute constructions with participials (their (42b): Ca.
+  /-- Absolute constructions with participials (the paper's (42b): Ca.
       *abraçats en Teo i la Ana*). -/
   | absoluteParticipial
   deriving DecidableEq, Repr
@@ -157,7 +157,7 @@ theorem every_language_diagnosable :
 /-- The readings available to a plural-subject clause (§4.3, p. 38):
     the lexical pseudo-reciprocal (single collective event), the
     grammatical plain reciprocal (accumulated unidirectional events,
-    their (50)), and the grammatical reflexive. -/
+    (50)), and the grammatical reflexive. -/
 inductive SeReading where
   | lexicalPseudoReciprocal
   | grammaticalReciprocal
@@ -165,8 +165,8 @@ inductive SeReading where
   deriving DecidableEq, Repr
 
 /-- Readings of a *se*-clause by verb class: class-3 *se*-clauses are
-    three-ways ambiguous (their (56a)/(57a)); plain transitives lack the
-    lexical reading (their (55)); class-1 verbs do not combine with
+    three-ways ambiguous (56a)/(57a); plain transitives lack the
+    lexical reading (55); class-1 verbs do not combine with
     *se*. -/
 def readingsWithSe : VerbClass → List SeReading
   | .reciprocalIntransitive => []
@@ -177,7 +177,7 @@ def readingsWithSe : VerbClass → List SeReading
 
 /-- Readings without *se* (in a Table 2.2 environment): only the
     pseudo-reciprocal survives — the reflexive/reciprocal ambiguity
-    disappears (p. 30; their (56b)/(57b): no reflexive reading without
+    disappears (p. 30; (56b)/(57b): no reflexive reading without
     *se*). -/
 def readingsWithoutSe : VerbClass → List SeReading
   | .plainTransitive => []
@@ -194,13 +194,13 @@ theorem seless_kills_grammatical_readings :
 
 /-! ### Pseudo-reciprocity and Winter's Table 3 (§4.3) -/
 
-/-- Their (53) matches [winter-2018]'s *divorce* row: the collective
+/-- (53) matches [winter-2018]'s *divorce* row: the collective
     form does not entail two unidirectional relations (a divorce can be
     initiated by one side) — Pr₂ fails. -/
 theorem divorce_agrees_with_winter :
     Winter2018.divorce.pr2 = some false := rfl
 
-/-- Their (54) matches [winter-2018]'s *kiss* row: two unidirectional
+/-- (54) matches [winter-2018]'s *kiss* row: two unidirectional
     kisses do not make a mutual kiss — Pr₁ fails. -/
 theorem kiss_agrees_with_winter :
     Winter2018.kiss.pr1 = some false := rfl
@@ -209,9 +209,9 @@ theorem kiss_agrees_with_winter :
 
 /-- Whether the class allows the reciprocal 'with'-construction: yes for
     both lexical classes — including non-symmetric members, *contra*
-    the symmetric-only restriction (their (59): It. *consultarsi con*,
+    the symmetric-only restriction (the paper's (59): It. *consultarsi con*,
     *lasciarsi con*; attested *baciarsi con*, *abbracciarsi con* (60)) —
-    and never for unambiguous transitives (their (61):
+    and never for unambiguous transitives (the paper's (61):
     \**ringraziarsi con*). NB the Italian construction retains *si*,
     unlike French (\**s'est embrassé avec*, [siloni-2012] via
     ex. 39 of that discussion) — the availability contrast is
@@ -230,13 +230,13 @@ theorem withConstruction_iff_lexical (c : VerbClass) :
 /-! ### The (43) verb list -/
 
 /-- A lexical reciprocal meaning attested with a transitive alternate,
-    with the languages attesting it (their (43)). -/
+    with the languages attesting it (43). -/
 structure LexicalReciprocal where
   gloss : String
   languages : List Language
   deriving DecidableEq, Repr
 
-/-- Their (43): lexical reciprocals with a transitive alternate across
+/-- (43): lexical reciprocals with a transitive alternate across
     BP (b), Catalan (c), Italian (i), and Spanish (s). -/
 def lexicalReciprocals : List LexicalReciprocal :=
   let bp := Language.brazilianPortuguese
@@ -270,7 +270,7 @@ theorem every_language_attests :
   intro l; cases l <;> decide
 
 /-- The witness behind `romance_not_monolithic`, grounded in the
-    Italian fragment: *abbracciare* 'hug' (their (40)) carries a lexical
+    Italian fragment: *abbracciare* 'hug' (40) carries a lexical
     reciprocal entry alongside its homophonous transitive alternate. -/
 theorem abbracciare_grounds_divergence :
     "abbracciare" ∈ Italian.Reciprocals.lexicalReciprocals.map Verb.form := by

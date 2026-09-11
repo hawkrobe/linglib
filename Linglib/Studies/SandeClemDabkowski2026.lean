@@ -15,12 +15,12 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
 
 [sande-clem-dabkowski-2026]: in Guébie particle-verb focus constructions, the
 fronted particle harmonizes in ATR with the clause-final verb across intervening
-harmony-eligible words (their (24)). The analysis: harmony is strictly local at vP
+harmony-eligible words (24). The analysis: harmony is strictly local at vP
 Spell-out, and later A′-movement separates target from trigger — spelled-out
 material staying accessible to later syntax (§6.2, via [fox-pesetsky-2005]'s
 Cyclic Linearization). Everything below is derived from the two §4 parameters
 (Aux blocking V-to-T, remnant fronting) rather than stipulated; the empirical core
-is their (44): harmony iff V is spelled out inside vP.
+is (44): harmony iff V is spelled out inside vP.
 
 ## Main definitions
 
@@ -30,7 +30,7 @@ is their (44): harmony iff V is spelled out inside vP.
   particle's surface value ((12)–(13)), and the (46)/(47) ranking as a tableau.
 * `FrozenATR`, `guebiePICMode`: the per-cycle harmony record (§6.1) and the PIC
   stance (§6.2).
-* `guebieFronting`: the §3 movement witness, their (31) on the carrier.
+* `guebieFronting`: the §3 movement witness, (31) on the carrier.
 * `HarmonyProfile`, `WolofShape`: the §7 prediction schema — trigger and target
   co-spelled-out low, movement after — instantiated by Guébie and Wolof.
 
@@ -286,7 +286,7 @@ Three diagnostics: successive cyclicity ((25)–(26)), island sensitivity
 ((27)–(28)), and island creation ((29)–(30)). This registers Guébie beside
 [harizanov-gribanova-2019]'s Russian as a construction whose verb doubling is syntactic,
 against [landau-2006]'s PF-driven Hebrew analysis. The witness is the schematic derivation
-of their (31): the verb raises out of the VP and the remnant, the particle over the verb's
+of (31): the verb raises out of the VP and the remnant, the particle over the verb's
 trace, fronts to Spec,CP; the carrier pronounces no trace, so the doubling, the lower copy
 spelled out for recoverability per [koopman-1997], lies beyond it. -/
 

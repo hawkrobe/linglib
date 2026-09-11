@@ -13,18 +13,18 @@ is licensed by its language's inventory and distinct cells receive distinct geom
 (`licenses_rows`); and the person-only languages Pirahã, Maxakalí and Kwakiutl realize exactly
 the geometries their inventories license, at most four first- and second-person pronouns
 (`person_only_exhaust`). Pruning a dependent from a licensed geometry leaves a licensed
-geometry, whence the implicational universals of their (18), no dual without plural, no paucal
+geometry, whence the implicational universals of (18), no dual without plural, no paucal
 without dual, no inclusive without second person (`dual_needs_plural` and its siblings), and
 Greenberg's Universals 37 and 45 on gender; Universal 36, gender implies number, is the
 dependency of Class on Individuation. Markedness is node count and acquisition builds structure
 top-down, so third person is least marked, the Fijian first inclusive paucal uses all eight
-nodes, and first person precedes second and singular plural (their (20)).
+nodes, and first person precedes second and singular plural (20).
 
 ## Implementation notes
 
-The pronoun tables (their Tables 3–8 and 13–15) are the rows of
+The pronoun tables (Tables 3–8 and 13–15) are the rows of
 `Data/Examples/HarleyRitter2002.json`, read off by the tables' person and number labels; the
-inventories of their (12)–(17), (25) and (27) are stated as `Lang.active` and then shown to be
+inventories of (12)–(17), (25) and (27) are stated as `Lang.active` and then shown to be
 what the rows determine. The default Speaker and Minimal nodes do not count toward markedness,
 so the Daga first singular is less marked than the first plural.
 

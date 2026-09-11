@@ -232,7 +232,7 @@ theorem syntacticallyErgative_iff (locus : CaseLocus) :
     SyntacticallyErgative locus ↔ locus = .absNom := by
   cases locus <;> decide
 
-/-! ### Case configurations (their (3), (10)) -/
+/-! ### Case configurations (3), (10) -/
 
 /-- The heads that assign structural Case (5). -/
 inductive Licenser where
