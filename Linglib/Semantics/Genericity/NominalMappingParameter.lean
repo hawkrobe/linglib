@@ -451,14 +451,14 @@ def fallbackToExists (isKindDenoting : Bool) (bp : BlockingPrinciple) : Bool :=
   !isKindDenoting ∧ !bp.existsBlocked
 
 /-! ### DKP scope derivation (Chierchia side of the scrambling comparison)
-[krifka-2004] [chierchia-1998]
+[krifka-2003] [chierchia-1998]
 
 Chierchia's Derived Kind Predication introduces the existential *locally* — where the
 kind meets the predicate — so negation always scopes outside it. Modelled with plain
-`Prop` existential closure (`existsClose`) over the kind's instances. Krifka's
-position-sensitive ∃-shift in `Krifka2004.lean` reuses the same `existsClose`, so the two
-accounts share one closure and differ only in where negation sits; they are compared on
-the Dutch scrambling data in `Studies/LeBruynDeSwart2022.lean`.
+`Prop` existential closure (`existsClose`) over the kind's instances. The position-sensitive
+∃-shift that `Studies/LeBruynDeSwart2022.lean` reads into [krifka-2003] reuses the same
+`existsClose`, so the two accounts share one closure and differ only in where negation
+sits; they are compared there on the Dutch scrambling data.
 
 `existsClose` is Partee's `A` (existential closure) in plain extensional form. The same
 operator dressed in the DWP/Gallin deep embedding is `Quantification.A`, needed there
@@ -508,7 +508,7 @@ example : downDefinedFor .mass false = true := rfl
 /-!
 ## Related Theory
 
-- `Semantics/Lexical/Noun/Kind/Krifka2004.lean` - Alternative: Bare NPs as properties
+- `Studies/Krifka2003.lean` - Alternative: Bare NPs as properties
 - `Semantics/Lexical/Noun/Kind/MeaningPreservation.lean` - Meaning Preservation, singular kinds
 - `Semantics/Genericity/Basic.lean` - GEN operator for generic readings
 
