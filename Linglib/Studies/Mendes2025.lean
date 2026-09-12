@@ -5,34 +5,26 @@ import Linglib.Semantics.Modality.HistoricalAlternatives
 /-!
 # Mendes (2025): The Subordinate Future
 
-[mendes-2025]
+This file formalizes the analysis of the Portuguese subordinate future, a subjunctive with
+future morphology, in [mendes-2025]. The form enables modal donkey anaphora, the
+subjunctive binding situation variables across clause boundaries as an indefinite binds a
+donkey pronoun; it weakens the existential presupposition of strong quantifiers in its
+restrictor, a modal displacement; and its future orientation is parasitic on the modal
+anaphora rather than contributed by a temporal operator, following the observation the
+paper adopts that a subordinate future in a conditional is evaluated after the antecedent
+event. The operator is the composition of the dynamic subjunctive and the dynamic future
+(`subordinateFuture`), the future shift is derived from the modal component, and the
+compositional derivation of *Se Maria estiver em casa, ela vai atender* runs end to end in
+compositional discourse representation theory.
 
-The Subordinate Future (SF) in Portuguese is a mood form (subjunctive
-with future morphology) that:
-1. Enables modal donkey anaphora — subjunctive binds situation variables
-   across clause boundaries (§3.1)
-2. Weakens existential presuppositions of strong quantifiers in
-   restrictors (§2.2)
-3. Has a future-oriented temporal interpretation that is *parasitic on*
-   the modal anaphora — not stipulated by an independent temporal
-   operator (§3.2, following [crouch-1993] [crouch-1994])
+## Implementation notes
 
-## Organization
+The dynamic mood and tense operators are `Semantics/Mood/Dynamic` and
+`Semantics/Tense/Dynamic` over the situation carrier of `Semantics/Dynamic/Situation`.
 
-- §1 The SF operator (§3.2): `subordinateFuture := dynSUBJ ∘ dynFUT`,
-  plus its conditional and relative-clause specializations.
-- §2 Temporal properties (§3.2): theorems showing the future shift
-  is derived from the modal component, not stipulated.
-- §3 Compositional CDRT derivations (§4.3.1): lexical entries and
-  end-to-end derivation of "Se Maria estiver em casa, ela vai atender".
-- §4 Presupposition weakening (§2.2): SF in restrictors of strong
-  quantifiers, formalized as modal displacement.
+## References
 
-The dynamic primitives are imported from co-located dynamic operator
-files: `dynSUBJ`/`dynIND` from `Semantics/Mood/Dynamic.lean`
-(siblings of static `Mood.SUBJ`/`IND`), `dynFUT` from
-`Semantics/Tense/Dynamic.lean`, and the shared carrier from
-`Semantics/Dynamic/Situation.lean`.
+* [mendes-2025]
 -/
 
 namespace Mendes2025
@@ -43,10 +35,6 @@ open DynamicSemantics
 open DynamicSemantics.CCP (IsEliminative)
 open Tense
 open Mood
-
--- ════════════════════════════════════════════════════════════════
--- § 1. The SF Operator (§3.2)
--- ════════════════════════════════════════════════════════════════
 
 /--
 Subordinate Future (SF) analysis.
@@ -138,10 +126,6 @@ def everyWithSFRestrictor {W T : Type*} [LinearOrder T]
   let c₂ := restrictor c₁
   -- Finally: Apply nuclear scope (inherits temporal anchor)
   nuclear c₂
-
--- ════════════════════════════════════════════════════════════════
--- § 2. Temporal Properties of SF (§3.2)
--- ════════════════════════════════════════════════════════════════
 
 /--
 SF introduces a future situation.
@@ -242,10 +226,6 @@ theorem sf_restrictor_future_reference {W T : Type*} [LinearOrder T]
   -- subordinateFuture guarantees the future ordering via dynFUT
   unfold subordinateFuture at h_sf
   exact (Tense.compare_mem_future _ _).mp (DynamicSemantics.mem_lift_test.mp h_sf).2
-
--- ════════════════════════════════════════════════════════════════
--- § 3. Compositional CDRT Derivations (§4.3.1)
--- ════════════════════════════════════════════════════════════════
 
 variable {W T E : Type*} [LinearOrder T]
 variable (history : HistoricalAlternatives W T)
@@ -461,10 +441,6 @@ theorem sf_vs_counterfactual_temporal {W T : Type*} [LinearOrder T]
       (gs.assignment sitVar).time > (gs.assignment speechVar).time :=
   derivation_future_ordering history maria atHomeRel answerRel sitVar speechVar c
 
--- ════════════════════════════════════════════════════════════════
--- § 4. Presupposition Weakening (§2.2)
--- ════════════════════════════════════════════════════════════════
-
 /-!
 ### Key data (Portuguese)
 
@@ -613,10 +589,6 @@ theorem modal_displacement_weaker_than_accommodation {W T E : Type*} [LE T]
   obtain ⟨s₁, h_s₁⟩ := h_nonempty
   exact ⟨s₁, h_s₁, h_global s₁ h_s₁⟩
 
--- ════════════════════════════════════════════════════════════════
--- § 5. Modal Donkey Anaphora (§3.1)
--- ════════════════════════════════════════════════════════════════
-
 /-!
 The central theoretical insight of [mendes-2025] §3.1: SF enables
 modal donkey anaphora — subjunctive binds situation variables across
@@ -745,8 +717,8 @@ theorem subjIndChain_singleton {W T : Type*} [LE T]
     (s₀ : Index W T)
     (P Q : Index W T → Prop) :
     (∃ gs, gs ∈ subjIndChain history v
-      (fun c => { gs ∈ c | P gs.world })
-      (fun c => { gs ∈ c | Q gs.world })
+      (λ c => { gs ∈ c | P gs.world })
+      (λ c => { gs ∈ c | Q gs.world })
       ({⟨s₀, g⟩} : Set (Index.Possibility W T))) ↔
     (∃ s₁ ∈ historicalBase history s₀, P s₁ ∧ Q s₁) := by
   unfold subjIndChain
@@ -780,14 +752,14 @@ theorem subjIndChain_entails_conditionalSF {W T : Type*} [LE T]
     (P : Index W T → Prop)
     (Q : Index W T → Index W T → Prop)
     (h : ∃ gs, gs ∈ subjIndChain history v
-      (fun c => { gs ∈ c | P gs.world })
-      (fun c => { gs ∈ c | Q gs.world gs.world })
+      (λ c => { gs ∈ c | P gs.world })
+      (λ c => { gs ∈ c | Q gs.world gs.world })
       ({⟨s₀, g⟩} : Set (Index.Possibility W T))) :
-    conditionalSF history P (fun s₁ _ => Q s₁ s₁) s₀ := by
+    conditionalSF history P (λ s₁ _ => Q s₁ s₁) s₀ := by
   unfold conditionalSF SUBJ
   obtain ⟨s₁, h_hist, hP, hQ⟩ :=
-    (subjIndChain_singleton history v g s₀ P (fun s => Q s s)).mp h
-  exact ⟨s₁, h_hist, fun _ => hQ⟩
+    (subjIndChain_singleton history v g s₀ P (λ s => Q s s)).mp h
+  exact ⟨s₁, h_hist, λ _ => hQ⟩
 
 /-!
 ### Bridge to Hofmann (2025) accessibility
