@@ -3,23 +3,23 @@ import Linglib.Fragments.English.Toy
 
 /-!
 # Partee (1987): Noun Phrase Interpretation and Type-shifting Principles
-[partee-1987]
 
-Partee's §5 sketches an analysis of English `be` as a type-shifting
-functor that lowers a generalized quantifier (`⟨⟨e,t⟩,t⟩`) to a
-predicate (`⟨e,t⟩`):
+This file formalizes the treatment of the copula in [partee-1987]: among the type-shifting
+principles that let a noun phrase denote an entity, a predicate, or a generalized quantifier
+as its environment demands, English *be* is the functor `BE` that lowers a generalized
+quantifier to a predicate, so that *John is a teacher* reduces to the predication of
+*teacher* of John and, on a proper-name subject, to the identity shift `ident` (`be_sem`,
+`be_transparent`).
 
-  BE = λQ.λx. Q(λy. y = x)  :  ⟨⟨e,t⟩,t⟩ → ⟨e,t⟩
+## Implementation notes
 
-The copula's combined effect for "John is a teacher" is then
-`BE(⟦a teacher⟧)(⟦John⟧) = teacher'(john')`. On proper-name subjects
-the composition reduces to the `ident` shift `λx. [j = x]`.
+The shifts live in `Semantics/Composition/TypeShifting`. Only the copula section of the paper
+is formalized, and its sketch is explicitly about English, so it licenses no cross-linguistic
+predictions.
 
-Partee's paper is about type-shifting principles in general; the `be`
-treatment is one section's sketch, not the paper's main content, and
-is explicitly framed as for English. Cross-linguistic predictions over
-typological samples are outside the paper's scope and do not belong
-in this study file.
+## References
+
+* [partee-1987]
 -/
 
 namespace Partee1987
