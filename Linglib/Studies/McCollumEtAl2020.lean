@@ -22,11 +22,6 @@ and the circumambience proper, both sides needed at once, is the witness fed to 
 substrate's dependence and machine-level classification (`tutrugbu_requiresBothSides`,
 `tutrugbu_nonmyopic`).
 
-## TODO
-
-The example and definition numbers are transcribed from an earlier version of this file and
-are UNVERIFIED.
-
 ## References
 
 * [mccollum-bakovic-mai-meinhardt-2020]
