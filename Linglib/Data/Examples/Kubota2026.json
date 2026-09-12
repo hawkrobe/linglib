@@ -1,15 +1,76 @@
 [
   {
+    "id": "kubota2026_ex10_nanka_noncancelable",
+    "source": {"bibkey": "kubota-2026", "paperLabel": "(10)"},
+    "language": "nucl1643",
+    "primaryText": "Satō-iri-no ryokucha-wa jitsu-ni mooshi-bun-nai mono-da-ga, watashi-wa satō-iri-no ryokucha nanka kesshite nomanai.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Green tea with sugar is indeed impeccable, but I never drink such a thing.",
+    "context": "The preceding clause of the same sentence praises green tea with sugar.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "nanka"],
+      ["phenomenon", "noncancelability"],
+      ["contextStance", "positive"]
+    ],
+    "comment": "The positive evaluation in the preceding clause contradicts the negative stance of nanka, and the stance cannot be cancelled: the evaluative meaning is conventional, not a Gricean inference."
+  },
+  {
+    "id": "kubota2026_ex11_mushiro_unexpected",
+    "source": {"bibkey": "kubota-2026", "paperLabel": "(11)"},
+    "language": "nucl1643",
+    "primaryText": "Igai-na koto-ni, sunao-ni misu-o mitome-ta hō-ga mushiro yoi kekka-ni tsunagaru.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Unexpectedly, honestly admitting one's mistake leads (rather) to a better outcome.",
+    "context": "The sentence-initial adverbial marks the outcome as unexpected.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Igai-na koto-ni, sunao-ni misu-o mitome-ta hō-ga yahari yoi kekka-ni tsunagaru.", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "mushiro"],
+      ["phenomenon", "noncancelability"],
+      ["contextExpectation", "unexpected"]
+    ],
+    "comment": "The contrary marker mushiro 'rather' is fine under 'unexpectedly'; yahari 'as expected' is not."
+  },
+  {
+    "id": "kubota2026_ex12_yahari_expected",
+    "source": {"bibkey": "kubota-2026", "paperLabel": "(12)"},
+    "language": "nucl1643",
+    "primaryText": "Igai-na koto-wa nani-mo na-ku, sunao-ni misu-o mitome-ta hō-ga yahari yoi kekka-ni tsunagaru.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Nothing surprising; frankly admitting your mistake leads (as expected) to better results.",
+    "context": "The sentence-initial adverbial marks the outcome as expected.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Igai-na koto-wa nani-mo na-ku, sunao-ni misu-o mitome-ta hō-ga mushiro yoi kekka-ni tsunagaru.", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "yahari"],
+      ["phenomenon", "noncancelability"],
+      ["contextExpectation", "expected"]
+    ],
+    "comment": "yahari 'as expected' is fine under 'nothing surprising'; the contrary marker mushiro is not."
+  },
+  {
     "id": "kubota2026_ex37_nanka_counterstance",
     "source": {"bibkey": "kubota-2026", "paperLabel": "(37)"},
     "language": "nucl1643",
     "primaryText": "Ge, amai mono-wa suki-da kedo, satō-iri-no ryokucha nanka zettai oishiku nai yo.",
     "discourseSegments": [
-      "A: Satō-iri-no ryokucha-tte oishii yo ne.",
+      "A: Satō-iri-no ryokucha-tte, oishii yo ne.",
       "B: Ge, amai mono-wa suki-da kedo, satō-iri-no ryokucha nanka zettai oishiku nai yo."
     ],
     "glossedTokens": [],
-    "translation": "Ugh, I do like sweets, but sweetened green tea (nanka) is absolutely not tasty.",
+    "translation": "Ugh, I do like sweets, but sweetened green tea is absolutely not tasty.",
     "context": "A has just asserted a positive evaluation: 'Sweetened green tea is tasty, isn't it?'",
     "judgment": "acceptable",
     "alternatives": [],
@@ -17,9 +78,9 @@
     "paperFeatures": [
       ["marker", "nanka"],
       ["phenomenon", "counterstance"],
-      ["counterstanceSalient", "true"]
+      ["priorMove", "evaluativeAssertion"]
     ],
-    "comment": "Counterstance salient: A's positive evaluation of sweetened green tea licenses nanka. Example number verified against the Kubota 2026 PDF (2026-06-08 audit)."
+    "comment": "A's positive evaluation of sweetened green tea is the salient counterstance that licenses nanka."
   },
   {
     "id": "kubota2026_ex38_nanka_no_counterstance",
@@ -31,9 +92,9 @@
       "B: Satō-iri-no ryokucha nanka oishiku-nai-yo."
     ],
     "glossedTokens": [],
-    "translation": "Sweetened green tea (nanka) is not tasty.",
-    "context": "A has asked a neutral question: 'What kind of drink tastes good with sugar in it?' — no evaluation is salient.",
-    "judgment": "unacceptable",
+    "translation": "Sweetened green tea is not tasty (at all).",
+    "context": "A has asked a general wh-question, 'I wonder what kind of drink tastes good with sugar in it': whether sweetened green tea is tasty is not at issue.",
+    "judgment": "questionable",
     "alternatives": [
       {"form": "Satō-iri-no ryokucha-wa oishiku-nai-yo.", "judgment": "acceptable"}
     ],
@@ -41,9 +102,9 @@
     "paperFeatures": [
       ["marker", "nanka"],
       ["phenomenon", "counterstance"],
-      ["counterstanceSalient", "false"]
+      ["priorMove", "whQuestion"]
     ],
-    "comment": "No counterstance salient: A's question is neutral, not evaluative; the paper marks nanka with ?? here ({wa/??nanka}), the plain wa variant is fine. Example number verified against the Kubota 2026 PDF (2026-06-08 audit)."
+    "comment": "The paper marks nanka with ?? here ({wa/??nanka}); the plain wa variant is fine. No counterstance is salient after a general wh-question."
   },
   {
     "id": "kubota2026_ex39_dose_q1",
@@ -52,20 +113,20 @@
     "primaryText": "Satō-iri-no ryokucha-wa dōse mazui yo.",
     "discourseSegments": [
       "Q1: Satō-iri-no ryokucha-wa oishii-ka-na?",
-      "Satō-iri-no ryokucha-wa dōse mazui yo."
+      "A: Satō-iri-no ryokucha-wa dōse mazui yo."
     ],
     "glossedTokens": [],
-    "translation": "Sweetened green tea is (dōse) bad-tasting anyway.",
-    "context": "Q1 'I wonder if sweetened green tea is tasty' makes 'sweetened green tea is tasty' a salient counterstance.",
+    "translation": "Sweetened green tea is untasty anyway.",
+    "context": "Q1, 'I wonder if sweetened green tea is tasty', makes the issue the prejacent responds to salient.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "dōse"],
       ["phenomenon", "counterstance"],
-      ["counterstanceSalient", "true"]
+      ["priorMove", "polarQuestion"]
     ],
-    "comment": "Q1 makes the positive evaluation salient as a counterstance, licensing dōse. Example number verified against the Kubota 2026 PDF (2026-06-08 audit)."
+    "comment": "The polar question raises the issue whether sweetened green tea is tasty, which licenses dōse."
   },
   {
     "id": "kubota2026_ex39_dose_q2",
@@ -74,38 +135,20 @@
     "primaryText": "Satō-iri-no ryokucha-wa dōse mazui yo.",
     "discourseSegments": [
       "Q2: Donna nomimono-ni satō-o ireru-no-ga oishii-ka-na?",
-      "Satō-iri-no ryokucha-wa dōse mazui yo."
+      "A: Satō-iri-no ryokucha-wa dōse mazui yo."
     ],
     "glossedTokens": [],
-    "translation": "Sweetened green tea is (dōse) bad-tasting anyway.",
-    "context": "Q2 'What drink tastes good with sugar?' is neutral: no specific evaluation is salient as a counterstance.",
+    "translation": "Sweetened green tea is untasty anyway.",
+    "context": "Q2, 'I wonder what kind of drink tastes good with sugar in it', is a general wh-question that leaves the specific issue unraised.",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "dōse"],
       ["phenomenon", "counterstance"],
-      ["counterstanceSalient", "false"]
+      ["priorMove", "whQuestion"]
     ],
-    "comment": "Same sentence as the Q1 response; infelicitous because Q2 makes no evaluation salient as a counterstance. Example number verified against the Kubota 2026 PDF (2026-06-08 audit)."
-  },
-  {
-    "id": "kubota2026_ex10_nanka_noncancelable",
-    "source": {"bibkey": "kubota-2026", "paperLabel": "(10)"},
-    "language": "nucl1643",
-    "primaryText": "Satō-iri-no ryokucha-wa jitsu-ni mooshi-bun-nai mono-da-ga, watashi-wa satō-iri-no ryokucha nanka kesshite nomanai.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Green tea with sugar is indeed impeccable, but I will never drink green tea with sugar (nanka).",
-    "context": "The preceding clause of the same sentence praises green tea with sugar.",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["marker", "nanka"],
-      ["phenomenon", "noncancelability"]
-    ],
-    "comment": "Non-cancelability: the positive evaluation in the preceding clause contradicts nanka's negative stance, and the stance cannot be cancelled. Example number verified against the Kubota 2026 PDF (2026-06-08 audit)."
+    "comment": "Same sentence as the response to Q1; infelicitous because no salient issue directly responded to by the prejacent is raised."
   },
   {
     "id": "kubota2026_ex40_nanka_denial",
@@ -127,7 +170,7 @@
       ["phenomenon", "denial"],
       ["denialTarget", "prejacent"]
     ],
-    "comment": "B's denial means 'You'll drink it for sure', not 'You are not negative about green tea with sugar': denial targets the propositional content, not the evaluative stance (descriptive ineffability). Example number verified against the Kubota 2026 PDF (2026-06-08 audit)."
+    "comment": "B's denial means 'You'll drink it for sure', not 'You are not negative about green tea with sugar': the stance layer cannot be the target of a yes/no response."
   },
   {
     "id": "kubota2026_ex41_dose_denial",
@@ -149,7 +192,7 @@
       ["phenomenon", "denial"],
       ["denialTarget", "prejacent"]
     ],
-    "comment": "B's denial means 'You have plenty of chances', not 'You aren't really so pessimistic': denial targets the proposition, not the pessimistic stance. Example number verified against the Kubota 2026 PDF (2026-06-08 audit)."
+    "comment": "B's denial means 'You have plenty of chances', not 'You aren't really so pessimistic'."
   },
   {
     "id": "kubota2026_ex42_perspective_shift",
@@ -158,8 +201,8 @@
     "primaryText": "Sensei-wa [boku-ga (dōse) SALT-ni(-nanka) tōra-nai]-to omot-te-ta rashii.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Apparently my advisor thought I wouldn't get into SALT (dōse/nanka).",
-    "context": "",
+    "translation": "My advisor seems to have thought I wouldn't possibly get accepted at SALT.",
+    "context": "The speaker was confident their paper would be accepted; the advisor held a pessimistic view.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -168,13 +211,13 @@
       ["phenomenon", "perspectiveShift"],
       ["perspectiveHolder", "attitudeHolder"]
     ],
-    "comment": "Under the attitude verb 'think' the negative/pessimistic outlook is attributed to the advisor, not the speaker: outlook markers perspective-shift under embedding, unlike pure expressives. Example number verified against the Kubota 2026 PDF (2026-06-08 audit)."
+    "comment": "Under the attitude verb the pessimistic outlook can only be read as the advisor's, not the speaker's: outlook markers shift under embedding, unlike typical expressives."
   },
   {
     "id": "kubota2026_ex45a_nanka_epistemic",
     "source": {"bibkey": "kubota-2026", "paperLabel": "(45a)"},
     "language": "nucl1643",
-    "primaryText": "nanka … hazu",
+    "primaryText": "Konna tokoro ni nihonjin-nanka inai hazu da.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "There shouldn't be any Japanese people in a place like this.",
@@ -186,15 +229,37 @@
       ["marker", "nanka"],
       ["phenomenon", "modalInteraction"],
       ["modalForm", "hazu"],
-      ["modalFlavor", "epistemic"]
+      ["modalFlavor", "epistemic"],
+      ["evaluation", "neutral"]
     ],
-    "comment": "nanka with the epistemic modal hazu 'supposed': acceptable, with a neutral (non-pejorative) interpretation. Schematic marker–modal combination; the source row recorded only the combination and its interpretation. Example number verified against the Kubota 2026 PDF (2026-06-08 audit)."
+    "comment": "With the epistemic modal hazu the negative implication is comparatively neutral."
   },
   {
-    "id": "kubota2026_ex45c_nanka_bouletic",
+    "id": "kubota2026_ex45b_nanka_ability",
+    "source": {"bibkey": "kubota-2026", "paperLabel": "(45b)"},
+    "language": "nucl1643",
+    "primaryText": "Watashi ni-wa kin medaru-nanka torenai.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "There's no way I can win a gold medal.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "nanka"],
+      ["phenomenon", "modalInteraction"],
+      ["modalForm", "-eru"],
+      ["modalFlavor", "circumstantial"],
+      ["evaluation", "neutral"]
+    ],
+    "comment": "With the ability modal the negative implication is comparatively neutral, as with the epistemic case."
+  },
+  {
+    "id": "kubota2026_ex45c_nanka_deontic",
     "source": {"bibkey": "kubota-2026", "paperLabel": "(45c)"},
     "language": "nucl1643",
-    "primaryText": "nanka … ika-nai hō-ga yokat-ta",
+    "primaryText": "Tookyoo-ni-nanka ika-nai hō-ga yokat-ta.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "It would have been better not to go to Tokyo (of all places).",
@@ -206,20 +271,42 @@
       ["marker", "nanka"],
       ["phenomenon", "modalInteraction"],
       ["modalForm", "hō-ga yokat-ta"],
-      ["modalFlavor", "bouletic"]
+      ["modalFlavor", "deontic"],
+      ["evaluation", "pejorative"]
     ],
-    "comment": "nanka with a deontic/bouletic modal 'it would have been better not to go': acceptable, with a pejorative interpretation. Schematic marker–modal combination; the source row recorded only the combination and its interpretation. Example number verified against the Kubota 2026 PDF (2026-06-08 audit)."
+    "comment": "With a priority modal the negative implication is clearly pejorative."
+  },
+  {
+    "id": "kubota2026_ex45d_nanka_bouletic",
+    "source": {"bibkey": "kubota-2026", "paperLabel": "(45d)"},
+    "language": "nucl1643",
+    "primaryText": "Aisu kuriimu-nanka iranai.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I don't want such a thing as ice cream.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "nanka"],
+      ["phenomenon", "modalInteraction"],
+      ["modalForm", "iranai"],
+      ["modalFlavor", "bouletic"],
+      ["evaluation", "pejorative"]
+    ],
+    "comment": "With a bouletic modal the negative implication is clearly pejorative."
   },
   {
     "id": "kubota2026_ex46a_semete_epistemic",
     "source": {"bibkey": "kubota-2026", "paperLabel": "(46a)"},
     "language": "nucl1643",
-    "primaryText": "semete … hazu",
+    "primaryText": "Kono-yoona tokoro-ni-wa semete Nihonjin-wa iru hazu-da.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "??In a place like this, there should at least be some Japanese people.",
+    "translation": "In a place like this, there should at least be some Japanese people.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "questionable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -228,13 +315,33 @@
       ["modalForm", "hazu"],
       ["modalFlavor", "epistemic"]
     ],
-    "comment": "semete with the epistemic modal hazu 'supposed' is degraded (?? in the paper): semete rejects epistemic modal flavor. Schematic marker–modal combination; the source row recorded only the combination and its interpretation. Example number verified against the Kubota 2026 PDF (2026-06-08 audit)."
+    "comment": "The paper marks the sentence ??: semete is incompatible with the epistemic modal hazu."
+  },
+  {
+    "id": "kubota2026_ex46b_semete_ability",
+    "source": {"bibkey": "kubota-2026", "paperLabel": "(46b)"},
+    "language": "nucl1643",
+    "primaryText": "Watashi-ni-wa semete dō-medaru-wa toreru.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "As for me, I can at least win a bronze medal.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["marker", "semete"],
+      ["phenomenon", "modalInteraction"],
+      ["modalForm", "-eru"],
+      ["modalFlavor", "circumstantial"]
+    ],
+    "comment": "The paper marks the sentence ??: semete is incompatible with the ability modal -eru."
   },
   {
     "id": "kubota2026_ex46c_semete_desiderative",
     "source": {"bibkey": "kubota-2026", "paperLabel": "(46c)"},
     "language": "nucl1643",
-    "primaryText": "semete … -tai",
+    "primaryText": "Semete yobō-sesshu-wa uke-tai.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "One should at least get vaccinated.",
@@ -248,13 +355,13 @@
       ["modalForm", "-tai"],
       ["modalFlavor", "bouletic"]
     ],
-    "comment": "semete with the desiderative modal -tai 'want': acceptable. Schematic marker–modal combination; the source row recorded only the combination and its interpretation. Example number verified against the Kubota 2026 PDF (2026-06-08 audit)."
+    "comment": "semete with the desiderative -tai."
   },
   {
     "id": "kubota2026_ex46d_semete_deontic",
     "source": {"bibkey": "kubota-2026", "paperLabel": "(46d)"},
     "language": "nucl1643",
-    "primaryText": "semete … -beki",
+    "primaryText": "Semete ryohi-wa harau-beki-da.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "At least we should cover the travel expenses.",
@@ -268,6 +375,6 @@
       ["modalForm", "-beki"],
       ["modalFlavor", "deontic"]
     ],
-    "comment": "semete with the deontic modal -beki 'should': acceptable. Schematic marker–modal combination; the source row recorded only the combination and its interpretation. Example number verified against the Kubota 2026 PDF (2026-06-08 audit)."
+    "comment": "semete with the deontic -beki."
   }
 ]

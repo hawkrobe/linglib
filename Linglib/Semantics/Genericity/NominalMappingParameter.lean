@@ -166,8 +166,8 @@ section PluralClosure
 
 variable {World Atom : Type*}
 
-/-- Plural closure is idempotent for mass nouns: ⊔P = P when P is cumulative.
-    This is [krifka-2026]'s absorption rule ⊔⊔S = ⊔S for the join closure. -/
+/-- Plural closure is idempotent for mass nouns: ⊔P = P when P is cumulative, whence the
+    absorption rule ⊔⊔S = ⊔S ([krifka-2026]). -/
 theorem pluralClosure_mass (P : Property World Atom)
     (hMass : IsMass World Atom P) :
     pluralClosure World Atom P = P := by
@@ -185,44 +185,6 @@ theorem pluralClosure_cum (P : Property World Atom) (w : World) :
   Mereology.algClosure_cum
 
 end PluralClosure
-
--- Kind Anaphora ([krifka-2026] §2)
-
-/--
-Kind anaphor for [MASS] concepts: ⟦it⟧ = λP[MASS]. λi. ∩P(i).
-
-Mass nouns are already cumulative, so ∩ applies directly without
-plural closure. The singular pronoun *it* picks up a mass concept
-dref and derives the corresponding kind individual.
-
-Example: *John noticed mold. He is allergic against it.*
-  ⟦it⟧(⟦mold⟧) = ∩⟦mold⟧ = the mold-kind
--/
-def kindAnaphorMass (P : Property World Atom) : Kind World Atom :=
-  down World Atom P
-
-/--
-Kind anaphor for [COUNT] concepts: ⟦they⟧ = λP[COUNT]. λi. ∩(⊔P)(i).
-
-Count nouns need plural closure (⊔) before nominalization (∩).
-The plural pronoun *they* picks up a count concept dref, applies
-plural closure to get a cumulative predicate, then derives the
-kind individual via ∩.
-
-Example: *John noticed a spider. He has a phobia against them.*
-  ⟦they⟧(⟦spider⟧) = ∩(⊔⟦spider⟧) = ∩⟦spiders⟧ = the spider-kind
--/
-def kindAnaphorCount (P : Property World Atom) : Kind World Atom :=
-  down World Atom (pluralClosure World Atom P)
-
-/-- For mass nouns, the two anaphors yield the same kind (up to absorption).
-    This is why *it* and *they* are interchangeable for mass concepts —
-    except that the morphosyntactic [MASS] feature blocks *they*. -/
-theorem kindAnaphorCount_mass (P : Property World Atom)
-    (hMass : IsMass World Atom P) :
-    kindAnaphorCount World Atom P = kindAnaphorMass World Atom P := by
-  unfold kindAnaphorCount kindAnaphorMass
-  rw [pluralClosure_mass P hMass]
 
 -- Round-Trip Theorems
 
@@ -489,14 +451,14 @@ def fallbackToExists (isKindDenoting : Bool) (bp : BlockingPrinciple) : Bool :=
   !isKindDenoting ∧ !bp.existsBlocked
 
 /-! ### DKP scope derivation (Chierchia side of the scrambling comparison)
-[krifka-2004] [chierchia-1998]
+[krifka-2003] [chierchia-1998]
 
 Chierchia's Derived Kind Predication introduces the existential *locally* — where the
 kind meets the predicate — so negation always scopes outside it. Modelled with plain
-`Prop` existential closure (`existsClose`) over the kind's instances. Krifka's
-position-sensitive ∃-shift in `Krifka2004.lean` reuses the same `existsClose`, so the two
-accounts share one closure and differ only in where negation sits; they are compared on
-the Dutch scrambling data in `Studies/LeBruynDeSwart2022.lean`.
+`Prop` existential closure (`existsClose`) over the kind's instances. The position-sensitive
+∃-shift that `Studies/LeBruynDeSwart2022.lean` reads into [krifka-2003] reuses the same
+`existsClose`, so the two accounts share one closure and differ only in where negation
+sits; they are compared there on the Dutch scrambling data.
 
 `existsClose` is Partee's `A` (existential closure) in plain extensional form. The same
 operator dressed in the DWP/Gallin deep embedding is `Quantification.A`, needed there
@@ -546,7 +508,7 @@ example : downDefinedFor .mass false = true := rfl
 /-!
 ## Related Theory
 
-- `Semantics/Lexical/Noun/Kind/Krifka2004.lean` - Alternative: Bare NPs as properties
+- `Studies/Krifka2003.lean` - Alternative: Bare NPs as properties
 - `Semantics/Lexical/Noun/Kind/MeaningPreservation.lean` - Meaning Preservation, singular kinds
 - `Semantics/Genericity/Basic.lean` - GEN operator for generic readings
 
