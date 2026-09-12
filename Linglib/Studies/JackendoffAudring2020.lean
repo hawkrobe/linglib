@@ -8,6 +8,7 @@ import Linglib.Core.Order.Flat
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Fin.VecNotation
 import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Jackendoff and Audring (2020): The Texture of the Lexicon
@@ -17,7 +18,9 @@ morphological motivation is shared structure recorded by nondirectional relation
 between fully specified lexical entries, not inheritance from an abstract base. The
 mixed-direction pairs of Objection 10 to inheritance, Section 3.4.4, are the test: *assassin*
 and *assassinate* build the second on the first in phonology and the first on the second in
-semantics, so no acyclic inheritance hierarchy holds both demands (`assassin_cycle`), while a
+semantics, so no acyclic inheritance hierarchy holds both demands (`assassin_cycle`), though
+default inheritance itself computes as the taxonomy of Figure 3.5 intends
+(`ostrich_overrides`), while a
 sister link with a coindex per shared part carries both, (41) (`assassin_pairs`), and reads the
 same transposed (`assassin_pairs_symm`). Bumped up a level, Section 4.8.2, the link between the
 *-ism* and *-ist* schemas, (47), pairs every ideology's noun with its adherent's, whatever the
@@ -70,6 +73,99 @@ common (`instantiates_ishSchema_iff`), and absorbs a newly encountered sister
 namespace JackendoffAudring2020
 
 open Morphology ConstructionMorphology
+
+/-! ### Open and closed variables, (17) and (18)
+
+The toponym patterns (17): a name and the type of a geographical feature, the name an open
+variable and the feature type a closed one, whose fillers are learned pattern by pattern; in
+(18d) *the* and *of* are constants. -/
+
+/-- The pattern (18a), name then feature: the name open, the feature closed. -/
+def toponymA : Schema (Fin 2) (Flat String) := ⟨λ _ => ⊥, {0}⟩
+
+/-- The pattern (18b), feature then name. -/
+def toponymB : Schema (Fin 2) (Flat String) := ⟨λ _ => ⊥, {1}⟩
+
+/-- The pattern (18d), *the* feature *of* name: two constants, a closed feature, an open name. -/
+def toponymD : Schema (Fin 4) (Flat String) := ⟨![↑"the", ⊥, ↑"of", ⊥], {3}⟩
+
+/-- The stored toponyms of (17a). -/
+def toponymsA : Set (Fin 2 → Flat String) :=
+  {Forms.arrowheadLake.slots, Forms.loonMountain.slots, Forms.wissahickonCreek.slots,
+    Forms.laurelHill.slots, Forms.sugarIsland.slots}
+
+/-- The stored toponyms of (17b). -/
+def toponymsB : Set (Fin 2 → Flat String) :=
+  {Forms.mountEverest.slots, Forms.lakeMichigan.slots, Forms.capeCod.slots}
+
+/-- The stored toponyms of (17d). -/
+def toponymsD : Set (Fin 4 → Flat String) :=
+  {Forms.bayOfFundy.slots, Forms.gulfOfStLawrence.slots, Forms.capeOfGoodHope.slots,
+    Forms.isleOfWight.slots}
+
+/-- *Morris Mountain* is licensed by (18a): the name is open and *Mountain* is attested. -/
+theorem morrisMountain_generates : toponymA.Generates toponymsA Forms.morrisMountain.slots :=
+  ⟨λ i => bot_le, λ i _ hi => by
+    fin_cases i
+    · exact absurd (Set.mem_singleton _) hi
+    · exact ⟨Forms.loonMountain.slots, ⟨by simp [toponymsA], λ _ => bot_le⟩, by decide⟩⟩
+
+/-- *Mount Morris* is licensed by (18b) likewise. -/
+theorem mountMorris_generates : toponymB.Generates toponymsB Forms.mountMorris.slots :=
+  ⟨λ i => bot_le, λ i _ hi => by
+    fin_cases i
+    · exact ⟨Forms.mountEverest.slots, ⟨by simp [toponymsB], λ _ => bot_le⟩, by decide⟩
+    · exact absurd (Set.mem_singleton _) hi⟩
+
+/-- *Mountain Morris* is not: *Mountain* is not an attested feature of the pattern (18b). -/
+theorem not_mountainMorris_generates :
+    ¬ toponymB.Generates toponymsB ![↑"Mountain", ↑"Morris"] := by
+  rintro ⟨-, h⟩
+  obtain ⟨w, ⟨hw, -⟩, hw0⟩ := h 0 rfl (by simp [toponymB])
+  simp only [toponymsB, Set.mem_insert_iff, Set.mem_singleton_iff] at hw
+  rcases hw with rfl | rfl | rfl <;> exact absurd hw0 (by decide)
+
+/-- *The Mount of Halle* is not licensed by (18d): *Mount* is not among its attested features. -/
+theorem not_mountOfHalle_generates :
+    ¬ toponymD.Generates toponymsD ![↑"the", ↑"Mount", ↑"of", ↑"Halle"] := by
+  rintro ⟨-, h⟩
+  obtain ⟨w, ⟨hw, -⟩, hw1⟩ := h 1 rfl (by simp [toponymD])
+  simp only [toponymsD, Set.mem_insert_iff, Set.mem_singleton_iff] at hw
+  rcases hw with rfl | rfl | rfl | rfl <;> exact absurd hw1 (by decide)
+
+/-! ### Default inheritance and override, Figure 3.5
+
+The taxonomy of Figure 3.5: birds fly by default, the ostrich overrides, and the canary
+inherits flight. -/
+
+/-- The nodes of Figure 3.5. -/
+inductive Animal
+  | animal
+  | bird
+  | fish
+  | canary
+  | ostrich
+  deriving DecidableEq, Fintype
+
+/-- The taxonomy: birds and fish are animals, canaries and ostriches are birds. -/
+def animalHierarchy : Hierarchy Animal :=
+  .ofDepth
+    (λ | .animal => none | .bird => some .animal | .fish => some .animal
+       | .canary => some .bird | .ostrich => some .bird)
+    (λ | .animal => 0 | .bird => 1 | .fish => 1 | .canary => 2 | .ostrich => 2) (by decide)
+
+/-- Flight as a local specification: birds fly, the ostrich overrides. -/
+def flies : Animal → Option Bool
+  | .bird => some true
+  | .ostrich => some false
+  | _ => none
+
+/-- The ostrich's override and the canary's inheritance compute as intended. -/
+theorem ostrich_overrides :
+    animalHierarchy.value flies .ostrich = some false ∧
+      animalHierarchy.value flies .canary = some true :=
+  ⟨animalHierarchy.value_eq_of_att rfl,
+    by rw [animalHierarchy.value_eq_parent rfl]; exact animalHierarchy.value_eq_of_att rfl⟩
 
 /-! ### Sister words -/
 
