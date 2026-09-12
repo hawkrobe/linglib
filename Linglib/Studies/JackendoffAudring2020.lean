@@ -1,4 +1,5 @@
 import Linglib.Data.Examples.JackendoffAudring2020
+import Linglib.Data.Forms.JackendoffAudring2020
 import Linglib.Morphology.Construction.Schema
 import Linglib.Morphology.Construction.SameExcept
 import Linglib.Morphology.Construction.Inheritance
@@ -6,6 +7,8 @@ import Linglib.Morphology.Paradigm.Linkage
 import Linglib.Morphology.Paradigm.Morphome
 import Linglib.Core.Order.Flat
 import Mathlib.Data.Fintype.Prod
+import Mathlib.Data.Fin.VecNotation
+import Mathlib.Tactic.FinCases
 
 /-!
 # Jackendoff and Audring (2020): The Texture of the Lexicon
@@ -48,6 +51,9 @@ common (`instantiates_ishSchema_iff`), and absorbs a newly encountered sister
 * The cycle theorem renders the paradox of Objection 10 through the well-foundedness of an
   inheritance hierarchy; the book argues from the above-and-below paradox and makes no
   well-foundedness claim.
+* The syllables and the *-ish* adjectives are the CLDF forms of
+  `Data/Forms/JackendoffAudring2020.json`, read as slot-indexed segments by
+  `Data.Forms.Form.slots`; a syllable's positions are onset, nucleus and coda.
 * The correspondence between a schema's variable coindices and the constant coindices of its
   instances, left unformalized in Section 4.13.2, is the subscripting of
   `Morphology.Construction.Schema.InstantiatesAt`; a productive variable is one marked open
@@ -243,34 +249,6 @@ theorem ismist_pairs (b : B) (i : I) :
 
 /-! ### Ablaut as a link off the nucleus -/
 
-/-- Syllable positions. -/
-inductive Pos
-  | onset
-  | nucleus
-  | coda
-  deriving DecidableEq
-
-/-- Phonological material of the verbs cited: the onsets *s-*, *str-*, *spr-*, the nuclei /ɪ/,
-/æ/, /ʌ/, /ɛ/, /a/ and the codas /ŋ/, /x/. -/
-inductive Seg
-  | s
-  | str
-  | shpr
-  | ih
-  | ae
-  | uh
-  | eh
-  | ah
-  | ng
-  | x
-  deriving DecidableEq
-
-/-- A monosyllable: its onset, nucleus and coda. -/
-def syllable (o n c : Seg) : Pos → Flat Seg
-  | .onset => ↑o
-  | .nucleus => ↑n
-  | .coda => ↑c
-
 /-- The variables of the ablaut schemas: the onset and the coda, shared by stem and past, and
 the two nuclei. -/
 inductive NucleusVar
@@ -280,98 +258,93 @@ inductive NucleusVar
   | past
   deriving DecidableEq
 
-/-- The subscripting of the stem's positions by the variables of the ablaut schemas. -/
-def stemSub : Pos → NucleusVar
-  | .onset => .onset
-  | .nucleus => .stem
-  | .coda => .coda
+/-- The subscripting of the stem's three positions, onset, nucleus and coda, by the variables
+of the ablaut schemas. -/
+def stemSub : Fin 3 → NucleusVar := ![.onset, .stem, .coda]
 
 /-- The subscripting of the past's positions by the variables of the ablaut schemas. -/
-def pastSub : Pos → NucleusVar
-  | .onset => .onset
-  | .nucleus => .past
-  | .coda => .coda
+def pastSub : Fin 3 → NucleusVar := ![.onset, .past, .coda]
 
 /-- Two syllables linked at every position but the nucleus, whose description pins the nuclei
 `v` and `w`, `⊥` for an open nucleus: the shape of the ablaut schemas (25) and (26) and of the
 German present-tense schema (45). -/
-def nucleusPair (v w : Flat Seg) : Schema NucleusVar (Flat Seg) :=
+def nucleusPair (v w : Flat String) : Schema NucleusVar (Flat String) :=
   ⟨λ | .stem => v | .past => w | _ => ⊥, {.onset, .coda}⟩
 
 /-- The general ablaut schema (25): both nuclei open. -/
-def ablaut : Schema NucleusVar (Flat Seg) := nucleusPair ⊥ ⊥
+def ablaut : Schema NucleusVar (Flat String) := nucleusPair ⊥ ⊥
 
 /-- The *sing*/*sang* subschema (26): /ɪ/ in the stem, /æ/ in the past. -/
-def singSang : Schema NucleusVar (Flat Seg) := nucleusPair ↑Seg.ih ↑Seg.ae
+def singSang : Schema NucleusVar (Flat String) := nucleusPair ↑"ɪ" ↑"æ"
 
 /-- The *string*/*strung* subschema, (26) with /ʌ/ for /æ/. -/
-def stringStrung : Schema NucleusVar (Flat Seg) := nucleusPair ↑Seg.ih ↑Seg.uh
+def stringStrung : Schema NucleusVar (Flat String) := nucleusPair ↑"ɪ" ↑"ʌ"
 
 /-- A paired instantiation of a nucleus pair is a stem and a past that are the same except at
 the nucleus, with the pinned nuclei. -/
-theorem nucleusPair_iff {v w : Flat Seg} {s p : Pos → Flat Seg} :
+theorem nucleusPair_iff {v w : Flat String} {s p : Fin 3 → Flat String} :
     (nucleusPair v w).InstantiatesAt (Sum.elim stemSub pastSub) (Sum.elim s p) ↔
-      v ≤ s .nucleus ∧ w ≤ p .nucleus ∧ SameExcept s p {.nucleus} := by
+      v ≤ s 1 ∧ w ≤ p 1 ∧ SameExcept s p {1} := by
   rw [Schema.instantiatesAt_elim_iff]
   constructor
   · rintro ⟨hs, hp, -, -, h⟩
-    refine ⟨hs .nucleus, hp .nucleus, λ q hq => h q q ?_⟩
-    cases q <;> first | rfl | simp at hq
+    refine ⟨hs 1, hp 1, λ q hq => h q q ?_⟩
+    fin_cases q <;> first | rfl | exact (hq rfl).elim
   · rintro ⟨hv, hw, h⟩
     refine ⟨λ q => ?_, λ q => ?_, λ a b hab => ?_, λ a b hab => ?_, λ a b hab => ?_⟩
-    · cases q <;> simp [nucleusPair, stemSub, hv]
-    · cases q <;> simp [nucleusPair, pastSub, hw]
-    · cases a <;> cases b <;> first | rfl | exact absurd hab (by decide)
-    · cases a <;> cases b <;> first | rfl | exact absurd hab (by decide)
-    · cases a <;> cases b <;> first | exact absurd hab (by decide) | exact h (by simp)
+    · fin_cases q <;> first | exact bot_le | exact hv
+    · fin_cases q <;> first | exact bot_le | exact hw
+    · fin_cases a <;> fin_cases b <;> first | rfl | exact absurd hab (by decide)
+    · fin_cases a <;> fin_cases b <;> first | rfl | exact absurd hab (by decide)
+    · fin_cases a <;> fin_cases b <;>
+        first | exact absurd hab (by decide) | exact h (by simp)
 
 /-- (25) pairs exactly the stems and pasts that are the same except at the nucleus. -/
-theorem ablaut_pairs_iff {s p : Pos → Flat Seg} :
-    ablaut.InstantiatesAt (Sum.elim stemSub pastSub) (Sum.elim s p) ↔
-      SameExcept s p {.nucleus} := by
+theorem ablaut_pairs_iff {s p : Fin 3 → Flat String} :
+    ablaut.InstantiatesAt (Sum.elim stemSub pastSub) (Sum.elim s p) ↔ SameExcept s p {1} := by
   simp [ablaut, nucleusPair_iff]
 
 /-- A subschema with pinned nuclei is a special case of the general ablaut schema: every pair
 of (26) is a pair of (25). -/
-theorem ablaut_pairs_of_nucleusPair {v w : Flat Seg} {s p : Pos → Flat Seg}
+theorem ablaut_pairs_of_nucleusPair {v w : Flat String} {s p : Fin 3 → Flat String}
     (h : (nucleusPair v w).InstantiatesAt (Sum.elim stemSub pastSub) (Sum.elim s p)) :
     ablaut.InstantiatesAt (Sum.elim stemSub pastSub) (Sum.elim s p) :=
   ablaut_pairs_iff.2 (nucleusPair_iff.1 h).2.2
 
 /-- A pair under a subschema with distinct pinned nuclei is a nucleus contrast: the same
 except at the nucleus, where both are present and differ. -/
-theorem contrast_of_nucleusPair {v w : Seg} (hvw : v ≠ w) {s p : Pos → Flat Seg}
+theorem contrast_of_nucleusPair {v w : String} (hvw : v ≠ w) {s p : Fin 3 → Flat String}
     (h : (nucleusPair ↑v ↑w).InstantiatesAt (Sum.elim stemSub pastSub) (Sum.elim s p)) :
-    Contrast s p {.nucleus} := by
+    Contrast s p {1} := by
   obtain ⟨hv, hw, hs⟩ := nucleusPair_iff.1 h
   rw [Flat.coe_le_iff] at hv hw
   refine ⟨hs, λ q hq => ?_⟩
   rw [Set.mem_singleton_iff] at hq
   subst hq
   rw [hv, hw]
-  exact ⟨Option.some_ne_none v, Option.some_ne_none w, λ h => hvw (Flat.coe_injective h)⟩
+  exact ⟨Flat.coe_ne_bot, Flat.coe_ne_bot, λ h => hvw (Flat.coe_injective h)⟩
 
 /-- Two syllables differing only in their nucleus are a paired instantiation of the subschema
 pinning those nuclei. -/
-theorem syllable_pairs (o v w c : Seg) :
+theorem syllable_pairs (o v w c : String) :
     (nucleusPair ↑v ↑w).InstantiatesAt (Sum.elim stemSub pastSub)
-      (Sum.elim (syllable o v c) (syllable o w c)) := by
+      (Sum.elim ![↑o, ↑v, ↑c] ![↑o, ↑w, ↑c]) := by
   rw [nucleusPair_iff]
   refine ⟨le_rfl, le_rfl, λ q hq => ?_⟩
-  simp only [Set.mem_compl_iff, Set.mem_singleton_iff] at hq
-  cases q <;> simp_all [syllable]
+  fin_cases q <;> first | rfl | exact (hq rfl).elim
 
 /-- *sing*/*sang*, (24), under (26); *string*/*strung* under its subschema; and the German
 *sprech-*/*sprich-* of (43) under the shape of (45). -/
-example :
+theorem ablaut_words :
     singSang.InstantiatesAt (Sum.elim stemSub pastSub)
-        (Sum.elim (syllable .s .ih .ng) (syllable .s .ae .ng)) ∧
+        (Sum.elim Forms.sing.slots Forms.sang.slots) ∧
       stringStrung.InstantiatesAt (Sum.elim stemSub pastSub)
-        (Sum.elim (syllable .str .ih .ng) (syllable .str .uh .ng)) ∧
+        (Sum.elim Forms.string.slots Forms.strung.slots) ∧
       ablaut.InstantiatesAt (Sum.elim stemSub pastSub)
-        (Sum.elim (syllable .shpr .eh .x) (syllable .shpr .ih .x)) :=
-  ⟨syllable_pairs .., syllable_pairs ..,
-    ablaut_pairs_of_nucleusPair (syllable_pairs .shpr .eh .ih .x)⟩
+        (Sum.elim Forms.sprech.slots Forms.sprich.slots) := by
+  simp only [singSang, stringStrung, ablaut, nucleusPair_iff]
+  refine ⟨⟨by decide, by decide, ?_⟩, ⟨by decide, by decide, ?_⟩,
+    ⟨bot_le, bot_le, ?_⟩⟩ <;> intro q hq <;> fin_cases q <;> first | decide | exact (hq rfl).elim
 
 /-! ### The present-tense cells of (45) as a morphome -/
 
@@ -533,54 +506,32 @@ theorem walk_syncretism :
 
 /-! ### Structural Intersection -/
 
-/-- The bases and the affix of the *-ish* adjectives (5) of Section 7.8.1, with *fool* for the
-newly encountered sister. -/
-inductive IshAtom
-  | pig
-  | child
-  | slug
-  | fool
-  | ish
-  deriving DecidableEq
-
-/-- The slots of an *-ish* adjective. -/
-inductive IshSlot
-  | base
-  | affix
-  deriving DecidableEq
-
-/-- The *-ish* adjective on base `b`. -/
-def ishWord (b : IshAtom) : IshSlot → Flat IshAtom
-  | .base => ↑b
-  | .affix => ↑IshAtom.ish
-
-/-- The schema (6): the affix pinned, the base a variable. -/
-def ishSchema : Schema IshSlot (Flat IshAtom) :=
-  ⟨λ | .base => ⊥ | .affix => ↑IshAtom.ish, {.base}⟩
+/-- The schema (6) over the two slots of an *-ish* adjective, base and affix: the affix pinned,
+the base a variable. -/
+def ishSchema : Schema (Fin 2) (Flat String) := ⟨![⊥, ↑"ish"], {0}⟩
 
 /-- Structural Intersection constructs the schema: the description of (6) is the meet of the
 three sisters of (5), keeping what they share and leaving a variable where they differ. -/
 theorem ishSchema_body_eq_inf :
-    ishSchema.body = ishWord .pig ⊓ ishWord .child ⊓ ishWord .slug := by
+    ishSchema.body = Forms.piggish.slots ⊓ Forms.childish.slots ⊓ Forms.sluggish.slots := by
   funext v
-  cases v <;> decide
+  fin_cases v <;> decide
 
 /-- The schema is the most the sisters have in common: a description is instantiated by all
 three exactly when it is instantiated by the schema's description. -/
-theorem instantiates_ishSchema_iff {s : Schema IshSlot (Flat IshAtom)} :
+theorem instantiates_ishSchema_iff {s : Schema (Fin 2) (Flat String)} :
     s.Instantiates ishSchema.body ↔
-      s.Instantiates (ishWord .pig) ∧ s.Instantiates (ishWord .child) ∧
-        s.Instantiates (ishWord .slug) := by
+      s.Instantiates Forms.piggish.slots ∧ s.Instantiates Forms.childish.slots ∧
+        s.Instantiates Forms.sluggish.slots := by
   rw [ishSchema_body_eq_inf, Schema.instantiates_inf_iff, Schema.instantiates_inf_iff,
     and_assoc]
 
-theorem ishSchema_le_foolish : ishSchema.body ≤ ishWord .fool
-  | .base => bot_le
-  | .affix => le_rfl
+theorem ishSchema_le_foolish : ishSchema.body ≤ Forms.foolish.slots := λ i => by
+  fin_cases i <;> decide
 
 /-- A newly encountered sister intersected with the schema yields the schema again, the
 Minimal Generalization Learner's fixed point. -/
-theorem ishSchema_inf_foolish : ishSchema.body ⊓ ishWord .fool = ishSchema.body :=
+theorem ishSchema_inf_foolish : ishSchema.body ⊓ Forms.foolish.slots = ishSchema.body :=
   inf_eq_left.2 ishSchema_le_foolish
 
 end JackendoffAudring2020

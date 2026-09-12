@@ -3,8 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Data.Forms.Audring2019
 import Linglib.Morphology.Construction.Schema
-import Linglib.Core.Order.Flat
+import Linglib.Core.Relation.FactorsThroughOn
+import Mathlib.Data.Fin.VecNotation
+import Mathlib.Tactic.FinCases
 
 /-!
 # Audring (2019): Mothers or sisters? The encoding of morphological knowledge
@@ -22,15 +25,16 @@ specified word generates nothing but itself (`word_generates_iff`).
 
 The second-order schema `[N -ful]A ≈ [N -less]A` of (14) is a sister link between mother
 schemas, one description over a shared base variable read through two subscriptings. The
-coindexed base pairs *careful* with *careless* and not with *hopeless*
-(`careful_careless_pairs`, `not_careful_hopeless_pairs`). A mother of the two schemas would be
+coindexed base pairs *careful* with *careless* and not with *clueless*
+(`careful_careless_pairs`, `not_careful_clueless_pairs`). A mother of the two schemas would be
 the meet of their descriptions, which over these slots is empty (`fulLess_mother_eq_bot`) and
 so is instantiated by every word (`fulLess_mother_instantiates`): it states nothing the sisters
 do not, and cannot state the pairing they do.
 
 ## Implementation notes
 
-* Words are descriptions over a base slot and an affix slot on a flat carrier, one tier of the
+* The words are the CLDF forms of `Data/Forms/Audring2019.json`, read as slot-indexed segments
+  by `Data.Forms.Form.slots`: a base slot and an affix slot on the flat carrier, one tier of the
   paper's three; the same subscripting mechanism coindexes across tiers. The paper's remaining
   cases for a mother, an antonymic scale and the feature matrix of an inflectional paradigm,
   are not formalized.
@@ -45,42 +49,25 @@ namespace Audring2019
 
 open Morphology.Construction
 
-/-- The bases and affixes of the words cited: the *-ish* family of (8) with the novel base
-*Trump*, and the *-ful* and *-less* words of (14). -/
-inductive Atom
-  | boy
-  | fool
-  | child
-  | trump
-  | care
-  | hope
-  | ish
-  | ful
-  | less
-  deriving DecidableEq
-
-/-- The slots of a suffixed word. -/
-inductive Slot
-  | base
-  | affix
-  deriving DecidableEq
-
-/-- The fully specified word with base `b` and affix `a`. -/
-def word (b a : Atom) : Slot → Flat Atom
-  | .base => ↑b
-  | .affix => ↑a
+/-- A word with base `b` and affix `a` over the two slots base and affix. -/
+def word (b a : String) : Fin 2 → Flat String := ![↑b, ↑a]
 
 /-! ### The *-ish* family: sister links and their mother -/
 
 /-- The mother schema `[N -ish]A` of (8): the affix pinned, the base an open variable. -/
-def ishSchema : Schema Slot (Flat Atom) := ⟨λ | .base => ⊥ | .affix => ↑Atom.ish, {.base}⟩
+def ishSchema : Schema (Fin 2) (Flat String) := ⟨![⊥, ↑"ish"], {0}⟩
 
 /-- The stored family of (8). -/
-def ishFamily : Set (Slot → Flat Atom) := {word .boy .ish, word .fool .ish, word .child .ish}
+def ishFamily : Set (Fin 2 → Flat String) :=
+  {Forms.boyish.slots, Forms.foolish.slots, Forms.childish.slots}
 
-theorem ishSchema_instantiates (b : Atom) : ishSchema.Instantiates (word b .ish)
-  | .base => bot_le
-  | .affix => le_rfl
+/-- Any word whose affix is *-ish* instantiates the mother. -/
+theorem ishSchema_instantiates {w : Fin 2 → Flat String} (h : w 1 = ↑"ish") :
+    ishSchema.Instantiates w := by
+  intro i
+  fin_cases i
+  · exact bot_le
+  · exact h.ge
 
 /-- The variables of a sister link coindexing the affixes of two words. -/
 inductive AffixLink
@@ -90,10 +77,7 @@ inductive AffixLink
   deriving DecidableEq
 
 /-- The sister link at the affix: the two affix slots share a variable, the bases do not. -/
-def affixLink : Slot ⊕ Slot → AffixLink
-  | .inl .base => .base₁
-  | .inr .base => .base₂
-  | _ => .affix
+def affixLink : Fin 2 ⊕ Fin 2 → AffixLink := Sum.elim ![.base₁, .affix] ![.base₂, .affix]
 
 /-- The variables of a sister link coindexing the bases of two words. -/
 inductive BaseLink
@@ -103,46 +87,46 @@ inductive BaseLink
   deriving DecidableEq
 
 /-- The sister link at the base: the two base slots share a variable, the affixes do not. -/
-def baseLink : Slot ⊕ Slot → BaseLink
-  | .inl .affix => .affix₁
-  | .inr .affix => .affix₂
-  | _ => .base
+def baseLink : Fin 2 ⊕ Fin 2 → BaseLink := Sum.elim ![.base, .affix₁] ![.base, .affix₂]
 
-/-- Two *-ish* words are sisters at the affix: the pair factors through the link. -/
-theorem ish_affix_sisters (b b' : Atom) :
-    (Sum.elim (word b .ish) (word b' .ish)).FactorsThrough affixLink := by
-  rintro (p | p) (q | q) h <;> cases p <;> cases q <;> first | rfl | simp [affixLink] at h
+/-- *boyish* and *childish* are sisters at the affix: the pair factors through the link. -/
+theorem ish_affix_sisters :
+    (Sum.elim Forms.boyish.slots Forms.childish.slots).FactorsThrough affixLink := by
+  decide
 
-/-- Two *-ish* words with different bases cannot be coindexed at the base: the relation between
-*boy* and *child* is equivalence of function, not sameness, and no sister link states it. -/
-theorem not_base_sisters {b b' : Atom} (h : b ≠ b') :
-    ¬ (Sum.elim (word b .ish) (word b' .ish)).FactorsThrough baseLink :=
-  λ hf => h (Flat.coe_injective (@hf (.inl .base) (.inr .base) rfl))
+/-- *boyish* and *childish* cannot be coindexed at the base: the relation between *boy* and
+*child* is equivalence of function, not sameness, and no sister link states it. -/
+theorem not_base_sisters :
+    ¬ (Sum.elim Forms.boyish.slots Forms.childish.slots).FactorsThrough baseLink := by
+  decide
 
 /-- The mother relates every member of the family through its one variable. -/
-theorem ishSchema_relates {w : Slot → Flat Atom} (hw : w ∈ ishFamily) :
+theorem ishSchema_relates {w : Fin 2 → Flat String} (hw : w ∈ ishFamily) :
     ishSchema.Relates ishFamily w := by
   refine ⟨hw, ?_⟩
   simp only [ishFamily, Set.mem_insert_iff, Set.mem_singleton_iff] at hw
-  rcases hw with rfl | rfl | rfl <;> exact ishSchema_instantiates _
+  rcases hw with rfl | rfl | rfl <;> exact ishSchema_instantiates (by decide)
 
 /-- The mother is productive: its one variable is open. -/
 theorem ishSchema_isProductive : ishSchema.IsProductive := by
-  rintro (_ | _) h
-  exacts [Set.mem_singleton _, absurd h (by decide)]
+  intro i h
+  fin_cases i
+  · exact Set.mem_singleton_iff.2 rfl
+  · exact absurd h (by decide)
 
 /-- The mother generates the novel *Trumpish* with nothing stored. -/
-theorem ishSchema_generates_trumpish : ishSchema.Generates ∅ (word .trump .ish) :=
-  ishSchema_isProductive.generates_iff.2 (ishSchema_instantiates _)
+theorem ishSchema_generates_trumpish : ishSchema.Generates ∅ Forms.trumpish.slots :=
+  ishSchema_isProductive.generates_iff.2 (ishSchema_instantiates (by decide))
 
 /-- A fully specified word, taken as a schema, generates nothing but itself: a sister link
 between stored words licenses no novel word, and productivity needs a mother's variable. -/
-theorem word_generates_iff (b a : Atom) {Λ : Set (Slot → Flat Atom)} {w : Slot → Flat Atom} :
-    (⟨word b a, ∅⟩ : Schema Slot (Flat Atom)).Generates Λ w ↔ w = word b a := by
-  have hmax : ∀ v, IsMax (word b a v) := λ v => by cases v <;> exact Flat.isMax_coe _
+theorem word_generates_iff (b a : String) {Λ : Set (Fin 2 → Flat String)}
+    {w : Fin 2 → Flat String} :
+    (⟨word b a, ∅⟩ : Schema (Fin 2) (Flat String)).Generates Λ w ↔ w = word b a := by
+  have hmax : ∀ v, IsMax (word b a v) := λ v => by fin_cases v <;> exact Flat.isMax_coe _
   refine ⟨λ h => (Schema.instantiates_iff_eq_of_forall_isMax hmax).1 h.instantiates, ?_⟩
   rintro rfl
-  exact ⟨le_rfl, λ v hv _ => by cases v <;> exact absurd hv Flat.coe_ne_bot⟩
+  exact ⟨le_rfl, λ v hv _ => by fin_cases v <;> exact absurd hv Flat.coe_ne_bot⟩
 
 /-! ### The second-order schema `[N -ful]A ≈ [N -less]A` -/
 
@@ -154,54 +138,50 @@ inductive FulLessVar
   deriving DecidableEq
 
 /-- (14): the two schemas with their coindexed base as one description. -/
-def fulLess : Schema FulLessVar (Flat Atom) :=
-  ⟨λ | .base => ⊥ | .ful => ↑Atom.ful | .less => ↑Atom.less, {.base}⟩
+def fulLess : Schema FulLessVar (Flat String) :=
+  ⟨λ | .base => ⊥ | .ful => ↑"ful" | .less => ↑"less", {.base}⟩
 
 /-- The subscripting of the slots of `[N -ful]A` by the variables of (14). -/
-def fulSub : Slot → FulLessVar
-  | .base => .base
-  | .affix => .ful
+def fulSub : Fin 2 → FulLessVar := ![.base, .ful]
 
 /-- The subscripting of the slots of `[N -less]A` by the variables of (14). -/
-def lessSub : Slot → FulLessVar
-  | .base => .base
-  | .affix => .less
+def lessSub : Fin 2 → FulLessVar := ![.base, .less]
 
 /-- `[N -ful]A`: the description of (14) read at its own slots. -/
-def fulSchema : Schema Slot (Flat Atom) := fulLess.comap fulSub
+def fulSchema : Schema (Fin 2) (Flat String) := fulLess.comap fulSub
 
 /-- `[N -less]A`: the description of (14) read at its own slots. -/
-def lessSchema : Schema Slot (Flat Atom) := fulLess.comap lessSub
+def lessSchema : Schema (Fin 2) (Flat String) := fulLess.comap lessSub
 
 /-- The variables of (14) filled by base `b`. -/
-def fulLessWord (b : Atom) : FulLessVar → Flat Atom
+def fulLessWord (b : String) : FulLessVar → Flat String
   | .base => ↑b
-  | .ful => ↑Atom.ful
-  | .less => ↑Atom.less
+  | .ful => ↑"ful"
+  | .less => ↑"less"
 
 /-- *careful* and *careless* are a paired instantiation of (14): same base, sister affixes. -/
 theorem careful_careless_pairs :
     fulLess.InstantiatesAt (Sum.elim fulSub lessSub)
-      (Sum.elim (word .care .ful) (word .care .less)) :=
-  ⟨fulLessWord .care, λ v => by cases v <;> first | exact bot_le | exact le_rfl,
-    funext λ p => by rcases p with p | p <;> cases p <;> rfl⟩
+      (Sum.elim Forms.careful.slots Forms.careless.slots) :=
+  ⟨fulLessWord "care", λ v => by cases v <;> first | exact bot_le | exact le_rfl,
+    funext λ p => by rcases p with p | p <;> fin_cases p <;> decide⟩
 
-/-- *careful* and *hopeless* are not: the coindexed base is filled differently. -/
-theorem not_careful_hopeless_pairs :
+/-- *careful* and *clueless* are not: the coindexed base is filled differently. -/
+theorem not_careful_clueless_pairs :
     ¬ fulLess.InstantiatesAt (Sum.elim fulSub lessSub)
-      (Sum.elim (word .care .ful) (word .hope .less)) :=
-  λ h => by
-    simpa [word] using (Schema.instantiatesAt_elim_iff.1 h).2.2.2.2 .base .base rfl
+      (Sum.elim Forms.careful.slots Forms.clueless.slots) :=
+  λ h => absurd ((Schema.instantiatesAt_elim_iff.1 h).2.2.2.2 0 0 rfl) (by decide)
 
 /-- A mother of the two schemas would be the meet of their descriptions, which over these slots
 is empty: nothing but the categories, which the slots do not record. -/
 theorem fulLess_mother_eq_bot : fulSchema.body ⊓ lessSchema.body = ⊥ := by
   funext v
-  cases v <;> decide
+  fin_cases v <;> decide
 
 /-- The mother is instantiated by every word: it states nothing the sisters do not. -/
-theorem fulLess_mother_instantiates (w : Slot → Flat Atom) :
-    (⟨fulSchema.body ⊓ lessSchema.body, ∅⟩ : Schema Slot (Flat Atom)).Instantiates w := by
+theorem fulLess_mother_instantiates (w : Fin 2 → Flat String) :
+    (⟨fulSchema.body ⊓ lessSchema.body, ∅⟩ : Schema (Fin 2) (Flat String)).Instantiates
+      w := by
   show fulSchema.body ⊓ lessSchema.body ≤ w
   rw [fulLess_mother_eq_bot]
   exact bot_le

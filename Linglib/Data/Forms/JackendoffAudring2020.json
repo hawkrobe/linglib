@@ -1,0 +1,169 @@
+{
+  "FormTable": [
+    {
+      "ID": "jackendoffaudring2020_sing",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "sing",
+      "Form": "sing",
+      "Segments": ["s", "ɪ", "ŋ"],
+      "Comment": "stem; onset, nucleus, coda",
+      "Source": ["jackendoff-audring-2020[(24)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_sang",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "sing_past",
+      "Form": "sang",
+      "Segments": ["s", "æ", "ŋ"],
+      "Comment": "past tense; onset, nucleus, coda",
+      "Source": ["jackendoff-audring-2020[(24)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_string",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "string",
+      "Form": "string",
+      "Segments": ["str", "ɪ", "ŋ"],
+      "Comment": "stem; the onset cluster is one segment",
+      "Source": ["jackendoff-audring-2020[(26)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_strung",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "string_past",
+      "Form": "strung",
+      "Segments": ["str", "ʌ", "ŋ"],
+      "Comment": "past tense",
+      "Source": ["jackendoff-audring-2020[(26)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_sprech",
+      "Language_ID": "stan1295",
+      "Parameter_ID": "speak_stem",
+      "Form": "sprech-",
+      "Segments": ["ʃpr", "ɛ", "x"],
+      "Comment": "default stem of sprechen",
+      "Source": ["jackendoff-audring-2020[(43)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_sprich",
+      "Language_ID": "stan1295",
+      "Parameter_ID": "speak_stem_present_2_3_sg",
+      "Form": "sprich-",
+      "Segments": ["ʃpr", "ɪ", "x"],
+      "Comment": "special stem of the present 2nd and 3rd singular",
+      "Source": ["jackendoff-audring-2020[(43)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_piggish",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "like_a_pig",
+      "Form": "piggish",
+      "Segments": ["pig", "ish"],
+      "Comment": "the -ish sisters of Section 7.8.1",
+      "Source": ["jackendoff-audring-2020[7.8.1 (5)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_childish",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "like_a_child",
+      "Form": "childish",
+      "Segments": ["child", "ish"],
+      "Comment": "the -ish sisters of Section 7.8.1",
+      "Source": ["jackendoff-audring-2020[7.8.1 (5)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_sluggish",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "like_a_slug",
+      "Form": "sluggish",
+      "Segments": ["slug", "ish"],
+      "Comment": "the -ish sisters of Section 7.8.1",
+      "Source": ["jackendoff-audring-2020[7.8.1 (5)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_foolish",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "like_a_fool",
+      "Form": "foolish",
+      "Segments": ["fool", "ish"],
+      "Comment": "the newly encountered sister of Section 7.8.1",
+      "Source": ["jackendoff-audring-2020[7.8.1]"]
+    }
+  ],
+  "ParameterTable": [
+    {
+      "ID": "sing",
+      "Name": "sing",
+      "Description": ""
+    },
+    {
+      "ID": "sing_past",
+      "Name": "sing (past)",
+      "Description": ""
+    },
+    {
+      "ID": "string",
+      "Name": "string",
+      "Description": ""
+    },
+    {
+      "ID": "string_past",
+      "Name": "string (past)",
+      "Description": ""
+    },
+    {
+      "ID": "speak_stem",
+      "Name": "speak (stem)",
+      "Description": ""
+    },
+    {
+      "ID": "speak_stem_present_2_3_sg",
+      "Name": "speak (present 2nd and 3rd singular stem)",
+      "Description": ""
+    },
+    {
+      "ID": "like_a_pig",
+      "Name": "like a pig",
+      "Description": ""
+    },
+    {
+      "ID": "like_a_child",
+      "Name": "like a child",
+      "Description": ""
+    },
+    {
+      "ID": "like_a_slug",
+      "Name": "like a slug",
+      "Description": ""
+    },
+    {
+      "ID": "like_a_fool",
+      "Name": "like a fool",
+      "Description": ""
+    }
+  ],
+  "FormRelationTable": [
+    {
+      "ID": "jackendoffaudring2020_sing_sang",
+      "Form_ID": "jackendoffaudring2020_sing",
+      "Target_ID": "jackendoffaudring2020_sang",
+      "Relation": "past",
+      "Source": ["jackendoff-audring-2020[(24)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_string_strung",
+      "Form_ID": "jackendoffaudring2020_string",
+      "Target_ID": "jackendoffaudring2020_strung",
+      "Relation": "past",
+      "Source": ["jackendoff-audring-2020[(26)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_sprech_sprich",
+      "Form_ID": "jackendoffaudring2020_sprech",
+      "Target_ID": "jackendoffaudring2020_sprich",
+      "Relation": "present_2_3_sg_stem",
+      "Source": ["jackendoff-audring-2020[(45)]"]
+    }
+  ]
+}
