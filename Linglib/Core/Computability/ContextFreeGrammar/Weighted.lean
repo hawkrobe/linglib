@@ -8,20 +8,13 @@ Substrate for any analysis that attaches a weight to each rule of a
 `ContextFreeGrammar`. A `WeightedCFG G W` carries a per-rule value in
 some ordered type `W` with a zero element, plus a nonnegativity
 constraint. **No normalization is bundled** — that's the job of
-specializations (e.g. multinomial PCFG, where the W is `ℝ≥0∞` and
-per-LHS sums to 1).
-
-Anchored on the multinomial-PCFG file's previous docstring promise:
-"the unbundled 'weighted CFG' is genuinely useful for theories where
-weights are not yet normalized (e.g. `DMPCFG`'s pre-Dirichlet
-hyperparameters), and will be introduced when the first such consumer
-arrives." DMPCFG arrived; this is that file.
+specializations (e.g. `PCFG`, where the W is `ℝ≥0∞` and per-LHS sums
+to 1, and `DirichletPCFG`, whose pseudo-counts are not normalized).
 
 This file also defines the per-LHS rule subtype `G.RulesWithLHS a`,
 which is the natural index for any per-LHS analysis (PMFs, Pólya
-urns, MAP-weight comparisons). Previously declared inside `DMPCFG`'s
-namespace; promoted here so that `MultinomialPCFG`, `DMPCFG`, and any
-future weighted-CFG consumer share one definition.
+urns, posterior-weight comparisons), shared by `PCFG`, `DirichletPCFG`,
+and any future weighted-CFG consumer.
 
 ## Main definitions
 
@@ -83,12 +76,12 @@ A *weighted CFG* over `G` with weights in `W`: per-rule weight
 function and a nonnegativity constraint, but no normalization.
 
 Specializations layer normalization on top:
-- `MultinomialPCFG G` (= `WeightedCFG G ℝ≥0∞` with per-LHS sum-to-1
-  exposed as a per-LHS `PMF`).
-- `DMPCFG` carries `pseudo : Rule → ℝ` with the stronger constraint
-  `0 < pseudo r` for `r ∈ G.rules` (Dirichlet hyperparameters); the
-  normalized object DMPCFG induces is the posterior MAP, available
-  via `DMPCFG.posteriorMAP : DMPCFG G → Multiset _ → MultinomialPCFG G`.
+- `PCFG G` (= `WeightedCFG G ℝ≥0∞` with per-LHS sum-to-1 exposed as a
+  per-LHS `PMF`).
+- `DirichletPCFG G` carries `pseudo : Rule → ℝ` with the stronger
+  constraint `0 < pseudo r` for `r ∈ G.rules` (Dirichlet
+  hyperparameters); the normalized object it induces is the posterior
+  predictive `DirichletPCFG.predictivePCFG`.
 
 The W-polymorphism mirrors mathlib's `Module R M`, `Polynomial R`,
 etc.: the substrate doesn't fix the value type, leaving consumers to
