@@ -8,42 +8,33 @@ import Linglib.Processing.Expectation.LanguageModel
 import Linglib.Processing.Expectation.PrefixProbability
 
 /-!
-# Levy (2008): expectation-based syntactic comprehension
+# Levy (2008): Expectation-Based Syntactic Comprehension
 
-[levy-2008] (Cognition 106, 1126–1177) derives a resource-allocation theory of
-processing difficulty: a comprehender maintains a probability distribution over
-the complete structures consistent with the input so far, and the difficulty of
-a word is the relative entropy of the updated distribution with respect to the
-old one. The paper's central result (its eq. (4)) is that this difficulty is
-exactly the word's surprisal — [hale-2001]'s theory — for *any* generative
-process over structures, making surprisal a *causal bottleneck* (§2.3): the
-structural representations affect predicted difficulty only through the
-conditional word probabilities they determine.
-
-## Main definitions
-
-* `posterior` — the comprehender's distribution given a prefix: the prior
-  conditioned on consistency (eq. (3)). The prefix substrate (`consistent`,
-  `prefixMass`, `nextProb`) lives in `Processing.Expectation.PrefixProbability`.
-
-## Main results
-
-* `posterior_incremental` — incremental update equals direct conditioning
-  (eqs. (5)–(8)).
-* `klDiv_posterior_eq_surprisal` — eq. (4): the relative entropy of the update
-  equals the surprisal of the word, via `InformationTheory.klDiv_cond_self`.
-* `klDiv_posterior_eq_lm_surprisal` — the difficulty read through any
-  `LangModel` matching the process's conditional word probabilities.
-* `bottleneck` — §2.3: processes agreeing on conditional word probabilities
-  incur identical update difficulty, whatever their structures.
+This file formalizes the resource-allocation theory of processing difficulty of [levy-2008].
+A comprehender maintains a probability distribution over the complete structures consistent
+with the input so far, the prior conditioned on consistency with the prefix (`posterior`),
+and the difficulty of a word is the relative entropy of the updated distribution with respect
+to the old one. Incremental update equals direct conditioning (`posterior_incremental`), and
+the paper's central result is that the difficulty so defined is exactly the word's surprisal
+(`klDiv_posterior_eq_surprisal`), [hale-2001]'s measure, for any generative process over
+structures. Surprisal is therefore a causal bottleneck: processes agreeing on conditional
+word probabilities incur identical difficulty whatever their structures (`bottleneck`), and
+the difficulty may be read through any language model matching those probabilities
+(`klDiv_posterior_eq_lm_surprisal`).
 
 ## Implementation notes
 
-Structures live in an arbitrary discrete measurable space, covering the
-paper's "normally infinite" 𝒯; the generative process is the prefix
-substrate's `PMF`, conditioned as a measure. The prior `P` is fixed
-throughout, matching the paper's caveat that the equivalence holds only when
-extra-sentential context does not change while the word is processed.
+Structures live in an arbitrary discrete measurable space, covering the paper's normally
+infinite structure set; the generative process is the prefix substrate's `PMF`, conditioned
+as a measure, and the prefix apparatus (`consistent`, `prefixMass`, `nextProb`) is
+`Processing.Expectation.PrefixProbability`. The prior is fixed throughout, matching the
+paper's caveat that the equivalence holds only when extra-sentential context does not change
+while the word is processed.
+
+## References
+
+* [levy-2008]
+* [hale-2001]
 -/
 
 namespace Levy2008
@@ -82,13 +73,13 @@ theorem posterior_consistent_append :
     Set.inter_eq_right.mpr (consistent_anti str (List.prefix_append ws [w])),
     toMeasure_consistent, toMeasure_consistent, nextProb, div_eq_mul_inv, mul_comm]
 
-/-- **Eq. (4)**: the relative entropy of the updated distribution over
+/-- The paper's eq. (4): the relative entropy of the updated distribution over
     structures with respect to the pre-update distribution is the surprisal of
     the word that triggered the update. -/
 theorem klDiv_posterior_eq_surprisal (h : prefixMass P str (ws ++ [w]) ≠ 0) :
     klDiv (posterior P str (ws ++ [w])) (posterior P str ws)
       = ENNReal.ofReal (-Real.log (nextProb P str ws w).toReal) := by
-  have hws : prefixMass P str ws ≠ 0 := fun h0 =>
+  have hws : prefixMass P str ws ≠ 0 := λ h0 =>
     h (le_zero_iff.mp ((prefixMass_anti P str (List.prefix_append ws [w])).trans_eq h0))
   have : IsProbabilityMeasure (posterior P str ws) :=
     cond_isProbabilityMeasure ((toMeasure_consistent P str ws).trans_ne hws)
@@ -105,7 +96,7 @@ theorem klDiv_posterior_eq_lm_surprisal (lm : LangModel W)
       = ENNReal.ofReal (lm.surprisal ws w) := by
   rw [klDiv_posterior_eq_surprisal P str ws w h, LangModel.surprisal, hlm]
 
-/-- **Causal bottleneck** (§2.3, Fig. 1b): two generative processes assigning
+/-- The causal bottleneck (§2.3, Fig. 1b): two generative processes assigning
     the same conditional word probability incur the same update difficulty,
     regardless of their structural representations. -/
 theorem bottleneck {T' : Type*} [MeasurableSpace T'] [DiscreteMeasurableSpace T']

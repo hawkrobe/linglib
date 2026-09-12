@@ -38,8 +38,6 @@ bridge if needed.
 
 ## Todo
 
-* Bridge to `CandidateInterpretation.malamudDisjunction` — they agree
-  on full domain: `existPL x P x w ↔ malamudDisjunction P x w`.
 * Bridge to `Plurality.Distributivity.pluralTruthValue` (K&S
   divergence): `¬ (∀ P x w, existPL x P x w ↔ pluralTruthValue P x w
   = .true)` — counterexample at any mixed-truth `(P, x)`.
