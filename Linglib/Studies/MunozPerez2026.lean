@@ -3,7 +3,6 @@ import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.Clitics
-import Linglib.Studies.KoontzGarboden2009
 
 /-!
 # Muñoz Pérez (2026) — Stylistic Applicatives in Chilean Spanish
@@ -462,28 +461,24 @@ theorem cl2_invariable :
     (applySpanishFission .s1 [.vCAUSE, .vGO, .vBE]).map (·.cl2Form) = some "le" ∧
     (applySpanishFission .s2 [.vCAUSE, .vGO, .vBE]).map (·.cl2Form) = some "le" := by decide
 
-/-! ### Refutation of [koontz-garboden-2009]
+/-! ### Against a null-reflexive extension of [koontz-garboden-2009]
 
-K-G's reflexivization analysis predicts that every alternating verb
-has SE in its anticausative form (cumulation of A and P spelled out as
-SE). The verb-level predicate `KoontzGarboden2009.kgPredictsSEMarked`
-formalises this chain. *mejorar* "improve" alternates while remaining
-unmarked, falsifying the prediction. The paper's footnote 7 notes that
+On the reflexivization analysis extended with a null reflexive
+([chierchia-2004]), every alternating verb has SE in its anticausative,
+cumulation of A and P being spelled out as SE. *mejorar* "improve"
+alternates while remaining unmarked. The paper's footnote 7 notes that
 [koontz-garboden-2009]'s own implementation restricts reflexivization
-to SE-marked anticausatives, so the *mejorar* argument bites most
-directly against the null-reflexive extension ([chierchia-2004]). -/
+to SE-marked anticausatives, so the argument bites against the
+extension. -/
 
-/-- Refutation of [koontz-garboden-2009]: *mejorar* alternates but
-    is unmarked (no SE), against K-G's prediction that reflexivization
-    requires SE-spell-out. Closes the bridge from K-G's
-    `reflexivization.involvesCumulation = true` to a falsifying
-    Spanish verb. -/
-theorem refutes_koontzgarboden :
-    ¬ KoontzGarboden2009.kgPredictsSEMarked mejorar := by
-  unfold KoontzGarboden2009.kgPredictsSEMarked KoontzGarboden2009.hasSEMarking
-  intro h
-  rcases h rfl with h | h
-  all_goals exact absurd h (by decide)
+/-- The verb-level prediction of the null-reflexive extension: an
+    alternating verb has SE in its anticausative form. -/
+def seMarkedIfAlternating (v : SpanishVerbEntry) : Prop :=
+  v.causativeAlternation = true → v.anticausativeMarking ≠ .unmarked
+
+/-- *mejorar* alternates but is unmarked, against the prediction. -/
+theorem refutes_koontzgarboden : ¬ seMarkedIfAlternating mejorar := by
+  unfold seMarkedIfAlternating; decide
 
 /-! ### Cross-framework comparisons
 
