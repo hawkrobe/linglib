@@ -10,10 +10,11 @@ an optional PERFECT aspect head. The three pronoun values the account uses
 are `indexicalPresent` (the head of the English simple past — pastness from
 PERF, hence deictic), `anaphoricPast` (the German Preterit — requires a
 discourse antecedent), and `boundPresent` (zero tense — locally bound,
-surfaces as zero via `Overtness`). SOT deletion (`sotDeletionApplicable`,
-`applyDeletion`) deletes an embedded tense under morphological identity with
-the matrix, leaving the embedded clause temporally dependent on the matrix
-event time (`applyDeletion_isPresent`).
+surfaces as zero via `Overtness`). The rival SOT deletion rule of
+[ogihara-1989] and [ogihara-1996] (`sotDeletionApplicable`, `applyDeletion`),
+which [kratzer-1998] sets out to do without, deletes an embedded tense under
+morphological identity with the matrix, leaving the embedded clause
+temporally dependent on the matrix event time (`applyDeletion_isPresent`).
 
 The paper-attributed predictions, the Fragment instances, and the
 divergence from [ogihara-1996] live in `Studies/Kratzer1998.lean`.
@@ -23,25 +24,28 @@ namespace Tense.Decomposition
 
 open Tense
 
-/-- Phonological overtness of a referential expression ([kratzer-1998] §3): a zero tense under
-SOT and a pro-drop subject are `zero`; *he* and the German Preterit are `overt`. -/
+/-- Phonological overtness of a referential expression: a bound tense left unpronounced in a
+non-finite clause and a pro-drop subject are `zero`; *he* and the German Preterit are
+`overt`. [kratzer-1998] §3's zero pronouns and tenses can also be pronounced, taking their
+features from the antecedent. -/
 inductive Overtness where
   | overt
   | zero
   deriving DecidableEq, Repr, Inhabited
 
-/-- [kratzer-1998]'s locality generalization: an expression locally bound by an agreeing head
-surfaces as zero; a free expression surfaces as overt. -/
+/-- Overtness from binding: an expression locally bound by an agreeing head may surface as
+zero; a free expression surfaces as overt. -/
 def Overtness.fromBinding : ReferentialMode → (localDomain : Bool) → Overtness
   | .bound, true => .zero
   | _, _ => .overt
 
 /-! ### SOT deletion -/
 
-/-- [kratzer-1998]'s SOT deletion condition: an embedded tense whose
-    morphology is identical to the matrix tense can be optionally deleted,
-    making the embedded clause temporally dependent on the matrix event
-    time. -/
+/-- The SOT deletion condition of [ogihara-1989] and [ogihara-1996]: an
+    embedded tense whose morphology is identical to the matrix tense can be
+    optionally deleted, making the embedded clause temporally dependent on
+    the matrix event time. [kratzer-1998] replaces the rule by a zero tense
+    that is bound and picks up the matrix tense's features at PF. -/
 def sotDeletionApplicable (matrixTense embeddedTense : Finset Ordering) : Bool :=
   decide (matrixTense = embeddedTense)
 

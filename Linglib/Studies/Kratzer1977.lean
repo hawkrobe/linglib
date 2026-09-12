@@ -1,379 +1,154 @@
 import Linglib.Semantics.Modality.Kratzer.Premise
-import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Fintype.Prod
 
 /-!
-# Kratzer (1977) — Premise semantics worked example
+# Kratzer (1977): What 'must' and 'can' must and can mean
 
-[kratzer-1977] [kratzer-2012]
+This file formalizes the paper's two worked examples of modality in view of an inconsistent
+premise set, on the premise semantics of `Modality.Kratzer.Premise`. In a New Zealand whose
+whole common law is three judgments, that murder is a crime and that deer are, and are not,
+personally responsible for the damage they inflict on young trees, the premise set is
+inconsistent. Under Definitions 5 and 6, which read *must* as consequence and *can* as
+compatibility, every proposition then follows and none is compatible: it must be that murder
+is not a crime, and deer cannot be responsible. Definitions 7 and 8 quantify over the
+consistent subsets of the premise set and recover the verdicts the paper argues for: murder
+must be a crime and cannot fail to be one, while deer can be responsible and can fail to be.
+The second example, the recommendations of the former principals of a Whare Wananga, shows
+that the verdicts depend on how premises are individuated: a single recommendation that the
+pupils stride and fly is contradicted as a whole by a ban on striding, so flying is not
+required, whereas two recommendations, to stride and to fly, leave flying required.
 
-A concrete formalization of the New Zealand judgments scenario from §1.3
-of [kratzer-1977] (= Chapter 1 of [kratzer-2012]), exercising
-the API of `Modality.Kratzer.Premise`.
+## Implementation notes
 
-## The scenario
+The worlds are the four combinations of the two issues each example turns on, so every
+claim about a concrete premise list is decided over `Bool × Bool` once the sublists of the
+list are enumerated by `simp`. The premise set is the same at every world, as the scenarios assume.
+The paper's sentence numbers are those of the original article; the 2012 revision renumbers
+them.
 
-[kratzer-1977] imagines a country whose entire common law consists
-of three judgments:
+## References
 
-1. *Murder is a crime.* — call this proposition `p`.
-2. *Deer are personally responsible for damage they inflict on young
-   trees.* — call this proposition `q`.
-3. *Deer are not personally responsible for damage they inflict on young
-   trees.* — proposition `¬q`.
-
-The premise set `A = [p, q, ¬q]` is **inconsistent** (its intersection
-is empty: no world makes `q` and `¬q` both true). Yet our intuitions
-about modal claims relativized to *what the New Zealand judgments
-provide* are crisp:
-
-- (7) "Murder must be a crime." — TRUE
-- (8) "It must be that murder is not a crime." — FALSE
-- (9) "It is possible that deer are responsible." — TRUE
-- (10) "It is possible that deer are not responsible." — TRUE
-- (14) "It is possible that murder is not a crime." — FALSE
-
-Kratzer's original Defs 5–6 (necessity = consequence, possibility =
-compatibility) collapse on inconsistent `A`: by *ex falso quodlibet*,
-**everything** follows from `A`, so `must p` and `must ¬p` are both
-true, and **nothing** is compatible with `A`, so `can q` and `can ¬q`
-are both false. Defs 7–8 — quantifying over the consistent subsets of
-`A` and asking for an extension that supports the conclusion — recover
-the intuitive predictions.
-
-## What this study is
-
-An integration test for the premise-set API of `Modality.Kratzer`:
-it picks the worked example Kratzer uses to motivate the revision from
-Defs 5–6 to Defs 7–8 and verifies, by structural proofs over the four-world
-frame, that the formalization gets each prediction right and that the
-unrevised definitions fail in exactly the way Kratzer says they do.
+* [kratzer-1977]
+* [kratzer-2012] — Chapter 1, the revised version of the paper
 -/
 
 namespace Kratzer1977
 
 open Modality.Kratzer
 
-/-! ## §1. The model
+/-- The four worlds: the truth values of the two issues an example turns on. -/
+abbrev World := Bool × Bool
 
-A four-world frame, indexed by `Fin 4`, that distinguishes the two
-contingent dimensions of the scenario: whether murder is a crime
-(`p`) and whether deer are responsible (`q`). All four combinations
-are represented so that every singleton premise — `p`, `q`, `¬q`, `¬p`
-— is individually consistent.
+/-- The first issue holds. -/
+def p : World → Prop := (·.1 = true)
 
-| world | p (murder is a crime) | q (deer responsible) |
-|-------|-----------------------|----------------------|
-| `w₀`  | true                  | true                 |
-| `w₁`  | true                  | false                |
-| `w₂`  | false                 | true                 |
-| `w₃`  | false                 | false                |
--/
+/-- The second issue holds. -/
+def q : World → Prop := (·.2 = true)
 
-/-- "Murder is a crime." True at `w₀` and `w₁`. -/
-def p : Fin 4 → Prop
-  | 0 => True
-  | 1 => True
-  | 2 => False
-  | 3 => False
+/-- The negation of a proposition. -/
+def neg (r : World → Prop) : World → Prop := λ w => ¬ r w
 
-/-- "Deer are personally responsible for damage they inflict on young trees."
-    True at `w₀` and `w₂`. -/
-def q : Fin 4 → Prop
-  | 0 => True
-  | 1 => False
-  | 2 => True
-  | 3 => False
+/-- Decide a claim about concrete premise lists over the four worlds. -/
+scoped macro "decide_worlds" : tactic =>
+  `(tactic| (simp only [isConsistent, isCompatibleWith, followsFrom, propIntersection,
+      Set.Nonempty, Set.subset_def, Set.mem_ofPred_eq, List.forall_mem_cons, List.mem_nil_iff,
+      false_implies, implies_true, and_true, p, q, neg]; decide))
 
-/-- "Deer are not personally responsible…" — the negation of `q`. -/
-def negQ : Fin 4 → Prop := fun w => ¬ q w
+/-! ### The New Zealand judgments (§2.1–§2.2)
 
-/-- "Murder is not a crime." The negation of `p`. -/
-def negP : Fin 4 → Prop := fun w => ¬ p w
+`p` is that murder is a crime, the judgment (10); `q` that deer are personally responsible for
+damage they inflict on young trees, the Auckland judgment (11); and `neg q` the Wellington
+judgment (12). -/
 
-/-- The premise set `A` of [kratzer-1977] §1.3 — *what the New Zealand
-    judgments provide*: the three rulings, taken together. -/
-def A : List (Fin 4 → Prop) := [p, q, negQ]
+/-- What the New Zealand judgments provide. -/
+def judgments : List (World → Prop) := [p, q, neg q]
 
-/-- The constant modal restriction: at every world, the premise set is `A`.
-    The scenario abstracts away from world-to-world variation in the
-    judgments. -/
-def f : Fin 4 → List (Fin 4 → Prop) := fun _ => A
+theorem judgments_inconsistent : ¬ isConsistent judgments := λ ⟨_, h⟩ =>
+  h (neg q) (by simp [judgments]) (h q (by simp [judgments]))
 
-/-! ## Membership lemmas: each judgment is in `A`. -/
+/-- Under Definition 5 the inconsistent judgments make (7) true: it must be that murder is
+not a crime, by ex falso quodlibet. -/
+theorem must_neg_p (w : World) : mustInView (Function.const World judgments) (neg p) w :=
+  λ _ h => absurd (h q (by simp [judgments])) (h (neg q) (by simp [judgments]))
 
-lemma p_mem_A : p ∈ A := List.mem_cons_self
-lemma q_mem_A : q ∈ A := List.mem_cons_of_mem _ List.mem_cons_self
-lemma negQ_mem_A : negQ ∈ A :=
-  List.mem_cons_of_mem _ (List.mem_cons_of_mem _ List.mem_cons_self)
+/-- Under Definition 6 nothing is compatible with the judgments, so (8) is false: deer cannot
+be personally responsible. -/
+theorem not_can_q (w : World) : ¬ canInView (Function.const World judgments) q w :=
+  λ ⟨_, h⟩ => h (neg q) (by simp [judgments]) (h q (by simp))
 
-/-! ## §2. `A` is inconsistent
+/-- Definition 7 makes (6) true, murder must be a crime: `p` is compatible with every
+consistent subset of the judgments. -/
+theorem must'_p (w : World) : mustInView' (Function.const World judgments) p w := by
+  refine mustInView'_of_forall_isCompatibleWith rfl ?_
+  rintro B ⟨hB, hc⟩
+  simp [judgments, List.sublists] at hB
+  rcases hB with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+    first | exact absurd hc (by decide_worlds) | decide_worlds
 
-The premise set contains both `q` and its negation, so its
-intersection is empty. -/
+/-- Definition 7 makes (7) false: no consistent subset of the judgments entails that murder
+is not a crime. -/
+theorem not_must'_neg_p (w : World) :
+    ¬ mustInView' (Function.const World judgments) (neg p) w := λ h =>
+  let ⟨C, ⟨hC, hc⟩, _, hf⟩ := h [] ⟨by simp [judgments, List.sublists], by decide_worlds⟩
+  by
+    simp [judgments, List.sublists] at hC
+    rcases hC with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+      first | exact absurd hc (by decide_worlds) | exact absurd hf (by decide_worlds)
 
-theorem A_inconsistent : ¬ isConsistent A := by
-  rintro ⟨w, hw⟩
-  exact (hw negQ negQ_mem_A) (hw q q_mem_A)
+/-- Definition 8 makes (8) true: the judgment that deer are responsible is itself a consistent
+subset. -/
+theorem can'_q (w : World) : canInView' (Function.const World judgments) q w :=
+  canInView'_of_mem (B := [q]) ⟨by simp [judgments, List.sublists], by decide_worlds⟩
+    List.mem_cons_self
 
-/-! ## §3. Unrevised Defs 5–6 give paradoxical predictions
+/-- Definition 8 makes (9) true, symmetrically. -/
+theorem can'_neg_q (w : World) : canInView' (Function.const World judgments) (neg q) w :=
+  canInView'_of_mem (B := [neg q]) ⟨by simp [judgments, List.sublists], by decide_worlds⟩
+    List.mem_cons_self
 
-These two theorems are the formal counterpart of Kratzer's diagnosis
-of the original definitions: they trivialize over an inconsistent `A`. -/
+/-- Definition 8 makes (13) false, it cannot be that murder is not a crime: the dual of
+(6). -/
+theorem not_can'_neg_p (w : World) :
+    ¬ canInView' (Function.const World judgments) (neg p) w :=
+  (mustInView'_iff_not_canInView'_not _ _ _).mp (must'_p w)
 
-/-- Under the original Def 5 (`mustInView`), the inconsistent `A`
-    entails *every* proposition — including `¬p`. This is the paradox
-    of *ex falso quodlibet* that motivates the revision to Def 7. -/
-theorem must_negP_under_def5 : mustInView f negP 0 := by
-  intro w hw
-  -- propIntersection A is empty, so the goal is vacuously derivable.
-  exact absurd (hw q q_mem_A) (hw negQ negQ_mem_A)
+/-! ### The Whare Wananga recommendations (§2.3)
 
-/-- Under the original Def 6 (`canInView`), nothing is compatible with
-    the inconsistent `A` — including `q`, which intuitively *is*
-    possible in view of the judgments. -/
-theorem can_q_under_def6 : ¬ canInView f q 0 := by
-  rintro ⟨w, hw⟩
-  -- hw : ∀ r ∈ q :: A, r w
-  have hq : q w := hw q List.mem_cons_self
-  have hnq : ¬ q w := hw negQ (List.mem_cons_of_mem _ negQ_mem_A)
-  exact hnq hq
+`p` is that the pupils practise striding and `q` that they practise flying. Te Miti's
+recommendation is read once as the single proposition (14), that they do both, and once as
+two recommendations; Te Kini's is (15), that they do not stride. -/
 
-/-! ## §4. Revised Defs 7–8 give the intuitive predictions
+/-- Te Miti's recommendation as one proposition, with Te Kini's. -/
+def recommendations : List (World → Prop) := [λ w => p w ∧ q w, neg p]
 
-Each theorem corresponds to a sentence number from [kratzer-1977]
-§1.3, with the predicted truth value Kratzer argues for.
+/-- Te Miti's recommendation as two propositions, with Te Kini's. -/
+def recommendations' : List (World → Prop) := [q, p, neg p]
 
-The proofs proceed by enumerating the consistent sublists of `A` and,
-for each one, exhibiting an extension that witnesses (or refutes) the
-target consequence. -/
+private theorem neg_p_ne_conj : neg p ≠ λ w => p w ∧ q w := λ h =>
+  absurd (h ▸ show neg p (false, false) from Bool.false_ne_true) λ hc =>
+    Bool.false_ne_true hc.1
 
-/-! ### Membership helpers for the four worlds -/
+/-- On the first reading (16) is false: Te Kini's ban is a consistent subset whose only
+consistent extension is itself, and flying does not follow from it. -/
+theorem not_must'_q (w : World) : ¬ mustInView' (Function.const World recommendations) q w :=
+  λ h =>
+  let ⟨C, ⟨hC, hc⟩, hBC, hf⟩ :=
+    h [neg p] ⟨by simp [recommendations, List.sublists], by decide_worlds⟩
+  by
+    simp [recommendations, List.sublists] at hC
+    rcases hC with rfl | rfl | rfl | rfl <;>
+      first
+      | exact absurd (hBC List.mem_cons_self) List.not_mem_nil
+      | exact absurd (List.mem_singleton.mp (hBC List.mem_cons_self)) neg_p_ne_conj
+      | exact absurd hf (by decide_worlds)
+      | exact absurd hc (by decide_worlds)
 
-@[simp] lemma p_zero : p 0 := trivial
-@[simp] lemma p_one : p 1 := trivial
-@[simp] lemma not_p_two : ¬ p 2 := id
-@[simp] lemma not_p_three : ¬ p 3 := id
-
-@[simp] lemma q_zero : q 0 := trivial
-@[simp] lemma not_q_one : ¬ q 1 := id
-@[simp] lemma q_two : q 2 := trivial
-@[simp] lemma not_q_three : ¬ q 3 := id
-
-@[simp] lemma negQ_one : negQ 1 := not_q_one
-@[simp] lemma negQ_three : negQ 3 := not_q_three
-
-/-! ### Consistency of relevant sublists of `A` -/
-
-lemma cons_singleton_p : isConsistent ([p] : List (Fin 4 → Prop)) := by
-  refine ⟨0, ?_⟩
-  intro r hr
-  rcases List.mem_singleton.mp hr with rfl
-  exact p_zero
-
-lemma cons_singleton_q : isConsistent ([q] : List (Fin 4 → Prop)) := by
-  refine ⟨0, ?_⟩
-  intro r hr
-  rcases List.mem_singleton.mp hr with rfl
-  exact q_zero
-
-lemma cons_singleton_negQ : isConsistent ([negQ] : List (Fin 4 → Prop)) := by
-  refine ⟨1, ?_⟩
-  intro r hr
-  rcases List.mem_singleton.mp hr with rfl
-  exact negQ_one
-
-lemma cons_pair_pq : isConsistent ([p, q] : List (Fin 4 → Prop)) := by
-  refine ⟨0, ?_⟩
-  intro r hr
-  rcases List.mem_cons.mp hr with rfl | hr
-  · exact p_zero
-  · rcases List.mem_singleton.mp hr with rfl; exact q_zero
-
-lemma cons_pair_pnegQ : isConsistent ([p, negQ] : List (Fin 4 → Prop)) := by
-  refine ⟨1, ?_⟩
-  intro r hr
-  rcases List.mem_cons.mp hr with rfl | hr
-  · exact p_one
-  · rcases List.mem_singleton.mp hr with rfl; exact negQ_one
-
-/-! ### Sublist enumeration
-
-Every sublist of `A = [p, q, negQ]` has every element drawn from `{p, q, negQ}`. -/
-
-lemma mem_of_sublist_A {B : List (Fin 4 → Prop)}
-    (hB : B ∈ A.sublists) {x : Fin 4 → Prop} (hx : x ∈ B) :
-    x = p ∨ x = q ∨ x = negQ := by
-  have hSub : B.Sublist A := List.mem_sublists.mp hB
-  have hxA : x ∈ A := hSub.subset hx
-  rcases List.mem_cons.mp hxA with rfl | hxA
-  · exact Or.inl rfl
-  rcases List.mem_cons.mp hxA with rfl | hxA
-  · exact Or.inr (Or.inl rfl)
-  · rcases List.mem_singleton.mp hxA with rfl
-    exact Or.inr (Or.inr rfl)
-
-/-- A consistent sublist of `A` cannot contain both `q` and `negQ`. -/
-lemma not_q_and_negQ {B : List (Fin 4 → Prop)} (hCons : isConsistent B)
-    (hq : q ∈ B) (hnq : negQ ∈ B) : False := by
-  obtain ⟨w, hw⟩ := hCons
-  exact (hw negQ hnq) (hw q hq)
-
-/-! ### Sublist relations against `A = [p, q, negQ]` -/
-
-/-- `[p, q]` is a sublist of `[p, q, negQ]` (drop `negQ`). -/
-lemma pq_sublist_A : ([p, q] : List (Fin 4 → Prop)) ∈ A.sublists := by
-  rw [List.mem_sublists]
-  -- Build [p, q].Sublist [p, q, negQ]: keep p, keep q, drop negQ.
-  exact ((List.nil_sublist [negQ]).cons_cons q).cons_cons p
-
-/-- `[p, negQ]` is a sublist of `[p, q, negQ]` (drop `q`). -/
-lemma pnegQ_sublist_A : ([p, negQ] : List (Fin 4 → Prop)) ∈ A.sublists := by
-  rw [List.mem_sublists]
-  -- Build [p, negQ].Sublist [p, q, negQ]: keep p, drop q, keep negQ.
-  exact ((List.Sublist.refl ([negQ] : List (Fin 4 → Prop))).cons q).cons_cons p
-
-/-- `[p]` is a sublist of `[p, q, negQ]`. -/
-lemma p_sublist_A : ([p] : List (Fin 4 → Prop)) ∈ A.sublists := by
-  rw [List.mem_sublists]
-  -- Build [p].Sublist [p, q, negQ]: keep p, drop q, drop negQ.
-  exact ((List.nil_sublist [negQ]).cons q).cons_cons p
-
-/-- `[q]` is a sublist of `[p, q, negQ]`. -/
-lemma q_sublist_A : ([q] : List (Fin 4 → Prop)) ∈ A.sublists := by
-  rw [List.mem_sublists]
-  -- Build [q].Sublist [p, q, negQ]: drop p, keep q, drop negQ.
-  exact (((List.nil_sublist [negQ]).cons_cons q).cons p)
-
-/-- `[negQ]` is a sublist of `[p, q, negQ]`. -/
-lemma negQ_sublist_A : ([negQ] : List (Fin 4 → Prop)) ∈ A.sublists := by
-  rw [List.mem_sublists]
-  -- Build [negQ].Sublist [p, q, negQ]: drop p, drop q, keep negQ.
-  exact ((List.Sublist.refl ([negQ] : List (Fin 4 → Prop))).cons q).cons p
-
-/-- The empty list is a sublist of `A`. -/
-lemma nil_sublist_A : ([] : List (Fin 4 → Prop)) ∈ A.sublists := by
-  rw [List.mem_sublists]; exact List.nil_sublist _
-
-/-! ### Witness selection for the revised must/can theorems -/
-
-/-- For any consistent sublist `B` of `A`, exhibit a consistent sublist
-    `C` of `A` with `B ⊆ C` and `p ∈ C`. We use `[p, q]` if `B` does not
-    contain `negQ`, and `[p, negQ]` otherwise. -/
-lemma exists_extension_with_p {B : List (Fin 4 → Prop)}
-    (hBSub : B ∈ A.sublists) (hBCons : isConsistent B) :
-    ∃ C ∈ A.sublists, isConsistent C ∧ B ⊆ C ∧ p ∈ C := by
-  by_cases hNegQ : negQ ∈ B
-  · refine ⟨[p, negQ], pnegQ_sublist_A, cons_pair_pnegQ, ?_, ?_⟩
-    · intro x hxB
-      rcases mem_of_sublist_A hBSub hxB with rfl | rfl | rfl
-      · exact List.mem_cons_self
-      · exact absurd (not_q_and_negQ hBCons hxB hNegQ) id
-      · exact List.mem_cons_of_mem _ List.mem_cons_self
-    · exact List.mem_cons_self
-  · refine ⟨[p, q], pq_sublist_A, cons_pair_pq, ?_, ?_⟩
-    · intro x hxB
-      rcases mem_of_sublist_A hBSub hxB with rfl | rfl | rfl
-      · exact List.mem_cons_self
-      · exact List.mem_cons_of_mem _ List.mem_cons_self
-      · exact absurd hxB hNegQ
-    · exact List.mem_cons_self
-
-/-- Any list containing `p` entails `p`: ⋂ C ⊆ p. -/
-lemma followsFrom_p_of_mem {C : List (Fin 4 → Prop)} (hp : p ∈ C) :
-    followsFrom p C := fun _ hi => hi p hp
-
-/-- (7) "Murder must be a crime" — TRUE under Def 7. The extension
-    `[p, q]` (or `[p, ¬q]`) of any consistent subset of `A` entails `p`. -/
-theorem sentence_7_must_p : mustInView' f p 0 := by
-  intro B hB
-  obtain ⟨hBSub, hBCons⟩ := hB
-  obtain ⟨C, hCSub, hCCons, hBC, hpC⟩ := exists_extension_with_p hBSub hBCons
-  exact ⟨C, ⟨hCSub, hCCons⟩, hBC, followsFrom_p_of_mem hpC⟩
-
-/-- (8) "It must be that murder is not a crime" — FALSE under Def 7.
-    Apply Def 7 at `B = [p]`; any consistent extension `C ⊇ [p]` of `A`
-    contains `p`, but `negP` cannot follow from `C` because `C` admits
-    a witness world (`0` if `q ∈ C`, else `1`) where `p` holds, hence
-    `negP` fails. -/
-theorem sentence_8_not_must_negP : ¬ mustInView' f negP 0 := by
-  intro h
-  have hp : [p] ∈ consistentSublists (f 0) := ⟨p_sublist_A, cons_singleton_p⟩
-  obtain ⟨C, ⟨hCSub, hCCons⟩, hpC, hFollows⟩ := h _ hp
-  have hpInC : p ∈ C := hpC List.mem_cons_self
-  by_cases hqInC : q ∈ C
-  · -- world 0: at 0, p holds and q holds; negQ ∉ C since C consistent.
-    have hnegQNotInC : negQ ∉ C := fun h2 => not_q_and_negQ hCCons hqInC h2
-    have h0_in : (0 : Fin 4) ∈ propIntersection C := by
-      intro r hr
-      rcases mem_of_sublist_A hCSub hr with rfl | rfl | rfl
-      · exact p_zero
-      · exact q_zero
-      · exact absurd hr hnegQNotInC
-    exact (hFollows h0_in) p_zero
-  · -- world 1: at 1, p holds and ¬q holds (so negQ would hold), but q ∉ C.
-    have h1_in : (1 : Fin 4) ∈ propIntersection C := by
-      intro r hr
-      rcases mem_of_sublist_A hCSub hr with rfl | rfl | rfl
-      · exact p_one
-      · exact absurd hr hqInC
-      · exact negQ_one
-    exact (hFollows h1_in) p_one
-
-/-- (9) "It is possible that deer are responsible" — TRUE under Def 8.
-    Witness: take `B = [q]`; every consistent extension already contains `q`,
-    so adding `q` preserves consistency. -/
-theorem sentence_9_can_q : canInView' f q 0 := by
-  refine ⟨[q], ⟨q_sublist_A, cons_singleton_q⟩, ?_⟩
-  intro C hC hBC
-  obtain ⟨hCSub, hCCons⟩ := hC
-  have hqC : q ∈ C := hBC List.mem_cons_self
-  obtain ⟨w, hw⟩ := hCCons
-  refine ⟨w, ?_⟩
-  intro r hr
-  rcases List.mem_cons.mp hr with rfl | hrC
-  · exact hw q hqC
-  · exact hw r hrC
-
-/-- (10) "It is possible that deer are not responsible" — TRUE under Def 8.
-    Symmetric to (9), with witness `B = [¬q]`. -/
-theorem sentence_10_can_negQ : canInView' f negQ 0 := by
-  refine ⟨[negQ], ⟨negQ_sublist_A, cons_singleton_negQ⟩, ?_⟩
-  intro C hC hBC
-  obtain ⟨hCSub, hCCons⟩ := hC
-  have hnegQC : negQ ∈ C := hBC List.mem_cons_self
-  obtain ⟨w, hw⟩ := hCCons
-  refine ⟨w, ?_⟩
-  intro r hr
-  rcases List.mem_cons.mp hr with rfl | hrC
-  · exact hw negQ hnegQC
-  · exact hw r hrC
-
-/-- (14) "It is possible that murder is not a crime" — FALSE under Def 8.
-    Every consistent subset of `A` extends to one containing `p`, and
-    adding `¬p` to such a set is never consistent. -/
-theorem sentence_14_not_can_negP : ¬ canInView' f negP 0 := by
-  rintro ⟨B, hB, hAll⟩
-  obtain ⟨hBSub, hBCons⟩ := hB
-  obtain ⟨C, hCSub, hCCons, hBC, hpC⟩ := exists_extension_with_p hBSub hBCons
-  have hCompat := hAll C ⟨hCSub, hCCons⟩ hBC
-  obtain ⟨w, hw⟩ := hCompat
-  have hnegP : negP w := hw negP List.mem_cons_self
-  have hp : p w := hw p (List.mem_cons_of_mem _ hpC)
-  exact hnegP hp
-
-/-! ## §5. The contrast in one place
-
-Two theorems pinning the bug-vs-fix asymmetry: the revised definitions
-agree with intuition exactly where the original definitions trivialize. -/
-
-/-- Def 5 wrongly accepts `must ¬p`; Def 7 correctly rejects it. -/
-theorem def5_vs_def7_negP :
-    mustInView f negP 0 ∧ ¬ mustInView' f negP 0 :=
-  ⟨must_negP_under_def5, sentence_8_not_must_negP⟩
-
-/-- Def 6 wrongly rejects `can q`; Def 8 correctly accepts it. -/
-theorem def6_vs_def8_q :
-    ¬ canInView f q 0 ∧ canInView' f q 0 :=
-  ⟨can_q_under_def6, sentence_9_can_q⟩
+/-- On the second reading (16) is true: flying is compatible with every consistent subset. -/
+theorem must'_q (w : World) : mustInView' (Function.const World recommendations') q w := by
+  refine mustInView'_of_forall_isCompatibleWith rfl ?_
+  rintro B ⟨hB, hc⟩
+  simp [recommendations', List.sublists] at hB
+  rcases hB with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+    first | exact absurd hc (by decide_worlds) | decide_worlds
 
 end Kratzer1977
