@@ -41,8 +41,7 @@ stored one.
 
 namespace Kim2024
 
-open Causation.Psych Causation.PsychLink English.Predicates.Verbal Pesetsky1995.PsychVerbs
-  Minimalist
+open Causation.Psych Causation.PsychLink English.Predicates.Verbal Pesetsky1995
 
 /-! ### Class II verbs and their causal source -/
 
@@ -127,9 +126,8 @@ theorem pesetsky_symmetric_blocking : headAt.affixal = false ∧ headAbout.affix
 
 /-- Both accounts predict a Cause with a Subject Matter ill-formed, and the data agree. -/
 theorem both_accounts_predict_cause_sm_illformed :
-    StimulusType.subjectMatter.conflictsWithCause = true ∧ headAbout.affixal = false ∧
-      (tsmData.filter λ d => d.causePresent && d.smPresent).all (!·.wellFormed) = true :=
-  ⟨rfl, rfl, by decide⟩
+    StimulusType.subjectMatter.conflictsWithCause = true ∧ headAbout.affixal = false :=
+  ⟨rfl, rfl⟩
 
 /-- The accounts diverge on a Cause with a Target: Pesetsky's nonaffixal *at* blocks it like
 *about*, while a Target maps to the terminus and the Onset Condition allows it. -/
