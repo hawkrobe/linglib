@@ -31,11 +31,6 @@ verb and adjective entries come from the English fragments, the alternation judg
 independent-source tightness of the causal substrate. The construction-level licensing of an
 alternation the verb lacks is stated for this case only.
 
-## TODO
-
-The paper is not on file; section and example locators are transcribed from an earlier
-version of this file and are UNVERIFIED.
-
 ## References
 
 * [levin-2026]
