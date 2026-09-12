@@ -852,7 +852,9 @@ noncomputable def samplesToCorpusCounts
     CorpusCounts T G :=
   (tree.toCFGTree?.elim 0 ({·} : DerivationTree T G.NT → Multiset _),
    fun A => slotToFinpartition (finalState.slots A),
-   fun r i => tree.collectHaltCounts r i)
+   fun r i d => match d with
+     | .recurse => (tree.collectHaltCounts r i).1
+     | .halt => (tree.collectHaltCounts r i).2)
 
 /-- Depth-0 base case for the un-memoised unfold: returns
 `PMF.pure (.fragment start)`. -/
@@ -889,7 +891,7 @@ equal to `1`.
 
 A `.fragment` leaf has no branches, so `collectHaltCounts` returns the
 zero pair for every `(rule, position)`, making `samplesToCorpusCounts.Z`
-extensionally equal to `emptyHaltCounts G`. The depth-0 sample mass is
+the zero halt count. The depth-0 sample mass is
 `1` (PMF.pure), and the empty-corpus density is `1` by
 `corpusProbGivenStorage_empty`; equality holds.
 
@@ -909,14 +911,11 @@ theorem fragmentLambdaDepth_zero_marginalises
           (samplesToCorpusCounts (.fragment start) (PYPState.empty hyper)).1
           (samplesToCorpusCounts (.fragment start) (PYPState.empty hyper)).2.1
           (samplesToCorpusCounts (.fragment start) (PYPState.empty hyper)).2.2) := by
-  -- The Z-component is `fun r i => (0, 0)` — extensionally `emptyHaltCounts`.
   have h_Z : (samplesToCorpusCounts (.fragment start)
                 (PYPState.empty hyper : PYPState G.NT
-                  (LazyTree G.NT T (ContextFreeRule T G.NT)))).2.2
-              = FragmentGrammar.emptyHaltCounts G := by
-    funext r i
-    simp only [samplesToCorpusCounts, LazyTree.collectHaltCounts_fragment,
-               FragmentGrammar.emptyHaltCounts]
+                  (LazyTree G.NT T (ContextFreeRule T G.NT)))).2.2 = 0 := by
+    funext r i d
+    cases d <;> simp [samplesToCorpusCounts]
   rw [fragmentLambdaDepth_zero]
   show (PMF.pure _) _ = _
   rw [PMF.pure_apply]
@@ -982,7 +981,7 @@ The proof requires:
 3. Identifying the limit's marginal at `(D, Y, Z)` with the §3.1.8
    product formula — induction matching each PYP draw to its AG-factor
    contribution and each biased-coin flip to its beta-binomial-ratio
-   contribution to `M.fgFactor`.
+   contribution to the slot urn's `PolyaUrn.seqProb`.
 
 Step 1 needs probabilistic-fixed-point machinery for monotone PMF-valued
 recursions (Knaster–Tarski / Kleene fixed point on ω-CPPOs of sub-
