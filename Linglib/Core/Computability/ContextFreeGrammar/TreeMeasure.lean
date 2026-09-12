@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.ContextFreeGrammar.Probabilistic
 import Linglib.Core.MeasureTheory.Measure.GiryMonad
+import Linglib.Core.Order.IterateFixedPoint
 
 /-!
 # The tree measure of a probabilistic context-free grammar
@@ -26,6 +27,7 @@ is subcritical or critical; that theorem is not proved here.
 
 * `PCFG.expand`: one expansion step from a family of tree measures.
 * `PCFG.treeMeasure`: the least fixed point of `expand`.
+* `PCFG.IsTight`: the tree measure has total mass one at every nonterminal.
 
 ## Main results
 
@@ -34,6 +36,8 @@ is subcritical or critical; that theorem is not proved here.
 * `PCFG.treeMeasure_singleton_node`, `PCFG.treeMeasure_singleton_of_ne`,
   `PCFG.treeMeasure_singleton`: the mass of a tree rooted at `A` is its `derivProb`, and trees
   rooted elsewhere have mass `0`.
+* `PCFG.treeMeasure_univ_le_one`: the tree measure is a sub-probability measure, so tightness is
+  the question of whether the missing mass, escaping to infinite derivations, is zero.
 
 ## Implementation notes
 
@@ -105,6 +109,13 @@ noncomputable def treeMeasure : G.NT → Measure (DerivationTree T G.NT) :=
 
 theorem expand_treeMeasure : W.expand W.treeMeasure = W.treeMeasure :=
   W.expandHom.map_lfp
+
+theorem treeMeasure_eq_iSup_iterate : W.treeMeasure = ⨆ n, W.expandHom^[n] ⊥ :=
+  OrderHom.lfp_eq_iSup_iterate _ fun c => by
+    show W.expand (⨆ n, c n) = ⨆ n, W.expand (c n)
+    rw [← Pi.ωSup_eq_iSup (L := fun _ => Measure (DerivationTree T G.NT)) c,
+      W.ωScottContinuous_expand.map_ωSup, Pi.ωSup_eq_iSup]
+    rfl
 
 /-! ### Evaluation on singletons -/
 
@@ -264,5 +275,67 @@ theorem treeMeasure_singleton (t : DerivationTree T G.NT) (A : G.NT) :
       obtain rfl : A = B := (by simpa using h.symm)
       exact W.treeMeasure_singleton_node A cs
   · exact W.treeMeasure_singleton_of_ne h
+
+/-! ### Total mass -/
+
+variable {W}
+
+omit [DecidableEq G.NT] in
+theorem childrenMeasure_univ_le_one {κ : G.NT → Measure (DerivationTree T G.NT)}
+    (hκ : ∀ B, κ B Set.univ ≤ 1) :
+    ∀ syms : List (Symbol T G.NT), childrenMeasure κ syms Set.univ ≤ 1
+  | [] => by simp [childrenMeasure]
+  | .terminal t :: rest => by
+    rw [childrenMeasure, Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top,
+      Set.preimage_univ]
+    exact childrenMeasure_univ_le_one hκ rest
+  | .nonterminal B :: rest => by
+    rw [childrenMeasure, Measure.bind_apply MeasurableSpace.measurableSet_top
+      measurable_from_top.aemeasurable]
+    calc ∫⁻ c, ((childrenMeasure κ rest).map (c :: ·)) Set.univ ∂κ B
+        ≤ ∫⁻ _, 1 ∂κ B := lintegral_mono fun c => by
+          rw [Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top,
+            Set.preimage_univ]
+          exact childrenMeasure_univ_le_one hκ rest
+      _ = κ B Set.univ := lintegral_one
+      _ ≤ 1 := hκ B
+
+theorem expand_univ_le_one {κ : G.NT → Measure (DerivationTree T G.NT)}
+    (hκ : ∀ B, κ B Set.univ ≤ 1) (A : G.NT) : W.expand κ A Set.univ ≤ 1 := by
+  rw [expand_apply]
+  calc ∑ r ∈ G.rules.filter (·.input = A),
+        W.weight r * childrenMeasure κ r.output (node A ⁻¹' Set.univ)
+      ≤ ∑ r ∈ G.rules.filter (·.input = A), W.weight r := Finset.sum_le_sum fun r _ => by
+        rw [Set.preimage_univ]
+        exact mul_le_of_le_one_right zero_le (childrenMeasure_univ_le_one hκ _)
+    _ ≤ 1 := W.sum_weight_le_one A
+
+variable (W)
+
+theorem iterate_expand_univ_le_one : ∀ (n : ℕ) (A : G.NT), (W.expandHom^[n] ⊥) A Set.univ ≤ 1
+  | 0, _ => by
+    rw [Function.iterate_zero_apply, Pi.bot_apply]
+    exact (Measure.le_iff'.1 (bot_le (a := (0 : Measure (DerivationTree T G.NT)))) _).trans
+      (by simp)
+  | n + 1, A => by
+    rw [Function.iterate_succ_apply']
+    exact expand_univ_le_one (iterate_expand_univ_le_one n) A
+
+/-- The tree measure is a sub-probability measure at every nonterminal. -/
+theorem treeMeasure_univ_le_one (A : G.NT) : W.treeMeasure A Set.univ ≤ 1 := by
+  rw [treeMeasure_eq_iSup_iterate, iSup_apply,
+    Measure.iSup_apply_of_monotone (fun m n h => W.expandHom.iterate_bot_mono h A)
+      MeasurableSpace.measurableSet_top]
+  exact iSup_le fun n => W.iterate_expand_univ_le_one n A
+
+instance (A : G.NT) : IsFiniteMeasure (W.treeMeasure A) :=
+  ⟨(W.treeMeasure_univ_le_one A).trans_lt ENNReal.one_lt_top⟩
+
+/-- A PCFG is tight when its tree measure at every nonterminal has total mass one: the
+generation process terminates almost surely from every nonterminal. -/
+def IsTight : Prop := ∀ A, W.treeMeasure A Set.univ = 1
+
+theorem isTight_iff : W.IsTight ↔ ∀ A, IsProbabilityMeasure (W.treeMeasure A) :=
+  ⟨fun h A => ⟨h A⟩, fun h A => (h A).measure_univ⟩
 
 end PCFG
