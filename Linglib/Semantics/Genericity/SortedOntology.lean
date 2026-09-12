@@ -54,7 +54,7 @@ kind predication without any generic quantifier.
 
 - [chierchia-1998]: Formalizes R as the ∪ operator, adds ∩/∪ kind↔property
   mapping
-- [krifka-2004]: Rejects kinds as basic; bare NPs are properties
+- [krifka-2003]: Rejects kinds as basic; bare NPs are properties
 - [dayal-2004]: Extends with singular kinds and Meaning Preservation
 
 See `Studies/LeBruynDeSwart2022.lean` for the Chierchia-vs-Krifka comparison
