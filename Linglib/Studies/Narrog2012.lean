@@ -1,49 +1,40 @@
 import Linglib.Semantics.Modality.Narrog
-import Linglib.Studies.Hacquard2010
 
 /-!
 # Narrog (2012): Modality, Subjectivity, and Semantic Change
-[narrog-2012]
 
-Study file formalizing the core contributions of [narrog-2012] beyond
-what is already captured in `Modality.Narrog` (the 2D/3D semantic
-map) and `Narrog2010` (Bybee et al. data + directionality).
+This file formalizes the category hierarchy and the category-climbing hypothesis of
+[narrog-2012]. Scope data from Japanese order the grammatical categories of the verbal
+clause from voice and benefactives at the bottom through aspect, dynamic and deontic
+modality, negation and epistemic modality, and tense to mood and illocutionary
+modification at the top (`GramCategory`, `GramCategory.scopeLevel`), an empirical
+hierarchy finer than the stipulated universal one of [cinque-1999]; epistemic modality
+outscopes deontic and dynamic modality, and mood outscopes modality proper
+(`epistemic_outscopes_deontic`, `mood_outscopes_modality`). Scope level determines speaker
+orientation (`scope_implies_orientation`), and the categories that serve as diachronic
+sources of modality lie strictly below those that serve as its targets
+(`GramCategory.changeRole`, `source_below_target`), the structural precondition of the
+hypothesis that semantic change involving grammatical categories climbs from narrower to
+wider scope. Langacker's stages in the development of the English modals ascend the
+orientation levels in the same direction (`langackerStages`, `langacker_stages_monotone`).
 
-## New contributions formalized here
+## Implementation notes
 
-1. **Category hierarchy** (Tables 3.5–3.9): an empirically-derived scope
-   hierarchy from Japanese data, finer-grained than [cinque-1999]'s
-   stipulated universal hierarchy. Categories at the bottom (voice, aspect)
-   are event-oriented; categories at the top (mood, illocutionary
-   modification) are speech-act-oriented.
+The scope levels follow the combined hierarchy of the book's third chapter, categories on
+a shared level being unordered; the source and target classification extends the book's
+table of non-modal categories by placing the modal categories at the bidirectional level.
+The directionality of the attested changes themselves is proved in `Studies/Narrog2010`.
 
-2. **Source and target categories** (Table 3.10): which grammatical
-   categories serve as diachronic sources, targets, or both for modality.
+## References
 
-3. **Category-climbing hypothesis** (§3.3.1): semantic change involving
-   grammatical categories proceeds from narrow-scope to wide-scope — i.e.,
-   from lower to higher in the hierarchy.
-
-4. **Bridge: Narrog → Hacquard** (our construction): the event-oriented /
-   speech-act-oriented cut in Narrog's hierarchy aligns with
-   [hacquard-2006]'s AspP boundary. Categories below the boundary lack
-   propositional content; categories above it have content. This unifies the
-   diachronic (Narrog) and synchronic (Hacquard) perspectives. Narrog does
-   not explicitly make this connection; we construct it here.
-
-5. **Subjectification stages for English modals** (Table 3.3): Langacker's
-   three stages of modal development, mapped to `SpeakerOrientationLevel`.
+* [narrog-2012]
+* [narrog-2009a]
+* [cinque-1999]
 -/
 
 namespace Narrog2012
 
 open Modality.Narrog
-open Modality (ModalPosition EventBinder)
-
-
--- ============================================================================
--- §1. Category Hierarchy (Tables 3.5–3.9)
--- ============================================================================
 
 /-- Grammatical categories relevant to the verbal clause, drawn from
     [narrog-2012] Tables 3.5–3.9 and [narrog-2009a].
@@ -102,8 +93,7 @@ instance (a b : GramCategory) : Decidable (a ≤ b) :=
 instance (a b : GramCategory) : Decidable (a < b) :=
   inferInstanceAs (Decidable (a.scopeLevel < b.scopeLevel))
 
-/-- Epistemic modality outscopes deontic modality — the basic observation
-    that all three frameworks (Cinque, Hacquard, Narrog) agree on. -/
+/-- Epistemic modality outscopes deontic modality. -/
 theorem epistemic_outscopes_deontic : GramCategory.deontic1 < GramCategory.epistemic1 := by
   decide
 
@@ -120,10 +110,6 @@ theorem mood_outscopes_modality :
 /-- Illocutionary modification is the widest-scope category. -/
 theorem im_is_widest (c : GramCategory) : c ≤ GramCategory.illocutionaryMod := by
   cases c <;> decide
-
--- ============================================================================
--- §2. Speaker-Orientation by Scope Level
--- ============================================================================
 
 /-- Map a category to its speaker-orientation level in Narrog's 2D map.
 
@@ -161,10 +147,6 @@ def GramCategory.toOrientation : GramCategory → SpeakerOrientationLevel
 theorem scope_implies_orientation (a b : GramCategory) (h : a < b) :
     a.toOrientation ≤ b.toOrientation := by
   revert h; cases a <;> cases b <;> decide
-
--- ============================================================================
--- §3. Source and Target Categories (Table 3.10)
--- ============================================================================
 
 /-- Role of a grammatical category relative to modality in diachronic change.
 
@@ -213,93 +195,6 @@ theorem target_is_mood (c : GramCategory) (h : c.changeRole = .target) :
     c.toOrientation = .mood := by
   revert h; cases c <;> decide
 
--- ============================================================================
--- §4. Bridge: Narrog Hierarchy → Hacquard Content Licensing (Our Construction)
--- ============================================================================
-
-/-- Map Narrog's scope-based orientation to Hacquard's modal position.
-
-    Event-oriented categories (scope levels 0–2, up to perfective aspect) map
-    to Hacquard's `belowAsp`; speaker-oriented and mood categories map to
-    `aboveAsp`. The AspP boundary is the empirical cut-point that both
-    frameworks independently identify.
-
-    **NB**: This bridge is our own construction. [narrog-2012] compares
-    his scope hierarchy to [cinque-1999]'s in §3.2 but does not
-    explicitly connect it to [hacquard-2006]'s content licensing. The
-    alignment is natural — both identify a boundary between event-level and
-    propositional-level categories — but the formal mapping is ours. -/
-def GramCategory.toHacquardPosition : GramCategory → ModalPosition
-  | c => if c.toOrientation == .eventOriented then .belowAsp else .aboveAsp
-
-/-- Orientation-level bridge: Narrog's speaker-orientation maps to
-    Hacquard's modal position. Event-oriented = belowAsp;
-    speaker-oriented and mood = aboveAsp. -/
-def narrogOrientationToPosition : SpeakerOrientationLevel → ModalPosition
-  | .eventOriented => .belowAsp
-  | .speakerOriented => .aboveAsp
-  | .mood => .aboveAsp
-
-/-- The orientation-level bridge preserves the epistemic availability
-    prediction: event-oriented categories (belowAsp) lack content and
-    cannot project epistemic; speaker-oriented and mood categories
-    (aboveAsp) have content and can. -/
-theorem narrog_hacquard_bridge :
-    (narrogOrientationToPosition .eventOriented).defaultBinder.canProjectEpistemic
-      = false ∧
-    (narrogOrientationToPosition .speakerOriented).defaultBinder.canProjectEpistemic
-      = true ∧
-    (narrogOrientationToPosition .mood).defaultBinder.canProjectEpistemic
-      = true :=
-  ⟨rfl, rfl, rfl⟩
-
-/-- Event-oriented categories map to belowAsp (VP events, no content). -/
-theorem event_oriented_below_asp :
-    GramCategory.toHacquardPosition .voice = .belowAsp ∧
-    GramCategory.toHacquardPosition .dynamicModality = .belowAsp ∧
-    GramCategory.toHacquardPosition .perfImperfAspect = .belowAsp := by
-  exact ⟨rfl, rfl, rfl⟩
-
-/-- Speaker-oriented categories map to aboveAsp (contentful events). -/
-theorem speaker_oriented_above_asp :
-    GramCategory.toHacquardPosition .epistemic1 = .aboveAsp ∧
-    GramCategory.toHacquardPosition .deontic1 = .aboveAsp ∧
-    GramCategory.toHacquardPosition .evidentiality2 = .aboveAsp := by
-  exact ⟨rfl, rfl, rfl⟩
-
-/-- The Hacquard bridge preserves the epistemic/root prediction:
-    epistemic categories map to aboveAsp (where Hacquard licenses epistemic),
-    and dynamic/ability categories map to belowAsp (where Hacquard blocks
-    epistemic). This is the key unification of the diachronic and synchronic
-    perspectives. -/
-theorem hacquard_narrog_agree_on_epistemic :
-    -- Narrog: epistemic is speaker-oriented
-    GramCategory.epistemic1.toOrientation = .speakerOriented ∧
-    -- Hacquard: speaker-oriented → aboveAsp → epistemic available
-    GramCategory.toHacquardPosition .epistemic1 = .aboveAsp ∧
-    EventBinder.speechAct.canProjectEpistemic = true ∧
-    -- Narrog: dynamic is event-oriented
-    GramCategory.dynamicModality.toOrientation = .eventOriented ∧
-    -- Hacquard: event-oriented → belowAsp → no epistemic
-    GramCategory.toHacquardPosition .dynamicModality = .belowAsp ∧
-    EventBinder.vpEvent.canProjectEpistemic = false :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
-
--- ============================================================================
--- §5. Category-Climbing Hypothesis (§3.3.1)
--- ============================================================================
-
-/-! The category-climbing hypothesis — that cross-linguistic modal change
-    always proceeds from narrow-scope (event-oriented) to wide-scope
-    (speech-act-oriented) — is proved as `Narrog2010.directionality`
-    over the Bybee et al. (1994) dataset. The `source_below_target` theorem
-    above establishes the structural precondition for this in our hierarchy:
-    every source category is strictly below every target category. -/
-
--- ============================================================================
--- §6. Subjectification of English Modals (Table 3.3)
--- ============================================================================
-
 /-- A stage in the diachronic development of English modals.
     [narrog-2012] Table 3.3, following Langacker (1990; 1998; 1999). -/
 structure ModalDevelopmentStage where
@@ -335,75 +230,5 @@ theorem langacker_stages_monotone :
     langackerStages.Pairwise (λ a b => a.orientation ≤ b.orientation) := by
   simp [langackerStages]
   decide
-
--- ============================================================================
--- §7. Three Perspectives on Position-Flavor (Cinque, Hacquard, Narrog)
--- ============================================================================
-
-/-- All three frameworks agree that epistemic is "higher" than root/dynamic,
-    but for different reasons:
-
-    - [cinque-1999]: stipulated functional heads place epistemic above TP.
-    - [hacquard-2006]: content licensing blocks epistemic below AspP.
-    - [narrog-2012]: empirical scope data from Japanese places epistemic
-      at scope levels 3–5 vs. dynamic at level 1.
-
-    This theorem states the common prediction, which each framework derives
-    differently. -/
-theorem three_way_agreement_epistemic_above_root :
-    -- Cinque: epistemic heads are high
-    Hacquard2010.CinqueHead.modEpistemic.IsHigh ∧
-    -- Hacquard: high position licenses epistemic
-    ModalPosition.aboveAsp.defaultBinder.canProjectEpistemic = true ∧
-    -- Narrog: epistemic has higher scope level than dynamic
-    GramCategory.dynamicModality < GramCategory.epistemic1 := by
-  exact ⟨by decide, rfl, by decide⟩
-
--- ============================================================================
--- §8. Deriving Orientation from Flavor (ModalItem Bridge)
--- ============================================================================
-
-/-- Derive a default speaker-orientation from a `ModalFlavor`.
-
-    Epistemic modality is speaker-oriented (the speaker assesses likelihood).
-    Deontic modality is speaker-oriented (the speaker imposes norms).
-    Circumstantial modality is event-oriented (describes abilities/facts).
-
-    This bridges the existing `ModalItem.meaning` (List ForceFlavor) data
-    that fragment entries already carry to Narrog's orientation axis,
-    without requiring changes to the `ModalItem` structure. -/
-def orientationOfFlavor : Modality.ModalFlavor → SpeakerOrientationLevel
-  | .epistemic => .speakerOriented
-  | .deontic => .speakerOriented
-  | .bouletic => .speakerOriented
-  | .circumstantial => .eventOriented
-
-/-- Circumstantial-only modals are event-oriented. -/
-theorem circumstantial_is_event_oriented :
-    orientationOfFlavor .circumstantial = .eventOriented := rfl
-
-/-- Epistemic modals are speaker-oriented. -/
-theorem epistemic_is_speaker_oriented :
-    orientationOfFlavor .epistemic = .speakerOriented := rfl
-
-/-- The consistency claim holds for flavors in Narrog's image.
-    Bouletic collapses with deontic in Narrog's 2D space (both volitive,
-    speaker-oriented), so the round-trip from `.bouletic` yields `.deontic`. -/
-theorem orientationOfFlavor_consistent :
-    ∀ f : Modality.ModalFlavor, f ≠ .bouletic →
-      ∃ r : NarrogRegion, r.toModalFlavor = some f ∧
-        r.orientation = orientationOfFlavor f := by
-  intro f hf; cases f with
-  | epistemic => exact ⟨⟨.nonVolitive, .speakerOriented⟩, rfl, rfl⟩
-  | deontic => exact ⟨⟨.volitive, .speakerOriented⟩, rfl, rfl⟩
-  | bouletic => exact absurd rfl hf
-  | circumstantial => exact ⟨⟨.nonVolitive, .eventOriented⟩, rfl, rfl⟩
-
-/-- `toHacquardPosition` factors through `toOrientation` and
-    `narrogOrientationToPosition`. This links the category-level
-    bridge (§4) to the orientation-level bridge. -/
-theorem toHacquardPosition_factors (c : GramCategory) :
-    c.toHacquardPosition = narrogOrientationToPosition c.toOrientation := by
-  cases c <;> rfl
 
 end Narrog2012
