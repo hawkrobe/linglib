@@ -23,11 +23,6 @@ Indices are partial assignments paired with worlds on the substrate's `Logic/Ass
 theorems use classical meta-logic. The quantifiers of the paper's §5.8 and the modal
 subordination of its §6 are not represented.
 
-## TODO
-
-The paper is not on file; section locators are transcribed from an earlier version of this
-file and are UNVERIFIED.
-
 ## References
 
 * [mandelkern-2022]
