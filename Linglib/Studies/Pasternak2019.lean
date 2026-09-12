@@ -3,12 +3,12 @@ import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 import Linglib.Semantics.Mereology
 
 /-!
-# Pasternak (2019): intensity in the mereology of mental states
+# Pasternak (2019): A Lot of Hatred and a Ton of Desire
 
-[pasternak-2019] treats intensity as a monotonic measure function on mental states: a more
-intense state is bigger along a part-whole dimension, so *Ann hates Bill more than Matt hates
-Jeff* is a verbal comparative of the same shape as *more snow* and *ran more*
-([wellwood-2015]), its measure obeying the monotonicity constraint
+This file formalizes the account in [pasternak-2019] of intensity as a monotonic measure
+function on mental states: a more intense state is bigger along a part-whole dimension, so
+*Ann hates Bill more than Matt hates Jeff* is a verbal comparative of the same shape as
+*more snow* and *ran more* ([wellwood-2015]), its measure obeying the monotonicity constraint
 ([schwarzschild-2006]) that pseudopartitives, *out the wazoo*, adverbial measure phrases and
 nominal and verbal comparatives all impose (`Degree.admissibleMeasure`). A mental-state verb
 carries its predicate and its intensity measure (`MentalStateVerb`), thematic roles come
@@ -17,13 +17,13 @@ and the intensity comparative is `Degree.maxComparative` with matrix and than-cl
 predicates that may differ in experiencer and theme (`intensityComparative`). The
 comparative entails the matrix positive (`intensityComparative.exists_matrix`) but not the
 than-clause positive — *Jack admires the chairman more than Jill does; in fact, Jill doesn't
-admire him at all* — which Pasternak secures by adding a zero degree to the than-clause set
+admire him at all* — which the paper secures by adding a zero degree to the than-clause set
 (`intensityComparativeZero_of_none`). Mental-state predicates are homogeneous, closed under
-parts; his biconditional form of homogeneity is `Mereology.DIV` (`div_iff`). Under unique
-witnesses on both sides the comparative reduces to comparing the two intensities
-(`intensityComparative_unique`), a simplification Pasternak himself does not adopt.
+parts; the paper's biconditional form of homogeneity is `Mereology.DIV` (`div_iff`). Under
+unique witnesses on both sides the comparative reduces to comparing the two intensities
+(`intensityComparative_unique`), a simplification the paper does not adopt.
 
-## Todo
+## TODO
 
 * Mandarin *duō* / *hěn duō (de)*, which needs Fragment entries.
 * The two-dimensional state ontology with its vertical axis and the fineness ordering.
@@ -32,7 +32,8 @@ witnesses on both sides the comparative reduces to comparing the two intensities
 ## References
 
 * [pasternak-2019]
-* [schwarzschild-2006], [wellwood-2015]
+* [schwarzschild-2006]
+* [wellwood-2015]
 -/
 
 namespace Pasternak2019
@@ -103,8 +104,8 @@ at all: *Jack admires the chairman more than Jill does; in fact, Jill doesn't ad
 theorem intensityComparativeZero_of_none {e : Event T} (he : themed v frame α x e)
     (hpos : 0 < v.μint e) (hβ : ∀ e', themed v frame β y e' → v.μint e' ≤ 0) :
     intensityComparativeZero v frame α β x y :=
-  ⟨e, he, 0, ⟨Set.mem_insert _ _, fun _ hd => (Set.mem_insert_iff.1 hd).elim le_of_eq
-    fun ⟨e', he', hle⟩ => hle.trans (hβ e' he')⟩, hpos⟩
+  ⟨e, he, 0, ⟨Set.mem_insert _ _, λ _ hd => (Set.mem_insert_iff.1 hd).elim le_of_eq
+    λ ⟨e', he', hle⟩ => hle.trans (hβ e' he')⟩, hpos⟩
 
 end Zero
 
@@ -112,6 +113,6 @@ end Zero
 biconditional form: a `Mereology.DIV` predicate holds of `e` iff it holds of every part. -/
 theorem div_iff {α : Type*} [Preorder α] {P : α → Prop} (h : Mereology.DIV P) (e : α) :
     P e ↔ ∀ e' ≤ e, P e' :=
-  ⟨fun he _ hle => h hle he, fun hall => hall e le_rfl⟩
+  ⟨λ he _ hle => h hle he, λ hall => hall e le_rfl⟩
 
 end Pasternak2019
