@@ -11,76 +11,47 @@ import Linglib.Discourse.CommonGround
 import Mathlib.Data.Fintype.Powerset
 
 /-!
-# [mihoc-2019]: Decomposing Modified Numerals
-[mihoc-2019] [hackl-2000] [kennedy-2015] [horn-1972] [geurts-nouwen-2007]
-[nouwen-2010] [fox-hackl-2006] [spector-2014] [chierchia-2013]
-[sauerland-stateva-2011] [krifka-2007]
+# Mihoc (2019): Decomposing Logic
 
-[mihoc-2019] (Ch. 2) decomposes bare (BN), comparative-modified (CMN), and
-superlative-modified (SMN) numerals into *extent indicators* — `much`/`little`
-denote positive/negative extents on the cardinality scale, transposing
-Kennedy's earlier extent algebra (her §2.5) — and two operators: [comp]
-places the maximum of the degree predicate in the *complement* of the extent,
-[at-sup] inside it. The four modified forms are cross-pairings (*more than* =
-[comp]+much, *less than* = [comp]+little, *at least* = [at-sup]+**little**,
-*at most* = [at-sup]+**much**), and the truth conditions provably reduce to
-the Hackl/Kennedy meanings — here the named meanings of `Numerals`,
-so the reduction theorems double as bridges to the [kennedy-2015] spine.
-Alternatives fall out of the truth conditions: σA replaces the numeral with a
-scalemate; DA replaces the set the maximum is asserted to fall in — the
-complement of the extent for [comp] forms (her Ch. 2 (38c)), the extent for
-[at-sup] forms (her Ch. 2 (39c)) — with its proper subsets. Bare numerals
-generate *no* DA, since their (Hornian, lower-bounded) truth conditions
-reference no degree-set domain (her Ch. 2 (37c)).
+This file formalizes the decomposition of bare, comparative-modified, and
+superlative-modified numerals in [mihoc-2019]. The extent indicators *much* and *little*
+denote the positive and negative extents on the cardinality scale, and two operators place
+the maximum of the degree predicate in the complement of the extent or inside it, so
+*more than* and *less than* are the complement operator with the two extents and *at
+least* and *at most* the inside operator with the extents crossed (`Form`); the truth
+conditions reduce to the named meanings of [hackl-2000] and [kennedy-2015]
+(`Form.tc_iff_rel`), and the strict versus non-strict boundary of the two classes falls out
+(`comp_excludes_boundary`, `atSup_includes_boundary`). Alternatives follow from the truth
+conditions, scalemate alternatives and domain alternatives over the set the maximum is
+asserted to fall in, and exhaustification over scalemates at scale granularity one yields
+an exact reading for every form (`Form.exhSigma`), welcome for bare numerals after
+[horn-1972] and unwelcome for the modified ones, while coarser granularities in the sense of
+[sauerland-stateva-2011] avoid it, the grade context of [spector-2014] being the
+granularity-four case. Unpruned domain alternatives force total ignorance
+(`Ignorance.parse_sg_total`), and the domain-alternative exhaustifier is vacuous under
+negation, so the superlative forms fail the proper-strengthening requirement
+(`AntiNegativity.negation_fails_PS`).
 
-Ch. 3 defends classical scalar implicatures for all three classes and locates
-the failures: σA-exhaustification at scale granularity 1 produces an
-'exactly' meaning for *every* form — welcome for bare numerals ([horn-1972],
-her Ch. 3 (2)), unwelcome for CMNs/SMNs (her Ch. 3 (24)–(27)) — while coarser
-granularities avoid it (her §3.7; [spector-2014]'s grade context, her §3.6
-(33), is the granularity-4 instance). The scale and its granularity are
-contextual ([sauerland-stateva-2011]'s granularity functions; rounder
-numerals select coarser scales, [krifka-2007] and her pp. 110–111), not
-universally dense — contra [fox-hackl-2006] (her fn. 8). On discrete scales
-the two accounts agree (`FoxHackl2006.moreThan_exact_nat` is
-the g = 1 'exactly n+1' rescue); they part on whether density ever
-obliterates the next-stronger alternative.
+## Implementation notes
 
-## Main definitions
+The scale is discrete, so the two accounts of comparative numerals agree at granularity one
+where [fox-hackl-2006]'s dense scale would obliterate the next-stronger alternative; the
+extents and operators factor through the comparison spine of `Semantics/Degree/Comparison`
+and the exhaustifiers through `Semantics/Exhaustification`.
 
-- `much`, `little`: the extent indicators, as `Degree.Comparison.interval`s
-- `compTC`, `atSupTC`: the [comp]/[at-sup] truth conditions on the maximum
-- `Form`: BN/CMN/SMN assertion forms; `Form.toComparison` factors them
-  through the `Comparison` spine; `Form.tc`, `Form.domainAlts`,
-  `Form.strongerAlt`, `Form.exhSigma`
+## References
 
-## Main results
-
-- `compTC_much_iff` … `atSupTC_much_iff`: the reductions to the
-  `Numerals` named meanings (her Ch. 2 (32)–(33))
-- `Form.tc_iff_rel`: the Op × Extent factorization lands on `Comparison.rel`
-- `comp_excludes_boundary` / `atSup_includes_boundary`: the Class A/B
-  strict/non-strict split ([geurts-nouwen-2007], [nouwen-2010]) as
-  corollaries of `Comparison.boundary_mem`
-- `exhSigma_bare_eq_exhNumeral`: at granularity 1 her `O_σA` *is* the spine's
-  `exhNumeral` (hence, via `Spector2013.exhNumeral_eq_innocent_exh`, Fox-2007
-  innocent exclusion); `exhSigma` is its granularity/direction generalization
-- `exhSigma_*_g1`: 'exactly' meanings for all five forms at granularity 1
-  (her Ch. 3 (2), (24)–(27)); `exhSigma_moreThan_proper`: the strengthening
-  is non-vacuous — deriving an implicature exactly where [kennedy-2015]'s
-  neo-Gricean account derives none (`Kennedy2015.stronger_gt`)
-- `exhSigma_moreThan_coarse_not_exactly`, `spector_grade_context`: coarser
-  granularity avoids the 'exactly' overgeneration (her §3.6–3.7)
-- `exhSigma_moreThan_eq_exhChain` / `exhSigma_atMost_eq_exhChain`: the
-  one-scalemate operator equals whole-scale chain-exhaustification
-  (`Exhaustification.exhChain_iff_succ`)
-- `Ignorance.parse_sg_total`: unpruned parses force total ignorance —
-  the structural core of her Tables 4.1/4.3, via
-  `Exhaustification.forall_not_preExh_iff`; `winner0_blocked`,
-  `sg_accommodates_loser`, `db_blocks_loser`: the residual table cells
-- `AntiNegativity.negation_fails_PS`: `O_ExhDA` is vacuous under negation
-  (her Ch. 5 (9)), so the SMN's Proper Strengthening requirement fails;
-  `NumeralClass`: her [±prune DA, ±PS] parameter pair
+* [mihoc-2019]
+* [hackl-2000]
+* [kennedy-2015]
+* [horn-1972]
+* [geurts-nouwen-2007]
+* [nouwen-2010]
+* [fox-hackl-2006]
+* [spector-2014]
+* [chierchia-2013]
+* [sauerland-stateva-2011]
+* [krifka-2007]
 -/
 
 namespace Mihoc2019
@@ -424,25 +395,25 @@ avoid: cf. `FoxHackl2006.moreThan_not_hasMaxInf`.) -/
 
 theorem exhSigma_moreThan_eq_exhChain (n g maxD : ℕ) :
     (Form.moreThan n).exhSigma g maxD ↔
-      Exhaustification.exhChain (fun k => (Form.moreThan (n + k * g)).tc) 0 maxD := by
+      Exhaustification.exhChain (λ k => (Form.moreThan (n + k * g)).tc) 0 maxD := by
   rw [Exhaustification.exhChain_iff_succ
-      (fun j k hjk d hd => by
+      (λ j k hjk d hd => by
         simp only [tc_moreThan] at hd ⊢
         have := Nat.mul_le_mul_right g hjk
         omega)
-      Nat.zero_lt_one fun j hj => hj]
+      Nat.zero_lt_one λ j hj => hj]
   simp only [Form.exhSigma, Form.strongerAlt, tc_moreThan, Nat.zero_mul,
     Nat.add_zero, Nat.one_mul]
 
 theorem exhSigma_atMost_eq_exhChain (n g maxD : ℕ) :
     (Form.atMost n).exhSigma g maxD ↔
-      Exhaustification.exhChain (fun k => (Form.atMost (n - k * g)).tc) 0 maxD := by
+      Exhaustification.exhChain (λ k => (Form.atMost (n - k * g)).tc) 0 maxD := by
   rw [Exhaustification.exhChain_iff_succ
-      (fun j k hjk d hd => by
+      (λ j k hjk d hd => by
         simp only [tc_atMost] at hd ⊢
         have := Nat.mul_le_mul_right g hjk
         omega)
-      Nat.zero_lt_one fun j hj => hj]
+      Nat.zero_lt_one λ j hj => hj]
   simp only [Form.exhSigma, Form.strongerAlt, tc_atMost, Nat.zero_mul,
     Nat.sub_zero, Nat.one_mul]
 
@@ -483,25 +454,25 @@ theorem boxS_iff_entails (E : Finset EWorld) (p : EWorld → Prop) :
 
 /-- The asserted prejacent: `□_S`(*less than three*). -/
 def prejacent (E : Finset EWorld) : Prop :=
-  boxS E fun w => (Form.lessThan 3).tc w.val
+  boxS E λ w => (Form.lessThan 3).tc w.val
 
 instance (E : Finset EWorld) : Decidable (prejacent E) :=
-  inferInstanceAs (Decidable (boxS E fun w => (Form.lessThan 3).tc w.val))
+  inferInstanceAs (Decidable (boxS E λ w => (Form.lessThan 3).tc w.val))
 
 /-- Singleton domain alternatives: `□_S(max = i)` for `i < 3`. -/
 def sgDA (E : Finset EWorld) (i : Fin 3) : Prop :=
-  boxS E fun w => w.val = i.val
+  boxS E λ w => w.val = i.val
 
 /-- Doubleton domain alternatives: `□_S` of the prejacent region minus
 value `i`. -/
 def dbDA (E : Finset EWorld) (i : Fin 3) : Prop :=
-  boxS E fun w => w.val < 3 ∧ w.val ≠ i.val
+  boxS E λ w => w.val < 3 ∧ w.val ≠ i.val
 
 instance (E : Finset EWorld) (i : Fin 3) : Decidable (sgDA E i) :=
-  inferInstanceAs (Decidable (boxS E fun w => w.val = i.val))
+  inferInstanceAs (Decidable (boxS E λ w => w.val = i.val))
 
 instance (E : Finset EWorld) (i : Fin 3) : Decidable (dbDA E i) :=
-  inferInstanceAs (Decidable (boxS E fun w => w.val < 3 ∧ w.val ≠ i.val))
+  inferInstanceAs (Decidable (boxS E λ w => w.val < 3 ∧ w.val ≠ i.val))
 
 /-- A nonempty state settles at most one singleton region. -/
 theorem sgDA_subsingleton {E : Finset EWorld} (hE : E.Nonempty) {i j : Fin 3}
@@ -519,7 +490,7 @@ theorem total_ignorance_of_not_preExh {E : Finset EWorld} (hE : E.Nonempty)
     ¬ sgDA E i := by
   intro hi
   rw [Exhaustification.forall_not_preExh_iff] at h
-  exact h ⟨i, hi, fun j hj => sgDA_subsingleton hE hj hi⟩
+  exact h ⟨i, hi, λ j hj => sgDA_subsingleton hE hj hi⟩
 
 /-- The `O_ExhDA+σA` parse of `□_S`(*less than three*) (her (12)/(14)/(16)),
 with her DA-pruning parameter: `sg`/`db` select which DA sizes survive
@@ -528,7 +499,7 @@ def parse (sg db : Bool) (E : Finset EWorld) : Prop :=
   prejacent E ∧
   (sg = true → ∀ i, ¬ Exhaustification.preExh (sgDA E) i) ∧
   (db = true → ∀ i, ¬ Exhaustification.preExh (dbDA E) i) ∧
-  ¬ boxS E (fun w => w.val < 2) ∧ ¬ boxS E (fun w => w.val < 1)
+  ¬ boxS E (λ w => w.val < 2) ∧ ¬ boxS E (λ w => w.val < 1)
 
 instance (sg db : Bool) (E : Finset EWorld) : Decidable (parse sg db E) :=
   inferInstanceAs (Decidable (prejacent E ∧ _ ∧ _ ∧ _ ∧ _))
@@ -542,23 +513,23 @@ def winner0 (E : Finset EWorld) : Prop := sgDA E 0
 /-- Her canonical 'loser' scenario: `□_S ¬0 ∧ ¬□_S 1 ∧ ¬□_S 2` — one region
 excluded, the rest unsettled. -/
 def loser0 (E : Finset EWorld) : Prop :=
-  (boxS E fun w => w.val ≠ 0) ∧ ¬ sgDA E 1 ∧ ¬ sgDA E 2
+  (boxS E λ w => w.val ≠ 0) ∧ ¬ sgDA E 1 ∧ ¬ sgDA E 2
 
 instance (E : Finset EWorld) : Decidable (loser0 E) :=
-  inferInstanceAs (Decidable ((boxS E fun w => w.val ≠ 0) ∧ _ ∧ _))
+  inferInstanceAs (Decidable ((boxS E λ w => w.val ≠ 0) ∧ _ ∧ _))
 
 /-- Any parse that keeps the singleton DA forces total ignorance — her
 Table 4.1 and 4.3 sum-ups, including the SMN (no-pruning) verdict. -/
 theorem parse_sg_total {db : Bool} {E : Finset EWorld} (hE : E.Nonempty)
     (h : parse true db E) : TotalIgnorance E :=
-  fun i => total_ignorance_of_not_preExh hE (h.2.1 rfl) i
+  λ i => total_ignorance_of_not_preExh hE (h.2.1 rfl) i
 
 /-- The 'winner' scenario clashes with the σA-implicature — the ✗ cells of
 her Tables 4.1/4.2: `□_S 0` entails `□_S`(*less than one*). -/
 theorem winner0_blocked {sg db : Bool} {E : Finset EWorld}
     (h : parse sg db E) : ¬ winner0 E := by
   intro hw
-  exact h.2.2.2.2 fun w hwE => by have := hw w hwE; omega
+  exact h.2.2.2.2 λ w hwE => by have := hw w hwE; omega
 
 /-- The singleton-DA regime accommodates the 'loser' scenario — Table 4.1's
 ✓ cell (CMNs, which may prune, admit partial ignorance). -/
@@ -605,7 +576,7 @@ theorem oParse_iff_negPrejacent (w : NWorld) : oParse w ↔ negPrejacent w := by
   constructor
   · exact And.left
   · intro h
-    refine ⟨h, fun i hpe => h ((tc_lessThan 2 w.val).mpr ?_)⟩
+    refine ⟨h, λ i hpe => h ((tc_lessThan 2 w.val).mpr ?_)⟩
     have hi := hpe.1
     simp only [negDA] at hi
     omega
