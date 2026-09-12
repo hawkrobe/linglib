@@ -1,7 +1,6 @@
 import Linglib.Data.Examples.JackendoffAudring2020
 import Linglib.Data.Forms.JackendoffAudring2020
 import Linglib.Morphology.Construction.Schema
-import Linglib.Morphology.Construction.SameExcept
 import Linglib.Morphology.Construction.Inheritance
 import Linglib.Morphology.Paradigm.Linkage
 import Linglib.Morphology.Paradigm.Morphome
@@ -284,7 +283,7 @@ def stringStrung : Schema NucleusVar (Flat String) := nucleusPair ↑"ɪ" ↑"ʌ
 the nucleus, with the pinned nuclei. -/
 theorem nucleusPair_iff {v w : Flat String} {s p : Fin 3 → Flat String} :
     (nucleusPair v w).InstantiatesAt (Sum.elim stemSub pastSub) (Sum.elim s p) ↔
-      v ≤ s 1 ∧ w ≤ p 1 ∧ SameExcept s p {1} := by
+      v ≤ s 1 ∧ w ≤ p 1 ∧ Set.EqOn s p {1}ᶜ := by
   rw [Schema.instantiatesAt_elim_iff]
   constructor
   · rintro ⟨hs, hp, -, -, h⟩
@@ -301,7 +300,7 @@ theorem nucleusPair_iff {v w : Flat String} {s p : Fin 3 → Flat String} :
 
 /-- (25) pairs exactly the stems and pasts that are the same except at the nucleus. -/
 theorem ablaut_pairs_iff {s p : Fin 3 → Flat String} :
-    ablaut.InstantiatesAt (Sum.elim stemSub pastSub) (Sum.elim s p) ↔ SameExcept s p {1} := by
+    ablaut.InstantiatesAt (Sum.elim stemSub pastSub) (Sum.elim s p) ↔ Set.EqOn s p {1}ᶜ := by
   simp [ablaut, nucleusPair_iff]
 
 /-- A subschema with pinned nuclei is a special case of the general ablaut schema: every pair
@@ -318,6 +317,7 @@ theorem contrast_of_nucleusPair {v w : String} (hvw : v ≠ w) {s p : Fin 3 → 
     Contrast s p {1} := by
   obtain ⟨hv, hw, hs⟩ := nucleusPair_iff.1 h
   rw [Flat.coe_le_iff] at hv hw
+  rw [contrast_iff_of_forall_isMax λ _ => Flat.isMax_of_ne_bot]
   refine ⟨hs, λ q hq => ?_⟩
   rw [Set.mem_singleton_iff] at hq
   subst hq
