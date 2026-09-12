@@ -35,15 +35,212 @@ are UNVERIFIED.
 * [baker-2015]
 -/
 
+namespace Minimalist
+
+/-- Case accessibility for agreement.
+
+    The hierarchy determines which DPs are visible to agreement probes.
+    Higher accessibility = more likely to be targeted by a probe. -/
+inductive CaseAccessibility where
+  /-- Unmarked case: NOM (nom-acc) or ABS (erg-abs). Highest. -/
+  | unmarked
+  /-- Dependent case: ACC (nom-acc) or ERG (erg-abs). Middle. -/
+  | dependent
+  /-- Lexical/oblique case: DAT, GEN, PP, etc. Lowest. -/
+  | lexical
+  deriving DecidableEq, Repr
+
+/-- Numeric rank for ordering. Higher = more accessible. -/
+def CaseAccessibility.rank : CaseAccessibility → Nat
+  | .unmarked => 2
+  | .dependent => 1
+  | .lexical => 0
+
+/-- Is a DP with this case level accessible to a probe with the
+    given threshold? Contiguity: a DP is accessible iff its level
+    is at or above the threshold. -/
+def caseAccessible (dpLevel threshold : CaseAccessibility) : Bool :=
+  dpLevel.rank ≥ threshold.rank
+
+/-- A case alignment maps argument positions (S, A, P) to case
+    accessibility levels.
+
+    - S: intransitive subject (sole argument)
+    - A: transitive agent (external argument)
+    - P: transitive patient (internal argument) -/
+structure CaseAlignment where
+  /-- Case accessibility of the intransitive subject. -/
+  sLevel : CaseAccessibility
+  /-- Case accessibility of the transitive agent. -/
+  aLevel : CaseAccessibility
+  /-- Case accessibility of the transitive patient. -/
+  pLevel : CaseAccessibility
+  deriving Repr
+
+/-- Nominative-accusative alignment: S and A both get unmarked (NOM),
+    P gets dependent (ACC). -/
+def nomAcc : CaseAlignment :=
+  ⟨.unmarked, .unmarked, .dependent⟩
+
+/-- Ergative-absolutive alignment: S and P both get unmarked (ABS),
+    A gets dependent (ERG). -/
+def ergAbs : CaseAlignment :=
+  ⟨.unmarked, .dependent, .unmarked⟩
+
+/-- Tripartite alignment: S gets unmarked (ABS), A gets dependent
+    (ERG), P gets dependent (ACC). Mam. -/
+def tripartite : CaseAlignment :=
+  ⟨.unmarked, .dependent, .dependent⟩
+
+/-- Agreement pattern: which argument positions trigger agreement. -/
+structure AgreementPattern where
+  sAgrees : Bool   -- intransitive subject
+  aAgrees : Bool   -- transitive agent
+  pAgrees : Bool   -- transitive patient
+  deriving DecidableEq, Repr
+
+/-- Given a case alignment and an accessibility threshold, compute
+    which argument positions are visible to the probe. -/
+def agreementFromThreshold (ca : CaseAlignment) (threshold : CaseAccessibility) :
+    AgreementPattern :=
+  { sAgrees := caseAccessible ca.sLevel threshold
+  , aAgrees := caseAccessible ca.aLevel threshold
+  , pAgrees := caseAccessible ca.pLevel threshold }
+
+/-- Is this agreement pattern ergative-absolutive?
+    S and P agree, A does not (S=P≠A). -/
+def AgreementPattern.isErgAbs (ap : AgreementPattern) : Bool :=
+  ap.sAgrees && ap.pAgrees && !ap.aAgrees
+
+/-- Is this agreement pattern nominative-accusative?
+    S and A agree, P does not (S=A≠P). -/
+def AgreementPattern.isNomAcc (ap : AgreementPattern) : Bool :=
+  ap.sAgrees && ap.aAgrees && !ap.pAgrees
+
+/-- The three possible thresholds. -/
+def thresholds : List CaseAccessibility :=
+  [.unmarked, .dependent, .lexical]
+
+/-- With NOM-ACC case, A always agrees whenever S agrees (both have
+    unmarked = NOM). Therefore, the pattern S=P≠A (ergative-absolutive
+    agreement) is impossible: you cannot target S without also targeting A.
+
+    This is [bobaljik-2008]'s typological gap: NOM-ACC case + ERG-ABS
+    agreement is unattested. -/
+theorem nomAcc_a_equals_s (threshold : CaseAccessibility) :
+    (agreementFromThreshold nomAcc threshold).aAgrees =
+    (agreementFromThreshold nomAcc threshold).sAgrees := by
+  cases threshold <;> rfl
+
+/-- Corollary: ERG-ABS agreement is impossible with NOM-ACC case.
+    No threshold produces S=P≠A under NOM-ACC alignment. -/
+theorem nomAcc_no_ergAbs_agreement (threshold : CaseAccessibility) :
+    (agreementFromThreshold nomAcc threshold).isErgAbs = false := by
+  cases threshold <;> rfl
+
+/-- With ERG-ABS case, threshold = unmarked yields ABS agreement:
+    S and P agree (both have ABS = unmarked), A does not (ERG =
+    dependent, below threshold). This is ergative-absolutive agreement. -/
+theorem ergAbs_unmarked_yields_abs_agreement :
+    (agreementFromThreshold ergAbs .unmarked).isErgAbs = true := rfl
+
+/-- With ERG-ABS case, threshold = dependent yields agreement with
+    ALL arguments (S, A, P all accessible). -/
+theorem ergAbs_dependent_yields_all :
+    let ap := agreementFromThreshold ergAbs .dependent
+    ap.sAgrees = true ∧ ap.aAgrees = true ∧ ap.pAgrees = true :=
+  ⟨rfl, rfl, rfl⟩
+
+/-- Contiguity: if a DP with dependent case is accessible, then any
+    DP with unmarked case is also accessible (unmarked > dependent). -/
+theorem contiguity_unmarked_dependent (threshold : CaseAccessibility) :
+    caseAccessible .dependent threshold = true →
+    caseAccessible .unmarked threshold = true := by
+  cases threshold <;> simp [caseAccessible, CaseAccessibility.rank]
+
+/-- Contiguity: if a DP with lexical case is accessible, then DPs
+    with dependent and unmarked case are also accessible. -/
+theorem contiguity_lexical (threshold : CaseAccessibility) :
+    caseAccessible .lexical threshold = true →
+    caseAccessible .dependent threshold = true ∧
+    caseAccessible .unmarked threshold = true := by
+  cases threshold <;> simp [caseAccessible, CaseAccessibility.rank]
+
+/-- Dative intervention: a dative DP blocks the probe's search.
+
+    Components:
+    - `dativePresent`: a dative DP intervenes between probe and goal
+    - `threshold`: the probe's case accessibility threshold
+    - `targetLevel`: the case level of the intended goal -/
+structure DativeInterventionContext where
+  /-- A dative (lexical case) DP intervenes. -/
+  dativePresent : Bool
+  /-- The probe's case accessibility threshold. -/
+  threshold : CaseAccessibility
+  /-- Case level of the intended agreement target. -/
+  targetLevel : CaseAccessibility
+  deriving Repr
+
+/-- Is the dative visible to the probe? Only if the threshold is
+    low enough to include lexical case. -/
+def dativeVisibleToProbe (threshold : CaseAccessibility) : Bool :=
+  caseAccessible .lexical threshold
+
+/-- Does dative intervention cause agreement failure?
+
+    The dative intervenes (blocks the probe by locality/minimality)
+    if it has matching phi-features. But it cannot be a valid goal
+    because its case (lexical) is below the threshold. The probe
+    fails without crashing.
+
+    This is modeled as: if a dative is present AND the dative's
+    case is below the threshold (so the probe can't Agree with it)
+    AND the dative blocks access to the real target by minimality,
+    then agreement fails. -/
+def dativeIntervenes (ctx : DativeInterventionContext) : Bool :=
+  ctx.dativePresent &&
+  !dativeVisibleToProbe ctx.threshold  -- dative below threshold
+
+/-- With a standard threshold (unmarked or dependent), a dative
+    DP causes intervention: it blocks the probe but cannot be
+    agreed with. -/
+theorem dative_blocks_at_unmarked :
+    dativeIntervenes ⟨true, .unmarked, .unmarked⟩ = true := rfl
+
+theorem dative_blocks_at_dependent :
+    dativeIntervenes ⟨true, .dependent, .unmarked⟩ = true := rfl
+
+/-- If the threshold includes lexical case, the dative does NOT
+    intervene — it becomes a valid agreement target. -/
+theorem dative_no_intervention_at_lexical :
+    dativeIntervenes ⟨true, .lexical, .unmarked⟩ = false := rfl
+
+/-- Kaqchikel has ergative-absolutive alignment: S and P get ABS
+    (unmarked), A gets ERG (dependent). -/
+def kaqCaseAlignment : CaseAlignment := ergAbs
+
+/-- Under Kaqchikel's alignment with threshold = unmarked, agreement
+    targets S and P (Set B / absolutive agreement) but not A. This is
+    consistent with the Set B (ABS) paradigm. -/
+theorem kaq_abs_agreement :
+    (agreementFromThreshold kaqCaseAlignment .unmarked).sAgrees = true ∧
+    (agreementFromThreshold kaqCaseAlignment .unmarked).pAgrees = true ∧
+    (agreementFromThreshold kaqCaseAlignment .unmarked).aAgrees = false :=
+  ⟨rfl, rfl, rfl⟩
+
+/-- Kaqchikel Set A agreement targets A (ERG): this requires a
+    separate probe (Voice/v) with threshold = dependent, which
+    sees both unmarked and dependent case DPs. -/
+theorem kaq_erg_agreement_threshold :
+    (agreementFromThreshold kaqCaseAlignment .dependent).aAgrees = true := rfl
+
+end Minimalist
+
 namespace Marantz1991
 
 open Minimalist Minimalist.Voice
 open Case
 open Georgian.Agreement
-
--- ============================================================================
--- § 1: Bridge from SplitErgativity to Dependent Case
--- ============================================================================
 
 /-- Map alignment family to dependent case language type.
     Bridges the typological description (`Alignment.SplitErgativity`) to
@@ -58,10 +255,6 @@ def georgianLangType (ts : TenseSeries) : Alignment.AlignmentType :=
 
 theorem present_is_accusative : georgianLangType .present = .accusative := rfl
 theorem aorist_is_ergative : georgianLangType .aorist = .ergative := rfl
-
--- ============================================================================
--- § 2: NP Configurations by Verb Class
--- ============================================================================
 
 /-- NP configuration for each Georgian verb class (present/aorist).
 
@@ -78,10 +271,6 @@ def georgianNPs : VerbClass → List NP
   | .class3 => [⟨"subj", none⟩, ⟨"empty", none⟩]  -- phantom object position
   | .class4 => [⟨"subj", some .dat⟩, ⟨"obj", none⟩]  -- quirky DAT
 
--- ============================================================================
--- § 3: Georgian Case Derivation
--- ============================================================================
-
 /-- Run the dependent case algorithm for a Georgian verb class in a
     given tense series. -/
 def georgianCaseResult (vc : VerbClass) (ts : TenseSeries) : List (NP × Valuation) :=
@@ -91,10 +280,6 @@ private def getCase! (label : String) (results : List (NP × Valuation)) : Case 
   match getCaseOf label results with
   | some c => c
   | none   => .dat  -- placeholder; the algorithm always returns every NP
-
--- ============================================================================
--- § 4: Abstract Case → Morphological Case (Georgian Spell-Out)
--- ============================================================================
 
 /-- Georgian-specific mapping from abstract case (algorithm output) to
     surface morphological case. This is the language-specific spell-out
@@ -116,10 +301,6 @@ def georgianSpellout : Case → Case
 theorem acc_surfaces_as_dat : georgianSpellout .acc = .dat := rfl
 theorem abs_surfaces_as_nom : georgianSpellout .abs = .nom := rfl
 
--- ============================================================================
--- § 5: Bridge to Georgian Agreement Fragment
--- ============================================================================
-
 /-! The dependent case algorithm + Georgian spell-out produces exactly
     the surface case frames recorded in `Georgian.Agreement`.
     This is the core empirical validation: the algorithm derives all
@@ -139,10 +320,6 @@ theorem object_derivation_matches :
     georgianSpellout (getCase! "obj" (georgianCaseResult .class4 .present)) = .nom ∧
     georgianSpellout (getCase! "obj" (georgianCaseResult .class4 .aorist)) = .nom := by
   native_decide
-
--- ============================================================================
--- § 6: The Ergative Generalization
--- ============================================================================
 
 /-! [marantz-1991]'s Ergative generalization: ergative case may appear
     on the subject of an intransitive clause, but not on a derived subject.
@@ -182,10 +359,6 @@ theorem ergative_requires_competitor :
     getMechanismOf "higher" (assignCases .ergative [⟨"higher", none⟩, ⟨"lower", none⟩]) =
       some .dependent := by
   native_decide
-
--- ============================================================================
--- § 7: Burzio's Generalization Decomposed
--- ============================================================================
 
 /-! [marantz-1991]'s key insight: Burzio's generalization
     ("non-thematic subject → no accusative object") splits into:
@@ -230,10 +403,6 @@ def npCount (voice : Head) (internalArgs : Nat) : Nat :=
 
 theorem agentive_two_nps : npCount agentive 1 = 2 := rfl
 theorem anticausative_one_np : npCount anticausative 1 = 1 := rfl
-
--- ============================================================================
--- § 8: Hindi Split Ergativity
--- ============================================================================
 
 /-! Hindi has aspect-conditioned split ergativity: perfective triggers
     ERG on the transitive agent (*-ne*), imperfective has NOM-ACC.
@@ -305,10 +474,6 @@ theorem phantom_np_parameter :
     getCaseOf "subj" (assignCases .ergative [⟨"subj", none⟩]) = some .abs := by
   native_decide
 
--- ============================================================================
--- § 9: All Three Levels of the Hierarchy in One Language
--- ============================================================================
-
 /-! Georgian demonstrates all three levels of [marantz-1991]'s
     case realization hierarchy within a single language:
 
@@ -330,10 +495,6 @@ theorem lexical_bleeds_dependent_georgian :
     getMechanismOf "obj" (georgianCaseResult .class4 .present) = some .unmarked ∧
     getMechanismOf "obj" (georgianCaseResult .class1 .present) = some .dependent := by
   native_decide
-
--- ============================================================================
--- § 10: Case Hierarchy ↔ Agreement Hierarchy Bridge
--- ============================================================================
 
 /-! [marantz-1991]'s case realization hierarchy (lexical > dependent >
     unmarked) parallels the Moravcsik agreement accessibility hierarchy
@@ -381,10 +542,6 @@ theorem class2_unmarked_highest_accessibility :
     sourceToAccessibility Mechanism.unmarked = CaseAccessibility.unmarked ∧
     caseAccessible CaseAccessibility.unmarked CaseAccessibility.unmarked = true := ⟨rfl, rfl⟩
 
--- ============================================================================
--- § 11: Voice → NP Count → Case (End-to-End)
--- ============================================================================
-
 /-! The full argumentation chain from Voice to surface case:
 
     Voice (θ-assigning?) → NP count → dependent case algorithm → spell-out
@@ -425,10 +582,6 @@ theorem burzio_from_voice :
     -- Non-thematic Voice: no ACC (sole NP gets NOM)
     getCaseOf "theme" (assignCases .accusative (npsFromVoice anticausative)) = some .nom := by
   native_decide
-
--- ============================================================================
--- § 12: Agreement–Case Independence (§7 Core Insight)
--- ============================================================================
 
 /-! [marantz-1991]'s central insight about Georgian split ergativity:
     case direction changes by tense series, but agreement does NOT.
