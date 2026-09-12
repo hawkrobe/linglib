@@ -19,8 +19,7 @@ The lexical-reactive side — `никто`, `ничего`, `никогда`, `�
 lives in `Fragments/Russian/PolarityItems.lean` per the operator/lexical-
 reactive split documented in `Core/Lexical/NegMarker.lean`. The
 `NegConcordExample` data below illustrates the marker's NC behavior at
-the sentence level, which is operator-side typology consumed by
-`Studies/Miestamo2005.lean`.
+the sentence level, which is operator-side typology.
 -/
 
 namespace Russian.Negation

@@ -714,7 +714,6 @@ import Linglib.Features.Gender.Capabilities
 import Linglib.Features.Gender.Decomposition
 import Linglib.Features.Gender.Interp
 import Linglib.Features.Gender.Resolve
-import Linglib.Features.Genericity
 import Linglib.Features.Givenness
 import Linglib.Features.Grammaticalization
 import Linglib.Features.Indefinite
@@ -1274,8 +1273,6 @@ import Linglib.Fragments.Yoruba.Phonology
 import Linglib.Fragments.Yoruba.Relativization
 import Linglib.Fragments.ZarmaSonrai.Negation
 import Linglib.Fragments.Zulu.Phonology
-import Linglib.Morphology.Construction.Inheritance
-import Linglib.Morphology.Construction.Schema
 import Linglib.Morphology.DistributedMorphology.Allosemy
 import Linglib.Morphology.DistributedMorphology.Basic
 import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
@@ -1592,7 +1589,6 @@ import Linglib.Semantics.Conditionals.Counterfactual.Alternatives
 import Linglib.Semantics.Conditionals.Counterfactual.Implicature
 import Linglib.Semantics.Conditionals.Counterfactual.Lumping
 import Linglib.Semantics.Conditionals.Counterfactual.QuantifierEmbedding
-import Linglib.Semantics.Conditionals.LeftNested
 import Linglib.Semantics.Conditionals.Marker
 import Linglib.Semantics.Conditionals.PremiseSemantic
 import Linglib.Semantics.Conditionals.Presupposition
@@ -1725,7 +1721,6 @@ import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Modality.Kratzer.Ordering
 import Linglib.Semantics.Modality.Kratzer.Premise
-import Linglib.Semantics.Modality.ModalBaseKind
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Semantics.Modality.Narrog
 import Linglib.Semantics.Modality.Orthologic.Frames
@@ -2339,7 +2334,6 @@ import Linglib.Studies.Kenstowicz1987
 import Linglib.Studies.KeshetAbney2024
 import Linglib.Studies.Khoo2015
 import Linglib.Studies.Kim2024
-import Linglib.Studies.Kim2024_UPH
 import Linglib.Studies.Kiparsky2002
 import Linglib.Studies.KirkGiannini2024
 import Linglib.Studies.Kiss1998
@@ -2356,15 +2350,11 @@ import Linglib.Studies.Kratzer1981
 import Linglib.Studies.Kratzer1996
 import Linglib.Studies.Kratzer1998
 import Linglib.Studies.Kratzer2012Conditionals
-import Linglib.Studies.Kratzer2012Informational
-import Linglib.Studies.Kratzer2012Lumping
 import Linglib.Studies.KratzerSelkirk2020
 import Linglib.Studies.KratzerShimoyama2002
 import Linglib.Studies.Krejci2012
 import Linglib.Studies.Krifka1989
 import Linglib.Studies.Krifka1998
-import Linglib.Studies.Krifka2004
-import Linglib.Studies.Krifka2007
 import Linglib.Studies.Krifka2013
 import Linglib.Studies.Krifka2015
 import Linglib.Studies.Krifka2020

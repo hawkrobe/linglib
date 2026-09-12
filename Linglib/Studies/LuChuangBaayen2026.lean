@@ -2,9 +2,10 @@ import Linglib.Processing.DiscriminativeLexicon.Training
 import Linglib.Studies.ChuangEtAl2026
 
 /-!
-# Lu, Chuang and Baayen 2026: tonal realization in spontaneous Taiwan Mandarin
+# Lu, Chuang and Baayen (2026): The Realization of Tones in Spontaneous Spoken Taiwan Mandarin
 
-[lu-chuang-baayen-2026] survey the f0 contours of disyllabic words across all 20 tone patterns
+This file formalizes the model-side half of the centroid claim of [lu-chuang-baayen-2026],
+which surveys the f0 contours of disyllabic words across all 20 tone patterns
 of Taiwan Mandarin, a lexical tone followed by a lexical or neutral tone (Table 1), in
 [fon-2004]'s corpus of spontaneous speech. In generalized additive mixed models, word and sense
 outweigh tone pattern as predictors of the contour (§3.4). Following
@@ -19,22 +20,17 @@ simply be reclassified, and theoretically: the model predicts forms from meaning
 from forms, and the tone-pattern contours emerge without the model being told the patterns.
 The lab-speech contours of [xu-1997] match the predicted ones for several patterns (Fig. 11).
 
-This file instantiates the DLM at the paper's carriers and states the model-side half of the
-centroid claim at them. Linearity alone sends a centroid to the mean of the predicted contours
-(`LinearMap.map_centroid`); training does better: whenever membership in a set of training
-tokens is a linear functional of the embeddings, the least-squares map sends that set's
-centroid exactly to the mean of its target contours (`production_centroid_eq_of_decodable`,
+The file instantiates the discriminative lexicon at the paper's carriers. Linearity alone
+sends a centroid to the mean of the predicted contours (`LinearMap.map_centroid`); training
+does better: whenever membership in a set of training tokens is a linear functional of the
+embeddings, the least-squares map sends that set's centroid exactly to the mean of its target
+contours (`production_centroid_eq_of_decodable`,
 the substrate's `Linear.IsELTrainedOn.production_centroid_eq_of_decodable`, shared with
 [chuang-bell-tseng-baayen-2026]'s Fig. 18). The paper's centroids weight word types equally
 rather than tokens (§4.4) and Fig. 9 compares against GAMM contours, so the match it reports
 is approximate; the theorem states what least squares guarantees when a tone pattern is
 linearly recoverable from meaning. The GAMM fits and the nearest-neighbour accuracies are
 outside the Processing scope.
-
-## Main results
-
-* `production_centroid_eq_of_decodable`: a least-squares-trained map sends the centroid of a
-  linearly decodable tone pattern's tokens exactly to the mean of their target contours.
 
 ## References
 

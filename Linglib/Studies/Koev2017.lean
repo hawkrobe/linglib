@@ -1,559 +1,135 @@
 import Linglib.Semantics.Events.Basic
-import Linglib.Semantics.Tense.Evidential
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Fragments.Slavic.Bulgarian.Evidentials
 
 /-!
-# [koev-2017]: Bulgarian Evidentials and Spatiotemporal Distance
+# Koev (2017): Evidentiality, Learning Events and Spatiotemporal Distance
 
-The Bulgarian evidential (-l participle) is felicitous when the speaker's
-evidence acquisition is **spatiotemporally distant** from the described
-event: either temporally non-overlapping (standard indirect evidence) or
-spatially distant (same time, different place). Direct witness (same
-time, same place) is infelicitous. Plus: the evidential contribution
-projects past negation/modals (not-at-issue) and the speaker is fully
-committed to the proposition (non-modal analysis, contra
-[izvorski-1997]).
+This file formalizes [koev-2017]'s account of the Bulgarian evidential *-l* as a spatiotemporal
+distance rather than a semantic primitive: an evidential sentence introduces a learning event,
+the event through which the speaker acquired the evidence for the claim, and requires that it
+be spatiotemporally distant from the described event, either not overlapping it in time, as
+with standard indirect evidence, or located elsewhere, as when smoke from a chimney shows a
+fire in progress (`spatiotemporallyDistant`, Definition 24). Direct witness, the same time and
+the same place, is the one configuration the evidential excludes (`direct_not_distant`). The
+distance constraint is independent of the temporal ordering that past tense contributes: the
+smoke scenario satisfies it with no ordering at all (`smoke_no_tense_ordering`). The evidential
+implication is not at issue and projects: in the representation (74b) the learning event
+restricts the context set while the declarative operator (72) commits the speaker to the core
+proposition itself, so the distance condition is the presupposition of a partial proposition
+whose assertion is that proposition, and negation preserves it, (78) (`toEvidentialProp`,
+`projection_past_negation`). No modal weakening of the assertion is involved, against
+[izvorski-1997].
 
-## Main definitions
+## Implementation notes
 
-* `temporallyDisjoint` / `spatiotemporallyDistant` — Koev's △ predicate (Def. 24)
-* `EvidentialDatum` + `coreData` — felicity data table for indirect /
-  direct-witness / smoke-from-chimney scenarios
-* `trianglePredicts` — felicity prediction by △
-* `triangle_predicts_all` — verification that △ matches felicity data
-
-## TODO
-
-* **Location field on `Event T`**: △ is parameterized over an external
-  `loc : Event T → L` because `Event T` lacks a built-in location.
-  Extending the core event type would affect ~20 files. Until then,
-  spatial-distance reasoning takes `loc` as a parameter at use sites.
-* **Learning event `e_l` ontology**: Koev's deepest contribution (74b) is
-  the existential introduction of a learning event with `learn_{cs(k)}`
-  subscripted on the context set. Not yet formalized; the substrate
-  bridge to [cumming-2026]'s downstream T ≤ A constraint is partial.
+* `Event T` carries no location, so the distance predicate takes a location function as a
+  parameter.
+* The learning predicate itself, the knowledge change it reports, and the evidence-source
+  typology of §5 are not modelled; the scenarios record only the two events.
 
 ## References
 
-* [koev-2017] (primary)
-* [cumming-2026] (downstream consumer of △ → T ≤ A bridge)
-* [izvorski-1997] (contra: modal analysis Koev rejects)
+* [koev-2017]
+* [izvorski-1997]
 -/
 
 namespace Koev2017
 
-/-! ### Spatiotemporal Overlap Types -/
-
-/-- Whether the described event and the learning event overlap in time. -/
-inductive TemporalOverlap where
-  | overlapping     -- τ(e) ∩ τ(e') ≠ ∅
-  | nonoverlapping  -- τ(e) ∩ τ(e') = ∅
-  deriving DecidableEq, Repr
-
-/-- Whether the described event and the learning event share a location. -/
-inductive SpatialRelation where
-  | samePlace       -- loc(e) = loc(e')
-  | differentPlace  -- loc(e) ≠ loc(e')
-  deriving DecidableEq, Repr
-
-/-! ### Evidential Datum Structure -/
-
-/-- An evidential felicity datum from [koev-2017].
-    Each records the spatiotemporal configuration of the described event
-    and the learning event, and whether the evidential is felicitous. -/
-structure EvidentialDatum where
-  /-- Temporal overlap between described and learning events -/
-  temporal : TemporalOverlap
-  /-- Spatial relation between described and learning events -/
-  spatial : SpatialRelation
-  /-- Whether the Bulgarian evidential is felicitous in this configuration -/
-  evidentialFelicitous : Bool
-  /-- Example number in [koev-2017] -/
-  exampleNum : String
-  deriving Repr, BEq
-
-/-! ### Core △ Data ([koev-2017], §4) -/
-
-/-- (3)/(25a): Standard indirect evidence — speaker was not present when
-    the event occurred. Non-overlapping in time, same place. Felicitous. -/
-def indirectEvidence : EvidentialDatum where
-  temporal := .nonoverlapping
-  spatial := .samePlace
-  evidentialFelicitous := true
-  exampleNum := "25a"
-
-/-- Direct witness — speaker perceived the event as it happened.
-    Overlapping in time, same place. Infelicitous. -/
-def directWitness : EvidentialDatum where
-  temporal := .overlapping
-  spatial := .samePlace
-  evidentialFelicitous := false
-  exampleNum := "25a-control"
-
-/-- (25b): Smoke from chimney — speaker perceives evidence of the event
-    from a different location, at the same time. Overlapping in time,
-    different place. Felicitous — spatial distance suffices. -/
-def smokeFromChimney : EvidentialDatum where
-  temporal := .overlapping
-  spatial := .differentPlace
-  evidentialFelicitous := true
-  exampleNum := "25b"
-
-/-! ### Commitment and Projection Data -/
-
-/-- The evidential does not weaken commitment: "EV(p) and I know
-    because I was there" is not contradictory (unlike a modal which
-    would predict contradiction). [koev-2017], §3. -/
-def commitmentDatum : Bool := true
-
-/-- The evidential contribution projects past negation: "It is not the
-    case that Ivan EV-came" presupposes indirect evidence while negating
-    the proposition. [koev-2017], §5. -/
-def projectionDatum : Bool := true
-
-/-! ### △ Felicity Generalization -/
-
-/-- △ predicts felicity: the evidential is felicitous iff the described
-    event and the learning event are spatiotemporally distant (temporally
-    non-overlapping or spatially distant). -/
-def trianglePredicts (d : EvidentialDatum) : Bool :=
-  match d.temporal, d.spatial with
-  | .nonoverlapping, _              => true   -- temporal disjointness suffices
-  | _,               .differentPlace => true  -- spatial distance suffices
-  | .overlapping,    .samePlace      => false -- no distance → infelicitous
-
-/-- All core data points. -/
-def coreData : List EvidentialDatum :=
-  [indirectEvidence, directWitness, smokeFromChimney]
-
-/-! ### Data Verification -/
-
-/-- There are 3 core data points. -/
-theorem core_count : coreData.length = 3 := rfl
-
-/-- △ correctly predicts felicity for all core data points. -/
-theorem triangle_predicts_all :
-    coreData.all (fun d => d.evidentialFelicitous == trianglePredicts d) = true := rfl
-
-/-! ### Evidential Perspective -/
-
-open Evidential
-
-/-- A datum's evidential perspective is read off temporal overlap:
-    overlapping learning events are contemporaneous, non-overlapping ones
-    retrospective (in Koev's PE data the learning event follows the
-    described event). -/
-instance : HasEvidentialPerspective EvidentialDatum where
-  toEvidentialPerspective d :=
-    match d.temporal with
-    | .overlapping => some .contemporaneous
-    | .nonoverlapping => some .retrospective
-
-/-- All of Koev's spatiotemporal configurations are nonfuture (T ≤ A): the
-    event-interval account agrees with the perspective taxonomy. -/
-theorem coreData_nonfuture : ∀ d ∈ coreData, IsNonfuture d := by decide
-
-/-! ### Bridge: Connecting to Linglib Infrastructure -/
-
-/-! Bridge theorems connecting [koev-2017]'s spatiotemporal distance analysis
-to existing linglib infrastructure, organized around the paper's four
-properties (property 6):
-
-- **(i) Spatiotemporal meaning** — △(e, e_l): §§3–4 below
-- **(ii) Speaker commitment** — assertion = p, non-modal: §5
-- **(iii)–(iv) Not at issue + Projection** — presup projects past negation: §6
-
-Plus structural bridges:
-- **△ vs. temporal ordering** — these are independent constraints: §4
-- **Bridge to [cumming-2026]** — △ → T ≤ A (downstream evidence): §7
-- **Bridge to nfutL** — existing fragment connection: §8
-
-## Central Claim: Learning Events
-
-The paper's deepest contribution is ontological: evidentials introduce a
-**learning event** e_l — the event through which the speaker acquired the
-reported information. The formal representation (74b):
-
-  ∃e_l ∧ learn_{cs(k)}(e_l, sp(k), p) ∧ τ(e_l) ≤ time(k) ∧ e △ e_l
-
-The learn predicate is subscripted with **cs(k)** (context set), not with
-**p** (scope proposition). This is the formal mechanism for not-at-issue
-status: the evidential restricts the context set directly (≈ presupposition),
-while the assertion commits the speaker to p via DECL (72).
--/
-
 open Presupposition
-open Tense.Evidential
-open Bulgarian.Evidentials
 
-/-! ### Spatiotemporal distance △ substrate (inlined) -/
+variable {T : Type*} [LinearOrder T] {L : Type*}
 
-/-! [koev-2017] Definition 24: two events satisfy △ when either
-    their temporal traces don't overlap (standard indirect evidence) or
-    they occur at different locations (smoke-from-chimney scenario).
-    Inlined from former `Semantics/Events/SpatiotemporalDistance.lean`
-    — single-consumer (this file) substrate, paper-anchored entirely on
-    Koev 2017. Architectural note: `Event T` lacks a built-in location
-    field, so △ is parameterized by an external `loc : Event T → L`. -/
+/-- Two events are temporally disjoint when their temporal traces do not overlap, the first
+disjunct of Definition 24. -/
+def temporallyDisjoint (e₁ e₂ : Event T) : Prop := ¬ e₁.τ.overlaps e₂.τ
 
-/-- Two events are temporally disjoint when their temporal traces do not
-    overlap (Koev 2017, first disjunct of Def. 24). -/
-def temporallyDisjoint {T : Type*} [LinearOrder T]
-    (e₁ e₂ : Event T) : Prop :=
-  ¬ (e₁.τ.overlaps e₂.τ)
-
-/-- Spatiotemporal distance △ (Koev 2017, Def. 24). Two events are
-    spatiotemporally distant if either their temporal traces don't
-    overlap or they occur at different locations. -/
-def spatiotemporallyDistant {T : Type*} [LinearOrder T]
-    {L : Type*} [DecidableEq L]
-    (loc : Event T → L) (e₁ e₂ : Event T) : Prop :=
+/-- Spatiotemporal distance, Definition 24: the events do not overlap in time or occur at
+different locations. -/
+def spatiotemporallyDistant (loc : Event T → L) (e₁ e₂ : Event T) : Prop :=
   temporallyDisjoint e₁ e₂ ∨ loc e₁ ≠ loc e₂
 
-/-- If e₁ temporally precedes e₂, they are temporally disjoint
-    (standard indirect evidence: described event finished before
-    learning event started). -/
-theorem temporallyDisjoint_of_precedes {T : Type*} [LinearOrder T]
-    (e₁ e₂ : Event T)
-    (h : e₁.τ.precedes e₂.τ) : temporallyDisjoint e₁ e₂ := by
-  unfold temporallyDisjoint NonemptyInterval.overlaps NonemptyInterval.precedes at *
-  simp only [Event.τ] at *
-  exact fun ⟨_, h2⟩ => absurd h2 (not_le.mpr h)
+instance [DecidableEq T] (e₁ e₂ : Event T) : Decidable (temporallyDisjoint e₁ e₂) :=
+  inferInstanceAs (Decidable (¬ e₁.τ.overlaps e₂.τ))
 
-/-- If two events are temporally disjoint and the first starts no later
-    than the second, then the first is temporally before the second:
-    bridges Koev's event-based △ to Cumming's point-based T ≤ A. -/
-theorem disjoint_earlier_implies_isBefore {T : Type*} [LinearOrder T]
-    (e₁ e₂ : Event T)
-    (hd : temporallyDisjoint e₁ e₂)
-    (hearlier : e₁.τ.fst ≤ e₂.τ.fst) : e₁.τ.isBefore e₂.τ := by
-  unfold temporallyDisjoint NonemptyInterval.overlaps at hd
-  unfold NonemptyInterval.isBefore
-  simp only [Event.τ] at *
-  by_contra h
-  push Not at h
-  exact hd ⟨le_trans hearlier e₂.runtime.fst_le_snd, le_of_lt h⟩
+instance [DecidableEq T] [DecidableEq L] (loc : Event T → L) (e₁ e₂ : Event T) :
+    Decidable (spatiotemporallyDistant loc e₁ e₂) :=
+  inferInstanceAs (Decidable (temporallyDisjoint e₁ e₂ ∨ loc e₁ ≠ loc e₂))
 
-/-- Overlapping runtimes are incompatible with temporal distance. -/
-theorem overlapping_not_disjoint {T : Type*} [LinearOrder T]
-    (e₁ e₂ : Event T)
-    (h : e₁.τ.overlaps e₂.τ) : ¬ temporallyDisjoint e₁ e₂ :=
-  fun hd => hd h
+/-- An event that precedes another is temporally disjoint from it: standard indirect evidence,
+the described event over before the learning event begins. -/
+theorem temporallyDisjoint_of_precedes {e₁ e₂ : Event T} (h : e₁.τ.precedes e₂.τ) :
+    temporallyDisjoint e₁ e₂ :=
+  NonemptyInterval.precedes_not_overlaps h
 
-/-- Spatial distance alone suffices for △ (Koev 2017, ex. 25b). -/
-theorem spatiotemporallyDistant_of_different_location
-    {T : Type*} [LinearOrder T] {L : Type*} [DecidableEq L]
-    (loc : Event T → L) (e₁ e₂ : Event T)
-    (h : loc e₁ ≠ loc e₂) : spatiotemporallyDistant loc e₁ e₂ :=
-  Or.inr h
-
-/-- Temporal disjointness alone suffices for △. -/
-theorem spatiotemporallyDistant_of_temporallyDisjoint
-    {T : Type*} [LinearOrder T] {L : Type*} [DecidableEq L]
-    (loc : Event T → L) (e₁ e₂ : Event T)
-    (h : temporallyDisjoint e₁ e₂) : spatiotemporallyDistant loc e₁ e₂ :=
-  Or.inl h
-
-/-! ### Learning Scenarios ([koev-2017], §4) -/
-
-/-- A learning scenario: the evidential introduces a
-    learning event e_l — the event through which the speaker acquired
-    the reported information — paired with the described event e.
-
-    The paper's representation (74b):
-      ∃e_l ∧ learn_{cs(k)}(e_l, sp(k), p) ∧ τ(e_l) ≤ time(k) ∧ e △ e_l
-
-    ## The cs(k) Subscript
-
-    The `learn` predicate is subscripted with **cs(k)** (the context set at
-    discourse move k), not with the scope proposition p. This is the formal
-    mechanism for not-at-issue status: the evidential contribution restricts
-    the *context set* directly (≈ presupposition in `PartialProp.presup`), while
-    the assertion commits the speaker to p via DECL (72), which maps to
-    `PartialProp.assertion`.
-
-    The mapping is:
-    - `learn_{cs(k)}(e_l, sp(k), p)` → `PartialProp.presup` (restricts cs)
-    - `DECL(72): dc^sp(c) ⊆ p` → `PartialProp.assertion` (commits to p)
-
-    This explains why the evidential projects past negation (property 6iv):
-    `PartialProp.neg` preserves `presup` while negating `assertion`.
-
-    ## What's Captured
-
-    - The **event pair** (e, e_l) — the described event and the learning event
-    - **△(e, e_l)** — spatiotemporal distance, via `isTemporallyDisjoint` /
-      `isSpatiotemporallyDistant` and bridge to `PartialProp` via `toEvidentialProp`
-    - **The presup/assertion split** — cs(k) subscript → presup, DECL → assertion
-
-    ## What's Not Captured (Future Work)
-
-    - **The learn predicate itself**: We don't model the knowledge-change
-      semantics of `learn(e_l, sp(k), p)`. This would require time-indexed
-      epistemic states: K_sp(p, t) ∧ ¬K_sp(p, t') for t' < τ(e_l).
-    - **Propositional content p**: The structure pairs events but doesn't
-      carry the proposition learned. Adding `p : W → Bool` would require
-      a world type parameter constraining downstream usage.
-    - **Speech time constraint**: τ(e_l) ≤ time(k) ensures the learning
-      event is past. This interacts with tense morphology (the L-participle
-      is morphologically past) but is not modeled here.
-    - **Evidence source typology**: The paper distinguishes reportative,
-      inferential, and assumptive evidence (§5) via different learn
-      predicates. We collapse these into a single △ constraint. -/
+/-- A learning scenario: the described event and the learning event through which the speaker
+acquired the evidence for the claim, (74b). -/
 structure LearningScenario (T : Type*) [LinearOrder T] where
-  /-- The described event (what happened: e.g., Ivan kissing Maria) -/
   described : Event T
-  /-- The learning event (how the speaker found out: e.g., hearing a report) -/
   learning : Event T
 
-/-- △ holds for this scenario (temporal component): the described and
-    learning events have non-overlapping temporal traces. -/
-def LearningScenario.isTemporallyDisjoint {T : Type*} [LinearOrder T]
-    (s : LearningScenario T) : Prop :=
-  temporallyDisjoint s.described s.learning
-
-/-- △ holds for this scenario (full spatiotemporal version): temporal
-    disjointness OR spatial distance. -/
-def LearningScenario.isSpatiotemporallyDistant {T : Type*} [LinearOrder T]
-    {L : Type*} [DecidableEq L] (loc : Event T → L)
-    (s : LearningScenario T) : Prop :=
-  spatiotemporallyDistant loc s.described s.learning
-
-/-- Computable temporal △ for ℤ events: ¬(τ(e) overlaps τ(e_l)).
-    Since integer comparison is decidable, we can evaluate △ from the
-    event structure directly. -/
-def LearningScenario.triangleTemporalB (s : LearningScenario ℤ) : Bool :=
-  !(s.described.τ.fst ≤ s.learning.τ.snd && s.learning.τ.fst ≤ s.described.τ.snd)
-
-/-- `triangleTemporalB` agrees with the propositional `isTemporallyDisjoint`:
-    the Bool computation and the Prop predicate coincide for ℤ events. -/
-theorem LearningScenario.triangleTemporalB_iff (s : LearningScenario ℤ) :
-    s.triangleTemporalB = true ↔ s.isTemporallyDisjoint := by
-  unfold triangleTemporalB isTemporallyDisjoint temporallyDisjoint NonemptyInterval.overlaps
-  simp only [Event.τ]
-  constructor
-  · intro h ⟨h1, h2⟩
-    simp only [Bool.not_eq_true', Bool.and_eq_false_iff,
-               decide_eq_false_iff_not] at h
-    cases h with
-    | inl h => exact h h1
-    | inr h => exact h h2
-  · intro h
-    simp only [Bool.not_eq_true', Bool.and_eq_false_iff,
-               decide_eq_false_iff_not]
-    by_contra hc
-    push Not at hc
-    exact h ⟨hc.1, hc.2⟩
-
-/-- Construct a PartialProp from a learning scenario, making the
-    cs(k) → presup mapping constructive.
-
-    The presupposition is derived from the event structure (△ holds or not),
-    and the assertion is the scope proposition p (committed via DECL).
-    This is the concrete realization of Koev's (74b):
-    - `presup` := △(described, learning) — the evidential's cs(k) contribution
-    - `assertion` := p — the scope proposition -/
-def LearningScenario.toEvidentialProp (s : LearningScenario ℤ)
-    {W : Type*} (p : W → Prop) : PartialProp W where
-  presup := fun _ => s.triangleTemporalB
+/-- The evidential sentence as a partial proposition: the distance condition of the learning
+event restricts the context set, (74b), and the declarative operator (72) commits the speaker
+to the core proposition itself. -/
+def LearningScenario.toEvidentialProp (loc : Event T → L) (s : LearningScenario T) {W : Type*}
+    (p : W → Prop) : PartialProp W where
+  presup := λ _ => spatiotemporallyDistant loc s.described s.learning
   assertion := p
 
-/-! ### Concrete Scenarios -/
-
-/-- Described event: interval [0, 5]. -/
-def describedEvent : Event ℤ := ⟨⟨⟨0, 5⟩, by omega⟩, .action⟩
-
-/-- Learning event (indirect): interval [10, 15] — strictly later. -/
-def learningEventIndirect : Event ℤ := ⟨⟨⟨10, 15⟩, by omega⟩, .state⟩
-
-/-- Learning event (direct witness): interval [2, 4] — overlaps described. -/
-def learningEventDirect : Event ℤ := ⟨⟨⟨2, 4⟩, by omega⟩, .state⟩
-
-/-- Learning event (spatial distance): interval [0, 5] — same time,
-    different place (smoke from chimney). -/
-def learningEventSpatial : Event ℤ := ⟨⟨⟨0, 5⟩, by omega⟩, .state⟩
-
-/-- Indirect evidence scenario: described event [0,5], learning event [10,15]. -/
-def indirectScenario : LearningScenario ℤ where
-  described := describedEvent
-  learning := learningEventIndirect
-
-/-- Smoke-from-chimney scenario: described event [0,5], learning event [0,5]
-    at a different location. -/
-def smokeScenario : LearningScenario ℤ where
-  described := describedEvent
-  learning := learningEventSpatial
-
-/-! ### Property (i): Spatiotemporal Meaning — △ -/
-
-/-- Indirect evidence: described and learning events are temporally
-    disjoint — described event [0,5] finished before learning event
-    [10,15] started. △ satisfied via temporal disjointness. -/
-theorem indirect_temporallyDisjoint :
-    temporallyDisjoint indirectScenario.described indirectScenario.learning := by
-  unfold temporallyDisjoint NonemptyInterval.overlaps indirectScenario describedEvent learningEventIndirect
-  simp only [Event.τ]
-  omega
-
-/-- Direct witness: described event [0,5] and learning event [2,4] overlap.
-    They are NOT temporally disjoint — △ fails (when also co-located). -/
-theorem direct_not_disjoint :
-    ¬ temporallyDisjoint describedEvent learningEventDirect := by
-  unfold temporallyDisjoint NonemptyInterval.overlaps describedEvent learningEventDirect
-  simp only [Event.τ]
-  push Not
-  omega
-
-/-- The smoke scenario events temporally overlap — temporal disjointness
-    alone does NOT yield △ here. -/
-theorem smoke_temporally_overlapping :
-    ¬ temporallyDisjoint smokeScenario.described smokeScenario.learning := by
-  unfold temporallyDisjoint NonemptyInterval.overlaps smokeScenario describedEvent learningEventSpatial
-  simp only [Event.τ]
-  push Not
-  omega
-
-/-- Despite temporal overlap, any location function assigning different
-    locations to the described and learning events yields △. This captures
-    the smoke-from-chimney scenario (§4): spatial distance suffices. -/
-theorem smoke_spatiotemporallyDistant
-    {L : Type*} [DecidableEq L] (loc : Event ℤ → L)
-    (hdiff : loc smokeScenario.described ≠ loc smokeScenario.learning) :
-    spatiotemporallyDistant loc smokeScenario.described smokeScenario.learning :=
-  Or.inr hdiff
-
-/-! ### △ vs. Temporal Ordering (Independent Constraints) -/
-
-/-! The paper separates two constraints in (74b):
-    - `e △ e_l` : spatiotemporal distance (the **evidential's** contribution)
-    - `τ(e) < τ(e_l)` : temporal ordering (the **past tense's** contribution)
-
-    These are independent: △ can hold via spatial distance alone (smoke
-    scenario has △ without temporal ordering), and temporal ordering is
-    imposed by tense morphology, not the evidential. -/
-
-/-- Temporal ordering: the described event PRECEDES the learning event.
-    This is the past tense's contribution, NOT the evidential's.
-    Paper (74b): τ(e) < τ(e_l). -/
-theorem indirect_tense_ordering :
-    indirectScenario.described.τ.precedes indirectScenario.learning.τ := by
-  unfold NonemptyInterval.precedes indirectScenario describedEvent learningEventIndirect
-  simp only [Event.τ]
-  omega
-
-/-- The smoke scenario has NO temporal ordering (events are simultaneous),
-    yet △ holds via spatial distance. This demonstrates that △ and temporal
-    ordering are independent constraints. -/
-theorem smoke_no_tense_ordering :
-    ¬ smokeScenario.described.τ.precedes smokeScenario.learning.τ := by
-  unfold NonemptyInterval.precedes smokeScenario describedEvent learningEventSpatial
-  simp only [Event.τ]
-  omega
-
-/-! ### The Four Properties (Derived from toEvidentialProp) -/
-
-/-! All four properties (property 6) follow from `toEvidentialProp`:
-
-    - **(i) Spatiotemporal meaning**: presup = △(described, learning),
-      derived from event structure via `triangleTemporalB`
-    - **(ii) Speaker commitment**: assertion = p (non-modal, full commitment)
-    - **(iii) Not at issue**: △ is in presup (cs restriction), not assertion
-    - **(iv) Projection**: PartialProp.neg preserves presup → △ projects past ¬ -/
-
-/-- Property (6i): the presupposition of the constructed PartialProp IS the
-    △ condition, derived from the event structure. When △ holds (indirect
-    evidence), the presupposition is satisfied at every world. -/
-theorem indirect_presup_satisfied {W : Type*} (p : W → Prop) (w : W) :
-    (indirectScenario.toEvidentialProp p).presup w := by
-  unfold LearningScenario.toEvidentialProp LearningScenario.triangleTemporalB
-         indirectScenario describedEvent learningEventIndirect
-  simp only [Event.τ]
-  decide
-
-/-- When △ fails (direct witness), the presupposition fails —
-    the evidential sentence is undefined (infelicitous). -/
-def directScenario : LearningScenario ℤ where
-  described := describedEvent
-  learning := learningEventDirect
-
-theorem direct_presup_fails {W : Type*} (p : W → Prop) (w : W) :
-    ¬ (directScenario.toEvidentialProp p).presup w := by
-  unfold LearningScenario.toEvidentialProp LearningScenario.triangleTemporalB
-         directScenario describedEvent learningEventDirect
-  simp only [Event.τ]
-  decide
-
-/-- Property (6ii): the assertion of a scenario's PartialProp IS the scope
-    proposition. The speaker commits to p, not to a modalized version.
-    This holds by construction: DECL (72) maps to `PartialProp.assertion`. -/
-theorem assertion_is_scope (s : LearningScenario ℤ) {W : Type*} (p : W → Prop) :
-    (s.toEvidentialProp p).assertion = p := rfl
-
-/-- A modal evidential would assert □_e(p) — "p must be
-    true given evidence e" — a DIFFERENT proposition from p.
-
-    This is a simplified stub; the full Kratzer-grounded version is
-    `Izvorski1997.Ev`, which uses `necessity f g p` as the assertion and
-    the existence of indirect evidence for `p` as the presupposition. -/
-def modalEvidential {W : Type*} (evidence : Bool) (must_p : W → Prop) : PartialProp W where
-  presup := fun _ => evidence
-  assertion := must_p
-
-/-- The modal analysis CAN weaken the assertion: there exist
-    instantiations where the modal's assertion diverges from the scope
-    proposition, while Koev's assertion is always p by construction. -/
-theorem modal_can_weaken :
-    ∃ (p must_p : Unit → Prop),
-      (indirectScenario.toEvidentialProp p).assertion ≠
-      (modalEvidential true must_p).assertion := by
-  refine ⟨fun _ => True, fun _ => False, ?_⟩
-  simp only [LearningScenario.toEvidentialProp, modalEvidential]
-  intro h
-  exact absurd (congr_fun h ()) (by simp)
-
-/-- Property (6iv): the evidential presupposition projects past negation.
-    Negating the evidential negates the assertion (p → ¬p) but preserves
-    the presupposition (△). This follows from PartialProp's general negation
-    rule and captures the paper's formalization (78). -/
-theorem projection_past_negation (s : LearningScenario ℤ) {W : Type*} (p : W → Prop) :
-    (PartialProp.neg (s.toEvidentialProp p)).presup = (s.toEvidentialProp p).presup :=
+/-- Projection, (78): negation preserves the evidential presupposition while negating the
+core proposition. -/
+theorem projection_past_negation (loc : Event T → L) (s : LearningScenario T) {W : Type*}
+    (p : W → Prop) :
+    (s.toEvidentialProp loc p).neg.presup = (s.toEvidentialProp loc p).presup :=
   PartialProp.neg_presup _
 
-/-! ### Bridge to [cumming-2026]: △ → T ≤ A -/
+/-! ### The scenarios of §4 -/
 
-/-- For the indirect evidence case, temporal disjointness + ordering
-    gives isBefore: τ(e).snd ≤ τ(e_l).fst. -/
-theorem indirect_isBefore :
-    indirectScenario.described.τ.isBefore indirectScenario.learning.τ := by
-  unfold NonemptyInterval.isBefore indirectScenario describedEvent learningEventIndirect
-  simp only [Event.τ]
-  omega
+/-- A place for the events of the scenarios. -/
+inductive Place
+  | here
+  | there
+  deriving DecidableEq, Repr
 
-/-- Construct Cumming's EvidentialFrame from the learning scenario:
-    T = τ(e).snd, A = τ(e_l).fst. This bridges Koev's event-based
-    analysis to Cumming's point-based (S, A, T) frame. -/
-def indirectFrame : EvidentialFrame ℤ where
-  speechTime := 20
-  perspectiveTime := 20
-  referenceTime := 20
-  eventTime := indirectScenario.described.τ.snd
-  acquisitionTime := indirectScenario.learning.τ.fst
+/-- The described event, over the interval `[0, 5]`. -/
+def described : Event ℤ := ⟨⟨⟨0, 5⟩, by omega⟩, .action⟩
 
-/-- Cumming's downstream evidence (T ≤ A) holds for the indirect frame —
-    the temporal special case of Koev's △. -/
-theorem indirect_downstream : indirectFrame.Downstream := by
-  unfold EvidentialFrame.Downstream indirectFrame indirectScenario describedEvent
-    learningEventIndirect
-  simp only [Event.τ]
-  omega
+/-- Standard indirect evidence, (25a): the speaker learns of the event afterwards. -/
+def indirect : LearningScenario ℤ := ⟨described, ⟨⟨⟨10, 15⟩, by omega⟩, .state⟩⟩
 
-/-! ### Bridge to Existing Fragment -/
+/-- Direct witness: the speaker perceives the event as it happens, in the same place. -/
+def direct : LearningScenario ℤ := ⟨described, ⟨⟨⟨2, 4⟩, by omega⟩, .state⟩⟩
 
-/-- The existing Bulgarian nfutL entry has EP = downstream (T ≤ A),
-    which is the temporal special case of Koev's △: when spatial distance
-    is not at play, △ reduces to temporal disjointness, and temporal
-    disjointness + described-before-learning gives T ≤ A. -/
-theorem nfutL_is_downstream : nfutL.ep = .downstream := rfl
+/-- Smoke from the chimney, (25b): the speaker perceives the evidence at the same time from
+elsewhere. -/
+def smoke : LearningScenario ℤ := ⟨described, ⟨⟨⟨0, 5⟩, by omega⟩, .state⟩⟩
+
+/-- The location of every event is `here` except the smoke scenario's learning event, the
+one state that runs alongside the described event. -/
+def loc (e : Event ℤ) : Place := if e.sort = .state ∧ e.τ.fst = 0 then .there else .here
+
+/-- The evidential is felicitous with indirect evidence, by temporal disjointness, and with
+smoke from the chimney, by spatial distance alone, and infelicitous under direct witness. -/
+theorem felicity :
+    spatiotemporallyDistant loc indirect.described indirect.learning ∧
+      spatiotemporallyDistant loc smoke.described smoke.learning ∧
+      ¬ spatiotemporallyDistant loc direct.described direct.learning := by
+  decide
+
+/-- Direct witness fails both disjuncts of Definition 24. -/
+theorem direct_not_distant (loc : Event ℤ → L) (h : loc direct.described = loc direct.learning) :
+    ¬ spatiotemporallyDistant loc direct.described direct.learning := by
+  rintro (hd | hl)
+  · exact hd (by decide)
+  · exact hl h
+
+/-- The two constraints of (74b) are independent: past tense orders the described event before
+the learning event in the indirect scenario, while the smoke scenario satisfies the distance
+condition with the two events simultaneous. -/
+theorem smoke_no_tense_ordering :
+    indirect.described.τ.precedes indirect.learning.τ ∧
+      ¬ smoke.described.τ.precedes smoke.learning.τ ∧
+      temporallyDisjoint indirect.described indirect.learning ∧
+      ¬ temporallyDisjoint smoke.described smoke.learning := by
+  decide
 
 end Koev2017
