@@ -172,6 +172,9 @@ instance : PartialOrder (Flat α) where
 theorem coe_le_iff : (a : Flat α) ≤ y ↔ y = ↑a :=
   ⟨fun h => by cases h; rfl, fun h => h ▸ .refl a⟩
 
+/-- A value is maximal: nothing lies above it but itself. -/
+theorem isMax_coe (a : α) : IsMax (a : Flat α) := λ _ hy => (coe_le_iff.1 hy).le
+
 theorem le_coe_iff : x ≤ (b : Flat α) ↔ x = ⊥ ∨ x = ↑b := by
   cases x <;> simp
 
