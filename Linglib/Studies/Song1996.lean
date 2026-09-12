@@ -14,7 +14,7 @@ PURP (Korean *-ke ha-*).
 This file owns Song's typology + 6 per-language datums + WALS Ch 110A/111A
 grounding theorems + the Comrie-Song complexity bridge. The orthogonal
 Pylkkänen 2008 Voice-bundling × selection typology lives at
-`Studies/Pylkkanen2008.lean` §13 (Pylkkänen's
+`Studies/Pylkkanen2008.lean` (Pylkkänen's
 substrate; not subsumed by Song's). Comrie 1989's compact/morphological/
 periphrastic complexity scale lives at
 `Semantics/Causation/Morphological.CausativeComplexity` (the
@@ -42,7 +42,7 @@ the file-level typology should be read against:
   language, losing a robust typological generalization.
 - [wood-marantz-2017], [cuervo-2014]: generative-side updates of
   Pylkkänen 2008's Voice-bundling × selection typology — see
-  `Pylkkanen2008.lean` §13.
+  `Pylkkanen2008.lean`.
 
 The internal `CausativeMorphology` enum (suffix / freeMorpheme / lexical)
 within COMPACT is closer to current field consensus than Song's COMPACT/AND/
