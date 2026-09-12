@@ -278,6 +278,54 @@ theorem length_values (t : RoseTree α) : t.values.length = t.numNodes := by
       List.map_congr_left ih]
     omega
 
+/-- The value at each node paired with the values of its children, in preorder: the local
+branching structure of the tree, one entry per node. -/
+def offspring : RoseTree α → List (α × List α)
+  | .node a cs => (a, cs.map value) :: (cs.map fun c => offspring c).flatten
+termination_by t => sizeOf t
+decreasing_by exact sizeOf_lt_of_mem ‹_›
+
+@[simp] theorem offspring_node (a : α) (cs : List (RoseTree α)) :
+    offspring (node a cs) = (a, cs.map value) :: (cs.map offspring).flatten := by
+  rw [offspring]
+
+theorem length_offspring (t : RoseTree α) : t.offspring.length = t.numNodes := by
+  induction t with
+  | node a cs ih =>
+    simp only [offspring_node, numNodes_node, List.length_cons, List.length_flatten,
+      List.map_map, Function.comp_def]
+    rw [show (cs.map fun c => c.offspring.length) = cs.map numNodes from
+      List.map_congr_left ih]
+    omega
+
+/-- The leaf values from left to right: the ordered frontier. -/
+def leafList : RoseTree α → List α :=
+  fold fun a ls => match ls with
+    | [] => [a]
+    | ls => ls.flatten
+
+@[simp] theorem leafList_leaf (a : α) : leafList (node a []) = [a] := by
+  simp only [leafList, fold_node, List.map_nil]
+
+theorem leafList_node_of_ne_nil (a : α) {cs : List (RoseTree α)} (h : cs ≠ []) :
+    leafList (node a cs) = (cs.map leafList).flatten := by
+  obtain ⟨c, cs, rfl⟩ := List.exists_cons_of_ne_nil h
+  simp only [leafList, fold_node, List.map_cons]
+
+@[simp] theorem leafList_node_cons (a : α) (c : RoseTree α) (cs : List (RoseTree α)) :
+    leafList (node a (c :: cs)) = ((c :: cs).map leafList).flatten :=
+  leafList_node_of_ne_nil a (List.cons_ne_nil c cs)
+
+theorem leafList_ne_nil (t : RoseTree α) : t.leafList ≠ [] := by
+  induction t with
+  | node a cs ih =>
+    cases cs with
+    | nil => simp
+    | cons c cs =>
+      rw [leafList_node_cons]
+      exact List.flatten_ne_nil_iff.2 ⟨c.leafList, List.mem_map_of_mem (List.mem_cons_self ..),
+        ih c (List.mem_cons_self ..)⟩
+
 /-- The number of leaves (childless nodes). A single leaf counts as `1`. -/
 def numLeaves : RoseTree α → ℕ :=
   fold fun _ ns => max 1 ns.sum
@@ -413,6 +461,25 @@ theorem map_leaf (f : α → β) (a : α) : map f (leaf a) = leaf (f a) := rfl
   | node a cs ih =>
     simp only [map_node, height_node, List.map_map]
     exact congrArg (List.foldr max 0) (List.map_congr_left fun c hc => congrArg (· + 1) (ih c hc))
+
+@[simp] theorem offspring_map (f : α → β) (t : RoseTree α) :
+    (map f t).offspring = t.offspring.map fun p => (f p.1, p.2.map f) := by
+  induction t with
+  | node a cs ih =>
+    simp only [map_node, offspring_node, List.map_map, List.map_cons, List.map_flatten]
+    refine congrArg₂ _ ?_ (congrArg List.flatten (List.map_congr_left fun c hc => ih c hc))
+    exact congrArg _ (List.map_congr_left fun c _ => by cases c; rfl)
+
+@[simp] theorem leafList_map (f : α → β) (t : RoseTree α) :
+    (map f t).leafList = t.leafList.map f := by
+  induction t with
+  | node a cs ih =>
+    cases cs with
+    | nil => simp
+    | cons c cs =>
+      simp only [map_node, List.map_cons, leafList_node_cons, List.map_flatten, List.map_map]
+      exact congrArg List.flatten (congrArg₂ _ (ih c (List.mem_cons_self ..))
+        (List.map_congr_left fun d hd => ih d (List.mem_cons_of_mem _ hd)))
 
 /-! ### Instances -/
 
