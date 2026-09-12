@@ -344,7 +344,8 @@ theorem ablaut_words :
         (Sum.elim Forms.sprech.slots Forms.sprich.slots) := by
   simp only [singSang, stringStrung, ablaut, nucleusPair_iff]
   refine ⟨⟨by decide, by decide, ?_⟩, ⟨by decide, by decide, ?_⟩,
-    ⟨bot_le, bot_le, ?_⟩⟩ <;> intro q hq <;> fin_cases q <;> first | decide | exact (hq rfl).elim
+    ⟨bot_le, bot_le, ?_⟩⟩
+  all_goals intro q hq; fin_cases q <;> first | decide | exact (hq rfl).elim
 
 /-! ### The present-tense cells of (45) as a morphome -/
 
