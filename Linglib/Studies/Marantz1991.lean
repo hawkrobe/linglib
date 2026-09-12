@@ -24,11 +24,6 @@ Default case, the last resort of the hierarchy, is not modelled apart from unmar
 the evidential series of Georgian is a morphological property of its inflection and outside
 the algorithm. [baker-2015] later develops the hierarchy into a cross-linguistic algorithm.
 
-## TODO
-
-The paper is not on file; locators are transcribed from an earlier version of this file and
-are UNVERIFIED.
-
 ## References
 
 * [marantz-1991]
@@ -288,7 +283,7 @@ private def getCase! (label : String) (results : List (NP × Valuation)) : Case 
 
     - Abstract ACC → morphological DAT (dative and accusative
       morphological case have fallen together in Georgian into what
-      is called "the dative case" — [marantz-1991] p. 12)
+      is called "the dative case" — [marantz-1991] p. 234)
     - Abstract ABS → morphological NOM (unmarked surface form)
     - Abstract ERG → morphological ERG -/
 def georgianSpellout : Case → Case
