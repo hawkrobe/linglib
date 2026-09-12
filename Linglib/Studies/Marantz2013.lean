@@ -19,10 +19,11 @@ contains nor is contained in the root's (`idiom_rows`, `domains_cross_cut`), and
 that conditions the root is the first category head or noncyclic with only null heads below
 it (`strong_prediction`).
 
-## TODO
+## Implementation notes
 
-The chapter is not on file; example and section locators are transcribed from an earlier
-version of this file and are UNVERIFIED.
+The words are the rows of `Data/Examples/Marantz2013`, the examples of (1) to (3) and (5) to
+(7) and Table 6.1 of the chapter; the locality predicates are those of
+`Morphology/DistributedMorphology/Locality`.
 
 ## References
 
