@@ -1724,7 +1724,6 @@ import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Modality.Kratzer.Ordering
 import Linglib.Semantics.Modality.Kratzer.Premise
-import Linglib.Semantics.Modality.ModalBaseKind
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Semantics.Modality.Narrog
 import Linglib.Semantics.Modality.Orthologic.Frames
@@ -2360,7 +2359,6 @@ import Linglib.Studies.KratzerShimoyama2002
 import Linglib.Studies.Krejci2012
 import Linglib.Studies.Krifka1989
 import Linglib.Studies.Krifka1998
-import Linglib.Studies.Krifka2004
 import Linglib.Studies.Krifka2007
 import Linglib.Studies.Krifka2013
 import Linglib.Studies.Krifka2015

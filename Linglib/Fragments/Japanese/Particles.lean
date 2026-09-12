@@ -19,8 +19,8 @@ embedding-distribution facets.
 
 Adverbs and focus particles that express subjective evaluation and manage
 discourse stances, following [kubota-2026]. The fragment carries the theory-neutral
-lexical inventory (form + category); [kubota-2026]'s stance classification and modal
-selectional restrictions live in `Studies/Kubota2026.lean`.
+lexical inventory (form + category); [kubota-2026]'s two-layered meaning and modal
+selectional generalizations live in `Studies/Kubota2026.lean`.
 -/
 
 namespace Japanese.Particles
@@ -114,9 +114,9 @@ end Japanese.Particles
 /-! ## Part 2: Outlook Markers
 
 Theory-neutral lexical inventory of the Japanese adverbs and focus particles that
-[kubota-2026] analyses as outlook markers ([kubota-2026] (1)-(2)). The stance
-classification, modal restrictions, and dual-layer denotation are paper apparatus and
-live in `Studies/Kubota2026.lean`. -/
+[kubota-2026] analyses as outlook markers ([kubota-2026] (1)-(2)). The two-layered
+denotation and the modal selectional generalizations are paper apparatus and live in
+`Studies/Kubota2026.lean`. -/
 
 namespace Japanese.OutlookMarkers
 
@@ -136,7 +136,7 @@ structure OutlookMarkerForm where
   deriving DecidableEq, Repr
 
 /-- Outlook markers are all use-conditional items of one expressive class — the consensus
-metadata Fragments carry; the diagnostic fingerprint lives in `Studies/Kubota2026.lean`. -/
+metadata Fragments carry. -/
 def expressiveKind : Features.Expressive := .outlookMarker
 
 /-! ### Adverbs ([kubota-2026] (1)) -/
