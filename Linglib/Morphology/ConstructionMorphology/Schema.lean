@@ -47,7 +47,8 @@ variables (`Schema.instantiates_iff_instantiation_of_forall_isMax`).
   subscripting, as instantiation of the pulled-back description together with agreement at
   coindexed positions.
 * `Schema.Relates`, `Schema.Generates`, `Schema.IsProductive`: the two roles of a schema and
-  productivity.
+  productivity; `Schema.generates_iff_mem_pi`: what a schema generates is the product of its
+  slotwise fillers.
 * `Instantiation`, `Contrast`: the relational links, same except at a set of positions.
 * `Schema.instantiates_inf_iff`, `Schema.instantiates_iff_of_unify_eq_some`: the meet of two
   items is their least general generalization, the Structural Intersection of Relational
@@ -269,6 +270,24 @@ def Generates (s : Schema V α) (Λ : Set (V → α)) (w : V → α) : Prop :=
   s.Instantiates w ∧ ∀ v, s.body v = ⊥ → v ∉ s.opens → w v ∈ s.attested Λ v
 
 theorem Generates.instantiates (h : s.Generates Λ w) : s.Instantiates w := h.1
+
+/-- The fillers a schema admits at a slot over a lexicon: anything above the description at an
+open variable, the attested fillers at a closed one, and whatever lies above a constant. -/
+def fillers (s : Schema V α) (Λ : Set (V → α)) (v : V) : Set α :=
+  {a | s.body v ≤ a ∧ (s.body v = ⊥ → v ∉ s.opens → a ∈ s.attested Λ v)}
+
+/-- The items a schema generates are the product of its slotwise filler sets. -/
+theorem generates_iff_mem_pi : s.Generates Λ w ↔ w ∈ Set.pi Set.univ (s.fillers Λ) := by
+  simp only [Generates, Set.mem_univ_pi, fillers, Set.mem_ofPred_eq, Instantiates, Pi.le_def]
+  exact ⟨λ h v => ⟨h.1 v, h.2 v⟩, λ h => ⟨λ v => (h v).1, λ v => (h v).2⟩⟩
+
+/-- Where every value other than `⊥` is maximal, a constant admits only itself. -/
+theorem fillers_of_ne_bot (hα : ∀ a : α, a ≠ ⊥ → IsMax a) {v : V}
+    (hv : s.body v ≠ ⊥) :
+    s.fillers Λ v = {s.body v} := by
+  ext a
+  simp only [fillers, Set.mem_ofPred_eq, Set.mem_singleton_iff]
+  exact ⟨λ h => (le_antisymm (hα _ hv h.1) h.1), λ h => ⟨h.ge, λ h' => absurd h' hv⟩⟩
 
 /-- A related item is generated, attesting its own fillers. -/
 theorem Relates.generates (h : s.Relates Λ w) : s.Generates Λ w :=

@@ -3,249 +3,156 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Morphology.ConstructionMorphology.Schema
 import Mathlib.Data.Fintype.Card
-import Mathlib.Tactic.DeriveFintype
+import Mathlib.Data.Fintype.EquivFin
+import Mathlib.Order.WellFounded
+import Mathlib.Data.Option.Basic
 
 /-!
 # Inheritance hierarchies
 
-The rival horn of the motivation question ([jackendoff-audring-2020] ch. 3): a
-lexical entry is motivated by inheriting default properties from a more general
-entry, overriding where it legislates locally. A `Hierarchy` is a single-parent
-chain with acyclicity witnessed by a well-founded parent relation (the taxonomy
-of [jackendoff-audring-2020]'s Figure 3.5); multiple inheritance — a node with
-two schematic parents, as in their cross-classifying cases — is deferred to a
-future engine and out of scope here.
+This file defines default inheritance with override: a lexical entry inherits a property from a
+more general entry unless it specifies the property itself. It is the organizing principle of
+the hierarchical lexicon of Construction Morphology and the rival to relational motivation in
+Relational Morphology. A `Hierarchy` is a single-parent forest whose parent relation is
+well-founded, and `Hierarchy.value` looks up a node's own specification if it has one and its
+nearest ancestor's otherwise, by recursion along the parent relation; the recursion step is
+the priority union of partial values, `Option.or`.
 
-Default/override lookup (`Hierarchy.value`) reads a node's local specification if
-present, else the nearest ancestor's. It is computed by fuel-bounded structural
-recursion saturating at `Fintype.card`, so it kernel-reduces (a
-`WellFounded.fix` definition would not, blocking `decide`). Acyclicity is not
-needed for the lookup laws — `card` fuel saturates any finite parent map — so
-`value_eq_of_att` and `value_eq_parent` hold structurally; the well-founded
-field records the taxonomy commitment and feeds later results.
+A finite family of schemas with distinct descriptions carries its own hierarchy
+(`Hierarchy.ofFamily`): a schema's parent is the nearest more general schema of the family,
+the one whose description is greatest among those strictly below its own. What is inherited
+monotonically, everything a more general description pins, needs no lookup, since an instance
+of a schema instantiates every more general schema; the lookup is for defeasible properties
+that a subschema may override.
 
-Formal defaults-with-override traditions this abstracts: DATR
-([evans-gazdar-1996]) and Network Morphology ([brown-hippisley-2012]).
-[jackendoff-audring-2020] argue inheritance and the impoverished-entry model do
-not by themselves explicate motivation — their claim, contested in the DATR
-literature. The recursion step is the priority union of the flat
-feature-slot order (`Option.or`, i.e. `Flat.or`; see `valueFuel_succ`);
-its multi-parent default-inheritance form lives in
-`Syntax/ConstructionGrammar/Inheritance.lean` (`inheritField`).
+Multiple inheritance, a node with two parents, is not modelled here; the multi-parent form of
+the override step is `Syntax/ConstructionGrammar/Inheritance.lean`. The formal traditions of
+defaults with override are DATR and Network Morphology.
 
 ## Main declarations
 
-- `Hierarchy` — a single-parent chain with a well-founded parent relation
-- `valueFuel`, `Hierarchy.value` — fuel-bounded default/override lookup
-- `Hierarchy.value_eq_of_att`, `Hierarchy.value_eq_parent` — override wins;
-  path extension to the parent
-- `Hierarchy.parent_asymm` — no 2-cycle: nodes cannot be each other's parent
+* `Hierarchy`, `Hierarchy.ofDepth`: a single-parent forest with a well-founded parent relation.
+* `Hierarchy.value`, `Hierarchy.value_eq`: default-and-override lookup and its recursion.
+* `Hierarchy.parent_asymm`: no two nodes are each other's parent.
+* `Hierarchy.NearestGeneral`, `Hierarchy.ofFamily`, `Hierarchy.ofFamily_parent_eq_some_iff`: the
+  hierarchy derived from a finite family of schemas.
+
+## References
+
+* [jackendoff-audring-2020]
+* [booij-2010-compass]
+* [evans-gazdar-1996]
+* [brown-hippisley-2012]
 -/
 
 namespace ConstructionMorphology
 
-variable {ι β : Type*} {parent : ι → Option ι} {att : ι → Option β}
+variable {ι β : Type*}
 
-/-- A single-parent inheritance chain: `parent` links each node to its immediate
-supertype (`none` at a root), with `wf` witnessing acyclicity. -/
+/-- A single-parent inheritance hierarchy: `parent` links each node to its immediate
+supertype, `none` at a root, and `wf` witnesses acyclicity. -/
 structure Hierarchy (ι : Type*) where
   /-- The immediate-supertype map. -/
   parent : ι → Option ι
   /-- Acyclicity: the parent relation is well-founded. -/
-  wf : WellFounded (fun a b => parent b = some a)
+  wf : WellFounded λ a b => parent b = some a
 
-/-- Build a hierarchy from a depth function decreasing toward the root: on a
-finite node type the obligation closes by `decide`, sparing each constructicon
-a hand-rolled well-foundedness proof. -/
-def Hierarchy.ofDepth (parent : ι → Option ι) (depth : ι → Nat)
+namespace Hierarchy
+
+/-- A hierarchy from a parent map and a depth function decreasing toward the root; on a finite
+node type the obligation closes by `decide`. -/
+def ofDepth (parent : ι → Option ι) (depth : ι → ℕ)
     (h : ∀ a b, parent b = some a → depth a < depth b) : Hierarchy ι where
   parent := parent
-  wf := Subrelation.wf (fun {a b} hab => h a b hab)
-    (InvImage.wf depth Nat.lt_wfRel.wf : WellFounded fun a b => depth a < depth b)
+  wf := Subrelation.wf (λ {a b} hab => h a b hab) (InvImage.wf depth Nat.lt_wfRel.wf)
 
-/-- Default/override lookup with a step budget: at fuel `0` only the local
-specification is read; each further unit walks one step to the parent. -/
-def valueFuel (parent : ι → Option ι) (att : ι → Option β) : Nat → ι → Option β
-  | 0, n => att n
-  | k + 1, n =>
-    match att n with
-    | some v => some v
-    | none => (parent n).bind (valueFuel parent att k)
+variable (h : Hierarchy ι) {att : ι → Option β}
 
-/-- The recursion step is the priority union of the flat feature-slot
-order: the local specification wins, else defer to the parent. -/
-theorem valueFuel_succ (k : Nat) (n : ι) :
-    valueFuel parent att (k + 1) n =
-      (att n).or ((parent n).bind (valueFuel parent att k)) := by
-  cases h : att n <;> simp [valueFuel, h, Option.or]
+/-- Default-and-override lookup: a node's own specification if present, else the nearest
+ancestor's, by recursion along the parent relation. -/
+def value (att : ι → Option β) : ι → Option β :=
+  h.wf.fix λ n ih => (att n).or ((h.parent n).pbind λ m hm => ih m (Option.mem_def.1 hm))
 
-/-! ### Fuel monotonicity and saturation -/
-
-/-- A local specification is read at any fuel. -/
-theorem valueFuel_of_att {n : ι} {v : β} (h : att n = some v) (k : Nat) :
-    valueFuel parent att k n = some v := by
-  cases k with
-  | zero => exact h
-  | succ k => simp only [valueFuel, h]
-
-/-- A value found within `k` steps is still found within `k + 1`. -/
-theorem valueFuel_some_succ (k : Nat) (n : ι) (v : β)
-    (h : valueFuel parent att k n = some v) :
-    valueFuel parent att (k + 1) n = some v := by
-  induction k generalizing n v with
-  | zero =>
-    simp only [valueFuel] at h
-    simp only [valueFuel, h]
-  | succ k ih =>
-    simp only [valueFuel] at h ⊢
-    cases hatt : att n with
-    | some a => simp only [hatt] at h ⊢; exact h
-    | none =>
-      simp only [hatt] at h ⊢
-      cases hp : parent n with
-      | none => rw [hp] at h; simp at h
-      | some m => simp only [hp] at h ⊢; exact ih m v h
-
-/-- Two fuel levels giving the same lookup give the same lookup after one more
-step: the recursion consumes only the previous level. -/
-theorem valueFuel_succ_congr {j k : Nat}
-    (h : valueFuel parent att j = valueFuel parent att k) :
-    valueFuel parent att (j + 1) = valueFuel parent att (k + 1) := by
-  funext n
-  simp only [valueFuel, h]
-
-/-- Once a fuel level is a fixed point, every larger level agrees with it. -/
-theorem valueFuel_const_of_fixed {k : Nat}
-    (hfix : valueFuel parent att k = valueFuel parent att (k + 1)) :
-    ∀ m, k ≤ m → valueFuel parent att m = valueFuel parent att k := by
-  intro m hm
-  induction m, hm using Nat.le_induction with
-  | base => rfl
-  | succ m _ ih => rw [valueFuel_succ_congr ih, ← hfix]
-
-section Fintype
-variable [Fintype ι]
-
-/-- The nodes whose lookup succeeds within `k` steps. -/
-private def defined (parent : ι → Option ι) (att : ι → Option β) (k : Nat) : Finset ι :=
-  Finset.univ.filter (fun n => (valueFuel parent att k n).isSome = true)
-
-private theorem mem_defined {k : Nat} {n : ι} :
-    n ∈ defined parent att k ↔ (valueFuel parent att k n).isSome = true := by
-  simp [defined]
-
-private theorem defined_subset_succ (k : Nat) :
-    defined parent att k ⊆ defined parent att (k + 1) := by
-  intro n hn
-  rw [mem_defined] at hn ⊢
-  obtain ⟨v, hv⟩ := Option.isSome_iff_exists.mp hn
-  simp [valueFuel_some_succ k n v hv]
-
-private theorem defined_ssubset_of_ne {k : Nat}
-    (h : valueFuel parent att k ≠ valueFuel parent att (k + 1)) :
-    defined parent att k ⊂ defined parent att (k + 1) := by
-  refine lt_of_le_of_ne (defined_subset_succ k) ?_
-  intro hdefeq
-  apply h
-  funext n
-  by_cases hk : (valueFuel parent att k n).isSome = true
-  · obtain ⟨v, hv⟩ := Option.isSome_iff_exists.mp hk
-    rw [hv, valueFuel_some_succ k n v hv]
-  · rw [Bool.not_eq_true, Option.isSome_eq_false_iff, Option.isNone_iff_eq_none] at hk
-    by_cases hk1 : (valueFuel parent att (k + 1) n).isSome = true
-    · have hmem : n ∈ defined parent att k := hdefeq ▸ mem_defined.mpr hk1
-      rw [mem_defined, hk] at hmem
-      exact absurd hmem (by simp)
-    · rw [Bool.not_eq_true, Option.isSome_eq_false_iff, Option.isNone_iff_eq_none] at hk1
-      rw [hk, hk1]
-
-/-- **Card fuel saturates**: with `Fintype.card` fuel the lookup is a fixed
-point of the one-step recursion. A monotone chain of defined-sets bounded by the
-universe can strictly grow at most `card` times. -/
-theorem valueFuel_card_fixed :
-    valueFuel parent att (Fintype.card ι) = valueFuel parent att (Fintype.card ι + 1) := by
-  by_contra hne
-  have hstep : ∀ k, k ≤ Fintype.card ι →
-      (defined parent att k).card < (defined parent att (k + 1)).card := by
-    intro k hk
-    apply Finset.card_lt_card
-    apply defined_ssubset_of_ne
-    intro heq
-    exact hne ((valueFuel_const_of_fixed heq (Fintype.card ι) (by omega)).trans
-      (valueFuel_const_of_fixed heq (Fintype.card ι + 1) (by omega)).symm)
-  have hgrow : ∀ k, k ≤ Fintype.card ι + 1 → k ≤ (defined parent att k).card := by
-    intro k hk
-    induction k with
-    | zero => omega
-    | succ k ih =>
-      have h1 := hstep k (by omega)
-      have h2 := ih (by omega)
-      omega
-  have hbound : (defined parent att (Fintype.card ι + 1)).card ≤ Fintype.card ι := by
-    rw [defined]; exact (Finset.card_filter_le _ _).trans_eq Finset.card_univ
-  have := hgrow (Fintype.card ι + 1) (by omega)
-  omega
-
-/-- Default/override lookup: a node's local specification if present, else the
-nearest ancestor's, computed by saturating the fuel recursion at `Fintype.card`. -/
-def Hierarchy.value (h : Hierarchy ι) (att : ι → Option β) (n : ι) : Option β :=
-  valueFuel h.parent att (Fintype.card ι) n
+/-- The recursion step is the priority union: the local specification wins, else defer to the
+parent. -/
+theorem value_eq (n : ι) : h.value att n = (att n).or ((h.parent n).bind (h.value att)) := by
+  rw [value, WellFounded.fix_eq, Option.pbind_eq_bind]
 
 /-- Override wins: a local specification is the value. -/
-theorem Hierarchy.value_eq_of_att (h : Hierarchy ι) {att : ι → Option β} {n : ι} {v : β}
-    (hn : att n = some v) : h.value att n = some v :=
-  valueFuel_of_att hn (Fintype.card ι)
+theorem value_eq_of_att {n : ι} {v : β} (hn : att n = some v) : h.value att n = some v := by
+  rw [value_eq, hn, Option.some_or]
 
-/-- Path extension: at a node with no local specification, the value is the
-parent's. -/
-theorem Hierarchy.value_eq_parent (h : Hierarchy ι) {att : ι → Option β} {n : ι}
-    (hn : att n = none) : h.value att n = (h.parent n).bind (h.value att) := by
-  show valueFuel h.parent att (Fintype.card ι) n = _
-  rw [valueFuel_card_fixed]
-  simp only [Hierarchy.value, valueFuel, hn]
+/-- Path extension: at a node with no local specification, the value is the parent's. -/
+theorem value_eq_parent {n : ι} (hn : att n = none) :
+    h.value att n = (h.parent n).bind (h.value att) := by
+  rw [value_eq, hn, Option.none_or]
 
-end Fintype
-
-/-- **No 2-cycle**: in a well-founded hierarchy no two nodes are each other's
-parent. This is the obstruction a single directed inheritance relation hits on
-[jackendoff-audring-2020]'s Objection 10 — a pair whose form and meaning planes
-demand opposite parent orientations cannot both be edges of one acyclic
-hierarchy. -/
-theorem Hierarchy.parent_asymm (h : Hierarchy ι) {a b : ι}
-    (hab : h.parent a = some b) (hba : h.parent b = some a) : False :=
+/-- No two nodes are each other's parent. -/
+theorem parent_asymm {a b : ι} (hab : h.parent a = some b) (hba : h.parent b = some a) :
+    False :=
   h.wf.asymmetric a b hba hab
 
-/-! ### Figure 3.5: default and override
+/-! ### The hierarchy of a family of schemas -/
 
-The taxonomy `Animal → Bird/Fish`, `Bird → Canary/Ostrich`: birds fly by
-default, the ostrich overrides to not-fly, the canary inherits flight. A concept
-hierarchy, not linguistic data — an abstract witness that override and default
-inheritance compute as intended. -/
+section Family
+variable {V α : Type*} [PartialOrder α] {family : ι → Schema V α} {i j : ι}
 
-private inductive Animal
-  | animal | bird | fish | canary | ostrich
-  deriving DecidableEq, Fintype
+/-- `j` is the nearest more general schema than `i` in the family when its description is
+strictly below `i`'s and above every other description of the family strictly below `i`'s. -/
+def NearestGeneral (family : ι → Schema V α) (i j : ι) : Prop :=
+  (family j).body < (family i).body ∧
+    ∀ k, (family k).body < (family i).body → (family k).body ≤ (family j).body
 
-private def animalParent : Animal → Option Animal
-  | .animal => none
-  | .bird => some .animal
-  | .fish => some .animal
-  | .canary => some .bird
-  | .ostrich => some .bird
+/-- With distinct descriptions, the nearest more general schema is unique. -/
+theorem NearestGeneral.unique (hinj : Function.Injective λ i => (family i).body) {j' : ι}
+    (hj : NearestGeneral family i j) (hj' : NearestGeneral family i j') : j = j' :=
+  hinj (le_antisymm (hj'.2 j hj.1) (hj.2 j' hj'.1))
 
-private def animalHierarchy : Hierarchy Animal :=
-  .ofDepth animalParent (fun a => match a with
-    | .animal => 0 | .bird => 1 | .fish => 1 | .canary => 2 | .ostrich => 2) (by decide)
+variable [Fintype ι] [DecidableLE (V → α)] [DecidableLT (V → α)]
 
-/-- Flight as a local specification: birds fly, the ostrich overrides. -/
-private def flies : Animal → Option Bool
-  | .bird => some true
-  | .ostrich => some false
-  | _ => none
+instance (family : ι → Schema V α) (i j : ι) : Decidable (NearestGeneral family i j) := by
+  unfold NearestGeneral
+  infer_instance
 
-/-- The ostrich's override and the canary's inheritance compute as intended. -/
-example : animalHierarchy.value flies .ostrich = some false ∧
-    animalHierarchy.value flies .canary = some true := by decide
+/-- The subsumption hierarchy of a finite family of schemas with distinct descriptions: a
+schema's parent is the nearest more general schema of the family, when there is one. -/
+def ofFamily (family : ι → Schema V α) (hinj : Function.Injective λ i => (family i).body) :
+    Hierarchy ι where
+  parent i :=
+    if h : ∃ j, NearestGeneral family i j then
+      some (Finset.univ.choose (NearestGeneral family i)
+        (h.elim λ j hj => ⟨j, ⟨Finset.mem_univ _, hj⟩, λ j' hj' => hj'.2.unique hinj hj⟩))
+    else none
+  wf := by
+    have hT : IsTrans ι λ a b => (family a).body < (family b).body := ⟨λ _ _ _ => lt_trans⟩
+    have hI : Std.Irrefl λ a b => (family a).body < (family b).body := ⟨λ _ => lt_irrefl _⟩
+    refine Subrelation.wf ?_
+      (Finite.wellFounded_of_trans_of_irrefl λ a b => (family a).body < (family b).body)
+    intro a b hab
+    split_ifs at hab with h
+    exact (Option.some_inj.1 hab ▸
+      (Finset.choose_spec (NearestGeneral family b) Finset.univ _).2).1
+
+theorem ofFamily_parent_eq_some_iff (hinj : Function.Injective λ i => (family i).body) :
+    (ofFamily family hinj).parent i = some j ↔ NearestGeneral family i j := by
+  show (if h : ∃ j, NearestGeneral family i j then some (Finset.univ.choose _ _) else none) =
+      some j ↔ _
+  split_ifs with h
+  · rw [Option.some_inj]
+    exact ⟨λ e => e ▸ (Finset.choose_spec (NearestGeneral family i) Finset.univ _).2,
+      λ hj => ((Finset.choose_spec (NearestGeneral family i) Finset.univ _).2).unique hinj hj⟩
+  · exact iff_of_false (by simp) λ hj => h ⟨j, hj⟩
+
+theorem ofFamily_parent_eq_none_iff (hinj : Function.Injective λ i => (family i).body) :
+    (ofFamily family hinj).parent i = none ↔ ¬ ∃ j, NearestGeneral family i j := by
+  show (if h : ∃ j, NearestGeneral family i j then some (Finset.univ.choose _ _) else none) =
+      none ↔ _
+  split_ifs with h <;> simp [h]
+
+end Family
+
+end Hierarchy
 
 end ConstructionMorphology
