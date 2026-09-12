@@ -31,17 +31,20 @@ is subcritical or critical; that theorem is not proved here.
 
 * `PCFG.ωScottContinuous_expand`, `PCFG.treeMeasure_eq_iSup_iterate`: continuity and the
   Kleene form of the fixed point.
-* `PCFG.treeMeasure_singleton`: the mass of a tree rooted at `A` is its `derivProb`, and trees
+* `PCFG.treeMeasure_singleton_node`, `PCFG.treeMeasure_singleton_of_ne`,
+  `PCFG.treeMeasure_singleton`: the mass of a tree rooted at `A` is its `derivProb`, and trees
   rooted elsewhere have mass `0`.
 
 ## Implementation notes
 
 Derivation trees, their lists, and rules carry the discrete σ-algebra `⊤`, so every function out
 of them is measurable and every set is measurable, which discharges the side conditions of
-`Measure.bind_apply` without a countability assumption on `T`. Rule choice at `A` is the measure
-`Measure.sum` over `G.RulesWithLHS A` of the rule weights times Dirac masses, so the evaluation
-lemmas go through `lintegral_sum_measure` and `tsum_fintype`. The `if`s in the singleton lemmas
-decide equality of trees classically, since `DerivationTree` carries no `DecidableEq` instance.
+`Measure.bind_apply` without a countability assumption on `T`. Rule choice at `A` is the finite sum
+over the rules with left-hand side `A` of the rule weights times Dirac masses, so the evaluation
+lemmas go through `lintegral_finsetSum_measure`. The singleton lemmas are stated for matching and
+mismatching root symbols separately (`treeMeasure_singleton_node`, `treeMeasure_singleton_of_ne`);
+the `if` form `treeMeasure_singleton` decides equality of trees classically, since
+`DerivationTree` carries no `DecidableEq` instance.
 
 ## References
 
@@ -63,21 +66,15 @@ open DerivationTree
 
 variable {T : Type*} {G : ContextFreeGrammar T} [DecidableEq G.NT] (W : PCFG G)
 
-/-- The rule distribution at nonterminal `A`, as a measure on rules. -/
 noncomputable def ruleMeasure (A : G.NT) : Measure (ContextFreeRule T G.NT) :=
-  Measure.sum fun r : G.RulesWithLHS A => W.weight r.1 • Measure.dirac r.1
+  ∑ r ∈ G.rules.filter (·.input = A), W.weight r • Measure.dirac r
 
-/-- Given a distribution `κ B` of trees rooted at each nonterminal `B`, the distribution of the
-list of children expanding a right-hand side: terminals become leaves, nonterminals draw from
-`κ`. -/
 noncomputable def childrenMeasure (κ : G.NT → Measure (DerivationTree T G.NT)) :
     List (Symbol T G.NT) → Measure (List (DerivationTree T G.NT))
   | [] => Measure.dirac []
   | .terminal t :: rest => (childrenMeasure κ rest).map (leaf t :: ·)
   | .nonterminal B :: rest => (κ B).bind fun c => (childrenMeasure κ rest).map (c :: ·)
 
-/-- One expansion step: choose a rule at `A`, expand its right-hand side from `κ`, and build the
-node. -/
 noncomputable def expand (κ : G.NT → Measure (DerivationTree T G.NT)) (A : G.NT) :
     Measure (DerivationTree T G.NT) :=
   (W.ruleMeasure A).bind fun r => (childrenMeasure κ r.output).map (node A)
@@ -99,167 +96,173 @@ theorem ωScottContinuous_expand : ωScottContinuous W.expand :=
     (fun r => Measure.ωScottContinuous_map (ωScottContinuous_childrenMeasure r.output)
       measurable_from_top) fun _ => measurable_from_top
 
-/-- The expansion operator as an order homomorphism. -/
 noncomputable def expandHom :
     (G.NT → Measure (DerivationTree T G.NT)) →o (G.NT → Measure (DerivationTree T G.NT)) :=
   ⟨W.expand, W.ωScottContinuous_expand.monotone⟩
 
-/-- The tree measure of a PCFG: at each nonterminal, the least fixed point of expansion. -/
 noncomputable def treeMeasure : G.NT → Measure (DerivationTree T G.NT) :=
   OrderHom.lfp W.expandHom
 
 theorem expand_treeMeasure : W.expand W.treeMeasure = W.treeMeasure :=
   W.expandHom.map_lfp
 
-theorem treeMeasure_eq_iSup_iterate : W.treeMeasure = ⨆ n, W.expandHom^[n] ⊥ :=
-  OrderHom.lfp_eq_iSup_iterate _ fun c => by
-    show W.expand (⨆ n, c n) = ⨆ n, W.expand (c n)
-    rw [← Pi.ωSup_eq_iSup (L := fun _ => Measure (DerivationTree T G.NT)) c,
-      W.ωScottContinuous_expand.map_ωSup, Pi.ωSup_eq_iSup]
-    rfl
-
 /-! ### Evaluation on singletons -/
 
 section
 
-open scoped Classical
+variable {W} {κ : G.NT → Measure (DerivationTree T G.NT)}
 
-theorem expand_apply (κ : G.NT → Measure (DerivationTree T G.NT)) (A : G.NT)
-    (s : Set (DerivationTree T G.NT)) :
+theorem expand_apply (A : G.NT) (s : Set (DerivationTree T G.NT)) :
     W.expand κ A s =
-      ∑ r : G.RulesWithLHS A, W.weight r.1 * childrenMeasure κ r.1.output (node A ⁻¹' s) := by
+      ∑ r ∈ G.rules.filter (·.input = A),
+        W.weight r * childrenMeasure κ r.output (node A ⁻¹' s) := by
   simp only [expand, ruleMeasure]
   rw [Measure.bind_apply MeasurableSpace.measurableSet_top measurable_from_top.aemeasurable,
-    lintegral_sum_measure, tsum_fintype]
+    lintegral_finsetSum_measure]
   refine Finset.sum_congr rfl fun r _ => ?_
   rw [lintegral_smul_measure, lintegral_dirac' _ measurable_from_top, smul_eq_mul,
     Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top]
 
-omit [DecidableEq G.NT] in
-theorem childrenMeasure_nil_apply (κ : G.NT → Measure (DerivationTree T G.NT))
-    (s : Set (List (DerivationTree T G.NT))) : childrenMeasure κ [] s = s.indicator 1 [] :=
-  Measure.dirac_apply' _ MeasurableSpace.measurableSet_top
+omit [DecidableEq G.NT]
 
-omit [DecidableEq G.NT] in
-theorem childrenMeasure_terminal_apply (κ : G.NT → Measure (DerivationTree T G.NT)) (t : T)
-    (rest : List (Symbol T G.NT)) (s : Set (List (DerivationTree T G.NT))) :
-    childrenMeasure κ (.terminal t :: rest) s = childrenMeasure κ rest ((leaf t :: ·) ⁻¹' s) :=
-  Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top
+@[simp]
+theorem childrenMeasure_nil_singleton_nil : childrenMeasure κ [] {[]} = 1 :=
+  Measure.dirac_apply_of_mem rfl
 
-omit [DecidableEq G.NT] in
-theorem childrenMeasure_nonterminal_apply (κ : G.NT → Measure (DerivationTree T G.NT)) (B : G.NT)
-    (rest : List (Symbol T G.NT)) (s : Set (List (DerivationTree T G.NT))) :
-    childrenMeasure κ (.nonterminal B :: rest) s =
-      ∫⁻ c, childrenMeasure κ rest ((c :: ·) ⁻¹' s) ∂κ B := by
-  simp only [childrenMeasure]
-  rw [Measure.bind_apply MeasurableSpace.measurableSet_top measurable_from_top.aemeasurable]
-  simp_rw [Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top]
+@[simp]
+theorem childrenMeasure_nil_singleton_cons (c : DerivationTree T G.NT)
+    (cs : List (DerivationTree T G.NT)) : childrenMeasure κ [] {c :: cs} = 0 := by
+  rw [childrenMeasure, Measure.dirac_apply' _ MeasurableSpace.measurableSet_top]
+  simp
 
-omit [DecidableEq G.NT] in
-theorem cons_preimage_singleton_nil {c' : DerivationTree T G.NT} :
-    (c' :: ·) ⁻¹' ({[]} : Set (List (DerivationTree T G.NT))) = ∅ := by
-  ext l; simp
+@[simp]
+theorem childrenMeasure_cons_singleton_nil (s : Symbol T G.NT) (rest : List (Symbol T G.NT)) :
+    childrenMeasure κ (s :: rest) {[]} = 0 := by
+  cases s with
+  | terminal t =>
+    rw [childrenMeasure, Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top]
+    convert measure_empty (μ := childrenMeasure κ rest)
+    ext; simp
+  | nonterminal B =>
+    rw [childrenMeasure, Measure.bind_apply MeasurableSpace.measurableSet_top
+      measurable_from_top.aemeasurable]
+    refine (lintegral_congr fun c => ?_).trans lintegral_zero
+    rw [Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top]
+    convert measure_empty (μ := childrenMeasure κ rest)
+    ext; simp
 
-omit [DecidableEq G.NT] in
-theorem cons_preimage_singleton {c c' : DerivationTree T G.NT} {cs : List (DerivationTree T G.NT)} :
-    (c' :: ·) ⁻¹' ({c :: cs} : Set (List (DerivationTree T G.NT))) =
-      if c = c' then {cs} else ∅ := by
-  ext l; by_cases h : c = c' <;> simp [h, eq_comm]
+@[simp]
+theorem childrenMeasure_terminal_singleton_leaf (t : T) (rest : List (Symbol T G.NT))
+    (cs : List (DerivationTree T G.NT)) :
+    childrenMeasure κ (.terminal t :: rest) {leaf t :: cs} = childrenMeasure κ rest {cs} := by
+  rw [childrenMeasure, Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top]
+  congr 1; ext; simp
 
-omit [DecidableEq G.NT] in
-theorem node_preimage_singleton_leaf {A : G.NT} {t : T} :
-    node A ⁻¹' ({leaf t} : Set (DerivationTree T G.NT)) = ∅ := by
-  ext l; simp
+@[simp]
+theorem childrenMeasure_terminal_singleton_cons_of_ne (t : T) (rest : List (Symbol T G.NT))
+    {c : DerivationTree T G.NT} (hc : c ≠ leaf t) (cs : List (DerivationTree T G.NT)) :
+    childrenMeasure κ (.terminal t :: rest) {c :: cs} = 0 := by
+  rw [childrenMeasure, Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top]
+  convert measure_empty (μ := childrenMeasure κ rest)
+  ext; simp [Ne.symm hc]
 
-theorem node_preimage_singleton {A B : G.NT} {cs : List (DerivationTree T G.NT)} :
-    node A ⁻¹' ({node B cs} : Set (DerivationTree T G.NT)) = if A = B then {cs} else ∅ := by
-  ext l; by_cases h : A = B <;> simp [h]
+@[simp]
+theorem childrenMeasure_nonterminal_singleton_cons (B : G.NT) (rest : List (Symbol T G.NT))
+    (c : DerivationTree T G.NT) (cs : List (DerivationTree T G.NT)) :
+    childrenMeasure κ (.nonterminal B :: rest) {c :: cs} =
+      κ B {c} * childrenMeasure κ rest {cs} := by
+  rw [childrenMeasure, Measure.bind_apply MeasurableSpace.measurableSet_top
+    measurable_from_top.aemeasurable]
+  have : (fun c' => ((childrenMeasure κ rest).map (c' :: ·)) {c :: cs}) =
+      ({c} : Set (DerivationTree T G.NT)).indicator fun _ => childrenMeasure κ rest {cs} := by
+    funext c'
+    rw [Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top]
+    by_cases h : c' = c
+    · subst h; simp; congr 1; ext; simp
+    · rw [Set.indicator_of_notMem (by simpa using h)]
+      convert measure_empty (μ := childrenMeasure κ rest)
+      ext; simp [h]
+  rw [this, lintegral_indicator_const MeasurableSpace.measurableSet_top, mul_comm]
+
+/-- A child list whose root symbols do not match the right-hand side has mass `0`, for any
+family of tree measures concentrated on trees with the right root. -/
+theorem childrenMeasure_singleton_of_ne
+    (hκ : ∀ B (c : DerivationTree T G.NT), c.rootSymbol ≠ .nonterminal B → κ B {c} = 0) :
+    ∀ (syms : List (Symbol T G.NT)) (cs : List (DerivationTree T G.NT)),
+      cs.map rootSymbol ≠ syms → childrenMeasure κ syms {cs} = 0
+  | [], [], h => absurd rfl h
+  | [], _ :: _, _ => by simp
+  | _ :: _, [], _ => by simp
+  | .terminal t :: rest, c :: cs, h => by
+    by_cases hc : c = leaf t
+    · subst hc
+      simp only [List.map_cons, rootSymbol_leaf, ne_eq, List.cons.injEq, true_and] at h
+      simp [childrenMeasure_singleton_of_ne hκ rest cs h]
+    · simp [hc]
+  | .nonterminal B :: rest, c :: cs, h => by
+    rw [childrenMeasure_nonterminal_singleton_cons]
+    by_cases hc : c.rootSymbol = .nonterminal B
+    · simp only [List.map_cons, hc, ne_eq, List.cons.injEq, true_and] at h
+      simp [childrenMeasure_singleton_of_ne hκ rest cs h]
+    · simp [hκ B c hc]
+
+end
+
+theorem treeMeasure_singleton_of_ne {t : DerivationTree T G.NT} {A : G.NT}
+    (h : t.rootSymbol ≠ .nonterminal A) : W.treeMeasure A {t} = 0 := by
+  rw [← W.expand_treeMeasure, expand_apply]
+  have : node A ⁻¹' ({t} : Set (DerivationTree T G.NT)) = ∅ := by
+    ext cs
+    simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_empty_iff_false, iff_false]
+    rintro rfl
+    exact h rfl
+  simp [this]
 
 mutual
-/-- Under the tree measure, a child list has the mass its trees assign, provided its root
-symbols match the right-hand side. -/
-theorem childrenMeasure_treeMeasure_singleton (syms : List (Symbol T G.NT))
-    (cs : List (DerivationTree T G.NT)) :
-    childrenMeasure W.treeMeasure syms {cs} =
-      if cs.map rootSymbol = syms then W.derivProbList cs else 0 := by
-  cases syms with
-  | nil =>
-    rw [childrenMeasure_nil_apply]
-    cases cs <;> simp [derivProbList]
-  | cons s rest =>
-    cases s with
-    | terminal t =>
-      rw [childrenMeasure_terminal_apply]
-      cases cs with
-      | nil => simp [cons_preimage_singleton_nil]
-      | cons c cs =>
-        rw [cons_preimage_singleton]
-        by_cases hc : c = leaf t
-        · subst hc
-          rw [if_pos rfl, childrenMeasure_treeMeasure_singleton rest cs]
-          simp [derivProbList, derivProb]
-        · rw [if_neg hc, measure_empty, eq_comm]
-          cases c with
-          | leaf t' => simp_all
-          | node _ _ => simp
-    | nonterminal B =>
-      rw [childrenMeasure_nonterminal_apply]
-      cases cs with
-      | nil => simp [cons_preimage_singleton_nil]
-      | cons c cs =>
-        simp_rw [cons_preimage_singleton]
-        have : (fun c' => childrenMeasure W.treeMeasure rest (if c = c' then {cs} else ∅)) =
-            ({c} : Set (DerivationTree T G.NT)).indicator
-              fun _ => childrenMeasure W.treeMeasure rest {cs} := by
-          funext c'; by_cases h : c = c' <;> simp [h, Set.indicator, eq_comm]
-        rw [this, lintegral_indicator_const MeasurableSpace.measurableSet_top,
-          treeMeasure_singleton c B,
-          childrenMeasure_treeMeasure_singleton rest cs]
-        cases c with
-        | leaf t => simp
-        | node A cs' =>
-          simp only [rootSymbol_node, List.map_cons, List.cons.injEq, Symbol.nonterminal.injEq,
-            derivProbList]
-          by_cases hA : A = B <;> by_cases hrest : cs.map rootSymbol = rest <;>
-            simp [hA, hrest, mul_comm]
+/-- A tree rooted at `A` has mass `derivProb` under the tree measure at `A`. -/
+theorem treeMeasure_singleton_node (A : G.NT) (cs : List (DerivationTree T G.NT)) :
+    W.treeMeasure A {node A cs} = W.derivProb (node A cs) := by
+  classical
+  rw [← W.expand_treeMeasure, expand_apply, derivProb]
+  have hpre : node A ⁻¹' ({node A cs} : Set (DerivationTree T G.NT)) = {cs} := by ext; simp
+  rw [hpre, Finset.sum_congr rfl fun r hr =>
+    show W.weight r * childrenMeasure W.treeMeasure r.output {cs} =
+      if r = ⟨A, cs.map rootSymbol⟩ then W.weight r * W.derivProbList cs else 0 from ?_,
+    Finset.sum_ite_eq']
+  · split_ifs with h
+    · rfl
+    · rw [W.weight_eq_zero_of_not_mem _ fun h' => h (Finset.mem_filter.mpr ⟨h', rfl⟩), zero_mul]
+  · obtain ⟨-, rfl⟩ := Finset.mem_filter.mp hr
+    by_cases hout : cs.map rootSymbol = r.output
+    · rw [← hout, childrenMeasure_treeMeasure_singleton, if_pos]
+      cases r; simp_all
+    · rw [childrenMeasure_singleton_of_ne (fun _ _ => W.treeMeasure_singleton_of_ne) _ _ hout,
+        mul_zero, if_neg fun h' => hout (congrArg ContextFreeRule.output h').symm]
 
-/-- Under the tree measure, a tree rooted at `A` has mass `derivProb`; trees rooted elsewhere
-have mass `0`. -/
+/-- A child list has the mass its trees assign, at the right-hand side it spells out. -/
+theorem childrenMeasure_treeMeasure_singleton (cs : List (DerivationTree T G.NT)) :
+    childrenMeasure W.treeMeasure (cs.map rootSymbol) {cs} = W.derivProbList cs := by
+  cases cs with
+  | nil => simp [derivProbList]
+  | cons c cs =>
+    cases c with
+    | leaf t => simp [derivProbList, derivProb, childrenMeasure_treeMeasure_singleton cs]
+    | node B cs' =>
+      simp [derivProbList, treeMeasure_singleton_node B cs',
+        childrenMeasure_treeMeasure_singleton cs]
+end
+
+open scoped Classical in
+/-- Under the tree measure at `A`, a tree has mass `derivProb` when rooted at `A` and `0`
+otherwise. -/
 theorem treeMeasure_singleton (t : DerivationTree T G.NT) (A : G.NT) :
     W.treeMeasure A {t} = if t.rootSymbol = .nonterminal A then W.derivProb t else 0 := by
-  rw [← W.expand_treeMeasure, expand_apply]
-  cases t with
-  | leaf t => simp [node_preimage_singleton_leaf]
-  | node B cs =>
-    simp_rw [node_preimage_singleton]
-    by_cases hAB : A = B
-    · subst hAB
-      simp only [if_true, rootSymbol_node, derivProb]
-      simp_rw [childrenMeasure_treeMeasure_singleton]
-      rw [show (∑ r : G.RulesWithLHS A, W.weight r.1 *
-            if cs.map rootSymbol = r.1.output then W.derivProbList cs else 0) =
-          ∑ r ∈ G.rules.filter (·.input = A), W.weight r *
-            if cs.map rootSymbol = r.output then W.derivProbList cs else 0 from
-          Finset.sum_attach (G.rules.filter fun r : ContextFreeRule T G.NT => r.input = A)
-            fun r => W.weight r * if cs.map rootSymbol = r.output then W.derivProbList cs else 0]
-      by_cases hmem : (⟨A, cs.map rootSymbol⟩ : ContextFreeRule T G.NT) ∈ G.rules
-      · rw [Finset.sum_eq_single ⟨A, cs.map rootSymbol⟩]
-        · simp
-        · rintro r hr hne
-          have : cs.map rootSymbol ≠ r.output := fun h => hne (by
-            obtain ⟨_, hrA⟩ := Finset.mem_filter.mp hr
-            cases r; simp_all)
-          simp [this]
-        · exact fun h => (h (Finset.mem_filter.mpr ⟨hmem, rfl⟩)).elim
-      · rw [W.weight_eq_zero_of_not_mem _ hmem, zero_mul]
-        refine Finset.sum_eq_zero fun r hr => ?_
-        have : cs.map rootSymbol ≠ r.output := fun h => hmem (by
-          obtain ⟨hr', hrA⟩ := Finset.mem_filter.mp hr
-          cases r; simp_all)
-        simp [this]
-    · simp [hAB, Ne.symm hAB]
-end
-
-end
+  split_ifs with h
+  · cases t with
+    | leaf t => simp at h
+    | node B cs =>
+      obtain rfl : A = B := (by simpa using h.symm)
+      exact W.treeMeasure_singleton_node A cs
+  · exact W.treeMeasure_singleton_of_ne h
 
 end PCFG
