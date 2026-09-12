@@ -1274,8 +1274,6 @@ import Linglib.Fragments.Yoruba.Phonology
 import Linglib.Fragments.Yoruba.Relativization
 import Linglib.Fragments.ZarmaSonrai.Negation
 import Linglib.Fragments.Zulu.Phonology
-import Linglib.Morphology.Construction.Inheritance
-import Linglib.Morphology.Construction.Schema
 import Linglib.Morphology.DistributedMorphology.Allosemy
 import Linglib.Morphology.DistributedMorphology.Basic
 import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
@@ -2357,7 +2355,6 @@ import Linglib.Studies.Kratzer1996
 import Linglib.Studies.Kratzer1998
 import Linglib.Studies.Kratzer2012Conditionals
 import Linglib.Studies.Kratzer2012Informational
-import Linglib.Studies.Kratzer2012Lumping
 import Linglib.Studies.KratzerSelkirk2020
 import Linglib.Studies.KratzerShimoyama2002
 import Linglib.Studies.Krejci2012
