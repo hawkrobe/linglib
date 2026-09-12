@@ -1,262 +1,177 @@
-import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 import Linglib.Syntax.Minimalist.Probe.Profile
+import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 
 /-!
-# Selective Opacity [keine-2019]
+# Keine (2019): Selective Opacity
 
-Selective Opacity. *Linguistic Inquiry* 50(1), 13–62.
+This file formalizes the horizons account of selective opacity of [keine-2019]: a syntactic
+domain may be opaque to some operations and transparent to others (their (1)), and the constraint
+is on the searches of probes, each terminated by a category of its own, its horizon ((38)),
+rather than on domains or on the moving element. With category inheritance within an extended
+projection ((43)) a clause's label collects the categories it projects, so a clause is opaque to a
+probe exactly when its label contains the horizon, and Upward Entailment ((40)), that larger
+clauses are at least as opaque, is the Horizon Inheritance Theorem ((45), (46)):
+`upward_entailment`. The Hindi probes of (48) and (57), φ-agreement and A-movement on T⁰ with
+horizon T, wh-licensing on C⁰ with horizon C and Ā-movement on C⁰ without one, derive the
+transparency table (58) with its three locality types (`transparency_table`) and with it the
+generalizations (21) and (23) on long-distance agreement; English hyperraising is A-movement
+with horizon C (Section 4.2.3), and its availability elsewhere is the absence of that horizon
+(`hyperraising_iff`).
 
-## Summary
+The Height-Locality Connection ((33), (62)), that higher probes search into more kinds of
+structure, is derived rather than stipulated: a probe whose horizon lies below its position finds
+it in its sister and is vacuous ((63)), so for a nonvacuous probe the position bounds the horizon
+and the horizon bounds the position, the Height-Locality Theorem ((65)) instantiated for Hindi in
+(66) and (67).
 
-[keine-2019] argues that selective opacity — where the same
-domain is opaque to some operations but transparent to others — is
-a property of *probes*, not of domains. The constraint targets Agree,
-the operation underlying both movement and φ-agreement. Different
-probes have different *horizons* (categories that terminate their
-search), and the interplay of probe location and horizon setting
-produces the observed selective opacity patterns.
+## Implementation notes
 
-## Core Contributions Formalized
+Labels are the projected heads of the substrate's `ClauseSpine`s and transparency is
+`Probe.Profile.transparentToLabel`; the article's probes are the substrate's `keinePhiProbe`,
+`keineAProbe`, `keineWhLicensing` and `keineĀProbe`, and vacuity is `Probe.Profile.isVacuous`,
+which takes the sister of a probe on C⁰ to be TP and of one on T⁰ to be vP.
 
-1. **The transparency table** (58): four operations (φ-agreement,
-   A-movement, wh-licensing, Ā-movement) × three clause sizes
-   (CP, TP, vP) yield a non-binary opacity pattern.
+## References
 
-2. **Upward Entailment** (40): if a clause is opaque to a probe,
-   all larger clauses are too.
-
-3. **Height-Locality Connection** (33/62): the higher a probe sits
-   in the clausal spine, the more structures are transparent to it.
-
-4. **Hindi LDA generalizations**:
-   - (21): A-movement of *any* element renders the embedded clause
-     obligatorily transparent for LDA
-   - (23): finite clauses are opaque to A-movement and φ-agreement
-     but not Ā-movement
-   - (25): the transparency/opacity table by clause type and operation
-
-## Relationship to [keine-2020]
-
-This article's simplified fValue model (`transparentTo`) treats clause
-types as linearly ordered. [keine-2020] introduces bilateral labeling
-(`transparentToLabel`) which correctly handles partially ordered clause
-types (NmlzP vs CP in Hindi). The article probes remain useful for
-verifying the paper's original predictions, but the book's model
-supersedes the fValue approximation. See `Keine2020.lean` for the
-book's 4×4 transparency tables and bilateral-labeling theorems.
-
-Key refinements in [keine-2020]:
-- Hindi φ/A horizon refined from ⊣ C to ⊣ T (book (219))
-- Hindi Ā horizon specified as ⊣ Nmlz (not just "no horizon")
-- English Ā has ⊣ C (the article treated it as horizonless)
-- German adds ForceP as a distinct clause size above CP
-- Vacuous probes derived from bilateral labeling (§3.5)
-- HLT (279) derived as emergent property, not stipulated
-
-## Architecture
-
-The theory-layer infrastructure (`Probe.Profile`, `transparentTo`,
-`transparentToLabel`, `upward_entailment`, `height_locality_connection`)
-lives in `Syntax/Minimalism/Probe.lean`. This file
-imports those definitions and verifies the paper's empirical predictions
-as concrete theorems using the simplified fValue model.
+* [keine-2019]
 -/
 
 namespace Keine2019
 
-open Minimalist (Probe.Profile keinePhiProbe keineAProbe keineWhLicensing
-  keineĀProbe fValue ClauseSpine Cat)
+open Minimalist
 
--- ============================================================================
--- § 1: The Transparency Table ([keine-2019] (58))
--- ============================================================================
+/-- The label of a finite clause, the categories inherited up its extended projection ((44)). -/
+def cpLabel : List Cat := ClauseSpine.cP.projectedHeads
 
-/-! ### Table (58): Transparency (✓) and opacity (*) by clause type and operation
+/-- The label of a large nonfinite clause. -/
+def tpLabel : List Cat := ClauseSpine.tP.projectedHeads
 
-| Operation     | Probe location | CP (finite) | TP (nonfinite) | vP (nonfinite) |
-|---------------|---------------|-------------|----------------|----------------|
-| φ-agreement   | T⁰            | *           | *              | ✓              |
-| A-movement    | T⁰            | *           | *              | ✓              |
-| wh-licensing  | C⁰            | *           | ✓              | ✓              |
-| Ā-movement    | C⁰            | ✓           | ✓              | ✓              |
+/-- The label of a small nonfinite clause. -/
+def vpLabel : List Cat := ClauseSpine.vP.projectedHeads
 
-The table captures the central empirical discovery: selective opacity is
-not a binary phenomenon. There are at least three distinct locality types,
-corresponding to different probe–horizon pairings. -/
+/-! ### Horizons and Upward Entailment (Section 4.1) -/
 
--- ────────────────────────────────────────────────────────────────
--- φ-agreement (probe on T⁰, horizon C): opaque to CP and TP, transparent to vP
--- ────────────────────────────────────────────────────────────────
+/-- (45), (46): Upward Entailment follows from category inheritance. A probe blocked by a clause
+is blocked by every larger one, whatever its horizon, since the larger clause's label extends the
+smaller one's. -/
+theorem upward_entailment (p : Probe.Profile) :
+    (p.transparentToLabel vpLabel = false → p.transparentToLabel tpLabel = false) ∧
+      (p.transparentToLabel tpLabel = false → p.transparentToLabel cpLabel = false) :=
+  ⟨upward_entailment_label p _ _ (by decide), upward_entailment_label p _ _ (by decide)⟩
 
-theorem phi_opaque_to_cp : keinePhiProbe.transparentTo .C = false := by decide
-theorem phi_opaque_to_tp : keinePhiProbe.transparentTo .T = false := by decide
-theorem phi_transparent_to_vp : keinePhiProbe.transparentTo .v = true := by decide
+/-! ### The Hindi probes (Section 4.2) -/
 
--- ────────────────────────────────────────────────────────────────
--- A-movement (probe on T⁰, horizon C): same locality as φ-agreement
--- ────────────────────────────────────────────────────────────────
+/-- A probe's row of the transparency table: finite, large nonfinite, small nonfinite. -/
+def row (p : Probe.Profile) : List Bool := [cpLabel, tpLabel, vpLabel].map p.transparentToLabel
 
-theorem a_opaque_to_cp : keineAProbe.transparentTo .C = false := by decide
-theorem a_opaque_to_tp : keineAProbe.transparentTo .T = false := by decide
-theorem a_transparent_to_vp : keineAProbe.transparentTo .v = true := by decide
+/-- (58): φ-agreement and A-movement search only into vP clauses, wh-licensing into TP and vP
+clauses, Ā-movement into all three. -/
+theorem transparency_table :
+    row keinePhiProbe = [false, false, true] ∧ row keineAProbe = [false, false, true] ∧
+      row keineWhLicensing = [false, true, true] ∧ row keineĀProbe = [true, true, true] := by
+  decide
 
--- ────────────────────────────────────────────────────────────────
--- wh-licensing (probe on C⁰, horizon C): opaque to CP, transparent to TP and vP
--- ────────────────────────────────────────────────────────────────
+/-- Selective opacity is not binary: the table has three locality types. -/
+theorem three_locality_types :
+    row keinePhiProbe ≠ row keineWhLicensing ∧ row keineWhLicensing ≠ row keineĀProbe ∧
+      row keinePhiProbe ≠ row keineĀProbe := by
+  decide
 
-theorem wh_opaque_to_cp : keineWhLicensing.transparentTo .C = false := by decide
-theorem wh_transparent_to_tp : keineWhLicensing.transparentTo .T = true := by decide
-theorem wh_transparent_to_vp : keineWhLicensing.transparentTo .v = true := by decide
+/-- (23), the finite clause embedding (49): finite clauses, edge included, are opaque to
+A-movement and φ-agreement but not to Ā-movement. -/
+theorem finite_clauses_selectively_opaque :
+    keineAProbe.transparentToLabel cpLabel = false ∧
+      keinePhiProbe.transparentToLabel cpLabel = false ∧
+      keineĀProbe.transparentToLabel cpLabel = true := by
+  decide
 
--- ────────────────────────────────────────────────────────────────
--- Ā-movement (probe on C⁰, no horizon): transparent to everything
--- ────────────────────────────────────────────────────────────────
+/-- (21), the nonfinite embeddings (50) and (51): the two probes on T⁰ share their horizon, so a
+nonfinite clause small enough for A-extraction is the vP structure and is transparent to
+φ-agreement, which makes long-distance agreement obligatory; Ā-movement enters the TP structure
+too and has no such effect. -/
+theorem a_extraction_forces_lda :
+    (∀ L ∈ [tpLabel, vpLabel], keineAProbe.transparentToLabel L = true →
+        L = vpLabel ∧ keinePhiProbe.transparentToLabel L = true) ∧
+      keineĀProbe.transparentToLabel tpLabel = true ∧
+      keinePhiProbe.transparentToLabel tpLabel = false := by
+  decide
 
-theorem ābar_transparent_to_cp : keineĀProbe.transparentTo .C = true := by decide
-theorem ābar_transparent_to_tp : keineĀProbe.transparentTo .T = true := by decide
-theorem ābar_transparent_to_vp : keineĀProbe.transparentTo .v = true := by decide
+/-! ### Hyperraising (Section 4.2.3) -/
 
--- ============================================================================
--- § 2: Hindi Generalizations
--- ============================================================================
+/-- The English A-probe, on T⁰ with horizon C. -/
+def englishAProbe : Probe.Profile := ⟨.T, some .C⟩
 
-/-! ### Generalization (21): A-extraction renders clause transparent for LDA
+/-- The English extraposition probe, on T⁰ with horizon T. -/
+def extrapositionProbe : Probe.Profile := ⟨.T, some .T⟩
 
-If A-movement of *any* element out of an embedded clause has applied,
-that clause is obligatorily transparent for LDA. Agreement is hence
-obligatory and default agreement is impossible, regardless of whether
-the agreement controller moves or not. Ā-movement has no such effect.
-
-This is captured by the shared locality of A-movement and φ-agreement:
-both are probes on T⁰ with horizon C. If A-movement can penetrate a
-clause (= clause is transparent to the A-probe), φ-agreement can too. -/
-
-/-- A-movement and φ-agreement share the same horizon and probe location.
-    This is the structural reason A-extraction entails LDA transparency:
-    whatever is transparent to [•A•] is transparent to [*φ*]. -/
-theorem a_phi_same_profile :
-    keineAProbe.probeHead = keinePhiProbe.probeHead ∧
-    keineAProbe.horizon = keinePhiProbe.horizon := ⟨rfl, rfl⟩
-
-/-- Consequence: for any clause head, A-transparency implies φ-transparency.
-    This derives generalization (21) — if A-movement can enter a clause,
-    φ-agreement can too, making LDA obligatory. -/
-theorem a_transparency_implies_phi (c : Cat)
-    (h : keineAProbe.transparentTo c = true) :
-    keinePhiProbe.transparentTo c = true := h
-
-/-! ### Generalization (23): finite clauses are selectively opaque
-
-Finite clauses (CP) are opaque to A-movement and φ-agreement, but
-transparent to Ā-movement. This is a direct consequence of the
-probe–horizon pairings: A-probes and φ-probes have C as their horizon,
-so CP blocks them. Ā-probes have no horizon, so nothing blocks them. -/
-
-/-- The full (23): CP is selectively opaque — blocks A-movement and
-    φ-agreement but not Ā-movement. -/
-theorem finite_clause_selective_opacity :
-    keineAProbe.transparentTo .C = false ∧
-    keinePhiProbe.transparentTo .C = false ∧
-    keineĀProbe.transparentTo .C = true := ⟨by decide, by decide, by decide⟩
-
--- ============================================================================
--- § 3: Height-Locality Instantiations
--- ============================================================================
-
-/-! ### Generalization (33)/(62): Height-Locality Connection
-
-The higher the structural position of a probe, the more kinds of
-structures it can search into.
-
-This is verified concretely: the Ā-probe (on C⁰, fValue 6) can search
-into strictly more clause types than the A-probe (on T⁰, fValue 2).
-The Height-Locality Connection is not a stipulation — it is derived as
-a theorem in `Agree.lean` from the monotonicity of horizons within
-extended projections. -/
-
-/-- Ā-probes are higher than A-probes in the functional sequence. -/
-theorem ābar_higher_than_a :
-    fValue keineĀProbe.probeHead > fValue keineAProbe.probeHead := by decide
-
-/-- The Ā-probe can search into everything the A-probe can, and more.
-    For all three clause sizes, Ā-transparency ≥ A-transparency. -/
-theorem ābar_subsumes_a :
-    (keineAProbe.transparentTo .v = true → keineĀProbe.transparentTo .v = true) ∧
-    (keineAProbe.transparentTo .T = true → keineĀProbe.transparentTo .T = true) ∧
-    (keineAProbe.transparentTo .C = true → keineĀProbe.transparentTo .C = true) :=
-  ⟨fun _ => by decide, fun _ => by decide, fun _ => by decide⟩
-
--- ============================================================================
--- § 4: Upward Entailment Instantiations
--- ============================================================================
-
-/-! ### Generalization (40): Upward Entailment
-
-If a clause of a given size is opaque for a probe, all larger clauses
-are also opaque. Verified concretely for the A-probe: vP is transparent,
-TP is opaque, and CP is opaque. The transition from transparent to opaque
-happens once and never reverses. -/
-
-/-- A-probe: opacity increases monotonically along the functional sequence.
-    vP (F1) ✓ → T (F2) * → C (F6) *. Once opaque, always opaque. -/
-theorem a_probe_monotonic_opacity :
-    keineAProbe.transparentTo .v = true ∧
-    keineAProbe.transparentTo .T = false ∧
-    keineAProbe.transparentTo .C = false := ⟨by decide, by decide, by decide⟩
-
--- ============================================================================
--- § 5: ClauseSpine Bridge
--- ============================================================================
-
-/-! ### Clause spine integration
-
-The named spines from `ClauseSpine.lean` connect to probe transparency
-via `fLevel`: a spine's F-level determines which probes can search into
-clauses of that size. -/
-
-/-- vP-sized clauses are transparent to all four probes. -/
-theorem vP_transparent_all :
-    keinePhiProbe.transparentTo ClauseSpine.vP.highestHead = true ∧
-    keineAProbe.transparentTo ClauseSpine.vP.highestHead = true ∧
-    keineWhLicensing.transparentTo ClauseSpine.vP.highestHead = true ∧
-    keineĀProbe.transparentTo ClauseSpine.vP.highestHead = true :=
-  ⟨by decide, by decide, by decide, by decide⟩
-
-/-- CP-sized clauses are transparent only to the Ā-probe. -/
-theorem cP_transparent_only_ābar :
-    keinePhiProbe.transparentTo ClauseSpine.cP.highestHead = false ∧
-    keineAProbe.transparentTo ClauseSpine.cP.highestHead = false ∧
-    keineWhLicensing.transparentTo ClauseSpine.cP.highestHead = false ∧
-    keineĀProbe.transparentTo ClauseSpine.cP.highestHead = true :=
-  ⟨by decide, by decide, by decide, by decide⟩
-
-/-- TP-sized clauses are transparent to wh-licensing and Ā-movement
-    but opaque to φ-agreement and A-movement. -/
-theorem tP_transparency :
-    keinePhiProbe.transparentTo ClauseSpine.tP.highestHead = false ∧
-    keineAProbe.transparentTo ClauseSpine.tP.highestHead = false ∧
-    keineWhLicensing.transparentTo ClauseSpine.tP.highestHead = true ∧
-    keineĀProbe.transparentTo ClauseSpine.tP.highestHead = true :=
-  ⟨by decide, by decide, by decide, by decide⟩
-
--- ============================================================================
--- § 6: Hyperraising ([keine-2019] §4.2.3)
--- ============================================================================
-
-/-! ### English hyperraising is blocked by CP
-
-A-movement (hyperraising) out of a finite clause is impossible in
-English because the A-probe ([•A•] on T⁰) has C as its horizon.
-The CP boundary blocks the A-probe's search, ruling out
-`*John seems [CP t likes oatmeal]`. -/
-
-/-- Hyperraising blocked: A-probe cannot search into CP. -/
+/-- (59): no A-probe search enters a finite clause in English, while Ā-extraction is unaffected;
+extraposition, with horizon T, cannot leave even a nonfinite clause. -/
 theorem hyperraising_blocked :
-    keineAProbe.transparentTo .C = false := by decide
+    englishAProbe.transparentToLabel cpLabel = false ∧
+      keineĀProbe.transparentToLabel cpLabel = true ∧
+      extrapositionProbe.transparentToLabel tpLabel = false := by
+  decide
 
-/-- Ā-extraction is fine: Ā-probe has no horizon blocking CP.
-    `Who do you think [CP t eats oatmeal]?` is grammatical. -/
-theorem ābar_extraction_ok :
-    keineĀProbe.transparentTo .C = true := by decide
+/-- Hyperraising is a horizon parameter: an A-probe on T⁰ enters finite clauses exactly when its
+horizon is none of the categories a finite clause inherits, as in the languages that allow it. -/
+theorem hyperraising_iff (h : Option Cat) :
+    (⟨.T, h⟩ : Probe.Profile).transparentToLabel cpLabel = true ↔ ∀ c ∈ cpLabel, h ≠ some c := by
+  cases h with
+  | none => simp [Probe.Profile.transparentToLabel]
+  | some x =>
+    simp only [Probe.Profile.transparentToLabel, Bool.not_eq_true', List.any_eq_false, beq_iff_eq,
+      ne_eq, Option.some.injEq]
+    exact ⟨λ h c hc hx => h c hc hx.symm, λ h c hc hx => h c hc hx.symm⟩
+
+/-! ### The Height-Locality Connection (Section 5) -/
+
+/-- (63): a probe on C⁰ with horizon T finds its horizon in its sister and has no search space. -/
+theorem vacuous_example : (⟨.C, some .T⟩ : Probe.Profile).isVacuous = true := by decide
+
+/-- (65a), height to locality: a nonvacuous probe on C⁰ has no horizon among the categories of
+its sister TP, and one on T⁰ none among those of vP, so those clauses are necessarily transparent
+to it. -/
+theorem height_to_locality (h : Cat) :
+    ((⟨.C, some h⟩ : Probe.Profile).isVacuous = false → h ∉ tpLabel) ∧
+      ((⟨.T, some h⟩ : Probe.Profile).isVacuous = false → h ∉ vpLabel) := by
+  simp [Probe.Profile.isVacuous, Probe.Profile.transparentToLabel, tpLabel, vpLabel]
+
+/-- (65b), locality to height: a probe with horizon T is vacuous on C⁰, and one with horizon v on
+T⁰ and C⁰; a nonvacuous probe's horizon bounds its position from below. -/
+theorem locality_to_height :
+    (⟨.C, some .T⟩ : Probe.Profile).isVacuous = true ∧
+      (⟨.T, some .v⟩ : Probe.Profile).isVacuous = true ∧
+      (⟨.C, some .v⟩ : Probe.Profile).isVacuous = true := by
+  decide
+
+/-- A nonvacuous probe on C⁰ searches into TP and vP clauses, and one on T⁰ into vP clauses,
+whatever their horizons: the Height-Locality Connection for the two positions. -/
+theorem nonvacuous_transparent (h : Option Cat) :
+    ((⟨.C, h⟩ : Probe.Profile).isVacuous = false →
+        (⟨.C, h⟩ : Probe.Profile).transparentToLabel tpLabel = true ∧
+          (⟨.C, h⟩ : Probe.Profile).transparentToLabel vpLabel = true) ∧
+      ((⟨.T, h⟩ : Probe.Profile).isVacuous = false →
+        (⟨.T, h⟩ : Probe.Profile).transparentToLabel vpLabel = true) := by
+  cases h with
+  | none => simp [Probe.Profile.isVacuous, Probe.Profile.transparentToLabel]
+  | some x =>
+    have hsub : ∀ c ∈ vpLabel, c ∈ tpLabel := by decide
+    simp only [Probe.Profile.isVacuous, Probe.Profile.transparentToLabel, Bool.not_eq_true',
+      Bool.not_eq_false', List.any_eq_false, List.any_eq_true, beq_iff_eq,
+      decide_eq_false_iff_not, not_exists, not_and, tpLabel, vpLabel]
+    exact ⟨λ h => ⟨h, λ c hc => h c (hsub c hc)⟩, λ h => h⟩
+
+/-- (66) and (67) for Hindi: the four probes are nonvacuous, so the two on C⁰ search into TP and
+vP clauses and the two on T⁰ into vP clauses, which is why nonfinite clauses are no islands for
+Ā-movement or wh-licensing and why only these interact with long-distance agreement as (21)
+says; and the A-probe's horizon T would make it vacuous on C⁰, so A-movement lands inside
+nonfinite clauses. -/
+theorem hindi_consequences :
+    (∀ p ∈ [keinePhiProbe, keineAProbe, keineWhLicensing, keineĀProbe], p.isVacuous = false) ∧
+      (∀ p ∈ [keineWhLicensing, keineĀProbe],
+        p.transparentToLabel tpLabel = true ∧ p.transparentToLabel vpLabel = true) ∧
+      (∀ p ∈ [keinePhiProbe, keineAProbe], p.transparentToLabel vpLabel = true) ∧
+      (⟨.C, keineAProbe.horizon⟩ : Probe.Profile).isVacuous = true := by
+  decide
 
 end Keine2019
