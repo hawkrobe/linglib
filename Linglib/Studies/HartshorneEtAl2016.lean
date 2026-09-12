@@ -162,7 +162,7 @@ theorem episodeWithTarget_subject : episodeWithTarget.subject = some stimulus :=
 /-! ### Agreement with the classifications the paper builds on -/
 
 /-- The subject role of [belletti-rizzi-1988]'s classes, as `Pesetsky1995` records it. -/
-def Participant.toSubjectRole : Participant → Option Pesetsky1995.PsychVerbs.SubjectRole
+def Participant.toSubjectRole : Participant → Option Pesetsky1995.SubjectRole
   | experiencer => some .experiencer
   | stimulus => some .stimulus
   | target => none
@@ -170,9 +170,9 @@ def Participant.toSubjectRole : Participant → Option Pesetsky1995.PsychVerbs.S
 /-- The prominence subjects are the Class I and Class II subjects. -/
 theorem agrees_with_belletti_rizzi :
     attitude.subject.bind Participant.toSubjectRole =
-        Pesetsky1995.PsychVerbs.PsychVerbClass.expectedSubjectRole .classI ∧
+        Pesetsky1995.PsychVerbClass.expectedSubjectRole .classI ∧
       episode.subject.bind Participant.toSubjectRole =
-        Pesetsky1995.PsychVerbs.PsychVerbClass.expectedSubjectRole .classII := by
+        Pesetsky1995.PsychVerbClass.expectedSubjectRole .classII := by
   decide
 
 /-- The argument positions as the shared role labels. -/
