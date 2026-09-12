@@ -2336,7 +2336,6 @@ import Linglib.Studies.Keine2020
 import Linglib.Studies.Kennedy1999
 import Linglib.Studies.Kennedy2007
 import Linglib.Studies.Kennedy2015
-import Linglib.Studies.Kennedy2015PMF
 import Linglib.Studies.KennedyLevin2008
 import Linglib.Studies.Kenstowicz1987
 import Linglib.Studies.KeshetAbney2024

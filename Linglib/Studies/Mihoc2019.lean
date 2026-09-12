@@ -68,7 +68,7 @@ obliterates the next-stronger alternative.
 - `exhSigma_*_g1`: 'exactly' meanings for all five forms at granularity 1
   (her Ch. 3 (2), (24)–(27)); `exhSigma_moreThan_proper`: the strengthening
   is non-vacuous — deriving an implicature exactly where [kennedy-2015]'s
-  neo-Gricean account derives none (`Kennedy2015.classA_moreThan3_no_primary`)
+  neo-Gricean account derives none (`Kennedy2015.primaryAlternatives_gt`)
 - `exhSigma_moreThan_coarse_not_exactly`, `spector_grade_context`: coarser
   granularity avoids the 'exactly' overgeneration (her §3.6–3.7)
 - `exhSigma_moreThan_eq_exhChain` / `exhSigma_atMost_eq_exhChain`: the
@@ -380,7 +380,7 @@ theorem exhSigma_atMost_g1 (n maxD : ℕ) (hn : 1 ≤ n) :
 /-- The granularity-1 strengthening is *non-vacuous*: some worlds verify the
 CMN's truth conditions but not its exhaustification. Mihoc thus derives a
 scalar implicature for Class A forms exactly where [kennedy-2015]'s
-neo-Gricean account derives none (`Kennedy2015.classA_moreThan3_no_primary`)
+neo-Gricean account derives none (`Kennedy2015.primaryAlternatives_gt`)
 — same truth conditions, opposite pragmatic verdict, reconciled only by the
 granularity parameter (coarse scales recover the weaker effect,
 `exhSigma_moreThan_coarse_not_exactly`). -/
