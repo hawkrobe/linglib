@@ -3,26 +3,27 @@ import Linglib.Semantics.Degree.Basic
 import Linglib.Fragments.English.Predicates.Adjectival
 
 /-!
-# Kennedy 2007: relative and absolute gradable adjectives
+# Kennedy (2007): Vagueness and Grammar
 
-The positive form of a gradable adjective is true of what *stands out* relative to the kind of
-measurement the adjective encodes: `⟦pos⟧ = λg λx. g(x) ≥ s(g)` (27), with the standard `s`
-fixed by the scale rather than by a comparison class (§2). Relative adjectives (*tall*, *long*)
-take a contextual standard; absolute adjectives take an endpoint, minimum (*wet*, *bent*) or
-maximum (*full*, *dry*) (§3.1). Four diagnostics separate the two (§3.2): definite descriptions
-pick out the one object that stands out only for relative adjectives; the Sorites second premise
-is judged false for absolutes; comparatives entail the positive form for absolutes, in the
-direction the standard fixes, and not at all for relatives; and maximizers and minimizers
-distribute by the endpoints of the adjective's scale, the antonym using the same scale with the
-ends exchanged (61). Interpretive Economy (66) derives the standard from scale structure: an
-endpoint standard is available exactly where the scale has that endpoint, and a totally closed
-scale admits both (67)–(68).
-
-[kennedy-mcnally-2005] [rotstein-winter-2004]
+This file formalizes the relative–absolute distinction among gradable adjectives of
+[kennedy-2007]. The positive form is true of what stands out relative to the kind of measurement
+the adjective encodes, `⟦pos⟧ = λg λx. g(x) ≥ s(g)` (27), the standard `s` fixed by the scale
+rather than by a comparison class (Section 2): relative adjectives (*tall*, *long*) take a
+contextual standard, absolute adjectives an endpoint, minimum (*wet*, *bent*) or maximum
+(*full*, *dry*) (Section 3.1). Four diagnostics separate the two (Section 3.2): definite
+descriptions pick out the one object that stands out only for relative adjectives; the Sorites
+second premise is judged false for absolutes; comparatives entail the positive form for
+absolutes, in the direction the standard fixes, and not at all for relatives; and maximizers and
+minimizers distribute by the endpoints of the adjective's scale, the antonym using the same scale
+with the ends exchanged (61). Interpretive Economy (66) derives the standard from scale
+structure: an endpoint standard is available exactly where the scale has that endpoint, and a
+totally closed scale admits both (67)–(68).
 
 ## References
 
 * [kennedy-2007]
+* [kennedy-mcnally-2005]
+* [rotstein-winter-2004]
 -/
 
 namespace Kennedy2007
