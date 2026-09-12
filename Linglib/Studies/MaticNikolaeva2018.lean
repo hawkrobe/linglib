@@ -1,24 +1,23 @@
-import Linglib.Semantics.Polarity.Marking
-import Linglib.Fragments.English.PolarityMarking
-import Linglib.Fragments.German.PolarityMarking
-
 /-!
 # Matić and Nikolaeva (2018): From Polarity Focus to Salient Polarity
 
-This file records the argument of [matic-nikolaeva-2018] that polarity focus is not a fixed
-form–meaning association: what the literature has tried to pin down denotationally is a
-family of communicative intentions the authors call salient polarity, realized by a
-heterogeneous list of structures across languages. The file does not formalize salient
-polarity as a predicate, which would be the very stipulation the chapter rejects; it records
-the attested list of structures ascribed to salient polarity, its cardinality mismatch with
-the substrate's marking strategies, and the claim that no form-class encoding captures the
-interpretational notion, the chapter's own critique of the verum-focus tradition of
-[hohle-1992].
+This file formalizes the inventory behind the argument of [matic-nikolaeva-2018] that polarity
+focus is not a linguistic category pairing a form class with a denotation. What the verum-focus
+tradition after [hohle-1992] has tried to pin down denotationally is, in the chapter's terms,
+salient polarity, an interpretive effect conveyed by a heterogeneous and open-ended list of
+structures: in the chapter's German, English, and Serbian lists, prosodic accent on auxiliaries
+and finite verbs, periphrases with *tun* and *do*, fronting and inversion constructions,
+discourse particles, adverbs, and discourse markers (`Structure`, `Structure.device`). The
+inventory realizes every one of the chapter's devices and is covered by none of them
+(`every_device_attested`, `no_device_covers`), which is the observation the chapter sets
+against any account that reads salient polarity off a single form class.
 
-## TODO
+## Implementation notes
 
-The chapter is not on file; example and page locators are transcribed from an earlier
-version of this file and are UNVERIFIED.
+The inventory is the chapter's lists (2) to (4), taken as data; the chapter's positive
+proposal, that salient polarity is an inference from unrelated denotations, is not a
+denotation and is not formalized, and the lists are explicitly non-exhaustive, so the
+theorems are about the attested inventory rather than about the category.
 
 ## References
 
@@ -28,308 +27,90 @@ version of this file and are UNVERIFIED.
 
 namespace MaticNikolaeva2018
 
-open Polarity.Marking (Strategy Entry)
-open English.PolarityMarking (emphaticDo)
-open German.PolarityMarking (verumFocus dochPreUtterance)
+/-- The kinds of device the chapter finds conveying salient polarity: prosody, verbal
+periphrasis, a dedicated syntactic construction or word-order configuration, a discourse
+particle, an adverb, or a discourse marker. -/
+inductive Device where
+  | prosody
+  | periphrasis
+  | wordOrder
+  | particle
+  | adverb
+  | discourseMarker
+  deriving DecidableEq
 
-/-! ## §1 Attested salient-polarity structures (M&N examples 2–4)
-
-Per [matic-nikolaeva-2018] pp. 13–14, the literature has ascribed
-salient polarity to a heterogeneous set of structures across German,
-English, and Serbian. The list below abridges the chapter's enumeration
-(M&N's own (2), (3), (4)). M&N flag this list as **open-ended** ("the
-list seems to be open" — p. 15); the constructors below are a finite
-proxy for argumentative purposes only. -/
-inductive MNAttestedStructure where
-  /-- German: accent on auxiliary, modal, or complementizer (M&N 2a;
-      cf. [hohle-1992], Lohnstein 2016) -/
+/-- The structures ascribed to salient polarity in the chapter's lists for German (2), English
+(3), and Serbian (4). -/
+inductive Structure where
+  /-- German accent on an auxiliary, modal, or complementizer, *er HAT das Buch geschrieben*. -/
   | germanAccentOnAuxiliary
-  /-- German: accent on lexical finite verb (M&N 2b) -/
+  /-- German accent on the lexical finite verb, *er SCHREIBT sein Buch*. -/
   | germanAccentOnLexicalVerb
-  /-- German: emphatic *tun* periphrasis "Bücher lesen tut er" (M&N 2c) -/
+  /-- German emphatic *tun* periphrasis, *Bücher lesen tut er*. -/
   | germanEmphaticTun
-  /-- German: VP fronting "Bücher gelesen hat er" (M&N 2d) -/
+  /-- German full or partial verb-phrase fronting, *Bücher gelesen hat er*. -/
   | germanVPFronting
-  /-- German: accented discourse particles *doch / schon / wohl / ja*
-      "Er ist DOCH gekommen" (M&N 2e) -/
+  /-- German accented discourse particles *doch*, *schon*, *wohl*, *ja*. -/
   | germanAccentedDiscourseParticles
-  /-- German: discourse markers *ich schwöre* / *ehrlich* / *ungelogen*
-      (M&N 2f) -/
+  /-- German discourse markers *ich schwöre*, *ehrlich*, *ungelogen*. -/
   | germanDiscourseMarkers
-  /-- German: adverbs *tatsächlich* / *wahrhaftig* (M&N 2g) -/
+  /-- German adverbs *tatsächlich*, *wahrhaftig*. -/
   | germanTruthAdverbs
-  /-- English: accented auxiliary or modal "He WILL be on time" (M&N 3a) -/
+  /-- English accent on an auxiliary or modal, *he WILL be on time*. -/
   | englishAccentedAuxiliary
-  /-- English: accented lexical verb "He READ it yesterday" (M&N 3b) -/
+  /-- English accent on the lexical finite verb, *he READ it yesterday*. -/
   | englishAccentedLexicalVerb
-  /-- English: emphatic *do*-support "She did open the door" (M&N 3c) -/
+  /-- English emphatic *do*-support, *she did open the door*. -/
   | englishEmphaticDo
-  /-- English: VP fronting "He went there to learn, and learn he did" (M&N 3d) -/
+  /-- English verb-phrase fronting, *and learn he did*. -/
   | englishVPFronting
-  /-- English: adverbs *really / definitely* (M&N 3e) -/
+  /-- English adverbs *really*, *definitely*. -/
   | englishAdverbs
-  /-- English: particles *so / too / indeed* (M&N 3f) -/
+  /-- English particles *so*, *too*, *indeed*, *he did so finish the paper*. -/
   | englishParticles
-  /-- English: *so*-inversion "and so do I" (M&N 3g) -/
+  /-- English *so*-inversion, *and so do I*. -/
   | englishSoInversion
-  /-- Serbian: accented finite verb "Ona PIŠE romane" (M&N 4a) -/
+  /-- English expletive inversion, *but will he fuck convince me*. -/
+  | englishFInversion
+  /-- Serbian accent on the finite verb, *ona PIŠE romane*. -/
   | serbianAccentedFiniteVerb
-  /-- Serbian: accent on auxiliary/modal "On JESTE napisao tu knjigu"
-      (M&N 4b) -/
+  /-- Serbian accented full auxiliary in place of the clitic, *on JESTE napisao tu knjigu*. -/
   | serbianAccentedAuxiliary
-  /-- Serbian: accented verb + postposed subject (M&N 4c) -/
+  /-- Serbian accented verb with postposed subject, *NAPISAĆE on tu knjigu*. -/
   | serbianAccentedVerbPostposedSubject
-  /-- Serbian: particles and adverbs *stvarno / baš* (M&N 4d) -/
+  /-- Serbian particles and adverbs *stvarno*, *fakat*, *baš*. -/
   | serbianParticles
-  deriving DecidableEq, Repr
+  /-- Serbian discourse markers *majke mi*, *ozbiljno*. -/
+  | serbianDiscourseMarkers
+  deriving DecidableEq
 
-def mnAllStructures : List MNAttestedStructure :=
-  [.germanAccentOnAuxiliary, .germanAccentOnLexicalVerb, .germanEmphaticTun,
-   .germanVPFronting, .germanAccentedDiscourseParticles,
-   .germanDiscourseMarkers, .germanTruthAdverbs,
-   .englishAccentedAuxiliary, .englishAccentedLexicalVerb, .englishEmphaticDo,
-   .englishVPFronting, .englishAdverbs, .englishParticles, .englishSoInversion,
-   .serbianAccentedFiniteVerb, .serbianAccentedAuxiliary,
-   .serbianAccentedVerbPostposedSubject, .serbianParticles]
+/-- The device by which each structure conveys salient polarity. -/
+def Structure.device : Structure → Device
+  | .germanAccentOnAuxiliary | .germanAccentOnLexicalVerb
+  | .englishAccentedAuxiliary | .englishAccentedLexicalVerb
+  | .serbianAccentedFiniteVerb | .serbianAccentedAuxiliary => .prosody
+  | .germanEmphaticTun | .englishEmphaticDo => .periphrasis
+  | .germanVPFronting | .englishVPFronting | .englishSoInversion | .englishFInversion
+  | .serbianAccentedVerbPostposedSubject => .wordOrder
+  | .germanAccentedDiscourseParticles | .englishParticles | .serbianParticles => .particle
+  | .germanTruthAdverbs | .englishAdverbs => .adverb
+  | .germanDiscourseMarkers | .serbianDiscourseMarkers => .discourseMarker
 
-/-! ## §2 The substrate's denotational mapping (Option-valued)
+/-- Every device the chapter names is attested in its lists. -/
+theorem every_device_attested (d : Device) : ∃ s : Structure, s.device = d := by
+  cases d
+  · exact ⟨.germanAccentOnAuxiliary, rfl⟩
+  · exact ⟨.germanEmphaticTun, rfl⟩
+  · exact ⟨.germanVPFronting, rfl⟩
+  · exact ⟨.germanAccentedDiscourseParticles, rfl⟩
+  · exact ⟨.germanTruthAdverbs, rfl⟩
+  · exact ⟨.germanDiscourseMarkers, rfl⟩
 
-The substrate `Strategy` enum has 5 constructors. Any
-denotational encoding of salient polarity onto this enum must collapse
-M&N's 18+ attested structures into 5 buckets — necessarily many-to-one.
-
-The mapping below is the *charitable* reading of how a denotational
-account would assign each M&N structure to a substrate strategy. It is
-**Option-valued**: structures for which no substrate strategy gives a
-defensible fit return `none`. (`.other` exists in the substrate as a
-catch-all but using it would mask the failure; we want the *non-fit*
-to be visible at the type level. This realizes the mathlib-audit
-recommendation to expose the dumping-ground claim structurally rather
-than via a `decide` count.) -/
-def substrateBestEffort : MNAttestedStructure → Option Strategy
-  | .germanAccentOnAuxiliary             => some .verumFocus
-  | .germanAccentOnLexicalVerb           => some .verumFocus
-  | .germanEmphaticTun                   => none
-  | .germanVPFronting                    => none
-  | .germanAccentedDiscourseParticles    => some .polarityReversal  -- doch is canonical
-  | .germanDiscourseMarkers              => none
-  | .germanTruthAdverbs                  => none
-  | .englishAccentedAuxiliary            => some .verumFocus
-  | .englishAccentedLexicalVerb          => some .verumFocus
-  | .englishEmphaticDo                   => some .verumFocus
-  | .englishVPFronting                   => none
-  | .englishAdverbs                      => none
-  | .englishParticles                    => none
-  | .englishSoInversion                  => none
-  | .serbianAccentedFiniteVerb           => some .verumFocus
-  | .serbianAccentedAuxiliary            => some .verumFocus
-  | .serbianAccentedVerbPostposedSubject => none
-  | .serbianParticles                    => none
-
-/-! ## §2b Fragment routing — the M&N argument on actual lexical data
-
-For 4 M&N structures the existing Fragment library already encodes
-the corresponding lexical entry. The routing below makes the M&N
-non-isomorphism claims indictments of *actual Fragment data*, not just
-of M&N's hand-curated symbol list. The 14 unrouted structures (German
-*tun* periphrasis, Serbian particles, English *so*-inversion, etc.) have
-no Fragment entries; for those the M&N argument runs against the
-substrate enum directly, in §2 above. -/
-def fromFragment : MNAttestedStructure → Option Entry
-  | .englishEmphaticDo                => some emphaticDo
-  | .germanAccentOnAuxiliary          => some verumFocus
-  | .germanAccentOnLexicalVerb        => some verumFocus
-  | .germanAccentedDiscourseParticles => some dochPreUtterance
-  | _                                 => none
-
-/-- For the 4 Fragment-routable M&N structures, the Fragment's substrate
-    `strategy` field agrees with `substrateBestEffort`. This grounds the
-    best-effort mapping in actual data: it isn't an editorial fiction. -/
-theorem substrateBestEffort_agrees_with_fragments :
-    ∀ s : MNAttestedStructure, ∀ e : Entry,
-      fromFragment s = some e → substrateBestEffort s = some e.strategy := by
-  intro s e h
-  cases s <;> simp [fromFragment] at h <;> (subst h; rfl)
-
-/-! ## §3 Non-isomorphism: the encoding is many-to-one
-
-The substrate's encoding is not injective on M&N's attested-structure
-list — `.verumFocus` collects 7 cross-linguistic structures M&N treat
-as separate phenomena, and `none` collects 10 more (M&N's claim that
-"the grammatical category gets a blurry extension and must be
-continuously expanded", p. 15). -/
-
-/-- The denotational encoding cannot place two attested structures M&N
-    treat as substantively different (German emphatic *tun* and English
-    VP fronting). Both fall outside any substrate strategy bucket. -/
-theorem substrate_cannot_encode_germanEmphaticTun_and_englishVPFronting :
-    substrateBestEffort .germanEmphaticTun = none ∧
-    substrateBestEffort .englishVPFronting = none := ⟨rfl, rfl⟩
-
-/-- The substrate's `.verumFocus` constructor collects multiple distinct
-    M&N structures. **This is now a claim about real Fragment data**:
-    the English *do*-support entry (`English.PolarityMarking.emphaticDo`)
-    and the German verum-focus entry (`German.PolarityMarking.verumFocus`)
-    have the same substrate `strategy` field, even though M&N argue
-    they have different distributional properties (M&N §2.2.1). -/
-theorem fragment_data_lumps_emphaticDo_with_verumFocus :
-    emphaticDo.strategy = verumFocus.strategy := rfl
-
-/-- The substrate has no defensible encoding for at least 10 of M&N's
-    18 attested salient-polarity structures. The substrate's catch-all
-    `.other` constructor would silently absorb these, but accepting
-    that absorption is exactly what M&N argue against (p. 15: "the
-    grammatical category gets a blurry extension and must be
-    continuously expanded to encompass all structures carrying the
-    desired effect"). The Option-valued mapping makes the failure
-    structural: there is no `some _` to assign. -/
-theorem substrate_cannot_encode_at_least_ten :
-    (mnAllStructures.filter (λ s => substrateBestEffort s == none)).length ≥ 10 := by
-  decide
-
-/-! ## §4 Open-endedness: the load-bearing claim
-
-M&N's deeper argument is not just that the encoding is many-to-one — it
-is that the *list* of structures that can convey salient polarity is
-itself **open-ended**. The chapter (p. 15) explicitly notes that
-expressions like *on the contrary*, *just the opposite*, and complement
-clauses introduced with *it is true that* fit the standard salient-
-polarity diagnostics but are not in any existing typology, and concludes
-"the list seems to be open."
-
-We record M&N's three explicit witnesses as `String` data outside
-`MNAttestedStructure`. The inductive type cannot witness its own
-incompleteness — adding the three witnesses as constructors would
-just push the openness one step further out (M&N would point at
-yet another structure not in the extended type). The witness list
-plus the non-emptiness theorem is the substantive Lean correlate of
-M&N's "the list seems to be open" claim. -/
-
-/-- Three salient-polarity-conveying structures M&N (p. 15) explicitly
-    cite as missing from existing typologies. They live as `String` data
-    rather than `MNAttestedStructure` constructors precisely because
-    M&N's openness argument denies that any finite enumeration closes
-    the category. -/
-def mnOpenEndedWitnesses : List String :=
-  ["on the contrary",
-   "just the opposite",
-   "complement clauses with *it is true that p*"]
-
-/-- The salient-polarity-conveying list M&N attests is **larger** than
-    the 18-constructor `MNAttestedStructure` enum: at minimum, three
-    further witnesses (M&N p. 15) can be exhibited as `String`s outside
-    the inductive type. Any finite extension of `MNAttestedStructure`
-    would face the same problem. This is the operational sense in
-    which M&N's open-endedness claim holds against any closure attempt. -/
-theorem mn_attested_list_strictly_grows : mnOpenEndedWitnesses ≠ [] := by decide
-
-/-! ## §5 Garassino & Jacob (2018, fn 13) endorsement
-
-The same-volume [garassino-jacob-2018] explicitly adopt M&N's
-salient-polarity view (their fn 13, p. 236; verbatim quote in
-`Studies/GarassinoJacob2018.lean::§4`). This is a
-documented framework alignment within the volume itself, not the
-formaliser's editorial synthesis — a peer in the same edited volume
-reaching the same conclusion. -/
-
-/-! ## §6 The argument extends to sibling frameworks
-
-M&N §2 explicitly target three sibling frameworks beyond the substrate's
-form-class encoding. Two of them are formalized in linglib:
-
-- `Studies/RomeroHan2004.lean` formalizes
-  [romero-han-2004]'s **FOR-SURE-CommonGround** epistemic-conjunction
-  operator. M&N call this "Lexical Operator Theory" (LOT) and
-  reject it on the same form-meaning grounds (M&N §2 "epistemic
-  account").
-- `Semantics/Mood/Gutzmann.lean` /
-  `Studies/Gutzmann2015.lean` formalize
-  [gutzmann-2015]'s use-conditional sentence-mood operators
-  (DEONT/EPIS/HKNOW). The verum-specific Gutzmann work M&N cite
-  (Gutzmann & Castroviejo Miró 2011) is *not* formalized in
-  linglib — the existing Gutzmann file is the broader 2015
-  sentence-mood book whose framework scope does not extend to
-  polarity-marking devices at all.
-
-Below we extend the M&N non-fit argument to both. The shared shape —
-each framework yields an `Option`-valued partial mapping from
-`MNAttestedStructure`, with the `none` extension counting the
-framework's encoding failures — could be lifted to a typeclass
-(`FrameworkFit α := MNAttestedStructure → Option α`); we keep the
-mappings as separate `def`s for now so each framework's coverage
-profile stays visible at the def-site. -/
-
-/-- Romero & Han's framework offers exactly one analytic option for
-    salient polarity: the FOR-SURE-CommonGround operator. M&N call this LOT. -/
-inductive RHAnalysis where
-  /-- [romero-han-2004]'s `RomeroHan2004.verum` operator analyzes the
-      structure as expressing speaker certainty about CommonGround-addition. -/
-  | epistemicVerum
-  deriving DecidableEq, Repr
-
-/-- R&H's FOR-SURE-CommonGround analysis is canonically motivated by — and
-    arguably restricted to — accent on finite verbs / auxiliaries
-    (the prosodic-on-finite-verb subset). For M&N's other 11
-    structures (periphrastic *tun*, VP fronting, discourse particles,
-    inversion constructions, adverbs, …) the R&H framework is silent. -/
-def romeroHanBestEffort : MNAttestedStructure → Option RHAnalysis
-  | .germanAccentOnAuxiliary       => some .epistemicVerum
-  | .germanAccentOnLexicalVerb     => some .epistemicVerum
-  | .englishAccentedAuxiliary      => some .epistemicVerum
-  | .englishAccentedLexicalVerb    => some .epistemicVerum
-  | .englishEmphaticDo             => some .epistemicVerum
-  | .serbianAccentedFiniteVerb     => some .epistemicVerum
-  | .serbianAccentedAuxiliary      => some .epistemicVerum
-  | _                              => none
-
-/-- R&H's FOR-SURE-CommonGround analysis cannot encode at least 11 of M&N's 18
-    attested salient-polarity structures. The framework's analytic
-    scope is the prosodic-on-finite-verb subset; everything else falls
-    outside. -/
-theorem romeroHan_cannot_encode_at_least_eleven :
-    (mnAllStructures.filter (λ s => romeroHanBestEffort s == none)).length ≥ 11 := by
-  decide
-
-/-- Gutzmann 2015's UCI dimensions (DEONT/EPIS/HKNOW). The 2015
-    framework is about sentence-mood operators, not polarity-marking
-    devices; M&N's specific Gutzmann target is Gutzmann & Castroviejo
-    Miró 2011 ("a kind of conversational operator"), which is not
-    formalized in linglib. -/
-inductive GutzmannDimension where
-  | deontic
-  | epistemic
-  | hearerKnowledge
-  deriving DecidableEq, Repr
-
-/-- Gutzmann 2015's sentence-mood UCIs do not analyze polarity-marking
-    structures: the framework's scope is clause-type composition
-    (V2/VL/imperative declaratives, interrogatives), not the prosodic /
-    particle / construction inventory M&N enumerate. The constant-`none`
-    encoding records that the framework simply does not extend. The
-    shared verum-related Gutzmann critique M&N actually engage
-    (Gutzmann & Castroviejo Miró 2011) is not in linglib's substrate. -/
-def gutzmannBestEffort : MNAttestedStructure → Option GutzmannDimension :=
-  λ _ => none
-
-/-- Gutzmann 2015's sentence-mood framework cannot analyze any of M&N's
-    18 attested salient-polarity structures — the framework scopes over
-    clause types, not polarity-marking devices. Vacuous coverage,
-    recorded structurally. -/
-theorem gutzmann_2015_framework_does_not_apply :
-    ∀ s : MNAttestedStructure, gutzmannBestEffort s = none := by
-  intro _; rfl
-
-/-- The M&N argument is universal: at least 10 attested structures fall
-    outside the substrate enum, at least 11 fall outside R&H's
-    FOR-SURE-CommonGround, and all 18 fall outside Gutzmann 2015's sentence-mood
-    UCIs. The structures inside the *intersection* of all three
-    frameworks — the canonical prosodic verum focus on finite verbs —
-    are exactly the cases all four traditions agree about; the
-    disagreement is entirely about what *else* counts. -/
-theorem mn_argument_extends_across_frameworks :
-    (mnAllStructures.filter (λ s => substrateBestEffort s == none)).length ≥ 10 ∧
-    (mnAllStructures.filter (λ s => romeroHanBestEffort s == none)).length ≥ 11 ∧
-    (mnAllStructures.filter (λ s => gutzmannBestEffort s == none)).length = 18 := by
-  refine ⟨?_, ?_, ?_⟩ <;> decide
+/-- No single device covers the inventory: the structures ascribed to salient polarity do not
+form a form class. -/
+theorem no_device_covers (d : Device) : ∃ s : Structure, s.device ≠ d := by
+  cases d
+  · exact ⟨.germanEmphaticTun, by decide⟩
+  all_goals exact ⟨.germanAccentOnAuxiliary, by decide⟩
 
 end MaticNikolaeva2018
