@@ -74,6 +74,65 @@ namespace JackendoffAudring2020
 
 open Morphology ConstructionMorphology
 
+/-! ### Open and closed variables, (17) and (18)
+
+The toponym patterns (17): a name and the type of a geographical feature, the name an open
+variable and the feature type a closed one, whose fillers are learned pattern by pattern; in
+(18d) *the* and *of* are constants. -/
+
+/-- The pattern (18a), name then feature: the name open, the feature closed. -/
+def toponymA : Schema (Fin 2) (Flat String) := ⟨λ _ => ⊥, {0}⟩
+
+/-- The pattern (18b), feature then name. -/
+def toponymB : Schema (Fin 2) (Flat String) := ⟨λ _ => ⊥, {1}⟩
+
+/-- The pattern (18d), *the* feature *of* name: two constants, a closed feature, an open name. -/
+def toponymD : Schema (Fin 4) (Flat String) := ⟨![↑"the", ⊥, ↑"of", ⊥], {3}⟩
+
+/-- The stored toponyms of (17a). -/
+def toponymsA : Set (Fin 2 → Flat String) :=
+  {Forms.arrowheadLake.slots, Forms.loonMountain.slots, Forms.wissahickonCreek.slots,
+    Forms.laurelHill.slots, Forms.sugarIsland.slots}
+
+/-- The stored toponyms of (17b). -/
+def toponymsB : Set (Fin 2 → Flat String) :=
+  {Forms.mountEverest.slots, Forms.lakeMichigan.slots, Forms.capeCod.slots}
+
+/-- The stored toponyms of (17d). -/
+def toponymsD : Set (Fin 4 → Flat String) :=
+  {Forms.bayOfFundy.slots, Forms.gulfOfStLawrence.slots, Forms.capeOfGoodHope.slots,
+    Forms.isleOfWight.slots}
+
+/-- *Morris Mountain* is licensed by (18a): the name is open and *Mountain* is attested. -/
+theorem morrisMountain_generates : toponymA.Generates toponymsA Forms.morrisMountain.slots :=
+  ⟨λ i => bot_le, λ i _ hi => by
+    fin_cases i
+    · exact absurd (Set.mem_singleton _) hi
+    · exact ⟨Forms.loonMountain.slots, ⟨by simp [toponymsA], λ _ => bot_le⟩, by decide⟩⟩
+
+/-- *Mount Morris* is licensed by (18b) likewise. -/
+theorem mountMorris_generates : toponymB.Generates toponymsB Forms.mountMorris.slots :=
+  ⟨λ i => bot_le, λ i _ hi => by
+    fin_cases i
+    · exact ⟨Forms.mountEverest.slots, ⟨by simp [toponymsB], λ _ => bot_le⟩, by decide⟩
+    · exact absurd (Set.mem_singleton _) hi⟩
+
+/-- *Mountain Morris* is not: *Mountain* is not an attested feature of the pattern (18b). -/
+theorem not_mountainMorris_generates :
+    ¬ toponymB.Generates toponymsB ![↑"Mountain", ↑"Morris"] := by
+  rintro ⟨-, h⟩
+  obtain ⟨w, ⟨hw, -⟩, hw0⟩ := h 0 rfl (by simp [toponymB])
+  simp only [toponymsB, Set.mem_insert_iff, Set.mem_singleton_iff] at hw
+  rcases hw with rfl | rfl | rfl <;> exact absurd hw0 (by decide)
+
+/-- *The Mount of Halle* is not licensed by (18d): *Mount* is not among its attested features. -/
+theorem not_mountOfHalle_generates :
+    ¬ toponymD.Generates toponymsD ![↑"the", ↑"Mount", ↑"of", ↑"Halle"] := by
+  rintro ⟨-, h⟩
+  obtain ⟨w, ⟨hw, -⟩, hw1⟩ := h 1 rfl (by simp [toponymD])
+  simp only [toponymsD, Set.mem_insert_iff, Set.mem_singleton_iff] at hw
+  rcases hw with rfl | rfl | rfl | rfl <;> exact absurd hw1 (by decide)
+
 /-! ### Default inheritance and override, Figure 3.5
 
 The taxonomy of Figure 3.5: birds fly by default, the ostrich overrides, and the canary
