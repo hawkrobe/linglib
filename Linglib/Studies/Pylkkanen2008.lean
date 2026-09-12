@@ -58,7 +58,7 @@ in the "Applicative diagnostics" section below.
 - `Studies/Larson1988.lean`: VP shell predecessor — same c-command
   hierarchy (IO > DO) derived differently. Bridge theorem below proves
   convergence.
-- `Studies/Kratzer1996.lean` Part III: Voice-based tree derivations
+- `Studies/Kratzer1996.lean`: the VoiceP derivation of the external argument
   (transitive, anticausative) using the same infrastructure.
 -/
 
