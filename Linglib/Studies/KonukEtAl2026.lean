@@ -1,349 +1,228 @@
-import Linglib.Semantics.Causation.SEM.Bool
-import Linglib.Semantics.Causation.SEM.Counterfactual
 import Linglib.Semantics.Causation.Strength
-import Linglib.Semantics.Plurality.Distributivity
-import Mathlib.Data.Rat.Defs
-import Mathlib.Tactic.NormNum
-import Mathlib.Data.Fintype.Fin
-import Mathlib.Data.Fintype.Pi
-import Mathlib.Tactic.FinCases
+import Linglib.Semantics.Plurality.Basic
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Ring
 
 /-!
-# [konuk-et-al-2026]: Plural Causes
-[konuk-et-al-2026]
+# Konuk, Quillien and Mascarenhas (2026): Plural Causes
 
-Formalizes Konuk, Quillien & Mascarenhas (2026) "Plural causes,"
-*Open Mind*.
+This file formalizes [konuk-et-al-2026]'s account of plural causes in causal selection: a
+conjunction of events such as *A and B* is a candidate cause in its own right, scored by the
+counterfactual dependence of the outcome on the compound binary variable that is true when
+both hold. The Necessity–Sufficiency Model of [icard-et-al-2017], the substrate's
+`Causation.Strength.nsm`, applies to the compound with the compound's own prior, its
+necessity the probability that the outcome fails where the compound fails, and its sufficiency
+the probability that forcing the compound on restores an absent outcome
+(`Compound.score`). In Experiment 1 a player wins with two colored balls from three urns of
+probabilities 0.05, 0.5 and 0.95; with the counterfactual worlds drawn from the priors, the
+score of a pair is in closed form one minus the chance that exactly one of its urns and the
+third all come out colored (`score_pair`), so the pair of the intermediate and high urns
+scores 39/40 while the pair of the low and intermediate urns scores 21/40, though the low and
+high urns are alike on their own: plural judgments are not linear in singular ones
+(`antilinearity`). In Experiment 2 the rule is (A ∧ B) ∨ (C ∧ D): only pairs within a
+disjunct are sufficient for a win (`sufficient_pairs`), and losing rounds are scored against
+the homogeneous loss ¬A ∧ ¬B ∧ ¬C ∧ ¬D, the plural negation of the winning conditions
+in the sense of [kriz-spector-2021], rather than the classical negation, (2) and (3):
+under the classical loss no single white ball is necessary in the overdetermined negative round,
+under the homogeneous loss each is (`overdetermined_negative`), and in the triple-negative
+round the representation negates as homogeneously as the facts allow (`triple_negative`).
 
-## Core Contributions
+## Implementation notes
 
-1. **Compound causes**: A∧B is treated as a single compound binary variable
-   for causal selection, not decomposed into individual contributions.
-2. **Necessity-Sufficiency Model** (NSM): `NSM(C) = P(C)·Suf(C) + (1-P(C))·Nec(C)`
-   from [icard-et-al-2017], applied to compound causes.
-3. **Anti-linearity**: NSM(INT∧HIGH) > NSM(LOW∧INT) even though LOW and HIGH
-   have comparable individual causal strength (Experiment 1).
-4. **Homogeneous loss**: Loss judgments follow LOSS_strong = ¬A∧¬B∧¬C∧¬D,
-   not classical ¬((A∧B)∨(C∧D)) (Experiment 2), mixed with classical
-   via fitted parameter w ≈ 0.77.
-5. **Crossing avoidance**: Within-disjunct plural causes (A∧B) preferred
-   over cross-disjunct (A∧C) when the rule is (A∧B)∨(C∧D) (Experiment 2).
+* Worlds are tuples of Booleans, so probabilities are finite sums over products of Booleans
+  and the closed form is proved by expanding them; the stability parameter is set to 0, the
+  paper's own exposition, so that sampling propensities are the priors.
+* The fitted parameters, s = 0.71 in Experiment 1 and the mixture weight w = 0.77 of the two
+  loss representations in Experiment 2, and the Counterfactual Effect Size Model are not
+  represented.
 
-## V2 substrate
+## References
 
-The two scenarios (threshold game + disjunctive rule) share a single
-`KonukVar` inductive enum (9 vertices). Each scenario's win-vertex
-mechanism is a Boolean function of its parents (threshold-≥-2 for
-`win`; (A∧B)∨(C∧D) for `exp2Win`). Compound sufficiency/necessity
-are polymorphic predicates over `BoolSEM` defined via `developDetOn`
-with the explicit vertex list.
+* [konuk-et-al-2026]
+* [icard-et-al-2017]
+* [kriz-spector-2021]
 -/
 
 namespace KonukEtAl2026
 
-open Causation Causation.Mechanism Causation.SEM
-open Causation.Strength (nsm samplingPropensity)
+open Causation.Strength
 
--- ════════════════════════════════════════════════════
--- § Vertex enum (combines both experiments)
--- ════════════════════════════════════════════════════
+variable {W : Type*} [Fintype W]
 
-/-- All vertices used by both Konuk experiments. -/
-inductive KonukVar
-  -- Threshold game (Experiment 1): three urns + win
-  | urnA | urnB | urnC | win
-  -- Disjunctive rule (Experiment 2): four sources + win
-  | exp2A | exp2B | exp2C | exp2D | exp2Win
-  deriving DecidableEq, Fintype, Repr
+/-- The mass of the worlds passing a test, under a distribution over worlds. -/
+def mass (p : W → ℚ) (S : W → Bool) : ℚ := ∑ w, if S w then p w else 0
 
-/-- The shared causal graph for both experiments. -/
-def konukGraph : CausalGraph KonukVar :=
-  ⟨fun
-    | .urnA | .urnB | .urnC => ∅
-    | .win => {.urnA, .urnB, .urnC}
-    | .exp2A | .exp2B | .exp2C | .exp2D => ∅
-    | .exp2Win => {.exp2A, .exp2B, .exp2C, .exp2D}⟩
+/-- A compound cause: the test that all its variables hold, and the intervention that sets
+them all true. -/
+structure Compound (W : Type*) where
+  holds : W → Bool
+  on : W → W
 
-/-- Threshold-≥-2 mechanism: WIN iff at least 2 of {urnA, urnB, urnC} true.
-    Equivalent to (A∧B) ∨ (A∧C) ∨ (B∧C). -/
-private def thresholdMech
-    (ρ : ∀ u : konukGraph.parents .win, Bool) : Bool :=
-  let a := ρ ⟨.urnA, by simp [konukGraph]⟩
-  let b := ρ ⟨.urnB, by simp [konukGraph]⟩
-  let c := ρ ⟨.urnC, by simp [konukGraph]⟩
-  (a && b) || (a && c) || (b && c)
+namespace Compound
 
-/-- Disjunctive-rule mechanism: WIN iff (A∧B) ∨ (C∧D). -/
-private def disjunctiveRuleMech
-    (ρ : ∀ u : konukGraph.parents .exp2Win, Bool) : Bool :=
-  let a := ρ ⟨.exp2A, by simp [konukGraph]⟩
-  let b := ρ ⟨.exp2B, by simp [konukGraph]⟩
-  let c := ρ ⟨.exp2C, by simp [konukGraph]⟩
-  let d := ρ ⟨.exp2D, by simp [konukGraph]⟩
-  (a && b) || (c && d)
+variable (p : W → ℚ) (f : W → Bool) (C : Compound W)
 
-/-- The shared BoolSEM for both Konuk experiments. -/
-noncomputable def konukSEM : BoolSEM KonukVar :=
-  { graph := konukGraph
-    mech := fun v => match v with
-      | .urnA | .urnB | .urnC => const (G := konukGraph) false
-      | .win => deterministic thresholdMech
-      | .exp2A | .exp2B | .exp2C | .exp2D => const (G := konukGraph) false
-      | .exp2Win => deterministic disjunctiveRuleMech }
+/-- Necessity: the probability, over the worlds where the compound fails, that the outcome
+fails. -/
+def necessity : ℚ := mass p (λ w => !C.holds w && !f w) / mass p (λ w => !C.holds w)
 
-noncomputable instance : SEM.IsDeterministic konukSEM where
-  mech_det v := match v with
-    | .urnA | .urnB | .urnC | .exp2A | .exp2B | .exp2C | .exp2D =>
-      inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .win | .exp2Win =>
-      inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+/-- Sufficiency: the probability, over the worlds where compound and outcome both fail, that
+forcing the compound on produces the outcome. -/
+def sufficiency : ℚ :=
+  mass p (λ w => !C.holds w && !f w && f (C.on w)) / mass p (λ w => !C.holds w && !f w)
 
-/-- Topologically-ordered vertex list (roots before win-vertices). -/
-def konukVarList : List KonukVar :=
-  [.urnA, .urnB, .urnC, .exp2A, .exp2B, .exp2C, .exp2D, .win, .exp2Win]
+/-- The score of a compound: [icard-et-al-2017]'s model applied to the compound variable,
+its prior the mass of the worlds where it holds. -/
+def score : ℚ := nsm (mass p C.holds) (C.sufficiency p f) (C.necessity p f)
 
--- ════════════════════════════════════════════════════
--- § Compound sufficiency and necessity (polymorphic)
--- ════════════════════════════════════════════════════
+/-- A compound is sufficient for an outcome when forcing it on produces the outcome in every
+world. -/
+def Sufficient : Prop := ∀ w, f (C.on w) = true
 
-/-- A compound cause is **sufficient** iff setting all its variables to
-    true produces the effect under `developDetOn`. -/
-noncomputable def compoundSufficient (M : BoolSEM KonukVar)
-    [SEM.IsDeterministic M] (bg : Valuation (fun _ : KonukVar => Bool))
-    (causes : List KonukVar) (effect : KonukVar) : Prop :=
-  (developDetOn M konukVarList 1
-    (causes.foldl (fun s' v => s'.extend v true) bg)).hasValue effect true
+instance : Decidable (C.Sufficient f) := inferInstanceAs (Decidable (∀ w, f (C.on w) = true))
 
-noncomputable instance (M : BoolSEM KonukVar) [SEM.IsDeterministic M]
-    (bg : Valuation _) (causes : List KonukVar) (effect : KonukVar) :
-    Decidable (compoundSufficient M bg causes effect) :=
-  Classical.dec _
+end Compound
 
-/-- A compound cause is **necessary** iff setting all its variables to
-    false prevents the effect under `developDetOn`. -/
-noncomputable def compoundNecessary (M : BoolSEM KonukVar)
-    [SEM.IsDeterministic M] (bg : Valuation (fun _ : KonukVar => Bool))
-    (causes : List KonukVar) (effect : KonukVar) : Prop :=
-  ¬ (developDetOn M konukVarList 1
-    (causes.foldl (fun s' v => s'.extend v false) bg)).hasValue effect true
+/-! ### Experiment 1: the threshold game -/
 
-noncomputable instance (M : BoolSEM KonukVar) [SEM.IsDeterministic M]
-    (bg : Valuation _) (causes : List KonukVar) (effect : KonukVar) :
-    Decidable (compoundNecessary M bg causes effect) :=
-  Classical.dec _
+/-- A round of the threshold game: whether each of the three urns gave a colored ball. -/
+abbrev Round₁ := Bool × Bool × Bool
 
--- ════════════════════════════════════════════════════
--- § 3. Experiment 1: Threshold Game
--- ════════════════════════════════════════════════════
+/-- The player wins with two colored balls or more. -/
+def win₁ : Round₁ → Bool
+  | (a, b, c) => (a && b) || (a && c) || (b && c)
 
-/-- The actual situation: all three urns are on. -/
-private def thresholdActual : Valuation (fun _ : KonukVar => Bool) :=
-  Valuation.empty.extend .urnA true |>.extend .urnB true |>.extend .urnC true
+/-- Independent draws with the urns' probabilities: the counterfactual distribution with the
+stability parameter at 0. -/
+def draws (pA pB pC : ℚ) : Round₁ → ℚ
+  | (a, b, c) =>
+    (if a then pA else 1 - pA) * (if b then pB else 1 - pB) * (if c then pC else 1 - pC)
 
-/-- Any pair of urns is sufficient (compound sufficiency). -/
-theorem anyPair_sufficient_AB :
-    compoundSufficient konukSEM Valuation.empty [.urnA, .urnB] .win := by
-  unfold compoundSufficient; rfl
+/-- The pair of the first two urns as a compound cause. -/
+def pair : Compound Round₁ := ⟨λ w => w.1 && w.2.1, λ w => (true, true, w.2.2)⟩
 
-theorem anyPair_sufficient_AC :
-    compoundSufficient konukSEM Valuation.empty [.urnA, .urnC] .win := by
-  unfold compoundSufficient; rfl
+/-- The pair is sufficient for a win. -/
+theorem pair_sufficient : pair.Sufficient win₁ := by decide
 
-theorem anyPair_sufficient_BC :
-    compoundSufficient konukSEM Valuation.empty [.urnB, .urnC] .win := by
-  unfold compoundSufficient; rfl
+/-- The score of a pair in closed form: its sufficiency is one, and its necessity carries the
+worlds where neither urn gives a colored ball or exactly one does and the third does not, so
+the score is one minus the probability that exactly one of the pair and the third urn give
+colored balls. -/
+theorem score_pair {pA pB pC : ℚ} (hA : 0 < pA ∧ pA < 1) (hB : 0 < pB ∧ pB < 1)
+    (hC : 0 < pC ∧ pC < 1) :
+    pair.score (draws pA pB pC) win₁ = 1 - (pA * (1 - pB) + (1 - pA) * pB) * pC := by
+  have hn : mass (draws pA pB pC) (λ w => !pair.holds w) = 1 - pA * pB := by
+    simp only [mass, Fintype.sum_prod_type, Fintype.sum_bool, pair, draws]
+    simp; ring
+  have hnf : mass (draws pA pB pC) (λ w => !pair.holds w && !win₁ w) =
+      (1 - pA) * (1 - pB) + (pA * (1 - pB) + (1 - pA) * pB) * (1 - pC) := by
+    simp only [mass, Fintype.sum_prod_type, Fintype.sum_bool, pair, draws, win₁]
+    simp; ring
+  have hnfs : mass (draws pA pB pC) (λ w => !pair.holds w && !win₁ w && win₁ (pair.on w)) =
+      (1 - pA) * (1 - pB) + (pA * (1 - pB) + (1 - pA) * pB) * (1 - pC) := by
+    simp only [mass, Fintype.sum_prod_type, Fintype.sum_bool, pair, draws, win₁]
+    simp; ring
+  have hc : mass (draws pA pB pC) pair.holds = pA * pB := by
+    simp only [mass, Fintype.sum_prod_type, Fintype.sum_bool, pair, draws]
+    simp; ring
+  have hn0 : (1 : ℚ) - pA * pB ≠ 0 := by nlinarith [hA.1, hA.2, hB.1, hB.2]
+  have hnf0 : (1 - pA) * (1 - pB) + (pA * (1 - pB) + (1 - pA) * pB) * (1 - pC) ≠ 0 :=
+    ne_of_gt (add_pos_of_pos_of_nonneg (mul_pos (sub_pos.2 hA.2) (sub_pos.2 hB.2))
+      (mul_nonneg (add_nonneg (mul_nonneg hA.1.le (sub_nonneg.2 hB.2.le))
+        (mul_nonneg (sub_nonneg.2 hA.2.le) hB.1.le)) (sub_nonneg.2 hC.2.le)))
+  rw [Compound.score, Compound.sufficiency, Compound.necessity, hn, hnf, hnfs, hc, nsm,
+    div_self hnf0]
+  field_simp
+  ring
 
-/-- But compound pairs ARE necessary in the actual world.
+/-- The urns' probabilities: low, intermediate and high. -/
+def pLow : ℚ := 1 / 20
+def pInt : ℚ := 1 / 2
+def pHigh : ℚ := 19 / 20
 
-    Individual urns are not necessary (overdetermination), but compound
-    pairs are — removing any pair drops below threshold. This justifies
-    treating A∧B as the unit of causal attribution. -/
-theorem compound_pair_necessary_in_actual :
-    compoundNecessary konukSEM thresholdActual [.urnA, .urnB] .win ∧
-    compoundNecessary konukSEM thresholdActual [.urnA, .urnC] .win ∧
-    compoundNecessary konukSEM thresholdActual [.urnB, .urnC] .win := by
-  refine ⟨?_, ?_, ?_⟩
-  all_goals (unfold compoundNecessary; intro h; exact Bool.false_ne_true (Option.some.inj h))
+/-- Anti-linearity: the pair of the intermediate and high urns scores 39/40 and the pair of
+the low and intermediate urns 21/40, so plural scores are not a linear combination of
+singular ones, the low and high urns being alike. -/
+theorem antilinearity :
+    pair.score (draws pInt pHigh pLow) win₁ = 39 / 40 ∧
+      pair.score (draws pLow pInt pHigh) win₁ = 21 / 40 ∧
+      pair.score (draws pLow pInt pHigh) win₁ < pair.score (draws pInt pHigh pLow) win₁ := by
+  rw [score_pair (by norm_num [pInt]) (by norm_num [pHigh]) (by norm_num [pLow]),
+    score_pair (by norm_num [pLow]) (by norm_num [pInt]) (by norm_num [pHigh])]
+  norm_num [pLow, pInt, pHigh]
 
--- ════════════════════════════════════════════════════
--- § NSM Computation for Experiment 1 (unchanged — pure ℚ arithmetic)
--- ════════════════════════════════════════════════════
+/-! ### Experiment 2: the disjunctive rule -/
 
-def pLow : ℚ := 1/20
-def pInt : ℚ := 1/2
-def pHigh : ℚ := 19/20
+/-- A round with four urns. -/
+abbrev Round₂ := Bool × Bool × Bool × Bool
 
-/-- NSM for a compound pair {X,Y} in the threshold-≥-2 game (Suf=1).
+/-- The player wins with two purple balls, from A and B, or two yellow, from C and D, (1). -/
+def win₂ : Round₂ → Bool
+  | (a, b, c, d) => (a && b) || (c && d)
 
-    NSM = 1 - P(WIN ∧ ¬C), where P(WIN ∧ ¬C) is the probability that
-    exactly one of {X,Y} is on AND the third urn Z is also on. -/
-def nsmThreshold (pX pY pZ : ℚ) : ℚ :=
-  1 - (pX * (1 - pY) + (1 - pX) * pY) * pZ
+/-- The classical loss, (3): the negation of the winning conditions. -/
+def lossClassical (w : Round₂) : Bool := !win₂ w
 
-/-- NSM({INT, HIGH}) = 39/40. -/
-theorem nsm_intHigh : nsmThreshold pInt pHigh pLow = 39/40 := by
-  simp only [nsmThreshold, pInt, pHigh, pLow]; norm_num
+/-- The homogeneous loss, (2): the plural negation of the winning conditions. -/
+def lossStrong : Round₂ → Bool
+  | (a, b, c, d) => !a && !b && !c && !d
 
-/-- NSM({LOW, INT}) = 21/40. -/
-theorem nsm_lowInt : nsmThreshold pLow pInt pHigh = 21/40 := by
-  simp only [nsmThreshold, pLow, pInt, pHigh]; norm_num
+/-- The urn `i`'s draw in a round. -/
+def draw : Round₂ → Fin 4 → Bool
+  | (a, b, c, d), i => ![a, b, c, d] i
 
-/-- **Anti-linearity**: INT∧HIGH has strictly higher NSM than LOW∧INT.
+/-- Setting urn `i`'s draw. -/
+def set (w : Round₂) (i : Fin 4) (b : Bool) : Round₂ :=
+  (if i = 0 then b else w.1, if i = 1 then b else w.2.1, if i = 2 then b else w.2.2.1,
+    if i = 3 then b else w.2.2.2)
 
-    The additive hypothesis predicts LOW∧INT ≈ INT∧HIGH (since LOW and HIGH
-    have comparable individual NSM in the threshold game). The holistic NSM
-    gives 39/40 vs 21/40, matching the empirical finding. -/
-theorem antiLinearity_nsm :
-    nsmThreshold pInt pHigh pLow > nsmThreshold pLow pInt pHigh := by
-  simp only [nsmThreshold, pInt, pHigh, pLow]; norm_num
+/-- The homogeneous loss is the plural negation of the draws in the sense of
+[kriz-spector-2021]: none of the urns gives a colored ball. -/
+theorem lossStrong_iff_noneSatisfy (w : Round₂) :
+    lossStrong w = true ↔ Plurality.noneSatisfy (λ i (_ : Unit) => draw w i = true) Finset.univ () := by
+  revert w; decide
 
--- ════════════════════════════════════════════════════
--- § 4. Experiment 2: Disjunctive Rule and LOSS
--- ════════════════════════════════════════════════════
-
-/-- Classical LOSS = ¬((A∧B) ∨ (C∧D)) ≡ ¬(A∧B) ∧ ¬(C∧D). -/
-def lossClassical (a b c d : Bool) : Bool :=
-  !(a && b) && !(c && d)
-
-/-- Homogeneous LOSS = ¬A ∧ ¬B ∧ ¬C ∧ ¬D. -/
-def lossStrong (a b c d : Bool) : Bool :=
-  !a && !b && !c && !d
-
-/-- LOSS_strong entails classical LOSS. -/
-theorem lossStrong_implies_classical (a b c d : Bool) :
-    lossStrong a b c d = true → lossClassical a b c d = true := by
-  cases a <;> cases b <;> cases c <;> cases d <;> simp [lossStrong, lossClassical]
-
-/-- Classical LOSS does NOT entail LOSS_strong.
-
-    Witness: A=1, B=0, C=0, D=0 — neither A∧B nor C∧D holds (classical LOSS),
-    but A is present (LOSS_strong fails). -/
-theorem lossStrong_strictly_stronger :
-    ∃ a b c d, lossClassical a b c d = true ∧ lossStrong a b c d = false :=
-  ⟨true, false, false, false, rfl, rfl⟩
-
-/-- Mixture model: w · LOSS_strong + (1-w) · LOSS_classical.
-
-    Fitted w ≈ 0.77, reflecting the dominance of the homogeneous reading
-    over the classical reading. -/
-def lossMixed (w : ℚ) (a b c d : Bool) : ℚ :=
-  w * (if lossStrong a b c d then 1 else 0) +
-  (1 - w) * (if lossClassical a b c d then 1 else 0)
-
-/-- At w = 1, the mixture reduces to LOSS_strong. -/
-theorem lossMixed_at_one (a b c d : Bool) :
-    lossMixed 1 a b c d = if lossStrong a b c d then 1 else 0 := by
-  simp [lossMixed]
-
-/-- At w = 0, the mixture reduces to classical LOSS. -/
-theorem lossMixed_at_zero (a b c d : Bool) :
-    lossMixed 0 a b c d = if lossClassical a b c d then 1 else 0 := by
-  simp [lossMixed]
-
-/-- The loss gap (classical but not strong) is exactly `someSatisfy` for the
-    "is present" predicate: some but not all variables are false.
-
-    The classical negation ¬(A∧B) ∧ ¬(C∧D) allows worlds where some
-    variables are true and others false. The homogeneous negation
-    ¬A∧¬B∧¬C∧¬D requires all false. The gap is the truth-value gap from
-    [kriz-spector-2021]. -/
-theorem loss_gap_iff_pluralGap :
-    ∀ f : Fin 4 → Bool,
-    (lossClassical (f 0) (f 1) (f 2) (f 3) = true ∧
-     lossStrong (f 0) (f 1) (f 2) (f 3) = false) ↔
-    (lossClassical (f 0) (f 1) (f 2) (f 3) = true ∧
-     Plurality.someSatisfy
-       (fun (i : Fin 4) (_ : Unit) => f i) Finset.univ () = true) := by
+/-- The homogeneous loss is strictly stronger than the classical one. -/
+theorem lossStrong_lt_classical :
+    (∀ w, lossStrong w = true → lossClassical w = true) ∧
+      ∃ w, lossClassical w = true ∧ lossStrong w = false := by
   decide
 
--- ════════════════════════════════════════════════════
--- § 5. Experiment 2: Crossing Avoidance
--- ════════════════════════════════════════════════════
+/-- Only the pairs within a disjunct are sufficient for a win: A ∧ B and C ∧ D, not the
+crossing pairs. -/
+theorem sufficient_pairs :
+    Compound.Sufficient win₂ ⟨λ w => w.1 && w.2.1, λ w => (true, true, w.2.2.1, w.2.2.2)⟩ ∧
+      Compound.Sufficient win₂ ⟨λ w => w.2.2.1 && w.2.2.2, λ w => (w.1, w.2.1, true, true)⟩ ∧
+      ¬ Compound.Sufficient win₂ ⟨λ w => w.1 && w.2.2.1, λ w => (true, w.2.1, true, w.2.2.2)⟩ ∧
+      ¬ Compound.Sufficient win₂ ⟨λ w => w.2.1 && w.2.2.2, λ w => (w.1, true, w.2.2.1, true)⟩ := by
+  decide
 
-/-- Disjunct membership classification for a pair of variables. -/
-inductive DisjunctMembership where
-  | withinAB
-  | withinCD
-  | crossDisjunct
-  deriving DecidableEq, Repr
+/-- The triple-positive round, colored balls from A, B and D: the pair A ∧ B wins on its own
+and D is idle, the win surviving its removal. -/
+theorem triple_positive :
+    win₂ (true, true, false, false) = true ∧ win₂ (set (true, true, false, true) 3 false) = true := by
+  decide
 
-/-- Classify a pair of Experiment 2 variables by disjunct membership. -/
-def classifyPair (i j : Fin 4) : DisjunctMembership :=
-  if i.val < 2 ∧ j.val < 2 then .withinAB
-  else if i.val ≥ 2 ∧ j.val ≥ 2 then .withinCD
-  else .crossDisjunct
+/-- The overdetermined negative round, white balls from every urn: under the classical loss no
+single white ball is necessary, the loss surviving any one urn's colored ball, while under the
+homogeneous loss every white ball is. -/
+theorem overdetermined_negative :
+    (∀ i, lossClassical (set (false, false, false, false) i true) = true) ∧
+      ∀ i, lossStrong (set (false, false, false, false) i true) = false := by
+  decide
 
-theorem ab_within : classifyPair 0 1 = .withinAB := rfl
-theorem cd_within : classifyPair 2 3 = .withinCD := rfl
-theorem ac_cross : classifyPair 0 2 = .crossDisjunct := rfl
-theorem bd_cross : classifyPair 1 3 = .crossDisjunct := rfl
-
-/-- **Structural crossing avoidance**: within-disjunct compound {A,B} is
-    sufficient for WIN, but cross-disjunct compound {A,C} is NOT.
-
-    A∧B matches a conjunctive law, so setting A=B=1 fires the law and
-    produces WIN. But A∧C does not match any single law. -/
-theorem structural_crossing_avoidance :
-    compoundSufficient konukSEM Valuation.empty [.exp2A, .exp2B] .exp2Win ∧
-    compoundSufficient konukSEM Valuation.empty [.exp2C, .exp2D] .exp2Win ∧
-    ¬ compoundSufficient konukSEM Valuation.empty [.exp2A, .exp2C] .exp2Win ∧
-    ¬ compoundSufficient konukSEM Valuation.empty [.exp2B, .exp2D] .exp2Win := by
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · unfold compoundSufficient; rfl
-  · unfold compoundSufficient; rfl
-  · unfold compoundSufficient; intro h; exact Bool.false_ne_true (Option.some.inj h)
-  · unfold compoundSufficient; intro h; exact Bool.false_ne_true (Option.some.inj h)
-
--- ════════════════════════════════════════════════════
--- § Triple-1 / Triple-0 conditions
--- ════════════════════════════════════════════════════
-
-/-- Triple-1 actual world: colored balls from A, B, D; white from C. -/
-private def triple1Actual : Valuation (fun _ : KonukVar => Bool) :=
-  Valuation.empty.extend .exp2A true |>.extend .exp2B true
-    |>.extend .exp2C false |>.extend .exp2D true
-
-/-- In Triple-1, the compound A∧B is both sufficient (in empty bg) and
-    necessary (in actual world). -/
-theorem triple1_AB_sufficient_and_necessary :
-    compoundSufficient konukSEM Valuation.empty [.exp2A, .exp2B] .exp2Win ∧
-    compoundNecessary konukSEM triple1Actual [.exp2A, .exp2B] .exp2Win := by
-  refine ⟨?_, ?_⟩
-  · unfold compoundSufficient; rfl
-  · unfold compoundNecessary; intro h; exact Bool.false_ne_true (Option.some.inj h)
-
-/-- Triple-0 actual world: white balls from A, B, D; colored from C. -/
-private def triple0Actual : Valuation (fun _ : KonukVar => Bool) :=
-  Valuation.empty.extend .exp2A false |>.extend .exp2B false
-    |>.extend .exp2C true |>.extend .exp2D false
-
-/-- In Triple-0 (loss), under homogeneous representation LOSS = ¬A∧¬B∧¬D,
-    the white ball from D is indispensable. -/
-theorem triple0_lossStrong_needs_all :
-    lossStrong false false true false = false ∧
-    lossStrong false false false false = true := ⟨rfl, rfl⟩
-
--- ════════════════════════════════════════════════════
--- § 6. Bridge: LOSS_strong = `noneSatisfy` (Homogeneity)
--- ════════════════════════════════════════════════════
-
-/-- LOSS_strong holds iff every individual variable is false. -/
-theorem lossStrong_iff_allFalse (f : Fin 4 → Bool) :
-    lossStrong (f 0) (f 1) (f 2) (f 3) = true ↔ ∀ i : Fin 4, f i = false := by
-  constructor
-  · intro h i
-    fin_cases i <;> simp_all [lossStrong]
-  · intro h
-    unfold lossStrong
-    rw [h 0, h 1, h 2, h 3]
-    rfl
-
-/-- LOSS_strong is exactly `noneSatisfy` from [kriz-spector-2021]. -/
-theorem lossStrong_eq_noneSatisfy :
-    ∀ f : Fin 4 → Bool,
-    lossStrong (f 0) (f 1) (f 2) (f 3) =
-    Plurality.noneSatisfy
-      (fun (i : Fin 4) (_ : Unit) => f i) Finset.univ () := by
+/-- The triple-negative round, white balls from A, B and D and a colored one from C: under the
+classical loss D's white ball is indispensable while A's and B's are redundant with each other,
+and the homogeneous representation compatible with the facts, ¬A ∧ ¬B ∧ ¬D, makes each of
+the three indispensable. -/
+theorem triple_negative :
+    let actual : Round₂ := (false, false, true, false)
+    lossClassical (set actual 3 true) = false ∧ lossClassical (set actual 0 true) = true ∧
+      lossClassical (set actual 1 true) = true ∧
+      ∀ i ∈ ({0, 1, 3} : Finset (Fin 4)),
+        ¬ Plurality.noneSatisfy (λ j (_ : Unit) => draw (set actual i true) j = true)
+          {0, 1, 3} () := by
   decide
 
 end KonukEtAl2026
