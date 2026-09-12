@@ -89,6 +89,132 @@
       "Segments": ["fool", "ish"],
       "Comment": "the newly encountered sister of Section 7.8.1",
       "Source": ["jackendoff-audring-2020[7.8.1]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_arrowheadLake",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "toponym",
+      "Form": "Arrowhead Lake",
+      "Segments": ["Arrowhead", "Lake"],
+      "Comment": "(17a): name then feature",
+      "Source": ["jackendoff-audring-2020[(17a)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_loonMountain",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "toponym",
+      "Form": "Loon Mountain",
+      "Segments": ["Loon", "Mountain"],
+      "Comment": "(17a): name then feature",
+      "Source": ["jackendoff-audring-2020[(17a)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_wissahickonCreek",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "toponym",
+      "Form": "Wissahickon Creek",
+      "Segments": ["Wissahickon", "Creek"],
+      "Comment": "(17a): name then feature",
+      "Source": ["jackendoff-audring-2020[(17a)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_laurelHill",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "toponym",
+      "Form": "Laurel Hill",
+      "Segments": ["Laurel", "Hill"],
+      "Comment": "(17a): name then feature",
+      "Source": ["jackendoff-audring-2020[(17a)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_sugarIsland",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "toponym",
+      "Form": "Sugar Island",
+      "Segments": ["Sugar", "Island"],
+      "Comment": "(17a): name then feature",
+      "Source": ["jackendoff-audring-2020[(17a)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_mountEverest",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "toponym",
+      "Form": "Mount Everest",
+      "Segments": ["Mount", "Everest"],
+      "Comment": "(17b): feature then name",
+      "Source": ["jackendoff-audring-2020[(17b)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_lakeMichigan",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "toponym",
+      "Form": "Lake Michigan",
+      "Segments": ["Lake", "Michigan"],
+      "Comment": "(17b): feature then name",
+      "Source": ["jackendoff-audring-2020[(17b)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_capeCod",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "toponym",
+      "Form": "Cape Cod",
+      "Segments": ["Cape", "Cod"],
+      "Comment": "(17b): feature then name",
+      "Source": ["jackendoff-audring-2020[(17b)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_bayOfFundy",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "toponym",
+      "Form": "the Bay of Fundy",
+      "Segments": ["the", "Bay", "of", "Fundy"],
+      "Comment": "(17d): the feature of name",
+      "Source": ["jackendoff-audring-2020[(17d)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_gulfOfStLawrence",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "toponym",
+      "Form": "the Gulf of St. Lawrence",
+      "Segments": ["the", "Gulf", "of", "St. Lawrence"],
+      "Comment": "(17d)",
+      "Source": ["jackendoff-audring-2020[(17d)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_capeOfGoodHope",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "toponym",
+      "Form": "the Cape of Good Hope",
+      "Segments": ["the", "Cape", "of", "Good Hope"],
+      "Comment": "(17d)",
+      "Source": ["jackendoff-audring-2020[(17d)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_isleOfWight",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "toponym",
+      "Form": "the Isle of Wight",
+      "Segments": ["the", "Isle", "of", "Wight"],
+      "Comment": "(17d)",
+      "Source": ["jackendoff-audring-2020[(17d)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_morrisMountain",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "toponym",
+      "Form": "Morris Mountain",
+      "Segments": ["Morris", "Mountain"],
+      "Comment": "a coinage the pattern (17a) licenses",
+      "Source": ["jackendoff-audring-2020[2.7]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_mountMorris",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "toponym",
+      "Form": "Mount Morris",
+      "Segments": ["Mount", "Morris"],
+      "Comment": "a coinage the pattern (17b) licenses",
+      "Source": ["jackendoff-audring-2020[2.7]"]
     }
   ],
   "ParameterTable": [
@@ -140,6 +266,11 @@
     {
       "ID": "like_a_fool",
       "Name": "like a fool",
+      "Description": ""
+    },
+    {
+      "ID": "toponym",
+      "Name": "name of a geographical feature",
       "Description": ""
     }
   ],

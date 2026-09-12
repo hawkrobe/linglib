@@ -714,7 +714,6 @@ import Linglib.Features.Gender.Capabilities
 import Linglib.Features.Gender.Decomposition
 import Linglib.Features.Gender.Interp
 import Linglib.Features.Gender.Resolve
-import Linglib.Features.Genericity
 import Linglib.Features.Givenness
 import Linglib.Features.Grammaticalization
 import Linglib.Features.Indefinite
@@ -1724,7 +1723,6 @@ import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Modality.Kratzer.Ordering
 import Linglib.Semantics.Modality.Kratzer.Premise
-import Linglib.Semantics.Modality.ModalBaseKind
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Semantics.Modality.Narrog
 import Linglib.Semantics.Modality.Orthologic.Frames
@@ -2338,7 +2336,6 @@ import Linglib.Studies.Kenstowicz1987
 import Linglib.Studies.KeshetAbney2024
 import Linglib.Studies.Khoo2015
 import Linglib.Studies.Kim2024
-import Linglib.Studies.Kim2024_UPH
 import Linglib.Studies.Kiparsky2002
 import Linglib.Studies.KirkGiannini2024
 import Linglib.Studies.Kirkpatrick2024
@@ -2356,13 +2353,13 @@ import Linglib.Studies.Kratzer1981
 import Linglib.Studies.Kratzer1996
 import Linglib.Studies.Kratzer1998
 import Linglib.Studies.Kratzer2012Conditionals
-import Linglib.Studies.Kratzer2012Informational
 import Linglib.Studies.KratzerSelkirk2020
 import Linglib.Studies.KratzerShimoyama2002
 import Linglib.Studies.Krejci2012
 import Linglib.Studies.Krifka1989
 import Linglib.Studies.Krifka1998
 import Linglib.Studies.Krifka2004
+import Linglib.Studies.Krifka2007
 import Linglib.Studies.Krifka2013
 import Linglib.Studies.Krifka2015
 import Linglib.Studies.Krifka2020
