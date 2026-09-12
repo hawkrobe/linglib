@@ -7,57 +7,34 @@ import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
-# Majid, Boster & Bowerman (2008)
-[majid-boster-bowerman-2008]
+# Majid, Boster and Bowerman (2008): The Cross-Linguistic Categorization of Everyday Events
 
-The cross-linguistic categorization of everyday events: A study of
-cutting and breaking. Cognition 109(2), 235–250.
+This file formalizes the event space of [majid-boster-bowerman-2008], who had speakers of
+twenty-eight languages describe sixty-one video clips of cutting and breaking and found four
+shared dimensions of categorization: the predictability of the locus of separation, sharp
+instruments on yielding objects at one end and blunt instruments or hands at the other; the
+tearing of cloth by hand; snapping against smashing among the unpredictable events; and the
+poking of holes. A clip is a point in the feature space over which verb roots define ranges
+(`SeparationEvent`, the substrate's `Root.Content`), and a verb applies to an event when the
+event's values fall within its root's ranges, the many-to-many mapping that varies across
+languages. The cut and break classes of [levin-1993] sit at the ends of the first dimension,
+and the separation in material integrity of [hale-keyser-1987] is their shared superordinate.
 
-## Core Contributions
+## Implementation notes
 
-28 typologically diverse languages, 61 video clips depicting "cutting
-and breaking" events. Correspondence analysis reveals 4 shared
-dimensions along which languages categorize these events:
+The first dimension is continuous in the paper's correspondence analysis and is
+discretized here into three values.
 
-- **Dim 1: Predictability** of the locus of separation (continuous,
-  most important). Sharp instruments on yielding objects → predictable
-  (= "cutting"); blunt instruments or hands → unpredictable (= "breaking").
-  NOTE: This dimension is continuous in the original correspondence analysis;
-  our three-valued discretization (high/intermediate/low) is a simplification.
-- **Dim 2: Tearing.** Hand-tear of cloth consistently distinguished
-  from both cutting and breaking across 10/28 languages.
-- **Dim 3: Snap vs smash.** Among low-predictability events:
-  snapping (pressure from both ends on 1D rigid object) vs smashing
-  (blow from hammer on 3D rigid object).
-- **Dim 4: Poke a hole.** Poking a hole in stretched cloth with a twig.
+## TODO
 
-Languages share the dimensionality but vary in how many categories
-they carve and where they place boundaries.
+The paper is not on file; the clip inventory and locators are transcribed from an earlier
+version of this file and are UNVERIFIED.
 
-## Integration with linglib
+## References
 
-The 4 dimensions project onto existing `Root.Content` features:
-
-| Dimension | Projects onto |
-|-----------|--------------|
-| Dim 1 (predictability) | `instrument` × `patientRobustness` (derived) |
-| Dim 2 (tearing) | `resultGeometry == .separation` ∧ `instrument == .hands` |
-| Dim 3 (snap/smash) | `direction` (bidirectional vs omnidirectional) |
-| Dim 4 (poke hole) | specific event type |
-
-Bridge theorems connect to `LevinClass` and `MeaningComponents`:
-- [levin-1993]'s cut/break distinction (±contact, ±instrumentSpec)
-  corresponds to the endpoints of Dimension 1
-- [hale-keyser-1987]'s "separation in material integrity" is the
-  shared superordinate category that both cut and break belong to
-
-## Design
-
-`SeparationEvent` is a **point** in the same feature space that
-`Root.Content` defines **regions** over. A verb is compatible with an
-event iff the event's feature values fall within the verb root's ranges.
-This captures the many-to-many mapping between events and verbs that
-varies across languages.
+* [majid-boster-bowerman-2008]
+* [levin-1993]
+* [hale-keyser-1987]
 -/
 
 namespace MajidBosterBowerman2008
@@ -68,12 +45,9 @@ open ArgumentStructure
 open Features
 open Semantics.Root.Content
 open Semantics.Root.Content.InstrumentType Semantics.Root.Content.ObjectDimensionality
-  Semantics.Root.Content.Robustness Semantics.Root.Content.ResultGeometry Semantics.Root.Content.ForceLevel
+  Semantics.Root.Content.Robustness Semantics.Root.Content.ResultGeometry
+  Semantics.Root.Content.ForceLevel
   Semantics.Root.Content.ForceDirection
-
--- ════════════════════════════════════════════════════
--- § 1. Separation Events (stimulus level)
--- ════════════════════════════════════════════════════
 
 /-- A separation event characterized by physical properties of the
     action, instrument, and affected object.
@@ -98,10 +72,6 @@ structure SeparationEvent where
   /-- Is the separation reversible (can the object be reassembled)? -/
   reversible : Bool
   deriving DecidableEq, Repr
-
--- ════════════════════════════════════════════════════
--- § 2. Representative Clips
--- ════════════════════════════════════════════════════
 
 /-! Encodings of representative clips from the appendix. Clip numbers
     follow [majid-boster-bowerman-2008] Appendix (pp. 248–249).
@@ -175,10 +145,6 @@ def clip07_pushChair : SeparationEvent :=
 /-- Clip 33: Open a book (reversible separation). -/
 def clip33_openBook : SeparationEvent :=
   ⟨.hands, .twoD, .moderate, .deformation, .low, .unidirectional, true⟩
-
--- ════════════════════════════════════════════════════
--- § 3. Dimension Projections
--- ════════════════════════════════════════════════════
 
 /-- Predictability of the locus of separation (Dimension 1).
 
@@ -262,10 +228,6 @@ def SeparationEvent.isMaterialDestruction (e : SeparationEvent) : Bool :=
 def SeparationEvent.isPokingHole (e : SeparationEvent) : Bool :=
   e.result == .surfaceBreach && e.objectDim == .twoD && e.objectRob == .flimsy
 
--- ════════════════════════════════════════════════════
--- § 4. Compatibility with Root.Content
--- ════════════════════════════════════════════════════
-
 /-- A separation event is compatible with a root's profile when each of its feature
     values lies in the root's region for that dimension. -/
 def SeparationEvent.CompatibleWith (e : SeparationEvent) (r : Root.Content) : Prop :=
@@ -275,10 +237,6 @@ def SeparationEvent.CompatibleWith (e : SeparationEvent) (r : Root.Content) : Pr
 
 instance (e : SeparationEvent) (r : Root.Content) : Decidable (e.CompatibleWith r) := by
   unfold SeparationEvent.CompatibleWith; infer_instance
-
--- ════════════════════════════════════════════════════
--- § 5. Dimension Verification
--- ════════════════════════════════════════════════════
 
 /-- Slicing a carrot with a knife has high predictability. -/
 theorem sliceCarrot_high_predictability :
@@ -355,10 +313,6 @@ theorem snapCarrot_consistent :
 theorem smashPlate_consistent :
     clip40_smashPlate.breakSubtype = clip39_smashPot.breakSubtype := rfl
 
--- ════════════════════════════════════════════════════
--- § 6. Cross-Linguistic Verb Categories
--- ════════════════════════════════════════════════════
-
 /-- English cutting-and-breaking verb categories.
 
     English has 5 basic categories for material destruction events
@@ -427,10 +381,6 @@ def yeliDnyeVerb (e : SeparationEvent) : YeliDnyeCBVerb :=
     does not provide sufficient data on individual verb-to-clip mappings
     for 50+ verbs. -/
 
--- ════════════════════════════════════════════════════
--- § 7. Cross-Linguistic Agreement Theorems
--- ════════════════════════════════════════════════════
-
 /-! All three languages agree on the superordinate cut/break boundary
     (Dimension 1): high-predictability events get a "cutting" verb,
     low-predictability events get a "breaking" verb. The languages
@@ -454,10 +404,6 @@ theorem snap_distinct_EN : englishVerb clip19_snapTwig = .snap := rfl
 
 /-- Yélî Dnye groups snapping with tearing (both hand actions). -/
 theorem snap_grouped_YD : yeliDnyeVerb clip19_snapTwig = .v3 := rfl
-
--- ════════════════════════════════════════════════════
--- § 8. Bridge to Levin Classes and MeaningComponents
--- ════════════════════════════════════════════════════
 
 /-- High-predictability events correspond to Levin's *cut* class
     meaning components: change of state + contact + motion + causation
@@ -497,10 +443,6 @@ theorem cut_break_same_template :
     LevinClass.cut.eventTemplate = LevinClass.break_.eventTemplate :=
   rfl
 
--- ════════════════════════════════════════════════════
--- § 9. Bridge to Fragment Root Profiles
--- ════════════════════════════════════════════════════
-
 /-! Rather than defining inline profiles, we derive them from the actual
     Fragment entries in `English.Predicates.Verbal`. This
     ensures that compatibility theorems test the real lexical data. -/
@@ -539,10 +481,6 @@ theorem sliceCarrot_compatible_cut :
 /-- Tearing cloth is NOT compatible with the *cut* profile (wrong instrument). -/
 theorem tearCloth_incompatible_cut :
     ¬ clip01_tearCloth.CompatibleWith (fragmentContent cut) := by decide
-
--- ════════════════════════════════════════════════════
--- § 10. Key Finding: Dimensional Constraint
--- ════════════════════════════════════════════════════
 
 /-- The 4 dimensions are not independent: tearing events (Dim 2)
     always have low predictability (Dim 1). -/
@@ -591,10 +529,6 @@ theorem dim3_nested_in_dim1 (e : SeparationEvent)
     it sits in the "breaking" side of Dimension 1. -/
 theorem pokeHole_low_predictability :
     clip45_pokeHole.predictability = .low := rfl
-
--- ════════════════════════════════════════════════════
--- § 11. Cross-Linguistic Disagreement
--- ════════════════════════════════════════════════════
 
 /-! The key relativity finding: languages share the dimensional structure
     but place category boundaries at different points. English makes finer
