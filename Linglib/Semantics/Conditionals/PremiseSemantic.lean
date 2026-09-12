@@ -75,7 +75,8 @@ three, the lumping CF does NOT use `SimilarityOrdering` /
 
 namespace Conditionals.PremiseSemantic
 
-open _root_.Conditionals.Counterfactual (Lumps IsConsistent IsCompatible Follows)
+open _root_.Conditionals.Counterfactual (Lumps IsConsistent IsCompatible Follows
+  isCompatible_iff_not_follows_compl)
 
 variable {S : Type*} [Preorder S]
 
@@ -155,18 +156,13 @@ theorem not_mightCF_of_crucialSet_empty {Fw : Set (Set S)}
   rintro ⟨A, hA, _⟩
   exact (Set.mem_empty_iff_false A).mp (h ▸ hA)
 
-/-- **Might/would duality** ([kratzer-2012] p. 125):
-    "'Might'-counterfactuals are interpreted as duals of the
-    corresponding 'would'-counterfactuals." Whether
-    `mightCF Fw w p q ↔ ¬ wouldCF Fw w p qᶜ` follows from our §5.4.4
-    encoding is non-trivial: the would-CF quantifier is `∀ A ∃ A' ⊇ A`
-    and the might-CF quantifier is `∃ A ∀ A' ⊇ A`, so duality requires
-    that `Follows A' qᶜ ↔ ¬ IsCompatible q A'` *uniformly across A'* —
-    which holds only when the Crucial Set is upward-directed. We leave
-    the bridge as future work. -/
+/-- **Might/would duality** ([kratzer-2012] p. 125): a might-counterfactual is the negation
+    of the would-counterfactual with the complementary consequent, since compatibility with a
+    premise set is the failure of the complement to follow from it. -/
 theorem mightCF_iff_not_wouldCF_compl {Fw : Set (Set S)} {w : S}
     {p q : Set S} :
     mightCF Fw w p q ↔ ¬ wouldCF Fw w p qᶜ := by
-  sorry  -- TODO: requires upward-directedness of CrucialSet; see docstring
+  simp only [mightCF, wouldCF, isCompatible_iff_not_follows_compl, not_forall, not_exists,
+    not_and, exists_prop]
 
 end Conditionals.PremiseSemantic

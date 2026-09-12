@@ -1,7 +1,7 @@
 import Linglib.Data.Examples.JackendoffAudring2020
 import Linglib.Data.Forms.JackendoffAudring2020
-import Linglib.Morphology.Construction.Schema
-import Linglib.Morphology.Construction.Inheritance
+import Linglib.Morphology.ConstructionMorphology.Schema
+import Linglib.Morphology.ConstructionMorphology.Inheritance
 import Linglib.Morphology.Paradigm.Linkage
 import Linglib.Morphology.Paradigm.Morphome
 import Linglib.Core.Order.Flat
@@ -43,7 +43,7 @@ common (`instantiates_ishSchema_iff`), and absorbs a newly encountered sister
 * Lexical entries and schemas are slot-indexed descriptions over a flat carrier, a constant
   above `⊥` and a variable at `⊥`; a relational coindex is a variable subscripting a slot of
   each entry, which a paired instantiation fills alike
-  (`Morphology.Construction.Schema.InstantiatesAt`). The containment of
+  (`ConstructionMorphology.Schema.InstantiatesAt`). The containment of
   the semantics of *assassinate* in that of *assassin*, (41), is rendered as a shared slot.
 * The zero exponence of the present and the infinitive of *walk*, (19), the double
   coindexation of Section 4.3, appears as a syncretism of the paradigm (`walk_syncretism`).
@@ -55,7 +55,7 @@ common (`instantiates_ishSchema_iff`), and absorbs a newly encountered sister
   `Data.Forms.Form.slots`; a syllable's positions are onset, nucleus and coda.
 * The correspondence between a schema's variable coindices and the constant coindices of its
   instances, left unformalized in Section 4.13.2, is the subscripting of
-  `Morphology.Construction.Schema.InstantiatesAt`; a productive variable is one marked open
+  `ConstructionMorphology.Schema.InstantiatesAt`; a productive variable is one marked open
   over and above its attested fillers.
 
 ## References
@@ -69,7 +69,7 @@ common (`instantiates_ishSchema_iff`), and absorbs a newly encountered sister
 
 namespace JackendoffAudring2020
 
-open Morphology Morphology.Construction
+open Morphology ConstructionMorphology
 
 /-! ### Sister words -/
 
