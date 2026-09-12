@@ -4,26 +4,27 @@ import Linglib.Studies.ZurawHayes2017
 # Magri (2025): Constraint Interaction in Probabilistic Phonology
 
 This file formalizes the characterization of [magri-2025]: within harmony-based probabilistic
-phonology, an n-ary harmony function predicts the shifted-sigmoids generalization of
-[zuraw-hayes-2017] and [hayes-2022] exactly when it is separable, a product of per-constraint
-factors raised to the constraint weights. Maximum entropy harmony is separable, so it
-predicts the generalization as a corollary, and any separable harmony is maximum entropy
-under a rescaling of its constraints. The file runs the theory on the paper's Tagalog nasal
-substitution case: the six constraints are independent (`constraint_independence`), the
-violation differences inherit that independence (`violDiff_consistent`), the per-cell logit
-rates and the empirical odds ratios come out as reported (`logitRate_row_diff`,
-`odds_ratios_close`), and the separable forward direction holds at the level of
-probabilities (`me_separable_predicts_hz_tagalog`).
+phonology, a harmony function predicts the shifted-sigmoids generalization of
+[zuraw-hayes-2017] and [hayes-2022], that the rates of a process governed by independent
+factors fit sigmoids sharing their abscissas, equivalently that differences of logit rates
+across one factor are constant across the other (§2.2), exactly when it is separable, a
+product of per-constraint factors raised to the constraint weights. Maximum entropy harmony
+is separable, so it predicts the generalization (§3), and any separable harmony is maximum
+entropy under a rescaling of its constraints (§5). The file runs the theory on the paper's
+Tagalog nasal substitution case (§2.1): the six constraints of the two-by-two square of
+prefixes and stem-initial obstruents are independent, the markedness constraints insensitive
+to the prefix and the faithfulness constraints to the stem (§2.3, §2.4,
+`constraint_independence`), the violation differences inherit that independence
+(`violDiff_consistent`), the per-cell logit rates come out in closed form
+(`logitRate_row_diff`), and the separable forward direction holds at the level of
+probabilities for every weighting (`me_separable_predicts_hz_tagalog`).
 
 ## Implementation notes
 
-The two-by-two sub-square, the constraint inventory, and the constant-difference identity
-are those of `Studies/ZurawHayes2017.lean`, from which the paper inherits its setup.
-
-## TODO
-
-The paper is not on file; example locators are transcribed from an earlier version of this
-file and are UNVERIFIED.
+The two-by-two sub-square, the constraint inventory, the rates, and the constant-difference
+identity are those of `Studies/ZurawHayes2017.lean`, from which the paper inherits its setup;
+the converse direction, that a harmony predicting the generalization is separable, is not
+formalized.
 
 ## References
 
@@ -37,54 +38,7 @@ namespace Magri2025
 open Core.Optimization Constraints Constraints OptimalityTheory HarmonicGrammar
 open ZurawHayes2017
 
-/-! ## § 1: Constraint Independence
-
-The constraint violation profiles viewed as functions on underlying
-forms (ignoring the candidate dimension, since we work with violation
-*differences* Δₖ). For the independence check, we verify that each
-raw constraint is insensitive to at least one dimension.
--/
-
-/-- C₁ = NasSub is insensitive to the prefix (row dimension):
-    the violation is 1 for NO and 0 for YES regardless of prefix.
-    Per [zuraw-hayes-2017] ex. (3) (NasSub is the markedness driver
-    against nasal+obstruent sequences). -/
-theorem nasSub_insensitive_to_row (o : NasalSubOutput) :
-    nasSub (.mang_b, o) = nasSub (.pang_b, o) ∧
-    nasSub (.mang_k, o) = nasSub (.pang_k, o) := by
-  cases o <;> decide
-
-/-- C₂ = \*NC is insensitive to the prefix. Per [zuraw-2010] ex. (17):
-    "\*NC: A [+nasal] segment must not be immediately followed by a
-    [-voice, -sonorant] segment". -/
-theorem starNC_insensitive_to_row (o : NasalSubOutput) :
-    starNC (.mang_b, o) = starNC (.pang_b, o) ∧
-    starNC (.mang_k, o) = starNC (.pang_k, o) := by
-  cases o <;> decide
-
-/-- C₃ = \*\[stem\] is insensitive to the prefix. -/
-theorem starStemVelar_insensitive_to_row (o : NasalSubOutput) :
-    starStemVelar (.mang_b, o) = starStemVelar (.pang_b, o) ∧
-    starStemVelar (.mang_k, o) = starStemVelar (.pang_k, o) := by
-  cases o <;> decide
-
-/-- C₄ = \*\[stem\]/n is insensitive to the prefix. -/
-theorem starStemVelarCoronal_insensitive_to_row (o : NasalSubOutput) :
-    starStemVelarCoronal (.mang_b, o) = starStemVelarCoronal (.pang_b, o) ∧
-    starStemVelarCoronal (.mang_k, o) = starStemVelarCoronal (.pang_k, o) := by
-  cases o <;> decide
-
-/-- C₅ = UNIF(maŋ) is insensitive to the stem-initial obstruent (column). -/
-theorem unifMang_insensitive_to_col (o : NasalSubOutput) :
-    unifMang (.mang_b, o) = unifMang (.mang_k, o) ∧
-    unifMang (.pang_b, o) = unifMang (.pang_k, o) := by
-  cases o <;> decide
-
-/-- C₆ = UNIF(paŋ) is insensitive to the stem-initial obstruent. -/
-theorem unifPang_insensitive_to_col (o : NasalSubOutput) :
-    unifPang (.mang_b, o) = unifPang (.mang_k, o) ∧
-    unifPang (.pang_b, o) = unifPang (.pang_k, o) := by
-  cases o <;> decide
+/-! ### Constraint independence (§2.3, §2.4) -/
 
 set_option linter.unusedSimpArgs false in
 /-- **Constraint independence**: for each fixed output, the six
@@ -105,7 +59,7 @@ theorem constraint_independence (o : NasalSubOutput) :
       nasalSubSquare, InsensitiveToRow, InsensitiveToCol] <;>
     decide
 
-/-! ## § 2: Violation Difference Consistency -/
+/-! ### Violation differences -/
 
 /-- The violation differences are consistent with the raw constraint
     profiles: `Δₖ(x) = Cₖ(x, NO) − Cₖ(x, YES)`. -/
@@ -114,14 +68,11 @@ theorem violDiff_consistent (k : Fin 6) (x : NasalSubInput) :
     ((constraints k) (x, .no) : ℤ) - ((constraints k) (x, .yes) : ℤ) := by
   fin_cases k <;> cases x <;> decide
 
-/-! ## § 3: Concrete Logit-Rate Computations
+/-! ### Logit rates (§2.2, §3)
 
-The constant-difference identity itself is
-`ZurawHayes2017.maxent_predicts_hz_tagalog` (with closed form
-`ZurawHayes2017.hz_constant_value_tagalog`), stated with that paper's
-data. This section verifies [magri-2025]'s per-cell symbolic logit rates
-`LR(x) = Σₖ wₖ · Δₖ(x)`.
--/
+The constant-difference identity is `ZurawHayes2017.maxent_predicts_hz_tagalog`, with closed
+form `ZurawHayes2017.hz_constant_value_tagalog`; the per-cell symbolic logit rates
+`LR(x) = Σₖ wₖ · Δₖ(x)` are verified here. -/
 
 /-- `LR(maŋb) = w₁ − w₅` -/
 theorem logitRate_mang_b (w : Fin 6 → ℚ) :
@@ -157,60 +108,7 @@ theorem logitRate_row_diff (w : Fin 6 → ℚ) :
     -w 1 + w 2 + w 3 := by
   rw [logitRate_mang_b, logitRate_mang_k]; ring
 
-/-! ## § 4: Empirical Rate Verification
-
-The empirical rates satisfy HZ's identity to good approximation.
-The exact identity is `logit(R(tl)) − logit(R(tr)) = logit(R(bl)) − logit(R(br))`.
-We verify the approximate version on the rational rates.
--/
-
-/-- Rates are in (0, 1). -/
-theorem rate_pos (x : NasalSubInput) : 0 < nasalSubRate x := by
-  cases x <;> norm_num [nasalSubRate]
-
-theorem rate_lt_one (x : NasalSubInput) : nasalSubRate x < 1 := by
-  cases x <;> norm_num [nasalSubRate]
-
--- The logit-rate differences are approximately equal:
--- `logit(0.916) − logit(0.993) ≈ logit(0.434) − logit(0.909)`.
---
--- We verify the exact rational version. The logit of `p` is
--- `log(p/(1−p))`, and the *difference* of logits is
--- `log(p₁(1−p₂) / (p₂(1−p₁)))`. We check that the ratios
--- `p₁(1−p₂) / (p₂(1−p₁))` are approximately equal across rows,
--- verifying HZ's empirical observation.
-
-/-- Logit-odds ratio for top row: (916/1000)·(7/1000) / ((993/1000)·(84/1000))
-    = 916·7 / (993·84) = 6412 / 83412. -/
-theorem top_row_odds_ratio :
-    nasalSubRate .mang_b * (1 - nasalSubRate .mang_k) /
-    (nasalSubRate .mang_k * (1 - nasalSubRate .mang_b)) =
-    6412 / 83412 := by
-  simp only [nasalSubRate]; norm_num
-
-/-- Logit-odds ratio for bottom row: (434/1000)·(91/1000) / ((909/1000)·(566/1000))
-    = 434·91 / (909·566) = 39494 / 514494. -/
-theorem bottom_row_odds_ratio :
-    nasalSubRate .pang_b * (1 - nasalSubRate .pang_k) /
-    (nasalSubRate .pang_k * (1 - nasalSubRate .pang_b)) =
-    39494 / 514494 := by
-  simp only [nasalSubRate]; norm_num
-
-/-- The two odds ratios are close: 6412/83412 ≈ 0.0769 and
-    39494/514494 ≈ 0.0768 — a remarkable match confirming HZ's
-    empirical observation. Equality of these ratios would mean
-    `logit(R(tl)) − logit(R(tr)) = logit(R(bl)) − logit(R(br))`
-    exactly. -/
-theorem odds_ratios_close :
-    -- Cross-multiply to avoid division: a/b ≈ c/d iff ad ≈ bc
-    -- 6412 · 514494 = 3,298,935,528
-    -- 39494 · 83412 = 3,294,273,528
-    -- Difference: 4,662,000 (≈ 0.14% of either product)
-    6412 * 514494 = 3298935528 ∧
-    39494 * 83412 = 3294273528 := by
-  constructor <;> norm_num
-
-/-! ## § 5: Separable Forward Direction -/
+/-! ### The separable forward direction (§3, §5) -/
 
 set_option linter.unusedSimpArgs false in
 /-- **ME predicts HZ at the probability level**: the log-probability-ratio
