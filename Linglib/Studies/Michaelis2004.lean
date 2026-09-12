@@ -7,29 +7,28 @@ import Linglib.Syntax.ConstructionGrammar.Composition
 import Linglib.Semantics.Aspect.Basic
 
 /-!
-# [michaelis-2004]: Type Shifting in Construction Grammar
+# Michaelis (2004): Type Shifting in Construction Grammar
 
-Aspectual coercion without interpolated coercion operators: constructions
-denote semantic types, and the override principle — "if a lexical item is
-semantically incompatible with its morphosyntactic context, the meaning
-of the lexical item conforms to the meaning of the structure in which it
-is embedded" ((20)) — resolves mismatches in favor of the construction.
-Concord constructions denote the type they select ((27)); shift
-constructions denote a different one ((28)); both perform implicit
-type-shifting via the override, and only shift constructions shift
-explicitly (Table 3).
+This file formalizes the account of aspectual coercion without interpolated coercion
+operators in [michaelis-2004]. Constructions denote semantic types, and the override
+principle resolves a mismatch between a lexical item and its morphosyntactic context in
+favour of the construction: concord constructions denote the type they select, shift
+constructions a different one, both shifting implicitly through the override and only shift
+constructions shifting explicitly. The reconciliation operators, inchoative addition, onset
+selection, and conformity to an activity (`inchoativeAddition`, `onsetSelection`,
+`conformToActivity`), the frame adverbial as a concord construction and the progressive as a
+shift construction, the two readings of an activity under a frame adverbial
+(`frame_adverbial_activity_ambiguity`), and the stativity of progressive predications
+whatever the complement's Aktionsart (`progressive_stativizes`) are stated.
 
-## Main declarations
+## TODO
 
-- `Michaelis2004.inchoativeAddition`, `onsetSelection`,
-  `conformToActivity`: the reconciliation operators
-- `Michaelis2004.frameAdverbial` (concord, Figure 5) and
-  `Michaelis2004.progressive` (shift, Figure 6), meaning poles their
-  composition rules
-- `Michaelis2004.frame_adverbial_activity_ambiguity`: the two readings of
-  ex. (41), derived from the two operators
-- `Michaelis2004.progressive_stativizes`: progressive predications denote
-  states whatever the complement's Aktionsart
+The paper is not on file; example, figure, and table locators are transcribed from an
+earlier version of this file and are UNVERIFIED.
+
+## References
+
+* [michaelis-2004]
 -/
 
 namespace Michaelis2004
@@ -67,7 +66,7 @@ override conforms any input to the activity type — states via the
 addition of `hold` and an effector to their causal representation, telic
 events via their processual construal. -/
 def conformToActivity : AspectualProfile → AspectualProfile :=
-  fun _ => activityProfile
+  λ _ => activityProfile
 
 /-! ### The frame adverbial construction (Figure 5, concord) -/
 
@@ -130,7 +129,7 @@ theorem frameAdverbial_concord : PreservesType frameAdverbialRule := by
 
 /-- The progressive is a shift construction: it selects activities but
 denotes states. -/
-theorem progressive_shift : ¬ PreservesType progressiveRule := fun h =>
+theorem progressive_shift : ¬ PreservesType progressiveRule := λ h =>
   absurd (h activityProfile stateProfile (by decide)) (by decide)
 
 /-! ### Frame-adverbial predictions (§5.1.2) -/
