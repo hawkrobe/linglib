@@ -3,55 +3,32 @@ import Linglib.Semantics.Quantification.Generic
 import Linglib.Studies.Cohen1999
 
 /-!
-# [nickel-2009]: Generics and the ways of normality
+# Nickel (2009): Generics and the Ways of Normality
 
-Bernhard Nickel, "Generics and the ways of normality",
-*Linguistics and Philosophy* 31 (2009), 629–648.
+This file formalizes the argument of [nickel-2009] from conjunctive generics against
+majority-based accounts of the generic operator. *Elephants live in Africa and Asia* is
+sentential conjunction, *elephants live in Africa and elephants live in Asia*, and is true
+although no majority of elephants lives in either place, so the probabilistic operator of
+[cohen-1999a] predicts it false (`cohen_fails_elephant_asia`). Normality comes in ways: a
+characterizing sentence is true when there is a way of being normal in the respect the
+predicate determines such that every individual normal in that way satisfies the predicate
+(`nickelGEN`), so each conjunct of a conjunctive generic may draw on its own way
+(`nickelConjunctiveGEN`, `nickel_handles_elephant_conjunction`,
+`bears_nickel_succeeds`), and the ways are incompatible without the conjunction entailing
+that anything lives in both places (`ways_incompatible`).
 
-## The Problem: Conjunctive Generics
+## Implementation notes
 
-Nickel criticizes majority-based views of generics (including
-[cohen-1999a]'s probability-based GEN) by showing they cannot
-handle conjunctive generics like:
+The ways are indices selecting the individuals that count as normal, the actual-extension
+proxy for the paper's respects of normality and its inductive targets; the counterfactual
+element the paper notes it needs when no individual is normal in a way is not represented,
+so the operator holds vacuously in that case. The comparison with Cohen's operator runs
+over one shared toy model, with the habitats as the alternative set.
 
-    (2b) Elephants live in Africa and Asia.
+## References
 
-If (2b) is equivalent to the sentential conjunction:
-
-    Elephants live in Africa AND Elephants live in Asia.
-
-then a majority-based view would require both conjuncts to hold with
-prevalence > 0.5 over the same domain. But African elephants and Asian
-elephants are disjoint populations — most elephants can't live in BOTH
-places. So the majority view predicts the conjunction is false, contrary
-to speaker judgments. (Nickel's running example is the elephants (2b/11);
-example (2a), "Bears live in North America, South America, Europe, and
-Asia", is the more dramatic four-continent variant.)
-
-## Nickel's Solution: Ways of Being Normal
-
-Nickel proposes that normality is not a single binary predicate but
-comes in multiple **ways**. For the elephant case:
-
-- **Way w₁**: normal w.r.t. habitat → lives in Africa
-- **Way w₂**: normal w.r.t. habitat → lives in Asia
-
-GEN existentially quantifies over ways of being normal, then
-universally quantifies over the As that are normal in that way (p. 643):
-
-    G(A;F) is true iff there is a way w of being an F-normal A such that
-    all As that are w are F.
-
-i.e. `∃w. ∀x. (A(x) ∧ normalIn(x, w)) → F(x)`. Conjunctive generics can
-then use different normality ways for each conjunct.
-
-Nickel notes (p. 643) that these truth-conditions "don't account yet for
-a situation in which there aren't any F-normal As… we need to introduce a
-counterfactual element. However, for the purposes of this paper, we can
-ignore this complication." The formalization below inherits that: `nickelGEN`
-holds vacuously when no entity is normal in any way. The way-existential is
-modeled by its actual-extension proxy (the modal/inductive-target content of
-"a respect of normality" is abstracted away).
+* [nickel-2009]
+* [cohen-1999a]
 -/
 
 namespace Nickel2009
@@ -85,13 +62,13 @@ so the only Nickel-specific apparatus is the `∃`-over-ways wrapper. -/
 def nickelGEN {α : Type*} (entities : Finset α) (normalIn : α → NormalcyWay → Prop)
     (ways : Finset NormalcyWay) (restrictor scope : α → Prop)
     [DecidablePred restrictor] [DecidablePred scope]
-    [∀ w, DecidablePred (fun e => normalIn e w)] : Prop :=
-  ∃ w ∈ ways, everyOn entities (fun e => restrictor e ∧ normalIn e w) scope
+    [∀ w, DecidablePred (λ e => normalIn e w)] : Prop :=
+  ∃ w ∈ ways, everyOn entities (λ e => restrictor e ∧ normalIn e w) scope
 
 instance {α : Type*} (entities : Finset α) (normalIn : α → NormalcyWay → Prop)
     (ways : Finset NormalcyWay) (restrictor scope : α → Prop)
     [DecidablePred restrictor] [DecidablePred scope]
-    [∀ w, DecidablePred (fun e => normalIn e w)] :
+    [∀ w, DecidablePred (λ e => normalIn e w)] :
     Decidable (nickelGEN entities normalIn ways restrictor scope) := by
   unfold nickelGEN; infer_instance
 
@@ -101,14 +78,14 @@ def nickelConjunctiveGEN {α : Type*} (entities : Finset α)
     (normalIn : α → NormalcyWay → Prop) (ways : Finset NormalcyWay)
     (restrictor scope1 scope2 : α → Prop)
     [DecidablePred restrictor] [DecidablePred scope1] [DecidablePred scope2]
-    [∀ w, DecidablePred (fun e => normalIn e w)] : Prop :=
+    [∀ w, DecidablePred (λ e => normalIn e w)] : Prop :=
   nickelGEN entities normalIn ways restrictor scope1 ∧
   nickelGEN entities normalIn ways restrictor scope2
 
 instance {α : Type*} (entities : Finset α) (normalIn : α → NormalcyWay → Prop)
     (ways : Finset NormalcyWay) (restrictor scope1 scope2 : α → Prop)
     [DecidablePred restrictor] [DecidablePred scope1] [DecidablePred scope2]
-    [∀ w, DecidablePred (fun e => normalIn e w)] :
+    [∀ w, DecidablePred (λ e => normalIn e w)] :
     Decidable (nickelConjunctiveGEN entities normalIn ways restrictor scope1 scope2) := by
   unfold nickelConjunctiveGEN; infer_instance
 
@@ -117,12 +94,12 @@ instance {α : Type*} (entities : Finset α) (normalIn : α → NormalcyWay → 
     is a property of the toy model, not a commitment of the account. -/
 def waysIncompatible {α : Type*} (entities : Finset α)
     (normalIn : α → NormalcyWay → Prop) (ways : Finset NormalcyWay)
-    [∀ w, DecidablePred (fun e => normalIn e w)] : Prop :=
+    [∀ w, DecidablePred (λ e => normalIn e w)] : Prop :=
   ∀ e ∈ entities, ∀ w₁ ∈ ways, ∀ w₂ ∈ ways,
     w₁ ≠ w₂ → ¬ (normalIn e w₁ ∧ normalIn e w₂)
 
 instance {α : Type*} (entities : Finset α) (normalIn : α → NormalcyWay → Prop)
-    (ways : Finset NormalcyWay) [∀ w, DecidablePred (fun e => normalIn e w)] :
+    (ways : Finset NormalcyWay) [∀ w, DecidablePred (λ e => normalIn e w)] :
     Decidable (waysIncompatible entities normalIn ways) := by
   unfold waysIncompatible; infer_instance
 
@@ -131,18 +108,18 @@ instance {α : Type*} (entities : Finset α) (normalIn : α → NormalcyWay → 
 section Elephants
 
 /-- 10 elephants: 6 African (ids 0–5), 4 Asian (ids 6–9). -/
-def elephants : Finset Entity := ((List.range 10).map (fun n => (⟨n⟩ : Entity))).toFinset
+def elephants : Finset Entity := ((List.range 10).map (λ n => (⟨n⟩ : Entity))).toFinset
 
-abbrev isElephant : Entity → Prop := fun _ => True
-abbrev livesInAfrica : Entity → Prop := fun e => e.id < 6
-abbrev livesInAsia : Entity → Prop := fun e => e.id ≥ 6
+abbrev isElephant : Entity → Prop := λ _ => True
+abbrev livesInAfrica : Entity → Prop := λ e => e.id < 6
+abbrev livesInAsia : Entity → Prop := λ e => e.id ≥ 6
 
 def africanWay : NormalcyWay := ⟨1⟩
 def asianWay : NormalcyWay := ⟨2⟩
 def ways : Finset NormalcyWay := {africanWay, asianWay}
 
 /-- Normal in the African way = African elephants; in the Asian way = Asian. -/
-abbrev elephantNormalIn : Entity → NormalcyWay → Prop := fun e w =>
+abbrev elephantNormalIn : Entity → NormalcyWay → Prop := λ e w =>
   (w.id = 1 ∧ e.id < 6) ∨ (w.id = 2 ∧ e.id ≥ 6)
 
 end Elephants
@@ -153,20 +130,20 @@ section Bears
 
 /-- 20 bears across 4 continents (5 each): NA 0–4, SA 5–9, EU 10–14, AS 15–19.
     The majority view fails for ALL four habitat conjuncts (each is 5/20 = 25%). -/
-def bears : Finset Entity := ((List.range 20).map (fun n => (⟨n⟩ : Entity))).toFinset
+def bears : Finset Entity := ((List.range 20).map (λ n => (⟨n⟩ : Entity))).toFinset
 
-abbrev isBear : Entity → Prop := fun _ => True
-abbrev bearNA : Entity → Prop := fun e => e.id < 5
-abbrev bearSA : Entity → Prop := fun e => e.id ≥ 5 ∧ e.id < 10
-abbrev bearEU : Entity → Prop := fun e => e.id ≥ 10 ∧ e.id < 15
-abbrev bearAS : Entity → Prop := fun e => e.id ≥ 15
+abbrev isBear : Entity → Prop := λ _ => True
+abbrev bearNA : Entity → Prop := λ e => e.id < 5
+abbrev bearSA : Entity → Prop := λ e => e.id ≥ 5 ∧ e.id < 10
+abbrev bearEU : Entity → Prop := λ e => e.id ≥ 10 ∧ e.id < 15
+abbrev bearAS : Entity → Prop := λ e => e.id ≥ 15
 
 /-- The disjunction of the habitat alternatives: every bear lives somewhere. -/
-abbrev bearHabitat : Entity → Prop := fun e => bearNA e ∨ bearSA e ∨ bearEU e ∨ bearAS e
+abbrev bearHabitat : Entity → Prop := λ e => bearNA e ∨ bearSA e ∨ bearEU e ∨ bearAS e
 
 def bearWays : Finset NormalcyWay := {⟨1⟩, ⟨2⟩, ⟨3⟩, ⟨4⟩}
 
-abbrev bearNormalIn : Entity → NormalcyWay → Prop := fun e w =>
+abbrev bearNormalIn : Entity → NormalcyWay → Prop := λ e w =>
   (w.id = 1 ∧ e.id < 5) ∨ (w.id = 2 ∧ e.id ≥ 5 ∧ e.id < 10) ∨
   (w.id = 3 ∧ e.id ≥ 10 ∧ e.id < 15) ∨ (w.id = 4 ∧ e.id ≥ 15)
 
@@ -203,7 +180,7 @@ view succeeds. Per the chronology rule this comparison lives in the later paper
 /-- Cohen's majority GEN is false for "Elephants live in Asia" (prevalence 4/10). -/
 theorem cohen_fails_elephant_asia :
     ¬ Cohen1999.gen elephants isElephant
-      (fun e => livesInAfrica e ∨ livesInAsia e) livesInAsia := by
+      (λ e => livesInAfrica e ∨ livesInAsia e) livesInAsia := by
   rw [Cohen1999.gen_iff_thresholdGt _ _ _ _ (by decide)]
   decide
 
@@ -212,7 +189,7 @@ theorem cohen_fails_elephant_asia :
     succeeds — exactly the divergence Nickel's paper draws against Cohen. -/
 theorem cohen_fails_nickel_succeeds_on_conjunction :
     ¬ Cohen1999.gen elephants isElephant
-      (fun e => livesInAfrica e ∨ livesInAsia e) livesInAsia ∧
+      (λ e => livesInAfrica e ∨ livesInAsia e) livesInAsia ∧
     nickelConjunctiveGEN elephants elephantNormalIn ways
       isElephant livesInAfrica livesInAsia := by
   refine ⟨cohen_fails_elephant_asia, ?_⟩
@@ -237,9 +214,9 @@ theorem nickel_single_way_is_everyOn {α : Type*} (entities : Finset α)
     (normalIn : α → NormalcyWay → Prop) (w : NormalcyWay)
     (restrictor scope : α → Prop)
     [DecidablePred restrictor] [DecidablePred scope]
-    [∀ w, DecidablePred (fun e => normalIn e w)] :
+    [∀ w, DecidablePred (λ e => normalIn e w)] :
     nickelGEN entities normalIn {w} restrictor scope ↔
-      everyOn entities (fun e => restrictor e ∧ normalIn e w) scope := by
+      everyOn entities (λ e => restrictor e ∧ normalIn e w) scope := by
   simp [nickelGEN]
 
 /-! ### Generic-quantifier interface -/
@@ -249,7 +226,7 @@ theorem nickel_single_way_is_everyOn {α : Type*} (entities : Finset α)
     the [nickel-2009] instance of the shared schema in `Quantification.Generic`. -/
 theorem nickelGEN_univ_eq_genWays {α : Type*} [Fintype α]
     (normalIn : α → NormalcyWay → Prop) (ways : Finset NormalcyWay) (R S : α → Prop)
-    [DecidablePred R] [DecidablePred S] [∀ w, DecidablePred (fun e => normalIn e w)] :
+    [DecidablePred R] [DecidablePred S] [∀ w, DecidablePred (λ e => normalIn e w)] :
     nickelGEN Finset.univ normalIn ways R S ↔ Quantification.genWays normalIn ways R S := by
   simp only [nickelGEN, Quantification.genWays, everyOn, and_comm]
 

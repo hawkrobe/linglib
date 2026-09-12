@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Core.Data.Fintype.Order
 import Linglib.Core.Data.Sum.Basic
 import Linglib.Core.Order.PartialUnify
 import Mathlib.Order.Lattice
@@ -46,9 +47,10 @@ variables (`Schema.instantiates_iff_instantiation_of_forall_isMax`).
 * `Schema.InstantiatesAt`, `Schema.instantiatesAt_iff`: instantiation at positions through a
   subscripting, as instantiation of the pulled-back description together with agreement at
   coindexed positions.
-* `Schema.Relates`, `Schema.Generates`, `Schema.IsProductive`: the two roles of a schema and
-  productivity; `Schema.generates_iff_mem_pi`: what a schema generates is the product of its
-  slotwise fillers.
+* `Schema.productive`, `Schema.Relates`, `Schema.Generates`, `Schema.IsProductive`: the schema
+  with every variable open, the two roles of a schema, and productivity;
+  `Schema.generates_iff_mem_pi`: what a schema generates is the product of its slotwise
+  fillers.
 * `Instantiation`, `Contrast`: the relational links, same except at a set of positions.
 * `Schema.instantiates_inf_iff`, `Schema.instantiates_iff_of_unify_eq_some`: the meet of two
   items is their least general generalization, the Structural Intersection of Relational
@@ -86,12 +88,15 @@ structure Schema (V α : Type*) where
 namespace Schema
 
 section PartialOrder
-variable [PartialOrder α] {s t : Schema V α} {w w₁ w₂ : V → α} {Λ Λ' : Set (V → α)}
-  {v : V}
+variable [PartialOrder α] {s t : Schema V α} {w w₁ w₂ : V → α}
 
 /-- An item `w` instantiates a schema `s` if the description of `s` lies below `w` slot by slot:
 each constant is matched and each variable is filled freely. -/
 def Instantiates (s : Schema V α) (w : V → α) : Prop := s.body ≤ w
+
+instance decidablePredInstantiates [DecidableLE (V → α)] (s : Schema V α) :
+    DecidablePred s.Instantiates :=
+  λ w => inferInstanceAs (Decidable (s.body ≤ w))
 
 /-- A schema instantiates its own description. -/
 theorem instantiates_body (s : Schema V α) : s.Instantiates s.body := le_rfl
@@ -213,6 +218,21 @@ theorem instantiatesAt_elim_swap :
     funext λ p => by cases p <;> rfl
   rw [h₁, h₂]
 
+/-- Through injective subscriptings that coincide exactly off `S`, a paired instantiation is
+two instances of the pulled-back descriptions that are the same except at `S`. -/
+theorem instantiatesAt_elim_iff_eqOn {pos₁ pos₂ : P → V} {w₁ w₂ : P → α} {S : Set P}
+    (h₁ : pos₁.Injective) (h₂ : pos₂.Injective)
+    (h : ∀ a b, pos₁ a = pos₂ b ↔ a = b ∧ a ∉ S) :
+    s.InstantiatesAt (Sum.elim pos₁ pos₂) (Sum.elim w₁ w₂) ↔
+      (s.comap pos₁).Instantiates w₁ ∧ (s.comap pos₂).Instantiates w₂ ∧
+        Set.EqOn w₁ w₂ Sᶜ := by
+  rw [instantiatesAt_elim_iff]
+  refine and_congr_right λ _ => and_congr_right λ _ => ⟨λ hc a ha => ?_, λ he => ?_⟩
+  · exact hc.2.2 a a ((h a a).2 ⟨rfl, ha⟩)
+  · refine ⟨h₁.factorsThrough _, h₂.factorsThrough _, λ a b hab => ?_⟩
+    obtain ⟨rfl, ha⟩ := (h a b).1 hab
+    exact he ha
+
 end Positions
 
 /-! ### The relational role -/
@@ -263,6 +283,15 @@ theorem instantiates_inf_iff [SemilatticeInf α] {s : Schema V α} {w₁ w₂ : 
 section OrderBot
 variable [PartialOrder α] [OrderBot α] {s : Schema V α} {w : V → α} {Λ Λ' : Set (V → α)}
 
+/-- The schema with description `body` and every variable open. -/
+def productive (body : V → α) : Schema V α := ⟨body, {v | body v = ⊥}⟩
+
+@[simp] theorem productive_body (body : V → α) : (productive body).body = body := rfl
+
+@[simp] theorem productive_opens (body : V → α) :
+    (productive body).opens = {v | body v = ⊥} :=
+  rfl
+
 /-- A schema `s` generates an item `w` over a lexicon `Λ` if `w` instantiates `s` and every closed
 variable of `s`, a slot at `⊥` not marked open, takes in `w` a filler attested in `Λ`: the
 generative role of a schema, licensing possibly novel items. -/
@@ -282,8 +311,8 @@ theorem generates_iff_mem_pi : s.Generates Λ w ↔ w ∈ Set.pi Set.univ (s.fil
   exact ⟨λ h v => ⟨h.1 v, h.2 v⟩, λ h => ⟨λ v => (h v).1, λ v => (h v).2⟩⟩
 
 /-- Where every value other than `⊥` is maximal, a constant admits only itself. -/
-theorem fillers_of_ne_bot (hα : ∀ a : α, a ≠ ⊥ → IsMax a) {v : V}
-    (hv : s.body v ≠ ⊥) :
+theorem fillers_eq_singleton_of_forall_isMax (hα : ∀ a : α, a ≠ ⊥ → IsMax a)
+    {v : V} (hv : s.body v ≠ ⊥) :
     s.fillers Λ v = {s.body v} := by
   ext a
   simp only [fillers, Set.mem_ofPred_eq, Set.mem_singleton_iff]
@@ -304,6 +333,8 @@ theorem Generates.mono (h : Λ ⊆ Λ') (hw : s.Generates Λ w) : s.Generates Λ
 /-- A schema is productive if every variable, every slot at `⊥`, is open. -/
 def IsProductive (s : Schema V α) : Prop := ∀ v, s.body v = ⊥ → v ∈ s.opens
 
+theorem isProductive_productive (body : V → α) : (productive body).IsProductive := λ _ h => h
+
 /-- A productive schema generates exactly its instances. -/
 theorem IsProductive.generates_iff (hs : s.IsProductive) :
     s.Generates Λ w ↔ s.Instantiates w :=
@@ -316,6 +347,13 @@ theorem isProductive_iff_generates_empty : s.IsProductive ↔ s.Generates ∅ s.
   by_contra hvo
   obtain ⟨w, ⟨hw, -⟩, -⟩ := h.2 v hv hvo
   exact hw
+
+/-- A schema generates every instance over every lexicon exactly when it is productive. -/
+theorem isProductive_iff_forall_generates_iff :
+    s.IsProductive ↔
+      ∀ (Λ : Set (V → α)) (w : V → α), s.Generates Λ w ↔ s.Instantiates w :=
+  ⟨λ hs _ _ => hs.generates_iff,
+    λ h => isProductive_iff_generates_empty.2 ((h ∅ _).2 s.instantiates_body)⟩
 
 end OrderBot
 
@@ -365,9 +403,11 @@ theorem contrast_iff_of_forall_isMax (hα : ∀ a : α, a ≠ ⊥ → IsMax a) :
       Set.EqOn f g Sᶜ ∧ ∀ p ∈ S, f p ≠ ⊥ ∧ g p ≠ ⊥ ∧ f p ≠ g p :=
   and_congr_right' (forall₂_congr λ _ _ => not_compat_iff_of_forall_isMax hα)
 
+namespace Schema
+
 /-- On a flat carrier, a filled item instantiates a schema exactly when it is the schema's
 description, the same except at the variables. -/
-theorem Schema.instantiates_iff_instantiation_of_forall_isMax
+theorem instantiates_iff_instantiation_of_forall_isMax
     (hα : ∀ a : α, a ≠ ⊥ → IsMax a) {s : Schema P α} {w : P → α}
     (hw : ∀ p, w p ≠ ⊥) :
     s.Instantiates w ↔ Instantiation s.body w {p | s.body p = ⊥} := by
@@ -378,6 +418,8 @@ theorem Schema.instantiates_iff_instantiation_of_forall_isMax
     show s.body p < w p
     rw [hp]
     exact bot_lt_iff_ne_bot.2 (hw p)
+
+end Schema
 
 end OrderBot
 

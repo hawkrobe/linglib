@@ -4,54 +4,39 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
 
 /-!
-# Newman (2024) — When Arguments Merge [newman-2024]
+# Newman (2024): When Arguments Merge
 
-Elise Newman (2024). *When Arguments Merge*. MIT Press (Linguistic
-Inquiry Monographs 88). ISBN 9780262379960.
+This file formalizes the categorial merge hypothesis of [newman-2024], on which every
+element of category V shares the same merge features and only three features introduce
+arguments: one specific to determiner phrases, one unspecified for category, and one
+merging a verb phrase, borne by the light verb alone (`MergeFeature`, `CMHHead`). With
+feature maximality, weak economy, and the generalized tucking-in of [paille-2020], the
+hypothesis derives that phrases of other categories merge before determiner phrases when a
+verb bears both features (`nonDPFirst`), that the verb phrase becomes a specifier of the
+light verb when the light verb bears the unspecified feature (`vpIsSpecifier`), that
+neither internal argument of a high-indirect-object ditransitive c-commands the other, so
+either may passivize, that weak economy makes an interrogative indirect object the
+passive subject (`weakEconomyValid`), that phrases with inherent case cannot check the
+determiner feature and so cannot move to subject (`DPType.canAMove`), and that
+anti-redundancy deletes the lower agreement copy in Mayan agent focus when two probes
+target the same extracted argument. The verb type space is the range of feature bundles
+across the verb and the light verb (`VPProfile`).
 
-## Overview
+## Implementation notes
 
-The Categorial Merge Hypothesis (CMH) proposes that all elements of
-category V share the same Merge features, with only three
-argument-introducing features: `[·D·]` (DP-specific), `[·X·]`
-(category-unspecified), and `[·V·]` (VP-merge, v only). Combined with
-Feature Maximality, Weak Economy, and Generalized Tucking In
-([paille-2020]), the CMH derives:
+The hypothesis's primitives are paper-specific and live here under the Minimalist
+namespace; the case-phrase detector inspects syntactic objects of the Minimalist substrate.
 
-1. **Non-DP First**: XPs merge before DPs when V bears both features
-2. **VP-as-specifier**: When v bears `[·X·]`, VP is forced to be a
-   specifier of v (not complement)
-3. **Symmetric passives**: In "high IO" ditransitives, neither internal
-   argument c-commands the other, so either can passivize
-4. **DOMA**: Weak Economy forces IO to be passive subject when IO is
-   a wh-phrase (checks more features)
-5. **No IO passives with inherent case**: KPs can't check `[·D·]`, so
-   they can't A-move to subject (Greek, Tamil, German, Turkish, Spanish)
-6. **Agent Focus in Mayan**: Anti-redundancy deletes lower agreement
-   copies when both probes target the same extracted argument
+## References
 
-## Formalized Predictions
-
-This file formalizes the verb type space, structural predictions about
-VP-specifierhood and its consequences, the KP/DP distinction for
-passive accessibility, and anti-redundancy for agreement.
-
-## CMH Apparatus (relocated from `Minimalism/CMH.lean`)
-
-The Categorial Merge Hypothesis primitives below are paper-specific to
-[newman-2024] (with [paille-2020] for Generalized Tucking In)
-and not consumed elsewhere in the library, so they live here under
-`namespace Minimalist.CMH` for symmetry with other Minimalist apparatus
-and to support qualified lookup if a future paper picks them up.
+* [newman-2024]
+* [paille-2020]
+* [preminger-2014]
 -/
 
 namespace Minimalist.CMH
 
 open SyntacticObject
-
--- ============================================================================
--- § 1: Merge Features
--- ============================================================================
 
 /-- The three argument-introducing Merge features for verbal heads.
 
@@ -85,17 +70,13 @@ def MergeBundle.featureCount (b : MergeBundle) : Nat :=
 def MergeBundle.toList (b : MergeBundle) : List MergeFeature :=
   (if b.hasD then [.D] else []) ++ (if b.hasX then [.X] else []) ++ (if b.hasV then [.V] else [])
 
--- ============================================================================
--- § 2: CMH Verbal Heads
--- ============================================================================
-
 /-- Whether a category is a verbal head in the CMH sense. -/
 def isVerbalHead : Cat → Prop
   | .V => True
   | .v => True
   | _  => False
 
-instance : DecidablePred isVerbalHead := fun c => by
+instance : DecidablePred isVerbalHead := λ c => by
   cases c <;> unfold isVerbalHead <;> infer_instance
 
 /-- A CMH-compliant verbal head: a V or v with a Merge feature bundle.
@@ -122,10 +103,6 @@ def mkVLittleHead (hasD hasX : Bool) : CMHHead where
   cat := .v
   features := ⟨hasD, hasX, true⟩
   v_constraint := λ h => absurd h (by decide)
-
--- ============================================================================
--- § 3: The Space of Possible vPs (Table 134)
--- ============================================================================
 
 /-- Profile of a verb phrase: how many DP and XP arguments V and v
     collectively introduce. This determines the verb type.
@@ -203,10 +180,6 @@ example : ditransitiveDOC.totalArgs = 3 := rfl
 example : raising.totalArgs = 1 := rfl
 example : maximalVerb.totalArgs = 4 := rfl
 
--- ============================================================================
--- § 4: Non-DP First Theorem
--- ============================================================================
-
 /-- When V bears both `[·D·]` and `[·X·]`, the XP merges first (as
     complement) and the DP second (as specifier).
 
@@ -229,10 +202,6 @@ def nonDPFirst (_vHead : CMHHead) (_hD : _vHead.features.hasD = true)
   (.complement, .specifier)
 
 
--- ============================================================================
--- § 5: VP-as-Specifier
--- ============================================================================
-
 /-- When v introduces an XP (v bears `[·X·]`), VP is forced to become
     a specifier of v rather than its complement.
 
@@ -246,10 +215,6 @@ def vpIsSpecifier (littleV : CMHHead) : Bool :=
     for verb movement and ellipsis. -/
 def vAndVFormComplex (littleV : CMHHead) : Bool :=
   !vpIsSpecifier littleV
-
--- ============================================================================
--- § 6: Weak Economy
--- ============================================================================
 
 /-- A pending operation: a possible Merge at a given derivational step.
     Tracks which features would be checked and whether the operation
@@ -288,10 +253,6 @@ def weakEconomyValid (ops : List PendingOp) (chosenIdx : Nat) : Bool :=
 def mutuallyBleeding (op1 op2 : PendingOp) (i j : Nat) : Bool :=
   op1.bleeds.contains j || op2.bleeds.contains i
 
--- ============================================================================
--- § 7: Generalized Tucking In ([paille-2020])
--- ============================================================================
-
 /-- Specifier position in a tree with multiple specifiers.
     Under Generalized Tucking In, new specifiers merge *below* existing
     ones — as close to the head as possible. -/
@@ -304,10 +265,6 @@ inductive SpecPosition where
     Given `n` existing specifiers, the new one gets position `innermost`
     and all existing specifiers shift outward by one. -/
 def tuckIn (_existingSpecs : Nat) : SpecPosition := .innermost
-
--- ============================================================================
--- § 8: Nominal Types and the Entailment Hierarchy
--- ============================================================================
 
 /-- Types of nominals, ordered by feature-checking capacity.
     The CMH establishes an entailment hierarchy among nominal types:
@@ -416,10 +373,6 @@ private theorem isKP_rejects_bare_K_leaf : ¬ isKP (leaf kProbeK) := by
   rintro ⟨d, hd, _⟩
   exact (immediatelyContains_leaf kProbeK d) hd
 
--- ============================================================================
--- § 9: Anti-Redundancy in Agreement
--- ============================================================================
-
 /-- When two adjacent φ-probes copy features of the same goal, the
     lower copy is deleted at PF. This is the anti-redundancy principle
     that derives Agent Focus morphology in Mayan languages.
@@ -461,10 +414,6 @@ namespace Newman2024
 open Minimalist Minimalist.CMH
 open SyntacticObject
 
--- ============================================================================
--- § 1: The Space of Possible vPs
--- ============================================================================
-
 -- The CMH predicts exactly which verb types exist based on feature
 -- combinations on V and v. We verify the basic inventory.
 
@@ -498,10 +447,6 @@ theorem raising_one_arg : raising.totalArgs = 1 := rfl
 /-- Maximal verbs ("bet") have four arguments. -/
 theorem maximal_four_args : maximalVerb.totalArgs = 4 := rfl
 
--- ============================================================================
--- § 2: VP-as-Specifier Consequences
--- ============================================================================
-
 /-- In a low-XP ditransitive (V: [·D·][·X·], v: [·D·][·V·]),
     VP is NOT a specifier of v because v lacks [·X·]. -/
 theorem low_xp_vp_is_complement :
@@ -521,10 +466,6 @@ theorem doc_no_complex_head :
 
 theorem transitive_forms_complex :
     vAndVFormComplex (mkVLittleHead true false) = true := rfl
-
--- ============================================================================
--- § 3: Entailment Hierarchy and KP Blocks Passive
--- ============================================================================
 
 -- The entailment hierarchy wh-DP ⊇ DP ⊇ non-DP determines which
 -- nominals can undergo A-movement. KPs (inherent case shells) behave
@@ -557,10 +498,6 @@ theorem nonDP_cannot_amove : DPType.canAMove .nonDP = false := rfl
 theorem dp_can_amove : DPType.canAMove .dp = true := rfl
 theorem whDP_can_amove : DPType.canAMove .whDP = true := rfl
 
--- ============================================================================
--- § 4: Symmetric Passives
--- ============================================================================
-
 -- In a high-IO ditransitive where VP is a specifier of v, neither
 -- internal argument c-commands the other. The IO (merged as XP
 -- complement of v) and the DO (merged as DP complement of V, inside
@@ -574,10 +511,6 @@ theorem whDP_can_amove : DPType.canAMove .whDP = true := rfl
 /-- The high-IO structure has VP as specifier. -/
 theorem high_io_has_vp_spec :
     vpIsSpecifier (mkVLittleHead true true) = true := rfl
-
--- ============================================================================
--- § 5: DOMA (Double Object Movement Asymmetry)
--- ============================================================================
 
 -- DOMA: when IO is a wh-phrase in a passive, IO must be the passive
 -- subject (not DO). Weak Economy explains this: IO-to-subject checks
@@ -607,10 +540,6 @@ theorem doma_prefers_io : weakEconomyValid [ioToSubjectWh, doToSubjectWh] 0 = tr
 theorem doma_disprefers_do : weakEconomyValid [ioToSubjectWh, doToSubjectWh] 1 = false := by
   decide
 
--- ============================================================================
--- § 6: Anti-Redundancy and Agent Focus
--- ============================================================================
-
 -- In Mayan AF configurations, the agent moves to Spec,CP for
 -- Ā-extraction. Both v (φ-probe) and C (φ-probe) agree with the
 -- agent. Anti-redundancy deletes the lower copy (on v), yielding
@@ -636,10 +565,6 @@ theorem af_surviving_copy :
 /-- The surviving copy is the one on C (height 3). -/
 theorem af_c_probe_survives :
     (applyAntiRedundancy mayanAFCopies).head? = some ⟨3, 0⟩ := by decide
-
--- ============================================================================
--- § 7: Weak Economy and Optional Clitic Doubling (Greek)
--- ============================================================================
 
 /-- In Greek active transitives, three operations compete after IO
     merges as XP:
@@ -672,10 +597,6 @@ theorem greek_cd_valid :
 theorem greek_subject_valid :
     weakEconomyValid [cliticDouble, mergeVP, mergeSubject] 2 = true := by decide
 
--- ============================================================================
--- § 8: Feature Bundle Comparison with Existing Voice Typology
--- ============================================================================
-
 -- The CMH's [·D·] on v is an argument-introducing Merge feature:
 -- it causes a DP to merge as a thematic external argument. Voice's
 -- hasD is a PF subcategorization feature (requires specifier at PF).
@@ -702,10 +623,6 @@ theorem passive_lacks_D : passiveV.features.hasD = false := rfl
 theorem voice_hasD_ne_assignsTheta :
     Voice.anticausative.HasD ∧ ¬ Voice.anticausative.AssignsTheta ∧
     Voice.passive.HasD ∧ ¬ Voice.passive.AssignsTheta := by decide
-
--- ============================================================================
--- § 9: Feature Failure (Assumption 19c)
--- ============================================================================
 
 -- Newman adopts [preminger-2014]'s obligatory-no-crash model for
 -- Merge features: [·D·], [·X·], [·V·] can go unchecked without
@@ -735,10 +652,6 @@ theorem weather_needs_feature_failure : weatherVerb.totalDP = 0 := rfl
     argument for A-movement to Spec,TP (impersonal passives), T's `[·D·]` goes
     unchecked — tolerated by Feature Failure. -/
 theorem impersonal_passive_converges : passiveV.features.hasD = false := rfl
-
--- ============================================================================
--- § 10: Binding Predictions from VP-as-Specifier
--- ============================================================================
 
 -- The CMH's VP-as-specifier prediction has direct consequences for
 -- binding. In the low-XP structure (VP is complement of v), DO

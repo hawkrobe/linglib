@@ -37,8 +37,8 @@ comparative or an explicit degree modifier, demands precise knowledge of the deg
 
 ## TODO
 
-The paradigm's moves are typed from the paper's descriptions of its contexts; the dialogues
-themselves await the paper as `Data/Examples/NapoliNespor1976.json` rows.
+The paradigm's moves are typed from the paper's descriptions of its dialogues; the
+dialogues themselves are not yet rows of `Data/Examples/NapoliNespor1976.json`.
 -/
 
 namespace NapoliNespor1976

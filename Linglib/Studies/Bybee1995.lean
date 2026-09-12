@@ -18,13 +18,13 @@ over stored forms and the productivity of a schema is determined by two things: 
 frequency, the number of distinct forms instantiating it, and the openness of its variables.
 Token frequency does the opposite work, strengthening an individual form's own entry. Over a
 corpus of tokens, a schema's type frequency counts the distinct forms it relates and its token
-frequency counts every occurrence (`typeFrequency_le_tokenFrequency`); what a schema
-generates depends on the corpus only through its types, so repetition of a stored form leaves
-its generative capacity unchanged (`generates_iff_of_toFinset_eq`), and a more general schema
-has the larger type frequency (`typeFrequency_mono`). Openness is the other determinant: a
-schema generates every instance whatever is stored exactly when all of its variables are open
-(`generates_iff_instantiates_forall_iff_isProductive`), which is what makes the English past in
-*-ed* fully productive (`edSchema_isProductive`).
+frequency counts every occurrence (`typeFrequency_le_tokenFrequency`), and a more general
+schema has the larger type frequency (`typeFrequency_mono`). What a schema generates depends
+on the corpus only through its types, since the lexicon of its roles is the corpus's set of
+types, so repetition of a stored form leaves its generative capacity unchanged. Openness is the
+other determinant: a schema generates every instance whatever is stored exactly when all of
+its variables are open (`Schema.isProductive_iff_forall_generates_iff`), which is what makes
+the English past in *-ed* fully productive (`edSchema_isProductive`).
 
 Schemas are product-oriented: generalizations over the derived forms themselves, not over
 pairs of base and derived form. The class of *strung* is the shape of its past tenses, and the
@@ -60,55 +60,37 @@ variable [DecidableEq (P → α)]
 it. -/
 def typeFrequency (s : Schema P α) [DecidablePred s.Instantiates] (c : Multiset (P → α)) :
     ℕ :=
-  (c.toFinset.filter s.Instantiates).card
+  c.dedup.countP s.Instantiates
 
 /-- The token frequency of a schema over a corpus: the number of occurrences of forms
 instantiating it. -/
 def tokenFrequency (s : Schema P α) [DecidablePred s.Instantiates] (c : Multiset (P → α)) :
     ℕ :=
-  Multiset.card (c.filter s.Instantiates)
+  c.countP s.Instantiates
 
 /-- Types are at most tokens. -/
 theorem typeFrequency_le_tokenFrequency (s : Schema P α) [DecidablePred s.Instantiates]
-    (c : Multiset (P → α)) : typeFrequency s c ≤ tokenFrequency s c := by
-  unfold typeFrequency tokenFrequency
-  rw [← Multiset.toFinset_filter]
-  exact Multiset.toFinset_card_le _
+    (c : Multiset (P → α)) : typeFrequency s c ≤ tokenFrequency s c :=
+  Multiset.countP_le_of_le _ (Multiset.dedup_le c)
 
 /-- A more general schema has the larger type frequency. -/
 theorem typeFrequency_mono {s t : Schema P α} [DecidablePred s.Instantiates]
     [DecidablePred t.Instantiates] (h : t.body ≤ s.body) (c : Multiset (P → α)) :
-    typeFrequency s c ≤ typeFrequency t c :=
-  Finset.card_le_card
-    (Finset.monotone_filter_right _ λ _ _ hw => Schema.body_le_body_iff.1 h hw)
-
-/-- What a schema generates depends on a corpus only through its types: repeating a stored
-form, raising its token frequency, changes nothing. -/
-theorem generates_iff_of_toFinset_eq [OrderBot α] (s : Schema P α) {c c' : Multiset (P → α)}
-    (h : c.toFinset = c'.toFinset) {w : P → α} :
-    s.Generates ↑c.toFinset w ↔ s.Generates ↑c'.toFinset w := by
-  rw [h]
+    typeFrequency s c ≤ typeFrequency t c := by
+  unfold typeFrequency
+  rw [Multiset.countP_eq_card_filter, Multiset.countP_eq_card_filter]
+  exact Multiset.card_le_card
+    (Multiset.monotone_filter_right _ λ _ hw => Schema.body_le_body_iff.1 h hw)
 
 end Frequency
 
 /-! ### Openness -/
 
-/-- A schema generates every instance over every lexicon exactly when all its variables are
-open: only a totally open schema attains full productivity. -/
-theorem generates_iff_instantiates_forall_iff_isProductive [OrderBot α] (s : Schema P α) :
-    (∀ (Λ : Set (P → α)) w, s.Generates Λ w ↔ s.Instantiates w) ↔ s.IsProductive :=
-  ⟨λ h => Schema.isProductive_iff_generates_empty.2 ((h ∅ _).2 s.instantiates_body),
-    λ hs _ _ => hs.generates_iff⟩
+/-- The English past in *-ed*, over a base slot and an affix slot: the base open, so totally
+open in the sense of `Schema.isProductive_iff_forall_generates_iff`. -/
+def edSchema : Schema (Fin 2) (Flat String) := Schema.productive ![⊥, ↑"ed"]
 
-/-- The English past in *-ed*, over a base slot and an affix slot: the base open. -/
-def edSchema : Schema (Fin 2) (Flat String) := ⟨![⊥, ↑"ed"], {0}⟩
-
-/-- The regular past is totally open. -/
-theorem edSchema_isProductive : edSchema.IsProductive := by
-  intro i h
-  fin_cases i
-  · exact Set.mem_singleton_iff.2 rfl
-  · exact absurd h (by decide)
+theorem edSchema_isProductive : edSchema.IsProductive := Schema.isProductive_productive _
 
 /-! ### The product-oriented class of *strung* -/
 
@@ -124,7 +106,7 @@ def strungClass : Set (Fin 3 → Flat String) :=
 theorem struck_instantiates :
     strungSchema.Instantiates Forms.struck.slots ∧ strungSchema.Instantiates Forms.snuck.slots ∧
       strungSchema.Instantiates Forms.drug.slots := by
-  refine ⟨λ i => ?_, λ i => ?_, λ i => ?_⟩ <;> fin_cases i <;> decide
+  decide
 
 /-- The variables of a source-oriented pairing of base and past: the shared onset and coda,
 and the two nuclei. -/
