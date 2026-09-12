@@ -6,35 +6,31 @@ Authors: Robert Hawkins
 import Linglib.Studies.Hansson2010
 
 /-!
-# McMullin (2016) [mcmullin-2016]
+# McMullin (2016): Tier-Based Locality in Long-Distance Phonotactics
 
-Tier-based locality in long-distance phonotactics: learnability and typology.
-PhD thesis, University of British Columbia.
+This file formalizes the argument of [mcmullin-2016] for the tier-based description of
+long-distance phonotactics. A long-distance constraint can be stated over subsequences, a
+forbidden pair of segments however far apart, the strictly piecewise description, or over
+a tier projection, deleting transparent material and forbidding adjacent pairs, the
+tier-based strictly local description; the thesis argues for the tier-based class, since
+strictly piecewise grammars cannot see a blocker, an intervening segment that halts
+harmony, deletion never turning a legal word illegal. Both halves are stated. Transparent
+harmony, the Navajo sibilant harmony of [hansson-2010], is one stringset under either
+description, as every agreement language is strictly piecewise of width two, equality being
+transitive; opaque harmony with a blocker is tier-based strictly local of width two but
+strictly piecewise at no width, since deleting the blocker leaves an illegal word and
+strictly piecewise languages are closed under subsequence.
 
-A long-distance phonotactic can be stated over **subsequences** — a forbidden pair of
-segments however far apart, the strictly piecewise (SP) description — or over a **tier
-projection** — delete the transparent material, then forbid adjacent pairs, the
-tier-based strictly local (TSL) description. [mcmullin-2016] argues for the tier-based
-class: SP grammars cannot see a **blocker**, an intervening segment that halts harmony,
-because deleting material can never turn an SP-legal word illegal.
+## Implementation notes
 
-Both halves are formalised here.
+The blocking alphabet is schematic, one blocker, one transparent segment, and the two
+harmonizing series, and stands in for no particular language; the attested opaque
+consonant-harmony systems surveyed by Hansson are not formalized.
 
-* **Transparent harmony: the classes coincide.** Navajo sibilant harmony — the
-  [hansson-2010] case study formalised as TSL_2 in `Studies/Hansson2010.lean` — is the
-  same stringset as an SP_2 grammar. This is not an artefact of the toy alphabet:
-  *every* AGREE language is SP_2 (`Subregular.TierStrictlyLocalGrammar.agree_language_eq_sp`),
-  because
-  equality is transitive, so constraining tier-adjacent pairs already constrains pairs
-  at arbitrary distance.
-* **Opaque harmony: they come apart.** A blocking pattern is TSL_2 but SP at no width,
-  since deleting the blocker leaves an illegal word and SP languages are
-  subsequence-closed.
+## References
 
-The blocking alphabet `BSeg` is schematic — one blocker, one transparent segment, and
-the two harmonizing series — and stands in for no particular language. Opaque
-consonant-harmony systems are rare; [hansson-2010] surveys the attested cases and none
-is formalised here.
+* [mcmullin-2016]
+* [hansson-2010]
 -/
 
 namespace McMullin2016
@@ -87,7 +83,7 @@ tier keeps — that is the whole of its opacity. -/
 def BSeg.onTier (s : BSeg) : Prop := s ≠ .transparent
 
 instance : DecidablePred BSeg.onTier :=
-  fun s => inferInstanceAs (Decidable (s ≠ .transparent))
+  λ s => inferInstanceAs (Decidable (s ≠ .transparent))
 
 /-- The forbidden tier-adjacent pairs: the two series may not be tier-adjacent. -/
 def BSeg.Mixed : BSeg → BSeg → Prop
@@ -96,7 +92,7 @@ def BSeg.Mixed : BSeg → BSeg → Prop
   | _, _ => False
 
 instance : DecidableRel BSeg.Mixed :=
-  fun a b => by cases a <;> cases b <;> simp only [BSeg.Mixed] <;> infer_instance
+  λ a b => by cases a <;> cases b <;> simp only [BSeg.Mixed] <;> infer_instance
 
 /-- The schematic blocking language: harmony across transparent material, halted by a
 blocker. -/
@@ -126,7 +122,7 @@ languages are subsequence-closed, so a legal word whose blocker-deletion is ille
 rules out every SP grammar at once. -/
 theorem blockingLang_not_isStrictlyPiecewise (k : ℕ) :
     ¬ blockingLang.IsStrictlyPiecewise k :=
-  fun h => unblocked_not_mem (h.mem_of_sublist (by decide) blocked_mem)
+  λ h => unblocked_not_mem (h.mem_of_sublist (by decide) blocked_mem)
 
 /-- **The tier buys expressive power** ([mcmullin-2016]): some TSL_2 language is
 strictly piecewise at no width. With `navajoSibilantHarmony_lang_isSP2` — where the two

@@ -1,7 +1,7 @@
 /-!
 # Cross-linguistic conditional markers
 
-[cao-white-lassiter-2025] [mizuno-2024]
+[lassiter-2025] [mizuno-2024]
 
 Typological vocabulary for conditional markers across languages.
 Some languages have distinct lexical items for hypothetical (HC) vs
