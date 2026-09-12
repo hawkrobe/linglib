@@ -7,20 +7,23 @@ import Linglib.Core.Relation.FactorsThroughOn
 import Linglib.Fragments.Tangale.Phonology
 
 /-!
-# Tangale sandhi as a probe for syntactic structure
+# Kenstowicz (1987): The Phonology and Syntax of Wh-Expressions in Tangale
 
-Formalises [kenstowicz-1987]: the blockage of phrasal phonological
-rules can reveal surface syntax "that we did not already know".
-Tangale elision and tonal delinking apply obligatorily between a verb
-and its object (15b, e) but block before a wh-object (15c, f). A
-[wh]-sensitive sandhi rule is rejected both on interface-theoretic
-grounds and by the minimal pair (16): wh-*possessors* inside NP
-trigger elision (*ayab noŋ* 'whose banana'). The solution: wh-subjects
-obligatorily postpose to a position with "the force of the English
-cleft" (18) — the Focus position — and apparently in-situ wh-objects
-occupy it string-vacuously, so a constituent boundary blocks sandhi.
-Elision tracks government exactly once the Focus position is admitted;
-the [wh] feature does not factor it.
+This file formalizes the argument of [kenstowicz-1987] that the blocking of phrasal
+phonological rules reveals surface syntax "that we did not already know". Tangale elision and
+tonal delinking apply obligatorily between a verb and its object ((15b), (15e)) but are blocked
+before a wh-object ((15c), (15f)); a sandhi rule sensitive to the [wh] feature is rejected both
+on interface grounds and by the minimal pair (16), where a wh-possessor inside NP triggers
+elision (*ayab noŋ* 'whose banana'). The solution is syntactic: wh-subjects obligatorily postpose
+to a position with "the force of the English cleft" (18), the Focus position, and apparently
+in-situ wh-objects occupy it string-vacuously, so a constituent boundary blocks the sandhi.
+Elision then tracks government exactly (`elision_tracks_government`), and the [wh] feature does
+not factor it (`elision_not_factor_through_wh`).
+
+## References
+
+* [kenstowicz-1987]
+* [kidda-1985]
 -/
 
 namespace Kenstowicz1987
