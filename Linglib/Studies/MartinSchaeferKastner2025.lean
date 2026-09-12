@@ -8,27 +8,29 @@ import Linglib.Fragments.Romance.French.Predicates
 
 This file formalizes the pragmatic account of French anticausative marking of
 [martin-schaefer-kastner-2025]. Anticausatives marked with *se* and unmarked ones do not
-differ in meaning; cooperative speakers manage the voice ambiguity of *se*, which marks both
-anticausative and reflexive voice, under the Manner supermaxim, and the choice is driven by
-verb class, limited-control against in-control, by the animacy of the sole argument, and by
-the bias to read human arguments as agents. Three generalizations follow: with a human
-argument, limited-control verbs prefer the unmarked form, which is unambiguously
-anticausative, while in-control verbs prefer the marked form, since the unmarked form would
-signal that no agentive construal was intended; with a nonhuman argument, the marked form is
-preferred when the speaker presents the nonhuman as responsible, the reflexive parse being
-the only way to assign it agency.
+differ in meaning; the *se* form is ambiguous between anticausative and reflexive voice while
+the bare form is not (`Form.voiceOptions`, `se_ambiguous`), and cooperative speakers manage
+that ambiguity under the Manner supermaxim. With a human argument the reflexive parse is
+salient, by the bias to read humans as agents; for a limited-control verb, *rougir* 'blush',
+the parse misleads, so the unmarked form is preferred, the unmarked limited-control
+preference (4), and for an in-control verb, *(se) plier* 'bend', the bare form's inference
+that no agentive construal was intended misleads instead, so the marked form is preferred,
+the marked in-control preference (5). With a nonhuman argument no parse is salient and no
+preference arises, unless the speaker means to present the nonhuman as responsible, when
+the marked form is preferred since the reflexive parse is the only way to assign it agency,
+the marked responsibility preference (`preference`, `generalizations`). The control level is
+not read off the entailment profile, limited-control and in-control property-change verbs
+sharing one (`control_level_not_from_entailments`), and the opposite preferences of the two
+classes falsify any uniform semantic difference between the two forms
+(`opposite_preferences_falsify_uniform_semantics`). Preferences arise only for verbs with
+both forms (`SeMarking.HasChoice`).
 
 ## Implementation notes
 
 The voice flavours are the substrate's non-thematic and reflexive flavours after
-[schaefer-2008], the maxim the substrate's Manner submaxim of avoiding ambiguity, and the
-entailment profiles of anticausative subjects the substrate's; the account presupposes the
-reflexive–anticausative syncretism of [koontz-garboden-2009].
-
-## TODO
-
-The paper is not on file; the table and generalization numbers are transcribed from an
-earlier version of this file and are UNVERIFIED.
+[schaefer-2008], and the entailment profiles of anticausative subjects the substrate's; the
+account presupposes the reflexive–anticausative syncretism of [koontz-garboden-2009]. The
+experiments' rating means are described in the paper and not represented.
 
 ## References
 
@@ -39,351 +41,141 @@ earlier version of this file and are UNVERIFIED.
 
 namespace MartinSchaeferKastner2025
 
-open Minimalist.Voice (Flavor)
-open ArgumentStructure (EntailmentProfile)
-open ArgumentStructure (PredictsUnaccusative)
-open Pragmatics.GriceanMaxims (MannerSubmaxim)
-open French.Predicates
+open Minimalist.Voice ArgumentStructure French.Predicates
 
--- ============================================================================
--- § 1: Core Types
--- ============================================================================
+/-! ### The classes -/
 
-/-- Morphological class of an anticausative with respect to *se*-marking.
-    [martin-schaefer-kastner-2025] §1:
-    - −*se*: AC form cannot have *se* (*changer de position*)
-    - +*se*: AC form must have *se* (*s'affaiblir*)
-    - ±*se*: AC form optionally has *se* (*casser*, *plier*, *rougir*) -/
+/-- The morphological class of an anticausative: the bare form only, *changer de position*;
+the *se* form only, *s'affaiblir*; or both, *casser*, *plier*, *rougir*. -/
 inductive SeMarking where
-  | minusSe     -- Unmarked anticausative (−se AC-verb)
-  | plusSe      -- Marked anticausative (+se AC-verb)
-  | plusMinusSe -- Optionally marked anticausative (±se AC-verb)
-  deriving DecidableEq, Repr
+  | minusSe
+  | plusSe
+  | plusMinusSe
+  deriving DecidableEq
 
-/-- Lexical-semantic class of a change-of-state verb based on whether
-    the change is typically under the human undergoer's control.
-    [martin-schaefer-kastner-2025] §1.1.
+/-- Whether the speaker has a choice of form: only the verbs with both forms. -/
+def SeMarking.HasChoice : SeMarking → Prop
+  | .plusMinusSe => True
+  | _ => False
 
-    This classification reflects shared world knowledge about human
-    agency, NOT lexical-semantic structure. Property-change verbs from
-    both classes share the same entailment profile (`cosSubjectProfile`);
-    the distinction is pragmatic (see `control_level_not_from_entailments`). -/
+instance : DecidablePred SeMarking.HasChoice := λ m => by
+  cases m <;> unfold SeMarking.HasChoice <;> infer_instance
+
+/-- Whether the change a verb names is typically under its human undergoer's control (§1.1):
+*rougir* 'blush' and *pâlir* 'get pale' are limited-control, *plier* 'bend' and
+*s'approcher* 'get close' in-control. The distinction is world knowledge, not entailment. -/
 inductive ControlLevel where
-  /-- Change typically NOT under human control: *rougir* 'blush',
-      *pâlir* 'get pale', *rajeunir* 'rejuvenate'. -/
   | limitedControl
-  /-- Change typically under human control: *plier* 'bend',
-      *(s')approcher* 'get close', *(se) courber* 'bend/curve'. -/
   | inControl
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
-/-- Animacy of the sole DP argument. -/
+/-- The animacy of the sole argument. -/
 inductive Animacy where
   | human
   | nonhuman
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
-/-- Speaker's communicative goal regarding agency attribution.
-    G3 (responsibility preference) is conditional on this goal:
-    with nonhuman DPs, +*se* is preferred only when the speaker
-    aims to present the entity as responsible. -/
+/-- Whether the speaker means to present the entity as responsible for the change. -/
 inductive ResponsibilityGoal where
-  | neutral              -- No particular goal regarding agency
-  | conveyResponsibility -- Speaker aims to present entity as responsible
-  deriving DecidableEq, Repr
+  | neutral
+  | conveyResponsibility
+  deriving DecidableEq
 
--- ============================================================================
--- § 2: Control Level and Entailment Profiles
--- ============================================================================
-
-/-- ControlLevel is NOT derivable from Dowty's entailment profiles.
-    Limited-control property-change verbs (*rougir*) and in-control
-    property-change verbs (*refroidir*) share the same entailment
-    profile: both lack volition, sentience, causation, and movement.
-
-    The classification reflects shared world knowledge:
-    - *rougir* 'blush': blushing is not typically under human control
-    - *refroidir* 'cool down': cooling can be under human control
-
-    Both are non-volitional changes of state with no movement. -/
+/-- The control level is not derivable from the entailment profile: the limited-control
+*rougir* and the in-control *refroidir* share one. -/
 theorem control_level_not_from_entailments :
-    rougir.subjectEntailments = refroidir.subjectEntailments := by native_decide
+    rougir.subjectEntailments = refroidir.subjectEntailments := by decide
 
-/-- Movement in the entailment profile is a SUFFICIENT but not NECESSARY
-    condition for in-control status. Motion verbs like *approcher* have
-    movement AND are in-control. But property-change verbs like
-    *refroidir* are in-control WITHOUT movement. -/
+/-- Movement entailments suffice for in-control status, *approcher*, but are not necessary,
+*refroidir* being in-control without them. -/
 theorem movement_sufficient_not_necessary :
     approcher.subjectEntailments = some motionCosSubjectProfile ∧
-    refroidir.subjectEntailments = some cosSubjectProfile ∧
-    motionCosSubjectProfile.movement = true ∧
-    cosSubjectProfile.movement = false := by decide
+      refroidir.subjectEntailments = some cosSubjectProfile ∧
+      motionCosSubjectProfile.movement = true ∧ cosSubjectProfile.movement = false := by
+  decide
 
--- ============================================================================
--- § 3: Voice Ambiguity — the *se* syncretism
--- ============================================================================
+/-! ### The voice ambiguity of *se* -/
 
-/-- Voice flavors available for a form WITHOUT *se*.
-    Only the anticausative (non-thematic) parse is available.
-    The DP is a theme, not an agent. -/
-def bareVoiceOptions : List Flavor := [.nonThematic]
+/-- The two forms of a verb with a choice. -/
+inductive Form where
+  | bare
+  | se
+  deriving DecidableEq
 
-/-- Voice flavors available for a form WITH *se*.
-    Both anticausative and reflexive parses are available —
-    this is the reflexive-anticausative syncretism
-    ([schaefer-2008], [koontz-garboden-2009]).
+/-- The voice flavours a form admits: the bare form only the non-thematic anticausative, the
+*se* form the reflexive as well, the syncretism of [schaefer-2008] and
+[koontz-garboden-2009]. -/
+def Form.voiceOptions : Form → List Flavor
+  | .bare => [.nonThematic]
+  | .se => [.nonThematic, .reflexive]
 
-    K-G 2009's reflexivization analysis predicts exactly this
-    syncretism: *se* marks reflexivization, which covers both
-    the reflexive reading (the entity acts on itself) and the
-    anticausative reading (EFFECTOR = THEME, agentivity bleached
-    by underspecification). -/
-def seVoiceOptions : List Flavor := [.nonThematic, .reflexive]
+/-- Both forms share the anticausative parse, and only the *se* form has the reflexive one. -/
+theorem se_ambiguous :
+    (∀ f : Form, Flavor.nonThematic ∈ f.voiceOptions) ∧
+      Flavor.reflexive ∈ Form.se.voiceOptions ∧ Flavor.reflexive ∉ Form.bare.voiceOptions := by
+  refine ⟨λ f => ?_, by decide, by decide⟩
+  cases f <;> decide
 
-/-- The *se*-marked form is ambiguous: it has strictly more voice parses. -/
-theorem se_is_ambiguous : seVoiceOptions.length > bareVoiceOptions.length := by decide
+/-! ### Managing the ambiguity (§2) -/
 
-/-- The bare form is unambiguous for anticausative voice. -/
-theorem bare_is_unambiguous : bareVoiceOptions = [.nonThematic] := rfl
+/-- The agent bias: the reflexive parse of the *se* form is salient for a human argument. -/
+def ReflexiveSalient : Animacy → Prop
+  | .human => True
+  | .nonhuman => False
 
-/-- Both forms share the anticausative parse. -/
-theorem shared_anticausative_parse :
-    Flavor.nonThematic ∈ bareVoiceOptions ∧
-    Flavor.nonThematic ∈ seVoiceOptions := ⟨List.mem_cons_self .., List.mem_cons_self ..⟩
+/-- The reflexive parse clashes with shared assumptions for a limited-control verb, whose
+change is not under the undergoer's control, and aligns with them for an in-control verb. -/
+def ReflexiveClashes : ControlLevel → Prop
+  | .limitedControl => True
+  | .inControl => False
 
-/-- The reflexive parse is available only with *se*. -/
-theorem reflexive_only_with_se :
-    Flavor.reflexive ∈ seVoiceOptions ∧
-    Flavor.reflexive ∉ bareVoiceOptions := by decide
+instance : DecidablePred ReflexiveSalient := λ a => by
+  cases a <;> unfold ReflexiveSalient <;> infer_instance
 
--- ============================================================================
--- § 4: Agent Bias
--- ============================================================================
+instance : DecidablePred ReflexiveClashes := λ c => by
+  cases c <;> unfold ReflexiveClashes <;> infer_instance
 
-/-- Agent bias: human DPs in subject position are preferentially
-    interpreted as agents ([bickel-etal-2015], [sauppe-etal-2023]).
-    With nonhuman DPs, the reflexive parse is not a priori salient. -/
-def reflexiveParseSalient (anim : Animacy) : Bool :=
-  match anim with
-  | .human => true
-  | .nonhuman => false
+/-- The preferred form of a verb with a choice. -/
+inductive Preference where
+  | unmarked
+  | marked
+  deriving DecidableEq
 
--- ============================================================================
--- § 5: Preference Predictions — the three generalizations
--- ============================================================================
-
-/-- Whether the non-target sense (reflexive) clashes with shared
-    assumptions about the event.
-
-    - Limited-control verbs: the reflexive parse (DP = agent of own change)
-      clashes with the assumption that the change is not under the human's
-      control. Reflexive parse = misleading.
-    - In-control verbs: the reflexive parse aligns with the assumption
-      that the change IS under the human's control. Reflexive parse = not
-      misleading. -/
-def reflexiveParseClashes (ctrl : ControlLevel) : Bool :=
-  match ctrl with
-  | .limitedControl => true
-  | .inControl => false
-
-/-- The predicted preference for the form of ±*se* AC-verbs.
-    Returns `some true` if +*se* is preferred, `some false` if −*se*
-    is preferred, `none` if no preference arises.
-
-    Derived compositionally from the paper's §2.2 reasoning:
-
-    1. Is the reflexive parse salient? (`reflexiveParseSalient`)
-       Agent bias activates with human DPs, making the reflexive parse
-       of *se* a priori salient. With nonhuman DPs, no ambiguity to manage.
-
-    2. If salient, does it clash with shared assumptions? (`reflexiveParseClashes`)
-       - YES (limited-control): reflexive parse misleading → AVOID
-         ambiguity → prefer bare (−*se*). [dowty-1980]: if structure A
-         is ambiguous between X and Y while B has only X, reserve A for Y.
-       - NO (in-control): bare form's anti-implicature ("no agent") clashes
-         instead → MAINTAIN ambiguity → prefer +*se*.
-
-    §2.3 reframes "Avoid ambiguity" as "MANAGE ambiguity" — a single
-    Manner principle with two optimal strategies depending on whether
-    the nontarget sense aligns with or clashes against shared assumptions.
-
-    For nonhuman DPs, see `predictSePreferenceExt` which incorporates
-    the speaker's responsibility goal (G3). -/
-def predictSePreference (ctrl : ControlLevel) (anim : Animacy) : Option Bool :=
-  if !reflexiveParseSalient anim then none          -- no ambiguity to manage
-  else if reflexiveParseClashes ctrl then some false -- avoid ambiguity: prefer bare
-  else some true                                     -- maintain ambiguity: prefer +se
-
-/-- Extended preference prediction incorporating the speaker's
-    communicative goal (G3: responsibility preference for nonhuman DPs).
-
-    With nonhuman DPs in neutral contexts, neither form is preferred
-    (agent bias inactive). But when the speaker aims to convey that
-    the nonhuman entity is responsible for the change, +*se* is
-    preferred: only the *se*-marked form allows a reflexive parse,
-    which is the only grammatical way to assign agency to a nonhuman
-    sole argument. -/
-def predictSePreferenceExt (ctrl : ControlLevel) (anim : Animacy)
-    (goal : ResponsibilityGoal) : Option Bool :=
-  match anim with
-  | .human => predictSePreference ctrl .human
-  | .nonhuman => match goal with
+/-- The predicted preference, from the Manner supermaxim: where the reflexive parse is salient,
+avoid the ambiguous form when that parse misleads and keep it when the bare form's inference
+that no agent was intended misleads instead; where no parse is salient, the marked form only
+when the speaker means to convey responsibility, the reflexive parse being the only way to
+assign a nonhuman agency. -/
+def preference (ctrl : ControlLevel) (anim : Animacy) (goal : ResponsibilityGoal) :
+    Option Preference :=
+  if ReflexiveSalient anim then some (if ReflexiveClashes ctrl then .unmarked else .marked)
+  else match goal with
     | .neutral => none
-    | .conveyResponsibility => some true  -- G3: prefer +se
+    | .conveyResponsibility => some .marked
 
-/-- The pragmatic principle behind each preference. -/
-def preferenceRationale (ctrl : ControlLevel) (anim : Animacy) :
-    Option MannerSubmaxim :=
-  match anim, ctrl with
-  | .human, .limitedControl => some .avoidAmbiguity  -- avoid misleading reflexive parse
-  | .human, .inControl      => some .avoidAmbiguity  -- avoid misleading no-agent inference
-  | .nonhuman, _            => none                  -- no Manner pressure
+/-- The three generalizations: the unmarked limited-control preference and the marked
+in-control preference with a human argument, the marked responsibility preference with a
+nonhuman one, and no preference for a nonhuman argument otherwise. -/
+theorem generalizations (g : ResponsibilityGoal) (c : ControlLevel) :
+    preference .limitedControl .human g = some .unmarked ∧
+      preference .inControl .human g = some .marked ∧
+      preference c .nonhuman .conveyResponsibility = some .marked ∧
+      preference c .nonhuman .neutral = none := by
+  cases g <;> cases c <;> decide
 
--- ============================================================================
--- § 6: Generalization Theorems
--- ============================================================================
+/-- Against the causation claim of [labelle-1992] and [labelle-doron-2010]: the same class of
+verbs with a choice shows opposite preferences by control level, which no uniform semantic
+difference between the two forms could produce. -/
+theorem opposite_preferences_falsify_uniform_semantics (g : ResponsibilityGoal) :
+    preference .limitedControl .human g ≠ preference .inControl .human g := by
+  cases g <;> decide
 
-/-- **Generalization 1 — Unmarked limited-control preference (human DP).**
-    With a limited-control ±*se* verb and a human DP, the −*se* form is
-    preferred (experiment 1a: neutral/inchoative contexts). -/
-theorem unmarked_limited_control_preference :
-    predictSePreference .limitedControl .human = some false := rfl
+/-! ### Unaccusativity -/
 
-/-- **Generalization 2 — Marked in-control preference (human DP).**
-    With an in-control ±*se* verb and a human DP, the +*se* form is
-    preferred (experiment 1b: all three contexts). -/
-theorem marked_in_control_preference :
-    predictSePreference .inControl .human = some true := rfl
-
-/-- **Generalization 3 — Marked responsibility preference (nonhuman DP).**
-    With a nonhuman DP, +*se* is preferred when the speaker aims to
-    present the entity as responsible. Only *se* allows the reflexive
-    parse, which is the only grammatical way to assign agency to a
-    nonhuman sole argument. Control level is irrelevant — the mechanism
-    (reflexive parse as sole agency channel) applies uniformly. -/
-theorem marked_responsibility_preference :
-    predictSePreferenceExt .limitedControl .nonhuman .conveyResponsibility = some true ∧
-    predictSePreferenceExt .inControl .nonhuman .conveyResponsibility = some true := ⟨rfl, rfl⟩
-
-/-- In neutral contexts with nonhuman DPs, no preference is predicted
-    (agent bias inactive, no pragmatic pressure). -/
-theorem no_preference_nonhuman_neutral :
-    predictSePreferenceExt .limitedControl .nonhuman .neutral = none ∧
-    predictSePreferenceExt .inControl .nonhuman .neutral = none := ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 7: Choice Prerequisite
--- ============================================================================
-
-/-- Pragmatic form preferences arise ONLY with ±*se* verbs, where the
-    speaker has a genuine choice between bare and *se*-marked forms.
-
-    - −*se* verbs: only the bare form exists → no choice, no pragmatics
-    - +*se* verbs: only the *se* form exists → no choice, no pragmatics
-    - ±*se* verbs: both forms available → speaker must manage ambiguity
-
-    The number of available forms determines whether pragmatic pressure
-    applies. -/
-def availableForms (marking : SeMarking) : Nat :=
-  match marking with
-  | .minusSe     => 1  -- bare only
-  | .plusSe      => 1  -- se only
-  | .plusMinusSe => 2  -- both
-
-/-- Only ±*se* verbs have a genuine choice between forms. -/
-theorem choice_only_with_plusMinusSe (m : SeMarking) :
-    availableForms m > 1 ↔ m = .plusMinusSe := by
-  cases m <;> simp [availableForms]
-
--- ============================================================================
--- § 8: Unaccusativity Bridge
--- ============================================================================
-
-/-- All anticausative verb profiles predict unaccusativity
-    (no volition, no causation, has P-Patient features).
-    This is expected: anticausative subjects are derived internal
-    arguments. -/
-theorem cos_profile_unaccusative :
-    PredictsUnaccusative cosSubjectProfile := by decide
-
-theorem motion_cos_profile_unaccusative :
-    PredictsUnaccusative motionCosSubjectProfile := by decide
-
--- ============================================================================
--- § 9: Against the Causation Claim
--- ============================================================================
-
-/-- The causation claim ([labelle-1992], [labelle-doron-2010])
-    predicts that the presence vs. absence of *se* correlates with external
-    vs. internal causation ACROSS THE BOARD. But the preferences documented
-    here arise ONLY with ±*se* verbs (where the speaker has a choice) and
-    ONLY with human DPs (where agent bias is active). This is incompatible
-    with a semantic distinction between ±*se* forms.
-
-    Formally: the same verb class (±*se*) shows OPPOSITE preferences
-    depending on control level — limited-control prefers −*se*, in-control
-    prefers +*se*. A semantic account predicting uniform behavior for all
-    ±*se* verbs is falsified. -/
-theorem opposite_preferences_falsify_uniform_semantics :
-    predictSePreference .limitedControl .human ≠
-    predictSePreference .inControl .human := by decide
-
--- ============================================================================
--- § 10: Experimental Data (raw means)
--- ============================================================================
-
-/-- Raw mean acceptability ratings (7-point Likert scale).
-    Encoded as rationals (×1000) for decidable comparison.
-    From experiments 1a and 1b. -/
-structure ConditionMean where
-  context : String
-  animacy : Animacy
-  /-- +se mean × 1000 (rational encoding) -/
-  plusSeMean : Nat
-  /-- −se mean × 1000 (rational encoding) -/
-  minusSeMean : Nat
-  deriving Repr, DecidableEq
-
-/-- Experiment 1a: limited-control verbs (Table 2).
-    Values are raw means × 1000. -/
-def experiment1a_data : List ConditionMean :=
-  [ ⟨"inchoative", .human,    4109, 6321⟩
-  , ⟨"inchoative", .nonhuman, 5167, 5583⟩
-  , ⟨"neutral",    .human,    3218, 6526⟩
-  , ⟨"neutral",    .nonhuman, 4616, 5282⟩
-  , ⟨"reflexive",  .human,    4904, 3551⟩
-  , ⟨"reflexive",  .nonhuman, 5917, 6449⟩ ]
-
-/-- Experiment 1b: in-control verbs (Table 4).
-    Values are raw means × 1000. -/
-def experiment1b_data : List ConditionMean :=
-  [ ⟨"inchoative", .human,    5590, 3506⟩
-  , ⟨"inchoative", .nonhuman, 6051, 6237⟩
-  , ⟨"neutral",    .human,    5904, 3628⟩
-  , ⟨"neutral",    .nonhuman, 5641, 5269⟩
-  , ⟨"reflexive",  .human,    5891, 2994⟩
-  , ⟨"reflexive",  .nonhuman, 6308, 5654⟩ ]
-
-/-- **G1 confirmed**: for limited-control verbs with human DPs in the
-    neutral context, −*se* ratings (6.526) exceed +*se* ratings (3.218). -/
-theorem exp1a_neutral_human_confirms_G1 :
-    (3218 : Nat) < 6526 := by omega
-
-/-- **G2 confirmed**: for in-control verbs with human DPs in the
-    neutral context, +*se* ratings (5.904) exceed −*se* ratings (3.628). -/
-theorem exp1b_neutral_human_confirms_G2 :
-    (3628 : Nat) < 5904 := by omega
-
-/-- **G1 reverses in reflexive context**: with limited-control verbs,
-    human DPs in the reflexive context prefer +*se* (4.904 > 3.551).
-    This is expected: the reflexive context forces an agentive construal,
-    which only +*se* can express. -/
-theorem exp1a_reflexive_human_reversal :
-    (3551 : Nat) < 4904 := by omega
-
-/-- **G2 holds in reflexive context too**: with in-control verbs,
-    human DPs in the reflexive context strongly prefer +*se* (5.891 > 2.994). -/
-theorem exp1b_reflexive_human_confirms_G2 :
-    (2994 : Nat) < 5891 := by omega
+/-- The anticausative subject profiles predict unaccusativity: no volition, no causation, a
+patient. -/
+theorem cos_profiles_unaccusative :
+    PredictsUnaccusative cosSubjectProfile ∧ PredictsUnaccusative motionCosSubjectProfile := by
+  decide
 
 end MartinSchaeferKastner2025
