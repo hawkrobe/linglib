@@ -28,8 +28,9 @@ perfectly match it in matters of particular fact up to that time
 ## Main results
 
 * `historicalProperties_ofDatedFacts` : agreement on dated facts has the standard properties;
-* `upperLimitConstraintModal_implies_value` : the Upper Limit Constraint
-  ([abusch-1997]) is derived from `actualHistoryBase` membership;
+* `actualHistoryBase_time_actual`, `futureHistoryBase_time_future` : the temporal slices
+  project to their interval predicates, from which [klecha-2016] derives the Upper Limit
+  Constraint of [abusch-1997];
 * `alternatives_antitone`, `metaphysicalBase_antitone` : the metaphysical base
   shrinks as time advances;
 * `settled_not_diverse` : settled properties block metaphysical readings;
@@ -214,26 +215,14 @@ def liftProp (p : W → Prop) : TProp W T :=
 def holdsAt (p : TProp W T) (w : W) (t : T) : Prop :=
   p ⟨w, t⟩
 
-/-! ## Klecha 2016: ULC derived from history structure
+/-! ## Time projections of the situation bases
 
-The Upper Limit Constraint — embedded RT under a doxastic attitude must be
-≤ matrix EvalT — was stated by [abusch-1997] ("the now of an epistemic
-alternative is an upper limit for the denotation of tenses"), with the
-presuppositional construal due to [heim-1994-comments].
-[klecha-2016] *derives* the same constraint from the temporal character of
-the doxastic modal base: DOX returns actual histories 𝒜_t, and membership
-entails RT ≤ t by `.2` projection through the situation-base definition.
-Symmetrically, CIR returns ℱ_t and membership entails RT > t. The theorems
-below make the projection kernel-checked.
-
-This is what distinguishes [klecha-2016]'s account from
-[abusch-1997]'s: both rely on the branching-futures motivation, but Klecha
-derives ULC from history structure while Abusch states it as a constraint on
-tense-node denotation. The dispatch on `ModalBaseKind` lives in
-`Studies/Klecha2016.lean` (`attitudeTemporalConstraint`). The modal-alternative
-quantification in Abusch's formulation is captured here at the substrate level
-by `HistoricalAlternatives` membership; the value-level projection
-`s'.time ≤ s.time` recovers Abusch's bare-`≤` form. -/
+The Upper Limit Constraint — the embedded reference time under a doxastic attitude is no
+later than the matrix evaluation time — is stated by [abusch-1997] as a constraint on tense,
+with the presuppositional construal of [heim-1994-comments]; [klecha-2016] derives it from
+the temporal character of the doxastic modal base, actual histories ending at the evaluation
+time, and symmetrically a future orientation from the circumstantial base. The projections
+below are what that derivation uses (`Studies/Klecha2016.lean`). -/
 
 /-- A situation in `historicalBase` has prospective time. -/
 theorem historicalBase_time_prospective [LE T]
@@ -247,25 +236,6 @@ theorem actualHistoryBase_time_actual [LE T]
     (history : HistoricalAlternatives W T) (s s' : Index W T)
     (h : s' ∈ actualHistoryBase history s) :
     isActualHistory s.time s'.time :=
-  h.2
-
-/-- Modal-layer Upper Limit Constraint: an embedded situation `s'` satisfies it
-    relative to a matrix situation `s` and doxastic accessibility `history` iff
-    `s'` lies in `s`'s actual-history base. See the section note for how this
-    recovers [abusch-1997]'s alternative-quantifying formulation. -/
-def upperLimitConstraintModal [LE T]
-    (history : HistoricalAlternatives W T)
-    (matrixSituation embeddedSituation : Index W T) : Prop :=
-  embeddedSituation ∈ actualHistoryBase history matrixSituation
-
-/-- The modal-layer Upper Limit Constraint implies the value-level one
-    (`embeddedSituation.time ≤ matrixSituation.time`), by `.2` projection
-    through `actualHistoryBase`. -/
-theorem upperLimitConstraintModal_implies_value [LE T]
-    (history : HistoricalAlternatives W T)
-    (s s' : Index W T)
-    (h : upperLimitConstraintModal history s s') :
-    s'.time ≤ s.time :=
   h.2
 
 /-- A situation in `futureHistoryBase` has future time. -/
