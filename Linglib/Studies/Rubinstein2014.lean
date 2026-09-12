@@ -1,4 +1,3 @@
-import Linglib.Studies.Narrog2010
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Modality.Directive
 import Linglib.Semantics.Homogeneity.Decided
@@ -507,7 +506,7 @@ item (English *should*/*ought*), compositional weakening of a strong modal
 (Spanish *debería* = *deber*+COND), or evaluative-comparative language
 (Hebrew *yoter tov*). Hebrew lacks the first two; this supports the claim that
 weak necessity is comparative — where the comparative route is the only route,
-it surfaces overtly. Data imported from `Studies/Narrog2010.lean`. -/
+it surfaces overtly. -/
 
 /-- Rubinstein's three routes to expressing weak necessity (§2.1). -/
 inductive WeakNecessityStrategy where
@@ -542,14 +541,6 @@ theorem hebrew_strategy_evaluative :
     (Examples.all.filter (fun e =>
        e.language == "hebr1245" && e.paperFeatures.any (·.1 == "strategy"))).all
       (·.paperFeatures.lookup "strategy" == some "evaluativeComparative") = true := by decide
-
-open Narrog2010 in
-/-- Only 62 of the 200 surveyed languages grammaticalize weak deontic
-    necessity (Table 1), supporting Rubinstein's claim that weak necessity is
-    not a universal grammatical category. The Table-1 row totals exceed the
-    131 languages with deontic necessity because some have modals of multiple
-    types. -/
-theorem weak_rarity : countOf .weak = 62 := by decide
 
 /-! ### Bridge to the English fragment (`Auxiliaries.lean`)
 
