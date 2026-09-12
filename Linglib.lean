@@ -1589,7 +1589,6 @@ import Linglib.Semantics.Conditionals.Counterfactual.Alternatives
 import Linglib.Semantics.Conditionals.Counterfactual.Implicature
 import Linglib.Semantics.Conditionals.Counterfactual.Lumping
 import Linglib.Semantics.Conditionals.Counterfactual.QuantifierEmbedding
-import Linglib.Semantics.Conditionals.LeftNested
 import Linglib.Semantics.Conditionals.Marker
 import Linglib.Semantics.Conditionals.PremiseSemantic
 import Linglib.Semantics.Conditionals.Presupposition
@@ -2358,7 +2357,6 @@ import Linglib.Studies.KratzerShimoyama2002
 import Linglib.Studies.Krejci2012
 import Linglib.Studies.Krifka1989
 import Linglib.Studies.Krifka1998
-import Linglib.Studies.Krifka2007
 import Linglib.Studies.Krifka2013
 import Linglib.Studies.Krifka2015
 import Linglib.Studies.Krifka2020
