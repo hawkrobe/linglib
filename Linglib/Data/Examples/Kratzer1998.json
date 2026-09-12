@@ -236,6 +236,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
+    "paperFeatures": [["form", "simple past"], ["context", "out of the blue"]],
     "comment": "Kratzer's example (40a), Section 7, p. 16. Cornerstone of the deictic-vs-anaphoric contrast: English simple past does not require a contextually salient past time.",
     "metaLanguage": "stan1293",
     "lgrConformance": "WORD_ALIGNED"
@@ -259,6 +260,7 @@
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
+    "paperFeatures": [["form", "Präteritum"], ["context", "out of the blue"]],
     "comment": "Kratzer's example (40b), Section 7, p. 16. Star is Kratzer's. Per Kratzer: \"At best, it sounds like the hypercorrect utterance of a South German speaker.\" Cornerstone of the deictic-vs-anaphoric Preterit asymmetry.",
     "metaLanguage": "stan1293",
     "lgrConformance": "WORD_ALIGNED"
@@ -282,6 +284,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
+    "paperFeatures": [["form", "Perfekt"], ["context", "out of the blue"]],
     "comment": "Kratzer's example (40c), Section 7, p. 16. The Perfekt fills the deictic-past slot that the Preterit cannot. Supports Kratzer's decomposition: English simple past = perfect-aspect + present-tense.",
     "metaLanguage": "stan1293",
     "lgrConformance": "WORD_ALIGNED"
@@ -298,6 +301,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
+    "paperFeatures": [["form", "simple past"], ["context", "out of the blue"]],
     "comment": "Kratzer's example (41a), Section 7, p. 16. English simple past = perfect tolerated in embedded sentences.",
     "metaLanguage": "stan1293",
     "lgrConformance": "WORD_ALIGNED"
@@ -318,6 +322,7 @@
     "judgment": "marginal",
     "alternatives": [],
     "readings": [],
+    "paperFeatures": [["form", "Präteritum"], ["context", "out of the blue"]],
     "comment": "Kratzer's example (41b), Section 7, p. 16. Per Kratzer: \"needs a contextually salient past time to be acceptable\" — directly diagnoses the anaphoric requirement.",
     "metaLanguage": "stan1293",
     "lgrConformance": "WORD_ALIGNED"
@@ -338,6 +343,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
+    "paperFeatures": [["form", "Perfekt"], ["context", "out of the blue"]],
     "comment": "Kratzer's example (41c), Section 7, p. 16. The Perfekt slot again fills in for the missing deictic Preterit.",
     "metaLanguage": "stan1293",
     "lgrConformance": "WORD_ALIGNED"

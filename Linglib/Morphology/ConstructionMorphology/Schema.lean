@@ -69,7 +69,7 @@ Marking a constant slot as open has no effect.
 * [albright-hayes-2003]
 -/
 
-namespace Morphology.Construction
+namespace ConstructionMorphology
 
 variable {V P Q P₁ P₂ α : Type*}
 
@@ -364,4 +364,4 @@ end OrderBot
 
 end RelationalLinks
 
-end Morphology.Construction
+end ConstructionMorphology
