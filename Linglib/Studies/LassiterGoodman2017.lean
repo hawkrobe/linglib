@@ -1,483 +1,256 @@
-import Linglib.Pragmatics.RSA.Operators
-import Linglib.Pragmatics.RSA.LatentOperators
-import Linglib.Core.Probability.JointPosterior
-import Mathlib.Probability.Distributions.Uniform
+import Linglib.Pragmatics.RSA.Basic
+import Mathlib.Probability.ConditionalProbability
 
 /-!
-# Lassiter and Goodman 2017: Adjectival vagueness in a Bayesian model of interpretation
+# Lassiter and Goodman (2017): Adjectival Vagueness in a Bayesian Model of Interpretation
 
-[lassiter-goodman-2017] gives a Bayesian/RSA account of vague gradable
-adjectives. This file formalises the **structural skeleton** of that
-account on mathlib's `PMF`, with explicit acknowledgment of what the
-file does and does not capture.
+This file formalizes the free-variable Rational Speech Act model of [lassiter-goodman-2017] on
+the RSA kernel pipeline. A positive-form gradable adjective compares a degree with a threshold
+the semantics leaves open (`sem`); the pragmatic listener resolves the threshold jointly with
+the state, threading each candidate assignment through a threshold-indexed literal listener and
+speaker (`L0`, `S1`) and inverting the family against the product of the degree prior and the
+threshold prior (`L1`). The threshold marginal of that posterior gives the metalinguistic
+probability that an individual counts as tall, the posterior mass of thresholds below the
+individual's height (`metalinguistic`), and borderline cases are those of intermediate
+metalinguistic probability.
 
-## Scope (honest reckoning, post-audit)
+The sorites dissolves as in Edgington. Read materially, the inductive premises fail exactly
+when the threshold falls in the gap between adjacent members, and the gap masses sum to the
+mass of the whole range (`sum_gapMass`), so each can be small while their sum is near one;
+Adams's theorem bounds the uncertainty of the conclusion of a valid argument by the summed
+uncertainty of its premises (`adams`), and the sorites is valid (`sorites_uncertainty`).
+Read by Adams's Thesis, each premise is a conditional probability of the threshold marginal
+and is at most the material premise (`conditionalPremise_le`).
 
-L&G 2017's *novel* contribution is the **free-variable inference** of §4
-(Eqs. 26-29): the L1 listener jointly infers the world `A` and the
-threshold variable `V`, with marginalisation over thresholds (Eq. 30)
-giving the height posterior. The paper's central empirical claims —
-information transmission for vague terms (§4.3, Figs. 5-6),
-context-sensitivity via prior shape (§4.4, Fig. 7, "tall building" vs.
-"tall person"), antonym symmetry (Fig. 6), and the MC/PC/free-variable
-sorites trichotomy (§5, Eqs. 36/38/41-44) — all live in that joint
-posterior.
+## Implementation notes
 
-**What this file captures:**
+Degrees form a finite linear order so that the discrete pipeline applies; the paper's
+continuous scale and normal prior enter only through its simulations, which are not stated.
+The assignment of the paper's eq. 27 is the pair of thresholds for the adjective and its
+antonym, and the threshold prior is a parameter rather than the paper's uniform prior, which
+the model never uses beyond its being a prior.
 
-1. **§3.5 (NEW): The joint (world × threshold) posterior architecture
-   (L&G Eqs. 26-30) — the paper's novel contribution.** Built on
-   `PMF.posterior` instantiated at product type `α := W × T`, with
-   marginalization formulas via `PMF.posterior_fst_apply` /
-   `posterior_snd_apply` from `Core/Probability/JointPosterior.lean`.
-   `worldPosterior_apply` is L&G's Eq. 30 (height marginalization);
-   `thresholdPosterior_apply` is the Fig. 5 left-panel marginal.
-2. L&G-anchored *interpretive wrappers* for generic PMF theorems already
-   promoted to `Core/Probability/Posterior.lean` (the structural sorites
-   bound, the borderline-as-intermediate-measure schema, posterior
-   concentration).
-3. L&G's Eq. 32 outer-measure metalinguistic-probability formula directly
-   via `PMF.toOuterMeasure`.
-4. The Frank-&-Goodman 2012 scalar-implicature mechanism that L&G use as
-   a §3 warmup — clearly labelled as not L&G's novel contribution.
+## TODO
 
-**Not yet captured (paper-specific evaluative content, not structural gaps):**
+The free-variable reading of the inductive premise (the paper's eq. 44), the antonym symmetry
+of the simulations, and the scalar-implicature warm-up of §3 are not stated.
 
-- The MC/PC/free-variable trichotomy on sorites premises (Eqs. 36/38/41-44)
-  — distinct ways of evaluating the joint L1 at a sorites premise; the
-  joint architecture above is the substrate, the trichotomy is per-paper
-  application.
-- Antonym symmetry (Eqs. 22-23, Fig. 6) — comparison of `tall` and `short`
-  posteriors via scale-flipping.
-- The "informativity-prior tradeoff" (§4.3 prose) — qualitative claim
-  about how the joint posterior balances informativity against prior
-  shape; not a sharp formal theorem.
-- Numerical Fig. 5/6/7/8 simulations — Metropolis-Hastings approximations
-  of the integrals, beyond the structural skeleton's scope.
-- Adams's bound (`adams_uncertainty_bound`, deferred — verbose generic
-  probability theorem, not RSA-specific; cf. § Note on Adams below).
+## References
 
-## Geometry of the sorites bound
-
-L&G 2017 Eq. 37 defines premise probability as an **integral over an
-interval**:
-```
-P(x_m tall ∧ x_{m-1} not tall) = ∫_{h(x_{m-1})}^{h(x_m)} L1_latent(.tall) dθ
-```
-With grid spacing ε > 0 (e.g., ε = 0.5 inch in the Fig. 8 simulation),
-each sorites gap corresponds to a *set* of thresholds, not a single
-value. The discrete sum-over-singletons bound proved here
-(`sorites_borderline_sum_le_one`) is the **single-point discretisation**
-of Eq. 37; the full interval-additive form requires sigma-additivity of
-`PMF.toOuterMeasure` on disjoint sets, which is true but not yet
-factored out as a lemma. Stated as `sorites_premise_interval_sum_le_one`
-below as a deferred sorry.
-
-## Cross-framework positioning (linglib's "make incompatibilities visible")
-
-L&G's probabilistic resolution of the sorites and characterisation of
-borderline cases are *one* of several formalised positions in linglib:
-
-* `Studies/Fine1975.lean` — supervaluation,
-  borderline mapped to `Trivalent.indet`, sorites resolved by super-falsity
-  of the inductive premise.
-* `Studies/CobrerosEtAl2012.lean` — tolerant, classical and strict truth
-  ([cobreros-etal-2012]), sorites resolved by the non-transitivity of
-  strict-to-tolerant consequence.
-* `Studies/Klein1980.lean` — comparison-class
-  delineation.
-* `Studies/Kennedy2007.lean` —
-  standard-of-comparison contextualism.
-
-Per linglib's "no bridge files" discipline, framework-comparison content
-is anchored *here* (the chronologically-later paper) rather than in a
-dedicated comparison file. The §7 theorem below proves the L&G
-prediction, contrasts it with the [alxatib-pelletier-2011]
-borderline-contradiction data, and so makes the empirical incompatibility
-between L&G's literal-meaning rule and the observed acceptance rate
-visible at theorem level.
-
-## Note on Adams's bound
-
-L&G p. 25 cites Adams (1966) on cumulative uncertainty: "the uncertainty
-of the consequent cannot exceed the sum of the uncertainties of the
-premises." This is a generic probability theorem (`P(⋂ A_i) ≥
-1 - ∑ (1 - P(A_i))`) with no RSA-specific content. Stated as
-`adams_uncertainty_bound` (sorry'd) for completeness; the proof is a
-verbose induction that belongs in mathlib's outer-measure library, not
-here. L&G p. 27 (Eq. 38) also invokes a *different* Adams thesis ("The
-Equation": `P(if A then B) = P(B|A)`), used for PC-sorites premise
-strengths — neither captured.
+* [lassiter-goodman-2017]
 -/
+
+open MeasureTheory ProbabilityTheory RSA
+open scoped ENNReal
 
 namespace LassiterGoodman2017
 
-open scoped ENNReal
+/-- The utterances: the adjective, its antonym, and saying nothing. -/
+inductive Utterance
+  | tall | short | silent
+  deriving DecidableEq, Repr, Fintype
 
-variable {Threshold : Type*}
+instance : MeasurableSpace Utterance := ⊤
+instance : DiscreteMeasurableSpace Utterance := ⟨λ _ => trivial⟩
+instance : Nonempty Utterance := ⟨.silent⟩
 
-/-! ## §1. Sorites bound (singleton discretisation)
+variable {D : Type*} [LinearOrder D] [MeasurableSpace D] [DiscreteMeasurableSpace D]
 
-The discrete singleton sorites bound. Faithful to L&G 2017 §5
-ARITHMETICALLY but uses a **single-point** approximation of Eq. 37's
-interval integral. The general interval-additive form is below
-(deferred). -/
+/-- The meaning of an utterance at a degree under an assignment of thresholds to the adjective
+and its antonym (eqs. 22–23): *tall* holds above the first threshold, *short* below the second,
+and silence everywhere. -/
+def sem (θ : D × D) : Utterance → Set D
+  | .tall => Set.Ioi θ.1
+  | .short => Set.Iio θ.2
+  | .silent => Set.univ
 
-/-- **Sorites resolution (singleton discretisation)**: for any threshold
-posterior PMF and any finite set of distinct threshold values, the sum
-of single-threshold probabilities is bounded by 1.
+/-- The literal listener at an assignment (eq. 27): the degree prior conditioned on the truth
+of the utterance. -/
+noncomputable def L0 (μ : Measure D) (θ : D × D) : Kernel Utterance D :=
+  literalListener μ λ u => (sem θ u).indicator 1
 
-This is the discrete-grid approximation of L&G 2017 Eq. 37 with
-grid-spacing ε such that each sorites gap corresponds to exactly one
-threshold value. Faithful to the §5 *arithmetic* of the resolution
-("the cumulative probability budget is bounded") but not to the *geometry*
-(Eq. 37 sums measures of disjoint intervals, not singletons).
+theorem L0_apply_singleton_ne_zero_iff (μ : Measure D) [IsFiniteMeasure μ] (θ : D × D)
+    (u : Utterance) (d : D) : L0 μ θ u {d} ≠ 0 ↔ d ∈ sem θ u ∧ μ {d} ≠ 0 := by
+  by_cases h : d ∈ sem θ u
+  · rw [L0, literalListener_indicator_apply_singleton μ (sem θ) h]
+    exact ⟨λ h' => ⟨h, (mul_ne_zero_iff.mp h').2⟩,
+      λ h' => mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) h'.2⟩
+  · rw [L0, literalListener_indicator_apply_singleton_of_notMem μ (sem θ) h]
+    exact iff_of_false (λ h' => h' rfl) (λ h' => h h'.1)
 
-Wraps the generic `PMF.sum_finset_le_one` with L&G framing. -/
-theorem sorites_borderline_sum_le_one (L1_latent : PMF Threshold)
-    (s : Finset Threshold) :
-    (∑ θ ∈ s, L1_latent θ) ≤ 1 :=
-  L1_latent.sum_finset_le_one s
+section Model
 
-/-- **Sorites resolution (interval-additive form, faithful to Eq. 37)**:
-for pairwise disjoint sorites-gap intervals `I θ`, the sum of
-premise-event probabilities is bounded by 1.
+variable [Fintype D]
 
-This is the form L&G actually use in §5 — premise probability is
-`L1_latent.toOuterMeasure (gap interval)`. The bound follows from
-sigma-additivity of `PMF.toOuterMeasure` on disjoint sets +
-`toOuterMeasure_apply_le_one` on the union.
+/-- The speaker at an assignment (eq. 28): the family speaker over degrees and assignments at
+rationality `α` with cost factors `cost`. -/
+noncomputable def S1 (μ : Measure D) (α : ℝ) (cost : Utterance → ℝ≥0∞) :
+    Kernel (D × (D × D)) Utterance :=
+  familySpeaker (L0 μ) α cost
 
-Not yet proved: requires factoring out a sigma-additivity lemma for
-`PMF.toOuterMeasure` on `Finset`-indexed disjoint sets, which deserves
-its own `Core/Probability/` slot. The discrete singleton form
-(`sorites_borderline_sum_le_one`) carries the §5 arithmetic; this form
-captures the §5 geometry. -/
-theorem sorites_premise_interval_sum_le_one (L1_latent : PMF Threshold)
-    {β : Type*} (s : Finset β) (I : β → Set Threshold)
-    (h_disjoint : ∀ b ∈ s, ∀ b' ∈ s, b ≠ b' → Disjoint (I b) (I b')) :
-    (∑ b ∈ s, L1_latent.toOuterMeasure (I b)) ≤ 1 :=
-  PMF.toOuterMeasure_finset_sum_disjoint_le_one L1_latent s I h_disjoint
+/-- The pragmatic listener (eq. 29): the family listener against the product of the degree
+prior and the threshold prior. Its first marginal is the degree posterior (eq. 31), its second
+the posterior over assignments (eq. 30). -/
+noncomputable def L1 [Nonempty D] (μ : Measure D) [IsProbabilityMeasure μ]
+    (ν : Measure (D × D)) [IsProbabilityMeasure ν] (α : ℝ) (cost : Utterance → ℝ≥0∞) :
+    Kernel Utterance (D × (D × D)) :=
+  familyListener (L0 μ) α cost (μ.prod ν)
 
-/-! ## §2. Borderline as intermediate measure (L&G §4.4 closing argument)
+variable (μ : Measure D) [IsProbabilityMeasure μ] (ν : Measure (D × D)) (α : ℝ)
+  (cost : Utterance → ℝ≥0∞)
 
-The probabilistic characterisation of "borderline": the metalinguistic
-probability `P_T(a is tall) = L1_latent.toOuterMeasure {θ | θ ≤ h(a)}`
-is intermediate exactly when the threshold posterior straddles the
-height being judged.
+/-- The speaker produces an utterance at a degree and assignment exactly when it is true there
+and the degree has positive prior. -/
+theorem S1_apply_singleton_ne_zero_iff (hα : 0 < α) (hc0 : ∀ u, cost u ≠ 0)
+    (hctop : ∀ u, cost u ≠ ∞) (d : D) (θ : D × D) (u : Utterance) :
+    S1 μ α cost (d, θ) {u} ≠ 0 ↔ d ∈ sem θ u ∧ μ {d} ≠ 0 := by
+  rw [S1, familySpeaker_apply, ← L0_apply_singleton_ne_zero_iff μ θ u d]
+  exact ⟨λ h h' => h (speaker_apply_singleton_eq_zero hα h'),
+    speaker_apply_singleton_ne_zero hα.le hc0 hctop
+      λ u' => literalListener_apply_le_one μ _ u' {d}⟩
 
-**Cross-framework note**: this characterisation is contested.
-Supervaluation (`Fine1975.lean`) maps borderline to `Trivalent.indet`;
-epistemicism denies the very framing (borderline cases have determinate
-Boolean truth values we don't know); TCS predicts borderline
-contradictions are tolerantly *true*, with empirical support from
-[alxatib-pelletier-2011]. -/
+/-- An utterance true at a degree of positive prior under an assignment of positive prior has
+a positive marginal. -/
+theorem comp_S1_ne_zero (hα : 0 < α) (hc0 : ∀ u, cost u ≠ 0) (hctop : ∀ u, cost u ≠ ∞)
+    {u : Utterance} {d : D} {θ : D × D} (hd : μ {d} ≠ 0) (hθ : ν {θ} ≠ 0) (hu : d ∈ sem θ u) :
+    (S1 μ α cost ∘ₘ μ.prod ν) {u} ≠ 0 :=
+  comp_familySpeaker_ne_zero (w := d) (l := θ)
+    (by rw [← Set.singleton_prod_singleton, Measure.prod_prod]; exact mul_ne_zero hd hθ)
+    ((S1_apply_singleton_ne_zero_iff μ α cost hα hc0 hctop d θ u).mpr ⟨hu, hd⟩)
 
-/-- **Borderline-case theorem**: when both some threshold below `h` AND
-some threshold ≥ `h` are in the posterior support, the metalinguistic
-probability `P_T` is intermediate (`0 < P_T < 1`).
+variable [Nonempty D] [IsProbabilityMeasure ν]
 
-L&G's structural form of vagueness — but contested across frameworks.
-See module docstring for cross-framework positioning. -/
-theorem borderline_intermediate {S : Type*} (L1_latent : PMF S) (s : Set S)
-    (h_witness_in : ∃ θ ∈ s, θ ∈ L1_latent.support)
-    (h_witness_out : ∃ θ ∉ s, θ ∈ L1_latent.support) :
-    0 < L1_latent.toOuterMeasure s ∧ L1_latent.toOuterMeasure s < 1 :=
-  L1_latent.toOuterMeasure_pos_and_lt_one s h_witness_in h_witness_out
+instance : IsMarkovKernel (L1 μ ν α cost) :=
+  inferInstanceAs (IsMarkovKernel ((familySpeaker (L0 μ) α cost)†(μ.prod ν)))
 
-/-! ## §3. Pragmatic strengthening — Frank-Goodman 2012 mechanism
+/-- Truthfulness: the pragmatic listener puts positive mass on a degree and assignment exactly
+when both have positive prior and the utterance is true at the degree under the assignment. -/
+theorem L1_apply_singleton_ne_zero_iff (hα : 0 < α) (hc0 : ∀ u, cost u ≠ 0)
+    (hctop : ∀ u, cost u ≠ ∞) {u : Utterance} (hu : (S1 μ α cost ∘ₘ μ.prod ν) {u} ≠ 0)
+    (d : D) (θ : D × D) :
+    L1 μ ν α cost u {(d, θ)} ≠ 0 ↔ μ {d} ≠ 0 ∧ ν {θ} ≠ 0 ∧ d ∈ sem θ u := by
+  have hs := S1_apply_singleton_ne_zero_iff μ α cost hα hc0 hctop d θ u
+  rw [S1, familySpeaker_apply] at hs
+  rw [L1, familyListener_apply_singleton _ _ _ hu, ← Set.singleton_prod_singleton,
+    Measure.prod_prod]
+  simp only [ne_eq, ENNReal.div_eq_zero_iff, mul_eq_zero, not_or, measure_ne_top,
+    not_false_eq_true, and_true] at hs ⊢
+  rw [hs]
+  tauto
 
-L&G 2017 §3 introduces this mechanism (Eqs. 14-20 with SOME/ALL) as a
-**warmup** illustration of iterated rational reasoning. The genuinely
-novel L&G L1 architecture is the §4 free-variable inference (Eqs.
-28-29 — joint posterior over `(world, threshold)`), **NOT formalised
-here**.
+/-- The posterior over the adjective's threshold (eq. 30): the marginal of the listener on the
+first coordinate of the assignment. -/
+noncomputable def thresholdPosterior (u : Utterance) : Measure D :=
+  (L1 μ ν α cost u).snd.fst
 
-The theorem below captures the FG2012 scalar-implicature mechanism that
-L&G use as exposition. It is genuinely RSA-architectural (depends on
-rational speaker over alternatives + Bayesian listener), but does not
-capture L&G's novel contribution. Anchored to L&G only because they
-present this mechanism in §3; the canonical reference is
-[frank-goodman-2012]. -/
+instance (u : Utterance) : IsProbabilityMeasure (thresholdPosterior μ ν α cost u) := by
+  unfold thresholdPosterior; infer_instance
 
-/-- **Pragmatic strengthening (FG2012 mechanism)**: when `u_weak` applies
-at both `w_strong` and `w_only_weak` but a stronger alternative
-`u_strong` applies only at `w_strong`, the listener posterior at
-`u_weak` underspecifies `w_strong`. Generalised over arbitrary world
-prior: requires the prior to assign equal weight to the two compared
-worlds (the "neutral prior" assumption isolates the speaker-side
-contribution).
+/-- The metalinguistic probability that a degree counts as tall under a threshold measure
+(eq. 32): the mass of thresholds below it. -/
+noncomputable def metalinguistic (ρ : Measure D) (d : D) : ℝ≥0∞ := ρ (Set.Iio d)
 
-The proof composes the promoted `posterior_lt_of_kernel_lt_of_prior_eq`
-with `normalize_lt_of_apply_eq_of_sum_lt`. This is the FG2012
-scalar-implicature mechanism, reframed at the L&G layer. -/
-theorem pragmatic_strengthening {Utt World : Type*}
-    (score : World → Utt → ℝ≥0∞)
-    (h_score_top : ∀ w, ∑' u, score w u ≠ ∞)
-    (h_score_pos : ∀ w, ∑' u, score w u ≠ 0)
-    (S1 : World → PMF Utt)
-    (h_S1 : ∀ w, S1 w = PMF.normalize (score w) (h_score_pos w) (h_score_top w))
-    (worldPrior : PMF World)
-    (u_weak : Utt) (w_strong w_only_weak : World)
-    (h_marg : PMF.marginal S1 worldPrior u_weak ≠ 0)
-    (h_eq : score w_strong u_weak = score w_only_weak u_weak)
-    (h_pos_strong : score w_strong u_weak ≠ 0)
-    (h_pos_strong_top : score w_strong u_weak ≠ ⊤)
-    (h_partition_strict : ∑' u, score w_only_weak u < ∑' u, score w_strong u)
-    (h_prior_eq : worldPrior w_strong = worldPrior w_only_weak)
-    (h_prior_pos : worldPrior w_strong ≠ 0) :
-    PMF.posterior S1 worldPrior u_weak h_marg w_strong <
-      PMF.posterior S1 worldPrior u_weak h_marg w_only_weak := by
-  have h_pos_only : score w_only_weak u_weak ≠ 0 := h_eq ▸ h_pos_strong
-  have h_pos_only_top : score w_only_weak u_weak ≠ ⊤ := h_eq ▸ h_pos_strong_top
-  apply PMF.posterior_lt_of_kernel_lt_of_prior_eq _ _ _ _ _ _ h_prior_eq h_prior_pos
-  rw [h_S1 w_strong, h_S1 w_only_weak]
-  exact PMF.normalize_lt_of_apply_eq_of_sum_lt _ _ _ _ _ _ _
-    h_eq h_pos_only h_pos_only_top h_partition_strict
+/-- The metalinguistic probability marginalizes the joint posterior over the degree and the
+antonym's threshold. -/
+theorem metalinguistic_thresholdPosterior (u : Utterance) (d : D) :
+    metalinguistic (thresholdPosterior μ ν α cost u) d
+      = L1 μ ν α cost u {p | p.2.1 < d} := by
+  rw [metalinguistic, thresholdPosterior, Measure.fst_apply .of_discrete,
+    Measure.snd_apply .of_discrete]
+  rfl
 
-/-- **Iteration strictly strengthens L0**: corollary of `pragmatic_strengthening`.
-The same asymmetric extensions that produce the strengthening also distinguish
-`L1` from `L0`. -/
-theorem iteration_strengthens {Utt World : Type*}
-    (score : World → Utt → ℝ≥0∞)
-    (h_score_top : ∀ w, ∑' u, score w u ≠ ∞)
-    (h_score_pos : ∀ w, ∑' u, score w u ≠ 0)
-    (S1 : World → PMF Utt)
-    (h_S1 : ∀ w, S1 w = PMF.normalize (score w) (h_score_pos w) (h_score_top w))
-    (worldPrior : PMF World)
-    (u_weak : Utt) (w_strong w_only_weak : World)
-    (h_marg : PMF.marginal S1 worldPrior u_weak ≠ 0)
-    (h_eq : score w_strong u_weak = score w_only_weak u_weak)
-    (h_pos_strong : score w_strong u_weak ≠ 0)
-    (h_pos_strong_top : score w_strong u_weak ≠ ⊤)
-    (h_partition_strict : ∑' u, score w_only_weak u < ∑' u, score w_strong u)
-    (h_prior_eq : worldPrior w_strong = worldPrior w_only_weak)
-    (h_prior_pos : worldPrior w_strong ≠ 0) :
-    PMF.posterior S1 worldPrior u_weak h_marg w_strong ≠
-      PMF.posterior S1 worldPrior u_weak h_marg w_only_weak :=
-  ne_of_lt (pragmatic_strengthening score h_score_top h_score_pos S1 h_S1
-    worldPrior u_weak w_strong w_only_weak h_marg h_eq
-    h_pos_strong h_pos_strong_top h_partition_strict h_prior_eq h_prior_pos)
+/-- A borderline case: a degree of intermediate metalinguistic probability. -/
+def Borderline (ρ : Measure D) (d : D) : Prop :=
+  0 < metalinguistic ρ d ∧ metalinguistic ρ d < 1
 
-/-! ## §3'. Note on context-sensitivity (L&G §4.4)
+end Model
 
-L&G's §4.4 "skyscraper" passage characterises context-sensitivity via
-**prior shape transfer to posterior shape** — the height prior for
-"buildings" has a different mean and standard deviation than for
-"people", and this propagates through the joint inference (Eqs. 28-29)
-to a different threshold posterior, hence a different metalinguistic
-probability of "tall".
+/-! ### The sorites -/
 
-A previous version of this file ("`prior_dominates_implicature`")
-captured a much weaker claim: that a strongly-skewed prior on a single
-world can override the kernel's pragmatic ranking on that world. That is
-generic Bayes weighting (`posterior_lt_iff_score_lt`), not L&G's §4.4
-claim about prior-shape transfer. The honest version requires the joint
-posterior of Eqs. 28-29, which lives in the substrate gap (§4 of the
-module docstring).
+section Sorites
 
-The generic Bayes-weighting result is `PMF.posterior_lt_iff_score_lt` in
-`Core/Probability/Posterior.lean` and is reusable for any consumer;
-no L&G-specific wrapper here. -/
+variable (ρ : Measure D)
 
-/-! ## §3.5. **The joint (world × threshold) posterior — L&G's novel contribution**
+/-- The failure probability of a material inductive premise (eq. 37): the threshold falls
+between two adjacent members. -/
+noncomputable def gapMass (a b : D) : ℝ≥0∞ := ρ (Set.Ico a b)
 
-L&G 2017's central architectural innovation (§4.2, Eqs. 26-29): the
-pragmatic listener jointly infers the world `A` and the free threshold
-variable `V`, with marginalisation over `V` (Eq. 30) yielding the
-height posterior of §4.3 (Fig. 5).
+/-- Along a monotone sequence the gap masses sum to the mass of the whole range. -/
+theorem sum_gapMass (x : ℕ → D) (hx : Monotone x) (n : ℕ) :
+    ∑ i ∈ Finset.range n, gapMass ρ (x i) (x (i + 1)) = gapMass ρ (x 0) (x n) := by
+  induction n with
+  | zero => simp [gapMass]
+  | succ n ih =>
+    rw [Finset.sum_range_succ, ih, gapMass, gapMass, gapMass,
+      ← measure_union Set.Ico_disjoint_Ico_same .of_discrete,
+      Set.Ico_union_Ico_eq_Ico (hx (Nat.zero_le n)) (hx n.le_succ)]
 
-**No new definition needed**: the joint posterior is `PMF.posterior`
-instantiated at the product type `α := W × T`. The structural content
-is the marginalisation formulas — which are direct instantiations of
-`PMF.posterior_fst_apply` / `posterior_snd_apply` from
-`Core/Probability/JointPosterior.lean`.
+/-- Adams's theorem: the uncertainty of the conclusion of a valid argument is at most the
+summed uncertainty of its premises. -/
+theorem adams {Ω ι : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
+    (s : Finset ι) (A : ι → Set Ω) (hA : ∀ i ∈ s, MeasurableSet (A i)) {C : Set Ω}
+    (hC : ⋂ i ∈ s, A i ⊆ C) : 1 - μ C ≤ ∑ i ∈ s, (1 - μ (A i)) := by
+  calc 1 - μ C ≤ 1 - μ (⋂ i ∈ s, A i) := tsub_le_tsub_left (measure_mono hC) 1
+    _ = μ (⋂ i ∈ s, A i)ᶜ := (prob_compl_eq_one_sub (.biInter s.countable_toSet hA)).symm
+    _ = μ (⋃ i ∈ s, (A i)ᶜ) := by rw [Set.compl_iInter₂]
+    _ ≤ ∑ i ∈ s, μ (A i)ᶜ := measure_biUnion_finset_le s _
+    _ = ∑ i ∈ s, (1 - μ (A i)) :=
+      Finset.sum_congr rfl λ i hi => prob_compl_eq_one_sub (hA i hi)
 
-**This section captures the architectural skeleton.** Per-paper
-numerical simulations (Fig. 5/6/7/8) are deliberately out of scope —
-they are MCMC approximations of the integrals, not structural theorems
-about the model class. The structural theorems below apply to ANY
-choice of `(W, T, Utt, S1, prior)` instantiating L&G's joint chain. -/
+omit [MeasurableSpace D] [DiscreteMeasurableSpace D] in
+/-- The material sorites is valid: if the top member is tall and no gap holds the threshold,
+the bottom member is tall. -/
+theorem sorites_valid (x : ℕ → D) (n : ℕ) {θ : D} (hθ : θ < x n)
+    (hgap : ∀ i ∈ Finset.range n, θ ∉ Set.Ico (x i) (x (i + 1))) : θ < x 0 := by
+  induction n with
+  | zero => exact hθ
+  | succ n ih =>
+    exact ih (lt_of_not_ge λ h => hgap n (Finset.mem_range.mpr n.lt_succ_self) ⟨h, hθ⟩)
+      λ i hi => hgap i (Finset.range_mono n.le_succ hi)
 
-section JointPosterior
+variable [IsProbabilityMeasure ρ]
 
-variable {W T Utt : Type*} [Fintype W] [Fintype T] [Fintype Utt] [DecidableEq W]
+/-- The uncertainty of the sorites conclusion is bounded by the uncertainty that the top member
+is tall plus the summed gap masses, which is the mass of the whole range. -/
+theorem sorites_uncertainty (x : ℕ → D) (hx : Monotone x) (n : ℕ) :
+    1 - metalinguistic ρ (x 0) ≤ (1 - metalinguistic ρ (x n)) + gapMass ρ (x 0) (x n) := by
+  have h := adams ρ (Finset.range (n + 1))
+    (λ i => if i < n then (Set.Ico (x i) (x (i + 1)))ᶜ else Set.Iio (x n))
+    (λ _ _ => .of_discrete) (C := Set.Iio (x 0)) ?_
+  · rw [Finset.sum_range_succ, if_neg (lt_irrefl n),
+      Finset.sum_congr rfl (λ i hi => by rw [if_pos (Finset.mem_range.mp hi)]),
+      add_comm] at h
+    simp only [prob_compl_eq_one_sub (MeasurableSet.of_discrete),
+      ENNReal.sub_sub_cancel ENNReal.one_ne_top prob_le_one] at h
+    rwa [← sum_gapMass ρ x hx]
+  · intro θ hθ
+    rw [Set.mem_iInter₂] at hθ
+    have htop := hθ n (Finset.mem_range.mpr n.lt_succ_self)
+    rw [if_neg (lt_irrefl n)] at htop
+    exact sorites_valid x n htop λ i hi => by
+      have := hθ i (Finset.range_mono n.le_succ hi)
+      rwa [if_pos (Finset.mem_range.mp hi)] at this
 
-/-- **L&G 2017 Eq. 29: the joint posterior over (world, threshold)**.
-`P_L1(W, T | u) ∝ P_S1(u | W, T) · P(W, T)`.
+/-- Under Adams's Thesis (eq. 40) an inductive premise is the conditional probability that
+the lower member is tall given that the upper one is, which is at most the material premise,
+the probability that the threshold avoids the gap. -/
+theorem conditionalPremise_le {a b : D} (hab : a ≤ b) :
+    ρ[Set.Iio a | Set.Iio b] ≤ ρ (Set.Ico a b)ᶜ := by
+  rw [cond_apply .of_discrete, Set.Iio_inter_Iio, min_eq_right hab,
+    prob_compl_eq_one_sub .of_discrete]
+  have hsplit : ρ (Set.Iio b) = ρ (Set.Iio a) + ρ (Set.Ico a b) := by
+    rw [← measure_union ((Set.Iio_disjoint_Ici le_rfl).mono_right Set.Ico_subset_Ici_self)
+      .of_discrete, Set.Iio_union_Ico_eq_Iio hab]
+  rcases eq_or_ne (ρ (Set.Iio b)) 0 with h0 | h0
+  · rw [measure_mono_null (Set.Iio_subset_Iio hab) h0, mul_zero]
+    exact zero_le
+  rw [ENNReal.inv_mul_le_iff h0 (measure_ne_top _ _),
+    ENNReal.mul_sub (λ _ _ => measure_ne_top _ _), mul_one, hsplit]
+  calc ρ (Set.Iio a) = ρ (Set.Iio a) + ρ (Set.Ico a b) - ρ (Set.Ico a b) :=
+        (ENNReal.add_sub_cancel_right (measure_ne_top _ _)).symm
+    _ ≤ ρ (Set.Iio a) + ρ (Set.Ico a b) - (ρ (Set.Iio a) + ρ (Set.Ico a b)) * ρ (Set.Ico a b) :=
+        tsub_le_tsub_left (mul_le_of_le_one_left zero_le (hsplit ▸ prob_le_one)) _
 
-This is just `PMF.posterior` at α := W × T — no new definition. The
-structural content lives in the marginalization theorems below. -/
-noncomputable def jointL1
-    (S1 : (W × T) → PMF Utt) (worldThresholdPrior : PMF (W × T))
-    (u : Utt) (h_marg : PMF.marginal S1 worldThresholdPrior u ≠ 0) :
-    PMF (W × T) :=
-  PMF.posterior S1 worldThresholdPrior u h_marg
-
-/-- **L&G 2017 Eq. 30: the world (height) marginal of the joint posterior**.
-`P_L1(w | u) = ∑_θ P_L1(w, θ | u) = (∑_θ P(w, θ) · S1(u | w, θ)) / Z`.
-
-The height-marginalisation formula (paper Fig. 5 right panel — height
-posterior). Direct corollary of `PMF.posterior_fst_apply`. -/
-theorem worldPosterior_apply
-    (S1 : (W × T) → PMF Utt) (worldThresholdPrior : PMF (W × T)) (u : Utt)
-    (h_marg : PMF.marginal S1 worldThresholdPrior u ≠ 0) (w : W) :
-    (jointL1 S1 worldThresholdPrior u h_marg).fst w
-      = (∑ θ : T, worldThresholdPrior (w, θ) * S1 (w, θ) u)
-          / PMF.marginal S1 worldThresholdPrior u :=
-  PMF.posterior_fst_apply S1 worldThresholdPrior u h_marg w
-
-/-- **L&G 2017 Fig. 5 left panel: the threshold marginal of the joint posterior**.
-`P_L1(θ | u) = ∑_w P_L1(w, θ | u) = (∑_w P(w, θ) · S1(u | w, θ)) / Z`.
-
-The threshold-marginalisation formula. The threshold posterior is what
-yields the metalinguistic probability of Eq. 32 (cf. §4 below). -/
-theorem thresholdPosterior_apply [DecidableEq T]
-    (S1 : (W × T) → PMF Utt) (worldThresholdPrior : PMF (W × T)) (u : Utt)
-    (h_marg : PMF.marginal S1 worldThresholdPrior u ≠ 0) (θ : T) :
-    (jointL1 S1 worldThresholdPrior u h_marg).snd θ
-      = (∑ w : W, worldThresholdPrior (w, θ) * S1 (w, θ) u)
-          / PMF.marginal S1 worldThresholdPrior u :=
-  PMF.posterior_snd_apply S1 worldThresholdPrior u h_marg θ
-
-/-- **Comparison decomposition for the height posterior**.
-For two heights `w₁, w₂`, the L1 height posterior favours `w₂` over `w₁`
-iff the conditional-joint sums favour it. Generalises
-`PMF.posterior_lt_iff_score_lt` to the marginalised case.
-
-Useful for paper claims of the shape "L1 favours height h₂ > h₁ given
-'tall'" — reduces to comparing per-height conditional joint masses.
-Direct corollary of `PMF.posterior_fst_lt_iff`. -/
-theorem worldPosterior_lt_iff
-    (S1 : (W × T) → PMF Utt) (worldThresholdPrior : PMF (W × T)) (u : Utt)
-    (h_marg : PMF.marginal S1 worldThresholdPrior u ≠ 0) (w₁ w₂ : W) :
-    (jointL1 S1 worldThresholdPrior u h_marg).fst w₁
-      < (jointL1 S1 worldThresholdPrior u h_marg).fst w₂
-      ↔ (∑ θ : T, worldThresholdPrior (w₁, θ) * S1 (w₁, θ) u)
-          < ∑ θ : T, worldThresholdPrior (w₂, θ) * S1 (w₂, θ) u :=
-  PMF.posterior_fst_lt_iff S1 worldThresholdPrior u h_marg w₁ w₂
-
-end JointPosterior
-
-/-! ## §4. L&G Eq. 32 — metalinguistic probability as outer measure
-
-L&G 2017 Eq. 32 (paper p. 22, verified):
-```
-P_T(a is tall) = ∫_0^{height(a)} P_L1(θ_tall | u = "a is tall") dθ_tall
-```
-The outer measure of `Set.Iio h` (thresholds at most `h`) under the
-threshold posterior is the discrete analogue. No new theorem here; the
-formal content is just `PMF.toOuterMeasure (Set.Iio h)`. -/
-
-/-- **L&G Eq. 32 reference**: the metalinguistic probability of "a is
-tall" is the threshold-posterior outer measure of thresholds ≤ height(a).
-
-In code, this is just `L1_latent.toOuterMeasure (Set.Iio h)`. Stated as
-an `example` (not a `def`) to anchor Eq. 32 without introducing a pure
-rename. -/
-example {S : Type*} [Preorder S] (L1_latent : PMF S) (h : S) :
-    L1_latent.toOuterMeasure (Set.Iio h) = L1_latent.toOuterMeasure (Set.Iio h) := rfl
-
-/-! ## §5. Adams's bound — generic probability, not RSA-specific
-
-L&G p. 25 cites Adams (1966) on cumulative uncertainty:
-```
-1 - P(⋂ A_i) ≤ ∑ (1 - P(A_i))
-```
-or equivalently `P(⋂ A_i) ≥ 1 - ∑ (1 - P(A_i))`.
-
-Generic probability theorem with no RSA-specific content; stated for
-completeness, with proof deferred. The right home is mathlib's outer-
-measure library, not here. -/
-
-/-- **Adams's bound (cumulative uncertainty, generic)**: for any indexed
-family of sets in a PMF, the measure of the intersection is bounded
-below by `1 - ∑ (1 - measure(A_i))`. Generic probability theorem;
-deferred. -/
-theorem adams_uncertainty_bound {S : Type*} (p : PMF S)
-    (sets : List (Set S)) :
-    p.toOuterMeasure (sets.foldr (· ∩ ·) Set.univ) ≥
-      (1 : ℝ≥0∞) - sets.foldr (fun A acc => acc + (1 - p.toOuterMeasure A)) 0 := by
-  sorry  -- generic outer-measure bound, belongs in mathlib's library
-
-/-! ## §6. Posterior concentration as fully-informative limit
-
-When only one world has positive `prior · kernel` mass at observation
-`u`, the posterior concentrates entirely on that world. The
-deterministic limit of Bayesian update.
-
-The theorem `posterior_eq_one_of_singleton_score_support` is in
-`Core/Probability/Posterior.lean`; it generalises the L&G "fully
-informative L1 update" intuition without L&G framing. -/
-
-example {Utt World : Type*}
-    (S1 : World → PMF Utt) (worldPrior : PMF World) (u : Utt)
-    (h_marg : PMF.marginal S1 worldPrior u ≠ 0)
-    (w_unique : World)
-    (h_unique : ∀ w', w' ≠ w_unique → worldPrior w' = 0 ∨ S1 w' u = 0) :
-    PMF.posterior S1 worldPrior u h_marg w_unique = 1 :=
-  PMF.posterior_eq_one_of_singleton_score_support S1 worldPrior u h_marg w_unique h_unique
-
-/-! ## §7. Empirical contrast with [alxatib-pelletier-2011]
-
-L&G's literal-meaning prediction for "X is tall and X is not tall" — the
-joint-Boolean conjunction of two complementary truth-conditional
-contributions — is bounded by `P_T(tall) · (1 - P_T(tall)) ≤ 1/4`,
-maximised at the maximally borderline `P_T = 1/2`.
-
-Empirical contrast: [alxatib-pelletier-2011] report **44.7%
-acceptance** for "X is tall and not tall" applied to the median
-(borderline) man in their visual stimulus.
-
-`44.7% > 25%`, so a literal-meaning probabilistic account cannot
-reproduce the data. This is the formal expression of the empirical
-challenge that motivated TCS ([cobreros-etal-2012],
-`Studies/CobrerosEtAl2012.lean`), where borderline cases tolerantly satisfy
-`P ∧ ¬P` *as a tolerantly-true proposition* — not via probability
-multiplication.
-
-This file does not formalise L&G's pragmatic enrichment of the literal
-prediction (which would route through the joint posterior of Eqs.
-28-29, in the substrate gap). The bound below is the literal-rule
-prediction only. -/
-
-/-- **L&G literal-rule borderline-contradiction bound**: under the
-literal-meaning rule `P("X is P and not P") = P_T(P) · P_T(¬P)`, the
-predicted acceptance is bounded by `1/4`, regardless of the underlying
-threshold posterior or the height being judged.
-
-Empirical contrast: [alxatib-pelletier-2011] report 44.7% — well
-above 25% — so the literal-rule prediction is empirically refuted.
-TCS ([cobreros-etal-2012], `Studies/CobrerosEtAl2012.lean`)
-accommodates the data via
-non-probabilistic tolerant satisfaction. -/
-theorem lg_literal_borderline_bounded {S : Type*} (L1_latent : PMF S) (s : Set S) :
-    L1_latent.toOuterMeasure s * (1 - L1_latent.toOuterMeasure s) ≤ (1/4 : ℝ≥0∞) := by
-  -- AM-GM on ENNReal for `p ∈ [0,1]`: `p · (1-p) ≤ 1/4`. Lift to `ℝ` via
-  -- `toReal`, where the bound is `(2p - 1)² ≥ 0`.
-  set p := L1_latent.toOuterMeasure s with hp_def
-  have hp_le : p ≤ 1 := PMF.toOuterMeasure_apply_le_one _ _
-  have hp_ne_top : p ≠ ⊤ := lt_of_le_of_lt hp_le ENNReal.one_lt_top |>.ne
-  have h_one_minus_ne_top : 1 - p ≠ ⊤ :=
-    ENNReal.sub_ne_top ENNReal.one_ne_top
-  have h_prod_ne_top : p * (1 - p) ≠ ⊤ :=
-    ENNReal.mul_ne_top hp_ne_top h_one_minus_ne_top
-  -- Move to `ℝ` where `(2q - 1)² ≥ 0` gives the bound.
-  rw [show (1/4 : ℝ≥0∞) = ENNReal.ofReal (1/4) by
-        rw [ENNReal.ofReal_div_of_pos (by norm_num : (0:ℝ) < 4),
-            ENNReal.ofReal_one, ENNReal.ofReal_ofNat]]
-  rw [← ENNReal.ofReal_toReal h_prod_ne_top]
-  apply ENNReal.ofReal_le_ofReal
-  rw [ENNReal.toReal_mul]
-  set q := p.toReal with hq_def
-  have hq_nonneg : 0 ≤ q := ENNReal.toReal_nonneg
-  have hq_le_one : q ≤ 1 := by
-    rw [hq_def, show (1:ℝ) = (1 : ℝ≥0∞).toReal from ENNReal.toReal_one.symm]
-    exact ENNReal.toReal_mono ENNReal.one_ne_top hp_le
-  have h_sub_toReal : (1 - p).toReal = 1 - q := by
-    rw [ENNReal.toReal_sub_of_le hp_le ENNReal.one_ne_top, ENNReal.toReal_one]
-  rw [h_sub_toReal]
-  -- Now: q * (1 - q) ≤ 1/4 on ℝ via (2q - 1)² ≥ 0
-  nlinarith [sq_nonneg (2 * q - 1)]
+end Sorites
 
 end LassiterGoodman2017
