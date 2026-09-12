@@ -3,79 +3,48 @@ import Linglib.Data.Examples.Schema
 import Linglib.Data.Examples.Ogihara1996
 
 /-!
-# [ogihara-1996]: Tense, Attitudes, and Scope
-[ogihara-1996] [ogihara-1989]
+# Ogihara (1996): Tense, Attitudes, and Scope
 
-[ogihara-1996]'s theory: embedded past tense is **ambiguous**
-between a genuine past reading and a zero-tense reading. Zero tense is
-a bound variable that receives the matrix event time, producing the
-simultaneous reading.
+This file formalizes the ambiguity thesis of [ogihara-1996], developing [ogihara-1989]:
+an embedded past tense is ambiguous between a genuine past, contributing temporal
+precedence, and a zero tense, a bound variable that receives the matrix event time. The
+simultaneous reading is the zero-tense reading (`ogihara_derives_simultaneous`) and the
+shifted reading the genuine-past reading (`ogihara_derives_shifted`), against
+[kratzer-1998], for whom the past is never ambiguous and the simultaneous reading arises
+from deletion at logical form, and [klecha-2016], for whom it arises from the composition
+of modal base and tense. Japanese is a pure relative-tense language, every tense being
+interpreted in the scope of the structurally higher tenses, so an embedded past is anterior
+to the matrix event and *Taroo-wa Hanako-ga byookidat-ta to it-ta* has only the shifted
+reading (`embeddedByookiDatta`, `byookiDatta_shifted`), the simultaneous reading requiring
+the embedded present; the English past perfect under a past matrix is built against the
+same matrix frame (`pluperfectShifted`, `pluperfect_is_past`).
 
-This file carries the two-reading commitment (`PastReading`), derives
-the two predictions, and records the contrast with [kratzer-1998]
-(deletion, not ambiguity).
+## Implementation notes
 
-## Core Mechanisms
+The frames are Reichenbach frames over the integers, with the embedded perspective time
+set to the matrix event time. The Japanese example with an embedded present under a past
+matrix, whose simultaneous reading places the event at the matrix event time while the
+morphology says present, is not encoded, since a single reference and event time cannot
+carry both the morphological tense and the divergent event location.
 
-1. **Ambiguous past**: past morphology has two semantic values —
-   genuine past (temporal precedence) vs zero tense (bound variable).
-2. **Zero tense = bound variable**: receives binder time via lambda
-   abstraction. The substrate primitive
-   `Tense.zeroTense_receives_binder_time` proves the bound
-   variable resolves to the binder.
-3. **SOT = zero tense**: the simultaneous reading is the zero-tense
-   reading.
+## References
 
-## Key Distinction from Kratzer
-
-- **Ogihara**: past IS semantically ambiguous (two readings).
-- **Kratzer**: past is NEVER ambiguous; the simultaneous reading
-  arises from morphosyntactic *deletion* of past at LF.
-
-Both make identical predictions for the standard past-under-past data,
-but they disagree about the source of the simultaneous reading:
-ambiguity (Ogihara) vs deletion (Kratzer). The Phase F bridge program
-will land a typed *contradiction* witness on the embedded-present
-puzzle (where they actually diverge).
-
+* [ogihara-1996]
+* [ogihara-1989]
+* [kratzer-1998]
+* [klecha-2016]
 -/
-
-open Tense
 
 namespace Ogihara1996
 
 open Tense
-open Data.Examples (LinguisticExample)
 
--- ════════════════════════════════════════════════════════════════
--- § Ogihara's ambiguity claim (the divergence from Kratzer)
--- ════════════════════════════════════════════════════════════════
-
-/-- Two readings of past morphology in embedded contexts: the
-    structural commitment that embedded past is **ambiguous**.
-    Rejected by [kratzer-1998] (past is never ambiguous; the
-    simultaneous reading derives from deletion at LF) and finessed by
-    [klecha-2016] (modal-base × tense composition, no ambiguity). -/
+/-- The two readings of embedded past morphology: a genuine past, contributing temporal
+precedence, and a zero tense, a bound variable with no temporal content of its own. -/
 inductive PastReading where
-  /-- Genuine past: temporal precedence (R < eval time). -/
   | genuinePast
-  /-- Zero tense: bound variable, no independent temporal content. -/
   | zeroTense
-  deriving DecidableEq, Repr
-
-/-- [ogihara-1996]'s key claim: past IS ambiguous between genuine
-    past and zero tense. This is a categorical structural difference
-    from [kratzer-1998]'s deletion analysis. In Ogihara, the
-    simultaneous reading = the zero-tense READING of past (semantic
-    ambiguity); in Kratzer, it = deletion of past (morphological
-    operation, no ambiguity). -/
-theorem ogihara_ambiguity_vs_deletion :
-    PastReading.genuinePast ≠ PastReading.zeroTense := nofun
-
-
--- ════════════════════════════════════════════════════════════════
--- § Derivation Theorems
--- ════════════════════════════════════════════════════════════════
+  deriving DecidableEq
 
 /-- [ogihara-1996] derives the simultaneous reading via the zero
     tense reading of past: the bound variable receives `E_matrix`. The
@@ -98,91 +67,37 @@ theorem ogihara_derives_shifted {T : Type*} [LinearOrder T]
   simp only [embeddedFrame, ReichenbachFrame.isPast_def]
   exact hPast
 
-
--- ════════════════════════════════════════════════════════════════
--- § Empirical Data: Japanese non-SOT + Pluperfect (Ogihara 1996 Ch. 1)
--- ════════════════════════════════════════════════════════════════
-
-/-! Reichenbach data frames for the Ogihara diagnostics that the schema
-    cleanly admits. Verified against the book text:
-    - **(2b)** `Taroo-wa Hanako-ga byookidat-ta to it-ta` (PAST matrix +
-      PAST embedded) → ONLY shifted (`embeddedByookiDatta`).
-    - **(19d)** "He said that Mary had been reading books yesterday"
-      → past perfect with definite-past adverbial (`pluperfectShifted`).
-
-    **Schema-gap caveat: ex (2a) is intentionally not Lean-encoded.**
-    Ogihara ex (2a) `Taroo-wa Hanako-ga byooki-da to it-ta` (PAST matrix
-    + PRESENT embedded) has a simultaneous reading: Hanako is sick at
-    Taro's saying time. The `ReichenbachFrame` schema cannot model this
-    faithfully — the embedded morphology says PRESENT (R = S), but the
-    simultaneous interpretation places the event at matrix E (≠ S).
-    A single (R, E) pair cannot simultaneously encode the morphological
-    tense AND the divergent event location. This is a general gap that
-    also bites counterfactual past, fake past, historical present, and
-    FID; it is not specific to Ogihara. The JSON record
-    `Examples.ex2a` captures the empirical pair (sentence + readings)
-    without committing to a Reichenbach analysis.
-
-    The pluperfect frame is built via `embeddedFrame` against the
-    local `matrixItta` (per CLAUDE.md "Theory-hub denotation as
-    study-file constraint" — `matrixItta`'s S/P/R/E = (0, 0, -2, -2)
-    matches the generic "X said Y" matrix shape, so the (19d)
-    "He said …" construction reuses it). The Japanese matrix is
-    root-clause; per Ogihara's absolute-tense analysis the embedded
-    (2b) frame keeps P = S = 0. -/
-
-/-- Japanese matrix frame `Taroo-wa ... to it-ta` (Taro said ...).
-    Past tense, perfective. S = P = 0, R = E = -2. -/
+/-- The matrix frame *Taroo-wa … to it-ta*, past and perfective: the speech and perspective
+times at the origin, the reference and event times two units earlier. -/
 def matrixItta : ReichenbachFrame ℤ where
   speechTime := 0
   perspectiveTime := 0
   referenceTime := -2
   eventTime := -2
 
-/-- Ogihara ex (2b) embedded `Hanako-ga byookidat-ta` (Hanako had been
-    sick) — PAST under PAST, ONLY the shifted reading. In non-SOT
-    Japanese, embedded past is absolute (R < S, not R < matrix E).
-    The unavailability of the simultaneous reading is Ogihara's
-    cornerstone diagnostic.
+/-- The embedded *Hanako-ga byookidat-ta*: a past under a past, interpreted relative to the
+matrix event, so its perspective time is the matrix event time and its reference time lies
+before it. -/
+def embeddedByookiDatta : ReichenbachFrame ℤ := embeddedFrame matrixItta (-5) (-5)
 
-    Encoded as a standalone root-style frame (P = S = 0): per Ogihara
-    Ch. 1 (p. 12), Japanese is an "absolute tense" language; the
-    embedded clause does NOT shift its perspective time — that's
-    precisely the empirical content of "absolute, not relative". -/
-def embeddedByookiDatta : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := -5
-  eventTime := -5
+/-- The English past perfect under a past matrix, *he said that Mary had been reading books
+yesterday*: past relative to the embedded perspective, and perfect. -/
+def pluperfectShifted : ReichenbachFrame ℤ := embeddedFrame matrixItta (-4) (-5)
 
-/-- Ogihara ex (19d) "He said that Mary had been reading books yesterday."
-    English past perfect under past matrix. R < P (past) + E < R (perfect):
-    the reading event precedes the reference time (within "yesterday"),
-    which precedes the saying. Built via `embeddedFrame` against
-    `matrixItta` (S/P/R/E = (0,0,-2,-2) — the generic "X said Y" matrix
-    shape, reusable for the (19d) English example). -/
-def pluperfectShifted : ReichenbachFrame ℤ :=
-  embeddedFrame matrixItta (-4) (-5)
+/-- The embedded Japanese past is evaluated from the matrix event, not the speech time. -/
+theorem japanese_relative_perspective :
+    embeddedByookiDatta.perspectiveTime = matrixItta.eventTime := rfl
 
+/-- The embedded Japanese past has only the shifted reading. -/
+theorem byookiDatta_shifted : embeddedByookiDatta.isPast := by
+  simp only [ReichenbachFrame.isPast_def, embeddedByookiDatta, embeddedFrame, matrixItta]; omega
 
--- ════════════════════════════════════════════════════════════════
--- § Per-Datum Verifications
--- ════════════════════════════════════════════════════════════════
-
-/-- Japanese non-SOT: embedded perspective stays at speech time
-    (the diagnostic content of "absolute"). -/
-theorem japanese_absolute_perspective :
-    embeddedByookiDatta.perspectiveTime = embeddedByookiDatta.speechTime := rfl
-
-/-- Pluperfect: E < R (perfect aspect: event before reference). -/
+/-- The past perfect is perfect: its event precedes its reference time. -/
 theorem pluperfect_is_perfect : pluperfectShifted.isPerfect := by
-  simp only [ReichenbachFrame.isPerfect, pluperfectShifted, embeddedFrame,
-    matrixItta]; omega
+  simp only [ReichenbachFrame.isPerfect, pluperfectShifted, embeddedFrame, matrixItta]; omega
 
-/-- Pluperfect: R < P (past tense relative to embedded perspective). -/
+/-- The past perfect is past relative to the embedded perspective. -/
 theorem pluperfect_is_past : pluperfectShifted.isPast := by
-  simp only [ReichenbachFrame.isPast_def, pluperfectShifted, embeddedFrame,
-    matrixItta]; omega
-
+  simp only [ReichenbachFrame.isPast_def, pluperfectShifted, embeddedFrame, matrixItta]; omega
 
 end Ogihara1996
