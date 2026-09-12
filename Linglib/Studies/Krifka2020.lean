@@ -1,249 +1,236 @@
-import Linglib.Discourse.SpeechAct
+import Mathlib.Data.Set.Basic
+import Mathlib.Order.Basic
+import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Layered Assertive Clauses: JP/ComP modifiers
-[krifka-2020] [speas-2004] [wiltschko-2014]
+# Krifka (2020): Layers of Assertive Clauses: Propositions, Judgements, Commitments, Acts
 
-Worked examples for [krifka-2020]'s four-layer clause structure
-(TP > JP > ComP > ActP). The JP layer originates with [speas-2004]
-and is developed crosslinguistically by [wiltschko-2014];
-[krifka-2020] synthesises them with the commitment-space framework
-of [krifka-2015] (see sibling
-`Studies/Krifka2015.lean`).
+This file formalizes [krifka-2020]'s decomposition of an assertive clause into a proposition
+(TP), a private judgement of it (JP), a public commitment to that judgement (ComP), and the act
+that updates the common ground (ActP). A judgement phrase abstracts over the judge of a
+judge-relative proposition (`Judgement`); the commitment phrase turns it into the proposition
+that the judge is publicly responsible for its truth (`comP`); the assertive act performs a
+performative update, which does not restrict the common ground but moves each of its indices
+to a successor at which the speaker's commitment holds (`performative`), in contrast to the
+informative update of [stalnaker-1978] (`informative`). Commitment closure, the pragmatic
+step licensed once every index records a trustworthy speaker's commitment, then adds the
+judgement itself (`assertClosed`), and judgement closure adds the proposition judged. On this
+account a subjective epistemic adverb like *sicherlich* commits the speaker only to their own
+certainty, a proposition easier to defend than the one communicated (`commits_certainly`), and
+a reportative like *laut Eva* commits the speaker to Eva's commitment. The layers are ordered,
+and clause-embedding predicates select a layer: *abhängen* a proposition, *glauben* and
+*wissen* a judgement, *sagen* a commitment, so which modifiers a complement clause admits
+follows from the layer selected (`Licensed`).
 
-## Coverage
+## Implementation notes
 
-- §1 — Hedges as JP modifiers ("I think p" → epistemicStatus := weak)
-- §2 — Oaths as ComP modifiers ("I swear p" → commitmentStrength := strong)
-- §3 — JP/ComP independence (commute, layer non-interaction)
-- §4 — Rank orderings: hedges weaken, oaths strengthen, relative to the
-  `.standard` default
+* The branching successor relation `i ⊶ i′[φ]` is a primitive with its one axiom, that `φ`
+  holds at the successor; a model supplies it together with the commitment and certainty
+  relations. Judgements and commitments share the type of functions from judges to
+  propositions, the paper's sortal distinction being carried by the operators that build them.
+* The closures are informative updates under their conditions, the trustworthiness and the
+  absence of objection being left to the discourse.
+* Commitment strength (§3.2) is not modelled: the paper argues it has no discrete values on a
+  single dimension. The report readings under which *wissen* and *glauben* embed commitment
+  modifiers are noted, not modelled.
 
-## Out of scope
+## References
 
-- The actual commitment-space dynamics — see Krifka2015.lean.
-- Proxy assertions ("Mary says p") — flagged in [krifka-2015]
-  conclusion, not exercised here.
-- Conjunct/disjunct systems (Newari etc.) — typological extension noted
-  in [krifka-2015] conclusion but separate study.
--/
-
-/-!### Layered Assertive Clauses
-
-[krifka-2020] [speas-2004] [wiltschko-2014]
-
-Four-layer decomposition of an assertive clause from [krifka-2020]:
-TP (propositional content), JP (epistemic judgement), ComP (commitment
-strength), ActP (speech act type). JP terminology and the layered idea
-trace to [speas-2004] and [wiltschko-2014]; [krifka-2020]
-synthesises them with the commitment-space framework.
-
-| Layer | Contribution | Example Modifier |
-|-------|-------------|-----------------|
-| TP | Propositional content | tense, aspect |
-| JP (Judge Phrase) | Epistemic judgment | "I think", evidentials |
-| ComP (Commitment Phrase) | Commitment strength | "I swear", "perhaps" |
-| ActP (Act Phrase) | Speech act type | declarative, imperative |
-
-JP and ComP are independent: "I think I swear p" vs "I swear I think p"
-both involve TP content p, but with different epistemic/commitment profiles.
-
-This file is sibling to `Discourse/Commitment/Space.lean` (the 2015
-commitment-space framework). The two are independent — neither imports
-the other — and study files target whichever is appropriate:
-
-- `Studies/Krifka2015.lean` consumes `Commitment.Space`
-- `Studies/Krifka2020.lean` consumes this file
+* [krifka-2020]
+* [krifka-2015] — commitment spaces, the framework the layers refine
+* [stalnaker-1978] — informative update
+* [farkas-bruce-2010] — assertions that stick to the common ground even when rejected
 -/
 
 namespace Krifka2020
 
-open Mood (Illocutionary)
+variable {Judge Index : Type*}
 
--- ════════════════════════════════════════════════════
--- § 1. Commitment Strength
--- ════════════════════════════════════════════════════
+/-! ### Propositions, judgements, commitments, acts -/
 
-/-- Graded commitment strength, controlled by ComP modifiers.
+/-- A judge-relative proposition, the meaning of a TP (19), or of a judgement phrase (20),
+which makes the judge accessible. -/
+abbrev Judgement (Judge Index : Type*) := Judge → Index → Prop
 
-    - `weak`: hedged ("I think p", "maybe p")
-    - `standard`: default declarative assertion
-    - `strong`: oath formulae ("I swear p", "I promise p") -/
-inductive CommitmentStrength where
-  | weak
-  | standard
-  | strong
-  deriving DecidableEq, Repr, Inhabited
+/-- The primitives of the semantics: public commitment `x ⊢ᵢ φ`, the certainty operator of
+(42), and the branching successor `i ⊶ i′[φ]`, at which `φ` holds. -/
+structure Model (Judge Index : Type*) where
+  commits : Judge → Index → (Index → Prop) → Prop
+  cert : Judge → Index → (Index → Prop) → Prop
+  succ : Index → (Index → Prop) → Index → Prop
+  succ_holds : ∀ i φ i', succ i φ i' → φ i'
 
-/-- Numerical ordering of commitment strengths. -/
-def CommitmentStrength.rank : CommitmentStrength → Nat
-  | .weak => 0
-  | .standard => 1
-  | .strong => 2
+variable (M : Model Judge Index)
 
-/-- Standard is the default. -/
-theorem standard_is_default : CommitmentStrength.standard.rank = 1 := rfl
+/-- The commitment phrase (21): the judge is publicly responsible for the truth of the
+judgement. -/
+def comP (J : Judgement Judge Index) : Judgement Judge Index := λ j i => M.commits j i (J j)
 
-/-- Strong > standard > weak. -/
-theorem strength_ordering :
-    CommitmentStrength.weak.rank < CommitmentStrength.standard.rank ∧
-    CommitmentStrength.standard.rank < CommitmentStrength.strong.rank :=
-  ⟨by decide, by decide⟩
+/-- Informative update (22): restriction of the common ground. -/
+def informative (c : Set Index) (φ : Index → Prop) : Set Index := {i ∈ c | φ i}
 
--- ════════════════════════════════════════════════════
--- § 2. Layered Assertion Structure
--- ════════════════════════════════════════════════════
+/-- Performative update (23): each index moves to a successor at which the proposition holds.
+-/
+def performative (c : Set Index) (φ : Index → Prop) : Set Index :=
+  {i' | ∃ i ∈ c, M.succ i φ i'}
 
-/-- A fully layered assertion, decomposed into the four clause layers.
+/-- The assertive act (24): the performative update with the commitment phrase applied to the
+speaker. -/
+def assert (s : Judge) (c : Set Index) (J : Judgement Judge Index) : Set Index :=
+  performative M c (comP M J s)
 
-    Each layer is independent: the epistemic status (JP) can vary without
-    affecting the commitment strength (ComP), and vice versa. The actType
-    uses `Illocutionary` from `Discourse/SpeechAct.lean`. -/
-structure LayeredAssertion (W : Type*) where
-  /-- TP: the propositional content -/
-  content : Set W
-  /-- JP: the speaker's epistemic status toward the content -/
-  epistemicStatus : CommitmentStrength := .standard
-  /-- ComP: the strength of the speaker's public commitment -/
-  commitmentStrength : CommitmentStrength := .standard
-  /-- ActP: the type of speech act performed -/
-  actType : Illocutionary := .declarative
+/-- Commitment closure (25) after an assertion ((26), (27)): the judgement the speaker is
+committed to is added to the common ground. -/
+def assertClosed (s : Judge) (c : Set Index) (J : Judgement Judge Index) : Set Index :=
+  informative (assert M s c J) (J s)
 
--- ════════════════════════════════════════════════════
--- § 3. Informative vs Performative Updates
--- ════════════════════════════════════════════════════
+/-- A subjective epistemic adverb (42): the judge is certain of the judgement. -/
+def certainly (J : Judgement Judge Index) : Judgement Judge Index := λ j i => M.cert j i (J j)
 
-/-- Update type for assertions.
+/-- A reportative evidential (53): another authority is committed to the judgement. -/
+def according (x : Judge) (J : Judgement Judge Index) : Judgement Judge Index :=
+  λ _ i => M.commits x i (J x)
 
-    Krifka distinguishes two fundamentally different ways an assertion
-    can change the common ground:
+/-- *Allegedly* (55): some authority is committed to the judgement. -/
+def allegedly (J : Judgement Judge Index) : Judgement Judge Index :=
+  λ _ i => ∃ x, M.commits x i (J x)
 
-    - **informative** (`·φ`): eliminates worlds incompatible with φ.
-      Example: "The meeting is at 5" — reduces uncertainty.
+variable {M} {s : Judge} {c : Set Index} {J : Judgement Judge Index} {i : Index}
 
-    - **performative** (`•φ`): changes world indices so φ becomes true.
-      Example: "I hereby name this ship the Queen Elizabeth" — makes
-      φ true by the act of uttering it.
+theorem informative_subset (c : Set Index) (φ : Index → Prop) : informative c φ ⊆ c :=
+  λ _ h => h.1
 
-    This distinction is orthogonal to commitment strength (ComP) and
-    epistemic status (JP). -/
-inductive UpdateType where
-  | informative   -- ·φ : eliminates worlds where φ is false
-  | performative  -- •φ : changes worlds so φ becomes true
-  deriving DecidableEq, Repr, Inhabited
+/-- After an assertion every index records the speaker's commitment: the condition of
+commitment closure holds. -/
+theorem commits_of_mem_assert (h : i ∈ assert M s c J) : M.commits s i (J s) :=
+  let ⟨_, _, h⟩ := h; M.succ_holds _ _ _ h
 
-/-- Informative update: restrict context set to worlds satisfying φ.
+/-- The communicated meaning (27): the commitment and, by closure, the judgement. -/
+theorem mem_assertClosed_iff :
+    i ∈ assertClosed M s c J ↔ (∃ i₀ ∈ c, M.succ i₀ (comP M J s) i) ∧ J s i :=
+  Iff.rfl
 
-    -- UNVERIFIED: [krifka-2020] eq. number for the informative-update
-    -- definition (the 2020 paper PDF was not available for this audit;
-    -- the underlying concept is clearly Krifka's, but the equation tag
-    -- needs human verification before promoting to a precise citation). -/
-def informativeUpdate {W : Type*} (cs : List W) (φ : W → Prop)
-    [DecidablePred φ] : List W :=
-  cs.filter (fun w => φ w)
+/-- An assertion is rejected without loss: the commitment stays in the common ground even
+when closure is withheld ([farkas-bruce-2010]). -/
+theorem assertClosed_subset_assert : assertClosed M s c J ⊆ assert M s c J :=
+  informative_subset _ _
 
-/-- A fully specified assertion with update type. -/
-structure TypedAssertion (W : Type*) extends LayeredAssertion W where
-  /-- Whether the update is informative or performative -/
-  updateType : UpdateType := .informative
+/-! ### Judgement modifiers -/
 
-/-- Default assertions are informative (the common case). -/
-theorem default_assertion_informative {W : Type*} (p : Set W) :
-    ({ content := p : TypedAssertion W }).updateType = .informative := rfl
+/-- Asserting a hedged judgement (46) commits the speaker to their certainty, not to the
+proposition. -/
+theorem commits_certainly (h : i ∈ assert M s c (certainly M J)) :
+    M.commits s i λ i => M.cert s i (J s) :=
+  commits_of_mem_assert h
 
-end Krifka2020
+/-- After commitment closure the certainty holds, which is the condition of judgement closure
+(44), the step that introduces the proposition itself. -/
+theorem cert_of_mem_assertClosed (h : i ∈ assertClosed M s c (certainly M J)) :
+    M.cert s i (J s) :=
+  h.2
 
+/-- Asserting a reportative (53) commits the speaker to the authority's commitment, a
+dependent commitment that leaves the authority to blame. -/
+theorem commits_according {x : Judge} (h : i ∈ assert M s c (according M x J)) :
+    M.commits s i λ i => M.commits x i (J x) :=
+  commits_of_mem_assert h
 
-namespace Krifka2020
-
-
-
--- ════════════════════════════════════════════════════
--- § 1. Hedges as JP Modifiers
--- ════════════════════════════════════════════════════
-
-/-- A hedge modifies the JP layer (epistemic status) to `weak`.
-
-    "I think p" = assertion with `epistemicStatus := .weak`.
-    The TP content (p) is unchanged; only the JP layer is modified. -/
-def hedgeAsJP {W : Type*} (la : LayeredAssertion W) : LayeredAssertion W :=
-  { la with epistemicStatus := .weak }
-
-/-- Hedging preserves content (TP is untouched by JP modification). -/
-theorem hedgeAsJP_content_eq {W : Type*} (la : LayeredAssertion W) :
-    (hedgeAsJP la).content = la.content := rfl
-
-/-- Hedging sets epistemic status to weak. -/
-theorem hedgeAsJP_epistemicStatus_eq_weak {W : Type*} (la : LayeredAssertion W) :
-    (hedgeAsJP la).epistemicStatus = .weak := rfl
-
-/-- Hedging does not affect commitment strength. -/
-theorem hedgeAsJP_commitmentStrength_eq {W : Type*} (la : LayeredAssertion W) :
-    (hedgeAsJP la).commitmentStrength = la.commitmentStrength := rfl
-
--- ════════════════════════════════════════════════════
--- § 2. Oaths as ComP Modifiers
--- ════════════════════════════════════════════════════
-
-/-- An oath modifies the ComP layer (commitment strength) to `strong`.
-
-    "I swear p" = assertion with `commitmentStrength := .strong`.
-    The TP content (p) is unchanged; only the ComP layer is modified. -/
-def oathAsComP {W : Type*} (la : LayeredAssertion W) : LayeredAssertion W :=
-  { la with commitmentStrength := .strong }
-
-/-- Oaths preserve content. -/
-theorem oathAsComP_content_eq {W : Type*} (la : LayeredAssertion W) :
-    (oathAsComP la).content = la.content := rfl
-
-/-- Oaths set commitment strength to strong. -/
-theorem oathAsComP_commitmentStrength_eq_strong {W : Type*}
-    (la : LayeredAssertion W) :
-    (oathAsComP la).commitmentStrength = .strong := rfl
-
-/-- Oaths do not affect epistemic status. -/
-theorem oathAsComP_epistemicStatus_eq {W : Type*} (la : LayeredAssertion W) :
-    (oathAsComP la).epistemicStatus = la.epistemicStatus := rfl
-
--- ════════════════════════════════════════════════════
--- § 3. JP/ComP Independence
--- ════════════════════════════════════════════════════
-
-/-- JP and ComP can co-occur: hedging + oath on the same assertion.
-
-    "I think I swear p": epistemicStatus = weak, commitmentStrength = strong.
-    "I swear I think p": same result (layers are independent). -/
-def hedgedOath {W : Type*} (la : LayeredAssertion W) : LayeredAssertion W :=
-  { la with epistemicStatus := .weak, commitmentStrength := .strong }
-
-/-- Order doesn't matter: hedge(oath(la)) = oath(hedge(la)). -/
-theorem hedgeAsJP_oathAsComP_comm {W : Type*} (la : LayeredAssertion W) :
-    hedgeAsJP (oathAsComP la) = oathAsComP (hedgeAsJP la) := rfl
-
-/-- Hedged oath has weak epistemic + strong commitment. -/
-theorem hedgedOath_profile {W : Type*} (la : LayeredAssertion W) :
-    (hedgedOath la).epistemicStatus = .weak ∧
-    (hedgedOath la).commitmentStrength = .strong :=
+/-- Evidentials scope over epistemics (91): *laut Eva sicherlich* has Eva certain, *sicherlich
+laut Eva* has the speaker certain of Eva's commitment. -/
+theorem according_certainly (x : Judge) :
+    (according M x (certainly M J) = λ _ i => M.commits x i λ i => M.cert x i (J x)) ∧
+      (certainly M (according M x J) = λ j i => M.cert j i λ i => M.commits x i (J x)) :=
   ⟨rfl, rfl⟩
 
-/-- Both layered modifications preserve TP content. -/
-theorem hedgedOath_content_eq {W : Type*} (la : LayeredAssertion W) :
-    (hedgedOath la).content = la.content := rfl
+/-! ### A model -/
 
--- ════════════════════════════════════════════════════
--- § 4. Rank Orderings
--- ════════════════════════════════════════════════════
+/-- Indices as times, a commitment or a judgement being on record from the first step on,
+and the successor the next step. -/
+def steps : Model Unit ℕ where
+  commits _ i _ := 0 < i
+  cert _ i _ := 0 < i
+  succ i φ i' := i' = i + 1 ∧ φ i'
+  succ_holds _ _ _ h := h.2
 
-/-- Hedging produces a strictly lower-rank epistemic status than the
-    `.standard` default: "I think p" weakens the assertion. -/
-theorem hedgeAsJP_rank_lt_standard {W : Type*} (la : LayeredAssertion W) :
-    (hedgeAsJP la).epistemicStatus.rank < CommitmentStrength.standard.rank :=
-  show CommitmentStrength.weak.rank < CommitmentStrength.standard.rank by decide
+/-- *Max snores loudly* from the first step on. -/
+def snores : Judgement Unit ℕ := λ _ i => 0 < i
 
-/-- Oaths produce a strictly higher-rank commitment strength than the
-    `.standard` default: "I swear p" strengthens the assertion. -/
-theorem oathAsComP_rank_gt_standard {W : Type*} (la : LayeredAssertion W) :
-    (oathAsComP la).commitmentStrength.rank > CommitmentStrength.standard.rank :=
-  show CommitmentStrength.strong.rank > CommitmentStrength.standard.rank by decide
+/-- The assertion from the initial index moves the common ground to the next step, where the
+speaker's commitment is on record, and closure keeps it, since the proposition holds there. -/
+theorem assert_steps :
+    assert steps () {0} snores = {1} ∧ assertClosed steps () {0} snores = {1} :=
+  have h : assert steps () {0} snores = {1} := Set.ext λ i =>
+    ⟨λ ⟨_, h0, h1, _⟩ => Set.mem_singleton_iff.2 (by have := Set.mem_singleton_iff.1 h0; omega),
+      λ h => ⟨0, rfl, show i = 0 + 1 by have := Set.mem_singleton_iff.1 h; omega,
+        show 0 < i by have := Set.mem_singleton_iff.1 h; omega⟩⟩
+  ⟨h, Set.ext λ i => ⟨λ ⟨h1, _⟩ => h ▸ h1,
+    λ h1 => ⟨h ▸ h1, show 0 < i by have := Set.mem_singleton_iff.1 h1; omega⟩⟩⟩
+
+/-! ### Layers and embedding -/
+
+/-- The layers of an assertive clause, in the order of (88). -/
+inductive Layer
+  | tp
+  | jp
+  | comP
+  | actP
+  deriving DecidableEq, Fintype, Repr
+
+/-- The height of a layer. -/
+def Layer.rank : Layer → ℕ
+  | .tp => 0
+  | .jp => 1
+  | .comP => 2
+  | .actP => 3
+
+instance : LinearOrder Layer := LinearOrder.lift' Layer.rank (by decide)
+
+/-- Modifiers of §3, with the layer they modify: subjective epistemics and evidentials the
+judgement, affirmatives the commitment, *offen gesagt* the act. -/
+inductive Modifier
+  | sicherlich
+  | wahrscheinlich
+  | lautEva
+  | echt
+  | ungelogen
+  | wirklich
+  | ehrlich
+  | offenGesagt
+  deriving DecidableEq, Fintype, Repr
+
+def Modifier.layer : Modifier → Layer
+  | .sicherlich | .wahrscheinlich | .lautEva => .jp
+  | .echt | .ungelogen | .wirklich | .ehrlich => .comP
+  | .offenGesagt => .actP
+
+/-- Clause-embedding predicates of §4.1 with the layer they select: a proposition (96), a
+judgement (101), a commitment (111), or an act (112). -/
+inductive Predicate
+  | abhaengen
+  | glauben
+  | wissen
+  | sagen
+  | mitteilen
+  deriving DecidableEq, Repr
+
+def Predicate.selects : Predicate → Layer
+  | .abhaengen => .tp
+  | .glauben | .wissen => .jp
+  | .sagen => .comP
+  | .mitteilen => .actP
+
+/-- A modifier occurs in a complement clause when the predicate selects its layer or a higher
+one. -/
+def Licensed (m : Modifier) (p : Predicate) : Prop := m.layer ≤ p.selects
+
+instance (m : Modifier) (p : Predicate) : Decidable (Licensed m p) :=
+  inferInstanceAs (Decidable (_ ≤ _))
+
+/-- No modifier under *abhängen* (95); judgement modifiers but no affirmatives under *glauben*
+(100); both under *sagen* (110). -/
+theorem licensed_iff :
+    (∀ m, ¬ Licensed m .abhaengen) ∧ (∀ m, Licensed m .glauben ↔ m.layer = .jp) ∧
+      (∀ m, Licensed m .sagen ↔ m.layer ≠ .actP) := by
+  decide
 
 end Krifka2020
