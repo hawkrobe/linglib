@@ -378,9 +378,8 @@ says uniform [N] feature. Applied to [mcnally-deswart-2011]'s
 `InflectedAnalysis` rivals (which all involve some `n` head), they
 diverge on what additional commitment is required.
 
-This is the cross-framework divergence the [mcnally-deswart-2011]
-bridge in `Panagiotidis2015.lean` (`namespace MdSBridge`) noted as
-*open* — addressed here. -/
+This is the cross-framework divergence between the two accounts of the
+*n* head on [mcnally-deswart-2011]'s Dutch data — addressed here. -/
 
 namespace MdSPanaDivergence
 
@@ -457,9 +456,8 @@ dialogue on Dutch nominalisation morphology:
 
 * `McNallyDeSwart2011`: provides the data (`het rode van X`, modifier
   distribution) and the trope analysis (Moltmann 2004).
-* `Panagiotidis2015`: applies §6.7.1 modifier-distribution diagnostic
-  geometrically; agrees with M&deS on each rival's predictions
-  (shared Ackema & Neeleman 2004 lineage).
+* `Panagiotidis2015`: the categorizer theory on which every *n* head
+  bears the same interpretable [N] feature.
 * `Wood2023`: requires alloseme commitment per rival; identifies a
   framework gap (no "trope" Nominalizer.Alloseme), making the divergence with
   Panagiotidis (uniform [N], no allosemes) substantive.
