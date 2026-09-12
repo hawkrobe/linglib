@@ -85,6 +85,13 @@ theorem corpusProb_add (D₁ D₂ : Multiset (DerivationTree T G.NT)) :
     W.corpusProb (D₁ + D₂) = W.corpusProb D₁ * W.corpusProb D₂ := by
   simp [corpusProb]
 
+theorem sum_weight_le_one (A : G.NT) : ∑ r ∈ G.rules.filter (·.input = A), W.weight r ≤ 1 := by
+  by_cases hA : A ∈ G.rules.image (·.input)
+  · exact (W.sum_weight A hA).le
+  · rw [Finset.sum_eq_zero fun r hr => (hA (Finset.mem_image.mpr
+      ⟨r, (Finset.mem_filter.mp hr).1, (Finset.mem_filter.mp hr).2⟩)).elim]
+    exact zero_le_one
+
 section
 
 variable [DecidableEq T]
