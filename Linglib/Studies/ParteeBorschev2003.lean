@@ -8,19 +8,25 @@ genitive. On the split analysis the paper defends, a genitive is either the argu
 relational noun, *teacher of John's*, or a modifier of a sortal noun carrying a free
 contextual relation, *team of John's*; on the uniform analysis of [vikner-jensen-2002] every
 genitive is an argument, a sortal noun being coerced to a relational one. For a
-pragmatically coerced sortal noun the two assemble the same denotation and differ only in
-where the free relation enters; they come apart under *former* (§4.3): *Mary's former
-mansion* has a reading on which the building is a former mansion now Mary's and one on which
-it was formerly Mary's mansion, the free relation outside or inside the scope of *former*
-(`readingA`, `readingB`). The split analysis derives only the first and coercion both, and
-the two are distinct predicates on a model where the building is still a mansion but no
-longer Mary's (`FormerMansion.readingA_ne_readingB`).
+pragmatically coerced sortal noun the two assemble the same predicate and differ only in
+where the free relation enters (`convergence`); they come apart under *former* (§4.3):
+*Mary's former mansion* has a reading on which the building is a former mansion now
+Mary's and one on which it was formerly Mary's mansion, the free relation outside or inside
+the scope of *former* (`readingA`, `readingB`). The split analysis derives only the first,
+since the relation enters with the genitive after *former* has combined with the noun, and
+coercion derives both. The two readings coincide whenever the free relation is constant
+over time (`readingA_eq_readingB_of_constant`) and come apart exactly when it changes:
+the second reading holds and the first fails of what was the possessor's and is no longer,
+whether or not it is still a mansion (`readingB_not_readingA_iff`), and the first holds and
+the second fails of a former mansion that has become the possessor's since
+(`readingA_not_readingB_iff`).
 
 ## Implementation notes
 
-The possessive combinator `π` is that of `Semantics/Possession/Basic`; the paper's
-compositional tree for the split analysis and its discussion of the Russian genitive are not
-represented.
+The possessive combinator `π` is that of `Semantics/Possession/Relationalizer`, where the
+convergence of the two analyses is already recorded on its definition; *former* is modelled
+against a fixed past time. The paper's compositional tree for the split analysis and its
+discussion of the Russian genitive are not represented.
 
 ## References
 
@@ -34,58 +40,59 @@ open Possession
 
 variable {E S : Type*}
 
-/-! ### The readings of *Mary's former mansion* (P&B §4.3)
+/-! ### Convergence (15), (16) -/
 
-`former` (CN/CN) modifies the noun predicate; `formerRel` (TCN/TCN) modifies a
-relation. With the free relation `R` *outside* `former` (Reading A) vs. *inside*
-`formerRel`'s scope (Reading B), the genitive denotes differently. P&B's split
-introduces `R` only with the construction, after `former`, deriving Reading A
-alone; J&V's coercion can introduce `R` at the noun-shift, deriving both. -/
+/-- The uniform analysis: a sortal noun coerced to a relation by a free relation, then applied
+to its possessor. -/
+def coerced (N : E → S → Prop) (R : E → E → S → Prop) : E → E → S → Prop :=
+  λ y x s => N x s ∧ R y x s
 
-/-- Reading A: the free relation is outside `former`'s scope — *a former mansion
-that is now Mary's*. The only reading P&B's split derives. -/
-def readingA (former : (E → S → Prop) → E → S → Prop) (possessor : E)
-    (noun : E → S → Prop) (R : E → E → S → Prop) : E → S → Prop :=
-  π (former noun) R possessor
+/-- The coerced noun taken as argument and the modifier genitive `π N R y` assemble the same
+predicate: the accounts differ only in where the free relation enters. -/
+theorem convergence (N : E → S → Prop) (R : E → E → S → Prop) (y : E) :
+    coerced N R y = π N R y :=
+  rfl
 
-/-- Reading B: the free relation is inside `formerRel`'s scope — *something that
-was formerly Mary's mansion*. Available on J&V's coercion. -/
-def readingB (formerRel : (E → E → S → Prop) → E → E → S → Prop) (possessor : E)
-    (noun : E → S → Prop) (R : E → E → S → Prop) : E → S → Prop :=
-  formerRel (π noun R) possessor
+/-! ### Divergence under *former* (17), (18) -/
 
-namespace FormerMansion
+/-- *former* on a noun: held at the past time and no longer holds. -/
+def former (past : S) (P : E → S → Prop) : E → S → Prop := λ x s => P x past ∧ ¬ P x s
 
-/-- Entities: building `0`, Mary `1`. -/
-abbrev Ent := Fin 2
-/-- Time: `true` now, `false` past. -/
-abbrev Tm := Bool
+/-- *former* on a relation, the shifted modifier of *former owner*. -/
+def formerRel (past : S) (Rel : E → E → S → Prop) : E → E → S → Prop :=
+  λ y x s => Rel y x past ∧ ¬ Rel y x s
 
-/-- The building `0` is a mansion at every time. -/
-def mansion : Ent → Tm → Prop := λ x _ => x = 0
-/-- Mary (`1`) owned the building (`0`) only in the past. -/
-def owns : Ent → Ent → Tm → Prop := λ o x t => o = 1 ∧ x = 0 ∧ t = false
-/-- *former* P: was P in the past, no longer P now. -/
-def former (P : Ent → Tm → Prop) : Ent → Tm → Prop := λ x t => P x false ∧ ¬ P x t
-/-- *former* on a relation: held in the past, no longer. -/
-def formerRel (Rel : Ent → Ent → Tm → Prop) : Ent → Ent → Tm → Prop :=
-  λ o x t => Rel o x false ∧ ¬ Rel o x t
+variable (past : S) (N : E → S → Prop) (R : E → E → S → Prop) (y x : E) (s : S)
 
-/-- **Divergence**: the locus of the free relation is detectable under *former*.
-The building is still a mansion now but Mary no longer owns it, so Reading B
-(*was Mary's mansion*) holds of it while Reading A (*a former mansion now
-Mary's*) does not. P&B's split derives only Reading A; J&V's coercion derives
-both — J&V's empirical advantage (P&B §4.3). -/
-theorem readingA_ne_readingB :
-    readingA former 1 mansion owns ≠ readingB formerRel 1 mansion owns := by
-  intro h
-  have hA : ¬ readingA former 1 mansion owns 0 true := by
-    unfold readingA π former mansion owns; decide
-  have hB : readingB formerRel 1 mansion owns 0 true := by
-    unfold readingB formerRel π mansion owns; decide
-  rw [h] at hA
-  exact hA hB
+/-- Reading A: the free relation outside the scope of *former*, *a former mansion that is now
+Mary's*. -/
+def readingA : E → S → Prop := π (former past N) R y
 
-end FormerMansion
+/-- Reading B: the free relation inside the scope of *former*, *something that was formerly
+Mary's mansion*. -/
+def readingB : E → S → Prop := formerRel past (π N R) y
+
+/-- When the free relation does not change over time the two readings coincide, so the
+position of the relation is undetectable. -/
+theorem readingA_eq_readingB_of_constant (hR : ∀ x s, R y x s ↔ R y x past) :
+    readingA past N R y = readingB past N R y := by
+  funext x s
+  simp only [readingA, readingB, π, former, formerRel, hR x s]
+  exact propext (by tauto)
+
+/-- Reading B holds and reading A fails of exactly what was the possessor's `N` and is no
+longer the possessor's, whether or not it is still an `N`: the building that is still a
+mansion but no longer Mary's. -/
+theorem readingB_not_readingA_iff :
+    readingB past N R y x s ∧ ¬ readingA past N R y x s ↔
+      N x past ∧ R y x past ∧ ¬ R y x s := by
+  simp only [readingA, readingB, π, former, formerRel]; tauto
+
+/-- Reading A holds and reading B fails of exactly a former `N` that is the possessor's now
+and was not when it was an `N`: a ruin Mary has acquired since. -/
+theorem readingA_not_readingB_iff :
+    readingA past N R y x s ∧ ¬ readingB past N R y x s ↔
+      N x past ∧ ¬ N x s ∧ R y x s ∧ ¬ R y x past := by
+  simp only [readingA, readingB, π, former, formerRel]; tauto
 
 end ParteeBorschev2003
