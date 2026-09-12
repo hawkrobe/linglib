@@ -2,59 +2,34 @@ import Linglib.Fragments.Uyghur.Complementizers
 import Linglib.Data.Examples.Major2024
 
 /-!
-# Major 2024: Re-analyzing 'say' complementation
-[major-2024]
+# Major (2024): Re-analyzing *say* Complementation
 
-Uyghur *dep* clauses look like complementizer-headed CP complements
-but are converbial adjunct clauses headed by the verb *de* 'say' plus
-the converb -(I)p, merging at VP or TP (his 4, 9). Because the linker
-contains the verb 'say', main-verb properties of *de-* persist inside
-dep clauses (his 39–41), and because the linker is a converb, dep
-clauses are banned from argument positions: they cannot be grammatical
-subjects (his 49b) and "are never internal arguments" (§3.2). The
-paper's methodological point — "taking the morphology at face value
-(i.e. dep is 'say' + CNV)" (§1) — is rendered literally here:
-`mergeMode` reads a morpheme's merge behavior off its recorded
-morphology (`verbForm`, `coding`), and the ban is derived, not
-stipulated per position. The Washo parallel is [bochnak-hanink-2021]'s
-modifier analysis of non-factive embedding, which Major extends with
-the verb 'say' inside the linker.
+This file formalizes [major-2024]'s analysis of Uyghur *dep* clauses. They look like
+complementizer-headed complements but are converbial adjunct clauses headed by the verb *de*
+'say' with the converb *-(I)p*, merging at VP or TP; because the linker contains the verb,
+main-verb properties of *de-* persist inside *dep* clauses, and because it is a converb,
+*dep* clauses are barred from argument positions. The merge behaviour is read off the
+fragment entries' recorded morphology (`mergeMode`, `licensedIn`), and the ban is derived
+for any analysis of that shape (`SayConverbAnalysis.argument_ban`, `dep_never_argument`),
+with the participial complements as the contrast (`participial_licensed_iff_argument`). The
+Washo parallel is the modifier analysis of non-factive embedding of [bochnak-hanink-2021].
 
-The case-theoretic payoff (his §§4–6) is out of scope here: the same
-decomposition holds of Sakha *dien* = *die* 'say' + converb -(E)n, so
-[baker-vinokurova-2010]'s accusative subjects under *dien* reduce to
-ECM by the v of 'say', resurrecting Case-by-Agree where B&V argued
-for Dependent Case Theory.
+## Implementation notes
 
-## Main declarations
+The case-theoretic consequences for Sakha *dien* and the accusative subjects of
+[baker-vinokurova-2010] are not represented; the examples are rows of
+`Data/Examples/Major2024.json`.
 
-- `ClausePosition`, `MergeMode`, `mergeMode`, `licensedIn` — merge
-  behavior read off the fragment entries' morphology
-- `SayConverbAnalysis` — witness record for the re-analysis (cf.
-  `Bondarenko2022.ContAnalysis` for the rival carving); `depAnalysis`
-  is the Uyghur witness, and `SayConverbAnalysis.argument_ban` derives
-  the ban for any witness
-- `dep_never_argument`, `participial_licensed_iff_argument` — the
-  argument-position asymmetry (his 49, 59, 61)
-- `coerced_speech_reading` — unergative 'scream' + dep (his 38–41)
-- `dep_nci_diagnoses_height` — the VP/TP height contrast (his 54)
-- `dep_never_feeds_factivity` — the factivity alternation as a
-  corollary of the ban (his 61–65)
+## TODO
 
-## The rival carving (docstring-only, per the chronology rule)
+The paper is not on file; example and section locators are transcribed from an earlier
+version of this file and are UNVERIFIED.
 
-[bondarenko-2022] assigns the structurally parallel Buryat say-complex
-*gɘ-žɘ* to functional heads: the say-root expones Cont and the converb
-is a Comp allomorph (`Bondarenko2022.buryatAnalysis`), so the complex
-heads a selected complement. Major's carving keeps both pieces
-lexical — verb plus adjunct-forming converb — and denies complement
-status altogether. Major does not engage that analysis (he cites only
-[bondarenko-2020] among factivity-alternation accounts, §3.2), so no
-divergence theorem is stated here; the two witnesses coexist as rival
-records over their respective fragment inventories.
+## References
 
-Typed paradigm sentences (his 2, 38–41, 49) live in `Major2024.Examples`,
-generated from `Data/Examples/Major2024.json`.
+* [major-2024]
+* [bochnak-hanink-2021]
+* [baker-vinokurova-2010]
 -/
 
 namespace Major2024
@@ -189,7 +164,7 @@ theorem SayConverbAnalysis.adjoins (a : SayConverbAnalysis) :
     licensedIn a.converb .vpAdjunct ∧ licensedIn a.converb .tpAdjunct := by
   unfold licensedIn
   rw [a.mergeMode_converb]
-  exact ⟨fun h => h, fun h => h⟩
+  exact ⟨λ h => h, λ h => h⟩
 
 /-- The argument-position ban, derived for any witness: the converb
 morphology fixes adjunction, and adjuncts never saturate. -/
@@ -198,7 +173,7 @@ theorem SayConverbAnalysis.argument_ban (a : SayConverbAnalysis)
     ¬ licensedIn a.converb pos := by
   unfold licensedIn
   rw [a.mergeMode_converb]
-  exact fun hn => hn h
+  exact λ hn => hn h
 
 /-- The Uyghur witness: *dep* = *de* 'say' + -(I)p (his 2–3), over the
 fragment inventory. -/
@@ -313,7 +288,7 @@ paper rejects (§3.2; 'know' stays presuppositional about its own
 object even with dep present, his 62). -/
 theorem dep_never_feeds_factivity (pos : ClausePosition)
     (h : licensedIn Uyghur.ip pos) : ¬ pos.feedsFactivity :=
-  fun hf => dep_never_argument pos (feedsFactivity_isArgument pos hf) h
+  λ hf => dep_never_argument pos (feedsFactivity_isArgument pos hf) h
 
 /-- The participial contrast (his 61a, 63a–b): the nominalized clause
 sits in complement position, where factivity is fed. -/

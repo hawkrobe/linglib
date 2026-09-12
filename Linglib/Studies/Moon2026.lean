@@ -82,14 +82,14 @@ disconnected sum: non-cumulativity from topology rather than from quantization
 (`qua_cum_incompatible`). -/
 theorem connectivity_breaks_cum (hConn : ∀ x, P x → SelfConnected x) {x y : α} (hx : P x)
     (hy : P y) (hDisc : ¬ SelfConnected (x ⊔ y)) : ¬ CUM P :=
-  fun hCum => hDisc (hConn _ (hCum hx hy))
+  λ hCum => hDisc (hConn _ (hCum hx hy))
 
 /-- With a proper part that is also an instance, such a predicate is neither cumulative
 nor quantized. -/
 theorem connectivity_middle_ground (hConn : ∀ x, P x → SelfConnected x) {a b : α} (ha : P a)
     (hb : P b) (hDisc : ¬ SelfConnected (a ⊔ b)) {x y : α} (hx : P x) (hy : P y)
     (hlt : y < x) : ¬ CUM P ∧ ¬ QUA P :=
-  ⟨connectivity_breaks_cum hConn ha hb hDisc, fun hQ => hQ hy hx hlt.ne hlt.le⟩
+  ⟨connectivity_breaks_cum hConn ha hb hDisc, λ hQ => hQ hy hx hlt.ne hlt.le⟩
 
 end Mereotopology
 
@@ -146,7 +146,7 @@ theorem selfConnected_of_mixedDrinkDen {x : α} (hx : mixedDrinkDen recipe μ ph
 connected liquid. -/
 theorem not_mixedDrinkDen_of_not_selfConnected {x : α} (hDisc : ¬ SelfConnected x) :
     ¬ mixedDrinkDen recipe μ phase x :=
-  fun hx => hDisc (selfConnected_of_mixedDrinkDen hx)
+  λ hx => hDisc (selfConnected_of_mixedDrinkDen hx)
 
 /-- A single ingredient is not the drink: with at least two ingredients whose extensions
 are exclusive of one another's parts, an entity all of whose parts are ingredient `i`
@@ -154,7 +154,7 @@ fills no other slot. -/
 theorem not_mixedDrinkDen_of_exclusive {recipe : Recipe α K (n + 2)} {y : α} (i : Fin (n + 2))
     (hExcl : ∀ j ≠ i, ∀ z ≤ y, ¬ recipe.ingredients j z) :
     ¬ mixedDrinkDen recipe μ phase y :=
-  fun ⟨w⟩ => let ⟨j, hj⟩ := exists_ne i; hExcl j hj _ (w.part_le j) (w.satisfies j)
+  λ ⟨w⟩ => let ⟨j, hj⟩ := exists_ne i; hExcl j hj _ (w.part_le j) (w.satisfies j)
 
 /-- A mixed drink has at least two disjoint non-null parts, so it is not an atom. -/
 theorem mixedDrink_not_atom {recipe : Recipe α K (n + 2)} {x : α}
@@ -171,13 +171,13 @@ theorem mixedDrink_not_atom {recipe : Recipe α K (n + 2)} {x : α}
 mixed drinks: their unit of individuation is not atomicity but the measured part. -/
 theorem atomsOf_excludes_mixed_drinks {recipe : Recipe α K (n + 2)} (DRINK : α → Prop) {x : α}
     (hx : mixedDrinkDen recipe μ phase x) : ¬ Number.atomsOf DRINK x :=
-  fun ⟨_, hAtom⟩ => mixedDrink_not_atom hx hAtom
+  λ ⟨_, hAtom⟩ => mixedDrink_not_atom hx hAtom
 
 /-- Half a margarita with its ratios and connectivity preserved is a margarita, so the
 denotation is not quantized. -/
 theorem mixedDrink_not_qua {x y : α} (hx : mixedDrinkDen recipe μ phase x)
     (hy : mixedDrinkDen recipe μ phase y) (hlt : y < x) : ¬ QUA (mixedDrinkDen recipe μ phase) :=
-  fun hQ => hQ hy hx hlt.ne hlt.le
+  λ hQ => hQ hy hx hlt.ne hlt.le
 
 /-- Mixed drinks occupy [filip-2012]'s middle ground, neither cumulative nor quantized,
 as an instance of `connectivity_middle_ground`. -/
@@ -185,7 +185,7 @@ theorem mixedDrink_middle_ground {a b : α} (ha : mixedDrinkDen recipe μ phase 
     (hb : mixedDrinkDen recipe μ phase b) (hDisc : ¬ SelfConnected (a ⊔ b)) {x y : α}
     (hx : mixedDrinkDen recipe μ phase x) (hy : mixedDrinkDen recipe μ phase y) (hlt : y < x) :
     ¬ CUM (mixedDrinkDen recipe μ phase) ∧ ¬ QUA (mixedDrinkDen recipe μ phase) :=
-  connectivity_middle_ground (fun _ => selfConnected_of_mixedDrinkDen) ha hb hDisc hx hy hlt
+  connectivity_middle_ground (λ _ => selfConnected_of_mixedDrinkDen) ha hb hDisc hx hy hlt
 
 omit [TopologicalSpace α] in
 /-- Neither cumulativity nor quantization of the object propagates to the VP, so neither

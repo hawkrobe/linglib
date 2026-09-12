@@ -1,28 +1,40 @@
 import Linglib.Syntax.Anaphora.Diagnostic
 import Linglib.Data.Examples.Landau2026
-import Linglib.Syntax.RelativeClause.Basic
-import Linglib.Fragments.Hebrew.Relativization
 
 /-!
-# Landau 2026: Silent Resumption [landau-2026]
+# Landau (2026): Silent Resumption: A New Test for Ellipsis
 
-The **Ellipsis-Internal Resumption** (EIR) test distinguishes deep from
-surface anaphora ([hankamer-sag-1976]). By the Ban on Vacuous Quantification
-([chomsky-1982]), an Ā-operator can bind into a null site iff the site has
-LF-visible structure to host a resumptive variable — iff it is a surface
-anaphor (ellipsis). EIR improves on the extraction test: resumptive
-dependencies are fixed at LF, so EIR failure cannot be bled by derivational
-timing and is unambiguously diagnostic of a deep anaphor.
+This file formalizes the ellipsis-internal resumption test of [landau-2026]: by the ban on
+vacuous quantification ([chomsky-1982]) an Ā-operator binds into a null site only if the site
+has structure at LF to host a resumptive variable, so binding into a null site diagnoses a
+surface anaphor, an ellipsis, in the sense of [hankamer-sag-1976]. The three diagnostics are
+`Diagnostic`s over anaphoric depth: the new test decides depth (`eir_decides`), since a
+resumptive dependency is fixed at LF and can be neither bled by derivational timing nor blocked
+by an island, whereas the extraction and agreement tests of [merchant-2001] leave a failure
+ambiguous (`extraction_not_decides`, `agreement_not_decides`) and are refined by the new test
+(`eir_refines_extraction`, `eir_refines_agreement`). The paper's Hebrew nominal ellipses, where
+extraction is unavailable, and its cross-linguistic mixed anaphors are rows of
+`Data/Examples/Landau2026.json`, and every row's acceptability matches the prediction read off
+its depth (`all_eir_consistent`).
 
-`allData` gathers the paper's rows — Hebrew nP/DP/PP ellipsis (where the
-extraction test is unavailable: DPs are absolute islands and P-stranding is
-barred) and the cross-linguistic "mixed anaphors" (English *do so*, Dutch
-*dat doen*, Danish *det*, Korean null objects), all diagnosed deep.
+## Implementation notes
+
+The paper was not available for this pass, and the row annotations and example numbers carried
+over from the earlier version of this file are marked as unverified. A row's depth, domain, and
+the availability of extraction are read from its paper features, and passing the test is the
+acceptability of the resumptive-binding sentence.
+
+## References
+
+* [landau-2026]
+* [hankamer-sag-1976], [chomsky-1982], [merchant-2001]
 -/
 
 namespace Landau2026
 
-open RelativeClause
+-- UNVERIFIED: the example numbers and row annotations are those of the earlier version of
+-- this file.
+
 open Anaphor (Depth DepthCause)
 open Data.Examples (LinguisticExample)
 
@@ -65,7 +77,7 @@ agreement are the two *reliable* classic diagnostics ([landau-2026], after
     because resumptive dependencies are established at LF and cannot be bled by
     derivational timing, nor blocked by islands. -/
 def eir : Diagnostic Bool Depth :=
-  .ofCauses (fun pass => if pass then {.hostsVariable} else {.deepAnaphor}) DepthCause.entails
+  .ofCauses (λ pass => if pass then {.hostsVariable} else {.deepAnaphor}) DepthCause.entails
 
 /-- The **extraction test** as a depth diagnostic. A pass is `hostsVariable`
     (surface); a failure is ambiguous — a `deepAnaphor`, or a *surface* site whose
@@ -73,7 +85,7 @@ def eir : Diagnostic Bool Depth :=
     `islandBlocking`. That extra ambiguity is exactly the gap EIR closes. -/
 def extraction : Diagnostic Bool Depth :=
   .ofCauses
-    (fun pass => if pass then {.hostsVariable}
+    (λ pass => if pass then {.hostsVariable}
                  else {.deepAnaphor, .derivationalBleeding, .islandBlocking})
     DepthCause.entails
 
@@ -95,7 +107,7 @@ def extraction : Diagnostic Bool Depth :=
     a failure means deep. This is what "a new test for ellipsis" amounts to,
     made precise as `Diagnostic.Decides`. -/
 theorem eir_decides : eir.Decides Depth.testOutcome :=
-  fun d => by cases d <;> simp [Depth.testOutcome]
+  λ d => by cases d <;> simp [Depth.testOutcome]
 
 /-- Extraction does **not** decide depth: on a deep site its verdict still admits
     `surface` (the failure could be a bled or island-blocked extraction), so it is
@@ -122,7 +134,7 @@ theorem eir_refines_extraction : eir.Refines extraction := by
     `extractionAvailable = false`.) -/
 def agreement : Diagnostic Bool Depth :=
   .ofCauses
-    (fun pass => if pass then {.hostsVariable} else {.deepAnaphor, .derivationalBleeding})
+    (λ pass => if pass then {.hostsVariable} else {.deepAnaphor, .derivationalBleeding})
     DepthCause.entails
 
 @[simp] theorem agreement_consistent_false :
@@ -225,34 +237,5 @@ theorem hebrew_extraction_unavailable :
 /-- All four cross-linguistic mixed anaphors are diagnosed as deep. -/
 theorem mixed_anaphors_deep :
     ∀ e ∈ mixedAnaphorData, depthOf e = .deep := by decide
-
-/-! ### Integration with existing infrastructure -/
-
-/-- Hebrew has a productive resumptive strategy in relativization — the
-    prerequisite for applying the EIR test. The same resumptive pronoun type
-    that `RelativeClause.NPRelType.resumptive` models for relative clauses is
-    what the EIR test probes for inside ellipsis sites. -/
-theorem hebrew_has_resumptive_strategy :
-    Hebrew.relSheResumptive.npRel = .resumptive := rfl
-
-/-- **The EIR test relies on base-generated resumption.** The paper's argument
-    turns on resumptive dependencies being fixed at LF (binding, not movement),
-    so ellipsis timing cannot bleed them — exactly `ResumptiveKind.bound`. The
-    Sichel-refined Hebrew marker `relSheBoundResumptive` carries this kind,
-    making the paper's "binding, not movement" mechanism true by construction
-    against the relativization substrate ([sichel-2014]). -/
-theorem hebrew_resumptive_is_base_generated :
-    Hebrew.relSheBoundResumptive.npRel.resumptiveKind = some .bound := rfl
-
-/-- The resumptive strategy covers the genitive position on the Accessibility
-    Hierarchy, where possessive resumptive pronouns (the most common type in the
-    EIR data) sit. -/
-theorem resumptive_covers_genitive :
-    Hebrew.relSheResumptive.Covers .genitive := by decide
-
-/-- The gap strategy does NOT cover genitive — this is why possessive
-    dependencies in Hebrew require resumption, making the EIR test applicable. -/
-theorem gap_excludes_genitive :
-    ¬ Hebrew.relSheGap.Covers .genitive := by decide
 
 end Landau2026

@@ -5,50 +5,27 @@ import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.Clitics
 
 /-!
-# Muñoz Pérez (2026) — Stylistic Applicatives in Chilean Spanish
-[munoz-perez-2026]
+# Muñoz Pérez (2026): Stylistic Applicatives
 
-Grammaticality judgments from [munoz-perez-2026] "Stylistic applicatives:
-A lens into the nature of anticausative SE" (*Glossa* 11(1)).
+This file formalizes the argument of [munoz-perez-2026] from the stylistic dative clitic
+*le* of Chilean Spanish, which co-occurs with the reflexive *se* of marked anticausatives
+and the ethical dative *me*, to the nature of anticausative *se*. The three clitic
+patterns are synonymous, which follows if the Voice head that hosts them is semantically
+vacuous (`three_way_synonymy_from_vacuity`); the stylistic clitic is restricted to a
+non-first-person form (`fission_person_restriction`), requires an inchoative predicate
+(`stylLE_requires_inchoative`), and is blocked by unmarked anticausatives
+(`unmarked_blocks_stylLE`), all of which the paper's structural fission rule accounts for
+(`spanishFissionRule`). Acceptability follows the library's six-level taxonomy, the paper's
+star mapping to the unacceptable level.
 
-## Main declarations
+## TODO
 
-* `Judgment`, `CliticPattern`, `DativeCliticPerson` — empirical data types
-* `ApplicativeFission`, `spanishFissionRule` — the paper's structural
-  Fission rule (55), study-local: the paper lists the two positions'
-  forms rather than a Vocabulary for the residue-driven
-  `DistributedMorphology.scansion`
-* `voice_semantically_vacuous` — re-export of
-  `Minimalist.Voice.nonThematic_no_semantics`
-* `three_way_synonymy_from_vacuity`,
-  `fission_person_restriction`, `stylLE_requires_inchoative`,
-  `unmarked_blocks_stylLE` — bridge theorems for the empirical
-  properties of stylistic LE the Fission analysis accounts for
+The paper is not on file; example and rule numbers are transcribed from an earlier version
+of this file and are UNVERIFIED.
 
-## Implementation notes
+## References
 
-Acceptability follows the project-canonical `Features.Acceptability`
-six-level taxonomy. Paper-internal `*` maps to `.unacceptable` and the
-unmarked judgment maps to `.ok`.
-
-## Key data points
-
-1. **Three-way synonymy** (exx. 7–12): For marked anticausatives with
-   1SG/2SG dative, three clitic patterns are interchangeable:
-   - SE + CL_dat: *se me rompió* "it broke on me"
-   - CL_dat + LE: *me le rompió*
-   - SE + CL_dat + LE: *se me le rompió*
-
-2. **Person restriction** (exx. 15–19, *cerrar la ventana*): Stylistic
-   LE is available only with 1SG (*me*) and 2SG (*te*), not 3SG (*le*),
-   1PL (*nos*), 2/3PL (*les*).
-
-3. **Marking restriction** (exx. 39–44): Stylistic LE requires SE-marked
-   (or optionally SE-marked) anticausatives. Unmarked anticausatives
-   (*mejorar*) block it.
-
-4. **Negative controls** (exx. 13b, 14b): *quejarse* and impersonal SE
-   reject the *me le* pattern; the stylistic *le* is not a free dative.
+* [munoz-perez-2026]
 -/
 
 open Features (Acceptability)
@@ -291,11 +268,11 @@ def ApplicativeFission.apply (rule : ApplicativeFission) (p : Category) (c : Lis
     - Bundle: [+PART, +SING] person (1SG or 2SG)
     - Realization: Cl₁ = me/te (from [±AUTHOR]), Cl₂ = le (invariable) -/
 def spanishFissionRule : ApplicativeFission where
-  contextOk := fun heads => isInchoative heads = true
-  decContext := fun heads => inferInstanceAs (Decidable (isInchoative heads = true))
+  contextOk := λ heads => isInchoative heads = true
+  decContext := λ heads => inferInstanceAs (Decidable (isInchoative heads = true))
   bundleOk := IsFissionApplicable
   decBundle := inferInstance
-  realize := fun p => {
+  realize := λ p => {
     cl1Form := if p.toFeatures.hasAuthor then "me" else "te"
     cl2Form := "le"
   }
@@ -310,7 +287,7 @@ def spanishFissionRule : ApplicativeFission where
 def AnticausativePF (out : FissionOutput) : Prop :=
   out.cl1Form = "me" ∨ out.cl1Form = "te" ∨ out.cl1Form = "se"
 
-instance : DecidablePred AnticausativePF := fun out =>
+instance : DecidablePred AnticausativePF := λ out =>
   inferInstanceAs
     (Decidable (out.cl1Form = "me" ∨ out.cl1Form = "te" ∨ out.cl1Form = "se"))
 
@@ -358,7 +335,7 @@ theorem stylLE_requires_inchoative :
     DERIVED from the verb fragment. -/
 theorem stylLE_verbs_inchoative :
     (Spanish.Predicates.munozVerbs.filter (·.licensesStylLE)).all
-      (fun v => isInchoative v.verbHead) = true := by decide
+      (λ v => isInchoative v.verbHead) = true := by decide
 
 /-! ### Marking restriction -/
 
@@ -382,7 +359,7 @@ theorem optional_licenses_stylLE :
     DERIVED from the fragment data. -/
 theorem blocking_verbs_all_unmarked :
     (Spanish.Predicates.munozVerbs.filter (!·.licensesStylLE)).all
-      (fun v => v.anticausativeMarking == .unmarked) = true := by decide
+      (λ v => v.anticausativeMarking == .unmarked) = true := by decide
 
 /-! ### SE-optionality (the PF condition, rule 58) -/
 

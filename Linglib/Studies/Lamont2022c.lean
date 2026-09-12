@@ -1,172 +1,326 @@
 import Linglib.Phonology.Prosody.Foot
 import Linglib.Phonology.Constraints.Directional
-import Linglib.Core.Optimization.Evaluation
+import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
 
 /-!
-# Lamont (2022): footing in directional Harmonic Serialism
-[lamont-2022c]
+# Lamont (2022): A Restrictive, Parsimonious Theory of Footing in Directional Harmonic Serialism
 
-[lamont-2022c] develops a theory of quantity-insensitive footing in Harmonic Serialism
-(HS; [prince-smolensky-1993]) where CON contains only **directionally evaluated**
-constraints ([lamont-2022b]; Eisner 2000): a constraint maps a candidate to a
-per-position violation *vector*, and candidates are ordered lexicographically by the
-*location* of violations rather than their total count. The central result is that
-`Parse(σ)` — penalising unfooted syllables — under directional evaluation both motivates
-iterative footing **and** decides where feet surface, obviating alignment constraints
-([mccarthy-prince-1993]); having `Trochee`/`Iamb` penalise monosyllabic feet additionally
-obviates `FtBin` ([martinez-paricio-kager-2015]).
+This file formalizes the theory of quantity-insensitive footing of [lamont-2022c]: Harmonic
+Serialism ([prince-smolensky-1993]) with a GEN that parses one foot per step ([pruitt-2010],
+[pruitt-2012]) and a CON of directionally evaluated constraints ([eisner-2000],
+[lamont-2022b]), whose violation vectors record where violations fall and are compared
+lexicographically. Under directional evaluation `Parse(σ)` both motivates iterative footing and
+decides where feet surface, so that the alignment constraints of [mccarthy-prince-1993] are
+unnecessary, and with `Trochee` and `Iamb` both penalizing monosyllabic feet `FtBin` is
+unnecessary too ([martinez-paricio-kager-2015]). The paper's tableaux are run as
+`HSDerivation`s over footings: the four-syllable step that parses a leftmost trochee (23), the
+odd-parity step that parses a final monosyllable when `Parse(σ)` dominates `Trochee` and leaves
+it unfooted otherwise ((24), (25), Murinbata ([street-mollinjin-1981]) against Pintupi
+([hansen-hansen-1969])), antepenultimate stress placed by `Iamb` where `Hd(ω)` is active (29),
+bidirectional footing from a `FootLeft` foot (33), ternary rhythm from `*FootFoot` (36), and the
+exhaustive bidirectional footing of Waorani (43), which parses its suffix string first under
+indexed constraints (44). A monosyllabic foot is never optimal while a disyllabic foot can be
+parsed (`monosyllable_never_optimal`), and `Parse(σ)` orders the placements of a foot type
+((13), (14)).
 
-This file formalises the central QI result. GEN parses **one foot per step**
-([pruitt-2010]; [pruitt-2012]): a single unfooted σ into a monosyllabic foot, or two
-adjacent unfooted σ into a disyllabic foot. We reuse the canonical `Prosody.Foot`
-(`S = Unit`, since QI footing strips weight) assembled **flatly** — a footing is a
-sequence of feet and stray syllables with no designated head foot, because Lamont does
-not distinguish primary from secondary stress (so the headed `Prosody.Word` ω, which is
-a footing *plus* a head foot, is deliberately *not* the candidate type here). `Parse(σ)`
-is a `Constraints.directionalBlock` over σ-positions; `Trochee`/`Iamb` read the foot
-head off `Foot.head`.
+## Implementation notes
 
-## Main results
+A footing is the library's `Prosody.Footing`, a flat sequence of feet and stray syllables
+with no head foot, since the paper does not distinguish primary from secondary stress; a
+syllable carries no weight, and for Waorani only its affiliation to stem or suffix. Directional
+constraints are `Constraints.directionalBlock`s, one binary constraint per syllable position,
+the block reversed for right-to-left evaluation; a foot-form violation is charged at the
+rightmost syllable of its foot, as under left-to-right evaluation, which the paper shows is the
+only direction that matters for these constraints in iterative footing. The prosodic-word
+constraints `Hd(ω)`, `NonFinality`, `FootLeft`, `FootRight`, and `*FootFoot` are counted, their
+direction being irrelevant to a word. Each tableau is a `stepOptimum` computation with
+convergence checked at the last step; the factorial typology of §4 is not formalized.
 
-* `murinbata_exhaustive` / `pintupi_inexhaustive` — the headline contrast: the same
-  5σ step parses exhaustively under `Parse(σ) ≫ Trochee` ([street-mollinjin-1981]) but
-  stays faithful (final σ unfooted) under `Trochee ≫ Parse(σ)` ([hansen-hansen-1969]).
-* `ftbin_obviated` — a monosyllabic-foot candidate is harmonically bounded with no
-  `FtBin` in CON ([martinez-paricio-kager-2015]).
+## References
 
-## Deferred (prose)
-
-The paper's bidirectional Waorani case study (§3 — a head foot at the right edge with
-secondary feet built left-to-right) is its showcase and the natural next extension;
-Macedonian (`Hd(ω)`/`NonFinality`), Garawa, and Cayuvava ternarity (`*FootFoot`) each
-need further constraints; the software-computed factorial typology (§4) is a meta-claim,
-not a per-string prediction. All are noted here, not formalised.
+* [lamont-2022c]
+* [lamont-2022b], [eisner-2000], [prince-smolensky-1993], [pruitt-2010], [pruitt-2012]
+* [mccarthy-prince-1993], [martinez-paricio-kager-2015]
+* [street-mollinjin-1981], [hansen-hansen-1969]
 -/
 
 namespace Lamont2022c
 
-open Prosody Core.Optimization.Evaluation
+open Prosody Constraints OptimalityTheory Core.Optimization.Evaluation
 
-/-! ### Footings
+variable {S : Type*} [DecidableEq S]
 
-A footing here is the canonical `Prosody.Footing Unit` (quantity-insensitive, so feet
-are `Foot Unit`): a flat sequence of feet and unfooted stray σ, no designated head foot
-([lamont-2022c], abstracting from primary stress). `Parse(σ)` reads `Footing.strayMarks`;
-`Trochee`/`Iamb` read each foot's head (`Foot.head`). -/
+/-! ### GEN (§2.1) -/
+
+/-- The footings that parse exactly one more foot: a stray syllable into a monosyllabic foot,
+or two adjacent stray syllables into a trochee or an iamb ((9)); feet are never altered. -/
+def parseOne : Footing S → List (Footing S)
+  | [] => []
+  | .inl f :: rest => (parseOne rest).map (.inl f :: ·)
+  | .inr a :: rest =>
+      (.inl (Foot.monosyllable a) :: rest) ::
+        (match rest with
+          | .inr b :: rest' => [.inl (Foot.trochee a b) :: rest', .inl (Foot.iamb a b) :: rest']
+          | _ => []) ++ (parseOne rest).map (.inr a :: ·)
+
+/-- GEN: the faithful candidate and the parses of one more foot. -/
+def gen (fc : Footing S) : Finset (Footing S) := (fc :: parseOne fc).toFinset
+
+/-! ### Constraints (§2.2) -/
+
+/-- `Parse(σ)` evaluated left to right ((10)): one violation at each unfooted syllable. -/
+def parseLR (n : ℕ) : List (Constraint (Footing S)) :=
+  directionalBlock n λ i fc => fc.strayMarks.getD i.val 0 = 1
+
+/-- `Parse(σ)` evaluated right to left: the block reversed. -/
+def parseRL (n : ℕ) : List (Constraint (Footing S)) := (parseLR n).reverse
+
+/-- The violation vector of a foot-form constraint: a foot with the property `P` is charged
+at its rightmost syllable, the left-to-right convention. -/
+def footMarks (P : Foot S → Bool) (fc : Footing S) : List ℕ :=
+  fc.flatMap (Sum.elim
+    (λ f => if P f then List.replicate (f.length - 1) 0 ++ [1] else List.replicate f.length 0)
+    (λ _ => [0]))
+
+/-- `Trochee` ((15)): one violation per foot whose rightmost syllable is its head, a
+monosyllabic foot included. -/
+def trochee (n : ℕ) : List (Constraint (Footing S)) :=
+  directionalBlock n λ i fc => (footMarks (λ f => decide f.IsIambic) fc).getD i.val 0 = 1
+
+/-- `Iamb` ((18)): one violation per foot whose leftmost syllable is its head, a monosyllabic
+foot included. -/
+def iamb (n : ℕ) : List (Constraint (Footing S)) :=
+  directionalBlock n λ i fc => (footMarks (λ f => decide f.IsTrochaic) fc).getD i.val 0 = 1
+
+/-- `Hd(ω)` ((26)): the word dominates no foot. -/
+def hdWord : Constraint (Footing S) := Constraint.binary (·.feet = [])
+
+/-- `NonFinality` ((28)): the rightmost syllable is footed. -/
+def nonFinality : Constraint (Footing S) :=
+  Constraint.binary (·.strayMarks.getLast? = some 0)
+
+/-- `FootLeft` ((30)): the leftmost syllable is not leftmost in a foot. -/
+def footLeft : Constraint (Footing S) := Constraint.binary (·.strayMarks.head? = some 1)
+
+/-- `FootRight` ((31)): the rightmost syllable is not rightmost in a foot. -/
+def footRight : Constraint (Footing S) := Constraint.binary (·.strayMarks.getLast? = some 1)
+
+/-- `*FootFoot` ((34)): one violation per pair of adjacent feet. -/
+def starFootFoot : Constraint (Footing S) :=
+  λ fc => ((fc.zip fc.tail).filter λ p => p.1.isLeft && p.2.isLeft).length
+
+/-- The violation vector of a block of constraints on a footing. -/
+def vec (block : List (Constraint (Footing S))) (fc : Footing S) : List ℕ := block.map (· fc)
+
+/-! ### Iterative footing (§2.2)
+
+Quantity-insensitive words are strings of syllables of type `Unit`. -/
+
+/-- An unfooted syllable. -/
+abbrev stray : Foot Unit ⊕ Unit := .inr ()
+
+/-- A trochee `(σ́σ)`. -/
+abbrev troch : Foot Unit ⊕ Unit := .inl (Foot.trochee () ())
 
 /-- A monosyllabic foot `(σ́)`. -/
-def mono : Foot Unit := ⟨[()], 0⟩
-/-- A (left-headed) trochee `(σ́σ)`. -/
-def troch : Foot Unit := ⟨[(), ()], 0⟩
-/-- A (right-headed) iamb `(σσ́)`. -/
-def iamb : Foot Unit := ⟨[(), ()], 1⟩
+abbrev mono : Foot Unit ⊕ Unit := .inl (Foot.monosyllable ())
 
-/-! ### The directional constraints
+/-- A string of `n` unfooted syllables. -/
+def strays (n : ℕ) : Footing Unit := List.replicate n stray
 
-`Parse(σ)` ([lamont-2022c] (10)) is a `Constraints.directionalBlock`: a per-position
-block of binary constraints, `position i ↦ ⟦σ i is unfooted⟧`. `Trochee` (15) and
-`Iamb` (18) penalise feet by head position — `Trochee` a foot whose head is rightmost
-(= `Foot.IsIambic`, true of iambs and monosyllables), `Iamb` a foot whose head is
-leftmost (= `Foot.IsTrochaic`, true of trochees and monosyllables); a monosyllabic foot
-violates both, doing `FtBin`'s work. -/
+/-- `Parse(σ)⇒` orders the placements of a trochee, the leftmost best ((13a)). -/
+theorem parseLR_orders_trochees :
+    LexLT (vec (parseLR 4) [troch, stray, stray]) (vec (parseLR 4) [stray, troch, stray]) ∧
+      LexLT (vec (parseLR 4) [stray, troch, stray]) (vec (parseLR 4) [stray, stray, troch]) := by
+  decide +kernel
 
-/-- `Parse(σ)` as a directional block over `n` σ-positions. -/
-def parse (n : Nat) : List (Constraints.Constraint (Footing Unit)) :=
-  Constraints.directionalBlock n (fun (i : Fin n) (fc : Footing Unit) => (fc.strayMarks).getD i.val 0 = 1)
+/-- `Parse(σ)⇐` orders them the other way, the rightmost best ((14a)). -/
+theorem parseRL_orders_trochees :
+    LexLT (vec (parseRL 4) [stray, stray, troch]) (vec (parseRL 4) [stray, troch, stray]) ∧
+      LexLT (vec (parseRL 4) [stray, troch, stray]) (vec (parseRL 4) [troch, stray, stray]) := by
+  decide +kernel
 
-/-- `Trochee`: one violation per foot whose head is rightmost (= `Foot.IsIambic`). -/
-def trochee (fc : Footing Unit) : Nat :=
-  ((fc.feet).filter (fun f => decide f.IsIambic)).length
-/-- `Iamb`: one violation per foot whose head is leftmost (= `Foot.IsTrochaic`). -/
-def iambC (fc : Footing Unit) : Nat :=
-  ((fc.feet).filter (fun f => decide f.IsTrochaic)).length
+/-- `Parse(σ)⇒ ≫ Trochee ≫ Iamb`: Murinbata's exhaustive left-to-right trochees ((21), (23),
+(24)). -/
+def murinbata (n : ℕ) : HSDerivation (Footing Unit) :=
+  ⟨gen, parseLR n ++ trochee n ++ iamb n⟩
 
-/-- The violation vector of a footing under a ranking (a list of constraints), as the
-    concatenated per-constraint violations — ordered lexicographically (`LexLE`). -/
-def profile (ranking : List (Constraints.Constraint (Footing Unit))) (fc : Footing Unit) : List Nat :=
-  ranking.map (fun c => c fc)
+/-- `Trochee ≫ Parse(σ)⇒ ≫ Iamb`: Pintupi's inexhaustive left-to-right trochees ((22),
+(25)). -/
+def pintupi (n : ℕ) : HSDerivation (Footing Unit) :=
+  ⟨gen, trochee n ++ parseLR n ++ iamb n⟩
 
-/-- Murinbata ranking `Parse(σ) ≫ Trochee ≫ Iamb` ([street-mollinjin-1981]). -/
-def murinbata (n : Nat) : List (Constraints.Constraint (Footing Unit)) :=
-  parse n ++ [fun fc => trochee fc, fun fc => iambC fc]
-/-- Pintupi ranking `Trochee ≫ Parse(σ) ≫ Iamb` ([hansen-hansen-1969]). -/
-def pintupi (n : Nat) : List (Constraints.Constraint (Footing Unit)) :=
-  (fun fc => trochee fc) :: parse n ++ [fun fc => iambC fc]
+/-- (23i): the first step parses a trochee at the left edge. -/
+theorem step_23i : (murinbata 4).stepOptimum (strays 4) = {[troch, stray, stray]} := by
+  decide +kernel
 
-/-! ### The headline: exhaustive vs inexhaustive (the decisive step)
+/-- (23m): the second step foots the remaining two syllables. -/
+theorem step_23m : (murinbata 4).stepOptimum [troch, stray, stray] = {[troch, troch]} := by
+  decide +kernel
 
-The same 5σ string at the step from `(σ́σ)(σ́σ)σ`: GEN can parse the final stray σ into
-a monosyllabic foot (`exhaustive`) or leave it (`faithful`, converged). -/
+/-- The even-parity derivation converges without a monosyllabic foot. -/
+theorem converged_23 : (murinbata 4).Converged [troch, troch] := by decide +kernel
 
-/-- `(σ́σ)(σ́σ)σ` — two trochees and a final unfooted σ. -/
-def faithful : Footing Unit := [.inl troch, .inl troch, .inr ()]
-/-- `(σ́σ)(σ́σ)(σ́)` — the final σ parsed into a monosyllabic foot. -/
-def exhaustive : Footing Unit := [.inl troch, .inl troch, .inl mono]
+/-- The monosyllabic-foot parses of `/σσσσ/` ((23b–e)). -/
+def monoParses : List (Footing Unit) :=
+  [[mono, stray, stray, stray], [stray, mono, stray, stray], [stray, stray, mono, stray],
+    [stray, stray, stray, mono]]
 
-/-- **Murinbata** ([street-mollinjin-1981]): under `Parse(σ) ≫ Trochee`, the exhaustive
-    parse wins — the final σ is footed into a monosyllable (final monosyllabic feet,
-    exhaustive parsing). -/
-theorem murinbata_exhaustive :
-    LexLE (profile (murinbata 5) exhaustive) (profile (murinbata 5) faithful)
-    ∧ ¬ LexLE (profile (murinbata 5) faithful) (profile (murinbata 5) exhaustive) := by decide
+/-- The six rankings of `Parse(σ)`, `Trochee`, and `Iamb`, evaluated left to right. -/
+def rankings (n : ℕ) : List (List (Constraint (Footing Unit))) :=
+  [parseLR n ++ trochee n ++ iamb n, parseLR n ++ iamb n ++ trochee n,
+    trochee n ++ parseLR n ++ iamb n, trochee n ++ iamb n ++ parseLR n,
+    iamb n ++ parseLR n ++ trochee n, iamb n ++ trochee n ++ parseLR n]
 
-/-- **Pintupi** ([hansen-hansen-1969]): under `Trochee ≫ Parse(σ)`, the faithful parse
-    wins — parsing a monosyllable would violate the dominant `Trochee`, so the final σ
-    stays unfooted (inexhaustive parsing). The derivation has converged. -/
-theorem pintupi_inexhaustive :
-    LexLE (profile (pintupi 5) faithful) (profile (pintupi 5) exhaustive)
-    ∧ ¬ LexLE (profile (pintupi 5) exhaustive) (profile (pintupi 5) faithful) := by decide
+/-- A monosyllabic foot is never optimal while a disyllabic foot can be parsed ((23)): under
+every ranking of the three constraints, no monosyllabic parse of `/σσσσ/` is in the step
+optimum, so `FtBin` is unnecessary. -/
+theorem monosyllable_never_optimal :
+    ∀ r ∈ rankings 4, ∀ m ∈ monoParses,
+      m ∉ (HSDerivation.mk gen r).stepOptimum (strays 4) := by
+  decide +kernel
 
-/-! ### Parsimony: `FtBin` is obviated
+/-- (24): with `Parse(σ)` dominant, the final syllable of an odd-parity word is footed. -/
+theorem step_24 :
+    (murinbata 5).stepOptimum [troch, troch, stray] = {[troch, troch, mono]} := by
+  decide +kernel
 
-In even-parity `/σσσσ/`, the monosyllabic-foot candidate `(σ́)σσσ` is harmonically
-bounded by the disyllabic `(σ́σ)σσ` under `Parse(σ) ≫ Trochee ≫ Iamb` — *without* any
-`FtBin` in CON. `Trochee` and `Iamb` both penalising monosyllables do `FtBin`'s work
-([martinez-paricio-kager-2015]). -/
+/-- (25): with `Trochee` dominant, it stays unfooted and the derivation has converged. -/
+theorem converged_25 : (pintupi 5).Converged [troch, troch, stray] := by decide +kernel
 
-/-- `(σ́σ)σσ` — one leftmost trochee in `/σσσσ/`. -/
-def disyll4 : Footing Unit := [.inl troch, .inr (), .inr ()]
-/-- `(σ́)σσσ` — one leftmost monosyllable in `/σσσσ/`. -/
-def monosyll4 : Footing Unit := [.inl mono, .inr (), .inr (), .inr ()]
+/-! ### Non-iterative footing (§2.2)
 
-/-- **`FtBin` obviation**: the disyllabic-foot candidate strictly beats the
-    monosyllabic-foot candidate with no `FtBin` in CON — the monosyllable both fails
-    `Parse(σ)` more and violates `Trochee`. -/
-theorem ftbin_obviated :
-    LexLE (profile (murinbata 4) disyll4) (profile (murinbata 4) monosyll4)
-    ∧ ¬ LexLE (profile (murinbata 4) monosyll4) (profile (murinbata 4) disyll4) := by decide
+Where `Hd(ω)` alone motivates a foot, `Iamb⇒` places a trochee as far right as `NonFinality`
+allows: antepenultimate stress ((27), (29)). -/
 
-/-! ### The footing functor: head (= stress) survives into grid and tree
+/-- `Hd(ω) ≫ Trochee ≫ NonFinality ≫ Iamb⇒ ≫ Parse(σ)`: Macedonian antepenultimate
+stress. -/
+def macedonian (n : ℕ) : HSDerivation (Footing Unit) :=
+  ⟨gen, hdWord :: trochee n ++ nonFinality :: iamb n ++ parseLR n⟩
 
-Lamont's `Trochee`/`Iamb` read each foot's head off `Foot.head`. Re-representing a foot
-into the prosodic `Tree` (`Foot.toProsTree`) and the head-flag row (`Foot.headFlags`)
-recovers *exactly* that head — `Foot.headFlags_toProsTree` proves the tree's σ-leaves
-carry the same head profile — and the tree always lands in the well-formed
-f/σ band (`Foot.isFoot_toProsTree`). So the head, the stress these constraints penalise,
-survives both re-representations. QI footing strips weight, so the tree reads any
-constant σ-weight. -/
+/-- (29f): the trochee surfaces one syllable from the right edge. -/
+theorem step_29f : (macedonian 4).stepOptimum (strays 4) = {[stray, troch, stray]} := by
+  decide +kernel
 
-/-- QI footing is weight-blind: a `Foot Unit`'s σ read one (light) mora. -/
-def qiWeight : Unit → Syllable.Weight := fun _ => Syllable.Weight.light
+/-- No further foot is parsed, `Trochee` and `Iamb` dominating `Parse(σ)`. -/
+theorem converged_29 : (macedonian 4).Converged [stray, troch, stray] := by decide +kernel
 
-/-- **Well-formedness through the functor**: every QI foot Lamont assembles re-represents
-    as a well-formed prosodic-tree foot (`Foot.isFoot_toProsTree`) — the flat `Footing`
-    candidates are built from feet that are legal `f`-over-σ subtrees of the OT `Tree`
-    carrier. -/
-theorem qiFeet_areFootTrees :
-    IsFoot (mono.toProsTree qiWeight) ∧ IsFoot (troch.toProsTree qiWeight)
-      ∧ IsFoot (iamb.toProsTree qiWeight) :=
-  ⟨Foot.isFoot_toProsTree qiWeight mono, Foot.isFoot_toProsTree qiWeight troch,
-   Foot.isFoot_toProsTree qiWeight iamb⟩
+/-! ### Bidirectional and ternary footing (§2.2)
 
-/-- **Head survives into flags and tree**: the head-flag row marks the foot head — leftmost
-    for the trochee (the foot Lamont's `Iamb` penalises), rightmost for the iamb (the foot
-    `Trochee` penalises) — and the prosodic tree carries the *same* head profile, reduced
-    here through `Foot.headFlags_toProsTree`. The trochaic vs iambic stress survives the
-    functor identically. -/
-theorem head_survives :
-    Foot.headFlags troch = [true, false] ∧ Foot.headFlags iamb = [false, true] := by
-  rw [← Foot.headFlags_toProsTree qiWeight troch, ← Foot.headFlags_toProsTree qiWeight iamb]
-  decide
+A foot is first parsed at one edge, satisfying `FootLeft`, then feet are parsed from the other
+edge by `Parse(σ)⇐`, with word-internal lapse in odd-parity words ((32), (33)); `*FootFoot`
+above `Parse(σ)` leaves a syllable between feet ((35), (36)). -/
+
+/-- `FootLeft ≫ Trochee ≫ Parse(σ)⇐ ≫ Iamb`: Garawa's bidirectional trochees. -/
+def garawa (n : ℕ) : HSDerivation (Footing Unit) :=
+  ⟨gen, footLeft :: trochee n ++ parseRL n ++ iamb n⟩
+
+theorem step_33b : (garawa 7).stepOptimum (strays 7) = {troch :: strays 5} := by decide +kernel
+
+theorem step_33g : (garawa 7).stepOptimum (troch :: strays 5) = {troch :: strays 3 ++ [troch]} := by
+  decide +kernel
+
+theorem step_33i :
+    (garawa 7).stepOptimum (troch :: strays 3 ++ [troch]) = {[troch, stray, troch, troch]} := by
+  decide +kernel
+
+/-- (33j): the third syllable stays unfooted, `Trochee` dominating `Parse(σ)`. -/
+theorem converged_33 : (garawa 7).Converged [troch, stray, troch, troch] := by decide +kernel
+
+/-- `NonFinality ≫ *FootFoot ≫ Parse(σ)⇐ ≫ Trochee ≫ Iamb`: Cayuvava's dactyls. -/
+def cayuvava (n : ℕ) : HSDerivation (Footing Unit) :=
+  ⟨gen, nonFinality :: starFootFoot :: parseRL n ++ trochee n ++ iamb n⟩
+
+theorem step_36h : (cayuvava 9).stepOptimum (strays 9) = {strays 6 ++ [troch, stray]} := by
+  decide +kernel
+
+theorem step_36n :
+    (cayuvava 9).stepOptimum (strays 6 ++ [troch, stray]) =
+      {strays 3 ++ [troch, stray, troch, stray]} := by
+  decide +kernel
+
+theorem step_36q :
+    (cayuvava 9).stepOptimum (strays 3 ++ [troch, stray, troch, stray]) =
+      {[troch, stray, troch, stray, troch, stray]} := by
+  decide +kernel
+
+/-- The stray syllables cannot be footed without violating `NonFinality` or `*FootFoot`. -/
+theorem converged_36 : (cayuvava 9).Converged [troch, stray, troch, stray, troch, stray] := by
+  decide +kernel
+
+/-! ### Waorani (§3)
+
+The head foot is parsed at the right edge under `FootRight`, then the suffix string is footed
+under the indexed `Parse(σ)ₛᵤffix`, then the stem from the left, with a monosyllabic foot
+surfacing only in the stem, since the indexed `Trocheeₛᵤffix` dominates `Parse(σ)ₛᵤffix` while
+`Parse(σ)` dominates `Trochee` ((37)–(44)). -/
+
+/-- A syllable's affiliation. -/
+inductive Morph
+  | stem
+  | suffix
+  deriving DecidableEq, Repr
+
+/-- The suffix syllables. -/
+def Morph.isSuffix : Morph → Bool
+  | .suffix => true
+  | .stem => false
+
+/-- `Parse(σ)` indexed to the suffix string, evaluated left to right. -/
+def parseSuffixLR (n : ℕ) : List (Constraint (Footing Morph)) :=
+  directionalBlock n λ i fc =>
+    (fc.flatMap (Sum.elim (λ f => List.replicate f.length 0)
+      (λ s => [if s.isSuffix then 1 else 0]))).getD i.val 0 = 1
+
+/-- `Trochee` indexed to the suffix string: charged to a foot dominating a suffix syllable. -/
+def trocheeSuffix (n : ℕ) : List (Constraint (Footing Morph)) :=
+  directionalBlock n λ i fc =>
+    (footMarks (λ f => decide f.IsIambic && f.syllables.any Morph.isSuffix) fc).getD i.val 0 = 1
+
+/-- `FootRight ≫ Parse(σ)⇒ ≫ Trochee ≫ Iamb` ((43)), with the indexed `Trocheeₛᵤffix ≫
+Parse(σ)ₛᵤffix` between `FootRight` and `Parse(σ)` ((44)). -/
+def waorani (n : ℕ) : HSDerivation (Footing Morph) :=
+  ⟨gen, footRight :: trocheeSuffix n ++ parseSuffixLR n ++ parseLR n ++ trochee n ++ iamb n⟩
+
+/-- An unfooted stem syllable. -/
+abbrev st : Foot Morph ⊕ Morph := .inr .stem
+
+/-- An unfooted suffix syllable. -/
+abbrev sf : Foot Morph ⊕ Morph := .inr .suffix
+
+/-- A trochee over two stem syllables. -/
+abbrev trochSt : Foot Morph ⊕ Morph := .inl (Foot.trochee .stem .stem)
+
+/-- A trochee over two suffix syllables. -/
+abbrev trochSf : Foot Morph ⊕ Morph := .inl (Foot.trochee .suffix .suffix)
+
+/-- A monosyllabic foot over a stem syllable. -/
+abbrev monoSt : Foot Morph ⊕ Morph := .inl (Foot.monosyllable .stem)
+
+/-- (43): a pentasyllabic stem is footed from the right edge, then from the left, and a
+monosyllabic foot surfaces word-medially. -/
+theorem steps_43 :
+    (waorani 5).stepOptimum [st, st, st, st, st] = {[st, st, st, trochSt]} ∧
+    (waorani 5).stepOptimum [st, st, st, trochSt] = {[trochSt, st, trochSt]} ∧
+    (waorani 5).stepOptimum [trochSt, st, trochSt] = {[trochSt, monoSt, trochSt]} ∧
+    (waorani 5).Converged [trochSt, monoSt, trochSt] := by
+  decide +kernel
+
+/-- (44): with a pentasyllabic suffix string, the head foot is parsed at the right edge, the
+suffix string is footed from its left edge before the stem, the stem is exhaustively footed,
+and the remaining suffix syllable stays unfooted. -/
+theorem steps_44 :
+    (waorani 10).stepOptimum [st, st, st, st, st, sf, sf, sf, sf, sf] =
+        {[st, st, st, st, st, sf, sf, sf, trochSf]} ∧
+      (waorani 10).stepOptimum [st, st, st, st, st, sf, sf, sf, trochSf] =
+        {[st, st, st, st, st, trochSf, sf, trochSf]} ∧
+      (waorani 10).stepOptimum [st, st, st, st, st, trochSf, sf, trochSf] =
+        {[trochSt, st, st, st, trochSf, sf, trochSf]} ∧
+      (waorani 10).stepOptimum [trochSt, st, st, st, trochSf, sf, trochSf] =
+        {[trochSt, trochSt, st, trochSf, sf, trochSf]} ∧
+      (waorani 10).stepOptimum [trochSt, trochSt, st, trochSf, sf, trochSf] =
+        {[trochSt, trochSt, monoSt, trochSf, sf, trochSf]} ∧
+      (waorani 10).Converged [trochSt, trochSt, monoSt, trochSf, sf, trochSf] := by
+  decide +kernel
 
 end Lamont2022c

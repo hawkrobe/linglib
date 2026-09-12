@@ -1,38 +1,40 @@
 import Linglib.Syntax.Control.Defs
 import Linglib.Syntax.Control.Head
-import Linglib.Studies.Chierchia1984
 import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Data.Complementation.Noonan2007
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
 # Landau (2015): A Two-Tiered Theory of Control
-[landau-2015] [landau-2004] [landau-2013]
 
-MIT Press. ISBN 978-0-262-02885-1.
+This file formalizes the two-tiered theory of [landau-2015]: obligatory control complements
+divide by the attitude status of the selecting predicate, non-attitude complements
+establishing control by predication and attitude complements by the binding of a projected
+coordinate of the embedded context, a second tier built over the first. The predicate classes
+of [landau-2000] carry the split, the four classes selecting untensed complements to the
+predicative tier and the four selecting tensed ones to the logophoric tier ((4), (5)); the
+summary table of contrasts (80) shows the two tiers separated on every row, with obligatory
+control into an inflected complement realized as the OC-NC generalization (70) over the
+library's clause classes (`inflectedComplement_realizes_ocnc`); and object control under
+attitude predicates reads *de se* with psychological verbs and *de te* with communicative
+ones (36). The predicate classes are derived from the English fragment's verb entries rather
+than stored (`derivedLandauClass`), and the derivation places the book's exhaustive-control
+verbs on the predicative tier and its partial-control verbs on the logophoric tier.
 
-The TTC's own apparatus — the predicative/logophoric `Tier`, the eight
-`PredicateClass`es, and their tier assignment — is defined here, mapped into
-the neutral vocabulary by `Tier.mechanism` (`Control.Mechanism`); the
-finiteness scale it consumes is `Control.ClauseClass`
-(`Syntax/Control/Head.lean`). The file holds the book's empirical
-engagement: the table (80) contrasts, the
-*de se*/*de te* split in object control (table (36)), the derivation of
-predicate classes from English Fragment verb entries, and the
-consilience bridge to [noonan-2007]'s CTP classification.
+## Implementation notes
 
-## Main results
+The book was checked against the author's 2014 manuscript, whose numbering agrees with the
+citations here. The tiers are mapped into the library's neutral vocabulary of control
+mechanisms, predication sharing a referent and logophoric control composing a binding leg
+over predication. Table (80) is recorded as the book states it; its three saturation rows,
+control shift, partial control, and split control, are what `Control.IsSaturating` denies of a
+predicative dependency, and its inflected-complement row is the one derived here. Obligatory
+*de se* is a property of the logophoric tier alone, not a criterion of obligatory control.
 
-- `Table80Row` with the two availability columns: the six empirical
-  contrasts of table (80), a perfect split between the tiers
-  (`table80_complementary`); the mechanism rows cite their
-  `Control.IsSaturating` derivations
-- `objectControlReading`: psychological → *de se*, communicative →
-  *de te* (table (36))
-- `derivedLandauClass` / `derivedControlTier`: predicate classes derived
-  from Fragment verb fields rather than stored
-- `ctpToControlTier` / `ctpToLandauClass`: Noonan CTP classes mapped to
-  the TTC, with the tier-consistency theorem
+## References
+
+* [landau-2015]
+* [landau-2000], [landau-2004], [landau-2013]
+* [pearson-2016], [heim-2008], [kratzer-2009], [ganenkov-2019]
 -/
 
 namespace Landau2015
@@ -42,181 +44,134 @@ open Features (Attitude)
 
 /-! ### The two tiers -/
 
-/-- The two tiers of obligatory control.
-
-    Predicative control (EC complements): selected by nonattitude
-    predicates; PRO moves to Spec,Fin and control is syntactic
-    predication; forces exhaustive control.
-
-    Logophoric control (PC complements): selected by attitude
-    predicates; C^OC projects a perspectival coordinate and control is
-    predication + variable binding; allows partial control and forces
-    an attitude-holder-bound reading — *de se* under subject and
-    psych-object control, *de te* under communicative object control
-    (table (36), `objectControlReading`). -/
+/-- The two tiers of obligatory control: predicative control, selected by non-attitude
+predicates, where PRO moves to the specifier of Fin and control is syntactic predication,
+which forces exhaustive control; and logophoric control, selected by attitude predicates,
+where the complementizer projects a perspectival coordinate that binds PRO, which admits
+partial control and forces a reading bound to the attitude holder. -/
 inductive Tier where
-  /-- Predicative control: nonattitude, predication only -/
   | predicative
-  /-- Logophoric control: attitude, predication + variable binding -/
   | logophoric
   deriving DecidableEq, Repr
 
-/-- Logophoric control corresponds to attitude complements. -/
-def Tier.isAttitude : Tier → Bool
-  | .predicative => false
-  | .logophoric  => true
-
-/-- Each tier's dependency mechanism, in the neutral vocabulary
-    (`Control.Mechanism`): predication shares the referent; logophoric
-    control composes a binding leg over predication. -/
+/-- Each tier's dependency mechanism in the neutral vocabulary: predication shares the
+referent, logophoric control composes a binding leg over predication. -/
 def Tier.mechanism : Tier → Control.Mechanism
   | .predicative => .referent
   | .logophoric  => .composite
 
-/-! ### Predicate classification -/
+/-! ### Predicate classes ((4), (5)) -/
 
-/-- The control predicate classes ([landau-2000]; (4a–d)/(5a–d)): classes
-    (4a–d) select untensed complements (nonattitude → predicative control),
-    classes (5a–d) tensed ones (attitude → logophoric control),
-    [landau-2004]'s correlation. Membership is a property of
-    predicate–complement pairs, not lexemes, and the evaluative class is the
-    *of*-frame adjectives specifically ([landau-2004] for the class).
-    [pearson-2016]'s rival cut is temporal, not attitudinal. -/
+/-- The control predicate classes of [landau-2000]: four selecting untensed complements (4),
+four selecting tensed complements (5), [landau-2004]'s correlation. Membership is a property
+of predicate–complement pairs, not lexemes, and the evaluative class is the *of*-frame
+adjectives; [pearson-2016]'s rival cut is temporal rather than attitudinal. -/
 inductive PredicateClass where
-  /-- avoid, dare, manage, remember, … (nonattitude) -/
+  /-- *dare*, *manage*, *remember*, *avoid*, *fail*, *force*, … (4a). -/
   | implicative
-  /-- begin, continue, finish, start, stop (nonattitude) -/
+  /-- *begin*, *start*, *continue*, *finish*, *stop* (4b). -/
   | aspectual
-  /-- have, is able, may, must, need, should (nonattitude) -/
+  /-- *have*, *need*, *may*, *should*, *is able*, *must* (4c). -/
   | modal
-  /-- bold, crazy, kind, rude, silly, smart (nonattitude; *of*-frame
-      adjectives) -/
+  /-- *rude*, *silly*, *smart*, *kind*, *bold*, *crazy* (4d). -/
   | evaluative
-  /-- dislike, glad, hate, regret, sorry, … (attitude) -/
+  /-- *glad*, *regret*, *hate*, *sorry*, … (5a). -/
   | factive
-  /-- affirm, believe, claim, declare, say, think (attitude) -/
+  /-- *believe*, *think*, *say*, *claim*, *declare*, … (5b). -/
   | propositional
-  /-- agree, choose, decide, hope, intend, want, … (attitude) -/
+  /-- *want*, *hope*, *agree*, *decide*, *intend*, *promise*, *choose*, … (5c). -/
   | desiderative
-  /-- ask, guess, inquire, know, wonder (attitude) -/
+  /-- *wonder*, *ask*, *inquire*, *guess*, *know* (5d). -/
   | interrogative
   deriving DecidableEq, Repr
 
-/-- Map predicate class to control tier. -/
+/-- The tier a class selects: untensed complements are predicative, tensed ones logophoric. -/
 def PredicateClass.tier : PredicateClass → Tier
   | .implicative | .aspectual | .modal | .evaluative => .predicative
   | .factive | .propositional | .desiderative | .interrogative => .logophoric
 
-/-! ### Table (80): empirical contrasts -/
+/-! ### The empirical contrasts (table (80)) -/
 
-/-- The six contrast rows of table (80) of [landau-2015]. -/
+/-- The six contrasts of table (80). -/
 inductive Table80Row where
-  /-- OC into an inflected complement (the OC-NC generalization (70);
-      `inflectedComplement_realizes_ocnc`) -/
+  /-- Obligatory control into an inflected complement, the OC-NC generalization (70). -/
   | inflectedComplement
-  /-- `[−human]` PRO ((81): the logophoric binder is the
-      AUTHOR/ADDRESSEE function, defined only for humans) -/
+  /-- A non-human PRO ((81)): the logophoric binder is the author or addressee coordinate,
+  defined only for humans. -/
   | nonhumanPRO
-  /-- Implicit control ((90)/(93): predication needs an overt
-      external argument) -/
+  /-- An implicit controller ((90), (93)): predication needs a syntactically represented
+  argument, so exhaustive-control verbs resist impersonal passives (98). -/
   | implicitControl
-  /-- Control shift (`Control.IsSaturating.eq_of_controllers` blocks
-      it under predication: the shifted reading assigns the saturated
-      slot a different controller) -/
+  /-- Control shift (§4.3): predication is bi-unique (`Control.IsSaturating.eq_of_controllers`),
+  so no other argument can saturate the predicate. -/
   | controlShift
-  /-- Partial control (`Control.IsSaturating.not_hasPartial` blocks it
-      under predication) -/
+  /-- Partial control (§5): a saturating dependency is exhaustive
+  (`Control.IsSaturating.not_isPartial`). -/
   | partialControl
-  /-- Split control (`Control.IsSaturating.not_hasSplit` blocks it
-      under predication) -/
+  /-- Split control (§5): a saturating dependency has a unique controller
+  (`Control.IsSaturating.not_isSplit`). -/
   | splitControl
   deriving DecidableEq, Repr
 
-/-- Table (80)'s predicative column. -/
+/-- The predicative column of table (80). -/
 def availableUnderPredicative : Table80Row → Bool
   | .inflectedComplement => true
   | .nonhumanPRO         => true
   | _                    => false
 
-/-- Table (80)'s logophoric column. -/
+/-- The logophoric column of table (80). -/
 def availableUnderLogophoric : Table80Row → Bool
   | .inflectedComplement => false
   | .nonhumanPRO         => false
   | _                    => true
 
-/-- Table (80) is a perfect split: every contrast is available under
-    exactly one tier. -/
+/-- Table (80) separates the tiers on every row. -/
 theorem table80_complementary (r : Table80Row) :
     availableUnderLogophoric r = !availableUnderPredicative r := by
   cases r <;> rfl
 
-/-- The inflected-complement row is the OC-NC generalization ((70)),
-    derived from the calculus: `[+Agr]` leaves OC in `[−T]` complements
-    (the predicative tier) and destroys it in `[+T]` complements (the
-    logophoric tier), by the Feature Transmission asymmetry ((60):
-    predication is not contingent on feature matching — Icelandic quirky
-    constructions — while variable binding is, [heim-2008],
-    [kratzer-2009]). Its empirical scope is contested ([ganenkov-2019]). -/
+/-- The inflected-complement row is the OC-NC generalization (70) over the clause classes:
+agreement leaves obligatory control in an untensed complement, the predicative tier, and
+destroys it in a tensed one, the logophoric tier, since predication is not contingent on feature
+matching while variable binding is ([heim-2008], [kratzer-2009]); its empirical scope is
+contested ([ganenkov-2019]). -/
 theorem inflectedComplement_realizes_ocnc :
     availableUnderPredicative .inflectedComplement
-        = decide (ClauseClass.cSubjunctive.HasOC true)
-    ∧ availableUnderLogophoric .inflectedComplement
-        = decide (ClauseClass.fSubjunctive.HasOC true) := by
-  exact ⟨by decide, by decide⟩
+        = decide (ClauseClass.cSubjunctive.HasOC true) ∧
+      availableUnderLogophoric .inflectedComplement
+        = decide (ClauseClass.fSubjunctive.HasOC true) :=
+  ⟨by decide, by decide⟩
 
-/-- EC verbs resist impersonal passives ((98) in [landau-2015]): a
-    direct consequence of condition (90), since impersonal passives
-    suppress the external argument that predicative control needs —
-    the implicit-control row of table (80). Cross-linguistic evidence:
-    Hebrew, German, Dutch, Russian. -/
-theorem ec_resists_impersonal_passives :
-    availableUnderPredicative .implicitControl = false := rfl
+/-! ### Readings of PRO under attitude predicates (table (36)) -/
 
-/-! ### De se / de te in object control (table (36)) -/
-
-/-- The two logophoric readings of OC PRO under attitude predicates
-    (table (36) of [landau-2015]): which coordinate of the embedded
-    context is projected depends on the object control verb subclass. -/
+/-- The logophoric readings of PRO: bound to the author coordinate of the embedded context
+(*de se*) or to its addressee coordinate (*de te*). -/
 inductive DeSeReading where
-  /-- PRO = AUTHOR(i'): attitude holder's identification of self -/
   | deSe
-  /-- PRO = ADDRESSEE(i'): attitude holder's identification of addressee -/
   | deTe
   deriving DecidableEq, Repr
 
-/-- Object control verb subclasses (table (36)). -/
+/-- The object control verbs by the coordinate they project (36). -/
 inductive ObjectControlSubclass where
-  /-- Psychological verbs: *convince*, *persuade*, *dissuade*, *tempt* -/
+  /-- *convince*, *persuade*, *dissuade*, *tempt*. -/
   | psychological
-  /-- Communicative verbs: *tell*, *ask*, *urge*, *recommend* -/
+  /-- *tell*, *ask*, *urge*, *recommend*. -/
   | communicative
   deriving DecidableEq, Repr
 
-/-- Psychological verbs bind the AUTHOR coordinate (*de se*);
-    communicative verbs bind the ADDRESSEE coordinate (*de te*). -/
+/-- Psychological verbs bind the author coordinate and communicative verbs the addressee
+coordinate (36). -/
 def objectControlReading : ObjectControlSubclass → DeSeReading
   | .psychological => .deSe
   | .communicative => .deTe
 
-theorem psychological_deSe :
-    objectControlReading .psychological = .deSe := rfl
+/-! ### Predicate classes from the fragment -/
 
-theorem communicative_deTe :
-    objectControlReading .communicative = .deTe := rfl
-
-/-! ### Derived Landau class from Verb -/
-
-/-- Derive [landau-2015]'s predicate class from Verb fields — a bridge
-    from Fragment verb entries to the TTC deriving the classification
-    from existing semantic fields rather than storing it independently.
-    Returns `none` when the classification cannot be determined from the
-    available fields (e.g., `try` has no `implicative`, `attitude`, or
-    `cosType`).
-
-    Mapping: `cosType` → aspectual; `implicative`/`causative` →
-    implicative; `factivePresup` → factive; question-embedding without
-    attitude → interrogative; doxastic → propositional; preferential →
-    desiderative. -/
+/-- The predicate class of a fragment verb, read off its semantic fields: a change-of-state type
+gives the aspectual class, an implicative or causative entry the implicative class, a factive
+presupposition the factive class, question embedding without an attitude the interrogative
+class, and a doxastic or preferential attitude the propositional or desiderative class; `none`
+where the fields decide nothing, as for *try*. -/
 def derivedLandauClass (v : Verb) : Option PredicateClass :=
   if v.cosType.isSome then some .aspectual
   else if v.implicative.isSome then some .implicative
@@ -228,10 +183,8 @@ def derivedLandauClass (v : Verb) : Option PredicateClass :=
     | some (.preferential _) => some .desiderative
     | none                   => none
 
-/-- Derive control tier from Verb fields: a control verb induces
-    logophoric control iff it selects an attitude complement (detected
-    via `attitude`, `factivePresup`, or `takesQuestionBase`); otherwise
-    predicative. Returns `none` for non-control verbs. -/
+/-- The tier of a fragment control verb: that of its class, or else logophoric exactly when the
+verb selects an attitude complement; `none` for a verb without control. -/
 def derivedControlTier (v : Verb) : Option Tier :=
   if v.controlType == ControlType.none && v.altControlType == ControlType.none then Option.none
   else match derivedLandauClass v with
@@ -241,274 +194,35 @@ def derivedControlTier (v : Verb) : Option Tier :=
       then some .logophoric
       else some .predicative
 
-/-! ### Per-verb verification -/
+section Verbs
 
-section VerbVerification
 open English.Predicates.Verbal
 
--- Predicative (EC) verbs: derived class → predicative tier
+/-- The fragment's exhaustive-control verbs: aspectual and implicative. -/
+def exhaustiveControlVerbs : List Verb :=
+  [stop.toVerb, start.toVerb, begin_.toVerb, continue_.toVerb, manage.toVerb, fail.toVerb,
+    remember.toVerb, forget.toVerb, force.toVerb]
 
-/-- "stop" (CoS cessation) → aspectual → predicative -/
-theorem stop_aspectual :
-    derivedLandauClass stop.toVerb = some .aspectual := rfl
+/-- The fragment's partial-control verbs: desiderative, factive, propositional, and
+interrogative. -/
+def partialControlVerbs : List Verb :=
+  [want.toVerb, hope.toVerb, promise.toVerb, persuade.toVerb, regret.toVerb, know.toVerb,
+    believe.toVerb, think.toVerb, wonder.toVerb]
 
-/-- "start" (CoS inception) → aspectual → predicative -/
-theorem start_aspectual :
-    derivedLandauClass start.toVerb = some .aspectual := rfl
+/-- The exhaustive-control verbs derive a class on the predicative tier. -/
+theorem exhaustiveControlVerbs_predicative :
+    ∀ v ∈ exhaustiveControlVerbs, (derivedLandauClass v).map (·.tier) = some .predicative := by
+  decide
 
-/-- "begin" (CoS inception) → aspectual → predicative -/
-theorem begin_aspectual :
-    derivedLandauClass begin_.toVerb = some .aspectual := rfl
+/-- The partial-control verbs derive a class on the logophoric tier. -/
+theorem partialControlVerbs_logophoric :
+    ∀ v ∈ partialControlVerbs, (derivedLandauClass v).map (·.tier) = some .logophoric := by
+  decide
 
-/-- "continue" (CoS continuation) → aspectual → predicative -/
-theorem continue_aspectual :
-    derivedLandauClass continue_.toVerb = some .aspectual := rfl
+/-- *try* carries none of the deciding fields: trying entails no success and reports no
+attitude. -/
+theorem try_unclassifiable : derivedLandauClass try_.toVerb = none := rfl
 
-/-- "manage" (positive implicative) → implicative → predicative -/
-theorem manage_implicative :
-    derivedLandauClass manage.toVerb = some .implicative := rfl
-
-/-- "fail" (negative implicative) → implicative → predicative -/
-theorem fail_implicative :
-    derivedLandauClass fail.toVerb = some .implicative := rfl
-
-/-- "remember" (positive implicative) → implicative → predicative -/
-theorem remember_implicative :
-    derivedLandauClass remember.toVerb = some .implicative := rfl
-
-/-- "forget" (negative implicative) → implicative → predicative -/
-theorem forget_implicative :
-    derivedLandauClass forget.toVerb = some .implicative := rfl
-
-/-- "force" (coercive causative) → implicative → predicative -/
-theorem force_implicative :
-    derivedLandauClass force.toVerb = some .implicative := rfl
-
--- Logophoric (PC) verbs: derived class → logophoric tier
-
-/-- "want" (preferential attitude) → desiderative → logophoric -/
-theorem want_desiderative :
-    derivedLandauClass want.toVerb = some .desiderative := rfl
-
-/-- "hope" (preferential attitude) → desiderative → logophoric -/
-theorem hope_desiderative :
-    derivedLandauClass hope.toVerb = some .desiderative := rfl
-
-/-- "promise" (preferential attitude) → desiderative → logophoric.
-    Previously unclassified; fixed by adding `attitude` to the
-    Fragment entry per [landau-2015] (5c). -/
-theorem promise_desiderative :
-    derivedLandauClass promise.toVerb = some .desiderative := rfl
-
-/-- "persuade" (preferential attitude, object control) → desiderative →
-    logophoric. Table (36) establishes *persuade* as logophoric object
-    control; the desiderative label is this file's derivation from the
-    Fragment's preferential-attitude field ((4)/(5) list no class for it). -/
-theorem persuade_desiderative :
-    derivedLandauClass persuade.toVerb = some .desiderative := rfl
-
-/-- "regret" (factive) → factive → logophoric -/
-theorem regret_factive :
-    derivedLandauClass regret.toVerb = some .factive := rfl
-
-/-- "know" (factive + question) → factive → logophoric -/
-theorem know_factive :
-    derivedLandauClass know.toVerb = some .factive := rfl
-
-/-- "believe" (doxastic attitude) → propositional → logophoric -/
-theorem believe_propositional :
-    derivedLandauClass believe.toVerb = some .propositional := rfl
-
-/-- "think" (doxastic attitude) → propositional → logophoric -/
-theorem think_propositional :
-    derivedLandauClass think.toVerb = some .propositional := rfl
-
-/-- "wonder" (question-embedding, non-attitude) → interrogative → logophoric -/
-theorem wonder_interrogative :
-    derivedLandauClass wonder.toVerb = some .interrogative := rfl
-
--- Negative test: verbs that should NOT be classifiable
-
-/-- "try" has no cosType, implicative, causative, factivePresup,
-    takesQuestionBase, or attitude, so `derivedLandauClass` cannot
-    classify it. This is correct: "try" is not implicative (trying
-    doesn't entail succeeding) and not clearly attitudinal. -/
-theorem try_unclassifiable :
-    derivedLandauClass try_.toVerb = none := rfl
-
--- Control tier verification: derived tier matches expected tier
-
-theorem stop_predicative_tier :
-    (derivedLandauClass stop.toVerb).map (·.tier) = some .predicative := rfl
-
-theorem manage_predicative_tier :
-    (derivedLandauClass manage.toVerb).map (·.tier) = some .predicative := rfl
-
-theorem want_logophoric_tier :
-    (derivedLandauClass want.toVerb).map (·.tier) = some .logophoric := rfl
-
-theorem regret_logophoric_tier :
-    (derivedLandauClass regret.toVerb).map (·.tier) = some .logophoric := rfl
-
-theorem believe_logophoric_tier :
-    (derivedLandauClass believe.toVerb).map (·.tier) = some .logophoric := rfl
-
-theorem wonder_logophoric_tier :
-    (derivedLandauClass wonder.toVerb).map (·.tier) = some .logophoric := rfl
-
-theorem promise_logophoric_tier :
-    (derivedLandauClass promise.toVerb).map (·.tier) = some .logophoric := rfl
-
-theorem persuade_logophoric_tier :
-    (derivedLandauClass persuade.toVerb).map (·.tier) = some .logophoric := rfl
-
-end VerbVerification
-
-/-! ### Noonan CTP → Landau tier bridge -/
-
-/-- Map [noonan-2007]'s CTP classes to [landau-2015]'s control tiers:
-    modal/phasal/achievement/negative are nonattitude (predicative);
-    utterance/propAttitude/commentative/knowledge/desiderative/
-    manipulative are attitude (logophoric); pretence is ambiguous and
-    perception typically takes no controlled complement. -/
-def ctpToControlTier : CTPClass → Option Tier
-  | .modal        => some .predicative
-  | .phasal       => some .predicative
-  | .achievement  => some .predicative
-  | .negative     => some .predicative
-  | .utterance    => some .logophoric
-  | .propAttitude => some .logophoric
-  | .commentative => some .logophoric
-  | .knowledge    => some .logophoric
-  | .desiderative => some .logophoric
-  | .manipulative => some .logophoric
-  | .pretence     => none
-  | .perception   => none
-
-/-- Map [noonan-2007]'s CTP classes to [landau-2015]'s predicate classes
-    (where the mapping is unambiguous). -/
-def ctpToLandauClass : CTPClass → Option PredicateClass
-  | .modal        => some .modal
-  | .phasal       => some .aspectual
-  | .achievement  => some .implicative
-  | .negative     => some .implicative
-  | .commentative => some .factive
-  | .knowledge    => some .factive
-  | .propAttitude => some .propositional
-  | .utterance    => some .propositional
-  | .desiderative => some .desiderative
-  | .manipulative => some .desiderative
-  | .pretence     => none
-  | .perception   => none
-
-/-- When both mappings are defined, they agree on the control tier. -/
-theorem ctp_tier_consistent (c : CTPClass)
-    (hTier : (ctpToControlTier c).isSome = true)
-    (hClass : (ctpToLandauClass c).isSome = true) :
-    ctpToControlTier c = (ctpToLandauClass c).map (·.tier) := by
-  cases c <;> simp_all [ctpToControlTier, ctpToLandauClass, PredicateClass.tier]
-
-/-! [noonan-2007]'s equi-deletion criterion (§2.1) and [landau-2015]'s
-    control tiers classify the same English verbs by independent
-    properties; the bridge theorem makes the consilience kernel-checked,
-    witnessed by `manage`. -/
-
-open Data.Complementation.Noonan2007 (english_manage)
-
-/-- Cross-paper consilience: Noonan-equi on the achievement class
-    coincides with Landau's predicative tier. -/
-theorem manage_equi_implies_predicative :
-    english_manage.hasEquiDeletion = true →
-    ctpToControlTier english_manage.ctpClass = some .predicative := by
-  intro _
-  rfl
-
-/-! ### Chierchia (1984) comparison
-
-The TTC engages [chierchia-1984]'s property theory as its major
-predecessor; the two cut the control verb space differently:
-
-- **Chierchia**: ALL verbs with the CP are obligatory control, regardless
-  of attitude status. The CP is a meaning postulate that applies uniformly.
-  The subject/object and attitude/non-attitude distinctions are orthogonal.
-- **Landau**: attitude verbs (want, hope, promise, persuade) are logophoric
-  (perspectival coordinate needed), non-attitude verbs (try, manage, force)
-  are predicative.
-
-The systematic divergence: Chierchia → obligatory → predicative for
-ALL control verbs, while Landau → logophoric for attitude verbs. The
-theories agree on non-attitude verbs (both predicative) and diverge
-precisely on attitude verbs. -/
-
-/-- Map Chierchia's control classes to Landau's control tiers. -/
-def chierchiaToLandauTier : Chierchia1984.ControlClass → Tier
-  | .obligatory     => .predicative
-  | .semiObligatory => .predicative
-  | .prominence     => .logophoric
-
-/-- The CP/no-CP distinction aligns with the predicative/logophoric
-    distinction: CP-bearing classes are predicative, CP-lacking classes
-    are logophoric. Chierchia's CP is thereby the semantic reflex of
-    Landau's condition (90): the entailment needs a specific overt
-    argument to serve as controller, which is what predication
-    demands. -/
-theorem cp_iff_predicative (c : Chierchia1984.ControlClass) :
-    c.HasControlPrinciple ↔ chierchiaToLandauTier c = .predicative := by
-  cases c <;> decide
-
--- ── Per-verb cross-system consistency ──
-
-section CrossSystemVerification
-open English.Predicates.Verbal
-
-/-! ### Non-attitude verbs: Chierchia and Landau agree
-
-For verbs without an attitude builder (try, manage, begin, stop,
-force, fail), both systems classify them as predicative control. -/
-
-theorem try_agrees :
-    (Chierchia1984.ControlClass.ofVerb try_.toVerb).map chierchiaToLandauTier
-    = derivedControlTier try_.toVerb := rfl
-
-theorem manage_agrees :
-    (Chierchia1984.ControlClass.ofVerb manage.toVerb).map chierchiaToLandauTier
-    = derivedControlTier manage.toVerb := rfl
-
-theorem force_agrees :
-    (Chierchia1984.ControlClass.ofVerb force.toVerb).map chierchiaToLandauTier
-    = derivedControlTier force.toVerb := rfl
-
-/-! ### Attitude verbs: systematic divergence
-
-For verbs with an attitude builder (want, hope, promise, persuade),
-the two systems diverge: Chierchia classifies them as obligatory
-(→ predicative), while Landau classifies them as logophoric.
-
-This is a genuine theoretical disagreement: Chierchia groups by
-entailment structure (all verbs with the CP are treated uniformly),
-Landau groups by attitude status (attitude verbs introduce a
-perspectival coordinate that changes the control mechanism). -/
-
-theorem want_diverges :
-    (Chierchia1984.ControlClass.ofVerb want.toVerb).map chierchiaToLandauTier = some .predicative
-    ∧ derivedControlTier want.toVerb = some .logophoric :=
-  ⟨rfl, rfl⟩
-
-theorem hope_diverges :
-    (Chierchia1984.ControlClass.ofVerb hope.toVerb).map chierchiaToLandauTier = some .predicative
-    ∧ derivedControlTier hope.toVerb = some .logophoric :=
-  ⟨rfl, rfl⟩
-
-theorem promise_diverges :
-    (Chierchia1984.ControlClass.ofVerb promise.toVerb).map chierchiaToLandauTier = some .predicative
-    ∧ derivedControlTier promise.toVerb = some .logophoric :=
-  ⟨rfl, rfl⟩
-
-theorem persuade_diverges :
-    (Chierchia1984.ControlClass.ofVerb persuade.toVerb).map chierchiaToLandauTier = some .predicative
-    ∧ derivedControlTier persuade.toVerb = some .logophoric :=
-  ⟨rfl, rfl⟩
-
-end CrossSystemVerification
+end Verbs
 
 end Landau2015

@@ -1,404 +1,176 @@
-import Linglib.Fragments.English.Tense
-import Linglib.Semantics.Tense.Evidential
+import Linglib.Semantics.Tense.Reichenbach
+import Linglib.Features.Acceptability
 
 /-!
-# [lakoff-1970]: Tense and Its Relation to Participants
-[lakoff-1970]
+# Lakoff (1970): Tense and Its Relation to Participants
 
-[lakoff-1970] argues that tense selection is sensitive to speaker/hearer
-epistemic states, not just temporal ordering: past tense can apply to a
-present-time event that has lost psychological **salience** ("The animal
-you saw WAS a chipmunk" — it still is one), and embedded present survives
-a past matrix when the content is **novel** to the hearer. The
-`TensePerspective` frame extends the evidential-tense substrate's
-`EvidentialFrame` (`Semantics/Tense/Evidential.lean`) with these two
-participant dimensions; the paper's acceptability judgments are
-collected as `TenseJudgment` data, and the paper's synthetic vs
-periphrastic form contrast (`TenseFormType`) with its English exemplar
-entries lives here as study-local apparatus.
+This file formalizes the claim of [lakoff-1970] that the choice of a tense answers to the
+participants and not only to the times: a past tense may report a present state the speaker no
+longer treats as salient, a present tense survives under a past matrix when its content is new
+to the hearer, the present perfect asks for a relevance the speaker grants, and a present tense
+stands for a future one when the event is scheduled. `Perspective` extends the library's
+Reichenbach frame with the two participant dimensions, the salience of the event to the speaker
+and the novelty of the content to the hearer, and each of the paper's uses is a condition on
+such a frame. A use of a tense is true when the relation of the event to the speech time lies
+in the cell of the tense chosen (`IsTrueUse`) and false otherwise; the paper's judgments are
+predicted by true use or by a licensed false use in a synthetic form
+(`predicted_iff_acceptable`), the periphrastic *used to* being confined to true pasts
+(`false_use_synthetic`).
 
-## Key Minimal Pairs
+## Implementation notes
 
-- §1 False tense: synthetic forms (WAS, IS) can express non-temporal tense;
-  periphrastic forms (USED TO) cannot.
-- §2 SOT/novelty: present tense survives under past matrix when content is
-  novel to hearer ("discovered that the boy HAS blue eyes").
-- §4 Perfect/salience: present perfect requires current relevance
-  (*"Shakespeare has quarreled with Bacon" vs "Shakespeare has written...").
-- §5 Will-deletion: scheduled events allow present-for-future
-  ("The meeting starts at 3"), but unscheduled events do not
-  (*"It rains Thursday").
+The paper was not available for this pass: the example numbers and judgments are those of the
+earlier version of this file and are marked as unverified. The participant dimensions are
+propositions on the frame, and the frame is Reichenbach's; the evidential refinement of the
+frame belongs to the later literature and is not used.
+
+## TODO
+
+Verify the example numbers, the sentences, and the judgments against the paper, and add the
+sequence-of-tense and present-perfect data once the paper's own examples can be checked.
+
+## References
+
+* [lakoff-1970]
+* [reichenbach-1947]
 -/
 
 namespace Lakoff1970
 
-/-- Morphological form type of a tense: synthetic (inflectional: *walked*)
-    vs periphrastic (auxiliary-based: *used to walk*). Lakoff §1's
-    licensing contrast: only synthetic forms permit false tense. -/
-inductive TenseFormType where
-  | synthetic
-  | periphrastic
-  deriving DecidableEq, Repr, BEq
-
-/-- Acceptability judgment for a tense example. -/
-inductive Acceptability where
-  | grammatical
-  | ungrammatical
-  | marginal
-  deriving DecidableEq, Repr
-
-/-- Whether the tense use is "true" (temporal) or "false" (psychological). -/
-inductive TenseUseType where
-  | trueTense
-  | falseTense
-  deriving DecidableEq, Repr
-
-/-- A grammaticality judgment from [lakoff-1970]. -/
-structure TenseJudgment where
-  /-- Example number in the paper (e.g., "4a", "8a") -/
-  exNumber : String
-  /-- The sentence (abbreviated) -/
-  sentence : String
-  /-- True or false tense use -/
-  tenseUse : TenseUseType
-  /-- Synthetic or periphrastic form -/
-  formType : TenseFormType
-  /-- The paper's acceptability judgment -/
-  acceptability : Acceptability
-  deriving Repr, BEq
-
--- ════════════════════════════════════════════════════
--- § 1. False Tense (§1)
--- ════════════════════════════════════════════════════
-
-/-- (4a) "The animal you saw WAS a chipmunk" — false past, synthetic, OK. -/
-def ex4a : TenseJudgment where
-  exNumber := "4a"
-  sentence := "The animal you saw was a chipmunk"
-  tenseUse := .falseTense
-  formType := .synthetic
-  acceptability := .grammatical
-
-/-- (6a) "The animal you saw IS a chipmunk" — true present, synthetic, OK. -/
-def ex6a : TenseJudgment where
-  exNumber := "6a"
-  sentence := "The animal you saw is a chipmunk"
-  tenseUse := .trueTense
-  formType := .synthetic
-  acceptability := .grammatical
-
-/-- (8a) *"The animal you saw USED TO BE a chipmunk" — false past,
-    periphrastic, ungrammatical. The periphrastic form forces true-past
-    reading, which conflicts with the present-time event. -/
-def ex8a : TenseJudgment where
-  exNumber := "8a"
-  sentence := "The animal you saw used to be a chipmunk"
-  tenseUse := .falseTense
-  formType := .periphrastic
-  acceptability := .ungrammatical
-
-/-- (9a) "The animal you saw USED TO BE a chipmunk" — true past,
-    periphrastic, grammatical. It genuinely WAS a chipmunk before. -/
-def ex9a : TenseJudgment where
-  exNumber := "9a"
-  sentence := "That used to be a chipmunk"
-  tenseUse := .trueTense
-  formType := .periphrastic
-  acceptability := .grammatical
-
--- ════════════════════════════════════════════════════
--- § 2. SOT and Hearer Novelty (§2)
--- ════════════════════════════════════════════════════
-
-/-- (13a) "He discovered that the boy HAD blue eyes" — SOT past-under-past, OK. -/
-def ex13a : TenseJudgment where
-  exNumber := "13a"
-  sentence := "He discovered that the boy had blue eyes"
-  tenseUse := .trueTense
-  formType := .synthetic
-  acceptability := .grammatical
-
-/-- (13b) "He discovered that the boy HAS blue eyes" — novel-info present
-    survives under past matrix, grammatical when content is new to hearer. -/
-def ex13b : TenseJudgment where
-  exNumber := "13b"
-  sentence := "He discovered that the boy has blue eyes"
-  tenseUse := .trueTense
-  formType := .synthetic
-  acceptability := .grammatical
-
--- ════════════════════════════════════════════════════
--- § 3. Perfect and Salience (§4)
--- ════════════════════════════════════════════════════
-
-/-- (22a) "Shakespeare has written 37 plays" — salient (enduring relevance), OK. -/
-def ex22a : TenseJudgment where
-  exNumber := "22a"
-  sentence := "Shakespeare has written 37 plays"
-  tenseUse := .trueTense
-  formType := .synthetic
-  acceptability := .grammatical
-
-/-- (22b) *"Shakespeare has quarreled with Bacon" — not salient
-    (no current relevance), ungrammatical with present perfect. -/
-def ex22b : TenseJudgment where
-  exNumber := "22b"
-  sentence := "Shakespeare has quarreled with Bacon"
-  tenseUse := .trueTense
-  formType := .synthetic
-  acceptability := .ungrammatical
-
--- ════════════════════════════════════════════════════
--- § 4. Will-Deletion (§5)
--- ════════════════════════════════════════════════════
-
-/-- (27a) "John will die" — overt future, grammatical (control). -/
-def ex27a : TenseJudgment where
-  exNumber := "27a"
-  sentence := "John will die"
-  tenseUse := .trueTense
-  formType := .synthetic
-  acceptability := .grammatical
-
-/-- (27b) "John dies tomorrow" — will-deletion with scheduled/salient event, OK. -/
-def ex27b : TenseJudgment where
-  exNumber := "27b"
-  sentence := "John dies tomorrow"
-  tenseUse := .falseTense
-  formType := .synthetic
-  acceptability := .grammatical
-
-/-- (25b) *"It rains Thursday" — will-deletion without salience/schedule,
-    ungrammatical. Weather events are not scheduled. -/
-def ex25b : TenseJudgment where
-  exNumber := "25b"
-  sentence := "It rains Thursday"
-  tenseUse := .falseTense
-  formType := .synthetic
-  acceptability := .ungrammatical
-
--- ════════════════════════════════════════════════════
--- § 5. Collections
--- ════════════════════════════════════════════════════
-
-/-- All judgments from the paper. -/
-def allJudgments : List TenseJudgment :=
-  [ex4a, ex6a, ex8a, ex9a, ex13a, ex13b, ex22a, ex22b, ex27a, ex27b, ex25b]
-
-/-- False-tense judgments only. -/
-def falseTenseJudgments : List TenseJudgment :=
-  allJudgments.filter (·.tenseUse == .falseTense)
-
-/-- Periphrastic judgments only. -/
-def periphrasticJudgments : List TenseJudgment :=
-  allJudgments.filter (·.formType == .periphrastic)
-
--- ════════════════════════════════════════════════════
--- § 6. Data Verification
--- ════════════════════════════════════════════════════
-
-/-- There are 11 total judgments. -/
-theorem total_count : allJudgments.length = 11 := rfl
-
-/-- There are 4 false-tense judgments. -/
-theorem false_tense_count : falseTenseJudgments.length = 4 := rfl
-
-/-- There are 2 periphrastic judgments. -/
-theorem periphrastic_count : periphrasticJudgments.length = 2 := rfl
-
-/-- The only ungrammatical false-tense-with-periphrastic example is ex8a. -/
-theorem false_periphrastic_ungrammatical :
-    (falseTenseJudgments.filter (·.formType == .periphrastic)).length = 1 := rfl
-
--- ════════════════════════════════════════════════════
--- § 7. Participant-Perspective Frame
--- ════════════════════════════════════════════════════
-
-open Tense.Evidential
 open Tense
-
-/-- Lakoff's participant-sensitive tense frame. Extends the substrate's
-    `EvidentialFrame` (which extends `ReichenbachFrame` with acquisition
-    time A) with two psychological dimensions. Lakoff's observations are
-    orthogonal to the evidential constraint: "false past" arises
-    even when evidence is downstream (the chipmunk is still there, so
-    T ≤ A holds) because the event has lost psychological salience. -/
-structure TensePerspective (T : Type*) extends EvidentialFrame T where
-  /-- Is the event psychologically salient to the speaker at S? -/
-  speakerSalience : Bool
-  /-- Is the propositional content new to the hearer? -/
-  hearerNovelty : Bool
 
 variable {T : Type*}
 
-/-- **False tense** (Lakoff §1): past (or future) morphology applied to a
-    present-time event because the speaker does not find it salient.
+/-! ### The participant frame -/
 
-    Past example: "The animal you saw WAS a chipmunk" (it still IS one).
-    Future example: "That thing WILL be a chipmunk" (it already IS one).
-    The licensing condition is the same for both; the surface-form
-    divergence is recorded in the perspective entries (`formType`). -/
-def falsePast (f : TensePerspective T) : Prop :=
-  f.eventTime = f.speechTime ∧ ¬(f.speakerSalience = true)
+/-- Reichenbach's frame with the two participant dimensions: whether the event is salient to
+the speaker at speech time, and whether the content is new to the hearer. -/
+structure Perspective (T : Type*) extends ReichenbachFrame T where
+  /-- The event is psychologically salient to the speaker at speech time. -/
+  Salient : Prop
+  /-- The content is new to the hearer. -/
+  Novel : Prop
+  [decSalient : Decidable Salient]
+  [decNovel : Decidable Novel]
 
-/-- **Novel-information present** (Lakoff §2): present tense survives under
-    a past-tense matrix verb because the embedded content is new to the
-    hearer ("He discovered that the boy HAS blue eyes"). -/
-def novelInfoPresent (f : TensePerspective T) : Prop :=
-  f.hearerNovelty = true ∧ f.eventTime = f.speechTime
+attribute [instance] Perspective.decSalient Perspective.decNovel
 
-/-- **Perfect requires salience** (Lakoff §4): the present perfect is
-    infelicitous when the event lacks current relevance to the speaker
-    (*"Shakespeare has quarreled with Bacon"). -/
-def perfectRequiresSalience (f : TensePerspective T) : Prop :=
-  f.speakerSalience = true
+/-- A use of a tense cell is true when the relation of the event to the speech time lies in
+the cell: the past, present, future, and nonpast table. -/
+def IsTrueUse [LinearOrder T] (cell : Finset Ordering) (f : Perspective T) : Prop :=
+  compare f.eventTime f.speechTime ∈ cell
 
-/-- **Will-deletion** (Lakoff §5): future-time events can appear in present
-    tense (deleting *will*) when the speaker treats them as salient and
-    scheduled ("The meeting starts at 3"). -/
-def willDeletion [LT T] (f : TensePerspective T) : Prop :=
-  f.speechTime < f.eventTime ∧ f.speakerSalience = true
+instance [LinearOrder T] (cell : Finset Ordering) (f : Perspective T) :
+    Decidable (IsTrueUse cell f) :=
+  inferInstanceAs (Decidable (_ ∈ _))
 
-/-- Classify a tense use as true (grammatical tense matches the temporal
-    relation) or false (tense encodes psychological perspective instead),
-    reusing the `TenseUseType` classification of the judgment data.
+/-- False past (§1): a past tense on a present state the speaker no longer finds salient, as
+*The animal you saw was a chipmunk* of an animal that still is one. -/
+def FalsePast [DecidableEq T] (f : Perspective T) : Prop :=
+  f.eventTime = f.speechTime ∧ ¬ f.Salient
 
-    *Derived, not stipulated*: the use is *true* exactly when the event-vs-speech
-    comparison falls in the tense's `Finset Ordering` cell
-    (`compare f.eventTime f.speechTime ∈ gramTense`), reproducing the four-way
-    past/present/future/nonpast table (`past`: `E < S`; `present`: `E = S`;
-    `future`: `S < E`; `nonpast`: `S ≤ E`). -/
-def classifyUse [LinearOrder T] (gramTense : Finset Ordering)
-    (f : TensePerspective T) : TenseUseType :=
-  if compare f.eventTime f.speechTime ∈ gramTense then .trueTense else .falseTense
+instance [DecidableEq T] (f : Perspective T) : Decidable (FalsePast f) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
-/-- **Periphrastic forms block false tense** (Lakoff §1, ex. 8a vs 9a):
-    a false tense use demands a synthetic form; true tense is compatible
-    with any form. -/
-def FalseTenseLicensed (use : TenseUseType) (form : TenseFormType) : Prop :=
-  use = .falseTense → form = .synthetic
+/-- Novel present (§2): a present tense under a past matrix, licensed by content new to the
+hearer, as *He discovered that the boy has blue eyes*. -/
+def NovelPresent (f : Perspective T) : Prop := f.Novel ∧ f.eventTime = f.speechTime
 
--- ════════════════════════════════════════════════════
--- § 8. English perspective entries
--- ════════════════════════════════════════════════════
+/-- Relevant perfect (§4): the present perfect, a past event at a present reference time,
+requires the event to be salient, as *Shakespeare has written thirty-seven plays* against
+*Shakespeare has quarreled with Bacon*. -/
+def RelevantPerfect [LinearOrder T] (f : Perspective T) : Prop :=
+  f.isPerfect ∧ f.referenceTime = f.speechTime ∧ f.Salient
 
-open English.Tense in
-/-- A tense paradigm entry enriched with Lakoff's perspective dimensions:
-    grammatical tense and morphological form type (synthetic vs
-    periphrastic). Study-local: the classification is this paper's
-    analytical frame over the Fragment's `TAMEEntry` data. -/
-structure TensePerspectiveEntry extends TAMEEntry where
-  /-- The grammatical tense this form realizes -/
-  gramTense : Finset Ordering
-  /-- Synthetic (inflectional) or periphrastic (auxiliary-based) -/
-  formType : TenseFormType
+/-- Will-deletion (§5): a present tense for a future event the speaker treats as scheduled and
+salient, as *John dies tomorrow* against *It rains Thursday*. -/
+def WillDeletion [LinearOrder T] (f : Perspective T) : Prop :=
+  f.speechTime < f.eventTime ∧ f.Salient
 
-/-- Does this form allow false-tense interpretations?
-    Derived from `formType`: only synthetic forms can. -/
-def TensePerspectiveEntry.allowsFalseTense (e : TensePerspectiveEntry) : Bool :=
-  e.formType == .synthetic
+instance [LinearOrder T] (f : Perspective T) : Decidable (WillDeletion f) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
-/-- English simple past with perspective: synthetic, allows false past. -/
-def simplePastPerspective : TensePerspectiveEntry where
-  label := "simple past"
-  ep := .downstream
-  up := .past
-  gramTense := _root_.Tense.past
-  formType := .synthetic
+/-- A false past is a false use of the past cell. -/
+theorem falsePast_not_trueUse [LinearOrder T] {f : Perspective T} (h : FalsePast f) :
+    ¬ IsTrueUse past f := by
+  simp only [IsTrueUse, compare_mem_past, h.1, lt_self_iff_false, not_false_eq_true]
 
-/-- English simple present with perspective: synthetic, allows false uses. -/
-def simplePresentPerspective : TensePerspectiveEntry where
-  label := "simple present"
-  ep := .downstream
-  up := .present
-  gramTense := _root_.Tense.present
-  formType := .synthetic
+/-- Will-deletion is a false use of the present cell. -/
+theorem willDeletion_not_trueUse [LinearOrder T] {f : Perspective T} (h : WillDeletion f) :
+    ¬ IsTrueUse present f := by
+  simp only [IsTrueUse, compare_mem_present]; exact h.1.ne'
 
-/-- English periphrastic past "used to V": cannot express false past. -/
-def usedTo : TensePerspectiveEntry where
-  label := "used to"
-  ep := .downstream
-  up := .past
-  gramTense := _root_.Tense.past
-  formType := .periphrastic
+/-! ### Forms and judgments
 
-/-- English periphrastic future "going to V": cannot express false future. -/
-def goingTo : TensePerspectiveEntry where
-  label := "going to"
-  ep := .unconstrained
-  up := .future
-  gramTense := _root_.Tense.future
-  formType := .periphrastic
+-- UNVERIFIED: the example numbers, sentences, and judgments below are carried over from the
+earlier version of this file and have not been checked against the paper. -/
 
-/-- Synthetic entries allow false tense. -/
-theorem simplePast_allows_false : simplePastPerspective.allowsFalseTense = true := rfl
-theorem simplePresent_allows_false : simplePresentPerspective.allowsFalseTense = true := rfl
+/-- The morphology of a tense form: synthetic, as *walked*, or periphrastic, as *used to
+walk*. -/
+inductive Form where
+  | synthetic
+  | periphrastic
+  deriving DecidableEq
 
-/-- Periphrastic entries block false tense. -/
-theorem usedTo_blocks_false : usedTo.allowsFalseTense = false := rfl
-theorem goingTo_blocks_false : goingTo.allowsFalseTense = false := rfl
+/-- An English tense form: the cell it realizes and its morphology. -/
+structure TenseForm where
+  cell : Finset Ordering
+  form : Form
 
--- ════════════════════════════════════════════════════
--- § 9. Bridge: Data and Theory Connections
--- ════════════════════════════════════════════════════
+/-- The simple past. -/
+def simplePast : TenseForm := ⟨past, .synthetic⟩
 
-theorem ex4a_formType :
-    ex4a.formType = simplePastPerspective.formType := rfl
+/-- The simple present. -/
+def simplePresent : TenseForm := ⟨present, .synthetic⟩
 
-theorem ex8a_formType :
-    ex8a.formType = usedTo.formType := rfl
+/-- The future with *will*. -/
+def will : TenseForm := ⟨future, .synthetic⟩
 
-theorem ex9a_formType :
-    ex9a.formType = usedTo.formType := rfl
+/-- The periphrastic past *used to*. -/
+def usedTo : TenseForm := ⟨past, .periphrastic⟩
 
-theorem synthetic_allows_false_tense :
-    FalseTenseLicensed .falseTense .synthetic := λ _ => rfl
+/-- A frame at speech time zero with the event at `e`. -/
+private def frame (e : ℤ) (Salient : Prop) [Decidable Salient] : Perspective ℤ :=
+  { speechTime := 0, perspectiveTime := 0, referenceTime := e, eventTime := e
+    Salient, Novel := False }
 
-theorem periphrastic_blocks_false_tense :
-    ¬ FalseTenseLicensed .falseTense .periphrastic := λ h => nomatch h rfl
+/-- A judgment of the paper: the form used, the frame of the utterance, and the verdict. -/
+structure Judgment where
+  form : TenseForm
+  frame : Perspective ℤ
+  verdict : Features.Judgment
 
-theorem true_tense_any_form :
-    FalseTenseLicensed .trueTense .periphrastic := λ h => nomatch h
+/-- The paper licenses a form in a frame when its use is true, or when it is a synthetic form
+in one of the false uses the paper describes: a false past, or will-deletion. -/
+def Judgment.Predicted (j : Judgment) : Prop :=
+  IsTrueUse j.form.cell j.frame ∨
+    (j.form.form = .synthetic ∧
+      ((j.form.cell = past ∧ FalsePast j.frame) ∨ (j.form.cell = present ∧ WillDeletion j.frame)))
 
-theorem usedTo_entry_blocks_false :
-    usedTo.allowsFalseTense = false := rfl
+instance (j : Judgment) : Decidable j.Predicted := by
+  unfold Judgment.Predicted; infer_instance
 
-theorem simplePast_entry_allows_false :
-    simplePastPerspective.allowsFalseTense = true := rfl
+/-- The judgments of §1 and §5: (4a) *The animal you saw was a chipmunk*, (6a) *The animal you
+saw is a chipmunk*, (8a) *The animal you saw used to be a chipmunk* of an animal that still is
+one, (9a) *That used to be a chipmunk*, (27a) *John will die*, (27b) *John dies tomorrow*, and
+(25b) *It rains Thursday*. -/
+def rows : List Judgment :=
+  [ ⟨simplePast, frame 0 False, .acceptable⟩
+  , ⟨simplePresent, frame 0 True, .acceptable⟩
+  , ⟨usedTo, frame 0 False, .ungrammatical⟩
+  , ⟨usedTo, frame (-1) True, .acceptable⟩
+  , ⟨will, frame 1 True, .acceptable⟩
+  , ⟨simplePresent, frame 1 True, .acceptable⟩
+  , ⟨simplePresent, frame 1 False, .ungrammatical⟩ ]
 
-/-- A false past is temporally present — the mismatch is purely
-    psychological (salience), not temporal. -/
-theorem false_past_is_temporally_present (f : TensePerspective T)
-    (h : falsePast f) :
-    f.eventTime = f.speechTime :=
-  h.1
+/-- The account predicts exactly the acceptable judgments. -/
+theorem predicted_iff_acceptable : ∀ j ∈ rows, j.Predicted ↔ j.verdict = .acceptable := by
+  decide
 
-/-- When `falsePast` holds, the evidential substrate's present-tense UP
-    constraint (T = S, `UPCondition.present`) is satisfied. -/
-theorem false_past_satisfies_up_present (f : TensePerspective ℤ)
-    (h : falsePast f) :
-    UPCondition.present.toConstraint f.toEvidentialFrame :=
-  (Tense.compare_mem_present _ _).2 h.1
-
-theorem false_past_classified_correctly [LinearOrder T]
-    (f : TensePerspective T) (h : falsePast f) :
-    classifyUse Tense.past f = .falseTense := by
-  simp only [classifyUse, Tense.compare_mem_past]
-  exact if_neg (by rw [h.1]; exact lt_irrefl _)
-
-theorem will_deletion_requires_future_and_salience (f : TensePerspective ℤ)
-    (h : willDeletion f) :
-    f.speechTime < f.eventTime ∧ f.speakerSalience = true :=
-  h
-
-theorem grammatical_false_tense_all_synthetic :
-    (falseTenseJudgments.filter
-      (λ j => j.acceptability == .grammatical)).all
-      (λ j => j.formType == .synthetic) = true := rfl
-
-theorem false_periphrastic_is_ungrammatical :
-    (ex8a.tenseUse == .falseTense &&
-     ex8a.formType == .periphrastic &&
-     ex8a.acceptability == .ungrammatical) = true := rfl
+/-- §1: an acceptable false use is in a synthetic form; the periphrastic *used to* is confined
+to true pasts. -/
+theorem false_use_synthetic (j : Judgment) (hj : j ∈ rows) (ha : j.verdict = .acceptable)
+    (hf : ¬ IsTrueUse j.form.cell j.frame) : j.form.form = .synthetic :=
+  (((predicted_iff_acceptable j hj).mpr ha).resolve_left hf).1
 
 end Lakoff1970

@@ -2,42 +2,32 @@ import Linglib.Syntax.Minimalist.Ellipsis
 import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
-# [merchant-2013] — Voice and Ellipsis
+# Merchant (2013): Voice and Ellipsis
 
-Voice mismatches between an elided phrase and its antecedent are tolerated
-under VP-ellipsis but blocked under sluicing, fragment answers, gapping,
-and stripping. This *uneven distribution* follows from the structural
-position of VoiceP relative to the [E]-bearing head.
+This file formalizes the account in [merchant-2013] of the uneven distribution of voice
+mismatches under ellipsis: tolerated under verb-phrase ellipsis, blocked under sluicing,
+fragment answers, gapping, and stripping. Verb-phrase ellipsis targets the complement of
+Voice, so Voice is external to the ellipsis site and mismatches are invisible to the
+identity condition, whereas the clausal ellipses target a phrase containing Voice, so
+mismatches violate identity. No argument-structure alternation, causative–inchoative,
+dative, middle, or prepositional, is tolerated under any ellipsis, the heads regulating them
+all sitting at or below v and hence inside every deletion domain. Every judgment is derived
+from the substrate's deletion-domain predicate, with German and Greek data beside English.
 
-## Core Insight
+## TODO
 
-VP-ellipsis targets vP (complement of Voice), so Voice is *external* to
-the ellipsis site — mismatches are invisible to the identity condition.
-Sluicing and other clausal ellipses target TP (which *contains* VoiceP),
-so Voice is *internal* — mismatches violate identity.
+The paper is not on file; section locators are transcribed from an earlier version of this
+file and are UNVERIFIED.
 
-## Argument Structure Alternations (§3.3)
+## References
 
-No argument structure alternation — causative/inchoative, dative, middle,
-prepositional — is tolerated under *any* kind of ellipsis. The heads
-regulating these alternations all sit at or below v, hence are always
-inside the deletion domain regardless of ellipsis height.
-
-## Formalization
-
-Every grammaticality judgment is verified against `canMismatch` from
-`DeletionDomain.lean`. Cross-linguistic data (German, Greek) supplements
-the English paradigm.
+* [merchant-2013]
 -/
 
 namespace Merchant2013
 
 open Minimalist Minimalist.Voice
 open Minimalist.Ellipsis
-
--- ════════════════════════════════════════════════════
--- § 1. Ellipsis Types Beyond VPE and Sluicing
--- ════════════════════════════════════════════════════
 
 /-- Fragment answers: movement to Spec,CP + TP-deletion.
     Same [E] position as sluicing ([merchant-2004]). -/
@@ -52,10 +42,6 @@ def stripping : EllipsisType := ⟨.C, "stripping"⟩
 /-- Pseudogapping: remnant extracted from vP; deletion domain includes
     VoiceP. [E] at T or higher. -/
 def pseudogapping : EllipsisType := ⟨.T, "pseudogapping"⟩
-
--- ════════════════════════════════════════════════════
--- § 2. Voice Mismatch Data
--- ════════════════════════════════════════════════════
 
 /-- A voice mismatch datum across an ellipsis boundary. -/
 structure VoiceMismatchDatum where
@@ -128,10 +114,6 @@ def ex11a : VoiceMismatchDatum :=
     antecedentVoice := .agentive, targetVoice := .passive
     ellipsisType := stripping, grammatical := false }
 
--- ════════════════════════════════════════════════════
--- § 3. Voice Mismatch Predictions
--- ════════════════════════════════════════════════════
-
 /-- VP-ellipsis data matches canMismatch. -/
 theorem vpe_voice_predicted :
     (ex1a.grammatical = true ↔ canMismatch englishVPE voiceMismatch) ∧
@@ -148,10 +130,6 @@ theorem high_ellipsis_voice_predicted :
     (ex9a.grammatical = true ↔ canMismatch fragmentAnswers voiceMismatch) ∧
     (ex10a.grammatical = true ↔ canMismatch gapping voiceMismatch) ∧
     (ex11a.grammatical = true ↔ canMismatch stripping voiceMismatch) := by decide
-
--- ════════════════════════════════════════════════════
--- § 4. Argument Structure Alternation Data (§3.3)
--- ════════════════════════════════════════════════════
 
 /-- A datum for argument structure alternation under ellipsis. -/
 structure ArgStructureDatum where
@@ -213,10 +191,6 @@ def ex44 : ArgStructureDatum :=
     alternationType := prepAlternation
     ellipsisType := pseudogapping, grammatical := false }
 
--- ════════════════════════════════════════════════════
--- § 5. Argument Structure Predictions
--- ════════════════════════════════════════════════════
-
 /-- Per-datum verification: each datum's grammaticality equals the
     canMismatch prediction for its alternation type and ellipsis type. -/
 theorem argStructure_data_predicted :
@@ -245,10 +219,6 @@ theorem v_alternations_blocked_high_ellipsis :
     ¬ canMismatch gapping middleAlternation ∧
     ¬ canMismatch pseudogapping prepAlternation := by
   decide
-
--- ════════════════════════════════════════════════════
--- § 6. Key Theoretical Claims
--- ════════════════════════════════════════════════════
 
 /-- The uneven distribution: voice mismatches are tolerated in VP-ellipsis
     (low [E]) but blocked in all clausal ellipses (high [E]). -/
@@ -283,7 +253,7 @@ theorem voice_uniquely_discriminates :
 theorem no_inverse_language :
     canMismatch sluicing voiceMismatch →
     canMismatch englishVPE voiceMismatch :=
-  fun h => mismatch_monotone voiceMismatch sluicing englishVPE h rfl
+  λ h => mismatch_monotone voiceMismatch sluicing englishVPE h rfl
 
 /-- Voice's discriminating power follows from its spine position:
     it sits between the VPE boundary (Voice) and the sluicing boundary (C).
@@ -295,10 +265,6 @@ theorem voice_between_boundaries :
     prepAlternation.headPosition = .v ∧
     middleAlternation.headPosition = .v ∧
     lexicalMismatch.headPosition = .V := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
-
--- ════════════════════════════════════════════════════
--- § 7. End-to-End Argumentation Chain
--- ════════════════════════════════════════════════════
 
 /-- End-to-end chain: Voice severing ([kratzer-1996]) →
     Merchant's deletion domain theory ([merchant-2013]) →

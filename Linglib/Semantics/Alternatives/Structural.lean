@@ -255,6 +255,68 @@ theorem category_preservation {C W : Type} [DecidableEq C]
   | tail _ h_last ih =>
     exact structOp_preserves_no_cat source c _ _ h_source ih h_last
 
+/-- One structural operation cannot introduce a subtree property that no source item has,
+that the tree lacks, and that a node cannot acquire by losing a child, by having a child
+replaced, or by a change of a binder's body. -/
+private theorem structOp_preserves_free {C W : Type} (source : List (Tree C W))
+    (Bad : Tree C W → Prop) (h_source : ∀ s ∈ source, ∀ t ∈ s.subtrees, ¬ Bad t)
+    (h_delete : ∀ (cat : C) (cs : List (Tree C W)) (i : Fin cs.length),
+      ¬ Bad (.node cat cs) → ¬ Bad (.node cat (cs.eraseIdx i)))
+    (h_set : ∀ (cat : C) (cs : List (Tree C W)) (i : Fin cs.length) (ψ : Tree C W),
+      ¬ Bad (.node cat cs) → ¬ Bad (.node cat (cs.set i ψ)))
+    (h_bind : ∀ (n : ℕ) (cat : C) (body body' : Tree C W),
+      ¬ Bad (.bind n cat body) → ¬ Bad (.bind n cat body'))
+    {φ ψ : Tree C W} (h_φ : ∀ t ∈ φ.subtrees, ¬ Bad t) (h_step : StructOp source φ ψ) :
+    ∀ t ∈ ψ.subtrees, ¬ Bad t := by
+  induction h_step with
+  | subst _ h_src => exact h_source _ h_src
+  | @delete cat cs i =>
+    rw [Tree.subtrees_node] at h_φ ⊢
+    intro t ht
+    rcases List.mem_cons.mp ht with rfl | ht
+    · exact h_delete cat cs i (h_φ _ (List.mem_cons_self ..))
+    · obtain ⟨c, hc, htc⟩ := List.mem_flatMap.mp ht
+      exact h_φ t (List.mem_cons_of_mem _ (List.mem_flatMap.mpr
+        ⟨c, (List.eraseIdx_sublist cs i).subset hc, htc⟩))
+  | @contract cat cs child h_mem _ =>
+    rw [Tree.subtrees_node] at h_φ
+    exact λ t ht => h_φ t (List.mem_cons_of_mem _ (List.mem_flatMap.mpr ⟨child, h_mem, ht⟩))
+  | @inChild cat cs i ψ_child _ ih =>
+    rw [Tree.subtrees_node] at h_φ ⊢
+    have hih := ih λ t ht =>
+      h_φ t (List.mem_cons_of_mem _ (List.mem_flatMap.mpr ⟨cs.get i, List.get_mem cs i, ht⟩))
+    intro t ht
+    rcases List.mem_cons.mp ht with rfl | ht
+    · exact h_set cat cs i ψ_child (h_φ _ (List.mem_cons_self ..))
+    · obtain ⟨c, hc, htc⟩ := List.mem_flatMap.mp ht
+      rcases List.mem_or_eq_of_mem_set hc with hc | rfl
+      · exact h_φ t (List.mem_cons_of_mem _ (List.mem_flatMap.mpr ⟨c, hc, htc⟩))
+      · exact hih t htc
+  | @inBind n cat body body' _ ih =>
+    intro t ht
+    rcases List.mem_cons.mp ht with rfl | ht
+    · exact h_bind n cat body body' (h_φ _ (List.mem_cons_self ..))
+    · exact ih (λ t ht => h_φ t (List.mem_cons_of_mem _ ht)) t ht
+
+/-- A subtree property that no source item has, that the host lacks, and that a node cannot
+acquire by losing a child, by having a child replaced, or by a change of a binder's body,
+is absent from every structural alternative of the host. -/
+theorem subtree_preservation {C W : Type} (source : List (Tree C W)) (Bad : Tree C W → Prop)
+    (h_source : ∀ s ∈ source, ∀ t ∈ s.subtrees, ¬ Bad t)
+    (h_delete : ∀ (cat : C) (cs : List (Tree C W)) (i : Fin cs.length),
+      ¬ Bad (.node cat cs) → ¬ Bad (.node cat (cs.eraseIdx i)))
+    (h_set : ∀ (cat : C) (cs : List (Tree C W)) (i : Fin cs.length) (ψ : Tree C W),
+      ¬ Bad (.node cat cs) → ¬ Bad (.node cat (cs.set i ψ)))
+    (h_bind : ∀ (n : ℕ) (cat : C) (body body' : Tree C W),
+      ¬ Bad (.bind n cat body) → ¬ Bad (.bind n cat body'))
+    {φ ψ : Tree C W} (h_φ : ∀ t ∈ φ.subtrees, ¬ Bad t) (h_reach : atMostAsComplex source ψ φ) :
+    ∀ t ∈ ψ.subtrees, ¬ Bad t := by
+  unfold atMostAsComplex at h_reach
+  induction h_reach with
+  | refl => exact h_φ
+  | tail _ h_last ih =>
+    exact structOp_preserves_free source Bad h_source h_delete h_set h_bind ih h_last
+
 -- ═══════════════════════════════════════════════════════════════════════
 -- §5  Horn scales are structural alternatives
 -- ═══════════════════════════════════════════════════════════════════════

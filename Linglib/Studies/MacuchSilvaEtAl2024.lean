@@ -3,55 +3,38 @@ import Mathlib.Algebra.Order.Field.Rat
 import Mathlib.Data.Nat.Cast.Order.Basic
 
 /-!
-# [macuch-silva-etal-2024]: Strategic Use of English Quantifiers
-[macuch-silva-etal-2024] [cummins-franke-2021]
+# Macuch Silva et al. (2024): Strategic Use of English Quantifiers
 
-Formalizes Macuch Silva, Lorson, Franke, Cummins & Winter (2024) "Strategic use
-of English quantifiers in the reporting of quantitative information",
-*Discourse Processes* 61(10), 498–523.
+This file formalizes the argumentative-difficulty account of [macuch-silva-etal-2024]. Two
+experiments have English speakers describe exam results, a number of correct answers out of a
+total, under a goal of framing the outcome as a success or as a failure. The difficulty of
+framing a result in the desired direction is the distance of its proportion from the goal's
+ideal (`argumentativeDifficulty`), and the account predicts that as difficulty grows the
+speaker retreats to informationally weaker quantifiers, from *all* through *most* to *some*,
+those truthful over broader ranges of outcomes (`truthfulQuantifiers`,
+`strongestTruthfulPositive`, `weakening_with_difficulty`). The paper thereby extends the
+argumentative strength of [cummins-franke-2021] from a property of the speaker's utterance
+to a property of the situation.
 
-Two experiments on how English speakers strategically choose quantifiers
-to describe school exam results under positive or negative framing goals.
+## Implementation notes
 
-## Experiment 1 — Forced Choice (p. 503)
+Proportions and difficulties are rationals; the quantifier scale is the lexical scale of
+`Semantics.Alternatives.Lexical`. The experiments' response rates are reported in prose in
+the paper and are not represented.
 
-60 participants each saw all 20 exam-result tables (5 students × 12 questions)
-and completed "In this exam [Q1] of the students got [Q2] of the questions [ADJ]"
-with Q1, Q2 ∈ {all, most, some, none} and ADJ ∈ {right, wrong}.
-Within-subjects: each participant saw 10 stimuli in high-success framing
-and 10 in low-success (allocation randomized).
+## TODO
 
-## Experiment 2 — Free Production (p. 510)
+The paper is not on file; the page locators are transcribed from an earlier version of this
+file and are UNVERIFIED.
 
-30 participants wrote free-form descriptions of 12 stimuli under the same
-framing manipulation. Responses coded for expression type, negation, and polarity.
+## References
 
-## Key Results
-
-1. **Adjective choice tracks condition**: 92% "right" in high success, 18% in low
-2. **some/most dominate**: 78% (high) / 74% (low) of quantifier choices
-3. **Positive framing bias**: 74% of Exp 2 descriptions framed positively
-4. **Difficulty → weakening**: as argumentative difficulty increases,
-   speakers shift from all → most → some
-
-## Theoretical Contribution
-
-The *argumentative difficulty* metric captures how hard it is to frame a
-quantitative result in a given direction. When difficulty is high (e.g.,
-framing bad results positively), speakers use informationally weaker
-quantifiers that are truthful over broader ranges of outcomes.
-This extends [cummins-franke-2021]'s argumentative strength framework
-from a speaker-oriented strength measure to a situation-oriented
-difficulty measure.
-
+* [macuch-silva-etal-2024]
+* [cummins-franke-2021]
 -/
 
 namespace MacuchSilvaEtAl2024
 
-
--- ============================================================
--- Section 1: Experimental Design
--- ============================================================
 
 /-- Experimental condition: high or low success framing -/
 inductive Condition where
@@ -78,10 +61,6 @@ def ExamStimulus.proportion (s : ExamStimulus) : ℚ :=
   if s.nTotal = 0 then 0
   else ↑s.nCorrect / ↑s.nTotal
 
-
--- ============================================================
--- Section 2: Argumentative Difficulty (pp. 501–502, 507)
--- ============================================================
 
 /-- Argumentative difficulty: how hard it is to frame a result in the desired direction.
 
@@ -122,10 +101,6 @@ theorem difficulty_monotone_lowSuccess
   simp [argumentativeDifficulty, ExamStimulus.proportion, Nat.ne_of_gt ht]
   exact div_lt_div_of_pos_right (Nat.cast_lt.mpr hlt) (Nat.cast_pos.mpr ht)
 
-
--- ============================================================
--- Section 3: Quantifier Weakening Prediction
--- ============================================================
 
 /-- Which quantifiers from {all, most, some, none} are truthful
 for a given exam result? -/
@@ -185,167 +160,6 @@ theorem weakening_with_difficulty :
     -- difficulty 1.0: none (zero correct)
     strongestTruthfulPositive ⟨0, 60, Nat.zero_le 60⟩ = .none_ := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> decide +kernel
-
-
--- ============================================================
--- Section 4: Experiment 1 Results (p. 505)
--- ============================================================
-
-/-- Adjective choice: 92% chose "right" in high-success condition.
-(β = 0.99, 95% CrI [0.96, 1.0]; p. 505) -/
-def exp1_adjective_rate_highSuccess : ℚ := 92 / 100
-
-/-- Adjective choice: 18% chose "right" in low-success condition.
-(β = 0.10, 95% CrI [0.05, 0.17]; p. 505)
-Note: β = 0.10 is the model's posterior probability, not the observed rate. -/
-def exp1_adjective_rate_lowSuccess : ℚ := 18 / 100
-
-/-- Adjective choice strongly matches framing condition -/
-theorem exp1_adjective_matches_condition :
-    exp1_adjective_rate_highSuccess > 3/4 ∧
-    exp1_adjective_rate_lowSuccess < 1/4 := by
-  constructor <;> decide +kernel
-
-/-- Quantifier proportions for student reference (p. 505).
-"some and most are the quantifiers most frequently used to refer to students" -/
-structure Exp1QuantifierData where
-  condition : String
-  someRate : ℚ
-  mostRate : ℚ
-  deriving Repr
-
-def exp1_quant_highSuccess : Exp1QuantifierData :=
-  { condition := "high success", someRate := 38/100, mostRate := 40/100 }
-
-def exp1_quant_lowSuccess : Exp1QuantifierData :=
-  { condition := "low success", someRate := 38/100, mostRate := 36/100 }
-
-/-- some + most dominate quantifier choices in both conditions -/
-theorem exp1_some_most_dominant :
-    exp1_quant_highSuccess.someRate + exp1_quant_highSuccess.mostRate > 1/2 ∧
-    exp1_quant_lowSuccess.someRate + exp1_quant_lowSuccess.mostRate > 1/2 := by
-  constructor <;> decide +kernel
-
-/-- some + most combined rates -/
-def exp1_some_most_highSuccess : ℚ := 78 / 100  -- 38% + 40%
-def exp1_some_most_lowSuccess : ℚ := 74 / 100   -- 38% + 36%
-
-/-- Quantifier proportions for question reference (p. 505).
-"most and all referring to questions" -/
-def exp1_questions_highSuccess_most : ℚ := 41 / 100
-def exp1_questions_highSuccess_all : ℚ := 36 / 100
-def exp1_questions_lowSuccess_most : ℚ := 39 / 100
-def exp1_questions_lowSuccess_all : ℚ := 33 / 100
-
-/-- most + all dominate question-reference quantifiers -/
-theorem exp1_questions_most_all_dominant :
-    exp1_questions_highSuccess_most + exp1_questions_highSuccess_all > 1/2 ∧
-    exp1_questions_lowSuccess_most + exp1_questions_lowSuccess_all > 1/2 := by
-  constructor <;> decide +kernel
-
-
--- ============================================================
--- Section 5: Experiment 2 Results (pp. 512–515)
--- ============================================================
-
-/-- Experiment 2: 330 total descriptions, 265 analyzed (pp. 511–512).
-64 excluded for containing multiple student/question references. -/
-def exp2_totalDescriptions : Nat := 330
-def exp2_analyzedDescriptions : Nat := 265
-
-/-- Positive framing bias: 74% across conditions (p. 514).
-
-High success: 98% positive; Low success: 51% negative.
-Even in the low-success condition, ~49% still framed positively. -/
-def exp2_positive_bias_rate : ℚ := 74 / 100
-def exp2_highSuccess_positive_rate : ℚ := 98 / 100
-def exp2_lowSuccess_negative_rate : ℚ := 51 / 100
-
-theorem exp2_positive_bias :
-    exp2_positive_bias_rate > 1/2 := by decide +kernel
-
-/-- High-success overwhelmingly positive; low-success roughly split -/
-theorem exp2_framing_asymmetry :
-    exp2_highSuccess_positive_rate > 9/10 ∧
-    exp2_lowSuccess_negative_rate < 6/10 := by
-  constructor <;> decide +kernel
-
-/-- Expression strategy categories (p. 512).
-Based on which referents (students, questions) receive quantity expressions. -/
-structure ExpressionStrategy where
-  strategy : String
-  proportion : ℚ
-  deriving Repr
-
-/-- Experiment 2 strategy proportions (p. 512) -/
-def exp2_strategies : List ExpressionStrategy :=
-  [ ⟨"student + question quantity",  55 / 100⟩
-  , ⟨"student quantity only",        33 / 100⟩
-  , ⟨"no quantity expression",        9 / 100⟩
-  , ⟨"question quantity only",        3 / 100⟩
-  ]
-
-/-- Strategy proportions sum to 100% -/
-theorem exp2_strategies_sum :
-    (55 : ℚ)/100 + 33/100 + 9/100 + 3/100 = 1 := by decide +kernel
-
-/-- Dual-reference (student + question) is the most common strategy -/
-theorem exp2_dual_most_common :
-    (55 : ℚ)/100 > 33/100 := by decide +kernel
-
-/-- Among responses with quantifiers (151 observations; p. 515):
-all, most, some, none account for 67%; all + most = 54%. -/
-def exp2_standard_quantifier_share : ℚ := 67 / 100
-def exp2_all_most_share : ℚ := 54 / 100
-
-theorem exp2_standard_quantifiers_dominant :
-    exp2_standard_quantifier_share > 1/2 ∧
-    exp2_all_most_share > 1/2 := by
-  constructor <;> decide +kernel
-
-/-- Most prevalent cross-condition strategies (p. 515):
-20% use quantifiers for both referents,
-19% use quantifier for students only. -/
-def exp2_both_quantifiers_rate : ℚ := 20 / 100
-def exp2_student_quantifier_only_rate : ℚ := 19 / 100
-
-theorem exp2_top_strategies_close :
-    exp2_both_quantifiers_rate > exp2_student_quantifier_only_rate := by decide +kernel
-
-
--- ============================================================
--- Section 6: Difficulty Modulates Quantifier Choice (pp. 517–519)
--- ============================================================
-
-/-- Core finding: difficulty modulates quantifier choice (p. 519).
-
-When framing matches condition (e.g., "right" in high success):
-- Difficulty ~0.0: *all* most likely
-- Difficulty ~0.25: *most* overtakes *all*
-- Difficulty ~0.50: *some* overtakes *most*
-- Difficulty ~0.75: *none* overtakes *some* (for negative framing)
-
-This matches the weakening prediction: speakers use informationally
-weaker quantifiers when the situation is hard to frame in the
-desired direction (p. 519). -/
-structure DifficultyQuantifierPrediction where
-  difficultyThreshold : ℚ
-  dominantBefore : Alternatives.Quantifiers.QuantExpr
-  dominantAfter : Alternatives.Quantifiers.QuantExpr
-  deriving Repr
-
-/-- Approximate crossover thresholds from Figures 5–6 and 10–11.
-These are read from density plots and are approximate. -/
-def exp1_crossovers_highSuccess_right : List DifficultyQuantifierPrediction :=
-  [ ⟨25/100, .all, .most⟩     -- all → most at ~0.25 difficulty
-  , ⟨50/100, .most, .some_⟩   -- most → some at ~0.50 difficulty
-  ]
-
-/-- The crossover pattern matches the Horn scale ordering:
-at each threshold, the dominant quantifier shifts one step down. -/
-theorem crossovers_follow_horn_scale :
-    Alternatives.Quantifiers.entails .all .most = true ∧
-    Alternatives.Quantifiers.entails .most .some_ = true := by decide +kernel
 
 
 end MacuchSilvaEtAl2024

@@ -153,7 +153,7 @@ abbrev isDog (x : Finset (Fin 2)) : Prop := x.Nonempty
 /-- Shan *mǎa* 'dog' patterns with English *furniture*: the sum of dogs is dogs, but the
 individual dogs are minimal, so the predicate is cumulative without being homogeneous. -/
 theorem maa_cumulative_not_divisive : CUM isDog ∧ ¬ LacksMinimalParts isDog := by
-  refine ⟨fun _ hx _ _ => hx.mono Finset.subset_union_left, fun h => ?_⟩
+  refine ⟨λ _ hx _ _ => hx.mono Finset.subset_union_left, λ h => ?_⟩
   obtain ⟨y, hy, hne⟩ := h {0} (Finset.singleton_nonempty 0)
   exact hne.ne_empty ((Finset.subset_singleton_iff.1 hy.le).resolve_right hy.ne)
 
