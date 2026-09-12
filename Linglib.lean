@@ -2411,7 +2411,6 @@ import Linglib.Studies.Magri2025
 import Linglib.Studies.Maier2015
 import Linglib.Studies.MajidBosterBowerman2008
 import Linglib.Studies.Major2024
-import Linglib.Studies.Mandelkern2019
 import Linglib.Studies.Mandelkern2022
 import Linglib.Studies.Marantz1991
 import Linglib.Studies.Marantz2013
