@@ -1,0 +1,166 @@
+[
+  {
+    "id": "maier2015_42",
+    "source": {
+      "bibkey": "maier-2015",
+      "paperLabel": "(42), after Karttunen (1973)"
+    },
+    "language": "stan1293",
+    "primaryText": "Bill believed Fred had been beating his wife and he hoped Fred would stop.",
+    "discourseSegments": [
+      "Bill believed Fred had been beating his wife and he hoped Fred would stop."
+    ],
+    "glossedTokens": [],
+    "translation": "Bill believed Fred had been beating his wife and he hoped Fred would stop.",
+    "context": "The presupposition of stop, that Fred had been beating his wife, is filtered: it is not the speaker's.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "order",
+        "doxasticFirst"
+      ],
+      [
+        "attitudes",
+        "believe;hope"
+      ],
+      [
+        "trigger",
+        "stop"
+      ]
+    ]
+  },
+  {
+    "id": "maier2015_7a",
+    "source": {
+      "bibkey": "maier-2015",
+      "paperLabel": "(7a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John believes that Mary will come. He hopes that SUE will come too.",
+    "discourseSegments": [
+      "John believes that Mary will come.",
+      "He hopes that SUE will come too."
+    ],
+    "glossedTokens": [],
+    "translation": "John believes that Mary will come. He hopes that SUE will come too.",
+    "context": "The presupposition of too is filtered by the belief.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "order",
+        "doxasticFirst"
+      ],
+      [
+        "attitudes",
+        "believe;hope"
+      ],
+      [
+        "trigger",
+        "too"
+      ]
+    ]
+  },
+  {
+    "id": "maier2015_7b",
+    "source": {
+      "bibkey": "maier-2015",
+      "paperLabel": "(7b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John hopes that Mary will come. He believes that SUE will come too.",
+    "discourseSegments": [
+      "John hopes that Mary will come.",
+      "He believes that SUE will come too."
+    ],
+    "glossedTokens": [],
+    "translation": "John hopes that Mary will come. He believes that SUE will come too.",
+    "context": "The presupposition of too finds no antecedent in the belief and projects.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "order",
+        "parasiticFirst"
+      ],
+      [
+        "attitudes",
+        "hope;believe"
+      ],
+      [
+        "trigger",
+        "too"
+      ]
+    ]
+  },
+  {
+    "id": "maier2015_22a",
+    "source": {
+      "bibkey": "maier-2015",
+      "paperLabel": "(22a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John believes that Mary will come to his party. Last night he imagined that HER SISTER would come too.",
+    "discourseSegments": [
+      "John believes that Mary will come to his party.",
+      "Last night he imagined that HER SISTER would come too."
+    ],
+    "glossedTokens": [],
+    "translation": "John believes that Mary will come to his party. Last night he imagined that HER SISTER would come too.",
+    "context": "A representational attitude without a preference component is parasitic on belief in the same way.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "order",
+        "doxasticFirst"
+      ],
+      [
+        "attitudes",
+        "believe;imagine"
+      ],
+      [
+        "trigger",
+        "too"
+      ]
+    ]
+  },
+  {
+    "id": "maier2015_22b",
+    "source": {
+      "bibkey": "maier-2015",
+      "paperLabel": "(22b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Last night John imagined that Mary would come to his party. He believes that HER SISTER will come too.",
+    "discourseSegments": [
+      "Last night John imagined that Mary would come to his party.",
+      "He believes that HER SISTER will come too."
+    ],
+    "glossedTokens": [],
+    "translation": "Last night John imagined that Mary would come to his party. He believes that HER SISTER will come too.",
+    "context": "The reverse order does not filter.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "order",
+        "parasiticFirst"
+      ],
+      [
+        "attitudes",
+        "imagine;believe"
+      ],
+      [
+        "trigger",
+        "too"
+      ]
+    ]
+  }
+]

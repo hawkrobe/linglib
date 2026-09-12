@@ -1,25 +1,33 @@
 import Linglib.Semantics.Dynamic.DRS.Basic
+import Linglib.Data.Examples.Maier2015
 import Mathlib.Data.Fin.VecNotation
 
 /-!
 # Maier (2015): Parasitic Attitudes
 
-This file formalizes [maier-2015]'s solution to the attitude-projection puzzle of
+This file formalizes the solution in [maier-2015] to the attitude-projection puzzle of
 [karttunen-1973], *Bill believed Fred had been beating his wife and he hoped Fred would
-stop*, which does not presuppose for the speaker that Fred was beating his wife, as a
-mechanism of discourse representation theory over the substrate's DRS core. An agent's
-mental state is one representation, a belief layer with labelled non-doxastic compartments
-embedded inside it (`MentalState`, `MentalState.flatten`), so referents introduced in the
-belief layer are accessible from a desire compartment but not conversely
-(`parasitic_asymmetry`). A sequence of same-agent attitude ascriptions merges into one
-mental-state description (`MentalState.merge`), after which a presupposition triggered in
-the desire compartment binds, in the manner of [van-der-sandt-1992], to the believed event
-rather than projecting (`MentalState.bind`, `presup_resolved_after_binding`).
+stop*, which does not presuppose for the speaker that Fred was beating his wife. An agent's
+mental state is one discourse representation, a belief layer with labelled non-doxastic
+compartments embedded in it (`MentalState`, `MentalState.flatten`), so a referent introduced
+in the belief layer is accessible from every compartment while a compartment's referents are
+visible nowhere else (`accessible_belief_of_compartment`, `not_accessible_of_belief`):
+the non-doxastic attitudes are parasitic on belief. A sequence of ascriptions to one agent
+merges into one description (`MentalState.merge`), after which a presupposition triggered in
+a desire compartment binds, in the manner of [van-der-sandt-1992], to the believed event
+rather than projecting (`MentalState.bind`, `presup_binds_after_merge`,
+`presup_resolved_after_binding`), whereas one triggered in the belief layer after a desire
+finds no antecedent there and projects. That asymmetry is the paper's data: in the sequences
+of `Data/Examples/Maier2015` the presupposition is filtered exactly when the doxastic
+ascription comes first (`filtering_iff_doxastic_first`).
 
 ## Implementation notes
 
-The compartment labels are structural, not intensional operators, so parasitism is a matter
-of the standard accessibility relation of the DRS core in `Semantics/Dynamic/DRS`.
+The compartment labels are structural, not intensional operators, so parasitism is the
+standard accessibility of the DRS core in `Semantics/Dynamic/DRS`, a compartment being a
+subordinate box; the core's negation is the subordination device, its truth conditions
+playing no role. The general accessibility lemmas assume the belief layer and the
+compartments hold atomic conditions, as every description in the paper does.
 
 ## TODO
 
@@ -37,90 +45,10 @@ open FirstOrder DRT
 
 namespace Maier2015
 
-/-! ### Empirical projection facts -/
+/-! ### The DRS language of the Karttunen example (§5.3) -/
 
-/-- A recorded judgment about an attitude-sequence sentence: whether the
-embedded presupposition projects to the speaker, whether it is attributed to the
-attitude holder, and whether the sentence is acceptable. -/
-structure AttitudeSequenceJudgment where
-  /-- The sentence being judged. -/
-  sentence : String
-  /-- Does the presupposition project to the speaker? -/
-  presupProjectsToSpeaker : Bool
-  /-- Is the presupposition attributed to the attitude holder? -/
-  presupProjectsToHolder : Bool
-  /-- Is the sentence acceptable? -/
-  acceptable : Bool
-  deriving Repr
-
-/-- Karttunen's puzzle (ex. 42): a believe-then-hope sequence filters the
-presupposition of *stop*, which therefore does not project to the speaker. -/
-def believeHopeFiltering : AttitudeSequenceJudgment :=
-  { sentence := "Bill believed Fred had been beating his wife and he hoped Fred would stop"
-    presupProjectsToSpeaker := false
-    presupProjectsToHolder := true
-    acceptable := true }
-
-/-- Maier's (7a): belief-then-hope filters the *too*-presupposition, so the
-discourse is felicitous. -/
-def believeHopeTooFiltering : AttitudeSequenceJudgment :=
-  { sentence := "John believes that Mary will come. He hopes that SUE will come too."
-    presupProjectsToSpeaker := false
-    presupProjectsToHolder := true
-    acceptable := true }
-
-/-- Maier's (7b): hope-then-belief does *not* filter the *too*-presupposition,
-which projects and renders the discourse infelicitous. The contrast with (7a) is
-the asymmetry the parasitic account explains. -/
-def hopeBelieveNoFiltering : AttitudeSequenceJudgment :=
-  { sentence := "*John hopes that Mary will come. He believes that SUE will come too."
-    presupProjectsToSpeaker := true
-    presupProjectsToHolder := false
-    acceptable := false }
-
-/-- Maier's (22a): the asymmetry extends to purely representational attitudes
-(imagine/dream) lacking a preference component — belief-then-imagine filters. -/
-def believeImagineFiltering : AttitudeSequenceJudgment :=
-  { sentence := "John believes that Mary will come to his party. Last night he imagined that " ++
-      "HER SISTER would come too."
-    presupProjectsToSpeaker := false
-    presupProjectsToHolder := true
-    acceptable := true }
-
-/-- Maier's (22b): the reverse order (imagine-then-believe) does not filter. -/
-def imagineBelieveNoFiltering : AttitudeSequenceJudgment :=
-  { sentence := "*Last night John imagined that Mary would come to his party. He believes that " ++
-      "HER SISTER will come too."
-    presupProjectsToSpeaker := true
-    presupProjectsToHolder := false
-    acceptable := false }
-
-/-- All empirical judgments collected in this module. -/
-def allJudgments : List AttitudeSequenceJudgment :=
-  [ believeHopeFiltering, believeHopeTooFiltering, hopeBelieveNoFiltering,
-    believeImagineFiltering, imagineBelieveNoFiltering ]
-
-/-- The filtering cases: a doxastic attitude precedes a parasitic one. -/
-def filteringCases : List AttitudeSequenceJudgment :=
-  [ believeHopeFiltering, believeHopeTooFiltering, believeImagineFiltering ]
-
-/-- The non-filtering cases: a parasitic attitude precedes a doxastic one. -/
-def nonFilteringCases : List AttitudeSequenceJudgment :=
-  [ hopeBelieveNoFiltering, imagineBelieveNoFiltering ]
-
-/-- In every filtering case the presupposition stays off the speaker; in every
-non-filtering case it projects. This is the asymmetry the mechanism below
-derives. -/
-theorem projection_asymmetry_data :
-    filteringCases.all (·.presupProjectsToSpeaker == false) = true ∧
-    nonFilteringCases.all (·.presupProjectsToSpeaker == true) = true := by
-  decide
-
-/-! ### The DRS language of the Karttunen example (Maier §5.3) -/
-
-/-- Relations of the Karttunen example: `sue`/`jane` (1-ary), `husband` (2-ary,
-`husband(h, j)`), event-style `cheat(e, j, h)` (3-ary, event + cheater + victim),
-`stop(j, e')` (2-ary, agent + event). -/
+/-- Relations of the example: `sue` and `jane`, `husband(h, j)`, the event `cheat(e, j, h)`,
+and `stop(j, e')`. -/
 inductive MaierRel : ℕ → Type
   | sue : MaierRel 1
   | jane : MaierRel 1
@@ -128,148 +56,198 @@ inductive MaierRel : ℕ → Type
   | cheat : MaierRel 3
   | stop : MaierRel 2
 
-/-- The first-order language of the example (no functions). -/
+/-- The first-order language of the example. -/
 def maierLang : Language := ⟨λ _ => Empty, MaierRel⟩
 
 /-- Conditions over `maierLang` with `ℕ` discourse referents. -/
 abbrev MCond := Condition maierLang ℕ
 
-/-! ### Mental-state descriptions (Maier §3.1) -/
+/-- A condition introducing no box. -/
+def MCond.IsAtomic : MCond → Prop
+  | .rel _ _ | .eq _ _ => True
+  | _ => False
 
-/-- Attitude-mode labels for non-doxastic compartments. Per Maier (fn. 11) these
-are labels, not intensional operators — they do not affect DRT accessibility,
-only which compartment an ascription contributes to under merge. -/
-inductive AttMode
+instance : DecidablePred MCond.IsAtomic := λ c => by
+  cases c <;> unfold MCond.IsAtomic <;> infer_instance
+
+/-! ### Mental-state descriptions (§3.1) -/
+
+/-- Attitude-mode labels for the non-doxastic compartments: desire, imagination, intention. -/
+inductive AttMode where
   | des
   | imgn
   | int
   deriving DecidableEq, Repr, BEq
 
-/-- A labeled non-doxastic compartment: an embedded sub-DRS (its own discourse
-referents and conditions) under an attitude-mode label. -/
+/-- A labelled non-doxastic compartment: its own referents and conditions under a mode. -/
 structure Compartment where
   mode : AttMode
   drefs : List ℕ
   conds : List MCond
 
-/-- Maier's mental-state description: a global belief layer (discourse referents
-+ conditions) with embedded labeled compartments. Mirrors his (32) `K = K_BEL`
-with `DES-K_DES` embedded. -/
+/-- A mental-state description (32): a belief layer with embedded compartments. -/
 structure MentalState where
   beliefDrefs : List ℕ
   beliefConds : List MCond
   compartments : List Compartment
 
-/-- Flatten a mental state to a single `DRS maierLang ℕ`: the belief box
-containing the belief conditions plus, for each compartment, a *subordinate*
-sub-box. Because each compartment is embedded inside the belief box, the core's
-`accessibleFrom` makes belief referents accessible from a compartment but not
-conversely — Maier's parasitism, for free.
+/-- A compartment as a subordinate box. -/
+def Compartment.box (c : Compartment) : MCond := .neg (.mk c.drefs.toFinset c.conds)
 
-Standard DRT (the core) has no labeled / operator-free embedded-box condition
-(Maier fn. 11), so `neg` stands in purely as the subordination device: `accScope`
-descends into any complex condition identically, so the accessibility geometry the
-theorems test is exactly Maier's; `neg`'s truth-semantics is immaterial here. -/
+/-- The description as one DRS: the belief box, with each compartment a subordinate box, so
+that the core's accessibility runs from a compartment up to the belief layer and not back. -/
 def MentalState.flatten (K : MentalState) : DRS maierLang ℕ :=
-  .mk K.beliefDrefs.toFinset
-    (K.beliefConds ++ K.compartments.map (λ c => .neg (.mk c.drefs.toFinset c.conds)))
+  .mk K.beliefDrefs.toFinset (K.beliefConds ++ K.compartments.map Compartment.box)
 
-/-! ### Attitude merge (Maier §5.2, (58)) -/
+/-! ### Parasitism as accessibility -/
 
-/-- Append one compartment's content into another of the same mode. -/
+private theorem accScopeL_cons (s : Finset ℕ) (c : MCond) (cs : List MCond) (x : ℕ) :
+    Condition.accScopeL s (c :: cs) x =
+      (Condition.accScope s c x).orElse λ _ => Condition.accScopeL s cs x :=
+  rfl
+
+private theorem accScope_atomic {s : Finset ℕ} {c : MCond} (h : c.IsAtomic) (x : ℕ) :
+    Condition.accScope s c x = none := by
+  cases c <;> simp [MCond.IsAtomic] at h <;> simp [Condition.accScope]
+
+private theorem accScopeL_atomic_append {s : Finset ℕ} {bs : List MCond}
+    (hb : ∀ c ∈ bs, c.IsAtomic) (ms : List MCond) (x : ℕ) :
+    Condition.accScopeL s (bs ++ ms) x = Condition.accScopeL s ms x := by
+  induction bs with
+  | nil => rfl
+  | cons c cs ih =>
+    rw [List.cons_append, accScopeL_cons, accScope_atomic (hb c (List.mem_cons_self ..)),
+      ih λ d hd => hb d (List.mem_cons_of_mem _ hd)]
+    rfl
+
+private theorem accScopeL_compartments (s : Finset ℕ) {cs : List Compartment}
+    (hcs : ∀ c ∈ cs, ∀ cd ∈ c.conds, cd.IsAtomic) {y : ℕ} (hyc : ∃ c ∈ cs, y ∈ c.drefs) :
+    ∃ acc, Condition.accScopeL s (cs.map Compartment.box) y = some acc ∧ s ⊆ acc := by
+  induction cs with
+  | nil => simp at hyc
+  | cons c cs ih =>
+    rw [List.map_cons, accScopeL_cons]
+    by_cases h : y ∈ c.drefs
+    · refine ⟨s ∪ c.drefs.toFinset, ?_, Finset.subset_union_left⟩
+      simp [Compartment.box, Condition.accScope_neg, DRS.accScope, h]
+    · have hnone : Condition.accScope s c.box y = none := by
+        rw [Compartment.box, Condition.accScope_neg, DRS.accScope, if_neg (by simpa using h),
+          ← List.append_nil c.conds]
+        exact accScopeL_atomic_append (hcs c (List.mem_cons_self ..)) [] y
+      rw [hnone]
+      obtain ⟨c', hc', hy'⟩ := hyc
+      rcases List.mem_cons.1 hc' with rfl | hc'
+      · exact absurd hy' h
+      · exact ih (λ d hd => hcs d (List.mem_cons_of_mem _ hd)) ⟨c', hc', hy'⟩
+
+/-- The belief layer does not see a compartment: a belief referent has only the belief
+referents accessible. -/
+theorem not_accessible_of_belief (K : MentalState) {x y : ℕ} (hx : x ∈ K.beliefDrefs)
+    (hy : y ∉ K.beliefDrefs) : ¬ DRS.Accessible K.flatten x y := by
+  simp [DRS.Accessible, DRS.accessibleFrom, DRS.accScope, MentalState.flatten, hx, hy]
+
+/-- A compartment sees the belief layer: a referent introduced in a compartment has every
+belief referent accessible, parasitism in the paper's sense (§3.1). -/
+theorem accessible_belief_of_compartment (K : MentalState)
+    (hb : ∀ c ∈ K.beliefConds, c.IsAtomic)
+    (hcs : ∀ c ∈ K.compartments, ∀ cd ∈ c.conds, cd.IsAtomic) {x y : ℕ}
+    (hx : x ∈ K.beliefDrefs) (hy : y ∉ K.beliefDrefs) (hyc : ∃ c ∈ K.compartments, y ∈ c.drefs) :
+    DRS.Accessible K.flatten y x := by
+  obtain ⟨acc, hacc, hsub⟩ :=
+    accScopeL_compartments (∅ ∪ K.beliefDrefs.toFinset) hcs hyc
+  have h : DRS.accScope ∅ K.flatten y = some acc := by
+    rw [DRS.accScope, MentalState.flatten, if_neg (by simpa using hy)]
+    exact (accScopeL_atomic_append hb _ y).trans hacc
+  simp only [DRS.Accessible, DRS.accessibleFrom, h, Option.getD_some]
+  exact hsub (by simp [hx])
+
+/-! ### Attitude merge (58) and presupposition binding -/
+
+/-- Append one compartment's content to another of the same mode. -/
 def Compartment.append (c c' : Compartment) : Compartment :=
   { mode := c.mode, drefs := c.drefs ++ c'.drefs, conds := c.conds ++ c'.conds }
 
-/-- Merge two compartment lists by attitude mode: like-mode compartments are
-combined, others carried over. -/
+/-- Merge two compartment lists by attitude mode. -/
 def mergeCompartments (cs cs' : List Compartment) : List Compartment :=
   cs'.foldl (λ cur c' =>
     if cur.any (·.mode == c'.mode) then
       cur.map (λ c => if c.mode == c'.mode then c.append c' else c)
     else cur ++ [c']) cs
 
-/-- Maier's attitude-merge (his (58)): combine two partial descriptions of one
-agent's mental state by merging the belief layers and merging like-mode
-compartments. The core's `merge` is flat concatenation (gap 2); this respects the
-belief/compartment structure. -/
+/-- Attitude merge (58): two partial descriptions of one agent's state become one, the belief
+layers merged and like-mode compartments combined. -/
 def MentalState.merge (K K' : MentalState) : MentalState :=
   { beliefDrefs := K.beliefDrefs ++ K'.beliefDrefs
     beliefConds := K.beliefConds ++ K'.beliefConds
     compartments := mergeCompartments K.compartments K'.compartments }
 
-/-! ### Presupposition binding (Maier §4.2, van der Sandt) -/
-
-/-- Resolve a presupposition by binding its referent `presup` to an accessible
-antecedent: drop `presup` from the universes and rename it to `antecedent`
-throughout, via the core's functorial `Condition.map` (capture-free since the DRS
-is proper). Licensed only when `antecedent` is accessible from `presup` (checked
-separately via `DRS.Accessible`). -/
+/-- Resolve a presupposition by binding its referent to an accessible antecedent, in the
+manner of [van-der-sandt-1992]: drop the presupposed referent and rename it throughout. -/
 def MentalState.bind (presup antecedent : ℕ) (K : MentalState) : MentalState :=
   { beliefDrefs := K.beliefDrefs.filter (· != presup)
-    beliefConds := K.beliefConds.map (Condition.map (λ d => if d = presup then antecedent else d))
-    compartments := K.compartments.map (λ c =>
+    beliefConds := K.beliefConds.map (Condition.map λ d => if d = presup then antecedent else d)
+    compartments := K.compartments.map λ c =>
       { mode := c.mode
         drefs := c.drefs.filter (· != presup)
-        conds := c.conds.map (Condition.map (λ d => if d = presup then antecedent else d)) }) }
+        conds := c.conds.map (Condition.map λ d => if d = presup then antecedent else d) } }
 
-/-! ### Solving Karttunen's puzzle (Maier §5.3, (53)–(60))
+/-! ### Karttunen's puzzle (§5.3)
 
-"Sue thinks that Jane has been cheating on her husband. She hopes that Jane will
-stop cheating on him." Referents: s = 10, j = 11, h = 12, e = 20 (the believed
-cheating event), e' = 21 (the cheating event presupposed by *stop*). -/
+*Sue thinks that Jane has been cheating on her husband. She hopes that Jane will stop
+cheating on him.* Referents: Sue 10, Jane 11, the husband 12, the believed cheating event 20,
+and the cheating event 21 presupposed by *stop*. -/
 
-/-- After sentence 1: Sue believes there is a cheating event `e` (Maier (59),
-belief layer). -/
+/-- After the first sentence: Sue believes there is a cheating event (59). -/
 def sueBelief : MentalState :=
   { beliefDrefs := [10, 11, 12, 20]
     beliefConds := [.rel .sue ![10], .rel .jane ![11], .rel .husband ![12, 11],
                     .rel .cheat ![20, 11, 12]]
     compartments := [] }
 
-/-- After sentence 2 (in isolation): Sue's desire compartment contains
-`stop(j, e')` and the presupposed cheating event `e'`, with no belief-layer
-antecedent of its own. -/
+/-- The second sentence on its own: a desire compartment with *stop* and the presupposed
+event, with no antecedent in its belief layer. -/
 def sueHope : MentalState :=
   { beliefDrefs := []
     beliefConds := []
     compartments := [{ mode := .des, drefs := [21],
                        conds := [.rel .stop ![11, 21], .rel .cheat ![21, 11, 12]] }] }
 
-/-- The two ascriptions merged into one mental-state description (Maier (59)). -/
+/-- The two ascriptions merged (59). -/
 def sueMerged : MentalState := sueBelief.merge sueHope
 
-/-- The merged description after binding the presupposed event `e'` to the
-believed event `e` (Maier (60)). -/
+/-- The merged description after binding the presupposed event to the believed one (60). -/
 def sueBound : MentalState := sueMerged.bind 21 20
 
-/-- Before merge, the believed cheating event does not even occur in the lone
-hope description, so the *stop* presupposition has no antecedent to bind to —
-only (dispreferred) accommodation is available. -/
+/-- Before the merge the believed event does not occur in the hope description, so the
+presupposition of *stop* has no antecedent and could only be accommodated. -/
 theorem believed_event_absent_before_merge : 20 ∉ DRS.varFinset sueHope.flatten := by
-  simp [sueHope, MentalState.flatten]; decide
+  simp [sueHope, MentalState.flatten, Compartment.box]; decide
 
-/-- After merge, the believed cheating event `e` (20) is accessible from the
-desire-compartment presupposition `e'` (21): binding `e' = e` is licensed. This
-is the filtering, reusing the core's `DRS.Accessible` unchanged. -/
-theorem presup_binds_after_merge : DRS.Accessible sueMerged.flatten 21 20 := by
-  simp [DRS.Accessible, DRS.accessibleFrom, sueMerged, sueBelief, sueHope, MentalState.merge,
-    mergeCompartments, MentalState.flatten, DRS.accScope, Condition.accScopeL,
-    Condition.accScope, Option.orElse]
+/-- After the merge the believed event is accessible from the presupposed one, so binding is
+licensed: the filtering. -/
+theorem presup_binds_after_merge : DRS.Accessible sueMerged.flatten 21 20 :=
+  accessible_belief_of_compartment sueMerged (by decide) (by decide) (by decide) (by decide)
+    (by decide)
 
-/-- The dependence is asymmetric (Maier §3.1, fn. 11): the believed event in the
-belief layer does *not* see the desire-compartment referent. Belief can filter
-desire's presupposition, not conversely. -/
-theorem parasitic_asymmetry : ¬ DRS.Accessible sueMerged.flatten 20 21 := by
-  simp [DRS.Accessible, DRS.accessibleFrom, sueMerged, sueBelief, sueHope, MentalState.merge,
-    mergeCompartments, MentalState.flatten, DRS.accScope]
+/-- The dependence is asymmetric: the believed event does not see the desire's referent. -/
+theorem parasitic_asymmetry : ¬ DRS.Accessible sueMerged.flatten 20 21 :=
+  not_accessible_of_belief sueMerged (by decide) (by decide)
 
-/-- After binding, the presupposed cheating referent `e'` (21) no longer occurs:
-it has been identified with the believed event `e` (20), so the presupposition is
-resolved by binding (filtered), not accommodated or projected (Maier's (60)). -/
+/-- After binding, the presupposed referent is gone and the believed event remains: resolved
+by binding, neither accommodated nor projected (60). -/
 theorem presup_resolved_after_binding :
     21 ∉ DRS.varFinset sueBound.flatten ∧ 20 ∈ DRS.varFinset sueBound.flatten := by
   simp [sueBound, sueMerged, sueBelief, sueHope, MentalState.merge, mergeCompartments,
-    MentalState.bind, MentalState.flatten, Condition.map]
+    MentalState.bind, MentalState.flatten, Compartment.box, Condition.map]
+  decide
+
+/-! ### The data -/
+
+/-- In the attitude sequences of the paper and of [karttunen-1973], the presupposition of the
+second ascription is filtered, and the discourse felicitous, exactly when the doxastic
+ascription comes first: the parasitic attitude sees the belief and not conversely. -/
+theorem filtering_iff_doxastic_first :
+    ∀ e ∈ Examples.all, e.judgment = .acceptable ↔ e.feature? "order" = some "doxasticFirst" := by
   decide
 
 end Maier2015
