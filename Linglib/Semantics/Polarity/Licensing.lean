@@ -86,7 +86,7 @@ inductive LicensingMechanism where
 
     Every classification of `LicensingContext` (DE strength, K&L mechanism,
     canonical example, citation lineage) projects out of this single record.
-    Per-paper classifiers (`Ladusaw1979.licensingStrength`,
+    Per-paper classifiers (`Ladusaw1979.IsDownwardEntailing`,
     `KadmonLandman1993.klExplanation`) are derivations from `LicensingContext.properties`,
     not parallel stipulations. -/
 structure ContextProperties where
