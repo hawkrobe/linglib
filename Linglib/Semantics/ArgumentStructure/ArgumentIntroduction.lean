@@ -166,6 +166,30 @@ Hebrew possessor datives). -/
 theorem toTheme_licenses_transitive (themeRel body : ThematicRel Entity T) :
     IntroMode.toTheme.Licenses (VerbDenot.transitive themeRel body) := trivial
 
+namespace IntroMode
+
+/-- An introducer composes with an unergative exactly when it relates its argument to the
+event: [pylkkanen-2008]'s first applicative diagnostic. -/
+theorem licenses_unergative_iff (m : IntroMode) (body : Event T → Prop) :
+    m.Licenses (VerbDenot.unergative (Entity := Entity) body) ↔ m = .toEvent := by
+  cases m <;> simp [Licenses, VerbDenot.IsTransitive]
+
+/-- An introducer composes with a Kimian stative exactly when it relates its argument to the
+event: [pylkkanen-2008]'s second applicative diagnostic. -/
+theorem licenses_kimian_iff (m : IntroMode) (rel : Entity → Entity → Prop) :
+    m.Licenses (VerbDenot.kimianStative (T := T) rel) ↔ m = .toEvent := by
+  cases m <;> simp [Licenses, VerbDenot.IsTransitive]
+
+/-- The two diagnostics co-vary: whatever an introducer does with unergatives it does with
+statives, since both turn on relating the argument to the event rather than to a theme. -/
+theorem licenses_unergative_iff_licenses_kimian (m : IntroMode) (body : Event T → Prop)
+    (rel : Entity → Entity → Prop) :
+    m.Licenses (VerbDenot.unergative (Entity := Entity) body) ↔
+      m.Licenses (VerbDenot.kimianStative (T := T) rel) := by
+  rw [licenses_unergative_iff, licenses_kimian_iff]
+
+end IntroMode
+
 /-- [pylkkanen-2008]'s eq. 103, as a theorem about the denotations:
 forcing a low (theme-relating) applicative onto an unergative binds the applied
 argument's theme relation to the external argument, yielding `agentRel x e ∧

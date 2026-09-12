@@ -182,7 +182,7 @@ disagreements with them Lean-checkable. -/
 
 Both analyses agree that the first object of English DOC is in an
 Appl-projection above V (not selected by V). Pylkkänen's `english_appl`
-commits English DOC to `.lowRecipient` (`Pylkkanen2008.lean:227`); this
+commits English DOC to `.lowRecipient` (`Pylkkanen2008.Construction.head`); this
 classification correctly predicts the structural facts about c-command,
 binding, and quantifier scope.
 
@@ -195,7 +195,7 @@ machinery, which has no substrate analogue (see G2 ANALOGUE note).
 Bruening explicitly *rejects* Pylkkänen 2008's analysis as a "variety of
 small clause analysis" (fn. 10 p. 1042). -/
 theorem bruening_vs_pylkkanen_low_recipient :
-    Pylkkanen2008.english_appl.classification = Minimalist.ApplType.lowRecipient
+    Pylkkanen2008.Construction.englishDOC.head = Minimalist.ApplType.lowRecipient
     ∧ docOnlyVerbs.all (fun v => v.implicitGoal != some .indef) = true := by
   refine ⟨rfl, ?_⟩; decide
 
