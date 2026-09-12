@@ -33,10 +33,8 @@ The minimal-vP claim is recorded per fragment as an empirical generalization.
 
 ## TODO
 
-The paper is not on file; section and example locators are transcribed from an earlier
-version of this file and are UNVERIFIED. Exfoliation, a uniform *again*-presupposition
-substrate, the restitutive reading, and the German and Romance restructuring typology of
-[wurmbrand-2014] are not represented.
+Exfoliation, a uniform *again*-presupposition substrate, the restitutive reading, and the
+German and Romance restructuring typology of [wurmbrand-2014] are not represented.
 
 ## References
 
