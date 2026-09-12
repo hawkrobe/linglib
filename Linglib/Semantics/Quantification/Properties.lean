@@ -175,6 +175,11 @@ theorem conservative_iff_livesOn (q : GQ α) :
   unfold Conservative LivesOn restrict
   exact ⟨fun h A B => h A B, fun h R S => h R S⟩
 
+/-- A conservative quantifier's value at a restrictor depends only on the scope's meet with it. -/
+theorem Conservative.iff_of_inf_eq {q : GQ α} (hq : Conservative q) {R S S' : α → Prop}
+    (h : R ⊓ S = R ⊓ S') : q R S ↔ q R S' :=
+  (hq R S).trans ((Iff.of_eq (congrArg (q R) h)).trans (hq R S').symm)
+
 /-! ### Basic Left Monotonicity and Smoothness ([peters-westerstahl-2006] §5.5-5.6) -/
 
 /-- Persistence → ↑_SE Mon. -/
