@@ -9,19 +9,32 @@ import Linglib.Fragments.Numee.Prosody
 import Linglib.Studies.Hyman2006
 
 /-!
-# Lionnet (2025): tonal languages without tone
+# Lionnet (2025): Tonal Languages Without Tone
 
-[lionnet-2025] analyses the word prosody of Drubea and Numèè (Oceanic, New Caledonia) as
-consisting entirely of register features — an underlying downstep `l` and a postlexical
-upstep `h` — with no tone features: the register-bearing unit is the mora, as the CV⁺V
-three-way contrast shows; each native stem carries at most one downstep (culminativity);
-the downstep meets [leben-2018]'s definitional properties; and the analysis is more
-parsimonious than a tonal one (§5). Tone systems thereby split into tone-based and
-register-based, enriching [hyman-2006]'s word-prosodic typology.
+This file formalizes the analysis of the word prosody of Drubea and Numèè (Oceanic, New
+Caledonia) in [lionnet-2025] as consisting entirely of register features, an underlying
+downstep and a postlexical epenthetic upstep, with no tone features. The register-bearing
+unit is the mora, as the three-way CVꜜV contrast shows (`cvPlusV_three_way_distinct`); each
+stem pattern carries at most one downstep, register culminativity (`pattern_culminative`);
+downsteps terrace (`four_downsteps_terrace`); a registerless stretch before a downstep is
+raised by h-epenthesis, abruptly or by spreading (`hEpenthesis`, `hEpenthesisSpread`); and
+an utterance-initial downstep is neutralised phonetically while its feature still blocks
+h-epenthesis on itself (`utt_initial_l_underlyingly_active`). The downstep meets
+[leben-2018]'s definitional properties, and the system is tonal in the sense of
+[hyman-2006] yet register-based rather than tone-based, a distinction within Hyman's tone
+prototype that his typology does not draw (`drubea_register_only`, `drubea_tone_only`).
 
-The register-only apparatus — culminativity, pre-downstep h-epenthesis in its abrupt and
-spreading variants, and utterance-initial neutralisation — is the paper's; the terracing
-realization it rides on is `Tone.Register`.
+## Implementation notes
+
+The terracing realization is `Tone.Register`; the stems and boundary processes are the
+Drubea and Numèè fragments. The paper's comparison with a tonal alternative, which it
+rejects as less parsimonious, is prose and is not represented.
+
+## References
+
+* [lionnet-2025]
+* [leben-2018]
+* [hyman-2006]
 -/
 
 namespace Lionnet2025
@@ -30,11 +43,11 @@ open Tone Drubea.Prosody
 
 /-! ### The register-only apparatus -/
 
-/-- **Register culminativity** (§3.10): at most one `[-raised]` node per stem. -/
+/-- Register culminativity (§3.8): at most one `[-raised]` node per stem. -/
 abbrev IsCulminative (ts : List TRN) : Prop :=
-  ts.countP (fun t => t.raised == some false) ≤ 1
+  ts.countP (λ t => t.raised == some false) ≤ 1
 
-/-- **Pre-downstep h-epenthesis** (§3.2, §4.4): an upstep replaces the registerless node
+/-- Pre-downstep h-epenthesis (§3.2, §4.4): an upstep replaces the registerless node
 immediately before a downstep. An underlying downstep blocks the rule on itself — the
 diagnostic that survives utterance-initial neutralisation. -/
 def hEpenthesis : List TRN → List TRN
@@ -43,7 +56,7 @@ def hEpenthesis : List TRN → List TRN
   | TRN.empty :: TRN.downstep :: rest => TRN.upstep :: TRN.downstep :: hEpenthesis rest
   | t :: rest => t :: hEpenthesis rest
 
-/-- **Spreading h-epenthesis** (§3.2): every registerless node before a downstep is
+/-- Spreading h-epenthesis (§3.2): every registerless node before a downstep is
 raised. -/
 def hEpenthesisSpread : List TRN → List TRN
   | [] => []
@@ -56,7 +69,7 @@ def hEpenthesisSpread : List TRN → List TRN
       | _ => TRN.empty :: rest'
   | t :: rest => t :: hEpenthesisSpread rest
 
-/-- **Utterance-initial neutralisation** (§3.5, §4.5): an initial `[-raised]` node is
+/-- Utterance-initial neutralisation (§3.5, §4.5): an initial `[-raised]` node is
 realized at the baseline, there being no preceding register to contrast with. The feature
 stays in the underlying form, blocking h-epenthesis on itself. -/
 def realizePitchUtterance (level : Int) : List TRN → List Int
@@ -69,36 +82,28 @@ def realizePitchUtterance (level : Int) : List TRN → List Int
 
 /-- Every monosyllabic minimal pair shares its segmental form: the contrast is the register
 feature `l` alone. -/
-theorem minimal_pairs_same_segments :
-    monoMinimalPairs.all (fun (a, b) => a.form == b.form) = true := by
+theorem minimal_pairs_same_segments : ∀ ab ∈ monoMinimalPairs, ab.1.form = ab.2.form := by
   decide
 
 /-- The contrast in each minimal pair is the register specification: one member is
 registerless, the other σ1-downstepped. -/
 theorem minimal_pairs_register_contrast :
-    monoMinimalPairs.all (fun (a, b) =>
-      a.pattern == .registerless && b.pattern == .σ1_downstepped) = true := by
+    ∀ ab ∈ monoMinimalPairs, ab.1.pattern = .registerless ∧ ab.2.pattern = .σ1_downstepped := by
   decide
 
 /-! ### Culminativity -/
 
-/-- Every stem in the Drubea fragment is culminative: at most one `l` per stem (§3.10). -/
+/-- Every stem in the Drubea fragment is culminative: at most one `l` per stem (§3.8). -/
 theorem all_stems_culminative :
     ∀ e ∈ allStems, IsCulminative e.specs := by
   decide
 
-/-- Culminativity holds structurally for all three patterns at any mora count: each
-pattern places at most one `l`. -/
-theorem pattern_culminative_0 (p : StemPattern) :
-    IsCulminative (p.toSpecs 0) := by cases p <;> decide
-theorem pattern_culminative_1 (p : StemPattern) :
-    IsCulminative (p.toSpecs 1) := by cases p <;> decide
-theorem pattern_culminative_2 (p : StemPattern) :
-    IsCulminative (p.toSpecs 2) := by cases p <;> decide
-theorem pattern_culminative_3 (p : StemPattern) :
-    IsCulminative (p.toSpecs 3) := by cases p <;> decide
-theorem pattern_culminative_4 (p : StemPattern) :
-    IsCulminative (p.toSpecs 4) := by cases p <;> decide
+/-- Each pattern places at most one downstep, whatever the mora count. -/
+theorem pattern_culminative (p : StemPattern) (n : ℕ) : IsCulminative (p.toSpecs n) := by
+  have h : ∀ m, (List.replicate m TRN.empty).countP (λ t => t.raised == some false) = 0 :=
+    λ m => List.countP_eq_zero.mpr λ t ht => by rw [List.eq_of_mem_replicate ht]; decide
+  cases p <;> simp only [IsCulminative, StemPattern.toSpecs] <;> (try split_ifs) <;>
+    simp only [List.countP_cons, h] <;> decide
 
 /-! ### The CV⁺V three-way contrast: the mora as register-bearing unit -/
 
@@ -207,76 +212,14 @@ theorem drubea_final_raising :
     applyBoundary [TRN.downstep, TRN.empty, TRN.empty] .h_pct =
       [TRN.downstep, TRN.empty, TRN.upstep] := by decide
 
-/-! ### Downstep properties -/
+/-! ### Downstep properties
 
-/-- [leben-2018]'s properties of downstep, as refined in §6.1: (a)–(c) definitional,
-(d)–(f) cross-linguistic tendencies. -/
-structure DownstepProperties where
-  /-- (a) Affects the whole prosodic domain, not a single tone. -/
-  affectsDomain : Bool
-  /-- (b) Changes the register for what follows. -/
-  changesRegister : Bool
-  /-- (c) Cumulative: downsteps stack. -/
-  isCumulative : Bool
-  /-- (d) Utterance-initially, no phonetic contrast with the undownstepped. -/
-  uttInitialNeutral : Bool
-  /-- (e) Characteristically affects H tones. -/
-  characteristicallyAffectsH : Bool
-  /-- (f) Functions contrastively. -/
-  functionsContrastively : Bool
-  deriving Repr
-
-/-- Drubea/Numèè downstep meets the three definitional properties ([leben-2018]: 2; §6.1).
-Property (e) does not apply: the system has no H tones. -/
-def drubeaDownstep : DownstepProperties where
-  affectsDomain := true
-  changesRegister := true
-  isCumulative := true
-  uttInitialNeutral := true
-  characteristicallyAffectsH := false
-  functionsContrastively := true
-
-theorem drubea_core_properties :
-    drubeaDownstep.affectsDomain ∧ drubeaDownstep.changesRegister ∧
-      drubeaDownstep.isCumulative := ⟨rfl, rfl, rfl⟩
-
-/-- `functionsContrastively` is witnessed by `monoMinimalPairs`: two stems with the same
-segments and different register specifications (§3.10). -/
-theorem drubea_contrastively_witnessed :
-    drubeaDownstep.functionsContrastively = true ∧
-    ∃ a b : StemEntry, a.form = b.form ∧ a.specs ≠ b.specs := by
-  refine ⟨rfl, ?_⟩
-  refine ⟨⟨"be", "death; to die", .registerless, 1⟩,
-          ⟨"be", "niaouli tree", .σ1_downstepped, 1⟩, rfl, ?_⟩
-  decide
-
-/-! ### Register versus tonal analysis -/
-
-/-- The primitives of an analysis (§4–§5): underlying primitives and postlexical
-processes. -/
-structure AnalysisInventory where
-  underlyingPrimitives : Nat
-  postlexicalProcesses : Nat
-  deriving Repr, DecidableEq
-
-/-- The register analysis (§4): one underlying primitive, `l`, and one postlexical
-process, h-epenthesis. -/
-def registerAnalysis : AnalysisInventory where
-  underlyingPrimitives := 1
-  postlexicalProcesses := 1
-
-/-- The tonal alternative (§5): underlying L, epenthetic H and epenthetic downstep, with
-OCP-driven downstep insertion and H-spreading — and a duplication (L and downstep both
-encode the drop) and a conspiracy (two unrelated raisings with one phonetic effect). -/
-def tonalAnalysis : AnalysisInventory where
-  underlyingPrimitives := 3
-  postlexicalProcesses := 2
-
-/-- The register analysis is strictly more parsimonious. -/
-theorem register_more_parsimonious :
-    registerAnalysis.underlyingPrimitives < tonalAnalysis.underlyingPrimitives ∧
-    registerAnalysis.postlexicalProcesses < tonalAnalysis.postlexicalProcesses :=
-  ⟨by decide, by decide⟩
+[leben-2018]'s definitional properties of downstep, as the paper's §6.1 refines them, are the
+theorems above: the drop affects the whole following domain and changes the register
+(`registerless_maintains_lowered`), it is cumulative (`four_downsteps_terrace`), it is
+neutralised utterance-initially (`utt_initial_no_contrast`), and it functions contrastively
+(`minimal_pairs_register_contrast`); the tendency to affect H tones has no purchase in a
+system without tone features. -/
 
 /-! ### Typology
 
