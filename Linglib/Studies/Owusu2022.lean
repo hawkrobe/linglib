@@ -2,71 +2,49 @@ import Linglib.Fragments.Akan.Determiners
 import Linglib.Semantics.Quantification.ChoiceFunction
 
 /-!
-# [owusu-2022]: Cross-Categorial Definiteness/Familiarity
+# Owusu (2022): Cross-Categorial Definiteness/Familiarity
 
-[owusu-2022] Ch 3 analyses the Akan (Kwa, Niger-Congo) indefinite *bí* as
-an unambiguous choice function (after [kratzer-1998-pseudoscope]) whose
-situation pronoun ties the CF and the NP to a single index — entry (67):
-⟦bí⟧ = λs.λP : CH(f_s). f_s(P(s)). The substrate type is
-`SkolemCF S E := S → CF E` (`ChoiceFunction.lean`). The *nó* chapters and
-the rival analyses in [bombi-2018], [schwarz-2013],
-[arkoh-matthewson-2013] are left for future Studies files.
-
-## Main declarations
-
-* `Owusu2022.skolemDenot` — denotation table for the Fragment's
-  `Akan.Determiners.Indefinite` contrast: `.bi` is a skolemized CF
-  applied at the situation of its argument; `.bare` is not CF-analyzed
-  here.
-* `Owusu2022.bi_wide_scope_specific` — the ∃ > ¬ reading of the `.bi`
-  denotation is specific (its witness is the CF's choice), derived from
-  the substrate's `cf_wide_scope_specific`.
-* `Owusu2022.tying_contentful` — entry (67)'s same-index tying of CF
-  and restrictor is contentful in both coordinates.
-* `Owusu2022.Onipa`, `Owusu2022.preferAma` — a two-person model of
-  §3.2.5 ex. (21) *Onipa bí a-n-to dwom* 'a certain person didn't sing'.
-* `Owusu2022.bi_wide_scope_witnessed`, `Owusu2022.someone_sang` — on
-  that model the ∃ > ¬ reading is true while the ¬ > ∃ reading is false,
-  the configuration where the two readings diverge.
+This file formalizes the third chapter of [owusu-2022], on the Akan indefinite *bí* as an
+unambiguous choice function after [kratzer-1998-pseudoscope] whose situation pronoun ties the
+function and the noun phrase to one index, the dissertation's entry (67): *bí* applies a
+skolemized choice function to its restrictor at the situation of its argument
+(`skolemDenot`). The ∃ > ¬ reading of *bí* under negation is specific, its witness being the
+function's choice, and the tying of the two indices is contentful in both coordinates
+(`bi_wide_scope_specific`, `tying_contentful`); a two-person model of the dissertation's
+example (21), *Onipa bí a-n-to dwom* 'a certain person didn't sing', makes the wide-scope
+reading true and the narrow-scope reading false (`bi_wide_scope_witnessed`, `someone_sang`).
 
 ## Implementation notes
 
-Wide scope under negation (data §3.2.5 exx. (21)–(22); analysis §3.3):
-the CF variable is contextually given (speaker-anchored), and negation
-binds no situation variable, so the CF's referent is fixed before
-negation applies and ¬ > ∃ is underivable. The general lemma states what
-the ∃ > ¬ reading entails; the two-person model witnesses it on a model
-falsifying ¬ > ∃ — the case where the readings come apart. The
-operator-side derivation — extensional operators provably neutralize the
-situation pronoun's free/bound distinction, situation quantifiers
-provably separate it — lives in the substrate
-(`Semantics/Quantification/ChoiceFunction`: `bound_free_collapse`,
-`bound_free_diverge_box`). The narrow-scope readings in conditional
-antecedents (situation pronoun bound locally) and the opaque readings
-under intensional verbs (a skolem *world* index, §3.3.3, following
-Mirrazi's world-skolemized CFs — a 2019 ms., published as
-[mirrazi-2024]) need binding machinery beyond the fixed-situation
-fragment formalized here, as do the functional readings bound by
-individual quantifiers (the *biara* subject/object asymmetry via weak
-crossover on the individual skolem index).
+The substrate type is the skolemized choice function of
+`Semantics/Quantification/ChoiceFunction`, and the bare noun phrase is not analysed here, bare
+nouns receiving kind and indefinite readings outside the choice-function analysis. Wide scope
+under negation follows because the choice-function variable is contextually given and
+negation binds no situation variable, so the function's referent is fixed before negation
+applies and ¬ > ∃ is underivable; the general lemma states what the ∃ > ¬ reading entails, and
+the model witnesses it where the two readings come apart. The narrow-scope readings in
+conditional antecedents, the opaque readings under intensional verbs by a skolem world index
+after [mirrazi-2024], and the functional readings bound by individual quantifiers need binding
+machinery beyond the fixed-situation fragment formalized here.
 
-## Todo
+## TODO
 
-* The *nó* analysis (familiarity + non-uniqueness presuppositions,
-  Ch 2), alongside [bombi-2018], [schwarz-2013],
-  [arkoh-matthewson-2013].
-* The clausal determiner *nó* (Ch 4): definite propositions, NegP
-  attachment, CPS/CG dual update.
-* Narrow-scope *bí* in conditional antecedents (situation pronoun bound
-  locally) and opaque *bí* under intensional verbs (skolem world index,
-  §3.3.3).
-* The individual skolem index: functional readings under *biara*
-  'every' and the subject/object asymmetry via weak crossover (§3.3).
-* The over-generation argument against free ∃-closure: the unavailable
-  ∃-below-negation reading (the analysis' (50)) and the
-  downward-entailing weak-truth-conditions scenario.
-* The *bí nó* (anaphoric definite) vs *nó bí* (partitive) order
-  contrast (§3.4).
+* The *nó* analysis of the second chapter, familiarity with a non-uniqueness presupposition,
+  alongside [bombi-2018], [schwarz-2013], and [arkoh-matthewson-2013].
+* The clausal determiner *nó* of the fourth chapter.
+* Narrow-scope *bí* in conditional antecedents and opaque *bí* under intensional verbs.
+* The individual skolem index and the subject/object asymmetry with *biara* 'every'.
+* The over-generation argument against free existential closure.
+* The *bí nó* against *nó bí* order contrast.
+
+## References
+
+* [owusu-2022]
+* [kratzer-1998-pseudoscope]
+* [mirrazi-2024]
+* [bombi-2018]
+* [schwarz-2013]
+* [arkoh-matthewson-2013]
 -/
 
 open Quantification.ChoiceFunction
@@ -114,10 +92,10 @@ theorem tying_contentful :
         f.applyIntension s P ≠ f s' (P s) := by
   classical
   refine ⟨Bool, Bool × Bool,
-    fun s N => (s, if N (s, true) then true else false),
-    fun s x => x.2 = s, true, false, ?_, ?_⟩
+    λ s N => (s, if N (s, true) then true else false),
+    λ s x => x.2 = s, true, false, ?_, ?_⟩
   · simp only [SkolemCF.applyIntension]
-    rw [if_pos trivial, if_neg (fun h => Bool.noConfusion h)]
+    rw [if_pos trivial, if_neg (λ h => Bool.noConfusion h)]
     decide
   · simp only [SkolemCF.applyIntension]
     rw [if_pos trivial]
@@ -143,7 +121,7 @@ open Classical in
 /-- A correct `SkolemCF` over the trivial situation `Unit` that selects
 *Ama* whenever the restrictor allows it, else *Kofi*. -/
 noncomputable def preferAma : SkolemCF Unit Onipa :=
-  fun _ P => if P .ama then .ama else .kofi
+  λ _ P => if P .ama then .ama else .kofi
 
 theorem preferAma_correct : preferAma.isCorrect := by
   intro _ P ⟨x, hPx⟩
@@ -159,7 +137,7 @@ denotation picks *Ama* from the (rigid, on this one-situation model)
 *onipa* domain, and she did not sing. -/
 theorem bi_wide_scope_witnessed :
     ∀ d ∈ skolemDenot preferAma () .bi,
-      ¬ ToDwom (d (fun _ _ => True)) := by
+      ¬ ToDwom (d (λ _ _ => True)) := by
   simp only [skolemDenot_bi, Option.mem_some_iff, forall_eq']
   simp only [SkolemCF.applyIntension, preferAma, if_true]
   exact id
