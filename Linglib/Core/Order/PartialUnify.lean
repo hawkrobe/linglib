@@ -249,6 +249,20 @@ theorem bot_compat [Preorder α] [OrderBot α] (a : α) : Compat (⊥ : α) a :=
 theorem compat_bot [Preorder α] [OrderBot α] (a : α) : Compat a (⊥ : α) :=
   Compat.of_le le_rfl bot_le
 
+/-- Where every element other than `⊥` is maximal, two elements are incompatible exactly
+when both are present and distinct. -/
+theorem not_compat_iff_of_forall_isMax [PartialOrder α] [OrderBot α]
+    (h : ∀ a : α, a ≠ ⊥ → IsMax a) {a b : α} :
+    ¬ Compat a b ↔ a ≠ ⊥ ∧ b ≠ ⊥ ∧ a ≠ b := by
+  constructor
+  · intro hc
+    exact ⟨λ ha => hc (ha ▸ bot_compat b), λ hb => hc (hb ▸ compat_bot a),
+      λ hab => hc (hab ▸ compat_self a)⟩
+  · rintro ⟨ha, hb, hab⟩ ⟨u, hu⟩
+    obtain ⟨hau, hbu⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+    exact hab ((le_antisymm (h a ha hau) hau).symm.trans
+      (le_antisymm (h b hb hbu) hbu))
+
 /-- Monotone maps preserve compatibility. -/
 theorem Monotone.compat [Preorder α] [Preorder β] {f : α → β}
     (hf : Monotone f) {a b : α} (h : Compat a b) : Compat (f a) (f b) := by

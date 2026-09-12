@@ -29,6 +29,15 @@ closed variables take only fillers attested among the stored instances. Every re
 generated, every generated item is related once stored, and a schema is productive, every
 variable open, exactly when it generates its own description over the empty lexicon.
 
+Two items over one position space are the same except at a set of positions when they agree
+off it, `Set.EqOn` on the complement, and what happens at those positions classifies the link
+between them: an instantiation when the second strictly dominates the first there, the link
+from a schema's description to its instances, and a contrast when the two are incompatible
+there, the link between sister words. An elaboration, one item the same as the other plus
+something else, is an instantiation read from the elaborated item. On a flat carrier a filled
+item instantiates a schema exactly when it is the description, the same except at the
+variables (`Schema.instantiates_iff_instantiation_of_forall_isMax`).
+
 ## Main declarations
 
 * `Schema`: a slot-indexed description with a set of open variables.
@@ -39,6 +48,7 @@ variable open, exactly when it generates its own description over the empty lexi
   coindexed positions.
 * `Schema.Relates`, `Schema.Generates`, `Schema.IsProductive`: the two roles of a schema and
   productivity.
+* `Instantiation`, `Contrast`: the relational links, same except at a set of positions.
 * `Schema.instantiates_inf_iff`, `Schema.instantiates_iff_of_unify_eq_some`: the meet of two
   items is their least general generalization, the Structural Intersection of Relational
   Morphology, and the unification of two descriptions has exactly their common instances.
@@ -52,6 +62,7 @@ Marking a constant slot as open has no effect.
 ## References
 
 * [jackendoff-audring-2020]
+* [culicover-jackendoff-2012]
 * [booij-2010]
 * [booij-2010-compass]
 * [plotkin-1970]
@@ -290,5 +301,67 @@ theorem isProductive_iff_generates_empty : s.IsProductive ↔ s.Generates ∅ s.
 end OrderBot
 
 end Schema
+
+/-! ### Relational links
+
+Two items over one position space are the same except at `S` when they agree off `S`; what
+happens at `S` classifies the link. -/
+
+section RelationalLinks
+variable {f g : P → α} {S : Set P}
+
+section PartialOrder
+variable [PartialOrder α]
+
+/-- `Instantiation f g S` means that `g` is the same as `f` except at `S`, where it strictly
+dominates `f`: the relational link from a schema's description to its instances. -/
+def Instantiation (f g : P → α) (S : Set P) : Prop :=
+  Set.EqOn f g Sᶜ ∧ StrongLT (S.domRestrict f) (S.domRestrict g)
+
+/-- `Contrast f g S` means that `f` and `g` are the same except at `S`, where they are
+incompatible: the relational link between sister words. -/
+def Contrast (f g : P → α) (S : Set P) : Prop :=
+  Set.EqOn f g Sᶜ ∧ ∀ p ∈ S, ¬ Compat (f p) (g p)
+
+theorem Contrast.symm (h : Contrast f g S) : Contrast g f S :=
+  ⟨h.1.symm, λ p hp hc => h.2 p hp hc.symm⟩
+
+/-- An instantiation of a schema's description instantiates the schema. -/
+theorem Instantiation.instantiates {s : Schema P α} {w : P → α}
+    (h : Instantiation s.body w S) : s.Instantiates w := by
+  intro p
+  by_cases hp : p ∈ S
+  · exact (h.2 ⟨p, hp⟩).le
+  · exact (h.1 hp).le
+
+end PartialOrder
+
+section OrderBot
+variable [PartialOrder α] [OrderBot α]
+
+/-- Where every value other than `⊥` is maximal, a contrast is two present and distinct
+values. -/
+theorem contrast_iff_of_forall_isMax (hα : ∀ a : α, a ≠ ⊥ → IsMax a) :
+    Contrast f g S ↔
+      Set.EqOn f g Sᶜ ∧ ∀ p ∈ S, f p ≠ ⊥ ∧ g p ≠ ⊥ ∧ f p ≠ g p :=
+  and_congr_right' (forall₂_congr λ _ _ => not_compat_iff_of_forall_isMax hα)
+
+/-- On a flat carrier, a filled item instantiates a schema exactly when it is the schema's
+description, the same except at the variables. -/
+theorem Schema.instantiates_iff_instantiation_of_forall_isMax
+    (hα : ∀ a : α, a ≠ ⊥ → IsMax a) {s : Schema P α} {w : P → α}
+    (hw : ∀ p, w p ≠ ⊥) :
+    s.Instantiates w ↔ Instantiation s.body w {p | s.body p = ⊥} := by
+  refine ⟨λ h => ⟨λ p hp => ?_, λ p => ?_⟩, Instantiation.instantiates⟩
+  · simp only [Set.mem_compl_iff, Set.mem_ofPred_eq] at hp
+    exact le_antisymm (h p) (hα _ hp (h p))
+  · have hp : s.body p = ⊥ := p.2
+    show s.body p < w p
+    rw [hp]
+    exact bot_lt_iff_ne_bot.2 (hw p)
+
+end OrderBot
+
+end RelationalLinks
 
 end Morphology.Construction
