@@ -1,31 +1,32 @@
 import Linglib.Semantics.Alternatives.Lexical
+import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Algebra.Order.Field.Rat
 import Mathlib.Data.Nat.Cast.Order.Basic
 
 /-!
-# Macuch Silva et al. (2024): Strategic Use of English Quantifiers
+# Macuch Silva, Lorson, Franke, Cummins and Rohde (2024): Strategic Use of English Quantifiers
 
 This file formalizes the argumentative-difficulty account of [macuch-silva-etal-2024]. Two
 experiments have English speakers describe exam results, a number of correct answers out of a
-total, under a goal of framing the outcome as a success or as a failure. The difficulty of
-framing a result in the desired direction is the distance of its proportion from the goal's
-ideal (`argumentativeDifficulty`), and the account predicts that as difficulty grows the
-speaker retreats to informationally weaker quantifiers, from *all* through *most* to *some*,
-those truthful over broader ranges of outcomes (`truthfulQuantifiers`,
-`strongestTruthfulPositive`, `weakening_with_difficulty`). The paper thereby extends the
-argumentative strength of [cummins-franke-2021] from a property of the speaker's utterance
-to a property of the situation.
+total, under the goal of presenting the outcome as a success or as a failure, with the four
+quantifiers *all*, *most*, *some* and *none* in Experiment 1. The difficulty of framing a
+result toward a goal is the distance of its proportion of correct answers from the goal's
+ideal: the proportion itself for a failure framing and its complement for a success framing
+(`difficulty`), so the two difficulties of one table sum to one (`difficulty_add`). The
+account predicts that as difficulty grows the speaker retreats to informationally weaker
+quantifiers, *all* giving way to *most* and then to *some*, those truthful over broader ranges
+of outcomes: truth is inherited down the lexical scale (`Truthful.of_entails`), the strongest
+truthful quantifier for the goal-congruent adjective is monotone in the count it describes
+(`strongest_mono`), and difficulty orders those counts the other way, so the strongest
+truthful quantifier weakens with difficulty (`weakening_with_difficulty`). The paper thereby
+extends the argumentative strength of [cummins-franke-2021] from a property of the speaker's
+utterance to a property of the situation.
 
 ## Implementation notes
 
-Proportions and difficulties are rationals; the quantifier scale is the lexical scale of
-`Semantics.Alternatives.Lexical`. The experiments' response rates are reported in prose in
-the paper and are not represented.
-
-## TODO
-
-The paper is not on file; the page locators are transcribed from an earlier version of this
-file and are UNVERIFIED.
+Proportions and difficulties are rationals; the quantifier scale and its entailments are
+those of `Semantics.Alternatives.Lexical`. The paper's refined difficulty, which also counts
+the students scoring zero, and the response probabilities of Figure 5 are described in prose.
 
 ## References
 
@@ -35,131 +36,144 @@ file and are UNVERIFIED.
 
 namespace MacuchSilvaEtAl2024
 
+open Alternatives.Quantifiers
 
-/-- Experimental condition: high or low success framing -/
-inductive Condition where
-  | highSuccess  -- "describe as if students did well"
-  | lowSuccess   -- "describe as if students did poorly"
-  deriving DecidableEq, Repr
+/-- The framing goal: present the results as a success or as a failure. -/
+inductive Goal where
+  | highSuccess
+  | lowSuccess
+  deriving DecidableEq
 
-/-- Adjective choice in the forced-choice task -/
+/-- The adjective of the description frame, *N students got some questions right/wrong*. -/
 inductive Adjective where
   | right
   | wrong
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
-/-- An exam stimulus: nCorrect out of nTotal cells are green (correct).
-Each table has 5 students × 12 questions = 60 cells. -/
+/-- The adjective congruent with a goal: *right* for a success framing, *wrong* for a failure
+framing. -/
+def Goal.adjective : Goal → Adjective
+  | .highSuccess => .right
+  | .lowSuccess => .wrong
+
+/-- An exam table: the number of correct answers out of the total. -/
 structure ExamStimulus where
-  nCorrect : Nat
-  nTotal : Nat
-  h_le : nCorrect ≤ nTotal
-  deriving Repr
+  nCorrect : ℕ
+  nTotal : ℕ
+  nCorrect_le : nCorrect ≤ nTotal
+  nTotal_pos : 0 < nTotal
 
-/-- Proportion correct as a rational -/
-def ExamStimulus.proportion (s : ExamStimulus) : ℚ :=
-  if s.nTotal = 0 then 0
-  else ↑s.nCorrect / ↑s.nTotal
+namespace ExamStimulus
 
+variable (s s₁ s₂ : ExamStimulus)
 
-/-- Argumentative difficulty: how hard it is to frame a result in the desired direction.
+/-- The proportion of correct answers. -/
+def proportion : ℚ := s.nCorrect / s.nTotal
 
-High-success condition: difficulty = 1 - proportion
-  (easy when all correct → 0.0, hard when few correct → 1.0)
-Low-success condition: difficulty = proportion
-  (easy when none correct → 0.0, hard when many correct → 1.0)
+/-- The number of answers the adjective counts. -/
+def count : Adjective → ℕ
+  | .right => s.nCorrect
+  | .wrong => s.nTotal - s.nCorrect
 
-This is the simplified version. The paper also uses a refined metric
-accounting for distribution shape across students (p. 507), but the
-ordinal predictions are the same. -/
-def argumentativeDifficulty (s : ExamStimulus) (c : Condition) : ℚ :=
-  let p := s.proportion
-  match c with
-  | .highSuccess => 1 - p
-  | .lowSuccess => p
+/-- No adjective counts more than the total. -/
+theorem count_le (a : Adjective) : s.count a ≤ s.nTotal := by
+  have := s.nCorrect_le
+  cases a <;> simp only [count] <;> omega
 
--- Verify difficulty at extremes
+variable {s₁ s₂}
 
-/-- Perfect score in high-success = 0 difficulty (easiest) -/
-theorem perfect_highSuccess_easy :
-    argumentativeDifficulty ⟨60, 60, le_refl 60⟩ .highSuccess = 0 := by decide +kernel
+theorem proportion_le_proportion_iff (h : s₁.nTotal = s₂.nTotal) :
+    s₁.proportion ≤ s₂.proportion ↔ s₁.nCorrect ≤ s₂.nCorrect := by
+  unfold proportion
+  rw [h, div_le_div_iff_of_pos_right (Nat.cast_pos.2 s₂.nTotal_pos), Nat.cast_le]
 
-/-- Zero correct in low-success = 0 difficulty (easiest) -/
-theorem zero_lowSuccess_easy :
-    argumentativeDifficulty ⟨0, 60, Nat.zero_le 60⟩ .lowSuccess = 0 := by decide +kernel
+end ExamStimulus
 
-/-- 15/60 correct in high-success = 0.75 difficulty (hard) -/
-theorem quarter_highSuccess_hard :
-    argumentativeDifficulty ⟨15, 60, by omega⟩ .highSuccess = 3/4 := by decide +kernel
+open ExamStimulus
 
-/-- Difficulty is monotone: more correct → harder to frame as low success -/
-theorem difficulty_monotone_lowSuccess
-    (n₁ n₂ total : Nat) (h₁ : n₁ ≤ total) (h₂ : n₂ ≤ total) (hlt : n₁ < n₂)
-    (ht : 0 < total) :
-    argumentativeDifficulty ⟨n₁, total, h₁⟩ .lowSuccess <
-    argumentativeDifficulty ⟨n₂, total, h₂⟩ .lowSuccess := by
-  simp [argumentativeDifficulty, ExamStimulus.proportion, Nat.ne_of_gt ht]
-  exact div_lt_div_of_pos_right (Nat.cast_lt.mpr hlt) (Nat.cast_pos.mpr ht)
+/-- Argumentative difficulty: the distance of the proportion from the goal's ideal, the
+proportion itself under a failure framing and its complement under a success framing. -/
+def difficulty (s : ExamStimulus) : Goal → ℚ
+  | .highSuccess => 1 - s.proportion
+  | .lowSuccess => s.proportion
 
+/-- The two framings of one table are complementary in difficulty. -/
+theorem difficulty_add (s : ExamStimulus) :
+    difficulty s .highSuccess + difficulty s .lowSuccess = 1 := by
+  simp [difficulty]
 
-/-- Which quantifiers from {all, most, some, none} are truthful
-for a given exam result? -/
-def truthfulQuantifiers (s : ExamStimulus) : List Alternatives.Quantifiers.QuantExpr :=
-  let result : List Alternatives.Quantifiers.QuantExpr := []
-  let result := if s.nCorrect = 0 then result ++ [.none_] else result
-  let result := if s.nCorrect > 0 then result ++ [.some_] else result
-  let result := if s.nCorrect * 2 > s.nTotal then result ++ [.most] else result
-  let result := if s.nCorrect = s.nTotal then result ++ [.all] else result
-  result
+/-- Difficulty orders the goal-congruent counts the other way: the harder the framing, the
+fewer answers the congruent adjective has to describe. -/
+theorem count_le_of_difficulty_le {s₁ s₂ : ExamStimulus} (g : Goal) (h : s₁.nTotal = s₂.nTotal)
+    (hd : difficulty s₁ g ≤ difficulty s₂ g) : s₂.count g.adjective ≤ s₁.count g.adjective := by
+  cases g
+  · simp only [difficulty] at hd
+    simp only [Goal.adjective, count]
+    exact (proportion_le_proportion_iff h.symm).1 ((sub_le_sub_iff_left 1).1 hd)
+  · have := (proportion_le_proportion_iff h).1 hd
+    simp only [Goal.adjective, count]
+    omega
 
-/-- The strongest truthful quantifier for positive framing.
+/-! ### Truthful quantifiers -/
 
-As proportion decreases (difficulty increases in high-success):
-all (perfect) → most (majority) → some (any nonzero) → none (zero) -/
-def strongestTruthfulPositive (s : ExamStimulus) : Alternatives.Quantifiers.QuantExpr :=
-  if s.nCorrect = s.nTotal then .all
-  else if s.nCorrect * 2 > s.nTotal then .most
-  else if s.nCorrect > 0 then .some_
+/-- The quantifier is truthful of the count the adjective describes. -/
+def Truthful (s : ExamStimulus) (a : Adjective) : QuantExpr → Prop
+  | .all => s.count a = s.nTotal
+  | .most => s.nTotal < 2 * s.count a
+  | .some_ => 0 < s.count a
+  | .none_ => s.count a = 0
+
+instance (s : ExamStimulus) (a : Adjective) : DecidablePred (Truthful s a) := λ q => by
+  cases q <;> unfold Truthful <;> infer_instance
+
+/-- Truth is inherited down the scale: a quantifier entailed by a truthful one is truthful. -/
+theorem Truthful.of_entails {s : ExamStimulus} {a : Adjective} {q q' : QuantExpr}
+    (h : entails q q' = true) (hq : Truthful s a q) : Truthful s a q' := by
+  have := s.nTotal_pos
+  cases q <;> cases q' <;> simp only [entails, Bool.false_eq_true] at h <;>
+    simp only [Truthful] at hq ⊢ <;> omega
+
+/-- The position of a quantifier on the scale, *none* below *some* below *most* below *all*. -/
+def rank : QuantExpr → ℕ
+  | .none_ => 0
+  | .some_ => 1
+  | .most => 2
+  | .all => 3
+
+/-- The strongest truthful quantifier: *all* of a full count, *most* of a majority, *some* of
+any positive count, and *none* otherwise. -/
+def strongest (s : ExamStimulus) (a : Adjective) : QuantExpr :=
+  if s.count a = s.nTotal then .all
+  else if s.nTotal < 2 * s.count a then .most
+  else if 0 < s.count a then .some_
   else .none_
 
--- Verify the weakening pattern with concrete examples
+theorem strongest_truthful (s : ExamStimulus) (a : Adjective) : Truthful s a (strongest s a) := by
+  unfold strongest
+  split_ifs <;> simp only [Truthful] <;> omega
 
-/-- Perfect score (difficulty 0.0): "all" is available -/
-theorem perfect_allows_all :
-    strongestTruthfulPositive ⟨60, 60, le_refl 60⟩ = .all := by decide +kernel
+/-- Every truthful positive quantifier is entailed by the strongest one. -/
+theorem entails_strongest {s : ExamStimulus} {a : Adjective} {q : QuantExpr} (hq : Truthful s a q)
+    (hne : q ≠ .none_) : entails (strongest s a) q = true := by
+  have := s.nCorrect_le
+  have := s.nTotal_pos
+  cases a <;> cases q <;> simp only [Truthful, count] at hq <;> unfold strongest <;>
+    split_ifs <;> simp only [entails, count] at * <;> omega
 
-/-- 42/60 correct (difficulty 0.3): "most" is strongest -/
-theorem fortytwo_allows_most :
-    strongestTruthfulPositive ⟨42, 60, by omega⟩ = .most := by decide +kernel
+/-- The strongest truthful quantifier is monotone in the count: more of the described answers,
+a stronger quantifier. -/
+theorem strongest_mono {s₁ s₂ : ExamStimulus} (a : Adjective) (h : s₁.nTotal = s₂.nTotal)
+    (hc : s₁.count a ≤ s₂.count a) : rank (strongest s₁ a) ≤ rank (strongest s₂ a) := by
+  have := s₁.count_le a
+  have := s₂.count_le a
+  unfold strongest
+  split_ifs <;> simp only [rank] <;> omega
 
-/-- 18/60 correct (difficulty 0.7): "some" is strongest -/
-theorem eighteen_allows_some :
-    strongestTruthfulPositive ⟨18, 60, by omega⟩ = .some_ := by decide +kernel
-
-/-- Zero correct (difficulty 1.0): only "none" is truthful -/
-theorem zero_allows_none :
-    strongestTruthfulPositive ⟨0, 60, Nat.zero_le 60⟩ = .none_ := by decide +kernel
-
-/-- The quantifier ordering matches the Horn scale from `Degree` -/
-theorem quantifier_ordering_matches_scale :
-    Alternatives.Quantifiers.entails .all .most = true ∧
-    Alternatives.Quantifiers.entails .most .some_ = true ∧
-    Alternatives.Quantifiers.entails .some_ .none_ = false := by decide +kernel
-
-/-- The weakening pattern: increasing difficulty leads to weaker
-strongest-truthful quantifier. Demonstrated for high-success framing. -/
-theorem weakening_with_difficulty :
-    -- difficulty 0.0: all
-    strongestTruthfulPositive ⟨60, 60, le_refl 60⟩ = .all ∧
-    -- difficulty 0.17: most (high success, most students did well)
-    strongestTruthfulPositive ⟨50, 60, by omega⟩ = .most ∧
-    -- difficulty 0.5: most (half correct, still majority)
-    strongestTruthfulPositive ⟨31, 60, by omega⟩ = .most ∧
-    -- difficulty 0.7: some (minority correct)
-    strongestTruthfulPositive ⟨18, 60, by omega⟩ = .some_ ∧
-    -- difficulty 1.0: none (zero correct)
-    strongestTruthfulPositive ⟨0, 60, Nat.zero_le 60⟩ = .none_ := by
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> decide +kernel
-
+/-- Weakening with difficulty: between two tables of one size, the harder the framing toward a
+goal, the weaker the strongest quantifier truthful of the goal-congruent count. -/
+theorem weakening_with_difficulty {s₁ s₂ : ExamStimulus} (g : Goal) (h : s₁.nTotal = s₂.nTotal)
+    (hd : difficulty s₁ g ≤ difficulty s₂ g) :
+    rank (strongest s₂ g.adjective) ≤ rank (strongest s₁ g.adjective) :=
+  strongest_mono _ h.symm (count_le_of_difficulty_le g h hd)
 
 end MacuchSilvaEtAl2024
