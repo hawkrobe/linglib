@@ -11,255 +11,204 @@ import Linglib.Studies.Landau2015
 # Landau (2024): Control
 
 This file formalizes the empirical generalizations of [landau-2024], the Element surveying
-control theory: the trichotomy of obligatory control, non-obligatory control, and no control on
-the Spanish paradigm (41); the revised Visser's generalization of [van-urk-2013] (19) on the
-Norwegian passives (20); the direct-discourse correlation of [postal-1970] (33) and its
-grammatical realization by the Korean jussive markers (35); the confinement of partial control
-to attitude complements ((36), (37)), which the library's saturating dependencies deny of a
-predicative complement; the dual licensing of non-obligatory control by topic and by logophoric
-centre ((52), (55)); and the split of controlled adjuncts into strict and alternating types by
-the propositional-variant criterion ((84), (89)). The tier system is that of
-`Studies/Landau2015.lean`, and complement typing follows the Element's denotations ((56), (58),
-(72), after [grano-2015]).
+control theory. The trichotomy of obligatory control, non-obligatory control, and no control
+is read off finiteness and position on the Spanish paradigm (41): finite clauses show no
+control in either position, infinitival complements obligatory control, and infinitival
+subjects non-obligatory control, so non-obligatory control arises only in clauses that can
+display obligatory control (`Status.of`, `noc_only_in_oc_capable`). The revised Visser's
+generalization of [van-urk-2013] (19) bars implicit control when T agrees with a
+referential DP, the Norwegian personal and impersonal passives of *promise* (20) being the
+minimal pair (`RVG`, `norwegian_rvg`). The direct-discourse correlation of [postal-1970]
+(33) predicts the controller from the person of the direct-discourse counterpart's subject,
+and the Korean jussive markers (35) realize it grammatically: the volitional, imperative,
+and exhortative markers induce subject, object, and split control under one verb of saying
+(`korean_realizes_postal`). Partial control is confined to attitude complements ((36),
+(37)): a predicative complement is saturated by its controller, which the library's
+saturating dependencies deny a partial reading (`manage_excludes_pc`), and only
+propositional complements host lexical subjects ((56), (58), (72), after [grano-2015]).
+Non-obligatory control is licensed by topicality or by logophoric centrality, each
+sufficient and neither necessary ((52), (55), `Antecedent.MayControl`), and controlled
+adjuncts split into strict and alternating types by whether their head also builds a
+propositional variant ((84), (89), `alternates_iff_propositional_variant`).
 
 ## Implementation notes
 
-The Element was not available for this pass, and the example numbers carried over from the
-earlier version of this file are marked as unverified. The generalizations are recorded as the
-Element states them, over small enumerations of the configurations it discusses; the
-partial-control row is the one derived from the substrate.
+The tier system is that of `Studies/Landau2015.lean`; the generalizations are stated over
+the Element's own configurations, and the partial-control row is the one derived from the
+substrate. The strict/alternating split records both columns of table (89), the criterion
+being validated on the English inventory rather than derived.
 
 ## References
 
 * [landau-2024]
-* [van-urk-2013], [postal-1970], [grano-2015]
+* [van-urk-2013]
+* [postal-1970]
+* [grano-2015]
 -/
 
 namespace Landau2024
 
--- UNVERIFIED: the example numbers below are those of the earlier version of this file.
-
 open Control SetRel
 open Semantics.Composition.TypeShifting (ComplementDenotation)
 
-/-! ### The OC/NOC/NC trichotomy
-
-NOC is the non-OC behavior of clauses that *can* display OC; clauses
-that never can (finite complements, in most languages) are no control
-(NC). The Spanish paradigm (41): infinitival complements are OC,
-infinitival subjects NOC, finite clauses NC in either position. -/
+/-! ### The trichotomy (41) -/
 
 /-- Control statuses: obligatory, non-obligatory, and no control. -/
 inductive Status where
   | oc
   | noc
   | nc
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
-/-- A row of the Spanish paradigm (41): clause finiteness, whether the
-    clause sits in complement position, and its control status. -/
-structure Ex41Row where
-  finite : Bool
-  complement : Bool
-  status : Status
-  deriving DecidableEq, Repr
+/-- The control status of a clause by its finiteness and its position, the Spanish
+paradigm (41): finite clauses show no control anywhere, infinitival complements obligatory
+control, and infinitival subjects non-obligatory control. -/
+def Status.of (finite complement : Bool) : Status :=
+  if finite then .nc else if complement then .oc else .noc
 
-/-- The four configurations of (41). -/
-def ex41 : List Ex41Row :=
-  [ ⟨false, true,  .oc⟩    -- (41a) infinitival complement
-  , ⟨false, false, .noc⟩   -- (41b) infinitival subject
-  , ⟨true,  true,  .nc⟩    -- (41c) finite complement
-  , ⟨true,  false, .nc⟩ ]  -- (41d) finite subject
+/-- Non-obligatory control occurs only in clauses that can display obligatory control, the
+infinitives; an uncontrolled finite clause is no control. -/
+theorem noc_only_in_oc_capable (f c : Bool) : Status.of f c = .noc → f = false := by
+  cases f <;> cases c <;> decide
 
-/-- NOC occurs only in clauses that can display OC: never in finite
-    clauses, whose uncontrolled behavior is NC. -/
-theorem noc_only_in_oc_capable :
-    ∀ r ∈ ex41, r.status = .noc → r.finite = false := by
-  decide
+/-- Finite clauses are no control in every position. -/
+theorem finite_is_nc (c : Bool) : Status.of true c = .nc := rfl
 
-/-- Finite clauses are NC in every position. -/
-theorem finite_is_nc : ∀ r ∈ ex41, r.finite = true → r.status = .nc := by
-  decide
+/-! ### The revised Visser's generalization (19), (20) -/
 
-/-! ### The revised Visser's generalization
-
-(19), [van-urk-2013]: implicit subjects cannot control if T agrees
-with a referential DP. The Norwegian minimal pair (20): the personal
-passive (T agrees with the promisee) blocks implicit control; the
-impersonal passive (expletive, no referential agreement) allows it.
-The interrogative complements of (22) are a genuine standing
-exception. -/
-
-/-- A passive control configuration: does T agree with a referential
-    DP, and is implicit control licensed? -/
+/-- A passive control configuration: whether T agrees with a referential DP, and whether
+implicit control obtains. -/
 structure PassiveConfig where
   tAgreesReferential : Bool
-  implicitControlOK : Bool
-  deriving DecidableEq, Repr
+  implicitControl : Bool
+  deriving DecidableEq
 
-/-- The Norwegian pair (20): personal vs impersonal passive of
-    'promise'. -/
-def ex20 : List PassiveConfig :=
-  [⟨true, false⟩, ⟨false, true⟩]
+/-- The revised Visser's generalization of [van-urk-2013] (19): an implicit subject cannot
+control when T agrees with a referential DP. -/
+def RVG (c : PassiveConfig) : Prop :=
+  c.tAgreesReferential = true → c.implicitControl = false
 
-/-- The revised Visser's generalization on (20): implicit control is
-    licensed exactly where T does not agree with a referential DP. -/
-theorem rvg : ∀ c ∈ ex20, c.implicitControlOK = !c.tAgreesReferential := by
-  decide
+instance (c : PassiveConfig) : Decidable (RVG c) := inferInstanceAs (Decidable (_ → _))
 
-/-! ### The direct-discourse correlation and Korean jussives
+/-- The Norwegian personal passive of *promise* (20a): T agrees with the promisee, and the
+implicit agent cannot control. -/
+def personalPassive : PassiveConfig := ⟨true, false⟩
 
-[postal-1970]'s generalization ((33)): if the direct-discourse
-counterpart's subject is second person, the controller is the object;
-if first person, the subject. The Korean jussive markers realize the
-correlation grammatically ((35), with *mal* 'say' held fixed): the
-volitional marker is speaker-oriented and induces subject control,
-the imperative addressee-oriented inducing object control, the
-exhortative speaker+addressee-oriented inducing split control;
-the indicative induces no control. -/
+/-- The impersonal passive (20b): an expletive, no referential agreement, and implicit
+control. -/
+def impersonalPassive : PassiveConfig := ⟨false, true⟩
+
+/-- The pair obeys the generalization, and the impersonal passive shows that the absence of
+referential agreement is what frees implicit control. -/
+theorem norwegian_rvg : RVG personalPassive ∧ RVG impersonalPassive := by decide
+
+/-! ### The direct-discourse correlation (33) and the Korean jussives (35) -/
 
 /-- The subject of the direct-discourse counterpart. -/
 inductive DDSubject where
   | speaker
   | addressee
   | speakerPlusAddressee
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
 /-- Which matrix argument controls. -/
 inductive Choice where
   | subject
   | object
   | split
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
-/-- [postal-1970]'s correlation (33), stated over discourse roles:
-    speaker-subject direct discourse → subject control,
-    addressee-subject → object control, joint → split. -/
+/-- The correlation of [postal-1970] (33): a first-person direct-discourse subject gives
+subject control, a second-person one object control, and a joint one split control. -/
 def postalChoice : DDSubject → Choice
-  | .speaker              => .subject
-  | .addressee            => .object
+  | .speaker => .subject
+  | .addressee => .object
   | .speakerPlusAddressee => .split
 
-/-- The Korean control-inducing jussive markers ((35b–d)). -/
+/-- The Korean control-inducing jussive markers (35): volitional *keyss*, imperative *la*,
+exhortative *ca*. -/
 inductive Jussive where
-  /-- volitional *keyss* -/
   | volitional
-  /-- imperative *la* -/
   | imperative
-  /-- exhortative *ca* -/
   | exhortative
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
-/-- The discourse orientation of each jussive marker. -/
+/-- The discourse orientation of each marker. -/
 def Jussive.orientation : Jussive → DDSubject
-  | .volitional  => .speaker
-  | .imperative  => .addressee
+  | .volitional => .speaker
+  | .imperative => .addressee
   | .exhortative => .speakerPlusAddressee
 
-/-- The controller each marker induces under *mal* 'say' ((35b–d)). -/
+/-- The controller each marker induces under *mal* 'say' (35). -/
 def Jussive.controller : Jussive → Choice
-  | .volitional  => .subject
-  | .imperative  => .object
+  | .volitional => .subject
+  | .imperative => .object
   | .exhortative => .split
 
-/-- The Korean jussive table realizes [postal-1970]'s correlation:
-    controller choice is the direct-discourse role of the marker's
-    orientation — determined by the embedded mood, not the (fixed)
-    matrix verb. -/
-theorem korean_realizes_postal (j : Jussive) :
-    j.controller = postalChoice j.orientation := by
+/-- The jussive table realizes the correlation: the controller is fixed by the embedded
+mood's orientation, not by the matrix verb, which is held constant. -/
+theorem korean_realizes_postal (j : Jussive) : j.controller = postalChoice j.orientation := by
   cases j <;> rfl
 
-/-! ### Partial control is attitude-only
+/-! ### Partial control is confined to attitude complements (36), (37) -/
 
-(36)–(37): PC is attested in attitude complements and unavailable
-under implicatives — *\*John managed to gather at 6* (37a). On the
-dual theory this is `Control.IsSaturating.not_isPartial`: implicative
-complements are predicative, and predication saturates, sharing the
-referent exhaustively. The (37a) configuration refutes saturating
-status for its hypothetical PC reading, never the other way around. -/
-
-/-- The semantic layer a tier's complement inhabits ((56)/(58)):
-    predicative complements are properties, logophoric ones
-    propositions. -/
+/-- The semantic layer a tier's complement inhabits ((56), (58)): predicative complements are
+properties, logophoric ones propositions. -/
 def tierDenotation : Landau2015.Tier → ComplementDenotation
   | .predicative => .property
-  | .logophoric  => .proposition
+  | .logophoric => .proposition
 
-/-- Generalization (72): a lexical subject saturates a property, so
-    exactly the propositional (logophoric, attitude) complements license
-    one (the generalization originates with [grano-2015]). -/
+/-- Generalization (72): a lexical subject saturates a property, so exactly the propositional,
+logophoric complements license one, the generalization originating with [grano-2015]. -/
 theorem lexicalSubject_iff_logophoric (t : Landau2015.Tier) :
     tierDenotation t = .proposition ↔ t = .logophoric := by
   cases t <;> decide
 
-/-- The (37a) configuration: matrix controller position `0`, embedded
-    subject position `1`. -/
+/-- The configuration of (37a), *John managed to gather at 6*: the matrix controller in
+position `0`, the embedded subject in position `1`. -/
 def ex37Dependency : SetRel (Fin 2) (Fin 2) := {(0, 1)}
 
-/-- The PC reading's referent sizes: the controller (John) is properly
-    contained in the gathering group. -/
-def ex37Val : Fin 2 → ℕ :=
-  λ p => if p = 0 then 1 else 2
+/-- The partial-control reading's referent sizes: the controller is properly contained in the
+gathering group. -/
+def ex37Val : Fin 2 → ℕ := λ p => if p = 0 then 1 else 2
 
-/-- A partial-control reading is incompatible with a saturating
-    dependency: (37a)'s star, from exhaustive sharing. -/
+/-- A partial-control reading is incompatible with a saturating dependency: the star on (37a),
+from exhaustive sharing. -/
 theorem manage_excludes_pc : ¬ IsSaturating ex37Val ex37Dependency :=
   λ h => h.not_isPartial ⟨0, 1, rfl, by decide⟩
 
-/-! ### NOC: dual licensing by topic and logophoric center
+/-! ### Non-obligatory control: topic and logophoric center (52), (55) -/
 
-(52): topicality and logophoricity are each
-sufficient for NOC antecedence and neither is necessary — (52a) is
-NOC by a `[−top, +log]` antecedent (an implicit passive agent), (52b)
-by `[+top, −log]` (an established topic with no mental perspective on
-the event). The `[+human]` character of logophoric antecedents
-follows from mental perspective; topical antecedents are only
-*preferentially* human — the (55b) default `[+topic] → [+human]`, with
-(49) the resisting data and (50) the attested overrides. -/
-
-/-- A candidate NOC antecedent's discourse status. -/
+/-- A candidate antecedent's discourse status. -/
 structure Antecedent where
   topic : Bool
   logophoricCenter : Bool
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
-/-- (55a): a DP may serve as NOC controller iff it is a topic or a
-    logophoric center. -/
+/-- (55a): a DP may serve as non-obligatory controller iff it is a topic or a logophoric
+center. -/
 def Antecedent.MayControl (a : Antecedent) : Prop :=
   a.topic = true ∨ a.logophoricCenter = true
 
-instance (a : Antecedent) : Decidable a.MayControl :=
-  inferInstanceAs (Decidable (_ ∨ _))
+instance (a : Antecedent) : Decidable a.MayControl := inferInstanceAs (Decidable (_ ∨ _))
 
-/-- (52a): the implicit passive agent — a logophoric center that is
-    no topic — controls. -/
-theorem noc_by_log_alone : Antecedent.MayControl ⟨false, true⟩ := by decide
+/-- (52): the implicit passive agent, a logophoric center that is no topic, controls (52a),
+and so does an established topic with no perspective on the event (52b), while a DP with
+neither status cannot. -/
+theorem licensing_cases :
+    Antecedent.MayControl ⟨false, true⟩ ∧ Antecedent.MayControl ⟨true, false⟩ ∧
+      ¬ Antecedent.MayControl ⟨false, false⟩ := by
+  decide
 
-/-- (52b): the established topic with no perspective on the event
-    controls. -/
-theorem noc_by_topic_alone : Antecedent.MayControl ⟨true, false⟩ := by decide
-
-/-- Neither licensor is necessary — each (52) case lacks the other's. -/
+/-- Neither licensor is necessary: each case of (52) lacks the other's. -/
 theorem neither_licensor_necessary :
-    ¬(∀ a : Antecedent, a.MayControl → a.topic = true) ∧
-      ¬(∀ a : Antecedent, a.MayControl → a.logophoricCenter = true) := by
+    ¬ (∀ a : Antecedent, a.MayControl → a.topic = true) ∧
+      ¬ (∀ a : Antecedent, a.MayControl → a.logophoricCenter = true) := by
   refine ⟨λ h => ?_, λ h => ?_⟩
   · simpa using h ⟨false, true⟩ (by decide)
   · simpa using h ⟨true, false⟩ (by decide)
 
-/-- A DP with neither status cannot serve as NOC controller. -/
-theorem no_status_no_control : ¬ Antecedent.MayControl ⟨false, false⟩ := by
-  decide
-
-/-! ### Adjunct control: strict OC vs alternating OC/NOC
-
-(84): English controlled adjuncts split into strict
-OC adjuncts and adjuncts alternating OC/NOC; strict *NOC* adjuncts
-are unattested. The propositional-variant criterion ((89)): an
-adjunct type alternates iff its head also builds a variant hosting a
-lexical subject — the P head s-selects a property only (strict) or a
-property/proposition ambiguously (alternating). -/
+/-! ### Adjunct control: strict against alternating (84), (89) -/
 
 /-- The English controlled-adjunct types of (84). -/
 inductive AdjunctType where
@@ -273,25 +222,31 @@ inductive AdjunctType where
   | absolutive
   | justification
   | telic
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
-/-- (84)'s observed split: does the adjunct type ever alternate into
-    NOC? -/
-def observedAlternates : AdjunctType → Bool
-  | .goal | .result | .stimulus | .subjectPurpose => false
-  | _ => true
+/-- The observed split of (84): the adjunct type alternates between obligatory and
+non-obligatory control, or is strictly obligatory. -/
+def AdjunctType.Alternates : AdjunctType → Prop
+  | .goal | .result | .stimulus | .subjectPurpose => False
+  | _ => True
 
-/-- (89)'s structural column: does the adjunct head build a
-    propositional variant (one hosting a lexical subject)? -/
-def hasPropositionalVariant : AdjunctType → Bool
-  | .goal | .result | .stimulus | .subjectPurpose => false
-  | _ => true
+/-- The structural column of (89): the adjunct's head also builds a propositional variant,
+one hosting a lexical subject. -/
+def AdjunctType.HasPropositionalVariant : AdjunctType → Prop
+  | .goal | .result | .stimulus | .subjectPurpose => False
+  | _ => True
 
-/-- The propositional-variant criterion, validated on the English
-    inventory: an adjunct type alternates into NOC exactly when its
-    head has a propositional variant. -/
+instance : DecidablePred AdjunctType.Alternates := λ a => by
+  cases a <;> unfold AdjunctType.Alternates <;> infer_instance
+
+instance : DecidablePred AdjunctType.HasPropositionalVariant := λ a => by
+  cases a <;> unfold AdjunctType.HasPropositionalVariant <;> infer_instance
+
+/-- The propositional-variant criterion on the English inventory: an adjunct type alternates
+into non-obligatory control exactly when its head has a propositional variant, so the strict
+types are the purely predicative ones. -/
 theorem alternates_iff_propositional_variant (a : AdjunctType) :
-    observedAlternates a = hasPropositionalVariant a := by
-  cases a <;> rfl
+    a.Alternates ↔ a.HasPropositionalVariant := by
+  cases a <;> decide
 
 end Landau2024
