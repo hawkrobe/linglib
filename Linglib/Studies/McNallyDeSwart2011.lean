@@ -6,544 +6,183 @@ import Linglib.Fragments.Dutch.Adjectives
 
 This file formalizes the analysis of [mcnally-deswart-2011] of the three ways Dutch refers
 to abstract objects such as colours, illustrated with *rood* 'red': the uninflected nominal
-*het rood* and the derived *de roodheid* denote kinds or sets of subkinds, while the inflected
-*het rode van de aardbeien* denotes a trope, the entity correlate of a relational property.
-The determiner *het* is polysemous, the iota operator with neuter nouns and the
-nominalization operator of [chierchia-1984] when embedding an inflected adjective, and the
-inflectional suffix is not a category-changing nominalizer but a valence-increasing operator
-turning the adjective into a relation between an object and its aspect. The empirical
-contrasts follow: the inflected form admits adverbial but not adjectival modification,
-tolerates no determiner but *het*, and does not occur generically, while the derived form
-admits all determiners and pluralizes and the uninflected form is a neuter mass noun.
+*het rood* and the derived *de roodheid* denote kinds, sets of subkinds, while the inflected
+*het rode van de aardbeien* denotes a trope, the entity correlate of a relational property
+instantiated in one bearer. The uninflected nominal of a root is the subkind of the shade
+partition its root determines, so distinct roots denote disjoint kinds, the disjointness
+condition of [carlson-1977] (`uninflectedNominal`, `uninflectedNominal_disjoint`); the
+derived nominal is defined only for roots with a *-heid* form and then denotes the same
+kind (`derivedNominal`, `derivedNominal_eq_uninflected`); the inflectional suffix is not a
+category-changing nominalizer but a valence-increasing operator turning the adjective into a
+relation between an object and its aspect, which the determiner *het*, the nominalization
+operator of [chierchia-1984] when it embeds an adjective phrase, reifies as a trope
+(`inflectAdjective`, `inflectedWithHet`). The three forms differ in what the determiner
+embeds and in what they denote, and the paper's distributional diagnostics follow from those
+two coordinates: adjectival modification and determiners other than *het* need a noun, and
+generic use needs a kind, so the inflected form alone fails all three (`Form`,
+`inflected_diagnostics`, `fails_iff_inflected`). The paper's three rival analyses of the
+inflected form are named for later comparison (`InflectedAnalysis`).
 
 ## Implementation notes
 
-The colour and taste roots and their three morphological forms come from the Dutch
-adjective fragment, and the subkind relation is the salient equivalence relation of
-`Semantics/Genericity/Subkinds`, so the kind ontology is that of [zamparelli-1995] and
-[carlson-1977] and Carlson's disjointness condition follows.
+The roots and their forms come from the Dutch adjective fragment, and the subkind relation is
+the salient equivalence relation of `Semantics/Genericity/Subkinds`; the model is extensional,
+so the kind denoted by the derived nominal coincides with the uninflected one. The trope is
+the pair of the aspect property and its bearer. The paper's observation that the inflected
+construction is rare with concrete adjectives, and its extension to Dutch nominalized
+infinitives and Spanish *lo*-nominals, are described in prose.
 
 ## TODO
 
-The paper is not on file; example numbers are transcribed from an earlier version of this
-file and are UNVERIFIED.
+The paper is not on file; the example numbers are transcribed from an earlier version of
+this file and are UNVERIFIED.
 
 ## References
 
 * [mcnally-deswart-2011]
 * [chierchia-1984]
-* [zamparelli-1995]
 * [carlson-1977]
 -/
 
 namespace McNallyDeSwart2011
 
-open Semantics.Kinds.Subkinds (subkindOf disjointness_condition
-  subkindOf_ne mem_subkindOf)
-open Dutch.Adjectives (AdjEntry Domain rood wit vreemd gezond leuk dicht)
+open Semantics.Kinds.Subkinds Dutch.Adjectives
 
-/-! ## §3.1: Uncategorised roots and the Dutch lexicon
+/-! ### Kinds: the uninflected and derived nominals -/
 
-[mcnally-deswart-2011] (18) posits entity-denoting roots: `[[rood]] =
-red`, `[[zuur]] = acid`. Both nominal and adjectival uses project from the
-same root — the [marantz-1997] uncategorised-roots pattern. The roots
-themselves are the consensus Dutch lexical entries in
-`Fragments/Dutch/Adjectives.lean`; this file uses those entries as the
-carrier identifying each colour or taste subkind. -/
-
-/-! ## §3.1, §3.2: Shades, colour partition, and Mendia substrate
-
-[mcnally-deswart-2011] follows [zamparelli-1995]'s layered DP:
-the noun `rood_N` denotes the *set of subkinds* (shades) of the colour
-red. The subkind relation is [mendia-2020]'s kind-formation framework
-— partition the domain of shade-atoms by the salient equivalence relation
-`belongs to the same colour root`. -/
-
-/-- A shade-atom: an adjective entry from the Dutch Fragment paired with a
-    distinguishing index. The pair lets multiple shade-tokens belong to
-    the same colour subkind (e.g., crimson and scarlet both belong to
-    `rood`), so the [mendia-2020] partition is exercised non-trivially. -/
+/-- A shade: an adjective entry of the fragment with an index, so that several shades belong
+to one colour. -/
 structure Shade where
-  /-- The adjective entry classifying this shade — drawn from the Dutch
-      Fragment (e.g., `Dutch.Adjectives.rood`). -/
   root : AdjEntry
-  /-- Distinguishing index for multiple shade-tokens of the same root. -/
-  idx  : Nat
+  idx : ℕ
   deriving DecidableEq, Repr
 
-/-- The salient [mendia-2020] kind-formation for shades: partitioned
-    by their adjective-entry root. Each equivalence class is a subkind
-    (set of shade-tokens for one Dutch adjective entry). The same setoid
-    works for both colours and tastes — only the chosen entries differ. -/
+/-- The kind-forming relation on shades: sharing a root. -/
 def kfShade : Setoid Shade where
   r s₁ s₂ := s₁.root = s₂.root
   iseqv := ⟨λ _ => rfl, Eq.symm, Eq.trans⟩
 
-/-- Canonical witness shade for an adjective entry. -/
+/-- The canonical shade of a root. -/
 def canonicalShade (a : AdjEntry) : Shade := ⟨a, 0⟩
 
-/-- [mcnally-deswart-2011] (19): the uninflected nominal `rood_N`
-    denotes the set of subkinds (shades) of the colour `red`. Implemented
-    as `Subkinds.subkindOf kfShade (canonicalShade rood)` — the
-    equivalence class of any canonical witness. The Dutch Fragment entry
-    `Dutch.Adjectives.rood` is the actual lexical anchor. -/
+/-- The uninflected nominal *het rood* (19): the set of subkinds, the shades, of the colour. -/
 def uninflectedNominal (a : AdjEntry) : Set Shade :=
   subkindOf kfShade (canonicalShade a)
 
-/-- The uninflected nominal of `a` is exactly the set of shades whose root
-    is `a`. -/
-theorem uninflectedNominal_iff (a : AdjEntry) (s : Shade) :
+theorem mem_uninflectedNominal (a : AdjEntry) (s : Shade) :
     s ∈ uninflectedNominal a ↔ s.root = a :=
   ⟨Eq.symm, Eq.symm⟩
 
-/-- Distinct adjective entries project to disjoint uninflected nominals —
-    a direct consequence of [carlson-1977]'s Disjointness Condition
-    derived from the Mendia partition. -/
+/-- Distinct roots denote disjoint kinds, the disjointness condition of [carlson-1977]. -/
 theorem uninflectedNominal_disjoint {a₁ a₂ : AdjEntry} (h : a₁ ≠ a₂) :
     Disjoint (uninflectedNominal a₁) (uninflectedNominal a₂) :=
-  disjointness_condition kfShade (a := canonicalShade a₁)
-    (b := canonicalShade a₂) h
+  disjointness_condition kfShade (a := canonicalShade a₁) (b := canonicalShade a₂) h
 
-/-- Concrete witness: `rood` and `wit` denote disjoint subkinds. The Dutch
-    Fragment entries are non-equal as `AdjEntry` records, so the Mendia
-    Disjointness Condition gives disjoint shade-sets directly. -/
-theorem rood_disjoint_from_wit :
-    Disjoint (uninflectedNominal rood) (uninflectedNominal wit) :=
-  uninflectedNominal_disjoint (by decide)
-
-/-! ## §3.2: PP modification and `het` as iota (uninflected case)
-
-[mcnally-deswart-2011] (20): the PP `van de aardbeien` introduces a
-contextual relation `R_i(x_k, s)` where `s` is the PP-complement entity.
-Combined via predicate-modification with the noun's set of subkinds, then
-selected by `het` as iota, it picks out the unique strawberry-related
-shade of red. -/
-
-/-- [mcnally-deswart-2011] (20): a PP modifier introduces a contextual
-    relation between subkinds and the PP-complement entity. Modelled here
-    as a predicate-restriction on shades. -/
-def ppModifier {Entity : Type*} (R : Shade → Entity → Prop) (s : Entity)
-    (P : Set Shade) : Set Shade :=
+/-- A prepositional modifier (20) restricts the kind by a contextual relation to the
+complement's entity. -/
+def ppModifier {Entity : Type*} (R : Shade → Entity → Prop) (s : Entity) (P : Set Shade) :
+    Set Shade :=
   {x | x ∈ P ∧ R x s}
 
-/-- [mcnally-deswart-2011] (21a): `rood van de aardbeien` denotes the
-    set of red-shades that stand in `R_i` to the strawberries. -/
-def uninflectedNominalWithPP {Entity : Type*} (a : AdjEntry)
-    (R : Shade → Entity → Prop) (s : Entity) : Set Shade :=
-  ppModifier R s (uninflectedNominal a)
-
-/-! ## §3.3: Derived `-heid` form
-
-[mcnally-deswart-2011] (24a-c): the derivational suffix `-heid`
-operates on a property `P` (the adjective's denotation) and returns the
-set of subkinds of its entity correlate (Chierchia ∩P). Modelled here at
-the kind-of-subkinds layer. -/
-
-/-- The adjectival denotation of a Dutch adjective entry, abbreviated as
-    `[[rood_A]] = λy. Red(y)` per [mcnally-deswart-2011] (23c). The
-    paper distinguishes a gradable measure-function reading (23a, after
-    [kennedy-mcnally-2010]) from a non-gradable proxy reading (23b);
-    we abbreviate as the paper does, and identify each adjective with its
-    Dutch Fragment entry. -/
-def adjectivalProperty (a : AdjEntry) : Shade → Prop :=
-  λ s => s.root = a
-
-/-- [mcnally-deswart-2011] (24b): `roodheid_N` denotes the set of
-    subkinds of the entity correlate (Chierchia ∩) of the property
-    `λy. Red(y)`. The substantive Chierchia ∩ operator lives in
-    `Semantics/Genericity/NominalMappingParameter.lean` (`down`/`up` for
-    intensional kinds) and `Semantics/Composition/TypeShifting.lean`
-    (`NOM` extensional counterpart, with `NOM = iota` in the finite
-    setting); we do not call them here because the extensional collapse
-    means the only Fragment-visible distinction is whether the adjective
-    *has* a `-heid` form at all.
-
-    The construction is *partial*: when `a` lacks a `-heid` form (e.g.,
-    `roze`, `mauve` per [mcnally-deswart-2011] §1), the derived
-    nominal is *outside the scope* of the analysis — `none`, not `some ∅`.
-    This matches the paper's framing (p. 426, set aside): "Not all
-    adjectives allow modification by `-heid` to form a nominalization,
-    or have uninflected nominal counterparts. We will focus on triplets…". -/
+/-- The derived nominal *de roodheid* (24): defined for the roots with a *-heid* form, and
+denoting the kind of the root. -/
 def derivedNominal (a : AdjEntry) : Option (Set Shade) :=
-  a.nominalHeid.map λ _ => subkindOf kfShade (canonicalShade a)
+  a.nominalHeid.map λ _ => uninflectedNominal a
 
-/-- When `a` admits a `-heid` form, the derived nominal coincides
-    extensionally with the uninflected nominal — both denote the same
-    Mendia subkind. This is the empirical convergence
-    [mcnally-deswart-2011] §3.2-3.3 establishes between the two
-    kind-denoting routes; the formal divergence (∩ vs root projection)
-    is suppressed in the extensional model. -/
-theorem derivedNominal_eq_uninflected_of_heid {a : AdjEntry}
-    (h : a.nominalHeid.isSome) :
+/-- Where defined, the derived nominal is the uninflected one. -/
+theorem derivedNominal_eq_uninflected {a : AdjEntry} (h : a.nominalHeid.isSome) :
     derivedNominal a = some (uninflectedNominal a) := by
-  unfold derivedNominal
-  cases hh : a.nominalHeid with
-  | none => simp [hh] at h
-  | some _ => rfl
+  obtain ⟨_, hh⟩ := Option.isSome_iff_exists.1 h
+  simp [derivedNominal, hh]
 
-/-- When `a` has no `-heid` form (e.g., `roze`), the derived-nominal
-    construction is *outside the scope* of the analysis. -/
-theorem derivedNominal_none_of_no_heid {a : AdjEntry}
-    (h : a.nominalHeid = none) : derivedNominal a = none := by
-  unfold derivedNominal; rw [h]; rfl
+/-- *roze* 'pink' has no *-heid* form, so no derived nominal. -/
+theorem derivedNominal_roze : derivedNominal roze = none := by decide
 
-/-- Concrete witness using the Fragment's exception class: `roze` 'pink'
-    has no `-heid` form per [mcnally-deswart-2011] §1, so its derived
-    nominal is outside scope. -/
-theorem roze_derivedNominal_none :
-    derivedNominal Dutch.Adjectives.roze = none :=
-  derivedNominal_none_of_no_heid (by decide)
+/-! ### The trope: the inflected form -/
 
-/-! ## §1: Domain-driven felicity of inflected nominalisation
-
-[mcnally-deswart-2011] §1 observes that the inflected nominalisation
-construction (`het rode van X`, `het vreemde van X`) is *frequent with
-abstract adjectives* (`vreemd`, `gezond`, `leuk`, `bijzonder`) but
-*rare with concrete adjectives* — the cited contrast being
-`?*het dichte van deze doos` 'the closed of this box'. We project this
-asymmetry off the Fragment's `Domain` field. -/
-
-/-- Frequency of the inflected nominalisation construction by domain.
-    [mcnally-deswart-2011] §1 + §3.4 reports a graded scale, not a
-    binary contrast: abstract adjectives admit the construction *most
-    freely*, colour and taste are the focal cases (admit all three forms
-    productively), and concrete adjectives are *marginal* (only `dicht`
-    is cited, with `?*het dichte van deze doos` flagged). -/
-inductive Frequency where
-  /-- Most freely admitted (abstract: `het vreemde van X`, paper §3.4). -/
-  | high
-  /-- Productively admitted (colour, taste: `het rode van X`, paper §3.1). -/
-  | medium
-  /-- Marginally admitted (concrete: `?*het dichte van deze doos`, §1). -/
-  | marginal
-  deriving DecidableEq, Repr
-
-/-- The frequency-of-inflected-nominalisation predicted by a semantic
-    `Domain`. Per [mcnally-deswart-2011] §1 + §3.4. -/
-def inflectedNominalisationFrequency : Domain → Frequency
-  | .color    => .medium
-  | .taste    => .medium
-  | .abstract => .high
-  | .concrete => .marginal
-
-/-- The §1 abstract/concrete asymmetry, formalised on Fragment entries
-    along the graded `Frequency` scale. Abstract adjectives (`vreemd`,
-    `gezond`, `leuk`) score `.high`; colours and tastes (`rood`)
-    score `.medium`; the concrete adjective `dicht` scores `.marginal`.
-    The proof reads `.domain` on each Fragment entry. -/
-theorem domain_frequency_split :
-    inflectedNominalisationFrequency rood.domain   = .medium ∧
-    inflectedNominalisationFrequency vreemd.domain = .high   ∧
-    inflectedNominalisationFrequency gezond.domain = .high   ∧
-    inflectedNominalisationFrequency leuk.domain   = .high   ∧
-    inflectedNominalisationFrequency dicht.domain  = .marginal := by
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;>
-    simp [inflectedNominalisationFrequency,
-      Dutch.Adjectives.rood, Dutch.Adjectives.vreemd,
-      Dutch.Adjectives.gezond, Dutch.Adjectives.leuk,
-      Dutch.Adjectives.dicht]
-
-/-! ## §3.4: Inflected `-e` form — relational trope semantics
-
-[mcnally-deswart-2011] (25): the inflectional suffix `-e` increases
-the adjective's valence by one, introducing a relation `P_asp(y)(x)`
-between an external entity `y` (saturated by PP) and the `P` aspect `x`
-of `y`. The `het` article then applies [chierchia-1984]'s ∩ to
-reify the resulting property as a trope (an entity correlate of a
-property *uniquely instantiated in one individual*).
-
-The crucial type-theoretic distinction: uninflected/derived denote
-*kinds* (sets of subkinds); inflected denotes a *trope* (a single
-property-aspect of a specific entity), which is *not* a kind. -/
-
-/-- An `AspectOf` instance records, for each adjectival property `P`, the
-    "P-aspect" relation the language pairs with `P`. This makes
-    [mcnally-deswart-2011]'s `P_asp` derivation explicit: the suffix
-    `-e` does not introduce an arbitrary new relation; it produces *the*
-    aspect-relation contextually associated with `P` (analogous to the
-    `cor` function relating the proxy adjective to its associated property
-    in (23b)). -/
+/-- The aspect relation a language pairs with each adjectival property: the relation between
+a bearer and its aspect of that property. -/
 def AspectOf (Entity : Type*) := (Shade → Prop) → Entity → Shade → Prop
 
-/-- [mcnally-deswart-2011] (25a): `[[-e]] = λPλyλx. P_asp(y)(x)`.
-    The `-e` inflection takes a property `P` and produces `P_asp` via the
-    contextual aspect-of mapping. Crucially `P_asp` is *derived from* `P`
-    (not an independent input), so substituting a different property
-    yields a different aspect relation. -/
-def inflectAdjective {Entity : Type*}
-    (asp : AspectOf Entity) (P : Shade → Prop) :
-    Entity → Shade → Prop := asp P
+/-- The inflectional suffix (25): a valence-increasing operator taking the adjective's property
+to the aspect relation. -/
+def inflectAdjective {Entity : Type*} (asp : AspectOf Entity) (P : Shade → Prop) :
+    Entity → Shade → Prop :=
+  asp P
 
-/-- [mcnally-deswart-2011] (26b): saturating the `-e`-inflected
-    adjective with a PP-complement entity yields a *property* (the
-    aspect-of-`s` property), not a set of kinds. -/
-def inflectedWithPP {Entity : Type*}
-    (Pasp : Entity → Shade → Prop) (s : Entity) : Shade → Prop :=
-  Pasp s
+/-- The trope *het rode van de aardbeien* (26): the aspect property saturated by the bearer,
+reified by *het* together with its bearer. -/
+def inflectedWithHet {Entity : Type*} (asp : AspectOf Entity) (P : Shade → Prop) (s : Entity) :
+    (Shade → Prop) × Entity :=
+  (inflectAdjective asp P s, s)
 
--- (NOTE: a previous `inflectAdjective_respects_property` theorem was
--- deleted as η-identity. Genuine pinning of the `asp` ↔ `P` relationship
--- requires a `LawfulAspectOf` typeclass with injectivity laws, which is
--- not warranted by a single-paper consumer; promote when needed.)
+/-! ### The three forms and the diagnostics -/
 
-/-! [moltmann-2004] **trope**: the entity correlate of a property
-    uniquely instantiated in one specific individual. We do *not*
-    introduce a dedicated `Trope` struct — the inflected-form denotation
-    is the bare pair `(Shade → Prop) × Entity`, with `.fst` recording the
-    property aspect and `.snd` recording the bearer. A full
-    [moltmann-2004] / [moltmann-2013] formalisation would
-    additionally individuate by spatiotemporal location and carry a
-    uniqueness-presupposition witness; promote to substrate
-    (`Semantics/Reference/Trope.lean` or similar) when a second
-    consumer arrives. No prior `Trope` type exists in linglib. -/
-
-/-- The denotation of a `het`-reified inflected adjective: the bare pair
-    `(property-aspect, bearer)`. -/
-abbrev TropePair (Entity : Type*) := (Shade → Prop) × Entity
-
-/-- [mcnally-deswart-2011] (26c): `het rode van de aardbeien`
-    denotes the trope obtained by reifying (Chierchia ∩) the property
-    `λx. Red_asp(strawberries)(x)`. The result is *not* a kind; it is a
-    trope — an entity correlate uniquely tied to a specific bearer. The
-    full pipeline (`-e` inflection + PP saturation + het-as-∩) composes
-    `inflectAdjective` and `inflectedWithPP`. -/
-def inflectedWithHet {Entity : Type*}
-    (asp : AspectOf Entity) (P : Shade → Prop) (s : Entity) :
-    TropePair Entity :=
-  (inflectedWithPP (inflectAdjective asp P) s, s)
-
-/-! ## §3.4-3.5: Type-theoretic contrast between the three forms
-
-The architectural payoff of the paper: uninflected and derived forms
-denote sets of subkinds (kind-level); the inflected form denotes a trope
-(individual-level). The Lean types make this explicit. -/
-
-/-- The three Dutch forms are typologically distinct in their *Lean
-    return types*: uninflected and derived return `Set Shade` (kinds);
-    the inflected form returns `TropePair Entity`. This is the core
-    contrast [mcnally-deswart-2011] establishes. -/
-inductive Form where
-  /-- `het rood (van X)` — uninflected nominal, neuter mass noun. -/
-  | uninflected
-  /-- `de roodheid (van X)` — derived nominal via -heid, count or mass. -/
-  | derived
-  /-- `het rode van X` — inflected adjective + het-as-∩. -/
-  | inflected
+/-- What the determiner embeds. -/
+inductive Embedded where
+  | noun
+  | adjectivePhrase
   deriving DecidableEq, Repr
 
-/-- Whether a form's denotation is a *kind* (set of subkinds) or a *trope*
-    (entity correlate of a uniquely instantiated property). -/
-inductive AbstractObjectKind where
-  | kind   -- Set of subkinds
-  | trope  -- Entity correlate uniquely instantiated
+/-- The kind of abstract object a form denotes. -/
+inductive AbstractObject where
+  | kind
+  | trope
   deriving DecidableEq, Repr
 
-/-- [mcnally-deswart-2011]'s central typological claim: each Dutch
-    form maps to a determinate kind of abstract object. -/
-def Form.denotationType : Form → AbstractObjectKind
-  | .uninflected => .kind
-  | .derived     => .kind
-  | .inflected   => .trope
-
-/-- Uninflected and derived both denote *kinds*; inflected is the unique
-    *trope*-denoting form. This is the empirically motivated three-way
-    distinction the paper argues for (§3.4 + §5 conclusion). -/
-theorem two_kinds_one_trope :
-    Form.uninflected.denotationType = .kind ∧
-    Form.derived.denotationType     = .kind ∧
-    Form.inflected.denotationType   = .trope := ⟨rfl, rfl, rfl⟩
-
-/-! ## §2.3: Rival analyses of the inflected form
-
-[mcnally-deswart-2011] §2.3 considers two rival analyses of `het rode
-van X` and rejects both, in favour of the third (`het` as Chierchia ∩):
-
-1. **Nominalisation analysis**: the inflected `rode` IS a noun (changed
-   category via `-e`). Rejected because nouns admit adjectival modification
-   and other determiners (paper §2.3 (13)-(14)).
-2. **Ellipsis analysis**: the inflected `rode` is an adjective hiding an
-   empty/elided noun. Rejected because (a) determiner restrictions (14)
-   and lack of generic readings (15) are unexplained, and (b) no plausible
-   noun can be inserted (paper §2.3 (16): `de` is required for `kleur`,
-   `smaak`).
-3. **Het-as-∩ analysis**: `het` carries Chierchia ∩, embedding the AP
-   directly under DP. The adjective remains adjectival (taking adverbial
-   mod), and only `het` (the default ∩-marker for non-nominal categories)
-   is licensed.
-
-Following the [snyder-2026] `PolymorphicAnalysis` pattern, we encode
-all three rivals and their predictions for the §2.3 diagnostics. The
-substantive theorem `only_hetAsCap_matches_diagnostics` shows only the
-adopted analysis matches the actual data — the other two would predict
-the wrong distribution. -/
-
-/-- The three rival analyses of Dutch `het rode van X` considered in
-    [mcnally-deswart-2011] §2.3. -/
-inductive InflectedAnalysis where
-  /-- The inflected adjective is a noun (category-changing). Rejected. -/
-  | nominalisation
-  /-- The inflected adjective hides an empty/elided noun. Rejected. -/
-  | ellipsis
-  /-- `het` = Chierchia ∩, embedding the inflected AP under DP. Adopted. -/
-  | hetAsCap
+/-- A form of abstract reference: what the determiner embeds and what the whole denotes. -/
+structure Form where
+  embedded : Embedded
+  denotation : AbstractObject
   deriving DecidableEq, Repr
 
-/-- Does the analysis predict that the form admits adverbial (rather than
-    adjectival) modification? Per §2.3 (13). The three rivals diverge
-    here: only `nominalisation` (which makes the form a noun) predicts
-    adjectival mod is licensed and adverbial mod blocked. Under
-    `ellipsis`, the visible element remains an adjective pre-ellipsis,
-    so adverbial mod IS licensed. -/
-def InflectedAnalysis.PredictsAdverbialModOnly : InflectedAnalysis → Prop
-  | .nominalisation => False  -- nouns take adjectival modification
-  | .ellipsis       => True   -- visible adjective remains adjectival pre-ellipsis
-  | .hetAsCap       => True   -- AP under DP, takes adverbial mod
+/-- *het rood*: a neuter mass noun denoting a kind. -/
+def uninflected : Form := ⟨.noun, .kind⟩
 
-instance : DecidablePred InflectedAnalysis.PredictsAdverbialModOnly :=
-  λ a => by cases a <;> unfold InflectedAnalysis.PredictsAdverbialModOnly <;> exact inferInstance
+/-- *de roodheid*: a derived noun denoting a kind. -/
+def derived : Form := ⟨.noun, .kind⟩
 
-/-- Does the analysis predict that *only* `het` (no other determiners)
-    licenses the form? Per §2.3 (14). -/
-def InflectedAnalysis.PredictsHetOnlyDeterminer : InflectedAnalysis → Prop
-  | .nominalisation => False
-  | .ellipsis       => False
-  | .hetAsCap       => True
+/-- *het rode van X*: an adjective phrase under *het*, denoting a trope. -/
+def inflected : Form := ⟨.adjectivePhrase, .trope⟩
 
-instance : DecidablePred InflectedAnalysis.PredictsHetOnlyDeterminer :=
-  λ a => by cases a <;> unfold InflectedAnalysis.PredictsHetOnlyDeterminer <;> exact inferInstance
+/-- Adjectival modification targets a noun (13). -/
+def Form.AdmitsAdjectivalModification (f : Form) : Prop := f.embedded = .noun
 
-/-- Does the analysis predict that the form rejects generic readings?
-    Per §2.3 (15). -/
-def InflectedAnalysis.PredictsNoGeneric : InflectedAnalysis → Prop
-  | .nominalisation => False
-  | .ellipsis       => False
-  | .hetAsCap       => True
+/-- Determiners other than *het* select a noun; *het* alone carries the nominalization of an
+adjective phrase (14). -/
+def Form.AdmitsOtherDeterminers (f : Form) : Prop := f.embedded = .noun
 
-instance : DecidablePred InflectedAnalysis.PredictsNoGeneric :=
-  λ a => by cases a <;> unfold InflectedAnalysis.PredictsNoGeneric <;> exact inferInstance
-
-/-- [mcnally-deswart-2011]'s §2.3 argument made formal: only the
-    `hetAsCap` analysis predicts the actual distribution (adverbial-mod
-    only, het-only determiner, no generics). Each predicate is decided
-    on the rival's own theoretical commitments; the conjunction
-    discriminates rivals from data. -/
-theorem only_hetAsCap_matches_diagnostics (a : InflectedAnalysis) :
-    (a.PredictsAdverbialModOnly ∧
-     a.PredictsHetOnlyDeterminer ∧
-     a.PredictsNoGeneric) ↔ a = .hetAsCap := by
-  cases a <;> simp [InflectedAnalysis.PredictsAdverbialModOnly,
-    InflectedAnalysis.PredictsHetOnlyDeterminer,
-    InflectedAnalysis.PredictsNoGeneric]
-
-/-! ## §2.3: Form-level distribution facts
-
-The morphosyntactic facts (13)-(15) about each Dutch form: only the
-inflected form is restricted to *het*, to adverbial modification, and
-rejects generic uses. -/
-
-/-- Whether a form admits non-`het` determiners (a, this, his, no, many).
-    [mcnally-deswart-2011] (14): only inflected refuses. -/
-def Form.AdmitsDetOtherThanHet : Form → Prop
-  | .uninflected => True   -- (7)
-  | .derived     => True   -- (11)
-  | .inflected   => False  -- (14a-b): *een/dit/zijn/geen/veel rode
-
-instance : DecidablePred Form.AdmitsDetOtherThanHet :=
-  λ f => by cases f <;> unfold Form.AdmitsDetOtherThanHet <;> exact inferInstance
-
-/-- Whether a form admits adjectival modification (vs only adverbial).
-    [mcnally-deswart-2011] (13): only inflected refuses. -/
-def Form.AdmitsAdjectivalModification : Form → Prop
-  | .uninflected => True   -- (6a)
-  | .derived     => True   -- (10)
-  | .inflected   => False  -- (13): adverbial only
+/-- Generic use needs a kind (15). -/
+def Form.AdmitsGeneric (f : Form) : Prop := f.denotation = .kind
 
 instance : DecidablePred Form.AdmitsAdjectivalModification :=
-  λ f => by cases f <;> unfold Form.AdmitsAdjectivalModification <;> exact inferInstance
+  λ _ => inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred Form.AdmitsOtherDeterminers := λ _ => inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred Form.AdmitsGeneric := λ _ => inferInstanceAs (Decidable (_ = _))
 
-/-- Whether a form admits a generic interpretation. (8), (12) vs (15). -/
-def Form.AdmitsGeneric : Form → Prop
-  | .uninflected => True   -- (8): Rood is een krachtige kleur.
-  | .derived     => True   -- (12): Blijvende roodheid is...
-  | .inflected   => False  -- (15): *Rode is...
+/-- The inflected form fails all three diagnostics, and the two nominal forms pass them. -/
+theorem inflected_diagnostics :
+    (¬ inflected.AdmitsAdjectivalModification ∧ ¬ inflected.AdmitsOtherDeterminers ∧
+      ¬ inflected.AdmitsGeneric) ∧
+    ∀ f ∈ [uninflected, derived],
+      f.AdmitsAdjectivalModification ∧ f.AdmitsOtherDeterminers ∧ f.AdmitsGeneric := by
+  decide
 
-instance : DecidablePred Form.AdmitsGeneric :=
-  λ f => by cases f <;> unfold Form.AdmitsGeneric <;> exact inferInstance
+/-- Among the three forms, failing any diagnostic is being the inflected form: the
+distributional restrictions are the trope semantics. -/
+theorem fails_iff_inflected (f : Form) (hf : f ∈ [uninflected, derived, inflected]) :
+    (¬ f.AdmitsAdjectivalModification ∨ ¬ f.AdmitsOtherDeterminers ∨ ¬ f.AdmitsGeneric) ↔
+      f = inflected := by
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hf
+  rcases hf with rfl | rfl | rfl <;> decide
 
-/-- The morphosyntactic distribution (§2.3 — three diagnostics) and the
-    semantic-type column (`denotationType`) are cross-aligned: a form
-    fails any one of the three diagnostics iff it denotes a trope. This
-    is the substantive content of the paper's claim that the
-    morphosyntactic restrictions on `het rode van X` are *because of* its
-    trope semantics — two independently-stated tables coincide. -/
-theorem morphosyntax_aligns_with_trope_semantics (f : Form) :
-    (¬ f.AdmitsDetOtherThanHet ∨
-     ¬ f.AdmitsAdjectivalModification ∨
-     ¬ f.AdmitsGeneric)
-    ↔ f.denotationType = .trope := by
-  cases f <;> simp [Form.denotationType, Form.AdmitsDetOtherThanHet,
-    Form.AdmitsAdjectivalModification, Form.AdmitsGeneric]
-
-/-- Equivalent biconditional: a form denotes a trope iff it is the
-    inflected form. -/
-theorem trope_iff_inflected (f : Form) :
-    f.denotationType = .trope ↔ f = .inflected := by
-  cases f <;> simp [Form.denotationType]
-
-/-! ## §3.5, §4: Cross-linguistic parallels
-
-[mcnally-deswart-2011] §3.5 places the inflected construction in
-parallel with Dutch *het*-nominalised infinitives (`het zingen van Jan`,
-§3.5 (28a)). For the semantics, the paper invokes [chierchia-1984]
-on infinitives and gerunds, and [hamm-vanlambalgen-2002] on formal
-foundations of nominalisation. [pullum-1991]'s "NP with VP head"
-analysis treats the *syntax* of English `-ing` separately and is *not*
-itself a Chierchia-∩ analysis.
-
-§4 considers Spanish *lo*-nominals (`lo blanco de las dunas`). Crucially,
-[villalba-2009]'s own analysis uses Moltmann's properties/qualities
-ontology (introducing a *quality* sort distinct from properties), *not*
-Chierchia ∩. McNally & de Swart §4 *propose* extending their ∩-analysis
-to Spanish, against Villalba — the ∩-extension is M&deS's, not Villalba's.
-
-The paper's central general claim (§5): natural languages exploit the
-inflection / derivation distinction to create subtle nuances in reference
-to abstract objects, all derivable from a parsimonious kind+token
-ontology — no separate "quality" sort is needed (contra Villalba).
-
-The cross-linguistic cluster — Dutch *het* (inflected adjective AND
-*het*-nominalised infinitive), English `-ing` gerund (Chierchia 1984 +
-Hamm & van Lambalgen 2002 semantics, Pullum 1991 syntax), Spanish *lo*
-(M&deS extension, against Villalba) — is documented here in prose
-because none of the analogues besides Dutch inflected-adjective is
-currently formalised in linglib. Promote to a typed cluster when
-the second case lands. -/
-
-/-! ## §5: Cross-paper substrate alignment with Snyder 2026
-
-`Studies/Snyder2026.lean` (Polymorphic Contextualism)
-and this file (McNally & de Swart 2011) both consume the same substrate:
-* `Subkinds.subkindOf` for kind formation by salient equivalence
-  relation (numerals partition by mathematical system; colours partition
-  by chromatic root).
-* IOTA-as-definite for selecting a unique subkind from a modified noun
-  predicate.
-
-They *disagree* on:
-* Whether nominalisation is Chierchia ∩ (this paper) or Partee NOM as a
-  pure type-shifter (Snyder Polymorphic Contextualism, §2 (10a)). In the
-  finite extensional setting these collapse (cf.
-  `Composition/TypeShifting.lean` `NOM = iota`), but conceptually they
-  diverge: ∩ is *substantive* (entity-correlate-of-property), NOM is
-  *formal* (Partee-shifter combinator).
-* Whether the lexical entry is unitary (Snyder: one `λxα. two(x)`) or
-  category-projected (McNally & de Swart: distinct `rood_N` vs `rood_A`
-  built from a shared root via different morphological projections).
-
-The shared substrate (Mendia subkinds + IOTA) is genuine; the divergence
-on nominalisation and lexical-projection architecture is genuine theoretical
-incompatibility. This is exactly the kind of cross-framework engagement
-linglib is designed to surface.
--/
+/-- The three analyses of the inflected form the paper weighs (§2.3): a category-changing
+nominalization, ellipsis of a noun, and *het* as the nominalization operator over an adjective
+phrase, the one adopted. -/
+inductive InflectedAnalysis where
+  | nominalisation
+  | ellipsis
+  | hetAsCap
+  deriving DecidableEq, Repr
 
 end McNallyDeSwart2011
