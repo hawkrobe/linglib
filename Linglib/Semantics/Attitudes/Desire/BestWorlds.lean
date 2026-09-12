@@ -59,7 +59,13 @@ theorem Want.not_compl [Finite W] (h : bel.Nonempty) (hp : Want G bel p) :
   let ⟨w, hw, hu⟩ := exists_undominated G bel h
   hnp w hw hu (hp w hw hu)
 
+/-- Closure under doxastic entailment: what is wanted is wanted under every consequence the
+agent believes it to have, the doxastic-closure problem of [villalta-2008]. -/
+theorem Want.mono_on {q : Set W} (hpq : ∀ w ∈ bel, w ∈ p → w ∈ q) (h : Want G bel p) :
+    Want G bel q :=
+  fun w hw hu => hpq w hw (h w hw hu)
+
 theorem Want.mono {q : Set W} (hpq : p ⊆ q) (h : Want G bel p) : Want G bel q :=
-  fun w hw hu => hpq (h w hw hu)
+  h.mono_on fun _ _ hw => hpq hw
 
 end Desire.BestWorlds
