@@ -1,4 +1,5 @@
 import Linglib.Pragmatics.RSA.Silence
+import Linglib.Pragmatics.RSA.Operators
 import Mathlib.Data.ENNReal.Inv
 
 /-!

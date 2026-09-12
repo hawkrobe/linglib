@@ -1,648 +1,443 @@
-import Linglib.Pragmatics.RSA.Operators
-import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Silence
-import Linglib.Core.Probability.Posterior
-import Linglib.Semantics.Alternatives.Lexical
-import Mathlib.Data.ENNReal.Inv
 
 /-!
-# [potts-etal-2016]: Embedded Implicatures as Pragmatic Inferences
-[potts-etal-2016] [chemla-spector-2011]
+# Potts, Lassiter, Levy and Frank (2016): Embedded Implicatures as Pragmatic Inferences under Compositional Lexical Uncertainty
 
-"Embedded Implicatures as Pragmatic Inferences under Compositional Lexical
-Uncertainty." Journal of Semantics 33(4): 755–802.
+This file formalizes the compositional lexical-uncertainty model of [potts-etal-2016] in the
+context of its experiment (§6). Three players each hit none, some, or all of their shots, a
+state being the multiset of outcomes (16); a message composes a quantifier over players with a
+quantifier over shots, the null message added (18); and the lexica are the neo-Gricean
+refinement set of *some*, itself or *some but not all* (14), (19d). The literal listener
+conditions a flat prior on a message's extension under a lexicon, the speaker weights messages
+by the listener's mass at the state and a cost, and the uncertainty listener inverts the speaker
+jointly over states and lexica (13) (`L0`, `S1`, `L1`); the fixed-lexicon pragmatics of (19b)
+inverts the base-lexicon speaker alone (`L1fixed`). The uncertainty listener assigns mass to a
+state exactly when some refinement makes the message true there, the fixed-lexicon listener
+exactly when the base lexicon does, so *exactly one player hit some of his shots* is heard as
+compatible with the locally enriched states NSA and SAA and *no player hit some of his shots*
+with NNA, NAA and AAA, which the fixed-lexicon model excludes (`one_some_local`,
+`no_some_local`), the low but non-negligible enrichment under a negative quantifier that
+[chemla-spector-2011] report. The uncertainty listener still ranks the literal construal first,
+NNS and NNN (`one_some_literal_first`, `no_some_literal_first`), and for *every player hit some
+of his shots* mirrors the human ordering, SSS first and AAA last among the true states, where
+the fixed-lexicon listener puts SAA first (`every_some_ordering`, `every_some_fixed`). Every
+ordering holds at every rationality and every cost of the null message.
 
-## Empirical anchor: [chemla-spector-2011]
+## Implementation notes
 
-The 3-players × 3-outcomes architecture is structurally the same as
-CS11's *every/exactly one/no* × *some/all* design (CS11 uses 6 letters
-× 3 cell-states for Exp 1, 3 letters for Exp 2). The LU model's
-predictions — DE prefers weak lexicon (NNN reading), UE prefers strong
-(SSS embedded SI) — match CS11's qualitative findings: STRONG > WEAK
-in universal contexts (Exp 1) and LOCAL > FALSE in non-monotonic
-(Exp 2). The LU model is *silent* on the attitude-verb gradient that
-CS11 doesn't test (think > want > all > must, from
-[geurts-pouscoulous-2009]).
+The state and lexicon priors are flat (18). The null message is true at every state, so its
+cost adds the same weight to every row of the speaker, and the share of a statement is its
+informativity weight over the sum of the weights of the statements true at the state plus that
+constant; each ordering is an inequality between such fractions in the weights `4^{-α}`,
+`3^{-α}`, `2^{-α}`, `1`. The unconstrained refinement model (19c), whose lexica are the nonempty
+subsets of the denotation of *some* over sets of shots, and the fit to the response data are not
+formalized.
 
-## The Puzzle
+## References
 
-Scalar implicatures interact asymmetrically with logical operators:
-
-- **UE (upward-entailing)**: "Every player hit some of his shots" →
-  embedded implicature "some but not all" (enriched reading SSS preferred)
-- **DE (downward-entailing)**: "No player hit some of his shots" →
-  global reading preferred, no embedded implicature (NNN preferred)
-
-## The Model: Compositional Lexical Uncertainty
-
-The key innovation is **lexical uncertainty**: L1 marginalizes over possible
-lexica (refinements of "some") rather than using a fixed literal semantics.
-This file formalizes the paper's **neo-Gricean refinement** model variant
-(the paper's (19d), refining only "some" to the two-element set
-`{⟦some⟧, ⟦some and not all⟧}` of (14)) — *not* their unconstrained-refinement
-model (19c), whose listener marginalizes over the full refinement lattice
-`℘(⟦some⟧) ∖ ∅`. The two refinements are:
-- **Weak**: "some" = "at least one" (the unrefined lower-bound `⟦some⟧`)
-- **Strong**: "some" = "some but not all" (the maximal enrichment)
-
-The PMF stack mirrors [goodman-stuhlmuller-2013]'s latent-uncertainty model
-on mathlib `PMF`, with `Latent := Lexicon`:
-
-* `L0 lex u : PMF World` — `RSA.L0OfPred` (uniform on the extension).
-* `S1 lex w : PMF Utterance` — `RSA.S1Belief (L0 lex) (fun _ => 1) 1 w`
-  (α = 1, no utterance cost): normalises `L0 lex u w` over utterances.
-* `marginalSpeaker w : PMF Utterance` — `RSA.marginalizeKernel` of `S1`
-  against the uniform `Lexicon` prior.
-* `L1 u : PMF World` — `PMF.posterior marginalSpeaker (uniform World) u`.
-
-## Architecture
-
-The experiment (Section 6) uses 3 players, each with outcome N (nothing) /
-S (scored but not aced) / A (aced). The 10 equivalence classes are the
-multisets of 3 outcomes. Utterances are `PlayerQ × ShotQ` (outer × inner
-quantifier): "every/exactly one/no player hit all/none/some of his shots."
-
-## Predictions
-
-The asymmetry arises from monotonicity:
-- **DE** (under "no"): strong "some" *widens* the true-world set → less
-  informative → L1 prefers weak lexicon → global reading (NNN)
-- **UE** (under "every"): strong "some" *narrows* the true-world set → more
-  informative → L1 prefers strong lexicon → enriched reading (SSS)
+* [potts-etal-2016]
+* [chemla-spector-2011]
 -/
 
-open scoped ENNReal
+open MeasureTheory ProbabilityTheory RSA
+open scoped ENNReal NNReal
 
 namespace PottsEtAl2016
 
-/-! ### Domain types -/
+/-! ### The context (§6, (16) and (18)) -/
 
-/-- World state as equivalence class over 3 players' outcomes.
-    Each player's outcome: N (nothing), S (scored but not aced), A (aced).
-    10 classes = multisets of size 3 from {N, S, A}. -/
+/-- A player's outcome: hit none of the shots, some but not all, or all. -/
+inductive Outcome where
+  | nothing
+  | scored
+  | aced
+  deriving DecidableEq, Fintype
+
+/-- The states (16): the multisets of three outcomes, named by their outcomes. -/
 inductive World where
-  | NNN | NNS | NNA | NSS | NSA | NAA | SSS | SSA | SAA | AAA
-  deriving DecidableEq, Repr, Inhabited, Fintype
+  | NNN
+  | NNS
+  | NNA
+  | NSS
+  | NSA
+  | NAA
+  | SSS
+  | SSA
+  | SAA
+  | AAA
+  deriving DecidableEq, Fintype, Nonempty
 
-/-- Inner quantifier: over a player's shots. -/
+instance : MeasurableSpace World := ⊤
+
+/-- The outcomes of a state. -/
+def World.outcomes : World → Multiset Outcome
+  | .NNN => {.nothing, .nothing, .nothing}
+  | .NNS => {.nothing, .nothing, .scored}
+  | .NNA => {.nothing, .nothing, .aced}
+  | .NSS => {.nothing, .scored, .scored}
+  | .NSA => {.nothing, .scored, .aced}
+  | .NAA => {.nothing, .aced, .aced}
+  | .SSS => {.scored, .scored, .scored}
+  | .SSA => {.scored, .scored, .aced}
+  | .SAA => {.scored, .aced, .aced}
+  | .AAA => {.aced, .aced, .aced}
+
+/-- The quantifiers over a player's shots: *every*, *no*, *some*. -/
 inductive ShotQ where
-  | all | none_ | some_
-  deriving DecidableEq, Repr, Inhabited, Fintype
+  | every
+  | no
+  | some_
+  deriving DecidableEq, Fintype
 
-/-- Outer quantifier: over players. -/
+/-- The quantifiers over the players: *every*, *exactly one*, *no*. -/
 inductive PlayerQ where
-  | every | exactlyOne | no
-  deriving DecidableEq, Repr, Inhabited, Fintype
+  | every
+  | exactlyOne
+  | no
+  deriving DecidableEq, Fintype
 
-/-- Statement: outer quantifier × inner quantifier. -/
+/-- The lexica of the neo-Gricean refinement set (14), (19d): *some* read as itself or as
+*some but not all*. -/
+inductive Lex where
+  | weak
+  | strong
+  deriving DecidableEq, Fintype, Nonempty
+
+instance : MeasurableSpace Lex := ⊤
+
+/-- The outcomes *some* covers under a lexicon: any hit, or some but not all. -/
+def Lex.someDen : Lex → Finset Outcome
+  | .weak => {.scored, .aced}
+  | .strong => {.scored}
+
+/-- The refinement condition (11): each lexicon reads *some* as a nonempty part of its base
+denotation, which the base lexicon is. -/
+theorem lex_refines : ∀ l : Lex, l.someDen.Nonempty ∧ l.someDen ⊆ Lex.weak.someDen := by
+  decide
+
+/-- Whether an outcome satisfies the quantifier over shots under a lexicon. -/
+def ShotQ.Holds (l : Lex) : ShotQ → Outcome → Prop
+  | .every, o => o = .aced
+  | .no, o => o = .nothing
+  | .some_, o => o ∈ l.someDen
+
+instance (l : Lex) (s : ShotQ) : DecidablePred (s.Holds l) := λ o => by
+  cases s <;> unfold ShotQ.Holds <;> infer_instance
+
+/-- Whether a number of players satisfies the quantifier over players. -/
+def PlayerQ.Holds : PlayerQ → ℕ → Prop
+  | .every, n => n = 3
+  | .exactlyOne, n => n = 1
+  | .no, n => n = 0
+
+instance (q : PlayerQ) : DecidablePred q.Holds := λ n => by
+  cases q <;> unfold PlayerQ.Holds <;> infer_instance
+
+/-- A statement (18c): a quantifier over players applied to a quantifier over shots. -/
 abbrev Stmt := PlayerQ × ShotQ
 
-/-- Utterance: a statement, or silence (`none`) — the null utterance, true at
-every world. -/
-abbrev Utterance := RSA.WithSilence Stmt
+/-- The truth of a statement at a state under a lexicon: the quantifier over players applied to
+the number of players whose outcome satisfies the quantifier over shots. -/
+def Stmt.Truth (l : Lex) (s : Stmt) (w : World) : Prop :=
+  s.1.Holds (w.outcomes.countP (s.2.Holds l))
 
-/-- Lexicon: how "some" is interpreted. -/
-inductive Lexicon where
-  | weak   -- "some" = at least one (lower-bound)
-  | strong -- "some" = some but not all (enriched)
-  deriving DecidableEq, Repr, Inhabited, Fintype
+instance (l : Lex) (s : Stmt) : DecidablePred (s.Truth l) := λ w =>
+  inferInstanceAs (Decidable (s.1.Holds (w.outcomes.countP (s.2.Holds l))))
 
-/-! ### World count functions -/
+/-- The extension of a statement under a lexicon. -/
+def stmtSem (l : Lex) (s : Stmt) : Finset World := Finset.univ.filter (s.Truth l)
 
-/-- Number of players who scored (hit ≥ 1 shot, i.e. S or A). -/
-def World.numScored : World → Nat
-  | .NNN => 0 | .NNS => 1 | .NNA => 1 | .NSS => 2 | .NSA => 2
-  | .NAA => 2 | .SSS => 3 | .SSA => 3 | .SAA => 3 | .AAA => 3
+/-- The messages (18c): the statements and the null message of (12a). -/
+abbrev Msg := WithSilence Stmt
 
-/-- Number of players who aced (hit all shots). -/
-def World.numAced : World → Nat
-  | .NNN => 0 | .NNS => 0 | .NNA => 1 | .NSS => 0 | .NSA => 1
-  | .NAA => 2 | .SSS => 0 | .SSA => 1 | .SAA => 2 | .AAA => 3
+instance : MeasurableSpace Msg := ⊤
 
-/-- Number of players who scored but did not ace. -/
-def World.numScoredNotAced : World → Nat
-  | .NNN => 0 | .NNS => 1 | .NNA => 0 | .NSS => 2 | .NSA => 1
-  | .NAA => 0 | .SSS => 3 | .SSA => 2 | .SAA => 1 | .AAA => 0
+/-- The extension of a message under a lexicon, the null message true at every state. -/
+def sem (l : Lex) : Msg → Finset World := liftSem (stmtSem l)
 
-/-- Number of players who did nothing (hit 0 shots). -/
-def World.numNothing : World → Nat
-  | .NNN => 3 | .NNS => 2 | .NNA => 2 | .NSS => 1 | .NSA => 1
-  | .NAA => 1 | .SSS => 0 | .SSA => 0 | .SAA => 0 | .AAA => 0
+/-- *Every player hit some of his shots*. -/
+abbrev everySome : Stmt := (.every, .some_)
 
-/-! ### Truth conditions (lexicon-parameterized) -/
+/-- *Exactly one player hit some of his shots*. -/
+abbrev oneSome : Stmt := (.exactlyOne, .some_)
 
-/-- Count of players satisfying the inner predicate, under a given lexicon.
-    - `all`: number who aced
-    - `none_`: number who did nothing
-    - `some_`: depends on lexicon:
-      - weak: number who scored (≥ 1 shot)
-      - strong: number who scored but did not ace -/
-def predCount (sq : ShotQ) (lex : Lexicon) (w : World) : Nat :=
-  match sq with
-  | .all => w.numAced
-  | .none_ => w.numNothing
-  | .some_ => match lex with
-    | .weak => w.numScored
-    | .strong => w.numScoredNotAced
+/-- *No player hit some of his shots*. -/
+abbrev noSome : Stmt := (.no, .some_)
 
-/-- Truth value of a statement in a world under a lexicon. -/
-def stmtTruth (lex : Lexicon) : Stmt → World → Prop
-  | (pq, sq), w =>
-    let n := predCount sq lex w
-    match pq with
-    | .every => n = 3
-    | .exactlyOne => n = 1
-    | .no => n = 0
-
-instance (lex : Lexicon) : ∀ s, DecidablePred (stmtTruth lex s)
-  | (pq, _), _ => by cases pq <;> exact Nat.decEq _ _
-
-/-- Truth value of an utterance under a lexicon: `stmtTruth` with silence
-true at every world. -/
-def utteranceTruth (lex : Lexicon) : Utterance → World → Prop :=
-  RSA.liftMeaning (stmtTruth lex)
-
-instance (lex : Lexicon) : ∀ u, DecidablePred (utteranceTruth lex u) :=
-  inferInstanceAs (∀ u, DecidablePred (RSA.liftMeaning (stmtTruth lex) u))
-
-/-! ### Structural properties
-
-The lexicon affects only "some"; "all" and "none" are unambiguous. The DE/UE
-asymmetry is a *widening vs. narrowing* fact about the strong lexicon's
-extension under each outer quantifier. -/
-
-/-- Lexica agree on all "all"-utterances; the lexicon only refines "some". -/
-theorem lexica_agree_on_all :
-    ∀ pq w, utteranceTruth .weak (some (pq, .all)) w ↔
-            utteranceTruth .strong (some (pq, .all)) w := by decide
-
-/-- Lexica agree on all "none"-utterances. -/
-theorem lexica_agree_on_none :
-    ∀ pq w, utteranceTruth .weak (some (pq, .none_)) w ↔
-            utteranceTruth .strong (some (pq, .none_)) w := by decide
-
-/-- DE context: strong "some" *widens* the set of true worlds relative to weak.
-    Under "no player hit some of his shots":
-    - Weak "some": only NNN satisfies (1 world)
-    - Strong "some": NNN, NNA, NAA, AAA satisfy (4 worlds)
-    Widening makes the utterance less informative under the strong lexicon. -/
-theorem de_enrichment_widens :
-    (Finset.univ.filter (utteranceTruth .weak (some (.no, .some_)))).card <
-    (Finset.univ.filter (utteranceTruth .strong (some (.no, .some_)))).card := by
+/-- The lexica agree off *some*, and the refinement narrows the extension of *some* under
+*every* while widening it under *no*, the source of the asymmetry; under *exactly one* the
+refinement admits the locally enriched states NSA and SAA. -/
+theorem refinement_facts :
+    (∀ q : PlayerQ, stmtSem .weak (q, .every) = stmtSem .strong (q, .every) ∧
+      stmtSem .weak (q, .no) = stmtSem .strong (q, .no)) ∧
+    stmtSem .strong everySome ⊂ stmtSem .weak everySome ∧
+    stmtSem .weak noSome ⊂ stmtSem .strong noSome ∧
+    stmtSem .weak oneSome = {.NNS, .NNA} ∧ stmtSem .strong oneSome = {.NNS, .NSA, .SAA} := by
   decide
 
-/-- UE context: strong "some" *narrows* the set of true worlds relative to weak.
-    Under "every player hit some of his shots":
-    - Weak "some": SSS, SSA, SAA, AAA satisfy (4 worlds)
-    - Strong "some": only SSS satisfies (1 world)
-    Narrowing makes the utterance more informative under the strong lexicon. -/
-theorem ue_enrichment_narrows :
-    (Finset.univ.filter (utteranceTruth .strong (some (.every, .some_)))).card <
-    (Finset.univ.filter (utteranceTruth .weak (some (.every, .some_)))).card := by
+/-- Every message is true at some state under the base lexicon. -/
+theorem sem_weak_nonempty (m : Msg) : ∃ w, w ∈ sem .weak m := by
+  revert m; decide
+
+/-! ### The model (13), (18), (19) -/
+
+section Tower
+
+variable (α : ℝ) (κ : ℝ≥0)
+
+/-- The cost factor (18d): `κ` for the null message and 1 for every statement. -/
+def cost : Msg → ℝ≥0∞ := liftCostFactor κ 1
+
+/-- The literal listener (13a) at a flat prior: uniform on the message's extension. -/
+noncomputable def L0 (l : Lex) : Kernel Msg World := uniformListener (sem l)
+
+/-- The speaker (13b). -/
+noncomputable def S1 (l : Lex) : Kernel World Msg := speaker α (cost κ) (L0 l)
+
+/-- The uncertainty listener (13c): the joint posterior over states and lexica at flat priors,
+whose state marginal is the paper's listener. -/
+noncomputable def L1 : Kernel Msg (World × Lex) :=
+  familyListener L0 α (cost κ) (uniformOn Set.univ)
+
+/-- The fixed-lexicon pragmatic listener (19b): the base lexicon's speaker inverted at a flat
+prior. -/
+noncomputable def L1fixed : Kernel Msg World :=
+  pragmaticListener α (cost κ) (L0 .weak) (uniformOn Set.univ)
+
+end Tower
+
+private theorem cost_ne_zero {κ : ℝ≥0} (hκ : κ ≠ 0) (m : Msg) : cost κ m ≠ 0 := by
+  cases m <;> simp [cost, hκ]
+
+private theorem cost_ne_top (κ : ℝ≥0) (m : Msg) : cost κ m ≠ ∞ := by
+  cases m <;> simp [cost]
+
+section Model
+
+variable {α : ℝ} (hα : 0 < α) {κ : ℝ≥0} (hκ : κ ≠ 0)
+include hα hκ
+
+/-! ### Support: local enrichment (§6.3) -/
+
+/-- The uncertainty listener assigns mass to a state exactly when some lexicon makes the
+message true there. -/
+theorem L1_fst_ne_zero_iff (m : Msg) (w : World) :
+    (L1 α κ m).fst {w} ≠ 0 ↔ ∃ l, w ∈ sem l m :=
+  familyListener_uniform_fst_apply_singleton_ne_zero_iff sem hα (cost_ne_zero hκ)
+    (cost_ne_top κ) (let ⟨w, h⟩ := sem_weak_nonempty m; ⟨.weak, w, h⟩) w
+
+/-- The fixed-lexicon listener assigns mass to a state exactly when the base lexicon makes the
+message true there. -/
+theorem L1fixed_ne_zero_iff (m : Msg) (w : World) :
+    L1fixed α κ m {w} ≠ 0 ↔ w ∈ sem .weak m := by
+  obtain ⟨w₀, h₀⟩ := sem_weak_nonempty m
+  have hs := speaker_uniformListener_apply_singleton_ne_zero_iff (sem .weak) hα
+    (cost_ne_zero hκ) (cost_ne_top κ)
+  rw [L1fixed, pragmaticListener, L0, posterior_apply_singleton_ne_zero_iff _ _
+    (comp_apply_singleton_ne_zero _ _ (uniformOn_univ_singleton_ne_zero w₀) ((hs w₀ m).2 h₀)),
+    and_iff_right (uniformOn_univ_singleton_ne_zero w), hs]
+
+/-- *Exactly one player hit some of his shots*: the locally enriched states NSA and SAA, false
+on the literal construal, receive mass from the uncertainty listener and none from the
+fixed-lexicon listener. -/
+theorem one_some_local :
+    ∀ w ∈ ({.NSA, .SAA} : Finset World),
+      (L1 α κ (some oneSome)).fst {w} ≠ 0 ∧ L1fixed α κ (some oneSome) {w} = 0 := by
+  intro w hw
+  rw [L1_fst_ne_zero_iff hα hκ, ← not_ne_iff, (L1fixed_ne_zero_iff hα hκ _ w).not]
+  simp only [Finset.mem_insert, Finset.mem_singleton] at hw
+  rcases hw with rfl | rfl <;> decide
+
+/-- *No player hit some of his shots*: the locally enriched states NNA, NAA and AAA receive mass
+from the uncertainty listener and none from the fixed-lexicon listener. -/
+theorem no_some_local :
+    ∀ w ∈ ({.NNA, .NAA, .AAA} : Finset World),
+      (L1 α κ (some noSome)).fst {w} ≠ 0 ∧ L1fixed α κ (some noSome) {w} = 0 := by
+  intro w hw
+  rw [L1_fst_ne_zero_iff hα hκ, ← not_ne_iff, (L1fixed_ne_zero_iff hα hκ _ w).not]
+  simp only [Finset.mem_insert, Finset.mem_singleton] at hw
+  rcases hw with rfl | rfl | rfl <;> decide
+
+/-! ### Preference orderings (§6.2, §6.3) -/
+
+/-- State preference of the uncertainty listener is the pooled speaker preference. -/
+theorem L1_fst_real_lt_iff (m : Msg) (w₁ w₂ : World) :
+    (L1 α κ m).fst.real {w₁} < (L1 α κ m).fst.real {w₂} ↔
+      ∑ l, (S1 α κ l w₁).real {m} < ∑ l, (S1 α κ l w₂).real {m} :=
+  let ⟨w₀, h₀⟩ := sem_weak_nonempty m
+  familyListener_fst_real_lt_iff L0 uniformOn_univ_singleton_eq uniformOn_univ_singleton_ne_zero
+    ((speaker_uniformListener_apply_singleton_ne_zero_iff (sem .weak) hα (cost_ne_zero hκ)
+      (cost_ne_top κ) w₀ m).2 h₀)
+
+/-- State preference of the fixed-lexicon listener is the base-lexicon speaker's preference. -/
+theorem L1fixed_real_lt_iff (m : Msg) (w₁ w₂ : World) :
+    (L1fixed α κ m).real {w₁} < (L1fixed α κ m).real {w₂} ↔
+      (S1 α κ .weak w₁).real {m} < (S1 α κ .weak w₂).real {m} :=
+  let ⟨w₀, h₀⟩ := sem_weak_nonempty m
+  pragmaticListener_real_lt_iff α (cost κ) (L0 .weak) (uniformOn Set.univ)
+    uniformOn_univ_singleton_eq uniformOn_univ_singleton_ne_zero
+    ((speaker_uniformListener_apply_singleton_ne_zero_iff (sem .weak) hα (cost_ne_zero hκ)
+      (cost_ne_top κ) w₀ m).2 h₀)
+
+omit hκ in
+/-- The speaker's share of a statement: its informativity weight over the weights of the
+statements true at the state plus the null message's weight. -/
+theorem S1_real (l : Lex) (w : World) (s : Stmt) :
+    (S1 α κ l w).real {some s}
+      = (if w ∈ stmtSem l s then (((stmtSem l s).card : ℝ))⁻¹ ^ α else 0)
+        / ((∑ s', if w ∈ stmtSem l s' then (((stmtSem l s').card : ℝ))⁻¹ ^ α else 0)
+            + κ * (10 : ℝ)⁻¹ ^ α) := by
+  have h := speaker_liftCostFactor_uniformListener_real_singleton_some (stmtSem l) hα
+    (ENNReal.coe_ne_top (r := κ)) w s
+  rw [profile_invPowSum_toReal _ hα.le, ENNReal.coe_toReal,
+    (by decide : Fintype.card World = 10), Nat.cast_ofNat] at h
+  exact h
+
+end Model
+
+/-! #### The weights and the sums -/
+
+/-- The two lexica as `Fin 2`, for sums over the family. -/
+def Lex.equivFin : Lex ≃ Fin 2 where
+  toFun | .weak => 0 | .strong => 1
+  invFun | 0 => .weak | 1 => .strong
+  left_inv l := by cases l <;> rfl
+  right_inv i := by fin_cases i <;> rfl
+
+/-- The quantifiers over players as `Fin 3`. -/
+def PlayerQ.equivFin : PlayerQ ≃ Fin 3 where
+  toFun | .every => 0 | .exactlyOne => 1 | .no => 2
+  invFun | 0 => .every | 1 => .exactlyOne | 2 => .no
+  left_inv q := by cases q <;> rfl
+  right_inv i := by fin_cases i <;> rfl
+
+/-- The quantifiers over shots as `Fin 3`. -/
+def ShotQ.equivFin : ShotQ ≃ Fin 3 where
+  toFun | .every => 0 | .no => 1 | .some_ => 2
+  invFun | 0 => .every | 1 => .no | 2 => .some_
+  left_inv s := by cases s <;> rfl
+  right_inv i := by fin_cases i <;> rfl
+
+theorem Lex.sum_univ {M : Type*} [AddCommMonoid M] (f : Lex → M) :
+    ∑ l, f l = f .weak + f .strong := by
+  rw [Fintype.sum_equiv Lex.equivFin f (f ∘ Lex.equivFin.symm) λ l => by simp,
+    Fin.sum_univ_two]
+  rfl
+
+theorem PlayerQ.sum_univ {M : Type*} [AddCommMonoid M] (f : PlayerQ → M) :
+    ∑ q, f q = f .every + f .exactlyOne + f .no := by
+  rw [Fintype.sum_equiv PlayerQ.equivFin f (f ∘ PlayerQ.equivFin.symm) λ q => by simp,
+    Fin.sum_univ_three]
+  rfl
+
+theorem ShotQ.sum_univ {M : Type*} [AddCommMonoid M] (f : ShotQ → M) :
+    ∑ s, f s = f .every + f .no + f .some_ := by
+  rw [Fintype.sum_equiv ShotQ.equivFin f (f ∘ ShotQ.equivFin.symm) λ s => by simp,
+    Fin.sum_univ_three]
+  rfl
+
+/-- The extension sizes of the statements. -/
+private theorem cards :
+    (stmtSem .weak (.every, .every)).card = 1 ∧ (stmtSem .strong (.every, .every)).card = 1 ∧
+    (stmtSem .weak (.every, .no)).card = 1 ∧ (stmtSem .strong (.every, .no)).card = 1 ∧
+    (stmtSem .weak everySome).card = 4 ∧ (stmtSem .strong everySome).card = 1 ∧
+    (stmtSem .weak (.exactlyOne, .every)).card = 3 ∧
+    (stmtSem .strong (.exactlyOne, .every)).card = 3 ∧
+    (stmtSem .weak (.exactlyOne, .no)).card = 3 ∧ (stmtSem .strong (.exactlyOne, .no)).card = 3 ∧
+    (stmtSem .weak oneSome).card = 2 ∧ (stmtSem .strong oneSome).card = 3 ∧
+    (stmtSem .weak (.no, .every)).card = 4 ∧ (stmtSem .strong (.no, .every)).card = 4 ∧
+    (stmtSem .weak (.no, .no)).card = 4 ∧ (stmtSem .strong (.no, .no)).card = 4 ∧
+    (stmtSem .weak noSome).card = 1 ∧ (stmtSem .strong noSome).card = 4 := by
   decide
 
-/-! ### Literal listener `L0`
-
-Per-lexicon literal listener via `RSA.L0OfPred`: uniform on the
-extension of the (lexicon-parameterised) meaning function. Every utterance has
-a non-empty extension (every quantifier is true at some world, and `null` is
-true everywhere), so the `Nonempty` precondition is universal. -/
-
-/-- Every `(lexicon, utterance)` has a non-empty extension. -/
-theorem ext_nonempty (lex : Lexicon) (u : Utterance) :
-    (RSA.extensionOf (utteranceTruth lex) u).Nonempty := by
-  rw [Finset.nonempty_iff_ne_empty]
-  cases lex <;> rcases u with _ | ⟨pq, sq⟩ <;>
-    first | decide | (cases pq <;> cases sq <;> decide)
-
-/-- Per-lexicon literal listener: uniform on the extension. -/
-noncomputable def L0 (lex : Lexicon) (u : Utterance) : PMF World :=
-  RSA.L0OfPred (utteranceTruth lex) u (ext_nonempty lex u)
-
-/-- Closed-form `L0` value: `ENNReal.ofReal (1 / |extension|)` at true worlds,
-`0` otherwise, in the if-form the closed-form reductions use. -/
-theorem L0_apply (lex : Lexicon) (u : Utterance) (w : World) :
-    L0 lex u w =
-      if utteranceTruth lex u w
-      then ENNReal.ofReal (((RSA.extensionOf (utteranceTruth lex) u).card : ℝ))⁻¹
-      else 0 := by
-  unfold L0
-  by_cases h : utteranceTruth lex u w
-  · rw [if_pos h, RSA.L0OfPred_apply_of_mem _ h,
-        ← ENNReal.ofReal_natCast, ← ENNReal.ofReal_inv_of_pos]
-    exact_mod_cast Finset.card_pos.mpr (ext_nonempty lex u)
-  · rw [if_neg h, RSA.L0OfPred_apply_of_not_mem _ h]
-
-/-- `L0 lex none w = ofReal (1/10)`: silence is true at every world, so its
-extension is all 10 worlds. Used to discharge the speaker normaliser's
-positivity hypothesis. -/
-theorem L0_null (lex : Lexicon) (w : World) :
-    L0 lex none w = ENNReal.ofReal ((10 : ℝ))⁻¹ := by
-  rw [L0_apply, if_pos (show utteranceTruth lex none w from trivial),
-      show RSA.extensionOf (utteranceTruth lex) none = Finset.univ by
-        ext w; simp [utteranceTruth],
-      show (Finset.univ : Finset World).card = 10 by rfl]
-  norm_num
-
-/-- Sum-over-`Utterance` unfolder (silence + the 9 statements), proved by
-`rfl`, so partition sums reduce to a concrete 10-term sum. -/
-theorem Utterance_sum_univ {β : Type*} [AddCommMonoid β] (f : Utterance → β) :
-    ∑ i, f i =
-      f none + (f (some (.every, .all)) + (f (some (.every, .none_)) +
-      (f (some (.every, .some_)) + (f (some (.exactlyOne, .all)) +
-      (f (some (.exactlyOne, .none_)) + (f (some (.exactlyOne, .some_)) +
-      (f (some (.no, .all)) + (f (some (.no, .none_)) +
-      (f (some (.no, .some_)) + 0))))))))) := by rfl
-
-/-! ### Extension cardinalities
-
-Per-`(lexicon, utterance)` extension sizes, `decide`-checked, so `L0_apply`
-reduces to concrete `ofReal((c)⁻¹)` values. -/
-
-private theorem card_w_ea : (RSA.extensionOf (utteranceTruth .weak) (some (.every, .all))).card = 1 := by decide
-private theorem card_w_en : (RSA.extensionOf (utteranceTruth .weak) (some (.every, .none_))).card = 1 := by decide
-private theorem card_w_es : (RSA.extensionOf (utteranceTruth .weak) (some (.every, .some_))).card = 4 := by decide
-private theorem card_w_oa : (RSA.extensionOf (utteranceTruth .weak) (some (.exactlyOne, .all))).card = 3 := by decide
-private theorem card_w_on : (RSA.extensionOf (utteranceTruth .weak) (some (.exactlyOne, .none_))).card = 3 := by decide
-private theorem card_w_os : (RSA.extensionOf (utteranceTruth .weak) (some (.exactlyOne, .some_))).card = 2 := by decide
-private theorem card_w_na : (RSA.extensionOf (utteranceTruth .weak) (some (.no, .all))).card = 4 := by decide
-private theorem card_w_nn : (RSA.extensionOf (utteranceTruth .weak) (some (.no, .none_))).card = 4 := by decide
-private theorem card_w_ns : (RSA.extensionOf (utteranceTruth .weak) (some (.no, .some_))).card = 1 := by decide
-private theorem card_w_nu : (RSA.extensionOf (utteranceTruth .weak) none).card = 10 := by decide
-private theorem card_s_ea : (RSA.extensionOf (utteranceTruth .strong) (some (.every, .all))).card = 1 := by decide
-private theorem card_s_en : (RSA.extensionOf (utteranceTruth .strong) (some (.every, .none_))).card = 1 := by decide
-private theorem card_s_es : (RSA.extensionOf (utteranceTruth .strong) (some (.every, .some_))).card = 1 := by decide
-private theorem card_s_oa : (RSA.extensionOf (utteranceTruth .strong) (some (.exactlyOne, .all))).card = 3 := by decide
-private theorem card_s_on : (RSA.extensionOf (utteranceTruth .strong) (some (.exactlyOne, .none_))).card = 3 := by decide
-private theorem card_s_os : (RSA.extensionOf (utteranceTruth .strong) (some (.exactlyOne, .some_))).card = 3 := by decide
-private theorem card_s_na : (RSA.extensionOf (utteranceTruth .strong) (some (.no, .all))).card = 4 := by decide
-private theorem card_s_nn : (RSA.extensionOf (utteranceTruth .strong) (some (.no, .none_))).card = 4 := by decide
-private theorem card_s_ns : (RSA.extensionOf (utteranceTruth .strong) (some (.no, .some_))).card = 4 := by decide
-private theorem card_s_nu : (RSA.extensionOf (utteranceTruth .strong) none).card = 10 := by decide
-
-/-! ### Speaker normaliser `Z`
-
-`S1Belief` with α = 1 and unit cost has score `(L0 u w)^1 · 1 = L0 u w`, so the
-partition function is `Z lex w = ∑' u, L0 lex u w`. Each value is `ofReal` of a
-rational; the closed forms below are computed by `simp +decide only [...]`
-(reducing to a sum of concrete `ofReal (c⁻¹)` terms)
-followed by explicit `ENNReal.ofReal_add` folding and `norm_num`. -/
-
-/-- With α = 1 and unit cost, the speaker score is just `L0 lex u w`. -/
-theorem score_eq (lex : Lexicon) (w : World) (u : Utterance) :
-    (L0 lex u w : ℝ≥0∞) ^ (1 : ℝ) * 1 = L0 lex u w := by rw [ENNReal.rpow_one, mul_one]
-
-/-- The `S1Belief` normaliser at `(lexicon, world)`. -/
-noncomputable def Z (lex : Lexicon) (w : World) : ℝ≥0∞ :=
-  ∑' u, (L0 lex u w : ℝ≥0∞) ^ (1 : ℝ) * 1
-
-theorem Z_eq_sum (lex : Lexicon) (w : World) : Z lex w = ∑' u, L0 lex u w := by
-  unfold Z; simp_rw [score_eq]
-
-theorem Z_ne_top (lex : Lexicon) (w : World) : Z lex w ≠ ∞ := by
-  rw [Z_eq_sum]; exact ENNReal.tsum_ne_top_of_fintype (fun u => PMF.apply_ne_top _ _)
-
-/-- The speaker normaliser is non-zero: `null` is true everywhere, contributing
-`ofReal (1/10) ≠ 0`. -/
-theorem Z_ne_zero (lex : Lexicon) (w : World) :
-    (∑' u, (L0 lex u w : ℝ≥0∞) ^ (1 : ℝ) * 1) ≠ 0 := by
-  rw [show (∑' u, (L0 lex u w : ℝ≥0∞) ^ (1 : ℝ) * 1) = Z lex w from rfl, Z_eq_sum]
-  refine ENNReal.summable.tsum_ne_zero_iff.mpr ⟨none, ?_⟩
-  rw [L0_null]; simp
-
--- DE partitions (under "no … some"): NNN, AAA where the comparison lives.
-private theorem Z_w_NNN : Z .weak .NNN = ENNReal.ofReal (47 / 20) := by
-  rw [Z_eq_sum, tsum_fintype]
-  simp +decide only [L0_apply, Utterance_sum_univ, card_w_en, 
-    card_w_na, card_w_ns, card_w_nu, 
-    ↓reduceIte, add_zero, zero_add]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1; norm_num
-private theorem Z_s_NNN : Z .strong .NNN = ENNReal.ofReal (8 / 5) := by
-  rw [Z_eq_sum, tsum_fintype]
-  simp +decide only [L0_apply, Utterance_sum_univ, 
-    card_s_en,
-    card_s_na, card_s_ns, card_s_nu,
-    ↓reduceIte, add_zero, zero_add]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1; norm_num
-private theorem Z_s_NNA : Z .strong .NNA = ENNReal.ofReal (41 / 60) := by
-  rw [Z_eq_sum, tsum_fintype]
-  simp +decide only [L0_apply, Utterance_sum_univ, 
-    card_s_oa, card_s_ns, card_s_nu,
-    ↓reduceIte, add_zero, zero_add]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1; norm_num
-private theorem Z_s_NAA : Z .strong .NAA = ENNReal.ofReal (41 / 60) := by
-  rw [Z_eq_sum, tsum_fintype]
-  simp +decide only [L0_apply, Utterance_sum_univ, 
-    card_s_on, card_s_ns, card_s_nu,
-    ↓reduceIte, add_zero, zero_add]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1; norm_num
-private theorem Z_s_AAA : Z .strong .AAA = ENNReal.ofReal (8 / 5) := by
-  rw [Z_eq_sum, tsum_fintype]
-  simp +decide only [L0_apply, Utterance_sum_univ, 
-    card_s_ea, 
-    card_s_nn, card_s_ns, card_s_nu,
-    ↓reduceIte, add_zero, zero_add]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1; norm_num
--- UE partitions (under "every … some"): SSS, SSA, SAA, AAA.
-private theorem Z_w_SSS : Z .weak .SSS = ENNReal.ofReal (17 / 20) := by
-  rw [Z_eq_sum, tsum_fintype]
-  simp +decide only [L0_apply, Utterance_sum_univ, card_w_es, 
-    card_w_na, card_w_nn, card_w_nu, 
-    ↓reduceIte, add_zero, zero_add]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1; norm_num
-private theorem Z_s_SSS : Z .strong .SSS = ENNReal.ofReal (8 / 5) := by
-  rw [Z_eq_sum, tsum_fintype]
-  simp +decide only [L0_apply, Utterance_sum_univ, 
-    card_s_es, card_s_na, card_s_nn, card_s_nu,
-    ↓reduceIte, add_zero, zero_add]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1; norm_num
-private theorem Z_w_SSA : Z .weak .SSA = ENNReal.ofReal (14 / 15) := by
-  rw [Z_eq_sum, tsum_fintype]
-  simp +decide only [L0_apply, Utterance_sum_univ, card_w_es, card_w_oa,
-    card_w_nn, card_w_nu, 
-    ↓reduceIte, add_zero, zero_add]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1; norm_num
-private theorem Z_w_SAA : Z .weak .SAA = ENNReal.ofReal (3 / 5) := by
-  rw [Z_eq_sum, tsum_fintype]
-  simp +decide only [L0_apply, Utterance_sum_univ, card_w_es, 
-    card_w_nn, card_w_nu, 
-    ↓reduceIte, add_zero, zero_add]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1; norm_num
-private theorem Z_w_AAA : Z .weak .AAA = ENNReal.ofReal (8 / 5) := by
-  rw [Z_eq_sum, tsum_fintype]
-  simp +decide only [L0_apply, Utterance_sum_univ, card_w_ea, card_w_es, 
-    card_w_nn, card_w_nu, 
-    ↓reduceIte, add_zero, zero_add]
-  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1; norm_num
-
-/-! ### Per-lexicon speaker `S1`
-
-`RSA.S1Belief (L0 lex) (fun _ => 1) 1 w`: normalises `L0 lex u w` over
-utterances at the fixed world `w`. The closed-form values are
-`ofReal (L0-value · Z⁻¹)`. -/
-
-/-- Per-lexicon speaker (α = 1, no cost). -/
-noncomputable def S1 (lex : Lexicon) (w : World) : PMF Utterance :=
-  RSA.S1Belief (L0 lex) (fun _ => 1) 1 w (Z_ne_zero lex w)
-    (by rw [show (∑' u, (L0 lex u w : ℝ≥0∞) ^ (1 : ℝ) * 1) = Z lex w from rfl]
-        exact Z_ne_top lex w)
-
-theorem S1_apply (lex : Lexicon) (w : World) (u : Utterance) :
-    S1 lex w u = (L0 lex u w) ^ (1 : ℝ) * 1 * (Z lex w)⁻¹ := by
-  unfold S1; rw [RSA.S1Belief_apply]; rfl
-
-/-- Speaker value when the utterance is **false** at the world: `L0 = 0`, so
-`S1 = 0`. -/
-private theorem S1_eq_zero (lex : Lexicon) (w : World) (u : Utterance)
-    (h : ¬ utteranceTruth lex u w) : S1 lex w u = 0 := by
-  rw [S1_apply, score_eq, L0_apply, if_neg h]; simp
-
-/-- Speaker value when the utterance is **true**: `ofReal (1/c · 1/Z)`, computed
-from the extension cardinality `c` and the partition `Z`. -/
-private theorem S1_eq_ofReal (lex : Lexicon) (w : World) (u : Utterance)
-    (c : ℕ) (hc : 0 < c) (zr : ℝ) (hzr : 0 < zr)
-    (htrue : utteranceTruth lex u w)
-    (hcard : (RSA.extensionOf (utteranceTruth lex) u).card = c)
-    (hZ : Z lex w = ENNReal.ofReal zr) :
-    S1 lex w u = ENNReal.ofReal ((c : ℝ)⁻¹ * zr⁻¹) := by
-  rw [S1_apply, score_eq, L0_apply, if_pos htrue, hcard, hZ,
-      ← ENNReal.ofReal_inv_of_pos hzr, ← ENNReal.ofReal_mul (by positivity)]
-
-/-! ### Marginal speaker over lexica
-
-`RSA.marginalizeKernel` against the uniform `Lexicon` prior. Over the 2-element
-`Lexicon`, `marginalSpeaker w u = (1/2)·S1 weak w u + (1/2)·S1 strong w u`. -/
-
-/-- Marginal speaker: marginalises `S1` over a uniform `Lexicon` prior. -/
-noncomputable def marginalSpeaker (w : World) : PMF Utterance :=
-  RSA.marginalizeKernel (PMF.uniformOfFintype Lexicon) (fun lex w => S1 lex w) w
-
-private theorem Lexicon_sum_univ {β : Type*} [AddCommMonoid β] (f : Lexicon → β) :
-    ∑ i, f i = f .weak + (f .strong + 0) := by rfl
-
-private theorem uniformLex_apply (lex : Lexicon) :
-    (PMF.uniformOfFintype Lexicon) lex = ENNReal.ofReal (1 / 2) := by
-  rw [PMF.uniformOfFintype_apply, show Fintype.card Lexicon = 2 from by decide,
-      show ((2 : ℕ) : ℝ≥0∞) = ENNReal.ofReal 2 from by norm_num,
-      ← ENNReal.ofReal_inv_of_pos (by norm_num)]
-  norm_num
-
-/-- Marginal speaker as the explicit `(1/2, 1/2)`-weighted lexicon mixture. -/
-theorem marginalSpeaker_apply (w : World) (u : Utterance) :
-    marginalSpeaker w u =
-      ENNReal.ofReal (1 / 2) * S1 .weak w u + (ENNReal.ofReal (1 / 2) * S1 .strong w u + 0) := by
-  unfold marginalSpeaker
-  rw [RSA.marginalizeKernel_apply, tsum_fintype, Lexicon_sum_univ,
-      uniformLex_apply, uniformLex_apply]
-
-/-! ### Marginal-speaker closed forms (per prediction cell)
-
-The 8 cells the predictions compare, each `ofReal` of a rational. DE worlds
-under "no … some"; UE worlds under "every … some". Values match the LU model's
-hand-computation (α = 1, uniform priors). -/
-
-private theorem ms_DE_NNN : marginalSpeaker .NNN (some (.no, .some_)) = ENNReal.ofReal (875 / 3008) := by
-  rw [marginalSpeaker_apply,
-      S1_eq_ofReal .weak .NNN _ 1 (by norm_num) (47 / 20) (by norm_num) (by decide) card_w_ns Z_w_NNN,
-      S1_eq_ofReal .strong .NNN _ 4 (by norm_num) (8 / 5) (by norm_num) (by decide) card_s_ns Z_s_NNN,
-      ← ENNReal.ofReal_mul (by norm_num), ← ENNReal.ofReal_mul (by norm_num),
-      add_zero, ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1; norm_num
-
-private theorem ms_DE_NNA : marginalSpeaker .NNA (some (.no, .some_)) = ENNReal.ofReal (15 / 82) := by
-  rw [marginalSpeaker_apply, S1_eq_zero .weak .NNA _ (by decide),
-      S1_eq_ofReal .strong .NNA _ 4 (by norm_num) (41 / 60) (by norm_num) (by decide) card_s_ns Z_s_NNA,
-      mul_zero, zero_add, add_zero, ← ENNReal.ofReal_mul (by norm_num)]
-  congr 1; norm_num
-
-private theorem ms_DE_NAA : marginalSpeaker .NAA (some (.no, .some_)) = ENNReal.ofReal (15 / 82) := by
-  rw [marginalSpeaker_apply, S1_eq_zero .weak .NAA _ (by decide),
-      S1_eq_ofReal .strong .NAA _ 4 (by norm_num) (41 / 60) (by norm_num) (by decide) card_s_ns Z_s_NAA,
-      mul_zero, zero_add, add_zero, ← ENNReal.ofReal_mul (by norm_num)]
-  congr 1; norm_num
-
-private theorem ms_DE_AAA : marginalSpeaker .AAA (some (.no, .some_)) = ENNReal.ofReal (5 / 64) := by
-  rw [marginalSpeaker_apply, S1_eq_zero .weak .AAA _ (by decide),
-      S1_eq_ofReal .strong .AAA _ 4 (by norm_num) (8 / 5) (by norm_num) (by decide) card_s_ns Z_s_AAA,
-      mul_zero, zero_add, add_zero, ← ENNReal.ofReal_mul (by norm_num)]
-  congr 1; norm_num
-
-private theorem ms_UE_SSS : marginalSpeaker .SSS (some (.every, .some_)) = ENNReal.ofReal (125 / 272) := by
-  rw [marginalSpeaker_apply,
-      S1_eq_ofReal .weak .SSS _ 4 (by norm_num) (17 / 20) (by norm_num) (by decide) card_w_es Z_w_SSS,
-      S1_eq_ofReal .strong .SSS _ 1 (by norm_num) (8 / 5) (by norm_num) (by decide) card_s_es Z_s_SSS,
-      ← ENNReal.ofReal_mul (by norm_num), ← ENNReal.ofReal_mul (by norm_num),
-      add_zero, ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  congr 1; norm_num
-
-private theorem ms_UE_SSA : marginalSpeaker .SSA (some (.every, .some_)) = ENNReal.ofReal (15 / 112) := by
-  rw [marginalSpeaker_apply,
-      S1_eq_ofReal .weak .SSA _ 4 (by norm_num) (14 / 15) (by norm_num) (by decide) card_w_es Z_w_SSA,
-      S1_eq_zero .strong .SSA _ (by decide),
-      mul_zero, add_zero, add_zero, ← ENNReal.ofReal_mul (by norm_num)]
-  congr 1; norm_num
-
-private theorem ms_UE_SAA : marginalSpeaker .SAA (some (.every, .some_)) = ENNReal.ofReal (5 / 24) := by
-  rw [marginalSpeaker_apply,
-      S1_eq_ofReal .weak .SAA _ 4 (by norm_num) (3 / 5) (by norm_num) (by decide) card_w_es Z_w_SAA,
-      S1_eq_zero .strong .SAA _ (by decide),
-      mul_zero, add_zero, add_zero, ← ENNReal.ofReal_mul (by norm_num)]
-  congr 1; norm_num
-
-private theorem ms_UE_AAA : marginalSpeaker .AAA (some (.every, .some_)) = ENNReal.ofReal (5 / 64) := by
-  rw [marginalSpeaker_apply,
-      S1_eq_ofReal .weak .AAA _ 4 (by norm_num) (8 / 5) (by norm_num) (by decide) card_w_es Z_w_AAA,
-      S1_eq_zero .strong .AAA _ (by decide),
-      mul_zero, add_zero, add_zero, ← ENNReal.ofReal_mul (by norm_num)]
-  congr 1; norm_num
-
-/-! ### Pragmatic listener `L1`
-
-`PMF.posterior marginalSpeaker (uniform World) u`. The marginal positivity
-hypotheses are discharged via `PMF.marginal_ne_zero` with the target world as
-witness (`marginalSpeaker w u ≠ 0` for the relevant `(w, u)`). -/
-
-private theorem hMarg_DE :
-    PMF.marginal marginalSpeaker (PMF.uniformOfFintype World) (some (.no, .some_)) ≠ 0 := by
-  refine PMF.marginal_ne_zero marginalSpeaker _ _ (a := World.NNN) ?_ ?_
-  · exact (PMF.uniformOfFintype World).mem_support_iff World.NNN |>.mp
-      (PMF.mem_support_uniformOfFintype World.NNN)
-  · rw [ms_DE_NNN]; simp
-
-private theorem hMarg_UE :
-    PMF.marginal marginalSpeaker (PMF.uniformOfFintype World) (some (.every, .some_)) ≠ 0 := by
-  refine PMF.marginal_ne_zero marginalSpeaker _ _ (a := World.SSS) ?_ ?_
-  · exact (PMF.uniformOfFintype World).mem_support_iff World.SSS |>.mp
-      (PMF.mem_support_uniformOfFintype World.SSS)
-  · rw [ms_UE_SSS]; simp
-
-/-- Pragmatic listener: Bayesian inversion of `marginalSpeaker` against the
-uniform world prior. -/
-noncomputable def L1 (u : Utterance)
-    (h : PMF.marginal marginalSpeaker (PMF.uniformOfFintype World) u ≠ 0) : PMF World :=
-  PMF.posterior marginalSpeaker (PMF.uniformOfFintype World) u h
-
-/-! ### Predictions: DE blocking
-
-"No player hit some of his shots" → NNN preferred.
-
-Under the weak lexicon, only NNN makes the utterance true (1 world, maximally
-informative). Under the strong lexicon, NNN, NNA, NAA, and AAA all make it true
-(4 worlds, less informative). L1 marginalizes over lexica weighted by
-informativity, preferring the weak lexicon for this utterance. Result: NNN
-receives the highest posterior — the global reading. -/
-
-/-- DE blocking: NNN > NNA. -/
-theorem de_blocking_NNN_vs_NNA :
-    L1 (some (.no, .some_)) hMarg_DE .NNN > L1 (some (.no, .some_)) hMarg_DE .NNA := by
-  rw [L1, gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform, ms_DE_NNA, ms_DE_NNN]
-  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
-
-/-- DE blocking: NNN > NAA. -/
-theorem de_blocking_NNN_vs_NAA :
-    L1 (some (.no, .some_)) hMarg_DE .NNN > L1 (some (.no, .some_)) hMarg_DE .NAA := by
-  rw [L1, gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform, ms_DE_NAA, ms_DE_NNN]
-  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
-
-/-- DE blocking: NNN > AAA. -/
-theorem de_blocking_NNN_vs_AAA :
-    L1 (some (.no, .some_)) hMarg_DE .NNN > L1 (some (.no, .some_)) hMarg_DE .AAA := by
-  rw [L1, gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform, ms_DE_AAA, ms_DE_NNN]
-  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
-
-/-! ### Predictions: UE enrichment
-
-"Every player hit some of his shots" → SSS preferred.
-
-Under the strong lexicon, only SSS makes the utterance true (1 world, maximally
-informative). Under the weak lexicon, SSS, SSA, SAA, and AAA all make it true
-(4 worlds, less informative). L1 marginalizes and prefers the informative
-strong lexicon for this utterance. Result: SSS receives the highest posterior —
-the embedded implicature. -/
-
-/-- UE enrichment: SSS > SSA. -/
-theorem ue_enrichment_SSS_vs_SSA :
-    L1 (some (.every, .some_)) hMarg_UE .SSS > L1 (some (.every, .some_)) hMarg_UE .SSA := by
-  rw [L1, gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform, ms_UE_SSA, ms_UE_SSS]
-  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
-
-/-- UE enrichment: SSS > SAA. -/
-theorem ue_enrichment_SSS_vs_SAA :
-    L1 (some (.every, .some_)) hMarg_UE .SSS > L1 (some (.every, .some_)) hMarg_UE .SAA := by
-  rw [L1, gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform, ms_UE_SAA, ms_UE_SSS]
-  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
-
-/-- UE enrichment: SSS > AAA. -/
-theorem ue_enrichment_SSS_vs_AAA :
-    L1 (some (.every, .some_)) hMarg_UE .SSS > L1 (some (.every, .some_)) hMarg_UE .AAA := by
-  rw [L1, gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform, ms_UE_AAA, ms_UE_SSS]
-  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
-
-/-! ### Grounding: outer quantifiers
-
-The outer quantifiers "every" and "no" in the [potts-etal-2016] model agree
-with the shared quantifier semantics `Alternatives.Quantifiers.worldMeaning`.
-This grounds the stipulated `utteranceTruth` in the shared quantifier
-infrastructure.
-
-Compare `GoodmanStuhlmuller2013`'s `qMeaning`, an independent implementation
-of the same count-threshold semantics. -/
-
-private theorem predCount_lt_four (sq : ShotQ) (lex : Lexicon) (w : World) :
-    predCount sq lex w < 4 := by
-  cases sq <;> cases lex <;> cases w <;> decide
-
-/-- "Every player hit X" ↔ `worldMeaning 3 .all` applied to `predCount`. -/
-theorem outer_every_grounded (sq : ShotQ) (lex : Lexicon) (w : World) :
-    utteranceTruth lex (some (.every, sq)) w ↔
-    Alternatives.Quantifiers.worldMeaning 3 .all
-      ⟨⟨predCount sq lex w, predCount_lt_four sq lex w⟩⟩ = true := by
-  cases sq <;> cases lex <;> cases w <;> decide
-
-/-- "No player hit X" ↔ `worldMeaning 3 .none_` applied to `predCount`. -/
-theorem outer_no_grounded (sq : ShotQ) (lex : Lexicon) (w : World) :
-    utteranceTruth lex (some (.no, sq)) w ↔
-    Alternatives.Quantifiers.worldMeaning 3 .none_
-      ⟨⟨predCount sq lex w, predCount_lt_four sq lex w⟩⟩ = true := by
-  cases sq <;> cases lex <;> cases w <;> decide
-
-/-! ### Cross-study connections
-
-The [potts-etal-2016] predictions connect to two other parts of linglib:
-
-1. **`Geurts2010`** (`ScalarImplicatures.Studies.Geurts2010`): Notes that the
-   minimal LU model inverts the predictions, but "the full Potts et al. model
-   derives the correct pattern." The theorems here are the formal backing.
-
-2. **`EmbeddedSIPrediction`** (`LexicalUncertainty.Compositional`): Tracks
-   embedded SI predictions by context type. The Potts model demonstrates the
-   negation case: local reading dispreferred in DE (global NNN preferred). -/
+section Findings
+
+variable {α : ℝ} (hα : 0 < α) {κ : ℝ≥0} (hκ : κ ≠ 0)
+include hα hκ
+
+/-- The informativity weights `4^{-α} < 3^{-α} < 2^{-α} < 1`, positive, and the null message's
+nonnegative weight. -/
+private theorem weights :
+    0 < (4 : ℝ)⁻¹ ^ α ∧ (4 : ℝ)⁻¹ ^ α < (3 : ℝ)⁻¹ ^ α ∧ (3 : ℝ)⁻¹ ^ α < (2 : ℝ)⁻¹ ^ α ∧
+      (2 : ℝ)⁻¹ ^ α < 1 ∧ 0 ≤ (κ : ℝ) * (10 : ℝ)⁻¹ ^ α :=
+  ⟨Real.rpow_pos_of_pos (by norm_num) α, Real.rpow_lt_rpow (by norm_num) (by norm_num) hα,
+    Real.rpow_lt_rpow (by norm_num) (by norm_num) hα,
+    Real.rpow_lt_one (by norm_num) (by norm_num) hα, by positivity⟩
+
+/-- *Every player hit some of his shots*: the uncertainty listener ranks the locally enriched
+SSS above the other true states and AAA below the two remaining ones, the ordering of the human
+responses. -/
+theorem every_some_ordering :
+    (L1 α κ (some everySome)).fst.real {.SSA} < (L1 α κ (some everySome)).fst.real {.SSS} ∧
+    (L1 α κ (some everySome)).fst.real {.SAA} < (L1 α κ (some everySome)).fst.real {.SSS} ∧
+    (L1 α κ (some everySome)).fst.real {.AAA} < (L1 α κ (some everySome)).fst.real {.SSA} ∧
+    (L1 α κ (some everySome)).fst.real {.AAA} < (L1 α κ (some everySome)).fst.real {.SAA} := by
+  obtain ⟨ha, hab, hbc, hc1, ht⟩ := weights hα hκ
+  have ha1 : (4 : ℝ)⁻¹ ^ α < 1 := hab.trans (hbc.trans hc1)
+  obtain ⟨c1, c2, -, -, c5, c6, c7, c8, -, -, -, c12, c13, c14, c15, c16, -, c18⟩ := cards
+  simp +decide only [L1_fst_real_lt_iff hα hκ, Lex.sum_univ, S1_real hα, Fintype.sum_prod_type,
+    PlayerQ.sum_univ, ShotQ.sum_univ, c1, c2, c5, c6, c7, c8, c12, c13, c14, c15, c16, c18,
+    Nat.cast_ofNat, Nat.cast_one, inv_one, Real.one_rpow, ↓reduceIte, add_zero, zero_add,
+    zero_div]
+  refine ⟨(div_lt_div_of_pos_left ha (by positivity) (by linarith)).trans_le
+    (le_add_of_nonneg_right (by positivity)), ?_,
+    div_lt_div_of_pos_left ha (by positivity) (by linarith),
+    div_lt_div_of_pos_left ha (by positivity) (by linarith)⟩
+  rw [div_add_div _ _ (by positivity) (by positivity), div_lt_div_iff₀ (by positivity)
+    (by positivity)]
+  nlinarith [mul_pos ha ha, mul_pos (mul_pos ha ha) (sub_pos.2 ha1), mul_nonneg ha.le ht,
+    mul_nonneg (mul_nonneg ha.le ht) (sub_pos.2 ha1).le, mul_nonneg ht ht]
+
+/-- The fixed-lexicon listener instead puts SAA above SSS. -/
+theorem every_some_fixed :
+    (L1fixed α κ (some everySome)).real {.SSS} < (L1fixed α κ (some everySome)).real {.SAA} := by
+  obtain ⟨ha, -, -, -, -⟩ := weights hα hκ
+  obtain ⟨-, -, -, -, c5, -, -, -, -, -, -, -, c13, -, c15, -, -, -⟩ := cards
+  simp +decide only [L1fixed_real_lt_iff hα hκ, S1_real hα, Fintype.sum_prod_type,
+    PlayerQ.sum_univ, ShotQ.sum_univ, c5, c13, c15, Nat.cast_ofNat, ↓reduceIte, add_zero,
+    zero_add]
+  exact div_lt_div_of_pos_left ha (by positivity) (by linarith)
+
+/-- *Exactly one player hit some of his shots*: the literal construal NNS stays the most
+preferred state, above NNA and above the locally enriched NSA and SAA. -/
+theorem one_some_literal_first :
+    (L1 α κ (some oneSome)).fst.real {.NNA} < (L1 α κ (some oneSome)).fst.real {.NNS} ∧
+    (L1 α κ (some oneSome)).fst.real {.NSA} < (L1 α κ (some oneSome)).fst.real {.NNS} ∧
+    (L1 α κ (some oneSome)).fst.real {.SAA} < (L1 α κ (some oneSome)).fst.real {.NNS} := by
+  obtain ⟨ha, hab, hbc, -, -⟩ := weights hα hκ
+  obtain ⟨-, -, -, -, c5, -, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, -, c18⟩ := cards
+  simp +decide only [L1_fst_real_lt_iff hα hκ, Lex.sum_univ, S1_real hα, Fintype.sum_prod_type,
+    PlayerQ.sum_univ, ShotQ.sum_univ, c5, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c18,
+    Nat.cast_ofNat, ↓reduceIte, add_zero, zero_add, zero_div]
+  exact ⟨(div_lt_div_of_pos_left (ha.trans (hab.trans hbc)) (by positivity) (by linarith)).trans_le
+      (le_add_of_nonneg_right (by positivity)),
+    (div_lt_div_of_pos_left (ha.trans hab) (by positivity) (by linarith)).trans_le
+      (le_add_of_nonneg_left (by positivity)),
+    lt_add_of_pos_left _ (by positivity)⟩
+
+/-- *No player hit some of his shots*: the literal construal NNN stays the most preferred state,
+above the locally enriched NNA, NAA and AAA. -/
+theorem no_some_literal_first :
+    (L1 α κ (some noSome)).fst.real {.NNA} < (L1 α κ (some noSome)).fst.real {.NNN} ∧
+    (L1 α κ (some noSome)).fst.real {.NAA} < (L1 α κ (some noSome)).fst.real {.NNN} ∧
+    (L1 α κ (some noSome)).fst.real {.AAA} < (L1 α κ (some noSome)).fst.real {.NNN} := by
+  obtain ⟨ha, hab, -, -, ht⟩ := weights hα hκ
+  obtain ⟨c1, c2, c3, c4, c5, -, c7, c8, c9, c10, c11, -, c13, c14, c15, c16, c17, c18⟩ := cards
+  simp +decide only [L1_fst_real_lt_iff hα hκ, Lex.sum_univ, S1_real hα, Fintype.sum_prod_type,
+    PlayerQ.sum_univ, ShotQ.sum_univ, c1, c2, c3, c4, c5, c7, c8, c9, c10, c11, c13, c14, c15,
+    c16, c17, c18, Nat.cast_ofNat, Nat.cast_one, inv_one, Real.one_rpow, ↓reduceIte, add_zero,
+    zero_add, zero_div]
+  have hab' : 0 < (3 : ℝ)⁻¹ ^ α - (4 : ℝ)⁻¹ ^ α := sub_pos.2 hab
+  have key : (4 : ℝ)⁻¹ ^ α / ((3 : ℝ)⁻¹ ^ α + (4 : ℝ)⁻¹ ^ α + κ * (10 : ℝ)⁻¹ ^ α)
+      < 1 / (1 + ((4 : ℝ)⁻¹ ^ α + 1) + κ * (10 : ℝ)⁻¹ ^ α)
+        + (4 : ℝ)⁻¹ ^ α / (1 + ((4 : ℝ)⁻¹ ^ α + (4 : ℝ)⁻¹ ^ α) + κ * (10 : ℝ)⁻¹ ^ α) := by
+    rw [div_add_div _ _ (by positivity) (by positivity), div_lt_div_iff₀ (by positivity)
+      (by positivity)]
+    nlinarith [mul_pos ha ha, mul_pos (mul_pos ha ha) hab', mul_nonneg ha.le ht,
+      mul_nonneg (mul_nonneg ha.le ht) hab'.le, mul_pos ha hab', mul_nonneg ht ht,
+      mul_nonneg hab'.le ht]
+  exact ⟨key, key, lt_add_of_pos_left _ (by positivity)⟩
+
+end Findings
 
 end PottsEtAl2016

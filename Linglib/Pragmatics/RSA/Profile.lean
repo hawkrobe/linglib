@@ -75,6 +75,15 @@ theorem exists_of_fiberProfile_ne_zero {o : O} {t : T} (h : fiberProfile sem obs
   rw [Finset.mem_filter, trueChoices, Finset.mem_filter] at hc
   exact ⟨c, hc.2, hc.1.2⟩
 
+/-- The real profile sum, expanded over the choices: the informativity weights of the choices
+true at the state. -/
+theorem profile_invPowSum_toReal {α : ℝ} (hα : 0 ≤ α) (t : T) :
+    ((profile sem t).invPowSum α).toReal
+      = ∑ c, if t ∈ sem c then (((sem c).card : ℝ))⁻¹ ^ α else 0 := by
+  rw [Multiset.invPowSum_toReal hα (zero_notMem_profile sem t), profile, Multiset.map_map,
+    ← Finset.sum_filter, Finset.sum_eq_multiset_sum]
+  rfl
+
 theorem profile_ne_zero (hsem : ∀ t, ∃ c, t ∈ sem c) (t : T) : profile sem t ≠ 0 := by
   obtain ⟨c, hc⟩ := hsem t
   intro h

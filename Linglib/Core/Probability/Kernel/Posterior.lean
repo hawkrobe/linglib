@@ -63,6 +63,13 @@ theorem posterior_apply_singleton {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (ω
   rw [hrect]
   ring
 
+/-- The posterior is positive at a state exactly when the prior and the likelihood are. -/
+theorem posterior_apply_singleton_ne_zero_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (ω : Ω) :
+    (κ†μ) x {ω} ≠ 0 ↔ μ {ω} ≠ 0 ∧ κ ω {x} ≠ 0 := by
+  rw [posterior_apply_singleton κ μ hx, ne_eq, ENNReal.div_eq_zero_iff, mul_eq_zero, not_or,
+    not_or]
+  exact ⟨λ h => h.1, λ h => ⟨h, measure_ne_top _ _⟩⟩
+
 /-- Two states with the same likelihood of the observation and the same prior mass have the
 same posterior mass. -/
 theorem posterior_apply_singleton_congr {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) {ω₁ ω₂ : Ω}
@@ -369,8 +376,6 @@ theorem comp_uniformOn_univ_apply_singleton (x : 𝓧) :
 observation normalized over the states, the prior cancelling. -/
 theorem posterior_uniformOn_univ_apply_singleton {x : 𝓧} (hx : ∑ w, κ w {x} ≠ 0) (w : W) :
     (κ†(uniformOn (Set.univ : Set W))) x {w} = κ w {x} / ∑ w', κ w' {x} := by
-  have : IsProbabilityMeasure (uniformOn (Set.univ : Set W)) :=
-    isProbabilityMeasure_uniformOn Set.finite_univ Set.univ_nonempty
   have hc : (Fintype.card W : ℝ≥0∞)⁻¹ ≠ 0 := ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _)
   have hct : (Fintype.card W : ℝ≥0∞)⁻¹ ≠ ⊤ :=
     ENNReal.inv_ne_top.mpr (Nat.cast_ne_zero.mpr Fintype.card_ne_zero)
