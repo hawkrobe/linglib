@@ -1,22 +1,34 @@
 import Linglib.Studies.McCarthy2005
 
 /-!
-# [marco-rasin-2026] — Optimal Paradigms and Judeo-Tripolitanian Arabic
+# Marco and Rasin (2026): Optimal Paradigms
 
-[mccarthy-2005] derived the Moroccan Arabic noun–verb asymmetry in the position of schwa —
-verbs CCəC regardless of sonority, nouns CəCC when C₂ is more sonorous than C₃ — from
-paradigm structure: most verbal suffixes are C-initial, so OP-MAX-V draws the unsuffixed
-verb to CCəC by majority rules, whereas the one-member noun paradigm is left to SONCON.
-The prediction (11) is that a CCəC stem with C₂ more sonorous than C₃ appears before more
-C-initial than V-initial suffixes. In Judeo-Tripolitanian Arabic verbs and nouns pattern as
-in Moroccan (13)–(14), but adjectives are CCəC regardless of sonority (15)–(16) while
-inflecting, like nouns, with V-initial suffixes only (18): under McCarthy's ranking OP selects
-the levelled CəCC paradigm (19), and treating the adjective as a paradigm of one selects CəCC
-as well (20). A category-specific template {CCəC}_{Verb, Adj} (22) derives the pattern (23), against
-the thesis of category-neutral phonology ([bobaljik-2008]).
+This file formalizes the challenge to optimal paradigms of [marco-rasin-2026]. [mccarthy-2005]
+derived the Moroccan Arabic noun–verb asymmetry in the position of schwa, verbs CCəC
+regardless of sonority and nouns CəCC when the second consonant is more sonorous than the
+third, from paradigm structure: most verbal suffixes are consonant-initial, so paradigm
+uniformity draws the unsuffixed verb to CCəC by majority rule, while the one-member noun
+paradigm is left to the sonority constraint. In Judeo-Tripolitanian Arabic verbs and nouns
+pattern as in Moroccan, but adjectives are CCəC regardless of sonority while inflecting, like
+nouns, with vowel-initial suffixes only, so under McCarthy's ranking optimal paradigms select
+the levelled CəCC paradigm for them; a category-specific template for verbs and adjectives
+derives the pattern, against category-neutral phonology ([bobaljik-2008]).
 
-The paradigms, constraints and ranking are those of the [mccarthy-2005] study, run on the
-JTA data; schwa is epenthetic (fn. 5), so the input is the bare root.
+## Implementation notes
+
+The paradigms, constraints, and ranking are those of the McCarthy 2005 study, run on the
+Judeo-Tripolitanian data; schwa is epenthetic, so the input is the bare root.
+
+## TODO
+
+The paper is not on file; example numbers are transcribed from an earlier version of this
+file and are UNVERIFIED.
+
+## References
+
+* [marco-rasin-2026]
+* [mccarthy-2005]
+* [bobaljik-2008]
 -/
 
 namespace MarcoRasin2026
