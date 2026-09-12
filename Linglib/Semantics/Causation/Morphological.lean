@@ -7,7 +7,7 @@ import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 /-!
 # Morphological Causation: Causative Construction Typology
 
-[comrie-1989] [song-1996] [krejci-2012]
+[comrie-1989] [song-1996]
 
 Causative constructions cross-linguistically vary along two orthogonal
 axes: **morphological complexity** (compact → analytic) and **semantic
@@ -53,22 +53,6 @@ Agentivity decomposes into **intentionality × control** (following
 - `CausativeConstruction` bundles complexity + mediation + causer/causee
   restrictions for cross-linguistic comparison
 - `CausativeConstruction.ComrieMonotone` formalizes the compact-diffuse correlation
-
-## Intransitivization ([krejci-2012])
-
-The causative/inchoative alternation has two directions: causativization
-(adding an external cause) and intransitivization (removing or
-coidentifying it). [krejci-2012]'s central insight: intransitive
-variants are NOT structurally uniform. **Reflexive** intransitives
-(German *sich*, Hindi *apne-aap*) coidentify causer and causee,
-retaining bieventive structure. **Anticausative** intransitives remove
-the external cause entirely, yielding monoeventive structure.
-
-- `IntransitivizationType` distinguishes reflexive, anticausative,
-  and unmarked intransitivization
-- Three diagnostics (*again*/*re-* ambiguity, negation over CAUSE,
-  "by itself") all detect the causer position retained by reflexive
-  intransitives but absent from anticausatives
 -/
 
 namespace Causation.Morphological
@@ -371,87 +355,5 @@ theorem inanimate_no_induced :
 
 theorem physImpact_no_induced :
     CauseeAffecteeType.hasInducedAgentivity .physImpactHuman = false := rfl
-
-/-! ### Intransitivization Type ([krejci-2012]) -/
-
-/-- How an alternating verb forms its intransitive variant.
-
-    [krejci-2012]'s central insight: intransitive variants of
-    causative/inchoative alternation verbs are NOT structurally uniform.
-    Two distinct operations produce surface intransitives:
-
-    - **anticausative**: on the deletion analysis ([krejci-2012]),
-      the external cause is removed entirely; the result is monoeventive:
-      [BECOME [x STATE]], with no causer position. On the competing
-      reflexivization analysis ([koontz-garboden-2009]), CAUSE is
-      retained and the EFFECTOR is identified with the THEME — the result
-      is bieventive. See `Studies/KoontzGarboden2009.lean`.
-    - **reflexive**: the causer and causee are *coidentified* —
-      a single participant fills both roles. The result is bieventive:
-      [x ACT] CAUSE [BECOME [x STATE]] with causer = causee.
-      Morphologically marked: German *sich*, Marathi *-un*.
-    - **unmarked**: no morphological distinction (English *break*).
-      Event structure must be diagnosed per-verb. -/
-inductive IntransitivizationType where
-  | anticausative   -- external cause removed; monoeventive result
-  | reflexive       -- causer = causee (coidentification); bieventive
-  | unmarked        -- no overt marking (English)
-  deriving DecidableEq, Repr
-
-/-- Reflexive intransitives retain the causer position (coidentified
-    with the causee), preserving bieventive structure. Anticausatives
-    remove the causer entirely, yielding monoeventive structure. -/
-def IntransitivizationType.isBieventive : IntransitivizationType → Bool
-  | .reflexive => true
-  | _ => false
-
-/-- Does the intransitive variant involve coidentification of causer
-    and causee (a single participant in both roles)? -/
-def IntransitivizationType.hasCoidentification : IntransitivizationType → Bool
-  | .reflexive => true
-  | _ => false
-
-/-- "By itself" (*von selbst*, *apne-aap*, *aapo-aap*) is licensed
-    when a causer position exists, even if coidentified with the
-    causee. Anticausatives lack a causer position entirely.
-
-    English unmarked intransitives also license "by itself"
-    ("The door opened by itself"), because the unmarked form can be
-    either reflexive or anticausative — only true anticausatives
-    block the modifier. -/
-def IntransitivizationType.licensesBySelf : IntransitivizationType → Bool
-  | .anticausative => false
-  | _ => true
-
--- § 10a. Bridge theorems
-
-/-- Coidentification implies bieventivity (the causer position
-    preserved by coidentification is what makes the structure bieventive). -/
-theorem coidentification_implies_bieventive (it : IntransitivizationType) :
-    it.hasCoidentification = true → it.isBieventive = true := by
-  cases it <;> simp [IntransitivizationType.hasCoidentification,
-    IntransitivizationType.isBieventive]
-
-/-- Bieventivity implies "by itself" licensing (both track the
-    presence of a causer position). -/
-theorem bieventive_implies_bySelf (it : IntransitivizationType) :
-    it.isBieventive = true → it.licensesBySelf = true := by
-  cases it <;> simp [IntransitivizationType.isBieventive,
-    IntransitivizationType.licensesBySelf]
-
-/-- Anticausatives are monoeventive on [krejci-2012]'s analysis:
-    no coidentification, no bieventivity, no "by itself" licensing.
-    [koontz-garboden-2009] disputes this — see
-    `Studies/KoontzGarboden2009.lean`. -/
-theorem anticausative_monoeventive :
-    IntransitivizationType.isBieventive .anticausative = false ∧
-    IntransitivizationType.hasCoidentification .anticausative = false ∧
-    IntransitivizationType.licensesBySelf .anticausative = false := ⟨rfl, rfl, rfl⟩
-
-/-- Reflexive intransitives are bieventive with coidentification. -/
-theorem reflexive_bieventive :
-    IntransitivizationType.isBieventive .reflexive = true ∧
-    IntransitivizationType.hasCoidentification .reflexive = true ∧
-    IntransitivizationType.licensesBySelf .reflexive = true := ⟨rfl, rfl, rfl⟩
 
 end Causation.Morphological
