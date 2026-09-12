@@ -1,615 +1,276 @@
 import Mathlib.Data.Set.Functor
+import Mathlib.Data.Set.Lattice
 import Linglib.Fragments.Japanese.Determiners
 import Linglib.Fragments.German.ModalIndefinites
 import Linglib.Fragments.Latvian.IndeterminatePronouns
+import Linglib.Data.Examples.KratzerShimoyama2002
 
 /-!
-# Kratzer & Shimoyama (2002): Indeterminate Pronouns
-[kratzer-shimoyama-2002]
+# Kratzer and Shimoyama (2002): Indeterminate Pronouns: The View from Japanese
 
-"Indeterminate Pronouns: The View from Japanese." In C. Lee et al. (eds.),
-*Contrastiveness in Information Structure, Alternatives and Scalar
-Implicatures*, Studies in Natural Language and Linguistic Theory 91, 123-143.
+This file formalizes the paper's Hamblin semantics for indeterminate pronouns and its
+application to German *irgendein*. Every expression denotes a set of alternatives; an
+indeterminate pronoun denotes a set of individuals, composition is pointwise functional
+application, and the alternatives expand until an operator, existential, universal, negative,
+or interrogative, closes them. Since closure returns a single proposition, alternatives are
+caught by the nearest operator, which is the paper's locality constraint on association.
+Determiner quantification is the special case in which the alternatives are individuals.
+*Irgendein* widens a domain-restricted indefinite to the whole extension of its noun, and
+modals are sensitive to the propositional alternatives in their scope; their truth conditions
+are weak, and the distribution requirement behind the free-choice effect, that every
+alternative be realised at some accessible world, is not entailed by them but derived as a
+conversational implicature from the reasons a speaker could have for widening, present
+under *kann* and *muss* and cancelled under negated possibility. The paper closes with the
+selectivity of Indo-European indeterminates, *irgendein* associating only with existential
+closure, and the Beck effects, in which an intervening operator blocks the in situ wh-phrase.
 
-## Core Thesis
+## Implementation notes
 
-Hamblin alternative semantics, originally designed for questions, is the
-right architecture for **all quantification**. Indeterminate pronouns
-(Japanese *dare*, *nani*, *doko*...) denote sets of individual alternatives
-that expand pointwise via functional application until caught by an
-operator (∃, ∀, Neg, Q). Quantification is operator selection, not DP
-movement.
+Hamblin functional application is mathlib's `Set.seq`, and singleton denotations are
+`{f}`; the four sentential operators return singleton sets, as in the paper, so that closure
+is idle on an already closed set. The modal semantics is stated for an accessibility relation
+on any type of worlds, and the free-choice computations are the paper's three tables with
+the derived implicature as a hypothesis. The Beck-effect paradigm and its scrambled
+counterpart are example rows, keyed by the intervener's interpretable feature. Locators
+follow the 2002 manuscript, whose numbering the published chapter keeps.
 
-## Formalized Contributions
+## References
 
-1. **Hamblin operators** (§2): The four sentential operators over
-   propositional alternative sets.
-2. **Pointwise FA = Set applicative** (§3): K&S's Hamblin FA is exactly
-   mathlib's `Set.seq` — the structure [charlow-2018] later identifies
-   as the Set applicative (the connection is drawn from the newer
-   paper's side, in `Studies/Charlow2018.lean`, per chronology).
-3. **GQ as special case** (§2): Determiner quantification falls out
-   when alternatives are individuals — `[∃]({P(x) : x ∈ A}) ↔ ∃x∈A, P(x)`.
-4. **Singleton collapse**: When alternatives are a singleton (ordinary
-   semantics), Hamblin modals reduce to standard Kripke modals.
-5. **Modal–indefinite interaction** (§7): Possibility/necessity modals
-   are sensitive to Hamblin alternatives in their scope.
-6. **Distribution requirement as implicature** (§6, §8): The free choice
-   effect is derived via Gricean reasoning, not semantic entailment.
-7. **End-to-end FC derivation**: Hamblin T-content + implicature = FC.
-8. **Selectivity** (§9): Non-selective (Japanese) vs. selective
-   (Indo-European) indeterminate systems, with Beck effect data.
-9. **Cross-linguistic paradigm** (§1): Latvian indeterminate series.
-
-## Integration Points
-
-- §3 Hamblin FA bridges to mathlib's `Set.seq` (`hamblinFA_eq_seq`)
-- Singleton collapse bridges Hamblin modals to Kripke semantics
-- Fragment data bridges to `Japanese/Determiners.lean`,
-  `German/ModalIndefinites.lean`, and `Latvian/IndeterminatePronouns.lean`
+* [kratzer-shimoyama-2002]
+* [hamblin-1973b] — alternative semantics for questions
+* [haspelmath-1997] — the Latvian paradigm
+* [kadmon-landman-1993] — widening for a reason
+* [beck-1996] — intervention effects
 -/
 
 namespace KratzerShimoyama2002
 
-/-- Local singleton-set helper: Hamblin alternative sets denote `α → Prop`,
-so a singleton "set of alternatives" `{p}` is the constant `fun q => q = p`.
-This is mathlib's `Set.singleton`/`pure`, named locally for paper fidelity
-(K&S 2002 used `{·}` for the singleton-alternative-set; the original
-`Composition/SetMonad.lean` exported it as `eta`, since dissolved into
-`Studies/Charlow2020.lean` — too new to import from a 2002 paper). -/
-private abbrev singletonAlt {α : Type} (p : α) : α → Prop := fun q => q = p
+/-! ### Hamblin composition (§2, §3) -/
 
--- ════════════════════════════════════════════════════════════════
--- Part I: Hamblin Alternative Semantics Generalized (§2-3)
--- ════════════════════════════════════════════════════════════════
+section Composition
 
-/-!
-## §2-3: Hamblin Interpretation System
+variable {W E : Type*}
 
-In a Hamblin semantics, **all expressions denote sets of alternatives**.
-Most lexical items denote singleton sets; indeterminate pronouns denote
-sets of individuals. Composition is pointwise functional application.
--/
+/-- A singleton set of functions applies pointwise as an image: the verb of *dare nemutta*
+introduces one alternative, the indeterminate a set of individuals. -/
+theorem seq_singleton (f : E → W → Prop) (A : Set E) : Set.seq {f} A = f '' A := by
+  ext p; simp [Set.mem_seq_iff]
 
-/-- A Hamblin denotation is a set of alternatives of type α.
-    This is exactly the carrier of [charlow-2020]'s set monad. -/
-abbrev HamblinDen (α : Type) := α → Prop
+/-- Existential closure: the single proposition true where some alternative is. -/
+def opExists (A : Set (W → Prop)) : Set (W → Prop) := {λ w => ∃ p ∈ A, p w}
 
-/-- Hamblin Functional Application (§3): pointwise application of a set
-    of functions to a set of arguments.
+/-- Universal closure: the single proposition true where every alternative is. -/
+def opForall (A : Set (W → Prop)) : Set (W → Prop) := {λ w => ∀ p ∈ A, p w}
 
-    `⟦α⟧ = {a ∈ Dσ : ∃b ∈ ⟦β⟧ ∃c ∈ ⟦γ⟧, a = c(b)}` -/
-def hamblinFA {A B : Type} (funSet : HamblinDen (A → B)) (argSet : HamblinDen A) : HamblinDen B :=
-  fun b => ∃ f, funSet f ∧ ∃ x, argSet x ∧ f x = b
+/-- Negative closure: the single proposition true where no alternative is. -/
+def opNeg (A : Set (W → Prop)) : Set (W → Prop) := {λ w => ∀ p ∈ A, ¬ p w}
 
-/-- **Bridge**: Hamblin FA = mathlib's `Set.seq` (the Set applicative's
-`<*>`). The identification of this structure as an applicative functor
-is [charlow-2018]'s §3.3 observation; the bridge is stated here against
-mathlib's neutral infrastructure to respect chronology. -/
-theorem hamblinFA_eq_seq {A B : Type} (m : HamblinDen (A → B)) (n : HamblinDen A) :
-    hamblinFA m n = Set.seq m n := by
-  funext b
-  exact propext Set.mem_seq_iff.symm
+/-- The question operator returns the alternatives themselves. -/
+def opQ (A : Set (W → Prop)) : Set (W → Prop) := A
 
--- ════════════════════════════════════════════════════════════════
--- §2: The Four Sentential Operators
--- ════════════════════════════════════════════════════════════════
+/-- Negative closure is the negation of existential closure. -/
+theorem opNeg_eq (A : Set (W → Prop)) : opNeg A = {λ w => ¬ ∃ p ∈ A, p w} := by
+  simp [opNeg, not_exists]
 
-/-!
-## §2: Sentential Operators over Propositional Alternatives
+theorem opExists_singleton (p : W → Prop) : opExists {p} = {p} := by simp [opExists]
 
-The alternatives created by indeterminate phrases expand until caught
-by an operator. Where A is a set of propositions (p. 126-127):
+theorem opForall_singleton (p : W → Prop) : opForall {p} = {p} := by simp [opForall]
 
-- `[∃](A)` — true iff some proposition in A is true
-- `[∀](A)` — true iff every proposition in A is true
-- `[Neg](A)` — true iff no proposition in A is true
-- `[Q](A)` — A itself (the Hamblin question denotation)
--/
+/-- Alternatives are caught by the nearest operator (4): once closed, a set has a single
+member, so a higher operator finds nothing left to quantify over. -/
+theorem opForall_opExists (A : Set (W → Prop)) : opForall (opExists A) = opExists A :=
+  opForall_singleton _
 
-section Operators
+theorem opExists_opForall (A : Set (W → Prop)) : opExists (opForall A) = opForall A :=
+  opExists_singleton _
 
-variable {W : Type}
+/-- Determiner quantification as the special case with individual alternatives (§2):
+existential closure over the propositions a predicate yields from a set of individuals is
+the ordinary existential quantifier. -/
+theorem opExists_image (P : E → W → Prop) (A : Set E) :
+    opExists (P '' A) = {λ w => ∃ x ∈ A, P x w} := by
+  simp [opExists]
 
-/-- `[∃](A)`: existential closure over propositional alternatives. -/
-def opExists (A : HamblinDen (W → Prop)) : W → Prop :=
-  fun w => ∃ p, A p ∧ p w
+theorem opForall_image (P : E → W → Prop) (A : Set E) :
+    opForall (P '' A) = {λ w => ∀ x ∈ A, P x w} := by
+  simp [opForall]
 
-/-- `[∀](A)`: universal closure over propositional alternatives. -/
-def opForall (A : HamblinDen (W → Prop)) : W → Prop :=
-  fun w => ∀ p, A p → p w
+end Composition
 
-/-- `[Neg](A)`: negative closure over propositional alternatives. -/
-def opNeg (A : HamblinDen (W → Prop)) : W → Prop :=
-  fun w => ∀ p, A p → ¬p w
-
-/-- `[Q](A)`: question operator — identity on propositional alternatives. -/
-def opQ (A : HamblinDen (W → Prop)) : HamblinDen (W → Prop) := A
-
-/-- Neg is the pointwise negation of ∃: `[Neg](A)(w) ↔ ¬[∃](A)(w)`. -/
-theorem opNeg_iff_not_opExists (A : HamblinDen (W → Prop)) (w : W) :
-    opNeg A w ↔ ¬opExists A w := by
-  constructor
-  · intro hneg ⟨p, hA, hp⟩; exact hneg p hA hp
-  · intro hne p hA hp; exact hne ⟨p, hA, hp⟩
-
-/-- ∀ entails ∃ on non-empty alternative sets. -/
-theorem opForall_entails_opExists (A : HamblinDen (W → Prop))
-    (hne : ∃ p, A p) (w : W) (h : opForall A w) : opExists A w := by
-  obtain ⟨p, hp⟩ := hne
-  exact ⟨p, hp, h p hp⟩
-
-/-- Map from operator tags to their semantic implementations. -/
-inductive QuantOperator where
-  | exists_   -- [∃]: existential closure
-  | forall_   -- [∀]: universal closure
-  | neg       -- [Neg]: negative closure
-  | question  -- [Q]: question formation
-  deriving DecidableEq, Repr
-
-/-- Semantic interpretation of a propositional quantificational operator.
-    Returns `none` for `.question`, which produces an alternative set rather
-    than a proposition. -/
-def QuantOperator.applyProp (op : QuantOperator) (A : HamblinDen (W → Prop)) : Option (W → Prop) :=
-  match op with
-  | .exists_  => some (opExists A)
-  | .forall_  => some (opForall A)
-  | .neg      => some (opNeg A)
-  | .question => none
-
-/-- The question operator returns the alternative set unchanged:
-    `[Q](A) = A`. This is distinct from the propositional operators
-    because it does not collapse alternatives to a truth value. -/
-theorem question_returns_alternatives (A : HamblinDen (W → Prop)) :
-    QuantOperator.applyProp .question A = none ∧ opQ A = A :=
-  ⟨rfl, rfl⟩
-
-/-- **Determiner quantification as special case** (p. 126):
-    "Determiner quantification falls out as a special case, the case where
-    the alternatives are individuals."
-
-    When an indeterminate denotes a set of individuals A and a predicate
-    lifts each individual to a proposition, sentential `[∃]` over the
-    resulting propositional alternatives equals the standard GQ existential:
-    `[∃]({P(x) : x ∈ A})(w) ↔ ∃ x ∈ A, P(x)(w)`. -/
-theorem opExists_gq_special_case {E W : Type}
-    (A : HamblinDen E) (P : E → W → Prop) (w : W) :
-    opExists (fun p => ∃ x, A x ∧ p = P x) w ↔ ∃ x, A x ∧ P x w := by
-  constructor
-  · rintro ⟨_, ⟨x, hA, rfl⟩, hp⟩; exact ⟨x, hA, hp⟩
-  · rintro ⟨x, hA, hp⟩; exact ⟨P x, ⟨x, hA, rfl⟩, hp⟩
-
-/-- Universal counterpart: `[∀]` over individual alternatives = standard ∀.
-    `[∀]({P(x) : x ∈ A})(w) ↔ ∀ x ∈ A, P(x)(w)`. -/
-theorem opForall_gq_special_case {E W : Type}
-    (A : HamblinDen E) (P : E → W → Prop) (w : W) :
-    opForall (fun p => ∃ x, A x ∧ p = P x) w ↔ ∀ x, A x → P x w := by
-  constructor
-  · intro h x hA; exact h (P x) ⟨x, hA, rfl⟩
-  · rintro h _ ⟨x, hA, rfl⟩; exact h x hA
-
-end Operators
-
--- ════════════════════════════════════════════════════════════════
--- Part II: Indeterminate Pronoun Derivations (§2)
--- ════════════════════════════════════════════════════════════════
-
-/-!
-## Compositional Derivation of *dare(-ga) nemutta*
-
-Japanese indeterminate pronouns denote sets of individuals. Composed
-with a predicate via pointwise FA, they produce propositional alternative
-sets. An operator then closes the set (p. 126):
-
-- `⟦dare⟧^{w,g}    = {x: human(x)(w)}`
-- `⟦nemutta⟧^{w,g}  = {λxλw'. slept(x)(w')}` (singleton)
-- `⟦dare nemutta⟧^{w,g} = {p: ∃x[human(x)(w) & p = λw'. slept(x)(w')]}`
-
-We simplify by working extensionally (dropping the world parameter on
-the restrictor), which is faithful for the core point that operator
-selection = quantification.
--/
+/-! ### *Dare(-ga) nemutta* (§2) -/
 
 section Derivation
 
-inductive Person where | a | b | c
-  deriving DecidableEq, Repr
+variable {W E : Type*} (human slept : E → W → Prop)
 
-/-- `⟦dare⟧` = the set of all humans (extensional simplification). -/
-def dare : HamblinDen Person := fun _ => True
+/-- *dare* 'who': the humans at the evaluation world. -/
+def dare (w : W) : Set E := {x | human x w}
 
-/-- `⟦nemutta⟧` = singleton set containing the sleep predicate. -/
-def sleptPred (slept : Person → Prop) : HamblinDen (Person → Prop) :=
-  singletonAlt slept
+/-- *nemutta* 'slept': one alternative. -/
+def nemutta : Set (E → W → Prop) := {slept}
 
-/-- `⟦dare nemutta⟧` = {slept(a), slept(b), slept(c)} via Hamblin FA. -/
-def dareNemutta (slept : Person → Prop) : HamblinDen Prop :=
-  hamblinFA (sleptPred slept) dare
+/-- *dare nemutta*: a proposition for each human. -/
+theorem dare_nemutta (w : W) :
+    Set.seq (nemutta slept) (dare human w) = {p | ∃ x, human x w ∧ p = slept x} := by
+  rw [nemutta, seq_singleton]
+  ext p; simp [dare, eq_comm]
 
-/-- dare-ka nemutta = [∃]({slept(a), slept(b), slept(c)}) = ∃x.slept(x) -/
-theorem dare_ka_derivation (slept : Person → Prop) :
-    (∃ p, dareNemutta slept p ∧ p) ↔ (∃ x : Person, slept x) := by
-  constructor
-  · rintro ⟨_, ⟨f, rfl, x, _, rfl⟩, hp⟩; exact ⟨x, hp⟩
-  · rintro ⟨x, hx⟩; exact ⟨slept x, ⟨slept, rfl, x, trivial, rfl⟩, hx⟩
+/-- *dare-ka nemutta*: someone slept. -/
+theorem dare_ka (w : W) :
+    opExists (Set.seq (nemutta slept) (dare human w)) = {λ w' => ∃ x, human x w ∧ slept x w'} := by
+  rw [nemutta, seq_singleton, opExists_image]; rfl
 
-/-- dare-mo nemutta = [∀]({slept(a), slept(b), slept(c)}) = ∀x.slept(x) -/
-theorem dare_mo_derivation (slept : Person → Prop) :
-    (∀ p, dareNemutta slept p → p) ↔ (∀ x : Person, slept x) := by
-  constructor
-  · intro h x; exact h (slept x) ⟨slept, rfl, x, trivial, rfl⟩
-  · rintro h _ ⟨f, rfl, x, _, rfl⟩; exact h x
+/-- *dare-mo nemutta*: everyone slept. -/
+theorem dare_mo (w : W) :
+    opForall (Set.seq (nemutta slept) (dare human w)) = {λ w' => ∀ x, human x w → slept x w'} := by
+  rw [nemutta, seq_singleton, opForall_image]; rfl
 
 end Derivation
 
--- ════════════════════════════════════════════════════════════════
--- Part III: Modal–Indefinite Interaction (§7)
--- ════════════════════════════════════════════════════════════════
-
-/-!
-## §7: Modals over Hamblin Alternative Sets
-
-The key insight: modals can be sensitive to the propositional alternatives
-introduced by indeterminate phrases in their scope (p. 132-133).
-
-Possibility/necessity modals over an alternative set A:
-
-```
-⟦kann α⟧(w) = ∃w'[R(w,w') ∧ ∃p[p ∈ A ∧ p(w')]]
-⟦muss α⟧(w) = ∀w'[R(w,w') → ∃p[p ∈ A ∧ p(w')]]
-```
-
-The **distribution requirement** (to be derived as implicature in §8):
-
-`∀p[p ∈ A → ∃w'[R(w,w') ∧ p(w')]]`
-
-distributes alternatives over accessible worlds.
-
-Note: We use `Prop`-valued accessibility here (rather than a `Bool`-valued
-relation) to stay in `Prop` throughout the Hamblin
-semantics. The singleton collapse theorem below shows these Hamblin modals
-reduce to standard Kripke modals when the alternative set is a singleton.
--/
-
-section ModalInteraction
-
-variable {W : Type}
-
-/-- Prop-valued accessibility relation for Hamblin modal semantics. -/
-abbrev HamblinAccessRel (W : Type) := W → W → Prop
-
-/-- Possibility modal over Hamblin alternatives (§7, p. 133):
-    True at w iff some accessible world satisfies some alternative. -/
-def hamblinPoss (R : HamblinAccessRel W) (A : HamblinDen (W → Prop)) (w : W) : Prop :=
-  ∃ w', R w w' ∧ ∃ p, A p ∧ p w'
-
-/-- Necessity modal over Hamblin alternatives (§7, p. 133):
-    True at w iff every accessible world satisfies some alternative. -/
-def hamblinNec (R : HamblinAccessRel W) (A : HamblinDen (W → Prop)) (w : W) : Prop :=
-  ∀ w', R w w' → ∃ p, A p ∧ p w'
-
-/-- The distribution requirement (§7, p. 133): for every alternative p in A,
-    there exists an accessible world where p is true. -/
-def distribReq (R : HamblinAccessRel W) (A : HamblinDen (W → Prop)) (w : W) : Prop :=
-  ∀ p, A p → ∃ w', R w w' ∧ p w'
-
-/-- **Singleton collapse**: when the alternative set is a singleton {p},
-    Hamblin possibility reduces to standard Kripke possibility.
-    This is the paper's core architectural claim: ordinary semantics
-    is the special case where all denotations are singletons. -/
-theorem hamblinPoss_singleton (R : HamblinAccessRel W) (p : W → Prop) (w : W) :
-    hamblinPoss R (singletonAlt p) w ↔ ∃ w', R w w' ∧ p w' := by
-  constructor
-  · rintro ⟨w', hw', q, rfl, hq⟩; exact ⟨w', hw', hq⟩
-  · rintro ⟨w', hw', hp⟩; exact ⟨w', hw', p, rfl, hp⟩
-
-/-- **Singleton collapse for necessity**: when alternatives are a singleton,
-    Hamblin necessity reduces to standard Kripke necessity. -/
-theorem hamblinNec_singleton (R : HamblinAccessRel W) (p : W → Prop) (w : W) :
-    hamblinNec R (singletonAlt p) w ↔ ∀ w', R w w' → p w' := by
-  constructor
-  · intro h w' hw'; obtain ⟨_, rfl, hq⟩ := h w' hw'; exact hq
-  · intro h w' hw'; exact ⟨p, rfl, h w' hw'⟩
-
-/-- Necessity entails possibility (when some accessible world exists). -/
-theorem hamblinNec_entails_hamblinPoss (R : HamblinAccessRel W) (A : HamblinDen (W → Prop))
-    (w : W) (h : hamblinNec R A w) (hacc : ∃ w', R w w') : hamblinPoss R A w := by
-  obtain ⟨w', hw'⟩ := hacc
-  obtain ⟨p, hA, hp⟩ := h w' hw'
-  exact ⟨w', hw', p, hA, hp⟩
-
-/-- The distribution requirement is NOT entailed by necessity (§6, p. 131).
-    Necessity only requires *some* alternative per world, not that *every*
-    alternative is witnessed. The distribution requirement is an implicature.
-
-    Countermodel: R reflexive-only, A = {p₁, p₂} where p₁ holds at true,
-    p₂ holds at false. From w = true, only true is accessible: necessity
-    holds (p₁ witnesses true) but distribution fails (p₂ is unwitnessed). -/
-theorem distrib_not_entailed_by_nec :
-    ∃ (R : HamblinAccessRel Bool) (A : HamblinDen (Bool → Prop)) (w : Bool),
-      hamblinNec R A w ∧ ¬distribReq R A w := by
-  let R : HamblinAccessRel Bool := fun w w' => w = w'
-  let p₁ : Bool → Prop := fun w => w = true
-  let p₂ : Bool → Prop := fun w => w = false
-  let A : HamblinDen (Bool → Prop) := fun p => p = p₁ ∨ p = p₂
-  refine ⟨R, A, true, ?_, ?_⟩
-  · intro w' hw'
-    subst hw'
-    exact ⟨p₁, Or.inl rfl, rfl⟩
-  · intro hdist
-    obtain ⟨w', hw', hp₂⟩ := hdist p₂ (Or.inr rfl)
-    subst hw'
-    exact absurd hp₂ (by decide)
-
-end ModalInteraction
-
--- ════════════════════════════════════════════════════════════════
--- Part IV: Domain Widening (§7)
--- ════════════════════════════════════════════════════════════════
-
-/-!
-## §7: Domain Widening
-
-*ein Mann* denotes a contextually restricted **subset** of men
-(Schwarzschild 2000: singleton indefinites). *irgendein Mann*
-widens to the **full set** (p. 132).
-
-This is the same mechanism as contextual domain restriction in
-`DomainRestriction.lean`: *ein* selects from a contextually restricted
-domain C ∩ P, while *irgend-* removes the restriction.
--/
-
-section DomainWidening
-
-variable {E : Type}
-
-/-- A simple indefinite selects from a contextually restricted subset. -/
-def simpleIndef (D : Set E) (P : E → Prop) : Set E :=
-  {x | x ∈ D ∧ P x}
-
-/-- An *irgend-* indefinite widens to the full predicate extension. -/
-def irgendIndef (P : E → Prop) : Set E :=
-  {x | P x}
-
-/-- Widening weakens existentials: restricted entails widened. -/
-theorem simple_entails_widened (D : Set E) (P Q : E → Prop) :
-    (∃ x ∈ simpleIndef D P, Q x) → (∃ x ∈ irgendIndef P, Q x) := by
-  rintro ⟨x, ⟨_, hP⟩, hQ⟩
-  exact ⟨x, hP, hQ⟩
-
-end DomainWidening
-
--- ════════════════════════════════════════════════════════════════
--- Part V: Distribution Requirement as Implicature (§6, §8)
--- ════════════════════════════════════════════════════════════════
-
-/-!
-## §6 & §8: Pragmatic Derivation of the Free Choice Implicature
-
-§6 establishes that the distribution requirement is a conversational
-implicature: cancelable (ex. 11), disappears in DE contexts (ex. 12, 14).
-
-§8 derives it via Gricean reasoning about *why the speaker widened*.
-Widening could serve: (a) strengthening, (b) avoiding a false claim,
-(c) avoiding a false exhaustivity inference (p. 134).
-
-Three cases over alternatives {A, B}:
-
-### (16) Possibility: *Du kannst dir irgendeins leihen*
-- T-content: ◇(A ∨ B)
-- Implicature: ◇A ↔ ◇B
-- Total: ◇A ∧ ◇B
-
-### (17) Necessity: *Du musst dir irgendeins leihen*
-- T-content: □(A ∨ B)
-- Implicature: □A ↔ □B
-- Total: □(A ∨ B) ∧ ◇A ∧ ◇B
-
-### (18) Negated possibility: *auf keinen Fall*
-- T-content: ¬◇(A ∨ B)
-- No implicature: canceled (widening adds nothing in DE context)
--/
-
-section DistributionRequirement
-
-variable {W : Type}
-
-/-- **(16) Possibility: T-content + implicature → FC.**
-    ◇(A ∨ B) with ◇A ↔ ◇B yields ◇A ∧ ◇B. -/
-theorem fc_possibility (pA pB : Prop)
-    (h_tcontent : pA ∨ pB)
-    (h_implic : pA ↔ pB) : pA ∧ pB := by
-  cases h_tcontent with
-  | inl ha => exact ⟨ha, h_implic.mp ha⟩
-  | inr hb => exact ⟨h_implic.mpr hb, hb⟩
-
-/-- **(17) Necessity total meaning (p. 135).**
-    □(A∨B) → ◇(A∨B) → ◇A ∨ ◇B, combined with ◇A↔◇B, gives
-    □(A∨B) ∧ ◇A ∧ ◇B. -/
-theorem fc_necessity_total (nAB : Prop) (pA pB : Prop)
-    (h_nAB : nAB)
-    (h_nec_to_poss : nAB → pA ∨ pB)
-    (h_poss_implic : pA ↔ pB) :
-    nAB ∧ pA ∧ pB :=
-  ⟨h_nAB, fc_possibility pA pB (h_nec_to_poss h_nAB) h_poss_implic⟩
-
-/-- **(18) Negated possibility: implicature canceled.**
-    ¬◇(A ∨ B) implies ¬◇A ∧ ¬◇B. Widening adds nothing. -/
-theorem fc_negated_no_implicature
-    (pA pB : Prop)
-    (h_neg : ¬(pA ∨ pB)) : ¬pA ∧ ¬pB :=
-  ⟨fun ha => h_neg (Or.inl ha), fun hb => h_neg (Or.inr hb)⟩
-
-/-- **End-to-end FC derivation for (16)**: Given two propositional
-    alternatives under a possibility modal, the T-content is exactly
-    `hamblinPoss`, and applying the biconditional implicature yields FC.
-
-    This connects the modal semantics (§7) to the pragmatic derivation
-    (§8) in a single theorem. -/
-theorem fc_end_to_end_possibility (R : HamblinAccessRel W) (p q : W → Prop)
-    (w : W)
-    (h_tcontent : hamblinPoss R (fun r => r = p ∨ r = q) w)
-    (h_implic : (∃ w', R w w' ∧ p w') ↔ (∃ w', R w w' ∧ q w')) :
-    (∃ w', R w w' ∧ p w') ∧ (∃ w', R w w' ∧ q w') := by
-  have h_disj : (∃ w', R w w' ∧ p w') ∨ (∃ w', R w w' ∧ q w') := by
-    obtain ⟨w', hw', r, hr, hrw⟩ := h_tcontent
-    cases hr with
-    | inl h => exact Or.inl ⟨w', hw', h ▸ hrw⟩
-    | inr h => exact Or.inr ⟨w', hw', h ▸ hrw⟩
-  exact fc_possibility _ _ h_disj h_implic
-
-end DistributionRequirement
-
--- ════════════════════════════════════════════════════════════════
--- Part VI: Selectivity & Intervention (§9)
--- ════════════════════════════════════════════════════════════════
-
-/-!
-## §9: Non-Selective vs. Selective Indeterminate Systems
-
-Japanese: **non-selective** — same base (*dare*) + different particles
-(ka → ∃, mo → ∀, demo → FC). Base does not change shape.
-
-Indo-European: **selective** — *irgendein* associates only with [∃],
-not [∀], [Neg], or [Q]. Explained via uninterpretable features (p. 138):
-selective indeterminates carry uninterpretable [∃] that must be checked
-against an interpretable counterpart via feature movement.
-
-### Beck Effects (§9, p. 139)
-
-When feature movement of uninterpretable [∃] is blocked by an
-intervening scope-bearing element, ungrammaticality results:
-
-- (23a) *Was hat sie **nicht** WEM gezeigt? — blocked by *nicht* ([Neg])
-- (23b) *Was hat sie **nie** WEM gezeigt? — blocked by *nie*
-- (23c) *Was hat **niemand** WEM gezeigt? — blocked by *niemand*
-- (23d) *Was hat **fast jeder** WEM gezeigt? — blocked by *fast jeder*
-- (23e) *Was hat **(irgend)jemand** WEM gezeigt? — blocked by *jemand*
-- (23f) Was hat **der Hans** WEM gezeigt? — OK (definite: no scope feature)
-- (23g) Was hat sie **damals** WEM gezeigt? — OK (adverb: no scope feature)
--/
-
-/-- An indeterminate pronoun paradigm: which operators it associates with,
-    and whether its morphology changes per operator. -/
-structure IndeterminateParadigm where
-  language : String
-  base : String
-  associatesWith : List QuantOperator
-  morphologicallyMarked : Bool
-  deriving Repr
-
-def IndeterminateParadigm.isNonSelective (p : IndeterminateParadigm) : Bool :=
-  p.associatesWith.length ≥ 3
-
-def IndeterminateParadigm.isSelective (p : IndeterminateParadigm) : Bool :=
-  p.associatesWith.length ≤ 2
-
-/-- Japanese *dare*: non-selective. Associates with all four operators
-    via different particles. Base form does not change. -/
-def japaneseParadigm : IndeterminateParadigm where
-  language := "Japanese"
-  base := "dare"
-  associatesWith := [.exists_, .forall_, .neg, .question]
-  morphologicallyMarked := false
-
-theorem japanese_non_selective : japaneseParadigm.isNonSelective = true := by native_decide
-
-/-- German *irgend-*: selective. Associates only with [∃] (§9, p. 137).
-    Cannot associate with [∀] (ex. 20c), [Neg] (ex. 21), or [Q]. -/
-def germanParadigm : IndeterminateParadigm where
-  language := "German"
-  base := "irgend-"
-  associatesWith := [.exists_]
-  morphologicallyMarked := true
-
-theorem german_selective : germanParadigm.isSelective = true := by native_decide
-
--- Beck effect intervention data (§9, p. 139, examples 23a-g)
-
-/-- An intervention datum: an element between a wh-phrase and its
-    in-situ associate, and whether the result is grammatical. -/
-structure InterventionDatum where
-  intervener : String
-  gloss : String
-  grammatical : Bool
-  isScopeBearing : Bool
-  deriving Repr, BEq
-
-/-- Beck effect paradigm (examples 23a-g): scope-bearing elements
-    block feature movement of [∃]/[Q]; non-scope-bearing elements don't.
-
-    Pattern: `*Was hat sie [INTERVENER] WEM gezeigt?` -/
-def beckParadigm : List InterventionDatum :=
-  [ ⟨"nicht",           "not",             false, true⟩    -- (23a) Neg
-  , ⟨"nie",             "never",           false, true⟩    -- (23b) Neg
-  , ⟨"niemand",         "nobody",          false, true⟩    -- (23c) ∃+Neg
-  , ⟨"fast jeder",      "almost everyone", false, true⟩    -- (23d) ∀
-  , ⟨"(irgend)jemand",  "somebody",        false, true⟩    -- (23e) ∃
-  , ⟨"der Hans",        "Hans (definite)",  true, false⟩   -- (23f) no scope feature
-  , ⟨"damals",          "then (adverb)",    true, false⟩ ] -- (23g) no scope feature
-
-/-- Scope-bearing elements block; non-scope-bearing elements don't. -/
-theorem beck_scope_bearing_block :
-    (beckParadigm.filter (·.grammatical == false)).length = 5 ∧
-    (beckParadigm.filter (·.grammatical == true)).length = 2 := by
-  native_decide
-
-/-- The generalization: scope-bearing = ungrammatical, non-scope-bearing = OK. -/
-theorem beck_generalization :
-    beckParadigm.all (fun d => d.isScopeBearing == !d.grammatical) = true := by
-  native_decide
-
--- ════════════════════════════════════════════════════════════════
--- Bridge to Fragment Entries
--- ════════════════════════════════════════════════════════════════
-
-open Japanese.Determiners (dare_ka dare_mo)
-open German.ModalIndefinites (irgendein)
-
-/-- Same base (*dare*), different force via particle alternation. -/
-theorem same_base_different_force :
-    dare_ka.indeterminate = dare_mo.indeterminate ∧
-    dare_ka.qforce ≠ dare_mo.qforce := by
-  exact ⟨rfl, by decide⟩
-
-/-- dare-ka is existential; paradigm predicts ∃ association. -/
-theorem dare_ka_existential_from_paradigm :
-    dare_ka.qforce = .existential ∧
-    japaneseParadigm.associatesWith.contains .exists_ = true :=
-  ⟨rfl, by native_decide⟩
-
-/-- dare-mo is universal; paradigm predicts ∀ association. -/
-theorem dare_mo_universal_from_paradigm :
-    dare_mo.qforce = .universal ∧
-    japaneseParadigm.associatesWith.contains .forall_ = true :=
-  ⟨rfl, by native_decide⟩
-
-/-- *irgendein* is existential-only + not-at-issue (domain widening). -/
-theorem irgendein_existential_only :
-    germanParadigm.associatesWith = [.exists_] ∧
-    irgendein.status = .implicature :=
-  ⟨rfl, rfl⟩
-
--- ════════════════════════════════════════════════════════════════
--- Part VII: Cross-Linguistic Indeterminate Typology (§1)
--- ════════════════════════════════════════════════════════════════
-
-/-!
-## §1: Indeterminate Pronoun Paradigms Cross-Linguistically
-
-[haspelmath-1997] (p. 277, diacritics omitted). The Latvian
-paradigm illustrates a selective system: each operator association is
-morphologically marked by a distinct prefix (kaut- existential,
-ne- under direct negation, jeb- indirect negation/comparatives/FC).
-
-Latvian paradigm data imported from `Fragments/Latvian/IndeterminatePronouns.lean`.
--/
-
-open Latvian.IndeterminatePronouns (paradigm)
-
-/-- Latvian is morphologically marked (selective); Japanese is not. -/
-theorem selective_contrast :
-    paradigm.length = 6 ∧ japaneseParadigm.morphologicallyMarked = false :=
-  ⟨rfl, rfl⟩
+/-! ### Widening and modals (§7) -/
+
+section Modals
+
+variable {W E : Type*}
+
+/-- *ein Mann* with the contextual domain `D`: a subset of the men. -/
+def ein (man : E → Prop) (D : Set E) : Set E := {x | man x ∧ x ∈ D}
+
+/-- *irgend-* widens over every value of the domain variable. -/
+def irgend (den : Set E → Set E) : Set E := ⋃ D, den D
+
+/-- *irgendein Mann* denotes all the men. -/
+theorem irgend_ein (man : E → Prop) : irgend (ein man) = {x | man x} := by
+  ext x
+  simp only [irgend, ein, Set.mem_iUnion, Set.mem_ofPred_eq]
+  exact ⟨λ ⟨_, h, _⟩ => h, λ h => ⟨Set.univ, h, Set.mem_univ x⟩⟩
+
+/-- The restricted indefinite is included in its widening. -/
+theorem subset_irgend (den : Set E → Set E) (D : Set E) : den D ⊆ irgend den :=
+  Set.subset_iUnion den D
+
+/-- *kann* over propositional alternatives: some alternative holds at some accessible
+world. -/
+def kann (R : W → W → Prop) (A : Set (W → Prop)) : Set (W → Prop) :=
+  {λ w => ∃ w', R w w' ∧ ∃ p ∈ A, p w'}
+
+/-- *muss* over propositional alternatives: at every accessible world some alternative
+holds. -/
+def muss (R : W → W → Prop) (A : Set (W → Prop)) : Set (W → Prop) :=
+  {λ w => ∀ w', R w w' → ∃ p ∈ A, p w'}
+
+/-- The distribution requirement: every alternative holds at some accessible world. -/
+def distribution (R : W → W → Prop) (A : Set (W → Prop)) (w : W) : Prop :=
+  ∀ p ∈ A, ∃ w', R w w' ∧ p w'
+
+/-- On a single alternative the modals are the Kripke modals. -/
+theorem kann_singleton (R : W → W → Prop) (p : W → Prop) :
+    kann R {p} = {λ w => ∃ w', R w w' ∧ p w'} := by
+  simp [kann]
+
+theorem muss_singleton (R : W → W → Prop) (p : W → Prop) :
+    muss R {p} = {λ w => ∀ w', R w w' → p w'} := by
+  simp [muss]
+
+/-- The distribution requirement is not entailed by *muss* (§6): with two alternatives
+and a single accessible world verifying one of them, necessity holds and distribution
+fails. -/
+theorem not_distribution_of_muss :
+    ∃ (R : Bool → Bool → Prop) (A : Set (Bool → Prop)) (w : Bool),
+      (∀ q ∈ muss R A, q w) ∧ ¬ distribution R A w :=
+  ⟨Eq, {λ w => w = true, λ w => w = false}, true,
+    λ q hq => by
+      rw [muss, Set.mem_singleton_iff] at hq
+      subst hq
+      exact λ w' hw' => ⟨_, Set.mem_insert _ _, hw'.symm⟩,
+    λ h => by
+      obtain ⟨w', hw', hp⟩ := h _ (Set.mem_insert_of_mem _ (Set.mem_singleton _))
+      subst hw'
+      exact Bool.noConfusion hp⟩
+
+end Modals
+
+/-! ### The free-choice implicature (§8)
+
+Widening is for a reason: strengthening, avoiding a false claim, or avoiding a false
+exhaustivity inference. For (16), had the speaker chosen the narrower set with one
+alternative, the exhaustivity inference would have excluded the other; the only reason to
+widen is that this inference is false, so each alternative's possibility implies the other's.
+The same reasoning yields the implicature of (17); under the negated possibility of (18)
+every such reason is already entailed by what was said, and the implicature is cancelled. -/
+
+section FreeChoice
+
+variable {W : Type*} (R : W → W → Prop) (A B : W → Prop) (w : W)
+
+/-- Possibility at `w`. -/
+def poss (p : W → Prop) : Prop := ∃ w', R w w' ∧ p w'
+
+/-- Necessity at `w`. -/
+def nec (p : W → Prop) : Prop := ∀ w', R w w' → p w'
+
+/-- *Kann* over the two alternatives is the possibility of their disjunction. -/
+theorem kann_pair : (∀ q ∈ kann R {A, B}, q w) ↔ poss R w (λ w => A w ∨ B w) := by
+  simp [kann, poss, exists_or, and_or_left]
+
+/-- *Muss* over the two alternatives is the necessity of their disjunction. -/
+theorem muss_pair : (∀ q ∈ muss R {A, B}, q w) ↔ nec R w (λ w => A w ∨ B w) := by
+  simp [muss, nec]
+
+/-- (16): the truth-conditional content with the implicature yields free choice. -/
+theorem total_kann (hT : poss R w (λ w => A w ∨ B w)) (hI : poss R w A ↔ poss R w B) :
+    poss R w A ∧ poss R w B := by
+  obtain ⟨w', hw', h⟩ := hT
+  rcases h with h | h
+  · exact ⟨⟨w', hw', h⟩, hI.mp ⟨w', hw', h⟩⟩
+  · exact ⟨hI.mpr ⟨w', hw', h⟩, ⟨w', hw', h⟩⟩
+
+/-- (17): the total meaning implies both possibilities once some world is accessible. -/
+theorem total_muss (hT : nec R w (λ w => A w ∨ B w)) (hI : nec R w A ↔ nec R w B)
+    (hser : ∃ w', R w w') : poss R w A ∧ poss R w B := by
+  obtain ⟨w₀, hw₀⟩ := hser
+  by_cases hA : nec R w A
+  · exact ⟨⟨w₀, hw₀, hA w₀ hw₀⟩, ⟨w₀, hw₀, hI.mp hA w₀ hw₀⟩⟩
+  · have hB : ¬ nec R w B := λ h => hA (hI.mpr h)
+    simp only [nec, not_forall] at hA hB
+    obtain ⟨wa, hwa, ha⟩ := hA
+    obtain ⟨wb, hwb, hb⟩ := hB
+    exact ⟨⟨wb, hwb, (hT wb hwb).resolve_right hb⟩, ⟨wa, hwa, (hT wa hwa).resolve_left ha⟩⟩
+
+/-- (18): under negated possibility every reason for widening is already entailed, so no
+strengthening is available. -/
+theorem total_neg_kann (hT : ¬ poss R w (λ w => A w ∨ B w)) : ¬ poss R w A ∧ ¬ poss R w B :=
+  ⟨λ ⟨w', hw', h⟩ => hT ⟨w', hw', Or.inl h⟩, λ ⟨w', hw', h⟩ => hT ⟨w', hw', Or.inr h⟩⟩
+
+end FreeChoice
+
+/-! ### Selectivity and intervention (§9) -/
+
+open Data.Examples
+
+/-- Japanese indeterminates do not change shape: *dare-ka* and *dare-mo* share their base
+and differ in force. -/
+theorem japanese_same_base :
+    Japanese.Determiners.dare_ka.indeterminate = Japanese.Determiners.dare_mo.indeterminate ∧
+      Japanese.Determiners.dare_ka.qforce ≠ Japanese.Determiners.dare_mo.qforce :=
+  ⟨rfl, by decide⟩
+
+/-- The Latvian series of [haspelmath-1997] are selective: in every row the existential,
+negative, and free-choice forms differ. -/
+theorem latvian_selective :
+    ∀ e ∈ Latvian.IndeterminatePronouns.paradigm,
+      e.existential ≠ e.negPolarity ∧ e.existential ≠ e.freeChoice ∧
+        e.negPolarity ≠ e.freeChoice := by
+  decide
+
+/-- The Beck effects (23) and their scrambled counterparts (24): a multiple question with the
+second wh-phrase in situ is ungrammatical iff an operator bearing an interpretable feature,
+inflectional negation or the existential closure of a quantifier, intervenes between the
+wh-phrase and the complementiser. -/
+theorem rows_beck :
+    ∀ r ∈ Examples.all,
+      (r.judgment = .ungrammatical ↔
+        r.feature? "order" = some "intervener-first" ∧ r.feature? "feature" ≠ some "none") := by
+  decide +kernel
 
 end KratzerShimoyama2002

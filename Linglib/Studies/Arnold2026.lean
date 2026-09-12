@@ -95,8 +95,8 @@ theorem rows_personal_elaborated :
 gender is blocked at stage 1, needs an ungendered lexical entry at stage 2, and is free at
 stage 3. -/
 theorem stages_do_not_separate_kinds :
-    genderObligatoryFor .referentialKnownGender .stage1 = true ∧
-      genderObligatoryFor .ungenderedProperName .stage2 = false ∧
-      genderObligatoryFor .referentialKnownGender .stage3 = false := ⟨rfl, rfl, rfl⟩
+    "they" ∉ forms .one kelly ∧ "they" ∈ forms .two kelly ∧ "they" ∉ forms .two maria ∧
+      "they" ∈ forms .three maria := by
+  decide +kernel
 
 end Arnold2026
