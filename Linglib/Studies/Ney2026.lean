@@ -2,138 +2,57 @@ import Linglib.Semantics.Reference.Basic
 import Linglib.Discourse.CommonGround
 
 /-!
-# Ney 2026 — Insinuative reference and the coordination account
-[ney-2026] [king-2013] [king-2014b]
+# Ney (2026): Insinuative Reference and the Coordination Account
 
-Insinuative reference is a metasemantic strategy: a speaker uses a
-directly-referential expression (typically a demonstrative or
-"supplementive" in [king-2013]'s sense — `this`, `those`, `it`)
-under conditions where the lexical meaning + salient context license
-multiple referents, intends one specific ("unavowed") referent while
-at least one other ("avowable") referent is also licensed, and intends
-to preserve plausible deniability about the unavowed intent.
+This file formalizes the phenomenon and the argument of [ney-2026]. Insinuative reference
+is a metasemantic strategy: a speaker uses a directly referential expression under
+conditions where its meaning and the salient context license several referents, intends
+one unavowed referent while another is avowable, and preserves deniability
+(`SpeakerIntention`, `HasInsinuativeStructure`). The strategy is a prima facie challenge
+to the coordination account of [king-2013] and [king-2014b], on which reference succeeds
+when a reasonable hearer would recognize the intention: if the conception of
+reasonableness is common ground, insinuative reference could not succeed
+(`prima_facie_challenge`). The paper's resolution reads the conception as what is
+reasonable by the lights of at least one of the interlocutors, the union of the hearer
+profiles each counts as reasonable (`ConceptionOfReasonableness`, `coordination`); the
+condition is anti-monotone in the conception (`coordination_anti_mono`), membership in the
+union requires private knowledge of an individual conception, so it is not common-ground
+transparent (`coordination_inter_in_cg_but_union_not`), and the four examples of the paper
+succeed under both readings while exhibiting the anaphora discriminator
+(`all_four_examples_are_jointly_successful`,
+`all_four_examples_exhibit_anaphora_discriminator`).
 
-[ney-2026] introduces the phenomenon, distinguishes it from
-related phenomena ([camp-2018] insinuation, dogwhistles per
-[stanley-2015] [henderson-mccready-2018]
-[henderson-mccready-2024] [khoo-2017] [saul-2018]
-[saul-2024], pseudo-insinuative speech per
-[tuters-hagen-2020]), shows it poses a *prima facie* challenge
-to [king-2013]'s coordination account (§3, the `<ONE>`-`<FOUR>`
-argument), and resolves the challenge by reading the conception of
-reasonableness as the *intersection* of the interlocutors' individual
-belief-sets — equivalently, the *union* of the hearer-profiles each
-agent counts as reasonable (§4 p. 22, revised statement p. 24). The
-union is not CommonGround-accessible because membership in it requires private
-knowledge of either individual conception.
+## Implementation notes
 
-## Encoding choice (relative to [ney-2026] pp. 22, 24)
+Hearer profiles rather than recognizable intentions are the carrier, so that the paper's
+revised statement, every competent and attentive hearer reasonable by the lights of at
+least one interlocutor, is the coordination condition over the union; the dual encoding
+would map the revision to an intersection with monotonicity reversed. The structural
+pattern is formalized without the speaker's deniability intent, which separates
+insinuative reference from pseudo-insinuative speech, and the common-ground operator is a
+hypothesis rather than a derivation from common belief, so the resolution theorems are
+witnessed on toy operators over a small carrier.
 
-`ConceptionOfReasonableness C W E := Set (HearerProfile C W E)` — the
-set of hearer-profiles each agent counts as *reasonable*. Then the
-verbatim revised statement of [ney-2026] p. 24 — "every competent,
-attentive hearer H who is reasonable by the lights of at least one
-among the speaker and the actual hearer" — is `∀ h ∈ RS ∪ RH, h
-recognizes intention`, i.e., `coordination (RS ⊔ RH)`. The union
-*enlarges* the set of required-recognizer hearers, so the success
-condition is **harder** under Ney's revision than under the objector's
-reconstruction `coordination (RS ⊓ RH)`. `coordination` is therefore
-anti-monotone in the conception parameter (`coordination_anti_mono`).
+## References
 
-This is the dual of an alternative encoding `Set (SpeakerIntention)`
-(intentions deemed recognizable). Under that encoding, Ney's revision
-would map to *intersection* of belief-sets (intentions both agents
-agree are recognizable) — the same dual content but with monotonicity
-reversed, and with the prima-facie argument needing different modal
-closures (∧-intro vs universal lift). We pick the hearer-profile
-encoding because it matches the verbatim revised statement and makes
-Ney's resolution structurally explicit: the *membership* facts for
-`RS ⊔ RH` require private knowledge of either RS or RH individually,
-hence are not CommonGround-transparent, hence the `<ONE>`-`<FOUR>` chain breaks.
-
-## What this file formalizes vs. what it doesn't
-
-`HasInsinuativeStructure licenses s` captures the *structural pattern*
-— multi-licensed referents with a distinguished intended one — but
-NOT the speaker-side intent to preserve deniability. The full
-phenomenon is the conjunction of the structural pattern and the
-deniability intent; the latter is left for a future extension when
-there is a downstream consumer that needs to discriminate it (e.g.,
-from pseudo-insinuative speech, where the structure is present but
-the intent is absent — [ney-2026] §2 (17), the 4chan
-triple-parentheses case).
-
-The §3 prima-facie challenge is formalized abstractly:
-`prima_facie_challenge` takes `inCG : Prop → Prop` and a CommonGround-transparency
-hypothesis on the conception. Substantive Ney soundness — that the
-resolution holds under a *realistic* CommonGround operator derived from
-`commonBelief` ([stalnaker-2002]) — requires a `CommonGround.toAgentAccess :
-Filter W → E → W → W → Prop` bridge in `Discourse/CommonGround.lean`
-that does not yet exist. Until that bridge lands, the resolution
-theorems are witnessed by toy operators (a degenerate `inCG := · = True`
-that distinguishes intersection-CommonGround-transparency from union-CommonGround-transparency
-on a small carrier).
-
-## Distinguishing the phenomenon (Ney 2026 §2)
-
-Insinuative reference is distinct from:
-- [camp-2018] insinuation: there the unavowed content is conveyed
-  by Gricean *implicature*; here it is the expression's *semantic value*.
-- [stanley-2015] / [henderson-mccready-2018] [henderson-mccready-2024] /
-  [khoo-2017] dogwhistles: those depend on conventionalized lexical
-  items. Insinuative reference is a metasemantic strategy applicable
-  to any directly-referential expression.
-- [saul-2018] / [saul-2024] intentional overt dogwhistles:
-  the closest analogue, but Saul's apparatus depends on a partitioned
-  audience; insinuative reference can occur with a single hearer.
-- pseudo-insinuative speech ([tuters-hagen-2020]): structurally
-  similar but lacks genuine intent to preserve deniability.
-
-[ney-2026] §5 proposes reserving "insinuation" for the Camp-style
-implicature phenomenon and using "insinuative speech" as the broader
-deniability-preserving category encompassing all four. This file's
-namespace is `Ney2026`; a future shared insinuative-speech
-superclass with sibling Camp / Saul
-formalizations is the obvious organising principle but is not built
-here.
-
-The paper's methodological framing is *non-ideal philosophy of
-language* per [beaver-stanley-2023].
-
-## Substrate primitives this file leans on (with citations)
-
-Imports `Reference.Basic` ([kaplan-1989]'s Character/Content +
-[almog-2014]'s ReferentialProfile) and `CommonGround`
-([stalnaker-2002]'s context set). `SpeakerIntention.intendedRef`
-parallels [donnellan-1966]'s referential-use intended object;
-the broader speaker-intent structure connects to [searle-1983]
-intentional states (not unified here).
-
-## Shape gaps tracked but not fixed here
-
-1. `TrueDemonstrative.demonstratum : C → Option E` (in
-   `Reference/Demonstratives.lean`) is functional — at most one
-   referent per context. Insinuative reference needs *multiple*
-   simultaneously-licensed referents per context; we work around by
-   taking `licenses : E → Prop` as an abstract input parameter. The
-   principled fix is to refactor `demonstratum` to a relation
-   `C → E → Prop`.
-2. `inCG : Prop → Prop` (here taken as hypothesis) should connect to
-   `commonBelief` in `Logic/Modal/Epistemic.lean`
-   once a `CommonGround.toAgentAccess` bridge exists.
-3. `SpeakerIntention.intendedRef` parallel-stipulates with
-   `Donnellan.DefiniteDescription.intendedRef`; not unified.
-
-## Authority
-
-[ney-2026], *Linguistics & Philosophy* (2026),
-DOI 10.1007/s10988-026-09456-0. Examples (1)–(4) are §1–§2; the
-`<ONE>`-`<FOUR>` argument is §3 (pp. 17–19); the conception-of-
-reasonableness reading and revised coordination statement are §4
-(pp. 22, 24); the anaphora discriminator is §3 ("thirdly", pp. 15–16);
-the §5 conclusion proposes the broader "insinuative speech" terminology.
-[king-2013] is the primary coordination-account source;
-[king-2014b] is its considered restatement.
+* [ney-2026]
+* [king-2013]
+* [king-2014b]
+* [camp-2018]
+* [stanley-2015]
+* [henderson-mccready-2018]
+* [henderson-mccready-2024]
+* [khoo-2017]
+* [saul-2018]
+* [saul-2024]
+* [tuters-hagen-2020]
+* [beaver-stanley-2023]
+* [kaplan-1989]
+* [almog-2014]
+* [stalnaker-2002]
+* [donnellan-1966]
+* [searle-1983]
+* [buring-2005]
 -/
 
 namespace Ney2026
@@ -205,7 +124,7 @@ conception of reasonableness `R` recognizes the speaker's intention.
 of the four canonical sentences reduce to `Or.inl rfl`-style. -/
 abbrev coordination {C W E : Type*}
     (R : ConceptionOfReasonableness C W E) : Account C W E :=
-  fun s => ∀ h ∈ R, h s
+  λ s => ∀ h ∈ R, h s
 
 /-- `coordination` is *anti-monotone* in its conception parameter:
 enlarging the set of required-recognizer hearers makes the success
@@ -216,7 +135,7 @@ the speaker would consider them reasonable"). -/
 theorem coordination_anti_mono {C W E : Type*}
     {R₁ R₂ : ConceptionOfReasonableness C W E} (h : R₁ ≤ R₂) :
     coordination R₂ ≤ coordination R₁ :=
-  fun _ hs h₀ hh₀ => hs h₀ (h hh₀)
+  λ _ hs h₀ hh₀ => hs h₀ (h hh₀)
 
 /-! ## §2. King's binary reconstruction vs Ney's revision
 
@@ -386,14 +305,14 @@ bridge that does not yet exist. -/
 intends `true`, with a constant character. -/
 private def boolWitness : SpeakerIntention Unit Unit Bool where
   speaker     := false
-  expression  := { character := fun _ _ => true
+  expression  := { character := λ _ _ => true
                  , profile := ⟨true, true, false⟩ }
   context     := ()
   intendedRef := true
 
 /-- A hearer-profile that recognizes nothing (always rejects). -/
 private def alwaysRejectsProfile : HearerProfile Unit Unit Bool :=
-  fun _ => False
+  λ _ => False
 
 /-- The asymmetry [ney-2026] §4 hinges on: there exists a CommonGround
 operator and a pair of conceptions where the intersection-success
@@ -408,8 +327,8 @@ theorem coordination_inter_in_cg_but_union_not :
       inCG (coordination (RS ⊓ RH) s) ∧
       ¬ inCG (coordination (RS ⊔ RH) s) :=
   ⟨id, ∅, {alwaysRejectsProfile}, boolWitness,
-   fun _ hh => hh.1.elim,
-   fun hall => hall alwaysRejectsProfile (Or.inr rfl)⟩
+   λ _ hh => hh.1.elim,
+   λ hall => hall alwaysRejectsProfile (Or.inr rfl)⟩
 
 /-! ## §6. Extensional gap between intersection and union accounts
 
@@ -430,7 +349,7 @@ succeed). -/
 
 private def extensionalGapWitness : Scenario Unit Unit Bool where
   intention         := boolWitness
-  licenses          := fun _ => True
+  licenses          := λ _ => True
   RS                := ∅
   RH                := {alwaysRejectsProfile}
   unavowed_licensed := trivial
@@ -443,8 +362,8 @@ theorem exists_inter_succeeds_union_fails :
       ¬ coordination (sc.RS ⊔ sc.RH) sc.intention :=
   ⟨extensionalGapWitness,
    extensionalGapWitness.hasInsinuativeStructure,
-   fun _ hh => hh.1.elim,
-   fun hall => hall alwaysRejectsProfile (Or.inr rfl)⟩
+   λ _ hh => hh.1.elim,
+   λ hall => hall alwaysRejectsProfile (Or.inr rfl)⟩
 
 /-! ## §7. Anaphora discriminator ([ney-2026] §3, "thirdly")
 
@@ -507,7 +426,7 @@ variable {E : Type*} [DecidableEq E]
 avowable referents: recognizes any intention whose intendedRef is one
 of them. -/
 def perceptiveHearer (unavowed avowable : E) : HearerProfile Unit Unit E :=
-  fun s => s.intendedRef = unavowed ∨ s.intendedRef = avowable
+  λ s => s.intendedRef = unavowed ∨ s.intendedRef = avowable
 
 /-- Build a scenario where both interlocutors agree on the conception
 {perceptiveHearer unavowed avowable}. Models [ney-2026]'s
@@ -517,11 +436,11 @@ def mkBinary
     Scenario Unit Unit E where
   intention :=
     { speaker     := speaker
-    , expression  := { character := fun _ _ => unavowed
+    , expression  := { character := λ _ _ => unavowed
                      , profile := ⟨true, true, false⟩ }
     , context     := ()
     , intendedRef := unavowed }
-  licenses          := fun r => r = unavowed ∨ r = avowable
+  licenses          := λ r => r = unavowed ∨ r = avowable
   RS                := {perceptiveHearer unavowed avowable}
   RH                := {perceptiveHearer unavowed avowable}
   unavowed_licensed := Or.inl rfl
