@@ -4,109 +4,47 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Autosegmental.Floating
-import Linglib.Phonology.Autosegmental.Junction
 import Linglib.Morphology.Word.Tree
 
 /-!
-# Laoide-Kemp (2026): Irish preverbal *d'* as a floating segment
-[laoide-kemp-2026]
+# Laoide-Kemp (2026): Strict modularity at the morphosyntax-phonology interface
 
-[laoide-kemp-2026] resolves an apparent ordering paradox in Irish
-initial consonant mutation (ICM). The preverbal tense particle *d'*
-(glossed `HIST`) is usually taken as the *trigger* of lenition on the
-following verb, yet its appearance is *conditioned on* the post-lenition
-form: *d'* surfaces before vowel-initial verbs (`d' ól` 'I drank')
-and before lenited *f*-initial verbs (`d' fhág` 'I left'), but not
-before C-initial verbs (`*d' bhog`).
+This file formalizes the analysis of [laoide-kemp-2026] of the Irish historic-tense particle
+*d'*, which appears before vowel-initial and lenited *f*-initial verbs but not before other
+consonants ((11)), an apparent paradox for the autosegmental account of initial consonant
+mutation, since the particle taken to trigger lenition seems to be inserted only once lenition
+has applied. On the paper's account the exponent of historic tense is a floating segment `(d)`
+followed by the lenition-inducing bundle `{L}` ((18)): both are inserted in every environment,
+`{L}` docks onto the following consonant, deleting the segmental content of an *f* (§2.2), and
+`(d)` is pronounced only if it can link to an adjacent skeletal C-slot that is empty and
+directly followed by a filled V-slot (§4.1). Over the library's floating autosegmental forms
+on a strict-CV skeleton ([lowenstamm-1996]), the historic exponent is prefixed by
+concatenation, lenition is the surface delinking of a word-initial *f*, and the docking
+condition is read off the surface form: `(d)` surfaces before *ól* and *fág* but not before
+*bog* (Figure 1), and never before a past-tense impersonal, whose empty initial CV unit blocks
+both lenition and docking (Figure 5, §6.2), the two effects of one piece of structure
+(`laoideKemp_fig1_fig5`, `impersonal_blocks_lenition`). The analysis is strictly modular in the
+sense of [bermudez-otero-2012]: the morpheme is inserted uniformly and the phonology decides.
 
-If *d'* is the trigger of lenition, how can its insertion depend on the
-output of lenition? The autosegmental answer (Figs. 1, 2, 5 of the
-paper): the historic-tense morpheme is `(d) + {L}` where **both
-elements are floating**. `{L}` (the lenition-inducing bundle) docks
-onto the immediately-following consonant if present; `(d)` is a
-floating melodic segment that surfaces only if it can link to an
-adjacent C-skeleton position that is both *segmentally empty* and
-*directly followed by a non-empty V-slot*. C-initial verbs leave the
-first C-slot full; vowel-initial verbs leave it empty; *f*-initial
-verbs leave it empty after `{L}` deletes the *f* segmental content.
+## Implementation notes
 
-The analysis is **strictly modular** in the sense of
-[bermudez-otero-2012]: morphosyntax inserts the floating
-morpheme in *all* phonological contexts, and the phonology determines
-whether `(d)` surfaces by ordinary representational constraints. The
-paper contrasts this with a morphosyntactic alternative (two separate
-`[+HIST]` exponents in different spell-out cycles) and argues
-empirically against it on the basis of Munster Irish (§6.1) and
-past-tense impersonal mutation resistance (§6.2).
+The segment inventory covers the paper's examples only. Lenition is modelled as the deletion
+of *f* alone, the one effect that bears on the distribution of `(d)`, and targets the melody
+linked to the leftmost skeletal slot, so the empty CV unit of an impersonal keeps the stem's
+*f* out of reach. The infrasegmental-government domains that license `(d)` before the lenited
+clusters of (12) (Figure 2, [scheer-1998]), the Munster reanalysis of `(d)` as part of the
+lenition bundle (§6.1, Table 3), and the rejected morphosyntactic alternative of §5 are not
+modelled.
 
-## Grounding: `FloatingForm` over a CV backbone
+## TODO
 
-This file is founded on `Autosegmental.FloatingForm CVKind
-Segment` — the project's floating-autosegmental substrate, which
-[laoide-kemp-2026]'s floating consonants are a named motivating
-consumer of. Three substrate features carry the analysis directly:
+Model Figure 2, the *r*- against *fr*-initial contrast, once a government substrate exists.
 
-* **Morph membership** on every tier/backbone element distinguishes
-  the historic-tense `(d)`, the verb stem, and the past-tense
-  impersonal exponent.
-* The **underlying/surface split** (`links` vs `surfaceLinks`) models
-  lenition the way the paper does — as a *delinking* of the *f*
-  segment from its skeletal slot, leaving the underlying form intact
-  and the C-slot surface-empty (`FloatingForm.deleteTierElem`).
-* The historic-tense and impersonal exponents are **prefixed by
-  `Graph.concat`**, so the morpheme composition the paper draws (Fig. 1:
-  `(d)` to the left of the stem; Fig. 5: an empty CV unit to the left)
-  is true by construction, not stipulated.
+## References
 
-Lenition is keyed on the melodic element linked to the **leftmost
-skeletal slot** (`initialConsonantIdx`), not the leftmost melody
-element: in a prefixed form (Fig. 5) the stem's *f* is no longer
-adjacent to the left edge, and the empty CV unit correctly blocks
-`{L}` from docking onto it.
-
-## What this file formalises
-
-* §1 An Irish segment type and CV-skeleton kind.
-* §2 Morphemes (`HIST`, the stem, `PST.IMPERS`).
-* §3 Verb-stem `FloatingForm`s for `bog`, `ól`, `fág`.
-* §4 The exponents `(d)`/`{L}` and the empty-CV impersonal prefix,
-  composed onto stems via `Graph.concat`.
-* §5 Lenition modelled as surface delinking of *f* on the leftmost
-  consonant (the `{L}` effect).
-* §6 The docking predicate `dPrimeSurfaces` — Laoide-Kemp's central
-  empirical generalisation, formulated on the surface graph.
-* §7 Worked-example theorems for Figs. 1a (`bog → bhog`), 1b
-  (`ól → d' ól`), 1c (`fág → d' fhág`), and 5 (past-tense impersonals
-  `bogadh`, `óladh`, `fágadh`, all `*d'`).
-
-## What this file does NOT formalise
-
-* **Figure 2 (r-initial vs fr-initial)** — `rith` (r-initial; *d'*
-  cannot dock because the first C-slot has /r/) and `freagair`
-  (fr-initial; `{L}` deletes /f/, leaving an empty C in an
-  Infrasegmental Government domain that licenses `(d)`-docking
-  despite the empty V-slot pattern). The IG-domain account requires
-  [scheer-1998] substrate which linglib doesn't carry yet; deferred.
-* **§6.1 Munster Irish dialectal variation** — `dh'` appears after
-  *all* lenition-triggering preverbal particles in Munster, not just
-  historic tense. The paper argues this is naturally accommodated by
-  positing `(d)` as part of the lenition bundle in Munster; encoded
-  here as a docstring sketch only.
-* **§5 morphosyntactic alternative** — the rejected analysis using
-  two separate `[+HIST]` exponents in different spell-out cycles.
-  Encoded only via the *predictions* the phonological account makes
-  (§6 of this file); the alternative would predict the same
-  distribution for Standard Irish but fails the Munster and
-  impersonal tests (paper §6).
-
-## Convention
-
-`(d)` and `{L}` in the paper are typeset with parentheses and braces
-to indicate floating status. In Lean identifiers we write `dPrime`
-and the `HIST` morpheme. `{L}` itself is modelled as the lenition
-*process* (`lenite`) rather than a distinct tier element, matching the
-paper's treatment of it as abstract lenition-inducing material; `(d)`
-is modelled as a genuine floating melodic segment (`Segment.dPrime`).
+* [laoide-kemp-2026]
+* [bermudez-otero-2012], [lowenstamm-1996], [gussmann-1986], [ni-chiosain-1991],
+  [scheer-1998]
 -/
 
 namespace LaoideKemp2026
@@ -114,16 +52,9 @@ namespace LaoideKemp2026
 open Autosegmental
 open Morphology (Morph)
 
-/-! ## §1 Segment inventory and CV skeleton
+/-! ### Segments and skeleton -/
 
-A minimal Irish segment inventory sufficient for the paper's
-worked examples. Only the segments appearing in `bog`, `ól`, `fág`,
-and their past-tense impersonals are enumerated; full Irish phonology
-lives in `Fragments/Irish/` (currently absent — Celtic phonology is a
-flagged gap in linglib).
--/
-
-/-- Irish segment, minimal coverage. -/
+/-- The segments of the paper's worked examples. -/
 inductive Segment
   /-- Consonant `b`. -/
   | b
@@ -151,48 +82,37 @@ inductive Segment
   | dPrime
   deriving DecidableEq, Repr
 
-/-- Is the segment `f` (the target of the special lenition →
-    deletion rule in the paper's §2.2)? -/
+/-- The segment *f*, whose content lenition deletes (§2.2). -/
 def Segment.isF : Segment → Bool
   | .f => true
   | _  => false
 
-/-- CV-skeleton kind. A 2-kind skeleton (`C` for consonant slot, `V`
-    for vowel slot), matching the Strict-CV convention
-    ([lowenstamm-1996]); a project-canonical Strict-CV substrate
-    does not exist (see CLAUDE.md for the deferral rationale). -/
+/-- A slot of the strict-CV skeleton ([lowenstamm-1996]). -/
 inductive CVKind
   | C
   | V
   deriving DecidableEq, Repr
 
-/-! ## §2 Morphemes
+/-! ### Morphemes
 
-Every tier and backbone element of a `FloatingForm` carries morpheme
-membership. We tag the three morphemes the analysis distinguishes:
-the verb stem (a free word), the historic-tense exponent `HIST`
-(carrying floating `(d)`), and the past-tense impersonal exponent
-(carrying the empty CV unit; §6.2).
--/
+Every tier and skeletal element carries its morpheme: the verb stem, the historic-tense
+exponent bearing the floating `(d)`, and the past-tense impersonal exponent bearing the empty
+CV unit (§6.2). -/
 
 /-- The verb-stem morpheme (a free word), keyed by orthographic form. -/
 private def mStem (s : String) : Morph := .root s
 
-/-- The historic-tense exponent, bearing floating `(d)` and `{L}`. -/
+/-- The historic-tense exponent, bearing `(d)` and `{L}`. -/
 private def mHist : Morph := .pref "d'"
 
-/-- The past-tense impersonal exponent: an empty CV unit at the left
-    edge ([laoide-kemp-2026] §6.2, Fig. 5). -/
+/-- The past-tense impersonal exponent (§6.2). -/
 private def mImpers : Morph := .pref ""
 
-/-! ## §3 Verb stems as `FloatingForm`s
+/-! ### Verb stems
 
-A verb stem is a `FloatingForm CVKind Segment Morph`: the **upper** tier is
-the segmental melody (`Segment`), the **lower** tier is the CV
-skeleton (`CVKind`), and association lines `(k, j)` link melody
-element `k` to skeleton position `j`. The surface state mirrors the
-underlying state on input (`FloatingForm.mkInput`).
--/
+A stem is a floating form whose upper tier is the melody, whose lower tier is the CV skeleton,
+and whose association lines `(k, j)` link melody element `k` to skeletal slot `j`; on input the
+surface state is the underlying one. -/
 
 /-- A melodic tier element bearing morpheme `m`. -/
 private def mel (s : Segment) (m : Morph) : TierSpec Segment Morph := ⟨s, m⟩
@@ -208,40 +128,26 @@ private def stemForm (name : String) (skeleton : List CVKind)
   let m := mStem name
   FloatingForm.mkInput (skeleton.map (slot · m)) (melody.map (mel · m)) links
 
-/-- The verb `bog` 'soft', the C-initial example in [laoide-kemp-2026]
-    Fig. 1a. Melody = [b, o, g]; skeleton = [C, V, C]; identity
-    associations. -/
+/-- *bog* 'move', consonant-initial (Figure 1a). -/
 def bog : FloatingForm CVKind Segment Morph :=
   stemForm "bog" [.C, .V, .C] [.b, .o, .g] {(0, 0), (1, 1), (2, 2)}
 
-/-- The verb `ól` 'drink', the V-initial example in
-    [laoide-kemp-2026] Fig. 1b. Melody = [ó, l]; skeleton =
-    [C, V, C, V]; the initial C-slot has no melodic association.
-    This is the key structural property: the underlying form has an
-    empty C-slot at position 0. -/
+/-- *ól* 'drink', vowel-initial (Figure 1b): the initial C-slot is empty underlyingly. -/
 def ól : FloatingForm CVKind Segment Morph :=
   stemForm "ol" [.C, .V, .C, .V] [.ó, .l] {(0, 1), (1, 2)}
 
-/-- The verb `fág` 'leave', the *f*-initial example in
-    [laoide-kemp-2026] Fig. 1c. Melody = [f, á, g]; skeleton =
-    [C, V, C]; identity associations. Under lenition, the `f`
-    segmental content deletes, leaving an empty C₁-slot — exactly
-    the configuration that licenses `(d)`-docking. -/
+/-- *fág* 'leave', *f*-initial (Figure 1c). -/
 def fág : FloatingForm CVKind Segment Morph :=
   stemForm "fag" [.C, .V, .C] [.f, .á, .g] {(0, 0), (1, 1), (2, 2)}
 
-/-! ## §4 The exponents and morpheme composition
+/-! ### The exponents
 
-The historic-tense morpheme contributes a **floating** `(d)` melodic
-segment with no skeleton of its own (it docks onto the stem's
-skeleton). The past-tense impersonal morpheme contributes an **empty
-CV unit** — a `[C, V]` skeleton with no melody (Fig. 5). Both are
-prefixed onto a stem with `Graph.concat`, which shifts the stem's
-association lines by the prefix's tier lengths.
--/
+The historic-tense morpheme contributes a floating `(d)` with no skeleton of its own ((18)),
+and the past-tense impersonal morpheme an empty CV unit with no melody (Figure 5); each is
+prefixed to a stem by concatenation, which shifts the stem's association lines by the prefix's
+tier lengths. -/
 
-/-- The historic-tense exponent: a floating `(d)` melodic segment,
-    no skeleton, no associations ([laoide-kemp-2026] Fig. 1). -/
+/-- The historic-tense exponent ((18)): a floating `(d)`, no skeleton, no associations. -/
 def historicExponent : FloatingForm CVKind Segment Morph where
   upper := .ofList [mel .dPrime mHist]
   lower := .empty
@@ -249,9 +155,7 @@ def historicExponent : FloatingForm CVKind Segment Morph where
   deletedTier := ∅
   surfaceLinks := ∅
 
-/-- The past-tense impersonal exponent: an empty CV unit (`[C, V]`
-    skeleton), no melody, no associations ([laoide-kemp-2026] §6.2,
-    Fig. 5). -/
+/-- The past-tense impersonal exponent (§6.2, Figure 5): an empty CV unit, no melody. -/
 def impersonalExponent : FloatingForm CVKind Segment Morph where
   upper := .empty
   lower := .ofList [slot .C mImpers, slot .V mImpers]
@@ -259,59 +163,38 @@ def impersonalExponent : FloatingForm CVKind Segment Morph where
   deletedTier := ∅
   surfaceLinks := ∅
 
-/-- Prefix the historic-tense exponent onto a stem (Fig. 1): floating
-    `(d)` becomes melody index 0; the stem's melody shifts right by one. -/
+/-- The historic-tense form of a stem: `(d)` becomes melody element 0. -/
 def withHist (stem : FloatingForm CVKind Segment Morph) : FloatingForm CVKind Segment Morph :=
   historicExponent.hconcat stem
 
-/-- Prefix the empty-CV impersonal exponent onto a stem (Fig. 5): the
-    stem's skeleton shifts right by two, so the left edge is an empty
-    `C₀V₀` unit. -/
+/-- The past-tense impersonal of a stem: an empty CV unit at the left edge. -/
 def withImpers (stem : FloatingForm CVKind Segment Morph) : FloatingForm CVKind Segment Morph :=
   impersonalExponent.hconcat stem
 
-/-! ## §5 Lenition: the `{L}` deletion rule for *f*
+/-! ### Lenition
 
-The Irish lenition mutation has many surface effects (stop → fricative,
-voiceless → voiced, etc.) but the only effect relevant to the
-distribution of `(d)` is the **deletion of word-initial /f/**
-([laoide-kemp-2026] §2.2; [gussmann-1986],
-[ni-chiosain-1991]). Under the autosegmental analysis,
-the lenition-inducing bundle `{L}` docks onto the initial consonant
-and deletes its segmental content; the C-skeletal slot remains
-behind, surface-empty.
+Of the effects of lenition only the deletion of a word-initial *f* bears on the distribution of
+`(d)` (§2.2, [gussmann-1986], [ni-chiosain-1991]): `{L}` docks onto the initial consonant and
+removes its segmental content, leaving the skeletal slot behind. This is a surface delinking of
+the *f* from its slot, and it targets the melody linked to the leftmost skeletal slot, so that
+behind an empty CV unit (Figure 5) the stem's *f* is out of reach. -/
 
-We model this as a **surface delinking** (`deleteTierElem`): the *f*
-melody element is deleted from the surface, leaving its C-slot
-surface-empty while the underlying form is preserved. Lenition targets
-the consonant linked to the **leftmost skeletal slot** — in a prefixed
-impersonal form (Fig. 5), the stem's *f* is no longer at the left edge,
-so `{L}` cannot reach it and the *f* stays unmutated.
--/
-
-/-- The melody index of the consonant linked to the leftmost skeletal
-    slot (skeleton position 0), if any — the target of `{L}`. -/
+/-- The melody index of the consonant linked to the leftmost skeletal slot, the target of
+`{L}`. -/
 def initialConsonantIdx (f : FloatingForm CVKind Segment Morph) : Option Nat :=
-  (List.range f.upper.len).find? (fun k => (k, 0) ∈ f.surfaceLinks)
+  (List.range f.upper.len).find? (λ k => (k, 0) ∈ f.surfaceLinks)
 
-/-- Apply lenition: if the consonant on the leftmost skeletal slot is
-    `f`, delete its melodic content on the surface (leaving the slot
-    surface-empty). All other surface effects of lenition (b → v, etc.)
-    are out of scope for the *d'* distribution question. -/
+/-- Lenition: if the consonant on the leftmost skeletal slot is *f*, delete its melodic
+content on the surface, leaving the slot empty. -/
 def lenite (f : FloatingForm CVKind Segment Morph) : FloatingForm CVKind Segment Morph :=
   match initialConsonantIdx f with
   | some k => if (f.upper.get? k).map TierSpec.value = some .f then f.deleteTierElem k else f
   | none   => f
 
-/-! ## §6 The docking predicate
+/-! ### Docking
 
-`(d)` surfaces iff the post-lenition surface form has an empty C-slot
-at position 0 directly followed by a non-empty V-slot at position 1
-([laoide-kemp-2026] §4, Fig. 1). The predicate inspects the
-**surface graph** (`FloatingForm.surfaceGraph`): the actual `(d)`
-surfacing is then a deterministic consequence of the autosegmental
-linking convention.
--/
+`(d)` is pronounced iff, after lenition, the first skeletal slot is an empty C-slot directly
+followed by a filled V-slot (§4.1). -/
 
 /-- Skeleton position `j` is a C-slot. -/
 def isCSlot (f : FloatingForm CVKind Segment Morph) (j : Nat) : Prop :=
@@ -327,10 +210,8 @@ def isVSlot (f : FloatingForm CVKind Segment Morph) (j : Nat) : Prop :=
 instance (f : FloatingForm CVKind Segment Morph) (j : Nat) : Decidable (isVSlot f j) :=
   inferInstanceAs (Decidable (_ = _))
 
-/-- The configuration that licenses `(d)`-docking, evaluated on the
-    surface graph: position 0 is an empty C-slot, position 1 is a
-    non-empty V-slot. The structural predicate at the heart of the
-    paper's analysis ([laoide-kemp-2026] §4.1). -/
+/-- The configuration that licenses the docking of `(d)`, on the surface form: slot 0 an empty
+C-slot, slot 1 a filled V-slot (§4.1). -/
 def dDockable (f : FloatingForm CVKind Segment Morph) : Prop :=
   isCSlot f 0 ∧ ¬ f.SurfaceLinkedLower 0 ∧
     isVSlot f 1 ∧ f.SurfaceLinkedLower 1
@@ -338,80 +219,52 @@ def dDockable (f : FloatingForm CVKind Segment Morph) : Prop :=
 instance (f : FloatingForm CVKind Segment Morph) : Decidable (dDockable f) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _))
 
-/-- `(d)` surfaces in the historic-tense form `f` iff the post-lenition
-    surface form is `(d)`-dockable. [laoide-kemp-2026] §4.1. -/
+/-- `(d)` surfaces in a historic-tense form iff the lenited form licenses its docking. -/
 def dPrimeSurfaces (f : FloatingForm CVKind Segment Morph) : Prop :=
   dDockable (lenite f)
 
 instance (f : FloatingForm CVKind Segment Morph) : Decidable (dPrimeSurfaces f) :=
   inferInstanceAs (Decidable (dDockable _))
 
-/-! ## §7 Worked examples (paper Figs. 1a, 1b, 1c)
+/-! ### Figure 1
 
-The three figures in [laoide-kemp-2026] §4.1 establish the
-core empirical pattern. In every historic-tense form, `(d)` is melody
-index 0 and is **floating** before docking — the floating status the
-whole analysis turns on. -/
+In every historic-tense form `(d)` is melody element 0 and floating before docking. -/
 
-/-- `(d)` is floating (alive but unlinked) in the historic-tense form
-    of every stem before docking — the premise of the analysis. -/
+/-- `(d)` is floating in a historic-tense form before docking. -/
 theorem dPrime_floating_bog : (withHist bog).IsFloating 0 := by decide
 
-/-- **Fig. 1a (C-initial: `bog`).** The first C-slot is occupied by
-    `b`; `(d)` cannot dock. Lenition affects `b` (b → v / β) but
-    *does not vacate the C-slot* — there is still a segment there.
-    `(d)` therefore stays unpronounced: `dDockable` fails on the
-    `¬ IsLinkedLower 0` conjunct (C₁ is surface-linked to `b`). -/
+/-- Figure 1a, *bog* → *bhog*: the first C-slot is occupied, and lenition leaves a segment
+in it, so `(d)` cannot dock ((11c)). -/
 theorem bog_no_dPrime : ¬ dPrimeSurfaces (withHist bog) := by decide
 
-/-- **Fig. 1b (V-initial: `ól`).** The underlying form has an empty
-    C₁-slot already (the vowel `ó` associates to V₁, not to C₀).
-    Lenition is a no-op: C₀ has no linked consonant (the verb is
-    V-initial), so `{L}` has nothing to delete. `dDockable` holds;
-    `(d)` surfaces. The historic form is `d' ól`. -/
+/-- Figure 1b, *ól* → *d' ól*: the first C-slot is empty underlyingly, `{L}` has nothing to
+dock onto, and `(d)` links ((11a)). -/
 theorem ól_yes_dPrime : dPrimeSurfaces (withHist ól) := by decide
 
-/-- **Fig. 1c (*f*-initial: `fág`).** Underlyingly, `f` occupies C₁
-    and `(d)` would not be able to dock. Lenition deletes `f`'s
-    segmental content on the surface (via `lenite`), leaving C₁
-    surface-empty; `dDockable` then holds on the lenited form;
-    `(d)` surfaces. The historic tense form is `d' fhág`. -/
+/-- Figure 1c, *fág* → *d' fhág*: lenition deletes the *f*, leaving the first C-slot empty
+on the surface, and `(d)` links ((11b)). -/
 theorem fág_yes_dPrime : dPrimeSurfaces (withHist fág) := by decide
 
-/-! ## §8 Past-tense impersonals (paper Fig. 5)
+/-! ### Figure 5
 
-Past tense impersonal verbs carry an underlying **empty CV unit** at
-their left edge ([laoide-kemp-2026] §6.2, Fig. 5), modelled here by
-prefixing `impersonalExponent` with `Graph.concat`. This empty unit
-does double duty: `{L}` cannot dock onto the stem's initial consonant
-(it is no longer adjacent to the left edge — `lenite` is a no-op), and
-the empty `C₀` is followed by an **empty** `V₀`, so the `(d)`-docking
-condition `IsLinkedLower 1` fails. Both effects fall out of the same
-piece of structure, and `(d)` never surfaces — exactly the paper's
-account of why preverbal *d'* is absent on past-tense impersonals. -/
+A past-tense impersonal carries an empty CV unit at its left edge (§6.2), which does double
+duty: `{L}` finds no consonant to dock onto, and the empty C-slot is followed by an empty
+V-slot, so `(d)` cannot link either ((27)). -/
 
-/-- **Fig. 5a (C-initial impersonal: `bogadh`).** `*d' bogadh`. -/
+/-- Figure 5a, *bogadh*: no `(d)`. -/
 theorem bogadh_no_dPrime : ¬ dPrimeSurfaces (withHist (withImpers bog)) := by decide
 
-/-- **Fig. 5b (V-initial impersonal: `óladh`).** `*d' óladh` — the
-    empty `V₀` of the impersonal prefix breaks the docking condition
-    even though the verb is V-initial. -/
+/-- Figure 5b, *óladh*: the empty V-slot of the prefix blocks docking although the verb is
+vowel-initial. -/
 theorem óladh_no_dPrime : ¬ dPrimeSurfaces (withHist (withImpers ól)) := by decide
 
-/-- **Fig. 5c (*f*-initial impersonal: `fágadh`).** `*d' fágadh` — the
-    empty `C₀` blocks `{L}` from docking onto the stem's `f` (so `f`
-    stays, unlike Fig. 1c), and the empty `V₀` blocks `(d)`. -/
+/-- Figure 5c, *fágadh*: the empty C-slot keeps `{L}` from the stem's *f*, and the empty
+V-slot blocks `(d)`. -/
 theorem fágadh_no_dPrime : ¬ dPrimeSurfaces (withHist (withImpers fág)) := by decide
 
-/-! ## §9 Side-by-side: the paper's empirical core
-
-Putting the theorems together gives [laoide-kemp-2026]'s central
-observation: in Standard Irish historic tense, `(d)` surfaces *iff*
-the verb is V-initial (Fig. 1b) or *f*-initial (Fig. 1c), but not
-when C-initial (Fig. 1a); and it never surfaces on past-tense
-impersonals (Fig. 5), regardless of the stem's initial segment. -/
-
-/-- The paper's central empirical generalisation, Figs. 1 + 5. -/
+/-- The empirical core: in the historic tense `(d)` surfaces before a vowel-initial or
+*f*-initial verb and not before a consonant-initial one, and never before a past-tense
+impersonal (Figures 1 and 5). -/
 theorem laoideKemp_fig1_fig5 :
     (¬ dPrimeSurfaces (withHist bog) ∧ dPrimeSurfaces (withHist ól) ∧
       dPrimeSurfaces (withHist fág)) ∧
@@ -421,566 +274,8 @@ theorem laoideKemp_fig1_fig5 :
   ⟨⟨bog_no_dPrime, ól_yes_dPrime, fág_yes_dPrime⟩,
    ⟨bogadh_no_dPrime, óladh_no_dPrime, fágadh_no_dPrime⟩⟩
 
-/-! ## §10 Modularity: the analysis lives in the monoidal subcategory
-
-[laoide-kemp-2026]'s strict-modularity thesis, formalised against the
-monoidal category of representations.
-Three theorems, one per modular commitment: the morpheme is *composed*
-by the monoidal product `⊗ = concat` (not inserted by a non-local
-rule); the composition *preserves well-formedness* because the
-No-Crossing Constraint is morpheme-modular (`ncc_isMonoidal`); and
-the `(d)`-surfacing decision is *left-edge local* — invariant under
-material appended on the right (no look-ahead, the apparent paradox
-dissolved). -/
-
-/-- The historic-tense morpheme is composed by the monoidal product:
-    `withHist stem` is literally `historicExponent ⊗ stem`. The formal
-    content of "morphosyntax *concatenates* the floating morpheme"
-    ([bermudez-otero-2012]'s strict modularity) — not a non-local
-    insertion rule. -/
-theorem withHist_eq_concat (stem : FloatingForm CVKind Segment Morph) :
-    withHist stem = historicExponent.hconcat stem := rfl
-
-/-- Composing the historic-tense morpheme preserves autosegmental
-    well-formedness — a direct consequence of the No-Crossing
-    Constraint being morpheme-modular. The floating `(d)` shifts the
-    stem's links monotonically, never creating a crossing line. -/
-theorem withHist_isPlanar (stem : FloatingForm CVKind Segment Morph)
-    (hP : IsNonCrossing stem.links) : IsNonCrossing (withHist stem).links := by
-  rw [withHist_eq_concat, FloatingForm.hconcat_links]
-  simp only [historicExponent, Finset.empty_union]
-  exact hP.image_monotone (ρ := (· + 1)) fun _ _ h => Nat.add_le_add_right h 1
-
-/-- A concrete suffix used to probe right-insensitivity. -/
-private def someSuffix : FloatingForm CVKind Segment Morph :=
-  stemForm "ma" [.C, .V] [.m, .a] {(0, 0), (1, 1)}
-
-/-- **Left-edge locality (no look-ahead), concrete witness.** Appending
-    phonological material on the right of the stem does not change whether
-    `(d)` surfaces. Shown here for `ól` with a concrete suffix; the general
-    statement (any suffix, configuration level) is
-    `dDockable_withHist_concat_right` below. This is the categorical
-    resolution of the paper's apparent ordering paradox — the conditioning
-    *looks* boundary-spanning but is in fact morpheme-local. -/
-theorem dPrime_right_invariant :
-    dPrimeSurfaces (withHist ól) ↔
-      dPrimeSurfaces (withHist ((ól.hconcat someSuffix))) := by
-  decide
-
-/-! ### The general no-look-ahead theorem
-
-`dPrime_right_invariant` above is the concrete witness; here it is for
-*every* suffix. The floating `(d)` shifts melody indices only, so
-surface-linkedness of a skeletal slot reduces to the stem's underlying
-links; and suffix material concatenated on the right lands at skeletal
-positions `≥ stem.lower.len`, never touching slots `0`/`1`. The
-docking configuration is therefore determined by the stem's left edge
-alone — the formal content of strict modularity (no look-ahead). -/
-
-/-- Surface-linkedness of skeletal slot `j` on a historic-tense form
-    reduces to the stem having an underlying link to `j`: the floating
-    `(d)` shifts melody indices only, never skeletal ones. -/
-private theorem isLinkedLower_withHist (X : FloatingForm CVKind Segment Morph) (j : Nat) :
-    (withHist X).SurfaceLinkedLower j ↔ ∃ a, (a, j) ∈ X.links := by
-  have hlinks : (withHist X).surfaceLinks = X.links.image (shiftLink 1 0) := by
-    rw [withHist_eq_concat, FloatingForm.hconcat_surfaceLinks]
-    simp [historicExponent]
-  constructor
-  · rintro ⟨p, hp, hpj⟩
-    rw [hlinks, Finset.mem_image] at hp
-    obtain ⟨q, hq, hqp⟩ := hp
-    refine ⟨q.1, ?_⟩
-    have hqj : q.2 = j := by
-      have h2 := congrArg Prod.snd hqp
-      simp only [shiftLink_apply, Nat.add_zero] at h2
-      rw [h2]; exact hpj
-    rw [← hqj]; exact hq
-  · rintro ⟨a, ha⟩
-    refine ⟨(a + 1, j), ?_, rfl⟩
-    rw [hlinks, Finset.mem_image]
-    exact ⟨(a, j), ha, by simp [shiftLink]⟩
-
-/-- A link to a low skeletal slot (`j < stem.lower.len`) is unaffected
-    by appending a suffix: the suffix's links are shifted to slots
-    `≥ stem.lower.len`, never reaching `j`. -/
-private theorem linked_concat_low (stem suffix : FloatingForm CVKind Segment Morph) {j : Nat}
-    (hj : j < stem.lower.len) :
-    (∃ a, (a, j) ∈ (stem.hconcat suffix).links) ↔
-      ∃ a, (a, j) ∈ stem.links := by
-  rw [FloatingForm.hconcat_links]
-  constructor
-  · rintro ⟨a, ha⟩
-    rw [Finset.mem_union] at ha
-    rcases ha with h | h
-    · exact ⟨a, h⟩
-    · exfalso
-      rw [Finset.mem_image] at h
-      obtain ⟨q, _, hqe⟩ := h
-      have hsnd := congrArg Prod.snd hqe
-      simp only [shiftLink_apply] at hsnd
-      omega
-  · rintro ⟨a, ha⟩
-    exact ⟨a, Finset.mem_union.2 (Or.inl ha)⟩
-
-/-- The skeletal (lower) tier of a historic form is the stem's — the
-    floating `(d)` contributes no skeletal slot. -/
-private theorem withHist_lower (Y : FloatingForm CVKind Segment Morph) :
-    (withHist Y).lower = Y.lower := by
-  rw [withHist_eq_concat, FloatingForm.hconcat_lower]
-  exact LabeledTuple.empty_concat Y.lower
-
-/-- The melodic (upper) tier of a historic form is `(d)` concatenated with the
-    stem's — used to compute upper-tier lengths in the locality proofs. -/
-private theorem withHist_upper (Y : FloatingForm CVKind Segment Morph) :
-    (withHist Y).upper = historicExponent.upper.concat Y.upper := by
-  rw [withHist_eq_concat, FloatingForm.hconcat_upper]
-
-/-- **The general no-look-ahead theorem.** For *any* suffix, the
-    `(d)`-docking configuration of the historic-tense form is determined
-    by the stem's left two skeletal slots alone — appending phonological
-    material on the right cannot change it (the stem already supplies
-    those slots). The general form of `dPrime_right_invariant`: the
-    formal content of strict modularity. (The post-*lenition* version
-    `dPrimeSurfaces` additionally requires `{L}`-docking to be left-local,
-    which holds for in-bounds stems; this is the configuration-level
-    statement, on which it rests.) -/
-theorem dDockable_withHist_concat_right (stem suffix : FloatingForm CVKind Segment Morph)
-    (h2 : 2 ≤ stem.lower.len) :
-    dDockable (withHist ((stem.hconcat suffix))) ↔
-      dDockable (withHist stem) := by
-  have hlow : ∀ j, j < stem.lower.len →
-      (withHist ((stem.hconcat suffix))).lower.get? j =
-        (withHist stem).lower.get? j := by
-    intro j hj
-    rw [withHist_lower, withHist_lower, FloatingForm.hconcat_lower,
-      LabeledTuple.get?_concat_left hj]
-  have hlink : ∀ j, j < stem.lower.len →
-      ((withHist ((stem.hconcat suffix))).SurfaceLinkedLower j ↔
-        (withHist stem).SurfaceLinkedLower j) := by
-    intro j hj
-    rw [isLinkedLower_withHist, isLinkedLower_withHist]
-    exact linked_concat_low stem suffix hj
-  unfold dDockable isCSlot isVSlot
-  rw [hlow 0 (by omega), hlow 1 (by omega), hlink 0 (by omega), hlink 1 (by omega)]
-
-/-! ### Lifting to the post-lenition predicate
-
-The configuration-level theorem above is pre-lenition. The full
-`dPrimeSurfaces` version additionally needs `{L}`-docking (`lenite`) to
-be left-local: `lenite` targets the consonant on skeletal slot 0, which
-is the stem's, and deletes the same melody index in both forms. This
-needs the stem **in-bounds** (`stem.InBounds`): otherwise a stem
-link with an out-of-range melody index would sit outside `withHist
-stem`'s `initialConsonantIdx` search range but inside the longer suffixed
-range, and `lenite` could target different indices. -/
-
-/-- A surface link to a low skeletal slot (`j < stem.lower.len`) is
-    present in the suffixed form iff present in the stem's — the
-    pointwise (per `(k, j)`) version of `linked_concat_low`, used both
-    for `initialConsonantIdx` and after `deleteTierElem`. -/
-private theorem mem_surfaceLinks_concat (stem suffix : FloatingForm CVKind Segment Morph)
-    {k j : Nat} (hj : j < stem.lower.len) :
-    (k, j) ∈ (withHist ((stem.hconcat suffix))).surfaceLinks ↔
-      (k, j) ∈ (withHist stem).surfaceLinks := by
-  have hsB : (withHist ((stem.hconcat suffix))).surfaceLinks =
-      (stem.hconcat suffix).links.image (shiftLink 1 0) := by
-    rw [withHist_eq_concat, FloatingForm.hconcat_surfaceLinks]
-    simp [historicExponent]
-  have hsA : (withHist stem).surfaceLinks =
-      stem.links.image (shiftLink 1 0) := by
-    rw [withHist_eq_concat, FloatingForm.hconcat_surfaceLinks]
-    simp [historicExponent]
-  rw [hsB, hsA, FloatingForm.hconcat_links, Finset.image_union, Finset.mem_union]
-  have hfalse : (k, j) ∉ (suffix.links.image
-      (shiftLink stem.upper.len stem.lower.len)).image (shiftLink 1 0) := by
-    rw [Finset.image_image, Finset.mem_image]
-    rintro ⟨⟨a, b⟩, _, he⟩
-    have hsnd := congrArg Prod.snd he
-    simp only [Function.comp_apply, shiftLink_apply] at hsnd
-    omega
-  tauto
-
-/-- `List.find?` over `range n` is unchanged by extending `n`, provided
-    the predicate is `false` on the new tail — the search never reaches it. -/
-private theorem find?_range_stable {p : Nat → Bool} {m n : Nat} (hmn : m ≤ n)
-    (htail : ∀ i, m ≤ i → p i = false) :
-    (List.range n).find? p = (List.range m).find? p := by
-  cases hm : (List.range m).find? p with
-  | none =>
-    rw [List.find?_range_eq_none] at hm ⊢
-    intro i _
-    by_cases h : i < m
-    · exact hm i h
-    · simp [htail i (by omega)]
-  | some k =>
-    rw [List.find?_range_eq_some] at hm ⊢
-    obtain ⟨hpk, hk, hmin⟩ := hm
-    rw [List.mem_range] at hk
-    exact ⟨hpk, List.mem_range.mpr (by omega), hmin⟩
-
-/-- **`{L}`-docking is left-local.** `lenite` targets the same melody
-    index in the historic form of the stem and of the suffixed stem:
-    the slot-0 search predicate agrees (`mem_surfaceLinks_concat`) and,
-    by `InBounds`, the stem's slot-0 links sit inside its own melody
-    range, so the longer suffixed search finds no extra match. -/
-private theorem initialConsonantIdx_concat (stem suffix : FloatingForm CVKind Segment Morph)
-    (h2 : 2 ≤ stem.lower.len) (hib : stem.InBounds) :
-    initialConsonantIdx (withHist ((stem.hconcat suffix)))
-      = initialConsonantIdx (withHist stem) := by
-  have hpt : (fun k => decide ((k, 0) ∈
-        (withHist ((stem.hconcat suffix))).surfaceLinks)) =
-      (fun k => decide ((k, 0) ∈ (withHist stem).surfaceLinks)) :=
-    funext fun k => decide_eq_decide.mpr (mem_surfaceLinks_concat stem suffix (by omega))
-  have eA : (withHist stem).upper.len = stem.upper.len + 1 := by
-    rw [withHist_upper]; simp [historicExponent, Nat.add_comm]
-  unfold initialConsonantIdx
-  rw [hpt]
-  apply find?_range_stable
-  · show (withHist stem).upper.len ≤
-      (withHist ((stem.hconcat suffix))).upper.len
-    have eB : (withHist ((stem.hconcat suffix))).upper.len =
-        stem.upper.len + suffix.upper.len + 1 := by
-      rw [withHist_upper, FloatingForm.hconcat_upper]
-      simp [historicExponent, LabeledTuple.concat_len]; omega
-    omega
-  · intro i hi
-    simp only [decide_eq_false_iff_not]
-    intro hmem
-    have hsA : (withHist stem).surfaceLinks = stem.links.image (shiftLink 1 0) := by
-      rw [withHist_eq_concat, FloatingForm.hconcat_surfaceLinks]
-      simp [historicExponent]
-    rw [hsA, Finset.mem_image] at hmem
-    obtain ⟨⟨a, b⟩, hab, he⟩ := hmem
-    have hfst := congrArg Prod.fst he
-    simp only [shiftLink_apply] at hfst
-    have hin1 : a < stem.upper.len := (hib (a, b) hab).1
-    rw [eA] at hi
-    omega
-
-/-- The docking configuration is right-local even after `lenite` deletes
-    melody index `k`: `deleteTierElem k` only filters `surfaceLinks` and
-    leaves the lower tier, so the slot-0/1 agreement survives. -/
-private theorem dDockable_deleteTierElem_concat (stem suffix : FloatingForm CVKind Segment Morph)
-    (h2 : 2 ≤ stem.lower.len) (k : Nat) :
-    dDockable ((withHist ((stem.hconcat suffix))).deleteTierElem k) ↔
-      dDockable ((withHist stem).deleteTierElem k) := by
-  have hlow : ∀ j, j < stem.lower.len →
-      ((withHist ((stem.hconcat suffix))).deleteTierElem k).lower.get? j =
-        ((withHist stem).deleteTierElem k).lower.get? j := by
-    intro j hj
-    show (withHist ((stem.hconcat suffix))).lower.get? j =
-      (withHist stem).lower.get? j
-    rw [withHist_lower, withHist_lower, FloatingForm.hconcat_lower,
-      LabeledTuple.get?_concat_left hj]
-  have hlink : ∀ j, j < stem.lower.len →
-      (((withHist ((stem.hconcat suffix))).deleteTierElem k).SurfaceLinkedLower j ↔
-        ((withHist stem).deleteTierElem k).SurfaceLinkedLower j) := by
-    intro j hj
-    show (∃ p ∈ (withHist ((stem.hconcat suffix))).surfaceLinks.filter
-        (fun l => l.fst ≠ k), p.snd = j) ↔
-      (∃ p ∈ (withHist stem).surfaceLinks.filter (fun l => l.fst ≠ k), p.snd = j)
-    simp only [Finset.mem_filter]
-    constructor
-    · rintro ⟨p, ⟨hmem, hne⟩, hsnd⟩
-      have hp : p = (p.1, j) := Prod.ext rfl hsnd
-      rw [hp] at hmem
-      exact ⟨p, ⟨hp ▸ (mem_surfaceLinks_concat stem suffix hj).mp hmem, hne⟩, hsnd⟩
-    · rintro ⟨p, ⟨hmem, hne⟩, hsnd⟩
-      have hp : p = (p.1, j) := Prod.ext rfl hsnd
-      rw [hp] at hmem
-      exact ⟨p, ⟨hp ▸ (mem_surfaceLinks_concat stem suffix hj).mpr hmem, hne⟩, hsnd⟩
-  unfold dDockable isCSlot isVSlot
-  rw [hlow 0 (by omega), hlow 1 (by omega), hlink 0 (by omega), hlink 1 (by omega)]
-
-/-- **The general no-look-ahead theorem, post-lenition.** For any suffix,
-    whether `(d)` *surfaces* — `dPrimeSurfaces`, i.e. dockability after
-    `{L}`-lenition — is determined by the stem's left edge alone. Both
-    the docking configuration (`dDockable_withHist_concat_right`) and the
-    `{L}`-docking target (`initialConsonantIdx_concat`, needing
-    `InBounds`) are left-local, so the full predicate is too. This is
-    the paper's central claim, in full: preverbal *d'* never looks
-    rightward past the word it attaches to. -/
-theorem dPrimeSurfaces_withHist_concat_right (stem suffix : FloatingForm CVKind Segment Morph)
-    (h2 : 2 ≤ stem.lower.len) (hib : stem.InBounds) :
-    dPrimeSurfaces (withHist ((stem.hconcat suffix))) ↔
-      dPrimeSurfaces (withHist stem) := by
-  have hk : ∀ k, initialConsonantIdx (withHist stem) = some k →
-      (withHist ((stem.hconcat suffix))).upper.get? k =
-        (withHist stem).upper.get? k := by
-    intro k hoi
-    have hk_lt : k < (withHist stem).upper.len :=
-      List.mem_range.mp (List.mem_of_find?_eq_some hoi)
-    have hsplit : (withHist ((stem.hconcat suffix))).upper =
-        (withHist stem).upper.concat suffix.upper := by
-      rw [withHist_upper, FloatingForm.hconcat_upper, withHist_upper,
-        LabeledTuple.concat_assoc]
-    rw [hsplit, LabeledTuple.get?_concat_left hk_lt]
-  unfold dPrimeSurfaces lenite
-  rw [initialConsonantIdx_concat stem suffix h2 hib]
-  cases hoi : initialConsonantIdx (withHist stem) with
-  | none =>
-    dsimp only
-    exact dDockable_withHist_concat_right stem suffix h2
-  | some k =>
-    dsimp only
-    rw [hk k hoi]
-    split
-    · exact dDockable_deleteTierElem_concat stem suffix h2 k
-    · exact dDockable_withHist_concat_right stem suffix h2
-
-/-! ## §11 Layer 2 — the historic morpheme as a monoidal-category functor
-
-The deepest categorical content: morpheme *prefixation* is not merely a
-function on representations but an **endofunctor on the monoidal
-category** of representations — mathlib's `tensorLeft`. This consumes the
-full `MonoidalCategory (AR t)` instance (not merely the tensor
-operation), and the **associativity of prefixation** is the category's
-associator, exhibited by `tensorLeftTensor` — a natural isomorphism
-that does not exist without coherence (pentagon + triangle).
-
-`(d)` acts on the left edge, so it is *left*-tensoring (`tensorLeft`),
-not right: the categorical encoding of the morpheme's **directionality**
-as a preverbal particle rather than a suffix.
-
-The remaining Layer-2 frontier — modelling *lenition* and *docking*
-themselves as endofunctors of the representation category (acting on morphisms, not just
-objects) — is left open. The conjecture is that they are functorial
-only over precedence-preserving morphisms, not over all broad ones;
-`delinkInitialFunctor` settles the lenition case. The
-extensional content (no look-ahead) is fully captured by
-`dPrimeSurfaces_withHist_concat_right` above: for any suffix, whether
-`(d)` surfaces depends only on the stem's left edge. -/
-
-/-- The historic-tense exponent as an object of the monoidal category of
-    representations: one floating `(d)` melody node, no skeleton, no links. -/
-def historicExponentRep :
-    AR (Sigma.fst :
-      ((b : Bool) × TwoTier (TierSpec Segment Morph) (SegSpec CVKind Morph) b) → Bool) :=
-  AR.ofData
-    (fun b => match b with
-      | true => ([mel .dPrime mHist] : List (TwoTier (TierSpec Segment Morph) (SegSpec CVKind Morph) true))
-      | false => [])
-    ⊥
-
-open CategoryTheory MonoidalCategory in
-/-- **The historic morpheme is an endofunctor of the representation category.** Prefixing `(d)`
-    is left-tensoring by `historicExponentAR` — mathlib's `tensorLeft`,
-    which exists only because the category is monoidal. Left- rather
-    than right-tensoring encodes the morpheme's directionality as a
-    preverbal particle. -/
-def withHistFunctor :
-    AR (Sigma.fst :
-        ((b : Bool) × TwoTier (TierSpec Segment Morph) (SegSpec CVKind Morph) b) → Bool) ⥤
-    AR (Sigma.fst :
-        ((b : Bool) × TwoTier (TierSpec Segment Morph) (SegSpec CVKind Morph) b) → Bool) :=
-  tensorLeft historicExponentRep
-
-open CategoryTheory MonoidalCategory in
-/-- The functor's action on objects *is* morpheme prefixing: the tensor of
-    the exponent with the stem. -/
-theorem withHistFunctor_obj
-    (X : AR (Sigma.fst :
-        ((b : Bool) × TwoTier (TierSpec Segment Morph) (SegSpec CVKind Morph) b) → Bool)) :
-    withHistFunctor.obj X = historicExponentRep ⊗ X := rfl
-
-open CategoryTheory MonoidalCategory in
-/-- **Associativity of prefixation is the associator.** This natural
-    isomorphism — prefixing the compound `(d) ⊗ X` equals prefixing `X`
-    then prefixing `(d)` — is built from the category's associator, so it does
-    not exist unless the monoidal structure is *coherent* (pentagon +
-    triangle). It is the concrete artifact that makes the monoidal coherence
-    load-bearing rather than decorative. -/
-noncomputable def prefixAssoc
-    (X : AR (Sigma.fst :
-        ((b : Bool) × TwoTier (TierSpec Segment Morph) (SegSpec CVKind Morph) b) → Bool)) :
-    tensorLeft (historicExponentRep ⊗ X) ≅
-      tensorLeft X ⋙ tensorLeft historicExponentRep :=
-  tensorLeftTensor historicExponentRep X
-
-/-! ## §11.5 The morphism-functor frontier: why lenition is precedence-sensitive
-
-Layer 2 modelled morpheme *prefixing* as the functor `tensorLeft`. The
-deeper question is whether a phonological *process* — `{L}`-lenition — is
-a functor on the autosegmental category, acting on morphisms and not just
-objects. At the graph level, lenition is `delinkInitial`: erase the
-association lines to the leftmost (word-initial) skeletal slot.
-
-The answer is a sharp dichotomy. `delinkInitial` is **not** a functor on
-the broad category: a label-preserving reindexing
-(a broad `Graph.Hom`) can move a non-initial element into initial position, after
-which there is *no* morphism between the delinked images at all
-(`delinkInitial_not_functorial`). But over the **precedence-preserving wide
-subcategory** (the foundation's `AR.precPreserving`), it lifts to a genuine
-endofunctor `delinkInitialFunctor`: an arc-preserving morphism transports
-tier-initiality for free — an arc into `v` maps to an arc into `f v` — so the
-delinked edge conditions carry over. This is the categorical content of the
-linguistic fact that lenition targets the *word-initial* consonant: the
-process is functorial over exactly the maps that preserve precedence. -/
-
-section Frontier
-
-open Autosegmental
-
-/-- A vertex with no arc-predecessor: the tier-initial position. -/
-def NoPred {S : Type*} (X : Graph S) (v : X.V) : Prop :=
-  ∀ u, ¬ X.arcs.Adj u v
-
-/-- Erase every association line incident to a tier-`i₀`-initial vertex — the
-    graph model of the paper's initial-position delinking (lenition targeting
-    the word-initial slot). Arcs and labels are untouched. -/
-def delinkInitial {S ι : Type*} (t : S → ι) (i₀ : ι) (X : Graph S) : Graph S where
-  V := X.V
-  edges :=
-    { Adj := fun v w => X.edges.Adj v w ∧
-        ¬ (X.tier t v = i₀ ∧ NoPred X v) ∧ ¬ (X.tier t w = i₀ ∧ NoPred X w)
-      symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.2, h.2.1⟩⟩
-      loopless := ⟨fun v h => X.edges.loopless.irrefl v h.1⟩ }
-  arcs := X.arcs
-  label := X.label
-
-/-- Delinking preserves the structural axioms: arcs are untouched and the
-    edge set shrinks. -/
-def delinkInitialRep {S ι : Type*} {t : S → ι} (i₀ : ι) (X : AR t) : AR t :=
-  ⟨delinkInitial t i₀ X.obj, X.property.1, fun _ _ hadj harc => X.property.2 hadj.1 harc⟩
-
-open CategoryTheory in
-/-- **Initial-position delinking is an endofunctor of the precedence-preserving
-    wide subcategory**: an arc-preserving morphism transports tier-initiality
-    for free (an arc into `v` maps to an arc into `f v`), so the delinked edge
-    conditions carry over. On the broad category the lift fails
-    (`delinkInitial_not_functorial` below). -/
-def delinkInitialFunctor {S ι : Type*} {t : S → ι} (i₀ : ι) :
-    WideSubcategory (AR.precPreserving (t := t)) ⥤
-      WideSubcategory (AR.precPreserving (t := t)) where
-  obj X := ⟨delinkInitialRep i₀ X.obj⟩
-  map {X Y} f :=
-    ⟨InducedCategory.homMk
-      { toFun := f.hom.hom.toFun
-        edge_map := by
-          rintro v w ⟨hadj, hv, hw⟩
-          refine ⟨f.hom.hom.edge_map hadj, ?_, ?_⟩
-          · rintro ⟨htier, hmin⟩
-            refine hv ⟨?_, fun u hu => hmin (f.hom.hom.toFun u) (f.property hu)⟩
-            rw [show X.obj.obj.tier t v = Y.obj.obj.tier t (f.hom.hom.toFun v) from
-              (congrArg t (f.hom.hom.label_comp v)).symm]
-            exact htier
-          · rintro ⟨htier, hmin⟩
-            refine hw ⟨?_, fun u hu => hmin (f.hom.hom.toFun u) (f.property hu)⟩
-            rw [show X.obj.obj.tier t w = Y.obj.obj.tier t (f.hom.hom.toFun w) from
-              (congrArg t (f.hom.hom.label_comp w)).symm]
-            exact htier
-        label_comp := f.hom.hom.label_comp }, f.property⟩
-  map_id X := by
-    apply WideSubcategory.hom_ext
-    apply InducedCategory.hom_ext
-    rfl
-  map_comp f g := by
-    apply WideSubcategory.hom_ext
-    apply InducedCategory.hom_ext
-    rfl
-
-/-- The **negative half** of the dichotomy needs a witness: on the broad
-    category the lift fails, because a label-preserving reindexing can move a
-    non-initial slot into initial position. -/
-private abbrev negA :
-    AR (Sigma.fst : ((b : Bool) × TwoTier Unit Bool b) → Bool) :=
-  AR.ofData
-    (fun b => match b with
-      | true => ([()] : List (TwoTier Unit Bool true))
-      | false => [false, true])
-    (fun i j p q => i = true ∧ j = false ∧ p = 0 ∧ q = 1)
-
-private abbrev negB :
-    AR (Sigma.fst : ((b : Bool) × TwoTier Unit Bool b) → Bool) :=
-  AR.ofData
-    (fun b => match b with
-      | true => ([()] : List (TwoTier Unit Bool true))
-      | false => [true, false])
-    (fun i j p q => i = true ∧ j = false ∧ p = 0 ∧ q = 0)
-
-/-- The label-preserving swap of the two skeletal slots: a broad morphism
-    (it does not preserve precedence). -/
-private def negSwap : Graph.Hom negA.obj negB.obj where
-  toFun v := match v with
-    | ⟨true, p⟩ => ⟨true, p⟩
-    | ⟨false, ⟨0, _⟩⟩ => ⟨false, ⟨1, by decide⟩⟩
-    | ⟨false, ⟨1, _⟩⟩ => ⟨false, ⟨0, by decide⟩⟩
-  edge_map := by
-    rintro ⟨bv, p⟩ ⟨bw, q⟩ ⟨hne, hor⟩
-    rcases hor with ⟨rfl, rfl, hp, hq⟩ | ⟨rfl, rfl, hp, hq⟩
-    · obtain rfl : p = ⟨0, by decide⟩ := Fin.ext hp
-      obtain rfl : q = ⟨1, by decide⟩ := Fin.ext hq
-      exact ⟨by decide, Or.inl ⟨rfl, rfl, rfl, rfl⟩⟩
-    · obtain rfl : q = ⟨0, by decide⟩ := Fin.ext hp
-      obtain rfl : p = ⟨1, by decide⟩ := Fin.ext hq
-      exact ⟨by decide, Or.inr ⟨rfl, rfl, rfl, rfl⟩⟩
-  label_comp := by
-    rintro ⟨bv, p⟩
-    cases bv
-    · match p with
-      | ⟨0, _⟩ => rfl
-      | ⟨1, _⟩ => rfl
-    · rfl
-
-/-- **Delinking is not functorial on the broad category**: `negSwap` is a
-    morphism, yet the delinked images admit no morphism at all — the
-    surviving slot-1 link of `negA` lands on `negB`'s initial slot, which
-    delinking erased. The obstruction is precisely failure to preserve
-    precedence (`delinkInitialFunctor` lifts it otherwise). -/
-theorem delinkInitial_not_functorial :
-    IsEmpty (Graph.Hom
-      (delinkInitial Sigma.fst false negA.obj)
-      (delinkInitial Sigma.fst false negB.obj)) := by
-  refine ⟨fun g => ?_⟩
-  let v1 : negA.obj.V := ⟨true, ⟨0, by decide⟩⟩
-  let w1 : negA.obj.V := ⟨false, ⟨1, by decide⟩⟩
-  have hsurv : (delinkInitial Sigma.fst false negA.obj).edges.Adj v1 w1 := by
-    refine ⟨⟨by decide, Or.inl ⟨rfl, rfl, rfl, rfl⟩⟩, ?_, ?_⟩
-    · rintro ⟨h, -⟩
-      exact absurd h (by decide)
-    · rintro ⟨-, hmin⟩
-      exact hmin ⟨false, ⟨0, by decide⟩⟩ ⟨rfl, by decide⟩
-  have htw : (g.toFun w1).1 = false := congrArg Sigma.fst (g.label_comp w1)
-  obtain ⟨⟨-, hor⟩, hv, hw⟩ := g.edge_map hsurv
-  rcases hor with ⟨-, -, -, hq⟩ | ⟨ht, -, -, -⟩
-  · -- the image link lands on negB's initial slot: contradiction with delinking
-    refine hw ⟨htw, fun u hu => ?_⟩
-    have h2 : (u.2 : ℕ) < ((g.toFun w1).2 : ℕ) := hu.2
-    omega
-  · -- the symmetric orientation contradicts label preservation
-    exact absurd (htw.symm.trans ht) (by decide)
-
-end Frontier
-
-/-! ## §12 The strict-modularity payoff
-
-The phonological analysis above is *strictly modular* in the sense
-of [bermudez-otero-2012]: morphosyntax inserts the historic-
-tense morpheme `(d) + {L}` uniformly, and the phonology decides
-whether `(d)` surfaces by inspecting the post-lenition skeletal
-configuration of the verb. No look-ahead in morphology; no
-post-lenition reference in spell-out; no module-transcending
-diacritic. The paper's §1 frames this in opposition to four
-non-modular alternatives:
-
-* **Morphology directly manipulates phonological structure**
-  ([anderson-1992]).
-* **Readjustment rules triggered by module-transcending
-  diacritics** ([harley-noyer-1999]).
-* **Co-phonologies** ([anttila-2002], [inkelas-zoll-2007]).
-* **Morph-specific phonological constraints**
-  ([pater-2000], [pater-2009]).
-
-The autosegmental approach with floating phonologically-defective
-material ([lieber-1983], [zimmermann-2022]) is the
-fifth and only strictly-modular alternative, and it is the one
-[laoide-kemp-2026] adopts.
-
-This file does not formalise the other four alternatives directly.
-Their predictions for Standard Irish coincide with the
-autosegmental account; the discriminating data are in §6 of the
-paper (Munster Irish, past-tense impersonals) and are noted in the
-module docstring as deferred extensions.
--/
+/-- Figure 5 from the other side: the empty CV unit leaves `{L}` no consonant to dock onto, so
+an impersonal resists lenition even after a lenition-triggering particle ((26b)). -/
+theorem impersonal_blocks_lenition : initialConsonantIdx (withImpers fág) = none := by decide
 
 end LaoideKemp2026

@@ -9,31 +9,31 @@ import Linglib.Phonology.Autosegmental.Floating
 import Mathlib.Tactic.Linarith
 
 /-!
-# Poko postlexical tone requires serial, directional evaluation
-[mcpherson-lamont-2026], *Phonology* 43, e1.
+# McPherson and Lamont (2026): Poko Postlexical Tone Requires Serial, Directional Evaluation
 
-Poko postlexical tone (lexical data in `Fragments.Poko.Tone`) resists
-global constraint evaluation: no ranking or weighting of the paper's
-four faithfulness constraints derives both `/nān + rī^H + nā/` ('I ate
-a pig') and `/kāk^H + rī^H/` ('his pig'), while directional Harmonic
-Serialism ([lamont-2022b]) with `*FLOAT` evaluated left-to-right
-converges on every attested form. All step witnesses are
-`decide`-checked (no `sorry`).
+This file formalizes the argument of [mcpherson-lamont-2026] that Poko postlexical tone
+resists global constraint evaluation. No ranking or weighting of the paper's four
+faithfulness constraints derives both *nān + rī^H + nā* 'I ate a pig' and *kāk^H + rī^H*
+'his pig': the ranking argument is an inconsistent set of elementary ranking conditions
+derived from the candidates' violation profiles (`parallel_OT_inadequate`), and the
+weighting argument a contradiction in which one constraint's weight must both exceed and
+fall below a sum of others (`weighted_HG_inadequate`). Directional Harmonic Serialism after
+[lamont-2022b], with the constraint against floating tones evaluated left to right,
+converges on every attested form, whereas right-to-left evaluation converges on the wrong
+form and a count-based constraint yields a divergent tie ([pruitt-2009]); the further
+tableaux show the repair of falling contours, the blocking of crowding, and forced
+tautomorphemic docking. Every step witness is decided.
 
-## Main results
+## Implementation notes
 
-* `parallel_OT_inadequate` — the eq. 59 support is ERC-inconsistent
-  (ranking paradox), with W/L patterns derived from candidate
-  violation profiles via `ercOfProfiles`, not stipulated.
-* `weighted_HG_inadequate` — the paper's weighting contradiction:
-  `MAX(H)` cannot both exceed and fall below the summed weights of
-  `{DEP(link)/H, MAX(M), MAX(link)/M}`.
-* `Fig3.fig3_LR_converged` / `Fig3.fig3_RL_converged` — LR converges
-  to attested `[kāk rī dō]`, RL to the wrong `*[kāk rī dó]` (fig. 3);
-  `Fig3.parallel_optimum_three_way_tie` — count-based `*FLOAT` yields
-  a divergent tie ([pruitt-2009]).
-* `Eq21`–`Eq30` — further tableaux (eqs. 21, 22, 24, 27, 30): `*FALL`
-  repair, `*CROWD` blocking, `*M◁L`-forced tautomorphemic docking.
+The lexical data live in `Fragments.Poko.Tone`; the tableaux, rankings, and serial
+derivations are the substrate's harmonic-serialism and tableau apparatus.
+
+## References
+
+* [mcpherson-lamont-2026]
+* [lamont-2022b]
+* [pruitt-2009]
 -/
 
 namespace McPhersonLamont2026
@@ -60,7 +60,7 @@ inductive Cand
 
 /-- `MAX(H)` (eq. 7c): one violation per H tone deleted by GEN. -/
 def maxH : Constraint Cand :=
-  fun
+  λ
     | .nanWinner => 0   -- H docks rightward (preserved)
     | .nanLoser  => 1   -- H deleted
     | .kakWinner => 2   -- both Hs deleted
@@ -68,7 +68,7 @@ def maxH : Constraint Cand :=
 
 /-- `DEP(link)/H` (eq. 7a): one violation per inserted H-associated link. -/
 def depLinkH : Constraint Cand :=
-  fun
+  λ
     | .nanWinner => 1   -- new H link inserted (docking)
     | .nanLoser  => 0
     | .kakWinner => 0
@@ -76,7 +76,7 @@ def depLinkH : Constraint Cand :=
 
 /-- `MAX(M)` (eq. 7c analogue): one violation per M tone deleted. -/
 def maxM : Constraint Cand :=
-  fun
+  λ
     | .nanWinner => 1   -- M overwritten by docking H
     | .nanLoser  => 0
     | .kakWinner => 0
@@ -84,7 +84,7 @@ def maxM : Constraint Cand :=
 
 /-- `MAX(link)/M` (eq. 7b analogue): one violation per deleted M-tone link. -/
 def maxLinkM : Constraint Cand :=
-  fun
+  λ
     | .nanWinner => 1
     | .nanLoser  => 0
     | .kakWinner => 0
@@ -254,7 +254,8 @@ theorem fig3_RL_step3 :
 /-- RL step 4: *FALL repairs dō's HM contour; MAX(H) ≫ MAX(M) deletes the M. -/
 theorem fig3_RL_step4 :
     derivationRL.stepOptimum (((fig3Input.deleteTierElem 5).insertLink 3 2).deleteTierElem 1) =
-      {(((fig3Input.deleteTierElem 5).insertLink 3 2).deleteTierElem 1).deleteTierElem 4} := by decide
+      {(((fig3Input.deleteTierElem 5).insertLink 3 2).deleteTierElem 1).deleteTierElem 4} := by
+  decide
 
 /-- RL converges on `starredForm`. -/
 theorem fig3_RL_converged : derivationRL.Converged starredForm := by decide
@@ -434,11 +435,11 @@ open Morphology (Morph)
 /-- Embed a `tonalOverwrite` output into `FloatingForm`: one morpheme `m`, links `(i, i)`. -/
 def FloatingForm.ofTBUList {S : Type*} (host : List (TBU S)) (m : Morph) :
     FloatingForm S TRN Morph where
-  lower := .ofList (host.map (fun tbu => { seg := tbu.seg, morpheme := m }))
-  upper := .ofList (host.map (fun tbu => { value := tbu.tone, morpheme := m }))
-  links := ((List.range host.length).map (fun i => (i, i))).toFinset
+  lower := .ofList (host.map (λ tbu => { seg := tbu.seg, morpheme := m }))
+  upper := .ofList (host.map (λ tbu => { value := tbu.tone, morpheme := m }))
+  links := ((List.range host.length).map (λ i => (i, i))).toFinset
   deletedTier := ∅
-  surfaceLinks := ((List.range host.length).map (fun i => (i, i))).toFinset
+  surfaceLinks := ((List.range host.length).map (λ i => (i, i))).toFinset
 
 /-- Embedded forms carry at most one surface tone per TBU. -/
 theorem FloatingForm.ofTBUList_linksTo_subsingleton {S : Type*}
@@ -464,7 +465,7 @@ theorem FloatingForm.ofTBUList_linksTo_subsingleton {S : Type*}
     List.nodup_iff_count_le_one.mp h_nodup i
   have h_count_eq : ((FloatingForm.ofTBUList host m).linksTo i).count i =
                     ((FloatingForm.ofTBUList host m).linksTo i).length :=
-    List.count_eq_length.mpr (fun b hb => (h_all b hb).symm)
+    List.count_eq_length.mpr (λ b hb => (h_all b hb).symm)
   omega
 
 /-- A `FloatingForm` with two surface tones on one TBU — unreachable by `ofTBUList`. -/

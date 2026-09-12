@@ -2,41 +2,31 @@ import Linglib.Morphology.DistributedMorphology.Locality
 import Linglib.Data.Examples.Marantz2013
 
 /-!
-# Locality domains for contextual allomorphy across the interfaces
+# Marantz (2013): Locality Domains for Contextual Allomorphy Across the Interfaces
 
-[marantz-2013]: contextual allosemy — the choice of a polysemous root's
-meaning in context — is bounded exactly as contextual allomorphy is, by the
-spell-out domain of the first category head and by adjacency at the
-interface, phonological for allomorphy and semantic for allosemy. Past tense
-conditions the root of *taught* across a null v but not the root of
-*quantized* across *-ize* ((1)); productive *-er*, outer *-er* and *-ness*,
-and the verb made from the noun *house* show a second category head closing
-the domain ((2), (3), §6.2); *global* fixes the reading *globalize* cannot
-revert, and *novelize* the one *novelization* cannot (§6.3). The Japanese
-continuative nominalizations, Greek *-tos* statives, and English *quantized
-energy* ((5)–(7), Table 6.1) assign a special root meaning over an overt
-verbalizer because that verbalizer is semantically null and the trigger is
-noncyclic; their counterparts over an overt adjectivizer cannot. Idioms such
-as *nationalize* live in a different domain, below the external argument,
-which neither contains nor is contained in the root's spell-out domain.
+This file formalizes the locality claim of [marantz-2013]: contextual allosemy, the choice
+of a polysemous root's meaning in context, is bounded exactly as contextual allomorphy is,
+by the spell-out domain of the first category head and by adjacency at the interface,
+phonological for allomorphy and semantic for allosemy. Past tense conditions the root of
+*taught* across a null v but not the root of *quantized* across *-ize*; a second category
+head closes the domain, as *-er*, *-ness*, and the verb made from the noun *house* show;
+*global* fixes the reading *globalize* cannot revert. The heads of the examples with their
+nullness at each interface (`Head`, `Morpheme`, `cyclic`, `phonNull`, `semNull`) and the
+words with the head whose conditioning is at issue (`Row`, `rows`) give the results: attested
+conditioning is visible at its interface and blocked conditioning is not
+(`allomorphy_rows`, `allosemy_rows`), idioms live below Voice in a domain that neither
+contains nor is contained in the root's (`idiom_rows`, `domains_cross_cut`), and a head
+that conditions the root is the first category head or noncyclic with only null heads below
+it (`strong_prediction`).
 
-## Main definitions
+## TODO
 
-* `Head`, `Morpheme`, `cyclic`, `phonNull`, `semNull`, `agentive`: the heads
-  of the examples, the categorizers as the cyclic heads, and nullness at each
-  interface.
-* `Row`, `rows`: the paper's words, each with the head whose conditioning of
-  the root is at issue.
+The chapter is not on file; example and section locators are transcribed from an earlier
+version of this file and are UNVERIFIED.
 
-## Main results
+## References
 
-* `allomorphy_rows`, `allosemy_rows`: attested conditioning is visible at its
-  interface and blocked conditioning is not.
-* `idiom_rows`: the idiomatic word lies below Voice.
-* `domains_cross_cut`: a head local to the root outside the idiom domain, and
-  one inside the idiom domain outside the root's.
-* `strong_prediction`: a head that conditions the root is the first category
-  head or noncyclic, with only null heads below it (§6.5).
+* [marantz-2013]
 -/
 
 namespace Marantz2013
@@ -76,10 +66,10 @@ def semNull (m : Morpheme) : Prop := m.sem = .null
 /-- Introduces the external argument. -/
 def agentive (m : Morpheme) : Prop := m.head = .voice
 
-instance : DecidablePred cyclic := fun _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _))
-instance : DecidablePred phonNull := fun _ => inferInstanceAs (Decidable (_ = _))
-instance : DecidablePred semNull := fun _ => inferInstanceAs (Decidable (_ = _))
-instance : DecidablePred agentive := fun _ => inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred cyclic := λ _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+instance : DecidablePred phonNull := λ _ => inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred semNull := λ _ => inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred agentive := λ _ => inferInstanceAs (Decidable (_ = _))
 
 /-! ### The words -/
 
@@ -130,7 +120,7 @@ def rootNames : List String := (Examples.all.filterMap (·.feature? "root")).era
 def Row.ofExample (ex : LinguisticExample) : Option Row := do
   let root ← ex.feature? "root"
   let heads := [("h1", "h1exp"), ("h2", "h2exp"), ("h3", "h3exp"), ("h4", "h4exp")].filterMap
-    fun (k, e) => (ex.feature? k).bind (Morpheme.ofLabel ((ex.feature? e).getD ""))
+    λ (k, e) => (ex.feature? k).bind (Morpheme.ofLabel ((ex.feature? e).getD ""))
   let t ← (ex.feature? "trigger").bind triggerOfLabel
   if h : t < heads.length then
     pure ⟨ex.primaryText, ⟨⟨rootNames.idxOf root⟩, heads⟩, ⟨t, h⟩,

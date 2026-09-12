@@ -1488,7 +1488,6 @@ import Linglib.Semantics.Alternatives.Structural
 import Linglib.Semantics.Alternatives.Symmetric
 import Linglib.Semantics.ArgumentStructure.Affectedness
 import Linglib.Semantics.ArgumentStructure.Agentivity
-import Linglib.Semantics.ArgumentStructure.ArgDerivation
 import Linglib.Semantics.ArgumentStructure.ArgumentIntroduction
 import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 import Linglib.Semantics.ArgumentStructure.CaseRegion
@@ -1589,7 +1588,6 @@ import Linglib.Semantics.Conditionals.Counterfactual.Alternatives
 import Linglib.Semantics.Conditionals.Counterfactual.Implicature
 import Linglib.Semantics.Conditionals.Counterfactual.Lumping
 import Linglib.Semantics.Conditionals.Counterfactual.QuantifierEmbedding
-import Linglib.Semantics.Conditionals.LeftNested
 import Linglib.Semantics.Conditionals.Marker
 import Linglib.Semantics.Conditionals.PremiseSemantic
 import Linglib.Semantics.Conditionals.Presupposition
@@ -1667,7 +1665,6 @@ import Linglib.Semantics.Quantification.Signatures
 import Linglib.Logic.Natural.Soundness
 import Linglib.Logic.Natural.Strawson.Basic
 import Linglib.Logic.Natural.Strawson.Soundness
-import Linglib.Semantics.Events.Adjacency
 import Linglib.Semantics.Events.Basic
 import Linglib.Semantics.Events.CEM
 import Linglib.Semantics.Events.Path
@@ -1696,7 +1693,6 @@ import Linglib.Semantics.Focus.Marking
 import Linglib.Semantics.Focus.Particles
 import Linglib.Semantics.Focus.Unalternatives
 import Linglib.Semantics.Genericity.Basic
-import Linglib.Semantics.Genericity.Dynamic
 import Linglib.Semantics.Genericity.MeaningPreservation
 import Linglib.Semantics.Genericity.NominalMappingParameter
 import Linglib.Semantics.Genericity.SortedOntology
@@ -2338,7 +2334,6 @@ import Linglib.Studies.Khoo2015
 import Linglib.Studies.Kim2024
 import Linglib.Studies.Kiparsky2002
 import Linglib.Studies.KirkGiannini2024
-import Linglib.Studies.Kirkpatrick2024
 import Linglib.Studies.Kiss1998
 import Linglib.Studies.Klecha2016
 import Linglib.Studies.Klein1980
@@ -2358,7 +2353,6 @@ import Linglib.Studies.KratzerShimoyama2002
 import Linglib.Studies.Krejci2012
 import Linglib.Studies.Krifka1989
 import Linglib.Studies.Krifka1998
-import Linglib.Studies.Krifka2007
 import Linglib.Studies.Krifka2013
 import Linglib.Studies.Krifka2015
 import Linglib.Studies.Krifka2020
@@ -2396,7 +2390,6 @@ import Linglib.Studies.Levin2026
 import Linglib.Studies.LevshinaEtAl2023
 import Linglib.Studies.Levy2008
 import Linglib.Studies.Lewis1973
-import Linglib.Studies.Lionnet2022Laal
 import Linglib.Studies.Lionnet2025
 import Linglib.Studies.LittleMoroneyRoyer2022
 import Linglib.Studies.LiuRotter2025
@@ -2417,7 +2410,6 @@ import Linglib.Studies.Magri2025
 import Linglib.Studies.Maier2015
 import Linglib.Studies.MajidBosterBowerman2008
 import Linglib.Studies.Major2024
-import Linglib.Studies.Mandelkern2019
 import Linglib.Studies.Mandelkern2022
 import Linglib.Studies.Marantz1991
 import Linglib.Studies.Marantz2013

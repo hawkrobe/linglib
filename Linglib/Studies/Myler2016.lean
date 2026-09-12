@@ -3,43 +3,31 @@ import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 import Linglib.Data.Examples.Myler2016
 
 /-!
-# Building and interpreting possession sentences
+# Myler (2016): Building and Interpreting Possession Sentences
 
-[myler-2016] treats every *have* and *be* as one meaningless copula v, whose
-meaning is the identity function and whose form is fixed by its syntactic
-surroundings: *have* under a transitive Voice — one that bears the specifier
-feature {D} and φ-features — and *be* otherwise. The possession relation
-comes from inside the DP complement, and Voice adds a θ-role only when the
-complement is a predicate of eventualities. Icelandic's two *have* verbs
-divide the transitive context by what lies below v: *hafa* over a PredP,
-*eiga* elsewhere.
-
-## Main definitions
-
-* `Context`, `englishItems`, `icelandicItems`: what v's insertion sees and
-  the Vocabulary Items of English and Icelandic.
-* `Attributive`: the two DP-internal possession structures, a PP possessor
-  under Pred or a possessor in Spec,PossP.
-* `voiceAlloseme`: the Voice alloseme a complement selects, the substrate's
-  `Voice.Alloseme.fromComplement`.
-
-## Main results
-
-* `have_iff_transitive`: *have* is *be* in a transitive Voice context.
-* `hafa_iff_predP`, `eiga_only_if_no_pp`, `hafa_only_if_pp`: the Icelandic
-  items and the two generalizations that follow from the structures.
-* `clausal_rows`, `attributive_rows`: the items reproduce the Icelandic data
-  pool, clausal and attributive.
-* `expletive_voice_passes_complement`: with a relational complement Voice
-  is the identity, so the sentence means what its complement means.
+This file formalizes the treatment of *have* and *be* in [myler-2016] as one meaningless
+copula whose meaning is the identity function and whose form is fixed by its syntactic
+surroundings: *have* under a transitive Voice, one bearing the specifier feature and
+φ-features, and *be* otherwise (`englishItems`, `have_iff_transitive`). The possession
+relation comes from inside the noun-phrase complement, and Voice adds a thematic role only
+when the complement is a predicate of eventualities, so with a relational complement the
+sentence means what its complement means (`expletive_voice_passes_complement`). Icelandic's
+two *have* verbs divide the transitive context by what lies below the copula, *hafa* over a
+predicative phrase and *eiga* elsewhere (`icelandicItems`, `hafa_iff_predP`), and the two
+generalizations about attributive possession follow from the structures
+(`eiga_only_if_no_pp`, `hafa_only_if_pp`); the items reproduce the book's Icelandic data,
+clausal and attributive.
 
 ## Implementation notes
 
-Example numbers are the book's: chapter 1 for the copula and Voice rules,
-chapter 4 for *have* and the Icelandic section. The Minimalist `Voice.Head`
-flavors are not used for the insertion context: Myler's condition is
-syntactic ({D} and φ, the transitive configuration of (24)), and relational
-*have* has an expletive Voice at LF while still surfacing as *have*.
+Example numbers are the book's, chapter 1 for the copula and Voice rules and chapter 4 for
+*have* and the Icelandic section. The Minimalist Voice flavors are not used for the
+insertion context, which is syntactic, the transitive configuration; relational *have* has
+an expletive Voice at logical form while still surfacing as *have*.
+
+## References
+
+* [myler-2016]
 -/
 
 namespace Myler2016
@@ -112,7 +100,7 @@ def Attributive.AllowsPP : Attributive → Prop
   | .possP => False
 
 instance : DecidablePred Attributive.AllowsPP :=
-  fun a => by cases a <;> unfold Attributive.AllowsPP <;> infer_instance
+  λ a => by cases a <;> unfold Attributive.AllowsPP <;> infer_instance
 
 /-- Clausal possession embeds the attributive structure under v in a
 transitive context. -/

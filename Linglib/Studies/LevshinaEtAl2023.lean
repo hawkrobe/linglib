@@ -1,31 +1,40 @@
 import Linglib.Data.UD.DependencyLength.FutrellEtAl2020
 
 /-!
-# Levshina et al. 2023: Gradient Word Order
-[levshina-stoynova-2023]
+# Levshina et al. (2023): Why We Need a Gradient Approach to Word Order
 
-Levshina et al., "Why we need a gradient approach to word order" (*Linguistics*
-61(4):825–883) argues that word-order typology should use continuous measures
-(proportions, Shannon entropy, mutual information) rather than categorical
-labels (SVO, SOV, "rigid", "flexible").
+This file records the gradient word-order measures of [levshina-stoynova-2023]: in place of
+categorical labels such as SVO or "flexible", a language's basic order is described by the
+proportion of subject-before-object clauses, the Shannon entropy of the subject–object order,
+and the mutual information between case marking and grammatical role (`GradientWOProfile`).
+Three claims are checked on the paper's datasets: the proportion ranges continuously across
+languages rather than splitting into types (`so_proportion_is_continuous`), languages with
+informative case marking have freer order (`case_mi_correlates_with_so_entropy`), and one
+language varies by register, Russian conversation permitting far more object-first clauses
+than fiction (`russian_vo_varies_by_register`).
 
-Key claims: SO proportion is continuous across languages (Fig. 1); case-marking
-MI correlates with SO entropy (Fig. 3); register affects word-order proportions
-(Fig. 7: Russian VO varies by register). Data from the paper's OSF repository
-(https://osf.io/w9u6v/): Dataset1.txt (per-language SO proportion), Dataset3.txt
-(SO entropy, case MI), Dataset6.txt (Russian register variation). All values
-are ×1000 integer encodings.
+## Implementation notes
+
+The values are the paper's OSF datasets (https://osf.io/w9u6v/) as integers scaled by a
+thousand: the proportion from Dataset1, entropy and case mutual information from Dataset3,
+and the Russian register proportions from Dataset6.
+
+## TODO
+
+The rows are empirical data and belong in a generated `Data/WordOrder` module; the figure
+attributions are transcribed from an earlier version of this file and are UNVERIFIED pending
+a check against the paper.
+
+## References
+
+* [levshina-stoynova-2023]
 -/
 
 namespace LevshinaEtAl2023
 
--- ============================================================================
--- §2: Gradient Language Profile (OSF Dataset1.txt + Dataset3.txt)
--- ============================================================================
-
-/-- Per-language gradient word-order data from the [levshina-stoynova-2023] OSF
-    datasets. SO proportion from Dataset1.txt, entropy and case MI from
-    Dataset3.txt. All values × 1000, rounded to nearest integer. -/
+/-- A language's gradient word-order profile: the proportion of subject-before-object
+clauses, the entropy of the subject–object order, and the mutual information between case
+marking and grammatical role, each scaled by a thousand. -/
 structure GradientWOProfile where
   name : String
   isoCode : String
@@ -36,8 +45,6 @@ structure GradientWOProfile where
   /-- Mutual information between case markers and grammatical role × 1000 (Dataset3.txt) -/
   caseMI1000 : Nat
   deriving Repr, DecidableEq
-
--- 30 languages with exact values from OSF Dataset1.txt + Dataset3.txt
 
 def arabic : GradientWOProfile :=
   { name := "Arabic", isoCode := "ar"
@@ -159,83 +166,34 @@ def vietnamese : GradientWOProfile :=
   { name := "Vietnamese", isoCode := "vi"
     soProportion1000 := 981, soEntropy1000 := 105, caseMI1000 := 0 }
 
-/-- All 30 gradient word-order profiles from OSF Dataset1.txt + Dataset3.txt. -/
+/-- The thirty languages of the datasets. -/
 def allProfiles : List GradientWOProfile :=
   [ arabic, bulgarian, croatian, czech, danish, dutch, english, estonian
   , finnish, french, german, greek, hindi, hungarian, indonesian, italian
   , japanese, korean, latvian, lithuanian, persian, portuguese, romanian
   , russian, slovene, spanish, swedish, tamil, turkish, vietnamese ]
 
--- ============================================================================
--- §3: Levshina et al. Core Theorems
--- ============================================================================
-
-/-- Languages with near-deterministic SO order (proportion > 960) have low SO entropy (< 300).
-    13 languages: Bulgarian, Danish, Dutch, English, French, Indonesian, Italian,
-    Korean, Portuguese, Romanian, Spanish, Swedish, Vietnamese. -/
-theorem rigid_languages_low_entropy :
-    (allProfiles.filter (·.soProportion1000 > 960)).all
-      (·.soEntropy1000 < 300) = true := by decide
-
-/-- Among Indo-European languages with case morphology, high SO entropy (> 700) implies
-    high case MI (> 400). Czech, Hungarian, Latvian, Lithuanian all use case marking
-    to compensate for word-order freedom. -/
-theorem case_rich_flexible_languages_high_mi :
-    (allProfiles.filter (λ p => p.soEntropy1000 > 700 ∧ p.caseMI1000 > 0)).all
-      (λ p => p.caseMI1000 > 400 ∨ p.name == "Tamil") = true := by decide
-
-/-- Tamil is a counterexample to the simple "flexibility requires case marking" story:
-    high SO entropy (824) but low case MI (59). Tamil uses verb agreement and
-    animacy rather than case morphology for role disambiguation.
-
-    This makes the gradient approach especially valuable — it reveals that the
-    case–flexibility correlation is a tendency with principled exceptions, not a law. -/
-theorem tamil_counterexample :
-    tamil.soEntropy1000 > 800 ∧ tamil.caseMI1000 < 100 := by
-  constructor <;> decide
-
-/-- Case MI correlates with SO entropy: languages with caseMI > 300 have
-    higher mean SO entropy than languages with caseMI ≤ 300. -/
+/-- The mean subject–object entropy of a set of languages, scaled by a thousand. -/
 def meanSOEntropy (ps : List GradientWOProfile) : Nat :=
   if ps.isEmpty then 0
   else ps.foldl (λ acc p => acc + p.soEntropy1000) 0 / ps.length
 
+/-- Languages whose case marking carries much information about grammatical role have freer
+subject–object order on average than the rest. -/
 theorem case_mi_correlates_with_so_entropy :
     meanSOEntropy (allProfiles.filter (·.caseMI1000 > 300)) >
     meanSOEntropy (allProfiles.filter (·.caseMI1000 ≤ 300)) := by decide
 
-/-- SO proportion spans a wide range: from Lithuanian (608) to Indonesian (999).
-    This 391-point spread refutes any simple binary classification. -/
+/-- The subject-before-object proportion spans the range from Lithuanian to Indonesian
+rather than clustering at a few types. -/
 theorem so_proportion_is_continuous :
     indonesian.soProportion1000 - lithuanian.soProportion1000 > 350 := by decide
 
--- ============================================================================
--- §4: Bridges to Existing Data
--- ============================================================================
-
--- Bridge 3: Head-final proportion ↔ SO proportion (Data/UD/DependencyLength/FutrellEtAl2020)
-
-/-- Languages with a high head-final proportion (> 700‰) in
-    [futrell-levy-gibson-2020]'s Table 2 have high soProportion (> 700) in
-    Levshina: head-final ≈ SOV ≈ high SO proportion. -/
-theorem head_final_correlates_with_so :
-    let shared := allProfiles.filter (λ p =>
-      Data.UD.DependencyLength.FutrellEtAl2020.rows.any (·.isoCode == p.isoCode))
-    let highHF := shared.filter (λ p =>
-      match Data.UD.DependencyLength.FutrellEtAl2020.rows.find? (·.isoCode == p.isoCode) with
-      | some f => f.propHeadFinal1000 > 700
-      | none => false)
-    highHF.all (·.soProportion1000 > 700) = true := by decide
-
--- ============================================================================
--- §5: Register Variation (Russian Case Study, OSF Dataset6.txt)
--- ============================================================================
-
-/-- Russian VO probability by register, from OSF Dataset6.txt (100 clauses per register).
-    Demonstrates within-language variation that a categorical label obscures. -/
+/-- The proportion of verb-before-object clauses in a register of Russian, scaled by a
+thousand. -/
 structure RegisterProfile where
   register : String
-  voProbability1000 : Nat  -- VO probability × 1000
+  voProbability1000 : Nat
   deriving Repr, DecidableEq
 
 def russianConversation : RegisterProfile :=
@@ -250,16 +208,8 @@ def russianNews : RegisterProfile :=
 def russianRegisters : List RegisterProfile :=
   [russianConversation, russianFiction, russianNews]
 
-/-- Russian conversation has lower VO probability than fiction:
-    spoken language permits more OV orders. -/
+/-- Russian conversation permits more object-first clauses than fiction. -/
 theorem russian_vo_varies_by_register :
     russianConversation.voProbability1000 < russianFiction.voProbability1000 := by decide
-
-/-- The register variation is large: fiction - conversation > 400
-    (a 44 percentage-point spread). A single categorical label
-    cannot capture this within-language variation. -/
-theorem register_variation_is_large :
-    russianFiction.voProbability1000 - russianConversation.voProbability1000 > 400 := by
-  decide
 
 end LevshinaEtAl2023

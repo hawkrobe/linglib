@@ -1,70 +1,68 @@
 import Linglib.Data.Generalizations.HomogeneityProjection
 
 /-!
-# [kriz-chemla-2015]: Two methods to find truth-value gaps
+# Križ and Chemla (2015): Two Methods to Find Truth-Value Gaps
 
-[kriz-chemla-2015] introduce two experimental methods for detecting truth-value
-gaps — separate completely-true and completely-false tasks (Exps. A0-A3) and
-one-shot ternary judgments (Exps. B1-B3, C2-C4) — and apply them to the
-projection of plural-definite homogeneity from the scope of sentential negation,
-`every`/`all`, `no`, and `exactly 2`. The gap projects in every tested
-environment except the gap? configuration (where the some- and all-substituted
-variants of the sentence are both false); under `no` it emerges only with the
-grammatical restimulation of Exp. C2, small but robust (fn. 14).
+This file formalizes the theoretical assessment in [kriz-chemla-2015], which
+introduces two experimental methods for detecting truth-value gaps (separate
+completely-true and completely-false tasks in Exps. A0–A3, one-shot ternary
+judgments in Exps. B1–B3 and C2–C4) and applies them to the projection of
+plural-definite homogeneity from the scope of sentential negation, `every` or
+`all`, `no`, and `exactly 2`. The gap projects in every tested environment
+except the gap? configuration, where the some- and all-substituted variants of
+the sentence are both false; under `no` it emerges only in Exp. C2, small but
+robust (fn. 14).
 
-The stimulus rows live in the generated `Data.Examples.KrizChemla2015` module
-and are pooled by [[Generalizations.HomogeneityProjection]] (embedded cells) and
-[[Generalizations.HomogeneityGap]] (unembedded and negated cells). This file
-implements §6's assessment of the three theoretical approaches to homogeneity
-against those pools.
+The paper's guiding principle (§3) locates a gap wherever the variant of the
+sentence with an existential in place of the definite is true while the
+variant with a universal is false. `someReading` and `allReading` are those
+two variants over a `Display` of homogeneous or `mixed` cells, and the three
+approaches assessed in §6 are combinations of them and of the globally
+exhaustified meaning (30): `supervaluation` ([spector-2013]; equivalently the
+local-exhaustification construals of §6.1.2), `globalConstrual` (the
+literal-versus-global-exhaustification construals, [magri-2009]), and
+`universalPresupposition` ([schwarzschild-1994], [lobner-2000],
+[gajewski-2005]). Each is run over a representative Table 13 display per
+tested cell against the pooled judgments of `Generalizations.HomogeneityProjection`
+and `Generalizations.HomogeneityGap`, whose rows are generated from
+`Data/Examples/KrizChemla2015.json`. The supervaluation prediction reproduces
+every pooled judgment (§6.4); the global construals fail on exactly the C2 `no`
+gap and the C4 gap?? gap; universal projection fails on exactly the bivalent
+conditions containing non-homogeneous cells (the argument from (42) in §6.3)
+plus the gap? condition.
 
-## Main declarations
+## Implementation notes
 
-* `Cell`, `Display` — the experimental displays: arrays of nine objects, each
-  array classified by whether it is fully, partially, or not at all
-  target-satisfying.
-* `someReading`, `allReading` — the paper's guiding principle (§3): the
-  sentence variants with the definite plural replaced by an existential or a
-  universal quantifier.
-* `supervaluation` — two-candidate supervaluation ([spector-2013]): true iff
-  true on both resolutions of the definite, false iff false on both. As §6.2
-  notes, this coincides with the local-exhaustification implicature construals
-  (si2)/(si4) of §6.1.2 on the projection data.
-* `globalConstrual` — implicature construals (si1)/(si3) ([magri-2009],
-  [magri-2014]): gap iff the literal and globally exhaustified meanings
-  conflict.
-* `universalPresupposition` — homogeneity as a presupposition projecting
-  universally from the quantifier's scope ([schwarzschild-1994],
-  [lobner-2000], [gajewski-2005]).
-* `display` — a representative Table 13 display for each tested C-series cell.
+A display is a list of `Cell`s, one per array of nine objects, since only the
+full / mixed / empty classification of each array enters the readings. The
+`notEvery` operator of the pool postdates the paper ([augurzky-etal-2023]);
+`globalExh` gives it the general clause of (30) and no theorem here exercises
+it. `bareLiteralNegative` and `wideScopeParse` reconstruct §6.1.3's diagnosis
+of the downward-entailing problem for the implicature approach: the bare
+existential literal meaning predicts no gap under negation, and parsing the
+definite above negation restores the fit for plain negation but not for `no`,
+whose definite contains a variable bound by the quantifier ([steedman-2012]).
 
-## Main results
+## TODO
 
-* `supervaluation_matches_pool` — the supervaluation/local-exhaustification
-  prediction reproduces every pooled projection judgment: §6.4's bottom line,
-  at the price of either local exhaustification in downward-entailing contexts
-  (contra [chierchia-fox-spector-2012]) or a restricted candidate set.
-* `globalConstrual_divergence` — construals comparing the literal meaning with
-  *global* exhaustification fail on exactly the C2 `no` gap and the C4 gap??
-  gap, the paper's two problem cells for (si1)/(si3).
-* `universalPresupposition_divergence` — universal projection fails on exactly
-  the bivalently-judged conditions containing non-homogeneous cells (argument
-  (42) of §6.3) plus the gap? condition.
-* `globalConstrual_every`, `globalConstrual_no_never_gap` — §6.1.3's structural
-  observations: all implicature construals align in the scope of `every`, and
-  without local exhaustification no gap can arise in the scope of `no`.
-* `supervaluationGap_matches_pool`, `bareLiteral_misses_negation_gap`,
-  `wideScopeParse_matches_pool` — the unembedded grid: supervaluation predicts
-  the polarity × scenario judgments; the bare existential literal meaning
-  predicts no gap under negation (the downward-entailing problem of §6.1.3);
-  the wide-scope parse of the definite (fn. 18) restores the fit.
+* The [george-2008]-style trivalent projection theory that §6.3 credits with
+  matching the supervaluation predictions is not implemented, nor are the
+  richer-candidate supervaluation variants of §6.2, which over-predict a gap
+  in the gap? condition.
 
-## Todo
+## References
 
-* [george-2008]-style trivalent presupposition projection — the variant §6.3
-  endorses as matching the supervaluation predictions — is not implemented,
-  nor are the richer-candidate supervaluation variants of fn. 19, which
-  over-predict a gap in the gap? condition.
+* [kriz-chemla-2015]
+* [spector-2013]
+* [magri-2009]
+* [magri-2014]
+* [chierchia-fox-spector-2012]
+* [schwarzschild-1994]
+* [lobner-2000]
+* [gajewski-2005]
+* [george-2008]
+* [steedman-2012]
+* [augurzky-etal-2023]
 -/
 
 namespace KrizChemla2015
@@ -92,7 +90,7 @@ plural predication. -/
 def Cell.homogeneous (c : Cell) : Prop := c ≠ .mixed
 
 instance : DecidablePred Cell.homogeneous :=
-  fun c => inferInstanceAs (Decidable (c ≠ .mixed))
+  λ c => inferInstanceAs (Decidable (c ≠ .mixed))
 
 /-- Number of cells whose boy found at least some of his presents. -/
 def occupied (d : Display) : ℕ := d.countP (· != Cell.empty)
@@ -245,7 +243,7 @@ exhaustification comes to the same thing, on any display. -/
 theorem globalConstrual_every (d : Display) :
     globalConstrual .every d = supervaluation .every d := by
   have h : allReading .every d → someReading .every d :=
-    fun ha c hc => by simp [ha c hc]
+    λ ha c hc => by simp [ha c hc]
   by_cases hs : someReading .every d <;> by_cases ha : allReading .every d <;>
     simp_all [globalConstrual, supervaluation, globalExh, gapValue]
 
@@ -303,7 +301,7 @@ theorem bareLiteral_misses_negation_gap :
       bareLiteralNegative d.scenario ≠ d.observed := by
   decide
 
-/-- The negated sentence with the definite parsed above negation (fn. 18):
+/-- The negated sentence with the definite parsed above negation (§6.1.3):
 the existential and universal resolutions now scope over the negated
 predicate. -/
 def wideScopeParse (sc : HomogeneityGap.GapScenario) : Trivalent :=

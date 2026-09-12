@@ -7,44 +7,32 @@ import Linglib.Phonology.Subregular.Dependence
 import Linglib.Core.Computability.Bimachine
 
 /-!
-# McCollum, Baković, Mai & Meinhardt (2020): Tutrugbu ATR harmony is circumambient
+# McCollum, Baković, Mai and Meinhardt (2020): Unbounded Circumambient Patterns
 
-[mccollum-bakovic-mai-meinhardt-2020] (Phonology 37:215-255) show that Tutrugbu
-(Kwa, Ghana) regressive ATR harmony is an **unbounded circumambient** segmental
-pattern (their def. 13): the surface ATR of a prefix vowel depends on information
-arbitrarily far away on *both* sides — the [ATR] value of the root (to the right)
-and the [high] value of the initial-syllable vowel (to the left). Circumambient
-patterns require **non-deterministic** regular power (above the weakly-deterministic
-upper bound of [heinz-lai-2013]); Tutrugbu is, in the authors' words, "a variation
-on the **sour grapes** pattern" — i.e. a *non-myopic* harmony ([wilson-2003],
-[wilson-2006]). It is thus a robustly attested counterexample to the claim that
-unbounded spreading is always myopic: [walker-2010] argued (from Romance metaphony)
-that nonmyopic harmony exists; [kimper-2012] and [mascaro-2019] replied that harmony
-is myopic; Tutrugbu is the segmental case the myopic-side replies do not dissolve.
+This file formalizes the Tutrugbu case of [mccollum-bakovic-mai-meinhardt-2020]. Regressive
+ATR harmony in Tutrugbu is an unbounded circumambient pattern: the surface ATR of a prefix
+vowel depends on information arbitrarily far away on both sides, the ATR value of the root
+to the right and the height of the initial-syllable vowel to the left, since a non-high
+prefix vowel blocks harmony exactly when the initial vowel is high, at any distance. Such
+patterns require non-deterministic regular power, above the weakly deterministic bound of
+[heinz-lai-2013], and are a non-myopic harmony of the sour-grapes kind, the segmental
+counterexample to the claim that unbounded spreading is myopic. The rule `tutrugbuATR`
+implements the conditional blocking on a small alphabet, the paper's contrasts are decided,
+and the circumambience proper, both sides needed at once, is the witness fed to the
+substrate's dependence and machine-level classification (`tutrugbu_requiresBothSides`,
+`tutrugbu_nonmyopic`).
 
-## The pattern (paper §2.1)
+## TODO
 
-[+ATR] is dominant; affixes are underlyingly [−ATR]; harmony is regressive
-(root → prefix). The conditional-blocking generalisation (paper §2.1, exx. (6)-(8)):
+The example and definition numbers are transcribed from an earlier version of this file and
+are UNVERIFIED.
 
-* a [−high] prefix vowel **blocks** harmony **iff** the initial-syllable vowel is
-  [+high] (exx. (6)); two [+high] prefixes (3) or two [−high] prefixes (4)-(5) never
-  block; harmony spreads as far as the blocking [−high] vowel and stops (7);
-* the [+high] initial and the [−high] blocker may be separated by an **unbounded**
-  number of syllables (ex. (8), 0–4-syllable gaps shown). So a medial vowel's ATR
-  depends on the root (right) and the initial-σ height (left), both unbounded.
+## References
 
-## What this file does
-
-`Seg` is a toy alphabet (prefix vowels ±high × ±ATR-surface; root ±ATR). `tutrugbuATR`
-implements the conditional-blocking rule faithfully; the paper's exx. (3)-(8) are
-decide-checked as stimulus contrasts. `tutrugbu_twoSidedUnboundedDependence` and
-`tutrugbu_nonmyopic` connect it to the substrate predicates in `Dependence.lean`,
-and `tutrugbu_requiresBothSides` is the circumambience proper — both sides needed at
-once, which the two-sided dependence alone does not give.
-
-The machine-level classification (circumambient ⟹ non-deterministic, *not* weakly
-deterministic) is what that witness feeds.
+* [mccollum-bakovic-mai-meinhardt-2020]
+* [heinz-lai-2013]
+* [wilson-2006]
+* [walker-2010]
 -/
 
 namespace McCollumEtAl2020
@@ -274,7 +262,7 @@ theorem tutrugbu_requiresBothSides : RequiresBothSides tutrugbuATR := by
   have hRin : (baseR d)[d + 1]? = some .vLo := by
     rw [show baseR d = pre Seg.vLo d ++ [.rM] from rfl,
         List.getElem?_append_left (by omega : d + 1 < (pre Seg.vLo d).length), pre_get_target]
-  refine ⟨base d, d + 1, ?_, ?_, fun s => ?_⟩
+  refine ⟨base d, d + 1, ?_, ?_, λ s => ?_⟩
   · simp only [base, pre, List.length_cons, List.length_append, List.length_replicate,
       List.length_nil]; omega
   · rw [base_get_target, hbin]; decide

@@ -14,8 +14,8 @@ inter-event constraint `cond : β → β → Prop`. Two specializations:
   `Events/Aspect/Incremental.lean`). Permits arbitrary sum formation —
   models *read the article* (re-reading allowed).
 * **Precedence-respecting** (`cond := precedes`): [krifka-1998]
-  §4.3 eq. 71 movement-relation closure (`MovementClosure` in
-  `Studies/Krifka1998.lean` Part II). Only events in precedence order
+  §4.3 eq. 71 movement-relation closure (`MR` in
+  `Studies/Krifka1998.lean`). Only events in precedence order
   combine — prevents telekinetic concatenations.
 
 ## Main definitions

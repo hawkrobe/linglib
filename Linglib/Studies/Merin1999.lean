@@ -6,38 +6,31 @@ import Mathlib.Data.Set.Card
 import Mathlib.Tactic.FieldSimp
 
 /-!
-# Merin (1999) — Why *Not* Speak Notspeak
-[merin-1999]
+# Merin (1999): Negative Attributes, Partitions, and Rational Decisions
 
-[merin-1999] "Negative Attributes, Partitions, and Rational
-Decisions" gives a decision-theoretic rationale for attribute spaces
-being partitions and a purely epistemic, syntax-independent
-characterization of negative attributes as proper coarsenings.
+This file formalizes the decision-theoretic rationale in [merin-1999] for attribute spaces
+being partitions and its epistemic, syntax-independent characterization of negative
+attributes as proper coarsenings. The complements of a partition's cells form a partition
+exactly when the partition is binary (`compl_isPartition_iff`); complement probabilities sum
+to one less than the number of cells and form a distribution exactly for two cells
+(`sum_compl_prob`, `sum_compl_prob_eq_one_iff`); the binary partition of a proposition and
+its negation is the coarsest coarsening preserving it (`binaryPartition_coarsens`); an
+attribute is negative with respect to a partition when it and some cell properly coarsen it
+(`IsNegativeAttribute`); and partition-relative expected utility is the law of total
+expectation, a coarsening's cell terms regrouping the finer partition's
+(`eu_eq_partitionEU`, `partitionEU_coarsening_regroup`). The paper's claim that re-coverings
+which neither coarsen nor refine fail compositionality, and the conditional-independence
+result of [johnson-1986] it cites, are not represented.
 
-Formalized:
+## TODO
 
-- **FACT 1** (p. 261): the complements of a partition's cells form a
-  partition iff the partition is binary (`compl_isPartition_iff`).
-- **FACT 3** (p. 261): complement probabilities sum to `n − 1`
-  (`sum_compl_prob`); they form a distribution iff `n = 2`
-  (`sum_compl_prob_eq_one_iff`, Merin's FACT 2).
-- **Coarsening** (p. 262): `IsProperCoarsening`; negation-induced binary
-  partitions (`binaryPartition`, `complement_same_partition`).
-- **FACT 4** (p. 263): `{P, ¬P}` is the coarsest `P`-preserving
-  coarsening (`binaryPartition_coarsens`).
-- **Negative attributes** (p. 263): `R` is negative w.r.t. partition `F`
-  iff `{R, Q}` properly coarsens `F` for some cell `Q ∈ F`
-  (`IsNegativeAttribute`).
-- **EU compositionality under coarsening** (p. 264): partition-relative
-  expected utility is the law of total expectation
-  (`eu_eq_partitionEU`), and a coarsening's cell terms regroup the finer
-  partition's terms (`partitionEU_coarsening_regroup`).
+The paper is not on file; page locators are transcribed from an earlier version of this
+file and are UNVERIFIED.
 
-Not formalized: FACT 5 (pp. 264–265), that re-coverings which neither
-coarsen nor refine *fail* compositionality (an existence claim over
-discrete measures), and the [johnson-1986] conditional-independence
-result motivating binary partitions in epistemic kinetics (§8, cited by
-Merin, not proved there).
+## References
+
+* [merin-1999]
+* [johnson-1986]
 -/
 
 namespace Merin1999
@@ -52,7 +45,7 @@ has exactly two cells. -/
 theorem compl_isPartition_iff {W : Type*} [Nonempty W] {F : Set (Set W)}
     (hF : Setoid.IsPartition F) :
     Setoid.IsPartition (compl '' F) ↔ F.encard = 2 := by
-  have cover : ∀ a : W, ∃ B ∈ F, a ∈ B := fun a =>
+  have cover : ∀ a : W, ∃ B ∈ F, a ∈ B := λ a =>
     let ⟨B, hB, _⟩ := hF.2 a; ⟨B, hB.1, hB.2⟩
   have uniq : ∀ {a : W} {B₁ B₂ : Set W}, B₁ ∈ F → B₂ ∈ F →
       a ∈ B₁ → a ∈ B₂ → B₁ = B₂ := by
@@ -67,9 +60,9 @@ theorem compl_isPartition_iff {W : Type*} [Nonempty W] {F : Set (Set W)}
     -- partition), so some point lies outside `A`.
     have hAc : Aᶜ ∈ compl '' F := Set.mem_image_of_mem _ hA
     obtain ⟨b, hb⟩ : Set.Nonempty (Aᶜ) :=
-      Set.nonempty_iff_ne_empty.mpr (fun h => hFc.1 (h ▸ hAc))
+      Set.nonempty_iff_ne_empty.mpr (λ h => hFc.1 (h ▸ hAc))
     obtain ⟨B, hB, hbB⟩ := cover b
-    have hBA : B ≠ A := fun h => hb (h ▸ hbB)
+    have hBA : B ≠ A := λ h => hb (h ▸ hbB)
     -- No third cell: its points would witness overlap of `Aᶜ` and `Bᶜ`.
     have hall : ∀ C ∈ F, C = A ∨ C = B := by
       intro C hC
@@ -77,9 +70,9 @@ theorem compl_isPartition_iff {W : Type*} [Nonempty W] {F : Set (Set W)}
       push Not at hne
       obtain ⟨hCA, hCB⟩ := hne
       obtain ⟨c, hc⟩ : Set.Nonempty C :=
-        Set.nonempty_iff_ne_empty.mpr (fun h => hF.1 (h ▸ hC))
-      have hcA : c ∈ Aᶜ := fun h => hCA (uniq hC hA hc h)
-      have hcB : c ∈ Bᶜ := fun h => hCB (uniq hC hB hc h)
+        Set.nonempty_iff_ne_empty.mpr (λ h => hF.1 (h ▸ hC))
+      have hcA : c ∈ Aᶜ := λ h => hCA (uniq hC hA hc h)
+      have hcB : c ∈ Bᶜ := λ h => hCB (uniq hC hB hc h)
       obtain ⟨D, _, hu⟩ := hFc.2 c
       have h1 := hu Aᶜ ⟨Set.mem_image_of_mem _ hA, hcA⟩
       have h2 := hu Bᶜ ⟨Set.mem_image_of_mem _ hB, hcB⟩
@@ -125,9 +118,9 @@ probabilities of the complements of a partition's cells sum to `n − 1`,
 theorem sum_compl_prob {W : Type*} [Fintype W] [DecidableEq W]
     (P : Finpartition (Finset.univ : Finset W)) (prior : W → ℚ)
     (hsum : Finset.univ.sum prior = 1) :
-    P.parts.sum (fun c => (Finset.univ \ c).sum prior) =
+    P.parts.sum (λ c => (Finset.univ \ c).sum prior) =
       (P.parts.card : ℚ) - 1 := by
-  have hpart : P.parts.sum (fun c => c.sum prior) = 1 := by
+  have hpart : P.parts.sum (λ c => c.sum prior) = 1 := by
     rw [← hsum]
     conv_rhs => rw [show (Finset.univ : Finset W) = P.parts.biUnion id
       from P.biUnion_parts.symm]
@@ -148,7 +141,7 @@ iff the partition is binary. -/
 theorem sum_compl_prob_eq_one_iff {W : Type*} [Fintype W] [DecidableEq W]
     (P : Finpartition (Finset.univ : Finset W)) (prior : W → ℚ)
     (hsum : Finset.univ.sum prior = 1) :
-    P.parts.sum (fun c => (Finset.univ \ c).sum prior) = 1 ↔
+    P.parts.sum (λ c => (Finset.univ \ c).sum prior) = 1 ↔
       P.parts.card = 2 := by
   rw [sum_compl_prob P prior hsum]
   constructor
@@ -170,7 +163,7 @@ abbrev binaryPartition {M : Type*} (p : M → Bool) : QUD M := ofProject p
 proposition and its negation carry the same information. -/
 theorem complement_same_partition {M : Type*} (p : M → Bool) (w v : M) :
     (binaryPartition p).sameAnswer w v =
-    (binaryPartition (fun m => !p m)).sameAnswer w v := by
+    (binaryPartition (λ m => !p m)).sameAnswer w v := by
   simp only [ofProject_sameAnswer]
   cases p w <;> cases p v <;> rfl
 
@@ -209,7 +202,7 @@ conditional EU by the cell's probability
 (`EU_Q(a) = Σ_{c ∈ cells Q} P(c) · EU(a | c)`). -/
 def partitionEU [Fintype M] [DecidableEq M]
     (dp : DecisionProblem ℚ M A) (q : QUD M) (a : A) : ℚ :=
-  (q.toCellsFinset Finset.univ).sum (fun cell =>
+  (q.toCellsFinset Finset.univ).sum (λ cell =>
     cell.sum dp.prior * condExpectedUtility dp cell a)
 
 /-- Cell probability times conditional EU is the raw weighted sum, for
@@ -218,13 +211,13 @@ private theorem cellProb_mul_conditionalEU [DecidableEq M]
     (dp : DecisionProblem ℚ M A) (cell : Finset M) (a : A)
     (hprior : ∀ w, dp.prior w ≥ 0) :
     cell.sum dp.prior * condExpectedUtility dp cell a =
-    cell.sum (fun w => dp.prior w * dp.utility w a) := by
+    cell.sum (λ w => dp.prior w * dp.utility w a) := by
   simp only [condExpectedUtility]
   by_cases htot : cell.sum dp.prior = 0
   · simp only [htot, ite_true, mul_zero]
     symm; apply Finset.sum_eq_zero; intro w hw
     have hle : dp.prior w ≤ cell.sum dp.prior :=
-      Finset.single_le_sum (fun x _ => hprior x) hw
+      Finset.single_le_sum (λ x _ => hprior x) hw
     have hzero : dp.prior w = 0 := le_antisymm (by linarith) (hprior w)
     simp [hzero]
   · simp only [htot, ite_false]
@@ -242,7 +235,7 @@ theorem eu_eq_partitionEU [Fintype M] [DecidableEq M]
     (q.toCellsFinset Finset.univ).biUnion id
     from (toCellsFinset_covers q Finset.univ).symm]
   rw [Finset.sum_biUnion (toCellsFinset_pairwiseDisjoint q Finset.univ)]
-  exact Finset.sum_congr rfl (fun cell _ =>
+  exact Finset.sum_congr rfl (λ cell _ =>
     (cellProb_mul_conditionalEU dp cell a hprior).symm)
 
 /-- Partition-relative EU is partition-independent: any two partitions
@@ -263,16 +256,16 @@ theorem partitionEU_coarsening_regroup [Fintype M] [DecidableEq M]
     (hcoarse : q'.coarsens q)
     (hprior : ∀ w, dp.prior w ≥ 0) :
     partitionEU dp q' a =
-      (q'.toCellsFinset Finset.univ).sum (fun c' =>
-        ((q.toCellsFinset Finset.univ).filter (· ⊆ c')).sum (fun c =>
+      (q'.toCellsFinset Finset.univ).sum (λ c' =>
+        ((q.toCellsFinset Finset.univ).filter (· ⊆ c')).sum (λ c =>
           c.sum dp.prior * condExpectedUtility dp c a)) := by
   unfold partitionEU
-  refine Finset.sum_congr rfl (fun c' hc' => ?_)
+  refine Finset.sum_congr rfl (λ c' hc' => ?_)
   rw [cellProb_mul_conditionalEU dp c' a hprior]
   conv_lhs => rw [show c' = ((q.toCellsFinset Finset.univ).filter (· ⊆ c')).biUnion id
     from coarse_eq_biUnion_fine q q' Finset.univ hcoarse c' hc']
   rw [Finset.sum_biUnion (fine_cells_in_coarse_pairwiseDisjoint q Finset.univ c')]
-  exact Finset.sum_congr rfl (fun c _ =>
+  exact Finset.sum_congr rfl (λ c _ =>
     (cellProb_mul_conditionalEU dp c a hprior).symm)
 
 end Merin1999

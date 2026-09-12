@@ -1,37 +1,18 @@
 import Linglib.Phonology.OptimalityTheory.Grammar
 
 /-!
-# Merchant & Prince (2022): tableaux to grammars
+# Merchant and Prince (2022): The Mother of All Tableaux
 
-[merchant-prince-2022]'s *Mother of All Tableaux* studies the large-scale structure
-of an OT typology: the partition of `Ord(S.Con)` into **grammars**, the invariant
-**MOAT** that every violation tableau yielding the typology instantiates, and its
-geometry. This file lands the foundational wire — the bridge from the Concrete-OT
-**tableau** engine (`OptimalityTheory.Tableau`, the `LexMinProblem` the Studies
-already build) to the abstract **`Grammar`** hub (`OptimalityTheory.Grammar`,
-[merchant-riggle-2016]).
-
-A row `w` of a tableau, asserted optimal, generates the ERC set of its winner-loser
-comparisons against the other candidates (`rowERCs`); the **grammar of that row**
-(`rowGrammar`) is `Grammar.ofERCs` of those conditions. Its legs are exactly the
-rankings under which `w` wins (`mem_rowGrammar_legs_iff_lex`) — this is the semantic
-anchor connecting the abstract hub back to lexicographic optimality
-([prince-smolensky-1993]).
-
-This is the first real consumer of the `Grammar` hub. The MOAT superstructure —
-`Typology` as the partition of these row-grammars (one row per grammar, by "One
-Tableau Suffices"), the border-point pair, the EPO, and the MOAT itself — builds on
-this bridge and is left to follow-on work.
-
-## Main definitions
-
-* `rowERCs` — the winner-loser ERCs of a tableau row against the other candidates.
-* `rowGrammar` — the `Grammar` of a tableau row (the tableau → hub bridge).
-
-## Main results
-
-* `mem_rowGrammar_legs_iff_lex` — a row's grammar collects exactly the rankings
-  under which its profile lexicographically dominates every competitor's.
+This file formalizes the bridge from tableaux to grammars in [merchant-prince-2022], which
+studies the large-scale structure of an optimality-theoretic typology: the partition of the
+rankings into grammars, the invariant that every violation tableau yielding the typology
+instantiates, and its geometry. A row of a tableau asserted optimal generates the
+elementary ranking conditions of its winner–loser comparisons (`rowERCs`), and the grammar of
+that row is the grammar of those conditions in the hub of [merchant-riggle-2016]
+(`rowGrammar`); its rankings are exactly those under which the row wins by lexicographic
+optimality after [prince-smolensky-1993] (`mem_rowGrammar_legs_iff_lex`). The typology as
+the partition of row grammars, the border-point pair, and the invariant itself are not
+represented.
 
 ## References
 
@@ -74,7 +55,7 @@ theorem mem_rowGrammar_legs_iff_lex {t : Tableau C n} {w : C}
     {h : (ERC.linearExtensions (rowERCs t w)).Nonempty} {r : Ranking n} :
     r ∈ (rowGrammar t w h).legs ↔
       ∀ l ∈ t.candidates.erase w,
-        toLex (fun p => t.profile w (r p)) ≤ toLex (fun p => t.profile l (r p)) := by
+        toLex (λ p => t.profile w (r p)) ≤ toLex (λ p => t.profile l (r p)) := by
   rw [mem_rowGrammar_legs]
   unfold rowERCs
   constructor
