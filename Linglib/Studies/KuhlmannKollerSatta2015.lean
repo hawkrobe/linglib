@@ -3,45 +3,47 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Data.List.Basic
 
 /-!
-# Target-restricted CCG generates a non-context-free language
+# Kuhlmann, Koller and Satta (2015): Lexicalization and Generative Power in CCG
 
-Formalisation of the construction in [kuhlmann-koller-satta-2015], Example 2: a
-target-restricted combinatory categorial grammar — the formalism of
-[vijay-shanker-weir-1994] and [weir-joshi-1988], "VW-CCG" in the paper's
-terminology — that generates the non-context-free language `aⁿbⁿcⁿ`.
+This file formalizes Example 2 of [kuhlmann-koller-satta-2015], the grammar `G₁` in the
+formalism of [vijay-shanker-weir-1994] and [weir-joshi-1988] whose rules of application and
+of composition of degree at most 2 are restricted to primary inputs with target `S`, and
+proves that its language is exactly `aⁿbⁿcⁿ` (`language_eq_anbnc`). The completeness half
+follows the paper's derivation: the `b`s are composed into a cluster `S/C/…/C`
+(`cluster_derives`), and each `C` argument is peeled off by crossed-composing a `c` and
+backward-applying an `a` (`peel_derives`). The soundness half is an induction on
+derivability showing that every derivable pair has one of the shapes that construction
+produces (`reachable_of_derives`).
 
-The point is theoretical. [kuhlmann-koller-satta-2015] show that the CCG≡TAG weak
-equivalence holds for *target-restricted* CCG, where combinatory rules may be restricted per
-grammar (here, via the target restriction modelled in `Syntax/CCG/Grammar`: every rule
-fires only when the *target* of its primary input category is `S`). For lexicalized CCG
-*without* target restrictions they prove the power is strictly below TAG: such a CCG that
-covers `aⁿbⁿcⁿ` also admits extra permuted strings, so it cannot generate the language
-*exactly*. `Syntax/CCG/Derivation`'s `CCG.Derivation` models a (rule-inventory) fragment of that
-unrestricted variant, so this construction genuinely needs the restricted model
-`CCG.Grammar`.
-
-Atoms follow the paper (`A, B, C, S`) as the study's own atom type — `CCG.Cat` is
-parameterized over its atoms, so the construction needs no proxy inventory.
-
-## Main definitions
-
-- `exampleGrammar` — the grammar `G₁` of Example 2: six lexical entries, target
-  restriction and start at `S`, degree bound 2.
-
-## Main statements
-
-- `cluster_derives` — the `b`-cluster: `G₁` derives `bⁿ` at category `S/Cⁿ`.
-- `peel_derives` — peeling: each `C` argument is discharged by crossed-composing a
-  `c` and backward-applying an `a`, wrapping the string as `a … c`.
-- `ccg_generates_anbnc` — `anbncStrings ⊆ exampleGrammar.language`.
+The paper's results turn on two properties of rule restrictions, which are stated here for
+the substrate's grammars as permission gates: prefix-closedness (Definition 2) and the
+absence of target restrictions (Definition 3). Every target-restricted grammar is
+prefix-closed, so `G₁` is (Example 6), while `G₁` is not without target restrictions
+(Example 8). This is the configuration the paper's Theorems 2 and 3 separate: prefix-closed
+grammars with target restrictions are weakly equivalent to tree-adjoining grammar, and
+without them they cannot generate `aⁿbⁿcⁿ`.
 
 ## Implementation notes
 
-These are the *completeness* direction (`anbncStrings ⊆ exampleGrammar.language`).
-The converse *soundness* (`exampleGrammar.language ⊆ anbncStrings`, an induction on
-`Grammar.Derives`) is stateable but not formalised here; with it, relabelling
-`{"a","b","c"} → ThreeSymbol` and `AnBnCn.anbnc_not_contextFree` would establish that
-the grammar's language is itself non-context-free.
+The atoms `A`, `B`, `C`, `S` are the study's own type, since `CCG.Cat` is parameterized over
+its atoms. The lexical entry for `c` is `C\A`, the direction the paper's derivation of
+`aⁿbⁿcⁿ` requires. Strings are token lists over `"a"`, `"b"`, `"c"`; the language
+`aⁿbⁿcⁿ` is stated over them rather than over `ThreeSymbol`, on which
+`anbnc_not_contextFree` is proved.
+
+## TODO
+
+* Theorems 1–4 and the main lemma (a Parikh-equivalent context-free sublanguage for every
+  prefix-closed grammar without target restrictions) are not formalized; nor is the
+  relabelling that would turn `language_eq_anbnc` into the non-context-freeness of
+  `G₁`'s language.
+
+## References
+
+* [kuhlmann-koller-satta-2015]
+* [vijay-shanker-weir-1994]
+* [weir-joshi-1988]
+* [schiffer-maletti-2021]
 -/
 
 namespace KuhlmannKollerSatta2015
@@ -84,15 +86,15 @@ theorem target_clusterCat (n : Nat) : (clusterCat n).target = Atom.S := by
   | succ n ih => simpa [clusterCat] using ih
 
 /-- No non-`S` atom is a cluster category: targets differ. -/
-@[simp] theorem acat_ne_clusterCat (k : Nat) : Acat ≠ clusterCat k := fun h => by
+@[simp] theorem acat_ne_clusterCat (k : Nat) : Acat ≠ clusterCat k := λ h => by
   have := congrArg Cat.target h
   simp [target_clusterCat] at this
 
-@[simp] theorem bcat_ne_clusterCat (k : Nat) : Bcat ≠ clusterCat k := fun h => by
+@[simp] theorem bcat_ne_clusterCat (k : Nat) : Bcat ≠ clusterCat k := λ h => by
   have := congrArg Cat.target h
   simp [target_clusterCat] at this
 
-@[simp] theorem ccat_ne_clusterCat (k : Nat) : Ccat ≠ clusterCat k := fun h => by
+@[simp] theorem ccat_ne_clusterCat (k : Nat) : Ccat ≠ clusterCat k := λ h => by
   have := congrArg Cat.target h
   simp [target_clusterCat] at this
 
@@ -153,7 +155,7 @@ completeness construction, so the language contains nothing beyond `aⁿbⁿcⁿ
 
 /-- The derivable category/string pairs of `G₁`: the six lexical shapes, the degree-2
 chain categories, the clusters (wrapped by `i` peels), and the peel intermediates. -/
-def Reachable : Cat Atom → List String → Prop := fun c w =>
+def Reachable : Cat Atom → List String → Prop := λ c w =>
   (c = Acat ∧ w = ["a"]) ∨
   (c = (Ccat \ Acat) ∧ w = ["c"]) ∨
   (c = ((Bcat / Ccat) / Bcat) ∧ w = ["b"]) ∨
@@ -347,6 +349,46 @@ theorem reachable_of_derives {c : Cat Atom} {w : List String}
         · rcases k' with _ | k' <;>
             simp [clusterCat, Cat.generalizedBackwardComp] at hc
       · exact absurd hn (by omega)
+
+/-! ### Rule restrictions (§3.1, §3.3) -/
+
+/-- A category with its outermost `k` arguments removed: from `Y|ₙYₙ ⋯ |₁Y₁` to
+`Y|ₙYₙ ⋯ |ₖ₊₁Yₖ₊₁`. -/
+def prefixCat {α : Type*} : ℕ → Cat α → Cat α
+  | 0, c => c
+  | k + 1, .rslash c _ _ => prefixCat k c
+  | k + 1, .lslash c _ _ => prefixCat k c
+  | _ + 1, c => c
+
+/-- Definition 2: a grammar is prefix-closed when every permitted instance of composition
+stays permitted with the outermost arguments of the secondary input removed and the degree
+lowered accordingly. -/
+def PrefixClosed {α : Type*} (G : Grammar α) : Prop :=
+  (∀ n a b, G.allowsFwd n a b → ∀ k ≤ n, G.allowsFwd (n - k) a (prefixCat k b)) ∧
+  (∀ n a b, G.allowsBwd n a b → ∀ k ≤ n, G.allowsBwd (n - k) (prefixCat k a) b)
+
+/-- Definition 3: a grammar is without target restrictions when every permitted instance
+stays permitted under any change of the primary input's result category. -/
+def WithoutTargetRestrictions {α : Type*} (G : Grammar α) : Prop :=
+  (∀ n x x' m y b, G.allowsFwd n (.rslash x m y) b → G.allowsFwd n (.rslash x' m y) b) ∧
+  (∀ n a x x' m y, G.allowsBwd n a (.lslash x m y) → G.allowsBwd n a (.lslash x' m y))
+
+/-- A target-restricted grammar is prefix-closed: its gates look only at the degree and the
+primary input's target. -/
+theorem targetRestricted_prefixClosed {α : Type*} (L : List (String × Cat α)) (s : α)
+    (d : ℕ) : PrefixClosed (Grammar.targetRestricted L s d) :=
+  ⟨λ _ _ _ h k _ => ⟨(Nat.sub_le _ k).trans h.1, h.2⟩,
+   λ _ _ _ h k _ => ⟨(Nat.sub_le _ k).trans h.1, h.2⟩⟩
+
+/-- Example 6: `G₁` is prefix-closed. -/
+theorem exampleGrammar_prefixClosed : PrefixClosed exampleGrammar :=
+  targetRestricted_prefixClosed _ _ _
+
+/-- Example 8: `G₁` is not without target restrictions, since application of `S/C` to `C`
+is permitted but application of `B/C` to `C` is not. -/
+theorem exampleGrammar_not_withoutTargetRestrictions :
+    ¬ WithoutTargetRestrictions exampleGrammar :=
+  λ h => absurd (h.1 0 Scat Bcat .dot Ccat Ccat ⟨Nat.zero_le _, rfl⟩).2 (by decide)
 
 /-! ### Generative-capacity result -/
 

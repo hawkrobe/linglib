@@ -49,6 +49,16 @@ comparative, base and reduplicant). The morphological counterpart of
 - **Generator**: `scripts/gen_forms.py` (`--check` verifies sync, `--fmt` canonical JSON)
 - **Input/Output**: `Linglib/Data/Forms/{AuthorYear}.json` → `{AuthorYear}.lean`
 
+### Treebank coverage of non-projectivity constraints
+
+Per-paper statistics on how many of a treebank's dependency trees, or of the grammar rules
+extracted from them, satisfy a constraint on non-projectivity (projectivity, a gap-degree
+bound, well-nestedness, planarity, or a conjunction), at the precision the paper prints.
+
+- **Schema**: `Linglib/Data/Treebank/Coverage/Schema.lean`
+- **Generator**: `scripts/gen_treebank_coverage.py` (`--check` verifies sync)
+- **Input/Output**: `Linglib/Data/Treebank/Coverage/{Paper}.json` → `{Paper}.lean`
+
 ### UD dependency length by language
 
 Per-paper corpus statistics over Universal Dependencies treebanks: the
