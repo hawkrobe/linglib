@@ -29,9 +29,9 @@ P(seq | π) = Γ(Σ π) / Γ(Σ π + Σ x)  ·  ∏ Γ(π_i + x_i) / Γ(π_i)
 ```
 
 This file gives only the closed-form per-sequence likelihood
-`seqProb` — the form fragment-grammar consumers in
-`Morphology/FragmentGrammars/` actually use (a corpus IS a
-labeled derivation sequence, not a draw from the unlabeled-count
+`seqProb` — the form `DirichletPCFG` and the adaptor and fragment
+grammars of `ODonnell2015` actually use (a corpus IS a labeled
+derivation sequence, not a draw from the unlabeled-count
 distribution). The sequence law and the count-vector law — the
 "Dirichlet–multinomial distribution" — live in the sibling file
 `DirichletMultinomial.lean`, which carries the measure-theory imports.
@@ -75,7 +75,7 @@ for such a bridge) is also deferred.
 
 ## References
 
-- [odonnell-2015] — Pólya-urn closed form for DMPCFG (§3.1.3).
+- [odonnell-2015] — Pólya-urn closed form for the Dirichlet PCFG (§3.1.3).
 - Blackwell, D. & MacQueen, J. B. (1973). "Ferguson distributions via
   Pólya urn schemes". *The Annals of Statistics* 1(2): 353–355.
 - Ferguson, T. S. (1973). "A Bayesian analysis of some nonparametric
@@ -141,9 +141,8 @@ P(seq | π) = Γ(Σ π) / Γ(Σ π + Σ x)  ·  ∏ Γ(π_i + x_i) / Γ(π_i)
 ```
 
 Depends only on the counts (not the order), which is what makes the
-recursive stochastic equations defining DMPCFG, adaptor grammars, and
-fragment grammars in `Morphology.FragmentGrammars.*`
-well-defined as marginals over draw order — *partition
+recursive stochastic equations defining `DirichletPCFG` and the adaptor
+and fragment grammars of `ODonnell2015` well-defined as marginals over draw order — *partition
 exchangeability* in the EPPF sense, distinct from but implied by
 exchangeability proper of the joint sequence law.
 
@@ -459,7 +458,7 @@ theorem sum_seqProb_eq_one [Nonempty α] [DecidableEq α] (N : ℕ) :
 
 /--
 Per-sequence Pólya likelihood is strictly positive on nonempty
-alphabets. Used by downstream consumers (`DMPCFG`, `AdaptorGrammar`)
+alphabets. Used by downstream consumers (`DirichletPCFG`, `ODonnell2015.AdaptorGrammar`)
 to derive nonnegativity of corpus probabilities.
 -/
 theorem seqProb_pos [Nonempty α] (x : α → ℕ) :

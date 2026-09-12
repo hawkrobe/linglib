@@ -1,5 +1,7 @@
-import Linglib.Morphology.FragmentGrammars.FragmentGrammar
+import Linglib.Core.Computability.ContextFreeGrammar.Dirichlet
+import Linglib.Core.Probability.PitmanYor
 import Linglib.Morphology.Exponence.Select
+import Mathlib.Analysis.Calculus.ContDiff.FaaDiBruno
 
 /-!
 # O'Donnell (2015): Productivity and Reuse in Language
@@ -11,10 +13,11 @@ fragment grammar recovers this, the Dirichlet-multinomial probabilistic context-
 grammar ranking the token-frequent *-ion* first. The three suffixes carry a productivity
 ordering (`Suffix.productivityIndex`, `moreProductiveThan`) grounded in the hapax-based
 statistics of Baayen that the book correlates with its models (`ness_hapax_richer`,
-`ness_higher_type_token_ratio`, `ion_token_frequency_dominates`), the suffixes are rules
-of a toy grammar over the fragment-grammar substrate (`suffixGrammar`), and a
-Dirichlet-multinomial grammar whose pseudo-counts track the empirical productivity is
-exhibited (`dmpcfgFromObserved`, `dmpcfgFromObserved_pseudo_respects_productivity`).
+`ness_higher_type_token_ratio`, `ion_token_frequency_dominates`), the book's adaptor and
+fragment grammars are built over the Dirichlet PCFG of `DirichletPCFG` (`AdaptorGrammar`,
+`FragmentGrammar`), the suffixes are rules of a toy grammar (`suffixGrammar`), and a Dirichlet
+prior whose pseudo-counts track the empirical productivity is exhibited (`suffixPrior`,
+`suffixPrior_pseudo_respects_productivity`).
 
 ## Implementation notes
 
@@ -28,11 +31,12 @@ book's point against the token-frequency model.
 
 * [odonnell-2015]
 * [kiparsky-1973]
+* [pitman-2006]
 -/
 
 namespace ODonnell2015
 
-open Morphology.FragmentGrammars
+open ProbabilityTheory
 
 /-! ## The three suffixes
 
@@ -73,7 +77,7 @@ def Suffix.productivityIndex : Suffix → Nat
 productivity. Any theory of productivity that purports to account for
 the [odonnell-2015] Chapter 7 data must reproduce this ordering;
 failure to do so falsifies the theory against the data (this is exactly
-the discriminator deployed against DMPCFG / MAG / DOP1 / ENDOP in
+the discriminator deployed against the Dirichlet PCFG, MAG, DOP1 and ENDOP in
 Fig 7.3, all of which place *-ion* in their top 5). -/
 def moreProductiveThan (a b : Suffix) : Prop :=
   a.productivityIndex > b.productivityIndex
@@ -125,11 +129,157 @@ theorem ness_higher_type_token_ratio :
       ionStats.wordTypes * nessStats.wordTokens := by decide
 
 /-- *-ion* has more than an order of magnitude more tokens than
-*-ness* — the token-frequency gap that misleads DMPCFG, which "bases
+*-ness* — the token-frequency gap that misleads the Dirichlet PCFG, which "bases
 productivity inferences purely on the token frequency of suffixes"
 (p. 268). -/
 theorem ion_token_frequency_dominates :
     ionStats.wordTokens > 10 * nessStats.wordTokens := by decide
+
+/-! ## Adaptor and fragment grammars (§3.1.7, §3.1.8)
+
+An adaptor grammar in the book's maximum-a-posteriori variant is a Dirichlet PCFG with a
+Pitman–Yor process at each nonterminal memoising the subtrees computed there. The corpus
+probability is stated given the latent table assignment `Y`, per nonterminal a set partition of
+the uses of that nonterminal by the table they sat at, since marginalising over `Y` is the
+inference problem of §3.2. `TableAssignment` uses mathlib's `OrderedFinpartition`, whose
+`extendEquiv` is the seating-plan bijection of [pitman-2006]; `pypFactor` depends only on the
+block sizes. -/
+
+/-- The book's adaptor grammar over `G`: a Dirichlet PCFG with a Pitman–Yor process memoising
+the subtrees rooted at each nonterminal. -/
+@[ext]
+structure AdaptorGrammar {T : Type} [DecidableEq T] (G : ContextFreeGrammar T)
+    [DecidableEq G.NT] extends DirichletPCFG G where
+  /-- The Pitman–Yor process memoising expansions of each nonterminal. -/
+  pyp : G.NT → PitmanYor
+
+namespace AdaptorGrammar
+
+variable {T : Type} [DecidableEq T] {G : ContextFreeGrammar T} [DecidableEq G.NT]
+
+/-- The latent table assignment `Y`: for each nonterminal, a set partition of its uses in the
+corpus by the table they sat at. Consistency with the corpus is the caller's hypothesis. -/
+abbrev TableAssignment (G : ContextFreeGrammar T) : Type :=
+  G.NT → Σ n, OrderedFinpartition n
+
+variable (M : AdaptorGrammar G)
+
+/-- The Pitman–Yor probability of the table assignment at nonterminal `a`. -/
+noncomputable def pypFactor (a : G.NT) (Y : TableAssignment G) : ℝ :=
+  (M.pyp a).partitionProb (Y a).snd.toNatPartition
+
+/-- The corpus probability given a table assignment: at each nonterminal the grammar expands,
+the Dirichlet PCFG factor times the Pitman–Yor factor. -/
+noncomputable def corpusProbGivenTables (D : Multiset (DerivationTree T G.NT))
+    (Y : TableAssignment G) : ℝ :=
+  ∏ a ∈ G.rules.image (·.input), M.toDirichletPCFG.lhsFactor a D * M.pypFactor a Y
+
+theorem corpusProbGivenTables_nonneg (D : Multiset (DerivationTree T G.NT))
+    (Y : TableAssignment G) : 0 ≤ M.corpusProbGivenTables D Y :=
+  Finset.prod_nonneg λ a ha => mul_nonneg (M.toDirichletPCFG.lhsFactor_pos ha D).le
+    ((M.pyp a).partitionProb_nonneg _)
+
+/-- The table assignment with no customers at any nonterminal. -/
+def emptyTables (G : ContextFreeGrammar T) : TableAssignment G :=
+  λ _ => ⟨0, default⟩
+
+@[simp]
+theorem pypFactor_emptyTables (a : G.NT) : M.pypFactor a (emptyTables G) = 1 := by
+  show (M.pyp a).partitionProb (default : OrderedFinpartition 0).toNatPartition = 1
+  rw [Subsingleton.elim (default : OrderedFinpartition 0).toNatPartition default]
+  simp [PitmanYor.partitionProb, default, Nat.Partition.indiscrete]
+
+@[simp]
+theorem corpusProbGivenTables_empty : M.corpusProbGivenTables 0 (emptyTables G) = 1 :=
+  Finset.prod_eq_one λ a ha =>
+    have := DirichletPCFG.nonempty_rulesWithLHS_of_mem_image ha
+    by simp
+
+/-- The conjugate update of the Dirichlet component by a corpus; the Pitman–Yor
+hyperparameters are unchanged. -/
+noncomputable def posterior (D : Multiset (DerivationTree T G.NT)) : AdaptorGrammar G :=
+  { M with toDirichletPCFG := M.toDirichletPCFG.posterior D }
+
+@[simp]
+theorem posterior_zero : M.posterior 0 = M := by
+  ext1 <;> simp [posterior]
+
+theorem posterior_add (D₁ D₂ : Multiset (DerivationTree T G.NT)) :
+    M.posterior (D₁ + D₂) = (M.posterior D₁).posterior D₂ := by
+  ext1 <;> simp [posterior, DirichletPCFG.posterior_add]
+
+end AdaptorGrammar
+
+/-! Expanding a rule `r`, a fragment grammar decides at each right-hand-side nonterminal `B`
+whether to expand `B` productively or to halt and leave `B` an open slot of the fragment being
+stored. The decision is a biased coin whose weight has a beta prior with pseudo-counts
+`ψ_{r,B}`; integrating the weight out turns the decisions at that slot into a two-colour Pólya
+urn, which is the representation the book computes with. The halt count `Z` is latent like
+`Y`; the book writes the halt count at a slot of `r` as `x_r - z_{r,B}`, so a `Z` consistent with
+the corpus has `Z r i .recurse + Z r i .halt` equal to the corpus count of `r`. -/
+
+/-- The outcome of the lazy coin at a nonterminal slot: `recurse` expands the slot productively,
+`halt` leaves it open in the stored fragment. -/
+inductive FragmentGrammar.Decision
+  | recurse
+  | halt
+  deriving DecidableEq, Fintype, Inhabited
+
+/-- A fragment grammar over `G`: an adaptor grammar with, at each nonterminal position of each
+rule, a Pólya urn over `recurse`/`halt` decisions whose pseudo-counts are the beta parameters
+`ψ_{r,B}`. -/
+@[ext]
+structure FragmentGrammar {T : Type} [DecidableEq T] (G : ContextFreeGrammar T)
+    [DecidableEq G.NT] extends AdaptorGrammar G where
+  /-- The urn over `recurse`/`halt` decisions at nonterminal position `i` of rule `r`. -/
+  halt : (r : ContextFreeRule T G.NT) → r.NonterminalPos → PolyaUrn FragmentGrammar.Decision
+
+namespace FragmentGrammar
+
+variable {T : Type} [DecidableEq T] {G : ContextFreeGrammar T} [DecidableEq G.NT]
+
+/-- The latent variable `Z`: at each nonterminal position of each rule, the number of
+`recurse` and of `halt` decisions taken there across the corpus. -/
+abbrev HaltCounts (G : ContextFreeGrammar T) : Type :=
+  (r : ContextFreeRule T G.NT) → r.NonterminalPos → Decision → ℕ
+
+variable (M : FragmentGrammar G)
+
+/-- The corpus probability given a table assignment `Y` and halt counts `Z`: the
+adaptor-grammar factor times, at each nonterminal slot, the urn likelihood of the decisions
+taken there. -/
+noncomputable def corpusProbGivenStorage (D : Multiset (DerivationTree T G.NT))
+    (Y : AdaptorGrammar.TableAssignment G) (Z : HaltCounts G) : ℝ :=
+  M.corpusProbGivenTables D Y * ∏ r ∈ G.rules, ∏ i, (M.halt r i).seqProb (Z r i)
+
+theorem corpusProbGivenStorage_nonneg (D : Multiset (DerivationTree T G.NT))
+    (Y : AdaptorGrammar.TableAssignment G) (Z : HaltCounts G) :
+    0 ≤ M.corpusProbGivenStorage D Y Z :=
+  mul_nonneg (M.corpusProbGivenTables_nonneg D Y) <| Finset.prod_nonneg λ r _ =>
+    Finset.prod_nonneg λ i _ => ((M.halt r i).seqProb_pos _).le
+
+@[simp]
+theorem corpusProbGivenStorage_empty :
+    M.corpusProbGivenStorage 0 (AdaptorGrammar.emptyTables G) 0 = 1 := by
+  simp only [corpusProbGivenStorage, AdaptorGrammar.corpusProbGivenTables_empty, one_mul]
+  exact Finset.prod_eq_one λ r _ => Finset.prod_eq_one λ i _ => (M.halt r i).seqProb_zero
+
+/-- The conjugate update by a corpus `D` and its halt counts `Z`: the adaptor-grammar component
+absorbs the rule counts of `D`, and the urn at each slot absorbs the decisions taken there. -/
+noncomputable def posterior (D : Multiset (DerivationTree T G.NT)) (Z : HaltCounts G) :
+    FragmentGrammar G where
+  toAdaptorGrammar := M.toAdaptorGrammar.posterior D
+  halt r i := (M.halt r i).posterior (Z r i)
+
+@[simp]
+theorem posterior_zero : M.posterior 0 0 = M := by
+  ext1 <;> simp [posterior]
+
+theorem posterior_add (D₁ D₂ : Multiset (DerivationTree T G.NT)) (Z₁ Z₂ : HaltCounts G) :
+    M.posterior (D₁ + D₂) (Z₁ + Z₂) = (M.posterior D₁ Z₁).posterior D₂ Z₂ := by
+  ext1 <;> simp [posterior, AdaptorGrammar.posterior_add, PolyaUrn.posterior_add]
+
+end FragmentGrammar
 
 /-! ## Toy CFG -/
 
@@ -190,13 +340,13 @@ def suffixGrammar : ContextFreeGrammar Sym where
   rules := {rNess, rIon, rAte, rAdj, rV, rBnd}
 
 /-- `DecidableEq` for the grammar's `NT` projection — needed by
-    `DMPCFG`'s typeclass arguments. Not synthesised automatically
+    `DirichletPCFG`'s typeclass arguments. Not synthesised automatically
     because `suffixGrammar.NT` is a structure projection that the
     typeclass solver does not reduce to `SuffixNT`. -/
 instance : DecidableEq suffixGrammar.NT :=
   inferInstanceAs (DecidableEq SuffixNT)
 
-/-! ## Bridge from data layer + DMPCFG instance -/
+/-! ## The Dirichlet prior over the toy grammar -/
 
 /-- Bridge from `Suffix` to the rules of this grammar. -/
 def suffixToRule : Suffix → ContextFreeRule Sym SuffixNT
@@ -218,49 +368,14 @@ def pseudoVal (r : ContextFreeRule Sym SuffixNT) : ℝ :=
   else if r = rBnd then 1
   else 1
 
-/-- A `DMPCFG` over `suffixGrammar` whose per-rule pseudo-counts are
-    derived from `Suffix.productivityIndex` (the qualitative productivity
-    ranking). The connection is structural: revising `productivityIndex`
-    changes the pseudo-counts here in lockstep. -/
-def dmpcfgFromObserved : DMPCFG suffixGrammar where
+/-- The Dirichlet prior over `suffixGrammar` whose pseudo-counts derive from
+    `Suffix.productivityIndex`, so revising the ranking changes the prior in
+    lockstep. -/
+def suffixPrior : DirichletPCFG suffixGrammar where
   pseudo := pseudoVal
   pseudo_pos r _ := by
     unfold pseudoVal
     split_ifs <;> positivity
-
-/-! ## Plumbing: named N-bucket witnesses + parametric pseudoVal lemma -/
-
-/-- `rNess` as an inhabitant of the N-LHS subtype. Named once so
-    consumers don't repeat `⟨rNess, by decide⟩` at every call. -/
-private def nNess : suffixGrammar.RulesWithLHS SuffixNT.N :=
-  ⟨rNess, by decide⟩
-
-/-- `rIon` as an inhabitant of the N-LHS subtype. -/
-private def nIon : suffixGrammar.RulesWithLHS SuffixNT.N :=
-  ⟨rIon, by decide⟩
-
-/-- The N-LHS bucket of `suffixGrammar` is nonempty (`rNess` ∈ it).
-    Required for `mapWeightPMF` and `mapWeight_sum_eq_one_of_lhs`. -/
-instance n_bucket_nonempty :
-    Nonempty (suffixGrammar.RulesWithLHS SuffixNT.N) :=
-  ⟨nNess⟩
-
-/-- All four LHS buckets of `suffixGrammar` are nonempty: every
-    nonterminal in this toy grammar has at least one rule expanding
-    it (N has rNess + rIon, A has rAdj, V has rAte + rV, BND has rBnd).
-
-    Required to construct `dmpcfgFromObserved.posteriorMAP D`
-    as a full `MultinomialPCFG suffixGrammar` (the structure carries
-    the typeclass `[∀ a, Nonempty (G.RulesWithLHS a)]` because
-    PMFs over empty supports don't exist). -/
-instance suffixGrammar_buckets_nonempty :
-    ∀ a : suffixGrammar.NT, Nonempty (suffixGrammar.RulesWithLHS a) := by
-  intro a
-  match a with
-  | SuffixNT.N => exact ⟨nNess⟩
-  | SuffixNT.A => exact ⟨⟨rAdj, by decide⟩⟩
-  | SuffixNT.V => exact ⟨⟨rV, by decide⟩⟩
-  | SuffixNT.BND => exact ⟨⟨rBnd, by decide⟩⟩
 
 /-- Parametric pseudo-count formula for productivity-bearing rules:
     `pseudoVal (suffixToRule s) = productivityIndex s + 1`. -/
@@ -268,138 +383,78 @@ private lemma pseudoVal_suffixToRule (s : Suffix) :
     pseudoVal (suffixToRule s) = ((s.productivityIndex : ℕ) : ℝ) + 1 := by
   cases s <;> rfl
 
-@[simp] private lemma pseudoVal_rNess : pseudoVal rNess = 3 := by
+private lemma pseudoVal_rNess : pseudoVal rNess = 3 := by
   show pseudoVal (suffixToRule .ness) = 3
   rw [pseudoVal_suffixToRule]; norm_num [Suffix.productivityIndex]
 
-@[simp] private lemma pseudoVal_rIon : pseudoVal rIon = 2 := by
+private lemma pseudoVal_rIon : pseudoVal rIon = 2 := by
   show pseudoVal (suffixToRule .ion) = 2
-  rw [pseudoVal_suffixToRule]; norm_num [Suffix.productivityIndex]
-
-@[simp] private lemma pseudoVal_rAte : pseudoVal rAte = 1 := by
-  show pseudoVal (suffixToRule .ate) = 1
   rw [pseudoVal_suffixToRule]; norm_num [Suffix.productivityIndex]
 
 /-! ## Theorems -/
 
-/-- The FG-family API exemplified on the toy grammar: any `DMPCFG`
-    over `suffixGrammar` assigns probability 1 — and hence positive
-    probability — to the empty corpus. Direct corollary of
-    `DMPCFG.corpusProb_zero`. -/
-theorem corpusProb_pos_for_empty (M : DMPCFG suffixGrammar) :
-    0 < M.corpusProb 0 := by
-  rw [DMPCFG.corpusProb_zero]; exact zero_lt_one
+/-- Any Dirichlet PCFG over `suffixGrammar` assigns probability `1`, hence positive
+    probability, to the empty corpus. -/
+theorem corpusProb_pos_for_empty (M : DirichletPCFG suffixGrammar) : 0 < M.corpusProb 0 := by
+  rw [DirichletPCFG.corpusProb_zero]; exact zero_lt_one
 
-/-- Structural drift sentry: a stronger productivity ranking
-    (`moreProductiveThan`) implies a larger DMPCFG pseudo-count for the
-    corresponding rule. Propagates `moreProductiveThan` through
-    `pseudoVal`, so this breaks if `Suffix.productivityIndex` is revised
-    in a way that contradicts the rule-level encoding. -/
-theorem dmpcfgFromObserved_pseudo_respects_productivity
+/-- A stronger productivity ranking (`moreProductiveThan`) implies a larger pseudo-count for
+    the corresponding rule, so a revision of `Suffix.productivityIndex` that contradicts the
+    rule-level encoding breaks here. -/
+theorem suffixPrior_pseudo_respects_productivity
     {a b : Suffix} (h : moreProductiveThan a b) :
-    dmpcfgFromObserved.pseudo (suffixToRule a) >
-        dmpcfgFromObserved.pseudo (suffixToRule b) := by
+    suffixPrior.pseudo (suffixToRule a) > suffixPrior.pseudo (suffixToRule b) := by
   show pseudoVal (suffixToRule a) > pseudoVal (suffixToRule b)
   rw [pseudoVal_suffixToRule, pseudoVal_suffixToRule]
-  have : (a.productivityIndex : ℝ) > (b.productivityIndex : ℝ) := by
-    exact_mod_cast h
+  have : (a.productivityIndex : ℝ) > (b.productivityIndex : ℝ) := by exact_mod_cast h
   linarith
 
-/-- The central failure mode [odonnell-2015] Ch 7 documents
-    (p. 268; Fig 7.4 p. 267 supplies the CELEX evidence). DMPCFG
-    posterior MAP weights track `pseudo + count`, so any corpus
-    where `rIon` derivations exceed `rNess` derivations by more than
-    1 makes DMPCFG's PMF rank `rIon` above `rNess` — directly
-    contradicting `moreProductiveThan ness ion`. The `+1` threshold
-    reflects the pseudo-count gap (`pseudoVal rNess − pseudoVal rIon
-    = 3 − 2 = 1`); once corpus counts overcome the prior gap,
-    frequency dominates.
-
-    O'Donnell's CELEX numbers in Fig 7.4 (`-ion`: ~162k tokens vs
-    `-ness`: ~16k tokens) leave the gap an order of magnitude larger
-    than +1, so the conclusion holds for realistic data; the
-    hypothesis is the abstract minimum that suffices. -/
-theorem dmpcfgFromObserved_mapWeightPMF_lt_of_count_gap
-    (D : Multiset (DerivationTree Sym SuffixNT))
+/-- The failure mode of the Dirichlet PCFG the book documents in Chapter 7 (p. 268, with the
+    CELEX evidence of Fig 7.4 on p. 267): its posterior predictive tracks pseudo-count plus
+    corpus count, so any corpus in which `rIon` derivations exceed `rNess` derivations by more
+    than the pseudo-count gap of `1` ranks `rIon` above `rNess`, against
+    `moreProductiveThan ness ion`. The CELEX token gap is an order of magnitude larger than the
+    hypothesis requires. -/
+theorem suffixPrior_predictive_lt_of_count_gap (D : Multiset (DerivationTree Sym SuffixNT))
     (h : DerivationTree.corpusRuleCount (N := SuffixNT) rNess D + 1 <
          DerivationTree.corpusRuleCount (N := SuffixNT) rIon D) :
-    dmpcfgFromObserved.mapWeightPMF D nNess <
-        dmpcfgFromObserved.mapWeightPMF D nIon := by
-  rw [DMPCFG.mapWeightPMF_lt_iff]
-  show pseudoVal rNess +
-        (DerivationTree.corpusRuleCount (N := SuffixNT) rNess D : ℝ) <
-      pseudoVal rIon +
-        (DerivationTree.corpusRuleCount (N := SuffixNT) rIon D : ℝ)
-  rw [pseudoVal_rNess, pseudoVal_rIon]
+    suffixPrior.predictive rNess D < suffixPrior.predictive rIon D := by
+  refine (suffixPrior.predictive_lt_iff_of_same_lhs (r := rNess) (r' := rIon) (by decide) rfl).2 ?_
   have h' : (DerivationTree.corpusRuleCount (N := SuffixNT) rNess D : ℝ) + 1 <
-            (DerivationTree.corpusRuleCount (N := SuffixNT) rIon D : ℝ) := by
-    exact_mod_cast h
+      DerivationTree.corpusRuleCount (N := SuffixNT) rIon D := by exact_mod_cast h
+  show pseudoVal rNess + _ < pseudoVal rIon + _
+  rw [pseudoVal_rNess, pseudoVal_rIon]
   linarith
 
-/-- Prior PMF (empty corpus): DMPCFG correctly orders the N-rules of
-    `suffixGrammar`. With no data, the posterior IS the prior (per
-    `mapWeight_zero`), and the prior IS the per-LHS-normalised
-    pseudo-counts. Since `pseudoVal rNess > pseudoVal rIon` by
-    construction, the PMF mass at `rNess` exceeds that at `rIon`.
-
-    The *first half* of the [odonnell-2015] Ch 7 critique of
-    DMPCFG: it does not start wrong. The model's failure mode is
-    data-driven, not prior-driven. -/
-theorem dmpcfgFromObserved_mapWeightPMF_prior_lt :
-    dmpcfgFromObserved.mapWeightPMF 0 nIon <
-      dmpcfgFromObserved.mapWeightPMF 0 nNess := by
-  rw [DMPCFG.mapWeightPMF_lt_iff]
-  show pseudoVal rIon + (DerivationTree.corpusRuleCount (N := SuffixNT) rIon 0 : ℝ) <
-       pseudoVal rNess + (DerivationTree.corpusRuleCount (N := SuffixNT) rNess 0 : ℝ)
-  rw [DerivationTree.corpusRuleCount_zero, DerivationTree.corpusRuleCount_zero,
-      pseudoVal_rIon, pseudoVal_rNess]
+/-- With no data the Dirichlet PCFG orders the nominalising rules correctly: the prior
+    predictive is the normalised pseudo-count, and `pseudoVal rNess > pseudoVal rIon`. The
+    model's failure is data-driven, not prior-driven. -/
+theorem suffixPrior_predictive_prior_lt :
+    suffixPrior.predictive rIon 0 < suffixPrior.predictive rNess 0 := by
+  refine (suffixPrior.predictive_lt_iff_of_same_lhs (r := rIon) (r' := rNess) (by decide) rfl).2 ?_
+  show pseudoVal rIon + _ < pseudoVal rNess + _
+  rw [pseudoVal_rIon, pseudoVal_rNess, DerivationTree.corpusRuleCount_zero,
+    DerivationTree.corpusRuleCount_zero]
   norm_num
 
-/-- **Bridge demo.** The same prior comparison stated as a fact about
-    `dmpcfgFromObserved.posteriorMAP 0` — a `MultinomialPCFG suffixGrammar`
-    derived from the DMPCFG via the conjugate-prior collapse.
+/-- The same prior comparison as a fact about the predictive PCFG, the point estimate the
+    Dirichlet prior induces. -/
+theorem suffixPrior_predictivePCFG_prior_lt :
+    (suffixPrior.predictivePCFG 0).weight rIon < (suffixPrior.predictivePCFG 0).weight rNess := by
+  rw [DirichletPCFG.predictivePCFG_weight _ (by decide),
+    DirichletPCFG.predictivePCFG_weight _ (by decide),
+    ENNReal.ofReal_lt_ofReal_iff (suffixPrior.predictive_pos (by decide) 0)]
+  exact suffixPrior_predictive_prior_lt
 
-    This is the proof-of-life that the `DMPCFG → MultinomialPCFG`
-    bridge cashes out: any DMPCFG-side PMF fact translates straight
-    to a MultinomialPCFG-side fact about the posterior MAP, via
-    `posteriorMAP_rulePMF`. Future cross-paper consumers (Albright-Hayes,
-    Bybee, dual-route) can target `MultinomialPCFG` and have their
-    theorems automatically apply to DMPCFG-derived posteriors. -/
-theorem dmpcfgFromObserved_posteriorMAP_prior_lt :
-    (dmpcfgFromObserved.posteriorMAP 0).rulePMF SuffixNT.N nIon <
-      (dmpcfgFromObserved.posteriorMAP 0).rulePMF SuffixNT.N nNess :=
-  dmpcfgFromObserved_mapWeightPMF_prior_lt
-
-/-- The full [odonnell-2015] Ch 7 critique of DMPCFG, in one
-    theorem. Two facts that look contradictory but aren't:
-
-    - Without data (empty corpus), DMPCFG's PMF over the N-rules
-      ranks `rNess` above `rIon` — matching the data-layer
-      `productivityIndex`.
-    - Given a corpus with sufficiently many `rIon` derivations
-      (more than `rNess` by more than the pseudo-count gap of 1),
-      the PMF flips and ranks `rIon` above `rNess` — contradicting
-      the empirical productivity ordering [odonnell-2015]
-      reports for English.
-
-    Per Ch 7 (Fig 7.4 p. 267), DMPCFG is built with the right prior
-    but bases its posterior on `pseudo + count`, so when CELEX-scale
-    token frequencies hit the model the data overwhelms the prior
-    and the posterior ranking flips. The fix the book proposes —
-    Fragment Grammars — gives a different posterior structure that
-    doesn't collapse productivity into raw frequency. -/
-theorem dmpcfgFromObserved_mapWeightPMF_prior_and_posterior_disagree
-    (D : Multiset (DerivationTree Sym SuffixNT))
+/-- The Chapter 7 critique of the Dirichlet PCFG in one theorem: right without data, wrong once
+    `-ion` tokens dominate. The fix the book proposes, the fragment grammar, gives a posterior
+    that does not collapse productivity into raw frequency. -/
+theorem suffixPrior_prior_and_posterior_disagree (D : Multiset (DerivationTree Sym SuffixNT))
     (h : DerivationTree.corpusRuleCount (N := SuffixNT) rNess D + 1 <
          DerivationTree.corpusRuleCount (N := SuffixNT) rIon D) :
-    -- Prior: ness > ion at empty corpus
-    (dmpcfgFromObserved.mapWeightPMF 0 nIon <
-      dmpcfgFromObserved.mapWeightPMF 0 nNess) ∧
-    -- Posterior: ion > ness once data dominates
-    (dmpcfgFromObserved.mapWeightPMF D nNess <
-      dmpcfgFromObserved.mapWeightPMF D nIon) :=
-  ⟨dmpcfgFromObserved_mapWeightPMF_prior_lt,
-   dmpcfgFromObserved_mapWeightPMF_lt_of_count_gap D h⟩
+    suffixPrior.predictive rIon 0 < suffixPrior.predictive rNess 0 ∧
+      suffixPrior.predictive rNess D < suffixPrior.predictive rIon D :=
+  ⟨suffixPrior_predictive_prior_lt, suffixPrior_predictive_lt_of_count_gap D h⟩
 
 /-! ### The Probabilistic Elsewhere Condition (§5.5.3)
 
@@ -549,8 +604,7 @@ as a Lean theorem.
   §7.3.2 (p. 269). Needs a relative-frequency comparator primitive
   (Hay 2001 / Hay & Baayen 2002).
 - `ability_paradox_discriminates_fg_from_mag` — [odonnell-2015]
-  Ch 8. "MAG" is `AdaptorGrammar` (already formalised in
-  `FragmentGrammars/AdaptorGrammar.lean`); needs a richer toy grammar
+  Ch 8. "MAG" is `AdaptorGrammar` above; needs a richer toy grammar
   with `-able`/`-ity` rules and a stored `-ability` fragment.
 - `cross_study_albright_hayes` — productivity index alignment. Needs
   a `suffixToAHRule` shim into `Studies/AlbrightHayes2003.lean`'s

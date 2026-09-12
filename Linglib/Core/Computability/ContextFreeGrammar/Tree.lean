@@ -170,9 +170,12 @@ theorem corpusRuleCount_zero (r : ContextFreeRule T N) :
     corpusRuleCount r (0 : Multiset (DerivationTree T N)) = 0 := by
   simp [corpusRuleCount]
 
-/-- Corpus rule counts add over disjoint corpora — `corpusRuleCount`
-    is a `Multiset` sum over `ruleCount`, which respects multiset
-    addition by `Multiset.map_add` + `Multiset.sum_add`. -/
+@[simp]
+theorem corpusRuleCount_singleton (r : ContextFreeRule T N) (t : DerivationTree T N) :
+    corpusRuleCount r {t} = ruleCount r t := by
+  simp [corpusRuleCount]
+
+/-- Corpus rule counts add over disjoint corpora. -/
 theorem corpusRuleCount_add (r : ContextFreeRule T N)
     (D₁ D₂ : Multiset (DerivationTree T N)) :
     corpusRuleCount r (D₁ + D₂) = corpusRuleCount r D₁ + corpusRuleCount r D₂ := by

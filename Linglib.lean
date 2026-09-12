@@ -1297,13 +1297,6 @@ import Linglib.Morphology.Exponence.Containment.Selection
 import Linglib.Morphology.Exponence.Decomposition
 import Linglib.Morphology.Exponence.Elsewhere
 import Linglib.Morphology.Exponence.Select
-import Linglib.Morphology.FragmentGrammars.AdaptorGrammar
-import Linglib.Morphology.FragmentGrammars.CFGFragment
-import Linglib.Morphology.FragmentGrammars.Comparisons
-import Linglib.Morphology.FragmentGrammars.DMPCFG
-import Linglib.Morphology.FragmentGrammars.FragmentGrammar
-import Linglib.Morphology.FragmentGrammars.FragmentLambda
-import Linglib.Morphology.FragmentGrammars.MultinomialPCFG
 import Linglib.Morphology.Morph
 import Linglib.Morphology.Morphotactics.CVTemplate
 import Linglib.Morphology.Morphotactics.MirrorPrinciple

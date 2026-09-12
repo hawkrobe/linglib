@@ -21,8 +21,8 @@ distribution on partitions of `[n]`, generalising the Chinese Restaurant
 Process (the one-parameter Dirichlet process). The mathematical reference
 is [pitman-2006] §3.2 (Saint-Flour lectures); the linguistic
 application that motivates this file is [odonnell-2015] §3.1.6
-(memoization distribution for adaptor and fragment grammars in
-`Morphology/FragmentGrammars/`).
+(memoization distribution for the adaptor and fragment grammars of
+`ODonnell2015`).
 
 ## Naming convention
 
@@ -81,7 +81,7 @@ Pitman 2006 gives several equivalent normalisations of the EPPF:
 
 We formalise (a) as `sum_partitionProb_set_eq_one`, summing over
 `Finpartition (Finset.univ : Finset (Fin n))`. This is the form the
-downstream `AdaptorGrammar` consumer needs (since AG's `Y` is a labeled
+downstream `ODonnell2015.AdaptorGrammar` consumer needs (since AG's `Y` is a labeled
 table assignment, equivalent to a set partition under the canonical
 "tables labeled by order of creation" convention).
 
@@ -93,7 +93,7 @@ at `α = 0, θ = 1, n = 3` the bare sum is `2/3`.
 ## Limitations
 
 * `partitionProb` returns `ℝ` rather than `PMF`. The downstream
-  consumer `AdaptorGrammar.corpusProbGivenTables` is itself an
+  consumer `ODonnell2015.AdaptorGrammar.corpusProbGivenTables` is itself an
   ℝ-valued kernel (table assignments are latent, not marginalised),
   so the bare-ℝ form is what the consumer wants.
 * The normalisation theorem `sum_partitionProb_set_eq_one`
@@ -194,7 +194,7 @@ Convert a set partition of `Fin n` (i.e., a `Finpartition` of
 structure (which elements are in which block) and keeps only the
 cardinalities.
 
-Used by `AdaptorGrammar.pypFactor` to evaluate Pitman's EPPF
+Used by `ODonnell2015.AdaptorGrammar.pypFactor` to evaluate Pitman's EPPF
 (`PitmanYor.partitionProb`) on a labeled table assignment, since the
 EPPF formula depends only on block sizes.
 -/
@@ -512,7 +512,7 @@ noncomputable def partitionProb {n : ℕ} (q : Nat.Partition n) : ℝ :=
     factor in [pitman-2006] eq 3.6 is nonnegative under the PYP
     constraints (`0 ≤ α ≤ 1`, `θ ≥ -α`), and the overall quotient and
     product preserve nonnegativity. Used downstream by
-    `AdaptorGrammar.corpusProbGivenTables_nonneg`. -/
+    `ODonnell2015.AdaptorGrammar.corpusProbGivenTables_nonneg`. -/
 theorem partitionProb_nonneg {n : ℕ} (q : Nat.Partition n) :
     0 ≤ p.partitionProb q := by
   obtain ⟨a, b, ha_nn, ha_le, hba⟩ := p

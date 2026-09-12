@@ -30,8 +30,8 @@ count vector `x` with `∑ i, x i = N` has mass `Nat.multinomial univ x * seqPro
   multinomial coefficient.
 * `PolyaUrn.dirichletMultinomial_real_singleton` — the closed-form mass of a count vector.
 
-Split from `PolyaUrn.lean` so that consumers of `seqProb` alone (the fragment grammars in
-`Morphology/FragmentGrammars/`) do not import measure theory.
+Split from `PolyaUrn.lean` so that consumers of `seqProb` alone (`DirichletPCFG` and the
+adaptor and fragment grammars of `ODonnell2015`) do not import measure theory.
 -/
 
 open MeasureTheory
