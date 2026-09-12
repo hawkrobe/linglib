@@ -2,9 +2,10 @@ import Linglib.Syntax.Minimalist.Phase.Basic
 import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 
 /-!
-# Olivier 2026: auxiliary switch as person-identity matching
+# Olivier (2026): Agree in Restructuring
 
-Auxiliary Switch — BE in place of HAVE on a modal in a compound tense whose infinitive is
+This file formalizes the account of auxiliary switch in [olivier-2026]. Auxiliary switch,
+BE in place of HAVE on a modal in a compound tense whose infinitive is
 unaccusative or reflexive — is ordinary auxiliary selection across a transparent
 restructuring domain. Auxiliary selection itself is not driven by argument structure: a
 person value carries the referential identity of its bearer, Voice's valued φ-set is
@@ -18,11 +19,8 @@ subject's — to vAux, BE. Prepositional clitics (*y/ci*, *en/ne*, *lui/gli*)
 climb without a switch since they introduce no coreferential person value, and a vAux that
 also probes the internal argument gives the Italian and Sardinian speakers' BE. Out of
 scope: conditions 1–2, which the restructuring structure presupposes; gender and number on
-the participle; impersonal *si*; the corpus counts.
-
-## Main definitions
-
-* `compound`: the simple compound tense; `matrixAux` the restructuring one.
+the participle; impersonal *si*; the corpus counts. The simple compound tense is `compound`
+and the restructuring one `Restructuring.matrixAux`.
 
 ## References
 
