@@ -7,24 +7,27 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 
 /-!
-# Thick vs Thin Causative Verb Data
-[martin-rose-nichols-2025] [embick-2009]
+# Martin, Rose and Nichols (2025): Burning Facts: Thick and Thin Causatives
 
-Corpus survey data from Table 3: 37 English causative verbs classified by
-four binary properties:
+This file formalizes the corpus survey of [martin-rose-nichols-2025], whose Table 3
+classifies thirty-seven English causative verbs by four binary properties: participation
+in the causative–anticausative alternation, thickness, the encoding of a manner of causing
+that restricts the subject to concrete causers, compatibility with strong adjectival
+resultatives such as *break open*, and compatibility with omission or quality-denoting
+subjects. Thick verbs are, with one exception, those taking strong resultatives, thin verbs
+those accepting omission subjects, and thickness aligns with the manner of causing of the
+causative verb classes; the correlation is strong but not exact, *bury* being thick without
+a resultative and a few thick verbs occurring occasionally with omission subjects.
 
-1. **alternating**: Participates in the causative/anticausative alternation
-2. **thick**: Encodes manner of causing (subject restriction on abstract causes)
-3. **ASR**: Compatible with strong adjectival resultatives (*break open*)
-4. **omissionSubjects**: Compatible with omission/quality-denoting subjects
+## TODO
 
-## Key Findings (§4.3)
+The preprint's table is transcribed from an earlier version of this file and is UNVERIFIED
+against the text now on file.
 
-- 12/13 thick verbs have ASR, 22/24 thin verbs accept omission subjects
-- Thick ≈ causative manner verbs, but *bury* is thick without ASR
-- The correlation is strong but not perfect: some thick verbs (burn, lift, lock)
-  are occasionally found with omission subjects in corpora
+## References
 
+* [martin-rose-nichols-2025]
+* [embick-2009]
 -/
 
 namespace MartinRoseNichols2025.ThickThin
@@ -89,63 +92,88 @@ covering the key patterns. Numbers in comments refer to Table 3 rows. -/
 -- === Thin causatives (result-only, no manner specification) ===
 
 def activate : ThickThinEntry :=    -- #1
-  { toVerbEntry := V.activate, alternating := true, thick := false, asr := false, omissionSubjects := true }
+  { toVerbEntry := V.activate, alternating := true, thick := false, asr := false,
+    omissionSubjects := true }
 def affect : ThickThinEntry :=      -- #2
-  { toVerbEntry := V.affect, alternating := false, thick := false, asr := false, omissionSubjects := true }
+  { toVerbEntry := V.affect, alternating := false, thick := false, asr := false,
+    omissionSubjects := true }
 def change : ThickThinEntry :=      -- #3
-  { toVerbEntry := V.change, alternating := true, thick := false, asr := false, omissionSubjects := true }
+  { toVerbEntry := V.change, alternating := true, thick := false, asr := false,
+    omissionSubjects := true }
 def damage : ThickThinEntry :=      -- #6
-  { toVerbEntry := V.damage, alternating := false, thick := false, asr := false, omissionSubjects := true }
+  { toVerbEntry := V.damage, alternating := false, thick := false, asr := false,
+    omissionSubjects := true }
 def destroy : ThickThinEntry :=     -- #7
-  { toVerbEntry := V.destroy, alternating := false, thick := false, asr := false, omissionSubjects := true }
+  { toVerbEntry := V.destroy, alternating := false, thick := false, asr := false,
+    omissionSubjects := true }
 def eliminate : ThickThinEntry :=   -- #9
-  { toVerbEntry := V.eliminate, alternating := false, thick := false, asr := false, omissionSubjects := true }
+  { toVerbEntry := V.eliminate, alternating := false, thick := false, asr := false,
+    omissionSubjects := true }
 def hurt : ThickThinEntry :=        -- #12
-  { toVerbEntry := V.hurt, alternating := false, thick := false, asr := false, omissionSubjects := true }
+  { toVerbEntry := V.hurt, alternating := false, thick := false, asr := false,
+    omissionSubjects := true }
 def kill : ThickThinEntry :=        -- #13
-  { toVerbEntry := V.kill, alternating := false, thick := false, asr := false, omissionSubjects := true }
+  { toVerbEntry := V.kill, alternating := false, thick := false, asr := false,
+    omissionSubjects := true }
 def restore : ThickThinEntry :=     -- #17
-  { toVerbEntry := V.restore, alternating := false, thick := false, asr := false, omissionSubjects := true }
+  { toVerbEntry := V.restore, alternating := false, thick := false, asr := false,
+    omissionSubjects := true }
 def start : ThickThinEntry :=       -- #20
-  { toVerbEntry := V.start, alternating := true, thick := false, asr := false, omissionSubjects := true }
+  { toVerbEntry := V.start, alternating := true, thick := false, asr := false,
+    omissionSubjects := true }
 def stop : ThickThinEntry :=        -- #21
-  { toVerbEntry := V.stop, alternating := true, thick := false, asr := false, omissionSubjects := false }
+  { toVerbEntry := V.stop, alternating := true, thick := false, asr := false,
+    omissionSubjects := false }
 def trigger : ThickThinEntry :=     -- #22
-  { toVerbEntry := V.trigger, alternating := false, thick := false, asr := false, omissionSubjects := true,
+  { toVerbEntry := V.trigger, alternating := false, thick := false, asr := false,
+    omissionSubjects := true,
     thickThinClass := .thin }
 
 -- === Thick causatives (manner-encoding, restrict abstract subjects) ===
 
 def break_ : ThickThinEntry :=      -- #25
-  { toVerbEntry := V.break_, alternating := true, thick := true, asr := true, omissionSubjects := false }
+  { toVerbEntry := V.break_, alternating := true, thick := true, asr := true,
+    omissionSubjects := false }
 def burn : ThickThinEntry :=        -- #27
-  { toVerbEntry := V.burn, alternating := true, thick := true, asr := true, omissionSubjects := true,
+  { toVerbEntry := V.burn, alternating := true, thick := true, asr := true,
+    omissionSubjects := true,
     thickThinClass := .thickManner }  -- Exception: burn found with omission subjects
 def bury : ThickThinEntry :=        -- #26
-  { toVerbEntry := V.bury, alternating := false, thick := true, asr := false, omissionSubjects := false,
+  { toVerbEntry := V.bury, alternating := false, thick := true, asr := false,
+    omissionSubjects := false,
     thickThinClass := .thickState }   -- Thick via state property, NOT causative manner verb
 def cut : ThickThinEntry :=         -- #28
-  { toVerbEntry := V.cut, alternating := false, thick := true, asr := true, omissionSubjects := false }
+  { toVerbEntry := V.cut, alternating := false, thick := true, asr := true,
+    omissionSubjects := false }
 def drop : ThickThinEntry :=        -- #29
-  { toVerbEntry := V.drop, alternating := true, thick := true, asr := true, omissionSubjects := false }
+  { toVerbEntry := V.drop, alternating := true, thick := true, asr := true,
+    omissionSubjects := false }
 def lift : ThickThinEntry :=        -- #30
-  { toVerbEntry := V.lift, alternating := false, thick := true, asr := true, omissionSubjects := true,
+  { toVerbEntry := V.lift, alternating := false, thick := true, asr := true,
+    omissionSubjects := true,
     thickThinClass := .thickManner }  -- Exception: lift found with omission subjects
 def lock : ThickThinEntry :=        -- #31
-  { toVerbEntry := V.lock, alternating := true, thick := true, asr := true, omissionSubjects := true,
+  { toVerbEntry := V.lock, alternating := true, thick := true, asr := true,
+    omissionSubjects := true,
     thickThinClass := .thickManner }  -- Exception: lock found with omission subjects
 def melt : ThickThinEntry :=        -- #32
-  { toVerbEntry := V.melt, alternating := true, thick := true, asr := true, omissionSubjects := false }
+  { toVerbEntry := V.melt, alternating := true, thick := true, asr := true,
+    omissionSubjects := false }
 def mix : ThickThinEntry :=         -- #33
-  { toVerbEntry := V.mix, alternating := true, thick := true, asr := true, omissionSubjects := false }
+  { toVerbEntry := V.mix, alternating := true, thick := true, asr := true,
+    omissionSubjects := false }
 def shut : ThickThinEntry :=        -- #34
-  { toVerbEntry := V.shut, alternating := true, thick := true, asr := true, omissionSubjects := false }
+  { toVerbEntry := V.shut, alternating := true, thick := true, asr := true,
+    omissionSubjects := false }
 def spread : ThickThinEntry :=      -- #35
-  { toVerbEntry := V.spread, alternating := true, thick := true, asr := true, omissionSubjects := false }
+  { toVerbEntry := V.spread, alternating := true, thick := true, asr := true,
+    omissionSubjects := false }
 def stretch : ThickThinEntry :=     -- #36
-  { toVerbEntry := V.stretch, alternating := true, thick := true, asr := true, omissionSubjects := false }
+  { toVerbEntry := V.stretch, alternating := true, thick := true, asr := true,
+    omissionSubjects := false }
 def switch : ThickThinEntry :=      -- #37
-  { toVerbEntry := V.switch, alternating := true, thick := true, asr := true, omissionSubjects := false }
+  { toVerbEntry := V.switch, alternating := true, thick := true, asr := true,
+    omissionSubjects := false }
 
 /-! ## Per-datum verification theorems -/
 
