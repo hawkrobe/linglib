@@ -17,7 +17,7 @@ import Linglib.Core.Order.OmegaCompletePartialOrder
 `Measure.bind` is monotone in both arguments and commutes with suprema of monotone sequences in
 both arguments. Together with the complete lattice structure on `Measure α`, this makes an
 operator built from `bind` ω-Scott-continuous, so its least fixed point is the supremum of its
-Kleene iterates (`OrderHom.lfp_eq_sSup_iterate`). This is the least-fixed-point semantics of
+Kleene iterates (`fixedPoints.lfp_eq_sSup_iterate`). This is the least-fixed-point semantics of
 recursive probabilistic programs of [kozen-1981], stated on the monad of [giry-1982].
 `[UPSTREAM]` candidate for `Mathlib/MeasureTheory/Measure/GiryMonad.lean`.
 
@@ -37,6 +37,13 @@ recursive probabilistic programs of [kozen-1981], stated on the monad of [giry-1
   `bind` is ω-Scott-continuous jointly in the measure and the kernel, and `map` in the measure,
   so operators built from them have Kleene least fixed points.
 
+## Implementation notes
+
+`Measure α` is an ω-complete partial order through its complete lattice, while a Pi type of
+measures also carries the product ω-CPO instance; the two agree but not reducibly, so continuity
+proofs are pinned to explicit suprema through `CompleteLattice.ωSup_eq_iSup` and
+`Pi.ωSup_eq_iSup` rather than to `ωSup`.
+
 ## References
 
 * [giry-1982]
@@ -49,11 +56,12 @@ open scoped ENNReal
 namespace ENNReal
 
 /-- A supremum over a monotone sequence commutes with a countable sum. -/
-theorem iSup_tsum_of_monotone {ι : Type*} [Countable ι] [MeasurableSpace ι]
-    [MeasurableSingletonClass ι] {g : ℕ → ι → ℝ≥0∞} (hg : Monotone g) :
+theorem iSup_tsum_of_monotone {ι : Type*} {g : ℕ → ι → ℝ≥0∞} (hg : Monotone g) :
     ⨆ n, ∑' i, g n i = ∑' i, ⨆ n, g n i := by
-  simp_rw [← lintegral_count]
-  exact (lintegral_iSup (fun n => measurable_of_countable (g n)) hg).symm
+  simp_rw [ENNReal.tsum_eq_iSup_sum]
+  rw [iSup_comm]
+  exact iSup_congr fun s => (ENNReal.finsetSum_iSup fun m n =>
+    ⟨max m n, fun i => ⟨hg (le_max_left m n) i, hg (le_max_right m n) i⟩⟩).symm
 
 end ENNReal
 
@@ -121,17 +129,19 @@ theorem iSup_bind_of_monotone {μ : ℕ → Measure α} (hμ : Monotone μ) {f :
     lintegral_iSup_measure_of_monotone hμ]
   simp_rw [bind_apply hs hf.aemeasurable]
 
+theorem measurable_iSup_measure_of_monotone {f : ℕ → α → Measure β} (hf : ∀ n, Measurable (f n))
+    (hmono : Monotone f) : Measurable fun a => ⨆ n, f n a :=
+  measurable_of_measurable_coe _ fun s hs => by
+    simp_rw [iSup_apply_of_monotone (fun m n h => hmono h _) hs]
+    exact Measurable.iSup fun n => (measurable_coe hs).comp (hf n)
+
 theorem bind_iSup_of_monotone {μ : Measure α} {f : ℕ → α → Measure β}
     (hf : ∀ n, Measurable (f n)) (hmono : Monotone f) :
     μ.bind (fun a => ⨆ n, f n a) = ⨆ n, μ.bind (f n) := by
   have hpt : ∀ a, ∀ {s : Set β}, MeasurableSet s → (⨆ n, f n a) s = ⨆ n, f n a s :=
     fun a _ hs => iSup_apply_of_monotone (fun m n h => hmono h a) hs
-  have hmeas : Measurable fun a => ⨆ n, f n a :=
-    measurable_of_measurable_coe _ fun s hs => by
-      simp_rw [hpt _ hs]
-      exact Measurable.iSup fun n => (measurable_coe hs).comp (hf n)
   ext s hs
-  rw [bind_apply hs hmeas.aemeasurable,
+  rw [bind_apply hs (measurable_iSup_measure_of_monotone hf hmono).aemeasurable,
     iSup_apply_of_monotone
       (fun m n h => bind_mono_right (fun a => hmono h a) (hf m).aemeasurable
         (hf n).aemeasurable) hs]
@@ -187,12 +197,6 @@ end Interchange
 
 variable {γ : Type*} [OmegaCompletePartialOrder γ]
 
-theorem measurable_iSup_of_monotone {f : ℕ → α → Measure β} (hf : ∀ n, Measurable (f n))
-    (hmono : Monotone f) : Measurable fun a => ⨆ n, f n a :=
-  measurable_of_measurable_coe _ fun s hs => by
-    simp_rw [iSup_apply_of_monotone (fun m n h => hmono h _) hs]
-    exact Measurable.iSup fun n => (measurable_coe hs).comp (hf n)
-
 /-- `bind` is ω-Scott-continuous jointly in the measure and the kernel. -/
 theorem ωScottContinuous_bind {M : γ → Measure α} {F : γ → α → Measure β}
     (hM : ωScottContinuous M) (hF : ∀ a, ωScottContinuous (F · a))
@@ -207,7 +211,7 @@ theorem ωScottContinuous_bind {M : γ → Measure α} {F : γ → α → Measur
   have hF' : F (ωSup c) = fun a => ⨆ n, F (c n) a := by
     funext a; rw [(hF a).map_ωSup, CompleteLattice.ωSup_eq_iSup]; rfl
   rw [CompleteLattice.ωSup_eq_iSup, hM', hF',
-    iSup_bind_of_monotone hMc (measurable_iSup_of_monotone (fun n => hmeas (c n)) hFc)]
+    iSup_bind_of_monotone hMc (measurable_iSup_measure_of_monotone (fun n => hmeas (c n)) hFc)]
   simp_rw [bind_iSup_of_monotone (fun n => hmeas (c n)) hFc]
   rw [iSup_iSup_eq_iSup_diag fun m n m' n' hm hn =>
     bind_mono (hMc hm) (fun a => hFc hn a) (hmeas (c n)).aemeasurable (hmeas (c n')).aemeasurable]
