@@ -1,0 +1,2299 @@
+[
+  {
+    "id": "longobardi2001_6a",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(6a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Elefanti di colore bianco hanno creato in passato grande curiosità.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "White-colored elephants raised a lot of curiosity in the past.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "episodic"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_6b",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(6b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Elefanti di colore bianco possono creare grande curiosità.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "White-colored elephants may raise a lot of curiosity.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "marginal"
+      },
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "habitual"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_6c",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(6c)"
+    },
+    "language": "ital1282",
+    "primaryText": "Elefanti di colore bianco hanno creato sempre/spesso in passato grande curiosità.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "White-colored elephants always/often raised a lot of curiosity in the past.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "marginal"
+      },
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "adverbial"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_7",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(7)"
+    },
+    "language": "ital1282",
+    "primaryText": "Cani da guardia di grosse dimensioni sono più efficienti.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Watchdogs of large size are more efficient.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "iLevelA"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_8a",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(8a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Stati di grandi dimensioni sono pericolosi.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "States of large size are dangerous.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "iLevelA"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_8b",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(8b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Stati di grandi dimensioni sono prosperi.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "States of large size are prosperous.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "iLevelB"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_9b",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(9b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Cani da guardia di grosse dimensioni sono più pelosi/neri.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Watchdogs of large size are more hairy/black.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "iLevelB"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_10a",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(10a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Uccelli di zone paludose sono ghiotti di insetti.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Birds from marshy areas are greedy for insects.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "iLevelA"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_10b",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(10b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Uccelli di zone paludose sono scuri/intelligenti.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Birds from marshy areas are dark/intelligent.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "iLevelB"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_12",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(12)"
+    },
+    "language": "ital1282",
+    "primaryText": "In questi casi, pompieri di grande esperienza intervengono in soccorso delle vittime dell'incidente.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "In such cases, firemen of great experience run to the rescue of the victims of the accident.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "habitual"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_13a",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(13a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Elefanti di colore bianco sono estinti.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "White-colored elephants have become extinct.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "ungrammatical"
+      },
+      {
+        "name": "Gen",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "kindLevel"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_13b",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(13b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Elefanti di colore bianco diventano sempre più grandi man mano che si va a nord.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "White-colored elephants grow larger as one drives north.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "ungrammatical"
+      },
+      {
+        "name": "Gen",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "kindLevel"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_13c",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(13c)"
+    },
+    "language": "ital1282",
+    "primaryText": "Elefanti di colore bianco sono così chiamati per la pigmentazione della loro pelle.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "White-colored elephants are so-called because of the pigmentation of their skin.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "ungrammatical"
+      },
+      {
+        "name": "Gen",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "kindLevel"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_21a",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(21a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Elefanti di colore bianco passeranno il Giudizio Universale domani alle 5.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "White-colored elephants will undergo the Final Judgment tomorrow at 5.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "episodic"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_21b",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(21b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Elefanti di colore bianco sono stati sterminati in massa da un cataclisma nel 1874.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "White-colored elephants were mass-exterminated by a cataclysm in 1874.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "episodic"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_15a",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(15a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Degli/Due elefanti di colore bianco hanno creato in passato grande curiosità.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Some/Two white-colored elephants raised a lot of curiosity in the past.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "overtIndefinite"
+      ],
+      [
+        "environment",
+        "episodic"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_15b",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(15b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Degli/Due elefanti di colore bianco possono creare grande curiosità.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Some/Two white-colored elephants may raise a lot of curiosity.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "marginal"
+      },
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "overtIndefinite"
+      ],
+      [
+        "environment",
+        "habitual"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_15c",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(15c)"
+    },
+    "language": "ital1282",
+    "primaryText": "Degli/Due elefanti di colore bianco hanno creato sempre/spesso in passato grande curiosità.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Some/Two white-colored elephants always/often raised a lot of curiosity in the past.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "marginal"
+      },
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "overtIndefinite"
+      ],
+      [
+        "environment",
+        "adverbial"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_16",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(16)"
+    },
+    "language": "ital1282",
+    "primaryText": "Dei/Due cani da guardia di grosse dimensioni sono più efficienti.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Some/Two watchdogs of large size are more efficient.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "overtIndefinite"
+      ],
+      [
+        "environment",
+        "iLevelA"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_17a",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(17a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Uno stato di grandi dimensioni è pericoloso.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A state of large size is dangerous.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "overtIndefinite"
+      ],
+      [
+        "environment",
+        "iLevelA"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_17b",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(17b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Uno stato di grandi dimensioni è prospero.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A state of large size is prosperous.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "overtIndefinite"
+      ],
+      [
+        "environment",
+        "iLevelB"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_18b",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(18b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Un cane da guardia di grosse dimensioni è più peloso/nero.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A watchdog of large size is more hairy/black.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "overtIndefinite"
+      ],
+      [
+        "environment",
+        "iLevelB"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_20a",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(20a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Degli/Due elefanti di colore bianco sono estinti.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Some/Two white-colored elephants have become extinct.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "ungrammatical"
+      },
+      {
+        "name": "Gen",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "overtIndefinite"
+      ],
+      [
+        "environment",
+        "kindLevel"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_20b",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(20b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Degli/Due elefanti di colore bianco diventano sempre più grandi man mano che si va a nord.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Some/Two white-colored elephants grow larger as one drives north.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "ungrammatical"
+      },
+      {
+        "name": "Gen",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "overtIndefinite"
+      ],
+      [
+        "environment",
+        "kindLevel"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_26",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(26)"
+    },
+    "language": "ital1282",
+    "primaryText": "Ho escluso solo vecchie signore.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I only excluded old ladies.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "episodic"
+      ],
+      [
+        "position",
+        "object"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_27",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(27)"
+    },
+    "language": "ital1282",
+    "primaryText": "Una buona legge esclude solo cittadini stranieri dal diritto di voto.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A fair law only excludes foreign citizens from the right to vote.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "habitual"
+      ],
+      [
+        "position",
+        "object"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_28",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(28)"
+    },
+    "language": "ital1282",
+    "primaryText": "Amo/Adoro/Mi piacciono arance di grandi dimensioni.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I love/adore/like oranges of large size.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "iLevelA"
+      ],
+      [
+        "position",
+        "object"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_29",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(29)"
+    },
+    "language": "ital1282",
+    "primaryText": "Roentgen ha scoperto raggi X.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Roentgen discovered X-rays.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "ungrammatical"
+      },
+      {
+        "name": "Gen",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "kindLevel"
+      ],
+      [
+        "position",
+        "object"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_30a",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(30a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Ho escluso solo delle vecchie signore.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I only excluded some old ladies.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "overtIndefinite"
+      ],
+      [
+        "environment",
+        "episodic"
+      ],
+      [
+        "position",
+        "object"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_30b",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(30b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Una buona legge esclude solo dei cittadini stranieri dal diritto di voto.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A fair law only excludes some foreign citizens from the right to vote.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "overtIndefinite"
+      ],
+      [
+        "environment",
+        "habitual"
+      ],
+      [
+        "position",
+        "object"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_30c",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(30c)"
+    },
+    "language": "ital1282",
+    "primaryText": "Amo/Adoro/Mi piacciono delle arance di grandi dimensioni.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I love/adore/like some oranges of large size.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "overtIndefinite"
+      ],
+      [
+        "environment",
+        "iLevelA"
+      ],
+      [
+        "position",
+        "object"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_30d",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(30d)"
+    },
+    "language": "ital1282",
+    "primaryText": "Roentgen ha scoperto dei raggi X.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Roentgen discovered some X-rays.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "ungrammatical"
+      },
+      {
+        "name": "Gen",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "overtIndefinite"
+      ],
+      [
+        "environment",
+        "kindLevel"
+      ],
+      [
+        "position",
+        "object"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_48a",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(48a), the translation of (6a)"
+    },
+    "language": "stan1293",
+    "primaryText": "White-colored elephants raised a lot of curiosity in the past.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "White-colored elephants raised a lot of curiosity in the past.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "episodic"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_21a_en",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(21a), English translation"
+    },
+    "language": "stan1293",
+    "primaryText": "White-colored elephants will undergo the Final Judgment tomorrow at 5.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "White-colored elephants will undergo the Final Judgment tomorrow at 5.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "episodic"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_48b",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(48b), the translation of (13a)"
+    },
+    "language": "stan1293",
+    "primaryText": "White-colored elephants have become extinct.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "White-colored elephants have become extinct.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "kindLevel"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_48c",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(48c), the translation of (8b)"
+    },
+    "language": "stan1293",
+    "primaryText": "States of large size are prosperous.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "States of large size are prosperous.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "iLevelB"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_48d",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(48d), the translation of (26)"
+    },
+    "language": "stan1293",
+    "primaryText": "I only excluded old ladies.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I only excluded old ladies.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "episodic"
+      ],
+      [
+        "position",
+        "object"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_48e",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(48e), the translation of (29)"
+    },
+    "language": "stan1293",
+    "primaryText": "Roentgen discovered X-rays.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Roentgen discovered X-rays.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "kindLevel"
+      ],
+      [
+        "position",
+        "object"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_34a",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(34a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Gli elefanti di colore bianco hanno creato in passato grande curiosità.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The white-colored elephants raised a lot of curiosity in the past.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "definite"
+      ],
+      [
+        "environment",
+        "episodic"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_34b",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(34b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Gli elefanti di colore bianco sono estinti.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The white-colored elephants have become extinct.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "definite"
+      ],
+      [
+        "environment",
+        "kindLevel"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_34c",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(34c)"
+    },
+    "language": "ital1282",
+    "primaryText": "Gli elefanti di colore bianco diventano sempre più grandi man mano che si va a nord.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The white-colored elephants grow larger as one drives north.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "definite"
+      ],
+      [
+        "environment",
+        "kindLevel"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_34d",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(34d)"
+    },
+    "language": "ital1282",
+    "primaryText": "Gli elefanti di colore bianco sono così chiamati per la pigmentazione della loro pelle.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The white-colored elephants are so-called because of the pigmentation of their skin.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "definite"
+      ],
+      [
+        "environment",
+        "kindLevel"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_34e",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(34e)"
+    },
+    "language": "ital1282",
+    "primaryText": "Gli elefanti di colore bianco passeranno il Giudizio Universale domani alle 5.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The white-colored elephants will undergo the Final Judgment tomorrow at 5.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "definite"
+      ],
+      [
+        "environment",
+        "episodic"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_34f",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(34f)"
+    },
+    "language": "ital1282",
+    "primaryText": "Gli elefanti di colore bianco sono stati sterminati in massa da un cataclisma.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The white-colored elephants were mass-exterminated by a cataclysm.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "definite"
+      ],
+      [
+        "environment",
+        "episodic"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_35a",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(35a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Gli stati di grandi dimensioni sono prosperi.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The states of large size are prosperous.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "definite"
+      ],
+      [
+        "environment",
+        "iLevelB"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_35b",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(35b)"
+    },
+    "language": "ital1282",
+    "primaryText": "I cani da guardia di grosse dimensioni sono più pelosi.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The watchdogs of large size are more hairy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "definite"
+      ],
+      [
+        "environment",
+        "iLevelB"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_36a",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(36a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Ho escluso solo le vecchie signore.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I only excluded the old ladies.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "definite"
+      ],
+      [
+        "environment",
+        "episodic"
+      ],
+      [
+        "position",
+        "object"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_36b",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(36b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Una buona legge esclude solo i cittadini stranieri dal diritto di voto.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A fair law only excludes the foreign citizens from the right to vote.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "definite"
+      ],
+      [
+        "environment",
+        "habitual"
+      ],
+      [
+        "position",
+        "object"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_36c",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(36c)"
+    },
+    "language": "ital1282",
+    "primaryText": "Amo/Adoro/Mi piacciono le arance di grandi dimensioni.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I love/adore/like the oranges of large size.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "definite"
+      ],
+      [
+        "environment",
+        "iLevelA"
+      ],
+      [
+        "position",
+        "object"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_36d",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(36d)"
+    },
+    "language": "ital1282",
+    "primaryText": "Roentgen ha scoperto i raggi X.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Roentgen discovered the X-rays.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "definite"
+      ],
+      [
+        "environment",
+        "kindLevel"
+      ],
+      [
+        "position",
+        "object"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_22",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(22)"
+    },
+    "language": "stan1293",
+    "primaryText": "Cats think very highly of themselves.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Cats think very highly of themselves.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "species",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "distributive",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "kindAnaphora"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_24",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(24)"
+    },
+    "language": "ital1282",
+    "primaryText": "Gatti di grandi dimensioni hanno un'alta opinione di se stessi.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Cats of great size have a high opinion of themselves.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "species",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "distributive",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "kindAnaphora"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_25a",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(25a)"
+    },
+    "language": "ital1282",
+    "primaryText": "Un gatto di grandi dimensioni ha un'alta opinione di se stesso.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A cat of great size has a high opinion of itself.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "species",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "distributive",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "overtIndefinite"
+      ],
+      [
+        "environment",
+        "kindAnaphora"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_25b",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(25b)"
+    },
+    "language": "ital1282",
+    "primaryText": "Dei gatti di grandi dimensioni hanno un'alta opinione di se stessi.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Some cats of great size have a high opinion of themselves.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "species",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "distributive",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "overtIndefinite"
+      ],
+      [
+        "environment",
+        "kindAnaphora"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_37",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(37)"
+    },
+    "language": "ital1282",
+    "primaryText": "I gatti di grandi dimensioni hanno un'alta opinione di se stessi.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The cats of great size have a high opinion of themselves.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "species",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "distributive",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "definite"
+      ],
+      [
+        "environment",
+        "kindAnaphora"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_63a",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(63a)"
+    },
+    "language": "mode1248",
+    "primaryText": "Asproi elephantes echoun exaphanisthei.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "White elephants have become extinct.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "ungrammatical"
+      },
+      {
+        "name": "Gen",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "kindLevel"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_63b",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(63b)"
+    },
+    "language": "mode1248",
+    "primaryText": "Asproi elephantes apothekatisthēkan apo ena kataklysmo to 1874.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "White elephants were exterminated by a cataclysm in 1874.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Ex",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "Gen",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "bareNoun"
+      ],
+      [
+        "environment",
+        "episodic"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_64a",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(64a)"
+    },
+    "language": "mode1248",
+    "primaryText": "Oi asproi elephantes echoun exafanisthei.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The white elephants have become extinct.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Gen",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "definite"
+      ],
+      [
+        "environment",
+        "kindLevel"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_64b",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(64b)"
+    },
+    "language": "mode1248",
+    "primaryText": "Oi asproi elephantes apothekatisthēkan apo ena kataklysmo to 1874.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The white elephants were exterminated by a cataclysm in 1874.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Gen",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "nominal",
+        "definite"
+      ],
+      [
+        "environment",
+        "episodic"
+      ],
+      [
+        "position",
+        "subject"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_65a",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(65a)"
+    },
+    "language": "mode1248",
+    "primaryText": "Rōmē einai ē proteuousa tēs Italias.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Rome is the capital of Italy.",
+    "context": "The name without the article; with the article Ē the sentence is grammatical.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nominal",
+        "properName"
+      ],
+      [
+        "article",
+        "absent"
+      ]
+    ]
+  },
+  {
+    "id": "longobardi2001_65b",
+    "source": {
+      "bibkey": "longobardi-2001",
+      "paperLabel": "(65b)"
+    },
+    "language": "mode1248",
+    "primaryText": "Xerō Rōmē poly kala.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I know Rome very well.",
+    "context": "The name without the article; with the article tē the sentence is grammatical.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nominal",
+        "properName"
+      ],
+      [
+        "article",
+        "absent"
+      ]
+    ]
+  }
+]
