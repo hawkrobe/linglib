@@ -2,89 +2,47 @@ import Mathlib.Tactic.DeriveFintype
 import Linglib.Features.Polarity
 import Linglib.Data.Generalizations.HomogeneityGap
 import Linglib.Semantics.Exhaustification.Finite
-import Linglib.Semantics.Plurality.Implicature
 
 /-!
 # Magri (2014): Homogeneity Effects via Double Strengthening
-[magri-2014]
 
-An account for the homogeneity effects triggered by plural definites and
-conjunction based on double strengthening. In *Pragmatics, Semantics and
-the Case of Scalar Implicatures*, ed. S. Pistoia Reda (Palgrave Macmillan),
-99-145.
+This file formalizes the double-strengthening account of homogeneity of [magri-2014]. A
+plural definite has the plain existential meaning of the indefinite, and its universal
+reading is an implicature of an implicature: the indefinite triggers the *only some*
+inference, and the definite triggers the inference that this inference is false, after the
+iterated exhaustification of [spector-2007]. The configuration is three items, the item
+displaying homogeneity, its semantically equivalent weak alternative, and the strong
+alternative (`Role`), with Horn-mateness holding between neighbours but not across
+(`hornMates`), so that the inner exhaustification excludes nothing for the definite while
+the outer one, comparing strengthened meanings, derives the universal reading
+(`double_strengthening_yields_universal`). No strengthening applies in downward-entailing environments,
+where the definite shows its existential meaning, which is the homogeneity gap. The primal
+theory, strengthening a weak plain meaning, covers definites and plural morphology; the dual
+theory, weakening a strong plain meaning, covers unfocused conjunction.
 
-## Core Idea
+## Implementation notes
 
-Plural definites like *the boys* have a **plain existential semantics**,
-equivalent to the indefinite *some boys*. Their universal reading arises
-through *double strengthening* modeled on [spector-2007]:
+Exhaustification is the substrate's innocent exclusion after [fox-2007]. The scenarios count
+satisfying individuals out of a total, so the three items' meanings are cardinality
+conditions.
 
-1. The indefinite *some boys* triggers the "only-some" scalar implicature
-2. The definite *the boys* triggers the implicature that this "only-some"
-   implicature is false
-3. The universal reading thus arises as a "not-only-some" implicature
+## TODO
 
-No strengthening occurs in DE environments, where definites reveal their
-plain existential semantics --- producing homogeneity effects.
+The paper is not on file; equation and section locators are transcribed from an earlier
+version of this file and are UNVERIFIED. The polarity-by-scenario predictions against the
+pooled homogeneity-gap data are not stated.
 
-## Formal Structure
+## References
 
-The theory reduces to a three-element alternative configuration:
-
-- **MYSTERY**: the item displaying homogeneity (THE / PL / AND_unF)
-- **WEAK**: its semantically equivalent alternative (SOME / SING / OR)
-- **STRONG**: the stronger alternative (ALL / TWO / BOTH)
-
-The crucial asymmetry: MYSTERY and WEAK are Horn-mates, WEAK and STRONG
-are Horn-mates, but MYSTERY is NOT a Horn-mate of STRONG. Horn-mateness
-is non-transitive.
-
-## Double Exhaustification
-
-The universal reading arises via two layers of EXH:
-
-1. **Inner EXH**: SOME excludes ALL (standard SI), but THE has no
-   excludable alternatives (ALL is not a Horn-mate, SOME is equivalent).
-   So EXH(THE) = THE = SOME, EXH(SOME) = SOME AND NOT ALL.
-
-2. **Outer EXH**: At the second level, EXH(SOME) = SOME AND NOT ALL is
-   *strictly stronger* than EXH(THE) = SOME. Since SOME is a Horn-mate
-   of THE, it becomes excludable at the outer level:
-   EXH(EXH(THE)) = SOME AND NOT(SOME AND NOT ALL) = ALL.
-
-## Primal vs Dual
-
-- **Primal theory**: MYSTERY has weak plain meaning, strengthened to STRONG
-  in UE. Applies to definites and plural morphology.
-- **Dual theory**: MYSTERY has strong plain meaning, weakened to WEAK in DE.
-  Applies to unfocused conjunction.
-
-Both derive the same net result: MYSTERY behaves as STRONG in UE,
-MYSTERY behaves as WEAK in DE.
-
-## Relationship to [spector-2007]
-
-Magri extends Spector's exhaustivity-based account of plural morphology
-(PL/SING/TWO) to plural definites (THE/SOME/ALL) and unfocused conjunction
-(AND_unF/OR/BOTH). The key technical innovation is assumption (19): using
-*iterated* exhaustification where the *strengthened* alternatives (not
-just plain meanings) determine outer-level excludability. Spector's
-single-EXH result `Max(P) = {Exhaust(P)}` is formalized in
-`ScalarImplicatures/Studies/Spector2007.lean`.
-
-TODO: state the double-strengthening account's polarity × scenario
-predictions, run them against the pooled `Generalizations.HomogeneityGap`
-data, and prove divergence theorems vs rivals.
+* [magri-2014]
+* [spector-2007]
+* [fox-2007]
 -/
 
 namespace Magri2014
 
 open Features (Polarity)
 
-
--- ============================================================
--- SECTION 1: The Alternative Configuration
--- ============================================================
 
 /--
 The three items in a double-strengthening configuration.
@@ -170,10 +128,6 @@ theorem the_does_not_exclude_some : innerExcludable .mystery .weak = false := rf
 theorem some_does_not_exclude_the : innerExcludable .weak .mystery = false := rfl
 
 
--- ============================================================
--- SECTION 2: Exhaustification (EXH)
--- ============================================================
-
 /--
 The semantic value of an item, in an abstract Boolean domain.
 
@@ -212,65 +166,6 @@ theorem strong_entails_weak (s : Scenario) (hn : s.total ≥ 1) :
   simp only [allMeaning, someMeaning, beq_iff_eq, decide_eq_true_eq]
   omega
 
-/-! ### Bridge to [bar-lev-2021]'s `existPL`
-
-Magri 2014's "plain existential" semantics for plural definites (§3)
-is structurally identical to Bar-Lev 2021's `∃-PL` operator
-(`Plurality.Implicature.existPL`) applied on the full domain. The two
-homogeneity accounts agree on the basic meaning and diverge only in
-the strengthening mechanism: Magri uses *double scalar implicature*
-(§3 of [magri-2014]), Bar-Lev uses `Exh^{IE+II}`. The bridge
-below formalises the convergence at the substrate level.
-
-The translation `fromPredicate` abstracts a Bar-Lev-style predicative
-model `(P, x, w)` to a Magri-style `Scenario` by counting how many
-atoms of `x` satisfy `P` at `w`. -/
-
-section ImplicatureBridge
-
-open Plurality.Implicature (existPL existPL_full)
-
-variable {Atom W : Type*} [DecidableEq Atom]
-
-/-- Translate a Bar-Lev-style predicative model into a Magri-style
-    `Scenario` by counting how many atoms of `x` satisfy `P` at `w`. -/
-def fromPredicate (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
-    (x : Finset Atom) (w : W) : Scenario where
-  total := x.card
-  satisfying := (x.filter (fun a => P a w)).card
-  valid := Finset.card_filter_le _ _
-
-/-- **Magri's plain existential = Bar-Lev's `existPL` on full domain.**
-    The "plain existential" semantics Magri assigns to plural definites
-    is structurally identical to Bar-Lev 2021's `∃-PL` operator with
-    `D = x`. Both homogeneity accounts thus share the basic meaning;
-    they differ only in the strengthening mechanism. -/
-theorem someMeaning_iff_existPL
-    (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
-    (x : Finset Atom) (w : W) :
-    someMeaning (fromPredicate P x w) = true ↔ existPL x P x w := by
-  rw [existPL_full _ _ _ _ (Finset.Subset.refl x)]
-  simp only [someMeaning, fromPredicate, decide_eq_true_eq, ge_iff_le,
-             Nat.one_le_iff_ne_zero, Finset.card_ne_zero,
-             Finset.filter_nonempty_iff]
-
-/-- **Magri's strong universal = atomic universal.** `allMeaning s = true`
-    iff every atom of `x` satisfies `P` — the truth condition the
-    universal reading of the plural definite is supposed to converge
-    on under either double strengthening (Magri) or `Exh^{IE+II}`
-    (Bar-Lev). -/
-theorem allMeaning_iff_forall_mem
-    (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
-    (x : Finset Atom) (w : W) :
-    allMeaning (fromPredicate P x w) = true ↔ ∀ a ∈ x, P a w := by
-  simp only [allMeaning, fromPredicate, beq_iff_eq]
-  refine ⟨fun h a hax => ?_, fun h => ?_⟩
-  · have hfeq : x.filter (fun a => P a w) = x :=
-      Finset.eq_of_subset_of_card_le (Finset.filter_subset _ _) (by omega)
-    exact (Finset.filter_eq_self.mp hfeq) a hax
-  · rw [Finset.filter_eq_self.mpr h]
-
-end ImplicatureBridge
 
 /--
 EXH applied to a prejacent: assert the prejacent and negate all
@@ -306,10 +201,6 @@ theorem exh_the (s : Scenario) :
     List.all_cons, List.all_nil, Bool.and_true, Bool.true_and, Bool.false_and,
     Bool.not_true, Bool.not_false, ite_false, Bool.false_eq_true]
 
-
--- ============================================================
--- SECTION 3: Double Strengthening (the main result)
--- ============================================================
 
 /--
 At the outer (second) EXH level, excludability uses Horn-mateness but
@@ -402,10 +293,6 @@ theorem double_strengthening_yields_universal (s : Scenario) (hn : s.total ≥ 1
     omega
 
 
--- ============================================================
--- SECTION 4: DE Environments (no strengthening)
--- ============================================================
-
 /--
 In DE environments (negation, restrictor of *every*, etc.), no
 strengthening occurs. The definite reveals its plain existential semantics.
@@ -423,10 +310,6 @@ theorem de_no_strengthening (s : Scenario) :
     notMeaning (primalMeaning .weak) s := by
   rfl
 
-
--- ============================================================
--- SECTION 5: Homogeneity Effects (derived)
--- ============================================================
 
 /--
 A GAP scenario: some but not all individuals satisfy the predicate.
@@ -464,10 +347,6 @@ theorem homogeneity_from_double_strengthening (s : Scenario) (h : isGap s = true
     doubleExh .mystery s = false ∧ notMeaning someMeaning s = false :=
   ⟨gap_positive_false s h, gap_negative_false s h⟩
 
-
--- ============================================================
--- SECTION 6: Concrete Instances
--- ============================================================
 
 /--
 The three domains unified by the double strengthening account.
@@ -519,10 +398,6 @@ def conjunctionLabels : DomainLabels :=
 def allDomains : List DomainLabels :=
   [definiteLabels, pluralMorphLabels, conjunctionLabels]
 
-
--- ============================================================
--- SECTION 7: Primal vs Dual
--- ============================================================
 
 /--
 Whether the domain uses the primal or dual version of the theory.
@@ -587,10 +462,6 @@ theorem primal_dual_agree :
     effectiveInterpretation .primal = effectiveInterpretation .dual := by
   funext pol; cases pol <;> rfl
 
-
--- ============================================================
--- SECTION 8: Sloppy Existential Readings
--- ============================================================
 
 /--
 Magri's conjecture: a matrix plural definite has a universal
@@ -670,12 +541,12 @@ open Generalizations.HomogeneityGap (allData) in
     cells are bivalent, as `double_strengthening_yields_universal` and
     `de_no_strengthening` require). -/
 theorem matches_pooled_gap_data :
-    ((allData.any fun d =>
+    ((allData.any λ d =>
         d.polarity == .positive && d.scenario == .gap && d.observed == .indet) = true) ∧
-    ((allData.any fun d =>
+    ((allData.any λ d =>
         d.polarity == .negative && d.scenario == .gap && d.observed == .indet) = true) ∧
-    ((allData.filter (fun d => d.scenario != .gap)).all
-        (fun d => d.observed != .indet) = true) :=
+    ((allData.filter (λ d => d.scenario != .gap)).all
+        (λ d => d.observed != .indet) = true) :=
   ⟨by decide, by decide, by decide⟩
 
 
@@ -697,10 +568,6 @@ theorem dual_monotonicity_pattern :
     effectiveInterpretation .dual .positive = .strong ∧
     effectiveInterpretation .dual .negative = .weak := ⟨rfl, rfl⟩
 
-
--- ============================================================
--- SECTION 9: Bridge to Fox's Computable exhB
--- ============================================================
 
 /-!
 ## Connection to [fox-2007]'s Computable Algorithm
@@ -757,9 +624,9 @@ theorem fox_inner_exh_the :
     apply `innocent_exh_singleton_proper` for the remaining `bAll ⊊ bSome`. -/
 theorem fox_inner_exh_some :
     innocent.exh (altsFromPreds someAlts) (predToFinset bSome)
-      = predToFinset (fun w => bSome w && !bAll w) := by
+      = predToFinset (λ w => bSome w && !bAll w) := by
   rw [innocent_exh_erase_entailed (a := predToFinset bSome)
-        (fun _ h => h) (by decide),
+        (λ _ h => h) (by decide),
       show (altsFromPreds someAlts).erase (predToFinset bSome)
         = ({predToFinset bAll} : Finset (Finset Sat)) from by decide,
       innocent_exh_singleton_proper (α := predToFinset bAll) (by decide)]
@@ -767,9 +634,9 @@ theorem fox_inner_exh_some :
 
 /-- Inner results as named functions for the outer level. -/
 private def innerThe : Sat → Bool :=
-  fun w => decide (w ∈ innocent.exh (altsFromPreds theAlts) (predToFinset bSome))
+  λ w => decide (w ∈ innocent.exh (altsFromPreds theAlts) (predToFinset bSome))
 private def innerSome : Sat → Bool :=
-  fun w => decide (w ∈ innocent.exh (altsFromPreds someAlts) (predToFinset bSome))
+  λ w => decide (w ∈ innocent.exh (altsFromPreds someAlts) (predToFinset bSome))
 
 /-- Outer-level alternative list for THE: [EXH(THE), EXH(SOME)].
     EXH(SOME) = SOME ∧ ¬ALL is strictly stronger than EXH(THE) = SOME,
@@ -791,7 +658,7 @@ theorem fox_double_exh_yields_all :
     innocent.exh (altsFromPreds outerAltsForThe) (predToFinset innerThe)
       = predToFinset bAll := by
   rw [innocent_exh_erase_entailed (a := predToFinset innerThe)
-        (fun _ h => h) (by decide),
+        (λ _ h => h) (by decide),
       show (altsFromPreds outerAltsForThe).erase (predToFinset innerThe)
         = ({predToFinset innerSome} : Finset (Finset Sat)) from by decide,
       innocent_exh_singleton_proper (α := predToFinset innerSome) (by decide)]
@@ -799,10 +666,6 @@ theorem fox_double_exh_yields_all :
 
 end FoxBridge
 
-
--- ============================================================
--- SECTION 10: Dual Theory — Inner EXH and DE Properties (§5.5)
--- ============================================================
 
 /-!
 ## Dual Theory: UE Is Trivial, DE Reveals Weak Meaning
@@ -882,10 +745,6 @@ theorem dual_de_reveals_weak (s : Scenario)
 end DualComputation
 
 
--- ============================================================
--- SECTION 11: Enriched Conjunction Alternatives (§A.7)
--- ============================================================
-
 /-!
 ## Enriched Alternatives for Conjunction (§A.7)
 
@@ -957,7 +816,7 @@ theorem exh_andF :
     so `innocent_exh_pairwise_disjoint_partial` returns `φ \ (cAnd ∪ cRight)`. -/
 theorem exh_left :
     innocent.exh (altsFromPreds leftAlts) (predToFinset cLeft)
-      = predToFinset (fun w => cLeft w && !cRight w) := by
+      = predToFinset (λ w => cLeft w && !cRight w) := by
   rw [innocent_exh_erase_entailed (a := predToFinset cOr)
         (by decide) (by decide),
       show (altsFromPreds leftAlts).erase (predToFinset cOr)
@@ -972,7 +831,7 @@ theorem exh_left :
     then apply partial-cover to {cAnd, cLeft}. -/
 theorem exh_right :
     innocent.exh (altsFromPreds rightAlts) (predToFinset cRight)
-      = predToFinset (fun w => cRight w && !cLeft w) := by
+      = predToFinset (λ w => cRight w && !cLeft w) := by
   rw [innocent_exh_erase_entailed (a := predToFinset cOr)
         (by decide) (by decide),
       show (altsFromPreds rightAlts).erase (predToFinset cOr)
@@ -983,10 +842,10 @@ theorem exh_right :
 
 -- DE computation: negated meanings with per-prejacent alternative lists
 
-def nAnd : ConjW → Bool := fun w => !cAnd w
-def nOr : ConjW → Bool := fun w => !cOr w
-private def nLeft : ConjW → Bool := fun w => !cLeft w
-private def nRight : ConjW → Bool := fun w => !cRight w
+def nAnd : ConjW → Bool := λ w => !cAnd w
+def nOr : ConjW → Bool := λ w => !cOr w
+private def nLeft : ConjW → Bool := λ w => !cLeft w
+private def nRight : ConjW → Bool := λ w => !cRight w
 
 /-- not·AND_unF's alternatives: {not·AND_F, not·LEFT, not·RIGHT}. -/
 private def nAndUnFAlts : List (ConjW → Bool) := [nAnd, nLeft, nRight]
@@ -1016,9 +875,9 @@ theorem de_exh_notAndUnF :
     (`φ \ ALT.sup = ∅`); only `nOr` is IE, which a decide closes from there. -/
 theorem de_exh_notAndF :
     innocent.exh (altsFromPreds nAndFAlts) (predToFinset nAnd)
-      = predToFinset (fun w => nAnd w && cOr w) := by
+      = predToFinset (λ w => nAnd w && cOr w) := by
   rw [innocent_exh_erase_entailed (a := predToFinset nAnd)
-        (fun _ h => h) (by decide)]
+        (λ _ h => h) (by decide)]
   decide
 
 /-- (71c) EXH(not·LEFT) = not·LEFT ∧ OR ∧ RIGHT.
@@ -1029,7 +888,7 @@ theorem de_exh_notAndF :
     so `innocent_exh_pairwise_disjoint_partial` returns the residual. -/
 theorem de_exh_notLeft :
     innocent.exh (altsFromPreds nLeftAlts) (predToFinset nLeft)
-      = predToFinset (fun w => nLeft w && cOr w && cRight w) := by
+      = predToFinset (λ w => nLeft w && cOr w && cRight w) := by
   rw [innocent_exh_erase_entailed (a := predToFinset nAnd)
         (by decide) (by decide),
       show (altsFromPreds nLeftAlts).erase (predToFinset nAnd)
@@ -1044,7 +903,7 @@ theorem de_exh_notLeft :
     then partial-cover for {nOr, nLeft}. -/
 theorem de_exh_notRight :
     innocent.exh (altsFromPreds nRightAlts) (predToFinset nRight)
-      = predToFinset (fun w => nRight w && cOr w && cLeft w) := by
+      = predToFinset (λ w => nRight w && cOr w && cLeft w) := by
   rw [innocent_exh_erase_entailed (a := predToFinset nAnd)
         (by decide) (by decide),
       show (altsFromPreds nRightAlts).erase (predToFinset nAnd)
@@ -1056,14 +915,14 @@ theorem de_exh_notRight :
 /-- Outer-level alternatives for not·AND_unF: the exhaustified forms
     of its Horn-mates {not·AND_F, not·LEFT, not·RIGHT}. -/
 def outerNAndUnFAlts : List (ConjW → Bool) :=
-  [ fun w => decide (w ∈ innocent.exh (altsFromPreds nAndUnFAlts) (predToFinset nAnd))
-  , fun w => decide (w ∈ innocent.exh (altsFromPreds nAndFAlts) (predToFinset nAnd))
-  , fun w => decide (w ∈ innocent.exh (altsFromPreds nLeftAlts) (predToFinset nLeft))
-  , fun w => decide (w ∈ innocent.exh (altsFromPreds nRightAlts) (predToFinset nRight)) ]
+  [ λ w => decide (w ∈ innocent.exh (altsFromPreds nAndUnFAlts) (predToFinset nAnd))
+  , λ w => decide (w ∈ innocent.exh (altsFromPreds nAndFAlts) (predToFinset nAnd))
+  , λ w => decide (w ∈ innocent.exh (altsFromPreds nLeftAlts) (predToFinset nLeft))
+  , λ w => decide (w ∈ innocent.exh (altsFromPreds nRightAlts) (predToFinset nRight)) ]
 
 /-- The inner EXH result for not·AND_unF (= not·AND, vacuous). -/
 def innerNAndUnF : ConjW → Bool :=
-  fun w => decide (w ∈ innocent.exh (altsFromPreds nAndUnFAlts) (predToFinset nAnd))
+  λ w => decide (w ∈ innocent.exh (altsFromPreds nAndUnFAlts) (predToFinset nAnd))
 
 /-- **Computation (72)**: Double exhaustification of not·AND_unF yields not·OR.
 
@@ -1082,10 +941,6 @@ theorem de_double_exh_conjunction :
 
 end EnrichedConjunction
 
-
--- ============================================================
--- SECTION 12: Uniform Double Strengthening
--- ============================================================
 
 /-!
 ## Uniform Double Strengthening over Theory Variants
@@ -1140,10 +995,6 @@ theorem uniform_gap (v : TheoryVariant) (s : Scenario) (_hn : s.total ≥ 1)
 
 end UniformStrengthening
 
-
--- ============================================================
--- SECTION 13: Questions Pull Apart Primal from Dual (§5.5.4)
--- ============================================================
 
 /-!
 ## Questions: A Testable Distinction (§5.5.4)
