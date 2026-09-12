@@ -77,7 +77,7 @@ before #⁰) system on a single DP. Its derived status is a theorem:
 target resolution is `Probe.cascade` over the two probes
 (`Probe/Basic.lean`), and the rank comparison agrees with the
 cascade on the φ-cell inventory
-(`Preminger2014.afAgreementTarget_eq_rank`). It is not a salience
+(`Preminger2014.afTarget_eq_rank`). It is not a salience
 scale ([preminger-2014] Ch. 7).
 
 -/
@@ -188,7 +188,7 @@ def probeVisible (target : Probe.Target) (person : Person) (isPlural : Bool) : B
     exponence in the single morphological slot, and each probe
     targets any DP bearing the sought feature. The rank captures
     the combined effect on a single DP; its derived status is
-    `Preminger2014.afAgreementTarget_eq_rank` (cascade resolution,
+    `Preminger2014.afTarget_eq_rank` (cascade resolution,
     `Probe/Basic.lean`). It is not a salience scale
     ([preminger-2014] Ch. 7). -/
 def probeResolutionRank (person : Person) (isPlural : Bool) : Nat :=
