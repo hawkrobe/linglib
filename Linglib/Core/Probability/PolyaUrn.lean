@@ -1,6 +1,10 @@
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.RingTheory.Polynomial.Pochhammer
+import Mathlib.Data.Real.Basic
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Algebra.BigOperators.Field
 
 /-!
 # Pólya urn (per-sequence likelihood)
@@ -25,8 +29,12 @@ specific draw sequence with counts `x_1, …, x_K` has the closed form
 of [odonnell-2015] §3.1.3:
 
 ```
-P(seq | π) = Γ(Σ π) / Γ(Σ π + Σ x)  ·  ∏ Γ(π_i + x_i) / Γ(π_i)
+P(seq | π) = ∏ (π_i)_{x_i} / (Σ π)_{Σ x}
 ```
+
+in rising factorials `(a)_n = a (a + 1) ⋯ (a + n − 1)` (`ascPochhammer`), equivalently a ratio of
+Gamma values since `Γ(a + n) / Γ(a) = (a)_n`. The rising-factorial form keeps the identity
+algebraic: no analysis is imported.
 
 This file gives only the closed-form per-sequence likelihood
 `seqProb` — the form `DirichletPCFG` and the adaptor and fragment
@@ -84,7 +92,6 @@ for such a bridge) is also deferred.
 
 namespace ProbabilityTheory
 
-open Real
 
 /--
 A Pólya urn scheme over the alphabet `α`, parameterized by
@@ -134,10 +141,10 @@ theorem total_pos [Nonempty α] : 0 < u.total :=
 /--
 Closed-form *per-sequence likelihood* (not the count law — see
 `PolyaUrn.dirichletMultinomial` for that): probability that a draw
-sequence with counts `x` was emitted by the urn `u`.
+sequence with counts `x` was emitted by the urn `u`, in rising factorials,
 
 ```
-P(seq | π) = Γ(Σ π) / Γ(Σ π + Σ x)  ·  ∏ Γ(π_i + x_i) / Γ(π_i)
+P(seq | π) = ∏ (π_i)_{x_i} / (Σ π)_{Σ x} .
 ```
 
 Depends only on the counts (not the order), which is what makes the
@@ -150,18 +157,11 @@ To convert to the count-vector mass, multiply by the multinomial
 coefficient `(∑ x_i)! / ∏ (x_i!)` (`dirichletMultinomial_real_singleton`).
 -/
 noncomputable def seqProb (x : α → ℕ) : ℝ :=
-  Gamma u.total / Gamma (u.total + ∑ i, (x i : ℝ)) *
-    ∏ i, Gamma (u.pseudo i + x i) / Gamma (u.pseudo i)
+  (∏ i, (ascPochhammer ℝ (x i)).eval (u.pseudo i)) / (ascPochhammer ℝ (∑ i, x i)).eval u.total
 
 /-- The empty count vector — no draws — has per-sequence likelihood `1`. -/
-theorem seqProb_zero [Nonempty α] :
-    u.seqProb (fun _ => 0) = 1 := by
-  unfold seqProb
-  simp only [Nat.cast_zero, Finset.sum_const_zero, add_zero]
-  rw [div_self (Gamma_pos_of_pos u.total_pos).ne', one_mul]
-  apply Finset.prod_eq_one
-  intro i _
-  exact div_self (Gamma_pos_of_pos (u.pseudo_pos i)).ne'
+theorem seqProb_zero : u.seqProb (fun _ => 0) = 1 := by
+  simp [seqProb]
 
 /--
 **Pólya urn predictive recurrence.** Incrementing the count at color `c`
@@ -173,120 +173,30 @@ seqProb (x with x_c := x_c + 1) = seqProb x · (π_c + x_c) / (Σπ + Σx)
 ```
 
 This is the discrete-time recursion underlying the Dirichlet–Multinomial
-normalization. Proof: unfold `seqProb`, apply `Real.Gamma_add_one` at
-both `Σπ + Σx` (denominator) and `π_c + x_c` (the c-th factor in the
-product), and let the other terms cancel.
+normalization; it is the rising-factorial recurrence `(a)_{n+1} = (a)_n (a + n)` at the
+colour `c` and at the total.
 -/
 theorem seqProb_succ [Nonempty α] [DecidableEq α] (x : α → ℕ) (c : α) :
     u.seqProb (Function.update x c (x c + 1)) =
       u.seqProb x * (u.pseudo c + x c) / (u.total + ∑ i, (x i : ℝ)) := by
-  -- ## Proof strategy
-  --
-  -- LHS = Γ(Σπ) / Γ(Σπ + Σx + 1) · Γ(π_c + x_c + 1) / Γ(π_c) · ∏_{i≠c} Γ(π_i+x_i)/Γ(π_i)
-  -- Apply `Real.Gamma_add_one` at the (Σπ + Σx + 1) denominator and at the
-  -- (π_c + x_c + 1) c-th product factor, then field_simp + ring.
-  -- Setup: positivity facts, abbreviations.
-  have h_total_pos : 0 < u.total := u.total_pos
-  have h_x_nn : (0 : ℝ) ≤ ∑ i, (x i : ℝ) :=
-    Finset.sum_nonneg fun _ _ => Nat.cast_nonneg _
-  have h_pseudo_c_pos : 0 < u.pseudo c := u.pseudo_pos c
-  have h_xc_nn : (0 : ℝ) ≤ (x c : ℝ) := Nat.cast_nonneg _
-  have h_S_pos : 0 < u.total + ∑ i, (x i : ℝ) := by linarith
-  have h_S_ne : u.total + ∑ i, (x i : ℝ) ≠ 0 := h_S_pos.ne'
-  have h_pc_pos : 0 < u.pseudo c + (x c : ℝ) := by linarith
-  have h_pc_ne : u.pseudo c + (x c : ℝ) ≠ 0 := h_pc_pos.ne'
-  -- Step 1: rewrite the sum over the updated function as ∑ x + 1.
-  -- Strategy: cast Function.update through Nat.cast, then use sum_update_of_mem.
-  have h_sum_update : (∑ i, ((Function.update x c (x c + 1)) i : ℝ)) =
-      (∑ i, (x i : ℝ)) + 1 := by
-    have heq : (fun i => ((Function.update x c (x c + 1)) i : ℝ)) =
-        Function.update (fun i => (x i : ℝ)) c ((x c : ℝ) + 1) := by
-      funext i
-      by_cases hi : i = c
-      · subst hi; simp
-      · simp [hi]
-    rw [show (∑ i, ((Function.update x c (x c + 1)) i : ℝ)) =
-          ∑ i, (Function.update (fun i => (x i : ℝ)) c ((x c : ℝ) + 1)) i by rw [heq]]
-    rw [Finset.sum_update_of_mem (Finset.mem_univ c)]
-    have hsplit : (∑ i, (x i : ℝ)) =
-        (x c : ℝ) + ∑ i ∈ Finset.univ \ {c}, (x i : ℝ) := by
-      have hh := Finset.sum_update_of_mem (Finset.mem_univ c)
-        (f := fun i => (x i : ℝ)) (b := (x c : ℝ))
-      -- hh : ∑ i, Function.update (...) c (x c) i = (x c) + ∑ i ∈ univ \ {c}, x i
-      -- LHS reduces to ∑ i, (x i : ℝ) since updating with the original value is the function.
-      have hupd : (fun i => Function.update (fun i => (x i : ℝ)) c ((x c : ℝ)) i) =
-          (fun i => (x i : ℝ)) := by
-        funext i; by_cases hi : i = c
-        · subst hi; simp
-        · simp [hi]
-      rw [hupd] at hh
-      linarith
-    linarith
-  -- Step 2: rewrite the product over the updated function.
-  -- Pull out the c-th factor (at the updated value) using prod_update_of_mem.
-  have h_prod_update :
-      (∏ i, Gamma (u.pseudo i + (Function.update x c (x c + 1)) i) / Gamma (u.pseudo i)) =
-        (Gamma (u.pseudo c + ((x c : ℝ) + 1)) / Gamma (u.pseudo c)) *
-          ∏ i ∈ Finset.univ \ {c}, Gamma (u.pseudo i + x i) / Gamma (u.pseudo i) := by
-    have heq : (fun i => Gamma (u.pseudo i + (Function.update x c (x c + 1)) i) / Gamma (u.pseudo i)) =
-        Function.update
-          (fun i => Gamma (u.pseudo i + (x i : ℝ)) / Gamma (u.pseudo i))
-          c
-          (Gamma (u.pseudo c + ((x c : ℝ) + 1)) / Gamma (u.pseudo c)) := by
-      funext i
-      by_cases hi : i = c
-      · rw [hi]
-        have hcast : ((x c + 1 : ℕ) : ℝ) = (x c : ℝ) + 1 := by push_cast; ring
-        simp [hcast]
-      · simp [hi]
-    rw [show (∏ i, Gamma (u.pseudo i + (Function.update x c (x c + 1)) i) / Gamma (u.pseudo i)) =
-          ∏ i, (Function.update
-                  (fun i => Gamma (u.pseudo i + (x i : ℝ)) / Gamma (u.pseudo i))
-                  c
-                  (Gamma (u.pseudo c + ((x c : ℝ) + 1)) / Gamma (u.pseudo c))) i by rw [heq]]
-    exact Finset.prod_update_of_mem (Finset.mem_univ c) _ _
-  -- Step 3: similarly pull out the c-th factor for `seqProb x`.
-  have h_prod_x :
-      (∏ i, Gamma (u.pseudo i + x i) / Gamma (u.pseudo i)) =
-        (Gamma (u.pseudo c + x c) / Gamma (u.pseudo c)) *
-          ∏ i ∈ Finset.univ \ {c}, Gamma (u.pseudo i + x i) / Gamma (u.pseudo i) := by
-    have := Finset.prod_update_of_mem (Finset.mem_univ c)
-      (f := fun i => Gamma (u.pseudo i + (x i : ℝ)) / Gamma (u.pseudo i))
-      (b := Gamma (u.pseudo c + (x c : ℝ)) / Gamma (u.pseudo c))
-    -- LHS of `this`: ∏ x ∈ univ, Function.update f c (f c) x = ∏ x ∈ univ, f x
-    rw [show (fun i => Function.update
-              (fun i => Gamma (u.pseudo i + (x i : ℝ)) / Gamma (u.pseudo i))
-              c
-              (Gamma (u.pseudo c + (x c : ℝ)) / Gamma (u.pseudo c)) i) =
-          (fun i => Gamma (u.pseudo i + (x i : ℝ)) / Gamma (u.pseudo i)) from ?_] at this
-    · exact this
-    · funext i
-      by_cases hi : i = c
-      · subst hi; simp
-      · simp [hi]
-  -- Step 4: apply Gamma_add_one to the two (... + 1) Gammas.
-  have h_S_ne_for_gamma : u.total + ∑ i, (x i : ℝ) ≠ 0 := h_S_ne
-  have h_gamma_S :
-      Gamma (u.total + ((∑ i, (x i : ℝ)) + 1)) =
-        (u.total + ∑ i, (x i : ℝ)) * Gamma (u.total + ∑ i, (x i : ℝ)) := by
-    have : u.total + ((∑ i, (x i : ℝ)) + 1) = (u.total + ∑ i, (x i : ℝ)) + 1 := by ring
-    rw [this, Real.Gamma_add_one h_S_ne_for_gamma]
-  have h_gamma_pc :
-      Gamma (u.pseudo c + ((x c : ℝ) + 1)) =
-        (u.pseudo c + (x c : ℝ)) * Gamma (u.pseudo c + (x c : ℝ)) := by
-    have : u.pseudo c + ((x c : ℝ) + 1) = (u.pseudo c + (x c : ℝ)) + 1 := by ring
-    rw [this, Real.Gamma_add_one h_pc_ne]
-  -- Step 5: assemble. Unfold seqProb on both sides.
+  have hsum : ∑ i, Function.update x c (x c + 1) i = (∑ i, x i) + 1 := by
+    rw [Finset.sum_update_of_mem (Finset.mem_univ c), Finset.sdiff_singleton_eq_erase,
+      ← Finset.add_sum_erase _ _ (Finset.mem_univ c)]
+    ring
+  have hprod : ∏ i, (ascPochhammer ℝ (Function.update x c (x c + 1) i)).eval (u.pseudo i) =
+      (∏ i, (ascPochhammer ℝ (x i)).eval (u.pseudo i)) * (u.pseudo c + x c) := by
+    rw [← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ c),
+      ← Finset.mul_prod_erase Finset.univ (fun i => (ascPochhammer ℝ (x i)).eval (u.pseudo i))
+        (Finset.mem_univ c),
+      Function.update_self, ascPochhammer_succ_eval,
+      Finset.prod_congr rfl fun i hi => by rw [Function.update_of_ne (Finset.ne_of_mem_erase hi)]]
+    ring
+  have hden : (ascPochhammer ℝ (∑ i, x i)).eval u.total ≠ 0 :=
+    (ascPochhammer_pos _ _ u.total_pos).ne'
+  have hS : u.total + ∑ i, (x i : ℝ) ≠ 0 :=
+    (add_pos_of_pos_of_nonneg u.total_pos (Finset.sum_nonneg fun _ _ => Nat.cast_nonneg _)).ne'
   unfold seqProb
-  rw [h_sum_update, h_prod_update, h_prod_x, h_gamma_S, h_gamma_pc]
-  -- Now both sides should match after field_simp + ring.
-  -- Goal shape:
-  --   Γ(Σπ) / ((Σπ+Σx) * Γ(Σπ+Σx)) * ((π_c+x_c) * Γ(π_c+x_c) / Γ(π_c) * P)
-  --   = Γ(Σπ) / Γ(Σπ+Σx) * (Γ(π_c+x_c) / Γ(π_c) * P) * (π_c + x_c) / (Σπ+Σx)
-  -- where P = prod over univ \ {c}.
-  have hΓ_S_ne : Gamma (u.total + ∑ i, (x i : ℝ)) ≠ 0 :=
-    (Gamma_pos_of_pos h_S_pos).ne'
-  have hΓ_pc_ne : Gamma (u.pseudo c) ≠ 0 := (Gamma_pos_of_pos h_pseudo_c_pos).ne'
+  rw [hsum, hprod, ascPochhammer_succ_eval, Nat.cast_sum]
   field_simp
 
 omit [Fintype α] in
@@ -461,27 +371,9 @@ Per-sequence Pólya likelihood is strictly positive on nonempty
 alphabets. Used by downstream consumers (`DirichletPCFG`, `ODonnell2015.AdaptorGrammar`)
 to derive nonnegativity of corpus probabilities.
 -/
-theorem seqProb_pos [Nonempty α] (x : α → ℕ) :
-    0 < u.seqProb x := by
-  have h_total_pos : 0 < u.total := u.total_pos
-  have h_x_nn : (0 : ℝ) ≤ ∑ i, (x i : ℝ) :=
-    Finset.sum_nonneg fun i _ => Nat.cast_nonneg _
-  have hΓ_num_pos : 0 < Gamma u.total := Gamma_pos_of_pos h_total_pos
-  have hΓ_den_pos : 0 < Gamma (u.total + ∑ i, (x i : ℝ)) :=
-    Gamma_pos_of_pos (by linarith)
-  have hRatio_pos :
-      0 < Gamma u.total / Gamma (u.total + ∑ i, (x i : ℝ)) :=
-    div_pos hΓ_num_pos hΓ_den_pos
-  have hProd_pos :
-      0 < ∏ i, Gamma (u.pseudo i + x i) / Gamma (u.pseudo i) := by
-    apply Finset.prod_pos
-    intro i _
-    have h_psi_pos : 0 < u.pseudo i := u.pseudo_pos i
-    have h_xi_nn : (0 : ℝ) ≤ (x i : ℝ) := Nat.cast_nonneg _
-    refine div_pos (Gamma_pos_of_pos ?_) (Gamma_pos_of_pos h_psi_pos)
-    linarith
-  unfold seqProb
-  exact mul_pos hRatio_pos hProd_pos
+theorem seqProb_pos [Nonempty α] (x : α → ℕ) : 0 < u.seqProb x :=
+  div_pos (Finset.prod_pos fun i _ => ascPochhammer_pos _ _ (u.pseudo_pos i))
+    (ascPochhammer_pos _ _ u.total_pos)
 
 -- Symmetric Polya urn: convenience constructor
 
@@ -500,7 +392,7 @@ def symmetric (c : ℝ) (hc : 0 < c) : PolyaUrn α where
 /-- The Polya predictive: probability that the next draw is color `i`,
 given observed counts. Closed form
 `(π_i + counts i) / (∑ π_j + ∑ counts)` follows from the ratio
-`seqProb (counts + e_i) / seqProb counts` via `Γ(z+1) = z · Γ(z)`. -/
+`seqProb (counts + e_i) / seqProb counts` via `(a)_{n+1} = (a)_n (a + n)`. -/
 noncomputable def predictive (u : PolyaUrn α) (counts : α → ℕ) (i : α) : ℝ :=
   (u.pseudo i + counts i) / (u.total + ∑ j, (counts j : ℝ))
 
@@ -524,7 +416,8 @@ theorem predictive_zero_symmetric (c : ℝ) (hc : 0 < c) (i : α) :
 /-- The urn scheme: prepending a draw multiplies the sequence likelihood by the predictive
 probability of that draw given the counts so far. -/
 theorem seqProb_countVec_cons [DecidableEq α] (c : α) {N : ℕ} (seq : Fin N → α) :
-    u.seqProb (countVec (Fin.cons c seq)) = u.seqProb (countVec seq) * u.predictive (countVec seq) c := by
+    u.seqProb (countVec (Fin.cons c seq)) =
+      u.seqProb (countVec seq) * u.predictive (countVec seq) c := by
   rw [countVec_cons, seqProb_succ, predictive, mul_div_assoc]
 
 /-- Polya predictive monotonicity: a color with a higher previous count
