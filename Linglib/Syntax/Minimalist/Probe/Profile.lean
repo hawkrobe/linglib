@@ -1,6 +1,7 @@
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 import Linglib.Syntax.Minimalist.Probe.Basic
+import Mathlib.Order.Monotone.Defs
 
 /-!
 # Probe Profiles ([keine-2019], [keine-2020])
@@ -503,6 +504,15 @@ theorem upward_entailment_label (p : Probe.Profile)
     rw [List.any_eq_true] at h_opaque ⊢
     obtain ⟨x, hx_mem, hx_eq⟩ := h_opaque
     exact ⟨x, h_sub x hx_mem, hx_eq⟩
+
+/-- Upward Entailment: for every probe, transparency is antitone in the extension order of
+clause spines, since a spine's label contains the horizon whenever a spine below it does. -/
+theorem Probe.Profile.transparentToLabel_antitone (p : Probe.Profile) :
+    Antitone λ s : ClauseSpine => p.transparentToLabel s.projectedHeads :=
+  λ s _ h => Bool.le_iff_imp.mpr λ ht => by
+    cases hs : p.transparentToLabel s.projectedHeads
+    · exact absurd (upward_entailment_label p _ _ h hs) (by simp [ht])
+    · exact hs
 
 -- ============================================================================
 -- § 8: Height-Locality Connection ([keine-2020] (20)/(33))

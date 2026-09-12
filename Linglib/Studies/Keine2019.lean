@@ -10,8 +10,9 @@ is on the searches of probes, each terminated by a category of its own, its hori
 rather than on domains or on the moving element. With category inheritance within an extended
 projection ((43)) a clause's label collects the categories it projects, so a clause is opaque to a
 probe exactly when its label contains the horizon, and Upward Entailment ((40)), that larger
-clauses are at least as opaque, is the Horizon Inheritance Theorem ((45), (46)):
-`upward_entailment`. The Hindi probes of (48) and (57), φ-agreement and A-movement on T⁰ with
+clauses are at least as opaque, is the Horizon Inheritance Theorem ((45), (46)), transparency
+antitone in the extension order of clause sizes (`sizes_le`). The Hindi probes of (48) and (57),
+φ-agreement and A-movement on T⁰ with
 horizon T, wh-licensing on C⁰ with horizon C and Ā-movement on C⁰ without one, derive the
 transparency table (58) with its three locality types (`transparency_table`) and with it the
 generalizations (21) and (23) on long-distance agreement; English hyperraising is A-movement
@@ -51,13 +52,11 @@ def vpLabel : List Cat := ClauseSpine.vP.projectedHeads
 
 /-! ### Horizons and Upward Entailment (Section 4.1) -/
 
-/-- (45), (46): Upward Entailment follows from category inheritance. A probe blocked by a clause
-is blocked by every larger one, whatever its horizon, since the larger clause's label extends the
-smaller one's. -/
-theorem upward_entailment (p : Probe.Profile) :
-    (p.transparentToLabel vpLabel = false → p.transparentToLabel tpLabel = false) ∧
-      (p.transparentToLabel tpLabel = false → p.transparentToLabel cpLabel = false) :=
-  ⟨upward_entailment_label p _ _ (by decide), upward_entailment_label p _ _ (by decide)⟩
+/-- (45), (46): Upward Entailment follows from category inheritance. The three clause sizes
+stand in the extension order, TP extending vP and CP extending TP, and transparency is antitone
+in that order for every probe (`Probe.Profile.transparentToLabel_antitone`), so a probe blocked
+by a clause is blocked by every larger one. -/
+theorem sizes_le : ClauseSpine.vP ≤ .tP ∧ ClauseSpine.tP ≤ .cP := by decide
 
 /-! ### The Hindi probes (Section 4.2) -/
 

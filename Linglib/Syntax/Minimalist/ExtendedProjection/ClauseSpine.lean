@@ -71,6 +71,16 @@ def ClauseSpine.extend (spine : ClauseSpine) (heads : List Cat) : ClauseSpine :=
 def ClauseSpine.above (spine : ClauseSpine) (c : Cat) : List Cat :=
   (spine.projectedHeads.reverse.takeWhile (· != c)).reverse
 
+/-- The extension order: a spine lies below another when the other projects every head it
+does, as the clause sizes of one extended projection do ([keine-2020]'s bilateral labels). -/
+instance : Preorder ClauseSpine where
+  le s t := s.projectedHeads ⊆ t.projectedHeads
+  le_refl _ := List.Subset.refl _
+  le_trans _ _ _ := List.Subset.trans
+
+instance (s t : ClauseSpine) : Decidable (s ≤ t) :=
+  decidable_of_iff (∀ c ∈ s.projectedHeads, c ∈ t.projectedHeads) Iff.rfl
+
 -- ============================================================================
 -- § 3: Named Spines
 -- ============================================================================
