@@ -2396,7 +2396,6 @@ import Linglib.Studies.Levin2026
 import Linglib.Studies.LevshinaEtAl2023
 import Linglib.Studies.Levy2008
 import Linglib.Studies.Lewis1973
-import Linglib.Studies.Lionnet2022Laal
 import Linglib.Studies.Lionnet2025
 import Linglib.Studies.LittleMoroneyRoyer2022
 import Linglib.Studies.LiuRotter2025
