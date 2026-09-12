@@ -1,0 +1,49 @@
+{
+  "FormTable": [
+    {
+      "ID": "booij2010_carlessness",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "carlessness",
+      "Form": "carlessness",
+      "Segments": ["carless", "ness"],
+      "Comment": "the paper's novel coin (Time, October 5, 2009)",
+      "Source": ["booij-2010-compass"]
+    },
+    {
+      "ID": "booij2010_baldness",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "baldness",
+      "Form": "baldness",
+      "Segments": ["bald", "ness"],
+      "Comment": "a stored deadjectival noun of the opening word set",
+      "Source": ["booij-2010-compass"]
+    },
+    {
+      "ID": "booij2010_awareness",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "awareness",
+      "Form": "awareness",
+      "Segments": ["aware", "ness"],
+      "Comment": "the paper's example of an existing deadjectival noun",
+      "Source": ["booij-2010-compass"]
+    }
+  ],
+  "ParameterTable": [
+    {
+      "ID": "carlessness",
+      "Name": "the state of being without a car",
+      "Description": ""
+    },
+    {
+      "ID": "baldness",
+      "Name": "baldness",
+      "Description": ""
+    },
+    {
+      "ID": "awareness",
+      "Name": "awareness",
+      "Description": ""
+    }
+  ],
+  "FormRelationTable": []
+}
