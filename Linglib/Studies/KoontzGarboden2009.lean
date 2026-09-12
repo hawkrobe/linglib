@@ -1,577 +1,241 @@
-import Linglib.Semantics.Causation.Morphological
-import Linglib.Semantics.ArgumentStructure.EventStructure
+import Linglib.Semantics.ArgumentStructure.VerbDenotation
 import Linglib.Fragments.Spanish.Predicates
-import Linglib.Syntax.Voice.Alternation
-
--- ============================================================================
--- § 0: Monotonicity Hypothesis Substrate
---     (was Morphology/Core/Monotonicity.lean, relocated 0.230.455
---     — KoontzGarboden 2009 is the originating paper, so the substrate
---     anchors here. Consumers: this file and HaninkKoontzGarboden2025.)
--- ============================================================================
-
-/-! The Monotonicity Hypothesis (MH) states that word formation operations
-do not remove operators from lexical semantic representations (LSRs).
-Given an LSR modeled as a set of operators, a word formation operation
-`f : LSR → LSR` satisfies the MH iff for all inputs `r`, the operators
-in `r` are a subset of the operators in `f(r)`.
-
-The MH is an empirical hypothesis, not a logical necessity. KG 2009
-argues that anticausativization — the strongest apparent counterexample
-— is consistent with the MH under a reflexivization analysis (the
-deletion analysis would violate it). The MH is distinct from the
-Bifurcation Thesis and Manner/Result Complementarity. -/
-
-namespace KoontzGarboden2009.Monotonicity
-
-/-- An operation over operator lists is monotonic if every operator
-    in the input is preserved in the output. -/
-def isMonotonic {Op : Type} [BEq Op] (inputOps outputOps : List Op) : Bool :=
-  inputOps.all (outputOps.contains ·)
-
-/-- A word formation operation `f` satisfies the Monotonicity Hypothesis
-    if it is monotonic for all inputs. -/
-def satisfiesMH {Op : Type} [BEq Op] (f : List Op → List Op) : Prop :=
-  ∀ ops, isMonotonic ops (f ops) = true
-
-/-- Identity on operator lists. Models any operation that constrains
-    argument structure without adding or removing operators (e.g.,
-    reflexivization: λℜλx[ℜ(x,x)]). -/
-def identityOp {Op : Type} (ops : List Op) : List Op := ops
-
-/-- Deletion of a specific operator from the list. -/
-def deleteOp {Op : Type} [BEq Op] (target : Op) (ops : List Op) : List Op :=
-  ops.filter (· != target)
-
-theorem isMonotonic_refl {Op : Type} [BEq Op] [LawfulBEq Op] (ops : List Op) :
-    isMonotonic ops ops = true := by
-  simp only [isMonotonic, List.all_eq_true]
-  intro x hx
-  exact List.contains_iff_mem.mpr hx
-
-theorem isMonotonic_append_right {Op : Type} [BEq Op] [LawfulBEq Op]
-    (input output extra : List Op)
-    (h : isMonotonic input output = true) :
-    isMonotonic input (output ++ extra) = true := by
-  simp only [isMonotonic, List.all_eq_true] at *
-  intro x hx
-  exact List.contains_iff_mem.mpr
-    (List.mem_append_left extra (List.contains_iff_mem.mp (h x hx)))
-
-theorem identityOp_satisfiesMH {Op : Type} [BEq Op] [LawfulBEq Op] :
-    satisfiesMH (identityOp (Op := Op)) := by
-  intro ops; exact isMonotonic_refl ops
-
-theorem deleteOp_not_satisfiesMH {Op : Type} [DecidableEq Op] (target : Op) :
-    ¬ satisfiesMH (deleteOp target) := by
-  intro h
-  have := h [target]
-  simp only [isMonotonic, deleteOp, List.all_cons, List.all_nil, Bool.and_true,
-    List.contains_iff_mem, List.filter, bne_self_eq_false] at this
-  cases this
-
-theorem satisfiesMH_iff_noRemoval {Op : Type} [BEq Op] [LawfulBEq Op]
-    (f : List Op → List Op) :
-    satisfiesMH f ↔ ∀ (ops : List Op) (x : Op), x ∈ ops → x ∈ f ops := by
-  constructor
-  · intro h ops x hx
-    have := h ops
-    simp only [isMonotonic, List.all_eq_true] at this
-    exact List.contains_iff_mem.mp (this x hx)
-  · intro h ops
-    simp only [isMonotonic, List.all_eq_true]
-    intro x hx
-    exact List.contains_iff_mem.mpr (h ops x hx)
-
-theorem satisfiesMH_comp {Op : Type} [BEq Op] [LawfulBEq Op]
-    (f g : List Op → List Op)
-    (hf : satisfiesMH f) (hg : satisfiesMH g) :
-    satisfiesMH (g ∘ f) := by
-  intro ops
-  simp only [Function.comp]
-  have hf' : isMonotonic ops (f ops) = true := hf ops
-  have hg' : isMonotonic (f ops) (g (f ops)) = true := hg (f ops)
-  simp only [isMonotonic, List.all_eq_true] at *
-  intro x hx
-  have hxf : x ∈ f ops := List.contains_iff_mem.mp (hf' x hx)
-  exact List.contains_iff_mem.mpr (List.contains_iff_mem.mp (hg' x hxf))
-
-end KoontzGarboden2009.Monotonicity
 
 /-!
-# [koontz-garboden-2009] — Anticausativization
+# Koontz-Garboden (2009): Anticausativization
 
-Koontz-Garboden, Andrew. 2009. Anticausativization.
-*Natural Language & Linguistic Theory* 27(1): 77–138.
+This file formalizes the reflexivization analysis of anticausativization, the derivation of an
+inchoative verb from its causative counterpart as in Spanish *romper* 'break (tr.)' ~
+*romperse* 'break (intr.)'. The reflexive clitic denotes the operator `λℜλx[ℜ(x,x)]`
+([chierchia-2004]), so a derived inchoative is its causative restricted to the diagonal and
+keeps the CAUSE operator. Stated on the library's change-of-state decomposition
+(`Verb.CosModel`), the analysis yields the paper's predictions as theorems. The single argument
+of a derived inchoative is the causer of its own change, so a verb whose causer must be an
+agent (*asesinar* 'assassinate') reflexivizes only to a reflexive-type reading, while a verb
+whose causer is an underspecified EFFECTOR ([van-valin-wilkins-1996]; *romper*) also has the
+anticausative reading. The causative does not entail the derived inchoative, although the
+inchoative entails the causative with the undergoer as its own causer. And *por sí solo* 'by
+itself', whose antecedent must be the effector of a causing subevent, is licensed by derived
+inchoatives but not by passives or by the CAUSE-less representation of internally caused
+verbs like *empeorar* 'worsen' ([rappaport-hovav-levin-1998]).
 
-## Core thesis
+The paper's second claim concerns the Monotonicity Hypothesis, that word formation
+operations never remove operators from lexical semantic representations. On the event
+templates of `ArgumentStructure.EventStructure`, the inchoativization rule of [grimshaw-1982]
+is `Template.intransitiveVariant`, which strips CAUSE from an accomplishment and so violates
+the hypothesis, whereas reflexivization identifies two argument positions and leaves the
+template intact.
 
-Anticausativization is semantically a **reflexivization** operation:
-the reflexive clitic (*se*, *sich*, *-da*, *-wa*) takes the two-place
-causative denotation and identifies the EFFECTOR with the THEME.
-Derived inchoatives **retain CAUSE** in their lexical semantic
-representation, contra the deletion analysis (Grimshaw 1982;
-[krejci-2012]).
+## Implementation notes
 
-## Key formal apparatus
+The paper's representations take the change-of-state event as the verb's event argument and
+existentially close the causing event; `causative` follows that convention, and
+`exists_causative_iff` shows that its existential closure agrees with
+`Verb.CosModel.causative`, whose event argument is the causing event. Agent entailments are an
+explicit relation on the model, since `Verb.CosModel` has only the underspecified `effector`.
+A Spanish verb's causer specification is derived from the proto-role subject profile the
+fragment states for it ([dowty-1991]): a causer that must be an agent entails volition. The
+reflexive/anticausative syncretism in the survey of [haspelmath-1990] that the paper
+tabulates is a typological argument left in prose.
 
-- ⟦*se*⟧ = λℜλx[ℜ(x,x)] — the reflexivization operator
-- ⟦*romper*⟧ = λxλyλsλe[∃v[CAUSE(v,e) ∧ EFFECTOR(v,y) ∧
-  BECOME(e,s) ∧ THEME(s,x) ∧ not-whole(s)]]
-- ⟦*romperse*⟧ = ⟦*se*⟧(⟦*romper*⟧) = λxλsλe[∃v[CAUSE(v,e) ∧
-  EFFECTOR(v,x) ∧ BECOME(e,s) ∧ THEME(s,x) ∧ not-whole(s)]]
+## References
 
-## Predictions
-
-1. Only verbs with underspecified causers (EFFECTOR) anticausativize.
-   Verbs with specified causers (AGENT) yield reflexive-only readings.
-2. Causative does NOT entail inchoative (the inchoative requires the
-   single argument to be both EFFECTOR and THEME).
-3. Derived inchoatives license *por sí solo* / *by itself* (because
-   CAUSE is in their denotation).
-4. Internally caused COS verbs (*empeorar*, *crecer*) lack CAUSE in
-   their LSR and reject *por sí solo*.
-
-## Monotonicity Hypothesis
-
-The Monotonicity Hypothesis (MH) states that word formation operations
-do not remove operators from lexical semantic representations. The
-reflexivization analysis preserves the MH; the deletion analysis violates
-it. Evidence from *por sí solo*, negation scope, NPI licensing, and the
-Albanian "feel like" construction independently confirms that derived
-inchoatives have CAUSE.
-
-## Bridges
-
-- `CauserSpec` (Spanish fragment) — EFFECTOR vs AGENT verb taxonomy
-- `InternalExternalCause.HasCauseInLSR` — internally vs externally caused distinction
-- `IntransitivizationType` — competing structural analysis ([krejci-2012])
-- `reflexivization` / `decausativization` — valency alternation types
+* [koontz-garboden-2009]
+* [chierchia-2004] — the reflexivization operator and *da sé* 'by itself'
+* [van-valin-wilkins-1996] — the EFFECTOR role
+* [grimshaw-1982], [reinhart-siloni-2005] — deletion analyses
+* [levin-hovav-1995], [rappaport-hovav-levin-1998] — internally and externally caused
+  change of state
+* [dowty-1991] — proto-role entailments
+* [haspelmath-1990] — the reflexive/anticausative syncretism
 -/
 
 namespace KoontzGarboden2009
 
-open Spanish.Predicates
-open Causation.Morphological
-open ArgumentStructure.EventStructure
-open KoontzGarboden2009.Monotonicity
-open Minimalist (VerbHead)
-open Voice
+open ArgumentStructure ArgumentStructure.EventStructure Spanish.Predicates
 
--- ════════════════════════════════════════════════════
--- § 1. The Reflexivization Operator (§2.2)
--- ════════════════════════════════════════════════════
+/-- The reflexivization operator (11): a two-place relation restricted to its diagonal. It is
+the denotation of the reflexive clitic *se* (19). -/
+def reflexivize {α β : Type*} (R : α → α → β) : α → β := λ x => R x x
 
-/-! The reflexivization operator (eq. 11) = λℜλx[ℜ(x,x)].
-    It takes a relation as an argument, setting both arguments
-    of the relation to be the same.
+section Model
 
-    In set-theoretic terms: if a relation is a set of pairs,
-    reflexivization restricts it to those pairs whose members are
-    identical. -/
+variable {Entity State T : Type*} [LinearOrder T] (M : Verb.CosModel Entity State T)
+  (θ agent : Entity → Event T → Prop) (v : Verb)
 
-/-- Reflexivization of a two-place relation over entities.
-    ⟦*se*⟧ = λℜλx[ℜ(x,x)] -/
-def reflexivize {Entity : Type} (R : Entity → Entity → Prop) :
-    Entity → Prop :=
-  fun x => R x x
+/-- A causative change-of-state verb ((10b), (17), (29)): an event `e` in which `x` comes to
+be in the root's state, caused by an event whose participant `y` bears the causer relation
+`θ`, the underspecified `M.effector` for *romper* and an agent relation for *asesinar*. -/
+def causative (y x : Entity) (e : Event T) : Prop :=
+  ∃ w, θ y w ∧ M.cause w e ∧ M.inchoative v x e
 
-/-- Reflexivization of a Boolean two-place predicate. -/
-def reflexivizeBool {Entity : Type} (R : Entity → Entity → Bool) :
-    Entity → Bool :=
-  fun x => R x x
+/-- Over the underspecified causer, `causative` and `Verb.CosModel.causative` have the same
+existential closure; they differ only in which event is the verb's argument. -/
+theorem exists_causative_iff (y x : Entity) :
+    (∃ e, causative M M.effector v y x e) ↔ ∃ w, M.causative v y x w :=
+  ⟨λ ⟨e, w, hθ, hc, hi⟩ => ⟨w, e, hθ, hc, hi⟩, λ ⟨w, e, hθ, hc, hi⟩ => ⟨e, w, hθ, hc, hi⟩⟩
 
--- ════════════════════════════════════════════════════
--- § 3. Verb Denotation Taxonomy (§§2.1, 3.1–3.2)
--- ════════════════════════════════════════════════════
+/-- Anticausativization is reflexivization ((20)–(21), (31)): the derived inchoative is the
+causative on its diagonal, so the undergoer is also the participant in the causing event. -/
+def anticausative : Entity → Event T → Prop := reflexivize (causative M θ v)
 
-/-! The critical distinction between verbs that anticausativize (*romper*)
-    and those that do not (*asesinar*) reduces to the thematic specification
-    of the participant in the causing subevent.
+theorem anticausative_iff (x : Entity) (e : Event T) :
+    anticausative M θ v x e ↔ ∃ w, θ x w ∧ M.cause w e ∧ M.inchoative v x e := Iff.rfl
 
-    `CauserSpec` from the Spanish fragment encodes this.
-    The prediction: `reflexivize` applied to an EFFECTOR verb yields
-    an anticausative reading; applied to an AGENT verb, a reflexive-only
-    reading. -/
+/-- The anticausative reading of a reflexivized verb: an instance whose single argument is not
+an agent of the event causing its change, as in *el vaso se rompió* 'the cup broke'. -/
+def AnticausativeReading (P : Entity → Event T → Prop) : Prop :=
+  ∃ x e, P x e ∧ ∀ w, M.cause w e → ¬ agent x w
 
-/-- Reflexivization of an EFFECTOR verb: the single argument becomes
-    both the undergoer (THEME) and the underspecified causer (EFFECTOR).
-    Because EFFECTOR carries no agent entailments, the result is
-    compatible with inanimate subjects → anticausative reading.
+/-- *Por sí solo* 'by itself' ((54)) is licensed on a predicate that entails a causing subevent
+with the subject as its effector; the modifier then adds that the subject is its sole
+effector (§3.4, §4.1). -/
+def LicensesBySelf (P : Entity → Event T → Prop) : Prop :=
+  ∀ x e, P x e → ∃ w, M.cause w e ∧ M.effector x w
 
-    Reflexivization of an AGENT verb: the single argument must be both
-    undergoer and AGENT. AGENT entails volition/sentience → the result
-    requires an animate, agentive subject → reflexive reading only. -/
-def reflexivizationYieldsAnticausative : CauserSpec → Bool
-  | .effector => true
-  | .agent => false
+/-- The passive of a causative verb ((53a), (64)): the causer is existentially closed rather
+than identified with the subject. -/
+def passive (x : Entity) (e : Event T) : Prop := ∃ y, causative M M.effector v y x e
 
--- ════════════════════════════════════════════════════
--- § 3b. Reduction to Proto-Role Entailments
--- ════════════════════════════════════════════════════
+variable {M θ agent v}
 
-/-! K-G's EFFECTOR/AGENT distinction ([van-valin-wilkins-1996])
-    partially reduces to [dowty-1991]'s proto-role entailments.
+/-- A derived inchoative entails the causative with its subject as its own causer, the special
+kind of causative that §3.5 finds the inchoative to entail. -/
+theorem causative_self_of_anticausative {x : Entity} {e : Event T}
+    (h : anticausative M θ v x e) : causative M θ v x x e := h
 
-    The reduction: EFFECTOR verbs entail causation but NOT volition
-    for their subject. AGENT verbs entail both. Volition is the
-    discriminating feature.
+/-- A derived inchoative retains a causing subevent whose causer is its subject: CAUSE
+survives reflexivization (§4). -/
+theorem exists_cause_of_anticausative {x : Entity} {e : Event T}
+    (h : anticausative M θ v x e) : ∃ w, θ x w ∧ M.cause w e :=
+  let ⟨w, hθ, hc, _⟩ := h; ⟨w, hθ, hc⟩
 
-    Where it reduces: for every Spanish verb with a `causerSpec`,
-    checking `volition` in the subject's entailment profile yields
-    the same classification. The alternation prediction chains:
-    entailment profile → CauserSpec → anticausativization.
+/-- Only verbs with a thematically underspecified causer anticausativize (§3.2): an
+anticausative reading needs a causer relation satisfied by a non-agent. -/
+theorem exists_nonagent_of_anticausativeReading
+    (h : AnticausativeReading M agent (anticausative M θ v)) : ∃ x w, θ x w ∧ ¬ agent x w :=
+  let ⟨x, _, ⟨w, hθ, hc, _⟩, hna⟩ := h; ⟨x, w, hθ, hna w hc⟩
 
-    Where it doesn't reduce conceptually: K-G's EFFECTOR is defined
-    by what the verb LACKS (thematic specification of the causer),
-    while Dowty's system specifies what the verb ENTAILS (individual
-    proto-role features). These are different theoretical objects that
-    happen to align for the causative alternation. A hypothetical verb
-    entailing sentience but not volition for its causer would be
-    classified as EFFECTOR by `toCauserSpec` — correctly, since it
-    would still admit non-agentive causers — but its EFFECTOR status
-    would carry more structure than K-G's underspecification account
-    predicts. -/
+/-- A verb whose causer must be an agent ((29), *asesinar*) reflexivizes to the reflexive-type
+reading only ((27)–(28), (31)). -/
+theorem not_anticausativeReading (hθ : ∀ x w, θ x w → agent x w) :
+    ¬ AnticausativeReading M agent (anticausative M θ v) := λ h =>
+  let ⟨x, w, h₁, h₂⟩ := exists_nonagent_of_anticausativeReading h; h₂ (hθ x w h₁)
 
-open ArgumentStructure
+/-- Derived inchoatives license *por sí solo* ((68)). -/
+theorem licensesBySelf_anticausative : LicensesBySelf M (anticausative M M.effector v) :=
+  λ _ _ h => let ⟨w, hθ, hc⟩ := exists_cause_of_anticausative h; ⟨w, hc, hθ⟩
 
-/-- Derive `CauserSpec` from a proto-role entailment profile.
-    Volition is the discriminating feature:
-    - volition → AGENT (thematically specified causer)
-    - causation without volition → EFFECTOR (underspecified causer)
-    - neither → not a causer at all -/
-def toCauserSpec (p : EntailmentProfile) : Option CauserSpec :=
-  if p.volition then some .agent
-  else if p.causation then some .effector
-  else none
+end Model
 
-/-- The derivation matches the stipulated `causerSpec` for every
-    Spanish verb that has both fields populated. -/
-theorem causerSpec_matches_profile :
-    (allVerbs.filter (fun v => v.causerSpec.isSome && v.subjectEntailments.isSome)).all
-      (fun v => v.subjectEntailments.bind toCauserSpec == v.causerSpec) = true := by
-  native_decide
+/-! ### Juan and the glass
 
-/-- Volition is the discriminating feature: all EFFECTOR verbs have
-    `volition = false` in their subject profile. -/
-theorem effector_lacks_volition :
-    (allVerbs.filter (fun v => v.causerSpec == some .effector)).all
-      (fun v => v.subjectEntailments.map (·.volition) == some false) = true := by
-  native_decide
+The model of (56)–(57) and (60): Juan breaks the glass. Whether the glass counts as an
+effector of the causing event is a parameter; the denial in (56) has it that it does not,
+the discourse in (60) that both the glass and Juan do. -/
 
-/-- All AGENT verbs have `volition = true` in their subject profile. -/
-theorem agent_has_volition :
-    (allVerbs.filter (fun v => v.causerSpec == some .agent)).all
-      (fun v => v.subjectEntailments.map (·.volition) == some true) = true := by
-  native_decide
+/-- The participants. -/
+inductive Participant
+  | juan
+  | vaso
+  deriving DecidableEq
 
-/-- Both EFFECTOR and AGENT verbs satisfy `IsEffector` (movement ∨ IE
-    with causation). This is why `IsEffector` alone cannot distinguish
-    them — it's a necessary but not sufficient condition for K-G's
-    EFFECTOR. The AGENT/EFFECTOR split requires checking volition. -/
-theorem both_satisfy_causation :
-    (allVerbs.filter (fun v => v.causerSpec.isSome)).all
-      (fun v => v.subjectEntailments.map (·.causation) == some true) = true := by
-  native_decide
+/-- Juan breaks the glass: `eff` says who counts as an effector of the causing event, and
+every event gives rise to the glass's broken state. -/
+def breaking (eff : Participant → Prop) : Verb.CosModel Participant Unit ℤ where
+  rootState _ x _ := x = .vaso
+  become _ _ := True
+  cause _ _ := True
+  effector y _ := eff y
+  manner _ _ := False
 
--- ════════════════════════════════════════════════════
--- § 4. The Main Prediction (§§3.1–3.2)
--- ════════════════════════════════════════════════════
+/-- Juan alone is an agent. -/
+def juanAgent (y : Participant) (_ : Event ℤ) : Prop := y = .juan
 
-/-! The central empirical prediction: a verb anticausativizes iff its
-    causer is underspecified (EFFECTOR). This is validated against the
-    Spanish fragment data. -/
+/-- The model of (56)–(57): Juan, not the glass, is the effector. -/
+def breakingByJuan : Verb.CosModel Participant Unit ℤ := breaking (· = .juan)
 
-/-- All EFFECTOR verbs in the Spanish fragment alternate. -/
-theorem effector_verbs_alternate :
-    (allVerbs.filter (fun v => v.causerSpec == some .effector)).all
-      (·.causativeAlternation) = true := by native_decide
+/-- The model of (60): the glass and Juan are both effectors. -/
+def breakingByBoth : Verb.CosModel Participant Unit ℤ := breaking λ _ => True
 
-/-- No AGENT verb in the Spanish fragment alternates. -/
-theorem agent_verbs_dont_alternate :
-    (allVerbs.filter (fun v => v.causerSpec == some .agent)).all
-      (!·.causativeAlternation) = true := by native_decide
+/-- An event of the models. -/
+private def e₀ : Event ℤ := ⟨⟨(0, 0), le_rfl⟩, .action⟩
 
--- ════════════════════════════════════════════════════
--- § 5. Non-Entailment of Inchoative by Causative (§3.5)
--- ════════════════════════════════════════════════════
+/-- The causative does not entail the derived inchoative ((56)–(57)): with Juan the only
+effector, *Juan rompió el vaso* holds and *el vaso se rompió* fails. -/
+theorem not_anticausative_of_causative :
+    causative breakingByJuan breakingByJuan.effector romper.toVerb .juan .vaso e₀ ∧
+      ¬ anticausative breakingByJuan breakingByJuan.effector romper.toVerb .vaso e₀ :=
+  ⟨⟨e₀, rfl, trivial, (), trivial, rfl⟩, λ ⟨_, h, _⟩ => Participant.noConfusion h⟩
 
-/-! Contrary to the received wisdom (from [lakoff-1965]), the
-    reflexivization analysis predicts that causative does NOT entail
-    inchoative for derived inchoatives.
+/-- *El vaso se rompió* has the anticausative reading: the glass is a non-agentive
+effector of its own breaking. -/
+theorem anticausativeReading_romper :
+    AnticausativeReading breakingByBoth juanAgent
+      (anticausative breakingByBoth breakingByBoth.effector romper.toVerb) :=
+  ⟨.vaso, e₀, ⟨e₀, trivial, trivial, (), trivial, rfl⟩, λ _ _ h => Participant.noConfusion h⟩
 
-    Causative *romper*: ∃v[CAUSE(v,e) ∧ EFFECTOR(v,y) ∧ ...]
-      — the effector y and undergoer x can be DISTINCT participants.
-    Inchoative *romperse*: ∃v[CAUSE(v,e) ∧ EFFECTOR(v,x) ∧ ...]
-      — the effector and undergoer MUST be the SAME participant.
+/-- A passive does not license *por sí solo* ((53a), (64)): its subject need not be an
+effector of the causing subevent. -/
+theorem not_licensesBySelf_passive :
+    ¬ LicensesBySelf breakingByJuan (passive breakingByJuan romper.toVerb) := λ h =>
+  let ⟨_, _, hw⟩ := h .vaso e₀ ⟨.juan, e₀, rfl, trivial, (), trivial, rfl⟩
+  Participant.noConfusion hw
 
-    A causative event where the effector and undergoer are distinct
-    satisfies the causative but not the inchoative. The Spanish data
-    in exx. 56–57 confirm this: a causative can be true while the
-    derived inchoative is denied.
+/-- The CAUSE-less representation of an internally caused verb ((65), (67)), the library's
+`Verb.CosModel.inchoative`, does not license *por sí solo*. -/
+theorem not_licensesBySelf_inchoative :
+    ¬ LicensesBySelf breakingByJuan (breakingByJuan.inchoative empeorar.toVerb) := λ h =>
+  let ⟨_, _, hw⟩ := h .vaso e₀ ⟨(), trivial, rfl⟩
+  Participant.noConfusion hw
 
-    We model this with a minimal 2-entity domain. -/
+/-! ### The Monotonicity Hypothesis -/
 
-/-- A minimal 2-entity domain for the non-entailment model. -/
-inductive SmallEntity where
-  | glass   -- el vaso (the glass)
-  | juan    -- Juan (the external causer)
+/-- The Monotonicity Hypothesis ((8)) for a word formation operation on event templates: the
+output keeps CAUSE and BECOME wherever the input has them. -/
+def MonotonicityHypothesis (f : Template → Option Template) : Prop :=
+  ∀ t t', f t = some t' → (t.HasCause → t'.HasCause) ∧ (t.HasResultState → t'.HasResultState)
+
+/-- The inchoativization rule of [grimshaw-1982] ((95)) is `Template.intransitiveVariant`,
+which strips CAUSE from an accomplishment; it violates the hypothesis. -/
+theorem not_monotonicityHypothesis_intransitiveVariant :
+    ¬ MonotonicityHypothesis Template.intransitiveVariant :=
+  λ h => (h .accomplishment .achievement rfl).1 trivial
+
+/-- Reflexivization on templates: it identifies the external-causer position with the
+undergoer, so it applies exactly to templates with that position and changes no operator. -/
+def reflexivizeTemplate (t : Template) : Option Template :=
+  if t.HasExternalCauser then some t else none
+
+/-- Anticausativization as reflexivization satisfies the hypothesis. -/
+theorem monotonicityHypothesis_reflexivizeTemplate :
+    MonotonicityHypothesis reflexivizeTemplate := by
+  intro t t' h
+  unfold reflexivizeTemplate at h
+  split at h
+  · cases h; exact ⟨id, id⟩
+  · exact absurd h (by simp)
+
+/-! ### Spanish verbs -/
+
+/-- The thematic specification of a verb's causer (§2.1): an underspecified EFFECTOR, or an
+AGENT. -/
+inductive Causer
+  | effector
+  | agent
   deriving DecidableEq, Repr
 
-/-- A causative relation R(effector, undergoer) representing a
-    specific breaking event: Juan broke the glass.
-    Only the pair (Juan, glass) satisfies the relation. -/
-def breakRelation : SmallEntity → SmallEntity → Bool
-  | .juan, .glass => true
-  | _, _          => false
+/-- The causer specification, derived from the verb's stated proto-role subject profile: a
+causer that must be an agent entails volition, one that need only cause the change is an
+EFFECTOR, and a subject that causes nothing is no causer. -/
+def causer (v : Verb) : Option Causer :=
+  v.subjectEntailments.bind λ p =>
+    if p.volition then some .agent else if p.causation then some .effector else none
 
-/-- The causative is satisfied: Juan broke the glass. -/
-theorem causative_satisfied :
-    breakRelation .juan .glass = true := rfl
-
-/-- The inchoative denotation is the reflexivization of the causative
-    (§2.2, eq. 19): ⟦*se*⟧(⟦*romper*⟧) restricts to the diagonal.
-    The glass is not its own effector in this scenario. -/
-theorem inchoative_not_satisfied :
-    reflexivizeBool breakRelation .glass = false := rfl
-
-/-- Non-entailment derived from reflexivization: there exists a
-    model where the causative is true but the inchoative is false.
-    This follows from the reflexivization operator restricting R to
-    its diagonal — a point (Juan, glass) off the diagonal satisfies
-    the causative but the diagonal point (glass, glass) does not.
-    (exx. 56–57) -/
-theorem causative_does_not_entail_inchoative :
-    breakRelation .juan .glass = true ∧
-    reflexivizeBool breakRelation .glass = false := ⟨rfl, rfl⟩
-
--- ════════════════════════════════════════════════════
--- § 6. Por Sí Solo / By Itself Diagnostic (§§3.4, 4.1)
--- ════════════════════════════════════════════════════
-
-/-! *por sí solo* 'by itself' requires a CAUSE operator in the
-    denotation of the verb it modifies. It is:
-    - Acceptable with derived inchoatives (*romperse*, *abrirse*)
-    - Unacceptable with passives (*fue hundido* 'was sunk')
-    - Unacceptable with statives (*saber* 'know', *ser rojo* 'be red')
-    - Unacceptable with internally caused COS verbs (*empeorar*, *crecer*)
-
-    This diagnostic independently confirms that derived inchoatives
-    retain CAUSE. -/
-
-/-- Externally caused COS verbs have CAUSE in their LSR and
-    license *por sí solo*. -/
-theorem external_has_cause :
-    InternalExternalCause.HasCauseInLSR .external := by decide
-
-/-- Internally caused COS verbs lack CAUSE and reject *por sí solo*. -/
-theorem internal_no_cause :
-    ¬ InternalExternalCause.HasCauseInLSR .internal := by decide
-
-/-- The Albanian "feel like" construction (§4.2) provides independent
-    evidence: its "unintended cause" reading (Kallulli 2006b) is
-    available only for verbs with CAUSE in their LSR. COS verbs
-    like *break* get the reading; non-causative verbs like *eat* do not.
-    This is the same structural property that `HasCauseInLSR` tests. -/
-theorem feel_like_requires_cause :
-    InternalExternalCause.HasCauseInLSR .external ∧
-    ¬ InternalExternalCause.HasCauseInLSR .internal := ⟨by decide, by decide⟩
-
--- ════════════════════════════════════════════════════
--- § 7. Monotonicity Hypothesis (§1, §4)
--- ════════════════════════════════════════════════════
-
-/-! The Monotonicity Hypothesis (MH): word formation operations do not
-    remove operators from lexical semantic representations. This is a
-    constraint on the FORM of word formation rules, not on their output.
-
-    [koontz-garboden-2009] argues that anticausativization is the
-    strongest apparent counterexample to the MH, since the deletion
-    analysis requires removing the CAUSE operator. The reflexivization
-    analysis resolves this: no operator is deleted, the relation is
-    simply reflexivized. -/
-
-/-- On the reflexivization analysis, anticausativization is the
-    identity on operator lists — it satisfies the MH. -/
-theorem reflexivization_satisfiesMH_verbHead :
-    satisfiesMH (identityOp (Op := VerbHead)) :=
-  identityOp_satisfiesMH
-
-/-- On the deletion analysis, anticausativization removes vCAUSE —
-    it does not satisfy the MH. -/
-theorem deletion_of_cause_not_satisfiesMH :
-    ¬ satisfiesMH (deleteOp VerbHead.vCAUSE) :=
-  deleteOp_not_satisfiesMH _
-
-/-- Concrete instance: the inchoative operator list [vCAUSE, vGO, vBE]
-    is monotonically preserved by reflexivization. -/
-theorem reflexivization_monotonic :
-    isMonotonic
-      [VerbHead.vCAUSE, .vGO, .vBE]
-      [VerbHead.vCAUSE, .vGO, .vBE] = true := by native_decide
-
-/-- Concrete instance: deleting vCAUSE from the inchoative list
-    breaks monotonicity. -/
-theorem deletion_not_monotonic :
-    isMonotonic
-      [VerbHead.vCAUSE, .vGO, .vBE]
-      [VerbHead.vGO, .vBE] = false := by native_decide
-
--- ════════════════════════════════════════════════════
--- § 8. Bridge: Reflexivization ↔ ValencyAlternation
--- ════════════════════════════════════════════════════
-
-/-! [koontz-garboden-2009]'s core claim is that what the valency substrate
-    calls `decausativization` (A suppressed from participant structure) is
-    semantically `reflexivization` (A and P cumulated). The structural
-    effect looks like decausativization — the derived construction is
-    intransitive with a single S argument — but the semantic operation
-    is reflexivization of the causative denotation.
-
-    On Creissels' framework, reflexivization and decausativization are
-    distinct: reflexivization cumulates A and P, while decausativization
-    suppresses A. K-G argues the surface decausativization in languages
-    with SE-marking is semantically reflexivization. -/
-
-/-- Decausativization suppresses A; reflexivization cumulates A and P. -/
-theorem structural_distinction :
-    decausativization.fateOfA = .suppressed ∧
-    reflexivization.fateOfA = .cumulated := ⟨rfl, rfl⟩
-
-/-- K-G's claim: the SE-marked form is semantically reflexivization
-    (cumulation of A and P), not decausativization (suppression of A).
-    The surface effect looks like valency decrease, but the underlying
-    operation is cumulation — both arguments are still semantically
-    present, identified with each other. -/
-theorem reflexivization_is_cumulation :
-    reflexivization.involvesCumulation = true ∧
-    decausativization.involvesCumulation = false := ⟨rfl, rfl⟩
-
--- ════════════════════════════════════════════════════
--- § 9. Bridge: IntransitivizationType
--- ════════════════════════════════════════════════════
-
-/-! [krejci-2012]'s `IntransitivizationType.anticausative` says the
-    external cause is removed (monoeventive). [koontz-garboden-2009]
-    says it is retained via reflexivization (bieventive). These are
-    competing analyses.
-
-    The library now records both. On K-G's analysis, what Krejci calls
-    "anticausative" is actually a special case of "reflexive" where the
-    EFFECTOR underspecification makes the reflexive reading look like
-    an anticausative. -/
-
-/-- On Krejci's analysis, anticausatives are monoeventive. -/
-theorem krejci_anticausative_monoeventive :
-    IntransitivizationType.isBieventive .anticausative = false := rfl
-
-/-- On Krejci's analysis, reflexives are bieventive. -/
-theorem krejci_reflexive_bieventive :
-    IntransitivizationType.isBieventive .reflexive = true := rfl
-
-/-! K-G's central claim is that anticausativization IS reflexivization
-    (not deletion): the "anticausative" reading arises from EFFECTOR
-    underspecification, not from a structurally distinct operation.
-    This entails CAUSE retention (so K-G's analysis preserves the
-    Monotonicity Hypothesis), against deletion analyses which violate
-    it. The structural content lives in `reflexivize` above and the
-    `causative_does_not_entail_inchoative` theorem below. -/
-
-/-- Deletion ([krejci-2012]) and reflexivization (this file) make
-opposing predictions about whether *romperse* retains CAUSE: deletion
-maps `.accomplishment` to `.achievement` (no CAUSE); reflexivization
-preserves the LSR of an externally-caused verb (CAUSE retained). *por
-sí solo* licensing (§6) supports reflexivization. -/
-theorem deletion_vs_reflexivization_diverge_on_romper :
-    ¬ (Template.HasCause (Template.accomplishment.intransitiveVariant.getD .state) ↔
-       InternalExternalCause.HasCauseInLSR .external) := by decide
-
--- ════════════════════════════════════════════════════
--- § 10. Cross-Linguistic Morphological Evidence (§3.3)
--- ════════════════════════════════════════════════════
-
-/-! Haspelmath (1990): in 9 of 13 languages with anticausative markers,
-    the same marker also serves as a reflexive marker. This is the
-    expected state of affairs if anticausativization IS reflexivization,
-    and would be a remarkable coincidence on any other analysis. -/
-
-/-- Cross-linguistic anticausative/reflexive marker syncretism data
-    from Haspelmath 1990, cited in [koontz-garboden-2009] (35). -/
-structure MarkerSyncretismDatum where
-  language : String
-  hasReflexiveUse : Bool
-  hasAnticausativeUse : Bool
-  deriving Repr, BEq
-
-def haspelmathData : List MarkerSyncretismDatum :=
-  [ { language := "Tigre",         hasReflexiveUse := true,  hasAnticausativeUse := true }
-  , { language := "Motu",          hasReflexiveUse := true,  hasAnticausativeUse := true }
-  , { language := "O'odham",       hasReflexiveUse := true,  hasAnticausativeUse := true }
-  , { language := "Mod. Greek",    hasReflexiveUse := true,  hasAnticausativeUse := true }
-  , { language := "Kanuri",        hasReflexiveUse := true,  hasAnticausativeUse := true }
-  , { language := "Margi",         hasReflexiveUse := true,  hasAnticausativeUse := true }
-  , { language := "Uigur",         hasReflexiveUse := false, hasAnticausativeUse := true }
-  , { language := "Udmurt",        hasReflexiveUse := true,  hasAnticausativeUse := true }
-  , { language := "Nimboran",      hasReflexiveUse := false, hasAnticausativeUse := true }
-  , { language := "Danish",        hasReflexiveUse := false, hasAnticausativeUse := true }
-  , { language := "Latin (r)",     hasReflexiveUse := true,  hasAnticausativeUse := true }
-  , { language := "Latin (esse)",  hasReflexiveUse := true,  hasAnticausativeUse := true }
-  , { language := "Mwera",         hasReflexiveUse := false, hasAnticausativeUse := true }
-  ]
-
-/-- 9 of 13 languages have syncretism (marker serves both functions). -/
-theorem syncretism_majority :
-    (haspelmathData.filter (fun d => d.hasReflexiveUse && d.hasAnticausativeUse)).length = 9 := by
-  native_decide
-
-/-- All 13 languages have anticausative use (selection criterion). -/
-theorem all_have_anticausative :
-    haspelmathData.all (·.hasAnticausativeUse) = true := by native_decide
-
-/-! ### Verb-level prediction (refutability bridge)
-
-K-G's reflexivization analysis is empirically falsifiable at the verb
-level. The chain: K-G claims anticausativization IS reflexivization
-(§ 8 above); reflexivization cumulates A and P
-(`reflexivization_is_cumulation`); the Spanish spell-out of cumulation
-is SE. So K-G predicts: every alternating verb has SE in its
-anticausative — i.e., `anticausativeMarking` is `.marked` or
-`.optional`, never `.unmarked`.
-
-The third link (SE-as-spell-out-of-cumulation) is a morphological
-premise of the analysis, exposed below as `hasSEMarking`. A verb
-that alternates while remaining `.unmarked` falsifies the chain.
-[munoz-perez-2026] uses *mejorar* "improve" as exactly such a
-falsifier (Studies/MunozPerez2026.lean, `refutes_koontzgarboden`). -/
-
-/-- The morphological premise of K-G's analysis applied to Spanish:
-    cumulation of A and P (the semantic effect of reflexivization)
-    surfaces as SE. `True` for the SE-bearing marking values; `False`
-    for `.unmarked`. -/
-def hasSEMarking (m : AnticausativeMarking) : Prop :=
-  m = .marked ∨ m = .optional
-
-instance : DecidablePred hasSEMarking := fun _ => by
-  unfold hasSEMarking; infer_instance
-
-/-- K-G's verb-level prediction: every verb that participates in the
-    causative/anticausative alternation has SE in its anticausative
-    form. Derived from `reflexivization.involvesCumulation = true`
-    (proved in `reflexivization_is_cumulation`) plus the Spanish
-    spell-out bridge `hasSEMarking`. -/
-def kgPredictsSEMarked (v : SpanishVerbEntry) : Prop :=
-  v.causativeAlternation = true → hasSEMarking v.anticausativeMarking
-
-/-- Positive consistency: every alternating SE-marked or optionally
-    SE-marked verb in the Spanish Fragment satisfies the prediction.
-    This rules out the prediction being vacuously violated everywhere,
-    making the *mejorar* counterexample meaningful. -/
-theorem kgPredictsSEMarked_holds_on_marked :
-    (allVerbs.filter
-        (fun v => v.causativeAlternation &&
-          (v.anticausativeMarking == .marked || v.anticausativeMarking == .optional))).all
-      (fun v => v.causativeAlternation = true →
-        v.anticausativeMarking = .marked ∨ v.anticausativeMarking = .optional)
-      = true := by decide
+/-- Only causative verbs with underspecified causers have derived inchoatives (§3.1–§3.2):
+among the fragment's verbs that have a causer, the alternating ones are the EFFECTOR verbs. -/
+theorem alternates_iff_effector :
+    ∀ v ∈ allVerbs, ∀ c ∈ causer v.toVerb, (v.causativeAlternation = true ↔ c = .effector) := by
+  decide
 
 end KoontzGarboden2009

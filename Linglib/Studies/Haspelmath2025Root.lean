@@ -1,7 +1,7 @@
 import Mathlib.Order.WithBot
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Data.UD.Basic
-import Linglib.Morphology.Construction.Schema
+import Linglib.Morphology.ConstructionMorphology.Schema
 import Linglib.Morphology.Root.Basic
 import Linglib.Morphology.Root.Consonantal
 
@@ -23,7 +23,7 @@ sharing the skeleton k-t-b are four roots (`arabic_four_roots`) and the German a
 §6 adopts the heterosemy view: `hammer` (noun) and `hammer` (verb) are two roots with one
 shape (`hammer_two_roots`), related by the sister schemas of (21) (`nounVerb`, one
 description over shared variables read through two subscriptings,
-`Morphology.Construction.Schema.InstantiatesAt`), which the pair instantiates
+`ConstructionMorphology.Schema.InstantiatesAt`), which the pair instantiates
 (`hammer_sisters`) and
 `hammer`/`dance` does not.
 
@@ -301,7 +301,7 @@ inductive RootVar
 
 /-- (21): the sister schemas `X (noun)` and `X (verb)` as one description over their
 variables, the categories pinned, the meanings and the shared shape open. -/
-def nounVerb : Construction.Schema RootVar Slot where
+def nounVerb : ConstructionMorphology.Schema RootVar Slot where
   body
     | .nounCategory => ↑(Value.category .object)
     | .verbCategory => ↑(Value.category .action)
@@ -321,10 +321,10 @@ def verbSub : Tier → RootVar
   | .phonology => .shape
 
 /-- (21a) `X (noun)`: an object meaning related to `X`, a noun, with the open shape `Y`. -/
-def nounSchema : Construction.Schema Tier Slot := nounVerb.comap nounSub
+def nounSchema : ConstructionMorphology.Schema Tier Slot := nounVerb.comap nounSub
 
 /-- (21b) `X (verb)`: doing in relation to `X`, a verb, with the open shape `Y`. -/
-def verbSchema : Construction.Schema Tier Slot := nounVerb.comap verbSub
+def verbSchema : ConstructionMorphology.Schema Tier Slot := nounVerb.comap verbSub
 
 /-- (20a): `hammer` (noun). -/
 def hammerNoun : Tier → Slot
@@ -365,6 +365,6 @@ theorem hammer_dance_not_sisters :
     ¬ nounVerb.InstantiatesAt (Sum.elim nounSub verbSub) (Sum.elim hammerNoun danceVerb) :=
   λ h => by
     simpa [hammerNoun, danceVerb] using
-      (Construction.Schema.instantiatesAt_elim_iff.1 h).2.2.2.2 .phonology .phonology rfl
+      (ConstructionMorphology.Schema.instantiatesAt_elim_iff.1 h).2.2.2.2 .phonology .phonology rfl
 
 end Haspelmath2025Root

@@ -7,24 +7,31 @@ import Mathlib.Data.Fintype.Prod
 import Linglib.Semantics.Modality.Kratzer.Operators
 
 /-!
-# Kratzer 1981: The Notional Category of Modality
+# Kratzer (1981): The Notional Category of Modality
 
-[kratzer-1981]'s practical-inference example (her §7): *I want to
-become mayor; I will become mayor only if I go to the pub regularly.*
-The circumstances contribute the modal base, the desires the ordering
-source, and the ordering source's two ideals — becoming mayor, not
-going to the pub — pull in opposite directions, so the induced
-ordering is non-connected by construction: her clause (c), "If v ∈ A
-and z ∈ B, then neither v ≤ z nor z ≤ v."
+This file formalizes the paper's practical-inference example, on the modal base and ordering
+source semantics of `Modality.Kratzer.Operators`. Someone wants two things, to become mayor
+and to avoid the pub, while the circumstances are such that they become mayor only if they go
+to the pub. The circumstances supply the modal base and the desires the ordering source, and
+the two ideals pull apart: a world where the speaker goes to the pub and becomes mayor and one
+where they stay home and do not are incomparable, so the ordering is not connected. Of the
+five conclusions the paper considers, the three necessities and impossibilities (that the
+speaker should go to the pub, should avoid it, and could become mayor without it) fail, while
+the two possibilities (that they could go and could avoid going) hold, under the paper's
+limit-free necessity and its dual possibility.
 
-Her verdicts: conclusions one ("must go to the pub"), two ("must not
-go"), and three ("possible to become mayor without going") are
-faulty; four ("possible to go") and five ("possible not to go") are
-correct. The example also fixes the form of `bestWorlds`: under the
-dominance reading (at least as good as *every* accessible world) the
-best set here is empty and all five conclusions would come out
-trivially, so her verdicts require the minimality reading
-(`dominance_best_empty`, `best_nonempty`).
+## Implementation notes
+
+The worlds are the four combinations of becoming mayor and going to the pub, so every claim
+is decided once the modal base, the ordering source, and the operators are unfolded. The
+example also fixes the reading of `bestWorlds`: the world that is at least as good as every
+accessible world does not exist here, so the minimality reading, on which the best worlds are
+the two ideal-realizing ones, is the one that agrees with the limit-free operators.
+
+## References
+
+* [kratzer-1981]
+* [kratzer-2012] — Chapter 2, the revised version of the paper
 -/
 
 namespace Kratzer1981
@@ -34,122 +41,85 @@ open Modality.Kratzer
 /-- A world: does the speaker become mayor, and go to the pub regularly? -/
 abbrev World := Bool × Bool
 
-/-- The evaluation world (arbitrary; the backgrounds are constant). -/
+/-- The evaluation world, arbitrary since the backgrounds are constant. -/
 def w₀ : World := (false, false)
 
-/-- Circumstances: I will become mayor only if I go to the pub regularly. -/
-def circumstances : ModalBase World :=
-  fun _ => [fun w => w.1 = true → w.2 = true]
+/-- The relevant circumstances: the speaker becomes mayor only by going to the pub. -/
+def circumstances : ModalBase World := Function.const World [λ w => w.1 = true → w.2 = true]
 
-/-- Desires: to become mayor, and not to go to the pub. -/
+/-- What the speaker wants: to become mayor, and to avoid the pub. -/
 def desires : OrderingSource World :=
-  fun _ => [fun w => w.1 = true, fun w => w.2 = false]
+  Function.const World [λ w => w.1 = true, λ w => w.2 = false]
 
-private lemma mem_acc_iff (w : World) :
-    w ∈ accessibleWorlds circumstances w₀ ↔ (w.1 = true → w.2 = true) := by
-  simp [accessibleWorlds, circumstances, Modality.Kratzer.propIntersection]
+/-- Decide a claim about the backgrounds and the ordering over the four worlds. -/
+scoped macro "decide_worlds" : tactic =>
+  `(tactic| (simp only [accessibleWorlds, propIntersection, atLeastAsGoodAs_iff, circumstances,
+      desires, Function.const_apply, Set.mem_ofPred_eq, List.forall_mem_cons, List.mem_nil_iff,
+      false_implies, implies_true, and_true]; decide))
 
-private lemma agag_iff (a b : World) :
-    atLeastAsGoodAs (desires w₀) a b ↔
-      ((b.1 = true → a.1 = true) ∧ (b.2 = false → a.2 = false)) := by
-  constructor
-  · intro h
-    exact ⟨h _ List.mem_cons_self, h _ (List.mem_cons_of_mem _ List.mem_cons_self)⟩
-  · rintro ⟨h1, h2⟩ q hq hqb
-    cases hq with
-    | head => exact h1 hqb
-    | tail _ hq =>
-      cases hq with
-      | head => exact h2 hqb
-      | tail _ hq => cases hq
-
-/-- Her clause (c): the mayor-ideal world and the no-pub-ideal world are
-incomparable — the ordering is non-connected by construction. -/
+/-- The paper's clause (c): the world of going to the pub and becoming mayor and the world of
+staying home are incomparable, so the ordering is not connected. -/
 theorem mayor_pub_incomparable :
     ¬ atLeastAsGoodAs (desires w₀) (true, true) (false, false) ∧
-    ¬ atLeastAsGoodAs (desires w₀) (false, false) (true, true) := by
-  constructor <;> rw [agag_iff] <;> decide
+      ¬ atLeastAsGoodAs (desires w₀) (false, false) (true, true) := by
+  decide_worlds
 
-private lemma mem_best_iff (w : World) :
-    w ∈ bestWorlds circumstances desires w₀ ↔
-      (w.1 = true → w.2 = true) ∧
-      ∀ v : World, (v.1 = true → v.2 = true) →
-        ((w.1 = true → v.1 = true) ∧ (w.2 = false → v.2 = false)) →
-        ((v.1 = true → w.1 = true) ∧ (v.2 = false → w.2 = false)) := by
-  constructor
-  · rintro ⟨hacc, hmin⟩
-    refine ⟨(mem_acc_iff w).mp hacc, fun v hv hle => ?_⟩
-    exact (agag_iff w v).mp (hmin ((mem_acc_iff v).mpr hv) ((agag_iff v w).mpr hle))
-  · rintro ⟨hacc, hmin⟩
-    refine ⟨(mem_acc_iff w).mpr hacc, fun v hv hle => ?_⟩
-    exact (agag_iff w v).mpr
-      (hmin v ((mem_acc_iff v).mp hv) ((agag_iff v w).mp hle))
+/-- Clause (f): the accessible world where the speaker goes to the pub and still fails to
+become mayor is strictly worse than either ideal-realizing world. -/
+theorem pub_no_mayor_worst :
+    ∀ v ∈ ({(true, true), (false, false)} : Set World),
+      atLeastAsGoodAs (desires w₀) v (false, true) ∧
+        ¬ atLeastAsGoodAs (desires w₀) (false, true) v := by
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq]
+  decide_worlds
 
-/-- The best worlds are exactly the two ideal-realizing ones: become
-mayor and go, or stay home and skip the pub. -/
-theorem best_eq :
-    ∀ w : World, w ∈ bestWorlds circumstances desires w₀ ↔
-      (w = (true, true) ∨ w = (false, false)) := by
-  intro w
-  rw [mem_best_iff]
+/-- No accessible world is at least as good as every accessible world: on the dominance
+reading of "best" the example would have no best world at all. -/
+theorem no_dominant_world :
+    ¬ ∃ w ∈ accessibleWorlds circumstances w₀,
+      ∀ v ∈ accessibleWorlds circumstances w₀, atLeastAsGoodAs (desires w₀) w v := by
+  decide_worlds
+
+/-- The best worlds are the two ideal-realizing ones. -/
+theorem mem_bestWorlds_iff (w : World) :
+    w ∈ bestWorlds circumstances desires w₀ ↔ w = (true, true) ∨ w = (false, false) := by
   revert w
-  decide
+  simp only [bestWorlds, Core.Order.Normality.mem_optimal, kratzerNormality,
+    Core.Order.Normality.fromProps, Preorder.ofCriteria_le_iff]
+  decide_worlds
 
-/-- Conclusion one is faulty: it is not necessary to go to the pub. -/
-theorem conclusion_one_faulty :
-    ¬ necessity circumstances desires (fun w => w.2 = true) w₀ := by
-  intro h
-  exact absurd (h (false, false) ((best_eq _).mpr (Or.inr rfl))) (by decide)
+/-- The example satisfies the Limit Assumption, so the paper's limit-free operators are
+quantification over `bestWorlds`. -/
+theorem limitAssumption : LimitAssumption circumstances desires w₀ := by
+  simp only [LimitAssumption, mem_bestWorlds_iff]
+  decide_worlds
 
-/-- Conclusion two is faulty: it is not necessary to skip the pub. -/
-theorem conclusion_two_faulty :
-    ¬ necessity circumstances desires (fun w => w.2 = false) w₀ := by
-  intro h
-  exact absurd (h (true, true) ((best_eq _).mpr (Or.inl rfl))) (by decide)
+/-- Decide a verdict of the limit-free operators through the best worlds. -/
+scoped macro "decide_verdict" : tactic =>
+  `(tactic| (simp only [humanPossibility, humanNecessity_iff_necessity limitAssumption,
+      necessity, ModalLogic.box, kratzerBestR, mem_bestWorlds_iff, forall_eq_or_imp,
+      forall_eq]; decide))
 
-/-- Conclusion three is faulty: becoming mayor without the pub is not
-even accessible. -/
-theorem conclusion_three_faulty :
-    ¬ possibility circumstances desires (fun w => w.1 = true ∧ w.2 = false) w₀ := by
-  rintro ⟨w, hw, h1, h2⟩
-  have := ((best_eq w).mp hw)
-  rcases this with rfl | rfl <;> simp_all
+/-- Conclusion one fails: the speaker need not go to the pub. -/
+theorem not_must_pub : ¬ humanNecessity circumstances desires (·.2 = true) w₀ := by
+  decide_verdict
 
-/-- Conclusion four is correct: going to the pub is possible. -/
-theorem conclusion_four_correct :
-    possibility circumstances desires (fun w => w.2 = true) w₀ :=
-  ⟨(true, true), (best_eq _).mpr (Or.inl rfl), rfl⟩
+/-- Conclusion two fails: the speaker need not avoid the pub. -/
+theorem not_must_avoid : ¬ humanNecessity circumstances desires (·.2 = false) w₀ := by
+  decide_verdict
 
-/-- Conclusion five is correct: skipping the pub is possible. -/
-theorem conclusion_five_correct :
-    possibility circumstances desires (fun w => w.2 = false) w₀ :=
-  ⟨(false, false), (best_eq _).mpr (Or.inr rfl), rfl⟩
+/-- Conclusion three fails: becoming mayor without the pub is not even accessible, and wishes
+cannot override facts. -/
+theorem not_can_mayor_without_pub :
+    ¬ humanPossibility circumstances desires (λ w => w.1 = true ∧ w.2 = false) w₀ := by
+  decide_verdict
 
-/-! ### The example fixes the form of `bestWorlds` -/
+/-- Conclusion four holds: the speaker could go to the pub. -/
+theorem can_pub : humanPossibility circumstances desires (·.2 = true) w₀ := by
+  decide_verdict
 
-/-- Under the dominance reading of "best" — at least as good as every
-accessible world — the best set of her example is empty: the two
-ideal-realizing worlds disqualify each other. -/
-theorem dominance_best_empty :
-    {w : World | w ∈ accessibleWorlds circumstances w₀ ∧
-      ∀ v ∈ accessibleWorlds circumstances w₀,
-        atLeastAsGoodAs (desires w₀) w v} = ∅ := by
-  ext w
-  simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_and]
-  intro hacc h
-  have h1 := (agag_iff w (true, true)).mp
-    (h (true, true) ((mem_acc_iff _).mpr (by decide)))
-  have h2 := (agag_iff w (false, false)).mp
-    (h (false, false) ((mem_acc_iff _).mpr (by decide)))
-  have hw := (mem_acc_iff w).mp hacc
-  obtain ⟨a, b⟩ := w
-  revert h1 h2 hw
-  cases a <;> cases b <;> decide
-
-/-- The minimality reading leaves the best set nonempty, as her verdicts
-require. -/
-theorem best_nonempty :
-    (bestWorlds circumstances desires w₀).Nonempty :=
-  ⟨(true, true), (best_eq _).mpr (Or.inl rfl)⟩
+/-- Conclusion five holds: the speaker could avoid the pub. -/
+theorem can_avoid : humanPossibility circumstances desires (·.2 = false) w₀ := by
+  decide_verdict
 
 end Kratzer1981
