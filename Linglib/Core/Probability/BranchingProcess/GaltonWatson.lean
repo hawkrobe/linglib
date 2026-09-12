@@ -6,17 +6,19 @@ Authors: Robert Hawkins
 import Linglib.Core.Computability.ContextFreeGrammar.Tree
 import Linglib.Core.MeasureTheory.Measure.GiryMonad
 import Linglib.Core.Order.IterateFixedPoint
+import Linglib.Core.Probability.Kernel.Basic
+import Linglib.Core.Probability.Kernel.Composition.Lemmas
 import Mathlib.Probability.Kernel.IonescuTulcea.Traj
 
 /-!
 # Multitype Galton–Watson processes
 
-A multitype Galton–Watson process with types `ι` and marks `T` is an offspring distribution for
-each type over ordered lists of types and marks. An individual of type `i` draws its offspring,
-each type among them founds an independent copy of the process, and each mark is a leaf. The
-family tree of an individual is the plane tree of [neveu-1986]; its law on finite trees is the
-least fixed point of the one-generation operator on the Giry monad, and the missing mass is the
-probability of surviving forever.
+A multitype Galton–Watson process with types `ι` and marks `T` is an offspring kernel
+`ξ : Kernel ι (List (Symbol T ι))`. An individual of type `i` draws its offspring from `ξ i`, an
+ordered list of types and marks; each type among them founds an independent copy of the process
+and each mark is a leaf. The family tree of an individual is the plane tree of [neveu-1986]; its
+law on finite trees is the least fixed point of the one-generation operator on the Giry monad,
+and the missing mass is the probability of surviving forever.
 
 A probabilistic context-free grammar is the instance whose types are the nonterminals, whose
 marks are the terminals, and whose offspring at `A` is the right-hand side of a rule chosen with
@@ -24,47 +26,46 @@ its weight; see `PCFG.galtonWatson`.
 
 ## Main definitions
 
-* `ProbabilityTheory.GaltonWatson`: the offspring kernel.
-* `GaltonWatson.expand`: one generation, and `GaltonWatson.law`: its least fixed point, the law
-  of the finite family tree.
+* `GaltonWatson.PartialTree`: family trees with holes, the states of the generation chain.
+* `GaltonWatson.fill`: the kernel filling the holes of a partial tree with independent draws
+  from a family of laws, and `GaltonWatson.generation`: the kernel expanding every hole by one
+  generation.
+* `GaltonWatson.expand`: one generation from a single hole followed by filling, and
+  `GaltonWatson.law`: its least fixed point, the law of the finite family tree at each type.
 * `GaltonWatson.weight`: the probability of a finite family tree, the product over its internal
   nodes of the offspring probability there.
 * `GaltonWatson.extinctionProb`: the total mass of `law`, the probability that the family tree
   is finite.
-* `GaltonWatson.Partial`, `GaltonWatson.fill`, `GaltonWatson.stepAll`, `GaltonWatson.stepIter`:
-  partial family trees with holes, filling the holes from a family of laws, one synchronous
-  generation, and `n` generations, the generation-by-generation Markov chain.
-* `GaltonWatson.stepKernel`, `GaltonWatson.chainKernel`, `GaltonWatson.trajectory`: with
-  probability offspring, the generation chain as a Markov kernel and, through the Ionescu–Tulcea
-  theorem (`ProbabilityTheory.Kernel.traj`), the law of its whole trajectory.
+* `GaltonWatson.chainKernel`, `GaltonWatson.trajectory`: with Markov offspring, the generation
+  chain in Ionescu–Tulcea form and, through `ProbabilityTheory.Kernel.traj`, the law of its
+  whole trajectory.
 
 ## Main results
 
-* `GaltonWatson.law_eq_iSup_iterate`: the law is the supremum of the Kleene iterates from the
-  zero measure.
+* `GaltonWatson.law_eq_iSup_iterate`: the law is the supremum of the Kleene iterates of
+  `expand` from the zero kernel.
 * `GaltonWatson.law_singleton`: a finite tree rooted at type `i` has probability `weight` under
   the law at `i`, and trees rooted elsewhere have probability `0`.
 * `GaltonWatson.law_univ_le_one`: with sub-probability offspring the law is a sub-probability
-  measure.
-* `GaltonWatson.fill_expand`, `GaltonWatson.law_eq_iSup_stepIter`: filling with one more
-  generation is one synchronous step followed by filling, so the Kleene iterates are the
-  completed parts of the generation chain and the law is their supremum. This is the finite side
-  of the identification of `law` with the trajectory measure of the chain.
+  kernel.
+* `GaltonWatson.fill_expand`: filling with one more generation is one generation followed by
+  filling, so `GaltonWatson.fill_iterate` identifies the Kleene iterates with the completed part
+  of the generation chain and `GaltonWatson.law_eq_iSup_generation` expresses the law as their
+  supremum.
 * `GaltonWatson.trajectory_map_eval`: at time `n` the trajectory is distributed as `n`
   generations, so the Kleene iterates are the marginals of the trajectory measure.
 
 ## Implementation notes
 
 Family trees are `DerivationTree T ι`, with marks as leaves and types as internal labels, and
-offspring lists are `List (Symbol T ι)`; both carry the discrete σ-algebra `⊤`, so every
-function out of them is measurable without a countability assumption. The offspring measures
-are not required to be probability measures: sub-probability offspring model killing, and the
-grammar instance produces the zero measure at a nonterminal no rule expands. The extinction
-probability is the least fixed point of the offspring generating function and equals one exactly
-when the mean matrix is subcritical or critical ([athreya-ney-1972]); that theorem is not proved
-here. The intertwining with the generation chain commutes two independent `bind`s, which is
-Fubini and needs the discrete σ-algebra on products of the tree types to be the product
-σ-algebra, hence the countability hypotheses on `ι` and `T` there.
+partial trees are `DerivationTree (Symbol T ι) ι`, whose leaves are marks or holes. Both, and
+lists of them, carry the discrete σ-algebra `⊤`, so every function out of them is measurable and,
+with `ι` and `T` countable, every measure on them is s-finite and every kernel between them is an
+s-finite kernel; Fubini then needs no finiteness hypotheses. The offspring kernel is not
+required to be Markov: sub-probability offspring model killing, and the grammar instance
+produces the zero measure at a nonterminal no rule expands. The extinction probability is the
+least fixed point of the offspring generating function and equals one exactly when the mean
+matrix is subcritical or critical ([athreya-ney-1972]); that theorem is not proved here.
 
 ## References
 
@@ -79,183 +80,359 @@ instance {T N : Type*} : MeasurableSpace (DerivationTree T N) := ⊤
 instance {T N : Type*} : MeasurableSpace (List (DerivationTree T N)) := ⊤
 instance {T N : Type*} : MeasurableSpace (List (Symbol T N)) := ⊤
 
-namespace ProbabilityTheory
-
-/-- A multitype Galton–Watson process with types `ι` and marks `T`: an individual of type `i`
-has offspring drawn from `offspring i`, an ordered list of types (individuals of the next
-generation) and marks (leaves). -/
-structure GaltonWatson (ι T : Type*) where
-  /-- The offspring distribution of an individual of type `i`. -/
-  offspring : ι → Measure (List (Symbol T ι))
-
-namespace GaltonWatson
+namespace ProbabilityTheory.GaltonWatson
 
 open DerivationTree
 
-variable {ι T : Type*} (P : GaltonWatson ι T)
+variable {ι T : Type*} [MeasurableSpace ι]
 
-/-- Given laws `κ i` for the family trees of individuals of type `i`, the law of the list of
-subtrees below a list of offspring: marks become leaves, types draw from `κ`. -/
-noncomputable def childrenMeasure (κ : ι → Measure (DerivationTree T ι)) :
-    List (Symbol T ι) → Measure (List (DerivationTree T ι))
+/-- Partial family trees: a leaf is a mark `Symbol.terminal t` or a hole `Symbol.nonterminal i`
+of type `i`, yet to be expanded. -/
+abbrev PartialTree (ι T : Type*) := DerivationTree (Symbol T ι) ι
+
+/-! ### Filling the holes -/
+
+section Fill
+
+variable (κ : Kernel ι (DerivationTree T ι))
+
+mutual
+private noncomputable def fillFun : PartialTree ι T → Measure (DerivationTree T ι)
+  | .leaf (.terminal t) => Measure.dirac (leaf t)
+  | .leaf (.nonterminal i) => κ i
+  | .node i cs => (fillListFun cs).map (node i)
+private noncomputable def fillListFun : List (PartialTree ι T) → Measure (List (DerivationTree T ι))
   | [] => Measure.dirac []
-  | .terminal t :: rest => (childrenMeasure κ rest).map (leaf t :: ·)
-  | .nonterminal i :: rest => (κ i).bind fun c => (childrenMeasure κ rest).map (c :: ·)
+  | s :: ss => ((fillFun s).prod (fillListFun ss)).map (Function.uncurry List.cons)
+end
 
-/-- One generation: an individual of type `i` draws its offspring and each type among them grows
-a family tree with law `κ`. -/
-noncomputable def expand (κ : ι → Measure (DerivationTree T ι)) (i : ι) :
-    Measure (DerivationTree T ι) :=
-  (P.offspring i).bind fun syms => (childrenMeasure κ syms).map (node i)
+/-- Fill the holes of a partial tree with independent draws from the laws `κ`. -/
+noncomputable def fill : Kernel (PartialTree ι T) (DerivationTree T ι) := ⟨fillFun κ, .of_discrete⟩
 
-theorem ωScottContinuous_childrenMeasure (syms : List (Symbol T ι)) :
-    ωScottContinuous fun κ : ι → Measure (DerivationTree T ι) => childrenMeasure κ syms := by
-  induction syms with
-  | nil => exact ωScottContinuous.const
-  | cons s rest ih =>
-    cases s with
-    | terminal t => exact Measure.ωScottContinuous_map ih measurable_from_top
-    | nonterminal i =>
-      exact Measure.ωScottContinuous_bind (ωScottContinuous.apply i)
-        (fun _ => Measure.ωScottContinuous_map ih measurable_from_top) fun _ => measurable_from_top
+/-- Fill the holes of a list of partial trees independently. -/
+noncomputable def fillList : Kernel (List (PartialTree ι T)) (List (DerivationTree T ι)) :=
+  ⟨fillListFun κ, .of_discrete⟩
 
-theorem ωScottContinuous_expand : ωScottContinuous P.expand :=
-  ωScottContinuous.of_apply₂ fun _ => Measure.ωScottContinuous_bind_right
-    (fun syms => Measure.ωScottContinuous_map (ωScottContinuous_childrenMeasure syms)
-      measurable_from_top) fun _ => measurable_from_top
+@[simp] theorem fill_leaf_terminal (t : T) : fill κ (leaf (.terminal t)) = Measure.dirac (leaf t) :=
+  rfl
 
-/-- The generation operator as an order homomorphism. -/
-noncomputable def expandHom :
-    (ι → Measure (DerivationTree T ι)) →o (ι → Measure (DerivationTree T ι)) :=
-  ⟨P.expand, P.ωScottContinuous_expand.monotone⟩
+@[simp] theorem fill_leaf_nonterminal (i : ι) : fill κ (leaf (.nonterminal i)) = κ i := rfl
 
-/-- The law of the family tree of an individual of type `i`, on finite trees: the least fixed
-point of the generation operator. Its total mass is the extinction probability. -/
-noncomputable def law : ι → Measure (DerivationTree T ι) :=
-  OrderHom.lfp P.expandHom
+theorem fill_node (i : ι) (cs : List (PartialTree ι T)) :
+    fill κ (node i cs) = (fillList κ cs).map (node i) := rfl
 
-theorem expand_law : P.expand P.law = P.law :=
-  P.expandHom.map_lfp
+@[simp] theorem fillList_nil : fillList κ [] = Measure.dirac [] := rfl
 
-theorem law_eq_iSup_iterate : P.law = ⨆ n, P.expandHom^[n] ⊥ :=
-  OrderHom.lfp_eq_iSup_iterate _ fun c => by
-    show P.expand (⨆ n, c n) = ⨆ n, P.expand (c n)
-    rw [← Pi.ωSup_eq_iSup (L := fun _ => Measure (DerivationTree T ι)) c,
-      P.ωScottContinuous_expand.map_ωSup, Pi.ωSup_eq_iSup]
+theorem fillList_cons (s : PartialTree ι T) (ss : List (PartialTree ι T)) :
+    fillList κ (s :: ss) = ((fill κ s).prod (fillList κ ss)).map (Function.uncurry List.cons) :=
+  rfl
+
+variable {κ}
+
+@[simp]
+theorem fillList_nil_singleton_cons (c : DerivationTree T ι) (cs : List (DerivationTree T ι)) :
+    fillList κ [] {c :: cs} = 0 := by
+  rw [fillList_nil, Measure.dirac_apply' _ .of_discrete]
+  simp
+
+mutual
+theorem fill_univ_le_one [Countable ι] [Countable T] (hκ : ∀ i, κ i Set.univ ≤ 1) :
+    ∀ s : PartialTree ι T, fill κ s Set.univ ≤ 1
+  | .leaf (.terminal _) => by simp
+  | .leaf (.nonterminal i) => hκ i
+  | .node _ cs => by
+    rw [fill_node, Measure.map_apply .of_discrete .univ, Set.preimage_univ]
+    exact fillList_univ_le_one hκ cs
+theorem fillList_univ_le_one [Countable ι] [Countable T] (hκ : ∀ i, κ i Set.univ ≤ 1) :
+    ∀ ss : List (PartialTree ι T), fillList κ ss Set.univ ≤ 1
+  | [] => by simp
+  | s :: ss => by
+    rw [fillList_cons, Measure.map_apply .of_discrete .univ, Set.preimage_univ,
+      ← Set.univ_prod_univ, Measure.prod_prod]
+    exact mul_le_one' (fill_univ_le_one hκ s) (fillList_univ_le_one hκ ss)
+end
+
+mutual
+theorem isProbabilityMeasure_fill [Countable ι] [Countable T] [IsMarkovKernel κ] :
+    ∀ s : PartialTree ι T, IsProbabilityMeasure (fill κ s)
+  | .leaf (.terminal _) => by rw [fill_leaf_terminal]; infer_instance
+  | .leaf (.nonterminal i) => by rw [fill_leaf_nonterminal]; infer_instance
+  | .node _ cs => by
+    have := isProbabilityMeasure_fillList cs
+    rw [fill_node]
+    exact Measure.isProbabilityMeasure_map Measurable.of_discrete.aemeasurable
+theorem isProbabilityMeasure_fillList [Countable ι] [Countable T] [IsMarkovKernel κ] :
+    ∀ ss : List (PartialTree ι T), IsProbabilityMeasure (fillList κ ss)
+  | [] => by rw [fillList_nil]; infer_instance
+  | s :: ss => by
+    have := isProbabilityMeasure_fill s
+    have := isProbabilityMeasure_fillList ss
+    rw [fillList_cons]
+    exact Measure.isProbabilityMeasure_map Measurable.of_discrete.aemeasurable
+end
+
+variable [Countable ι] [Countable T]
+
+instance [IsMarkovKernel κ] : IsMarkovKernel (fill κ) := ⟨isProbabilityMeasure_fill⟩
+
+instance [IsMarkovKernel κ] : IsMarkovKernel (fillList κ) := ⟨isProbabilityMeasure_fillList⟩
+
+@[simp]
+theorem fillList_cons_singleton_cons (s : PartialTree ι T) (ss : List (PartialTree ι T))
+    (c : DerivationTree T ι) (cs : List (DerivationTree T ι)) :
+    fillList κ (s :: ss) {c :: cs} = fill κ s {c} * fillList κ ss {cs} := by
+  rw [fillList_cons, Measure.map_apply .of_discrete .of_discrete, ← Measure.prod_prod]
+  congr 1
+  ext ⟨_, _⟩
+  simp
+
+@[simp]
+theorem fillList_cons_singleton_nil (s : PartialTree ι T) (ss : List (PartialTree ι T)) :
+    fillList κ (s :: ss) {[]} = 0 := by
+  rw [fillList_cons, Measure.map_apply .of_discrete .of_discrete]
+  convert measure_empty (μ := (fill κ s).prod (fillList κ ss))
+  ext ⟨_, _⟩
+  simp
+
+/-- A list of subtrees whose root symbols do not spell out the holes has mass `0`, for any family
+of laws concentrated on trees of the right type. -/
+theorem fillList_map_leaf_singleton_of_ne
+    (hκ : ∀ i (c : DerivationTree T ι), c.rootSymbol ≠ .nonterminal i → κ i {c} = 0) :
+    ∀ (syms : List (Symbol T ι)) (cs : List (DerivationTree T ι)),
+      cs.map rootSymbol ≠ syms → fillList κ (syms.map leaf) {cs} = 0
+  | [], [], h => absurd rfl h
+  | [], _ :: _, _ => fillList_nil_singleton_cons _ _
+  | _ :: _, [], _ => fillList_cons_singleton_nil _ _
+  | .terminal t :: rest, c :: cs, h => by
+    rw [List.map_cons, fillList_cons_singleton_cons, fill_leaf_terminal, Measure.dirac_apply]
+    by_cases hc : c = leaf t
+    · subst hc
+      simp only [List.map_cons, rootSymbol_leaf, ne_eq, List.cons.injEq, true_and] at h
+      rw [fillList_map_leaf_singleton_of_ne hκ rest cs h, mul_zero]
+    · simp [Ne.symm hc]
+  | .nonterminal i :: rest, c :: cs, h => by
+    rw [List.map_cons, fillList_cons_singleton_cons, fill_leaf_nonterminal]
+    by_cases hc : c.rootSymbol = .nonterminal i
+    · simp only [List.map_cons, hc, ne_eq, List.cons.injEq, true_and] at h
+      rw [fillList_map_leaf_singleton_of_ne hκ rest cs h, mul_zero]
+    · rw [hκ i c hc, zero_mul]
+
+end Fill
+
+/-! ### One generation -/
+
+section Generation
+
+variable (ξ : Kernel ι (List (Symbol T ι)))
+
+mutual
+private noncomputable def generationFun : PartialTree ι T → Measure (PartialTree ι T)
+  | .leaf (.terminal t) => Measure.dirac (leaf (.terminal t))
+  | .leaf (.nonterminal i) => (ξ i).map fun syms => node i (syms.map leaf)
+  | .node i cs => (generationListFun cs).map (node i)
+private noncomputable def generationListFun :
+    List (PartialTree ι T) → Measure (List (PartialTree ι T))
+  | [] => Measure.dirac []
+  | s :: ss => ((generationFun s).prod (generationListFun ss)).map (Function.uncurry List.cons)
+end
+
+/-- One synchronous generation: every hole draws its offspring and becomes a node whose children
+are fresh holes and marks. -/
+noncomputable def generation : Kernel (PartialTree ι T) (PartialTree ι T) :=
+  ⟨generationFun ξ, .of_discrete⟩
+
+/-- One synchronous generation on a list of partial trees. -/
+noncomputable def generationList : Kernel (List (PartialTree ι T)) (List (PartialTree ι T)) :=
+  ⟨generationListFun ξ, .of_discrete⟩
+
+@[simp] theorem generation_leaf_terminal (t : T) :
+    generation ξ (leaf (.terminal t)) = Measure.dirac (leaf (.terminal t)) := rfl
+
+@[simp] theorem generation_leaf_nonterminal (i : ι) :
+    generation ξ (leaf (.nonterminal i)) = (ξ i).map fun syms => node i (syms.map leaf) := rfl
+
+theorem generation_node (i : ι) (cs : List (PartialTree ι T)) :
+    generation ξ (node i cs) = (generationList ξ cs).map (node i) := rfl
+
+@[simp] theorem generationList_nil : generationList ξ [] = Measure.dirac [] := rfl
+
+theorem generationList_cons (s : PartialTree ι T) (ss : List (PartialTree ι T)) :
+    generationList ξ (s :: ss) =
+      ((generation ξ s).prod (generationList ξ ss)).map (Function.uncurry List.cons) := rfl
+
+mutual
+theorem isProbabilityMeasure_generation [Countable ι] [Countable T] [IsMarkovKernel ξ] :
+    ∀ s : PartialTree ι T, IsProbabilityMeasure (generation ξ s)
+  | .leaf (.terminal _) => by rw [generation_leaf_terminal]; infer_instance
+  | .leaf (.nonterminal i) => by
+    rw [generation_leaf_nonterminal]
+    exact Measure.isProbabilityMeasure_map Measurable.of_discrete.aemeasurable
+  | .node _ cs => by
+    have := isProbabilityMeasure_generationList cs
+    rw [generation_node]
+    exact Measure.isProbabilityMeasure_map Measurable.of_discrete.aemeasurable
+theorem isProbabilityMeasure_generationList [Countable ι] [Countable T] [IsMarkovKernel ξ] :
+    ∀ ss : List (PartialTree ι T), IsProbabilityMeasure (generationList ξ ss)
+  | [] => by rw [generationList_nil]; infer_instance
+  | s :: ss => by
+    have := isProbabilityMeasure_generation s
+    have := isProbabilityMeasure_generationList ss
+    rw [generationList_cons]
+    exact Measure.isProbabilityMeasure_map Measurable.of_discrete.aemeasurable
+end
+
+instance [Countable ι] [Countable T] [IsMarkovKernel ξ] : IsMarkovKernel (generation ξ) :=
+  ⟨isProbabilityMeasure_generation ξ⟩
+
+instance [Countable ι] [Countable T] [IsMarkovKernel ξ] : IsMarkovKernel (generationList ξ) :=
+  ⟨isProbabilityMeasure_generationList ξ⟩
+
+variable [Countable ι] [MeasurableSingletonClass ι]
+
+/-- One generation from a type `i`: a single hole of type `i` draws its offspring, and each type
+among them grows a family tree with law `κ`. -/
+noncomputable def expand (κ : Kernel ι (DerivationTree T ι)) : Kernel ι (DerivationTree T ι) :=
+  (fill κ ∘ₖ generation ξ).comap (fun i => leaf (.nonterminal i)) .of_discrete
+
+variable {ξ} {κ : Kernel ι (DerivationTree T ι)}
+
+@[simp]
+theorem expand_apply (i : ι) : expand ξ κ i = fill κ ∘ₘ generation ξ (leaf (.nonterminal i)) := by
+  rw [expand, comap_apply, comp_apply]
+
+theorem expand_apply' (i : ι) (s : Set (DerivationTree T ι)) :
+    expand ξ κ i s = ∫⁻ syms, fillList κ (syms.map leaf) (node i ⁻¹' s) ∂ξ i := by
+  rw [expand_apply, Measure.bind_apply .of_discrete (Kernel.aemeasurable _),
+    generation_leaf_nonterminal, lintegral_map (Kernel.measurable_coe _ .of_discrete) .of_discrete]
+  simp_rw [fill_node, Measure.map_apply .of_discrete .of_discrete]
+
+mutual
+/-- Filling with one more generation is one generation followed by filling. -/
+theorem fill_expand_apply [Countable T] :
+    ∀ s : PartialTree ι T, fill (expand ξ κ) s = fill κ ∘ₘ generation ξ s
+  | .leaf (.terminal t) => by
+    rw [fill_leaf_terminal, generation_leaf_terminal, Measure.dirac_bind (Kernel.measurable _),
+      fill_leaf_terminal]
+  | .leaf (.nonterminal i) => by rw [fill_leaf_nonterminal, expand_apply]
+  | .node i cs => by
+    rw [fill_node, generation_node, fillList_expand_apply cs,
+      Measure.map_bind (Kernel.measurable _) .of_discrete,
+      Measure.bind_map .of_discrete (Kernel.measurable _)]
     rfl
+theorem fillList_expand_apply [Countable T] :
+    ∀ ss : List (PartialTree ι T), fillList (expand ξ κ) ss = fillList κ ∘ₘ generationList ξ ss
+  | [] => by
+    rw [fillList_nil, generationList_nil, Measure.dirac_bind (Kernel.measurable _), fillList_nil]
+  | s :: ss => by
+    rw [fillList_cons, generationList_cons, fill_expand_apply s, fillList_expand_apply ss,
+      ← Measure.parallelComp_comp_prod, Measure.map_comp _ _ .of_discrete,
+      Measure.bind_map .of_discrete (Kernel.measurable _)]
+    congr 1
+    funext ⟨s', ss'⟩
+    rw [Function.comp_apply, Function.uncurry_apply_pair, fillList_cons,
+      Kernel.map_apply _ .of_discrete, parallelComp_apply]
+end
+
+variable [Countable T]
+
+instance [IsMarkovKernel ξ] [IsMarkovKernel κ] : IsMarkovKernel (expand ξ κ) := by
+  rw [expand]; infer_instance
+
+/-- Filling with one more generation is one generation followed by filling. -/
+theorem fill_expand : fill (expand ξ κ) = fill κ ∘ₖ generation ξ :=
+  Kernel.ext fill_expand_apply
+
+end Generation
 
 /-! ### The weight of a finite family tree -/
+
+section Weight
+
+variable (ξ : Kernel ι (List (Symbol T ι)))
 
 mutual
 /-- The probability of a finite family tree: the product over its internal nodes of the
 offspring probability of the list of symbols below that node. -/
 noncomputable def weight : DerivationTree T ι → ℝ≥0∞
   | .leaf _ => 1
-  | .node i cs => P.offspring i {cs.map rootSymbol} * weightList cs
-
+  | .node i cs => ξ i {cs.map rootSymbol} * weightList cs
 /-- The product of the weights of a list of family trees. -/
 noncomputable def weightList : List (DerivationTree T ι) → ℝ≥0∞
   | [] => 1
   | c :: cs => weight c * weightList cs
 end
 
-/-! ### Evaluation on singletons -/
+end Weight
 
-section
+/-! ### The law of the family tree -/
 
-variable {P} {κ : ι → Measure (DerivationTree T ι)}
+section Law
 
-theorem expand_apply (i : ι) (s : Set (DerivationTree T ι)) :
-    P.expand κ i s = ∫⁻ syms, childrenMeasure κ syms (node i ⁻¹' s) ∂P.offspring i := by
-  rw [expand, Measure.bind_apply MeasurableSpace.measurableSet_top measurable_from_top.aemeasurable]
-  simp_rw [Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top]
+variable (ξ : Kernel ι (List (Symbol T ι))) [Countable ι] [MeasurableSingletonClass ι]
 
-@[simp]
-theorem childrenMeasure_nil_singleton_nil : childrenMeasure κ [] {[]} = 1 :=
-  Measure.dirac_apply_of_mem rfl
-
-@[simp]
-theorem childrenMeasure_nil_singleton_cons (c : DerivationTree T ι)
-    (cs : List (DerivationTree T ι)) : childrenMeasure κ [] {c :: cs} = 0 := by
-  rw [childrenMeasure, Measure.dirac_apply' _ MeasurableSpace.measurableSet_top]
-  simp
-
-@[simp]
-theorem childrenMeasure_cons_singleton_nil (s : Symbol T ι) (rest : List (Symbol T ι)) :
-    childrenMeasure κ (s :: rest) {[]} = 0 := by
+mutual
+theorem ωScottContinuous_fill [Countable T] (s : PartialTree ι T) :
+    ωScottContinuous fun κ : ι → Measure (DerivationTree T ι) => fill (ofFunOfCountable κ) s := by
   cases s with
-  | terminal t =>
-    rw [childrenMeasure, Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top]
-    convert measure_empty (μ := childrenMeasure κ rest)
-    ext; simp
-  | nonterminal i =>
-    rw [childrenMeasure, Measure.bind_apply MeasurableSpace.measurableSet_top
-      measurable_from_top.aemeasurable]
-    refine (lintegral_congr fun c => ?_).trans lintegral_zero
-    rw [Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top]
-    convert measure_empty (μ := childrenMeasure κ rest)
-    ext; simp
-
-@[simp]
-theorem childrenMeasure_terminal_singleton_leaf (t : T) (rest : List (Symbol T ι))
-    (cs : List (DerivationTree T ι)) :
-    childrenMeasure κ (.terminal t :: rest) {leaf t :: cs} = childrenMeasure κ rest {cs} := by
-  rw [childrenMeasure, Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top]
-  congr 1; ext; simp
-
-@[simp]
-theorem childrenMeasure_terminal_singleton_cons_of_ne (t : T) (rest : List (Symbol T ι))
-    {c : DerivationTree T ι} (hc : c ≠ leaf t) (cs : List (DerivationTree T ι)) :
-    childrenMeasure κ (.terminal t :: rest) {c :: cs} = 0 := by
-  rw [childrenMeasure, Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top]
-  convert measure_empty (μ := childrenMeasure κ rest)
-  ext; simp [Ne.symm hc]
-
-@[simp]
-theorem childrenMeasure_nonterminal_singleton_cons (i : ι) (rest : List (Symbol T ι))
-    (c : DerivationTree T ι) (cs : List (DerivationTree T ι)) :
-    childrenMeasure κ (.nonterminal i :: rest) {c :: cs} =
-      κ i {c} * childrenMeasure κ rest {cs} := by
-  rw [childrenMeasure, Measure.bind_apply MeasurableSpace.measurableSet_top
-    measurable_from_top.aemeasurable]
-  have : (fun c' => ((childrenMeasure κ rest).map (c' :: ·)) {c :: cs}) =
-      ({c} : Set (DerivationTree T ι)).indicator fun _ => childrenMeasure κ rest {cs} := by
-    funext c'
-    rw [Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top]
-    by_cases h : c' = c
-    · subst h; simp; congr 1; ext; simp
-    · rw [Set.indicator_of_notMem (by simpa using h)]
-      convert measure_empty (μ := childrenMeasure κ rest)
-      ext; simp [h]
-  rw [this, lintegral_indicator_const MeasurableSpace.measurableSet_top, mul_comm]
-
-/-- A list of subtrees whose root symbols do not match the offspring has mass `0`, for any family
-of laws concentrated on trees of the right type. -/
-theorem childrenMeasure_singleton_of_ne
-    (hκ : ∀ i (c : DerivationTree T ι), c.rootSymbol ≠ .nonterminal i → κ i {c} = 0) :
-    ∀ (syms : List (Symbol T ι)) (cs : List (DerivationTree T ι)),
-      cs.map rootSymbol ≠ syms → childrenMeasure κ syms {cs} = 0
-  | [], [], h => absurd rfl h
-  | [], _ :: _, _ => by simp
-  | _ :: _, [], _ => by simp
-  | .terminal t :: rest, c :: cs, h => by
-    by_cases hc : c = leaf t
-    · subst hc
-      simp only [List.map_cons, rootSymbol_leaf, ne_eq, List.cons.injEq, true_and] at h
-      simp [childrenMeasure_singleton_of_ne hκ rest cs h]
-    · simp [hc]
-  | .nonterminal i :: rest, c :: cs, h => by
-    rw [childrenMeasure_nonterminal_singleton_cons]
-    by_cases hc : c.rootSymbol = .nonterminal i
-    · simp only [List.map_cons, hc, ne_eq, List.cons.injEq, true_and] at h
-      simp [childrenMeasure_singleton_of_ne hκ rest cs h]
-    · simp [hκ i c hc]
-
+  | leaf s =>
+    cases s with
+    | terminal t => exact ωScottContinuous.const
+    | nonterminal i => exact ωScottContinuous.apply i
+  | node i cs => exact Measure.ωScottContinuous_map (ωScottContinuous_fillList cs) .of_discrete
+theorem ωScottContinuous_fillList [Countable T] (ss : List (PartialTree ι T)) :
+    ωScottContinuous fun κ : ι → Measure (DerivationTree T ι) =>
+      fillList (ofFunOfCountable κ) ss := by
+  cases ss with
+  | nil => exact ωScottContinuous.const
+  | cons s ss =>
+    exact Measure.ωScottContinuous_map
+      (Measure.ωScottContinuous_prod (ωScottContinuous_fill s) (ωScottContinuous_fillList ss))
+      .of_discrete
 end
 
-theorem law_singleton_of_ne {t : DerivationTree T ι} {i : ι}
-    (h : t.rootSymbol ≠ .nonterminal i) : P.law i {t} = 0 := by
-  rw [← P.expand_law, expand_apply]
+variable [Countable T]
+
+theorem ωScottContinuous_expand :
+    ωScottContinuous fun κ : ι → Measure (DerivationTree T ι) => ⇑(expand ξ (ofFunOfCountable κ)) :=
+  ωScottContinuous.of_apply₂ fun i => by
+    simp only [expand_apply]
+    exact Measure.ωScottContinuous_bind_right (fun s => ωScottContinuous_fill s) fun _ =>
+      Kernel.measurable _
+
+/-- The generation operator on families of laws indexed by type, as an order homomorphism. -/
+noncomputable def expandHom :
+    (ι → Measure (DerivationTree T ι)) →o (ι → Measure (DerivationTree T ι)) :=
+  ⟨fun κ => ⇑(expand ξ (ofFunOfCountable κ)), (ωScottContinuous_expand ξ).monotone⟩
+
+/-- The law of the family tree of an individual of each type, on finite trees: the least fixed
+point of the generation operator. Its total mass is the extinction probability. -/
+noncomputable def law : Kernel ι (DerivationTree T ι) := ofFunOfCountable (expandHom ξ).lfp
+
+theorem expand_law : expand ξ (law ξ) = law ξ :=
+  Kernel.ext fun i => congrFun (expandHom ξ).map_lfp i
+
+theorem coe_iterate_expand : ∀ n : ℕ, ⇑((expand ξ)^[n] 0) = (expandHom ξ)^[n] ⊥
+  | 0 => rfl
+  | n + 1 => by
+    rw [Function.iterate_succ_apply', Function.iterate_succ_apply', ← coe_iterate_expand n]
+    rfl
+
+/-- The law is the supremum of the Kleene iterates of `expand` from the zero kernel. -/
+theorem law_eq_iSup_iterate : ⇑(law ξ) = ⨆ n, ⇑((expand ξ)^[n] 0) := by
+  simp_rw [coe_iterate_expand]
+  exact OrderHom.lfp_eq_iSup_iterate _ fun c => by
+    show ⇑(expand ξ (ofFunOfCountable (⨆ n, c n))) = ⨆ n, ⇑(expand ξ (ofFunOfCountable (c n)))
+    rw [← Pi.ωSup_eq_iSup (L := fun _ => Measure (DerivationTree T ι)) c,
+      (ωScottContinuous_expand ξ).map_ωSup, Pi.ωSup_eq_iSup]
+    rfl
+
+theorem monotone_iterate_expand : Monotone fun n => ⇑((expand ξ)^[n] 0) := by
+  simp_rw [coe_iterate_expand]
+  exact (expandHom ξ).iterate_bot_mono
+
+theorem law_singleton_of_ne {t : DerivationTree T ι} {i : ι} (h : t.rootSymbol ≠ .nonterminal i) :
+    law ξ i {t} = 0 := by
+  rw [← expand_law, expand_apply']
   have : node i ⁻¹' ({t} : Set (DerivationTree T ι)) = ∅ := by
     ext cs
     simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_empty_iff_false, iff_false]
@@ -266,409 +443,178 @@ theorem law_singleton_of_ne {t : DerivationTree T ι} {i : ι}
 mutual
 /-- A family tree of an individual of type `i` has probability `weight` under the law at `i`. -/
 theorem law_singleton_node (i : ι) (cs : List (DerivationTree T ι)) :
-    P.law i {node i cs} = P.weight (node i cs) := by
-  rw [← P.expand_law, expand_apply, weight]
+    law ξ i {node i cs} = weight ξ (node i cs) := by
+  rw [← expand_law, expand_apply', weight]
   have hpre : node i ⁻¹' ({node i cs} : Set (DerivationTree T ι)) = {cs} := by ext; simp
-  have hind : (fun syms => childrenMeasure P.law syms {cs}) =
-      ({cs.map rootSymbol} : Set (List (Symbol T ι))).indicator fun _ => P.weightList cs := by
+  have hind : (fun syms => fillList (law ξ) (syms.map leaf) {cs}) =
+      ({cs.map rootSymbol} : Set (List (Symbol T ι))).indicator fun _ => weightList ξ cs := by
     funext syms
     by_cases hs : cs.map rootSymbol = syms
     · subst hs
-      rw [childrenMeasure_law_singleton cs, Set.indicator_of_mem (Set.mem_singleton _)]
-    · rw [childrenMeasure_singleton_of_ne (fun _ _ => P.law_singleton_of_ne) _ _ hs,
+      rw [fillList_law_singleton cs, Set.indicator_of_mem (Set.mem_singleton _)]
+    · rw [fillList_map_leaf_singleton_of_ne (fun _ _ => law_singleton_of_ne ξ) _ _ hs,
         Set.indicator_of_notMem (by simpa using Ne.symm hs)]
-  rw [hpre, hind, lintegral_indicator_const MeasurableSpace.measurableSet_top, mul_comm]
-
-/-- A list of family trees has probability `weightList` below the offspring it spells out. -/
-theorem childrenMeasure_law_singleton (cs : List (DerivationTree T ι)) :
-    childrenMeasure P.law (cs.map rootSymbol) {cs} = P.weightList cs := by
+  rw [hpre, hind, lintegral_indicator_const .of_discrete, mul_comm]
+/-- A list of family trees has probability `weightList` below the holes it spells out. -/
+theorem fillList_law_singleton (cs : List (DerivationTree T ι)) :
+    fillList (law ξ) ((cs.map rootSymbol).map leaf) {cs} = weightList ξ cs := by
   cases cs with
   | nil => simp [weightList]
   | cons c cs =>
     cases c with
-    | leaf t => simp [weightList, weight, childrenMeasure_law_singleton cs]
+    | leaf t =>
+      rw [List.map_cons, List.map_cons, fillList_cons_singleton_cons, fillList_law_singleton cs,
+        weightList, rootSymbol_leaf, fill_leaf_terminal, weight]
+      simp
     | node i cs' =>
-      simp [weightList, law_singleton_node i cs', childrenMeasure_law_singleton cs]
+      rw [List.map_cons, List.map_cons, fillList_cons_singleton_cons, fillList_law_singleton cs,
+        weightList, rootSymbol, fill_leaf_nonterminal, law_singleton_node i cs']
 end
 
 open scoped Classical in
 /-- Under the law at `i`, a finite tree has probability `weight` when its root has type `i`
 and `0` otherwise. -/
 theorem law_singleton (t : DerivationTree T ι) (i : ι) :
-    P.law i {t} = if t.rootSymbol = .nonterminal i then P.weight t else 0 := by
+    law ξ i {t} = if t.rootSymbol = .nonterminal i then weight ξ t else 0 := by
   split_ifs with h
   · cases t with
     | leaf t => simp at h
     | node j cs =>
       obtain rfl : i = j := (by simpa using h.symm)
-      exact P.law_singleton_node i cs
-  · exact P.law_singleton_of_ne h
+      exact law_singleton_node ξ i cs
+  · exact law_singleton_of_ne ξ h
 
 /-! ### Extinction -/
 
-section
+variable {ξ}
 
-variable {P}
+theorem expand_univ_le_one (hξ : ∀ i, ξ i Set.univ ≤ 1) {κ : Kernel ι (DerivationTree T ι)}
+    (hκ : ∀ i, κ i Set.univ ≤ 1) (i : ι) : expand ξ κ i Set.univ ≤ 1 := by
+  rw [expand_apply, Measure.bind_apply .univ (Kernel.aemeasurable _)]
+  calc ∫⁻ s, fill κ s Set.univ ∂generation ξ (leaf (.nonterminal i))
+      ≤ ∫⁻ _, 1 ∂generation ξ (leaf (.nonterminal i)) :=
+        lintegral_mono fun s => fill_univ_le_one hκ s
+    _ = ξ i Set.univ := by
+      rw [lintegral_one, generation_leaf_nonterminal, Measure.map_apply .of_discrete .univ,
+        Set.preimage_univ]
+    _ ≤ 1 := hξ i
 
-theorem childrenMeasure_univ_le_one {κ : ι → Measure (DerivationTree T ι)}
-    (hκ : ∀ i, κ i Set.univ ≤ 1) :
-    ∀ syms : List (Symbol T ι), childrenMeasure κ syms Set.univ ≤ 1
-  | [] => by simp [childrenMeasure]
-  | .terminal t :: rest => by
-    rw [childrenMeasure, Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top,
-      Set.preimage_univ]
-    exact childrenMeasure_univ_le_one hκ rest
-  | .nonterminal i :: rest => by
-    rw [childrenMeasure, Measure.bind_apply MeasurableSpace.measurableSet_top
-      measurable_from_top.aemeasurable]
-    calc ∫⁻ c, ((childrenMeasure κ rest).map (c :: ·)) Set.univ ∂κ i
-        ≤ ∫⁻ _, 1 ∂κ i := lintegral_mono fun c => by
-          rw [Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top,
-            Set.preimage_univ]
-          exact childrenMeasure_univ_le_one hκ rest
-      _ = κ i Set.univ := lintegral_one
-      _ ≤ 1 := hκ i
-
-theorem expand_univ_le_one (hP : ∀ i, P.offspring i Set.univ ≤ 1)
-    {κ : ι → Measure (DerivationTree T ι)} (hκ : ∀ i, κ i Set.univ ≤ 1) (i : ι) :
-    P.expand κ i Set.univ ≤ 1 := by
-  rw [expand_apply]
-  calc ∫⁻ syms, childrenMeasure κ syms (node i ⁻¹' Set.univ) ∂P.offspring i
-      ≤ ∫⁻ _, 1 ∂P.offspring i := lintegral_mono fun syms => by
-        rw [Set.preimage_univ]; exact childrenMeasure_univ_le_one hκ syms
-    _ = P.offspring i Set.univ := lintegral_one
-    _ ≤ 1 := hP i
-
-end
-
-section Extinction
-
-variable (hP : ∀ i, P.offspring i Set.univ ≤ 1)
-include hP
-
-theorem iterate_expand_univ_le_one : ∀ (n : ℕ) (i : ι), (P.expandHom^[n] ⊥) i Set.univ ≤ 1
-  | 0, _ => by
-    rw [Function.iterate_zero_apply, Pi.bot_apply]
-    exact (Measure.le_iff'.1 (bot_le (a := (0 : Measure (DerivationTree T ι)))) _).trans (by simp)
+theorem iterate_expand_univ_le_one (hξ : ∀ i, ξ i Set.univ ≤ 1) :
+    ∀ (n : ℕ) (i : ι), ((expand ξ)^[n] 0) i Set.univ ≤ 1
+  | 0, _ => by simp
   | n + 1, i => by
     rw [Function.iterate_succ_apply']
-    exact expand_univ_le_one hP (iterate_expand_univ_le_one n) i
+    exact expand_univ_le_one hξ (iterate_expand_univ_le_one hξ n) i
 
-/-- With sub-probability offspring, the law on finite family trees is a sub-probability measure;
+/-- With sub-probability offspring, the law on finite family trees is a sub-probability kernel;
 the missing mass is the probability of survival forever. -/
-theorem law_univ_le_one (i : ι) : P.law i Set.univ ≤ 1 := by
+theorem law_univ_le_one (hξ : ∀ i, ξ i Set.univ ≤ 1) (i : ι) : law ξ i Set.univ ≤ 1 := by
   rw [law_eq_iSup_iterate, iSup_apply,
-    Measure.iSup_apply_of_monotone (fun m n h => P.expandHom.iterate_bot_mono h i)
-      MeasurableSpace.measurableSet_top]
-  exact iSup_le fun n => P.iterate_expand_univ_le_one hP n i
+    Measure.iSup_apply_of_monotone (fun m n h => monotone_iterate_expand ξ h i) .univ]
+  exact iSup_le fun n => iterate_expand_univ_le_one hξ n i
 
-end Extinction
+variable (ξ)
 
-/-- The extinction probability of an individual of type `i`: the probability that its family
-tree is finite. -/
-noncomputable def extinctionProb (i : ι) : ℝ≥0∞ := P.law i Set.univ
+/-- The extinction probability of an individual of type `i`: the total mass of the law on finite
+family trees, which for Markov offspring is the probability that the family tree is finite. -/
+noncomputable def extinctionProb (i : ι) : ℝ≥0∞ := law ξ i Set.univ
 
 /-! ### Generations -/
 
-/-- Partial family trees: leaves are marks (`Sum.inl`) or holes of a type (`Sum.inr`), yet to
-be expanded. -/
-abbrev Partial (ι T : Type*) := DerivationTree (T ⊕ ι) ι
-
-/-- An offspring symbol as a one-node partial tree: a mark leaf or a hole. -/
-def Partial.ofSymbol : Symbol T ι → Partial ι T
-  | .terminal t => leaf (.inl t)
-  | .nonterminal i => leaf (.inr i)
-
-variable {P}
-
-mutual
-/-- Fill the holes of a partial tree with independent draws from `κ`. -/
-noncomputable def fill (κ : ι → Measure (DerivationTree T ι)) :
-    Partial ι T → Measure (DerivationTree T ι)
-  | .leaf (.inl t) => Measure.dirac (leaf t)
-  | .leaf (.inr i) => κ i
-  | .node i cs => (fillList κ cs).map (node i)
-/-- Fill the holes of a list of partial trees. -/
-noncomputable def fillList (κ : ι → Measure (DerivationTree T ι)) :
-    List (Partial ι T) → Measure (List (DerivationTree T ι))
-  | [] => Measure.dirac []
-  | s :: ss => (fill κ s).bind fun c => (fillList κ ss).map (c :: ·)
-end
-
-variable (P)
-
-mutual
-/-- One synchronous generation: every hole draws its offspring and becomes a node whose
-children are fresh holes and marks. -/
-noncomputable def stepAll : Partial ι T → Measure (Partial ι T)
-  | .leaf (.inl t) => Measure.dirac (leaf (.inl t))
-  | .leaf (.inr i) => (P.offspring i).map fun syms => node i (syms.map Partial.ofSymbol)
-  | .node i cs => (stepAllList cs).map (node i)
-/-- One synchronous generation on a list of partial trees. -/
-noncomputable def stepAllList : List (Partial ι T) → Measure (List (Partial ι T))
-  | [] => Measure.dirac []
-  | s :: ss => (stepAll s).bind fun s' => (stepAllList ss).map (s' :: ·)
-end
-
-variable {P} {κ : ι → Measure (DerivationTree T ι)}
-
-theorem childrenMeasure_eq_fillList :
-    ∀ syms : List (Symbol T ι), childrenMeasure κ syms = fillList κ (syms.map Partial.ofSymbol)
-  | [] => rfl
-  | .terminal t :: rest => by
-    rw [childrenMeasure, List.map_cons, fillList, Partial.ofSymbol, fill,
-      Measure.dirac_bind measurable_from_top, childrenMeasure_eq_fillList rest]
-  | .nonterminal i :: rest => by
-    rw [childrenMeasure, List.map_cons, fillList, Partial.ofSymbol, fill,
-      childrenMeasure_eq_fillList rest]
-
-/-! ### Total mass -/
-
-mutual
-theorem fill_univ_le_one (hκ : ∀ i, κ i Set.univ ≤ 1) :
-    ∀ s : Partial ι T, fill κ s Set.univ ≤ 1
-  | .leaf (.inl t) => by simp [fill]
-  | .leaf (.inr i) => hκ i
-  | .node i cs => by
-    rw [fill, Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top,
-      Set.preimage_univ]
-    exact fillList_univ_le_one hκ cs
-theorem fillList_univ_le_one (hκ : ∀ i, κ i Set.univ ≤ 1) :
-    ∀ ss : List (Partial ι T), fillList κ ss Set.univ ≤ 1
-  | [] => by simp [fillList]
-  | s :: ss => by
-    rw [fillList, Measure.bind_apply MeasurableSpace.measurableSet_top
-      measurable_from_top.aemeasurable]
-    calc ∫⁻ c, ((fillList κ ss).map (c :: ·)) Set.univ ∂fill κ s
-        ≤ ∫⁻ _, 1 ∂fill κ s := lintegral_mono fun c => by
-          rw [Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top,
-            Set.preimage_univ]
-          exact fillList_univ_le_one hκ ss
-      _ = fill κ s Set.univ := lintegral_one
-      _ ≤ 1 := fill_univ_le_one hκ s
-end
-
-variable (P)
-
-mutual
-theorem stepAll_univ_le_one (hP : ∀ i, P.offspring i Set.univ ≤ 1) :
-    ∀ s : Partial ι T, P.stepAll s Set.univ ≤ 1
-  | .leaf (.inl t) => by simp [stepAll]
-  | .leaf (.inr i) => by
-    rw [stepAll, Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top,
-      Set.preimage_univ]
-    exact hP i
-  | .node i cs => by
-    rw [stepAll, Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top,
-      Set.preimage_univ]
-    exact stepAllList_univ_le_one hP cs
-theorem stepAllList_univ_le_one (hP : ∀ i, P.offspring i Set.univ ≤ 1) :
-    ∀ ss : List (Partial ι T), P.stepAllList ss Set.univ ≤ 1
-  | [] => by simp [stepAllList]
-  | s :: ss => by
-    rw [stepAllList, Measure.bind_apply MeasurableSpace.measurableSet_top
-      measurable_from_top.aemeasurable]
-    calc ∫⁻ s', ((P.stepAllList ss).map (s' :: ·)) Set.univ ∂P.stepAll s
-        ≤ ∫⁻ _, 1 ∂P.stepAll s := lintegral_mono fun s' => by
-          rw [Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top,
-            Set.preimage_univ]
-          exact stepAllList_univ_le_one hP ss
-      _ = P.stepAll s Set.univ := lintegral_one
-      _ ≤ 1 := stepAll_univ_le_one hP s
-end
-
-/-! ### Intertwining -/
-
-instance {α : Type*} : MeasurableSingletonClass (DerivationTree α ι) :=
-  ⟨fun _ => MeasurableSpace.measurableSet_top⟩
-instance {α : Type*} : MeasurableSingletonClass (List (DerivationTree α ι)) :=
-  ⟨fun _ => MeasurableSpace.measurableSet_top⟩
-
-mutual
-/-- Filling with one more generation is one synchronous step followed by filling. -/
-theorem fill_expand [Countable ι] [Countable T] (hP : ∀ i, P.offspring i Set.univ ≤ 1)
-    (hκ : ∀ i, κ i Set.univ ≤ 1) : ∀ s : Partial ι T,
-      fill (P.expand κ) s = (P.stepAll s).bind (fill κ)
-  | .leaf (.inl t) => by
-    rw [fill, stepAll, Measure.dirac_bind measurable_from_top, fill]
-  | .leaf (.inr i) => by
-    rw [fill, stepAll, expand, Measure.bind_map measurable_from_top measurable_from_top]
-    congr 1
-    funext syms
-    simp only [Function.comp, fill, childrenMeasure_eq_fillList]
-  | .node i cs => by
-    rw [fill, stepAll, fillList_expand hP hκ cs,
-      Measure.map_bind measurable_from_top measurable_from_top,
-      Measure.bind_map measurable_from_top measurable_from_top]
-    rfl
-theorem fillList_expand [Countable ι] [Countable T] (hP : ∀ i, P.offspring i Set.univ ≤ 1)
-    (hκ : ∀ i, κ i Set.univ ≤ 1) : ∀ ss : List (Partial ι T),
-      fillList (P.expand κ) ss = (P.stepAllList ss).bind (fillList κ)
-  | [] => by
-    rw [fillList, stepAllList, Measure.dirac_bind measurable_from_top, fillList]
-  | s :: ss => by
-    rw [fillList, fill_expand hP hκ s, fillList_expand hP hκ ss,
-      Measure.bind_bind measurable_from_top.aemeasurable measurable_from_top.aemeasurable,
-        stepAllList,
-      Measure.bind_bind measurable_from_top.aemeasurable measurable_from_top.aemeasurable]
-    congr 1
-    funext s'
-    rw [Measure.bind_map measurable_from_top measurable_from_top]
-    simp_rw [Measure.map_bind measurable_from_top measurable_from_top]
-    have : IsFiniteMeasure (fill κ s') :=
-      ⟨(fill_univ_le_one hκ s').trans_lt ENNReal.one_lt_top⟩
-    have : IsFiniteMeasure (P.stepAllList ss) :=
-      ⟨(P.stepAllList_univ_le_one hP ss).trans_lt ENNReal.one_lt_top⟩
-    exact Measure.bind_comm Measurable.of_discrete
-end
-
-/-! ### Generations as a Markov chain -/
-
-/-- `n` synchronous generations from a partial tree. -/
-noncomputable def stepIter : ℕ → Partial ι T → Measure (Partial ι T)
-  | 0 => Measure.dirac
-  | n + 1 => fun s => (P.stepAll s).bind (stepIter n)
-
 /-- The `n`-th Kleene iterate fills a partial tree exactly as `n` synchronous generations do,
 followed by the completion of what remains. -/
-theorem fill_iterate [Countable ι] [Countable T] (hP : ∀ i, P.offspring i Set.univ ≤ 1) :
-    ∀ (n : ℕ) (s : Partial ι T),
-      fill (P.expandHom^[n] ⊥) s = (P.stepIter n s).bind (fill ⊥)
-  | 0, s => by
-    rw [Function.iterate_zero_apply, stepIter, Measure.dirac_bind measurable_from_top]
-  | n + 1, s => by
-    rw [Function.iterate_succ_apply', stepIter]
-    rw [show P.expandHom (P.expandHom^[n] ⊥) = P.expand (P.expandHom^[n] ⊥) from rfl,
-      fill_expand P hP (P.iterate_expand_univ_le_one hP n) s,
-      Measure.bind_bind measurable_from_top.aemeasurable measurable_from_top.aemeasurable]
-    congr 1
-    funext s'
-    exact fill_iterate hP n s'
+theorem fill_iterate : ∀ n : ℕ, fill ((expand ξ)^[n] 0) = fill 0 ∘ₖ (generation ξ ^ n)
+  | 0 => (comp_id _).symm
+  | n + 1 => by
+    rw [Function.iterate_succ_apply', fill_expand, fill_iterate n, comp_assoc, pow_succ]
+    rfl
 
 /-- The law of the family tree at type `i` is the supremum over `n` of the completed part of
 `n` synchronous generations from a single hole of type `i`. -/
-theorem law_eq_iSup_stepIter [Countable ι] [Countable T] (hP : ∀ i, P.offspring i Set.univ ≤ 1)
-    (i : ι) : P.law i = ⨆ n, (P.stepIter n (leaf (.inr i))).bind (fill ⊥) := by
+theorem law_eq_iSup_generation (i : ι) :
+    law ξ i = ⨆ n, fill 0 ∘ₘ (generation ξ ^ n) (leaf (.nonterminal i)) := by
   rw [law_eq_iSup_iterate, iSup_apply]
-  exact iSup_congr fun n => P.fill_iterate hP n (leaf (.inr i))
+  exact iSup_congr fun n => by rw [← fill_leaf_nonterminal, fill_iterate, comp_apply]
+
+end Law
 
 /-! ### The generation chain as a Markov chain -/
 
-theorem stepIter_succ' (n : ℕ) (s : Partial ι T) :
-    P.stepIter (n + 1) s = (P.stepIter n s).bind P.stepAll := by
-  induction n generalizing s with
-  | zero =>
-    show (P.stepAll s).bind Measure.dirac = (Measure.dirac s).bind P.stepAll
-    rw [Measure.bind_dirac, Measure.dirac_bind measurable_from_top]
-  | succ n ih =>
-    calc P.stepIter (n + 2) s = (P.stepAll s).bind (P.stepIter (n + 1)) := rfl
-      _ = (P.stepAll s).bind fun s' => (P.stepIter n s').bind P.stepAll := by
-        congr 1; funext s'; exact ih s'
-      _ = ((P.stepAll s).bind (P.stepIter n)).bind P.stepAll :=
-        (Measure.bind_bind measurable_from_top.aemeasurable measurable_from_top.aemeasurable).symm
-      _ = (P.stepIter (n + 1) s).bind P.stepAll := rfl
+section Chain
 
-mutual
-theorem stepAll_univ [∀ i, IsProbabilityMeasure (P.offspring i)] : ∀ s : Partial ι T, P.stepAll s
-  Set.univ = 1
-  | .leaf (.inl t) => by simp [stepAll]
-  | .leaf (.inr i) => by
-    rw [stepAll, Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top,
-      Set.preimage_univ, measure_univ]
-  | .node i cs => by
-    rw [stepAll, Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top,
-      Set.preimage_univ, stepAllList_univ cs]
-theorem stepAllList_univ [∀ i, IsProbabilityMeasure (P.offspring i)] : ∀ ss : List (Partial ι T),
-  P.stepAllList ss Set.univ = 1
-  | [] => by simp [stepAllList]
-  | s :: ss => by
-    rw [stepAllList, Measure.bind_apply MeasurableSpace.measurableSet_top
-      measurable_from_top.aemeasurable]
-    simp_rw [Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top,
-      Set.preimage_univ, stepAllList_univ ss]
-    rw [lintegral_one, stepAll_univ s]
-end
-
-/-- One synchronous generation as a Markov kernel on partial trees. -/
-noncomputable def stepKernel : Kernel (Partial ι T) (Partial ι T) :=
-  ⟨P.stepAll, measurable_from_top⟩
-
-@[simp]
-theorem stepKernel_apply (s : Partial ι T) : P.stepKernel s = P.stepAll s := rfl
-
-instance [∀ i, IsProbabilityMeasure (P.offspring i)] : IsMarkovKernel P.stepKernel :=
-  ⟨fun s => ⟨P.stepAll_univ s⟩⟩
+variable (ξ : Kernel ι (List (Symbol T ι)))
 
 /-- The generation chain in Ionescu–Tulcea form: the state at time `n + 1` depends on the
 trajectory up to time `n` only through its last coordinate. -/
 noncomputable def chainKernel (n : ℕ) :
-    Kernel (Π i : Iic n, (fun _ : ℕ => Partial ι T) i) ((fun _ : ℕ => Partial ι T) (n + 1)) :=
-  P.stepKernel.comap (fun x => x ⟨n, mem_Iic.2 le_rfl⟩) (measurable_pi_apply _)
+    Kernel (Π i : Iic n, (fun _ : ℕ => PartialTree ι T) i)
+      ((fun _ : ℕ => PartialTree ι T) (n + 1)) :=
+  (generation ξ).comap (fun x => x ⟨n, mem_Iic.2 le_rfl⟩) (measurable_pi_apply _)
 
-instance [∀ i, IsProbabilityMeasure (P.offspring i)] (n : ℕ) : IsMarkovKernel (P.chainKernel n) :=
-  IsMarkovKernel.comap _ _
+variable [Countable ι] [Countable T] [IsMarkovKernel ξ]
+
+instance (n : ℕ) : IsMarkovKernel (chainKernel ξ n) := IsMarkovKernel.comap _ _
 
 /-- The Ionescu–Tulcea trajectory kernel of the generation chain. -/
-noncomputable def chainTraj [∀ i, IsProbabilityMeasure (P.offspring i)] (n : ℕ) :
-    Kernel (Π i : Iic n, (fun _ : ℕ => Partial ι T) i) (ℕ → Partial ι T) :=
-  traj (X := fun _ : ℕ => Partial ι T) P.chainKernel n
+noncomputable def chainTraj (n : ℕ) :
+    Kernel (Π i : Iic n, (fun _ : ℕ => PartialTree ι T) i) (ℕ → PartialTree ι T) :=
+  traj (X := fun _ : ℕ => PartialTree ι T) (chainKernel ξ) n
 
 /-- The law of the whole trajectory of generations started at a partial tree. -/
-noncomputable def trajectory [∀ i, IsProbabilityMeasure (P.offspring i)] (s : Partial ι T) :
-    Measure (ℕ → Partial ι T) :=
-  P.chainTraj 0 fun _ => s
+noncomputable def trajectory (s : PartialTree ι T) : Measure (ℕ → PartialTree ι T) :=
+  chainTraj ξ 0 fun _ => s
 
-instance [∀ i, IsProbabilityMeasure (P.offspring i)] (s : Partial ι T) :
-    IsProbabilityMeasure (P.trajectory s) :=
-  inferInstanceAs (IsProbabilityMeasure (traj (X := fun _ : ℕ => Partial ι T) P.chainKernel 0 _))
+instance (s : PartialTree ι T) : IsProbabilityMeasure (trajectory ξ s) :=
+  inferInstanceAs (IsProbabilityMeasure
+    (traj (X := fun _ : ℕ => PartialTree ι T) (chainKernel ξ) 0 _))
 
 /-- At time `n` the generation chain is distributed as `n` synchronous generations. -/
-theorem trajectory_map_eval [∀ i, IsProbabilityMeasure (P.offspring i)] (s : Partial ι T) :
-    ∀ n : ℕ, (P.trajectory s).map (fun ω => ω n) = P.stepIter n s
+theorem trajectory_map_eval (s : PartialTree ι T) :
+    ∀ n : ℕ, (trajectory ξ s).map (fun ω => ω n) = (generation ξ ^ n) s
   | 0 => by
-    have h := traj_map_frestrictLe_apply (X := fun _ : ℕ => Partial ι T) (κ := P.chainKernel) 0 0
-      (fun _ => s)
+    have h := traj_map_frestrictLe_apply (X := fun _ : ℕ => PartialTree ι T) (κ := chainKernel ξ)
+      0 0 (fun _ => s)
     rw [partialTraj_self, Kernel.id_apply] at h
-    show (P.trajectory s).map (fun ω => ω 0) = Measure.dirac s
-    have hm : (P.trajectory s).map (fun ω => ω 0) = ((P.trajectory s).map (frestrictLe 0)).map
-        (fun x : Π i : Iic 0, (fun _ : ℕ => Partial ι T) i => x ⟨0, mem_Iic.2 le_rfl⟩) :=
-      (Measure.map_map (μ := P.trajectory s) (measurable_pi_apply (⟨0, mem_Iic.2 le_rfl⟩ : Iic 0))
+    show (trajectory ξ s).map (fun ω => ω 0) = Measure.dirac s
+    have hm : (trajectory ξ s).map (fun ω => ω 0) = ((trajectory ξ s).map (frestrictLe 0)).map
+        (fun x : Π i : Iic 0, (fun _ : ℕ => PartialTree ι T) i => x ⟨0, mem_Iic.2 le_rfl⟩) :=
+      (Measure.map_map (μ := trajectory ξ s) (measurable_pi_apply (⟨0, mem_Iic.2 le_rfl⟩ : Iic 0))
         (measurable_frestrictLe 0)).symm
-    rw [hm, show (P.trajectory s).map (frestrictLe 0) = Measure.dirac (fun _ => s) from h]
+    rw [hm, show (trajectory ξ s).map (frestrictLe 0) = Measure.dirac (fun _ => s) from h]
     exact Measure.map_dirac _
   | n + 1 => by
-    have hpt : ∀ x : Π i : Iic n, (fun _ : ℕ => Partial ι T) i,
-        (traj (X := fun _ : ℕ => Partial ι T) P.chainKernel n x).map (fun ω => ω (n + 1)) =
-          P.stepAll (x ⟨n, mem_Iic.2 le_rfl⟩) := fun x => by
-      rw [← Kernel.map_apply (traj (X := fun _ : ℕ => Partial ι T) P.chainKernel n)
+    have hpt : ∀ x : Π i : Iic n, (fun _ : ℕ => PartialTree ι T) i,
+        (traj (X := fun _ : ℕ => PartialTree ι T) (chainKernel ξ) n x).map (fun ω => ω (n + 1)) =
+          generation ξ (x ⟨n, mem_Iic.2 le_rfl⟩) := fun x => by
+      rw [← Kernel.map_apply (traj (X := fun _ : ℕ => PartialTree ι T) (chainKernel ξ) n)
           (measurable_pi_apply (n + 1)) x,
-        map_traj_succ_self (X := fun _ : ℕ => Partial ι T) (κ := P.chainKernel), chainKernel,
+        map_traj_succ_self (X := fun _ : ℕ => PartialTree ι T) (κ := chainKernel ξ), chainKernel,
         comap_apply]
-      rfl
-    have hmarg : (P.trajectory s).map (fun ω => ω n) =
-        (partialTraj (X := fun _ : ℕ => Partial ι T) P.chainKernel 0 n (fun _ => s)).map
-          (fun x : Π i : Iic n, (fun _ : ℕ => Partial ι T) i => x ⟨n, mem_Iic.2 le_rfl⟩) := by
-      rw [← traj_map_frestrictLe_apply (X := fun _ : ℕ => Partial ι T) (κ := P.chainKernel) 0 n
+    have hmarg : (trajectory ξ s).map (fun ω => ω n) =
+        (partialTraj (X := fun _ : ℕ => PartialTree ι T) (chainKernel ξ) 0 n (fun _ => s)).map
+          (fun x : Π i : Iic n, (fun _ : ℕ => PartialTree ι T) i => x ⟨n, mem_Iic.2 le_rfl⟩) := by
+      rw [← traj_map_frestrictLe_apply (X := fun _ : ℕ => PartialTree ι T) (κ := chainKernel ξ) 0 n
         (fun _ => s)]
-      exact (Measure.map_map (μ := P.trajectory s)
+      exact (Measure.map_map (μ := trajectory ξ s)
         (measurable_pi_apply (⟨n, mem_Iic.2 le_rfl⟩ : Iic n)) (measurable_frestrictLe n)).symm
-    have hcomp := traj_comp_partialTraj (X := fun _ : ℕ => Partial ι T) (κ := P.chainKernel)
+    have hcomp := traj_comp_partialTraj (X := fun _ : ℕ => PartialTree ι T) (κ := chainKernel ξ)
       (Nat.zero_le n)
-    calc (P.trajectory s).map (fun ω => ω (n + 1))
-        = ((partialTraj (X := fun _ : ℕ => Partial ι T) P.chainKernel 0 n (fun _ => s)).bind
-            (traj (X := fun _ : ℕ => Partial ι T) P.chainKernel n)).map (fun ω => ω (n + 1)) := by
+    calc (trajectory ξ s).map (fun ω => ω (n + 1))
+        = ((partialTraj (X := fun _ : ℕ => PartialTree ι T) (chainKernel ξ) 0 n (fun _ => s)).bind
+            (traj (X := fun _ : ℕ => PartialTree ι T) (chainKernel ξ) n)).map
+              (fun ω => ω (n + 1)) := by
           rw [trajectory, chainTraj, ← hcomp, comp_apply]
-      _ = (partialTraj (X := fun _ : ℕ => Partial ι T) P.chainKernel 0 n (fun _ => s)).bind
-            fun x => P.stepAll (x ⟨n, mem_Iic.2 le_rfl⟩) := by
+      _ = (partialTraj (X := fun _ : ℕ => PartialTree ι T) (chainKernel ξ) 0 n (fun _ => s)).bind
+            fun x => generation ξ (x ⟨n, mem_Iic.2 le_rfl⟩) := by
           rw [Measure.map_bind (Kernel.measurable _) (measurable_pi_apply _)]
           simp_rw [hpt]
-      _ = ((partialTraj (X := fun _ : ℕ => Partial ι T) P.chainKernel 0 n (fun _ => s)).map
-            (fun x : Π i : Iic n, (fun _ : ℕ => Partial ι T) i => x ⟨n, mem_Iic.2 le_rfl⟩)).bind
-              P.stepAll :=
-          (Measure.bind_map (measurable_pi_apply _) measurable_from_top).symm
-      _ = (P.stepIter n s).bind P.stepAll := by rw [← hmarg, trajectory_map_eval s n]
-      _ = P.stepIter (n + 1) s := (P.stepIter_succ' n s).symm
+      _ = ((partialTraj (X := fun _ : ℕ => PartialTree ι T) (chainKernel ξ) 0 n (fun _ => s)).map
+            (fun x : Π i : Iic n, (fun _ : ℕ => PartialTree ι T) i => x ⟨n, mem_Iic.2 le_rfl⟩)).bind
+              (generation ξ) :=
+          (Measure.bind_map (measurable_pi_apply _) (Kernel.measurable _)).symm
+      _ = generation ξ ∘ₘ (generation ξ ^ n) s := by rw [← hmarg, trajectory_map_eval s n]
+      _ = (generation ξ ^ (n + 1)) s := by rw [pow_succ']; rfl
 
-end GaltonWatson
+end Chain
 
-end ProbabilityTheory
+end ProbabilityTheory.GaltonWatson

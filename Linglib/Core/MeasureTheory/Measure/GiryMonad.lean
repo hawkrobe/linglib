@@ -33,9 +33,10 @@ recursive probabilistic programs of [kozen-1981], stated on the monad of [giry-1
 * `MeasureTheory.Measure.bind_map`, `MeasureTheory.Measure.map_bind`,
   `MeasureTheory.Measure.bind_comm`: `bind` and `map` interchange, and two independent `bind`s
   commute (Fubini).
-* `MeasureTheory.Measure.ωScottContinuous_bind`, `MeasureTheory.Measure.ωScottContinuous_map`:
-  `bind` is ω-Scott-continuous jointly in the measure and the kernel, and `map` in the measure,
-  so operators built from them have Kleene least fixed points.
+* `MeasureTheory.Measure.ωScottContinuous_bind`, `MeasureTheory.Measure.ωScottContinuous_map`,
+  `MeasureTheory.Measure.ωScottContinuous_prod`: `bind` is ω-Scott-continuous jointly in the
+  measure and the kernel, `map` in the measure and `prod` in both factors, so operators built
+  from them have Kleene least fixed points.
 
 ## Implementation notes
 
@@ -221,6 +222,13 @@ theorem ωScottContinuous_map {M : γ → Measure α} (hM : ωScottContinuous M)
     (hg : Measurable g) : ωScottContinuous fun x => (M x).map g := by
   simp_rw [← bind_dirac_eq_map _ hg]
   exact ωScottContinuous_bind hM (fun _ => ωScottContinuous.const) fun _ => measurable_dirac.comp hg
+
+theorem ωScottContinuous_prod {M : γ → Measure α} {N : γ → Measure β} (hM : ωScottContinuous M)
+    (hN : ωScottContinuous N) [∀ x, SFinite (N x)] :
+    ωScottContinuous fun x => (M x).prod (N x) := by
+  simp_rw [prod_def]
+  exact ωScottContinuous_bind hM (fun a => ωScottContinuous_map hN measurable_prodMk_left)
+    fun _ => Measurable.map_prodMk_left
 
 theorem ωScottContinuous_bind_left {f : α → Measure β} (hf : Measurable f) :
     ωScottContinuous fun μ : Measure α => μ.bind f :=
