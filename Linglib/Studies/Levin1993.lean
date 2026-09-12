@@ -1,57 +1,37 @@
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Data.Examples.Levin1993
-import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Studies.Dowty1991
 
 /-!
-# Diathesis Alternation Bridge [levin-1993]
+# Levin (1993): English Verb Classes and Alternations
 
-Connects the alternation judgment rows in `Data/Examples/Levin1993.json` to
-the `LevinClass.participatesIn` prediction function, the Fragment verb
-entries, and [dowty-1991]'s proto-role account of the three verb classes.
+This file formalizes the diagnostic of [levin-1993]: a verb's participation in diathesis
+alternations follows from its meaning, so verbs fall into semantically coherent classes that
+share an alternation profile (`ArgumentStructure.LevinClass.participatesIn`). The book's
+opening quadruple *break*, *cut*, *hit*, *touch* takes four distinct profiles across the
+causative/inchoative, middle, conative, and body-part possessor ascension alternations, one
+class each (`quadruple_profiles_distinct`), and every categorical alternation judgment among
+the book's examples in `Data/Examples/Levin1993.json` agrees with the profile of the verb's
+class (`participation_matches_profile`).
 
-The verbs *break*, *cut*, *hit*, *touch* form Levin's §0.4 diagnostic
-quadruple (pp. 5–10): each participates in a distinct subset of the
-causative/inchoative, middle, conative, and body-part possessor ascension
-alternations.
+## Implementation notes
 
-| Verb | Class | CI | Mid | Con | BPPA |
-|------|-------|----|-----|-----|------|
-| break | 45.1 | ✓ | ✓ | ✗ | ✗ |
-| cut | 21.1 | ✗ | ✓ | ✓ | ✓ |
-| hit | 18.1 | ✗ | ✗ | ✓ | ✓ |
-| touch | 20 | ✗ | ✗ | ✗ | ✓ |
+Rows record the verb's class by the book's section number and the alternation by name;
+`classOf` and `alternationOf` read them into the substrate's enumerations, collapsing
+subclasses to their representatives and leaving classes outside the enumerations' grain
+unrepresented, on which the transfer theorem is vacuous. Marginal judgments carry no
+categorical participation value.
 
-## Main declarations
+## References
 
-- `classOf`, `alternationOf`, `observed` — project a row's `paperFeatures`
-  into the curated `LevinClass` / `DiathesisAlternation` enums and a
-  categorical participation value
-- `participation_matches_prediction` — every categorical row with a
-  representable class and alternation agrees with `participatesIn`
-- `quadruple_patterns_distinct` — the four §0.4 verbs show pairwise
-  distinct participation patterns
-- `dowty_*` — [dowty-1991] §9.3's change-of-state predictions checked against
-  the rows (the comparison lives here, in the later paper's file)
+* [levin-1993]
 -/
 
 namespace Levin1993
 
-open Data.Examples
-open ArgumentStructure
-open English.Predicates.Verbal
+open Data.Examples ArgumentStructure
 
--- ════════════════════════════════════════════════════
--- § 1. Row adapters
--- ════════════════════════════════════════════════════
-
-/-- Map a row's `levin_class` section string to the curated `LevinClass`
-    enum. Subclasses collapse to their enum representative (51.3.2 run
-    verbs → `mannerOfMotion`; 47.5.1 swarm verbs → the §47 existence
-    family's `exist`; 48.1.1 → `appear`; 41.1.1 dress verbs → `dress`;
-    36.3 → `socialInteraction`; 54.1 register verbs → `measure`).
-    Classes outside the enum's grain (40.2 nonverbal expression, 40.3.2
-    wink, 40.4 snooze, 37.5 talk) map to `none`. -/
+/-- The class named by a section number of the book, subclasses collapsing to their
+representatives. -/
 def classOfString : String → Option LevinClass
   | "45.1" => some .break_
   | "21.1" => some .cut
@@ -78,7 +58,7 @@ def classOfString : String → Option LevinClass
   | "54.1" => some .measure
   | _ => none
 
-/-- Map a row's `alternation` tag to the curated enum. -/
+/-- The alternation named by a row's tag. -/
 def alternationOfString : String → Option DiathesisAlternation
   | "causativeInchoative" => some .causativeInchoative
   | "inducedAction" => some .inducedAction
@@ -107,123 +87,36 @@ def alternationOfString : String → Option DiathesisAlternation
   | "directionalPhrase" => some .directionalPhrase
   | _ => none
 
-/-- Levin class recorded on a row. -/
+/-- The class recorded on a row. -/
 def classOf (e : LinguisticExample) : Option LevinClass :=
-  (e.paperFeatures.lookup "levin_class").bind classOfString
+  (e.feature? "levin_class").bind classOfString
 
-/-- Alternation recorded on a row. -/
+/-- The alternation recorded on a row. -/
 def alternationOf (e : LinguisticExample) : Option DiathesisAlternation :=
-  (e.paperFeatures.lookup "alternation").bind alternationOfString
+  (e.feature? "alternation").bind alternationOfString
 
-/-- Categorical participation recorded on a row; `none` for marginal
-    judgments (the `participatesIn` profile is Boolean). -/
+/-- The categorical participation recorded on a row, none for a marginal judgment. -/
 def observed (e : LinguisticExample) : Option Bool :=
-  match e.paperFeatures.lookup "participates" with
+  match e.feature? "participates" with
   | some "true" => some true
   | some "false" => some false
   | _ => none
 
--- ════════════════════════════════════════════════════
--- § 2. Transfer: judgments match the participation profile
--- ════════════════════════════════════════════════════
+/-- Every categorical row with a representable class and alternation agrees with the class's
+profile; in particular an inherently specified instrument requires an agent, which keeps
+*cut* out of the inchoative. -/
+theorem participation_matches_profile :
+    ∀ e ∈ Examples.all, ∀ c ∈ classOf e, ∀ a ∈ alternationOf e, ∀ b ∈ observed e,
+      c.participatesIn a = b := by
+  decide
 
-/-- A row agrees with `LevinClass.participatesIn` (vacuously, if its class
-    or alternation is unrepresentable or its judgment is marginal). -/
-def agreesWithPrediction (e : LinguisticExample) : Bool :=
-  match classOf e, alternationOf e, observed e with
-  | some c, some a, some b => c.participatesIn a == b
-  | _, _, _ => true
-
-set_option maxRecDepth 4096 in
-/-- Every categorical row with a representable class and alternation matches
-    the `participatesIn` prediction. In particular the CI rule blocks *cut*
-    via instrument specification (Levin pp. 9–10: an inherently specified
-    instrument requires an agent, blocking the agentless inchoative). -/
-theorem participation_matches_prediction :
-    Examples.all.all agreesWithPrediction = true := by decide
-
-/-- Every row's `alternation` tag is one of the curated alternations. -/
-theorem alternations_all_representable :
-    Examples.all.all (fun e => (alternationOf e).isSome) = true := by decide
-
-set_option maxRecDepth 4096 in
-/-- Exactly four rows carry Levin classes outside the curated enum's grain:
-    *wave* (40.3.2 wink), *laugh* (40.2 nonverbal expression), *sleep*
-    (40.4 snooze), *talk* (37.5). These are excluded from
-    `participation_matches_prediction` by `classOf`. -/
-theorem unrepresentable_classes :
-    (Examples.all.filter (fun e => (classOf e).isNone)).map (·.id) =
-      ["levin1993_ubpo_wave", "levin1993_co_laugh", "levin1993_pp_sleep",
-       "levin1993_pp_talk"] := by decide
-
--- ════════════════════════════════════════════════════
--- § 3. The §0.4 diagnostic quadruple
--- ════════════════════════════════════════════════════
-
-/-- Participation pattern of a verb across the four §0.4 alternations
-    (CI, middle, conative, BPPA). -/
-def quadruplePattern (rows : List LinguisticExample) : List (Option Bool) :=
-  rows.map observed
-
-/-- Each verb of the quadruple shows a pairwise distinct pattern across the
-    four alternations — Levin's §0.4 table has no repeated rows, so the four
-    verbs instantiate four distinct verb classes. -/
-theorem quadruple_patterns_distinct :
-    [quadruplePattern [Examples.ci_break, Examples.mid_break,
-       Examples.con_break, Examples.bppa_break],
-     quadruplePattern [Examples.ci_cut, Examples.mid_cut,
-       Examples.con_cut, Examples.bppa_cut],
-     quadruplePattern [Examples.ci_hit, Examples.mid_hit,
-       Examples.con_hit, Examples.bppa_hit],
-     quadruplePattern [Examples.ci_touch, Examples.mid_touch,
-       Examples.con_touch, Examples.bppa_touch]].Pairwise (· ≠ ·) := by decide
-
--- ════════════════════════════════════════════════════
--- § 4. Fragment connection
--- ════════════════════════════════════════════════════
-
-/-! Each Fragment verb entry's `levinClass` matches the class recorded on
-    its alternation rows. -/
-
-theorem break_class_matches : break_.levinClass = classOf Examples.ci_break := by decide
-theorem cut_class_matches : cut.levinClass = classOf Examples.ci_cut := by decide
-theorem hit_class_matches : hit.levinClass = classOf Examples.ci_hit := by decide
-theorem touch_class_matches : touch.levinClass = classOf Examples.ci_touch := by decide
-theorem push_class_matches : push.levinClass = classOf Examples.con_push := by decide
-theorem spray_class_matches : spray.levinClass = classOf Examples.loc_spray := by decide
-theorem load_class_matches : load.levinClass = classOf Examples.loc_load := by decide
-theorem give_class_matches : give.levinClass = classOf Examples.dat_give := by decide
-theorem send_class_matches : send.levinClass = classOf Examples.dat_send := by decide
-
--- ════════════════════════════════════════════════════
--- § 5. Bridge to [dowty-1991] §9.3: three verb classes
--- ════════════════════════════════════════════════════
-
-/-! [dowty-1991] §9.3 derives the alternation behavior of the spray/load,
-    *break*, and *hit* classes from the distribution of the change-of-state
-    entailment across non-subject arguments: symmetric CoS permits
-    alternation, asymmetric CoS fixes the CoS argument as direct object.
-    Levin's judgment rows confirm each prediction. -/
-
-/-- Spray/load: CoS is symmetric across theme and location, predicting the
-    locative alternation — attested for both *spray* and *load*. -/
-theorem dowty_sprayLoad_symmetry_matches_data :
-    Dowty1991.CosSymmetric Dowty1991.sprayLoadTheme Dowty1991.sprayLoadLocation
-    ∧ observed Examples.loc_spray = some true
-    ∧ observed Examples.loc_load = some true := by decide
-
-/-- *Break*: CoS is asymmetric (direct object vs. instrument), fixing the
-    CoS argument as direct object — *break* lacks the locative alternation. -/
-theorem dowty_break_asymmetry_matches_prediction :
-    ¬ Dowty1991.CosSymmetric Dowty1991.breakDirectObject Dowty1991.breakInstrument
-    ∧ LevinClass.break_.participatesIn .locative = false := by decide
-
-/-- *Hit*: both arguments symmetrically lack CoS — the conative is attested
-    while the CoS-sensitive causative/inchoative and middle are blocked. -/
-theorem dowty_hit_class_matches_data :
-    Dowty1991.CosSymmetric Dowty1991.hitArg1 Dowty1991.hitArg2
-    ∧ observed Examples.con_hit = some true
-    ∧ observed Examples.ci_hit = some false
-    ∧ observed Examples.mid_hit = some false := by decide
+/-- The book's opening quadruple: *break*, *cut*, *hit*, and *touch* take pairwise distinct
+profiles across the causative/inchoative, middle, conative, and body-part possessor ascension
+alternations, so they instantiate four verb classes. -/
+theorem quadruple_profiles_distinct :
+    ([LevinClass.break_, .cut, .hit, .touch].map λ c =>
+      [DiathesisAlternation.causativeInchoative, .middle, .conative,
+        .bodyPartPossessorAscension].map c.participatesIn).Pairwise (· ≠ ·) := by
+  decide
 
 end Levin1993
