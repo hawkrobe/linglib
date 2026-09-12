@@ -1,4 +1,4 @@
-import Linglib.Studies.Krifka2007
+import Linglib.Studies.Krifka2007b
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Data.Examples.AlexandropoulouGotzner2024a
 
@@ -16,7 +16,7 @@ so the three cases pull them apart (the paper's Table 1).
 The predictions are computed from the mechanisms over the four surface forms:
 Horn's R-strengthening of the face-threatening negated positive and Q/R
 middling of the double negative (`hornRanges`), Krifka's BiOT quadruplet from
-`Krifka2007` (`krifkaRanges`), and its NACH extension as a comparison of
+`Krifka2007b` (`krifkaRanges`), and its NACH extension as a comparison of
 complexity deviations (`deviation`). The gap condition is read off the
 Fragment's antonym classification. The reported findings — an asymmetry for
 weak relatives only — confirm Horn on the weak cases, refute both Krifka
@@ -32,7 +32,7 @@ variants, and leave Horn's strong-adjective prediction unsupported.
 
 namespace AlexandropoulouGotzner2024a
 
-open Degree Features Krifka2007 Data.Examples English.Predicates.Adjectival
+open Degree Features Krifka2007b Data.Examples English.Predicates.Adjectival
 
 /-! ### Design cells -/
 
@@ -95,7 +95,7 @@ def hornRanges : Ranges
   | .notPositive => {.negative}
   | .notNegative => {.plateauLow, .plateauHigh}
 
-/-- Krifka's ranges: the BiOT quadruplet of `Krifka2007`. -/
+/-- Krifka's ranges: the BiOT quadruplet of `Krifka2007b`. -/
 def krifkaRanges : Ranges := λ f ↦ (krifkaQuadruplet.filter (·.1 = f)).image (·.2)
 
 theorem hornRanges_asymmetric : hornRanges.asymmetry = .asymmetric := by decide
