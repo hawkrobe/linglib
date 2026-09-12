@@ -25,11 +25,6 @@ of *have* for past orientation.
 The modal inventories are the Gitksan, St'át'imcets, Nez Perce, and Niuean fragments; the
 primary-source theorems for Gitksan are in `Studies/Matthewson2013.lean`.
 
-## TODO
-
-The chapter is not on file; section and table locators are transcribed from an earlier
-version of this file and are UNVERIFIED.
-
 ## References
 
 * [matthewson-2016]
