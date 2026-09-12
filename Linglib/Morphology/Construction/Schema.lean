@@ -39,8 +39,8 @@ variable open, exactly when it generates its own description over the empty lexi
 * `Schema.Relates`, `Schema.Generates`, `Schema.IsProductive`: the two roles of a schema and
   productivity.
 * `Schema.instantiates_inf_iff`, `Schema.instantiates_iff_of_unify_eq_some`: the meet of two
-  items is their least general generalization, and the unification of two descriptions has
-  exactly their common instances.
+  items is their least general generalization, the Structural Intersection of Relational
+  Morphology, and the unification of two descriptions has exactly their common instances.
 
 ## Implementation notes
 
@@ -253,7 +253,8 @@ theorem attested_mono (h : Λ ⊆ Λ') (v : V) : s.attested Λ v ⊆ s.attested 
 end PartialOrder
 
 /-- A schema is instantiated by the meet of two items exactly when it is instantiated by both:
-the meet is their least general generalization. -/
+the meet is their least general generalization, the Structural Intersection of Relational
+Morphology. -/
 theorem instantiates_inf_iff [SemilatticeInf α] {s : Schema V α} {w₁ w₂ : V → α} :
     s.Instantiates (w₁ ⊓ w₂) ↔ s.Instantiates w₁ ∧ s.Instantiates w₂ :=
   le_inf_iff
