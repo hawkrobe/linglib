@@ -55,7 +55,7 @@ def word (b a : String) : Fin 2 → Flat String := ![↑b, ↑a]
 /-! ### The *-ish* family: sister links and their mother -/
 
 /-- The mother schema `[N -ish]A` of (8): the affix pinned, the base an open variable. -/
-def ishSchema : Schema (Fin 2) (Flat String) := ⟨![⊥, ↑"ish"], {0}⟩
+def ishSchema : Schema (Fin 2) (Flat String) := Schema.productive ![⊥, ↑"ish"]
 
 /-- The stored family of (8). -/
 def ishFamily : Set (Fin 2 → Flat String) :=
@@ -108,11 +108,7 @@ theorem ishSchema_relates {w : Fin 2 → Flat String} (hw : w ∈ ishFamily) :
   rcases hw with rfl | rfl | rfl <;> exact ishSchema_instantiates (by decide)
 
 /-- The mother is productive: its one variable is open. -/
-theorem ishSchema_isProductive : ishSchema.IsProductive := by
-  intro i h
-  fin_cases i
-  · exact Set.mem_singleton_iff.2 rfl
-  · exact absurd h (by decide)
+theorem ishSchema_isProductive : ishSchema.IsProductive := Schema.isProductive_productive _
 
 /-- The mother generates the novel *Trumpish* with nothing stored. -/
 theorem ishSchema_generates_trumpish : ishSchema.Generates ∅ Forms.trumpish.slots :=

@@ -375,24 +375,23 @@ def singSang : Schema NucleusVar (Flat String) := nucleusPair ↑"ɪ" ↑"æ"
 /-- The *string*/*strung* subschema, (26) with /ʌ/ for /æ/. -/
 def stringStrung : Schema NucleusVar (Flat String) := nucleusPair ↑"ɪ" ↑"ʌ"
 
+/-- A syllable instantiates a nucleus pair's stem side exactly when its nucleus is the pinned
+one. -/
+theorem comap_stemSub_instantiates_iff {v w : Flat String} {s : Fin 3 → Flat String} :
+    ((nucleusPair v w).comap stemSub).Instantiates s ↔ v ≤ s 1 :=
+  ⟨λ h => h 1, λ h i => by fin_cases i <;> first | exact bot_le | exact h⟩
+
+theorem comap_pastSub_instantiates_iff {v w : Flat String} {p : Fin 3 → Flat String} :
+    ((nucleusPair v w).comap pastSub).Instantiates p ↔ w ≤ p 1 :=
+  ⟨λ h => h 1, λ h i => by fin_cases i <;> first | exact bot_le | exact h⟩
+
 /-- A paired instantiation of a nucleus pair is a stem and a past that are the same except at
 the nucleus, with the pinned nuclei. -/
 theorem nucleusPair_iff {v w : Flat String} {s p : Fin 3 → Flat String} :
     (nucleusPair v w).InstantiatesAt (Sum.elim stemSub pastSub) (Sum.elim s p) ↔
       v ≤ s 1 ∧ w ≤ p 1 ∧ Set.EqOn s p {1}ᶜ := by
-  rw [Schema.instantiatesAt_elim_iff]
-  constructor
-  · rintro ⟨hs, hp, -, -, h⟩
-    refine ⟨hs 1, hp 1, λ q hq => h q q ?_⟩
-    fin_cases q <;> first | rfl | exact (hq rfl).elim
-  · rintro ⟨hv, hw, h⟩
-    refine ⟨λ q => ?_, λ q => ?_, λ a b hab => ?_, λ a b hab => ?_, λ a b hab => ?_⟩
-    · fin_cases q <;> first | exact bot_le | exact hv
-    · fin_cases q <;> first | exact bot_le | exact hw
-    · fin_cases a <;> fin_cases b <;> first | rfl | exact absurd hab (by decide)
-    · fin_cases a <;> fin_cases b <;> first | rfl | exact absurd hab (by decide)
-    · fin_cases a <;> fin_cases b <;>
-        first | exact absurd hab (by decide) | exact h (by simp)
+  rw [Schema.instantiatesAt_elim_iff_eqOn (S := {1}) (by decide) (by decide) (by decide),
+    comap_stemSub_instantiates_iff, comap_pastSub_instantiates_iff]
 
 /-- (25) pairs exactly the stems and pasts that are the same except at the nucleus. -/
 theorem ablaut_pairs_iff {s p : Fin 3 → Flat String} :
@@ -605,7 +604,7 @@ theorem walk_syncretism :
 
 /-- The schema (6) over the two slots of an *-ish* adjective, base and affix: the affix pinned,
 the base a variable. -/
-def ishSchema : Schema (Fin 2) (Flat String) := ⟨![⊥, ↑"ish"], {0}⟩
+def ishSchema : Schema (Fin 2) (Flat String) := Schema.productive ![⊥, ↑"ish"]
 
 /-- Structural Intersection constructs the schema: the description of (6) is the meet of the
 three sisters of (5), keeping what they share and leaving a variable where they differ. -/

@@ -53,7 +53,7 @@ affix slot is lexically fixed as `-ness` and whose base slot is an open
 
 /-- The `-ness` schema over the two slots of a `-ness` noun, base and affix: the affix slot
 pinned to `-ness`, the base slot an open deadjectival variable (`⊥`). -/
-def nessSchema : Schema (Fin 2) (Flat String) := ⟨![⊥, ↑"ness"], {0}⟩
+def nessSchema : Schema (Fin 2) (Flat String) := Schema.productive ![⊥, ↑"ness"]
 
 /-- Any filling whose affix slot is `-ness` instantiates the schema: the base slot
 is open, the affix slot's constraint is met. -/
@@ -82,11 +82,7 @@ def nessLexicon : Set (Fin 2 → Flat String) :=
   {Forms.baldness.slots, Forms.awareness.slots}
 
 /-- The `-ness` schema is productive: its one variable, the base slot, is open. -/
-theorem nessSchema_isProductive : nessSchema.IsProductive := by
-  intro i h
-  fin_cases i
-  · exact Set.mem_singleton_iff.2 rfl
-  · exact absurd h (by decide)
+theorem nessSchema_isProductive : nessSchema.IsProductive := Schema.isProductive_productive _
 
 /-- The schema licenses the novel coin `carlessness` over the stored nouns: the
 open base slot takes the unlisted adjective, and the affix slot is a constant.
@@ -136,11 +132,6 @@ def compoundFamily : CompoundNode → Schema CompoundVar (Flat String)
   | .vn => compoundSubschema "V"
   | .an => compoundSubschema "A"
   | .pn => compoundSubschema "P"
-
-instance : DecidableLE (CompoundVar → Flat String) := λ _ _ => Fintype.decidableForallFintype
-
-instance : DecidableLT (CompoundVar → Flat String) :=
-  λ _ _ => decidable_of_iff _ lt_iff_le_not_ge.symm
 
 /-- The hierarchical constructicon of English compounds, derived from the schemas. -/
 def compoundHierarchy : Hierarchy CompoundNode := .ofFamily compoundFamily (by decide)
