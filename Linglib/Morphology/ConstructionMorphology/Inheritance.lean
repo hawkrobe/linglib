@@ -3,6 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Morphology.ConstructionMorphology.Schema
+import Mathlib.Data.Fintype.Card
+import Mathlib.Data.Fintype.EquivFin
 import Mathlib.Order.WellFounded
 import Mathlib.Data.Option.Basic
 
@@ -17,6 +20,13 @@ well-founded, and `Hierarchy.value` looks up a node's own specification if it ha
 nearest ancestor's otherwise, by recursion along the parent relation; the recursion step is
 the priority union of partial values, `Option.or`.
 
+A finite family of schemas with distinct descriptions carries its own hierarchy
+(`Hierarchy.ofFamily`): a schema's parent is the nearest more general schema of the family,
+the one whose description is greatest among those strictly below its own. What is inherited
+monotonically, everything a more general description pins, needs no lookup, since an instance
+of a schema instantiates every more general schema; the lookup is for defeasible properties
+that a subschema may override.
+
 Multiple inheritance, a node with two parents, is not modelled here; the multi-parent form of
 the override step is `Syntax/ConstructionGrammar/Inheritance.lean`. The formal traditions of
 defaults with override are DATR and Network Morphology.
@@ -26,6 +36,8 @@ defaults with override are DATR and Network Morphology.
 * `Hierarchy`, `Hierarchy.ofDepth`: a single-parent forest with a well-founded parent relation.
 * `Hierarchy.value`, `Hierarchy.value_eq`: default-and-override lookup and its recursion.
 * `Hierarchy.parent_asymm`: no two nodes are each other's parent.
+* `Hierarchy.NearestGeneral`, `Hierarchy.ofFamily`, `Hierarchy.ofFamily_parent_eq_some_iff`: the
+  hierarchy derived from a finite family of schemas.
 
 ## References
 
@@ -81,6 +93,65 @@ theorem value_eq_parent {n : ι} (hn : att n = none) :
 theorem parent_asymm {a b : ι} (hab : h.parent a = some b) (hba : h.parent b = some a) :
     False :=
   h.wf.asymmetric a b hba hab
+
+/-! ### The hierarchy of a family of schemas -/
+
+section Family
+variable {V α : Type*} [PartialOrder α] {family : ι → Schema V α} {i j : ι}
+
+/-- `j` is the nearest more general schema than `i` in the family when its description is
+strictly below `i`'s and above every other description of the family strictly below `i`'s. -/
+def NearestGeneral (family : ι → Schema V α) (i j : ι) : Prop :=
+  (family j).body < (family i).body ∧
+    ∀ k, (family k).body < (family i).body → (family k).body ≤ (family j).body
+
+/-- With distinct descriptions, the nearest more general schema is unique. -/
+theorem NearestGeneral.unique (hinj : Function.Injective λ i => (family i).body) {j' : ι}
+    (hj : NearestGeneral family i j) (hj' : NearestGeneral family i j') : j = j' :=
+  hinj (le_antisymm (hj'.2 j hj.1) (hj.2 j' hj'.1))
+
+variable [Fintype ι] [DecidableLE (V → α)] [DecidableLT (V → α)]
+
+instance (family : ι → Schema V α) (i j : ι) : Decidable (NearestGeneral family i j) := by
+  unfold NearestGeneral
+  infer_instance
+
+/-- The subsumption hierarchy of a finite family of schemas with distinct descriptions: a
+schema's parent is the nearest more general schema of the family, when there is one. -/
+def ofFamily (family : ι → Schema V α) (hinj : Function.Injective λ i => (family i).body) :
+    Hierarchy ι where
+  parent i :=
+    if h : ∃ j, NearestGeneral family i j then
+      some (Finset.univ.choose (NearestGeneral family i)
+        (h.elim λ j hj => ⟨j, ⟨Finset.mem_univ _, hj⟩, λ j' hj' => hj'.2.unique hinj hj⟩))
+    else none
+  wf := by
+    have hT : IsTrans ι λ a b => (family a).body < (family b).body := ⟨λ _ _ _ => lt_trans⟩
+    have hI : Std.Irrefl λ a b => (family a).body < (family b).body := ⟨λ _ => lt_irrefl _⟩
+    refine Subrelation.wf ?_
+      (Finite.wellFounded_of_trans_of_irrefl λ a b => (family a).body < (family b).body)
+    intro a b hab
+    split_ifs at hab with h
+    exact (Option.some_inj.1 hab ▸
+      (Finset.choose_spec (NearestGeneral family b) Finset.univ _).2).1
+
+theorem ofFamily_parent_eq_some_iff (hinj : Function.Injective λ i => (family i).body) :
+    (ofFamily family hinj).parent i = some j ↔ NearestGeneral family i j := by
+  show (if h : ∃ j, NearestGeneral family i j then some (Finset.univ.choose _ _) else none) =
+      some j ↔ _
+  split_ifs with h
+  · rw [Option.some_inj]
+    exact ⟨λ e => e ▸ (Finset.choose_spec (NearestGeneral family i) Finset.univ _).2,
+      λ hj => ((Finset.choose_spec (NearestGeneral family i) Finset.univ _).2).unique hinj hj⟩
+  · exact iff_of_false (by simp) λ hj => h ⟨j, hj⟩
+
+theorem ofFamily_parent_eq_none_iff (hinj : Function.Injective λ i => (family i).body) :
+    (ofFamily family hinj).parent i = none ↔ ¬ ∃ j, NearestGeneral family i j := by
+  show (if h : ∃ j, NearestGeneral family i j then some (Finset.univ.choose _ _) else none) =
+      none ↔ _
+  split_ifs with h <;> simp [h]
+
+end Family
 
 end Hierarchy
 
