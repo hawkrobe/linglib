@@ -1,193 +1,213 @@
-import Linglib.Studies.WaldonDegen2021
+import Linglib.Studies.DegenEtAl2020
+import Linglib.Pragmatics.RSA.Uniform
 
 /-!
-# [kursat-degen-2021]
-[degen-etal-2020] [waldon-degen-2021]
+# Kursat and Degen (2021): Perceptual Difficulty and Redundant Modification
 
-Perceptual difficulty differences predict asymmetry in redundant
-modification with color and material adjectives. *Proceedings of the
-Linguistic Society of America* 6(1): 676-688, 2021.
+This file formalizes the Perceptual Difficulty Hypothesis of [kursat-degen-2021]: the noise
+attached to an adjective in the continuous-semantics model of [degen-etal-2020] reflects how
+hard it is to verify that an object has the property, so that harder properties are mentioned
+redundantly less often. The critical display of Experiment 2 is modelled as the paper describes
+it, a target, a competitor sharing the redundant property, and two distractors sharing the
+sufficient property with the competitor, with one noise channel per property. The speaker of
+[degen-etal-2020] prefers the redundant expression exactly when the redundant property's channel
+exceeds one half, whatever the sufficient property's channel (`redundant_preferred_iff`), so a
+material channel at or below one half and a colour channel above it yield redundant colour where
+material suffices and no redundant material where colour suffices
+(`perceptual_difficulty_asymmetry`).
 
-## Core Argument
+The reported effects of the three experiments are recorded as `Effect`s: material adjectives
+are verified less accurately and more slowly than colour adjectives, in isolation and in the
+production displays (`material_harder`); colour is mentioned redundantly more often than
+material (`color_more_redundant`); and perceptual difficulty within a property type does not
+predict redundancy, so only the weak version of the hypothesis is supported
+(`strong_version_unsupported`).
 
-Material adjectives are harder to perceive than color adjectives
-(Exps 1, 3), and color adjectives are used redundantly more often than
-material adjectives (Exp 2). This anti-correlation between perceptual
-difficulty and redundant-use rate supports a noise-based RSA account
-([waldon-degen-2021]) where the noise parameter reflects perceptual
-difficulty of property verification.
+## Implementation notes
 
-## Experiments
+The model reuses the noise channel of [degen-etal-2020]. The scene is abstracted to the roles
+of its two properties, so a colour-redundant trial and a material-redundant trial are the same
+model with the channels swapped. Coefficients are the paper's, as printed; the response-time
+coefficient of Experiment 1 is printed with a standard error inconsistent with its
+t-statistic. Where the paper reports a p-value only as a bound, `Effect.p` records the bound.
 
-- **Exp 1** (§2, N = 105: 120 recruited, 15 excluded): Perceptual difficulty
-  norms. Participants verified whether an adjective applied to an object.
-  Material adjectives produced higher error rates (β = 0.48) and slower
-  RTs (β = 5.44).
-- **Exp 2** (§3, N ≈ 95: 100 recruited, 5 excluded): Redundant modifier
-  production. Speakers described objects in contexts where one property
-  was sufficient. Color was used redundantly more than material (β = 2.32).
-- **Exp 3** (§4, N = 376: 400 recruited, 24 excluded): Perceptual difficulty
-  measured with Exp 2 displays. Material remained harder (error β = 0.96,
-  RT β = 0.24).
+## References
 
-## Verified Data
-
-All regression coefficients verified against paper text (§2.3, §3.3,
-§4.3).
-
-## Noise-Model Connection
-
-The cs-RSA model ([degen-etal-2020]) explains redundant modification via
-noisy perception: features with higher perceptual discrimination contribute
-more signal to the literal listener. This paper grounds the asymmetry
-perceptually — material is harder to verify than color (Exps 1, 3), and
-color is used redundantly more (Exp 2) — establishing the *ordering*
-(color easier than material), not specific channel parameters. The full S1
-redundancy prediction requires the incremental model of
-[waldon-degen-2021] (re-exported below).
+* [kursat-degen-2021]
+* [degen-etal-2020]
 -/
 
 namespace KursatDegen2021
 
--- ============================================================================
--- § Regression Results
--- ============================================================================
+open MeasureTheory ProbabilityTheory RSA
+open DegenEtAl2020 (channel channel_nonneg)
+open scoped ENNReal
 
-/-- A regression result from one of the paper's mixed-effects models.
-    Sign convention varies by experiment: in Exps 1/3, positive β means
-    material > color (harder); in Exp 2, positive β means color > material
-    (more redundant). See individual def docstrings for interpretation. -/
-structure RegressionResult where
-  /-- Fixed-effect coefficient -/
+/-! ### The critical display of Experiment 2 -/
+
+/-- The four objects of a critical trial: the target, the competitor sharing the redundant
+property with it, and two distractors sharing the sufficient property with the competitor. -/
+inductive World where
+  | target
+  | competitor
+  | distractor₁
+  | distractor₂
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+instance : MeasurableSpace World := ⊤
+instance : DiscreteMeasurableSpace World := ⟨λ _ => trivial⟩
+
+/-- Whether an object has the target's sufficient property. -/
+def World.hasSufficient : World → Bool
+  | .target => true
+  | .competitor | .distractor₁ | .distractor₂ => false
+
+/-- Whether an object has the target's redundant property. -/
+def World.hasRedundant : World → Bool
+  | .target | .competitor => true
+  | .distractor₁ | .distractor₂ => false
+
+/-- The two referring expressions: the sufficient adjective alone, or both adjectives. -/
+inductive Utterance where
+  | sufficient
+  | redundant
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+instance : MeasurableSpace Utterance := ⊤
+instance : DiscreteMeasurableSpace Utterance := ⟨λ _ => trivial⟩
+
+/-- The continuous meaning with channel `xs` for the sufficient property and `xr` for the
+redundant one: each mentioned adjective holds of an object to degree `x` when it matches and
+`1 − x` when it does not. -/
+def meaning (xs xr : ℝ) : Utterance → World → ℝ
+  | .sufficient, w => channel xs (some true) w.hasSufficient
+  | .redundant, w => channel xs (some true) w.hasSufficient * channel xr (some true) w.hasRedundant
+
+section Model
+
+variable {xs xr : ℝ}
+
+theorem meaning_nonneg (hs0 : 0 ≤ xs) (hs1 : xs ≤ 1) (hr0 : 0 ≤ xr) (hr1 : xr ≤ 1)
+    (u : Utterance) (w : World) : 0 ≤ meaning xs xr u w := by
+  cases u <;> simp only [meaning]
+  · exact channel_nonneg hs0 hs1 _ _
+  · exact mul_nonneg (channel_nonneg hs0 hs1 _ _) (channel_nonneg hr0 hr1 _ _)
+
+/-- The literal listener: the meaning normalized over the display at a uniform prior. -/
+noncomputable def L0 (xs xr : ℝ) : Kernel Utterance World :=
+  literalListener (uniformOn Set.univ) λ u w => ENNReal.ofReal (meaning xs xr u w)
+
+/-- The speaker with unit informativeness weight and no cost. -/
+noncomputable def S1 (xs xr : ℝ) : Kernel World Utterance := speaker 1 1 (L0 xs xr)
+
+private theorem sum_world (f : World → ℝ) :
+    ∑ w, f w = f .target + f .competitor + f .distractor₁ + f .distractor₂ := by
+  rw [show (Finset.univ : Finset World) =
+      {.target, .competitor, .distractor₁, .distractor₂} from rfl,
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_singleton]
+  ring
+
+private theorem row_sufficient : ∑ w, meaning xs xr .sufficient w = 3 - 2 * xs := by
+  rw [sum_world]
+  simp [meaning, channel, World.hasSufficient]
+  ring
+
+private theorem row_redundant :
+    ∑ w, meaning xs xr .redundant w = xr + 2 * (1 - xs) * (1 - xr) := by
+  rw [sum_world]
+  simp [meaning, channel, World.hasSufficient, World.hasRedundant]
+  ring
+
+/-- The redundant expression is preferred for the target exactly when the redundant property's
+channel exceeds one half, whatever the sufficient property's channel short of Boolean. -/
+theorem redundant_preferred_iff (hs0 : 0 < xs) (hs1 : xs < 1) (hr0 : 0 < xr) (hr1 : xr ≤ 1) :
+    (S1 xs xr .target).real {.sufficient} < (S1 xs xr .target).real {.redundant} ↔ 1/2 < xr := by
+  have hnn := meaning_nonneg hs0.le hs1.le hr0.le hr1
+  have hsuf : 0 < 3 - 2 * xs := by linarith
+  have hred : 0 < xr + 2 * (1 - xs) * (1 - xr) := by nlinarith
+  have h1 := literalListener_uniformOn_ofReal_apply_singleton (meaning xs xr) .sufficient
+    World.target (hnn _) (by rw [row_sufficient]; exact hsuf)
+  have h2 := literalListener_uniformOn_ofReal_apply_singleton (meaning xs xr) .redundant
+    World.target (hnn _) (by rw [row_redundant]; exact hred)
+  have hm1 : meaning xs xr .sufficient .target = xs := by
+    simp [meaning, channel, World.hasSufficient]
+  have hm2 : meaning xs xr .redundant .target = xs * xr := by
+    simp [meaning, channel, World.hasSufficient, World.hasRedundant]
+  rw [S1]
+  refine (speaker_real_singleton_lt_iff (cost := 1) (L := L0 xs xr) (w := World.target)
+    zero_le_one (λ _ => ENNReal.one_ne_top) (λ u => literalListener_apply_le_one _ _ u _)
+    ⟨.redundant, ?_⟩).trans ?_
+  · rw [ENNReal.rpow_one, Pi.one_apply, mul_one, L0, h2, row_redundant, hm2]
+    exact (ENNReal.ofReal_pos.mpr (div_pos (mul_pos hs0 hr0) hred)).ne'
+  · simp only [ENNReal.rpow_one, Pi.one_apply, mul_one, L0]
+    rw [h1, h2, row_sufficient, row_redundant, hm1, hm2,
+      ENNReal.ofReal_lt_ofReal_iff (div_pos (mul_pos hs0 hr0) hred), div_lt_div_iff₀ hsuf hred]
+    have hk : 0 < xs * (1 - xs) := mul_pos hs0 (by linarith)
+    constructor <;> intro h <;> nlinarith [hk]
+
+end Model
+
+/-- The Perceptual Difficulty Hypothesis in the model: with the material channel at or below
+one half and the colour channel above it, redundant colour is preferred where material suffices
+and redundant material is dispreferred where colour suffices. -/
+theorem perceptual_difficulty_asymmetry {xm xc : ℝ} (hm0 : 0 < xm) (hm : xm ≤ 1/2)
+    (hc : 1/2 < xc) (hc1 : xc < 1) :
+    (S1 xm xc .target).real {.sufficient} < (S1 xm xc .target).real {.redundant} ∧
+      ¬ (S1 xc xm .target).real {.sufficient} < (S1 xc xm .target).real {.redundant} :=
+  ⟨(redundant_preferred_iff hm0 (by linarith) (by linarith) hc1.le).2 hc,
+   λ h => absurd ((redundant_preferred_iff (by linarith) hc1 hm0 (by linarith)).1 h) (not_lt.2 hm)⟩
+
+/-! ### The reported effects -/
+
+/-- A fixed effect as the paper reports it: coefficient, standard error, and the p-value or its
+reported bound. -/
+structure Effect where
+  /-- The coefficient. -/
   beta : ℚ
-  /-- Standard error -/
+  /-- The standard error. -/
   se : ℚ
-  /-- t-statistic (when reported) -/
-  tStat : Option ℚ := none
-  /-- All reported effects are p < .0001 -/
-  significant : Bool
-  deriving Repr
+  /-- The p-value, or its reported upper bound. -/
+  p : ℚ
 
--- ============================================================================
--- § Experiment 1: Perceptual Difficulty Norms (§2, N = 105)
--- ============================================================================
+/-- Experiment 1: the log odds of an error, material against colour. -/
+def exp1Error : Effect := ⟨48/100, 12/100, 1/10000⟩
 
-/-- Material → higher error rates (§2.3: β = 0.48, SE = 0.12, p < .0001).
-    Log odds of incorrect response. -/
-def exp1_error : RegressionResult :=
-  { beta := 0.48, se := 0.12, significant := true }
+/-- Experiment 1: response time, material against colour, as printed. -/
+def exp1RT : Effect := ⟨544/100, 474/100, 1/10000⟩
 
-/-- Material → slower RTs (§2.3: β = 5.44, SE = 4.74, t = 11.49, p < .0001).
-    RT difference in ms (material − color).
-    NOTE: The paper's SE and t are inconsistent (5.44/4.74 ≈ 1.15 ≠ 11.49);
-    likely SE = 0.474 (giving 5.44/0.474 ≈ 11.48). Values as printed. -/
-def exp1_rt : RegressionResult :=
-  { beta := 5.44, se := 4.74, tStat := some 11.49, significant := true }
+/-- Experiment 2: the log odds of redundant mention, colour against material. -/
+def exp2Redundancy : Effect := ⟨232/100, 64/100, 1/10000⟩
 
--- ============================================================================
--- § Experiment 2: Redundant Modifier Production (§3, N ≈ 95)
--- ============================================================================
+/-- Experiment 3: the log odds of an error, material against colour. -/
+def exp3Error : Effect := ⟨96/100, 9/100, 1/10000⟩
 
-/-- Color used redundantly more than material (§3.3: β = 2.32, SE = 0.64,
-    p < .0001). Log odds of including the redundant modifier. -/
-def exp2_redundancy : RegressionResult :=
-  { beta := 2.32, se := 0.64, significant := true }
+/-- Experiment 3: log response time, material against colour. -/
+def exp3RT : Effect := ⟨24/100, 18/1000, 1/10000⟩
 
-/-- The strong version of the perceptual difficulty hypothesis —
-    within-property-type difficulty predicts item-level redundancy —
-    is not supported (§3.3: insufficient speakers for material items). -/
-def strongVersionSupported : Bool := false
+/-- Experiment 3: residualized perceptual difficulty as a predictor of redundancy. -/
+def withinDifficulty : Effect := ⟨-113/10, 1641/100, 49/100⟩
 
--- ============================================================================
--- § Experiment 3: Perceptual Difficulty in Context (§4, N = 376)
--- ============================================================================
+/-- Experiment 3: the interaction of property type with residualized difficulty. -/
+def withinInteraction : Effect := ⟨1357/100, 3187/100, 67/100⟩
 
-/-- Material → higher error rates in context (§4.3: β = 0.96, SE = 0.09,
-    p < .0001). -/
-def exp3_error : RegressionResult :=
-  { beta := 0.96, se := 0.09, significant := true }
+/-- Experiment 3: the residualized log ratio of sufficient to redundant response time. -/
+def withinLogRatio : Effect := ⟨531/100, 387/100, 17/100⟩
 
-/-- Material → slower RTs in context (§4.3: β = 0.24, SE = 0.018,
-    t = −59.62, p < .0001). Log-transformed RT. -/
-def exp3_rt : RegressionResult :=
-  { beta := 0.24, se := 0.018, tStat := some (-59.62), significant := true }
-
--- ============================================================================
--- § Bridge: Difficulty Ordering
--- ============================================================================
-
-/-- Material is harder to perceive than color: both error and RT effects
-    are significant in Exp 1 (isolated properties) and Exp 3 (in context). -/
+/-- Material is harder to verify than colour: more errors and longer response times, in
+isolation and in the production displays. -/
 theorem material_harder :
-    exp1_error.significant ∧ exp1_rt.significant ∧
-    exp3_error.significant ∧ exp3_rt.significant :=
-  ⟨rfl, rfl, rfl, rfl⟩
+    0 < exp1Error.beta ∧ 0 < exp1RT.beta ∧ 0 < exp3Error.beta ∧ 0 < exp3RT.beta := by
+  norm_num [exp1Error, exp1RT, exp3Error, exp3RT]
 
-/-- All difficulty effects have positive β: material produces more errors
-    and slower RTs than color. -/
-theorem difficulty_direction :
-    exp1_error.beta > 0 ∧ exp1_rt.beta > 0 ∧
-    exp3_error.beta > 0 ∧ exp3_rt.beta > 0 := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> norm_num [exp1_error, exp1_rt, exp3_error, exp3_rt]
+/-- Colour is mentioned redundantly more often than material. -/
+theorem color_more_redundant : 0 < exp2Redundancy.beta := by
+  norm_num [exp2Redundancy]
 
--- ============================================================================
--- § Bridge: Redundancy Ordering
--- ============================================================================
-
-/-- Color is used redundantly more than material: positive β in Exp 2. -/
-theorem color_more_redundant :
-    exp2_redundancy.significant ∧ exp2_redundancy.beta > 0 := by
-  exact ⟨rfl, by norm_num [exp2_redundancy]⟩
-
--- ============================================================================
--- § Bridge: Difficulty Predicts Redundancy
--- ============================================================================
-
-/-- The core finding: perceptual difficulty and redundant use are
-    anti-correlated across property types. Material is harder to perceive
-    (positive β in Exps 1, 3) AND less redundantly used (positive β in
-    Exp 2 means color > material). All effects significant. -/
-theorem difficulty_predicts_redundancy :
-    -- Material is harder (positive β = material > color)
-    exp1_error.significant ∧ exp1_error.beta > 0 ∧
-    exp3_error.significant ∧ exp3_error.beta > 0 ∧
-    -- Color is more redundantly used (positive β = color > material)
-    exp2_redundancy.significant ∧ exp2_redundancy.beta > 0 := by
-  refine ⟨rfl, ?_, rfl, ?_, rfl, ?_⟩ <;> norm_num [exp1_error, exp3_error, exp2_redundancy]
-
--- ============================================================================
--- § Incremental Model Connection
--- ============================================================================
-
-/-! The full redundancy prediction requires the incremental CI-RSA model
-([waldon-degen-2021]), which processes utterances word-by-word. The
-incremental model's three predictions are verified as theorems in
-`WaldonDegen2021.lean` — here we re-export the key result showing that
-redundant color > redundant size in English, which is the color/size
-analogue of the color/material asymmetry tested in Exp 2. -/
-
-/-- The CI-RSA incremental model predicts English speakers use redundant
-    color more than redundant size (Waldon & Degen 2021, Prediction 1).
-    This is the color/size version of the color/material asymmetry
-    observed in Exp 2. Stated as the chain-rule trajectory comparison on
-    the exact-ℚ speaker face. -/
-theorem incremental_model_predicts_color_asymmetry :
-    WaldonDegen2021.s1PMF WaldonDegen2021.allUttsEng WaldonDegen2021.csScene
-        .smallBlue [] .small *
-      WaldonDegen2021.s1PMF WaldonDegen2021.allUttsEng WaldonDegen2021.csScene
-        .smallBlue [.small] .blue *
-      WaldonDegen2021.s1PMF WaldonDegen2021.allUttsEng WaldonDegen2021.csScene
-        .smallBlue [.small, .blue] .pin *
-      WaldonDegen2021.s1PMF WaldonDegen2021.allUttsEng WaldonDegen2021.csScene
-        .smallBlue [.small, .blue, .pin] .stop <
-    WaldonDegen2021.s1PMF WaldonDegen2021.allUttsEng WaldonDegen2021.ssScene
-        .smallBlue [] .small *
-      WaldonDegen2021.s1PMF WaldonDegen2021.allUttsEng WaldonDegen2021.ssScene
-        .smallBlue [.small] .blue *
-      WaldonDegen2021.s1PMF WaldonDegen2021.allUttsEng WaldonDegen2021.ssScene
-        .smallBlue [.small, .blue] .pin *
-      WaldonDegen2021.s1PMF WaldonDegen2021.allUttsEng WaldonDegen2021.ssScene
-        .smallBlue [.small, .blue, .pin] .stop :=
-  WaldonDegen2021.prediction1_english_asymmetry
+/-- The strong version of the hypothesis, difficulty predicting redundancy within a property
+type, finds no support: none of the three within-property tests reaches significance. -/
+theorem strong_version_unsupported :
+    1/20 < withinDifficulty.p ∧ 1/20 < withinInteraction.p ∧ 1/20 < withinLogRatio.p := by
+  norm_num [withinDifficulty, withinInteraction, withinLogRatio]
 
 end KursatDegen2021
