@@ -1,22 +1,29 @@
 import Linglib.Semantics.Tense.Compositional
 
 /-!
-# [ogihara-1989]: Temporal Reference in English and Japanese
+# Ogihara (1989): Temporal Reference in English and Japanese
 
-[ogihara-1989] §2.3 reconciles [prior-1967]'s operator analysis of tense
-with [partee-1973]'s referential analysis: tense is a variable that picks
-a time and must satisfy a temporal presupposition (the picked time is
-past/present/future). The referential analysis picks the time; the
-operator imposes the constraint. They are complementary layers, not
-competitors (`referential_past_decomposition`).
+This file formalizes the integrated theory of temporal reference with which the first
+chapter of [ogihara-1989] closes, reconciling the quantificational analysis of tense of
+[prior-1967] with the referential analysis of [partee-1973]: the quantificational approach
+is basically correct, and the referential character of tenses is a contextual restriction
+on the quantificational force of the tense morphemes. The referential analysis picks the
+time and the operator imposes the constraint, so the past operator applied at a
+referentially determined time decomposes into the precedence of that time and the truth
+of the predicate at it (`referential_past_decomposition`).
+
+## References
+
+* [ogihara-1989]
+* [prior-1967]
+* [partee-1973]
 -/
 
 open Tense
 
 namespace Ogihara1989
 
-open Tense (interpTense PAST)
-open Semantics.Context (Index)
+open Semantics.Context
 
 /-- The Priorean `PAST` operator, applied at a referentially determined
     time g(n), decomposes into the conjunction of (1) the referential
@@ -28,6 +35,6 @@ theorem referential_past_decomposition {W T : Type*} [LinearOrder T]
     (w : W) (speechTime : T) :
     PAST P ⟨w, interpTense n g⟩ ⟨w, speechTime⟩ ↔
     (g n < speechTime ∧ P ⟨w, g n⟩) := by
-  simp [Tense.constrain]
+  simp
 
 end Ogihara1989
