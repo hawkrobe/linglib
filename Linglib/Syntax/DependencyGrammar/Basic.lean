@@ -193,4 +193,11 @@ instance {n : ℕ} (b e : Graph n) (w : Fin n) :
     Decidable (HasUnrepresentedArg b e w) :=
   inferInstanceAs (Decidable (∃ _, _))
 
+/-- An arc that enhancement adds to a position lacking it in the basic graph is an
+unrepresented argument relation. -/
+theorem hasUnrepresentedArg_enhance {n : ℕ} (g : Graph n) {x w : Fin n} (r : UD.DepRel)
+    (extra : List (Fin n × Fin n × UD.DepRel)) (hmem : (x, w, r) ∈ extra) (h : ¬ g.Adj x w) :
+    HasUnrepresentedArg g (g.enhance extra) w :=
+  ⟨x, Graph.enhance_adj.mpr (Or.inr ⟨r, hmem⟩), h⟩
+
 end DependencyGrammar

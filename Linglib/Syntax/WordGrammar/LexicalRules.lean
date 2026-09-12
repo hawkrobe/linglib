@@ -86,6 +86,17 @@ def passiveRule : LexRule :=
         features := { e.features with voice := some .Pass }
         valency := e.valency.filter (·.depType != .obj) ++ [⟨.obl, .right, false⟩] } }
 
+/-- The passive rule on an active transitive verb entry: it applies, and the derived entry
+carries the passive valency, the object slot removed and an optional *by*-phrase added. -/
+theorem passiveRule_transitive (e : LexEntry) (hc : e.cat = .VERB)
+    (hv : e.features.voice ≠ some .Pass) (h : e.valency = Valency.transitive) :
+    passiveRule.applies e = true ∧
+      (passiveRule.transform e).valency = Valency.passiveTransitive := by
+  refine ⟨?_, ?_⟩
+  · simp [passiveRule, hc, hv, h, Valency.transitive]
+  · show e.valency.filter (·.depType != .obj) ++ [⟨.obl, .right, false⟩] = _
+    rw [h]; rfl
+
 -- ============================================================================
 -- Applying Lexical Rules
 -- ============================================================================
