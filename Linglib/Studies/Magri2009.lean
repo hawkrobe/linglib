@@ -30,11 +30,6 @@ mandatoriness of the exhaustivity operator in matrix clauses is an external assu
 `BPSWorld` type below concerns bare plural subjects, not the presuppositional
 exhaustification of the same abbreviation elsewhere in the library.
 
-## TODO
-
-The paper is not on file; equation and section locators are transcribed from an earlier
-version of this file and are UNVERIFIED.
-
 ## References
 
 * [magri-2009]
