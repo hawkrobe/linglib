@@ -1,58 +1,48 @@
 import Linglib.Discourse.Commitment.Space
 import Linglib.Discourse.Commitment.Table
-import Linglib.Features.Acceptability
 import Linglib.Semantics.Questions.Bias
 
 /-!
-# Krifka 2015: bias in commitment space semantics
+# Krifka (2015): Bias in Commitment Space Semantics
 
-[krifka-2015] models a conversation as a commitment space, the current commitment state with
-its projected continuations, and speech acts as its updates (`Commitment.Space`). An assertion
-`S⊢φ` re-roots the space at the state that records the speaker's commitment (14), so the root
-narrows at once — where [farkas-bruce-2010], whom Krifka credits for his rejection operator
-(p. 331), leave the common ground untouched until acceptance. A question keeps the root and
-restricts the continuations to assertions by the addressee: a monopolar question projects only
-the addressee's assertion of `φ` (27), so *yes* is a projected continuation and *no* requires a
-prior rejection (28), while a bipolar question is the disjunction of the two monopolar questions
-(23), (31), projecting both answers (24). Low negation is a monopolar question about `¬φ` (29);
-high negation projects the addressee's refusal `¬S₂⊢φ` (39), weaker than `S₂⊢¬φ` since a
-consistent commitment to `¬φ` already excludes a commitment to `φ` (p. 340). Table 1 (p. 341)
-records how the three question forms are licensed by the contextual evidence of
-[buring-gunlogson-2000]. A matching tag conjoins an assertion with the monopolar question of the
-same content (44); a reverse tag disjoins the assertion with the monopolar question of the
-negation (45).
+This file formalizes [krifka-2015]'s commitment space semantics of biased questions. A
+conversation is a commitment space, the current commitment state with its projected
+continuations (`Commitment.Space`), and speech acts are its updates. An assertion re-roots the
+space at the state recording the speaker's commitment (14), so the root narrows at once, where
+[farkas-bruce-2010], whom the paper credits for its rejection operator, leave the common ground
+untouched until acceptance. A question keeps the root and restricts the continuations to
+assertions by the addressee. A monopolar question projects only the addressee's assertion of
+`φ` (27), so *yes* is a projected continuation and *no* requires a prior rejection (28), while a
+bipolar question is the disjunction of the two monopolar questions ((23), (31)) and projects
+both answers (24); the issue projection of the library sees the bipolar question but not the
+monopolar one (`monopolar_not_inquisitive`). Low negation is a monopolar question about `¬φ`
+(29); high negation projects the addressee's refusal `¬S₂⊢φ` (39), weaker than `S₂⊢¬φ`, since
+a consistent commitment to `¬φ` already excludes a commitment to `φ`. The licensing of the
+three question forms by the contextual evidence of [buring-gunlogson-2000] then reproduces the
+paper's Table 1 (`table1`). A matching tag conjoins an assertion with the monopolar question of
+the same content (44), and a reverse tag disjoins the assertion with the monopolar question of
+the negation (`reverseTag`, (45)).
 
-## Main definitions
+## Implementation notes
 
-* `Weather`, `raining`, `C₀` — the two-world fixture and the initial space, the free space on
-  the empty commitment state.
-* `table1`, `noNegLicensing` — Table 1 and its explanation.
-* `matchingTag`, `reverseTag` — (44), (45).
-
-## Main results
-
-* `assert_root`, `assert_contextSet_vs_farkasBruce_cg` — (14) and the contrast with the Table.
-* `monopolar_yes_mem`, `monopolar_no_not_mem`, `bipolar_yes_mem`, `bipolar_no_mem` — (23)–(28).
-* `highNegation_refusal_mem`, `not_mem_slate_of_commit_compl` — (39) and p. 340.
-* `monopolar_not_inquisitive`, `bipolar_inquisitive` — the issue projection sees the bipolar
-  question but not the monopolar one.
-* `matchingTag_root`, `reverseTag_root`, `reverseTag_branches` — (44), (45).
+* The fixture is a two-world space, raining or not, rooted at the empty commitment state.
+* Contextual evidence is the set of worlds it leaves open: the proposition, everything, or its
+  complement. A monopolar question is licensed by evidence for its proposed assertion, a
+  bipolar question by neutral evidence, and the high-negation question wherever the evidence
+  is not for `φ`; the low-negation question has only the monopolar reading, its bipolar reading
+  being blocked by the question without negation.
 
 ## References
 
-* [M. Krifka, *Bias in Commitment Space Semantics: Declarative Questions, Negated Questions,
-  and Question Tags* (2015)][krifka-2015]
-* [D. F. Farkas and K. B. Bruce, *On Reacting to Assertions and Polar Questions*
-  (2010)][farkas-bruce-2010]
-* [D. Büring and C. Gunlogson, *Aren't Positive and Negative Polar Questions the Same?*
-  (2000)][buring-gunlogson-2000]
+* [krifka-2015]
+* [farkas-bruce-2010] — the Table and the rejection operator
+* [buring-gunlogson-2000] — contextual evidence and the three question forms
 -/
 
 namespace Krifka2015
 
 open Commitment Commitment.Space
 open Question
-open Features (Acceptability)
 
 /-! ### The fixture -/
 
@@ -65,7 +55,7 @@ inductive Weather
 /-- It is raining. -/
 def raining : Set Weather := {.rain}
 
-theorem raining_ne_compl : raining ≠ rainingᶜ := fun h =>
+theorem raining_ne_compl : raining ≠ rainingᶜ := λ h =>
   (Set.ext_iff.1 h .rain).1 rfl rfl
 
 /-- The initial commitment space: no commitments, every development licit. -/
@@ -162,7 +152,7 @@ theorem monopolar_not_inquisitive :
       (contextSet_insert_commit_empty _ _).ge⟩)
   refine h ?_
   have : (C₀.monopolarQuestion .addressee raining).toIssue.info = raining := by
-    refine Set.Subset.antisymm (Set.sUnion_subset fun i hi => ?_) (Set.subset_sUnion_of_mem hmem)
+    refine Set.Subset.antisymm (Set.sUnion_subset λ i hi => ?_) (Set.subset_sUnion_of_mem hmem)
     rcases (mem_toIssue_iff _).1 hi with ⟨h0, -⟩ | ⟨c, hc, hic⟩
     · exact absurd monopolar_continuation_mem (h0 ▸ Set.notMem_empty _)
     · exact hic.trans (monopolar_continuation_subset hc)
@@ -194,7 +184,7 @@ theorem bipolar_inquisitive : (C₀.bipolarQuestion .addressee raining).toIssue.
   have hrain : Weather.rain ∈ (C₀.bipolarQuestion .addressee raining).toIssue.info :=
     Set.subset_sUnion_of_mem hyes rfl
   have hnoRain : Weather.noRain ∈ (C₀.bipolarQuestion .addressee raining).toIssue.info :=
-    Set.subset_sUnion_of_mem hno fun h => Weather.noConfusion h
+    Set.subset_sUnion_of_mem hno λ h => Weather.noConfusion h
   rcases (mem_toIssue_iff _).1 hinfo with ⟨h0, -⟩ | ⟨c, hc, hsub⟩
   · have hmem : insert (commit .addressee raining) ∅ ∈
         (C₀.bipolarQuestion .addressee raining).continuations :=
@@ -205,48 +195,46 @@ theorem bipolar_inquisitive : (C₀.bipolarQuestion .addressee raining).toIssue.
     · exact Weather.noConfusion (h (hsub hnoRain))
     · exact h (hsub hrain) rfl
 
-/-! ### Table 1 (p. 341) -/
+/-! ### Table 1 -/
 
-/-- The three question forms of Table 1. -/
-inductive NegationType
-  | noNeg
-  | lowNeg
-  | highNeg
-  deriving DecidableEq, Repr
+/-- The worlds the contextual evidence of [buring-gunlogson-2000] leaves open. -/
+def evidence (φ : Set Weather) : ContextualEvidence → Set Weather
+  | .forP => φ
+  | .neutral => Set.univ
+  | .againstP => φᶜ
 
-/-- Which reading licenses the question without negation in each context (p. 341). -/
-inductive NoNegReading
-  | monopolarLicensed
-  | bipolarLicensed
-  | bothDegraded
-  deriving DecidableEq, Repr
+/-- A monopolar question proposing `S₂⊢φ` is licensed by evidence for `φ`. -/
+def MonopolarLicensed (E φ : Set Weather) : Prop := E ⊆ φ
 
-/-- Table 1: acceptability by contextual evidence and question form; the parenthesised `(#)`
-is `marginal`. -/
-def table1 : ContextualEvidence → NegationType → Acceptability
-  | .forP,     .noNeg   => .ok
-  | .forP,     .lowNeg  => .anomalous
-  | .forP,     .highNeg => .anomalous
-  | .neutral,  .noNeg   => .ok
-  | .neutral,  .lowNeg  => .anomalous
-  | .neutral,  .highNeg => .ok
-  | .againstP, .noNeg   => .marginal
-  | .againstP, .lowNeg  => .ok
-  | .againstP, .highNeg => .ok
+/-- A bipolar question is licensed by neutral evidence. -/
+def BipolarLicensed (E φ : Set Weather) : Prop := ¬ E ⊆ φ ∧ ¬ E ⊆ φᶜ
 
-/-- The explanation of the no-negation column: the monopolar reading is licensed by evidence
-for `φ`, the bipolar reading by neutral evidence, and neither by evidence against. -/
-def noNegLicensing : ContextualEvidence → NoNegReading
-  | .forP     => .monopolarLicensed
-  | .neutral  => .bipolarLicensed
-  | .againstP => .bothDegraded
+/-- The high-negation question, proposing the refusal `¬S₂⊢φ`, is licensed wherever the
+evidence is not for `φ`. -/
+def HighNegationLicensed (E φ : Set Weather) : Prop := ¬ E ⊆ φ
 
-/-- Low negation is only monopolar and high negation is weaker: the columns of Table 1 differ
-exactly where the readings predict. -/
-theorem table1_columns_differ :
-    (∀ e, table1 e .lowNeg = .ok ↔ e = .againstP) ∧
-      (∀ e, table1 e .highNeg = .ok ↔ e ≠ .forP) := by
-  refine ⟨fun e => ?_, fun e => ?_⟩ <;> cases e <;> decide
+/-- The question without negation is licensed on either of its readings; the question with low
+negation only on the monopolar reading of `¬φ`; the question with high negation as such. -/
+def Licensed (E φ : Set Weather) : PQForm → Prop
+  | .PosQ => MonopolarLicensed E φ ∨ BipolarLicensed E φ
+  | .LoNQ => MonopolarLicensed E φᶜ
+  | .HiNQ => HighNegationLicensed E φ
+
+theorem raining_ne_empty : raining ≠ ∅ := (Set.singleton_nonempty _).ne_empty
+
+theorem raining_ne_univ : raining ≠ Set.univ := λ h =>
+  Weather.noConfusion (Set.eq_univ_iff_forall.1 h .noRain)
+
+/-- Table 1: with evidence for `φ` only the question without negation is licensed, read
+monopolar; with neutral evidence the question without negation, read bipolar, and the
+high-negation question; with evidence against `φ` both negated questions and not the question
+without negation. -/
+theorem table1 (e : ContextualEvidence) :
+    (Licensed (evidence raining e) raining .PosQ ↔ e ≠ .againstP) ∧
+      (Licensed (evidence raining e) raining .LoNQ ↔ e = .againstP) ∧
+      (Licensed (evidence raining e) raining .HiNQ ↔ e ≠ .forP) := by
+  cases e <;> simp [Licensed, MonopolarLicensed, BipolarLicensed, HighNegationLicensed, evidence,
+    raining_ne_empty, raining_ne_univ]
 
 /-! ### Question tags (44), (45) -/
 
