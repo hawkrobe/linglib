@@ -1,67 +1,53 @@
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
-import Mathlib.Data.Rat.Defs
+import Mathlib.Tactic.NormNum
 
 /-!
-# [labov-2012] — Dialect Diversity in America: The Politics of
-Language Change
+# Labov (2012): Dialect Diversity in America
 
-University of Virginia Press, 2012 (Page-Barbour Lectures for 2009).
-ISBN 978-0-8139-3326-9.
+This file formalizes the one quantitative observation of [labov-2012] that the library
+consumes: the President's rate of the *-in'* variant of (ING) on three occasions of
+increasing formality, a Father's Day barbecue, the interview that followed it, and a scripted
+convention address, the book's illustration of the style shifting shared across the speech
+community, its hidden consensus on the variable. `obama_ING` records the three rates and
+`obama_ING_monotone` their strict decrease with formality, the intra-speaker counterpart of the
+class-and-style stratification of [labov-2006]; `Studies/Burnett2019.lean` derives the
+direction of this shift from a speaker's social-meaning game.
 
-## Obama's (ING) style shifting (Ch. 2, Figure 3)
+## Implementation notes
 
-The centerpiece example of the "hidden consensus" on (ING): even
-President Obama adjusts his -in' vs -ing rate across contexts. Labov
-observed Obama in three situations of increasing formality:
+The three contexts are the book's own occasions rather than the interview styles of
+[labov-2006], and the observation is kept as a single record. The percentages are the book's;
+the figure and page on which they appear were not checked against a copy of the book.
 
-1. **Casual**: a Father's Day barbecue on the White House lawn,
-   chatting with chef Bobby Flay about barbeque technique. 72% -in'.
-2. **Careful**: the Father's Day ceremonies that followed, asking and
-   answering political questions. 33% -in'.
-3. **Formal**: scripted acceptance speech at the Democratic National
-   Convention. 3% -in'.
+## References
 
-(p. 13): "on figure 3 registers an -in' percentage of 72% for this
-occasion. [...] His percentage of -in' falls to 33%. The most formal
-context shown is his scripted acceptance speech at the Democratic
-National Convention, where we see only 3% -in'."
-
-The monotone decrease (72% > 33% > 3%) is a textbook illustration of
-intra-speaker style shifting along the formality dimension. The data
-connects to the SMG model in `Burnett2019.lean`, which derives the
-directional pattern (cool-guy prefers -in' in casual context, -ing in
-careful context) from Bayesian pragmatic reasoning.
+* [labov-2012]
+* [labov-2006]
 -/
 
 namespace Labov2012
 
--- ============================================================================
--- Obama's (ING) rates (Ch. 2, Figure 3)
--- ============================================================================
-
-/-- Three-context style-shifting observation: proportion of -in' usage
-    in casual, careful, and formal speech contexts. -/
+/-- One speaker's rate of a variant on three occasions of increasing formality. -/
 structure StyleShiftObs where
-  casual  : ℚ
+  /-- The casual occasion. -/
+  casual : ℚ
+  /-- The careful occasion. -/
   careful : ℚ
-  formal  : ℚ
+  /-- The formal occasion. -/
+  formal : ℚ
 
-/-- Obama's (ING) rates across three contexts ([labov-2012],
-    Ch. 2, Figure 3):
-    casual (barbecue) ≈ 72% /in/, careful (journalist Q&A) ≈ 33%,
-    formal (DNC speech) ≈ 3%.
-
-    This illustrates intra-speaker style shifting — the same speaker
-    adjusts variant rates with contextual formality. -/
+-- UNVERIFIED: the book's Chapter 2 figure of the President's (ING) rates, cited here from
+-- the earlier version of this file; the values agree with published summaries of the book.
+/-- The President's rate of *-in'*: 72% chatting at a barbecue, 33% answering questions at the
+ceremony that followed, 3% in the scripted acceptance speech. -/
 def obama_ING : StyleShiftObs where
-  casual  := 72/100
+  casual := 72/100
   careful := 33/100
-  formal  := 3/100
+  formal := 3/100
 
-/-- Obama's /in/ rate decreases monotonically with formality. -/
+/-- The rate of *-in'* falls strictly with the formality of the occasion. -/
 theorem obama_ING_monotone :
-    obama_ING.casual > obama_ING.careful ∧
-    obama_ING.careful > obama_ING.formal := by
-  exact ⟨by native_decide, by native_decide⟩
+    obama_ING.casual > obama_ING.careful ∧ obama_ING.careful > obama_ING.formal := by
+  norm_num [obama_ING]
 
 end Labov2012
