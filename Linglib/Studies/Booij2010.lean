@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Data.Forms.Booij2010
 import Linglib.Morphology.ConstructionMorphology.Schema
 import Mathlib.Data.Fin.VecNotation
+import Mathlib.Tactic.DeriveFintype
 import Mathlib.Tactic.FinCases
 import Linglib.Morphology.ConstructionMorphology.Inheritance
 import Linglib.Core.Order.Flat
@@ -145,7 +146,10 @@ option: an NN modifier may be a compound, an AN modifier may not. -/
 theorem compound_inheritance :
     compoundHierarchy.value headedness .nn = some .right ∧
     compoundHierarchy.value recursiveModifier .nn = some true ∧
-    compoundHierarchy.value recursiveModifier .an = some false := by decide
+    compoundHierarchy.value recursiveModifier .an = some false :=
+  ⟨by rw [compoundHierarchy.value_eq_parent rfl]; exact compoundHierarchy.value_eq_of_att rfl,
+   by rw [compoundHierarchy.value_eq_parent rfl]; exact compoundHierarchy.value_eq_of_att rfl,
+   compoundHierarchy.value_eq_of_att rfl⟩
 
 /-! ### Default inheritance and override: `werkbaar`
 
@@ -181,7 +185,8 @@ def baseTransitivity : BaarNode → Option Transitivity
 specification, while the schema keeps its default. -/
 theorem werkbaar_overrides :
     baarHierarchy.value baseTransitivity .werkbaar = some .intrans ∧
-    baarHierarchy.value baseTransitivity .baarSchema = some .trans := by decide
+    baarHierarchy.value baseTransitivity .baarSchema = some .trans :=
+  ⟨baarHierarchy.value_eq_of_att rfl, baarHierarchy.value_eq_of_att rfl⟩
 
 /-! ### Schema unification: `on-` composed with `V-baar`
 

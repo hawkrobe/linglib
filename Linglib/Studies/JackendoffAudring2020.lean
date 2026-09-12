@@ -8,6 +8,7 @@ import Linglib.Core.Order.Flat
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Fin.VecNotation
 import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Jackendoff and Audring (2020): The Texture of the Lexicon
@@ -17,7 +18,9 @@ morphological motivation is shared structure recorded by nondirectional relation
 between fully specified lexical entries, not inheritance from an abstract base. The
 mixed-direction pairs of Objection 10 to inheritance, Section 3.4.4, are the test: *assassin*
 and *assassinate* build the second on the first in phonology and the first on the second in
-semantics, so no acyclic inheritance hierarchy holds both demands (`assassin_cycle`), while a
+semantics, so no acyclic inheritance hierarchy holds both demands (`assassin_cycle`), though
+default inheritance itself computes as the taxonomy of Figure 3.5 intends
+(`ostrich_overrides`), while a
 sister link with a coindex per shared part carries both, (41) (`assassin_pairs`), and reads the
 same transposed (`assassin_pairs_symm`). Bumped up a level, Section 4.8.2, the link between the
 *-ism* and *-ist* schemas, (47), pairs every ideology's noun with its adherent's, whatever the
@@ -70,6 +73,40 @@ common (`instantiates_ishSchema_iff`), and absorbs a newly encountered sister
 namespace JackendoffAudring2020
 
 open Morphology ConstructionMorphology
+
+/-! ### Default inheritance and override, Figure 3.5
+
+The taxonomy of Figure 3.5: birds fly by default, the ostrich overrides, and the canary
+inherits flight. -/
+
+/-- The nodes of Figure 3.5. -/
+inductive Animal
+  | animal
+  | bird
+  | fish
+  | canary
+  | ostrich
+  deriving DecidableEq, Fintype
+
+/-- The taxonomy: birds and fish are animals, canaries and ostriches are birds. -/
+def animalHierarchy : Hierarchy Animal :=
+  .ofDepth
+    (λ | .animal => none | .bird => some .animal | .fish => some .animal
+       | .canary => some .bird | .ostrich => some .bird)
+    (λ | .animal => 0 | .bird => 1 | .fish => 1 | .canary => 2 | .ostrich => 2) (by decide)
+
+/-- Flight as a local specification: birds fly, the ostrich overrides. -/
+def flies : Animal → Option Bool
+  | .bird => some true
+  | .ostrich => some false
+  | _ => none
+
+/-- The ostrich's override and the canary's inheritance compute as intended. -/
+theorem ostrich_overrides :
+    animalHierarchy.value flies .ostrich = some false ∧
+      animalHierarchy.value flies .canary = some true :=
+  ⟨animalHierarchy.value_eq_of_att rfl,
+    by rw [animalHierarchy.value_eq_parent rfl]; exact animalHierarchy.value_eq_of_att rfl⟩
 
 /-! ### Sister words -/
 
