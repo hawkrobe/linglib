@@ -159,6 +159,13 @@ def IsConsistent (A : Set (Set S)) : Prop :=
 def IsCompatible (p : Set S) (A : Set (Set S)) : Prop :=
   IsConsistent (insert p A)
 
+/-- `p` is compatible with `A` iff its complement does not follow from `A`. -/
+theorem isCompatible_iff_not_follows_compl {p : Set S} {A : Set (Set S)} :
+    IsCompatible p A ↔ ¬ Follows A pᶜ := by
+  simp only [IsCompatible, IsConsistent, Follows, Set.sInter_insert, Set.not_subset,
+    Set.Nonempty, Set.mem_inter_iff, Set.mem_compl_iff, not_not]
+  exact ⟨λ ⟨s, hw, hp, hA⟩ => ⟨s, ⟨hw, hA⟩, hp⟩, λ ⟨s, ⟨hw, hA⟩, hp⟩ => ⟨s, hw, hp, hA⟩⟩
+
 /-- **Logical equivalence** ([kratzer-2012], p. 118): `p` and `q`
     agree on the worlds part. Kratzer writes `p ∩ W = q ∩ W`.
 
