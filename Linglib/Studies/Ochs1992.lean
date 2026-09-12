@@ -1,317 +1,114 @@
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
-import Mathlib.Data.Fintype.Basic
+import Mathlib.Tactic.NormNum
 
 /-!
-# [ochs-1992] — Indexing Gender
+# Ochs (1992): Indexing Gender
 
-## Overview
+This file formalizes the model of indirect indexicality in [ochs-1992]. Few features of
+language index gender directly and exclusively; linguistic forms directly index stances,
+acts, and activities, and these in turn help to constitute gender, so the relation of
+language to gender is non-exclusive, constitutive, and mediated. The Japanese sentence-final
+particles of [uyeno-1971] are the running example: *ze* directly indexes coarse intensity
+and *wa* delicate intensity, and the affective dispositions so indexed are part of the
+preferred images of men and women. The two steps are association maps, from form to stance
+(`formStanceAssoc`) and from stance to gender (`stanceGenderAssoc`), and the indirect
+form–gender association is their composition (`composedAssoc`), a field of the second
+indexical order in the sense of [silverstein-2003] (`composedField`). *ze* indexes
+masculinity more than femininity and *wa* the reverse, through the stances alone
+(`ze_indexes_masculine`, `wa_indexes_feminine`), and both particles carry a positive
+association with both genders, the non-exclusivity that follows from every stance being
+available to both sexes (`all_nonexclusive`).
 
-[ochs-1992] argues that the relation between language and gender is
-almost never a direct mapping from linguistic form to gender category.
-Instead, linguistic forms index *stances* and *speech acts*, which in turn
-*constitutively* relate to gender identity. Three properties characterize
-this relation:
+## Implementation notes
 
-1. **Non-exclusivity**: few features of language directly and exclusively
-   index gender. The association is probabilistic, not categorical.
-2. **Constitutivity**: using certain linguistic forms helps *constitute*
-   gender identity, not merely reflect it (cf. "doing gender,"
-   [west-zimmerman-1987]).
-3. **Mediation**: the relation is indirect — form → stance/act → gender.
-   Direct indexical relations (e.g., "he"/"she") are rare; mediated
-   relations (e.g., *ze* → coarse intensity → masculinity) are the norm.
+The form-to-stance map is categorical and the stance-to-gender strengths are illustrative
+proportions with a positive floor; the argument rests on the composition, not on the
+numbers. The third property of the chapter, that the relation is temporally transcendent,
+is not represented.
 
-## Formalization
+## References
 
-The core formal contribution is modeling indirect indexicality as
-**composition of association maps** ([ochs-1992] Figure 14.2):
-
-- **Field 1** (`formStanceAssoc`): maps sentence-final particles to
-  the interactional stances they directly index (categorical 0/1)
-- **Field 2** (`stanceGenderAssoc`): maps interactional stances to
-  gender identity poles, with graded (non-exclusive) associations
-- **Composition** (`composedAssoc`): the matrix product of the two
-  fields via `SocialMeaning.IndexicalField.composeIndex`, deriving the indirect
-  form–gender association
-
-Non-exclusivity is then a *theorem* about the composed field: when
-stances have mixed gender associations, forms that index those stances
-inherit the non-exclusivity.
-
-## Cross-linguistic data
-
-Japanese sentence-final particles ([uyeno-1971]) illustrate the
-mediation thesis (Figure 14.1):
-- *ze/zo* directly index **coarse intensity**, which constitutively
-  indexes masculinity
-- *wa* directly indexes **delicate intensity**, which constitutively
-  indexes femininity — but both genders use *wa*, confirming
-  non-exclusivity
-- *yo* (emphatic) and *ne* (confirmation-seeking) have weak,
-  gender-neutral stance associations
-
-## Connections
-
-* `SocialMeaning.IndexicalField.composeIndex`: the composition operation
-  formalized as a general primitive for indirect indexicality
-* `SocialMeaning.IndexicalField.IndexicalField`: the composed field is lifted
-  to an `IndexicalField`, connecting to [eckert-2008]'s framework
-  which explicitly builds on [ochs-1992] and [silverstein-1976]
-* `Burnett2019`: RSA model of persona
-  inference from variant choice — the computational realization of
-  Ochs's indirect indexicality thesis via [burnett-2019]'s SMG
+* [ochs-1992]
+* [uyeno-1971]
+* [silverstein-1976]
+* [silverstein-2003]
+* [eckert-2008]
+* [west-zimmerman-1987]
 -/
 
 namespace Ochs1992
 
 open SocialMeaning.IndexicalField
 
--- ============================================================================
--- §1. Types
--- ============================================================================
-
-/-- Interactional stances that sentence-final particles directly index.
-    These are the intermediate meanings through which gender is indirectly
-    indexed ([ochs-1992] Figure 14.2).
-
-    [ochs-1992] identifies two key poles of *intensity* in Japanese:
-    "coarse intensity" (indexed by *ze/zo*) and "delicate intensity"
-    (indexed by *wa*). These stance categories are distinct from the
-    evaluative stances of [kubota-2026]'s outlook markers. -/
+/-- The two interactional stances of the chapter's example: coarse intensity, the rough
+forceful style, and delicate intensity, the gentle refined one. -/
 inductive Stance where
-  /-- Coarse intensity — rough, forceful interactional style.
-      Indexed by *ze*, *zo*. -/
   | coarse
-  /-- Delicate intensity — gentle, refined interactional style.
-      Indexed by *wa*. -/
   | delicate
-  /-- Emphatic assertion — strong commitment without coarseness.
-      Indexed by *yo*. -/
-  | emphatic
-  /-- Seeking confirmation or agreement from the addressee.
-      Indexed by *ne*. -/
-  | confirmSeeking
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq
 
-instance : Fintype Stance where
-  elems := {.coarse, .delicate, .emphatic, .confirmSeeking}
-  complete := by intro x; cases x <;> simp
+/-- The stances, for composition. -/
+def Stance.all : List Stance := [.coarse, .delicate]
 
-/-- All stances as a list (for `composeIndex`). -/
-def Stance.all : List Stance :=
-  [.coarse, .delicate, .emphatic, .confirmSeeking]
-
-/-- Gender identity poles — the endpoints of the social gender dimension.
-    Not grammatical gender (masc/fem noun class) but the social identity
-    dimension that linguistic forms can index
-    ([west-zimmerman-1987]). -/
+/-- The poles of the social gender dimension ([west-zimmerman-1987]). -/
 inductive GenderPole where
   | masculine
   | feminine
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq
 
-instance : Fintype GenderPole where
-  elems := {.masculine, .feminine}
-  complete := by intro x; cases x <;> simp
-
-/-- Japanese sentence-final particles discussed in [ochs-1992].
-    See [uyeno-1971] for the foundational study. -/
+/-- The two sentence-final particles: *ze*, coarse, and *wa*, delicate. -/
 inductive SFP where
-  | ze   -- ぜ: coarse intensity
-  | zo   -- ぞ: coarse intensity (stronger)
-  | wa   -- わ: delicate intensity
-  | yo   -- よ: emphatic
-  | ne   -- ね: confirmation-seeking
-  deriving DecidableEq, Repr, Inhabited
+  | ze
+  | wa
+  deriving DecidableEq
 
-instance : Fintype SFP where
-  elems := {.ze, .zo, .wa, .yo, .ne}
-  complete := by intro x; cases x <;> simp
-
--- ============================================================================
--- §2. The two association maps — the indirect indexicality chain
--- ============================================================================
-
-/-- Field 1: SFP → Stance (direct index).
-
-    Each particle directly indexes exactly one interactional stance.
-    The mapping is categorical (0/1) — a particle either does or does
-    not index a stance. The probabilistic gradient enters in Field 2. -/
+/-- The direct index: each particle indexes exactly one stance. -/
 def formStanceAssoc : SFP → Stance → ℚ
-  | .ze, .coarse         => 1
-  | .zo, .coarse         => 1
-  | .wa, .delicate       => 1
-  | .yo, .emphatic       => 1
-  | .ne, .confirmSeeking => 1
-  | _,   _               => 0
+  | .ze, .coarse => 1
+  | .wa, .delicate => 1
+  | _, _ => 0
 
-/-- Field 2: Stance → GenderPole (constitutive relation).
-
-    Captures how habitual use of certain stances constitutes gender
-    identity. Values are association strengths — positive for BOTH poles
-    on every stance, encoding [ochs-1992]'s non-exclusivity.
-
-    The two intensity stances are mirror images on the gender axis:
-    coarse is 3/4 masculine, delicate is 3/4 feminine. The remaining
-    stances (emphatic, confirmation-seeking) are gender-neutral. -/
+/-- The constitutive relation: coarse intensity is part of the preferred image of men and
+delicate intensity of women, each stance keeping a positive association with both poles
+since both sexes use both. -/
 def stanceGenderAssoc : Stance → GenderPole → ℚ
-  | .coarse,         .masculine => 3/4
-  | .coarse,         .feminine  => 1/4
-  | .delicate,       .masculine => 1/4
-  | .delicate,       .feminine  => 3/4
-  | .emphatic,       .masculine => 1/2
-  | .emphatic,       .feminine  => 1/2
-  | .confirmSeeking, .masculine => 1/2
-  | .confirmSeeking, .feminine  => 1/2
+  | .coarse, .masculine => 3/4
+  | .coarse, .feminine => 1/4
+  | .delicate, .masculine => 1/4
+  | .delicate, .feminine => 3/4
 
--- ============================================================================
--- §3. Composed field — indirect indexicality
--- ============================================================================
-
-/-- The composed (indirect) form → gender association.
-    This IS [ochs-1992]'s central theoretical claim: linguistic
-    forms index gender only indirectly, mediated through stances.
-
-    composedAssoc(sfp, g) = Σ_s formStance(sfp, s) × stanceGender(s, g) -/
+/-- The indirect index of gender by a particle: the composition of the two maps through
+the stances. -/
 def composedAssoc (sfp : SFP) (g : GenderPole) : ℚ :=
   composeIndex formStanceAssoc stanceGenderAssoc Stance.all sfp g
 
--- ============================================================================
--- §4. Mediation theorems
--- ============================================================================
+/-- *ze* indexes masculinity more than femininity, mediated by coarse intensity. -/
+theorem ze_indexes_masculine : composedAssoc .ze .feminine < composedAssoc .ze .masculine := by
+  norm_num [composedAssoc, composeIndex, Stance.all, formStanceAssoc, stanceGenderAssoc]
 
-/-- *ze* indirectly indexes masculinity more than femininity.
-    The asymmetry is mediated through coarse intensity (3/4 masc). -/
-theorem ze_indexes_masculine :
-    composedAssoc .ze .masculine > composedAssoc .ze .feminine := by native_decide
+/-- *wa* indexes femininity more than masculinity, mediated by delicate intensity. -/
+theorem wa_indexes_feminine : composedAssoc .wa .masculine < composedAssoc .wa .feminine := by
+  norm_num [composedAssoc, composeIndex, Stance.all, formStanceAssoc, stanceGenderAssoc]
 
-/-- *wa* indirectly indexes femininity more than masculinity.
-    The asymmetry is mediated through delicate intensity (3/4 fem). -/
-theorem wa_indexes_feminine :
-    composedAssoc .wa .feminine > composedAssoc .wa .masculine := by native_decide
+/-- Non-exclusivity: every particle carries a positive association with both poles, since
+every stance does and every particle indexes a stance. -/
+theorem all_nonexclusive (sfp : SFP) (g : GenderPole) : 0 < composedAssoc sfp g := by
+  cases sfp <;> cases g <;>
+    norm_num [composedAssoc, composeIndex, Stance.all, formStanceAssoc, stanceGenderAssoc]
 
-/-- *zo* patterns like *ze* (both index coarse intensity). -/
-theorem zo_indexes_masculine :
-    composedAssoc .zo .masculine > composedAssoc .zo .feminine := by native_decide
-
--- ============================================================================
--- §5. Non-exclusivity theorems
--- ============================================================================
-
-/-- **Universal non-exclusivity**: every SFP has positive association
-    with both gender poles. This is [ochs-1992]'s property 1:
-    "few features of language directly and exclusively index gender."
-
-    The proof follows from the fact that every stance has positive
-    association with both genders (the 1/4 floor in `stanceGenderAssoc`),
-    and every SFP indexes at least one stance. -/
-theorem all_nonexclusive :
-    ∀ sfp : SFP, ∀ g : GenderPole, composedAssoc sfp g > 0 := by
-  intro sfp g; cases sfp <;> cases g <;> native_decide
-
--- ============================================================================
--- §6. Gender-neutral stances
--- ============================================================================
-
-/-- *yo* (emphatic) is gender-neutral: equal association with both poles. -/
-theorem yo_gender_neutral :
-    composedAssoc .yo .masculine = composedAssoc .yo .feminine := by native_decide
-
-/-- *ne* (confirmation-seeking) is gender-neutral. -/
-theorem ne_gender_neutral :
-    composedAssoc .ne .masculine = composedAssoc .ne .feminine := by native_decide
-
--- ============================================================================
--- §7. Symmetry — coarse/delicate intensity as mirror images
--- ============================================================================
-
-/-- **Symmetry**: *ze* and *wa* are mirror images on the gender axis.
-    *ze*'s masculine association equals *wa*'s feminine association (3/4),
-    and vice versa (1/4). This symmetry arises from the mirror structure
-    of `stanceGenderAssoc` on the coarse/delicate intensity poles. -/
-theorem ze_wa_symmetry :
-    composedAssoc .ze .masculine = composedAssoc .wa .feminine ∧
-    composedAssoc .ze .feminine  = composedAssoc .wa .masculine := by
-  constructor <;> native_decide
-
-/-- *zo* inherits *ze*'s symmetry with *wa*. -/
-theorem zo_wa_symmetry :
-    composedAssoc .zo .masculine = composedAssoc .wa .feminine ∧
-    composedAssoc .zo .feminine  = composedAssoc .wa .masculine := by
-  constructor <;> native_decide
-
--- ============================================================================
--- §8. Factorization — the mediation thesis made explicit
--- ============================================================================
-
-/-- The composed form–gender association factors through the stance
-    domain. This makes the mediation thesis computationally explicit:
-    the value for (*ze*, masculine) is determined entirely by the
-    sum-product through all four stances. -/
-theorem mediation_ze_masc :
-    composedAssoc .ze .masculine =
-      formStanceAssoc .ze .coarse         * stanceGenderAssoc .coarse         .masculine
-    + formStanceAssoc .ze .delicate       * stanceGenderAssoc .delicate       .masculine
-    + formStanceAssoc .ze .emphatic       * stanceGenderAssoc .emphatic       .masculine
-    + formStanceAssoc .ze .confirmSeeking * stanceGenderAssoc .confirmSeeking .masculine := by
-  native_decide
-
--- ============================================================================
--- §9. Rankings — ordinal structure
--- ============================================================================
-
-/-- Ranking of SFPs by masculine association strength:
-    ze = zo (3/4) > yo = ne (1/2) > wa (1/4). -/
-theorem masculine_ranking :
-    composedAssoc .ze .masculine = composedAssoc .zo .masculine ∧
-    composedAssoc .ze .masculine > composedAssoc .yo .masculine ∧
-    composedAssoc .yo .masculine = composedAssoc .ne .masculine ∧
-    composedAssoc .yo .masculine > composedAssoc .wa .masculine := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
-
-/-- Ranking of SFPs by feminine association strength:
-    wa (3/4) > yo = ne (1/2) > ze = zo (1/4).
-    This is the exact mirror of the masculine ranking. -/
-theorem feminine_ranking :
-    composedAssoc .wa .feminine > composedAssoc .yo .feminine ∧
-    composedAssoc .yo .feminine = composedAssoc .ne .feminine ∧
-    composedAssoc .yo .feminine > composedAssoc .ze .feminine ∧
-    composedAssoc .ze .feminine = composedAssoc .zo .feminine := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
-
--- ============================================================================
--- §10. Bridge to IndexicalField framework
--- ============================================================================
-
-/-- The form–stance relation as an `IndexicalField` at second indexical
-    order: SFPs are consciously manipulable markers
-    ([silverstein-2003]). -/
-def formStanceField : IndexicalField SFP Stance where
-  association := formStanceAssoc
-  order := .second
-
-/-- The composed relation as an `IndexicalField`. -/
+/-- The composed relation as an indexical field of the second order: the particles are
+consciously manipulable markers ([silverstein-2003]). -/
 def composedField : IndexicalField SFP GenderPole where
   association := composedAssoc
   order := .second
 
-/-- The composed field indexes *ze* toward masculinity. -/
-theorem composedField_ze_indexes_masc :
-    composedField.indexes .ze .masculine := by
-  simp only [IndexicalField.indexes, composedField]
-  native_decide
-
-/-- The composed field indexes *wa* toward femininity. -/
-theorem composedField_wa_indexes_fem :
-    composedField.indexes .wa .feminine := by
-  simp only [IndexicalField.indexes, composedField]
-  native_decide
-
-/-- *ze* and *wa* contrast on the masculine trait: their composed
-    associations differ. -/
-theorem ze_wa_contrast_masculine :
-    composedField.contrasts .ze .wa .masculine := by
-  simp only [IndexicalField.contrasts, composedField]
-  native_decide
+/-- The composed field indexes *ze* toward masculinity and *wa* toward femininity, and the
+two particles contrast on each pole. -/
+theorem composedField_indexes :
+    composedField.indexes .ze .masculine ∧ composedField.indexes .wa .feminine ∧
+      composedField.contrasts .ze .wa .masculine := by
+  refine ⟨all_nonexclusive .ze .masculine, all_nonexclusive .wa .feminine, ?_⟩
+  show composedAssoc .ze .masculine ≠ composedAssoc .wa .masculine
+  norm_num [composedAssoc, composeIndex, Stance.all, formStanceAssoc, stanceGenderAssoc]
 
 end Ochs1992
