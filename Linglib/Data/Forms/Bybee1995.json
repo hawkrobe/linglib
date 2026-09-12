@@ -1,0 +1,190 @@
+{
+  "FormTable": [
+    {
+      "ID": "bybee1995_strung",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "string_past",
+      "Form": "strung",
+      "Segments": ["str", "ʌ", "ŋ"],
+      "Comment": "central member of the product-oriented class",
+      "Source": ["bybee-1995[2]"]
+    },
+    {
+      "ID": "bybee1995_stung",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "sting_past",
+      "Form": "stung",
+      "Segments": ["st", "ʌ", "ŋ"],
+      "Comment": "member of the product-oriented class",
+      "Source": ["bybee-1995[2]"]
+    },
+    {
+      "ID": "bybee1995_flung",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "fling_past",
+      "Form": "flung",
+      "Segments": ["fl", "ʌ", "ŋ"],
+      "Comment": "member of the product-oriented class",
+      "Source": ["bybee-1995[2]"]
+    },
+    {
+      "ID": "bybee1995_hung",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "hang_past",
+      "Form": "hung",
+      "Segments": ["h", "ʌ", "ŋ"],
+      "Comment": "member of the product-oriented class",
+      "Source": ["bybee-1995[2]"]
+    },
+    {
+      "ID": "bybee1995_strike",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "strike",
+      "Form": "strike",
+      "Segments": ["str", "aɪ", "k"],
+      "Comment": "base of a dialectal new member; its vowel is not /ɪ/",
+      "Source": ["bybee-1995[2]"]
+    },
+    {
+      "ID": "bybee1995_struck",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "strike_past",
+      "Form": "struck",
+      "Segments": ["str", "ʌ", "k"],
+      "Comment": "dialectal new member of the class",
+      "Source": ["bybee-1995[2]"]
+    },
+    {
+      "ID": "bybee1995_sneak",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "sneak",
+      "Form": "sneak",
+      "Segments": ["sn", "i", "k"],
+      "Comment": "base of a dialectal new member; its vowel is not /ɪ/",
+      "Source": ["bybee-1995[2]"]
+    },
+    {
+      "ID": "bybee1995_snuck",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "sneak_past",
+      "Form": "snuck",
+      "Segments": ["sn", "ʌ", "k"],
+      "Comment": "dialectal new member of the class",
+      "Source": ["bybee-1995[2]"]
+    },
+    {
+      "ID": "bybee1995_drag",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "drag",
+      "Form": "drag",
+      "Segments": ["dr", "æ", "g"],
+      "Comment": "base of a dialectal new member; its vowel is not /ɪ/",
+      "Source": ["bybee-1995[2]"]
+    },
+    {
+      "ID": "bybee1995_drug",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "drag_past",
+      "Form": "drug",
+      "Segments": ["dr", "ʌ", "g"],
+      "Comment": "dialectal new member of the class",
+      "Source": ["bybee-1995[2]"]
+    },
+    {
+      "ID": "bybee1995_string",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "string",
+      "Form": "string",
+      "Segments": ["str", "ɪ", "ŋ"],
+      "Comment": "base of strung",
+      "Source": ["bybee-1995[2]"]
+    }
+  ],
+  "ParameterTable": [
+    {
+      "ID": "string_past",
+      "Name": "string (past)",
+      "Description": ""
+    },
+    {
+      "ID": "sting_past",
+      "Name": "sting (past)",
+      "Description": ""
+    },
+    {
+      "ID": "fling_past",
+      "Name": "fling (past)",
+      "Description": ""
+    },
+    {
+      "ID": "hang_past",
+      "Name": "hang (past)",
+      "Description": ""
+    },
+    {
+      "ID": "strike",
+      "Name": "strike",
+      "Description": ""
+    },
+    {
+      "ID": "strike_past",
+      "Name": "strike (past)",
+      "Description": ""
+    },
+    {
+      "ID": "sneak",
+      "Name": "sneak",
+      "Description": ""
+    },
+    {
+      "ID": "sneak_past",
+      "Name": "sneak (past)",
+      "Description": ""
+    },
+    {
+      "ID": "drag",
+      "Name": "drag",
+      "Description": ""
+    },
+    {
+      "ID": "drag_past",
+      "Name": "drag (past)",
+      "Description": ""
+    },
+    {
+      "ID": "string",
+      "Name": "string",
+      "Description": ""
+    }
+  ],
+  "FormRelationTable": [
+    {
+      "ID": "bybee1995_string_strung",
+      "Form_ID": "bybee1995_string",
+      "Target_ID": "bybee1995_strung",
+      "Relation": "past",
+      "Source": ["bybee-1995[2]"]
+    },
+    {
+      "ID": "bybee1995_strike_struck",
+      "Form_ID": "bybee1995_strike",
+      "Target_ID": "bybee1995_struck",
+      "Relation": "past",
+      "Source": ["bybee-1995[2]"]
+    },
+    {
+      "ID": "bybee1995_sneak_snuck",
+      "Form_ID": "bybee1995_sneak",
+      "Target_ID": "bybee1995_snuck",
+      "Relation": "past",
+      "Source": ["bybee-1995[2]"]
+    },
+    {
+      "ID": "bybee1995_drag_drug",
+      "Form_ID": "bybee1995_drag",
+      "Target_ID": "bybee1995_drug",
+      "Relation": "past",
+      "Source": ["bybee-1995[2]"]
+    }
+  ]
+}
