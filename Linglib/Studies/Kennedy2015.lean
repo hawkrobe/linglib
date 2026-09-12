@@ -1,169 +1,257 @@
 import Linglib.Semantics.Quantification.Numerals.Basic
-import Linglib.Semantics.Alternatives.AsymStronger
-import Mathlib.Data.Rat.Defs
-import Mathlib.Tactic.DeriveFintype
+import Linglib.Pragmatics.NeoGricean.Basic
+import Mathlib.Order.Bounds.Basic
 
 /-!
-# [kennedy-2015]: De-Fregean numerals — neo-Gricean derivation
-[kennedy-2015] [sauerland-2004] [nouwen-2010]
-[geurts-nouwen-2007] [frank-goodman-2012] [franke-2011]
+# Kennedy (2015): A "de-Fregean" Semantics (and Neo-Gricean Pragmatics) for Modified and Unmodified Numerals
 
-[kennedy-2015] replaces the Horn scale `⟨1, 2, 3, …⟩` with a single
-**lexically-grouped alternative set** containing the bare numeral together
-with all of its surface modifications:
+This file formalizes the de-Fregean semantics of [kennedy-2015]: a numeral, bare or modified,
+is a quantifier over degree properties, true of a property when its greatest degree stands in
+the numeral's relation to the number, `max{n | D(n)} = m` for the bare numeral ((29)), `> m` and
+`< m` for the Class A modifiers *more than* and *fewer than* ((41)), `≥ m` and `≤ m` for the
+Class B modifiers *at least* and *at most* ((42)). Applied to the degrees a count reaches this is
+the substrate's `Degree.Comparison.over`, so bare numerals are two-sided without a Horn scale
+(`deFregean_Iic`), and the one-sided readings of numerals under root modals ((31)–(34)) are
+matters of scope: a bare numeral scoping over a necessity modal states the least count the modal
+requires and over a possibility modal the greatest it allows (`necessity_wide_iff`,
+`possibility_wide_iff`).
 
-```
-  ALT(n) = {bare n, more than n, fewer than n, at least n, at most n}
-```
+The ignorance inferences of the Class B modifiers are Sauerland's primary implicatures ((43))
+over Kennedy's single alternative set, the five forms of one numeral ((46)): *at least m* is
+asymmetrically entailed by the bare numeral and by *more than m* and by no other alternative,
+*at most m* by the bare numeral and *fewer than m* ((47)), while the bare numeral and the
+Class A forms are entailed by no alternative at all (`primaryAlternatives_ge`,
+`primaryAlternatives_gt`, and the rest); and neither primary implicature of a Class B form
+strengthens to a secondary one ((44)), each contradicting the assertion together with the other
+(`not_isSecondaryImplicature_ge`, `not_isSecondaryImplicature_le`).
 
-The point is **anti-Horn-scale**: there is no fixed scale direction. The
-asymmetric-entailment filter of [sauerland-2004]'s primary-implicature
-operator does the work that a pre-categorized "lower" or "upper" scale
-would otherwise do. Asserting "at least n" makes only the lower-direction
-alternatives (bare n, more than n) asymmetrically stronger; the
-upper-direction alternatives (fewer than n, at most n) are not — they're
-disjoint or overlapping but not subsets — so they don't trigger primary
-implicatures. The Class A / Class B distinction (labels from
-[nouwen-2010], which [kennedy-2015] *contests* by replacing
-Nouwen's lexical bifurcation with one denotation + asymmetric entailment)
-falls out as a structural property of the modifier's relation:
+## Implementation notes
 
-- **Class B (`≥`, `≤`)** — the bare numeral is asymmetrically stronger
-  than the asserted form (and so is the strict modifier on the same
-  side); two primary implicatures, hence ignorance.
-- **Class A (`>`, `<`)** — *no* alternative in the full set is
-  asymmetrically stronger than the asserted form; no primary implicature.
+The worlds of the pragmatics are counts, so a form's content is the set `c.over id m` of counts,
+the alternatives are the images of the substrate's `Numerals.kennedyAlternatives`, and the
+neo-Gricean operators are `NeoGricean.commitment` and `NeoGricean.IsSecondaryImplicature`. The
+interactions of Class B modifiers with root modals (Section 4.2) are not formalized.
 
-We formalize both routes:
+## References
 
-- §2 derives the predictions **symbolically** via `asymStrongerOn`
-  (the polymorphic primitive from
-  `Semantics/Alternatives/AsymStronger.lean`).
-- §3 derives the same direction probabilistically through RSA L1.
-
-§3 is our own integration contribution, not Kennedy's — Kennedy's paper
-discusses [franke-2011]'s IBR as the probabilistic counterpart, not
-[frank-goodman-2012]-style RSA. The two routes are theoretically
-distinct: §2 follows Kennedy directly; §3 shows the same qualitative
-predictions emerge from a soft-max listener over the same alternative set
-and bare-numeral semantics.
-
-The formalization consumes `Numeral.Entry.denoteUnder` from
-`Semantics/Numerals/Basic.lean` directly — there is no separate
-"Kennedy meaning" function (Kennedy's alternative set is *which* numeral
-words to consider, not *what they mean*).
-
-Domain: cardinality 0–5 (`Fin 6`, wide enough that Class A "more than 3"
-needs `w = 4` to be non-trivial).
+* [kennedy-2015]
+* [sauerland-2004]
+* [nouwen-2010]
 -/
 
 namespace Kennedy2015
 
-open Numerals
-open Alternatives (asymStrongerOn)
+open Degree Numerals NeoGricean Set
 
--- ============================================================================
--- §1: Cardinality worlds and Kennedy's single alternative set
--- ============================================================================
+/-! ### The de-Fregean semantics (Section 3) -/
 
-/-- Cardinality worlds 0–5. We use `Fin 6` directly: `decide` runs over
-    the type-class-derived `Fintype`, and the six-element domain is wide
-    enough that Class A "more than 3" needs `w = 4` to be non-trivial. -/
-abbrev KCard : Type := Fin 6
+/-- (29), (41), (42): the numeral form `c m` is true of a degree property `D` when `D` has a
+greatest degree standing in the relation `c` to `m`. -/
+def deFregean (c : Comparison) (m : ℕ) (D : Set ℕ) : Prop := ∃ k, IsGreatest D k ∧ c.rel k m
 
-/-- Kennedy's alternative set members for `n = 3`. One enum unifying
-    bare and all four modifications — Class A vs Class B is read off
-    asymmetric-entailment, not from membership in a pre-split sublist.
-    The RSA analysis lives in `Kennedy2015PMF`. -/
-inductive KUtt where
-  | bare3 | moreThan3 | fewerThan3 | atLeast3 | atMost3
-  deriving DecidableEq, Repr, Fintype
+/-- A count reaching a degree is a member of the comparison's interval. -/
+theorem mem_over (c : Comparison) (m n : ℕ) : n ∈ c.over id m ↔ c.rel n m :=
+  Comparison.mem_interval c n m
 
-/-- The numeral word (`Numeral.Entry`) a Kennedy alternative is — all at
-    argument 3, with their surface forms. -/
-def KUtt.entry : KUtt → Numeral.Entry
-  | .bare3      => ⟨"three", .eq, 3⟩
-  | .moreThan3  => ⟨"more than three", .gt, 3⟩
-  | .fewerThan3 => ⟨"fewer than three", .lt, 3⟩
-  | .atLeast3   => ⟨"at least three", .ge, 3⟩
-  | .atMost3    => ⟨"at most three", .le, 3⟩
+/-- On the degrees a count reaches, the de-Fregean form is the comparison of the count itself,
+the substrate's meaning of the numeral: two-sided bare content with no Horn scale. -/
+theorem deFregean_Iic (c : Comparison) (m n : ℕ) : deFregean c m (Iic n) ↔ n ∈ c.over id m := by
+  constructor
+  · rintro ⟨k, hk, hrel⟩
+    rw [← isGreatest_Iic.unique hk] at hrel
+    exact (mem_over c m n).mpr hrel
+  · exact λ h => ⟨n, isGreatest_Iic, (mem_over c m n).mp h⟩
 
-/-- Prop-valued meaning of any Kennedy alternative under bilateral (exact) bare
-    semantics — `Numeral.Entry.denoteUnder` with `bare := bareMeaning`. -/
-def kMean (u : KUtt) (w : KCard) : Prop :=
-  u.entry.denoteUnder bareMeaning w.val
+section Modals
 
-noncomputable instance (u : KUtt) : DecidablePred (kMean u) :=
-  fun w => inferInstanceAs (Decidable (u.entry.denoteUnder bareMeaning w.val))
+variable {W : Type*}
 
--- ============================================================================
--- §2: Symbolic neo-Gricean derivation ([sauerland-2004] on Kennedy's alts)
--- ============================================================================
+/-- The degrees reached in every accessible world: the property a numeral measures when it
+scopes over a necessity modal. -/
+def necessityDegrees (R : Set W) (count : W → ℕ) : Set ℕ := {n | ∀ w ∈ R, n ≤ count w}
 
-/-! Sauerland's primary-implicature schema applied to Kennedy's single
-alternative set distinguishes Class A from Class B with no probability:
+/-- The degrees reached in some accessible world: the property a numeral measures when it
+scopes over a possibility modal. -/
+def possibilityDegrees (R : Set W) (count : W → ℕ) : Set ℕ := {n | ∃ w ∈ R, n ≤ count w}
 
-For asserted φ and alternative set ALT, the primary implicatures are
-`{¬Kψ | ψ ∈ ALT, ψ asymmetrically entails φ over the speaker's worlds}`.
+/-- (33a), (34a): under a modal the bare numeral keeps its two-sided content in each accessible
+world. -/
+theorem narrow_scope_two_sided (R : Set W) (count : W → ℕ) (m : ℕ) :
+    (∀ w ∈ R, deFregean .eq m (Iic (count w))) ↔ ∀ w ∈ R, count w = m := by
+  simp only [deFregean_Iic]
+  exact Iff.rfl
 
-Over the six-world domain, the meanings at `n = 3` are:
+/-- (33b): over a necessity modal the bare numeral is lower-bounded: every accessible world
+reaches `m` and one reaches exactly `m`, so `m` is the least count the modal requires. -/
+theorem necessity_wide_iff (R : Set W) (count : W → ℕ) (m : ℕ) :
+    deFregean .eq m (necessityDegrees R count) ↔
+      (∀ w ∈ R, m ≤ count w) ∧ ∃ w ∈ R, count w = m := by
+  constructor
+  · rintro ⟨k, ⟨hmem, hub⟩, hkm⟩
+    have hkm' : k = m := hkm
+    subst hkm'
+    refine ⟨hmem, ?_⟩
+    by_contra h
+    push Not at h
+    have : k + 1 ∈ necessityDegrees R count :=
+      λ w hw => Nat.lt_of_le_of_ne (hmem w hw) (h w hw).symm
+    exact absurd (hub this) (by omega)
+  · rintro ⟨hall, w, hw, hwm⟩
+    exact ⟨m, ⟨hall, λ n hn => hwm ▸ hn w hw⟩, rfl⟩
 
-| Expr             | True at        |
-|------------------|----------------|
-| `bare 3`         | `{3}`          |
-| `more than 3`    | `{4, 5}`       |
-| `fewer than 3`   | `{0, 1, 2}`    |
-| `at least 3`     | `{3, 4, 5}`    |
-| `at most 3`      | `{0, 1, 2, 3}` |
+/-- (34b): over a possibility modal the bare numeral is upper-bounded: some accessible world
+reaches exactly `m` and none exceeds it, so `m` is the greatest count the modal allows. -/
+theorem possibility_wide_iff (R : Set W) (count : W → ℕ) (m : ℕ) :
+    deFregean .eq m (possibilityDegrees R count) ↔
+      (∃ w ∈ R, count w = m) ∧ ∀ w ∈ R, count w ≤ m := by
+  constructor
+  · rintro ⟨k, ⟨⟨w, hw, hwk⟩, hub⟩, hkm⟩
+    have hkm' : k = m := hkm
+    subst hkm'
+    exact ⟨⟨w, hw, le_antisymm (hub ⟨w, hw, le_rfl⟩) hwk⟩, λ w' hw' => hub ⟨w', hw', le_rfl⟩⟩
+  · rintro ⟨⟨w, hw, hwm⟩, hall⟩
+    exact ⟨m, ⟨⟨w, hw, hwm.ge⟩, λ _ ⟨w', hw', hn⟩ => hn.trans (hall w' hw')⟩, rfl⟩
 
-Asserting "at least 3": `bare 3 ⊊ at least 3` and `more than 3 ⊊
-at least 3` — both asymmetrically stronger. The upper-direction
-alternatives `fewer than 3` and `at most 3` are not subsets (the former
-is disjoint, the latter overlaps but extends below). So 2 primary
-implicatures fire.
+end Modals
 
-Asserting "more than 3": `bare 3` is *disjoint* (rules out subset
-relation in either direction); `at least 3` is a *weaker* alternative
-(superset, not subset); `at most 3` and `fewer than 3` are also not
-subsets. So 0 primary implicatures fire — exactly Kennedy's Class A
-prediction.
+/-! ### Ignorance implicatures (Section 4.1) -/
 
-The alternative set is `Finset.univ : Finset KUtt` (all 5 KUtt
-constructors); the world domain is `Finset.univ : Finset KCard` (Fin 6
-via Fintype). -/
+/-- (46): the alternatives of a numeral form are the five forms of the same numeral, the
+substrate's `kennedyAlternatives`, as sets of counts. -/
+def alternatives (m : ℕ) : Set (Set ℕ) := {ψ | ∃ c ∈ kennedyAlternatives, ψ = c.over id m}
 
-/-- **Class B (lower-bound) triggers two primary implicatures**.
-    Asserting "at least 3" makes both "bare 3" and "more than 3"
-    asymmetrically stronger over the six-world domain; the
-    upper-direction alternatives are not. -/
-theorem classB_atLeast3_two_primary :
-    (Finset.univ.filter
-      (fun u : KUtt => asymStrongerOn Finset.univ (kMean u) (kMean .atLeast3))).card
-      = 2 := by
-  decide
+/-- (43): the alternatives that asymmetrically entail a form, whose content is a proper subset of
+its content; their negated knowledge is the form's primary implicatures. -/
+def primaryAlternatives (c : Comparison) (m : ℕ) : Set (Set ℕ) :=
+  {ψ ∈ alternatives m | ψ ⊂ c.over id m}
 
-/-- **Class A (lower-bound) triggers no primary implicatures**.
-    Asserting "more than 3" makes *no* alternative in Kennedy's full
-    set — neither bare-direction nor cross-direction — asymmetrically
-    stronger. -/
-theorem classA_moreThan3_no_primary :
-    (Finset.univ.filter
-      (fun u : KUtt => asymStrongerOn Finset.univ (kMean u) (kMean .moreThan3))).card
-      = 0 := by
-  decide
+/-- Inclusion between two forms of a positive numeral is decided at three counts, one below,
+at, and above the number. -/
+private theorem over_subset_iff (c c' : Comparison) {m : ℕ} (hm : 0 < m) :
+    c.over id m ⊆ c'.over id m ↔
+      (c.rel 0 m → c'.rel 0 m) ∧ (c.rel m m → c'.rel m m) ∧
+        (c.rel (m + 1) m → c'.rel (m + 1) m) := by
+  simp only [Set.subset_def, mem_over]
+  refine ⟨λ h => ⟨h 0, h m, h (m + 1)⟩, λ ⟨h0, hm', h1⟩ x hx => ?_⟩
+  cases c <;> cases c' <;>
+    simp only [Comparison.rel, imp_iff_not_or, not_true_eq_false, false_or] at h0 hm' h1 hx ⊢ <;>
+    omega
 
-/-- Mirror image: **Class B (upper-bound) triggers two primary implicatures**. -/
-theorem classB_atMost3_two_primary :
-    (Finset.univ.filter
-      (fun u : KUtt => asymStrongerOn Finset.univ (kMean u) (kMean .atMost3))).card
-      = 2 := by
-  decide
+private theorem over_ssubset_iff (c c' : Comparison) {m : ℕ} (hm : 0 < m) :
+    c.over id m ⊂ c'.over id m ↔
+      ((c.rel 0 m → c'.rel 0 m) ∧ (c.rel m m → c'.rel m m) ∧
+          (c.rel (m + 1) m → c'.rel (m + 1) m)) ∧
+        ¬ ((c'.rel 0 m → c.rel 0 m) ∧ (c'.rel m m → c.rel m m) ∧
+          (c'.rel (m + 1) m → c.rel (m + 1) m)) := by
+  rw [Set.ssubset_def, over_subset_iff c c' hm, over_subset_iff c' c hm]
 
-/-- Mirror image: **Class A (upper-bound) triggers no primary implicatures**. -/
-theorem classA_fewerThan3_no_primary :
-    (Finset.univ.filter
-      (fun u : KUtt => asymStrongerOn Finset.univ (kMean u) (kMean .fewerThan3))).card
-      = 0 := by
-  decide
+private theorem mem_alternatives_iff (m : ℕ) (ψ : Set ℕ) :
+    ψ ∈ alternatives m ↔ ψ = Comparison.eq.over id m ∨ ψ = Comparison.gt.over id m ∨
+      ψ = Comparison.lt.over id m ∨ ψ = Comparison.ge.over id m ∨ ψ = Comparison.le.over id m := by
+  simp [alternatives, kennedyAlternatives]
+
+/-- (47a): *at least m* is asymmetrically entailed by the bare numeral and by *more than m*, so
+its primary implicatures are ignorance of both, and by no other alternative. -/
+theorem primaryAlternatives_ge {m : ℕ} (hm : 0 < m) :
+    primaryAlternatives .ge m = {Comparison.eq.over id m, Comparison.gt.over id m} := by
+  ext ψ
+  simp only [primaryAlternatives, mem_ofPred_eq, mem_alternatives_iff, mem_insert_iff,
+    mem_singleton_iff]
+  constructor
+  · rintro ⟨rfl | rfl | rfl | rfl | rfl, h⟩
+    · exact Or.inl rfl
+    · exact Or.inr rfl
+    all_goals
+      rw [over_ssubset_iff _ _ hm] at h
+      simp only [Comparison.rel, imp_iff_not_or, not_and_or, not_or, not_not] at h
+      omega
+  · rintro (rfl | rfl) <;> refine ⟨by simp, ?_⟩ <;> rw [over_ssubset_iff _ _ hm] <;>
+      simp only [Comparison.rel, imp_iff_not_or, not_and_or, not_or, not_not,
+        not_true_eq_false, false_or] <;> omega
+
+/-- (47b): *at most m* is asymmetrically entailed by the bare numeral and by *fewer than m*. -/
+theorem primaryAlternatives_le {m : ℕ} (hm : 0 < m) :
+    primaryAlternatives .le m = {Comparison.eq.over id m, Comparison.lt.over id m} := by
+  ext ψ
+  simp only [primaryAlternatives, mem_ofPred_eq, mem_alternatives_iff, mem_insert_iff,
+    mem_singleton_iff]
+  constructor
+  · rintro ⟨rfl | rfl | rfl | rfl | rfl, h⟩
+    · exact Or.inl rfl
+    · exfalso
+      rw [over_ssubset_iff _ _ hm] at h
+      simp only [Comparison.rel, imp_iff_not_or, not_and_or, not_or, not_not] at h
+      omega
+    · exact Or.inr rfl
+    all_goals
+      rw [over_ssubset_iff _ _ hm] at h
+      simp only [Comparison.rel, imp_iff_not_or, not_and_or, not_or, not_not] at h
+      omega
+  · rintro (rfl | rfl) <;> refine ⟨by simp, ?_⟩ <;> rw [over_ssubset_iff _ _ hm] <;>
+      simp only [Comparison.rel, imp_iff_not_or, not_and_or, not_or, not_not,
+        not_true_eq_false, false_or] <;> omega
+
+/-- The bare numeral is entailed by none of its alternatives: no primary implicatures, and none
+of the upper-bounding secondary ones a Horn scale would give. -/
+theorem primaryAlternatives_eq {m : ℕ} (hm : 0 < m) : primaryAlternatives .eq m = ∅ := by
+  ext ψ
+  simp only [primaryAlternatives, mem_ofPred_eq, mem_alternatives_iff, mem_empty_iff_false,
+    iff_false, not_and]
+  rintro (rfl | rfl | rfl | rfl | rfl) h <;> rw [over_ssubset_iff _ _ hm] at h <;>
+    simp only [Comparison.rel, imp_iff_not_or, not_and_or, not_or, not_not,
+        not_true_eq_false, false_or, true_and] at h <;> omega
+
+/-- Class A: *more than m* is entailed by no alternative, so it carries no ignorance
+implicature. -/
+theorem primaryAlternatives_gt {m : ℕ} (hm : 0 < m) : primaryAlternatives .gt m = ∅ := by
+  ext ψ
+  simp only [primaryAlternatives, mem_ofPred_eq, mem_alternatives_iff, mem_empty_iff_false,
+    iff_false, not_and]
+  rintro (rfl | rfl | rfl | rfl | rfl) h <;> rw [over_ssubset_iff _ _ hm] at h <;>
+    simp only [Comparison.rel, imp_iff_not_or, not_and_or, not_or, not_not,
+        not_true_eq_false, false_or] at h <;> omega
+
+/-- Class A: *fewer than m* is entailed by no alternative. -/
+theorem primaryAlternatives_lt {m : ℕ} (hm : 0 < m) : primaryAlternatives .lt m = ∅ := by
+  ext ψ
+  simp only [primaryAlternatives, mem_ofPred_eq, mem_alternatives_iff, mem_empty_iff_false,
+    iff_false, not_and]
+  rintro (rfl | rfl | rfl | rfl | rfl) h <;> rw [over_ssubset_iff _ _ hm] at h <;>
+    simp only [Comparison.rel, imp_iff_not_or, not_and_or, not_or, not_not,
+        not_true_eq_false, false_or] at h <;> omega
+
+/-- (44) fails for *at least m*: knowing the bare numeral false with the assertion is knowing
+*more than m*, and knowing *more than m* false with the assertion is knowing the bare numeral,
+each contradicting the other primary implicature; the ignorance is not strengthened. -/
+theorem not_isSecondaryImplicature_ge (m : ℕ) :
+    ¬ IsSecondaryImplicature (Comparison.ge.over id m) (alternatives m)
+        (Comparison.eq.over id m) ∧
+      ¬ IsSecondaryImplicature (Comparison.ge.over id m) (alternatives m)
+        (Comparison.gt.over id m) := by
+  refine ⟨λ h => ?_, λ h => ?_⟩
+  · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.gt.over id m)
+      ((mem_alternatives_iff m _).mpr (by simp)) λ n ⟨h1, h2⟩ => ?_
+    simp only [mem_over, Comparison.rel] at *
+    omega
+  · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.eq.over id m)
+      ((mem_alternatives_iff m _).mpr (by simp)) λ n ⟨h1, h2⟩ => ?_
+    simp only [mem_over, Comparison.rel] at *
+    omega
+
+/-- (44) fails for *at most m* the same way, with *fewer than m* in place of *more than m*. -/
+theorem not_isSecondaryImplicature_le (m : ℕ) :
+    ¬ IsSecondaryImplicature (Comparison.le.over id m) (alternatives m)
+        (Comparison.eq.over id m) ∧
+      ¬ IsSecondaryImplicature (Comparison.le.over id m) (alternatives m)
+        (Comparison.lt.over id m) := by
+  refine ⟨λ h => ?_, λ h => ?_⟩
+  · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.lt.over id m)
+      ((mem_alternatives_iff m _).mpr (by simp)) λ n ⟨h1, h2⟩ => ?_
+    simp only [mem_over, Comparison.rel] at *
+    omega
+  · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.eq.over id m)
+      ((mem_alternatives_iff m _).mpr (by simp)) λ n ⟨h1, h2⟩ => ?_
+    simp only [mem_over, Comparison.rel] at *
+    omega
 
 end Kennedy2015
