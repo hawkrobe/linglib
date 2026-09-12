@@ -123,7 +123,161 @@ def foolish : Form :=
       ⟨"jackendoff-audring-2020", "7.8.1"⟩
     ] }
 
-def all : List Form := [sing, sang, string, strung, sprech, sprich, piggish, childish, sluggish, foolish]
+def arrowheadLake : Form :=
+  { id := "jackendoffaudring2020_arrowheadLake"
+    languageId := "stan1293"
+    parameterId := "toponym"
+    form := "Arrowhead Lake"
+    segments := ["Arrowhead", "Lake"]
+    comment := "(17a): name then feature"
+    source := [
+      ⟨"jackendoff-audring-2020", "(17a)"⟩
+    ] }
+
+def loonMountain : Form :=
+  { id := "jackendoffaudring2020_loonMountain"
+    languageId := "stan1293"
+    parameterId := "toponym"
+    form := "Loon Mountain"
+    segments := ["Loon", "Mountain"]
+    comment := "(17a): name then feature"
+    source := [
+      ⟨"jackendoff-audring-2020", "(17a)"⟩
+    ] }
+
+def wissahickonCreek : Form :=
+  { id := "jackendoffaudring2020_wissahickonCreek"
+    languageId := "stan1293"
+    parameterId := "toponym"
+    form := "Wissahickon Creek"
+    segments := ["Wissahickon", "Creek"]
+    comment := "(17a): name then feature"
+    source := [
+      ⟨"jackendoff-audring-2020", "(17a)"⟩
+    ] }
+
+def laurelHill : Form :=
+  { id := "jackendoffaudring2020_laurelHill"
+    languageId := "stan1293"
+    parameterId := "toponym"
+    form := "Laurel Hill"
+    segments := ["Laurel", "Hill"]
+    comment := "(17a): name then feature"
+    source := [
+      ⟨"jackendoff-audring-2020", "(17a)"⟩
+    ] }
+
+def sugarIsland : Form :=
+  { id := "jackendoffaudring2020_sugarIsland"
+    languageId := "stan1293"
+    parameterId := "toponym"
+    form := "Sugar Island"
+    segments := ["Sugar", "Island"]
+    comment := "(17a): name then feature"
+    source := [
+      ⟨"jackendoff-audring-2020", "(17a)"⟩
+    ] }
+
+def mountEverest : Form :=
+  { id := "jackendoffaudring2020_mountEverest"
+    languageId := "stan1293"
+    parameterId := "toponym"
+    form := "Mount Everest"
+    segments := ["Mount", "Everest"]
+    comment := "(17b): feature then name"
+    source := [
+      ⟨"jackendoff-audring-2020", "(17b)"⟩
+    ] }
+
+def lakeMichigan : Form :=
+  { id := "jackendoffaudring2020_lakeMichigan"
+    languageId := "stan1293"
+    parameterId := "toponym"
+    form := "Lake Michigan"
+    segments := ["Lake", "Michigan"]
+    comment := "(17b): feature then name"
+    source := [
+      ⟨"jackendoff-audring-2020", "(17b)"⟩
+    ] }
+
+def capeCod : Form :=
+  { id := "jackendoffaudring2020_capeCod"
+    languageId := "stan1293"
+    parameterId := "toponym"
+    form := "Cape Cod"
+    segments := ["Cape", "Cod"]
+    comment := "(17b): feature then name"
+    source := [
+      ⟨"jackendoff-audring-2020", "(17b)"⟩
+    ] }
+
+def bayOfFundy : Form :=
+  { id := "jackendoffaudring2020_bayOfFundy"
+    languageId := "stan1293"
+    parameterId := "toponym"
+    form := "the Bay of Fundy"
+    segments := ["the", "Bay", "of", "Fundy"]
+    comment := "(17d): the feature of name"
+    source := [
+      ⟨"jackendoff-audring-2020", "(17d)"⟩
+    ] }
+
+def gulfOfStLawrence : Form :=
+  { id := "jackendoffaudring2020_gulfOfStLawrence"
+    languageId := "stan1293"
+    parameterId := "toponym"
+    form := "the Gulf of St. Lawrence"
+    segments := ["the", "Gulf", "of", "St. Lawrence"]
+    comment := "(17d)"
+    source := [
+      ⟨"jackendoff-audring-2020", "(17d)"⟩
+    ] }
+
+def capeOfGoodHope : Form :=
+  { id := "jackendoffaudring2020_capeOfGoodHope"
+    languageId := "stan1293"
+    parameterId := "toponym"
+    form := "the Cape of Good Hope"
+    segments := ["the", "Cape", "of", "Good Hope"]
+    comment := "(17d)"
+    source := [
+      ⟨"jackendoff-audring-2020", "(17d)"⟩
+    ] }
+
+def isleOfWight : Form :=
+  { id := "jackendoffaudring2020_isleOfWight"
+    languageId := "stan1293"
+    parameterId := "toponym"
+    form := "the Isle of Wight"
+    segments := ["the", "Isle", "of", "Wight"]
+    comment := "(17d)"
+    source := [
+      ⟨"jackendoff-audring-2020", "(17d)"⟩
+    ] }
+
+def morrisMountain : Form :=
+  { id := "jackendoffaudring2020_morrisMountain"
+    languageId := "stan1293"
+    parameterId := "toponym"
+    form := "Morris Mountain"
+    segments := ["Morris", "Mountain"]
+    comment := "a coinage the pattern (17a) licenses"
+    source := [
+      ⟨"jackendoff-audring-2020", "2.7"⟩
+    ] }
+
+def mountMorris : Form :=
+  { id := "jackendoffaudring2020_mountMorris"
+    languageId := "stan1293"
+    parameterId := "toponym"
+    form := "Mount Morris"
+    segments := ["Mount", "Morris"]
+    comment := "a coinage the pattern (17b) licenses"
+    source := [
+      ⟨"jackendoff-audring-2020", "2.7"⟩
+    ] }
+
+def all : List Form := [sing, sang, string, strung, sprech, sprich, piggish, childish, sluggish, foolish, arrowheadLake, loonMountain, wissahickonCreek, laurelHill, sugarIsland, mountEverest, lakeMichigan, capeCod, bayOfFundy, gulfOfStLawrence, capeOfGoodHope, isleOfWight, morrisMountain, mountMorris]
 
 def parameters : List Parameter := [
   { id := "sing", name := "sing", description := "" },
@@ -135,7 +289,8 @@ def parameters : List Parameter := [
   { id := "like_a_pig", name := "like a pig", description := "" },
   { id := "like_a_child", name := "like a child", description := "" },
   { id := "like_a_slug", name := "like a slug", description := "" },
-  { id := "like_a_fool", name := "like a fool", description := "" }
+  { id := "like_a_fool", name := "like a fool", description := "" },
+  { id := "toponym", name := "name of a geographical feature", description := "" }
 ]
 
 def relations : List FormRelation := [
