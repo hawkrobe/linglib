@@ -182,12 +182,10 @@ end Signature
     structure [∃v[CAUSE(v,e) ∧ EFFECTOR(v,x) ∧ BECOME(e,s) ∧ THEME(s,x)]].
     This preserves the Monotonicity Hypothesis and explains the
     cross-linguistic tendency for anticausative morphology to coincide
-    with reflexive morphology (Haspelmath's typological work on the
-    causative-anticausative alternation; see [alexiadou-schaefer-2015]
-    for the modern cross-linguistic picture). -- UNVERIFIED: original
-    text cited "Haspelmath 1990: 9/13 languages" — Haspelmath 1990 is on
-    passives; the typology of C/I alternation is in Haspelmath 1993,
-    figure unverified.
+    with reflexive morphology: in the survey of [haspelmath-1990] that
+    [koontz-garboden-2009] tabulates, the anticausative marker also has
+    reflexive uses in nine of the thirteen languages that have one (see
+    [alexiadou-schaefer-2015] for the modern cross-linguistic picture).
 
     `Template.intransitiveVariant` below implements the deletion view at the
     template level. The reflexivization analysis is formalized in
