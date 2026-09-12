@@ -170,11 +170,11 @@ noncomputable def pypFactor (a : G.NT) (Y : TableAssignment G) : ℝ :=
 
 /-- The corpus probability given a table assignment: at each nonterminal the grammar expands,
 the Dirichlet PCFG factor times the Pitman–Yor factor. -/
-noncomputable def corpusProbGivenTables (D : Multiset (DerivationTree T G.NT))
+noncomputable def corpusProbGivenTables (D : Multiset (RoseTree (Symbol T G.NT)))
     (Y : TableAssignment G) : ℝ :=
   ∏ a ∈ G.rules.image (·.input), M.toDirichletPCFG.lhsFactor a D * M.pypFactor a Y
 
-theorem corpusProbGivenTables_nonneg (D : Multiset (DerivationTree T G.NT))
+theorem corpusProbGivenTables_nonneg (D : Multiset (RoseTree (Symbol T G.NT)))
     (Y : TableAssignment G) : 0 ≤ M.corpusProbGivenTables D Y :=
   Finset.prod_nonneg λ a ha => mul_nonneg (M.toDirichletPCFG.lhsFactor_pos ha D).le
     ((M.pyp a).partitionProb_nonneg _)
@@ -197,14 +197,14 @@ theorem corpusProbGivenTables_empty : M.corpusProbGivenTables 0 (emptyTables G) 
 
 /-- The conjugate update of the Dirichlet component by a corpus; the Pitman–Yor
 hyperparameters are unchanged. -/
-noncomputable def posterior (D : Multiset (DerivationTree T G.NT)) : AdaptorGrammar G :=
+noncomputable def posterior (D : Multiset (RoseTree (Symbol T G.NT))) : AdaptorGrammar G :=
   { M with toDirichletPCFG := M.toDirichletPCFG.posterior D }
 
 @[simp]
 theorem posterior_zero : M.posterior 0 = M := by
   ext1 <;> simp [posterior]
 
-theorem posterior_add (D₁ D₂ : Multiset (DerivationTree T G.NT)) :
+theorem posterior_add (D₁ D₂ : Multiset (RoseTree (Symbol T G.NT))) :
     M.posterior (D₁ + D₂) = (M.posterior D₁).posterior D₂ := by
   ext1 <;> simp [posterior, DirichletPCFG.posterior_add]
 
@@ -248,11 +248,11 @@ variable (M : FragmentGrammar G)
 /-- The corpus probability given a table assignment `Y` and halt counts `Z`: the
 adaptor-grammar factor times, at each nonterminal slot, the urn likelihood of the decisions
 taken there. -/
-noncomputable def corpusProbGivenStorage (D : Multiset (DerivationTree T G.NT))
+noncomputable def corpusProbGivenStorage (D : Multiset (RoseTree (Symbol T G.NT)))
     (Y : AdaptorGrammar.TableAssignment G) (Z : HaltCounts G) : ℝ :=
   M.corpusProbGivenTables D Y * ∏ r ∈ G.rules, ∏ i, (M.halt r i).seqProb (Z r i)
 
-theorem corpusProbGivenStorage_nonneg (D : Multiset (DerivationTree T G.NT))
+theorem corpusProbGivenStorage_nonneg (D : Multiset (RoseTree (Symbol T G.NT)))
     (Y : AdaptorGrammar.TableAssignment G) (Z : HaltCounts G) :
     0 ≤ M.corpusProbGivenStorage D Y Z :=
   mul_nonneg (M.corpusProbGivenTables_nonneg D Y) <| Finset.prod_nonneg λ r _ =>
@@ -266,7 +266,7 @@ theorem corpusProbGivenStorage_empty :
 
 /-- The conjugate update by a corpus `D` and its halt counts `Z`: the adaptor-grammar component
 absorbs the rule counts of `D`, and the urn at each slot absorbs the decisions taken there. -/
-noncomputable def posterior (D : Multiset (DerivationTree T G.NT)) (Z : HaltCounts G) :
+noncomputable def posterior (D : Multiset (RoseTree (Symbol T G.NT))) (Z : HaltCounts G) :
     FragmentGrammar G where
   toAdaptorGrammar := M.toAdaptorGrammar.posterior D
   halt r i := (M.halt r i).posterior (Z r i)
@@ -275,7 +275,7 @@ noncomputable def posterior (D : Multiset (DerivationTree T G.NT)) (Z : HaltCoun
 theorem posterior_zero : M.posterior 0 0 = M := by
   ext1 <;> simp [posterior]
 
-theorem posterior_add (D₁ D₂ : Multiset (DerivationTree T G.NT)) (Z₁ Z₂ : HaltCounts G) :
+theorem posterior_add (D₁ D₂ : Multiset (RoseTree (Symbol T G.NT))) (Z₁ Z₂ : HaltCounts G) :
     M.posterior (D₁ + D₂) (Z₁ + Z₂) = (M.posterior D₁ Z₁).posterior D₂ Z₂ := by
   ext1 <;> simp [posterior, AdaptorGrammar.posterior_add, PolyaUrn.posterior_add]
 
@@ -415,13 +415,13 @@ theorem suffixPrior_pseudo_respects_productivity
     than the pseudo-count gap of `1` ranks `rIon` above `rNess`, against
     `moreProductiveThan ness ion`. The CELEX token gap is an order of magnitude larger than the
     hypothesis requires. -/
-theorem suffixPrior_predictive_lt_of_count_gap (D : Multiset (DerivationTree Sym SuffixNT))
-    (h : DerivationTree.corpusRuleCount (N := SuffixNT) rNess D + 1 <
-         DerivationTree.corpusRuleCount (N := SuffixNT) rIon D) :
+theorem suffixPrior_predictive_lt_of_count_gap (D : Multiset (RoseTree (Symbol Sym SuffixNT)))
+    (h : RoseTree.corpusRuleCount (N := SuffixNT) rNess D + 1 <
+         RoseTree.corpusRuleCount (N := SuffixNT) rIon D) :
     suffixPrior.predictive rNess D < suffixPrior.predictive rIon D := by
   refine (suffixPrior.predictive_lt_iff_of_same_lhs (r := rNess) (r' := rIon) (by decide) rfl).2 ?_
-  have h' : (DerivationTree.corpusRuleCount (N := SuffixNT) rNess D : ℝ) + 1 <
-      DerivationTree.corpusRuleCount (N := SuffixNT) rIon D := by exact_mod_cast h
+  have h' : (RoseTree.corpusRuleCount (N := SuffixNT) rNess D : ℝ) + 1 <
+      RoseTree.corpusRuleCount (N := SuffixNT) rIon D := by exact_mod_cast h
   show pseudoVal rNess + _ < pseudoVal rIon + _
   rw [pseudoVal_rNess, pseudoVal_rIon]
   linarith
@@ -433,8 +433,8 @@ theorem suffixPrior_predictive_prior_lt :
     suffixPrior.predictive rIon 0 < suffixPrior.predictive rNess 0 := by
   refine (suffixPrior.predictive_lt_iff_of_same_lhs (r := rIon) (r' := rNess) (by decide) rfl).2 ?_
   show pseudoVal rIon + _ < pseudoVal rNess + _
-  rw [pseudoVal_rIon, pseudoVal_rNess, DerivationTree.corpusRuleCount_zero,
-    DerivationTree.corpusRuleCount_zero]
+  rw [pseudoVal_rIon, pseudoVal_rNess, RoseTree.corpusRuleCount_zero,
+    RoseTree.corpusRuleCount_zero]
   norm_num
 
 /-- The same prior comparison as a fact about the predictive PCFG, the point estimate the
@@ -449,9 +449,9 @@ theorem suffixPrior_predictivePCFG_prior_lt :
 /-- The Chapter 7 critique of the Dirichlet PCFG in one theorem: right without data, wrong once
     `-ion` tokens dominate. The fix the book proposes, the fragment grammar, gives a posterior
     that does not collapse productivity into raw frequency. -/
-theorem suffixPrior_prior_and_posterior_disagree (D : Multiset (DerivationTree Sym SuffixNT))
-    (h : DerivationTree.corpusRuleCount (N := SuffixNT) rNess D + 1 <
-         DerivationTree.corpusRuleCount (N := SuffixNT) rIon D) :
+theorem suffixPrior_prior_and_posterior_disagree (D : Multiset (RoseTree (Symbol Sym SuffixNT)))
+    (h : RoseTree.corpusRuleCount (N := SuffixNT) rNess D + 1 <
+         RoseTree.corpusRuleCount (N := SuffixNT) rIon D) :
     suffixPrior.predictive rIon 0 < suffixPrior.predictive rNess 0 ∧
       suffixPrior.predictive rNess D < suffixPrior.predictive rIon D :=
   ⟨suffixPrior_predictive_prior_lt, suffixPrior_predictive_lt_of_count_gap D h⟩

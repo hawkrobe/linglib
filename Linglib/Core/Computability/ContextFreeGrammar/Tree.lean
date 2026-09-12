@@ -1,1293 +1,465 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Mathlib.Computability.ContextFreeGrammar
+import Linglib.Core.Data.RoseTree.Get
+import Linglib.Core.Data.RoseTree.Countable
 import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
-import Linglib.Core.Order.Branching
-import Mathlib.Data.W.Basic
-import Mathlib.Logic.Encodable.Basic
-import Mathlib.Data.Countable.Basic
+import Mathlib.Algebra.Order.BigOperators.Group.List
+import Mathlib.Algebra.Order.Group.Nat
+import Mathlib.Data.Finset.Card
+import Mathlib.Data.Nat.Find
 
 /-!
-# Derivation Trees for Context-Free Grammars
+# Derivation trees of a context-free grammar
 
-`DerivationTree T N` is a derivation tree whose leaves hold terminal symbols of type `T`
-and whose internal nodes hold a nonterminal of type `N` together with a list of
-children. The file provides:
+A derivation tree of a context-free grammar is a rose tree over its symbols,
+`RoseTree (Symbol T N)`. It is valid for a grammar when every terminal node is a leaf and every
+nonterminal node, read with the symbols of its children, is a rule. The yield of a tree is the
+list of terminals at its leaves, left to right.
 
-* `ValidFor g`: validity — every internal node matches a production rule in `g`.
-* `yield` / `yieldList`: the terminal frontier, left-to-right.
-* `subtreeAt?` / `replaceAt`: position-based subtree access and replacement.
-* `validFor_derives`: soundness — a valid tree derives its yield from its root.
-* `exists_valid_tree`: tree existence, with height–yield bounds.
-* `size`: the size measure, with minimality and a pigeonhole on derivation paths.
-* `map`: relabelling of nonterminals, commuting with `yield`, `height` and `subtreeAt?`.
-* A `Countable` instance for countable `T` and `N`, by an injection into a W-type.
+## Main definitions
+
+* `RoseTree.yield`: the terminal frontier.
+* `RoseTree.ValidFor g`: validity for the grammar `g`.
+* `RoseTree.ruleCount`, `RoseTree.corpusRuleCount`: the number of applications of a rule in a
+  tree and in a corpus of trees.
+* `RoseTree.ruleAt?`: the rule applied at a Gorn address.
+* `ContextFreeGrammar.maxBranch`, `ContextFreeGrammar.pumpingConstant`: the branching bound and
+  the pumping constant of a grammar.
+
+## Main results
+
+* `RoseTree.ValidFor.derives`: a valid tree derives its yield from its root symbol.
+* `ContextFreeGrammar.exists_valid_tree`: every word of the language has a valid derivation tree
+  from the start symbol.
+* `RoseTree.ValidFor.length_yield_le`: a valid tree of height `h` has at most `maxBranch ^ h`
+  terminals.
+* `RoseTree.ValidFor.replaceAt`, `RoseTree.ValidFor.exists_repeat`: replacing a subtree by one
+  with the same root symbol preserves validity, and a long enough path in a valid tree passes two
+  nodes with the same nonterminal; together with `RoseTree.numNodes_replaceAt_lt` these are the
+  ingredients of the pumping lemma.
 -/
-/-- A derivation tree for a context-free grammar.
-    Leaves hold terminal symbols; internal nodes hold a nonterminal
-    and a list of children (matching a production rule's RHS). -/
-inductive DerivationTree (T N : Type*) where
-  | leaf (t : T) : DerivationTree T N
-  | node (nt : N) (children : List (DerivationTree T N)) : DerivationTree T N
 
-namespace DerivationTree
+/-- The terminal at a symbol, if it is one. -/
+def Symbol.terminal? {T N : Type*} : Symbol T N → Option T
+  | .terminal a => some a
+  | .nonterminal _ => none
 
-variable {T N : Type*}
+@[simp] theorem Symbol.terminal?_terminal {T N : Type*} (a : T) :
+    (Symbol.terminal a : Symbol T N).terminal? = some a := rfl
 
-/-- The root symbol of a subtree. -/
-def rootSymbol : DerivationTree T N → Symbol T N
-  | .leaf t => .terminal t
-  | .node nt _ => .nonterminal nt
+@[simp] theorem Symbol.terminal?_nonterminal {T N : Type*} (A : N) :
+    (Symbol.nonterminal A : Symbol T N).terminal? = none := rfl
 
-@[simp] theorem rootSymbol_leaf (t : T) :
-    (leaf t : DerivationTree T N).rootSymbol = .terminal t := rfl
+/-- Relabel the nonterminals of a symbol. -/
+def Symbol.mapNonterminal {T N N' : Type*} (f : N → N') : Symbol T N → Symbol T N'
+  | .terminal a => .terminal a
+  | .nonterminal A => .nonterminal (f A)
 
-@[simp] theorem rootSymbol_node (nt : N) (children : List (DerivationTree T N)) :
-    (node nt children).rootSymbol = .nonterminal nt := rfl
+@[simp] theorem Symbol.mapNonterminal_terminal {T N N' : Type*} (f : N → N') (a : T) :
+    Symbol.mapNonterminal f (Symbol.terminal a : Symbol T N) = .terminal a := rfl
 
-mutual
-/-- The terminal frontier (yield) of a derivation tree, read left to right. -/
-def yield : DerivationTree T N → List T
-  | .leaf t => [t]
-  | .node _ children => yieldList children
+@[simp] theorem Symbol.mapNonterminal_nonterminal {T N N' : Type*} (f : N → N') (A : N) :
+    Symbol.mapNonterminal f (Symbol.nonterminal A : Symbol T N) = .nonterminal (f A) := rfl
 
-/-- Concatenate yields of a list of subtrees. -/
-def yieldList : List (DerivationTree T N) → List T
-  | [] => []
-  | t :: ts => t.yield ++ yieldList ts
-end
+@[simp] theorem Symbol.terminal?_mapNonterminal {T N N' : Type*} (f : N → N') (s : Symbol T N) :
+    (s.mapNonterminal f).terminal? = s.terminal? := by cases s <;> rfl
 
-mutual
-/-- The height: 0 for leaves, 1 + max child height for nodes. -/
-def height : DerivationTree T N → Nat
-  | .leaf _ => 0
-  | .node _ children => 1 + heightMax children
-
-/-- Maximum height among a list of subtrees. -/
-def heightMax : List (DerivationTree T N) → Nat
-  | [] => 0
-  | t :: ts => max t.height (heightMax ts)
-end
-
-/-! ### Relabelling nonterminals -/
-
-section Map
-variable {N' : Type*}
-
-mutual
-/-- Relabel every nonterminal by `f`, keeping leaves and shape. -/
-def map (f : N → N') : DerivationTree T N → DerivationTree T N'
-  | .leaf t => .leaf t
-  | .node nt children => .node (f nt) (mapList f children)
-
-/-- `map` on a list of subtrees. -/
-def mapList (f : N → N') : List (DerivationTree T N) → List (DerivationTree T N')
-  | [] => []
-  | t :: ts => map f t :: mapList f ts
-end
-
-@[simp] theorem map_leaf (f : N → N') (t : T) :
-    map f (.leaf t : DerivationTree T N) = .leaf t := rfl
-
-@[simp] theorem map_node (f : N → N') (nt : N) (children : List (DerivationTree T N)) :
-    map f (.node nt children) = .node (f nt) (mapList f children) := rfl
-
-@[simp] theorem mapList_nil (f : N → N') : mapList f ([] : List (DerivationTree T N)) = [] := rfl
-
-@[simp] theorem mapList_cons (f : N → N') (t : DerivationTree T N)
-    (ts : List (DerivationTree T N)) :
-    mapList f (t :: ts) = map f t :: mapList f ts := rfl
-
-theorem mapList_eq_map (f : N → N') (ts : List (DerivationTree T N)) :
-    mapList f ts = ts.map (map f) := by
-  induction ts with
-  | nil => rfl
-  | cons t ts ih => simp [ih]
-
-mutual
-/-- Relabelling preserves the yield. -/
-theorem yield_map (f : N → N') : ∀ t : DerivationTree T N, (map f t).yield = t.yield
-  | .leaf _ => rfl
-  | .node _ children => by simp only [map, yield, yieldList_mapList f children]
-
-theorem yieldList_mapList (f : N → N') :
-    ∀ ts : List (DerivationTree T N), yieldList (mapList f ts) = yieldList ts
-  | [] => rfl
-  | t :: ts => by simp only [mapList, yieldList, yield_map f t, yieldList_mapList f ts]
-end
-
-mutual
-/-- Relabelling preserves the height. -/
-theorem height_map (f : N → N') : ∀ t : DerivationTree T N, (map f t).height = t.height
-  | .leaf _ => rfl
-  | .node _ children => by simp only [map, height, heightMax_mapList f children]
-
-theorem heightMax_mapList (f : N → N') :
-    ∀ ts : List (DerivationTree T N), heightMax (mapList f ts) = heightMax ts
-  | [] => rfl
-  | t :: ts => by simp only [mapList, heightMax, height_map f t, heightMax_mapList f ts]
-end
-
-end Map
-
-/-- A derivation tree is valid for a CFG if every internal node (A, children)
-    corresponds to a rule A → [rootSymbol c₁, ..., rootSymbol cₖ], and all
-    children are themselves valid. -/
-inductive ValidFor (g : ContextFreeGrammar T) : DerivationTree T g.NT → Prop where
-  | leaf (t : T) : ValidFor g (.leaf t)
-  | node (nt : g.NT) (children : List (DerivationTree T g.NT))
-    (hrule : ⟨nt, children.map rootSymbol⟩ ∈ g.rules)
-    (hchildren : ∀ c ∈ children, ValidFor g c) :
-    ValidFor g (.node nt children)
-
-section RuleCount
-
-variable [DecidableEq T] [DecidableEq N]
-
-mutual
-/-- Number of times rule `r` is applied at internal nodes of the
-    derivation tree `t`. A leaf contributes nothing; a node `(nt, cs)`
-    contributes 1 if its instantiated rule `⟨nt, cs.map rootSymbol⟩`
-    matches `r`, plus the count over its children. Substrate primitive
-    used by any weighted-CFG analysis (PCFG corpus probability,
-    Dirichlet posterior, etc.). -/
-def ruleCount (r : ContextFreeRule T N) :
-    DerivationTree T N → ℕ
-  | .leaf _ => 0
-  | .node nt cs =>
-      (if r = ⟨nt, cs.map rootSymbol⟩ then 1 else 0) + ruleCountList r cs
-
-/-- List version of `ruleCount` (mutual companion). -/
-def ruleCountList (r : ContextFreeRule T N) :
-    List (DerivationTree T N) → ℕ
-  | [] => 0
-  | t :: ts => ruleCount r t + ruleCountList r ts
-end
-
-/-- Total number of times rule `r` is used across a corpus `D` of
-    derivation trees. -/
-def corpusRuleCount (r : ContextFreeRule T N)
-    (D : Multiset (DerivationTree T N)) : ℕ :=
-  (D.map (ruleCount r)).sum
-
-/-- Empty corpus contributes no rule applications. -/
-@[simp]
-theorem corpusRuleCount_zero (r : ContextFreeRule T N) :
-    corpusRuleCount r (0 : Multiset (DerivationTree T N)) = 0 := by
-  simp [corpusRuleCount]
-
-@[simp]
-theorem corpusRuleCount_singleton (r : ContextFreeRule T N) (t : DerivationTree T N) :
-    corpusRuleCount r {t} = ruleCount r t := by
-  simp [corpusRuleCount]
-
-/-- Corpus rule counts add over disjoint corpora. -/
-theorem corpusRuleCount_add (r : ContextFreeRule T N)
-    (D₁ D₂ : Multiset (DerivationTree T N)) :
-    corpusRuleCount r (D₁ + D₂) = corpusRuleCount r D₁ + corpusRuleCount r D₂ := by
-  unfold corpusRuleCount
-  rw [Multiset.map_add, Multiset.sum_add]
-
-end RuleCount
-
-end DerivationTree
-
--- ============================================================================
--- CFL Pumping Lemma — Helper Lemmas
--- ============================================================================
-
-private theorem DerivationTree.height_le_heightMax {T N : Type*}
-    {t : DerivationTree T N} {ts : List (DerivationTree T N)}
-    (ht : t ∈ ts) : t.height ≤ DerivationTree.heightMax ts := by
-  induction ts with
-  | nil => simp at ht
-  | cons s ss ih =>
-    simp only [DerivationTree.heightMax]
-    rcases List.mem_cons.mp ht with rfl | h
-    · exact le_max_left _ _
-    · exact le_trans (ih h) (le_max_right _ _)
-
-private theorem le_foldl_max_init (l : List Nat) (init : Nat) :
-    init ≤ l.foldl max init := by
-  induction l generalizing init with
-  | nil => exact le_refl _
-  | cons a as ih =>
-    simp only [List.foldl_cons]
-    exact le_trans (le_max_left init a) (ih _)
-
-private theorem le_foldl_max_of_mem (l : List Nat) (x : Nat) (init : Nat) (hx : x ∈ l) :
-    x ≤ l.foldl max init := by
-  induction l generalizing init with
-  | nil => simp at hx
-  | cons a as ih =>
-    simp only [List.foldl_cons]
-    rcases List.mem_cons.mp hx with rfl | h
-    · exact le_trans (le_max_right init x) (le_foldl_max_init as _)
-    · exact ih _ h
-
--- ============================================================================
--- CFL Pumping Lemma — Grammar Properties
--- ============================================================================
-
-/-- Maximum rule RHS length in a grammar (at least 2).
-
-    We take the max over all rules' output lengths, floored at 2 to ensure
-    the branching factor is nontrivial (a tree of branching ≥ 2 and height h
-    has at most b^h leaves). -/
-noncomputable def ContextFreeGrammar.maxBranch {T : Type*}
-    (g : ContextFreeGrammar T) : Nat :=
-  max 2 (g.rules.val.toList.map (·.output.length) |>.foldl max 0)
-
-/-- The pumping constant for a CFG: b^(k+1) where b = maxBranch ≥ 2
-    and k = number of rules (upper bound on distinct nonterminals). -/
-noncomputable def ContextFreeGrammar.pumpingConstant {T : Type*}
-    (g : ContextFreeGrammar T) : Nat :=
-  g.maxBranch ^ (g.rules.card + 1)
-
-/-- maxBranch is at least 2. -/
-theorem ContextFreeGrammar.maxBranch_ge_two {T : Type*}
-    (g : ContextFreeGrammar T) : g.maxBranch ≥ 2 := le_max_left _ _
-
-/-- The pumping constant is positive (b ≥ 2 so b^(k+1) ≥ 2). -/
-theorem ContextFreeGrammar.pumpingConstant_pos {T : Type*}
-    (g : ContextFreeGrammar T) : g.pumpingConstant > 0 :=
-  Nat.pos_of_ne_zero (by
-    unfold pumpingConstant
-    exact ne_of_gt (Nat.lt_of_lt_of_le Nat.zero_lt_one
-      (Nat.one_le_pow _ _ (by have := g.maxBranch_ge_two; omega))))
-
-/-- Any rule's RHS length is at most `maxBranch`. -/
-private theorem ContextFreeGrammar.maxBranch_ge_output {T : Type*} (g : ContextFreeGrammar T)
-    (r : ContextFreeRule T g.NT) (hr : r ∈ g.rules) :
-    r.output.length ≤ g.maxBranch := by
-  unfold maxBranch
-  apply le_trans _ (le_max_right _ _)
-  apply le_foldl_max_of_mem
-  exact List.mem_map.mpr
-    ⟨r, Multiset.mem_toList.mpr (Finset.mem_val.mpr hr), rfl⟩
-
-/-- Sum of children's yields is at most `|children| * b ^ heightMax`. -/
-private theorem DerivationTree.yieldList_le {T N : Type*} (b : Nat) (_hb : b ≥ 2)
-    (ts : List (DerivationTree T N))
-    (hbound : ∀ c ∈ ts, c.yield.length ≤ b ^ c.height) :
-    (DerivationTree.yieldList ts).length ≤ ts.length * b ^ DerivationTree.heightMax ts := by
-  induction ts with
-  | nil => simp [DerivationTree.yieldList, DerivationTree.heightMax]
-  | cons t rest ih =>
-    simp only [DerivationTree.yieldList, List.length_append, List.length_cons, DerivationTree.heightMax]
-    have ht := hbound t (List.mem_cons_self ..)
-    have hrest := ih (fun c hc => hbound c (List.mem_cons_of_mem t hc))
-    have hle_t : b ^ t.height ≤ b ^ (max t.height (DerivationTree.heightMax rest)) :=
-      Nat.pow_le_pow_right (by omega) (le_max_left _ _)
-    have hle_rest : b ^ (DerivationTree.heightMax rest) ≤
-        b ^ (max t.height (DerivationTree.heightMax rest)) :=
-      Nat.pow_le_pow_right (by omega) (le_max_right _ _)
-    set p := b ^ (max t.height (DerivationTree.heightMax rest))
-    have h1 : t.yield.length ≤ p := le_trans ht hle_t
-    have h2 : (DerivationTree.yieldList rest).length ≤ rest.length * p :=
-      le_trans hrest (Nat.mul_le_mul_left _ hle_rest)
-    have h3 : (rest.length + 1) * p = p + rest.length * p := by
-      rw [Nat.add_mul, Nat.one_mul, Nat.add_comm]
-    omega
-
--- ============================================================================
--- Tree Existence — Helper Lemmas
--- ============================================================================
-
-namespace ContextFreeGrammar
-
-variable {T : Type*} {g : ContextFreeGrammar T}
-
-/-- A rewriting step at any position: applying a rule's RHS in place. -/
-private theorem Rewrites.at_position {r : ContextFreeRule T g.NT}
-    (p q : List (Symbol T g.NT)) :
-    r.Rewrites (p ++ [Symbol.nonterminal r.input] ++ q) (p ++ r.output ++ q) := by
-  induction p with
-  | nil =>
-    simp only [List.nil_append]
-    exact .head q
-  | cons x xs ih =>
-    have h1 : (x :: xs) ++ [Symbol.nonterminal r.input] ++ q =
-              x :: (xs ++ [Symbol.nonterminal r.input] ++ q) := by simp
-    have h2 : (x :: xs) ++ r.output ++ q = x :: (xs ++ r.output ++ q) := by simp
-    rw [h1, h2]
-    exact .cons x ih
-
-set_option maxHeartbeats 400000 in
-/-- A `Rewrites` step on a concatenated list happens in one of the two halves. -/
-private theorem Rewrites.append_split {r : ContextFreeRule T g.NT}
-    {u₁ u₂ v : List (Symbol T g.NT)} (h : r.Rewrites (u₁ ++ u₂) v) :
-    (∃ v₁, v = v₁ ++ u₂ ∧ r.Rewrites u₁ v₁) ∨
-    (∃ v₂, v = u₁ ++ v₂ ∧ r.Rewrites u₂ v₂) := by
-  obtain ⟨p, q, hpq, hv⟩ := h.exists_parts
-  rw [List.append_assoc] at hpq
-  rcases List.append_eq_append_iff.mp hpq with ⟨e, hp_eq, hu₂⟩ | ⟨e, hu₁, hrest⟩
-  · -- nonterminal in u₂
-    right
-    have hu₂' : u₂ = e ++ [Symbol.nonterminal r.input] ++ q := by
-      rw [hu₂]; simp [List.append_assoc]
-    refine ⟨e ++ r.output ++ q, ?_, ?_⟩
-    · subst hp_eq; rw [hv]; simp [List.append_assoc]
-    · rw [hu₂']; exact Rewrites.at_position e q
-  · rcases e with _ | ⟨e_head, e_tail⟩
-    · -- u₁ = p, nonterminal at start of u₂
-      simp at hu₁
-      simp only [List.nil_append] at hrest
-      right
-      refine ⟨r.output ++ q, ?_, ?_⟩
-      · subst hu₁; rw [hv]; simp [List.append_assoc]
-      · rw [← hrest]
-        simp only [List.singleton_append]
-        exact .head q
-    · -- nonterminal in u₁
-      simp only [List.nil_append, List.cons_append] at hrest
-      rw [List.cons_eq_cons] at hrest
-      obtain ⟨he_head, h_tail⟩ := hrest
-      left
-      refine ⟨p ++ r.output ++ e_tail, ?_, ?_⟩
-      · rw [hv, h_tail]; simp [List.append_assoc]
-      · rw [hu₁]
-        rw [show p ++ e_head :: e_tail = p ++ [e_head] ++ e_tail by simp]
-        rw [he_head.symm]
-        exact Rewrites.at_position p e_tail
-
-/-- A `Produces` step on a concatenated list happens in one of the two halves. -/
-private theorem Produces.append_split {u₁ u₂ v : List (Symbol T g.NT)}
-    (h : g.Produces (u₁ ++ u₂) v) :
-    (∃ v₁, v = v₁ ++ u₂ ∧ g.Produces u₁ v₁) ∨
-    (∃ v₂, v = u₁ ++ v₂ ∧ g.Produces u₂ v₂) := by
-  obtain ⟨r, hr, hrew⟩ := h
-  rcases Rewrites.append_split hrew with ⟨v₁, hv, hpr⟩ | ⟨v₂, hv, hpr⟩
-  · exact .inl ⟨v₁, hv, r, hr, hpr⟩
-  · exact .inr ⟨v₂, hv, r, hr, hpr⟩
-
-/-- A `Derives` chain on a concatenated list decomposes into chains for each half. -/
-private theorem Derives.append_split {u₁ u₂ v : List (Symbol T g.NT)}
-    (h : g.Derives (u₁ ++ u₂) v) :
-    ∃ v₁ v₂, v = v₁ ++ v₂ ∧ g.Derives u₁ v₁ ∧ g.Derives u₂ v₂ := by
-  induction h with
-  | refl => exact ⟨u₁, u₂, rfl, .refl _, .refl _⟩
-  | tail _ h_step ih =>
-    obtain ⟨m₁, m₂, hmid, hd₁, hd₂⟩ := ih
-    rw [hmid] at h_step
-    rcases Produces.append_split h_step with ⟨v₁, hv, hp⟩ | ⟨v₂, hv, hp⟩
-    · exact ⟨v₁, m₂, hv, hd₁.trans_produces hp, hd₂⟩
-    · exact ⟨m₁, v₂, hv, hd₁, hd₂.trans_produces hp⟩
-
-/-- A terminal symbol can never be rewritten (productions only replace nonterminals). -/
-private theorem Derives.of_terminal {t : T} {v : List (Symbol T g.NT)}
-    (h : g.Derives [Symbol.terminal t] v) : v = [Symbol.terminal t] := by
-  induction h with
-  | refl => rfl
-  | tail _ h_step ih =>
-    rw [ih] at h_step
-    obtain ⟨r, _, hrew⟩ := h_step
-    obtain ⟨p, q, hpq, _⟩ := hrew.exists_parts
-    have hmem : (Symbol.nonterminal r.input : Symbol T g.NT) ∈
-        ([Symbol.terminal t] : List _) := by
-      rw [hpq]; simp
-    simp at hmem
-
-/-- The yield of a list of leaves is the original list of terminals. -/
-private theorem yieldList_leaves (w : List T) :
-    DerivationTree.yieldList (w.map (DerivationTree.leaf : T → DerivationTree T g.NT)) = w := by
-  induction w with
-  | nil => rfl
-  | cons t ts ih =>
-    simp only [List.map_cons, DerivationTree.yieldList, DerivationTree.yield, List.singleton_append, ih]
-
-/-- `yieldList` distributes over list concatenation. -/
-private theorem yieldList_append {N : Type*} (xs ys : List (DerivationTree T N)) :
-    DerivationTree.yieldList (xs ++ ys) = DerivationTree.yieldList xs ++ DerivationTree.yieldList ys := by
-  induction xs with
-  | nil => simp [DerivationTree.yieldList]
-  | cons x xs ih =>
-    simp only [List.cons_append, DerivationTree.yieldList, ih, List.append_assoc]
-
-set_option maxHeartbeats 800000 in
-/-- **Forest existence.** For any sentential form `sf` deriving a terminal string `w`,
-    there exists a list of trees whose roots match `sf`, are all valid, and whose
-    concatenated yields equal `w`. -/
-private theorem forest_exists {sf : List (Symbol T g.NT)} {w : List T}
-    (h : g.Derives sf (w.map Symbol.terminal)) :
-    ∃ trees : List (DerivationTree T g.NT),
-      trees.map DerivationTree.rootSymbol = sf ∧
-      (∀ t ∈ trees, t.ValidFor g) ∧
-      DerivationTree.yieldList trees = w := by
-  induction h using Relation.ReflTransGen.head_induction_on with
-  | refl =>
-    refine ⟨w.map (DerivationTree.leaf : T → DerivationTree T g.NT), ?_, ?_, ?_⟩
-    · simp [List.map_map, Function.comp_def, DerivationTree.rootSymbol]
-    · intro t ht
-      simp only [List.mem_map] at ht
-      obtain ⟨_, _, rfl⟩ := ht
-      exact .leaf _
-    · exact yieldList_leaves w
-  | head h_step _ ih =>
-    obtain ⟨forest_c, hroot, hvalid, hyield⟩ := ih
-    obtain ⟨r, hr, hrew⟩ := h_step
-    obtain ⟨p, q, hsf, hc⟩ := hrew.exists_parts
-    let pLen := p.length
-    let outLen := r.output.length
-    let prefix' := forest_c.take pLen
-    let middle := (forest_c.drop pLen).take outLen
-    let suffix := forest_c.drop (pLen + outLen)
-    let new_node : DerivationTree T g.NT := .node r.input middle
-    let new_forest := prefix' ++ [new_node] ++ suffix
-    have hprefix_root : prefix'.map DerivationTree.rootSymbol = p := by
-      have h1 : (forest_c.take pLen).map DerivationTree.rootSymbol =
-          (forest_c.map DerivationTree.rootSymbol).take pLen := by rw [List.map_take]
-      rw [show prefix' = forest_c.take pLen from rfl, h1, hroot, hc]
-      simp [pLen]
-    have hmiddle_root : middle.map DerivationTree.rootSymbol = r.output := by
-      have h1 : ((forest_c.drop pLen).take outLen).map DerivationTree.rootSymbol =
-          ((forest_c.map DerivationTree.rootSymbol).drop pLen).take outLen := by
-        rw [List.map_take, List.map_drop]
-      rw [show middle = (forest_c.drop pLen).take outLen from rfl, h1, hroot, hc]
-      simp [pLen, outLen, List.append_assoc]
-    have hsuffix_root : suffix.map DerivationTree.rootSymbol = q := by
-      have h1 : (forest_c.drop (pLen + outLen)).map DerivationTree.rootSymbol =
-          (forest_c.map DerivationTree.rootSymbol).drop (pLen + outLen) := by
-        rw [List.map_drop]
-      rw [show suffix = forest_c.drop (pLen + outLen) from rfl, h1, hroot, hc]
-      simp [pLen, outLen, List.append_assoc]
-    refine ⟨new_forest, ?_, ?_, ?_⟩
-    · rw [hsf]
-      show (prefix' ++ [new_node] ++ suffix).map DerivationTree.rootSymbol =
-           p ++ [Symbol.nonterminal r.input] ++ q
-      simp only [List.map_append, List.map_cons, List.map_nil]
-      rw [hprefix_root, hsuffix_root]
-      show p ++ [new_node.rootSymbol] ++ q = p ++ [Symbol.nonterminal r.input] ++ q
-      rfl
-    · intro t ht
-      simp only [new_forest, List.mem_append, List.mem_singleton] at ht
-      rcases ht with (ht | ht) | ht
-      · exact hvalid t (List.mem_of_mem_take ht)
-      · subst ht
-        refine .node r.input middle ?_ ?_
-        · rw [hmiddle_root]; exact hr
-        · intro c hc
-          have : c ∈ forest_c := by
-            have := List.mem_of_mem_take hc
-            exact List.mem_of_mem_drop this
-          exact hvalid c this
-      · exact hvalid t (List.mem_of_mem_drop ht)
-    · show DerivationTree.yieldList new_forest = w
-      have h_decomp : forest_c = prefix' ++ middle ++ suffix := by
-        show forest_c = forest_c.take pLen ++ (forest_c.drop pLen).take outLen ++
-                        forest_c.drop (pLen + outLen)
-        conv_lhs => rw [← List.take_append_drop pLen forest_c,
-                        ← List.take_append_drop outLen (forest_c.drop pLen),
-                        List.drop_drop]
-        rw [List.append_assoc]
-      have hy_orig : DerivationTree.yieldList (prefix' ++ middle ++ suffix) = w := by
-        rw [← h_decomp]; exact hyield
-      rw [yieldList_append, yieldList_append] at hy_orig
-      show DerivationTree.yieldList (prefix' ++ [new_node] ++ suffix) = w
-      rw [yieldList_append, yieldList_append]
-      have h_node_yield : DerivationTree.yieldList [new_node] = DerivationTree.yieldList middle := by
-        show DerivationTree.yieldList [new_node] = DerivationTree.yieldList middle
-        simp [DerivationTree.yieldList, DerivationTree.yield, new_node]
-      rw [h_node_yield]
-      exact hy_orig
-
-end ContextFreeGrammar
-
-/-- **Tree existence.** Every word in a CFG's language has a valid derivation
-    tree rooted at the start symbol.
-
-    Proof: applies `forest_exists` to the start nonterminal `[g.initial]`,
-    which yields a singleton forest containing the desired tree. The
-    `forest_exists` lemma generalizes to all sentential forms by induction
-    on the derivation, with each `Produces` step "folding" the children of
-    the rewritten nonterminal back into a single node tree. -/
-theorem exists_valid_tree {T : Type*} (g : ContextFreeGrammar T)
-    (w : List T) (hw : w ∈ g.language) :
-    ∃ t : DerivationTree T g.NT,
-      t.ValidFor g ∧ t.yield = w ∧ t.rootSymbol = .nonterminal g.initial := by
-  have hd : g.Derives [Symbol.nonterminal g.initial] (w.map Symbol.terminal) := hw
-  obtain ⟨trees, hroot, hvalid, hyield⟩ := ContextFreeGrammar.forest_exists hd
-  have hlen : trees.length = 1 := by
-    have := congr_arg List.length hroot
-    simp at this; exact this
-  match trees, hlen with
-  | [t], _ =>
-    refine ⟨t, ?_, ?_, ?_⟩
-    · exact hvalid t (List.mem_singleton.mpr rfl)
-    · have hy : DerivationTree.yieldList [t] = w := hyield
-      simp only [DerivationTree.yieldList, List.append_nil] at hy
-      exact hy
-    · have hr : [t].map DerivationTree.rootSymbol = [Symbol.nonterminal g.initial] := hroot
-      simp at hr; exact hr
-
-set_option maxHeartbeats 400000 in
-/-- **Height–yield bound.** A valid derivation tree of height h has at most
-    b^h terminal leaves, where b is the max branching factor.
-
-    Proof: well-founded recursion on tree size. A leaf has height 0 and
-    1 = b⁰ leaves. A node with children c₁...cₖ (k ≤ b) has
-    |yield| = Σᵢ |yield(cᵢ)| ≤ k · b^(max heights) ≤ b · b^(h-1) = b^h. -/
-theorem yield_length_le_of_height {T : Type*} (g : ContextFreeGrammar T)
-    (t : DerivationTree T g.NT) (ht : t.ValidFor g) :
-    t.yield.length ≤ g.maxBranch ^ t.height := by
-  match t, ht with
-  | .leaf _, _ => simp [DerivationTree.yield, DerivationTree.height]
-  | .node nt children, .node _ _ hrule hvalid =>
-    simp only [DerivationTree.yield, DerivationTree.height]
-    have hchildren_bound : ∀ c ∈ children, c.yield.length ≤ g.maxBranch ^ c.height :=
-      fun c hc => yield_length_le_of_height g c (hvalid c hc)
-    have hlist := DerivationTree.yieldList_le g.maxBranch g.maxBranch_ge_two children hchildren_bound
-    have hlen : children.length ≤ g.maxBranch := by
-      have heq : children.length = (children.map DerivationTree.rootSymbol).length := by simp
-      rw [heq]
-      show (children.map DerivationTree.rootSymbol).length ≤ g.maxBranch
-      have : (children.map DerivationTree.rootSymbol).length =
-          (ContextFreeRule.mk nt (children.map DerivationTree.rootSymbol)).output.length := rfl
-      rw [this]
-      exact g.maxBranch_ge_output ⟨nt, children.map DerivationTree.rootSymbol⟩ hrule
-    set b := g.maxBranch
-    set hm := DerivationTree.heightMax children
-    have h1 : children.length * b ^ hm ≤ b * b ^ hm := Nat.mul_le_mul_right _ hlen
-    have h2 : b * b ^ hm = b ^ (1 + hm) := by
-      rw [show 1 + hm = hm + 1 from by omega, Nat.pow_succ']
-    omega
-termination_by sizeOf t
--- ============================================================================
--- Pumping Infrastructure: Position-based Subtree Access
--- ============================================================================
-
-namespace DerivationTree
-
-variable {T N : Type*}
-
-/-- A position in a tree: list of child indices to follow from the root. -/
-abbrev Pos := List Nat
-
-/-- Subtree at a given position. Returns `none` if the path is invalid. -/
-def subtreeAt? : DerivationTree T N → Pos → Option (DerivationTree T N)
-  | t, [] => some t
-  | .leaf _, _ :: _ => none
-  | .node _ children, i :: rest =>
-    children[i]?.bind (·.subtreeAt? rest)
-
-/-- Replace the subtree at a given position. If the path is invalid, returns the
-    original tree unchanged. -/
-def replaceAt : DerivationTree T N → Pos → DerivationTree T N → DerivationTree T N
-  | _, [], new => new
-  | .leaf t, _ :: _, _ => .leaf t
-  | .node nt children, i :: rest, new =>
-    if h : i < children.length then
-      .node nt (children.set i (children[i].replaceAt rest new))
-    else
-      .node nt children
-
-/-- Replacing a subtree at a non-root position preserves the root symbol. -/
-theorem rootSymbol_replaceAt_cons (t : DerivationTree T N) (i : Nat) (rest : Pos)
-    (new : DerivationTree T N) :
-    (t.replaceAt (i :: rest) new).rootSymbol = t.rootSymbol := by
-  match t with
-  | .leaf _ => rfl
-  | .node _ children =>
-    by_cases hi : i < children.length
-    · simp [replaceAt, hi, rootSymbol]
-    · simp [replaceAt, hi, rootSymbol]
-
-/-- Yield decomposition: replacing a subtree at position `p` produces yield
-    `pre ++ new.yield ++ post`, where `pre`/`post` are the surrounding context. -/
-theorem yield_replaceAt_decomp (t : DerivationTree T N) (p : Pos) (sub : DerivationTree T N)
-    (h : t.subtreeAt? p = some sub) :
-    ∃ pre post : List T,
-      t.yield = pre ++ sub.yield ++ post ∧
-      ∀ new : DerivationTree T N, (t.replaceAt p new).yield = pre ++ new.yield ++ post := by
-  induction p generalizing t with
-  | nil =>
-    simp [subtreeAt?] at h
-    subst h
-    refine ⟨[], [], ?_, ?_⟩
-    · simp
-    · intro new; simp [replaceAt]
-  | cons i rest ih =>
-    match t with
-    | .leaf _ => simp [subtreeAt?] at h
-    | .node nt children =>
-      simp only [subtreeAt?] at h
-      rcases hi : children[i]? with _ | child
-      · simp [hi] at h
-      · simp [hi] at h
-        obtain ⟨pre_inner, post_inner, hyield_inner, hreplace_inner⟩ := ih child h
-        have hi_lt : i < children.length := by
-          rw [List.getElem?_eq_some_iff] at hi; exact hi.1
-        have hget : children[i] = child := by
-          rw [List.getElem?_eq_some_iff] at hi; exact hi.2
-        have hsplit_orig : children = children.take i ++ child :: children.drop (i+1) := by
-          calc children
-              = children.take i ++ children.drop i := (List.take_append_drop _ _).symm
-            _ = children.take i ++ children[i] :: children.drop (i+1) := by
-                congr 1; exact List.drop_eq_getElem_cons hi_lt
-            _ = children.take i ++ child :: children.drop (i+1) := by rw [hget]
-        have hsplit_set : ∀ new : DerivationTree T N,
-            children.set i new = children.take i ++ new :: children.drop (i+1) := by
-          intro new
-          clear hsplit_orig hget hi h hyield_inner hreplace_inner ih
-          induction children generalizing i with
-          | nil => simp at hi_lt
-          | cons c cs ih_cs =>
-            cases i with
-            | zero => simp [List.set]
-            | succ k =>
-              simp only [List.length_cons] at hi_lt
-              have hk_lt : k < cs.length := by omega
-              simp [List.set, ih_cs k hk_lt]
-        refine ⟨yieldList (children.take i) ++ pre_inner,
-                post_inner ++ yieldList (children.drop (i+1)), ?_, ?_⟩
-        · show yieldList children = _
-          conv_lhs => rw [hsplit_orig]
-          rw [ContextFreeGrammar.yieldList_append]
-          show _ = (yieldList (children.take i) ++ pre_inner) ++ sub.yield ++
-              (post_inner ++ yieldList (children.drop (i+1)))
-          have hcons_eq : yieldList (child :: children.drop (i+1)) =
-              child.yield ++ yieldList (children.drop (i+1)) := by
-            simp [yieldList]
-          rw [hcons_eq, hyield_inner]
-          simp [List.append_assoc]
-        · intro new
-          have hreplace_unfolds :
-              replaceAt (.node nt children) (i :: rest) new =
-              .node nt (children.set i (child.replaceAt rest new)) := by
-            simp only [replaceAt, hi_lt, ↓reduceDIte, hget]
-          rw [hreplace_unfolds]
-          show yieldList (children.set i (child.replaceAt rest new)) = _
-          rw [hsplit_set, ContextFreeGrammar.yieldList_append]
-          show _ = (yieldList (children.take i) ++ pre_inner) ++ new.yield ++
-              (post_inner ++ yieldList (children.drop (i+1)))
-          have hcons_eq2 : yieldList (child.replaceAt rest new :: children.drop (i+1)) =
-              (child.replaceAt rest new).yield ++ yieldList (children.drop (i+1)) := by
-            simp [yieldList]
-          rw [hcons_eq2, hreplace_inner new]
-          simp [List.append_assoc]
-
-/-- Replacing a subtree of the same root symbol preserves validity. -/
-theorem validFor_replaceAt {g : ContextFreeGrammar T}
-    (t : DerivationTree T g.NT) (p : Pos) (sub new : DerivationTree T g.NT)
-    (h : t.subtreeAt? p = some sub)
-    (hroot : new.rootSymbol = sub.rootSymbol)
-    (ht_valid : t.ValidFor g) (hnew_valid : new.ValidFor g) :
-    (t.replaceAt p new).ValidFor g := by
-  induction p generalizing t with
-  | nil =>
-    simp [subtreeAt?] at h
-    subst h
-    simp [replaceAt]
-    exact hnew_valid
-  | cons i rest ih =>
-    match t with
-    | .leaf _ => simp [subtreeAt?] at h
-    | .node nt children =>
-      simp only [subtreeAt?] at h
-      rcases hi : children[i]? with _ | child
-      · simp [hi] at h
-      · simp [hi] at h
-        have hi_lt : i < children.length := by
-          rw [List.getElem?_eq_some_iff] at hi; exact hi.1
-        have hget : children[i] = child := by
-          rw [List.getElem?_eq_some_iff] at hi; exact hi.2
-        have hreplace_unfolds :
-            replaceAt (.node nt children) (i :: rest) new =
-            .node nt (children.set i (child.replaceAt rest new)) := by
-          simp only [replaceAt, hi_lt, ↓reduceDIte, hget]
-        rw [hreplace_unfolds]
-        match ht_valid with
-        | .node _ _ hrule hchildren =>
-          have hchild_valid : child.ValidFor g := hchildren child (by
-            rw [show child = children[i] from hget.symm]
-            exact List.getElem_mem _)
-          have hchild_replace_valid : (child.replaceAt rest new).ValidFor g :=
-            ih child h hchild_valid
-          have hchild_replace_root :
-              (child.replaceAt rest new).rootSymbol = child.rootSymbol := by
-            cases rest with
-            | nil =>
-              simp [replaceAt]
-              simp [subtreeAt?] at h
-              subst h
-              exact hroot
-            | cons _ _ => exact rootSymbol_replaceAt_cons _ _ _ _
-          refine .node nt _ ?_ ?_
-          · have hmap_eq : (children.set i (child.replaceAt rest new)).map rootSymbol =
-                children.map rootSymbol := by
-              rw [List.map_set, hchild_replace_root, ← hget]
-              have h_map_lt : i < (children.map rootSymbol).length := by
-                rw [List.length_map]; exact hi_lt
-              rw [show children[i].rootSymbol = (children.map rootSymbol)[i]'h_map_lt from
-                (List.getElem_map _).symm]
-              exact List.set_getElem_self _
-            rw [hmap_eq]; exact hrule
-          · intro c hc_mem
-            rcases List.mem_or_eq_of_mem_set hc_mem with hc_orig | hc_eq
-            · exact hchildren c hc_orig
-            · subst hc_eq; exact hchild_replace_valid
-
-/-- Among a nonempty list of trees, there is one with maximum height. -/
-private theorem exists_max_height (c : DerivationTree T N) (cs : List (DerivationTree T N)) :
-    ∃ c_max ∈ (c :: cs : List (DerivationTree T N)),
-      ∀ c' ∈ (c :: cs : List (DerivationTree T N)), c'.height ≤ c_max.height := by
-  induction cs generalizing c with
-  | nil =>
-    refine ⟨c, List.mem_singleton.mpr rfl, ?_⟩
-    intro c' hc'
-    rw [List.mem_singleton.mp hc']
-  | cons d ds ih =>
-    obtain ⟨m, hm_mem, hm_max⟩ := ih c
-    by_cases hgt : d.height > m.height
-    · refine ⟨d, by simp, ?_⟩
-      intro c' hc'
-      simp only [List.mem_cons] at hc'
-      rcases hc' with hcc | hcd | hcds
-      · subst hcc
-        have := hm_max c' (List.mem_cons_self ..)
-        omega
-      · subst hcd; exact le_refl _
-      · have := hm_max c' (by simp [hcds]); omega
-    · refine ⟨m, ?_, ?_⟩
-      · simp only [List.mem_cons] at hm_mem ⊢
-        rcases hm_mem with hmc | hmds
-        · left; exact hmc
-        · right; right; exact hmds
-      · intro c' hc'
-        simp only [List.mem_cons] at hc'
-        rcases hc' with hcc | hcd | hcds
-        · subst hcc; exact hm_max c' (List.mem_cons_self ..)
-        · subst hcd; push Not at hgt; exact hgt
-        · exact hm_max c' (by simp [hcds])
-
--- ============================================================================
--- Spine extraction & pigeonhole
--- ============================================================================
-
-/-- For a max-height list, find the max-height element. -/
-private theorem exists_max_height_child (c : DerivationTree T N) (cs : List (DerivationTree T N)) :
-    ∃ c_max ∈ (c :: cs : List (DerivationTree T N)),
-      c_max.height = heightMax (c :: cs) := by
-  induction cs generalizing c with
-  | nil => exact ⟨c, by simp, by simp [heightMax]⟩
-  | cons d ds ih =>
-    obtain ⟨m, hm_mem, hm_eq⟩ := ih c
-    have hc_le_m : c.height ≤ m.height := by
-      have : heightMax (c :: ds) = max c.height (heightMax ds) := by simp [heightMax]
-      rw [this] at hm_eq; omega
-    have hds_le_m : heightMax ds ≤ m.height := by
-      have : heightMax (c :: ds) = max c.height (heightMax ds) := by simp [heightMax]
-      rw [this] at hm_eq; omega
-    by_cases hgt : d.height > m.height
-    · refine ⟨d, by simp, ?_⟩
-      have h1 : heightMax (c :: d :: ds) = max c.height (max d.height (heightMax ds)) := by
-        simp [heightMax]
-      rw [h1, max_eq_left (le_of_lt (by omega : heightMax ds < d.height)),
-          max_eq_right (by omega : c.height ≤ d.height)]
-    · push Not at hgt
-      refine ⟨m, ?_, ?_⟩
-      · simp at hm_mem ⊢
-        rcases hm_mem with hmc | hmds
-        · left; exact hmc
-        · right; right; exact hmds
-      · have h1 : heightMax (c :: d :: ds) = max c.height (max d.height (heightMax ds)) := by
-          simp [heightMax]
-        rw [h1]
-        apply le_antisymm
-        · have hm_eq' : m.height = max c.height (heightMax ds) := by
-            have : heightMax (c :: ds) = max c.height (heightMax ds) := by simp [heightMax]
-            rw [this] at hm_eq; exact hm_eq
-          rw [hm_eq']
-          exact max_le_max (le_refl _) (le_max_right _ _)
-        · exact max_le hc_le_m (max_le hgt hds_le_m)
-
-/-- For a tree of height ≥ k+1, there exists a position list of length k
-    such that the subtree at that position has height ≥ 1 (i.e., is a `.node`). -/
-theorem exists_pos_of_height (t : DerivationTree T N) (k : Nat) (h : t.height ≥ k + 1) :
-    ∃ p : Pos, p.length = k ∧ ∃ sub, t.subtreeAt? p = some sub ∧ sub.height ≥ 1 := by
-  induction k generalizing t with
-  | zero => exact ⟨[], rfl, t, rfl, h⟩
-  | succ n ih =>
-    match t with
-    | .leaf _ => simp [height] at h
-    | .node nt children =>
-      have hmax : heightMax children ≥ n + 1 := by simp [height] at h; omega
-      match hcs : children with
-      | [] => simp [heightMax] at hmax
-      | c :: cs =>
-        obtain ⟨c_max, hmem, heq⟩ := exists_max_height_child c cs
-        have hc_height : c_max.height ≥ n + 1 := by rw [heq]; exact hmax
-        rcases List.mem_iff_get.mp hmem with ⟨⟨k_idx, hk_lt⟩, hk_get⟩
-        obtain ⟨p_inner, hp_len, sub, hsub, hsub_h⟩ := ih c_max hc_height
-        refine ⟨k_idx :: p_inner, ?_, sub, ?_, hsub_h⟩
-        · simp [hp_len]
-        · simp only [subtreeAt?]
-          rw [show (c :: cs)[k_idx]? = some c_max from
-            List.getElem?_eq_some_iff.mpr ⟨hk_lt, hk_get⟩]
-          simp [hsub]
-
-/-- Stronger: extract a max-descent path of length k, with subtree at depth i
-    having height = t.height - i. -/
-theorem exists_pos_max_descent (t : DerivationTree T N) (k : Nat) (h : t.height ≥ k + 1) :
-    ∃ p : Pos, p.length = k ∧
-      ∀ i, i ≤ k → ∃ sub, t.subtreeAt? (p.take i) = some sub ∧ sub.height = t.height - i := by
-  induction k generalizing t with
-  | zero =>
-    refine ⟨[], rfl, ?_⟩
-    intro i hi
-    have : i = 0 := by omega
-    subst this
-    refine ⟨t, rfl, ?_⟩
-    simp
-  | succ n ih =>
-    match t with
-    | .leaf _ => simp [height] at h
-    | .node nt children =>
-      have hmax : heightMax children ≥ n + 1 := by simp [height] at h; omega
-      match hcs : children with
-      | [] => simp [heightMax] at hmax
-      | c :: cs =>
-        obtain ⟨c_max, hmem, heq⟩ := exists_max_height_child c cs
-        have hc_height_ge : c_max.height ≥ n + 1 := by rw [heq]; exact hmax
-        rcases List.mem_iff_get.mp hmem with ⟨⟨k_idx, hk_lt⟩, hk_get⟩
-        obtain ⟨p_inner, hp_len, hsub_at⟩ := ih c_max hc_height_ge
-        refine ⟨k_idx :: p_inner, by simp [hp_len], ?_⟩
-        intro i hi
-        subst hcs
-        cases i with
-        | zero =>
-          simp only [List.take_zero, subtreeAt?]
-          refine ⟨.node nt (c :: cs), rfl, ?_⟩
-          simp
-        | succ k' =>
-          simp only [List.take_succ_cons]
-          have hk'_le_n : k' ≤ n := by omega
-          obtain ⟨sub, hsub_at_inner, hsub_h⟩ := hsub_at k' hk'_le_n
-          refine ⟨sub, ?_, ?_⟩
-          · simp only [subtreeAt?]
-            rw [show (c :: cs)[k_idx]? = some c_max from
-              List.getElem?_eq_some_iff.mpr ⟨hk_lt, hk_get⟩]
-            simpa using hsub_at_inner
-          · rw [hsub_h, heq]
-            simp [height]
-            omega
-
-/-- subtreeAt? splits along path concatenation. -/
-theorem subtreeAt?_append (t : DerivationTree T N) (p1 p2 : Pos) :
-    t.subtreeAt? (p1 ++ p2) = (t.subtreeAt? p1).bind (·.subtreeAt? p2) := by
-  induction p1 generalizing t with
-  | nil => simp [subtreeAt?]
-  | cons i rest ih =>
-    match t with
-    | .leaf _ => simp [subtreeAt?]
-    | .node _ children =>
-      simp only [List.cons_append, subtreeAt?]
-      rcases hi : children[i]? with _ | child
-      · simp
-      · simp [ih]
-
-/-- Relabelling commutes with subtree access. -/
-theorem subtreeAt?_map {N' : Type*} (f : N → N') (t : DerivationTree T N) (p : Pos) :
-    (map f t).subtreeAt? p = (t.subtreeAt? p).map (map f) := by
-  induction p generalizing t with
-  | nil => simp [subtreeAt?]
-  | cons i rest ih =>
-    match t with
-    | .leaf _ => simp [subtreeAt?]
-    | .node nt children =>
-      simp only [map_node, subtreeAt?, mapList_eq_map, List.getElem?_map]
-      rcases children[i]? with _ | child
-      · simp
-      · simp [ih]
-
-/-- For a valid tree and a path that descends, each prefix subtree is a `.node`. -/
-theorem spine_node_at_prefix (t : DerivationTree T N) (p : Pos) (sub : DerivationTree T N)
-    (hsub : t.subtreeAt? p = some sub) (hsub_h : sub.height ≥ 1)
-    (k : Nat) (hk : k < p.length + 1) :
-    ∃ nt children, t.subtreeAt? (p.take k) = some (.node nt children) := by
-  induction p generalizing t k with
-  | nil =>
-    simp at hk; subst hk
-    simp [subtreeAt?] at hsub
-    subst hsub
-    match t, hsub_h with
-    | .node nt children, _ => exact ⟨nt, children, rfl⟩
-  | cons i rest ih =>
-    cases k with
-    | zero =>
-      simp [subtreeAt?]
-      match t with
-      | .leaf _ => simp [subtreeAt?] at hsub
-      | .node nt children => exact ⟨nt, children, rfl⟩
-    | succ k' =>
-      simp only [List.take_succ_cons]
-      simp only [List.length_cons] at hk
-      have hk' : k' < rest.length + 1 := by omega
-      match t with
-      | .leaf _ => simp [subtreeAt?] at hsub
-      | .node nt children =>
-        simp only [subtreeAt?] at hsub ⊢
-        rcases hi : children[i]? with _ | child
-        · simp [hi] at hsub
-        · simp [hi] at hsub
-          exact ih child hsub k' hk'
-
-/-- Validity propagates through subtreeAt?. -/
-theorem subtreeAt?_validFor {g : ContextFreeGrammar T} (t : DerivationTree T g.NT)
-    (ht : t.ValidFor g) (p : Pos) (sub : DerivationTree T g.NT)
-    (hsub : t.subtreeAt? p = some sub) : sub.ValidFor g := by
-  induction p generalizing t with
-  | nil => simp [subtreeAt?] at hsub; subst hsub; exact ht
-  | cons i rest ih =>
-    match t with
-    | .leaf _ => simp [subtreeAt?] at hsub
-    | .node nt children =>
-      simp only [subtreeAt?] at hsub
-      rcases hi : children[i]? with _ | child
-      · simp [hi] at hsub
-      · simp [hi] at hsub
-        match ht with
-        | .node _ _ _ hchildren =>
-          have hi_lt : i < children.length := by
-            rw [List.getElem?_eq_some_iff] at hi; exact hi.1
-          have hchild_in : child ∈ children := by
-            rw [show child = children[i] from by
-              rw [List.getElem?_eq_some_iff] at hi; exact hi.2.symm]
-            exact List.getElem_mem _
-          exact ih child (hchildren child hchild_in) hsub
-
-/-- Extract the rule used at a position (option-valued). -/
-def ruleAt? {g : ContextFreeGrammar T} (t : DerivationTree T g.NT) (p : Pos) :
-    Option (ContextFreeRule T g.NT) :=
-  match t.subtreeAt? p with
-  | some (.node nt children) => some ⟨nt, children.map rootSymbol⟩
-  | _ => none
-
-/-- For a valid tree at a `.node` subtree, ruleAt? returns the matching rule in g.rules. -/
-theorem ruleAt?_mem_rules {g : ContextFreeGrammar T} (t : DerivationTree T g.NT)
-    (ht : t.ValidFor g) (p : Pos) (nt : g.NT) (children : List (DerivationTree T g.NT))
-    (hsub : t.subtreeAt? p = some (.node nt children)) :
-    ruleAt? t p = some ⟨nt, children.map rootSymbol⟩ ∧
-    ⟨nt, children.map rootSymbol⟩ ∈ g.rules := by
-  refine ⟨?_, ?_⟩
-  · simp [ruleAt?, hsub]
-  · have hsub_valid : (DerivationTree.node nt children).ValidFor g :=
-      subtreeAt?_validFor t ht p (.node nt children) hsub
-    match hsub_valid with
-    | .node _ _ hrule _ => exact hrule
-
--- ============================================================================
--- Tree size measure (for minimality argument)
--- ============================================================================
-
-mutual
-def size : DerivationTree T N → Nat
-  | .leaf _ => 1
-  | .node _ children => 1 + sizeList children
-
-def sizeList : List (DerivationTree T N) → Nat
-  | [] => 0
-  | t :: ts => t.size + sizeList ts
-end
-
-theorem size_pos (t : DerivationTree T N) : t.size ≥ 1 := by
-  match t with
-  | .leaf _ => simp [size]
-  | .node _ _ => simp [size]
-
-theorem sizeList_le_of_mem {t : DerivationTree T N} {ts : List (DerivationTree T N)} (h : t ∈ ts) :
-    t.size ≤ sizeList ts := by
-  induction ts with
-  | nil => simp at h
-  | cons s ss ih =>
-    simp only [sizeList]
-    rcases List.mem_cons.mp h with rfl | h
-    · omega
-    · have := ih h; omega
-
-theorem size_subtreeAt?_le (t : DerivationTree T N) (p : Pos) (sub : DerivationTree T N)
-    (h : t.subtreeAt? p = some sub) : sub.size ≤ t.size := by
-  induction p generalizing t with
-  | nil =>
-    have hsub : sub = t := (by simpa [subtreeAt?] using h : t = sub).symm
-    rw [hsub]
-  | cons i rest ih =>
-    match t with
-    | .leaf _ => simp [subtreeAt?] at h
-    | .node _ children =>
-      simp only [subtreeAt?] at h
-      rcases hi : children[i]? with _ | child
-      · simp [hi] at h
-      · simp [hi] at h
-        have hi_lt := (List.getElem?_eq_some_iff.mp hi).1
-        have hget := (List.getElem?_eq_some_iff.mp hi).2
-        have := ih child h
-        have := sizeList_le_of_mem (hget ▸ List.getElem_mem hi_lt)
-        simp [size]; omega
-
-theorem size_subtreeAt?_lt_of_cons (t : DerivationTree T N) (i : Nat) (rest : Pos)
-    (sub : DerivationTree T N) (h : t.subtreeAt? (i :: rest) = some sub) :
-    sub.size < t.size := by
-  match t with
-  | .leaf _ => simp [subtreeAt?] at h
-  | .node _ children =>
-    simp only [subtreeAt?] at h
-    rcases hi : children[i]? with _ | child
-    · simp [hi] at h
-    · simp [hi] at h
-      have hi_lt := (List.getElem?_eq_some_iff.mp hi).1
-      have hget := (List.getElem?_eq_some_iff.mp hi).2
-      have := size_subtreeAt?_le child rest sub h
-      have := sizeList_le_of_mem (hget ▸ List.getElem_mem hi_lt)
-      simp [size]; omega
-
-theorem sizeList_set (l : List (DerivationTree T N)) (i : Nat) (x : DerivationTree T N) (hi : i < l.length) :
-    sizeList (l.set i x) + l[i].size = sizeList l + x.size := by
-  induction l generalizing i with
-  | nil => simp at hi
-  | cons h t ih =>
-    cases i with
-    | zero => simp [List.set, sizeList]; omega
-    | succ k =>
-      simp only [List.length_cons] at hi
-      have hk_lt : k < t.length := by omega
-      simp only [List.set, sizeList, List.getElem_cons_succ]
-      have := ih k hk_lt
-      omega
-
-/-- Replacing a subtree with a strictly smaller one gives a strictly smaller tree. -/
-theorem size_replaceAt_lt (t : DerivationTree T N) (p : Pos) (sub new : DerivationTree T N)
-    (h : t.subtreeAt? p = some sub) (hlt : new.size < sub.size) :
-    (t.replaceAt p new).size < t.size := by
-  induction p generalizing t with
-  | nil =>
-    simp [subtreeAt?] at h; subst h; simp [replaceAt]; exact hlt
-  | cons i rest ih =>
-    match t with
-    | .leaf _ => simp [subtreeAt?] at h
-    | .node nt children =>
-      simp only [subtreeAt?] at h
-      rcases hi : children[i]? with _ | child
-      · simp [hi] at h
-      · simp [hi] at h
-        have hi_lt : i < children.length := by
-          rw [List.getElem?_eq_some_iff] at hi; exact hi.1
-        have hget : children[i] = child := by
-          rw [List.getElem?_eq_some_iff] at hi; exact hi.2
-        have hreplace_unfolds :
-            replaceAt (.node nt children) (i :: rest) new =
-            .node nt (children.set i (child.replaceAt rest new)) := by
-          simp only [replaceAt, hi_lt, ↓reduceDIte, hget]
-        rw [hreplace_unfolds]
-        simp only [size]
-        have hchild_lt : (child.replaceAt rest new).size < child.size := ih child h
-        have hset := sizeList_set children i (child.replaceAt rest new) hi_lt
-        rw [hget] at hset
-        omega
-
-/-- Existence of minimum-size valid tree with given yield and root. -/
-theorem exists_min_size_tree {g : ContextFreeGrammar T} (t : DerivationTree T g.NT) (ht : t.ValidFor g) :
-    ∃ t_min : DerivationTree T g.NT,
-      t_min.ValidFor g ∧
-      t_min.yield = t.yield ∧
-      t_min.rootSymbol = t.rootSymbol ∧
-      ∀ t' : DerivationTree T g.NT,
-        t'.ValidFor g → t'.yield = t.yield →
-        t'.rootSymbol = t.rootSymbol →
-        t_min.size ≤ t'.size := by
-  classical
-  let P : Nat → Prop := fun n => ∃ t' : DerivationTree T g.NT,
-    t'.ValidFor g ∧ t'.yield = t.yield ∧ t'.rootSymbol = t.rootSymbol ∧ t'.size = n
-  have hP_ne : ∃ n, P n := ⟨t.size, t, ht, rfl, rfl, rfl⟩
-  obtain ⟨t_min, ht_min_v, ht_min_y, ht_min_r, ht_min_s⟩ := Nat.find_spec hP_ne
-  refine ⟨t_min, ht_min_v, ht_min_y, ht_min_r, ?_⟩
-  intro t' ht'_v ht'_y ht'_r
-  have hP_t' : P t'.size := ⟨t', ht'_v, ht'_y, ht'_r, rfl⟩
-  have hle : Nat.find hP_ne ≤ t'.size := Nat.find_le hP_t'
-  omega
-
-/-- Pigeonhole: along a long-enough valid path, two prefixes have same root nonterminal. -/
-theorem exists_repeat_root {g : ContextFreeGrammar T}
-    (t : DerivationTree T g.NT) (ht : t.ValidFor g)
-    (p : Pos) (sub : DerivationTree T g.NT)
-    (hsub : t.subtreeAt? p = some sub) (hsub_h : sub.height ≥ 1)
-    (hlen : p.length ≥ g.rules.card) :
-    ∃ i j : Nat, i < j ∧ j ≤ p.length ∧
-      ∃ ntᵢ children_i ntⱼ children_j,
-        t.subtreeAt? (p.take i) = some (.node ntᵢ children_i) ∧
-        t.subtreeAt? (p.take j) = some (.node ntⱼ children_j) ∧
-        ntᵢ = ntⱼ := by
-  classical
-  let f : Nat → ContextFreeRule T g.NT := fun k =>
-    (ruleAt? t (p.take k)).getD ⟨g.initial, []⟩
-  have hf_in : ∀ k ∈ Finset.range (p.length + 1), f k ∈ g.rules := by
-    intro k hk
-    simp at hk
-    obtain ⟨nt, children, hsub_k⟩ := spine_node_at_prefix t p sub hsub hsub_h k hk
-    obtain ⟨hrule_eq, hrule_in⟩ := ruleAt?_mem_rules t ht (p.take k) nt children hsub_k
-    show f k ∈ g.rules
-    simp only [f, hrule_eq, Option.getD_some]
-    exact hrule_in
-  have hcard : g.rules.card < (Finset.range (p.length + 1)).card := by
-    simp [Finset.card_range]; omega
-  obtain ⟨a, ha, b, hb, hne, hfeq⟩ :=
-    Finset.exists_ne_map_eq_of_card_lt_of_maps_to hcard hf_in
-  simp at ha hb
-  rcases Nat.lt_or_ge a b with hab | hab
-  · obtain ⟨nt_a, children_a, hsub_a⟩ := spine_node_at_prefix t p sub hsub hsub_h a ha
-    obtain ⟨nt_b, children_b, hsub_b⟩ := spine_node_at_prefix t p sub hsub hsub_h b hb
-    obtain ⟨hrule_a, _⟩ := ruleAt?_mem_rules t ht (p.take a) nt_a children_a hsub_a
-    obtain ⟨hrule_b, _⟩ := ruleAt?_mem_rules t ht (p.take b) nt_b children_b hsub_b
-    have h_fa : f a = ⟨nt_a, children_a.map rootSymbol⟩ := by
-      simp only [f, hrule_a, Option.getD_some]
-    have h_fb : f b = ⟨nt_b, children_b.map rootSymbol⟩ := by
-      simp only [f, hrule_b, Option.getD_some]
-    have : nt_a = nt_b := by
-      have : (⟨nt_a, children_a.map rootSymbol⟩ : ContextFreeRule T g.NT) =
-          ⟨nt_b, children_b.map rootSymbol⟩ := by rw [← h_fa, ← h_fb, hfeq]
-      exact ContextFreeRule.mk.injEq _ _ _ _ |>.mp this |>.1
-    exact ⟨a, b, hab, by omega, nt_a, children_a, nt_b, children_b, hsub_a, hsub_b, this⟩
-  · have hba : b < a := lt_of_le_of_ne hab (Ne.symm hne)
-    obtain ⟨nt_a, children_a, hsub_a⟩ := spine_node_at_prefix t p sub hsub hsub_h a ha
-    obtain ⟨nt_b, children_b, hsub_b⟩ := spine_node_at_prefix t p sub hsub hsub_h b hb
-    obtain ⟨hrule_a, _⟩ := ruleAt?_mem_rules t ht (p.take a) nt_a children_a hsub_a
-    obtain ⟨hrule_b, _⟩ := ruleAt?_mem_rules t ht (p.take b) nt_b children_b hsub_b
-    have h_fa : f a = ⟨nt_a, children_a.map rootSymbol⟩ := by
-      simp only [f, hrule_a, Option.getD_some]
-    have h_fb : f b = ⟨nt_b, children_b.map rootSymbol⟩ := by
-      simp only [f, hrule_b, Option.getD_some]
-    have : nt_b = nt_a := by
-      have : (⟨nt_b, children_b.map rootSymbol⟩ : ContextFreeRule T g.NT) =
-          ⟨nt_a, children_a.map rootSymbol⟩ := by rw [← h_fa, ← h_fb, hfeq]
-      exact ContextFreeRule.mk.injEq _ _ _ _ |>.mp this |>.1
-    exact ⟨b, a, hba, by omega, nt_b, children_b, nt_a, children_a, hsub_b, hsub_a, this⟩
-
--- ============================================================================
--- Soundness: valid tree ⇒ grammar derives its yield
--- ============================================================================
-
-private theorem derives_yieldList {T : Type*} {g : ContextFreeGrammar T}
-    (ts : List (DerivationTree T g.NT))
-    (hvalid : ∀ t ∈ ts, g.Derives [t.rootSymbol] (t.yield.map Symbol.terminal)) :
-    g.Derives (ts.map DerivationTree.rootSymbol) ((DerivationTree.yieldList ts).map Symbol.terminal) := by
-  induction ts with
-  | nil => exact Relation.ReflTransGen.refl
-  | cons c cs ih =>
-    simp only [List.map_cons, DerivationTree.yieldList, List.map_append]
-    show g.Derives ([c.rootSymbol] ++ cs.map DerivationTree.rootSymbol)
-      (c.yield.map Symbol.terminal ++ (DerivationTree.yieldList cs).map Symbol.terminal)
-    exact ((hvalid c (List.mem_cons_self ..)).append_right _).trans
-      ((ih (fun t ht => hvalid t (List.mem_cons_of_mem _ ht))).append_left _)
-
-theorem validFor_derives {T : Type*} {g : ContextFreeGrammar T}
-    (t : DerivationTree T g.NT) (ht : t.ValidFor g) :
-    g.Derives [t.rootSymbol] (t.yield.map Symbol.terminal) := by
-  match t, ht with
-  | .leaf _, _ => exact Relation.ReflTransGen.refl
-  | .node nt children, .node _ _ hrule hchildren =>
-    exact (ContextFreeGrammar.Produces.single
-      ⟨⟨nt, children.map DerivationTree.rootSymbol⟩, hrule,
-       ContextFreeRule.Rewrites.input_output⟩).trans
-      (derives_yieldList children (fun c hc => validFor_derives c (hchildren c hc)))
-termination_by t
-
-end DerivationTree
-
-/-! ### Rose-tree interface instances
-
-`DerivationTree.Pos` is the Gorn address — exactly
-`Core.Order.TreePath.toList` — so the generic
-`Core.Order.Branching.subtreeAt` walks the same positions as
-`subtreeAt?`. The structural `size`/`height`/`yield` above remain the
-kernel-computable specializations of the generic API. -/
-
-namespace DerivationTree
-
-variable {T N : Type*}
-
-instance : Core.Order.Branching (DerivationTree T N) where
-  children
-    | .leaf _ => []
-    | .node _ cs => cs
-
-@[simp] theorem branching_children_leaf (t : T) :
-    Core.Order.Branching.children (DerivationTree.leaf (N := N) t) = [] := rfl
-
-@[simp] theorem branching_children_node (nt : N) (cs : List (DerivationTree T N)) :
-    Core.Order.Branching.children (DerivationTree.node nt cs) = cs := rfl
-
-instance : Core.Order.IsFiniteBranching (DerivationTree T N) :=
-  .ofMeasure sizeOf fun {c t} hc => by
-    cases t with
-    | leaf _ => simp at hc
-    | node nt cs =>
-      simp only [branching_children_node] at hc
-      have := List.sizeOf_lt_of_mem hc
-      simp only [DerivationTree.node.sizeOf_spec]
-      omega
-
-/-! ### Countability -/
-
-instance _root_.Symbol.instCountable [Countable T] [Countable N] : Countable (Symbol T N) :=
+instance Symbol.instCountable {T N : Type*} [Countable T] [Countable N] : Countable (Symbol T N) :=
   Function.Injective.countable (f := fun s : Symbol T N => match s with
     | .terminal t => Sum.inl t
     | .nonterminal n => Sum.inr n) fun s s' h => by
     cases s <;> cases s' <;> simp_all
 
-/-- Branching signature of the W-type encoding: leaves and the empty list have no children, a
-node has one child (its list of children), a cons cell has two. -/
-private def wArity : Option (T ⊕ (N ⊕ Unit)) → Type
-  | some (.inl _) => Empty
-  | some (.inr (.inl _)) => Unit
-  | none => Empty
-  | some (.inr (.inr _)) => Bool
+namespace RoseTree
 
-mutual
-private def toW : DerivationTree T N → WType (wArity (T := T) (N := N))
-  | .leaf t => ⟨some (.inl t), Empty.elim⟩
-  | .node n cs => ⟨some (.inr (.inl n)), fun _ => toWList cs⟩
-private def toWList : List (DerivationTree T N) → WType (wArity (T := T) (N := N))
-  | [] => ⟨none, Empty.elim⟩
-  | c :: cs => ⟨some (.inr (.inr ())), fun b => bif b then toW c else toWList cs⟩
-end
+variable {T N : Type*}
 
-mutual
-private theorem toW_injective : ∀ {t t' : DerivationTree T N}, toW t = toW t' → t = t'
-  | .leaf _, .leaf _, h => by
-    obtain ⟨h1, -⟩ := WType.mk.inj h
-    cases h1; rfl
-  | .leaf _, .node _ _, h => by exact absurd (WType.mk.inj h).1 (by simp)
-  | .node _ _, .leaf _, h => by exact absurd (WType.mk.inj h).1 (by simp)
-  | .node n cs, .node n' cs', h => by
-    obtain ⟨h1, h2⟩ := WType.mk.inj h
-    cases h1
-    rw [toWList_injective (congr_fun (eq_of_heq h2) ())]
-private theorem toWList_injective :
-    ∀ {cs cs' : List (DerivationTree T N)}, toWList cs = toWList cs' → cs = cs'
-  | [], [], _ => rfl
-  | [], _ :: _, h => by exact absurd (WType.mk.inj h).1 (by simp)
-  | _ :: _, [], h => by exact absurd (WType.mk.inj h).1 (by simp)
-  | c :: cs, c' :: cs', h => by
-    obtain ⟨-, h2⟩ := WType.mk.inj h
-    have h3 := congr_fun (eq_of_heq h2)
-    rw [toW_injective (t := c) (t' := c') (by simpa using h3 true),
-      toWList_injective (cs := cs) (cs' := cs') (by simpa using h3 false)]
-end
+/-! ### The yield -/
 
-instance [Countable T] [Countable N] : Countable (DerivationTree T N) := by
+/-- The terminal frontier of a tree: the terminals among its leaves, left to right. -/
+def yield (t : RoseTree (Symbol T N)) : List T := t.leafList.filterMap Symbol.terminal?
+
+@[simp] theorem yield_node_nil (s : Symbol T N) : yield (node s []) = s.terminal?.toList := by
+  cases s <;> simp [yield]
+
+@[simp] theorem yield_leaf (s : Symbol T N) : yield (leaf s) = s.terminal?.toList :=
+  yield_node_nil s
+
+theorem yield_node_of_ne_nil (s : Symbol T N) {cs : List (RoseTree (Symbol T N))} (h : cs ≠ []) :
+    yield (node s cs) = (cs.map yield).flatten := by
+  rw [yield, leafList_node_of_ne_nil _ h, List.filterMap_flatten, List.map_map]
+  rfl
+
+@[simp] theorem yield_node_cons (s : Symbol T N) (c : RoseTree (Symbol T N))
+    (cs : List (RoseTree (Symbol T N))) :
+    yield (node s (c :: cs)) = ((c :: cs).map yield).flatten :=
+  yield_node_of_ne_nil s (List.cons_ne_nil c cs)
+
+@[simp] theorem yield_node_nonterminal (A : N) (cs : List (RoseTree (Symbol T N))) :
+    yield (node (.nonterminal A) cs) = (cs.map yield).flatten := by
+  cases cs with
+  | nil => simp
+  | cons c cs => exact yield_node_cons _ c cs
+
+@[simp] theorem yield_map {N' : Type*} (f : N → N') (t : RoseTree (Symbol T N)) :
+    (t.map (Symbol.mapNonterminal f)).yield = t.yield := by
+  simp only [yield, leafList_map, List.filterMap_map, Function.comp_def,
+    Symbol.terminal?_mapNonterminal]
+
+/-- Replacing inside the tree splits the yield into the terminals left of the address, the yield
+of the subtree there, and the terminals to its right. -/
+theorem yield_replaceAt {t s : RoseTree (Symbol T N)} {p : List ℕ} (h : t.subtreeAt p = some s) :
+    ∃ pre post : List T, t.yield = pre ++ s.yield ++ post ∧
+      ∀ new : RoseTree (Symbol T N), (t.replaceAt p new).yield = pre ++ new.yield ++ post := by
+  obtain ⟨pre, post, hy, hy'⟩ := leafList_replaceAt h
+  exact ⟨pre.filterMap Symbol.terminal?, post.filterMap Symbol.terminal?,
+    by simp [yield, hy, List.filterMap_append],
+    fun new => by simp [yield, hy', List.filterMap_append]⟩
+
+/-! ### Validity -/
+
+/-- A derivation tree is valid for a grammar when every terminal node is a leaf and every
+nonterminal node, with the symbols of its children, is a rule of the grammar. -/
+inductive ValidFor (g : ContextFreeGrammar T) : RoseTree (Symbol T g.NT) → Prop
+  | terminal (a : T) : ValidFor g (leaf (.terminal a))
+  | nonterminal (A : g.NT) (cs : List (RoseTree (Symbol T g.NT)))
+      (hrule : ⟨A, cs.map value⟩ ∈ g.rules) (hcs : ∀ c ∈ cs, ValidFor g c) :
+      ValidFor g (node (.nonterminal A) cs)
+
+namespace ValidFor
+
+variable {g : ContextFreeGrammar T}
+
+theorem of_mem {s : Symbol T g.NT} {cs : List (RoseTree (Symbol T g.NT))}
+    (h : ValidFor g (node s cs)) {c : RoseTree (Symbol T g.NT)} (hc : c ∈ cs) : ValidFor g c := by
+  cases h with
+  | terminal => simp at hc
+  | nonterminal _ _ _ hcs => exact hcs c hc
+
+theorem rule_mem {A : g.NT} {cs : List (RoseTree (Symbol T g.NT))}
+    (h : ValidFor g (node (.nonterminal A) cs)) : ⟨A, cs.map value⟩ ∈ g.rules := by
+  cases h with
+  | nonterminal _ _ hrule => exact hrule
+
+theorem eq_nil_of_terminal {a : T} {cs : List (RoseTree (Symbol T g.NT))}
+    (h : ValidFor g (node (.terminal a) cs)) : cs = [] := by
+  cases h; rfl
+
+/-- A node with children is a nonterminal node. -/
+theorem exists_nonterminal_of_ne_nil {s : Symbol T g.NT} {cs : List (RoseTree (Symbol T g.NT))}
+    (h : ValidFor g (node s cs)) (hcs : cs ≠ []) : ∃ A, s = .nonterminal A := by
+  cases h with
+  | terminal => exact absurd rfl hcs
+  | nonterminal A => exact ⟨A, rfl⟩
+
+theorem subtreeAt {t : RoseTree (Symbol T g.NT)} (ht : ValidFor g t) {p : List ℕ}
+    {s : RoseTree (Symbol T g.NT)} (hs : t.subtreeAt p = some s) : ValidFor g s := by
+  induction p generalizing t with
+  | nil => exact Option.some.inj hs ▸ ht
+  | cons i p ih =>
+    obtain ⟨c, hc, hcs⟩ := subtreeAt_cons_eq_some_iff.mp hs
+    cases t with
+    | node s cs => exact ih (ht.of_mem (List.mem_of_getElem? hc)) hcs
+
+/-- Replacing a subtree by a valid tree with the same root symbol preserves validity. -/
+theorem replaceAt {t : RoseTree (Symbol T g.NT)} (ht : ValidFor g t) {p : List ℕ}
+    {s : RoseTree (Symbol T g.NT)} (hs : t.subtreeAt p = some s)
+    {new : RoseTree (Symbol T g.NT)} (hnew : ValidFor g new) (hv : new.value = s.value) :
+    ValidFor g (t.replaceAt p new) := by
+  induction p generalizing t with
+  | nil => rw [replaceAt_nil]; exact hnew
+  | cons i p ih =>
+    obtain ⟨c, hc, hcs⟩ := subtreeAt_cons_eq_some_iff.mp hs
+    cases t with
+    | node s₀ cs =>
+      rw [children_node] at hc
+      rw [replaceAt_cons_of_getElem? (by simpa using hc), value_node, children_node]
+      have hval : (c.replaceAt p new).value = c.value := by
+        cases p with
+        | nil => rw [replaceAt_nil, hv, Option.some.inj hcs]
+        | cons j p => exact value_replaceAt_cons c j p new
+      obtain ⟨A, rfl⟩ := ht.exists_nonterminal_of_ne_nil
+        (List.ne_nil_of_mem (List.mem_of_getElem? hc))
+      refine nonterminal A _ ?_ fun d hd => ?_
+      · obtain ⟨hi, rfl⟩ := List.getElem?_eq_some_iff.mp hc
+        have h := List.set_getElem_self (as := cs.map value) (i := i) (by simpa using hi)
+        rw [List.getElem_map] at h
+        rw [List.map_set, hval, h]
+        exact ht.rule_mem
+      · rcases List.mem_or_eq_of_mem_set hd with hd | rfl
+        · exact ht.of_mem hd
+        · exact ih (ht.of_mem (List.mem_of_getElem? hc)) hcs
+
+end ValidFor
+
+/-! ### Rule counts -/
+
+section RuleCount
+
+variable [DecidableEq T] [DecidableEq N]
+
+/-- The number of applications of the rule `r` in a tree: the nonterminal nodes whose symbol and
+children's symbols spell out `r`. -/
+def ruleCount (r : ContextFreeRule T N) (t : RoseTree (Symbol T N)) : ℕ :=
+  t.offspring.count (.nonterminal r.input, r.output)
+
+theorem ruleCount_node_nonterminal (r : ContextFreeRule T N) (A : N)
+    (cs : List (RoseTree (Symbol T N))) :
+    ruleCount r (node (.nonterminal A) cs) =
+      (if r = ⟨A, cs.map value⟩ then 1 else 0) + (cs.map (ruleCount r)).sum := by
+  simp only [ruleCount, offspring_node, List.count_cons, List.count_flatten, List.map_map,
+    Function.comp_def, beq_iff_eq, Prod.mk.injEq, Symbol.nonterminal.injEq]
+  rw [add_comm]
+  congr 1
+  cases r
+  simp [ContextFreeRule.mk.injEq, eq_comm]
+
+theorem ruleCount_node_terminal (r : ContextFreeRule T N) (a : T)
+    (cs : List (RoseTree (Symbol T N))) :
+    ruleCount r (node (.terminal a) cs) = (cs.map (ruleCount r)).sum := by
+  simp only [ruleCount, offspring_node, List.count_cons, List.count_flatten, List.map_map,
+    Function.comp_def, beq_iff_eq, Prod.mk.injEq, reduceCtorEq, false_and, if_false, add_zero]
+  rfl
+
+/-- The number of applications of the rule `r` in a corpus of trees. -/
+def corpusRuleCount (r : ContextFreeRule T N) (D : Multiset (RoseTree (Symbol T N))) : ℕ :=
+  (D.map (ruleCount r)).sum
+
+@[simp] theorem corpusRuleCount_zero (r : ContextFreeRule T N) :
+    corpusRuleCount r (0 : Multiset (RoseTree (Symbol T N))) = 0 := by
+  simp [corpusRuleCount]
+
+@[simp] theorem corpusRuleCount_singleton (r : ContextFreeRule T N) (t : RoseTree (Symbol T N)) :
+    corpusRuleCount r {t} = ruleCount r t := by
+  simp [corpusRuleCount]
+
+theorem corpusRuleCount_add (r : ContextFreeRule T N) (D₁ D₂ : Multiset (RoseTree (Symbol T N))) :
+    corpusRuleCount r (D₁ + D₂) = corpusRuleCount r D₁ + corpusRuleCount r D₂ := by
+  simp [corpusRuleCount]
+
+end RuleCount
+
+/-! ### The rule at an address -/
+
+/-- The rule applied at a Gorn address: the nonterminal there with the symbols of its children,
+`none` off the tree or at a terminal. -/
+def ruleAt? {g : ContextFreeGrammar T} (t : RoseTree (Symbol T g.NT)) (p : List ℕ) :
+    Option (ContextFreeRule T g.NT) :=
+  (t.subtreeAt p).bind fun s => match s.value with
+    | .nonterminal A => some ⟨A, s.children.map value⟩
+    | .terminal _ => none
+
+theorem ruleAt?_eq_some {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)} {p : List ℕ}
+    {A : g.NT} {cs : List (RoseTree (Symbol T g.NT))}
+    (h : t.subtreeAt p = some (node (.nonterminal A) cs)) :
+    ruleAt? t p = some ⟨A, cs.map value⟩ := by
+  simp [ruleAt?, h]
+
+/-- Along an address into a valid tree, every proper prefix ends at a nonterminal node, and so
+does the address itself when the subtree there has children. -/
+theorem ValidFor.exists_subtreeAt_take {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
+    (ht : ValidFor g t) {p : List ℕ} {s : RoseTree (Symbol T g.NT)} (hs : t.subtreeAt p = some s)
+    (hh : 0 < s.height) {k : ℕ} (hk : k ≤ p.length) :
+    ∃ A cs, t.subtreeAt (p.take k) = some (node (.nonterminal A) cs) := by
+  obtain ⟨u, hu⟩ := Option.isSome_iff_exists.mp (subtreeAt_take_isSome hs k)
+  obtain ⟨s₀, cs, rfl⟩ : ∃ s₀ cs, u = node s₀ cs := by cases u; exact ⟨_, _, rfl⟩
+  have hne : cs ≠ [] := by
+    rcases Nat.lt_or_ge k p.length with hlt | hge
+    · rw [← List.take_append_drop k p, subtreeAt_append, hu, Option.bind_some,
+        List.drop_eq_getElem_cons hlt] at hs
+      obtain ⟨c, hc, -⟩ := subtreeAt_cons_eq_some_iff.mp hs
+      exact List.ne_nil_of_mem (List.mem_of_getElem? hc)
+    · rw [List.take_of_length_le (le_antisymm hk hge ▸ le_rfl), hs] at hu
+      obtain rfl := Option.some.inj hu
+      obtain ⟨c, hc, -⟩ := exists_mem_children_height_add_one hh
+      exact List.ne_nil_of_mem hc
+  obtain ⟨A, rfl⟩ := (ht.subtreeAt hu).exists_nonterminal_of_ne_nil hne
+  exact ⟨A, cs, hu⟩
+
+/-- Pigeonhole along an address: a path of at least `g.rules.card` steps through a valid tree,
+ending at a node with children, passes two nodes with the same nonterminal. -/
+theorem ValidFor.exists_repeat {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
+    (ht : ValidFor g t) {p : List ℕ} {s : RoseTree (Symbol T g.NT)} (hs : t.subtreeAt p = some s)
+    (hh : 0 < s.height) (hlen : g.rules.card ≤ p.length) :
+    ∃ i j, i < j ∧ j ≤ p.length ∧ ∃ A csᵢ csⱼ,
+      t.subtreeAt (p.take i) = some (node (.nonterminal A) csᵢ) ∧
+      t.subtreeAt (p.take j) = some (node (.nonterminal A) csⱼ) := by
   classical
-  let _ := Encodable.ofCountable T
-  let _ := Encodable.ofCountable N
-  have _ : ∀ a, Fintype (wArity (T := T) (N := N) a) := fun a => by
-    rcases a with _ | (_ | (_ | _))
-    · exact inferInstanceAs (Fintype Empty)
-    · exact inferInstanceAs (Fintype Empty)
-    · exact inferInstanceAs (Fintype Unit)
-    · exact inferInstanceAs (Fintype Bool)
-  have _ : ∀ a, Encodable (wArity (T := T) (N := N) a) := fun a => by
-    rcases a with _ | (_ | (_ | _))
-    · exact inferInstanceAs (Encodable Empty)
-    · exact inferInstanceAs (Encodable Empty)
-    · exact inferInstanceAs (Encodable Unit)
-    · exact inferInstanceAs (Encodable Bool)
-  exact Function.Injective.countable fun _ _ h => toW_injective h
+  let f : ℕ → ContextFreeRule T g.NT := fun k => (ruleAt? t (p.take k)).getD ⟨g.initial, []⟩
+  have hf : ∀ k ∈ Finset.range (p.length + 1), f k ∈ g.rules := fun k hk => by
+    obtain ⟨A, cs, hA⟩ :=
+      ht.exists_subtreeAt_take hs hh (Nat.lt_succ_iff.mp (Finset.mem_range.mp hk))
+    simp only [f, ruleAt?_eq_some hA, Option.getD_some]
+    exact (ht.subtreeAt hA).rule_mem
+  obtain ⟨a, ha, b, hb, hne, hfeq⟩ := Finset.exists_ne_map_eq_of_card_lt_of_maps_to
+    (by simp only [Finset.card_range]; omega) hf
+  wlog hab : a < b generalizing a b
+  · exact this b hb a ha hne.symm hfeq.symm (lt_of_le_of_ne (not_lt.mp hab) hne.symm)
+  rw [Finset.mem_range] at ha hb
+  obtain ⟨A, csₐ, hA⟩ := ht.exists_subtreeAt_take hs hh (Nat.lt_succ_iff.mp ha)
+  obtain ⟨B, cs_b, hB⟩ := ht.exists_subtreeAt_take hs hh (Nat.lt_succ_iff.mp hb)
+  have : A = B := by
+    have h := hfeq
+    simp only [f, ruleAt?_eq_some hA, ruleAt?_eq_some hB, Option.getD_some,
+      ContextFreeRule.mk.injEq] at h
+    exact h.1
+  subst this
+  exact ⟨a, b, hab, Nat.lt_succ_iff.mp hb, A, csₐ, cs_b, hA, hB⟩
 
-end DerivationTree
+/-- Among the valid trees with a given yield and root symbol there is one of least size. -/
+theorem ValidFor.exists_min_numNodes {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
+    (ht : ValidFor g t) :
+    ∃ t' : RoseTree (Symbol T g.NT), ValidFor g t' ∧ t'.yield = t.yield ∧ t'.value = t.value ∧
+      ∀ t'' : RoseTree (Symbol T g.NT), ValidFor g t'' → t''.yield = t.yield →
+        t''.value = t.value → t'.numNodes ≤ t''.numNodes := by
+  classical
+  let P : ℕ → Prop := fun n => ∃ t' : RoseTree (Symbol T g.NT),
+    ValidFor g t' ∧ t'.yield = t.yield ∧ t'.value = t.value ∧ t'.numNodes = n
+  have hP : ∃ n, P n := ⟨t.numNodes, t, ht, rfl, rfl, rfl⟩
+  obtain ⟨t', h₁, h₂, h₃, h₄⟩ := Nat.find_spec hP
+  exact ⟨t', h₁, h₂, h₃, fun t'' hv hy hr => h₄ ▸ Nat.find_le ⟨t'', hv, hy, hr, rfl⟩⟩
+
+end RoseTree
+
+namespace ContextFreeGrammar
+
+variable {T : Type*} (g : ContextFreeGrammar T)
+
+/-! ### The branching bound -/
+
+/-- The branching bound of a grammar: the longest right-hand side, and at least `2`. -/
+noncomputable def maxBranch : ℕ := max 2 (g.rules.sup fun r => r.output.length)
+
+/-- The pumping constant `maxBranch ^ (rules.card + 1)`: a valid tree with more terminals has a
+path through two nodes with the same nonterminal. -/
+noncomputable def pumpingConstant : ℕ := g.maxBranch ^ (g.rules.card + 1)
+
+theorem two_le_maxBranch : 2 ≤ g.maxBranch := le_max_left _ _
+
+theorem pumpingConstant_pos : 0 < g.pumpingConstant :=
+  Nat.pow_pos (by have := g.two_le_maxBranch; omega)
+
+theorem length_output_le_maxBranch {r : ContextFreeRule T g.NT} (hr : r ∈ g.rules) :
+    r.output.length ≤ g.maxBranch :=
+  le_trans (Finset.le_sup (f := fun r : ContextFreeRule T g.NT => r.output.length) hr)
+    (le_max_right _ _)
+
+variable {g}
+
+/-- A valid tree of height `h` has at most `maxBranch ^ h` terminals. -/
+theorem _root_.RoseTree.ValidFor.length_yield_le {t : RoseTree (Symbol T g.NT)}
+    (ht : t.ValidFor g) : t.yield.length ≤ g.maxBranch ^ t.height := by
+  induction ht with
+  | terminal a => simp [RoseTree.leaf]
+  | nonterminal A cs hrule _ ih =>
+    cases cs with
+    | nil => simp
+    | cons c cs =>
+      set h := (RoseTree.node (.nonterminal A) (c :: cs)).height with hh
+      have hpos : 0 < h :=
+        Nat.lt_of_le_of_lt (Nat.zero_le _) (RoseTree.height_lt_of_mem (c := c) (by simp))
+      have hb : 0 < g.maxBranch := by have := g.two_le_maxBranch; omega
+      rw [RoseTree.yield_node_nonterminal, List.length_flatten, List.map_map]
+      calc ((c :: cs).map (List.length ∘ RoseTree.yield)).sum
+          ≤ ((c :: cs).map fun _ => g.maxBranch ^ (h - 1)).sum := by
+            refine List.sum_le_sum fun d hd => ?_
+            refine (ih d hd).trans (Nat.pow_le_pow_right hb ?_)
+            have := RoseTree.height_lt_of_mem (t := RoseTree.node (.nonterminal A) (c :: cs)) hd
+            omega
+        _ = (c :: cs).length * g.maxBranch ^ (h - 1) := by
+            rw [List.map_const', List.sum_const_nat]
+        _ ≤ g.maxBranch * g.maxBranch ^ (h - 1) :=
+            Nat.mul_le_mul_right _ (by simpa using g.length_output_le_maxBranch hrule)
+        _ = g.maxBranch ^ h := by rw [← Nat.pow_succ']; congr 1; omega
+
+/-! ### Soundness and completeness -/
+
+private theorem derives_flatten_yield {cs : List (RoseTree (Symbol T g.NT))}
+    (h : ∀ c ∈ cs, g.Derives [c.value] (c.yield.map Symbol.terminal)) :
+    g.Derives (cs.map RoseTree.value) ((cs.map RoseTree.yield).flatten.map Symbol.terminal) := by
+  induction cs with
+  | nil => exact Relation.ReflTransGen.refl
+  | cons c cs ih =>
+    rw [List.map_cons, List.map_cons, List.flatten_cons, List.map_append, ← List.singleton_append]
+    exact ((h c (List.mem_cons_self ..)).append_right _).trans
+      ((ih fun d hd => h d (List.mem_cons_of_mem _ hd)).append_left _)
+
+/-- **Soundness.** A valid tree derives its yield from its root symbol. -/
+theorem _root_.RoseTree.ValidFor.derives {t : RoseTree (Symbol T g.NT)} (ht : t.ValidFor g) :
+    g.Derives [t.value] (t.yield.map Symbol.terminal) := by
+  induction ht with
+  | terminal a => simp [RoseTree.leaf]; exact Relation.ReflTransGen.refl
+  | nonterminal A cs hrule _ ih =>
+    rw [RoseTree.value_node, RoseTree.yield_node_nonterminal]
+    exact (Produces.single ⟨⟨A, cs.map RoseTree.value⟩, hrule,
+      ContextFreeRule.Rewrites.input_output⟩).trans (derives_flatten_yield ih)
+
+/-- A rewriting step at any position. -/
+private theorem Rewrites.at_position {r : ContextFreeRule T g.NT} (p q : List (Symbol T g.NT)) :
+    r.Rewrites (p ++ [Symbol.nonterminal r.input] ++ q) (p ++ r.output ++ q) := by
+  induction p with
+  | nil => simpa using ContextFreeRule.Rewrites.head q
+  | cons x xs ih => simpa using ContextFreeRule.Rewrites.cons x ih
+
+/-- **Forest existence.** A sentential form deriving a word is the list of root symbols of a
+list of valid trees whose yields concatenate to the word. -/
+private theorem exists_forest {sf : List (Symbol T g.NT)} {w : List T}
+    (h : g.Derives sf (w.map Symbol.terminal)) :
+    ∃ ts : List (RoseTree (Symbol T g.NT)), ts.map RoseTree.value = sf ∧
+      (∀ t ∈ ts, t.ValidFor g) ∧ (ts.map RoseTree.yield).flatten = w := by
+  induction h using Relation.ReflTransGen.head_induction_on with
+  | refl =>
+    refine ⟨w.map fun a => RoseTree.leaf (.terminal a), ?_, ?_, ?_⟩
+    · simp [Function.comp_def, RoseTree.leaf]
+    · rintro t ht
+      obtain ⟨a, -, rfl⟩ := List.mem_map.mp ht
+      exact .terminal a
+    · induction w <;> simp_all
+  | head hstep _ ih =>
+    obtain ⟨ts, hroot, hvalid, hyield⟩ := ih
+    obtain ⟨r, hr, hrew⟩ := hstep
+    obtain ⟨p, q, hsf, hc⟩ := hrew.exists_parts
+    subst hsf hc
+    have hlen : p.length + r.output.length ≤ ts.length := by
+      have := congrArg List.length hroot; simp at this; omega
+    refine ⟨ts.take p.length ++ [RoseTree.node (.nonterminal r.input)
+      ((ts.drop p.length).take r.output.length)] ++ ts.drop (p.length + r.output.length),
+      ?_, ?_, ?_⟩
+    · have h1 : (ts.take p.length).map RoseTree.value = p := by
+        rw [List.map_take, hroot]; simp
+      have h2 : ((ts.drop p.length).take r.output.length).map RoseTree.value = r.output := by
+        rw [List.map_take, List.map_drop, hroot]; simp
+      have h3 : (ts.drop (p.length + r.output.length)).map RoseTree.value = q := by
+        rw [List.map_drop, hroot]; simp
+      simp only [List.map_append, List.map_cons, List.map_nil, RoseTree.value_node, h1, h3]
+    · intro t ht
+      simp only [List.mem_append, List.mem_singleton] at ht
+      rcases ht with (ht | rfl) | ht
+      · exact hvalid t (List.mem_of_mem_take ht)
+      · refine .nonterminal r.input _ ?_ fun c hc =>
+          hvalid c (List.mem_of_mem_drop (List.mem_of_mem_take hc))
+        rw [List.map_take, List.map_drop, hroot]; simpa using hr
+      · exact hvalid t (List.mem_of_mem_drop ht)
+    · have hsplit : ts = ts.take p.length ++ (ts.drop p.length).take r.output.length ++
+          ts.drop (p.length + r.output.length) := by
+        rw [List.append_assoc, ← List.drop_drop, List.take_append_drop, List.take_append_drop]
+      conv_rhs => rw [← hyield, hsplit]
+      simp only [List.map_append, List.flatten_append, List.map_cons, List.map_nil,
+        List.flatten_cons, List.flatten_nil, List.append_nil, RoseTree.yield_node_nonterminal]
+
+/-- **Completeness.** Every word of the language has a valid derivation tree from the start
+symbol. -/
+theorem exists_valid_tree (g : ContextFreeGrammar T) {w : List T} (hw : w ∈ g.language) :
+    ∃ t : RoseTree (Symbol T g.NT), t.ValidFor g ∧ t.yield = w ∧
+      t.value = .nonterminal g.initial := by
+  obtain ⟨ts, hroot, hvalid, hyield⟩ := exists_forest (g := g) hw
+  obtain ⟨t, rfl⟩ : ∃ t, ts = [t] := by
+    rcases ts with _ | ⟨t, _ | ⟨_, _⟩⟩ <;> simp at hroot
+    exact ⟨t, rfl⟩
+  exact ⟨t, hvalid t (List.mem_singleton_self t), by simpa using hyield, by simpa using hroot⟩
+
+end ContextFreeGrammar

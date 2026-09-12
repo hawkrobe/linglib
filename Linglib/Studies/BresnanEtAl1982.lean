@@ -42,7 +42,7 @@ conditions on f-structures, and functional control derives the cross-serial asso
 
 namespace BresnanEtAl1982
 
-open DerivationTree Symbol
+open RoseTree Symbol
 
 /-- Leaf classes: a noun phrase or a verb. -/
 inductive Word | np | v
@@ -55,60 +55,61 @@ inductive Cat | S | VP | vBar
 /-! ### The trees -/
 
 /-- The verb cluster of `m + 1` verbs: the right-branching V′ of (22), by V′ → V (V′). -/
-def cluster : ℕ → DerivationTree Word Cat
-  | 0 => .node .vBar [.leaf .v]
-  | m + 1 => .node .vBar [.leaf .v, cluster m]
+def cluster : ℕ → RoseTree (Symbol Word Cat)
+  | 0 => node (nonterminal .vBar) [leaf (terminal .v)]
+  | m + 1 => node (nonterminal .vBar) [leaf (terminal .v), cluster m]
 
 /-- The embedded VP spine of `k + 1` object NPs, by VP → (NP)(VP). -/
-def spine : ℕ → DerivationTree Word Cat
-  | 0 => .node .VP [.leaf .np]
-  | k + 1 => .node .VP [.leaf .np, spine k]
+def spine : ℕ → RoseTree (Symbol Word Cat)
+  | 0 => node (nonterminal .VP) [leaf (terminal .np)]
+  | k + 1 => node (nonterminal .VP) [leaf (terminal .np), spine k]
 
 /-- The VP of (22): the first object, the spine of the remaining `k` objects, and the cluster. -/
-def topVP : ℕ → ℕ → DerivationTree Word Cat
-  | 0, m => .node .VP [.leaf .np, cluster m]
-  | k + 1, m => .node .VP [.leaf .np, spine k, cluster m]
+def topVP : ℕ → ℕ → RoseTree (Symbol Word Cat)
+  | 0, m => node (nonterminal .VP) [leaf (terminal .np), cluster m]
+  | k + 1, m => node (nonterminal .VP) [leaf (terminal .np), spine k, cluster m]
 
 /-- The c-structure (22) of a clause with a subject, `k + 1` object NPs and `m + 1` verbs. -/
-def tree (k m : ℕ) : DerivationTree Word Cat := .node .S [.leaf .np, topVP k m]
+def tree (k m : ℕ) : RoseTree (Symbol Word Cat) :=
+  node (nonterminal .S) [leaf (terminal .np), topVP k m]
 
 /-- The well-formed trees: `n + 1` objects and `n + 2` verbs, each non-final verb with its object.
 (1) is `dutch 0`, (26) is `dutch 1`, (3) is `dutch 2`. -/
-def dutch (n : ℕ) : DerivationTree Word Cat := tree n (n + 1)
+def dutch (n : ℕ) : RoseTree (Symbol Word Cat) := tree n (n + 1)
 
 @[simp] theorem yield_cluster (m : ℕ) : (cluster m).yield = List.replicate (m + 1) .v := by
   induction m with
   | zero => rfl
-  | succ m ih => simp [cluster, yield, yieldList, ih, List.replicate_succ]
+  | succ m ih => simp [cluster, ih, List.replicate_succ]
 
 @[simp] theorem yield_spine (k : ℕ) : (spine k).yield = List.replicate (k + 1) .np := by
   induction k with
   | zero => rfl
-  | succ k ih => simp [spine, yield, yieldList, ih, List.replicate_succ]
+  | succ k ih => simp [spine, ih, List.replicate_succ]
 
 @[simp] theorem yield_topVP (k m : ℕ) :
     (topVP k m).yield = List.replicate (k + 1) .np ++ List.replicate (m + 1) .v := by
-  cases k <;> simp [topVP, yield, yieldList, List.replicate_succ]
+  cases k <;> simp [topVP, List.replicate_succ]
 
 @[simp] theorem yield_tree (k m : ℕ) :
     (tree k m).yield = List.replicate (k + 2) .np ++ List.replicate (m + 1) .v := by
-  simp [tree, yield, yieldList, List.replicate_succ]
+  simp [tree, List.replicate_succ]
 
 theorem yield_dutch (n : ℕ) :
     (dutch n).yield = List.replicate (n + 2) .np ++ List.replicate (n + 2) .v := by
   simp [dutch]
 
-@[simp] theorem rootSymbol_cluster (m : ℕ) : (cluster m).rootSymbol = .nonterminal .vBar := by
+@[simp] theorem value_cluster (m : ℕ) : (cluster m).value = nonterminal .vBar := by
   cases m <;> rfl
 
-@[simp] theorem rootSymbol_spine (k : ℕ) : (spine k).rootSymbol = .nonterminal .VP := by
+@[simp] theorem value_spine (k : ℕ) : (spine k).value = nonterminal .VP := by
   cases k <;> rfl
 
-@[simp] theorem rootSymbol_topVP (k m : ℕ) : (topVP k m).rootSymbol = .nonterminal .VP := by
+@[simp] theorem value_topVP (k m : ℕ) : (topVP k m).value = nonterminal .VP := by
   cases k <;> rfl
 
-theorem cluster_height_pos (m : ℕ) : 1 ≤ (cluster m).height := by
-  cases m <;> simp [cluster, height]
+theorem cluster_height_pos (m : ℕ) : 0 < (cluster m).height := by
+  cases m <;> simp [cluster, leaf]
 
 /-! ### The c-structure grammar -/
 
@@ -129,39 +130,39 @@ def cStructure : ContextFreeGrammar Word where
 theorem cluster_validFor (m : ℕ) : (cluster m).ValidFor cStructure := by
   induction m with
   | zero =>
-    refine .node _ _ (by simp [cStructure]) ?_
-    simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq]; exact .leaf _
+    refine .nonterminal _ _ (by simp [cStructure]) ?_
+    simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq]; exact .terminal _
   | succ m ih =>
-    refine .node _ _ (by simp [cStructure]) ?_
+    refine .nonterminal _ _ (by simp [cStructure]) ?_
     simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
-    exact ⟨.leaf _, ih⟩
+    exact ⟨.terminal _, ih⟩
 
 theorem spine_validFor (k : ℕ) : (spine k).ValidFor cStructure := by
   induction k with
   | zero =>
-    refine .node _ _ (by simp [cStructure]) ?_
-    simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq]; exact .leaf _
+    refine .nonterminal _ _ (by simp [cStructure]) ?_
+    simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq]; exact .terminal _
   | succ k ih =>
-    refine .node _ _ (by simp [cStructure]) ?_
+    refine .nonterminal _ _ (by simp [cStructure]) ?_
     simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
-    exact ⟨.leaf _, ih⟩
+    exact ⟨.terminal _, ih⟩
 
 theorem topVP_validFor (k m : ℕ) : (topVP k m).ValidFor cStructure := by
   cases k with
   | zero =>
-    refine .node _ _ (by simp [cStructure]) ?_
+    refine .nonterminal _ _ (by simp [cStructure]) ?_
     simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
-    exact ⟨.leaf _, cluster_validFor m⟩
+    exact ⟨.terminal _, cluster_validFor m⟩
   | succ k =>
-    refine .node _ _ (by simp [cStructure]) ?_
+    refine .nonterminal _ _ (by simp [cStructure]) ?_
     simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
-    exact ⟨.leaf _, spine_validFor k, cluster_validFor m⟩
+    exact ⟨.terminal _, spine_validFor k, cluster_validFor m⟩
 
 /-- The c-structure grammar generates every tree, whatever its counts of objects and verbs. -/
 theorem tree_validFor_cStructure (k m : ℕ) : (tree k m).ValidFor cStructure := by
-  refine .node _ _ (by simp [cStructure]) ?_
+  refine .nonterminal _ _ (by simp [cStructure]) ?_
   simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
-  exact ⟨.leaf _, topVP_validFor k m⟩
+  exact ⟨.terminal _, topVP_validFor k m⟩
 
 /-! ### The f-structure and its well-formedness -/
 
@@ -173,7 +174,7 @@ structure Spine where
   verbs : ℕ
 
 /-- The spine of a tree: its object NPs (all but the subject) and its verbs. -/
-def Spine.ofTree (t : DerivationTree Word Cat) : Spine :=
+def Spine.ofTree (t : RoseTree (Symbol Word Cat)) : Spine :=
   ⟨t.yield.count .np - 1, t.yield.count .v⟩
 
 @[simp] theorem Spine.ofTree_tree (k m : ℕ) : Spine.ofTree (tree k m) = ⟨k + 1, m + 1⟩ := by
@@ -277,27 +278,27 @@ theorem yield_dutch_mem_weakGrammar (n : ℕ) : (dutch n).yield ∈ weakGrammar.
 /-! ### Strong non-context-freeness -/
 
 /-- The derivation trees of `g` from its start symbol. -/
-def trees (g : ContextFreeGrammar Word) : Set (DerivationTree Word g.NT) :=
-  {t | t.ValidFor g ∧ t.rootSymbol = .nonterminal g.initial}
+def trees (g : ContextFreeGrammar Word) : Set (RoseTree (Symbol Word g.NT)) :=
+  {t | t.ValidFor g ∧ t.value = nonterminal g.initial}
 
 /-- The path from the root down the verb cluster: into the VP, into the V′, then `L` steps along
 the cluster. -/
-def path (L : ℕ) : Pos := 1 :: 2 :: List.replicate L 1
+def path (L : ℕ) : List ℕ := 1 :: 2 :: List.replicate L 1
 
 theorem cluster_subtreeAt_replicate (m r : ℕ) :
-    (cluster (m + r)).subtreeAt? (List.replicate r 1) = some (cluster m) := by
+    (cluster (m + r)).subtreeAt (List.replicate r 1) = some (cluster m) := by
   induction r with
   | zero => rfl
   | succ r ih =>
-    show (cluster (m + r + 1)).subtreeAt? (1 :: List.replicate r 1) = some (cluster m)
-    simp [cluster, subtreeAt?, ih]
+    show (cluster (m + r + 1)).subtreeAt (1 :: List.replicate r 1) = some (cluster m)
+    simp [cluster, ih]
 
 theorem dutch_subtreeAt_take (n L r : ℕ) (hr : r ≤ L) (hL : L ≤ n + 2) :
-    (dutch (n + 1)).subtreeAt? ((path L).take (r + 2)) = some (cluster (n + 2 - r)) := by
+    (dutch (n + 1)).subtreeAt ((path L).take (r + 2)) = some (cluster (n + 2 - r)) := by
   have hp : (path L).take (r + 2) = [1, 2] ++ List.replicate r 1 := by
     simp [path, List.take_replicate, Nat.min_eq_left hr]
-  rw [hp, subtreeAt?_append]
-  have h1 : (dutch (n + 1)).subtreeAt? [1, 2] = some (cluster (n + 2)) := rfl
+  rw [hp, subtreeAt_append]
+  have h1 : (dutch (n + 1)).subtreeAt [1, 2] = some (cluster (n + 2)) := rfl
   rw [h1, Option.bind_some]
   have := cluster_subtreeAt_replicate (n + 2 - r) r
   rwa [Nat.sub_add_cancel (by omega)] at this
@@ -314,78 +315,78 @@ nonterminals to the categories S, VP, V′ — so no finite feature decoration h
 replacing the lower repeat by the upper one gives a valid tree of the same root with more verbs than
 noun phrases, which no `dutch n` has. -/
 theorem not_strongly_contextFree (g : ContextFreeGrammar Word) (ℓ : g.NT → Cat) :
-    map ℓ '' trees g ≠ Set.range dutch := by
+    map (Symbol.mapNonterminal ℓ) '' trees g ≠ Set.range dutch := by
   intro hEq
   set L := g.rules.card with hL
-  have hmem : dutch (L + 1) ∈ map ℓ '' trees g := by rw [hEq]; exact Set.mem_range_self _
+  have hmem : dutch (L + 1) ∈ map (Symbol.mapNonterminal ℓ) '' trees g := by
+    rw [hEq]; exact Set.mem_range_self _
   obtain ⟨t, ⟨ht, hroot⟩, htℓ⟩ := hmem
   -- the subtrees of `t` along the cluster path relabel to clusters
-  have hsub : ∀ r ≤ L, ∃ s, t.subtreeAt? ((path L).take (r + 2)) = some s ∧
-      map ℓ s = cluster (L + 2 - r) := by
+  have hsub : ∀ r ≤ L, ∃ s, t.subtreeAt ((path L).take (r + 2)) = some s ∧
+      map (Symbol.mapNonterminal ℓ) s = cluster (L + 2 - r) := by
     intro r hr
     have h := dutch_subtreeAt_take L L r hr (by omega)
-    rw [← htℓ, subtreeAt?_map] at h
+    rw [← htℓ, subtreeAt_map] at h
     exact Option.map_eq_some_iff.mp h
   -- the category of the subtree of `t` at each depth along the path
-  have hcat : ∀ k ≤ L + 2, ∀ nt cs, t.subtreeAt? ((path L).take k) = some (.node nt cs) →
-      ℓ nt = catAt k := by
+  have hcat : ∀ k ≤ L + 2, ∀ nt cs,
+      t.subtreeAt ((path L).take k) = some (node (nonterminal nt) cs) → ℓ nt = catAt k := by
     intro k hk nt cs h
-    have hm := congrArg (Option.map (map ℓ)) h
-    rw [← subtreeAt?_map, htℓ] at hm
-    have key : ∀ d : DerivationTree Word Cat,
-        (dutch (L + 1)).subtreeAt? ((path L).take k) = some d →
-          d.rootSymbol = .nonterminal (catAt k) := by
+    have hm := congrArg (Option.map (map (Symbol.mapNonterminal ℓ))) h
+    rw [← subtreeAt_map, htℓ] at hm
+    have key : ∀ d : RoseTree (Symbol Word Cat),
+        (dutch (L + 1)).subtreeAt ((path L).take k) = some d →
+          d.value = nonterminal (catAt k) := by
       match k, hk with
       | 0, _ =>
         intro d hd
-        simp only [List.take_zero, subtreeAt?, Option.some.injEq] at hd
+        simp only [List.take_zero, subtreeAt_nil, Option.some.injEq] at hd
         subst hd; rfl
       | 1, _ =>
         intro d hd
-        have h1 : (dutch (L + 1)).subtreeAt? ((path L).take 1) = some (topVP (L + 1) (L + 2)) :=
+        have h1 : (dutch (L + 1)).subtreeAt ((path L).take 1) = some (topVP (L + 1) (L + 2)) :=
           rfl
         rw [h1, Option.some.injEq] at hd
-        subst hd; exact rootSymbol_topVP _ _
+        subst hd; exact value_topVP _ _
       | r + 2, hk =>
         intro d hd
         rw [dutch_subtreeAt_take L L r (by omega) (by omega), Option.some.injEq] at hd
-        subst hd; exact rootSymbol_cluster _
+        subst hd; exact value_cluster _
     simpa using key _ hm
   -- pigeonhole along the cluster path
   obtain ⟨sL, hsL, hsLℓ⟩ := hsub L le_rfl
   have hpath : (path L).take (L + 2) = path L := List.take_of_length_le (by simp [path])
   rw [hpath] at hsL
-  have hsLh : sL.height ≥ 1 := by rw [← height_map ℓ, hsLℓ]; exact cluster_height_pos _
-  obtain ⟨i, j, hij, hjle, ntᵢ, cᵢ, ntⱼ, cⱼ, hi, hj, hnt⟩ :=
-    exists_repeat_root t ht (path L) sL hsL hsLh
-      (by simp only [path, List.length_cons, List.length_replicate]; omega)
+  have hsLh : 0 < sL.height := by
+    rw [← height_map (Symbol.mapNonterminal ℓ), hsLℓ]; exact cluster_height_pos _
+  obtain ⟨i, j, hij, hjle, A, cᵢ, cⱼ, hi, hj⟩ :=
+    ht.exists_repeat hsL hsLh (by simp only [path, List.length_cons, List.length_replicate]; omega)
   simp only [path, List.length_cons, List.length_replicate] at hjle
   -- both repeats lie in the cluster
-  have hcati := hcat i (by omega) ntᵢ cᵢ hi
-  have hcatj := hcat j (by omega) ntⱼ cⱼ hj
+  have hcati := hcat i (by omega) A cᵢ hi
+  have hcatj := hcat j (by omega) A cⱼ hj
   have hi2 : 2 ≤ i := by
-    have hc : catAt i = catAt j := by rw [← hcati, ← hcatj, hnt]
+    have hc : catAt i = catAt j := by rw [← hcati, ← hcatj]
     rcases i with _ | _ | i <;> rcases j with _ | _ | j <;> simp [catAt] at hc <;> omega
   -- the pumped tree
-  set t' := t.replaceAt ((path L).take j) (.node ntᵢ cᵢ) with ht'
-  have hvalid : t'.ValidFor g :=
-    validFor_replaceAt t _ _ _ hj (by simp [rootSymbol, hnt]) ht (subtreeAt?_validFor t ht _ _ hi)
-  have hroot' : t'.rootSymbol = .nonterminal g.initial := by
+  set t' := t.replaceAt ((path L).take j) (node (nonterminal A) cᵢ) with ht'
+  have hvalid : t'.ValidFor g := ht.replaceAt hj (ht.subtreeAt hi) rfl
+  have hroot' : t'.value = nonterminal g.initial := by
     obtain ⟨j', rfl⟩ : ∃ j', j = j' + 1 := ⟨j - 1, by omega⟩
-    rw [ht', path, List.take_succ_cons, rootSymbol_replaceAt_cons]; exact hroot
-  have hmem' : map ℓ t' ∈ Set.range dutch := by
+    rw [ht', path, List.take_succ_cons, value_replaceAt_cons]; exact hroot
+  have hmem' : map (Symbol.mapNonterminal ℓ) t' ∈ Set.range dutch := by
     rw [← hEq]; exact Set.mem_image_of_mem _ ⟨hvalid, hroot'⟩
   obtain ⟨m, hm⟩ := hmem'
   -- yields: the pumped tree has `j - i` more verbs than noun phrases
-  obtain ⟨pre, post, hy, hy'⟩ := yield_replaceAt_decomp t _ _ hj
+  obtain ⟨pre, post, hy, hy'⟩ := yield_replaceAt hj
   obtain ⟨sᵢ, hsᵢ, hsᵢℓ⟩ := hsub (i - 2) (by omega)
   obtain ⟨sⱼ, hsⱼ, hsⱼℓ⟩ := hsub (j - 2) (by omega)
   rw [show i - 2 + 2 = i by omega, hi, Option.some.injEq] at hsᵢ
   rw [show j - 2 + 2 = j by omega, hj, Option.some.injEq] at hsⱼ
   subst hsᵢ hsⱼ
-  have hyi : (DerivationTree.node ntᵢ cᵢ).yield = List.replicate (L + 2 - (i - 2) + 1) .v := by
+  have hyi : (node (nonterminal A) cᵢ).yield = List.replicate (L + 2 - (i - 2) + 1) .v := by
     rw [← yield_map ℓ, hsᵢℓ, yield_cluster]
-  have hyj : (DerivationTree.node ntⱼ cⱼ).yield = List.replicate (L + 2 - (j - 2) + 1) .v := by
+  have hyj : (node (nonterminal A) cⱼ).yield = List.replicate (L + 2 - (j - 2) + 1) .v := by
     rw [← yield_map ℓ, hsⱼℓ, yield_cluster]
   have hyt : t.yield = List.replicate (L + 3) .np ++ List.replicate (L + 3) .v := by
     rw [← yield_map ℓ, htℓ, yield_dutch]
@@ -393,8 +394,8 @@ theorem not_strongly_contextFree (g : ContextFreeGrammar Word) (ℓ : g.NT → C
     rw [← yield_map ℓ, ← hm, yield_dutch]
   have hnp := congrArg (List.count Word.np) hy
   have hv := congrArg (List.count Word.v) hy
-  have hnp' := congrArg (List.count Word.np) (hy' (.node ntᵢ cᵢ))
-  have hv' := congrArg (List.count Word.v) (hy' (.node ntᵢ cᵢ))
+  have hnp' := congrArg (List.count Word.np) (hy' (node (nonterminal A) cᵢ))
+  have hv' := congrArg (List.count Word.v) (hy' (node (nonterminal A) cᵢ))
   rw [hyt, hyj] at hnp hv
   rw [← ht', hyt', hyi] at hnp' hv'
   simp [List.count_replicate] at hnp hv hnp' hv'
