@@ -1277,7 +1277,6 @@ import Linglib.Fragments.Zulu.Phonology
 import Linglib.Morphology.Construction.Inheritance
 import Linglib.Morphology.Construction.SameExcept
 import Linglib.Morphology.Construction.Schema
-import Linglib.Morphology.Construction.Sister
 import Linglib.Morphology.DistributedMorphology.Allosemy
 import Linglib.Morphology.DistributedMorphology.Basic
 import Linglib.Morphology.DistributedMorphology.Categorizer.Basic

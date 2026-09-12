@@ -215,6 +215,16 @@ referral's re-selection. -/
 def expoFragment (b : Block L Z P) : Block L Z P :=
   b.filter (fun r => r.payload matches .expo _)
 
+omit [PartialOrder P] [DecidableEq L] [DecidableLE P] in
+/-- Every member of a block's exponence fragment carries an exponence payload. -/
+theorem mem_expoFragment_expo {b : Block L Z P} {r : Rule L P (Action Z P)}
+    (h : r ∈ expoFragment b) : ∃ f, r.payload = Action.expo f := by
+  simp only [expoFragment, List.mem_filter] at h
+  obtain ⟨-, h2⟩ := h
+  cases hp : r.payload with
+  | expo f => exact ⟨f, rfl⟩
+  | referral g => rw [hp] at h2; simp at h2
+
 /-- The form produced by evaluating a block at a cell: select the narrowest
 applicable rule; an exponence rule applies its form operation, a referral rule
 re-selects among the block's exponence rules at the retargeted property set (one
@@ -232,6 +242,21 @@ def evalBlockForm (Lindex : Z → L) (b : Block L Z P) (wσ : Z × P) : Z :=
         | .referral _ => wσ.1
       | none => wσ.1
   | none => wσ.1
+
+/-- A referred cell realizes as its referent's exponence-only evaluation: when the narrowest
+rule at `(w, σ)` is a referral to `retarget`, evaluating the block equals evaluating its
+exponence fragment at the retargeted cell. -/
+theorem evalBlockForm_referral {Lindex : Z → L} {b : Block L Z P} {w : Z} {σ : P}
+    {r : Rule L P (Action Z P)} {retarget : P → P}
+    (hr : selectMinimal b (Lindex w, σ) = some r)
+    (hpay : r.payload = Action.referral retarget) :
+    evalBlockForm Lindex b (w, σ)
+      = evalBlockForm Lindex (expoFragment b) (w, retarget σ) := by
+  cases hs : selectMinimal (expoFragment b) (Lindex w, retarget σ) with
+  | none => simp only [evalBlockForm, hr, hpay, hs]
+  | some s =>
+    obtain ⟨g, hg⟩ := mem_expoFragment_expo (selectMinimal_mem hs)
+    simp only [evalBlockForm, hr, hpay, hs, hg]
 
 /-- Evaluate a block at a form-state, keeping the property set ([bonami-stump-2016]'s
 rule format outputs `⟨f(W), σ⟩`). -/

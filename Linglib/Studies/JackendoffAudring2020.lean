@@ -1,5 +1,5 @@
 import Linglib.Data.Examples.JackendoffAudring2020
-import Linglib.Morphology.Construction.Sister
+import Linglib.Morphology.Construction.Schema
 import Linglib.Morphology.Construction.SameExcept
 import Linglib.Morphology.Construction.Inheritance
 import Linglib.Morphology.Paradigm.Linkage
@@ -23,8 +23,8 @@ base and the ideology (`ismist_pairs`), the open-ended relation the book illustr
 *Trumpism*. Ablaut, Section 5.3, is a sister link off the syllabic nucleus: the general schema
 (25) pairs exactly the stems and pasts that are the same except at the nucleus
 (`ablaut_pairs_iff`), the *sing*/*sang* subschema (26) is a special case of it
-(`ablaut_pairs_of_nucleusSister_pairs`) whose pairs are nucleus contrasts
-(`contrast_of_nucleusSister_pairs`), and the German present-tense schema (45) has the same
+(`ablaut_pairs_of_nucleusPair`) whose pairs are nucleus contrasts
+(`contrast_of_nucleusPair`), and the German present-tense schema (45) has the same
 phonological shape. The cells (45) serves, the second and third singular present, are a
 morphome, Section 5.4.4: the syncretism class of the special stem of *sprechen* is a value
 conjunction of no feature of the paradigm (`spricht_morphome`). The Same Verb Problem, Section
@@ -36,8 +36,9 @@ and *wring*.
 ## Implementation notes
 
 * Lexical entries and schemas are slot-indexed descriptions over a flat carrier, a constant
-  above `⊥` and a variable at `⊥`; a relational coindex is a link between slots that a paired
-  instantiation must fill alike (`Morphology.Construction.Sister.Pairs`). The containment of
+  above `⊥` and a variable at `⊥`; a relational coindex is a variable subscripting a slot of
+  each entry, which a paired instantiation fills alike
+  (`Morphology.Construction.Schema.InstantiatesAt`). The containment of
   the semantics of *assassinate* in that of *assassin*, (41), is rendered as a shared slot.
 * The zero exponence of the present and the infinitive of *walk*, (19), the double
   coindexation of Section 4.3, appears as a syncretism of the paradigm (`walk_syncretism`).
@@ -68,6 +69,16 @@ inductive Part
   | ate
   deriving DecidableEq
 
+/-- The variables of (41): the phonology of *assassin*, which is the base of *assassinate*
+(coindex 2), the predicate MURDER of both (coindex 1), the person that *assassin* adds and the
+affix that *assassinate* adds. -/
+inductive AssassinVar
+  | phon
+  | murder
+  | person
+  | ate
+  deriving DecidableEq
+
 /-- The slots of *assassin*: its phonology, the predicate it contains, and the person. -/
 inductive AssassinSlot
   | phon
@@ -82,33 +93,42 @@ inductive AssassinateSlot
   | murder
   deriving DecidableEq
 
-/-- The entry (41a), fully specified. -/
-def assassin : Schema AssassinSlot (Flat Part) :=
-  ⟨λ | .phon => ↑Part.asasin | .murder => ↑Part.murder | .person => ↑Part.person, ∅⟩
+/-- The entries (41a) and (41b) with their coindices, as one fully specified description over
+the shared variables. -/
+def assassinPair : Schema AssassinVar (Flat Part) :=
+  ⟨λ | .phon => ↑Part.asasin | .murder => ↑Part.murder | .person => ↑Part.person
+     | .ate => ↑Part.ate, ∅⟩
 
-/-- The entry (41b), fully specified. -/
-def assassinate : Schema AssassinateSlot (Flat Part) :=
-  ⟨λ | .base => ↑Part.asasin | .affix => ↑Part.ate | .murder => ↑Part.murder, ∅⟩
+/-- The subscripting of the slots of *assassin* by the variables of (41). -/
+def assassinSub : AssassinSlot → AssassinVar
+  | .phon => .phon
+  | .murder => .murder
+  | .person => .person
 
-/-- The sister link of (41): coindex 2 identifies the phonology of *assassin* with the base of
-*assassinate*, coindex 1 the predicate of *assassinate* with the one inside *assassin*. -/
-def assassinSister : Sister AssassinSlot AssassinateSlot (Flat Part) where
-  fst := assassin
-  snd := assassinate
-  link
-    | .phon, .base => True
-    | .murder, .murder => True
-    | _, _ => False
+/-- The subscripting of the slots of *assassinate* by the variables of (41). -/
+def assassinateSub : AssassinateSlot → AssassinVar
+  | .base => .phon
+  | .affix => .ate
+  | .murder => .murder
 
-/-- The two entries are a paired instantiation of their sister link: they share the base
-phonology and the predicate, and neither contains all of the other. -/
-theorem assassin_pairs : assassinSister.Pairs assassin.body assassinate.body :=
-  ⟨le_rfl, le_rfl, λ v₁ v₂ h => by
-    cases v₁ <;> cases v₂ <;> simp_all [assassinSister, assassin, assassinate]⟩
+/-- The entry (41a): the pair read at the slots of *assassin*. -/
+def assassin : Schema AssassinSlot (Flat Part) := assassinPair.comap assassinSub
+
+/-- The entry (41b): the pair read at the slots of *assassinate*. -/
+def assassinate : Schema AssassinateSlot (Flat Part) := assassinPair.comap assassinateSub
+
+/-- The two entries are a paired instantiation of (41): they share the base phonology and the
+predicate, and neither contains all of the other. -/
+theorem assassin_pairs :
+    assassinPair.InstantiatesAt (Sum.elim assassinSub assassinateSub)
+      (Sum.elim assassin.body assassinate.body) :=
+  ⟨assassinPair.body, le_rfl, funext λ p => by rcases p with p | p <;> cases p <;> rfl⟩
 
 /-- The link is nondirectional: neither word is derived from the other. -/
-theorem assassin_pairs_symm : assassinSister.swap.Pairs assassinate.body assassin.body :=
-  Sister.pairs_swap.2 assassin_pairs
+theorem assassin_pairs_symm :
+    assassinPair.InstantiatesAt (Sum.elim assassinateSub assassinSub)
+      (Sum.elim assassinate.body assassin.body) :=
+  Schema.instantiatesAt_elim_swap.2 assassin_pairs
 
 /-- The pair as nodes of an inheritance hierarchy. -/
 inductive Pair
@@ -133,6 +153,16 @@ inductive Atom (B I : Type*)
   | ist
   | adherent
 
+/-- The variables of the schemas (47): the base `X` and the ideology, shared by the two schemas
+(coindices α and β), the two affixes and the relation ADHERENT. -/
+inductive IsmIstVar
+  | base
+  | ideology
+  | ism
+  | ist
+  | adherent
+  deriving DecidableEq
+
 /-- The slots of the *-ism* schema: base, affix, semantics. -/
 inductive IsmSlot
   | base
@@ -150,23 +180,30 @@ inductive IstSlot
 
 variable {B I : Type*}
 
+/-- (47): the *-ism* and *-ist* schemas with their coindices as one description, the affixes
+and ADHERENT pinned, the base and the ideology open. -/
+def ismist : Schema IsmIstVar (Flat (Atom B I)) :=
+  ⟨λ | .ism => ↑(Atom.ism : Atom B I) | .ist => ↑(Atom.ist : Atom B I)
+     | .adherent => ↑(Atom.adherent : Atom B I) | _ => ⊥, {.base, .ideology}⟩
+
+/-- The subscripting of the slots of the *-ism* schema by the variables of (47). -/
+def ismSub : IsmSlot → IsmIstVar
+  | .base => .base
+  | .affix => .ism
+  | .sem => .ideology
+
+/-- The subscripting of the slots of the *-ist* schema by the variables of (47). -/
+def istSub : IstSlot → IsmIstVar
+  | .base => .base
+  | .affix => .ist
+  | .relation => .adherent
+  | .ideology => .ideology
+
 /-- (47a): the affix pinned to *-ism*, the base and the ideology open. -/
-def ismSchema : Schema IsmSlot (Flat (Atom B I)) :=
-  ⟨λ | .affix => ↑(Atom.ism : Atom B I) | _ => ⊥, {.base, .sem}⟩
+def ismSchema : Schema IsmSlot (Flat (Atom B I)) := ismist.comap ismSub
 
 /-- (47b): the affix pinned to *-ist* and the semantics to ADHERENT of an open ideology. -/
-def istSchema : Schema IstSlot (Flat (Atom B I)) :=
-  ⟨λ | .affix => ↑(Atom.ist : Atom B I) | .relation => ↑(Atom.adherent : Atom B I) | _ => ⊥,
-    {.base, .ideology}⟩
-
-/-- The linked variable coindices of (47): `α` identifies the bases, `β` the ideology. -/
-def ismist : Sister IsmSlot IstSlot (Flat (Atom B I)) where
-  fst := ismSchema
-  snd := istSchema
-  link
-    | .base, .base => True
-    | .sem, .ideology => True
-    | _, _ => False
+def istSchema : Schema IstSlot (Flat (Atom B I)) := ismist.comap istSub
 
 /-- The *-ism* noun on base `b` denoting the ideology `i`. -/
 def ismWord (b : B) (i : I) : IsmSlot → Flat (Atom B I)
@@ -181,13 +218,20 @@ def istWord (b : B) (i : I) : IstSlot → Flat (Atom B I)
   | .relation => ↑(Atom.adherent : Atom B I)
   | .ideology => ↑(Atom.ideology i : Atom B I)
 
+/-- The variables of (47) filled by the base `b` and the ideology `i`. -/
+def ismistWord (b : B) (i : I) : IsmIstVar → Flat (Atom B I)
+  | .base => ↑(Atom.base b : Atom B I)
+  | .ideology => ↑(Atom.ideology i : Atom B I)
+  | .ism => ↑(Atom.ism : Atom B I)
+  | .ist => ↑(Atom.ist : Atom B I)
+  | .adherent => ↑(Atom.adherent : Atom B I)
+
 /-- The relation is open-ended: for any base and any ideology, *X-ism* and *X-ist* are a paired
 instantiation of the sister schemas, *Trumpism* and *Trumpist* included. -/
-theorem ismist_pairs (b : B) (i : I) : ismist.Pairs (ismWord b i) (istWord b i) := by
-  refine ⟨λ v => ?_, λ v => ?_, λ v₁ v₂ h => ?_⟩
-  · cases v <;> simp [ismist, ismSchema, ismWord]
-  · cases v <;> simp [ismist, istSchema, istWord]
-  · cases v₁ <;> cases v₂ <;> simp_all [ismist, ismWord, istWord]
+theorem ismist_pairs (b : B) (i : I) :
+    ismist.InstantiatesAt (Sum.elim ismSub istSub) (Sum.elim (ismWord b i) (istWord b i)) :=
+  ⟨ismistWord b i, λ v => by cases v <;> first | exact bot_le | exact le_rfl,
+    funext λ p => by rcases p with p | p <;> cases p <;> rfl⟩
 
 /-! ### Ablaut as a link off the nucleus -/
 
@@ -219,56 +263,79 @@ def syllable (o n c : Seg) : Pos → Flat Seg
   | .nucleus => ↑n
   | .coda => ↑c
 
-/-- Two schemas over a syllable linked at every position but the nucleus, whose bodies pin
-the nuclei `v` and `w`, `⊥` for an open nucleus: the shape of the ablaut schemas (25) and (26)
-and of the German present-tense schema (45). -/
-def nucleusSister (v w : Flat Seg) : Sister Pos Pos (Flat Seg) where
-  fst := ⟨λ | .nucleus => v | _ => ⊥, {.onset, .coda}⟩
-  snd := ⟨λ | .nucleus => w | _ => ⊥, {.onset, .coda}⟩
-  link p q := p = q ∧ p ≠ .nucleus
+/-- The variables of the ablaut schemas: the onset and the coda, shared by stem and past, and
+the two nuclei. -/
+inductive NucleusVar
+  | onset
+  | coda
+  | stem
+  | past
+  deriving DecidableEq
+
+/-- The subscripting of the stem's positions by the variables of the ablaut schemas. -/
+def stemSub : Pos → NucleusVar
+  | .onset => .onset
+  | .nucleus => .stem
+  | .coda => .coda
+
+/-- The subscripting of the past's positions by the variables of the ablaut schemas. -/
+def pastSub : Pos → NucleusVar
+  | .onset => .onset
+  | .nucleus => .past
+  | .coda => .coda
+
+/-- Two syllables linked at every position but the nucleus, whose description pins the nuclei
+`v` and `w`, `⊥` for an open nucleus: the shape of the ablaut schemas (25) and (26) and of the
+German present-tense schema (45). -/
+def nucleusPair (v w : Flat Seg) : Schema NucleusVar (Flat Seg) :=
+  ⟨λ | .stem => v | .past => w | _ => ⊥, {.onset, .coda}⟩
 
 /-- The general ablaut schema (25): both nuclei open. -/
-def ablaut : Sister Pos Pos (Flat Seg) := nucleusSister ⊥ ⊥
+def ablaut : Schema NucleusVar (Flat Seg) := nucleusPair ⊥ ⊥
 
 /-- The *sing*/*sang* subschema (26): /ɪ/ in the stem, /æ/ in the past. -/
-def singSang : Sister Pos Pos (Flat Seg) := nucleusSister ↑Seg.ih ↑Seg.ae
+def singSang : Schema NucleusVar (Flat Seg) := nucleusPair ↑Seg.ih ↑Seg.ae
 
 /-- The *string*/*strung* subschema, (26) with /ʌ/ for /æ/. -/
-def stringStrung : Sister Pos Pos (Flat Seg) := nucleusSister ↑Seg.ih ↑Seg.uh
+def stringStrung : Schema NucleusVar (Flat Seg) := nucleusPair ↑Seg.ih ↑Seg.uh
 
-/-- A paired instantiation of a nucleus sister is a pair that is the same except at the
-nucleus, with the pinned nuclei. -/
-theorem nucleusSister_pairs_iff {v w : Flat Seg} {s p : Pos → Flat Seg} :
-    (nucleusSister v w).Pairs s p ↔
+/-- A paired instantiation of a nucleus pair is a stem and a past that are the same except at
+the nucleus, with the pinned nuclei. -/
+theorem nucleusPair_iff {v w : Flat Seg} {s p : Pos → Flat Seg} :
+    (nucleusPair v w).InstantiatesAt (Sum.elim stemSub pastSub) (Sum.elim s p) ↔
       v ≤ s .nucleus ∧ w ≤ p .nucleus ∧ SameExcept s p {.nucleus} := by
-  simp only [Sister.Pairs, nucleusSister, Schema.Instantiates, SameExcept, Set.EqOn,
-    Set.mem_compl_iff, Set.mem_singleton_iff, Pi.le_def]
+  rw [Schema.instantiatesAt_elim_iff]
   constructor
-  · rintro ⟨h₁, h₂, hl⟩
-    exact ⟨h₁ .nucleus, h₂ .nucleus, λ q hq => hl ⟨rfl, hq⟩⟩
-  · rintro ⟨hv, hw, hs⟩
-    refine ⟨λ q => ?_, λ q => ?_, ?_⟩
-    · cases q <;> simp [hv]
-    · cases q <;> simp [hw]
-    · rintro q₁ q₂ ⟨rfl, hq⟩
-      exact hs hq
+  · rintro ⟨hs, hp, -, -, h⟩
+    refine ⟨hs .nucleus, hp .nucleus, λ q hq => h q q ?_⟩
+    cases q <;> first | rfl | simp at hq
+  · rintro ⟨hv, hw, h⟩
+    refine ⟨λ q => ?_, λ q => ?_, λ a b hab => ?_, λ a b hab => ?_, λ a b hab => ?_⟩
+    · cases q <;> simp [nucleusPair, stemSub, hv]
+    · cases q <;> simp [nucleusPair, pastSub, hw]
+    · cases a <;> cases b <;> first | rfl | exact absurd hab (by decide)
+    · cases a <;> cases b <;> first | rfl | exact absurd hab (by decide)
+    · cases a <;> cases b <;> first | exact absurd hab (by decide) | exact h (by simp)
 
 /-- (25) pairs exactly the stems and pasts that are the same except at the nucleus. -/
 theorem ablaut_pairs_iff {s p : Pos → Flat Seg} :
-    ablaut.Pairs s p ↔ SameExcept s p {.nucleus} := by
-  simp [ablaut, nucleusSister_pairs_iff]
+    ablaut.InstantiatesAt (Sum.elim stemSub pastSub) (Sum.elim s p) ↔
+      SameExcept s p {.nucleus} := by
+  simp [ablaut, nucleusPair_iff]
 
 /-- A subschema with pinned nuclei is a special case of the general ablaut schema: every pair
 of (26) is a pair of (25). -/
-theorem ablaut_pairs_of_nucleusSister_pairs {v w : Flat Seg} {s p : Pos → Flat Seg}
-    (h : (nucleusSister v w).Pairs s p) : ablaut.Pairs s p :=
-  ablaut_pairs_iff.2 (nucleusSister_pairs_iff.1 h).2.2
+theorem ablaut_pairs_of_nucleusPair {v w : Flat Seg} {s p : Pos → Flat Seg}
+    (h : (nucleusPair v w).InstantiatesAt (Sum.elim stemSub pastSub) (Sum.elim s p)) :
+    ablaut.InstantiatesAt (Sum.elim stemSub pastSub) (Sum.elim s p) :=
+  ablaut_pairs_iff.2 (nucleusPair_iff.1 h).2.2
 
 /-- A pair under a subschema with distinct pinned nuclei is a nucleus contrast: the same
 except at the nucleus, where both are present and differ. -/
-theorem contrast_of_nucleusSister_pairs {v w : Seg} (hvw : v ≠ w) {s p : Pos → Flat Seg}
-    (h : (nucleusSister ↑v ↑w).Pairs s p) : Contrast s p {.nucleus} := by
-  obtain ⟨hv, hw, hs⟩ := nucleusSister_pairs_iff.1 h
+theorem contrast_of_nucleusPair {v w : Seg} (hvw : v ≠ w) {s p : Pos → Flat Seg}
+    (h : (nucleusPair ↑v ↑w).InstantiatesAt (Sum.elim stemSub pastSub) (Sum.elim s p)) :
+    Contrast s p {.nucleus} := by
+  obtain ⟨hv, hw, hs⟩ := nucleusPair_iff.1 h
   rw [Flat.coe_le_iff] at hv hw
   refine ⟨hs, λ q hq => ?_⟩
   rw [Set.mem_singleton_iff] at hq
@@ -279,19 +346,24 @@ theorem contrast_of_nucleusSister_pairs {v w : Seg} (hvw : v ≠ w) {s p : Pos �
 /-- Two syllables differing only in their nucleus are a paired instantiation of the subschema
 pinning those nuclei. -/
 theorem syllable_pairs (o v w c : Seg) :
-    (nucleusSister ↑v ↑w).Pairs (syllable o v c) (syllable o w c) := by
-  rw [nucleusSister_pairs_iff]
+    (nucleusPair ↑v ↑w).InstantiatesAt (Sum.elim stemSub pastSub)
+      (Sum.elim (syllable o v c) (syllable o w c)) := by
+  rw [nucleusPair_iff]
   refine ⟨le_rfl, le_rfl, λ q hq => ?_⟩
   simp only [Set.mem_compl_iff, Set.mem_singleton_iff] at hq
   cases q <;> simp_all [syllable]
 
 /-- *sing*/*sang*, (24), under (26); *string*/*strung* under its subschema; and the German
 *sprech-*/*sprich-* of (43) under the shape of (45). -/
-example : singSang.Pairs (syllable .s .ih .ng) (syllable .s .ae .ng) ∧
-    stringStrung.Pairs (syllable .str .ih .ng) (syllable .str .uh .ng) ∧
-    ablaut.Pairs (syllable .shpr .eh .x) (syllable .shpr .ih .x) :=
+example :
+    singSang.InstantiatesAt (Sum.elim stemSub pastSub)
+        (Sum.elim (syllable .s .ih .ng) (syllable .s .ae .ng)) ∧
+      stringStrung.InstantiatesAt (Sum.elim stemSub pastSub)
+        (Sum.elim (syllable .str .ih .ng) (syllable .str .uh .ng)) ∧
+      ablaut.InstantiatesAt (Sum.elim stemSub pastSub)
+        (Sum.elim (syllable .shpr .eh .x) (syllable .shpr .ih .x)) :=
   ⟨syllable_pairs .., syllable_pairs ..,
-    ablaut_pairs_of_nucleusSister_pairs (syllable_pairs .shpr .eh .ih .x)⟩
+    ablaut_pairs_of_nucleusPair (syllable_pairs .shpr .eh .ih .x)⟩
 
 /-! ### The present-tense cells of (45) as a morphome -/
 
