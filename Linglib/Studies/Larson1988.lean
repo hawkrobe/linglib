@@ -27,8 +27,8 @@ indirect passive *Mary was sent a letter* is derived by dative shift followed by
 
 ## Implementation notes
 
-The paper was not available for this pass, and the section and example numbers carried over
-from the earlier version of this file are marked as unverified. The head movement of the verb
+The oblique dative and dative shift are the paper's second and third sections, the indirect
+passive its fourth, and recoverability the second part of its fifth. The head movement of the verb
 from the inner to the outer shell is not modelled, since the c-command facts depend only on the
 positions of the arguments; each derivation is paired with the planar tree it produces, on which
 c-command is decided. The recoverability entries record the roles the paper assigns to each
@@ -44,9 +44,6 @@ namespace Larson1988
 
 open Minimalist SyntacticObject
 open RoseTree UnorderedTree
-
--- UNVERIFIED: the section and example locators cited below are those of the earlier version
--- of this file.
 
 /-! ### Lexical items -/
 
