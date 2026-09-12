@@ -6,28 +6,30 @@ import Linglib.Data.Examples.Partee2010
 
 /-!
 # Partee (2010): Privative Adjectives: Subsective plus Coercion
-[partee-2010]
 
-[partee-2010] argues no adjectives are genuinely
-[kamp-1975]-privative: apparent privatives are subsective after
-NVP-driven noun-coercion (the NVP and HPP of [kamp-partee-1995] p. 161,
-restated as formulae (18) and (20) in [partee-2010] § 4). Polish
-NP-splitting data from [nowak-2000] is the empirical wedge.
+This file formalizes the argument of [partee-2010] that no adjective is privative in the
+sense of [kamp-1975]: an apparent privative such as *fake* is subsective once the noun is
+coerced to a wider meaning, real or fake fur, under the Non-Vacuity Principle and the Head
+Primacy Principle of [kamp-partee-1995]. A Kamp-privative adjective admits no coercion
+licensed by non-vacuity, since privativity leaves its extension within the noun's empty
+(`isPrivative_no_LicensedCoercion`), whereas the reanalysed *fake* does (`fakeReanalysis`,
+`fakeCoercion`) and lands in the subsective class (`fakeReanalysis_RevisedClass_subsective`).
+The Polish NP-splitting data of [nowak-2000] is the diagnostic: a split is acceptable exactly
+outside the non-subsective class, tracking the reading rather than the lexeme for the
+ambiguous *biedny* (`split_tracks_subsectivity`).
 
-## Main results
+## Implementation notes
 
-* `isPrivative_no_LicensedCoercion`: Kamp-privative adjectives admit
-  no `LicensedCoercion` — the formal obstruction motivating reanalysis.
-* `fakeReanalysis : SubsectiveReanalysis Kamp1975.fakeAdj` — the
-  constructive reanalysis of Kamp's paradigm privative — with
-  `fakeCoercion`, the coercion it licenses (the positive half of the
-  obstruction), and `fakeReanalysis_RevisedClass_subsective`, placing
-  the reanalysed meaning in `RevisedClass.subsective`.
-* `split_tracks_subsectivity`: over the [nowak-2000] sample, NP-split
-  acceptability tracks the reading's class (splittable ⟺ not
-  non-subsective) — the § 3 generalization.
-* Witness bridges from Kamp's `grayAdj`/`skillfulAdj`/`allegedAdj`
-  to `RevisedClass` cases.
+The coercion apparatus is that of `Semantics/Modification/Coercion` and the adjective classes
+those of `Semantics/Modification/Classification`; the Polish rows are the generated examples
+of `Data/Examples/Partee2010`, and Kamp's paradigm adjectives come from the Kamp study.
+
+## References
+
+* [partee-2010]
+* [kamp-1975]
+* [kamp-partee-1995]
+* [nowak-2000]
 -/
 
 namespace Partee2010
@@ -44,7 +46,7 @@ variable {W E : Type*}
 theorem isPrivative_no_LicensedCoercion {adj : Modifier (Property W E)}
     (hp : isPrivative adj) (N : Property W E) (w : W) :
     IsEmpty (LicensedCoercion N adj w) :=
-  ⟨fun lc => by
+  ⟨λ lc => by
     obtain ⟨x, hshift, hadj⟩ := lc.satisfies_nvp.1
     exact isPrivative_iff.mp hp lc.shift w x hadj hshift⟩
 
@@ -62,8 +64,8 @@ theorem fakeAdj_no_LicensedCoercion (N : Property Kamp1975.W2 Kamp1975.E3)
     direct application of `fakeAdj N` to entities in `N` is empty
     (privative). -/
 def fakeReanalysis : SubsectiveReanalysis Kamp1975.fakeAdj where
-  nounShift N := fun w x => N w x ∨ Kamp1975.fakeAdj N w x
-  adjSubsective := fun N w x => N w x ∧ x = Kamp1975.E3.b
+  nounShift N := λ w x => N w x ∨ Kamp1975.fakeAdj N w x
+  adjSubsective := λ N w x => N w x ∧ x = Kamp1975.E3.b
   le_nounShift _ _ _ hN := Or.inl hN
   is_subsective _ _ _ h := h.1
   shift_inert N w hne := by
@@ -71,7 +73,7 @@ def fakeReanalysis : SubsectiveReanalysis Kamp1975.fakeAdj where
     exact absurd hN (isPrivative_iff.mp Kamp1975.fake_privative N w x hadj)
 
 /-- A toy noun for the fur scenario: `a` is (real) fur. -/
-def furN : Property Kamp1975.W2 Kamp1975.E3 := fun _ x => x = .a
+def furN : Property Kamp1975.W2 Kamp1975.E3 := λ _ x => x = .a
 
 /-- With the noun widened to "real or fake fur", the reanalysed meaning
     is non-vacuous in the shifted domain: `b` is fake fur (positive
@@ -79,8 +81,8 @@ def furN : Property Kamp1975.W2 Kamp1975.E3 := fun _ x => x = .a
 theorem fakeReanalysis_isNonVacuous (w : Kamp1975.W2) :
     isNonVacuous (fakeReanalysis.adjSubsective (fakeReanalysis.nounShift furN)) w
       (fakeReanalysis.nounShift furN w) :=
-  have hb : fakeReanalysis.nounShift furN w .b := Or.inr ⟨trivial, fun h => nomatch h⟩
-  ⟨⟨.b, hb, hb, rfl⟩, ⟨.a, Or.inl rfl, fun h => nomatch h.2⟩⟩
+  have hb : fakeReanalysis.nounShift furN w .b := Or.inr ⟨trivial, λ h => nomatch h⟩
+  ⟨⟨.b, hb, hb, rfl⟩, ⟨.a, Or.inl rfl, λ h => nomatch h.2⟩⟩
 
 /-- The coercion `fakeReanalysis` licenses at the fur noun — the
     positive counterpart to `fakeAdj_no_LicensedCoercion`: the
@@ -97,15 +99,15 @@ theorem fakeReanalysis_RevisedClass_subsective :
     RevisedClass.subsective.satisfies fakeReanalysis.adjSubsective :=
   fakeReanalysis.is_subsective
 
-/-! ### § 3: the splitting diagnostic -/
+/-! ### The splitting diagnostic -/
 
-/-- [partee-2010] § 3's diagnostic prediction: NP-splitting is available
-    exactly outside the non-subsective class. -/
+/-- The diagnostic prediction: NP-splitting is available exactly outside the non-subsective
+class. -/
 abbrev predictsSplit (c : RevisedClass) : Prop := c ≠ .nonSubsective
 
 /-- The [nowak-2000] split sample: each split datum (or reading, for
-    ambiguous *biedny*) paired with the class [partee-2010] § 3 assigns
-    to the adjective's reading. -/
+    ambiguous *biedny*) paired with the class the paper assigns to the
+    adjective's reading. -/
 def splitSample : List (Features.Judgment × RevisedClass) :=
   [(Examples.ex_11b.judgment, .intersective),   -- przystojny 'handsome'
    (Examples.ex_12b.judgment, .intersective),   -- nowy 'new'
