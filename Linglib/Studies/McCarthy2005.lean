@@ -20,11 +20,6 @@ Arabic tableaux for the right and left edges of the verb stem and for geminate v
 Moroccan majority-rules paradigm, and the Hebrew jussive paradigms of Benua are rerun under
 the paper's ranking.
 
-## TODO
-
-The chapter is not on file; example locators are transcribed from an earlier version of this
-file and are UNVERIFIED.
-
 ## References
 
 * [mccarthy-2005]
