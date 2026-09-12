@@ -3,7 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Data.Forms.Booij2010
 import Linglib.Morphology.Construction.Schema
+import Mathlib.Data.Fin.VecNotation
+import Mathlib.Tactic.FinCases
 import Linglib.Morphology.Construction.Inheritance
 import Linglib.Core.Order.Flat
 
@@ -45,76 +48,56 @@ affix slot is lexically fixed as `-ness` and whose base slot is an open
 (deadjectival) variable. A concrete adjective unified into the base slot yields a
 `-ness` noun. -/
 
-/-- The morphs and (deadjectival) bases the `-ness` schema handles. -/
-inductive Atom | ness | aware | carless | bald
-  deriving DecidableEq, Fintype
-
-/-- The two slots of the `-ness` construction. -/
-inductive NessSlot | base | affix
-  deriving DecidableEq, Fintype
-
-/-- The `-ness` schema: the affix slot pinned to `-ness`, the base slot an open
-deadjectival variable (`⊥`). -/
-def nessSchema : Schema NessSlot (Flat Atom) where
-  body
-    | .base => ⊥
-    | .affix => ↑Atom.ness
-  opens := {.base}
-
-/-- `carlessness`: the paper's novel coin (Time, October 5, 2009), the
-adjective `carless` unified into the base slot. -/
-def carlessness : NessSlot → Flat Atom
-  | .base => ↑Atom.carless
-  | .affix => ↑Atom.ness
-
-/-- `baldness`: a stored `-ness` noun of the paper's opening word set. -/
-def baldness : NessSlot → Flat Atom
-  | .base => ↑Atom.bald
-  | .affix => ↑Atom.ness
-
-/-- `awareness`: the paper's example of an existing deadjectival noun, stored. -/
-def awareness : NessSlot → Flat Atom
-  | .base => ↑Atom.aware
-  | .affix => ↑Atom.ness
+/-- The `-ness` schema over the two slots of a `-ness` noun, base and affix: the affix slot
+pinned to `-ness`, the base slot an open deadjectival variable (`⊥`). -/
+def nessSchema : Schema (Fin 2) (Flat String) := ⟨![⊥, ↑"ness"], {0}⟩
 
 /-- Any filling whose affix slot is `-ness` instantiates the schema: the base slot
 is open, the affix slot's constraint is met. -/
-theorem ness_instantiates {w : NessSlot → Flat Atom} (h : w .affix = ↑Atom.ness) :
+theorem ness_instantiates {w : Fin 2 → Flat String} (h : w 1 = ↑"ness") :
     nessSchema.Instantiates w := by
-  intro i; cases i
+  intro i
+  fin_cases i
   · exact bot_le
-  · rw [h]; exact le_rfl
+  · exact h.ge
 
-/-- `carlessness` instantiates the `-ness` schema. -/
-theorem carlessness_instantiates : nessSchema.Instantiates carlessness :=
-  ness_instantiates rfl
+/-- `carlessness`, the paper's novel coin (Time, October 5, 2009), instantiates the
+`-ness` schema. -/
+theorem carlessness_instantiates : nessSchema.Instantiates Forms.carlessness.slots :=
+  ness_instantiates (by decide)
 
 /-- Instantiation as unification: unifying the schema description with
 `carlessness` returns `carlessness` — [booij-2010-compass]'s worked example. -/
 theorem carlessness_unifies :
-    PartialUnify.unify nessSchema.body carlessness = some carlessness :=
+    PartialUnify.unify nessSchema.body Forms.carlessness.slots =
+      some Forms.carlessness.slots :=
   nessSchema.instantiates_iff_unify.mp carlessness_instantiates
 
-/-- The stored `-ness` nouns, feeding the schema's two roles. -/
-def nessLexicon : Set (NessSlot → Flat Atom) := {baldness, awareness}
+/-- The stored `-ness` nouns of the paper's opening word set, feeding the schema's two
+roles. -/
+def nessLexicon : Set (Fin 2 → Flat String) :=
+  {Forms.baldness.slots, Forms.awareness.slots}
 
 /-- The `-ness` schema is productive: its one variable, the base slot, is open. -/
 theorem nessSchema_isProductive : nessSchema.IsProductive := by
-  rintro (_ | _) h
-  exacts [Set.mem_singleton _, absurd h (by decide)]
+  intro i h
+  fin_cases i
+  · exact Set.mem_singleton_iff.2 rfl
+  · exact absurd h (by decide)
 
 /-- The schema licenses the novel coin `carlessness` over the stored nouns: the
 open base slot takes the unlisted adjective, and the affix slot is a constant.
 Being productive, the schema generates every instance whatever is stored. -/
-theorem carlessness_generates : nessSchema.Generates nessLexicon carlessness :=
+theorem carlessness_generates :
+    nessSchema.Generates nessLexicon Forms.carlessness.slots :=
   nessSchema_isProductive.generates_iff.2 carlessness_instantiates
 
 /-- The relational role over the same schema: `awareness` is listed and
 instantiates it — the paper's two functions of a schema, expressing the
 predictable properties of existing words and coining new ones, on one
 schema and one lexicon. -/
-theorem awareness_related : nessSchema.Relates nessLexicon awareness :=
-  ⟨Set.mem_insert_of_mem _ rfl, ness_instantiates rfl⟩
+theorem awareness_related : nessSchema.Relates nessLexicon Forms.awareness.slots :=
+  ⟨Set.mem_insert_of_mem _ rfl, ness_instantiates (by decide)⟩
 
 /-! ### The compound hierarchy
 
