@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Core.Data.Sum.Basic
 import Linglib.Core.Order.PartialUnify
 import Mathlib.Order.Lattice
 
@@ -56,20 +57,6 @@ Marking a constant slot as open has no effect.
 * [plotkin-1970]
 * [albright-hayes-2003]
 -/
-
-/-- The sum of two functions factors through the sum of two others exactly when each factors
-through its own and the two agree wherever the subscripts coincide. -/
-theorem Function.factorsThrough_sum_elim_iff {α β γ δ : Type*} {f₁ : α → γ}
-    {f₂ : β → γ} {g₁ : α → δ} {g₂ : β → δ} :
-    (Sum.elim g₁ g₂).FactorsThrough (Sum.elim f₁ f₂) ↔
-      g₁.FactorsThrough f₁ ∧ g₂.FactorsThrough f₂ ∧
-        ∀ a b, f₁ a = f₂ b → g₁ a = g₂ b := by
-  simp only [Function.FactorsThrough, Sum.forall, forall_and, Sum.elim_inl, Sum.elim_inr]
-  constructor
-  · rintro ⟨⟨h₁, -⟩, h, h₂⟩
-    exact ⟨h₁, h₂, h⟩
-  · rintro ⟨h₁, h₂, h⟩
-    exact ⟨⟨h₁, λ b a hab => (h a b hab.symm).symm⟩, h, h₂⟩
 
 namespace Morphology.Construction
 
@@ -196,7 +183,7 @@ theorem instantiatesAt_elim_iff :
       (s.comap pos₁).Instantiates w₁ ∧ (s.comap pos₂).Instantiates w₂ := by
     simp only [Instantiates, comap_body, Sum.comp_elim, Pi.le_def, Sum.forall, Sum.elim_inl,
       Sum.elim_inr]
-  rw [instantiatesAt_iff, Function.factorsThrough_sum_elim_iff, h, and_assoc]
+  rw [instantiatesAt_iff, Function.factorsThrough_sumElim_iff, h, and_assoc]
 
 /-- A paired instantiation is symmetric: the sister relation has no direction. -/
 theorem instantiatesAt_elim_swap :
