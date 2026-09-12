@@ -67,6 +67,7 @@ for such a bridge) is also deferred.
 
 - `PolyaUrn α` — pseudo-counts on `α` (the Dirichlet hyperparameters).
 - `PolyaUrn.total` — the sum `Σ π_i`.
+- `PolyaUrn.posterior` — the conjugate update by observed counts.
 - `PolyaUrn.seqProb` — closed-form per-sequence likelihood
   ([odonnell-2015] §3.1.3, depending only on counts).
 - `PolyaUrn.countVec` — the count vector of a draw sequence, the urn's sufficient statistic;
@@ -100,6 +101,27 @@ structure PolyaUrn (α : Type*) where
   pseudo_pos : ∀ i, 0 < pseudo i
 
 namespace PolyaUrn
+
+section Posterior
+
+variable {α : Type*} (u : PolyaUrn α)
+
+/-- The conjugate update of the urn by observed counts `x`: each colour's pseudo-count grows by
+its count. The Dirichlet mixing measure stays Dirichlet under categorical data, so the update
+stays inside `PolyaUrn α`. -/
+def posterior (x : α → ℕ) : PolyaUrn α where
+  pseudo i := u.pseudo i + x i
+  pseudo_pos i := add_pos_of_pos_of_nonneg (u.pseudo_pos i) (Nat.cast_nonneg _)
+
+@[simp] theorem posterior_zero : u.posterior 0 = u := by
+  ext i
+  simp [posterior]
+
+theorem posterior_add (x y : α → ℕ) : u.posterior (x + y) = (u.posterior x).posterior y := by
+  ext i
+  simp [posterior, add_assoc]
+
+end Posterior
 
 variable {α : Type*} [Fintype α] (u : PolyaUrn α)
 

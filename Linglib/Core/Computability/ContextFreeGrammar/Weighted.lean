@@ -27,6 +27,9 @@ future weighted-CFG consumer share one definition.
 
 - `ContextFreeGrammar.RulesWithLHS G a` — subtype of grammar rules
   whose left-hand side equals `a`.
+- `Symbol.IsNonterminal` — the predicate picking out nonterminal symbols.
+- `ContextFreeRule.NonterminalPos r` — subtype of right-hand-side positions
+  of `r` holding a nonterminal, the index for any per-slot analysis.
 - `WeightedCFG G W` — per-rule weight in `W`, nonnegative, no
   normalization constraint.
 -/
@@ -44,6 +47,36 @@ abbrev RulesWithLHS (a : G.NT) :=
   { r : ContextFreeRule T G.NT // r ∈ G.rules.filter (·.input = a) }
 
 end ContextFreeGrammar
+
+namespace Symbol
+
+variable {T N : Type*}
+
+/-- `s.IsNonterminal` holds when the symbol `s` is a nonterminal. -/
+def IsNonterminal : Symbol T N → Prop
+  | terminal _ => False
+  | nonterminal _ => True
+
+instance : DecidablePred (IsNonterminal : Symbol T N → Prop)
+  | terminal _ => isFalse id
+  | nonterminal _ => isTrue trivial
+
+@[simp] theorem isNonterminal_nonterminal (n : N) :
+    (nonterminal n : Symbol T N).IsNonterminal := trivial
+
+@[simp] theorem not_isNonterminal_terminal (t : T) :
+    ¬ (terminal t : Symbol T N).IsNonterminal := id
+
+end Symbol
+
+namespace ContextFreeRule
+
+/-- The positions on the right-hand side of `r` that hold a nonterminal: the slots at which a
+derivation from `r` branches, and the index for any analysis carried out per slot. -/
+abbrev NonterminalPos {T N : Type*} (r : ContextFreeRule T N) : Type :=
+  {i : Fin r.output.length // r.output[i].IsNonterminal}
+
+end ContextFreeRule
 
 /--
 A *weighted CFG* over `G` with weights in `W`: per-rule weight
