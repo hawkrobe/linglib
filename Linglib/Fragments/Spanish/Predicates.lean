@@ -6,23 +6,15 @@ import Linglib.Syntax.Minimalist.Verbal.Decomposition
 [cuervo-2003] [munoz-perez-2026] [koontz-garboden-2009]
 
 Verbs from Muñoz [munoz-perez-2026] classified by anticausative marking (SE)
-and event-structural decomposition, extended with causer specification
-from [koontz-garboden-2009].
+and event-structural decomposition, with the verbs whose causer specification
+[koontz-garboden-2009] discusses. The causer specification itself is derived
+from the proto-role subject profile in `Studies/KoontzGarboden2009.lean`.
 
 ## Anticausative Marking Types
 
 - **Marked**: Anticausative requires SE (*quebrar* → *quebrarse*)
 - **Unmarked**: No SE in anticausative (*mejorar* → *mejorar*)
 - **Optional**: SE is marginal (*hervir* → *?hervirse*)
-
-## Causer Specification ([koontz-garboden-2009] §§3.1–3.2)
-
-The thematic specification of the causing participant determines
-whether a verb can anticausativize:
-- **EFFECTOR** (underspecified): causative admits agents, instruments,
-  natural forces, events → anticausative available (*romper*, *abrir*)
-- **AGENT** (specified): causative requires agentive causer →
-  no anticausative, only reflexive (*asesinar*, *cortar*)
 
 -/
 
@@ -43,25 +35,6 @@ inductive AnticausativeMarking where
   | optional   -- Marginal SE (hervir → ?hervirse)
   deriving DecidableEq, Repr
 
-/-- Thematic specification of the participant in the causing subevent
-    ([koontz-garboden-2009] §§2.1, 3.1–3.2).
-
-    The critical distinction: EFFECTOR ([van-valin-wilkins-1996])
-    is thematically underspecified — the causer can be an agent, instrument,
-    natural force, or event. AGENT is thematically specified — the causer
-    must be agentive (volitional, sentient).
-
-    This determines anticausativizability: reflexivization of an EFFECTOR
-    verb yields an anticausative reading; reflexivization of an AGENT verb
-    yields only a reflexive reading. -/
-inductive CauserSpec where
-  /-- Underspecified causer: admits agents, instruments, natural forces,
-      events. Spanish *romper*, *abrir*, *hundir*, *ahogar*. -/
-  | effector
-  /-- Agentive causer required. Spanish *asesinar*, *cortar*. -/
-  | agent
-  deriving DecidableEq, Repr
-
 -- ============================================================================
 -- § 2: Verb Entry Structure
 -- ============================================================================
@@ -79,9 +52,6 @@ structure SpanishVerbEntry extends Verb where
   verbHead : List VerbHead
   /-- Empirical: does this verb license stylistic LE? -/
   licensesStylLE : Bool
-  /-- Thematic specification of the causing participant
-      ([koontz-garboden-2009]). `none` for non-causative verbs. -/
-  causerSpec : Option CauserSpec := none
   deriving Repr, BEq
 
 -- ============================================================================
@@ -95,7 +65,7 @@ def abrir : SpanishVerbEntry :=
   { form := "abrir", frames := [Frame.np],
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := true, causerSpec := some .effector,
+    licensesStylLE := true,
     subjectEntailments := some ⟨false, false, true, false, true,
                                  false, false, false, false, false⟩ }
 
@@ -106,7 +76,7 @@ def romper : SpanishVerbEntry :=
   { form := "romper", frames := [Frame.np],
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := true, causerSpec := some .effector,
+    licensesStylLE := true,
     subjectEntailments := some ⟨false, false, true, false, true,
                                  false, false, false, false, false⟩ }
 
@@ -116,7 +86,7 @@ def hundir : SpanishVerbEntry :=
   { form := "hundir", frames := [Frame.np],
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := true, causerSpec := some .effector,
+    licensesStylLE := true,
     subjectEntailments := some ⟨false, false, true, false, true,
                                  false, false, false, false, false⟩ }
 
@@ -214,7 +184,7 @@ def asesinar : SpanishVerbEntry :=
   { form := "asesinar", frames := [Frame.np],
     anticausativeMarking := .marked,
     causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := false, causerSpec := some .agent,
+    licensesStylLE := false,
     subjectEntailments := some accomplishmentSubjectProfile }
 
 /-- *cortar* "cut" — AGENT causer required. No anticausative.
@@ -223,7 +193,7 @@ def cortar : SpanishVerbEntry :=
   { form := "cortar", frames := [Frame.np],
     anticausativeMarking := .marked,
     causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := false, causerSpec := some .agent,
+    licensesStylLE := false,
     subjectEntailments := some accomplishmentSubjectProfile }
 
 /-- *ahogar* "drown" — EFFECTOR causer, but animate theme undergoers
@@ -233,7 +203,7 @@ def ahogar : SpanishVerbEntry :=
   { form := "ahogar", frames := [Frame.np],
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := false, causerSpec := some .effector,
+    licensesStylLE := false,
     subjectEntailments := some ⟨false, false, true, false, true,
                                  false, false, false, false, false⟩ }
 
@@ -258,8 +228,7 @@ def crecer : SpanishVerbEntry :=
 def munozVerbs : List SpanishVerbEntry :=
   [abrir, romper, hundir, caer, morir, cerrar, quebrar, hervir, olvidar, ocurrir, mejorar, rasgar]
 
-/-- Verbs from [koontz-garboden-2009] — causer specification data,
-    not tested for stylistic LE. -/
+/-- Verbs from [koontz-garboden-2009], not tested for stylistic LE. -/
 def kgVerbs : List SpanishVerbEntry :=
   [asesinar, cortar, ahogar, empeorar, crecer]
 
@@ -281,20 +250,6 @@ theorem hervir_licenses_stylLE : hervir.licensesStylLE = true := rfl
 theorem olvidar_licenses_stylLE : olvidar.licensesStylLE = true := rfl
 theorem ocurrir_licenses_stylLE : ocurrir.licensesStylLE = true := rfl
 theorem mejorar_blocks_stylLE : mejorar.licensesStylLE = false := rfl
-
--- ============================================================================
--- § 4b: Koontz-Garboden (2009) Alternation Predictions
--- ============================================================================
-
-/-- EFFECTOR verbs anticausativize; AGENT verbs do not.
-    [koontz-garboden-2009] §§3.1–3.2. -/
-theorem effector_verbs_alternate :
-    (allVerbs.filter (fun v => v.causerSpec == some .effector)).all
-      (·.causativeAlternation) = true := by decide
-
-theorem agent_verbs_dont_alternate :
-    (allVerbs.filter (fun v => v.causerSpec == some .agent)).all
-      (!·.causativeAlternation) = true := by decide
 
 -- ============================================================================
 -- § 4c: Muñoz-Pérez (2026) Stylistic LE

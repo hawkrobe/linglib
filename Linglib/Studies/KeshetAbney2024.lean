@@ -4,56 +4,31 @@ import Linglib.Logic.PIP.Intensional
 import Linglib.Data.Examples.KeshetAbney2024
 
 /-!
-# Keshet & Abney (2024): Intensional Anaphora
+# Keshet and Abney (2024): Intensional Anaphora
 
-A pronoun presupposes that its antecedent description has a non-empty
-extension (9). In PIP (`Logic/PIP/Basic.lean`) the antecedent description of a
-summation pronoun is a formula label, so "Andrea might be eating a
-cheeseburger. #It is large." (79) is `might_w(ΣwE) ∧ E ≡ … ∧ large_w(ΣbE |
-single(ΣbE))`: the world variable of `E` is bound by the summation inside
-`might` at its first use and by the discourse at the pronoun, so the
-pronoun's description is evaluated at the discourse world, and felicity (83)
-demands `single(ΣbE)` in every world where Andrea *might* be eating one —
-including the worlds where she is not. With `must` (88)–(90) the realistic
-modal base guarantees the description at the world of evaluation, and the
-pronoun is fine; with a value-based presupposition of existence the mayoral
-candidates of (85), who all exist, would wrongly license "she". This file
-states the paper's discourses over `PIP` and proves the felicity conditions
-it derives from them, at the level of a scenario (accessibility, antecedent
-description, continuation) and on its models.
+This file formalizes the account of anaphora under modals of [keshet-abney-2024]: a pronoun
+presupposes that its antecedent description has a non-empty extension ((9)), and in the paper's
+logic PIP (`Logic/PIP/Basic.lean`) the antecedent description of a summation pronoun is a formula
+label, so *Andrea might be eating a cheeseburger. #It is large.* ((79)) is
+`might_w(ΣwE) ∧ E ≡ … ∧ large_w(ΣbE | single(ΣbE))`: the world variable of `E` is bound by the
+summation inside *might* at its first use and by the discourse at the pronoun, so the pronoun's
+description is evaluated at the discourse world and felicity ((83)) demands `single(ΣbE)` in
+every world where Andrea might be eating one, including those where she is not
+(`felicitous_discourseMight_iff`, `not_felicitous_burger`). With *must* ((88)–(90)) the realistic
+modal base guarantees the description at the world of evaluation and the pronoun is fine
+(`felicitous_discourseMust_of_realistic`), whereas a value-based presupposition of existence
+would wrongly license *she* for the mayoral candidates of (85), who all exist. The unembedded
+discourse (74) is felicitous ((78), `felicitous_plain`), and the bathroom disjunction (95) exactly
+when a bathroom, if there is one, is unique ((97), `felicitous_bathroom_iff`).
 
-The paper's felicity conditions (78), (83), (87), (90), (97) quantify `∀w`
-over worlds; the statements below take a world of evaluation `w₀` and an
-assignment sending `w` to it.
+## Implementation notes
 
-## Main definitions
-
-* `Scenario`, `Scenario.model` — an intensional model with accessibility, an
-  antecedent description and a continuation.
-* `descE`, `base`, `Modal.apply`, `continuation`, `discourse` — the antecedent
-  description, the modal base `β_w`, `might_w`/`must_w` (35), the continuation
-  with its summation pronoun `Σbφ | single(Σbφ)` (71), and the discourse
-  `modal_w(Σwφ) ∧ E ≡ … ∧ cont_w(Σbφ | single(Σbφ))` with `φ` the label `E`
-  before expansion and its definition after.
-* `discourseMight`, `discourseMust`, `plain`, `bathroom` — (80b)+(82b), (89),
-  (75)+(76), and (95).
-
-## Main statements
-
-* `expandSelf_discourseMight`, `expandSelf_discourseMust`, `expandSelf_bathroom`
-  — expanding the label retrieves the antecedent description in the modal and
-  at the pronoun.
-* `felicitous_discourse_iff` — a modal discourse is felicitous at `w₀` iff the
-  modal claim there implies a unique satisfier of the description at `w₀`.
-* `felicitous_discourseMight_iff`, `not_felicitous_burger` — (83)/(87): with
-  `might`, every world from which a description-world is accessible needs a
-  unique satisfier; (79) fails at a world where Andrea is fasting.
-* `felicitous_discourseMust_iff`, `felicitous_discourseMust_of_realistic` —
-  (90): with a realistic modal base and unique satisfiers, `must` licenses the
-  pronoun.
-* `felicitous_plain` — (78): the unembedded discourse (74) is felicitous.
-* `felicitous_bathroom_iff` — (97): the bathroom disjunction is felicitous iff
-  a bathroom, if there is one, is unique.
+The paper's felicity conditions (78), (83), (87), (90) and (97) quantify over worlds; the
+statements here take a world of evaluation `w₀` and an assignment sending `w` to it, at the level
+of a `Scenario` (accessibility, antecedent description, continuation) and its PIP model
+`Scenario.model`. The modals are `Modal.apply` ((35)), the summation pronoun `Term.sgPronoun`
+((71)), and the discourses `discourseMight` ((80b) with (82b)), `discourseMust` ((89)), `plain`
+((75) with (76)) and `bathroom` ((95)), each expanded from its label by `Formula.expandSelf`.
 
 ## References
 

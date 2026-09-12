@@ -7,51 +7,34 @@ import Linglib.Fragments.Slavic.Russian.Gender
 import Linglib.Fragments.Hausa.Gender
 
 /-!
-# Grammatical gender: a close look at gender assignment across languages
+# Kramer (2020): Grammatical Gender: A Close Look at Gender Assignment Across Languages
 
-[kramer-2020] reviews how nouns are sorted into genders. Every gender
-system assigns gender to some nouns by animacy, humanness, or social
-gender/biological sex — the semantic core generalization — and the
-remainder nouns take one gender or several, recycled from the core or
-novel, in every combination (Table 2). Russian's remainder follows
-declension class up to the Class III exceptions, and Hausa's feminine
-remainder ends in *-ā*, a correlation that fails in the other direction.
-Against these facts the review sets [harris-1991]'s lexical rules beside
-[kramer-2015]'s gender on n for Spanish: the two agree on Spanish, but a
-lexical entry holds one gender feature, so hybrid nouns call for a second
-structural source, and the thesis of radical interpretability derives the
-semantic core from the structural account alone.
+This file formalizes the review's account of how nouns are sorted into genders. Every gender
+system assigns gender to some nouns by animacy, humanness, or social gender/biological sex, the
+semantic core generalization, and the remainder nouns take one gender or several, recycled from
+the core or novel, in every combination (Table 2). Russian's remainder follows declension class
+up to the Class III exceptions, and Hausa's feminine remainder ends in *-ā*, a correlation that
+fails in the other direction. Against these facts the review sets the lexical rules of
+[harris-1991] beside the gender-on-*n* analysis of [kramer-2015] for Spanish: the two agree on
+Spanish, but a lexical entry holds one gender feature, so hybrid nouns call for a second
+structural source, and the thesis of radical interpretability derives the semantic core from
+the structural account alone.
 
-## Main definitions
+## Implementation notes
 
-* `IsCore`, `SatisfiesSemanticCore`: the properties of (3) and the
-  generalization (2) over [corbett-1991]'s survey of assignment systems.
-* `Remainder`: a language's core and remainder genders and the cells of
-  Table 2.
-* `declensionGender`: [corbett-1991]'s declension rule (18) for Russian.
-* `phonologicalRule`: the disputed Hausa rule (26).
-* `LexicalEntry`, `LexicalEntry.humanCloning`, `LexicalEntry.humanGender`:
-  [harris-1991]'s lexical system (Figure 1, (23)).
-* `nHead`, `determiners`, `determiner`: the four n's of (24) and the
-  determiner items of (25).
-* `RadicallyInterpretable`: (29) as a condition on a language's gender
-  features.
+The semantic core generalization is checked over the assignment survey of `Corbett1991`, and
+the Spanish, Russian, and Hausa data are the Fragments' nouns rather than the review's tables;
+`Remainder.spanish` reads the split of Table 1 off the Fragment. The determiner items of (25)
+go through the library's Subset Principle, so *el* for [−fem] and for featureless *n* is a
+computation rather than a listing. The hybrid datum (27) is the one hand-typed example, since
+the Russian Fragment records only the morphological gender of *vrač*.
 
-## Main results
+## References
 
-* `semantic_core_holds`: (2) across the sample.
-* `Remainder.not_mixed_of_allSame`: the inapplicable cell of Table 2.
-* `declension_exceptions`: (18) fails on exactly the Class III nouns of
-  (19).
-* `phonologicalRule_kada`, `feminine_remainder_aa`: the *-ā* correlation
-  fails forwards and holds backwards.
-* `lexical_faithful`, `structural_faithful`, `lexical_eq_structural`: both
-  accounts recover the Fragment's genders.
-* `determiner_iMasc_eq_plain`: [−fem] and featureless n share *el* by the
-  Subset Principle.
-* `lexical_no_hybrid`: no lexical entry fits (27).
-* `exists_interpretable`, `lexical_allows_arbitrary_only`: radical
-  interpretability yields the semantic core; the lexical account does not.
+* [kramer-2020]
+* [corbett-1991] — the assignment survey and the Russian declension rule
+* [harris-1991] — lexical gender assignment
+* [kramer-2015] — structural gender assignment
 -/
 
 namespace Kramer2020
@@ -66,7 +49,7 @@ def IsCore : Corbett1991.Criterion → Prop
   | .animacy | .humanness | .sex => True
   | _ => False
 
-instance : DecidablePred IsCore := fun b => by cases b <;> unfold IsCore <;> infer_instance
+instance : DecidablePred IsCore := λ b => by cases b <;> unfold IsCore <;> infer_instance
 
 /-- The semantic core generalization (2): a language with gender assigns it
 to some nouns by a property of (3). -/
@@ -154,7 +137,7 @@ theorem table2 :
 other remainder genders, the remainder takes different, novel genders. -/
 theorem akoose_cell (r : Remainder ℕ) (hcore : r.core = {1}) (hcard : 7 ≤ r.remainder.card)
     (h : 1 ∉ r.remainder) : ¬ r.AllSame ∧ r.Novel :=
-  ⟨fun h₁ => by unfold AllSame at h₁; omega,
+  ⟨λ h₁ => by unfold AllSame at h₁; omega,
     by rw [Novel, hcore]; exact Finset.disjoint_singleton_right.mpr h⟩
 
 end Remainder
@@ -172,7 +155,7 @@ def declensionGender : Russian.Gender.DeclClass → Gender
 and masculine *put'*. -/
 theorem declension_exceptions :
     Russian.Gender.remainderNouns.filter
-        (fun n => n.declClass.map declensionGender ≠ some n.gender.toLabel) =
+        (λ n => n.declClass.map declensionGender ≠ some n.gender.toLabel) =
       [Russian.Gender.znamja, Russian.Gender.put'] := by
   decide
 
@@ -257,9 +240,6 @@ def nHead (n : Spanish.Gender.Noun) : Categorizer.Head :=
 theorem nHead_mem_spanishHeads (n : Spanish.Gender.Noun) : nHead n ∈ spanishHeads := by
   obtain ⟨_, g, b⟩ := n; cases g <;> cases b <;> simp [nHead, spanishHeads]
 
-/-- Same-root nominals (14a) combine with either interpretable n. -/
-def sameRootHeads : List Categorizer.Head := [.n_iFem, .n_iMasc]
-
 /-- The features of a definite determiner: [d], [def], and the gender it
 acquires by agreement. -/
 inductive DetFeature where
@@ -270,7 +250,7 @@ inductive DetFeature where
 
 /-- What the determiner carries after agreeing with a head. -/
 def determinerFeatures (ch : Categorizer.Head) : List DetFeature :=
-  [.d, .definite] ++ (ch.phi.gender.map fun gf => .gender gf.val).toList
+  [.d, .definite] ++ (ch.phi.gender.map λ gf => .gender gf.val).toList
 
 /-- The Spanish definite determiners (25): *la* with [+fem], *el*
 underspecified. -/

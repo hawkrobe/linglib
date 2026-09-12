@@ -43,7 +43,7 @@ its multi-parent default-inheritance form lives in
 - `Hierarchy.parent_asymm` — no 2-cycle: nodes cannot be each other's parent
 -/
 
-namespace Morphology.Construction
+namespace ConstructionMorphology
 
 variable {ι β : Type*} {parent : ι → Option ι} {att : ι → Option β}
 
@@ -248,4 +248,4 @@ private def flies : Animal → Option Bool
 example : animalHierarchy.value flies .ostrich = some false ∧
     animalHierarchy.value flies .canary = some true := by decide
 
-end Morphology.Construction
+end ConstructionMorphology
