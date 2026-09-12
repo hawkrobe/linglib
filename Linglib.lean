@@ -2338,7 +2338,6 @@ import Linglib.Studies.Kenstowicz1987
 import Linglib.Studies.KeshetAbney2024
 import Linglib.Studies.Khoo2015
 import Linglib.Studies.Kim2024
-import Linglib.Studies.Kim2024_UPH
 import Linglib.Studies.Kiparsky2002
 import Linglib.Studies.KirkGiannini2024
 import Linglib.Studies.Kirkpatrick2024
@@ -2356,7 +2355,6 @@ import Linglib.Studies.Kratzer1981
 import Linglib.Studies.Kratzer1996
 import Linglib.Studies.Kratzer1998
 import Linglib.Studies.Kratzer2012Conditionals
-import Linglib.Studies.Kratzer2012Informational
 import Linglib.Studies.KratzerSelkirk2020
 import Linglib.Studies.KratzerShimoyama2002
 import Linglib.Studies.Krejci2012
