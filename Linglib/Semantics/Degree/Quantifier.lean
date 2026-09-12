@@ -126,6 +126,43 @@ theorem maxComparative_eq_iff (μ : α → D) (xa xb : α) :
     maxComparative (· = xa) (· = xb) μ ↔ μ xb < μ xa :=
   maxComparative_unique rfl (fun _ h => h) rfl (fun _ h => h)
 
+/-- A greatest than-witness under a measure monotone on the witnesses makes its measure the
+greatest than-clause degree. -/
+theorem isGreatest_thanDegrees_of_isGreatest [Preorder α] {Pthan : α → Prop} {μ : α → D}
+    {xb : α} (hb : IsGreatest {x | Pthan x} xb) (hμ : MonotoneOn μ {x | Pthan x}) :
+    IsGreatest (thanDegrees Pthan μ) (μ xb) :=
+  ⟨⟨xb, hb.1, le_refl _⟩, λ _ ⟨_, hx, hle⟩ => hle.trans (hμ hx hb.1 (hb.2 hx))⟩
+
+/-- With greatest witnesses on both sides and measures monotone on each side, the
+max-quantified comparative compares the greatest witnesses' measures. -/
+theorem maxComparative_of_isGreatest [Preorder α] {Pmatrix Pthan : α → Prop} {μ : α → D}
+    {xa xb : α} (ha : IsGreatest {x | Pmatrix x} xa) (hμa : MonotoneOn μ {x | Pmatrix x})
+    (hb : IsGreatest {x | Pthan x} xb) (hμb : MonotoneOn μ {x | Pthan x}) :
+    maxComparative Pmatrix Pthan μ ↔ μ xb < μ xa := by
+  constructor
+  · rintro ⟨δ, hδ, x, hx, hlt⟩
+    exact lt_of_le_of_lt (hδ.2 ⟨xb, hb.1, le_refl _⟩)
+      (lt_of_lt_of_le hlt (hμa hx ha.1 (ha.2 hx)))
+  · exact λ hlt => ⟨μ xb, isGreatest_thanDegrees_of_isGreatest hb hμb, xa, ha.1, hlt⟩
+
+/-- The than-clause degree set with the scale's zero degree added ([pasternak-2019]): its
+maximum exists even without a than-witness. -/
+def thanDegreesZero [Zero D] (Pthan : α → Prop) (μ : α → D) : Set D :=
+  insert 0 (thanDegrees Pthan μ)
+
+/-- The max-quantified comparative over `thanDegreesZero`: the than-clause positive is not
+entailed. -/
+def maxComparativeZero [Zero D] (Pmatrix Pthan : α → Prop) (μ : α → D) : Prop :=
+  ∃ δ, IsGreatest (thanDegreesZero Pthan μ) δ ∧ ∃ x, Pmatrix x ∧ δ < μ x
+
+/-- With no than-witness measuring above zero, the comparative holds of any matrix witness
+measuring above zero: *Dee ran more than Evan did; in fact, Evan didn't run at all*. -/
+theorem maxComparativeZero_of_forall_le_zero [Zero D] {Pmatrix Pthan : α → Prop} {μ : α → D}
+    {x : α} (hx : Pmatrix x) (hpos : 0 < μ x) (hthan : ∀ y, Pthan y → μ y ≤ 0) :
+    maxComparativeZero Pmatrix Pthan μ :=
+  ⟨0, ⟨Set.mem_insert _ _, λ _ hd => (Set.mem_insert_iff.1 hd).elim le_of_eq
+    λ ⟨y, hy, hle⟩ => hle.trans (hthan y hy)⟩, x, hx, hpos⟩
+
 /-- Grounding in the S-comparative: when the than-clause degree set has a
 maximum, a matrix witness clears it iff it clears the whole set
 (`Comparison.gt.overSet`, via `gtOverSet_eq_singleton_of_isGreatest`). -/
