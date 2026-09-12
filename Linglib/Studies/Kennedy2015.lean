@@ -20,8 +20,8 @@ The ignorance inferences of the Class B modifiers are Sauerland's primary implic
 over Kennedy's single alternative set, the five forms of one numeral ((46)): *at least m* is
 asymmetrically entailed by the bare numeral and by *more than m* and by no other alternative,
 *at most m* by the bare numeral and *fewer than m* ((47)), while the bare numeral and the
-Class A forms are entailed by no alternative at all (`primaryAlternatives_ge`,
-`primaryAlternatives_gt`, and the rest); and neither primary implicature of a Class B form
+Class A forms are entailed by no alternative at all (`over_ssubset_iff`, `stronger_ge`,
+`stronger_gt`, and the rest); and neither primary implicature of a Class B form
 strengthens to a secondary one ((44)), each contradicting the assertion together with the other
 (`not_isSecondaryImplicature_ge`, `not_isSecondaryImplicature_le`).
 
@@ -118,12 +118,12 @@ end Modals
 
 /-- (46): the alternatives of a numeral form are the five forms of the same numeral, the
 substrate's `kennedyAlternatives`, as sets of counts. -/
-def alternatives (m : ℕ) : Set (Set ℕ) := {ψ | ∃ c ∈ kennedyAlternatives, ψ = c.over id m}
+def alternatives (m : ℕ) : Set (Set ℕ) := (·.over id m) '' {c | c ∈ kennedyAlternatives}
 
-/-- (43): the alternatives that asymmetrically entail a form, whose content is a proper subset of
-its content; their negated knowledge is the form's primary implicatures. -/
-def primaryAlternatives (c : Comparison) (m : ℕ) : Set (Set ℕ) :=
-  {ψ ∈ alternatives m | ψ ⊂ c.over id m}
+/-- (43): the alternatives that asymmetrically entail a form, as comparisons; their negated
+knowledge is the form's primary implicatures. -/
+def stronger (m : ℕ) (c : Comparison) : Set Comparison :=
+  {c' | c' ∈ kennedyAlternatives ∧ c'.over id m ⊂ c.over id m}
 
 /-- Inclusion between two forms of a positive numeral is decided at three counts, one below,
 at, and above the number. -/
@@ -137,88 +137,41 @@ private theorem over_subset_iff (c c' : Comparison) {m : ℕ} (hm : 0 < m) :
     simp only [Comparison.rel, imp_iff_not_or, not_true_eq_false, false_or] at h0 hm' h1 hx ⊢ <;>
     omega
 
-private theorem over_ssubset_iff (c c' : Comparison) {m : ℕ} (hm : 0 < m) :
+/-- Asymmetric entailment among the forms of a positive numeral: the bare numeral entails both
+Class B forms and each Class A form entails the Class B form on its side, and nothing else. -/
+theorem over_ssubset_iff {m : ℕ} (hm : 0 < m) (c c' : Comparison) :
     c.over id m ⊂ c'.over id m ↔
-      ((c.rel 0 m → c'.rel 0 m) ∧ (c.rel m m → c'.rel m m) ∧
-          (c.rel (m + 1) m → c'.rel (m + 1) m)) ∧
-        ¬ ((c'.rel 0 m → c.rel 0 m) ∧ (c'.rel m m → c.rel m m) ∧
-          (c'.rel (m + 1) m → c.rel (m + 1) m)) := by
+      (c, c') ∈ [(Comparison.eq, Comparison.ge), (.eq, .le), (.gt, .ge), (.lt, .le)] := by
   rw [Set.ssubset_def, over_subset_iff c c' hm, over_subset_iff c' c hm]
-
-private theorem mem_alternatives_iff (m : ℕ) (ψ : Set ℕ) :
-    ψ ∈ alternatives m ↔ ψ = Comparison.eq.over id m ∨ ψ = Comparison.gt.over id m ∨
-      ψ = Comparison.lt.over id m ∨ ψ = Comparison.ge.over id m ∨ ψ = Comparison.le.over id m := by
-  simp [alternatives, kennedyAlternatives]
+  cases c <;> cases c' <;> simp [Comparison.rel, imp_iff_not_or] <;> omega
 
 /-- (47a): *at least m* is asymmetrically entailed by the bare numeral and by *more than m*, so
-its primary implicatures are ignorance of both, and by no other alternative. -/
-theorem primaryAlternatives_ge {m : ℕ} (hm : 0 < m) :
-    primaryAlternatives .ge m = {Comparison.eq.over id m, Comparison.gt.over id m} := by
-  ext ψ
-  simp only [primaryAlternatives, mem_ofPred_eq, mem_alternatives_iff, mem_insert_iff,
-    mem_singleton_iff]
-  constructor
-  · rintro ⟨rfl | rfl | rfl | rfl | rfl, h⟩
-    · exact Or.inl rfl
-    · exact Or.inr rfl
-    all_goals
-      rw [over_ssubset_iff _ _ hm] at h
-      simp only [Comparison.rel, imp_iff_not_or, not_and_or, not_or, not_not] at h
-      omega
-  · rintro (rfl | rfl) <;> refine ⟨by simp, ?_⟩ <;> rw [over_ssubset_iff _ _ hm] <;>
-      simp only [Comparison.rel, imp_iff_not_or, not_and_or, not_or, not_not,
-        not_true_eq_false, false_or] <;> omega
+its primary implicatures are ignorance of both. -/
+theorem stronger_ge {m : ℕ} (hm : 0 < m) : stronger m .ge = {.eq, .gt} := by
+  ext c
+  cases c <;> simp [stronger, kennedyAlternatives, over_ssubset_iff hm]
 
 /-- (47b): *at most m* is asymmetrically entailed by the bare numeral and by *fewer than m*. -/
-theorem primaryAlternatives_le {m : ℕ} (hm : 0 < m) :
-    primaryAlternatives .le m = {Comparison.eq.over id m, Comparison.lt.over id m} := by
-  ext ψ
-  simp only [primaryAlternatives, mem_ofPred_eq, mem_alternatives_iff, mem_insert_iff,
-    mem_singleton_iff]
-  constructor
-  · rintro ⟨rfl | rfl | rfl | rfl | rfl, h⟩
-    · exact Or.inl rfl
-    · exfalso
-      rw [over_ssubset_iff _ _ hm] at h
-      simp only [Comparison.rel, imp_iff_not_or, not_and_or, not_or, not_not] at h
-      omega
-    · exact Or.inr rfl
-    all_goals
-      rw [over_ssubset_iff _ _ hm] at h
-      simp only [Comparison.rel, imp_iff_not_or, not_and_or, not_or, not_not] at h
-      omega
-  · rintro (rfl | rfl) <;> refine ⟨by simp, ?_⟩ <;> rw [over_ssubset_iff _ _ hm] <;>
-      simp only [Comparison.rel, imp_iff_not_or, not_and_or, not_or, not_not,
-        not_true_eq_false, false_or] <;> omega
+theorem stronger_le {m : ℕ} (hm : 0 < m) : stronger m .le = {.eq, .lt} := by
+  ext c
+  cases c <;> simp [stronger, kennedyAlternatives, over_ssubset_iff hm]
 
 /-- The bare numeral is entailed by none of its alternatives: no primary implicatures, and none
 of the upper-bounding secondary ones a Horn scale would give. -/
-theorem primaryAlternatives_eq {m : ℕ} (hm : 0 < m) : primaryAlternatives .eq m = ∅ := by
-  ext ψ
-  simp only [primaryAlternatives, mem_ofPred_eq, mem_alternatives_iff, mem_empty_iff_false,
-    iff_false, not_and]
-  rintro (rfl | rfl | rfl | rfl | rfl) h <;> rw [over_ssubset_iff _ _ hm] at h <;>
-    simp only [Comparison.rel, imp_iff_not_or, not_and_or, not_or, not_not,
-        not_true_eq_false, false_or, true_and] at h <;> omega
+theorem stronger_eq {m : ℕ} (hm : 0 < m) : stronger m .eq = ∅ := by
+  ext c
+  cases c <;> simp [stronger, kennedyAlternatives, over_ssubset_iff hm]
 
 /-- Class A: *more than m* is entailed by no alternative, so it carries no ignorance
 implicature. -/
-theorem primaryAlternatives_gt {m : ℕ} (hm : 0 < m) : primaryAlternatives .gt m = ∅ := by
-  ext ψ
-  simp only [primaryAlternatives, mem_ofPred_eq, mem_alternatives_iff, mem_empty_iff_false,
-    iff_false, not_and]
-  rintro (rfl | rfl | rfl | rfl | rfl) h <;> rw [over_ssubset_iff _ _ hm] at h <;>
-    simp only [Comparison.rel, imp_iff_not_or, not_and_or, not_or, not_not,
-        not_true_eq_false, false_or] at h <;> omega
+theorem stronger_gt {m : ℕ} (hm : 0 < m) : stronger m .gt = ∅ := by
+  ext c
+  cases c <;> simp [stronger, kennedyAlternatives, over_ssubset_iff hm]
 
 /-- Class A: *fewer than m* is entailed by no alternative. -/
-theorem primaryAlternatives_lt {m : ℕ} (hm : 0 < m) : primaryAlternatives .lt m = ∅ := by
-  ext ψ
-  simp only [primaryAlternatives, mem_ofPred_eq, mem_alternatives_iff, mem_empty_iff_false,
-    iff_false, not_and]
-  rintro (rfl | rfl | rfl | rfl | rfl) h <;> rw [over_ssubset_iff _ _ hm] at h <;>
-    simp only [Comparison.rel, imp_iff_not_or, not_and_or, not_or, not_not,
-        not_true_eq_false, false_or] at h <;> omega
+theorem stronger_lt {m : ℕ} (hm : 0 < m) : stronger m .lt = ∅ := by
+  ext c
+  cases c <;> simp [stronger, kennedyAlternatives, over_ssubset_iff hm]
 
 /-- (44) fails for *at least m*: knowing the bare numeral false with the assertion is knowing
 *more than m*, and knowing *more than m* false with the assertion is knowing the bare numeral,
@@ -230,11 +183,11 @@ theorem not_isSecondaryImplicature_ge (m : ℕ) :
         (Comparison.gt.over id m) := by
   refine ⟨λ h => ?_, λ h => ?_⟩
   · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.gt.over id m)
-      ((mem_alternatives_iff m _).mpr (by simp)) λ n ⟨h1, h2⟩ => ?_
+      ⟨_, by simp [kennedyAlternatives], rfl⟩ λ n ⟨h1, h2⟩ => ?_
     simp only [mem_over, Comparison.rel] at *
     omega
   · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.eq.over id m)
-      ((mem_alternatives_iff m _).mpr (by simp)) λ n ⟨h1, h2⟩ => ?_
+      ⟨_, by simp [kennedyAlternatives], rfl⟩ λ n ⟨h1, h2⟩ => ?_
     simp only [mem_over, Comparison.rel] at *
     omega
 
@@ -246,11 +199,11 @@ theorem not_isSecondaryImplicature_le (m : ℕ) :
         (Comparison.lt.over id m) := by
   refine ⟨λ h => ?_, λ h => ?_⟩
   · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.lt.over id m)
-      ((mem_alternatives_iff m _).mpr (by simp)) λ n ⟨h1, h2⟩ => ?_
+      ⟨_, by simp [kennedyAlternatives], rfl⟩ λ n ⟨h1, h2⟩ => ?_
     simp only [mem_over, Comparison.rel] at *
     omega
   · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.eq.over id m)
-      ((mem_alternatives_iff m _).mpr (by simp)) λ n ⟨h1, h2⟩ => ?_
+      ⟨_, by simp [kennedyAlternatives], rfl⟩ λ n ⟨h1, h2⟩ => ?_
     simp only [mem_over, Comparison.rel] at *
     omega
 

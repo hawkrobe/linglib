@@ -1,370 +1,170 @@
 import Linglib.Semantics.Aspect.DegreeAchievement
-import Linglib.Features.ScalarDimension
 import Linglib.Semantics.Degree.Measure.Temporal
-import Linglib.Semantics.Degree.Basic
-import Mathlib.Order.BoundedOrder.Basic
-import Mathlib.Order.Max
-import Mathlib.Order.WithBot
-import Linglib.Semantics.ArgumentStructure.Affectedness
+import Linglib.Semantics.Degree.Boundedness
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Adjectival
-import Linglib.Semantics.Aspect.Basic
+import Mathlib.Order.Max
+import Mathlib.Order.Bounds.Basic
 
 /-!
-# Degree achievements: the adjectival core of telicity
+# Kennedy and Levin (2008): Measure of Change
 
-Formalisation of [kennedy-levin-2008], which derives the telicity of degree
-achievement verbs (*widen*, *cool*, *straighten*, ...) from the boundedness of
-the scale lexicalised by their adjectival base: a closed-scale base yields a
-telic (accomplishment) verb, an open-scale base an atelic (activity) verb.
+This file formalizes the account of variable telicity in degree achievements of
+[kennedy-levin-2008]. A degree achievement is the verbal positive form (26) of a measure of
+change function (25), the difference function (23) of the adjective's measure function, whose
+derived scale has as its minimum the degree the argument has when the event begins and inherits
+a maximum from the adjective's scale exactly when that scale has one (`deltaBoundedness`,
+`isLeast_derivedScale`, `isGreatest_derivedScale`). Interpretive Economy (18) then licenses two
+standards on the derived scale: its minimum, true of any positive change, the comparative and
+atelic reading every degree achievement has ((22), `minStandard_iff`); and, when the adjective's
+scale is closed above, its maximum, true when the argument ends completely straight, dark or
+full, the telic reading of Section 3.3 (`maxStandard_iff`), which entails the atelic one and is
+therefore preferred (`minStandard_of_maxStandard`). Without a greatest degree, as for *widen*,
+the derived scale has no maximum and so no telic reading (`not_isGreatest_derivedScale`), while
+Interpretive Economy rules out the contextual standard the adjective *wide* has, so *widen*
+never means *become wide*; the telic use of *cool* in (1a) rests on a conventionalized
+non-scalar standard the account leaves to the lexicon.
 
-## Main results
-
-* `*_derived_vendler` / `da_vendler_classes_agree` — each verb's stipulated
-  Vendler class agrees with the class derived from its `degreeAchievementScale`.
-* `*_scale` — each degree-achievement verb shares its adjectival base's scale
-  boundedness, including the *boil* case where the verb selects a bounded
-  portion of an otherwise open scale.
-* `*_inX` / `*_forX` — telicity-diagnostic predictions: closed-scale verbs
-  accept *in X*, open-scale verbs accept *for X*.
-* `*_pipeline_converge` — the scale-based and Vendler-based licensing pipelines
-  agree on boundedness.
-* The order-theoretic core (`telic_of_orderTop` / `atelic_of_noMaxOrder`, below):
-  a degree achievement admits a
-  Quantized (telic) witness iff its scale has a greatest degree, via mathlib's
-  `OrderTop` / `NoMaxOrder` mixins (witness `g_φ = ⊤`), feeding [beavers-2011]'s
-  affectedness hierarchy. Here it is instantiated at the dimensions the verbs
-  measure — `straighten_telic` (straightness, closed), `widen_atelic` (width,
-  open) — grounded to the verbs' stored dimensions by `straighten_dimension` /
-  `widen_dimension`. The variable-telicity contrast of [kennedy-levin-2008] §3.3.
+The English fragment's degree achievements instantiate the account: each verb's Vendler class
+is the one its base scale derives (`da_vendler_classes_agree`), each verb shares the boundedness
+of its adjective (`adjective_verb_scales`), and the *in X* and *for X* diagnostics of (1) and
+(6) follow the scale (`inX_iff_hasMax`, `diagnostics`).
 
 ## Implementation notes
 
-The scale annotations and Vendler classes consumed here live on the English
-verbal/adjectival fragment entries; the derivations they are checked against
-live in `Semantics/Aspect/DegreeAchievement.lean`, and the affectedness
-typeclass chain in `Semantics/ArgumentStructure/Affectedness.lean`.
+Measure functions, difference functions and the measure of change are the substrate's
+`Degree.TemporalMeasure`, `Degree.differenceFunction` and `Degree.measureOfChange`, and the
+readings are stated on the measure of change between an event's initial and final times; scale
+boundedness is `Degree.Boundedness`. The measure-phrase and degree-modifier compositions of
+(28)–(34) are not formalized.
+
+## References
+
+* [kennedy-levin-2008]
+* [hay-kennedy-levin-1999]
+* [kennedy-2007]
 -/
 
 namespace KennedyLevin2008
 
-open English.Predicates.Verbal hiding clean cool warm open_
-open Aspect Aspect.DegreeAchievement
--- Fully qualified aliases for names shared between Verbal and Adjectival
-private def vClean := English.Predicates.Verbal.clean
-private def vCool := English.Predicates.Verbal.cool
-private def vWarm := English.Predicates.Verbal.warm
-private def vOpen := English.Predicates.Verbal.open_
-private def aClean := English.Predicates.Adjectival.clean
-private def aCool := English.Predicates.Adjectival.cool
-private def aWarm := English.Predicates.Adjectival.warm
-private def aOpen := English.Predicates.Adjectival.open_
+open Degree Aspect
 
-/-! ### Per-verb derived Vendler class
+/-! ### The measure of change and its scale (Sections 3.2 and 3.3) -/
 
-For each degree achievement verb, the Vendler class stipulated in the fragment
-matches the class `DegreeAchievementScale.defaultVendlerClass` derives from the
-verb's scale boundedness. -/
+/-- The scale of a measure of change: closed below at the degree the argument starts with, and
+closed above exactly when the adjective's scale is. -/
+def deltaBoundedness : Boundedness → Boundedness
+  | .open_ | .lowerBounded => .lowerBounded
+  | .upperBounded | .closed => .closed
 
-/-- "bend": closed scale → accomplishment (derived = stipulated). -/
-theorem bend_derived_vendler :
-    bend.toVerb.degreeAchievementScale.get!.defaultVendlerClass =
-    bend.toVerb.vendlerClass.get! := rfl
+/-- The derived scale always has a minimum, the derived zero. -/
+theorem deltaBoundedness_hasMin (b : Boundedness) : (deltaBoundedness b).HasMin := by
+  cases b <;> decide
 
-/-- "boil": closed scale → accomplishment (derived = stipulated). -/
-theorem boil_derived_vendler :
-    boil.toVerb.degreeAchievementScale.get!.defaultVendlerClass =
-    boil.toVerb.vendlerClass.get! := rfl
+/-- The derived scale has a maximum exactly when the adjective's scale has one. -/
+theorem deltaBoundedness_hasMax_iff (b : Boundedness) :
+    (deltaBoundedness b).HasMax ↔ b.HasMax := by
+  cases b <;> decide
 
-/-- "rust": open scale → activity (derived = stipulated). -/
-theorem rust_derived_vendler :
-    rust.toVerb.degreeAchievementScale.get!.defaultVendlerClass =
-    rust.toVerb.vendlerClass.get! := rfl
+section Readings
 
-/-- "increase": open scale → activity (derived = stipulated). -/
-theorem increase_derived_vendler :
-    increase.toVerb.degreeAchievementScale.get!.defaultVendlerClass =
-    increase.toVerb.vendlerClass.get! := rfl
+variable {α δ T : Type*} [LinearOrder δ] (m : TemporalMeasure α δ T) (x : α) (i f : T)
 
-/-- "clean": closed scale → accomplishment (derived = stipulated). -/
-theorem clean_derived_vendler :
-    vClean.toVerb.degreeAchievementScale.get!.defaultVendlerClass =
-    vClean.toVerb.vendlerClass.get! := rfl
+/-- The derived scale of the measure of change for an argument starting at time `i`: the
+degrees from its initial degree up. -/
+def derivedScale : Set δ := Set.Ici (m x i)
 
-/-- "straighten": closed scale → accomplishment (derived = stipulated). -/
-theorem straighten_derived_vendler :
-    straighten.toVerb.degreeAchievementScale.get!.defaultVendlerClass =
-    straighten.toVerb.vendlerClass.get! := rfl
+/-- The derived zero: the argument's initial degree is the least degree of the derived scale. -/
+theorem isLeast_derivedScale : IsLeast (derivedScale m x i) (m x i) := isLeast_Ici
 
-/-- "flatten": closed scale → accomplishment (derived = stipulated). -/
-theorem flatten_derived_vendler :
-    flatten.toVerb.degreeAchievementScale.get!.defaultVendlerClass =
-    flatten.toVerb.vendlerClass.get! := rfl
+/-- A greatest degree of the adjective's scale is the greatest of the derived scale. -/
+theorem isGreatest_derivedScale [OrderTop δ] : IsGreatest (derivedScale m x i) ⊤ :=
+  ⟨le_top, λ _ _ => le_top⟩
 
-/-- "open": closed scale → accomplishment (derived = stipulated). -/
-theorem open_derived_vendler :
-    vOpen.toVerb.degreeAchievementScale.get!.defaultVendlerClass =
-    vOpen.toVerb.vendlerClass.get! := rfl
+/-- Without a greatest degree on the adjective's scale, the derived scale has none either. -/
+theorem not_isGreatest_derivedScale [NoMaxOrder δ] (d : δ) :
+    ¬ IsGreatest (derivedScale m x i) d := by
+  rintro ⟨hd, hub⟩
+  obtain ⟨d', hd'⟩ := exists_gt d
+  exact absurd (hub (le_trans hd hd'.le)) hd'.not_ge
 
-/-- "lengthen": open scale → activity (derived = stipulated). -/
-theorem lengthen_derived_vendler :
-    lengthen.toVerb.degreeAchievementScale.get!.defaultVendlerClass =
-    lengthen.toVerb.vendlerClass.get! := rfl
+/-- The minimum-standard reading of (27): the argument changes by a non-zero degree of the
+derived scale, the comparative truth conditions of (22). -/
+def MinStandard : Prop := m x i < measureOfChange m x i f
 
-/-- "widen": open scale → activity (derived = stipulated). -/
-theorem widen_derived_vendler :
-    widen.toVerb.degreeAchievementScale.get!.defaultVendlerClass =
-    widen.toVerb.vendlerClass.get! := rfl
+/-- The maximum-standard reading of (27): the argument reaches the greatest degree. -/
+def MaxStandard [OrderTop δ] : Prop := measureOfChange m x i f = ⊤
 
-/-- "cool": open scale → activity (derived = stipulated). -/
-theorem cool_derived_vendler :
-    vCool.toVerb.degreeAchievementScale.get!.defaultVendlerClass =
-    vCool.toVerb.vendlerClass.get! := rfl
+/-- The comparative reading is a positive change of the measured property. -/
+theorem minStandard_iff : MinStandard m x i f ↔ m x i < m x f := by
+  simp [MinStandard, measureOfChange, differenceFunction]
 
-/-- "warm": open scale → activity (derived = stipulated). -/
-theorem warm_derived_vendler :
-    vWarm.toVerb.degreeAchievementScale.get!.defaultVendlerClass =
-    vWarm.toVerb.vendlerClass.get! := rfl
+/-- Once the argument does not start at the maximum, the telic reading is reaching it. -/
+theorem maxStandard_iff [OrderTop δ] (h : m x i < ⊤) : MaxStandard m x i f ↔ m x f = ⊤ := by
+  unfold MaxStandard measureOfChange differenceFunction
+  constructor
+  · intro hm
+    rcases max_choice (m x i) (m x f) with h' | h' <;> rw [h'] at hm
+    · exact absurd hm h.ne
+    · exact hm
+  · intro hf
+    rw [hf, max_eq_right le_top]
 
-/-- The degree-achievement verbs whose telicity this file derives from scale
-    boundedness. -/
+/-- The telic reading entails the atelic one, and so is the more informative and preferred. -/
+theorem minStandard_of_maxStandard [OrderTop δ] (h : m x i < ⊤) (hmax : MaxStandard m x i f) :
+    MinStandard m x i f := by
+  rw [minStandard_iff, (maxStandard_iff m x i f h).mp hmax]
+  exact h
+
+end Readings
+
+/-! ### The English degree achievements -/
+
+/-- The fragment's degree achievements. -/
 def daVerbs : List Verb :=
-  [bend.toVerb, boil.toVerb, rust.toVerb, increase.toVerb, vClean.toVerb,
-   straighten.toVerb, flatten.toVerb, vOpen.toVerb, lengthen.toVerb,
-   widen.toVerb, vCool.toVerb, vWarm.toVerb]
+  [English.Predicates.Verbal.bend.toVerb, English.Predicates.Verbal.boil.toVerb,
+   English.Predicates.Verbal.rust.toVerb, English.Predicates.Verbal.increase.toVerb,
+   English.Predicates.Verbal.clean.toVerb, English.Predicates.Verbal.straighten.toVerb,
+   English.Predicates.Verbal.flatten.toVerb, English.Predicates.Verbal.open_.toVerb,
+   English.Predicates.Verbal.lengthen.toVerb, English.Predicates.Verbal.widen.toVerb,
+   English.Predicates.Verbal.cool.toVerb, English.Predicates.Verbal.warm.toVerb]
 
-/-- The invariant the per-verb `*_derived_vendler` lemmas witness, stated once:
-    every degree-achievement verb's stipulated Vendler class equals the class
-    derived from its scale boundedness. A drift sentry — adding a verb whose
-    annotations disagree breaks this. -/
+/-- Every degree achievement's Vendler class is the one its base scale derives: closed above,
+an accomplishment; otherwise an activity. -/
 theorem da_vendler_classes_agree :
     ∀ v ∈ daVerbs, v.vendlerClass = v.degreeAchievementScale.map (·.defaultVendlerClass) := by
   decide
 
-/-! ### Adjective–verb scale agreement
+/-- The adjective–verb pairs of the fragment: *clean*, *straight*, *flat* and *open* with
+closed scales, *long*, *wide*, *cool* and *warm* with open ones. -/
+def pairs : List (English.Predicates.Adjectival.AdjectivalPredicateEntry × Verb) :=
+  [(English.Predicates.Adjectival.clean, English.Predicates.Verbal.clean.toVerb),
+   (English.Predicates.Adjectival.straight, English.Predicates.Verbal.straighten.toVerb),
+   (English.Predicates.Adjectival.flat, English.Predicates.Verbal.flatten.toVerb),
+   (English.Predicates.Adjectival.open_, English.Predicates.Verbal.open_.toVerb),
+   (English.Predicates.Adjectival.long, English.Predicates.Verbal.lengthen.toVerb),
+   (English.Predicates.Adjectival.wide, English.Predicates.Verbal.widen.toVerb),
+   (English.Predicates.Adjectival.cool, English.Predicates.Verbal.cool.toVerb),
+   (English.Predicates.Adjectival.warm, English.Predicates.Verbal.warm.toVerb)]
 
-For each adjective–verb pair, the verb's `degreeAchievementScale.scaleBoundedness`
-matches the adjective's `scaleType`: the verb inherits the scale classification
-of its adjectival base. -/
+/-- A degree achievement measures on its adjective's scale. -/
+theorem adjective_verb_scales :
+    ∀ p ∈ pairs, p.2.degreeAchievementScale.map (·.scaleBoundedness) = some p.1.scaleType := by
+  decide
 
-/-- clean (adj, closed) ↔ clean (verb, closed scale). -/
-theorem clean_adj_verb_scale :
-    aClean.scaleType =
-    (vClean.toVerb.degreeAchievementScale.get!).scaleBoundedness := rfl
+/-- (1) and (6): a degree achievement takes *in X* exactly when its scale is closed above, and
+*for X* otherwise, its Vendler class being derived from the scale. -/
+theorem inX_iff_hasMax (d : Features.ScalarDimension) :
+    (inXPrediction d.defaultVendlerClass = .accept ↔ d.boundedness.HasMax) ∧
+      (forXPrediction d.defaultVendlerClass = .accept ↔ ¬ d.boundedness.HasMax) := by
+  cases d <;> decide
 
-/-- straight (adj, closed) ↔ straighten (verb, closed scale). -/
-theorem straight_straighten_scale :
-    English.Predicates.Adjectival.straight.scaleType =
-    (straighten.toVerb.degreeAchievementScale.get!).scaleBoundedness := rfl
-
-/-- flat (adj, closed) ↔ flatten (verb, closed scale). -/
-theorem flat_flatten_scale :
-    English.Predicates.Adjectival.flat.scaleType =
-    (flatten.toVerb.degreeAchievementScale.get!).scaleBoundedness := rfl
-
-/-- open (adj, closed) ↔ open (verb, closed scale). -/
-theorem open_adj_verb_scale :
-    aOpen.scaleType =
-    (vOpen.toVerb.degreeAchievementScale.get!).scaleBoundedness := rfl
-
-/-- long (adj, open) ↔ lengthen (verb, open scale). -/
-theorem long_lengthen_scale :
-    English.Predicates.Adjectival.long.scaleType =
-    (lengthen.toVerb.degreeAchievementScale.get!).scaleBoundedness := rfl
-
-/-- wide (adj, open) ↔ widen (verb, open scale). -/
-theorem wide_widen_scale :
-    English.Predicates.Adjectival.wide.scaleType =
-    (widen.toVerb.degreeAchievementScale.get!).scaleBoundedness := rfl
-
-/-- cool (adj, open) ↔ cool (verb, open scale). -/
-theorem cool_adj_verb_scale :
-    aCool.scaleType =
-    (vCool.toVerb.degreeAchievementScale.get!).scaleBoundedness := rfl
-
-/-- warm (adj, open) ↔ warm (verb, open scale). -/
-theorem warm_adj_verb_scale :
-    aWarm.scaleType =
-    (vWarm.toVerb.degreeAchievementScale.get!).scaleBoundedness := rfl
-
-/-- *hot* (adj, open) vs *boil* (verb, closed at the boiling point).
-    *boil* selects a conventionalised endpoint (the boiling point) despite the
-    open scale of its base adjective *hot*. This fragment annotation extends
-    [kennedy-levin-2008]'s treatment of *cool*, whose conventionalised
-    'room-temperature' standard licenses a telic reading from an open-scale base
-    (§3.3); [kennedy-levin-2008] do not themselves discuss *boil*. -/
-theorem hot_boil_scale_diverges :
-    English.Predicates.Adjectival.hot.scaleType = .open_ ∧
-    (boil.toVerb.degreeAchievementScale.get!).scaleBoundedness = .closed := ⟨rfl, rfl⟩
-
-/-! ### Telicity-diagnostic predictions
-
-Closed-scale degree achievements accept *in X* (telic); open-scale ones accept
-*for X* (atelic). -/
-
-/-! #### Closed-scale verbs accept *in X* -/
-
-/-- "bent the wire in 5 seconds" — closed-scale DA accepts "in X". -/
-theorem bend_inX :
-    inXPrediction bend.toVerb.vendlerClass.get! = .accept := rfl
-
-/-- "boiled the water in 3 minutes" — closed-scale DA accepts "in X". -/
-theorem boil_inX :
-    inXPrediction boil.toVerb.vendlerClass.get! = .accept := rfl
-
-/-- "cleaned the table in 5 minutes" — closed-scale DA accepts "in X". -/
-theorem clean_inX :
-    inXPrediction vClean.toVerb.vendlerClass.get! = .accept := rfl
-
-/-- "straightened the wire in 10 seconds" — closed-scale DA accepts "in X". -/
-theorem straighten_inX :
-    inXPrediction straighten.toVerb.vendlerClass.get! = .accept := rfl
-
-/-- "flattened the dough in 2 minutes" — closed-scale DA accepts "in X". -/
-theorem flatten_inX :
-    inXPrediction flatten.toVerb.vendlerClass.get! = .accept := rfl
-
-/-- "opened the door in 3 seconds" — closed-scale DA accepts "in X". -/
-theorem open_inX :
-    inXPrediction vOpen.toVerb.vendlerClass.get! = .accept := rfl
-
-/-! #### Open-scale verbs accept *for X* -/
-
-/-- "rusted for years" — open-scale DA accepts "for X". -/
-theorem rust_forX :
-    forXPrediction rust.toVerb.vendlerClass.get! = .accept := rfl
-
-/-- "increased for months" — open-scale DA accepts "for X". -/
-theorem increase_forX :
-    forXPrediction increase.toVerb.vendlerClass.get! = .accept := rfl
-
-/-- "lengthened the rope for hours" — open-scale DA accepts "for X". -/
-theorem lengthen_forX :
-    forXPrediction lengthen.toVerb.vendlerClass.get! = .accept := rfl
-
-/-- "widened the road for months" — open-scale DA accepts "for X". -/
-theorem widen_forX :
-    forXPrediction widen.toVerb.vendlerClass.get! = .accept := rfl
-
-/-- "cooled for an hour" — open-scale DA accepts "for X". -/
-theorem cool_forX :
-    forXPrediction vCool.toVerb.vendlerClass.get! = .accept := rfl
-
-/-- "warmed for an hour" — open-scale DA accepts "for X". -/
-theorem warm_forX :
-    forXPrediction vWarm.toVerb.vendlerClass.get! = .accept := rfl
-
-/-! ### Substrate demonstration: telicity from scale order
-
-The order-theoretic account of [kennedy-levin-2008]'s thesis (formalized below):
-a degree achievement is telic iff its scale has a greatest degree (`OrderTop`),
-with the Quantized witness `g_φ = ⊤`,
-feeding [beavers-2011]'s affectedness hierarchy. Here it is instantiated at the
-dimensions the K&L verbs measure. -/
-
-open ArgumentStructure
-open Features (ScalarDimension)
-open Degree
-
-/-! #### Telicity from the scale's order structure (order-theoretic K&L thesis)
-
-The telic reading is "the patient reaches the maximal degree `⊤`", available only
-on a scale with a greatest element (`OrderTop`); the atelic reading is "reaches
-*some* degree", always satisfiable. So telicity is a Quantized-witness existence
-fact over the dimension's `degree` fiber, derived from the order mixin — not a
-stored flag. The `ScalarDimension` carrier lives in `Semantics/Gradability/ScalarDimension.lean`;
-the event machinery below is specific to this paper's degree-achievement analysis. -/
-
-/-- Trivial patient: the measure of change ignores the patient's identity, so a
-    single one-constructor type serves for every degree type `δ`. -/
-inductive Patient
-  | mk
-
-section
-variable {δ : Type*} [LinearOrder δ]
-
-/-- The patient's degree at a time is that time — the temporal trace — so the final
-    degree of an event is its end-time. -/
-instance traceMeasure : HasTemporalMeasure Patient δ δ where
-  measure _ t := t
-
-/-- Companion `HasLatentScale` ([beavers-2011] eq. (60c)). -/
-instance : HasLatentScale Patient (Event δ) :=
-  HasLatentScale.ofHasMeasureFunction (δ := δ)
-
-/-- The forgetful link holds in this model: `latentScale` is `True`. -/
-instance : LawfulScalarLatent Patient δ (Event δ) := ⟨fun _ _ _ => trivial⟩
-
-/-- Telic reading: the patient reaches the maximal degree `⊤` by the event's end. -/
-def reachesTop [OrderTop δ] : Patient → Event δ → Prop :=
-  fun _ e => e.runtime.snd = (⊤ : δ)
-
-/-- Atelic ('comparative') reading: the patient reaches *some* degree by the end. -/
-def reachesSome : Patient → Event δ → Prop :=
-  fun _ e => ∃ g : δ, e.runtime.snd = g
-
-theorem reachesSome_nonQuantized : NonQuantized (δ := δ) (reachesSome (δ := δ)) :=
-  fun _ _ h => h
-
-theorem reachesTop_quantized [OrderTop δ] :
-    Quantized (reachesTop (δ := δ)) (⊤ : δ) :=
-  fun _ _ h => h
-
-/-- **Telic ⇐ a greatest degree.** `OrderTop` supplies the Quantized witness
-    `g_φ = ⊤` — the order-theoretic content of [kennedy-levin-2008]'s closed-scale
-    telicity. -/
-theorem telic_of_orderTop [OrderTop δ] :
-    ∃ g : δ, Quantized (reachesTop (δ := δ)) g :=
-  ⟨⊤, reachesTop_quantized⟩
-
-/-- **Telic ⇒ a greatest degree (contrapositive).** With no greatest degree
-    (`NoMaxOrder`), no final degree is entailed — [kennedy-levin-2008]'s open-scale
-    obligatory atelicity, derived from the order structure. -/
-theorem atelic_of_noMaxOrder [NoMaxOrder δ] :
-    ¬ ∃ g : δ, Quantized (reachesSome (δ := δ)) g := by
-  rintro ⟨g, hg⟩
-  obtain ⟨b, hb⟩ := exists_gt g
-  have hbg : b = g := hg Patient.mk ⟨⟨⟨b, b⟩, le_refl b⟩, .action⟩ ⟨_, rfl⟩
-  exact absurd hbg hb.ne'
-
-/-- Synthesis: with a greatest degree, the telic reading builds the Beavers
-    `IsQuantizedAffected` instance ([beavers-2011] eq. (62)); the weaker
-    mixins follow by derivation. -/
-instance reachesTop_isQuantizedAffected [OrderTop δ] :
-    IsQuantizedAffected (δ := δ) (reachesTop (δ := δ)) :=
-  ⟨⊤, reachesTop_quantized⟩
-
-end
-
-/-- *straighten* measures straightness — a closed scale — so a telic reading is
-    available, derived from the dimension's `OrderTop` (not a stored `HasMax`). -/
-theorem straighten_telic :
-    ∃ g : ScalarDimension.straightness.degree,
-      Quantized (reachesTop (δ := ScalarDimension.straightness.degree)) g :=
-  telic_of_orderTop
-
-/-- *widen* measures width — unbounded above — so no telic reading exists. -/
-theorem widen_atelic :
-    ¬ ∃ g : ScalarDimension.width.degree,
-      Quantized (reachesSome (δ := ScalarDimension.width.degree)) g :=
-  atelic_of_noMaxOrder
-
-/-- The fragment stores each verb's *dimension* directly (boundedness is derived):
-    *straighten* measures straightness, *widen* width — so `straighten_telic` /
-    `widen_atelic` above apply to the actual lexical entries. -/
-theorem straighten_dimension :
-    straighten.toVerb.degreeAchievementScale.get!.dimension = .straightness := rfl
-
-theorem widen_dimension :
-    widen.toVerb.degreeAchievementScale.get!.dimension = .width := rfl
-
-/-! #### Telicity at the `AffectednessDegree` level -/
-
-/-- The [kennedy-levin-2008] to [beavers-2011] telicity correspondence at the
-    `AffectednessDegree` level: a closed-scale base (*straighten*) projects to
-    `.quantized` (telic), an open-scale base (*widen*) to `.nonquantized`
-    (atelic). The strict ordering encodes the variable-telicity contrast. -/
-theorem widen_lt_straighten_at_affectedness_level :
-    AffectednessDegree.nonquantized < AffectednessDegree.quantized := by decide
+/-- The diagnostics on the fragment: *bend*, *boil*, *clean*, *straighten*, *flatten* and
+*open* take *in X*, *rust*, *increase*, *lengthen*, *widen*, *cool* and *warm* take *for X*. -/
+theorem diagnostics :
+    ∀ v ∈ daVerbs, ∀ s ∈ v.degreeAchievementScale,
+      (v.vendlerClass.map inXPrediction = some .accept ↔ s.scaleBoundedness.HasMax) ∧
+        (v.vendlerClass.map forXPrediction = some .accept ↔ ¬ s.scaleBoundedness.HasMax) := by
+  decide
 
 end KennedyLevin2008
