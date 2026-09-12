@@ -19,15 +19,11 @@ predicted by true use or by a licensed false use in a synthetic form
 
 ## Implementation notes
 
-The paper was not available for this pass: the example numbers and judgments are those of the
-earlier version of this file and are marked as unverified. The participant dimensions are
-propositions on the frame, and the frame is Reichenbach's; the evidential refinement of the
-frame belongs to the later literature and is not used.
-
-## TODO
-
-Verify the example numbers, the sentences, and the judgments against the paper, and add the
-sequence-of-tense and present-perfect data once the paper's own examples can be checked.
+The participant dimensions are propositions on the frame, and the frame is Reichenbach's; the
+evidential refinement of the frame belongs to the later literature and is not used. The false
+future of the paper's (4b) and (10a), a *will* for a present state not yet real to the speaker,
+would need a second direction of salience and is not represented, nor is the ban on *used to*
+under sequence of tense, (11b).
 
 ## References
 
@@ -100,10 +96,7 @@ theorem willDeletion_not_trueUse [LinearOrder T] {f : Perspective T} (h : WillDe
     ¬ IsTrueUse present f := by
   simp only [IsTrueUse, compare_mem_present]; exact h.1.ne'
 
-/-! ### Forms and judgments
-
--- UNVERIFIED: the example numbers, sentences, and judgments below are carried over from the
-earlier version of this file and have not been checked against the paper. -/
+/-! ### Forms and judgments -/
 
 /-- The morphology of a tense form: synthetic, as *walked*, or periphrastic, as *used to
 walk*. -/
@@ -150,10 +143,12 @@ def Judgment.Predicted (j : Judgment) : Prop :=
 instance (j : Judgment) : Decidable j.Predicted := by
   unfold Judgment.Predicted; infer_instance
 
-/-- The judgments of §1 and §5: (4a) *The animal you saw was a chipmunk*, (6a) *The animal you
-saw is a chipmunk*, (8a) *The animal you saw used to be a chipmunk* of an animal that still is
-one, (9a) *That used to be a chipmunk*, (27a) *John will die*, (27b) *John dies tomorrow*, and
-(25b) *It rains Thursday*. -/
+/-- The judgments of the paper's first and fifth sections: (4a) *the animal you saw was a
+chipmunk*, of an animal still running up a tree; (6a) *the animal you saw is a chipmunk*; (8a)
+*the animal you saw used to be a chipmunk*, of the same animal; (9a) *the animal the sorcerer
+got hold of used to be a chipmunk, but now he's a badger*; (27a) *John will die tomorrow*, said by
+his doctor; (27b) *John dies tomorrow*, said by his executioner; and (25b) *it rains Thursday,
+because the weatherman predicted it*. -/
 def rows : List Judgment :=
   [ ⟨simplePast, frame 0 False, .acceptable⟩
   , ⟨simplePresent, frame 0 True, .acceptable⟩
