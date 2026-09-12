@@ -2356,7 +2356,6 @@ import Linglib.Studies.Kratzer1981
 import Linglib.Studies.Kratzer1996
 import Linglib.Studies.Kratzer1998
 import Linglib.Studies.Kratzer2012Conditionals
-import Linglib.Studies.Kratzer2012Informational
 import Linglib.Studies.KratzerSelkirk2020
 import Linglib.Studies.KratzerShimoyama2002
 import Linglib.Studies.Krejci2012
