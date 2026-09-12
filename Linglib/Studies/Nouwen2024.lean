@@ -7,51 +7,43 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.FinCases
 
 /-!
-# [nouwen-2024] Deadjectival Intensifiers
-[lassiter-goodman-2017] [nouwen-2024]
+# Nouwen (2024): The Semantics and Probabilistic Pragmatics of Deadjectival Intensifiers
 
-"The semantics and probabilistic pragmatics of deadjectival intensifiers"
-Semantics and Pragmatics, Volume 17, Article 2.
+This file formalizes the account of deadjectival intensifiers in [nouwen-2024]. Adverbs
+such as *horribly* and *pleasantly* derive their degree function from the evaluative
+meaning of their adjectival base, and two generalizations follow from how that meaning
+composes with the threshold pragmatics of [lassiter-goodman-2017]: negative-evaluative bases
+yield high-degree intensifiers while positive-evaluative bases yield moderate ones, the
+Goldilocks effect, and, after [zwicky-1970], modal adjectives of negative polarity such as
+*unusual* can intensify while their positive counterparts cannot. The semantic layer
+carries the intensifier lexicon, the measure functions and their theory-layer grounding,
+the exact Goldilocks boundary, and the licensing-support order; the probabilistic model,
+on the mathlib measure face, rejects the simultaneous dual-threshold configuration and
+proves the predictions of the paper's sequential, backgrounded chain structurally, by ratio
+cancellation and mass monotonicity over the licensed thresholds.
 
-## Empirical Generalizations
+## Implementation notes
 
-1. **Goldilocks effect**: Negative-evaluative bases (horrible, terrible)
-   yield high-degree intensifiers; positive-evaluative bases (pleasant, nice)
-   yield moderate-degree intensifiers.
+The paper's measure functions, a square for negative evaluation and a Gaussian for positive
+evaluation, are replaced by a linear distance from the norm and its complement, which
+preserve the qualitative shape. The factive embedding of the paper's novel semantic
+proposal and the question-under-discussion partition over equivalence classes of worlds
+are not represented: the evaluative stage predicates heights directly and the model runs
+over raw heights, which is adequate for the toy example but does not extend to the paper's
+later figures.
 
-2. **Zwicky's generalization**: Modal adjectives with negative polarity
-   (unusual, surprising, impossible) can intensify, but their positive
-   counterparts (usual, expected, possible) cannot.
+## TODO
 
-## RSA Model
+Sixty-one numerical claims are discharged by `native_decide`; the rational-arithmetic
+cores await the measure-face migration of the RSA substrate.
 
-Extends [lassiter-goodman-2017] threshold RSA with **evaluative measures**:
-deadjectival adverbs (horribly, pleasantly) derive their degree function
-from the evaluative meaning of their adjectival base.
+## References
 
-**Measure function simplification**: The paper uses f(x) = x² for negative
-evaluation and a Gaussian for positive evaluation (handcrafted proof-of-concept
-functions). Our formalization uses |d − norm| and norm − |d − norm| respectively
-(linear/triangular). Both preserve the qualitative shape: negative measures peak
-at extremes, positive measures peak at the norm.
-
-### Probabilistic model
-
-The RSA model — the rejected simultaneous dual-threshold configuration
-(Nouwen's (49)) and the paper's final sequential/backgrounded chain
-(eqs. 50–51) — lives on the mathlib-PMF face in the "Probabilistic model" sections
-below, where the predictions are proven
-structurally: ratio cancellation collapses each marginalised speaker to a
-mass-monotone sum over the licensed thresholds, and informativity
-monotonicity beats the prior ratio. This file houses the semantic layer:
-the intensifier lexicon, the meaning functions and their theory-layer
-grounding, the exact Goldilocks boundary, the Wheeler leak, and the
-licensing-support order.
+* [nouwen-2024]
+* [lassiter-goodman-2017]
+* [kennedy-mcnally-2005]
+* [zwicky-1970]
 -/
-
--- ============================================================================
--- §1. Empirical Data (§2)
--- ============================================================================
 
 namespace Nouwen2024.Intensifiers
 
@@ -355,19 +347,6 @@ theorem possibly_zwicky : zwickyHolds possibly_ = true := by native_decide
 
 -- Summary statistics
 
-/-- Count of attested intensifiers -/
-def attestedCount : Nat := (allEntries.filter (·.attested)).length
-
-/-- Count of unattested intensifiers -/
-def unattestedCount : Nat := (allEntries.filter (!·.attested)).length
-
-#guard attestedCount == 21
-#guard unattestedCount == 3
-
--- ════════════════════════════════════════════════════
--- Fragment Bridge
--- ════════════════════════════════════════════════════
-
 /-- Look up the Fragment adjective entry for an intensifier's adjectival base. -/
 def IntensifierEntry.fragmentEntry (e : IntensifierEntry) :
     Option Degree.GradableAdjective :=
@@ -485,10 +464,6 @@ theorem impossible_valence_bridge :
     (impossibly.fragmentEntry.bind (·.evaluativeValence)) = some .neutral := by
   native_decide
 
--- ════════════════════════════════════════════════════
--- Universal Bridge: all entries resolve and agree
--- ════════════════════════════════════════════════════
-
 /-- Every intensifier entry's adjectival base resolves to a Fragment entry. -/
 theorem all_bases_resolve :
     allEntries.all (·.fragmentEntry.isSome) = true := by
@@ -501,10 +476,6 @@ theorem all_valences_agree :
     allEntries.all (λ e =>
       e.fragmentEntry.bind (·.evaluativeValence) == some e.valence) = true := by
   native_decide
-
--- ════════════════════════════════════════════════════
--- Derived Structural Properties
--- ════════════════════════════════════════════════════
 
 /-- All intensifier bases have open scales (§2.1, fn. 3: "I will restrict my
     attention to adjectives with open-ended scales"). Derived from the Fragment.
@@ -540,7 +511,8 @@ theorem zwicky_evaluative_both_attested :
     (Contrast with modals, where only deviation-denoting bases intensify.) -/
 theorem evaluative_has_both_polarities :
     (allEntries.filter (λ e => e.baseKind == .evaluative && e.valence == .positive)).length > 0 ∧
-    (allEntries.filter (λ e => e.baseKind == .evaluative && e.valence == .negative)).length > 0 := by
+    (allEntries.filter (λ e => e.baseKind == .evaluative && e.valence == .negative)).length > 0 :=
+    by
   native_decide
 
 /-- The Goldilocks effect holds universally across all entries (including
@@ -573,10 +545,6 @@ theorem antonym_pairs_resolve :
   native_decide
 
 end Nouwen2024.Intensifiers
-
--- ============================================================================
--- §2. RSA Model
--- ============================================================================
 
 namespace RSA.Nouwen2024
 
@@ -739,8 +707,8 @@ boundary (`θ + θ_e ≥ 2` on the Degree-6 scale, norm = 3). The U-shaped
 `μ_horrible` targets both scale extremes, but the positive form of *warm* has
 already cut off the cold end whenever the thresholds are high enough. -/
 theorem horriblyWarm_upperClosed_iff (θ θ_e : Threshold) :
-    UpwardClosedWithin (fun h => meaning .horribly_warm h θ θ_e)
-      (fun h => meaning .bare_warm h θ θ_e) ↔ 2 ≤ θ.toNat + θ_e.toNat := by
+    UpwardClosedWithin (λ h => meaning .horribly_warm h θ θ_e)
+      (λ h => meaning .bare_warm h θ θ_e) ↔ 2 ≤ θ.toNat + θ_e.toNat := by
   revert θ θ_e; decide
 
 /-- Positive evaluations are "reserved for the middle of a scale"
@@ -750,8 +718,8 @@ upper-tail intensification. (The nonemptiness guard excludes the vacuous
 `θ_e ≥ 3` cases, where no height is pleasant enough.) -/
 theorem pleasantlyWarm_never_upperClosed (θ θ_e : Threshold)
     (hne : ∃ h, meaning .pleasantly_warm h θ θ_e = true) :
-    ¬ UpwardClosedWithin (fun h => meaning .pleasantly_warm h θ θ_e)
-      (fun h => meaning .bare_warm h θ θ_e) := by
+    ¬ UpwardClosedWithin (λ h => meaning .pleasantly_warm h θ θ_e)
+      (λ h => meaning .bare_warm h θ θ_e) := by
   revert θ θ_e; decide
 
 /-- **The Wheeler leak** ([nouwen-2024] Fig. 5, p. 27: "horribly warm is not
@@ -774,7 +742,7 @@ listener sums over licensed latents). -/
 
 /-- The latent threshold pairs at which `u` is true at `h`. -/
 def licensingSet (u : Utterance) (h : Height) : Finset (Threshold × Threshold) :=
-  Finset.univ.filter fun l => meaning u h l.1 l.2
+  Finset.univ.filter λ l => meaning u h l.1 l.2
 
 /-- Componentwise measure dominance yields licensing-support inclusion:
 if `w₁` is at least as high and at least as extreme as `w₂`, every latent
@@ -841,10 +809,6 @@ def utteranceCost : Utterance → ℚ
   | .pleasantly_warm => 2
   | .silent          => 0
 
--- ============================================================================
--- Sequential Model (key innovation)
--- ============================================================================
-
 /-! ## Sequential Dual-Threshold Model — types
 
 [nouwen-2024]'s key innovation: the evaluative adverb and base adjective
@@ -876,7 +840,6 @@ def evalCost : EvalUtterance → ℚ
   | .eval_pos => 1
   | .silent   => 0
 
-
 -- Step 2: Adjective update with updated prior
 
 /-- Utterances for the adjective step. -/
@@ -895,11 +858,6 @@ def adjCost : AdjUtterance → ℚ
   | .warm   => 1
   | .silent => 0
 
-
--- ============================================================================
--- Probabilistic model (PMF face)
--- ============================================================================
-
 /-!
 ## The probabilistic model on mathlib `PMF`
 
@@ -909,7 +867,8 @@ def adjCost : AdjUtterance → ℚ
 deadjectival intensifiers", *Semantics & Pragmatics* 17:2, 1-45, 2024)
 gives an intersective semantic analysis of intensified adjectives
 (*horribly warm*, *pleasantly warm*) plus a chained-Bayesian pragmatic
-update. The sections below formalise the §4 Bayesian machinery, with explicit acknowledgment of what it does and does not
+update. The sections below formalise the §4 Bayesian machinery, with explicit acknowledgment
+of what it does and does not
 capture.
 
 ## Scope (honest reckoning, post-audit)
@@ -933,8 +892,7 @@ of Nouwen's actual contribution:
    soup-too-warm-to-eat counterexample to Nouwen 2010 Eq. 35. The file's
    stage-1 evaluative meaning predicates `muHorrible` of heights directly,
    without the propositional embedding. Without Eq. 44b's factive layer,
-   the prediction is L&G's, not Nouwen's. Stub theorem
-   `eq_44b_factive_embedding_NOT_FORMALISED` below documents the gap.
+   the prediction is L&G's, not Nouwen's.
 2. **Eq. 49 QUD partition `Q^A_X` — NOT formalised.** Nouwen's σ/ρ are
    defined over equivalence classes `[w]_~^A_X` where `w ~^A_X w' iff
    μ_A(x)(w) ≈ μ_A(x)(w')` (with explicit granularity). The file
@@ -942,8 +900,7 @@ of Nouwen's actual contribution:
    small Height-cardinality the partition collapses to identity and the
    shortcut is vacuously fine for the toy example, but the file cannot
    extend to Nouwen's Figures 4-7 construction (which depends on the
-   QUD partition + measure-function-on-cells distinction). Stub theorem
-   `eq_49_qud_partition_NOT_FORMALISED` below documents the gap.
+   QUD partition + measure-function-on-cells distinction).
 3. **`muHorrible` is linear `|h − norm|`, NOT Nouwen's `f(x) = x²`
    quadratic.** Nouwen's Figure 4(b) handcrafts `f(x) = x²`; the file's
    `muHorrible = |h − 3|` (deg 0 ↦ 3, deg 3 ↦ 0, deg 6 ↦ 3) is the
@@ -1001,8 +958,6 @@ scope for this file).
   collapsing the marginals to mass-monotone sums over the licensed
   thresholds; informativity (`gval 1 > gval 0`) beats the 2:1 prior ratio.
   No numeric reflection.
-- `eq_44b_factive_embedding_NOT_FORMALISED` — Nouwen's novel contribution.
-- `eq_49_qud_partition_NOT_FORMALISED` — explicit substrate gap.
 
 ## Reused from the semantic layer above
 
@@ -1084,7 +1039,7 @@ theorem evalLex_horrible_extension_pos (vt : ValidThreshold) (u : EvalUtterance)
     show heightPriorPMF _ *
       (if evalLex muHorrible (validToThreshold vt) .eval_pos (deg 0) then
         (1 : ℝ≥0∞) else 0) ≠ 0
-    -- Reduce: muHorrible (deg 0) = 3 (since deg 0 has toNat = 0, i.e. d < 3, so muHorrible = 3 - 0 = 3)
+    -- Reduce: muHorrible (deg 0) = 3 (deg 0 has toNat = 0, so d < 3 and muHorrible = 3 - 0 = 3)
     have : evalLex muHorrible (validToThreshold vt) .eval_pos (deg 0) = true := by
       unfold evalLex evalMeaning
       simp only []
@@ -1108,7 +1063,7 @@ theorem evalLex_horrible_extension_pos (vt : ValidThreshold) (u : EvalUtterance)
 /-- Stage 1 literal listener under `muHorrible` at valid threshold `vt`. -/
 noncomputable def evalL0_horribleAt (vt : ValidThreshold) :
     EvalUtterance → PMF Height :=
-  fun u => RSA.L0LassiterGoodman heightPriorPMF
+  λ u => RSA.L0LassiterGoodman heightPriorPMF
     (evalLex muHorrible (validToThreshold vt)) u
     (evalLex_horrible_extension_pos vt u)
 
@@ -1138,7 +1093,7 @@ noncomputable def evalSpeaker_horribleAt (vt : ValidThreshold) (w : Height) : PM
       refine ⟨.silent, ?_⟩
       have hL0 : evalL0_horribleAt vt .silent w = heightPriorPMF w := by
         unfold evalL0_horribleAt
-        exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (fun _ => rfl) _ _
+        exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (λ _ => rfl) _ _
       rw [hL0]
       apply mul_ne_zero _ (evalCostFactor_pos .silent)
       have hpos : 0 < heightPriorPMF w := pos_iff_ne_zero.mpr (heightPriorPMF_pos w)
@@ -1156,7 +1111,7 @@ noncomputable def evalSpeaker_horribleAt (vt : ValidThreshold) (w : Height) : PM
 Eq 70's marginalization step, restricted to thresholds with non-empty
 extension. -/
 noncomputable def evalSpeakerMarginalHorrible : Height → PMF EvalUtterance :=
-  RSA.marginalizeKernel thresholdPriorPMF (fun vt w => evalSpeaker_horribleAt vt w)
+  RSA.marginalizeKernel thresholdPriorPMF (λ vt w => evalSpeaker_horribleAt vt w)
 
 /-- Stage 1 L1 = pragmatic listener via `PMF.posterior`. The prior is
 `heightPriorPMF`; the speaker kernel is the threshold-marginalized
@@ -1168,7 +1123,7 @@ noncomputable def evalL1Horrible (u : EvalUtterance) : PMF Height :=
     -- (deg 0 is in extension for both .silent and .eval_pos at θ=0).
     (PMF.marginal_ne_zero _ _ _ (heightPriorPMF_pos (deg 0)) (by
       -- evalSpeakerMarginalHorrible (deg 0) u ≠ 0
-      -- = PMF.bind thresholdPriorPMF (fun vt => evalSpeaker_horribleAt vt (deg 0)) u
+      -- = PMF.bind thresholdPriorPMF (λ vt => evalSpeaker_horribleAt vt (deg 0)) u
       -- = ∑' vt, thresholdPriorPMF vt * evalSpeaker_horribleAt vt (deg 0) u
       -- Pick vt = 0; both factors positive.
       unfold evalSpeakerMarginalHorrible
@@ -1285,7 +1240,7 @@ theorem adjLex_warm_extension_pos (vt : ValidThreshold) (u : RSA.Nouwen2024.AdjU
 /-- Stage 2 literal listener with prior Π (the L&G "two priors" pattern:
 Π enters here, AND will enter again at the L1 stage). -/
 noncomputable def adjL0_warmAt (vt : ValidThreshold) : RSA.Nouwen2024.AdjUtterance → PMF Height :=
-  fun u => RSA.L0LassiterGoodman priorAfterEvalPos
+  λ u => RSA.L0LassiterGoodman priorAfterEvalPos
     (adjLex (validToThreshold vt)) u (adjLex_warm_extension_pos vt u)
 
 noncomputable def adjCostFactor (u : RSA.Nouwen2024.AdjUtterance) : ℝ≥0∞ :=
@@ -1305,7 +1260,7 @@ noncomputable def adjSpeaker_warmAt (vt : ValidThreshold) (w : Height) :
     PMF (RSA.Nouwen2024.AdjUtterance) :=
   if h_pos : (∑' u, ((adjL0_warmAt vt) u w : ℝ≥0∞) ^ (4 : ℝ) * adjCostFactor u) ≠ 0 then
     RSA.S1Belief (adjL0_warmAt vt) adjCostFactor 4 w h_pos
-      (ENNReal.tsum_ne_top_of_fintype fun u =>
+      (ENNReal.tsum_ne_top_of_fintype λ u =>
         ENNReal.mul_ne_top
           (ENNReal.rpow_ne_top_of_nonneg (by norm_num) (PMF.apply_ne_top _ _))
           (by unfold adjCostFactor; exact ENNReal.ofReal_ne_top))
@@ -1316,7 +1271,7 @@ noncomputable def adjSpeaker_warmAt (vt : ValidThreshold) (w : Height) :
 
 /-- Marginalize Stage 2 speaker over `ValidThreshold`. -/
 noncomputable def adjSpeakerMarginal : Height → PMF AdjUtterance :=
-  RSA.marginalizeKernel thresholdPriorPMF (fun vt w => adjSpeaker_warmAt vt w)
+  RSA.marginalizeKernel thresholdPriorPMF (λ vt w => adjSpeaker_warmAt vt w)
 
 /-- **Sequential L1 for "horribly warm".** Stage 2 L1 with prior Π
 (= stage 1 L1 at `.eval_pos`). The L&G "two priors" pattern: Π appears in
@@ -1347,7 +1302,8 @@ noncomputable def seqAdjL1HorriblyWarm (u : RSA.Nouwen2024.AdjUtterance) : PMF H
         have hL0_warm : adjL0_warmAt 0 .warm (deg 5) ≠ 0 := by
           unfold adjL0_warmAt
           rw [← PMF.mem_support_iff, RSA.mem_support_L0LassiterGoodman_iff]
-          refine ⟨priorAfterEvalPos_pos_at_horrible_pos (by decide : (0:ℕ) < muHorrible (deg 5)), ?_⟩
+          refine ⟨priorAfterEvalPos_pos_at_horrible_pos
+            (by decide : (0:ℕ) < muHorrible (deg 5)), ?_⟩
           -- adjLex (validToThreshold 0) .warm (deg 5) = true
           show RSA.Nouwen2024.adjMeaning .warm (deg 5) (validToThreshold 0) = true
           decide
@@ -1372,7 +1328,7 @@ noncomputable def seqAdjL1HorriblyWarm (u : RSA.Nouwen2024.AdjUtterance) : PMF H
         · -- .silent: L0(.silent | deg 5) = priorAfterEvalPos(deg 5) > 0
           have hL0_silent : adjL0_warmAt 0 .silent (deg 5) ≠ 0 := by
             unfold adjL0_warmAt
-            rw [RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (fun _ => rfl)]
+            rw [RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (λ _ => rfl)]
             exact priorAfterEvalPos_pos_at_horrible_pos (by decide)
           exact RSA.S1Belief_apply_ne_zero_of_pos _ _ _ _ _ _ hL0_silent (by
             unfold adjCostFactor
@@ -1401,7 +1357,7 @@ theorem evalMass_ne_zero (vt : ValidThreshold) : evalMass vt ≠ 0 :=
 theorem evalMass_ne_top (vt : ValidThreshold) : evalMass vt ≠ ⊤ := by
   refine ne_top_of_le_ne_top ENNReal.one_ne_top ?_
   calc evalMass vt
-      ≤ ∑' h, heightPriorPMF h := ENNReal.tsum_le_tsum fun h => by split <;> simp
+      ≤ ∑' h, heightPriorPMF h := ENNReal.tsum_le_tsum λ h => by split <;> simp
     _ = 1 := PMF.tsum_coe _
 
 /-- Π-mass of the `.warm` extension at threshold `vt` (the stage-2
@@ -1416,7 +1372,7 @@ theorem adjMass_ne_zero (vt : ValidThreshold) : adjMass vt ≠ 0 :=
 theorem adjMass_ne_top (vt : ValidThreshold) : adjMass vt ≠ ⊤ := by
   refine ne_top_of_le_ne_top ENNReal.one_ne_top ?_
   calc adjMass vt
-      ≤ ∑' h, priorAfterEvalPos h := ENNReal.tsum_le_tsum fun h => by split <;> simp
+      ≤ ∑' h, priorAfterEvalPos h := ENNReal.tsum_le_tsum λ h => by split <;> simp
     _ = 1 := PMF.tsum_coe _
 
 /-- Stage-1 speaker value at `.eval_pos` on its support: a function of the
@@ -1465,12 +1421,13 @@ theorem evalSpeaker_apply_of_true (vt : ValidThreshold) (w : Height)
     rfl
   have hL0sil : evalL0_horribleAt vt .silent w = heightPriorPMF w := by
     unfold evalL0_horribleAt
-    exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (fun _ => rfl) _ _
+    exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (λ _ => rfl) _ _
   unfold evalSpeaker_horribleAt
   rw [RSA.S1Belief_apply, sumEvalUtt, hL0pos, hL0sil, evalCostFactor_silent, mul_one,
     ENNReal.mul_rpow_of_nonneg _ _ (by norm_num)]
   -- value = (P^4 * M^4 * c) * (P^4 * M^4 * c + P^4)⁻¹ ; factor P^4
-  have hP4 : (heightPriorPMF w) ^ (4 : ℝ) ≠ 0 := (ENNReal.rpow_pos (pos_iff_ne_zero.mpr hP0) hPt).ne'
+  have hP4 : (heightPriorPMF w) ^ (4 : ℝ) ≠ 0 :=
+    (ENNReal.rpow_pos (pos_iff_ne_zero.mpr hP0) hPt).ne'
   have hP4t : (heightPriorPMF w) ^ (4 : ℝ) ≠ ⊤ := ENNReal.rpow_ne_top_of_nonneg (by norm_num) hPt
   rw [mul_assoc ((heightPriorPMF w) ^ (4 : ℝ)),
     show (heightPriorPMF w) ^ (4 : ℝ) * ((evalMass vt)⁻¹ ^ (4 : ℝ) *
@@ -1505,7 +1462,7 @@ theorem adjSpeaker_apply_of_true (vt : ValidThreshold) (w : Height)
     rfl
   have hL0sil : adjL0_warmAt vt .silent w = priorAfterEvalPos w := by
     unfold adjL0_warmAt
-    exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (fun _ => rfl) _ _
+    exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (λ _ => rfl) _ _
   have h_dite : (∑' u, ((adjL0_warmAt vt) u w : ℝ≥0∞) ^ (4 : ℝ) * adjCostFactor u) ≠ 0 := by
     rw [sumAdjUtt]
     intro hz
@@ -1544,7 +1501,7 @@ theorem adjSpeaker_apply_of_false (vt : ValidThreshold) (w : Height)
     simp
   have hL0sil : adjL0_warmAt vt .silent w = priorAfterEvalPos w := by
     unfold adjL0_warmAt
-    exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (fun _ => rfl) _ _
+    exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (λ _ => rfl) _ _
   have h_dite : (∑' u, ((adjL0_warmAt vt) u w : ℝ≥0∞) ^ (4 : ℝ) * adjCostFactor u) ≠ 0 := by
     rw [sumAdjUtt]
     intro hz
@@ -1567,7 +1524,7 @@ The `.eval_pos` extension shrinks strictly from threshold 0 to threshold 1
 drops strictly; the speaker value `gval` rises strictly (informativity). -/
 
 theorem evalMass_one_lt_zero : evalMass 1 < evalMass 0 := by
-  refine ENNReal.tsum_lt_tsum (i := deg 2) (evalMass_ne_top 1) (fun h => ?_) ?_
+  refine ENNReal.tsum_lt_tsum (i := deg 2) (evalMass_ne_top 1) (λ h => ?_) ?_
   · fin_cases h <;>
       simp [evalLex, evalMeaning, muHorrible, validToThreshold, Degree.Bounded.toNat,
         Degree.Threshold.toNat]
@@ -1730,7 +1687,7 @@ utterance's extension being nonempty (the four-utterance L&G L0). -/
 noncomputable def simL0At (l : Threshold × Threshold) (u : Utterance) : PMF Height :=
   if h_pos : (∑' h, heightPriorPMF h *
       (if meaning u h l.1 l.2 then (1 : ℝ≥0∞) else 0)) ≠ 0 then
-    RSA.L0LassiterGoodman heightPriorPMF (fun u' h => meaning u' h l.1 l.2) u h_pos
+    RSA.L0LassiterGoodman heightPriorPMF (λ u' h => meaning u' h l.1 l.2) u h_pos
   else PMF.uniformOfFintype Height
 
 /-- Simultaneous-model speaker at latent `(θ, θ_e)` and world `h` (total, with
@@ -1738,7 +1695,7 @@ the vacuous fallback at degenerate cells, as in `adjSpeaker_warmAt`). -/
 noncomputable def simSpeakerAt (l : Threshold × Threshold) (h : Height) : PMF Utterance :=
   if h_pos : (∑' u, ((simL0At l) u h : ℝ≥0∞) ^ (4 : ℝ) * simCostFactor u) ≠ 0 then
     RSA.S1Belief (simL0At l) simCostFactor 4 h h_pos
-      (ENNReal.tsum_ne_top_of_fintype fun u =>
+      (ENNReal.tsum_ne_top_of_fintype λ u =>
         ENNReal.mul_ne_top
           (ENNReal.rpow_ne_top_of_nonneg (by norm_num) (PMF.apply_ne_top _ _))
           (simCostFactor_finite u))
@@ -1798,7 +1755,7 @@ private theorem simValue_of_allTrue (l : Threshold × Threshold) (h : Height)
         mul_ne_zero hP0 (ENNReal.inv_ne_zero.mpr (by
           refine ne_top_of_le_ne_top ENNReal.one_ne_top ?_
           calc simMass l .silent
-              ≤ ∑' h', heightPriorPMF h' := ENNReal.tsum_le_tsum fun h' => by
+              ≤ ∑' h', heightPriorPMF h' := ENNReal.tsum_le_tsum λ h' => by
                 split <;> simp
             _ = 1 := PMF.tsum_coe _))
       rcases ENNReal.rpow_eq_zero_iff.mp h5 with ⟨hz0, -⟩ | ⟨-, hneg⟩
@@ -1837,7 +1794,7 @@ private theorem simMass_ne_top (l : Threshold × Threshold) (u : Utterance) :
     simMass l u ≠ ⊤ := by
   refine ne_top_of_le_ne_top ENNReal.one_ne_top ?_
   calc simMass l u
-      ≤ ∑' h', heightPriorPMF h' := ENNReal.tsum_le_tsum fun h' => by split <;> simp
+      ≤ ∑' h', heightPriorPMF h' := ENNReal.tsum_le_tsum λ h' => by split <;> simp
     _ = 1 := PMF.tsum_coe _
 
 /-- At a latent where every utterance is true at both worlds, ratio
@@ -1875,7 +1832,7 @@ theorem sim_sharedSupport_dominance_fails :
     rw [hv, simValue_of_allTrue _ _ hall2, ne_eq, ENNReal.div_eq_zero_iff, not_or]
     have hterm : ∀ u : Utterance,
         (simMass ((thr 1, thr 0) : Threshold × Threshold) u)⁻¹ ^ (4 : ℝ) *
-          simCostFactor u ≠ ⊤ := fun u =>
+          simCostFactor u ≠ ⊤ := λ u =>
       ENNReal.mul_ne_top
         (ENNReal.rpow_ne_top_of_nonneg (by norm_num)
           (ENNReal.inv_ne_top.mpr (simMass_ne_zero_of_true (hall2 u))))
@@ -1921,7 +1878,7 @@ noncomputable def evalSpeakerAt (evalMu : Height → ℕ) (vt : ValidThreshold)
   if h_pos : (∑' u, ((evalL0At evalMu vt) u w : ℝ≥0∞) ^ (4 : ℝ) *
       evalCostFactor u) ≠ 0 then
     RSA.S1Belief (evalL0At evalMu vt) evalCostFactor 4 w h_pos
-      (ENNReal.tsum_ne_top_of_fintype fun u =>
+      (ENNReal.tsum_ne_top_of_fintype λ u =>
         ENNReal.mul_ne_top
           (ENNReal.rpow_ne_top_of_nonneg (by norm_num) (PMF.apply_ne_top _ _))
           (evalCostFactor_finite u))
@@ -1929,18 +1886,18 @@ noncomputable def evalSpeakerAt (evalMu : Height → ℕ) (vt : ValidThreshold)
 
 /-- Measure-generic marginalized stage-1 speaker. -/
 noncomputable def evalMarginalAt (evalMu : Height → ℕ) : Height → PMF EvalUtterance :=
-  RSA.marginalizeKernel thresholdPriorPMF (fun vt w => evalSpeakerAt evalMu vt w)
+  RSA.marginalizeKernel thresholdPriorPMF (λ vt w => evalSpeakerAt evalMu vt w)
 
 theorem evalL0At_silent (evalMu : Height → ℕ) (vt : ValidThreshold) (w : Height) :
     evalL0At evalMu vt .silent w = heightPriorPMF w := by
   have hm : (∑' h, heightPriorPMF h *
       (if evalLex evalMu (validToThreshold vt) .silent h then (1 : ℝ≥0∞) else 0)) = 1 := by
     simp only [show ∀ h, evalLex evalMu (validToThreshold vt) .silent h = true from
-      fun _ => rfl, if_true, mul_one]
+      λ _ => rfl, if_true, mul_one]
     exact PMF.tsum_coe _
   unfold evalL0At
   rw [dif_pos (by rw [hm]; exact one_ne_zero)]
-  exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (fun _ => rfl) _ _
+  exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (λ _ => rfl) _ _
 
 private theorem evalSpeakerAt_h_pos (evalMu : Height → ℕ) (vt : ValidThreshold)
     (w : Height) :
@@ -2039,7 +1996,7 @@ noncomputable def adjSpeakerPleasantAt (vt : ValidThreshold) (w : Height) :
     PMF (RSA.Nouwen2024.AdjUtterance) :=
   if h_pos : (∑' u, ((adjL0PleasantAt vt) u w : ℝ≥0∞) ^ (4 : ℝ) * adjCostFactor u) ≠ 0 then
     RSA.S1Belief (adjL0PleasantAt vt) adjCostFactor 4 w h_pos
-      (ENNReal.tsum_ne_top_of_fintype fun u =>
+      (ENNReal.tsum_ne_top_of_fintype λ u =>
         ENNReal.mul_ne_top
           (ENNReal.rpow_ne_top_of_nonneg (by norm_num) (PMF.apply_ne_top _ _))
           (by unfold adjCostFactor; exact ENNReal.ofReal_ne_top))
@@ -2047,7 +2004,7 @@ noncomputable def adjSpeakerPleasantAt (vt : ValidThreshold) (w : Height) :
 
 /-- Marginalized stage-2 speaker for the pleasantly chain. -/
 noncomputable def adjMarginalPleasant : Height → PMF AdjUtterance :=
-  RSA.marginalizeKernel thresholdPriorPMF (fun vt w => adjSpeakerPleasantAt vt w)
+  RSA.marginalizeKernel thresholdPriorPMF (λ vt w => adjSpeakerPleasantAt vt w)
 
 /-- Nonempty `.warm` extension over Π_pleasant at threshold 0 (witness `deg 4`). -/
 private theorem adjMass_pleasant_zero_ne_zero :
@@ -2085,7 +2042,8 @@ private theorem adjSpeakerPleasant_warm_deg4_ne_zero :
 /-- **Sequential L1 for "pleasantly warm"** (mirrors `seqAdjL1HorriblyWarm`). -/
 noncomputable def seqAdjL1PleasantlyWarm (u : RSA.Nouwen2024.AdjUtterance) : PMF Height :=
   PMF.posterior adjMarginalPleasant priorAfterEvalPosPleasant u
-    (PMF.marginal_ne_zero _ _ _ (priorAfterEvalPosPleasant_pos_at (by decide : 0 < muPleasant (deg 4))) (by
+    (PMF.marginal_ne_zero _ _ _
+      (priorAfterEvalPosPleasant_pos_at (by decide : 0 < muPleasant (deg 4))) (by
       unfold adjMarginalPleasant
       rw [RSA.marginalizeKernel_apply]
       apply ENNReal.summable.tsum_ne_zero_iff.mpr
@@ -2097,11 +2055,11 @@ noncomputable def seqAdjL1PleasantlyWarm (u : RSA.Nouwen2024.AdjUtterance) : PMF
             have hm : (∑' h, priorAfterEvalPosPleasant h *
                 (if adjLex (validToThreshold 0) .silent h then (1 : ℝ≥0∞) else 0)) = 1 := by
               simp only [show ∀ h, adjLex (validToThreshold 0) .silent h = true from
-                fun _ => rfl, if_true, mul_one]
+                λ _ => rfl, if_true, mul_one]
               exact PMF.tsum_coe _
             unfold adjL0PleasantAt
             rw [dif_pos (by rw [hm]; exact one_ne_zero),
-              RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (fun _ => rfl)]
+              RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (λ _ => rfl)]
             exact priorAfterEvalPosPleasant_pos_at (by decide)
           have h_pos : (∑' u', ((adjL0PleasantAt 0) u' (deg 4) : ℝ≥0∞) ^ (4 : ℝ) *
               adjCostFactor u') ≠ 0 := by
@@ -2162,7 +2120,7 @@ and inherits its upward shift. The old cross-model inequality pair is
 subsumed by these identities plus the single-model shift theorems. -/
 
 /-- ℕ-valued constant measure ("usual"): no height discrimination. -/
-def muUsualN : Height → ℕ := fun _ => 3
+def muUsualN : Height → ℕ := λ _ => 3
 
 /-- μ_unusual has μ_horrible's shape: deviation measures pattern with
 negative evaluatives ([nouwen-2024] §5). -/
@@ -2187,7 +2145,7 @@ theorem evalL0At_usual (vt : ValidThreshold) (u : EvalUtterance) (w : Height) :
   unfold evalL0At
   rw [dif_pos (by rw [hm]; exact one_ne_zero)]
   exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _
-    (fun w' => evalLex_usual_true vt u w') _ _
+    (λ w' => evalLex_usual_true vt u w') _ _
 
 /-- Constant-measure speaker value: closed form, height-independent. -/
 theorem evalSpeakerAt_usual_apply (vt : ValidThreshold) (w : Height) :
@@ -2215,7 +2173,7 @@ theorem evalMarginalAt_usual_const (w : Height) :
   unfold evalMarginalAt
   rw [RSA.marginalizeKernel_apply, sumVT, uPrior, uPrior, uPrior,
     evalSpeakerAt_usual_apply, evalSpeakerAt_usual_apply, evalSpeakerAt_usual_apply,
-    show ∀ x : ℝ≥0∞, 3⁻¹ * x + 3⁻¹ * x + 3⁻¹ * x = 3 * 3⁻¹ * x from fun x => by ring,
+    show ∀ x : ℝ≥0∞, 3⁻¹ * x + 3⁻¹ * x + 3⁻¹ * x = 3 * 3⁻¹ * x from λ x => by ring,
     ENNReal.mul_inv_cancel (by norm_num) (by norm_num), one_mul]
 
 private theorem usualKernelValue_ne_zero :
@@ -2235,7 +2193,7 @@ update is the identity — Π_usual IS the prior. This is the deep form of the
 old `eval_constant_preserves_peak` (whose inequality is now a corollary of
 the prior's own shape) and the first half of "usually warm ≈ warm". -/
 theorem priorAfterEvalPosUsual_eq_prior : priorAfterEvalPosUsual = heightPriorPMF :=
-  PMF.posterior_eq_of_kernel_const _ _ _ _ (fun w => evalMarginalAt_usual_const w)
+  PMF.posterior_eq_of_kernel_const _ _ _ _ (λ w => evalMarginalAt_usual_const w)
 
 /-- The old `eval_constant_preserves_peak`, now a prior fact: the constant
 measure's stage-1 posterior at the norm exceeds it at the extreme because
@@ -2273,7 +2231,7 @@ noncomputable def adjSpeakerWithPrior (Pi : PMF Height) (vt : ValidThreshold)
   if h_pos : (∑' u, ((adjL0WithPrior Pi vt) u w : ℝ≥0∞) ^ (4 : ℝ) *
       adjCostFactor u) ≠ 0 then
     RSA.S1Belief (adjL0WithPrior Pi vt) adjCostFactor 4 w h_pos
-      (ENNReal.tsum_ne_top_of_fintype fun u =>
+      (ENNReal.tsum_ne_top_of_fintype λ u =>
         ENNReal.mul_ne_top
           (ENNReal.rpow_ne_top_of_nonneg (by norm_num) (PMF.apply_ne_top _ _))
           (by unfold adjCostFactor; exact ENNReal.ofReal_ne_top))
@@ -2281,18 +2239,18 @@ noncomputable def adjSpeakerWithPrior (Pi : PMF Height) (vt : ValidThreshold)
 
 /-- Prior-generic marginalized stage-2 speaker. -/
 noncomputable def adjMarginalWithPrior (Pi : PMF Height) : Height → PMF AdjUtterance :=
-  RSA.marginalizeKernel thresholdPriorPMF (fun vt w => adjSpeakerWithPrior Pi vt w)
+  RSA.marginalizeKernel thresholdPriorPMF (λ vt w => adjSpeakerWithPrior Pi vt w)
 
 theorem adjL0WithPrior_silent (Pi : PMF Height) (vt : ValidThreshold) (w : Height) :
     adjL0WithPrior Pi vt .silent w = Pi w := by
   have hm : (∑' h, Pi h *
       (if adjLex (validToThreshold vt) .silent h then (1 : ℝ≥0∞) else 0)) = 1 := by
     simp only [show ∀ h, adjLex (validToThreshold vt) .silent h = true from
-      fun _ => rfl, if_true, mul_one]
+      λ _ => rfl, if_true, mul_one]
     exact PMF.tsum_coe _
   unfold adjL0WithPrior
   rw [dif_pos (by rw [hm]; exact one_ne_zero)]
-  exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (fun _ => rfl) _ _
+  exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (λ _ => rfl) _ _
 
 private theorem adjSpeakerWithPrior_h_pos (Pi : PMF Height) (vt : ValidThreshold)
     {w : Height} (hPw : Pi w ≠ 0) :
@@ -2403,7 +2361,7 @@ private theorem adjMassP_ne_top (Pi : PMF Height) (vt : ValidThreshold) :
     adjMassP Pi vt ≠ ⊤ := by
   refine ne_top_of_le_ne_top ENNReal.one_ne_top ?_
   calc adjMassP Pi vt
-      ≤ ∑' h', Pi h' := ENNReal.tsum_le_tsum fun h' => by split <;> simp
+      ≤ ∑' h', Pi h' := ENNReal.tsum_le_tsum λ h' => by split <;> simp
     _ = 1 := PMF.tsum_coe _
 
 private theorem fvalP_ne_zero (Pi : PMF Height) (vt : ValidThreshold)
@@ -2570,9 +2528,9 @@ theorem eval_unusual_boosts_extreme :
     calc (∑' h, heightPriorPMF h * evalSpeakerMarginalHorrible h .eval_pos)
         < ∑' h, heightPriorPMF h * evalSpeakerMarginalHorrible (deg 6) .eval_pos := by
           refine ENNReal.tsum_lt_tsum (i := deg 3)
-            (ENNReal.tsum_ne_top_of_fintype fun h =>
+            (ENNReal.tsum_ne_top_of_fintype λ h =>
               ENNReal.mul_ne_top (PMF.apply_ne_top _ _) (PMF.apply_ne_top _ _))
-            (fun h => mul_le_mul_right (evalMarginal_le_deg6 h) _) ?_
+            (λ h => mul_le_mul_right (evalMarginal_le_deg6 h) _) ?_
           rw [evalMarginal_deg3, mul_zero]
           exact pos_iff_ne_zero.mpr
             (mul_ne_zero (heightPriorPMF_pos _) evalMarginal_deg6_ne_zero)
@@ -2620,7 +2578,7 @@ theorem seq_horribly_shifts_upward :
   rw [gt_iff_lt, PMF.posterior_chained_lt_iff_score_lt,
     evalMarginal_deg2, evalMarginal_deg5, adjMarginal_deg2, adjMarginal_deg5,
     heightPriorPMF_deg2_eq]
-  have hF0 : fval 0 + fval 1 ≠ 0 := fun h => fval_ne_zero 0 (add_eq_zero.mp h).1
+  have hF0 : fval 0 + fval 1 ≠ 0 := λ h => fval_ne_zero 0 (add_eq_zero.mp h).1
   have hFt : fval 0 + fval 1 ≠ ⊤ :=
     ENNReal.add_ne_top.mpr ⟨fval_ne_top 0, fval_ne_top 1⟩
   have key : 2 * gval 0 * (fval 0 + fval 1)
@@ -2647,61 +2605,7 @@ theorem seq_horribly_shifts_upward :
         (3⁻¹ * fval 0 + 3⁻¹ * fval 1 + 3⁻¹ * fval 2) := by
         ring
 
-/-! ## §6'. Substrate gaps documented as sorry'd theorems (Nouwen 2024 not-formalised)
-
-The following stubs explicitly mark what the file does NOT capture from
-Nouwen 2024. Each is the formal statement of the substrate gap; closing
-them would require substrate work documented in the module docstring. -/
-
-/-- **Eq. 44b factive embedding (Nouwen 2024 §3.2) — NOT FORMALISED.**
-
-Nouwen's novel semantic proposal (paper p. 2:21) requires the adverb's
-positive form to embed the *proposition* `λw. μ_A(x)(@) = μ_A(x)(w)`
-(Wheeler-style factive layer). The conjunction
-`(μ_A(x) ≥ θ_i) ∧ (μ_D(λw. μ_A(x)(@) = μ_A(x)(w)) ≥ θ_j)` is what
-distinguishes Nouwen 2024's intersection from L&G's straight positive
-form.
-
-This file's stage-1 evaluative meaning predicates `muHorrible` of heights
-directly (`evalLex evalMu θ u h := muHorrible h > θ.toNat`), without the
-propositional embedding. Without Eq. 44b's factive layer, the prediction
-is L&G's, not Nouwen's. Closing requires a `Prop`/`Bool`-valued lex over
-propositions, not just heights — substantial substrate refactor. -/
-theorem eq_44b_factive_embedding_NOT_FORMALISED :
-    -- Placeholder: should state that the file's evalLex implements the
-    -- factive embedding `μ_horrible(λw.μ_warm(x)(@) = μ_warm(x)(w))`.
-    -- Until the substrate exists, the statement is unstateable as a
-    -- meaningful Lean theorem.
-    True := trivial
-
-/-- **Eq. 49 QUD partition `Q^A_X` (Nouwen 2024 §4) — NOT FORMALISED.**
-
-Nouwen's σ/ρ are defined over equivalence classes of worlds, not raw
-worlds. The partition `Q^A_X = {[w]_~^A_X | w ∈ W}` is built from the
-equivalence `w ~^A_X w' iff μ_A(x)(w) ≈ μ_A(x)(w')` with explicit
-granularity `≈` (Nouwen rounds to one decimal in Figure 3).
-
-The file operates over raw `Height` with no quotient or equivalence
-relation. At small `Height` cardinality the partition collapses to
-identity and the shortcut is vacuously fine for the toy example, but the
-file cannot extend to Nouwen's Figures 4-7 (which depend on the QUD
-partition + measure-function-on-cells distinction). Closing requires
-defining `Quotient`-typed prior + kernels — substantial substrate
-refactor. -/
-theorem eq_49_qud_partition_NOT_FORMALISED :
-    -- Placeholder: should state that the file's prior + kernels are
-    -- defined over `Height / ~_A^X` rather than raw `Height`.
-    -- Until the substrate exists, the statement is unstateable.
-    True := trivial
-
-/-! ## §7. Structural-decomposition demos (lemma library witnesses)
-
-The following theorems exercise the inequality-decomposition lemmas added in
-0.230.387. Each one proves a structural claim about the model that the new
-lemmas dispatch in 1-2 lines — no numeric arithmetic required. The contrast
-with `seq_horribly_shifts_upward` (closed structurally via §5b) is
-the point: structural shell handles structural claims; the numeric core is
-reflection territory, regardless of bundling. -/
+/-! ## §7. Structural consequences of the literal listener -/
 
 /-- Order on the stage-2 `.warm` literal listener at worlds where the
 adjective extension holds reduces to order on the (eval-stage) prior.
@@ -2729,7 +2633,6 @@ leave the listener's beliefs unchanged from the prior. -/
 theorem adjL0_silent_eq_prior (vt : ValidThreshold) (w : Height) :
     adjL0_warmAt vt .silent w = priorAfterEvalPos w := by
   unfold adjL0_warmAt
-  exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (fun _ => rfl) _ _
-
+  exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (λ _ => rfl) _ _
 
 end RSA.Nouwen2024
