@@ -16,6 +16,12 @@ with a bottom element, together with the set of slots marked as open variables. 
 when the description lies below it slot by slot, so the instances of a schema form the principal
 upper set of its description, and instantiation is unification against the description.
 
+A description over variables is read at positions through a subscripting of positions by
+variables. Positions with the same subscript are coindexed and must be filled alike, so an item
+over positions instantiates a schema when it is an instance read through the subscripting.
+Two items are a paired instantiation, sister items, when their sum instantiates the schema
+through the sum of their subscriptings; the relation is symmetric.
+
 A schema plays two roles relative to a lexicon of stored items. In its relational role it
 motivates an item already stored; in its generative role it licenses a possibly novel item whose
 closed variables take only fillers attested among the stored instances. Every related item is
@@ -27,6 +33,9 @@ variable open, exactly when it generates its own description over the empty lexi
 * `Schema`: a slot-indexed description with a set of open variables.
 * `Schema.Instantiates`, `Schema.instantiates_iff_unify`: instantiation as pointwise domination,
   equivalently as unification.
+* `Schema.InstantiatesAt`, `Schema.instantiatesAt_iff`: instantiation at positions through a
+  subscripting, as instantiation of the pulled-back description together with agreement at
+  coindexed positions.
 * `Schema.Relates`, `Schema.Generates`, `Schema.IsProductive`: the two roles of a schema and
   productivity.
 * `Schema.instantiates_inf_iff`, `Schema.instantiates_iff_of_unify_eq_some`: the meet of two
@@ -42,14 +51,29 @@ Marking a constant slot as open has no effect.
 ## References
 
 * [jackendoff-audring-2020]
+* [booij-2010]
 * [booij-2010-compass]
 * [plotkin-1970]
 * [albright-hayes-2003]
 -/
 
+/-- The sum of two functions factors through the sum of two others exactly when each factors
+through its own and the two agree wherever the subscripts coincide. -/
+theorem Function.factorsThrough_sum_elim_iff {α β γ δ : Type*} {f₁ : α → γ}
+    {f₂ : β → γ} {g₁ : α → δ} {g₂ : β → δ} :
+    (Sum.elim g₁ g₂).FactorsThrough (Sum.elim f₁ f₂) ↔
+      g₁.FactorsThrough f₁ ∧ g₂.FactorsThrough f₂ ∧
+        ∀ a b, f₁ a = f₂ b → g₁ a = g₂ b := by
+  simp only [Function.FactorsThrough, Sum.forall, forall_and, Sum.elim_inl, Sum.elim_inr]
+  constructor
+  · rintro ⟨⟨h₁, -⟩, h, h₂⟩
+    exact ⟨h₁, h₂, h⟩
+  · rintro ⟨h₁, h₂, h⟩
+    exact ⟨⟨h₁, λ b a hab => (h a b hab.symm).symm⟩, h, h₂⟩
+
 namespace Morphology.Construction
 
-variable {V α : Type*}
+variable {V P Q P₁ P₂ α : Type*}
 
 /-- A schema is a slot-indexed description `body` together with a set `opens` of slots marked as
 open variables. A slot at `⊥` is a variable and a slot above `⊥` is a constant. -/
@@ -101,7 +125,96 @@ theorem instantiates_iff_of_unify_eq_some [Fintype V] [PartialUnify α] {u : Sch
     PartialUnify.mem_upperBounds_pair]
   rfl
 
+end PartialOrder
+
+/-! ### Positions and coindexation -/
+
+/-- The schema `s` read at positions through the subscripting `pos`, with coindexation
+forgotten: the description and the open variables pulled back along `pos`. -/
+def comap (s : Schema V α) (pos : P → V) : Schema P α :=
+  ⟨s.body ∘ pos, pos ⁻¹' s.opens⟩
+
+@[simp] theorem comap_body (s : Schema V α) (pos : P → V) :
+    (s.comap pos).body = s.body ∘ pos :=
+  rfl
+
+@[simp] theorem comap_opens (s : Schema V α) (pos : P → V) :
+    (s.comap pos).opens = pos ⁻¹' s.opens :=
+  rfl
+
+section Positions
+variable [PartialOrder α] {s : Schema V α} {pos : P → V} {w : P → α}
+
+/-- An item `w` over positions instantiates a schema `s` through the subscripting `pos` if `w`
+is an instance of `s` read at the positions: `w = u ∘ pos` for some instance `u`. -/
+def InstantiatesAt (s : Schema V α) (pos : P → V) (w : P → α) : Prop :=
+  ∃ u, s.Instantiates u ∧ w = u ∘ pos
+
+theorem Instantiates.instantiatesAt {u : V → α} (h : s.Instantiates u) (pos : P → V) :
+    s.InstantiatesAt pos (u ∘ pos) :=
+  ⟨u, h, rfl⟩
+
+@[simp] theorem instantiatesAt_id {w : V → α} : s.InstantiatesAt id w ↔ s.Instantiates w :=
+  ⟨λ ⟨_, hu, hw⟩ => hw ▸ hu, λ h => ⟨w, h, rfl⟩⟩
+
+/-- An item instantiates a schema through a subscripting exactly when it instantiates the
+pulled-back description and fills coindexed positions alike. -/
+theorem instantiatesAt_iff :
+    s.InstantiatesAt pos w ↔ (s.comap pos).Instantiates w ∧ w.FactorsThrough pos := by
+  constructor
+  · rintro ⟨u, hu, rfl⟩
+    exact ⟨λ p => hu (pos p), λ _ _ h => congrArg u h⟩
+  · rintro ⟨hc, hf⟩
+    refine ⟨Function.extend pos w s.body, λ v => ?_, (hf.extend_comp _).symm⟩
+    by_cases hv : ∃ p, pos p = v
+    · obtain ⟨p, rfl⟩ := hv
+      rw [hf.extend_apply]
+      exact hc p
+    · rw [Function.extend_apply' _ _ _ hv]
+
+/-- Instantiation through a subscripting is invariant under reindexing the positions. -/
+theorem instantiatesAt_comp_equiv (e : Q ≃ P) :
+    s.InstantiatesAt (pos ∘ e) (w ∘ e) ↔ s.InstantiatesAt pos w := by
+  constructor
+  · rintro ⟨u, hu, hw⟩
+    refine ⟨u, hu, funext λ p => ?_⟩
+    simpa using congrFun hw (e.symm p)
+  · rintro ⟨u, hu, rfl⟩
+    exact ⟨u, hu, rfl⟩
+
+variable {pos₁ : P₁ → V} {pos₂ : P₂ → V} {w₁ : P₁ → α} {w₂ : P₂ → α}
+
+/-- Two items are a paired instantiation through their subscriptings exactly when each
+instantiates its pulled-back description, each fills its own coindexed positions alike, and
+the two agree wherever their subscripts coincide. -/
+theorem instantiatesAt_elim_iff :
+    s.InstantiatesAt (Sum.elim pos₁ pos₂) (Sum.elim w₁ w₂) ↔
+      (s.comap pos₁).Instantiates w₁ ∧ (s.comap pos₂).Instantiates w₂ ∧
+        w₁.FactorsThrough pos₁ ∧ w₂.FactorsThrough pos₂ ∧
+          ∀ a b, pos₁ a = pos₂ b → w₁ a = w₂ b := by
+  have h : (s.comap (Sum.elim pos₁ pos₂)).Instantiates (Sum.elim w₁ w₂) ↔
+      (s.comap pos₁).Instantiates w₁ ∧ (s.comap pos₂).Instantiates w₂ := by
+    simp only [Instantiates, comap_body, Sum.comp_elim, Pi.le_def, Sum.forall, Sum.elim_inl,
+      Sum.elim_inr]
+  rw [instantiatesAt_iff, Function.factorsThrough_sum_elim_iff, h, and_assoc]
+
+/-- A paired instantiation is symmetric: the sister relation has no direction. -/
+theorem instantiatesAt_elim_swap :
+    s.InstantiatesAt (Sum.elim pos₂ pos₁) (Sum.elim w₂ w₁) ↔
+      s.InstantiatesAt (Sum.elim pos₁ pos₂) (Sum.elim w₁ w₂) := by
+  rw [← instantiatesAt_comp_equiv (Equiv.sumComm P₁ P₂)]
+  have h₁ : Sum.elim pos₂ pos₁ ∘ ⇑(Equiv.sumComm P₁ P₂) = Sum.elim pos₁ pos₂ :=
+    funext λ p => by cases p <;> rfl
+  have h₂ : Sum.elim w₂ w₁ ∘ ⇑(Equiv.sumComm P₁ P₂) = Sum.elim w₁ w₂ :=
+    funext λ p => by cases p <;> rfl
+  rw [h₁, h₂]
+
+end Positions
+
 /-! ### The relational role -/
+
+section PartialOrder
+variable [PartialOrder α] {s : Schema V α} {w : V → α} {Λ Λ' : Set (V → α)} {v : V}
 
 /-- A schema `s` relates an item `w` over a lexicon `Λ` if `w` is stored in `Λ` and instantiates
 `s`: the relational role of a schema. -/
