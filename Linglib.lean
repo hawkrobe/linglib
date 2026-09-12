@@ -1699,7 +1699,6 @@ import Linglib.Semantics.Focus.Marking
 import Linglib.Semantics.Focus.Particles
 import Linglib.Semantics.Focus.Unalternatives
 import Linglib.Semantics.Genericity.Basic
-import Linglib.Semantics.Genericity.Dynamic
 import Linglib.Semantics.Genericity.MeaningPreservation
 import Linglib.Semantics.Genericity.NominalMappingParameter
 import Linglib.Semantics.Genericity.SortedOntology
@@ -2343,7 +2342,6 @@ import Linglib.Studies.Kim2024
 import Linglib.Studies.Kim2024_UPH
 import Linglib.Studies.Kiparsky2002
 import Linglib.Studies.KirkGiannini2024
-import Linglib.Studies.Kirkpatrick2024
 import Linglib.Studies.Kiss1998
 import Linglib.Studies.Klecha2016
 import Linglib.Studies.Klein1980
