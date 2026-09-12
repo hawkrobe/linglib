@@ -1,7 +1,10 @@
 [
   {
     "id": "osborneli2023_ex2a",
-    "source": {"bibkey": "osborne-li-2023", "paperLabel": "(2a)"},
+    "source": {
+      "bibkey": "osborne-li-2023",
+      "paperLabel": "(2a)"
+    },
     "language": "stan1293",
     "primaryText": "Max and Lucie talked about him.",
     "discourseSegments": [],
@@ -11,15 +14,36 @@
     "judgment": "questionable",
     "alternatives": [],
     "readings": [
-      {"name": "him = Max (co-valued)", "judgment": "questionable"},
-      {"name": "him = external referent", "judgment": "acceptable"}
+      {
+        "name": "him = Max (co-valued)",
+        "judgment": "questionable"
+      },
+      {
+        "name": "him = external referent",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
-      ["coordinateSubject", "true"],
-      ["coVValuedPair", "him;Max"],
-      ["paperSection", "1"],
-      ["paperMeanScore", "2.38"],
-      ["paperNRespondents", "60"]
+      [
+        "coordinateSubject",
+        "true"
+      ],
+      [
+        "coVValuedPair",
+        "him;Max"
+      ],
+      [
+        "paperSection",
+        "1"
+      ],
+      [
+        "paperMeanScore",
+        "2.38"
+      ],
+      [
+        "paperNRespondents",
+        "60"
+      ]
     ],
     "comment": "Osborne & Li 2023 ex (2a), p. ~632. Crowdsourced mean 2.38 → `??` per paper p. 630 fn. 3 threshold table (1.65–2.29 = ?, 2.30–2.94 = ??, 2.95–4.00 = *).",
     "metaLanguage": "stan1293",
@@ -27,25 +51,49 @@
   },
   {
     "id": "osborneli2023_ex3a",
-    "source": {"bibkey": "osborne-li-2023", "paperLabel": "(3a)"},
+    "source": {
+      "bibkey": "osborne-li-2023",
+      "paperLabel": "(3a)"
+    },
     "language": "stan1293",
     "primaryText": "John and Mary talked about himself.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "John and Mary talked about himself.",
     "context": "Coordinate subject; reflexive in PP complement. Co-valuing `himself` with `John` (a conjunct valent of the subject) is marginal — the reflexive cannot find a fully matching antecedent in the local domain but is licensed by the conjunct valent.",
-    "judgment": "marginal",
+    "judgment": "questionable",
     "alternatives": [],
     "readings": [
-      {"name": "himself = John", "judgment": "marginal"}
+      {
+        "name": "himself = John",
+        "judgment": "marginal"
+      }
     ],
     "paperFeatures": [
-      ["coordinateSubject", "true"],
-      ["coVValuedPair", "himself;John"],
-      ["anaphorType", "reflexive"],
-      ["paperSection", "3"],
-      ["paperMeanScore", "2.15"],
-      ["paperNRespondents", "60"]
+      [
+        "coordinateSubject",
+        "true"
+      ],
+      [
+        "coVValuedPair",
+        "himself;John"
+      ],
+      [
+        "anaphorType",
+        "reflexive"
+      ],
+      [
+        "paperSection",
+        "3"
+      ],
+      [
+        "paperMeanScore",
+        "2.15"
+      ],
+      [
+        "paperNRespondents",
+        "60"
+      ]
     ],
     "comment": "Osborne & Li 2023 ex (3a). Mean 2.15 → `?` per threshold table. CRDC predicts marginality (full reflexive of conjunct antecedent); some speakers tolerate semantic-plural agreement, others not.",
     "metaLanguage": "stan1293",
@@ -53,7 +101,10 @@
   },
   {
     "id": "osborneli2023_ex3b",
-    "source": {"bibkey": "osborne-li-2023", "paperLabel": "(3b)"},
+    "source": {
+      "bibkey": "osborne-li-2023",
+      "paperLabel": "(3b)"
+    },
     "language": "stan1293",
     "primaryText": "John and Mary talked about him.",
     "discourseSegments": [],
@@ -63,14 +114,32 @@
     "judgment": "questionable",
     "alternatives": [],
     "readings": [
-      {"name": "him = John (co-valued)", "judgment": "questionable"}
+      {
+        "name": "him = John (co-valued)",
+        "judgment": "questionable"
+      }
     ],
     "paperFeatures": [
-      ["coordinateSubject", "true"],
-      ["coVValuedPair", "him;John"],
-      ["paperSection", "3"],
-      ["paperMeanScore", "2.43"],
-      ["paperNRespondents", "60"]
+      [
+        "coordinateSubject",
+        "true"
+      ],
+      [
+        "coVValuedPair",
+        "him;John"
+      ],
+      [
+        "paperSection",
+        "3"
+      ],
+      [
+        "paperMeanScore",
+        "2.43"
+      ],
+      [
+        "paperNRespondents",
+        "60"
+      ]
     ],
     "comment": "Osborne & Li 2023 ex (3b). Mean 2.43 → `??`.",
     "metaLanguage": "stan1293",
@@ -78,25 +147,49 @@
   },
   {
     "id": "osborneli2023_ex5a",
-    "source": {"bibkey": "osborne-li-2023", "paperLabel": "(5a)"},
+    "source": {
+      "bibkey": "osborne-li-2023",
+      "paperLabel": "(5a)"
+    },
     "language": "stan1293",
     "primaryText": "Both John and Mary love him.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Both John and Mary love him.",
     "context": "`both ... and ...` coordinator; pronoun as object of a symmetric predicate (`love`). Co-valuing `him` with `John` instantiates the CRDC configuration: `him` is a full valent, `John` is a conjunct of the coordinate subject.",
-    "judgment": "questionable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [
-      {"name": "him = John", "judgment": "questionable"}
+      {
+        "name": "him = John",
+        "judgment": "questionable"
+      }
     ],
     "paperFeatures": [
-      ["coordinateSubject", "true"],
-      ["coordinator", "both...and"],
-      ["coVValuedPair", "him;John"],
-      ["paperSection", "3"],
-      ["paperMeanScore", "UNVERIFIED"],
-      ["paperNRespondents", "UNVERIFIED"]
+      [
+        "coordinateSubject",
+        "true"
+      ],
+      [
+        "coordinator",
+        "both...and"
+      ],
+      [
+        "coVValuedPair",
+        "him;John"
+      ],
+      [
+        "paperSection",
+        "3"
+      ],
+      [
+        "paperMeanScore",
+        "3.20"
+      ],
+      [
+        "paperNRespondents",
+        "60"
+      ]
     ],
     "comment": "Osborne & Li 2023 ex (5a). CRDC predicts marginality (`.questionable`). Mean score and respondent count not verified against the paper PDF; the paired-coordinator variant pairs with a bare-`and` baseline that the paper itself uses to argue the symmetric-predicate `love` is the locus of the contrast, not the `both`-coordinator. Re-check both the score and the analytic attribution on next audit pass.",
     "metaLanguage": "stan1293",
@@ -104,7 +197,10 @@
   },
   {
     "id": "osborneli2023_ex6a",
-    "source": {"bibkey": "osborne-li-2023", "paperLabel": "(6a)"},
+    "source": {
+      "bibkey": "osborne-li-2023",
+      "paperLabel": "(6a)"
+    },
     "language": "stan1293",
     "primaryText": "Bill and Mary consider him to be ready for a raise.",
     "discourseSegments": [],
@@ -114,15 +210,36 @@
     "judgment": "questionable",
     "alternatives": [],
     "readings": [
-      {"name": "him = Bill", "judgment": "questionable"}
+      {
+        "name": "him = Bill",
+        "judgment": "questionable"
+      }
     ],
     "paperFeatures": [
-      ["coordinateSubject", "true"],
-      ["construction", "raising-to-object"],
-      ["coVValuedPair", "him;Bill"],
-      ["paperSection", "3"],
-      ["paperMeanScore", "2.42"],
-      ["paperNRespondents", "60"]
+      [
+        "coordinateSubject",
+        "true"
+      ],
+      [
+        "construction",
+        "raising-to-object"
+      ],
+      [
+        "coVValuedPair",
+        "him;Bill"
+      ],
+      [
+        "paperSection",
+        "3"
+      ],
+      [
+        "paperMeanScore",
+        "2.42"
+      ],
+      [
+        "paperNRespondents",
+        "60"
+      ]
     ],
     "comment": "Osborne & Li 2023 ex (6a). Mean 2.42 → `??`. Raising-to-object case strengthens the empirical base for CRDC over coordinate-subject configurations.",
     "metaLanguage": "stan1293",
@@ -130,7 +247,10 @@
   },
   {
     "id": "osborneli2023_ex9a",
-    "source": {"bibkey": "osborne-li-2023", "paperLabel": "(9a)"},
+    "source": {
+      "bibkey": "osborne-li-2023",
+      "paperLabel": "(9a)"
+    },
     "language": "stan1293",
     "primaryText": "Max talked about himself.",
     "discourseSegments": [],
@@ -140,14 +260,32 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "himself = Max", "judgment": "acceptable"}
+      {
+        "name": "himself = Max",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
-      ["coordinateSubject", "false"],
-      ["coVValuedPair", "himself;Max"],
-      ["paperSection", "3"],
-      ["paperMeanScore", "1.28"],
-      ["paperNRespondents", "60"]
+      [
+        "coordinateSubject",
+        "false"
+      ],
+      [
+        "coVValuedPair",
+        "himself;Max"
+      ],
+      [
+        "paperSection",
+        "3"
+      ],
+      [
+        "paperMeanScore",
+        "1.28"
+      ],
+      [
+        "paperNRespondents",
+        "60"
+      ]
     ],
     "comment": "Osborne & Li 2023 ex (9a). Mean 1.28 → no indicator (acceptable). Non-coordinate baseline; CRDC says nothing because there is no coordination.",
     "metaLanguage": "stan1293",
@@ -155,7 +293,10 @@
   },
   {
     "id": "osborneli2023_ex9b",
-    "source": {"bibkey": "osborne-li-2023", "paperLabel": "(9b)"},
+    "source": {
+      "bibkey": "osborne-li-2023",
+      "paperLabel": "(9b)"
+    },
     "language": "stan1293",
     "primaryText": "Max talked about him.",
     "discourseSegments": [],
@@ -165,15 +306,36 @@
     "judgment": "questionable",
     "alternatives": [],
     "readings": [
-      {"name": "him = Max", "judgment": "questionable"},
-      {"name": "him = external referent", "judgment": "acceptable"}
+      {
+        "name": "him = Max",
+        "judgment": "questionable"
+      },
+      {
+        "name": "him = external referent",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
-      ["coordinateSubject", "false"],
-      ["coVValuedPair", "him;Max"],
-      ["paperSection", "3"],
-      ["paperMeanScore", "2.92"],
-      ["paperNRespondents", "60"]
+      [
+        "coordinateSubject",
+        "false"
+      ],
+      [
+        "coVValuedPair",
+        "him;Max"
+      ],
+      [
+        "paperSection",
+        "3"
+      ],
+      [
+        "paperMeanScore",
+        "2.92"
+      ],
+      [
+        "paperNRespondents",
+        "60"
+      ]
     ],
     "comment": "Osborne & Li 2023 ex (9b). Mean 2.92 → `??`. The marginality here comes from Condition B (local pronoun bound by subject), not CRDC.",
     "metaLanguage": "stan1293",
@@ -181,7 +343,10 @@
   },
   {
     "id": "osborneli2023_ex11a",
-    "source": {"bibkey": "osborne-li-2023", "paperLabel": "(11a)"},
+    "source": {
+      "bibkey": "osborne-li-2023",
+      "paperLabel": "(11a)"
+    },
     "language": "stan1293",
     "primaryText": "Max and Lucie talked about his work.",
     "discourseSegments": [],
@@ -191,15 +356,36 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "his = Max", "judgment": "acceptable"}
+      {
+        "name": "his = Max",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
-      ["coordinateSubject", "true"],
-      ["coVValuedPair", "his;Max"],
-      ["anaphorType", "possessive"],
-      ["paperSection", "3"],
-      ["paperMeanScore", "1.20"],
-      ["paperNRespondents", "60"]
+      [
+        "coordinateSubject",
+        "true"
+      ],
+      [
+        "coVValuedPair",
+        "his;Max"
+      ],
+      [
+        "anaphorType",
+        "possessive"
+      ],
+      [
+        "paperSection",
+        "3"
+      ],
+      [
+        "paperMeanScore",
+        "1.20"
+      ],
+      [
+        "paperNRespondents",
+        "60"
+      ]
     ],
     "comment": "Osborne & Li 2023 ex (11a). Mean 1.20 → no indicator. Embedding the pronoun inside a possessive DP defuses CRDC.",
     "metaLanguage": "stan1293",
@@ -207,7 +393,10 @@
   },
   {
     "id": "osborneli2023_ex11e",
-    "source": {"bibkey": "osborne-li-2023", "paperLabel": "(11e)"},
+    "source": {
+      "bibkey": "osborne-li-2023",
+      "paperLabel": "(11e)"
+    },
     "language": "stan1293",
     "primaryText": "Max and Lucie talked about Max.",
     "discourseSegments": [],
@@ -217,16 +406,40 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "object Max ≠ subject Max", "judgment": "acceptable"},
-      {"name": "object Max = subject Max (same individual)", "judgment": "marginal"}
+      {
+        "name": "object Max ≠ subject Max",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "object Max = subject Max (same individual)",
+        "judgment": "marginal"
+      }
     ],
     "paperFeatures": [
-      ["coordinateSubject", "true"],
-      ["coVValuedPair", "Max;Max"],
-      ["anaphorType", "R-expression"],
-      ["paperSection", "3"],
-      ["paperMeanScore", "1.47"],
-      ["paperNRespondents", "100"]
+      [
+        "coordinateSubject",
+        "true"
+      ],
+      [
+        "coVValuedPair",
+        "Max;Max"
+      ],
+      [
+        "anaphorType",
+        "R-expression"
+      ],
+      [
+        "paperSection",
+        "3"
+      ],
+      [
+        "paperMeanScore",
+        "1.47"
+      ],
+      [
+        "paperNRespondents",
+        "100"
+      ]
     ],
     "comment": "Osborne & Li 2023 ex (11e). Mean 1.47 → no indicator. R-expressions skirt CRDC because they need no antecedent.",
     "metaLanguage": "stan1293",
@@ -234,7 +447,10 @@
   },
   {
     "id": "osborneli2023_ex20b",
-    "source": {"bibkey": "osborne-li-2023", "paperLabel": "(20b)"},
+    "source": {
+      "bibkey": "osborne-li-2023",
+      "paperLabel": "(20b)"
+    },
     "language": "stan1293",
     "primaryText": "Hank and Hillary appear to her to be good friends.",
     "discourseSegments": [],
@@ -244,15 +460,36 @@
     "judgment": "questionable",
     "alternatives": [],
     "readings": [
-      {"name": "her = Hillary", "judgment": "questionable"}
+      {
+        "name": "her = Hillary",
+        "judgment": "questionable"
+      }
     ],
     "paperFeatures": [
-      ["coordinateSubject", "true"],
-      ["construction", "raising-with-experiencer"],
-      ["coVValuedPair", "her;Hillary"],
-      ["paperSection", "3"],
-      ["paperMeanScore", "2.68"],
-      ["paperNRespondents", "60"]
+      [
+        "coordinateSubject",
+        "true"
+      ],
+      [
+        "construction",
+        "raising-with-experiencer"
+      ],
+      [
+        "coVValuedPair",
+        "her;Hillary"
+      ],
+      [
+        "paperSection",
+        "3"
+      ],
+      [
+        "paperMeanScore",
+        "2.68"
+      ],
+      [
+        "paperNRespondents",
+        "60"
+      ]
     ],
     "comment": "Osborne & Li 2023 ex (20b). Mean 2.68 → `??`. Raising-with-experiencer pattern: CRDC continues to apply across the raising chain.",
     "metaLanguage": "stan1293",
@@ -260,7 +497,10 @@
   },
   {
     "id": "osborneli2023_ex24a",
-    "source": {"bibkey": "osborne-li-2023", "paperLabel": "(24a)"},
+    "source": {
+      "bibkey": "osborne-li-2023",
+      "paperLabel": "(24a)"
+    },
     "language": "stan1293",
     "primaryText": "John talked about himself and his mother.",
     "discourseSegments": [],
@@ -270,14 +510,32 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "himself = John", "judgment": "acceptable"}
+      {
+        "name": "himself = John",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
-      ["coordinateObject", "true"],
-      ["coVValuedPair", "himself;John"],
-      ["paperSection", "3"],
-      ["paperMeanScore", "1.14"],
-      ["paperNRespondents", "60"]
+      [
+        "coordinateObject",
+        "true"
+      ],
+      [
+        "coVValuedPair",
+        "himself;John"
+      ],
+      [
+        "paperSection",
+        "3"
+      ],
+      [
+        "paperMeanScore",
+        "1.14"
+      ],
+      [
+        "paperNRespondents",
+        "60"
+      ]
     ],
     "comment": "Osborne & Li 2023 ex (24a). Mean 1.14 → no indicator. Key directionality test: conjunct anaphor of full-valent antecedent is fine; only the full-anaphor-of-conjunct direction triggers CRDC marginality.",
     "metaLanguage": "stan1293",
@@ -285,7 +543,10 @@
   },
   {
     "id": "osborneli2023_ex25c",
-    "source": {"bibkey": "osborne-li-2023", "paperLabel": "(25c)"},
+    "source": {
+      "bibkey": "osborne-li-2023",
+      "paperLabel": "(25c)"
+    },
     "language": "stan1293",
     "primaryText": "Jane defended her.",
     "discourseSegments": [],
@@ -295,14 +556,32 @@
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [
-      {"name": "her = Jane", "judgment": "ungrammatical"}
+      {
+        "name": "her = Jane",
+        "judgment": "ungrammatical"
+      }
     ],
     "paperFeatures": [
-      ["coordinateSubject", "false"],
-      ["coVValuedPair", "her;Jane"],
-      ["paperSection", "3"],
-      ["paperMeanScore", "3.20"],
-      ["paperNRespondents", "40"]
+      [
+        "coordinateSubject",
+        "false"
+      ],
+      [
+        "coVValuedPair",
+        "her;Jane"
+      ],
+      [
+        "paperSection",
+        "3"
+      ],
+      [
+        "paperMeanScore",
+        "3.20"
+      ],
+      [
+        "paperNRespondents",
+        "40"
+      ]
     ],
     "comment": "Osborne & Li 2023 ex (25c). Mean 3.20 → `*`. Standard Condition B violation; cited to contrast with the coordinate-object licensing in (24a).",
     "metaLanguage": "stan1293",
@@ -310,7 +589,10 @@
   },
   {
     "id": "osborneli2023_ex28d",
-    "source": {"bibkey": "osborne-li-2023", "paperLabel": "(28d)"},
+    "source": {
+      "bibkey": "osborne-li-2023",
+      "paperLabel": "(28d)"
+    },
     "language": "stan1293",
     "primaryText": "John expected Mary and him to be able to leave soon.",
     "discourseSegments": [],
@@ -320,15 +602,36 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "him = John", "judgment": "acceptable"}
+      {
+        "name": "him = John",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
-      ["coordinateObject", "true"],
-      ["construction", "raising-to-object"],
-      ["coVValuedPair", "him;John"],
-      ["paperSection", "3"],
-      ["paperMeanScore", "1.40"],
-      ["paperNRespondents", "60"]
+      [
+        "coordinateObject",
+        "true"
+      ],
+      [
+        "construction",
+        "raising-to-object"
+      ],
+      [
+        "coVValuedPair",
+        "him;John"
+      ],
+      [
+        "paperSection",
+        "3"
+      ],
+      [
+        "paperMeanScore",
+        "1.40"
+      ],
+      [
+        "paperNRespondents",
+        "60"
+      ]
     ],
     "comment": "Osborne & Li 2023 ex (28d). Mean 1.40 → no indicator. Confirms the directionality asymmetry: conjunct anaphor of full antecedent is fine even with raising-to-object.",
     "metaLanguage": "stan1293",
@@ -336,7 +639,10 @@
   },
   {
     "id": "osborneli2023_ex55a",
-    "source": {"bibkey": "osborne-li-2023", "paperLabel": "(55a)"},
+    "source": {
+      "bibkey": "osborne-li-2023",
+      "paperLabel": "(55a)"
+    },
     "language": "stan1293",
     "primaryText": "Sophy and Edgar voted for her.",
     "discourseSegments": [],
@@ -346,15 +652,36 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "her = Sophy", "judgment": "acceptable"}
+      {
+        "name": "her = Sophy",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
-      ["coordinateSubject", "true"],
-      ["coVValuedPair", "her;Sophy"],
-      ["paperSection", "6"],
-      ["isCounterexample", "true"],
-      ["paperMeanScore", "1.43"],
-      ["paperNRespondents", "40"]
+      [
+        "coordinateSubject",
+        "true"
+      ],
+      [
+        "coVValuedPair",
+        "her;Sophy"
+      ],
+      [
+        "paperSection",
+        "6"
+      ],
+      [
+        "isCounterexample",
+        "true"
+      ],
+      [
+        "paperMeanScore",
+        "1.43"
+      ],
+      [
+        "paperNRespondents",
+        "40"
+      ]
     ],
     "comment": "Osborne & Li 2023 ex (55a). Mean 1.43 → no indicator. Section 6 counterexample: predicates like `vote for` allow `her` to pick out an individual outside the coordination (a third party), making CRDC's prediction empirically wrong here. Flagged in `paperFeatures.isCounterexample`.",
     "metaLanguage": "stan1293",
