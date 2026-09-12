@@ -10,8 +10,9 @@ situation from one in which all smiled; *all* removes the gap and with it the no
 reading. A five-world model of three professors runs the account end to end on the library's
 homogeneity substrate (`barePlural`, `allPlural`, both originating with this paper): the
 non-maximal use under a coarse issue and its absence under a fine one, the unusability of the
-*all*-sentence at any gap world, the unmentionability of exceptions (`smith_exception_unaddressable`),
-and the paper's prediction that what an exception does instead matters, since a visibly angry
+*all*-sentence at any gap world, the unmentionability of exceptions
+(`smith_exception_unaddressable`), and the paper's prediction that what an exception does
+instead matters, since a visibly angry
 Smith falls into a different cell of the coarse issue than a neutral one
 (`bare_usable_neutral_not_angry`). Conjunctions of names, modelled as plurals over their
 conjuncts, are predicted to allow non-maximal readings they rarely have
