@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Core.Computability.ContextFreeGrammar.Tree
 import Linglib.Core.MeasureTheory.Measure.GiryMonad
 import Linglib.Core.Order.IterateFixedPoint
+import Mathlib.Probability.Kernel.IonescuTulcea.Traj
 
 /-!
 # Multitype Galton–Watson processes
@@ -33,6 +34,9 @@ its weight; see `PCFG.galtonWatson`.
 * `GaltonWatson.Partial`, `GaltonWatson.fill`, `GaltonWatson.stepAll`, `GaltonWatson.stepIter`:
   partial family trees with holes, filling the holes from a family of laws, one synchronous
   generation, and `n` generations, the generation-by-generation Markov chain.
+* `GaltonWatson.stepKernel`, `GaltonWatson.chainKernel`, `GaltonWatson.trajectory`: with
+  probability offspring, the generation chain as a Markov kernel and, through the Ionescu–Tulcea
+  theorem (`ProbabilityTheory.Kernel.traj`), the law of its whole trajectory.
 
 ## Main results
 
@@ -46,6 +50,8 @@ its weight; see `PCFG.galtonWatson`.
   generation is one synchronous step followed by filling, so the Kleene iterates are the
   completed parts of the generation chain and the law is their supremum. This is the finite side
   of the identification of `law` with the trajectory measure of the chain.
+* `GaltonWatson.trajectory_map_eval`: at time `n` the trajectory is distributed as `n`
+  generations, so the Kleene iterates are the marginals of the trajectory measure.
 
 ## Implementation notes
 
@@ -66,7 +72,7 @@ Fubini and needs the discrete σ-algebra on products of the tree types to be the
 * [athreya-ney-1972]
 -/
 
-open MeasureTheory OmegaCompletePartialOrder
+open MeasureTheory OmegaCompletePartialOrder ProbabilityTheory Kernel Finset Preorder
 open scoped ENNReal
 
 instance {T N : Type*} : MeasurableSpace (DerivationTree T N) := ⊤
@@ -545,6 +551,123 @@ theorem law_eq_iSup_stepIter [Countable ι] [Countable T] (hP : ∀ i, P.offspri
     (i : ι) : P.law i = ⨆ n, (P.stepIter n (leaf (.inr i))).bind (fill ⊥) := by
   rw [law_eq_iSup_iterate, iSup_apply]
   exact iSup_congr fun n => P.fill_iterate hP n (leaf (.inr i))
+
+/-! ### The generation chain as a Markov chain -/
+
+theorem stepIter_succ' (n : ℕ) (s : Partial ι T) :
+    P.stepIter (n + 1) s = (P.stepIter n s).bind P.stepAll := by
+  induction n generalizing s with
+  | zero =>
+    show (P.stepAll s).bind Measure.dirac = (Measure.dirac s).bind P.stepAll
+    rw [Measure.bind_dirac, Measure.dirac_bind measurable_from_top]
+  | succ n ih =>
+    calc P.stepIter (n + 2) s = (P.stepAll s).bind (P.stepIter (n + 1)) := rfl
+      _ = (P.stepAll s).bind fun s' => (P.stepIter n s').bind P.stepAll := by
+        congr 1; funext s'; exact ih s'
+      _ = ((P.stepAll s).bind (P.stepIter n)).bind P.stepAll :=
+        (Measure.bind_bind measurable_from_top.aemeasurable measurable_from_top.aemeasurable).symm
+      _ = (P.stepIter (n + 1) s).bind P.stepAll := rfl
+
+mutual
+theorem stepAll_univ [∀ i, IsProbabilityMeasure (P.offspring i)] : ∀ s : Partial ι T, P.stepAll s
+  Set.univ = 1
+  | .leaf (.inl t) => by simp [stepAll]
+  | .leaf (.inr i) => by
+    rw [stepAll, Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top,
+      Set.preimage_univ, measure_univ]
+  | .node i cs => by
+    rw [stepAll, Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top,
+      Set.preimage_univ, stepAllList_univ cs]
+theorem stepAllList_univ [∀ i, IsProbabilityMeasure (P.offspring i)] : ∀ ss : List (Partial ι T),
+  P.stepAllList ss Set.univ = 1
+  | [] => by simp [stepAllList]
+  | s :: ss => by
+    rw [stepAllList, Measure.bind_apply MeasurableSpace.measurableSet_top
+      measurable_from_top.aemeasurable]
+    simp_rw [Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top,
+      Set.preimage_univ, stepAllList_univ ss]
+    rw [lintegral_one, stepAll_univ s]
+end
+
+/-- One synchronous generation as a Markov kernel on partial trees. -/
+noncomputable def stepKernel : Kernel (Partial ι T) (Partial ι T) :=
+  ⟨P.stepAll, measurable_from_top⟩
+
+@[simp]
+theorem stepKernel_apply (s : Partial ι T) : P.stepKernel s = P.stepAll s := rfl
+
+instance [∀ i, IsProbabilityMeasure (P.offspring i)] : IsMarkovKernel P.stepKernel :=
+  ⟨fun s => ⟨P.stepAll_univ s⟩⟩
+
+/-- The generation chain in Ionescu–Tulcea form: the state at time `n + 1` depends on the
+trajectory up to time `n` only through its last coordinate. -/
+noncomputable def chainKernel (n : ℕ) :
+    Kernel (Π i : Iic n, (fun _ : ℕ => Partial ι T) i) ((fun _ : ℕ => Partial ι T) (n + 1)) :=
+  P.stepKernel.comap (fun x => x ⟨n, mem_Iic.2 le_rfl⟩) (measurable_pi_apply _)
+
+instance [∀ i, IsProbabilityMeasure (P.offspring i)] (n : ℕ) : IsMarkovKernel (P.chainKernel n) :=
+  IsMarkovKernel.comap _ _
+
+/-- The Ionescu–Tulcea trajectory kernel of the generation chain. -/
+noncomputable def chainTraj [∀ i, IsProbabilityMeasure (P.offspring i)] (n : ℕ) :
+    Kernel (Π i : Iic n, (fun _ : ℕ => Partial ι T) i) (ℕ → Partial ι T) :=
+  traj (X := fun _ : ℕ => Partial ι T) P.chainKernel n
+
+/-- The law of the whole trajectory of generations started at a partial tree. -/
+noncomputable def trajectory [∀ i, IsProbabilityMeasure (P.offspring i)] (s : Partial ι T) :
+    Measure (ℕ → Partial ι T) :=
+  P.chainTraj 0 fun _ => s
+
+instance [∀ i, IsProbabilityMeasure (P.offspring i)] (s : Partial ι T) :
+    IsProbabilityMeasure (P.trajectory s) :=
+  inferInstanceAs (IsProbabilityMeasure (traj (X := fun _ : ℕ => Partial ι T) P.chainKernel 0 _))
+
+/-- At time `n` the generation chain is distributed as `n` synchronous generations. -/
+theorem trajectory_map_eval [∀ i, IsProbabilityMeasure (P.offspring i)] (s : Partial ι T) :
+    ∀ n : ℕ, (P.trajectory s).map (fun ω => ω n) = P.stepIter n s
+  | 0 => by
+    have h := traj_map_frestrictLe_apply (X := fun _ : ℕ => Partial ι T) (κ := P.chainKernel) 0 0
+      (fun _ => s)
+    rw [partialTraj_self, Kernel.id_apply] at h
+    show (P.trajectory s).map (fun ω => ω 0) = Measure.dirac s
+    have hm : (P.trajectory s).map (fun ω => ω 0) = ((P.trajectory s).map (frestrictLe 0)).map
+        (fun x : Π i : Iic 0, (fun _ : ℕ => Partial ι T) i => x ⟨0, mem_Iic.2 le_rfl⟩) :=
+      (Measure.map_map (μ := P.trajectory s) (measurable_pi_apply (⟨0, mem_Iic.2 le_rfl⟩ : Iic 0))
+        (measurable_frestrictLe 0)).symm
+    rw [hm, show (P.trajectory s).map (frestrictLe 0) = Measure.dirac (fun _ => s) from h]
+    exact Measure.map_dirac _
+  | n + 1 => by
+    have hpt : ∀ x : Π i : Iic n, (fun _ : ℕ => Partial ι T) i,
+        (traj (X := fun _ : ℕ => Partial ι T) P.chainKernel n x).map (fun ω => ω (n + 1)) =
+          P.stepAll (x ⟨n, mem_Iic.2 le_rfl⟩) := fun x => by
+      rw [← Kernel.map_apply (traj (X := fun _ : ℕ => Partial ι T) P.chainKernel n)
+          (measurable_pi_apply (n + 1)) x,
+        map_traj_succ_self (X := fun _ : ℕ => Partial ι T) (κ := P.chainKernel), chainKernel,
+        comap_apply]
+      rfl
+    have hmarg : (P.trajectory s).map (fun ω => ω n) =
+        (partialTraj (X := fun _ : ℕ => Partial ι T) P.chainKernel 0 n (fun _ => s)).map
+          (fun x : Π i : Iic n, (fun _ : ℕ => Partial ι T) i => x ⟨n, mem_Iic.2 le_rfl⟩) := by
+      rw [← traj_map_frestrictLe_apply (X := fun _ : ℕ => Partial ι T) (κ := P.chainKernel) 0 n
+        (fun _ => s)]
+      exact (Measure.map_map (μ := P.trajectory s)
+        (measurable_pi_apply (⟨n, mem_Iic.2 le_rfl⟩ : Iic n)) (measurable_frestrictLe n)).symm
+    have hcomp := traj_comp_partialTraj (X := fun _ : ℕ => Partial ι T) (κ := P.chainKernel)
+      (Nat.zero_le n)
+    calc (P.trajectory s).map (fun ω => ω (n + 1))
+        = ((partialTraj (X := fun _ : ℕ => Partial ι T) P.chainKernel 0 n (fun _ => s)).bind
+            (traj (X := fun _ : ℕ => Partial ι T) P.chainKernel n)).map (fun ω => ω (n + 1)) := by
+          rw [trajectory, chainTraj, ← hcomp, comp_apply]
+      _ = (partialTraj (X := fun _ : ℕ => Partial ι T) P.chainKernel 0 n (fun _ => s)).bind
+            fun x => P.stepAll (x ⟨n, mem_Iic.2 le_rfl⟩) := by
+          rw [Measure.map_bind (Kernel.measurable _) (measurable_pi_apply _)]
+          simp_rw [hpt]
+      _ = ((partialTraj (X := fun _ : ℕ => Partial ι T) P.chainKernel 0 n (fun _ => s)).map
+            (fun x : Π i : Iic n, (fun _ : ℕ => Partial ι T) i => x ⟨n, mem_Iic.2 le_rfl⟩)).bind
+              P.stepAll :=
+          (Measure.bind_map (measurable_pi_apply _) measurable_from_top).symm
+      _ = (P.stepIter n s).bind P.stepAll := by rw [← hmarg, trajectory_map_eval s n]
+      _ = P.stepIter (n + 1) s := (P.stepIter_succ' n s).symm
 
 end GaltonWatson
 
