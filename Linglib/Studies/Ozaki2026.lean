@@ -1,443 +1,124 @@
+import Linglib.Data.Examples.Ozaki2026
 import Linglib.Syntax.Case.Dependent
 import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Fragments.Japanese.Case
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Japanese.Passive
 
 /-!
-# [ozaki-2026] — Japanese Accusative/Ablative Alternation: Data
-[ozaki-2026]
+# Ozaki (2026): Japanese Accusative/Ablative Alternation Verbs Are Unaccusative
 
-Empirical data from [ozaki-2026] on Japanese departure verbs
-that alternate between accusative *-o* and ablative *kara* marking
-on the source argument.
+This file formalizes the argument of [ozaki-2026] that the Japanese verbs of departure whose
+source argument is marked either accusative *o* or ablative *kara*, *hanareru* 'leave' and
+*deru* 'exit', project one dyadic unaccusative structure under both markings. The source is
+an argument whatever its marking, since it elides under an overt adjunct, the argumenthood
+diagnostic of [funakoshi-2016], and scrambles long-distance, that of [saito-1985]; and the
+verbs project no thematic Voice ([kratzer-1996]) under either marking, since their passive
+is the indirect passive, the direct passive with *niyotte* being ungrammatical, and the
+accusative wh-adjunct *nani-o* 'why' of [kurafuji-1997] is unavailable, as with
+unaccusatives. Each diagnostic returns the same verdict for both markings (`verdict`,
+`judgment_eq_verdict`, `diagnostics_both_markings`). The alternation is then a matter of case
+assignment: *kara* is a lexical ablative assigned by an optional postposition, and *o* is the
+dependent accusative assigned to a caseless noun phrase c-commanded by another, which the
+ablative bleeds (`acc_variant`, `abl_variant`, `accusative_without_voice`).
 
-## Key Empirical Facts
+## Implementation notes
 
-1. **Alternation**: Departure verbs like *hanareru* 'leave' and *deru*
-   'exit' allow both ACC and ABL on the source:
-   - "Taro-ga mura-**o** hanare-ta" (ACC)
-   - "Taro-ga mura-**kara** hanare-ta" (ABL)
+The examples are the generated rows of `Data/Examples/Ozaki2026`, the (9), (13), and (26)
+pairs split into an accusative and an ablative row. The case algorithm is the one-domain
+dependent-case assignment of `Syntax/Case/Dependent`, and the absence of thematic Voice is the
+non-thematic Voice head of `Syntax/Minimalist/Verbal/Voice`, which the Japanese Fragment records
+for both verbs and from which it derives their unaccusativity.
 
-2. **Argumenthood of source**: The source behaves as an argument regardless
-   of case — it can undergo VP ellipsis and long-distance scrambling.
+## References
 
-3. **Unaccusativity**: These verbs are unaccusative:
-   - Only indirect passive (*-rare*), no direct passive (*-niyotte*)
-   - *Nani-o* wh-adjunct test patterns with unaccusatives
-
-## Theory-Neutral
-
-This file contains no theoretical commitments. See Bridge.lean for
-connection to dependent case theory and Minimalist syntax.
-
+* [ozaki-2026]
+* [funakoshi-2016]
+* [saito-1985]
+* [kurafuji-1997]
+* [kratzer-1996]
 -/
 
 namespace Ozaki2026
 
--- ============================================================================
--- § 1: Data Types
--- ============================================================================
-
-/-! Case marking on the source argument of alternation verbs is recorded
-as a `Japanese.Case.CaseMarker` (the authoritative case-marker
-registry per [tsujimura-2014]), not as a parallel local enum. -/
-
-open Japanese.Case (CaseMarker o kara ga ni)
-open Japanese.Passive (PassiveType)
-
-/-- Diagnostics for argumenthood (vs. adjuncthood). -/
-inductive ArgumenthoodDiagnostic where
-  | ellipsis                -- VP ellipsis includes the constituent
-  | longDistanceScrambling  -- Constituent can scramble long-distance
-  deriving DecidableEq, Repr
-
-/-- Diagnostics for unaccusativity. -/
-inductive UnaccusativityDiagnostic where
-  | passivization   -- Only indirect passive available
-  | naniOWhAdjunct  -- *nani-o* wh-adjunct test: blocked = unaccusative
-  deriving DecidableEq, Repr
-
--- ============================================================================
--- § 2: Data Structures
--- ============================================================================
-
-/-- A single case alternation datum: a verb form with a source argument
-    in a particular case, plus grammaticality. -/
-structure AlternationDatum where
-  verb : String
-  sourceMarker : CaseMarker
-  grammatical : Bool
-  sentence : String
-  exampleNum : String
-
-/-- An unaccusativity diagnostic datum. -/
-structure UnaccusativityDatum where
-  verb : String
-  diagnostic : UnaccusativityDiagnostic
-  passiveType : Option PassiveType
-  grammatical : Bool
-  sentence : String
-  exampleNum : String
-  deriving DecidableEq, Repr
-
-/-- An argumenthood diagnostic datum. -/
-structure ArgumenthoodDatum where
-  verb : String
-  sourceMarker : CaseMarker
-  diagnostic : ArgumenthoodDiagnostic
-  grammatical : Bool
-  sentence : String
-  exampleNum : String
-
--- ============================================================================
--- § 3: Alternation Data
--- ============================================================================
-
-/-! ### *hanareru* 'leave' — ACC/ABL alternation (ex. 1)
-
-"Taro-ga mura-{o/kara} hanare-ta." (Taro-NOM village-{ACC/from} leave-PAST) -/
-
-def hanareru_acc : AlternationDatum where
-  verb := "hanareru"
-  sourceMarker := o
-  grammatical := true
-  sentence := "Taro-ga mura-o hanare-ta"
-  exampleNum := "1"
-
-def hanareru_abl : AlternationDatum where
-  verb := "hanareru"
-  sourceMarker := kara
-  grammatical := true
-  sentence := "Taro-ga mura-kara hanare-ta"
-  exampleNum := "1"
-
-/-! ### *deru* 'exit' — ACC/ABL alternation (implicit in ex. 9)
-
-The paper uses *deru* with "eki" (station) in the ellipsis diagnostic
-(ex. 9). The basic alternation is implicit: "Taro-ga eki-{o/kara} deta." -/
-
-def deru_acc : AlternationDatum where
-  verb := "deru"
-  sourceMarker := o
-  grammatical := true
-  sentence := "Taro-ga eki-o deta"
-  exampleNum := "9"
-
-def deru_abl : AlternationDatum where
-  verb := "deru"
-  sourceMarker := kara
-  grammatical := true
-  sentence := "Taro-ga eki-kara deta"
-  exampleNum := "9"
-
-def alternationData : List AlternationDatum :=
-  [hanareru_acc, hanareru_abl, deru_acc, deru_abl]
-
--- ============================================================================
--- § 4: Argumenthood Data
--- ============================================================================
-
-/-! ### VP ellipsis — source elides as argument (ex. 9–10)
-
-[funakoshi-2016]'s generalization: adjuncts can only be elided if no
-other VP-internal elements are present. The source of *deru* elides
-even with an overt adverb *suguni* 'quickly', confirming argumenthood.
-The continuation (10) is non-contradictory, showing the elided reading
-is available. -/
-
-def deru_ellipsis_acc : ArgumenthoodDatum where
-  verb := "deru"
-  sourceMarker := o
-  diagnostic := .ellipsis
-  grammatical := true
-  sentence := "Taro-wa suguni eki-o deta ga, Hanako-wa suguni denakatta"
-  exampleNum := "9"
-
-def deru_ellipsis_abl : ArgumenthoodDatum where
-  verb := "deru"
-  sourceMarker := kara
-  diagnostic := .ellipsis
-  grammatical := true
-  sentence := "Taro-wa suguni eki-kara deta ga, Hanako-wa suguni denakatta"
-  exampleNum := "9"
-
-/-! ### Long-distance scrambling — source scrambles freely (ex. 13)
-
-[saito-1985]: arguments can undergo long-distance scrambling, adjuncts
-cannot. The source of *hanareru* scrambles out of the embedded clause,
-confirming argumenthood regardless of case marking. -/
-
-def hanareru_scrambling_acc : ArgumenthoodDatum where
-  verb := "hanareru"
-  sourceMarker := o
-  diagnostic := .longDistanceScrambling
-  grammatical := true
-  sentence := "Mura-o Taro-wa [Hanako-ga __ hanareta to] itta"
-  exampleNum := "13"
-
-def hanareru_scrambling_abl : ArgumenthoodDatum where
-  verb := "hanareru"
-  sourceMarker := kara
-  diagnostic := .longDistanceScrambling
-  grammatical := true
-  sentence := "Mura-kara Taro-wa [Hanako-ga __ hanareta to] itta"
-  exampleNum := "13"
-
-def argumenthoodData : List ArgumenthoodDatum :=
-  [deru_ellipsis_acc, deru_ellipsis_abl, hanareru_scrambling_acc, hanareru_scrambling_abl]
-
--- ============================================================================
--- § 5: Unaccusativity Data
--- ============================================================================
-
-/-! ### Passive — only indirect passive available (ex. 14, 20)
-
-Japanese has two passives: indirect (*-rare-*, adversative, available
-to all verbs including unaccusatives) and direct (*-niyotte*, requires
-thematic Voice). If alternation verbs had thematic Voice, direct passive
-should be possible — but it is not (ex. 20). -/
-
-def hanareru_indirect_passive : UnaccusativityDatum where
-  verb := "hanareru"
-  diagnostic := .passivization
-  passiveType := some .indirect
-  grammatical := true
-  sentence := "Sono mura-ga Taro-ni hanare-rare-ta"
-  exampleNum := "14"
-
-def hanareru_direct_passive : UnaccusativityDatum where
-  verb := "hanareru"
-  diagnostic := .passivization
-  passiveType := some .direct
-  grammatical := false
-  sentence := "*Sono mura-ga Taro-niyotte hanare-rare-ta"
-  exampleNum := "20"
-
-/-! ### *nani-o* wh-adjunct — blocked with unaccusatives (ex. 26)
-
-[kurafuji-1997]: *nani-o* 'what-ACC' can mean 'why' with unergatives
-and transitives, but not with unaccusatives. Alternation verbs block
-this reading, patterning with unaccusatives. -/
-
-def hanareru_nanio : UnaccusativityDatum where
-  verb := "hanareru"
-  diagnostic := .naniOWhAdjunct
-  passiveType := none
-  grammatical := false
-  sentence := "*Nani-o Taro-wa mura-o hanare-teiru no"
-  exampleNum := "26"
-
-def unaccusativityData : List UnaccusativityDatum :=
-  [hanareru_indirect_passive, hanareru_direct_passive, hanareru_nanio]
-
--- ============================================================================
--- § 6: Verification Theorems
--- ============================================================================
-
-/-- Both ACC and ABL variants are grammatical for alternation verbs. -/
-theorem both_variants_grammatical :
-    alternationData.all (·.grammatical) = true := by native_decide
-
-/-- All argumenthood diagnostics succeed regardless of case marking. -/
-theorem argumenthood_regardless_of_case :
-    argumenthoodData.all (·.grammatical) = true := by native_decide
-
-/-- Direct passive is ungrammatical (hallmark of unaccusativity). -/
-theorem direct_passive_blocked :
-    hanareru_direct_passive.grammatical = false := rfl
-
-/-- Indirect passive is grammatical (expected for unaccusatives). -/
-theorem indirect_passive_ok :
-    hanareru_indirect_passive.grammatical = true := rfl
-
-/-- *Nani-o* is blocked — patterns with unaccusatives, not transitives. -/
-theorem nanio_blocked :
-    hanareru_nanio.grammatical = false := rfl
-
-/-- Four alternation data points total. -/
-theorem alternation_count : alternationData.length = 4 := rfl
-
-/-- Four argumenthood data points total. -/
-theorem argumenthood_count : argumenthoodData.length = 4 := rfl
-
-/-- Three unaccusativity data points total. -/
-theorem unaccusativity_count : unaccusativityData.length = 3 := rfl
-
-/-! ### Provenance: source markers come from the Fragment
-
-These four `rfl` theorems tie each alternation datum's `sourceMarker` to
-the corresponding `Japanese.Case` entry — the dissolution of
-this file's prior local `CaseMarking` enum (which re-stipulated four
-particles already present in `Japanese.Case`) is now mechanically
-auditable: editing the Fragment's `o` or `kara` definitions will cascade
-through these provenance theorems.
--/
-
-theorem hanareru_acc_uses_o : hanareru_acc.sourceMarker = o := rfl
-theorem hanareru_abl_uses_kara : hanareru_abl.sourceMarker = kara := rfl
-theorem deru_acc_uses_o : deru_acc.sourceMarker = o := rfl
-theorem deru_abl_uses_kara : deru_abl.sourceMarker = kara := rfl
-
-/-- The case-marker pair on each alternation datum is exactly Tsujimura's
-    case-particle / postposition contrast: -o is omissible (case particle),
-    -kara is not (postposition). The alternation thus crosses Tsujimura's
-    morphosyntactic split — a Marantz/Baker dependent-case pivot
-    (`.dependent` for ACC vs. `.lexical` for ABL, proved in §Bridge below)
-    coincides with a Tsujimura case-particle / postposition pivot. -/
-theorem alternation_crosses_tsujimura_split :
-    o.omissibleInCasual = true ∧ kara.omissibleInCasual = false := by decide
-
--- ============================================================================
--- § Bridge: Dependent Case × Minimalist Syntax
--- ============================================================================
-
-open Minimalist Minimalist.Voice
-open Case
-open Japanese.Predicates
-
-/-! ### The Spell-Out domain of a departure verb
-
-*Taroo-ga mura-o hanare-ta* puts two bare NPs in the TP domain, the raised
-leaver above the source. *Taroo-ga mura-kara hanare-ta* replaces the source
-with a PP, *kara* assigning it lexical ablative. -/
-
-/-- The accusative variant: leaver and source, both caseless. -/
-def accVariantNPs : List NP :=
-  [ { label := "leaver", lexicalCase := none },
-    { label := "source", lexicalCase := none } ]
-
-/-- The ablative variant: *kara* has valued the source ablative. -/
-def ablVariantNPs : List NP :=
-  [ { label := "leaver", lexicalCase := none },
-    { label := "source", lexicalCase := some .abl } ]
-
-def accVariantResult : List (NP × Valuation) := assignCases .accusative accVariantNPs
-
-def ablVariantResult : List (NP × Valuation) := assignCases .accusative ablVariantNPs
-
-/-- Departure verbs predict no external argument: non-thematic Voice
-    does not assign a θ-role ([kratzer-1996], [schaefer-2025]). -/
-theorem departure_no_external :
-    ¬ anticausative.AssignsTheta := by decide
-
-/-- Departure verbs have inchoative event structure (vGO + vBE, no vDO).
-    Verified via `buildDecomposition` from `Core/Voice.lean`. -/
-theorem departure_is_inchoative :
-    isInchoative (buildDecomposition anticausative [.vCAUSE, .vGO, .vBE]) = true := by
-  native_decide
-
-/-- Non-thematic Voice assigns no θ-role. -/
-theorem departure_voice_no_theta :
-    ¬ anticausative.AssignsTheta := by decide
-
-/-- ACC variant produces dependent ACC on source, unmarked NOM on leaver. -/
-theorem acc_derivation_correct :
-    getCaseOf "source" accVariantResult = some .acc ∧
-    getCaseOf "leaver" accVariantResult = some .nom := by decide
-
-/-- ABL variant produces lexical ABL on source, unmarked NOM on leaver. -/
-theorem abl_derivation_correct :
-    getCaseOf "source" ablVariantResult = some .abl ∧
-    getCaseOf "leaver" ablVariantResult = some .nom := by decide
-
-/-- In the ACC variant, source case is dependent. -/
-theorem acc_source_from_configuration :
-    getMechanismOf "source" accVariantResult = some .dependent := by decide
-
-/-- In the ABL variant, source case is lexical. -/
-theorem abl_source_from_lexical_p :
-    getMechanismOf "source" ablVariantResult = some .lexical := by decide
-
-/-- The alternation touches only the source: the leaver takes unmarked
-    nominative in both variants. -/
-theorem leaver_unmarked_in_both :
-    getMechanismOf "leaver" accVariantResult = some .unmarked ∧
-    getMechanismOf "leaver" ablVariantResult = some .unmarked := by decide
-
-/-- Anticausative Voice is not a phase head. -/
-theorem agree_acc_needs_phase_head :
-    ¬ anticausative.IsPhasal := by decide
-
-/-- Agentive Voice IS a phase head. -/
-theorem agentive_has_phase_head :
-    agentive.IsPhasal := by decide
-
-/-- The accusative unaccusative paradox. -/
-theorem accusative_unaccusative_paradox :
-    ¬ anticausative.AssignsTheta ∧
-    ¬ anticausative.IsPhasal ∧
-    getCaseOf "source" accVariantResult = some .acc ∧
-    getMechanismOf "source" accVariantResult = some .dependent := by
-  refine ⟨by decide, by decide, by decide, by decide⟩
-
-/-- Fragment entry for *hanareru* is marked unaccusative. -/
-theorem hanareru_is_unaccusative :
-    Japanese.Predicates.hanareru.unaccusative = true := rfl
-
-/-- Fragment entry for *deru* is marked unaccusative. -/
-theorem deru_is_unaccusative :
-    Japanese.Predicates.deru.unaccusative = true := rfl
-
-/-- Fragment entry for *hanareru* is not passivizable. -/
-theorem hanareru_not_passivizable :
-    Japanese.Predicates.hanareru.passivizable = false := rfl
-
-/-- Fragment entry for *deru* is not passivizable. -/
-theorem deru_not_passivizable :
-    Japanese.Predicates.deru.passivizable = false := rfl
-
-/-- Non-passivizability aligns with direct passive being ungrammatical. -/
-theorem passive_data_matches_fragment :
-    hanareru_direct_passive.grammatical = false ∧
-    Japanese.Predicates.hanareru.passivizable = false := ⟨rfl, rfl⟩
-
-/-- Non-passivizability follows from Voice theory. -/
-theorem passive_follows_from_voice :
-    ¬ anticausative.AssignsTheta ∧
-    Japanese.Predicates.hanareru.passivizable = false := by
-  refine ⟨?_, rfl⟩; decide
-
-/-- Verb forms in Data match Fragment entries. -/
-theorem hanareru_form_matches :
-    hanareru_acc.verb = Japanese.Predicates.hanareru.form := rfl
-
-theorem deru_form_matches :
-    deru_acc.verb = Japanese.Predicates.deru.form := rfl
-
-/-- All argumenthood diagnostics succeed. -/
-theorem source_is_argument_both_frames :
-    argumenthoodData.all (·.grammatical) = true := by native_decide
-
--- ============================================================================
--- § Voice Derivation Bridge
--- ============================================================================
-
-/-- Hanareru's unaccusativity is DERIVED from its voice type, not stipulated.
-    `derivedUnaccusative` uses the `voiceType` field to compute unaccusativity
-    via `VoiceType.assignsTheta`. -/
-theorem hanareru_unaccusative_derived :
-    Japanese.Predicates.hanareru.toVerb.derivedUnaccusative = true := rfl
-
-/-- Deru's unaccusativity is DERIVED from its voice type. -/
-theorem deru_unaccusative_derived :
-    Japanese.Predicates.deru.toVerb.derivedUnaccusative = true := rfl
-
-/-- The stored `unaccusative` flag agrees with the derived value.
-    This consistency check ensures that the stipulated field and the
-    Voice-based derivation produce the same answer. -/
-theorem hanareru_stored_matches_derived :
-    Japanese.Predicates.hanareru.unaccusative =
-    Japanese.Predicates.hanareru.toVerb.derivedUnaccusative := rfl
-
-theorem deru_stored_matches_derived :
-    Japanese.Predicates.deru.unaccusative =
-    Japanese.Predicates.deru.toVerb.derivedUnaccusative := rfl
-
-/-- Direct passive requires thematic Voice, which departure verbs lack. -/
+open Data.Examples Ozaki2026.Examples Case Minimalist.Voice
+
+/-! ### The diagnostics -/
+
+/-- The diagnostic an example applies. -/
+def diagnostic (e : LinguisticExample) : Option String := e.feature? "diagnostic"
+
+/-- The marking of the source in an example. -/
+def marking (e : LinguisticExample) : Option String := e.feature? "marking"
+
+/-- The verdict the argument assigns to each diagnostic: the alternation, the argumenthood
+diagnostics, and the indirect passive succeed, the direct passive and the wh-adjunct fail. -/
+def verdict : Option String → Judgment
+  | some "direct_passive" | some "nani_o" => .unacceptable
+  | _ => .acceptable
+
+/-- Every example's judgment is its diagnostic's verdict: the marking of the source plays no
+role. -/
+theorem judgment_eq_verdict : ∀ e ∈ Examples.all, e.judgment = verdict (diagnostic e) := by decide
+
+/-- Both markings are attested with each marking-sensitive diagnostic: the source elides and
+scrambles, and the wh-adjunct is out, under accusative and under ablative alike. -/
+theorem diagnostics_both_markings :
+    ∀ m ∈ ["acc", "abl"],
+      (∃ e ∈ Examples.all, marking e = some m ∧ diagnostic e = some "ellipsis" ∧
+        e.judgment = .acceptable) ∧
+      (∃ e ∈ Examples.all, marking e = some m ∧ diagnostic e = some "scrambling" ∧
+        e.judgment = .acceptable) ∧
+      ∃ e ∈ Examples.all, marking e = some m ∧ diagnostic e = some "nani_o" ∧
+        e.judgment = .unacceptable := by
+  decide
+
+/-- The Fragment records both verbs with non-thematic Voice, from which their unaccusativity
+is derived, and as non-passivizable. -/
+theorem alternation_verbs_unaccusative :
+    ∀ v ∈ [Japanese.Predicates.hanareru, Japanese.Predicates.deru],
+      v.voiceType = some .nonThematic ∧ v.toVerb.derivedUnaccusative = true ∧
+        v.passivizable = false := by
+  decide
+
+/-- The direct passive requires thematic Voice, which the non-thematic head does not
+provide: (20) is out. -/
 theorem direct_passive_requires_voice :
-    PassiveType.requiresThematicVoice .direct = true ∧
-    ¬ anticausative.AssignsTheta := by
-  refine ⟨rfl, ?_⟩; decide
+    Japanese.Passive.PassiveType.requiresThematicVoice .direct = true ∧
+      ¬ anticausative.AssignsTheta :=
+  ⟨rfl, by decide⟩
+
+/-! ### Case assignment (§3) -/
+
+/-- The accusative variant (28): leaver and source are caseless noun phrases in the one
+Spell-Out domain, the leaver c-commanding the source. -/
+def accVariant : List NP := [⟨"leaver", none⟩, ⟨"source", none⟩]
+
+/-- The ablative variant (29): the postposition has valued the source ablative. -/
+def ablVariant : List NP := [⟨"leaver", none⟩, ⟨"source", some .abl⟩]
+
+/-- In the accusative variant the source receives dependent accusative by (27) and the
+leaver unmarked nominative. -/
+theorem acc_variant :
+    getCaseOf "source" (assignCases .accusative accVariant) = some .acc ∧
+      getMechanismOf "source" (assignCases .accusative accVariant) = some .dependent ∧
+      getCaseOf "leaver" (assignCases .accusative accVariant) = some .nom ∧
+      getMechanismOf "leaver" (assignCases .accusative accVariant) = some .unmarked := by
+  decide
+
+/-- In the ablative variant the lexical ablative bleeds dependent accusative, and the leaver
+is unaffected. -/
+theorem abl_variant :
+    getCaseOf "source" (assignCases .accusative ablVariant) = some .abl ∧
+      getMechanismOf "source" (assignCases .accusative ablVariant) = some .lexical ∧
+      getCaseOf "leaver" (assignCases .accusative ablVariant) = some .nom ∧
+      getMechanismOf "leaver" (assignCases .accusative ablVariant) = some .unmarked := by
+  decide
+
+/-- Accusative without thematic Voice: the non-thematic head assigns no θ-role, and the
+source's accusative is configurational rather than assigned by a functional head. -/
+theorem accusative_without_voice :
+    ¬ anticausative.AssignsTheta ∧
+      getMechanismOf "source" (assignCases .accusative accVariant) = some .dependent := by
+  decide
 
 end Ozaki2026
