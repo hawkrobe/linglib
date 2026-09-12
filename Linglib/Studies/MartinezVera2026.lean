@@ -28,11 +28,6 @@ questions are substrate; the felicity apparatus is paper-specific and stays here
 three-way evidential paradigm of Saraguro Kichwa lives in its fragment. The paper's data is
 original fieldwork with six speakers following [matthewson-2004].
 
-## TODO
-
-The paper is not on file; definition and example numbers are transcribed from an earlier
-version of this file and are UNVERIFIED.
-
 ## References
 
 * [martinez-vera-2026]
