@@ -14,11 +14,6 @@ dative, middle, or prepositional, is tolerated under any ellipsis, the heads reg
 all sitting at or below v and hence inside every deletion domain. Every judgment is derived
 from the substrate's deletion-domain predicate, with German and Greek data beside English.
 
-## TODO
-
-The paper is not on file; section locators are transcribed from an earlier version of this
-file and are UNVERIFIED.
-
 ## References
 
 * [merchant-2013]
