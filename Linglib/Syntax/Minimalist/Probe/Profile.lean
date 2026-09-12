@@ -21,10 +21,12 @@ This file provides two transparency models:
    contains the horizon category. This correctly handles partially
    ordered clause types (NmlzP vs CP in Hindi).
 
-2. **F-value approximation** (`transparentTo`): the simplified model
-   from [keine-2019]. Uses `fValue clauseHead < fValue probeHead`
-   as an approximation. Valid when all clause types are linearly ordered
-   within a single extended projection, but fails for NmlzP/CP.
+2. **F-value approximation** (`transparentTo`): a simplification that
+   uses `fValue clauseHead < fValue probeHead` in place of the horizon.
+   It is not the model of [keine-2019], whose horizons with category
+   inheritance are `transparentToLabel`; it agrees with it when all
+   clause types are linearly ordered within a single extended
+   projection, but fails for NmlzP/CP.
 
 ## Language Parameterization
 
@@ -103,16 +105,16 @@ def Probe.Profile.transparentToLabel (p : Probe.Profile) (label : List Cat) : Bo
   | some h => !(label.any (· == h))
 
 -- ============================================================================
--- § 3: F-Value Transparency (Simplified Model, [keine-2019])
+-- § 3: F-Value Transparency (Simplified Model)
 -- ============================================================================
 
 /-- Is a clause with highest head `clauseHead` transparent to this probe?
 
-    **Simplified (F-value) model** from [keine-2019]: uses
-    `fValue clauseHead < fValue probeHead` as an approximation of
-    bilateral labeling. Valid when all clause types are linearly ordered
-    within a single EP branch, but produces incorrect results for
-    partially ordered clause types (NmlzP vs CP in Hindi).
+    **Simplified (F-value) model**: uses `fValue clauseHead < fValue probeHead`
+    in place of the horizon, an approximation of bilateral labeling that is
+    not the model of [keine-2019] (see `transparentToLabel`). Valid when all
+    clause types are linearly ordered within a single EP branch, but produces
+    incorrect results for partially ordered clause types (NmlzP vs CP in Hindi).
 
     For the proper bilateral-labeling model, use `transparentToLabel`.
 
@@ -128,27 +130,23 @@ def Probe.Profile.transparentTo (p : Probe.Profile) (clauseHead : Cat) : Bool :=
 -- § 4: The Four Article Probes ([keine-2019] Table (58))
 -- ============================================================================
 
-/-! These four probes are from the 2019 LI article, which used a simplified
-    3-clause-size model (vP, TP, CP). They remain useful for backward
-    compatibility and for verifying the article's predictions. For the
-    book's language-specific probe settings, see `LanguageProbeConfig`. -/
+/-! The four Hindi probes of the 2019 LI article, (48) and (57), over its
+    three clause sizes (vP, TP, CP). For the book's language-specific
+    probe settings, see `LanguageProbeConfig`. -/
 
-/-- φ-agreement probe: sits on T⁰, horizon is C.
-    Can search into vP but not TP or CP clauses.
-    Note: this is the [keine-2019] article setting; the book
-    refines Hindi φ to have horizon T ([keine-2020] (219)). -/
-def keinePhiProbe : Probe.Profile := ⟨.T, some .C⟩
+/-- The φ-agreement probe `[∗φ∗]` ([keine-2019] (48b)): on T⁰ with horizon T,
+    so it searches into vP clauses but not TP or CP clauses. -/
+def keinePhiProbe : Probe.Profile := ⟨.T, some .T⟩
 
-/-- A-movement probe (EPP on T⁰): sits on T⁰, horizon is C.
-    Same locality as φ-agreement — both are on T⁰. -/
-def keineAProbe : Probe.Profile := ⟨.T, some .C⟩
+/-- The A-movement probe `[•A•]` ([keine-2019] (48a)): on T⁰ with horizon T,
+    the same locality as φ-agreement. -/
+def keineAProbe : Probe.Profile := ⟨.T, some .T⟩
 
-/-- Wh-licensing probe: sits on C⁰, horizon is C.
-    Can search into vP and TP but not CP clauses. -/
+/-- The wh-licensing probe `[∗wh∗]` ([keine-2019] (57)): on C⁰ with horizon C,
+    so it searches into vP and TP but not CP clauses. -/
 def keineWhLicensing : Probe.Profile := ⟨.C, some .C⟩
 
-/-- Ā-movement probe from [keine-2019]: sits on C⁰, no horizon.
-    The 2019 article treated Ā as having no horizon.
+/-- The Ā-movement probe `[•Ā•]` ([keine-2019] (48c)): on C⁰ with no horizon.
     [keine-2020] (219) refines this: Hindi Ā has horizon Nmlz,
     English Ā has horizon C, German topicalization has no horizon. -/
 def keineĀProbe : Probe.Profile := ⟨.C, none⟩
