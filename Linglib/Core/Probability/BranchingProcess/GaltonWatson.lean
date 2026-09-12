@@ -30,6 +30,9 @@ its weight; see `PCFG.galtonWatson`.
   nodes of the offspring probability there.
 * `GaltonWatson.extinctionProb`: the total mass of `law`, the probability that the family tree
   is finite.
+* `GaltonWatson.Partial`, `GaltonWatson.fill`, `GaltonWatson.stepAll`, `GaltonWatson.stepIter`:
+  partial family trees with holes, filling the holes from a family of laws, one synchronous
+  generation, and `n` generations, the generation-by-generation Markov chain.
 
 ## Main results
 
@@ -39,6 +42,10 @@ its weight; see `PCFG.galtonWatson`.
   the law at `i`, and trees rooted elsewhere have probability `0`.
 * `GaltonWatson.law_univ_le_one`: with sub-probability offspring the law is a sub-probability
   measure.
+* `GaltonWatson.fill_expand`, `GaltonWatson.law_eq_iSup_stepIter`: filling with one more
+  generation is one synchronous step followed by filling, so the Kleene iterates are the
+  completed parts of the generation chain and the law is their supremum. This is the finite side
+  of the identification of `law` with the trajectory measure of the chain.
 
 ## Implementation notes
 
@@ -49,7 +56,9 @@ are not required to be probability measures: sub-probability offspring model kil
 grammar instance produces the zero measure at a nonterminal no rule expands. The extinction
 probability is the least fixed point of the offspring generating function and equals one exactly
 when the mean matrix is subcritical or critical ([athreya-ney-1972]); that theorem is not proved
-here.
+here. The intertwining with the generation chain commutes two independent `bind`s, which is
+Fubini and needs the discrete σ-algebra on products of the tree types to be the product
+σ-algebra, hence the countability hypotheses on `ι` and `T` there.
 
 ## References
 
@@ -326,6 +335,8 @@ theorem expand_univ_le_one (hP : ∀ i, P.offspring i Set.univ ≤ 1)
 
 end
 
+section Extinction
+
 variable (hP : ∀ i, P.offspring i Set.univ ≤ 1)
 include hP
 
@@ -345,10 +356,195 @@ theorem law_univ_le_one (i : ι) : P.law i Set.univ ≤ 1 := by
       MeasurableSpace.measurableSet_top]
   exact iSup_le fun n => P.iterate_expand_univ_le_one hP n i
 
-omit hP in
+end Extinction
+
 /-- The extinction probability of an individual of type `i`: the probability that its family
 tree is finite. -/
 noncomputable def extinctionProb (i : ι) : ℝ≥0∞ := P.law i Set.univ
+
+/-! ### Generations -/
+
+/-- Partial family trees: leaves are marks (`Sum.inl`) or holes of a type (`Sum.inr`), yet to
+be expanded. -/
+abbrev Partial (ι T : Type*) := DerivationTree (T ⊕ ι) ι
+
+/-- An offspring symbol as a one-node partial tree: a mark leaf or a hole. -/
+def Partial.ofSymbol : Symbol T ι → Partial ι T
+  | .terminal t => leaf (.inl t)
+  | .nonterminal i => leaf (.inr i)
+
+variable {P}
+
+mutual
+/-- Fill the holes of a partial tree with independent draws from `κ`. -/
+noncomputable def fill (κ : ι → Measure (DerivationTree T ι)) :
+    Partial ι T → Measure (DerivationTree T ι)
+  | .leaf (.inl t) => Measure.dirac (leaf t)
+  | .leaf (.inr i) => κ i
+  | .node i cs => (fillList κ cs).map (node i)
+/-- Fill the holes of a list of partial trees. -/
+noncomputable def fillList (κ : ι → Measure (DerivationTree T ι)) :
+    List (Partial ι T) → Measure (List (DerivationTree T ι))
+  | [] => Measure.dirac []
+  | s :: ss => (fill κ s).bind fun c => (fillList κ ss).map (c :: ·)
+end
+
+variable (P)
+
+mutual
+/-- One synchronous generation: every hole draws its offspring and becomes a node whose
+children are fresh holes and marks. -/
+noncomputable def stepAll : Partial ι T → Measure (Partial ι T)
+  | .leaf (.inl t) => Measure.dirac (leaf (.inl t))
+  | .leaf (.inr i) => (P.offspring i).map fun syms => node i (syms.map Partial.ofSymbol)
+  | .node i cs => (stepAllList cs).map (node i)
+/-- One synchronous generation on a list of partial trees. -/
+noncomputable def stepAllList : List (Partial ι T) → Measure (List (Partial ι T))
+  | [] => Measure.dirac []
+  | s :: ss => (stepAll s).bind fun s' => (stepAllList ss).map (s' :: ·)
+end
+
+variable {P} {κ : ι → Measure (DerivationTree T ι)}
+
+theorem childrenMeasure_eq_fillList :
+    ∀ syms : List (Symbol T ι), childrenMeasure κ syms = fillList κ (syms.map Partial.ofSymbol)
+  | [] => rfl
+  | .terminal t :: rest => by
+    rw [childrenMeasure, List.map_cons, fillList, Partial.ofSymbol, fill,
+      Measure.dirac_bind measurable_from_top, childrenMeasure_eq_fillList rest]
+  | .nonterminal i :: rest => by
+    rw [childrenMeasure, List.map_cons, fillList, Partial.ofSymbol, fill,
+      childrenMeasure_eq_fillList rest]
+
+/-! ### Total mass -/
+
+mutual
+theorem fill_univ_le_one (hκ : ∀ i, κ i Set.univ ≤ 1) :
+    ∀ s : Partial ι T, fill κ s Set.univ ≤ 1
+  | .leaf (.inl t) => by simp [fill]
+  | .leaf (.inr i) => hκ i
+  | .node i cs => by
+    rw [fill, Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top,
+      Set.preimage_univ]
+    exact fillList_univ_le_one hκ cs
+theorem fillList_univ_le_one (hκ : ∀ i, κ i Set.univ ≤ 1) :
+    ∀ ss : List (Partial ι T), fillList κ ss Set.univ ≤ 1
+  | [] => by simp [fillList]
+  | s :: ss => by
+    rw [fillList, Measure.bind_apply MeasurableSpace.measurableSet_top
+      measurable_from_top.aemeasurable]
+    calc ∫⁻ c, ((fillList κ ss).map (c :: ·)) Set.univ ∂fill κ s
+        ≤ ∫⁻ _, 1 ∂fill κ s := lintegral_mono fun c => by
+          rw [Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top,
+            Set.preimage_univ]
+          exact fillList_univ_le_one hκ ss
+      _ = fill κ s Set.univ := lintegral_one
+      _ ≤ 1 := fill_univ_le_one hκ s
+end
+
+variable (P)
+
+mutual
+theorem stepAll_univ_le_one (hP : ∀ i, P.offspring i Set.univ ≤ 1) :
+    ∀ s : Partial ι T, P.stepAll s Set.univ ≤ 1
+  | .leaf (.inl t) => by simp [stepAll]
+  | .leaf (.inr i) => by
+    rw [stepAll, Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top,
+      Set.preimage_univ]
+    exact hP i
+  | .node i cs => by
+    rw [stepAll, Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top,
+      Set.preimage_univ]
+    exact stepAllList_univ_le_one hP cs
+theorem stepAllList_univ_le_one (hP : ∀ i, P.offspring i Set.univ ≤ 1) :
+    ∀ ss : List (Partial ι T), P.stepAllList ss Set.univ ≤ 1
+  | [] => by simp [stepAllList]
+  | s :: ss => by
+    rw [stepAllList, Measure.bind_apply MeasurableSpace.measurableSet_top
+      measurable_from_top.aemeasurable]
+    calc ∫⁻ s', ((P.stepAllList ss).map (s' :: ·)) Set.univ ∂P.stepAll s
+        ≤ ∫⁻ _, 1 ∂P.stepAll s := lintegral_mono fun s' => by
+          rw [Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top,
+            Set.preimage_univ]
+          exact stepAllList_univ_le_one hP ss
+      _ = P.stepAll s Set.univ := lintegral_one
+      _ ≤ 1 := stepAll_univ_le_one hP s
+end
+
+/-! ### Intertwining -/
+
+instance {α : Type*} : MeasurableSingletonClass (DerivationTree α ι) :=
+  ⟨fun _ => MeasurableSpace.measurableSet_top⟩
+instance {α : Type*} : MeasurableSingletonClass (List (DerivationTree α ι)) :=
+  ⟨fun _ => MeasurableSpace.measurableSet_top⟩
+
+mutual
+/-- Filling with one more generation is one synchronous step followed by filling. -/
+theorem fill_expand [Countable ι] [Countable T] (hP : ∀ i, P.offspring i Set.univ ≤ 1)
+    (hκ : ∀ i, κ i Set.univ ≤ 1) : ∀ s : Partial ι T,
+      fill (P.expand κ) s = (P.stepAll s).bind (fill κ)
+  | .leaf (.inl t) => by
+    rw [fill, stepAll, Measure.dirac_bind measurable_from_top, fill]
+  | .leaf (.inr i) => by
+    rw [fill, stepAll, expand, Measure.bind_map measurable_from_top measurable_from_top]
+    congr 1
+    funext syms
+    simp only [Function.comp, fill, childrenMeasure_eq_fillList]
+  | .node i cs => by
+    rw [fill, stepAll, fillList_expand hP hκ cs,
+      Measure.map_bind measurable_from_top measurable_from_top,
+      Measure.bind_map measurable_from_top measurable_from_top]
+    rfl
+theorem fillList_expand [Countable ι] [Countable T] (hP : ∀ i, P.offspring i Set.univ ≤ 1)
+    (hκ : ∀ i, κ i Set.univ ≤ 1) : ∀ ss : List (Partial ι T),
+      fillList (P.expand κ) ss = (P.stepAllList ss).bind (fillList κ)
+  | [] => by
+    rw [fillList, stepAllList, Measure.dirac_bind measurable_from_top, fillList]
+  | s :: ss => by
+    rw [fillList, fill_expand hP hκ s, fillList_expand hP hκ ss,
+      Measure.bind_bind measurable_from_top.aemeasurable measurable_from_top.aemeasurable,
+        stepAllList,
+      Measure.bind_bind measurable_from_top.aemeasurable measurable_from_top.aemeasurable]
+    congr 1
+    funext s'
+    rw [Measure.bind_map measurable_from_top measurable_from_top]
+    simp_rw [Measure.map_bind measurable_from_top measurable_from_top]
+    have : IsFiniteMeasure (fill κ s') :=
+      ⟨(fill_univ_le_one hκ s').trans_lt ENNReal.one_lt_top⟩
+    have : IsFiniteMeasure (P.stepAllList ss) :=
+      ⟨(P.stepAllList_univ_le_one hP ss).trans_lt ENNReal.one_lt_top⟩
+    exact Measure.bind_comm Measurable.of_discrete
+end
+
+/-! ### Generations as a Markov chain -/
+
+/-- `n` synchronous generations from a partial tree. -/
+noncomputable def stepIter : ℕ → Partial ι T → Measure (Partial ι T)
+  | 0 => Measure.dirac
+  | n + 1 => fun s => (P.stepAll s).bind (stepIter n)
+
+/-- The `n`-th Kleene iterate fills a partial tree exactly as `n` synchronous generations do,
+followed by the completion of what remains. -/
+theorem fill_iterate [Countable ι] [Countable T] (hP : ∀ i, P.offspring i Set.univ ≤ 1) :
+    ∀ (n : ℕ) (s : Partial ι T),
+      fill (P.expandHom^[n] ⊥) s = (P.stepIter n s).bind (fill ⊥)
+  | 0, s => by
+    rw [Function.iterate_zero_apply, stepIter, Measure.dirac_bind measurable_from_top]
+  | n + 1, s => by
+    rw [Function.iterate_succ_apply', stepIter]
+    rw [show P.expandHom (P.expandHom^[n] ⊥) = P.expand (P.expandHom^[n] ⊥) from rfl,
+      fill_expand P hP (P.iterate_expand_univ_le_one hP n) s,
+      Measure.bind_bind measurable_from_top.aemeasurable measurable_from_top.aemeasurable]
+    congr 1
+    funext s'
+    exact fill_iterate hP n s'
+
+/-- The law of the family tree at type `i` is the supremum over `n` of the completed part of
+`n` synchronous generations from a single hole of type `i`. -/
+theorem law_eq_iSup_stepIter [Countable ι] [Countable T] (hP : ∀ i, P.offspring i Set.univ ≤ 1)
+    (i : ι) : P.law i = ⨆ n, (P.stepIter n (leaf (.inr i))).bind (fill ⊥) := by
+  rw [law_eq_iSup_iterate, iSup_apply]
+  exact iSup_congr fun n => P.fill_iterate hP n (leaf (.inr i))
 
 end GaltonWatson
 
