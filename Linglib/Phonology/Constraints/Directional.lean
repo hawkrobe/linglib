@@ -32,7 +32,7 @@ vector" ([lamont-2022b] §1.3, Fig 1.9).
 ## Consumers
 
 * `Tone.starFloatBlock` — `*FLOAT` directional float deletion ([mcpherson-lamont-2026]).
-* `Lamont2022c.parseSigmaBlock` — `Parse(σ)` directional footing ([lamont-2022c]).
+* `Lamont2022c.parseLR` — `Parse(σ)` directional footing ([lamont-2022c]).
 
 ## Scope
 
