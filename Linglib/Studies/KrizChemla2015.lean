@@ -3,52 +3,48 @@ import Linglib.Data.Generalizations.HomogeneityProjection
 /-!
 # Križ and Chemla (2015): Two Methods to Find Truth-Value Gaps
 
-This file formalizes the theoretical assessment in [kriz-chemla-2015], which
-introduces two experimental methods for detecting truth-value gaps (separate
-completely-true and completely-false tasks in Exps. A0–A3, one-shot ternary
-judgments in Exps. B1–B3 and C2–C4) and applies them to the projection of
-plural-definite homogeneity from the scope of sentential negation, `every` or
-`all`, `no`, and `exactly 2`. The gap projects in every tested environment
-except the gap? configuration, where the some- and all-substituted variants of
-the sentence are both false; under `no` it emerges only in Exp. C2, small but
-robust (fn. 14).
+This file formalizes the theoretical assessment in [kriz-chemla-2015], which introduces two
+experimental methods for detecting truth-value gaps, separate completely-true and
+completely-false tasks in Experiments A0 to A3 and one-shot ternary judgments in
+Experiments B1 to B3 and C2 to C4, and applies them to the projection of plural-definite
+homogeneity from the scope of sentential negation, *every* or *all*, *no*, and *exactly 2*.
+The gap projects in every tested environment except the gap? configuration, where the
+some- and all-substituted variants of the sentence are both false; under *no* it emerges
+only in Experiment C2, small but robust.
 
-The paper's guiding principle (§3) locates a gap wherever the variant of the
-sentence with an existential in place of the definite is true while the
-variant with a universal is false. `someReading` and `allReading` are those
-two variants over a `Display` of homogeneous or `mixed` cells, and the three
-approaches assessed in §6 are combinations of them and of the globally
-exhaustified meaning (30): `supervaluation` ([spector-2013]; equivalently the
-local-exhaustification construals of §6.1.2), `globalConstrual` (the
-literal-versus-global-exhaustification construals, [magri-2009]), and
-`universalPresupposition` ([schwarzschild-1994], [lobner-2000],
-[gajewski-2005]). Each is run over a representative Table 13 display per
-tested cell against the pooled judgments of `Generalizations.HomogeneityProjection`
-and `Generalizations.HomogeneityGap`, whose rows are generated from
-`Data/Examples/KrizChemla2015.json`. The supervaluation prediction reproduces
-every pooled judgment (§6.4); the global construals fail on exactly the C2 `no`
-gap and the C4 gap?? gap; universal projection fails on exactly the bivalent
-conditions containing non-homogeneous cells (the argument from (42) in §6.3)
-plus the gap? condition.
+The paper's guiding principle locates a gap wherever the variant of the sentence with an
+existential in place of the definite is true while the variant with a universal is false.
+`someReading` and `allReading` are those two variants over a `Display` of homogeneous or
+`mixed` cells, and the three approaches assessed in §6 are combinations of them and of the
+globally exhaustified meaning (30): `supervaluation` after [spector-2013], equivalently the
+local-exhaustification construals, `globalConstrual`, the literal-versus-global
+exhaustification construals after [magri-2009], and `universalPresupposition` after
+[schwarzschild-1994], [lobner-2000] and [gajewski-2005]. Each is run over the Table 13
+display recorded on each row of `Data/Examples/KrizChemla2015`, read into cells by
+`displayOf`, against the pooled judgments of `Generalizations.HomogeneityProjection` and
+`Generalizations.HomogeneityGap`. The supervaluation prediction reproduces every pooled
+judgment (`supervaluation_matches_pool`); the global construals fail on exactly the C2 *no*
+gap and the C4 gap?? gap (`globalConstrual_divergence`); universal projection fails on
+exactly the bivalent conditions containing non-homogeneous cells, the argument from (42),
+plus the gap? condition (`universalPresupposition_divergence`).
 
 ## Implementation notes
 
-A display is a list of `Cell`s, one per array of nine objects, since only the
-full / mixed / empty classification of each array enters the readings. The
-`notEvery` operator of the pool postdates the paper ([augurzky-etal-2023]);
-`globalExh` gives it the general clause of (30) and no theorem here exercises
-it. `bareLiteralNegative` and `wideScopeParse` reconstruct §6.1.3's diagnosis
-of the downward-entailing problem for the implicature approach: the bare
-existential literal meaning predicts no gap under negation, and parsing the
-definite above negation restores the fit for plain negation but not for `no`,
-whose definite contains a variable bound by the quantifier ([steedman-2012]).
+A display is a list of `Cell`s, one per array of nine objects, since only the full, mixed,
+or empty classification of each array enters the readings; a row's Table 13 number string
+is read cell by cell, `9` full, `0` empty, anything else mixed. The `notEvery` operator of
+the pool postdates the paper ([augurzky-etal-2023]); `globalExh` gives it the general clause
+of (30) and no theorem here exercises it. `bareLiteralNegative` and `wideScopeParse`
+reconstruct the diagnosis in §6.1.3 of the downward-entailing problem for the implicature
+approach: the bare existential literal meaning predicts no gap under negation, and parsing
+the definite above negation restores the fit for plain negation but not for *no*, whose
+definite contains a variable bound by the quantifier ([steedman-2012]).
 
 ## TODO
 
-* The [george-2008]-style trivalent projection theory that §6.3 credits with
-  matching the supervaluation predictions is not implemented, nor are the
-  richer-candidate supervaluation variants of §6.2, which over-predict a gap
-  in the gap? condition.
+* The [george-2008]-style trivalent projection theory that §6.3 credits with matching the
+  supervaluation predictions is not implemented, nor are the richer-candidate
+  supervaluation variants of §6.2, which over-predict a gap in the gap? condition.
 
 ## References
 
@@ -68,7 +64,7 @@ whose definite contains a variable bound by the quantifier ([steedman-2012]).
 namespace KrizChemla2015
 
 open Features (Polarity)
-open Generalizations Generalizations.HomogeneityProjection
+open Generalizations Generalizations.HomogeneityProjection Data.Examples
 
 /-! ### Displays -/
 
@@ -173,62 +169,48 @@ def universalPresupposition (op : EmbeddingOperator) (d : Display) : Trivalent :
 
 /-! ### The tested grid -/
 
-/-- A representative Table 13 display for each condition of Exps. C2-C4
-(`none` for cells the paper did not test). Read `[cell₁, ..., cell₄]` for the
-four boys; e.g. the `(every, gap)` display 9929 — three boys found all nine of
-their presents, one found two — is `[full, full, mixed, full]`. -/
-def display : EmbeddingOperator → GapScenario → Option Display
-  | .every, .trueScenario       => some [.full, .full, .full, .full]     -- 9999
-  | .every, .falseScenario      => some [.full, .mixed, .mixed, .empty]  -- 9770
-  | .every, .gap                => some [.full, .full, .mixed, .full]    -- 9929
-  | .no, .trueScenario          => some [.empty, .empty, .empty, .empty] -- 0000
-  | .no, .falseScenario         => some [.mixed, .empty, .empty, .full]  -- 5009
-  | .no, .gap                   => some [.empty, .empty, .mixed, .empty] -- 0070
-  | .exactlyTwo, .trueScenario  => some [.full, .full, .empty, .empty]   -- 9900
-  | .exactlyTwo, .falseScenario => some [.mixed, .empty, .empty, .empty] -- 4000
-  | .exactlyTwo, .gap           => some [.full, .mixed, .empty, .empty]  -- 9200
-  | .exactlyTwo, .gapQ          => some [.full, .mixed, .empty, .mixed]  -- 9202
-  | .exactlyTwo, .gapQQ         => some [.full, .mixed, .empty, .full]   -- 9209
-  | _, _ => none
+/-- A cell of a Table 13 number string: `9` of the nine objects is a full cell, `0` an empty
+one, and anything else a mixed one. -/
+def Cell.ofChar (c : Char) : Cell :=
+  if c = '9' then .full else if c = '0' then .empty else .mixed
 
-/-- Restrict a display-level account to the paper's tested grid, `none`
-marking cells the paper did not test. -/
-def predictOn (account : EmbeddingOperator → Display → Trivalent)
-    (op : EmbeddingOperator) (sc : GapScenario) : Option Trivalent :=
-  (display op sc).map (account op)
+/-- The display recorded on a row, read cell by cell; e.g. the (*every*, gap) display 9929,
+three boys who found all nine of their presents and one who found two, is
+`[full, full, mixed, full]`. -/
+def displayOf (e : LinguisticExample) : Option Display :=
+  (e.feature? "display").map λ s => s.toList.map Cell.ofChar
 
 /-! ### Predictions against the projection pool -/
 
-/-- The supervaluation (equivalently, local-exhaustification) prediction
-reproduces every pooled projection judgment — §6.4's bottom line. The fit is
-bought either by allowing local exhaustification in downward-entailing
-contexts, contra [chierchia-fox-spector-2012], or by restricting the
-supervaluation candidates to the existential and universal resolutions. -/
+/-- The supervaluation (equivalently, local-exhaustification) prediction reproduces every
+pooled projection judgment, the bottom line of §6.4. The fit is bought either by allowing
+local exhaustification in downward-entailing contexts, contra [chierchia-fox-spector-2012],
+or by restricting the supervaluation candidates to the existential and universal
+resolutions. -/
 theorem supervaluation_matches_pool :
-    ∀ d ∈ allData, d.source.bibkey = "kriz-chemla-2015" →
-      predictOn supervaluation d.operator d.scenario = some d.observed := by
+    ∀ e ∈ Examples.all, ∀ d ∈ fromExample e, ∀ disp ∈ displayOf e,
+      supervaluation d.operator disp = d.observed := by
   decide
 
-/-- Construals locating the gap in a literal-vs-global-exhaustification
-conflict fail on exactly two cells: the small-but-robust `no` gap of Exp. C2
-(no implicature arises in a downward-entailing context, §6.1.3) and the gap??
-gap of Exp. C4 (Table 12's s6, where the literal meaning and the implicature
-are false and true respectively, so their conjunction is simply false). Both
-cells are predicted clearly false but observed gappy. -/
+/-- Construals locating the gap in a literal-vs-global-exhaustification conflict fail on
+exactly two cells: the small-but-robust *no* gap of Experiment C2, where no implicature
+arises in a downward-entailing context (§6.1.3), and the gap?? gap of Experiment C4, where
+the literal meaning and the implicature are false and true respectively, so their
+conjunction is simply false. Both cells are predicted clearly false but observed gappy. -/
 theorem globalConstrual_divergence :
-    ∀ d ∈ allData, d.source.bibkey = "kriz-chemla-2015" →
-      (predictOn globalConstrual d.operator d.scenario ≠ some d.observed ↔
+    ∀ e ∈ Examples.all, ∀ d ∈ fromExample e, ∀ disp ∈ displayOf e,
+      (globalConstrual d.operator disp ≠ d.observed ↔
         (d.operator, d.scenario) ∈
           [(EmbeddingOperator.no, GapScenario.gap), (.exactlyTwo, .gapQQ)]) := by
   decide
 
-/-- Universal projection of the homogeneity presupposition fails on exactly
-the bivalently-judged conditions whose displays contain non-homogeneous cells
-— the false conditions of Exps. C2/C3, argument (42) of §6.3 — plus the gap?
-condition, where a presupposition failure is predicted but falsity observed. -/
+/-- Universal projection of the homogeneity presupposition fails on exactly the bivalently
+judged conditions whose displays contain non-homogeneous cells, the false conditions of
+Experiments C2 and C3, argument (42) of §6.3, plus the gap? condition, where a
+presupposition failure is predicted but falsity observed. -/
 theorem universalPresupposition_divergence :
-    ∀ d ∈ allData, d.source.bibkey = "kriz-chemla-2015" →
-      (predictOn universalPresupposition d.operator d.scenario ≠ some d.observed ↔
+    ∀ e ∈ Examples.all, ∀ d ∈ fromExample e, ∀ disp ∈ displayOf e,
+      (universalPresupposition d.operator disp ≠ d.observed ↔
         (d.operator, d.scenario) ∈
           [(EmbeddingOperator.every, GapScenario.falseScenario),
            (.no, .falseScenario), (.exactlyTwo, .falseScenario),
