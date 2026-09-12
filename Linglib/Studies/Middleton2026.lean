@@ -5,61 +5,39 @@ import Linglib.Fragments.Taos.Agreement
 import Linglib.Fragments.Basque.Postsyntax
 
 /-!
-# Middleton (2026) — Ordering of Impoverishment Rules in Taos and Basque
-[middleton-2026] [arregi-nevins-2012] [halle-marantz-1993]
-[harbour-2014] [harbour-2016] [kontak-kunkel-1987]
-[watkins-1984] [harbour-middleton-2026]
+# Middleton (2026): Ordering of Impoverishment Rules in Taos and Basque
 
-This file formalises the architectural argument of [middleton-2026].
-Working within Distributed Morphology ([halle-marantz-1993]),
-[arregi-nevins-2012] propose a strict modular postsyntax in
-which paradigmatic Impoverishment applies *as a block* before
-syntagmatic Impoverishment, and Metathesis follows all
-Impoverishment. Middleton shows from Taos verbal agreement that the
-second claim survives but the first does not (§§4.2.1–§4.2.5);
-the Basque half of the paper (§3.1) re-establishes the second
-claim — metathesis after impoverishment — using a different
-language and different rule shapes (whole-terminal deletion +
-adjacent-terminal swap).
+This file formalizes the architectural argument of [middleton-2026] within Distributed
+Morphology ([halle-marantz-1993]). [arregi-nevins-2012] propose a strictly modular
+postsyntax in which paradigmatic impoverishment applies as a block before syntagmatic
+impoverishment and metathesis follows all impoverishment; Taos verbal agreement shows that
+the second claim survives but the first does not, a syntagmatic rule having to feed a
+paradigmatic one, and the Basque half re-establishes the second claim with whole-terminal
+deletion and adjacent-terminal metathesis. A schematic pair of rules exhibits the divergence
+at a Taos-shaped witness (`paraAtomicRule`, `synMinimalRule`), the strict pipeline is shown
+strictly less expressive than the interleaved one whenever a syntagmatic rule must feed a
+paradigmatic one (`runStrict_forces_paraSyn_order`, `runInterleaved_admits_synPara`), a
+small vocabulary demonstrates insertion by the subset principle, and the Basque rules are
+stated on the domain-level rule shapes with the Ondarru divergence witness.
 
-## Scope
+## Implementation notes
 
-The full Taos paradigm involves dozens of Vocabulary Insertion rules
-and a large family of impoverishment / metathesis rules. We do not
-re-derive the entire paradigm. What lives here:
+The conditioning features come from the decomposition of [harbour-2014]; the rules are
+minimal witnesses to the ordering interaction, not literal transcriptions, and the full Taos
+paradigm, the containment constraints on feature bundles, and real vocabulary competition
+are not represented.
 
-* This file gives one **schematic** pair of rules
-  `paraAtomicRule` / `synMinimalRule` that exhibits the divergence
-  predicted by the paper at a real-shaped Taos witness neighborhood.
-  The conditioning features (`[+author]`, `[+atomic]`, `[+minimal]`)
-  are drawn from the Harbour decomposition the paper uses, but the
-  rules themselves are not literal transcriptions of paper rules —
-  they are minimal witnesses to the para-vs-syn ordering interaction
-  in [middleton-2026] §4.2.1–§4.2.4.
-* The general claim — that `runStrict` is strictly less expressive
-  than `runInterleaved` whenever a syntagmatic rule needs to feed a
-  paradigmatic one — is `runStrict_forces_paraSyn_order` /
-  `runInterleaved_admits_synPara`; instantiated on the witness below.
-* A small VI set demonstrates how the postsyntactic output feeds
-  Vocabulary Insertion (Subset Principle, [halle-marantz-1993]),
-  again schematically.
-* The Basque half of the paper requires *whole terminal* deletion
-  (Participant Dissimilation, rule 16) and *adjacent terminal* swap
-  (Ergative Metathesis, rule 13) — operations the focus-level Taos
-  sections cannot express. The domain-level rule shapes are
-  `DistributedMorphology.ObliterationRule` and
-  `DistributedMorphology.TerminalMetathesisRule` (`Spellout.lean`);
-  the bundles live in `Fragments/Basque/Postsyntax.lean`; the rules
-  and the Ondarru `s-endu-n` (17a) divergence witness are stated here.
+## TODO
 
-What is **not** modeled:
+The paper is not on file; section and rule numbers are transcribed from an earlier version
+of this file and are UNVERIFIED.
 
-* The full Taos paradigm and the literal rule statements of
-  [middleton-2026] (rule numbers and conditioning environments
-  vary across the four §4.2 cases).
-* Harbour's Reciprocal Containment constraints on feature bundles.
-* Real Taos VI competition — only enough VIs to demonstrate the
-  pipeline.
+## References
+
+* [middleton-2026]
+* [arregi-nevins-2012]
+* [halle-marantz-1993]
+* [harbour-2014]
 -/
 
 namespace Middleton2026
