@@ -3,28 +3,32 @@ import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Studies.Benua1997
 
 /-!
-# [mccarthy-2005] — Optimal Paradigms
+# McCarthy (2005): Optimal Paradigms
 
-Optimal Paradigms evaluates entire inflectional paradigms as candidates: markedness and
-input–output faithfulness are summed over the members, and the stem of every member stands
-in a correspondence relation ℛ_OP with the stem of every other, with no distinguished base —
-the symmetric counterpart of the base priority of [benua-1997], which OP leaves to
-derivational morphology. Faithfulness on ℛ_OP resists alternation within the paradigm, and
-three consequences follow from the architecture alone: overapplication only, attraction to
-the unmarked, and majority rules.
-
-`Paradigm` carries the shared input and the members, each with its inflectional cell,
-surface stem and input–stem correspondence; `Paradigm.corr` is the correspondence diagram
-whose ℛ_OP relations are read off the members' input correspondences — stem positions
-realising the same input position correspond, as do epenthetic positions at the same site —
-so the relation is symmetric and base-free by construction. `markedness`, `ioFaith` and
+This file formalizes optimal paradigms after [mccarthy-2005]. Entire inflectional paradigms
+are candidates: markedness and input–output faithfulness are summed over the members, and
+the stem of every member stands in a correspondence relation with the stem of every other,
+with no distinguished base, the symmetric counterpart of the base priority of [benua-1997],
+which optimal paradigms leave to derivational morphology. Faithfulness on that relation
+resists alternation within the paradigm, and three consequences follow from the architecture
+alone: overapplication only, attraction to the unmarked, and majority rules. A paradigm
+carries the shared input and its members with their cells, surface stems, and input–stem
+correspondences (`Paradigm`), the correspondence diagram is read off those
+(`Paradigm.corr`), symmetric and base-free by construction, and `markedness`, `ioFaith`, and
 `opFaith` sum a constraint over the members or the ordered member pairs. The Classical
-Arabic section reruns the tableaux for the right edge of the verb stem (/faʕaːl/, /faʕl/),
-the left edge (/fʕal/, /ftaʕal/, /stafʕaːl/) and the geminate verbs under the summary
-ranking (21), the Moroccan section the majority-rules paradigm of /ʃərb/ (32), and the
-Hebrew section the jussive paradigms of [benua-1997] under OP (33), where epenthesis
-underapplies only because overapplication is blocked. Symmetric OP constraints count each
-direction of ℛ_OP, as in fn. 5 and (32).
+Arabic tableaux for the right and left edges of the verb stem and for geminate verbs, the
+Moroccan majority-rules paradigm, and the Hebrew jussive paradigms of Benua are rerun under
+the paper's ranking.
+
+## TODO
+
+The chapter is not on file; example locators are transcribed from an earlier version of this
+file and are UNVERIFIED.
+
+## References
+
+* [mccarthy-2005]
+* [benua-1997]
 -/
 
 namespace McCarthy2005
