@@ -451,10 +451,10 @@ open KehlerRohde2013
     the opening in K&R's Independence Hypothesis their data exploits. -/
 theorem independence_violated_bridges_to_KR :
     -- K&R: passive subjects get more pronouns than active subjects
-    pronPassiveSubj > pronActiveSubj ∧
+    pronominalized .Pass .subject > pronominalized .Act .subject ∧
     -- Rosa & Arnold: goals get more pronouns than sources (same position)
     exp1_goal_subj_diff.percent > exp1_source_subj_diff.percent := by
-  refine ⟨by norm_num [pronPassiveSubj, pronActiveSubj], ?_⟩
+  refine ⟨by decide, ?_⟩
   decide
 
 /-- K&R's Table 2 shows that Occasion and Result are Goal-biased
@@ -467,12 +467,12 @@ theorem independence_violated_bridges_to_KR :
     pattern in this study's sentence completion data. -/
 theorem coherence_interaction_matches_KR_biases :
     -- K&R: Occasion is Goal-biased, Explanation is Source-biased
-    crOccasion.sourceGivenCR < 50 ∧
-    crExplanation.sourceGivenCR > 50 ∧
+    perfectiveSourceGiven .occasion < 50 ∧
+    perfectiveSourceGiven .explanation > 50 ∧
     -- Rosa & Arnold: Occasion/Result amplifies goal bias
     occasionResult_interaction.significant = true ∧
     -- Rosa & Arnold: Other (Explanation-heavy) does not
     other_interaction.significant = false :=
-  ⟨by norm_num [crOccasion], by norm_num [crExplanation], rfl, rfl⟩
+  ⟨by decide, by decide, rfl, rfl⟩
 
 end RosaArnold2017
