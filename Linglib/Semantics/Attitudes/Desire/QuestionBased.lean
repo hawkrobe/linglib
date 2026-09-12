@@ -13,7 +13,10 @@ metasemantic constraints — `IsConsidered` (every answer settles `p`), `IsDiver
 itself settled; [condoravdi-2002]), `IsBelSensitive` (the beliefs discriminate among the
 answers; [yalcin-2018]) — bundled as `Defined` and as the presupposition of `toPartialProp`,
 under which the ascription is Strawson upward monotone (`toPartialProp_strawsonEntails`).
-On the finest question the semantics is the best-worlds one (`want_finest_iff`).
+Diversity is what blocks vacuous falsity and truth (`not_want_of_not_exists`,
+`want_of_isConsidered_of_not_exists`). The question raised by a list of issues, the coarsest
+relative to which each is considered, is `ofIssues`. On the finest question the semantics is
+the best-worlds one (`want_finest_iff`).
 -/
 
 namespace Desire.QuestionBased
@@ -92,6 +95,57 @@ variable {G N Q bel p}
 
 theorem Want.mono {q : Set W} (hpq : p ⊆ q) (h : Want G Q bel p) : Want G Q bel q :=
   fun a ha hl hb w hw => hpq (h a ha hl hb w hw)
+
+/-! ### Best answers and diversity -/
+
+/-- A best live answer exists whenever some answer is live. -/
+theorem exists_best (h : ∃ a ∈ Q, Live bel a) :
+    ∃ a ∈ Q, Live bel a ∧ ∀ a' ∈ Q, Live bel a' → le G a' a → le G a a' := by
+  let _ : Preorder (Finset W) := Preorder.ofCriteria (fun a s : Finset W => a ⊆ s) {s | s ∈ G}
+  obtain ⟨a, ha⟩ := Set.Finite.exists_minimal
+    ((List.finite_toSet Q).subset fun a (ha : a ∈ Q ∧ Live bel a) => ha.1)
+    (let ⟨a, haQ, hl⟩ := h; ⟨a, haQ, hl⟩)
+  exact ⟨a, ha.1.1, ha.1.2, fun a' ha' hl' hle => ha.2 ⟨ha', hl'⟩ hle⟩
+
+/-- Without a `p`-answer the ascription is false as soon as some answer is live: the
+diversity constraint against vacuous falsity. -/
+theorem not_want_of_not_exists (hlive : ∃ a ∈ Q, Live bel a)
+    (hp : ¬ ∃ a ∈ Q, ∀ w ∈ a, w ∈ p) : ¬ Want G Q bel p := fun hw =>
+  let ⟨a, haQ, hl, hbest⟩ := exists_best (G := G) hlive
+  hp ⟨a, haQ, hw a haQ hl hbest⟩
+
+/-- With every answer settling `p` and no `¬p`-answer the ascription is true: the diversity
+constraint against vacuous truth. -/
+theorem want_of_isConsidered_of_not_exists (hc : IsConsidered Q p)
+    (hnp : ¬ ∃ a ∈ Q, ∀ w ∈ a, w ∉ p) : Want G Q bel p := fun a ha _ _ w hw =>
+  ((hc a ha).resolve_right fun h => hnp ⟨a, ha, h⟩) w hw
+
+/-! ### The question raised by a list of issues -/
+
+/-- The question raised by a list of issues: the nonempty cells of the partition by which of
+the issues hold. -/
+def ofIssues [Fintype W] [DecidableEq W] : List (Finset W) → List (Finset W)
+  | [] => [Finset.univ]
+  | p :: ps => ((ofIssues ps).flatMap fun a => [a ∩ p, a \ p]).filter (·.Nonempty)
+
+/-- Each issue is considered relative to the question it raises. -/
+theorem isConsidered_ofIssues [Fintype W] [DecidableEq W] {ps : List (Finset W)}
+    {p : Finset W} (hp : p ∈ ps) : IsConsidered (ofIssues ps) (↑p : Set W) := by
+  induction ps with
+  | nil => simp at hp
+  | cons q ps ih =>
+    intro a ha
+    simp only [ofIssues, List.mem_filter, List.mem_flatMap, List.mem_cons, List.not_mem_nil,
+      or_false] at ha
+    obtain ⟨⟨b, hb, rfl | rfl⟩, -⟩ := ha
+    · rcases List.mem_cons.1 hp with rfl | hp'
+      · exact Or.inl fun w hw => (Finset.mem_inter.1 hw).2
+      · exact (ih hp' b hb).imp (fun h w hw => h w (Finset.mem_inter.1 hw).1)
+          (fun h w hw => h w (Finset.mem_inter.1 hw).1)
+    · rcases List.mem_cons.1 hp with rfl | hp'
+      · exact Or.inr fun w hw => (Finset.mem_sdiff.1 hw).2
+      · exact (ih hp' b hb).imp (fun h w hw => h w (Finset.mem_sdiff.1 hw).1)
+          (fun h w hw => h w (Finset.mem_sdiff.1 hw).1)
 
 /-- Strawson upward monotonicity: where both ascriptions are defined, `want p` entails
 `want q` for `p ⊆ q`. -/
