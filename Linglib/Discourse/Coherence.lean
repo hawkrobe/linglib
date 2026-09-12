@@ -1,3 +1,5 @@
+import Mathlib.Tactic.DeriveFintype
+
 /-!
 # Discourse Coherence Relations
 [hobbs-1979] [kehler-2002] [umbach-2004]
@@ -24,6 +26,7 @@ inductive CoherenceClass where
 inductive CoherenceRelation where
   | explanation   -- "because": effect → cause (backward causal)
   | result        -- "so": cause → effect (forward causal)
+  | violatedExpectation  -- "but"/"nevertheless": cause → denied expected effect ([kehler-2002])
   | occasion      -- "and then": event₁ → event₂ (= SDRT's Narration)
   | elaboration   -- further detail on the same event
   | parallel      -- structural similarity between segments
@@ -32,12 +35,13 @@ inductive CoherenceRelation where
   | background    -- [asher-lascarides-2003]: scene-setting; β provides setting for α
   | consequence   -- [asher-lascarides-2003]: discourse-level conditional
   | alternation   -- [asher-lascarides-2003]: discourse-level disjunction
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 /-! ### Properties -/
 /-- Classify each relation into its coherence class. -/
 def CoherenceRelation.toClass : CoherenceRelation → CoherenceClass
   | .explanation  => .causeEffect
   | .result       => .causeEffect
+  | .violatedExpectation => .causeEffect
   | .occasion     => .contiguity
   | .elaboration  => .contiguity
   | .parallel     => .resemblance
@@ -56,6 +60,7 @@ inductive CausalDirection where
 def CoherenceRelation.causalDirection : CoherenceRelation → CausalDirection
   | .explanation  => .backward    -- "because": backward search for cause
   | .result       => .forward     -- "so": forward to effect
+  | .violatedExpectation => .forward  -- forward to the denied expected effect
   | .occasion     => .none        -- "and then": temporal, not causal
   | .elaboration  => .none        -- same event, no causal search
   | .parallel     => .none        -- structural, not causal
@@ -78,7 +83,7 @@ instance (r : CoherenceRelation) : Decidable r.selectsEffect := by
 /-- Every coherence relation, for marginalizing over the full set
     (e.g. the next-mention mixture `Σ_CR P(CR) · f(CR)`). -/
 def CoherenceRelation.all : List CoherenceRelation :=
-  [.explanation, .result, .occasion, .elaboration, .parallel,
+  [.explanation, .result, .violatedExpectation, .occasion, .elaboration, .parallel,
    .contrast, .correction, .background, .consequence, .alternation]
 /-- `all` is exhaustive. Adding a constructor breaks this proof, forcing every
     marginalization over `all` to be revisited rather than silently dropping a

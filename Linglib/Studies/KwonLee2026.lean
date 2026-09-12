@@ -623,7 +623,7 @@ theorem overt_fullNP_spread_small :
     The cross-linguistic variation in spread (§ 5) reflects how strongly
     each language's null form encodes topichood relative to other forms. -/
 def koreanSubjectTopichood : KehlerRohde2013.TopichoodLevel :=
-  KehlerRohde2013.topichood .Act true
+  KehlerRohde2013.topichood .Act .subject
 
 /-- Korean subjects are the default topichood level (subject of an active
     clause). Null pronouns mark high accessibility, which [kehler-rohde-2013]
