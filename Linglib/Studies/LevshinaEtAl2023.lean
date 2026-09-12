@@ -21,9 +21,7 @@ and the Russian register proportions from Dataset6.
 
 ## TODO
 
-The rows are empirical data and belong in a generated `Data/WordOrder` module; the figure
-attributions are transcribed from an earlier version of this file and are UNVERIFIED pending
-a check against the paper.
+The rows are empirical data and belong in a generated `Data/WordOrder` module.
 
 ## References
 
