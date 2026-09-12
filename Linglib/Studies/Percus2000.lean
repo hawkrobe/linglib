@@ -5,24 +5,32 @@ import Linglib.Semantics.Reference.Context.Index
 # Percus (2000): Constraints on Some Other Variables in Syntax
 
 This file formalizes the situation-pronoun syntax of [percus-2000]. Every predicate carries a
-situation pronoun, every clause introduces a situation binder, and two generalizations
-restrict which binder a pronoun may take: Generalization X, that the situation pronoun of a
-verb is bound by the nearest c-commanding binder, and Generalization Y, that the situation
-argument of an adverb of quantification is likewise locally bound, whereas the pronoun of a
-noun phrase may be bound from higher up (`LF.GenX`, `QLF.GenY`). Under an attitude verb this
-gives the noun phrase a de re reading, *my brother* evaluated at the matrix situation, while
-the embedded predicate is read de dicto only (`genX_licenses`); on a model where the brother
-is Bill in fact and Charlie in Mary's belief worlds, the two licensed LFs of *Mary believes
-my brother is a spy* come apart (`dpDeRe_true_allDeDicto_false`), and the LF that would
-read *John is Canadian* at the actual situation, true on the model, is excluded
-(`canadian_predicate_de_re_excluded`). For *always* the compliant LF quantifies over the
-situations of the belief world and the violating one over actual situations (`genY`).
+situation pronoun, every clause introduces an indexed λ binding situations, and two
+generalizations restrict which λ a pronoun may take: Generalization X (34), that the situation
+pronoun a verb selects for is coindexed with the nearest λ above it, and Generalization Y
+(39), that the situation pronoun an adverbial quantifier selects for is likewise locally
+bound, whereas the pronoun inside a determiner phrase may be bound from higher up (`LF.GenX`,
+`QLF.GenY`). For *Mary thinks that my brother is Canadian* (26a) this admits the indexing
+(27), *my brother* transparent and *is Canadian* opaque, and excludes the indexing (33),
+*my brother* opaque and *is Canadian* transparent. The paper's two scenarios are two models:
+where Mary takes Allon, the speaker's brother, not to be the brother but to be Canadian, the
+sentence is judged true, and only the licensed transparent-phrase indexing makes it so
+(`scenario_allon`); where Mary takes Pierre, a Canadian, to be the brother and so to be
+American, the sentence is judged false, and the one indexing that would make it true is the
+excluded one (`scenario_pierre`). For *Mary thinks that my brother always won the game*
+(35a), binding the quantifier's pronoun to the matrix λ, the indexing (37), would make the
+sentence true when Mary is unaware of the games Pierre won, where it is judged false, and
+binding it to the embedded λ, the indexing (38), makes it true when Mary is deluded about
+games Pierre lost, where it is judged true (`scenario_unaware`, `scenario_deluded`).
 
 ## Implementation notes
 
 Situation assignments specialize the assignments of `Logic/Assignment` to indices of world
-and time, and the models are two-world toy models. The paper's LF trees and examples are
-described in prose without the paper's numbering.
+and time, the λ-binding of situation pronouns being the predicate abstraction of
+[heim-kratzer-1998]; the models have two worlds, with a trivial time coordinate for (26a)
+and the rounds of the game for (35a). The coindexing of both embedded pronouns with the
+matrix λ is ruled out independently of the generalizations (fn. 18), and the motivation of
+Generalization X from counterfactuals (40) is not formalized.
 
 ## References
 
@@ -61,47 +69,51 @@ instance {W T : Type*} (domain : Index W T → List (Index W T)) (restrictor : I
     (g : SituationAssignment W T) : Decidable (alwaysAt domain restrictor n scope g) := by
   unfold alwaysAt; infer_instance
 
-/-! ### Generalizations X and Y -/
+/-! ### Generalizations X (34) and Y (39) -/
 
-/-- An LF of an attitude sentence: the matrix clause binds situation variable 1 and the
-embedded clause variable 2, and the LF records which binder the embedded verb's situation
-pronoun and the embedded noun phrase's pronoun take. -/
+/-- An indexing of the embedded clause of an attitude sentence, the positions S and T of
+(26b): the matrix λ carries index 1 and the embedded λ index 2, and the indexing records the
+λ the embedded verb's situation pronoun and the embedded determiner phrase's pronoun take. -/
 structure LF where
   verb : ℕ
   noun : ℕ
   deriving DecidableEq
 
-/-- Generalization X: the verb's situation pronoun is bound by the nearest binder; the noun
-phrase's pronoun is unconstrained. -/
+/-- Generalization X (34): the verb's situation pronoun is coindexed with the nearest λ; the
+determiner phrase's pronoun is unconstrained. -/
 def LF.GenX (lf : LF) : Prop := lf.verb = 2
 
 instance : DecidablePred LF.GenX := λ lf => inferInstanceAs (Decidable (lf.verb = 2))
 
-/-- The LF with everything read in the belief situations. -/
-def allDeDicto : LF := ⟨2, 2⟩
+/-- The indexing (27), S = s₂ and T = s₁: the determiner phrase transparent and the predicate
+opaque. -/
+def transparentDP : LF := ⟨2, 1⟩
 
-/-- The LF reading the noun phrase at the matrix situation. -/
-def dpDeRe : LF := ⟨2, 1⟩
+/-- The indexing (33), S = s₁ and T = s₂: the predicate transparent and the determiner phrase
+opaque. -/
+def transparentPredicate : LF := ⟨1, 2⟩
 
-/-- The LF reading the predicate at the matrix situation. -/
-def predicateDeRe : LF := ⟨1, 2⟩
+/-- Both pronouns bound by the embedded λ: everything opaque. -/
+def allOpaque : LF := ⟨2, 2⟩
 
-/-- Generalization X licenses the all-de-dicto and the de re noun phrase LFs and excludes the
-de re predicate LF. -/
-theorem genX_licenses : allDeDicto.GenX ∧ dpDeRe.GenX ∧ ¬ predicateDeRe.GenX := by decide
+/-- Generalization X licenses the all-opaque and the transparent-phrase indexings and excludes
+the transparent-predicate indexing. -/
+theorem genX_indexings :
+    allOpaque.GenX ∧ transparentDP.GenX ∧ ¬ transparentPredicate.GenX := by
+  decide
 
-/-- An LF for an adverb of quantification in an attitude complement: the binder its situation
-argument takes. -/
+/-- An indexing for an adverb of quantification in an attitude complement, the position S of
+(35b): the λ its situation pronoun takes. -/
 structure QLF where
   quant : ℕ
   deriving DecidableEq
 
-/-- Generalization Y: the adverb's situation argument is bound by the nearest binder. -/
+/-- Generalization Y (39): the adverb's situation pronoun is coindexed with the nearest λ. -/
 def QLF.GenY (q : QLF) : Prop := q.quant = 2
 
 instance : DecidablePred QLF.GenY := λ q => inferInstanceAs (Decidable (q.quant = 2))
 
-/-! ### A model -/
+/-! ### The models -/
 
 /-- The actual world and Mary's belief world. -/
 inductive W where
@@ -111,10 +123,15 @@ inductive W where
 
 inductive Person where
   | mary
-  | john
-  | bill
-  | charlie
+  | allon
+  | pierre
   deriving DecidableEq
+
+/-- The speaker's brother in a world: Allon in fact, Pierre in Mary's belief world, where she
+takes Pierre to be the brother and Allon not to be. -/
+def brother : W → Person
+  | .actual => .allon
+  | .belief => .pierre
 
 /-- Situations with a trivial time coordinate. -/
 abbrev Sit := Index W Unit
@@ -122,69 +139,51 @@ abbrev Sit := Index W Unit
 def sActual : Sit := ⟨.actual, ()⟩
 def sBelief : Sit := ⟨.belief, ()⟩
 
-/-- John is Canadian in fact and not in Mary's belief world. -/
-def IsCanadian (p : Person) (s : Sit) : Prop :=
-  match p, s.world with
-  | .john, .actual => True
-  | _, _ => False
+/-- The paper's two scenarios for (26a): Mary takes Allon not to be the brother but to be
+Canadian, and the sentence is judged true; Mary takes Pierre, a Canadian, to be the brother
+and, knowing the speaker is American, to be American, and the sentence is judged false. -/
+inductive Scenario where
+  | allon
+  | pierre
+  deriving DecidableEq
 
-instance (p : Person) (s : Sit) : Decidable (IsCanadian p s) := by
-  unfold IsCanadian; cases p <;> cases s.world <;> infer_instance
+/-- Who is Canadian in which world under each scenario. -/
+def IsCanadian : Scenario → Person → Sit → Prop
+  | .allon, .allon, ⟨.belief, _⟩ => True
+  | .pierre, .pierre, ⟨.actual, _⟩ => True
+  | _, _, _ => False
 
-/-- The speaker's brother is Bill in fact and Charlie in Mary's belief world. -/
-def IsBrother (p : Person) (s : Sit) : Prop :=
-  match p, s.world with
-  | .bill, .actual => True
-  | .charlie, .belief => True
-  | _, _ => False
-
-instance (p : Person) (s : Sit) : Decidable (IsBrother p s) := by
-  unfold IsBrother; cases p <;> cases s.world <;> infer_instance
-
-/-- Bill is a spy in Mary's belief world only. -/
-def IsSpy (p : Person) (s : Sit) : Prop :=
-  match p, s.world with
-  | .bill, .belief => True
-  | _, _ => False
-
-instance (p : Person) (s : Sit) : Decidable (IsSpy p s) := by
-  unfold IsSpy; cases p <;> cases s.world <;> infer_instance
+instance (sc : Scenario) (p : Person) (s : Sit) : Decidable (IsCanadian sc p s) := by
+  unfold IsCanadian
+  obtain ⟨w, _⟩ := s
+  cases sc <;> cases p <;> cases w <;> infer_instance
 
 /-- Mary's doxastic alternatives: the belief world. -/
 def doxMary : Sit → List Sit := λ _ => [sBelief]
 
-/-- The unique brother at a situation. -/
-def theBrother (s : Sit) : Person :=
-  if IsBrother .bill s then .bill else if IsBrother .charlie s then .charlie else .mary
-
 private def g₀ : SituationAssignment W Unit := λ _ => sActual
 
-/-- The reading of an LF of *Mary believes my brother is a spy*: the noun phrase's and the
-verb's situation pronouns are interpreted at the situations their binders supply. -/
-def spyReading (lf : LF) : Prop :=
-  believeSit (λ _ => doxMary) Person.mary 2 (λ g => IsSpy (theBrother (g lf.noun)) (g lf.verb))
-    g₀ sActual
+/-- The reading of (26a) under an indexing, (28b) and (34b): at every belief alternative of
+Mary's, the brother in the world the determiner phrase's pronoun denotes is Canadian at the
+situation the verb's pronoun denotes. -/
+def canadianReading (sc : Scenario) (lf : LF) : Prop :=
+  believeSit (λ _ => doxMary) Person.mary 2
+    (λ g => IsCanadian sc (brother (g lf.noun).world) (g lf.verb)) g₀ sActual
 
-instance (lf : LF) : Decidable (spyReading lf) := by
-  unfold spyReading believeSit; infer_instance
-
-/-- The two licensed LFs are distinct readings: with the brother read at the matrix situation
-the sentence is true, and with everything read in the belief world it is false. -/
-theorem dpDeRe_true_allDeDicto_false : spyReading dpDeRe ∧ ¬ spyReading allDeDicto := by
-  decide
-
-/-- The reading of an LF of *Mary believes John is Canadian*. -/
-def canadianReading (lf : LF) : Prop :=
-  believeSit (λ _ => doxMary) Person.mary 2 (λ g => IsCanadian .john (g lf.verb)) g₀ sActual
-
-instance (lf : LF) : Decidable (canadianReading lf) := by
+instance (sc : Scenario) (lf : LF) : Decidable (canadianReading sc lf) := by
   unfold canadianReading believeSit; infer_instance
 
-/-- Generalization X has empirical bite: the LF reading the predicate at the matrix situation
-would make the sentence true on the model, but it is excluded, and the licensed LF is
-false. -/
-theorem canadian_predicate_de_re_excluded :
-    canadianReading predicateDeRe ∧ ¬ predicateDeRe.GenX ∧ ¬ canadianReading allDeDicto := by
+/-- The first scenario: the sentence is judged true, and the licensed transparent-phrase
+indexing (27) is what makes it true, the all-opaque indexing making it false. -/
+theorem scenario_allon :
+    canadianReading .allon transparentDP ∧ ¬ canadianReading .allon allOpaque := by
+  decide
+
+/-- The second scenario: the sentence is judged false, and the one indexing that would make it
+true is the transparent-predicate indexing (33), which Generalization X excludes. -/
+theorem scenario_pierre :
+    canadianReading .pierre transparentPredicate ∧ ¬ transparentPredicate.GenX ∧
+      ¬ canadianReading .pierre transparentDP ∧ ¬ canadianReading .pierre allOpaque := by
   decide
 
 /-! ### Generalization Y -/
@@ -199,16 +198,25 @@ inductive Round where
 /-- Situations with a round as their time coordinate. -/
 abbrev RSit := Index W Round
 
-/-- Bill won the first two rounds in fact and every round in Mary's belief world. -/
-def Won (p : Person) (s : RSit) : Prop :=
-  match p, s.world, s.time with
-  | .bill, .actual, .r1 => True
-  | .bill, .actual, .r2 => True
-  | .bill, .belief, _ => True
+/-- The paper's two scenarios for (35a): Mary, unaware of the games, wrongly takes Pierre to
+be the brother, and Pierre won every game, the sentence being judged false; Mary is deluded
+that Pierre, whom she takes to be the brother, won every game he in fact lost, the sentence
+being judged true. -/
+inductive GameScenario where
+  | unaware
+  | deluded
+  deriving DecidableEq
+
+/-- Who won which round in which world under each scenario. -/
+def Won : GameScenario → Person → RSit → Prop
+  | .unaware, .pierre, ⟨.actual, _⟩ => True
+  | .deluded, .pierre, ⟨.belief, _⟩ => True
   | _, _, _ => False
 
-instance (p : Person) (s : RSit) : Decidable (Won p s) := by
-  unfold Won; cases p <;> cases s.world <;> cases s.time <;> infer_instance
+instance (sc : GameScenario) (p : Person) (s : RSit) : Decidable (Won sc p s) := by
+  unfold Won
+  obtain ⟨w, _⟩ := s
+  cases sc <;> cases p <;> cases w <;> infer_instance
 
 /-- The rounds of a situation's world. -/
 def rounds (s : RSit) : List RSit := [⟨s.world, .r1⟩, ⟨s.world, .r2⟩, ⟨s.world, .r3⟩]
@@ -218,20 +226,27 @@ def doxMaryR : RSit → List RSit := λ s => [⟨.belief, s.time⟩]
 
 private def g₃ : SituationAssignment W Round := λ _ => ⟨.actual, .r1⟩
 
-/-- The reading of an LF of *Mary thinks my brother always won the game*: the adverb ranges
-over the rounds of the situation its binder supplies. -/
-def alwaysReading (q : QLF) : Prop :=
+/-- The reading of (35a) under an indexing, (37b) and (38b): the determiner phrase's pronoun
+is bound by the embedded λ, and the adverb ranges over the rounds of the world its pronoun
+denotes. -/
+def alwaysReading (sc : GameScenario) (q : QLF) : Prop :=
   believeSit (λ _ => doxMaryR) Person.mary 2
-    (λ g => alwaysAt rounds (g q.quant) 3 (λ g' => Won .bill (g' 3)) g) g₃ ⟨.actual, .r1⟩
+    (λ g => alwaysAt rounds (g q.quant) 3 (λ g' => Won sc (brother (g 2).world) (g' 3)) g)
+    g₃ ⟨.actual, .r1⟩
 
-instance (q : QLF) : Decidable (alwaysReading q) := by
+instance (sc : GameScenario) (q : QLF) : Decidable (alwaysReading sc q) := by
   unfold alwaysReading believeSit alwaysAt; infer_instance
 
-/-- Generalization Y licenses the LF whose adverb ranges over the belief world's rounds, on
-which the sentence is true, and excludes the one ranging over the actual rounds, on which it
-is false. -/
-theorem genY :
-    (⟨2⟩ : QLF).GenY ∧ alwaysReading ⟨2⟩ ∧ ¬ (⟨1⟩ : QLF).GenY ∧ ¬ alwaysReading ⟨1⟩ := by
+/-- The indexing (37), the adverb's pronoun bound by the matrix λ, would make the sentence true
+where it is judged false; Generalization Y excludes it. -/
+theorem scenario_unaware :
+    alwaysReading .unaware ⟨1⟩ ∧ ¬ (⟨1⟩ : QLF).GenY ∧ ¬ alwaysReading .unaware ⟨2⟩ := by
+  decide
+
+/-- The indexing (38), the adverb's pronoun bound by the embedded λ, makes the sentence true
+where it is judged true, and the matrix binding would not. -/
+theorem scenario_deluded :
+    alwaysReading .deluded ⟨2⟩ ∧ (⟨2⟩ : QLF).GenY ∧ ¬ alwaysReading .deluded ⟨1⟩ := by
   decide
 
 end Percus2000
