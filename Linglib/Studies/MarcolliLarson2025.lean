@@ -2,22 +2,27 @@ import Linglib.Syntax.Minimalist.Theta.Basic
 import Linglib.Syntax.Minimalist.Theta.Realize
 
 /-!
-# Marcolli & Larson (2025): Theta theory, operads, and coloring
+# Marcolli and Larson (2025): Theta Theory, Operads and Coloring
 
-[marcolli-larson-2025] gives the explicit generating set of the colored
-operad that implements theta theory in mathematical Minimalism
-([marcolli-chomsky-berwick-2025] §3.8): theta-role assignment is a
-coloring algorithm on structures freely formed by Merge, and filtering by
-the coloring rules is equivalent to structure formation by a colored
-Merge. The generating system, its local conservation law, the derived
-External/Internal Merge dichotomy, and the derivability of the bare theta
-combs live in `Syntax/Minimalist/Theta/Basic.lean`; this file runs them on
-the paper's ditransitive example — *Brian gave the book to Mary*, whose
-verb assigns the grid (agent, theme, goal) with the internal hierarchy
-theme before goal — on a movement generator, and on [siloni-2012]'s
-parasitic assignment, recast as a language-specific generator whose
-absence from the standard rule set is the sole-role requirement and whose
-addition is the *se* marking.
+This file formalizes the worked examples of [marcolli-larson-2025], which gives the explicit
+generating set of the colored operad implementing theta theory in the mathematical
+Minimalism of [marcolli-chomsky-berwick-2025]: theta-role assignment is a coloring algorithm
+on structures freely formed by Merge, and filtering by the coloring rules is equivalent to
+structure formation by a colored Merge. The generating system, its local conservation law,
+the derived External/Internal Merge dichotomy, and the derivability of the bare theta combs
+are the substrate of `Syntax/Minimalist/Theta`; the file runs them on the paper's
+ditransitive example, *Brian gave the book to Mary*, whose verb assigns the grid of agent,
+theme, and goal with theme before goal (`giveComb_derivable`, `giveComb_criterion`), on a
+movement generator landing only in non-theta positions (`moveRule_out_nontheta`), and on the
+parasitic assignment of [siloni-2012], recast as a language-specific generator absent from
+the standard rule set and added by the *se* marking (`parasiticGen_notMem`,
+`parasiticGen_derivable`).
+
+## References
+
+* [marcolli-larson-2025]
+* [marcolli-chomsky-berwick-2025]
+* [siloni-2012]
 -/
 
 namespace MarcolliLarson2025
@@ -27,7 +32,7 @@ open Minimalist Minimalist.Theta
 /-- The example's internal theta hierarchy: theme outranks goal, per the
     ditransitive grid the paper builds for *give*. -/
 def giveHier : ThetaRole → ThetaRole → Prop :=
-  fun a b => a = .theme ∧ b = .goal
+  λ a b => a = .theme ∧ b = .goal
 
 /-- The *give* comb: agent, then theme, then goal discharge one node at a
     time; the head leaf carries the full giver grid. Colors only — the
