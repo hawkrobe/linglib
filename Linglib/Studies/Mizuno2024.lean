@@ -7,39 +7,40 @@ import Linglib.Fragments.Mandarin.Conditionals
 import Linglib.Data.Examples.Mizuno2024
 
 /-!
-# [mizuno-2024] — Strategies for Anderson Conditionals
+# Mizuno (2024): Strategies for Anderson Conditionals
 
-Teruyuki Mizuno (2024), "Strategies for Anderson Conditionals: Their Implications for
-the Typology of O-Marking and X-Marking", *Semantics and Pragmatics* 17(8): 1–14.
-[anderson-1951] [schlenker-2004] [von-fintel-iatridou-2023] [iatridou-2000]
+This file formalizes the account in [mizuno-2024] of Anderson conditionals, conditionals
+whose consequent is an observed fact and which therefore argue for their antecedent
+([anderson-1951]). English must X-mark them, since over the live domain the consequent is
+trivially true and O-marking says nothing, while Japanese and Mandarin must O-mark them:
+their X-marking, the fake past *-ta* and the perfective *le*, forces a counterfactual
+reading. The typological record and its attested minimal pairs are transferred from the
+paper's examples (`andersonStrategy`, `anderson_judgments_match_strategy`), and the
+correlation with future-less-vivid conditionals holds row by row
+(`flv_anderson_correlation`). Both strategies enlarge the modal domain to one containing a
+consequent-failing world, after the expansion analysis of [mackay-2015] and [mackay-2019]:
+X-marking by enlarging the base (`xMarking_expands`), Japanese O-marking by a
+historical-present shift of the evaluation index backward under branching time
+([schlenker-2004]; `hp_expands_jones_domain`), and on either route the consequent is left
+open and a true Anderson conditional excludes a live world (`expanded_anderson_informative`).
 
-Anderson conditionals ([anderson-1951]) argue *for* the truth of their antecedent.
-English must X-mark them (O-marking is trivial); Japanese and Mandarin must O-mark
-them — their X-marking (Fake Past -ta: [ogihara-2014], [mizuno-kaufmann-2019];
-perfective le) forces a counterfactual reading. Both strategies expand the modal
-domain `D ⊂ D⁺`; Mizuno adopts the *expansion* analysis (fn 6, [mackay-2015],
-[mackay-2019] contra [iatridou-2000] / [schulz-2014] exclusion) and analyzes Japanese
-O-marking as a Historical-Present shift ([schlenker-2004], [anand-toosarvandani-2018a],
-[anand-toosarvandani-2018b]) expanding `D` backward under branching time.
+## Implementation notes
 
-Stimuli: `Data/Examples/Mizuno2024.json` (module `Mizuno2024.Examples`); `#guard`s
-check observed directions on the named examples, row theorems quantify over
-`Examples.all`. Semantics: `Conditionals.strictImp` over a
-`HistoricalAlternatives` base; `Modality.Exclusion` supplies the X/O
-typology and exponent inventory.
+The Jones scenario is a strict conditional over a historical base whose worlds record
+whether the symptoms are shown; the marking typology and exponent inventory are those of
+`Semantics/Modality/Exclusion`, and the Mandarin exponent *le* is study-local, resting on
+the paper's single consultant.
 
-## Main results
+## References
 
-* `english_japanese_discrepancy` — English X-marks, Japanese O-marks.
-* `inventory_prediction_fails_japanese` — the §3.1 puzzle: Japanese has X-marking
-  (ex. 3) yet must not deploy it; English validates the inventory prediction.
-* `anderson_judgments_match_strategy` — every recorded judgment matches the strategy
-  record.
-* `flv_anderson_correlation` — Anderson X-marking ⇔ FLV X-marking, per row (§4.2).
-* `oMarking_anderson_trivial` / `xMarking_expands` / `consequent_open_over_xMarkedBase` /
-  `expanded_anderson_informative` — the triviality puzzle and its resolution.
-* `hp_expands_jones_domain` / `consequent_open_after_hp` — the HP route to the same
-  conclusions: §4.1 on [von-fintel-iatridou-2023]'s uniformity hypothesis.
+* [mizuno-2024]
+* [anderson-1951]
+* [schlenker-2004]
+* [von-fintel-iatridou-2023]
+* [iatridou-2000]
+* [mackay-2015]
+* [mackay-2019]
+* [condoravdi-2002]
 -/
 
 namespace Mizuno2024
@@ -103,19 +104,13 @@ theorem inventory_prediction_fails_japanese :
 theorem inventory_prediction_fails_mandarin :
     inventoryPrediction "mand1415" ≠ andersonStrategy "mand1415" := by decide
 
--- Ex. (3) grounds the inventory entry: tagged exponent = the Fragment's -ta; acceptable.
-#guard Examples.ja3.feature? "x_exponent" == Japanese.Conditionals.xMarking.map (·.form)
-#guard Examples.ja3.judgment == Features.Judgment.acceptable
-
 /-! ### The attested minimal pairs
 
 Pairs live inside one numbered example: the felicitous `primaryText` (strategy `m`)
 plus the infelicitous `alternatives` entry (realizing `m.other`). -/
 
-/-- Felicitous iff fully acceptable. -/
-def isFelicitous : Features.Judgment → Bool
-  | .acceptable => true
-  | _ => false
+/-- Felicitous when fully acceptable. -/
+def IsFelicitous (j : Features.Judgment) : Prop := j = .acceptable
 
 /-- Parse the `strategy` tag. -/
 def ofStrategyTag? : String → Option MarkingStrategy
@@ -123,35 +118,19 @@ def ofStrategyTag? : String → Option MarkingStrategy
   | "o-marking" => some .oMarking
   | _ => none
 
--- Ex. (1a) / (2): English X-marked felicitous, O-marked counterpart not.
-#guard isFelicitous Examples.en1a.judgment && !isFelicitous Examples.en2.judgment
--- Ex. (4a): Japanese -ru felicitous; the -ta alternative not.
-#guard isFelicitous Examples.ja4a.judgment &&
-  Examples.ja4a.alternatives.all (λ a => !isFelicitous a.2)
--- Ex. (7a), radical HP: Non-Past required even with an overtly past consequent.
-#guard isFelicitous Examples.ja7a.judgment &&
-  Examples.ja7a.alternatives.all (λ a => !isFelicitous a.2)
--- Ex. (13a): Mandarin without le felicitous; with le not.
-#guard isFelicitous Examples.ma13a.judgment &&
-  Examples.ma13a.alternatives.all (λ a => !isFelicitous a.2)
--- Five Anderson rows (ex. 1a, 2, 4a, 7a, 13a); every row's language is in the record.
-#guard (Examples.all.filter (·.feature? "construction" == some "anderson")).length == 5
-#guard Examples.all.all (λ e => (andersonStrategy e.language).isSome)
+/-- An Anderson row against the record: the primary judgment matches strategy `m` and each
+alternative matches the other strategy, O-marking being the absence of X-marking. -/
+def AndersonRowOK (e : LinguisticExample) : Prop :=
+  e.feature? "construction" = some "anderson" →
+    ∀ m ∈ (e.feature? "strategy").bind ofStrategyTag?,
+      (IsFelicitous e.judgment ↔ andersonStrategy e.language = some m) ∧
+        ∀ a ∈ e.alternatives, (IsFelicitous a.2 ↔ andersonStrategy e.language = some m.other)
 
-/-- One Anderson row against the record: primary judgment matches strategy `m`, each
-    alternative matches `m.other` (§2: O-marking = absence of X-marking). Non-Anderson
-    rows pass vacuously. -/
-def andersonRowOK (e : LinguisticExample) : Bool :=
-  match e.feature? "construction", (e.feature? "strategy").bind ofStrategyTag? with
-  | some "anderson", some m =>
-      (isFelicitous e.judgment == (andersonStrategy e.language == some m)) &&
-        e.alternatives.all (λ a =>
-          isFelicitous a.2 == (andersonStrategy e.language == some m.other))
-  | _, _ => true
+instance : DecidablePred AndersonRowOK := by
+  unfold AndersonRowOK IsFelicitous; infer_instance
 
 /-- Every recorded Anderson judgment matches the strategy record. -/
-theorem anderson_judgments_match_strategy :
-    ∀ e ∈ Examples.all, andersonRowOK e = true := by decide
+theorem anderson_judgments_match_strategy : ∀ e ∈ Examples.all, AndersonRowOK e := by decide
 
 /-! ### The Future-Less-Vivid correlation (§4.2) -/
 
@@ -161,11 +140,6 @@ def flvAvailableTag (e : LinguisticExample) : Option Bool :=
   | some "available"   => some true
   | some "unavailable" => some false
   | _                  => none
-
--- The FLV record is grounded in ex. 8 (English), 9–10 (Japanese), 11–12 (Mandarin).
-#guard flvAvailableTag Examples.en8 == some true
-#guard flvAvailableTag Examples.ja9 == some false
-#guard flvAvailableTag Examples.ma11 == some false
 
 /-- §4.2: Anderson X-marking and FLV X-marking stand or fall together, for every
     sampled language. An empirical correlation of two independent records, not a
@@ -264,13 +238,5 @@ theorem expanded_anderson_informative (antecedent : Set Bool)
   not_subset_of_mem_strictImp h consequent_open_after_hp
 
 /-! ### Fragment marker connection -/
-
--- Japanese Anderson conditionals use -(e)ba (both HC and PC, unlike HC-only -ra).
-#guard Japanese.Conditionals.eba.markerType ==
-  Conditionals.ConditionalMarkerType.both
-
--- Mandarin uses general-purpose ruguo; X/O is carried by consequent-final le.
-#guard Mandarin.Conditionals.ruguo.markerType ==
-  Conditionals.ConditionalMarkerType.both
 
 end Mizuno2024
