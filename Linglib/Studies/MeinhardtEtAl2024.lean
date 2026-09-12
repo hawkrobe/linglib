@@ -34,11 +34,6 @@ map is modelled directly, raising a recessive vowel when a dominant one occurs a
 rather than as a two-pass composition, and the opaque low vowel, the re-paired low vowel,
 glide effects, and the Turkana half of the paper are not represented.
 
-## TODO
-
-The paper is not on file; page and example locators are transcribed from an earlier version
-of this file and are UNVERIFIED.
-
 ## References
 
 * [meinhardt-mai-bakovic-mccollum-2024]
