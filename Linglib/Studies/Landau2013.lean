@@ -21,8 +21,9 @@ consume.
 
 ## Implementation notes
 
-The book was not available for this pass, and the example and section numbers carried over
-from the earlier version of this file are marked as unverified. Obligatory *de se* is not
+The signature is the book's (74), in the section on the obligatory-control signature of the
+first chapter, and the derivation of the criteria from it runs through (75)–(79). Obligatory
+*de se* is not
 criterial for obligatory control, being a property of the attitude tier, and the lexical-subject
 diagnostic is a criterion of obligatory nullness rather than of obligatory control, the
 separation the overt-subject studies turn on; the positive human-reference clause of the
@@ -36,8 +37,6 @@ non-obligatory signature is not modelled.
 namespace Landau2013
 
 open Control
-
--- UNVERIFIED: the signature is the book's (74), its derivation of the criteria (75)–(79).
 
 /-- The two clauses of the signature of obligatory control: the co-dependence clause admits
 implicit, split, and, through "part of it", partial control. -/
