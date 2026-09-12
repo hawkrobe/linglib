@@ -135,6 +135,19 @@ theorem uniformSpeaker_apply_singleton_eq_one {α : ℝ} (hα : 0 < α) {t : T} 
     (uniformListener_apply_singleton_le_one sem c t) fun c' hc' => by
       rw [uniformListener_apply_singleton, if_neg (hother c' hc')]
 
+/-- With positive finite cost factors, a speaker over the uniform literal listener produces a
+choice at a state exactly when the choice is true there. -/
+theorem speaker_uniformListener_apply_singleton_ne_zero_iff {α : ℝ} (hα : 0 < α)
+    {cost : C → ℝ≥0∞} (hc0 : ∀ c, cost c ≠ 0) (hctop : ∀ c, cost c ≠ ∞) (t : T) (c : C) :
+    speaker α cost (uniformListener sem) t {c} ≠ 0 ↔ t ∈ sem c :=
+  ⟨λ h => by
+    by_contra hmem
+    exact h (speaker_apply_singleton_eq_zero hα
+      (by rw [uniformListener_apply_singleton, if_neg hmem])),
+   λ h => speaker_apply_singleton_ne_zero hα.le hc0 hctop
+    (λ c' => uniformListener_apply_singleton_le_one sem c' t)
+    (uniformListener_apply_singleton_ne_zero sem h)⟩
+
 variable [DecidableEq O] (obs : C → O)
 
 theorem sum_rpow_uniformListener {α : ℝ} (hα : 0 < α) (t : T) :
@@ -460,6 +473,24 @@ theorem familyListener_uniform_apply_singleton_eq_zero {Λ : Type*} [Fintype Λ]
       (μ := uniformOn Set.univ) (w := t) (l := l) (u := c) (uniformOn_univ_singleton_ne_zero _)
       (uniformSpeaker_apply_singleton_ne_zero (sem l) hα.le h))
     (uniformSpeaker_apply_singleton_eq_zero (sem p.2) hα hp)
+
+omit [Nonempty C] in
+/-- With positive finite cost factors, the state marginal of the family listener at the uniform
+prior is positive at a state exactly when some latent makes the choice true there. -/
+theorem familyListener_uniform_fst_apply_singleton_ne_zero_iff {Λ : Type*} [Fintype Λ]
+    [MeasurableSpace Λ] [DiscreteMeasurableSpace Λ] [Nonempty Λ] (sem : Λ → C → Finset T)
+    {α : ℝ} (hα : 0 < α) {cost : C → ℝ≥0∞} (hc0 : ∀ c, cost c ≠ 0) (hctop : ∀ c, cost c ≠ ∞)
+    {c : C} (hc : ∃ l t, t ∈ sem l c) (t : T) :
+    (familyListener (fun l => uniformListener (sem l)) α cost (uniformOn Set.univ) c).fst {t}
+      ≠ 0 ↔ ∃ l, t ∈ sem l c := by
+  obtain ⟨l₀, t₀, h₀⟩ := hc
+  rw [familyListener_fst_apply_singleton_ne_zero_iff _ α cost
+    (comp_familySpeaker_ne_zero (L := fun l => uniformListener (sem l))
+      (uniformOn_univ_singleton_ne_zero (t₀, l₀))
+      ((speaker_uniformListener_apply_singleton_ne_zero_iff (sem l₀) hα hc0 hctop t₀ c).2 h₀))]
+  exact exists_congr λ l => by
+    rw [speaker_uniformListener_apply_singleton_ne_zero_iff (sem l) hα hc0 hctop]
+    exact and_iff_right (uniformOn_univ_singleton_ne_zero _)
 
 omit [Nonempty C] in
 /-- The evaluation register for a latent family at a natural rationality and the uniform

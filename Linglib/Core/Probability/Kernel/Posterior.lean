@@ -1,6 +1,7 @@
 import Linglib.Core.Algebra.Order.Chebyshev
 import Linglib.Core.MeasureTheory.Measure.Prod
 import Linglib.Core.Probability.UniformOn
+import Linglib.Core.Data.ENNReal.NNRatCast
 import Mathlib.Probability.Kernel.Posterior
 import Mathlib.MeasureTheory.Measure.Real
 
@@ -62,6 +63,13 @@ theorem posterior_apply_singleton {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (ω
   rw [ENNReal.eq_div_iff hx (measure_ne_top _ _), mul_comm]
   rw [hrect]
   ring
+
+/-- The posterior is positive at a state exactly when the prior and the likelihood are. -/
+theorem posterior_apply_singleton_ne_zero_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (ω : Ω) :
+    (κ†μ) x {ω} ≠ 0 ↔ μ {ω} ≠ 0 ∧ κ ω {x} ≠ 0 := by
+  rw [posterior_apply_singleton κ μ hx, ne_eq, ENNReal.div_eq_zero_iff, mul_eq_zero, not_or,
+    not_or]
+  exact ⟨λ h => h.1, λ h => ⟨h, measure_ne_top _ _⟩⟩
 
 /-- Two states with the same likelihood of the observation and the same prior mass have the
 same posterior mass. -/
@@ -369,8 +377,6 @@ theorem comp_uniformOn_univ_apply_singleton (x : 𝓧) :
 observation normalized over the states, the prior cancelling. -/
 theorem posterior_uniformOn_univ_apply_singleton {x : 𝓧} (hx : ∑ w, κ w {x} ≠ 0) (w : W) :
     (κ†(uniformOn (Set.univ : Set W))) x {w} = κ w {x} / ∑ w', κ w' {x} := by
-  have : IsProbabilityMeasure (uniformOn (Set.univ : Set W)) :=
-    isProbabilityMeasure_uniformOn Set.finite_univ Set.univ_nonempty
   have hc : (Fintype.card W : ℝ≥0∞)⁻¹ ≠ 0 := ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _)
   have hct : (Fintype.card W : ℝ≥0∞)⁻¹ ≠ ⊤ :=
     ENNReal.inv_ne_top.mpr (Nat.cast_ne_zero.mpr Fintype.card_ne_zero)
@@ -378,6 +384,17 @@ theorem posterior_uniformOn_univ_apply_singleton {x : 𝓧} (hx : ∑ w, κ w {x
     rw [comp_uniformOn_univ_apply_singleton]; exact mul_ne_zero hc hx
   rw [posterior_apply_singleton _ _ hsum, uniformOn_univ_apply_singleton,
     comp_uniformOn_univ_apply_singleton, ENNReal.mul_div_mul_left _ _ hc hct]
+
+open scoped NNRat in
+/-- The exact register: a kernel with rational rows has, against the uniform prior, the
+rational posterior that is the state's share of the observation's column. -/
+theorem posterior_uniformOn_univ_nnratCast_apply_singleton (q : W → 𝓧 → ℚ≥0)
+    (hκ : ∀ w x, κ w {x} = q w x) {x : 𝓧} (hx : ∑ w, q w x ≠ 0) (w : W) :
+    (κ†(uniformOn (Set.univ : Set W))) x {w} = ((q w x / ∑ w', q w' x : ℚ≥0) : ℝ≥0∞) := by
+  rw [posterior_uniformOn_univ_apply_singleton κ (by
+      simp only [hκ, ← ENNReal.nnratCast_sum, ne_eq, ENNReal.nnratCast_eq_zero]; exact hx),
+    ENNReal.nnratCast_div _ _ hx, ENNReal.nnratCast_sum]
+  simp only [hκ]
 
 end UniformPrior
 
