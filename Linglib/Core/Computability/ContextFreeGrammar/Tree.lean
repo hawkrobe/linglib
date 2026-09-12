@@ -1,6 +1,8 @@
 import Mathlib.Computability.ContextFreeGrammar
 import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 import Linglib.Core.Order.Branching
+import Mathlib.Data.W.Basic
+import Mathlib.Logic.Encodable.Basic
 
 /-!
 # Derivation Trees for Context-Free Grammars
@@ -16,6 +18,7 @@ children. The file provides:
 * `exists_valid_tree`: tree existence, with height–yield bounds.
 * `size`: the size measure, with minimality and a pigeonhole on derivation paths.
 * `map`: relabelling of nonterminals, commuting with `yield`, `height` and `subtreeAt?`.
+* A `Countable` instance for countable `T` and `N`, by an injection into a W-type.
 -/
 /-- A derivation tree for a context-free grammar.
     Leaves hold terminal symbols; internal nodes hold a nonterminal
@@ -1219,5 +1222,65 @@ instance : Core.Order.IsFiniteBranching (DerivationTree T N) :=
       have := List.sizeOf_lt_of_mem hc
       simp only [DerivationTree.node.sizeOf_spec]
       omega
+
+/-! ### Countability -/
+
+/-- Branching signature of the W-type encoding: leaves and the empty list have no children, a
+node has one child (its list of children), a cons cell has two. -/
+private def wArity : Option (T ⊕ (N ⊕ Unit)) → Type
+  | some (.inl _) => Empty
+  | some (.inr (.inl _)) => Unit
+  | none => Empty
+  | some (.inr (.inr _)) => Bool
+
+mutual
+private def toW : DerivationTree T N → WType (wArity (T := T) (N := N))
+  | .leaf t => ⟨some (.inl t), Empty.elim⟩
+  | .node n cs => ⟨some (.inr (.inl n)), fun _ => toWList cs⟩
+private def toWList : List (DerivationTree T N) → WType (wArity (T := T) (N := N))
+  | [] => ⟨none, Empty.elim⟩
+  | c :: cs => ⟨some (.inr (.inr ())), fun b => bif b then toW c else toWList cs⟩
+end
+
+mutual
+private theorem toW_injective : ∀ {t t' : DerivationTree T N}, toW t = toW t' → t = t'
+  | .leaf _, .leaf _, h => by
+    obtain ⟨h1, -⟩ := WType.mk.inj h
+    cases h1; rfl
+  | .leaf _, .node _ _, h => by exact absurd (WType.mk.inj h).1 (by simp)
+  | .node _ _, .leaf _, h => by exact absurd (WType.mk.inj h).1 (by simp)
+  | .node n cs, .node n' cs', h => by
+    obtain ⟨h1, h2⟩ := WType.mk.inj h
+    cases h1
+    rw [toWList_injective (congr_fun (eq_of_heq h2) ())]
+private theorem toWList_injective :
+    ∀ {cs cs' : List (DerivationTree T N)}, toWList cs = toWList cs' → cs = cs'
+  | [], [], _ => rfl
+  | [], _ :: _, h => by exact absurd (WType.mk.inj h).1 (by simp)
+  | _ :: _, [], h => by exact absurd (WType.mk.inj h).1 (by simp)
+  | c :: cs, c' :: cs', h => by
+    obtain ⟨-, h2⟩ := WType.mk.inj h
+    have h3 := congr_fun (eq_of_heq h2)
+    rw [toW_injective (t := c) (t' := c') (by simpa using h3 true),
+      toWList_injective (cs := cs) (cs' := cs') (by simpa using h3 false)]
+end
+
+instance [Countable T] [Countable N] : Countable (DerivationTree T N) := by
+  classical
+  let _ := Encodable.ofCountable T
+  let _ := Encodable.ofCountable N
+  have _ : ∀ a, Fintype (wArity (T := T) (N := N) a) := fun a => by
+    rcases a with _ | (_ | (_ | _))
+    · exact inferInstanceAs (Fintype Empty)
+    · exact inferInstanceAs (Fintype Empty)
+    · exact inferInstanceAs (Fintype Unit)
+    · exact inferInstanceAs (Fintype Bool)
+  have _ : ∀ a, Encodable (wArity (T := T) (N := N) a) := fun a => by
+    rcases a with _ | (_ | (_ | _))
+    · exact inferInstanceAs (Encodable Empty)
+    · exact inferInstanceAs (Encodable Empty)
+    · exact inferInstanceAs (Encodable Unit)
+    · exact inferInstanceAs (Encodable Bool)
+  exact Function.Injective.countable fun _ _ h => toW_injective h
 
 end DerivationTree
