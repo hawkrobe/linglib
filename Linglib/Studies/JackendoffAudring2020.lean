@@ -31,7 +31,10 @@ conjunction of no feature of the paradigm (`spricht_morphome`). The Same Verb Pr
 5.6, is a shared morphosyntax-phonology pivot without a shared semantics: two lexemes selecting
 the same pivot inflect alike at every cell (`realize_eq_of_sameVerb`), which pairs the two
 *draw*s of (60) and *take* with *take part*, (57) to (59), and separates the homophones *ring*
-and *wring*.
+and *wring*. Structural Intersection, Section 7.8.1, is the meet: the schema (6) is the
+intersection of its three sisters (5) (`ishSchema_body_eq_inf`), is the most they have in
+common (`instantiates_ishSchema_iff`), and absorbs a newly encountered sister
+(`ishSchema_inf_foolish`).
 
 ## Implementation notes
 
@@ -45,6 +48,10 @@ and *wring*.
 * The cycle theorem renders the paradox of Objection 10 through the well-foundedness of an
   inheritance hierarchy; the book argues from the above-and-below paradox and makes no
   well-foundedness claim.
+* The correspondence between a schema's variable coindices and the constant coindices of its
+  instances, left unformalized in Section 4.13.2, is the subscripting of
+  `Morphology.Construction.Schema.InstantiatesAt`; a productive variable is one marked open
+  over and above its attested fillers.
 
 ## References
 
@@ -52,6 +59,7 @@ and *wring*.
 * [booij-2010]
 * [aronoff-1994]
 * [spencer-2013]
+* [albright-hayes-2003]
 -/
 
 namespace JackendoffAudring2020
@@ -522,5 +530,57 @@ share the stem's phonology, and the past the past participle's. -/
 theorem walk_syncretism :
     formCells walk .bare = {.pres, .inf} ∧ formCells walk .t = {.past, .ptcp} := by
   decide
+
+/-! ### Structural Intersection -/
+
+/-- The bases and the affix of the *-ish* adjectives (5) of Section 7.8.1, with *fool* for the
+newly encountered sister. -/
+inductive IshAtom
+  | pig
+  | child
+  | slug
+  | fool
+  | ish
+  deriving DecidableEq
+
+/-- The slots of an *-ish* adjective. -/
+inductive IshSlot
+  | base
+  | affix
+  deriving DecidableEq
+
+/-- The *-ish* adjective on base `b`. -/
+def ishWord (b : IshAtom) : IshSlot → Flat IshAtom
+  | .base => ↑b
+  | .affix => ↑IshAtom.ish
+
+/-- The schema (6): the affix pinned, the base a variable. -/
+def ishSchema : Schema IshSlot (Flat IshAtom) :=
+  ⟨λ | .base => ⊥ | .affix => ↑IshAtom.ish, {.base}⟩
+
+/-- Structural Intersection constructs the schema: the description of (6) is the meet of the
+three sisters of (5), keeping what they share and leaving a variable where they differ. -/
+theorem ishSchema_body_eq_inf :
+    ishSchema.body = ishWord .pig ⊓ ishWord .child ⊓ ishWord .slug := by
+  funext v
+  cases v <;> decide
+
+/-- The schema is the most the sisters have in common: a description is instantiated by all
+three exactly when it is instantiated by the schema's description. -/
+theorem instantiates_ishSchema_iff {s : Schema IshSlot (Flat IshAtom)} :
+    s.Instantiates ishSchema.body ↔
+      s.Instantiates (ishWord .pig) ∧ s.Instantiates (ishWord .child) ∧
+        s.Instantiates (ishWord .slug) := by
+  rw [ishSchema_body_eq_inf, Schema.instantiates_inf_iff, Schema.instantiates_inf_iff,
+    and_assoc]
+
+theorem ishSchema_le_foolish : ishSchema.body ≤ ishWord .fool
+  | .base => bot_le
+  | .affix => le_rfl
+
+/-- A newly encountered sister intersected with the schema yields the schema again, the
+Minimal Generalization Learner's fixed point. -/
+theorem ishSchema_inf_foolish : ishSchema.body ⊓ ishWord .fool = ishSchema.body :=
+  inf_eq_left.2 ishSchema_le_foolish
 
 end JackendoffAudring2020
