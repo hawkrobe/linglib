@@ -814,6 +814,7 @@ def CoherenceRelation.preferredTransition : CoherenceRelation → Transition
   | .elaboration  => .continuation
   | .explanation  => .continuation
   | .result       => .continuation
+  | .violatedExpectation => .continuation  -- cause–effect, by analogy
   | .occasion     => .retaining
   | .parallel     => .retaining
   | .contrast     => .shifting
