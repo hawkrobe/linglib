@@ -25,11 +25,6 @@ and the separation in material integrity of [hale-keyser-1987] is their shared s
 The first dimension is continuous in the paper's correspondence analysis and is
 discretized here into three values.
 
-## TODO
-
-The paper is not on file; the clip inventory and locators are transcribed from an earlier
-version of this file and are UNVERIFIED.
-
 ## References
 
 * [majid-boster-bowerman-2008]
