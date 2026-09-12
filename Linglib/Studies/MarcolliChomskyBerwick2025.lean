@@ -6,16 +6,23 @@ Authors: Robert Hawkins
 import Linglib.Syntax.Minimalist.Linearization.Externalization
 
 /-!
-# Externalization examples from Marcolli–Chomsky–Berwick
+# Marcolli, Chomsky and Berwick (2025): Mathematical Structure of Syntactic Merge
 
-`decide`-checked worked examples of [marcolli-chomsky-berwick-2025] §1.12.1/§1.13
-externalization on the `SyntacticObject` carrier: the harmonic head-initial and
-head-final orders of a determiner–noun Merge (the head-side convention flips the
-yield), and exocentric elimination — two saturated nouns determine no head and no
-order (§1.13.2).
+This file formalizes the worked examples of externalization of
+[marcolli-chomsky-berwick-2025] on the `SyntacticObject` carrier of the Minimalist
+substrate: the harmonic head-initial and head-final orders of a determiner–noun Merge, the
+head-side convention flipping the yield, and exocentric elimination, two saturated nouns
+determining no head and hence no order. The framework itself is the `Syntax/Minimalist/`
+theory layer; the examples are kernel-checked against it.
 
-The book's framework itself is the `Syntax/Minimalist/` theory layer; this file
-holds its concrete examples, kernel-checked against that substrate.
+## TODO
+
+The book's section locators (§1.12.1, §1.13, §1.13.2) are transcribed from an earlier
+version of this file and are UNVERIFIED against the published text.
+
+## References
+
+* [marcolli-chomsky-berwick-2025]
 -/
 
 namespace MarcolliChomskyBerwick2025
@@ -37,8 +44,8 @@ example : (theDog.linearize .final).map (·.map (·.id)) = some [1, 0] := by dec
 example : theDog.phonYield .initial = some ["the", "dog"] := by decide
 example : theDog.phonYield .final = some ["dog", "the"] := by decide
 
-/-- Exocentric Merge: two saturated `N`s, neither selecting the other — no head,
-    no order ([marcolli-chomsky-berwick-2025] §1.13.2). -/
+/-- Exocentric Merge: two saturated `N`s, neither selecting the other, so no head and no
+order. -/
 private def exoNN : SyntacticObject :=
   ⟨UnorderedTree.mk (.node (Sum.inr none)
     [.node (Sum.inl ⟨.simple .N [] (phonForm := "cats"), 0⟩) [],
