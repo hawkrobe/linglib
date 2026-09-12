@@ -18,11 +18,6 @@ non-first-person form (`fission_person_restriction`), requires an inchoative pre
 (`spanishFissionRule`). Acceptability follows the library's six-level taxonomy, the paper's
 star mapping to the unacceptable level.
 
-## TODO
-
-The paper is not on file; example and rule numbers are transcribed from an earlier version
-of this file and are UNVERIFIED.
-
 ## References
 
 * [munoz-perez-2026]
