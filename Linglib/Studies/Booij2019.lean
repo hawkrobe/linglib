@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Data.Forms.Booij2019
-import Linglib.Morphology.Construction.Schema
+import Linglib.Morphology.ConstructionMorphology.Schema
 import Linglib.Morphology.Morphotactics.CVTemplate
 import Mathlib.Data.Fin.VecNotation
 import Mathlib.Tactic.FinCases
@@ -43,7 +43,7 @@ an adjective with the comparative template over the same three consonants
 
 namespace Booij2019
 
-open Morphology Morphology.Construction
+open Morphology ConstructionMorphology
 
 /-! ### The occupation template `C₁aC₂C₂aaC₃` -/
 

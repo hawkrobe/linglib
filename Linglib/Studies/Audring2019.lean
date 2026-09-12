@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Data.Forms.Audring2019
-import Linglib.Morphology.Construction.Schema
+import Linglib.Morphology.ConstructionMorphology.Schema
 import Linglib.Core.Relation.FactorsThroughOn
 import Mathlib.Data.Fin.VecNotation
 import Mathlib.Tactic.FinCases
@@ -47,7 +47,7 @@ do not, and cannot state the pairing they do.
 
 namespace Audring2019
 
-open Morphology.Construction
+open ConstructionMorphology
 
 /-- A word with base `b` and affix `a` over the two slots base and affix. -/
 def word (b a : String) : Fin 2 → Flat String := ![↑b, ↑a]
