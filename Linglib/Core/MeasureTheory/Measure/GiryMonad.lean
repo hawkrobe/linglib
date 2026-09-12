@@ -7,6 +7,8 @@ import Mathlib.MeasureTheory.Measure.GiryMonad
 import Mathlib.MeasureTheory.Integral.Lebesgue.Countable
 import Mathlib.MeasureTheory.Integral.Lebesgue.Add
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
+import Linglib.Core.Order.CompleteLattice
+import Linglib.Core.Order.OmegaCompletePartialOrder
 
 /-!
 # Monotonicity and ω-continuity of the Giry monad
@@ -27,6 +29,8 @@ recursive probabilistic programs of [kozen-1981], stated on the monad of [giry-1
   suprema of measures.
 * `MeasureTheory.Measure.iSup_bind_of_monotone`, `MeasureTheory.Measure.bind_iSup_of_monotone`:
   `bind` commutes with monotone suprema in each argument.
+* `MeasureTheory.Measure.ωScottContinuous_bind`: `bind` is ω-Scott-continuous jointly in the
+  measure and the kernel, so operators built from it have Kleene least fixed points.
 
 ## References
 
@@ -34,7 +38,7 @@ recursive probabilistic programs of [kozen-1981], stated on the monad of [giry-1
 * [kozen-1981]
 -/
 
-open MeasureTheory
+open MeasureTheory OmegaCompletePartialOrder
 open scoped ENNReal
 
 namespace ENNReal
@@ -113,7 +117,8 @@ theorem iSup_bind_of_monotone {μ : ℕ → Measure α} (hμ : Monotone μ) {f :
   simp_rw [bind_apply hs hf.aemeasurable]
 
 theorem bind_iSup_of_monotone {μ : Measure α} {f : ℕ → α → Measure β}
-    (hf : ∀ n, Measurable (f n)) (hmono : Monotone f) : μ.bind (fun a => ⨆ n, f n a) = ⨆ n, μ.bind (f n) := by
+    (hf : ∀ n, Measurable (f n)) (hmono : Monotone f) :
+    μ.bind (fun a => ⨆ n, f n a) = ⨆ n, μ.bind (f n) := by
   have hpt : ∀ a, ∀ {s : Set β}, MeasurableSet s → (⨆ n, f n a) s = ⨆ n, f n a s :=
     fun a _ hs => iSup_apply_of_monotone (fun m n h => hmono h a) hs
   have hmeas : Measurable fun a => ⨆ n, f n a :=
@@ -123,11 +128,50 @@ theorem bind_iSup_of_monotone {μ : Measure α} {f : ℕ → α → Measure β}
   ext s hs
   rw [bind_apply hs hmeas.aemeasurable,
     iSup_apply_of_monotone
-      (fun m n h =>
-        bind_mono_right (fun a => hmono h a) (hf m).aemeasurable (hf n).aemeasurable) hs]
+      (fun m n h => bind_mono_right (fun a => hmono h a) (hf m).aemeasurable
+        (hf n).aemeasurable) hs]
   simp_rw [bind_apply hs (hf _).aemeasurable, hpt _ hs]
   exact lintegral_iSup (fun n => (measurable_coe hs).comp (hf n))
     fun m n h a => le_iff'.1 (hmono h a) s
+
+/-! ### ω-Scott continuity -/
+
+variable {γ : Type*} [OmegaCompletePartialOrder γ]
+
+theorem measurable_iSup_of_monotone {f : ℕ → α → Measure β} (hf : ∀ n, Measurable (f n))
+    (hmono : Monotone f) : Measurable fun a => ⨆ n, f n a :=
+  measurable_of_measurable_coe _ fun s hs => by
+    simp_rw [iSup_apply_of_monotone (fun m n h => hmono h _) hs]
+    exact Measurable.iSup fun n => (measurable_coe hs).comp (hf n)
+
+/-- `bind` is ω-Scott-continuous jointly in the measure and the kernel. -/
+theorem ωScottContinuous_bind {M : γ → Measure α} {F : γ → α → Measure β}
+    (hM : ωScottContinuous M) (hF : ∀ a, ωScottContinuous (F · a))
+    (hmeas : ∀ x, Measurable (F x)) : ωScottContinuous fun x => (M x).bind (F x) := by
+  refine ωScottContinuous.of_monotone_map_ωSup ⟨fun x y h =>
+    bind_mono (hM.monotone h) (fun a => (hF a).monotone h) (hmeas x).aemeasurable
+      (hmeas y).aemeasurable, fun c => ?_⟩
+  have hMc : Monotone fun n => M (c n) := fun m n h => hM.monotone (c.monotone h)
+  have hFc : Monotone fun n => F (c n) := fun m n h a => (hF a).monotone (c.monotone h)
+  have hM' : M (ωSup c) = ⨆ n, M (c n) := by
+    rw [hM.map_ωSup, CompleteLattice.ωSup_eq_iSup]; rfl
+  have hF' : F (ωSup c) = fun a => ⨆ n, F (c n) a := by
+    funext a; rw [(hF a).map_ωSup, CompleteLattice.ωSup_eq_iSup]; rfl
+  rw [CompleteLattice.ωSup_eq_iSup, hM', hF',
+    iSup_bind_of_monotone hMc (measurable_iSup_of_monotone (fun n => hmeas (c n)) hFc)]
+  simp_rw [bind_iSup_of_monotone (fun n => hmeas (c n)) hFc]
+  rw [iSup_iSup_eq_iSup_diag fun m n m' n' hm hn =>
+    bind_mono (hMc hm) (fun a => hFc hn a) (hmeas (c n)).aemeasurable (hmeas (c n')).aemeasurable]
+  rfl
+
+theorem ωScottContinuous_bind_left {f : α → Measure β} (hf : Measurable f) :
+    ωScottContinuous fun μ : Measure α => μ.bind f :=
+  ωScottContinuous_bind ωScottContinuous.id (fun _ => ωScottContinuous.const) fun _ => hf
+
+theorem ωScottContinuous_bind_right {μ : Measure α} {F : γ → α → Measure β}
+    (hF : ∀ a, ωScottContinuous (F · a)) (hmeas : ∀ x, Measurable (F x)) :
+    ωScottContinuous fun x => μ.bind (F x) :=
+  ωScottContinuous_bind ωScottContinuous.const hF hmeas
 
 end Measure
 
