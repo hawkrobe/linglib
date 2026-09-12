@@ -162,6 +162,47 @@ theorem IsBTD.toIsBTLI (h : IsBTD k L) : IsBTLI k L :=
 theorem IsBTK.toIsBTLI (h : IsBTK k L) : IsBTLI k L :=
   IsBTC.mono (fun _ => Language.IsReverseDefinite.toIsGeneralizedDefinite) h
 
+/-! ## Tier literals
+
+The literals of a propositional logic over tier affixes: the words whose projection to a tier
+`T` is exactly `xs`, begins with `xs`, or ends in `xs`. Each lies in the multitier extension of
+the class its affix belongs to, with a window at least the length of the affix (strictly more
+for a whole tier word). -/
+
+variable (T : α → Bool) (xs : List α)
+
+/-- The words whose projection to the tier `T` is `xs`: the tier word `[⋊xs⋉]_T`. -/
+def tierWord : Language α := {w | w.filter T ∈ ({xs} : Language α)}
+
+/-- The words whose projection to the tier `T` begins with `xs`: the tier prefix `[⋊xs]_T`. -/
+def tierPrefix : Language α := {w | w.filter T ∈ ofPrefix xs}
+
+/-- The words whose projection to the tier `T` ends in `xs`: the tier suffix `[xs⋉]_T`. -/
+def tierSuffix : Language α := {w | w.filter T ∈ ofSuffix xs}
+
+theorem isBTN_tierWord : IsBTN (tierWord T xs) :=
+  .base ⟨T, {xs}, rfl, Or.inl (Set.finite_singleton xs)⟩
+
+theorem isBTD_tierWord (hk : xs.length < k) : IsBTD k (tierWord T xs) :=
+  .base ⟨T, {xs}, rfl, (isDefinite_succ_of_forall_length_le
+    λ _ hw => le_of_eq (congrArg List.length hw)).mono hk⟩
+
+theorem isBTK_tierWord (hk : xs.length < k) : IsBTK k (tierWord T xs) :=
+  .base ⟨T, {xs}, rfl, (isReverseDefinite_succ_of_forall_length_le
+    λ _ hw => le_of_eq (congrArg List.length hw)).mono hk⟩
+
+theorem isBTK_tierPrefix (hk : xs.length ≤ k) : IsBTK k (tierPrefix T xs) :=
+  .base ⟨T, ofPrefix xs, rfl, (isReverseDefinite_ofPrefix xs).mono hk⟩
+
+theorem isBTD_tierSuffix (hk : xs.length ≤ k) : IsBTD k (tierSuffix T xs) :=
+  .base ⟨T, ofSuffix xs, rfl, (isDefinite_ofSuffix xs).mono hk⟩
+
+theorem isBTK_ofPrefix (hk : xs.length ≤ k) : IsBTK k (ofPrefix xs) :=
+  .of_class ((isReverseDefinite_ofPrefix xs).mono hk)
+
+theorem isBTD_ofSuffix (hk : xs.length ≤ k) : IsBTD k (ofSuffix xs) :=
+  .of_class ((isDefinite_ofSuffix xs).mono hk)
+
 /-! ## TSL ⊆ multitier SL -/
 
 /-- **TSL_k → BTSL_k**: every tier-based strictly local language is in the
