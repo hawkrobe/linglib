@@ -1,5 +1,4 @@
 import Linglib.Semantics.Genericity.NominalMappingParameter
-import Linglib.Studies.Krifka2004
 import Linglib.Data.Examples.LeBruynDeSwart2022
 
 /-!
@@ -15,9 +14,9 @@ reference*. This adjudicates two accounts:
 * [chierchia-1998] (with [dayal-2004]): bare plurals denote kinds; the existential comes
   from Derived Kind Predication, which is *local*, so scope is position-invariant and
   cannot be wide (`NMP.chierchia_position_invariant`).
-* [krifka-2004]: bare plurals are properties; the existential type shift is a *local type
+* [krifka-2003]: bare plurals are properties; the existential type shift is a *local type
   repair* at the surface position, so a scrambled (raised) bare plural scopes wide
-  (`Krifka2004.scope_follows_position`).
+  (`scope_follows_position`).
 
 Both accounts share one existential closure (`NMP.existsClose`) and differ only in where
 negation sits: Chierchia always keeps it outside (`¬ ∃`), Krifka lets it move inside under
@@ -38,8 +37,44 @@ namespace LeBruynDeSwart2022
 
 open Data.Examples
 open Semantics.Kinds.NMP
-  (chierchiaDerivScrambled chierchiaDerivUnscrambled chierchia_position_invariant)
-open Krifka2004 (krifkaDerivScrambled krifkaDerivUnscrambled scope_follows_position)
+  (chierchiaDerivScrambled chierchiaDerivUnscrambled chierchia_position_invariant existsClose)
+
+/-! ### Krifka's shift at the scrambled position
+
+The paper reads the locally triggered existential shift of [krifka-2003] as applying at the
+bare plural's surface position, so that scrambling over negation carries the existential above
+it. -/
+
+section Scrambling
+
+variable {Entity : Type*}
+
+/-- Unscrambled `[niet [BP V]]`: ∃-shift below negation — `¬ ∃ x ∈ dom, P x ∧ Q x`
+(narrow scope). Definitionally `NMP.chierchiaDerivUnscrambled`. -/
+def krifkaDerivUnscrambled (dom : List Entity) (P Q : Entity → Prop) : Prop :=
+  ¬ existsClose dom P Q
+
+/-- Scrambled `[BP [niet V]]`: ∃-shift above negation — `∃ x ∈ dom, P x ∧ ¬ Q x`
+(wide scope over negation). -/
+def krifkaDerivScrambled (dom : List Entity) (P Q : Entity → Prop) : Prop :=
+  existsClose dom P (λ x => ¬ Q x)
+
+/-- **Scope follows position**: the scrambled (wide) and unscrambled (narrow) derivations
+diverge on some model — witnessed by a two-element domain where one element satisfies the
+predicate and the other does not. -/
+theorem scope_follows_position :
+    ∃ (Entity : Type) (dom : List Entity) (P Q : Entity → Prop),
+      krifkaDerivScrambled dom P Q ≠ krifkaDerivUnscrambled dom P Q := by
+  refine ⟨Bool, [true, false], λ _ => True, λ b => b = true, ?_⟩
+  intro h
+  have hs : krifkaDerivScrambled [true, false] (λ _ => True) (λ b => b = true) := by
+    unfold krifkaDerivScrambled; decide
+  rw [h] at hs
+  have hu : ¬ krifkaDerivUnscrambled [true, false] (λ _ => True) (λ b => b = true) := by
+    unfold krifkaDerivUnscrambled; decide
+  exact hu hs
+
+end Scrambling
 
 /-- Judgment of a named reading, if recorded. -/
 def readingOf (row : LinguisticExample) (name : String) : Option Features.Judgment :=
