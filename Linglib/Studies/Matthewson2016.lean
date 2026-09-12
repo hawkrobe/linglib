@@ -7,45 +7,33 @@ import Linglib.Fragments.NezPerce.Modals
 import Linglib.Fragments.Niuean.Modals
 
 /-!
-# Matthewson (2016) — Modality
+# Matthewson (2016): Modality
 
-[matthewson-2016]
+This file formalizes the cross-linguistic claims of the handbook survey [matthewson-2016]
+on modal flavour, modal force, and modal–temporal interaction in the framework of
+[kratzer-2012]. Modal backgrounds divide three ways, factual-circumstantial,
+factual-evidential, and content-evidential, refining the epistemic–circumstantial binary;
+Gitksan *ima('a)*, *gat*, and Nez Perce *o'qa* are modals without duals, specialized for
+neither necessity nor possibility; epistemic modals are more likely than circumstantial ones
+to lack duals, as Gitksan and Niuean show by encoding force only in the circumstantial
+domain; the Gitksan system lexicalizes all three background classes; and future temporal
+orientation requires overt prospective marking in Gitksan, mirroring the English requirement
+of *have* for past orientation.
 
-Lisa Matthewson. "Modality." Chapter 18 in *The Cambridge Handbook of
-Formal Semantics*, ed. Maria Aloni and Paul Dekker. Cambridge University
-Press. pp. 525–559. DOI: 10.1017/CBO9781139236157.019.
+## Implementation notes
 
-A survey of three core topics in modal semantics — modal flavour (§18.2),
-modal force (§18.3), and modal–temporal interactions (§18.4) — presented
-within the Kratzerian framework with cross-linguistic data from Gitksan,
-St'át'imcets, Nez Perce, Niuean, and other languages.
+The modal inventories are the Gitksan, St'át'imcets, Nez Perce, and Niuean fragments; the
+primary-source theorems for Gitksan are in `Studies/Matthewson2013.lean`.
 
-## Key contributions formalized here
+## TODO
 
-1. **Three-way background classification** (Table 18.3):
-   factual-circumstantial, factual-evidential, content-evidential.
-   Refines the traditional epistemic/circumstantial binary following
-   [kratzer-2012].
+The chapter is not on file; section and table locators are transcribed from an earlier
+version of this file and are UNVERIFIED.
 
-2. **Modals without duals** (§18.3.2): Gitksan ima('a)/gat and Nez Perce
-   o'qa are not specialized for necessity or possibility. Different
-   analyses: variable force (Peterson 2010) vs. strengthened possibility
-   (Deal 2011).
+## References
 
-3. **Cross-linguistic flavour–force correlation** (§18.5): epistemic
-   modals are more likely to lack duals than circumstantial modals.
-   Gitksan and Niuean both encode force distinctions in the circumstantial
-   domain but not the epistemic domain.
-
-4. **Gitksan three-way split** (Table 18.1): the Gitksan modal system
-   lexicalizes all three background classes — factual-circumstantial
-   (da'akhlxw, anookxw, sgi), factual-evidential (ima('a)), and
-   content-evidential (gat).
-
-5. **Temporal orientation and prospective aspect** (§18.4.3): Gitksan
-   requires overt prospective marking (*dim*) for future temporal
-   orientation, mirroring English's requirement of *have* for past
-   orientation.
+* [matthewson-2016]
+* [kratzer-2012]
 -/
 
 namespace Matthewson2016
@@ -143,10 +131,10 @@ end Gitksan
     the boundary. Epistemic modals are purely epistemic; circumstantial
     modals have no epistemic readings. -/
 theorem gitksan_absolute_split :
-    Gitksan.Modals.epistemicModals.all (fun e =>
-      e.meaning.all (fun ff => ff.flavor == .epistemic)) = true ∧
-    Gitksan.Modals.circumstantialModals.all (fun e =>
-      e.meaning.all (fun ff => ff.flavor != .epistemic)) = true := by
+    Gitksan.Modals.epistemicModals.all (λ e =>
+      e.meaning.all (λ ff => ff.flavor == .epistemic)) = true ∧
+    Gitksan.Modals.circumstantialModals.all (λ e =>
+      e.meaning.all (λ ff => ff.flavor != .epistemic)) = true := by
   constructor <;> decide
 
 -- ============================================================================
@@ -229,18 +217,18 @@ theorem niuean_liga_force_consistent :
 /-- Niuean: epistemic domain has one modal (both forces), circumstantial
     has two (one per force). -/
 theorem niuean_force_asymmetry :
-    (Niuean.Modals.allExpressions.filter (fun e =>
-      e.meaning.any (fun ff => ff.flavor == .epistemic))).length = 1 ∧
-    (Niuean.Modals.allExpressions.filter (fun e =>
-      e.meaning.any (fun ff => ff.flavor == .circumstantial))).length = 2 := by
+    (Niuean.Modals.allExpressions.filter (λ e =>
+      e.meaning.any (λ ff => ff.flavor == .epistemic))).length = 1 ∧
+    (Niuean.Modals.allExpressions.filter (λ e =>
+      e.meaning.any (λ ff => ff.flavor == .circumstantial))).length = 2 := by
   constructor <;> decide
 
 /-- All St'át'imcets and Niuean modals satisfy IFF. -/
 theorem all_fragments_iff :
     Statimcets.Modals.allExpressions.all
-      (fun e => satisfiesIFF e.meaning) = true ∧
+      (λ e => satisfiesIFF e.meaning) = true ∧
     Niuean.Modals.allExpressions.all
-      (fun e => satisfiesIFF e.meaning) = true := by
+      (λ e => satisfiesIFF e.meaning) = true := by
   constructor <;> decide
 
 -- ============================================================================
@@ -303,7 +291,7 @@ theorem nez_perce_oqa_sav :
 /-- Niuean: all modals satisfy SAV. -/
 theorem niuean_all_sav :
     Niuean.Modals.allExpressions.all
-      (fun e => satisfiesSAV e.meaning) = true := by decide
+      (λ e => satisfiesSAV e.meaning) = true := by decide
 
 -- ============================================================================
 -- §8. Hacquard's content licensing derives the epistemic/circumstantial split
