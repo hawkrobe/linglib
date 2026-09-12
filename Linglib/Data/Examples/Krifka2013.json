@@ -1,0 +1,447 @@
+[
+  {
+    "id": "krifka2013_ex1a",
+    "source": {"bibkey": "krifka-2013", "paperLabel": "(1a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Madrigals are polyphonic.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Madrigals are polyphonic.",
+    "context": "A bare plural with a defining property.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "barePlural"],
+      ["reading", "definitional"]
+    ],
+    "comment": "The paper credits the contrast to Lawler (1973).",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka2013_ex1b",
+    "source": {"bibkey": "krifka-2013", "paperLabel": "(1b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A madrigal is polyphonic.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A madrigal is polyphonic.",
+    "context": "An indefinite singular with a defining property.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "indefiniteSingular"],
+      ["reading", "definitional"]
+    ],
+    "comment": "Also (9), the linguistic rule among Cohen's rule types.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka2013_ex2a",
+    "source": {"bibkey": "krifka-2013", "paperLabel": "(2a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Madrigals are popular.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Madrigals are popular.",
+    "context": "A bare plural with an accidental property.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "barePlural"],
+      ["reading", "descriptive"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka2013_ex2b",
+    "source": {"bibkey": "krifka-2013", "paperLabel": "(2b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A madrigal is popular.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A madrigal is popular.",
+    "context": "An indefinite singular with an accidental property: being popular cannot be a definitional criterion for madrigals.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "indefiniteSingular"],
+      ["reading", "descriptive"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka2013_ex3a",
+    "source": {"bibkey": "krifka-2013", "paperLabel": "(3a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A kangaroo is a marsupial.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A kangaroo is a marsupial.",
+    "context": "Burton-Roberts's analytic indefinite-singular generic, equivalent to *To be a kangaroo is to be a marsupial*.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "indefiniteSingular"],
+      ["reading", "definitional"]
+    ],
+    "comment": "The paper credits the example to Burton-Roberts (1976).",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka2013_ex4a",
+    "source": {"bibkey": "krifka-2013", "paperLabel": "(4a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A tiger climbs trees.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A tiger climbs trees.",
+    "context": "Bolinger's intuition, reported by Burton-Roberts: true, though *To be a tiger is to climb trees* is false.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "indefiniteSingular"],
+      ["reading", "descriptive"]
+    ],
+    "comment": "The paper suggests the contrast is between universal and existential generics rather than descriptive and definitional ones.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka2013_ex5",
+    "source": {"bibkey": "krifka-2013", "paperLabel": "(5)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "An electron has a negative electric charge.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "An electron has a negative electric charge.",
+    "context": "A physical rule.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "indefiniteSingular"],
+      ["reading", "definitional"],
+      ["rule", "physical"]
+    ],
+    "comment": "Cohen's rule types, (5) to (9).",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka2013_ex6",
+    "source": {"bibkey": "krifka-2013", "paperLabel": "(6)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A gentleman opens doors for ladies.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A gentleman opens doors for ladies.",
+    "context": "A moral rule; *gentleman* names a social kind.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "indefiniteSingular"],
+      ["reading", "definitional"],
+      ["rule", "moral"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka2013_ex7",
+    "source": {"bibkey": "krifka-2013", "paperLabel": "(7)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A bishop moves diagonally.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A bishop moves diagonally.",
+    "context": "A legal rule of chess.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "indefiniteSingular"],
+      ["reading", "definitional"],
+      ["rule", "legal"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka2013_ex8",
+    "source": {"bibkey": "krifka-2013", "paperLabel": "(8)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A pomegranate apple costs 49 cents.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A pomegranate apple costs 49 cents.",
+    "context": "A legal rule, the price set by the shop manager.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "indefiniteSingular"],
+      ["reading", "definitional"],
+      ["rule", "legal"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka2013_ex13",
+    "source": {"bibkey": "krifka-2013", "paperLabel": "(13)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Boys don't cry.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Boys don't cry.",
+    "context": "Read descriptively, a generalization about boys under a shared interpretation; read definitionally, a proposal to restrict the interpretation of *boys*.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "descriptive", "judgment": "acceptable"},
+      {"name": "definitional", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["subject", "barePlural"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka2013_ex29",
+    "source": {"bibkey": "krifka-2013", "paperLabel": "(29)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A donkey has 62 chromosomes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A donkey has 62 chromosomes.",
+    "context": "An empirical finding that reads as definitional: the chromosome number runs in the species.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "indefiniteSingular"],
+      ["reading", "definitional"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka2013_ex37",
+    "source": {"bibkey": "krifka-2013", "paperLabel": "(37)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "An animal in this cage has 62 chromosomes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "An animal in this cage has 62 chromosomes.",
+    "context": "The subject does not pick out a natural kind on which a species-based generalization could rest.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "indefiniteSingular"],
+      ["reading", "definitional"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka2013_ex38",
+    "source": {"bibkey": "krifka-2013", "paperLabel": "(38)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A duck lays eggs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A duck lays eggs.",
+    "context": "Universal in the definitional reconstruction, the property being suppressed in immature and male ducks.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "indefiniteSingular"],
+      ["reading", "definitional"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka2013_ex39",
+    "source": {"bibkey": "krifka-2013", "paperLabel": "(39)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A shark attacks bathers.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A shark attacks bathers.",
+    "context": "A minority but striking property.",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "indefiniteSingular"]
+    ],
+    "comment": "Marked (#) in parentheses in the paper.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka2013_ex42a",
+    "source": {"bibkey": "krifka-2013", "paperLabel": "(42a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A king is generous.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A king is generous.",
+    "context": "An unmodified indefinite singular with an accidental property.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "indefiniteSingular"],
+      ["reading", "descriptive"]
+    ],
+    "comment": "The paper credits the contrast to Cohen (2001).",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka2013_ex42b",
+    "source": {"bibkey": "krifka-2013", "paperLabel": "(42b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A good king is generous.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A good king is generous.",
+    "context": "A partial definition of what makes a king good.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "indefiniteSingular"],
+      ["reading", "definitional"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka2013_ex43",
+    "source": {"bibkey": "krifka-2013", "paperLabel": "(43)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A banana that has been sat on by a rhinoceros is flat.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A banana that has been sat on by a rhinoceros is flat.",
+    "context": "A descriptive generalization with an indefinite-singular subject.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "indefiniteSingular"],
+      ["reading", "descriptive"]
+    ],
+    "comment": "The paper credits the example to Carlson (2009).",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka2013_ex44a",
+    "source": {"bibkey": "krifka-2013", "paperLabel": "(44a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A trout can be caught by many different methods.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A trout can be caught by many different methods.",
+    "context": "A descriptive generalization with an indefinite-singular subject; the methods do not run in the species.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "indefiniteSingular"],
+      ["reading", "descriptive"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka2013_ex44b",
+    "source": {"bibkey": "krifka-2013", "paperLabel": "(44b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A hedgehog makes a good pet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A hedgehog makes a good pet.",
+    "context": "A generalization in which single animals matter.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "indefiniteSingular"],
+      ["reading", "descriptive"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka2013_ex45a",
+    "source": {"bibkey": "krifka-2013", "paperLabel": "(45a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Guppies make good pets.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Guppies make good pets.",
+    "context": "An animal typically held in larger quantities.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "barePlural"],
+      ["reading", "descriptive"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka2013_ex45b",
+    "source": {"bibkey": "krifka-2013", "paperLabel": "(45b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A guppy makes a good pet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A guppy makes a good pet.",
+    "context": "An animal typically held in larger quantities.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "indefiniteSingular"],
+      ["reading", "descriptive"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  }
+]
