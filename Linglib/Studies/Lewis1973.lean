@@ -24,11 +24,6 @@ The counterfactual is an intervention on the deterministic development of the mo
 similarity ordering over worlds; the two agree on these deterministic scenarios. The paper's
 treatment of preemption is not represented.
 
-## TODO
-
-The page locators and the footnote on overdetermination are transcribed from an earlier
-version of this file and are marked `UNVERIFIED` pending a check against the paper.
-
 ## References
 
 * [lewis-1973-causation]
@@ -47,7 +42,7 @@ noncomputable def lewisButFor {W : Type*} [Fintype W] [DecidableEq W]
     (cause effect : W) : Prop :=
   ¬ (developDetOn M vs 1 (bg.extend cause false)).hasValue effect true
 
-/-- Causal dependence (UNVERIFIED: p. 563): both events occur, and the effect would not have
+/-- Causal dependence (p. 562): both events occur, and the effect would not have
 occurred without the cause. -/
 noncomputable def lewisDependence {W : Type*} [Fintype W] [DecidableEq W]
     (M : BoolSEM W) [SEM.IsDeterministic M]
@@ -57,7 +52,7 @@ noncomputable def lewisDependence {W : Type*} [Fintype W] [DecidableEq W]
   (developDetOn M vs 1 bg).hasValue effect true ∧
   lewisButFor M vs bg cause effect
 
-/-- Causation: the ancestral of causal dependence (UNVERIFIED: p. 563). -/
+/-- Causation: the ancestral of causal dependence (p. 563). -/
 def lewisCausation {W : Type*} [Fintype W] [DecidableEq W]
     (M : BoolSEM W) [SEM.IsDeterministic M]
     (vs : List W) (bg : Valuation (λ _ : W => Bool))
@@ -158,7 +153,7 @@ end Chain
 namespace Epiphenomena
 
 /-! The barometer reading and the storm are both effects of atmospheric pressure
-(UNVERIFIED: p. 565): the analysis makes the pressure the cause of each and neither effect a
+(pp. 561 and 564–565): the analysis makes the pressure the cause of each and neither effect a
 cause of the other. -/
 
 inductive V | pressure | barometer | storm
@@ -214,7 +209,7 @@ end Epiphenomena
 
 namespace Overdetermination
 
-/-! Symmetric overdetermination (UNVERIFIED: fn. 12): with two sufficient causes both
+/-! Symmetric overdetermination (fn. 12): with two sufficient causes both
 present, neither is necessary, so neither passes the but-for test. -/
 
 inductive V | a | b | e
