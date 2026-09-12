@@ -4,45 +4,51 @@ import Linglib.Data.Generalizations.HomogeneityGap
 import Linglib.Semantics.Exhaustification.Finite
 
 /-!
-# Magri (2014): Homogeneity Effects via Double Strengthening
+# Magri (2014): An Account for the Homogeneity Effect Triggered by Plural Definites and Conjunction
 
 This file formalizes the double-strengthening account of homogeneity of [magri-2014]. A
 plural definite has the plain existential meaning of the indefinite, and its universal
 reading is an implicature of an implicature: the indefinite triggers the *only some*
-inference, and the definite triggers the inference that this inference is false, after the
-iterated exhaustification of [spector-2007]. The configuration is three items, the item
-displaying homogeneity, its semantically equivalent weak alternative, and the strong
-alternative (`Role`), with Horn-mateness holding between neighbours but not across
-(`hornMates`), so that the inner exhaustification excludes nothing for the definite while
-the outer one, comparing strengthened meanings, derives the universal reading
-(`double_strengthening_yields_universal`). No strengthening applies in downward-entailing environments,
-where the definite shows its existential meaning, which is the homogeneity gap. The primal
-theory, strengthening a weak plain meaning, covers definites and plural morphology; the dual
-theory, weakening a strong plain meaning, covers unfocused conjunction.
+inference, and the definite triggers the inference that this inference is false, by the
+iterated exhaustification (19) of [spector-2007] over the exhaustivity operator (18). The
+configuration is three items, the item displaying homogeneity, its semantically equivalent
+weak alternative, and the strong alternative (`Role`), with Horn-mateness holding between
+neighbours but not across (`hornMates`), so the inner exhaustification excludes nothing for
+the definite while the outer one, comparing strengthened meanings, derives the universal
+reading (`double_strengthening_yields_universal`); the same result comes out of the
+substrate's innocent exclusion after [fox-2007] applied twice (`fox_double_exh_yields_all`).
+No strengthening applies in downward-entailing environments, where the definite shows its
+existential meaning, so in a scenario where some but not all satisfy the predicate both the
+positive and the negated sentence are false, the homogeneity gap
+(`homogeneity_from_double_strengthening`), which the pooled unembedded judgments show
+(`matches_pooled_gap_data`). The primal theory, strengthening a weak plain meaning, covers
+definites and plural morphology; the dual theory, weakening a strong plain meaning, covers
+unfocused conjunction, where the abstract computation (55) is vacuous and the enriched
+alternatives of the appendix, the atomic conjuncts (69), derive that unfocused conjunction
+under negation behaves as disjunction, computation (72) (`de_double_exh_conjunction`).
+Questions, which license no strengthening, tell the two theories apart, definites showing
+existential force (62) and unfocused conjunction conjunctive force (63)
+(`questions_differentiate`).
 
 ## Implementation notes
 
-Exhaustification is the substrate's innocent exclusion after [fox-2007]. The scenarios count
+Exhaustification over the three roles is a hand-coded excludability relation, checked against
+the substrate's innocent exclusion on two- and four-world models; the scenarios count
 satisfying individuals out of a total, so the three items' meanings are cardinality
-conditions.
-
-## TODO
-
-The paper is not on file; equation and section locators are transcribed from an earlier
-version of this file and are UNVERIFIED. The polarity-by-scenario predictions against the
-pooled homogeneity-gap data are not stated.
+conditions. Magri's conjecture that a matrix definite has universal force exactly when the
+indefinite triggers its implicature is described in prose.
 
 ## References
 
 * [magri-2014]
 * [spector-2007]
 * [fox-2007]
+* [gajewski-2005]
 -/
 
 namespace Magri2014
 
 open Features (Polarity)
-
 
 /--
 The three items in a double-strengthening configuration.
@@ -104,7 +110,6 @@ theorem strong_not_mate_of_mystery : hornMates .strong .mystery = false := rfl
 theorem weak_strong_mates : hornMates .weak .strong = true := rfl
 theorem weak_mystery_mates : hornMates .weak .mystery = true := rfl
 
-
 /--
 The set of excludable alternatives at the inner (first) EXH level.
 
@@ -126,7 +131,6 @@ theorem the_does_not_exclude_some : innerExcludable .mystery .weak = false := rf
 
 -- WEAK (SOME) does not exclude MYSTERY (THE) --- equivalent, no asymmetric entailment
 theorem some_does_not_exclude_the : innerExcludable .weak .mystery = false := rfl
-
 
 /--
 The semantic value of an item, in an abstract Boolean domain.
@@ -166,7 +170,6 @@ theorem strong_entails_weak (s : Scenario) (hn : s.total ≥ 1) :
   simp only [allMeaning, someMeaning, beq_iff_eq, decide_eq_true_eq]
   omega
 
-
 /--
 EXH applied to a prejacent: assert the prejacent and negate all
 innerExcludable alternatives ([spector-2007], definition 18).
@@ -201,7 +204,6 @@ theorem exh_the (s : Scenario) :
     List.all_cons, List.all_nil, Bool.and_true, Bool.true_and, Bool.false_and,
     Bool.not_true, Bool.not_false, ite_false, Bool.false_eq_true]
 
-
 /--
 At the outer (second) EXH level, excludability uses Horn-mateness but
 checks entailment of STRENGTHENED meanings rather than plain meanings.
@@ -228,7 +230,7 @@ theorem exh_weak_strictly_stronger :
     rw [exh_the]
     simp only [Bool.and_eq_true] at h
     exact h.1
-  · exact ⟨⟨3, 3, by omega⟩, by native_decide⟩
+  · exact ⟨⟨3, 3, by omega⟩, by decide⟩
 
 /-- The outer excludability assignment is justified by Horn-mateness
     plus asymmetric strengthened entailment. -/
@@ -292,7 +294,6 @@ theorem double_strengthening_yields_universal (s : Scenario) (hn : s.total ≥ 1
     simp [decide_eq_true_eq]
     omega
 
-
 /--
 In DE environments (negation, restrictor of *every*, etc.), no
 strengthening occurs. The definite reveals its plain existential semantics.
@@ -309,7 +310,6 @@ theorem de_no_strengthening (s : Scenario) :
     notMeaning (primalMeaning .mystery) s =
     notMeaning (primalMeaning .weak) s := by
   rfl
-
 
 /--
 A GAP scenario: some but not all individuals satisfy the predicate.
@@ -347,7 +347,6 @@ theorem homogeneity_from_double_strengthening (s : Scenario) (h : isGap s = true
     doubleExh .mystery s = false ∧ notMeaning someMeaning s = false :=
   ⟨gap_positive_false s h, gap_negative_false s h⟩
 
-
 /--
 The three domains unified by the double strengthening account.
 -/
@@ -359,45 +358,6 @@ inductive HomogeneityDomain where
   /-- Unfocused conjunction: AND_unF <-> OR, BOTH (dual) -/
   | conjunction
   deriving Repr, DecidableEq
-
-/--
-The correspondence table from the paper: each domain instantiates the
-same three-element alternative structure.
-
-| MYSTERY       | WEAK          | STRONG              |
-|---------------|---------------|---------------------|
-| the boys      | some boys     | all/each of the boys|
-| books (PL)    | a book (SING) | two books (TWO)     |
-| Adam and Bill | Adam or Bill  | both Adam and Bill  |
--/
-structure DomainLabels where
-  domain : HomogeneityDomain
-  mysteryLabel : String
-  weakLabel : String
-  strongLabel : String
-  deriving Repr
-
-def definiteLabels : DomainLabels :=
-  { domain := .definites
-  , mysteryLabel := "the boys"
-  , weakLabel := "some (of the) boys"
-  , strongLabel := "all/each of the boys" }
-
-def pluralMorphLabels : DomainLabels :=
-  { domain := .pluralMorphology
-  , mysteryLabel := "books (plural morphology)"
-  , weakLabel := "a book (singular)"
-  , strongLabel := "two books (numerical)" }
-
-def conjunctionLabels : DomainLabels :=
-  { domain := .conjunction
-  , mysteryLabel := "Adam and_unF Bill"
-  , weakLabel := "Adam or Bill"
-  , strongLabel := "(both) Adam and_F Bill" }
-
-def allDomains : List DomainLabels :=
-  [definiteLabels, pluralMorphLabels, conjunctionLabels]
-
 
 /--
 Whether the domain uses the primal or dual version of the theory.
@@ -462,51 +422,10 @@ theorem primal_dual_agree :
     effectiveInterpretation .primal = effectiveInterpretation .dual := by
   funext pol; cases pol <;> rfl
 
-
-/--
-Magri's conjecture: a matrix plural definite has a universal
-(existential) reading in a conversational context if and only if the
-corresponding indefinite triggers (does not trigger) the "only-some"
-scalar implicature.
-
-  A matrix definite THE has universal force <-> the indefinite SOME triggers SI
-
-When the indefinite triggers no "only-some" implicature, there is nothing
-for the definite's second-order implicature to negate, so no strengthening
-occurs and the definite reveals its plain existential meaning.
--/
-structure SloppyExistentialPrediction where
-  /-- Context description -/
-  context : String
-  /-- Does the indefinite trigger "only-some" in this context? -/
-  indefiniteTriggersSI : Bool
-  /-- Does the definite receive universal force? -/
-  definiteUniversal : Bool
-  deriving Repr
-
-/-- The prediction: these always agree. -/
-def sloppyPrediction (p : SloppyExistentialPrediction) : Bool :=
-  p.indefiniteTriggersSI == p.definiteUniversal
-
-/-- Classroom context: sloppy existential reading.
-    Example attributed to Schlenker (p.c.) in [gajewski-2005]. -/
-def classroomExample : SloppyExistentialPrediction :=
-  { context := "Three girls raise their hands. 'Wait, the girls have a question!'"
-  , indefiniteTriggersSI := false  -- "some girls" would also be fine here
-  , definiteUniversal := false }   -- sloppy existential: only 3 of 10
-
-/-- Standard predication: universal reading. -/
-def standardExample : SloppyExistentialPrediction :=
-  { context := "Ten girls in a team each solve the problem. 'The girls solved the problem.'"
-  , indefiniteTriggersSI := true   -- "some girls" would implicate not all
-  , definiteUniversal := true }    -- universal: all of them
-
-def sloppyExamples : List SloppyExistentialPrediction :=
-  [classroomExample, standardExample]
-
-theorem sloppy_prediction_holds :
-    sloppyExamples.all sloppyPrediction = true := by native_decide
-
+/-! Magri's conjecture: a matrix plural definite has universal force in a context exactly when
+the corresponding indefinite triggers the *only some* implicature there, since the definite's
+second-order implicature has nothing to negate otherwise, which yields the sloppy existential
+reading of the classroom example of [gajewski-2005]. -/
 
 -- ============================================================
 -- BRIDGE 1: Connection to Empirical Data
@@ -518,19 +437,19 @@ def switchesNone : Scenario := ⟨10, 0, by omega⟩
 def switchesGap : Scenario := ⟨10, 5, by omega⟩
 
 /-- In the ALL scenario, double strengthening gives the universal reading. -/
-theorem switches_all_true : doubleExh .mystery switchesAll = true := by native_decide
+theorem switches_all_true : doubleExh .mystery switchesAll = true := by decide
 
 /-- In the NONE scenario, double strengthening fails (no individuals satisfy). -/
-theorem switches_none_false : doubleExh .mystery switchesNone = false := by native_decide
+theorem switches_none_false : doubleExh .mystery switchesNone = false := by decide
 /-- In the NONE scenario, negation of existential gives true (none satisfy). -/
-theorem switches_none_neg_true : notMeaning someMeaning switchesNone = true := by native_decide
+theorem switches_none_neg_true : notMeaning someMeaning switchesNone = true := by decide
 
 /-- In the GAP scenario, both positive (double-strengthened) and negative
     (plain existential under negation) are false --- the homogeneity gap. -/
 theorem switches_gap_homogeneity :
     doubleExh .mystery switchesGap = false ∧
     notMeaning someMeaning switchesGap = false := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 open Generalizations.HomogeneityGap (allData) in
 /-- The double-strengthening derivation against the pooled unembedded
@@ -541,14 +460,10 @@ open Generalizations.HomogeneityGap (allData) in
     cells are bivalent, as `double_strengthening_yields_universal` and
     `de_no_strengthening` require). -/
 theorem matches_pooled_gap_data :
-    ((allData.any λ d =>
-        d.polarity == .positive && d.scenario == .gap && d.observed == .indet) = true) ∧
-    ((allData.any λ d =>
-        d.polarity == .negative && d.scenario == .gap && d.observed == .indet) = true) ∧
-    ((allData.filter (λ d => d.scenario != .gap)).all
-        (λ d => d.observed != .indet) = true) :=
-  ⟨by decide, by decide, by decide⟩
-
+    (∃ d ∈ allData, d.polarity = .positive ∧ d.scenario = .gap ∧ d.observed = .indet) ∧
+      (∃ d ∈ allData, d.polarity = .negative ∧ d.scenario = .gap ∧ d.observed = .indet) ∧
+      ∀ d ∈ allData, d.scenario ≠ .gap → d.observed ≠ .indet := by
+  refine ⟨by decide, by decide, by decide⟩
 
 -- ============================================================
 -- BRIDGE 2: Monotonicity of the Effective Interpretation
@@ -567,7 +482,6 @@ theorem primal_monotonicity_pattern :
 theorem dual_monotonicity_pattern :
     effectiveInterpretation .dual .positive = .strong ∧
     effectiveInterpretation .dual .negative = .weak := ⟨rfl, rfl⟩
-
 
 /-!
 ## Connection to [fox-2007]'s Computable Algorithm
@@ -666,7 +580,6 @@ theorem fox_double_exh_yields_all :
 
 end FoxBridge
 
-
 /-!
 ## Dual Theory: UE Is Trivial, DE Reveals Weak Meaning
 
@@ -743,7 +656,6 @@ theorem dual_de_reveals_weak (s : Scenario)
   simp [hne, hge]
 
 end DualComputation
-
 
 /-!
 ## Enriched Alternatives for Conjunction (§A.7)
@@ -941,7 +853,6 @@ theorem de_double_exh_conjunction :
 
 end EnrichedConjunction
 
-
 /-!
 ## Uniform Double Strengthening over Theory Variants
 
@@ -995,7 +906,6 @@ theorem uniform_gap (v : TheoryVariant) (s : Scenario) (_hn : s.total ≥ 1)
 
 end UniformStrengthening
 
-
 /-!
 ## Questions: A Testable Distinction (§5.5.4)
 
@@ -1028,45 +938,7 @@ theorem questions_differentiate :
     mysteryInQuestions .primal ≠ mysteryInQuestions .dual := by
   decide
 
-/-- Definites (primal) should have existential force in questions. -/
-theorem definites_existential_in_questions :
-    mysteryInQuestions (domainVariant .definites) = .weak := rfl
-
-/-- Unfocused conjunction (dual) should have conjunctive force in questions. -/
-theorem conjunction_conjunctive_in_questions :
-    mysteryInQuestions (domainVariant .conjunction) = .strong := rfl
-
-/-- Datum: "Did you talk to the students?" admits existential answer. -/
-structure QuestionForceDatum where
-  question : String
-  domain : HomogeneityDomain
-  variant : TheoryVariant
-  predictedForce : Role
-  /-- Data point: is the prediction borne out? -/
-  supported : Bool
-  deriving Repr
-
-def definitesQuestion : QuestionForceDatum :=
-  { question := "Did you talk to the students?"
-  , domain := .definites
-  , variant := .primal
-  , predictedForce := .weak
-  , supported := true }   -- (62b): existential answer felicitous
-
-def conjunctionQuestion : QuestionForceDatum :=
-  { question := "Did you talk to Adam and Bill?"
-  , domain := .conjunction
-  , variant := .dual
-  , predictedForce := .strong
-  , supported := true }   -- (63b): conjunctive answer degraded
-
-/-- Both question data points support the primal/dual distinction. -/
-theorem question_data_supports :
-    [definitesQuestion, conjunctionQuestion].all (·.supported) = true := by
-  native_decide
-
 end QuestionPrediction
-
 
 -- ============================================================
 -- BRIDGE 3: Enriched Conjunction ↔ Empirical Data
@@ -1118,6 +990,5 @@ theorem enriched_conjunction_end_to_end :
   ⟨de_double_exh_conjunction, rfl, rfl⟩
 
 end ConjunctionBridge
-
 
 end Magri2014
