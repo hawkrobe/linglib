@@ -24,11 +24,6 @@ clausal embedding, which the book attributes to vehicle change, would need a dep
 the schema lacks, as would the extension of the diagnostic to reflexives and reciprocals and
 the coordinate-structure argument for syntactic identification of the deletion site.
 
-## TODO
-
-The example numbers and the chapter locator are transcribed from an earlier version of this
-file and are marked `UNVERIFIED` pending a check against the book.
-
 ## References
 
 * [lechner-2004]
@@ -103,7 +98,7 @@ def headAvailabilityFromBinding (data : List BindingDatum) : HeadAvailability wh
 
 /-! ### The book's English data
 
--- UNVERIFIED: chapter 2, examples (24) and (28a). -/
+The data are the second chapter's (24) and (28a). -/
 
 /-- (24) *Mary is prouder of Johnᵢ than heᵢ is*: the matrix pronoun c-commands the
 associate and coreference into the deletion site is unavailable. -/
