@@ -23,11 +23,6 @@ variable-force analysis of *imaa* from the strengthened-possibility analysis of 
 *o'qa* by [deal-2011] is recorded by label only. The handbook chapter [matthewson-2016]
 restates the survey-level claims.
 
-## TODO
-
-The paper is not on file; figure, section, and example locators are transcribed from an
-earlier version of this file and are UNVERIFIED.
-
 ## References
 
 * [matthewson-2013]
