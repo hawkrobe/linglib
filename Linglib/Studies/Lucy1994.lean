@@ -3,9 +3,10 @@ import Linglib.Semantics.ArgumentStructure.SalienceClass
 import Linglib.Morphology.Exponence.Select
 
 /-!
-# Lucy 1994: The role of semantic value in lexical comparison
+# Lucy (1994): The Role of Semantic Value in Lexical Comparison
 
-[lucy-1994] argues that lexical classes must be identified
+This file formalizes the morpho-distributional diagnostic of [lucy-1994], who argues that
+lexical classes must be identified
 *morpho-distributionally*, not denotationally: the notional class "motion
 verbs", assembled by English intuition, coincides with no morphologically
 defined Yucatec class. The diagnostic is which derivation a root requires
@@ -24,21 +25,6 @@ Notional motion roots land in the *smallest* predicate class, patient
 salient (ex. (4)); at best the five `#`-marked roots lacking the `-Vl`
 imperfective form "a formal class of 'motion verbs'" (p. 641), a
 distinction invisible to the entailment grid.
-
-## Main results
-
-* `predicted_matches_attested`: applicability derived from
-  (kind signature × valency) reproduces every derivation Lucy attests.
-* `transitiviser_adds_compl`: each class's required transitiviser adds
-  exactly the Boolean complement of its underived stem's valency — the
-  three-way diagnostic is complementation in the valency lattice.
-* `motion_roots_not_separate_class`: motion roots share their predicted
-  class with plain state-change roots like *kíim* 'die'.
-* `positional_crosscuts_transitiviser_classes`: the positional diagnostic
-  overlaps `=∅` (*čin*) and the diagnostic gap (*kul*) — Lucy's classes
-  are not a partition.
-* `hash_not_signature_definable`: the `#` motion subclass is not a
-  function of the entailment grid.
 
 ## Implementation notes
 
@@ -61,6 +47,12 @@ The salience classes and the pair-level classifier
 (`ArgumentStructure.SalienceClass.ofKinds`) are substrate
 (`Semantics/ArgumentStructure/SalienceClass.lean`); this file supplies the
 Yucatec roots, diagnostic operators, and attested derivations.
+
+## References
+
+* [lucy-1994]
+* [beavers-koontz-garboden-2020]
+* [coon-2019]
 -/
 
 namespace Lucy1994
@@ -258,7 +250,7 @@ instance : Exponence.Rule DiagOp Root String where
   Applies := DiagOp.Applies
 
 instance : DecidableRel (Exponence.Applies : DiagOp → Root → Prop) :=
-  fun op r => op.decApplies r
+  λ op r => op.decApplies r
 
 @[simp] theorem applies_iff (op : DiagOp) (r : Root) :
     Exponence.Applies op r ↔ op.Applies r := Iff.rfl
@@ -266,22 +258,22 @@ instance : DecidableRel (Exponence.Applies : DiagOp → Root → Prop) :=
 /-- Affective `=t`: transitivises an agent-salient root by adding a
     patient argument. -/
 def affectiveT : DiagOp :=
-  ⟨"=t", {.internal}, fun r => IsAgentSalient r.kinds (valency r), inferInstance⟩
+  ⟨"=t", {.internal}, λ r => IsAgentSalient r.kinds (valency r), inferInstance⟩
 
 /-- Zero derivation `=∅`: the root alone supports a transitive stem. -/
 def zeroDeriv : DiagOp :=
-  ⟨"=∅", ∅, fun r => .internal ∈ valency r, inferInstance⟩
+  ⟨"=∅", ∅, λ r => .internal ∈ valency r, inferInstance⟩
 
 /-- Causative `=s`: transitivises a patient-salient root by adding an
     agent argument. -/
 def causativeS : DiagOp :=
-  ⟨"=s", {.external}, fun r => IsPatientSalient r.kinds (valency r), inferInstance⟩
+  ⟨"=s", {.external}, λ r => IsPatientSalient r.kinds (valency r), inferInstance⟩
 
 /-- Positional derivation, realized `=lah` ~ `=tal` by status (the
     `=tal` incompletive is the anomalous member, apparently compounding
     with *tàal* 'come'). -/
 def positionalLah : DiagOp :=
-  ⟨"=lah", ∅, fun r => IsPositional r.kinds, inferInstance⟩
+  ⟨"=lah", ∅, λ r => IsPositional r.kinds, inferInstance⟩
 
 /-- The diagnostic inventory, in the order of Lucy's presentation:
     the three transitivisers of ex. (1), then the positional. -/

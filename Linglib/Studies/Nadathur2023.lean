@@ -2,42 +2,37 @@ import Linglib.Semantics.Causation.Implicative
 import Linglib.Studies.Karttunen1971
 
 /-!
-# Nadathur 2023: Causal Semantics for Implicative Verbs
+# Nadathur (2023): Causal Semantics for Implicative Verbs
 
-The Dreyfus scenario of [nadathur-2023-implicatives] (§6.1.1, Figure 3;
-introduced in [nadathur-2019] ch. 3 as "the modified Dreyfus scenario",
-adapted from [baglini-francez-2016]): an eight-vertex structural causal
-model discriminating where two-way *dare* is felicitous. The felicity
-theorems are stated through `Implicative.manageSem` /
-`failSem` — the substrate formalization of this paper's prerequisite
-account (Proposal 32) — so they instantiate the same sufficiency predicate
-the rest of the codebase attributes to implicative verbs.
-
-## Main declarations
-
-- `Nadathur2023.dreyfusSEM`: the Dreyfus SCM (SEC = INT, MSG = INT ∧ NRV,
-  COM = MSG ∧ LST ∧ ¬BRK, SPY = SEC ∧ COM), background INT = SEC = true
-  with NRV, LST, BRK unresolved.
-- `dare_felicitous_for_msg`: NRV (courage, *dare*'s lexical prerequisite)
-  is causally necessary and sufficient for MSG — (34a), via
-  `nrv_necessary_for_msg` (Def 10b) and `nrv_sufficient_for_msg`.
-- `dare_infelicitous_for_com`, `dare_infelicitous_for_spy`: NRV is not
-  sufficient for COM / SPY ((34c), (34d)) — though it is necessary for
-  both (`nrv_necessary_for_com`, `nrv_necessary_for_spy`), completing
-  the paper's "necessary but not sufficient" verdicts.
+This file formalizes the Dreyfus scenario of [nadathur-2023-implicatives], introduced in
+[nadathur-2019] after [baglini-francez-2016]: an eight-vertex structural causal model that
+discriminates where two-way *dare* is felicitous. Its felicity presuppositions are stated
+through the substrate's sufficiency and necessity semantics for implicatives, so the
+theorems instantiate the same predicates the rest of the library attributes to these verbs.
+Courage, the lexical prerequisite of *dare*, is causally necessary and sufficient for
+sending the message (`dare_felicitous_for_msg`), but necessary and not sufficient for
+establishing communication and for spying, which stay unsettled while the listener and the
+garbling are unresolved (`nrv_necessary_not_sufficient_for_com_and_spy`).
 
 ## Implementation notes
 
-Theorems are stated over the strict T_D development (`developDetVtx?`,
-faithful to the paper's Definitions 4–5): the infelicity verdicts hold
-because COM and SPY stay *unsettled* while LST and BRK are unresolved —
-the paper's route. Concrete claims are discharged through the fuel
-bridge (`causallyEntails_iff_fuel` / `causallyNecessary_iff_fuel`) with
-the model's depth function as rank certificate, then `decide`.
+The theorems are stated over the strict development of the paper's definitions, and the
+concrete claims are discharged through the fuel bridge to the finite valuation space with
+the model's depth function as rank certificate.
 
-TODO: the *manage* examples (35a–d) need set-valued prerequisites (the
-(35c) prerequisite is the conjunction NRV ∧ LST ∧ ¬BRK, [nadathur-2023-implicatives]
-fn. 21); `manageSem` currently takes a single prerequisite vertex.
+## TODO
+
+The necessity presuppositions are decided by brute force over the valuation space under
+raised recursion and heartbeat limits; a structural proof through the parent equations
+would remove them. The *manage* examples need set-valued prerequisites, one of them the
+conjunction of courage, a listener, and an ungarbled message, while the substrate's
+sufficiency semantics takes a single prerequisite vertex.
+
+## References
+
+* [nadathur-2023-implicatives]
+* [nadathur-2019]
+* [baglini-francez-2016]
 -/
 
 namespace Nadathur2023
@@ -55,7 +50,7 @@ inductive V | INT | NRV | LST | BRK | SEC | MSG | COM | SPY
 
 /-- Causal graph: SEC←{INT}, MSG←{INT,NRV}, COM←{MSG,LST,BRK},
     SPY←{SEC,COM}; INT, NRV, LST, BRK exogenous. -/
-def graph : CausalGraph V := ⟨fun
+def graph : CausalGraph V := ⟨λ
   | .INT | .NRV | .LST | .BRK => ∅
   | .SEC => {.INT}
   | .MSG => {.INT, .NRV}
@@ -63,7 +58,7 @@ def graph : CausalGraph V := ⟨fun
   | .SPY => {.SEC, .COM}⟩
 
 /-- Depth certificate (also the rank for the fuel bridge). -/
-def depth : V → ℕ := fun
+def depth : V → ℕ := λ
   | .INT => 0 | .NRV => 0 | .LST => 0 | .BRK => 0
   | .SEC => 1 | .MSG => 1 | .COM => 2 | .SPY => 3
 
@@ -78,14 +73,14 @@ instance : CausalGraph.IsDAG graph := ranking.isDAG
     the COM mechanism. -/
 noncomputable def dreyfusSEM : BoolSEM V :=
   { graph := graph
-    mech := fun
+    mech := λ
       | .INT | .NRV | .LST | .BRK => const (G := graph) false
-      | .SEC => deterministic (fun ρ => ρ ⟨.INT, by decide⟩)
-      | .MSG => deterministic (fun ρ =>
+      | .SEC => deterministic (λ ρ => ρ ⟨.INT, by decide⟩)
+      | .MSG => deterministic (λ ρ =>
           ρ ⟨.INT, by decide⟩ && ρ ⟨.NRV, by decide⟩)
-      | .COM => deterministic (fun ρ =>
+      | .COM => deterministic (λ ρ =>
           ρ ⟨.MSG, by decide⟩ && ρ ⟨.LST, by decide⟩ && !ρ ⟨.BRK, by decide⟩)
-      | .SPY => deterministic (fun ρ =>
+      | .SPY => deterministic (λ ρ =>
           ρ ⟨.SEC, by decide⟩ && ρ ⟨.COM, by decide⟩) }
 
 instance : CausalGraph.IsDAG dreyfusSEM.graph :=
@@ -100,7 +95,7 @@ instance : SEM.IsDeterministic dreyfusSEM where
 
 /-- Background: Dreyfus intends to spy and has already collected secrets
     (INT = SEC = 1); NRV, LST, BRK are unresolved. -/
-def dreyfusBg : Valuation (fun _ : V => Bool) :=
+def dreyfusBg : Valuation (λ _ : V => Bool) :=
   Valuation.empty.extend .INT true |>.extend .SEC true
 
 /-- *dare* dispatches to the sufficiency semantics the theorems below are
@@ -112,12 +107,12 @@ theorem dare_semantics_via_manageSem :
     ImplicativeClass.dare.prerequisite = some Prerequisite.courage :=
   ⟨rfl, rfl⟩
 
-private lemma entails_iff {s : Valuation (fun _ : V => Bool)} {v : V} {x : Bool} :
+private lemma entails_iff {s : Valuation (λ _ : V => Bool)} {v : V} {x : Bool} :
     SEM.causallyEntails dreyfusSEM s v x ↔
       developDetVtxFuel dreyfusSEM s 4 v = some x :=
   SEM.causallyEntails_iff_fuel dreyfusSEM ranking (by cases v <;> decide) s x
 
-private lemma necessary_iff {s : Valuation (fun _ : V => Bool)} {c e : V} :
+private lemma necessary_iff {s : Valuation (λ _ : V => Bool)} {c e : V} :
     Implicative.necessityPresup dreyfusSEM s c true e true ↔
       SEM.causallyNecessaryFuel dreyfusSEM 4 s c true e true :=
   SEM.causallyNecessary_iff_fuel dreyfusSEM ranking
@@ -128,8 +123,8 @@ private lemma necessary_iff {s : Valuation (fun _ : V => Bool)} {c e : V} :
     background, and adding NRV = 1 causally entails MSG = 1. -/
 theorem nrv_sufficient_for_msg :
     manageSem dreyfusSEM dreyfusBg .NRV true .MSG true :=
-  ⟨⟨fun h => absurd (entails_iff.mp h) (by decide),
-    fun h => absurd (entails_iff.mp h) (by decide)⟩,
+  ⟨⟨λ h => absurd (entails_iff.mp h) (by decide),
+    λ h => absurd (entails_iff.mp h) (by decide)⟩,
    entails_iff.mpr (by decide)⟩
 
 set_option maxRecDepth 400000 in
@@ -221,10 +216,6 @@ theorem msg_iff_nerve :
     (by decide) (by decide) nrv_sufficient_for_msg nrv_necessary_for_msg
 
 end Nadathur2023
-
--- ════════════════════════════════════════════════════
--- § Karttunen 1971 classification recovered
--- ════════════════════════════════════════════════════
 
 /-! [nadathur-2023-implicatives] §2 motivates the prerequisite account
 from [karttunen-1971]'s descriptive 2×2 taxonomy; the conversion lives

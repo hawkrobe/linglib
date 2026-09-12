@@ -13,7 +13,7 @@ Theory-neutral tone data for Laal (language isolate, southern Chad): the three
 contrastive tone heights H/M/L, the attested stem-level tone melodies (Table 2),
 and verb roots illustrating M-lowering. Transcriptional facts only — the
 subtonal `[±upper]`/`[±raised]` featural analysis and the M-lowering mechanism
-live in `Studies/Lionnet2022Laal.lean`.
+live in `Studies/Lionnet2022.lean`.
 -/
 
 namespace Laal.Prosody

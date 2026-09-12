@@ -7,74 +7,38 @@ import Linglib.Semantics.Questions.Hamblin
 import Linglib.Studies.Faller2019
 
 /-!
-# Martínez Vera (2026): Verum, contrast, and evidentiality in Saraguro Kichwa
-[martinez-vera-2026] [martinez-vera-2024]
-[martinez-vera-camacho-2025] [faller-2002] [faller-2019a]
-[murray-2014] [murray-2017] [tellings-2014]
-[grzech-2020] [bendezu-2023] [sanchez-2010]
-[hintz-hintz-2017] [cole-1982] [roelofsen-vangool-2010]
-[roelofsen-farkas-2015] [simons-tonhauser-beaver-roberts-2010]
-[krifka-2014] [rooth-1985] [rooth-1992] [hirsch-2017]
-[hohle-1992] [romero-han-2004] [kiss-1998]
-[matthewson-2021] [matthewson-2004] [bochnak-matthewson-2015]
-[gutzmann-hartmann-matthewson-2020] [goodhue-2022a]
-[rochemont-2018]
+# Martínez Vera (2026): Verum, Contrast and Evidentiality in Saraguro Kichwa
 
-Saraguro Kichwa (`qvj`) marker `=mi` is analysed as a *focus marker*
-whose felicity presupposes a highlighted, strengthened alternative that
-entails the negation of the scope proposition (paper's def. 37).
+This file formalizes [martinez-vera-2026]'s analysis of the Saraguro Kichwa enclitic *=mi*
+as a focus marker whose felicity presupposes a highlighted, strengthened alternative
+entailing the negation of the scope proposition (`miFelicitous`, the paper's definition
+(37), reduced to the polar case where exhaustification is the identity). The marker is
+licensed when the negation of the scope is salient, after a biased question, an assertion
+of the negation, or a reportative-evidential antecedent: the polar question under
+discussion (`polarQUD`) and the discourse update by an evidential act's raised propositions
+(`updateAfterAct`) give the headline contrast, *=mi* felicitous after presenting with the
+reportative *-shka* and infelicitous after asserting with the direct *-rka*. The polar
+partition is in general distinct from the verum partition of [romero-han-2004]
+(`mv_partition_neq_romeroHan_partition`).
 
-Three empirical signatures:
+## Implementation notes
 
-1. `=mi` is licensed when ¬p is salient (biased question, assertion of
-   ¬p, or a reportative-evidential antecedent).
-2. `=mi` is licensed in matrix declaratives following a reportative
-   evidential `-shka`, but NOT following a direct evidential `-rka`.
-3. `=mi` surfaces in contrastive (corrective) uses, sister to focus
-   strategies like English `only` ([rochemont-2018],
-   [hirsch-2017]).
+The bilayered content, highlighting, evidential illocution, evidential sources, and polar
+questions are substrate; the felicity apparatus is paper-specific and stays here, while the
+three-way evidential paradigm of Saraguro Kichwa lives in its fragment. The paper's data is
+original fieldwork with six speakers following [matthewson-2004].
 
-## What this study formalises
+## TODO
 
-* `miFelicitous` — paper eq. (37), reduced to the polar alternative-set
-  case (innocently excludable alternatives are absent from polar
-  partitions, so exhaustification collapses to identity).
-* `polarQUD p` — the QUD over which a verum-marker felicity question
-  is settled, built from `Question.polar`. Its `alt = {p, pᶜ}`,
-  so `Highlighting.AddressesQUD` does real filtering work.
-* `updateAfterAct` — generic discourse update that adds an act's
-  `EvidentialAct.raisedPropositions` to the salient set. No
-  match-on-`commitsToScope` here: the substrate-level theorems
-  `present_raises_polar_negation` and `assert_does_not_raise_polar_negation`
-  in `Discourse/EvidentialIllocution` carry the load.
-* The headline contrast (paper exx. 47–50): `=mi` is felicitous after
-  `present` (reportative `-shka`) and infelicitous after `assert`
-  (direct `-rka`). Proofs project from substrate.
-* `mv_partition_neq_romeroHan_partition` — the cross-framework
-  divergence theorem showing MV's polar partition `{p, pᶜ}` is in
-  general distinct from Romero & Han's verum partition
-  `{VERUM p, ¬VERUM p}`. Makes the line-a (focus) vs line-b
-  (CommonGround-modal verum operator) split visible at the type level.
+The paper is not on file; definition and example numbers are transcribed from an earlier
+version of this file and are UNVERIFIED.
 
-## Substrate consumed
+## References
 
-| Substrate | Provides |
-|-----------|----------|
-| `Semantics/Presupposition/ContentLayer` | `BiLayered W` ⟨A, N⟩ pair (rules I–III defined below) |
-| `Semantics/Highlighting` | `HighlightingContext`, `Highlighted`, `AddressesQUD` |
-| `Discourse/EvidentialIllocution` | `assert`, `present`, `EvidentialAct`, `raisedPropositions` |
-| `Semantics/Evidential/Source` | `CoarseSource` (`direct`, `hearsay`, `inference`) |
-| `Semantics/Questions/Hamblin` | `Question.polar` for the polar QUD |
-
-## Methodological note
-
-The paper's data is original fieldwork with six Saraguro speakers,
-following [matthewson-2004], [bochnak-matthewson-2015].
-Per CLAUDE.md (per-language paper-specific data lives in Studies, not
-Fragments), the felicity-judgment apparatus stays in this file; the
-neutral consensus typology — that Saraguro Kichwa has a 3-way
-evidential paradigm with the discourse-sensitive enclitic =mi — lives
-in `Fragments/Quechua/SaraguroKichwa/Evidentiality.lean`.
+* [martinez-vera-2026]
+* [faller-2002]
+* [romero-han-2004]
+* [matthewson-2004]
 -/
 
 namespace MartinezVera2026
@@ -92,7 +56,7 @@ def composeI (atFn naiFn : (W → Prop) → (W → Prop)) (β : BiLayered W) : B
 
 /-- Composition rule II: both α and β bring NAI; the new NAI accumulates `α.N β.A ∧ β.N`. -/
 def composeII (atFn naiFn : (W → Prop) → (W → Prop)) (β : BiLayered W) : BiLayered W :=
-  { atIssue := atFn β.atIssue, notAtIssue := fun w => naiFn β.atIssue w ∧ β.notAtIssue w }
+  { atIssue := atFn β.atIssue, notAtIssue := λ w => naiFn β.atIssue w ∧ β.notAtIssue w }
 
 /-- Composition rule III: an illocutionary operator takes the full ⟨A, N⟩ pair. -/
 def composeIII (op : BiLayered W → BiLayered W) (β : BiLayered W) : BiLayered W := op β
@@ -108,11 +72,11 @@ def composeIII (op : BiLayered W → BiLayered W) (β : BiLayered W) : BiLayered
 
 @[simp] theorem composeII_notAtIssue (atFn naiFn : (W → Prop) → (W → Prop))
     (β : BiLayered W) :
-    (composeII atFn naiFn β).notAtIssue = fun w => naiFn β.atIssue w ∧ β.notAtIssue w := rfl
+    (composeII atFn naiFn β).notAtIssue = λ w => naiFn β.atIssue w ∧ β.notAtIssue w := rfl
 
 /-- Rule II generalizes rule I: they coincide when β's NAI is trivial. -/
 theorem composeI_eq_composeII (atFn naiFn : (W → Prop) → (W → Prop)) (β : BiLayered W)
-    (hβ : β.notAtIssue = fun _ => True) : composeI atFn naiFn β = composeII atFn naiFn β := by
+    (hβ : β.notAtIssue = λ _ => True) : composeI atFn naiFn β = composeII atFn naiFn β := by
   ext w
   · rfl
   · simp [composeI, composeII, hβ]
@@ -405,7 +369,7 @@ theorem mi_infelicitous_after_assert
   subst hq_eq
   apply hne
   ext w
-  refine ⟨fun hw => ?_, fun hw => absurd hw (Set.notMem_empty _)⟩
+  refine ⟨λ hw => ?_, λ hw => absurd hw (Set.notMem_empty _)⟩
   have := hsub hw
   simp [BiLayered.ofProp] at this
   exact absurd hw this

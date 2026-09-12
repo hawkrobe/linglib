@@ -266,26 +266,27 @@ theorem rows_role : ∀ r ∈ rows, r.observed = if r.Host then r.base.role else
 
 /-! ### O'dam on the causativizability hierarchy -/
 
-/-- O'dam's row for Table 2.8 of [krejci-2012], read off the rows: which of her verb classes
-gain an agent from the applicative. -/
-def causativizability : Krejci2012.CausativizabilityData where
+/-- The tier of the causativizability hierarchy of [krejci-2012] a base verb belongs to. -/
+def Base.tier (b : Base) : Option Krejci2012.Tier :=
+  match b.verbClass with
+  | .unaccusative => some .unaccusative
+  | .middle | .ingestion => some .middleIngestive
+  | .unergative => some .unergative
+  | .plain => if 1 ≤ b.objects then some .simpleTransitive else none
+  | _ => none
+
+/-- O'dam's row for Table 2.8 of [krejci-2012], read off the rows: the tiers whose verbs gain
+an agent from the applicative. -/
+def causativizability : Krejci2012.Causative where
   language := "O'dam"
   morpheme := "-dha, -tuda"
-  unaccusative :=
-    rows.any λ r => decide (r.base.verbClass = .unaccusative ∧ r.observed = some .agent)
-  middlesIngestive := rows.any λ r =>
-    decide ((r.base.verbClass = .middle ∨ r.base.verbClass = .ingestion) ∧
-      r.observed = some .agent)
-  unergative := rows.any λ r => decide (r.base.verbClass = .unergative ∧ r.observed = some .agent)
-  simpleTransitive := rows.any λ r =>
-    decide (r.base.verbClass = .plain ∧ 1 ≤ r.base.objects ∧ r.observed = some .agent)
+  reach := (rows.filterMap λ r => if r.observed = some .agent then r.base.tier else none).toFinset
 
 /-- The applicatives reach unergatives but not simple transitives, Krejci's third type. -/
-theorem causativizability_unergative_not_simpleTransitive :
-    causativizability.unergative = true ∧ causativizability.simpleTransitive = false := by
+theorem causativizability_type : causativizability.type = some .unergative := by
   decide +kernel
 
-theorem causativizability_respectsHierarchy : causativizability.respectsHierarchy = true := by
+theorem causativizability_respectsHierarchy : causativizability.RespectsHierarchy := by
   decide +kernel
 
 end Everdell2023

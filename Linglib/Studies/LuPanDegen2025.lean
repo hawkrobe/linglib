@@ -16,45 +16,42 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Data.Examples.LuPanDegen2025
 
 /-!
-# Evidence for a Discourse Account of Manner-of-Speaking Islands
-[lu-pan-degen-2025]
+# Lu, Pan and Degen (2025): Evidence for a Discourse Account of Manner-of-Speaking Islands
 
-[lu-pan-degen-2025] (*Language* 101(4): 627–659) reports five acceptability
-judgment experiments testing the causal relationship between discourse
-backgroundedness and the manner-of-speaking (MoS) island effect, and this
-file connects that data to the formal backgroundedness model
-(the backgroundedness sections below) and the lexical substrate
-(`Semantics/ArgumentStructure/LevinClass`).
+This file formalizes the discourse account of manner-of-speaking islands that
+[lu-pan-degen-2025] test in five acceptability experiments. A communication verb decomposes
+into a light verb of saying and an optional manner component (`VerbDecomp`); the question
+under discussion partitions communication events along the manner or the content dimension,
+backgrounding the other (`QUDDimension`, `complementBackgrounded`); and a backgrounded
+constituent resists extraction, so manner-of-speaking verbs, whose manner component is
+addressed by default, make their complements islands while bridge verbs do not
+(`mos_island_effect`, `bridge_no_island`). The experiments' manipulations follow: prosodic
+focus on the embedded object ameliorates the island (`prosodic_amelioration`), a manner
+adverb on *say* recreates it (`say_adverb_replication`), the complements of
+manner-of-speaking verbs project under negation where those of bridge verbs do not, and
+extraction rank is monotone in a rational at-issueness degree
+(`extraction_rank_monotone_in_atIssueness`). Verb-frame frequency plays no role.
 
-## Key findings (§0 data)
+## Implementation notes
 
-1. Prosodic focus on the embedded object ameliorates the MoS island (Exp 1)
-2. The same manipulation creates island effects with the bridge verb *say* (Exp 2a)
-3. MoS verbs default-background their complements more than *say* (Exp 2b)
-4. Adding manner adverbs to *say* replicates the MoS island effect (Exp 3a)
-5. The say+adverb island is also sensitive to prosodic manipulation (Exp 3b)
-6. Verb-frame frequency does NOT predict the effect (all experiments)
+Mean acceptability ratings and backgroundedness proportions are hundredths as natural
+numbers; the stimulus sentences are rows of `Data/Examples/LuPanDegen2025.json`. The
+manner weight of a verb is read from its Levin class in `Semantics.ArgumentStructure`, and
+the island is classified as weak and discourse-sourced against the island typology of
+[ross-1967].
 
-Mean acceptability ratings and backgroundedness proportions are coded as
-`Nat` (× 100). Stimulus sentences live in
-`Data/Examples/LuPanDegen2025.json` (generated module
-`Data.Examples.LuPanDegen2025`).
+## TODO
 
-## Derivation chain (§2–§7)
+The paper is not on file; experiment numbers and section locators are transcribed from an
+earlier version of this file and are UNVERIFIED.
 
-```
-Semantics/ArgumentStructure/LevinClass  →  mannerSpec = true for MoS verbs (§37.3)
-         ↓
-backgroundedness model (below)  →  mannerSpec ↔ hasMannerWeight → island
-         ↓
-mosIslandSources = [.discourse], mosIslandStrength = .weak
-```
+## References
 
-The MoS island is classified as weak (ameliorable) and discourse-sourced, and
-we derive both properties from the experimental data and the formal model.
-
+* [lu-pan-degen-2025]
+* [kratzer-selkirk-2020]
+* [roberts-2012]
+* [goldberg-2006]
 -/
-
 
 namespace LuPanDegen2025
 
@@ -415,7 +412,7 @@ theorem extraction_filler_is_focus_alternative
     (hqa : qaCongruentWeak answerFocus extractionQ) :
     -- Then: every filler value produces a focus alternative
     ∀ c : Content, den ⟨m, c⟩ ∈ answerFocus :=
-  fun c => hqa (hq c)
+  λ c => hqa (hq c)
 
 /-- The discourse status of the extracted filler: **focused**.
 
@@ -1978,7 +1975,7 @@ manipulation, exactly one of the two accounts is correct (XOR). They
 have full coverage (together 7/7) with zero overlap. -/
 theorem complementary_accounts :
     allManipulations.all
-      (fun m => processingCorrect m != discourseCorrect m) = true := by decide
+      (λ m => processingCorrect m != discourseCorrect m) = true := by decide
 
 /-! ## §9. Connection to [sag-2010]'s Construction-Based Islands
 

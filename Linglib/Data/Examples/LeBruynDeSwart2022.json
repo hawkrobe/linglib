@@ -1,43 +1,122 @@
 [
   {
     "id": "lebruyndeswart2022_boeken_niet_uitgelezen",
-    "source": {"bibkey": "le-bruyn-de-swart-2022", "paperLabel": "UNVERIFIED ex. 34-35"},
+    "source": {
+      "bibkey": "le-bruyn-de-swart-2022",
+      "paperLabel": "(35)"
+    },
     "language": "dutc1256",
     "primaryText": "Het klopt dat ik boeken niet heb uitgelezen.",
     "discourseSegments": [],
-    "glossedTokens": [["Het", "it"], ["klopt", "is.true"], ["dat", "that"], ["ik", "I"], ["boeken", "books"], ["niet", "not"], ["heb", "have"], ["uitgelezen", "finished"]],
+    "glossedTokens": [
+      [
+        "Het",
+        "it"
+      ],
+      [
+        "klopt",
+        "is.true"
+      ],
+      [
+        "dat",
+        "that"
+      ],
+      [
+        "ik",
+        "I"
+      ],
+      [
+        "boeken",
+        "books"
+      ],
+      [
+        "niet",
+        "not"
+      ],
+      [
+        "heb",
+        "have"
+      ],
+      [
+        "uitgelezen",
+        "finished"
+      ]
+    ],
     "translation": "It's true that there are books I didn't finish.",
-    "context": "",
+    "context": "Preceded in the source by a discussion of reading habits; followed by 'Then I started on them but found out that I did not like them after all.'",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "wide_scope", "judgment": "acceptable"},
-      {"name": "narrow_scope", "judgment": "unacceptable"}
+      {
+        "name": "wide_scope",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "narrow_scope",
+        "judgment": "unacceptable"
+      }
     ],
     "paperFeatures": [
-      ["position", "scrambled"]
+      [
+        "position",
+        "scrambled"
+      ]
     ],
-    "comment": "Migrated from Phenomena/Generics/KindReference.lean dutchScrambledBoeken. Scrambled bare plural with negation: obligatory wide scope (there are books I didn't finish), not 'I finished no books'.",
+    "comment": "Naturally occurring scrambled bare plural over negation: obligatory wide scope (there are books I didn't finish), not 'I finished no books'; the follow-up sentence confirms the wide scope reading.",
     "lgrConformance": "WORD_ALIGNED"
   },
   {
     "id": "lebruyndeswart2022_boeken_gehaat",
-    "source": {"bibkey": "le-bruyn-de-swart-2022", "paperLabel": "UNVERIFIED ex. 36-37"},
+    "source": {
+      "bibkey": "le-bruyn-de-swart-2022",
+      "paperLabel": "(36b)"
+    },
     "language": "dutc1256",
     "primaryText": "dat ik boeken altijd gehaat heb",
     "discourseSegments": [],
-    "glossedTokens": [["dat", "that"], ["ik", "I"], ["boeken", "books"], ["altijd", "always"], ["gehaat", "hated"], ["heb", "have"]],
+    "glossedTokens": [
+      [
+        "dat",
+        "that"
+      ],
+      [
+        "ik",
+        "I"
+      ],
+      [
+        "boeken",
+        "books"
+      ],
+      [
+        "altijd",
+        "always"
+      ],
+      [
+        "gehaat",
+        "hated"
+      ],
+      [
+        "heb",
+        "have"
+      ]
+    ],
     "translation": "that I've always hated books",
-    "context": "Embedded clause.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "kind_reference", "judgment": "acceptable"}
+      {
+        "name": "kind_reference",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
-      ["position", "scrambled"]
+      [
+        "position",
+        "scrambled"
+      ]
     ],
-    "comment": "Migrated from Phenomena/Generics/KindReference.lean dutchScrambledKindBoeken. A scrambled bare plural can still be kind-referring with a kind-level predicate ('hate'): scrambling affects scope, not kindhood.",
+    "comment": "A scrambled bare plural under a kind-level predicate ('hate') keeps its kind reading: scrambling affects scope, not kind reference.",
     "lgrConformance": "WORD_ALIGNED"
   }
 ]

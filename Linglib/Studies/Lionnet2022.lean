@@ -9,71 +9,60 @@ import Linglib.Phonology.Autosegmental.NormalForm
 import Linglib.Fragments.Laal.Prosody
 
 /-!
-# Lionnet (2022): The features and geometry of tone in Laal
+# Lionnet (2022): The Features and Geometry of Tone in Laal
 
-Laal (isolate, southern Chad) has three contrastive tone heights H/M/L. [lionnet-2022]
-argues for a subtonal analysis à la [yip-1980]/[pulleyblank-1986] (two register
-features `[±upper]`, `[±raised]`) linked to a Tonal Root Node ([snider-2020]):
-H = `[+upper, −raised]`, M = `[−upper, +raised]`, L = `[−upper, −raised]`, with
-the fourth combination `[+upper, +raised]` the systematic gap. This featural
-specification gives a unified account of the otherwise-puzzling Mid tone — its
-exclusivity (`*MX/XM`) and its instability (M-lowering).
+This file formalizes the subtonal analysis of the three-height tone system of Laal in
+[lionnet-2022]. The heights are bundles of two register features on a tonal root node, in
+the two-feature model of [yip-1980] and [pulleyblank-1986] and the geometry of [snider-2020]:
+H is `[+upper, −raised]`, M is `[−upper, +raised]`, L is `[−upper, −raised]`, and
+`[+upper, +raised]` is the system's gap (`featural_analysis`, `superHigh_is_the_gap`). The
+analysis unifies the behaviour of the mid tone. It never shares a stem with another height
+(`M_exclusive`); it lowers to L under a `[−raised]` neighbour, the only `[+raised]` tone being
+the only target (`mLowering_from_L`, `H_stable`); and the ventive suffix, a floating
+`[−raised]` taking `[upper]` from the root, surfaces as H after H and as L after M and L
+(`ventive_after_M`). The tonal root node lets a feature act on its own tier apart from the
+whole tone: on the multi-tier autosegmental foundation, delinking the `[raised]` feature
+leaves the association of the tone to its mora untouched (`partial_indep_of_full`).
 
-## What this formalizes
+## Implementation notes
 
-* §5.1 the featural analysis — the substrate `TRN.H/M/L` encode Lionnet's (51).
-* §3 M-exclusivity (`*MX/XM`) over the attested stem melodies.
-* §5.2 M-lowering as `[−raised]` assimilation (`TRN.assimilate`): a `[−raised]`
-  trigger (H or L) turns the only `[+raised]` tone, M, into L.
-* §5.5 the ventive suffix as a floating `[−raised]` with `[upper]` from the root
-  (`TRN.dock`).
-* §5.6 the `[+upper, +raised]` gap (Table-4 type-A system).
-* §5.2 (ex. 53–55, 58) the **optional** OCP-`[raised]` merger — consuming the
-  `OCP` fusion repair.
+The substrate `TRN` bundle carries the two register features, and `TRN.assimilate` and
+`TRN.dock` are the `[−raised]` spreading and docking of the paper's derivations. The fusion
+of adjacent identical `[−raised]` autosegments, which the paper mentions as an option it does
+not adopt, is the `OCP.collapse` face of the tier-relative OCP. The full-tone spreading and
+deletion processes of the paper's §6, its vowel harmony, and the alternative analyses of its
+§7 are not represented.
 
-## What this does NOT formalize
+## References
 
-* §6.1–6.3 base-pattern reduction, replacive full-tone spread, and high-tone
-  spread (the full-TRN spreading/deletion processes), and the vowel-harmony
-  patterns of §2 — these need the broader autosegmental spreading machinery.
-* §7 the alternatives (tone-as-unit, M-as-zero).
-
-## Honest scope notes
-
-M-lowering proper is `[−raised]` *assimilation*, not OCP-merger; and `*MX/XM` is an
-*agreement* constraint (`*[α raised][β raised]`), the opposite of the identity-OCP.
-The `OCP` API is consumed only for the merger of (53–55)/(58), which
-Lionnet presents explicitly as optional ("not necessary in the present analysis" /
-"or fusion"). It is included because it is the merger face of the same OCP
-principle whose prohibition face lives in `OCP`.
+* [lionnet-2022]
+* [yip-1980]
+* [pulleyblank-1986]
+* [snider-2020]
+* [chandlee-jardine-2019]
 -/
 
-namespace Lionnet2022Laal
+namespace Lionnet2022
 
 open Tone
 open Laal.Prosody
 
 /-! ### The subtonal featural analysis (§5.1) -/
 
-/-- Lionnet's featural analysis (ex. 51) as a map into the register-tier `TRN`
-encoding: H = `[+upper, −raised]`, M = `[−upper, +raised]`, L = `[−upper, −raised]`. -/
+/-- The featural analysis (ex. 51) as a map into the register-tier `TRN` encoding. -/
 def toneToTRN : Tone → TRN
   | .H => TRN.H
   | .M => TRN.M
   | .L => TRN.L
 
-/-- The substrate `TRN.H/M/L` encode exactly Lionnet's (51) feature matrix. -/
+/-- The substrate's `TRN.H`, `TRN.M`, `TRN.L` are the feature matrix of (51). -/
 theorem featural_analysis :
     TRN.H = ⟨some true, some false⟩ ∧
     TRN.M = ⟨some false, some true⟩ ∧
     TRN.L = ⟨some false, some false⟩ := ⟨rfl, rfl, rfl⟩
 
-/-- The three tones are featurally distinct — the analysis distinguishes them. -/
-theorem tones_distinct_as_TRN :
-    (([Tone.H, Tone.M, Tone.L]).map toneToTRN).Nodup := by decide
-
-/-- Paradigmatic pitch (§4): `[upper]` counts two and `[raised]` one, independently per
-node — no register state. -/
+/-- Paradigmatic pitch (§5.1): `[upper]` counts two and `[raised]` one, independently per
+node, with no register state. -/
 def absolutePitch (t : TRN) : Int :=
   (if t.upper = some true then 2 else 0) + if t.raised = some true then 1 else 0
 
@@ -83,12 +72,7 @@ theorem absolutePitch_ordered :
       absolutePitch TRN.superHigh = 3 := by
   decide
 
-/-- The minimal triplet (ex. 8) contrasts in tone alone: pairwise-distinct
-melodies on one segmental frame. -/
-theorem minimalTriplet_distinct_tones :
-    (minimalTriplet.map (·.melody)).Nodup := by decide
-
-/-! ### M-exclusivity: `*MX/XM` (§3) -/
+/-! ### M-exclusivity: `*MX/XM` (§3, §5.4) -/
 
 /-- **M-exclusivity** (`*MX/XM`): in every attested stem melody, if M occurs then
 the melody is *all* M — M never co-occurs with a different tone at stem level. -/
@@ -132,11 +116,10 @@ theorem superHigh_is_the_gap : TRN.superHigh ∉ laalToneInventory := by decide
 
 /-! ### The optional OCP-`[raised]` merger (§5.2, ex. 53–55, 58) -/
 
-/-- Lionnet (ex. 54–55, 58) notes — but explicitly does *not* adopt — an optional
-OCP-`[raised]` economy under which two adjacent identical `[−raised]` autosegments
-fuse into one multiply-linked autosegment. When two adjacent tones are *fully*
-identical, that fusion is `OCP.collapse`: two adjacent L tones collapse to
-one. -/
+/-- The paper (exx. 54–55, 58) mentions, without adopting, an optional OCP-`[raised]`
+economy under which two adjacent identical `[−raised]` autosegments fuse into one
+multiply-linked autosegment; for fully identical adjacent tones that fusion is
+`OCP.collapse`. -/
 theorem ocp_raised_merge_LL :
     OCP.collapse [TRN.L, TRN.L] = [TRN.L] := by decide
 
@@ -145,36 +128,29 @@ theorem ocp_raised_merge_LL :
 are distinct *tones* but both `[−raised]`, so adjacent they violate OCP-`[raised]`
 even though `[TRN.H, TRN.L]` is clean as a whole-TRN tier. -/
 theorem ocp_raised_is_tier_relative :
-    ¬ OCP.IsCleanOn (fun _ : TRN => True) (·.raised) [TRN.H, TRN.L] ∧
+    ¬ OCP.IsCleanOn (λ _ : TRN => True) (·.raised) [TRN.H, TRN.L] ∧
       OCP.IsClean [TRN.H, TRN.L] := by decide
 
-/-- Under the optional economy, fusing adjacent identical `[raised]` autosegments
-leaves the `[raised]`-projected tier OCP-clean — the faithful tier-relative reading
-of Lionnet (ex. 54–55, 58), via the substrate retraction `collapse_clean`. The
-merger face of the same OCP principle whose prohibition (TSL₂) face lives in
-`OCP`. -/
+/-- Under the optional economy, fusing adjacent identical `[raised]` autosegments leaves
+the `[raised]`-projected tier OCP-clean. -/
 theorem ocp_raised_merge_clean (tier : List TRN) :
     OCP.IsClean (OCP.collapse (tier.map (·.raised))) :=
   OCP.collapse_clean _
 
 /-! ### The register-tier geometry on the multi-tier substrate (§5–§6)
 
-[lionnet-2022]'s geometry (ex. 52) is a hub-and-spoke around the **Tonal Root Node**:
-the `[±upper]` register tier, the `[±raised]` tier, and the mora (TBU) tier each
-associate to the TRN. On the graph foundation this is a
-four-tier graph. Its point over the `TRN` *bundle* used above: each subtonal feature
-is a tier of its own, so it can be manipulated **independently of the whole TRN** —
-[lionnet-2022]'s *partial activity* (§5, e.g. `[−raised]` assimilation) — which a
-bundled `TRN` record cannot structurally express. Whole-TRN operations (§6) act on
-the TRN↔mora layer; both live on one object. -/
+The geometry of (52) is a hub and spokes around the tonal root node: the `[±upper]` tier,
+the `[±raised]` tier, and the mora tier each associate to it. On the graph foundation this
+is a four-tier graph, on which a subtonal feature is a tier of its own and so can be
+manipulated apart from the whole node, the paper's partial activity, which the bundled
+`TRN` record cannot express; whole-node operations act on the node-to-mora layer. -/
 
 open Autosegmental
 
 /-- The four Laal tone tiers: `[±upper]` register, `[±raised]`, the TRN, the mora. -/
 abbrev laalTier : Fin 4 → Type := ![Option Bool, Option Bool, Unit, Unit]
 
-/-- The tier words of a one-TRN M-toned form (`M = [−upper, +raised]`,
-    [lionnet-2022] ex. 51). -/
+/-- The tier words of a one-node M-toned form. -/
 def laalWords : ∀ i : Fin 4, List (laalTier i) :=
   Fin.cons [some false] (Fin.cons [some true] (Fin.cons [()] (Fin.cons [()] finZeroElim)))
 
@@ -215,14 +191,12 @@ def delink (L : Fin 4 → Fin 4 → ℕ → ℕ → Prop) (i₀ j₀ : Fin 4)
 def delinkRaised : AR (Sigma.fst : ((i : Fin 4) × laalTier i) → Fin 4) :=
   AR.ofData laalWords (delink laalSpokes 1 2)
 
-/-- Delinking the subtonal `[−raised]` feature leaves the **whole-TRN** layer
-    (TRN↔mora, tier-pair `(2, 3)`) untouched: partial activity is independent
-    of full activity — the structural content of [lionnet-2022]'s
-    subtonal-feature autonomy, impossible to state on a bundled `TRN`. -/
 instance : Finite mForm.obj.V := inferInstanceAs (Finite ((_ : Fin 4) × Fin _))
 
 instance : Finite delinkRaised.obj.V := inferInstanceAs (Finite ((_ : Fin 4) × Fin _))
 
+/-- Delinking the subtonal `[−raised]` feature leaves the node-to-mora layer, the tier pair
+`(2, 3)`, untouched: partial activity is independent of full activity. -/
 theorem partial_indep_of_full (p q : ℕ) :
     delinkRaised.link 2 3 p q ↔ mForm.link 2 3 p q := by
   unfold delinkRaised mForm
@@ -237,4 +211,4 @@ theorem delinkRaised_erases (p q : ℕ) : ¬ delinkRaised.link 1 2 p q := by
   · exact hne ⟨rfl, rfl⟩
   · rcases h2 with h2 | h2 | h2 <;> simp_all
 
-end Lionnet2022Laal
+end Lionnet2022

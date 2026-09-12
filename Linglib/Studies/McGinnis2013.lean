@@ -4,54 +4,35 @@ import Linglib.Data.Examples.McGinnis2013
 import Mathlib.Data.Prod.Lex
 
 /-!
-# Agree and Fission in Georgian plurals
+# McGinnis (2013): Agree and Fission in Georgian Plurals
 
-[mcginnis-2013]: the interactions among the number suffixes of the Georgian
-verb follow from one number-agreement feature on T, specified [Group], and
-from Fission of the fused Tense/Aspect/Mood node during Vocabulary Insertion.
-T's [Group] probes the subject, then a first- or second-person object clitic,
-so one argument per clause triggers plural agreement ((5)–(6)); the TAM node
-is realized by strict scansion, each item discharging its intrinsic features
-and the residue passing on, so the third-person plural screeve *-es* leaves
-no Group for *-t* (`*g-nax-es-t`, (3)), *-t* [#, Group] leaves no # for the
-default *-s* [#] (`*g-nax-o-s-t`, (15), (20)), and *-s*'s TAM restriction is
-contextual, not discharged ((13)–(14)). The dative first-person plural bears
-the collective person feature Multispeaker with its Group impoverished ((8)),
-so *gv-* marks it and no *-t* follows ((23)), while *gv-nax-e-t* (21) has a
-single Group, the subject's. The person prefixes (9) are ranked by the
-feature geometry (4): a dependent node brings every node it depends on, so
-*gv-* [Multispeaker] ⊃ *m-* [Speaker] ⊃ *g-* [Participant], and the
-geometry supplies the [#] of the revised *-t* (13c).
+This file formalizes [mcginnis-2013]'s account of the number suffixes of the Georgian
+verb from one number-agreement feature on T, specified for group, and from fission of the
+fused tense–aspect–mood node during vocabulary insertion. The group feature probes the
+subject and then a first- or second-person object clitic, so one argument per clause
+triggers plural agreement; the node is realized by strict scansion, each item discharging
+its intrinsic features and the residue passing on, so the third-person plural screeve suffix
+leaves no group for the plural suffix, the plural suffix leaves no number for the default
+suffix, and the default suffix's restriction is contextual, not discharged. The dative
+first-person plural bears the collective person feature with its group impoverished, so the
+first-person plural prefix marks it and no plural suffix follows. Every row of the pool is
+grammatical exactly when the prefix and suffixes are what the analysis inserts
+(`rows_realized`); geometric dependence orders the vocabulary items by site inclusion
+(`prefix_ranking`), the geometry of [harley-ritter-2002] gives the plural suffix its number
+(`t_revised`), and the node never carries two groups (`count_group_le_one`).
 
-## Main definitions
+## TODO
 
-* `Feature`, `site`: geometry nodes, case, and TAM features; a site as the
-  lower set of the nodes it mentions.
-* `Argument`, `numberTarget`, `personTarget`: the arguments and the two
-  probes.
-* `prefixes`, `Screeve.vocabulary`: the Vocabularies (9), (10), (13).
-* `personPrefix`, `suffixes`: the person prefix by the Subset Principle and the
-  TAM suffixes by scansion.
-
-## Main results
-
-* `rows_realized`: every row of the pool is grammatical iff the prefix and
-  suffixes are what the analysis inserts.
-* `dependent_more_specific`, `prefix_ranking`: geometric dependence is site
-  inclusion, so the engine ranks (9a) > (9b) > (9c) and (9d) > (9e) > (9f).
-* `t_revised`: the geometry gives *-t* its [#].
-* `sites_lowerSets`, `screeve_first`, `number_ranked`: every site is a lower
-  set, interpretable features are discharged first, and the number items
-  are ranked by intrinsic then contextual features.
-* `count_group_le_one`: the TAM node never carries two Groups.
+The chapter is not on file; example and vocabulary numbers are transcribed from an earlier
+version of this file and are UNVERIFIED.
 
 ## References
 
-* [S. Béjar, *Phi-syntax*][bejar-2003]
-* [S. R. Anderson, *On representations in morphology*][anderson-1984]
-* [H. Harley and E. Ritter, *Person and number in pronouns*][harley-ritter-2002]
-* [A. González Poot and M. McGinnis, *Local versus long-distance
-  Fission*][gonzalez-poot-mcginnis-2006]
+* [mcginnis-2013]
+* [harley-ritter-2002]
+* [gonzalez-poot-mcginnis-2006]
+* [bejar-2003]
+* [anderson-1984]
 -/
 
 namespace McGinnis2013
@@ -100,7 +81,7 @@ def Argument.hasGroup (a : Argument) : Bool :=
 /-- A first- or second-person argument: a clitic, within T's reach. -/
 def Argument.IsParticipant (a : Argument) : Prop := a.person = .first ∨ a.person = .second
 
-instance : DecidablePred Argument.IsParticipant := fun _ => inferInstanceAs (Decidable (_ ∨ _))
+instance : DecidablePred Argument.IsParticipant := λ _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-! ### Agree -/
 
@@ -124,7 +105,7 @@ def numberNodes : Option Argument → List Node
 
 /-- The person-agreement node on v: the target's person content with its case. -/
 def prefixNode (subj obj : Argument) : List Feature :=
-  ((personTarget subj obj).map fun a =>
+  ((personTarget subj obj).map λ a =>
     a.personNodes.map Feature.node ++ if a.dat then [.dat] else []).getD []
 
 /-- The two screeves treated: aorist (10) and optative (13). -/
@@ -265,7 +246,7 @@ theorem t_revised : site [.group] [] = [.node .individuation, .node .group] := b
 /-- The geometry nodes of every site form a lower set with the root. -/
 theorem sites_lowerSets :
     ∀ i ∈ prefixes ++ aoristScreeve ++ aoristNumber ++ optativeScreeve ++ optativeNumber,
-      IsLowerSet (↑(insert ⊥ (i.site.focus.filterMap fun f =>
+      IsLowerSet (↑(insert ⊥ (i.site.focus.filterMap λ f =>
         match f with | .node n => some n | _ => none).toFinset) : Set Node) := by
   decide
 
@@ -284,7 +265,7 @@ theorem screeve_first :
 deciding ties: the number items descend lexicographically in (intrinsic,
 contextual) feature count, *-t* above *-s* ((20)). -/
 theorem number_ranked :
-    optativeNumber.Pairwise fun i j =>
+    optativeNumber.Pairwise λ i j =>
       toLex (j.site.focus.length, j.site.leftCtx.flatten.length) <
         toLex (i.site.focus.length, i.site.leftCtx.flatten.length) := by
   decide
@@ -305,10 +286,10 @@ theorem count_group_le_one (s : Screeve) (subj obj : Argument) :
     (tamNode s subj obj).count (.node .group) ≤ 1 := by
   have h₁ : (s.features.count (Feature.node .group)) = 0 := by cases s <;> rfl
   have h₂ : ((subj.personNodes.map Feature.node).count (.node .group)) = 0 := by
-    rw [List.count_map_of_injective _ _ (fun _ _ h => Feature.node.inj h)]
+    rw [List.count_map_of_injective _ _ (λ _ _ h => Feature.node.inj h)]
     exact count_group_personNodes subj
   have h₃ := count_group_numberNodes (numberTarget subj obj)
-  rw [← List.count_map_of_injective _ Feature.node (fun _ _ h => Feature.node.inj h)] at h₃
+  rw [← List.count_map_of_injective _ Feature.node (λ _ _ h => Feature.node.inj h)] at h₃
   simp only [tamNode, List.count_append]
   omega
 

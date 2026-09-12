@@ -48,17 +48,17 @@ measure: MC's effect is not register-sensitive to interlocutor relation.
 
 ## Implementation notes
 Reuses the sign-prediction machinery of `Studies/LiuRotter2025`
-(`ShiftObservation`, `cellMean`, `forceKey`, the rival accounts). Cell means live
-in `Data.Examples.RotterLiu2025` (×100, on the 1–7 scale); they do not reduce in
-the kernel, so concrete shifts are *computed* via `#eval` while the
-kernel-checkable content is each analysis's systematic prediction.
+(`ShiftObservation`, `forceKey`, the rival accounts). Cell means live in
+`Data.Examples.RotterLiu2025` (×100, on the 1–7 scale); concrete shifts are
+exhibited via `#eval` while the kernel-checkable content is each analysis's
+systematic prediction.
 -/
 
 namespace RotterLiu2025
 
 open Modality (ModalForce)
 open Data.Examples (LinguisticExample)
-open LiuRotter2025 (ShiftObservation vacuityEffect spreadEffect cellMean forceKey)
+open LiuRotter2025 (ShiftObservation vacuityEffect spreadEffect forceKey)
 
 /-! ### The two analyses (precise predictions) -/
 
@@ -105,9 +105,7 @@ def observedShift (measure context : String) (force : ModalForce) :
     Option ShiftObservation := do
   let mc ← findCell context (forceKey force) "MC"
   let sm ← findCell context (forceKey force) "SM"
-  let mcv ← cellMean measure mc
-  let smv ← cellMean measure sm
-  pure { force := force, mcMean := mcv, smMean := smv }
+  pure { force := force, mcMean := ← mc.nat? measure, smMean := ← sm.nat? measure }
 
 /-- The universal case adjudicates: *must certainly* > *must* carries the
     strengthening sign the spread analysis predicts and the concord analysis
@@ -116,8 +114,8 @@ theorem necessity_adjudicates (o : ShiftObservation)
     (hf : o.force = .necessity) (h : o.smMean < o.mcMean) :
     o.observedSign = spreadPred o.force ∧ o.observedSign ≠ concordPred o.force := by
   have hs : o.observedSign = 1 := by
-    show SignType.sign (o.mcMean - o.smMean) = 1
-    exact sign_pos (by linarith)
+    show SignType.sign ((o.mcMean : ℤ) - o.smMean) = 1
+    exact sign_pos (sub_pos.mpr (by exact_mod_cast h))
   rw [hs, hf]; decide
 
 /-- The existential weakening is a residual: *may possibly* < *may* carries a
@@ -127,8 +125,8 @@ theorem possibility_residual (o : ShiftObservation)
     (hf : o.force = .possibility) (h : o.mcMean < o.smMean) :
     o.observedSign ≠ spreadPred o.force ∧ o.observedSign ≠ concordPred o.force := by
   have hs : o.observedSign = -1 := by
-    show SignType.sign (o.mcMean - o.smMean) = -1
-    exact sign_neg (by linarith)
+    show SignType.sign ((o.mcMean : ℤ) - o.smMean) = -1
+    exact sign_neg (sub_neg.mpr (by exact_mod_cast h))
   rw [hs, hf]; decide
 
 /-! ### Register (in)sensitivity — RQ4
@@ -145,16 +143,17 @@ def RegisterSensitive (close distant : ShiftObservation) : Prop :=
 
 /-- A CONTEXT main effect (the same additive shift `c` on MC and SM) leaves the
     concord shift's sign unchanged: it cancels in MC − SM. -/
-theorem context_main_effect_preserves_sign (o : ShiftObservation) (c : ℚ) :
+theorem context_main_effect_preserves_sign (o : ShiftObservation) (c : ℕ) :
     ShiftObservation.observedSign ⟨o.force, o.mcMean + c, o.smMean + c⟩
       = o.observedSign := by
-  show SignType.sign (o.mcMean + c - (o.smMean + c)) = SignType.sign (o.mcMean - o.smMean)
-  congr 1; ring
+  show SignType.sign (((o.mcMean + c : ℕ) : ℤ) - ((o.smMean + c : ℕ) : ℤ))
+    = SignType.sign ((o.mcMean : ℤ) - o.smMean)
+  congr 1; push_cast; ring
 
 /-- RQ4 ([rotter-liu-2025]): when contexts differ only by a main effect, the
     concord shift is *not* register-sensitive — close and distant carry the same
     sign, so no NUMBER × CONTEXT interaction arises. -/
-theorem not_registerSensitive_of_main_effect (o : ShiftObservation) (c : ℚ) :
+theorem not_registerSensitive_of_main_effect (o : ShiftObservation) (c : ℕ) :
     ¬ RegisterSensitive o ⟨o.force, o.mcMean + c, o.smMean + c⟩ := by
   unfold RegisterSensitive
   rw [context_main_effect_preserves_sign]

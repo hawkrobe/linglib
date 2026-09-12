@@ -6,30 +6,30 @@ import Mathlib.Data.Fin.VecNotation
 /-!
 # Muskens (1996): Combining Montague Semantics and Discourse Representation
 
-[muskens-1996] shows that DRT embeds in classical type theory once states are
-atomic and discourse referents are functions from states — the Dynamic Ty2
-substrate at `DynamicSemantics`. This study covers the paper's two
-worked developments over that substrate:
+This file formalizes the two worked developments of [muskens-1996] over the embedding of
+discourse representation theory in classical type theory, in which states are atomic and
+discourse referents are functions from states, the substrate at `Semantics/Dynamic/CDRT`.
+The compositional fragment gives lexical translations for a fragment of English with
+generalized coordination at every category (`cn`, `iv`, `tv`, `detA`, `detEvery`, `detNo`,
+`andNP`, `orVP`) and runs the paper's derivations: cross-sentential anaphora, the donkey
+sentence, and verb-phrase coordination with anaphora across the conjuncts. The weakest
+precondition calculus extracts first-order truth conditions from update meanings (`wp`),
+with the compositional rules for tests, sequencing, and random assignment
+(`wp_test`, `wp_seq`, `wp_randomAssign`), the reduction of truth to the weakest
+precondition of the trivial condition (`wp_true_eq_closure`), and the syntactic
+characterization of entailment (`drtEntails`).
 
-* **The compositional fragment** (§III.4, §IV): lexical translations T₀ for a
-  fragment of English, generalized coordination at every category, and the
-  paper's derivations (cross-sentential anaphora, the donkey sentence, VP
-  coordination with cross-conjunct anaphora).
-* **The weakest precondition calculus** (§III.6): compositional extraction of
-  first-order truth conditions from `Update` meanings — `wp`, its
-  compositional rules, Propositions 2–3, and semantic properness.
+## Implementation notes
 
-## Semantic types (Table 2)
+The paper's types translate as follows: static predicates are `E → Prop`, dynamic
+propositions are `Update S`, dynamic predicates take a discourse referent to an update
+(`DynPred`), and dynamic quantifiers take a dynamic predicate to an update (`DynQuant`).
+The composition rules are function application, sequencing, and abstraction and need no
+separate formalization.
 
-| Muskens type | Lean type | Description |
-|--------------|-----------|-------------|
-| `et` | `E → Prop` | static predicate |
-| `s(st)` | `Update S` | dynamic proposition |
-| `[π]` | `Dref S E → Update S` | dynamic predicate (`DynPred`) |
-| `[[π]]` | `DynPred S E → Update S` | dynamic quantifier (`DynQuant`) |
+## References
 
-Composition rules T₁–T₅ need no special formalization: they are function
-application, `seq`, and λ-abstraction.
+* [muskens-1996]
 -/
 
 namespace Muskens1996
@@ -312,7 +312,7 @@ then continuing with `φ` equals cylindrifying `φ` at `n`. -/
 theorem cdrt_new_seq_eq_cylindrify {E : Type*} (n : Nat) (φ : DProp E) :
     closure (DProp.new n * φ) =
     cylindrify n (closure φ) := by
-  ext g; simp only [closure, DProp.seq, seq, Relation.Comp, DProp.new, cylindrify]
+  ext g; simp only [closure, cylindrify]
   constructor
   · rintro ⟨o, k, ⟨e, rfl⟩, hφ⟩
     exact ⟨e, o, by convert hφ using 2; simp [Function.update_apply]⟩
@@ -350,7 +350,7 @@ inductive Fn4Rel : ℕ → Type
   | mortal : Fn4Rel 1
 
 /-- The language of the fn. 4 witness (no function symbols). -/
-def fn4Lang : Language := ⟨fun _ => Empty, Fn4Rel⟩
+def fn4Lang : Language := ⟨λ _ => Empty, Fn4Rel⟩
 
 /-- The antecedent `[x | man x]`. -/
 def fn4Ante : DRS fn4Lang ℕ := .mk {0} [.rel .man (![0])]
@@ -366,8 +366,8 @@ def fn4 : DRS fn4Lang ℕ := .mk ∅ [.imp fn4Ante fn4Cons]
 instance : fn4Lang.Structure (Fin 2) where
   funMap {_} f _ := f.elim
   RelMap {n} R := match n, R with
-    | 1, .man => fun args => args 0 = 0
-    | 1, .mortal => fun args => args 0 = 1
+    | 1, .man => λ args => args 0 = 0
+    | 1, .mortal => λ args => args 0 = 1
 
 /-- The witness is proper: its referential presuppositions are satisfied. -/
 theorem fn4_isProper : fn4.IsProper := by
@@ -380,14 +380,14 @@ theorem fn4_not_reuseFreeAt : ¬ DRS.ReuseFreeAt ∅ fn4 := by
 /-- Flat truth: every input verifies the witness — the re-declared referent
 may be reassigned, so it suffices that some mortal exist. -/
 theorem fn4_trueRel (g : ℕ → Fin 2) : DRS.trueRel fn4 g := by
-  refine ⟨g, fun x _ => rfl, ?_⟩
+  refine ⟨g, λ x _ => rfl, ?_⟩
   intro c hc
   simp only [fn4, DRS.conditions_mk, List.mem_singleton] at hc
   subst hc
   rw [Embedding.verifies_imp]
   intro g₁ _ _
   refine ⟨Function.update g₁ 0 1,
-    fun x hx => by rw [Function.update_apply, if_neg (by simpa [fn4Cons] using hx)], ?_⟩
+    λ x hx => by rw [Function.update_apply, if_neg (by simpa [fn4Cons] using hx)], ?_⟩
   intro c hc
   simp only [fn4Cons, DRS.conditions_mk, List.mem_singleton] at hc
   subst hc
@@ -400,8 +400,8 @@ no output verifies the witness in a model with a non-mortal man. -/
 theorem fn4_not_toRelAt (g : ℕ → Fin 2) : ¬ ∃ g', DRS.toRelAt ∅ fn4 g g' := by
   rintro ⟨g', hg'⟩
   have himp : Condition.holdsAt (∅ ∪ ∅) (.imp fn4Ante fn4Cons) g' := hg'.2.1
-  have hman : DRS.toRelAt (∅ ∪ ∅) fn4Ante g' (fun _ => 0) :=
-    ⟨fun x hx => absurd hx (by simp), rfl, trivial⟩
+  have hman : DRS.toRelAt (∅ ∪ ∅) fn4Ante g' (λ _ => 0) :=
+    ⟨λ x hx => absurd hx (by simp), rfl, trivial⟩
   obtain ⟨g₂, heq, hmortal, -⟩ := himp _ hman
   have h0 : g₂ 0 = 0 := heq (by simp [fn4Ante])
   have h1 : g₂ 0 = 1 := hmortal
@@ -411,7 +411,7 @@ theorem fn4_not_toRelAt (g : ℕ → Fin 2) : ¬ ∃ g', DRS.toRelAt ∅ fn4 g g
 flat-true, indexed-false. -/
 theorem fn4_diverges (g : ℕ → Fin 2) :
     ¬ (DRS.trueRel fn4 g ↔ ∃ g', DRS.toRelAt ∅ fn4 g g') :=
-  fun h => fn4_not_toRelAt g (h.mp (fn4_trueRel g))
+  λ h => fn4_not_toRelAt g (h.mp (fn4_trueRel g))
 
 end Fn4
 
