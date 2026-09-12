@@ -1666,7 +1666,6 @@ import Linglib.Semantics.Quantification.Signatures
 import Linglib.Logic.Natural.Soundness
 import Linglib.Logic.Natural.Strawson.Basic
 import Linglib.Logic.Natural.Strawson.Soundness
-import Linglib.Semantics.Events.Adjacency
 import Linglib.Semantics.Events.Basic
 import Linglib.Semantics.Events.CEM
 import Linglib.Semantics.Events.Path
