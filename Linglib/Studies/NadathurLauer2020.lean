@@ -3,65 +3,44 @@ import Linglib.Semantics.Causation.Sufficiency
 import Linglib.Studies.Karttunen1971
 
 /-!
-# [nadathur-lauer-2020]: Causal Necessity, Causal Sufficiency, and the Implications of Causative Verbs
+# Nadathur and Lauer (2020): Causal Necessity, Causal Sufficiency, and Causative Verbs
 
-[nadathur-lauer-2020] [pearl-2000]
+This file formalizes the three scenarios of [nadathur-lauer-2020] and its constraint on
+volitional action. Periphrastic *cause* asserts causal necessity and periphrastic *make*
+causal sufficiency, two notions that come apart over a structural-equation dynamics after
+[pearl-2000]: in the fire scenario the drought is necessary but not sufficient for the
+fire, so *cause* is felicitous and *make* is not until the missing precondition is fixed
+(`Fire.make_infelicitous_for_fire`, `Fire.make_felicitous_for_fire_with_known_line`); in the
+bus scenario the visit is sufficient but not necessary (`Bus.make_felicitous_for_bus`,
+`Bus.cause_infelicitous_for_bus`); and in the lighthouse scenario the temporal location
+constraint blocks *make* for the earlier of two necessary causes while *cause* survives for
+both (`Lighthouse.make_felicitous_for_storms`, `Lighthouse.make_infelicitous_for_earthquake`).
+The constraint on volitional action separates *make* from *let*: a permission scenario
+satisfies bare sufficiency yet fails it (`Volitional.volitionalActionConstraint`), while
+command and persuasion satisfy it. The paper's observation against an entailment-based
+taxonomy, that necessity implications are cancellable and reinforceable while sufficiency
+implications are not, closes the file.
 
-Nadathur & Lauer 2020. *Glossa* 5(1): 49.
+## Implementation notes
 
-## Headline claim
+The substrate's necessity semantics implements the actual-cause formulation of
+[nadathur-2023-implicatives] rather than the paper's own definition, a move the paper
+itself anticipates in suggesting that necessity causatives may be better explicated through
+a definition of actual cause; the sufficiency semantics is the sufficiency clause of the
+paper's definition, and its non-inevitability precondition is not represented. Preemption
+is not formalized, following the paper's decision to set it aside.
 
-Periphrastic *make* and *cause* differ truth-conditionally:
-- *cause* asserts **causal necessity** (Def 24)
-- *make* asserts **causal sufficiency** (Def 23)
+## TODO
 
-The two notions are mathematically distinct over a structural-equation
-framework: there exist scenarios where one holds but the other doesn't,
-producing minimal-pair contrasts in felicity.
+One necessity proof runs under a raised recursion limit; a structural proof through the
+parent equations would remove it.
 
-This file formalizes N&L's three illustrative scenarios (§3.6.1-§3.6.3)
-plus the volitional-action constraint (§4.1, Def 43) that distinguishes
-*make* from sister periphrastics like *let*.
+## References
 
-## Project-canonical definitions
-
-The substrate's `Necessity.causeSem` (in `Semantics/Causation/`)
-implements [nadathur-2023-implicatives] **Definition 10b** rather than this paper's
-literal Def 24. The paper itself anticipates this in fn 18: "the semantics
-of necessity causatives may well be better explicated in terms of one of
-the definitions of *actual cause*, rather than the version of causal
-necessity defined here." Def 10b IS an actual-cause formulation. The
-deviation is principled.
-
-`Sufficiency.makeSem` is the sufficiency clause (b) of N&L's Def 23;
-the non-inevitability precondition (clause a) is not yet represented
-in the substrate (it would be falsified by the eager-default
-development — see the substrate TODO in `SEM/Counterfactual.lean`).
-
-## Scenarios
-
-- **Fire (§3.6.1, Fig 2)**: necessary but insufficient cause. *cause* OK,
-  *make* infelicitous. Adding the missing precondition flips both to
-  felicitous.
-- **Bus (§3.6.2, Fig 3)**: sufficient but unnecessary cause. *make* OK,
-  *cause* infelicitous.
-- **Lighthouse (§3.6.3, Fig 4)**: temporal location constraint (Def 28)
-  blocks *make* for the earlier of two necessary causes; *cause* remains
-  felicitous for both.
-- **Permission (§4.1, Fig 5)**: bare sufficiency holds but Def 43
-  (volitional-action constraint) fails — predicts *make* infelicitous.
-- **Command (§4.1, Fig 6)** + **Persuasion (§4.1, Fig 7)**: Def 43
-  satisfied — predicts *make* felicitous in both authority and
-  manipulation contexts.
-
-## Excluded
-
-Preemption (Suzy/Billy) is **not formalized here** — N&L footnote 8
-explicitly says "we will not discuss the specifics of pre-emption in this
-paper" — and is not formalized in `Studies/Lewis1973.lean` either:
-that file's `Overdetermination` namespace is *symmetric* overdetermination
-(which Lewis's fn. 12 sets aside), not late preemption. See
-`ProductionDependence.lean`'s discussion for the cross-paper consequence.
+* [nadathur-lauer-2020]
+* [pearl-2000]
+* [nadathur-2023-implicatives]
+* [karttunen-1971]
 -/
 
 namespace NadathurLauer2020
@@ -70,10 +49,6 @@ open Causation Causation.Mechanism Causation.SEM
 open Causation.Sufficiency (makeSem)
 open Causation.Necessity (causeSem)
 
--- ════════════════════════════════════════════════════
--- § §3.6.1 Fire scenario (necessary but insufficient)
--- ════════════════════════════════════════════════════
-
 namespace Fire
 
 /-- Vertices for the fire dynamics (Fig 2): P=power restored, D=drought,
@@ -81,13 +56,13 @@ namespace Fire
 inductive V | P | D | G | L | F deriving DecidableEq, Fintype, Repr
 
 /-- Causal graph: G←{D}; F←{G,P,L}; P,D,L exogenous. -/
-def graph : CausalGraph V := ⟨fun
+def graph : CausalGraph V := ⟨λ
   | .P => ∅ | .D => ∅ | .L => ∅
   | .G => {.D}
   | .F => {.G, .P, .L}⟩
 
 /-- Depth certificate (also the rank for the fuel bridge). -/
-def depth : V → ℕ := fun | .P => 0 | .D => 0 | .L => 0 | .G => 1 | .F => 2
+def depth : V → ℕ := λ | .P => 0 | .D => 0 | .L => 0 | .G => 1 | .F => 2
 
 private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
   intro u v h; revert h; cases u <;> cases v <;> decide
@@ -100,12 +75,12 @@ instance : CausalGraph.IsDAG graph := ranking.isDAG
     (fire ignites only when grass inflammable, power on, line touching). -/
 noncomputable def fireSEM : BoolSEM V :=
   { graph := graph
-    mech := fun
+    mech := λ
       | .P => const (G := graph) false
       | .D => const (G := graph) false
       | .L => const (G := graph) false
-      | .G => deterministic (fun ρ => ρ ⟨.D, by simp [graph]⟩)
-      | .F => deterministic (fun ρ =>
+      | .G => deterministic (λ ρ => ρ ⟨.D, by simp [graph]⟩)
+      | .F => deterministic (λ ρ =>
           ρ ⟨.G, by simp [graph]⟩ &&
           ρ ⟨.P, by simp [graph]⟩ &&
           ρ ⟨.L, by simp [graph]⟩) }
@@ -120,13 +95,13 @@ noncomputable instance : SEM.IsDeterministic fireSEM where
 /-- Background s_b: drought conditions and inflammable grass observed,
     line condition unknown. (Per N&L p. 19, footnote 21: realistic
     epistemic ignorance about whether the line was already down.) -/
-noncomputable def s_b : Valuation (fun _ : V => Bool) :=
+noncomputable def s_b : Valuation (λ _ : V => Bool) :=
   Valuation.empty.extend .D true |>.extend .G true
 
 /-- Extended background s_b1: the line is also known to be down. -/
-noncomputable def s_b1 : Valuation (fun _ : V => Bool) := s_b.extend .L true
+noncomputable def s_b1 : Valuation (λ _ : V => Bool) := s_b.extend .L true
 
-private lemma entails_iff {s : Valuation (fun _ : V => Bool)} {v : V} {x : Bool} :
+private lemma entails_iff {s : Valuation (λ _ : V => Bool)} {v : V} {x : Bool} :
     SEM.causallyEntails fireSEM s v x ↔
       SEM.developDetVtxFuel fireSEM s 3 v = some x :=
   SEM.causallyEntails_iff_fuel fireSEM ranking (by cases v <;> decide) s x
@@ -146,13 +121,9 @@ theorem make_infelicitous_for_fire :
     for F=true. -/
 theorem make_felicitous_for_fire_with_known_line :
     makeSem fireSEM s_b1 .P true .F true :=
-  ⟨fun h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
+  ⟨λ h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
 
 end Fire
-
--- ════════════════════════════════════════════════════
--- § §3.6.2 Bus scenario (sufficient but unnecessary)
--- ════════════════════════════════════════════════════
 
 namespace Bus
 
@@ -161,13 +132,13 @@ namespace Bus
 inductive V | Vis | Tr | Rn | Bk | Bs deriving DecidableEq, Fintype, Repr
 
 /-- Causal graph: Bk←{Vis,Tr}; Bs←{Rn,Bk}; Vis,Tr,Rn exogenous. -/
-def graph : CausalGraph V := ⟨fun
+def graph : CausalGraph V := ⟨λ
   | .Vis => ∅ | .Tr => ∅ | .Rn => ∅
   | .Bk => {.Vis, .Tr}
   | .Bs => {.Rn, .Bk}⟩
 
 /-- Depth certificate (also the rank for the fuel bridge). -/
-def depth : V → ℕ := fun | .Vis => 0 | .Tr => 0 | .Rn => 0 | .Bk => 1 | .Bs => 2
+def depth : V → ℕ := λ | .Vis => 0 | .Tr => 0 | .Rn => 0 | .Bk => 1 | .Bs => 2
 
 private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
   intro u v h; revert h; cases u <;> cases v <;> decide
@@ -184,14 +155,14 @@ instance : CausalGraph.IsDAG graph := ranking.isDAG
     necessary). -/
 noncomputable def busSEM : BoolSEM V :=
   { graph := graph
-    mech := fun
+    mech := λ
       | .Vis => const (G := graph) false
       | .Tr => const (G := graph) false
       | .Rn => const (G := graph) false
-      | .Bk => deterministic (fun ρ =>
+      | .Bk => deterministic (λ ρ =>
           ρ ⟨.Vis, by simp [graph]⟩ &&
           ρ ⟨.Tr, by simp [graph]⟩)
-      | .Bs => deterministic (fun ρ =>
+      | .Bs => deterministic (λ ρ =>
           ρ ⟨.Rn, by simp [graph]⟩ ||
           ρ ⟨.Bk, by simp [graph]⟩) }
 
@@ -204,15 +175,15 @@ noncomputable instance : SEM.IsDeterministic busSEM where
 
 /-- Background s_b: Ava visiting, rain forecast. Training status Tr is the
     purported cause of bus-taking (via bike taken). -/
-noncomputable def s_b : Valuation (fun _ : V => Bool) :=
+noncomputable def s_b : Valuation (λ _ : V => Bool) :=
   Valuation.empty.extend .Vis true |>.extend .Rn true
 
-private lemma entails_iff {s : Valuation (fun _ : V => Bool)} {v : V} {x : Bool} :
+private lemma entails_iff {s : Valuation (λ _ : V => Bool)} {v : V} {x : Bool} :
     SEM.causallyEntails busSEM s v x ↔
       SEM.developDetVtxFuel busSEM s 3 v = some x :=
   SEM.causallyEntails_iff_fuel busSEM ranking (by cases v <;> decide) s x
 
-private lemma necessary_iff {s : Valuation (fun _ : V => Bool)} {c e : V} :
+private lemma necessary_iff {s : Valuation (λ _ : V => Bool)} {c e : V} :
     BoolSEM.causallyNecessary busSEM s c e ↔
       SEM.causallyNecessaryFuel busSEM 3 s c true e true :=
   SEM.causallyNecessary_iff_fuel busSEM ranking
@@ -225,7 +196,7 @@ private lemma necessary_iff {s : Valuation (fun _ : V => Bool)} {c e : V} :
     Bk:=1 forces Bs:=1 for clause (b). -/
 theorem make_felicitous_for_bus :
     makeSem busSEM s_b .Tr true .Bs true :=
-  ⟨fun h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
+  ⟨λ h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
 
 set_option maxRecDepth 4096 in
 /-- (33b) `#Ava's training caused Lia to take the bus.` Cause-side: fails
@@ -239,10 +210,6 @@ theorem cause_infelicitous_for_bus :
 
 end Bus
 
--- ════════════════════════════════════════════════════
--- § §3.6.3 Lighthouse scenario (temporal location constraint)
--- ════════════════════════════════════════════════════
-
 /-! Per-vertex temporal index and the temporal-location constraint
     ([nadathur-lauer-2020] Def 28). Local to this study file —
     promote to substrate (`Core/Causal/SEM/Temporal.lean`) if a second
@@ -254,12 +221,12 @@ namespace Lighthouse
     (time 3). -/
 inductive V | Q | S | L deriving DecidableEq, Fintype, Repr
 
-def graph : CausalGraph V := ⟨fun
+def graph : CausalGraph V := ⟨λ
   | .Q => ∅ | .S => ∅
   | .L => {.Q, .S}⟩
 
 /-- Depth certificate (also the rank for the fuel bridge). -/
-def depth : V → ℕ := fun | .Q => 0 | .S => 0 | .L => 1
+def depth : V → ℕ := λ | .Q => 0 | .S => 0 | .L => 1
 
 private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
   intro u v h; revert h; cases u <;> cases v <;> decide
@@ -272,10 +239,10 @@ instance : CausalGraph.IsDAG graph := ranking.isDAG
     earthquake-induced foundation damage AND extreme storms). -/
 noncomputable def lighthouseSEM : BoolSEM V :=
   { graph := graph
-    mech := fun
+    mech := λ
       | .Q => const (G := graph) false
       | .S => const (G := graph) false
-      | .L => deterministic (fun ρ =>
+      | .L => deterministic (λ ρ =>
           ρ ⟨.Q, by simp [graph]⟩ &&
           ρ ⟨.S, by simp [graph]⟩) }
 
@@ -298,10 +265,10 @@ def lighthouseTimes : V → Nat
 
     Default evaluation time is the cause's time. -/
 def validBackgroundFor (idx : V → Nat) (t : Nat)
-    (s : Valuation (fun _ : V => Bool)) : Prop :=
+    (s : Valuation (λ _ : V => Bool)) : Prop :=
   ∀ v, (s.get v).isSome → idx v ≤ t
 
-private lemma entails_iff {s : Valuation (fun _ : V => Bool)} {v : V} {x : Bool} :
+private lemma entails_iff {s : Valuation (λ _ : V => Bool)} {v : V} {x : Bool} :
     SEM.causallyEntails lighthouseSEM s v x ↔
       developDetVtxFuel lighthouseSEM s 2 v = some x :=
   SEM.causallyEntails_iff_fuel lighthouseSEM ranking (by cases v <;> decide) s x
@@ -311,7 +278,7 @@ private lemma entails_iff {s : Valuation (fun _ : V => Bool)} {v : V} {x : Bool}
     suffices for L=true. -/
 theorem make_felicitous_for_storms :
     makeSem lighthouseSEM (Valuation.empty.extend .Q true) .S true .L true :=
-  ⟨fun h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
+  ⟨λ h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
 
 /-- (35c) `#The earthquake made the tower collapse.` Infelicitous via
     Def 28 temporal-location constraint: the only background under which
@@ -358,10 +325,6 @@ theorem make_infelicitous_for_earthquake :
 
 end Lighthouse
 
--- ════════════════════════════════════════════════════
--- § §4.1 Volitional-action constraint (Def 43)
--- ════════════════════════════════════════════════════
-
 /-! N&L's Def 43 distinguishes *make* from sister periphrastics like *let*:
     when the effect is a volitional action with intention vertex W_E,
     the background must not fix W_E in a way that makes the cause
@@ -384,7 +347,7 @@ def IntentionMap (V : Type*) := V → Option V
     determined-ness check. -/
 def volitionalActionConstraint {V : Type*} [Fintype V] [DecidableEq V]
     (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
-    (intentions : IntentionMap V) (bg : Valuation (fun _ : V => Bool))
+    (intentions : IntentionMap V) (bg : Valuation (λ _ : V => Bool))
     (cause effect : V) : Prop :=
   ∀ wE, intentions effect = some wE →
     ¬ (makeSem M (bg.extend cause true) wE false effect false ∧
@@ -402,12 +365,12 @@ open Volitional (volitionalActionConstraint IntentionMap)
     D = children dance. -/
 inductive V | WD | G | D deriving DecidableEq, Fintype, Repr
 
-def graph : CausalGraph V := ⟨fun
+def graph : CausalGraph V := ⟨λ
   | .WD => ∅ | .G => ∅
   | .D => {.WD, .G}⟩
 
 /-- Depth certificate (also the rank for the fuel bridge). -/
-def depth : V → ℕ := fun | .WD => 0 | .G => 0 | .D => 1
+def depth : V → ℕ := λ | .WD => 0 | .G => 0 | .D => 1
 
 private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
   intro u v h; revert h; cases u <;> cases v <;> decide
@@ -420,10 +383,10 @@ instance : CausalGraph.IsDAG graph := ranking.isDAG
     permission needed for dancing. -/
 noncomputable def permissionSEM : BoolSEM V :=
   { graph := graph
-    mech := fun
+    mech := λ
       | .WD => const (G := graph) false
       | .G => const (G := graph) false
-      | .D => deterministic (fun ρ =>
+      | .D => deterministic (λ ρ =>
           ρ ⟨.WD, by simp [graph]⟩ &&
           ρ ⟨.G, by simp [graph]⟩) }
 
@@ -437,15 +400,15 @@ noncomputable instance : SEM.IsDeterministic permissionSEM where
 
 /-- Background: children eager to dance (W_D := true). Cause is G
     (Gurung's permission); effect is D (dancing). -/
-noncomputable def bg : Valuation (fun _ : V => Bool) :=
+noncomputable def bg : Valuation (λ _ : V => Bool) :=
   Valuation.empty.extend .WD true
 
 /-- Intention map: dancing's intention vertex is W_D. -/
-def intentions : IntentionMap V := fun
+def intentions : IntentionMap V := λ
   | .D => some .WD
   | _ => none
 
-private lemma entails_iff {s : Valuation (fun _ : V => Bool)} {v : V} {x : Bool} :
+private lemma entails_iff {s : Valuation (λ _ : V => Bool)} {v : V} {x : Bool} :
     SEM.causallyEntails permissionSEM s v x ↔
       developDetVtxFuel permissionSEM s 2 v = some x :=
   SEM.causallyEntails_iff_fuel permissionSEM ranking (by cases v <;> decide) s x
@@ -453,7 +416,7 @@ private lemma entails_iff {s : Valuation (fun _ : V => Bool)} {v : V} {x : Bool}
 /-- Bare sufficiency holds: G:=true is sufficient for D=true given W_D=true. -/
 theorem permission_makeSem :
     makeSem permissionSEM bg .G true .D true :=
-  ⟨fun h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
+  ⟨λ h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
 
 /-- (40a) `??Gurung made the children dance.` Volitional-action
     constraint VIOLATED: with W_D fixed in bg, W_D := false is sufficient
@@ -469,7 +432,7 @@ theorem permission_violates_volitional_constraint :
   · -- makeSem permissionSEM (bg + G:=true) WD false D false: with G granted,
     -- D = W_D ∧ G is settled true (so D = false is not inevitable), and
     -- revoking the desire settles D = false.
-    exact ⟨fun h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
+    exact ⟨λ h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
   · -- (bg.remove .G).get .WD ≠ none. bg fixes .WD=true; removing .G doesn't change that.
     intro hNone
     -- (bg.remove .G).get .WD: .WD ≠ .G so remove doesn't touch it; equals bg.get .WD = some true.
@@ -501,12 +464,12 @@ open Volitional (volitionalActionConstraint IntentionMap)
     once G fires. -/
 inductive V | WD | G | D deriving DecidableEq, Fintype, Repr
 
-def graph : CausalGraph V := ⟨fun
+def graph : CausalGraph V := ⟨λ
   | .WD => ∅ | .G => ∅
   | .D => {.WD, .G}⟩
 
 /-- Depth certificate (also the rank for the fuel bridge). -/
-def depth : V → ℕ := fun | .WD => 0 | .G => 0 | .D => 1
+def depth : V → ℕ := λ | .WD => 0 | .G => 0 | .D => 1
 
 private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
   intro u v h; revert h; cases u <;> cases v <;> decide
@@ -519,10 +482,10 @@ instance : CausalGraph.IsDAG graph := ranking.isDAG
     independent desire suffices for dancing. -/
 noncomputable def commandSEM : BoolSEM V :=
   { graph := graph
-    mech := fun
+    mech := λ
       | .WD => const (G := graph) false
       | .G => const (G := graph) false
-      | .D => deterministic (fun ρ =>
+      | .D => deterministic (λ ρ =>
           ρ ⟨.WD, by simp [graph]⟩ ||
           ρ ⟨.G, by simp [graph]⟩) }
 
@@ -534,21 +497,21 @@ noncomputable instance : SEM.IsDeterministic commandSEM where
     | .WD | .G => inferInstanceAs (Mechanism.IsDeterministic (const _))
     | .D => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
-def intentions : IntentionMap V := fun
+def intentions : IntentionMap V := λ
   | .D => some .WD
   | _ => none
 
-private lemma entails_iff {s : Valuation (fun _ : V => Bool)} {v : V} {x : Bool} :
+private lemma entails_iff {s : Valuation (λ _ : V => Bool)} {v : V} {x : Bool} :
     SEM.causallyEntails commandSEM s v x ↔
       developDetVtxFuel commandSEM s 2 v = some x :=
   SEM.causallyEntails_iff_fuel commandSEM ranking (by cases v <;> decide) s x
 
 /-- (41) context: the children are independently eager (W_D = 1). -/
-noncomputable def bgEager : Valuation (fun _ : V => Bool) :=
+noncomputable def bgEager : Valuation (λ _ : V => Bool) :=
   Valuation.empty.extend .WD true
 
 /-- (42) context: the children are reluctant (W_D = 0). -/
-noncomputable def bgReluctant : Valuation (fun _ : V => Bool) :=
+noncomputable def bgReluctant : Valuation (λ _ : V => Bool) :=
   Valuation.empty.extend .WD false
 
 /-- (41) Bare sufficiency in the eager context: with W_D = 1 fixed,
@@ -558,12 +521,12 @@ noncomputable def bgReluctant : Valuation (fun _ : V => Bool) :=
     in both. -/
 theorem command_makeSem_eager :
     makeSem commandSEM bgEager .G true .D true :=
-  ⟨fun h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
+  ⟨λ h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
 
 /-- (42) Bare sufficiency in the reluctant context (W_D = 0). -/
 theorem command_makeSem_reluctant :
     makeSem commandSEM bgReluctant .G true .D true :=
-  ⟨fun h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
+  ⟨λ h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
 
 /-- (42a) `Gurung made the children dance` (reluctant context).
     Volitional-action constraint SATISFIED: W_D := false is NOT
@@ -598,13 +561,13 @@ open Volitional (volitionalActionConstraint IntentionMap)
     Distinct mechanism: G acts via the agent's desire, not in parallel. -/
 inductive V | WD | G | D deriving DecidableEq, Fintype, Repr
 
-def graph : CausalGraph V := ⟨fun
+def graph : CausalGraph V := ⟨λ
   | .G => ∅
   | .WD => {.G}
   | .D => {.WD}⟩
 
 /-- Depth certificate (also the rank for the fuel bridge). -/
-def depth : V → ℕ := fun | .G => 0 | .WD => 1 | .D => 2
+def depth : V → ℕ := λ | .G => 0 | .WD => 1 | .D => 2
 
 private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
   intro u v h; revert h; cases u <;> cases v <;> decide
@@ -617,10 +580,10 @@ instance : CausalGraph.IsDAG graph := ranking.isDAG
     desires); D := W_D (children dance iff they want to). -/
 noncomputable def persuasionSEM : BoolSEM V :=
   { graph := graph
-    mech := fun
+    mech := λ
       | .G => const (G := graph) false
-      | .WD => deterministic (fun ρ => ρ ⟨.G, by simp [graph]⟩)
-      | .D => deterministic (fun ρ => ρ ⟨.WD, by simp [graph]⟩) }
+      | .WD => deterministic (λ ρ => ρ ⟨.G, by simp [graph]⟩)
+      | .D => deterministic (λ ρ => ρ ⟨.WD, by simp [graph]⟩) }
 
 instance : CausalGraph.IsDAG persuasionSEM.graph :=
   inferInstanceAs (CausalGraph.IsDAG graph)
@@ -630,11 +593,11 @@ noncomputable instance : SEM.IsDeterministic persuasionSEM where
     | .G => inferInstanceAs (Mechanism.IsDeterministic (const _))
     | .WD | .D => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
-def intentions : IntentionMap V := fun
+def intentions : IntentionMap V := λ
   | .D => some .WD
   | _ => none
 
-private lemma entails_iff {s : Valuation (fun _ : V => Bool)} {v : V} {x : Bool} :
+private lemma entails_iff {s : Valuation (λ _ : V => Bool)} {v : V} {x : Bool} :
     SEM.causallyEntails persuasionSEM s v x ↔
       developDetVtxFuel persuasionSEM s 3 v = some x :=
   SEM.causallyEntails_iff_fuel persuasionSEM ranking (by cases v <;> decide) s x
@@ -642,7 +605,7 @@ private lemma entails_iff {s : Valuation (fun _ : V => Bool)} {v : V} {x : Bool}
 /-- Bare sufficiency: G:=true forces W_D=true forces D=true. -/
 theorem persuasion_makeSem :
     makeSem persuasionSEM Valuation.empty .G true .D true :=
-  ⟨fun h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
+  ⟨λ h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
 
 /-- (44a) `Gurung made the children dance (by playing their favourite song).`
     Volitional-action constraint SATISFIED: although W_D := false is
@@ -657,7 +620,7 @@ theorem persuasion_satisfies_volitional_constraint :
   -- hDet : (Valuation.empty.remove .G).get .WD ≠ none
   -- But Valuation.empty.get .WD = none, and remove only sets vertices to none.
   apply hDet
-  show ((Valuation.empty : Valuation (fun _ : V => Bool)).remove V.G).get V.WD = none
+  show ((Valuation.empty : Valuation (λ _ : V => Bool)).remove V.G).get V.WD = none
   simp [Valuation.remove, Valuation.get, Valuation.empty]
 
 theorem persuasion_make_felicitous :
@@ -666,10 +629,6 @@ theorem persuasion_make_felicitous :
   ⟨persuasion_makeSem, persuasion_satisfies_volitional_constraint⟩
 
 end Persuasion
-
--- ════════════════════════════════════════════════════
--- § §4.2 Causal "perfection" (cancellability/reinforceability)
--- ════════════════════════════════════════════════════
 
 /-! N&L §4.2 argues that the necessity inference of *make* is a
     pragmatic enrichment, not entailed content. Their argument runs
@@ -710,10 +669,6 @@ theorem necessity_cancellable :
 theorem necessity_reinforceable :
     makeSem Fire.fireSEM Fire.s_b1 .P true .F true :=
   Fire.make_felicitous_for_fire_with_known_line
-
--- ════════════════════════════════════════════════════
--- § Karttunen's entailment cells: same pattern, different mechanism
--- ════════════════════════════════════════════════════
 
 /-! N&L's central observation against entailment-based taxonomy:
 periphrastic causatives share [karttunen-1971]'s sufficient-only
