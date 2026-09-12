@@ -1,487 +1,237 @@
-import Linglib.Semantics.Reference.Rigidity
 import Linglib.Logic.Assignment
-import Linglib.Semantics.Tense.Pronoun
-import Linglib.Semantics.Reference.Context.Tower
-import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Fragments.English.Nouns
-import Linglib.Fragments.English.FunctionWords
+import Linglib.Semantics.Reference.Context.Index
 
 /-!
-# [percus-2000]: Constraints on Situation Variables in Syntax [percus-2000]
-[heim-kratzer-1998] [kratzer-1998] [partee-1973]
+# Percus (2000): Constraints on Some Other Variables in Syntax
 
-Formalizes Percus's theory of situation pronouns in LF and derives
-concrete de re / de dicto predictions from Fragment lexical entries.
+This file formalizes the situation-pronoun syntax of [percus-2000]. Every predicate carries a
+situation pronoun, every clause introduces a situation binder, and two generalizations
+restrict which binder a pronoun may take: Generalization X, that the situation pronoun of a
+verb is bound by the nearest c-commanding binder, and Generalization Y, that the situation
+argument of an adverb of quantification is likewise locally bound, whereas the pronoun of a
+noun phrase may be bound from higher up (`LF.GenX`, `QLF.GenY`). Under an attitude verb this
+gives the noun phrase a de re reading, *my brother* evaluated at the matrix situation, while
+the embedded predicate is read de dicto only (`genX_licenses`); on a model where the brother
+is Bill in fact and Charlie in Mary's belief worlds, the two licensed LFs of *Mary believes
+my brother is a spy* come apart (`dpDeRe_true_allDeDicto_false`), and the LF that would
+read *John is Canadian* at the actual situation, true on the model, is excluded
+(`canadian_predicate_de_re_excluded`). For *always* the compliant LF quantifies over the
+situations of the belief world and the violating one over actual situations (`genY`).
 
-Every predicate takes a situation argument, every clause introduces a
-lambda-s binder, and **Generalization X** constrains which binder can
-bind which variable.
+## Implementation notes
 
-## Generalization X
+Situation assignments specialize the assignments of `Logic/Assignment` to indices of world
+and time, and the models are two-world toy models. The paper's LF trees and examples are
+described in prose without the paper's numbering.
 
-> The situation pronoun that a predicate is associated with must be
-> bound by the minimal c-commanding situation binder.
+## References
 
-## Situation Assignment Infrastructure
-
-Situation assignments specialize `Assignment` from `D = T`
-(Partee's temporal variables) to `D = Index W T` (Percus's
-situation variables).
-
-## Empirical Chain
-
-```
-Fragments/English/Predicates/Verbal.lean
-  "believe": opaqueContext = true, attitude =.doxastic.nonVeridical
-  "think": opaqueContext = true, attitude =.doxastic.nonVeridical
-    ↓ (opaqueContext = true → introduces situation binder λs)
-(this file: theory + empirical predictions)
-  believeSit: ∀s' ∈ Dox(s). complement(g[n ↦ s'])
-  genXWellFormed / genYWellFormed: filter readings
-    ↓ (concrete model + predicate denotations)
-  reading computations → truth values → match empirical judgments
-```
-
+* [percus-2000]
+* [heim-kratzer-1998]
 -/
-
-open Tense
-open Tense
 
 namespace Percus2000
 
-open Semantics.Context (Index)
 open Semantics.Context
-open Features (Attitude)
 
--- ════════════════════════════════════════════════════════════════
--- § Situation Assignment
--- ════════════════════════════════════════════════════════════════
-
-/-- Situation assignment function: maps variable indices to situations. -/
+/-- An assignment of situations to variable indices. -/
 abbrev SituationAssignment (W T : Type*) := Assignment (Index W T)
 
-/-- Situation variable denotation: s_n^g = g(n). -/
-abbrev interpSitVar {W T : Type*} (n : ℕ) (g : SituationAssignment W T) :
-    Index W T :=
-  g n
+/-- Belief with situation binding: the complement holds at every doxastic alternative of the
+agent, the binder `n` reset to that alternative. -/
+def believeSit {W T E : Type*} (dox : E → Index W T → List (Index W T)) (agent : E) (n : ℕ)
+    (complement : SituationAssignment W T → Prop) (g : SituationAssignment W T)
+    (s : Index W T) : Prop :=
+  ∀ s' ∈ dox agent s, complement (Function.update g n s')
 
-/-- Modified situation assignment g[n -> s]. -/
-abbrev updateSitVar {W T : Type*} (g : SituationAssignment W T)
-    (n : ℕ) (s : Index W T) : SituationAssignment W T :=
-  Function.update g n s
-
-/-- Situation lambda abstraction: bind a situation variable. -/
-abbrev sitLambdaAbs {W T α : Type*} (n : ℕ)
-    (body : SituationAssignment W T → α) :
-    SituationAssignment W T → Index W T → α :=
-  λ g s => body (Function.update g n s)
-
--- ════════════════════════════════════════════════════════════════
--- § Generalization X
--- ════════════════════════════════════════════════════════════════
-
-structure PredicateBinding where
-  sitVarIndex : ℕ
-  closestBinderIndex : ℕ
-
-def PredicateBinding.genXCompliant (b : PredicateBinding) : Bool :=
-  b.sitVarIndex == b.closestBinderIndex
-
-def genXWellFormed (bindings : List PredicateBinding) : Bool :=
-  bindings.all PredicateBinding.genXCompliant
-
-/-- Generalization Y: adverbial quantifiers must use nearest binder. -/
-def genYWellFormed (quantifierBindings : List PredicateBinding) : Bool :=
-  quantifierBindings.all PredicateBinding.genXCompliant
-
-def genXYWellFormed (predicateBindings quantifierBindings : List PredicateBinding) : Bool :=
-  genXWellFormed predicateBindings && genYWellFormed quantifierBindings
-
--- ════════════════════════════════════════════════════════════════
--- § Tower Bridge: Generalization X as Depth Constraint
--- ════════════════════════════════════════════════════════════════
-
-def GenXAsTowerDepth {C R : Type*} (ap : AccessPattern C R) : Prop :=
-  ap.depth = .local
-
-def RestrictorUnconstrained {C R : Type*} (_ap : AccessPattern C R) : Prop :=
-  True
-
-def genXTowerWellFormed {C : Type*}
-    (predicatePatterns : List (Σ R, AccessPattern C R))
-    (_restrictorPatterns : List (Σ R, AccessPattern C R)) : Prop :=
-  ∀ p, p ∈ predicatePatterns → GenXAsTowerDepth p.2
-
-theorem genX_bridge_compliant :
-    ∀ (b : PredicateBinding), b.genXCompliant = true ↔
-      b.sitVarIndex = b.closestBinderIndex := by
-  intro b
-  simp only [PredicateBinding.genXCompliant, beq_iff_eq]
-
--- ════════════════════════════════════════════════════════════════
--- § Attitude Semantics with Situation Binding
--- ════════════════════════════════════════════════════════════════
-
-abbrev DoxSit (W T E : Type*) := E → Index W T → List (Index W T)
-
-def believeSit {W T E : Type*}
-    (dox : DoxSit W T E) (agent : E) (n : ℕ)
-    (complement : SituationAssignment W T → Prop)
-    (g : SituationAssignment W T) (s : Index W T) : Prop :=
-  ∀ s' ∈ dox agent s, complement (updateSitVar g n s')
-
-instance {W T E : Type*}
-    (dox : DoxSit W T E) (agent : E) (n : ℕ)
+instance {W T E : Type*} (dox : E → Index W T → List (Index W T)) (agent : E) (n : ℕ)
     (complement : SituationAssignment W T → Prop) [DecidablePred complement]
     (g : SituationAssignment W T) (s : Index W T) :
     Decidable (believeSit dox agent n complement g s) := by
   unfold believeSit; infer_instance
 
-def alwaysAt {W T : Type*}
-    (domain : Index W T → List (Index W T))
-    (ssh : Index W T) (n : ℕ)
-    (scope : SituationAssignment W T → Prop)
-    (g : SituationAssignment W T) : Prop :=
-  ∀ s' ∈ domain ssh, scope (updateSitVar g n s')
+/-- An adverb of quantification over the situations its restrictor supplies, the binder `n`
+reset to each. -/
+def alwaysAt {W T : Type*} (domain : Index W T → List (Index W T)) (restrictor : Index W T)
+    (n : ℕ) (scope : SituationAssignment W T → Prop) (g : SituationAssignment W T) : Prop :=
+  ∀ s' ∈ domain restrictor, scope (Function.update g n s')
 
-instance {W T : Type*}
-    (domain : Index W T → List (Index W T))
-    (ssh : Index W T) (n : ℕ)
-    (scope : SituationAssignment W T → Prop) [DecidablePred scope]
-    (g : SituationAssignment W T) :
-    Decidable (alwaysAt domain ssh n scope g) := by
+instance {W T : Type*} (domain : Index W T → List (Index W T)) (restrictor : Index W T)
+    (n : ℕ) (scope : SituationAssignment W T → Prop) [DecidablePred scope]
+    (g : SituationAssignment W T) : Decidable (alwaysAt domain restrictor n scope g) := by
   unfold alwaysAt; infer_instance
 
--- ════════════════════════════════════════════════════════════════
--- § Key Properties
--- ════════════════════════════════════════════════════════════════
+/-! ### Generalizations X and Y -/
 
-theorem sitVar_receives_binder_value {W T : Type*}
-    (g : SituationAssignment W T) (n : ℕ) (s : Index W T) :
-    interpSitVar n (updateSitVar g n s) = s :=
-  Function.update_self n s g
+/-- An LF of an attitude sentence: the matrix clause binds situation variable 1 and the
+embedded clause variable 2, and the LF records which binder the embedded verb's situation
+pronoun and the embedded noun phrase's pronoun take. -/
+structure LF where
+  verb : ℕ
+  noun : ℕ
+  deriving DecidableEq
 
-theorem sitVar_other_unaffected {W T : Type*}
-    (g : SituationAssignment W T) (n i : ℕ) (s : Index W T)
-    (h : i ≠ n) :
-    interpSitVar i (updateSitVar g n s) = interpSitVar i g :=
-  Function.update_of_ne h s g
+/-- Generalization X: the verb's situation pronoun is bound by the nearest binder; the noun
+phrase's pronoun is unconstrained. -/
+def LF.GenX (lf : LF) : Prop := lf.verb = 2
 
--- ════════════════════════════════════════════════════════════════
--- § Bridge: Temporal <-> Situational
--- ════════════════════════════════════════════════════════════════
+instance : DecidablePred LF.GenX := λ lf => inferInstanceAs (Decidable (lf.verb = 2))
 
-def toTemporalAssignment {W T : Type*}
-    (g : SituationAssignment W T) : TemporalAssignment T :=
-  λ n => (g n).time
+/-- The LF with everything read in the belief situations. -/
+def allDeDicto : LF := ⟨2, 2⟩
 
-theorem temporal_projection_commutes {W T : Type*}
-    (g : SituationAssignment W T) (n : ℕ) :
-    Tense.interpTense n (toTemporalAssignment g) = (interpSitVar n g).time :=
-  rfl
+/-- The LF reading the noun phrase at the matrix situation. -/
+def dpDeRe : LF := ⟨2, 1⟩
 
--- ════════════════════════════════════════════════════════════════
--- § Fragment Bridge: Lexical Entries → Percus Situation Binding
--- ════════════════════════════════════════════════════════════════
+/-- The LF reading the predicate at the matrix situation. -/
+def predicateDeRe : LF := ⟨1, 2⟩
 
-def introducesSitBinder (v : English.Predicates.Verbal.VerbEntry) : Bool :=
-  v.opaqueContext
+/-- Generalization X licenses the all-de-dicto and the de re noun phrase LFs and excludes the
+de re predicate LF. -/
+theorem genX_licenses : allDeDicto.GenX ∧ dpDeRe.GenX ∧ ¬ predicateDeRe.GenX := by decide
 
-def isDoxasticUniversal (v : English.Predicates.Verbal.VerbEntry) : Bool :=
-  match v.attitude with
-  | some (.doxastic _) => true
-  | _ => false
+/-- An LF for an adverb of quantification in an attitude complement: the binder its situation
+argument takes. -/
+structure QLF where
+  quant : ℕ
+  deriving DecidableEq
 
-theorem believe_introduces_sit_binder :
-    introducesSitBinder English.Predicates.Verbal.believe = true := rfl
-theorem think_introduces_sit_binder :
-    introducesSitBinder English.Predicates.Verbal.think = true := rfl
+/-- Generalization Y: the adverb's situation argument is bound by the nearest binder. -/
+def QLF.GenY (q : QLF) : Prop := q.quant = 2
 
-theorem believe_is_doxastic :
-    isDoxasticUniversal English.Predicates.Verbal.believe = true := rfl
-theorem think_is_doxastic :
-    isDoxasticUniversal English.Predicates.Verbal.think = true := rfl
+instance : DecidablePred QLF.GenY := λ q => inferInstanceAs (Decidable (q.quant = 2))
 
-theorem believe_is_nonveridical :
-    English.Predicates.Verbal.believe.attitude =
-    some (.doxastic .nonVeridical) := rfl
+/-! ### A model -/
 
-theorem always_is_universal :
-    English.FunctionWords.always.force = .universal := rfl
-
-theorem mary_is_proper :
-    English.Nouns.mary.proper = true := rfl
-theorem john_is_proper :
-    English.Nouns.john.proper = true := rfl
-theorem bill_is_proper :
-    English.Nouns.bill.proper = true := rfl
-theorem brother_is_common :
-    English.Nouns.brother.proper = false := rfl
-theorem spy_is_common :
-    English.Nouns.spy.proper = false := rfl
-
--- ════════════════════════════════════════════════════════════════
--- § Concrete Model
--- ════════════════════════════════════════════════════════════════
-
+/-- The actual world and Mary's belief world. -/
 inductive W where
-  | actual | belief
-  deriving DecidableEq, Repr
+  | actual
+  | belief
+  deriving DecidableEq
 
 inductive Person where
-  | mary | john | bill | charlie
-  deriving DecidableEq, Repr
+  | mary
+  | john
+  | bill
+  | charlie
+  deriving DecidableEq
 
+/-- Situations with a trivial time coordinate. -/
 abbrev Sit := Index W Unit
 
-def sit (w : W) : Sit := ⟨w, ()⟩
-def sActual : Sit := sit .actual
-def sBelief : Sit := sit .belief
+def sActual : Sit := ⟨.actual, ()⟩
+def sBelief : Sit := ⟨.belief, ()⟩
 
-def entityOf (n : English.Nouns.NounEntry) : Person :=
-  if n.formSg == "Mary" then .mary
-  else if n.formSg == "John" then .john
-  else if n.formSg == "Bill" then .bill
-  else .charlie
-
-theorem entityOf_mary :
-    entityOf English.Nouns.mary = .mary := rfl
-theorem entityOf_john :
-    entityOf English.Nouns.john = .john := rfl
-theorem entityOf_bill :
-    entityOf English.Nouns.bill = .bill := rfl
-
--- ════════════════════════════════════════════════════════════════
--- § Predicate Denotations (Situation-Dependent)
--- ════════════════════════════════════════════════════════════════
-
-def isCanadian (p : Person) (s : Sit) : Prop :=
+/-- John is Canadian in fact and not in Mary's belief world. -/
+def IsCanadian (p : Person) (s : Sit) : Prop :=
   match p, s.world with
   | .john, .actual => True
   | _, _ => False
 
-instance instDecidableIsCanadian (p : Person) (s : Sit) : Decidable (isCanadian p s) := by
-  unfold isCanadian; cases p <;> cases s.world <;> infer_instance
+instance (p : Person) (s : Sit) : Decidable (IsCanadian p s) := by
+  unfold IsCanadian; cases p <;> cases s.world <;> infer_instance
 
-def isBrotherOf (p : Person) (s : Sit) : Prop :=
+/-- The speaker's brother is Bill in fact and Charlie in Mary's belief world. -/
+def IsBrother (p : Person) (s : Sit) : Prop :=
   match p, s.world with
   | .bill, .actual => True
   | .charlie, .belief => True
   | _, _ => False
 
-instance instDecidableIsBrotherOf (p : Person) (s : Sit) : Decidable (isBrotherOf p s) := by
-  unfold isBrotherOf; cases p <;> cases s.world <;> infer_instance
+instance (p : Person) (s : Sit) : Decidable (IsBrother p s) := by
+  unfold IsBrother; cases p <;> cases s.world <;> infer_instance
 
-def isSpyAt (p : Person) (s : Sit) : Prop :=
+/-- Bill is a spy in Mary's belief world only. -/
+def IsSpy (p : Person) (s : Sit) : Prop :=
   match p, s.world with
   | .bill, .belief => True
   | _, _ => False
 
-instance instDecidableIsSpyAt (p : Person) (s : Sit) : Decidable (isSpyAt p s) := by
-  unfold isSpyAt; cases p <;> cases s.world <;> infer_instance
+instance (p : Person) (s : Sit) : Decidable (IsSpy p s) := by
+  unfold IsSpy; cases p <;> cases s.world <;> infer_instance
 
-theorem brother_form :
-    English.Nouns.brother.formSg = "brother" := rfl
-theorem spy_form :
-    English.Nouns.spy.formSg = "spy" := rfl
+/-- Mary's doxastic alternatives: the belief world. -/
+def doxMary : Sit → List Sit := λ _ => [sBelief]
 
--- ════════════════════════════════════════════════════════════════
--- § Doxastic Alternatives
--- ════════════════════════════════════════════════════════════════
-
-def doxMary : Sit → List Sit
-  | ⟨.actual, _⟩ => [sBelief]
-  | ⟨.belief, _⟩ => [sBelief]
-
--- ════════════════════════════════════════════════════════════════
--- § Example 1: "Mary believes John is Canadian"
--- ════════════════════════════════════════════════════════════════
-
-section Example1
+/-- The unique brother at a situation. -/
+def theBrother (s : Sit) : Person :=
+  if IsBrother .bill s then .bill else if IsBrother .charlie s then .charlie else .mary
 
 private def g₀ : SituationAssignment W Unit := λ _ => sActual
 
-def reading1_deDicto : Prop :=
-  believeSit (λ _ => doxMary)
-    (entityOf English.Nouns.mary) 2
-    (λ g => isCanadian (entityOf English.Nouns.john) (interpSitVar 2 g))
+/-- The reading of an LF of *Mary believes my brother is a spy*: the noun phrase's and the
+verb's situation pronouns are interpreted at the situations their binders supply. -/
+def spyReading (lf : LF) : Prop :=
+  believeSit (λ _ => doxMary) Person.mary 2 (λ g => IsSpy (theBrother (g lf.noun)) (g lf.verb))
     g₀ sActual
 
-instance : Decidable reading1_deDicto := by
-  unfold reading1_deDicto believeSit; infer_instance
+instance (lf : LF) : Decidable (spyReading lf) := by
+  unfold spyReading believeSit; infer_instance
 
-def reading2_deRe : Prop :=
-  believeSit (λ _ => doxMary)
-    (entityOf English.Nouns.mary) 2
-    (λ g => isCanadian (entityOf English.Nouns.john) (interpSitVar 1 g))
-    (updateSitVar g₀ 1 sActual) sActual
+/-- The two licensed LFs are distinct readings: with the brother read at the matrix situation
+the sentence is true, and with everything read in the belief world it is false. -/
+theorem dpDeRe_true_allDeDicto_false : spyReading dpDeRe ∧ ¬ spyReading allDeDicto := by
+  decide
 
-instance : Decidable reading2_deRe := by
-  unfold reading2_deRe believeSit; infer_instance
+/-- The reading of an LF of *Mary believes John is Canadian*. -/
+def canadianReading (lf : LF) : Prop :=
+  believeSit (λ _ => doxMary) Person.mary 2 (λ g => IsCanadian .john (g lf.verb)) g₀ sActual
 
-theorem deDicto_is_false : ¬ reading1_deDicto := by decide
-theorem deRe_is_true : reading2_deRe := by decide
-theorem readings_differ : ¬ (reading1_deDicto ↔ reading2_deRe) := by
-  intro h; exact deDicto_is_false (h.mpr deRe_is_true)
+instance (lf : LF) : Decidable (canadianReading lf) := by
+  unfold canadianReading believeSit; infer_instance
 
-def reading1_bindings : List PredicateBinding := [⟨2, 2⟩]
-def reading2_bindings : List PredicateBinding := [⟨1, 2⟩]
+/-- Generalization X has empirical bite: the LF reading the predicate at the matrix situation
+would make the sentence true on the model, but it is excluded, and the licensed LF is
+false. -/
+theorem canadian_predicate_de_re_excluded :
+    canadianReading predicateDeRe ∧ ¬ predicateDeRe.GenX ∧ ¬ canadianReading allDeDicto := by
+  decide
 
-theorem reading1_genX_ok : genXWellFormed reading1_bindings = true := rfl
-theorem reading2_genX_violation : genXWellFormed reading2_bindings = false := rfl
+/-! ### Generalization Y -/
 
-def empiricalJudgment_ex1 : Prop := False
+/-- Three rounds of the game. -/
+inductive Round where
+  | r1
+  | r2
+  | r3
+  deriving DecidableEq
 
-theorem genX_predicts_correct_reading :
-    reading1_deDicto ↔ empiricalJudgment_ex1 := by
-  unfold empiricalJudgment_ex1; exact iff_false_intro deDicto_is_false
-theorem genX_blocks_incorrect_reading :
-    ¬ (reading2_deRe ↔ empiricalJudgment_ex1) := by
-  intro h; exact h.mp deRe_is_true
-
-end Example1
-
--- ════════════════════════════════════════════════════════════════
--- § Example 2: "Mary believes my brother is a spy"
--- ════════════════════════════════════════════════════════════════
-
-section Example2
-
-private def g₀' : SituationAssignment W Unit := λ _ => sActual
-
-private def theBrother (s : Sit) : Person :=
-  if isBrotherOf .bill s then .bill
-  else if isBrotherOf .charlie s then .charlie
-  else .mary
-
-def readingA_allDeDicto : Prop :=
-  believeSit (λ _ => doxMary) (entityOf English.Nouns.mary) 2
-    (λ g =>
-      let s := interpSitVar 2 g
-      isSpyAt (theBrother s) s)
-    g₀' sActual
-
-instance : Decidable readingA_allDeDicto := by
-  unfold readingA_allDeDicto believeSit; infer_instance
-
-def readingB_npDeRe : Prop :=
-  believeSit (λ _ => doxMary) (entityOf English.Nouns.mary) 2
-    (λ g =>
-      let sMatrix := interpSitVar 1 g
-      let sEmbed := interpSitVar 2 g
-      isSpyAt (theBrother sMatrix) sEmbed)
-    (updateSitVar g₀' 1 sActual) sActual
-
-instance : Decidable readingB_npDeRe := by
-  unfold readingB_npDeRe believeSit; infer_instance
-
-def readingC_predDeRe : Prop :=
-  believeSit (λ _ => doxMary) (entityOf English.Nouns.mary) 2
-    (λ g =>
-      let sMatrix := interpSitVar 1 g
-      let sEmbed := interpSitVar 2 g
-      isSpyAt (theBrother sEmbed) sMatrix)
-    (updateSitVar g₀' 1 sActual) sActual
-
-instance : Decidable readingC_predDeRe := by
-  unfold readingC_predDeRe believeSit; infer_instance
-
-theorem readingA_is_false : ¬ readingA_allDeDicto := by decide
-theorem readingB_is_true : readingB_npDeRe := by decide
-theorem readingC_is_false : ¬ readingC_predDeRe := by decide
-
-def readingA_bindings : List PredicateBinding := [⟨2, 2⟩]
-def readingB_bindings : List PredicateBinding := [⟨2, 2⟩]
-def readingC_bindings : List PredicateBinding := [⟨1, 2⟩]
-
-theorem readingA_genX_ok : genXWellFormed readingA_bindings = true := rfl
-theorem readingB_genX_ok : genXWellFormed readingB_bindings = true := rfl
-theorem readingC_genX_violation : genXWellFormed readingC_bindings = false := rfl
-
-end Example2
-
--- ════════════════════════════════════════════════════════════════
--- § Example 3: "Mary thinks my brother always won the game"
--- ════════════════════════════════════════════════════════════════
-
-section Example3
-
-inductive Round where | r1 | r2 | r3 deriving DecidableEq, Repr
-
+/-- Situations with a round as their time coordinate. -/
 abbrev RSit := Index W Round
-private def rSit (w : W) (r : Round) : RSit := ⟨w, r⟩
 
-def wonGame (p : Person) (s : RSit) : Prop :=
+/-- Bill won the first two rounds in fact and every round in Mary's belief world. -/
+def Won (p : Person) (s : RSit) : Prop :=
   match p, s.world, s.time with
   | .bill, .actual, .r1 => True
   | .bill, .actual, .r2 => True
-  | .bill, .actual, .r3 => False
   | .bill, .belief, _ => True
   | _, _, _ => False
 
-instance instDecidableWonGame (p : Person) (s : RSit) : Decidable (wonGame p s) := by
-  unfold wonGame; cases p <;> cases s.world <;> cases s.time <;> infer_instance
+instance (p : Person) (s : RSit) : Decidable (Won p s) := by
+  unfold Won; cases p <;> cases s.world <;> cases s.time <;> infer_instance
 
-def gameRounds (s : RSit) : List RSit :=
-  [rSit s.world .r1, rSit s.world .r2, rSit s.world .r3]
+/-- The rounds of a situation's world. -/
+def rounds (s : RSit) : List RSit := [⟨s.world, .r1⟩, ⟨s.world, .r2⟩, ⟨s.world, .r3⟩]
 
-def doxMaryR : RSit → List RSit
-  | ⟨.actual, r⟩ => [⟨.belief, r⟩]
-  | ⟨.belief, r⟩ => [⟨.belief, r⟩]
+/-- Mary's doxastic alternatives, round by round. -/
+def doxMaryR : RSit → List RSit := λ s => [⟨.belief, s.time⟩]
 
-private def g₃ : SituationAssignment W Round := λ _ => rSit .actual .r1
+private def g₃ : SituationAssignment W Round := λ _ => ⟨.actual, .r1⟩
 
-def genY_compliant : Prop :=
-  believeSit (λ _ => doxMaryR) (entityOf English.Nouns.mary) 2
-    (λ g =>
-      let ssh := interpSitVar 2 g
-      alwaysAt gameRounds ssh 3
-        (λ g' => wonGame (entityOf English.Nouns.bill) (interpSitVar 3 g')) g)
-    g₃ (rSit .actual .r1)
+/-- The reading of an LF of *Mary thinks my brother always won the game*: the adverb ranges
+over the rounds of the situation its binder supplies. -/
+def alwaysReading (q : QLF) : Prop :=
+  believeSit (λ _ => doxMaryR) Person.mary 2
+    (λ g => alwaysAt rounds (g q.quant) 3 (λ g' => Won .bill (g' 3)) g) g₃ ⟨.actual, .r1⟩
 
-instance : Decidable genY_compliant := by
-  unfold genY_compliant believeSit alwaysAt; infer_instance
+instance (q : QLF) : Decidable (alwaysReading q) := by
+  unfold alwaysReading believeSit alwaysAt; infer_instance
 
-def genY_violation : Prop :=
-  believeSit (λ _ => doxMaryR) (entityOf English.Nouns.mary) 2
-    (λ g =>
-      let ssh := interpSitVar 1 g
-      alwaysAt gameRounds ssh 3
-        (λ g' => wonGame (entityOf English.Nouns.bill) (interpSitVar 3 g')) g)
-    (updateSitVar g₃ 1 (rSit .actual .r1)) (rSit .actual .r1)
-
-instance : Decidable genY_violation := by
-  unfold genY_violation believeSit alwaysAt; infer_instance
-
-theorem genY_compliant_is_true : genY_compliant := by decide
-theorem genY_violation_is_false : ¬ genY_violation := by decide
-theorem genY_readings_differ : ¬ (genY_compliant ↔ genY_violation) := by
-  intro h; exact genY_violation_is_false (h.mp genY_compliant_is_true)
-
-def empiricalJudgment_ex3 : Prop := True
-
-theorem genY_predicts_correct_reading :
-    genY_compliant ↔ empiricalJudgment_ex3 := by
-  unfold empiricalJudgment_ex3; exact iff_true_intro genY_compliant_is_true
-theorem genY_blocks_incorrect_reading :
-    ¬ (genY_violation ↔ empiricalJudgment_ex3) := by
-  intro h; exact genY_violation_is_false (h.mpr (by unfold empiricalJudgment_ex3; trivial))
-
-def ex3_predBindings : List PredicateBinding := [⟨3, 3⟩]
-def ex3_quantBindings_compliant : List PredicateBinding := [⟨2, 2⟩]
-def ex3_quantBindings_violation : List PredicateBinding := [⟨1, 2⟩]
-
-theorem ex3_genX_ok_for_both : genXWellFormed ex3_predBindings = true := rfl
-theorem ex3_genY_compliant_ok :
-    genYWellFormed ex3_quantBindings_compliant = true := rfl
-theorem ex3_genY_violation_caught :
-    genYWellFormed ex3_quantBindings_violation = false := rfl
-
-theorem ex3_genXY_compliant :
-    genXYWellFormed ex3_predBindings ex3_quantBindings_compliant = true := rfl
-theorem ex3_genXY_violation :
-    genXYWellFormed ex3_predBindings ex3_quantBindings_violation = false := rfl
-
-end Example3
+/-- Generalization Y licenses the LF whose adverb ranges over the belief world's rounds, on
+which the sentence is true, and excludes the one ranging over the actual rounds, on which it
+is false. -/
+theorem genY :
+    (⟨2⟩ : QLF).GenY ∧ alwaysReading ⟨2⟩ ∧ ¬ (⟨1⟩ : QLF).GenY ∧ ¬ alwaysReading ⟨1⟩ := by
+  decide
 
 end Percus2000
