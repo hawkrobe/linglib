@@ -1,669 +1,297 @@
 import Linglib.Semantics.Mereology
-import Linglib.Semantics.Events.Basic
-import Linglib.Semantics.Plurality.Algebra
 import Linglib.Semantics.ArgumentStructure.Thematic.Mereology
-import Linglib.Semantics.Aspect.Incremental
 import Linglib.Semantics.Aspect.Cumulativity
-import Linglib.Semantics.Aspect.Basic
+import Mathlib.Order.WellFounded
 
 /-!
-# [krifka-1989] "Nominal Reference, Temporal Constitution and Quantification"
+# Krifka (1989): Nominal Reference, Temporal Constitution and Quantification in Event Semantics
 
-K89's algebraic semantics tying nominal-reference properties (CUM/QUA
-via §3 mass/count/bare-plural) to verbal aspect (CUM/QUA on VPs via §4
-thematic-relation properties + §5 temporal-trace homomorphisms). A
-schema-level study: each section either records data (NP/verb/reading
-items with enumerated source kinds) or calls a propositional theorem
-on abstract domains.
+This file formalizes the paper's algebraic account of the parallel between nominal reference
+and temporal constitution. Objects, events, and times each form a join semilattice, and a
+predicate over one of them has cumulative reference when it is closed under join and
+quantized reference when no instance is a proper part of another; singular, strictly
+cumulative, strictly quantized, and atomic reference are the variants of §2, with the paper's
+theorems relating them, and predicates cut out by an extensive measure function are
+quantized. In §3 mass nouns are cumulative, bare plurals cumulative by algebraic closure, and
+measure constructions and count nouns quantized by their measure functions. In §4 a verbal
+predicate is built from a verb, a nominal predicate, and a thematic relation, and the
+reference type of the nominal predicate transfers to the verbal one through properties of
+the relation: summativity carries cumulativity across (T 7), uniqueness of objects and
+mapping to objects carry quantization across when the relation is not iterative (T 11), which
+uniqueness of events guarantees (T 10, T 12), and mapping to events with strict quantization
+yields atomicity (T 13). Graduality bundles the mapping properties (D 35), and the five
+classes of (14) sort transitive verbs by summativity, graduality, and uniqueness of events.
+In §5 durative adverbials are quantizing modifiers on events through the derived measure of
+the temporal trace, and time-span adverbials, which are upward entailing in their number,
+require atomic rather than quantized verbal predicates.
 
-## Main definitions
+## Implementation notes
 
-* `NPDatum` + `k89NPData` — 15 NPs from K89 §3 (mass/count/measure/definite)
-* `qmod_qua` / `qmod_of_cum_is_qua` / `measure_phrase_makes_qua` — K89 §2-§3
-  measure-phrase substrate (T6 + D28; inlined from former
-  `Events/MeasurePhrases.lean`)
-* `K89ThematicClass` + `K89ThematicDatum` + `k89Table14` — K89 §4 eq. 14 verbs
-  (write/eat/read/touch/see) with feature profiles {SUM, GRAD, UNI-E}
-* `ATM` + `qua_implies_atm` — K89 D17/D18/T4 atomicity (§5 *in*-X licensing)
-* `K89ThematicClass.toVerbIncClass` — K89 → K98 refinement bridge
-* `K89QuantDatum` + `k89Section7Data` — K89 §7 quantification data items
-
-## TODO
-
-* **K89 GRAD propositional chain**: `SINC + ExtMeasure + MeasureProportional →
-  GRAD` was deleted in 0.231.55 (formerly in `Events/GradualChange.lean`,
-  zero-consumer); the Bool-tag proxy in `Studies/Krifka1998.lean` is also gone.
-  A future K89 §4 propositional-faithfulness pass needs to rebuild it.
-* **K89↔Champollion `forAdverbial_subsumes_qmod` bridge**: also dropped in
-  0.231.55 as dead. ~5 LOC over `forAdverbialMeaning` + `QMOD` to
-  re-derive when a Champollion replication wants the cross-framework bridge.
-* **K89 §7 quantification** (max/MXE/MXT/cumulative-distributive
-  derivations): registered as data here; full formalization left to a
-  successor file naturally clustering with Plurals/Quantification.
-* **GRAD collapse caveat (§ 4)**: `ThematicProfile` collapses K89's
-  5-tuple {SUM, UNI-O, UNI-E, MAP-O, MAP-E} to 3-tuple {SUM, GRAD,
-  UNI-E}. K89 D35 has GRAD ↔ UNI-O ∧ MAP-O ∧ MAP-E. K89 T11/T12 use
-  UNI-O and MAP-O *individually*; the unbundled form is needed there.
-* **Atomicity-without-quantization witness**: § 5 explains that *Ann drank
-  wine in 0.43 seconds* is ATM-but-not-QUA, but the substrate witness
-  requires event-CEM atom infrastructure beyond this file's scope.
-
-## What this file is NOT
-
-* Not a verb-classification study (that's `Studies/Krifka1998.lean`'s
-  `VerbIncClass`; the K89 → K98 refinement bridge in § 4 makes the
-  connection explicit).
-* Not a *for*-X / *in*-X diagnostic study (that's
-  `Semantics/Aspect/Basic.lean`).
-* Not a critique of K89's binary CUM/QUA (that's `Studies/Filip2012.lean`,
-  which proves the three-way classification's middle ground stable).
+The paper's relations are stated with the library's object-first thematic relations, so its
+uniqueness of objects is `UP`, uniqueness of events `GUE`, mapping to objects `MO`, mapping
+to events `ME`, and summativity `CumTheta`; cumulative and quantized reference are
+`Mereology.CUM` and `Mereology.QUA`. Theorem (T 3) needs a nonempty predicate, since the
+empty predicate is both quantized and strictly cumulative. The proof of (T 13) establishes
+that every verbal event has a part outside the predicate; its conclusion that the event
+therefore contains an atom holds when the part order on events is well founded, in which case
+every predicate has atomic reference, which `atm_of_wellFoundedLT` records. The sections on
+negation (§6) and quantification (§7) are prose.
 
 ## References
 
-* [krifka-1989] (primary, anchor for this file)
-* Sister: `Studies/Krifka1998.lean` (K98, same-author 9-years-later
-  refinement; covers both §3 incrementality and §4 motion);
-  `Studies/Filip2012.lean` (three-way classification critique).
+* [krifka-1989]
+* [link-1983] — the lattice-theoretic mereology
+* [krifka-1998] — the later development of the transfer properties
 -/
 
 namespace Krifka1989
 
-open _root_.Mereology
-open Plurality.Algebra (Materialization)
-open ArgumentStructure (UP)
-open Aspect.Incremental (SINC VerbIncClass IsSincVerb)
-open Aspect.Cumulativity (VP qua_propagation)
-/-- Reference type as a lexical tag: cumulative or quantized. The algebraic content is
-`Mereology.CUM`/`Mereology.QUA`. -/
-inductive RefType
-  | cum
-  | qua
+open Mereology ArgumentStructure Aspect.Cumulativity
+
+/-! ### Reference types (§2) -/
+
+section Reference
+
+variable {α : Type*} [SemilatticeSup α]
+
+/-- (D 11): singular reference. -/
+def SNG (P : α → Prop) : Prop := ∃ x, P x ∧ ∀ y, P y → x = y
+
+/-- (D 13): strictly cumulative reference. -/
+def SCUM (P : α → Prop) : Prop := CUM P ∧ ¬ SNG P
+
+/-- (D 15): strictly quantized reference, every instance having a proper part. -/
+def SQUA (P : α → Prop) : Prop := QUA P ∧ ∀ x, P x → ∃ y, y < x
+
+/-- (D 18): atomic reference, every instance having a part that is a `P`-atom (D 17). -/
+def ATM (P : α → Prop) : Prop := ∀ x, P x → ∃ y ≤ x, atomize P y
+
+/-- (T 1). -/
+theorem qua_of_sng {P : α → Prop} (h : SNG P) : QUA P :=
+  let ⟨_, _, hx⟩ := h
+  qua_of_forall λ a b ha hlt hb => hlt.ne ((hx b hb).symm.trans (hx a ha))
+
+/-- (T 2). -/
+theorem cum_of_sng {P : α → Prop} (h : SNG P) : CUM P := by
+  obtain ⟨x, hx, huniq⟩ := h
+  intro a ha b hb
+  rw [← huniq a ha, ← huniq b hb, sup_idem]
+  exact hx
+
+/-- (T 3), for a nonempty predicate. -/
+theorem not_scum_of_qua {P : α → Prop} (hne : ∃ x, P x) (h : QUA P) : ¬ SCUM P := by
+  rintro ⟨hcum, hsng⟩
+  obtain ⟨x, hx⟩ := hne
+  refine hsng ⟨x, hx, λ y hy => ?_⟩
+  by_contra hxy
+  have hsup := hcum hx hy
+  rcases eq_or_ne (x ⊔ y) x with hxs | hxs
+  · exact h hy hx (Ne.symm hxy) (hxs ▸ le_sup_right)
+  · exact h hx hsup hxs.symm le_sup_left
+
+/-- (T 4): quantized reference is atomic, each instance being its own atom. -/
+theorem atm_of_qua {P : α → Prop} (h : QUA P) : ATM P := λ x hx =>
+  ⟨x, le_rfl, hx, λ z hz hzx => by
+    rcases eq_or_lt_of_le hzx with rfl | hlt
+    · exact le_rfl
+    · exact (h hz hx hlt.ne hlt.le).elim⟩
+
+/-- (T 6): a predicate restricted by an extensive measure function to a value is quantized. -/
+theorem qua_of_extMeasure {M : Type*} [AddCommMonoid M] [PartialOrder M] (μ : α → M)
+    [ExtMeasure μ] (n : M) : QUA (μ · = n) :=
+  extMeasure_qua n
+
+/-- With a well-founded part order every predicate has atomic reference: the minimal
+instances below any instance are its atoms. -/
+theorem atm_of_wellFoundedLT [WellFoundedLT α] (P : α → Prop) : ATM P := λ x hx => by
+  obtain ⟨y, ⟨hy, hyx⟩, hmin⟩ :=
+    WellFounded.has_min wellFounded_lt {y | P y ∧ y ≤ x} ⟨x, hx, le_rfl⟩
+  exact ⟨y, hyx, hy, λ z hz hzy => (eq_of_le_of_not_lt hzy (hmin z ⟨hz, hzy.trans hyx⟩)).symm.le⟩
+
+end Reference
+
+/-! ### Nominal predicates (§3) -/
+
+section Nominal
+
+variable {α : Type*} [SemilatticeSup α]
+
+/-- A bare plural: the algebraic closure of the count noun under join, which is
+cumulative. -/
+theorem barePlural_cum (P : α → Prop) : CUM (AlgClosure P) := algClosure_cum
+
+/-- The measure construction (4): a cumulative noun restricted by an extensive measure
+function is quantized (D 28), which is why measure phrases do not iterate (3c). -/
+theorem measure_qua {M : Type*} [AddCommMonoid M] [PartialOrder M] {P : α → Prop}
+    (_ : CUM P) (μ : α → M) [ExtMeasure μ] (n : M) : QUA (QMOD P μ n) :=
+  qmod_qua P n
+
+/-- A count noun (6) is a classifier construction with the natural unit built in: the noun's
+predicate restricted by the natural-unit measure to a number, hence quantized. -/
+theorem countNoun_qua {M : Type*} [AddCommMonoid M] [PartialOrder M] (P : α → Prop)
+    (NU : α → M) [ExtMeasure NU] (n : M) : QUA (QMOD P NU n) :=
+  qmod_qua P n
+
+end Nominal
+
+/-! ### Transfer of reference from objects to events (§4) -/
+
+section Transfer
+
+variable {O E : Type*} [SemilatticeSup O] [SemilatticeSup E]
+
+/-- The verbal predicate (12): a verb, a nominal predicate, and a thematic relation. -/
+def ofTheta (α : E → Prop) (δ : O → Prop) (θ : O → E → Prop) : E → Prop :=
+  λ e => α e ∧ ∃ x, δ x ∧ θ x e
+
+/-- (D 34): iterativity, some part of the object being subjected to two parts of the
+event. -/
+def ITER (θ : O → E → Prop) (e : E) (x : O) : Prop :=
+  θ x e ∧ ∃ e' e'' x', e' ≤ e ∧ e'' ≤ e ∧ e' ≠ e'' ∧ x' ≤ x ∧ θ x' e' ∧ θ x' e''
+
+/-- (D 35): graduality, uniqueness of objects with both mappings. -/
+def GRAD (θ : O → E → Prop) : Prop := UP θ ∧ MO θ ∧ ME θ
+
+variable {α : E → Prop} {δ : O → Prop} {θ : O → E → Prop}
+
+/-- (T 7): a cumulative verb, a cumulative nominal predicate, and a summative relation
+give a cumulative verbal predicate. -/
+theorem cum_ofTheta (hα : CUM α) (hδ : CUM δ) (hθ : CumTheta θ) : CUM (ofTheta α δ θ) :=
+  λ e ⟨ha, x, hx, hθx⟩ e' ⟨ha', x', hx', hθx'⟩ =>
+    ⟨hα ha ha', x ⊔ x', hδ hx hx', hθ x x' e e' hθx hθx'⟩
+
+/-- (T 8): a singular nominal predicate, a summative relation, and a strictly cumulative
+verbal predicate force an iterative event, since two distinct events with the one object
+sum to an event subjecting it twice. -/
+theorem exists_iter (hδ : SNG δ) (hθ : CumTheta θ) (hne : ∃ e, ofTheta α δ θ e)
+    (hs : SCUM (ofTheta α δ θ)) : ∃ e x, ITER θ e x := by
+  obtain ⟨e₁, hα₁, x₁, hx₁, hθ₁⟩ := hne
+  obtain ⟨hcum, hsng⟩ := hs
+  have : ∃ e₂, ofTheta α δ θ e₂ ∧ e₁ ≠ e₂ := by
+    by_contra h
+    exact hsng ⟨e₁, ⟨hα₁, x₁, hx₁, hθ₁⟩, λ e₂ he₂ => by
+      by_contra hne
+      exact h ⟨e₂, he₂, hne⟩⟩
+  obtain ⟨e₂, ⟨_, x₂, hx₂, hθ₂⟩, hne⟩ := this
+  obtain ⟨x, _, huniq⟩ := hδ
+  rw [← huniq x₁ hx₁] at hθ₁
+  rw [← huniq x₂ hx₂] at hθ₂
+  exact ⟨e₁ ⊔ e₂, x, by simpa using hθ x x e₁ e₂ hθ₁ hθ₂, e₁, e₂, x, le_sup_left,
+    le_sup_right, hne, le_rfl, hθ₁, hθ₂⟩
+
+/-- (T 9): without iteration the verbal predicate of a singular nominal predicate is not
+strictly cumulative. -/
+theorem not_scum_of_not_iter (hδ : SNG δ) (hθ : CumTheta θ) (hne : ∃ e, ofTheta α δ θ e)
+    (hi : ∀ e x, ¬ ITER θ e x) : ¬ SCUM (ofTheta α δ θ) := λ hs =>
+  let ⟨e, x, h⟩ := exists_iter hδ hθ hne hs; hi e x h
+
+/-- (T 10): uniqueness of events excludes iteration. -/
+theorem not_iter_of_gue (h : GUE θ) (e : E) (x : O) : ¬ ITER θ e x :=
+  λ ⟨_, _, _, _, _, _, hne, _, h', h''⟩ => hne (h _ _ _ h' h'')
+
+/-- (T 11): a quantized nominal predicate transfers quantization to the verbal predicate when
+the relation has uniqueness of objects, mapping to objects, and no iteration. -/
+theorem qua_ofTheta (hδ : QUA δ) (hu : UP θ) (hm : MO θ) (hi : ∀ e x, ¬ ITER θ e x) :
+    QUA (ofTheta α δ θ) :=
+  qua_of_forall λ e₁ e₂ ⟨_, x₁, hx₁, hθ₁⟩ hlt ⟨_, x₂, hx₂, hθ₂⟩ => by
+    obtain ⟨x₃, hx₃, hθ₃⟩ := hm x₁ e₁ e₂ hθ₁ hlt.le
+    have h32 : x₃ = x₂ := hu x₃ x₂ e₂ hθ₃ hθ₂
+    subst h32
+    have hne : x₁ ≠ x₃ := λ h =>
+      hi e₁ x₁ ⟨hθ₁, e₁, e₂, x₁, le_rfl, hlt.le, hlt.ne', le_rfl, hθ₁, h ▸ hθ₃⟩
+    exact hδ hx₂ hx₁ hne.symm hx₃
+
+/-- (T 12): the special case of uniqueness of events, as for effected and consumed
+objects. -/
+theorem qua_ofTheta_of_gue (hδ : QUA δ) (hu : UP θ) (hm : MO θ) (hg : GUE θ) :
+    QUA (ofTheta α δ θ) :=
+  qua_ofTheta hδ hu hm (not_iter_of_gue hg)
+
+/-- The step of (T 13): with a strictly quantized nominal predicate, mapping to events,
+and uniqueness of objects, every verbal event has a part outside the verbal predicate. -/
+theorem exists_le_not_ofTheta (hδ : SQUA δ) (hm : ME θ) (hu : UP θ) (e : E)
+    (he : ofTheta α δ θ e) : ∃ e' ≤ e, ¬ ofTheta α δ θ e' := by
+  obtain ⟨_, x, hx, hθx⟩ := he
+  obtain ⟨y, hyx⟩ := hδ.2 x hx
+  obtain ⟨e', he', hθy⟩ := hm x e y hθx hyx.le
+  refine ⟨e', he', λ ⟨_, z, hz, hθz⟩ => ?_⟩
+  have hzy : z = y := hu z y e' hθz hθy
+  subst hzy
+  exact hδ.1 hz hx hyx.ne hyx.le
+
+/-! ### The classification of thematic relations (14) -/
+
+/-- The five classes of (14): gradual effected patient (*write a letter*), gradual consumed
+patient (*eat an apple*), gradual patient (*read a letter*), affected patient (*touch a
+cat*), and stimulus (*see a horse*). -/
+inductive ThematicClass
+  | gradualEffectedPatient
+  | gradualConsumedPatient
+  | gradualPatient
+  | affectedPatient
+  | stimulus
   deriving DecidableEq, Repr
 
-/-! ### K89 measure-phrase substrate (inlined from Events/MeasurePhrases.lean in 0.231.55) -/
-
-/-- QMOD produces QUA predicates when μ is extensive and n > 0.
-    [krifka-1989] §2: "three kilos of rice" is QUA because no
-    proper part of a 3kg entity also weighs 3kg (extensivity of
-    weight). -/
-theorem qmod_qua {α : Type*} [SemilatticeSup α]
-    {R : α → Prop} {μ : α → ℚ} [hμ : ExtMeasure μ]
-    {n : ℚ} (_hn : 0 < n) :
-    QUA (QMOD R μ n) :=
-  Mereology.qmod_qua R n
-
-/-- A CUM mass noun combined with QMOD (via an extensive measure)
-    yields a QUA measure phrase. [krifka-1989] §3 D28. -/
-theorem qmod_of_cum_is_qua {α : Type*} [SemilatticeSup α]
-    {R : α → Prop} (_hCum : CUM R)
-    {μ : α → ℚ} [ExtMeasure μ]
-    {n : ℚ} (hn : 0 < n) :
-    QUA (QMOD R μ n) :=
-  qmod_qua hn
-
-/-- **K89 measure-phrase chain**: QMOD(mass_noun, extensive_μ, n) +
-    `[IsSincVerb θ]` → QUA VP (telic). Central K89 result: measure
-    phrases turn mass nouns into quantized predicates, and quantization
-    propagates through strictly incremental verbs to yield telic VPs. -/
-theorem measure_phrase_makes_qua {α β : Type*}
-    [SemilatticeSup α] [SemilatticeSup β]
-    {R : α → Prop} (hCum : CUM R)
-    {μ : α → ℚ} [ExtMeasure μ]
-    {n : ℚ} (hn : 0 < n)
-    {θ : α → β → Prop} [IsSincVerb θ] :
-    QUA (VP θ (QMOD R μ n)) :=
-  qua_propagation (qmod_of_cum_is_qua hCum hn)
-
-/-! ### Nominal Reference Classification (K89 §3) -/
-
-/-- Why an NP has the reference type it does, per [krifka-1989] §3.
-    Each constructor names the structural source of CUM or QUA reference.
-    Replaces a free-form `String` justification field with an enumerated
-    typology so per-source consistency can be checked.
-
-    Note: §7 proportional quantifiers (*most girls*, *less than three
-    girls*) are intentionally NOT a constructor here. K89 §7 gives them
-    maximal-event semantics (D44 MXT, D45 MXE, D46 max), not §3 CUM/QUA
-    classification. They live in `K89QuantDatum` (§6) as sentence-level
-    data without a §3 reference type. -/
-inductive NPRefSource where
-  | massNoun        -- CUM via mass-noun semantics
-  | barePlural      -- CUM via algebraic closure (*P)
-  | countNumeral    -- QUA via count noun + numeral
-  | measurePhrase   -- QUA via QMOD on extensive measure (D28)
-  | definite        -- QUA via singular maximal individual (§7)
-  | singularCount   -- QUA via singular count noun
-  deriving DecidableEq, Repr
-
-/-- The structural source uniquely determines CUM vs QUA per K89 §3.
-    Mass nouns and bare plurals are CUM; count, measured, definite
-    NPs are QUA. -/
-def NPRefSource.expectedRef : NPRefSource → RefType
-  | .massNoun       => .cum
-  | .barePlural     => .cum
-  | .countNumeral   => .qua
-  | .measurePhrase  => .qua
-  | .definite       => .qua
-  | .singularCount  => .qua
-
-/-- An NP datum: English form, mereological reference tag, structural
-    source. The `source` field justifies the `refType` per K89 §3, and
-    `all_nps_consistent_with_source` verifies they agree. -/
-structure NPDatum where
-  np : String
-  refType : RefType
-  source : NPRefSource
-  deriving Repr, BEq
-
-/-- "apples" — bare plural, CUM via algebraic closure. -/
-def applesNP : NPDatum := { np := "apples", refType := .cum, source := .barePlural }
-
-/-- "two apples" — count noun + numeral, QUA. -/
-def twoApplesNP : NPDatum := { np := "two apples", refType := .qua, source := .countNumeral }
-
-/-- "water" — mass noun, CUM. -/
-def waterNP : NPDatum := { np := "water", refType := .cum, source := .massNoun }
-
-/-- "three kilos of water" — QMOD on extensive measure, QUA. K89 §3 D28. -/
-def threeKilosWaterNP : NPDatum := { np := "three kilos of water", refType := .qua, source := .measurePhrase }
-
-/-- "a house" — singular count noun, QUA. -/
-def aHouseNP : NPDatum := { np := "a house", refType := .qua, source := .singularCount }
-
-/-- "houses" — bare plural, CUM. -/
-def housesNP : NPDatum := { np := "houses", refType := .cum, source := .barePlural }
-
-/-- "rice" — mass noun, CUM. K89 §3 paradigm example. -/
-def riceNP : NPDatum := { np := "rice", refType := .cum, source := .massNoun }
-
-/-- "the cart" — singular count noun + definite, QUA via singular reference. -/
-def theCartNP : NPDatum := { np := "the cart", refType := .qua, source := .singularCount }
-
-/-! K89 §4 table 14 NP exemplars (eq. 14, p. 96): NPs that pair with
-    the five thematic-class verbs. -/
-
-/-- "a letter" — singular count, QUA. K89 (12-13), §4 table example. -/
-def aLetterNP : NPDatum := { np := "a letter", refType := .qua, source := .singularCount }
-
-/-- "an apple" — singular count, QUA. K89 (14), gradual-consumed-patient row
-    (*eat an apple*). -/
-def anAppleNP : NPDatum := { np := "an apple", refType := .qua, source := .singularCount }
-
-/-- "a cat" — singular count, QUA. K89 (14), affected-patient row
-    (*touch a cat*). -/
-def aCatNP : NPDatum := { np := "a cat", refType := .qua, source := .singularCount }
-
-/-- "a horse" — singular count, QUA. K89 (14), stimulus row (*see a horse*). -/
-def aHorseNP : NPDatum := { np := "a horse", refType := .qua, source := .singularCount }
-
-/-! K89 §5 NP exemplars (eq. 19, p. 99): the wine pair used to argue
-    atomicity ≠ quantization. -/
-
-/-- "wine" — mass noun, CUM. K89 §5 (*drink wine*). The §5 punchline
-    *Ann drank wine in 0.43 seconds* shows that the *in*-X licensing
-    condition is ATM (atomicity), not QUA — see §5 below. -/
-def wineNP : NPDatum := { np := "wine", refType := .cum, source := .massNoun }
-
-/-- "a glass of wine" — measure construction, QUA. K89 §5 contrast
-    partner to *wine*. -/
-def aGlassOfWineNP : NPDatum := { np := "a glass of wine", refType := .qua, source := .measurePhrase }
-
-/-- "seven apples" — count + numeral, QUA. K89 §7 cumulative-reading
-    object NP (*two girls ate seven apples*, eq. 37). -/
-def sevenApplesNP : NPDatum := { np := "seven apples", refType := .qua, source := .countNumeral }
-
-/-- All NP data items registered by §3 classification. Excludes K89 §7
-    proportional quantifiers (those live in §6 `K89QuantDatum` data). -/
-def k89NPData : List NPDatum :=
-  [applesNP, twoApplesNP, waterNP, threeKilosWaterNP,
-   aHouseNP, housesNP, riceNP, theCartNP,
-   aLetterNP, anAppleNP, aCatNP, aHorseNP,
-   wineNP, aGlassOfWineNP, sevenApplesNP]
-
-/-- Each NP's `refType` matches its structural source per K89 §3.
-    Catches typos and mis-classifications when the data list grows. -/
-theorem all_nps_consistent_with_source :
-    k89NPData.all (fun d => d.source.expectedRef == d.refType) = true := by
-  decide
-
-/-! ### Grounding in K89 Theory's propositional predicates -/
-
-/-! These theorems exercise the K89 theory file's propositional
-    predicates on abstract domains, bridging the file-level Bool-tag
-    classification (`RefType.cum`/`.qua`) to K89's algebraic content
-    (`CUM`/`QUA` on `α → Prop`). The `applesNP.refType = .cum` Bool tag
-    corresponds to the propositional claim `CUM (AlgClosure P)` for any
-    apples-like `P`, which follows from `Mereology.algClosure_cum`. -/
-
-section Grounding
-
-variable {α : Type*}
-
-/-- Bare-plural NPs are cumulative: K89 §3 derives this from algebraic
-    closure (*P closed under sum), `Mereology.algClosure_cum`. -/
-theorem barePlural_grounded [SemilatticeSup α] {P : α → Prop} :
-    CUM (AlgClosure P) :=
-  algClosure_cum
-
-end Grounding
-
-/-! ### Measure phrases — exercise qmod / measure_phrase_makes_qua -/
-
-/-! K89 §3 derives that measure phrases like *three kilos of rice* are
-    quantized via D28 (QMOD, §3 p. 82) and the upstream T6 (extensive
-    measure → quantized, §2 p. 80). These theorems CALL the K89 theory
-    file's `qmod_of_cum_is_qua` and `measure_phrase_makes_qua` on an
-    abstract `[ExtMeasure μ]` instance — the docstring promise the
-    previous file's `measure_phrase_qua` (which was just `⟨rfl, rfl⟩`
-    on stipulated fields) failed to honor. -/
-
-section MeasurePhrases
-
-variable {α β : Type*} [SemilatticeSup α]
-
-/-- *Three kilos of rice* is QUA: a CUM mass noun + an extensive measure
-    + a positive value yields a quantized predicate. Direct call to
-    `qmod_of_cum_is_qua` (K89 theory §2). -/
-theorem threeKilosRice_qua_via_qmod
-    {Rice : α → Prop} (hRice : CUM Rice)
-    {μ : α → ℚ} [ExtMeasure μ] :
-    QUA (QMOD Rice μ 3) :=
-  qmod_of_cum_is_qua hRice (by norm_num)
-
-/-- *Eat three kilos of rice* is QUA: K89's full chain — CUM noun + QMOD
-    via extensive measure → QUA NP, then `[IsSincVerb θ]` propagates
-    QUA to the VP. Direct call to `measure_phrase_makes_qua` (K89
-    theory §4, typeclass-canonical form). -/
-theorem eatThreeKilosRice_qua_vp [SemilatticeSup β]
-    {Rice : α → Prop} (hRice : CUM Rice)
-    {μ : α → ℚ} [ExtMeasure μ]
-    {θ : α → β → Prop} [IsSincVerb θ] :
-    QUA (VP θ (QMOD Rice μ 3)) :=
-  measure_phrase_makes_qua hRice (by norm_num)
-
-end MeasurePhrases
-
-/-! ### K89 §4 thematic-relation features (eq. 14, p. 96) -/
-
-/-! K89 §4 (eq. 14, p. 96) classifies thematic relations by a feature
-    profile {SUM, UNI-O, UNI-E, MAP-O, MAP-E}, with GRAD = UNI-O ∧ MAP-O
-    ∧ MAP-E (D35). The five rows of K89's table:
-
-    | example         | SUM | GRAD | UNI-E | label                    |
-    |-----------------|-----|------|-------|--------------------------|
-    | write a letter  |  X  |  X   |  X    | gradual effected patient |
-    | eat an apple    |  X  |  X   |  X    | gradual consumed patient |
-    | read a letter   |  X  |  X   |  -    | gradual patient          |
-    | touch a cat     |  X  |  -   |  -    | affected patient         |
-    | see a horse     |  X  |  -   |  -    | stimulus                 |
-
-    These five labels are K89's thematic-relation classes. The
-    propositional predicates (SUM, UP, MO, MSO, MSE, UE, UO, GUE) are
-    K89 D29-D35 (§4, pp. 92-96) and live in
-    `Studies/Krifka1998.lean` for organizational reasons. Below, each class is captured as a Bool feature profile;
-    a successor study could instantiate the propositional predicates
-    on concrete θ relations.
-
-    **GRAD collapse caveat.** The `ThematicProfile` collapses K89's
-    5-tuple {SUM, UNI-O, UNI-E, MAP-O, MAP-E} to 3-tuple {SUM, GRAD,
-    UNI-E}. K89 D35 defines GRAD ↔ UNI-O ∧ MAP-O ∧ MAP-E, and all five
-    table-14 verbs happen to align on UNI-O/MAP-O/MAP-E (they co-vary).
-    But K89 T11 (p. 95) and T12 use UNI-O and MAP-O *individually* as
-    antecedent conditions (not bundled as GRAD). A future formalization
-    of T11/T12 will need the unbundled version. -/
-
-inductive K89ThematicClass where
-  | gradualEffectedPatient   -- write a letter
-  | gradualConsumedPatient   -- eat an apple
-  | gradualPatient           -- read a letter
-  | affectedPatient          -- touch a cat
-  | stimulus                 -- see a horse
-  deriving DecidableEq, Repr
-
-/-- Bool-tag profile of K89 §4 features. `hasGRAD` abbreviates
-    `hasUNI_O ∧ hasMAP_O ∧ hasMAP_E` (K89 D35), faithful for table 14
-    rows where the three components co-vary; see the docstring caveat
-    above. -/
-structure ThematicProfile where
-  hasSUM : Bool
-  hasGRAD : Bool
-  hasUNI_E : Bool
-  deriving Repr, DecidableEq
-
-/-- K89 §4 table-14 feature profiles. -/
-def K89ThematicClass.profile : K89ThematicClass → ThematicProfile
-  | .gradualEffectedPatient => { hasSUM := true,  hasGRAD := true,  hasUNI_E := true  }
-  | .gradualConsumedPatient => { hasSUM := true,  hasGRAD := true,  hasUNI_E := true  }
-  | .gradualPatient         => { hasSUM := true,  hasGRAD := true,  hasUNI_E := false }
-  | .affectedPatient        => { hasSUM := true,  hasGRAD := false, hasUNI_E := false }
-  | .stimulus               => { hasSUM := true,  hasGRAD := false, hasUNI_E := false }
-
-/-- The five K89 (1989) §4 verbs forming K89's table-14 classification.
-    Used to derive verb strings in `K89ThematicDatum.vp` instead of
-    storing the English form as a free `String`. -/
-inductive K89Verb where
-  | write  -- gradual effected patient (creation)
-  | eat    -- gradual consumed patient
-  | read   -- gradual patient (no UE)
-  | touch  -- affected patient
-  | see    -- stimulus
-  deriving DecidableEq, Repr
-
-/-- English lemma for each K89 §4 verb. -/
-def K89Verb.lemma : K89Verb → String
-  | .write => "write"
-  | .eat   => "eat"
-  | .read  => "read"
-  | .touch => "touch"
-  | .see   => "see"
-
-/-- A K89 §4 verb-NP datum: the verb (enumerated), the thematic class
-    K89 assigns it, and the NP it pairs with in K89's exemplars. The
-    English `vp` string is *derived* from `verb.lemma` and `npDatum.np`
-    rather than stored separately — making typos impossible. -/
-structure K89ThematicDatum where
-  verb : K89Verb
-  thematicClass : K89ThematicClass
-  npDatum : NPDatum
-  deriving Repr
-
-/-- The English VP, derived from the verb lemma and NP. -/
-def K89ThematicDatum.vp (d : K89ThematicDatum) : String :=
-  d.verb.lemma ++ " " ++ d.npDatum.np
-
-def writeALetter : K89ThematicDatum :=
-  { verb := .write, thematicClass := .gradualEffectedPatient, npDatum := aLetterNP }
-
-def eatAnApple : K89ThematicDatum :=
-  { verb := .eat, thematicClass := .gradualConsumedPatient, npDatum := anAppleNP }
-
-def readALetter : K89ThematicDatum :=
-  { verb := .read, thematicClass := .gradualPatient, npDatum := aLetterNP }
-
-def touchACat : K89ThematicDatum :=
-  { verb := .touch, thematicClass := .affectedPatient, npDatum := aCatNP }
-
-def seeAHorse : K89ThematicDatum :=
-  { verb := .see, thematicClass := .stimulus, npDatum := aHorseNP }
-
-def k89Table14 : List K89ThematicDatum :=
-  [writeALetter, eatAnApple, readALetter, touchACat, seeAHorse]
-
-/-- Derived VPs match the expected English exemplars from K89 (14). -/
-theorem k89Table14_vps :
-    writeALetter.vp = "write a letter" ∧
-    eatAnApple.vp = "eat an apple" ∧
-    readALetter.vp = "read a letter" ∧
-    touchACat.vp = "touch a cat" ∧
-    seeAHorse.vp = "see a horse" := ⟨rfl, rfl, rfl, rfl, rfl⟩
-
-/-- Every K89 thematic class has SUM (cumulativity for thematic relations);
-    K89 §4 treats SUM as the foundational property of thematic roles. -/
-theorem all_classes_have_sum :
-    k89Table14.all (fun d => d.thematicClass.profile.hasSUM) = true := by
-  decide
-
-/-- Gradual classes (effected, consumed, plain) all have GRAD; affected
-    and stimulus do not. K89 §4 distinction. -/
-theorem gradual_classes_have_grad :
-    K89ThematicClass.gradualEffectedPatient.profile.hasGRAD = true ∧
-    K89ThematicClass.gradualConsumedPatient.profile.hasGRAD = true ∧
-    K89ThematicClass.gradualPatient.profile.hasGRAD = true := ⟨rfl, rfl, rfl⟩
-
-theorem nongradual_classes_lack_grad :
-    K89ThematicClass.affectedPatient.profile.hasGRAD = false ∧
-    K89ThematicClass.stimulus.profile.hasGRAD = false := ⟨rfl, rfl⟩
-
-/-- Effected and consumed patients are distinguished from plain gradual
-    patients by UNI-E (uniqueness of events): each subevent of writing
-    or eating produces a unique consumed/produced sub-object. *Read a
-    letter* allows the same letter-segment to be read multiple times,
-    so it lacks UNI-E. -/
-theorem uni_e_distinguishes_effected_consumed :
-    K89ThematicClass.gradualEffectedPatient.profile.hasUNI_E = true ∧
-    K89ThematicClass.gradualConsumedPatient.profile.hasUNI_E = true ∧
-    K89ThematicClass.gradualPatient.profile.hasUNI_E = false := ⟨rfl, rfl, rfl⟩
-
-/-! ### K89 → K98 refinement (sister-paper bridge)
-
-    K89 (1989) and K98 (*Origins of Telicity*, 1998) are the same
-    author refining the same theory at two stages. K98's `VerbIncClass`
-    (`sinc | inc | cumOnly`) is a coarsening of K89's table-14
-    five-class scheme. The mapping below makes the refinement explicit:
-    *gradual effected/consumed* → SINC (strict bijection between
-    object parts and event parts, K98 §3.2 eq. 51), *gradual patient*
-    (lacking UNI-E) → INC (general incrementality, K98 §3.6, allows
-    re-reading), *affected patient* and *stimulus* (lacking GRAD) →
-    cumOnly (no incremental theme, K98 §3.2). -/
-
-/-- Refine K89's 5-class scheme to K98's 3-class enum. K89's 1989 paper
-    distinguishes effected from consumed patients (creation vs.
-    consumption), but they share the SINC profile in K98's coarser
-    classification. -/
-def K89ThematicClass.toVerbIncClass : K89ThematicClass → VerbIncClass
-  | .gradualEffectedPatient => .sinc
-  | .gradualConsumedPatient => .sinc
-  | .gradualPatient         => .inc
-  | .affectedPatient        => .cumOnly
-  | .stimulus               => .cumOnly
-
-/-- The K89 → K98 refinement is consistent with K89's GRAD distinction:
-    SINC verbs all have GRAD (consumption/creation gives bijection);
-    cumOnly verbs all lack GRAD (no theme-event mapping); INC verbs
-    have GRAD without UNI-E (re-reading allowed). -/
-theorem toVerbIncClass_respects_grad (cls : K89ThematicClass) :
-    (cls.toVerbIncClass = .sinc ∨ cls.toVerbIncClass = .inc) ↔
-    cls.profile.hasGRAD = true := by
-  cases cls <;> decide
-
-/-- Every K89 verb-NP datum maps to a K98 `VerbIncClass` consistently. -/
-theorem k89Table14_refines_k98_consistently :
-    k89Table14.all (fun d =>
-      (d.thematicClass.toVerbIncClass = .sinc) ||
-      (d.thematicClass.toVerbIncClass = .inc) ||
-      (d.thematicClass.toVerbIncClass = .cumOnly)) = true := by
-  decide
-
-/-! ### Atomicity ≠ Quantization (K89 §5 eq. 19; K89 T4) -/
-
-/-! K89 §5 (around eq. 19, *Ann drank wine in 0.43 seconds*) makes a
-    crucial point that a surface QUA → in-X / CUM → for-X classification
-    papers over: time-span adverbials require **atomicity** (ATM), not
-    quantization (QUA). The QUA → ATM direction is K89 T4 (§2 p. 78,
-    listed among "easily checked" theorems); the lifted form for VPs
-    via thematic relations is K89 T13 (§4 p. 95). The reverse
-    (ATM → QUA) does *not* hold: a predicate can be ATM without being
-    QUA.
-
-    Concretely: *Ann drank wine in 0.43 seconds* is acceptable because
-    the predicate `λ e. drink-wine(e) ∧ τ(e) ≤ 0.43sec` is atomic — no
-    shorter event is also a 0.43-second wine-drinking — even though
-    `wine` itself is CUM (mass noun, *not* QUA). The QUA-via-D28 chain
-    is one route to ATM, not the only route. -/
-
-section Atomicity
-
-variable {α : Type*} [PartialOrder α]
-
-/-- K89 D17: y is a P-atom — `Mereology.atomize P` (the P-relative `Minimal`):
-    y satisfies P and has no proper part also satisfying P. Distinct from
-    `Mereology.Atom` (the *absolute* no-proper-part predicate, ignoring P). -/
-abbrev AtomicForP (P : α → Prop) (y : α) : Prop := Mereology.atomize P y
-
-/-- K89 D18: ATM(P) — P has atomic reference: every P-instance has a
-    P-atomic part. The licensing condition for time-span (*in*-X)
-    adverbials per K89 §5. -/
-def ATM (P : α → Prop) : Prop :=
-  ∀ x, P x → ∃ y, y ≤ x ∧ AtomicForP P y
-
-/-- K89 T4 (§2 p. 78, "easily checked"): every quantized predicate is
-    atomic. Witness: any QUA-instance is itself a P-atom (QUA forbids
-    proper P-parts), so it is its own atomic-part witness. -/
-theorem qua_implies_atm {P : α → Prop} (hQua : QUA P) : ATM P := by
-  intro x hPx
-  refine ⟨x, le_refl x, hPx, ?_⟩
-  intro z hPz hzx
-  rcases eq_or_lt_of_le hzx with rfl | hlt
-  · exact le_refl _
-  · exact (hQua hPz hPx hlt.ne hlt.le).elim
-
-/-! The ATM-but-not-QUA case is genuinely possible — that's this
-    section's point. K89's *Ann drank wine in 0.43 seconds* shows that
-    a bounded-duration predicate can be ATM (no shorter sub-event is
-    also a 0.43-second wine-drinking) without being QUA on the
-    underlying object NP (wine is CUM). The substrate-witness theorem
-    requires event-CEM atom infrastructure beyond this file's scope;
-    the *Ann drank wine* exemplar below stands as the linguistic
-    motivation. -/
-
-end Atomicity
-
-/-! ### K89 §3/§5 Materialization Homomorphisms
-
-K89 page 87 introduces a function `h : I → Q` mapping individuals to
-their constitutive matter, with `Q(x) → h(x) = x` (identity on
-Q-elements) and `h(x ∪ y) = h(x) ∪_Q h(y)` (join preservation). K89
-§5 D40 (page 96) introduces the temporal trace `τ : E → T` with the
-same shape: `τ(e ∪ e') = τ(e) ∪_T τ(e')`. Both are join
-homomorphisms between complete join semi-lattices, exactly the shape
-captured by `Plurality.Algebra.Materialization` (= mathlib's
-`SupHom I Q`). K89's specific bisorted I/Q framing adds the identity-
-on-Q condition; the lattice-homomorphism backbone is shared. -/
-
-section Materialization
-
-variable {I Q : Type*} [SemilatticeSup I] [SemilatticeSup Q]
-
-/-- K89's homomorphism law `h(x ∪ y) = h(x) ⊔ h(y)` (page 87) is the
-    `map_sup'` clause of a `Materialization` (= `SupHom I Q`). This
-    lemma exposes it as a named theorem for K89-side use (e.g., for the
-    temporal trace `τ : E → T` from §5 D40, page 96). -/
-theorem materialization_join (mat : Materialization I Q) (x y : I) :
-    mat (x ⊔ y) = mat x ⊔ mat y :=
-  mat.map_sup' x y
-
-end Materialization
-
-/-- *Ann drank wine in 0.43 seconds* (K89 §5 eq. 19): a CUM-NP VP that
-    accepts *in*-X. Listed as a thematic datum (K89 §4 eat-class) with
-    the *wine* NP, flagged as the edge case where ATM and QUA come
-    apart on the object NP. -/
-def annDrankWineInSeconds : K89ThematicDatum :=
-  { verb := .eat,  -- "drink" not in §4 verb list, eat is the consumed-patient sibling
-    thematicClass := .gradualConsumedPatient,
-    npDatum := wineNP }
-
-/-- The wine NP in *Ann drank wine in 0.43 seconds* is CUM (mass noun).
-    Without atomicity-not-quantization licensing (K89 §5), the §5
-    *in*-X acceptance would be unexplained. -/
-theorem ann_drank_wine_object_is_cum :
-    annDrankWineInSeconds.npDatum.refType = .cum := rfl
-
-/-- The §5 contrast partner: *drink a glass of wine in 0.43 seconds*'s
-    object IS QUA (measure construction), so the K89 §3 D28 chain
-    handles it via QMOD; the wine bare-mass case in
-    `annDrankWineInSeconds` is the one that requires the ATM-not-QUA
-    pathway formalized as `ATM` above. -/
-theorem aGlassOfWine_is_qua :
-    aGlassOfWineNP.refType = .qua := rfl
-
-/-! ### Quantification (K89 §7) -/
-
-/-! K89 §7 introduces:
-
-    - definite NPs (eq. 35-36) via maximal-individual semantics;
-    - increasing/decreasing quantifiers (eq. 31-34) via maximal events
-      + the `max` function (D46);
-    - cumulative readings (eq. 37-40) via summative thematic relations;
-    - distributive readings (eq. 41-42) via the ATP atomic-part operator.
-
-    This section registers the data items K89 builds his quantification
-    analysis on. Full formalization of `max` / MXE / MXT / cumulative-
-    distributive derivations is left to a successor file (e.g. a
-    `Studies/Krifka1989Quant.lean`); the
-    chronological anchor is here, but the substrate work-product would
-    naturally cluster with Plurals/Quantification, where Champollion
-    2017 already engages cumulative readings. -/
-
-/-- The reading-type of a K89 §7 quantification datum, per the paper's
-    eq. 31-32 (increasing/decreasing) and eq. 37/41-42 (cumulative,
-    distributive). -/
-inductive K89Reading where
-  | increasingProportional   -- "most girls" (K89 eq. 31)
-  | decreasing               -- "less than three girls" (K89 eq. 32)
-  | cumulative               -- "two girls ate seven apples" (K89 eq. 37)
-  | distributive             -- "two girls ate seven apples each" (K89 eq. 42)
-  deriving DecidableEq, Repr
-
-/-- Paper-internal reference for each K89 §7 reading. -/
-def K89Reading.eqRef : K89Reading → String
-  | .increasingProportional => "K89 §7 eq. 31"
-  | .decreasing             => "K89 §7 eq. 32"
-  | .cumulative             => "K89 §7 eq. 37"
-  | .distributive           => "K89 §7 eq. 42"
-
-/-- A K89 §7 quantification datum: the English sentence + reading kind.
-    Does NOT carry an NPDatum (the proportional/decreasing-quantifier
-    NPs are not §3 CUM/QUA-classified; K89 §7 treats them via
-    maximal-event semantics instead). -/
-structure K89QuantDatum where
-  sentence : String
-  reading : K89Reading
-  deriving Repr
-
-def mostGirlsSang : K89QuantDatum :=
-  { sentence := "Most girls sang", reading := .increasingProportional }
-
-def lessThanThreeGirlsSang : K89QuantDatum :=
-  { sentence := "Less than three girls sang", reading := .decreasing }
-
-def twoGirlsAteSevenApples : K89QuantDatum :=
-  { sentence := "Two girls ate seven apples", reading := .cumulative }
-
-def twoGirlsAteSevenApplesEach : K89QuantDatum :=
-  { sentence := "Two girls ate seven apples each", reading := .distributive }
-
-def k89Section7Data : List K89QuantDatum :=
-  [mostGirlsSang, lessThanThreeGirlsSang, twoGirlsAteSevenApples, twoGirlsAteSevenApplesEach]
-
-/-! ### Scope: predicate-level QUA/CUM ≠ carrier-level boundedness -/
-
-/-! [krifka-1989] defines `QUA` and `CUM` (D 14, D 12, p. 78) as
-    properties of *predicates* over a structured carrier — a complete
-    join semilattice with a part relation. K89 makes no claim that these
-    predicate-level properties entail bounds on the *carrier* itself
-    (e.g. that it has Mathlib `OrderTop` / `OrderBot` instances).
-
-    The lexical tag `RefType` records which reference type a predicate has
-    and says nothing about the carrier (see the mereological-dimension lemmas
-    in `Semantics/Mereology.lean` for the structural facts that do hold —
-    e.g. `qua_pullback`, `cum_measure_unbounded`).
-    The two examples below show the gap in both directions.
-
-    The defeasible cross-domain bridge `closed scale → telic verb` for
-    *degree achievements specifically* is [hay-kennedy-levin-1999]'s
-    contribution (lengthen, cool, straighten); it is not K89's claim, and
-    even HKL restrict it to verbs derived from gradable adjectives. -/
-
-/-- **Forward gap**: a predicate can be K89-QUA on a carrier that has no
-    `OrderTop` instance. The singleton predicate `(· = 5)` on `ℕ` is QUA
-    (no proper part of 5 in ℕ also equals 5), but ℕ has no maximum. -/
-example : Mereology.QUA (α := ℕ) (· = 5) := Mereology.singleton_qua 5
-
-example : NoMaxOrder ℕ := inferInstance
-
-/-- **Reverse gap**: a carrier can be order-bounded on both ends without
-    its predicates being K89-QUA. `Fin 3` has both `OrderTop` and
-    `OrderBot`, but the predicate "value is at most 1" admits both `0`
-    and `1` with `0 < 1` — QUA's no-proper-part-overlap condition fails. -/
-example : ¬ Mereology.QUA (α := Fin 3) (fun k => k.val ≤ 1) := by
-  intro h
-  have h1 : (1 : Fin 3).val ≤ 1 := by decide
-  have h0 : (0 : Fin 3).val ≤ 1 := by decide
-  have hlt : (0 : Fin 3) < 1 := by decide
-  exact h h0 h1 hlt.ne hlt.le
-
-example : OrderTop (Fin 3) := inferInstance
-example : OrderBot (Fin 3) := inferInstance
+/-- The gradual classes. -/
+def ThematicClass.Gradual : ThematicClass → Prop
+  | .gradualEffectedPatient | .gradualConsumedPatient | .gradualPatient => True
+  | .affectedPatient | .stimulus => False
+
+/-- The classes with uniqueness of events. -/
+def ThematicClass.UniqueEvents : ThematicClass → Prop
+  | .gradualEffectedPatient | .gradualConsumedPatient => True
+  | .gradualPatient | .affectedPatient | .stimulus => False
+
+/-- What (14) requires of a relation in a class: summativity throughout, graduality for the
+gradual classes, uniqueness of events for effected and consumed patients. -/
+def ThematicClass.Requires (c : ThematicClass) (θ : O → E → Prop) : Prop :=
+  CumTheta θ ∧ (c.Gradual → GRAD θ) ∧ (c.UniqueEvents → GUE θ)
+
+/-- Effected and consumed patients make a quantized object into a quantized verbal
+predicate (T 12): *write a letter* and *eat an apple* are telic. -/
+theorem qua_of_uniqueEvents {c : ThematicClass} (hc : c.UniqueEvents) (h : c.Requires θ)
+    (hδ : QUA δ) : QUA (ofTheta α δ θ) := by
+  have hg : GRAD θ := h.2.1 (by cases c <;> trivial)
+  exact qua_ofTheta_of_gue hδ hg.1 hg.2.1 (h.2.2 hc)
+
+/-- A gradual patient transfers cumulativity (T 7) and, with a strictly quantized object,
+leaves every event a part outside the predicate (T 13), the atomicity behind *read a
+letter in an hour* even where the letter may be reread. -/
+theorem gradualPatient_transfer (h : ThematicClass.gradualPatient.Requires θ) :
+    (CUM α → CUM δ → CUM (ofTheta α δ θ)) ∧
+      (SQUA δ → ∀ e, ofTheta α δ θ e → ∃ e' ≤ e, ¬ ofTheta α δ θ e') :=
+  ⟨λ hα hδ => cum_ofTheta hα hδ h.1,
+    λ hδ => exists_le_not_ofTheta hδ (h.2.1 trivial).2.2 (h.2.1 trivial).1⟩
+
+end Transfer
+
+/-! ### Temporal adverbials (§5) -/
+
+section Adverbials
+
+variable {E T M : Type*} [SemilatticeSup T]
+
+/-- A durative adverbial (15): the quantizing modifier on events through the measure of
+the temporal trace (D 41); the result is quantized once that derived measure is
+extensive. -/
+theorem durative_qua [SemilatticeSup E] [AddCommMonoid M] [PartialOrder M] (P : E → Prop)
+    (μ' : E → M) [ExtMeasure μ'] (n : M) : QUA (QMOD P μ' n) :=
+  qmod_qua P n
+
+/-- A time-span adverbial (16): the event lies within a convex time of the given measure. -/
+def inSpan (P : E → Prop) (τ : E → T) (Conv : T → Prop) (μ : T → M) (n : M) : E → Prop :=
+  λ e => P e ∧ ∃ t, Conv t ∧ μ t = n ∧ τ e ≤ t
+
+/-- Time-span adverbials are upward entailing in their number (17): if every convex time of
+one measure lies within a convex time of a larger measure, the adverbial with the larger
+number holds of every event the smaller one holds of. -/
+theorem inSpan_mono (P : E → Prop) (τ : E → T) (Conv : T → Prop) (μ : T → M) {n n' : M}
+    (h : ∀ t, Conv t → μ t = n → ∃ t', Conv t' ∧ μ t' = n' ∧ t ≤ t') :
+    ∀ e, inSpan P τ Conv μ n e → inSpan P τ Conv μ n' e := by
+  rintro e ⟨hp, t, hc, hμ, hle⟩
+  obtain ⟨t', hc', hμ', htt'⟩ := h t hc hμ
+  exact ⟨hp, t', hc', hμ', hle.trans htt'⟩
+
+end Adverbials
 
 end Krifka1989
