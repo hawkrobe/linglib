@@ -682,7 +682,7 @@ theorem caus_strength_uniform_across_classII :
     account — both stimulus subtypes produce the same HMC configuration.
 
     The bridge to semantic accounts of the T/SM restriction (which may
-    make asymmetric predictions) is in `Kim2024_UPH.lean`. -/
+    make asymmetric predictions) is in `Kim2024.lean`. -/
 
 /-- Both *at* and *about* are nonaffixal: both block CAUS movement
     through the cascade spine equally. -/
