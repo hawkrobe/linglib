@@ -24,10 +24,12 @@ the structural account alone.
 
 The semantic core generalization is checked over the assignment survey of `Corbett1991`, and
 the Spanish, Russian, and Hausa data are the Fragments' nouns rather than the review's tables;
-`Remainder.spanish` reads the split of Table 1 off the Fragment. The determiner items of (25)
-go through the library's Subset Principle, so *el* for [−fem] and for featureless *n* is a
-computation rather than a listing. The hybrid datum (27) is the one hand-typed example, since
-the Russian Fragment records only the morphological gender of *vrač*.
+`Remainder.spanish` reads the split of Table 1 off the Fragment, and the two assignment
+accounts are compared on every noun of the Fragment's shape rather than on its list. The
+determiner items of (25) go through the library's Subset Principle, so *el* for [−fem] and
+for featureless *n* is a computation rather than a listing. The hybrid datum (27) is the one
+hand-typed example, since the Russian Fragment records only the morphological gender of
+*vrač*.
 
 ## References
 
@@ -211,11 +213,10 @@ def lexicalEntry (n : Spanish.Gender.Noun) : LexicalEntry :=
   ⟨n.isNaturalGender, n.isNaturalGender && n.gender == .fem,
     !n.isNaturalGender && n.gender == .fem⟩
 
-/-- The lexical account recovers every Fragment gender. -/
-theorem lexical_faithful :
-    ∀ n ∈ Spanish.Gender.allNouns,
-      (lexicalEntry n).humanGender.gender = n.gender.toLabel := by
-  decide
+/-- The lexical account recovers the gender of every noun of the Fragment's shape. -/
+theorem lexical_faithful (n : Spanish.Gender.Noun) :
+    (lexicalEntry n).humanGender.gender = n.gender.toLabel := by
+  obtain ⟨_, g, b⟩ := n; cases g <;> cases b <;> rfl
 
 /-- *persona*, listed with [f], stays feminine under Human Cloning. -/
 theorem persona_cloned_feminine :
@@ -270,17 +271,22 @@ theorem determiner_iMasc_eq_plain :
 theorem determiner_iFem_eq_uFem :
     determiner .n_iFem = some "la" ∧ determiner .n_uFem = some "la" := by decide
 
-/-- The structural account recovers every Fragment gender. -/
-theorem structural_faithful :
-    ∀ n ∈ Spanish.Gender.allNouns,
-      determiner (nHead n) = some (if n.gender = .fem then "la" else "el") := by
-  decide
+/-- The determiner a gender value calls for. -/
+def expectedDeterminer : Spanish.Gender.Value → String
+  | .fem => "la"
+  | .masc => "el"
 
-/-- On Spanish the two accounts agree (§3.3). -/
-theorem lexical_eq_structural :
-    ∀ n ∈ Spanish.Gender.allNouns,
-      ((lexicalEntry n).humanGender.gender = .feminine ↔ determiner (nHead n) = some "la") := by
-  decide
+/-- The structural account recovers the gender of every noun of the Fragment's shape. -/
+theorem structural_faithful (n : Spanish.Gender.Noun) :
+    determiner (nHead n) = some (expectedDeterminer n.gender) := by
+  obtain ⟨_, g, b⟩ := n; cases g <;> cases b <;> dsimp only [nHead, expectedDeterminer] <;> decide
+
+/-- On Spanish the two accounts agree (§3.3), noun by noun. -/
+theorem lexical_eq_structural (n : Spanish.Gender.Noun) :
+    (lexicalEntry n).humanGender.gender = .feminine ↔ determiner (nHead n) = some "la" := by
+  rw [lexical_faithful, structural_faithful]
+  obtain ⟨_, g, _⟩ := n
+  cases g <;> dsimp only [expectedDeterminer] <;> decide
 
 /-! ### Hybrid nouns (§3.3.2) -/
 
@@ -288,10 +294,20 @@ theorem lexical_eq_structural :
 morphologically masculine Class I noun — and their genders in one phrase. -/
 def hybridTargets : List (String × Gender) := [("xoroš-aja", .feminine), ("glavn-yj", .masculine)]
 
-/-- No lexical entry fits (27): an entry has one gender. The structural
-account adds a second source of gender features above n. -/
-theorem lexical_no_hybrid : ¬ ∃ e : LexicalEntry, ∀ t ∈ hybridTargets, t.2 = e.gender := by
-  decide
+/-- No lexical entry fits agreement targets of both genders, since an entry has one gender;
+the structural account adds a second source of gender features above n. -/
+theorem no_lexical_hybrid {targets : List (String × Gender)}
+    (hf : ∃ t ∈ targets, t.2 = .feminine) (hm : ∃ t ∈ targets, t.2 = .masculine) :
+    ¬ ∃ e : LexicalEntry, ∀ t ∈ targets, t.2 = e.gender := by
+  rintro ⟨e, he⟩
+  obtain ⟨t, ht, hft⟩ := hf
+  obtain ⟨t', ht', hmt⟩ := hm
+  exact Gender.noConfusion ((hft.symm.trans (he t ht)).trans (hmt.symm.trans (he t' ht')).symm)
+
+/-- (27) is such a case. -/
+theorem lexical_no_hybrid : ¬ ∃ e : LexicalEntry, ∀ t ∈ hybridTargets, t.2 = e.gender :=
+  no_lexical_hybrid ⟨_, List.mem_cons_self .., rfl⟩
+    ⟨_, List.mem_cons_of_mem _ (List.mem_singleton_self _), rfl⟩
 
 /-! ### Radical interpretability and the semantic core (§3.3.3) -/
 
