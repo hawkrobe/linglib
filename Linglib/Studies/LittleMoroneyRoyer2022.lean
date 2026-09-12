@@ -8,10 +8,11 @@ import Linglib.Fragments.Mayan.Chol.Classifiers
 import Linglib.Fragments.Shan.Classifiers
 
 /-!
-# Little, Moroney & Royer (2022)
+# Little, Moroney and Royer (2022): Classifiers Can Be for Numerals or Nouns
 
-Numeral classifiers are not one thing. In a classifier-for-numeral
-language the classifier is the measure function the numeral demands; in a
+This file formalizes the two strategies of numeral modification of
+[little-moroney-royer-2022]. In a classifier-for-numeral language the
+classifier is the measure function the numeral demands; in a
 classifier-for-noun language it atomizes the noun so that a partition
 numeral can count. Ch'ol takes the first path and Shan the second, with
 constituency `[[Num Clf] N]` versus `[Num [Clf N]]`, yet both reach the
@@ -36,7 +37,7 @@ rests on Vietnamese rather than Ch'ol or Shan data and is not formalized.
 
 ## References
 
-* [little-moroney-royer-2022], §2.3 (6)–(13), §3.4, §4, §4.5 (51)–(52)
+* [little-moroney-royer-2022]
 * [ionin-matushansky-2006]
 * [chierchia-1998]
 * [bale-coon-2014]
