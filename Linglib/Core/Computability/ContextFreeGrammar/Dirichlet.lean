@@ -43,7 +43,7 @@ open Real ProbabilityTheory
 /-- A Dirichlet prior on the rule distributions of `G`: a positive pseudo-count for every rule
 of the grammar. -/
 @[ext]
-structure DirichletPCFG {T : Type} [DecidableEq T] (G : ContextFreeGrammar T)
+structure DirichletPCFG {T : Type*} [DecidableEq T] (G : ContextFreeGrammar T)
     [DecidableEq G.NT] where
   /-- The Dirichlet pseudo-count of a rule. -/
   pseudo : ContextFreeRule T G.NT → ℝ
@@ -52,7 +52,7 @@ structure DirichletPCFG {T : Type} [DecidableEq T] (G : ContextFreeGrammar T)
 
 namespace DirichletPCFG
 
-variable {T : Type} [DecidableEq T] {G : ContextFreeGrammar T} [DecidableEq G.NT]
+variable {T : Type*} [DecidableEq T] {G : ContextFreeGrammar T} [DecidableEq G.NT]
 
 open DerivationTree (corpusRuleCount corpusRuleCount_zero corpusRuleCount_add)
 
