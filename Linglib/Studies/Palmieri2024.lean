@@ -10,50 +10,38 @@ import Linglib.Fragments.Swahili.Reciprocals
 /-!
 # Palmieri (2024): Lexical and Grammatical Reciprocity
 
-[palmieri-2024]
+This file formalizes the second chapter of [palmieri-2024], on lexical reciprocity in Romance.
+Against the language-level parameter of [siloni-2012], on which Romance forms its reciprocals
+in the syntax, a class of verbs ('hug', 'kiss', 'meet', 'marry') has both a transitive entry,
+whose reciprocal reading requires *se*, and an intransitive lexical reciprocal entry that
+surfaces without *se* in language-specific environments: Brazilian Portuguese finite clauses,
+analytic causatives in all four languages, and Spanish and Catalan absolute participials
+(`VerbClass`, `seOmissible`, `romance_not_monolithic`). A Romance lexical reciprocal is a verb
+with some construction in which a reciprocal interpretation emerges without *se* or any other
+reciprocity element, the chapter's definition (44). Semantically, grammatical reciprocity
+accumulates unidirectional events while a lexical reciprocal denotes a single collective
+event, the pseudo-reciprocal reading, which subsumes the plain reciprocals of [winter-2018]
+and the non-plain 'divorce' and 'kiss' (`SeReading`, `divorce_agrees_with_winter`,
+`kiss_agrees_with_winter`); a *se*-clause with such a verb is three-ways ambiguous, and its
+*se*-less counterpart keeps only the pseudo-reciprocal reading
+(`seless_kills_grammatical_readings`). The reciprocal 'with'-construction tracks the lexical
+class, the generalization of [kemmer-1993], including its non-symmetric members and the
+*si*-retaining Italian cases that refine the French-based restriction of [siloni-2012]
+(`withConstruction_iff_lexical`).
 
-LOT Dissertation 670, Utrecht University. Chapter 2 (Romance) is
-formalized here; the Swahili chapters and the reflexivity/reciprocity
-questionnaires are Todos.
+## Implementation notes
 
-Romance is not monolithically syntactic about reciprocity, against the
-language-level lex-syn parameter of [siloni-2012]
-(`Siloni2012.italian.formation = .syntactic`): a class of verbs ('hug',
-'kiss', 'meet', 'marry', …) has BOTH a transitive entry — whose
-reciprocal reading requires *se*, the grammatical strategy — and an
-intransitive lexical reciprocal entry that surfaces without *se* in
-language-specific environments (Table 2.2: BP finite clauses, analytic
-causatives in all four languages, Spanish/Catalan absolute
-participials). Definition (44): a Romance lexical reciprocal is a verb
-with some construction where a reciprocal interpretation emerges without
-*se* or any other reciprocity element.
+The class tables are the chapter's Tables 2.1 and 2.2. The verb list (43) and the
+per-language inventories come from the Romance Fragments, and one theorem from the fourth
+chapter's Swahili data records that lexical reciprocity need not be derivational. The Swahili
+chapters and the questionnaires are not otherwise formalized.
 
-The semantic diagnostic is **pseudo-reciprocity** (§4.3): grammatical
-reciprocity accumulates unidirectional events (50), while
-lexical reciprocals denote a single collective event, subsuming
-[winter-2018]'s plain reciprocals (symmetric bases, 'meet') and
-non-plain ones — 'divorce' fails the collective-to-unidirectional
-direction (53) and 'kiss' the converse (54), matching
-Winter's Table 3 rows (`divorce_agrees_with_winter`,
-`kiss_agrees_with_winter`). Without *se* only the pseudo-reciprocal
-reading survives; *se*-clauses with lexical reciprocals are three-ways
-ambiguous (§4.3, p. 38). The reciprocal 'with'-construction tracks the
-lexical class (§4.4, after [kemmer-1993]), including non-symmetric
-members ('confer', 'break up') and *si*-retaining Italian instances —
-refining [siloni-2012]'s French-based restriction.
+## References
 
-## Main declarations
-
-* `VerbClass` — Table 2.1's three classes, with `combinesWithSe`,
-  `reciprocityByItself`, and the two-entry `formations`.
-* `Language`, `Environment`, `seOmissible` — Table 2.2.
-* `SeReading` + `readingsWith`/`readingsWithoutSe` — the §4.3 ambiguity
-  and its *se*-less resolution.
-* `withConstruction_iff_lexical` — the 'with'-construction tracks
-  lexical formation across the class system.
-* `romance_not_monolithic` — the recorded divergence from [siloni-2012].
-* `lexicalReciprocals` — the (43) verb list across BP/Catalan/Italian/
-  Spanish.
+* [palmieri-2024]
+* [siloni-2012]
+* [winter-2018]
+* [kemmer-1993]
 -/
 
 namespace Palmieri2024
@@ -213,9 +201,8 @@ theorem kiss_agrees_with_winter :
     *lasciarsi con*; attested *baciarsi con*, *abbracciarsi con* (60)) —
     and never for unambiguous transitives (the paper's (61):
     \**ringraziarsi con*). NB the Italian construction retains *si*,
-    unlike French (\**s'est embrassé avec*, [siloni-2012] via
-    ex. 39 of that discussion) — the availability contrast is
-    class-level, not language-level. -/
+    unlike French (\**s'est embrassé avec*, [siloni-2012]) — the
+    availability contrast is class-level, not language-level. -/
 def VerbClass.allowsWithConstruction : VerbClass → Bool
   | .plainTransitive => false
   | _                => true
