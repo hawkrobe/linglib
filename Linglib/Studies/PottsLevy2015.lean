@@ -1,281 +1,439 @@
-import Linglib.Core.Probability.Scores
-import Linglib.Pragmatics.RSA.ScoreChain
+import Linglib.Pragmatics.RSA.Uniform
+import Linglib.Core.Probability.Kernel.Mixture
+import Mathlib.Data.NNRat.BigOperators
+import Mathlib.Data.Rat.Cast.CharZero
+import Mathlib.Data.Rat.Cast.Order
 
 /-!
-# [potts-levy-2015]: lexical uncertainty and speaker expertise with disjunction
+# Potts and Levy (2015): Negotiating Lexical Uncertainty and Speaker Expertise with Disjunction
 
-Hurford-violating disjunctions ("X or A" with A ⊆ ⟦X⟧) are felicitous and
-carry ignorance implicatures. The paper derives both from RSA with lexical
-uncertainty (BLS 41, pp. 417–445): the listener jointly infers the world and
-the speaker's lexicon (eq. 14), and an expertise speaker (eq. 15) signals
-both world knowledge (α term) and lexicon knowledge (β term). Domain: 5
-utterances × 3 states (w₁, w₂, and the uncertainty join w₁₂, where truth
-requires truth at both atoms) × 3 lexica for X (`base` = A ∪ B, `excl` = B,
-`syn` = A).
-
-## Main results
-
-* `l1_uncertainty`, `l1_lexicon`: hearing "A or X", the joint listener
-  infers speaker uncertainty (w₁₂ > w₁ > w₂) and the exclusivized lexicon
-  (excl > base > syn).
-* `s1_disjunction_iff_uncertain`: the eq. 11 speaker uses the disjunction
-  exactly when uncertain.
-* `s2End_disjunction_iff_uncertain`, `AorX_signals_excl_vs_A`: eq. 15's
-  informativity and expertise components verified independently.
-* `l2_uncertainty`, `l2_lexicon`, `s2Exp_disjunction_iff_uncertain`: the
-  same at the stacked expertise level, Figure 10's regime α = 2, β = 1,
-  C(or) = 1 (its L₂ margins are .91 > .09 > 0 over worlds and
-  .49 > .34 > .17 over lexica; p. 436: "S₂'s preferred message given
-  observed state w₁∨w₂ and lexicon L₁ from Figure 10 is A or X").
-* `excl_is_base_minus_A`: the `excl` lexicon is exhaustification —
-  excl(X) = base(X) ∧ ¬A.
+This file formalizes the lexical-uncertainty model of [potts-levy-2015] and its Hurfordian
+context. Disjunctions *A or X* whose disjunct *X* covers *A* violate the generalization of
+[hurford-1974] yet are used, and the listener who hears one infers both that the speaker is
+uncertain between the disjuncts and that her lexicon keeps them apart. The model is a
+rational-speech-acts tower over states, messages, and lexica (§3). A literal listener conditions
+a flat prior on a message's extension under a lexicon (10), a speaker chooses messages by the
+listener's mass at the state under a rationality and a cost (11), and a pragmatic listener
+inverts the speaker (12) (`L0`, `S1`, `l1`); the lexical-uncertainty listener infers state and
+lexicon jointly (14) (`L1`), the expertise speaker weighs the world information and the lexicon
+information a message carries (15) (`S2`), the next listener inverts her (`L2`), and
+marginalization recovers simple signaling (16), (17) (`S2exp`). The state space is closed under
+joins so that a disjunction can convey uncertainty, a join state satisfying a message when all
+its atoms do (§4, Figure 6), and the lexica refine the unknown term *X* (13) (`World`, `Msg`,
+`Lex`, `sem`). In the Hurfordian context of §5.2, three atoms, the terms *A*, *B*, *X* with their
+disjunctions, and the lexica reading *X* as the general term, its exclusivization, or the
+synonym of *A*, at α = 2, β = 1 and a disjunction cost of 1 (Figure 10): the listener hearing
+*A or X* ranks the uncertain state first and the exclusivized lexicon first at both levels
+(`l1_uncertainty`, `l1_lexicon`, `l2_uncertainty`, `l2_lexicon`), the exclusivizing speaker uses
+the disjunction exactly when uncertain (`s1_disjunction_iff_uncertain`), the disjunction
+signals exclusivization where the bare disjunct does not (`AorX_signals_excl`), and the
+expertise speaker who is uncertain and exclusivizes prefers the disjunction to every other
+message, the paper's production claim for this context (`s2_prefers_disjunction`,
+`s2exp_disjunction_iff_uncertain`).
 
 ## Implementation notes
 
-α = 2 and β = 1 are natural powers, so each agent is a `PMF.ofScores`
-cast of an exact-`ℚ≥0` score function the kernel computes with; the tower
-recurses through the score functions. No utterance row is dead (`null` is
-true everywhere), so the uniform fallback never fires.
-The disjunction cost `exp(−1)` is rationalized as `37/100` (qualitative
-predictions robust, paper §5.4). `s2PMF` is the endorsement reading of S₂
-over the level-1 listener (an informativity-component decomposition);
-`s2ExpPMF` is the paper's eq. 17 lexicon-marginalized expertise speaker.
+The agents are kernels of `Pragmatics/RSA`, the speakers power-weight kernels and the
+listeners Bayesian inverses against uniform priors; the expertise speaker is a weight kernel
+built from the fixed-lexicon listener and the lexicon posterior, the rationality inside the
+weights. The cost factor `exp (−1)` of the disjunctions is rationalized as `37/100`, and every
+prediction is certified by an exact rational computation of the tower (`s1q` to `s2expq`),
+each kernel value shown equal to its rational counterpart. The definitional regime of §5.1,
+which needs β > α, and the parameter exploration of §5.4 are not formalized.
 
-The definitional regime (syn dominating, "wine lover or oenophile")
-requires β > α (paper §5.4) and is not modeled.
+## References
 
-## TODO
-
-Model the definitional regime (β > α) and the implicature-blocking
-simulations of paper §5.3. Relate the lexica to
-`Semantics.Exhaustification` operators (`excl_is_base_minus_A` is the
-`exh` clause over alternatives {A, X}).
+* [potts-levy-2015]
+* [hurford-1974]
 -/
 
-open scoped NNRat
+open MeasureTheory ProbabilityTheory RSA
+open scoped ENNReal NNReal NNRat
 
 namespace PottsLevy2015
 
-/-! ### Domain -/
+/-! ### The domain (§4, §5) -/
 
-/-- World states: `w₁` (only A), `w₂` (only B), and the uncertainty join
-`w₁₂` (both possible). -/
+/-- The three atomic states of the context. -/
+inductive Atom where
+  | w₁
+  | w₂
+  | w₃
+  deriving DecidableEq, Fintype
+
+/-- The states: the nonempty joins of the atoms (Figure 6). -/
 inductive World where
-  | w₁ | w₂ | w₁₂
-  deriving DecidableEq, Repr, Inhabited, Fintype
+  | w₁
+  | w₂
+  | w₃
+  | w₁₂
+  | w₁₃
+  | w₂₃
+  | w₁₂₃
+  deriving DecidableEq, Fintype, Nonempty
 
-/-- Utterances: the atoms A, B, the ambiguous term X, the disjunction, and
-the designated null message. -/
-inductive Utterance where
-  | A | B | X | AorX | null
-  deriving DecidableEq, Repr, Inhabited, Fintype
+instance : MeasurableSpace World := ⊤
 
-/-- Lexica for X: `base` (X = A ∪ B), `excl` (X = B, exhaustified), `syn`
-(X = A, synonymous). -/
+/-- The atoms a state joins. -/
+def World.atoms : World → Finset Atom
+  | .w₁ => {.w₁}
+  | .w₂ => {.w₂}
+  | .w₃ => {.w₃}
+  | .w₁₂ => {.w₁, .w₂}
+  | .w₁₃ => {.w₁, .w₃}
+  | .w₂₃ => {.w₂, .w₃}
+  | .w₁₂₃ => {.w₁, .w₂, .w₃}
+
+/-- The messages: the basic terms, their disjunctions, and the null message. -/
+inductive Msg where
+  | A
+  | B
+  | X
+  | AorB
+  | AorX
+  | BorX
+  | AorBorX
+  | null
+  deriving DecidableEq, Fintype, Nonempty
+
+instance : MeasurableSpace Msg := ⊤
+
+/-- Whether a message is a disjunction, the messages that carry a cost. -/
+def Msg.IsDisjunction : Msg → Prop
+  | .AorB | .AorX | .BorX | .AorBorX => True
+  | _ => False
+
+instance : DecidablePred Msg.IsDisjunction := λ m => by
+  cases m <;> unfold Msg.IsDisjunction <;> infer_instance
+
+/-- The lexica (13): the base lexicon reading *X* as the general term over the first two atoms,
+its exclusivization to the second atom, and the synonym of *A*. -/
 inductive Lex where
-  | base | excl | syn
-  deriving DecidableEq, Repr, Inhabited, Fintype
+  | base
+  | excl
+  | syn
+  deriving DecidableEq, Fintype, Nonempty
 
-/-! ### Truth conditions -/
+instance : MeasurableSpace Lex := ⊤
 
-/-- Truth of non-disjunctive utterances at atomic worlds. -/
-def atomicTruth : Lex → Utterance → World → Bool
-  | _, .A, .w₁ => true
-  | _, .B, .w₂ => true
-  | .base, .X, .w₁ => true
-  | .base, .X, .w₂ => true
-  | .excl, .X, .w₂ => true
-  | .syn,  .X, .w₁ => true
-  | _, .null, _ => true
-  | _, _, _ => false
+/-- The atoms *X* denotes under a lexicon. -/
+def Lex.x : Lex → Finset Atom
+  | .base => {.w₁, .w₂}
+  | .excl => {.w₂}
+  | .syn => {.w₁}
 
-/-- Truth at all worlds: "A or X" is A ∨ X, and truth at the join `w₁₂`
-requires truth at both atoms (the speaker asserts only what holds across
-all epistemically accessible worlds). -/
-def truth (l : Lex) (u : Utterance) (w : World) : Bool := let atWorld (w' : World) :=
-    match u with
-    | .AorX => atomicTruth l .A w' || atomicTruth l .X w'
-    | other => atomicTruth l other w'
-  match w with
-  | .w₁ => atWorld .w₁
-  | .w₂ => atWorld .w₂
-  | .w₁₂ => atWorld .w₁ && atWorld .w₂
+/-- The atoms a message denotes under a lexicon: *A* the first atom, *B* the second,
+disjunction union, and the null message everything. -/
+def atomDen (l : Lex) : Msg → Finset Atom
+  | .A => {.w₁}
+  | .B => {.w₂}
+  | .X => l.x
+  | .AorB => {.w₁, .w₂}
+  | .AorX => {.w₁} ∪ l.x
+  | .BorX => {.w₂} ∪ l.x
+  | .AorBorX => {.w₁, .w₂} ∪ l.x
+  | .null => Finset.univ
 
-/-! ### Truth-conditional facts -/
+/-- The extension of a message in the join-closed state space: the states all of whose atoms
+the message denotes. -/
+def sem (l : Lex) (m : Msg) : Finset World :=
+  Finset.univ.filter λ w => w.atoms ⊆ atomDen l m
 
-/-- excl(X) = base(X) ∧ ¬A: the `excl` lexicon is the exhaustification of
-X relative to the alternative A. -/
-theorem excl_is_base_minus_A :
-    ∀ w, atomicTruth .excl .X w =
-      (atomicTruth .base .X w && !atomicTruth .base .A w) := by
+/-- Under the exclusivized lexicon *A* and *X* are disjoint, the Hurford rescue; under the
+synonym lexicon *A or X* is *A*, the Hurford violation; and under the exclusivized lexicon the
+uncertain state satisfies exactly the disjunctions containing *A* and the null message. -/
+theorem lexica_facts :
+    Disjoint (atomDen .excl .A) (atomDen .excl .X) ∧ atomDen .syn .AorX = atomDen .syn .A ∧
+      (∀ m, World.w₁₂ ∈ sem .excl m ↔ m = .AorX ∨ m = .AorB ∨ m = .AorBorX ∨ m = .null) := by
   decide
 
-/-- syn(X) = A: the `syn` lexicon narrows X to its overlap with A. -/
-theorem syn_is_base_A :
-    ∀ w, atomicTruth .syn .X w = atomicTruth .base .A w := by
-  decide
+instance : IsProbabilityMeasure (uniformOn (Set.univ : Set World)) :=
+  isProbabilityMeasure_uniformOn Set.finite_univ Set.univ_nonempty
 
-/-- `excl` is a proper refinement of `base`. -/
-theorem base_entails_excl :
-    (∀ w, atomicTruth .excl .X w = true → atomicTruth .base .X w = true) ∧
-    ∃ w, atomicTruth .base .X w = true ∧ atomicTruth .excl .X w = false := by
-  decide
+instance : IsProbabilityMeasure (uniformOn (Set.univ : Set (World × Lex))) :=
+  isProbabilityMeasure_uniformOn Set.finite_univ Set.univ_nonempty
 
-/-- Under `syn`, "A or X" is extensionally "A": the Hurford violation. -/
-theorem syn_AorX_eq_A :
-    ∀ w, truth .syn .AorX w = truth .syn .A w := by decide
+/-! ### The tower (§3) -/
 
-/-- Under `excl`, A and X are disjoint: the exhaustified reading that
-rescues the disjunction. -/
-theorem excl_disjoint :
-    ¬∃ w, truth .excl .A w = true ∧ truth .excl .X w = true := by decide
+section Tower
 
-/-- Under `excl`, "A or X" is the only non-null utterance true at `w₁₂`. -/
-theorem excl_w12_AorX_unique :
-    truth .excl .AorX .w₁₂ = true ∧
-    truth .excl .A .w₁₂ = false ∧
-    truth .excl .B .w₁₂ = false ∧
-    truth .excl .X .w₁₂ = false := by decide
+variable (κ : ℝ≥0∞)
 
-/-- Under `syn`, "A or X" is false at `w₁₂` (it reduces to A, which fails
-at w₂). -/
-theorem syn_w12_AorX_false :
-    truth .syn .AorX .w₁₂ = false := by decide
+/-- The cost factor of a message: `κ` for a disjunction and 1 otherwise. -/
+def cost (m : Msg) : ℝ≥0∞ := if m.IsDisjunction then κ else 1
 
-/-- Under `base`, "A or X" is true at `w₁₂`. -/
-theorem base_w12_AorX_true :
-    truth .base .AorX .w₁₂ = true := by decide
+/-- The literal listener (10) at a flat prior: uniform on the message's extension. -/
+noncomputable def L0 (l : Lex) : Kernel Msg World := uniformListener (sem l)
 
-/-! ### The agent tower (eqs. 10–17)
+/-- The speaker (11) at α = 2: the substrate's power-weight speaker. -/
+noncomputable def S1 (l : Lex) : Kernel World Msg := speaker 2 (cost κ) (L0 l)
 
-Agents are `PMF`s, each with one `ℚ≥0` score function as its computational
-face: the tower recurses through the normalized scores (`÷0 = 0`, though
-no row here is dead), the `PMF` is their `PMF.ofScores` cast, and
-`PMF.ofScores_apply` is the pointwise hom between the two. -/
+instance (l : Lex) : IsFiniteKernel (S1 κ l) := inferInstanceAs (IsFiniteKernel (speaker _ _ _))
 
-/-- Speaker scores (eq. 11 at α = 2, uniform world prior, zero cost): the
-normalized squared literal listener of eq. 10. -/
-def s1Score (l : Lex) (w : World) : Utterance → ℚ≥0 :=
-  PMF.normalizeScores fun u => RSA.Score.l0 (truth l) (fun _ => 1) u w ^ 2
+/-- The fixed-lexicon pragmatic listener (12): the speaker's Bayesian inverse at a flat prior. -/
+noncomputable def l1 (l : Lex) : Kernel Msg World := (S1 κ l)†(uniformOn Set.univ)
 
-/-- Speaker (eq. 11). -/
-noncomputable def s1 (l : Lex) (w : World) : PMF Utterance := .ofScores .uniform (s1Score l w)
+/-- The lexical-uncertainty listener (14) at k = 1: the joint posterior over states and lexica
+against a flat prior, the substrate's family listener. -/
+noncomputable def L1 : Kernel Msg (World × Lex) :=
+  familyListener L0 2 (cost κ) (uniformOn Set.univ)
 
-/-- Fixed-lexicon pragmatic listener (the paper's lowercase l₁, eq. 12):
-the speaker renormalized over worlds — Bayes with a uniform prior, at a
-single lexicon (Figure 2's "fixed 𝓛" column). -/
-def l1FixedScore (l : Lex) (u : Utterance) : World → ℚ≥0 :=
-  PMF.normalizeScores fun w => s1Score l w u
+/-- The expertise speaker (15) at k = 2, α = 2 and β = 1: weights the square of the
+fixed-lexicon listener's mass at the state by the lexicon posterior and the cost. -/
+noncomputable def S2 : Kernel (World × Lex) Msg :=
+  Kernel.ofWeights λ p m => l1 κ p.2 m {p.1} ^ 2 * (L1 κ m).snd {p.2} * cost κ m
 
-/-- Lexical-uncertainty listener over worlds (the paper's uppercase L₁,
-eq. 14/16): the per-lexicon normaliser cancels under uniform priors,
-leaving `∑ s₁`. -/
-def l1Score (u : Utterance) : World → ℚ≥0 := PMF.normalizeScores fun w => ∑ l, s1Score l w u
+instance : IsFiniteKernel (S2 κ) := inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
 
-/-- Joint listener over worlds (eq. 16). -/
-noncomputable def l1 (u : Utterance) : PMF World := .ofScores .uniform (l1Score u)
+/-- The lexical-uncertainty listener (14) at k = 2. -/
+noncomputable def L2 : Kernel Msg (World × Lex) := (S2 κ)†(uniformOn Set.univ)
 
-/-- Joint-listener lexicon-posterior scores (eq. 14). -/
-def l1LatScore (u : Utterance) : Lex → ℚ≥0 := PMF.normalizeScores fun l => ∑ w, s1Score l w u
+/-- The marginal expertise speaker (17) at a flat lexicon prior. -/
+noncomputable def S2exp : Kernel World Msg :=
+  Kernel.mixture (λ _ : Lex => 3⁻¹) λ l => (S2 κ).comap (·, l) (measurable_of_countable _)
 
-/-- Joint listener over lexica (eq. 14). -/
-noncomputable def l1Lat (u : Utterance) : PMF Lex := .ofScores .uniform (l1LatScore u)
+end Tower
 
-/-- Disjunction cost factor `exp(−C(m))` with C(or) = 1, rationalized as
-`37/100 ≈ exp(−1)`. -/
-def disjCost : Utterance → ℚ≥0
-  | .AorX => 37/100
-  | _ => 1
+/-! ### The rational face -/
 
-/-- Expertise-speaker scores (eq. 15 at α = 2, β = 1):
-normalized `l₁(w|m,L)² · L₁(L|m) · exp(−C(m))`. -/
-def s2Score (l : Lex) (w : World) : Utterance → ℚ≥0 :=
-  PMF.normalizeScores fun u => l1FixedScore l u w ^ 2 * l1LatScore u l * disjCost u
+/-- Normalization of a rational score over a finite type. -/
+def normalize {σ : Type*} [Fintype σ] (f : σ → ℚ≥0) (x : σ) : ℚ≥0 := f x / ∑ y, f y
 
-/-- Endorsement speaker: the L₁ world posterior renormalized per world
-(the informativity component of eq. 15 in isolation). -/
-noncomputable def s2End (w : World) : PMF Utterance := .ofScores .uniform fun u => l1Score u w
+/-- The rational cost factor. -/
+def costq (κ : ℚ≥0) (m : Msg) : ℚ≥0 := if m.IsDisjunction then κ else 1
 
-/-- L₂ scores (eq. 14 at k = 2): summed expertise speakers. At fixed `u`
-they are the world-posterior scores; at fixed `w`, the eq. 17
-lexicon-marginalized speaker scores. -/
-def l2Score (u : Utterance) (w : World) : ℚ≥0 := ∑ l, s2Score l w u
+/-- The literal listener's mass. -/
+def l0q (l : Lex) (m : Msg) (w : World) : ℚ≥0 :=
+  if w ∈ sem l m then ((sem l m).card : ℚ≥0)⁻¹ else 0
 
-/-- L₂ listener over worlds (eq. 16 at k = 2). -/
-noncomputable def l2 (u : Utterance) : PMF World := .ofScores .uniform (l2Score u)
+/-- The speaker's shares. -/
+def s1q (κ : ℚ≥0) (l : Lex) (w : World) : Msg → ℚ≥0 :=
+  normalize λ m => l0q l m w ^ 2 * costq κ m
 
-/-- L₂ listener over lexica (eq. 14 at k = 2). -/
-noncomputable def l2Lat (u : Utterance) : PMF Lex := .ofScores .uniform fun l => ∑ w, s2Score l w u
+/-- The fixed-lexicon listener's masses. -/
+def l1q (κ : ℚ≥0) (l : Lex) (m : Msg) : World → ℚ≥0 := normalize λ w => s1q κ l w m
 
-/-- Marginal expertise speaker (eq. 17 at k = 2, uniform lexicon prior). -/
-noncomputable def s2Exp (w : World) : PMF Utterance := .ofScores .uniform fun u => l2Score u w
+/-- The joint listener's masses. -/
+def L1q (κ : ℚ≥0) (m : Msg) : World × Lex → ℚ≥0 := normalize λ p => s1q κ p.2 p.1 m
 
-/-! ### The L₁ inferences -/
+/-- The lexicon posterior. -/
+def L1latq (κ : ℚ≥0) (m : Msg) (l : Lex) : ℚ≥0 := ∑ w, L1q κ m (w, l)
 
-/-- The ignorance implicature: hearing "A or X", L₁ ranks the uncertainty
-state on top — w₁₂ > w₁ > w₂. The speaker could have said "A" knowing w₁
-or "X" knowing w₂ (under `excl`), so the disjunction signals commitment
-to neither disjunct. -/
+/-- The state posterior. -/
+def L1worldq (κ : ℚ≥0) (m : Msg) (w : World) : ℚ≥0 := ∑ l, L1q κ m (w, l)
+
+/-- The expertise speaker's shares. -/
+def s2q (κ : ℚ≥0) (p : World × Lex) : Msg → ℚ≥0 :=
+  normalize λ m => l1q κ p.2 m p.1 ^ 2 * L1latq κ m p.2 * costq κ m
+
+/-- The level-two joint listener's masses. -/
+def L2q (κ : ℚ≥0) (m : Msg) : World × Lex → ℚ≥0 := normalize λ p => s2q κ p m
+
+/-- The level-two lexicon posterior. -/
+def L2latq (κ : ℚ≥0) (m : Msg) (l : Lex) : ℚ≥0 := ∑ w, L2q κ m (w, l)
+
+/-- The level-two state posterior. -/
+def L2worldq (κ : ℚ≥0) (m : Msg) (w : World) : ℚ≥0 := ∑ l, L2q κ m (w, l)
+
+/-- The marginal expertise speaker's shares. -/
+def s2expq (κ : ℚ≥0) (w : World) (m : Msg) : ℚ≥0 := (∑ l, s2q κ (w, l) m) / 3
+
+/-- The rationalized disjunction cost, `exp (−1)` to two places. -/
+abbrev κ₀ : ℚ≥0 := 37 / 100
+
+/-- The cost factor at the rationalized cost. -/
+abbrev K : ℝ≥0∞ := ((κ₀ : ℝ≥0) : ℝ≥0∞)
+
+/-! ### Each kernel value is its rational counterpart -/
+
+private theorem s1_weight_ne_zero (l : Lex) (w : World) :
+    ∑ m, l0q l m w ^ 2 * costq κ₀ m ≠ 0 := by
+  revert l w; decide +kernel
+
+private theorem s1q_sum_ne_zero (l : Lex) (m : Msg) : ∑ w, s1q κ₀ l w m ≠ 0 := by
+  revert l m; decide +kernel
+
+private theorem s1q_joint_sum_ne_zero (m : Msg) : ∑ p : World × Lex, s1q κ₀ p.2 p.1 m ≠ 0 := by
+  revert m; decide +kernel
+
+private theorem s2_weight_ne_zero (p : World × Lex) :
+    ∑ m, l1q κ₀ p.2 m p.1 ^ 2 * L1latq κ₀ m p.2 * costq κ₀ m ≠ 0 := by
+  revert p; decide +kernel
+
+private theorem s2q_sum_ne_zero (m : Msg) : ∑ p : World × Lex, s2q κ₀ p m ≠ 0 := by
+  revert m; decide +kernel
+
+/-- The cast of a normalized rational score. -/
+theorem coe_normalize {σ : Type*} [Fintype σ] (f : σ → ℚ≥0) (h : ∑ y, f y ≠ 0) (x : σ) :
+    ((f x : ℝ≥0) : ℝ≥0∞) / ∑ y, ((f y : ℝ≥0) : ℝ≥0∞) = ((normalize f x : ℝ≥0) : ℝ≥0∞) := by
+  rw [normalize, NNRat.cast_div, ENNReal.coe_div (NNRat.cast_ne_zero.2 h), NNRat.cast_sum,
+    ENNReal.ofNNReal_finsetSum]
+
+/-- A weight kernel with rational weights has rational rows. -/
+theorem ofWeights_coe {α β : Type*} [MeasurableSpace α] [Countable α] [MeasurableSingletonClass α]
+    [MeasurableSpace β] [Fintype β] [MeasurableSingletonClass β] (q : α → β → ℚ≥0) (a : α)
+    (h : ∑ b, q a b ≠ 0) (b : β) :
+    Kernel.ofWeights (λ a b => ((q a b : ℝ≥0) : ℝ≥0∞)) a {b} =
+      ((normalize (q a) b : ℝ≥0) : ℝ≥0∞) := by
+  rw [Kernel.ofWeights_apply_singleton]
+  exact coe_normalize (q a) h b
+
+theorem cost_coe (κ : ℚ≥0) (m : Msg) :
+    cost ((κ : ℝ≥0) : ℝ≥0∞) m = ((costq κ m : ℝ≥0) : ℝ≥0∞) := by
+  unfold cost costq
+  split_ifs <;> simp
+
+theorem L0_apply (l : Lex) (m : Msg) (w : World) : L0 l m {w} = ((l0q l m w : ℝ≥0) : ℝ≥0∞) := by
+  rw [L0, uniformListener_apply_singleton, l0q]
+  split_ifs with h
+  · rw [NNRat.cast_inv, NNRat.cast_natCast,
+      ENNReal.coe_inv (by exact_mod_cast (Finset.card_pos.2 ⟨w, h⟩).ne'), ENNReal.coe_natCast]
+  · simp
+
+theorem S1_apply (l : Lex) (w : World) (m : Msg) :
+    S1 K l w {m} = ((s1q κ₀ l w m : ℝ≥0) : ℝ≥0∞) := by
+  have hw : (λ w u => L0 l u {w} ^ (2 : ℝ) * cost K u) =
+      λ w u => (((l0q l u w ^ 2 * costq κ₀ u : ℚ≥0) : ℝ≥0) : ℝ≥0∞) := by
+    funext w u
+    rw [L0_apply, cost_coe, ENNReal.rpow_two]
+    norm_cast
+  rw [S1, speaker, hw]
+  exact ofWeights_coe (λ w u => l0q l u w ^ 2 * costq κ₀ u) w (s1_weight_ne_zero l w) m
+
+theorem l1_apply (l : Lex) (m : Msg) (w : World) :
+    l1 K l m {w} = ((l1q κ₀ l m w : ℝ≥0) : ℝ≥0∞) := by
+  have hx : ∑ w', S1 K l w' {m} ≠ 0 := by
+    simp only [S1_apply]
+    rw [← ENNReal.ofNNReal_finsetSum, ← NNRat.cast_sum]
+    exact_mod_cast s1q_sum_ne_zero l m
+  rw [l1, posterior_uniformOn_univ_apply_singleton _ hx w]
+  simp only [S1_apply]
+  exact coe_normalize (λ w => s1q κ₀ l w m) (s1q_sum_ne_zero l m) w
+
+theorem L1_apply (m : Msg) (p : World × Lex) : L1 K m {p} = ((L1q κ₀ m p : ℝ≥0) : ℝ≥0∞) := by
+  have hs : ∀ p : World × Lex,
+      familySpeaker L0 2 (cost K) p {m} = ((s1q κ₀ p.2 p.1 m : ℝ≥0) : ℝ≥0∞) := λ p => by
+    rw [familySpeaker_apply]
+    exact S1_apply p.2 p.1 m
+  have hx : ∑ p : World × Lex, familySpeaker L0 2 (cost K) p {m} ≠ 0 := by
+    simp only [hs]
+    rw [← ENNReal.ofNNReal_finsetSum, ← NNRat.cast_sum]
+    exact_mod_cast s1q_joint_sum_ne_zero m
+  rw [L1, familyListener, posterior_uniformOn_univ_apply_singleton _ hx p]
+  simp only [hs]
+  exact coe_normalize (λ p : World × Lex => s1q κ₀ p.2 p.1 m) (s1q_joint_sum_ne_zero m) p
+
+theorem L1_snd_apply (m : Msg) (l : Lex) :
+    (L1 K m).snd {l} = ((L1latq κ₀ m l : ℝ≥0) : ℝ≥0∞) := by
+  rw [Measure.snd_apply_singleton, L1latq, NNRat.cast_sum, ENNReal.ofNNReal_finsetSum]
+  exact Finset.sum_congr rfl λ w _ => L1_apply m (w, l)
+
+theorem L1_fst_apply (m : Msg) (w : World) :
+    (L1 K m).fst {w} = ((L1worldq κ₀ m w : ℝ≥0) : ℝ≥0∞) := by
+  rw [Measure.fst_apply_singleton, L1worldq, NNRat.cast_sum, ENNReal.ofNNReal_finsetSum]
+  exact Finset.sum_congr rfl λ l _ => L1_apply m (w, l)
+
+theorem S2_apply (p : World × Lex) (m : Msg) : S2 K p {m} = ((s2q κ₀ p m : ℝ≥0) : ℝ≥0∞) := by
+  have hw : (λ (p : World × Lex) m => l1 K p.2 m {p.1} ^ 2 * (L1 K m).snd {p.2} * cost K m) =
+      λ p m => (((l1q κ₀ p.2 m p.1 ^ 2 * L1latq κ₀ m p.2 * costq κ₀ m : ℚ≥0) : ℝ≥0) : ℝ≥0∞) := by
+    funext p m
+    rw [l1_apply, L1_snd_apply, cost_coe]
+    norm_cast
+  rw [S2, hw]
+  exact ofWeights_coe (λ (p : World × Lex) m => l1q κ₀ p.2 m p.1 ^ 2 * L1latq κ₀ m p.2 * costq κ₀ m)
+    p (s2_weight_ne_zero p) m
+
+theorem L2_apply (m : Msg) (p : World × Lex) : L2 K m {p} = ((L2q κ₀ m p : ℝ≥0) : ℝ≥0∞) := by
+  have hx : ∑ p : World × Lex, S2 K p {m} ≠ 0 := by
+    simp only [S2_apply]
+    rw [← ENNReal.ofNNReal_finsetSum, ← NNRat.cast_sum]
+    exact_mod_cast s2q_sum_ne_zero m
+  rw [L2, posterior_uniformOn_univ_apply_singleton _ hx p]
+  simp only [S2_apply]
+  exact coe_normalize (λ p : World × Lex => s2q κ₀ p m) (s2q_sum_ne_zero m) p
+
+theorem L2_snd_apply (m : Msg) (l : Lex) :
+    (L2 K m).snd {l} = ((L2latq κ₀ m l : ℝ≥0) : ℝ≥0∞) := by
+  rw [Measure.snd_apply_singleton, L2latq, NNRat.cast_sum, ENNReal.ofNNReal_finsetSum]
+  exact Finset.sum_congr rfl λ w _ => L2_apply m (w, l)
+
+theorem L2_fst_apply (m : Msg) (w : World) :
+    (L2 K m).fst {w} = ((L2worldq κ₀ m w : ℝ≥0) : ℝ≥0∞) := by
+  rw [Measure.fst_apply_singleton, L2worldq, NNRat.cast_sum, ENNReal.ofNNReal_finsetSum]
+  exact Finset.sum_congr rfl λ l _ => L2_apply m (w, l)
+
+theorem S2exp_apply (w : World) (m : Msg) : S2exp K w {m} = ((s2expq κ₀ w m : ℝ≥0) : ℝ≥0∞) := by
+  rw [S2exp, Kernel.mixture_apply']
+  simp only [Kernel.comap_apply', S2_apply]
+  rw [s2expq, NNRat.cast_div, NNRat.cast_sum, NNRat.cast_ofNat, ENNReal.coe_div three_ne_zero,
+    ENNReal.ofNNReal_finsetSum, ENNReal.coe_ofNat, div_eq_mul_inv, Finset.sum_mul]
+  exact Finset.sum_congr rfl λ l _ => mul_comm _ _
+
+/-! ### The Hurfordian context (§5.2, Figure 10) -/
+
+private theorem real_lt {x y : ℚ≥0} (h : x < y) :
+    ((x : ℝ≥0) : ℝ≥0∞).toReal < ((y : ℝ≥0) : ℝ≥0∞).toReal := by
+  rw [ENNReal.coe_toReal, ENNReal.coe_toReal]
+  exact NNReal.coe_lt_coe.2 (NNRat.cast_lt.2 h)
+
+/-- The ignorance implicature: hearing *A or X*, the lexical-uncertainty listener ranks the
+uncertain state above the first atom and that above the second. -/
 theorem l1_uncertainty :
-    l1 .AorX .w₂ < l1 .AorX .w₁ ∧ l1 .AorX .w₁ < l1 .AorX .w₁₂ :=
-  ⟨PMF.ofScores_lt _ (by decide +kernel), PMF.ofScores_lt _ (by decide +kernel)⟩
+    (L1 K .AorX).fst.real {.w₂} < (L1 K .AorX).fst.real {.w₁} ∧
+      (L1 K .AorX).fst.real {.w₁} < (L1 K .AorX).fst.real {.w₁₂} := by
+  simp only [measureReal_def, L1_fst_apply]
+  exact ⟨real_lt (by decide +kernel), real_lt (by decide +kernel)⟩
 
-/-- The Hurford rescue: hearing "A or X", L₁ ranks the exclusivized
-lexicon on top — excl > base > syn. `excl` makes the disjunction maximally
-informative; `syn` makes it redundant. -/
+/-- The Hurford rescue: hearing *A or X*, the listener ranks the exclusivized lexicon above the
+base lexicon and that above the synonym lexicon. -/
 theorem l1_lexicon :
-    l1Lat .AorX .syn < l1Lat .AorX .base ∧ l1Lat .AorX .base < l1Lat .AorX .excl :=
-  ⟨PMF.ofScores_lt _ (by decide +kernel), PMF.ofScores_lt _ (by decide +kernel)⟩
+    (L1 K .AorX).snd.real {.syn} < (L1 K .AorX).snd.real {.base} ∧
+      (L1 K .AorX).snd.real {.base} < (L1 K .AorX).snd.real {.excl} := by
+  simp only [measureReal_def, L1_snd_apply]
+  exact ⟨real_lt (by decide +kernel), real_lt (by decide +kernel)⟩
 
-/-! ### Speaker rationality -/
-
-/-- The eq. 11 speaker (under `excl`) uses the disjunction exactly when
-uncertain: at w₁₂ it beats both bare disjuncts, while knowing w₁ the bare
-"A" wins. -/
+/-- The exclusivizing speaker uses the disjunction exactly when uncertain: at the uncertain
+state it beats both bare disjuncts, while knowing the first atom the bare *A* wins. -/
 theorem s1_disjunction_iff_uncertain :
-    s1 .excl .w₁₂ .A < s1 .excl .w₁₂ .AorX ∧
-    s1 .excl .w₁₂ .X < s1 .excl .w₁₂ .AorX ∧
-    s1 .excl .w₁ .AorX < s1 .excl .w₁ .A :=
-  ⟨PMF.ofScores_lt _ (by decide +kernel), PMF.ofScores_lt _ (by decide +kernel),
-    PMF.ofScores_lt _ (by decide +kernel)⟩
+    (S1 K .excl .w₁₂).real {.A} < (S1 K .excl .w₁₂).real {.AorX} ∧
+      (S1 K .excl .w₁₂).real {.X} < (S1 K .excl .w₁₂).real {.AorX} ∧
+      (S1 K .excl .w₁).real {.AorX} < (S1 K .excl .w₁).real {.A} := by
+  simp only [measureReal_def, S1_apply]
+  exact ⟨real_lt (by decide +kernel), real_lt (by decide +kernel), real_lt (by decide +kernel)⟩
 
-/-! ### Endorsement decomposition
+/-- The expertise component: *A or X* signals the exclusivized lexicon more strongly than the
+bare *A* does, which every lexicon reads alike. -/
+theorem AorX_signals_excl : (L1 K .A).snd.real {.excl} < (L1 K .AorX).snd.real {.excl} := by
+  simp only [measureReal_def, L1_snd_apply]
+  exact real_lt (by decide +kernel)
 
-Eq. 15's two utility terms as independent components: informativity via
-the endorsement speaker `s2End` (S₂(u|w) ∝ L₁(w|u)) and expertise via
-lexicon signaling. With β > 0 the speaker has both reasons to use the
-disjunction. -/
-
-/-- The informativity component alone already selects the disjunction
-exactly when uncertain ("A" is false at w₁₂ under every lexicon). -/
-theorem s2End_disjunction_iff_uncertain :
-    s2End .w₁₂ .A < s2End .w₁₂ .AorX ∧ s2End .w₁ .AorX < s2End .w₁ .A :=
-  ⟨PMF.ofScores_lt _ (by decide +kernel), PMF.ofScores_lt _ (by decide +kernel)⟩
-
-/-- The expertise component: "A or X" signals the `excl` lexicon more
-strongly than "A" does (all lexica agree on "A", so its lexicon posterior
-is near-uniform). This asymmetry is what β > 0 amplifies. -/
-theorem AorX_signals_excl_vs_A : l1Lat .A .excl < l1Lat .AorX .excl :=
-  PMF.ofScores_lt_cross _ _ (by decide +kernel)
-
-/-! ### Predictions at the stacked level (Figure 10) -/
-
-/-- L₂ hearing "A or X" reproduces the uncertainty ordering
-w₁₂ > w₁ > w₂ (Figure 10 world margins .91 > .09 > 0). -/
+/-- At the second level the listener hearing *A or X* again ranks the uncertain state first. -/
 theorem l2_uncertainty :
-    l2 .AorX .w₂ < l2 .AorX .w₁ ∧ l2 .AorX .w₁ < l2 .AorX .w₁₂ :=
-  ⟨PMF.ofScores_lt _ (by decide +kernel), PMF.ofScores_lt _ (by decide +kernel)⟩
+    (L2 K .AorX).fst.real {.w₂} < (L2 K .AorX).fst.real {.w₁} ∧
+      (L2 K .AorX).fst.real {.w₁} < (L2 K .AorX).fst.real {.w₁₂} := by
+  simp only [measureReal_def, L2_fst_apply]
+  exact ⟨real_lt (by decide +kernel), real_lt (by decide +kernel)⟩
 
-/-- L₂ hearing "A or X" reproduces the lexicon ordering excl > base > syn
-(Figure 10 lexicon margins .49 > .34 > .17). -/
+/-- At the second level the listener hearing *A or X* again ranks the exclusivized lexicon
+first. -/
 theorem l2_lexicon :
-    l2Lat .AorX .syn < l2Lat .AorX .base ∧ l2Lat .AorX .base < l2Lat .AorX .excl :=
-  ⟨PMF.ofScores_lt _ (by decide +kernel), PMF.ofScores_lt _ (by decide +kernel)⟩
+    (L2 K .AorX).snd.real {.syn} < (L2 K .AorX).snd.real {.base} ∧
+      (L2 K .AorX).snd.real {.base} < (L2 K .AorX).snd.real {.excl} := by
+  simp only [measureReal_def, L2_snd_apply]
+  exact ⟨real_lt (by decide +kernel), real_lt (by decide +kernel)⟩
 
-/-- The eq. 17 marginal speaker uses the disjunction exactly when
-uncertain (p. 436). -/
-theorem s2Exp_disjunction_iff_uncertain :
-    s2Exp .w₁₂ .A < s2Exp .w₁₂ .AorX ∧ s2Exp .w₁ .AorX < s2Exp .w₁ .A :=
-  ⟨PMF.ofScores_lt _ (by decide +kernel), PMF.ofScores_lt _ (by decide +kernel)⟩
+/-- The paper's production claim for the context: the expertise speaker who observes the
+uncertain state with the exclusivized lexicon prefers *A or X* to every other message. -/
+theorem s2_prefers_disjunction (m : Msg) (hm : m ≠ .AorX) :
+    (S2 K (.w₁₂, .excl)).real {m} < (S2 K (.w₁₂, .excl)).real {.AorX} := by
+  simp only [measureReal_def, S2_apply]
+  exact real_lt (by revert m; decide +kernel)
+
+/-- The marginal expertise speaker uses the disjunction exactly when uncertain. -/
+theorem s2exp_disjunction_iff_uncertain :
+    (S2exp K .w₁₂).real {.A} < (S2exp K .w₁₂).real {.AorX} ∧
+      (S2exp K .w₁).real {.AorX} < (S2exp K .w₁).real {.A} := by
+  simp only [measureReal_def, S2exp_apply]
+  exact ⟨real_lt (by decide +kernel), real_lt (by decide +kernel)⟩
 
 end PottsLevy2015

@@ -1,5 +1,6 @@
 import Linglib.Core.Algebra.Order.Chebyshev
 import Linglib.Core.MeasureTheory.Measure.Prod
+import Linglib.Core.Probability.UniformOn
 import Mathlib.Probability.Kernel.Posterior
 import Mathlib.MeasureTheory.Measure.Real
 
@@ -351,5 +352,33 @@ theorem posterior_snd_real_lt_iff [Fintype A] (b₁ b₂ : B) :
   exact Iff.rfl
 
 end Prod
+
+section UniformPrior
+
+variable {W : Type*} [MeasurableSpace W] [MeasurableSingletonClass W] [StandardBorelSpace W]
+  [Fintype W] [Nonempty W] (κ : Kernel W 𝓧) [IsFiniteKernel κ]
+
+omit [StandardBorelSpace W] [Nonempty W] [IsFiniteKernel κ] in
+/-- The observation marginal of a kernel against the uniform prior: the mean likelihood. -/
+theorem comp_uniformOn_univ_apply_singleton (x : 𝓧) :
+    (κ ∘ₘ uniformOn (Set.univ : Set W)) {x} = (Fintype.card W : ℝ≥0∞)⁻¹ * ∑ w, κ w {x} := by
+  rw [Measure.comp_apply_singleton, Finset.mul_sum]
+  exact Finset.sum_congr rfl λ w _ => by rw [uniformOn_univ_apply_singleton]
+
+/-- Bayes against the uniform prior: the posterior at a state is its likelihood of the
+observation normalized over the states, the prior cancelling. -/
+theorem posterior_uniformOn_univ_apply_singleton {x : 𝓧} (hx : ∑ w, κ w {x} ≠ 0) (w : W) :
+    (κ†(uniformOn (Set.univ : Set W))) x {w} = κ w {x} / ∑ w', κ w' {x} := by
+  have : IsProbabilityMeasure (uniformOn (Set.univ : Set W)) :=
+    isProbabilityMeasure_uniformOn Set.finite_univ Set.univ_nonempty
+  have hc : (Fintype.card W : ℝ≥0∞)⁻¹ ≠ 0 := ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _)
+  have hct : (Fintype.card W : ℝ≥0∞)⁻¹ ≠ ⊤ :=
+    ENNReal.inv_ne_top.mpr (Nat.cast_ne_zero.mpr Fintype.card_ne_zero)
+  have hsum : (κ ∘ₘ uniformOn (Set.univ : Set W)) {x} ≠ 0 := by
+    rw [comp_uniformOn_univ_apply_singleton]; exact mul_ne_zero hc hx
+  rw [posterior_apply_singleton _ _ hsum, uniformOn_univ_apply_singleton,
+    comp_uniformOn_univ_apply_singleton, ENNReal.mul_div_mul_left _ _ hc hct]
+
+end UniformPrior
 
 end ProbabilityTheory
