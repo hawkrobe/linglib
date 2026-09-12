@@ -4,13 +4,13 @@ import Linglib.Semantics.Genericity.NominalMappingParameter
 
 /-!
 # Dutch Noun Lexicon Fragment
-[krifka-2004] [chierchia-1998] [le-bruyn-de-swart-2022]
+[krifka-2003] [chierchia-1998] [le-bruyn-de-swart-2022]
 
 Dutch-specific noun entries with scrambling support. Dutch allows scrambling:
 objects can move across negation/adverbs, affecting bare plural scope.
 
 Based on [le-bruyn-de-swart-2022]: scrambled BPs take wide scope but can
-still be kind-referring, supporting [krifka-2004] over [chierchia-1998].
+still be kind-referring, supporting [krifka-2003] over [chierchia-1998].
 -/
 
 namespace Dutch.Nouns
