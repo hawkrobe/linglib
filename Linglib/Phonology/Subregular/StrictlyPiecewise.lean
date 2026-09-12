@@ -150,6 +150,16 @@ theorem IsStrictlyPiecewise.toIsPiecewiseTestable (h : L.IsStrictlyPiecewise k) 
   · exact hw s hlen ((subseqSet_eq_iff heq hlen).mpr hs)
   · exact hw s hlen ((subseqSet_eq_iff heq hlen).mp hs)
 
+/-- Avoiding one pattern that fits in the window is piecewise testable. -/
+theorem isPiecewiseTestable_compl_shuffleIdeal {p : List α} (hp : p.length ≤ k) :
+    (shuffleIdeal p)ᶜ.IsPiecewiseTestable k :=
+  (isStrictlyPiecewise_avoid hp).toIsPiecewiseTestable
+
+/-- Containing one pattern that fits in the window is piecewise testable. -/
+theorem isPiecewiseTestable_shuffleIdeal {p : List α} (hp : p.length ≤ k) :
+    (shuffleIdeal p).IsPiecewiseTestable k :=
+  compl_compl (shuffleIdeal p) ▸ (isPiecewiseTestable_compl_shuffleIdeal hp).compl
+
 /-- A language is strictly piecewise at some width iff it is sublist-closed
 [rogers-heinz-et-al-2010]. Backwards, `L` is its own grammar at the width bounding the
 finite forbidden basis, so that any word outside `L` is already refuted by a basis word it
