@@ -59,6 +59,29 @@ theorem IsConstituent.isCatena {g : Graph n} {s : Finset (Fin n)}
   rw [IsCatena, show (↑s : Set (Fin n)) = {x | Dominates g v x} from Set.ext hv]
   exact connected_induce_cone g v
 
+/-- A head with one of its dependents is a catena. -/
+theorem isCatena_pair (g : Graph n) {v w : Fin n} (h : g.Adj v w) (hne : v ≠ w) :
+    IsCatena g {v, w} := by
+  refine (SimpleGraph.connected_iff_exists_forall_reachable _).mpr ⟨⟨v, by simp⟩, ?_⟩
+  rintro ⟨u, hu⟩
+  rcases Finset.mem_insert.mp (Finset.mem_coe.mp hu) with rfl | hu'
+  · exact .rfl
+  · rw [Finset.mem_singleton] at hu'; subst hu'
+    exact SimpleGraph.Adj.reachable ⟨hne, Or.inl h⟩
+
+/-- In a tree, a head with one of its dependents is not a constituent when the head has
+another dependent: the head's cone contains the other dependent, and the dependent's cone
+does not contain the head. -/
+theorem not_isConstituent_pair {g : Graph n} (hT : g.IsTree) {v w u : Fin n} (hw : g.Adj v w)
+    (hu : g.Adj v u) (huw : u ≠ w) : ¬ IsConstituent g {v, w} := by
+  rintro ⟨c, hc⟩
+  rcases Finset.mem_insert.mp ((hc c).2 Relation.ReflTransGen.refl) with rfl | hcw
+  · rcases Finset.mem_insert.mp ((hc u).2 (Relation.ReflTransGen.single hu)) with rfl | hu'
+    · exact hT.acyclic u (Relation.TransGen.single hu)
+    · exact huw (Finset.mem_singleton.mp hu')
+  · rw [Finset.mem_singleton] at hcw; subst hcw
+    exact not_adj_dominates hT.acyclic hw ((hc v).1 (by simp))
+
 /-- The whole sentence is a constituent: the root's dominance cone. -/
 theorem isConstituent_univ {g : Graph n} (hT : g.IsTree) :
     IsConstituent g Finset.univ :=

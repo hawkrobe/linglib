@@ -119,6 +119,14 @@ theorem Graph.IsTree.leftUnique_adj (hT : g.IsTree) :
   obtain ⟨z, _, hz⟩ := hT.existsUnique_adj y hy
   exact (hz u hu).trans (hz u' hu').symm
 
+/-- Adding a second head for a position breaks tree-hood: the enhanced graph of a control or
+raising structure, whose embedded verb gains the matrix subject, is not a tree. -/
+theorem Graph.not_isTree_enhance {x : Fin n} (hv : g.Adj v w) (hx : x ≠ v) (r : UD.DepRel)
+    (extra : List (Fin n × Fin n × UD.DepRel)) (hmem : (x, w, r) ∈ extra) :
+    ¬ (g.enhance extra).IsTree := λ hT' =>
+  hx (hT'.leftUnique_adj (Graph.enhance_adj.mpr (Or.inr ⟨r, hmem⟩))
+    (Graph.enhance_adj.mpr (Or.inl hv)))
+
 /-- No arc closes a dominance cycle, on acyclic graphs. -/
 theorem not_adj_dominates (hacyc : ∀ v, ¬ TransGen g.Adj v v)
     (hadj : g.Adj v w) (hdom : Dominates g w v) : False :=
