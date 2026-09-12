@@ -157,8 +157,8 @@ theorem communicatedContent_antitone (q q' : QUD W) (p : Prop3 W)
 
 Bivalent counterpart of `addressesIssue`, from [kriz-spector-2021]: a
 `W → Prop` is *strongly relevant* to an issue when it is constant on each
-cell. The bivalent bridge to `addressesIssue` is
-`KrizSpector2021.bivalent_addressing_iff_stronglyRelevant`. -/
+cell; Addressing has it as its special case on bivalent propositions
+(`KrizSpector2021.addressesIssue_iff_stronglyRelevant`). -/
 
 /-- A proposition is strongly relevant to an issue iff it is constant on
     each cell of the partition. -/
