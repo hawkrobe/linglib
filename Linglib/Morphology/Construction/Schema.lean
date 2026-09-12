@@ -39,8 +39,8 @@ variable open, exactly when it generates its own description over the empty lexi
 * `Schema.Relates`, `Schema.Generates`, `Schema.IsProductive`: the two roles of a schema and
   productivity.
 * `Schema.instantiates_inf_iff`, `Schema.instantiates_iff_of_unify_eq_some`: the meet of two
-  items is their least general generalization, and the unification of two descriptions has
-  exactly their common instances.
+  items is their least general generalization, the Structural Intersection of Relational
+  Morphology, and the unification of two descriptions has exactly their common instances.
 
 ## Implementation notes
 
@@ -101,6 +101,11 @@ theorem instantiates_body (s : Schema V α) : s.Instantiates s.body := le_rfl
 theorem Instantiates.trans_le (h : s.Instantiates w₁) (hw : w₁ ≤ w₂) :
     s.Instantiates w₂ :=
   h.trans hw
+
+/-- A fully specified description, every slot maximal, is instantiated by itself alone. -/
+theorem instantiates_iff_eq_of_forall_isMax (h : ∀ v, IsMax (s.body v)) :
+    s.Instantiates w ↔ w = s.body :=
+  ⟨λ hw => funext λ v => le_antisymm (h v (hw v)) (hw v), λ hw => hw ▸ le_rfl⟩
 
 /-- A schema lies below another exactly when it is instantiated by everything the other is. -/
 theorem body_le_body_iff :
@@ -248,7 +253,8 @@ theorem attested_mono (h : Λ ⊆ Λ') (v : V) : s.attested Λ v ⊆ s.attested 
 end PartialOrder
 
 /-- A schema is instantiated by the meet of two items exactly when it is instantiated by both:
-the meet is their least general generalization. -/
+the meet is their least general generalization, the Structural Intersection of Relational
+Morphology. -/
 theorem instantiates_inf_iff [SemilatticeInf α] {s : Schema V α} {w₁ w₂ : V → α} :
     s.Instantiates (w₁ ⊓ w₂) ↔ s.Instantiates w₁ ∧ s.Instantiates w₂ :=
   le_inf_iff
