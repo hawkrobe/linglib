@@ -189,6 +189,11 @@ theorem Frame.ofRules_cons_of_ne (r : Rule W) (R : List (Rule W)) {d : Finset W}
       · exact absurd hc.2 h.symm
       · exact h' c ⟨hc', hc.2⟩⟩
 
+/-- The presented frame depends only on which rules have been accepted, not on their order. -/
+theorem Frame.ofRules_perm {R R' : List (Rule W)} (h : R.Perm R') :
+    Frame.ofRules R = Frame.ofRules R' :=
+  funext λ d => by simp only [Frame.ofRules, h.mem_iff]
+
 /-- `w` is normal in `πd` (Definition 4.3(i)): `w ∈ d` and `w` is at least as normal as every
 world of every subdomain of `d` containing it, under that subdomain's pattern. -/
 def Normal (π : Frame W) (d : Finset W) (w : W) : Prop :=
