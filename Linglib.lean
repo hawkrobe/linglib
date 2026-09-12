@@ -1589,7 +1589,6 @@ import Linglib.Semantics.Conditionals.Counterfactual.Alternatives
 import Linglib.Semantics.Conditionals.Counterfactual.Implicature
 import Linglib.Semantics.Conditionals.Counterfactual.Lumping
 import Linglib.Semantics.Conditionals.Counterfactual.QuantifierEmbedding
-import Linglib.Semantics.Conditionals.LeftNested
 import Linglib.Semantics.Conditionals.Marker
 import Linglib.Semantics.Conditionals.PremiseSemantic
 import Linglib.Semantics.Conditionals.Presupposition
@@ -1696,7 +1695,6 @@ import Linglib.Semantics.Focus.Marking
 import Linglib.Semantics.Focus.Particles
 import Linglib.Semantics.Focus.Unalternatives
 import Linglib.Semantics.Genericity.Basic
-import Linglib.Semantics.Genericity.Dynamic
 import Linglib.Semantics.Genericity.MeaningPreservation
 import Linglib.Semantics.Genericity.NominalMappingParameter
 import Linglib.Semantics.Genericity.SortedOntology
@@ -2338,7 +2336,6 @@ import Linglib.Studies.Khoo2015
 import Linglib.Studies.Kim2024
 import Linglib.Studies.Kiparsky2002
 import Linglib.Studies.KirkGiannini2024
-import Linglib.Studies.Kirkpatrick2024
 import Linglib.Studies.Kiss1998
 import Linglib.Studies.Klecha2016
 import Linglib.Studies.Klein1980
@@ -2358,7 +2355,6 @@ import Linglib.Studies.KratzerShimoyama2002
 import Linglib.Studies.Krejci2012
 import Linglib.Studies.Krifka1989
 import Linglib.Studies.Krifka1998
-import Linglib.Studies.Krifka2007
 import Linglib.Studies.Krifka2013
 import Linglib.Studies.Krifka2015
 import Linglib.Studies.Krifka2020
