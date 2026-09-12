@@ -20,7 +20,8 @@ open Sum
 
 namespace Function
 
-variable {α β γ δ : Type*} {f₁ : α → γ} {f₂ : β → γ} {g₁ : α → δ} {g₂ : β → δ}
+variable {α β γ δ : Type*} {f₁ : α → γ} {f₂ : β → γ}
+  {g₁ : α → δ} {g₂ : β → δ}
 
 theorem FactorsThrough.sumElim (h₁ : g₁.FactorsThrough f₁)
     (h₂ : g₂.FactorsThrough f₂) (h : ∀ a b, f₁ a = f₂ b → g₁ a = g₂ b) :
