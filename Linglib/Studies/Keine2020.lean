@@ -7,7 +7,8 @@ import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 This file formalizes the horizons theory of [keine-2020] as it parameterizes probes across
 languages. A probe's search terminates at its horizon category ((33)); labels are bilateral within
 an extended projection, so a clause is opaque to a probe exactly when its label contains the
-horizon, and Upward Entailment holds for every probe (`upward_entailment`). Hindi's four clause
+horizon, and Upward Entailment holds for every probe, transparency being antitone in the
+extension order of clause sizes (`sizes_le`). Hindi's four clause
 sizes ((168)) follow from the probes of (219), with NmlzP and CP incomparable, the one transparent
 to wh-licensing and the other to Ā-movement (`hindi_table`, `nmlzP_cP_incomparable`), and the
 A-Movement–Agreement Generalization ((231)) from the two probes on T⁰ sharing a horizon. English
@@ -47,21 +48,13 @@ def row (sizes : List ClauseSpine) (p : Probe.Profile) : List Bool :=
 
 /-! ### Upward Entailment -/
 
-/-- Larger clauses are at least as opaque, for every probe, since a clause's label extends the
-labels of the smaller clauses of its extended projection: TP extends vP, CP and NmlzP extend
-TP, ForceP extends CP. -/
-theorem upward_entailment (p : Probe.Profile) :
-    (p.transparentToLabel ClauseSpine.vP.projectedHeads = false →
-        p.transparentToLabel ClauseSpine.tP.projectedHeads = false) ∧
-      (p.transparentToLabel ClauseSpine.tP.projectedHeads = false →
-        p.transparentToLabel ClauseSpine.cP.projectedHeads = false ∧
-          p.transparentToLabel ClauseSpine.nmlzP.projectedHeads = false) ∧
-      (p.transparentToLabel ClauseSpine.cP.projectedHeads = false →
-        p.transparentToLabel ClauseSpine.forceP.projectedHeads = false) :=
-  ⟨upward_entailment_label p _ _ (by decide),
-    λ h => ⟨upward_entailment_label p _ _ (by decide) h,
-      upward_entailment_label p _ _ (by decide) h⟩,
-    upward_entailment_label p _ _ (by decide)⟩
+/-- The book's clause sizes in the extension order: TP extends vP, CP and NmlzP extend TP,
+ForceP extends CP. Transparency is antitone in this order for every probe
+(`Probe.Profile.transparentToLabel_antitone`), which is Upward Entailment. -/
+theorem sizes_le :
+    ClauseSpine.vP ≤ .tP ∧ ClauseSpine.tP ≤ .cP ∧ ClauseSpine.tP ≤ .nmlzP ∧
+      ClauseSpine.cP ≤ .forceP := by
+  decide
 
 /-! ### Hindi (Chapters 2 and 3) -/
 
