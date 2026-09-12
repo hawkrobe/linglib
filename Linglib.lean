@@ -2363,7 +2363,6 @@ import Linglib.Studies.Krejci2012
 import Linglib.Studies.Krifka1989
 import Linglib.Studies.Krifka1998
 import Linglib.Studies.Krifka2004
-import Linglib.Studies.Krifka2007
 import Linglib.Studies.Krifka2013
 import Linglib.Studies.Krifka2015
 import Linglib.Studies.Krifka2020
