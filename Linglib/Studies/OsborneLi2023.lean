@@ -5,50 +5,37 @@ import Linglib.Morphology.Word.Basic
 import Linglib.Data.Examples.OsborneLi2023
 
 /-!
-# CRDC: Conjunct Referential Dependency Constraint
-[osborne-li-2023]
+# Osborne and Li (2023): Coordination and Referential Dependencies
 
-The Conjunct Referential Dependency Constraint of [osborne-li-2023],
-p. 651 (verbatim):
-
-> A referentially dependent conjunct valent can be co-valued with a full
-> co-valent, but a referentially dependent full valent can hardly be
-> co-valued with a conjunct co-valent.
-
-The CRDC governs *only* configurations in which one of the relevant
-positions sits inside a coordinate structure; non-coordinate binding
-falls under Conditions A/B/C, on which the paper is explicit that the
-CRDC is silent (p. 651). Marginality is constitutive of its empirical
-content: the paper's crowdsourced acceptability table (p. 630 fn. 3)
-maps mean scores to markers — `?` (1.65–2.29), `??` (2.30–2.94), `*`
-(2.95–4.00) — and the CRDC's prediction is `??`,
-`Judgment.questionable` in the project's enum.
-
-Each theorem builds the tree of a stimulus from
-`Data.Examples.OsborneLi2023` and compares `crdcPredictedJudgment`
-with the row's recorded judgment: equality where the CRDC is the
-operative principle, and a recorded divergence for ex9b, whose
-sentence-level marginality is Condition B's contribution.
+This file formalizes the Conjunct Referential Dependency Constraint of [osborne-li-2023]: a
+referentially dependent conjunct valent can be co-valued with a full co-valent, but a
+referentially dependent full valent can hardly be co-valued with a conjunct co-valent. The
+constraint governs only configurations in which one of the two positions sits inside a
+coordinate structure, non-coordinate binding falling under the binding conditions on which
+the paper is silent, and its empirical content is graded: the paper's crowdsourced
+acceptability scale maps the constraint's prediction to the double question mark, the
+library's questionable judgment (`crdcPredictedJudgment`). Each stimulus is built as a
+dependency tree from the paper's examples and the prediction compared with the recorded
+judgment, equal wherever the constraint is the operative principle and diverging on the
+reflexive baseline whose marginality is Condition B's; the constraint is asymmetric on the
+coordinate-subject stimulus (`direction_asymmetry`).
 
 ## Implementation notes
 
-* "Valent" is operationalised as a direct UD valency-relation dependent
-  of the predicate (`UD.DepRel.isValencyArg`) — a deliberate
-  simplification of the paper's catena-based notion (§4); the example
-  set does not exercise the difference.
-* UD's basic-tree convention makes the first conjunct head the
-  coordinate structure, with remaining conjuncts attached via `.conj`;
-  the conjunct helpers are two-liners over `Graph.children`.
-* Binding theories elsewhere in linglib (`Studies/Chomsky1981.lean`,
-  `Syntax/HPSG/Coreference.lean`) make categorical predictions on
-  non-coordinate stimuli; the CRDC contributes a graded prediction on
-  coordinate ones. A head-to-head comparison needs coordination-aware
-  binding parsers and `Judgment`-valued output on their side.
+A valent is a direct valency-relation dependent of the predicate, a simplification of the
+paper's catena-based notion that the example set does not exercise; the first conjunct
+heads the coordinate structure in the Universal Dependencies convention.
 
 ## TODO
 
-* Cover §6's counterexamples (e.g. the *vote*-predicate identity split,
-  ex (55a) in the data) with a third-party-referent treatment.
+The paper is not on file; the page locators of the constraint and of the acceptability
+scale are transcribed from an earlier version of this file and are UNVERIFIED. The sixth
+section's counterexamples, such as the *vote*-predicate identity split, need a third-party
+referent treatment.
+
+## References
+
+* [osborne-li-2023]
 -/
 
 namespace OsborneLi2023
