@@ -1,386 +1,202 @@
 import Linglib.Semantics.Genericity.NominalMappingParameter
-import Linglib.Semantics.Dynamic.ICDRT.Defs
 import Linglib.Semantics.Dynamic.Update
 import Linglib.Logic.Assignment
 import Linglib.Features.MassCount
 
 /-!
-# Anaphora for Concepts, Kinds, and Parts
-[krifka-2026]
+# Krifka (2026): Anaphora for Concepts, Kinds, and Parts in Dynamic Interpretation
 
-Head nouns introduce presupposed **concept discourse referents** — properties
-tagged [MASS]/[COUNT] — which project past anaphoric islands (in Krifka's
-extended sense: negation, modals, conditionals), while entity drefs introduced
-by indefinites under negation are trapped. Kind anaphors pick up concept drefs
-and derive kind individuals via [chierchia-1998]'s ∩ from
-`Semantics/Genericity/NominalMappingParameter`: ⟦it⟧ = λP[MASS] λi.∩P(i),
-⟦they⟧ = λP[COUNT] λi.∩⊔P(i) (17a,b). The dynamic layer instantiates the
-substrate `Update`/`test`/`neg` algebra of `Semantics/Dynamic/Connectives`
-at heterogeneous assignments over `DRefVal`.
+This file formalizes [krifka-2026]'s account of anaphora to concepts, kinds and parts. The head
+noun of a DP introduces a discourse referent anchored to a concept, a property carrying a
+morphosyntactic count feature, and the kind pronouns pick it up: *it* takes a mass concept to
+its kind by the down operator of [chierchia-1998], *they* takes a count concept to the kind of
+its plural closure (`they`), which is why *a spider* is resumed by *them* and *mold* by *it*;
+on a cumulative concept the closure is absorbed, so the two coincide (`they_eq_it_of_isMass`),
+and on a singular count concept with several instances only the closed kind is defined
+(`spiders_kind`). Concept discourse referents are presupposed in the input assignment, like the
+referents of names, so they escape anaphoric islands: negation is a test, and a test returns
+its input assignment, so a concept referent survives it while an entity referent introduced
+under the negation does not (`concept_entity_asymmetry`). The anaphors differ in what they
+presuppose: the empty NP and the kind pronoun a concept referent, the partitive PP an entity
+referent, so after *John doesn't own a dog* the kind pronoun *them* is interpretable and a
+partitive is not (`anaphora_after_negation`). The paper's derivation of *John doesn't own a
+dog* is run on a two-entity model (`doesntOwnADog`).
 
-Negation here is the paper's VP negation ⟦doesn't⟧ (44b), `test (neg φ)`; the
-sentential ⟦NEG⟧ (34) additionally restricts the negated existential to
-extensions g≤k, and both carry a world-time index — differences orthogonal to
-projection, which needs only that negation is a test. The paper derives the
-concept dref's input-presupposition compositionally from the head noun's
-partial (strong-Kleene) lexical entry (40d); that pipeline is not formalized,
-so the projection theorems take the input conditions as hypotheses. Cf.
-[hofmann-2025] (`Studies/Hofmann2025.lean`) for the neighboring account of
-entity-dref accessibility under negation via nonveridical continuations.
+## Implementation notes
 
-## Main declarations
+* Assignments are total functions into a heterogeneous value type with a value marking
+  indices outside the domain; an anaphor's presupposition is a conjunct of its update, so a
+  failed presupposition makes the update empty rather than undefined.
+* Negation is the paper's VP negation, the substrate's `test (neg φ)`; the sentential negation
+  with its condition that the negated existential extend the input differs only in ways
+  irrelevant to projection. The concept referent's presupposition is a hypothesis of the
+  projection theorems; the paper derives it from the head noun's partial lexical entry.
+* Which concepts sponsor kinds (*dogs from the animal shelter* does not) is left to the
+  lexicon, as in the paper.
 
-- `selectPronoun`, `selectKindAnaphor`, `selectKindAnaphor_count_eq_mass`:
-  [MASS]/[COUNT]-driven pronoun and kind-operator selection, with absorption
-- `HAssign`, `entityIntro`: heterogeneous assignments and indefinite update
-- `concept_survives_test`, `entity_trapped_by_test`,
-  `concept_entity_asymmetry`: projection past island operators
-- an end-to-end model of *John₁ doesn't own [DP a₃ [NP dog]₂]* (44–45)
+## References
+
+* [krifka-2026]
+* [chierchia-1998] — the down operator
+* [link-1983] — the maximal element and the plural closure
+* [hofmann-2025] — entity referents under negation, the neighbouring account
 -/
 
 namespace Krifka2026
 
-open Semantics.Kinds.NMP (Property Kind IsMass
-  kindAnaphorMass kindAnaphorCount kindAnaphorCount_mass)
+open Semantics.Kinds.NMP (Individual Property IsMass pluralClosure pluralClosure_mass)
+open Mereology (AlgClosure)
 open DynamicSemantics (Update Condition)
 open DynamicSemantics.Update (test neg)
-open scoped DynamicSemantics
 
-/-! ### Concept drefs and heterogeneous dref values ([krifka-2026] §4)
+variable {World Atom : Type*}
 
-Paper-specific substrate: concept discourse referents (property + count
-feature), the heterogeneous `DRefVal` universe, and concept-variable
-indices. -/
--- ════════════════════════════════════════════════════
--- Concept Discourse Referents
--- ════════════════════════════════════════════════════
+/-! ### Kinds from concepts -/
 
--- Mass/Count Feature: uses `MassCount` from `Features.MassCount`.
+/-- The kind of a property (13): at each index, the maximal instance, when there is one. -/
+def Down (P : Property World Atom) (w : World) (x : Individual Atom) : Prop :=
+  IsGreatest (P w) x
 
-/--
-A concept discourse referent value: a property annotated with a
-morphosyntactic count feature.
+/-- *it* (17a): the kind of a concept. -/
+def it (P : Property World Atom) : World → Individual Atom → Prop := Down P
 
-Introduced by the NP of an antecedent DP. For example, *dog* in
-*John owns a dog* introduces a concept dref anchored to the property
-`λi.λx[dog(i)(x)]` with feature [COUNT].
+/-- *they* (17b): the kind of the plural closure of a concept. -/
+def they (P : Property World Atom) : World → Individual Atom → Prop :=
+  Down (pluralClosure World Atom P)
 
-Kind anaphors pick up concept drefs and derive kind individuals
-via Chierchia's ∩ (down) operator:
-- ⟦it⟧   = λP[MASS].  λi. ∩P(i)
-- ⟦they⟧ = λP[COUNT]. λi. ∩(⊔P)(i)
+/-- The kind pronoun the count feature selects. -/
+def pronoun : MassCount → Property World Atom → World → Individual Atom → Prop
+  | .mass => it
+  | .count => they
 
-The ⊔-closure for count nouns introduces pluralization, allowing for
-the number mismatch between *a spider* (singular) and *they* (plural).
-For mass nouns, ⊔-closure is vacuous (mass predicates are already
-cumulative), so the singular *it* is used.
--/
-structure ConceptDRef (W E : Type*) where
-  /-- The property this concept is anchored to: λi.λx[P(i)(x)] -/
-  property : W → E → Bool
-  /-- Morphosyntactic count feature -/
-  feature : MassCount
+/-- Absorption: on a cumulative concept the closure changes nothing, so *they* and *it* would
+denote the same kind ((16), (18d)); only the feature keeps *it* off a count concept. -/
+theorem they_eq_it_of_isMass {P : Property World Atom} (h : IsMass World Atom P) :
+    they P = it P := by
+  unfold they it; rw [pluralClosure_mass P h]
 
-/--
-Values that discourse referent indices can map to.
+/-- Two spiders, as a property of individuals over two atoms. -/
+def spider : Property Unit Bool := λ _ => {{true}, {false}}
 
-Standard dynamic semantics restricts assignments to map indices to
-entities. [krifka-2026] §4 extends this: assignments are partial
-functions from ℕ to a heterogeneous universe including entities,
-concepts (properties with count features), and world-time indices.
+/-- The kind of the singular count concept is undefined with two instances (15c). -/
+theorem spider_no_kind : ¬ ∃ x, it spider () x := λ ⟨_, ⟨hx, hmax⟩⟩ => by
+  rcases hx with rfl | rfl
+  · exact absurd (hmax (Set.mem_insert_of_mem _ rfl) rfl) Bool.noConfusion
+  · exact absurd (hmax (Set.mem_insert _ _) rfl) Bool.noConfusion
 
-- `.entity e`: an individual referent (standard entity dref)
-- `.concept c`: a concept dref — the NP property with [MASS]/[COUNT]
-- `.index w`: a world-time index dref
-- `.undef`: index not in the domain (models assignment partiality)
+/-- The kind of its plural closure is the sum of the two spiders (15b). -/
+theorem spiders_kind : they spider () Set.univ :=
+  ⟨by rw [show (Set.univ : Set Bool) = {true} ⊔ {false} from Set.ext λ b => by cases b <;> simp]
+      exact .sum (.base (Set.mem_insert _ _)) (.base (Set.mem_insert_of_mem _ rfl)),
+    λ _ _ => Set.subset_univ _⟩
 
-Key property: concept drefs project past operators like negation,
-disjunction, and modals — they are introduced in the global
-assignment, not in local sub-assignments. This is what licenses
-kind anaphora out of anaphoric islands:
+/-! ### Concept discourse referents and anaphoric islands -/
 
-  *John doesn't own a dog. He is afraid of them.*
+/-- The values a discourse referent can be anchored to (§4): an entity, a concept with its
+count feature, a kind, or an index; `undef` marks an index outside the assignment's domain. -/
+inductive DRefVal (World Atom : Type*)
+  | entity (x : Individual Atom)
+  | concept (P : Property World Atom) (f : MassCount)
+  | kind (k : World → Individual Atom → Prop)
+  | index (w : World)
+  | undef
 
-The entity dref for *a dog* is trapped under negation, but the
-concept dref for 'dog' projects to the global context.
--/
-inductive DRefVal (W E : Type*) where
-  | entity : E → DRefVal W E
-  | concept : ConceptDRef W E → DRefVal W E
-  | index : W → DRefVal W E
-  | undef : DRefVal W E
+/-- Heterogeneous assignments. -/
+abbrev HAssign (World Atom : Type*) := Assignment (DRefVal World Atom)
 
-namespace DRefVal
+/-- Existential introduction of an entity referent at `n`, as by an indexed determiner (40c);
+what falls under what is left to the body. -/
+def entityIntro (n : ℕ) (body : Update (HAssign World Atom)) : Update (HAssign World Atom) :=
+  λ g h => ∃ x : Individual Atom, body (Function.update g n (.entity x)) h
 
-variable {W E : Type*}
-
-/-- Extract entity value, if present. -/
-def getEntity : DRefVal W E → Option E
-  | .entity e => some e
-  | _ => none
-
-/-- Extract concept dref, if present. -/
-def getConcept : DRefVal W E → Option (ConceptDRef W E)
-  | .concept c => some c
-  | _ => none
-
-/-- Extract world-time index, if present. -/
-def getIndex : DRefVal W E → Option W
-  | .index w => some w
-  | _ => none
-
-/-- Is this index in the domain of the assignment? -/
-def isDefined : DRefVal W E → Prop
-  | .undef => False
-  | _ => True
-
-instance : DecidablePred (@isDefined W E) :=
-  fun d => by unfold isDefined; cases d <;> infer_instance
-
-/-- Lift a predicate on entities to DRefVal (false for non-entities). -/
-def liftEntityPred (p : E → Bool) : DRefVal W E → Bool
-  | .entity e => p e
-  | _ => false
-
-/-- Lift a predicate on concepts to DRefVal (false for non-concepts). -/
-def liftConceptPred (p : ConceptDRef W E → Bool) : DRefVal W E → Bool
-  | .concept c => p c
-  | _ => false
-
-end DRefVal
-
-/--
-A concept variable (names a concept dref).
-
-Concept variables are indices into the assignment that map to
-`ConceptDRef` values — properties annotated with [MASS]/[COUNT].
--/
-structure CVar where
-  idx : Nat
-  deriving DecidableEq, Repr, Hashable
-
-/-! ### Kind pronoun and kind-operator selection -/
-
-/-- Kind-anaphoric pronouns, selected by the [MASS]/[COUNT] feature. -/
-inductive KindPronoun where
-  | it    -- singular, selects [MASS] concepts
-  | they  -- plural, selects [COUNT] concepts
-  deriving DecidableEq, Repr
-
-/-- Select kind-anaphoric pronoun from the count feature.
-
-    [krifka-2026] (17a,b):
-    - ⟦it⟧  = λP[MASS]  λi.∩P(i)
-    - ⟦they⟧ = λP[COUNT] λi.∩⊔P(i) -/
-def selectPronoun : MassCount → KindPronoun
-  | .mass => .it
-  | .count => .they
-
-/-- The semantic side of (17a,b): *it* applies ∩ directly, *they* applies
-    plural closure ⊔ before ∩. -/
-def selectKindAnaphor {World Atom : Type} (feature : MassCount)
-    (P : Property World Atom) : Kind World Atom :=
-  match feature with
-  | .mass => kindAnaphorMass World Atom P
-  | .count => kindAnaphorCount World Atom P
-
-/-- For mass properties both anaphor paths yield the same kind, by
-    [krifka-2026]'s absorption rule ⊔⊔S = ⊔S: plural closure is a no-op on
-    cumulative properties, so for mass concepts the [MASS]/[COUNT] feature's
-    only role is selecting pronoun morphology. -/
-theorem selectKindAnaphor_count_eq_mass {World Atom : Type}
-    (P : Property World Atom) (hMass : IsMass World Atom P) :
-    selectKindAnaphor .count P = selectKindAnaphor .mass P :=
-  kindAnaphorCount_mass World Atom P hMass
-
-/-- Example (7a): count noun antecedent → plural kind anaphor *them*.
-    *John noticed a spider in the bathroom. He has a phobia against them / \*it.* -/
-theorem ex7a_count_them : selectPronoun .count = .they := rfl
-
-/-- Example (7b): mass noun antecedent → singular kind anaphor *it*.
-    *John noticed mold in the bathroom. He is allergic against it / \*them.* -/
-theorem ex7b_mass_it : selectPronoun .mass = .it := rfl
-
-/-- Examples (8a,b): the same individuals (*pollen*[MASS] vs *pollen grains*[COUNT])
-    select different pronouns based purely on the morphosyntactic feature.
-    (8a) *There is a lot of pollen in the air. I am allergic against it / \*them.*
-    (8b) *There are a lot of pollen grains in the air. I am allergic against them / ??it.* -/
-theorem ex8_feature_determines_pronoun :
-    selectPronoun .mass ≠ selectPronoun .count := by decide
-
-/-! ### Concept dref projection past anaphoric islands -/
-
-section IslandEscaping
-
-variable {W E : Type*}
-
-/-- Heterogeneous assignment: drefs valued in entities, concepts, or indices
-    ([krifka-2026] §4). Partiality is modeled by `DRefVal.undef`, so this is
-    `Assignment (DRefVal W E)` rather than `PartialAssign`. -/
-abbrev HAssign (W E : Type*) := Assignment (DRefVal W E)
-
-/-- Existential introduction of an entity dref at index `n`, as by the indexed
-    determiner *a₃* in (40c) — minus the falls-under-the-concept condition,
-    which is delegated to `body`, and with novelty (`g n = .undef`) as an
-    external hypothesis rather than built into the extension relation g<₃k. -/
-def entityIntro (n : Nat) (body : Update (HAssign W E)) : Update (HAssign W E) :=
-  λ g h => ∃ e : E, body (Function.update g n (.entity e)) h
-
-/-- Island operators are tests, and tests preserve every dref of the input
-    assignment. Negation, implication, and disjunction all return a
-    `Condition` re-entering the update algebra via `test`, so this single
-    fact covers [krifka-2026]'s whole island list at once. -/
-theorem test_apply_eq {C : Condition (HAssign W E)} {g h : HAssign W E}
-    (hTest : test C g h) (n : Nat) : h n = g n :=
+/-- A test returns its input assignment, so it preserves every referent: negation,
+implication and disjunction all re-enter the update algebra through `test`. -/
+theorem test_apply_eq {C : Condition (HAssign World Atom)} {g h : HAssign World Atom}
+    (hTest : test C g h) (n : ℕ) : h n = g n :=
   congrFun hTest.1.symm n
 
-/-- **Concept drefs survive islands** ((5a), (25), (44–45)): a concept dref
-    presupposed in the input is still anchored in the output of any test.
-    The presupposition is a hypothesis here; the paper derives it from the
-    head noun's partial lexical entry (40d). -/
-theorem concept_survives_test {n : Nat} {c : ConceptDRef W E}
-    {C : Condition (HAssign W E)} {g h : HAssign W E}
-    (hPresup : g n = .concept c) (hTest : test C g h) :
-    h n = .concept c :=
+/-- A concept referent presupposed in the input survives an island ((5a), (25), (45)). -/
+theorem concept_survives_test {n : ℕ} {P : Property World Atom} {f : MassCount}
+    {C : Condition (HAssign World Atom)} {g h : HAssign World Atom}
+    (hPresup : g n = .concept P f) (hTest : test C g h) : h n = .concept P f :=
   (test_apply_eq hTest n).trans hPresup
 
-/-- **Entity drefs are trapped by islands** ((5c)): a dref novel in the input
-    (introduced only inside the island's ¬∃k) is still undefined in the
-    output. -/
-theorem entity_trapped_by_test {n : Nat}
-    {C : Condition (HAssign W E)} {g h : HAssign W E}
-    (hNovel : g n = .undef) (hTest : test C g h) :
-    h n = .undef :=
+/-- An entity referent novel in the input, introduced only inside the island, is still undefined
+after it (5c). -/
+theorem entity_trapped_by_test {n : ℕ} {C : Condition (HAssign World Atom)}
+    {g h : HAssign World Atom} (hNovel : g n = .undef) (hTest : test C g h) : h n = .undef :=
   (test_apply_eq hTest n).trans hNovel
 
-/-- The concept/entity asymmetry under negation `test (neg φ)` ((44e)): the
-    concept dref persists, the entity dref does not. Both conjuncts are
-    instances of `test_apply_eq` — the asymmetry is carried entirely by where
-    the hypotheses place the two conditions (input presupposition vs input
-    novelty), which is [krifka-2026]'s point. -/
-theorem concept_entity_asymmetry {nC nE : Nat} {c : ConceptDRef W E}
-    {φ : Update (HAssign W E)} {g h : HAssign W E}
-    (hPresup : g nC = .concept c) (hNovel : g nE = .undef)
-    (hNeg : test (neg φ) g h) :
-    h nC = .concept c ∧ h nE = .undef :=
+/-- The asymmetry under negation (45): the concept referent persists, the entity referent does
+not; both are the one fact about tests, the asymmetry lying in where the two conditions sit. -/
+theorem concept_entity_asymmetry {nC nE : ℕ} {P : Property World Atom} {f : MassCount}
+    {φ : Update (HAssign World Atom)} {g h : HAssign World Atom}
+    (hPresup : g nC = .concept P f) (hNovel : g nE = .undef) (hNeg : test (neg φ) g h) :
+    h nC = .concept P f ∧ h nE = .undef :=
   ⟨concept_survives_test hPresup hNeg, entity_trapped_by_test hNovel hNeg⟩
 
-/-- Examples (5a,c), (25), (44–45): concept drefs project past negation.
+/-! ### Concept, kind and partitive anaphors -/
 
-    (5a) *John doesn't own a dog. He is afraid of them. But Mary owns one.*
-    (5c) *John doesn't own a dog. \*It is friendly.*
+/-- The empty NP (46d) presupposes a concept referent at `n` and hands its property on. -/
+def emptyNP (n : ℕ) (K : Property World Atom → Update (HAssign World Atom)) :
+    Update (HAssign World Atom) :=
+  λ g h => ∃ P f, g n = .concept P f ∧ K P g h
 
-    In the DRT representation (25) and dynamic semantics (44–45), the concept
-    dref x₂ for 'dog' is in the main box / presupposed in the input. After
-    negation, x₂ persists (licensing *them₂*, *one₂*), but the entity dref
-    x₃ is trapped under ¬∃ (blocking *\*it₃*). -/
-theorem dog_concept_survives_negation
-    {dogConcept : ConceptDRef W E}
-    {φ : Update (HAssign W E)}
-    {g h : HAssign W E}
-    (hDog : g 2 = .concept dogConcept)
-    (hNovel : g 3 = .undef)
-    (hNeg : test (neg φ) g h) :
-    h 2 = .concept dogConcept ∧ h 3 = .undef :=
-  concept_entity_asymmetry hDog hNovel hNeg
+/-- The kind pronoun (48c) presupposes a concept referent at `n` bearing the feature it agrees
+with and introduces the kind at `m`. -/
+def kindPronoun (f : MassCount) (n m : ℕ) : Update (HAssign World Atom) :=
+  λ g h => ∃ P, g n = .concept P f ∧ h = Function.update g m (.kind (pronoun f P))
 
-end IslandEscaping
+/-- The partitive PP presupposes an entity referent at `n` and introduces a part of it at `m`.
+-/
+def partitive (n m : ℕ) : Update (HAssign World Atom) :=
+  λ g h => ∃ x y, g n = .entity x ∧ y ⊆ x ∧ h = Function.update g m (.entity y)
 
-/-! ### End-to-end: *John doesn't own a dog* (44–45) -/
+/-- After a negated sentence the kind pronoun and the empty NP are interpretable on the
+concept referent, and a partitive on the trapped entity referent is not ((5a)–(5c)). -/
+theorem anaphora_after_negation {nC nE m : ℕ} {P : Property World Atom} {f : MassCount}
+    {φ : Update (HAssign World Atom)} {g h : HAssign World Atom}
+    (hPresup : g nC = .concept P f) (hNovel : g nE = .undef) (hNeg : test (neg φ) g h) :
+    (∃ h', kindPronoun f nC m h h') ∧ (∀ K, K P h h → emptyNP nC K h h) ∧
+      ¬ ∃ h', partitive nE m h h' :=
+  ⟨⟨_, P, concept_survives_test hPresup hNeg, rfl⟩,
+    λ _ hK => ⟨P, f, concept_survives_test hPresup hNeg, hK⟩,
+    λ ⟨_, _, _, hx, _⟩ => by rw [entity_trapped_by_test hNovel hNeg] at hx; cases hx⟩
 
-section EndToEnd
+/-! ### *John doesn't own a dog* -/
 
-/-- Concrete entity type for the worked example. -/
-inductive Ent where | john | mary
-  deriving DecidableEq, Repr
+/-- The entities of the model. -/
+inductive Ent
+  | john
+  | mary
+  deriving DecidableEq
 
-/-- Concrete world type. A world where John doesn't own a dog. -/
-inductive Wld where | w₀
-  deriving DecidableEq, Repr
+/-- The concept *dog*, with no instances. -/
+def dog : Property Unit Ent := λ _ => ∅
 
-/-- The concept 'dog' as a concept dref with [COUNT] feature.
-    In this model, no entity satisfies the dog predicate (John doesn't own one). -/
-def dogConcept : ConceptDRef Wld Ent where
-  property := λ _ _ => false   -- no dogs in this model
-  feature := .count
-
-/-- Initial assignment for (44e): g₁=F(John), g₂=F(dog), F(C)(g₂).
-    Following [krifka-2026] (40g)/(44e): John's name presupposes
-    dref 1 is anchored to John; the head noun *dog*₂ presupposes dref 2
-    is anchored to the 'dog' concept with [COUNT] feature. -/
-def g₀ : HAssign Wld Ent := λ n =>
-  match n with
-  | 1 => .entity .john
-  | 2 => .concept dogConcept
+/-- The input assignment of (44e): John at 1, the count concept *dog* at 2. -/
+def g₀ : HAssign Unit Ent
+  | 1 => .entity {.john}
+  | 2 => .concept dog .count
   | _ => .undef
 
-/-- Sentence meaning for "own [DP a₃ [NP dog]₂]": introduces entity dref
-    at index 3, constrained to satisfy the concept property at index 2. -/
-def ownADog : Update (HAssign Wld Ent) := entityIntro 3 (λ g h =>
-  g = h ∧ (g 2).liftConceptPred (λ c => c.property .w₀ (match g 3 with
-    | .entity e => e | _ => .john)) = true)
+/-- *own [a₃ [dog]₂]* (44c): a referent at 3 falling under the concept at 2. -/
+def ownADog : Update (HAssign Unit Ent) :=
+  entityIntro 3 λ g h => g = h ∧ ∃ P f x, g 2 = .concept P f ∧ g 3 = .entity x ∧ x ∈ P ()
 
-/-- "John₁ doesn't own [DP a₃ [NP dog]₂]": the paper's VP negation
-    ⟦doesn't⟧ (44b) is the substrate test of dynamic negation. -/
-def doesntOwnADog : Update (HAssign Wld Ent) := test (neg ownADog)
+/-- *John₁ doesn't own [a₃ [dog]₂]* (44e): the VP negation is the test of the negated update. -/
+def doesntOwnADog : Update (HAssign Unit Ent) := test (neg ownADog)
 
-/-- The negation is satisfiable in this model (no dogs exist).
-    Output: g₀ = h (test), confirming no entity dref was introduced. -/
-theorem negation_satisfiable : doesntOwnADog g₀ g₀ := by
-  refine ⟨rfl, ?_⟩
-  rintro ⟨k, e, -, hProp⟩
-  rw [Function.update_of_ne (by decide : (2 : Nat) ≠ 3),
-      show g₀ 2 = .concept dogConcept from rfl] at hProp
-  exact Bool.noConfusion hProp
+/-- The negated sentence holds in the model, there being no dogs, and returns the input. -/
+theorem doesntOwnADog_g₀ : doesntOwnADog g₀ g₀ :=
+  ⟨rfl, λ ⟨_, _, _, _, _, _, h₂, _, hy⟩ => by
+    rw [Function.update_of_ne (by decide : (2 : ℕ) ≠ 3)] at h₂
+    cases h₂; exact Set.notMem_empty _ hy⟩
 
-/-- **Main result**: after "John doesn't own a dog", the concept dref
-    for 'dog' at index 2 is accessible while the entity dref at index 3
-    remains undefined. This is the concrete instantiation of the asymmetry
-    predicted by [krifka-2026] §4. -/
-theorem concrete_concept_entity_asymmetry :
-    ∀ h : HAssign Wld Ent,
-      doesntOwnADog g₀ h →
-      h 2 = .concept dogConcept ∧ h 3 = .undef :=
-  λ _ hNeg => concept_entity_asymmetry rfl rfl hNeg
-
-/-- The kind anaphor *them* selects [COUNT] for dogs, as expected. -/
-theorem dog_kind_pronoun : selectPronoun dogConcept.feature = .they := rfl
-
-end EndToEnd
-
-/-! ### Concept vs kind anaphora (19a,b) -/
-
-/-- Anaphoric constructions that pick up concept drefs.
-
-    [krifka-2026] §3 distinguishes concept anaphors (which reuse the
-    property directly) from kind anaphors (which derive kind individuals
-    via ∩). Both pick up concept drefs, but they do different things.
-
-    The distinction is testable via examples like (19a,b):
-    (19a) *John didn't get a dog from the animal shelter downtown.
-           He is afraid of them.* — kind anaphora (OK: dogs-as-kind)
-    (19b) *John didn't get a dog from the animal shelter downtown.
-           But Mary got one.* — concept anaphora (OK: a dog-from-the-shelter) -/
-inductive AnaphoricConstruction where
-  | emptyNP   -- *one*, empty NP: picks up concept property directly
-  | emptyPP   -- partitive *of them*: picks up concept for part-whole
-  | kindPron  -- *it*[MASS], *they*[COUNT]: derives kind via ∩(⊔)P
-  deriving DecidableEq, Repr
-
-/-- Whether a construction derives a kind individual or reuses the property. -/
-def derivesKind : AnaphoricConstruction → Bool
-  | .kindPron => true
-  | .emptyNP  => false
-  | .emptyPP  => false
-
-/-- Kind pronouns derive kinds; concept anaphors (*one*, empty NP/PP) don't.
-    This distinction explains (19a) vs (19b): "dogs from the animal shelter"
-    doesn't name a kind (cf. [carlson-1977]), so kind anaphora yields the
-    general dog-kind, while concept anaphora preserves the full NP property. -/
-theorem kind_vs_concept_distinction :
-    derivesKind .kindPron = true ∧
-    derivesKind .emptyNP = false ∧
-    derivesKind .emptyPP = false :=
-  ⟨rfl, rfl, rfl⟩
+/-- After it, *them₂,₄* introduces the kind of dogs at 4 (48), while *it₃* has no referent
+(5c). -/
+theorem them_after_doesntOwnADog {h : HAssign Unit Ent} (hNeg : doesntOwnADog g₀ h) :
+    kindPronoun .count 2 4 h (Function.update h 4 (.kind (they dog))) ∧ h 3 = .undef :=
+  ⟨⟨dog, concept_survives_test rfl hNeg, rfl⟩, entity_trapped_by_test rfl hNeg⟩
 
 end Krifka2026

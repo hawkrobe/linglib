@@ -1,7 +1,6 @@
 /-!
 # Features.Attitudes
 [karttunen-1971] [villalta-2008] [anand-hacquard-2013]
-[klecha-2016]
 
 Per-verb-entry feature taxonomies for attitude verbs: veridicality
 (Karttunen lineage), evaluative valence (positive vs negative
@@ -178,18 +177,6 @@ def getPreferential : Attitude → Option Preferential
 def valence : Attitude → Option AttitudeValence
   | .doxastic _ => none
   | .preferential b => some b.valence
-
-/-- Can this attitude verb take a circumstantial modal base?
-    [klecha-2016]: doxastic attitudes (think, believe) take only DOX;
-    preferential attitudes (hope, want, pray) can also take CIR, which
-    permits future temporal orientation. This is the source of the
-    Upper Limit Constraint: DOX-only verbs block future readings. -/
-def PermitsCircumstantial : Attitude → Prop
-  | .doxastic _ => False
-  | .preferential _ => True
-
-instance : DecidablePred Attitude.PermitsCircumstantial := fun a => by
-  cases a <;> unfold Attitude.PermitsCircumstantial <;> infer_instance
 
 end Attitude
 
