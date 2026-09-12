@@ -41,7 +41,7 @@ earlier version of this file and are UNVERIFIED.
 namespace Longobardi2005
 
 open Longobardi2001 (DPParameter ArgumentType
-  romance english greek pnRequiresOvertD bnCanBeReferential)
+  romance english greek PnRequiresOvertD BnCanBeReferential)
 
 /-- The four classes of nominal heads, ranked from most prototypically
     referential (pronouns) to least (common nouns).
@@ -466,17 +466,13 @@ theorem quantificational_is_variable :
     determiner. When D is weak (English), the association can be
     covert. -/
 theorem strong_d_bridge :
-    pnRequiresOvertD romance = true ∧
-    pnRequiresOvertD english = false ∧
-    bnCanBeReferential romance = false ∧
-    bnCanBeReferential english = true :=
-  ⟨rfl, rfl, rfl, rfl⟩
+    PnRequiresOvertD romance ∧ ¬ PnRequiresOvertD english ∧
+      ¬ BnCanBeReferential romance ∧ BnCanBeReferential english := by
+  decide
 
 /-- Greek confirms the prediction: strong D + opaque α forces overt
     articles on all referential arguments including proper names. -/
-theorem greek_confirms :
-    pnRequiresOvertD greek = true ∧
-    bnCanBeReferential greek = false :=
-  ⟨rfl, rfl⟩
+theorem greek_confirms : PnRequiresOvertD greek ∧ ¬ BnCanBeReferential greek := by
+  decide
 
 end Longobardi2005
