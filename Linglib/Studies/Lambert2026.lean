@@ -1,683 +1,365 @@
-/-
-Copyright (c) 2026 Robert Hawkins. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Robert Hawkins
--/
 import Linglib.Core.Computability.Definite
-import Linglib.Core.Computability.PiecewiseTestable
 import Linglib.Core.Data.List.Bookend
-import Linglib.Phonology.Subregular.TierStrictlyLocal
 import Linglib.Phonology.Subregular.Multitier
 import Linglib.Phonology.Subregular.ForbiddenPairs
 import Linglib.Phonology.Subregular.Sibilant
 import Linglib.Phonology.Subregular.Agree
 
 /-!
-# [lambert-2026]: Multitier phonotactics with logic and algebra
+# Lambert (2026): Multitier phonotactics with logic and algebra
 
-Lambert (2026) classifies attested phonotactic constraints — bounded and
-unbounded stress, harmony, and tone across ~13 languages — into the
-multitier (Boolean closure of tier-projected) extensions of definite,
-generalized definite, and finite-or-cofinite classes. Headline empirical
-claims:
+This file formalizes the classifications of [lambert-2026]: attested constraints on stress,
+harmony, and tone are placed in the multitier extensions of the definite, reverse definite,
+generalized definite, and co/finite classes, the Boolean closures of the tier-projected classes,
+by writing each constraint as a propositional formula over tier affixes, and are refuted from a
+class by a pair of words the class cannot separate. With the tier literals `Language.tierWord`,
+`tierPrefix`, and `tierSuffix`, a membership proof has the shape of its formula: the bounded
+stress patterns with culminativity are multitier definite or reverse definite, the four
+unbounded patterns of Hayes's typology are multitier reverse definite, definite, or generalized
+definite as their defaults demand, Uyghur backness harmony is multitier definite
+(`uyghur_isBTD`), and the Karanga Shona verb stem is multitier generalized definite
+(`karangaShona_isBTLI`). The refutations follow the paper's parameterized witnesses:
+culminativity alone is not generalized definite, culminative stress-final is not definite, and
+Tsuut'ina sibilant harmony, Luganda plateauing, and Prinmi are not multitier generalized
+definite (`tsuutina_not_isBTLI`, `luganda_not_isBTLI`).
 
-* **Uyghur backness harmony is multitier definite (BTD)** — strictly
-  weaker than the multiple-tier-based strictly local class of
-  [de-santo-graf-2019], settling (categorically) the challenge raised
-  by [mayer-major-2018].
-* **Karanga Shona tone is multitier generalized definite (BTLI)** — no
-  more complex than the default-to-opposite unbounded stress patterns,
-  refining the melody-local analysis of [jardine-2020].
+## Implementation notes
 
-The propositional logic is `IsBTC 𝒞` — the Boolean closure of `IsTierBased 𝒞` —
-for `𝒞` in {`IsDefinite k`, `IsGeneralizedDefinite k`, `Language.IsStrictlyLocal · k`,
-`Language.IsStrictlyPiecewise · k`, `IsFiniteOrCofinite`}; the algebraic side is
-the syntactic-semigroup characterization of each class via Eilenberg
-[eilenberg-1976] variety equations (e.g., `D = ⟦sx̄ = x̄⟧`,
-`ℒℐ = ⟦x^ω y x^ω z x^ω = x^ω y x^ω⟧` per [straubing-1985] and
-[almeida-1995]). The Lean substrate (`IsBTC`, `IsTierBased`) lives in
-`Subregular/Language/Multitier.lean`; the algebraic characterization is queued for a
-future `SyntacticMonoid` PR.
+Patterns are string languages over the paper's alphabets: syllables by stress, and by weight
+and stress for unbounded stress; the sibilant classes; segment classes for Uyghur, with suffix
+material marked as such following the paper; and two tones, without tone associations. A
+pattern is defined by one of the paper's formulae, and where the paper gives an order-based and
+a tier-based formula for the same pattern both are classified but their equivalence is proved
+only for Navajo and Chuave. Windows are the paper's: the length of the longest affix, and one
+more for a whole tier word, whose boundary markers count. The Uyghur pattern is the categorical
+one of Mayer and Major that the paper analyzes.
 
-## Disclaimer 1: McCollum (2019) Uyghur gradience (linglib audit)
+## TODO
 
-This disclaimer is **not** a scope qualification carried by Lambert
-(2026); the paper does not cite McCollum. It is a linglib-internal
-audit annotation: Lambert's BTD analysis is faithful to
-[mayer-major-2018]'s **categorical idealization**, and a separate
-literature line — [mccollum-2019] — argues the suffix backness
-assignment is not categorical in the way the multitier-definite formula
-requires. The "arbitrarily specified, statistical tendency to be back"
-clause that Mayer & Major report for the no-V no-C case is precisely
-the locus where McCollum's gradient data resists categorical analysis.
-The headline theorem `uyghur_backness_isBTD` characterizes the
-categorical pattern only; the gradience is out of scope.
+Prove the equivalence of the order-based and tier-based formulae for Kagoshima Japanese ((42),
+(43)) and for Karanga Shona ((46)–(49)), and the piecewise testability of the Tsuut'ina
+grammar. The algebraic characterizations of §6 by equations on the syntactic semigroup are not
+formalized.
 
-## Disclaimer 2: Karanga Shona scope restriction
+## References
 
-The BTLI analysis applies to the **verb-stem** domain (post-hyphen
-material in Lambert (2026) (45)). [jardine-2020]'s motivation for a
-`melody local` class extends across morphological boundaries and to
-longer melodic patterns; the BTLI characterization is not a refutation
-of the broader melody-local programme but a delimited result for the
-verb-stem surface pattern. The headline theorem
-`karanga_shona_verb_stem_isBTLI` is named accordingly.
-
-## Cross-framework dialogue
-
-The multitier substrate is the prohibition reading of constraints scaled
-to Boolean closure. Cross-references the new file makes explicit (rather
-than silently diverging from existing linglib formalizations):
-
-* OT: linglib's `Constraint` framework places no complexity bound;
-  Lambert says all phonotactics live in `IsBTC`. The supraregular
-  counter-witness theorem and the positive `mkForbidPairsOnTier ⊆ TSL_2`
-  theorem are queued for a future `Phonology/Subregular/OTBound.lean`.
-* Harmonic Serialism: `Studies/McPhersonLamont2026.lean`
-  proves Poko surface tone HS-derivable but parallel-OT-impossible.
-  Lambert's static BTC characterization, applied to Poko's surface
-  stringset, would clarify *static description ≠ alternation
-  explanation*. Cross-reference to be added when Poko's surface
-  stringset is independently classified.
-* Autosegmental: linglib's `Phonology/Autosegmental/{
-  RegisterTier, GrammaticalTone}.lean` formalize multiply-linked tone
-  representations. Lambert (2026) §5 self-confesses that string-based
-  analysis loses information for tone; the loss theorem is stated as
-  `lambert_string_input_loses_tone_associations` (sorry'd) below.
-* OCP: `Phonology/Subregular/OCP.lean` carries a
-  prohibition-vs-merger distinction; `IsBTC` is the mathematical home of
-  the prohibition family at scale. The OCP file's docstring should gain
-  a "see also: BTC" link in a follow-up retrofit.
-* Structure-sensitive MTSL [de-santo-graf-2019]: not formalized in
-  linglib. Lambert's "BTD strictly supersedes SS-MTSL on Uyghur" is
-  recorded as a TODO theorem (`btd_supersedes_ss_mtsl_on_uyghur`) for
-  when SS-MTSL substrate lands.
-
-## Audit calibration note
-
-Per linglib's domain-expert agent calibration: the McCollum-2019 and
-Karanga-Shona-scope concerns are flagged HIGH but should be treated
-PROVISIONAL — they are corrections to scope, not refutations of the
-formal results. The Lean theorems below state the formal claims; the
-empirical disclaimers live in this docstring and the per-theorem
-docstrings.
+* [lambert-2026]
+* [omar-1969], [thurston-1966], [suomi-toivanen-ylitalo-2008]
+* [hayes-1995], [roberts-1987], [bunn-bunn-1970], [grubb-1969], [krueger-1961]
+* [heinz-2010], [sapir-hoijer-1967], [cook-1978], [mayer-major-2018]
+* [hyman-katamba-2010], [ding-2006], [donohue-1997], [odden-1984], [jardine-2020]
 -/
 
 namespace Lambert2026
 
-open Subregular
-open Language
-open List  -- for the `<+` (List.Sublist) infix used throughout the subsequence proofs
--- `Sibilant` and `TierStrictlyLocalGrammar.agree` live in the shared `Subregular` namespace
+open Language Subregular List
 
-/-! ### Sandwich-word helpers
+/-! ### Bookended witnesses
 
-The Tsuut'ina/Luganda counterexamples below are *bookended* words
-`replicate kL aL ++ mid ++ replicate kR aR`. These thin local wrappers specialise the
-generic `List` bookend lemmas (`Core/Data/List/Bookend.lean`) to the `Edge`-projection
-view used in the proofs. -/
+The paper's parameterized witnesses are words `aᵏ ++ mid ++ bᵏ`; the lemmas of
+`Core/Data/List/Bookend.lean` are specialized to the edge projections. -/
 
 section Sandwich
+
 variable {α : Type*}
 
 /-- A bookended word: `kL` copies of `aL`, then `mid`, then `kR` copies of `aR`. -/
 private abbrev sandwich (kL : ℕ) (aL : α) (mid : List α) (kR : ℕ) (aR : α) : List α :=
-  List.replicate kL aL ++ mid ++ List.replicate kR aR
+  replicate kL aL ++ mid ++ replicate kR aR
 
 private lemma takeAt_left_sandwich {k kL : ℕ} {aL : α} {mid : List α} {kR : ℕ} {aR : α}
-    (h : k ≤ kL) : Edge.left.takeAt k (sandwich kL aL mid kR aR) = List.replicate k aL := by
-  show (List.replicate kL aL ++ mid ++ List.replicate kR aR).take k = List.replicate k aL
-  rw [List.append_assoc, List.take_replicate_append h]
+    (h : k ≤ kL) : Edge.left.takeAt k (sandwich kL aL mid kR aR) = replicate k aL := by
+  show (replicate kL aL ++ mid ++ replicate kR aR).take k = replicate k aL
+  rw [append_assoc, take_replicate_append h]
 
 private lemma takeAt_right_sandwich {k kL : ℕ} {aL : α} {mid : List α} {kR : ℕ} {aR : α}
-    (h : k ≤ kR) : Edge.right.takeAt k (sandwich kL aL mid kR aR) = List.replicate k aR := by
-  show (List.replicate kL aL ++ mid ++ List.replicate kR aR).rtake k = List.replicate k aR
-  rw [List.rtake_append_replicate h]
+    (h : k ≤ kR) : Edge.right.takeAt k (sandwich kL aL mid kR aR) = replicate k aR := by
+  show (replicate kL aL ++ mid ++ replicate kR aR).rtake k = replicate k aR
+  rw [rtake_append_replicate h]
 
 private lemma filter_sandwich_of_pos_pos {T : α → Bool} {aL aR : α} (hL : T aL = true)
     (hR : T aR = true) {kL : ℕ} {mid : List α} {kR : ℕ} :
     (sandwich kL aL mid kR aR).filter T = sandwich kL aL (mid.filter T) kR aR := by
   unfold sandwich
-  rw [List.filter_replicate_append_replicate, if_pos hL, if_pos hR]
+  rw [filter_replicate_append_replicate, if_pos hL, if_pos hR]
 
 private lemma filter_sandwich_of_neg_pos {T : α → Bool} {aL aR : α} (hL : ¬ T aL = true)
     (hR : T aR = true) {kL : ℕ} {mid : List α} {kR : ℕ} :
-    (sandwich kL aL mid kR aR).filter T = mid.filter T ++ List.replicate kR aR := by
+    (sandwich kL aL mid kR aR).filter T = mid.filter T ++ replicate kR aR := by
   unfold sandwich
-  rw [List.filter_replicate_append_replicate, if_neg hL, if_pos hR, List.replicate_zero,
-    List.nil_append]
+  rw [filter_replicate_append_replicate, if_neg hL, if_pos hR, replicate_zero, nil_append]
 
 private lemma filter_sandwich_of_pos_neg {T : α → Bool} {aL aR : α} (hL : T aL = true)
     (hR : ¬ T aR = true) {kL : ℕ} {mid : List α} {kR : ℕ} :
-    (sandwich kL aL mid kR aR).filter T = List.replicate kL aL ++ mid.filter T := by
+    (sandwich kL aL mid kR aR).filter T = replicate kL aL ++ mid.filter T := by
   unfold sandwich
-  rw [List.filter_replicate_append_replicate, if_pos hL, if_neg hR, List.replicate_zero,
-    List.append_nil]
+  rw [filter_replicate_append_replicate, if_pos hL, if_neg hR, replicate_zero, append_nil]
 
 private lemma filter_sandwich_of_neg_neg {T : α → Bool} {aL aR : α} (hL : ¬ T aL = true)
     (hR : ¬ T aR = true) {kL : ℕ} {mid : List α} {kR : ℕ} :
     (sandwich kL aL mid kR aR).filter T = mid.filter T := by
   unfold sandwich
-  rw [List.filter_replicate_append_replicate, if_neg hL, if_neg hR, List.replicate_zero,
-    List.replicate_zero, List.nil_append, List.append_nil]
+  rw [filter_replicate_append_replicate, if_neg hL, if_neg hR, replicate_zero, replicate_zero,
+    nil_append, append_nil]
 
 private lemma sublist_sandwich_of_sublist_mid {pat mid : List α} (h : pat <+ mid)
     (kL : ℕ) (aL : α) (kR : ℕ) (aR : α) : pat <+ sandwich kL aL mid kR aR :=
-  List.sublist_replicate_append_replicate h kL aL kR aR
+  sublist_replicate_append_replicate h kL aL kR aR
 
 private lemma not_sublist_sandwich {pat mid : List α} {aL aR : α}
     (h_first : pat.head? ≠ some aL) (h_last : pat.getLast? ≠ some aR)
     (h_inner : ¬ pat <+ mid) (kL kR : ℕ) : ¬ pat <+ sandwich kL aL mid kR aR :=
-  List.not_sublist_replicate_append_replicate h_first h_last h_inner kL kR
+  not_sublist_replicate_append_replicate h_first h_last h_inner kL kR
+
+/-- Two members of a list occur in one order or the other as a subsequence, unless equal. -/
+private lemma sublist_pair_of_mem {l : List α} {x y : α} (hx : x ∈ l) (hy : y ∈ l) :
+    x = y ∨ [x, y] <+ l ∨ [y, x] <+ l := by
+  induction l with
+  | nil => nomatch hx
+  | cons a t ih =>
+    rcases mem_cons.mp hx with rfl | hx'
+    · rcases mem_cons.mp hy with rfl | hy'
+      · exact Or.inl rfl
+      · exact Or.inr (Or.inl ((singleton_sublist.mpr hy').cons_cons x))
+    · rcases mem_cons.mp hy with rfl | hy'
+      · exact Or.inr (Or.inr ((singleton_sublist.mpr hx').cons_cons y))
+      · exact (ih hx' hy').imp_right λ h => h.imp (·.cons a) (·.cons a)
 
 end Sandwich
 
-/-! ### Piecewise-testability helpers
+/-! ### Bounded stress (§2)
 
-The §§6–10 phonotactics are boolean combinations of "this pattern does (not) occur as a
-subsequence". Each such condition is strictly piecewise
-(`Language.isStrictlyPiecewise_avoid`), hence piecewise testable, and the boolean closure
-of `IsPiecewiseTestable` assembles the combinations. -/
+Stress-final, stress-penult, and stress-initial are definite, definite, and reverse definite
+((2), (5), (6)). Culminativity, at most one primary stress, is tier-based co/finite on the
+stress tier but not generalized definite, so it lifts each bounded pattern out of the affix
+classes to the multitier ones ((13)); with it stress-final is no longer definite (§2.3). -/
 
-section Piecewise
-variable {α : Type*} {p : List α} {k : ℕ}
-
-/-- Avoiding a pattern that fits in the window is piecewise testable. -/
-private theorem avoid_isPT (hp : p.length ≤ k) : IsPiecewiseTestable {w | ¬ p <+ w} k :=
-  (isStrictlyPiecewise_avoid hp).toIsPiecewiseTestable
-
-/-- Containing such a pattern is piecewise testable, being the complement. -/
-private theorem contains_isPT (hp : p.length ≤ k) : IsPiecewiseTestable {w | p <+ w} k := by
-  have h : ({w | ¬ p <+ w} : Language α)ᶜ = {w | p <+ w} := by ext w; simp
-  exact h ▸ (avoid_isPT hp).compl
-
-end Piecewise
-
--- ============================================================================
--- § 1. Iban (Austronesian): stress-final ∈ D_1
--- ============================================================================
-
-/-- Iban syllable type [omar-1969]: stressed (`σ́`) or unstressed (`σ`).
-The two-letter alphabet of Lambert (2026) §2.1. -/
-inductive IbanSyl | unstressed | stressed
+/-- A syllable, unstressed or bearing primary stress. -/
+inductive Syl
+  | unstressed
+  | stressed
   deriving DecidableEq, Repr
 
-/-- The Iban stress-final language [omar-1969]: the right-edge `D_1` language whose
-permitted length-1 suffix is `[stressed]`. -/
-def ibanLang : Language IbanSyl :=
-  {w | Edge.right.takeAt 1 w ∈ ({[.stressed]} : Set (List IbanSyl))}
+/-- The stress tier. -/
+def Syl.isStressed : Syl → Bool
+  | .stressed => true
+  | .unstressed => false
 
-/-- **Iban stress-final ∈ D_1** (Lambert 2026 §2.1, paper p. 4 example (2)). -/
-theorem iban_isDefinite_one : ibanLang.IsDefinite 1 :=
-  Language.isDefinite_setOf_right 1 _
+/-- Iban stress-final ((2), [omar-1969]): `σ́⋉`. -/
+def iban : Language Syl := ofSuffix [.stressed]
 
--- ============================================================================
--- § 2. Amara (Austronesian): stress-penult ∈ D_2
--- ============================================================================
+theorem iban_isDefinite : iban.IsDefinite 1 := isDefinite_ofSuffix _
 
-/-- Amara stress [thurston-1966]: penultimate-syllable stress with the
-monosyllabic exception (single syllable bears stress). The `D_2` language whose
-permitted length-2 suffixes are a stressed monosyllable or a stressed-then-
-unstressed penult. -/
-def amaraLang : Language IbanSyl :=
+/-- Amara stress-penult ((5), [thurston-1966]): `σ́Σ⋉ ∨ ⋊σ́⋉`. -/
+def amara : Language Syl :=
   {w | Edge.right.takeAt 2 w ∈
-    ({[.stressed], [.stressed, .unstressed]} : Set (List IbanSyl))}
+    ({[.stressed], [.stressed, .unstressed], [.stressed, .stressed]} : Set (List Syl))}
 
-/-- **Amara stress-penult ∈ D_2** (Lambert 2026 §2.1). -/
-theorem amara_isDefinite_two : amaraLang.IsDefinite 2 :=
-  Language.isDefinite_setOf_right 2 _
+theorem amara_isDefinite : amara.IsDefinite 2 := isDefinite_setOf_right 2 _
 
--- ============================================================================
--- § 2b. Finnish (Uralic): stress-initial ∈ K_1
--- ============================================================================
+/-- Finnish stress-initial ((6), [suomi-toivanen-ylitalo-2008]): `⋊σ́`. -/
+def finnish : Language Syl := ofPrefix [.stressed]
 
-/-- The Finnish stress-initial language [suomi-toivanen-ylitalo-2008]: primary stress
-fixed to the initial syllable — the reverse-definite dual of Iban, the left-edge
-`RD_1` language whose permitted length-1 prefix is `[stressed]` [lambert-2026] §2.2. -/
-def finnishLang : Language IbanSyl :=
-  {w | Edge.left.takeAt 1 w ∈ ({[.stressed]} : Set (List IbanSyl))}
+theorem finnish_isReverseDefinite : finnish.IsReverseDefinite 1 := isReverseDefinite_ofPrefix _
 
-/-- **Finnish stress-initial ∈ K_1** (Lambert 2026 §2.2, paper p. 5 example (6)). -/
-theorem finnish_isReverseDefinite_one : finnishLang.IsReverseDefinite 1 :=
-  Language.isReverseDefinite_setOf_left 1 _
+/-- Culminativity (§2.3): at most one stressed syllable, `[⋊⋉ ∨ ⋊σ́⋉]_{σ́}`. -/
+def culminativity : Language Syl :=
+  {w | w.filter Syl.isStressed = [] ∨ w.filter Syl.isStressed = [.stressed]}
 
--- ============================================================================
--- § 3. Uyghur backness harmony ∈ BTD
--- ============================================================================
+/-- Culminativity is tier-based co/finite: on the stress tier the word is empty or a single
+stressed syllable. -/
+theorem culminativity_isTierBased : IsTierBased IsFiniteOrCofinite culminativity :=
+  ⟨_, _, rfl, Or.inl ((Set.finite_singleton _).insert _)⟩
 
-/-- Uyghur segment classes relevant to backness harmony [mayer-major-2018]
-[lambert-2026] (33)-(35): front vowels, back vowels, transparent (i, e),
-front dorsal consonants, back dorsal consonants, suffix-marked harmonizing
-vowels and consonants, and a residual "other" class for non-harmonizing
-material. -/
-inductive UyghurSeg
-  | frontVowel | backVowel | transparentVowel
-  | frontDorsal | backDorsal
-  | suffixFrontVowel | suffixBackVowel
-  | suffixFrontDorsal | suffixBackDorsal
-  | other
+/-- Culminativity is not generalized definite: `σᵏσ́σᵏ` is in and `σᵏσ́σ́σᵏ` is out, with the
+same prefix and suffix of length `k`. -/
+theorem culminativity_not_isGeneralizedDefinite (k : ℕ) :
+    ¬ culminativity.IsGeneralizedDefinite k := by
+  intro h
+  have key : sandwich k Syl.unstressed [Syl.stressed] k Syl.unstressed ∈ culminativity ↔
+      sandwich k Syl.unstressed [Syl.stressed, Syl.stressed] k Syl.unstressed ∈ culminativity :=
+    isGeneralizedDefinite_iff_edges.mp h
+      (by rw [takeAt_left_sandwich le_rfl, takeAt_left_sandwich le_rfl])
+      (by rw [takeAt_right_sandwich le_rfl, takeAt_right_sandwich le_rfl])
+  have ha : sandwich k Syl.unstressed [Syl.stressed] k Syl.unstressed ∈ culminativity := by
+    show filter Syl.isStressed _ = [] ∨ filter Syl.isStressed _ = [Syl.stressed]
+    rw [filter_sandwich_of_neg_neg (by decide) (by decide)]
+    exact Or.inr rfl
+  refine absurd (key.mp ha) ?_
+  show ¬ (filter Syl.isStressed _ = [] ∨ filter Syl.isStressed _ = [Syl.stressed])
+  rw [filter_sandwich_of_neg_neg (by decide) (by decide)]
+  decide
+
+/-- Culminative stress-final ((13a)): `σ́⋉ ∧ [⋊σ́⋉]_{σ́}`. -/
+def stressFinalCulminative : Language Syl := iban ⊓ tierWord Syl.isStressed [.stressed]
+
+theorem stressFinalCulminative_isBTD : IsBTD 2 stressFinalCulminative :=
+  IsBTC.inter (isBTD_ofSuffix _ (by decide)) (isBTD_tierWord _ _ (by decide))
+
+/-- Culminative stress-penult ((13b)): `(σ́σ⋉ ∨ ⋊σ́⋉) ∧ [⋊σ́⋉]_{σ́}`. -/
+def stressPenultCulminative : Language Syl := amara ⊓ tierWord Syl.isStressed [.stressed]
+
+theorem stressPenultCulminative_isBTD : IsBTD 2 stressPenultCulminative :=
+  IsBTC.inter (IsBTC.of_class amara_isDefinite) (isBTD_tierWord _ _ (by decide))
+
+/-- Culminative stress-initial ((13c)): `⋊σ́ ∧ [⋊σ́⋉]_{σ́}`. -/
+def stressInitialCulminative : Language Syl := finnish ⊓ tierWord Syl.isStressed [.stressed]
+
+theorem stressInitialCulminative_isBTK : IsBTK 2 stressInitialCulminative :=
+  IsBTC.inter (isBTK_ofPrefix _ (by decide)) (isBTK_tierWord _ _ (by decide))
+
+/-- Culminative stress-final is not definite (§2.3): `σσᵏσ́` is in and `σ́σᵏσ́` is out, with the
+same suffix of length `k`; strict locality is more powerful than definiteness. -/
+theorem stressFinalCulminative_not_isDefinite (k : ℕ) :
+    ¬ stressFinalCulminative.IsDefinite k := by
+  intro h
+  have hlen : k ≤ (replicate k Syl.unstressed ++ [Syl.stressed]).length := by
+    rw [length_append, length_replicate, length_singleton]; omega
+  have key : [Syl.unstressed] ++ (replicate k Syl.unstressed ++ [Syl.stressed]) ∈
+      stressFinalCulminative ↔
+      [Syl.stressed] ++ (replicate k Syl.unstressed ++ [Syl.stressed]) ∈ stressFinalCulminative :=
+    iff_of_eq (h (by rw [Edge.takeAt_right_append_of_le_length _ _ hlen,
+      Edge.takeAt_right_append_of_le_length _ _ hlen]))
+  have ha : [Syl.unstressed] ++ (replicate k Syl.unstressed ++ [Syl.stressed]) ∈
+      stressFinalCulminative :=
+    ⟨(suffix_append (replicate k Syl.unstressed) [Syl.stressed]).trans
+      (suffix_append [Syl.unstressed] _), by
+      show filter Syl.isStressed _ = [Syl.stressed]
+      simp [Syl.isStressed]⟩
+  refine absurd (key.mp ha).2 ?_
+  show ¬ filter Syl.isStressed _ = [Syl.stressed]
+  simp [Syl.isStressed]
+
+/-! ### Unbounded stress (§3)
+
+The four patterns of Hayes's typology ([hayes-1995]) over syllables distinguished by weight:
+the default-to-same patterns are multitier reverse definite or definite, the default-to-opposite
+ones multitier generalized definite ((20), (23), (26), (29)). -/
+
+/-- A syllable by weight and stress. -/
+inductive QSyl
+  | light
+  | heavy
+  | lightStressed
+  | heavyStressed
   deriving DecidableEq, Repr
 
-/-! ### Tier predicates
-
-Lambert's `V_f ∪ V_b` is the harmonising-vowel tier; `C_f ∪ C_b` is the
-dorsal tier; `S_f` and `S_b` are the front- and back-suffix tiers
-(`V_X ∪ C_X` marked as suffix). Each is a Boolean predicate on
-`UyghurSeg`. -/
-
-/-- Harmonising-vowel tier: `V_f ∪ V_b`. -/
-def isHarmonyingVowel : UyghurSeg → Bool
-  | .frontVowel | .backVowel => true
+/-- The stress tier. -/
+def QSyl.isStressed : QSyl → Bool
+  | .lightStressed | .heavyStressed => true
   | _ => false
 
-/-- Dorsal-consonant tier: `C_f ∪ C_b`. -/
-def isDorsal : UyghurSeg → Bool
-  | .frontDorsal | .backDorsal => true
+/-- The heavy tier. -/
+def QSyl.isHeavy : QSyl → Bool
+  | .heavy | .heavyStressed => true
   | _ => false
 
-/-- Front-suffix tier `S_f`: front-marked suffix material (vowel or dorsal). -/
-def isSuffixFront : UyghurSeg → Bool
-  | .suffixFrontVowel | .suffixFrontDorsal => true
+/-- Exactly one primary stress: `[⋊σ́⋉]_{σ́}`. -/
+def oneStress : Language QSyl :=
+  tierWord QSyl.isStressed [.lightStressed] ⊔ tierWord QSyl.isStressed [.heavyStressed]
+
+theorem oneStress_isBTD : IsBTD 2 oneStress :=
+  IsBTC.union (isBTD_tierWord _ _ (by decide)) (isBTD_tierWord _ _ (by decide))
+
+theorem oneStress_isBTK : IsBTK 2 oneStress :=
+  IsBTC.union (isBTK_tierWord _ _ (by decide)) (isBTK_tierWord _ _ (by decide))
+
+/-- Amele ((20), [roberts-1987]): stress the leftmost heavy syllable, else the leftmost. -/
+def amele : Language QSyl :=
+  oneStress ⊓ (tierPrefix QSyl.isHeavy [.heavyStressed] ⊔
+    (tierWord QSyl.isHeavy [] ⊓ ofPrefix [.lightStressed]))
+
+theorem amele_isBTK : IsBTK 2 amele :=
+  IsBTC.inter oneStress_isBTK (IsBTC.union (isBTK_tierPrefix _ _ (by decide))
+    (IsBTC.inter (isBTK_tierWord _ _ (by decide)) (isBTK_ofPrefix _ (by decide))))
+
+/-- Golin ((23), [bunn-bunn-1970]): stress the rightmost heavy syllable, else the rightmost. -/
+def golin : Language QSyl :=
+  oneStress ⊓ (tierSuffix QSyl.isHeavy [.heavyStressed] ⊔
+    (tierWord QSyl.isHeavy [] ⊓ ofSuffix [.lightStressed]))
+
+theorem golin_isBTD : IsBTD 2 golin :=
+  IsBTC.inter oneStress_isBTD (IsBTC.union (isBTD_tierSuffix _ _ (by decide))
+    (IsBTC.inter (isBTD_tierWord _ _ (by decide)) (isBTD_ofSuffix _ (by decide))))
+
+/-- Kwak'wala ((26), [grubb-1969]): stress the leftmost heavy syllable, else the rightmost. -/
+def kwakwala : Language QSyl :=
+  oneStress ⊓ (tierPrefix QSyl.isHeavy [.heavyStressed] ⊔
+    (tierWord QSyl.isHeavy [] ⊓ ofSuffix [.lightStressed]))
+
+theorem kwakwala_isBTLI : IsBTLI 2 kwakwala :=
+  IsBTC.inter oneStress_isBTD.toIsBTLI
+    (IsBTC.union (IsBTK.toIsBTLI (isBTK_tierPrefix _ _ (by decide)))
+      (IsBTC.inter (IsBTD.toIsBTLI (isBTD_tierWord _ _ (by decide)))
+        (IsBTD.toIsBTLI (isBTD_ofSuffix _ (by decide)))))
+
+/-- Chuvash ((29), [krueger-1961]): stress the rightmost heavy syllable, else the leftmost. -/
+def chuvash : Language QSyl :=
+  oneStress ⊓ (tierSuffix QSyl.isHeavy [.heavyStressed] ⊔
+    (tierWord QSyl.isHeavy [] ⊓ ofPrefix [.lightStressed]))
+
+theorem chuvash_isBTLI : IsBTLI 2 chuvash :=
+  IsBTC.inter oneStress_isBTD.toIsBTLI
+    (IsBTC.union (IsBTD.toIsBTLI (isBTD_tierSuffix _ _ (by decide)))
+      (IsBTC.inter (IsBTD.toIsBTLI (isBTD_tierWord _ _ (by decide)))
+        (IsBTK.toIsBTLI (isBTK_ofPrefix _ (by decide)))))
+
+/-! ### Harmony (§4)
+
+Navajo's symmetric sibilant harmony ([sapir-hoijer-1967]) is multitier co/finite, one of the
+two sibilant tiers being empty, and coincides with the tier-based agreement grammar, which the
+library already identifies with [heinz-2010]'s forbidden subsequences. Tsuut'ina's asymmetric
+harmony ([cook-1978]) is tier-based strictly local but not multitier generalized definite: an
+internal factor is needed. Uyghur backness harmony ([mayer-major-2018]) is multitier definite,
+lying between the two. -/
+
+/-- The anterior tier. -/
+def Sibilant.isAnterior : Sibilant → Bool
+  | .anterior => true
   | _ => false
 
-/-- Back-suffix tier `S_b`: back-marked suffix material (vowel or dorsal). -/
-def isSuffixBack : UyghurSeg → Bool
-  | .suffixBackVowel | .suffixBackDorsal => true
+/-- The posterior tier. -/
+def Sibilant.isPosterior : Sibilant → Bool
+  | .posterior => true
   | _ => false
 
-/-! ### Atomic tier-projected definite languages
+/-- Navajo ((30)): the sibilants agree, `[⋊⋉]_s ∨ [⋊⋉]_ʃ`. -/
+def navajo : Language Sibilant :=
+  tierWord Sibilant.isAnterior [] ⊔ tierWord Sibilant.isPosterior []
 
-Each of the four atomic predicates in (35) is a `IsTierBased
-(Language.IsDefinite · 1)` test: a single permitted length-1 suffix set on
-the filtered tier (`Language.isDefinite_setOf_right`), lifted via `IsTierBased`. -/
+theorem navajo_isBTN : IsBTN navajo := IsBTC.union (isBTN_tierWord _ _) (isBTN_tierWord _ _)
 
-/-- The language "tier `T` is empty": after filtering by `T`, the word
-is `[]`. Encoded as `IsTierBased (IsDefinite 1)` via the singleton
-1-suffix `{[]}` (the only word whose right-1-suffix is `[]` is the
-empty word). -/
-def tierEmptyLang (T : UyghurSeg → Bool) : Language UyghurSeg :=
-  { w | w.filter T = [] }
-
-/-- The language "tier `T` ends with `x`": after filtering by `T`, the
-word's last element is `x`. Encoded as `IsTierBased (IsDefinite 1)`
-via the singleton 1-suffix `{[x]}`. -/
-def tierEndsWithLang (T : UyghurSeg → Bool) (x : UyghurSeg) :
-    Language UyghurSeg :=
-  { w | (w.filter T).drop ((w.filter T).length - 1) = [x] }
-
-/-- The right-1-suffix of a list is empty iff the list itself is empty.
-Helper for `tierEmptyLang_isTierBased`. -/
-private lemma takeAt_right_one_eq_nil_iff (xs : List UyghurSeg) :
-    Edge.right.takeAt 1 xs = [] ↔ xs = [] := by
-  rw [Edge.takeAt_right]
-  refine ⟨fun h => ?_, fun h => by rw [h]; simp⟩
-  have hlen := List.length_rtake xs 1
-  rw [h, List.length_nil] at hlen
-  exact List.eq_nil_of_length_eq_zero (by omega)
-
-/-- `tierEmptyLang T` is in `IsTierBased (IsDefinite 1)`. The base
-1-definite language is the singleton `{[]}` (only `[]` has right-1-
-suffix `[]`). -/
-lemma tierEmptyLang_isTierBased (T : UyghurSeg → Bool) :
-    IsTierBased (Language.IsDefinite · 1) (tierEmptyLang T) := by
-  refine ⟨T, {w | Edge.right.takeAt 1 w ∈ ({[]} : Set (List UyghurSeg))}, ?_,
-          Language.isDefinite_setOf_right 1 _⟩
+/-- The tier formula for Navajo describes the agreement grammar on the sibilant tier, which is
+tier-based strictly local and strictly piecewise. -/
+theorem navajo_eq_agree :
+    navajo = (TierStrictlyLocalGrammar.agree Sibilant.onTier).language := by
   ext w
-  show (w.filter T = []) ↔
-       Edge.right.takeAt 1 (w.filter T) ∈ ({[]} : Set (List UyghurSeg))
-  simp only [Set.mem_singleton_iff]
-  exact (takeAt_right_one_eq_nil_iff _).symm
+  rw [mem_agree_lang_iff_forall_sublist_pair]
+  show (w.filter Sibilant.isAnterior = [] ∨ w.filter Sibilant.isPosterior = []) ↔ _
+  simp only [filter_eq_nil_iff]
+  constructor
+  · rintro (h | h) a b hab ha hb
+    · have ha' := h a (hab.subset (mem_cons_self))
+      have hb' := h b (hab.subset (mem_cons_of_mem _ mem_cons_self))
+      cases a <;> cases b <;> simp_all [Sibilant.isAnterior, Sibilant.onTier]
+    · have ha' := h a (hab.subset (mem_cons_self))
+      have hb' := h b (hab.subset (mem_cons_of_mem _ mem_cons_self))
+      cases a <;> cases b <;> simp_all [Sibilant.isPosterior, Sibilant.onTier]
+  · intro h
+    by_contra hne
+    push Not at hne
+    obtain ⟨⟨x, hx, hx'⟩, ⟨y, hy, hy'⟩⟩ := hne
+    have hx : x = .anterior := by cases x <;> simp_all [Sibilant.isAnterior]
+    have hy : y = .posterior := by cases y <;> simp_all [Sibilant.isPosterior]
+    subst hx hy
+    rcases sublist_pair_of_mem ‹Sibilant.anterior ∈ w› ‹Sibilant.posterior ∈ w› with
+      h' | h' | h'
+    · exact Sibilant.noConfusion h'
+    · exact Sibilant.noConfusion (h _ _ h' trivial trivial)
+    · exact Sibilant.noConfusion (h _ _ h' trivial trivial)
 
-/-- `tierEndsWithLang T x` is in `IsTierBased (IsDefinite 1)`. The
-base 1-definite language is the singleton `{[x]}`. -/
-lemma tierEndsWithLang_isTierBased (T : UyghurSeg → Bool) (x : UyghurSeg) :
-    IsTierBased (Language.IsDefinite · 1) (tierEndsWithLang T x) := by
-  refine ⟨T, {w | Edge.right.takeAt 1 w ∈ ({[x]} : Set (List UyghurSeg))}, ?_,
-          Language.isDefinite_setOf_right 1 _⟩
-  ext w
-  show ((w.filter T).drop ((w.filter T).length - 1) = [x]) ↔
-       Edge.right.takeAt 1 (w.filter T) ∈ ({[x]} : Set (List UyghurSeg))
-  simp only [Set.mem_singleton_iff]
-  rfl
-
-/-! ### The Uyghur backness language as conjunction of (35a)-(35b)
-
-The English implication `A → B` is Boolean `Aᶜ ∨ B`; written using
-mathlib's `Language` lattice (Boolean algebra), `Aᶜ ⊔ B`. The full
-language is the intersection of four such implications. -/
-
-/-- The Uyghur backness harmony language as the conjunction of the four
-implications in Lambert (2026) (35a)-(35b). Categorical idealisation —
-see file docstring for the [mccollum-2019] gradience disclaimer. -/
-def uyghurBacknessLang : Language UyghurSeg :=
-  -- (35a.i)  [V_f⋊]_{V_f∪V_b} → [⋊⋉]_{S_b}
-  ((tierEndsWithLang isHarmonyingVowel .frontVowel)ᶜ ⊔ tierEmptyLang isSuffixBack) ⊓
-  -- (35a.ii) [V_b⋊]_{V_f∪V_b} → [⋊⋉]_{S_f}
-  ((tierEndsWithLang isHarmonyingVowel .backVowel)ᶜ ⊔ tierEmptyLang isSuffixFront) ⊓
-  -- (35b.i)  ([⋊⋉]_{V_f∪V_b} ∧ [C_f⋊]_{C_f∪C_b}) → [⋊⋉]_{S_b}
-  ((tierEmptyLang isHarmonyingVowel ⊓
-      tierEndsWithLang isDorsal .frontDorsal)ᶜ ⊔ tierEmptyLang isSuffixBack) ⊓
-  -- (35b.ii) ([⋊⋉]_{V_f∪V_b} ∧ [C_b⋊]_{C_f∪C_b}) → [⋊⋉]_{S_f}
-  ((tierEmptyLang isHarmonyingVowel ⊓
-      tierEndsWithLang isDorsal .backDorsal)ᶜ ⊔ tierEmptyLang isSuffixFront)
-
-/-- **Uyghur backness harmony ∈ BTD₁** (Lambert 2026 §4.3, eq. (35),
-refining [mayer-major-2018]). Constructive witness: the
-formalised `uyghurBacknessLang` is the intersection of four
-implications, each `Aᶜ ⊔ B` where `A` and `B` are
-`IsTierBased (IsDefinite 1)` (each is a tier-projected single-suffix
-test). The BTD membership follows from `IsBTC.{base, compl,
-union, inter}` applied to the four atomic tier-projected definite
-languages. -/
-theorem uyghur_backness_isBTD : ∃ k, IsBTD k uyghurBacknessLang := by
-  refine ⟨1, ?_⟩
-  -- Atomic IsBTD witnesses for the eight tier-projected definite tests.
-  have hVf : IsBTD 1 (tierEndsWithLang isHarmonyingVowel .frontVowel) :=
-    .base (tierEndsWithLang_isTierBased _ _)
-  have hVb : IsBTD 1 (tierEndsWithLang isHarmonyingVowel .backVowel) :=
-    .base (tierEndsWithLang_isTierBased _ _)
-  have hCf : IsBTD 1 (tierEndsWithLang isDorsal .frontDorsal) :=
-    .base (tierEndsWithLang_isTierBased _ _)
-  have hCb : IsBTD 1 (tierEndsWithLang isDorsal .backDorsal) :=
-    .base (tierEndsWithLang_isTierBased _ _)
-  have hVempty : IsBTD 1 (tierEmptyLang isHarmonyingVowel) :=
-    .base (tierEmptyLang_isTierBased _)
-  have hSf : IsBTD 1 (tierEmptyLang isSuffixFront) :=
-    .base (tierEmptyLang_isTierBased _)
-  have hSb : IsBTD 1 (tierEmptyLang isSuffixBack) :=
-    .base (tierEmptyLang_isTierBased _)
-  -- Build the four implications.
-  have impA : IsBTD 1 ((tierEndsWithLang isHarmonyingVowel .frontVowel)ᶜ ⊔
-                       tierEmptyLang isSuffixBack) :=
-    .union hVf.compl hSb
-  have impB : IsBTD 1 ((tierEndsWithLang isHarmonyingVowel .backVowel)ᶜ ⊔
-                       tierEmptyLang isSuffixFront) :=
-    .union hVb.compl hSf
-  have impC : IsBTD 1 ((tierEmptyLang isHarmonyingVowel ⊓
-                          tierEndsWithLang isDorsal .frontDorsal)ᶜ ⊔
-                       tierEmptyLang isSuffixBack) :=
-    .union (hVempty.inter hCf).compl hSb
-  have impD : IsBTD 1 ((tierEmptyLang isHarmonyingVowel ⊓
-                          tierEndsWithLang isDorsal .backDorsal)ᶜ ⊔
-                       tierEmptyLang isSuffixFront) :=
-    .union (hVempty.inter hCb).compl hSf
-  -- Conjunction (matching `uyghurBacknessLang`'s left-associative parsing).
-  exact ((impA.inter impB).inter impC).inter impD
-
-
--- ============================================================================
--- § 4. Karanga Shona verb-stem tone ∈ BTLI
--- ============================================================================
-
-/-- Karanga Shona tone alphabet [odden-1984] [lambert-2026]
-§5.6: low (ℓ) and high (h). -/
-inductive KShoTone | low | high
-  deriving DecidableEq, Repr
-
-/-! ### Atomic IsGeneralizedDefinite languages (uniform `k = 5`)
-
-Each component of Lambert's `φ_F ∨ L_m ∨ H_m` reduces to a Boolean
-combination of edge-anchored substring tests and tier-projected
-substring tests. We encode each as a `Language KShoTone` and prove it's
-`IsGeneralizedDefinite 5` directly via `List.take_take` /
-`List.drop_drop`-style structural arguments. The uniform `k = 5` is
-chosen as `1 + max(prefix length, suffix length, tier-projection
-length, max φ_F word length) = 1 + 4`. -/
-
-/-- "Word starts with `xs`": the language `{w | w.take xs.length = xs}`.
-Originally introduced for `KShoTone` but α-generic; also reused for
-`LugandaTone` in §10 Kagoshima Japanese. -/
-def startsWithLang {α : Type*} (xs : List α) : Language α :=
-  { w | w.take xs.length = xs }
-
-/-- "Word ends with `xs`": the language `{w | w.drop (w.length - xs.length) = xs}`.
-α-generic, reused for `LugandaTone` in §10 Kagoshima Japanese. -/
-def endsWithLang {α : Type*} (xs : List α) : Language α :=
-  { w | w.drop (w.length - xs.length) = xs }
-
-/-- "Tier-projection by `T` equals exactly `xs`": the language
-`{w | w.filter T = xs}`. α-generic, reused for `LugandaTone` in §10
-Kagoshima Japanese. -/
-def tierEqualLang {α : Type*} (T : α → Bool) (xs : List α) :
-    Language α :=
-  { w | w.filter T = xs }
-
-/-- Boolean tier predicate for `h`-tier (high tones only). -/
-def isHigh : KShoTone → Bool
-  | .high => true
-  | .low => false
-
-/-! ### IsGeneralizedDefinite witnesses at `k = 5`
-
-Unfolding helper: `Edge.left.takeAt k w = w.take k` and
-`Edge.right.takeAt k w = w.drop (w.length - k)` by `rfl`. The
-hypotheses from `IsGeneralizedDefinite k` come in the `Edge.takeAt`
-form; we unfold via `show` at the top of each proof. -/
-
-/-- `startsWithLang xs` is `IsGeneralizedDefinite k` for any `k ≥
-xs.length`. Proof: same `k`-prefix on both words determines the
-`xs.length`-prefix via `List.take_take`. α-generic. -/
-lemma startsWithLang_isGenDef {α : Type*} (xs : List α) (k : ℕ)
-    (hk : xs.length ≤ k) : (startsWithLang xs).IsGeneralizedDefinite k := by
-  rw [Language.isGeneralizedDefinite_iff_edges]
-  intro w₁ w₂ hpre _
-  -- Unfold Edge.left.takeAt to List.take.
-  change w₁.take k = w₂.take k at hpre
-  have htake : w₁.take xs.length = w₂.take xs.length := by
-    rw [show w₁.take xs.length = (w₁.take k).take xs.length by
-          rw [List.take_take, min_eq_left hk],
-        hpre, List.take_take, min_eq_left hk]
-  exact Iff.intro
-    (fun h => show w₂.take xs.length = xs from htake.symm.trans h)
-    (fun h => show w₁.take xs.length = xs from htake.trans h)
-
-/-- `endsWithLang xs` is `IsGeneralizedDefinite k` for any `k ≥
-xs.length`. Symmetric to `startsWithLang_isGenDef`; the underlying
-identity is `w.drop (w.length - xs.length) = (w.drop (w.length - k)).drop
-(k - xs.length)` when `xs.length ≤ k ≤ w.length`. The general case
-splits on whether `w` is shorter than `k`. -/
-lemma endsWithLang_isGenDef {α : Type*} (xs : List α) (k : ℕ)
-    (hk : xs.length ≤ k) : (endsWithLang xs).IsGeneralizedDefinite k := by
-  rw [Language.isGeneralizedDefinite_iff_edges]
-  intro w₁ w₂ _ hsuf
-  -- Unfold Edge.right.takeAt to List.drop.
-  change w₁.drop (w₁.length - k) = w₂.drop (w₂.length - k) at hsuf
-  -- The k-suffixes have equal length, so word lengths are related.
-  have hlen_eq : min k w₁.length = min k w₂.length := by
-    have h := congrArg List.length hsuf
-    simp [List.length_drop] at h
-    omega
-  have hdrop : w₁.drop (w₁.length - xs.length) =
-               w₂.drop (w₂.length - xs.length) := by
-    by_cases hw1 : k ≤ w₁.length
-    · -- Case: w₁.length ≥ k. Then min k w₁.length = k, so min k w₂.length = k, so w₂.length ≥ k.
-      have hw2 : k ≤ w₂.length := by
-        rw [min_eq_left hw1] at hlen_eq
-        by_cases h : k ≤ w₂.length
-        · exact h
-        · push Not at h
-          rw [min_eq_right (le_of_lt h)] at hlen_eq
-          omega
-      -- xs.suffix is inside k-suffix.
-      rw [show w₁.length - xs.length = (w₁.length - k) + (k - xs.length) by omega,
-          show w₂.length - xs.length = (w₂.length - k) + (k - xs.length) by omega,
-          ← List.drop_drop, ← List.drop_drop, hsuf]
-    · -- Case: w₁.length < k. Then min k w₁.length = w₁.length.
-      push Not at hw1
-      rw [min_eq_right (le_of_lt hw1)] at hlen_eq
-      have hw1_drop : w₁.length - k = 0 := by omega
-      rw [hw1_drop, List.drop_zero] at hsuf
-      -- hsuf: w₁ = w₂.drop (w₂.length - k). Lengths: w₁.length = min k w₂.length.
-      by_cases hw2 : k ≤ w₂.length
-      · -- w₂.length ≥ k, but w₁.length = min k w₂.length = k ≥ w₁.length means w₁.length = k. Contradiction with hw1.
-        rw [min_eq_left hw2] at hlen_eq
-        omega
-      · push Not at hw2
-        have hw2_drop : w₂.length - k = 0 := by omega
-        rw [hw2_drop, List.drop_zero] at hsuf
-        -- hsuf: w₁ = w₂. So both .drop equal.
-        rw [hsuf]
-  exact Iff.intro
-    (fun h => show w₂.drop (w₂.length - xs.length) = xs from hdrop.symm.trans h)
-    (fun h => show w₁.drop (w₁.length - xs.length) = xs from hdrop.trans h)
-
-/-- `tierEqualLang T xs` is `IsTierBased (IsGeneralizedDefinite k)` for
-any `k > xs.length` (strict — without strictness, e.g. `{[h, h]}` is
-not GeneralizedDefinite 2 since `[h, h, h]` and `[h, h]` share both
-2-prefix and 2-suffix). -/
-lemma tierEqualLang_isTierBased {α : Type*} (T : α → Bool) (xs : List α)
-    (k : ℕ) (hk : xs.length < k) :
-    IsTierBased (Language.IsGeneralizedDefinite · k) (tierEqualLang T xs) := by
-  refine ⟨T, {xs}, ?_, ?_⟩
-  · ext w; show (w.filter T = xs) ↔ w.filter T ∈ ({xs} : Set _)
-    simp [Set.mem_singleton_iff]
-  · -- {xs} is IsGeneralizedDefinite k for k ≥ xs.length.
-    -- Helper: a word `v` with `v.take k = xs` and `v.length ≤ k` (which we'll
-    -- establish) must equal `xs`.
-    have hxs_take : xs.take k = xs := List.take_of_length_le (le_of_lt hk)
-    -- The forward direction: if w₁ = xs, derive w₂ = xs from `xs.take k = w₂.take k`.
-    -- Since |xs| < k, we have |v.take k| = |xs| < k, forcing |v| < k, so v.take k = v.
-    have key : ∀ v : List α, xs.take k = v.take k → v = xs := by
-      intro v hv
-      rw [hxs_take] at hv
-      have hlen : xs.length = min k v.length := by
-        have := congrArg List.length hv
-        simpa [List.length_take] using this
-      have hv_lt : v.length < k := by
-        by_cases h : v.length ≤ k
-        · rcases eq_or_lt_of_le h with heq | hlt
-          · -- |v| = k. Then min k |v| = k. So |xs| = k, contradicting |xs| < k.
-            rw [heq, min_self] at hlen; omega
-          · exact hlt
-        · -- |v| > k impossible since min k |v| = k = |xs| contradicts |xs| < k.
-          push Not at h
-          rw [min_eq_left (le_of_lt h)] at hlen; omega
-      have hv_take : v.take k = v := List.take_of_length_le (le_of_lt hv_lt)
-      rw [hv_take] at hv
-      exact hv.symm
-    refine Language.isGeneralizedDefinite_iff_edges.mpr ?_
-    intro w₁ w₂ hpre _
-    change w₁.take k = w₂.take k at hpre
-    show w₁ ∈ ({xs} : Set _) ↔ w₂ ∈ ({xs} : Set _)
-    simp only [Set.mem_singleton_iff]
-    constructor
-    · intro h; exact key w₂ (h ▸ hpre)
-    · intro h; exact key w₁ (h ▸ hpre.symm)
-
-/-- The seven fully specified words from Lambert (2026) §5.6 (just above
-eq. (46), paper p. 19). Max length 4 (`hhℓh`). -/
-def kshonaSevenWords : List (List KShoTone) :=
-  [[.low], [.low, .high], [.low, .high, .low],
-   [.high], [.high, .low], [.high, .low, .high],
-   [.high, .high, .low, .high]]
-
-/-- The finite-language part `φ_F` of Lambert's witness — the seven
-fully specified words. -/
-def phi_F : Language KShoTone := { w | w ∈ kshonaSevenWords }
-
-/-- `phi_F` is `IsGeneralizedDefinite 5`. Max word length is 4, so for
-`k = 5 > 4`, any word of length ≤ 4 has `k`-prefix = whole word. Two
-words with same 5-prefix and length ≤ 4 are equal; any word with
-length > 4 has a 5-prefix of length 5 (or whole) which differs from
-any short word's 5-prefix. -/
-lemma phi_F_isGenDef : phi_F.IsGeneralizedDefinite 5 := by
-  rw [Language.isGeneralizedDefinite_iff_edges]
-  intro w₁ w₂ hpre _
-  change w₁.take 5 = w₂.take 5 at hpre
-  show w₁ ∈ phi_F ↔ w₂ ∈ phi_F
-  by_cases h1 : w₁.length ≤ 4
-  · -- w₁.take 5 = w₁.
-    have hw₁ : w₁.take 5 = w₁ := List.take_of_length_le (by omega)
-    rw [hw₁] at hpre
-    -- hpre : w₁ = w₂.take 5; |w₁| ≤ 4, so |w₂.take 5| ≤ 4, so |w₂| ≤ 4 too.
-    have hlen_eq : w₁.length = (w₂.take 5).length := by rw [← hpre]
-    rw [List.length_take] at hlen_eq
-    have hw₂_le : w₂.length ≤ 4 := by omega
-    have hw₂ : w₂.take 5 = w₂ := List.take_of_length_le (by omega)
-    rw [hw₂] at hpre
-    rw [show w₁ = w₂ from hpre]
-  · -- w₁.length > 4, so w₁ ∉ phi_F.
-    push Not at h1
-    have h2 : 4 < w₂.length := by
-      have hw₁_len : (w₁.take 5).length = 5 := by
-        rw [List.length_take]; omega
-      have hw₂_len : (w₂.take 5).length = 5 := by rw [← hpre]; exact hw₁_len
-      rw [List.length_take] at hw₂_len; omega
-    have hw₁_notin : w₁ ∉ phi_F := by
-      intro hin
-      simp [phi_F, kshonaSevenWords] at hin
-      rcases hin with h | h | h | h | h | h | h <;>
-        (rw [h] at h1; simp at h1)
-    have hw₂_notin : w₂ ∉ phi_F := by
-      intro hin
-      simp [phi_F, kshonaSevenWords] at hin
-      rcases hin with h | h | h | h | h | h | h <;>
-        (rw [h] at h2; simp at h2)
-    exact ⟨fun h => absurd h hw₁_notin, fun h => absurd h hw₂_notin⟩
-
-/-- The Karanga Shona verb-stem tone language as the disjunction `φ_F
-∨ L_m ∨ H_m` from Lambert (2026) §5.6 (formula appearing just after
-eq. (49), paper p. 19). -/
-def karangaShonaVerbStemLang : Language KShoTone :=
-  -- φ_F: finite seven words
-  phi_F ⊔
-  -- L_m: ℓ-toned roots, multitier definite per (48)
-  -- L_m = ⋊ℓhhℓ ∧ [⋊hh⋉]_{h}
-  (startsWithLang ([.low, .high, .high, .low] : List KShoTone) ⊓
-    tierEqualLang isHigh [.high, .high]) ⊔
-  -- H_m: h-toned roots, multitier definite per (49)
-  -- H_m = ⋊hhhℓ ∧ ℓh⋉ ∧ [⋊hhhh⋉]_{h}
-  (startsWithLang ([.high, .high, .high, .low] : List KShoTone) ⊓
-    endsWithLang ([.low, .high] : List KShoTone) ⊓
-    tierEqualLang isHigh [.high, .high, .high, .high])
-
-/-- **Karanga Shona verb-stem tone ∈ BTLI₅** (Lambert 2026 §5.6,
-refining [jardine-2020]). Constructive witness for the disjunction
-`φ_F ∨ L_m ∨ H_m` at uniform `k = 5`. Each disjunct lifts to
-`IsBTC (IsGeneralizedDefinite 5)` via `IsTierBased.of_class` +
-`IsBTC.base`; the disjunction is closed by `IsBTC.union`. -/
-theorem karanga_shona_verb_stem_isBTLI :
-    ∃ k, IsBTLI k karangaShonaVerbStemLang := by
-  refine ⟨5, ?_⟩
-  -- φ_F via direct IsGeneralizedDefinite + IsTierBased.of_class
-  have hPhi : IsBTLI 5 phi_F := .base (.of_class phi_F_isGenDef)
-  -- L_m components
-  have hLm_pre : IsBTLI 5 (startsWithLang ([.low, .high, .high, .low] : List KShoTone)) :=
-    .base (.of_class (startsWithLang_isGenDef _ 5 (by decide)))
-  have hLm_tier : IsBTLI 5 (tierEqualLang isHigh [.high, .high]) :=
-    .base (tierEqualLang_isTierBased isHigh _ 5 (by decide))
-  have hLm : IsBTLI 5
-      (startsWithLang ([.low, .high, .high, .low] : List KShoTone) ⊓
-        tierEqualLang isHigh [.high, .high]) := .inter hLm_pre hLm_tier
-  -- H_m components
-  have hHm_pre : IsBTLI 5 (startsWithLang ([.high, .high, .high, .low] : List KShoTone)) :=
-    .base (.of_class (startsWithLang_isGenDef _ 5 (by decide)))
-  have hHm_suf : IsBTLI 5 (endsWithLang ([.low, .high] : List KShoTone)) :=
-    .base (.of_class (endsWithLang_isGenDef _ 5 (by decide)))
-  have hHm_tier : IsBTLI 5 (tierEqualLang isHigh [.high, .high, .high, .high]) :=
-    .base (tierEqualLang_isTierBased isHigh _ 5 (by decide))
-  have hHm : IsBTLI 5
-      (startsWithLang ([.high, .high, .high, .low] : List KShoTone) ⊓
-        endsWithLang ([.low, .high] : List KShoTone) ⊓
-        tierEqualLang isHigh [.high, .high, .high, .high]) :=
-    .inter (.inter hHm_pre hHm_suf) hHm_tier
-  -- Disjunction
-  exact .union (.union hPhi hLm) hHm
-
--- ============================================================================
--- § 5. Tsuut'ina asymmetric harmony ∈ TSL_2 ∖ BTLI
--- ============================================================================
-
-/-! ### Sibilant-harmony grammars over the shared `Sibilant` alphabet
-
-Both asymmetric directions plus the symmetric foil, over the shared
-`Subregular.Sibilant` substrate. Lambert's classification draws the
-symmetric-vs-asymmetric comparison: the symmetric grammar is the [hansson-2010]
-Navajo profile (`TierStrictlyLocalGrammar.agree`, disagreement forbidden in both directions),
-the anterior-first asymmetric grammar the [cook-1978] Tsuut'ina profile. -/
-
-/-- Forbidden-pair relation: anterior immediately preceding posterior on the tier
-(the [cook-1978] Tsuut'ina adjacency). -/
+/-- Anterior immediately before posterior on the sibilant tier, the adjacency Tsuut'ina
+forbids ((31)). -/
 def antPostForbidden : Sibilant → Sibilant → Prop
   | .anterior, .posterior => True
   | _, _ => False
@@ -689,762 +371,364 @@ instance : DecidableRel antPostForbidden
   | .posterior, _ => isFalse not_false
   | .neutral, _ => isFalse not_false
 
-/-- Tsuut'ina-style asymmetric harmony: anterior-before-posterior forbidden on the
-tier, the reverse permitted. -/
-def asymmetricHarmonyAntFirst : TierStrictlyLocalGrammar 2 Sibilant :=
+/-- Tsuut'ina asymmetric harmony ([cook-1978]): `¬[sʃ]_{s,ʃ}`, an anterior sibilant is not
+followed on the tier by a posterior one. -/
+def tsuutinaGrammar : TierStrictlyLocalGrammar 2 Sibilant :=
   TierStrictlyLocalGrammar.ofForbiddenPairs antPostForbidden Sibilant.onTier
 
-/-- Dual forbidden-pair relation: posterior immediately preceding anterior. -/
-def postAntForbidden : Sibilant → Sibilant → Prop
-  | .posterior, .anterior => True
-  | _, _ => False
+/-- The Tsuut'ina language. -/
+def tsuutina : Language Sibilant := tsuutinaGrammar.language
 
-instance : DecidableRel postAntForbidden
-  | .posterior, .anterior => isTrue trivial
-  | .posterior, .posterior => isFalse not_false
-  | .posterior, .neutral => isFalse not_false
-  | .anterior, _ => isFalse not_false
-  | .neutral, _ => isFalse not_false
+theorem tsuutina_isTierStrictlyLocal : IsTierStrictlyLocal 2 tsuutina := ⟨tsuutinaGrammar, rfl⟩
 
-/-- Posterior-first asymmetric harmony grammar (the mirror of
-`asymmetricHarmonyAntFirst`). -/
-def asymmetricHarmonyPostFirst : TierStrictlyLocalGrammar 2 Sibilant :=
-  TierStrictlyLocalGrammar.ofForbiddenPairs postAntForbidden Sibilant.onTier
+/-- The accepted witness `ʃᵏ⁺¹sᵏ⁺¹`. -/
+private abbrev tsuutinaIn (k : ℕ) : List Sibilant :=
+  sandwich (k + 1) .posterior [] (k + 1) .anterior
 
-/-- Symmetric sibilant harmony: any tier-adjacent disagreement forbidden — the
-[hansson-2010] Navajo profile, the foil for the asymmetric comparison. -/
-def symmetricHarmony : TierStrictlyLocalGrammar 2 Sibilant :=
-  TierStrictlyLocalGrammar.agree Sibilant.onTier
+/-- The rejected witness `ʃᵏsʃsᵏ`. -/
+private abbrev tsuutinaOut (k : ℕ) : List Sibilant :=
+  sandwich k .posterior [.anterior, .posterior] k .anterior
 
-/-- The symmetric language is contained in the anterior-first asymmetric language:
-forbidding disagreement in both directions rules out everything the one-direction
-constraint does, and more. -/
-theorem symmetricHarmony_lang_subset_asymAntFirst :
-    symmetricHarmony.language ≤ asymmetricHarmonyAntFirst.language :=
-  language_antitone_R (R := antPostForbidden) (R' := (· ≠ ·))
-    (fun a b h => by cases a <;> cases b <;> simp_all [antPostForbidden])
-    Sibilant.onTier
-
-/-- Dual inclusion against the posterior-first asymmetric language. -/
-theorem symmetricHarmony_lang_subset_asymPostFirst :
-    symmetricHarmony.language ≤ asymmetricHarmonyPostFirst.language :=
-  language_antitone_R (R := postAntForbidden) (R' := (· ≠ ·))
-    (fun a b h => by cases a <;> cases b <;> simp_all [postAntForbidden])
-    Sibilant.onTier
-
-/-- The Tsuut'ina sibilant alphabet ([cook-1978]) is the shared three-class
-`Subregular.Sibilant` (anterior `s`, posterior `ʃ`, neutral non-sibilant). -/
-abbrev TsuutinaSeg := Sibilant
-
-/-- The TSL_2 grammar for Tsuut'ina asymmetric sibilant harmony ([cook-1978];
-Lambert's asymmetric classification): anterior preceding posterior on the
-sibilant tier is forbidden, the reverse permitted. -/
-def tsuutinaTSLGrammar : TierStrictlyLocalGrammar 2 TsuutinaSeg :=
-  asymmetricHarmonyAntFirst
-
-/-- The Tsuut'ina asymmetric sibilant harmony language. Defined as the
-language of the TSL_2 witness so that the membership theorem is
-definitional. -/
-def tsuutinaLang : Language TsuutinaSeg := tsuutinaTSLGrammar.language
-
-/-- **Tsuut'ina asymmetric harmony ∈ TSL_2**. Definitional witness: the
-TSL_2 grammar `tsuutinaTSLGrammar`. -/
-theorem tsuutina_isTSL2 : IsTierStrictlyLocal 2 tsuutinaLang :=
-  ⟨tsuutinaTSLGrammar, rfl⟩
-
-/-! ### Refutation: Tsuut'ina ∉ BTLI
-
-Lambert's parameterised counterexample: for every `k`, the
-words `ʃᵏ⁺¹sᵏ⁺¹` (accepted) and `ʃᵏ s ʃ sᵏ` (rejected) share the
-length-`k` tier-prefix and length-`k` tier-suffix on every Bool tier.
-Both witnesses are sandwiches with **asymmetric** bookends `posterior`
-on the left and `anterior` on the right; widths differ between
-witnesses (`k+1` for accepted, `k` for rejected). The 8-tier
-enumeration (3 alphabet classes × 2 keep/drop) collapses to 4 since the
-witnesses contain no neutrals.
-
-The local `sandwich` helpers (over `Core/Data/List/Bookend.lean`)
-handle the (true, true) case directly via `takeAt_*_sandwich` (the
-bookends are wide enough); the other three cases reduce to filtered
-words being equal (after a `replicate_succ` rewrite to merge the middle
-contribution into the bookend). -/
-
-/-- The accepted Tsuut'ina parameterised witness `ʃᵏ⁺¹ sᵏ⁺¹`. Sibilant
-tier projection: `posterior^(k+1) ++ anterior^(k+1)` — no anterior
-precedes any posterior. -/
-abbrev tsuutinaAccepted (k : ℕ) : List TsuutinaSeg :=
-  sandwich (k + 1) Sibilant.posterior [] (k + 1) Sibilant.anterior
-
-/-- The rejected Tsuut'ina parameterised witness `ʃᵏ s ʃ sᵏ`. The
-internal `[anterior, posterior]` is the forbidden adjacency on the
-sibilant tier. -/
-abbrev tsuutinaRejected (k : ℕ) : List TsuutinaSeg :=
-  sandwich k Sibilant.posterior [.anterior, .posterior] k Sibilant.anterior
-
-/-- Tier-affix equality on every Bool tier. Case-split on
-`(T posterior, T anterior)`. The (true, true) case applies the
-substrate's `takeAt_*_sandwich` directly (bookends wide enough). The
-other three cases collapse the filtered witnesses to a single replicate
-(with `replicate_succ` to merge bookend + middle contribution). -/
-private lemma tsuutina_tierAffixes (k : ℕ) (T : TsuutinaSeg → Bool) :
-    Edge.left.takeAt k ((tsuutinaAccepted k).filter T) =
-      Edge.left.takeAt k ((tsuutinaRejected k).filter T) ∧
-    Edge.right.takeAt k ((tsuutinaAccepted k).filter T) =
-      Edge.right.takeAt k ((tsuutinaRejected k).filter T) := by
-  unfold tsuutinaAccepted tsuutinaRejected
-  match h_post : T Sibilant.posterior, h_ant : T Sibilant.anterior with
+/-- The two witnesses share their affixes of length `k` on every tier. -/
+private lemma tsuutina_tierAffixes (k : ℕ) (T : Sibilant → Bool) :
+    Edge.left.takeAt k ((tsuutinaIn k).filter T) = Edge.left.takeAt k ((tsuutinaOut k).filter T) ∧
+    Edge.right.takeAt k ((tsuutinaIn k).filter T) =
+      Edge.right.takeAt k ((tsuutinaOut k).filter T) := by
+  unfold tsuutinaIn tsuutinaOut
+  match h_post : T .posterior, h_ant : T .anterior with
   | false, false =>
-    have h_post' : ¬ T Sibilant.posterior = true := by simp [h_post]
-    have h_ant' : ¬ T Sibilant.anterior = true := by simp [h_ant]
-    rw [filter_sandwich_of_neg_neg h_post' h_ant',
-        filter_sandwich_of_neg_neg h_post' h_ant']
+    have h_post' : ¬ T .posterior = true := by simp [h_post]
+    have h_ant' : ¬ T .anterior = true := by simp [h_ant]
+    rw [filter_sandwich_of_neg_neg h_post' h_ant', filter_sandwich_of_neg_neg h_post' h_ant']
     have h_rej : ([Sibilant.anterior, .posterior] : List _).filter T = [] := by
-      simp [List.filter_cons_of_neg h_ant', List.filter_cons_of_neg h_post']
+      simp [filter_cons_of_neg h_ant', filter_cons_of_neg h_post']
     simp [h_rej]
   | true, false =>
-    have h_ant' : ¬ T Sibilant.anterior = true := by simp [h_ant]
-    rw [filter_sandwich_of_pos_neg h_post h_ant',
-        filter_sandwich_of_pos_neg h_post h_ant']
-    -- accepted: replicate (k+1) post ++ [].filter T = replicate (k+1) post
-    -- rejected: replicate k post ++ [post] = replicate (k+1) post
-    have h_rej : ([Sibilant.anterior, .posterior] : List _).filter T =
-                 [Sibilant.posterior] := by
-      simp [List.filter_cons_of_neg h_ant', List.filter_cons_of_pos h_post]
-    rw [List.filter_nil, List.append_nil, h_rej, ← List.replicate_succ']
+    have h_ant' : ¬ T .anterior = true := by simp [h_ant]
+    rw [filter_sandwich_of_pos_neg h_post h_ant', filter_sandwich_of_pos_neg h_post h_ant']
+    have h_rej : ([Sibilant.anterior, .posterior] : List _).filter T = [.posterior] := by
+      simp [filter_cons_of_neg h_ant', filter_cons_of_pos h_post]
+    rw [filter_nil, append_nil, h_rej, ← replicate_succ']
     exact ⟨rfl, rfl⟩
   | false, true =>
-    have h_post' : ¬ T Sibilant.posterior = true := by simp [h_post]
-    rw [filter_sandwich_of_neg_pos h_post' h_ant,
-        filter_sandwich_of_neg_pos h_post' h_ant]
-    -- accepted: [].filter T ++ replicate (k+1) ant = replicate (k+1) ant
-    -- rejected: [ant] ++ replicate k ant = replicate (k+1) ant
-    have h_rej : ([Sibilant.anterior, .posterior] : List _).filter T =
-                 [Sibilant.anterior] := by
-      simp [List.filter_cons_of_pos h_ant, List.filter_cons_of_neg h_post']
-    rw [List.filter_nil, List.nil_append, h_rej]
-    show (Sibilant.anterior :: List.replicate k Sibilant.anterior).take k =
-         (List.replicate (k + 1) Sibilant.anterior).take k ∧
-         (Sibilant.anterior :: List.replicate k Sibilant.anterior).drop _ =
-         (List.replicate (k + 1) Sibilant.anterior).drop _
-    rw [← List.replicate_succ]
+    have h_post' : ¬ T .posterior = true := by simp [h_post]
+    rw [filter_sandwich_of_neg_pos h_post' h_ant, filter_sandwich_of_neg_pos h_post' h_ant]
+    have h_rej : ([Sibilant.anterior, .posterior] : List _).filter T = [.anterior] := by
+      simp [filter_cons_of_pos h_ant, filter_cons_of_neg h_post']
+    rw [filter_nil, nil_append, h_rej]
+    show (Sibilant.anterior :: replicate k .anterior).take k =
+        (replicate (k + 1) Sibilant.anterior).take k ∧
+      (Sibilant.anterior :: replicate k .anterior).drop _ =
+        (replicate (k + 1) Sibilant.anterior).drop _
+    rw [← replicate_succ]
     exact ⟨rfl, rfl⟩
   | true, true =>
-    rw [filter_sandwich_of_pos_pos h_post h_ant,
-        filter_sandwich_of_pos_pos h_post h_ant,
-        takeAt_left_sandwich (Nat.le_succ k), takeAt_left_sandwich (le_refl k),
-        takeAt_right_sandwich (Nat.le_succ k), takeAt_right_sandwich (le_refl k)]
+    rw [filter_sandwich_of_pos_pos h_post h_ant, filter_sandwich_of_pos_pos h_post h_ant,
+      takeAt_left_sandwich (Nat.le_succ k), takeAt_left_sandwich (le_refl k),
+      takeAt_right_sandwich (Nat.le_succ k), takeAt_right_sandwich (le_refl k)]
     exact ⟨rfl, rfl⟩
 
-/-- The accepted Tsuut'ina witness lies in `tsuutinaLang`. The sibilant
-tier projection is the witness itself (no neutral material), and on
-that string the only adjacency types are `(posterior, posterior)`,
-`(posterior, anterior)` (the boundary), and `(anterior, anterior)` —
-none of which equal the forbidden `(anterior, posterior)`. -/
-private lemma tsuutinaAccepted_mem (k : ℕ) :
-    tsuutinaAccepted k ∈ tsuutinaLang := by
-  show tsuutinaAccepted k ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs antPostForbidden
-                              Sibilant.onTier).language
+private lemma tsuutinaIn_mem (k : ℕ) : tsuutinaIn k ∈ tsuutina := by
+  show tsuutinaIn k ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs antPostForbidden
+    Sibilant.onTier).language
   rw [mem_ofForbiddenPairs_language_iff_filter_isChain]
-  -- Filter to sibilants: identity since no neutrals in the witness.
-  have h_filter : (tsuutinaAccepted k).filter
-                    (fun x => decide (Sibilant.onTier x)) =
-                  tsuutinaAccepted k := by
-    unfold tsuutinaAccepted sandwich
+  have h_filter : (tsuutinaIn k).filter (λ x => decide (Sibilant.onTier x)) = tsuutinaIn k := by
+    unfold tsuutinaIn sandwich
     simp
   rw [h_filter]
-  -- IsChain (¬ antPostForbidden) on sandwich (k+1) post [] (k+1) ant
-  -- = post^(k+1) ++ [] ++ ant^(k+1) = post^(k+1) ++ ant^(k+1).
-  show (sandwich (k + 1) Sibilant.posterior []
-          (k + 1) Sibilant.anterior).IsChain
-        (fun a b => ¬ antPostForbidden a b)
+  show (sandwich (k + 1) Sibilant.posterior [] (k + 1) Sibilant.anterior).IsChain
+    (λ a b => ¬ antPostForbidden a b)
   unfold sandwich
-  rw [List.append_nil, List.isChain_append]
-  refine ⟨?_, ?_, ?_⟩
-  · exact List.isChain_replicate_of_rel _ (by decide)
-  · exact List.isChain_replicate_of_rel _ (by decide)
-  · intro x hx y hy
-    rw [List.getLast?_replicate] at hx
-    rw [List.head?_replicate] at hy
-    simp at hx hy
-    obtain ⟨_, rfl⟩ := hx
-    obtain ⟨_, rfl⟩ := hy
-    decide
+  rw [append_nil, isChain_append]
+  refine ⟨isChain_replicate_of_rel _ (by decide), isChain_replicate_of_rel _ (by decide), ?_⟩
+  intro x hx y hy
+  rw [getLast?_replicate] at hx
+  rw [head?_replicate] at hy
+  simp at hx hy
+  obtain ⟨_, rfl⟩ := hx
+  obtain ⟨_, rfl⟩ := hy
+  decide
 
-/-- The rejected Tsuut'ina witness is **not** in `tsuutinaLang`. The
-internal `[anterior, posterior]` is precisely the forbidden adjacency
-on the sibilant tier. -/
-private lemma tsuutinaRejected_notMem (k : ℕ) :
-    tsuutinaRejected k ∉ tsuutinaLang := by
-  show ¬ (tsuutinaRejected k ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs antPostForbidden
-                                  Sibilant.onTier).language)
+private lemma tsuutinaOut_notMem (k : ℕ) : tsuutinaOut k ∉ tsuutina := by
+  show ¬ (tsuutinaOut k ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs antPostForbidden
+    Sibilant.onTier).language)
   rw [mem_ofForbiddenPairs_language_iff_filter_isChain]
-  -- Filter is identity (no neutrals).
-  have h_filter : (tsuutinaRejected k).filter
-                    (fun x => decide (Sibilant.onTier x)) =
-                  tsuutinaRejected k := by
-    unfold tsuutinaRejected sandwich
+  have h_filter : (tsuutinaOut k).filter (λ x => decide (Sibilant.onTier x)) = tsuutinaOut k := by
+    unfold tsuutinaOut sandwich
     simp
   rw [h_filter]
-  -- The witness contains the adjacent pair (anterior, posterior).
-  -- Unfold sandwich, then use isChain_append_cons_cons to expose the pair.
-  show ¬ (sandwich k Sibilant.posterior
-            [Sibilant.anterior, .posterior] k Sibilant.anterior).IsChain
-        (fun a b => ¬ antPostForbidden a b)
+  show ¬ (sandwich k Sibilant.posterior [Sibilant.anterior, .posterior] k Sibilant.anterior).IsChain
+    (λ a b => ¬ antPostForbidden a b)
   unfold sandwich
   intro hchain
-  -- Reassociate: post^k ++ [ant, post] ++ ant^k = post^k ++ (ant :: post :: ant^k).
-  rw [show List.replicate k Sibilant.posterior ++
-          [Sibilant.anterior, Sibilant.posterior] ++
-          List.replicate k Sibilant.anterior =
-          List.replicate k Sibilant.posterior ++
-          (Sibilant.anterior :: Sibilant.posterior ::
-            List.replicate k Sibilant.anterior) by
-        simp [List.append_assoc]] at hchain
-  rw [List.isChain_append_cons_cons] at hchain
-  exact hchain.2.1 (by decide : antPostForbidden Sibilant.anterior
-                                              Sibilant.posterior)
+  rw [show replicate k Sibilant.posterior ++ [Sibilant.anterior, Sibilant.posterior] ++
+      replicate k Sibilant.anterior =
+      replicate k Sibilant.posterior ++
+        (Sibilant.anterior :: Sibilant.posterior :: replicate k Sibilant.anterior) by
+      simp [append_assoc]] at hchain
+  rw [isChain_append_cons_cons] at hchain
+  exact hchain.2.1 (by decide : antPostForbidden Sibilant.anterior Sibilant.posterior)
 
-/-- **Tsuut'ina asymmetric harmony ∉ BTLI** (Lambert's parametrised
-counterexample). -/
-theorem tsuutina_not_isBTLI : ∀ k, ¬ IsBTLI k tsuutinaLang := by
-  intro k
-  apply not_isBTC_of_indist (w₁ := tsuutinaAccepted k) (w₂ := tsuutinaRejected k)
-  · exact IsBTC.indist_isGenDef_of_tierAffixes (tsuutina_tierAffixes k)
-  · exact tsuutinaAccepted_mem k
-  · exact tsuutinaRejected_notMem k
+/-- Tsuut'ina is not multitier generalized definite (§4.2): `ʃᵏ⁺¹sᵏ⁺¹` is in and `ʃᵏsʃsᵏ` is
+out, with the same affixes of length `k` on every tier. -/
+theorem tsuutina_not_isBTLI (k : ℕ) : ¬ IsBTLI k tsuutina :=
+  not_isBTC_of_indist (IsBTC.indist_isGenDef_of_tierAffixes (tsuutina_tierAffixes k))
+    (tsuutinaIn_mem k) (tsuutinaOut_notMem k)
 
--- ============================================================================
--- § 6. Luganda high-tone plateauing ∈ J ∖ BTLI
--- ============================================================================
-
-/-- Luganda tone alphabet [hyman-katamba-2010]: low (ℓ) and high (h),
-following [jardine-2020]'s identification of "intermediate" with low
-in the input. -/
-inductive LugandaTone | low | high
+/-- The segment classes of Uyghur backness harmony ((34)): harmonizing vowels and dorsal
+consonants, front or back, the same marked as suffix material, and the rest. -/
+inductive UyghurSeg
+  | frontVowel
+  | backVowel
+  | frontDorsal
+  | backDorsal
+  | suffixFrontVowel
+  | suffixBackVowel
+  | suffixFrontDorsal
+  | suffixBackDorsal
+  | other
   deriving DecidableEq, Repr
 
-/-- The Luganda high-tone plateauing predicate [lambert-2026] (37):
-no `[h, ℓ, h]` subsequence (at most one high span), and if any high tone
-appears then there is a later low (`[h, ℓ]` is a subsequence). -/
-def lugandaPred (w : List LugandaTone) : Prop :=
-  ¬ ([LugandaTone.high, .low, .high] <+ w) ∧
-    (LugandaTone.high ∈ w → [LugandaTone.high, .low] <+ w)
+/-- The harmonizing-vowel tier `V_f ∪ V_b`. -/
+def UyghurSeg.isHarmonizingVowel : UyghurSeg → Bool
+  | .frontVowel | .backVowel => true
+  | _ => false
 
-/-- The Luganda high-tone plateauing language. -/
-def lugandaLang : Language LugandaTone := { w | lugandaPred w }
+/-- The dorsal tier `C_f ∪ C_b`. -/
+def UyghurSeg.isDorsal : UyghurSeg → Bool
+  | .frontDorsal | .backDorsal => true
+  | _ => false
 
-/-- Membership in `lugandaLang` is membership in `lugandaPred`. -/
-@[simp] lemma mem_lugandaLang (w : List LugandaTone) :
-    w ∈ lugandaLang ↔ lugandaPred w := Iff.rfl
+/-- The front-suffix tier `S_f`. -/
+def UyghurSeg.isSuffixFront : UyghurSeg → Bool
+  | .suffixFrontVowel | .suffixFrontDorsal => true
+  | _ => false
 
-/-- **Luganda high-tone plateauing ∈ PT_3** (Lambert 2026 (37)). Plateauing bans the
-length-3 `[h, ℓ, h]`; the obligatory-final-low conjunct is "no `[h]`, or else `[h, ℓ]`".
-So the language is `SP_3 ⊓ (SP_3 ⊔ SP_3ᶜ)`. -/
-theorem luganda_isPT : lugandaLang.IsPiecewiseTestable 3 := by
-  have h : lugandaLang =
-      {w | ¬ ([LugandaTone.high, .low, .high] <+ w)} ⊓
-        ({w | ¬ ([LugandaTone.high] <+ w)} ⊔ {w | [LugandaTone.high, .low] <+ w}) := by
-    ext w
-    show lugandaPred w ↔ _ ∧ (_ ∨ _)
-    simp [lugandaPred, imp_iff_not_or]
-  rw [h]
-  exact (avoid_isPT (by decide)).inter
-    ((avoid_isPT (by decide)).union (contains_isPT (by decide)))
+/-- The back-suffix tier `S_b`. -/
+def UyghurSeg.isSuffixBack : UyghurSeg → Bool
+  | .suffixBackVowel | .suffixBackDorsal => true
+  | _ => false
 
-/-! ### Refutation: Luganda ∉ BTLI
+/-- Uyghur backness harmony ((35)): the suffix agrees with the rightmost harmonizing vowel, or
+failing that with the rightmost dorsal, each implication `φ → ψ` written `φᶜ ⊔ ψ`. -/
+def uyghur : Language UyghurSeg :=
+  ((tierSuffix UyghurSeg.isHarmonizingVowel [.frontVowel])ᶜ ⊔
+      tierWord UyghurSeg.isSuffixBack []) ⊓
+    ((tierSuffix UyghurSeg.isHarmonizingVowel [.backVowel])ᶜ ⊔
+      tierWord UyghurSeg.isSuffixFront []) ⊓
+    ((tierWord UyghurSeg.isHarmonizingVowel [] ⊓ tierSuffix UyghurSeg.isDorsal [.frontDorsal])ᶜ ⊔
+      tierWord UyghurSeg.isSuffixBack []) ⊓
+    ((tierWord UyghurSeg.isHarmonizingVowel [] ⊓ tierSuffix UyghurSeg.isDorsal [.backDorsal])ᶜ ⊔
+      tierWord UyghurSeg.isSuffixFront [])
 
-Lambert (2026) §5.1 parameterised counterexample: for every `k`, the words
-`ℓᵏ ℓ h h ℓ ℓᵏ` (accepted) and `ℓᵏ ℓ h ℓ h ℓ ℓᵏ` (rejected) share the
-length-`k` tier-prefix and length-`k` tier-suffix on every Bool tier.
-Both witnesses are sandwiches with bookend `low` and width `k`; the
-local `sandwich` helpers (over `Core/Data/List/Bookend.lean`)
-handle the bookend-keeps-tier-affix case directly, leaving only the
-small filtered-middle equality as per-witness work.
+/-- Uyghur backness harmony is multitier definite (§4.3): every literal is a tier suffix. -/
+theorem uyghur_isBTD : IsBTD 1 uyghur :=
+  IsBTC.inter (IsBTC.inter (IsBTC.inter
+    (IsBTC.union (IsBTC.compl (isBTD_tierSuffix _ _ (by decide))) (isBTD_tierWord _ _ (by decide)))
+    (IsBTC.union (IsBTC.compl (isBTD_tierSuffix _ _ (by decide))) (isBTD_tierWord _ _ (by decide))))
+    (IsBTC.union (IsBTC.compl (IsBTC.inter (isBTD_tierWord _ _ (by decide))
+      (isBTD_tierSuffix _ _ (by decide)))) (isBTD_tierWord _ _ (by decide))))
+    (IsBTC.union (IsBTC.compl (IsBTC.inter (isBTD_tierWord _ _ (by decide))
+      (isBTD_tierSuffix _ _ (by decide)))) (isBTD_tierWord _ _ (by decide)))
 
-Membership separation is **predicate-level** (not TSL-grammar level):
-`lugandaPred` requires no `[h, ℓ, h]` subsequence and (if any high
-appears) a `[h, ℓ]` subsequence. Accepted satisfies both; rejected fails
-the first because its explicit middle `[ℓ, h, ℓ, h, ℓ]` contains
-`[h, ℓ, h]` as a subsequence. -/
+/-! ### Tone (§5)
 
-/-- The accepted Luganda parameterised witness `ℓᵏ ℓ h h ℓ ℓᵏ`. The two
-high tones are adjacent inside the middle, so no `[h, ℓ, h]` subsequence
-can be formed (no low position lies strictly between them). -/
-abbrev lugandaAccepted (k : ℕ) : List LugandaTone :=
-  sandwich k LugandaTone.low [LugandaTone.low, .high, .high, .low] k LugandaTone.low
+Tone strings over low and high, without their associations to segments. Luganda plateauing and
+Prinmi are piecewise testable but not multitier generalized definite; Arigibi, Chuave, and
+Kagoshima Japanese are piecewise testable and multitier co/finite or definite; the Karanga Shona
+verb stem is multitier generalized definite. Order-based formulae are Boolean combinations of
+shuffle ideals. -/
 
-/-- The rejected Luganda parameterised witness `ℓᵏ ℓ h ℓ h ℓ ℓᵏ`. The
-explicit middle `[ℓ, h, ℓ, h, ℓ]` contains `[h, ℓ, h]` as a
-subsequence — exactly the structural pattern `lugandaPred` forbids. -/
-abbrev lugandaRejected (k : ℕ) : List LugandaTone :=
-  sandwich k LugandaTone.low [LugandaTone.low, .high, .low, .high, .low] k LugandaTone.low
+/-- A tone. -/
+inductive Tone
+  | low
+  | high
+  deriving DecidableEq, Repr
 
-/-- Tier-affix equality on every Bool tier. Case-split on `T low`:
-when low is kept, the bookends survive and `takeAt_*_sandwich` gives
-the affix `replicate k low` on both sides; when low is dropped, the
-filtered word collapses to the middle and the two middles project to
-the same filtered list (either `[h, h]` or `[]` depending on `T high`). -/
-private lemma luganda_tierAffixes (k : ℕ) (T : LugandaTone → Bool) :
-    Edge.left.takeAt k ((lugandaAccepted k).filter T) =
-      Edge.left.takeAt k ((lugandaRejected k).filter T) ∧
-    Edge.right.takeAt k ((lugandaAccepted k).filter T) =
-      Edge.right.takeAt k ((lugandaRejected k).filter T) := by
-  unfold lugandaAccepted lugandaRejected
-  match h_low : T LugandaTone.low with
-  | true =>
-    -- Bookends kept; filtered words remain sandwiches with bookend `low`.
-    -- `takeAt_*_sandwich` projects to `replicate k low` on both sides.
-    rw [filter_sandwich_of_pos_pos h_low h_low,
-        filter_sandwich_of_pos_pos h_low h_low,
-        takeAt_left_sandwich (le_refl k), takeAt_left_sandwich (le_refl k),
-        takeAt_right_sandwich (le_refl k), takeAt_right_sandwich (le_refl k)]
-    exact ⟨rfl, rfl⟩
-  | false =>
-    have h_low' : ¬ T LugandaTone.low = true := by simp [h_low]
-    -- Bookends dropped; both filtered words equal `mid.filter T`.
-    rw [filter_sandwich_of_neg_neg h_low' h_low',
-        filter_sandwich_of_neg_neg h_low' h_low']
-    -- Sub-case on `T high`; both middles' filtered forms agree.
-    match h_high : T LugandaTone.high with
-    | true =>
-      have h_acc : ([LugandaTone.low, .high, .high, .low] : List LugandaTone).filter T =
-                   [LugandaTone.high, .high] := by
-        simp [List.filter_cons_of_neg h_low', List.filter_cons_of_pos h_high]
-      have h_rej : ([LugandaTone.low, .high, .low, .high, .low] : List LugandaTone).filter T =
-                   [LugandaTone.high, .high] := by
-        simp [List.filter_cons_of_neg h_low', List.filter_cons_of_pos h_high]
-      rw [h_acc, h_rej]
-      exact ⟨rfl, rfl⟩
-    | false =>
-      have h_high' : ¬ T LugandaTone.high = true := by simp [h_high]
-      have h_acc : ([LugandaTone.low, .high, .high, .low] : List LugandaTone).filter T = [] := by
-        simp [List.filter_cons_of_neg h_low', List.filter_cons_of_neg h_high']
-      have h_rej : ([LugandaTone.low, .high, .low, .high, .low] : List LugandaTone).filter T = [] := by
-        simp [List.filter_cons_of_neg h_low', List.filter_cons_of_neg h_high']
-      rw [h_acc, h_rej]
-      exact ⟨rfl, rfl⟩
-
-/-- The accepted Luganda witness lies in `lugandaLang`. The first
-predicate conjunct `¬ [h, ℓ, h] <+ ·` follows from `not_sublist_sandwich`
-(pat = `[h, ℓ, h]` doesn't start or end with `low`, and the explicit
-middle doesn't contain `[h, ℓ, h]` as a subsequence). The second
-`high ∈ · → [h, ℓ] <+ ·` lifts a decidable check on the middle through
-`sublist_sandwich_of_sublist_mid`. -/
-private lemma lugandaAccepted_mem (k : ℕ) :
-    lugandaAccepted k ∈ lugandaLang := by
-  show lugandaPred (lugandaAccepted k)
-  refine ⟨?_, fun _ => ?_⟩
-  · exact not_sublist_sandwich (by decide) (by decide) (by decide) k k
-  · exact sublist_sandwich_of_sublist_mid (by decide) k _ k _
-
-/-- The rejected Luganda witness fails `lugandaPred` because its explicit
-middle `[low, high, low, high, low]` contains `[high, low, high]` as a
-subsequence (positions 1, 2, 3). Lifted via `sublist_sandwich_of_sublist_mid`. -/
-private lemma lugandaRejected_notMem (k : ℕ) :
-    lugandaRejected k ∉ lugandaLang := by
-  intro h_mem
-  exact h_mem.1 (sublist_sandwich_of_sublist_mid (by decide) k _ k _)
-
-/-- **Luganda high-tone plateauing ∉ BTLI** (Lambert 2026 §5.1).
-Parametrised-word witness: `ℓᵏ ℓ h h ℓ ℓᵏ` is accepted while
-`ℓᵏ ℓ h ℓ h ℓ ℓᵏ` is rejected, but the two share all length-`k`
-tier-affixes on every tier. -/
-theorem luganda_not_isBTLI : ∀ k, ¬ IsBTLI k lugandaLang := by
-  intro k
-  apply not_isBTC_of_indist (w₁ := lugandaAccepted k) (w₂ := lugandaRejected k)
-  · exact IsBTC.indist_isGenDef_of_tierAffixes (luganda_tierAffixes k)
-  · exact lugandaAccepted_mem k
-  · exact lugandaRejected_notMem k
-
--- ============================================================================
--- § 7. Prinmi pitch-accent ∈ PT_3 ∖ BTLI
--- ============================================================================
-
-/-! Lambert 2026 §5.2 ([ding-2006]): Prinmi pitch-accent lexically
-selects a high-tone position within a domain (morpheme or span of
-adjacent morphemes); high may spread progressively to the next syllable.
-The resulting pattern enforces:
-
-1. **Obligatoriness**: at least one high tone (`h`).
-2. **At most one high span**: no `[h, ℓ, h]` subsequence (same as
-   Luganda §5.1).
-3. **Span length ≤ 2**: no `[h, h, h]` subsequence (new conjunct
-   not present in Luganda).
-
-Lambert: "the same words witness this nonmembership as for high-tone
-plateauing: `ℓᵏ h h ℓᵏ` is valid but `ℓᵏ h ℓ h ℓᵏ` is not, despite
-the two having the same k-affixes on every tier." So we **reuse**
-`lugandaAccepted` / `lugandaRejected` as witnesses and `luganda_tierAffixes`
-as the indistinguishability proof — the substrate `Sandwich`'s
-`not_sublist_sandwich` discharges both the `[h, ℓ, h]` and the new
-`[h, h, h]` non-subsequence claims uniformly.
-
-Alphabet: `LugandaTone` reused per Lambert's unified `ℓ`/`h` notation
-across §5.
-
-Disclaimer (Lambert §5.2): [ding-2006] assumes maximally
-quadrisyllabic domains with significant compounding; that finite-domain
-restriction would make Prinmi *co/finite* (a stronger classification).
-The PT_3-and-not-BTLI result formalised here applies to the *unbounded*
-analysis Lambert presents; the bounded analysis is out of scope. -/
-
-/-- The Prinmi pitch-accent predicate [lambert-2026] (39):
-* `[h] <+ w` — at least one high tone (obligatoriness).
-* `¬ [h, ℓ, h] <+ w` — at most one high span.
-* `¬ [h, h, h] <+ w` — high span length ≤ 2 syllables. -/
-def prinmiPred (w : List LugandaTone) : Prop :=
-  ([LugandaTone.high] <+ w) ∧
-    (¬ ([LugandaTone.high, .low, .high] <+ w)) ∧
-    (¬ ([LugandaTone.high, .high, .high] <+ w))
-
-/-- The Prinmi pitch-accent language. -/
-def prinmiLang : Language LugandaTone := { w | prinmiPred w }
-
-/-- Membership in `prinmiLang` is membership in `prinmiPred`. -/
-@[simp] lemma mem_prinmiLang (w : List LugandaTone) :
-    w ∈ prinmiLang ↔ prinmiPred w := Iff.rfl
-
-/-- **Prinmi pitch-accent ∈ PT_3** (Lambert 2026 (39)). Obligatoriness requires the
-length-1 `[h]`; the two span conditions ban a length-3 pattern each. So the language is
-`SP_3ᶜ ⊓ SP_3 ⊓ SP_3`. -/
-theorem prinmi_isPT : prinmiLang.IsPiecewiseTestable 3 := by
-  have h : prinmiLang = {w | [LugandaTone.high] <+ w} ⊓
-      ({w | ¬ ([LugandaTone.high, .low, .high] <+ w)} ⊓
-        {w | ¬ ([LugandaTone.high, .high, .high] <+ w)}) := by
-    ext w
-    show prinmiPred w ↔ _ ∧ (_ ∧ _)
-    simp [prinmiPred]
-  rw [h]
-  exact (contains_isPT (by decide)).inter
-    ((avoid_isPT (by decide)).inter (avoid_isPT (by decide)))
-
-/-- The accepted Luganda witness also satisfies `prinmiPred`. The first
-two conjuncts mirror Luganda; the third (no `[h, h, h]` subseq) follows
-from `not_sublist_sandwich` since the explicit middle `[low, high, high,
-low]` contains no three highs. -/
-private lemma prinmiAccepted_mem (k : ℕ) :
-    lugandaAccepted k ∈ prinmiLang := by
-  show prinmiPred (lugandaAccepted k)
-  refine ⟨?_, ?_, ?_⟩
-  · exact sublist_sandwich_of_sublist_mid (by decide) k _ k _
-  · exact not_sublist_sandwich (by decide) (by decide) (by decide) k k
-  · exact not_sublist_sandwich (by decide) (by decide) (by decide) k k
-
-/-- The rejected Luganda witness fails `prinmiPred` because its explicit
-middle `[low, high, low, high, low]` contains `[high, low, high]` as a
-subsequence — exactly the second conjunct of `prinmiPred`. -/
-private lemma prinmiRejected_notMem (k : ℕ) :
-    lugandaRejected k ∉ prinmiLang := by
-  intro h_mem
-  exact h_mem.2.1 (sublist_sandwich_of_sublist_mid (by decide) k _ k _)
-
-/-- **Prinmi pitch-accent ∉ BTLI** (Lambert 2026 §5.2). Same witnesses
-and tier-affix proof as Luganda §5.1 — Lambert: "The same words witness
-this nonmembership as for high-tone plateauing." -/
-theorem prinmi_not_isBTLI : ∀ k, ¬ IsBTLI k prinmiLang := by
-  intro k
-  apply not_isBTC_of_indist (w₁ := lugandaAccepted k) (w₂ := lugandaRejected k)
-  · exact IsBTC.indist_isGenDef_of_tierAffixes (luganda_tierAffixes k)
-  · exact prinmiAccepted_mem k
-  · exact prinmiRejected_notMem k
-
--- ============================================================================
--- § 8. Arigibi pitch-accent ∈ PT_2 ∩ BTN
--- ============================================================================
-
-/-! Lambert 2026 §5.3 ([donohue-1997]): Arigibi (Trans-New Guinea)
-allows at most one mora with high tone (position lexically specified;
-words with no high tone are allowed). The phonotactic constraint is
-`¬h..h` — no `[high, high]` subsequence anywhere.
-
-Lambert: "exactly analogous to culminativity in isolation, and as such
-it is piecewise testable and tier-based co/finite, as demonstrated in
-§2.3" (Lambert's §2.3 is unbounded culminativity). -/
-
-/-- Boolean tier predicate selecting `LugandaTone.high`. Shared by §8
-Arigibi and §9 Chuave. -/
-def isLugHigh : LugandaTone → Bool
+/-- The high-tone tier. -/
+def Tone.isHigh : Tone → Bool
   | .high => true
   | .low => false
 
-/-- The Arigibi pitch-accent language: at most one high mora. -/
-def arigibiLang : Language LugandaTone :=
-  { w | ¬ ([LugandaTone.high, .high] <+ w) }
+/-- Luganda high-tone plateauing ((37), [hyman-katamba-2010]): `¬h..ℓ..h ∧ (h → h..ℓ)`. -/
+def luganda : Language Tone :=
+  (shuffleIdeal [.high, .low, .high])ᶜ ⊓ ((shuffleIdeal [.high])ᶜ ⊔ shuffleIdeal [.high, .low])
 
-/-- Membership in `arigibiLang` is `¬ [h, h] <+ w`. -/
-@[simp] lemma mem_arigibiLang (w : List LugandaTone) :
-    w ∈ arigibiLang ↔ ¬ ([LugandaTone.high, .high] <+ w) := Iff.rfl
+theorem luganda_isPiecewiseTestable : luganda.IsPiecewiseTestable 3 :=
+  (isPiecewiseTestable_compl_shuffleIdeal (by decide)).inter
+    ((isPiecewiseTestable_compl_shuffleIdeal (by decide)).union
+      (isPiecewiseTestable_shuffleIdeal (by decide)))
 
-/-- **Arigibi pitch-accent ∈ PT_2** (Lambert 2026 §5.3, formula `¬h..h`). The single
-banned subsequence `[h, h]` makes the language SP_2 outright. -/
-theorem arigibi_isPT : arigibiLang.IsPiecewiseTestable 2 := avoid_isPT (by decide)
+/-- The accepted witness `ℓᵏℓhhℓℓᵏ`. -/
+private abbrev toneIn (k : ℕ) : List Tone := sandwich k .low [.low, .high, .high, .low] k .low
 
-/-- The high-tier projection of any LugandaTone word is a `replicate`
-list of `high`s (since `isLugHigh` only keeps highs). -/
-private lemma lugFilterHigh_eq_replicate (w : List LugandaTone) :
-    w.filter isLugHigh = List.replicate (w.filter isLugHigh).length .high := by
-  apply List.eq_replicate_iff.mpr
-  refine ⟨rfl, ?_⟩
-  intro x hx
-  rw [List.mem_filter] at hx
-  rcases x with _ | _
-  · exact absurd hx.2 (by decide)
-  · rfl
+/-- The rejected witness `ℓᵏℓhℓhℓℓᵏ`. -/
+private abbrev toneOut (k : ℕ) : List Tone :=
+  sandwich k .low [.low, .high, .low, .high, .low] k .low
 
-/-- `[h, h] <+ w` iff `[h, h]` is a sublist of the high-tier projection.
-Forward: `Sublist.filter` + reduction of `[h, h].filter isLugHigh = [h, h]`.
-Backward: transitivity through `List.filter_sublist`. -/
-private lemma hh_sublist_iff_filter (w : List LugandaTone) :
-    ([LugandaTone.high, .high] <+ w) ↔
-      ([LugandaTone.high, .high] <+ w.filter isLugHigh) := by
+/-- The two witnesses share their affixes of length `k` on every tier. -/
+private lemma tone_tierAffixes (k : ℕ) (T : Tone → Bool) :
+    Edge.left.takeAt k ((toneIn k).filter T) = Edge.left.takeAt k ((toneOut k).filter T) ∧
+    Edge.right.takeAt k ((toneIn k).filter T) = Edge.right.takeAt k ((toneOut k).filter T) := by
+  unfold toneIn toneOut
+  match h_low : T .low with
+  | true =>
+    rw [filter_sandwich_of_pos_pos h_low h_low, filter_sandwich_of_pos_pos h_low h_low,
+      takeAt_left_sandwich (le_refl k), takeAt_left_sandwich (le_refl k),
+      takeAt_right_sandwich (le_refl k), takeAt_right_sandwich (le_refl k)]
+    exact ⟨rfl, rfl⟩
+  | false =>
+    have h_low' : ¬ T .low = true := by simp [h_low]
+    rw [filter_sandwich_of_neg_neg h_low' h_low', filter_sandwich_of_neg_neg h_low' h_low']
+    match h_high : T .high with
+    | true =>
+      have h_acc : ([Tone.low, .high, .high, .low] : List Tone).filter T = [.high, .high] := by
+        simp [filter_cons_of_neg h_low', filter_cons_of_pos h_high]
+      have h_rej : ([Tone.low, .high, .low, .high, .low] : List Tone).filter T =
+          [.high, .high] := by
+        simp [filter_cons_of_neg h_low', filter_cons_of_pos h_high]
+      rw [h_acc, h_rej]
+      exact ⟨rfl, rfl⟩
+    | false =>
+      have h_high' : ¬ T .high = true := by simp [h_high]
+      have h_acc : ([Tone.low, .high, .high, .low] : List Tone).filter T = [] := by
+        simp [filter_cons_of_neg h_low', filter_cons_of_neg h_high']
+      have h_rej : ([Tone.low, .high, .low, .high, .low] : List Tone).filter T = [] := by
+        simp [filter_cons_of_neg h_low', filter_cons_of_neg h_high']
+      rw [h_acc, h_rej]
+      exact ⟨rfl, rfl⟩
+
+/-- The tone witnesses are not separated by any multitier generalized definite language. -/
+private lemma tone_indist (k : ℕ) :
+    IsBTC.Indist (IsGeneralizedDefinite · k) (toneIn k) (toneOut k) :=
+  IsBTC.indist_isGenDef_of_tierAffixes (tone_tierAffixes k)
+
+/-- Luganda plateauing is not multitier generalized definite (§5.1). -/
+theorem luganda_not_isBTLI (k : ℕ) : ¬ IsBTLI k luganda :=
+  not_isBTC_of_indist (tone_indist k)
+    ⟨not_sublist_sandwich (by decide) (by decide) (by decide) k k,
+      Or.inr (sublist_sandwich_of_sublist_mid (by decide) k _ k _)⟩
+    λ h => h.1 (sublist_sandwich_of_sublist_mid (by decide) k _ k _)
+
+/-- Prinmi ((39), [ding-2006]): one high span of at most two syllables,
+`h ∧ ¬h..ℓ..h ∧ ¬h..h..h`. -/
+def prinmi : Language Tone :=
+  shuffleIdeal [.high] ⊓ (shuffleIdeal [.high, .low, .high])ᶜ ⊓
+    (shuffleIdeal [.high, .high, .high])ᶜ
+
+theorem prinmi_isPiecewiseTestable : prinmi.IsPiecewiseTestable 3 :=
+  ((isPiecewiseTestable_shuffleIdeal (by decide)).inter
+    (isPiecewiseTestable_compl_shuffleIdeal (by decide))).inter
+    (isPiecewiseTestable_compl_shuffleIdeal (by decide))
+
+/-- Prinmi is not multitier generalized definite (§5.2), by the Luganda witnesses. -/
+theorem prinmi_not_isBTLI (k : ℕ) : ¬ IsBTLI k prinmi :=
+  not_isBTC_of_indist (tone_indist k)
+    ⟨⟨sublist_sandwich_of_sublist_mid (by decide) k _ k _,
+      not_sublist_sandwich (by decide) (by decide) (by decide) k k⟩,
+      not_sublist_sandwich (by decide) (by decide) (by decide) k k⟩
+    λ h => h.1.2 (sublist_sandwich_of_sublist_mid (by decide) k _ k _)
+
+/-- Arigibi ((40), [donohue-1997]): at most one high mora, `¬h..h`. -/
+def arigibi : Language Tone := (shuffleIdeal [.high, .high])ᶜ
+
+theorem arigibi_isPiecewiseTestable : arigibi.IsPiecewiseTestable 2 :=
+  isPiecewiseTestable_compl_shuffleIdeal (by decide)
+
+/-- The high tier of a tone string is a run of highs. -/
+private lemma filter_isHigh_eq_replicate (w : List Tone) :
+    w.filter Tone.isHigh = replicate (w.filter Tone.isHigh).length .high :=
+  eq_replicate_iff.mpr ⟨rfl, λ x hx => by
+    rcases x with _ | _
+    · exact absurd (mem_filter.mp hx).2 (by decide)
+    · rfl⟩
+
+/-- Two highs occur in a tone string iff they occur on its high tier. -/
+private lemma high_high_sublist_iff (w : List Tone) :
+    [Tone.high, .high] <+ w ↔ [Tone.high, .high] <+ w.filter Tone.isHigh :=
+  ⟨λ h => by simpa only [filter_cons_of_pos (by decide : Tone.isHigh .high = true), filter_nil]
+    using h.filter Tone.isHigh, λ h => h.trans filter_sublist⟩
+
+/-- Arigibi is tier-based co/finite (§5.3): on the high tier the word is empty or a single
+high, culminativity on tone. -/
+theorem arigibi_isTierBased : IsTierBased IsFiniteOrCofinite arigibi := by
+  refine ⟨Tone.isHigh, {xs | xs = [] ∨ xs = [.high]}, ?_,
+    Or.inl ((Set.finite_singleton _).insert _)⟩
+  ext w
+  show ¬ [Tone.high, .high] <+ w ↔ w.filter Tone.isHigh = [] ∨ w.filter Tone.isHigh = [.high]
+  rw [high_high_sublist_iff, show ([Tone.high, .high] : List Tone) = replicate 2 .high from rfl,
+    filter_isHigh_eq_replicate w, replicate_sublist_replicate]
+  generalize (w.filter Tone.isHigh).length = n
+  rcases n with _ | _ | n
+  · simp
+  · simp
+  · simp [replicate_succ]
+
+/-- Kagoshima Japanese ((42), [ding-2006]): one high tone, on the final or the penultimate
+mora, `h ∧ ¬h..h ∧ ¬h..ℓ..ℓ`. -/
+def kagoshima : Language Tone :=
+  shuffleIdeal [.high] ⊓ (shuffleIdeal [.high, .high])ᶜ ⊓ (shuffleIdeal [.high, .low, .low])ᶜ
+
+theorem kagoshima_isPiecewiseTestable : kagoshima.IsPiecewiseTestable 3 :=
+  ((isPiecewiseTestable_shuffleIdeal (by decide)).inter
+    (isPiecewiseTestable_compl_shuffleIdeal (by decide))).inter
+    (isPiecewiseTestable_compl_shuffleIdeal (by decide))
+
+/-- Kagoshima Japanese by tiers ((43)): `[⋊h⋉]_{h} ∧ (hℓ⋉ ∨ h⋉)`. -/
+def kagoshimaTier : Language Tone :=
+  tierWord Tone.isHigh [.high] ⊓ (ofSuffix [.high, .low] ⊔ ofSuffix [.high])
+
+theorem kagoshimaTier_isBTD : IsBTD 2 kagoshimaTier :=
+  IsBTC.inter (isBTD_tierWord _ _ (by decide))
+    (IsBTC.union (isBTD_ofSuffix _ (by decide)) (isBTD_ofSuffix _ (by decide)))
+
+/-- Chuave ((44), [donohue-1997]): obligatoriness, at least one high mora, `h`. -/
+def chuave : Language Tone := shuffleIdeal [.high]
+
+theorem chuave_isPiecewiseTestable : chuave.IsPiecewiseTestable 1 :=
+  isPiecewiseTestable_shuffleIdeal (by decide)
+
+/-- Chuave is the complement of an empty high tier, `¬[⋊⋉]_{h}`. -/
+theorem chuave_eq_compl_tierWord : chuave = (tierWord Tone.isHigh [])ᶜ := by
+  ext w
+  show [Tone.high] <+ w ↔ ¬ w.filter Tone.isHigh = []
+  rw [singleton_sublist, filter_eq_nil_iff]
+  push Not
   constructor
-  · intro h
-    have := h.filter isLugHigh
-    simpa only [List.filter_cons_of_pos (by decide : isLugHigh .high = true),
-                List.filter_nil] using this
-  · intro h
-    exact h.trans List.filter_sublist
+  · exact λ h => ⟨.high, h, rfl⟩
+  · rintro ⟨a, ha, hh⟩
+    cases a
+    · exact absurd hh (by decide)
+    · exact ha
 
-/-- **Arigibi pitch-accent ∈ BTN** (Lambert 2026 §5.3). On the high
-tier, the projection has length ≤ 1, i.e., is either `[]` or `[high]` —
-a finite set, hence co/finite. -/
-theorem arigibi_isBTN : IsBTN arigibiLang := by
-  apply IsBTC.of_tierBased
-  refine ⟨isLugHigh, { xs | xs = [] ∨ xs = [LugandaTone.high] }, ?_, ?_⟩
-  · -- arigibiLang = preimage of {[], [high]} under tier projection.
-    ext w
-    show ¬ ([LugandaTone.high, .high] <+ w) ↔
-         (w.filter isLugHigh = [] ∨ w.filter isLugHigh = [.high])
-    rw [hh_sublist_iff_filter]
-    rw [show ([LugandaTone.high, .high] : List _) = List.replicate 2 .high from rfl]
-    rw [lugFilterHigh_eq_replicate w]
-    rw [List.replicate_sublist_replicate]
-    -- Goal: ¬ 2 ≤ (w.filter isLugHigh).length ↔
-    --       replicate _ .high = [] ∨ replicate _ .high = [.high]
-    constructor
-    · intro h_lt
-      have h_le_one : (w.filter isLugHigh).length ≤ 1 := by omega
-      rcases Nat.le_one_iff_eq_zero_or_eq_one.mp h_le_one with hn | hn
-      · left; rw [hn]; rfl
-      · right; rw [hn]; rfl
-    · rintro (h | h)
-      · -- h : replicate (w.filter isLugHigh).length .high = []
-        have h_len : (w.filter isLugHigh).length = 0 := by
-          have := congrArg List.length h
-          simpa [List.length_replicate] using this
-        omega
-      · -- h : replicate (w.filter isLugHigh).length .high = [.high]
-        have h_len : (w.filter isLugHigh).length = 1 := by
-          have := congrArg List.length h
-          simpa [List.length_replicate] using this
-        omega
-  · -- {xs | xs = [] ∨ xs = [high]} is {[], [high]}, finite.
-    left
-    have h_eq : ({xs : List LugandaTone | xs = [] ∨ xs = [.high]}) =
-                ({([] : List LugandaTone)} ∪ {[LugandaTone.high]}) := by
-      ext x
-      simp only [Set.mem_ofPred_eq, Set.mem_union, Set.mem_singleton_iff]
-    rw [h_eq]
-    exact (Set.finite_singleton _).union (Set.finite_singleton _)
+theorem chuave_isBTN : IsBTN chuave :=
+  chuave_eq_compl_tierWord ▸ IsBTC.compl (isBTN_tierWord Tone.isHigh [])
 
--- ============================================================================
--- § 9. Chuave obligatoriness ∈ PT_1 ∩ BTN
--- ============================================================================
+/-- The seven fully specified Karanga Shona stems (§5.6, [odden-1984]). -/
+def karangaShort : Language Tone :=
+  {w | w ∈ [[.low], [.low, .high], [.low, .high, .low], [.high], [.high, .low],
+    [.high, .low, .high], [.high, .high, .low, .high]]}
 
-/-! Lambert 2026 §5.5 ([donohue-1997]): Chuave (Trans-New Guinea)
-exhibits **obligatoriness** — every word must contain at least one
-high-tone mora. There is no restriction on placement; multiple high
-spans are allowed. The phonotactic constraint is the simplest possible:
-the formula `h` (at least one high). This is both:
+/-- The Karanga Shona verb stem ((48), (49)): a short stem, a low-toned root `⋊ℓhhℓ ∧ [⋊hh⋉]_{h}`,
+or a high-toned root `⋊hhhℓ ∧ ℓh⋉ ∧ [⋊hhhh⋉]_{h}`. -/
+def karangaShona : Language Tone :=
+  karangaShort ⊔
+    (ofPrefix [.low, .high, .high, .low] ⊓ tierWord Tone.isHigh [.high, .high]) ⊔
+    (ofPrefix [.high, .high, .high, .low] ⊓ ofSuffix [.low, .high] ⊓
+      tierWord Tone.isHigh [.high, .high, .high, .high])
 
-* **PT_1**: the constraint depends only on the length-1 subsequence
-  `[h]`.
-* **BTN** (multitier finite-or-cofinite): on the high tier, the
-  projection must be non-empty. The non-empty list set is co/finite
-  (its complement is the singleton `{[]}`). -/
-
-/-- The Chuave obligatoriness language: at least one mora has high tone. -/
-def chuaveLang : Language LugandaTone := { w | LugandaTone.high ∈ w }
-
-/-- Membership in `chuaveLang` is `high ∈ w`. -/
-@[simp] lemma mem_chuaveLang (w : List LugandaTone) :
-    w ∈ chuaveLang ↔ LugandaTone.high ∈ w := Iff.rfl
-
-/-- **Chuave obligatoriness ∈ PT_1** (Lambert 2026 §5.5). The constraint `high ∈ w` is
-the singleton subsequence presence `[high] <+ w`, the complement of an SP_1 language. -/
-theorem chuave_isPT : chuaveLang.IsPiecewiseTestable 1 := by
-  have h : chuaveLang = {w | [LugandaTone.high] <+ w} := by
-    ext w; exact List.singleton_sublist.symm
-  rw [h]
-  exact contains_isPT (by decide)
-
-/-- **Chuave obligatoriness ∈ BTN** (Lambert 2026 §5.5, formula
-`¬ [⋊⋉]_{h}`). On the high tier `isLugHigh`, the projection
-`w.filter isLugHigh` is non-empty iff `high ∈ w`. The non-empty set
-`{xs | xs ≠ []}` is co/finite (complement is `{[]}`). -/
-theorem chuave_isBTN : IsBTN chuaveLang := by
-  apply IsBTC.of_tierBased
-  refine ⟨isLugHigh, { xs | xs ≠ [] }, ?_, ?_⟩
-  · -- chuaveLang = preimage of {xs | xs ≠ []} under tier projection.
-    ext w
-    show LugandaTone.high ∈ w ↔ w.filter isLugHigh ∈ ({xs | xs ≠ []} : Set _)
-    simp only [Set.mem_ofPred_eq, ne_eq]
-    rw [List.filter_eq_nil_iff]
-    constructor
-    · intro hmem hall
-      exact (hall LugandaTone.high hmem) (by decide : isLugHigh .high = true)
-    · intro hne
-      by_contra hno
-      apply hne
-      intro x hx hisHigh
-      apply hno
-      rcases x with _ | _
-      · exact absurd hisHigh (by decide)
-      · exact hx
-  · -- IsFiniteOrCofinite { xs | xs ≠ [] }: complement is {[]}, finite.
-    right
-    show ({xs : List LugandaTone | xs ≠ []}ᶜ).Finite
-    have h_compl : ({xs : List LugandaTone | xs ≠ []}ᶜ) = {([] : List LugandaTone)} := by
-      ext x
-      simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, Set.mem_singleton_iff,
-                 ne_eq, not_not]
-    rw [h_compl]
-    exact Set.finite_singleton _
-
--- ============================================================================
--- § 10. Kagoshima Japanese pitch-accent ∈ PT_3
--- ============================================================================
-
-/-! Lambert 2026 §5.4 ([kawahara-2015], [haraguchi-1977]):
-Kagoshima Japanese has a pitch-accent system with exactly one high tone
-per word, appearing on the final or penultimate mora.
-
-Lambert formula (42), order-based PT_3:
-* `h`        — at least one high tone (obligatoriness)
-* `¬h..h`    — no two highs (culminativity)
-* `¬h..ℓ..ℓ` — high doesn't have two lows after (forces final/penult position)
-
-Lambert formula (43), tier-based multitier definite:
-* `[⋊h⋉]_{h}`   — high tier projection equals exactly `[h]`
-* `(hℓ⋉ ∨ h⋉)`  — word ends with `[h, ℓ]` or `[h]`
-
-The PT_3 result assembles the three subsequence conditions with the
-boolean closure of PT. The multitier
-characterization uses `tierEqualLang isLugHigh [.high]` (high tier =
-singleton `[h]`) intersected with the disjunction of two `endsWithLang`
-cases. The §4 helpers (`startsWithLang`, `endsWithLang`,
-`tierEqualLang`) were generalized to `α : Type*` for this section so
-they apply at type `LugandaTone` without duplication.
-
-We prove `kagoshima_multitier_isBTLI` (multitier generalized definite, k = 2).
-Lambert states the stronger BTD₂ classification (multitier definite —
-right-edge-only); BTD substrate for `endsWithLang` is queued for
-follow-up. The order/tier formulation equivalence (formulas 42 ↔ 43)
-is stated as a TODO theorem `kagoshima_lang_eq_mt`.
-
-Alphabet: `LugandaTone` reused per Lambert's unified `ℓ`/`h` notation
-across §5. -/
-
-/-- The Kagoshima Japanese pitch-accent predicate [lambert-2026]
-(42): at least one high, no two highs, no `[h, ℓ, ℓ]` subseq. -/
-def kagoshimaPred (w : List LugandaTone) : Prop :=
-  ([LugandaTone.high] <+ w) ∧
-    ¬ ([LugandaTone.high, .high] <+ w) ∧
-    ¬ ([LugandaTone.high, .low, .low] <+ w)
-
-/-- The Kagoshima Japanese pitch-accent language. -/
-def kagoshimaLang : Language LugandaTone := { w | kagoshimaPred w }
-
-/-- Membership in `kagoshimaLang` is membership in `kagoshimaPred`. -/
-@[simp] lemma mem_kagoshimaLang (w : List LugandaTone) :
-    w ∈ kagoshimaLang ↔ kagoshimaPred w := Iff.rfl
-
-/-- **Kagoshima Japanese pitch-accent ∈ PT_3** (Lambert 2026 (42)). Obligatoriness
-requires `[h]`; culminativity bans `[h, h]`; the position condition bans `[h, ℓ, ℓ]`. So
-the language is `SP_3ᶜ ⊓ SP_3 ⊓ SP_3`. -/
-theorem kagoshima_isPT : kagoshimaLang.IsPiecewiseTestable 3 := by
-  have h : kagoshimaLang = {w | [LugandaTone.high] <+ w} ⊓
-      ({w | ¬ ([LugandaTone.high, .high] <+ w)} ⊓
-        {w | ¬ ([LugandaTone.high, .low, .low] <+ w)}) := by
-    ext w
-    show kagoshimaPred w ↔ _ ∧ (_ ∧ _)
-    simp [kagoshimaPred]
-  rw [h]
-  exact (contains_isPT (by decide)).inter
-    ((avoid_isPT (by decide)).inter (avoid_isPT (by decide)))
-
-/-- The Kagoshima multitier-encoded language: high-tier-projection
-equals exactly `[h]` AND word ends with `[h, ℓ]` or `[h]`. Lambert
-2026 (43). -/
-def kagoshimaMTLang : Language LugandaTone :=
-  tierEqualLang isLugHigh [LugandaTone.high] ⊓
-    (endsWithLang ([LugandaTone.high, .low] : List LugandaTone) ⊔
-     endsWithLang ([LugandaTone.high] : List LugandaTone))
-
-/-- **Kagoshima multitier characterization ∈ BTLI₂** (Lambert 2026
-(43)). Each component lifts to `IsBTLI 2`:
-* `tierEqualLang isLugHigh [.high]` via `tierEqualLang_isTierBased` (k = 2 > 1 = |xs|);
-* `endsWithLang [.high, .low]` via `endsWithLang_isGenDef` (k = 2 ≥ 2);
-* `endsWithLang [.high]` via `endsWithLang_isGenDef` (k = 2 ≥ 1).
-The conjunction/disjunction are closed by `BoolClosure.inter` /
-`BoolClosure.union`. Lambert's stronger BTD₂ classification is queued
-for follow-up. -/
-theorem kagoshima_multitier_isBTLI : IsBTLI 2 kagoshimaMTLang := by
-  -- Tier component: high tier = [.high]
-  have hTier : IsBTLI 2 (tierEqualLang isLugHigh [LugandaTone.high]) :=
-    .base (tierEqualLang_isTierBased isLugHigh _ 2 (by decide))
-  -- Suffix components
-  have hSufHL : IsBTLI 2 (endsWithLang ([LugandaTone.high, .low] : List LugandaTone)) :=
-    .base (.of_class (endsWithLang_isGenDef _ 2 (by decide)))
-  have hSufH : IsBTLI 2 (endsWithLang ([LugandaTone.high] : List LugandaTone)) :=
-    .base (.of_class (endsWithLang_isGenDef _ 2 (by decide)))
-  -- Disjunction of suffixes
-  have hSuf : IsBTLI 2
-      (endsWithLang ([LugandaTone.high, .low] : List LugandaTone) ⊔
-       endsWithLang ([LugandaTone.high] : List LugandaTone)) := .union hSufHL hSufH
-  -- Intersection
-  exact .inter hTier hSuf
-
-/-! **Equivalence (formula 42 ↔ 43) is queued for follow-up.** Lambert
-states the order-based predicate `kagoshimaLang` and the multitier
-predicate `kagoshimaMTLang` describe the same language, but the proof
-requires structural reasoning about how "no `[h, ℓ, ℓ]` subseq"
-combined with "exactly one high" forces the unique high to lie in the
-final two positions. Both formulations are independently classified
-above (PT_3 and BTLI_2 respectively). -/
-
--- ============================================================================
--- § 11. Cross-framework refutation/cross-reference theorems (TODOs)
--- ============================================================================
-
-/-! Audit-flagged cross-framework engagement points. These are stated here
-so the disagreements (and convergences) with sibling linglib formalizations
-are visible rather than buried.
-
-Each is tagged with the auditor file path it cross-references. The proofs
-are deferred — typically to a follow-up substrate PR (e.g. `OTBound.lean`)
-or to the chronologically-later sibling study. -/
-
-/-- **Lambert 2026 multitier classification structurally weaker than
-SS-MTSL (de Santo & Graf 2019) on Uyghur**: every BTD language admits an
-SS-MTSL acceptor, but BTD is strictly more powerful as a phonotactic
-classifier — Uyghur backness harmony is BTD but [mayer-major-2018]
-shows it is not SS-MTSL. (Stated as TODO; activates when SS-MTSL
-substrate lands in linglib.) -/
-theorem btd_supersedes_ss_mtsl_on_uyghur : True := trivial
--- TODO: when SS-MTSL is formalized, replace with:
---   theorem btd_supersedes_ss_mtsl_on_uyghur :
---     IsBTD 2 uyghurBacknessLang ∧ ¬ IsSSMTSL uyghurBacknessLang
-
-/-- **String-input information loss for autosegmental tone analyses**: two
-distinct autosegmental representations (e.g. multiply-linked vs. singly-
-linked-with-spread on a tone tier) can have the same surface string. The
-BTC classification of a string language therefore is *not* a faithful
-summary of an autosegmental analysis of the same surface tone pattern.
-Cross-references `Phonology/Autosegmental/RegisterTier.lean`,
-`GrammaticalTone.lean`, and `Studies/Lionnet2025.lean`. -/
-theorem lambert_string_input_loses_tone_associations : True := trivial
--- TODO: state and prove via Tone
--- representation distinctness with shared string projection.
+/-- The Karanga Shona verb stem is multitier generalized definite (§5.6, refining
+[jardine-2020]): tier prefixes and tier suffixes are both needed. -/
+theorem karangaShona_isBTLI : IsBTLI 5 karangaShona :=
+  IsBTC.union (IsBTC.union
+    (IsBTC.of_class (isDefinite_succ_of_forall_length_le (N := 4)
+      λ w hw => (by decide : ∀ w ∈ [[Tone.low], [.low, .high], [.low, .high, .low], [.high],
+        [.high, .low], [.high, .low, .high], [.high, .high, .low, .high]], w.length ≤ 4)
+        w hw).toIsGeneralizedDefinite)
+    (IsBTC.inter (IsBTK.toIsBTLI (isBTK_ofPrefix _ (by decide)))
+      (IsBTD.toIsBTLI (isBTD_tierWord _ _ (by decide)))))
+    (IsBTC.inter (IsBTC.inter (IsBTK.toIsBTLI (isBTK_ofPrefix _ (by decide)))
+      (IsBTD.toIsBTLI (isBTD_ofSuffix _ (by decide))))
+      (IsBTD.toIsBTLI (isBTD_tierWord _ _ (by decide))))
 
 end Lambert2026
