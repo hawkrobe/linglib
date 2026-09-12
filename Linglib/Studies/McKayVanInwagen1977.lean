@@ -19,11 +19,6 @@ Both readings reduce to `Conditionals.Counterfactual.universalCounterfactual`, e
 the disjunction or conjoined over the disjuncts; worlds and predicates are propositions on
 enumerated world types.
 
-## TODO
-
-The paper is not on file; locators are transcribed from an earlier version of this file and
-are UNVERIFIED.
-
 ## References
 
 * [mckay-vaninwagen-1977]
