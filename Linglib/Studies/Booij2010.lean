@@ -4,10 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Data.Forms.Booij2010
-import Linglib.Morphology.Construction.Schema
+import Linglib.Morphology.ConstructionMorphology.Schema
 import Mathlib.Data.Fin.VecNotation
 import Mathlib.Tactic.FinCases
-import Linglib.Morphology.Construction.Inheritance
+import Linglib.Morphology.ConstructionMorphology.Inheritance
 import Linglib.Core.Order.Flat
 
 /-!
@@ -15,7 +15,7 @@ import Linglib.Core.Order.Flat
 
 [booij-2010-compass] analyzes complex words as constructions — pairings of form
 and meaning — licensed by constructional schemas in a hierarchical lexicon. This
-file instantiates the `Morphology/Construction/` substrate as that CxM engine
+file instantiates the `Morphology/ConstructionMorphology/` substrate as that CxM engine
 over small `Flat` carriers: the deadjectival `-ness` schema and its
 unification-instantiation (`carless` unified with the schema is `carlessness`),
 generation of a novel `-ness` noun, the compound hierarchy with right-headed
@@ -39,7 +39,7 @@ unification (`on-` prefixation composed with `V-baar`).
 
 namespace Booij2010
 
-open Morphology.Construction
+open ConstructionMorphology
 
 /-! ### The deadjectival `-ness` schema
 
