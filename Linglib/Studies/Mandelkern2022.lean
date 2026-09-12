@@ -1,78 +1,46 @@
 import Linglib.Logic.Assignment
 
 /-!
-# Mandelkern (2022) — Witnesses: the bounded theory of (in)definites
-[mandelkern-2022]
-[heim-1982] [groenendijk-stokhof-1991] [krahmer-muskens-1995]
-[karttunen-1976] [schlenker-2009] [stalnaker-1974] [stalnaker-1978]
-[dekker-1994] [rothschild-2017]
+# Mandelkern (2022): Witnesses
 
-[mandelkern-2022] (Linguistics & Philosophy 45(5):1091-1117) develops the
-**bounded theory** of (in)definites: meanings have *two dimensions* — classical
-truth-conditions plus a projective second dimension Mandelkern calls **bounds**.
-Indefinites `ɜx(p,q)` carry a **witness bound** (if true, then `g(x)` must be
-a witness); definites `ιx(p,q)` carry a **familiarity bound** (the scope `p`
-is true and satt throughout the local context).
+This file formalizes the bounded theory of definites and indefinites of [mandelkern-2022].
+Meanings have two dimensions, classical truth conditions and a projective dimension of
+bounds: an indefinite carries a witness bound, that if it is true its variable denotes a
+witness, and a definite carries a familiarity bound, that its restrictor is true and
+satisfied throughout the local context (`BoundedForm`, `truth`, `satt`). Bounds project
+through the connectives by Schlenker- and Karttunen-style local contexts, the update rule
+eliminates indices, and bound entailment and equivalence are preorders (`boundEntails`,
+`boundEquiv`); the headline three-way bound equivalence holds in the atomic instances the
+paper gives. Classical logic is preserved at the truth-conditional layer, double negation,
+disjunction with a conjoined disjunct, and De Morgan among them, so the theory avoids the
+logical problems of dynamic semantics around negation and disjunction while anaphoric
+coordination still happens in the bound dimension.
 
-The headline payoff: classical logic is preserved at the truth-conditional
-layer (¬¬p ≡ p, ¬p ∨ q ≡ ¬p ∨ (p&q), De Morgan, etc.), so the system avoids
-dynamic semantics' logical problems around negation and disjunction (paper §4).
-Dynamic anaphoric coordination still happens, but entirely in the bound
-dimension via Schlenker/Karttunen-style local-context projection.
+## Implementation notes
 
-## Architectural placement
+Indices are partial assignments paired with worlds on the substrate's `Logic/Assignment`;
+`BoundedForm` is the file's own language. Truth conditions are bivalent, so the classical
+theorems use classical meta-logic. The quantifiers of the paper's §5.8 and the modal
+subordination of its §6 are not represented.
 
-Self-contained study file at the bounded theory's own level of generality.
-**Deliberately disconnected** from `Charlow2025.LawfulDNELift` per the
-session's design decision: the two formalisations should mature independently
-before any unifying typeclass is extracted. Per [charlow-2025-staged-updates]
-§5 the two have higher-typed-bound vs. per-conjunct-bound differences that
-make a premature unification likely to be wrong.
+## TODO
 
-## Scope (paper §§5.1–5.7)
+The paper is not on file; section locators are transcribed from an earlier version of this
+file and are UNVERIFIED.
 
-Formalised here:
-* §5.1 — Truth and falsity (`truth`)
-* §5.2 — Witness bound (in `satt`'s `.indef` clause)
-* §5.3 — Familiarity bound (in `satt`'s `.def_` clause)
-* §5.4 — Update rule (`update`)
-* §5.5 — Projection of bounds through connectives (in `satt`'s recursion +
-  the derived `localCtx`/`negLocalCtx` helpers)
-* §5.6 — Bound-entailment, bound-equivalence (`boundEntails`, `boundEquiv`,
-  preorder lemmas; the headline three-way bound-equivalence proved in the
-  paper-faithful **atomic** specialization `section56_a_bound_equiv_b_atomic`
-  and `section56_b_bound_equiv_c_atomic`, where `F`, `G`, `H` are atoms
-  `.atom Fa [x]` etc. Generalisation to abstract `F G H : BoundedForm Atom`
-  awaits a `referencesVar`-style well-formedness predicate; the paper's
-  examples on p. 1108 are all atomic, so the atomic version covers the
-  intended use case.)
-* §5.7 — Classicality at the truth-conditional layer (4 theorems, all proved)
+## References
 
-§5.8 (quantifiers `EVERYx_δ` with assignment-pair domains, `MOSTx_δ`) and
-§6 (modal subordination, cross-world witness bounds) are out of scope.
-
-## Connection to existing linglib infrastructure
-
-* `Assignment.PartialAssign ℕ D := Nat → Option D` — used here, matching
-  [spector-2025] which formalises a *different* (trivalent-Transparency)
-  competitor to Mandelkern's bounded theory. Both files share the
-  partial-assignment substrate but diverge in their treatment of bounds vs.
-  presupposition.
-* `BoundedForm` is a fresh inductive language type for this file (no shared
-  surface-language type yet exists across linglib's dynamic theories).
-* The classical-logic theorems use Lean's `Classical.em` / `not_not` / `not_and_or`
-  directly — Mandelkern's truth-conditions are propositional and bivalent
-  (paper footnote 11), so classical meta-logic suffices.
+* [mandelkern-2022]
+* [heim-1982]
+* [karttunen-1976]
+* [schlenker-2009]
+* [stalnaker-1978]
 -/
 
 namespace Mandelkern2022
 
 
 universe u v
-
--- ════════════════════════════════════════════════════════════════
--- § 1. Setup: indices, contexts, atomic interpretations
--- ════════════════════════════════════════════════════════════════
 
 /-- A bounded-theory **index**: a partial assignment + a world. Paper's
 `⟨g, w⟩`. -/
@@ -108,10 +76,6 @@ def resolveVars {E : Type v} (g : PartialAssign ℕ E) : List Nat → Option (Li
 @[simp] theorem resolveVars_nil {E : Type v} (g : PartialAssign ℕ E) :
     resolveVars g [] = some [] := rfl
 
--- ════════════════════════════════════════════════════════════════
--- § 2. The bounded language ℒ_M (paper §5.1)
--- ════════════════════════════════════════════════════════════════
-
 /-- Mandelkern's two-place definite/indefinite language (paper §5.1, p. 1101):
 `ℒ_M ::= A(x₁,...,xₙ) | ⊤(xs) | p&q | p∨q | ¬p | ɜx(p,q) | ιx(p,q)`.
 
@@ -136,10 +100,6 @@ inductive BoundedForm (Atom : Type u) where
   | def_ : Nat → BoundedForm Atom → BoundedForm Atom → BoundedForm Atom
   deriving Repr
 
--- ════════════════════════════════════════════════════════════════
--- § 3. Truth conditions (paper §5.1, classical bivalent)
--- ════════════════════════════════════════════════════════════════
-
 /-- **Truth at an index** (paper §5.1, p. 1101 + appendix p. 1114). Pure
 classical: connectives are Boolean, indefinites are existential
 quantifiers, definites have the truth-conditions of their conjunction. The
@@ -156,10 +116,6 @@ def truth {Atom : Type u} {W E : Type v} (av : AtomEval Atom W E) :
   | .indef x p q, g, w =>
       ∃ a : E, truth av p (g.update x a) w ∧ truth av q (g.update x a) w
   | .def_ _ p q, g, w => truth av p g w ∧ truth av q g w
-
--- ════════════════════════════════════════════════════════════════
--- § 4. Satt (paper §§5.2, 5.3, 5.5)
--- ════════════════════════════════════════════════════════════════
 
 /-- **Satt at a context+index** (paper appendix p. 1114). Recursively
 defines bound-satisfaction via Schlenker-style local contexts. Each
@@ -235,10 +191,6 @@ def negLocalCtx {Atom : Type u} {W E : Type v} (av : AtomEval Atom W E)
     (c : Context W E) (p : BoundedForm Atom) : Context W E :=
   {idx | idx ∈ c ∧ ¬ truth av p idx.1 idx.2 ∧ satt av p c idx.1 idx.2}
 
--- ════════════════════════════════════════════════════════════════
--- § 4a. The witness-bound projection lemma
--- ════════════════════════════════════════════════════════════════
-
 /-- **Witness-bound projection through update** (the key non-trivial fact about
 how `ɜ`'s witness bound interacts with local-context computation): every index
 in `c^{ɜx(F,G)}` has `g(x)` itself satisfying both `F` and `G`.
@@ -260,10 +212,6 @@ theorem localCtx_indef_witness {Atom : Type u} {W E : Type v}
   simp only [satt, truth] at htruth hsatt
   exact (hsatt.2 htruth).1
 
--- ════════════════════════════════════════════════════════════════
--- § 5. Update rule (paper §5.4)
--- ════════════════════════════════════════════════════════════════
-
 /-- **Stalnakerian eliminative update** (paper §5.4, p. 1103): updating `c`
 with `p` keeps exactly the points where `p` is true and satt. Differs from
 Heimian update which extends assignments; bounds-style update only
@@ -277,7 +225,7 @@ new indices; it only filters. -/
 theorem update_subset {Atom : Type u} {W E : Type v} (av : AtomEval Atom W E)
     (c : Context W E) (p : BoundedForm Atom) :
     update av c p ⊆ c :=
-  fun _ hidx => hidx.1
+  λ _ hidx => hidx.1
 
 /-- **Update equals localCtx**: the update of `c` by `p` is the local
 context `c^p`. They are definitionally equal, but stated as a theorem for
@@ -311,7 +259,7 @@ def boundEquiv {Atom : Type u} {W E : Type v} (av : AtomEval Atom W E)
 theorem boundEntails.refl {Atom : Type u} {W E : Type v}
     (av : AtomEval Atom W E) (p : BoundedForm Atom) :
     boundEntails av p p :=
-  fun _ _ _ _ _ hp => hp
+  λ _ _ _ _ _ hp => hp
 
 /-- **Bound entailment is conditionally transitive** (paper p. 1108 implicitly).
 
@@ -359,11 +307,7 @@ theorem boundEntails_of_logicalEntails {Atom : Type u} {W E : Type v}
     (av : AtomEval Atom W E) {p q : BoundedForm Atom}
     (h : ∀ (g : PartialAssign ℕ E) (w : W), truth av p g w → truth av q g w) :
     boundEntails av p q :=
-  fun _ g w _ _ hp => h g w hp
-
--- ════════════════════════════════════════════════════════════════
--- § 7. Classicality at the truth-conditional layer (paper §5.7)
--- ════════════════════════════════════════════════════════════════
+  λ _ g w _ _ hp => h g w hp
 
 section Classicality
 
@@ -404,10 +348,6 @@ theorem excluded_middle_truth
   exact Classical.em _
 
 end Classicality
-
--- ════════════════════════════════════════════════════════════════
--- § 8. Indefinite-truth corollaries (paper §4)
--- ════════════════════════════════════════════════════════════════
 
 section IndefiniteTruth
 
@@ -450,15 +390,11 @@ theorem dneg_indef_bound_equiv
     (x : Nat) (p q : BoundedForm Atom) :
     boundEquiv av (.neg (.neg (.indef x p q))) (.indef x p q) :=
   ⟨boundEntails_of_logicalEntails av
-      (fun g w => (dne_truth av g w (.indef x p q)).mp),
+      (λ g w => (dne_truth av g w (.indef x p q)).mp),
    boundEntails_of_logicalEntails av
-      (fun g w => (dne_truth av g w (.indef x p q)).mpr)⟩
+      (λ g w => (dne_truth av g w (.indef x p q)).mpr)⟩
 
 end IndefiniteTruth
-
--- ════════════════════════════════════════════════════════════════
--- § 9. Section 5.6: bound-equivalence of three open-scope formulations
--- ════════════════════════════════════════════════════════════════
 
 /-! ### Paper §5.6 (20): three bound-equivalent formulations.
 
@@ -633,10 +569,6 @@ theorem section56_b_bound_equiv_c_atomic
 
 end Section56
 
--- ════════════════════════════════════════════════════════════════
--- § 10. Empirical anchors (paper §4 (11)–(14))
--- ════════════════════════════════════════════════════════════════
-
 /-! ### Paper §4 data, formalised at the satt-update level.
 
 These empirical claims (Karttunen 1976, Partee disjunctions, bathroom
@@ -714,10 +646,6 @@ mathlib-quality refactor would make `satt` non-`termination_by`
 (structural recursion) and reclaim the definitional collapse. -/
 
 end EmpiricalAnchors
-
--- ════════════════════════════════════════════════════════════════
--- § 11. Sanity tests
--- ════════════════════════════════════════════════════════════════
 
 section Tests
 

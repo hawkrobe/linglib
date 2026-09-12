@@ -15,37 +15,37 @@ open Data.Examples
 
 def boeken_niet_uitgelezen : LinguisticExample :=
   { id := "lebruyndeswart2022_boeken_niet_uitgelezen"
-    source := ⟨"le-bruyn-de-swart-2022", "UNVERIFIED ex. 34-35"⟩
+    source := ⟨"le-bruyn-de-swart-2022", "(35)"⟩
     reportedIn := none
     language := "dutc1256"
     primaryText := "Het klopt dat ik boeken niet heb uitgelezen."
     discourseSegments := []
     glossedTokens := [("Het", "it"), ("klopt", "is.true"), ("dat", "that"), ("ik", "I"), ("boeken", "books"), ("niet", "not"), ("heb", "have"), ("uitgelezen", "finished")]
     translation := "It's true that there are books I didn't finish."
-    context := ""
+    context := "Preceded in the source by a discussion of reading habits; followed by 'Then I started on them but found out that I did not like them after all.'"
     judgment := .acceptable
     alternatives := []
     readings := [("wide_scope", .acceptable), ("narrow_scope", .unacceptable)]
     paperFeatures := [("position", "scrambled")]
-    comment := "Migrated from Phenomena/Generics/KindReference.lean dutchScrambledBoeken. Scrambled bare plural with negation: obligatory wide scope (there are books I didn't finish), not 'I finished no books'."
+    comment := "Naturally occurring scrambled bare plural over negation: obligatory wide scope (there are books I didn't finish), not 'I finished no books'; the follow-up sentence confirms the wide scope reading."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
 def boeken_gehaat : LinguisticExample :=
   { id := "lebruyndeswart2022_boeken_gehaat"
-    source := ⟨"le-bruyn-de-swart-2022", "UNVERIFIED ex. 36-37"⟩
+    source := ⟨"le-bruyn-de-swart-2022", "(36b)"⟩
     reportedIn := none
     language := "dutc1256"
     primaryText := "dat ik boeken altijd gehaat heb"
     discourseSegments := []
     glossedTokens := [("dat", "that"), ("ik", "I"), ("boeken", "books"), ("altijd", "always"), ("gehaat", "hated"), ("heb", "have")]
     translation := "that I've always hated books"
-    context := "Embedded clause."
+    context := ""
     judgment := .acceptable
     alternatives := []
     readings := [("kind_reference", .acceptable)]
     paperFeatures := [("position", "scrambled")]
-    comment := "Migrated from Phenomena/Generics/KindReference.lean dutchScrambledKindBoeken. A scrambled bare plural can still be kind-referring with a kind-level predicate ('hate'): scrambling affects scope, not kindhood."
+    comment := "A scrambled bare plural under a kind-level predicate ('hate') keeps its kind reading: scrambling affects scope, not kind reference."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 

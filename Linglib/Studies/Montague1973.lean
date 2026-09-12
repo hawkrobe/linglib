@@ -35,9 +35,8 @@ Omitted: the string-level operations (gender, verb forms), tense (S17), and post
 
 ## References
 
-* [R. Montague, *The Proper Treatment of Quantification in Ordinary English* (1973)][montague-1973]
-* [D. Dowty, R. Wall, S. Peters, *Introduction to Montague Semantics*
-  (1981)][dowty-wall-peters-1981]
+* [montague-1973]
+* [dowty-wall-peters-1981]
 -/
 
 namespace Montague1973
@@ -145,10 +144,10 @@ its category. Names translate to `P̂ P{^j}`, `heₙ` to `P̂ P{xₙ}`, *be* to
 `α'(^β')`, and quantifying-in by `α'(x̂ₙ φ')`. -/
 def translate (M : Interp E W) :
     {A : Cat} → Analysis A → Assignment (W → E) → W → Denot E W A.ty
-  | _, .basic .john, _, i => fun P => P i fun _ => M.john
-  | _, .basic .mary, _, i => fun P => P i fun _ => M.mary
-  | _, .basic .bill, _, i => fun P => P i fun _ => M.bill
-  | _, .basic .ninety, _, i => fun P => P i fun _ => M.ninety
+  | _, .basic .john, _, i => λ P => P i λ _ => M.john
+  | _, .basic .mary, _, i => λ P => P i λ _ => M.mary
+  | _, .basic .bill, _, i => λ P => P i λ _ => M.bill
+  | _, .basic .ninety, _, i => λ P => P i λ _ => M.ninety
   | _, .basic .man, _, i => M.man i
   | _, .basic .woman, _, i => M.woman i
   | _, .basic .unicorn, _, i => M.unicorn i
@@ -159,26 +158,26 @@ def translate (M : Interp E W) :
   | _, .basic .love, _, i => M.love i
   | _, .basic .find, _, i => M.find i
   | _, .basic .seek, _, i => M.seek i
-  | _, .basic .be, _, i => fun Q x => Q i fun j y => x j = y j
-  | _, .he n, g, i => fun P => P i (g n)
-  | _, .every ζ, g, i => fun P => ∀ x, translate M ζ g i x → P i x
-  | _, .the ζ, g, i => fun P => ∃ y, (∀ x, translate M ζ g i x ↔ x = y) ∧ P i y
-  | _, .a ζ, g, i => fun P => ∃ x, translate M ζ g i x ∧ P i x
-  | _, .f4 α δ, g, i => translate M α g i fun j => translate M δ g j
-  | _, .f5 δ β, g, i => translate M δ g i fun j => translate M β g j
+  | _, .basic .be, _, i => λ Q x => Q i λ j y => x j = y j
+  | _, .he n, g, i => λ P => P i (g n)
+  | _, .every ζ, g, i => λ P => ∀ x, translate M ζ g i x → P i x
+  | _, .the ζ, g, i => λ P => ∃ y, (∀ x, translate M ζ g i x ↔ x = y) ∧ P i y
+  | _, .a ζ, g, i => λ P => ∃ x, translate M ζ g i x ∧ P i x
+  | _, .f4 α δ, g, i => translate M α g i λ j => translate M δ g j
+  | _, .f5 δ β, g, i => translate M δ g i λ j => translate M β g j
   | _, .f10 n α φ, g, i =>
-    translate M α g i fun j x => translate M φ (Function.update g n x) j
+    translate M α g i λ j x => translate M φ (Function.update g n x) j
 
 /-! ### Extensional counterparts and meaning postulates -/
 
 /-- `δ*` for a common noun or intransitive verb, `û δ(^u)`: the individuals whose rigid
 concept is in `δ`'s extension. -/
-def star₁ (δ : Denot E W Cat.CN.ty) : E → Prop := fun u => δ fun _ => u
+def star₁ (δ : Denot E W Cat.CN.ty) : E → Prop := λ u => δ λ _ => u
 
 /-- `δ*` for a transitive verb, `v̂ û δ(^u, ^v*)`, object-first: `star₂ δ v u` says `u`
 bears `δ` to `v`. -/
 def star₂ (δ : Denot E W Cat.TV.ty) : E → E → Prop :=
-  fun v u => δ (fun j P => P j fun _ => v) fun _ => u
+  λ v u => δ (λ j P => P j λ _ => v) λ _ => u
 
 /-- The postulates the examples rest on ((1)–(4) of the paper): names are rigid (built into
 `Interp`), the ordinary common nouns hold only of rigid concepts, *walk* is extensional,
@@ -188,14 +187,14 @@ structure Interp.LogicallyPossible (M : Interp E W) : Prop where
   woman_rigid : ∀ i x, M.woman i x → IsRigid x
   unicorn_rigid : ∀ i x, M.unicorn i x → IsRigid x
   walk_ext : ∃ m : W → E → Prop, ∀ i x, M.walk i x ↔ m i (x i)
-  love_ext : ∃ S : W → E → E → Prop, ∀ i Q x, M.love i Q x ↔ Q i fun j y => S j (x j) (y j)
-  find_ext : ∃ S : W → E → E → Prop, ∀ i Q x, M.find i Q x ↔ Q i fun j y => S j (x j) (y j)
+  love_ext : ∃ S : W → E → E → Prop, ∀ i Q x, M.love i Q x ↔ Q i λ j y => S j (x j) (y j)
+  find_ext : ∃ S : W → E → E → Prop, ∀ i Q x, M.find i Q x ↔ Q i λ j y => S j (x j) (y j)
 
 /-- A common noun holding only of rigid concepts is definable from its `*`-counterpart. -/
 theorem star₁_iff {δ : Denot E W Cat.CN.ty} (hδ : ∀ x, δ x → IsRigid x) (x : W → E) (i : W) :
     δ x ↔ IsRigid x ∧ star₁ δ (x i) :=
-  ⟨fun hx => ⟨hδ x hx, (congrArg δ ((hδ x hx).eq_const i)).mp hx⟩,
-    fun ⟨hr, hx⟩ => (congrArg δ (hr.eq_const i)).mpr hx⟩
+  ⟨λ hx => ⟨hδ x hx, (congrArg δ ((hδ x hx).eq_const i)).mp hx⟩,
+    λ ⟨hr, hx⟩ => (congrArg δ (hr.eq_const i)).mpr hx⟩
 
 namespace Interp.LogicallyPossible
 
@@ -215,18 +214,18 @@ theorem unicorn_iff (i : W) (x : W → E) :
 /-- A transitive verb satisfying postulate (4) is definable from its `*`-counterpart:
 `δ(x, Q) ↔ Q{ŷ δ*(ˇx, ˇy)}`. -/
 theorem love_iff (i : W) (Q : W → Denot E W Cat.T.ty) (x : W → E) :
-    M.love i Q x ↔ Q i fun j y => star₂ (M.love j) (y j) (x j) := by
+    M.love i Q x ↔ Q i λ j y => star₂ (M.love j) (y j) (x j) := by
   obtain ⟨S, hS⟩ := h.love_ext
-  have : ∀ j v u, star₂ (M.love j) v u ↔ S j u v := fun j v u => hS j _ _
+  have : ∀ j v u, star₂ (M.love j) v u ↔ S j u v := λ j v u => hS j _ _
   simp only [hS]
-  exact iff_of_eq (congrArg (Q i) (funext fun j => funext fun y => propext (this j _ _).symm))
+  exact iff_of_eq (congrArg (Q i) (funext λ j => funext λ y => propext (this j _ _).symm))
 
 theorem find_iff (i : W) (Q : W → Denot E W Cat.T.ty) (x : W → E) :
-    M.find i Q x ↔ Q i fun j y => star₂ (M.find j) (y j) (x j) := by
+    M.find i Q x ↔ Q i λ j y => star₂ (M.find j) (y j) (x j) := by
   obtain ⟨S, hS⟩ := h.find_ext
-  have : ∀ j v u, star₂ (M.find j) v u ↔ S j u v := fun j v u => hS j _ _
+  have : ∀ j v u, star₂ (M.find j) v u ↔ S j u v := λ j v u => hS j _ _
   simp only [hS]
-  exact iff_of_eq (congrArg (Q i) (funext fun j => funext fun y => propext (this j _ _).symm))
+  exact iff_of_eq (congrArg (Q i) (funext λ j => funext λ y => propext (this j _ _).symm))
 
 end Interp.LogicallyPossible
 
@@ -264,28 +263,28 @@ def ExtData.interp (d : ExtData E) : Interp E W where
   temperature i x := IsRigid x ∧ d.temperature (x i)
   walk i x := d.walk (x i)
   rise i x := d.rise (x i)
-  love i Q x := Q i fun j y => d.love (y j) (x j)
-  find i Q x := Q i fun j y => d.find (y j) (x j)
-  seek i Q x := Q i fun j y => d.seek (y j) (x j)
+  love i Q x := Q i λ j y => d.love (y j) (x j)
+  find i Q x := Q i λ j y => d.find (y j) (x j)
+  seek i Q x := Q i λ j y => d.seek (y j) (x j)
 
 theorem ExtData.interp_logicallyPossible (d : ExtData E) : (d.interp W).LogicallyPossible where
   man_rigid _ _ hx := hx.1
   woman_rigid _ _ hx := hx.1
   unicorn_rigid _ _ hx := hx.1
-  walk_ext := ⟨fun _ => d.walk, fun _ _ => Iff.rfl⟩
-  love_ext := ⟨fun _ u v => d.love v u, fun _ _ _ => Iff.rfl⟩
-  find_ext := ⟨fun _ u v => d.find v u, fun _ _ _ => Iff.rfl⟩
+  walk_ext := ⟨λ _ => d.walk, λ _ _ => Iff.rfl⟩
+  love_ext := ⟨λ _ u v => d.love v u, λ _ _ _ => Iff.rfl⟩
+  find_ext := ⟨λ _ u v => d.find v u, λ _ _ _ => Iff.rfl⟩
 
 @[simp] theorem ExtData.star₁_man (d : ExtData E) (i : W) : star₁ ((d.interp W).man i) = d.man :=
-  funext fun u => propext ⟨And.right, fun h => ⟨isRigid_const u, h⟩⟩
+  funext λ u => propext ⟨And.right, λ h => ⟨isRigid_const u, h⟩⟩
 
 @[simp] theorem ExtData.star₁_woman (d : ExtData E) (i : W) :
     star₁ ((d.interp W).woman i) = d.woman :=
-  funext fun u => propext ⟨And.right, fun h => ⟨isRigid_const u, h⟩⟩
+  funext λ u => propext ⟨And.right, λ h => ⟨isRigid_const u, h⟩⟩
 
 @[simp] theorem ExtData.star₁_unicorn (d : ExtData E) (i : W) :
     star₁ ((d.interp W).unicorn i) = d.unicorn :=
-  funext fun u => propext ⟨And.right, fun h => ⟨isRigid_const u, h⟩⟩
+  funext λ u => propext ⟨And.right, λ h => ⟨isRigid_const u, h⟩⟩
 
 @[simp] theorem ExtData.star₁_walk (d : ExtData E) (i : W) : star₁ ((d.interp W).walk i) = d.walk :=
   rfl
@@ -315,7 +314,7 @@ theorem translate_every_man_walks :
     translate M (f4 (every (basic man)) (basic walk)) g i ↔
       every_sem (star₁ (M.man i)) (star₁ (M.walk i)) := by
   simp only [translate, every_sem]
-  refine ⟨fun H u hu => H _ hu, fun H x hx => ?_⟩
+  refine ⟨λ H u hu => H _ hu, λ H x hx => ?_⟩
   obtain ⟨hr, hx⟩ := (h.man_iff i x).1 hx
   exact (congrArg (M.walk i) (hr.eq_const i)).mpr (H _ hx)
 
@@ -324,7 +323,7 @@ theorem translate_a_man_walks :
     translate M (f4 (a (basic man)) (basic walk)) g i ↔
       some_sem (star₁ (M.man i)) (star₁ (M.walk i)) := by
   simp only [translate, some_sem]
-  refine ⟨fun ⟨x, hx, hw⟩ => ?_, fun ⟨u, hu, hw⟩ => ⟨_, hu, hw⟩⟩
+  refine ⟨λ ⟨x, hx, hw⟩ => ?_, λ ⟨u, hu, hw⟩ => ⟨_, hu, hw⟩⟩
   obtain ⟨hr, hx⟩ := (h.man_iff i x).1 hx
   exact ⟨x i, hx, (congrArg (M.walk i) (hr.eq_const i)).mp hw⟩
 
@@ -337,11 +336,11 @@ theorem translate_the_man_walks :
   · rintro ⟨y, hy, hw⟩
     obtain ⟨hr, -⟩ := (h.man_iff i y).1 ((hy y).2 rfl)
     rw [hr.eq_const i] at hy hw
-    refine ⟨y i, fun u => (hy _).trans ⟨fun e => congrFun e i, congrArg fun v _ => v⟩, hw⟩
+    refine ⟨y i, λ u => (hy _).trans ⟨λ e => congrFun e i, congrArg λ v _ => v⟩, hw⟩
   · rintro ⟨v, hv, hw⟩
-    refine ⟨fun _ => v, fun x => ⟨fun hx => ?_, fun e => (congrArg (M.man i) e).mpr ?_⟩, hw⟩
+    refine ⟨λ _ => v, λ x => ⟨λ hx => ?_, λ e => (congrArg (M.man i) e).mpr ?_⟩, hw⟩
     · obtain ⟨hr, hx⟩ := (h.man_iff i x).1 hx
-      exact (hr.eq_const i).trans (congrArg (fun w _ => w) ((hv _).1 hx))
+      exact (hr.eq_const i).trans (congrArg (λ w _ => w) ((hv _).1 hx))
     · exact (hv v).2 rfl
 
 /-- *John finds a unicorn* translates to `∨u[unicorn*(u) ∧ find*(j, u)]`. -/
@@ -349,7 +348,7 @@ theorem translate_john_finds_a_unicorn :
     translate M (f4 (basic john) (f5 (basic find) (a (basic unicorn)))) g i ↔
       some_sem (star₁ (M.unicorn i)) (star₂ (M.find i) · M.john) := by
   simp only [translate, some_sem, h.find_iff]
-  refine ⟨fun ⟨x, hx, hf⟩ => ?_, fun ⟨u, hu, hf⟩ => ⟨_, hu, hf⟩⟩
+  refine ⟨λ ⟨x, hx, hf⟩ => ?_, λ ⟨u, hu, hf⟩ => ⟨_, hu, hf⟩⟩
   obtain ⟨-, hx⟩ := (h.unicorn_iff i x).1 hx
   exact ⟨x i, hx, hf⟩
 
@@ -358,7 +357,7 @@ theorem translate_bill_is_a_man :
     translate M (f4 (basic bill) (f5 (basic be) (a (basic man)))) g i ↔
       star₁ (M.man i) M.bill := by
   simp only [translate]
-  refine ⟨fun ⟨x, hx, e⟩ => ?_, fun hb => ⟨_, hb, rfl⟩⟩
+  refine ⟨λ ⟨x, hx, e⟩ => ?_, λ hb => ⟨_, hb, rfl⟩⟩
   obtain ⟨-, hx⟩ := (h.man_iff i x).1 hx
   exact e ▸ hx
 
@@ -384,14 +383,14 @@ existential scopes over the universal. -/
 theorem translate_direct :
     translate M aWomanLovesEveryMan.direct g i ↔
       surfaceScope some_sem every_sem (star₁ (M.woman i)) (star₁ (M.man i))
-        (fun u v => star₂ (M.love i) v u) := by
+        (λ u v => star₂ (M.love i) v u) := by
   simp only [aWomanLovesEveryMan.direct, translate, surfaceScope, iterate, some_sem, every_sem,
     h.love_iff]
   constructor
   · rintro ⟨y, hy, H⟩
-    exact ⟨y i, ((h.woman_iff i y).1 hy).2, fun v hv => H _ hv⟩
+    exact ⟨y i, ((h.woman_iff i y).1 hy).2, λ v hv => H _ hv⟩
   · rintro ⟨u, hu, H⟩
-    refine ⟨fun _ => u, hu, fun x hx => ?_⟩
+    refine ⟨λ _ => u, hu, λ x hx => ?_⟩
     exact H _ ((h.man_iff i x).1 hx).2
 
 /-- The quantifying-in analysis translates to `∧v[man*(v) → ∨u[woman*(u) ∧ love*(u, v)]]`:
@@ -399,7 +398,7 @@ the universal scopes over the existential. -/
 theorem translate_quantifiedIn :
     translate M aWomanLovesEveryMan.quantifiedIn g i ↔
       inverseScope some_sem every_sem (star₁ (M.woman i)) (star₁ (M.man i))
-        (fun u v => star₂ (M.love i) v u) := by
+        (λ u v => star₂ (M.love i) v u) := by
   simp only [aWomanLovesEveryMan.quantifiedIn, translate, inverseScope, iterate, some_sem,
     every_sem, h.love_iff, Function.update_self]
   constructor
@@ -408,7 +407,7 @@ theorem translate_quantifiedIn :
     exact ⟨y i, ((h.woman_iff i y).1 hy).2, hl⟩
   · intro H x hx
     obtain ⟨u, hu, hl⟩ := H _ ((h.man_iff i x).1 hx).2
-    exact ⟨fun _ => u, hu, hl⟩
+    exact ⟨λ _ => u, hu, hl⟩
 
 /-- The direct reading entails the quantified-in one. -/
 theorem translate_quantifiedIn_of_direct (H : translate M aWomanLovesEveryMan.direct g i) :
@@ -445,7 +444,7 @@ theorem aWomanLovesEveryMan_ambiguous (g : Assignment (Unit → ℕ)) :
   rw [translate_quantifiedIn h g (), translate_direct h g ()]
   simp only [inverseScope, surfaceScope, iterate, every_sem, some_sem, ExtData.star₁_man,
     ExtData.star₁_woman, ExtData.star₂_love, loveData]
-  refine ⟨fun v hv => ?_, fun ⟨u, hu, H⟩ => ?_⟩
+  refine ⟨λ v hv => ?_, λ ⟨u, hu, H⟩ => ?_⟩
   · rcases hv with rfl | rfl
     · exact ⟨2, by omega, by omega⟩
     · exact ⟨3, by omega, by omega⟩
@@ -484,16 +483,16 @@ theorem temperature_argument_invalid (g : Assignment (Fin 2 → ℕ)) :
       translate temperatureInterp (f4 (the (basic temperature)) (basic rise)) g 0 ∧
       ¬ translate temperatureInterp (f4 (basic ninety) (basic rise)) g 0 := by
   simp only [translate, temperatureInterp]
-  exact ⟨⟨_, fun _ => Iff.rfl, rfl⟩, ⟨_, fun _ => Iff.rfl, 1, by decide, by decide⟩,
-    fun ⟨_, _, hlt⟩ => lt_irrefl _ hlt⟩
+  exact ⟨⟨_, λ _ => Iff.rfl, rfl⟩, ⟨_, λ _ => Iff.rfl, 1, by decide, by decide⟩,
+    λ ⟨_, _, hlt⟩ => lt_irrefl _ hlt⟩
 
 /-- *A price rises* is true although no individual rises: the existential ranges over
 individual concepts, which is why the translation needs individual-concept variables. -/
 theorem a_price_rises (g : Assignment (Fin 2 → ℕ)) :
     translate temperatureInterp (f4 (a (basic price)) (basic rise)) g 0 ∧
-      ∀ u : ℕ, ¬ temperatureInterp.rise 0 fun _ => u := by
+      ∀ u : ℕ, ¬ temperatureInterp.rise 0 λ _ => u := by
   simp only [translate, temperatureInterp]
-  exact ⟨⟨_, rfl, 1, by decide, by decide⟩, fun _ ⟨_, _, hlt⟩ => lt_irrefl _ hlt⟩
+  exact ⟨⟨_, rfl, 1, by decide, by decide⟩, λ _ ⟨_, _, hlt⟩ => lt_irrefl _ hlt⟩
 
 /-! ### *John seeks a unicorn*: de dicto and de re -/
 
@@ -513,13 +512,13 @@ theorem exists_unicorn_of_deRe (M : Interp E W) (g : Assignment (W → E)) (i : 
 
 /-- An interpretation in which John seeks every property and there are no unicorns. -/
 def seekingInterp : Interp ℕ Unit :=
-  { loveData.interp Unit with seek := fun _ _ _ => True }
+  { loveData.interp Unit with seek := λ _ _ _ => True }
 
 /-- The de dicto reading does not entail that there is a unicorn: it is true in
 `seekingInterp`, where nothing is a unicorn. -/
 theorem deDicto_without_unicorns (g : Assignment (Unit → ℕ)) :
     translate seekingInterp johnSeeksAUnicorn.deDicto g () ∧
       ∀ x, ¬ seekingInterp.unicorn () x :=
-  ⟨trivial, fun _ h => h.2⟩
+  ⟨trivial, λ _ h => h.2⟩
 
 end Montague1973

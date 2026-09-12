@@ -26,8 +26,7 @@ every operation computable.
   for some `r`, `r′`; equivalently infix-hood of point sequences
   (`Path.subpath_iff_infix`), whence a scoped `PartialOrder`
   (`open scoped Spatial.Path`).
-* `Path.adjacent`: endpoint-sharing spatial adjacency ([krifka-1998]), the
-  spatial half of the movement relations in `Studies/Krifka1998.lean`.
+* `Path.adjacent`: endpoint-sharing spatial adjacency ([krifka-1998]).
 * `Path.Directionality`: the source/goal/route trichotomy of directional
   prepositions ([zwarts-2005]); paired with `Aspect.Telicity` at use sites
   — the paper's two independent classificatory axes.
@@ -157,8 +156,7 @@ theorem const_source_le (p : Path Loc) : const p.source ≤ p :=
 /-! ### Adjacency -/
 
 /-- Two paths are adjacent if one's goal is the other's source —
-    [krifka-1998]'s spatial adjacency `∞_H`, the spatial half of the
-    movement relations in `Studies/Krifka1998.lean`. -/
+    [krifka-1998]'s spatial adjacency `∞_H`. -/
 def adjacent (p1 p2 : Path Loc) : Prop :=
   p1.goal = p2.source ∨ p2.goal = p1.source
 
