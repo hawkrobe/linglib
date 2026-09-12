@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 import Linglib.Fragments.Indonesian.TAM
 import Linglib.Fragments.Indonesian.Complementation
 import Linglib.Semantics.Tense.Reichenbach
-import Linglib.Studies.Kiparsky2002
 import Linglib.Data.Examples.Arka2013
 
 /-!
@@ -137,13 +136,12 @@ instance {T : Type*} [LinearOrder T] (f : ReichenbachFrame T) :
   unfold englishPresentPerfect; infer_instance
 
 /-- Klein's puzzle and its Indonesian dissolution: with a past reference time the English
-present perfect is contradictory (`Kiparsky2002.present_perfect_puzzle`), while *sudah*
-under the same reference time is satisfiable — (5b) *Dia sudah pergi kemarin*. -/
+present perfect is contradictory, while *sudah* under the same reference time is satisfiable —
+(5b) *Dia sudah pergi kemarin*. -/
 theorem klein_puzzle_dissolved :
     (∀ f : ReichenbachFrame ℤ, englishPresentPerfect f → f.isPast → False) ∧
       ∃ f : ReichenbachFrame ℤ, Aux.sudah.frame f ∧ f.isPast :=
-  ⟨fun f hpp hpast => Kiparsky2002.present_perfect_puzzle f hpp.2
-      ((ReichenbachFrame.isPast_def f).mp hpast),
+  ⟨fun f hpp hpast => ne_of_lt ((ReichenbachFrame.isPast_def f).mp hpast) hpp.2,
     ⟨⟨2, 2, 1, 0⟩, by decide⟩⟩
 
 /-- The English present perfect strictly strengthens *sudah*. -/

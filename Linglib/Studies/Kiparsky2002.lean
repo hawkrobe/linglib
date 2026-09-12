@@ -1,337 +1,182 @@
 import Linglib.Semantics.Aspect.SubeventStructure
-import Linglib.Semantics.Aspect.Basic
-import Linglib.Core.Order.Interval
-import Linglib.Semantics.Tense.Reichenbach
 
 /-!
-# [kiparsky-2002]: Event structure and the perfect
-[kiparsky-2002] [pancheva-2003] [iatridou-anagnostopoulou-izvorski-2001]
+# Kiparsky (2002): Event Structure and the Perfect
 
-Kiparsky's argument that the English perfect's distinct readings
-arise from how the **event structure** of the verbal predicate is
-mapped onto the perfect's temporal parameters E, R, P. Telic
-predicates (achievements and accomplishments) denote complex events
-consisting of an activity leading to a change of state; atelic
-predicates do not. The availability of resultative and present-state
-readings depends on having a result phase that can anchor the
-reference time.
+This file formalizes [kiparsky-2002]'s account of the polysemy of the English perfect. The
+readings of [1], with the recent past a special case of the resultative, are the possible
+assignments of a verbal predicate's event structure to the temporal parameters E, R and P of the
+[reichenbach-1947] schema of [2], in which the perfect's E precedes R, [4]: the existential
+reading places the event in E, the universal reading makes it coextensive with E, the resultative
+reading places the activity of a telic predicate in E and its change of state between E and R
+with the result state holding through R, and the present state reading places R in the result
+state and leaves the change of state implicit (`PerfectReading.mapping`). Event structure is the
+substrate's `TemporalDecomposition`, so the two result-state readings need the complex
+decomposition of a telic predicate (`isComplex_of_presentState`).
 
-## Five → four readings
+The three arguments for the polysemy rest on one structural contrast: under the existential and
+universal readings the event precedes R (`precedes_of_existential`), under the resultative and
+present state readings the result state, and with it the event, extends through R
+(`le_runtime_of_presentState`), so no configuration is of both kinds. A subordinate perspective
+time anchored to the main-clause event, [16], therefore precedes the main perspective time in the
+first case and includes it in the second, which is why [declerck-1991]'s sequence of tense
+contrast, [25], separates the existential and universal perfects from the resultative
+(`sequenceOfTense_of_existential`, `no_sequenceOfTense_of_resultative`). Adverbs specify R, and
+the present perfect's R includes P, so [klein-1992]'s puzzle dissolves: no adverb anterior to P
+is possible, while the past perfect's two readings with such an adverb, [33], are the two sides
+of the contrast (`present_perfect_puzzle`). And the resultative reading is the only one that
+assigns the activity and the result state to different parameters, which is what lets the
+activity be presupposed and the change of state asserted, the source of the Wh-puzzle of [39]
+(`resultative_distinguishes`).
 
-Kiparsky §1 lists five readings: existential, universal, resultative,
-recent past, stative present. He folds recent past into resultative
-(p. 7: "the recent past reading is a special case of the resultative
-reading") leaving four. The `PerfectReading` enum below follows the
-4-reading taxonomy.
+## Implementation notes
 
-## Three puzzles
+* E, R and P are intervals, [2], and precedence is the strict `NonemptyInterval.precedes`, so
+  the event of the universal reading ends before R; the inclusive boundaries remarked on for
+  [10] are not represented.
+* The anchoring rule [16a] is read at its tightest, the subordinate perspective time being the
+  main-clause event's trace.
 
-Kiparsky's theory solves three classic perfect puzzles (§2-§4):
+## References
 
-- **Declerck's SOT puzzle** (§2): existential/universal perfects
-  trigger sequence of tense; resultative does not.
-- **Klein's present perfect puzzle** (§3): past perfect allows
-  point-denoting time adverbials with two readings (existential
-  reading 1 / resultative reading 2); present perfect allows
-  neither.
-- **Michaelis's Wh-puzzle** (§4): R-reading excluded in Wh-questions
-  unless the adverbial relates to the result state.
-
-## Pancheva 2003 relation
-
-[pancheva-2003]'s aspect-of-perfect-participle classification
-(universal / experiential / resultative) embeds into Kiparsky's via
-the `toKiparsky` bridge that lives in `Studies/Pancheva2003.lean`.
-Pancheva's account is independent: she derives the readings from
-participial aspect (Aktionsart × grammatical aspect), while Kiparsky
-derives them from event-structure mappings.
-
-## Status
-
-Substrate inherited from `Semantics/Tense/PerfectPolysemy.lean`
-(deleted; relocated here per CLAUDE.md graduation rule — Studies
-promotes to Theories only when ≥ 2 distinct paper-anchored Studies
-files consume it). Verified against the Kiparsky 2002 PDF: the
-4-reading taxonomy, the subevent-to-parameter mapping thesis, and the
-3 puzzles are all faithful to the paper.
-
+* [kiparsky-2002]
+* [reichenbach-1947]
+* [declerck-1991]
+* [klein-1992]
 -/
-
-open Tense
 
 namespace Kiparsky2002
 
-open Aspect
-open Aspect.SubeventStructure
+open Aspect.SubeventStructure NonemptyInterval
 
--- ════════════════════════════════════════════════════
--- § 1. Perfect Readings ([kiparsky-2002])
--- ════════════════════════════════════════════════════
-/-- Kiparsky's four readings of the perfect.
-    - `existential`: ∃ event in PTS ("has visited Paris")
-    - `universal`: event spans entire PTS ("has lived here since 2010")
-    - `resultative`: result state holds at R ("has broken the vase")
-    - `presentState`: result state holds at R, activity implicit
-      ("the road has widened") -/
-inductive PerfectReading where
+variable {T : Type*} [LinearOrder T]
+
+/-- The readings of the perfect, [1], the recent past being a special case of the resultative. -/
+inductive PerfectReading
   | existential
   | universal
   | resultative
   | presentState
   deriving DecidableEq, Repr
 
--- ════════════════════════════════════════════════════
--- § 2. Subevent-to-Parameter Mappings
--- ════════════════════════════════════════════════════
+/-- The perfect's temporal schema, [4]: the event interval E precedes the reference interval R,
+and tense relates R to the perspective interval P. -/
+structure Perfect (T : Type*) [LinearOrder T] where
+  E : NonemptyInterval T
+  R : NonemptyInterval T
+  P : NonemptyInterval T
+  perfect : E.precedes R
 
-/-- Existential reading: the PTS is right-bounded at R, and the event
-    runtime is contained within the PTS.
-    "I have visited Paris" — ∃ visiting event inside the PTS. -/
-def existentialReading {T : Type*} [LinearOrder T]
-    (d : TemporalDecomposition T) (pts : NonemptyInterval T)
-    (R : T) : Prop :=
-  pts.snd = R ∧ d.runtime ≤ pts
+namespace Perfect
 
-/-- Universal reading: the PTS is right-bounded at R, and the PTS is
-    contained within the event runtime (event ongoing throughout PTS).
-    "I have lived here since 2010" — PTS ⊆ event runtime. -/
-def universalReading {T : Type*} [LinearOrder T]
-    (d : TemporalDecomposition T) (pts : NonemptyInterval T)
-    (R : T) : Prop :=
-  pts.snd = R ∧ pts ≤ d.runtime
+variable (s : Perfect T)
 
-/-- Resultative reading: the result phase contains R. Requires a complex
-    decomposition (telic predicate with activity + result phases).
-    "I have broken the vase" — result state holds at R. -/
-def resultativeReading {T : Type*} [LinearOrder T]
-    (d : TemporalDecomposition T) (R : T) : Prop :=
-  match d with
-  | .complex _ phases _ _ => R ∈ phases.resultTrace
-  | .simple _ => False
+/-- The present perfect, [3a]: the unmarked inclusion of P in R. -/
+def Present : Prop := s.P ≤ s.R
 
-/-- Present-state reading: result phase contains R, activity is implicit
-    (presupposed rather than asserted). Requires complex decomposition.
-    "The road has widened" — result state observable at R. -/
-def presentStateReading {T : Type*} [LinearOrder T]
-    (d : TemporalDecomposition T) (R : T) : Prop :=
-  match d with
-  | .complex _ phases _ _ => R ∈ phases.resultTrace
-  | .simple _ => False
+/-- The past perfect, [4]: R precedes P. -/
+def Past : Prop := s.R.precedes s.P
 
--- ════════════════════════════════════════════════════
--- § 3. Reading Availability from VendlerClass
--- ════════════════════════════════════════════════════
+end Perfect
 
-/-- Available perfect readings for each Vendler class.
-    Telic classes (accomplishment, achievement) license all four readings.
-    Atelic classes (state, activity) license only existential and universal. -/
-def availableReadings : VendlerClass → List PerfectReading
-  | .state => [.existential, .universal]
-  | .activity => [.existential, .universal]
-  | .achievement => [.existential, .universal, .resultative, .presentState]
-  | .accomplishment => [.existential, .universal, .resultative, .presentState]
-  | .semelfactive => [.existential]
+/-- The assignment of event structure to the perfect's parameters under each reading, [6], [9],
+[11] and [13]: the event in E; the event coextensive with E; the activity in E, the change of
+state between E and R and R in the result state; R in the result state alone. -/
+def PerfectReading.mapping (s : Perfect T) : PerfectReading → TemporalDecomposition T → Prop
+  | .existential, d => d.runtime ≤ s.E
+  | .universal, d => d.runtime = s.E
+  | .resultative, .complex _ p _ _ =>
+      p.activityTrace ≤ s.E ∧ s.E.snd ≤ p.resultTrace.fst ∧ s.R ≤ p.resultTrace
+  | .presentState, .complex _ p _ _ => s.R ≤ p.resultTrace
+  | .resultative, .simple _ | .presentState, .simple _ => False
 
-/-- Telic classes have strictly more available readings than atelic classes. -/
-theorem telic_more_readings :
-    (availableReadings .accomplishment).length >
-    (availableReadings .activity).length := by native_decide
+open PerfectReading
 
-/-- Atelic classes lack the resultative reading. -/
-theorem atelic_no_resultative (c : VendlerClass) (h : c.telicity = .atelic) :
-    PerfectReading.resultative ∉ availableReadings c := by
-  cases c <;> simp_all [VendlerClass.telicity, availableReadings]
+variable {s : Perfect T} {d : TemporalDecomposition T}
 
-/-- Atelic classes lack the present-state reading. -/
-theorem atelic_no_presentState (c : VendlerClass) (h : c.telicity = .atelic) :
-    PerfectReading.presentState ∉ availableReadings c := by
-  cases c <;> simp_all [VendlerClass.telicity, availableReadings]
+/-! ### The readings -/
 
-/-- The resultative reading requires a complex (telic) decomposition:
-    simple decompositions make it trivially False. -/
-theorem resultative_requires_complex {T : Type*} [LinearOrder T]
-    (r : NonemptyInterval T) (R : T) :
-    ¬ resultativeReading (.simple r) R := by
-  simp [resultativeReading]
+theorem existential_of_universal (h : universal.mapping s d) : existential.mapping s d :=
+  le_of_eq h
 
--- (§ 4 Pancheva 2003 bridge moved to Studies/Pancheva2003.lean.)
+/-- The resultative configuration is the present state one with the change of state assigned. -/
+theorem presentState_of_resultative (h : resultative.mapping s d) :
+    presentState.mapping s d := by
+  cases d with
+  | simple _ => exact (h : False).elim
+  | complex _ _ _ _ => obtain ⟨_, _, h⟩ := h; exact h
 
--- ════════════════════════════════════════════════════
--- § 5. Kiparsky's Three Puzzles
--- ════════════════════════════════════════════════════
+/-- The result-state readings are confined to telic predicates, [11] and [13]: a simple
+decomposition has no result phase to place R in. -/
+theorem isComplex_of_presentState (h : presentState.mapping s d) : d.isComplex := by
+  cases d with
+  | simple _ => exact (h : False).elim
+  | complex _ _ _ _ => trivial
 
-/-! ### Puzzle 1: SOT Asymmetry
+/-- Under the existential reading the event precedes R, [6]. -/
+theorem precedes_of_existential (h : existential.mapping s d) : d.runtime.precedes s.R :=
+  lt_of_le_of_lt (NonemptyInterval.le_def.mp h).2 s.perfect
 
-In the resultative reading, the embedded perspective time P_sub anchors to the
-result state, which includes the matrix speech time — so P_sub does not precede
-P_main, and SOT (sequence of tenses) does not apply. In the existential and
-universal readings, P_sub precedes P_main, triggering SOT in SOT languages.
+/-- Under the present state reading the result state, and with it the event, extends through
+R, [13]. -/
+theorem le_runtime_of_presentState (h : presentState.mapping s d) : s.R ≤ d.runtime := by
+  cases d with
+  | simple _ => exact (h : False).elim
+  | complex _ _ _ hr => exact le_trans h hr
 
-TODO: Full formalization requires formalizing P_sub anchoring rules (Kiparsky's
-[16a–c]). The theorem below states the key structural difference. -/
+/-- The readings are semantically distinct, §1: no configuration is both existential and a
+result-state one. -/
+theorem not_existential_of_presentState (h : presentState.mapping s d) :
+    ¬ existential.mapping s d :=
+  λ he => precedes_not_overlaps (precedes_of_existential he)
+    (overlaps_symm (overlaps_of_le (le_runtime_of_presentState h)))
 
-/-- In the resultative reading of a present perfect, R includes P (= S for root).
-    Since P is within the result phase, the embedded perspective is not past-shifted,
-    and SOT does not apply. -/
-theorem resultative_no_sot_shift {T : Type*} [LinearOrder T]
-    (f : ReichenbachFrame T) (d : TemporalDecomposition T)
-    (h_present : f.isPresent) (h_result : resultativeReading d f.referenceTime) :
-    -- The result phase contains R (= P by h_present), so the embedded
-    -- temporal perspective is anchored to "now", not to a past time.
-    resultativeReading d f.perspectiveTime := by
-  rw [ReichenbachFrame.isPresent] at h_present
-  rw [← h_present]
-  exact h_result
+/-! ### The sequence of tense puzzle, §2 -/
 
-/-! ### Puzzle 2: Present Perfect Puzzle
+/-- Under the existential and universal readings the main-clause event lies in E, which
+precedes R, so a subordinate perspective time anchored to it, [16a], precedes the main one in
+the present and past perfects: sequence of tense, [16c], applies, [27]. -/
+theorem sequenceOfTense_of_existential (h : existential.mapping s d)
+    (hRP : s.R.fst ≤ s.P.fst) : d.runtime.precedes s.P :=
+  lt_of_lt_of_le (precedes_of_existential h) hRP
 
-In the present perfect, R includes P (= S for root clauses). Past-time adverbs
-(yesterday, in 1990) specify R, but R must include "now" — contradiction. This
-explains why *"I have seen him yesterday" is ungrammatical in English.
+/-- Under the resultative reading the result state holds through R, which includes P in the
+present perfect, so the subordinate perspective time includes the main one and [16c] is
+inapplicable, [26]. -/
+theorem no_sequenceOfTense_of_resultative (h : resultative.mapping s d) (hP : s.Present) :
+    s.P ≤ d.runtime ∧ ¬ d.runtime.precedes s.P :=
+  have hPd : s.P ≤ d.runtime :=
+    le_trans hP (le_runtime_of_presentState (presentState_of_resultative h))
+  ⟨hPd, λ hlt => precedes_not_overlaps hlt (overlaps_symm (overlaps_of_le hPd))⟩
 
-In the past perfect, R precedes P — no contradiction with past-time adverbs,
-and two readings (existential vs resultative) explain the ambiguity. -/
+/-! ### The present perfect puzzle, §3 -/
 
-/-- Present perfect with a past-time adverb: if R = P and the adverb forces
-    R < P, we get a contradiction. -/
-theorem present_perfect_puzzle {T : Type*} [LinearOrder T]
-    (f : ReichenbachFrame T)
-    (h_present : f.isPresent)
-    (h_past_adverb : f.referenceTime < f.perspectiveTime) :
-    False := by
-  rw [ReichenbachFrame.isPresent] at h_present
-  exact absurd (h_present ▸ h_past_adverb) (lt_irrefl _)
+/-- Adverbs specify R, so an adverb denoting a time anterior to P makes R precede P, which the
+present perfect's inclusion of P in R excludes, [12b] and [32a]; the past perfect admits it, and
+its two readings with such an adverb, [33], are the existential configuration, the event before
+R, and the resultative one, the result state through R. -/
+theorem present_perfect_puzzle (hP : s.Present) : ¬ s.Past :=
+  λ hpast => precedes_not_overlaps hpast (overlaps_symm (overlaps_of_le hP))
 
-/-- Past perfect allows past-time adverbs: R < P is consistent with isPast. -/
-theorem past_perfect_allows_adverbs {T : Type*} [LinearOrder T]
-    (f : ReichenbachFrame T)
-    (h_past : f.isPast)
-    (h_perfect : f.isPerfect) :
-    f.referenceTime < f.perspectiveTime ∧ f.eventTime < f.referenceTime :=
-  ⟨(ReichenbachFrame.isPast_def f).mp h_past, h_perfect⟩
+/-! ### The Wh-puzzle, §4 -/
 
-/-! ### Puzzle 3: Wh-Puzzle
+variable {rt : NonemptyInterval T} {p : SubeventPhases T} {ha : p.activityTrace ≤ rt}
+  {hr : p.resultTrace ≤ rt}
 
-In the resultative reading, the activity is presupposed and the result state is
-asserted. Wh-extraction from presupposed content is blocked. This explains why *"What has John eaten?" resists the resultative reading
-(the eating is presupposed, so "what" cannot extract from it).
+/-- Under the existential and universal readings both subevents of a telic predicate lie in E:
+only the whole event can be asserted or presupposed. -/
+theorem phases_le_of_existential (h : existential.mapping s (.complex rt p ha hr)) :
+    p.activityTrace ≤ s.E ∧ p.resultTrace ≤ s.E :=
+  ⟨le_trans ha h, le_trans hr h⟩
 
-TODO: Full formalization requires bridging to presupposition semantics
-(Presupposition) and question semantics (Questions). -/
-
-/-- The resultative reading splits the event into presupposed (activity) and
-    asserted (result state) content. -/
-structure ResultativeContentSplit (Prop' : Type*) where
-  /-- The activity phase is presupposed -/
-  presupposedActivity : Prop'
-  /-- The result state is asserted -/
-  assertedResult : Prop'
-
-/-- In the resultative reading, wh-extraction targets asserted content.
-    Since the activity (what was eaten) is presupposed, wh-extraction is blocked.
-    This is stated as a constraint: extractable content = asserted content only. -/
-theorem wh_targets_assertion (split : ResultativeContentSplit Prop) :
-    -- Only the asserted result is available for wh-extraction.
-    -- The presupposed activity is not accessible.
-    -- (This is a structural statement; the extraction-from-presupposition
-    -- filter requires the presupposition module for full formalization.)
-    split.assertedResult = split.assertedResult := rfl
-
--- ════════════════════════════════════════════════════
--- § 6. Compositional Derivation via ViewpointAspect
--- ════════════════════════════════════════════════════
-
-/-! The Kiparsky readings defined in § 2 as interval relations can be
-compositionally derived by stacking ViewpointAspect operators (IMPF, PRFV,
-PERF, UNBOUNDED) on `phasePred` event predicates. This section proves that
-the two characterizations are equivalent, grounding the readings in the
-same compositional pipeline used by ViewpointAspect.lean. -/
-
-/-- Kiparsky's existential reading = PERF(PRFV(full event)).
-    The PTS is right-bounded at R, and the full event runtime is
-    contained within the PTS — exactly PRFV (runtime ⊆ PTS)
-    composed with PERF (PTS ends at R). -/
-theorem existential_eq_perf_prfv {T : Type*} [LinearOrder T]
-    (d : TemporalDecomposition T) (R : T) :
-    (∃ pts, existentialReading d pts R) ↔
-    PERF (PRFV (phasePred d.runtime)) ⟨(), R⟩ := by
-  simp only [existentialReading, PERF, RB, PRFV, phasePred, Event.τ]
-  constructor
-  · rintro ⟨pts, hR, hSub⟩
-    -- sort defaults to .action; the proof doesn't reference .sort
-    exact ⟨pts, hR, ⟨d.runtime, .action⟩, hSub, rfl⟩
-  · rintro ⟨pts, hR, e, hSub, heq⟩
-    exact ⟨pts, hR, heq ▸ hSub⟩
-
-/-- Kiparsky's universal reading = PERF(UNBOUNDED(full event)).
-    The PTS is right-bounded at R, and the PTS is contained within
-    the event runtime — exactly UNBOUNDED (PTS ⊆ runtime)
-    composed with PERF (PTS ends at R). -/
-theorem universal_eq_perf_unbounded {T : Type*} [LinearOrder T]
-    (d : TemporalDecomposition T) (R : T) :
-    (∃ pts, universalReading d pts R) ↔
-    PERF (UNBOUNDED (phasePred d.runtime)) ⟨(), R⟩ := by
-  simp only [universalReading, PERF, RB, UNBOUNDED, phasePred, Event.τ]
-  constructor
-  · rintro ⟨pts, hR, hSub⟩
-    -- sort defaults to .action; the proof doesn't reference .sort
-    exact ⟨pts, hR, ⟨d.runtime, .action⟩, hSub, rfl⟩
-  · rintro ⟨pts, hR, e, hSub, heq⟩
-    exact ⟨pts, hR, heq ▸ hSub⟩
-
-/-- The resultative reading requires a complex decomposition. When available,
-    it holds whenever R falls within the result trace. PRFV on the full
-    event guarantees the result trace is within the reference time (by
-    `perfective_full_entails_result`), but the reading itself depends
-    only on R's position relative to the result phase. -/
-theorem resultative_from_result_contains {T : Type*} [LinearOrder T]
-    (rt : NonemptyInterval T) (phases : SubeventPhases T)
-    (h_act : phases.activityTrace ≤ rt)
-    (h_res : phases.resultTrace ≤ rt)
-    (R : T)
-    (h_R_in_result : R ∈ phases.resultTrace) :
-    resultativeReading (.complex rt phases h_act h_res) R :=
-  h_R_in_result
-
-/-- The existential reading is available for all Vendler classes (it uses
-    only the full runtime, not the subevent structure). -/
-theorem existential_available_for_all_classes (c : VendlerClass) :
-    PerfectReading.existential ∈ availableReadings c := by
-  cases c <;> simp [availableReadings]
-
--- ════════════════════════════════════════════════════
--- § 7. M&S Refinement: Readings by Event Type
--- ════════════════════════════════════════════════════
-
-/-- Available readings refined by M&S event type. The key insight:
-    points lack resultative and present-state readings because they have
-    no consequent state to anchor. [moens-steedman-1988] -/
-def msAvailableReadings : MoensSteedmanClass → List PerfectReading
-  | .state => [.existential, .universal]
-  | .process => [.existential, .universal]
-  | .culminatedProcess => [.existential, .universal, .resultative, .presentState]
-  | .culmination => [.existential, .universal, .resultative, .presentState]
-  | .point => [.existential, .universal]
-
-/-- The resultative reading requires a consequent state ([moens-steedman-1988]).
-    Points (telic but without consequent state) cannot anchor a result. -/
-theorem resultative_requires_consState (c : MoensSteedmanClass)
-    (h : c.toProfile.hasConsequentState = false) :
-    PerfectReading.resultative ∉ msAvailableReadings c := by
-  cases c <;> simp_all [MoensSteedmanClass.toProfile, msAvailableReadings]
-
-/-- `msAvailableReadings` refines `availableReadings`: every reading available
-    under the finer M&S classification is also available under Vendler. -/
-theorem ms_refines_vendler_readings (c : MoensSteedmanClass) :
-    ∀ r ∈ msAvailableReadings c, r ∈ availableReadings c.toProfile.toVendlerClass := by
-  cases c <;> simp [msAvailableReadings, MoensSteedmanClass.toProfile, availableReadings,
-    stateProfile, activityProfile, achievementProfile, accomplishmentProfile,
-    AspectualProfile.toVendlerClass]
-
-/-- Points are strictly more restrictive than Vendler achievements:
-    achievements have 4 available readings, points have only 2. -/
-theorem point_fewer_readings_than_achievement :
-    (msAvailableReadings .point).length <
-    (availableReadings VendlerClass.achievement).length := by native_decide
+/-- The resultative reading alone assigns the activity and the result state to different
+parameters, the activity to E and the result state, holding through R, outside E: the activity
+can be presupposed and the change of state asserted, and questioning the activity is questioning
+a presupposition, [39]. -/
+theorem resultative_distinguishes (h : resultative.mapping s (.complex rt p ha hr)) :
+    p.activityTrace ≤ s.E ∧ ¬ p.resultTrace ≤ s.E :=
+  have ⟨h₁, _, h₃⟩ := h
+  ⟨h₁, λ hle => precedes_not_overlaps s.perfect
+    (overlaps_symm (overlaps_of_le (le_trans h₃ hle)))⟩
 
 end Kiparsky2002
