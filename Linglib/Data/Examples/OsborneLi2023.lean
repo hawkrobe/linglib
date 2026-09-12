@@ -41,7 +41,7 @@ def ex3a : LinguisticExample :=
     glossedTokens := []
     translation := "John and Mary talked about himself."
     context := "Coordinate subject; reflexive in PP complement. Co-valuing `himself` with `John` (a conjunct valent of the subject) is marginal — the reflexive cannot find a fully matching antecedent in the local domain but is licensed by the conjunct valent."
-    judgment := .marginal
+    judgment := .questionable
     alternatives := []
     readings := [("himself = John", .marginal)]
     paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "himself;John"), ("anaphorType", "reflexive"), ("paperSection", "3"), ("paperMeanScore", "2.15"), ("paperNRespondents", "60")]
@@ -77,10 +77,10 @@ def ex5a : LinguisticExample :=
     glossedTokens := []
     translation := "Both John and Mary love him."
     context := "`both ... and ...` coordinator; pronoun as object of a symmetric predicate (`love`). Co-valuing `him` with `John` instantiates the CRDC configuration: `him` is a full valent, `John` is a conjunct of the coordinate subject."
-    judgment := .questionable
+    judgment := .ungrammatical
     alternatives := []
     readings := [("him = John", .questionable)]
-    paperFeatures := [("coordinateSubject", "true"), ("coordinator", "both...and"), ("coVValuedPair", "him;John"), ("paperSection", "3"), ("paperMeanScore", "UNVERIFIED"), ("paperNRespondents", "UNVERIFIED")]
+    paperFeatures := [("coordinateSubject", "true"), ("coordinator", "both...and"), ("coVValuedPair", "him;John"), ("paperSection", "3"), ("paperMeanScore", "3.20"), ("paperNRespondents", "60")]
     comment := "Osborne & Li 2023 ex (5a). CRDC predicts marginality (`.questionable`). Mean score and respondent count not verified against the paper PDF; the paired-coordinator variant pairs with a bare-`and` baseline that the paper itself uses to argue the symmetric-predicate `love` is the locus of the contrast, not the `both`-coordinator. Re-check both the score and the analytic attribution on next audit pass."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
