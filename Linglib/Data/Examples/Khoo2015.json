@@ -1,0 +1,86 @@
+[
+  {
+    "id": "khoo2015_control_false",
+    "source": {"bibkey": "khoo-2015", "paperLabel": "Section II"},
+    "language": "stan1293",
+    "primaryText": "Jim is at home right now.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Jim is at home right now.",
+    "context": "A non-modal assertion in the control vignette; participants rated on a 7-point scale either whether what the speaker said is false or whether they would respond 'No, ...'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["sentence", "control"],
+      ["response", "false"],
+      ["mean", "610"],
+      ["sd", "135"]
+    ],
+    "comment": "Mean 7-point rating and standard deviation, times 100.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "khoo2015_control_rejection",
+    "source": {"bibkey": "khoo-2015", "paperLabel": "Section II"},
+    "language": "stan1293",
+    "primaryText": "Jim is at home right now.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Jim is at home right now.",
+    "context": "A non-modal assertion in the control vignette; participants rated on a 7-point scale either whether what the speaker said is false or whether they would respond 'No, ...'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["sentence", "control"],
+      ["response", "rejection"],
+      ["mean", "560"],
+      ["sd", "113"]
+    ],
+    "comment": "Mean 7-point rating and standard deviation, times 100.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "khoo2015_modal_false",
+    "source": {"bibkey": "khoo-2015", "paperLabel": "Section II"},
+    "language": "stan1293",
+    "primaryText": "Fat Tony might be dead.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Fat Tony might be dead.",
+    "context": "Smith, having examined evidence consistent with Fat Tony's death, asserts the epistemic might-claim; Beth knows Fat Tony is alive; participants rated on a 7-point scale either whether what Smith said is false or whether they would respond 'No, ...'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["sentence", "modal"],
+      ["response", "false"],
+      ["mean", "242"],
+      ["sd", "161"]
+    ],
+    "comment": "Mean 7-point rating and standard deviation, times 100.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "khoo2015_modal_rejection",
+    "source": {"bibkey": "khoo-2015", "paperLabel": "Section II"},
+    "language": "stan1293",
+    "primaryText": "Fat Tony might be dead.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Fat Tony might be dead.",
+    "context": "Smith, having examined evidence consistent with Fat Tony's death, asserts the epistemic might-claim; Beth knows Fat Tony is alive; participants rated on a 7-point scale either whether what Smith said is false or whether they would respond 'No, ...'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["sentence", "modal"],
+      ["response", "rejection"],
+      ["mean", "503"],
+      ["sd", "177"]
+    ],
+    "comment": "Mean 7-point rating and standard deviation, times 100.",
+    "lgrConformance": ""
+  }
+]

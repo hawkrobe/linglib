@@ -1,134 +1,64 @@
-import Linglib.Studies.Rudin2025
+import Linglib.Data.Examples.Khoo2015
 
 /-!
-# [khoo-2015]: Modal Disagreements
+# Khoo (2015): Modal Disagreements
 
-Empirical data from Khoo's experiment on epistemic modal disagreements.
-The key finding: speakers reject might-claims (high rejection rating)
-without judging them false (low falsity rating). This dissociation
-between rejection and falsity judgments is predicted by [rudin-2025a]'s
-Neo-Stalnakerian Framework, which derives it from the fact that truth
-depends on the *assertor's* information while rejection depends on the
-*rejector's* information.
+This file records the experiment of [khoo-2015] on disagreements over epistemic modal claims.
+Participants read a control vignette with a non-modal assertion and a modal vignette in which
+Smith, having examined evidence consistent with Fat Tony's death, says *Fat Tony might be dead*
+while Beth knows him to be alive, and rated on a seven-point scale either whether what the
+speaker said is false or whether they would respond *No, ...* (Section II). The Difference
+Observation is that the modal claim is rejected readily yet not judged false, a dissociation the
+control assertion lacks (`difference_observation`): speakers reject the might-claim without
+judging it false.
 
-## Experimental Design (§II)
+## Implementation notes
 
-- N = 60 participants on Amazon Mechanical Turk
-- 2 × 2 mixed design: between-subjects on response type (False vs
-  Rejection), within-subjects on sentence type (Control vs Modal)
-- 7-point Likert scale (1 = completely disagree, 7 = completely agree)
-- Control vignette: non-modal assertion ("Jim is at home right now")
-- Modal vignette: epistemic might ("Fat Tony might be dead")
-- False condition: "Do you agree that what [speaker] said is false?"
-- Rejection condition: "Would you respond by saying 'No,...'?"
+The four cell means and standard deviations, times one hundred, are the rows of
+`Data/Examples/Khoo2015.json`, read with `nat?`; the paper's account of the observation is not
+formalized.
 
-## Key Finding: The Difference Observation (footnote 13)
+## References
 
-When presented with **Modal**, ordinary speakers are strongly inclined to
-reject Smith's assertion (M = 5.03) but are also strongly inclined to
-*disagree* that what Smith said is false (M = 2.42). This dissociation
-is absent in **Control**, where rejection and falsity ratings are similar.
-
-The interaction is the core result: the rejection–falsity gap *reverses
-direction* between Modal (rejection ≫ falsity) and Control (falsity ≥
-rejection).
-
+* [khoo-2015]
 -/
 
 namespace Khoo2015
 
-/-! ## Experimental Conditions -/
+open Data.Examples
 
-/-- Sentence type: control (non-modal) vs modal (epistemic might). -/
-inductive SentenceType where
-  | control  -- "Jim is at home right now" (non-modal assertion)
-  | modal    -- "Fat Tony might be dead" (epistemic might)
+/-- The sentence type of a vignette. -/
+inductive Sentence where
+  | control
+  | modal
   deriving DecidableEq, Repr
 
-/-- Response type: falsity judgment vs rejection inclination. -/
-inductive ResponseType where
-  | false_     -- "Do you agree that what [speaker] said is false?"
-  | rejection  -- "Would you respond by saying 'No, ...'?"
+/-- The question put to participants. -/
+inductive Response where
+  | false_
+  | rejection
   deriving DecidableEq, Repr
 
-/-- An experimental condition is a sentence × response pair. -/
-structure Condition where
-  sentence : SentenceType
-  response : ResponseType
-  deriving DecidableEq, Repr
+def Sentence.tag : Sentence → String
+  | .control => "control"
+  | .modal => "modal"
 
-/-- Mean Likert rating for each condition. -/
-def meanRating : Condition → Float
-  | ⟨.control, .false_⟩    => 6.10
-  | ⟨.control, .rejection⟩ => 5.60
-  | ⟨.modal,   .false_⟩    => 2.42
-  | ⟨.modal,   .rejection⟩ => 5.03
+def Response.tag : Response → String
+  | .false_ => "false"
+  | .rejection => "rejection"
 
-/-- Standard deviation for each condition. -/
-def sdRating : Condition → Float
-  | ⟨.control, .false_⟩    => 1.35
-  | ⟨.control, .rejection⟩ => 1.13
-  | ⟨.modal,   .false_⟩    => 1.61
-  | ⟨.modal,   .rejection⟩ => 1.77
+/-- The mean rating of a cell, times one hundred. -/
+def mean (s : Sentence) (r : Response) : ℕ :=
+  ((Examples.all.filter λ e =>
+      e.feature? "sentence" = some s.tag ∧ e.feature? "response" = some r.tag).filterMap
+    (·.nat? "mean")).headD 0
 
-/-! ## The Difference Observation
-
-The crucial finding: for modal sentences, rejection is high but falsity
-is low. For control sentences, both are high. -/
-
-/-- Modal rejection is high (above midpoint 4). -/
-theorem modal_rejection_high :
-    meanRating ⟨.modal, .rejection⟩ > 4.0 := by native_decide
-
-/-- Modal falsity is low (below midpoint 4). -/
-theorem modal_falsity_low :
-    meanRating ⟨.modal, .false_⟩ < 4.0 := by native_decide
-
-/-- The dissociation: modal rejection exceeds modal falsity. -/
-theorem modal_rejection_exceeds_falsity :
-    meanRating ⟨.modal, .rejection⟩ > meanRating ⟨.modal, .false_⟩ := by native_decide
-
-/-- Control shows no dissociation: falsity ≥ rejection. -/
-theorem control_no_dissociation :
-    meanRating ⟨.control, .false_⟩ ≥ meanRating ⟨.control, .rejection⟩ := by native_decide
-
-/-- The rejection–falsity gap is large for modal (> 2 points). -/
-theorem modal_gap_large :
-    meanRating ⟨.modal, .rejection⟩ - meanRating ⟨.modal, .false_⟩ > 2.0 := by native_decide
-
-/-- The rejection–falsity gap is small for control (< 1 point). -/
-theorem control_gap_small :
-    meanRating ⟨.control, .false_⟩ - meanRating ⟨.control, .rejection⟩ < 1.0 := by native_decide
-
-/-- The interaction: the rejection–falsity gap reverses direction between
-    Modal and Control. For Modal, rejection exceeds falsity; for Control,
-    falsity exceeds rejection. This is Khoo's "Difference Observation." -/
-theorem interaction_reversal :
-    meanRating ⟨.modal, .rejection⟩ > meanRating ⟨.modal, .false_⟩ ∧
-    meanRating ⟨.control, .false_⟩ ≥ meanRating ⟨.control, .rejection⟩ := by
-  constructor <;> native_decide
-
--- ============================================================================
--- § Neo-Stalnakerian Framework Grounding
--- ============================================================================
-
-open Rudin2025 in
-/-- The Mobster scenario has the structure predicted by the NSF:
-    Smith (assertor) has examined evidence consistent with Fat Tony being dead,
-    so his epistemic state contains p-worlds (p = "Fat Tony is dead").
-    Beth (rejector) knows Fat Tony is alive, so her epistemic state has no p-worlds.
-
-    The NSF predicts:
-    1. Smith's assertion is true (his state is in MI(might-p))
-    2. Beth's rejection is licensed (her state is not might-p-compatible)
-
-    This matches Khoo's finding: speakers reject the might-claim without
-    judging it false. -/
-theorem nsf_predicts_khoo_pattern
-    {W : Type*} (p : (W → Prop)) (smith beth : List W)
-    (h_smith : ∃ w ∈ smith, p w)
-    (h_beth : ¬ ∃ w ∈ beth, p w) :
-    MI (mightSimple p) smith ∧ rejectionLicensed (mightSimple p) beth :=
-  might_truth_acceptance_dissociate p smith beth h_smith h_beth
+/-- The Difference Observation: the modal claim is rejected above the scale's midpoint yet
+judged false below it, while the control assertion is judged false at least as readily as it
+is rejected. -/
+theorem difference_observation :
+    (400 < mean .modal .rejection ∧ mean .modal .false_ < 400) ∧
+      mean .control .rejection ≤ mean .control .false_ := by
+  decide
 
 end Khoo2015
