@@ -20,8 +20,10 @@ base is mess.
 
 ## Implementation notes
 
-The book was not available for this pass, and the chapter and section numbers carried over from
-the earlier version of this file are marked as unverified. The sum closure `star` takes sums of
+The section locators are the book's: distribution sets and cardinality in the fifth chapter,
+the Head Principle and its lemma, the white cats example that carries pluralization, the
+definitions of count, mass, neat, and mess i-sets and their lemma in the sixth, the neat mass
+nouns in the seventh, and the mess types in the eighth. The sum closure `star` takes sums of
 arbitrary subsets, so the closure of the empty set is the null element, and the mereological
 apparatus of overlap and disjointness is that of `Semantics/Mereology`, which
 [sutton-filip-2021] shares. Neatness is the book's atomisticity of the base, which it
@@ -35,13 +37,11 @@ substitutes for the base-atomicity of [landman-2011] and [landman-2016].
 
 namespace Landman2020
 
--- UNVERIFIED: the book's chapter, section, and lemma locators cited below.
-
 open Mereology (OverlapPred DisjointPred)
 
 variable {B : Type*} [CompleteBooleanAlgebra B]
 
-/-! ### Boolean background (his ch. 2)
+/-! ### Boolean background (ch. 2)
 
 `star X` is closure under arbitrary sums — `*X = {b : ∃ Y ⊆ X, b = ⊔Y}`,
 so `*∅ = {⊥}`. Mereological overlap is non-null meet. `plus Z` is `Z⁺`
@@ -101,18 +101,18 @@ def mOverlap (x y : B) : Prop := x ⊓ y ≠ ⊥
 /-- `Z⁺`: `Z` minus the null element. -/
 def plus (Z : Set B) : Set B := Z \ {⊥}
 
-/-- The `Z`-atoms: minimal elements of `Z⁺` (his ch. 2; relativized to
+/-- The `Z`-atoms: minimal elements of `Z⁺` (ch. 2; relativized to
     `Z`, not Boolean atoms). -/
 def atomsIn (Z : Set B) : Set B :=
   {z ∈ plus Z | ∀ y ∈ plus Z, y ≤ z → y = z}
 
 /-- `Z` is atomistic: every element of `Z⁺` is the sum of the `Z`-atoms
-    below it (his `ATOM_{Z,b} = (b] ∩ ATOM_Z` and `b = ⊔ATOM_{Z,b}`). -/
+    below it (the book's `ATOM_{Z,b} = (b] ∩ ATOM_Z` and `b = ⊔ATOM_{Z,b}`). -/
 def Atomistic (Z : Set B) : Prop :=
   ∀ b ∈ plus Z, b = sSup (Set.Iic b ∩ atomsIn Z)
 
 /-- In a ⊥-free disjoint set everything is minimal: `ATOM_Z = Z`
-    (his §6.1.2 Lemma, step 2: a disjoint base is its own set of
+    (§6.1.2 Lemma, step 2: a disjoint base is its own set of
     base-atoms). -/
 theorem atomsIn_eq_of_disjoint {Z : Set B} (hZ : DisjointPred mOverlap Z)
     (hbot : ⊥ ∉ Z) : atomsIn Z = Z := by
@@ -131,7 +131,7 @@ theorem atomsIn_eq_of_disjoint {Z : Set B} (hZ : DisjointPred mOverlap Z)
     rw [inf_eq_left.mpr hle]
     exact λ h => hybot (Set.mem_singleton_iff.mpr h)
 
-/-! ### Counting from disjointness (his ch. 5)
+/-! ### Counting from disjointness (ch. 5)
 
 Mountain semantics counts in terms of Boolean atoms; Iceberg semantics
 observes that **disjointness** of the base is what makes counting
@@ -139,7 +139,7 @@ correct. The distribution set `D_Z(x) = (x] ∩ Z` recovers `x` exactly
 when `Z` is disjoint — by frame distributivity, an element of a disjoint
 `Z` is below a sum of `Z`-elements only by being one of them. -/
 
-/-- The distribution set `D_Z(x) = (x] ∩ Z` (his §5.2). -/
+/-- The distribution set `D_Z(x) = (x] ∩ Z` (§5.2). -/
 def partsIn (Z : Set B) (x : B) : Set B := {z ∈ Z | z ≤ x}
 
 /-- **Membership in a sum is membership in the summands** (for disjoint,
@@ -186,7 +186,7 @@ theorem partsIn_injOn {Z : Set B} (hZ : DisjointPred mOverlap Z)
   λ x hx x' hx' h => by
     rw [← sSup_partsIn hZ hbot hx, ← sSup_partsIn hZ hbot hx', h]
 
-/-- `card_Z(x) = |D_Z(x)|` (his §5.2; presupposes `Z` disjoint, which is
+/-- `card_Z(x) = |D_Z(x)|` (§5.2; presupposes `Z` disjoint, which is
     what `partsIn_injOn` certifies as sufficient). -/
 noncomputable def card (Z : Set B) (x : B) : ℕ := (partsIn Z x).ncard
 
@@ -213,10 +213,10 @@ theorem card_pair {Z : Set B} (hZ : DisjointPred mOverlap Z)
   rw [sSup_pair] at h
   rw [h, Set.ncard_pair hne]
 
-/-! ### I-sets and count – mass – neat – mess (his §6.1) -/
+/-! ### I-sets and count – mass – neat – mess (§6.1) -/
 
 /-- An i-set: a body and a base that generates it under sum
-    (his §5.1/§6.1.2: `body(X) ⊆ *base(X)` and `⊔body(X) = ⊔base(X)`). -/
+    (§5.1/§6.1.2: `body(X) ⊆ *base(X)` and `⊔body(X) = ⊔base(X)`). -/
 structure ISet (B : Type*) [CompleteBooleanAlgebra B] where
   /-- The standard denotation. -/
   body : Set B
@@ -227,21 +227,21 @@ structure ISet (B : Type*) [CompleteBooleanAlgebra B] where
 
 namespace ISet
 
-/-- The singular null i-set ⟨∅, ∅⟩ (his §6.1.2 Lemma). -/
+/-- The singular null i-set ⟨∅, ∅⟩ (§6.1.2 Lemma). -/
 def nullEmpty : ISet B :=
   ⟨∅, ∅, Set.empty_subset _, rfl⟩
 
-/-- The plural null i-set ⟨{⊥}, ∅⟩ (his §6.1.2 Lemma; `*∅ = {⊥}`). -/
+/-- The plural null i-set ⟨{⊥}, ∅⟩ (§6.1.2 Lemma; `*∅ = {⊥}`). -/
 def nullBot : ISet B :=
   ⟨{⊥}, ∅, by simp [star_empty], by rw [sSup_singleton, sSup_empty]⟩
 
 /-- An i-set is null iff its base is empty. -/
 def IsNull (X : ISet B) : Prop := X.base = ∅
 
-/-- Count: the base is disjoint (his §6.1.2). -/
+/-- Count: the base is disjoint (§6.1.2). -/
 def IsCount (X : ISet B) : Prop := DisjointPred mOverlap X.base
 
-/-- Mass: if non-null then not count (his §6.1.2; the null i-sets are
+/-- Mass: if non-null then not count (§6.1.2; the null i-sets are
     both count and mass). -/
 def IsMass (X : ISet B) : Prop := ¬X.IsNull → ¬X.IsCount
 
@@ -255,7 +255,7 @@ def IsNeat (X : ISet B) : Prop :=
 def IsMess (X : ISet B) : Prop := ¬X.IsNull → ¬X.IsNeat
 
 /-- An empty-based i-set has body `∅` or `{⊥}`: the two null i-sets are
-    the only ones (his §6.1.2 Lemma). -/
+    the only ones (§6.1.2 Lemma). -/
 theorem body_eq_of_base_empty (X : ISet B) (h : X.base = ∅) :
     X.body = ∅ ∨ X.body = {⊥} := by
   have hsub : X.body ⊆ {⊥} := by
@@ -263,7 +263,7 @@ theorem body_eq_of_base_empty (X : ISet B) (h : X.base = ∅) :
     exact X.body_subset_star
   exact Set.subset_singleton_iff_eq.mp hsub
 
-/-- **Count i-sets are neat** (his §6.1.2 Lemma, claim 2): a ⊥-free
+/-- **Count i-sets are neat** (§6.1.2 Lemma, claim 2): a ⊥-free
     disjoint base is its own set of base-atoms, and trivially
     atomistic. -/
 theorem IsCount.isNeat {X : ISet B} (hX : X.IsCount)
@@ -276,7 +276,7 @@ theorem IsCount.isNeat {X : ISet B} (hX : X.IsCount)
   · rw [hatoms]
     exact hX
 
-/-! ### The Head Principle (his §5.3)
+/-! ### The Head Principle (§5.3)
 
 `base(α) = (body(α)] ∩ base(H)`: the base of a complex NP is the base of
 its *head*, restricted to the parts of the complex's body. The
@@ -289,14 +289,14 @@ count. -/
 def headBase (bodyC : Set B) (H : ISet B) : Set B :=
   {b ∈ H.base | b ≤ sSup bodyC}
 
-/-- His §5.3 Lemma, verbatim: "If `base(H)` is disjoint then `base(α)` is
+/-- §5.3 Lemma, verbatim: "If `base(H)` is disjoint then `base(α)` is
     disjoint. Proof: `base(α) ⊆ base(H)`. ∎" -/
 theorem headBase_disjoint {bodyC : Set B} {H : ISet B}
     (hH : DisjointPred mOverlap H.base) :
     DisjointPred mOverlap (headBase bodyC H) :=
   Mereology.DisjointPred.anti mOverlap (Set.sep_subset _ _) hH
 
-/-! ### Pluralization (his §5.4)
+/-! ### Pluralization (§5.4, the white cats example)
 
 `plur(P) = ⟨*body(P), (*body(P)] ∩ base(P)⟩`. Since
 `⊔*body(P) = ⊔body(P) = ⊔base(P)`, the head-principle restriction is
@@ -331,11 +331,11 @@ theorem plur_isCount {P : ISet B} (hP : P.IsCount) : (P.plur).IsCount :=
 
 end ISet
 
-/-! ### The noun classes (his ch. 7–8)
+/-! ### The noun classes (ch. 7–8)
 
 Number-neutral neat mass nouns (*poultry*, *livestock*, §7.1): the
 singular/plural distinction is not articulated — `⟨*X₀, *X₀⟩` for a
-disjoint `X₀` (his `DOM-BIRD`). The base overlaps (so: mass), but its
+disjoint `X₀` (the book's `DOM-BIRD`). The base overlaps (so: mass), but its
 atoms are exactly `X₀` (so: neat). Mess mass nouns (*water*, §8.1.5): the
 base has no minimal elements at all, so atomisticity fails outright. -/
 
@@ -360,7 +360,7 @@ theorem star_overlapPred {X₀ : Set B} (hbot : ⊥ ∉ X₀)
     rw [inf_sup_self]
     exact λ h => hbot (h ▸ h₀)
 
-/-- The number-neutral neat mass i-set `⟨*X₀, *X₀⟩` (his §7.1: *poultry*
+/-- The number-neutral neat mass i-set `⟨*X₀, *X₀⟩` (§7.1: *poultry*
     with `X₀ = DOM-BIRD`). -/
 def numberNeutral (X₀ : Set B) : ISet B where
   body := star X₀
@@ -405,7 +405,7 @@ theorem atomsIn_star_of_disjoint {X₀ : Set B}
     exact le_antisymm hle (hx'z ▸ le_sSup hx'Y)
 
 /-- Number-neutral nouns are **neat**: the base `*X₀` overlaps, but it is
-    atomistic over the disjoint generator set `X₀` (his §7.1: *poultry*
+    atomistic over the disjoint generator set `X₀` (§7.1: *poultry*
     is a neat mass i-set). -/
 theorem numberNeutral_isNeat {X₀ : Set B}
     (hdisj : DisjointPred mOverlap X₀) (hbot : ⊥ ∉ X₀) :
@@ -427,7 +427,7 @@ theorem numberNeutral_isNeat {X₀ : Set B}
     rw [hatoms]
     exact hdisj
 
-/-- A non-trivial atomless base is **mess** (his §8.1.5: *water*'s base
+/-- A non-trivial atomless base is **mess** (§8.1.5: *water*'s base
     has no minimal elements — space can always be shaved off a region
     containing a molecule — so atomisticity fails). -/
 theorem not_neat_of_atomless {X : ISet B} (h : atomsIn X.base = ∅)
