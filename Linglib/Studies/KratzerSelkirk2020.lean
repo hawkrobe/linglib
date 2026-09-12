@@ -2,321 +2,165 @@ import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Semantics.Alternatives.Basic
 import Linglib.Semantics.Focus.Control
 import Linglib.Studies.HartmannZimmermann2007
-import Linglib.Studies.BeckmanPierrehumbert1986
 
 /-!
-# Two-feature decomposition of information structure
+# Kratzer and Selkirk (2020): Deconstructing Information Structure
 
-Kratzer & Selkirk's privative-feature analysis: information structure
-decomposes into `[FoC]` (introduces alternatives) and `[G]` (presupposes
-discourse salience), with no separate feature for newness — merely new
-material is unmarked (§5).
+This file formalizes the paper's two-feature decomposition of information structure and
+its semantics in Rooth's alternatives framework. The privative feature [FoC] introduces
+alternatives, setting the alternatives value of a constituent of type τ to the whole domain
+of that type, and imposes no discourse requirement of its own; the squiggle operator that
+must c-command it requires the constituent to represent a contrast with each of a set of
+salient discourse referents, which must be among the alternatives and differ from the
+ordinary value, and then consumes the alternatives, collapsing them to the ordinary value.
+The feature [G] presupposes Givenness, that the alternatives value is the singleton of a
+salient discourse referent, and leaves both values unchanged; the requirement is
+use-conditional, like the German particles *ja* and *doch*. Two consequences follow. No
+constituent can bear both features, since no domain is a singleton, and a constituent
+containing a focus can be Given only if an operator inside it has consumed the alternatives,
+which is what licenses second-occurrence focus under *only*. Newness is no feature at all,
+so the paper's footnote on Hausa rereads the in situ and ex situ answers of
+[hartmann-zimmermann-2007] as unmarked newness and [FoC].
 
-## Main definitions
+## Implementation notes
 
-* `ISFeature`: `FoC` and `G` constructors.
-* `applyFoC`, `applyG`: feature contributions to an `WithAlternatives`
-  (45) and (47); K&S givenness (46) is the substrate's
-  `WithAlternatives.Given`.
-* `ContrastOperator`: the K&S ~ operator (54), which requires contrast
-  with each antecedent and collapses alternatives.
-* `onlySemantics`: the K&S analysis of *only* (56).
-* `isAGiven`: Schwarzschild A-givenness on alternative sets.
-* `IsFoCus`, `KSHausaReading`: the fn. 21 reinterpretation of Hausa.
-
-## Main results
-
-* `foc_g_exclusion`: `[FoC]` and `[G]` cannot both hold of a single
-  meaning under a non-trivial domain.
-* `consumed_alts_given`: ~ consumption yields Givenness — the engine of
-  their Second Occurrence Focus analysis (58).
-* `givenness_entails_aGivenness`: K&S givenness implies Schwarzschild
-  A-givenness; the converse is refuted.
+The paper's Givenness is the substrate's `WithAlternatives.Given`, and its *only* is the
+library's `Focus.onlyVia` at the salient contrast set, so the paper's indirect association
+through two occurrences of the contextual variable is a fact about the substrate. The
+squiggle operator is bundled with proofs of the first two contrast conditions of (49); the
+third, which prevents overfocusing by comparing [FoC]/[G]-variants, is not formalized. The
+prosodic spell-out of the features in English (§6–§7) is prose.
 
 ## References
 
-* [kratzer-selkirk-2020], [schwarzschild-1999],
-  [beaver-2007], [katz-selkirk-2011], [hartmann-zimmermann-2007].
+* [kratzer-selkirk-2020]
+* [rooth-1992] — alternatives semantics and the squiggle operator
+* [schwarzschild-1999] — A-Givenness, of which the paper's Givenness is a special case
+* [potts-2005] — expressive meaning
+* [hartmann-zimmermann-2007] — the Hausa data of footnote 21
 -/
 
 open Pragmatics.Expressives
 
 namespace KratzerSelkirk2020
 
-/-- The two privative morphosyntactic features of [kratzer-selkirk-2020].
+/-! ### The features (45)–(47) -/
 
-[FoC] and [G] are genuinely syntactic features: crosslinguistically they
-trigger displacement, agreement, and ellipsis (§2). They happen to be
-spelled out prosodically in Standard American and British English, but
-this is not their defining property. Newness is not a feature — merely
-new material is unmarked (§5). -/
-inductive ISFeature where
-  /-- FoCus: introduces alternatives, signals contrast.
-      Resembles [wh] — comes with obligatory ~ operator. -/
-  | FoC
-  /-- Givenness: presupposes discourse salience, signals match.
-      Contributes meaning directly (no operator needed). -/
-  | G
-  deriving DecidableEq, Repr
-
-/-! ## Contribution of [FoC]
-
-[FoC] does not change the ordinary value; its alternative set is the full domain D_τ
-(45) — standard Roothian focus semantics. [FoC] all by itself
-triggers no discourse requirement: it merely introduces alternatives,
-which alternatives-evaluating operators (the ~ operator, *only*) then
-use (§8). -/
-
-/-- Apply [FoC] to a meaning: ordinary value unchanged, alternative set becomes the
-    full domain (45). -/
+/-- The contribution of [FoC] (45): the ordinary value is unchanged and the alternatives
+value is the whole domain of the constituent's type. -/
 def applyFoC {α : Type*} (m : WithAlternatives α) (domain : Set α) : WithAlternatives α :=
   { ordinary := m.ordinary, alternatives := domain }
 
-/-- [FoC] preserves ordinary value ((45) first clause). -/
-theorem foc_preserves_ordinary {α : Type*} (m : WithAlternatives α) (domain : Set α) :
+theorem applyFoC_ordinary {α : Type*} (m : WithAlternatives α) (domain : Set α) :
     (applyFoC m domain).ordinary = m.ordinary := rfl
 
-/-! ## Contribution of [G]
+/-- The contribution of [G] indexed with the salient discourse referent `a` (47): defined
+only if the meaning is Given with respect to `a` (46), and then the identity. -/
+def applyG {α : Type*} (m : WithAlternatives α) (a : α) (_ : m.Given a) :
+    WithAlternatives α := m
 
-[G] is indexed with a contextually salient discourse referent a and
-introduces a Givenness requirement (47):
+theorem applyG_eq {α : Type*} (m : WithAlternatives α) (a : α) (h : m.Given a) :
+    applyG m a h = m := rfl
 
-  ⟦[α]_{G_a}⟧_{O,C} is defined iff a is a discourse referent in the
-    window preceding C, and α is Given with respect to a.
-  If defined, ⟦[α]_{G_a}⟧_{O,C} = ⟦α⟧_{O,C} and ⟦[α]_{G_a}⟧_{A,C} = ⟦α⟧_{A,C}.
-
-The requirement is purely use-conditional/expressive, like German *ja*
-and *doch* — a condition on the discourse context, not on truth
-conditions. -/
-
-/-- Apply [G], indexed with the salient discourse referent `a`: defined
-    only if the meaning is Given with respect to `a` (the paper's (46), the
-    substrate's `WithAlternatives.Given`); if defined, both values are
-    unchanged (47). -/
-def applyG {α : Type*} (m : WithAlternatives α) (a : α) (_ : m.Given a) : WithAlternatives α := m
-
-/-- [G] preserves ordinary value ((47): if defined, ordinary value unchanged). -/
-theorem g_preserves_ordinary {α : Type*} (m : WithAlternatives α) (a : α) (h : m.Given a) :
-    (applyG m a h).ordinary = m.ordinary := rfl
-
-/-- [G] preserves alternative set ((47): alternative set unchanged). -/
-theorem g_preserves_alternatives {α : Type*} (m : WithAlternatives α) (a : α) (h : m.Given a) :
-    (applyG m a h).alternatives = m.alternatives := rfl
-
-/-- [FoC] and [G] are mutually exclusive: no constituent can satisfy both
-    the [FoC] alternative set condition (the full domain `D_τ`) and the [G] alternative set
-    condition (`WithAlternatives.Given`, a singleton) when the domain has two
-    distinct elements — "assuming that no semantic domain is a singleton
-    set" (K&S §8 prose immediately preceding (58): "It follows that no
-    constituents can be both [G]-marked and [FoC]-marked"). Distinct from
-    (58) itself, which states the [G]-can-contain-[FoC]-only-with-consumption
-    consequence. -/
-theorem foc_g_exclusion {α : Type*} {m : WithAlternatives α} {a b : α}
+/-- No constituent bears both features: an alternatives value with two members, as any
+domain has, is not a singleton. -/
+theorem not_given_of_pair {α : Type*} {m : WithAlternatives α} {a b : α}
     (ha : a ∈ m.alternatives) (hb : b ∈ m.alternatives) (hab : a ≠ b) (referent : α) :
-    ¬ m.Given referent := fun h => by
+    ¬ m.Given referent := λ h => by
   rw [h] at ha hb
   exact hab (ha.trans hb.symm)
 
-/-- [G]'s Givenness requirement and the ~ operator's contrast requirement
-    are expressive (use-conditional) in the sense of [potts-2005] — K&S §8
-    on (47) and (53); [FoC] itself imposes no discourse requirement.
-    Packaged as the CI dimension of a `TwoDimProp`, the requirement
-    projects through negation: "It's not the case that [ELIZA]_{FoC}
-    mailed the caramels" still signals the contrast. -/
+/-- The Givenness requirement is use-conditional and must be met by the utterance context
+however deeply [G] is embedded: as the conventional-implicature dimension of a
+`TwoDimProp` it projects through negation. -/
 theorem useConditional_projects_through_neg {W : Type*} (atIssue requirement : W → Prop) :
     (TwoDimProp.neg (TwoDimProp.withCI atIssue requirement)).ci
-    = (TwoDimProp.withCI atIssue requirement).ci :=
+      = (TwoDimProp.withCI atIssue requirement).ci :=
   TwoDimProp.ci_projects_through_neg _
 
-/-! ## The ~ operator
+/-! ### The squiggle operator (49), (54) -/
 
-[FoC]-marked constituents must be c-commanded by a ~ operator (§8).
-The ~ operator takes a set of discourse referents 𝔠 as its contextual
-variable, requires α to represent a contrast with each member of 𝔠 —
-conditions (i) and (ii) of their contrast representation (49): the
-referent is among the alternatives and differs from the ordinary value; the
-minimality condition (iii), which prevents overFoCusing by checking
-FoC/G-variants, is not formalized here — and consumes the alternatives.
-
-Unlike Rooth's ~, K&S's ~ has no provision for questions as antecedents:
-it always signals contrast (54) discussion. -/
-
-/-- The ~ operator, allowing multiple antecedents (54):
-    ⟦~_𝔠 α⟧_{O,C} is defined iff 𝔠 is a set of discourse referents in C
-    and α represents a contrast with each member of 𝔠; if defined, the
-    ordinary value is unchanged and the alternative set collapses to {⟦α⟧_{O,C}}. -/
+/-- The squiggle operator with a set of discourse antecedents (54), carrying the first two
+contrast conditions of (49): each antecedent is among the alternatives and differs from the
+ordinary value. -/
 structure ContrastOperator (α : Type*) where
-  /-- The expression's meaning -/
+  /-- The meaning in its scope. -/
   meaning : WithAlternatives α
-  /-- The contrasting discourse referent(s) -/
+  /-- The contrasting discourse referents. -/
   antecedents : List α
-  /-- (49i): each antecedent is in the alternatives -/
+  /-- (49i): each antecedent is an alternative. -/
   antecedents_in_alts : ∀ a ∈ antecedents, a ∈ meaning.alternatives
-  /-- (49ii): each antecedent differs from the ordinary value -/
+  /-- (49ii): each antecedent differs from the ordinary value. -/
   antecedents_ne_ordinary : ∀ a ∈ antecedents, a ≠ meaning.ordinary
 
-/-- The ~ operator consumes alternatives: the result alternative set is the
-    singleton of the ordinary value. -/
-def ContrastOperator.result {α : Type*}
-    (op : ContrastOperator α) : WithAlternatives α :=
+/-- The operator consumes the alternatives: the ordinary value is unchanged and the
+alternatives value collapses to it. -/
+def ContrastOperator.result {α : Type*} (op : ContrastOperator α) : WithAlternatives α :=
   { ordinary := op.meaning.ordinary, alternatives := {op.meaning.ordinary} }
 
-/-- ~ preserves ordinary value. -/
-theorem squiggle_preserves_ordinary {α : Type*} (op : ContrastOperator α) :
-    op.result.ordinary = op.meaning.ordinary := rfl
+/-- After consumption the result is Given with respect to its ordinary value (46), which is
+what (58) requires of a Given constituent containing a focus: the engine of the
+second-occurrence-focus analysis of (59). -/
+theorem ContrastOperator.result_given {α : Type*} (op : ContrastOperator α) :
+    op.result.Given op.meaning.ordinary := rfl
 
-/-- ~ collapses the alternative set to a singleton. -/
-theorem squiggle_singleton_alternatives {α : Type*} (op : ContrastOperator α) :
-    op.result.alternatives = {op.meaning.ordinary} := rfl
-
-/-! ## Semantics of *only*
-
-(55b) is Rooth's indirect association verbatim: association with
-*only* is mediated by two occurrences of the contextual variable ℭ —
-one on *only*, one on the ~ operator that comes with [FoC]. -/
-
-/-- Semantics of *only* with explicit contrast set (56):
-`λp λw. ∀q ((q ∈ ℭ ∧ q(w)) → q = p)` — the strong-theory
-`Focus.onlyVia` at the list-supplied contrast set, so the
-`onlyVia` lemmas (antitonicity, squiggle-resolved exclusion) apply. -/
+/-- The semantics of *only* (56) over the salient contrast set, the library's `onlyVia`:
+association with the focus is indirect, through the contrast set the squiggle operator
+also carries (55b). -/
 def onlySemantics {W : Type*} (contrastSet : List (W → Prop)) (prejacent : W → Prop) :
     Set W :=
   Focus.onlyVia {q | q ∈ contrastSet} prejacent
 
-/-! ## [G] containing [FoC] requires alternatives consumption
+/-! ### A-Givenness (§3) -/
 
-(58): a constituent α containing [FoC]-marked β can be [G]-marked
-only if α also contains an operator that consumes the alternatives
-generated by β — otherwise α's alternative set is not a singleton, so α cannot
-be Given. This is the engine of their Second Occurrence Focus analysis:
-in "the fáculty only quote [the faculty]_{FoC}" (59)/(60), the
-second occurrence is [FoC]-marked inside a [G]-marked VP, possible
-because *only* + ~ consume the alternatives below the VP level. -/
-
-/-- After ~ consumption the result is Given (46) with respect to
-    the ordinary value: the alternative set has collapsed to the singleton
-    {ordinary value}, which is the precondition for [G]-marking. -/
-theorem consumed_alts_given {α : Type*} (op : ContrastOperator α) :
-    op.result.Given op.meaning.ordinary := by
-  show op.result.alternatives = {op.meaning.ordinary}
-  ext x
-  simp [squiggle_singleton_alternatives]
-
-/-! ## Prosodic spellout (§6–§7, not formalized)
-
-In Standard American and British English the features are spelled out at
-the syntax-phonology interface (MSO → PI): Match constraints
-((27)/(28)/(35)) generate prosodic constituency; [FoC] is spelled out as
-a prosodic head — the family {ω, φ, ι}-Level-Head ((34)/(43)) — and [G]
-as dephrasing, [G] = No-φ (38). The English rankings are
-[G] = No-φ >> MatchPhrase (41) and [G] = No-φ >> [FoC] = φ-Level-Head
-(44): when the two spellouts conflict, [G] wins.
-
-Second Occurrence Focus is the flagship prediction ((42), the
-[beaver-2007] example *even [the prosecutor]_{FoC} [only named
-[Sid]_{FoC} in court today]_{G}*): the SOF *Sid* sits inside a
-[G]-marked constituent, so it lacks φ status — hence **no H accent
-tone** and no φ-level prominence — while [FoC] = ω-Level-Head still
-makes it an ω-level head, realized as the strong pronoun form
-requirement and the small duration/intensity differences [beaver-2007]
-measured. [katz-selkirk-2011]'s FoC-New / New-FoC / New-New triples
-(36) supply the phonetic evidence that FoCus differs from mere
-newness: considerable downstep after a FoCus, no downstep or a small
-upstep onto a FoCus, small default downstep between merely new phrases.
-
-The pragmatic pressures — [G]-mark what is Given (61), represent
-non-trivial contrasts (66) — govern when marking is obligatory. -/
-
-/-! ## Bridge to Schwarzschild A-givenness
-
-Schwarzschild's A-Givenness (stated within Alternatives Semantics,
-§3): α is A-Given in C iff a salient discourse referent is a
-member of ⟦α⟧_{A,C}. K&S Givenness (46) is stronger — singleton vs
-membership. -/
-
-/-- Schwarzschild's A-Givenness: the referent is in the alternatives set. -/
+/-- [schwarzschild-1999]'s A-Givenness in alternatives semantics: a salient discourse
+referent is among the alternatives. -/
 def isAGiven {α : Type*} (m : WithAlternatives α) (referent : α) : Prop :=
   referent ∈ m.alternatives
 
-/-- K&S Givenness entails Schwarzschild A-Givenness ("our Givenness
-    falls out as a special case of A-Givenness", §3): if the
-    alternatives set is the singleton {a}, then a is a member of it. -/
-theorem givenness_entails_aGivenness {α : Type*} {m : WithAlternatives α} {referent : α}
-    (h : m.Given referent) :
-    isAGiven m referent := by
+/-- Givenness is a special case of A-Givenness. -/
+theorem isAGiven_of_given {α : Type*} {m : WithAlternatives α} {referent : α}
+    (h : m.Given referent) : isAGiven m referent := by
   rw [isAGiven, h]; rfl
 
-/-- The converse fails: A-Givenness does NOT entail K&S Givenness.
-    A non-singleton alternatives set can satisfy A-Givenness but not Givenness.
+/-- The converse fails: a two-membered alternatives value is A-Given with respect to either
+member but Given with respect to neither (footnote 14, on the condition being too easy to
+satisfy). -/
+theorem not_given_of_isAGiven :
+    ∃ (m : WithAlternatives ℕ) (referent : ℕ), isAGiven m referent ∧ ¬ m.Given referent :=
+  ⟨⟨1, {1, 2}⟩, 1, by simp [isAGiven],
+    not_given_of_pair (m := ⟨1, {1, 2}⟩) (a := 1) (b := 2) (by simp) (by simp) (by decide) 1⟩
 
-    This is the Schwarzschild overgeneration problem (K&S fn. 14):
-    "Every cat is a complainer" is trivially A-Given because ∃P[every P
-    is a complainer] is always true. K&S's singleton condition avoids this. -/
-theorem aGivenness_not_sufficient : ∃ (m : WithAlternatives Nat) (referent : Nat),
-    isAGiven m referent ∧ ¬ m.Given referent := by
-  refine ⟨⟨1, {1, 2}⟩, 1, by simp [isAGiven], fun h => ?_⟩
-  have h2 : (2 : ℕ) ∈ ({1} : Set ℕ) := h ▸ (by simp : (2:ℕ) ∈ ({1, 2} : Set ℕ))
-  simp at h2
+/-! ### Hausa (footnote 21)
 
-/-! ## Hausa in situ vs ex situ (fn. 21)
+The paper does not conclude with [hartmann-zimmermann-2007] that information focus is
+realised both in situ and ex situ in Hausa, since accommodated contrasts were not controlled
+for: on its inventory mere newness is no focus, so ex situ realises [FoC] and in situ is
+unmarked, in line with the corpus tendency the footnote cites, most information focus in
+situ and most selective, contrastive, and corrective focus ex situ. -/
 
-K&S contest [hartmann-zimmermann-2007]'s conclusion that information
-focus is realised both in situ and ex situ in Hausa: without
-controlling for accommodated contrasts, an in-situ answer may be
-merely new and an ex-situ one contrastive. On the K&S inventory mere
-newness is not focus at all, so the reinterpretation is: ex situ
-realises [FoC], in situ is unmarked. The corpus tendencies both sides
-cite (fn. 21; H&Z §3.3: 99 vs 25 in situ for new information,
-154 vs 12 ex situ for the contrastive family) fit the
-reinterpretation; the accounts genuinely diverge only on the minority
-cells, which is where the accommodation caveat does its work. -/
-
-/-- The K&S inventory over H&Z's pragmatic-use taxonomy: the
-contrastive family is [FoC]; new-information focus is mere newness —
-no feature at all. -/
+/-- The paper's inventory over the pragmatic uses of [hartmann-zimmermann-2007]: the
+contrastive family is [FoC], new information is unmarked. -/
 def IsFoCus : Focus.Use → Prop
   | .newInfo => False
-  | _        => True
+  | _ => True
 
 instance (u : Focus.Use) : Decidable (IsFoCus u) := by
   cases u <;> simp [IsFoCus] <;> infer_instance
 
-/-- The fn. 21 reinterpretation of Hausa: ex-situ realisation ↔
-[FoC]. -/
+/-- The rereading of Hausa: ex situ realisation iff [FoC]. -/
 def KSHausaReading (u : HartmannZimmermann2007.FocusUtterance) : Prop :=
   u.cfg.strategy = .exSitu ↔ IsFoCus u.pragType
 
-instance (u : HartmannZimmermann2007.FocusUtterance) :
-    Decidable (KSHausaReading u) :=
+instance (u : HartmannZimmermann2007.FocusUtterance) : Decidable (KSHausaReading u) :=
   inferInstanceAs (Decidable (_ ↔ _))
 
-/-- The two accounts diverge on H&Z's own matrix: the ex-situ
-new-information cell (22) and the in-situ corrective cell
-(25) both violate the reinterpretation. These are exactly the
-cells the accommodation caveat targets — the divergence is real but
-undecided on minimal pairs, and the corpus asymmetry is the evidence
-both sides invoke. -/
-theorem hz_matrix_cells_violate_ks_reading :
+/-- The two accounts part on the cells the accommodation caveat targets: the ex situ
+new-information answer and the in situ corrective answer of the Hausa study both violate
+the rereading. -/
+theorem hz_cells_violate_reading :
     ¬ KSHausaReading HartmannZimmermann2007.exSitu_newInfo ∧
-    ¬ KSHausaReading HartmannZimmermann2007.inSitu_corrective := by
+      ¬ KSHausaReading HartmannZimmermann2007.inSitu_corrective := by
   decide
-
-/-! ### Prosodic spellout at the φ level -/
-
-section FocusProsody
-
-open Features.Prosody BeckmanPierrehumbert1986
-
-/-- K&S place [FoC]'s prosodic spellout at the head of a φ-level prosodic
-constituent — [beckman-pierrehumbert-1986]'s intermediate phrase, which is
-also the catathesis domain. Whether focus spellout triggers catathesis
-therefore depends on the accent inventory: guaranteed in Japanese, whose
-only accent shape (H*+L) is bitonal, but not in English, whose default H*
-is monotonal. -/
-theorem foc_catathesis_language_dependent :
-    japanese.accentShapes.all (·.isBitonal) = true ∧
-      PitchAccent.H_star.isBitonal = false := ⟨rfl, rfl⟩
-
-end FocusProsody
 
 end KratzerSelkirk2020
