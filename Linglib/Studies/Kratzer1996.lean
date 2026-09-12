@@ -1,147 +1,99 @@
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Semantics.ArgumentStructure.ArgumentIntroduction
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
 import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
-# Linking Theory Predictions → Hand-Annotated θ-Roles
-[kratzer-1996] [rappaport-hovav-levin-1998]
+# Kratzer (1996): Severing the External Argument from its Verb
 
-Two accounts of argument realization make predictions about external
-argument theta roles. The two predicates live next to the types they
-project from: severing in `Voice.Flavor.thetaRole`
-(`Syntax/Minimalist/Verbal/Voice.lean`) and lexicalist in
-`Verb.predictedSubjectTheta`
-(`Semantics/Lexical/VerbEntry.lean`). Both operate over proto-role
-entailment profiles (`subjectEntailments` / `objectEntailments`) rather
-than the legacy `subjectTheta` / `objectTheta` labels (which were
-removed from `Verb`). Studies comparing the two accounts apply both
-predicates to the same `Verb` and inspect divergence; the
-`LinkingTheory` packaging that previously lived in `VoiceTheta.lean`
-was dissolved as having no remaining consumers.
+This file formalizes the paper's proposal that the external argument is not an argument of
+the verb. A transitive verb denotes a relation between its internal argument and an event,
+and the external argument is introduced by a separate functional head, Voice, whose
+denotation is a thematic relation such as Agent. Voice and the verb phrase combine by Event
+Identification, which conjoins the two at the event and leaves the introduced participant
+open, so that the sentence *Mittie fed the dog* denotes the events that are feedings of the
+dog and of which Mittie is the agent. Syntactically the external argument is the specifier of
+VoiceP, above the verb phrase that contains the verb and its internal argument.
 
-## Account 1: Severing
+## Implementation notes
 
-Voice flavor determines the theta role: Voice_AG → agent, Voice_CAUSE →
-stimulus. The current Voice typology has only two θ-assigning flavors,
-so it cannot distinguish experiencer from agent or theme from internal-
-arg derivation.
+Event Identification and the Voice denotation are the library's `eventIdentification` and
+`applToEvent`, and the agentive Voice head is `Voice.agentive`; the derivation is stated for an
+arbitrary agent relation and verb. The tree is built from planar leaf tokens, and the paper's
+structural claim is its c-command relations.
 
-## Account 2: Lexicalist ([levin-1993], [rappaport-hovav-levin-1998])
+## References
 
-The verb's lexical semantics — attitude, causalSource, factivePresup,
-levinClass, unaccusative, controlType, and proto-role entailments —
-determines the theta role, bypassing Voice.
-
-This file retains only the causative-alternation tree derivations
-(Part III); per-verb θ-role comparison theorems were removed with the
-`subjectTheta` / `objectTheta` fields.
+* [kratzer-1996]
+* [marantz-1984] — the asymmetry between internal and external arguments the paper builds on
 -/
 
 namespace Kratzer1996
 
-open English.Predicates.Verbal
+open ArgumentStructure
 
--- ════════════════════════════════════════════════════════════════════════
--- PART III: Tree-Based Derivations — Causative Alternation
--- ════════════════════════════════════════════════════════════════════════
+section Semantics
 
-/-! The causative alternation is the structural prediction of Voice
-severing: transitive "John broke the vase" has agentive Voice with an
-agent in Spec,VoiceP; anticausative "The vase broke" has non-thematic
-Voice with no specifier. Both share the same VP core. Event-structure
-predictions are verified in `Core/Voice.lean` via `Voice.buildDecomposition`. -/
+variable {Entity T : Type*} [LinearOrder T]
 
-section TreeDerivations
+/-- The denotation of *Mittie fed the dog*: Voice, denoting the agent relation, combines with
+the verb phrase by Event Identification, so the agent enters above the verb. -/
+def mittieFedTheDog (agent feed : ThematicRel Entity T) (mittie dog : Entity) :
+    Event T → Prop :=
+  applToEvent agent (feed dog) mittie
+
+/-- The sentence holds of an event iff Mittie is its agent and it is a feeding of the dog;
+the verb contributes no agent. -/
+theorem mittieFedTheDog_iff (agent feed : ThematicRel Entity T) (mittie dog : Entity)
+    (e : Event T) : mittieFedTheDog agent feed mittie dog e ↔ agent mittie e ∧ feed dog e :=
+  Iff.rfl
+
+/-- Severing: two verb phrases with the same events are indistinguishable once Voice adds
+the external argument, whatever the agent relation. -/
+theorem mittieFedTheDog_congr (agent feed feed' : ThematicRel Entity T) (mittie dog : Entity)
+    (h : ∀ e, feed dog e ↔ feed' dog e) (e : Event T) :
+    mittieFedTheDog agent feed mittie dog e ↔ mittieFedTheDog agent feed' mittie dog e :=
+  and_congr_right λ _ => h e
+
+end Semantics
+
+section Syntax
 
 open Minimalist SyntacticObject
 
--- Leaf tokens (the smart Merge `SyntacticObject.merge` is noncomputable, so concrete trees
--- are built planar-first from `LIToken`s and `decide`d over).
+/-- Agentive Voice, subcategorizing for the verb phrase. -/
+def voice : LIToken := ⟨.simple .Voice [.v] "Voice", 200⟩
 
-def voice_ag_t  : LIToken := ⟨.simple .Voice [.v]  "Voice[AG]",  200⟩
-def voice_nth_t : LIToken := ⟨.simple .Voice [.v]  "Voice[∅]",   210⟩
-def voice_mid_t : LIToken := ⟨.simple .Voice [.v]  "Voice[MID]", 211⟩
-def v_head_t    : LIToken := ⟨.simple .v     [.V]  "v",          201⟩
-def V_broke_t   : LIToken := ⟨.simple .V     [.D]  "broke",      212⟩
-def V_sank_t    : LIToken := ⟨.simple .V     [.D]  "sank",       213⟩
-def V_opened_t  : LIToken := ⟨.simple .V     [.D]  "opened",     214⟩
-def DP_john_t   : LIToken := ⟨.simple .D     []    "John",       206⟩
-def DP_vase_t   : LIToken := ⟨.simple .D     []    "the vase",   215⟩
-def DP_ship_t   : LIToken := ⟨.simple .D     []    "the ship",   216⟩
-def DP_door_t   : LIToken := ⟨.simple .D     []    "the door",   217⟩
+/-- The verbalizer. -/
+def little_v : LIToken := ⟨.simple .v [.V] "v", 201⟩
 
--- Tree derivations
+/-- The verb *fed*, subcategorizing for its internal argument. -/
+def fed : LIToken := ⟨.simple .V [.D] "fed", 202⟩
 
-/-- Transitive: "John broke the vase"
-    `[VoiceP John [Voice' Voice_AG [vP v [VP broke [DP the vase]]]]]` -/
-def transitiveTree : PlanarSyntacticObject :=
-  
-    (DP_john_t * (voice_ag_t * (v_head_t * (V_broke_t * DP_vase_t))))
+/-- The external argument. -/
+def mittie : LIToken := ⟨.simple .D [] "Mittie", 203⟩
 
-/-- Anticausative: "The vase broke"
-    `[VoiceP Voice_∅ [vP v [VP broke [DP the vase]]]]` -/
-def anticausativeTree : PlanarSyntacticObject :=
-  
-    (voice_nth_t * (v_head_t * (V_broke_t * DP_vase_t)))
+/-- The internal argument. -/
+def theDog : LIToken := ⟨.simple .D [] "the dog", 204⟩
 
-/-- Unaccusative: "The ship sank"
-    `[VoiceP Voice_∅ [vP v [VP sank [DP the ship]]]]` -/
-def unaccusativeTree : PlanarSyntacticObject :=
-  
-    (voice_nth_t * (v_head_t * (V_sank_t * DP_ship_t)))
+/-- `[VoiceP Mittie [Voice' Voice [vP v [VP fed [DP the dog]]]]]`. -/
+def tree : PlanarSyntacticObject := mittie * (voice * (little_v * (fed * theDog)))
 
-/-- Middle: "The door opened"
-    `[VoiceP Voice_MID [vP v [VP opened [DP the door]]]]` -/
-def middleTree : PlanarSyntacticObject :=
-  
-    (voice_mid_t * (v_head_t * (V_opened_t * DP_door_t)))
-
--- C-command predictions
-
-/-- Agent c-commands theme in the transitive. -/
-theorem transitive_agent_ccommands_theme :
-    cCommandsIn transitiveTree (leaf DP_john_t) (leaf DP_vase_t) := by decide
-
-/-- Theme does NOT c-command agent. -/
-theorem transitive_theme_not_ccommands_agent :
-    ¬ cCommandsIn transitiveTree (leaf DP_vase_t) (leaf DP_john_t) := by decide
-
-/-- Anticausative contains theme but no agent DP. -/
-theorem anticausative_contains_theme :
-    contains anticausativeTree (leaf DP_vase_t) := by decide
-
-/-- Unaccusative contains theme. -/
-theorem unaccusative_contains_theme :
-    contains unaccusativeTree (leaf DP_ship_t) := by decide
-
-/-- Middle contains theme. -/
-theorem middle_contains_theme :
-    contains middleTree (leaf DP_door_t) := by decide
-
--- Causative alternation
-
-/-- The transitive and anticausative share the VP core:
-    both contain V("broke") and DP("the vase"). -/
-theorem causative_pair_shared_vp :
-    contains transitiveTree (leaf V_broke_t) ∧
-    contains transitiveTree (leaf DP_vase_t) ∧
-    contains anticausativeTree (leaf V_broke_t) ∧
-    contains anticausativeTree (leaf DP_vase_t) := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
-
-/-- The transitive has an agent DP; the anticausative does not. -/
-theorem causative_pair_agent_contrast :
-    contains transitiveTree (leaf DP_john_t) ∧
-    ¬ contains anticausativeTree (leaf DP_john_t) := by
+/-- The external argument c-commands the internal argument, and not conversely. -/
+theorem mittie_cCommands_theDog :
+    cCommandsIn tree (leaf mittie) (leaf theDog) ∧
+      ¬ cCommandsIn tree (leaf theDog) (leaf mittie) := by
   constructor <;> decide
 
-/-- Voice determines the alternation: agentive assigns θ,
-    non-thematic does not. This is [kratzer-1996]'s severing
-    verified structurally on the tree derivations. -/
-theorem causative_pair_voice_contrast :
-    Voice.agentive.AssignsTheta ∧ ¬ Voice.anticausative.AssignsTheta := by decide
+/-- Voice c-commands the verb phrase, and the external argument c-commands Voice: the
+external argument sits above the head that introduces it. -/
+theorem voice_between :
+    cCommandsIn tree (leaf voice) (leaf fed) ∧ cCommandsIn tree (leaf mittie) (leaf voice) := by
+  constructor <;> decide
 
-end TreeDerivations
+/-- Agentive Voice assigns the external θ-role. -/
+theorem agentive_assignsTheta : Voice.agentive.AssignsTheta := by decide
+
+end Syntax
 
 end Kratzer1996

@@ -78,8 +78,7 @@ theorem allPlural_eq_true_iff (w : W) :
   generalize pluralTruthValue P x w = t
   cases t <;> simp
 
-/-- `bivalentPred` of an *all*-sentence is true iff `allSatisfy` holds.
-    Cf. `KrizSpector2021.all_addressing_iff_relevant`. -/
+/-- `bivalentPred` of an *all*-sentence is true iff `allSatisfy` holds. -/
 theorem bivalentPred_allPlural_eq_allSatisfy (w : W) :
     bivalentPred (allPlural P x) w = true ↔ allSatisfy P x w := by
   simp only [bivalentPred, beq_iff_eq]

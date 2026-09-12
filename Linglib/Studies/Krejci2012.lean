@@ -1,318 +1,294 @@
-import Linglib.Semantics.Causation.Morphological
-import Linglib.Semantics.ArgumentStructure.EventStructure
-import Linglib.Semantics.ArgumentStructure.ArgDerivation
+import Linglib.Studies.KoontzGarboden2009
+import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Core.Order.UpperLower.Finset
+import Mathlib.Tactic.DeriveFintype
 
 /-!
-# [krejci-2012] — Causativization as Antireflexivization
+# Krejci (2012): Causativization as Antireflexivization
 
-Krejci, Bonnie. 2012. *Causativization as Antireflexivization: A Study of
-Middle and Ingestive Verbs*. Master's Report, University of Texas at Austin.
+This file formalizes [krejci-2012]'s account of why middle and ingestive verbs (*wash*,
+*dress*; *eat*, *learn*) causativize like intransitives in languages that mark causatives
+morphologically. The report's survey orders verb classes on a hierarchy of causativizability,
+unaccusatives before middles and ingestives before unergatives before simple transitives, on
+which no language's causative process skips a tier. Its explanation is that the simple forms
+of these verbs are lexically reflexive: their event structure is already causative, with the
+causer and the causee coidentified, and the lexical causative (*feed*, *teach*, transitive
+*wash* and *dress*) arises by antireflexivization, which delinks the two arguments. This is
+the reflexivization analysis of [koontz-garboden-2009] read in the opposite direction of
+derivation, so the simple form is that study's `reflexivize` applied to its `causative`.
 
-## Core claims
+On a model of *eat*, *feed* and *make eat*, the entailments of the simple form split between
+the causer and the causee of the lexical causative but stay with the causee of the
+periphrastic causative (`feed_not_makeEat`); denying the simple form while asserting the
+lexical causative is consistent on the bieventive representation (`not_eat_and_feed`) and
+contradictory under causer addition; the result state supports a restitutive reading of
+*again* that the repetitive reading does not exhaust; and *by itself* is licensed. The
+hierarchy is a linear order on `Tier`, a causative process is the set of tiers it reaches,
+and respecting the hierarchy is a lower-set condition (`Causative.RespectsHierarchy`),
+checked on the report's Table 2.8.
 
-1. **Middles** (wash, dress; agent acts on their own body, [kemmer-1994]) and
-   **ingestives** (eat, drink; agent directs a consumed substance at themselves,
-   with *learn* proposed as a metaphorical ingestive, a class label from
-   [nedyalkov-silnitsky-1973]) are **lexically reflexive**: their simple forms
-   have bieventive causative event structure with coidentified causer and
-   causee — her (37), e.g.
-   `eat = [[ACT⟨manipulate food⟩(x)] CAUSE [BECOME ⟨potentially digest⟩(x, y)]]`.
+## Implementation notes
 
-2. **Antireflexivization** (§4.2, (96)–(97)): the lexical causative splits the
-   coidentified argument into two participants (eat→feed, learn→teach; wash and
-   dress reuse the same form transitively). *Feed* ≠ *make eat*: with *eat* the
-   eater must agentively manipulate food; with *feed* that entailment shifts to
-   the feeder; with *make eat* it stays on the eater (§4.2.1).
+* The model takes the verb's event to be the change of state and closes the causing event
+  existentially, as `KoontzGarboden2009.causative` does; *make eat* adds a second causing
+  event with its own effector.
+* Of the report's three tests of event-structural complexity only *again* is formalized;
+  *re-* and *almost* have the same scopal structure.
+* The Marathi evidence and the twenty surveyed languages outside Table 2.8 are not
+  formalized.
 
-3. **Five diagnostics** detect CAUSE in the English simple forms: the three
-   [dowty-1979] complexity tests — *again* ambiguity, *re-* prefixation, and
-   *almost* ambiguity (§4.3) — plus negation over CAUSE (§4.4) and *by itself*
-   (§4.5, after [chierchia-2004]). All five come out positive for all four
-   verbs, with hedges: some speakers reject the restitutive reading of *John
-   washed again* (her fn. 8), and the negation evidence is offered as
-   "tentative", with *I didn't eat any pie* marked "?" ((106a)).
+## References
 
-4. The **causativizability hierarchy** — unaccusatives > middles/ingestives >
-   unergatives > simple transitives — is implicational, and none of the 32
-   surveyed languages skips a tier; twelve are tabulated in Table 2.8
-   (`krejciLanguages`). The dedicated middles/ingestives tier is the report's
-   typological contribution. (Her second, morphological evidence base — Marathi
-   *-aw* causativization, her Section 5 — is not formalized here.)
-
-## Main declarations
-
-- `LexReflexiveVerb`, `allVerbs` — the four English verbs with their observed
-  diagnostic profiles and `IntransitivizationType` analysis
-- `reflexivePrediction`, `observed_matches_reflexive_analysis` — the reflexive
-  analysis predicts every diagnostic positive, matching the observations
-- `krejciLanguages`, `hierarchy_holds` — Table 2.8 and its implicational check
+* [krejci-2012]
+* [koontz-garboden-2009] — reflexivization, *by itself*, and denial of the simple form
+* [chierchia-2004] — *by itself*
+* [dowty-1979] — the *again* test
 -/
 
 namespace Krejci2012
 
-open Semantics
-open ArgumentStructure
-open Semantics.Root.Kinds
-open Causation.Morphological
-open ArgumentStructure.EventStructure
-open ArgumentStructure.ArgDerivation
+open KoontzGarboden2009 ArgumentStructure
 
-/-! ### Lexically reflexive verbs -/
+/-! ### Antireflexivization -/
 
-/-- Subtype of lexically reflexive verb.
-    Middles: agent acts on their own body ([kemmer-1994]: one internally
-    complex participant; her §4.1). Ingestives: agent causes a substance to
-    enter themselves, including "metaphorical ingesting"
-    ([nedyalkov-silnitsky-1973], her Table 2.5) such as *learn*. -/
-inductive LexReflexiveSubtype where
-  | middle
-  | ingestive
-  deriving DecidableEq, Repr
+section Model
 
-/-- Observed outcomes of the five CAUSE diagnostics for one verb's simple
-    form (§4.3–4.5). Each field is a recorded English judgment, cited to the
-    report's examples at the verb entries below. -/
-structure DiagnosticProfile where
-  /-- Postverbal *again* has restitutive + repetitive readings
-      ([dowty-1979]; (70)–(73)). -/
-  again : Bool
-  /-- *re-* prefixation yields a restitutive reading ((76)–(82)). -/
-  rePrefix : Bool
-  /-- *almost* scopes over action vs. result sub-event ((85)–(88)). -/
-  almost : Bool
-  /-- The simple form can be logically negated while the causative variant is
-      asserted, NPI-controlled against metalinguistic negation
-      (§4.4, (106)–(109); after [koontz-garboden-2009]). -/
-  negationOverCause : Bool
-  /-- *by itself* "without outside help" is licensed
-      (§4.5, (114); after [chierchia-2004]). -/
-  byItself : Bool
-  deriving DecidableEq, Repr
+variable {Entity State T : Type*} [LinearOrder T] (M : Verb.CosModel Entity State T)
+  (manip : Entity → Event T → Prop) (v : Verb)
 
-/-- A lexically reflexive verb: bieventive causative event structure with
-    coidentified causer and causee in the simple form, per her (37). -/
-structure LexReflexiveVerb where
-  gloss : String
-  subtype : LexReflexiveSubtype
-  /-- Suppletive lexical causative (antireflexivized form), `none` when the
-      same form serves transitively (wash, dress). -/
-  lexicalCausative : Option String
-  /-- [krejci-2012]'s analysis of the simple form: the causer position is
-      retained, coidentified with the causee. -/
-  intransType : IntransitivizationType
-  /-- Observed diagnostic outcomes for the simple form. -/
-  observed : DiagnosticProfile
-  deriving DecidableEq, Repr
+/-- The lexical causative (38a): the causer's manipulation of food brings the causee to the
+state of potential digestion. -/
+abbrev feed : Entity → Entity → Event T → Prop := causative M manip v
 
-/-- *eat*: ingestive.
-    `[[ACT⟨manipulate food⟩(x)] CAUSE [BECOME ⟨potentially digest⟩(x, y)]]`
-    ((37a)); lexical causative *feed* (§4.2.1). -/
-def eat : LexReflexiveVerb where
-  gloss := "eat"
-  subtype := .ingestive
-  lexicalCausative := some "feed"
-  intransType := .reflexive
-  observed :=
-    { again := true              -- (70) "Your guy ate the coin again..."
-      rePrefix := true           -- (76)–(77) attested "re-eat all the coins"
-      almost := true             -- (85) "John almost ate the pie"
-      negationOverCause := true  -- (92)/(106) "I didn't eat pie; you fed pie to me!"
-      byItself := true }         -- (114a) "The girl ate her food all by herself"
+/-- The simple form (37a) is the lexical causative on its diagonal: the eater manipulates the
+food and comes to digest it. Antireflexivization ((96)–(97)) delinks the two arguments. -/
+abbrev eat : Entity → Event T → Prop := reflexivize (feed M manip v)
 
-/-- *wash*: middle.
-    `[[ACT⟨manipulate water⟩(x)] CAUSE [BECOME ⟨washed⟩(x)]]` ((37b));
-    the transitive is the same form, antireflexivized (§4.2.2). -/
-def wash : LexReflexiveVerb where
-  gloss := "wash"
-  subtype := .middle
-  lexicalCausative := none
-  intransType := .reflexive
-  observed :=
-    { again := true              -- (71) "John washed again..." (fn. 8: variation)
-      rePrefix := true           -- (78)–(79) attested "rewash"
-      almost := true             -- (86) "John almost washed"
-      negationOverCause := true  -- (107) "I didn't wash; you washed me!"
-      byItself := true }         -- (114b) "The girl washed all by herself"
+/-- The periphrastic causative *make eat*: a further causing event, with its own effector, of
+an eating. -/
+def makeEat (z x : Entity) (e : Event T) : Prop :=
+  ∃ w, M.effector z w ∧ M.cause w e ∧ eat M manip v x e
 
-/-- *dress*: middle.
-    `[[ACT⟨manipulate clothes⟩(x)] CAUSE [BECOME ⟨dressed⟩(x)]]` ((37c));
-    the transitive is the same form, antireflexivized (§4.2.3). -/
-def dress : LexReflexiveVerb where
-  gloss := "dress"
-  subtype := .middle
-  lexicalCausative := none
-  intransType := .reflexive
-  observed :=
-    { again := true              -- (72) "John dressed again..."
-      rePrefix := true           -- (80)–(81) attested "re-dressed"
-      almost := true             -- (87) "John almost dressed"
-      negationOverCause := true  -- (108) "I didn't dress; you dressed me!"
-      byItself := true }         -- (114c) "The girl dressed all by herself"
+/-- Causativization by causer addition ((94)), the analysis the report rejects: the simple
+form is an activity `ingest` with no causing subevent, and the causative adds a causer. -/
+def causerAddition (ingest : Entity → Event T → Prop) (y x : Entity) (e : Event T) : Prop :=
+  ∃ w, M.effector y w ∧ M.cause w e ∧ ingest x e
 
-/-- *learn*: proposed metaphorical ingestive.
-    `[[ACT(x)] CAUSE [BECOME ⟨know⟩(x, y)]]` ((37d));
-    lexical causative *teach* (§4.2.4). -/
-def learn : LexReflexiveVerb where
-  gloss := "learn"
-  subtype := .ingestive
-  lexicalCausative := some "teach"
-  intransType := .reflexive
-  observed :=
-    { again := true              -- (73) "John learned English again..."
-      rePrefix := true           -- (82) "John re-learned English..."
-      almost := true             -- (88) "John almost learned French"
-      negationOverCause := true  -- (109) "I didn't learn French; you taught French to me!"
-      byItself := true }         -- (114d) "The girl learned to walk all by herself"
+/-- The restitutive reading of *again*: the result state held before. -/
+def Restitutive (P : Entity → Event T → Prop) (x : Entity) (e : Event T) : Prop :=
+  P x e ∧ ∃ e', e'.τ.isBefore e.τ ∧ M.inchoative v x e'
 
-def allVerbs : List LexReflexiveVerb :=
-  [eat, wash, dress, learn]
+/-- The repetitive reading of *again*: the whole event happened before. -/
+def Repetitive (P : Entity → Event T → Prop) (x : Entity) (e : Event T) : Prop :=
+  P x e ∧ ∃ e', e'.τ.isBefore e.τ ∧ P x e'
 
-/-! ### Observed diagnostics match the reflexive analysis -/
+variable {M manip v} {x y z : Entity} {e : Event T}
 
-/-- What the reflexive analysis predicts: bieventive structure supplies the
-    result state the three [dowty-1979] tests scope over, and the retained
-    (coidentified) causer supplies CAUSE for negation and *by itself*. Cells
-    are derived from the substrate's `IntransitivizationType.reflexive` facts,
-    not stipulated. -/
-def reflexivePrediction : DiagnosticProfile where
-  again := IntransitivizationType.reflexive.isBieventive
-  rePrefix := IntransitivizationType.reflexive.isBieventive
-  almost := IntransitivizationType.reflexive.isBieventive
-  negationOverCause := IntransitivizationType.reflexive.isBieventive
-  byItself := IntransitivizationType.reflexive.licensesBySelf
+/-- The simple form is the derived inchoative of [koontz-garboden-2009]. -/
+theorem eat_eq_anticausative : eat M manip v = anticausative M manip v := rfl
 
-/-- The report's empirical core: all four verbs are analyzed as reflexive
-    intransitivizers, and their observed diagnostic profiles are exactly what
-    that analysis predicts. A single `false` observation would falsify the
-    `.reflexive` typing. -/
-theorem observed_matches_reflexive_analysis :
-    ∀ v ∈ allVerbs,
-      v.intransType = .reflexive ∧ v.observed = reflexivePrediction := by
-  decide
+/-- The eater manipulates food ((39a)). -/
+theorem exists_manip_of_eat (h : eat M manip v x e) : ∃ w, manip x w ∧ M.cause w e :=
+  exists_cause_of_anticausative h
 
-/-- Antireflexivization is suppletive exactly for the ingestives (eat→feed,
-    learn→teach); the middles reuse the same form transitively (§4.2). -/
-theorem suppletive_iff_ingestive :
-    ∀ v ∈ allVerbs,
-      v.lexicalCausative.isSome = true ↔ v.subtype = .ingestive := by
-  decide
+/-- The feeder manipulates food ((45)). -/
+theorem exists_manip_of_feed (h : feed M manip v y x e) : ∃ w, manip y w ∧ M.cause w e :=
+  let ⟨w, h₁, h₂, _⟩ := h; ⟨w, h₁, h₂⟩
 
-/-! ### Root entailments and templates
+/-- Whoever is fed comes to potential digestion ((44c)). -/
+theorem inchoative_of_feed (h : feed M manip v y x e) : M.inchoative v x e :=
+  let ⟨_, _, _, h⟩ := h; h
 
-Her (37) puts CAUSE in the simple forms of *eat* and *dress*; the substrate's
-[beavers-koontz-garboden-2020]-style root classification agrees in carrying
-`cause`: both roots are `causativeResult` ({state, result, cause}). The point
-of contact is the *presence* of CAUSE, not its source — for [krejci-2012] the
-causer is the coidentified agent itself, and she argues explicitly against
-deriving the causative by adding an external causer ((93) vs. (96)–(97)).
-`learn`'s root is still the substrate's conservative `∅` placeholder, so
-the bridge is stated for *eat* and *dress* only.
+/-- Whoever is made to eat manipulates food ((47a)). -/
+theorem exists_manip_of_makeEat (h : makeEat M manip v z x e) :
+    ∃ w, manip x w ∧ M.cause w e :=
+  let ⟨_, _, _, h⟩ := h; exists_manip_of_eat h
 
-The accomplishment template licenses an intransitive (achievement) variant,
-yet *"The food ate" / *"The clothes dressed" are out: on [krejci-2012]'s
-account the alternation slot is already occupied — the simple form *is* the
-reflexive variant, and the causative is derived from it by antireflexivization
-rather than by adding CAUSE to an inchoative core. -/
+/-- Under causer addition the causative entails the simple form, so denying the one while
+asserting the other is contradictory ((95)). -/
+theorem ingest_of_causerAddition {ingest : Entity → Event T → Prop}
+    (h : causerAddition M ingest y x e) : ingest x e :=
+  let ⟨_, _, _, h⟩ := h; h
 
-/-- eat roots carry caused-consumption entailments. -/
-theorem eat_is_causativeResult :
-    LevinClass.rootEntailments .eat = causativeResult := rfl
+/-- For a predicate with a result state, the repetitive reading of *again* entails the
+restitutive one. -/
+theorem restitutive_of_repetitive {P : Entity → Event T → Prop}
+    (hP : ∀ x e, P x e → M.inchoative v x e) (h : Repetitive P x e) : Restitutive M v P x e :=
+  let ⟨he, e', hb, he'⟩ := h; ⟨he, e', hb, hP x e' he'⟩
 
-/-- dress roots carry caused dressed-state entailments. -/
-theorem dress_is_causativeResult :
-    LevinClass.rootEntailments .dress = causativeResult := rfl
+/-- *By itself* ((114a), after [koontz-garboden-2009]): eating has a causing subevent whose
+effector is the eater, once manipulating food makes one an effector. -/
+theorem licensesBySelf_eat (h : ∀ x w, manip x w → M.effector x w) :
+    LicensesBySelf M (eat M manip v) :=
+  λ _ _ he => let ⟨w, hm, hc⟩ := exists_manip_of_eat he; ⟨w, hc, h _ _ hm⟩
 
-/-- causativeResult roots carry the `cause` kind — CAUSE is in the simple
-    form, as her (37) requires. -/
-theorem causativeResult_entails_cause :
-    Root.Kind.cause ∈ causativeResult := by decide
+end Model
 
-/-- eat roots license the accomplishment template. -/
-theorem eat_licenses_accomplishment :
-    RootLicensesTemplate (LevinClass.rootEntailments .eat) .accomplishment := by
-  decide
+/-! ### Mary and John -/
 
-/-- eat's primary template is accomplishment. -/
-theorem eat_primary_accomplishment :
-    primaryTemplate (LevinClass.rootEntailments .eat) = some .accomplishment := rfl
+/-- The participants. -/
+inductive Participant
+  | mary
+  | john
+  deriving DecidableEq
 
-/-- eat's RoleList is `consumption` (agent + incremental theme). -/
-theorem eat_roleList_is_consumption :
-    LevinClass.roleList .eat = some consumption := rfl
+/-- An event running from `s` to `t`. -/
+private def ev (s t : ℤ) (h : s ≤ t := by decide) : Event ℤ := ⟨⟨(s, t), h⟩, .action⟩
 
-/-- The accomplishment template has an intransitive variant (achievement). -/
-theorem accomplishment_has_variant :
-    Template.intransitiveVariant .accomplishment = some .achievement := rfl
+/-- The event running from `s` to `t`. -/
+private def At (w : Event ℤ) (s t : ℤ) : Prop := w.τ.toProd = (s, t)
 
-/-- The intransitive variant retains the result state (instance of
-    `intransitive_has_resultState`). -/
-theorem alternation_preserves_result : Template.HasResultState .achievement :=
-  intransitive_has_resultState .accomplishment .achievement rfl
+private def w₀ : Event ℤ := ev 0 1
+private def e₀ : Event ℤ := ev 1 2
+private def w₁ : Event ℤ := ev 0 2
+private def w₂ : Event ℤ := ev 3 4
+private def e₁ : Event ℤ := ev 4 5
 
-/-- The intransitive variant loses CAUSE on the deletion analysis (instance of
-    `intransitive_no_cause`). -/
-theorem alternation_loses_cause : ¬ Template.HasCause .achievement :=
-  intransitive_no_cause .accomplishment .achievement rfl
+private def eatV : Verb := English.Predicates.Verbal.eat.toVerb
 
-/-! ### Causativizability hierarchy (Table 2.8)
+/-- A model in which the events `causing` lists bring John to potential digestion, with `eff`
+the effectors of events. -/
+def eating (causing : Event ℤ → Event ℤ → Prop) (eff : Participant → Event ℤ → Prop) :
+    Verb.CosModel Participant Unit ℤ where
+  rootState _ x _ := x = .john
+  become _ e := ∃ w, causing w e
+  cause := causing
+  effector := eff
+  manner _ _ := False
 
-unaccusatives > middles/ingestives > unergatives > simple transitives.
-Implicational: a causative morpheme that reaches a lower tier reaches every
-higher one, and none of the 32 surveyed languages skips a tier. Twelve are
-tabulated in Table 2.8, three per type: Type 1 (unaccusatives only) Slave,
-Mapudungun, Classical Nahuatl; Type 2 (+ middles/ingestives) Cora, Marathi,
-Amharic; Type 3 (+ unergatives) Ahtna, Tariana, Malayalam; Type 4 (+ simple
-transitives) Basque, Dulong/Rawang, Koyukon. The dedicated middles/ingestives
-tier between unaccusatives and unergatives is the report's typological
-contribution. Malayalam is grouped with Type 3 although its morpheme reaches
-transitives with an instrumental-case causee (her fn. 6). -/
+/-- Mary manipulates the food. -/
+def spoonManip (y : Participant) (w : Event ℤ) : Prop := y = .mary ∧ At w 0 1
 
-/-- Which verb classes one language's morphological causative applies to
-    (one row of Table 2.8). -/
-structure CausativizabilityData where
+/-- Spoon feeding ((44a)): Mary's manipulation of the food causes John's change. -/
+def spoonFeeding : Verb.CosModel Participant Unit ℤ :=
+  eating (λ w e => At w 0 1 ∧ At e 1 2) spoonManip
+
+/-- John manipulates the food. -/
+def supManip (y : Participant) (w : Event ℤ) : Prop := y = .john ∧ At w 0 1
+
+/-- Supervision ((48)): John's manipulation of the food and Mary's supervising action both
+cause John's change. -/
+def supervising : Verb.CosModel Participant Unit ℤ :=
+  eating (λ w e => (At w 0 1 ∨ At w 0 2) ∧ At e 1 2)
+    (λ y w => (y = .john ∧ At w 0 1) ∨ (y = .mary ∧ At w 0 2))
+
+/-- Mary manipulates the food the first time, John the second. -/
+def twoManip (y : Participant) (w : Event ℤ) : Prop :=
+  (y = .mary ∧ At w 0 1) ∨ (y = .john ∧ At w 3 4)
+
+/-- Two meals: Mary feeds John, and later John eats. -/
+def twoMeals : Verb.CosModel Participant Unit ℤ :=
+  eating (λ w e => (At w 0 1 ∧ At e 1 2) ∨ (At w 3 4 ∧ At e 4 5)) twoManip
+
+/-- *I didn't eat pie; you fed pie to me* ((92), (106)) is consistent: John, fed by Mary, did
+not eat, since he manipulated no food ((44a)). -/
+theorem not_eat_and_feed :
+    ¬ eat spoonFeeding spoonManip eatV .john e₀ ∧
+      feed spoonFeeding spoonManip eatV .mary .john e₀ :=
+  ⟨λ ⟨_, ⟨h, _⟩, _⟩ => Participant.noConfusion h,
+    ⟨w₀, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩, (), ⟨w₀, rfl, rfl⟩, rfl⟩⟩
+
+/-- Feeding is not making eat: John, fed, was not made to eat, as whoever is made to eat
+manipulates food ((47a)). -/
+theorem feed_not_makeEat :
+    feed spoonFeeding spoonManip eatV .mary .john e₀ ∧
+      ¬ makeEat spoonFeeding spoonManip eatV .mary .john e₀ :=
+  ⟨not_eat_and_feed.2, λ ⟨_, _, _, h⟩ => not_eat_and_feed.1 h⟩
+
+/-- Making eat is not feeding ((48)): Mary made John eat without touching any food. -/
+theorem makeEat_not_feed :
+    makeEat supervising supManip eatV .mary .john e₀ ∧
+      ¬ feed supervising supManip eatV .mary .john e₀ :=
+  ⟨⟨w₁, Or.inr ⟨rfl, rfl⟩, ⟨Or.inr rfl, rfl⟩, w₀, ⟨rfl, rfl⟩, ⟨Or.inl rfl, rfl⟩, (),
+      ⟨w₀, Or.inl rfl, rfl⟩, rfl⟩,
+    λ ⟨_, ⟨h, _⟩, _⟩ => Participant.noConfusion h⟩
+
+/-- Being fed does not license *by itself* ((113d)): John reaches the state, but the effector
+of the causing event is Mary. -/
+theorem not_licensesBySelf_inchoative :
+    ¬ LicensesBySelf spoonFeeding (spoonFeeding.inchoative eatV) := λ h =>
+  let ⟨_, _, hw⟩ := h .john e₀ ⟨(), ⟨w₀, rfl, rfl⟩, rfl⟩
+  Participant.noConfusion hw.1
+
+/-- *John ate again* ((70), (79)) after Mary had fed him: the restitutive reading holds, the
+state of potential digestion having held before, and the repetitive reading fails. -/
+theorem restitutive_not_repetitive :
+    Restitutive twoMeals eatV (eat twoMeals twoManip eatV) .john e₁ ∧
+      ¬ Repetitive (eat twoMeals twoManip eatV) .john e₁ :=
+  ⟨⟨⟨w₂, Or.inr ⟨rfl, rfl⟩, Or.inr ⟨rfl, rfl⟩, (), ⟨w₂, Or.inr ⟨rfl, rfl⟩⟩, rfl⟩,
+      e₀, by decide, (), ⟨w₀, Or.inl ⟨rfl, rfl⟩⟩, rfl⟩,
+    λ ⟨_, e', hb, w, hm, hc, _⟩ => by
+      rcases hm with ⟨h, _⟩ | ⟨_, hw⟩
+      · exact Participant.noConfusion h
+      rcases hc with ⟨h, _⟩ | ⟨_, he⟩
+      · exact absurd (hw.symm.trans h) (by decide)
+      · have hb' : e'.τ.toProd.2 ≤ 4 := hb
+        rw [he] at hb'
+        exact absurd hb' (by decide)⟩
+
+/-! ### The hierarchy of causativizability -/
+
+/-- The tiers of the hierarchy (22), from the most readily causativized. -/
+inductive Tier
+  | unaccusative
+  | middleIngestive
+  | unergative
+  | simpleTransitive
+  deriving DecidableEq, Fintype, Repr
+
+/-- The position of a tier on the hierarchy. -/
+def Tier.rank : Tier → ℕ
+  | .unaccusative => 0
+  | .middleIngestive => 1
+  | .unergative => 2
+  | .simpleTransitive => 3
+
+instance : LinearOrder Tier := LinearOrder.lift' Tier.rank (by decide)
+
+/-- A causative process of a language: the tiers whose verbs it applies to. -/
+structure Causative where
   language : String
   morpheme : String
-  unaccusative : Bool
-  middlesIngestive : Bool := false
-  unergative : Bool := false
-  simpleTransitive : Bool := false
-  deriving DecidableEq, Repr
+  reach : Finset Tier
 
-/-- The hierarchy is implicational: each level implies all higher levels.
-    simpleTransitive → unergative → middlesIngestive → unaccusative. -/
-def CausativizabilityData.respectsHierarchy (d : CausativizabilityData) : Bool :=
-  (!d.simpleTransitive || d.unergative) &&
-  (!d.unergative || d.middlesIngestive) &&
-  (!d.middlesIngestive || d.unaccusative)
+namespace Causative
 
-/-- Table 2.8: twelve languages, ordered from narrowest to broadest
-    causative scope. -/
-def krejciLanguages : List CausativizabilityData :=
-  [ { language := "Slave",            morpheme := "-h-",    unaccusative := true }
-  , { language := "Mapudungun",       morpheme := "-ɨm",    unaccusative := true }
-  , { language := "Classical Nahuatl", morpheme := "-tia",  unaccusative := true }
-  , { language := "Cora",             morpheme := "-te",    unaccusative := true
-    , middlesIngestive := true }
-  , { language := "Marathi",          morpheme := "-aw",    unaccusative := true
-    , middlesIngestive := true }
-  , { language := "Amharic",          morpheme := "a-",     unaccusative := true
-    , middlesIngestive := true }
-  , { language := "Ahtna",            morpheme := "-ɬ-",    unaccusative := true
-    , middlesIngestive := true, unergative := true }
-  , { language := "Tariana",          morpheme := "-i-ta",  unaccusative := true
-    , middlesIngestive := true, unergative := true }
-  , { language := "Malayalam",        morpheme := "-icc",   unaccusative := true
-    , middlesIngestive := true, unergative := true }
-  , { language := "Basque",           morpheme := "-arazi", unaccusative := true
-    , middlesIngestive := true, unergative := true, simpleTransitive := true }
-  , { language := "Dulong/Rawang",    morpheme := "shv-",   unaccusative := true
-    , middlesIngestive := true, unergative := true, simpleTransitive := true }
-  , { language := "Koyukon",          morpheme := "-ɬ-",    unaccusative := true
-    , middlesIngestive := true, unergative := true, simpleTransitive := true }
-  ]
+/-- The hierarchy: a process reaching a tier reaches every tier before it. -/
+def RespectsHierarchy (c : Causative) : Prop := IsLowerSet (↑c.reach : Set Tier)
 
-/-- All twelve Table 2.8 languages respect the implicational hierarchy. -/
-theorem hierarchy_holds :
-    krejciLanguages.all (·.respectsHierarchy) = true := by decide
+instance : DecidablePred RespectsHierarchy := λ _ => inferInstanceAs (Decidable (IsLowerSet _))
+
+/-- The type of a process, (1) to (4) of Table 2.8: the last tier it reaches. -/
+def type (c : Causative) : WithBot Tier := c.reach.max
+
+/-- A process that respects the hierarchy reaches exactly the tiers up to its type. -/
+theorem mem_reach_iff {c : Causative} (h : c.RespectsHierarchy) (t : Tier) :
+    t ∈ c.reach ↔ ↑t ≤ c.type := by
+  refine ⟨Finset.le_max, λ ht => ?_⟩
+  unfold type at ht
+  rcases hm : c.reach.max with _ | m <;> rw [hm] at ht
+  · exact absurd ht (WithBot.not_coe_le_bot t)
+  · exact h (WithBot.coe_le_coe.1 ht) (Finset.mem_of_max hm)
+
+end Causative
+
+/-- Table 2.8: the surveyed languages, three of each type. Malayalam reaches transitives only
+with an instrumental causee and is listed with the third type. -/
+def table : List Causative :=
+  [⟨"Slave", "-h-", {.unaccusative}⟩,
+   ⟨"Mapudungun", "-ɨm", {.unaccusative}⟩,
+   ⟨"Classical Nahuatl", "-tia", {.unaccusative}⟩,
+   ⟨"Cora", "-te", {.unaccusative, .middleIngestive}⟩,
+   ⟨"Marathi", "-aw", {.unaccusative, .middleIngestive}⟩,
+   ⟨"Amharic", "a-", {.unaccusative, .middleIngestive}⟩,
+   ⟨"Ahtna", "-ɬ-", {.unaccusative, .middleIngestive, .unergative}⟩,
+   ⟨"Tariana", "-i-ta", {.unaccusative, .middleIngestive, .unergative}⟩,
+   ⟨"Malayalam", "-icc", {.unaccusative, .middleIngestive, .unergative}⟩,
+   ⟨"Basque", "-arazi", {.unaccusative, .middleIngestive, .unergative, .simpleTransitive}⟩,
+   ⟨"Dulong/Rawang", "shv-", {.unaccusative, .middleIngestive, .unergative, .simpleTransitive}⟩,
+   ⟨"Koyukon", "-ɬ-", {.unaccusative, .middleIngestive, .unergative, .simpleTransitive}⟩]
+
+/-- No surveyed language skips a tier. -/
+theorem table_respectsHierarchy : ∀ c ∈ table, c.RespectsHierarchy := by decide
 
 end Krejci2012

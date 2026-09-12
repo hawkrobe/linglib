@@ -1,82 +1,390 @@
 [
   {
-    "id": "krifka1998_arrive_at_store",
-    "source": {"bibkey": "krifka-1998", "paperLabel": "§4.5 arrive (bounded path)"},
+    "id": "krifka1998_ex11a",
+    "source": {"bibkey": "krifka-1998", "paperLabel": "(11a)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "Mary arrived at the store in five minutes.",
+    "primaryText": "two kilograms of apples",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Mary arrived at the store in five minutes.",
-    "context": "Inherently directed motion with a specified goal: the path is bounded (has an endpoint), so the VP is telic and accepts the in-X adverbial.",
+    "translation": "two kilograms of apples",
+    "context": "Nominal measure construction with an extensive measure function.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["pathShape", "bounded"],
-      ["expectedTelicity", "telic"]
+      ["measureFunction", "extensive"]
     ],
-    "comment": "Migrated from the deleted MotionVPDatum table in Studies/Krifka1998.lean. UNVERIFIED paperLabel: section carried from prior Lean docstrings, eq. numbers dropped pending PDF check.",
+    "comment": "",
     "metaLanguage": "stan1293"
   },
   {
-    "id": "krifka1998_leave_the_house",
-    "source": {"bibkey": "krifka-1998", "paperLabel": "§4.5 leave (source path)"},
+    "id": "krifka1998_ex11b",
+    "source": {"bibkey": "krifka-1998", "paperLabel": "(11b)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "Mary left the house in a moment.",
+    "primaryText": "two bags of money",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Mary left the house in a moment.",
-    "context": "Leave verb specifying a source: the path is bounded at its origin, so the VP is telic and accepts the in-X adverbial.",
+    "translation": "two bags of money",
+    "context": "A container used as an extensive measure function.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["pathShape", "source"],
-      ["expectedTelicity", "telic"]
+      ["measureFunction", "extensive"]
     ],
-    "comment": "Migrated from the deleted MotionVPDatum table in Studies/Krifka1998.lean. UNVERIFIED paperLabel: section carried from prior Lean docstrings.",
+    "comment": "",
     "metaLanguage": "stan1293"
   },
   {
-    "id": "krifka1998_run_to_park",
-    "source": {"bibkey": "krifka-1998", "paperLabel": "§4.5 run to (bounded PP)"},
+    "id": "krifka1998_ex11c",
+    "source": {"bibkey": "krifka-1998", "paperLabel": "(11c)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "Mary ran to the park in ten minutes.",
+    "primaryText": "sixty degree Celsius of water",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Mary ran to the park in ten minutes.",
-    "context": "Manner-of-motion verb plus a goal PP: the directional to-PP supplies a bounded path, so the otherwise atelic verb yields a telic VP.",
-    "judgment": "acceptable",
+    "translation": "sixty degree Celsius of water",
+    "context": "Nominal measure construction with a non-extensive measure function.",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["pathShape", "bounded"],
-      ["expectedTelicity", "telic"]
+      ["measureFunction", "nonExtensive"]
     ],
-    "comment": "Migrated from the deleted MotionVPDatum table in Studies/Krifka1998.lean. UNVERIFIED paperLabel: section carried from prior Lean docstrings.",
+    "comment": "",
     "metaLanguage": "stan1293"
   },
   {
-    "id": "krifka1998_run_towards_park",
-    "source": {"bibkey": "krifka-1998", "paperLabel": "§4.5 run towards (unbounded PP)"},
+    "id": "krifka1998_ex11d",
+    "source": {"bibkey": "krifka-1998", "paperLabel": "(11d)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "Mary ran towards the park for ten minutes.",
+    "primaryText": "eighteen carats of gold",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Mary ran towards the park for ten minutes.",
-    "context": "Manner-of-motion verb plus a towards-PP: direction without a goal supplies an unbounded path, so the VP is atelic and takes for-X, not in-X.",
+    "translation": "eighteen carats of gold",
+    "context": "Nominal measure construction with a non-extensive measure function.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["measureFunction", "nonExtensive"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka1998_ex12c",
+    "source": {"bibkey": "krifka-1998", "paperLabel": "(12c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "hundred grams of five hundred meters of wool",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "hundred grams of five hundred meters of wool",
+    "context": "A measure phrase applied to a predicate that is already quantized; contrast (12a) hundred grams of wool and (12b) five hundred meters of wool.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["measureFunction", "extensive"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka1998_ex58",
+    "source": {"bibkey": "krifka-1998", "paperLabel": "(58)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary is an incredibly fast eater. Yesterday she ate peanuts in 0.43 seconds!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary is an incredibly fast eater. Yesterday she ate peanuts in 0.43 seconds!",
+    "context": "An interval adverbial with a non-quantized but temporally atomic predicate.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["pathShape", "unbounded"],
-      ["expectedTelicity", "atelic"]
+      ["adverbial", "in"]
     ],
-    "comment": "Migrated from the deleted MotionVPDatum table in Studies/Krifka1998.lean. UNVERIFIED paperLabel: section carried from prior Lean docstrings.",
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka1998_ex60a",
+    "source": {"bibkey": "krifka-1998", "paperLabel": "(60a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary wrote something in 10 minutes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary wrote something in 10 minutes.",
+    "context": "A non-quantized object that nevertheless yields a telic predicate; the paper gives the indefinite wide scope over the adverbial.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["adverbial", "in"]
+    ],
+    "comment": "The paper credits the observation to White (1994), Mittwoch (1982) and White and Zucchi (1996).",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka1998_ex60b",
+    "source": {"bibkey": "krifka-1998", "paperLabel": "(60b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary ate more than three apples in an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary ate more than three apples in an hour.",
+    "context": "A non-quantized, cumulative object that nevertheless yields a telic predicate.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["adverbial", "in"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka1998_ex60c",
+    "source": {"bibkey": "krifka-1998", "paperLabel": "(60c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary ate a quantity of porridge in an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary ate a quantity of porridge in an hour.",
+    "context": "A non-quantized, cumulative object that nevertheless yields a telic predicate.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["adverbial", "in"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka1998_ex66a",
+    "source": {"bibkey": "krifka-1998", "paperLabel": "(66a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Juan se tomó una copa de vino anoche antes de acostarse.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Juan drank a glass of wine last night before going to bed",
+    "context": "The reflexive clitic se with a telic predicate.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["clitic", "se"]
+    ],
+    "comment": "The paper credits the observation to Nishida (1994).",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka1998_ex66b",
+    "source": {"bibkey": "krifka-1998", "paperLabel": "(66b)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Juan se tomó vino anoche antes de acostarse.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Juan drank wine last night before going to bed",
+    "context": "The reflexive clitic se with an atelic predicate; without se the sentence is fine.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["clitic", "se"]
+    ],
+    "comment": "The paper credits the observation to Nishida (1994).",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka1998_ex74",
+    "source": {"bibkey": "krifka-1998", "paperLabel": "(74)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary walked from the university to the capitol.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary walked from the university to the capitol.",
+    "context": "A movement with a specified source and goal; telic, so it takes in an hour.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["path", "sourceGoal"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka1998_ex75",
+    "source": {"bibkey": "krifka-1998", "paperLabel": "(75)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary walked from the university towards the capitol.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary walked from the university towards the capitol.",
+    "context": "A movement with a specified source and direction, read as an initial part of a movement to the goal; not telic.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["path", "sourceDirection"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka1998_ex75_in",
+    "source": {"bibkey": "krifka-1998", "paperLabel": "(75)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "walk from the university towards the capitol in an hour",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "walk from the university towards the capitol in an hour",
+    "context": "An interval adverbial with a directed but goalless movement.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["path", "sourceDirection"],
+      ["adverbial", "in"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka1998_ex77a_in",
+    "source": {"bibkey": "krifka-1998", "paperLabel": "(77a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary baked the lobster till half done in an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary baked the lobster till half done in an hour.",
+    "context": "A change on the scale of doneness with an explicitly specified goal.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["goal", "specified"],
+      ["adverbial", "in"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka1998_ex77a_for",
+    "source": {"bibkey": "krifka-1998", "paperLabel": "(77a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary baked the lobster till half done for an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary baked the lobster till half done for an hour.",
+    "context": "A change on the scale of doneness with an explicitly specified goal.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["goal", "specified"],
+      ["adverbial", "for"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka1998_ex77b_in",
+    "source": {"bibkey": "krifka-1998", "paperLabel": "(77b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary whipped the cream stiff in an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary whipped the cream stiff in an hour.",
+    "context": "A resultative adjective specifying the goal of the change.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["goal", "specified"],
+      ["adverbial", "in"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka1998_ex77b_for",
+    "source": {"bibkey": "krifka-1998", "paperLabel": "(77b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary whipped the cream stiff for an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary whipped the cream stiff for an hour.",
+    "context": "A resultative adjective specifying the goal of the change.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["goal", "specified"],
+      ["adverbial", "for"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka1998_ex77c",
+    "source": {"bibkey": "krifka-1998", "paperLabel": "(77c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary baked the lobster in an hour / for an hour.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary baked the lobster in an hour / for an hour.",
+    "context": "Ambiguous between a change to the natural end state, which takes in an hour, and the bare process, which takes for an hour.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "goal reached (in an hour)", "judgment": "acceptable"},
+      {"name": "process only (for an hour)", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["goal", "implicit"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "krifka1998_ex78",
+    "source": {"bibkey": "krifka-1998", "paperLabel": "(78)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary arrived in London.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary arrived in London.",
+    "context": "An achievement, read as the minimal final part of a movement to London.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["path", "goal"]
+    ],
+    "comment": "",
     "metaLanguage": "stan1293"
   }
 ]

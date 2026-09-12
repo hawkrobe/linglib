@@ -101,8 +101,8 @@ def Template.vendlerClass (t : Template) : VendlerClass :=
     [krejci-2012]'s insight is that some verbs assigned simpler templates
     (eat, wash, dress, learn) nonetheless pass all three diagnostics — evidence
     that they have bieventive, causative event structures in their simple forms.
-    This verb-level property is captured in `Verb/Root/Classification.lean` and
-    `ArgDerivation`, not at the template level here. -/
+    This verb-level property is captured in `Verb/Root/Classification.lean`, not at the
+    template level here. -/
 
 /-- Does the template embed a result state under BECOME?
     Templates with [BECOME [STATE]] have a sub-event boundary that
@@ -171,7 +171,7 @@ end Signature
 
     The accomplishment template [[x ACT] CAUSE [BECOME [y STATE]]]
     has an intransitive variant. On the **deletion** analysis
-    ([krejci-2012]; [rappaport-hovav-levin-1998]), this is
+    ([rappaport-hovav-levin-1998]), this is
     the achievement [BECOME [x STATE]], obtained by stripping the
     external cause — yielding a monoeventive representation.
 
