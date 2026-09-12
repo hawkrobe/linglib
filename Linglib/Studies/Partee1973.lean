@@ -1,73 +1,52 @@
 import Linglib.Semantics.Tense.Compositional
 
 /-!
-# Tenses and Pronouns: Partee's Structural Analogy
-[partee-1973] [prior-1967]
+# Partee (1973): Some Structural Analogies between Tenses and Pronouns in English
 
-Formalizes [partee-1973]: tenses in English exhibit the same three-way
-interpretive ambiguity as pronouns — indexical, anaphoric, and
-bound-variable — and share the same formal mechanisms (assignment
-functions, variable lookup, lambda abstraction). The substrate carrier is
-`TensePronoun` (`Semantics/Tense/Pronoun.lean`).
+This file formalizes the analogy of [partee-1973]: tenses show the same three uses as
+pronouns, deictic, anaphoric, and bound, and so refer to times as pronouns refer to
+individuals rather than quantifying over them as the operators of [prior-1967] do. Past tense
+introduces a temporal variable resolved by an assignment to a contextually salient time
+(`parteeStoveExample`), so *I didn't turn off the stove* is false when the stove was turned
+off at that time, whereas the Priorean reading, that there is some past time at which it was
+not turned off, is trivially true (`stove_refutes_prior`); in a narrative two past tenses pick
+up the same salient time, as anaphoric pronouns corefer (`narrativeAnaphora`).
 
-| Mode      | Pronouns                     | Tenses                              |
-|-----------|------------------------------|-------------------------------------|
-| Indexical | "I" → agent of context       | present → speech time               |
-| Anaphoric | "he" → salient individual    | past → salient narrative time       |
-| Bound     | "his" in ∀x...his...         | tense in "whenever...is..."         |
+## Implementation notes
 
-Partee's main argument against [prior-1967]'s tense-as-operator view: "I
-didn't turn off the stove" with past tense does not mean "at SOME past
-time I didn't turn off the stove" (trivially true) but "at THAT specific
-time I didn't turn off the stove" — tenses refer, they don't quantify
-(`stove_refutes_prior`).
+The temporal assignments and tense interpretation are those of
+`Semantics/Tense/Compositional`, the temporal counterpart of the entity assignments of the
+Montague substrate.
 
-The definitions here are the temporal counterparts of the entity variable
-infrastructure in `Semantics.Montague.Variables`; both instantiate the
-generic `Assignment` infrastructure, which is Partee's point: the same
-referential mechanism operates over different domains.
+## References
 
-Later engagements with the analogy live in their own studies:
-`Ogihara1989` (operator–referential reconciliation), `Kratzer1998` (zero
-tense, SOT deletion), `Elbourne2013` (situation pronouns, free or bound).
+* [partee-1973]
+* [prior-1967]
 -/
 
 open Tense
 
 namespace Partee1973
 
-open Tense (interpTense PAST)
-open Semantics.Context (Index)
+open Semantics.Context
 
-/-- Partee's stove example: "I didn't turn off the stove."
+/-- *I didn't turn off the stove*: negation over a past tense that refers to the salient time
+the assignment supplies for variable `n`. -/
+def parteeStoveExample {T : Type*} (turnedOff : T → Prop) (g : TemporalAssignment T) (n : ℕ) :
+    Prop :=
+  ¬ turnedOff (interpTense n g)
 
-    Past tense introduces a temporal variable resolved to a specific
-    contextually salient time. The negation scopes over the temporal
-    reference, giving ¬P(t_i) rather than Prior's ∃t < now. ¬P(t). -/
-def parteeStoveExample {T : Type*} (turnedOff : T → Bool)
-    (g : TemporalAssignment T) (n : ℕ) : Bool :=
-  !turnedOff (interpTense n g)
-
-/-- [partee-1973]'s argument against [prior-1967], as a countermodel: in a
-    context where the stove WAS turned off at the salient time (−1), the
-    referential reading is false — the utterance is correctly predicted
-    false — while the Priorean existential reading stays true (witnessed
-    by any other past time), so the operator analysis trivializes the
-    sentence. -/
+/-- The argument against [prior-1967] as a countermodel: with the stove turned off at the
+salient time, the referential reading is false, while the Priorean existential reading stays
+true, witnessed by any other past time. -/
 theorem stove_refutes_prior :
-    parteeStoveExample (· == (-1 : ℤ)) (λ _ => (-1 : ℤ)) 0 = false ∧
-    ∃ s : Index Unit ℤ,
-      PAST (λ s => (s.time == (-1 : ℤ)) = false) s ⟨(), 0⟩ :=
-  ⟨by decide, ⟨(), -2⟩, by decide, by decide⟩
+    ¬ parteeStoveExample (· = (-1 : ℤ)) (λ _ => (-1 : ℤ)) 0 ∧
+      ∃ s : Index Unit ℤ, PAST (λ s => s.time ≠ (-1 : ℤ)) s ⟨(), 0⟩ :=
+  ⟨λ h => h rfl, ⟨(), -2⟩, by decide, by decide⟩
 
-/-- Partee's narrative example: "He turned the corner. He saw a house."
-
-    Both past tenses refer to the same narrative time — temporal
-    anaphora. Under the referential analysis both clauses evaluate at
-    g(n) for the same discourse-salient temporal variable n, just as
-    anaphoric pronouns corefer with an established individual. -/
-def narrativeAnaphora {T : Type*} (P Q : T → Bool)
-    (g : TemporalAssignment T) (n : ℕ) : Bool :=
-  P (interpTense n g) && Q (interpTense n g)
+/-- *He turned the corner. He saw a house.*: both past tenses refer to the same narrative time,
+as anaphoric pronouns corefer with an established individual. -/
+def narrativeAnaphora {T : Type*} (P Q : T → Prop) (g : TemporalAssignment T) (n : ℕ) : Prop :=
+  P (interpTense n g) ∧ Q (interpTense n g)
 
 end Partee1973
