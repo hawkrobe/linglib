@@ -5,36 +5,21 @@ import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Fragments.Akan.Phonology
 
 /-!
-# McCarthy & Prince (1995): Faithfulness and Reduplicative Identity
-[mccarthy-prince-1995]
+# McCarthy and Prince (1995): Faithfulness and Reduplicative Identity
 
-Formalizes the core empirical results of Correspondence Theory: the
-interaction between I-O faithfulness, B-R identity, and phonological
-markedness produces three typological patterns in the Basic Model —
-**non-application**, **emergence of the unmarked**, and **overapplication**
-— via ranking permutation of universal constraints. A fourth pattern,
-**normal application**, requires additional candidates beyond the
-Basic Model and is demonstrated by concrete language examples.
+This file formalizes the core results of correspondence theory in
+[mccarthy-prince-1995]: the interaction of input–output faithfulness, base–reduplicant
+identity, and markedness yields three patterns in the basic model, non-application,
+emergence of the unmarked, and overapplication, by ranking permutation, while normal
+application needs further candidates. The paper's striking result is that underapplication
+is not a basic-model category, no ranking of the three constraints producing it, which the
+factorial typology establishes; underapplication in Akan arises only when a fourth
+constraint blocks overapplication. Javanese intervocalic *h*-deletion is the signature
+overapplication case and Balangao partial reduplication the emergence of the unmarked.
 
-The paper's most striking theoretical result (§5) is that
-**underapplication is not a Basic Model category**: no ranking of the
-three core constraints can produce it. We prove this as
-`basic_model_no_underapplication`.
+## References
 
-## Sections (keyed to the paper's numbering)
-
-- **§3.4**: Javanese intervocalic *h*-deletion — the paper's signature
-  example of overapplication (ex. 1, 6–7).
-- **§4.2**: Balangao partial reduplication — emergence of the unmarked
-  (ex. 106–107). MAX-IO >> NO-CODA >> MAX-BR.
-- **§4**: Basic Model factorial typology — the abstract 3-constraint
-  interaction space. All 6 rankings of {IO-Faith, Phono, BR-Id} are
-  computed; the distinct optima are verified.
-- **§5**: Underapplication impossibility — the Basic Model cannot produce
-  underapplication; every ranking selects faithful, over, or normal.
-- **§5.1**: Akan underapplication — a 4th constraint (OCP) blocks
-  overapplication, producing underapplication. Demonstrates the
-  mechanism predicted by the Basic Model impossibility result.
+* [mccarthy-prince-1995]
 -/
 
 namespace McCarthyPrince1995
