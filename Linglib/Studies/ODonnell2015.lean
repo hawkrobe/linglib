@@ -2,55 +2,32 @@ import Linglib.Morphology.FragmentGrammars.FragmentGrammar
 import Linglib.Morphology.Exponence.Select
 
 /-!
-# O'Donnell 2015: English derivational morphology
+# O'Donnell (2015): Productivity and Reuse in Language
 
-[odonnell-2015]
+This file formalizes the central empirical contrast of the seventh chapter of
+[odonnell-2015] on English derivational morphology: the nominalizer *-ness* is productive
+while *-ion* and the verb-forming *-ate* are not, and of the competing models only the
+fragment grammar recovers this, the Dirichlet-multinomial probabilistic context-free
+grammar ranking the token-frequent *-ion* first. The three suffixes carry a productivity
+ordering (`Suffix.productivityIndex`, `moreProductiveThan`) grounded in the hapax-based
+statistics of Baayen that the book correlates with its models (`ness_hapax_richer`,
+`ness_higher_type_token_ratio`, `ion_token_frequency_dominates`), the suffixes are rules
+of a toy grammar over the fragment-grammar substrate (`suffixGrammar`), and a
+Dirichlet-multinomial grammar whose pseudo-counts track the empirical productivity is
+exhibited (`dmpcfgFromObserved`, `dmpcfgFromObserved_pseudo_respects_productivity`).
 
-First study file using the FG-family substrate from
-`Morphology/FragmentGrammars/`. Demonstrates the API on
-the central empirical contrast of [odonnell-2015] Chapter 7
-(Fig 7.3, p. 262): the productivity contrast between the highly
-productive English nominaliser *-ness* and the unproductive *-ion*
-and *-ate*.
+## Implementation notes
 
-## Empirical content
-
-The book's Chapter 7 load-bearing claim is qualitative:
-**`-ness:Adj>N` is productive; `-ion:V>N` and `-ate:BND>V` are not.**
-On Fig 7.3 (p. 262), only the FG model places `-ness` in its top-5
-productive suffixes; all four competing models (DMPCFG, MAG, DOP1,
-ENDOP) rank `-ion` first or second, and three of those (DMPCFG, DOP1,
-ENDOP) also wrongly elevate `-ate` (pp. 261–263). Table 7.1 (p. 265)
-adds that only FG correlates strongly with Baayen's hapax-based
-productivity estimators. `Suffix.productivityIndex` encodes a strict
-ordering `ness > ion > ate`; the `ion > ate` half is a tie-break
-(both are unproductive on novel forms but `-ate` is structurally more
-restricted), not part of [odonnell-2015]'s central contrast.
-
-Note that `-ate` is **not** a nominaliser — it is a verb-forming
-suffix that selects bound stems (e.g. *segregate* from bound
-*segregat-*). The toy grammar below reflects this: `rAte` produces
-`V`, not `N`, with a `BND` (bound-stem) nonterminal as its argument.
-The three suffixes are grouped here by being the central derivational
-contrast of [odonnell-2015] Ch 7, not by sharing an output category.
-
-## DMPCFG critique (Ch 7)
-
-The DMPCFG model bases its productivity inferences on the token
-frequency of suffixes ([odonnell-2015] Ch 7, p. 268). Per
-[odonnell-2015] Fig 7.4 (p. 267), `-ion` has roughly an order
-of magnitude more CELEX tokens than `-ness`, so a learned DMPCFG
-posterior places `-ion` above `-ness` in productivity — exactly the
-failure mode [odonnell-2015] uses to discriminate FG from
-DMPCFG. The pseudo-counts in `dmpcfgFromObserved` are *stipulated*
-to track the empirical productivity (via `productivityIndex`),
-not learned from a corpus. Two PMF-form theorems below
-(`…_prior_lt` and `…_lt_of_count_gap`) make the prior + flip
-dichotomy Lean-checkable.
+The *-ate* rule produces verbs from bound stems, so the three suffixes are grouped by the
+book's contrast rather than by output category; the ordering of *-ion* above *-ate* is a
+tie-break between two unproductive suffixes, not part of the book's claim. The
+pseudo-counts are stipulated to track productivity, not learned from a corpus, which is the
+book's point against the token-frequency model.
 
 ## References
 
-- [odonnell-2015] Ch 6–7.
+* [odonnell-2015]
+* [kiparsky-1973]
 -/
 
 namespace ODonnell2015
@@ -101,7 +78,7 @@ Fig 7.3, all of which place *-ion* in their top 5). -/
 def moreProductiveThan (a b : Suffix) : Prop :=
   a.productivityIndex > b.productivityIndex
 
-instance : DecidableRel moreProductiveThan := fun a b =>
+instance : DecidableRel moreProductiveThan := λ a b =>
   inferInstanceAs (Decidable (a.productivityIndex > b.productivityIndex))
 
 /-! ## Frequency-spectrum statistics (Fig 7.4, pp. 267–268)
@@ -498,12 +475,12 @@ structure FinRule (Ctx F : Type*) where
 /-- A finitely supported rule exposes the shared exponence core interface
 (`Morphology.Exponence.Rule`): applicability is support membership. -/
 instance : Exponence.Rule (FinRule Ctx F) Ctx F :=
-  ⟨FinRule.exponent, fun r c => c ∈ r.supp⟩
+  ⟨FinRule.exponent, λ r c => c ∈ r.supp⟩
 
 instance : Preorder (FinRule Ctx F) := Exponence.toPreorder
 
 instance : DecidableRel (Exponence.Applies : FinRule Ctx F → Ctx → Prop) :=
-  fun r c => inferInstanceAs (Decidable (c ∈ r.supp))
+  λ r c => inferInstanceAs (Decidable (c ∈ r.supp))
 
 omit [DecidableEq Ctx] in
 /-- Dualized support cardinality is strictly antitone in specificity: a
@@ -512,10 +489,10 @@ strictly broader finitely supported rule has strictly larger support
 embedding — strict antitonicity is exactly what the `Finset`-support
 engine retains). -/
 private theorem finRule_card_strictAnti :
-    StrictAnti (fun r : FinRule Ctx F => OrderDual.toDual r.supp.card) := by
+    StrictAnti (λ r : FinRule Ctx F => OrderDual.toDual r.supp.card) := by
   intro s r hlt
-  have hsub : s.supp ⊆ r.supp := fun x hx => hlt.le hx
-  have hns : ¬ r.supp ⊆ s.supp := fun hsub' => not_le_of_gt hlt fun x hx => hsub' hx
+  have hsub : s.supp ⊆ r.supp := λ x hx => hlt.le hx
+  have hns : ¬ r.supp ⊆ s.supp := λ hsub' => not_le_of_gt hlt λ x hx => hsub' hx
   exact OrderDual.toDual_lt_toDual.mpr
     (Finset.card_lt_card (lt_of_le_not_ge hsub hns))
 
@@ -528,7 +505,7 @@ probability (`genProb_le_iff_card_le`), so this is Elsewhere selection as
 maximum-likelihood inference, on record as a score. -/
 theorem selectByCard_isElsewhereWinner {v : List (FinRule Ctx F)} {c : Ctx}
     {r : FinRule Ctx F}
-    (h : selectBy (fun s => OrderDual.toDual s.supp.card) v c = some r) :
+    (h : selectBy (λ s => OrderDual.toDual s.supp.card) v c = some r) :
     IsElsewhereWinner v c r :=
   selectBy_isElsewhereWinner (finRule_card_strictAnti.strictAntiOn _) h
 
@@ -546,11 +523,11 @@ theorem maxGenProb_isElsewhereWinner {v : List (FinRule Ctx F)} {c : Ctx}
   refine ⟨⟨hrv, hrc⟩, ?_⟩
   rintro s ⟨hsv, htc⟩ hle
   have htc' : c ∈ s.supp := htc
-  have hsub : s.supp ⊆ r.supp := fun x hx => hle hx
+  have hsub : s.supp ⊆ r.supp := λ x hx => hle hx
   have hcard : r.supp.card ≤ s.supp.card :=
     (genProb_le_iff_card_le htc' hrc).mp (hmax s hsv htc')
   have heq : s.supp = r.supp := Finset.eq_of_subset_of_card_le hsub hcard
-  exact fun x hx => show x ∈ s.supp from heq ▸ hx
+  exact λ x hx => show x ∈ s.supp from heq ▸ hx
 
 end ProbabilisticElsewhere
 
