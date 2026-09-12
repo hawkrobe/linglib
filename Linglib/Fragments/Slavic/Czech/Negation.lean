@@ -33,11 +33,6 @@ open Syntax.Negation
 def ne : Marker :=
   { morphs := [.pref "ne"] }
 
-/-- Legacy String accessor for the prefix. Kept for back-compat with
-    `Studies/Miestamo2005.lean`. New consumers should
-    use `ne.form`. -/
-def negPrefix : String := ne.form
-
 /-- A Czech negation example. -/
 structure NegExample where
   affirmative : String
