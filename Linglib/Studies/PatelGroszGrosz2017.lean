@@ -2,200 +2,161 @@ import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Fragments.German.Determiners
 import Linglib.Studies.Schwarz2009
-import Linglib.Semantics.Presupposition.PhiFeatures
 
 /-!
-# Patel-Grosz & Grosz (2017): Revisiting Pronominal Typology
-[patel-grosz-grosz-2017] [schwarz-2009] [schwarz-2013]
-[elbourne-2005] [cardinaletti-starke-1999]
+# Patel-Grosz and Grosz (2017): Revisiting Pronominal Typology
 
-[patel-grosz-grosz-2017] (LI 48(2)) argue, for German, that personal pronouns
-(PER: *er/sie/es*) and demonstrative pronouns (DEM: *der/die/das*) have the **same
-core makeup** — both a null NP plus a definite determiner — and differ only in that
-DEM adds an **anaphoric index**: DEM is the [schwarz-2009] *strong* article,
-PER the *weak* article ("the latter are anaphoric in a way that the former are
-not"). The extra layer is that index, **not** spatial deixis — footnote 1
-stresses "it is far from clear that there is anything truly 'demonstrative' about"
-German DEMs. So here *der/die/das* are **strong-article `PersonalPronoun`s**, not a
-separate demonstrative type. The genuinely deictic objects are a different matter: the
-`Description.demonstrative` denotation, and the deictic demonstrative *pronoun*
-`DemonstrativePronoun` (German *dieser*, English *this*), which carries a `Features.Deixis.Feature`
-— *der* does **not**, so it is no `Demonstrative` (`Syntax/Category/Pronoun/Demonstrative.lean`). PER/DEM
-(article strength) is thus orthogonal to demonstrativehood (deixis). The PER/DEM distribution then
-follows from **structural economy**
-(*Minimize DP!*): PER, being less structured, is the default; DEM is licensed only
-by an added pragmatic effect (emotivity §5.1, disambiguation §5.2, register §5.3).
-
-The contributions are made *true by construction* on shared substrate:
-
-* **DEM = PER + anaphoric index** is the [schwarz-2009] weak/strong refinement
-  `Definiteness.interpret_anaphoric_eq_unique_of_existsUnique`: the strong description
-  (DEM, `.anaphoric`) and the weak description (PER, `.unique`) over one restrictor
-  pick the same referent exactly when the indexed entity is the unique satisfier —
-  off that, DEM is anaphoric in a way PER is not. Both denote via
-  `Description.ofPresupType`, with the strength round-tripping through
-  the Frame-free kind (`Description.kind_ofPresupType`, `DescriptionKind.presupType_toKind`); the
-  off-uniqueness **divergence** — DEM and PER picking *different* referents — is
-  `der_er_can_diverge`, reusing [schwarz-2009] §8's two-satisfier scenario.
-* The **two-series ↔ two-article** correlation (§4) is read off the determiner
-  inventory (`Determiner.Inventory.articleType`) and the lexicalized strong series, not
-  stipulated.
+This file formalizes the account in [patel-grosz-grosz-2017] of the German personal pronouns
+*er*, *sie*, *es* and the so-called demonstrative pronouns *der*, *die*, *das*. Both series
+are definite determiners over a null noun phrase; the demonstratives add a DP shell hosting
+an anaphoric index, so they are the strong article of [schwarz-2009] and the personal
+pronouns the weak one, and nothing genuinely demonstrative distinguishes them
+(`PronounSystem`, `german`). Corpus and experimental data on gender mismatch, equally
+available to both series, support the shared null noun phrase, and the two-series languages
+are those with two article forms (`german_weakAndStrong`). Where the two articles diverge,
+the demonstrative is anaphoric in a way the personal pronoun is not (`der_er_can_diverge`).
+The distribution follows from structural economy, Minimize DP!, which prefers the structure
+with fewer DP shells unless the added index does pragmatic work: emotivity, disambiguation
+away from the most prominent antecedent, or colloquial register (`DEMLicensingContext`,
+`Series.Optimal`, `optimal_iff`).
 
 ## Implementation notes
 
-The paper is German-focused (Bavarian in §5.3, passing Portuguese/French/Hebrew).
-The earlier ~11-language table, a five-context licensing inventory, and a Finnish
-"counterexample" had no basis in the text and were removed. *Minimize DP!* as a
-genuine node-count order (over `Pareto.lean`/`PullbackPreorder`) is left as a `Todo`.
-The §3 corpus finding — that gender mismatches (e.g. neuter *Mädchen*/*Ehepaar* with
-a non-neuter pronoun) are *equally* available for PER and DEM, PG&G's argument
-against a [±NP] split — is recorded in prose, as formalizing it needs antecedent
-modeling absent here.
+The German forms are typed as `PersonalPronoun`, article strength being a property of the
+series; deixis is the separate `DemonstrativePronoun` of the pronoun substrate, which *der*
+lacks. The divergence reuses the two-satisfier scenario of the Schwarz study, and Minimize
+DP! is a comparison of shell counts among the structures that achieve the intended
+interpretation; the gender-mismatch corpus counts are described in prose.
+
+## References
+
+* [patel-grosz-grosz-2017]
+* [schwarz-2009]
+* [elbourne-2005]
+* [cardinaletti-starke-1999]
 -/
 
 namespace PatelGroszGrosz2017
 
 open Definiteness
 
-/-- The **three** pragmatic contexts that license the strong-article ("DEM") series
-    in German ([patel-grosz-grosz-2017] §5): a positive pragmatic effect must
-    override the *Minimize DP!* preference for the less-structured PER. -/
+/-- The pragmatic effects that license the strong-article series (§5): the speaker's
+emotional engagement with the referent, disambiguation away from the most prominent
+antecedent, and colloquial or dialectal register. -/
 inductive DEMLicensingContext where
-  /-- §5.1 Emotivity — the speaker expresses emotional engagement with the referent. -/
   | emotivity
-  /-- §5.2 Disambiguation — DEM avoids the most prominent antecedent (anti-topicality). -/
   | disambiguation
-  /-- §5.3 Register — colloquial/dialectal register. -/
   | register
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
-/-! ### German 3rd-person pronoun inventory
+/-! ### The German inventory -/
 
-[patel-grosz-grosz-2017] footnote 1: German *der/die/das* are not truly
-demonstrative — they are the **strong-article** counterpart of the personal-pronoun
-series. So both series are `PersonalPronoun`, differing only in [schwarz-2009]
-article strength; which series a form belongs to is recorded here (the `weak`/`strong`
-split of `PronounSystem`), not in the theory-neutral `PersonalPronoun` schema. -/
+/-- The weak series: *er*. -/
+def er : PersonalPronoun :=
+  { form := "er", person := some .third, number := some .singular, gender := some .masculine }
 
--- Weak series (PER): the uniqueness/weak article.
-def er  : PersonalPronoun := { form := "er",  person := some .third, number := some .singular, gender := some .masculine }
-def sie : PersonalPronoun := { form := "sie", person := some .third, number := some .singular, gender := some .feminine }
-def es  : PersonalPronoun := { form := "es",  person := some .third, number := some .singular, gender := some .neuter }
+/-- The weak series: *sie*. -/
+def sie : PersonalPronoun :=
+  { form := "sie", person := some .third, number := some .singular, gender := some .feminine }
 
--- Strong series ("DEM"): the same core plus the strong-article anaphoric index.
-def der : PersonalPronoun := { form := "der", person := some .third, number := some .singular, gender := some .masculine }
-def die : PersonalPronoun := { form := "die", person := some .third, number := some .singular, gender := some .feminine }
-def das : PersonalPronoun := { form := "das", person := some .third, number := some .singular, gender := some .neuter }
+/-- The weak series: *es*. -/
+def es : PersonalPronoun :=
+  { form := "es", person := some .third, number := some .singular, gender := some .neuter }
 
-/-- A language's 3rd-person pronoun system as PG&G analyze it: the weak (PER) and
-    strong ("DEM") article series, the article inventory (source of `articleType`),
-    and the pragmatic contexts licensing the strong series. -/
+/-- The strong series: *der*, the same core plus the anaphoric index. -/
+def der : PersonalPronoun :=
+  { form := "der", person := some .third, number := some .singular, gender := some .masculine }
+
+/-- The strong series: *die*. -/
+def die : PersonalPronoun :=
+  { form := "die", person := some .third, number := some .singular, gender := some .feminine }
+
+/-- The strong series: *das*. -/
+def das : PersonalPronoun :=
+  { form := "das", person := some .third, number := some .singular, gender := some .neuter }
+
+/-- A language's third-person pronoun system: the weak and strong series, the article
+inventory, and the pragmatic effects that license the strong series. -/
 structure PronounSystem where
-  language : String
   weak : List PersonalPronoun
   strong : List PersonalPronoun
   determiners : Determiner.Inventory
   licensing : List DEMLicensingContext
 
-namespace PronounSystem
+/-- German: the weak series *er*, *sie*, *es*, the strong series *der*, *die*, *das*, the
+weak and strong articles, and all three licensing effects. -/
+def german : PronounSystem where
+  weak := [er, sie, es]
+  strong := [der, die, das]
+  determiners := German.Determiners.inventory
+  licensing := [.emotivity, .disambiguation, .register]
 
-/-- The language lexicalizes a distinct strong-article series (PG&G's added D-layer):
-    at least one strong form is present. Derived, not stipulated. -/
-def LexicalizesStrong (s : PronounSystem) : Prop := 0 < s.strong.length
+/-- German has two article forms, read off the determiner inventory, matching its two pronoun
+series (§4). -/
+theorem german_weakAndStrong : german.determiners.articleType = .weakAndStrong := by decide
 
-instance : DecidablePred LexicalizesStrong :=
-  fun s => inferInstanceAs (Decidable (0 < s.strong.length))
-
-end PronounSystem
-
-/-- German: weak PER *er/sie/es*, strong "DEM" *der/die/das*, weak/strong articles,
-    all three licensing contexts attested ([patel-grosz-grosz-2017] §5). -/
-def german : PronounSystem :=
-  { language := "German"
-    weak := [er, sie, es]
-    strong := [der, die, das]
-    determiners := German.Determiners.inventory
-    licensing := [.emotivity, .disambiguation, .register] }
-
-/-! ### The contributions, derived -/
-
-/-- German lexicalizes a distinct strong-article pronoun series — **derived** from
-    the presence of *der/die/das*, not stipulated. -/
-theorem german_lexicalizes_strong : german.LexicalizesStrong := by decide
-
-/-- German's article system is `.weakAndStrong` (two distinct article forms) —
-    derived from the determiner inventory, matching its weak/strong pronoun series
-    ([patel-grosz-grosz-2017] §4). -/
-theorem german_weakAndStrong :
-    german.determiners.articleType = .weakAndStrong := by decide
-
-/-- The [schwarz-2009]/[schwarz-2013] weak/strong typology meets PG&G's
-    two-series claim: German's two distinct article forms (deriving `.bipartite`)
-    correspond to its lexicalized strong series and the `.weakAndStrong` article
-    type — all derived from the determiner inventory + the strong forms. -/
-theorem schwarz_pgg_german_consistent :
-    German.Determiners.inventory.markingStrategy = .bipartite ∧
-    german.LexicalizesStrong ∧
-    german.determiners.articleType = .weakAndStrong :=
-  ⟨German.Determiners.marking, german_lexicalizes_strong, german_weakAndStrong⟩
-
-/-! ### The empirical payoff: the two series can diverge -/
-
-/-- [patel-grosz-grosz-2017]'s actual claim — DEM "is anaphoric in a way" PER
-    "is not" — made concrete: the strong-article "DEM" reading (*der*,
-    `ofPresupType .familiarity`) and the weak-article PER reading (*er*,
-    `ofPresupType .uniqueness`), over **one** restrictor and bi-assignment, pick
-    *different* referents. Reusing [schwarz-2009] §8's two-satisfier scenario:
-    the weak PER fails uniqueness (two satisfiers → `none`) while the strong DEM
-    reads off the discourse index. This is the divergence direction the convergence
-    theorem (`Definiteness.interpret_anaphoric_eq_unique_of_existsUnique`) rules out
-    only under uniqueness. -/
+/-- The strong series is anaphoric in a way the weak one is not: over one restrictor with
+two satisfiers, the weak description of *er* fails uniqueness while the strong description
+of *der* reads its referent off the discourse index, the two-satisfier scenario of the
+Schwarz study. -/
 theorem der_er_can_diverge :
     Definiteness.interpret
         (Definiteness.Description.ofPresupType .uniqueness Schwarz2009.studentRestr 0)
-        Schwarz2009.gAlice Schwarz2009.gs0
-      ≠ Definiteness.interpret
+        Schwarz2009.gAlice Schwarz2009.gs0 ≠
+      Definiteness.interpret
         (Definiteness.Description.ofPresupType .familiarity Schwarz2009.studentRestr 0)
         Schwarz2009.gAlice Schwarz2009.gs0 :=
   Schwarz2009.two_articles_can_disagree
 
-/-! ### Grounding the Pronoun API: `PersonalPronoun` denotes via a φ-restricted definite description
+/-! ### Minimize DP! (§5) -/
 
-A personal pronoun is a definite description over a null NP whose φ-features are presuppositions
-([elbourne-2005] pronouns-as-definites; gender = null-NP concord à la Sauerland; the
-partial-identity view of φ in `Semantics/Presupposition/PhiFeatures`, after Cooper/Heim & Kratzer).
-The PER series is the **weak** article (uniqueness); the marked DEM series the **strong**
-(familiarity, `der_er_can_diverge` above) — article-strength is *per-series*, not a per-element slot
-(like deficiency, unlike the demonstrative's deixis). The load-bearing parallel to the demonstrative
-grounding (`Studies/Hanink2021`): there the demonstrative's deixis is a presupposition on D, the
-deictic slot of `Description.demonstrative`; here the `HasPhi.phi` **gender** supplies the
-restrictor's presupposition. -/
+/-- The two series as structures: the weak series is a single DP, the strong series adds a
+shell hosting the anaphoric index. -/
+inductive Series where
+  | weak
+  | strong
+  deriving DecidableEq
 
-open Presupposition.PhiFeatures
+/-- The number of DP shells. -/
+def Series.shells : Series → ℕ
+  | .weak => 1
+  | .strong => 2
 
-/-- `⟦sie⟧` made concrete: the feminine PER's weak-article restrictor **is** the `femSem`
-    presupposition — true by construction (`(femSem isFemale).presup = isFemale`), so the gender
-    feature *drives* the definite description's restrictor rather than re-stipulating it. -/
-theorem feminine_per_restrictor_is_femSem {E W : Type}
-    (isFemale : E → Prop) (sIdx : Nat) :
-    Definiteness.Description.ofPresupType .uniqueness
-        ((fun _ _ x => (femSem isFemale).presup x) :
-          Semantics.Composition.DenotGS E W .et) sIdx
-      = Definiteness.Description.unique
-          ((fun _ _ x => isFemale x) :
-            Semantics.Composition.DenotGS E W .et) sIdx := rfl
+/-- Whether the series carries an anaphoric index. -/
+def Series.HasIndex : Series → Prop
+  | .weak => False
+  | .strong => True
 
-/-- Consequently a feminine PER picks the *unique female* — the gender presupposition is the
-    restrictor of the weak-article definite (`ιx[isFemale x]`). -/
-theorem feminine_per_picks_unique_female {E W : Type}
-    (isFemale : E → Prop) (sIdx : Nat)
-    (g : Assignment E) (gs : Semantics.Composition.SitAssignment W) :
-    Definiteness.interpret
-        (Definiteness.Description.ofPresupType .uniqueness
-          ((fun _ _ x => (femSem isFemale).presup x) :
-            Semantics.Composition.DenotGS E W .et) sIdx) g gs
-      = Definiteness.russellIota (E := E) (fun x => isFemale x) :=
-  Definiteness.interpret_unique
-    ((fun _ _ x => isFemale x) : Semantics.Composition.DenotGS E W .et) sIdx g gs
+/-- A series achieves an interpretation if it carries an index whenever the interpretation
+requires one. -/
+def Series.Achieves (needsIndex : Prop) (s : Series) : Prop := needsIndex → s.HasIndex
+
+/-- Minimize DP!: among the series that achieve the interpretation, use the one with the
+fewest DP shells. -/
+def Series.Optimal (needsIndex : Prop) (s : Series) : Prop :=
+  s.Achieves needsIndex ∧ ∀ s' : Series, s'.Achieves needsIndex → s.shells ≤ s'.shells
+
+/-- The weak series is the default and the strong series surfaces exactly when the index does
+pragmatic work: a series is optimal for an interpretation iff it is the strong series
+precisely when the interpretation needs the index. -/
+theorem optimal_iff (needsIndex : Prop) (s : Series) :
+    s.Optimal needsIndex ↔ (needsIndex ↔ s = .strong) := by
+  constructor
+  · rintro ⟨hach, hmin⟩
+    cases s with
+    | weak => exact ⟨λ hp => (hach hp).elim, λ h => Series.noConfusion h⟩
+    | strong =>
+      refine ⟨λ _ => rfl, λ _ => Classical.byContradiction λ hp => ?_⟩
+      exact absurd (hmin .weak λ h => (hp h).elim) (by decide)
+  · intro h
+    cases s with
+    | weak =>
+      refine ⟨λ hp => Series.noConfusion (h.1 hp), λ s' _ => ?_⟩
+      cases s' <;> decide
+    | strong =>
+      refine ⟨λ _ => trivial, λ s' hs' => ?_⟩
+      cases s' with
+      | weak => exact (hs' (h.2 rfl)).elim
+      | strong => exact le_rfl
 
 end PatelGroszGrosz2017
