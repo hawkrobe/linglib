@@ -1,35 +1,38 @@
-import Linglib.Data.Examples.Kriz2015
-import Linglib.Data.Generalizations.HomogeneityGap
-import Linglib.Studies.Magri2014
 import Linglib.Semantics.Homogeneity.Plural
 
 /-!
-# Križ (2016): homogeneity, non-maximality, and *all*
+# Križ (2016): Homogeneity, Non-Maximality, and All
 
-This file verifies [kriz-2016]'s predictions against a finite model, using
-the homogeneity substrate in `Homogeneity` and its plural
-instantiation (`barePlural`, `allPlural` — both originating with this
-paper). A five-world model checks the predictions end-to-end, including the
-§4.2 sensitivity to what an exception does instead and the §4.1
-unmentionability of exceptions. Closing sections connect the analysis to the
-typed data in `Data.Examples.Kriz2015` and to [magri-2014]'s rival gap
-derivation.
+This file formalizes [kriz-2016]'s account of non-maximal readings of definite plurals. *The
+professors smiled* is neither true nor false when some but not all of them smiled, and the
+sentence is nonetheless usable there whenever the current issue does not distinguish that
+situation from one in which all smiled; *all* removes the gap and with it the non-maximal
+reading. A five-world model of three professors runs the account end to end on the library's
+homogeneity substrate (`barePlural`, `allPlural`, both originating with this paper): the
+non-maximal use under a coarse issue and its absence under a fine one, the unusability of the
+*all*-sentence at any gap world, the unmentionability of exceptions (`smith_exception_unaddressable`),
+and the paper's prediction that what an exception does instead matters, since a visibly angry
+Smith falls into a different cell of the coarse issue than a neutral one
+(`bare_usable_neutral_not_angry`). Conjunctions of names, modelled as plurals over their
+conjuncts, are predicted to allow non-maximal readings they rarely have
+(`conj_modeled_as_plural_predicts_nonmax`), which the paper answers with an accommodated finer
+issue.
 
 ## Implementation notes
 
-`QUD W` is the substrate partition type, not the [roberts-1996] QUD-stack:
-§4.5 of the paper argues (examples (39)-(40)) that the current issue is an
-overarching, not directly manipulable, property of the discourse, so
-`coarseQ`/`fineQ` below are pedagogical constructions. Following §4.4, the
-gap is trivalent but not presuppositional (contra [gajewski-2005]). The §4.6
-numeral puzzle (*the ten professors smiled* resists non-maximality) is left
-unaddressed, as in the paper.
+* `QUD W` is the substrate partition type, not the question stack of [roberts-1996]: the
+  paper's §4.5 argues that the current issue is an overarching property of the discourse that
+  is not directly manipulable, so `coarseQ` and `fineQ` are constructions for the model.
+* Following §4.4, the gap is trivalent but not presuppositional (contra [gajewski-2005]).
+* The §4.5 puzzle of numerals (*the ten professors smiled* resists non-maximality) is left open,
+  as in the paper, and so is the accommodation step of §6.2.
 
 ## References
 
-* [M. Križ, *Homogeneity, Non-Maximality, and All*][kriz-2016]
-* [M. Križ, *Aspects of Homogeneity in the Semantics of Natural Language*][kriz-2015]
-* [K. Fine, *Vagueness, Truth and Logic*][fine-1975]
+* [kriz-2016]
+* [kriz-2015] — the dissertation the account develops
+* [lasersohn-1999], [kroch-1974] — pragmatic halos and the unmentionability of exceptions
+* [szabolcsi-haddican-2004], [magri-2014] — the homogeneity of conjunctions
 -/
 
 namespace Kriz2016
@@ -212,37 +215,9 @@ theorem bare_usable_neutral_not_angry :
 
 end FiniteModel
 
-/-! ### The typed switches data
-
-The switches items of `Data.Examples.Kriz2015` show the model's pattern in
-the wild: "Oh no, the switches are on!" is acceptable under the existential
-issue and unacceptable under the universal one (cf.
-`smithNeutral_usable_coarse` vs `smithNeutral_not_usable_fine`), and the
-*all* variant is unacceptable even in the permissive context (cf.
-`all_not_usable_smithNeutral`). The gap rows lift to `.indet` observations
-in the pooled `Generalizations.HomogeneityGap` data. -/
-
-open Generalizations.HomogeneityGap in
-/-- Both switches gap rows (positive and negated) observe `.indet`: the gap
-    is symmetric under negation. -/
-theorem switches_gap_observed_indet :
-    (fromExample Kriz2015.Examples.switches_pos_gap).map (·.observed) =
-      some .indet ∧
-    (fromExample Kriz2015.Examples.switches_neg_gap).map (·.observed) =
-      some .indet := by
-  decide
-
-open Generalizations.HomogeneityGap in
-/-- The model matches the data: the bare plural's value at the gap-world is
-    the value the positive gap row observes. -/
-theorem model_matches_gap_row :
-    (fromExample Kriz2015.Examples.switches_pos_gap).map (·.observed) =
-      some (barePlural smiled profs .smithNeutral) := by
-  decide
-
 /-! ### Conjunction overgeneration (§6.2)
 
-Conjunctions of proper names are homogeneous (Szabolcsi & Haddican 2004,
+Conjunctions of proper names are homogeneous ([szabolcsi-haddican-2004],
 [magri-2014]) yet generally resist non-maximal readings. Modelled as a
 plural over its conjunct atoms, the machinery predicts non-maximal use at a
 gap-world (`conj_modeled_as_plural_predicts_nonmax`); the paper's informal
@@ -300,50 +275,5 @@ theorem conj_modeled_as_plural_predicts_nonmax :
   decide
 
 end ConjunctionOvergeneration
-
-/-! ### Križ vs Magri on the gap's value
-
-[magri-2014] derives homogeneity from double exhaustification over
-alternative geometry: on a gap scenario, `doubleExh .mystery` is
-bivalent-false (`Magri2014.gap_positive_false`) — the gap collapses inside
-the semantics. For Križ the same input is `.indet`, and the gap is
-pragmatically recoverable under a coarse issue (`gap_enables_nonmax`). A
-false sentence is unutterable on standard Gricean terms, so Magri's account
-needs additional pragmatic machinery to license the non-maximal uses the
-finite model exhibits. `Magri2014.fromPredicate` translates the model's
-`(smiled, profs, smithNeutral)` into Magri's count abstraction, so both
-operators run on the same input. -/
-
-section MagriDivergence
-
-open Magri2014
-
-/-- A 3-atom Magri scenario where 2 of 3 atoms satisfy the predicate. -/
-def magriGapScenario : Scenario :=
-  { total := 3, satisfying := 2, valid := by omega }
-
-/-- Counting satisfiers of `smiled` at `smithNeutral` yields the 2-of-3
-    scenario: the divergence below is a same-input comparison. -/
-theorem fromPredicate_smithNeutral :
-    fromPredicate smiled profs .smithNeutral = magriGapScenario := rfl
-
-theorem magriGapScenario_isGap : isGap magriGapScenario = true := by decide
-
-/-- Magri's `doubleExh .mystery` is false on a 2-of-3 gap. -/
-theorem magri_2of3_gap_is_bivalent_false :
-    doubleExh .mystery magriGapScenario = false :=
-  gap_positive_false magriGapScenario magriGapScenario_isGap
-
-/-- On the same input, Magri's operator returns false while Križ's returns
-    `.indet` and the sentence is usable under the coarse issue: the two
-    accounts assign the gap incompatible statuses. -/
-theorem kriz_vs_magri_alternative_geometry :
-    doubleExh .mystery (fromPredicate smiled profs .smithNeutral) = false ∧
-    barePlural smiled profs .smithNeutral = .indet ∧
-    usable coarseQ (barePlural smiled profs) .smithNeutral :=
-  ⟨fromPredicate_smithNeutral.symm ▸ magri_2of3_gap_is_bivalent_false,
-   bare_smithNeutral, smithNeutral_usable_coarse⟩
-
-end MagriDivergence
 
 end Kriz2016
