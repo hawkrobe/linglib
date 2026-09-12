@@ -9,17 +9,28 @@ import Linglib.Syntax.DependencyGrammar.Catena
 import Linglib.Syntax.DependencyGrammar.Basic
 
 /-!
-# Osborne 2019: valency, catenae, control, and ellipsis
-[osborne-2019] [tesniere-1959]
+# Osborne (2019): A Dependency Grammar of English
 
-[osborne-2019]'s dependency grammar, from the English Fragment lexicon:
-each verb's valency (Ch. 6) is derived from its Fragment
-`complementType`, concrete trees are checked against those valencies,
-the passive valency is derived from the transitive one by lexical rule
-(passive participles: §6.6), catenae separate from constituents
-(Ch. 4), control and raising (§§6.8–6.9) lose their embedded subjects
-in the basic tree and recover them in the enhanced graph, and gapping
-(§12.7) elides a catena that is not a constituent.
+This file formalizes the parts of the dependency grammar of [osborne-2019] that the English
+fragment lexicon supports. Each verb's valency, the sixth chapter's notion, is derived from
+the fragment's complement type, and concrete trees are checked against those valencies, a
+spurious object or a missing one violating the frame; the passive valency is derived from
+the transitive one by the lexical rule for passive participles (`passive_derives_valency`).
+Catenae, the fourth chapter's unit, come apart from constituents, a verb with its subject
+being a catena but not a constituent; control and raising lose their embedded subject in the
+basic tree and recover it in the enhanced graph; and gapping elides a catena of the
+antecedent clause that is not one of its constituents.
+
+## Implementation notes
+
+The trees are Universal Dependencies graphs over fragment words, and the enhanced graph is
+the basic tree with the recovered subject arc added; the sections are those of the book
+after [tesniere-1959].
+
+## References
+
+* [osborne-2019]
+* [tesniere-1959]
 -/
 
 namespace Osborne2019
