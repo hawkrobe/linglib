@@ -89,6 +89,11 @@ lemma takeAt_right_append_of_le_length {k : ℕ} (x rest : List α) (h : k ≤ r
 lemma takeAt_idem : e.takeAt k (e.takeAt k xs) = e.takeAt k xs :=
   takeAt_of_length_le e (by rw [length_takeAt]; exact min_le_left _ _)
 
+/-- A shorter edge substring of a longer one is the shorter edge substring. -/
+lemma takeAt_takeAt_of_le {k k' : ℕ} (h : k ≤ k') (xs : List α) :
+    e.takeAt k (e.takeAt k' xs) = e.takeAt k xs := by
+  cases e <;> simp [List.rtake_eq_reverse_take_reverse, List.take_take, h]
+
 end Edge
 
 /-! ### Edge-bridge identities
@@ -167,6 +172,53 @@ theorem isReverseDefinite_setOf_left (k : ℕ) (P : Set (List α)) :
     IsReverseDefinite {w | Edge.left.takeAt k w ∈ P} k :=
   fun _ _ hab => congrArg (· ∈ P) hab
 
+/-! ### Monotonicity in the window -/
+
+/-- A `k`-definite language is `k'`-definite for every `k' ≥ k`. -/
+theorem IsDefinite.mono {k k' : ℕ} {L : Language α} (h : L.IsDefinite k) (hk : k ≤ k') :
+    L.IsDefinite k' :=
+  λ _ _ hab =>
+    h (by rw [← Edge.takeAt_takeAt_of_le .right hk, hab, Edge.takeAt_takeAt_of_le .right hk])
+
+/-- A reverse `k`-definite language is reverse `k'`-definite for every `k' ≥ k`. -/
+theorem IsReverseDefinite.mono {k k' : ℕ} {L : Language α} (h : L.IsReverseDefinite k)
+    (hk : k ≤ k') : L.IsReverseDefinite k' :=
+  λ _ _ hab =>
+    h (by rw [← Edge.takeAt_takeAt_of_le .left hk, hab, Edge.takeAt_takeAt_of_le .left hk])
+
+/-- A generalized `k`-definite language is generalized `k'`-definite for every `k' ≥ k`. -/
+theorem IsGeneralizedDefinite.mono {k k' : ℕ} {L : Language α} (h : L.IsGeneralizedDefinite k)
+    (hk : k ≤ k') : L.IsGeneralizedDefinite k' :=
+  λ a b hab => by
+    obtain ⟨h₁, h₂⟩ := Prod.mk.inj hab
+    refine h (Prod.ext ?_ ?_)
+    · show Edge.left.takeAt k a = Edge.left.takeAt k b
+      rw [← Edge.takeAt_takeAt_of_le .left hk, h₁, Edge.takeAt_takeAt_of_le .left hk]
+    · show Edge.right.takeAt k a = Edge.right.takeAt k b
+      rw [← Edge.takeAt_takeAt_of_le .right hk, h₂, Edge.takeAt_takeAt_of_le .right hk]
+
+/-! ### Affix languages -/
+
+/-- The words beginning with `xs`. -/
+def ofPrefix (xs : List α) : Language α := {w | xs <+: w}
+
+/-- The words ending in `xs`. -/
+def ofSuffix (xs : List α) : Language α := {w | xs <:+ w}
+
+/-- The words beginning with `xs` form a reverse definite language with window `xs.length`. -/
+theorem isReverseDefinite_ofPrefix (xs : List α) : (ofPrefix xs).IsReverseDefinite xs.length :=
+  λ a b hab => by
+    simp only [Edge.takeAt_left] at hab
+    show (xs <+: a) = (xs <+: b)
+    rw [List.prefix_iff_eq_take, List.prefix_iff_eq_take, hab]
+
+/-- The words ending in `xs` form a definite language with window `xs.length`. -/
+theorem isDefinite_ofSuffix (xs : List α) : (ofSuffix xs).IsDefinite xs.length :=
+  λ a b hab => by
+    show (xs <:+ a) = (xs <:+ b)
+    rw [List.suffix_iff_eq_drop, List.suffix_iff_eq_drop]
+    exact congrArg (xs = ·) hab
+
 /-! ### Reverse duality -/
 
 private lemma takeAt_left_reverse (k : ℕ) (l : List α) :
@@ -238,6 +290,17 @@ private lemma factorsThrough_takeAt_of_bounded {L : Language α} {N : ℕ} (e : 
     rw [hab]
   · have hb : ¬ b.length ≤ N := by omega
     exact propext ⟨fun h => absurd (h_bound a h) ha, fun h => absurd (h_bound b h) hb⟩
+
+/-- A language whose words have length at most `N` is `(N + 1)`-definite: a member is its
+own length-`(N + 1)` suffix. -/
+theorem isDefinite_succ_of_forall_length_le {L : Language α} {N : ℕ}
+    (h : ∀ w ∈ L, w.length ≤ N) : L.IsDefinite (N + 1) :=
+  factorsThrough_takeAt_of_bounded .right h
+
+/-- A language whose words have length at most `N` is reverse `(N + 1)`-definite. -/
+theorem isReverseDefinite_succ_of_forall_length_le {L : Language α} {N : ℕ}
+    (h : ∀ w ∈ L, w.length ≤ N) : L.IsReverseDefinite (N + 1) :=
+  factorsThrough_takeAt_of_bounded .left h
 
 /-- When the complement is bounded, membership still factors through the length-`(N+1)`
 edge projection: `factorsThrough_takeAt_of_bounded` gives it for `Lᶜ`, and factoring
