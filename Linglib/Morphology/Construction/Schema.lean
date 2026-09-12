@@ -102,6 +102,11 @@ theorem Instantiates.trans_le (h : s.Instantiates w₁) (hw : w₁ ≤ w₂) :
     s.Instantiates w₂ :=
   h.trans hw
 
+/-- A fully specified description, every slot maximal, is instantiated by itself alone. -/
+theorem instantiates_iff_eq_of_forall_isMax (h : ∀ v, IsMax (s.body v)) :
+    s.Instantiates w ↔ w = s.body :=
+  ⟨λ hw => funext λ v => le_antisymm (h v (hw v)) (hw v), λ hw => hw ▸ le_rfl⟩
+
 /-- A schema lies below another exactly when it is instantiated by everything the other is. -/
 theorem body_le_body_iff :
     t.body ≤ s.body ↔ ∀ ⦃w⦄, s.Instantiates w → t.Instantiates w :=
