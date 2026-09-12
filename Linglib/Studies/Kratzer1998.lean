@@ -1,166 +1,144 @@
 import Linglib.Semantics.Tense.Decomposition
+import Linglib.Semantics.Events.Basic
 import Linglib.Fragments.English.Tense
 import Linglib.Fragments.German.Tense
-import Linglib.Data.Examples.Schema
-import Linglib.Semantics.Tense.Pronoun
 import Linglib.Data.Examples.Kratzer1998
 
 /-!
-# [kratzer-1998]: More Structural Analogies between Pronouns and Tenses
-[kratzer-1998] [partee-1973] [klein-1994] [abusch-1988]
-[abusch-1997] [ogihara-1989]
+# Kratzer (1998): More Structural Analogies between Pronouns and Tenses
 
-[kratzer-1998]'s SALT VIII paper extends [partee-1973]'s
-tense–pronoun analogy in three directions: an aspect-based decomposition
-of English simple past, SOT deletion via zero tenses, and zero forms with
-locality constraints. The substrate machinery (deletion mechanism +
-tense pronouns used by Fragments) is at
-`Semantics/Tense/Decomposition.lean`; this study file
-collects the paper-anchored cross-references and the empirical chain
-theorems connecting Fragments → Theory → Data → Empirical judgments.
+This file formalizes the paper's tense inventory and the consequences it draws from it.
+Tenses are pronouns ([partee-1973]): English has two indexical tenses, a present defined
+when the context provides an interval including the utterance time and a past defined when
+it provides one preceding it, and a zero tense, a variable with no presupposition that must
+be bound by the next tense up, just as a zero pronoun must be bound by a local antecedent.
+Attitude complements denote properties of times because a zero tense with a binder index
+abstracts over the time, which derives Abusch's constraint from the verbs' selection; an
+indexical tense in the same position yields a proposition, whatever binder is inserted. The
+present under past of *The ultrasound picture indicated that Mary is pregnant* is read de re
+about a state through the operator that turns a property of times into a property of
+eventualities. Finally, since English *Borromini built this church* is fine out of the blue
+while the German Präteritum is not, the English simple past spells out a present tense with
+perfect aspect, one of the three aspect operators after [klein-1994] that map properties of
+events to properties of times; the German Perfekt has the same decomposition.
 
-## Architectural note
+## Implementation notes
 
-The `indexicalPresent` / `anaphoricPast` / `boundPresent`
-tense pronouns live at the Theories layer
-(`Tense/Decomposition.lean`) because
-`Fragments/{English,German,Italian}/Tense.lean` consume them via the
-`Fragments → Theories` import direction. The "Fragments import
-Theories, never Studies" layering discipline forces the substrate
-placement; this Studies file collects the paper-anchored cross-paper
-claims and bridge theorems that don't need to be Fragment-visible.
+An out-of-the-blue context is the temporal assignment sending every variable to the
+utterance time, so the definedness of a tense pronoun there is its presupposition under the
+library's `TensePronoun.fullPresupposition`, and the (40)–(41) verdicts follow from the
+Fragments' surface tenses rather than being listed. The aspect operators take a reference
+interval; a tense supplies a point, embedded as `NonemptyInterval.pure`. The zero-pronoun
+typology of §2–§3 and the locality argument from switch reference are prose.
 
-## Section 7 decomposition (English simple past = perfect + present)
+## References
 
-The cornerstone empirical contrast (`[kratzer-1998]` Section 7,
-ex (40), p. 16) is the English/German out-of-the-blue diagnostic:
-English simple past is acceptable as a deictic past tense (`(40a)`
-"Who built this Church? Borromini built this church."); the German
-simple past (Präteritum) is deviant in the same context (`(40b)`);
-the German present perfect (Perfekt) fills the deictic slot
-(`(40c)`). Kratzer concludes: "Since the simple past in English can
-be used in out of the blue utterances describing past events, it
-must be a way of spelling out perfect aspect and present tense
-together" (p. 18).
-
-The empirical data live as `Examples.ex40a`/`ex40b`/`ex40c` in the
-generated block below, with `Examples.all` exposing the full Kratzer98
-example list. The chain theorems below verify that the Fragment entries'
-`canBeDeictic` predictions agree with each example's empirical
-judgment.
-
+* [kratzer-1998]
+* [partee-1973] — tenses as pronouns
+* [abusch-1997], [ogihara-1989], [ogihara-1996] — sequence of tense and temporal de se
+* [heim-kratzer-1998] — binder indices
+* [klein-1994] — reference time and the aspects
 -/
-
-open Tense
 
 namespace Kratzer1998
 
-open Tense.Decomposition
-open Tense
-open Data.Examples (LinguisticExample)
+open Tense Tense.Decomposition Data.Examples
 
-/-! ### Fragment ↔ Example agreement: deictic-vs-anaphoric tense
+section Tenses
 
-The chain Fragment → Example replaces the previous Fragment → frame →
-datum chain (which was a six-conjunct `rfl` tower over hand-stipulated
-Reichenbach integers). The empirical anchor is now the
-`LinguisticExample.judgment` field of the corresponding Kratzer98
-numbered example, which is verifiable from the paper itself.
+variable {T : Type*} [LinearOrder T]
 
-Predictions tested:
-- `simplePastSurface.canBeDeictic = true` ↔ `Examples.ex40a.judgment = .acceptable`
-  (English simple past, out of the blue).
-- `preteritSurface.canBeDeictic = false` ↔ `Examples.ex40b.judgment = .ungrammatical`
-  (German Präteritum, out of the blue).
-- `perfektSurface.canBeDeictic = true` ↔ `Examples.ex40c.judgment = .acceptable`
-  (German Perfekt, out of the blue). -/
+/-- An out-of-the-blue context: no salient time but the utterance time, so every temporal
+variable resolves to it. -/
+def outOfTheBlue (t₀ : T) : TemporalAssignment T := Function.const ℕ t₀
 
-section KratzerChain
+/-- The indexical present is defined out of the blue: the utterance time includes itself. -/
+theorem indexicalPresent_outOfTheBlue (t₀ : T) :
+    indexicalPresent.fullPresupposition (outOfTheBlue t₀) := by
+  simp [TensePronoun.fullPresupposition, TensePronoun.resolve, TensePronoun.evalTime,
+    indexicalPresent, outOfTheBlue, present]
 
-open English.Tense (simplePastSurface)
-open German.Tense (preteritSurface perfektSurface)
-open Features (Judgment)
+/-- A past pronoun is undefined out of the blue: no provided interval precedes the utterance
+time. -/
+theorem not_anaphoricPast_outOfTheBlue (n : ℕ) (t₀ : T) :
+    ¬ (anaphoricPast n).fullPresupposition (outOfTheBlue t₀) := by
+  simp [TensePronoun.fullPresupposition, TensePronoun.resolve, TensePronoun.evalTime,
+    anaphoricPast, outOfTheBlue, past]
 
-/-- **English simple past = perfect + present.** Per Kratzer §7
-    (p. 18), the English simple past decomposes as PRESENT-tense head
-    over PERFECT aspect. The Fragment-level encoding (`constraint =
-    .present` + `hasPerfect = true`) is verified directly in
-    `Fragments/English/Tense.lean`; this theorem isolates the bridge
-    claim that needs both Fragment-side and Example-side facts: the
-    Fragment encoding predicts deictic usability, and Kratzer's
-    out-of-the-blue example (40a) ("Who built this Church?…") is
-    `.acceptable`. -/
-theorem english_simple_past_chain :
-    simplePastSurface.tensePronoun.constraint = Tense.present ∧
-    simplePastSurface.hasPerfect = true ∧
-    Examples.ex40a.judgment = Judgment.acceptable :=
-  ⟨rfl, rfl, rfl⟩
+omit [LinearOrder T] in
+/-- A zero tense with a binder index makes its clause a property of times (§5, (31)):
+whatever the assignment, the abstract applied to `t` evaluates the clause at `t`. -/
+theorem boundPresent_abstract (n : ℕ) (P : T → Prop) (g : TemporalAssignment T) (t : T) :
+    temporalLambdaAbs n (λ g => P ((boundPresent n).resolve g)) g t ↔ P t := by
+  simp [temporalLambdaAbs, TensePronoun.resolve, interpTense, boundPresent]
 
-/-- **German Preterit = genuine past pronoun.** Per Kratzer §7
-    (ex (40b), p. 16): the German Präteritum requires a contextually
-    salient past time, behaving like an anaphoric pronoun. The Fragment
-    encodes this as `preteritSurface.tensePronoun.constraint = .past`
-    + `hasPerfect = false`; the empirical anchor is `Examples.ex40b`
-    (deviant out of the blue, star per Kratzer). -/
-theorem german_preterit_chain :
-    preteritSurface.tensePronoun.constraint = Tense.past ∧
-    preteritSurface.hasPerfect = false ∧
-    Examples.ex40b.judgment = Judgment.ungrammatical :=
-  ⟨rfl, rfl, rfl⟩
+omit [LinearOrder T] in
+/-- An indexical tense cannot be abstracted over: the binder leaves the clause a proposition
+about the utterance time, which is why an attitude verb forces a zero tense. -/
+theorem indexicalPresent_not_abstracted {n : ℕ} (hn : n ≠ 0) (P : T → Prop)
+    (g : TemporalAssignment T) (t : T) :
+    temporalLambdaAbs n (λ g => P (indexicalPresent.resolve g)) g t ↔ P (g 0) := by
+  simp [temporalLambdaAbs, TensePronoun.resolve, interpTense, indexicalPresent,
+    Function.update_of_ne hn.symm]
 
-/-- **German Perfekt = perfect + present** (same decomposition as
-    English simple past). Per Kratzer §7 (ex (40c), p. 16): the Perfekt
-    fills the deictic-past slot that the Preterit cannot. The chain
-    asserts BOTH the empirical agreement on (40c) AND the cross-Fragment
-    parallelism (Perfekt's tense head + perfect-aspect coincide with
-    `simplePastSurface`'s), which is the substantive content of "same
-    decomposition." -/
-theorem german_perfekt_chain :
-    perfektSurface.tensePronoun.constraint = Tense.present ∧
-    perfektSurface.hasPerfect = true ∧
-    Examples.ex40c.judgment = Judgment.acceptable ∧
-    perfektSurface.tensePronoun.constraint =
-      simplePastSurface.tensePronoun.constraint ∧
-    perfektSurface.hasPerfect = simplePastSurface.hasPerfect :=
-  ⟨rfl, rfl, rfl, rfl, rfl⟩
+end Tenses
 
-/-- **Zero tense surface properties and the reflexive parallel.** Per
-    [kratzer-1998] §4 (p. 10–11) English has two indexical tenses and a
-    zero tense; per §3 the zero tense is a locally bound PRESENT that
-    surfaces as zero, exactly as a locally bound entity pronoun surfaces
-    as a reflexive, while the free pronouns (indexical present, anaphoric
-    past) stay overt. -/
-theorem zero_tense_chain (n : ℕ) :
-    (boundPresent n).constraint = Tense.present ∧
-    (boundPresent n).isBound ∧
-    Overtness.fromBinding (boundPresent n).mode true = .zero ∧
-    Overtness.fromBinding indexicalPresent.mode true = .overt ∧
-    Overtness.fromBinding (anaphoricPast n).mode true = .overt :=
-  ⟨rfl, rfl, rfl, rfl, rfl⟩
+section Aspect
 
-end KratzerChain
+variable {T W : Type*} [LinearOrder T]
 
-/-! ### Agreement with Ogihara on the simultaneous cell -/
+/-- The operator of (38): a property of times becomes a property of eventualities holding
+of `e` at every world iff the property holds of the running time of `e`. -/
+def star (P : NonemptyInterval T → W → Prop) (e : Event T) (_ : W) : Prop :=
+  ∀ w', P e.τ w'
 
-/-- Kratzer's SOT deletion and [ogihara-1996]'s zero-tense binding build
-    the **same embedded frame**: deletion yields exactly the
-    `simultaneousFrame` whose embedded event time is the matrix event time,
-    and that frame is PRESENT relative to the shifted perspective. The two
-    accounts provably agree on the core past-under-past simultaneous cell;
-    they differ in mechanism (deletion of a genuine PAST vs a bound zero
-    PRESENT — see `Ogihara1996.PastReading` for the typed
-    mechanism-level divergence). -/
-theorem deletion_agrees_with_zero_tense_binding {T : Type*}
-    (m : ReichenbachFrame T) :
-    applyDeletion m = Tense.simultaneousFrame m m.eventTime ∧
-    (applyDeletion m).isPresent :=
-  ⟨applyDeletion_eq_simultaneousFrame m, applyDeletion_isPresent m⟩
+/-- The temporal de re is semantically forced: `star P` does not depend on the evaluation
+world. -/
+theorem star_congr (P : NonemptyInterval T → W → Prop) (e : Event T) (w w' : W) :
+    star P e w ↔ star P e w' := Iff.rfl
 
-/-! ### Cross-paper bridge theorems (Phase F)
+/-- Imperfective aspect (§7): the reference time is included in the event time. -/
+def imperfective (P : Event T → W → Prop) (r : NonemptyInterval T) (w : W) : Prop :=
+  ∃ e, r ≤ e.τ ∧ P e w
 
-The contrast theorems with Ogihara, Sharvit, von Stechow, Klecha are
-intentionally not yet landed; substrate is ready (`applyDeletion`,
-`sotDeletionApplicable`, and the tense pronouns are exported from
-`Tense/Decomposition.lean`). -/
+/-- Perfective aspect: the event time is included in the reference time. -/
+def perfective (P : Event T → W → Prop) (r : NonemptyInterval T) (w : W) : Prop :=
+  ∃ e, e.τ ≤ r ∧ P e w
+
+/-- Perfect aspect: the event is over by the reference time. -/
+def perfect (P : Event T → W → Prop) (r : NonemptyInterval T) (w : W) : Prop :=
+  ∃ e, e.τ.precedes r ∧ P e w
+
+/-- Present tense with perfect aspect describes an event over by the utterance time: the
+English simple past needs no past pronoun to describe past events. -/
+theorem perfect_pure (P : Event T → W → Prop) (t₀ : T) (w : W) :
+    perfect P (NonemptyInterval.pure t₀) w ↔ ∃ e, e.τ.snd < t₀ ∧ P e w := Iff.rfl
+
+end Aspect
+
+/-! ### The Fragments' surface tenses (§7) -/
+
+open English.Tense German.Tense
+
+/-- The surface tense a row's `form` feature names. -/
+def surface : String → Option SurfaceTense
+  | "simple past" => some simplePastSurface
+  | "Präteritum" => some preteritSurface
+  | "Perfekt" => some perfektSurface
+  | _ => none
+
+/-- (40)–(41): a form is acceptable out of the blue iff its tense pronoun is defined there.
+The English simple past and the German Perfekt, PRESENT + PERFECT, are; the Präteritum, an
+anaphoric PAST, is not. -/
+theorem rows_outOfTheBlue :
+    ∀ r ∈ Examples.all, r.feature? "context" = some "out of the blue" →
+      ∀ s ∈ (r.feature? "form").bind surface,
+        (r.judgment = .acceptable ↔ s.tensePronoun.fullPresupposition (outOfTheBlue (0 : ℤ))) := by
+  decide +kernel
+
+/-- The English simple past and the German Perfekt share their decomposition, and both carry
+the PERFECT that the Präteritum lacks. -/
+theorem simplePast_eq_perfekt :
+    simplePastSurface = perfektSurface ∧ preteritSurface.hasPerfect = false := ⟨rfl, rfl⟩
 
 end Kratzer1998

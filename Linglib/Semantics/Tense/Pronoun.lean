@@ -128,6 +128,10 @@ def fullPresupposition [LinearOrder T]
     (tp : TensePronoun) (g : TemporalAssignment T) : Prop :=
   compare (tp.resolve g) (tp.evalTime g) ∈ tp.constraint
 
+instance [LinearOrder T] (tp : TensePronoun) (g : TemporalAssignment T) :
+    Decidable (tp.fullPresupposition g) :=
+  inferInstanceAs (Decidable (_ ∈ _))
+
 def isIndexical (tp : TensePronoun) : Prop := tp.mode = .indexical
 instance (tp : TensePronoun) : Decidable tp.isIndexical :=
   inferInstanceAs (Decidable (tp.mode = .indexical))
