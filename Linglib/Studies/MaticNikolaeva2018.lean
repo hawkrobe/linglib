@@ -3,54 +3,27 @@ import Linglib.Fragments.English.PolarityMarking
 import Linglib.Fragments.German.PolarityMarking
 
 /-!
-# Matić & Nikolaeva (2018) [matic-nikolaeva-2018]
+# Matić and Nikolaeva (2018): From Polarity Focus to Salient Polarity
 
-*From polarity focus to salient polarity: From things to processes.*
-In [dimroth-sudhoff-2018], pp. 9–53. DOI 10.1075/la.249.01mat.
+This file records the argument of [matic-nikolaeva-2018] that polarity focus is not a fixed
+form–meaning association: what the literature has tried to pin down denotationally is a
+family of communicative intentions the authors call salient polarity, realized by a
+heterogeneous list of structures across languages. The file does not formalize salient
+polarity as a predicate, which would be the very stipulation the chapter rejects; it records
+the attested list of structures ascribed to salient polarity, its cardinality mismatch with
+the substrate's marking strategies, and the claim that no form-class encoding captures the
+interpretational notion, the chapter's own critique of the verum-focus tradition of
+[hohle-1992].
 
-The chapter argues that "polarity focus" is **not** a fixed form-meaning
-association of the kind a Lean enum can encode, and proposes the term
-*salient polarity* for the inferentially-derived interpretation that
-the literature has tried to denotationally pin down.
+## TODO
 
-> Salient polarity does not correspond to anything resembling the
-> traditional linguistic category if the latter is understood as a
-> pairing between a linguistic form and a denotation, but is rather
-> to be conceived of as a fuzzy set of family resemblances unified
-> by shared communicative intentions.
-> — [matic-nikolaeva-2018], p. 12
+The chapter is not on file; example and page locators are transcribed from an earlier
+version of this file and are UNVERIFIED.
 
-This file does **not** formalize "salient polarity" as a predicate or
-function. Doing so would be the very stipulation move M&N reject — a
-form-class encoding masquerading as theory-neutral. Instead, the file
-records (a) the cross-linguistically attested *list* of structures
-ascribed to salient polarity in the literature (M&N examples 2–4,
-abridged), (b) the cardinality mismatch between this list and the
-substrate's `Strategy` enum, and (c) the load-bearing
-non-isomorphism claim that the substrate's encoding cannot capture
-M&N's interpretational notion.
+## References
 
-## Why this is not a "bridge file"
-
-Per CLAUDE.md anchoring discipline, the file is anchored on a single
-paper (`[matic-nikolaeva-2018]`); the cross-framework critique is
-M&N's own claim, not a synthesis the formaliser invented. It lives in
-`Studies/` exactly like every other `Studies/AuthorYear.lean`.
-The contradiction with the substrate is recorded at the substrate's
-def-site (`Semantics/Polarity/Marking.lean::Strategy`
-docstring) with a back-pointer here.
-
-## Cross-references
-
-- `Semantics/Polarity/Marking.lean::Strategy` — the
-  form-class encoding M&N reject; docstring acknowledges the rejection.
-- `Studies/GarassinoJacob2018.lean` — same volume;
-  G&J explicitly endorse M&N (their fn 13).
-- `Studies/Hohle1992.lean` — the verum-focus origin
-  M&N argue against in §2.2 ("the reduction of salient polarity to
-  accented finite verbs is neither empirically nor conceptually valid").
-- `Studies/TurcoBraunDimroth2014.lean` — the
-  production data M&N reinterpret.
+* [matic-nikolaeva-2018]
+* [hohle-1992]
 -/
 
 namespace MaticNikolaeva2018
@@ -211,7 +184,7 @@ theorem fragment_data_lumps_emphaticDo_with_verumFocus :
     desired effect"). The Option-valued mapping makes the failure
     structural: there is no `some _` to assign. -/
 theorem substrate_cannot_encode_at_least_ten :
-    (mnAllStructures.filter (fun s => substrateBestEffort s == none)).length ≥ 10 := by
+    (mnAllStructures.filter (λ s => substrateBestEffort s == none)).length ≥ 10 := by
   decide
 
 /-! ## §4 Open-endedness: the load-bearing claim
@@ -314,7 +287,7 @@ def romeroHanBestEffort : MNAttestedStructure → Option RHAnalysis
     scope is the prosodic-on-finite-verb subset; everything else falls
     outside. -/
 theorem romeroHan_cannot_encode_at_least_eleven :
-    (mnAllStructures.filter (fun s => romeroHanBestEffort s == none)).length ≥ 11 := by
+    (mnAllStructures.filter (λ s => romeroHanBestEffort s == none)).length ≥ 11 := by
   decide
 
 /-- Gutzmann 2015's UCI dimensions (DEONT/EPIS/HKNOW). The 2015
@@ -336,7 +309,7 @@ inductive GutzmannDimension where
     shared verum-related Gutzmann critique M&N actually engage
     (Gutzmann & Castroviejo Miró 2011) is not in linglib's substrate. -/
 def gutzmannBestEffort : MNAttestedStructure → Option GutzmannDimension :=
-  fun _ => none
+  λ _ => none
 
 /-- Gutzmann 2015's sentence-mood framework cannot analyze any of M&N's
     18 attested salient-polarity structures — the framework scopes over
@@ -354,9 +327,9 @@ theorem gutzmann_2015_framework_does_not_apply :
     are exactly the cases all four traditions agree about; the
     disagreement is entirely about what *else* counts. -/
 theorem mn_argument_extends_across_frameworks :
-    (mnAllStructures.filter (fun s => substrateBestEffort s == none)).length ≥ 10 ∧
-    (mnAllStructures.filter (fun s => romeroHanBestEffort s == none)).length ≥ 11 ∧
-    (mnAllStructures.filter (fun s => gutzmannBestEffort s == none)).length = 18 := by
+    (mnAllStructures.filter (λ s => substrateBestEffort s == none)).length ≥ 10 ∧
+    (mnAllStructures.filter (λ s => romeroHanBestEffort s == none)).length ≥ 11 ∧
+    (mnAllStructures.filter (λ s => gutzmannBestEffort s == none)).length = 18 := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
 end MaticNikolaeva2018

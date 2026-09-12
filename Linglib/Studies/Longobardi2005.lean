@@ -5,54 +5,43 @@ import Linglib.Studies.Longobardi2001
 
 /-!
 # Longobardi (2005): Toward a Unified Grammar of Reference
-[longobardi-2005] [longobardi-1994]
 
-Zeitschrift für Sprachwissenschaft 24(1): 5–44.
+This file formalizes the topological mapping theory of reference of [longobardi-2005]: a
+nominal refers to an individual, an object or a kind, exactly when its D position holds
+referential content. Two axioms, that individuals are denoted in D and that arguments denote
+individuals, together with the condition that a referential value is a constant when a
+lexically referential expression occupies or chains to D and a variable bound by an operator
+otherwise (`NominalConfig`, `denotesIndividual`, `isConstant`), yield the paper's derived
+claims: arguments with an empty D are variables (`empty_d_arguments_are_variables`), a
+constant needs lexically referential content in D (`constant_requires_d_content`), and
+reference to individuals goes with N-to-D raising, so proper names must raise and common
+nouns need not (`proper_names_must_raise`, `common_nouns_need_not_raise`). The four classes
+of nominal heads of the paper's properness hierarchy order these options
+(`NominalHeadClass`, `raising_monotone`), the Italian *solo* paradigm diagnoses raising
+(`solo_diagnoses_raising`), and expletive articles fill D without referential content.
 
-## Core Contribution
+## Implementation notes
 
-A syntax–semantics mapping theory reducing reference to nominal head
-position: a nominal refers to an individual (constant) iff its D
-position contains referential content. This unifies object reference
-and kind reference under a single structural generalization.
+N-to-D raising is head-to-head movement on the extended projection of the noun, and proper
+names in D are the directly referential expressions of `Semantics.Reference.Basic`. The
+parameters of [longobardi-2001] instantiate the theory's cross-linguistic settings.
 
-The paper rests on two axioms and a licensing condition, from which the
-**Core Generalization** — reference (to individuals) iff N-to-D —
-follows as a theorem.
+## TODO
 
-## Axioms
+The paper is not on file; the numbered axioms, theorems, and tables are transcribed from an
+earlier version of this file and are UNVERIFIED.
 
-- **(52) Denotation Hypothesis**: individuals are denoted in D.
-- **(53) Licensing Condition**: arguments denote individuals.
-- **(54) Constants vs Variables**: a referential value is constant if a
-  lexically referential expression occupies (or chains to) D; otherwise
-  the argument is a variable bound by an operator.
+## References
 
-## Derived Theorems
-
-- **(55)** arguments with empty D are variables.
-- **(56)** an argument is a constant only if D contains a lexically
-  referential expression.
-- **(33) Core Generalization**: reference (to individuals) iff N-to-D.
-
-## File Structure
-
-§1–§4 formalize the axioms, derived theorems, and noun taxonomy.
-§5–§7 formalize the Last Resort consequences and the bridge to the
-character semantics of `Reference/Basic`. §8–§13 instantiate the
-theory: N-to-D raising as head movement, Italian *solo* diagnostic,
-expletive articles, and the bridge to [longobardi-2001]'s
-`DPParameter`/`ArgumentType`.
+* [longobardi-2005]
+* [longobardi-2001]
+* [longobardi-1994]
 -/
 
 namespace Longobardi2005
 
 open Longobardi2001 (DPParameter ArgumentType
   romance english greek pnRequiresOvertD bnCanBeReferential)
-
--- ============================================================================
--- § 1: Nominal Head Classification — Table (28)
--- ============================================================================
 
 /-- The four classes of nominal heads, ranked from most prototypically
     referential (pronouns) to least (common nouns).
@@ -85,7 +74,7 @@ def ObjectReferential : NominalHeadClass → Prop
   | .specialCommon => True   -- conditioned: only when raised to D
   | .commonNoun    => False
 
-instance : DecidablePred ObjectReferential := fun c => by
+instance : DecidablePred ObjectReferential := λ c => by
   cases c <;> unfold ObjectReferential <;> infer_instance
 
 /-- Can function as a predicate (i.e., survive without D). -/
@@ -95,7 +84,7 @@ def CanBePredicate : NominalHeadClass → Prop
   | .specialCommon => True
   | .commonNoun    => True
 
-instance : DecidablePred CanBePredicate := fun c => by
+instance : DecidablePred CanBePredicate := λ c => by
   cases c <;> unfold CanBePredicate <;> infer_instance
 
 /-- Kind-referential: can denote a kind when introduced by definite article. -/
@@ -105,7 +94,7 @@ def KindReferential : NominalHeadClass → Prop
   | .specialCommon => True
   | .commonNoun    => True
 
-instance : DecidablePred KindReferential := fun c => by
+instance : DecidablePred KindReferential := λ c => by
   cases c <;> unfold KindReferential <;> infer_instance
 
 /-- Whether N-to-D raising is obligatory in argument position. -/
@@ -115,17 +104,13 @@ def RaisingObligatory : NominalHeadClass → Prop
   | .specialCommon => False  -- conditioned raising
   | .commonNoun    => False  -- never raises
 
-instance : DecidablePred RaisingObligatory := fun c => by
+instance : DecidablePred RaisingObligatory := λ c => by
   cases c <;> unfold RaisingObligatory <;> infer_instance
 
 -- The (28) partition is true by construction over the four `def`s above.
 -- The pretty-printed conjunction theorem (`table_28` in earlier drafts)
 -- was a `decide`-readback of the definitions, not a derivation, and is
 -- omitted per the no-encoding-conclusions rule.
-
--- ============================================================================
--- § 2: The Properness Hierarchy — (25)
--- ============================================================================
 
 /-- The scalar hierarchy of properness from [longobardi-2005] (25).
 
@@ -153,10 +138,6 @@ theorem raising_monotone :
         (RaisingObligatory c₂ → RaisingObligatory c₁) := by
   intro c₁ c₂ h₁ h₂
   cases c₁ <;> cases c₂ <;> simp_all [propernessRank, RaisingObligatory]
-
--- ============================================================================
--- § 3: The Topological Mapping Theory — Axioms (52)–(54)
--- ============================================================================
 
 /-- The lexical type of a noun: whether it names objects or kinds.
 
@@ -213,10 +194,6 @@ def isConstant (nc : NominalConfig) : Bool :=
 def isVariable (nc : NominalConfig) : Bool :=
   !nc.dHasReferentialContent
 
--- ============================================================================
--- § 4: Derived Theorems (55)–(56) and Core Generalization (33)
--- ============================================================================
-
 /-- **(55)** Arguments with empty D are variables.
 
     From (52)+(53)+(54): if D is empty, then by (52) the nominal cannot
@@ -259,10 +236,6 @@ theorem argument_requires_d (nc : NominalConfig)
   · simp [hArg] at h
   · exact h
 
--- ============================================================================
--- § 5: Why Proper Names Must Raise / Common Nouns Cannot
--- ============================================================================
-
 /-- [longobardi-2005] §10, question (57c): why must proper names raise?
 
     Object-naming nouns cannot satisfy (54b) — they name objects, not
@@ -296,10 +269,6 @@ theorem common_nouns_need_not_raise :
   intro nc _ hArg hEmptyD
   exact empty_d_arguments_are_variables nc hArg hEmptyD
 
--- ============================================================================
--- § 6: Expletive Articles
--- ============================================================================
-
 /-- Whether a definite article is expletive (semantically vacuous
     placeholder) or a genuine semantic operator.
 
@@ -326,12 +295,8 @@ def ExpletiveBlocksKindReading : ArticleType → Prop
   | .expletive => True   -- no kind reading: article is semantically vacuous
   | .operator  => False  -- kind reading possible: article is a real operator
 
-instance : DecidablePred ExpletiveBlocksKindReading := fun a => by
+instance : DecidablePred ExpletiveBlocksKindReading := λ a => by
   cases a <;> unfold ExpletiveBlocksKindReading <;> infer_instance
-
--- ============================================================================
--- § 7: Bridge to Reference/Basic — Proper Names as Directly Referential
--- ============================================================================
 
 open Reference.Basic (properName isDirectlyReferential
   constantCharacter)
@@ -349,10 +314,6 @@ theorem proper_name_in_d_is_constant
     constantCharacter (properName (C := C) (W := W) e).character :=
   ⟨Reference.Basic.properName_isDirectlyReferential e,
    Reference.Basic.properName_constantCharacter e⟩
-
--- ============================================================================
--- § 8: N-to-D Raising as Head-to-Head Movement
--- ============================================================================
 
 /-- N-to-D raising is head-to-head movement within the nominal extended
     projection.
@@ -401,10 +362,6 @@ def englishPN : NtoDRaising where
   raises := false  -- no overt raising needed (weak D)
   obligatory := false
 
--- ============================================================================
--- § 9: Italian Diagnostic Data — Solo Paradigm
--- ============================================================================
-
 /-- [longobardi-2005] §2: the *solo* paradigm. *Solo* 'only' is an
     adverb that must c-command its associate. When *solo* precedes a
     proper name but follows a common noun, this diagnoses the structural
@@ -432,10 +389,6 @@ def soloCN : SoloDiagnostic :=
 theorem solo_diagnoses_raising :
     soloPN.precedesSolo = true ∧ soloCN.precedesSolo = false :=
   ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 10: Expletive Articles with Proper Names
--- ============================================================================
 
 /-- [longobardi-2005] §8: Italian proper names optionally appear
     with a definite article (*la Maria*, *il Gianni*). This article is
@@ -481,10 +434,6 @@ theorem expletive_preserves_rigidity :
     laMaria.wideScopeOnly = true ∧ laMaria.kindReading = false :=
   ⟨rfl, rfl⟩
 
--- ============================================================================
--- § 11: Bridge to Longobardi 2001 — ArgumentType ↔ NominalConfig
--- ============================================================================
-
 /-- Map [longobardi-2001]'s `ArgumentType` to the topological
     mapping's constant/variable distinction.
 
@@ -508,10 +457,6 @@ theorem referential_is_constant :
 /-- Quantificational arguments are variables in the topological mapping. -/
 theorem quantificational_is_variable :
     isVariable (argumentTypeToConfig .quantificational) = true := rfl
-
--- ============================================================================
--- § 12: Bridge to DPParameter — Strong D Requires Overt D Content
--- ============================================================================
 
 /-- [longobardi-2001]'s `strongD` parameter corresponds to the
     topological mapping's requirement for overt referential content in D.

@@ -4,82 +4,35 @@ import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Fragments.Georgian.Agreement
 
 /-!
-# [marantz-1991] — Case and Licensing
-[marantz-1991]
+# Marantz (1991): Case and Licensing
 
-Two central claims:
+This file formalizes the two claims of [marantz-1991]. Abstract Case is not morphological
+case: noun phrases are licensed by projection and the extended projection principle, and
+morphological case is inserted post-syntactically according to a disjunctive hierarchy,
+lexically governed before dependent before unmarked before default, the substrate's
+`Syntax/Case/Dependent` mechanism. Burzio's generalization decomposes into the extended
+projection principle and the ergative generalization, that no ergative or accusative
+appears on a derived subject. Accusative and ergative are dependent cases assigned to the
+lower and the higher of two caseless noun phrases respectively, and the Georgian split
+between the present and aorist series follows from the alignment each series selects, with
+abstract accusative spelled out as dative and abstract absolutive as nominative, while
+agreement targets the same positions across the split.
 
-1. **Abstract Case ≠ morphological case.** NPs are licensed by projection
-   and the EPP, not by Case theory. Morphological case is post-syntactic,
-   inserted at Morphological Structure.
+## Implementation notes
 
-2. **Burzio's generalization decomposes** into the EPP (sentences need
-   subjects) and the **Ergative generalization** (no ERG/ACC on
-   non-thematic/derived subjects). The latter concerns morphological
-   case realization, not abstract licensing.
+Default case, the last resort of the hierarchy, is not modelled apart from unmarked case;
+the evidential series of Georgian is a morphological property of its inflection and outside
+the algorithm. [baker-2015] later develops the hierarchy into a cross-linguistic algorithm.
 
-## Case Realization Hierarchy
+## TODO
 
-Morphological case obeys a disjunctive hierarchy:
+The paper is not on file; locators are transcribed from an earlier version of this file and
+are UNVERIFIED.
 
-    lexically governed > dependent (ACC/ERG) > unmarked > default
+## References
 
-This is formalized in `Syntax/Case/Dependent.lean` as `Mechanism`
-(lexical > dependent > unmarked). [marantz-1991]'s fourth level,
-**default** case (absolute last resort when no other principle applies),
-is not modeled separately; it is conceptually distinct from unmarked
-(which is environment-sensitive — e.g., GEN inside NPs, NOM inside IPs)
-but our current grammar never needs to distinguish them.
-[baker-2015] later developed the hierarchy into a full
-cross-linguistic algorithm.
-
-## Dependent Case
-
-ACC and ERG are **dependent cases** — assigned relationally:
-- ACC: dependent case assigned to the lower of two caseless NPs
-- ERG: dependent case assigned to the higher of two caseless NPs
-- The two NPs must be *distinct* (not in the same chain); this is
-  implicit in our list representation where each `Case.NP` is a
-  distinct structural position.
-
-## Georgian Split Ergativity
-
-Present series INFL selects accusative alignment → surface NOM-DAT pattern
-(where DAT is the spell-out of abstract dependent ACC).
-Aorist series INFL selects ergative alignment → surface ERG-NOM pattern
-(where NOM is the spell-out of abstract unmarked ABS).
-Crucially, agreement direction is independent of case direction —
-the split in case morphology across tense series does NOT correlate
-with any split in agreement (which always targets the same positions).
-
-**Evidential series** (DAT-NOM "inversion") is not derived from the
-dependent case algorithm; it reflects a morphological property of
-evidential INFL. The algorithm covers present and aorist only.
-
-## Abstract Case vs Morphological Case
-
-The dependent case algorithm produces *abstract* case values (`Case`).
-These map to *morphological* surface forms (also `Case`) via
-language-specific spell-out at Morphological Structure. In Georgian:
-abstract ACC → morphological DAT (dative and accusative case have fallen
-together), abstract ABS → morphological NOM (unmarked surface form).
-
-## Case Hierarchy ↔ Agreement Hierarchy
-
-The case realization hierarchy (lexical > dependent > unmarked) parallels
-the Moravcsik agreement accessibility hierarchy (formalized below as
-`Minimalist.CaseAccessibility` from [preminger-2014]). Both rank
-case types identically; the former determines case *assignment* priority,
-the latter determines agreement *visibility*. The bridge
-`sourceToAccessibility` connects the two.
-
-## Case-Discrimination Apparatus (relocated from `Minimalism/CaseDiscrimination.lean`)
-
-The Moravcsik-hierarchy primitives below come from [preminger-2014]
-(with [bobaljik-2008], [scott-2023]). They are paper-specific
-to the case-discrimination tradition that this study is in conversation
-with, and are not consumed elsewhere in the library, so they live here
-under `namespace Minimalist` for symmetry with other Minimalist apparatus.
+* [marantz-1991]
+* [baker-2015]
 -/
 
 namespace Minimalist
@@ -289,10 +242,6 @@ open Minimalist Minimalist.Voice
 open Case
 open Georgian.Agreement
 
--- ============================================================================
--- § 1: Bridge from SplitErgativity to Dependent Case
--- ============================================================================
-
 /-- Map alignment family to dependent case language type.
     Bridges the typological description (`Alignment.SplitErgativity`) to
     the case algorithm (`Syntax/Case/Dependent.lean`). -/
@@ -306,10 +255,6 @@ def georgianLangType (ts : TenseSeries) : Alignment.AlignmentType :=
 
 theorem present_is_accusative : georgianLangType .present = .accusative := rfl
 theorem aorist_is_ergative : georgianLangType .aorist = .ergative := rfl
-
--- ============================================================================
--- § 2: NP Configurations by Verb Class
--- ============================================================================
 
 /-- NP configuration for each Georgian verb class (present/aorist).
 
@@ -326,10 +271,6 @@ def georgianNPs : VerbClass → List NP
   | .class3 => [⟨"subj", none⟩, ⟨"empty", none⟩]  -- phantom object position
   | .class4 => [⟨"subj", some .dat⟩, ⟨"obj", none⟩]  -- quirky DAT
 
--- ============================================================================
--- § 3: Georgian Case Derivation
--- ============================================================================
-
 /-- Run the dependent case algorithm for a Georgian verb class in a
     given tense series. -/
 def georgianCaseResult (vc : VerbClass) (ts : TenseSeries) : List (NP × Valuation) :=
@@ -339,10 +280,6 @@ private def getCase! (label : String) (results : List (NP × Valuation)) : Case 
   match getCaseOf label results with
   | some c => c
   | none   => .dat  -- placeholder; the algorithm always returns every NP
-
--- ============================================================================
--- § 4: Abstract Case → Morphological Case (Georgian Spell-Out)
--- ============================================================================
 
 /-- Georgian-specific mapping from abstract case (algorithm output) to
     surface morphological case. This is the language-specific spell-out
@@ -364,10 +301,6 @@ def georgianSpellout : Case → Case
 theorem acc_surfaces_as_dat : georgianSpellout .acc = .dat := rfl
 theorem abs_surfaces_as_nom : georgianSpellout .abs = .nom := rfl
 
--- ============================================================================
--- § 5: Bridge to Georgian Agreement Fragment
--- ============================================================================
-
 /-! The dependent case algorithm + Georgian spell-out produces exactly
     the surface case frames recorded in `Georgian.Agreement`.
     This is the core empirical validation: the algorithm derives all
@@ -387,10 +320,6 @@ theorem object_derivation_matches :
     georgianSpellout (getCase! "obj" (georgianCaseResult .class4 .present)) = .nom ∧
     georgianSpellout (getCase! "obj" (georgianCaseResult .class4 .aorist)) = .nom := by
   native_decide
-
--- ============================================================================
--- § 6: The Ergative Generalization
--- ============================================================================
 
 /-! [marantz-1991]'s Ergative generalization: ergative case may appear
     on the subject of an intransitive clause, but not on a derived subject.
@@ -430,10 +359,6 @@ theorem ergative_requires_competitor :
     getMechanismOf "higher" (assignCases .ergative [⟨"higher", none⟩, ⟨"lower", none⟩]) =
       some .dependent := by
   native_decide
-
--- ============================================================================
--- § 7: Burzio's Generalization Decomposed
--- ============================================================================
 
 /-! [marantz-1991]'s key insight: Burzio's generalization
     ("non-thematic subject → no accusative object") splits into:
@@ -478,10 +403,6 @@ def npCount (voice : Head) (internalArgs : Nat) : Nat :=
 
 theorem agentive_two_nps : npCount agentive 1 = 2 := rfl
 theorem anticausative_one_np : npCount anticausative 1 = 1 := rfl
-
--- ============================================================================
--- § 8: Hindi Split Ergativity
--- ============================================================================
 
 /-! Hindi has aspect-conditioned split ergativity: perfective triggers
     ERG on the transitive agent (*-ne*), imperfective has NOM-ACC.
@@ -553,10 +474,6 @@ theorem phantom_np_parameter :
     getCaseOf "subj" (assignCases .ergative [⟨"subj", none⟩]) = some .abs := by
   native_decide
 
--- ============================================================================
--- § 9: All Three Levels of the Hierarchy in One Language
--- ============================================================================
-
 /-! Georgian demonstrates all three levels of [marantz-1991]'s
     case realization hierarchy within a single language:
 
@@ -578,10 +495,6 @@ theorem lexical_bleeds_dependent_georgian :
     getMechanismOf "obj" (georgianCaseResult .class4 .present) = some .unmarked ∧
     getMechanismOf "obj" (georgianCaseResult .class1 .present) = some .dependent := by
   native_decide
-
--- ============================================================================
--- § 10: Case Hierarchy ↔ Agreement Hierarchy Bridge
--- ============================================================================
 
 /-! [marantz-1991]'s case realization hierarchy (lexical > dependent >
     unmarked) parallels the Moravcsik agreement accessibility hierarchy
@@ -629,10 +542,6 @@ theorem class2_unmarked_highest_accessibility :
     sourceToAccessibility Mechanism.unmarked = CaseAccessibility.unmarked ∧
     caseAccessible CaseAccessibility.unmarked CaseAccessibility.unmarked = true := ⟨rfl, rfl⟩
 
--- ============================================================================
--- § 11: Voice → NP Count → Case (End-to-End)
--- ============================================================================
-
 /-! The full argumentation chain from Voice to surface case:
 
     Voice (θ-assigning?) → NP count → dependent case algorithm → spell-out
@@ -673,10 +582,6 @@ theorem burzio_from_voice :
     -- Non-thematic Voice: no ACC (sole NP gets NOM)
     getCaseOf "theme" (assignCases .accusative (npsFromVoice anticausative)) = some .nom := by
   native_decide
-
--- ============================================================================
--- § 12: Agreement–Case Independence (§7 Core Insight)
--- ============================================================================
 
 /-! [marantz-1991]'s central insight about Georgian split ergativity:
     case direction changes by tense series, but agreement does NOT.
@@ -723,7 +628,7 @@ theorem case_splits_but_agreement_does_not :
     verbClassSubjectCase .class1 .present ≠ verbClassSubjectCase .class1 .aorist ∧
     -- All 6 φ-cells give the same isIndexed result regardless of which series
     -- we're in (it's not parameterized)
-    Agreement.Cell.pnCells.all (fun c => isIndexed c == c.isSAP) = true := by
+    Agreement.Cell.pnCells.all (λ c => isIndexed c == c.isSAP) = true := by
   constructor
   · decide
   · decide

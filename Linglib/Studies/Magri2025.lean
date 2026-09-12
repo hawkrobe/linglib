@@ -1,38 +1,35 @@
 import Linglib.Studies.ZurawHayes2017
 
 /-!
-# [magri-2025]: Constraint Interaction in Probabilistic Phonology
-[magri-2025]
+# Magri (2025): Constraint Interaction in Probabilistic Phonology
 
-Replication of [magri-2025] "Constraint Interaction in Probabilistic
-Phonology: Deducing Maximum Entropy Grammars from Hayes and Zuraw's Shifted
-Sigmoids Generalization" (Linguistic Inquiry, Early Access).
+This file formalizes the characterization of [magri-2025]: within harmony-based probabilistic
+phonology, an n-ary harmony function predicts the shifted-sigmoids generalization of
+[zuraw-hayes-2017] and [hayes-2022] exactly when it is separable, a product of per-constraint
+factors raised to the constraint weights. Maximum entropy harmony is separable, so it
+predicts the generalization as a corollary, and any separable harmony is maximum entropy
+under a rescaling of its constraints. The file runs the theory on the paper's Tagalog nasal
+substitution case: the six constraints are independent (`constraint_independence`), the
+violation differences inherit that independence (`violDiff_consistent`), the per-cell logit
+rates and the empirical odds ratios come out as reported (`logitRate_row_diff`,
+`odds_ratios_close`), and the separable forward direction holds at the level of
+probabilities (`me_separable_predicts_hz_tagalog`).
 
-## Main result
+## Implementation notes
 
-Within harmony-based probabilistic phonology, an n-ary harmony function
-predicts the shifted-sigmoids generalization of Hayes and Zuraw
-([zuraw-hayes-2017]; [hayes-2022]) **if and only
-if** the harmony is *separable* — it decomposes as `∏ₖ hₖ(Cₖ)^{wₖ}`.
-Since MaxEnt harmony is separable (each `hₖ = exp(−·)`), ME predicts HZ
-as a corollary. And since any separable harmony can be construed as ME
-through constraint rescaling `Ĉₖ = −log hₖ(Cₖ)`, the characterization
-is complete.
+The two-by-two sub-square, the constraint inventory, and the constant-difference identity
+are those of `Studies/ZurawHayes2017.lean`, from which the paper inherits its setup.
 
-## Formalization
+## TODO
 
-This study file instantiates [magri-2025]'s theory with the Tagalog
-nasal substitution case study from the paper, verifying:
+The paper is not on file; example locators are transcribed from an earlier version of this
+file and are UNVERIFIED.
 
-1. The six constraints satisfy `ConstraintIndependence`
-2. The violation differences inherit independence (`ViolDiffIndependence`)
-3. The per-cell symbolic logit rates and empirical odds ratios
-4. The separable forward direction at the probability level
+## References
 
-The 2×2 square data, constraint inventory, and the constant-difference
-identity itself (`maxent_predicts_hz_tagalog`,
-`hz_constant_value_tagalog`) come from `Studies/ZurawHayes2017.lean`
-([magri-2025] inherits the sub-square setup from [zuraw-hayes-2017]).
+* [magri-2025]
+* [zuraw-hayes-2017]
+* [hayes-2022]
 -/
 
 namespace Magri2025
@@ -97,7 +94,7 @@ set_option linter.unusedSimpArgs false in
     C₁–C₄ (markedness) are insensitive to row (prefix);
     C₅–C₆ (faithfulness) are insensitive to column (stem obstruent). -/
 theorem constraint_independence (o : NasalSubOutput) :
-    ConstraintIndependence (fun k x => (constraints k) (x, o)) nasalSubSquare := by
+    ConstraintIndependence (λ k x => (constraints k) (x, o)) nasalSubSquare := by
   intro k; fin_cases k <;> cases o <;>
     simp only [constraints, nasSub, starNC, starStemVelar,
       starStemVelarCoronal, unifMang, unifPang,
@@ -227,9 +224,9 @@ set_option linter.unusedSimpArgs false in
     the independence hypothesis. -/
 theorem me_separable_predicts_hz_tagalog (w : Fin 6 → ℝ) :
     ConstantLogitDiff
-      (fun x => Real.log (
-        (meSeparable 6 w).eval (fun k => (constraints k) (x, .yes)) /
-        (meSeparable 6 w).eval (fun k => (constraints k) (x, .no))))
+      (λ x => Real.log (
+        (meSeparable 6 w).eval (λ k => (constraints k) (x, .yes)) /
+        (meSeparable 6 w).eval (λ k => (constraints k) (x, .no))))
       nasalSubSquare := by
   apply separable_predicts_hz
   intro k

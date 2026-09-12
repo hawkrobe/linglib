@@ -3,70 +3,39 @@ import Mathlib.Data.Set.Card
 import Linglib.Semantics.Mereology
 
 /-!
-# Landman (2020) — Iceberg Semantics for Mass Nouns and Count Nouns
-[landman-2020]
+# Landman (2020): Iceberg Semantics for Mass Nouns and Count Nouns
 
-Formalizes the formal core of:
+This file formalizes the core of [landman-2020], over a complete Boolean algebra: an
+interpretation is an i-set, a body together with a base that generates it under sum, and the
+mass–count distinction lives in the base, an i-set being count when its base is disjoint and
+neat when its base is atomistic with disjoint base-atoms. Counting rests on disjointness rather
+than on Boolean atomicity, the mathematical heart of the book: over a disjoint base, membership
+in a sum is membership in the summands (`mem_iff_le_sSup_of_disjoint`), so every plurality is
+recovered from its distribution set and the cardinality of a sum is the number of generators
+summed (`card_sSup`). Count i-sets are neat (`ISet.IsCount.isNeat`), the Head Principle makes
+mass and count compositional since a complex inherits disjointness from its head
+(`ISet.headBase_disjoint`), pluralization leaves the base fixed and so preserves countness
+(`ISet.plur_isCount`), number-neutral nouns such as *poultry* are neat but mass, and an atomless
+base is mess.
 
-  Landman, F. (2020). *Iceberg Semantics for Mass Nouns and Count Nouns:
-  A New Framework for Boolean Semantics*. Studies in Linguistics and
-  Philosophy 105. Springer.
+## Implementation notes
 
-## The framework
+The book was not available for this pass, and the chapter and section numbers carried over from
+the earlier version of this file are marked as unverified. The sum closure `star` takes sums of
+arbitrary subsets, so the closure of the empty set is the null element, and the mereological
+apparatus of overlap and disjointness is that of `Semantics/Mereology`, which
+[sutton-filip-2021] shares. Neatness is the book's atomisticity of the base, which it
+substitutes for the base-atomicity of [landman-2011] and [landman-2016].
 
-Mountain semantics (Link-style Boolean semantics, [link-1983]) grounds
-counting in *atomicity*: singular count nouns denote sets of Boolean
-atoms. Iceberg semantics replaces this vertical picture with a horizontal
-one: every interpretation is an **i-set** ⟨body, base⟩ where the base
-*generates* the body under sum, and the mass/count distinction lives in
-the base — **count iff the base is disjoint** (§6.1.2); mass and count
-are perspectives on the same stuff, and Boolean atoms play no role.
+## References
 
-## Main results (all generic over a complete Boolean algebra)
-
-* `ISet`, the two null i-sets, and `ISet.body_eq_of_base_empty` (the
-  nulls are exactly the empty-based i-sets — his §6.1.2 Lemma).
-* **Counting is correct given disjointness, not atomicity** (the
-  mathematical heart of ch. 5): for a disjoint, ⊥-free `Z`, membership in
-  a sum of `Z`-elements is membership in the summands
-  (`mem_iff_le_sSup_of_disjoint`, by frame distributivity), so every
-  element of `*Z` is recovered from its distribution set
-  (`sSup_partsIn`), the distribution map is injective (`partsIn_injOn`),
-  and `card` counts correctly.
-* `atomsIn_eq_of_disjoint` (a ⊥-free disjoint set is all-minimal) and the
-  §6.1.2 Lemma `ISet.IsCount.isNeat`: **count i-sets are neat** — with
-  the book's *atomisticity* definition of neat, which §6.1.2 explicitly
-  substitutes for the base-atomicity of [landman-2011]/[landman-2016].
-* **The Head Principle** (§5.3): `base(α) = (body α] ∩ base(H)`, and its
-  Lemma — disjointness inherits from head to complex
-  (`ISet.headBase_disjoint`) — making mass/count *compositional*.
-* `ISet.plur` leaves the base fixed (`ISet.plur_base_eq_headBase`), so
-  pluralization preserves countness (`ISet.plur_isCount`) — the generic
-  content of the §5.4 *white cats* computation, where
-  `(*body(P)] ∩ base(P) = base(P)`.
-* The noun classes: number-neutral neat mass nouns (*poultry*,
-  `⟨*X₀, *X₀⟩`, §7.1) are neat (`numberNeutral_isNeat`) but their base
-  overlaps (`star_overlapPred`, hence mass); atomless bases are mess
-  (*water*, §8.1.5: `not_neat_of_atomless`).
-
-## Connections
-
-* The disjointness machinery is `Semantics/Mereology`'s
-  `OverlapPred`/`DisjointPred`/`nullSchema` (shared with
-  [sutton-filip-2021], whose counting bases are this book's bases and
-  whose individuation schemas select among its perspectives —
-  `Mereology.IsMaxDisjointIn`).
-* Mountain semantics' pluralization `*` is the Link closure of
-  `Semantics/Plurality/Algebra.lean`; Iceberg's `star` is its
-  complete-join generalization (sums of arbitrary subsets, so
-  `*∅ = {⊥}`).
-* The base-perspective on mass/count is the semantic ground for keeping
-  countability out of the `Number` value space
-  (`Features/Number/Basic.lean`): count/mass classifies *bases*; number
-  values classify referents.
+* [landman-2020]
+* [landman-2011], [landman-2016], [sutton-filip-2021]
 -/
 
 namespace Landman2020
+
+-- UNVERIFIED: the book's chapter, section, and lemma locators cited below.
 
 open Mereology (OverlapPred DisjointPred)
 
@@ -83,17 +52,17 @@ of `Z⁺` — *Z-atoms*, relativized to `Z`, not Boolean atoms. -/
 def star (X : Set B) : Set B := {b | ∃ Y ⊆ X, b = sSup Y}
 
 theorem subset_star {X : Set B} : X ⊆ star X :=
-  fun x hx => ⟨{x}, Set.singleton_subset_iff.mpr hx, sSup_singleton.symm⟩
+  λ x hx => ⟨{x}, Set.singleton_subset_iff.mpr hx, sSup_singleton.symm⟩
 
 theorem sSup_mem_star {X Y : Set B} (h : Y ⊆ X) : sSup Y ∈ star X :=
   ⟨Y, h, rfl⟩
 
 theorem star_mono {X Y : Set B} (h : X ⊆ Y) : star X ⊆ star Y :=
-  fun _ ⟨Z, hZ, hb⟩ => ⟨Z, hZ.trans h, hb⟩
+  λ _ ⟨Z, hZ, hb⟩ => ⟨Z, hZ.trans h, hb⟩
 
 theorem sSup_star_eq {X : Set B} : sSup (star X) = sSup X :=
   le_antisymm
-    (sSup_le fun _ ⟨Y, hY, hb⟩ => hb ▸ sSup_le_sSup hY)
+    (sSup_le λ _ ⟨_, hY, hb⟩ => hb ▸ sSup_le_sSup hY)
     (sSup_le_sSup subset_star)
 
 theorem star_empty : star (∅ : Set B) = {⊥} := by
@@ -111,15 +80,15 @@ theorem star_star {X : Set B} : star (star X) = star X := by
   refine Set.Subset.antisymm ?_ subset_star
   rintro b ⟨Y, hY, rfl⟩
   classical
-  choose Z hZsub hZsup using fun y (hy : y ∈ Y) => hY hy
+  choose Z hZsub hZsup using λ y (hy : y ∈ Y) => hY hy
   refine ⟨⋃ (y : B) (hy : y ∈ Y), Z y hy, ?_, le_antisymm ?_ ?_⟩
   · simp only [Set.iUnion_subset_iff]
     exact hZsub
-  · refine sSup_le fun y hy => ?_
+  · refine sSup_le λ y hy => ?_
     rw [hZsup y hy]
-    refine sSup_le_sSup fun w hw => ?_
+    refine sSup_le_sSup λ w hw => ?_
     exact Set.mem_iUnion.mpr ⟨y, Set.mem_iUnion.mpr ⟨hy, hw⟩⟩
-  · refine sSup_le fun w hw => ?_
+  · refine sSup_le λ w hw => ?_
     obtain ⟨y, hy⟩ := Set.mem_iUnion.mp hw
     obtain ⟨hyY, hwZ⟩ := Set.mem_iUnion.mp hy
     calc w ≤ sSup (Z y hyY) := le_sSup hwZ
@@ -153,14 +122,14 @@ theorem atomsIn_eq_of_disjoint {Z : Set B} (hZ : DisjointPred mOverlap Z)
     exact hz
   · intro hz
     have hzbot : z ∉ ({⊥} : Set B) :=
-      fun h => hbot (Set.mem_singleton_iff.mp h ▸ hz)
+      λ h => hbot (Set.mem_singleton_iff.mp h ▸ hz)
     refine ⟨⟨hz, hzbot⟩, ?_⟩
     rintro y ⟨hy, hybot⟩ hle
     by_contra hne
     refine hZ ⟨y, hy, z, hz, hne, ?_⟩
     show y ⊓ z ≠ ⊥
     rw [inf_eq_left.mpr hle]
-    exact fun h => hybot (Set.mem_singleton_iff.mpr h)
+    exact λ h => hybot (Set.mem_singleton_iff.mpr h)
 
 /-! ### Counting from disjointness (his ch. 5)
 
@@ -179,16 +148,16 @@ def partsIn (Z : Set B) (x : B) : Set B := {z ∈ Z | z ≤ x}
 theorem mem_iff_le_sSup_of_disjoint {Z Y : Set B}
     (hZ : DisjointPred mOverlap Z) (hbot : ⊥ ∉ Z) (hY : Y ⊆ Z)
     {z : B} (hz : z ∈ Z) : z ≤ sSup Y ↔ z ∈ Y := by
-  refine ⟨fun hle => ?_, fun h => le_sSup h⟩
+  refine ⟨λ hle => ?_, λ h => le_sSup h⟩
   by_contra hzY
-  have hzbot : z ≠ ⊥ := fun h => hbot (h ▸ hz)
+  have hzbot : z ≠ ⊥ := λ h => hbot (h ▸ hz)
   apply hzbot
   have h1 : z = z ⊓ sSup Y := (inf_eq_left.mpr hle).symm
   rw [inf_sSup_eq] at h1
   rw [h1]
-  refine le_antisymm (iSup_le fun y => iSup_le fun hy => le_of_eq ?_) bot_le
+  refine le_antisymm (iSup_le λ y => iSup_le λ hy => le_of_eq ?_) bot_le
   by_contra hne
-  exact hZ ⟨z, hz, y, hY hy, fun he => hzY (he ▸ hy), hne⟩
+  exact hZ ⟨z, hz, y, hY hy, λ he => hzY (he ▸ hy), hne⟩
 
 /-- The distribution set of a sum of `Z`-elements is exactly the set
     summed: counting reads the parts off correctly. -/
@@ -214,40 +183,28 @@ theorem sSup_partsIn {Z : Set B} (hZ : DisjointPred mOverlap Z)
     needs** — the central claim of Iceberg semantics, as a theorem. -/
 theorem partsIn_injOn {Z : Set B} (hZ : DisjointPred mOverlap Z)
     (hbot : ⊥ ∉ Z) : Set.InjOn (partsIn Z) (star Z) :=
-  fun x hx x' hx' h => by
+  λ x hx x' hx' h => by
     rw [← sSup_partsIn hZ hbot hx, ← sSup_partsIn hZ hbot hx', h]
 
 /-- `card_Z(x) = |D_Z(x)|` (his §5.2; presupposes `Z` disjoint, which is
     what `partsIn_injOn` certifies as sufficient). -/
 noncomputable def card (Z : Set B) (x : B) : ℕ := (partsIn Z x).ncard
 
-/-! ### Exact numbers: the junction with [harbour-2014]
+/-! ### Cardinality over a disjoint base -/
 
-[harbour-2014] (30) characterizes the exact number values over a
-generating set of atoms as cardinality classes — singular `|x| = 1`,
-dual `|x| = 2`, trial `|x| = 3` — with (31) the successor-like function
-that extends them. This book's `card` certifies precisely that counting:
-over a disjoint base, the cardinality of a sum is the number of
-generators summed. Two frameworks formalized from their own primary
-sources, agreeing on one counting operation by theorem. -/
-
-/-- Over a disjoint base, the Landman cardinality of a sum is the number
-    of generators summed — [harbour-2014]'s (30) cardinality classes are
-    `card`-classes. -/
+/-- Over a disjoint base, the cardinality of a sum is the number of generators summed. -/
 theorem card_sSup {Z Y : Set B} (hZ : DisjointPred mOverlap Z)
     (hbot : ⊥ ∉ Z) (hY : Y ⊆ Z) : card Z (sSup Y) = Y.ncard := by
   rw [card, partsIn_sSup hZ hbot hY]
 
-/-- A generator counts as one (Harbour's singular: `|x| = 1`). -/
+/-- A generator counts as one. -/
 theorem card_self {Z : Set B} (hZ : DisjointPred mOverlap Z)
     (hbot : ⊥ ∉ Z) {z : B} (hz : z ∈ Z) : card Z z = 1 := by
   have h := card_sSup hZ hbot (Set.singleton_subset_iff.mpr hz)
   rw [sSup_singleton] at h
   rw [h, Set.ncard_singleton]
 
-/-- A sum of two distinct generators counts as two (Harbour's dual:
-    `|x| = 2` — the value `Number.interp` assigns the minimal
-    non-atoms). -/
+/-- A sum of two distinct generators counts as two. -/
 theorem card_pair {Z : Set B} (hZ : DisjointPred mOverlap Z)
     (hbot : ⊥ ∉ Z) {z₁ z₂ : B} (h₁ : z₁ ∈ Z) (h₂ : z₂ ∈ Z)
     (hne : z₁ ≠ z₂) : card Z (z₁ ⊔ z₂) = 2 := by
@@ -315,7 +272,7 @@ theorem IsCount.isNeat {X : ISet B} (hX : X.IsCount)
   constructor
   · intro b hb
     rw [hatoms]
-    exact le_antisymm (le_sSup ⟨le_refl b, hb.1⟩) (sSup_le fun y hy => hy.1)
+    exact le_antisymm (le_sSup ⟨le_refl b, hb.1⟩) (sSup_le λ y hy => hy.1)
   · rw [hatoms]
     exact hX
 
@@ -350,7 +307,7 @@ example, `base(WHITE CATS) = base(WHITE CAT) = CAT ∩ WHITE`. -/
 def plur (P : ISet B) : ISet B where
   body := star P.body
   base := P.base
-  body_subset_star := fun b hb => by
+  body_subset_star := λ b hb => by
     rw [← star_star (X := P.base)]
     exact star_mono P.body_subset_star hb
   sSup_body_eq := by rw [sSup_star_eq, P.sSup_body_eq]
@@ -395,13 +352,13 @@ theorem star_overlapPred {X₀ : Set B} (hbot : ⊥ ∉ X₀)
   refine ⟨x₀, subset_star h₀, x₀ ⊔ x₁, hsup, ?_, ?_⟩
   · intro he
     have hle : x₁ ≤ x₀ := he ▸ le_sup_right
-    refine hdisj ⟨x₁, h₁, x₀, h₀, fun h => hne h.symm, ?_⟩
+    refine hdisj ⟨x₁, h₁, x₀, h₀, λ h => hne h.symm, ?_⟩
     show x₁ ⊓ x₀ ≠ ⊥
     rw [inf_eq_left.mpr hle]
-    exact fun h => hbot (h ▸ h₁)
+    exact λ h => hbot (h ▸ h₁)
   · show x₀ ⊓ (x₀ ⊔ x₁) ≠ ⊥
     rw [inf_sup_self]
-    exact fun h => hbot (h ▸ h₀)
+    exact λ h => hbot (h ▸ h₀)
 
 /-- The number-neutral neat mass i-set `⟨*X₀, *X₀⟩` (his §7.1: *poultry*
     with `X₀ = DOM-BIRD`). -/
@@ -426,11 +383,11 @@ theorem atomsIn_star_of_disjoint {X₀ : Set B}
       exact hzbot (Set.mem_singleton_iff.mpr (sSup_eq_bot.mpr hcon))
     have heq : y = sSup Y :=
       hmin y ⟨subset_star (hY hyY),
-        fun h => hybot (Set.mem_singleton_iff.mp h)⟩ (le_sSup hyY)
+        λ h => hybot (Set.mem_singleton_iff.mp h)⟩ (le_sSup hyY)
     exact heq ▸ hY hyY
   · intro hz
     have hzbot : z ∉ ({⊥} : Set B) :=
-      fun h => hbot (Set.mem_singleton_iff.mp h ▸ hz)
+      λ h => hbot (Set.mem_singleton_iff.mp h ▸ hz)
     refine ⟨⟨subset_star hz, hzbot⟩, ?_⟩
     rintro y ⟨hystar, hybot⟩ hle
     obtain ⟨Y, hY, rfl⟩ := hystar
@@ -460,7 +417,7 @@ theorem numberNeutral_isNeat {X₀ : Set B}
     obtain ⟨Y, hY, rfl⟩ := hbstar
     show sSup Y = sSup (Set.Iic (sSup Y) ∩ atomsIn (star X₀))
     rw [hatoms]
-    refine le_antisymm (sSup_le fun y hy => ?_) (sSup_le ?_)
+    refine le_antisymm (sSup_le λ y hy => ?_) (sSup_le ?_)
     · rcases eq_or_ne y ⊥ with rfl | hyne
       · exact bot_le
       · exact le_sSup ⟨le_sSup hy, hY hy⟩
@@ -477,7 +434,7 @@ theorem not_neat_of_atomless {X : ISet B} (h : atomsIn X.base = ∅)
     {b : B} (hb : b ∈ X.base) (hbne : b ≠ ⊥) : ¬X.IsNeat := by
   rintro ⟨hatomistic, -⟩
   have hbplus : b ∈ plus X.base :=
-    ⟨hb, fun h' => hbne (Set.mem_singleton_iff.mp h')⟩
+    ⟨hb, λ h' => hbne (Set.mem_singleton_iff.mp h')⟩
   have := hatomistic b hbplus
   rw [h, Set.inter_empty, sSup_empty] at this
   exact hbne this

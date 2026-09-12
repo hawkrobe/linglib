@@ -139,8 +139,7 @@ status is itself only Strawson (superlatives, per the later
 describes *where* NPIs occur; K&L and the Strawson tradition explain
 *why*. -/
 theorem ladusaw_de_is_kl_strengthening (ctx : LicensingContext)
-    (hDE : licensingStrength ctx = .antiAdditive ∨
-           licensingStrength ctx = .downwardEntailing) :
+    (hDE : IsDownwardEntailing ctx) :
     klExplanation ctx = .byStrengthening ∨
     klExplanation ctx = .byStrawsonDE := by
   revert hDE; cases ctx <;> decide

@@ -11,120 +11,45 @@ import Linglib.Phonology.Subregular.Dependence
 import Linglib.Core.Computability.Bimachine
 
 /-!
-# Meinhardt, Mai, Baković & McCollum (2024): ATR Harmony Subregular Classification
+# Meinhardt, Mai, Baković and McCollum (2024): Weak Determinism and ATR Harmony
 
-Worked example using the function-level subregular substrate
-(the subregular function classes) to classify a fragment of
-Eastern Nilotic ATR harmony per [meinhardt-mai-bakovic-mccollum-2024].
+This file formalizes the Maasai case of [meinhardt-mai-bakovic-mccollum-2024], which
+tightens the weakly deterministic function class of [heinz-lai-2013] by an explicit
+interaction condition. Bidirectional iterative ATR harmony in Maasai is attested and weakly
+deterministic, an unbounded semiambient pattern in which every target depends on one side
+at a time, so its two contradirectional subsequential passes do not interact; Turkana,
+identical but for exceptionally dominant retracted suffix vowels, is attested and
+non-deterministic, an unbounded circumambient pattern in which some targets depend on both
+sides at once. Dominance is an underlying specification of the spreading value on vowels,
+carried by roots and suffixes alike. The rightward spreading pass is output-strictly-local
+after [chandlee-eyraud-heinz-2015], the bidirectional dominant–recessive map is weakly
+deterministic through a non-interacting bimachine (`maasai_weaklyDeterministic`) with
+two-sided unbounded dependence (`maasai_twoSidedUnboundedDependence`) but without
+requiring both sides at once (`maasai_not_requiresBothSides`), the boundary the paper draws.
 
-## The paper
+## Implementation notes
 
-[meinhardt-mai-bakovic-mccollum-2024] (NLLT 42:1191-1232) propose a
-tightening of the [heinz-lai-2013] Weakly Deterministic (WD) function
-class. Their thesis:
+The alphabet has four symbols carrying the dominant–recessive distinction; the bidirectional
+map is modelled directly, raising a recessive vowel when a dominant one occurs anywhere,
+rather than as a two-pass composition, and the opaque low vowel, the re-paired low vowel,
+glide effects, and the Turkana half of the paper are not represented.
 
-* **Bidirectional** iterative ATR harmony in Maasai (Eastern Nilotic) is
-  *attested* and **WD** — unbounded *semiambient*: every target depends
-  on one side at a time (though the side may vary), so its two
-  contradirectional subsequential passes do not interact in the technical
-  sense the paper formalises (§4).
-* Turkana, identical to Maasai but for a set of exceptionally dominant
-  [-ATR] suffix vowels, is *attested* and **non-deterministic** —
-  unbounded *circumambient*: some targets depend on both sides at once,
-  so the passes must interact. "The Maasai pattern is weakly
-  deterministic, and the Turkana pattern is not" (end of §2.3): the
-  paper's ND case is attested, not merely the hypothetical sour grapes
-  ([wilson-2003]; [wilson-2006]) it also places above WD.
-* The original Heinz-Lai 2013 WD definition was too permissive,
-  admitting some unattested patterns; Meinhardt et al. patch it by
-  formalising the *interaction* condition explicitly (§4).
+## TODO
 
-## Maasai dominant/recessive harmony (paper §3.1, p. 1203)
+The paper is not on file; page and example locators are transcribed from an earlier version
+of this file and are UNVERIFIED.
 
-The empirically critical fact (paper p. 1203): "(non-exceptional)
-dominant vowels are underlyingly specified for the spreading value of
-the harmonic feature, [+ATR]" — dominance is an underlying featural
-specification on vowels, carried by roots and by suffixes alike (the
-paper shows both root- and suffix-controlled spreading), not a diacritic
-property of roots. A dominant vowel *triggers* spreading; recessive
-vowels harmonise.
+## References
 
-The bidirectional Maasai pattern (paper p. 1193, ex 1a):
-
-* (i) Full bidirectional spreading from a dominant root: /kɪ-√ñorr-ʊ/ →
-  [ki-√ñorr-u] '1pl-love-pres' — [+ATR] spreads from the (dominant)
-  root in both directions, raising recessive prefix /ɪ/ to [i] and
-  recessive suffix /ʊ/ to [u].
-* (ii) Leftward spread blocked by /a/: /ɪ-√as-ɪʃɔ-re/ → [ɪ-√as-iʃo-re]
-  '2sg-do-intr-appl' — the dominant applied suffix `-re` triggers
-  leftward [+ATR] spread, raising /ɪʃɔ/ to [iʃo]; the opaque /a/ of the
-  root blocks it, leaving the prefix /ɪ/ unchanged.
-
-## What this file does (audit-corrected)
-
-Per CLAUDE.md "stimulus contrasts" discipline for Studies files:
-
-1. Defines a 4-symbol alphabet `Seg` capturing the dominant/recessive
-   distinction the paper insists is empirically load-bearing — the
-   formaliser-invented alphabet from the previous version of this file
-   (which conflated [+ATR] with the spreading trigger) is replaced.
-2. Encodes the **rightward [+ATR] spreading** half of Maasai harmony
-   as both a `SubsequentialTransducer` and an `OSLRule`. Single-direction iterative
-   spreading is **Output-Strictly-Local** ([chandlee-eyraud-heinz-2015],
-   the result [meinhardt-mai-bakovic-mccollum-2024] builds on) — the
-   output decision at each position depends on whether the immediately
-   preceding **output** symbol is +ATR. The OSL classification is
-   tighter than Left-Subsequential and is what the paper actually
-   predicts for the unidirectional pass.
-3. Decide-checks input/output examples corresponding to ex 1a-i and
-   ex 1a-ii from the paper (encoded in the toy alphabet).
-4. Proves the **bidirectional** dominant-recessive map `maasai` is
-   **weakly deterministic** (`maasai_weaklyDeterministic`) via a
-   non-interacting bimachine, with two-sided unbounded dependence
-   (`maasai_twoSidedUnboundedDependence`) — a predicate Tutrugbu also
-   satisfies — while *not* `RequiresBothSides`
-   (`maasai_not_requiresBothSides`). That asymmetry is the WD/ND boundary
-   [meinhardt-mai-bakovic-mccollum-2024] draws.
-
-## What this file does NOT do
-
-* Does not encode the full Maasai/Turkana paradigms — only the minimal
-  pair sufficient to illustrate substrate use. Paper §§3–4 add the
-  re-paired low vowel (raised /A/ surfaces as [o]), opaque /A/ blocking,
-  glides disrupting harmony, and Turkana's exceptionally dominant
-  [-ATR] suffix vowels.
-* Does not formalize Turkana — the paper's *attested* non-deterministic
-  half. Its exceptionally dominant [-ATR] suffixes make the pattern
-  unbounded circumambient, so the `RequiresBothSides` machinery applies
-  directly; this is the natural next arc.
-* Models the bidirectional map directly (`maasai`: raise a recessive iff
-  a dominant occurs anywhere) rather than as an explicit two-pass
-  composition of a rightward and a leftward transducer, and omits the
-  opaque /a/ blocking — the non-opaque core already exhibits weak
-  determinism and the WD/ND covariation contrast.
-
-## Scope note: cross-construction extrapolation
-
-The OSL framing here characterises ATR harmony **within a single
-spell-out domain** (root + affixes). [sande-clem-dabkowski-2026]
-argue that ATR harmony in Guébie particle-verb focus-fronting
-constructions is *also* local at the moment of spell-out but
-*surface-discontinuous* after subsequent A′-movement. Their pattern
-is not a counterexample to the OSL classification of root-internal
-ATR harmony — the two analyses describe disjoint construction types
-— but it does refute the broader extrapolation that "ATR harmony is
-strictly local on the surface" universally. See
-`Studies/SandeClemDabkowski2026.lean` for the
-discontinuous case.
+* [meinhardt-mai-bakovic-mccollum-2024]
+* [heinz-lai-2013]
+* [chandlee-eyraud-heinz-2015]
+* [wilson-2006]
 -/
 
 namespace MeinhardtEtAl2024
 
 open Subregular
-
--- ============================================================================
--- § 1: Dominant/Recessive Alphabet
--- ============================================================================
 
 /-- Minimal alphabet capturing the dominance-vs-recessive distinction
 that drives Maasai ATR harmony per [meinhardt-mai-bakovic-mccollum-2024]
@@ -168,10 +93,6 @@ def raise : Seg → Seg
 
 end Seg
 
--- ============================================================================
--- § 2: Rightward [+ATR] Spreading as an OSL Rule
--- ============================================================================
-
 /-- **OSL rule encoding rightward [+ATR] spreading from a dominant root.**
 
 The rule's k = 2: the output decision at each position depends on the
@@ -201,10 +122,6 @@ def rightwardATR_osl : OSLRule 2 Seg Seg where
     | .recL, .recH :: _ => [.recH]
     | .recL, _ => [.recL]
 
--- ============================================================================
--- § 3: Worked Examples (paper p. 1193, ex 1a, simplified)
--- ============================================================================
-
 /-- **Ex 1a-i (rightward half)**: the dominant root triggers spread to
 the following recessive vowel.
 
@@ -226,10 +143,6 @@ example : rightwardATR_osl.apply [.dom, .a, .recL] = [.recH, .a, .recL] := by
 /-- **No spread without dominant trigger**: a string of recessive vowels
 with no dominant root passes through unchanged. -/
 example : rightwardATR_osl.apply [.recL, .recL] = [.recL, .recL] := by decide
-
--- ============================================================================
--- § 4: Subregular Classification
--- ============================================================================
 
 /-- **Rightward [+ATR] spreading is Left-Output-Strictly-Local**
 ([chandlee-eyraud-heinz-2015], the result
@@ -272,17 +185,17 @@ def hasDom (xs : List Seg) : Bool := xs.any (· == .dom)
 /-- Bidirectional dominant-recessive harmony (non-opaque core): a recessive raises iff the
 word has a dominant trigger anywhere. -/
 def maasai (xs : List Seg) : List Seg :=
-  xs.map (fun s => if hasDom xs && s == .recL then .recH else s)
+  xs.map (λ s => if hasDom xs && s == .recL then .recH else s)
 
 /-- The non-interacting bimachine: each side's state tracks a dominant seen on that side;
 a recessive raises if *either* side has one — a union of one-sided rules. -/
 def maasaiBM : Bimachine Bool Bool Seg Seg :=
-  .ofFlags (· == .dom) (· == .dom) fun l s r => if (l || r) && s == .recL then .recH else s
+  .ofFlags (· == .dom) (· == .dom) λ l s r => if (l || r) && s == .recL then .recH else s
 
 /-- `maasaiBM`'s cell output is a `unite` of one-sided raise-rules. -/
 theorem maasaiBM_isNonInteracting : maasaiBM.IsNonInteracting :=
-  ⟨⟨fun l s => if l && s == .recL then .recH else s,
-    fun r s => if r && s == .recL then .recH else s,
+  ⟨⟨λ l s => if l && s == .recL then .recH else s,
+    λ r s => if r && s == .recL then .recH else s,
     by decide, by intro l s r; cases s <;> cases l <;> cases r <;> rfl⟩⟩
 
 private theorem hasDom_split (xs : List Seg) (i : ℕ) (hi : i < xs.length) :
@@ -331,13 +244,13 @@ from at most one side — is the stronger claim, `maasai_semiambient`. -/
 theorem maasai_twoSidedUnboundedDependence : TwoSidedUnboundedDependence maasai := by
   refine .of_flanks (fill := Seg.recL) (xOn := Seg.recL) (yOn := Seg.recL)
     (xOff := Seg.dom) (yOff := Seg.dom)
-    (n := fun d => 2 * d + 1) (t := fun d => d + 1)
-    (fun d => by omega) (fun d => by omega) (fun d => ?_) (fun d => ?_) <;>
+    (n := λ d => 2 * d + 1) (t := λ d => d + 1)
+    (λ d => by omega) (λ d => by omega) (λ d => ?_) (λ d => ?_) <;>
   · have hb : hasDom (flankWord Seg.recL Seg.recL Seg.recL (2 * d + 1)) = false := by
       simp [hasDom, flankWord]
-    have hp : ∀ y, hasDom (flankWord Seg.dom Seg.recL y (2 * d + 1)) = true := fun y => by
+    have hp : ∀ y, hasDom (flankWord Seg.dom Seg.recL y (2 * d + 1)) = true := λ y => by
       simp [hasDom, flankWord]
-    have hp' : ∀ x, hasDom (flankWord x Seg.recL Seg.dom (2 * d + 1)) = true := fun x => by
+    have hp' : ∀ x, hasDom (flankWord x Seg.recL Seg.dom (2 * d + 1)) = true := λ x => by
       simp [hasDom, flankWord]
     simp only [maasai, List.getElem?_map,
       getElem?_flankWord_mid (show 0 < d + 1 by omega) (show d + 1 ≤ 2 * d + 1 by omega),
@@ -351,7 +264,7 @@ theorem maasai_semiambient : OneSidedChanges maasai :=
 
 /-- Hence Maasai does **not** require both sides — it escapes the teeth, unlike Tutrugbu.
 Covariation (both languages) and interaction (Tutrugbu only) come apart. -/
-theorem maasai_not_requiresBothSides : ¬ RequiresBothSides maasai := fun h =>
+theorem maasai_not_requiresBothSides : ¬ RequiresBothSides maasai := λ h =>
   h.not_isNonInteractingBimachineComputable maasai_weaklyDeterministic
 
 /-- Strictness witness `synchronous ⊊ WD`: Maasai is weakly deterministic yet not
@@ -361,15 +274,15 @@ witness (their Thms. 6 and 7). A Mealy-computable map is right-myopic
 (`IsMealyComputable.boundedDependence_right`), but Maasai's bidirectional spread is not
 (`maasai_twoSidedUnboundedDependence`); the block-class exclusion is
 `maasai_not_leftSubsequential`. -/
-theorem maasai_not_mealyComputable : ¬ IsMealyComputable maasai := fun h =>
+theorem maasai_not_mealyComputable : ¬ IsMealyComputable maasai := λ h =>
   maasai_twoSidedUnboundedDependence.unboundedDependence .right h.boundedDependence_right
 
 /-- **Maasai is not left-subsequential** — the *block* class is excluded too: `maasai`
 is length-preserving, so a left-subsequential computer's delay bound would cap its
 right dependence (`IsLeftSubsequential.boundedDependence_right`), but the spread's
 right dependence is unbounded. -/
-theorem maasai_not_leftSubsequential : ¬ IsLeftSubsequential maasai := fun h =>
+theorem maasai_not_leftSubsequential : ¬ IsLeftSubsequential maasai := λ h =>
   maasai_twoSidedUnboundedDependence.unboundedDependence .right
-    (h.boundedDependence_right fun xs => by simp [maasai])
+    (h.boundedDependence_right λ xs => by simp [maasai])
 
 end MeinhardtEtAl2024

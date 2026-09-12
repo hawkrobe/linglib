@@ -9,55 +9,38 @@ import Linglib.Fragments.Mandarin.Resultatives
 import Linglib.Data.Examples.Levin1993
 
 /-!
-# Levin (2026): The door pushed open
-[levin-2026]
+# Levin (2026): The Door Pushed Open
 
-*The door pushed open*: an English intransitive resultative construction
-with transitive-only verbs. *Journal of East Asian Linguistics* 35:3.
+This file formalizes [levin-2026]'s analysis of the English intransitive resultative with
+transitive-only verbs, *The door pushed open*, *The cork pulled free*, *The door slammed
+shut*, as the anticausative variant of the causative alternation, licensed by the resultative
+construction rather than by the verb, which cannot occur intransitively without the result
+phrase. The verbs are verbs of exerting force and of surface contact, whose classes lack the
+causative alternation in isolation (`all_classes_no_causative_alternation`); the result
+adjectives describe spatially instantiated states; neither ingredient suffices alone; the
+anticausative discourse conditions and a subject capable of autonomous motion, a projectile,
+license the intransitive; and the proper containment condition of
+[rappaport-hovav-levin-2012] forces the causative variant while the cause stays continuously
+involved.
 
-## Core contribution
+## Implementation notes
 
-Identifies a neglected class of English intransitive resultatives —
-*The door pushed open*, *The cork pulled free*, *The door slammed shut* —
-where the base verb is **transitive-only** outside the construction.
-These verbs (*push*, *slam*, *pull*) cannot occur intransitively without
-the result phrase: *\*The door pushed.*
+The construction contributes the causative semantics through `Causation.Resultatives`, the
+verb and adjective entries come from the English fragments, the alternation judgments from
+`Data/Examples/Levin1993.json`, and the proper containment condition maps onto the
+independent-source tightness of the causal substrate. The construction-level licensing of an
+alternation the verb lacks is stated for this case only.
 
-Proposes that these "intr-*push open*" resultatives are the **anticausative
-variant** of the causative alternation, with their transitive counterparts
-(*Pat pushed the door open*) as the causative variant. The resultative
-construction itself licenses the alternation that the verb lacks in
-isolation.
+## TODO
 
-## Key empirical findings
+The paper is not on file; section and example locators are transcribed from an earlier
+version of this file and are UNVERIFIED.
 
-1. **Verb restriction**: only verbs of exerting force (Levin §12) and
-   verbs of surface contact (§18 hitting, §10.4 wiping subtypes)
-2. **Adjective restriction**: only *open*, *closed*, *shut*, *free*,
-   *loose*, *flat* — all describing spatially instantiated states
-3. **Verb–adjective combination is critical**: neither alone suffices
-4. **Discourse licensing**: anticausative conditions — cause recoverable
-   in context or identity unknown to speaker
-5. **Semantic licensing**: subject DP must be capable of autonomous motion
-   ("projectile" — entity imbued with force that can act without
-   continuous external involvement)
-6. **Proper Containment Condition** ([rappaport-hovav-levin-2012]):
-   when the cause is continuously involved, the causative variant is
-   required — blocking the intr-*push open* pattern
+## References
 
-## Architecture
-
-This study connects four existing layers:
-- `Core.Lexical.LevinClass`: verb classes lack causative alternation (§12, §18)
-- `Causation.Resultatives`: construction adds CAUSE;
-  PCC maps onto the independent-source/tightness infrastructure
-- `English.Predicates`: verb and adjective entries
-- `Data.Examples.Levin1993`: alternation judgment rows
-
-The central theoretical insight — that *constructions* can license
-alternation behavior that *verbs* lack in isolation — is a construction
-grammar point that the current verb-level `participatesIn` infrastructure
-does not directly accommodate. This file formalizes the specific case.
+* [levin-2026]
+* [rappaport-hovav-levin-2012]
+* [levin-1993]
 -/
 
 namespace Levin2026
@@ -75,10 +58,6 @@ open Causation.Resultatives (resultativeCausativeBuilder)
 open Features.ChangeOfState (CoSType)
 open ConstructionGrammar (resultative composedMeaning predictedAlternationInConstruction
   Construction)
-
--- ════════════════════════════════════════════════════
--- § 1. Verb classes in the construction
--- ════════════════════════════════════════════════════
 
 /-! ## Verb inventory
 
@@ -255,10 +234,6 @@ theorem hit_middle_in_resultative :
       LevinClass.hit.meaningComponents resultative .middle = true := by
   decide
 
--- ════════════════════════════════════════════════════
--- § 2. Adjective set: spatially instantiated states
--- ════════════════════════════════════════════════════
-
 /-! ## Adjective inventory
 
 Only a small set of adjectives heads the result phrase in intr-*push open*
@@ -289,7 +264,7 @@ theorem all_attested_adjs_spatial :
     endpoint (fully open, fully closed, fully flat). -/
 theorem all_attested_adjs_closed_scale :
     [open_, closed_, shut, free_, loose, flat].all
-      (fun a => decide a.scaleType.HasMax) = true := by
+      (λ a => decide a.scaleType.HasMax) = true := by
   decide
 
 /-! Adjectives in senses that are NOT spatially instantiated do not
@@ -299,10 +274,6 @@ of charge", "free of debris") and *loose* ("loose shoelaces") are
 not attested. Adjectives like *bald*, *firm*, *senseless*, *red* have no
 `spatialConfigType` in the Fragment and are never attested in
 intr-*push open* resultatives (examples 57b–60b). -/
-
--- ════════════════════════════════════════════════════
--- § 3. Causative alternation pairs
--- ════════════════════════════════════════════════════
 
 /-! ## Transitive–intransitive pairing
 
@@ -458,10 +429,6 @@ def blockedCombinations : List (String × String × String) :=
   , ("scrape","smooth",   "*The ground scraped smooth and clean.")            -- (59b)
   , ("punch","senseless", "*Frank punched senseless.") ]                      -- (60b)
 
--- ════════════════════════════════════════════════════
--- § 4. The construction adds CAUSE
--- ════════════════════════════════════════════════════
-
 /-! ## Causal dynamics and event decomposition
 
 The constructional meaning of resultatives (§3, example 25):
@@ -508,10 +475,6 @@ theorem freeze_alternates_push_does_not :
     LevinClass.otherCoS.participatesIn .causativeInchoative = true ∧
     LevinClass.pushPull.participatesIn .causativeInchoative = false := ⟨rfl, rfl⟩
 
--- ════════════════════════════════════════════════════
--- § 5. Proper Containment Condition ↔ tightness
--- ════════════════════════════════════════════════════
-
 /-! ## PCC and the independent-source analysis
 
 The Proper Containment Condition ([rappaport-hovav-levin-2012]):
@@ -544,10 +507,6 @@ formalized in `Causation/Resultatives.lean`:
     Goldberg & Jackendoff's licensing-not-necessity stance — using this
     scenario as the disagreement witness — is the natural next step;
     currently deferred. -/
-
--- ════════════════════════════════════════════════════
--- § 6. Discourse licensing conditions
--- ════════════════════════════════════════════════════
 
 /-! ## Anticausative discourse conditions
 
@@ -585,10 +544,6 @@ def anticausativeLicensed : CauseStatus → Bool
 theorem recoverable_licenses : anticausativeLicensed .recoverableInContext = true := rfl
 theorem unknown_licenses : anticausativeLicensed .identityUnknown = true := rfl
 theorem not_recoverable_blocks : anticausativeLicensed .notRecoverable = false := rfl
-
--- ════════════════════════════════════════════════════
--- § 7. Semantic licensing: autonomous motion
--- ════════════════════════════════════════════════════
 
 /-! ## The projectile property
 
@@ -637,10 +592,6 @@ theorem machine_licenses : canBeIntrPushOpenSubject .machine = true := rfl
     "*The root cellar door nailed shut" (§6, ex. 75) is unacceptable. -/
 theorem continuous_force_blocks :
     canBeIntrPushOpenSubject .requiresContinuousForce = false := rfl
-
--- ════════════════════════════════════════════════════
--- § 8. Directed motion event descriptions
--- ════════════════════════════════════════════════════
 
 /-! ## Connection to directed motion
 
@@ -696,10 +647,6 @@ restriction: the relevant adjectives cannot be predicated of natural
 forces (*\*an open storm*), so no licensed verb–adjective combination
 exists. The theme passes the autonomous motion test but the adjective
 filter blocks it independently. -/
-
--- ════════════════════════════════════════════════════
--- § 9. Full licensing condition
--- ════════════════════════════════════════════════════
 
 /-! ## The licensing conjunction
 
@@ -781,10 +728,6 @@ theorem end_to_end_push_open :
     -- Step 8-9: theme is projectile → autonomous motion OK
     canBeIntrPushOpenSubject .projectile = true := by
   refine ⟨rfl, ?_, ?_, rfl, rfl, rfl, rfl⟩ <;> decide
-
--- ════════════════════════════════════════════════════
--- § 10. Filled resultative: construction–verb–adjective bundle
--- ════════════════════════════════════════════════════
 
 /-! ## FilledResultative: bundling lexical material with the construction
 
@@ -915,10 +858,6 @@ theorem pushOpen_filled_covers_core :
   exact ⟨pushOpen_filled.alternationPredicted,
          pushOpen_filled.adjSpatial⟩
 
--- ════════════════════════════════════════════════════
--- § 11. Cross-linguistic: Mandarin tuī-kāi 推开
--- ════════════════════════════════════════════════════
-
 /-! ## Mandarin cognate
 
 The paper (§1) motivates the English analysis by drawing parallels to
@@ -951,10 +890,6 @@ theorem resultative_cause_differs_from_cause_verb :
     cause.causative ≠ some resultativeCausativeBuilder := by
   decide
 
--- ════════════════════════════════════════════════════
--- § 7. BoolSEM scenario witnesses
--- ════════════════════════════════════════════════════
-
 /-! ## Per-scenario causal models
 
 Each causative resultative maps to a concrete `BoolSEM V` where the
@@ -977,17 +912,17 @@ inductive V | hammering | flat
 
 def varList : List V := [.hammering, .flat]
 
-def graph : CausalGraph V := ⟨fun | .hammering => ∅ | .flat => {.hammering}⟩
+def graph : CausalGraph V := ⟨λ | .hammering => ∅ | .flat => {.hammering}⟩
 
 instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph (fun | .hammering => 0 | .flat => 1)
+  CausalGraph.IsDAG.of_depth graph (λ | .hammering => 0 | .flat => 1)
     (by intro u v h; revert h; cases u <;> cases v <;> decide)
 
 noncomputable def model : BoolSEM V :=
   { graph := graph
-    mech := fun
+    mech := λ
       | .hammering => const (G := graph) false
-      | .flat => deterministic (fun ρ => ρ ⟨.hammering, by simp [graph]⟩) }
+      | .flat => deterministic (λ ρ => ρ ⟨.hammering, by simp [graph]⟩) }
 
 instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
@@ -1013,17 +948,17 @@ inductive V | kicking | in_field
 
 def varList : List V := [.kicking, .in_field]
 
-def graph : CausalGraph V := ⟨fun | .kicking => ∅ | .in_field => {.kicking}⟩
+def graph : CausalGraph V := ⟨λ | .kicking => ∅ | .in_field => {.kicking}⟩
 
 instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph (fun | .kicking => 0 | .in_field => 1)
+  CausalGraph.IsDAG.of_depth graph (λ | .kicking => 0 | .in_field => 1)
     (by intro u v h; revert h; cases u <;> cases v <;> decide)
 
 noncomputable def model : BoolSEM V :=
   { graph := graph
-    mech := fun
+    mech := λ
       | .kicking => const (G := graph) false
-      | .in_field => deterministic (fun ρ => ρ ⟨.kicking, by simp [graph]⟩) }
+      | .in_field => deterministic (λ ρ => ρ ⟨.kicking, by simp [graph]⟩) }
 
 instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
@@ -1049,17 +984,17 @@ inductive V | laughing | silly
 
 def varList : List V := [.laughing, .silly]
 
-def graph : CausalGraph V := ⟨fun | .laughing => ∅ | .silly => {.laughing}⟩
+def graph : CausalGraph V := ⟨λ | .laughing => ∅ | .silly => {.laughing}⟩
 
 instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph (fun | .laughing => 0 | .silly => 1)
+  CausalGraph.IsDAG.of_depth graph (λ | .laughing => 0 | .silly => 1)
     (by intro u v h; revert h; cases u <;> cases v <;> decide)
 
 noncomputable def model : BoolSEM V :=
   { graph := graph
-    mech := fun
+    mech := λ
       | .laughing => const (G := graph) false
-      | .silly => deterministic (fun ρ => ρ ⟨.laughing, by simp [graph]⟩) }
+      | .silly => deterministic (λ ρ => ρ ⟨.laughing, by simp [graph]⟩) }
 
 instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
@@ -1085,15 +1020,15 @@ inductive V | freezing | solid
 def varList : List V := [.freezing, .solid]
 
 /-- Empty graph: no causal relations (noncausative resultative). -/
-def graph : CausalGraph V := ⟨fun _ => ∅⟩
+def graph : CausalGraph V := ⟨λ _ => ∅⟩
 
 instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph (fun _ => 0)
+  CausalGraph.IsDAG.of_depth graph (λ _ => 0)
     (by intro u v h; revert h; cases u <;> cases v <;> decide)
 
 noncomputable def model : BoolSEM V :=
   { graph := graph
-    mech := fun _ => const (G := graph) false }
+    mech := λ _ => const (G := graph) false }
 
 instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
@@ -1123,22 +1058,22 @@ inductive V | drinking | tea_removal | teapot_dry
 
 def varList : List V := [.drinking, .tea_removal, .teapot_dry]
 
-def graph : CausalGraph V := ⟨fun
+def graph : CausalGraph V := ⟨λ
   | .drinking => ∅
   | .tea_removal => {.drinking}
   | .teapot_dry => {.tea_removal}⟩
 
 instance : CausalGraph.IsDAG graph :=
   CausalGraph.IsDAG.of_depth graph
-    (fun | .drinking => 0 | .tea_removal => 1 | .teapot_dry => 2)
+    (λ | .drinking => 0 | .tea_removal => 1 | .teapot_dry => 2)
     (by intro u v h; revert h; cases u <;> cases v <;> decide)
 
 noncomputable def model : BoolSEM V :=
   { graph := graph
-    mech := fun
+    mech := λ
       | .drinking => const (G := graph) false
-      | .tea_removal => deterministic (fun ρ => ρ ⟨.drinking, by simp [graph]⟩)
-      | .teapot_dry => deterministic (fun ρ => ρ ⟨.tea_removal, by simp [graph]⟩) }
+      | .tea_removal => deterministic (λ ρ => ρ ⟨.drinking, by simp [graph]⟩)
+      | .teapot_dry => deterministic (λ ρ => ρ ⟨.tea_removal, by simp [graph]⟩) }
 
 instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
@@ -1163,17 +1098,17 @@ inductive V | kicking | door_open
 
 def varList : List V := [.kicking, .door_open]
 
-def graph : CausalGraph V := ⟨fun | .kicking => ∅ | .door_open => {.kicking}⟩
+def graph : CausalGraph V := ⟨λ | .kicking => ∅ | .door_open => {.kicking}⟩
 
 instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph (fun | .kicking => 0 | .door_open => 1)
+  CausalGraph.IsDAG.of_depth graph (λ | .kicking => 0 | .door_open => 1)
     (by intro u v h; revert h; cases u <;> cases v <;> decide)
 
 noncomputable def model : BoolSEM V :=
   { graph := graph
-    mech := fun
+    mech := λ
       | .kicking => const (G := graph) false
-      | .door_open => deterministic (fun ρ => ρ ⟨.kicking, by simp [graph]⟩) }
+      | .door_open => deterministic (λ ρ => ρ ⟨.kicking, by simp [graph]⟩) }
 
 instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
@@ -1204,7 +1139,7 @@ inductive V | kicking | ball_motion | ball_energy | door_open
 
 def varList : List V := [.kicking, .ball_energy, .ball_motion, .door_open]
 
-def graph : CausalGraph V := ⟨fun
+def graph : CausalGraph V := ⟨λ
   | .kicking => ∅
   | .ball_energy => ∅
   | .ball_motion => {.kicking, .ball_energy}
@@ -1212,17 +1147,17 @@ def graph : CausalGraph V := ⟨fun
 
 instance : CausalGraph.IsDAG graph :=
   CausalGraph.IsDAG.of_depth graph
-    (fun | .kicking => 0 | .ball_energy => 0 | .ball_motion => 1 | .door_open => 2)
+    (λ | .kicking => 0 | .ball_energy => 0 | .ball_motion => 1 | .door_open => 2)
     (by intro u v h; revert h; cases u <;> cases v <;> decide)
 
 noncomputable def model : BoolSEM V :=
   { graph := graph
-    mech := fun
+    mech := λ
       | .kicking => const (G := graph) false
       | .ball_energy => const (G := graph) false
-      | .ball_motion => deterministic (fun ρ =>
+      | .ball_motion => deterministic (λ ρ =>
           ρ ⟨.kicking, by simp [graph]⟩ || ρ ⟨.ball_energy, by simp [graph]⟩)
-      | .door_open => deterministic (fun ρ => ρ ⟨.ball_motion, by simp [graph]⟩) }
+      | .door_open => deterministic (λ ρ => ρ ⟨.ball_motion, by simp [graph]⟩) }
 
 instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
@@ -1233,7 +1168,7 @@ noncomputable instance : SEM.IsDeterministic model where
     | .ball_motion => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
     | .door_open => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
-def ballHasEnergyBg : Valuation (fun _ : V => Bool) :=
+def ballHasEnergyBg : Valuation (λ _ : V => Bool) :=
   Valuation.empty.extend .ball_energy true
 
 /-- NOT tight: removing kicking still allows ball_energy → ball_motion
@@ -1241,7 +1176,7 @@ def ballHasEnergyBg : Valuation (fun _ : V => Bool) :=
     The kick is not necessary. -/
 theorem independent_source_breaks_necessity :
     ¬ completesForEffect model ballHasEnergyBg .kicking true false .door_open true :=
-  fun ⟨_, hb⟩ => hb (SEM.developDet_hasValue_of_developDetOn_hasValue
+  λ ⟨_, hb⟩ => hb (SEM.developDet_hasValue_of_developDetOn_hasValue
     (vs := varList) (n := 1) (by decide))
 
 end IndependentSourceBreaksNecessity

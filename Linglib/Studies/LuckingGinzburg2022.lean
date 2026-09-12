@@ -4,449 +4,228 @@ import Linglib.Semantics.Quantification.NumberTree
 import Mathlib.Data.Finset.Powerset
 
 /-!
-# Referential Transparency Theory
-[lucking-ginzburg-2022] [barwise-cooper-1981] [cooper-2023]
+# Lücking and Ginzburg (2022): Referential Transparency as the Proper Treatment for Quantification
 
-[lucking-ginzburg-2022] propose *Referential Transparency Theory* (RTT),
-replacing GQT's set-of-sets denotations for quantified noun phrases (QNPs)
-with **sets of ordered set bipartitions**. A bipartition ⟨refset, compset⟩
-partitions the head noun's extension into a reference set and complement set;
-the union is the maxset. Quantifier words act as "sieves" on bipartitions via
-a **descriptive quantifier condition** (q-cond), and a **quantifier perspective**
-(q-persp) gates anaphora accessibility.
+This file formalizes the denotations of quantified noun phrases in the referential
+transparency theory of [lucking-ginzburg-2022]. In place of the sets of sets of generalized
+quantifier theory ([barwise-cooper-1981]), a quantified noun phrase denotes a set of ordered
+bipartitions of the head noun's extension into a reference set and its complement (`BP`,
+`allBP`), the quantifier word acting as a sieve on them through a descriptive condition on
+the two cardinalities (`QCond`, `sieve`). Conservativity holds by construction, only the
+restrictor being partitioned (`qcond_conservative`); a verb phrase predicates on the
+reference set and anti-predicates on the complement set, which for *every* gives the
+classical truth conditions (`every_truth_conditions`); and the quantifier perspective,
+whether the bipartition with an empty reference set survives the sieve, is derived from the
+denotation and gates anaphora to the complement set (`deriveQPersp`). The paper's minimal
+pair: *few* and *a few* share their condition, but *a few* carries a reference individual,
+so its denotation lacks the empty-reference bipartition and the complement set is
+inaccessible (`few_dog_qpersp`, `aFew_dog_qpersp`). Reference sets are witness sets in the
+sense of [barwise-cooper-1981] (`bp_refset_is_witnessSet`), and the denotations over a noun
+with `k` instances number `2 ^ (k + 1) - 1`, fewer than the conservative generalized
+quantifiers of [van-benthem-1984] (`rttQuantifierCount_lt_conservative`).
 
-## Core contributions formalized
+## Implementation notes
 
-1. **Ordered set bipartitions** as QNP denotations (§2.3, (15))
-2. **Descriptive quantifier conditions** as cardinality relations (§4.2)
-3. **Quantifier perspective** *derived* from bipartition structure (§4.3, (47))
-4. **few/a few contrast**: same q-cond, different q-persp via refind (§4.3, (46))
-5. **Anti-predication**: VP predicates on refset, ¬VP on compset (§4.5)
-6. **Structural conservativity**: by construction (§1.3)
-7. **Complexity reduction**: 2^(k+1) − 1 vs GQT's 2^(T(k)) (§4.8)
-8. **Bridges**: RTT refsets = Cooper witness sets; compset predictions match
+Conditions are relations on the two cardinalities, quantity-invariant by construction; the
+contextual standard of *many* is a parameter and that of *few* is simplified to a strict
+comparison. The paper's third perspective value for degenerate denotations collapses into
+the non-empty one, which gates anaphora identically. The dialogue and gesture data, the
+clarification-request diagnostics, and the type-theoretic encoding are not represented.
 
-## Thread map
+## References
 
-- **Ordered set bipartitions**: defined here (`BP`)
-- **Witness sets**: `Semantics/Quantification/Witness.lean` —
-  `WitnessSet`, `IsExistW`, `AnaphoraRef`, `anaphoraAvailable`
-- **GQT properties**: `Quantification.Quantifier` —
-  `GQ`, `Conservative`
-- **Conservative count**: `Quantification.conservativeQuantifierCount`
-- **Dog example**: the dog world of [cooper-2023] Ch. 7, restated here
+* [lucking-ginzburg-2022]
+* [barwise-cooper-1981]
+* [van-benthem-1984]
 -/
 
 namespace LuckingGinzburg2022
 
 open Quantification
 
--- ============================================================================
--- §1. Ordered Set Bipartitions (§2.3, (15))
--- ============================================================================
-
-/-! ### §1. Ordered set bipartitions
-
-An ordered set bipartition of a set s is a pair ⟨refset, compset⟩ of disjoint
-subsets whose union is s. The ordering matters: ⟨A, B⟩ ≠ ⟨B, A⟩ in general.
-These replace GQT's subset-of-powerset denotations. -/
-
 variable {α : Type} [DecidableEq α]
 
-/-- An ordered set bipartition: a pair of Finsets.
-    §2.3, (15): ⟨refset, compset⟩ where refset ∩ compset = ∅
-    and refset ∪ compset = maxset (the head noun's extension).
-    Disjointness and union are verified extrinsically to enable `decide`. -/
+/-! ### Ordered set bipartitions -/
+
+/-- An ordered set bipartition (the paper's (15)): a reference set and a complement set,
+disjoint with union the head noun's extension; the two conditions are verified extrinsically
+so that the type decides. -/
 structure BP (α : Type) where
   refset : Finset α
   compset : Finset α
   deriving DecidableEq
 
-/-- The maxset (union of refset and compset). -/
+/-- The union of the two sets, the head noun's extension. -/
 def BP.maxset (b : BP α) : Finset α := b.refset ∪ b.compset
 
-/-- All ordered set bipartitions of S: for each R ⊆ S, form ⟨R, S \ R⟩. -/
+/-- All ordered bipartitions of a set: each subset with its complement. -/
 def allBP (S : Finset α) : Finset (BP α) :=
-  S.powerset.map ⟨λ R => ⟨R, S \ R⟩, λ a b h => by
-    simp [BP.mk.injEq] at h; exact h.1⟩
+  S.powerset.map ⟨λ R => ⟨R, S \ R⟩, λ a b h => by simp [BP.mk.injEq] at h; exact h.1⟩
 
-/-- The number of bipartitions of S equals 2^|S|.
-    Each element independently goes to refset or compset. -/
 theorem allBP_card (S : Finset α) : (allBP S).card = 2 ^ S.card := by
   simp [allBP, Finset.card_map, Finset.card_powerset]
 
-/-- Every bipartition in allBP has maxset = S. -/
-theorem allBP_maxset (S : Finset α) (b : BP α) (h : b ∈ allBP S) :
-    b.maxset = S := by
+theorem allBP_maxset (S : Finset α) (b : BP α) (h : b ∈ allBP S) : b.maxset = S := by
   simp [allBP, Finset.mem_map] at h
   obtain ⟨R, hR, rfl⟩ := h
   exact Finset.union_sdiff_of_subset hR
 
-/-- Refset of every bipartition in allBP is a subset of S. -/
-theorem allBP_refset_sub (S : Finset α) (b : BP α) (h : b ∈ allBP S) :
-    b.refset ⊆ S := by
+theorem allBP_refset_sub (S : Finset α) (b : BP α) (h : b ∈ allBP S) : b.refset ⊆ S := by
   simp [allBP, Finset.mem_map] at h
   obtain ⟨R, hR, rfl⟩ := h
   exact hR
 
--- ============================================================================
--- §2. Descriptive Quantifier Conditions (§4.2)
--- ============================================================================
+/-! ### Descriptive quantifier conditions -/
 
-/-! ### §2. Descriptive quantifier conditions
+/-- A descriptive quantifier condition (§4.2): a relation on the cardinalities of the
+reference and complement sets. -/
+abbrev QCond := ℕ → ℕ → Prop
 
-A q-cond is a relation on |refset| and |compset|. Since RTT q-conds depend
-only on cardinalities ([lucking-ginzburg-2022] §4.2), this is
-`ℕ → ℕ → Bool` — quantity invariance by construction. -/
+/-- The sieve: the bipartitions meeting the condition. -/
+def sieve (qc : QCond) [DecidableRel qc] (bps : Finset (BP α)) : Finset (BP α) :=
+  bps.filter λ b => qc b.refset.card b.compset.card
 
-/-- A descriptive quantifier condition: a decidable relation on
-    the cardinalities of refset and compset.
-    §4.2: the quantifier word's semantic contribution. -/
-abbrev QCond := ℕ → ℕ → Bool
+/-- *every*: an empty complement set. -/
+def every_qcond : QCond := λ _ c => c = 0
 
-/-- q-cond for *every*: |compset| = 0 (equivalently, |refset| = |maxset|).
-    §4.7, (58). -/
-def every_qcond : QCond := λ _r c => c == 0
+/-- *no*: an empty reference set. -/
+def no_qcond : QCond := λ r _ => r = 0
 
-/-- q-cond for *no*: |refset| = 0 (all elements in compset). -/
-def no_qcond : QCond := λ r _c => r == 0
+/-- *some*: a non-empty reference set. -/
+def some_qcond : QCond := λ r _ => 1 ≤ r
 
-/-- q-cond for *some*: |refset| ≥ 1 (at least one witness). -/
-def some_qcond : QCond := λ r _c => decide (r ≥ 1)
+/-- *most*: the reference set outnumbers the complement set. -/
+def most_qcond : QCond := λ r c => c < r
 
-/-- q-cond for *most*: |refset| > |compset|.
-    §4.2: proportional, refset is the majority. -/
-def most_qcond : QCond := λ r c => decide (r > c)
+/-- *few*: the complement set outnumbers the reference set. -/
+def few_qcond : QCond := λ r c => r < c
 
-/-- q-cond for *few*: |refset| < |compset|.
-    §4.3, (46): refset is the minority. The paper uses |refset| ≪ |compset|
-    with a contextual threshold; we simplify to strict less-than. -/
-def few_qcond : QCond := λ r c => decide (r < c)
+/-- *many* (the paper's (39)): the reference set exceeds a contextual standard. -/
+def many_qcond (θ : ℕ) : QCond := λ r _ => θ < r
 
-/-- q-cond for *many*: |refset| > θ (absolute threshold).
-    §4.2, (39): evaluated against contextual standard. -/
-def many_qcond (θ : ℕ) : QCond := λ r _c => decide (r > θ)
+instance : DecidableRel every_qcond := λ _ c => inferInstanceAs (Decidable (c = 0))
+instance : DecidableRel no_qcond := λ r _ => inferInstanceAs (Decidable (r = 0))
+instance : DecidableRel some_qcond := λ r _ => inferInstanceAs (Decidable (1 ≤ r))
+instance : DecidableRel most_qcond := λ r c => inferInstanceAs (Decidable (c < r))
+instance : DecidableRel few_qcond := λ r c => inferInstanceAs (Decidable (r < c))
+instance (θ : ℕ) : DecidableRel (many_qcond θ) := λ r _ => inferInstanceAs (Decidable (θ < r))
 
-/-- Sieve: filter bipartitions by a quantifier condition.
-    §2.3: quantifiers act as sieves on bipartition sets. -/
-def sieve (qc : QCond) (bps : Finset (BP α)) : Finset (BP α) :=
-  bps.filter (λ b => qc b.refset.card b.compset.card)
+/-! ### Quantifier perspective -/
 
--- ============================================================================
--- §3. Quantifier Perspective & Refind (§4.3)
--- ============================================================================
-
-/-! ### §3. Quantifier perspective (q-persp)
-
-The q-persp feature is *derived* from the bipartition denotation (§4.3, (47)).
-It tracks whether the bipartition with an empty refset — ⟨∅, maxset⟩ —
-is included in the quantifier's denotation. If so, the compset is accessible
-for anaphoric reference.
-
-The key empirical prediction: *few* and *a few* share the same q-cond
-(|refset| < |compset|) but differ in q-persp because *a few* includes a
-**refind** — an individual member of refset (§4.3, (46)). The refind forces
-refset ≠ ∅, excluding ⟨∅, maxset⟩ and blocking compset anaphora. -/
-
-/-- Quantifier perspective, derived from bipartition denotation.
-    §4.3, (47)–(48): gates anaphoric accessibility of compset. -/
-inductive QPerspective where
-  /-- The empty-refset bipartition ⟨∅, maxset⟩ IS in the denotation.
-      Compset is available for anaphora. -/
+/-- The quantifier perspective (the paper's (47)–(48)): whether the bipartition with an
+empty reference set belongs to the denotation, in which case the complement set is
+accessible to anaphora. -/
+inductive QPerspective
   | refsetEmpty
-  /-- The empty-refset bipartition is NOT in the denotation.
-      Compset is not available. -/
   | refsetNonempty
   deriving DecidableEq, Repr
 
-/-- Derive q-persp from a sieved set of bipartitions.
-    §4.3, (47): check whether ⟨∅, _⟩ survives the sieve.
-
-    The paper also has a third value "none" for degenerate cases
-    like *every* (sole bipartition ⟨maxset, ∅⟩), but this is functionally
-    equivalent to `refsetNonempty` — compset not available in either case. -/
+/-- The perspective derived from a sieved set of bipartitions. -/
 def deriveQPersp (bps : Finset (BP α)) : QPerspective :=
-  if decide (∃ b ∈ bps, b.refset = ∅) then .refsetEmpty
-  else .refsetNonempty
+  if ∃ b ∈ bps, b.refset = ∅ then .refsetEmpty else .refsetNonempty
 
-/-- Compset is available for anaphora iff q-persp = refsetEmpty.
-    §4.3, (47b). -/
-def QPerspective.compsetAvailable : QPerspective → Bool
-  | .refsetEmpty => true
-  | .refsetNonempty => false
+/-- The reference individual of *a few* (the paper's (46)) requires a non-empty reference
+set. -/
+def refindFilter (bps : Finset (BP α)) : Finset (BP α) := bps.filter λ b => b.refset.Nonempty
 
-/-- Refind filter: exclude bipartitions with empty refset.
-    §4.3, (46): *a few* includes a refind (an individual from refset),
-    which requires refset ≠ ∅. This excludes ⟨∅, maxset⟩, changing
-    q-persp from `refsetEmpty` to `refsetNonempty`. -/
-def refindFilter (bps : Finset (BP α)) : Finset (BP α) :=
-  bps.filter (λ b => decide (b.refset.card > 0))
+/-! ### The dogs -/
 
--- ============================================================================
--- §4. Structural Derivation of Compset Anaphora
--- ============================================================================
+/-- Three dogs. -/
+inductive Dog
+  | fido | rex | spot
+  deriving DecidableEq, Fintype
 
-/-! ### §4. Deriving compset anaphora from bipartition structure
+/-- The extension of *dog*. -/
+def dogs : Finset Dog := Finset.univ
 
-The paper's central contribution: compset anaphora availability is *derived*
-from the bipartition denotation via q-persp, not stipulated per quantifier.
-This section proves per-quantifier q-persp derivations on a concrete domain
-and shows that the few/a few contrast follows structurally.
-
-Note: the full [cooper-2023] Ch. 7 anaphora table also depends on
-referentiality (refset in dgb-params vs q-params) and plurality — distinctions
-orthogonal to RTT's q-persp mechanism. RTT's novel prediction is specifically
-about **compset accessibility**, which we derive here. -/
-
-/-- The individuals of the dog example of [cooper-2023] Ch. 7. -/
-inductive DogWorld
-  | fido | rex | spot | luna
-  deriving DecidableEq, Repr
-
-instance : Fintype DogWorld where
-  elems := {.fido, .rex, .spot, .luna}
-  complete x := by cases x <;> decide
-
-/-- Fido, Rex and Spot are dogs. -/
-def isDog : DogWorld → Prop
-  | .luna => False
-  | _ => True
-
-instance : DecidablePred isDog := λ x => by cases x <;> simp [isDog] <;> infer_instance
-
-/-- Prop version of `isDog` for decidable sieving. -/
-def isDogB : DogWorld → Prop
-  | .fido => True | .rex => True | .spot => True | .luna => False
-
-instance : DecidablePred isDogB := fun x => by unfold isDogB; cases x <;> infer_instance
-
-/-- Bool version of `doesBark`. -/
-def doesBarkB : DogWorld → Bool
-  | .fido => true | .rex => false | .spot => true | .luna => false
-
-/-- The set of dogs (3 entities). -/
-def dogs : Finset DogWorld := Finset.univ.filter (fun x => isDogB x)
-
-theorem dogs_eq : dogs = {.fido, .rex, .spot} := by decide
-
-/-- 2^3 = 8 bipartitions of the dog set. -/
 theorem dog_bipartitions_card : (allBP dogs).card = 8 := by decide
 
--- Per-quantifier q-persp derivations
-
-/-- *Every*: sole bipartition ⟨dogs, ∅⟩ has refset = dogs ≠ ∅.
-    Q-persp = refsetNonempty. Compset not available (compset = ∅). -/
+/-- *every*: the sole surviving bipartition has all dogs in the reference set. -/
 theorem every_dog_qpersp :
-    deriveQPersp (sieve every_qcond (allBP dogs)) = .refsetNonempty := by
-  decide
+    deriveQPersp (sieve every_qcond (allBP dogs)) = .refsetNonempty := by decide
 
-/-- *No*: sole bipartition ⟨∅, dogs⟩ has refset = ∅.
-    Q-persp = refsetEmpty. Compset available — but for *no*,
-    compset = maxset, so it collapses with maxset anaphora. -/
-theorem no_dog_qpersp :
-    deriveQPersp (sieve no_qcond (allBP dogs)) = .refsetEmpty := by decide
+/-- *no*: the sole surviving bipartition has an empty reference set. -/
+theorem no_dog_qpersp : deriveQPersp (sieve no_qcond (allBP dogs)) = .refsetEmpty := by decide
 
-/-- *Some*: ⟨∅, _⟩ excluded by |refset| ≥ 1.
-    Q-persp = refsetNonempty. -/
 theorem some_dog_qpersp :
-    deriveQPersp (sieve some_qcond (allBP dogs)) = .refsetNonempty := by
-  decide
+    deriveQPersp (sieve some_qcond (allBP dogs)) = .refsetNonempty := by decide
 
-/-- *Most*: ⟨∅, _⟩ excluded by |refset| > |compset|.
-    Q-persp = refsetNonempty. -/
 theorem most_dog_qpersp :
-    deriveQPersp (sieve most_qcond (allBP dogs)) = .refsetNonempty := by
+    deriveQPersp (sieve most_qcond (allBP dogs)) = .refsetNonempty := by decide
+
+/-- *few*: the empty-reference bipartition survives, so the complement set is accessible,
+*Few dogs barked. They slept through.* -/
+theorem few_dog_qpersp : deriveQPersp (sieve few_qcond (allBP dogs)) = .refsetEmpty := by
   decide
 
-/-- *Few*: ⟨∅, dogs⟩ included (0 < 3). Q-persp = refsetEmpty.
-    Compset IS available.
-    "Few dogs barked. They [= non-barking dogs] slept through." -/
-theorem few_dog_qpersp :
-    deriveQPersp (sieve few_qcond (allBP dogs)) = .refsetEmpty := by decide
-
-/-- *A few*: same q-cond as *few*, but refind excludes ⟨∅, dogs⟩.
-    Q-persp = refsetNonempty. Compset NOT available.
-    "#They [= non-barking dogs] slept through." -/
+/-- *a few*: the same condition, but the reference individual excludes the empty-reference
+bipartition, so the complement set is inaccessible. -/
 theorem aFew_dog_qpersp :
-    deriveQPersp (refindFilter (sieve few_qcond (allBP dogs))) =
-      .refsetNonempty := by decide
-
--- The few / a few contrast: the paper's key empirical result, derived structurally
-
-/-- Compset available for *few* (derived from q-persp). -/
-theorem few_compset_available :
-    (deriveQPersp (sieve few_qcond (allBP dogs))).compsetAvailable = true := by
+    deriveQPersp (refindFilter (sieve few_qcond (allBP dogs))) = .refsetNonempty := by
   decide
 
-/-- Compset NOT available for *a few* (derived: refind changes q-persp). -/
-theorem aFew_compset_not_available :
-    (deriveQPersp (refindFilter (sieve few_qcond (allBP dogs)))).compsetAvailable
-      = false := by decide
+/-! ### Witness sets and conservativity -/
 
-/-- This matches [cooper-2023] Ch. 7: `.compset ∈ anaphoraAvailable .few`
-    but `.compset ∉ anaphoraAvailable .aFew`. -/
-theorem few_aFew_matches_cooper :
-    (AnaphoraRef.compset ∈ anaphoraAvailable .few) ∧
-    (AnaphoraRef.compset ∉ anaphoraAvailable .aFew) := by
-  exact ⟨by decide, by decide⟩
+/-- Every reference set is a witness set of the head noun. -/
+theorem bp_refset_is_witnessSet [Fintype α] (P : α → Prop) [DecidablePred P] (b : BP α)
+    (h : b ∈ allBP (fullExtFinset P)) : WitnessSet P b.refset :=
+  ⟨λ _ ha => (Finset.mem_filter.mp (allBP_refset_sub _ b h ha)).2⟩
 
--- ============================================================================
--- §5. Witness-Set Bridge
--- ============================================================================
-
-/-! ### §5. RTT refsets are Cooper witness sets
-
-[cooper-2023] Ch. 7 defines `WitnessSet P X` as X ⊆ extension of P.
-RTT's refsets satisfy this by construction: every bipartition in `allBP S`
-has `refset ⊆ S`. When S = fullExtFinset P, this is exactly `WitnessSet P`. -/
-
-/-- Every RTT bipartition's refset is a Cooper witness set.
-    Bridges RTT's bipartition denotations to the witness-set framework
-    of [cooper-2023] Ch. 7. -/
-theorem bp_refset_is_witnessSet [Fintype α] (P : α → Prop) [DecidablePred P]
-    (b : BP α) (h : b ∈ allBP (fullExtFinset P)) :
-    WitnessSet P b.refset :=
-  ⟨fun a ha => (Finset.mem_filter.mp (allBP_refset_sub _ b h ha)).2⟩
-
-/-- The dogs Finset equals Cooper's fullExtFinset isDog. -/
-theorem dogs_eq_fullExt : dogs = fullExtFinset isDog := by decide
-
--- ============================================================================
--- §6. Conservativity & Complexity
--- ============================================================================
-
-/-! ### §6. Structural conservativity and complexity reduction
-
-RTT's bipartitions partition only the *restrictor* (head noun extension).
-Conservativity is guaranteed by construction: the scope set never appears
-independently. §1.3, §4.8. -/
-
-/-- Convert a QCond (bipartition sieve) to a classical GQ.
-    The QNP ⟨q-cond, N⟩ applied to VP = Q is true iff some bipartition
-    survives the sieve such that all refset members satisfy Q. -/
-def qcondToGQ (qc : QCond) [Fintype α] (N : α → Prop) [DecidablePred N]
+/-- The generalized quantifier of a condition: the verb phrase holds throughout the
+reference set of some surviving bipartition. -/
+def qcondToGQ (qc : QCond) [DecidableRel qc] [Fintype α] (N : α → Prop) [DecidablePred N]
     (Q : α → Prop) : Prop :=
-  ∃ b ∈ allBP (Finset.univ.filter N),
-    qc b.refset.card b.compset.card = true ∧ ∀ a ∈ b.refset, Q a
+  ∃ b ∈ allBP (Finset.univ.filter N), qc b.refset.card b.compset.card ∧ ∀ a ∈ b.refset, Q a
 
-/-- Conservativity holds for any QCond by construction.
-    Every `a ∈ b.refset` satisfies N (since `b.refset ⊆ filter N`),
-    so replacing Q with `N ∧ Q` doesn't change truth.
-    [lucking-ginzburg-2022] §1.3 [barwise-cooper-1981] -/
-theorem qcond_conservative [Fintype α] (qc : QCond) (N Q : α → Prop)
-    [DecidablePred N] :
-    qcondToGQ qc N Q ↔ qcondToGQ qc N (fun x => N x ∧ Q x) := by
+/-- Conservativity holds by construction: the reference set lies within the restrictor. -/
+theorem qcond_conservative [Fintype α] (qc : QCond) [DecidableRel qc] (N Q : α → Prop)
+    [DecidablePred N] : qcondToGQ qc N Q ↔ qcondToGQ qc N λ x => N x ∧ Q x := by
   constructor
   · rintro ⟨b, hmem, hqc, hQ⟩
-    refine ⟨b, hmem, hqc, fun a ha => ?_⟩
-    have haN : N a := by
-      have hSub := allBP_refset_sub _ b hmem
-      have := Finset.mem_filter.mp (hSub ha)
-      exact this.2
-    exact ⟨haN, hQ a ha⟩
+    exact ⟨b, hmem, hqc, λ a ha =>
+      ⟨(Finset.mem_filter.mp (allBP_refset_sub _ b hmem ha)).2, hQ a ha⟩⟩
   · rintro ⟨b, hmem, hqc, hNQ⟩
-    exact ⟨b, hmem, hqc, fun a ha => (hNQ a ha).2⟩
+    exact ⟨b, hmem, hqc, λ a ha => (hNQ a ha).2⟩
 
-/-- RTT quantifier count: for a head noun extension of size k,
-    there are 2^(k+1) − 1 possible QNP denotations (non-empty subsets
-    of the 2^k bipartitions). §4.8. -/
+/-- The number of denotations over a noun with `k` instances (§4.8): the non-empty sets of
+its `2 ^ k` bipartitions. -/
 def rttQuantifierCount (k : ℕ) : ℕ := 2 ^ (k + 1) - 1
 
-#guard rttQuantifierCount 2 == 7
-#guard rttQuantifierCount 3 == 15
+/-- Fewer denotations than conservative generalized quantifiers, at every size. -/
+theorem rttQuantifierCount_lt_conservative (k : ℕ) :
+    rttQuantifierCount k < conservativeQuantifierCount k :=
+  calc 2 ^ (k + 1) - 1 < 2 ^ (k + 1) := Nat.sub_lt (Nat.two_pow_pos _) one_pos
+    _ ≤ 2 ^ ((k + 1) * (k + 2) / 2) := Nat.pow_le_pow_right two_pos
+        ((Nat.le_div_iff_mul_le two_pos).mpr (Nat.mul_le_mul_left _ (by omega)))
 
-/-- RTT's quantifier space is strictly smaller than GQT's conservative
-    count ([van-benthem-1984]).
-    For n=2: RTT gives 7 vs GQT's 64. -/
-theorem rtt_fewer_than_conservative_2 :
-    rttQuantifierCount 2 < conservativeQuantifierCount 2 := by decide
+/-! ### Anti-predication -/
 
-theorem rtt_fewer_than_conservative_3 :
-    rttQuantifierCount 3 < conservativeQuantifierCount 3 := by decide
+/-- Anti-predication (§4.5): the verb phrase holds of every member of the reference set and
+fails of every member of the complement set. -/
+def antiPredication (VP : α → Prop) (b : BP α) : Prop :=
+  (∀ a ∈ b.refset, VP a) ∧ ∀ a ∈ b.compset, ¬ VP a
 
-theorem rtt_fewer_than_conservative_4 :
-    rttQuantifierCount 4 < conservativeQuantifierCount 4 := by decide
-
--- ============================================================================
--- §7. Anti-predication (§4.5)
--- ============================================================================
-
-/-! ### §7. Anti-predication
-
-A VP simultaneously predicates positively on refset members (the "nucl")
-and negatively on compset members (the "anti-nucl"). This two-headed
-predication is specific to RTT and absent from standard GQT. §4.5, Figure 5:
-the declarative plural head-subject rule has both `nucl` and `anti-nucl`. -/
-
-/-- Anti-predication: the VP holds for all refset members and fails
-    for all compset members. -/
-def antiPredication (VP : α → Bool) (b : BP α) : Prop :=
-  (∀ a ∈ b.refset, VP a = true) ∧ (∀ a ∈ b.compset, VP a = false)
-
-omit [DecidableEq α] in
-/-- Anti-predication implies the VP holds for every refset member. -/
-theorem antiPred_refset (VP : α → Bool) (b : BP α)
-    (h : antiPredication VP b) (a : α) (ha : a ∈ b.refset) :
-    VP a = true := h.1 a ha
-
-omit [DecidableEq α] in
-/-- Anti-predication implies the VP fails for every compset member. -/
-theorem antiPred_compset (VP : α → Bool) (b : BP α)
-    (h : antiPredication VP b) (a : α) (ha : a ∈ b.compset) :
-    VP a = false := h.2 a ha
-
-/-- Truth conditions for "every N VP" via RTT:
-    ∃ b in the sieved set with anti-predication ↔ ∀ a ∈ S, VP a = true.
-    The unique bipartition ⟨S, ∅⟩ makes anti-predication equivalent to
-    the VP holding on all of S (anti-nucl on ∅ is vacuous). -/
-theorem every_truth_conditions (S : Finset α) (VP : α → Bool) :
-    (∃ b ∈ sieve every_qcond (allBP S), antiPredication VP b) ↔
-    (∀ a ∈ S, VP a = true) := by
+/-- *every N VP*: some surviving bipartition is anti-predicated exactly when the verb phrase
+holds throughout the extension, the sole survivor having everything in its reference set. -/
+theorem every_truth_conditions (S : Finset α) (VP : α → Prop) :
+    (∃ b ∈ sieve every_qcond (allBP S), antiPredication VP b) ↔ ∀ a ∈ S, VP a := by
   constructor
-  · -- Forward: the unique surviving bipartition has refset = R where S ⊆ R,
-    -- so anti-predication on R implies the VP holds on all of S
-    rintro ⟨b, hb, hanti⟩
+  · rintro ⟨b, hb, hanti⟩
     have hmem := (Finset.mem_filter.mp hb).1
     have hqc := (Finset.mem_filter.mp hb).2
     rw [allBP, Finset.mem_map] at hmem
     obtain ⟨R, hR, rfl⟩ := hmem
     rw [Finset.mem_powerset] at hR
-    simp only [every_qcond, beq_iff_eq] at hqc
     have hcomp : S \ R = ∅ := Finset.card_eq_zero.mp hqc
-    -- Every a ∈ S must be in R (since S \ R = ∅), so anti-predication applies
     intro a haS
     apply hanti.1
     by_contra h
     exact absurd (hcomp ▸ Finset.mem_sdiff.mpr ⟨haS, h⟩) (by simp)
-  · -- Backward: construct ⟨S, S \ S⟩ = ⟨S, ∅⟩
-    intro hall
-    have hsdiff : S \ S = (∅ : Finset α) := by simp
-    refine ⟨⟨S, S \ S⟩, Finset.mem_filter.mpr ⟨?_, ?_⟩, hall, fun a ha => ?_⟩
+  · intro hall
+    refine ⟨⟨S, S \ S⟩, Finset.mem_filter.mpr ⟨?_, ?_⟩, hall, λ _ ha => ?_⟩
     · rw [allBP, Finset.mem_map]
       exact ⟨S, Finset.mem_powerset.mpr (Finset.Subset.refl S), rfl⟩
     · simp [every_qcond]
-    · rw [hsdiff] at ha; simp at ha
-
--- ============================================================================
--- §8. Sieve Cardinalities
--- ============================================================================
-
-/-! ### §8. Sieve cardinalities
-
-Concrete verification that the q-cond sieves produce expected counts. -/
-
-theorem every_dog_sieve_card :
-    (sieve every_qcond (allBP dogs)).card = 1 := by decide
-
-theorem no_dog_sieve_card :
-    (sieve no_qcond (allBP dogs)).card = 1 := by decide
-
-/-- 4 few-bipartitions: ⟨∅, dogs⟩ plus 3 singletons. -/
-theorem few_dog_sieve_card :
-    (sieve few_qcond (allBP dogs)).card = 4 := by decide
-
-/-- Refind removes the empty-refset bipartition, leaving 3. -/
-theorem aFew_dog_sieve_card :
-    (refindFilter (sieve few_qcond (allBP dogs))).card = 3 := by decide
+    · simp at ha
 
 end LuckingGinzburg2022

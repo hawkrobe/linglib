@@ -10,29 +10,34 @@ import Linglib.Studies.Landau2015
 /-!
 # Landau (2024): Control
 
-Formalizes [landau-2024] (Cambridge Elements in Generative Syntax),
-the survey synthesizing the state of control theory: the revised
-Visser's generalization ((19), [van-urk-2013]), the direct-discourse
-correlation behind embedded-speech-act theories ((33),
-[postal-1970]) and its Korean jussive realization ((35)), the
-attitude-only distribution of partial control ((36)–(37)), the
-OC/NOC/NC trichotomy ((41)), NOC's dual topic/logophoric licensing
-((52)), and the strict-vs-alternating adjunct split with the
-propositional-variant criterion ((84)/(89)). The dual theory of §5
-rests on the neutral substrate (`Syntax/Control/Defs.lean`) and the tier
-system of `Studies/Landau2015.lean`; this file holds the Element's own
-empirical generalizations and the complement typing ((56)/(58)/(72)). Its (95)
-challenges — backward control, PC's residue, agreement under
-property theories, the OC-NC generalization's crosslinguistic
-variation ([ganenkov-2019]), overt-PRO licensing, adjunct loci — are
-the open frontier.
+This file formalizes the empirical generalizations of [landau-2024], the Element surveying
+control theory: the trichotomy of obligatory control, non-obligatory control, and no control on
+the Spanish paradigm (41); the revised Visser's generalization of [van-urk-2013] (19) on the
+Norwegian passives (20); the direct-discourse correlation of [postal-1970] (33) and its
+grammatical realization by the Korean jussive markers (35); the confinement of partial control
+to attitude complements ((36), (37)), which the library's saturating dependencies deny of a
+predicative complement; the dual licensing of non-obligatory control by topic and by logophoric
+centre ((52), (55)); and the split of controlled adjuncts into strict and alternating types by
+the propositional-variant criterion ((84), (89)). The tier system is that of
+`Studies/Landau2015.lean`, and complement typing follows the Element's denotations ((56), (58),
+(72), after [grano-2015]).
+
+## Implementation notes
+
+The Element was not available for this pass, and the example numbers carried over from the
+earlier version of this file are marked as unverified. The generalizations are recorded as the
+Element states them, over small enumerations of the configurations it discusses; the
+partial-control row is the one derived from the substrate.
 
 ## References
 
-* [I. Landau, *Control*][landau-2024]
+* [landau-2024]
+* [van-urk-2013], [postal-1970], [grano-2015]
 -/
 
 namespace Landau2024
+
+-- UNVERIFIED: the example numbers below are those of the earlier version of this file.
 
 open Control SetRel
 open Semantics.Composition.TypeShifting (ComplementDenotation)
@@ -195,12 +200,12 @@ def ex37Dependency : SetRel (Fin 2) (Fin 2) := {(0, 1)}
 /-- The PC reading's referent sizes: the controller (John) is properly
     contained in the gathering group. -/
 def ex37Val : Fin 2 → ℕ :=
-  fun p => if p = 0 then 1 else 2
+  λ p => if p = 0 then 1 else 2
 
 /-- A partial-control reading is incompatible with a saturating
     dependency: (37a)'s star, from exhaustive sharing. -/
 theorem manage_excludes_pc : ¬ IsSaturating ex37Val ex37Dependency :=
-  fun h => h.not_isPartial ⟨0, 1, rfl, by decide⟩
+  λ h => h.not_isPartial ⟨0, 1, rfl, by decide⟩
 
 /-! ### NOC: dual licensing by topic and logophoric center
 
@@ -239,7 +244,7 @@ theorem noc_by_topic_alone : Antecedent.MayControl ⟨true, false⟩ := by decid
 theorem neither_licensor_necessary :
     ¬(∀ a : Antecedent, a.MayControl → a.topic = true) ∧
       ¬(∀ a : Antecedent, a.MayControl → a.logophoricCenter = true) := by
-  refine ⟨fun h => ?_, fun h => ?_⟩
+  refine ⟨λ h => ?_, λ h => ?_⟩
   · simpa using h ⟨false, true⟩ (by decide)
   · simpa using h ⟨true, false⟩ (by decide)
 

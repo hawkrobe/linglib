@@ -5,47 +5,35 @@ import Linglib.Studies.Condoravdi2002
 import Linglib.Semantics.Modality.ActualityEntailments
 
 /-!
-# [matthewson-2013] — Gitksan Modals
+# Matthewson (2013): Gitksan Modals
 
-Lisa Matthewson. "Gitksan Modals." *International Journal of American
-Linguistics* 79(3): 349–394. DOI: 10.1086/670751.
+This file formalizes three claims of [matthewson-2013] about the Gitksan modal system.
+Gitksan is a mixed system: it encodes modal strength in the circumstantial domain, where
+*da'akhlxw* and *sgi* differ in force, but not in the epistemic domain, where *imaa* and
+*gat* are variable in force. Its modals have no inherent future orientation, which comes from
+the prospective marker *dim*, obligatory with circumstantial modals and optional with
+epistemics, against the English analysis of [condoravdi-2002] in which prospectivity is part
+of *may*. And *da'akhlxw* shows no actuality entailment, since its obligatory *dim* blocks
+the perfective configuration that [hacquard-2006] predicts to yield one.
 
-Primary source for the Gitksan modal analysis. Three core contributions
-are formalized here against the existing infrastructure:
+## Implementation notes
 
-1. **Mixed-system thesis** (Fig. 1): Gitksan encodes modal STRENGTH in
-   the circumstantial domain (`daakhlxw` vs. `sgi`) but not the epistemic
-   domain (`imaa`/`gat` are variable-force).
+The modal inventory is the Gitksan fragment; the negation diagnostic separating the
+variable-force analysis of *imaa* from the strengthened-possibility analysis of Nez Perce
+*o'qa* by [deal-2011] is recorded by label only. The handbook chapter [matthewson-2016]
+restates the survey-level claims.
 
-2. **No inherent future orientation** (§3.3, §5.3): Gitksan modals are
-   not lexically future-oriented. Future orientation comes from `dim`,
-   *obligatory* with circumstantial modals and *optional* (only for
-   future orientation) with epistemics. This contradicts
-   [condoravdi-2002]'s English analysis, where prospectivity is
-   baked into `may`. Structurally: Gitksan *imaa* would evaluate its
-   prejacent at the point of the perspective, English *might* through
-   `Condoravdi2002.MAY` (forward expansion to `Interval.Ici`). We do not introduce
-   alias defs for the Gitksan/English projection here — that is a
-   downstream choice that should land in a typed compositional `dim`
-   operator (planned, see `ProspectiveMarkerPolicy` discussion in the
-   integration audit).
+## TODO
 
-3. **No actuality entailments for da'akhlxw** (§4.1, fn 32):
-   [hacquard-2006] predicts AEs for the perfective + root-modal
-   configuration. da'akhlxw's obligatory co-occurrence with `dim`
-   blocks that configuration empirically. The explanation is given
-   in [matthewson-2012].
+The paper is not on file; figure, section, and example locators are transcribed from an
+earlier version of this file and are UNVERIFIED.
 
-Supporting comparisons: Peterson 2010's variable-force analysis of
-imaa contrasts with [deal-2011]'s strengthened-possibility analysis
-of Nez Perce *o'qa* (§3.1, ex. 30 negation diagnostic). The diagnostic
-content (which scope ¬ takes relative to the modal) is *not* yet
-formalized here — currently only the labels.
+## References
 
-The modal inventory is in `Fragments/Gitksan/Modals.lean`. The handbook
-chapter [matthewson-2016] (`Studies/Matthewson2016.lean`) restates
-the survey-level claims; this file holds the primary-source theorems
-the chapter cites.
+* [matthewson-2013]
+* [condoravdi-2002]
+* [hacquard-2006]
+* [deal-2011]
 -/
 
 namespace Matthewson2013

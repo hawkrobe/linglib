@@ -1,437 +1,157 @@
+import Mathlib.Data.Finset.Insert
+
 /-!
-# [meyer-feiman-2021] — Composing Alternatives
-[bar-lev-fox-2017] [chierchia-2004] [fox-2007]
+# Meyer and Feiman (2021): Priming Reveals Similarities and Differences Between Implicatures
 
-Structural priming evidence that scalar and free choice implicatures
-decompose into independently parameterizable sub-computations.
+This file formalizes the implicature spectrum that [meyer-feiman-2021] propose to reconcile
+their structural-priming results. The core implicature mechanism has two sub-computations,
+generating alternatives and negating them, and each may run online or have its output
+stored; alternatives generated online cannot have been pre-negated, so the spectrum has
+three points (`Spectrum`, `spectrum_iff`): both steps online, the alternatives stored and
+negated online, or the enriched reading stored as a second lexical entry. Two readings
+prime each other when they share an online sub-computation that can be primed (`Primes`).
+Three experiments find that *some* and number words prime each other while free-choice
+disjunction primes neither; the paper places *some* at the fully online point and number
+words at the stored-alternatives point, so the shared computation behind the effect is the
+negation of alternatives (`negate_primeable`), and the free-choice data then rule out the
+recursive-implicature derivation of free choice, which negates alternatives, while
+admitting the alternative-asserting mechanism of [bar-lev-fox-2017] exactly when generation
+cannot be primed and modal-specific accounts such as [simons-2005] unconditionally
+(`fits_iff`).
 
-## Citation
+## Implementation notes
 
-Meyer, M.-C. & Feiman, R. (2021). Composing alternatives: The structural
-source of scalar and free choice implicatures. *Journal of Memory and
-Language*, 121, 104279.
+A derivation is represented by the finite set of sub-computations it runs online; the
+paper's hypothesis for *some* and number words with free choice left open is `spectrum`,
+and `Fits` compares an account's predicted between-category priming with the observed
+pattern. Within-category priming, the higher enrichment rate for number words, and the
+experiments' picture-similarity controls are not represented.
 
-## Core Contribution
+## References
 
-Implicature computation factors into two sub-operations:
-
-1. **ALT-GEN** (alternative generation): Computing what the speaker
-   *could have said*
-2. **ALT-NEG** (alternative negation): Strengthening by negating the
-   un-uttered alternatives
-
-Each sub-operation can independently be **online** (computed during
-processing) or **offline** (pre-stored with the lexical entry). This
-gives a spectrum of processing architectures:
-
-| Item     | ALT-GEN  | ALT-NEG        | Category      |
-|----------|----------|----------------|---------------|
-| *some*   | online   | online         | Quantifier    |
-| *three*  | offline  | online         | Numeral       |
-| FC *or*  | —        | different mech | FC disjunction|
-
-## Experimental Evidence (6 experiments)
-
-Structural priming paradigm: if two expressions share a sub-computation,
-processing one facilitates processing the other.
-
-- **Exp 1–2**: *some* → numerals (bidirectional priming)
-- **Exp 3–4**: numerals → *some* (bidirectional priming)
-- **Exp 5**: FC *or* → *some* (NO priming)
-- **Exp 6**: FC *or* → numerals (NO priming)
-
-The pattern falsifies any uniform account: shared ALT-NEG between *some*
-and numerals, but FC uses an entirely different mechanism (assertion-based
-per [bar-lev-fox-2017], not negation-based).
-
+* [meyer-feiman-2021]
+* [bar-lev-fox-2017]
+* [fox-2007]
+* [simons-2005]
 -/
 
 namespace MeyerFeiman2021
 
-
-/-! ## Processing Architecture Types -/
-
-/-- How alternatives are made available during processing.
-
-Meyer & Feiman's key theoretical distinction (§1.2, §5):
-- `online`: alternatives computed from the Horn scale at processing time
-  (e.g., *some* → {*most*, *all*} derived from ⟨some, most, all⟩)
-- `offline`: alternatives stored with the lexical entry
-  (e.g., *three* → {*one*, *two*, *four*,...} stored in the numeral system) -/
-inductive AltGenSource where
-  /-- Computed from Horn scale at processing time -/
-  | online
-  /-- Pre-stored with lexical entry -/
-  | offline
-  deriving DecidableEq, Repr, Inhabited
-
-/-- What is done with alternatives once generated.
-
-The mechanism by which un-uttered alternatives contribute to meaning:
-- `exhaustification`: negate alternatives (standard SI: "not all")
-- `innocentInclusion`: assert alternatives (FC: "may A ∧ may B")
-- `none`: no strengthening operation applies -/
-inductive AltNegMechanism where
-  /-- IE: negate alternatives (standard scalar implicature) -/
-  | exhaustification
-  /-- II: assert alternatives (free choice inference) -/
-  | innocentInclusion
-  /-- No strengthening -/
-  | none
-  deriving DecidableEq, Repr, Inhabited
-
-/-- A scalar item's implicature processing profile.
-
-Combines ALT-GEN source and ALT-NEG mechanism to classify how a given
-scalar item's implicature is computed. Meyer & Feiman argue that these
-two dimensions are independently parameterizable (§5). -/
-structure ProcessProfile where
-  /-- How alternatives are generated -/
-  altGen : AltGenSource
-  /-- What is done with alternatives -/
-  altNeg : AltNegMechanism
-  deriving DecidableEq, Repr
-
-instance : Inhabited ProcessProfile where
-  default := ⟨.online, .exhaustification⟩
-
-
-/-! ## Scalar Item Classification -/
-
-/-- The three classes of scalar item distinguished by Meyer & Feiman.
-
-The paper argues these are not merely taxonomic labels but reflect genuine
-processing differences, as demonstrated by the priming pattern. -/
-inductive ScalarItemClass where
-  /-- Quantifiers: ALT-GEN online, ALT-NEG online (§2.1) -/
-  | quantifier
-  /-- Numerals: ALT-GEN offline, ALT-NEG online (§2.2) -/
-  | numeral
-  /-- Free choice disjunction: different mechanism entirely (§2.3) -/
-  | freeChoiceDisjunction
-  deriving DecidableEq, Repr, Inhabited
-
-/-- The process profile for each scalar item class.
-
-This is the paper's central theoretical claim (Table 1, §5). -/
-def classProfile : ScalarItemClass → ProcessProfile
-  | .quantifier          => ⟨.online, .exhaustification⟩
-  | .numeral             => ⟨.offline, .exhaustification⟩
-  | .freeChoiceDisjunction => ⟨.online, .innocentInclusion⟩
-
-/-- Concrete scalar items used in the experiments. -/
-inductive ScalarItem where
-  | some_       -- Experiments 1–6 (target or prime)
-  | three       -- Experiments 1–6 (target or prime)
-  | four        -- Experiments 1–4
-  | fcOr        -- Experiments 5–6 (FC disjunction under modal)
-  deriving DecidableEq, Repr
-
-/-- Classify a concrete item into its class. -/
-def itemClass : ScalarItem → ScalarItemClass
-  | .some_  => .quantifier
-  | .three  => .numeral
-  | .four   => .numeral
-  | .fcOr   => .freeChoiceDisjunction
-
-/-- Get the process profile for a concrete item. -/
-def itemProfile (item : ScalarItem) : ProcessProfile :=
-  classProfile (itemClass item)
-
-
-/-! ## Priming Predictions
-
-Meyer & Feiman's reasoning (§2.3, §5):
-
-- Two items **prime** each other iff they share a sub-computation
-- Shared ALT-NEG → cross-category priming (*some* ↔ numerals)
-- Different ALT-NEG → no priming (FC ↮ *some*, FC ↮ numerals)
-- Shared vs different ALT-GEN → asymmetry in priming strength -/
-
-/-- Whether two scalar item classes share ALT-NEG. -/
-def sharesAltNeg (a b : ScalarItemClass) : Bool :=
-  (classProfile a).altNeg == (classProfile b).altNeg
-
-/-- Whether two scalar item classes share ALT-GEN. -/
-def sharesAltGen (a b : ScalarItemClass) : Bool :=
-  (classProfile a).altGen == (classProfile b).altGen
-
-/-- Predicted priming between two classes: occurs iff shared ALT-NEG. -/
-def predictsPriming (a b : ScalarItemClass) : Bool :=
-  sharesAltNeg a b
-
-
-/-! ## Experimental Data -/
-
-/-- Result of a structural priming experiment.
-
-Each experiment tests whether processing a scalar implicature with
-one item type facilitates processing with another. -/
-structure PrimingExperiment where
-  /-- Experiment identifier -/
-  experiment : String
-  /-- Prime scalar item class -/
-  primeClass : ScalarItemClass
-  /-- Target scalar item class -/
-  targetClass : ScalarItemClass
-  /-- Was significant priming observed? -/
-  primingObserved : Bool
-  /-- Number of participants -/
-  nParticipants : Nat
-  /-- Effect description -/
-  effectDescription : String
-  deriving Repr
-
-/-- Experiments 1–2: *some* primes numerals. -/
-def exp1_2 : PrimingExperiment :=
-  { experiment := "Exp 1–2"
-  , primeClass := .quantifier
-  , targetClass := .numeral
-  , primingObserved := true
-  , nParticipants := 98
-  , effectDescription := "After computing 'some→not all', participants more likely to compute 'three→exactly three'" }
-
-/-- Experiments 3–4: numerals prime *some*. -/
-def exp3_4 : PrimingExperiment :=
-  { experiment := "Exp 3–4"
-  , primeClass := .numeral
-  , targetClass := .quantifier
-  , primingObserved := true
-  , nParticipants := 100
-  , effectDescription := "After computing 'three→exactly three', participants more likely to compute 'some→not all'" }
-
-/-- Experiment 5: FC *or* does NOT prime *some*. -/
-def exp5 : PrimingExperiment :=
-  { experiment := "Exp 5"
-  , primeClass := .freeChoiceDisjunction
-  , targetClass := .quantifier
-  , primingObserved := false
-  , nParticipants := 100
-  , effectDescription := "FC 'or' computation does not facilitate 'some→not all'" }
-
-/-- Experiment 6: FC *or* does NOT prime numerals. -/
-def exp6 : PrimingExperiment :=
-  { experiment := "Exp 6"
-  , primeClass := .freeChoiceDisjunction
-  , targetClass := .numeral
-  , primingObserved := false
-  , nParticipants := 100
-  , effectDescription := "FC 'or' computation does not facilitate 'three→exactly three'" }
-
-/-- All experiments from [meyer-feiman-2021]. -/
-def allExperiments : List PrimingExperiment :=
-  [exp1_2, exp3_4, exp5, exp6]
-
-
-/-! ## Key Empirical Findings -/
-
-/-- The three main findings of the paper (§5). -/
-structure MainFindings where
-  /-- Finding 1: Bidirectional priming between *some* and numerals -/
-  someNumeralPriming : Bool
-  /-- Finding 2: No priming between FC *or* and *some* -/
-  noFCSomePriming : Bool
-  /-- Finding 3: No priming between FC *or* and numerals -/
-  noFCNumeralPriming : Bool
-  deriving Repr
-
-def mainFindings : MainFindings :=
-  { someNumeralPriming := true
-  , noFCSomePriming := true
-  , noFCNumeralPriming := true }
-
-
-/-! ## Connections to Other Phenomena
-
-The process profile classification connects to several existing
-phenomena in linglib. -/
-
-/-- Numeral Hurford rescue (e.g., "three or all") involves the offline/online
-    profile — alternatives are stored, so exhaustification ("exactly three")
-    is immediately available for Hurford rescue. -/
-def hurfordNumeralProfile : ProcessProfile := classProfile .numeral
-
-/-- FC phenomena use a fundamentally different mechanism from standard SI.
-
-The FC inference ◇(A ∨ B) → ◇A ∧ ◇B is derived via Innocent
-Inclusion rather than Innocent Exclusion, and is cancellable
-("... but I don't know which") unlike a semantic entailment. -/
-def freeChoiceProfile : ProcessProfile := classProfile .freeChoiceDisjunction
-
-/-- The asymmetry between SI and FC is a processing architecture difference,
-    not just a semantic difference. Both involve alternatives, but:
-    - SI: negate alternatives (IE)
-    - FC: assert alternatives (II) -/
-structure SIvsFCContrast where
-  /-- Standard SI mechanism -/
-  siMechanism : AltNegMechanism
-  /-- FC mechanism -/
-  fcMechanism : AltNegMechanism
-  /-- Are they the same? -/
-  sameMechanism : Bool
-  deriving Repr
-
-def siVsFc : SIvsFCContrast :=
-  { siMechanism := .exhaustification
-  , fcMechanism := .innocentInclusion
-  , sameMechanism := false }
-
-
-/-! ## Falsified Accounts
-
-Meyer & Feiman's data rules out several theoretical positions (§5). -/
-
-/-- Theoretical positions about scalar inference processing. -/
-inductive TheoreticalPosition where
-  /-- All scalar inferences use the same online computation -/
-  | uniformOnline
-  /-- All scalar inferences use stored/default meanings -/
-  | uniformOffline
-  /-- Scalar items differ in ALT-GEN but share ALT-NEG (M&F's position) -/
-  | decomposed
-  /-- Each scalar item class is fully independent -/
-  | fullyIndependent
-  deriving DecidableEq, Repr
-
-/-- Whether a theoretical position is compatible with the priming data. -/
-def compatibleWithData (pos : TheoreticalPosition) : Bool :=
-  match pos with
-  | .uniformOnline =>
-    -- Predicts uniform priming across all pairs: falsified by Exp 5–6
-    false
-  | .uniformOffline =>
-    -- Predicts no cross-category priming: falsified by Exp 1–4
-    false
-  | .decomposed =>
-    -- Predicts selective priming (shared ALT-NEG only): confirmed
-    true
-  | .fullyIndependent =>
-    -- Predicts no cross-category priming: falsified by Exp 1–4
-    false
-
--- ============================================================================
--- § Process Profile Verification
--- ============================================================================
-
-/-- Quantifiers and numerals share ALT-NEG (both use exhaustification). -/
-theorem quantifier_numeral_shared_altNeg :
-    sharesAltNeg .quantifier .numeral = true := rfl
-
-/-- Quantifiers and numerals differ on ALT-GEN. -/
-theorem quantifier_numeral_different_altGen :
-    sharesAltGen .quantifier .numeral = false := rfl
-
-/-- FC uses a different ALT-NEG mechanism from quantifiers. -/
-theorem fc_quantifier_different_altNeg :
-    sharesAltNeg .freeChoiceDisjunction .quantifier = false := rfl
-
-/-- FC uses a different ALT-NEG mechanism from numerals. -/
-theorem fc_numeral_different_altNeg :
-    sharesAltNeg .freeChoiceDisjunction .numeral = false := rfl
-
-/-- *some* and *three* share exhaustification. -/
-theorem some_three_same_altNeg :
-    (itemProfile .some_).altNeg = (itemProfile .three).altNeg := rfl
-
-/-- *some* and *three* differ on ALT-GEN source. -/
-theorem some_three_different_altGen :
-    (itemProfile .some_).altGen ≠ (itemProfile .three).altGen := by decide
-
-/-- FC *or* uses a completely different mechanism from *some*. -/
-theorem fcOr_some_different_mechanism :
-    (itemProfile .fcOr).altNeg ≠ (itemProfile .some_).altNeg := by decide
-
--- § Per-Experiment Verification
-
-/-- Exp 1–2: priming predicted (shared ALT-NEG) and observed. -/
-theorem exp1_2_matches_prediction :
-    exp1_2.primingObserved = predictsPriming exp1_2.primeClass exp1_2.targetClass := rfl
-
-/-- Exp 3–4: priming predicted (shared ALT-NEG) and observed. -/
-theorem exp3_4_matches_prediction :
-    exp3_4.primingObserved = predictsPriming exp3_4.primeClass exp3_4.targetClass := rfl
-
-/-- Exp 5: no priming predicted (different ALT-NEG) and none observed. -/
-theorem exp5_matches_prediction :
-    exp5.primingObserved = predictsPriming exp5.primeClass exp5.targetClass := rfl
-
-/-- Exp 6: no priming predicted (different ALT-NEG) and none observed. -/
-theorem exp6_matches_prediction :
-    exp6.primingObserved = predictsPriming exp6.primeClass exp6.targetClass := rfl
-
-/-- All experiments match the profile-based prediction. -/
-theorem all_experiments_match :
-    allExperiments.all (λ e => e.primingObserved == predictsPriming e.primeClass e.targetClass)
-    = true := by decide
-
--- § Falsification Theorems
-
-/-- The decomposed account is compatible with the data. -/
-theorem decomposed_compatible : compatibleWithData .decomposed = true := rfl
-
-/-- The uniform-online account is falsified. -/
-theorem uniform_online_falsified : compatibleWithData .uniformOnline = false := rfl
-
-/-- The uniform-offline account is falsified. -/
-theorem uniform_offline_falsified : compatibleWithData .uniformOffline = false := rfl
-
-/-- The fully-independent account is falsified. -/
-theorem fully_independent_falsified : compatibleWithData .fullyIndependent = false := rfl
-
-/-- Exactly one of the four positions survives the data. -/
-theorem exactly_one_survives :
-    [TheoreticalPosition.uniformOnline, .uniformOffline, .decomposed, .fullyIndependent].filter
-      compatibleWithData = [.decomposed] := by decide
-
--- § ALT-GEN Source Contrast
-
-/-- The quantifier class ⟨some, all⟩ computes its alternatives online. -/
-theorem quantifier_class_online :
-    (classProfile .quantifier).altGen = .online := rfl
-
-/-- The numeral class ⟨1, 2, 3,...⟩ draws on stored (offline) alternatives. -/
-theorem numeral_class_offline :
-    (classProfile .numeral).altGen = .offline := rfl
-
--- § Connections to Hurford Rescue
-
-/-- Numeral Hurford rescue: "three or all" is rescued because
-    exh(three) = "exactly three" is available via offline alternatives. -/
-theorem hurford_numeral_rescue_available :
-    hurfordNumeralProfile.altGen = .offline := rfl
-
-/-- Both rescued-numeral and rescued-quantifier Hurford cases use
-    the same strengthening mechanism (exhaustification). -/
-theorem hurford_same_neg_mechanism :
-    hurfordNumeralProfile.altNeg = (classProfile .quantifier).altNeg := rfl
-
--- § Connections to Free Choice Phenomena
-
-/-- FC uses innocent inclusion, not exhaustification. -/
-theorem fc_uses_inclusion : freeChoiceProfile.altNeg = .innocentInclusion := rfl
-
-/-- The SI/FC contrast is a processing architecture difference. -/
-theorem si_fc_different_mechanisms : siVsFc.sameMechanism = false := rfl
-
-/-- FC data items are correctly classified as having a distinct mechanism
-    from standard SI data items. -/
-theorem fc_data_distinct_from_si :
-    (classProfile .freeChoiceDisjunction).altNeg ≠
-    (classProfile .quantifier).altNeg := by decide
-
--- § The Spectrum as a Whole
-
-/-- All three classes share the property of being scalar (involving
-    alternatives), but differ in processing architecture. -/
-theorem all_involve_alternatives :
-    [ScalarItemClass.quantifier, .numeral, .freeChoiceDisjunction].all
-      (fun c => (classProfile c).altNeg != .none) = true := by decide
-
-/-- No two of the three classes have identical process profiles. -/
-theorem all_profiles_distinct :
-    classProfile .quantifier ≠ classProfile .numeral ∧
-    classProfile .quantifier ≠ classProfile .freeChoiceDisjunction ∧
-    classProfile .numeral ≠ classProfile .freeChoiceDisjunction := by
-  exact ⟨by decide, by decide, by decide⟩
+/-- The sub-computations an account of an enriched reading may run: generating alternatives,
+negating them, and, in the free-choice mechanism of [bar-lev-fox-2017], asserting them. -/
+inductive Step where
+  | generate
+  | negate
+  | assert
+  deriving DecidableEq
+
+/-- A point on the implicature spectrum: the sub-computations of the core mechanism that run
+online, the others having their output stored, where alternatives generated online cannot
+have been pre-negated. -/
+def Spectrum (o : Finset Step) : Prop :=
+  o ⊆ {.generate, .negate} ∧ (.generate ∈ o → .negate ∈ o)
+
+instance : DecidablePred Spectrum := λ _ => inferInstanceAs (Decidable (_ ∧ _))
+
+/-- The spectrum has three points: both steps online, stored alternatives negated online, and a
+stored enriched reading. -/
+theorem spectrum_iff (o : Finset Step) :
+    Spectrum o ↔ o = {.generate, .negate} ∨ o = {.negate} ∨ o = ∅ := by
+  constructor
+  · rintro ⟨hsub, himp⟩
+    have ha : Step.assert ∉ o := λ h => by simpa using hsub h
+    by_cases hn : Step.negate ∈ o
+    · by_cases hg : Step.generate ∈ o
+      · left; ext s; cases s <;> simp [hg, hn, ha]
+      · right; left; ext s; cases s <;> simp [hg, hn, ha]
+    · right; right; ext s; cases s <;> simp [hn, mt himp hn, ha]
+  · rintro (rfl | rfl | rfl) <;> decide
+
+/-- Two derivations prime each other when some sub-computation that can be primed runs online
+in both. -/
+def Primes (primeable o o' : Finset Step) : Prop := ∃ s ∈ primeable, s ∈ o ∧ s ∈ o'
+
+/-- The three categories of enriched reading tested. -/
+inductive Category where
+  | some
+  | number
+  | freeChoice
+  deriving DecidableEq
+
+/-- Between-category priming observed: *some* and number words prime each other in both
+directions, and free-choice disjunction primes neither and is primed by neither. -/
+def primed : Category → Category → Bool
+  | .some, .number | .number, .some => true
+  | _, _ => false
+
+/-- An account assigns each category the sub-computations its enriched reading runs online; it
+fits the data when it predicts between-category priming exactly where observed. -/
+def Fits (primeable : Finset Step) (account : Category → Finset Step) : Prop :=
+  ∀ a b, a ≠ b → (primed a b ↔ Primes primeable (account a) (account b))
+
+/-- The paper's hypothesis, with the free-choice derivation `fc` left open: *some* generates
+and negates its alternatives online, and number words store their alternatives, the count
+list, and negate them online. -/
+def spectrum (fc : Finset Step) : Category → Finset Step
+  | .some => {.generate, .negate}
+  | .number => {.negate}
+  | .freeChoice => fc
+
+/-- The only sub-computation online for both *some* and number words is negation, so the
+priming between them shows that negating alternatives can be primed. -/
+theorem negate_primeable {primeable fc : Finset Step}
+    (h : Primes primeable (spectrum fc .some) (spectrum fc .number)) : .negate ∈ primeable := by
+  obtain ⟨s, hs, -, h⟩ := h
+  simp only [spectrum, Finset.mem_singleton] at h
+  exact h ▸ hs
+
+/-- The hypothesis fits the data exactly when negation can be primed and the free-choice
+derivation shares no primeable sub-computation with *some*. -/
+theorem fits_iff (primeable fc : Finset Step) :
+    Fits primeable (spectrum fc) ↔
+      .negate ∈ primeable ∧ ¬ Primes primeable (spectrum fc .some) fc := by
+  constructor
+  · intro h
+    refine ⟨negate_primeable ((h .some .number (by decide)).mp rfl), λ hp => ?_⟩
+    exact absurd ((h .some .freeChoice (by decide)).mpr hp) (by decide)
+  · rintro ⟨hn, hfc⟩ a b hab
+    have hnum : ¬ Primes primeable {.negate} fc := λ ⟨s, hs, h₁, h₂⟩ =>
+      hfc ⟨s, hs, Finset.mem_insert_of_mem h₁, h₂⟩
+    cases a <;> cases b <;>
+      simp only [primed, spectrum, Bool.false_eq_true, false_iff, true_iff]
+    · exact absurd rfl hab
+    · exact ⟨.negate, hn, by decide, by decide⟩
+    · exact hfc
+    · exact ⟨.negate, hn, by decide, by decide⟩
+    · exact absurd rfl hab
+    · exact hnum
+    · exact λ ⟨s, hs, h₁, h₂⟩ => hfc ⟨s, hs, h₂, h₁⟩
+    · exact λ ⟨s, hs, h₁, h₂⟩ => hnum ⟨s, hs, h₂, h₁⟩
+    · exact absurd rfl hab
+
+/-- The recursive-implicature derivation of free choice ([fox-2007]) negates alternatives, so
+it shares the primeable computation with *some* and number words and cannot fit the data. -/
+theorem recursive_not_fits (primeable : Finset Step) :
+    ¬ Fits primeable (spectrum {.generate, .negate}) := by
+  rw [fits_iff]
+  rintro ⟨hn, h⟩
+  exact h ⟨.negate, hn, by decide, by decide⟩
+
+/-- The alternative-asserting mechanism of [bar-lev-fox-2017] shares only generation with
+*some*, so it fits the data exactly when generation cannot be primed. -/
+theorem inclusion_fits_iff (primeable : Finset Step) :
+    Fits primeable (spectrum {.generate, .assert}) ↔
+      .negate ∈ primeable ∧ .generate ∉ primeable := by
+  rw [fits_iff]
+  refine and_congr_right λ _ => ⟨λ h hg => h ⟨.generate, hg, by decide, by decide⟩, ?_⟩
+  rintro hg ⟨s, hs, h₁, h₂⟩
+  cases s <;> simp_all [spectrum]
+
+/-- A mechanism specific to modals and disjunction ([simons-2005]) runs no implicature
+sub-computation, so it fits the data whenever negation can be primed. -/
+theorem modal_fits_iff (primeable : Finset Step) :
+    Fits primeable (spectrum ∅) ↔ .negate ∈ primeable := by
+  rw [fits_iff]
+  simp [Primes]
 
 end MeyerFeiman2021
