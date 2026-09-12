@@ -5,6 +5,7 @@ Three sibling directories at this level:
 | Subdir | Purpose | Source format | Generated Lean |
 |---|---|---|---|
 | `Examples/` | Per-paper typed examples (`LinguisticExample` schema) | JSON, one file per paper | Inserted into study files via marker-block generator |
+| `Forms/` | Per-paper CLDF word forms (`FormTable`, `ParameterTable`, custom `FormRelationTable`) | JSON, one file per paper | `Forms/{AuthorYear}.lean` |
 | `PHOIBLE/` | Cross-linguistic phonological inventories | CSV (raw under `PHOIBLE/raw/`) | `Inventories/{Lang}.lean` |
 | `WALS/` | World Atlas of Language Structures | CSV (raw under `WALS/raw/`) | `Features/F*.lean`, `Languages.lean` |
 
@@ -34,6 +35,19 @@ Linglib/Data/
 See [`Examples/README.md`](Examples/README.md). Per-paper JSON; generator
 inserts into Studies files via marker blocks. JSON (not CSV) because the
 schema has nested fields.
+
+### Forms — CLDF word-level data
+
+Per-paper word forms in the Cross-Linguistic Data Formats Wordlist shape: a
+`FormTable` (form, language, concept, segmentation, source), a
+`ParameterTable` (the concepts), and a linglib extension `FormRelationTable`
+for the paradigmatic pairs a paper asserts (stem and past, adjective and
+comparative, base and reduplicant). The morphological counterpart of
+`Examples/`, whose datum is a sentence and its gloss.
+
+- **Schema**: `Linglib/Data/Forms/Schema.lean`
+- **Generator**: `scripts/gen_forms.py` (`--check` verifies sync, `--fmt` canonical JSON)
+- **Input/Output**: `Linglib/Data/Forms/{AuthorYear}.json` → `{AuthorYear}.lean`
 
 ### UD dependency length by language
 
