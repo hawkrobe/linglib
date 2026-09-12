@@ -166,8 +166,8 @@ section PluralClosure
 
 variable {World Atom : Type*}
 
-/-- Plural closure is idempotent for mass nouns: ⊔P = P when P is cumulative.
-    This is [krifka-2026]'s absorption rule ⊔⊔S = ⊔S for the join closure. -/
+/-- Plural closure is idempotent for mass nouns: ⊔P = P when P is cumulative, whence the
+    absorption rule ⊔⊔S = ⊔S ([krifka-2026]). -/
 theorem pluralClosure_mass (P : Property World Atom)
     (hMass : IsMass World Atom P) :
     pluralClosure World Atom P = P := by
@@ -185,44 +185,6 @@ theorem pluralClosure_cum (P : Property World Atom) (w : World) :
   Mereology.algClosure_cum
 
 end PluralClosure
-
--- Kind Anaphora ([krifka-2026] §2)
-
-/--
-Kind anaphor for [MASS] concepts: ⟦it⟧ = λP[MASS]. λi. ∩P(i).
-
-Mass nouns are already cumulative, so ∩ applies directly without
-plural closure. The singular pronoun *it* picks up a mass concept
-dref and derives the corresponding kind individual.
-
-Example: *John noticed mold. He is allergic against it.*
-  ⟦it⟧(⟦mold⟧) = ∩⟦mold⟧ = the mold-kind
--/
-def kindAnaphorMass (P : Property World Atom) : Kind World Atom :=
-  down World Atom P
-
-/--
-Kind anaphor for [COUNT] concepts: ⟦they⟧ = λP[COUNT]. λi. ∩(⊔P)(i).
-
-Count nouns need plural closure (⊔) before nominalization (∩).
-The plural pronoun *they* picks up a count concept dref, applies
-plural closure to get a cumulative predicate, then derives the
-kind individual via ∩.
-
-Example: *John noticed a spider. He has a phobia against them.*
-  ⟦they⟧(⟦spider⟧) = ∩(⊔⟦spider⟧) = ∩⟦spiders⟧ = the spider-kind
--/
-def kindAnaphorCount (P : Property World Atom) : Kind World Atom :=
-  down World Atom (pluralClosure World Atom P)
-
-/-- For mass nouns, the two anaphors yield the same kind (up to absorption).
-    This is why *it* and *they* are interchangeable for mass concepts —
-    except that the morphosyntactic [MASS] feature blocks *they*. -/
-theorem kindAnaphorCount_mass (P : Property World Atom)
-    (hMass : IsMass World Atom P) :
-    kindAnaphorCount World Atom P = kindAnaphorMass World Atom P := by
-  unfold kindAnaphorCount kindAnaphorMass
-  rw [pluralClosure_mass P hMass]
 
 -- Round-Trip Theorems
 
