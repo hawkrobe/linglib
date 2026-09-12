@@ -21,11 +21,6 @@ grammatical exactly when the prefix and suffixes are what the analysis inserts
 (`prefix_ranking`), the geometry of [harley-ritter-2002] gives the plural suffix its number
 (`t_revised`), and the node never carries two groups (`count_group_le_one`).
 
-## TODO
-
-The chapter is not on file; example and vocabulary numbers are transcribed from an earlier
-version of this file and are UNVERIFIED.
-
 ## References
 
 * [mcginnis-2013]
