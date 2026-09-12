@@ -2,47 +2,39 @@ import Linglib.Morphology.Paradigm.Contiguity
 import Linglib.Syntax.Case.Order
 
 /-!
-# Pantcheva 2011: syncretism in directional expressions
-[pantcheva-2011] [bobaljik-2012] [caha-2009]
+# Pantcheva (2011): Decomposing Path
 
-The directional containment object Place ⊂ Goal ⊂ Source ⊂ Route lives in
-`Syntax/Case/Order.lean` (`Case.PathDir`); this study tests its
-**syncretism prediction**. Of the logically possible syncretism patterns
-over the four path roles, only a few are attested, under two constraints
-([pantcheva-2011] §9.2):
+This file formalizes the syncretism typology of the ninth chapter of [pantcheva-2011]. The
+directional heads Place, Goal, Source, and Route form the containment sequence of
+`Case.PathDir`, and a syncretism pattern over the four is a paradigm over that sequence
+(`Pattern`). Two constraints cut the fifteen set-partitions of the four roles to the four
+attested patterns, Types 1 to 4 (`Possible`, `possible_syncretisms`): the *ABA generalization
+of Bobaljik ([bobaljik-2012], then circulating in manuscript), on which a syncretism targets
+only adjacent heads of the sequence, the same contiguity that governs nominal case in
+[caha-2009] (`Morphology.IsContiguous`); and *A&¬A, on which Goal and Source never share a
+marker, because the Source head is the locus of a reversal of the Goal path (§5.4), so one
+marker for both would be contradictory (`GoalSourceMerged`, `goalSource_distinct_denotation`).
+Seven of the eleven excluded patterns fall to *ABA and the other four to *A&¬A, the
+chapter's Table 9.3 (`aba_excluded`, `ana_excluded`). The containment itself is visible where
+the Source marker contains the Goal marker, as in Imbabura Quechua *-man* against *-man-da*
+(Table 4.2, `source_contains_goal`), and Georgian instantiates Type 3, with Location and Goal
+syncretic (Table 9.1, `georgian_loc_goal_possible`).
 
-* **\*ABA** (contiguity): a syncretism targets only *adjacent* heads on
-  the containment chain — the framework-neutral
-  `Morphology.Containment` object, *the same* used for nominal case
-  allomorphy ([caha-2009], [bobaljik-2012]).
-* **\*A&¬A**: Goal and Source never share a marker. Source is the
-  semantic *reversal* of Goal ([pantcheva-2011] §9.2.2), so a
-  Goal=Source marker would be contradictory — a *pragmatic* constraint,
-  not a structural one.
+## Implementation notes
 
-Together they cut the 15 set-partitions of {Place, Goal, Source, Route}
-to **four** possible patterns (`possible_syncretisms`), Pantcheva's
-Types 1–4. (Her Tables 9.2/9.3 enumerate 14, omitting one *ABA-excluded
-pattern — Goal=Route skipping Source; the enumeration here is over all
-15.) Attested instantiations (her Table 9.4): English *at*/*to*/*from*
-(all distinct, Type 1); Estonian `-l`/`-l-le`/`-l-t` and Imbabura
-Quechua `-pi`/`-man`/`-man-da`, where the Source marker morphologically
-contains the Goal marker — the shell containment made visible; Georgian
-Location=Goal (Type 3, her Table 9.1).
+The patterns are restricted-growth strings over the four positions, one representative per
+set-partition; the attested lexicalization patterns of §9.3.1 are described in prose.
 
-## Main declarations
+## References
 
-* `Pantcheva2011.possible` — the two-constraint filter (*ABA via
-  `Containment`, *A&¬A via `GoalSourceMerged`)
-* `Pantcheva2011.possible_syncretisms` — exactly the four attested
-  patterns; `four_possible`, `aba_excluded`, `ana_excluded`
-* `Pantcheva2011.source_contains_goal` — the morphological-containment
-  fact, read off the shared `PathDir` shell decomposition
+* [pantcheva-2011]
+* [bobaljik-2012]
+* [caha-2009]
 -/
 
 namespace Pantcheva2011
 
-open Morphology (IsContiguous)
+open Morphology
 
 /-- A syncretism pattern over the four path roles, in containment order
     [Place, Goal, Source, Route], as form-class indices: the n = 4
@@ -83,10 +75,6 @@ instance (p : Pattern) : Decidable (Possible p) :=
 theorem possible_syncretisms :
     allPatterns.filter (λ p => Possible p) =
       [![0, 0, 1, 1], ![0, 0, 1, 2], ![0, 1, 2, 2], ![0, 1, 2, 3]] := by decide
-
-/-- Exactly four syncretism patterns are possible. -/
-theorem four_possible : (allPatterns.filter (λ p => Possible p)).length = 4 := by
-  decide
 
 /-- Seven of the eleven excluded patterns violate \*ABA (non-contiguous —
     a syncretism spanning non-adjacent path roles). -/
