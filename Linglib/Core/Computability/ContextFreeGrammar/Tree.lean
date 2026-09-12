@@ -3,6 +3,7 @@ import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 import Linglib.Core.Order.Branching
 import Mathlib.Data.W.Basic
 import Mathlib.Logic.Encodable.Basic
+import Mathlib.Data.Countable.Basic
 
 /-!
 # Derivation Trees for Context-Free Grammars
@@ -1224,6 +1225,12 @@ instance : Core.Order.IsFiniteBranching (DerivationTree T N) :=
       omega
 
 /-! ### Countability -/
+
+instance _root_.Symbol.instCountable [Countable T] [Countable N] : Countable (Symbol T N) :=
+  Function.Injective.countable (f := fun s : Symbol T N => match s with
+    | .terminal t => Sum.inl t
+    | .nonterminal n => Sum.inr n) fun s s' h => by
+    cases s <;> cases s' <;> simp_all
 
 /-- Branching signature of the W-type encoding: leaves and the empty list have no children, a
 node has one child (its list of children), a cons cell has two. -/
