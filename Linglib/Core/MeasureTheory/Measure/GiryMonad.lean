@@ -29,8 +29,9 @@ recursive probabilistic programs of [kozen-1981], stated on the monad of [giry-1
   suprema of measures.
 * `MeasureTheory.Measure.iSup_bind_of_monotone`, `MeasureTheory.Measure.bind_iSup_of_monotone`:
   `bind` commutes with monotone suprema in each argument.
-* `MeasureTheory.Measure.ωScottContinuous_bind`: `bind` is ω-Scott-continuous jointly in the
-  measure and the kernel, so operators built from it have Kleene least fixed points.
+* `MeasureTheory.Measure.ωScottContinuous_bind`, `MeasureTheory.Measure.ωScottContinuous_map`:
+  `bind` is ω-Scott-continuous jointly in the measure and the kernel, and `map` in the measure,
+  so operators built from them have Kleene least fixed points.
 
 ## References
 
@@ -163,6 +164,11 @@ theorem ωScottContinuous_bind {M : γ → Measure α} {F : γ → α → Measur
   rw [iSup_iSup_eq_iSup_diag fun m n m' n' hm hn =>
     bind_mono (hMc hm) (fun a => hFc hn a) (hmeas (c n)).aemeasurable (hmeas (c n')).aemeasurable]
   rfl
+
+theorem ωScottContinuous_map {M : γ → Measure α} (hM : ωScottContinuous M) {g : α → β}
+    (hg : Measurable g) : ωScottContinuous fun x => (M x).map g := by
+  simp_rw [← bind_dirac_eq_map _ hg]
+  exact ωScottContinuous_bind hM (fun _ => ωScottContinuous.const) fun _ => measurable_dirac.comp hg
 
 theorem ωScottContinuous_bind_left {f : α → Measure β} (hf : Measurable f) :
     ωScottContinuous fun μ : Measure α => μ.bind f :=

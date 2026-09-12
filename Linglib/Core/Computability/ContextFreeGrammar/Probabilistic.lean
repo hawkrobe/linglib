@@ -45,7 +45,7 @@ open scoped ENNReal
 /-- A probabilistic context-free grammar over `G`: a rule weight vanishing off the grammar and
 summing to one over the rules with each left-hand side the grammar expands. -/
 @[ext]
-structure PCFG {T : Type} (G : ContextFreeGrammar T) [DecidableEq G.NT]
+structure PCFG {T : Type*} (G : ContextFreeGrammar T) [DecidableEq G.NT]
     extends WeightedCFG G ℝ≥0∞ where
   /-- Rules outside the grammar have weight `0`. -/
   weight_eq_zero_of_not_mem : ∀ r ∉ G.rules, weight r = 0
@@ -54,7 +54,7 @@ structure PCFG {T : Type} (G : ContextFreeGrammar T) [DecidableEq G.NT]
 
 namespace PCFG
 
-variable {T : Type} {G : ContextFreeGrammar T} [DecidableEq G.NT] (W : PCFG G)
+variable {T : Type*} {G : ContextFreeGrammar T} [DecidableEq G.NT] (W : PCFG G)
 
 attribute [simp] weight_eq_zero_of_not_mem
 
