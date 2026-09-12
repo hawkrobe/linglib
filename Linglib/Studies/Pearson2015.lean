@@ -4,56 +4,51 @@ import Linglib.Features.Logophoricity
 import Linglib.Syntax.Category.Pronoun.Logophoric
 
 /-!
-# Pearson (2015): The interpretation of the logophoric pronoun in Ewe
-[pearson-2015] [sells-1987] [percus-sauerland-2003] [charlow-sharvit-2014]
-[chierchia-1990] [kratzer-2009] [lewis-1979-attitudes] [aloni-2001]
+# Pearson (2015): The Interpretation of the Logophoric Pronoun in Ewe
 
-[pearson-2015] (*Nat Lang Semantics* 23(2)) gives the definitive modern semantics of the
-Ewe logophoric pronoun *yè* — the carrier `ye : LogophoricPronoun`
-(`Syntax/Category/Pronoun/Logophoric.lean`, `requiredRole = .self`). The traditional Heim & von
-Stechow view (after [chierchia-1990]) is that *yè* bears an `[log]` feature that must be
-bound by the **individual abstractor** an attitude verb introduces in the embedded left
-periphery — so *yè* obligatorily occurs under an attitude predicate and takes the **attitude
-holder** as antecedent (this *is* the `.self` requirement: Sells' antecedent-must-be-a-self).
-That view predicts *yè* is obligatorily **de se**.
+This file formalizes the semantics in [pearson-2015] of the Ewe logophoric pronoun *yè*. On
+the view of Heim and von Stechow after [chierchia-1990], *yè* is bound by the individual
+abstractor an attitude verb introduces, which fixes its distribution to attitude complements
+with the attitude holder as antecedent and predicts an obligatory de se reading; the
+fieldwork finding is that *yè* is de se or de re. The proposal keeps the binding and lets
+*yè* also sit in a covert constituent housing a concept-generator variable
+([percus-sauerland-2003], [charlow-sharvit-2014]): a generator maps a res to an individual
+concept and is suitable when reliable, returning the res in the actual world or, for the
+holder's epistemic alternatives, the holder, and acquaintance-based, its concepts lying in
+the holder's conceptual cover ([aloni-2001]) (`Reliable`, `Suitable`, `sayDeSe`, `sayDeRe`).
+In the paper's first scenario, John praising a paper he does not recognize as his own, the
+de se reading is false and the de re reading true (`ye_de_se_de_re_ambiguous`); in the
+second, John believing himself Napoleon and calling the patient he sees on television
+delusional, *John claims he is delusional* is true and *John claims Napoleon is delusional*
+false, because no concept in John's cover reliably returns the actual Napoleon
+(`napoleon_contrast`). In both readings the antecedent is the attitude holder, the carrier's
+requirement of a self antecedent in the sense of [sells-1987]
+(`ye_antecedent_is_attitude_holder`).
 
-[pearson-2015]'s fieldwork finding is that this prediction is **wrong**: *yè* is de se / de re
-**ambiguous**. Her account keeps *yè* bound by the attitude abstractor (preserving the
-distribution) but lets it additionally sit inside a **`resP`** — a covert constituent housing a
-**concept generator** variable ([percus-sauerland-2003], [charlow-sharvit-2014]) — yielding the
-de re reading. A concept generator maps a *res* to an individual concept; it is **suitable**
-when *reliable* (returns the res in the actual world, with a variable over the holder's
-epistemic alternatives overwritten with the holder) and **acquaintance-based** (the concept is
-one of the holder's available ways of identifying — a member of her conceptual cover,
-[aloni-2001]).
+## Implementation notes
 
-## This file
+Concepts are functions from centered worlds, the attitude alternatives of
+[lewis-1979-attitudes], to individuals, and a cover of `Semantics/Reference/Acquaintance`
+supplies acquaintance; the scenarios are finite models with one attitude alternative each.
+The contrast between *yè* and PRO, a φ-less minimal pronoun ([kratzer-2009]) that takes no
+long-distance antecedent, is described in prose.
 
-* `Concept` / `ConceptGenerator` — intensions over centered worlds; a `Concept` *is* an element
-  of an `Acquaintance.Cover`, so acquaintance is membership in the holder's cover.
-* `sayDeSe` (eq. 76), `sayDeRe`/`claimDeRe` (eq. 77/79b) — the two denotations of *say*, with
-  `Reliable` (eq. 82.i, reliability-with-epistemic-overwrite) and `Suitable` (eq. 82 = reliable
-  ∧ acquaintance-based-via-cover).
-* **Scenario 1** (eq. 75, §5.3): John says "whoever wrote this is clever", unaware he is the
-  author. `ye_de_se_de_re_ambiguous` proves the de se LF is **false** while the de re LF is
-  **true** — via an explicit witnessing "author" concept generator. [pearson-2015]'s central
-  finding, made true by construction.
-* **Scenario 2** (`Napoleon`, §6, eq. 80–85): John believes he is Napoleon and, not recognising
-  himself on TV, says the patient is delusional. `napoleon_contrast` proves "John claims he is
-  delusional" **true** but "John claims Napoleon is delusional" **false** — the bound pronoun
-  (overwritten to John, whom John is acquainted with) succeeds where the name (the actual-world
-  Napoleon, to whom John bears no acquaintance, so no cover concept reliably picks him) fails.
-* `ye_antecedent_is_attitude_holder` grounds the carrier: *yè*'s antecedent is the attitude
-  holder in both readings, i.e. the carrier's `requiredRole = .self`.
+## References
 
-Deferred to prose: the *yè*-vs-PRO φ-feature asymmetry (§7.1: PRO is a φ-less [kratzer-2009]
-minimal pronoun, so — unlike *yè* — it takes no long-distance antecedent).
+* [pearson-2015]
+* [sells-1987]
+* [chierchia-1990]
+* [percus-sauerland-2003]
+* [charlow-sharvit-2014]
+* [aloni-2001]
+* [lewis-1979-attitudes]
+* [kratzer-2009]
 -/
 
 namespace Pearson2015
 
-open Reference.Acquaintance (Cover)
-open Features.Logophoricity (LogophoricRole Logophoric)
+open Reference.Acquaintance
+open Features.Logophoricity
 
 /-! ### Concept generators ([percus-sauerland-2003], [charlow-sharvit-2014]) -/
 
@@ -144,14 +139,14 @@ def cleverB : Wld → Ind → Bool
   | _, _ => false
 
 /-- Reducible so `decide` sees the underlying `Bool` test through the wrapper. -/
-abbrev cleverP : CProp Wld Ind := fun y w => cleverB w y = true
+abbrev cleverP : CProp Wld Ind := λ y w => cleverB w y = true
 
 /-- The "author of the paper" concept: returns the res `john` in the actual world (John really
     is the author) but the believed author `auth` in John's belief world. -/
-def authorConcept : Concept Wld Ind := fun p => if p.1 = actual then john else auth
+def authorConcept : Concept Wld Ind := λ p => if p.1 = actual then john else auth
 
 /-- The generator carrying the "author" concept for any res. -/
-def authorGen : ConceptGenerator Wld Ind := fun _u => authorConcept
+def authorGen : ConceptGenerator Wld Ind := λ _u => authorConcept
 
 /-- John's conceptual cover: the "author of the paper" concept he is acquainted via. -/
 def s1Cover : Cover (Centered Wld Ind) Ind := {authorConcept}
@@ -214,14 +209,14 @@ def delusionalB : Wld → Ind → Bool
   | 1, 1 => true
   | _, _ => false
 
-abbrev delusionalP : CProp Wld Ind := fun y w => delusionalB w y = true
+abbrev delusionalP : CProp Wld Ind := λ y w => delusionalB w y = true
 
 /-- The "patient I saw on TV" concept: the actual world → `john` (reliably himself), the belief
     world → `patient` (whom John takes the man on TV to be). -/
-def patientConcept : Concept Wld Ind := fun p => if p.1 = actualN then john else patient
+def patientConcept : Concept Wld Ind := λ p => if p.1 = actualN then john else patient
 
 /-- The generator carrying the "patient" concept for any res. -/
-def patientGen : ConceptGenerator Wld Ind := fun _u => patientConcept
+def patientGen : ConceptGenerator Wld Ind := λ _u => patientConcept
 
 /-- John's conceptual cover: the single "patient on TV" concept. He has **no** concept that
     picks out the actual-world `napoleon`. -/
