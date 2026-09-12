@@ -2338,7 +2338,6 @@ import Linglib.Studies.Kenstowicz1987
 import Linglib.Studies.KeshetAbney2024
 import Linglib.Studies.Khoo2015
 import Linglib.Studies.Kim2024
-import Linglib.Studies.Kim2024_UPH
 import Linglib.Studies.Kiparsky2002
 import Linglib.Studies.KirkGiannini2024
 import Linglib.Studies.Kirkpatrick2024
