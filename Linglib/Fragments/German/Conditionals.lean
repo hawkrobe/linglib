@@ -3,6 +3,7 @@ import Linglib.Semantics.Conditionals.Marker
 
 /-!
 # German Conditional Markers
+[lassiter-2025]
 
 Conditional connectives in German and their HC/PC restrictions.
 
@@ -19,8 +20,8 @@ open _root_.Conditionals (ConditionalMarker ConditionalMarkerType)
 
 /-- German falls: HC-only conditional marker.
 
-    Implies speaker uncertainty. LNCs with falls are marginal
-    ([cao-white-lassiter-2025], ex. 21). -/
+    Implies speaker uncertainty; unacceptable in premise conditionals and as the
+    main marker of a left-nested conditional ([lassiter-2025], exx. 22, 24). -/
 def falls : ConditionalMarker where
   language := "German"
   marker := "falls"
@@ -31,7 +32,7 @@ def falls : ConditionalMarker where
 /-- German wenn: HC and PC conditional marker.
 
     Can mark either hypothetical or premise conditionals.
-    LNCs with wenn are acceptable ([cao-white-lassiter-2025], ex. 20). -/
+    LNCs with wenn are acceptable ([lassiter-2025], ex. 23). -/
 def wenn : ConditionalMarker where
   language := "German"
   marker := "wenn"
