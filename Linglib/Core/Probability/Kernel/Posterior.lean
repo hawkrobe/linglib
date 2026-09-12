@@ -1,7 +1,6 @@
 import Linglib.Core.Algebra.Order.Chebyshev
 import Linglib.Core.MeasureTheory.Measure.Prod
 import Linglib.Core.Probability.UniformOn
-import Linglib.Core.Data.ENNReal.NNRatCast
 import Mathlib.Probability.Kernel.Posterior
 import Mathlib.MeasureTheory.Measure.Real
 
@@ -384,17 +383,6 @@ theorem posterior_uniformOn_univ_apply_singleton {x : 𝓧} (hx : ∑ w, κ w {x
     rw [comp_uniformOn_univ_apply_singleton]; exact mul_ne_zero hc hx
   rw [posterior_apply_singleton _ _ hsum, uniformOn_univ_apply_singleton,
     comp_uniformOn_univ_apply_singleton, ENNReal.mul_div_mul_left _ _ hc hct]
-
-open scoped NNRat in
-/-- The exact register: a kernel with rational rows has, against the uniform prior, the
-rational posterior that is the state's share of the observation's column. -/
-theorem posterior_uniformOn_univ_nnratCast_apply_singleton (q : W → 𝓧 → ℚ≥0)
-    (hκ : ∀ w x, κ w {x} = q w x) {x : 𝓧} (hx : ∑ w, q w x ≠ 0) (w : W) :
-    (κ†(uniformOn (Set.univ : Set W))) x {w} = ((q w x / ∑ w', q w' x : ℚ≥0) : ℝ≥0∞) := by
-  rw [posterior_uniformOn_univ_apply_singleton κ (by
-      simp only [hκ, ← ENNReal.nnratCast_sum, ne_eq, ENNReal.nnratCast_eq_zero]; exact hx),
-    ENNReal.nnratCast_div _ _ hx, ENNReal.nnratCast_sum]
-  simp only [hκ]
 
 end UniformPrior
 

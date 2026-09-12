@@ -157,6 +157,12 @@ theorem sum_rpow_uniformListener {α : ℝ} (hα : 0 < α) (t : T) :
   rw [profile, Multiset.invPowSum, Multiset.map_map]
   rfl
 
+theorem sum_rpow_uniformListener_toReal {α : ℝ} (hα : 0 < α) (t : T) :
+    ∑ c, (uniformListener sem c {t} ^ α).toReal = ((profile sem t).invPowSum α).toReal := by
+  rw [← ENNReal.toReal_sum fun c _ =>
+    weight_rpow_ne_top hα.le (uniformListener_apply_singleton_le_one sem c t),
+    sum_rpow_uniformListener sem hα]
+
 /-- The speaker share of a true choice depends on the state only through its profile. -/
 theorem uniformSpeaker_apply_singleton_of_profile_eq {α : ℝ} (hα : 0 < α) {t t' : T}
     (hprof : profile sem t = profile sem t') {c : C} (hmem : t ∈ sem c) (hmem' : t' ∈ sem c) :

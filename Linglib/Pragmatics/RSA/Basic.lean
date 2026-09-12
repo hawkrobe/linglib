@@ -224,6 +224,16 @@ theorem speaker_apply_singleton_eq_one {α : ℝ} (hα : 0 < α) {cost : U → �
   exact ENNReal.div_self (mul_ne_zero (weight_rpow_ne_zero hα.le h) hc0)
     (ENNReal.mul_ne_top (weight_rpow_ne_top hα.le hle) hctop)
 
+/-- Speaker shares on reals: the weighted listener value over the row's total. -/
+theorem speaker_real_singleton {α : ℝ} (hα : 0 ≤ α) {cost : U → ℝ≥0∞} (hctop : ∀ u, cost u ≠ ∞)
+    {L : Kernel U W} {w : W} (hle : ∀ u, L u {w} ≤ 1) (u : U) :
+    (speaker α cost L w).real {u}
+      = (L u {w} ^ α).toReal * (cost u).toReal
+        / ∑ u', (L u' {w} ^ α).toReal * (cost u').toReal := by
+  rw [measureReal_def, speaker_apply_singleton, ENNReal.toReal_div, ENNReal.toReal_mul,
+    ENNReal.toReal_sum fun u' _ => ENNReal.mul_ne_top (weight_rpow_ne_top hα (hle u')) (hctop u')]
+  simp_rw [ENNReal.toReal_mul]
+
 omit [MeasurableSingletonClass U] in
 /-- Speaker shares are at most one. -/
 theorem speaker_real_singleton_le_one (α : ℝ) (cost : U → ℝ≥0∞) (L : Kernel U W) (w : W)
@@ -359,6 +369,20 @@ noncomputable def pragmaticListener : Kernel U W := (speaker α cost L)†μ
 
 instance : IsMarkovKernel (pragmaticListener α cost L μ) :=
   inferInstanceAs (IsMarkovKernel ((speaker α cost L)†μ))
+
+/-- At a prior giving every state the same positive mass, listener preference between two
+states is speaker preference between them: the prior and the marginal cancel. -/
+theorem pragmaticListener_real_lt_iff (hμeq : ∀ w w', μ {w} = μ {w'}) (hμ0 : ∀ w, μ {w} ≠ 0)
+    {u : U} {w₀ : W} (hs : speaker α cost L w₀ {u} ≠ 0) {w₁ w₂ : W} :
+    (pragmaticListener α cost L μ u).real {w₁} < (pragmaticListener α cost L μ u).real {w₂}
+      ↔ (speaker α cost L w₁).real {u} < (speaker α cost L w₂).real {u} := by
+  have hx : (speaker α cost L ∘ₘ μ) {u} ≠ 0 := comp_apply_singleton_ne_zero _ _ (hμ0 w₀) hs
+  rw [pragmaticListener, posterior_real_singleton _ _ hx, posterior_real_singleton _ _ hx,
+    div_lt_div_iff_of_pos_right
+      (by rw [measureReal_def]; exact ENNReal.toReal_pos hx (measure_ne_top _ _)),
+    show μ.real {w₁} = μ.real {w₂} by rw [measureReal_def, measureReal_def, hμeq],
+    mul_lt_mul_iff_of_pos_left
+      (by rw [measureReal_def]; exact ENNReal.toReal_pos (hμ0 w₂) (measure_ne_top _ _))]
 
 variable [DiscreteMeasurableSpace U] [StandardBorelSpace U] [Nonempty U] [DecidableEq O]
   (obs : U → O)

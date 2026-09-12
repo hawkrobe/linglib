@@ -1,4 +1,3 @@
-import Linglib.Core.Data.ENNReal.NNRatCast
 import Mathlib.Probability.Kernel.Basic
 import Mathlib.MeasureTheory.Measure.Real
 import Mathlib.Probability.UniformOn
@@ -200,16 +199,5 @@ theorem ofWeights_uniformOn_mul_uniformOn [DecidableEq β] (A B : α → Finset 
       ENNReal.mul_inv_cancel hK hK', mul_one, one_div]
   · rw [if_neg hb, Finset.inter_singleton_of_notMem hb, Finset.card_empty, Nat.cast_zero,
       ENNReal.zero_div, ENNReal.zero_div]
-
-/-! ### Rational weights -/
-
-open scoped NNRat in
-/-- A weight kernel with rational weights has rational rows: the share of `b` in row `a`, in
-`ℚ≥0` and cast. This is the exact register: a row computed by kernel reduction in `ℚ≥0`
-certifies the kernel's values. -/
-theorem ofWeights_nnratCast_apply_singleton (q : α → β → ℚ≥0) (a : α) (hq : ∑ b, q a b ≠ 0)
-    (b : β) :
-    ofWeights (fun a b => (q a b : ℝ≥0∞)) a {b} = ((q a b / ∑ b', q a b' : ℚ≥0) : ℝ≥0∞) := by
-  rw [ofWeights_apply_singleton, ENNReal.nnratCast_div _ _ hq, ENNReal.nnratCast_sum]
 
 end ProbabilityTheory.Kernel
