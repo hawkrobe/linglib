@@ -4,61 +4,37 @@ import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Fragments.Romance.French.Predicates
 
 /-!
-# [martin-schaefer-kastner-2025] — The Lexical Pragmatics of Reflexive Marking
+# Martin, Schäfer and Kastner (2025): The Lexical Pragmatics of Reflexive Marking
 
-Martin, Fabienne, Florian Schäfer & Itamar Kastner. 2025. The lexical
-pragmatics of reflexive marking. *Language* 101(3): 524–571.
+This file formalizes the pragmatic account of French anticausative marking of
+[martin-schaefer-kastner-2025]. Anticausatives marked with *se* and unmarked ones do not
+differ in meaning; cooperative speakers manage the voice ambiguity of *se*, which marks both
+anticausative and reflexive voice, under the Manner supermaxim, and the choice is driven by
+verb class, limited-control against in-control, by the animacy of the sole argument, and by
+the bias to read human arguments as agents. Three generalizations follow: with a human
+argument, limited-control verbs prefer the unmarked form, which is unambiguously
+anticausative, while in-control verbs prefer the marked form, since the unmarked form would
+signal that no agentive construal was intended; with a nonhuman argument, the marked form is
+preferred when the speaker presents the nonhuman as responsible, the reflexive parse being
+the only way to assign it agency.
 
-## Core thesis
+## Implementation notes
 
-French anticausatives marked with *se* or left unmarked do not differ in
-meaning. Rather, cooperative speakers manage the voice ambiguity introduced
-by *se* (which can mark both anticausative and reflexive voice) in line with
-the Manner supermaxim "Be perspicuous." The choice between ±*se* is driven
-by three interacting factors:
+The voice flavours are the substrate's non-thematic and reflexive flavours after
+[schaefer-2008], the maxim the substrate's Manner submaxim of avoiding ambiguity, and the
+entailment profiles of anticausative subjects the substrate's; the account presupposes the
+reflexive–anticausative syncretism of [koontz-garboden-2009].
 
-1. **Verb class** (limited-control vs. in-control)
-2. **Animacy** of the sole DP argument (human vs. nonhuman)
-3. **Agent bias** — the tendency to interpret human DPs as agents
+## TODO
 
-## Three generalizations (Table 1)
+The paper is not on file; the table and generalization numbers are transcribed from an
+earlier version of this file and are UNVERIFIED.
 
-- **Unmarked limited-control preference** (human DP): limited-control ±*se*
-  verbs (*rougir* 'blush') prefer the −*se* form. Rationale: −*se* is
-  unambiguously anticausative; +*se* introduces a reflexive parse that
-  clashes with shared assumptions (the change is not under the human's
-  control). Avoiding ambiguity is optimal.
+## References
 
-- **Marked in-control preference** (human DP): in-control ±*se* verbs
-  (*plier* 'bend') prefer the +*se* form. Rationale: choosing −*se*
-  would trigger a 'no-agent' inference (the speaker avoided the
-  ambiguous form, signaling no agentive construal), which clashes with
-  shared assumptions (the change IS typically under the human's control).
-  Maintaining ambiguity is optimal.
-
-- **Marked responsibility preference** (nonhuman DP): the +*se* form is
-  preferred when the speaker aims to present the nonhuman as responsible.
-  Only the *se*-marked form allows a reflexive parse, which is the only
-  grammatical way to assign agency to a nonhuman sole argument.
-
-## Bridges
-
-- `Flavor.nonThematic` ([schaefer-2008]): the anticausative voice
-  flavor — contributes no semantics. Both ±*se* anticausatives have this.
-- `Flavor.reflexive`: the reflexive voice flavor — assigns agent + theme
-  to the sole DP. Only available with *se*.
-- `MannerSubmaxim.avoidAmbiguity`: the Manner sub-maxim driving the
-  unmarked limited-control preference.
-- `cosSubjectProfile` / `motionCosSubjectProfile`: entailment profiles for
-  anticausative subjects. ControlLevel cross-cuts these: limited-control
-  and in-control property-change verbs share the same profile.
-
-## Relationship to [koontz-garboden-2009]
-
-MSK2025 presupposes K-G 2009's reflexive-anticausative syncretism: *se*
-marks both anticausative and reflexive voice because anticausativization
-IS reflexivization. The pragmatic effects arise precisely because this
-syncretism creates voice ambiguity that speakers must manage.
+* [martin-schaefer-kastner-2025]
+* [schaefer-2008]
+* [koontz-garboden-2009]
 -/
 
 namespace MartinSchaeferKastner2025
