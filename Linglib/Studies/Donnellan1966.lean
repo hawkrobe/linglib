@@ -52,13 +52,13 @@ theorem attributive_eq_some_iff :
 /-- The attributive use as a nominal denotation: the selector is the pointwise iota and there
 is no presupposition beyond its definedness. -/
 def attributiveNominal (domain : List E) (φ : E → W → Prop) [∀ e w, Decidable (φ e w)] :
-    NominalDenot Unit W E :=
+    Nominal Unit W E :=
   .ofReferent (attributive domain φ)
 
 /-- Where the description picks out `e`, the attributive use of *the φ is ψ* asserts `ψ e`. -/
 theorem attributiveNominal_assertion (ψ : E → W → Prop) (h : attributive domain φ w = some e) :
     ((attributiveNominal domain φ).resolve ψ ()).assertion w ↔ ψ e w := by
-  simp [attributiveNominal, NominalDenot.resolve, NominalDenot.ofReferent,
+  simp [attributiveNominal, Nominal.resolve, Nominal.ofReferent,
     Presupposition.PartialProp.presupOfReferent, h]
 
 /-- Donnellan's scene: the description uniquely fits `e` at `w` while the speaker intends

@@ -11,14 +11,15 @@ import Linglib.Semantics.Composition.Assignment
 /-!
 # The denotation of a pronoun
 
-A `PersonalPronoun` entry denotes as a `NominalDenot` whose selector is the variable denotation
+A `PersonalPronoun` entry denotes as a `Nominal` whose selector is the variable denotation
 `interpPronoun`, the value of the entry's index under the assignment, and whose intrinsic
 presupposition is the φ-feature presupposition read off the entry's person, number and gender
 through the cells of `Presupposition.PhiFeatures` (`PersonalPronoun.phiPresup`,
-`PersonalPronoun.denote`). This is the survey of [buring-2012]: one denotation serves the
-bound, anaphoric and deictic uses, binding being an operator on the assignment
-(`Composition/Binding.lean`), and an absent or unmarked feature contributes the trivial
-presupposition, the treatment of [sauerland-2003].
+`PersonalPronoun.denote`). The selector does not vary with the world of evaluation
+(`PersonalPronoun.isRigid_denote_selector`): a pronoun refers directly. This is the survey of
+[buring-2012]: one denotation serves the bound, anaphoric and deictic uses, binding being an
+operator on the assignment (`Composition/Binding.lean`), and an absent or unmarked feature
+contributes the trivial presupposition, the treatment of [sauerland-2003].
 
 ## Implementation notes
 
@@ -33,7 +34,7 @@ deferred until a study needs them.
 -/
 
 open Presupposition Presupposition.PhiFeatures
-open Reference (NominalDenot)
+open Reference (Nominal)
 open Semantics.Composition (interpPronoun)
 
 /-- The conjoined φ-feature presupposition of a pronoun entry over an entity domain `E`: the
@@ -61,9 +62,22 @@ def PersonalPronoun.phiPresup {E : Type*} [PartialOrder E] (e : PersonalPronoun)
 
 /-- A pronoun's denotation: the selector is the variable denotation `interpPronoun i`, always
 defined under a total assignment, and the intrinsic presupposition is the φ-feature
-presupposition of the resolved referent `g i`. The static case, with a trivial world. -/
-def PersonalPronoun.denote {E : Type} [PartialOrder E] (e : PersonalPronoun) (i : ℕ)
+presupposition of the resolved referent `g i`. -/
+def PersonalPronoun.denote {E W : Type} [PartialOrder E] (e : PersonalPronoun) (i : ℕ)
     (speaker addressee : E) (isFemale isInanimate : E → Prop) :
-    NominalDenot (Assignment E) PUnit E where
+    Nominal (Assignment E) W E where
   presup := λ g _ => (e.phiPresup speaker addressee isFemale isInanimate).presup (g i)
-  selector := λ g _ => some (interpPronoun (E := E) (W := PUnit) i g)
+  selector := λ g _ => some (interpPronoun (E := E) (W := W) i g)
+
+@[simp] theorem PersonalPronoun.denote_selector {E W : Type} [PartialOrder E]
+    (e : PersonalPronoun) (i : ℕ) (speaker addressee : E) (isFemale isInanimate : E → Prop)
+    (g : Assignment E) (w : W) :
+    (e.denote i speaker addressee isFemale isInanimate).selector g w = some (g i) :=
+  rfl
+
+/-- A pronoun's referent does not vary with the world: the selector is rigid. -/
+theorem PersonalPronoun.isRigid_denote_selector {E W : Type} [PartialOrder E]
+    (e : PersonalPronoun) (i : ℕ) (speaker addressee : E) (isFemale isInanimate : E → Prop)
+    (g : Assignment E) :
+    Reference.IsRigid ((e.denote (W := W) i speaker addressee isFemale isInanimate).selector g) :=
+  Reference.isRigid_const _
