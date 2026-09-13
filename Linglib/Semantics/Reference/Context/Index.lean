@@ -1,28 +1,41 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Mathlib.Tactic.TypeStar
 
 /-!
 # Indices of evaluation
 
-A `Index` is a (world, time) pair used as a context of
-evaluation for intensional, dynamic, modal, and tense semantics — the
-Lewis/Kaplan "index of evaluation", with world and temporal coordinates
-only. It is *not* the Kratzer parthood-structured situation (a preordered type, as in
-`Conditionals.Counterfactual` lumping) and *not* the Pearl/Halpern partial valuation
-(`Causation.Situation`).
+An index of evaluation is a world–time pair, the circumstance of evaluation of [kaplan-1989] with
+world and temporal coordinates only: a product, with its coordinates named (`Index.world`,
+`Index.time`), so that the `Prod` instances and API apply. It is not the Kratzer situation, a
+preordered type with parthood, nor the Pearl–Halpern partial valuation (`Causation.Situation`).
+
+## References
+
+* [kaplan-1989]
 -/
 
 namespace Reference
 
-/-- A world–time index: a (world, time) pair used as a context of
-    evaluation in intensional, dynamic, modal, and tense semantics.
+/-- A world–time index of evaluation. -/
+abbrev Index (W T : Type*) := W × T
 
-    This is the Lewis/Kaplan "index" — a coordinate tuple as point of
-    evaluation, abstracting from the parthood structure of Kratzer situations. -/
-structure Index (W T : Type*) where
-  /-- The world coordinate -/
-  world : W
-  /-- The temporal coordinate -/
-  time : T
-  deriving Repr
+namespace Index
+
+variable {W T : Type*}
+
+/-- The world coordinate. -/
+abbrev world (i : Index W T) : W := i.1
+
+/-- The temporal coordinate. -/
+abbrev time (i : Index W T) : T := i.2
+
+@[simp] theorem world_mk (w : W) (t : T) : Index.world (w, t) = w := rfl
+@[simp] theorem time_mk (w : W) (t : T) : Index.time (w, t) = t := rfl
+
+end Index
 
 end Reference
