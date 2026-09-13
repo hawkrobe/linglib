@@ -1,0 +1,720 @@
+import Linglib.Data.Examples.Schema
+
+/-!
+# `Just2024` — typed example data
+
+Auto-generated from `Linglib/Data/Examples/Just2024.json` by
+`scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
+the generator. Consumers (the paper's study file, test-suite hubs) import
+this module; declarations live in `namespace Just2024.Examples`.
+-/
+
+namespace Just2024.Examples
+
+open Data.Examples
+
+def ex_2a : LinguisticExample :=
+  { id := "just2024_2a"
+    source := ⟨"just-2024", "(2a)"⟩
+    reportedIn := none
+    language := "east2879"
+    primaryText := "äj-nø=tee-nø wöär-s-øt"
+    discourseSegments := []
+    glossedTokens := [("äj-nø=tee-nø", "drink-GER=eat-GER"), ("wöär-s-øt", "make-PST-3PL")]
+    translation := "They made something to eat and drink."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "P"), ("indexed", "false"), ("condition", "indefinite")]
+    comment := "Eastern Mansi: the subjective paradigm indexes only the A referent; the indefinite P is not indexed (Virtanen 2015)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_2b : LinguisticExample :=
+  { id := "just2024_2b"
+    source := ⟨"just-2024", "(2b)"⟩
+    reportedIn := none
+    language := "east2879"
+    primaryText := "õõw-øm öät kont-iitø"
+    discourseSegments := []
+    glossedTokens := [("õõw-øm", "door-ACC"), ("öät", "NEG"), ("kont-iitø", "find-3SG>SG")]
+    translation := "He does not find the door."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "P"), ("indexed", "true"), ("condition", "topical")]
+    comment := "The objective paradigm indexes the number of a P that is the secondary topic."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_3 : LinguisticExample :=
+  { id := "just2024_3"
+    source := ⟨"just-2024", "(3)"⟩
+    reportedIn := none
+    language := "mace1250"
+    primaryText := "Jana *(go)=bara režiser-ot"
+    discourseSegments := []
+    glossedTokens := [("Jana", "Jana"), ("*(go)=bara", "3SG.M.ACC=look.for.3SG"), ("režiser-ot", "movie.director-DEF.M")]
+    translation := "Jana is looking for the movie director."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "P"), ("indexed", "true"), ("condition", "definite")]
+    comment := "A definite P must be indexed, whether specific or not (Tomić 2008)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_4a : LinguisticExample :=
+  { id := "just2024_4a"
+    source := ⟨"just-2024", "(4a)"⟩
+    reportedIn := none
+    language := "kagu1239"
+    primaryText := "Awafele ha-wa-koma dijoka"
+    discourseSegments := []
+    glossedTokens := [("Awafele", "C2.woman"), ("ha-wa-koma", "PST-C2.A-kill"), ("dijoka", "C5.snake")]
+    translation := "The women killed the snake."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "P"), ("indexed", "false")]
+    comment := "Kagulu: P indexing is optional for animate referents with an overt NP (Petzell 2008); the snake is not indexed."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_4b : LinguisticExample :=
+  { id := "just2024_4b"
+    source := ⟨"just-2024", "(4b)"⟩
+    reportedIn := none
+    language := "kagu1239"
+    primaryText := "Ka-mu-on-aga imukulu akwe"
+    discourseSegments := []
+    glossedTokens := [("Ka-mu-on-aga", "PST.3SG.A-C1.P-see-IPFV"), ("imukulu", "C1.big"), ("akwe", "3SG.POSS")]
+    translation := "S/he sees his/her older sibling regularly."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "P"), ("indexed", "true"), ("condition", "animate")]
+    comment := "The animate P is indexed beside its NP."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_4c : LinguisticExample :=
+  { id := "just2024_4c"
+    source := ⟨"just-2024", "(4c)"⟩
+    reportedIn := none
+    language := "kagu1239"
+    primaryText := "Mheho i-ku-mu-ogoh-es-a"
+    discourseSegments := []
+    glossedTokens := [("Mheho", "C9.cold"), ("i-ku-mu-ogoh-es-a", "C9.A-PRS-3SG.P-fear-CAUS-FV")]
+    translation := "The cold scares him/her."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "P"), ("indexed", "true"), ("condition", "animate")]
+    comment := "The animate P is indexed with no NP."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_5a : LinguisticExample :=
+  { id := "just2024_5a"
+    source := ⟨"just-2024", "(5a)"⟩
+    reportedIn := none
+    language := "teiw1235"
+    primaryText := "Miaag yivar ga-sii"
+    discourseSegments := []
+    glossedTokens := [("Miaag", "yesterday"), ("yivar", "dog"), ("ga-sii", "3SG.P-bite")]
+    translation := "Yesterday a dog bit him."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "P"), ("indexed", "true"), ("condition", "animate")]
+    comment := "Teiwa: animate P referents are obligatorily indexed (Klamer 2010)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_5b : LinguisticExample :=
+  { id := "just2024_5b"
+    source := ⟨"just-2024", "(5b)"⟩
+    reportedIn := none
+    language := "teiw1235"
+    primaryText := "Miaag yivar ga'an sii"
+    discourseSegments := []
+    glossedTokens := [("Miaag", "yesterday"), ("yivar", "dog"), ("ga'an", "3SG"), ("sii", "bite")]
+    translation := "Yesterday a dog bit HIM (not me)."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "P"), ("indexed", "false"), ("condition", "focus")]
+    comment := "The prefix is omitted and a free pronoun used when the animate P is in contrastive focus."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_6a : LinguisticExample :=
+  { id := "just2024_6a"
+    source := ⟨"just-2024", "(6a)"⟩
+    reportedIn := none
+    language := "rund1242"
+    primaryText := "Abâna ba-ára-nyôye amatá"
+    discourseSegments := []
+    glossedTokens := [("Abâna", "C2.children"), ("ba-ára-nyôye", "C2-PST-drink:PFV"), ("amatá", "C1.milk")]
+    translation := "Children drank milk."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "A"), ("indexed", "true"), ("condition", "topical")]
+    comment := "Kirundi: canonical AVP order with the A indexed (Ndayiragije 1999)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_6b : LinguisticExample :=
+  { id := "just2024_6b"
+    source := ⟨"just-2024", "(6b)"⟩
+    reportedIn := none
+    language := "rund1242"
+    primaryText := "Amatá y-á-nyôye abâna"
+    discourseSegments := []
+    glossedTokens := [("Amatá", "C1.milk"), ("y-á-nyôye", "C1.PST-drink:PFV"), ("abâna", "C2.children")]
+    translation := "Children (not parents) drank milk."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "A"), ("indexed", "false"), ("condition", "focus")]
+    comment := "A and P swap positions, P is indexed, and the postverbal A is in contrastive focus."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_6c : LinguisticExample :=
+  { id := "just2024_6c"
+    source := ⟨"just-2024", "(6c)"⟩
+    reportedIn := none
+    language := "rund1242"
+    primaryText := "ha-á-nyôye amatá abâna"
+    discourseSegments := []
+    glossedTokens := [("ha-á-nyôye", "C10.LOC-PST-drink:PFV"), ("amatá", "C1.milk"), ("abâna", "C2.children")]
+    translation := "Children (not parents) drank milk."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "A"), ("indexed", "false"), ("condition", "focus")]
+    comment := "Locative inversion: a locative class prefix replaces the A index under A focus."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_7a : LinguisticExample :=
+  { id := "just2024_7a"
+    source := ⟨"just-2024", "(7a)"⟩
+    reportedIn := none
+    language := "wels1247"
+    primaryText := "Gwel-on nhw ddraig"
+    discourseSegments := []
+    glossedTokens := [("Gwel-on", "see-3PL.PST"), ("nhw", "they"), ("ddraig", "dragon")]
+    translation := "They saw a dragon."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "A"), ("indexed", "true"), ("condition", "pronominal")]
+    comment := "Welsh: only pronominal A referents are indexed for number (Borsley 2009)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_7b : LinguisticExample :=
+  { id := "just2024_7b"
+    source := ⟨"just-2024", "(7b)"⟩
+    reportedIn := none
+    language := "wels1247"
+    primaryText := "Gwel-odd y bechgyn ddraig"
+    discourseSegments := []
+    glossedTokens := [("Gwel-odd", "see-3SG.PST"), ("y", "DEF"), ("bechgyn", "boy.PL"), ("ddraig", "dragon")]
+    translation := "The boys saw a dragon."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "A"), ("indexed", "false"), ("condition", "lexical")]
+    comment := "A lexical A takes the default singular form."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_7c : LinguisticExample :=
+  { id := "just2024_7c"
+    source := ⟨"just-2024", "(7c)"⟩
+    reportedIn := none
+    language := "wels1247"
+    primaryText := "*Gwel-on y bechgyn ddraig"
+    discourseSegments := []
+    glossedTokens := [("Gwel-on", "see-3PL.PST"), ("y", "DEF"), ("bechgyn", "boy.PL"), ("ddraig", "dragon")]
+    translation := ""
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "A"), ("indexed", "true"), ("condition", "lexical")]
+    comment := "A lexical A cannot be indexed for number."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_8a : LinguisticExample :=
+  { id := "just2024_8a"
+    source := ⟨"just-2024", "(8a)"⟩
+    reportedIn := none
+    language := "koor1239"
+    primaryText := "nun-i doro woon-d-uu-ns'i-ko"
+    discourseSegments := []
+    glossedTokens := [("nun-i", "we-NOM"), ("doro", "sheep"), ("woon-d-uu-ns'i-ko", "buy-PFV-PST-1PL-FOC")]
+    translation := "We BOUGHT sheep."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "A"), ("indexed", "true"), ("condition", "predicateFocus")]
+    comment := "Koorete: the A is indexed only when the verb carries the focus marker -ko (Mendisu 2010)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_8b : LinguisticExample :=
+  { id := "just2024_8b"
+    source := ⟨"just-2024", "(8b)"⟩
+    reportedIn := none
+    language := "koor1239"
+    primaryText := "nun-i doro-ko woon-d-o"
+    discourseSegments := []
+    glossedTokens := [("nun-i", "we-NOM"), ("doro-ko", "sheep-FOC"), ("woon-d-o", "buy-PFV-PST")]
+    translation := "We bought SHEEP."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "A"), ("indexed", "false"), ("condition", "otherFocus")]
+    comment := "Focus on the P: no A index."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_8c : LinguisticExample :=
+  { id := "just2024_8c"
+    source := ⟨"just-2024", "(8c)"⟩
+    reportedIn := none
+    language := "koor1239"
+    primaryText := "tamba-ko doro woon-d-a"
+    discourseSegments := []
+    glossedTokens := [("tamba-ko", "me-FOC"), ("doro", "sheep"), ("woon-d-a", "buy-PFV-REL")]
+    translation := "I bought sheep."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "A"), ("indexed", "false"), ("condition", "focus")]
+    comment := "Focus on the A: no A index."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_8d : LinguisticExample :=
+  { id := "just2024_8d"
+    source := ⟨"just-2024", "(8d)"⟩
+    reportedIn := none
+    language := "koor1239"
+    primaryText := "*nun-i doro-ko woon-d-uu-ns'i"
+    discourseSegments := []
+    glossedTokens := [("nun-i", "we-NOM"), ("doro-ko", "sheep-FOC"), ("woon-d-uu-ns'i", "buy-PFV-PST-1PL")]
+    translation := "We BOUGHT sheep."
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "A"), ("indexed", "true"), ("condition", "otherFocus")]
+    comment := "An A index without the predicate focus marker is ungrammatical."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_9a : LinguisticExample :=
+  { id := "just2024_9a"
+    source := ⟨"just-2024", "(9a)"⟩
+    reportedIn := none
+    language := "west2369"
+    primaryText := "toofan-ha-ya peyapey dehkæde ra viran kærd"
+    discourseSegments := []
+    glossedTokens := [("toofan-ha-ya", "storm-PL-EZ"), ("peyapey", "constant"), ("dehkæde", "village"), ("ra", "ACC"), ("viran", "destroy"), ("kærd", "did.3SG")]
+    translation := "Constant storms destroyed the village."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "A"), ("indexed", "false"), ("condition", "inanimate")]
+    comment := "Persian: an inanimate plural A takes a singular index (Sedighi 2010)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_9b : LinguisticExample :=
+  { id := "just2024_9b"
+    source := ⟨"just-2024", "(9b)"⟩
+    reportedIn := none
+    language := "west2369"
+    primaryText := "dozd-an-e gharætgar dehkæde ra viran kærd-ænd"
+    discourseSegments := []
+    glossedTokens := [("dozd-an-e", "thief-PL-EZ"), ("gharætgar", "marauder"), ("dehkæde", "village"), ("ra", "ACC"), ("viran", "destroy"), ("kærd-ænd", "did-3PL")]
+    translation := "Marauders destroyed the village."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "A"), ("indexed", "true"), ("condition", "animate")]
+    comment := "An animate plural A is indexed for number."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_10a : LinguisticExample :=
+  { id := "just2024_10a"
+    source := ⟨"just-2024", "(10a)"⟩
+    reportedIn := none
+    language := "anua1242"
+    primaryText := "kwʌ̌n ā-cám ɲìlàal(-lì)"
+    discourseSegments := []
+    glossedTokens := [("kwʌ̌n", "porridge"), ("ā-cám", "PST-eat"), ("ɲìlàal(-lì)", "child(-DEF)")]
+    translation := "The child ate the porridge."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "A"), ("indexed", "false")]
+    comment := "Anuak: with a topical P in initial position the A is not indexed (Reh 1996)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_10b : LinguisticExample :=
+  { id := "just2024_10b"
+    source := ⟨"just-2024", "(10b)"⟩
+    reportedIn := none
+    language := "anua1242"
+    primaryText := "ɲìlàal kwʌ̌n ā-cám-ε"
+    discourseSegments := []
+    glossedTokens := [("ɲìlàal", "child"), ("kwʌ̌n", "porridge"), ("ā-cám-ε", "PST-eat-3SG.A")]
+    translation := "A child ate the porridge."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "A"), ("indexed", "true"), ("condition", "topical")]
+    comment := "The pragmatically unmarked order, clause-final verb and topical A, is the only one with an A index."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_10c : LinguisticExample :=
+  { id := "just2024_10c"
+    source := ⟨"just-2024", "(10c)"⟩
+    reportedIn := none
+    language := "anua1242"
+    primaryText := "ɲìlàal cám-á kwʌ̌n"
+    discourseSegments := []
+    glossedTokens := [("ɲìlàal", "child"), ("cám-á", "eat-FOC"), ("kwʌ̌n", "porridge")]
+    translation := "The child eats (the) porridge."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "A"), ("indexed", "false"), ("condition", "otherFocus")]
+    comment := "A focalized P: no A index."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_10d : LinguisticExample :=
+  { id := "just2024_10d"
+    source := ⟨"just-2024", "(10d)"⟩
+    reportedIn := none
+    language := "anua1242"
+    primaryText := "kwʌ̌n cám-á ɲìlàal(-li)"
+    discourseSegments := []
+    glossedTokens := [("kwʌ̌n", "porridge"), ("cám-á", "eat-FOC"), ("ɲìlàal(-li)", "child(-DEF)")]
+    translation := "A (the) child has eaten the porridge."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "A"), ("indexed", "false"), ("condition", "focus")]
+    comment := "A focalized A: no A index."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_12a : LinguisticExample :=
+  { id := "just2024_12a"
+    source := ⟨"just-2024", "(12a)"⟩
+    reportedIn := none
+    language := "shek1245"
+    primaryText := "gébèn bây dàdù nyààs=í-k"
+    discourseSegments := []
+    glossedTokens := [("gébèn", "Geben"), ("bây", "female"), ("dàdù", "child"), ("nyààs=í-k", "give.birth=3SG.F.A-REAL")]
+    translation := "Geben has given birth to a daughter!"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "A"), ("indexed", "true"), ("condition", "predicateFocus")]
+    comment := "Sheko: the A is indexed in main clauses (Hellenthal 2010)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_12b : LinguisticExample :=
+  { id := "just2024_12b"
+    source := ⟨"just-2024", "(12b)"⟩
+    reportedIn := none
+    language := "shek1245"
+    primaryText := "m-bāyǹ nata gasku-k-ə"
+    discourseSegments := []
+    glossedTokens := [("m-bāyǹ", "1SG.POSS-wife"), ("nata", "1SG"), ("gasku-k-ə", "insult-REAL-IND")]
+    translation := "MY WIFE insulted me."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "A"), ("indexed", "false"), ("condition", "focus")]
+    comment := "The A index is omitted when the A NP is in focus."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_13a_A : LinguisticExample :=
+  { id := "just2024_13a_A"
+    source := ⟨"just-2024", "(13a)"⟩
+    reportedIn := none
+    language := "maka1311"
+    primaryText := "Na=cini'=i tedong-ku i Ali"
+    discourseSegments := []
+    glossedTokens := [("Na=cini'=i", "3SG.A=see=3SG.P"), ("tedong-ku", "buffalo-1SG.POSS"), ("i", "PERS"), ("Ali", "Ali")]
+    translation := "Ali sees my buffalo."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "A"), ("indexed", "true"), ("condition", "topical")]
+    comment := "Makasar: in the normal transitive pattern both A (proclitic) and P (enclitic) are indexed (Jukes 2015)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_13a_P : LinguisticExample :=
+  { id := "just2024_13a_P"
+    source := ⟨"just-2024", "(13a)"⟩
+    reportedIn := none
+    language := "maka1311"
+    primaryText := "Na=cini'=i tedong-ku i Ali"
+    discourseSegments := []
+    glossedTokens := [("Na=cini'=i", "3SG.A=see=3SG.P"), ("tedong-ku", "buffalo-1SG.POSS"), ("i", "PERS"), ("Ali", "Ali")]
+    translation := "Ali sees my buffalo."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "P"), ("indexed", "true"), ("condition", "definite")]
+    comment := "The definite P is indexed by the enclitic."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_13b_A : LinguisticExample :=
+  { id := "just2024_13b_A"
+    source := ⟨"just-2024", "(13b)"⟩
+    reportedIn := none
+    language := "maka1311"
+    primaryText := "kongkong=a a-buno=i miong=a"
+    discourseSegments := []
+    glossedTokens := [("kongkong=a", "dog=DEF"), ("a-buno=i", "AF-kill=3SG.P"), ("miong=a", "cat=DEF")]
+    translation := "THE DOG killed the cat."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "A"), ("indexed", "false"), ("condition", "focus")]
+    comment := "The fronted, focused A is not indexed."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_13b_P : LinguisticExample :=
+  { id := "just2024_13b_P"
+    source := ⟨"just-2024", "(13b)"⟩
+    reportedIn := none
+    language := "maka1311"
+    primaryText := "kongkong=a a-buno=i miong=a"
+    discourseSegments := []
+    glossedTokens := [("kongkong=a", "dog=DEF"), ("a-buno=i", "AF-kill=3SG.P"), ("miong=a", "cat=DEF")]
+    translation := "THE DOG killed the cat."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "P"), ("indexed", "true"), ("condition", "definite")]
+    comment := "The definite P stays indexed."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_13c_P : LinguisticExample :=
+  { id := "just2024_13c_P"
+    source := ⟨"just-2024", "(13c)"⟩
+    reportedIn := none
+    language := "maka1311"
+    primaryText := "miong=a na=buno kongkong=a"
+    discourseSegments := []
+    glossedTokens := [("miong=a", "cat=DEF"), ("na=buno", "3SG.A=kill"), ("kongkong=a", "dog=DEF")]
+    translation := "The dog killed THE CAT."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "P"), ("indexed", "false"), ("condition", "focus")]
+    comment := "The fronted, focused P is not indexed."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_13c_A : LinguisticExample :=
+  { id := "just2024_13c_A"
+    source := ⟨"just-2024", "(13c)"⟩
+    reportedIn := none
+    language := "maka1311"
+    primaryText := "miong=a na=buno kongkong=a"
+    discourseSegments := []
+    glossedTokens := [("miong=a", "cat=DEF"), ("na=buno", "3SG.A=kill"), ("kongkong=a", "dog=DEF")]
+    translation := "The dog killed THE CAT."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("role", "A"), ("indexed", "true"), ("condition", "topical")]
+    comment := "The A stays indexed."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def t1_a1_p2 : LinguisticExample :=
+  { id := "just2024_t1_a1_p2"
+    source := ⟨"just-2024", "Table 1"⟩
+    reportedIn := none
+    language := "reye1240"
+    primaryText := "A 1 with P 2"
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("aPerson", "1"), ("pPerson", "2"), ("indexed", "P")]
+    comment := "Reyesano: the arguments indexed in a transitive clause by the persons of A and P (Guillaume 2009); locuphoric referents are indexed, a third-person co-argument only as A."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def t1_a1_p3 : LinguisticExample :=
+  { id := "just2024_t1_a1_p3"
+    source := ⟨"just-2024", "Table 1"⟩
+    reportedIn := none
+    language := "reye1240"
+    primaryText := "A 1 with P 3"
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("aPerson", "1"), ("pPerson", "3"), ("indexed", "A")]
+    comment := "Reyesano: the arguments indexed in a transitive clause by the persons of A and P (Guillaume 2009); locuphoric referents are indexed, a third-person co-argument only as A."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def t1_a2_p1 : LinguisticExample :=
+  { id := "just2024_t1_a2_p1"
+    source := ⟨"just-2024", "Table 1"⟩
+    reportedIn := none
+    language := "reye1240"
+    primaryText := "A 2 with P 1"
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("aPerson", "2"), ("pPerson", "1"), ("indexed", "A")]
+    comment := "Reyesano: the arguments indexed in a transitive clause by the persons of A and P (Guillaume 2009); locuphoric referents are indexed, a third-person co-argument only as A."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def t1_a2_p3 : LinguisticExample :=
+  { id := "just2024_t1_a2_p3"
+    source := ⟨"just-2024", "Table 1"⟩
+    reportedIn := none
+    language := "reye1240"
+    primaryText := "A 2 with P 3"
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("aPerson", "2"), ("pPerson", "3"), ("indexed", "A")]
+    comment := "Reyesano: the arguments indexed in a transitive clause by the persons of A and P (Guillaume 2009); locuphoric referents are indexed, a third-person co-argument only as A."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def t1_a3_p1 : LinguisticExample :=
+  { id := "just2024_t1_a3_p1"
+    source := ⟨"just-2024", "Table 1"⟩
+    reportedIn := none
+    language := "reye1240"
+    primaryText := "A 3 with P 1"
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("aPerson", "3"), ("pPerson", "1"), ("indexed", "AP")]
+    comment := "Reyesano: the arguments indexed in a transitive clause by the persons of A and P (Guillaume 2009); locuphoric referents are indexed, a third-person co-argument only as A."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def t1_a3_p2 : LinguisticExample :=
+  { id := "just2024_t1_a3_p2"
+    source := ⟨"just-2024", "Table 1"⟩
+    reportedIn := none
+    language := "reye1240"
+    primaryText := "A 3 with P 2"
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("aPerson", "3"), ("pPerson", "2"), ("indexed", "AP")]
+    comment := "Reyesano: the arguments indexed in a transitive clause by the persons of A and P (Guillaume 2009); locuphoric referents are indexed, a third-person co-argument only as A."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def t1_a3_p3 : LinguisticExample :=
+  { id := "just2024_t1_a3_p3"
+    source := ⟨"just-2024", "Table 1"⟩
+    reportedIn := none
+    language := "reye1240"
+    primaryText := "A 3 with P 3"
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("aPerson", "3"), ("pPerson", "3"), ("indexed", "A")]
+    comment := "Reyesano: the arguments indexed in a transitive clause by the persons of A and P (Guillaume 2009); locuphoric referents are indexed, a third-person co-argument only as A."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def all : List LinguisticExample := [ex_2a, ex_2b, ex_3, ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_6a, ex_6b, ex_6c, ex_7a, ex_7b, ex_7c, ex_8a, ex_8b, ex_8c, ex_8d, ex_9a, ex_9b, ex_10a, ex_10b, ex_10c, ex_10d, ex_12a, ex_12b, ex_13a_A, ex_13a_P, ex_13b_A, ex_13b_P, ex_13c_P, ex_13c_A, t1_a1_p2, t1_a1_p3, t1_a2_p1, t1_a2_p3, t1_a3_p1, t1_a3_p2, t1_a3_p3]
+
+end Just2024.Examples
