@@ -1,6 +1,5 @@
 import Linglib.Pragmatics.SocialMeaning.SCM
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
-import Mathlib.Tactic.Linarith
 
 /-!
 # Eckert-Montague Lift ([burnett-2019], Definition 3.4)
@@ -88,8 +87,8 @@ theorem emField_antitone {Variant : Type} {ps : PropertySpace}
     - `association(v, d) > 0` → positive pole of dimension d
     - `association(v, d) < 0` → negative pole of dimension d
     - `association(v, d) = 0` → no property on dimension d -/
-def scmPropertyIndexed {Variant : Type}
-    (field : AssociationField Variant SocialDimension ℚ)
+def scmPropertyIndexed {Variant : Type} {R : Type*} [Zero R] [LT R]
+    (field : AssociationField Variant SocialDimension R)
     (v : Variant) : SCMProperty → Prop
   | .competent     => field v .competence > 0
   | .incompetent   => field v .competence < 0
@@ -98,8 +97,8 @@ def scmPropertyIndexed {Variant : Type}
   | .solidary      => field v .antiSolidarity < 0
   | .antiSolidary  => field v .antiSolidarity > 0
 
-instance {Variant : Type}
-    (field : AssociationField Variant SocialDimension ℚ)
+instance {Variant : Type} {R : Type*} [Zero R] [LT R] [DecidableLT R]
+    (field : AssociationField Variant SocialDimension R)
     (v : Variant) : DecidablePred (scmPropertyIndexed field v) :=
   fun prop => match prop with
   | .competent     => inferInstanceAs (Decidable (_ > _))
@@ -109,16 +108,16 @@ instance {Variant : Type}
   | .solidary      => inferInstanceAs (Decidable (_ < _))
   | .antiSolidary  => inferInstanceAs (Decidable (_ > _))
 
-def scmPropertiesFromField {Variant : Type}
-    (field : AssociationField Variant SocialDimension ℚ)
+def scmPropertiesFromField {Variant : Type} {R : Type*} [Zero R] [LT R] [DecidableLT R]
+    (field : AssociationField Variant SocialDimension R)
     (v : Variant) : Finset SCMProperty :=
   Finset.univ.filter (scmPropertyIndexed field v)
 
 /-- The SCM properties derived from a sign-valued field are always
     consistent: no variant can index both poles of the same dimension,
     because `x > 0` and `x < 0` cannot both hold. -/
-theorem scmPropertiesFromField_consistent {Variant : Type}
-    (field : AssociationField Variant SocialDimension ℚ)
+theorem scmPropertiesFromField_consistent {Variant : Type} {R : Type*} [Zero R] [Preorder R]
+    [DecidableLT R] (field : AssociationField Variant SocialDimension R)
     (v : Variant) :
     scmSpace.isConsistent (scmPropertiesFromField field v) = true := by
   simp only [PropertySpace.isConsistent]
@@ -128,12 +127,12 @@ theorem scmPropertiesFromField_consistent {Variant : Type}
   have hq' := (Finset.mem_filter.mp hq).2
   cases p <;> cases q <;>
     simp only [scmPropertyIndexed, scmIncompatible, scmSpace] at * <;>
-    first | rfl | (exfalso; linarith)
+    first | rfl | exact (lt_asymm hp' hq').elim
 
 /-- Convert an association field over the SCM dimensions to a `GroundedField` over
     the SCM property space. -/
-def fromAssociationField {Variant : Type}
-    (field : AssociationField Variant SocialDimension ℚ) :
+def fromAssociationField {Variant : Type} {R : Type*} [Zero R] [Preorder R] [DecidableLT R]
+    (field : AssociationField Variant SocialDimension R) :
     GroundedField Variant scmSpace :=
   { indexedProperties := scmPropertiesFromField field
     indexed_consistent := scmPropertiesFromField_consistent field }

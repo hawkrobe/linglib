@@ -4,6 +4,7 @@ import Linglib.Semantics.Quantification.Numerals.Precision
 import Linglib.Pragmatics.SocialMeaning.SCM
 import Linglib.Pragmatics.SocialMeaning.EckertMontague
 import Linglib.Fragments.English.NumeralModifiers
+import Mathlib.Data.Sign.Defs
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -27,14 +28,15 @@ contrasts sharpen where precision is pragmatically idle.
 * `exp1Mean`, `exp2Mean` — the per-dimension cell means (Experiment 1: 216 recruited, 61
   excluded, within-subjects; Experiment 2: 960 recruited, 150 excluded, one-trial
   between-subjects).
-* `bsbField` — the association field of signs, `0` on the underspecified variant (the
-  neutral-diagnostic reading of the general discussion); `bsbGroundedField` — its
-  [burnett-2019] Eckert–Montague lift.
+* `signField`, `bsbField` — the association field of signs of each variant's contrast with the
+  underspecified variant, the neutral-diagnostic reading of the general discussion, derived from
+  the Experiment 1 means; `bsbGroundedField` — its [burnett-2019] Eckert–Montague lift.
 
 ## Main results
 
-* `sign_alignment`, `opposite_directions` — the core sign structure: Status and
-  anti-Solidarity favor precise, Solidarity reverses; precise and approximate are antipodal.
+* `sign_alignment`, `opposite_directions`, `signField_exp2Mean` — the core sign structure:
+  Status and anti-Solidarity favor precise, Solidarity reverses, precise and approximate are
+  antipodal, and Experiment 2 replicates the signs.
 * `underspec_near_precise_on_competence`, `underspec_near_approx_on_antiSol`,
   `underspec_intermediate_on_warmth`, `diagnostic_crossover` — the underspecified diagnostic
   (pp. 827–828).
@@ -199,25 +201,31 @@ theorem sign_alignment :
 
 /-! ### The three-way indexical field -/
 
-/-- The three-way association field: idealized signs (±1) matching the ordering theorems above,
-    with `0` on the underspecified variant. The `0` encodes the neutral-diagnostic reading of
-    the general discussion (p. 828), on which the underspecified variant reveals which
-    endpoint drives each contrast; the paper's alternative — round numbers carrying their own
-    chameleonic indexicality — is not modeled. -/
-def bsbField : AssociationField Variant SocialDimension ℚ := .of λ
-  | .precise, .competence => 1
-  | .precise, .warmth => -1
-  | .precise, .antiSolidarity => 1
-  | .approximate, .competence => -1
-  | .approximate, .warmth => 1
-  | .approximate, .antiSolidarity => -1
-  | .underspecified, _ => 0
+/-- The association field of signs a table of cell means determines: the sign of each
+    variant's contrast with the underspecified variant on each dimension. The underspecified
+    variant is the zero point, the neutral-diagnostic reading of the general discussion
+    (p. 828), on which it reveals which endpoint drives each contrast; the paper's alternative,
+    round numbers carrying their own chameleonic indexicality, is not modeled. -/
+def signField (mean : Variant → SocialDimension → ℚ) :
+    AssociationField Variant SocialDimension SignType :=
+  .of λ v d => SignType.sign (mean v d - mean .underspecified d)
 
-/-- Precise and approximate are antipodal: algebraically opposite associations on
-    every dimension. -/
+/-- The three-way field, the signs of the Experiment 1 contrasts. -/
+def bsbField : AssociationField Variant SocialDimension SignType := signField exp1Mean
+
+/-- Precise and approximate are antipodal, their contrasts with the underspecified variant
+    running opposite ways on every dimension. -/
 theorem opposite_directions : bsbField.Antipodal .precise .approximate := by
   show bsbField .precise = -bsbField .approximate
-  funext d; cases d <;> decide
+  funext d; cases d <;> decide +kernel
+
+/-- Experiment 2 replicates the sign structure of Experiment 1. -/
+theorem signField_exp2Mean : signField exp2Mean = bsbField := by
+  ext v d; cases v <;> cases d <;> decide +kernel
+
+/-- The underspecified variant, the zero point, indexes nothing. -/
+@[simp] theorem bsbField_underspecified : bsbField .underspecified = 0 := by
+  funext d; simp [bsbField, signField]
 
 /-! ### The underspecified diagnostic (pp. 827–828)
 
@@ -373,18 +381,18 @@ def bsbGroundedField : GroundedField Variant scmSpace :=
 theorem precise_scmProperties :
     bsbGroundedField.indexedProperties .precise =
       {.competent, .cold, .antiSolidary} := by
-  decide
+  decide +kernel
 
 /-- Approximate speech indexes the complement, {incompetent, warm, solidary}. -/
 theorem approximate_scmProperties :
     bsbGroundedField.indexedProperties .approximate =
       {.incompetent, .warm, .solidary} := by
-  decide
+  decide +kernel
 
 /-- The underspecified variant indexes nothing, so under the EM lift it is compatible with
     every persona — the neutral-diagnostic reading made structural. -/
 theorem underspecified_indexes_nothing :
     bsbGroundedField.indexedProperties .underspecified = ∅ := by
-  decide
+  decide +kernel
 
 end BeltramaSoltBurnett2023

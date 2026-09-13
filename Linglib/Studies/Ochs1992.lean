@@ -1,6 +1,5 @@
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
 import Mathlib.Data.Matrix.Mul
-import Mathlib.Tactic.NormNum
 
 /-!
 # Ochs (1992): Indexing Gender
@@ -20,10 +19,11 @@ non-exclusivity that follows from every stance being available to both sexes.
 
 ## Implementation notes
 
-The form-to-stance map is categorical and the stance-to-gender strengths are illustrative
-proportions with a positive floor; the argument rests on the composition, not on the
-numbers. The third property of the chapter, that the relation is temporally transcendent,
-is not represented.
+The form-to-stance map is categorical, and the stance-to-gender strengths are two parameters,
+the strength `a` with which a stance indexes the gender whose preferred image it belongs to
+and the strength `b` with which it indexes the other, the chapter fixing only that both are
+positive and that `a` exceeds `b`; the theorems assume no more. The third property of the
+chapter, that the relation is temporally transcendent, is not represented.
 
 ## References
 
@@ -60,45 +60,59 @@ inductive SFP where
   | wa
   deriving DecidableEq
 
+variable {R : Type*} [Semiring R]
+
 /-- The direct index has each particle index exactly one stance. -/
-def formStance : AssociationField SFP Stance ℚ := .of λ
+def formStance : AssociationField SFP Stance R := .of λ
   | .ze, .coarse => 1
   | .wa, .delicate => 1
   | _, _ => 0
 
 /-- The constitutive relation makes coarse intensity part of the preferred image of men and
-delicate intensity of women, each stance keeping a positive association with both poles since
-both sexes use both. -/
-def stanceGender : AssociationField Stance GenderPole ℚ := .of λ
-  | .coarse, .masculine => 3/4
-  | .coarse, .feminine => 1/4
-  | .delicate, .masculine => 1/4
-  | .delicate, .feminine => 3/4
+delicate intensity of women, each stance indexing its own gender with strength `a` and the
+other with strength `b`, since both sexes use both. -/
+def stanceGender (a b : R) : AssociationField Stance GenderPole R := .of λ
+  | .coarse, .masculine => a
+  | .coarse, .feminine => b
+  | .delicate, .masculine => b
+  | .delicate, .feminine => a
 
 /-- The indirect index of gender by a particle composes the two maps through the stances. -/
-def composed : AssociationField SFP GenderPole ℚ := formStance * stanceGender
+def composed (a b : R) : AssociationField SFP GenderPole R := formStance * stanceGender a b
 
-theorem composed_apply (sfp : SFP) (g : GenderPole) :
-    composed sfp g = formStance sfp .coarse * stanceGender .coarse g +
-      formStance sfp .delicate * stanceGender .delicate g := by
-  simp [composed, Matrix.mul_apply, Finset.univ, Fintype.elems, Finset.sum_insert]
+/-- *ze* inherits the gender associations of coarse intensity. -/
+theorem composed_ze (a b : R) (g : GenderPole) :
+    composed a b .ze g = stanceGender a b .coarse g := by
+  simp [composed, Matrix.mul_apply, Finset.univ, Fintype.elems, Finset.sum_insert, formStance]
+
+/-- *wa* inherits the gender associations of delicate intensity. -/
+theorem composed_wa (a b : R) (g : GenderPole) :
+    composed a b .wa g = stanceGender a b .delicate g := by
+  simp [composed, Matrix.mul_apply, Finset.univ, Fintype.elems, Finset.sum_insert, formStance]
+
+variable [Preorder R] {a b : R}
 
 /-- *ze* indexes masculinity more than femininity, mediated by coarse intensity. -/
-theorem ze_indexes_masculine : composed .ze .feminine < composed .ze .masculine := by
-  norm_num [composed_apply, formStance, stanceGender]
+theorem ze_indexes_masculine (h : b < a) :
+    composed a b .ze .feminine < composed a b .ze .masculine := by
+  simpa [composed_ze, stanceGender] using h
 
 /-- *wa* indexes femininity more than masculinity, mediated by delicate intensity. -/
-theorem wa_indexes_feminine : composed .wa .masculine < composed .wa .feminine := by
-  norm_num [composed_apply, formStance, stanceGender]
+theorem wa_indexes_feminine (h : b < a) :
+    composed a b .wa .masculine < composed a b .wa .feminine := by
+  simpa [composed_wa, stanceGender] using h
 
 /-- Every particle indexes both poles, since every stance does and every particle indexes a
 stance, the non-exclusivity of the relation. -/
-theorem indexes_all (sfp : SFP) (g : GenderPole) : composed.Indexes sfp g := by
-  cases sfp <;> cases g <;> norm_num [AssociationField.Indexes, composed_apply, formStance,
-    stanceGender]
+theorem indexes_all (hb : 0 < b) (h : b < a) (sfp : SFP) (g : GenderPole) :
+    (composed a b).Indexes sfp g := by
+  cases sfp <;> cases g <;>
+    simp [AssociationField.Indexes, composed_ze, composed_wa, stanceGender] <;>
+    first | exact hb | exact hb.trans h
 
 /-- The two particles contrast on each pole. -/
-theorem composed_ze_ne_wa (g : GenderPole) : composed .ze g ≠ composed .wa g := by
-  cases g <;> norm_num [composed_apply, formStance, stanceGender]
+theorem composed_ze_ne_wa (h : b < a) (g : GenderPole) :
+    composed a b .ze g ≠ composed a b .wa g := by
+  cases g <;> simp [composed_ze, composed_wa, stanceGender] <;> first | exact h.ne' | exact h.ne
 
 end Ochs1992

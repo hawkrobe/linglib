@@ -31,9 +31,10 @@ and the traits a variant indexes toward form its indexical field.
 
 An association field is a `Matrix`, so composing associations through a mediating domain, the
 indirect indexicality of [ochs-1992], is matrix multiplication, and inheriting a field along a
-map of variant spaces is `Matrix.submatrix`. The sign-valued fields of
-[beltrama-solt-burnett-2023] and the grounded fields of [burnett-2019] are association fields
-and indexical fields over the Stereotype Content Model dimensions.
+map of variant spaces is `Matrix.submatrix`. The carrier is any type with a zero and an order,
+`SignType` for the sign-valued fields of [beltrama-solt-burnett-2023], an ordered semiring for
+strengths that compose; the grounded fields of [burnett-2019] are indexical fields over the
+Stereotype Content Model properties.
 
 ## References
 
