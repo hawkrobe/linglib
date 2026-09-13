@@ -2,7 +2,7 @@ import Linglib.Semantics.Quantification.Numerals.Roundness
 import Linglib.Semantics.Quantification.Numerals.Precision
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
 import Linglib.Pragmatics.SocialMeaning.Dimension
-import Linglib.Pragmatics.SocialMeaning.EckertMontague
+import Linglib.Pragmatics.SocialMeaning.Persona
 import Linglib.Studies.BeltramaSoltBurnett2023
 import Linglib.Data.Examples.BeltramaSchwarz2024
 import Mathlib.Data.Sign.Defs
