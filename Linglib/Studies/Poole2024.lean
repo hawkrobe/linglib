@@ -1,128 +1,234 @@
-import Linglib.Syntax.Case.Assigner
+import Linglib.Syntax.Case.Dependent
+import Linglib.Syntax.Minimalist.Probe.Basic
+import Linglib.Data.Examples.Poole2024
 
 /-!
-# Poole (2024) — Dependent-case assignment could be Agree
-[poole-2024] [marantz-1991] [baker-vinokurova-2010]
+# Poole (2024): Dependent-case assignment could be Agree
 
-There are three models of case assignment: **m1** = case via Agree
-(functional-head valuation), **m2** = configurational/dependent case
-([marantz-1991]), **m3** = m1 + m2. Preminger argues m1 *undergenerates* —
-it has no analogue of dependent case, so m1 < m2. [poole-2024] pushes back:
-dependent case *can* be implemented in m1, via an ordered Agree **probe
-stack** ⟨[∗φ∗]ᵁᴺᴹ < [∗φ∗]ᵁᴺᴹ_DEP⟩ — the first probe values on a caseless DP
-("unlocking" the second), and the second then assigns dependent case to the
-next caseless DP (the dependency requirement: a second caseless DP must
-exist). So m1 ≥ m2: the two models are **extensionally equivalent**, and the
-choice between them is *theoretical* (parsimony, baroqueness), not empirical.
+This file formalizes [poole-2024]'s argument that dependent case, the innovation of
+[marantz-1991]'s configurational model, can be assigned by Agree. A head carries the probe stack
+(8): a φ-probe relativized to unmarked case, which values on the closest caseless DP and so
+records that a second DP is present, followed by a case-assigning probe with the same
+relativization, active only once the first is valued and, by the Principle of Minimal
+Compliance, blind to the first probe's goal ([rackowski-richards-2005]). Low dependent case
+comes from a stack on a head above both DPs, which meets them in c-command order; high
+dependent case from a stack on the head that introduces the higher DP, which searches its
+complement and then, by specifier–head Agree ([bejar-rezac-2009]), the specifier it merges
+with. Either way the stack assigns nothing with fewer than two caseless DPs in its domain and
+never marks the DP that unlocked it (`stack_eq_none_of_subsingleton`, `stack_ne_unlocker`).
 
-This is the **convergence dual of `Studies/Kalin2018.lean`**: where Kalin's
-licensing diverges from a no-licensing account (`¬ AgreesOnCase`), Poole's
-Agree-based dependent case *converges* with configurational dependent case.
-Both are stated through the same `Assigner` harness (`Syntax/Case/Assigner.lean`).
+On a two-DP domain the stack assigns exactly what the dependent rule of the configurational
+model assigns, low or high, whatever lexical case the DPs carry (`low_eq_dependentPass`,
+`high_eq_dependentPass`); this is the paper's translation of any configurational account into
+an Agree account. The two mechanisms part on a third caseless DP, which the configurational
+rule also marks and a single stack, discharged once, does not (`stack_marks_once`). The Sakha
+illustration of §5 puts a dative stack on V and an accusative stack on T; on every clause
+shape of table (19) the two stacks assign the cases that the dative and accusative rules of
+[baker-vinokurova-2010] assign (`sakha_eq_bakerVinokurova`), and accusative appears on a DP
+exactly when it is accessible to T and another caseless DP unlocks the stack, as in (15),
+(18) and (20) (`accusative_rows`).
 
-`agreeAssigner` below is the m1 mechanism for the *low-dependent* (accusative)
-pattern: probe stack on a head above both arguments, so the higher caseless DP
-unlocks (and stays unmarked) and the lower gets dependent case. We prove it
-yields **identical verdicts** to the configurational `dependentAssigner` on
-the two-argument configurations [poole-2024] illustrates from Sakha
-([baker-vinokurova-2010]'s "accusative" as low dependent case). The harness
-compares *outcomes*, so it can only confirm the *extensional* equivalence —
-which is exactly Poole's point: the m1/m2 distinction is not adjudicable on
-empirical reach. The Sakha ditransitive (UNM–DAT–ACC) needs *two* probe
-stacks (high DAT on V + low ACC on T); the single-stack model here covers the
-transitive, leaving multi-stack ditransitives as the natural extension.
+## Implementation notes
+
+Probes are the substrate's `Probe.search` over goals paired with their positions, so that
+minimal compliance is the removal of the unlocking position and case is assigned by position;
+the two-DP theorems then hold for arbitrary labels and lexical cases by computation. What the
+stack assigns is recorded as valued by Agree, the configurational rule as valued by a dependent
+rule, and the theorems compare the cases, which is the extensional equivalence the paper
+argues for; the provenance is where the two models differ by design. Unmarked case, case
+discrimination below the unmarked setting, and the negative c-command rules of §6.1 are not
+formalized.
+
+## References
+
+* [poole-2024]
+* [marantz-1991]
+* [baker-vinokurova-2010]
+* [rackowski-richards-2005]
+* [bejar-rezac-2009]
 -/
 
 namespace Poole2024
 
-open Syntax.Case
-open Syntax.Case.Licensing (LicensedNP)
+open Case Minimalist Data.Examples Examples
 
-/-- The m1 Agree-based dependent-case assigner for the low-dependent
-    (accusative) pattern, as a probe stack on a head above both arguments.
-    A DP with lexical case keeps it (`inherent`). Among the caseless DPs in
-    c-command order: the first **unlocks** the stack and stays unmarked
-    (`default`), the second is assigned dependent case (`structural`,
-    accusative). A single stack discharges once — so a lone caseless DP, or
-    DPs beyond the second, stay unmarked (the ditransitive needs a second
-    stack; see the module docstring). -/
-def agreeAssigner : Assigner := fun nps label =>
-  match nps.find? (·.label == label) with
-  | none => none
-  | some np =>
-    match np.lexicalCase with
-    | some c => some (.assigned c .inherent)
-    | none =>
-      let caseless := (nps.filter (·.lexicalCase.isNone)).map (·.label)
-      match caseless.findIdx (· == np.label) with
-      | 1 => some (.assigned .acc .structural)   -- second probe: dependent ACC
-      | _ => some (.assigned .nom .default)      -- unlocker / lone DP: unmarked
-  /- (`findIdx` is total — `np` is caseless and present, so its label is in
-     `caseless`; index 0 is the unlocker, ≥2 are post-discharge.) -/
+/-! ### The dependent-case probe stack (8) -/
 
-/-! ### m1 = m2 on the whole transitive paradigm
+/-- A goal as a head sees it: an NP with its current valuation, at its position among the
+goals the head encounters. -/
+abbrev Goal := (NP × Valuation) × ℕ
 
-The two mechanisms — a per-DP "is there a caseless c-commander?" check
-(`dependentAssigner`, m2) versus an ordered unlock-then-assign probe stack
-(`agreeAssigner`, m1) — are not merely equal on sample clauses: they compute
-the **same function** on the entire two-argument paradigm, for arbitrary case
-content. And their *exact point of divergence* is itself structural. -/
+/-- The φ-probe relativized to unmarked case: it sees exactly the caseless DPs. -/
+def unmarkedProbe : Probe Goal := Probe.ofVis λ g => g.1.2.isNone
 
-/-- The two-argument clause schema, parameterized by the case content and
-    licensing status of the subject and object. -/
-private def stim2 (sc oc : Option Case) (sn on : Bool) : List LicensedNP :=
-  [ { label := "subj", lexicalCase := sc, needsLicensing := sn }
-  , { label := "obj",  lexicalCase := oc, needsLicensing := on } ]
+/-- The stack (8) over the goals a head encounters in order: the position of the DP assigned
+dependent case, if the first probe finds a caseless DP to unlock the second and the second,
+ignoring that DP, finds another. -/
+def stack (goals : List (NP × Valuation)) : Option ℕ :=
+  (unmarkedProbe.search goals.zipIdx).bind λ g =>
+    (unmarkedProbe.search (goals.zipIdx.filter (·.2 ≠ g.2))).map (·.2)
 
-/-- **m1 = m2 on every transitive clause.** For *any* case content (`sc`, `oc`)
-    and licensing status of the two arguments, the Agree probe stack and
-    configurational dependent case assign the identical result — case *and*
-    provenance — to each argument. This is [poole-2024]'s extensional
-    equivalence as a statement about the two *functions*, not a finite sample:
-    on the configurations a single low-dependent stack covers, m2 ≤ m1. -/
-theorem agree_eq_dependent_two_args (sc oc : Option Case) (sn on : Bool) :
-    ∀ np ∈ stim2 sc oc sn on,
-      agreeAssigner (stim2 sc oc sn on) np.label
-        = dependentAssigner .accusative (stim2 sc oc sn on) np.label := by
-  rintro np hnp
-  simp only [stim2, List.mem_cons, List.not_mem_nil, or_false] at hnp
-  rcases hnp with rfl | rfl <;> cases sc <;> cases oc <;> rfl
+/-- The stack assigning the case `c`: the DP it finds is valued `c` by Agree, every other goal
+is left as it was. -/
+def assignDep (c : Case) (goals : List (NP × Valuation)) : List (NP × Valuation) :=
+  match stack goals with
+  | none => goals
+  | some j => goals.zipIdx.map λ g => if g.2 = j then (g.1.1, some (c, .agree)) else g.1
 
-/-- **m1 ≈ m2 through the harness, over the whole paradigm.** A corollary of
-    the assignment identity: the two accounts `AgreesOnCase` *and* `AgreesOnSource`
-    on every transitive — the convergence dual of `Kalin2018`'s
-    `dependentCase_vs_licensing_diverge_on_perfective_object` (`¬ AgreesOnCase`).
-    The harness compares outcomes, so this is exactly the extensional
-    equivalence [poole-2024] argues for; the residual m1-vs-m2 distinction is
-    theoretical (probe-stack baroqueness vs. a primitive dependent-case rule),
-    which an outcome comparison cannot — and should not — adjudicate. -/
-theorem m1_agrees_m2_two_args (sc oc : Option Case) (sn on : Bool) :
-    AgreesOnCase agreeAssigner (dependentAssigner .accusative) (stim2 sc oc sn on) ∧
-    AgreesOnSource agreeAssigner (dependentAssigner .accusative) (stim2 sc oc sn on) := by
-  refine ⟨fun np hnp => ?_, fun np hnp => ?_⟩ <;>
-    rw [agree_eq_dependent_two_args sc oc sn on np hnp]
+/-- The cases a list of valued NPs carries. -/
+def surface (out : List (NP × Valuation)) : List (Option Case) := out.map (·.2.map (·.1))
 
-/-! ### The boundary: one stack, one dependent case
+/-- With fewer than two caseless DPs among its goals the stack assigns nothing: the first probe
+is never valued, or the second finds no DP. -/
+theorem stack_eq_none_of_subsingleton {goals : List (NP × Valuation)}
+    (h : ∀ i j, ∀ g ∈ goals.zipIdx, ∀ g' ∈ goals.zipIdx, g.2 = i → g'.2 = j →
+      g.1.2 = none → g'.1.2 = none → i = j) :
+    stack goals = none := by
+  unfold stack
+  rcases hs : unmarkedProbe.search goals.zipIdx with _ | g
+  · rfl
+  · simp only [Option.bind_some, Option.map_eq_none_iff, Probe.search_eq_none_iff, List.mem_filter,
+      decide_eq_true_eq, and_imp]
+    intro g' hg' hne hvis
+    have hg := Probe.mem_of_search_eq_some hs
+    have hv := Probe.visible_of_search_eq_some hs
+    simp only [unmarkedProbe, Probe.ofVis, Option.isNone_iff_eq_none] at hv hvis
+    exact hne (h g'.2 g.2 g' hg' g hg rfl rfl hvis hv)
 
-The equivalence is *exact*: it holds for two arguments and fails for three.
-Configurational case marks every non-initial caseless DP accusative, whereas a
-single probe stack discharges only once. This divergence is the formal
-signature of "one stack = one dependent case" — and precisely why [poole-2024]
-models the Sakha ditransitive (UNM–DAT–ACC) with a *second* probe stack rather
-than one. -/
+/-- Minimal compliance: the DP that unlocks the stack is not the one it marks. -/
+theorem stack_ne_unlocker {goals : List (NP × Valuation)} {g : Goal} {j : ℕ}
+    (hs : unmarkedProbe.search goals.zipIdx = some g) (hj : stack goals = some j) : j ≠ g.2 := by
+  unfold stack at hj
+  rw [hs, Option.bind_some, Option.map_eq_some_iff] at hj
+  obtain ⟨g', hg', rfl⟩ := hj
+  exact of_decide_eq_true (List.mem_filter.1 (Probe.mem_of_search_eq_some hg')).2
 
-private def threeCaseless : List LicensedNP :=
-  [ { label := "a", lexicalCase := none, needsLicensing := true }
-  , { label := "b", lexicalCase := none, needsLicensing := true }
-  , { label := "c", lexicalCase := none, needsLicensing := true } ]
+/-! ### Low and high dependent case against the configurational rules -/
 
-/-- On three caseless arguments the two accounts diverge on the **third**: the
-    single probe stack leaves it unmarked (`nom`), whereas configurational case
-    marks it accusative (it is c-commanded by a caseless DP). -/
-theorem agree_diverges_dependent_three_caseless :
-    agreeAssigner threeCaseless "c" = some (.assigned .nom .default) ∧
-    dependentAssigner .accusative threeCaseless "c"
-      = some (.assigned .acc .structural) := by
-  exact ⟨by decide, by decide⟩
+/-- Low dependent case (10): a stack on a head above two DPs meets them in c-command order and
+assigns the lower one what the low dependent rule assigns, whatever lexical case either
+carries. -/
+theorem low_eq_dependentPass (c : Case) (a b : NP) :
+    surface (assignDep c (initial NP.lexicalCase [a, b]))
+      = surface (({ low := some c } : Rules).dependentPass (λ _ => true)
+          (initial NP.lexicalCase [a, b])) := by
+  obtain ⟨_, ca⟩ := a
+  obtain ⟨_, cb⟩ := b
+  cases ca <;> cases cb <;> rfl
+
+/-- High dependent case (11): a stack on the head introducing the higher DP searches its
+complement first and its specifier last, and assigns the specifier what the high dependent
+rule assigns, whatever lexical case either carries. -/
+theorem high_eq_dependentPass (c : Case) (spec comp : NP) :
+    (surface (assignDep c (initial NP.lexicalCase [comp, spec]))).reverse
+      = surface (({ high := some c } : Rules).dependentPass (λ _ => true)
+          (initial NP.lexicalCase [spec, comp])) := by
+  obtain ⟨_, cs⟩ := spec
+  obtain ⟨_, cc⟩ := comp
+  cases cs <;> cases cc <;> rfl
+
+/-- One stack, one dependent case: on three caseless DPs the stack marks only the second,
+whereas the low dependent rule marks every DP c-commanded by a caseless one. -/
+theorem stack_marks_once (c : Case) (a b d : NP) (ha : a.lexicalCase = none)
+    (hb : b.lexicalCase = none) (hd : d.lexicalCase = none) :
+    surface (assignDep c (initial NP.lexicalCase [a, b, d])) = [none, some c, none] ∧
+      surface (({ low := some c } : Rules).dependentPass (λ _ => true)
+        (initial NP.lexicalCase [a, b, d])) = [none, some c, some c] := by
+  obtain ⟨_, _⟩ := a
+  obtain ⟨_, _⟩ := b
+  obtain ⟨_, _⟩ := d
+  subst ha hb hd
+  exact ⟨rfl, rfl⟩
+
+/-! ### Sakha (§5) -/
+
+/-- A Sakha clause shape of table (19): whether it has an external argument, an indirect object
+in the specifier of VP, and a direct object in the complement of VP, the last either shifted out
+of the VP phase or not. -/
+structure Shape where
+  ea : Bool
+  io : Bool
+  dobj : Option Bool
+  deriving DecidableEq, Repr
+
+/-- The three arguments. -/
+def eaNP : NP := ⟨"EA", none⟩
+def ioNP : NP := ⟨"IO", none⟩
+def doNP : NP := ⟨"DO", none⟩
+
+/-- The goals V meets: its complement, the direct object, then its specifier, the indirect
+object. -/
+def Shape.vGoals (s : Shape) : List (NP × Valuation) :=
+  (s.dobj.map λ _ => (doNP, (none : Valuation))).toList ++ (if s.io then [(ioNP, none)] else [])
+
+/-- The goals T meets after V's stack has run: the external argument, then the direct object if
+it has shifted out of VP; the indirect object stays in the VP phase. -/
+def Shape.tGoals (s : Shape) (vp : List (NP × Valuation)) : List (NP × Valuation) :=
+  (if s.ea then [(eaNP, none)] else []) ++
+    (if s.dobj = some true then vp.filter (·.1 = doNP) else [])
+
+/-- The cases of the external argument, the indirect object, and the direct object after the
+dative stack on V and the accusative stack on T ([poole-2024] (16), (17)). -/
+def Shape.agree (s : Shape) : Option Case × Option Case × Option Case :=
+  let vp := assignDep .dat s.vGoals
+  let tp := assignDep .acc (s.tGoals vp)
+  let caseOf (n : NP) (l : List (NP × Valuation)) : Option Case :=
+    (l.find? (·.1 = n)).bind (·.2.map (·.1))
+  (caseOf eaNP tp, caseOf ioNP vp, (caseOf doNP tp).orElse λ _ => caseOf doNP vp)
+
+/-- The cases after the dative rule (14a) in the VP phase, the indirect object above the direct
+object, and the accusative rule (14b) in the clause. -/
+def Shape.bakerVinokurova (s : Shape) : Option Case × Option Case × Option Case :=
+  let vp := ({ high := some .dat } : Rules).dependentPass (λ _ => true)
+    ((if s.io then [(ioNP, none)] else []) ++
+      (s.dobj.map λ _ => (doNP, (none : Valuation))).toList)
+  let tp := ({ low := some .acc } : Rules).dependentPass (λ _ => true) (s.tGoals vp)
+  let caseOf (n : NP) (l : List (NP × Valuation)) : Option Case :=
+    (l.find? (·.1 = n)).bind (·.2.map (·.1))
+  (caseOf eaNP tp, caseOf ioNP vp, (caseOf doNP tp).orElse λ _ => caseOf doNP vp)
+
+/-- Table (19): on every clause shape the two stacks assign what the two dependent rules
+assign. -/
+theorem sakha_eq_bakerVinokurova (s : Shape) : s.agree = s.bakerVinokurova := by
+  obtain ⟨ea, io, dobj⟩ := s
+  cases ea <;> cases io <;> rcases dobj with _ | _ | _ <;> decide
+
+/-- The goals of T's accusative stack in (15), (18) and (20): another caseless DP, if any, then
+the DP in question, if accessible to T. -/
+def tGoals (licensor accessible : Bool) : List (NP × Valuation) :=
+  (if licensor then [(eaNP, none)] else []) ++ (if accessible then [(doNP, none)] else [])
+
+/-- A row's accusative marking, accessibility, and licensor, read from its features. -/
+def interpret (r : LinguisticExample) : Option (Bool × Bool × Bool) := do
+  let hasAcc ← match r.feature? "acc" with
+    | some "yes" => some true
+    | some "no" => some false
+    | _ => none
+  let accessible ← match r.feature? "accessible" with
+    | some "yes" => some true
+    | some "no" => some false
+    | _ => none
+  let licensor ← match r.feature? "licensor" with
+    | some "yes" => some true
+    | some "no" => some false
+    | _ => none
+  pure (hasAcc, accessible, licensor)
+
+/-- A row is predicted: it is acceptable exactly when it carries accusative just in case T's
+stack assigns it. -/
+def Predicted (r : LinguisticExample) : Prop :=
+  match interpret r with
+  | some (hasAcc, accessible, licensor) =>
+      r.judgment = .acceptable ↔ hasAcc = (stack (tGoals licensor accessible)).isSome
+  | none => False
+
+instance (r : LinguisticExample) : Decidable (Predicted r) := by
+  unfold Predicted; split <;> infer_instance
+
+/-- (15), (18), (20): the shifted direct object and the raised embedded subject are accusative
+exactly when another caseless DP unlocks T's stack; the unshifted object and the subject with
+no matrix DP are not. -/
+theorem accusative_rows : ∀ r ∈ Examples.all, Predicted r := by
+  decide
 
 end Poole2024
