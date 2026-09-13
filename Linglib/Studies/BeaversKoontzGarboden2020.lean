@@ -1,5 +1,5 @@
 import Linglib.Semantics.Root.Defs
-import Linglib.Semantics.ArgumentStructure.VerbDenotation
+import Linglib.Semantics.ArgumentStructure.Verb
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Data.Examples.BeaversKoontzGarboden2020
 

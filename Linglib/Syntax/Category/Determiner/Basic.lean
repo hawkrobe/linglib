@@ -41,7 +41,7 @@ localized to a single declaration.
 
 An `Article`'s admissible [schwarz-2009] strengths are `Article.presupTypes`
 (Frame-free, read off `uses`); its denotation is `Article.toDescriptions`
-(`Semantics/Definiteness/DeterminerDenotation.lean`, Frame-aware) — the set of `Description`s
+(`Semantics/Definiteness/Determiner.lean`, Frame-aware) — the set of `Description`s
 those strengths admit via `Description.ofPresupType`, so a syncretic article like
 English *the* denotes *both* the weak and the strong description. The possessive
 denotation is `Possessive.denote` (same file); the `Quantifier` generalized-quantifier
@@ -129,7 +129,7 @@ structure Quantifier extends Determiner where
 
 /-- A possessive determiner (my/your/the boy's). Its denotation is definiteness
 via a possession relation — `Possessive.denote` in
-`Semantics/Definiteness/DeterminerDenotation.lean`. -/
+`Semantics/Definiteness/Determiner.lean`. -/
 structure Possessive extends Determiner
   deriving DecidableEq, Repr
 
@@ -351,7 +351,7 @@ The [schwarz-2009] presupposition types an article *can* express — its
 admissible readings, read off `uses`. A syncretic article (English *the*) admits
 both; a weak- or strong-only article admits one. The image of these under
 `Description.ofPresupType` is the article's set of possible denotations
-(`Article.toDescriptions`, in `DeterminerDenotation.lean`). -/
+(`Article.toDescriptions`, in `Definiteness/Determiner.lean`). -/
 
 /-- The [schwarz-2009] strengths an article admits, read off its `uses` (as a
 list — `DefPresupType` is binary, so its content is the membership-closure). -/

@@ -10,7 +10,7 @@ import Linglib.Semantics.Possession.Basic
 
 Gives the determiner lexical records (`Syntax/Category/Determiner/Basic.lean`) meanings,
 as `NominalDenot`s — the determiner half of the API whose pronoun half is
-`Semantics/Reference/PronounDenotation.lean`. The wiring is parallel:
+`Semantics/Reference/Pronoun.lean`. The wiring is parallel:
 
 | | pronoun | determiner |
 |---|---|---|

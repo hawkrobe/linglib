@@ -1,6 +1,6 @@
 import Linglib.Semantics.Root.Defs
 import Linglib.Semantics.Possession.Relationalizer
-import Linglib.Semantics.ArgumentStructure.VerbDenotation
+import Linglib.Semantics.ArgumentStructure.Verb
 import Linglib.Fragments.Washo.PropertyConcepts
 import Linglib.Data.Examples.HaninkKoontzGarboden2025
 

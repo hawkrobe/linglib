@@ -11,7 +11,7 @@ Hofmann's `.star` (`M = Entity`, instance in `ICDRT/Basic.lean`), Charlow's
 `∅` (`M = Set`, instance in `Studies/Charlow2019.lean`), plain values for
 the extensional baseline (`M = Id`, the `Assignment` instance below) — and
 the shared signature is what makes per-family lookups comparable: the static
-pronoun selector of `Reference/PronounDenotation.lean` is its `Id` instance.
+pronoun selector of `Reference/Pronoun.lean` is its `Id` instance.
 
 The class is data-only (the `Membership`/`GetElem` pattern): update laws
 and accessibility predicates are each family's own commitments and live in

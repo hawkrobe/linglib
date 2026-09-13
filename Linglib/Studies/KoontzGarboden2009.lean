@@ -1,4 +1,4 @@
-import Linglib.Semantics.ArgumentStructure.VerbDenotation
+import Linglib.Semantics.ArgumentStructure.Verb
 import Linglib.Fragments.Spanish.Predicates
 
 /-!

@@ -1,5 +1,5 @@
 import Linglib.Fragments.English.Pronouns
-import Linglib.Semantics.Reference.PronounDenotation
+import Linglib.Semantics.Reference.Pronoun
 
 /-!
 # Büring 2012: pronouns
