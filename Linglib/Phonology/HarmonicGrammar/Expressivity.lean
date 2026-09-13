@@ -258,7 +258,7 @@ theorem lex_imp_lower_violations {n : Nat} (w : Fin n → ℝ) (M : Nat)
 
 /-- The algebraic form of the agreement kernel: an exponentially separated
 weighting reads the `M`-bounded fragment of the lex order strictly
-monotonically — [riggle-2009]'s order-preserving weight map from the violation
+monotonically — [riggle-2009b]'s order-preserving weight map from the violation
 semiring to tropical costs, in concrete form. -/
 theorem strictMonoOn_weightedViolations {n : Nat} {w : Fin n → ℝ} {M : Nat}
     (hw : ExponentiallySeparated w M) :
