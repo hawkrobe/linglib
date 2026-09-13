@@ -1,26 +1,31 @@
-import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Data.Examples.Anderson2006b
-import Mathlib.Data.List.MinMax
-import Mathlib.Tactic.DeriveFintype
+import Mathlib.Data.Finset.Insert
 
 /-!
-# Anderson 2006: localist case grammar
+# Anderson (2006): Modern grammars of case, chapter 6
 
-Every semantic relation an argument bears is a bundle of the three first-order case features of
-chapter 6 — absolutive, the semantically empty relation; source, whose non-locational form is the
-ergative; and locative, which may carry source or goal as a second-order feature — and all eight
-combinations occur: the Experiencer is a locative source, the contactive patient an absolutive
-locative, and *suffer*'s subject bears all three. Subject selection ranks ergative above ergative
-absolutive above absolutive, so only a non-spatial source or an absolutive can be subject, and
-subject formation then marks a selected absolutive as ergative — the neutralization behind
-subjecthood.
+This file formalizes the localist case grammar of chapter 6 of [anderson-2006b]. A semantic
+relation is a bundle of the three first-order case features of (11), absolutive, source and
+locative, and every bundle occurs: the ergative is a non-locational source, the experiencer a
+locative source (39h), the contactive patient an absolutive locative (22), and the subject of
+*suffer* bears all three (34). Goal specification (12b) marks an absolutive co-dependent with an
+ergative as a goal, the subject selection hierarchy (38)′ ranks a simple ergative above a
+combined one above any absolutive, and subject formation (40) adds the ergative feature to the
+selected argument, so that a subject is always a non-spatial source, inherent or derived.
 
-## Main definitions
+We prove that a subject is never a goal absolutive, so (40) applies exactly where (12b) fails,
+and that the hierarchy selects the recorded subject of each of the book's examples.
 
-* `Relation`: a bundle of first-order `Feature`s (the second-order {goal} and {src} are not
-  represented); `subjectRank` the hierarchy (38)′, `subject` the selected argument of a
-  `Predication`, `subjectFormation` rule (40).
-* `andersonLinking`: the hierarchy as a `LinkingTheory`, via `Relation.toRole`.
+## Implementation notes
+
+* The comma of (38) is read as (17) glosses it, "combined with some other relation", so a simple
+  ergative outranks the experiencer and the self-mover alike, as `A > D` in (4.17)′. The
+  hierarchy is (38)′, without the optional comma: the *with*-phrase of (4.8b) is a
+  circumstantial outside subject selection, as the chapter's own analysis has it.
+* Second-order features are not stored. The goal of an absolutive (12b) is derived from its
+  predication; the goal or source of a locative (12a) is left in the row comments.
+* A subject is any rank-maximal eligible argument: the hierarchy leaves equatives
+  indeterminate (4.13).
 
 ## References
 
@@ -29,147 +34,141 @@ subjecthood.
 
 namespace Anderson2006b
 
-open ArgumentStructure Data.Examples
-
-/-! ### Case features and relations -/
+open Data.Examples
 
 /-- The three first-order case features (11). -/
 inductive Feature
   | abs
   | src
   | loc
-  deriving DecidableEq, Fintype
+  deriving DecidableEq
 
-/-- A semantic relation is a bundle of first-order features; the eight combinations all
-occur (§6.2). -/
+/-- A semantic relation is a bundle of first-order case features. -/
 abbrev Relation := Finset Feature
+
+/-- A predication is the list of relations borne by a predicator's arguments. -/
+abbrev Predication := List Relation
 
 namespace Relation
 
-/-- The semantically empty relation. -/
+variable {r s : Relation} {p : Predication}
+
+/-! ### Named relations -/
+
+/-- The absolutive is the semantically empty relation. -/
 abbrev absolutive : Relation := {.abs}
 
-/-- Non-locational source. -/
+/-- The ergative is a non-locational source. -/
 abbrev ergative : Relation := {.src}
 
+/-- The simple locative. -/
 abbrev locative : Relation := {.loc}
 
-/-- The self-mover of (39c). -/
-abbrev ergAbs : Relation := {.abs, .src}
-
-/-- The Experiencer, a locative source (39h). -/
+/-- The experiencer is a locative source (39h). -/
 abbrev experiencer : Relation := {.src, .loc}
 
-/-- The contactive patient (22). -/
+/-- The contactive is an absolutive locative (22). -/
 abbrev contactive : Relation := {.abs, .loc}
 
-/-- The hom onto the project's role labels: a locative source is an experiencer, any other
-source an agent, a sourceless absolutive a patient. -/
-def toRole (r : Relation) : Option ThetaRole :=
-  if .src ∈ r then (if .loc ∈ r then some .experiencer else some .agent)
-  else if .abs ∈ r then some .patient else none
+/-- A relation is a patient when it combines the locative with a non-locative feature (33). -/
+def IsPatient (r : Relation) : Prop := .loc ∈ r ∧ (.abs ∈ r ∨ .src ∈ r)
 
-end Relation
+instance : DecidablePred IsPatient := λ _ => by unfold IsPatient; infer_instance
 
-/-! ### Subject selection and subject formation -/
+theorem isPatient_experiencer : IsPatient experiencer := by decide
 
-/-- The subject selection hierarchy (38)′: ergative > ergative absolutive > absolutive; a
-purely spatial argument is ineligible, and the locative feature is irrelevant. -/
+theorem isPatient_contactive : IsPatient contactive := by decide
+
+/-! ### Subject selection -/
+
+/-- The rank of a relation on the subject selection hierarchy (38)′. A simple ergative outranks
+a combined one, which outranks any absolutive, and a purely spatial argument is ineligible. -/
 def subjectRank (r : Relation) : ℕ :=
-  if .src ∈ r then (if .abs ∈ r then 2 else 3) else if .abs ∈ r then 1 else 0
+  if .src ∈ r then (if r = ergative then 3 else 2) else if .abs ∈ r then 1 else 0
 
-theorem subjectRank_ergative_gt_ergAbs : subjectRank .ergAbs < subjectRank .ergative := by
-  decide
+theorem subjectRank_pos_iff : 0 < r.subjectRank ↔ .src ∈ r ∨ .abs ∈ r := by
+  unfold subjectRank; split_ifs <;> simp_all
 
-theorem subjectRank_ergAbs_gt_absolutive :
-    subjectRank .absolutive < subjectRank .ergAbs := by decide
+theorem two_le_subjectRank_iff : 2 ≤ r.subjectRank ↔ .src ∈ r := by
+  unfold subjectRank; split_ifs <;> simp_all
 
-theorem subjectRank_insert_loc (r : Relation) : subjectRank (insert .loc r) = subjectRank r := by
-  simp [subjectRank]
+theorem subjectRank_lt_ergative (h : r ≠ ergative) : r.subjectRank < ergative.subjectRank := by
+  unfold subjectRank; split_ifs <;> simp_all
 
-/-- The Experiencer and the ergative differ in content but not in rank. -/
-theorem experiencer_ne_ergative :
-    Relation.experiencer ≠ Relation.ergative ∧
-      subjectRank .experiencer = subjectRank .ergative := by decide
+/-- A relation is a subject of a predication when it is an eligible argument no argument
+outranks; the hierarchy leaves ties indeterminate (4.13). -/
+def IsSubjectOf (r : Relation) (p : Predication) : Prop :=
+  r ∈ p ∧ 0 < r.subjectRank ∧ ∀ s ∈ p, s.subjectRank ≤ r.subjectRank
 
-/-- The relations of a predication's arguments. -/
-abbrev Predication := List Relation
+instance : Decidable (r.IsSubjectOf p) := by unfold IsSubjectOf; infer_instance
 
-/-- The selected subject: the highest-ranked argument. -/
-def subject (p : Predication) : Option Relation := p.argmax subjectRank
+/-- An absolutive is a goal of a predication when a co-argument is an ergative (12b); the
+accusative signals such an argument (13). -/
+def IsGoalOf (r : Relation) (p : Predication) : Prop :=
+  .abs ∈ r ∧ .src ∉ r ∧ ∃ s ∈ p, .src ∈ s
 
-/-- Subject formation (40): the selected argument acquires the ergative feature. -/
+instance : Decidable (r.IsGoalOf p) := by unfold IsGoalOf; infer_instance
+
+/-- A subject without an inherent source has no ergative co-argument. -/
+theorem IsSubjectOf.src_notMem_of_src_notMem (h : r.IsSubjectOf p) (hr : .src ∉ r) :
+    ∀ s ∈ p, .src ∉ s := λ s hs hsrc => by
+    have := h.2.2 s hs
+    have := two_le_subjectRank_iff.2 hsrc
+    have := mt two_le_subjectRank_iff.1 hr
+    omega
+
+/-- A subject is never a goal absolutive, so subject formation (40) applies exactly where goal
+specification (12b) fails. -/
+theorem IsSubjectOf.not_isGoalOf (h : r.IsSubjectOf p) : ¬ r.IsGoalOf p :=
+  λ ⟨_, hr, s, hs, hsrc⟩ => h.src_notMem_of_src_notMem hr s hs hsrc
+
+/-! ### Subject formation -/
+
+/-- Subject formation (40) marks the selected argument as a source. -/
 def subjectFormation (r : Relation) : Relation := insert .src r
 
-/-- Subject marks a non-spatial source, inherent or derived by (40). -/
-theorem src_mem_subjectFormation (r : Relation) : .src ∈ subjectFormation r :=
+theorem src_mem_subjectFormation (r : Relation) : .src ∈ r.subjectFormation :=
   Finset.mem_insert_self _ _
 
-/-- An inherent source is untouched by (40): the neutralization leaves the residue the
-ergative subjects have in common. -/
-theorem subjectFormation_eq_self {r : Relation} (h : .src ∈ r) : subjectFormation r = r :=
+/-- An inherent source is untouched by (40), which leaves as residue what the ergative
+subjects have in common. -/
+theorem subjectFormation_eq_self (h : .src ∈ r) : r.subjectFormation = r :=
   Finset.insert_eq_of_mem h
-
-/-! ### The derivations of (39) -/
-
-def read : Predication := [.ergative, .absolutive]
-
-def fell : Predication := [.absolutive, .locative]
-
-def flew : Predication := [.ergAbs, .locative]
-
-def knew : Predication := [.experiencer, .absolutive]
-
-def suffered : Predication := [{.abs, .src, .loc}, .locative]
-
-theorem subjects_39 :
-    subject read = some .ergative ∧ subject fell = some .absolutive ∧
-      subject flew = some .ergAbs ∧ subject knew = some .experiencer ∧
-      subject suffered = some {.abs, .src, .loc} := by decide
-
-/-- (39b) is the odd one out: its subject is not inherently ergative and is assimilated to the
-others only by (40). -/
-theorem fell_subject_not_src :
-    ∀ r ∈ (subject fell).toList, .src ∉ r ∧ .src ∈ subjectFormation r := by decide
 
 /-! ### The book's examples -/
 
 /-- The relation strings of the example rows. -/
-def Relation.ofString? : String → Option Relation
-  | "abs" => some .absolutive
-  | "erg" => some .ergative
-  | "loc" => some .locative
-  | "abs,erg" => some .ergAbs
-  | "erg,loc" => some .experiencer
-  | "abs,loc" => some .contactive
-  | "abs,erg,loc" => some {.abs, .src, .loc}
-  | _ => none
+def ofString : List (String × Relation) :=
+  [("abs", absolutive), ("erg", ergative), ("loc", locative), ("abs,erg", {.abs, .src}),
+    ("erg,loc", experiencer), ("abs,loc", contactive), ("abs,erg,loc", {.abs, .src, .loc})]
 
-/-- The predication a row records. -/
-def predicationOfRow (r : LinguisticExample) : Predication :=
-  r.paperFeatures.filterMap fun kv => if kv.1 = "arg" then Relation.ofString? kv.2 else none
+end Relation
 
-/-- Across the book's examples, the subject is the argument the hierarchy (38)′ selects — except
-(4.8b), whose complex absolutive outranks the simple one only under (38)'s optional comma. -/
-theorem rows_subject_selection :
-    ∀ r ∈ Examples.all, r.id ≠ "andersonjm2006_4_8b" →
-      subject (predicationOfRow r) = (r.feature? "subject").bind Relation.ofString? := by
+/-- The predication a row records, adjuncts excluded. -/
+def Predication.ofRow (e : LinguisticExample) : Predication :=
+  e.paperFeatures.filterMap λ kv =>
+    if kv.1 = "arg" then List.lookup kv.2 Relation.ofString else none
+
+/-- The hierarchy selects the recorded subject of each of the book's examples, and no other
+argument ties with it. -/
+theorem rows_subject :
+    ∀ e ∈ Examples.all, ∃ r ∈ Predication.ofRow e,
+      e.parse? "subject" Relation.ofString = some r ∧ r.IsSubjectOf (Predication.ofRow e) ∧
+        ∀ s ∈ Predication.ofRow e, s ≠ r → s.subjectRank < r.subjectRank := by
   decide +kernel
 
-/-! ### As a linking theory -/
+/-- The subject of (39b) is not inherently ergative; it is assimilated to the others only by
+(40). -/
+theorem fell_subject_derived :
+    ∃ r ∈ Predication.ofRow Examples.ex_39b,
+      r.IsSubjectOf (Predication.ofRow Examples.ex_39b) ∧ .src ∉ r := by
+  decide +kernel
 
-open Linking in
-/-- Anderson's subject selection as a linking theory over predications: the subject's role is
-the label of the selected relation; the theory is silent on other functions. -/
-def andersonLinking : LinkingTheory Predication Unit where
-  compatible _ := [()]
-  predict p _ pos := match pos with
-    | .subject => (subject p).bind Relation.toRole
-    | _ => none
-
-theorem andersonLinking_subjects :
-    andersonLinking.predict read () .subject = some .agent ∧
-      andersonLinking.predict fell () .subject = some .patient ∧
-      andersonLinking.predict knew () .subject = some .experiencer := by decide
+/-- The subject of (34) is at once an experiencer and a contactive, so all three first-order
+features combine on one argument. -/
+theorem suffered_subject :
+    ∃ r ∈ Predication.ofRow Examples.ex_34, r.IsSubjectOf (Predication.ofRow Examples.ex_34) ∧
+      Relation.experiencer ⊆ r ∧ Relation.contactive ⊆ r := by
+  decide +kernel
 
 end Anderson2006b
