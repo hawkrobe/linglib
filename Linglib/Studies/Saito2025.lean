@@ -3,66 +3,66 @@ import Linglib.Processing.DiscriminativeLexicon.Normed
 import Linglib.Processing.DiscriminativeLexicon.Training
 
 /-!
-# Saito, Tomaschek & Baayen (2025): frequency × inflectional status via the DLM
+# Saito, Tomaschek & Baayen (2025): Interaction of Frequency and Inflectional Status
 
-[saito-tomaschek-baayen-2025] reanalyse German tongue-position data (560 tokens, 88 word
-types sharing the rhyme `[a(:)(X)t]`, Karl-Eberhard Corpus): high-frequency *non-inflected*
-words show articulatory reduction (tongue raising, for the low vowel `[a(:)]`), while in
-high-frequency *inflected* words the reduction is attenuated (paper §2.2). Replacing the
-binary inflectional-status factor with `SemSupSuffix` — semantic support from word meaning
-to the suffix triphone, read off a trained DLM ([baayen-2019],
-[heitmeier-chuang-baayen-2026]) — improves the tongue-position GAMM by 142.87 AIC units
-with one fewer effective degree of freedom (paper §3.3, Table 3). The apparent
-morphological-boundary effect is thus driven by inflectional semantics, challenging
-production models with an intermediate morpheme layer such as WEAVER++
-([levelt-roelofs-meyer-1999], [roelofs-1997]).
-
-## Main declarations
-
-* `GermanInflectionalDLM`: `DiscriminativeLexicon.Linear` at the paper's carrier types,
-  triphone form vectors of dimension 14404 and word2vec meaning vectors of dimension 300
-  (paper §3.1).
-* `close_meanings_imply_close_form`: the substrate Lipschitz bound at those carriers —
-  close meanings yield close predicted articulations.
-* `semSup_lt_of_forms_lt`: when the suffix triphone is linearly decodable from
-  meanings, training alone gives suffix-bearing (inflected) words strictly greater
-  suffix support — the direction of the paper's headline contrast.
+This file formalizes the paper's discriminative-lexicon account of a frequency effect that
+reverses with inflectional status. In tongue-position data from the Karl Eberhards Corpus of
+spontaneous southern German, high-frequency non-inflected words show articulatory reduction
+of the stem vowel while high-frequency inflected words do not, and the paper replaces the
+binary inflectional-status predictor by the semantic support that a word's meaning lends to
+its suffix triphone in a trained discriminative lexicon, which improves the tongue-position
+model with one fewer degree of freedom. The model is the substrate's linear discriminative
+lexicon at the paper's carriers, triphone form vectors and word2vec meaning vectors
+(`GermanInflectionalDLM`); close meanings yield close predicted articulations
+(`close_meanings_imply_close_form`), and when the suffix triphone is linearly decodable from
+meanings, training alone gives inflected words strictly greater suffix support than
+non-inflected ones, the direction of the paper's contrast (`semSup_lt_of_forms_lt`). The
+result bears on production models with a morpheme layer such as WEAVER++
+([levelt-roelofs-meyer-1999], [roelofs-1997]), since the apparent morphological-boundary
+effect is carried by inflectional semantics.
 
 ## Implementation notes
 
-The paper's positional measures `SemSupVowel` and `SemSupSuffix` (paper §3.1 eqs. 3–4) are
-`semSup` (`Discriminative/Measures.lean`) at the stem-vowel and suffix triphone indices;
-the paper's triphone indexing is not reproduced here, so they get no separate definitions.
-The paper's production matrix `G` (solving `SG = C`) is the substrate's `production`, its
-comprehension matrix `F` (solving `CF = S`) is `comprehension`. The DLM's
-no-stored-entries architecture sits against frequency-channel theories of a stored
-lexicon and [bybee-1985]'s `tokenFreq` (`Studies/Bybee1985.lean`); cf. the
-activation-scaled faithfulness of `Studies/BreissKatsudaKawahara2026.lean`.
+The paper's positional measures, the semantic support for the vowel and suffix triphones, are
+`semSup` at the two triphone indices; the paper's triphone indexing is not reproduced. Its
+production matrix, solving `SG = C`, is the substrate's `production`, and its comprehension
+matrix, solving `CF = S`, is `comprehension`. The generalized additive models of the
+articulatory study are not formalized.
+
+## References
+
+* [saito-tomaschek-baayen-2025]
+* [baayen-2019]
+* [heitmeier-chuang-baayen-2026]
+* [levelt-roelofs-meyer-1999]
+* [roelofs-1997]
+* [muller-2015]
 -/
 
 namespace Saito2025
 
 open DiscriminativeLexicon
 
-/-- Triphone count of the paper's CELEX-derived form matrix `C` (paper §3.1). -/
+/-- The number of triphones of the paper's CELEX-derived form matrix. -/
 abbrev TriphoneCount : ℕ := 14404
 
-/-- Dimension of the pretrained German word2vec embeddings of [muller-2015]. -/
+/-- The dimension of the pretrained German word2vec embeddings of [muller-2015]. -/
 abbrev Word2VecGermanDim : ℕ := 300
 
-/-- Zero/one triphone-indicator form vectors. The binary structure is a property of the
+/-- Triphone-indicator form vectors; that the entries are zero or one is a property of the
 training data, not of the type. -/
 abbrev TriphoneVec := FormVec TriphoneCount
 
-/-- 300-dimensional word2vec meaning vectors. -/
+/-- Word2vec meaning vectors. -/
 abbrev GermanWord2VecVec := MeaningVec Word2VecGermanDim
 
-/-- The paper's DLM: `DiscriminativeLexicon.Linear` at German triphone × word2vec
-carrier types. -/
+/-- The paper's discriminative lexicon: the linear model at German triphone and word2vec
+carriers. -/
 abbrev GermanInflectionalDLM :=
   Linear ℝ TriphoneVec GermanWord2VecVec
 
-/-- Close meanings yield close predicted articulations, with constant `‖production‖`. -/
+/-- Close meanings yield close predicted articulations, with the production map's norm as
+the constant. -/
 theorem close_meanings_imply_close_form
     (D : GermanInflectionalDLM) (s₁ s₂ : GermanWord2VecVec) {ε : ℝ}
     (h : ‖s₁ - s₂‖ ≤ ε) :
@@ -70,12 +70,11 @@ theorem close_meanings_imply_close_form
       ‖D.production.toContinuousLinearMap‖ * ε :=
   D.norm_production_sub_le h
 
-/-- If the suffix-triphone coordinate is linearly decodable from word meanings —
-the paper's §4 mechanism, inflectional semantics tied to the suffix — then a
-trained DLM's `SemSupSuffix` reproduces it exactly, so a word carrying the
-suffix triphone (an inflected word) gets strictly greater suffix support than
-one lacking it: the direction of the paper's headline contrast (its Fig. 11),
-from the linear architecture alone. -/
+/-- When the suffix-triphone coordinate is linearly decodable from word meanings, the
+inflectional semantics the paper ties to the suffix, a trained lexicon's suffix support
+reproduces it exactly, so a word carrying the suffix triphone gets strictly greater suffix
+support than one lacking it: the direction of the paper's contrast between inflected and
+non-inflected words, from the linear architecture alone. -/
 theorem semSup_lt_of_forms_lt
     {m : ℕ} {D : GermanInflectionalDLM}
     {data : TrainingExperience m TriphoneCount Word2VecGermanDim}
