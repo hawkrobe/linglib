@@ -99,8 +99,9 @@ and the generic `island-cxt`/`weak-island-cxt` demonstration subtypes of `filler
 inductive Srt
   | top
   -- category hierarchy (filler-head-cxt keys on verbal/nonverbal; wh-rel on nominal; the-cl on comp;
-  -- the noun/prep split is the NP/PP distinction weak islands are sensitive to)
-  | cat | verbal | nonverbal | verb | comp | nominal | noun | prep | adj
+  -- nonverbal resolves to noun, prep, adj or adv ([sag-2010] (108)); the noun/prep split is the
+  -- NP/PP distinction weak islands are sensitive to)
+  | cat | verbal | nonverbal | verb | comp | nominal | noun | prep | adj | adv
   -- semantic-type hierarchy (clause types key on the MTR's SEM type)
   | semType | austinean | question | fact | proposition
   -- inversion-value hierarchy (aux-initial-cxt keys on the head's INV value, [sag-etal-2020] (39))
@@ -133,10 +134,10 @@ transitive closure. The order is `ReflTransGen covers`, so transitivity is struc
 hand-maintained closure or `|Srt|³` `decide`. Each filler-gap construction covers **two** parents —
 its `headed-cxt` subtype and its clausal type — the multiple inheritance. -/
 def covers : Srt → Srt → Bool
-  -- categories (nonverbal > {nominal, adj}; nominal > {noun, prep})
+  -- categories (nonverbal > {nominal, adj, adv}; nominal > {noun, prep})
   | .verbal, .cat => true | .nonverbal, .cat => true
   | .verb, .verbal => true | .comp, .verbal => true
-  | .nominal, .nonverbal => true | .adj, .nonverbal => true
+  | .nominal, .nonverbal => true | .adj, .nonverbal => true | .adv, .nonverbal => true
   | .noun, .nominal => true | .prep, .nominal => true
   -- semantic types
   | .austinean, .semType => true | .question, .semType => true
@@ -176,8 +177,8 @@ def rank : Srt → Nat
   | .loc => 1 | .idx => 1
   | .verbal => 2 | .nonverbal => 2 | .austinean => 2 | .question => 2 | .fact => 2 | .proposition => 2
   | .invPlus => 2 | .invMinus => 2 | .elist => 2 | .nelist => 2 | .phrasalCxt => 2 | .lexicalCxt => 2
-  | .verb => 3 | .comp => 3 | .nominal => 3 | .adj => 3 | .headedCxt => 3 | .clause => 3
-  | .inflectionalCxt => 3
+  | .verb => 3 | .comp => 3 | .nominal => 3 | .adj => 3 | .adv => 3 | .headedCxt => 3
+  | .clause => 3 | .inflectionalCxt => 3
   | .noun => 4 | .prep => 4 | .fillerHeadCxt => 4 | .auxInitialCxt => 4 | .headModifierCxt => 4
   | .coreCl => 4 | .relativeCl => 4
   | .islandCxt => 5 | .weakIslandCxt => 5
@@ -189,7 +190,7 @@ instance : PartialOrder Srt :=
 
 instance : DecidableLE Srt := fun a b =>
   decidableLEOfCovers (covers := (covers · · = true))
-    [.top, .cat, .verbal, .nonverbal, .verb, .comp, .nominal, .noun, .prep, .adj,
+    [.top, .cat, .verbal, .nonverbal, .verb, .comp, .nominal, .noun, .prep, .adj, .adv,
      .semType, .austinean, .question, .fact, .proposition, .invVal, .invPlus, .invMinus,
      .list, .elist, .nelist, .loc, .idx, .sign,
      .construct, .phrasalCxt, .lexicalCxt, .headedCxt, .clause, .fillerHeadCxt, .auxInitialCxt,
