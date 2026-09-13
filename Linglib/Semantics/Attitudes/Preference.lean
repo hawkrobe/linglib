@@ -45,20 +45,29 @@ preferences and `single` its one-preference case.
 A **preferential predicate** ([villalta-2008]) measures preference as
 a degree: ⟦x V p⟧(C) = μ(x, p) > θ(C), for a preference degree
 function μ and a contextual threshold θ over a comparison class C.
-[qing-uegaki-2025] classify non-veridical preferentials by clausal
-distributivity (`Distributivity.IsDistributive`) and evaluative
-valence: the degree-comparison predicates built here are distributive
-by construction (`mkDegreeComparison_isDistributive`), while *worry*
-and Mandarin *qidai* carry an extra global condition on the question
-that breaks distributivity (`worry_not_distributive`).
-`ThresholdSignificance` is the presupposition [uegaki-sudo-2019]
-posit for degree constructions — triggered by positive preferentials,
-not by negative ones ([qing-uegaki-2025] §3.2) — from which the
-anti-rogativity of the distributive positive class is derived in
-`Studies/UegakiSudo2019.lean`; the classification's cross-linguistic
-support lives in `Studies/QingEtAl2025.lean`, and the emotive
-doxastic refinement of *hope* and *fear* ([anand-hacquard-2013]) in
+The degree-comparison predicates built here are clausally
+distributive by construction (`mkDegreeComparison_isDistributive`),
+and a predicate that holds of a question but of none of its answers
+is not (`PreferentialPredicate.not_isDistributive_of_forall_not`),
+the diagnostic [qing-uegaki-2025] apply to *worry* and Mandarin
+*qidai* in `Studies/QingEtAl2025.lean`. `ThresholdSignificance` is
+the presupposition [uegaki-sudo-2019] posit for degree constructions,
+from which the anti-rogativity of *hope* is derived in
+`Studies/UegakiSudo2019.lean`; the emotive doxastic refinement of
+*hope* and *fear* ([anand-hacquard-2013]) is in
 `Studies/AnandHacquard2013.lean`.
+
+## References
+
+* [condoravdi-lauer-2011]
+* [condoravdi-lauer-2012]
+* [condoravdi-lauer-2016]
+* [lauer-2013]
+* [kratzer-1981]
+* [villalta-2008]
+* [uegaki-sudo-2019]
+* [qing-uegaki-2025]
+* [anand-hacquard-2013]
 -/
 
 variable {W : Type*}
@@ -91,7 +100,7 @@ def maxElts : Set (Set W) :=
     φ ∈ P.maxElts ↔ φ ∈ P.prefs ∧ ∀ q ∈ P.prefs, ¬ P.prec φ q :=
   Iff.rfl
 
-theorem maxElts_subset_prefs : P.maxElts ⊆ P.prefs := fun _ h => h.1
+theorem maxElts_subset_prefs : P.maxElts ⊆ P.prefs := λ _ h => h.1
 
 /-- Consistency w.r.t. an information state `B`: any subfamily of
     preferences whose joint realization is incompatible with `B`
@@ -242,6 +251,14 @@ def PreferentialPredicate.IsDistributive (V : PreferentialPredicate W E) : Prop 
   ∀ (x : E) (Q C : List (Finset W)),
     V.questionSemantics x Q C ↔ ∃ p ∈ Q, V.propSemantics x p C
 
+/-- A predicate that holds of a question but of none of its answers is not clausally
+    distributive: the diagnostic of [elliott-etal-2017] for *care* and of
+    [qing-uegaki-2025] for *worry*. -/
+theorem PreferentialPredicate.not_isDistributive_of_forall_not {V : PreferentialPredicate W E}
+    {x : E} {Q C : List (Finset W)} (hQ : V.questionSemantics x Q C)
+    (h : ∀ p ∈ Q, ¬ V.propSemantics x p C) : ¬ V.IsDistributive :=
+  λ hV => let ⟨p, hp, hxp⟩ := (hV x Q C).1 hQ; h p hp hxp
+
 /-! ### Degree-comparison predicates -/
 
 /-- Degree-comparison predicate ([villalta-2008]): ⟦x V p⟧(C) =
@@ -262,7 +279,7 @@ def mkDegreeComparison (valence : AttitudeValence)
 theorem mkDegreeComparison_isDistributive (valence : AttitudeValence)
     (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ) :
     (mkDegreeComparison valence μ θ).IsDistributive :=
-  fun _ _ _ => Iff.rfl
+  λ _ _ _ => Iff.rfl
 
 /-- *hope*: degree comparison, positive valence. What distinguishes
     *hope* from *want* is an additional doxastic component
@@ -291,44 +308,6 @@ def wish (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ) :
 def dread (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ) :
     PreferentialPredicate W E :=
   mkDegreeComparison .negative μ θ
-
-/-! ### Non-distributive preferentials -/
-
-/-- *worry*: propositionally a degree comparison, but the question
-    semantics adds a global uncertainty condition on the question —
-    not reducible to the existential over answers
-    ([qing-uegaki-2025] §3.1.2). -/
-def worry (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ)
-    (Uncertain : E → List (Finset W) → Prop) :
-    PreferentialPredicate W E where
-  valence := .negative
-  μ := μ
-  θ := θ
-  propSemantics x p C := μ x p > θ C
-  questionSemantics x Q C := Uncertain x Q ∧ ∃ p ∈ Q, μ x p > θ C
-
-/-- Mandarin *qidai* "look forward to": positive valence, with an
-    anticipation-of-resolution condition on the question — a positive
-    non-distributive preferential ([qing-uegaki-2025] §3.1.1). -/
-def qidai (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ)
-    (AnticipatesResolution : E → List (Finset W) → Prop) :
-    PreferentialPredicate W E where
-  valence := .positive
-  μ := μ
-  θ := θ
-  propSemantics x p C := μ x p > θ C
-  questionSemantics x Q C := AnticipatesResolution x Q ∧ ∃ p ∈ Q, μ x p > θ C
-
-/-- *worry* is not clausally distributive: when the agent is not
-    uncertain about `Q` but some answer clears the threshold, the
-    existential over the propositional semantics holds while the
-    question semantics fails. -/
-theorem worry_not_distributive (μ : E → Finset W → ℚ)
-    (θ : List (Finset W) → ℚ) (Uncertain : E → List (Finset W) → Prop)
-    (x : E) (Q C : List (Finset W)) (hu : ¬ Uncertain x Q)
-    (h : ∃ p ∈ Q, μ x p > θ C) :
-    ¬ (worry μ θ Uncertain).IsDistributive :=
-  fun hdist => hu (((hdist x Q C).mpr h).1)
 
 /-! ### Threshold significance -/
 
