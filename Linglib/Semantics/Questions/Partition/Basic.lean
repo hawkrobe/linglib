@@ -1,7 +1,5 @@
 import Linglib.Core.Data.Setoid.Basic
 import Mathlib.Data.Setoid.Partition
-import Mathlib.Order.Partition.Finpartition
-import Mathlib.SetTheory.Cardinal.Finite
 
 /-!
 # Partition questions
@@ -13,9 +11,7 @@ settles it, that is, when it is constant on the cells. The polar question whethe
 kernel of the indicator of `p`, settledness is the refinement order `s ≤ polar p`, and the
 question raised by a family of propositions is the meet of their polar questions, so a finer
 question settles more (`le_trans`), the finest question settles everything (`bot_le`), and a
-family's question settles each member (`iInf₂_le`). Over a finite type the cells are the parts
-of mathlib's `Finpartition.ofSetoid`, refinement is monotone into the `Finpartition` order, and
-the number of cells is `Nat.card (Quotient s)`.
+family's question settles each member (`iInf₂_le`).
 
 ## Main definitions
 
@@ -155,28 +151,5 @@ theorem ofProps_settles {p : Finset W} (hp : p ∈ ps) : (ofProps ps).Settles �
 /-- The question raised by a family is the coarsest question settling all of its members. -/
 theorem le_ofProps_iff : s ≤ ofProps ps ↔ ∀ p ∈ ps, s.Settles ↑p :=
   le_iInf₂_iff
-
-/-! ### Finite questions -/
-
-/-- A coarser question has no more cells. -/
-theorem natCard_quotient_anti [Finite W] {s t : Setoid W} (h : s ≤ t) :
-    Nat.card (Quotient t) ≤ Nat.card (Quotient s) :=
-  Nat.card_le_card_of_surjective (Quotient.map' id λ _ _ hab => h hab)
-    (Quotient.ind λ a => ⟨⟦a⟧, rfl⟩)
-
-/-- The parts of the finpartition of a question are its cells. [UPSTREAM] -/
-theorem mem_parts_ofSetoid_iff [Fintype W] [DecidableEq W] [DecidableRel s] {c : Finset W} :
-    c ∈ (Finpartition.ofSetoid s).parts ↔ ∃ w, c = Finset.univ.filter (s w ·) := by
-  simp [Finpartition.ofSetoid, Finpartition.ofSetSetoid_parts, eq_comm]
-
-/-- Refinement of questions is refinement of their finpartitions. [UPSTREAM] -/
-theorem _root_.Finpartition.ofSetoid_mono [Fintype W] [DecidableEq W] {s t : Setoid W}
-    [DecidableRel s] [DecidableRel t] (h : s ≤ t) :
-    Finpartition.ofSetoid s ≤ Finpartition.ofSetoid t := by
-  intro c hc
-  obtain ⟨w, rfl⟩ := mem_parts_ofSetoid_iff.1 hc
-  refine ⟨_, mem_parts_ofSetoid_iff.2 ⟨w, rfl⟩, λ x hx => ?_⟩
-  simp only [Finset.mem_filter] at hx ⊢
-  exact ⟨hx.1, Setoid.le_def.1 h hx.2⟩
 
 end Setoid

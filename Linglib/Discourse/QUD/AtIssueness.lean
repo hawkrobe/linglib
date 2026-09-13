@@ -75,14 +75,11 @@ structure MonotoneAntiCorrelation where
     (pairs.get i).atIssueness < (pairs.get j).atIssueness →
     (pairs.get j).projectivity ≤ (pairs.get i).projectivity
 /-! ### QUD Connection -/
-/-- Qualitative QUD-based at-issueness: content varying within QUD cells
-    counts as at-issue ([roberts-2012]). -/
-def atIssuenessFromQUD {M : Type*} (q : Setoid M) [DecidableRel q]
-    (content : M → Bool) (worlds : List M) : AtIssuenessDegree :=
-  if ∃ w₁ ∈ worlds, ∃ w₂ ∈ worlds, q w₁ w₂ ∧ content w₁ ≠ content w₂ then
-    ⟨1, by norm_num, le_refl 1⟩
-  else
-    ⟨0, le_refl 0, by norm_num⟩
+/-- Qualitative QUD-based at-issueness: content the question does not settle, varying within
+    a cell, counts as at-issue ([roberts-2012]). -/
+def atIssuenessFromQUD {M : Type*} [Fintype M] (q : Setoid M) [DecidableRel q]
+    (content : Set M) [DecidablePred (· ∈ content)] : AtIssuenessDegree :=
+  if q.Settles content then ⟨0, le_refl 0, by norm_num⟩ else ⟨1, by norm_num, le_refl 1⟩
 /-! ### Boundedness -/
 /-- Both at-issueness and projectivity are closed-bounded scales on [0, 1]. -/
 def atIssuenessBoundedness : Boundedness := .closed
