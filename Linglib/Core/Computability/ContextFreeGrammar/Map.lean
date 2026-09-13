@@ -404,4 +404,9 @@ theorem stringMap (f : T → List T') {L : Language T}
   obtain ⟨G, rfl⟩ := hL
   exact ⟨G.applyHom f, ContextFreeGrammar.applyHom_language f G⟩
 
+/-- If the homomorphic image of `L` is not context-free, then `L` is not context-free. -/
+theorem _root_.Language.not_isContextFree_of_stringMap_not (f : T → List T') {L : Language T}
+    (h : ¬ (Language.stringMap f L).IsContextFree) : ¬ L.IsContextFree :=
+  fun hL => h (hL.stringMap f)
+
 end Language.IsContextFree

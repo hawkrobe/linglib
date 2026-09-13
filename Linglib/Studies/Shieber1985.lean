@@ -1,4 +1,4 @@
-import Linglib.Core.Computability.ContextFreeGrammar.Closure
+import Linglib.Core.Computability.ContextFreeGrammar.InterRegular
 import Linglib.Core.Computability.NonContextFree.AnBnCnDn
 import Linglib.Core.Computability.NonContextFree.AmBnCmDn
 import Linglib.Core.Computability.NonContextFree.AnBnCn
@@ -43,7 +43,7 @@ clause) has shape `nps ++ vs` with case counts matched. Matrix tokens may
 appear interleaved anywhere; Shieber's homomorphism erases them.
 
 The proof exercises both legs of the Bar-Hillel schema
-(`Language.not_isContextFree_via_witness` from `Closure.lean`):
+(`Language.not_isContextFree_via_witness` from `InterRegular.lean`):
 
 * **Homomorphism leg** (`tokenStringHom`): cross-serial NPs and Vs map to
   singleton {a,b,c,d} letters; matrix tokens map to `[]` (Shieber's ε-erasure).
@@ -301,7 +301,7 @@ theorem stringMap_diagonal_eq_anbncndn :
     [shieber-1985]'s argument, using only the one-parameter substrate
     `{aⁿbⁿcⁿdⁿ}`. The image of the diagonal SG language under `tokenStringHom`
     equals `anbncndn` (not CF), so by closure under string homomorphism
-    (`Linglib.Core.Computability.ContextFreeGrammar.Closure`), the source is not CF. -/
+    (`Language.not_isContextFree_of_stringMap_not`), the source is not CF. -/
 theorem swiss_german_diagonal_not_contextFree :
     ¬ swissGermanDiagonalLang.IsContextFree := by
   apply Language.not_isContextFree_of_stringMap_not tokenStringHom

@@ -66,7 +66,6 @@ import Linglib.Core.Combinatorics.RootedTree.CutFilterMap
 import Linglib.Core.Combinatorics.RootedTree.DoubleCut
 import Linglib.Core.Combinatorics.SetFamily.FourFunctions
 import Linglib.Core.Computability.Bimachine
-import Linglib.Core.Computability.ContextFreeGrammar.Closure
 import Linglib.Core.Computability.ContextFreeGrammar.InterRegular
 import Linglib.Core.Computability.ContextFreeGrammar.Map
 import Linglib.Core.Computability.ContextFreeGrammar.Pumping

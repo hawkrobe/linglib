@@ -1,6 +1,6 @@
 import Linglib.Core.Computability.NonContextFree.BlockWitness
 import Linglib.Core.Computability.NonContextFree.AnBnCn
-import Linglib.Core.Computability.ContextFreeGrammar.Closure
+import Linglib.Core.Computability.ContextFreeGrammar.Map
 
 /-!
 # `{aⁿbⁿcⁿdⁿ}`: a four-symbol non-context-free witness

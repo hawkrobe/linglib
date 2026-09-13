@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.ContextFreeGrammar.Tree
+import Mathlib.Algebra.Order.BigOperators.Group.List
+import Mathlib.Algebra.Order.Group.Nat
 
 /-!
 # The pumping lemma for context-free languages
@@ -21,12 +23,16 @@ pumps them (`RoseTree.ValidFor.replaceAt`, `RoseTree.ValidFor.derives`).
 
 ## Main definitions
 
-* `HasCFLPumpingProperty`: the pumping property of a language.
+* `Language.HasCFLPumpingProperty`: the pumping property of a language.
+* `ContextFreeGrammar.maxBranch`, `ContextFreeGrammar.pumpingConstant`: the branching bound and
+  the pumping constant of a grammar.
 
 ## Main results
 
-* `cfl_pumping_lemma`: every context-free language has the pumping property.
-* `not_isContextFree_of_not_pumpable`: a language without it is not context-free.
+* `RoseTree.ValidFor.length_yield_le`: a valid tree of height `h` has at most `maxBranch ^ h`
+  terminals.
+* `Language.IsContextFree.hasCFLPumpingProperty`: every context-free language has the pumping
+  property.
 -/
 
 open RoseTree
@@ -34,7 +40,7 @@ open RoseTree
 /-- The pumping property of a language: beyond some length, every word splits as
 `u ++ v ++ x ++ y ++ z` with `v ++ x ++ y` no longer than that length, `v ++ y` nonempty, and every
 `u ++ vⁱ ++ x ++ yⁱ ++ z` in the language. -/
-def HasCFLPumpingProperty {α : Type*} (L : Language α) : Prop :=
+def Language.HasCFLPumpingProperty {α : Type*} (L : Language α) : Prop :=
   ∃ p : ℕ, 0 < p ∧ ∀ w ∈ L, p ≤ w.length →
     ∃ u v x y z : List α, w = u ++ v ++ x ++ y ++ z ∧ (v ++ x ++ y).length ≤ p ∧
       1 ≤ v.length + y.length ∧
@@ -42,7 +48,55 @@ def HasCFLPumpingProperty {α : Type*} (L : Language α) : Prop :=
 
 namespace ContextFreeGrammar
 
-variable {T : Type*} {g : ContextFreeGrammar T}
+variable {T : Type*} (g : ContextFreeGrammar T)
+
+/-! ### The branching bound -/
+
+/-- The branching bound of a grammar: the longest right-hand side, and at least `2`. -/
+noncomputable def maxBranch : ℕ := max 2 (g.rules.sup fun r => r.output.length)
+
+/-- The pumping constant `maxBranch ^ (rules.card + 1)`: a valid tree with more terminals has a
+path through two nodes with the same nonterminal. -/
+noncomputable def pumpingConstant : ℕ := g.maxBranch ^ (g.rules.card + 1)
+
+theorem two_le_maxBranch : 2 ≤ g.maxBranch := le_max_left _ _
+
+theorem pumpingConstant_pos : 0 < g.pumpingConstant :=
+  Nat.pow_pos (by have := g.two_le_maxBranch; omega)
+
+theorem length_output_le_maxBranch {r : ContextFreeRule T g.NT} (hr : r ∈ g.rules) :
+    r.output.length ≤ g.maxBranch :=
+  le_trans (Finset.le_sup (f := fun r : ContextFreeRule T g.NT => r.output.length) hr)
+    (le_max_right _ _)
+
+variable {g}
+
+/-- A valid tree of height `h` has at most `maxBranch ^ h` terminals. -/
+theorem _root_.RoseTree.ValidFor.length_yield_le {t : RoseTree (Symbol T g.NT)}
+    (ht : t.ValidFor g) : t.yield.length ≤ g.maxBranch ^ t.height := by
+  induction ht with
+  | terminal a => simp [RoseTree.leaf]
+  | nonterminal A cs hrule _ ih =>
+    cases cs with
+    | nil => simp
+    | cons c cs =>
+      set h := (RoseTree.node (.nonterminal A) (c :: cs)).height with hh
+      have hpos : 0 < h :=
+        Nat.lt_of_le_of_lt (Nat.zero_le _) (RoseTree.height_lt_of_mem (c := c) (by simp))
+      have hb : 0 < g.maxBranch := by have := g.two_le_maxBranch; omega
+      rw [RoseTree.yield_node_nonterminal, List.length_flatten, List.map_map]
+      calc ((c :: cs).map (List.length ∘ RoseTree.yield)).sum
+          ≤ ((c :: cs).map fun _ => g.maxBranch ^ (h - 1)).sum := by
+            refine List.sum_le_sum fun d hd => ?_
+            refine (ih d hd).trans (Nat.pow_le_pow_right hb ?_)
+            have := RoseTree.height_lt_of_mem (t := RoseTree.node (.nonterminal A) (c :: cs)) hd
+            omega
+        _ = (c :: cs).length * g.maxBranch ^ (h - 1) := by
+            rw [List.map_const', List.sum_const_nat]
+        _ ≤ g.maxBranch * g.maxBranch ^ (h - 1) :=
+            Nat.mul_le_mul_right _ (by simpa using g.length_output_le_maxBranch hrule)
+        _ = g.maxBranch ^ h := by rw [← Nat.pow_succ']; congr 1; omega
+
 
 private theorem flatten_replicate_succ (l : List T) (n : ℕ) :
     (List.replicate (n + 1) l).flatten = (List.replicate n l).flatten ++ l := by
@@ -146,16 +200,11 @@ theorem pumping_from_tall_tree {t : RoseTree (Symbol T g.NT)} (ht : t.ValidFor g
 end ContextFreeGrammar
 
 /-- **The pumping lemma for context-free languages.** -/
-theorem cfl_pumping_lemma {T : Type*} (L : Language T) (hcf : L.IsContextFree) :
-    HasCFLPumpingProperty L := by
+theorem Language.IsContextFree.hasCFLPumpingProperty {T : Type*} {L : Language T}
+    (hcf : L.IsContextFree) : L.HasCFLPumpingProperty := by
   obtain ⟨g, rfl⟩ := hcf
   refine ⟨g.pumpingConstant, g.pumpingConstant_pos, fun w hw hlen => ?_⟩
   obtain ⟨t, hvalid, hyield, hroot⟩ := g.exists_valid_tree hw
   obtain ⟨u, v, x, y, z, hdecomp, hvxy, hvy, hpump⟩ :=
     ContextFreeGrammar.pumping_from_tall_tree hvalid hroot (hyield ▸ hlen)
   exact ⟨u, v, x, y, z, hyield ▸ hdecomp, hvxy, hvy, hpump⟩
-
-/-- A language without the pumping property is not context-free. -/
-theorem not_isContextFree_of_not_pumpable {T : Type*} (L : Language T)
-    (h : ¬ HasCFLPumpingProperty L) : ¬ L.IsContextFree :=
-  fun hcf => h (cfl_pumping_lemma L hcf)

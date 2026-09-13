@@ -1,4 +1,5 @@
-import Mathlib.Computability.ContextFreeGrammar
+import Linglib.Core.Computability.ContextFreeGrammar
+import Linglib.Core.Computability.ContextFreeGrammar.Map
 import Mathlib.Computability.DFA
 import Mathlib.Data.Fintype.Pi
 
@@ -36,93 +37,15 @@ The (2) construction:
   through terminals (deterministic) and nonterminals (chosen path).
 
 Owns the `ContextFreeGrammar.product` definition and proves
-`Language.IsContextFree.inter_isRegular`. Together with the parallel
-homomorphism-closure proof in `Map.lean`, this dissolves the closure axioms
-previously in `Closure.lean`.
+`Language.IsContextFree.inter_isRegular`, together with the contrapositives that
+non-context-freeness arguments use: `Language.not_isContextFree_of_inter_regular_not`,
+and, with the homomorphism closure of `Map.lean`, the Bar-Hillel proof schema
+`Language.not_isContextFree_via_witness` of [shieber-1985].
 -/
 
 universe u
 
 variable {T : Type u}
-
-namespace ContextFreeRule
-
--- ============================================================================
--- Splitting lemma for Rewrites: a single-rule rewrite of `u₁ ++ u₂` happens
--- either entirely inside `u₁` or entirely inside `u₂`.
--- ============================================================================
-
-/-- A single-rule rewrite of a concatenation `u₁ ++ u₂` happens entirely in
-    `u₁` or entirely in `u₂`. The output decomposes correspondingly. -/
-lemma Rewrites.append_split {N : Type*} {r : ContextFreeRule T N} :
-    ∀ {u₁ u₂ v : List (Symbol T N)}, r.Rewrites (u₁ ++ u₂) v →
-    (∃ v₁, v = v₁ ++ u₂ ∧ r.Rewrites u₁ v₁) ∨
-    (∃ v₂, v = u₁ ++ v₂ ∧ r.Rewrites u₂ v₂) := by
-  intro u₁ u₂ v hrw
-  induction u₁ generalizing v with
-  | nil =>
-    right
-    exact ⟨v, by simp, by simpa using hrw⟩
-  | cons head u₁_tail ih =>
-    rw [List.cons_append] at hrw
-    cases hrw with
-    | head s =>
-      -- head = .nonterminal r.input, u₁_tail ++ u₂ = s, v = r.output ++ s.
-      left
-      refine ⟨r.output ++ u₁_tail, ?_, .head u₁_tail⟩
-      simp [List.append_assoc]
-    | cons x hrw_rest =>
-      -- v = head :: v_rest, hrw_rest : r.Rewrites (u₁_tail ++ u₂) v_rest.
-      cases ih hrw_rest with
-      | inl h =>
-        obtain ⟨v₁, hv_eq, hrw₁⟩ := h
-        left
-        refine ⟨head :: v₁, ?_, .cons head hrw₁⟩
-        simp [hv_eq]
-      | inr h =>
-        obtain ⟨v₂, hv_eq, hrw₂⟩ := h
-        right
-        refine ⟨v₂, ?_, hrw₂⟩
-        simp [hv_eq]
-
-end ContextFreeRule
-
-namespace ContextFreeGrammar
-
-/-- A single-step rewrite of `s₁ ++ s₂` happens entirely in `s₁` or entirely in
-    `s₂`. -/
-lemma Produces.append_split {G : ContextFreeGrammar T}
-    {s₁ s₂ v : List (Symbol T G.NT)} (hp : G.Produces (s₁ ++ s₂) v) :
-    (∃ t₁, v = t₁ ++ s₂ ∧ G.Produces s₁ t₁) ∨
-    (∃ t₂, v = s₁ ++ t₂ ∧ G.Produces s₂ t₂) := by
-  obtain ⟨r, hr_mem, hrw⟩ := hp
-  cases hrw.append_split with
-  | inl h =>
-    obtain ⟨v₁, hv_eq, hrw₁⟩ := h
-    exact .inl ⟨v₁, hv_eq, ⟨r, hr_mem, hrw₁⟩⟩
-  | inr h =>
-    obtain ⟨v₂, hv_eq, hrw₂⟩ := h
-    exact .inr ⟨v₂, hv_eq, ⟨r, hr_mem, hrw₂⟩⟩
-
-/-- **Splitting lemma for derivations.** A derivation `s₁ ++ s₂ ⇒* t` decomposes
-    into per-side derivations: `s₁ ⇒* t₁`, `s₂ ⇒* t₂`, with `t = t₁ ++ t₂`. -/
-lemma Derives.append_split {G : ContextFreeGrammar T} :
-    ∀ {s₁ s₂ t : List (Symbol T G.NT)}, G.Derives (s₁ ++ s₂) t →
-    ∃ t₁ t₂, t = t₁ ++ t₂ ∧ G.Derives s₁ t₁ ∧ G.Derives s₂ t₂ := by
-  intro s₁ s₂ t hd
-  induction hd with
-  | refl => exact ⟨s₁, s₂, rfl, .refl _, .refl _⟩
-  | tail _ step ih =>
-    obtain ⟨u₁, u₂, rfl, hd₁, hd₂⟩ := ih
-    cases step.append_split with
-    | inl h =>
-      obtain ⟨t₁, hv_eq, hp₁⟩ := h
-      exact ⟨t₁, u₂, hv_eq, hd₁.trans_produces hp₁, hd₂⟩
-    | inr h =>
-      obtain ⟨t₂, hv_eq, hp₂⟩ := h
-      exact ⟨u₁, t₂, hv_eq, hd₁, hd₂.trans_produces hp₂⟩
-
-end ContextFreeGrammar
 
 -- ============================================================================
 -- The Bar-Hillel construction: product of a CFG with a DFA
@@ -930,5 +853,17 @@ theorem inter_isRegular {α : Type*} {L R : Language α}
   classical
   refine ⟨G.product M, ?_⟩
   rw [ContextFreeGrammar.product_language, hM]
+
+/-- If `L ∩ R` is not context-free for a regular `R`, then `L` is not context-free. -/
+theorem _root_.Language.not_isContextFree_of_inter_regular_not {α : Type*} {L R : Language α}
+    (hR : R.IsRegular) (h : ¬ (L ⊓ R).IsContextFree) : ¬ L.IsContextFree :=
+  fun hL => h (hL.inter_isRegular hR)
+
+/-- The Bar-Hillel proof schema of [shieber-1985]: if the homomorphic image of `L` intersected
+with a regular language is not context-free, then `L` is not context-free. -/
+theorem _root_.Language.not_isContextFree_via_witness {α β : Type*} (f : α → List β)
+    (R : Language β) {L : Language α} (hR : R.IsRegular)
+    (h : ¬ (Language.stringMap f L ⊓ R).IsContextFree) : ¬ L.IsContextFree :=
+  fun hL => h ((hL.stringMap f).inter_isRegular hR)
 
 end Language.IsContextFree

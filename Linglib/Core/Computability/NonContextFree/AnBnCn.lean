@@ -69,7 +69,7 @@ Pumping down to `i = 0` gives `u ++ x ++ z = makeString_anbnc m`, so *every* sym
 times there. The pumped-out window is too short to meet both the `a`- and the `c`-block, so one
 of those two symbols is absent from `v` and `y` — forcing `m = p`, while the removed window
 makes the word strictly shorter. -/
-theorem anbnc_not_pumpable : ¬ HasCFLPumpingProperty anbnc := by
+theorem anbnc_not_pumpable : ¬ anbnc.HasCFLPumpingProperty := by
   rintro ⟨p, hp, hpump⟩
   obtain ⟨u, v, x, y, z, hw, hvxy, hvy, hall⟩ :=
     hpump _ (makeString_anbnc_mem p) (by rw [length_makeString_anbnc]; omega)
@@ -107,4 +107,4 @@ theorem anbnc_not_pumpable : ¬ HasCFLPumpingProperty anbnc := by
 
 /-- `{aⁿbⁿcⁿ}` is not context-free. -/
 theorem anbnc_not_contextFree : ¬ Language.IsContextFree anbnc :=
-  not_isContextFree_of_not_pumpable anbnc anbnc_not_pumpable
+  mt Language.IsContextFree.hasCFLPumpingProperty anbnc_not_pumpable
