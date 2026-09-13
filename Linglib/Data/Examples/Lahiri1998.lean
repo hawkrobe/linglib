@@ -391,6 +391,24 @@ def ex32a : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
+def ex33a : LinguisticExample :=
+  { id := "lahiri1998_ex33a"
+    source := ⟨"lahiri-1998", "(33a)"⟩
+    reportedIn := none
+    language := "hind1269"
+    primaryText := "kisiike bhii aane-ke baad raam ghar calaa gayaa"
+    discourseSegments := []
+    glossedTokens := [("kisiike bhii", "anyone's"), ("aane-ke baad", "coming after"), ("raam", "Ram"), ("ghar", "home"), ("calaa gayaa", "went")]
+    translation := "Ram went home after anyone came."
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("npi", "kisiike bhii"), ("environment", "after-clause")]
+    comment := "After-clauses, unlike before-clauses, do not license NPIs (4.6)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
 def ex34a : LinguisticExample :=
   { id := "lahiri1998_ex34a"
     source := ⟨"lahiri-1998", "(34a)"⟩
@@ -589,6 +607,60 @@ def ex36e : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
+def ex37a : LinguisticExample :=
+  { id := "lahiri1998_ex37a"
+    source := ⟨"lahiri-1998", "(37a)"⟩
+    reportedIn := none
+    language := "hind1269"
+    primaryText := "kal raam koii bhii mez uThaa sakaa"
+    discourseSegments := []
+    glossedTokens := [("kal", "yesterday"), ("raam", "Ram"), ("koii bhii", "any"), ("mez", "table"), ("uThaa sakaa", "lift could")]
+    translation := "Yesterday Ram was able to lift any table."
+    context := ""
+    judgment := .questionable
+    alternatives := []
+    readings := []
+    paperFeatures := [("npi", "koii bhii"), ("environment", "episodic possibility modal")]
+    comment := "Paper's diacritic is ??: an episodic ability modal degrades the NPI, so the licensing factor is genericity rather than the modal (5.2)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex38a : LinguisticExample :=
+  { id := "lahiri1998_ex38a"
+    source := ⟨"lahiri-1998", "(38a)"⟩
+    reportedIn := none
+    language := "hind1269"
+    primaryText := "ek bhii aadmii is mez-ko uThaa legaa"
+    discourseSegments := []
+    glossedTokens := [("ek bhii", "one even"), ("aadmii", "man"), ("is", "this"), ("mez-ko", "table"), ("uThaa legaa", "lift will")]
+    translation := "Even one person will lift this table."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("npi", "ek bhii"), ("environment", "generic future")]
+    comment := "The future licenses NPIs on its generic reading (5.3)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex38e : LinguisticExample :=
+  { id := "lahiri1998_ex38e"
+    source := ⟨"lahiri-1998", "(38e)"⟩
+    reportedIn := none
+    language := "hind1269"
+    primaryText := "kal tiin bajee koii bhii aadmii is mez-ko uThaa legaa"
+    discourseSegments := []
+    glossedTokens := [("kal", "tomorrow"), ("tiin bajee", "3 o'clock"), ("koii bhii", "any"), ("aadmii", "man"), ("is", "this"), ("mez-ko", "table"), ("uThaa legaa", "lift will")]
+    translation := "Anyone will lift this table at 3 o'clock tomorrow."
+    context := ""
+    judgment := .questionable
+    alternatives := []
+    readings := []
+    paperFeatures := [("npi", "koii bhii"), ("environment", "episodic future")]
+    comment := "Paper's diacritic is ??: an episodic future degrades the NPI (5.3)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
 def ex39a : LinguisticExample :=
   { id := "lahiri1998_ex39a"
     source := ⟨"lahiri-1998", "(39a)"⟩
@@ -697,6 +769,6 @@ def ex100b : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def all : List LinguisticExample := [ex6a, ex6b, ex6c, ex6d, ex7a, ex7b, ex8a, ex8b, ex9a, ex9b, ex10a, ex10c, ex11a, ex12a, ex29a, ex29b, ex29c, ex29d, ex31a, ex31b, ex32a, ex34a, ex41a, ex35a, ex35b, ex35d, ex35e, ex36a, ex36b, ex36c, ex36d, ex36e, ex39a, ex39b, ex40a, ex40b, ex100a, ex100b]
+def all : List LinguisticExample := [ex6a, ex6b, ex6c, ex6d, ex7a, ex7b, ex8a, ex8b, ex9a, ex9b, ex10a, ex10c, ex11a, ex12a, ex29a, ex29b, ex29c, ex29d, ex31a, ex31b, ex32a, ex33a, ex34a, ex41a, ex35a, ex35b, ex35d, ex35e, ex36a, ex36b, ex36c, ex36d, ex36e, ex37a, ex38a, ex38e, ex39a, ex39b, ex40a, ex40b, ex100a, ex100b]
 
 end Lahiri1998.Examples

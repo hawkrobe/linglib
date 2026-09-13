@@ -1,347 +1,227 @@
 import Linglib.Semantics.Focus.Particles
-import Linglib.Semantics.Polarity.Licensing
 import Linglib.Fragments.Hindi.PolarityItems
 import Linglib.Data.Examples.Lahiri1998
 
 /-!
-# Lahiri 1998 — Focus and negative polarity in Hindi
+# Lahiri (1998): Focus and negative polarity in Hindi
 
-Hindi NPIs (*koii bhii* 'anyone', *ek bhii* 'even one', *kuch bhii*
-'anything', *zaraa bhii* 'even a little') are morphologically an
-indefinite plus the focus particle *bhii* 'even' (paper (1), p. 58).
-[lahiri-1998] derives their distribution — as NPIs and as free-choice
-items — compositionally: *bhii* contributes the scalar implicature
-([karttunen-peters-1979]) that the assertion is least likely among the
-focus alternatives, and the weak indefinite sits at the bottom of the
-entailment scale. In UE contexts every alternative entails the
-assertion, making it the *most* likely — the implicature is
-contradicted (§7.4). In DE contexts entailment reverses and the
-implicature is satisfiable. Free-choice readings arise where the
-implicature is satisfiable in generic and possibility-modal contexts
-(§5, §7.6); *ek bhii*'s cardinality alternatives vs *koii bhii*'s
-contextual-property alternatives explain their contrasts (§8). The
-judged stimuli live in `Data/Examples/Lahiri1998.json`
-(`Examples.ex6a`, …).
+This file formalizes the paper's account of the Hindi negative polarity items, each a weak
+indefinite plus the focus particle *bhii* 'even' (`Hindi.PolarityItems`). The scalar
+presupposition of *even*, that the prejacent is less likely than every focus alternative,
+clashes with an entailment-monotone likelihood exactly when an alternative entails the
+prejacent (`Focus.Particles.not_evenPresup_of_subset`). The indefinite is the weakest
+predicate, so in an upward-entailing context every alternative entails the assertion and the
+presupposition is contradictory (`ue_clash`), while a downward-entailing operator reverses the
+entailments and leaves it satisfiable (`de_presup`); the restriction of a generic, read as a
+universal under the paper's background assumption, is such a slot (`generic_presup`), as are
+the negative-expectation reading of a question and the permission reading of an imperative.
+Clausemate negation takes scope over a Hindi subject indefinite, which is why Hindi licenses
+subject NPIs where English does not (`clausemate_negation`). The judgments of the paper's
+survey are rows, which `analysis_matches_judgments` reads as the analysis predicts, apart from
+the numeral and measure items *ek bhii* and *zaraa bhii* in imperatives and with numerals,
+whose cardinality alternatives the paper distinguishes from the contextual alternatives of
+*koii bhii* and *kuch bhii* and whose exclusion it leaves open (`cardinality_exceptions`).
+
+## Implementation notes
+
+A likelihood is a monotone map from propositions into a partial order, and the alternatives
+an item introduces are a list of predicates, cardinalities or contextual properties, each at
+most as strong as the weakest predicate `⊤`, the paper's `one`. The generic operator is read
+as a universal quantifier, which the paper grants on the background assumption that the
+exceptions the alternatives tolerate are exceptions the assertion tolerates too; the
+permission analysis of imperatives and the two implicature sets of a question are instances of
+`de_presup` and `ue_clash` and are not restated. The environments of the survey are
+classified as the analysis classifies them, downward entailing, generic, or neither;
+necessity modals and the episodic readings of possibility modals and the future are among
+the last, which the paper reports without deriving. The oblique forms *kisii-ko*, *kisii-se*,
+and *kisiike* are *koii*'s.
+
+## References
+
+* [lahiri-1998]
+* [karttunen-peters-1979]
+* [kadmon-landman-1993]
 -/
 
 namespace Lahiri1998
 
-open Focus.Particles (evenPresup LikelihoodMonotone)
-open Polarity
-open Data.Examples (LinguisticExample)
+open Focus.Particles Polarity Data.Examples Hindi.PolarityItems
 
-/-! ### Morphological decomposition (paper (1), p. 58)
+/-! ### The implicature clash (§7, §8) -/
 
-Every item in the paradigm is a weak indefinite plus *bhii*. The kind
-of alternatives an item activates (cardinality vs contextually salient
-properties, §8) is a lexical property, stored on the fragment entries
-in `Hindi.PolarityItems`. (*kahiiN bhii*'s licensed uses in the paper
-are correlatives, §4.4, an environment not modeled here.) -/
+section Model
 
-/-- A row of the paper's decomposition table (1): base indefinite and
-the *bhii*-compound, with the paper's glosses. -/
-structure NPIDecomposition where
-  base : String
-  baseGloss : String
-  npiForm : String
-  npiGloss : String
-  deriving Repr
+variable {World Ent α : Type*} [PartialOrder α] {μ : Set World → α}
 
-/-- The paper's decomposition table ((1), p. 58). -/
-def hindiNPIs : List NPIDecomposition :=
-  [ ⟨"ek", "one", "ek bhii", "any, even one"⟩
-  , ⟨"koii", "someone", "koii bhii", "anyone, any (count)"⟩
-  , ⟨"kuch", "something, a little", "kuch bhii", "anything, any (mass)"⟩
-  , ⟨"zaraa", "a little", "zaraa bhii", "even a little"⟩
-  , ⟨"kabhii", "sometime", "kabhii bhii", "anytime, ever"⟩
-  , ⟨"kahiiN", "somewhere", "kahiiN bhii", "anywhere"⟩ ]
+/-- The existential assertion of an indefinite restricted by `P`: some `P`-entity satisfies
+the predicate. -/
+def exist (P : Ent → Prop) (φ : World → Ent → Prop) : Set World := {w | ∃ x, P x ∧ φ w x}
 
-/-- Morphological uniformity: every NPI form is its base plus *bhii*. -/
-theorem npiForm_eq_base_bhii :
-    ∀ d ∈ hindiNPIs, d.npiForm = d.base ++ " bhii" := by decide
+/-- The universal reading of a generic restricted by `P`: every `P`-entity satisfies the
+predicate. -/
+def restrict (P : Ent → Prop) (φ : World → Ent → Prop) : Set World := {w | ∀ x, P x → φ w x}
 
-/-! ### The cardinality model
+variable {φ : World → Ent → Prop}
 
-The scale `∃x[n(x) ∧ VP(x)]` over a four-world model (`Fin 4`):
-world 0 = at least three entities satisfy the VP, 1 = exactly two,
-2 = exactly one, 3 = none. -/
+theorem exist_mono : Monotone (exist · φ) := λ _ _ h _ ⟨x, hx, hφ⟩ => ⟨x, h x hx, hφ⟩
 
-/-- At least one entity satisfies the VP (Bool form). -/
-def atLeastOneB : (Fin 4 → Bool) := λ w => w != 3
+theorem restrict_anti : Antitone (restrict · φ) := λ _ _ h _ hr x hx => hr x (h x hx)
 
-/-- At least two entities satisfy the VP (Bool form). -/
-def atLeastTwoB : (Fin 4 → Bool) := λ w => w == 0 || w == 1
+/-- The weakest predicate is true of everything, so every alternative entails the existential
+assertion. -/
+theorem exist_subset_exist_top (P : Ent → Prop) : exist P φ ⊆ exist ⊤ φ := exist_mono le_top
 
-/-- At least three entities satisfy the VP (Bool form). -/
-def atLeastThreeB : (Fin 4 → Bool) := λ w => w == 0
+/-- The universal assertion on the weakest predicate entails every alternative. -/
+theorem restrict_top_subset (P : Ent → Prop) : restrict ⊤ φ ⊆ restrict P φ :=
+  restrict_anti le_top
 
-/-- At least one entity satisfies the VP. True at 0, 1, 2. -/
-def atLeastOne : Set (Fin 4) := {w | atLeastOneB w = true}
+/-- The focus alternatives *bhii* induces from alternative predicates. -/
+def alternatives (Ps : List (Ent → Prop)) (φ : World → Ent → Prop) : List (Set World) :=
+  Ps.map (exist · φ)
 
-/-- At least two entities satisfy the VP. True at 0, 1. -/
-def atLeastTwo : Set (Fin 4) := {w | atLeastTwoB w = true}
+variable {Ps : List (Ent → Prop)}
 
-/-- At least three entities satisfy the VP. True at 0 only. -/
-def atLeastThree : Set (Fin 4) := {w | atLeastThreeB w = true}
+/-- In an upward-entailing context the presupposition of *bhii* is contradictory as soon as
+there is an alternative, cardinality or contextual property: each entails the assertion and
+so is at least as likely. -/
+theorem ue_clash (hμ : Monotone μ) (hPs : Ps ≠ []) :
+    ¬ evenPresup μ (exist ⊤ φ) (alternatives Ps φ) :=
+  let ⟨P, hP⟩ := Ps.exists_mem_of_ne_nil hPs
+  not_evenPresup_of_subset hμ (List.mem_map_of_mem hP) (exist_subset_exist_top P)
 
-/-! ### Weakness of `one` (§7.4, eq. 70)
+/-- A downward-entailing operator reverses the entailments, so under it the presupposition
+asks only that no alternative be exactly as likely; negation, the complement of a prohibition
+verb, and the permission an imperative grants are such operators. -/
+theorem de_presup (hμ : Monotone μ) {Q : Set World → Set World} (hQ : Antitone Q) :
+    evenPresup μ (Q (exist ⊤ φ)) ((alternatives Ps φ).map Q) ↔
+      ∀ P ∈ Ps, μ (Q (exist ⊤ φ)) ≠ μ (Q (exist P φ)) := by
+  rw [evenPresup_iff_ne hμ]
+  · simp [alternatives]
+  · simp only [alternatives, List.map_map, List.mem_map, Function.comp_def,
+      forall_exists_index, and_imp]
+    rintro _ P hP rfl
+    exact hQ (exist_subset_exist_top P)
 
-`one` is the weakest cardinality predicate: every `atLeastN`
-proposition entails `atLeastOne`, and not conversely. -/
+/-- *koii bhii aayaa* against *koii bhii nahiiN aayaa*, and the two implicature sets of a
+yes-no question: the positive reading clashes and the negative one is satisfiable. Negation
+inside the existential, the only scope English gives a subject indefinite, is again a positive
+context, which is why English lacks the subject NPIs that Hindi licenses. -/
+theorem clausemate_negation (hμ : Monotone μ) (hPs : Ps ≠ []) :
+    ¬ evenPresup μ (exist ⊤ φ) (alternatives Ps φ) ∧
+      (evenPresup μ (exist ⊤ φ)ᶜ ((alternatives Ps φ).map compl) ↔
+        ∀ P ∈ Ps, μ (exist ⊤ φ)ᶜ ≠ μ (exist P φ)ᶜ) ∧
+      ¬ evenPresup μ (exist ⊤ λ w x => ¬ φ w x) (alternatives Ps λ w x => ¬ φ w x) :=
+  ⟨ue_clash hμ hPs, de_presup hμ compl_anti, ue_clash hμ hPs⟩
 
-theorem two_entails_one : atLeastTwo ⊆ atLeastOne := by
-  intro w hw
-  simp [atLeastOne, atLeastOneB, atLeastTwo, atLeastTwoB] at *
-  rcases hw with h | h <;> simp [h]
-theorem three_entails_one : atLeastThree ⊆ atLeastOne := by
-  intro w hw
-  simp [atLeastOne, atLeastOneB, atLeastThree, atLeastThreeB] at *
-  simp [hw]
-theorem three_entails_two : atLeastThree ⊆ atLeastTwo := by
-  intro w hw
-  simp [atLeastThree, atLeastThreeB, atLeastTwo, atLeastTwoB] at *
-  left; exact hw
+/-- In the restriction of a generic the assertion entails every alternative, so the
+presupposition is satisfiable and the free-choice reading licensed. -/
+theorem generic_presup (hμ : Monotone μ) :
+    evenPresup μ (restrict ⊤ φ) (Ps.map (restrict · φ)) ↔
+      ∀ P ∈ Ps, μ (restrict ⊤ φ) ≠ μ (restrict P φ) := by
+  rw [evenPresup_iff_ne hμ]
+  · simp
+  · simp only [List.mem_map, forall_exists_index, and_imp]
+    rintro _ P hP rfl
+    exact restrict_top_subset P
 
-/-- The entailment is strict: `atLeastOne` does not entail stronger predicates. -/
-theorem one_not_entails_two : ¬ (atLeastOne ⊆ atLeastTwo) := by
-  intro h
-  have hw : (2 : Fin 4) ∈ atLeastOne := by simp [atLeastOne, atLeastOneB]
-  have := h hw
-  simp [atLeastTwo, atLeastTwoB] at this
-theorem one_not_entails_three : ¬ (atLeastOne ⊆ atLeastThree) := by
-  intro h
-  have hw : (2 : Fin 4) ∈ atLeastOne := by simp [atLeastOne, atLeastOneB]
-  have := h hw
-  simp [atLeastThree, atLeastThreeB] at this
+end Model
 
-/-! ### The implicature clash (§7.4, eqs. 66–79)
+/-! ### The survey (§4–§6, §8–§10) -/
 
-In UE, each alternative the ⊆ assertion, so a monotone
-likelihood ordering makes the assertion most likely — but EVEN demands
-it be least likely. Under negation the entailments reverse and EVEN is
-satisfiable. -/
+/-- The environments of the survey. -/
+inductive Environment where
+  | positive
+  | negation
+  | protasis
+  | apodosis
+  | universalRestrictor
+  | existentialRestrictor
+  | adversative
+  | factive
+  | settleForLess
+  | prohibitionComplement
+  | prohibitionObject
+  | before
+  | after
+  | question
+  | generic
+  | possibilityModal
+  | episodicModal
+  | genericFuture
+  | episodicFuture
+  | necessityModal
+  | imperative
+  | numeralGeneric
+  deriving DecidableEq, Repr
 
-section ImplicatureClash
+/-- Whether the analysis licenses an indefinite plus *bhii* in the environment: the
+downward-entailing environments, questions on their negative-expectation reading, and the
+generic environments, generics with or without a numeral, generically read possibility modals
+and futures, and imperatives read as permissions. -/
+def Environment.Licensed : Environment → Prop
+  | .negation | .protasis | .universalRestrictor | .adversative | .settleForLess
+  | .prohibitionComplement | .before | .question | .generic | .possibilityModal
+  | .genericFuture | .imperative | .numeralGeneric => True
+  | .positive | .apodosis | .existentialRestrictor | .factive | .prohibitionObject | .after
+  | .episodicModal | .episodicFuture | .necessityModal => False
 
-/-- UE pattern: all alternatives entail the assertion — fatal for EVEN. -/
-theorem ue_alt_entails_assertion :
-    atLeastTwo ⊆ atLeastOne ∧
-    atLeastThree ⊆ atLeastOne :=
-  ⟨two_entails_one, three_entails_one⟩
+instance : DecidablePred Environment.Licensed
+  | .negation | .protasis | .universalRestrictor | .adversative | .settleForLess
+  | .prohibitionComplement | .before | .question | .generic | .possibilityModal
+  | .genericFuture | .imperative | .numeralGeneric => isTrue trivial
+  | .positive | .apodosis | .existentialRestrictor | .factive | .prohibitionObject | .after
+  | .episodicModal | .episodicFuture | .necessityModal => isFalse id
 
-/-- DE pattern: the assertion all ⊆ alternatives — EVEN is
-satisfiable. -/
-theorem de_assertion_entails_alt :
-    atLeastOneᶜ ⊆ atLeastTwoᶜ ∧
-    atLeastOneᶜ ⊆ atLeastThreeᶜ := by
-  refine ⟨?_, ?_⟩
-  · intro w hw hw'
-    exact hw (two_entails_one hw')
-  · intro w hw hw'
-    exact hw (three_entails_one hw')
+/-- A judged example: its environment, the fragment entry of its item, and the judgment. -/
+structure Datum where
+  env : Environment
+  item : Item
+  judgment : Judgment
 
-/-- In UE the assertion does NOT entail the alternatives. -/
-theorem ue_not_reverse :
-    ¬ (atLeastOne ⊆ atLeastTwo) ∧
-    ¬ (atLeastOne ⊆ atLeastThree) :=
-  ⟨one_not_entails_two, one_not_entails_three⟩
+/-- The fragment entry of a row's item. -/
+def item? (r : LinguisticExample) : Option Item :=
+  r.parse? "npi" [("koii bhii", koiiBhii), ("koi bhii", koiiBhii), ("kisii-ko bhii", koiiBhii),
+    ("kisii-se bhii", koiiBhii), ("kisiike bhii", koiiBhii), ("ek bhii", ekBhii),
+    ("kuch bhii", kuchBhii), ("kuchh bhii", kuchBhii), ("zaraa bhii", zaraaBhii),
+    ("kabhii bhii", kabhiiBhii)]
 
-/-- In DE the alternatives do NOT entail the assertion. -/
-theorem de_not_reverse :
-    ¬ (atLeastTwoᶜ ⊆ atLeastOneᶜ) ∧
-    ¬ (atLeastThreeᶜ ⊆ atLeastOneᶜ) := by
-  refine ⟨?_, ?_⟩
-  · intro h
-    have h1 : (2 : Fin 4) ∈ atLeastTwoᶜ := by
-      simp [atLeastTwo, atLeastTwoB, Set.mem_compl_iff]
-    have h2 := h h1
-    simp [atLeastOne, atLeastOneB] at h2
-  · intro h
-    have h1 : (1 : Fin 4) ∈ atLeastThreeᶜ := by
-      simp [atLeastThree, atLeastThreeB, Set.mem_compl_iff]
-    have h2 := h h1
-    simp [atLeastOne, atLeastOneB] at h2
+/-- A row of the survey. -/
+def datum (r : LinguisticExample) : Option Datum := do
+  let env ← r.parse? "environment" [("positive (UE)", Environment.positive),
+    ("negation", .negation), ("negation (subject NPI)", .negation),
+    ("conditional protasis", .protasis), ("conditional apodosis", .apodosis),
+    ("universal restrictor", .universalRestrictor),
+    ("existential restrictor", .existentialRestrictor), ("adversative", .adversative),
+    ("non-adversative factive", .factive), ("settle-for-less glad", .settleForLess),
+    ("prohibition verb", .prohibitionComplement),
+    ("outside prohibition scope", .prohibitionObject), ("before-clause", .before),
+    ("after-clause", .after), ("question", .question), ("generic", .generic),
+    ("possibility modal", .possibilityModal), ("episodic possibility modal", .episodicModal),
+    ("generic future", .genericFuture), ("episodic future", .episodicFuture),
+    ("necessity modal", .necessityModal), ("imperative", .imperative),
+    ("generic, with numeral", .numeralGeneric)]
+  let item ← item? r
+  pure ⟨env, item, r.judgment⟩
 
-end ImplicatureClash
+/-- The survey. -/
+def data : List Datum := Examples.all.filterMap datum
 
-/-! ### The clash through the EVEN presupposition -/
+/-- The analysis reads every judgment of the survey, the cardinality items in imperatives and
+with numerals aside: an indefinite plus *bhii* is acceptable exactly in the environments it
+licenses. -/
+theorem analysis_matches_judgments :
+    ∀ d ∈ data,
+      d.item.alternativeType = .contextualProperty ∨
+        (d.env ≠ .imperative ∧ d.env ≠ .numeralGeneric) →
+      (d.judgment = .acceptable ↔ d.env.Licensed) := by
+  decide +kernel
 
-/-- An EVEN scalar implicature is contradicted whenever the assertion
-is entailed by an alternative: the alternative is then at most as
-likely, but EVEN requires the assertion to be strictly less likely. -/
-theorem even_clash_abstract {W : Type*}
-    (lt le : Set W → Set W → Prop)
-    (hMono : LikelihoodMonotone le)
-    (hCompat : ∀ a b, lt a b → le b a → False)
-    {assertion alt : Set W}
-    (hEntails : alt ⊆ assertion)
-    (hEven : lt assertion alt) :
-    False :=
-  hCompat assertion alt hEven (hMono hEntails)
-
-/-- In UE, the EVEN presupposition for *ek bhii* is contradicted
-(§7.4, eqs. 68–71). -/
-theorem ekBhii_even_clash_UE
-    (lt le : Set (Fin 4) → Set (Fin 4) → Prop)
-    (hMono : LikelihoodMonotone le)
-    (hCompat : ∀ a b, lt a b → le b a → False)
-    (hEven : evenPresup lt atLeastOne [atLeastTwo, atLeastThree]) :
-    False :=
-  even_clash_abstract lt le hMono hCompat two_entails_one
-    (hEven atLeastTwo (by simp))
-
-/-- In DE, the EVEN presupposition for *ek bhii nahiiN* is satisfiable:
-the negated assertion each ⊆ negated alternative (§7.4,
-eqs. 76–79). -/
-theorem ekBhii_even_ok_DE :
-    atLeastOneᶜ ⊆ atLeastTwoᶜ ∧
-    atLeastOneᶜ ⊆ atLeastThreeᶜ :=
-  de_assertion_entails_alt
-
-/-! ### NPI data (§4, §6)
-
-Licensing judgments from [lahiri-1998] §4 and §6 (stimuli in
-`Data/Examples/Lahiri1998.json`), paired with this study's analysis of
-each environment: *bhii* + indefinite is licensed in DE contexts and
-blocked in UE contexts. The adversative rescue in (31b) is
-[kadmon-landman-1993]'s "settle for less". -/
-
-/-- A judged example paired with the licensing context of the analysis
-(`none` = unlicensed environment). -/
-structure HindiNPIDatum where
-  ex : LinguisticExample
-  context : Option LicensingContext
-
-/-- The §4/§6 judgment data with per-environment analyses. -/
-def allHindiNPIData : List HindiNPIDatum :=
-  [ ⟨Examples.ex6a, none⟩, ⟨Examples.ex6b, some .negation⟩
-  , ⟨Examples.ex6c, none⟩, ⟨Examples.ex6d, some .negation⟩
-  , ⟨Examples.ex7a, none⟩, ⟨Examples.ex7b, some .negation⟩
-  , ⟨Examples.ex8a, none⟩, ⟨Examples.ex8b, some .negation⟩
-  , ⟨Examples.ex9a, none⟩, ⟨Examples.ex9b, some .negation⟩
-  , ⟨Examples.ex10a, some .conditionalAntecedent⟩, ⟨Examples.ex10c, none⟩
-  , ⟨Examples.ex11a, some .universalRestrictor⟩, ⟨Examples.ex12a, none⟩
-  , ⟨Examples.ex29a, some .adversative⟩, ⟨Examples.ex29b, some .adversative⟩
-  , ⟨Examples.ex29c, some .denyVerb⟩, ⟨Examples.ex29d, none⟩
-  , ⟨Examples.ex31a, none⟩, ⟨Examples.ex31b, some .adversative⟩
-  , ⟨Examples.ex32a, some .beforeClause⟩
-  , ⟨Examples.ex34a, some .question⟩
-  , ⟨Examples.ex41a, some .negation⟩ ]
-
-/-- A DE-or-question licenser, derived from `LicensingContext.properties`: the
-context's Strawson row supplies Zwarts strength, or it licenses by
-entropy (questions license via negative bias rather than pure DE). -/
-abbrev isDEOrQuestion (c : LicensingContext) : Prop :=
-  (c.properties.strawsonSignature.toDEStrength).isSome ∨
-    c.properties.mechanism = .byEntropy
-
-/-- The datum's context is some DE-or-question licenser. -/
-def hasDELicenser (d : HindiNPIDatum) : Prop :=
-  match d.context with
-  | none => False
-  | some c => isDEOrQuestion c
-
-instance : DecidablePred hasDELicenser := fun d => by
-  unfold hasDELicenser
-  cases d.context <;> infer_instance
-
-/-- The analysis licenses exactly the acceptable data: a datum has a
-licensing context iff the paper judges its example acceptable. -/
-theorem licensed_iff_acceptable :
-    ∀ d ∈ allHindiNPIData,
-      (d.context.isSome ↔ d.ex.judgment = .acceptable) := by decide
-
-/-- Every acceptable datum's licensing context is DE (or a question):
-the distribution follows the implicature-clash prediction. -/
-theorem grammatical_contexts_are_de :
-    ∀ d ∈ allHindiNPIData,
-      d.ex.judgment = .acceptable → hasDELicenser d := by decide
-
-/-! ### Free choice in generic and modal contexts (§5)
-
-Hindi NPIs are free-choice items in generic sentences and under
-possibility modals, but not under necessity modals; the GEN
-restriction is a strengthening environment, so the EVEN implicature is
-satisfiable there (§7.6, eqs. 95–98). -/
-
-/-- A judged free-choice example paired with the environment tested. -/
-structure FCDatum where
-  ex : LinguisticExample
-  contextType : LicensingContext
-
-/-- The §5 free-choice data. -/
-def allFCData : List FCDatum :=
-  [ ⟨Examples.ex35a, .generic⟩, ⟨Examples.ex35b, .generic⟩
-  , ⟨Examples.ex35d, .generic⟩, ⟨Examples.ex35e, .generic⟩
-  , ⟨Examples.ex36a, .modalPossibility⟩, ⟨Examples.ex36b, .modalPossibility⟩
-  , ⟨Examples.ex36c, .modalPossibility⟩
-  , ⟨Examples.ex36d, .modalNecessity⟩, ⟨Examples.ex36e, .modalNecessity⟩
-  , ⟨Examples.ex39a, .imperative⟩, ⟨Examples.ex39b, .imperative⟩
-  , ⟨Examples.ex40a, .imperative⟩, ⟨Examples.ex40b, .imperative⟩ ]
-
-/-- Generics and possibility modals license FC readings. -/
-theorem generic_and_possibility_license :
-    ∀ d ∈ allFCData,
-      (d.contextType = .generic ∨ d.contextType = .modalPossibility) →
-        d.ex.judgment = .acceptable := by decide
-
-/-- Necessity modals block FC readings. -/
-theorem necessity_blocks :
-    ∀ d ∈ allFCData, d.contextType = .modalNecessity →
-      d.ex.judgment ≠ .acceptable := by decide
-
-/-! ### The ek bhii / koii bhii contrast (§8)
-
-The first approximation treats *koii bhii* and *ek bhii* as
-equivalent, but *ek* activates cardinality alternatives (other
-numerals) while *koii* activates contextually salient properties —
-only the latter yield free-choice readings ((99), repeating
-`Examples.ex36a`/`ex36b`), and cardinality alternatives clash with
-explicit numerals ((100)). -/
-
-open Hindi.PolarityItems (koiiBhii koiiNahiin bhiiItems)
-
-/-- With an explicit numeral, *koii bhii* is fine and *ek bhii* is
-blocked ((100a) vs (100b)). -/
-theorem numeral_contrast :
-    Examples.ex100a.judgment = .acceptable ∧
-    Examples.ex100b.judgment ≠ .acceptable := by decide
-
-/-- §8's contrast is lexical: the fragment's *ek bhii* activates
-cardinality alternatives, *koii bhii* contextual properties. -/
-theorem contrast_is_lexical :
-    Hindi.PolarityItems.ekBhii.alternativeType = .cardinality ∧
-    koiiBhii.alternativeType = .contextualProperty := ⟨rfl, rfl⟩
-
-/-- The imperative asymmetry ((39) vs (40)): the cardinality-alternative
-items are exactly the ones whose attested contexts exclude imperatives. -/
-theorem cardinality_items_resist_imperatives :
-    ∀ i ∈ bhiiItems, i.alternativeType = .cardinality →
-      .imperative ∉ i.licensingContexts := by decide
-
-/-! ### Fragment grounding
-
-The fragment entries in `Hindi.PolarityItems` store the distribution
-this study derives: DE environments for NPI readings, generic/modal
-environments for FC readings, necessity modals excluded ((36d)). -/
-
-/-- The fragment's *koii bhii* matches the analysis: a dual NPI/FC item
-with indefinite + *even* morphology, licensed under negation ((6b)) and
-in generics ((35a)) but not under necessity modals ((36d)). -/
-theorem koiiBhii_fragment_grounded :
-    koiiBhii.licensor = some .weak ∧
-    koiiBhii.freeChoice = true ∧
-    koiiBhii.morphology = .indefPlusEven ∧
-    .negation ∈ koiiBhii.licensingContexts ∧
-    .generic ∈ koiiBhii.licensingContexts ∧
-    .modalNecessity ∉ koiiBhii.licensingContexts := by
-  refine ⟨rfl, rfl, rfl, ?_, ?_, ?_⟩ <;> decide
-
-/-- The fragment's *koii nahiiN* is a strength-licensed NPI with
-indefinite + negation morphology — the non-*bhii* route. -/
-theorem koiiNahiin_fragment_grounded :
-    koiiNahiin.licensor = some .weak ∧
-    koiiNahiin.morphology = .indefPlusNeg :=
-  ⟨rfl, rfl⟩
+/-- The numeral and measure items, whose alternatives are cardinalities, are out with a
+numeral and odd in imperatives, where the analysis predicts them licensed; the paper leaves
+the imperative case open. -/
+theorem cardinality_exceptions :
+    ∀ d ∈ data, d.item.alternativeType = .cardinality →
+      d.env = .imperative ∨ d.env = .numeralGeneric → d.judgment ≠ .acceptable := by
+  decide +kernel
 
 end Lahiri1998
