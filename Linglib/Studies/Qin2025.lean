@@ -1,60 +1,71 @@
 import Linglib.Morphology.Root.Basic
+import Linglib.Data.Examples.Qin2025
 import Mathlib.Data.Nat.Choose.Basic
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Qin 2025: canonical and non-canonical roots
-[qin-2025]
+# Qin (2025): Canonical and Non-Canonical Roots: The Diversity of Roots in Mandarin Chinese
 
-The canonical-typology space of roots over the formal base definition of
-`Morphology/Root/Basic.lean`: four canonicity criteria (Table 1) — C1
-boundness, C2 positional flexibility, C3 phonological richness, C4 meaning
-lexicality — spanning a 16-cell space anchored by the canonical root, with
-Fig. 1's tiers counting the ways of failing k criteria. The Mandarin case
-study classifies 122 morphemes in the space; flagship rows here run from
-canonical 厂 *chǎng* to the maximally non-canonical toneless 边 *-bian* and 个
-*-ge* (tonelessness diagnosing phonological deficiency in a tone language).
+This file formalizes [qin-2025]'s canonical typology of roots. The base definition, a
+morphologically unanalyzable form that serves as a morphological core of word formation, is the
+substrate's `Morphology.Morph.IsCoreIn`, and the paper's *-fer* shows that the judgment is formal
+rather than semantic: *-fer* is a core of the primary word *refer* though it has no meaning of its
+own (`fer_core`). Four criteria (Table 1), boundness, positional flexibility, phonological
+richness, and meaning lexicality, span a space of sixteen cells anchored by the canonical root
+that meets all four, and Fig. 1's one way of being canonical against fifteen of being
+non-canonical is the binomial count of the tiers (`tier_card`). The case study classifies 122
+Mandarin morphemes (Appendix A): the rows carry the appendix's judgments on the four criteria,
+its five groups are the number of criteria a row fails (`rows_group`), and the property of the
+distribution the paper singles out holds of every row, that a phonologically deficient morpheme,
+toneless in a tone language, is maximally non-canonical (`deficient_maximal`). The tiers run from
+the canonical 厂 *chǎng* of Table 3 through 不 *bù*, 霸 *bà*, and 性 *xìng* to the toneless 边
+*-bian* and 个 *-ge* (`mandarin_tiers`).
 
-The paper's *-fer* case makes the base definition's formal character exact:
-*-fer* is a morphological core despite "lacking identifiable meaning" — the
-roothood judgment is "formal-based", not semantic (`fer_core`; the
-contentfulness-gated alternative it contrasts with is
-`Studies/Haspelmath2025Root.lean`).
+## Implementation notes
 
-## Main results
+A row records a morpheme's judgment on each criterion as a Boolean, the canonical value being
+`true`; the appendix's finer codes, stable left or stable right, both count as positionally
+fixed. The counts of Tables 2 and 4 are the distribution of the rows and are not restated.
 
-* `fer_core` — *-fer* is a morphological core with no semantic input.
-* `Row`, `Row.violations`, `Row.IsCanonical` — the four-criterion space;
-  `space_card`, `tier_card` — Fig. 1's 16 cells and binomial tiers.
-* `chang`, `bu`, `ba`, `xing`, `bian`, `ge` — Mandarin rows with their
-  paper-assigned judgments (`mandarin_tiers`).
+## TODO
+
+The paper says that six of the unattested cells of the space require phonological deficiency;
+the appendix leaves seven such cells unattested, since only the maximally non-canonical cell
+contains a toneless morpheme, and the cell of free, fixed, toned, lexical morphemes is unattested
+as well.
+
+## References
+
+* [qin-2025]
+* [bloomfield-1933]
 -/
 
 namespace Qin2025
 
-open Morphology
+open Morphology Data.Examples Examples
 
-/-! ### The *-fer* witness -/
+/-! ### The base definition and *-fer* (§3.1) -/
 
 /-- The bound prefix of *refer*. -/
 def re : Morph := .pref "re"
+
 /-- *-fer*, a bound root with no identifiable meaning. -/
 def fer : Morph := .root "fer"
+
 /-- The bound prefix of *confer*. -/
 def con : Morph := .pref "con"
 
-/-- The mini-fragment: *refer* and *confer*, both free forms, primary since
-neither *re-*, *con-*, nor *-fer* is free. -/
+/-- The mini-fragment *refer* and *confer*, both free forms and both primary, since neither
+*re-*, *con-*, nor *-fer* is free. -/
 def ferWords : List (List Morph) := [[re, fer], [con, fer]]
 
 /-- *-fer* is a morphological core: it occurs in the primary word *refer*. -/
 theorem fer_core : fer.IsCoreIn ferWords ferWords := by decide
 
-/-! ### The four criteria and the theoretical space -/
+/-! ### The four criteria and the theoretical space (§3.2, §3.3) -/
 
-/-- A morpheme's judgment on the four canonicity criteria (Table 1), as the
-survey's classification outcomes: C1 free, C2 positionally flexible, C3
-phonologically rich, C4 lexical in meaning. -/
+/-- A morpheme's judgment on the four criteria of Table 1: free, positionally flexible,
+phonologically rich, and lexical in meaning. -/
 structure Row where
   /-- C1: free rather than bound. -/
   c1 : Bool
@@ -66,60 +77,80 @@ structure Row where
   c4 : Bool
   deriving DecidableEq, Repr, Fintype
 
-/-- The number of criteria a row fails — its distance from the canonical
-point. -/
+/-- The number of criteria a row fails, its distance from the canonical root. -/
 def Row.violations (r : Row) : ℕ :=
-  (if r.c1 then 0 else 1) + (if r.c2 then 0 else 1)
-    + (if r.c3 then 0 else 1) + (if r.c4 then 0 else 1)
+  (if r.c1 then 0 else 1) + (if r.c2 then 0 else 1) + (if r.c3 then 0 else 1) +
+    (if r.c4 then 0 else 1)
 
-/-- A **canonical root** satisfies all four criteria. -/
+/-- A canonical root satisfies all four criteria. -/
 def Row.IsCanonical (r : Row) : Prop := r.violations = 0
 
-instance (r : Row) : Decidable r.IsCanonical :=
-  inferInstanceAs (Decidable (r.violations = 0))
+instance (r : Row) : Decidable r.IsCanonical := inferInstanceAs (Decidable (r.violations = 0))
 
-/-- The theoretical space of roots has 16 cells (Fig. 1). -/
+/-- The theoretical space of roots has sixteen cells (Fig. 1). -/
 theorem space_card : Fintype.card Row = 16 := by decide
 
-/-- Fig. 1's tiers: `4.choose k` ways to fail exactly `k` criteria — "there
-are 15 different ways for an instance to be non-canonical, while only one way
-for an instance to be canonical". -/
+/-- Fig. 1's tiers: `4.choose k` ways to fail exactly `k` criteria, so fifteen ways of being
+non-canonical against one of being canonical. -/
 theorem tier_card :
-    ∀ k : Fin 5, ((Finset.univ.filter fun r : Row => r.violations = k).card
-      = Nat.choose 4 k) := by decide
-
-/-! ### Mandarin rows (§4, appendix)
-
-Judgments transcribed from the case study; glosses from the paper. -/
-
-/-- 厂 *chǎng* 'a factory': free, flexible (*fúzhuang-chǎng* ~ *chǎng-shang*),
-toned, fully referential — canonical. -/
-def chang : Row := ⟨true, true, true, true⟩
-
-/-- 不 *bù* 'generalized negation': deviates on C4 alone. -/
-def bu : Row := ⟨true, true, true, false⟩
-
-/-- 霸 *-bà* 'a person outstanding in a field': bound and positionally
-fixed. -/
-def ba : Row := ⟨false, false, true, true⟩
-
-/-- 性 *-xìng* 'to form nouns or adjectives indicating a property': bound,
-fixed, and schematic in meaning. -/
-def xing : Row := ⟨false, false, true, false⟩
-
-/-- 边 *-bian* 'indicating locality': bound, fixed, toneless, adding almost
-no meaning. -/
-def bian : Row := ⟨false, false, false, false⟩
-
-/-- 个 *-ge* 'used after a demonstrative pronoun': like *-bian*, meeting none
-of the criteria. -/
-def ge : Row := ⟨false, false, false, false⟩
-
-/-- The five Mandarin tiers, from canonical 厂 *chǎng* to the maximally
-non-canonical 边 *-bian* and 个 *-ge*. -/
-theorem mandarin_tiers :
-    chang.IsCanonical ∧ bu.violations = 1 ∧ ba.violations = 2
-      ∧ xing.violations = 3 ∧ bian.violations = 4 ∧ ge.violations = 4 := by
+    ∀ k : Fin 5, (Finset.univ.filter λ r : Row => r.violations = k).card = Nat.choose 4 k := by
   decide
+
+/-! ### The Mandarin case study (§4, Appendix A) -/
+
+/-- A row's judgments, read from the appendix's codes. -/
+def interpret (r : LinguisticExample) : Option Row := do
+  let c1 ← match r.feature? "boundness" with
+    | some "free" => some true
+    | some "bound" => some false
+    | _ => none
+  let c2 ← match r.feature? "position" with
+    | some "flexible" => some true
+    | some "left" | some "right" => some false
+    | _ => none
+  let c3 ← match r.feature? "phonology" with
+    | some "toned" => some true
+    | some "toneless" => some false
+    | _ => none
+  let c4 ← match r.feature? "meaning" with
+    | some "lexical" => some true
+    | some "less" => some false
+    | _ => none
+  pure ⟨c1, c2, c3, c4⟩
+
+/-- The appendix's group of a row: canonical roots, then non-canonical roots by the number of
+criteria violated. -/
+def group? : String → Option ℕ
+  | "1" => some 0
+  | "2" => some 1
+  | "3" => some 2
+  | "4" => some 3
+  | "5" => some 4
+  | _ => none
+
+/-- Every row is classified on all four criteria, and its group is the number it fails. -/
+theorem rows_group :
+    ∀ r ∈ Examples.all, ∃ row ∈ interpret r,
+      (r.feature? "group").bind group? = some row.violations := by
+  decide +kernel
+
+/-- A phonologically deficient morpheme is maximally non-canonical: only the bottom cell of the
+space holds a toneless morpheme. -/
+theorem deficient_maximal :
+    ∀ r ∈ Examples.all, ∀ row ∈ interpret r, row.c3 = false → row.violations = 4 := by
+  decide +kernel
+
+/-- The five tiers: canonical 厂 *chǎng* (Table 3), 不 *bù* deviating on meaning alone, bound and
+fixed 霸 *bà*, schematic 性 *xìng*, and the toneless 边 *-bian* and 个 *-ge* meeting no
+criterion. -/
+theorem mandarin_tiers :
+    ∀ r ∈ Examples.all, ∀ row ∈ interpret r,
+      (r.primaryText = "厂 chǎng" → row.IsCanonical) ∧
+      (r.primaryText = "不 bù" → row.violations = 1) ∧
+      (r.primaryText = "霸 bà" → row.violations = 2) ∧
+      (r.primaryText = "性 xìng" → row.violations = 3) ∧
+      (r.primaryText = "边 bian" → row.violations = 4) ∧
+      (r.primaryText = "个 ge" → row.violations = 4) := by
+  decide +kernel
 
 end Qin2025
