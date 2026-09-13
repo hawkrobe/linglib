@@ -1,8 +1,9 @@
 import Linglib.Semantics.Modality.Directive
 import Linglib.Semantics.Homogeneity.Decided
 import Linglib.Semantics.Exhaustification.Finite
-import Linglib.Studies.Rubinstein2014
+import Linglib.Data.Examples.Rubinstein2014
 import Linglib.Data.Examples.AghaJeretic2026
+import Mathlib.Data.Fintype.Prod
 
 /-!
 # Modal force and its realization across languages
