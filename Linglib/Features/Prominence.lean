@@ -16,19 +16,18 @@ marking, and the marking grids over them.
   plural-marking hierarchy, with the coarsening
   `AnimacyRank.toAnimacyLevel`.
 - `MarkingPattern` — which cells of the animacy × definiteness grid are
-  marked; the `MonotoneP`/`MonotoneA` staircases, cutoff constructors, and
+  marked; the `MonotoneP` staircase, cutoff constructors, and
   `monotoneP_iff_isUpperSet`.
 
 Paper-specific apparatus lives with its papers: the scenario universals in
 `Studies/Haspelmath2021.lean`, the OT typology in `Studies/Aissen2003.lean`,
-the indexing survey in `Studies/Just2024.lean`.
+the prominence principle of differential indexing in `Studies/Just2024.lean`.
 
 ## References
 
 * [aissen-2003]
 * [corbett-2000]
 * [haspelmath-2021]
-* [just-2024]
 * [smith-stark-1974]
 -/
 
@@ -160,23 +159,16 @@ def DefinitenessLevel.all : List DefinitenessLevel :=
 
 /-- A differential-marking pattern: which cells in the animacy × definiteness
     grid receive overt differential marking, for whatever argument role and
-    channel a consumer pairs the pattern with ([aissen-2003] flagging,
-    [just-2024] indexing). A `def`, not an `abbrev`, so the checkers below
-    are dot-accessible. -/
+    channel a consumer pairs the pattern with ([aissen-2003] flagging). A
+    `def`, not an `abbrev`, so the checkers below are dot-accessible. -/
 def MarkingPattern := AnimacyLevel → DefinitenessLevel → Bool
 
 namespace MarkingPattern
 
 /-- Marking is closed under moving up both scales — the upper-set staircase
-    of [aissen-2003]'s (33b), appropriate to P/T marking and extended to
-    P indexing by [just-2024]. -/
+    of [aissen-2003]'s (33b), appropriate to P/T marking. -/
 def MonotoneP (p : MarkingPattern) : Prop :=
   ∀ a a' d d', a ≤ a' → d ≤ d' → p a d = true → p a' d' = true
-
-/-- Marking closed downward — the mirror image appropriate to A/R marking
-    ([just-2024]). -/
-def MonotoneA (p : MarkingPattern) : Prop :=
-  ∀ a a' d d', a' ≤ a → d' ≤ d → p a d = true → p a' d' = true
 
 /-- The pattern depends only on animacy. -/
 def AnimacyOnly (p : MarkingPattern) : Prop :=
@@ -187,7 +179,6 @@ def DefinitenessOnly (p : MarkingPattern) : Prop :=
   ∀ a a' d, p a d = p a' d
 
 instance : DecidablePred MonotoneP := λ p => by unfold MonotoneP; infer_instance
-instance : DecidablePred MonotoneA := λ p => by unfold MonotoneA; infer_instance
 instance : DecidablePred AnimacyOnly := λ p => by unfold AnimacyOnly; infer_instance
 instance : DecidablePred DefinitenessOnly := λ p => by
   unfold DefinitenessOnly; infer_instance
@@ -211,15 +202,6 @@ def animacyAtLeast (cutoff : AnimacyLevel) : MarkingPattern :=
 /-- Mark the cells at or above a definiteness cutoff (P/T-type marking). -/
 def definitenessAtLeast (cutoff : DefinitenessLevel) : MarkingPattern :=
   λ _ d => decide (cutoff ≤ d)
-
-/-- Mark the cells at or below an animacy cutoff — A/R-type marking; the
-    marked zone is the complementary lower set. -/
-def animacyAtMost (cutoff : AnimacyLevel) : MarkingPattern :=
-  λ a _ => decide (a ≤ cutoff)
-
-/-- Mark the cells at or below a definiteness cutoff (A/R-type marking). -/
-def definitenessAtMost (cutoff : DefinitenessLevel) : MarkingPattern :=
-  λ _ d => decide (d ≤ cutoff)
 
 end MarkingPattern
 
