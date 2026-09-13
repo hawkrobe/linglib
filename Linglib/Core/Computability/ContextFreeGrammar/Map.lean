@@ -1,41 +1,41 @@
-import Mathlib.Computability.ContextFreeGrammar
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
+import Linglib.Core.Computability.ContextFreeGrammar
 
 /-!
-# Closure of `IsContextFree` under string homomorphism
+# Context-free languages are closed under string homomorphisms
 
-The image of a context-free language under a string homomorphism — induced by a
-per-symbol map `f : T → List T'` — is context-free. Construction: replace each
-terminal `a` in each grammar rule's output with the symbol-list `(f a).map .terminal`.
-Nonterminals are unchanged.
+A map `f : T → List T'` on letters extends to a monoid homomorphism on words, `List.flatMap f`,
+and to a semiring homomorphism `Language.stringMap f` on languages. The image of a context-free
+language under it is context-free: replace every terminal `a` in every rule by the string `f a`
+([hopcroft-motwani-ullman-2000]).
 
 ## Main definitions
 
-* `Language.stringMap f : Language T →+* Language T'`: image under the string
-  homomorphism. Since `List α = FreeMonoid α`, the action `List.flatMap f` is the
-  free-monoid lift `FreeMonoid.lift f`; bundled as a semiring hom mirroring mathlib's
-  `Language.map`, of which the letter-to-letter case is the special case
-  `Language.stringMap_letterMap`.
+* `Language.stringMap`: the image of a language under a string homomorphism.
+* `Symbol.applyHom`, `ContextFreeRule.applyHom`, `ContextFreeGrammar.applyHom`: a string
+  homomorphism applied to a symbol, a rule and a grammar.
 
-## Main theorems
+## Main results
 
-* `Language.IsContextFree.stringMap`: context-free languages are closed under
-  string homomorphism.
-* `ContextFreeGrammar.applyHom_language`: the grammar construction realizes `stringMap`.
+* `ContextFreeGrammar.applyHom_language`: the image grammar generates the image language.
+* `Language.IsContextFree.stringMap`: closure under string homomorphisms, with its
+  contrapositive `Language.not_isContextFree_of_stringMap_not`.
 
-[hopcroft-motwani-ullman-2000] (homomorphism-closure construction).
+## References
+
+* [hopcroft-motwani-ullman-2000]
 -/
 
 open scoped Classical
 
-universe u v
+variable {T T' N : Type*}
 
-variable {T : Type u} {T' : Type v}
-
-/-- The image of a language under the string homomorphism induced by a per-symbol
-    map `f : T → List T'`. On a word the action is `List.flatMap f` — i.e. the
-    free-monoid lift `FreeMonoid.lift f`, since `List α = FreeMonoid α`. Bundled as a
-    semiring hom mirroring mathlib's `Language.map`; the letter-to-letter map is the
-    special case `Language.stringMap_letterMap`. -/
+/-- The image of a language under the string homomorphism induced by `f : T → List T'`, the
+monoid homomorphism `List.flatMap f` on words; `Language.map` is the case of one-letter images. -/
 def Language.stringMap (f : T → List T') : Language T →+* Language T' where
   toFun := Set.image (List.flatMap f)
   map_zero' := Set.image_empty _
@@ -46,367 +46,172 @@ def Language.stringMap (f : T → List T') : Language T →+* Language T' where
 @[simp] theorem Language.mem_stringMap {f : T → List T'} {L : Language T} {w : List T'} :
     w ∈ Language.stringMap f L ↔ ∃ v ∈ L, List.flatMap f v = w := Iff.rfl
 
-/-- **Bridge to mathlib's `Language.map`.** The letter-to-letter map `f : T → T'`
-    (singleton outputs) is the special case of `stringMap` that collapses to mathlib's
-    `Language.map f`, so `stringMap` genuinely generalizes the existing letter image. -/
-@[simp] theorem Language.stringMap_letterMap (f : T → T') (L : Language T) :
+theorem Language.stringMap_singleton (f : T → T') (L : Language T) :
     Language.stringMap (fun a => [f a]) L = Language.map f L := by
-  have hfun : (List.flatMap (fun a => [f a]) : List T → List T') = List.map f :=
-    funext fun _ => List.map_eq_flatMap.symm
-  show Set.image (List.flatMap fun a => [f a]) L = Set.image (List.map f) L
-  rw [hfun]
+  show Set.image _ L = Set.image _ L
+  simp [← List.map_eq_flatMap]
+
+namespace Symbol
+
+/-- A string homomorphism on terminals applied to a symbol: a terminal becomes the string of
+terminals it maps to, a nonterminal stays. -/
+def applyHom (h : T → List T') : Symbol T N → List (Symbol T' N)
+  | terminal a => (h a).map terminal
+  | nonterminal A => [nonterminal A]
+
+@[simp] theorem applyHom_terminal (h : T → List T') (a : T) :
+    applyHom h (terminal a : Symbol T N) = (h a).map terminal := rfl
+
+@[simp] theorem applyHom_nonterminal (h : T → List T') (A : N) :
+    applyHom h (nonterminal A : Symbol T N) = [nonterminal A] := rfl
+
+theorem flatMap_applyHom_map_terminal (h : T → List T') (w : List T) :
+    (w.map (terminal (N := N))).flatMap (applyHom h) = (w.flatMap h).map terminal := by
+  induction w with
+  | nil => rfl
+  | cons a w ih => simp [ih]
+
+/-- A word of the image grammar comes from a word of the source. -/
+theorem eq_map_terminal_of_flatMap_applyHom {h : T → List T'} :
+    ∀ {l : List (Symbol T N)} {w' : List T'}, l.flatMap (applyHom h) = w'.map terminal →
+      ∃ w : List T, l = w.map terminal ∧ w.flatMap h = w'
+  | [], w', heq => ⟨[], rfl, by simpa using (List.map_eq_nil_iff.mp heq.symm).symm⟩
+  | nonterminal _ :: _, w', heq => by cases w' <;> simp at heq
+  | terminal a :: l, w', heq => by
+    rw [List.flatMap_cons, applyHom_terminal, eq_comm, List.map_eq_append_iff] at heq
+    obtain ⟨w₁, w₂, rfl, h₁, h₂⟩ := heq
+    obtain rfl := (List.map_injective_iff.mpr fun _ _ h => terminal.inj h) h₁
+    obtain ⟨w, rfl, rfl⟩ := eq_map_terminal_of_flatMap_applyHom h₂.symm
+    exact ⟨a :: w, rfl, by simp⟩
+
+/-- A nonterminal in the image of a sentential form comes from the same nonterminal in the
+source. -/
+theorem exists_eq_of_flatMap_applyHom {h : T → List T'} :
+    ∀ {l : List (Symbol T N)} {p q : List (Symbol T' N)} {X : N},
+      l.flatMap (applyHom h) = p ++ [nonterminal X] ++ q →
+      ∃ l₁ l₂, l = l₁ ++ [nonterminal X] ++ l₂ ∧
+        l₁.flatMap (applyHom h) = p ∧ l₂.flatMap (applyHom h) = q
+  | [], p, q, X, heq => by simp at heq
+  | nonterminal Y :: l, [], q, X, heq => by
+    simp only [List.flatMap_cons, applyHom_nonterminal, List.nil_append, List.singleton_append,
+      List.cons.injEq, nonterminal.injEq] at heq
+    obtain ⟨rfl, rfl⟩ := heq
+    exact ⟨[], l, rfl, rfl, rfl⟩
+  | nonterminal Y :: l, s :: p, q, X, heq => by
+    simp only [List.flatMap_cons, applyHom_nonterminal, List.cons_append, List.cons.injEq] at heq
+    obtain ⟨rfl, heq⟩ := heq
+    obtain ⟨l₁, l₂, rfl, rfl, rfl⟩ := exists_eq_of_flatMap_applyHom heq
+    exact ⟨nonterminal Y :: l₁, l₂, rfl, by simp, rfl⟩
+  | terminal a :: l, p, q, X, heq => by
+    rw [List.flatMap_cons, applyHom_terminal, List.append_assoc, List.append_eq_append_iff] at heq
+    rcases heq with ⟨p', rfl, heq⟩ | ⟨c, hc, heq⟩
+    · obtain ⟨l₁, l₂, rfl, rfl, rfl⟩ :=
+        exists_eq_of_flatMap_applyHom (List.append_assoc _ _ _ ▸ heq)
+      exact ⟨terminal a :: l₁, l₂, rfl, by simp, rfl⟩
+    · obtain ⟨w₁, w₂, -, -, rfl⟩ := List.map_eq_append_iff.mp hc
+      cases w₂ with
+      | nil =>
+        rw [List.map_nil, List.nil_append] at heq
+        obtain ⟨l₁, l₂, rfl, h₁, rfl⟩ := exists_eq_of_flatMap_applyHom (l := l) (p := [])
+          (by simpa only [List.nil_append] using heq.symm)
+        exact ⟨terminal a :: l₁, l₂, rfl, by simpa [h₁] using hc, rfl⟩
+      | cons b w₂ => simp at heq
+
+end Symbol
 
 namespace ContextFreeRule
 
-variable {N : Type*}
-
-/-- Apply a string homomorphism `h : T → List T'` to a single `Symbol`,
-    producing a symbol-list. Terminals are substituted; nonterminals are
-    preserved as singletons. -/
-def Symbol.applyHom (h : T → List T') : Symbol T N → List (Symbol T' N)
-  | .terminal a => (h a).map .terminal
-  | .nonterminal X => [.nonterminal X]
-
-/-- Apply a string homomorphism `h : T → List T'` to a symbol list (free
-    monoid functoriality). -/
-def applyHomList (h : T → List T') : List (Symbol T N) → List (Symbol T' N) :=
-  List.flatMap (Symbol.applyHom h)
-
-@[simp] theorem applyHomList_nil (h : T → List T') :
-    applyHomList h ([] : List (Symbol T N)) = [] := rfl
-
-@[simp] theorem applyHomList_cons (h : T → List T') (s : Symbol T N)
-    (ss : List (Symbol T N)) :
-    applyHomList h (s :: ss) = Symbol.applyHom h s ++ applyHomList h ss := by
-  simp [applyHomList, List.flatMap_cons]
-
-theorem applyHomList_append (h : T → List T') (xs ys : List (Symbol T N)) :
-    applyHomList h (xs ++ ys) = applyHomList h xs ++ applyHomList h ys :=
-  List.flatMap_append
-
-@[simp] theorem applyHomList_singleton_terminal (h : T → List T') (a : T) :
-    applyHomList h ([Symbol.terminal a] : List (Symbol T N)) = (h a).map .terminal := by
-  simp [applyHomList, Symbol.applyHom]
-
-@[simp] theorem applyHomList_singleton_nonterminal (h : T → List T') (X : N) :
-    applyHomList h ([Symbol.nonterminal X] : List (Symbol T N)) = [.nonterminal X] := by
-  simp [applyHomList, Symbol.applyHom]
-
-/-- For a list of terminals, `applyHomList` becomes `flatMap h` followed by
-    re-wrapping as terminals. -/
-theorem applyHomList_map_terminal (h : T → List T') (w : List T) :
-    applyHomList h (w.map (Symbol.terminal (N := N))) =
-    (List.flatMap h w).map .terminal := by
-  induction w with
-  | nil => rfl
-  | cons a as ih =>
-    simp only [List.map_cons, applyHomList_cons, Symbol.applyHom, ih,
-               List.flatMap_cons, List.map_append]
-
-/-- Apply a string homomorphism to a CFG rule. -/
-def applyHom (h : T → List T') (r : ContextFreeRule T N) : ContextFreeRule T' N where
-  input := r.input
-  output := applyHomList h r.output
+/-- A string homomorphism applied to a rule. -/
+def applyHom (h : T → List T') (r : ContextFreeRule T N) : ContextFreeRule T' N :=
+  ⟨r.input, r.output.flatMap (Symbol.applyHom h)⟩
 
 @[simp] theorem applyHom_input (h : T → List T') (r : ContextFreeRule T N) :
     (r.applyHom h).input = r.input := rfl
 
 @[simp] theorem applyHom_output (h : T → List T') (r : ContextFreeRule T N) :
-    (r.applyHom h).output = applyHomList h r.output := rfl
+    (r.applyHom h).output = r.output.flatMap (Symbol.applyHom h) := rfl
 
-/-- A single rule's `Rewrites` relation lifts under `applyHom`. -/
-theorem Rewrites.applyHom (h : T → List T') {r : ContextFreeRule T N}
-    {u v : List (Symbol T N)} (hr : r.Rewrites u v) :
-    (r.applyHom h).Rewrites (applyHomList h u) (applyHomList h v) := by
+theorem Rewrites.applyHom (h : T → List T') {r : ContextFreeRule T N} {u v : List (Symbol T N)}
+    (hr : r.Rewrites u v) :
+    (r.applyHom h).Rewrites (u.flatMap (Symbol.applyHom h)) (v.flatMap (Symbol.applyHom h)) := by
   obtain ⟨p, q, rfl, rfl⟩ := hr.exists_parts
-  simp only [applyHomList_append, applyHomList_singleton_nonterminal]
-  exact rewrites_of_exists_parts (r.applyHom h)
-    (applyHomList h p) (applyHomList h q)
+  simpa [List.flatMap_append] using rewrites_of_exists_parts (r.applyHom h)
+    (p.flatMap (Symbol.applyHom h)) (q.flatMap (Symbol.applyHom h))
 
 end ContextFreeRule
 
 namespace ContextFreeGrammar
 
-/-- Apply a string homomorphism to a CFG: substitute terminals in every rule.
-    Noncomputable due to `Finset.image` requiring decidable equality on rules
-    (provided classically). -/
-noncomputable def applyHom (h : T → List T') (G : ContextFreeGrammar T) : ContextFreeGrammar T' where
-  NT := G.NT
-  initial := G.initial
-  rules := G.rules.image (ContextFreeRule.applyHom h)
+variable (h : T → List T') {G : ContextFreeGrammar T}
 
-@[simp] theorem applyHom_NT (h : T → List T') (G : ContextFreeGrammar T) :
-    (G.applyHom h).NT = G.NT := rfl
+/-- A string homomorphism applied to a grammar: every terminal in every rule is replaced by its
+image. -/
+noncomputable def applyHom (G : ContextFreeGrammar T) : ContextFreeGrammar T' :=
+  ⟨G.NT, G.initial, G.rules.image (ContextFreeRule.applyHom h)⟩
 
-@[simp] theorem applyHom_initial (h : T → List T') (G : ContextFreeGrammar T) :
-    (G.applyHom h).initial = G.initial := rfl
+@[simp] theorem applyHom_NT : (G.applyHom h).NT = G.NT := rfl
 
-theorem applyHom_rules (h : T → List T') (G : ContextFreeGrammar T) :
-    (G.applyHom h).rules = G.rules.image (ContextFreeRule.applyHom h) := rfl
+@[simp] theorem applyHom_initial : (G.applyHom h).initial = G.initial := rfl
 
-/-- `Produces` lifts under `applyHom`. -/
-theorem Produces.applyHom (h : T → List T') {G : ContextFreeGrammar T}
-    {u v : List (Symbol T G.NT)} (huv : G.Produces u v) :
-    (G.applyHom h).Produces
-      (ContextFreeRule.applyHomList h u) (ContextFreeRule.applyHomList h v) := by
-  obtain ⟨r, hr_mem, hrw⟩ := huv
-  refine ⟨r.applyHom h, ?_, hrw.applyHom h⟩
-  rw [applyHom_rules]
-  exact Finset.mem_image.mpr ⟨r, hr_mem, rfl⟩
+theorem mem_applyHom_rules {r' : ContextFreeRule T' G.NT} :
+    r' ∈ (G.applyHom h).rules ↔ ∃ r ∈ G.rules, r.applyHom h = r' :=
+  Finset.mem_image
 
-/-- `Derives` lifts under `applyHom`. -/
-theorem Derives.applyHom (h : T → List T') {G : ContextFreeGrammar T}
-    {u v : List (Symbol T G.NT)} (huv : G.Derives u v) :
-    (G.applyHom h).Derives
-      (ContextFreeRule.applyHomList h u) (ContextFreeRule.applyHomList h v) := by
+theorem Produces.applyHom {u v : List (Symbol T G.NT)} (huv : G.Produces u v) :
+    (G.applyHom h).Produces (u.flatMap (Symbol.applyHom h)) (v.flatMap (Symbol.applyHom h)) :=
+  let ⟨r, hr, hrw⟩ := huv
+  ⟨r.applyHom h, (mem_applyHom_rules h).mpr ⟨r, hr, rfl⟩, hrw.applyHom h⟩
+
+theorem Derives.applyHom {u v : List (Symbol T G.NT)} (huv : G.Derives u v) :
+    (G.applyHom h).Derives (u.flatMap (Symbol.applyHom h)) (v.flatMap (Symbol.applyHom h)) := by
   induction huv with
-  | refl => exact Relation.ReflTransGen.refl
-  | tail _ hstep ih => exact ih.tail (hstep.applyHom h)
+  | refl => exact .refl _
+  | tail _ step ih => exact ih.trans_produces (step.applyHom h)
 
-end ContextFreeGrammar
+/-- A step of the image grammar from the image of a sentential form is the image of a step of
+the source grammar. -/
+theorem Produces.of_applyHom {l : List (Symbol T G.NT)} {t' : List (Symbol T' G.NT)}
+    (hp : (G.applyHom h).Produces (l.flatMap (Symbol.applyHom h)) t') :
+    ∃ t, G.Produces l t ∧ t.flatMap (Symbol.applyHom h) = t' := by
+  obtain ⟨r', hr', hrw⟩ := hp
+  obtain ⟨r, hr, rfl⟩ := (mem_applyHom_rules h).mp hr'
+  obtain ⟨p, q, hl, rfl⟩ := hrw.exists_parts
+  obtain ⟨l₁, l₂, rfl, rfl, rfl⟩ := Symbol.exists_eq_of_flatMap_applyHom (N := G.NT) hl
+  exact ⟨l₁ ++ r.output ++ l₂, ⟨r, hr, ContextFreeRule.rewrites_of_exists_parts r l₁ l₂⟩,
+    by simp [List.flatMap_append]⟩
 
--- ============================================================================
--- Language equality
--- ============================================================================
-
-namespace ContextFreeGrammar
-
-/-- Forward inclusion: every `(G.applyHom h)`-generated string is in
-    `Language.stringMap h G.language`. -/
-theorem applyHom_language_subset (h : T → List T') (G : ContextFreeGrammar T) :
-    Language.stringMap h G.language ≤ (G.applyHom h).language := by
-  intro w' hw'
-  obtain ⟨w, hw, rfl⟩ := Language.mem_stringMap.mp hw'
-  show (G.applyHom h).Derives [.nonterminal G.initial]
-        ((List.flatMap h w).map .terminal)
-  have hd := Derives.applyHom h hw
-  convert hd using 1
-  · simp [ContextFreeRule.Symbol.applyHom]
-  · simp [ContextFreeRule.applyHomList_map_terminal]
-
--- ============================================================================
--- Backward direction helpers (private to this file)
--- ============================================================================
-
-/-- If a terminal-only prefix `ts.map .terminal` is followed by `R` and the
-    whole equals `p ++ [.nonterminal X] ++ q`, then `ts.map .terminal` is a
-    prefix of `p`. -/
-private lemma terminal_prefix_split {N : Type*} (ts : List T') :
-    ∀ {R : List (Symbol T' N)} {p : List (Symbol T' N)} {X : N}
-      {q : List (Symbol T' N)},
-    ts.map (Symbol.terminal (N := N)) ++ R = p ++ [Symbol.nonterminal X] ++ q →
-    ∃ p_rest, p = ts.map .terminal ++ p_rest ∧
-              R = p_rest ++ [Symbol.nonterminal X] ++ q := by
-  induction ts with
-  | nil =>
-    intro R p X q heq
-    refine ⟨p, by simp, ?_⟩
-    simpa using heq
-  | cons t ts' ih =>
-    intro R p X q heq
-    rw [List.map_cons, List.cons_append] at heq
-    cases p with
-    | nil =>
-      rw [List.nil_append, List.singleton_append, List.cons.injEq] at heq
-      cases heq.1
-    | cons ph pt =>
-      rw [List.cons_append, List.cons_append, List.cons.injEq] at heq
-      obtain ⟨hph, hrest⟩ := heq
-      obtain ⟨p_rest, hpt_eq, hR_eq⟩ := ih hrest
-      refine ⟨p_rest, ?_, hR_eq⟩
-      rw [List.map_cons, List.cons_append, ← hph, hpt_eq]
-
-/-- If a terminal-only prefix `ts.map .terminal` is followed by `R` and the
-    whole equals `w'.map .terminal`, then `ts` is a prefix of `w'`. -/
-private lemma terminal_map_prefix {N : Type*} (ts : List T') :
-    ∀ {R : List (Symbol T' N)} {w' : List T'},
-    ts.map (Symbol.terminal (N := N)) ++ R = w'.map .terminal →
-    ∃ w'_rest, w' = ts ++ w'_rest ∧ R = w'_rest.map .terminal := by
-  induction ts with
-  | nil =>
-    intro R w' heq
-    refine ⟨w', by simp, ?_⟩
-    simpa using heq
-  | cons t ts' ih =>
-    intro R w' heq
-    rw [List.map_cons, List.cons_append] at heq
-    cases w' with
-    | nil =>
-      rw [List.map_nil] at heq
-      cases heq
-    | cons w ws =>
-      rw [List.map_cons, List.cons.injEq] at heq
-      obtain ⟨hwt, hrest⟩ := heq
-      injection hwt with htw
-      obtain ⟨w'_rest, hws_eq, hR_eq⟩ := ih hrest
-      refine ⟨w'_rest, ?_, hR_eq⟩
-      rw [List.cons_append, hws_eq, htw]
-
-/-- Decompose an `applyHomList` equation: if `applyHomList h m = p ++
-    [.nonterminal X] ++ q`, then there exist `pm`, `qm` on the G-side with
-    `m = pm ++ [.nonterminal X] ++ qm` whose images recover `p` and `q`.
-    The load-bearing lemma for lifting G'-derivations to G-derivations. -/
-private lemma decompose_applyHomList {h : T → List T'} {N : Type*}
-    (m : List (Symbol T N)) :
-    ∀ {p : List (Symbol T' N)} {X : N} {q : List (Symbol T' N)},
-    ContextFreeRule.applyHomList h m = p ++ [Symbol.nonterminal X] ++ q →
-    ∃ pm qm : List (Symbol T N),
-      m = pm ++ [Symbol.nonterminal X] ++ qm ∧
-      ContextFreeRule.applyHomList h pm = p ∧
-      ContextFreeRule.applyHomList h qm = q := by
-  induction m with
-  | nil =>
-    intro p X q heq
-    rw [ContextFreeRule.applyHomList_nil] at heq
-    exfalso
-    have hl := congr_arg List.length heq
-    simp at hl
-  | cons s rest ih =>
-    intro p X q heq
-    rw [ContextFreeRule.applyHomList_cons] at heq
-    cases s with
-    | nonterminal Y =>
-      simp only [ContextFreeRule.Symbol.applyHom, List.singleton_append] at heq
-      cases p with
-      | nil =>
-        rw [List.nil_append, List.singleton_append, List.cons.injEq] at heq
-        obtain ⟨hYX, hreq⟩ := heq
-        injection hYX with hYX'
-        refine ⟨[], rest, ?_, rfl, hreq⟩
-        rw [List.nil_append, List.singleton_append, hYX']
-      | cons ph pt =>
-        rw [List.cons_append, List.cons_append, List.cons.injEq] at heq
-        obtain ⟨hph, hrest⟩ := heq
-        obtain ⟨pm', qm', hrest_eq, hpm', hqm'⟩ := ih hrest
-        refine ⟨.nonterminal Y :: pm', qm', ?_, ?_, hqm'⟩
-        · rw [List.cons_append, List.cons_append, hrest_eq]
-        · rw [ContextFreeRule.applyHomList_cons]
-          simp only [ContextFreeRule.Symbol.applyHom, List.singleton_append]
-          rw [hpm', hph]
-    | terminal a =>
-      simp only [ContextFreeRule.Symbol.applyHom] at heq
-      obtain ⟨p_rest, hp_eq, hR_eq⟩ := terminal_prefix_split (h a) heq
-      obtain ⟨pm', qm', hrest_eq, hpm', hqm'⟩ := ih hR_eq
-      refine ⟨.terminal a :: pm', qm', ?_, ?_, hqm'⟩
-      · rw [List.cons_append, List.cons_append, hrest_eq]
-      · rw [ContextFreeRule.applyHomList_cons]
-        simp only [ContextFreeRule.Symbol.applyHom]
-        rw [hpm']
-        exact hp_eq.symm
-
-/-- Lift a one-step `Produces` of `G.applyHom h` to a one-step `Produces` of
-    `G`, given a preimage `s` of the source. -/
-private lemma producesLift {h : T → List T'} {G : ContextFreeGrammar T}
-    {m' t' : List (Symbol T' G.NT)} (hp : (G.applyHom h).Produces m' t')
-    {s : List (Symbol T G.NT)} (hs : ContextFreeRule.applyHomList h s = m') :
-    ∃ t : List (Symbol T G.NT),
-      G.Produces s t ∧ ContextFreeRule.applyHomList h t = t' := by
-  obtain ⟨r', hr'_mem, hrw⟩ := hp
-  rw [ContextFreeGrammar.applyHom_rules] at hr'_mem
-  obtain ⟨r, hr_mem, hr_eq⟩ := Finset.mem_image.mp hr'_mem
-  subst hr_eq
-  obtain ⟨p, q, hm'_eq, ht'_eq⟩ := hrw.exists_parts
-  rw [ContextFreeRule.applyHom_input] at hm'_eq
-  rw [ContextFreeRule.applyHom_output] at ht'_eq
-  rw [← hs] at hm'_eq
-  obtain ⟨ps, qs, hs_eq, hps, hqs⟩ := decompose_applyHomList s hm'_eq
-  refine ⟨ps ++ r.output ++ qs, ?_, ?_⟩
-  · refine ⟨r, hr_mem, ?_⟩
-    rw [hs_eq]
-    exact ContextFreeRule.rewrites_of_exists_parts r ps qs
-  · rw [ContextFreeRule.applyHomList_append, ContextFreeRule.applyHomList_append,
-        hps, hqs]
-    exact ht'_eq.symm
-
-/-- Lift a multi-step `Derives` of `G.applyHom h` to a `Derives` of `G`,
-    given a preimage `s` of the source. -/
-private lemma derivesLift {h : T → List T'} {G : ContextFreeGrammar T}
-    {m' t' : List (Symbol T' G.NT)} (hd : (G.applyHom h).Derives m' t') :
-    ∀ {s : List (Symbol T G.NT)}, ContextFreeRule.applyHomList h s = m' →
-    ∃ t : List (Symbol T G.NT),
-      G.Derives s t ∧ ContextFreeRule.applyHomList h t = t' := by
+theorem Derives.of_applyHom {l : List (Symbol T G.NT)} {t' : List (Symbol T' G.NT)}
+    (hd : (G.applyHom h).Derives (l.flatMap (Symbol.applyHom h)) t') :
+    ∃ t, G.Derives l t ∧ t.flatMap (Symbol.applyHom h) = t' := by
   induction hd with
-  | refl =>
-    intro s hs
-    exact ⟨s, Relation.ReflTransGen.refl, hs⟩
-  | tail _ hstep ih =>
-    intro s hs
-    obtain ⟨m_lift, hG_m_lift, hm_lift_eq⟩ := ih hs
-    obtain ⟨t_lift, hstep_lift, ht_lift_eq⟩ := producesLift hstep hm_lift_eq
-    exact ⟨t_lift, hG_m_lift.tail hstep_lift, ht_lift_eq⟩
+  | refl => exact ⟨l, .refl _, rfl⟩
+  | tail _ step ih =>
+    obtain ⟨t, hd, rfl⟩ := ih
+    obtain ⟨t', hp, ht'⟩ := step.of_applyHom
+    exact ⟨t', hd.trans_produces hp, ht'⟩
 
-/-- Recover a terminal preimage `w` from an `applyHomList` of a
-    G-side symbol-list `t` that produces an all-terminal G'-side string
-    `w'.map .terminal`. -/
-private lemma liftMapTerminal {h : T → List T'} {N : Type*} :
-    ∀ {t : List (Symbol T N)} {w' : List T'},
-    ContextFreeRule.applyHomList h t = w'.map (Symbol.terminal (N := N)) →
-    ∃ w : List T, t = w.map .terminal ∧ List.flatMap h w = w' := by
-  intro t
-  induction t with
-  | nil =>
-    intro w' heq
-    rw [ContextFreeRule.applyHomList_nil] at heq
-    have hw' : w' = [] := List.map_eq_nil_iff.mp heq.symm
-    refine ⟨[], rfl, ?_⟩
-    rw [hw']; rfl
-  | cons s rest ih =>
-    intro w' heq
-    rw [ContextFreeRule.applyHomList_cons] at heq
-    cases s with
-    | nonterminal Y =>
-      simp only [ContextFreeRule.Symbol.applyHom, List.singleton_append] at heq
-      cases w' with
-      | nil =>
-        rw [List.map_nil] at heq
-        cases heq
-      | cons w ws =>
-        rw [List.map_cons, List.cons.injEq] at heq
-        cases heq.1
-    | terminal a =>
-      simp only [ContextFreeRule.Symbol.applyHom] at heq
-      obtain ⟨w'_rest, hw'_eq, hR_eq⟩ := terminal_map_prefix (h a) heq
-      obtain ⟨w_rest, hrest_eq, happly⟩ := ih hR_eq
-      refine ⟨a :: w_rest, ?_, ?_⟩
-      · rw [List.map_cons, hrest_eq]
-      · rw [hw'_eq, ← happly]
-        rfl
-
-/-- Backward inclusion: every `(G.applyHom h)`-generated string is the image
-    of some `G`-generated preimage under `h`. The construction lifts
-    G'-derivations to G-derivations step-by-step using `decompose_applyHomList`
-    and `liftMapTerminal`. Standard textbook construction
-    ([hopcroft-motwani-ullman-2000] Theorem 7.24 part 4 (p. 284-285, homomorphism case)). -/
-theorem applyHom_language_subset_inv (h : T → List T') (G : ContextFreeGrammar T) :
-    (G.applyHom h).language ≤ Language.stringMap h G.language := by
-  intro w' hw'
-  -- hw' : (G.applyHom h).Derives [.nonterminal G.initial] (w'.map .terminal)
-  have hlift : ContextFreeRule.applyHomList h
-                 ([Symbol.nonterminal G.initial] : List (Symbol T G.NT)) =
-               [Symbol.nonterminal G.initial] := by
-    simp [ContextFreeRule.applyHomList, ContextFreeRule.Symbol.applyHom]
-  obtain ⟨t, hGt, ht_eq⟩ := derivesLift hw' hlift
-  obtain ⟨w, hw_term, hw_apply⟩ := liftMapTerminal ht_eq
-  refine Language.mem_stringMap.mpr ⟨w, ?_, hw_apply⟩
-  show G.Derives [.nonterminal G.initial] (w.map .terminal)
-  rw [← hw_term]; exact hGt
-
-theorem applyHom_language (h : T → List T') (G : ContextFreeGrammar T) :
-    (G.applyHom h).language = Language.stringMap h G.language :=
-  le_antisymm (applyHom_language_subset_inv h G) (applyHom_language_subset h G)
+/-- The image grammar generates the image language. -/
+theorem applyHom_language (G : ContextFreeGrammar T) :
+    (G.applyHom h).language = Language.stringMap h G.language := by
+  ext w'
+  rw [mem_language_iff, Language.mem_stringMap]
+  constructor
+  · intro hd
+    obtain ⟨t, hdG, ht⟩ := Derives.of_applyHom (l := [.nonterminal G.initial]) h (by simpa using hd)
+    obtain ⟨w, rfl, rfl⟩ := Symbol.eq_map_terminal_of_flatMap_applyHom ht
+    exact ⟨w, (mem_language_iff _ _).mpr hdG, rfl⟩
+  · rintro ⟨w, hw, rfl⟩
+    simpa [Symbol.flatMap_applyHom_map_terminal] using ((mem_language_iff _ _).mp hw).applyHom h
 
 end ContextFreeGrammar
 
-namespace Language.IsContextFree
-
-theorem stringMap (f : T → List T') {L : Language T}
-    (hL : L.IsContextFree) : (Language.stringMap f L).IsContextFree := by
-  obtain ⟨G, rfl⟩ := hL
-  exact ⟨G.applyHom f, ContextFreeGrammar.applyHom_language f G⟩
+/-- Context-free languages are closed under string homomorphisms. -/
+theorem Language.IsContextFree.stringMap (f : T → List T') {L : Language T}
+    (hL : L.IsContextFree) : (Language.stringMap f L).IsContextFree :=
+  let ⟨G, hG⟩ := hL
+  ⟨G.applyHom f, by rw [ContextFreeGrammar.applyHom_language, hG]⟩
 
 /-- If the homomorphic image of `L` is not context-free, then `L` is not context-free. -/
-theorem _root_.Language.not_isContextFree_of_stringMap_not (f : T → List T') {L : Language T}
+theorem Language.not_isContextFree_of_stringMap_not (f : T → List T') {L : Language T}
     (h : ¬ (Language.stringMap f L).IsContextFree) : ¬ L.IsContextFree :=
   fun hL => h (hL.stringMap f)
-
-end Language.IsContextFree

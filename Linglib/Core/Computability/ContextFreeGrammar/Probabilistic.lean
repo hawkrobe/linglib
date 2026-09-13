@@ -31,9 +31,10 @@ of the rule weight raised to the corpus count of that rule.
 ## Implementation notes
 
 Weights are `ℝ≥0∞`, the scalar of `MeasureTheory.Measure`, and a rule outside the grammar has
-weight `0`, so a tree applying such a rule has probability `0`. Whether the tree probabilities
-of a PCFG sum to one, tightness in the sense of [booth-thompson-1973] and [chi-1999], is not
-addressed here: `derivProb` is a weight on trees, not yet a measure.
+weight `0`, so a tree applying such a rule has probability `0`. `derivProb` is a weight on
+trees; the measure it is the singleton mass of, and tightness in the sense of
+[booth-thompson-1973] and [chi-1999], are in
+`Linglib.Core.Computability.ContextFreeGrammar.Measure`.
 
 ## References
 
