@@ -10,8 +10,7 @@ predication in this directory: a tolerance relation on `Finset Atom`
 (controlling exception tolerance), the basic distribution operators
 `distMaximal`/`allSatisfy`/`someSatisfy`/`noneSatisfy`, and their
 decidability instances. Specialised operators (`distTolerant`,
-trivalent K&S apparatus, Bar-Lev `existPL`, etc.) live in sibling
-files.
+the trivalent K&S apparatus) live in sibling files.
 
 ## Main declarations
 

@@ -28,8 +28,8 @@ which computes the sum under the full split of (56b) (`coord_card`), while the j
 ## Implementation notes
 
 * Pluralities are finite sets and a partition is a `Finset` of nonempty pairwise disjoint cells
-  whose union is the plurality, the finite counterpart of `Plurality.Cover.IsPartition`, chosen
-  so that cardinalities can be counted.
+  whose union is the plurality, mathlib's `Finpartition` without the bundled proofs, chosen so
+  that cardinalities can be counted.
 * The exclusion of overlap in the split reading, which the paper attributes to the Gricean maxim
   of Manner (Section 4.2.1), is a hypothesis of `coord_card`, not derived.
 
@@ -46,8 +46,7 @@ variable {α : Type*} [DecidableEq α]
 /-! ### Partitions and the cardinal modifier (5)–(7) -/
 
 /-- (6): `S` is a partition of `x` — nonempty, pairwise-disjoint
-cells whose union is `x`. Finset counterpart of
-`Plurality.Cover.IsPartition`. -/
+cells whose union is `x`, mathlib's `Finpartition` unbundled. -/
 def IsPart (S : Finset (Finset α)) (x : Finset α) : Prop :=
   (∀ s ∈ S, s ≠ ∅) ∧ (S : Set (Finset α)).PairwiseDisjoint id ∧
     S.sup id = x

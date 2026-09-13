@@ -1724,11 +1724,9 @@ import Linglib.Semantics.Mood.State
 import Linglib.Semantics.Mood.Verbal
 import Linglib.Semantics.Plurality.Algebra
 import Linglib.Semantics.Plurality.Basic
-import Linglib.Semantics.Plurality.Cover
 import Linglib.Semantics.Plurality.Cumulativity
 import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Semantics.Plurality.Groups
-import Linglib.Semantics.Plurality.Implicature
 import Linglib.Semantics.Plurality.Reciprocal
 import Linglib.Semantics.Plurality.Reciprocal.Scope
 import Linglib.Semantics.Plurality.Trivalent

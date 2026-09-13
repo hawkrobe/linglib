@@ -53,7 +53,8 @@ overlap.
 
 ## References
 
-* [champollion-2017], [hovda-2009], [krifka-1989], [krifka-1998], [link-1983]
+* [champollion-2017], [hovda-2009], [krifka-1989], [krifka-1998], [link-1983],
+  [schwarzschild-1996]
 -/
 
 namespace Mereology
@@ -174,6 +175,13 @@ theorem setOf_algClosure (P : α → Prop) : {x | AlgClosure P x} = supClosure {
       | base h => exact subset_supClosure h
       | sum _ _ ihx ihy => exact supClosed_supClosure ihx ihy)
     (supClosure_min (fun _ => .base) algClosure_cum)
+
+/-- `*P` holds of exactly the sums of nonempty finite families of `P`-elements: the implicit
+closure is an explicit finite cover ([schwarzschild-1996]; [champollion-2017]). -/
+theorem algClosure_iff_exists_sup' (P : α → Prop) (x : α) :
+    AlgClosure P x ↔ ∃ (t : Finset α) (ht : t.Nonempty), (∀ y ∈ t, P y) ∧ t.sup' ht id = x := by
+  rw [← Set.mem_setOf_eq (p := AlgClosure P), setOf_algClosure]
+  exact Iff.rfl
 
 end SemilatticeSup
 
