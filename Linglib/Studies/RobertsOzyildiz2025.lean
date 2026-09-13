@@ -1,172 +1,241 @@
 import Linglib.Studies.Glass2025
-import Linglib.Semantics.Causation.SEM.Bool
 import Linglib.Semantics.Causation.SEM.Counterfactual
 
 /-!
-# Roberts & Özyıldız 2025: The causal derivation of the contrafactive gap
+# Roberts and Özyıldız (2025): A causal explanation for the contrafactive gap
 
-[roberts-ozyildiz-2025] derive the contrafactive gap — the absence of
-verbs presupposing ¬p while asserting belief in p — from the
-**Predicate Lexicalization Constraint (PLC)**: presupposed content must
-be causally upstream of at-issue content. A verbal predicate with
-at-issue content α can carry presupposition π only if a causal chain
-runs from π to α in the normative belief-formation model
-p → indic(p) → acq(a)(iₚ) → B(a)(p): the fact generates indicators,
-acquaintance with which causes belief.
+This file formalizes the paper's explanation of the absence of contrafactive predicates, verbs
+that would presuppose the falsity of their complement while asserting belief in it. The
+Predicate Lexicalization Constraint requires the presupposition of a predicate to be causally
+upstream of its at-issue content in the normative model of belief formation, a causal chain
+running from one variable to another when altering the first can alter the second, the
+substrate's `BoolSEM.manipulates`. In the belief-formation model a fact generates indicators
+for itself, experience of an indicator is acquaintance with it, acquaintance forms belief, and
+a fact generates no indicator for its negation, `beliefModel`; the truth of a proposition
+therefore manipulates belief in it, `know_plc`, whereas its falsity does not, `contra_plc`,
+which is the gap. Predicates carrying the contrafactive inference are eventive: the Dutch
+deception verb *wijsmaken* and *hallucinate* satisfy the constraint through an intervening
+node of deception or distortion, `wijsmaken_plc`, and cutting that node returns the deficient
+configuration. The postsuppositional Mandarin yǐwéi lies outside the constraint, so the
+attestation table of [glass-2025] follows, `attested_iff`.
 
-Factives satisfy the PLC (`factive_satisfies_plc`: the chain from p to
-B(a)(p) exists); strong contrafactives violate it
-(`strong_contrafactive_violates_plc`: ¬p generates indicators for ¬p,
-not for p, so no chain reaches B(a)(p)) — the gap follows
-(`contrafactive_gap`), and structurally so
-(`contrafactive_gap_is_structural`: presupposing ¬p while asserting
-B(a)(¬p) is fine). Weak contrafactives like Mandarin yǐwéi escape:
-their falsity inference is a postsupposition about the output context
-([glass-2025]), not a presupposition inside the same eventuality, so
-the PLC does not apply. `attested_iff_plc` derives [glass-2025]'s
-attestation table from the causal account.
+## Implementation notes
 
-The belief-formation model is a deterministic `BoolSEM` over the
-`Causation` substrate; the PLC check runs `developDetOn` over a
-topologically ordered vertex list so proofs reduce structurally.
+Models are the substrate's deterministic Boolean structural equation models. The paper's
+first link makes the fact sufficient but not necessary for its indicators; in the normative
+model, without forged evidence, the indicator copies the fact. Exogenous variables default to
+false, and the normative background sets the experience conditions true, so that the
+manipulation test varies only the presupposed fact. The paper's causal chain is a template
+over the choice of proposition and attitude holder, and the model is that template.
+
+## References
+
+* [T. Roberts, D. Özyıldız, *A causal explanation for the contrafactive gap*
+  (2025)][roberts-ozyildiz-2025]
+* [L. Glass, *Attested versus unattested contrafactive belief verbs* (2025)][glass-2025]
+* [J. Pearl, *Causality: models, reasoning, and inference* (2009)][pearl-2000]
 -/
 
 namespace RobertsOzyildiz2025
 
-open Doxastic Glass2025
-open Presupposition
-open Causation Causation.Mechanism Causation.SEM
+open Glass2025 Causation Causation.Mechanism Causation.SEM Causation.BoolSEM
 
-/-! ### The belief-formation causal model -/
+/-! ### The belief-formation model -/
 
-/-- Variables of belief formation: the fact, its negation, their
-    indicators, acquaintance with the indicators, and the resulting
-    beliefs. An enum so the `developDet` fixpoint reduces
-    structurally. -/
-inductive BeliefVar
-  | p | not_p
-  | indic_p | indic_not_p
-  | acq_a_ip | acq_a_inp
-  | B_a_p | B_a_not_p
+/-- The variables of belief formation for a proposition and for its negation: the fact, an
+indicator for it, the agent's experience of the indicator, acquaintance with it, and the
+resulting belief. -/
+inductive V
+  | p | indicP | expP | acqP | beliefP
+  | notP | indicNotP | expNotP | acqNotP | beliefNotP
   deriving DecidableEq, Fintype, Repr
 
-/-- The causal graph: the chain `p → indic(p) → acq(a)(iₚ) → B(a)(p)`
-    and its parallel ¬p chain. -/
-def beliefGraph : CausalGraph BeliefVar :=
-  ⟨fun
-    | .p => ∅
-    | .not_p => ∅
-    | .indic_p => {.p}
-    | .indic_not_p => {.not_p}
-    | .acq_a_ip => {.indic_p}
-    | .acq_a_inp => {.indic_not_p}
-    | .B_a_p => {.acq_a_ip}
-    | .B_a_not_p => {.acq_a_inp}⟩
+/-- The causal graph: a fact generates an indicator for itself, experience of the indicator
+gives acquaintance with it, and acquaintance forms belief; the chains for a proposition and
+for its negation do not cross. -/
+def graph : CausalGraph V := ⟨λ
+  | .indicP => {.p}
+  | .acqP => {.indicP, .expP}
+  | .beliefP => {.acqP}
+  | .indicNotP => {.notP}
+  | .acqNotP => {.indicNotP, .expNotP}
+  | .beliefNotP => {.acqNotP}
+  | _ => ∅⟩
 
-/-- The belief-formation `BoolSEM`: roots default to `false` (the input
-    valuation overrides); each derived vertex copies its sole parent. -/
-noncomputable def beliefSEM : BoolSEM BeliefVar :=
-  { graph := beliefGraph
-    mech := fun v => match v with
-      | .p => const (G := beliefGraph) false
-      | .not_p => const (G := beliefGraph) false
-      | .indic_p => deterministic (fun ρ => ρ ⟨.p, by simp [beliefGraph]⟩)
-      | .indic_not_p => deterministic (fun ρ => ρ ⟨.not_p, by simp [beliefGraph]⟩)
-      | .acq_a_ip => deterministic (fun ρ => ρ ⟨.indic_p, by simp [beliefGraph]⟩)
-      | .acq_a_inp => deterministic (fun ρ => ρ ⟨.indic_not_p, by simp [beliefGraph]⟩)
-      | .B_a_p => deterministic (fun ρ => ρ ⟨.acq_a_ip, by simp [beliefGraph]⟩)
-      | .B_a_not_p => deterministic (fun ρ => ρ ⟨.acq_a_inp, by simp [beliefGraph]⟩) }
+def rank : CausalGraph.Ranking graph :=
+  ⟨λ | .indicP | .indicNotP => 1 | .acqP | .acqNotP => 2 | .beliefP | .beliefNotP => 3 | _ => 0,
+    by intro u v h; revert h; cases u <;> cases v <;> decide⟩
 
-noncomputable instance : SEM.IsDeterministic beliefSEM where
-  mech_det v := match v with
-    | .p => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .not_p => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .indic_p => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-    | .indic_not_p => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-    | .acq_a_ip => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-    | .acq_a_inp => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-    | .B_a_p => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-    | .B_a_not_p => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+instance : CausalGraph.IsDAG graph := rank.isDAG
 
-/-- Topologically ordered vertex list: one `stepOnceDetOn` pass
-    propagates the whole chain. -/
-def beliefVarList : List BeliefVar :=
-  [.p, .not_p, .indic_p, .indic_not_p, .acq_a_ip, .acq_a_inp, .B_a_p, .B_a_not_p]
+/-- The normative model of belief formation: an indicator exists when its fact holds,
+acquaintance is the existence of the indicator together with experience of it, and belief
+follows acquaintance. -/
+noncomputable def beliefModel : BoolSEM V where
+  graph := graph
+  mech
+    | .indicP => deterministic λ ρ => ρ ⟨.p, by simp [graph]⟩
+    | .acqP => deterministic λ ρ =>
+        ρ ⟨.indicP, by simp [graph]⟩ && ρ ⟨.expP, by simp [graph]⟩
+    | .beliefP => deterministic λ ρ => ρ ⟨.acqP, by simp [graph]⟩
+    | .indicNotP => deterministic λ ρ => ρ ⟨.notP, by simp [graph]⟩
+    | .acqNotP => deterministic λ ρ =>
+        ρ ⟨.indicNotP, by simp [graph]⟩ && ρ ⟨.expNotP, by simp [graph]⟩
+    | .beliefNotP => deterministic λ ρ => ρ ⟨.acqNotP, by simp [graph]⟩
+    | _ => const (G := graph) false
+
+noncomputable instance : SEM.IsDeterministic beliefModel where
+  mech_det
+    | .indicP | .acqP | .beliefP | .indicNotP | .acqNotP | .beliefNotP =>
+        inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+    | .p | .expP | .notP | .expNotP => inferInstanceAs (Mechanism.IsDeterministic (const _))
+
+instance : CausalGraph.IsDAG beliefModel.graph := inferInstanceAs (CausalGraph.IsDAG graph)
+
+/-- The variables in causal order. -/
+def order : List V :=
+  [.p, .notP, .expP, .expNotP, .indicP, .indicNotP, .acqP, .acqNotP, .beliefP, .beliefNotP]
+
+/-- The normative background: the agent experiences whatever indicators exist. -/
+def normative : Valuation (λ _ : V => Bool) :=
+  (Valuation.empty.extend .expP true).extend .expNotP true
 
 /-! ### The Predicate Lexicalization Constraint -/
 
-/-- The PLC: presupposition `presup` can be lexicalized with at-issue
-    content `atIssue` iff setting the presupposition true and running
-    the belief-formation model produces the at-issue content. -/
-noncomputable def SatisfiesPLC (presup atIssue : BeliefVar) : Prop :=
-  (developDetOn beliefSEM beliefVarList 1
-    (Valuation.empty.extend presup true)).hasValue atIssue true
+/-- *Know* satisfies the constraint: the truth of the complement manipulates belief in it,
+through the indicator and acquaintance with it. -/
+theorem know_plc : manipulates beliefModel normative .p .beliefP :=
+  manipulates_of_developDetOn_ne _ order 1 true false rfl rfl (by decide)
 
-noncomputable instance (presup atIssue : BeliefVar) :
-    Decidable (SatisfiesPLC presup atIssue) :=
-  Classical.dec _
+/-- The hypothetical *contra* violates the constraint: the falsity of the complement does not
+manipulate belief in it, because a fact generates indicators only for itself. -/
+theorem contra_plc : ¬ manipulates beliefModel normative .notP .beliefP :=
+  not_manipulates_of_developDetOn_eq _ order 1 false rfl rfl
 
-/-- Factives satisfy the PLC: the chain from `p` reaches `B(a)(p)`. -/
-theorem factive_satisfies_plc : SatisfiesPLC .p .B_a_p := by
-  unfold SatisfiesPLC
-  rfl
+/-- The template of the generalized constraint, oriented as the paper draws it: the fact does
+not manipulate belief in its negation. -/
+theorem contra_plc' : ¬ manipulates beliefModel normative .p .beliefNotP :=
+  not_manipulates_of_developDetOn_eq _ order 1 false rfl rfl
 
-/-- Strong contrafactives violate the PLC: `¬p` generates indicators
-    for `¬p`, not for `p`, so no chain reaches `B(a)(p)`. -/
-theorem strong_contrafactive_violates_plc : ¬ SatisfiesPLC .not_p .B_a_p := by
-  unfold SatisfiesPLC
-  intro h
-  exact Bool.false_ne_true (Option.some.inj h)
+/-- The constraint's verdict on the profiles of [glass-2025]: for a factive and for the
+hypothetical strong contrafactive, whether the presupposed fact manipulates belief in the
+complement; a nonfactive presupposes nothing and yǐwéi's falsity inference is a
+postsupposition on the output context, so the constraint does not apply. -/
+def SatisfiesPLC : Profile → Prop
+  | .factive => manipulates beliefModel normative .p .beliefP
+  | .strongContrafactive => manipulates beliefModel normative .notP .beliefP
+  | .nonfactive | .weakContrafactive => True
 
-/-- The contrafactive gap: the factive/contrafactive asymmetry follows
-    from the PLC. -/
-theorem contrafactive_gap :
-    SatisfiesPLC .p .B_a_p ∧ ¬ SatisfiesPLC .not_p .B_a_p :=
-  ⟨factive_satisfies_plc, strong_contrafactive_violates_plc⟩
+/-- The attestation table follows from the constraint: a profile is attested iff it
+satisfies the constraint where the constraint applies. -/
+theorem attested_iff : ∀ pr : Profile, pr.Attested ↔ SatisfiesPLC pr
+  | .factive => ⟨λ _ => know_plc, λ _ => trivial⟩
+  | .strongContrafactive => ⟨False.elim, λ h => contra_plc h⟩
+  | .nonfactive | .weakContrafactive => Iff.rfl
 
-/-- The asymmetry is structural: presupposing `¬p` while asserting
-    `B(a)(¬p)` is causally coherent — only the crossed profile is
-    ruled out. -/
-theorem contrafactive_gap_is_structural :
-    SatisfiesPLC .p .B_a_p ∧
-    ¬ SatisfiesPLC .not_p .B_a_p ∧
-    SatisfiesPLC .not_p .B_a_not_p := by
-  refine ⟨factive_satisfies_plc, strong_contrafactive_violates_plc, ?_⟩
-  unfold SatisfiesPLC
-  rfl
+/-! ### Eventive predicates with the contrafactive inference -/
 
-/-! ### Deriving the attestation table -/
+/-- The variables of *wijsmaken*: the complement's falsity, the object's prior lack of the
+belief, the subject's fooling the object, and the object's resulting belief. -/
+inductive W
+  | notRich | notBeliefPrior | fool | beliefRich
+  deriving DecidableEq, Fintype, Repr
 
-/-- The causal variables checked by the PLC for each presuppositional
-    class: factives pair `p` with `B(a)(p)`, contrafactives `¬p` with
-    `B(a)(p)`; the PLC does not apply to nonfactives (no
-    presupposition) or postsuppositional profiles. -/
-def presupClassToCausalVars : Profile → Option (BeliefVar × BeliefVar)
-  | .factive => some (.p, .B_a_p)
-  | .strongContrafactive => some (.not_p, .B_a_p)
-  | .nonfactive => none
-  | .weakContrafactive => none
+/-- Falsity and prior lack of belief are jointly necessary for fooling, which is sufficient
+for the belief. -/
+def wijsmakenGraph : CausalGraph W := ⟨λ
+  | .fool => {.notRich, .notBeliefPrior}
+  | .beliefRich => {.fool}
+  | _ => ∅⟩
 
-/-- PLC verdict per class: `none` where the PLC does not apply. -/
-noncomputable def presupClassSatisfiesPLC (pc : Profile) : Option Bool :=
-  match presupClassToCausalVars pc with
-  | none => none
-  | some (presup, atIssue) => some (decide (SatisfiesPLC presup atIssue))
+def wijsmakenRank : CausalGraph.Ranking wijsmakenGraph :=
+  ⟨λ | .fool => 1 | .beliefRich => 2 | _ => 0,
+    by intro u v h; revert h; cases u <;> cases v <;> decide⟩
 
-/-- [glass-2025]'s attestation table is derived from the PLC: a profile
-    is attested iff it satisfies the PLC or the PLC does not apply. -/
-theorem attested_iff_plc (pc : Profile) :
-    pc.Attested ↔ (presupClassSatisfiesPLC pc).getD true = true := by
-  cases pc <;> simp [Profile.Attested, presupClassSatisfiesPLC,
-    presupClassToCausalVars]
-  · exact factive_satisfies_plc
-  · exact strong_contrafactive_violates_plc
+instance : CausalGraph.IsDAG wijsmakenGraph := wijsmakenRank.isDAG
 
-/-- `PartialProp` of the hypothetical contrafactive: presupposes `¬p`,
-    asserts belief in `p` — the causally incoherent profile. -/
-def contrafactivePartialProp {W E : Type*} (R : E → W → W → Prop)
-    (agent : E) (p : W → Prop) (worlds : List W) : PartialProp W :=
-  { presup := fun w => ¬ p w
-  , assertion := fun w => BoxAt R agent w worlds p }
+/-- The model of *wijsmaken*, and the model with the eventive node cut, on which the belief
+no longer depends on anything. -/
+noncomputable def wijsmaken (eventive : Bool) : BoolSEM W where
+  graph := wijsmakenGraph
+  mech
+    | .fool => deterministic λ ρ =>
+        ρ ⟨.notRich, by simp [wijsmakenGraph]⟩ &&
+          ρ ⟨.notBeliefPrior, by simp [wijsmakenGraph]⟩
+    | .beliefRich => deterministic λ ρ => eventive && ρ ⟨.fool, by simp [wijsmakenGraph]⟩
+    | _ => const (G := wijsmakenGraph) false
+
+noncomputable instance (eventive : Bool) : SEM.IsDeterministic (wijsmaken eventive) where
+  mech_det
+    | .fool | .beliefRich => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+    | .notRich | .notBeliefPrior => inferInstanceAs (Mechanism.IsDeterministic (const _))
+
+instance (eventive : Bool) : CausalGraph.IsDAG (wijsmaken eventive).graph :=
+  inferInstanceAs (CausalGraph.IsDAG wijsmakenGraph)
+
+/-- The variables of *wijsmaken* in causal order. -/
+def wijsmakenOrder : List W := [.notRich, .notBeliefPrior, .fool, .beliefRich]
+
+/-- The background in which the object did not already hold the belief. -/
+def noPriorBelief : Valuation (λ _ : W => Bool) := Valuation.empty.extend .notBeliefPrior true
+
+/-- *Wijsmaken* satisfies the constraint: the complement's falsity manipulates the object's
+belief, through the act of fooling. -/
+theorem wijsmaken_plc : manipulates (wijsmaken true) noPriorBelief .notRich .beliefRich :=
+  manipulates_of_developDetOn_ne _ wijsmakenOrder 1 true false rfl rfl (by decide)
+
+/-- With the eventive node cut, the falsity presupposition is no longer upstream of the
+belief: the configuration of *contra*. -/
+theorem wijsmaken_cut : ¬ manipulates (wijsmaken false) noPriorBelief .notRich .beliefRich :=
+  not_manipulates_of_developDetOn_eq _ wijsmakenOrder 1 false rfl rfl
+
+/-- The variables of *hallucinate*: the complement's falsity, the distortion of the input,
+and the resulting belief. -/
+inductive H
+  | notLoves | distortion | beliefLoves
+  deriving DecidableEq, Fintype, Repr
+
+/-- Falsity is necessary for distortion, which is necessary for the belief. -/
+def hallucinateGraph : CausalGraph H := ⟨λ
+  | .distortion => {.notLoves}
+  | .beliefLoves => {.distortion}
+  | _ => ∅⟩
+
+def hallucinateRank : CausalGraph.Ranking hallucinateGraph :=
+  ⟨λ | .distortion => 1 | .beliefLoves => 2 | _ => 0,
+    by intro u v h; revert h; cases u <;> cases v <;> decide⟩
+
+instance : CausalGraph.IsDAG hallucinateGraph := hallucinateRank.isDAG
+
+/-- The model of *hallucinate*, and the model with the distortion cut. -/
+noncomputable def hallucinate (eventive : Bool) : BoolSEM H where
+  graph := hallucinateGraph
+  mech
+    | .distortion => deterministic λ ρ => ρ ⟨.notLoves, by simp [hallucinateGraph]⟩
+    | .beliefLoves => deterministic λ ρ =>
+        eventive && ρ ⟨.distortion, by simp [hallucinateGraph]⟩
+    | .notLoves => const (G := hallucinateGraph) false
+
+noncomputable instance (eventive : Bool) : SEM.IsDeterministic (hallucinate eventive) where
+  mech_det
+    | .distortion | .beliefLoves => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+    | .notLoves => inferInstanceAs (Mechanism.IsDeterministic (const _))
+
+instance (eventive : Bool) : CausalGraph.IsDAG (hallucinate eventive).graph :=
+  inferInstanceAs (CausalGraph.IsDAG hallucinateGraph)
+
+/-- The variables of *hallucinate* in causal order. -/
+def hallucinateOrder : List H := [.notLoves, .distortion, .beliefLoves]
+
+/-- *Hallucinate* satisfies the constraint through the distortion. -/
+theorem hallucinate_plc :
+    manipulates (hallucinate true) Valuation.empty .notLoves .beliefLoves :=
+  manipulates_of_developDetOn_ne _ hallucinateOrder 1 true false rfl rfl (by decide)
+
+/-- With the distortion cut, the falsity presupposition is no longer upstream of the
+belief. -/
+theorem hallucinate_cut :
+    ¬ manipulates (hallucinate false) Valuation.empty .notLoves .beliefLoves :=
+  not_manipulates_of_developDetOn_eq _ hallucinateOrder 1 false rfl rfl
 
 end RobertsOzyildiz2025
