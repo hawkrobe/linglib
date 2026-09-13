@@ -305,9 +305,9 @@ theorem use_model_resolves {W : Type*} {d d' : W} (hne : d' ≠ d) (u : Use) :
 contrast variable `C`; the focus constraint `C ⊆ ⟦·⟧f` is supplied
 separately by the squiggle, "leaving room for a pragmatic process of
 constructing a domain of quantification". The operator has no lexical
-access to focus values — direct-association implementations carry an
-alternative list lexically instead, and the two provably diverge under
-domain restriction (`Studies/Rooth1992.lean`). -/
+access to focus values, and fixing `C` to the full focus value of a
+focused transitive verb, which contains the trivial relation, makes
+*only* unsatisfiable (`onlyVia_eq_empty_of_univ_mem`). -/
 
 /-- The strong-theory *only* assertion, transposed to the propositional
 level: every true member of the resolved contrast set is the prejacent.
@@ -389,6 +389,13 @@ domain. -/
 theorem onlyVia_antitone {C C' : PropFocusValue W} (h : C ⊆ C')
     (p : Set W) : onlyVia C' p ⊆ onlyVia C p :=
   fun _ hw q hq => hw q (h hq)
+
+/-- A contrast set containing the trivial proposition makes *only*
+unsatisfiable for any other prejacent: the over-generation of fixing the
+domain to the full focus value of a focused transitive verb. -/
+theorem onlyVia_eq_empty_of_univ_mem {C : PropFocusValue W} {p : Set W}
+    (hC : Set.univ ∈ C) (hp : p ≠ Set.univ) : onlyVia C p = ∅ :=
+  Set.eq_empty_iff_forall_notMem.2 fun w hw => hp (hw _ hC (Set.mem_univ w)).symm
 
 /-- Against a squiggle-resolved contrast set, *only* genuinely
 excludes: the contrast clause supplies a distinct alternative that the
