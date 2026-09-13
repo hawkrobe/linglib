@@ -47,7 +47,7 @@ without a formal counterpart here.
 * [von-fintel-iatridou-2008]
 * [vander-klok-hohaus-2020]
 * [barwise-cooper-1981]
-* [schlenker-2004]
+* [schlenker-2004a]
 -/
 
 namespace AghaJeretic2022

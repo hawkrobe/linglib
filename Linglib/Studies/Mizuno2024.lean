@@ -21,7 +21,7 @@ correlation with future-less-vivid conditionals holds row by row
 consequent-failing world, after the expansion analysis of [mackay-2015] and [mackay-2019]:
 X-marking by enlarging the base (`xMarking_expands`), Japanese O-marking by a
 historical-present shift of the evaluation index backward under branching time
-([schlenker-2004]; `hp_expands_jones_domain`), and on either route the consequent is left
+([schlenker-2004a]; `hp_expands_jones_domain`), and on either route the consequent is left
 open and a true Anderson conditional excludes a live world (`expanded_anderson_informative`).
 
 ## Implementation notes
@@ -35,7 +35,7 @@ the paper's single consultant.
 
 * [mizuno-2024]
 * [anderson-1951]
-* [schlenker-2004]
+* [schlenker-2004a]
 * [von-fintel-iatridou-2023]
 * [iatridou-2000]
 * [mackay-2015]

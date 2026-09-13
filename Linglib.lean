@@ -428,7 +428,6 @@ import Linglib.Data.Examples.RotterLiu2025
 import Linglib.Data.Examples.Rubinstein2014
 import Linglib.Data.Examples.Saab2026
 import Linglib.Data.Examples.Schema
-import Linglib.Data.Examples.Schlenker2004
 import Linglib.Data.Examples.Sharvit2003
 import Linglib.Data.Examples.SolstadBott2024
 import Linglib.Data.Examples.Stankova2026
@@ -1821,7 +1820,6 @@ import Linglib.Semantics.Reference.Context.Shifts
 import Linglib.Semantics.Reference.Context.Tower
 import Linglib.Semantics.Reference.Demonstratives
 import Linglib.Semantics.Reference.Donnellan
-import Linglib.Semantics.Reference.FreeIndirectDiscourse
 import Linglib.Semantics.Reference.Kaplan
 import Linglib.Semantics.Reference.KaplanLD
 import Linglib.Semantics.Reference.Kripke
@@ -2547,7 +2545,6 @@ import Linglib.Studies.Sauerland2003
 import Linglib.Studies.Sauerland2004
 import Linglib.Studies.SauerlandStateva2011
 import Linglib.Studies.Schlenker2003
-import Linglib.Studies.Schlenker2004
 import Linglib.Studies.Schlenker2009
 import Linglib.Studies.SchlenkerEtAl2026
 import Linglib.Studies.SchlotterbeckWang2023

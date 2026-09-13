@@ -1,21 +1,21 @@
 import Linglib.Data.Examples.Schema
 
 /-!
-# `Schlenker2004` — typed example data
+# `Schlenker2004a` — typed example data
 
-Auto-generated from `Linglib/Data/Examples/Schlenker2004.json` by
+Auto-generated from `Linglib/Data/Examples/Schlenker2004a.json` by
 `scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
 the generator. Consumers (the paper's study file, test-suite hubs) import
-this module; declarations live in `namespace Schlenker2004.Examples`.
+this module; declarations live in `namespace Schlenker2004a.Examples`.
 -/
 
-namespace Schlenker2004.Examples
+namespace Schlenker2004a.Examples
 
 open Data.Examples
 
 def ex1 : LinguisticExample :=
-  { id := "schlenker2004_ex1"
-    source := ⟨"schlenker-2004", "(1)"⟩
+  { id := "schlenker2004a_ex1"
+    source := ⟨"schlenker-2004a", "(1)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Tomorrow was Monday, Monday, the beginning of another school week!"
@@ -27,13 +27,13 @@ def ex1 : LinguisticExample :=
     alternatives := []
     readings := [("FID (CT/CU split)", .acceptable), ("literal-contradiction", .ungrammatical)]
     paperFeatures := []
-    comment := "Schlenker 2004 ex (1), Mind & Language 19(3) p. 280. Literary source via Banfield 1982 p. 98 (a D.H. Lawrence novel; specific novel attribution unverified). Cornerstone of Schlenker's CT vs CU framework: in FID, indexical/tense items split between two contexts."
+    comment := "Schlenker 2004 ex (1), p. 280: Lawrence, Women in Love (p. 185 of the 1971 Heinemann edition), cited via Banfield 1982 p. 98 and Doron 1991. The past tense is evaluated against the Context of Utterance, `tomorrow` against the Context of Thought; evaluated against one context the sentence is contradictory."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
 def ex2 : LinguisticExample :=
-  { id := "schlenker2004_ex2"
-    source := ⟨"schlenker-2004", "(2)"⟩
+  { id := "schlenker2004a_ex2"
+    source := ⟨"schlenker-2004a", "(2)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Fifty eight years ago to this day, on January 22, 1944, just as the Americans are about to invade Europe, the Germans attack Vercors."
@@ -45,10 +45,10 @@ def ex2 : LinguisticExample :=
     alternatives := []
     readings := [("HP (CT/CU split, CT shifted back 58y)", .acceptable), ("literal-contradiction", .ungrammatical)]
     paperFeatures := []
-    comment := "Schlenker 2004 ex (2), p. 280. The Historical Present companion to (1)'s FID. Both motivate the same CT/CU split: when temporal indexicals and tense morphology disagree on which context anchors them, FID/HP are the diagnostics."
+    comment := "Schlenker 2004 ex (2), p. 281, repeated as (28a). Mirror image of (1): the present tense is evaluated against a Context of Utterance set fifty-eight years in the past, `fifty eight years ago` against the Context of Thought, which is the actual context."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
 def all : List LinguisticExample := [ex1, ex2]
 
-end Schlenker2004.Examples
+end Schlenker2004a.Examples
