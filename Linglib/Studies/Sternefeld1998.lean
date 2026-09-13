@@ -17,9 +17,10 @@ jointly.
 
 ## Implementation notes
 
-* A relation over pluralities is D-based when it holds only between singletons (§2.3); its
-  restriction to individuals is `R {a} {b}`, and Langendoen's formulae are the substrate
-  schemes `Reciprocal.WeakReciprocity` and `Reciprocal.StrongReciprocity` of that restriction.
+* A relation between individuals enters the set-based ontology as its image under singleton
+  formation, `Relation.Map R ({·}) ({·})`; this is the paper's D-based case (§2.3), and
+  Langendoen's formulae are the substrate schemes `Reciprocal.WeakReciprocity` and
+  `Reciprocal.StrongReciprocity` of `R` itself.
 * Denotations are nonempty, so the equivalences carry the nonemptiness, or for strong
   reciprocity the two-member, hypothesis that `*` and `**` build in and Langendoen's formulae
   leave vacuous.
@@ -41,64 +42,39 @@ open Mereology Plurality.Algebra Plurality.Cumulativity Reciprocal
 
 variable {α β : Type*}
 
-/-! ### D-based relations -/
+/-! ### Relations between individuals -/
 
-/-- A relation over pluralities is D-based when it holds only between individuals, that is
-between singletons (§2.3). -/
-def DBased (R : Finset α → Finset β → Prop) : Prop :=
-  ∀ ⦃x y⦄, R x y → ∃ a b, x = {a} ∧ y = {b}
+@[simp]
+theorem map_singleton_singleton (R : α → β → Prop) (a : α) (b : β) :
+    Relation.Map R ({·}) ({·}) ({a} : Finset α) ({b} : Finset β) ↔ R a b := by
+  simp [Relation.Map, Finset.singleton_inj]
 
-theorem DBased.apply {R : Finset α → Finset β → Prop} (hR : DBased R) (x : Finset α) :
-    ∀ ⦃y⦄, R x y → ∃ b, y = {b} := λ _ h =>
-  let ⟨_, b, _, hb⟩ := hR h
-  ⟨b, hb⟩
+/-- `*` of a relation between individuals, in its second argument, holds of the nonempty
+pluralities all of whose members are related to the first. -/
+theorem star_map_iff [DecidableEq β] (R : α → β → Prop) (a : α) (B : Finset β) :
+    star (Relation.Map R ({·}) ({·}) ({a} : Finset α)) B ↔ B.Nonempty ∧ ∀ b ∈ B, R a b := by
+  rw [star_iff_of_subset_range_singleton]
+  · simp only [map_singleton_singleton]
+  · rintro _ ⟨_, b, _, _, rfl⟩
+    exact ⟨b, rfl⟩
 
-/-- `*` of a D-based relation's second argument is D-based in the first. -/
-theorem DBased.star [DecidableEq β] {R : Finset α → Finset β → Prop} (hR : DBased R)
-    (B : Finset α → Finset β) : ∀ ⦃x⦄, star (R x) (B x) → ∃ a, x = {a} :=
+private theorem star_map_subset_range [DecidableEq β] (R : α → β → Prop)
+    (B : Finset α → Finset β) :
+    {x : Finset α | star (Relation.Map R ({·}) ({·}) x) (B x)} ⊆
+      Set.range ({·} : α → Finset α) :=
   λ _ h =>
     let ⟨_, hy, _⟩ := algClosure_has_base h
-    let ⟨a, _, ha, _⟩ := hR hy
+    let ⟨a, _, _, ha, _⟩ := hy
     ⟨a, ha⟩
-
-/-- A D-based relation is the singleton image of its restriction to individuals. -/
-theorem DBased.eq_map {R : Finset α → Finset β → Prop} (h : DBased R) :
-    R = Relation.Map (λ a b => R {a} {b}) ({·}) ({·}) := by
-  ext x y
-  constructor
-  · intro hxy
-    obtain ⟨a, b, rfl, rfl⟩ := h hxy
-    exact ⟨a, b, hxy, rfl, rfl⟩
-  · rintro ⟨a, b, hab, rfl, rfl⟩
-    exact hab
 
 variable [DecidableEq α] [DecidableEq β]
 
-/-- `*` of a predicate true of individuals only is the distributive `D` (15): it holds of the
-nonempty pluralities all of whose members satisfy it. -/
-theorem star_iff_of_dBased {P : Finset α → Prop} (hP : ∀ ⦃x⦄, P x → ∃ a, x = {a})
-    {x : Finset α} : star P x ↔ x.Nonempty ∧ ∀ a ∈ x, P {a} := by
-  have : P = (· ∈ ({·} : α → Finset α) '' {a | P {a}}) := by
-    ext s
-    constructor
-    · intro hs
-      obtain ⟨a, rfl⟩ := hP hs
-      exact ⟨a, hs, rfl⟩
-    · rintro ⟨a, ha, rfl⟩
-      exact ha
-  conv_lhs => rw [this]
-  rw [star_image_singleton]
-  exact Iff.rfl
-
 /-! ### Weak distributivity and weak reciprocity -/
 
-/-- Weak distributivity (2b) is `⟨A, B⟩ ∈ **R` (26a) for a D-based `R` between nonempty
-pluralities. -/
-theorem cumulation_iff_cumulative {R : Finset α → Finset β → Prop} (hR : DBased R)
-    {A : Finset α} (hA : A.Nonempty) (B : Finset β) :
-    Cumulation R A B ↔ Cumulative (λ a b => R {a} {b}) A B := by
-  conv_lhs => rw [hR.eq_map]
-  rw [cumulation_map_singleton, and_iff_right hA]
+/-- Weak distributivity (2b) is `⟨A, B⟩ ∈ **R` (26a) between nonempty pluralities. -/
+theorem cumulation_map_iff (R : α → β → Prop) {A : Finset α} (hA : A.Nonempty) (B : Finset β) :
+    Cumulation (Relation.Map R ({·}) ({·})) A B ↔ Cumulative R A B :=
+  (cumulation_map_singleton R A B).trans (and_iff_right hA)
 
 /-- Weak reciprocity (6), (26b): the reciprocal NP denotes the others, and non-identity is
 conjoined into the relation before cumulation. -/
@@ -115,12 +91,19 @@ theorem wr_of_weakReciprocity {R : Finset α → Finset α → Prop} {A : Finset
   rintro x y ⟨a, b, ⟨hab, hne⟩, rfl, rfl⟩
   exact ⟨hab, Finset.singleton_injective.ne hne⟩
 
-/-- For a D-based `R`, (26b) is Langendoen's (25b): weak reciprocity between individuals. -/
-theorem wr_iff {R : Finset α → Finset α → Prop} (hR : DBased R) {A : Finset α}
-    (hA : A.Nonempty) : WR R A ↔ WeakReciprocity (λ a b => R {a} {b}) A := by
-  have hR' : DBased (λ x y => R x y ∧ x ≠ y) := λ x y h => hR h.1
-  rw [WR, cumulation_iff_cumulative hR' hA, weakReciprocity_iff_cumulative_strict]
-  simp only [ne_eq, Finset.singleton_inj]
+/-- For a relation between individuals, (26b) is Langendoen's (25b). -/
+theorem wr_map_iff (R : α → α → Prop) {A : Finset α} (hA : A.Nonempty) :
+    WR (Relation.Map R ({·}) ({·})) A ↔ WeakReciprocity R A := by
+  have : (λ x y : Finset α => Relation.Map R ({·}) ({·}) x y ∧ x ≠ y) =
+      Relation.Map (λ a b => R a b ∧ a ≠ b) ({·}) ({·}) := by
+    ext x y
+    constructor
+    · rintro ⟨⟨a, b, hab, rfl, rfl⟩, hne⟩
+      exact ⟨a, b, ⟨hab, Finset.singleton_injective.ne_iff.1 hne⟩, rfl, rfl⟩
+    · rintro ⟨a, b, ⟨hab, hne⟩, rfl, rfl⟩
+      exact ⟨⟨a, b, hab, rfl, rfl⟩, Finset.singleton_injective.ne hne⟩
+  rw [WR, this, cumulation_map_singleton, and_iff_right hA,
+    weakReciprocity_iff_cumulative_strict]
 
 /-! ### Langendoen's model
 
@@ -134,9 +117,13 @@ def langendoenModel (x y : Finset (Fin 3)) : Prop :=
 instance : DecidableRel langendoenModel := λ _ _ => by
   unfold langendoenModel; infer_instance
 
-theorem not_dBased_langendoenModel : ¬ DBased langendoenModel := by
+/-- Langendoen's relation is not a relation between individuals. -/
+theorem langendoenModel_ne_map (R : Fin 3 → Fin 3 → Prop) :
+    langendoenModel ≠ Relation.Map R ({·}) ({·}) := by
   intro h
-  obtain ⟨a, -, ha, -⟩ := h (Or.inl ⟨rfl, rfl⟩)
+  have hL : langendoenModel {0, 1} {2} := Or.inl ⟨rfl, rfl⟩
+  rw [h] at hL
+  obtain ⟨a, -, -, ha, -⟩ := hL
   revert a
   decide
 
@@ -158,32 +145,28 @@ theorem not_weakReciprocity_langendoenModel :
 /-! ### Strong distributivity and strong reciprocity by iterated `*` -/
 
 /-- Strong distributivity by iterated `*` (7): `A ∈ *{x : B ∈ *{y : R(x, y)}}`. -/
-def SD (R : Finset α → Finset β → Prop) (A : Finset α) (B : Finset β) : Prop :=
-  star (λ x => star (R x) B) A
+def SD (R : α → β → Prop) (A : Finset α) (B : Finset β) : Prop :=
+  star (λ x : Finset α => star (Relation.Map R ({·}) ({·}) x) B) A
 
 /-- Strong reciprocity by iterated `*` (48b): `A ∈ *λx[{y : y ∈ A ∧ y ≠ x} ∈ *λy.R(x, y)]`,
 the reciprocal interpreted in situ as one NP. -/
-def SR (R : Finset α → Finset α → Prop) (A : Finset α) : Prop :=
-  star (λ x => star (R x) (A.filter λ b => ({b} : Finset α) ≠ x)) A
+def SR (R : α → α → Prop) (A : Finset α) : Prop :=
+  star (λ x : Finset α =>
+    star (Relation.Map R ({·}) ({·}) x) (A.filter λ b => ({b} : Finset α) ≠ x)) A
 
-/-- For a D-based `R`, (7) is Langendoen's strong distributivity (2a) between nonempty
-pluralities. -/
-theorem sd_iff {R : Finset α → Finset β → Prop} (hR : DBased R) {A : Finset α} {B : Finset β}
-    (hA : A.Nonempty) (hB : B.Nonempty) : SD R A B ↔ ∀ a ∈ A, ∀ b ∈ B, R {a} {b} := by
-  have hout : ∀ ⦃x⦄, star (R x) B → ∃ a, x = {a} := hR.star _
-  rw [SD, star_iff_of_dBased hout, and_iff_right hA]
-  refine forall₂_congr λ a _ => ?_
-  rw [star_iff_of_dBased (hR.apply _), and_iff_right hB]
+/-- (7) is Langendoen's strong distributivity (2a) between nonempty pluralities. -/
+theorem sd_iff (R : α → β → Prop) {A : Finset α} {B : Finset β} (hA : A.Nonempty)
+    (hB : B.Nonempty) : SD R A B ↔ ∀ a ∈ A, ∀ b ∈ B, R a b := by
+  rw [SD, star_iff_of_subset_range_singleton (star_map_subset_range R λ _ => B),
+    and_iff_right hA]
+  exact forall₂_congr λ a _ => (star_map_iff R a B).trans (and_iff_right hB)
 
-/-- For a D-based `R`, (48b) is Langendoen's strong reciprocity (3a) on a plurality of two or
-more. -/
-theorem sr_iff {R : Finset α → Finset α → Prop} (hR : DBased R) {A : Finset α} :
-    SR R A ↔ 2 ≤ A.card ∧ StrongReciprocity (λ a b => R {a} {b}) A := by
-  have hout : ∀ ⦃x⦄, star (R x) (A.filter λ b => ({b} : Finset α) ≠ x) → ∃ a, x = {a} :=
-    hR.star _
-  rw [SR, star_iff_of_dBased hout]
-  simp only [star_iff_of_dBased (hR.apply _), Finset.mem_filter, ne_eq,
-    Finset.singleton_inj, Finset.filter_nonempty_iff, StrongReciprocity]
+/-- (48b) is Langendoen's strong reciprocity (3a) on a plurality of two or more. -/
+theorem sr_iff (R : α → α → Prop) {A : Finset α} :
+    SR R A ↔ 2 ≤ A.card ∧ StrongReciprocity R A := by
+  rw [SR, star_iff_of_subset_range_singleton (star_map_subset_range R _)]
+  simp only [star_map_iff, Finset.mem_filter, ne_eq, Finset.singleton_inj,
+    Finset.filter_nonempty_iff, StrongReciprocity]
   constructor
   · rintro ⟨⟨a, ha⟩, h⟩
     obtain ⟨⟨b, hb, hba⟩, -⟩ := h a ha

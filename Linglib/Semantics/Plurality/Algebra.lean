@@ -287,6 +287,23 @@ theorem star_image_singleton (S : Set α) (x : Finset α) :
     rw [← key]
     exact algClosure_finsetSup' hx λ a ha => .base ⟨a, hS ha, rfl⟩
 
+/-- `*` of a predicate true of individuals only holds of the nonempty pluralities all of
+whose members satisfy it. -/
+theorem star_iff_of_subset_range_singleton {P : Finset α → Prop}
+    (hP : {x | P x} ⊆ Set.range ({·} : α → Finset α)) (x : Finset α) :
+    star P x ↔ x.Nonempty ∧ ∀ a ∈ x, P {a} := by
+  have : P = (· ∈ ({·} : α → Finset α) '' {a | P {a}}) := by
+    ext s
+    constructor
+    · intro hs
+      obtain ⟨a, rfl⟩ := hP hs
+      exact ⟨a, hs, rfl⟩
+    · rintro ⟨a, ha, rfl⟩
+      exact ha
+  conv_lhs => rw [this]
+  rw [star_image_singleton]
+  exact Iff.rfl
+
 end Finset
 
 /-! ### Distributive inference (join-prime atoms) -/
