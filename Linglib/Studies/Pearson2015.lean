@@ -51,7 +51,7 @@ in prose.
 
 namespace Pearson2015
 
-open Reference.Acquaintance
+open Reference
 open Features.Logophoricity
 
 /-! ### Concept generators -/
@@ -61,7 +61,7 @@ identifies as herself there. -/
 abbrev Centered (W E : Type*) := W × E
 
 /-- An individual concept: a function from centered worlds to individuals, an element of an
-`Acquaintance.Cover`. -/
+`Cover`. -/
 abbrev Concept (W E : Type*) := Centered W E → E
 
 /-- A concept generator: from a res to an individual concept. -/

@@ -1,4 +1,3 @@
-import Linglib.Semantics.Reference.PluralityLicensing
 import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
 import Linglib.Fragments.Hungarian.Reciprocals
 
@@ -35,46 +34,46 @@ a morphosyntactic mechanism.
 
 ## Connections
 
-- `Semantics/Reference/PluralityLicensing.lean` — the
-  `PluralityRequirement` substrate (anchored on this paper).
 - `Semantics/Dynamic/PPCDRT/Anaphora.lean` — the formal-semantic
   reciprocity / binding conditions over plural assignments.
-- `Fragments/Hungarian/Reciprocals.lean` — `AntecedentConfig`,
-  `reciprocalLicensed`, `pluralReflexiveLicensed`, verification.
+- `Fragments/Hungarian/Reciprocals.lean` — the lexical entries and the
+  antecedent constructions `AntecedentConfig`.
 - `Studies/Chomsky1981.lean` — the English reciprocal minimal pairs
   notes that syntactically singular antecedents are possible.
 -/
 
 namespace Rakosi2019
 
-open Reference.PluralityLicensing
 open PPCDRT
 open Core
 open Hungarian.Reciprocals
 
 -- ════════════════════════════════════════════════════════════════
--- § 1: The Asymmetry — Derived from PluralityRequirement
+-- § 1: The Asymmetry
 -- ════════════════════════════════════════════════════════════════
 
-/-- The paper's core generalization: reciprocals need semantic plurality,
-    reflexives need morphosyntactic plurality.
+/-- The reciprocal is licensed by a semantically plural antecedent: reciprocity requires
+    distinct individuals in the denotation (`recip_needs_multiple_individuals`), whatever
+    the antecedent's morphology. -/
+def reciprocalLicensed (cfg : AntecedentConfig) : Bool := cfg.semanticPl
 
-    This is not stipulated — it is derived from `anaphorPluralityReq`
-    in the theory layer, which in turn follows from the formal semantics
-    of binding (=) vs. reciprocity (R). -/
-theorem core_generalization :
-    anaphorPluralityReq (isReciprocal := true) = .semantic ∧
-    anaphorPluralityReq (isReciprocal := false) = .morphosyntactic := ⟨rfl, rfl⟩
+/-- The plural reflexive is licensed by a morphosyntactically plural antecedent: reflexive
+    binding is φ-agreement, and binding imposes no distinctness
+    (`binding_ok_with_singleton`). -/
+def pluralReflexiveLicensed (cfg : AntecedentConfig) : Bool := cfg.syntacticPl
 
 /-- All four singular constructions license reciprocals. -/
 theorem all_singular_constructions_license_recip :
-    singularConstructions.map reciprocalLicensed = [true, true, true, true] :=
-  (singular_asymmetry).1
+    singularConstructions.map reciprocalLicensed = [true, true, true, true] := rfl
 
 /-- No singular construction licenses the plural reflexive. -/
 theorem no_singular_construction_licenses_pl_refl :
-    singularConstructions.map pluralReflexiveLicensed = [false, false, false, false] :=
-  (singular_asymmetry).2
+    singularConstructions.map pluralReflexiveLicensed = [false, false, false, false] := rfl
+
+/-- With a standard plural antecedent, both are licensed. -/
+theorem plural_licenses_both :
+    reciprocalLicensed pluralAntecedent = true ∧
+    pluralReflexiveLicensed pluralAntecedent = true := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2: Inclusive Reference Reflexives Are Not True Anaphors
@@ -167,29 +166,33 @@ theorem bound_variable_asymmetry :
 -- § 4: Connection to Formal Semantics
 -- ════════════════════════════════════════════════════════════════
 
-/-- The semantic justification: reciprocity requires distinct individuals,
-    which is a denotation-level property. A semantically-plural but
-    syntactically-singular antecedent provides the needed distinct
-    individuals. A truly singular (atomic) antecedent does not —
-    which is why "*A gyerek kergeti egymás-t" (the child chases
-    each other) is ungrammatical even though the verb is 3SG. -/
-theorem semantic_justification :
-    -- Semantic plurality suffices for reciprocals
-    satisfiesPluralityReq .semantic false true = true ∧
-    -- Syntactic singularity blocks plural reflexives
-    satisfiesPluralityReq .morphosyntactic false true = false ∧
-    -- True singularity (no semantic plurality) blocks both
-    satisfiesPluralityReq .semantic false false = false ∧
-    satisfiesPluralityReq .morphosyntactic false false = false := ⟨rfl, rfl, rfl, rfl⟩
+/-- Reciprocity restricted to states where both discourse referents are defined forces two
+    distinct individuals: the distinctness clause of `reciprocityCond` gives a distinct pair
+    from any jointly defined state, which is the semantic plurality requirement on the
+    antecedent of a reciprocal. -/
+theorem reciprocity_implies_multiple_individuals {E : Type*} (uAnaph uAnt : Nat)
+    (S : PluralAssign ℕ E) (Δ : Set Nat)
+    (hdef : ∃ s ∈ S, (s uAnaph).isSome ∧ (s uAnt).isSome)
+    (h : reciprocityCond uAnaph uAnt S Δ) :
+    ∃ (a b : E), a ≠ b := by
+  obtain ⟨g, hgS, hAnaph, hAnt⟩ := hdef
+  obtain ⟨da, hda⟩ := Option.isSome_iff_exists.mp hAnaph
+  obtain ⟨db, hdb⟩ := Option.isSome_iff_exists.mp hAnt
+  exact ⟨da, db, h.2 g hgS da db hda hdb⟩
 
-/-- The formal semantics connection: reciprocity (R) presupposes
-    multiple individuals in the range of the discourse referent function.
-    This is derived in `PluralityLicensing.lean`:
-    `reciprocity_implies_multiple_individuals`. The PPCDRT version uses
-    plural information states; the witness here is the *contrapositive* —
-    if both anaphor and antecedent are mapped to the same value `0` in a
-    singleton state, the distinctness clause of `reciprocityCond` rules
-    out reciprocity. -/
+/-- Binding is compatible with a singleton state mapping both discourse referents to one
+    value: reflexive binding imposes no semantic plurality. -/
+theorem binding_compatible_with_singleton {E : Type*} (e : E) (uAnaph uAnt : Nat) :
+    bindingCond uAnaph uAnt
+      {PartialAssign.update (PartialAssign.update PartialAssign.empty uAnaph e) uAnt e} ∅ := by
+  intro g hg
+  obtain rfl : g = _ := hg
+  by_cases h : uAnaph = uAnt
+  · subst h; rfl
+  · simp [PartialAssign.update_at, h]
+
+/-- The contrapositive on a concrete state: with both anaphor and antecedent mapped to the
+    same value in a singleton state, the distinctness clause of `reciprocityCond` fails. -/
 theorem recip_needs_multiple_individuals :
     ¬ reciprocityCond (E := Nat) 0 1
         {PartialAssign.update
@@ -199,9 +202,11 @@ theorem recip_needs_multiple_individuals :
             ({PartialAssign.update (PartialAssign.update PartialAssign.empty 0 0) 1 0} :
               PluralAssign ℕ Nat) :=
     rfl
-  have h0 : (PartialAssign.update (PartialAssign.update PartialAssign.empty 0 0) 1 0) 0 = some 0 := by
+  have h0 :
+      (PartialAssign.update (PartialAssign.update PartialAssign.empty 0 0) 1 0) 0 = some 0 := by
     simp [PartialAssign.update]
-  have h1 : (PartialAssign.update (PartialAssign.update PartialAssign.empty 0 0) 1 0) 1 = some 0 := by
+  have h1 :
+      (PartialAssign.update (PartialAssign.update PartialAssign.empty 0 0) 1 0) 1 = some 0 := by
     simp [PartialAssign.update]
   exact h.2 _ hg 0 0 h0 h1 rfl
 

@@ -5,7 +5,7 @@ import Linglib.Semantics.Composition.Tree
 import Linglib.Studies.HeimKratzer1998
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Semantics.Quantification.Quantifier
-import Linglib.Semantics.Reference.Binding
+import Linglib.Semantics.Composition.Binding
 import Linglib.Semantics.Composition.Ty
 import Linglib.Semantics.Composition.Assignment
 import Linglib.Fragments.English.Toy
@@ -66,7 +66,6 @@ open scoped Assignment
 open Semantics.Composition.Tree
 open Pragmatics.Expressives
 open Quantification
-open Reference.Binding
 open Semantics.Composition
 open Semantics.Montague
 open Semantics.Montague.ToyLexicon (student_sem person_sem)

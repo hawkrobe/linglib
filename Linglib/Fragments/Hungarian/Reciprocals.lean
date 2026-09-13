@@ -1,7 +1,6 @@
 import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Syntax.Reciprocal
 import Linglib.Syntax.Category.Pronoun.Reciprocal
-import Linglib.Semantics.Reference.PluralityLicensing
 import Linglib.Data.UD.Basic
 import Linglib.Features.Number.Capabilities
 
@@ -45,7 +44,6 @@ construction types, while reflexives require morphosyntactic plurality
 namespace Hungarian.Reciprocals
 
 open Pronoun
-open Reference.PluralityLicensing
 
 /-- *egymás* — reciprocal pronoun 'each other'.
     Morphologically invariable: no φ-feature inflection.
@@ -136,39 +134,6 @@ def pluralAntecedent : AntecedentConfig :=
 /-- All four singular-antecedent constructions from [rakosi-2019]. -/
 def singularConstructions : List AntecedentConfig :=
   [quantifiedNP, singularCoordinate, collectiveNoun, boundVariable]
-
--- ════════════════════════════════════════════════════════════════
--- Licensing via PluralityRequirement
--- ════════════════════════════════════════════════════════════════
-
-/-- Reciprocals require only semantic plurality. -/
-def reciprocalReq : PluralityRequirement := anaphorPluralityReq true
-
-/-- Reflexives require morphosyntactic plurality. -/
-def reflexiveReq : PluralityRequirement := anaphorPluralityReq false
-
-/-- Whether the reciprocal is licensed in a given antecedent config. -/
-def reciprocalLicensed (cfg : AntecedentConfig) : Bool :=
-  satisfiesPluralityReq reciprocalReq cfg.syntacticPl cfg.semanticPl
-
-/-- Whether the plural reflexive (*maguk-at*) is licensed. -/
-def pluralReflexiveLicensed (cfg : AntecedentConfig) : Bool :=
-  satisfiesPluralityReq reflexiveReq cfg.syntacticPl cfg.semanticPl
-
--- ════════════════════════════════════════════════════════════════
--- Verification Theorems
--- ════════════════════════════════════════════════════════════════
-
-/-- The core asymmetry: in ALL four singular constructions, the
-    reciprocal is licensed but the plural reflexive is not. -/
-theorem singular_asymmetry :
-    singularConstructions.map reciprocalLicensed = [true, true, true, true] ∧
-    singularConstructions.map pluralReflexiveLicensed = [false, false, false, false] := ⟨rfl, rfl⟩
-
-/-- With a standard plural antecedent, both are licensed. -/
-theorem plural_licenses_both :
-    reciprocalLicensed pluralAntecedent = true ∧
-    pluralReflexiveLicensed pluralAntecedent = true := ⟨rfl, rfl⟩
 
 /-- *egymás* is formally distinct from both reflexive forms. -/
 theorem recip_distinct_from_reflexive :

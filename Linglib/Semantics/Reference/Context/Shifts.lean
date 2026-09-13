@@ -10,6 +10,11 @@ changes specific coordinates, with theorems documenting the preservation pattern
 These are the building blocks for tower-based composition. An attitude verb pushes
 `attitudeShift`, a sequence-of-tense embedding pushes `temporalShift`, and Kaplan-compliant
 English attitude verbs push `identityShift`.
+
+## References
+
+* [schlenker-2003]
+* [von-stechow-2009]
 -/
 
 namespace Reference

@@ -1,90 +1,66 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Semantics.Reference.Rigidity
 import Mathlib.Data.Set.Function
 
 /-!
-# Acquaintance and Conceptual Covers
-[lewis-1979-attitudes] (de se / de re reduction via centered worlds);
-[cresswell-vonstechow-1982] (de re belief generalized);
-[aloni-2001] (conceptual covers); [abusch-1997] (the temporal
-analogue: a "way of identifying a time" is the temporal time-concept
-licensing temporal de re).
+# Conceptual covers
 
-A polymorphic substrate for acquaintance-relation semantics: a `Cover Idx Res`
-is a set of intensions over an evaluation index `Idx` that picks out values
-in `Res`; an entity is *acquainted* (at index `p`) when some concept in the
-cover identifies it at `p`.
+A *conceptual cover* is a set of concepts, intensions from an index type to a domain of
+values, representing an agent's ways of identifying the values: the covers of [aloni-2001],
+the acquaintance relations of [lewis-1979-attitudes] and [cresswell-vonstechow-1982] read
+through the concept that identifies the res, the cover-relative belief of [dekker-2012], and
+the time-concepts of [heim-1994-comments] and [abusch-1997] with contexts as indices and times
+as values. A value is *acquainted* at an index when some concept in the cover picks it out
+there (`Cover.Acquainted`, membership in an image), and a cover is *exhaustive* on a domain
+when every value in it is picked out at every index (`Cover.IsExhaustiveOn`, `Set.SurjOn` at
+each index). The name cover identifies each value of a domain by its constant concept
+(`Cover.names`): its concepts are rigid (`Cover.isRigid_of_mem_names`), it is exhaustive on its
+domain (`Cover.names_isExhaustiveOn`), and it acquaints with every value of the domain at every
+index (`Cover.names_acquainted`).
 
-Instantiated at an assignment–witness pair as `Idx` and `Res := E` this is the
-cover-relative belief system of [dekker-2012].
-Instantiated at `Idx := Context W E P T`, `Res := T` this is
-[heim-1994-comments]'s time-concept; [abusch-1997]'s own de re rule, through an
-acquaintance relation rather than a cover, is `Acquaintance.deRe`
-(`Semantics/Attitudes/Acquaintance.lean`).
+## References
 
-## Reuse
-
-Concepts are plain intensions `Idx → Res` — no parallel `Concept` type is introduced.
-The acquaintance predicate is
-`Set.image`-membership; cover exhaustiveness is `Set.SurjOn`. Both are
-mathlib idioms — the only genuinely new content here is naming.
+* [aloni-2001]
+* [lewis-1979-attitudes]
+* [cresswell-vonstechow-1982]
+* [heim-1994-comments]
+* [abusch-1997]
+* [dekker-2012]
 -/
 
-namespace Reference.Acquaintance
+namespace Reference
 
-open Reference (IsRigid isRigid_const)
-
-/-- A conceptual cover ([aloni-2001] §3.2): a set of intensions over
-    an evaluation index `Idx` representing the agent's available "ways of
-    identifying" values of type `Res`.
-
-    [heim-1994-comments]'s time-concepts are the instance with
-    `Idx := Context W E P T`, `Res := T`. -/
+/-- A conceptual cover: a set of concepts from indices to values. -/
 abbrev Cover (Idx Res : Type*) : Type _ := Set (Idx → Res)
 
-/-- A cover is exhaustive on a domain when, at every index, every value
-    in the domain is picked out by some concept in the cover.
+namespace Cover
 
-    Mathlib idiom: `Set.SurjOn (· p) C dom`. -/
-def Cover.isExhaustiveOn {Idx Res : Type*} (C : Cover Idx Res)
-    (dom : Set Res) : Prop :=
-  ∀ p : Idx, Set.SurjOn (· p) C dom
+variable {Idx Res : Type*} {C : Cover Idx Res} {dom : Set Res} {r : Res} {p : Idx}
 
-/-- [lewis-1979-attitudes]'s acquaintance relation, generalized: `r` is
-    acquainted-with at index `p` (relative to `C`) when some concept in
-    `C` picks out `r` at `p`.
+/-- A cover is exhaustive on `dom` when at every index every value of `dom` is picked out by
+some concept in it. -/
+def IsExhaustiveOn (C : Cover Idx Res) (dom : Set Res) : Prop := ∀ p : Idx, Set.SurjOn (· p) C dom
 
-    Mathlib idiom: `r ∈ ((· p) '' C)` — set-image membership. -/
-def isAcquaintedWith {Idx Res : Type*}
-    (r : Res) (C : Cover Idx Res) (p : Idx) : Prop :=
-  r ∈ ((fun (c : Idx → Res) => c p) '' C)
+/-- `r` is acquainted at `p` through `C` when some concept in `C` picks it out at `p`. -/
+def Acquainted (C : Cover Idx Res) (r : Res) (p : Idx) : Prop := r ∈ (· p) '' C
 
-/-- [aloni-2001]'s name cover: rigid concepts (one per entity).
-    Each entity is identified by its constant intension.
-    This is the "de re" cover — entities thought of as themselves. -/
-def nameCover {Idx Res : Type*} (dom : Set Res) : Cover Idx Res :=
-  { c | ∃ r ∈ dom, c = fun _ => r }
+/-- The name cover of a domain: each value identified by its constant concept. -/
+def names (dom : Set Res) : Cover Idx Res := (λ r _ => r) '' dom
 
-/-- Every concept in a name cover is rigid. -/
-theorem nameCover_rigid {Idx Res : Type*} (dom : Set Res) :
-    ∀ c ∈ nameCover (Idx := Idx) dom, IsRigid c := by
-  intro c hc
-  obtain ⟨r, _, hcr⟩ := hc
-  subst hcr
+theorem isRigid_of_mem_names {c : Idx → Res} (h : c ∈ names dom) : IsRigid c := by
+  obtain ⟨r, -, rfl⟩ := h
   exact isRigid_const r
 
-/-- The name cover is exhaustive over its domain. -/
-theorem nameCover_isExhaustiveOn {Idx Res : Type*} (dom : Set Res) :
-    (nameCover (Idx := Idx) dom).isExhaustiveOn dom := by
-  intro p r hr
-  refine ⟨fun _ => r, ?_, rfl⟩
-  exact ⟨r, hr, rfl⟩
+theorem names_isExhaustiveOn : (names dom : Cover Idx Res).IsExhaustiveOn dom :=
+  λ _ r hr => ⟨λ _ => r, ⟨r, hr, rfl⟩, rfl⟩
 
-/-- An entity in the name cover's domain is acquainted-with via the name
-    cover at every index — names are rigid, so they identify entities at
-    all evaluation points. -/
-theorem nameCover_isAcquaintedWith_of_mem {Idx Res : Type*} (dom : Set Res)
-    (r : Res) (hr : r ∈ dom) (p : Idx) :
-    isAcquaintedWith r (nameCover (Idx := Idx) dom) p := by
-  refine ⟨fun _ => r, ⟨r, hr, rfl⟩, rfl⟩
+theorem names_acquainted (hr : r ∈ dom) : (names dom : Cover Idx Res).Acquainted r p :=
+  ⟨λ _ => r, ⟨r, hr, rfl⟩, rfl⟩
 
-end Reference.Acquaintance
+end Cover
+
+end Reference

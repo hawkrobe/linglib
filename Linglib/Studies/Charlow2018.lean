@@ -3,7 +3,7 @@ import Linglib.Semantics.Composition.Ty
 import Linglib.Semantics.Composition.Assignment
 import Linglib.Logic.Assignment
 import Mathlib.Control.Monad.Cont
-import Linglib.Semantics.Reference.Binding
+import Linglib.Semantics.Composition.Binding
 
 /-!
 # Charlow 2018: a modular theory of pronouns and binding
@@ -372,7 +372,7 @@ theorem typed_paycheck
 /-- The intension `λh. mom(h 0)` is compositionally derived as `ρ(mom) ⊛ pro₀` in the inner
 `Gₑ` applicative — the Reader monad's `pure` and `<*>` at the assignment sort. -/
 theorem typed_intension_is_rho_ap_pro (mom : E → E) :
-    ((pure mom : Reference.Binding.Reader (TypedAssignment E) (E → E)) <*> fun h => h 0) =
+    ((pure mom : Reader (TypedAssignment E) (E → E)) <*> fun h => h 0) =
       fun h => mom (h 0) := rfl
 
 /-- `G ∘ G` paycheck reading with `Assignment` sorts: the doubly
@@ -411,12 +411,12 @@ def vfPronoun : E → E := id
 
 /-- "She left" in VF: `ρ(left) ⊛ she = left`, the same Reader operations at environment `E`. -/
 theorem vf_she_left (left : E → Bool) :
-    ((pure left : Reference.Binding.Reader E (E → Bool)) <*> vfPronoun) = left := rfl
+    ((pure left : Reader E (E → Bool)) <*> vfPronoun) = left := rfl
 
 /-- "She saw her" with a single entity parameter: both pronouns resolve
 to the same entity, yielding `λe. saw e e` (reflexive reading). -/
 theorem vf_she_saw_her_single (saw : E → E → Bool) :
-    ((pure saw : Reference.Binding.Reader E (E → E → Bool)) <*> vfPronoun <*> vfPronoun) =
+    ((pure saw : Reader E (E → E → Bool)) <*> vfPronoun <*> vfPronoun) =
       fun e => saw e e := rfl
 
 /-- "She saw her" with the composed applicative (two entity
