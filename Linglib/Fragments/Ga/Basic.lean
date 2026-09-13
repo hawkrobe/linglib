@@ -5,6 +5,8 @@ Authors: Robert Hawkins
 -/
 import Linglib.Features.Number.Basic
 import Linglib.Features.Person.Basic
+import Linglib.Syntax.Category.Complementizer.Basic
+import Linglib.Syntax.Category.Verb.Complement.Basic
 
 /-!
 # Gã Fragment
@@ -22,12 +24,13 @@ clause typology.
 - TAM prefixes (future, progressive, perfective) and the irrealis
   marker `á`, realized in embedded control clauses as high tone on
   the subject pronoun
-- Complementizer inventory (`akɛ`, `kɛji`, `ni`) with finite vs.
-  irrealis distinction; `ni` is optionally overt with some
-  control verbs (*tao* 'want', [allotey-2021] ex 34) and
-  obligatory with others (*hiɛ-kã-nɔ* 'hope', ex 35)
+- Complementizer inventory (`akɛ`, `kɛji`, `ni`) as `Complementizer`
+  entries; `ni` is optionally overt with some control verbs (*tao*
+  'want', [allotey-2021] ex 34) and obligatory with others
+  (*hiɛ-kã-nɔ* 'hope', ex 35)
 - Embedded clause typology (three-way: `finiteAke`, `finiteKeji`,
-  `irrealisNi`)
+  `irrealisNi`), each type with its complementizer and its complement
+  `Frame`; the complement-taking verbs live in `Fragments/Ga/Predicates`
 - Pro-drop profile
 
 ## Identifier policy
@@ -42,10 +45,17 @@ preserved in the corresponding `String` value.
 The verb-movement/negation-placement diagnostic ([allotey-2021]'s fifth
 non-finiteness argument, after [pollock-1989]: finite verbs raise past
 the suffixal negation `-ee`, `-ŋ`, `-ko`, while irrealis embedded clauses
-show a free preverbal negator `ka`, her exx 120–125). Formalizing the raising
+show a free preverbal negator `ka`, exx 120–125). Formalizing the raising
 argument needs phrase-structure substrate beyond this fragment's
 clause-typology schema; the finiteness split it diagnoses is already
 carried by `ClauseProperties.unrestrictedTAM`.
+
+## References
+
+* [allotey-2021]
+* [landau-2004]
+* [noonan-2007]
+* [pollock-1989]
 -/
 
 namespace Ga
@@ -126,31 +136,36 @@ def TAM.isFinite : TAM → Bool
 
 /-! ### Complementizers -/
 
-/-- The three complementizers [allotey-2021] discusses. -/
-inductive Complementizer where
-  /-- `akɛ` — finite complementizer for declarative complements
-      (typically utterance and propositional attitude verbs) -/
-  | ake
-  /-- `kɛji` — finite complementizer for conditional and
-      conditional-like complements -/
-  | keji
-  /-- `ni` — irrealis complementizer; introduces controlled clauses
-      (a weak CP: no focus fronting, no independent tense,
-      [allotey-2021] exx 107–109). Optionally overt with some control
-      verbs (*tao* 'want', ex 34) and obligatory with others
-      (*hiɛ-kã-nɔ* 'hope', ex 35). -/
-  | ni
-  deriving DecidableEq, Repr
+/-- *akɛ* — the finite declarative complementizer, typing the complements
+    of utterance and attitude verbs ([allotey-2021] exx 47–49, 89a). -/
+def ake : Complementizer where
+  morphs := [.free "akɛ"]
+  coding := some .indicative
+  force := some .declarative
+  verbForm := some .Fin
 
-def Complementizer.form : Complementizer → String
-  | .ake  => "akɛ"
-  | .keji => "kɛji"
-  | .ni   => "ni"
+/-- *kɛji* — the finite complementizer of conditional clauses (ex 97a) and,
+    under *le* 'know', of polar and alternative questions ('know if they
+    will come', 'know whether you or he bought it', exx 104, 108); glossed
+    COND throughout the paper. -/
+def keji : Complementizer where
+  morphs := [.free "kɛji"]
+  coding := some .indicative
+  force := some .interrogative
+  verbForm := some .Fin
 
-/-- Whether the complementizer projects a finite (full-TAM) clause. -/
-def Complementizer.isFinite : Complementizer → Bool
-  | .ni   => false
-  | _     => true
+/-- *ni* — the irrealis complementizer of controlled clauses, glossed C and
+    the complement's verb INF: a weak CP with no focus fronting and no
+    independent tense (exx 107–109). Optionally overt with some control
+    verbs (*tao* 'want', ex 34) and obligatory with others (*hiɛ-kã-nɔ*
+    'hope', ex 35); homophonous with the focus marker (ex 27). -/
+def ni : Complementizer where
+  morphs := [.free "ni"]
+  coding := some .infinitive
+  verbForm := some .Inf
+
+/-- The three clause introducers that can head an embedded C (§5.5.1). -/
+def complementizers : List Complementizer := [ake, keji, ni]
 
 /-! ### Embedded clause typology -/
 
@@ -185,8 +200,6 @@ structure ClauseProperties where
   independentTense : Bool
   /-- Noncoreferential embedded subject possible (exx 110 vs 112). -/
   noncoreferentialSubject : Bool
-  /-- Selects one of the finite complementizers (`akɛ`, `kɛji`). -/
-  finiteComplementizer : Bool
   /-- Matrix negation licenses an embedded NPI across this clause's
       boundary (exx 116 vs 117). -/
   npiTransparent : Bool
@@ -198,20 +211,26 @@ structure ClauseProperties where
   deriving DecidableEq, Repr
 
 def clauseProperties : EmbeddedClauseType → ClauseProperties
-  | .finiteAke   => ⟨true,  true,  true,  true,  false, true,  false⟩
-  | .finiteKeji  => ⟨true,  true,  true,  true,  false, true,  false⟩
-  | .irrealisNi  => ⟨false, false, false, false, true,  false, true⟩
+  | .finiteAke   => ⟨true,  true,  true,  false, true,  false⟩
+  | .finiteKeji  => ⟨true,  true,  true,  false, true,  false⟩
+  | .irrealisNi  => ⟨false, false, false, true,  false, true⟩
 
+/-- The complementizer heading each clause type. -/
 def clauseComplementizer : EmbeddedClauseType → Complementizer
-  | .finiteAke   => .ake
-  | .finiteKeji  => .keji
-  | .irrealisNi  => .ni
+  | .finiteAke   => ake
+  | .finiteKeji  => keji
+  | .irrealisNi  => ni
 
--- The complementizer's finiteness equals the clause's
--- `finiteComplementizer` flag — by construction, not bridge.
-theorem complementizer_isFinite_eq_finiteFlag (c : EmbeddedClauseType) :
-    (clauseComplementizer c).isFinite = (clauseProperties c).finiteComplementizer := by
-  cases c <;> rfl
+/-- The complement frame a verb selecting each clause type records: a finite
+    declarative for `akɛ`, a finite interrogative for `kɛji`, and for `ni` an
+    infinitival whose subject is an overt proclitic in the subjective
+    (nominative) form of Table 3 — never null and never a lexical DP
+    (exx 40–42). -/
+def EmbeddedClauseType.frame : EmbeddedClauseType → Frame
+  | .finiteAke  => Frame.finiteClause
+  | .finiteKeji => [.clausal (coding := some .indicative) (force := some .interrogative)]
+  | .irrealisNi =>
+    [.clausal (coding := some .infinitive) (embeddedSubject := some (.overt (some .nom)))]
 
 /-! ### Typological profile -/
 
