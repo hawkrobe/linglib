@@ -149,7 +149,7 @@ theorem toPartialProp_strawsonEntails (hpq : p ⊆ q) :
 
 /-- On the finest question, question-based *want* is best-worlds *want* (§3.4). -/
 theorem want_bot_iff : Want G ⊥ bel p ↔ BestWorlds.Want G bel p := by
-  simp only [Want, BestWorlds.Want, BestWorlds.Undominated, BestWorlds.le_iff, MaximalFor, Live,
+  simp only [Want, BestWorlds.want_iff, BestWorlds.le_iff, MaximalFor, Live,
     entailed, Preorder.satisfied, Setoid.cell_bot, Set.mem_singleton_iff, exists_eq_left,
     Set.singleton_subset_iff, Set.ofPred_subset_ofPred, Finset.mem_coe, and_imp]
   simp +contextual [Set.mem_ofPred_eq]

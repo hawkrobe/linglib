@@ -111,8 +111,7 @@ theorem no_dominant_world :
 theorem mem_bestWorlds_iff (w : World) :
     w ∈ bestWorlds circumstances desires w₀ ↔ w = (true, true) ∨ w = (false, false) := by
   revert w
-  simp only [bestWorlds, Core.Order.Normality.mem_optimal, kratzerNormality,
-    Core.Order.Normality.fromProps, Preorder.ofCriteria_le_iff]
+  simp only [mem_bestWorlds]
   decide_worlds
 
 /-- The example satisfies the Limit Assumption, so the paper's limit-free operators are
@@ -221,8 +220,7 @@ scoped macro "decide_situations" : tactic =>
 theorem mem_bestWorlds_good_iff (s : Situation) :
     s ∈ bestWorlds emptyBackground morallyGood none ↔ s = none := by
   revert s
-  simp only [bestWorlds, Core.Order.Normality.mem_optimal, kratzerNormality,
-    Core.Order.Normality.fromProps, Preorder.ofCriteria_le_iff]
+  simp only [mem_bestWorlds]
   decide_situations
 
 /-- Among the situations with injustice, the one closest to the good is the one where it is
@@ -231,8 +229,7 @@ theorem mem_bestWorlds_injustice_iff (s : Situation) :
     s ∈ bestWorlds (restrictedBase emptyBackground injustice) morallyGood none ↔
       s = some .amended := by
   revert s
-  simp only [bestWorlds, Core.Order.Normality.mem_optimal, kratzerNormality,
-    Core.Order.Normality.fromProps, Preorder.ofCriteria_le_iff]
+  simp only [mem_bestWorlds]
   decide_situations
 
 /-- The restricted base satisfies the Limit Assumption, so the verdicts below are those of the

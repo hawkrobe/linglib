@@ -155,8 +155,7 @@ effective-preference source of (88) instead varies from world to world, footnote
 theorem designatedGoal_eq {f : ModalBase W} {p : W → Prop}
     (h : ∃ v ∈ accessibleWorlds f w, p v) :
     bestWorlds f (λ _ => [p]) w = accessibleWorlds (restrictedBase f p) w := by
-  rw [restricted_accessible_eq, bestWorlds, kratzerNormality, Core.Order.Normality.fromProps,
-    Core.Order.Normality.optimal_ofCriteria_eq]
+  rw [restricted_accessible_eq, bestWorlds, bestAmong_eq_of_exists]
   · ext u
     simp
   · obtain ⟨v, hv, hp⟩ := h

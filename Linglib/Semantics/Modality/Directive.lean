@@ -27,7 +27,7 @@ over a subset, making the claim weaker (easier to satisfy).
 ## Key Result
 
 `strong_entails_weak`: strong necessity entails weak necessity, since
-the g'-best of the g-best worlds are g-best (`bestAmong_sub`).
+the g'-best of the g-best worlds are g-best (`bestAmong_subset`).
 
 `weak_not_entails_strong`: the converse fails. A concrete counterexample shows
 that refining the ordering can eliminate a world where φ fails, making weak
@@ -88,7 +88,7 @@ theorem strong_entails_weak (f : ModalBase W) (g g' : OrderingSource W)
     weakNecessity f g g' p w := by
   rw [strongNecessity, necessity_iff_all] at h
   intro w' hw'
-  exact h w' (bestAmong_sub _ _ hw')
+  exact h w' (bestAmong_subset _ _ hw')
 
 /-! ## The converse fails -/
 
@@ -131,7 +131,7 @@ theorem weak_not_entails_strong :
         cases hq with
         | head => rfl
         | tail _ h => cases h
-      have hFT := hmin true (hBestAll true) hTF
+      have hFT := hmin (hBestAll true) hTF
       exact absurd (hFT (fun w => w = true) List.mem_cons_self rfl)
         Bool.false_ne_true
   -- Strong necessity fails at the g-best world `false`.
@@ -171,7 +171,7 @@ theorem weak_eq_strong_no_secondary (f : ModalBase W) (g : OrderingSource W)
     strongNecessity f g p w := by
   unfold weakNecessity strongNecessity
   rw [show bestAmong (bestWorlds f g w) ((emptyBackground (W := W)) w) =
-    bestWorlds f g w from bestAmong_empty _]
+    bestWorlds f g w from bestAmong_nil _]
   exact (necessity_iff_all f g p w).symm
 
 end Modality.Directive
