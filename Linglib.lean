@@ -1518,7 +1518,6 @@ import Linglib.Semantics.Attitudes.Desire.BestWorlds
 import Linglib.Semantics.Attitudes.Desire.Conditional
 import Linglib.Semantics.Attitudes.Desire.ExpectedValue
 import Linglib.Semantics.Attitudes.Desire.Preferential
-import Linglib.Semantics.Attitudes.Desire.QuestionBased
 import Linglib.Semantics.Attitudes.Distributivity
 import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Attitudes.EpistemicThreshold

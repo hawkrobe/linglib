@@ -1,6 +1,8 @@
-import Linglib.Semantics.Attitudes.Desire.QuestionBased
+import Linglib.Semantics.Questions.Partition.SubjectMatter
 import Mathlib.Data.Finset.Lattice.Fold
 import Mathlib.Order.Preorder.Finite
+import Mathlib.Tactic.DeriveFintype
+import Mathlib.Data.Fintype.Prod
 
 /-!
 # Cariani (2013): 'Ought' and resolution semantics
@@ -13,32 +15,32 @@ burn down the philosophy department* ([ross-1941]), and *Procrastinate ought to 
 the review* does not entail *Procrastinate ought to accept* ([jackson-pargetter-1986]). The
 account keeps COARSENESS, on which an ought-sentence can be true although some way of making its
 prejacent true is impermissible, by relativizing *ought* to a resolution: a partition of the
-modal base into the agent's options, an ordering of the options, and a benchmark below which an
-option is impermissible (`ResolutionContext`). *Ought p* holds when the options settle `p`,
-every best option entails `p`, and every option entailing `p` meets the benchmark (`Ought`), so
-that one impermissible option compatible with the prejacent falsifies the sentence, the paper's
-COARSE FALSEMAKING (`not_ought_of_not_meetsBenchmark`), while impermissible ways of `p` that no
-option distinguishes leave it true.
+modal base into the agent's options (`Setoid W`), an ordering of the options, and a benchmark
+below which an option is impermissible (`ResolutionContext`). *Ought p* holds when the
+resolution settles `p`, every best option entails `p`, and every option entailing `p` meets the
+benchmark (`Ought`), so that one impermissible option compatible with the prejacent falsifies
+the sentence, the paper's COARSE FALSEMAKING (`not_ought_of_not_meetsBenchmark`), while
+impermissible ways of `p` that no option distinguishes leave it true.
 
 Both puzzles refute INHERITANCE (`not_inheritance_ross`, `not_inheritance_proc`). Permission has
 two candidate entries, some option at the benchmark entails `p` or some best option does
 (`Permitted₁`, `Permitted₂`); *ought* entails both, both are closed under entailment, and since
 that closure together with the duality of *ought* and permission would restore INHERITANCE
 (`inheritance_of_dual`), *ought* is the dual of neither. A boxing semantics is the special case
-of a resolution whose cells are singletons and whose benchmark every option meets
-(`ought_finest_iff`).
+of the finest resolution with a benchmark every option meets (`ought_bot_iff`).
 
 ## Implementation notes
 
-* The ordering on options is a valuation into a preordered scale with the benchmark a threshold
-  of the scale, neutral between the ranking and quantitative scales the paper allows; the best
-  options are the `MaximalFor` elements of the valuation. The paper's examples value an option
-  at the rank of its best world (`ofRanking`).
-* `options` is the partition of the modal base itself, so the modal base is not a separate
+* The ordering on options is a valuation of worlds in a preordered scale that the resolution
+  settles, so that it ranks options, with the benchmark a threshold of the scale; this is
+  neutral between the ranking and quantitative scales the paper allows, and the best options
+  are the `MaximalFor` elements of the valuation. The paper's examples value an option at the
+  rank of its best world (`ofRanking`).
+* The resolution partitions the modal base itself, so the modal base is not a separate
   parameter and the ordering does not vary with it. The paper's third puzzle, conditional
   *oughts* under the restrictor analysis of conditionals, needs the modal base and is not
   formalized.
-* Visibility is `Desire.QuestionBased.IsConsidered`, every cell settling the prejacent.
+* Visibility is `Setoid.Settles`, the resolution settling the prejacent.
 
 ## References
 
@@ -50,46 +52,51 @@ of a resolution whose cells are singletons and whose benchmark every option meet
 
 namespace Cariani2013
 
-open Desire.QuestionBased
-
 variable {W V : Type*}
 
-/-- A resolution context: the agent's options, the cells of a partition of the modal base; the
-ordering, a valuation of options in a preordered scale; and the benchmark, the threshold of the
-scale below which an option is impermissible. -/
+/-- A resolution context: the resolution, a partition of the modal base into the agent's
+options; the ordering, a valuation of worlds that the resolution settles, so that it ranks
+options; and the benchmark, the threshold of the scale below which an option is
+impermissible. -/
 structure ResolutionContext (W V : Type*) where
-  /-- The options, mutually exclusive courses of action. -/
-  options : List (Finset W)
-  /-- The ordering: the value of an option in the scale. -/
-  value : Finset W → V
+  /-- The resolution: worlds in one cell realize the same option. -/
+  resolution : Setoid W
+  /-- The ordering: the value of a world's option in the scale. -/
+  value : W → V
+  /-- The valuation is constant on options. -/
+  value_settled : resolution ≤ Setoid.ker value
   /-- The benchmark: the least permissible value. -/
   benchmark : V
 
 namespace ResolutionContext
 
 /-- The context of a ranked action space: an option is valued at the rank of its best world. -/
-def ofRanking [SemilatticeSup V] [OrderBot V] (options : List (Finset W)) (rank : W → V)
-    (benchmark : V) : ResolutionContext W V :=
-  ⟨options, (·.sup rank), benchmark⟩
+def ofRanking [Fintype W] [SemilatticeSup V] [OrderBot V] (s : Setoid W) [DecidableRel s]
+    (rank : W → V) (benchmark : V) : ResolutionContext W V where
+  resolution := s
+  value w := (Finset.univ.filter (s · w)).sup rank
+  value_settled _ _ h := congrArg (Finset.sup · rank) <| Finset.filter_congr λ _ _ =>
+    ⟨λ h' => s.trans' h' h, λ h' => s.trans' h' (s.symm' h)⟩
+  benchmark := benchmark
 
 variable [Preorder V] (rc : ResolutionContext W V) (p : Set W)
 
 /-! ### The clauses -/
 
-/-- `p` is *visible* when the options settle it: each entails `p` or entails its negation. -/
-abbrev IsVisible : Prop := IsConsidered rc.options p
+/-- `p` is *visible* when the resolution settles it: each option entails `p` or its negation. -/
+abbrev IsVisible : Prop := rc.resolution.Settles p
 
 /-- An option *meets the benchmark* when its value is at least the benchmark. -/
-def MeetsBenchmark (o : Finset W) : Prop := rc.benchmark ≤ rc.value o
+def MeetsBenchmark (w : W) : Prop := rc.benchmark ≤ rc.value w
 
 /-- An option is *best* when no option is strictly better. -/
-def IsBest (o : Finset W) : Prop := MaximalFor (· ∈ rc.options) rc.value o
+def IsBest (w : W) : Prop := MaximalFor (λ _ => True) rc.value w
 
 /-- `p` is *optimal* when every best option entails it. -/
-def IsOptimal : Prop := ∀ o ∈ rc.options, rc.IsBest o → ∀ w ∈ o, w ∈ p
+def IsOptimal : Prop := ∀ w, rc.IsBest w → rc.resolution.cell w ⊆ p
 
 /-- `p` is *strongly permissible* when every option that entails it meets the benchmark. -/
-def IsStronglyPermissible : Prop := ∀ o ∈ rc.options, (∀ w ∈ o, w ∈ p) → rc.MeetsBenchmark o
+def IsStronglyPermissible : Prop := ∀ w, rc.resolution.cell w ⊆ p → rc.MeetsBenchmark w
 
 /-! ### The operators -/
 
@@ -97,86 +104,77 @@ def IsStronglyPermissible : Prop := ∀ o ∈ rc.options, (∀ w ∈ o, w ∈ p)
 def Ought : Prop := rc.IsVisible p ∧ rc.IsOptimal p ∧ rc.IsStronglyPermissible p
 
 /-- *Permitted p*, first entry: some option that entails `p` meets the benchmark. -/
-def Permitted₁ : Prop := ∃ o ∈ rc.options, (∀ w ∈ o, w ∈ p) ∧ rc.MeetsBenchmark o
+def Permitted₁ : Prop := ∃ w, rc.resolution.cell w ⊆ p ∧ rc.MeetsBenchmark w
 
 /-- *Permitted p*, second entry: some best option entails `p`. -/
-def Permitted₂ : Prop := ∃ o ∈ rc.options, rc.IsBest o ∧ ∀ w ∈ o, w ∈ p
+def Permitted₂ : Prop := ∃ w, rc.IsBest w ∧ rc.resolution.cell w ⊆ p
 
 /-- INHERITANCE: *ought* is closed under entailment of the prejacent. -/
 def Inheritance : Prop := ∀ p q : Set W, p ⊆ q → rc.Ought p → rc.Ought q
 
 section Decidable
 
-variable [DecidableRel (α := V) (· ≤ ·)]
+variable [Fintype W] [DecidableRel rc.resolution] [DecidableRel (α := V) (· ≤ ·)]
+  [DecidablePred (· ∈ p)]
 
-instance (o : Finset W) : Decidable (rc.MeetsBenchmark o) := inferInstanceAs (Decidable (_ ≤ _))
+instance (w : W) : Decidable (rc.MeetsBenchmark w) := inferInstanceAs (Decidable (_ ≤ _))
 
-instance [DecidableEq W] (o : Finset W) : Decidable (rc.IsBest o) :=
-  inferInstanceAs (Decidable (o ∈ rc.options ∧ ∀ o' ∈ rc.options, _ → _))
+instance (w : W) : Decidable (rc.IsBest w) :=
+  inferInstanceAs (Decidable (True ∧ ∀ _, True → _ → _))
 
-instance [DecidableEq W] [DecidablePred (· ∈ p)] : Decidable (rc.IsOptimal p) :=
-  inferInstanceAs (Decidable (∀ o ∈ rc.options, _ → _))
+instance : Decidable (rc.IsOptimal p) := inferInstanceAs (Decidable (∀ _, _ → _))
 
-instance [DecidablePred (· ∈ p)] : Decidable (rc.IsStronglyPermissible p) :=
-  inferInstanceAs (Decidable (∀ o ∈ rc.options, _ → _))
+instance : Decidable (rc.IsStronglyPermissible p) := inferInstanceAs (Decidable (∀ _, _ → _))
 
-instance [DecidableEq W] [DecidablePred (· ∈ p)] : Decidable (rc.Ought p) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+instance : Decidable (rc.Ought p) := inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-instance [DecidablePred (· ∈ p)] : Decidable (rc.Permitted₁ p) :=
-  inferInstanceAs (Decidable (∃ o ∈ rc.options, _))
+instance : Decidable (rc.Permitted₁ p) := inferInstanceAs (Decidable (∃ _, _ ∧ _))
 
-instance [DecidableEq W] [DecidablePred (· ∈ p)] : Decidable (rc.Permitted₂ p) :=
-  inferInstanceAs (Decidable (∃ o ∈ rc.options, _))
+instance : Decidable (rc.Permitted₂ p) := inferInstanceAs (Decidable (∃ _, _ ∧ _))
 
 end Decidable
 
-variable {rc p} {q : Set W}
+variable {rc p} {q : Set W} {w : W}
 
 /-! ### Coarse falsemaking and permission -/
 
 /-- COARSE FALSEMAKING: one option below the benchmark that entails `p` falsifies *ought p*,
 however good the other options are. -/
-theorem not_ought_of_not_meetsBenchmark {o : Finset W} (ho : o ∈ rc.options)
-    (hp : ∀ w ∈ o, w ∈ p) (h : ¬ rc.MeetsBenchmark o) : ¬ rc.Ought p :=
-  λ ⟨_, _, hsp⟩ => h (hsp o ho hp)
+theorem not_ought_of_not_meetsBenchmark (hp : rc.resolution.cell w ⊆ p)
+    (h : ¬ rc.MeetsBenchmark w) : ¬ rc.Ought p :=
+  λ ⟨_, _, hsp⟩ => h (hsp w hp)
 
 /-- Some option is best as soon as there are options. -/
-theorem exists_isBest (h : rc.options ≠ []) : ∃ o ∈ rc.options, rc.IsBest o :=
-  let ⟨o, ho⟩ := Set.Finite.exists_maximalFor rc.value _ (List.finite_toSet rc.options)
-    (List.exists_mem_of_ne_nil rc.options h)
-  ⟨o, ho.1, ho⟩
+theorem exists_isBest [Finite W] [Nonempty W] : ∃ w, rc.IsBest w :=
+  Set.Finite.exists_maximalFor rc.value Set.univ Set.finite_univ Set.univ_nonempty
 
 /-- What one ought to do some best option does. -/
-theorem Ought.permitted₂ (h : rc.options ≠ []) (ho : rc.Ought p) : rc.Permitted₂ p :=
-  let ⟨o, hmem, hbest⟩ := exists_isBest h
-  ⟨o, hmem, hbest, ho.2.1 o hmem hbest⟩
+theorem Ought.permitted₂ [Finite W] [Nonempty W] (ho : rc.Ought p) : rc.Permitted₂ p :=
+  let ⟨w, hbest⟩ := exists_isBest (rc := rc)
+  ⟨w, hbest, ho.2.1 w hbest⟩
 
 /-- What one ought to do is permitted: a best option does it by optimality and meets the
 benchmark by strong permissibility. -/
-theorem Ought.permitted₁ (h : rc.options ≠ []) (ho : rc.Ought p) : rc.Permitted₁ p :=
-  let ⟨o, hmem, hbest⟩ := exists_isBest h
-  ⟨o, hmem, ho.2.1 o hmem hbest, ho.2.2 o hmem (ho.2.1 o hmem hbest)⟩
+theorem Ought.permitted₁ [Finite W] [Nonempty W] (ho : rc.Ought p) : rc.Permitted₁ p :=
+  let ⟨w, hbest⟩ := exists_isBest (rc := rc)
+  ⟨w, ho.2.1 w hbest, ho.2.2 w (ho.2.1 w hbest)⟩
 
 /-- PI: permission is closed under entailment of the prejacent, on either entry. -/
 theorem Permitted₁.mono (hpq : p ⊆ q) : rc.Permitted₁ p → rc.Permitted₁ q :=
-  λ ⟨o, ho, hp, hb⟩ => ⟨o, ho, λ w hw => hpq (hp w hw), hb⟩
+  λ ⟨w, hp, hb⟩ => ⟨w, hp.trans hpq, hb⟩
 
 theorem Permitted₂.mono (hpq : p ⊆ q) : rc.Permitted₂ p → rc.Permitted₂ q :=
-  λ ⟨o, ho, hb, hp⟩ => ⟨o, ho, hb, λ w hw => hpq (hp w hw)⟩
+  λ ⟨w, hb, hp⟩ => ⟨w, hb, hp.trans hpq⟩
 
 /-! ### The boxing special case -/
 
-/-- With singleton cells and every option at the benchmark, *ought p* is quantification over the
-best worlds: the boxing semantics is a resolution semantics at the finest resolution. -/
-theorem ought_finest_iff {worlds : List W} (hw : ∀ w, w ∈ worlds)
-    (ho : rc.options = finest worlds) (hb : ∀ o ∈ rc.options, rc.MeetsBenchmark o) :
-    rc.Ought p ↔ ∀ w, MaximalFor (λ _ => True) (λ w => rc.value {w}) w → w ∈ p := by
-  have hv : IsConsidered (worlds.map ({·})) p := isConsidered_finest worlds
-  simp only [Ought, IsVisible, IsOptimal, IsStronglyPermissible, IsBest, MaximalFor, ho, finest,
-    List.mem_map, hw, true_and, true_implies, forall_exists_index, forall_apply_eq_imp_iff,
-    Finset.mem_singleton, forall_eq, Finset.singleton_inj, exists_eq] at hb ⊢
-  exact ⟨λ h w hm => h.2.1 w hm, λ h => ⟨hv, λ w hm => h w hm, λ w _ => hb w⟩⟩
+/-- On the finest resolution with every option at the benchmark, *ought p* is quantification
+over the best worlds: the boxing semantics is a resolution semantics. -/
+theorem ought_bot_iff (h : rc.resolution = ⊥) (hb : ∀ w, rc.MeetsBenchmark w) :
+    rc.Ought p ↔ ∀ w, rc.IsBest w → w ∈ p := by
+  simp only [Ought, IsVisible, IsOptimal, IsStronglyPermissible, h, Setoid.bot_settles,
+    Setoid.cell_bot, Set.singleton_subset_iff, true_and]
+  exact ⟨λ h => h.1, λ h => ⟨h, λ w _ => hb w⟩⟩
 
 end ResolutionContext
 
@@ -203,7 +201,7 @@ theorem ResolutionContext.not_dual₂ (h : ¬ rc.Inheritance) :
 
 /-- Joan's three courses of action. -/
 inductive RossW | attend | stayHome | burn
-  deriving DecidableEq
+  deriving DecidableEq, Fintype
 
 /-- Attending is best, staying home next, burning down the department worst. -/
 def rossRank : RossW → ℕ
@@ -211,10 +209,11 @@ def rossRank : RossW → ℕ
   | .stayHome => 2
   | .burn => 1
 
-/-- Joan's context: each action an option, the benchmark at staying home, so that burning down
-the department is the one impermissible option. -/
-def rossContext : ResolutionContext RossW ℕ :=
-  .ofRanking [{.attend}, {.stayHome}, {.burn}] rossRank 2
+/-- Joan's context: each action its own option, the benchmark at staying home, so that burning
+down the department is the one impermissible option. -/
+def rossContext : ResolutionContext RossW ℕ := .ofRanking ⊥ rossRank 2
+
+instance : DecidableRel rossContext.resolution := inferInstanceAs (DecidableRel (⊥ : Setoid RossW))
 
 /-- *Joan ought to attend her classes* is true. -/
 theorem ross_ought_attend : rossContext.Ought {RossW.attend} := by decide +kernel
@@ -251,7 +250,7 @@ theorem not_dual_ross :
 /-- Procrastinate's three courses of action ([jackson-pargetter-1986]): accepting the review and
 writing it, declining it, and accepting without writing. -/
 inductive ProcW | acceptWrite | decline | acceptNoWrite
-  deriving DecidableEq
+  deriving DecidableEq, Fintype
 
 /-- Accepting and writing is best; declining is better than accepting and not writing, which is
 what Procrastinate would in fact do. -/
@@ -261,8 +260,9 @@ def procRank : ProcW → ℕ
   | .acceptNoWrite => 1
 
 /-- Procrastinate's context, with the benchmark at declining. -/
-def procContext : ResolutionContext ProcW ℕ :=
-  .ofRanking [{.acceptWrite}, {.decline}, {.acceptNoWrite}] procRank 2
+def procContext : ResolutionContext ProcW ℕ := .ofRanking ⊥ procRank 2
+
+instance : DecidableRel procContext.resolution := inferInstanceAs (DecidableRel (⊥ : Setoid ProcW))
 
 /-- *Procrastinate ought to accept and write the review* is true. -/
 theorem proc_ought_acceptWrite : procContext.Ought {ProcW.acceptWrite} := by decide +kernel
@@ -282,7 +282,7 @@ theorem not_inheritance_proc : ¬ procContext.Inheritance := λ h =>
 
 /-- Jenny's ways to school. -/
 inductive Mode | running | walking | swimming | driving
-  deriving DecidableEq
+  deriving DecidableEq, Fintype
 
 /-- Running is best, walking and swimming tie, driving is worst. -/
 def jennyRank : Mode → ℕ
@@ -292,14 +292,16 @@ def jennyRank : Mode → ℕ
   | .driving => 1
 
 /-- The proposition that Jenny goes to school by `m`; a world also records whether she has a cup
-of coffee, which no option settles. -/
+of coffee, which the resolution ignores. -/
 abbrev mode (m : Mode) : Set (Mode × Bool) := {w | w.1 = m}
 
-/-- Jenny's context: the four ways to school as options, coffee below the resolution, and the
+/-- Jenny's context: the ways to school as options, coffee below the resolution, and the
 benchmark between walking and driving, so that driving is the one impermissible option. -/
 def jennyContext : ResolutionContext (Mode × Bool) ℕ :=
-  .ofRanking ([.running, .walking, .swimming, .driving].map λ m => {(m, true), (m, false)})
-    (jennyRank ·.1) 2
+  .ofRanking (Setoid.ker Prod.fst) (jennyRank ·.1) 2
+
+instance : DecidableRel jennyContext.resolution :=
+  inferInstanceAs (DecidableRel (Setoid.ker (Prod.fst : Mode × Bool → Mode)))
 
 /-- Running is permissible, optimal, and strongly permissible, so Jenny ought to run. -/
 theorem jenny_ought_running : jennyContext.Ought (mode .running) := by decide +kernel
@@ -318,7 +320,7 @@ theorem jenny_swimming_or_driving :
         ¬ jennyContext.IsStronglyPermissible (mode .swimming ∪ mode .driving) := by
   decide +kernel
 
-/-- Running or walking is visible in Jenny's options; having a cup of coffee is not. -/
+/-- Running or walking is visible in Jenny's resolution; having a cup of coffee is not. -/
 theorem jenny_visible :
     jennyContext.IsVisible (mode .running ∪ mode .walking) ∧
       ¬ jennyContext.IsVisible {w | w.2 = true} := by decide +kernel

@@ -66,4 +66,27 @@ theorem ofCriteria_le_of_subset {sat : α → C → Prop}
     (ofCriteria sat criteria).le a b :=
   fun c hc => h c (hsub hc)
 
+/-! ### The satisfied criteria as a valuation -/
+
+/-- The criteria that `a` satisfies. The criteria-derived order is the pullback of `⊇` along
+this map (`satisfied_subset_iff`), so the minimal elements of the order are the `MaximalFor`
+elements of the map (`maximalFor_satisfied_iff`): the best elements are those satisfying a
+maximal set of criteria, with no order instance on the carrier. -/
+def satisfied (sat : α → C → Prop) (criteria : Set C) (a : α) : Set C :=
+  {c ∈ criteria | sat a c}
+
+theorem satisfied_subset_iff (sat : α → C → Prop) (criteria : Set C) (a b : α) :
+    satisfied sat criteria a ⊆ satisfied sat criteria b ↔ (ofCriteria sat criteria).le b a :=
+  (ofCriteria_le_iff_subset sat criteria b a).symm
+
+theorem maximalFor_satisfied_iff (sat : α → C → Prop) (criteria : Set C) (P : α → Prop)
+    (a : α) :
+    MaximalFor P (satisfied sat criteria) a ↔ @Minimal α (ofCriteria sat criteria).toLE P a := by
+  simp only [MaximalFor, Minimal, satisfied_subset_iff]
+
+instance (sat : α → C → Prop) (l : List C) [DecidableEq C] [∀ a c, Decidable (sat a c)]
+    (a b : α) : Decidable (satisfied sat {c | c ∈ l} a ≤ satisfied sat {c | c ∈ l} b) :=
+  decidable_of_iff (∀ c ∈ l, sat a c → sat b c) (by
+    simp only [satisfied_subset_iff, ofCriteria_le_iff, Set.mem_ofPred_eq])
+
 end Preorder
