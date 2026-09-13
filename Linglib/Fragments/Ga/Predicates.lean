@@ -32,13 +32,20 @@ in `form`.
 * [allotey-2021]
 * [karttunen-1971]
 * [nadathur-lauer-2020]
+* [wurmbrand-lohninger-2023]
+* [wurmbrand-2024]
 -/
 
 namespace Ga
 
-/-- The reading of the controlled `ni`-frame under control relation `c`. -/
-def niReading (c : ControlType) : Verb.Reading :=
-  { frame := niFrame, control := some c }
+/-- The reading of the controlled `ni`-frame under control relation `c`, with
+    the complement's [wurmbrand-lohninger-2023] sort where [wurmbrand-2024]
+    classes the verb. -/
+def niReading (c : ControlType) (size : Option Clause.Size := none) : Verb.Reading :=
+  { frame := niFrame, control := some c, size }
+
+/-- The reading of a finite `akɛ`-frame: a proposition. -/
+def akeReading : Verb.Reading := { frame := Frame.finiteClause, size := some .proposition }
 
 /-! ### Subject control -/
 
@@ -48,7 +55,7 @@ def niReading (c : ControlType) : Verb.Reading :=
 def tao : Verb where
   form := "tao"
   frames := [niFrame]
-  readings := [niReading .subjectControl]
+  readings := [niReading .subjectControl (some .situation)]
 
 /-- *sumɔ* 'like' — subject control, with no complementizer under negation
     (ex 3a: *Dida sumɔ-ɔɔ e-na bo* 'Father is reluctant to see you') and with
@@ -82,7 +89,7 @@ def hiekpano : Verb where
 def miamihie : Verb where
   form := "mia-mi-hiɛ"
   frames := [niFrame]
-  readings := [niReading .subjectControl]
+  readings := [niReading .subjectControl (some .event)]
 
 /-- *kai* 'remember' — subject control in the `ni`-frame (exx 42–43: *Mi kai ni
     ma he wolo* 'I remembered to buy a book'), positive implicative. Alternates
@@ -118,7 +125,7 @@ def kpleno : Verb where
 def kpang : Verb where
   form := "kpaŋ"
   frames := [niFrame]
-  readings := [niReading .subjectControl]
+  readings := [niReading .subjectControl (some .situation)]
 
 /-- *kpã-gbɛ* 'expect' — subject control (ex 53: *Ajele kpã-gbɛ ni e-ye
     jweremɔ lɛ* 'Ajele expects to win the prize', infelicitous when Ajele does
@@ -126,7 +133,7 @@ def kpang : Verb where
 def kpagbe : Verb where
   form := "kpã-gbɛ"
   frames := [niFrame]
-  readings := [niReading .subjectControl]
+  readings := [niReading .subjectControl (some .situation)]
 
 /-- *dwɛŋ* 'think' — a finite complement with a low-tone, freely referring
     subject (exx 110–111: 'Aku thought s/he bought the book', under `akɛ` or a
@@ -135,7 +142,7 @@ def kpagbe : Verb where
 def dweng : Verb where
   form := "dwɛŋ"
   frames := [Frame.finiteClause, niFrame]
-  readings := [niReading .subjectControl]
+  readings := [akeReading, niReading .subjectControl]
   attitude := some (.doxastic .nonVeridical)
 
 /-! ### Object control -/
@@ -183,7 +190,7 @@ def bi : Verb where
 def kee : Verb where
   form := "kɛɛ"
   frames := [Frame.finiteClause, niFrame]
-  readings := [niReading .objectControl]
+  readings := [akeReading, niReading .objectControl]
   speechActVerb := true
 
 /-! ### Finite complements only -/

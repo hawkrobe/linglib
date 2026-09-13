@@ -1,6 +1,7 @@
 import Linglib.Syntax.Clause.Basic
 import Linglib.Syntax.Clause.Complementation
 import Linglib.Semantics.Mood.Defs
+import Linglib.Core.Order.Flat
 
 /-! # Complement frames — typed complement positions
 
@@ -14,6 +15,9 @@ case carrying the axes the predicate selects for. The flat
 
 * `Complement.Position` — one complement position; a clausal position
   carries its selectional axes by construction
+* `Complement.Axis`, `Complement.Axes`, `Complement.Position.axes` — the
+  axes a position and a clause-typer share, as a bundle of partial values
+  in the flat order
 * `Complement.Position.IsClausal`, `IsNominal`, `Frame.HasClausal`,
   `Frame.HasNominal` — category of a position, and of some position of a
   frame
@@ -89,6 +93,31 @@ instance : DecidablePred IsNominal := fun p => by
   cases p <;> unfold IsNominal <;> infer_instance
 
 end Position
+
+/-- The selectional axes a clausal position and a clause-typer share:
+    [noonan-2007] coding and illocutionary force. -/
+inductive Axis where
+  | coding
+  | force
+  deriving DecidableEq, Fintype, Repr
+
+/-- The value type of an axis. -/
+def Axis.Val : Axis → Type
+  | coding => Coding
+  | force => Mood.Illocutionary
+
+instance : ∀ a : Axis, DecidableEq a.Val
+  | .coding => inferInstanceAs (DecidableEq Coding)
+  | .force => inferInstanceAs (DecidableEq Mood.Illocutionary)
+
+/-- A bundle of partial axis values, ordered pointwise by extension:
+    unification is `PartialUnify.unify`, consistency is `Compat`. -/
+abbrev Axes := ∀ a : Axis, Flat a.Val
+
+/-- The axes a position records; a non-clausal position records nothing. -/
+def Position.axes (p : Position) : Axes
+  | .coding => p.coding?
+  | .force => p.force?
 
 end Complement
 
