@@ -40,7 +40,7 @@ Generalization X from counterfactuals (40) is not formalized.
 
 namespace Percus2000
 
-open Semantics.Context
+open Reference
 
 /-- An assignment of situations to variable indices. -/
 abbrev SituationAssignment (W T : Type*) := Assignment (Index W T)

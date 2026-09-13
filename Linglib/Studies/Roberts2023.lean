@@ -491,7 +491,7 @@ end Discourse
 
 namespace Roberts2023
 
-open Semantics.Context (Index)
+open Reference
 open Discourse (forceLinkingPrinciple defaultSemanticType Scoreboard)
 open Mood.Illocutionary (sincerityCondition)
 open Mood (State Component Illocutionary HasTarget)
@@ -505,7 +505,7 @@ abbrev World := Fin 4
 
 Roberts's "circumstance" ⟨w, t⟩ (eq. 45), SameHistory (47), and FUT
 (48) all instantiate the canonical world-time substrate in
-`Semantics.Context.Index` and `HistoricalAlternatives`:
+`Reference.Index` and `HistoricalAlternatives`:
 
   Roberts                        Linglib substrate
   ────────────────────────────   ────────────────────────────

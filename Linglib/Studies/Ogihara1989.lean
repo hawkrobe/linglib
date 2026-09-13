@@ -23,7 +23,7 @@ open Tense
 
 namespace Ogihara1989
 
-open Semantics.Context
+open Reference
 
 /-- The Priorean `PAST` operator, applied at a referentially determined
     time g(n), decomposes into the conjunction of (1) the referential

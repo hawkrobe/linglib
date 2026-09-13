@@ -16,7 +16,7 @@ cells behind the update spine's test filter.
 
 namespace Tense
 
-open Semantics.Context (Index)
+open Reference
 
 variable {W T : Type*} [LinearOrder T]
 

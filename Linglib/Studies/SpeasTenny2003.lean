@@ -37,8 +37,8 @@ the content.
 
 ## Connections
 
-- **Semantics/Context/Tower.lean**: `KContext.agent` = SPEAKER,
-  `KContext.addressee` = HEARER; P-roles resolve through the canonical
+- **Reference/Context/Tower.lean**: `Context.agent` = SPEAKER,
+  `Context.addressee` = HEARER; P-roles resolve through the canonical
   `Discourse.Role.resolve` over a `ContextTower`.
 - **Phase.lean**: `isPhaseHeadOf .SA` — SAP is the highest phase.
 - **ExtendedProjection/Basic.lean**: `fValue .SA = 7 > fValue .C = 6`.
@@ -58,7 +58,7 @@ formaliser's modernization.
 namespace SpeasTenny2003
 
 open Minimalist
-open Semantics.Context (KContext ContextTower ContextShift)
+open Reference
 open Mood (Illocutionary ClauseType)
 open Epistemicity
 
@@ -215,22 +215,22 @@ theorem seatOfKnowledge_agrees_with_authority_off_imperative
     reusing the canonical `Discourse.Role.resolve` (which reads from the
     speech-act origin). SEAT OF KNOWLEDGE resolves through its default
     discourse role; use `resolvePRoleInMood` for mood-sensitive resolution. -/
-def resolvePRole {W E P T : Type*} (tower : ContextTower (KContext W E P T)) (r : PRole) : E :=
+def resolvePRole {W E P T : Type*} (tower : ContextTower (Context W E P T)) (r : PRole) : E :=
   Discourse.Role.resolve tower r.toRole
 
 /-- Mood-sensitive role resolution: SEAT OF KNOWLEDGE is resolved through
     `seatOfKnowledge` before mapping to a participant. -/
-def resolvePRoleInMood {W E P T : Type*} (tower : ContextTower (KContext W E P T))
+def resolvePRoleInMood {W E P T : Type*} (tower : ContextTower (Context W E P T))
     (m : SAPMood) : PRole → E
   | .seatOfKnowledge => resolvePRole tower (seatOfKnowledge m)
   | r => resolvePRole tower r
 
 /-- SPEAKER resolves to the speech-act origin's agent. -/
-theorem resolvePRole_speaker {W E P T : Type*} (tower : ContextTower (KContext W E P T)) :
+theorem resolvePRole_speaker {W E P T : Type*} (tower : ContextTower (Context W E P T)) :
     resolvePRole tower .speaker = tower.origin.agent := rfl
 
 /-- HEARER resolves to the speech-act origin's addressee. -/
-theorem resolvePRole_hearer {W E P T : Type*} (tower : ContextTower (KContext W E P T)) :
+theorem resolvePRole_hearer {W E P T : Type*} (tower : ContextTower (Context W E P T)) :
     resolvePRole tower .hearer = tower.origin.addressee := rfl
 
 /-- **Key Claim 4 as a theorem.** P-roles are resolved from the SPEECH-ACT
@@ -238,25 +238,25 @@ theorem resolvePRole_hearer {W E P T : Type*} (tower : ContextTower (KContext W 
     context shift / embedding — inherited from
     `Discourse.Role.resolve_push`. -/
 theorem resolvePRole_shift_invariant {W E P T : Type*}
-    (tower : ContextTower (KContext W E P T)) (σ : ContextShift (KContext W E P T))
+    (tower : ContextTower (Context W E P T)) (σ : ContextShift (Context W E P T))
     (r : PRole) :
     resolvePRole (tower.push σ) r = resolvePRole tower r := by
   simp only [resolvePRole, Discourse.Role.resolve_push]
 
 /-- In declaratives the seat of knowledge resolves to the speaker (agent). -/
 theorem seatOfKnowledge_declarative_resolves {W E P T : Type*}
-    (tower : ContextTower (KContext W E P T)) :
+    (tower : ContextTower (Context W E P T)) :
     resolvePRoleInMood tower .declarative .seatOfKnowledge = tower.origin.agent := rfl
 
 /-- In interrogatives the seat of knowledge resolves to the hearer (addressee). -/
 theorem seatOfKnowledge_interrogative_resolves {W E P T : Type*}
-    (tower : ContextTower (KContext W E P T)) :
+    (tower : ContextTower (Context W E P T)) :
     resolvePRoleInMood tower .interrogative .seatOfKnowledge = tower.origin.addressee := rfl
 
 /-- In imperatives the seat of knowledge resolves to the hearer (addressee) —
     the corrected value (p.335), where the hearer realizes the proposition. -/
 theorem seatOfKnowledge_imperative_resolves {W E P T : Type*}
-    (tower : ContextTower (KContext W E P T)) :
+    (tower : ContextTower (Context W E P T)) :
     resolvePRoleInMood tower .imperative .seatOfKnowledge = tower.origin.addressee := rfl
 
 /-! ### SAP as a phase, and the F-hierarchy -/

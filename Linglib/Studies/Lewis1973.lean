@@ -31,7 +31,7 @@ treatment of preemption is not represented.
 
 namespace Lewis1973
 
-open Semantics.Context (Index)
+open Reference
 open Causation Causation.Mechanism Causation.SEM
 
 /-- The but-for counterfactual: had the cause not occurred, the effect would not have

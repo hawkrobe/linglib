@@ -48,7 +48,7 @@ Connects:
 
 namespace Tay2024
 
-open Semantics.Context (Index)
+open Reference
 
 open Causation.Resultatives
 open Morphology

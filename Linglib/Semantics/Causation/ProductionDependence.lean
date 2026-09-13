@@ -35,7 +35,7 @@ d-causes without producing anything.
 
 namespace Causation.ProductionDependence
 
-open Semantics.Context (Index)
+open Reference
 
 open Features
 

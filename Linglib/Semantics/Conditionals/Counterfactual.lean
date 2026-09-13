@@ -40,7 +40,7 @@ in mixed scenarios:
 
 namespace Conditionals.Counterfactual
 
-open Semantics.Context (Index)
+open Reference
 
 open _root_.Conditionals
 open Trivalent (ProjectionType dist)

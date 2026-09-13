@@ -120,7 +120,7 @@ The complement type of *believe* shifts from `W → Prop` to
 predicates over `Index W T`, and doxastic alternatives become world–time pairs:
 ⟦x believes p⟧(w,t) = ∀(w',t') ∈ Dox_x(w,t). p(w',t'). -/
 
-open Semantics.Context (Index)
+open Reference
 open Doxastic (Veridicality DoxasticPredicate BoxAt VeridicalityHolds)
 
 variable {W T E : Type*}
@@ -266,8 +266,7 @@ pushing a `temporalShift` onto the tower. -/
 
 section TemporalBridge
 
-open Semantics.Context (KContext ContextTower ContextShift AccessPattern DepthSpec
-  temporalShift)
+open Reference
 
 variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
 
@@ -277,13 +276,13 @@ variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
     embedding's time. Abusch's variable indices ARE tower depth indices for
     the temporal coordinate. -/
 def tensePronounAccessPattern (tp : TensePronoun) :
-    AccessPattern (KContext W E P T) T where
+    AccessPattern (Context W E P T) T where
   depth := .relative tp.evalTimeIndex
-  project := KContext.time
+  project := Context.time
 
 /-- A temporal assignment that faithfully represents a tower: `g k` returns
     the time coordinate at tower depth `k`. -/
-def towerFaithful (g : TemporalAssignment T) (t : ContextTower (KContext W E P T)) : Prop :=
+def towerFaithful (g : TemporalAssignment T) (t : ContextTower (Context W E P T)) : Prop :=
   ∀ (k : ℕ), g k = (t.contextAt k).time
 
 /-- When the temporal assignment encodes tower time coordinates,
@@ -291,7 +290,7 @@ def towerFaithful (g : TemporalAssignment T) (t : ContextTower (KContext W E P T
     the `tensePronounAccessPattern` against the tower. -/
 theorem tense_tower_bridge
     (tp : TensePronoun) (g : TemporalAssignment T)
-    (t : ContextTower (KContext W E P T))
+    (t : ContextTower (Context W E P T))
     (hFaithful : towerFaithful (W := W) (E := E) (P := P) g t) :
     tp.evalTime g = (tensePronounAccessPattern (W := W) (E := E) (P := P) tp).resolve t := by
   simp only [TensePronoun.evalTime, interpTense,
@@ -303,7 +302,7 @@ theorem tense_tower_bridge
     time — root-clause temporal evaluation is origin access, Kaplan's
     thesis for time. -/
 theorem tense_root_bridge
-    (tp : TensePronoun) (c : KContext W E P T)
+    (tp : TensePronoun) (c : Context W E P T)
     (hEval : tp.evalTimeIndex = 0)
     (g : TemporalAssignment T)
     (hFaithful : towerFaithful (W := W) (E := E) (P := P) g (ContextTower.root c)) :
@@ -317,7 +316,7 @@ theorem tense_root_bridge
     resolves to depth 0, the origin. -/
 theorem tensePronounAccessPattern_root_resolves
     (tp : TensePronoun) (hEval : tp.evalTimeIndex = 0)
-    (c : KContext W E P T) :
+    (c : Context W E P T) :
     (tensePronounAccessPattern (W := W) (E := E) (P := P) tp).resolve
       (ContextTower.root c) = c.time := by
   simp only [tensePronounAccessPattern, AccessPattern.resolve, hEval,
@@ -328,14 +327,14 @@ theorem tensePronounAccessPattern_root_resolves
     onto the tower: the updated assignment at the tower depth yields the
     new time. -/
 theorem von_stechow_tower
-    (g : TemporalAssignment T) (t : ContextTower (KContext W E P T))
+    (g : TemporalAssignment T) (t : ContextTower (Context W E P T))
     (newTime : T) :
     updateTemporal g t.depth newTime t.depth = newTime :=
   Function.update_self t.depth newTime g
 
 /-- Under faithful encoding, layers below the push point are preserved. -/
 theorem von_stechow_tower_preserves
-    (g : TemporalAssignment T) (t : ContextTower (KContext W E P T))
+    (g : TemporalAssignment T) (t : ContextTower (Context W E P T))
     (newTime : T)
     (hFaithful : towerFaithful g t)
     (k : ℕ) (hk : k < t.depth) :
@@ -347,7 +346,7 @@ theorem von_stechow_tower_preserves
 /-- Pushing a temporal shift assigns `newTime` to the new depth in
     the extended tower, mirroring `von_stechow_tower` on the assignment side. -/
 theorem von_stechow_tower_innermost
-    (t : ContextTower (KContext W E P T)) (newTime : T) :
+    (t : ContextTower (Context W E P T)) (newTime : T) :
     (t.push (temporalShift newTime)).innermost.time = newTime := by
   rw [ContextTower.push_innermost]
   simp only [temporalShift]

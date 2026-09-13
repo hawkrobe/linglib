@@ -206,7 +206,7 @@ theorem progressivePrediction_eq_accept_iff (c : VendlerClass) :
 abbrev IntervalPred (W T : Type*) [LinearOrder T] := W → NonemptyInterval T → Prop
 
 /-- A predicate over world-time points, the output of the perfect and the input to tense. -/
-abbrev PointPred (W T : Type*) := Semantics.Context.Index W T → Prop
+abbrev PointPred (W T : Type*) := Reference.Index W T → Prop
 
 /-- The viewpoints: the four relations of [klein-1994] between the topic time and the situation
 time, and the neutral viewpoint of [smith-1997], the default in the absence of aspect

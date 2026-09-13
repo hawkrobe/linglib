@@ -11,7 +11,7 @@ person shifts but time does not.
 
 ## Key Definitions
 
-- `amharic_pronI`: Amharic first person — `⟨.local, KContext.agent⟩`
+- `amharic_pronI`: Amharic first person — `⟨.local, Context.agent⟩`
 - `UniformShiftParam`: [anand-nevins-2004] constraint — all shifted
   indexicals in a language read from the same depth
 - `MixedShiftLexicon`: [deal-2020] — person shifts but time doesn't (Nez Perce)
@@ -22,7 +22,6 @@ person shifts but time does not.
 
 namespace Reference.ShiftedIndexicals
 
-open Semantics.Context
 open _root_.Reference.Kaplan
 
 variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
@@ -40,14 +39,14 @@ variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
     [schlenker-2003]: Amharic attitude verbs are context-shifting operators
     (monsters). Under the tower analysis, the monster pushes an attitude
     shift, and the shifted "I" reads from `.local` rather than `.origin`. -/
-def amharic_pronI : AccessPattern (KContext W E P T) E :=
-  ⟨.local, KContext.agent⟩
+def amharic_pronI : AccessPattern (Context W E P T) E :=
+  ⟨.local, Context.agent⟩
 
 /-- Amharic "here": reads position from the local (shifted) context.
     Under attitude shift, this yields the location of the attitude holder's
     reported speech act, not the actual speaker's location. -/
-def amharic_opHere : AccessPattern (KContext W E P T) P :=
-  ⟨.local, KContext.position⟩
+def amharic_opHere : AccessPattern (Context W E P T) P :=
+  ⟨.local, Context.position⟩
 
 @[simp] theorem amharic_pronI_depth :
     (amharic_pronI (W := W) (E := E) (P := P) (T := T)).depth = .local := rfl
@@ -65,7 +64,7 @@ def amharic_opHere : AccessPattern (KContext W E P T) P :=
     Kaplan's thesis: the SAME lexical item ("I") receives different
     interpretations cross-linguistically because of a depth parameter. -/
 theorem schlenker_counterexample
-    (c : KContext W E P T) (holder : E) (attWorld : W)
+    (c : Context W E P T) (holder : E) (attWorld : W)
     (hDistinct : c.agent ≠ holder) :
     let t := ContextTower.root c
     let σ := attitudeShift holder attWorld
@@ -78,7 +77,7 @@ theorem schlenker_counterexample
 
 /-- In a root tower (no embedding), English and Amharic "I" agree:
     both return the context's agent. -/
-theorem no_shift_agreement (c : KContext W E P T) :
+theorem no_shift_agreement (c : Context W E P T) :
     pronI_access.resolve (ContextTower.root c) =
     amharic_pronI.resolve (ContextTower.root c) := by
   simp only [pronI_access, amharic_pronI, AccessPattern.resolve,
@@ -115,13 +114,13 @@ def english : UniformShiftParam :=
 
 /-- Generate the first person access pattern from a uniform shift parameter. -/
 def UniformShiftParam.pronI (u : UniformShiftParam) :
-    AccessPattern (KContext W E P T) E :=
-  ⟨u.personDepth, KContext.agent⟩
+    AccessPattern (Context W E P T) E :=
+  ⟨u.personDepth, Context.agent⟩
 
 /-- Generate the second person access pattern from a uniform shift parameter. -/
 def UniformShiftParam.pronYou (u : UniformShiftParam) :
-    AccessPattern (KContext W E P T) E :=
-  ⟨u.personDepth, KContext.addressee⟩
+    AccessPattern (Context W E P T) E :=
+  ⟨u.personDepth, Context.addressee⟩
 
 /-- Uniformity: first and second person share the same depth. -/
 theorem uniform_depth (u : UniformShiftParam) :
@@ -160,13 +159,13 @@ def nezPerce : MixedShiftLexicon :=
 
 /-- Generate the first person access pattern from a mixed shift lexicon. -/
 def MixedShiftLexicon.pronI (m : MixedShiftLexicon) :
-    AccessPattern (KContext W E P T) E :=
-  ⟨m.personDepth, KContext.agent⟩
+    AccessPattern (Context W E P T) E :=
+  ⟨m.personDepth, Context.agent⟩
 
 /-- Generate the temporal indexical from a mixed shift lexicon. -/
 def MixedShiftLexicon.opNow (m : MixedShiftLexicon) :
-    AccessPattern (KContext W E P T) T :=
-  ⟨m.temporalDepth, KContext.time⟩
+    AccessPattern (Context W E P T) T :=
+  ⟨m.temporalDepth, Context.time⟩
 
 /-- In Nez Perce, person and time have different depths. -/
 theorem nezPerce_mixed :

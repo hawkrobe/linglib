@@ -421,7 +421,7 @@ theorem ds_agreement_universal :
 -- Part II: ContextTower Derivation
 -- ============================================================================
 
-open Semantics.Context
+open Reference
 
 -- ============================================================================
 -- § Chain Context Type
@@ -432,7 +432,7 @@ open Semantics.Context
 inductive ChainAgent where | subjectA | subjectB | subjectC
   deriving DecidableEq, Repr
 
-abbrev ChainCtx := KContext Unit ChainAgent Unit ℤ
+abbrev ChainCtx := Context Unit ChainAgent Unit ℤ
 
 /-- The final verb's context: subject A speaking at time 0.
     This is the "root" of the chain — the final verb's TAM values. -/
@@ -498,13 +498,13 @@ theorem medial_has_own_time_2 :
     (`tenseFromFinalVerb = true`). The medial verb inherits tense from
     the final verb's context. -/
 def originTenseAccess : AccessPattern ChainCtx ℤ :=
-  { depth := .origin, project := KContext.time }
+  { depth := .origin, project := Context.time }
 
 /-- Local access pattern: reads tense from the medial verb's own context.
     This models languages like Turkish where medial verbs retain some
     tense distinctions. -/
 def localTenseAccess : AccessPattern ChainCtx ℤ :=
-  { depth := .local, project := KContext.time }
+  { depth := .local, project := Context.time }
 
 /-- In a Nungon-style chain (tenseFromFinalVerb = true), medial verb
     reads final verb's tense (0) via origin access. -/

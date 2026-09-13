@@ -46,7 +46,7 @@ distinguish live from non-live possibilities.
 
 namespace Modality.Exclusion
 
-open Semantics.Context (KContext ContextTower temporalShift)
+open Reference
 open Mood (subjShift)
 
 /-! ### ExclF: the exclusion feature -/
@@ -73,7 +73,7 @@ This is a predicate over context towers: `ExclF dim tower` holds iff
 the relevant coordinate of the innermost context (topic) differs from
 the origin context (speaker). At a root tower innermost and origin
 coincide, so neither dimension's feature holds. -/
-def ExclF (dim : ExclDimension) (tower : ContextTower (KContext W E P T)) : Prop :=
+def ExclF (dim : ExclDimension) (tower : ContextTower (Context W E P T)) : Prop :=
   match dim with
   | .temporal => tower.innermost.time ≠ tower.origin.time
   | .modal    => tower.innermost.world ≠ tower.origin.world
@@ -86,7 +86,7 @@ When a subjunctive clause introduces a new world that differs from the
 origin, the resulting tower has modal ExclF. This is the tower-level
 formalization of [iatridou-2000]'s claim that counterfactual
 morphology signals world exclusion. -/
-theorem subjShift_produces_modal_exclF (c : KContext W E P T) (w' : W) (t' : T)
+theorem subjShift_produces_modal_exclF (c : Context W E P T) (w' : W) (t' : T)
     (h : w' ≠ c.world) :
     ExclF .modal ((ContextTower.root c).push (subjShift w' t')) :=
   h
@@ -95,7 +95,7 @@ theorem subjShift_produces_modal_exclF (c : KContext W E P T) (w' : W) (t' : T)
 
 When an embedding shifts the evaluation time away from the speech time,
 the resulting tower has temporal ExclF. This is ordinary temporal past. -/
-theorem temporalShift_produces_temporal_exclF (c : KContext W E P T) (t' : T)
+theorem temporalShift_produces_temporal_exclF (c : Context W E P T) (t' : T)
     (h : t' ≠ c.time) :
     ExclF .temporal ((ContextTower.root c).push (temporalShift t')) :=
   h
@@ -103,7 +103,7 @@ theorem temporalShift_produces_temporal_exclF (c : KContext W E P T) (t' : T)
 /-- Two shifts → both ExclFs: a subjunctive (world) shift followed by a
 temporal one yields modal and temporal exclusion together — the PastCF
 configuration of [iatridou-2000] (two past layers). -/
-theorem two_shifts_two_exclFs (c : KContext W E P T) (w' : W) (t' t'' : T)
+theorem two_shifts_two_exclFs (c : Context W E P T) (w' : W) (t' t'' : T)
     (hw : w' ≠ c.world) (ht : t'' ≠ c.time) :
     ExclF .modal (((ContextTower.root c).push (subjShift w' t')).push (temporalShift t'')) ∧
       ExclF .temporal (((ContextTower.root c).push (subjShift w' t')).push (temporalShift t'')) :=

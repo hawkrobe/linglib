@@ -29,7 +29,7 @@ The dynamic mood and tense operators are `Semantics/Mood/Dynamic` and
 
 namespace Mendes2025
 
-open Semantics.Context (Index)
+open Reference
 open HistoricalAlternatives
 open DynamicSemantics
 open DynamicSemantics.CCP (IsEliminative)

@@ -53,7 +53,7 @@ dref *and* moves the evaluation index to the introduced situation.
 
 namespace Mood
 
-open Semantics.Context (Index)
+open Reference
 open HistoricalAlternatives DynamicSemantics
 open DynamicSemantics.CCP (IsEliminative)
 open DynamicSemantics.Update (test closure)

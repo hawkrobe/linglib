@@ -37,7 +37,7 @@ tolerates present-under-future.
 namespace TsiliaZhao2026
 
 open Tense Tense.Perspective
-open Semantics.Context (KContext)
+open Reference
 
 /-! ### Shift together -/
 
@@ -183,7 +183,7 @@ theorem past_relative_shift_unique :
 structure InterpParams (W E P T : Type*) where
   /-- Context parameter c = ⟨c_s, c_a, c_t, c_w⟩ — for indexicals
       (I, now, here) -/
-  context : KContext W E P T
+  context : Context W E P T
   /-- Temporal perspective π — for tense (PRES, PAST, ⌈then⌉).
       Defaults to c_t in root clauses; shifted by OP_π under attitude
       verbs. -/
@@ -198,7 +198,7 @@ def InterpParams.shiftPerspective (ip : InterpParams W E P T) (newPi : T) :
 
 /-- OP_c on the interpretation parameter tuple: shift c, preserve π. -/
 def InterpParams.shiftContext (ip : InterpParams W E P T)
-    (newC : KContext W E P T) : InterpParams W E P T :=
+    (newC : Context W E P T) : InterpParams W E P T :=
   { ip with context := newC }
 
 /-- OP_π preserves the context parameter (including c_t): tense shift does
@@ -210,12 +210,12 @@ theorem InterpParams.shiftPerspective_preserves_context
 /-- OP_c preserves the temporal perspective: indexical shift does not entail
     tense shift. -/
 theorem InterpParams.shiftContext_preserves_perspective
-    (ip : InterpParams W E P T) (newC : KContext W E P T) :
+    (ip : InterpParams W E P T) (newC : Context W E P T) :
     (ip.shiftContext newC).perspective = ip.perspective := rfl
 
 /-- In root clauses, π defaults to c_t: the Truth Convention evaluates
     ⟦φ⟧ relative to c and π = c_t. -/
-def InterpParams.rootDefault (c : KContext W E P T) : InterpParams W E P T where
+def InterpParams.rootDefault (c : Context W E P T) : InterpParams W E P T where
   context := c
   perspective := c.time
 

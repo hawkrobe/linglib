@@ -45,7 +45,7 @@ namespace SchlenkerEtAl2026
 
 open Semantics.Iconic
 open Reference.Monsters (IsTowerMonster attitudeShift_is_monster isTowerMonster_congr)
-open Semantics.Context
+open Reference
 open ASL (SigningSpace)
 
 -- ════════════════════════════════════════════════════════════════
@@ -172,7 +172,7 @@ def resolveViewpoint
     viewpoint via `resolveViewpoint`, changing the agent changes what
     π* denotes. -/
 def roleShiftCtx (character : E) (rsWorld : W) :
-    ContextShift (KContext W E P T) where
+    ContextShift (Context W E P T) where
   apply := (attitudeShift (P := P) (T := T) character rsWorld).apply
   label := .roleShift
 
@@ -183,7 +183,7 @@ def roleShiftCtx (character : E) (rsWorld : W) :
     `attitudeShift`'s `apply`, and monsterhood depends only on `apply`. -/
 theorem roleShift_is_monster
     (character : E) (rsWorld : W)
-    (c : KContext W E P T)
+    (c : Context W E P T)
     (hAgent : c.agent ≠ character) :
     IsTowerMonster (roleShiftCtx (P := P) (T := T) character rsWorld) :=
   (isTowerMonster_congr (σ := roleShiftCtx (P := P) (T := T) character rsWorld)

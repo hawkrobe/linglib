@@ -279,8 +279,8 @@ end DynamicSemantics
 `Mood/Dynamic.lean`): a `Possibility` whose world coordinate is the
 current evaluation index and whose `ℕ`-registered drefs are also
 world-time indices. Contexts are plain level-0 states
-(`Set (Semantics.Context.Index.Possibility W T)`), so the update
+(`Set (Reference.Index.Possibility W T)`), so the update
 spine of `Semantics/Dynamic/Update.lean` applies directly. -/
-abbrev Semantics.Context.Index.Possibility (W T : Type*) :=
-  DynamicSemantics.Possibility (Semantics.Context.Index W T) ℕ
-    (Semantics.Context.Index W T)
+abbrev Reference.Index.Possibility (W T : Type*) :=
+  DynamicSemantics.Possibility (Reference.Index W T) ℕ
+    (Reference.Index W T)

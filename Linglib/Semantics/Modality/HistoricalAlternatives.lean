@@ -40,7 +40,7 @@ perfectly match it in matters of particular fact up to that time
   (`N P ∨ N ¬P`) — settled-*whether* (bilateral), the analogue of `oSettled`, not `IsInevitable`.
 -/
 
-open Semantics.Context (Index)
+open Reference
 
 /-- Historical-alternatives relation: given a ⟨world, time⟩ index, returns the
     worlds that agree with that world up to that time. This is the basis for the

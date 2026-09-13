@@ -10,7 +10,6 @@ These mechanisms are independent: a term can exhibit any subset.
 
 ## Key Definitions
 
-- `Context`: Kaplanian context of utterance (agent, world)
 - `Character`: Two-stage semantics — context → content
 - `ReferringExpression`: Bundles character + referential profile
 - `isDirectlyReferential`: Content is rigid at every context
@@ -25,18 +24,7 @@ namespace Reference.Basic
 
 open Reference (IsRigid isRigid_const)
 
-/-! ## Context and Character -/
-
-/-- A Kaplanian context of utterance.
-
-Contexts supply the parameters that indexicals depend on: who is speaking,
-what world is actual, etc. Following [kaplan-1989], characters are functions
-from contexts to contents. -/
-structure Context (W : Type*) (E : Type*) where
-  /-- The agent of the context (the speaker) -/
-  agent : E
-  /-- The world of the context (the actual world) -/
-  world : W
+/-! ## Character -/
 
 /-- A Kaplanian character: a function from contexts to contents (intensions).
 
@@ -148,16 +136,5 @@ theorem properNames_corefer_coextensional {C W E : Type*} (e₁ e₂ : E) (c : C
       (properName (W := W) e₂).character c w) :
     (properName (C := C) (W := W) e₁).character c = (properName (W := W) e₂).character c :=
   (isRigid_const e₁).eq_of_apply_eq (isRigid_const e₂) h
-
-/-! ## Bridge to KContext -/
-
-/-- Lift a simple `Context W E` to a full `KContext W E P T` by supplying
-trivial time and position.
-
-This allows existing code using the two-component context to interoperate
-with the full Kaplanian context. -/
-def Context.toKContext {W E P T : Type*} (c : Context W E) (addr : E) (p : P) (t : T) :
-    Semantics.Context.KContext W E P T :=
-  ⟨c.agent, addr, c.world, t, p⟩
 
 end Reference.Basic

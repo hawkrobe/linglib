@@ -8,7 +8,7 @@ import Linglib.Semantics.Reference.Context.Tower
 
 Connective layer bundling evidential source, epistemic authority (egophoricity),
 and mirativity into a unified `EpistemicProfile`. Bridges these feature-geometric
-dimensions to the model-theoretic level (`KContext` / `ContextTower`).
+dimensions to the model-theoretic level (`Context` / `ContextTower`).
 
 ## Motivation
 
@@ -39,7 +39,7 @@ namespace Epistemicity
 
 open Evidential
 open Features.Mirativity
-open Semantics.Context
+open Reference
 
 /-- Epistemic authority: WHO has privileged access to the propositional content.
     Egophoric systems ([tournadre-2008], [floyd-2018], Gawne & Spronck glossary 2)
@@ -69,7 +69,7 @@ structure EpistemicProfile where
     speech-act participants: ego if the knower is the speaker, allocutive
     if the knower is the addressee, nonparticipant otherwise. -/
 def epistemicAuthority {W E P T : Type*} [DecidableEq E]
-    (tower : ContextTower (KContext W E P T)) (knower : E) : EpistemicAuthority :=
+    (tower : ContextTower (Context W E P T)) (knower : E) : EpistemicAuthority :=
   let ctx := tower.origin
   if knower == ctx.agent then .ego
   else if knower == ctx.addressee then .allocutive
@@ -99,7 +99,7 @@ def allocutiveProfile (s : CoarseSource) : EpistemicProfile :=
 /-- Epistemic authority is invariant under tower push: egophoric marking
     reflects speech-act participants (from origin), not embedded ones. -/
 theorem epistemicAuthority_shift_invariant {W E P T : Type*} [DecidableEq E]
-    (tower : ContextTower (KContext W E P T)) (σ : ContextShift (KContext W E P T))
+    (tower : ContextTower (Context W E P T)) (σ : ContextShift (Context W E P T))
     (knower : E) :
     epistemicAuthority (tower.push σ) knower = epistemicAuthority tower knower := by
   simp only [epistemicAuthority, ContextTower.push_origin]

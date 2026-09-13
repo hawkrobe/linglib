@@ -33,7 +33,6 @@ the referent is the agent of an embedded context but NOT the actual speaker.
 
 namespace Reference.PersonFeatures
 
-open Semantics.Context
 
 variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
 
@@ -53,12 +52,12 @@ structure PersonFeature (W E P T : Type*) where
   /-- Which tower depth the feature refers to -/
   depth : DepthSpec
   /-- The constraint: does entity x satisfy the feature relative to context c? -/
-  check : E → KContext W E P T → Bool
+  check : E → Context W E P T → Bool
 
 /-- Evaluate a person feature against a tower: resolve the depth to a
     concrete context layer and check the constraint. -/
 def PersonFeature.eval (f : PersonFeature W E P T)
-    (x : E) (t : ContextTower (KContext W E P T)) : Bool :=
+    (x : E) (t : ContextTower (Context W E P T)) : Bool :=
   f.check x (t.contextAt (f.depth.resolve t.depth))
 
 -- ════════════════════════════════════════════════════════════════
@@ -103,7 +102,7 @@ def hearerStar [BEq E] : PersonFeature W E P T := hearerAt .origin
     This formalizes the key insight: logophoric pronouns are derived from
     the interaction of two person features — one referring to an embedded
     context variable, one to the utterance context. -/
-def isLogophoric [BEq E] (x : E) (t : ContextTower (KContext W E P T))
+def isLogophoric [BEq E] (x : E) (t : ContextTower (Context W E P T))
     (embeddedDepth : DepthSpec) : Bool :=
   (authorAt embeddedDepth).eval x t &&
   !(authorStar (W := W) (P := P) (T := T)).eval x t
@@ -113,7 +112,7 @@ def isLogophoric [BEq E] (x : E) (t : ContextTower (KContext W E P T))
 -- ════════════════════════════════════════════════════════════════
 
 /-- In a root tower, +author* checks against the origin agent. -/
-@[simp] theorem authorStar_root [BEq E] (x : E) (c : KContext W E P T) :
+@[simp] theorem authorStar_root [BEq E] (x : E) (c : Context W E P T) :
     (authorStar (W := W) (P := P) (T := T)).eval x
       (ContextTower.root c) = (x == c.agent) := rfl
 
@@ -121,7 +120,7 @@ def isLogophoric [BEq E] (x : E) (t : ContextTower (KContext W E P T))
     attitude holder. -/
 theorem authorLocal_shifted [BEq E] [LawfulBEq E]
     (holder : E) (w' : W)
-    (t : ContextTower (KContext W E P T)) :
+    (t : ContextTower (Context W E P T)) :
     (authorAt (W := W) (P := P) (T := T) .local).eval holder
       (t.push (attitudeShift holder w')) = true := by
   simp only [authorAt, PersonFeature.eval, DepthSpec.local_resolve,
@@ -137,7 +136,7 @@ theorem authorLocal_shifted [BEq E] [LawfulBEq E]
     not the actual speaker). -/
 theorem logophoric_refers_to_holder [BEq E] [LawfulBEq E]
     (holder : E) (w' : W)
-    (t : ContextTower (KContext W E P T))
+    (t : ContextTower (Context W E P T))
     (hDiff : (holder == t.origin.agent) = false) :
     isLogophoric holder (t.push (attitudeShift holder w')) .local = true := by
   unfold isLogophoric
@@ -152,7 +151,7 @@ theorem logophoric_refers_to_holder [BEq E] [LawfulBEq E]
     This is why logophoric pronouns are restricted to embedded contexts —
     the actual speaker cannot be logophoric in their own utterance. -/
 theorem speaker_not_logophoric [BEq E] [LawfulBEq E]
-    (t : ContextTower (KContext W E P T)) (d : DepthSpec) :
+    (t : ContextTower (Context W E P T)) (d : DepthSpec) :
     isLogophoric t.origin.agent t d = false := by
   simp only [isLogophoric, authorStar, authorAt, PersonFeature.eval,
     DepthSpec.origin_resolve, ContextTower.contextAt_zero,

@@ -27,8 +27,6 @@ import Linglib.Semantics.Reference.Basic
 namespace Reference.KaplanLD
 
 open Reference (IsRigid isRigid_const)
-open Semantics.Context (KContext ProperContext LocatedContext)
-open _root_.Reference.Basic (Context Character Content)
 
 /-! ## LD Structure -/
 
@@ -67,9 +65,9 @@ structure LDStructure where
       This validates ⊨ Exist I. -/
   proper : ∀ c : C, exists_ (cAgent c) (cWorld c)
 
-/-- Extract a `KContext` from an LD structure at a context index. -/
-def LDStructure.toKContext (ld : LDStructure) (c : ld.C) :
-    KContext ld.W ld.U ld.P ld.T :=
+/-- Extract a `Context` from an LD structure at a context index. -/
+def LDStructure.toContext (ld : LDStructure) (c : ld.C) :
+    Context ld.W ld.U ld.P ld.T :=
   ⟨ld.cAgent c, ld.cAddressee c, ld.cWorld c, ld.cTime c, ld.cPosition c⟩
 
 /-! ## Dthat Operator (§XII) -/
