@@ -3,198 +3,199 @@ import Linglib.Discourse.CommonGround
 import Linglib.Fragments.English.PolarityItems
 import Linglib.Logic.Modal.Defs
 import Linglib.Semantics.Questions.Hamblin
+import Linglib.Semantics.Questions.Bias
 import Mathlib.Order.Interval.Set.Defs
 
 /-!
-# Romero & Han (2004): negative yes/no questions
+# Romero and Han (2004): On negative yes/no questions
 
-[romero-han-2004] derive the epistemic bias of preposed-negation *yn*-questions from a single
-assumption: preposing negation contributes the conversational epistemic operator VERUM
-((9), (64)), `FOR-SURE-CG_x p` — at every world compatible with `x`'s knowledge, at every world
-where `x`'s conversational goals are fulfilled, `p` is in the common ground ((43)). A
-*yn*-question over VERUM partitions on certainty about adding `p` to the common ground rather
-than on `p` ((46) vs (48)), a meta-conversational move licit only under a prior bias (the
-Principle of Economy (50)); [ladd-1981]'s `p`/`¬p` ambiguity is the scope of negation relative
-to VERUM — the PI reading `[Q [not [VERUM p]]]` ((73)) and the NI reading
-`[Q [VERUM [not p]]]` ((68)) — disambiguated by positive and negative polarity items since
-VERUM intervenes between negation and the IP only in the former. The polarity of the
-implicature is fixed not by the partition, which PI- and *really*-questions share ((84), (85)),
-but by the *pronounced cell* ((iii′)): pronouncing `FOR-SURE-CG q` asks for conclusive evidence
-for `q`, so `¬q` is the speaker's belief; pronouncing `¬FOR-SURE-CG q` asks for doubts about
-`q`, so `q` is. Hence PI-, NI-, and focused-*NOT* questions implicate `p` and
-*really*-questions `¬p` ((81), (82), (110), (117)). Speaker belief is the epistemic
-proposition `Set.Iic` of `Pragmatics/NeoGricean/Basic.lean`.
+This file formalizes the paper's derivation of the epistemic bias of yes/no questions with
+preposed negation from one assumption: preposing negation contributes the conversational
+epistemic operator VERUM, `verum`, true at a world when the proposition is in the common
+ground at every world compatible with the speaker's knowledge and conversational goals. A
+question over VERUM partitions on certainty about adding the proposition to the common
+ground rather than on the proposition, `denotation_eq`, a meta-conversational move licit
+only under a prior bias; the paper's positive and negative readings are the two scopes of
+negation relative to VERUM, distinguished by which polarity items they license, `Licensed`.
+The polarity of the implicature is fixed not by the partition, which the positive reading
+shares with a *really*-question, but by the pronounced cell: pronouncing certainty asks for
+conclusive evidence, so the speaker believes the negation, and pronouncing uncertainty asks
+for doubts, so the speaker believes the proposition, `speakerBelief_eq`. The paper's
+examples are rows: the polarity-item judgments follow licensing, and the bias of every
+question with preposed negation and of every VERUM form is the one the model implicates,
+`bias_of_form`.
 
-## Main definitions
+## Implementation notes
 
-* `verum`: FOR-SURE-CG over epistemic and conversational accessibility and a common-ground
-  assignment.
-* `Form`: the four VERUM *yn*-questions — PI, NI, *really*, focused *NOT* — with their
-  `prejacent` under VERUM and pronounced `Cell`.
-* `denotation`, `pronounced`, `speakerBelief`: the partition, the pronounced cell, and the
-  epistemic implicature of each form.
-* `Licensed`: a polarity item is licensed iff its requirement matches whether the IP under
-  VERUM is negated.
-
-## Main results
-
-* `verum_eq_box_box`: VERUM is a necessity nested in a necessity.
-* `denotation_eq`: every VERUM question denotes the unbalanced partition `polar (VERUM q)`;
-  `polar_compl` is why non-preposed negation leaves the partition balanced ((22), (65)).
-* `speakerBelief_pi`, `speakerBelief_ni`, `speakerBelief_really`, `speakerBelief_notFocus`:
-  the implicature pattern, positive for the negative questions and negative for the positive
-  one; `denotation_pi_eq_really` shows the partition alone cannot fix it.
-* `licensed_iff_acceptable`: the *too*/*either* judgments on (6), (7), (77)–(80).
+Speaker belief is the epistemic proposition of the states settling a proposition,
+`Set.Iic`. Question forms and biases are the substrate's `Question.PQForm` and
+`Question.OriginalBias`, preposed negation being the high-negation form. The Principle of
+Economy that makes VERUM questions biased is stated in the paper in prose and is not
+formalized.
 
 ## References
 
-* [romero-han-2004] — the VERUM analysis
-* [ladd-1981] — the `p`/`¬p` ambiguity and its polarity-item diagnostic
-* [hohle-1992] — VERUM as polarity focus, `Studies/Hohle1992.lean`
+* [M. Romero, C.-H. Han, *On negative yes/no questions* (2004)][romero-han-2004]
+* [D. R. Ladd, *A first look at the semantics and pragmatics of negative questions and tag
+  questions* (1981)][ladd-1981]
+* [T. N. Höhle, *Über Verum-Fokus im Deutschen* (1992)][hohle-1992]
 -/
 
 namespace RomeroHan2004
 
 open ModalLogic (box)
-open Question (polar polar_compl)
+open Question (polar polar_compl PQForm OriginalBias)
 open Set (Iic)
+open Data.Examples
 
-variable {W : Type*} (epi conv : W → W → Prop) (cg : W → Filter W) (p q : Set W)
+variable {W : Type*} (epi conv : W → W → Prop) (cg : W → Filter W) (p : Set W)
 
 /-! ### VERUM -/
 
-/-- The VERUM operator `FOR-SURE-CG_x p` ((43)): `p` is in the common ground at every world
-compatible with the conversational goals of every world compatible with `x`'s knowledge. -/
+/-- The VERUM operator (43): the proposition is in the common ground at every world
+compatible with the conversational goals of every world compatible with the speaker's
+knowledge. -/
 def verum : Set W :=
   {w | ∀ w', epi w w' → ∀ w'', conv w' w'' → p ∈ cg w''}
 
 /-- VERUM is a necessity nested in a necessity. -/
 theorem verum_eq_box_box :
-    verum epi conv cg p = box epi (box conv fun w => p ∈ cg w) := rfl
+    verum epi conv cg p = box epi (box conv λ w => p ∈ cg w) := rfl
 
 /-! ### The four VERUM questions -/
 
-/-- The *yn*-questions containing VERUM: the PI reading `[Q [not [VERUM p]]]` ((73)), the NI
-reading `[Q [VERUM [not p]]]` ((68)), the *really*-question `[Q [VERUM p]]` ((111)), and
-focused *NOT*, `[Q [NOT p]]` with `NOT = FOR-SURE-CG-NOT` ((54), (118)). -/
-inductive Form where
+/-- The yes/no questions containing VERUM: the positive reading of preposed negation, with
+negation over VERUM (73), the negative reading, with VERUM over negation (68), the
+*really*-question (111), and focused *NOT* (118). -/
+inductive Form
   | pi
   | ni
   | really
   | notFocus
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype
 
-/-- Which cell of the partition the question pronounces: the `FOR-SURE-CG q` cell, asking for
-conclusive evidence for `q`, or its complement, asking for doubts about `q` ((98), (103)). -/
-inductive Cell where
-  | conclusive
-  | doubt
-  deriving DecidableEq, Repr
-
-/-- The proposition under VERUM: `p` for PI and *really*, `¬p` for NI and focused *NOT*. -/
+/-- The proposition under VERUM: the proposition for the positive reading and *really*, its
+negation for the negative reading and focused *NOT*. -/
 def prejacent : Form → Set W
   | .pi | .really => p
   | .ni | .notFocus => pᶜ
 
-/-- The pronounced cell: only the PI reading, where negation scopes over VERUM, pronounces
-the complement ((97), (102), (112), (119)). -/
-def cell : Form → Cell
-  | .pi => .doubt
-  | .ni | .really | .notFocus => .conclusive
+/-- Whether the form pronounces the doubt cell, the complement of VERUM: only the positive
+reading, where negation scopes over VERUM, does. -/
+def Form.Doubt : Form → Prop
+  | .pi => True
+  | .ni | .really | .notFocus => False
 
-/-- The cell a form pronounces, as a proposition. -/
+instance : DecidablePred Form.Doubt := λ f => by cases f <;> unfold Form.Doubt <;> infer_instance
+
+/-- The cell a form pronounces. -/
 def pronounced (f : Form) : Set W :=
-  match cell f with
-  | .conclusive => verum epi conv cg (prejacent p f)
-  | .doubt => (verum epi conv cg (prejacent p f))ᶜ
+  if f.Doubt then (verum epi conv cg (prejacent p f))ᶜ else verum epi conv cg (prejacent p f)
 
 /-- The question denoted: the polar question over the pronounced cell. -/
 def denotation (f : Form) : Question W := polar (pronounced epi conv cg p f)
 
-/-- Every VERUM question denotes the unbalanced partition
-`{FOR-SURE-CG q, ¬FOR-SURE-CG q}` ((48), (69), (74)). -/
+/-- Every VERUM question denotes the partition on certainty about its prejacent (48), (69),
+(74), whichever cell it pronounces. -/
 theorem denotation_eq (f : Form) :
     denotation epi conv cg p f = polar (verum epi conv cg (prejacent p f)) := by
-  cases f <;> simp [denotation, pronounced, cell]
+  unfold denotation pronounced
+  split_ifs <;> simp
 
-/-- PI- and *really*-questions denote the same partition ((84), (85)). -/
+/-- The positive reading and the *really*-question denote the same partition (84), (85). -/
 theorem denotation_pi_eq_really :
     denotation epi conv cg p .pi = denotation epi conv cg p .really := by
   simp [denotation_eq, prejacent]
 
 /-! ### The epistemic implicature
 
-The intent of a question pronouncing `FOR-SURE-CG q` is to ask for conclusive evidence for
-`q`, which the addressee can only have if `q` is the addressee's proposition and `¬q` the
-speaker's belief; pronouncing `¬FOR-SURE-CG q` asks for doubts about `q`, so `q` is the
-speaker's belief ((99), (104), (iii′)). -/
+A question pronouncing certainty about its prejacent asks for conclusive evidence for it,
+which the addressee can only supply if the prejacent is the addressee's proposition and its
+negation the speaker's belief; a question pronouncing uncertainty asks for doubts, so the
+prejacent is the speaker's belief. -/
 
-/-- The speaker's original belief implicated by a form: the epistemic proposition of states
-settling the prejacent's negation (conclusive cell) or the prejacent (doubt cell). -/
+/-- The speaker's original belief implicated by a form: the epistemic proposition of the
+states settling the prejacent's negation, or the prejacent itself for the doubt cell. -/
 def speakerBelief (f : Form) : Set (Set W) :=
-  match cell f with
-  | .conclusive => Iic (prejacent p f)ᶜ
-  | .doubt => Iic (prejacent p f)
+  if f.Doubt then Iic (prejacent p f) else Iic (prejacent p f)ᶜ
 
-/-- The PI-question implicates `p` ((81)). -/
-theorem speakerBelief_pi : speakerBelief p .pi = Iic p := rfl
+/-- The bias each form implicates: belief in the proposition for the preposed-negation
+readings (81), (82) and focused *NOT* (117), belief in its negation for *really* (110). -/
+def Form.implicature : Form → OriginalBias
+  | .pi | .ni | .notFocus => .forP
+  | .really => .againstP
 
-/-- The NI-question, double-checking the addressee's `¬p`, also implicates `p` ((82)). -/
-theorem speakerBelief_ni : speakerBelief p .ni = Iic p := by
-  simp [speakerBelief, cell, prejacent]
-
-/-- The *really*-question implicates `¬p` ((37), (110)). -/
-theorem speakerBelief_really : speakerBelief p .really = Iic pᶜ := rfl
-
-/-- The focused-*NOT* question implicates `p` ((117)). -/
-theorem speakerBelief_notFocus : speakerBelief p .notFocus = Iic p := by
-  simp [speakerBelief, cell, prejacent]
+/-- The implicated belief settles the proposition or its negation according to the form's
+implicature; the partition shared by the positive reading and *really* cannot fix it. -/
+theorem speakerBelief_eq (f : Form) :
+    speakerBelief p f = if f.implicature = .forP then Iic p else Iic pᶜ := by
+  cases f <;> simp [speakerBelief, Form.Doubt, Form.implicature, prejacent]
 
 /-! ### Polarity items
 
-PIs are licensed under VERUM in a positive IP and NIs in a negative one ((70), (71), (75),
-(76)); VERUM intervenes between negation and the IP in the PI reading, so the IP is negated
-only in the NI and focused-*NOT* forms. -/
+Positive polarity items are licensed under VERUM in a positive clause and negative ones in
+a negative clause (70), (71), (75), (76); VERUM intervenes between negation and the clause
+in the positive reading, so the clause is negated only in the negative reading and under
+focused *NOT*. -/
 
-/-- Whether the IP under VERUM is negated. -/
-def IPNegated : Form → Prop
+/-- Whether the clause under VERUM is negated. -/
+def Form.Negated : Form → Prop
   | .ni | .notFocus => True
   | .pi | .really => False
 
-instance : DecidablePred IPNegated
-  | .ni | .notFocus => isTrue trivial
-  | .pi | .really => isFalse id
+instance : DecidablePred Form.Negated := λ f => by
+  cases f <;> unfold Form.Negated <;> infer_instance
 
-/-- A polarity item is licensed in a form iff a positive polarity item finds the IP unnegated
-and a negative one finds it negated. -/
+/-- A polarity item is licensed in a form iff a positive item finds the clause unnegated and
+a negative one finds it negated. -/
 def Licensed (e : Polarity.Item) (f : Form) : Prop :=
-  (e.isPPI → ¬ IPNegated f) ∧ (e.isNPI → IPNegated f)
+  (e.isPPI → ¬ f.Negated) ∧ (e.isNPI → f.Negated)
 
 instance (e : Polarity.Item) (f : Form) : Decidable (Licensed e f) := by
   unfold Licensed; infer_instance
 
-/-! ### The paper's judgments -/
+/-! ### The paper's examples -/
 
-/-- A licensing row: the polarity item, the form, and whether the paper judges it
-acceptable. -/
-def datum (e : Data.Examples.LinguisticExample) : Option (Polarity.Item × Form × Bool) := do
-  let item ← match e.feature? "item" with
-    | some "too" => some English.PolarityItems.too
-    | some "either" => some English.PolarityItems.either_npi
-    | _ => none
-  let f ← match e.feature? "form" with
-    | some "pi" => some Form.pi
-    | some "ni" => some .ni
-    | some "really" => some .really
-    | some "notFocus" => some .notFocus
-    | _ => none
-  pure (item, f, e.judgment == .acceptable)
+/-- An example: its question form by the position of negation, its reported bias, its VERUM
+form and its polarity item, each when the paper gives one, and its judgment. -/
+structure Datum where
+  pqForm : Option PQForm
+  bias : Option OriginalBias
+  form : Option Form
+  item : Option Polarity.Item
+  judgment : Features.Judgment
 
-/-- The *too*/*either* judgments on (6), (7), and (77)–(80). -/
-def data : List (Polarity.Item × Form × Bool) := Examples.all.filterMap datum
+/-- An example read into its datum. -/
+def datum (e : LinguisticExample) : Datum where
+  pqForm := e.parse? "negation"
+    [("preposed", PQForm.HiNQ), ("nonPreposed", .LoNQ), ("none", .PosQ)]
+  bias := e.parse? "bias" [("positive", OriginalBias.forP), ("negative", .againstP),
+    ("none", .neutral)]
+  form := e.parse? "form" [("pi", Form.pi), ("ni", .ni), ("really", .really),
+    ("notFocus", .notFocus)]
+  item := e.parse? "item"
+    [("too", English.PolarityItems.too), ("either", English.PolarityItems.either_npi)]
+  judgment := e.judgment
 
-/-- Licensing predicts every *too*/*either* judgment. -/
-theorem licensed_iff_acceptable : ∀ d ∈ data, Licensed d.1 d.2.1 ↔ d.2.2 = true := by
+/-- The paper's examples. -/
+def data : List Datum := Examples.all.map datum
+
+/-- Licensing predicts every *too* and *either* judgment on (6), (7) and (77) to (80). -/
+theorem licensed_iff_acceptable :
+    ∀ d ∈ data, ∀ e ∈ d.item.toList, ∀ f ∈ d.form.toList,
+      (Licensed e f ↔ d.judgment = .acceptable) := by
+  decide
+
+/-- Preposed negation carries a positive bias in every language of the survey, (1), (5) and
+(14) to (18), and non-preposed negation none. -/
+theorem bias_of_pqForm :
+    ∀ d ∈ data, ∀ pq ∈ d.pqForm.toList, ∀ b ∈ d.bias.toList,
+      (pq = .HiNQ → b = .forP) ∧ (pq = .LoNQ → b = .neutral) := by
+  decide
+
+/-- The bias reported for a VERUM form is the belief the model implicates. -/
+theorem bias_of_form :
+    ∀ d ∈ data, ∀ f ∈ d.form.toList, ∀ b ∈ d.bias.toList, b = f.implicature := by
   decide
 
 end RomeroHan2004
