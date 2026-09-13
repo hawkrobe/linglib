@@ -158,6 +158,14 @@ theorem toPartialProp_strawsonEntails {q : Set W} (hpq : p ⊆ q) :
 /-- The finest question over a world list: one singleton answer per world. -/
 def finest (worlds : List W) : List (Finset W) := worlds.map ({·})
 
+/-- Every proposition is considered relative to the finest question. -/
+theorem isConsidered_finest (worlds : List W) : IsConsidered (finest worlds) p :=
+  fun a ha => by
+    obtain ⟨w, -, rfl⟩ := List.mem_map.1 ha
+    by_cases h : w ∈ p
+    · exact Or.inl (by simpa)
+    · exact Or.inr (by simpa)
+
 theorem le_singleton_iff (G : List (Finset W)) (w z : W) :
     le G {w} {z} ↔ BestWorlds.le G w z := by
   simp [le_iff, BestWorlds.le_iff]
