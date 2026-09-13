@@ -12,6 +12,7 @@ python3 scripts/gen_examples.py <AuthorYear>   # generate one paper's module
 python3 scripts/gen_examples.py --all          # regenerate every paper
 python3 scripts/gen_examples.py --check        # verify modules match JSON (CI)
 python3 scripts/gen_examples.py --fmt          # rewrite JSON in canonical format
+python3 scripts/check_examples.py              # study literals vs rows, bibkeys (CI)
 ```
 
 JSON files use the canonical format emitted by `--fmt` (2-space indent,

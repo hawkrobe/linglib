@@ -148,7 +148,7 @@
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "P-ban"],
-      ["verb", "metanjono 'regret'"]
+      ["verb", "metaniono"]
     ],
     "comment": "metanjono 'regret' takes a PP complement headed by ja 'for'.",
     "metaLanguage": "stan1293",
@@ -171,7 +171,6 @@
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "P-ban"],
-      ["verb", "metanjono 'regret'"],
       ["complementizer", "pu"],
       ["verb", "metaniono"],
       ["position", "internal_argument"]
@@ -197,9 +196,10 @@
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "P-ban"],
-      ["verb", "metanjono 'regret'"],
+      ["verb", "metaniono"],
       ["complementizer", "pu"],
-      ["position", "p_complement"]
+      ["position", "p_complement"],
+      ["confound", "p_ban"]
     ],
     "comment": "Translation marked 'intended:' in the paper. The pu-clause cannot combine with the P ja.",
     "metaLanguage": "stan1293",
