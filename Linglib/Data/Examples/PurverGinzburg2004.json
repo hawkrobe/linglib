@@ -1,0 +1,692 @@
+[
+  {
+    "id": "purverginzburg2004_ex25",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(25)"},
+    "language": "stan1293",
+    "primaryText": "Pikey?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "You pikey! Typical!",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "acceptable"},
+      {"name": "referent", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "cn"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex26",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(26)"},
+    "language": "stan1293",
+    "primaryText": "Comb?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Got a comb anywhere?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "acceptable"},
+      {"name": "referent", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "cn"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex27",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(27)"},
+    "language": "stan1293",
+    "primaryText": "Turkey?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "We'll get the turkey out of the oven.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "acceptable"},
+      {"name": "referent", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "cn"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex31",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(31)"},
+    "language": "stan1293",
+    "primaryText": "Admiration?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "because Donna is high in admiration in fact",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "bareSingular"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex32",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(32)"},
+    "language": "stan1293",
+    "primaryText": "Coal?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "It has only been burning coal in it!",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "acceptable"},
+      {"name": "referent", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "bareSingular"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex34",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(34)"},
+    "language": "stan1293",
+    "primaryText": "Numbers?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Now I would like you to tell me about numbers.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "acceptable"},
+      {"name": "referent", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "cn"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex35",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(35)"},
+    "language": "stan1293",
+    "primaryText": "Meals?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Anyway, you were telling me about meals.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "referent", "judgment": "acceptable"},
+      {"name": "predicate", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "specificIndefinite"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex36",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(36)"},
+    "language": "stan1293",
+    "primaryText": "Hours?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "You two hours ago",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "determiner", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "indefinite"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex37",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(37)"},
+    "language": "stan1293",
+    "primaryText": "That way?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Which way's North, do you know? That way.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "referent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "demonstrative"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex38",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(38)"},
+    "language": "stan1293",
+    "primaryText": "Julie?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "What was that lady?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "referent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "demonstrative"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex39",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(39)"},
+    "language": "stan1293",
+    "primaryText": "What lot?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Oh God I hate these lot, they're so boring.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "referent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "demonstrative"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex40",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(40)"},
+    "language": "stan1293",
+    "primaryText": "Julian?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "It's, how many times did he spew up the stairs?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "referent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "pronoun"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex41",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(41)"},
+    "language": "stan1293",
+    "primaryText": "The spot?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "bring the tourist around show them the spot",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "referent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "definite"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex42",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(42)"},
+    "language": "stan1293",
+    "primaryText": "The police?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "They would be working on the kidnapper's instructions, the police?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "referent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "definite"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex43",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(43)"},
+    "language": "stan1293",
+    "primaryText": "Chorlton?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "took a blood sample. Er, the doctor",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "referent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "definite"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex44",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(44)"},
+    "language": "stan1293",
+    "primaryText": "What car?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Richard hit the ball on the car.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "referent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "definite"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex46",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(46)"},
+    "language": "stan1293",
+    "primaryText": "The pools?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "they would have to keep all the pools in good order",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "functional", "judgment": "acceptable"},
+      {"name": "referent", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "attributiveDefinite"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex47",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(47)"},
+    "language": "stan1293",
+    "primaryText": "The names?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I want you to write the names of these notes up here.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "domain", "judgment": "acceptable"},
+      {"name": "functional", "judgment": "marginal"},
+      {"name": "referent", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "attributiveDefinite"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex49",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(49)"},
+    "language": "stan1293",
+    "primaryText": "The bushel?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "On the back, the bushel, yes",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "referent", "judgment": "acceptable"},
+      {"name": "predicate", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "definite"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex50",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(50)"},
+    "language": "stan1293",
+    "primaryText": "The what?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The bird in my bed.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "definite"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex53",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(53)"},
+    "language": "stan1293",
+    "primaryText": "A wart?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I've been treating it as a wart.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "acceptable"},
+      {"name": "referent", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "indefinite"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex54",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(54)"},
+    "language": "stan1293",
+    "primaryText": "A log?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Erm, it's a do- it's a log.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "acceptable"},
+      {"name": "referent", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "indefinite"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex55",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(55)"},
+    "language": "stan1293",
+    "primaryText": "Twenty rooms?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "It had twenty rooms in it.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "determiner", "judgment": "acceptable"},
+      {"name": "predicate", "judgment": "acceptable"},
+      {"name": "referent", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "indefinite"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex56",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(56)"},
+    "language": "stan1293",
+    "primaryText": "A what?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I've bought her a Ghost video.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "acceptable"},
+      {"name": "referent", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "indefinite"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex57",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(57)"},
+    "language": "stan1293",
+    "primaryText": "A woman?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "No it is a woman",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "acceptable"},
+      {"name": "referent", "judgment": "marginal"}
+    ],
+    "paperFeatures": [
+      ["np", "indefinite"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex58",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(58)"},
+    "language": "stan1293",
+    "primaryText": "What shop?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "We're just going to Beckenham because we have to go to a shop there.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "referent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "specificIndefinite"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex59",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(59)"},
+    "language": "stan1293",
+    "primaryText": "Which man?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "waiting for a man they mention tonight and that man is a well known killer of British soldiers",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "referent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "specificIndefinite"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex62",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(62)"},
+    "language": "stan1293",
+    "primaryText": "Every day?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "No I'll commute every day",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "acceptable"},
+      {"name": "determiner", "judgment": "acceptable"},
+      {"name": "referent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "universal"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex63",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(63)"},
+    "language": "stan1293",
+    "primaryText": "Nothing?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "No. Nothing at all.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "determiner", "judgment": "acceptable"},
+      {"name": "referent", "judgment": "marginal"}
+    ],
+    "paperFeatures": [
+      ["np", "negative"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex64",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(64)"},
+    "language": "stan1293",
+    "primaryText": "Everyone? / Me, Carl and Donna?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I want everyone in here to come with me.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "referent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "universal"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex65",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(65)"},
+    "language": "stan1293",
+    "primaryText": "Most people?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Most people came to the party.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "referent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "universal"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex77",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(77)"},
+    "language": "stan1293",
+    "primaryText": "three?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "she's got three rottweiler's now",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "determiner", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "determiner"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex79",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(79)"},
+    "language": "stan1293",
+    "primaryText": "How many procedures?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "How many procedures have we actually audited so far Richard?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "acceptable"},
+      {"name": "determiner", "judgment": "acceptable"},
+      {"name": "referent", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "wh"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex80",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(80)"},
+    "language": "stan1293",
+    "primaryText": "Why?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Why does the postman have to take all the letters away?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "acceptable"},
+      {"name": "referent", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "wh"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex87",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(87)"},
+    "language": "stan1293",
+    "primaryText": "No meat?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Tell mum no meat.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "predicate", "judgment": "acceptable"},
+      {"name": "determiner", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "monotoneDecreasing"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex88",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(88)"},
+    "language": "stan1293",
+    "primaryText": "Not all of them?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Did they come back? Not all.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "referent", "judgment": "acceptable"},
+      {"name": "complement", "judgment": "marginal"}
+    ],
+    "paperFeatures": [
+      ["np", "monotoneDecreasingReferential"]
+    ]
+  },
+  {
+    "id": "purverginzburg2004_ex90",
+    "source": {"bibkey": "purver-ginzburg-2004", "paperLabel": "(90)"},
+    "language": "stan1293",
+    "primaryText": "Not all of them?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Not all of the journalists agreed.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "complement", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["np", "monotoneDecreasingReferential"]
+    ]
+  }
+]
