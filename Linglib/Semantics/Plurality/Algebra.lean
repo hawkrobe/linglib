@@ -42,10 +42,9 @@ mathlib's `SupHom` and could be folded into it (Todo).
 
 ## Todo
 
-* Bridge to `Distributivity.distMaximal`: the Finset-side operator is
-  the join-prime atom specialisation of `distr_atom_part`. Currently
-  prose-only (§6 below); a formal `distMaximal_iff_star_atoms` theorem
-  requires aligning `Finset Atom` with `Type*`-lattice carriers.
+* Bridge to `Distributivity.distMaximal`: on `Finset` carriers `star_image_singleton`
+  gives `*P = D P` for a `P` true of individuals only; the world-indexed
+  `distMaximal` is its pointwise form.
 -/
 
 namespace Plurality.Algebra
@@ -259,6 +258,36 @@ theorem properPlural_not_base {P : E → Prop}
   fun hPx => distr_disjoint_properPlural hDistr hPx hPP
 
 end Theorems
+
+/-! ### Sets of individuals
+
+On [schwarzschild-1996]'s set-based ontology, adopted by [sternefeld-1998], pluralities are
+finite sets of individuals, an individual is its singleton, and sum is union. -/
+
+section Finset
+variable {α : Type*} [DecidableEq α]
+
+/-- `*` of a set of individuals, taken as singletons, holds of exactly its nonempty subsets:
+`*P = D P` for a `P` true of individuals only ([sternefeld-1998], (15)). -/
+theorem star_image_singleton (S : Set α) (x : Finset α) :
+    star (· ∈ ({·} : α → Finset α) '' S) x ↔ x.Nonempty ∧ ↑x ⊆ S := by
+  constructor
+  · intro h
+    induction h with
+    | base h => obtain ⟨a, ha, rfl⟩ := h; exact ⟨Finset.singleton_nonempty a, by simpa⟩
+    | sum _ _ ih ih' =>
+      refine ⟨ih.1.mono Finset.subset_union_left, ?_⟩
+      rw [Finset.sup_eq_union, Finset.coe_union]
+      exact Set.union_subset ih.2 ih'.2
+  · rintro ⟨hx, hS⟩
+    have key : x.sup' hx (λ a => ({a} : Finset α)) = x :=
+      le_antisymm ((Finset.sup'_le_iff _ _).2 λ a ha => Finset.singleton_subset_iff.2 ha)
+        (Finset.subset_iff.2 λ a ha =>
+          Finset.singleton_subset_iff.1 (Finset.le_sup' (λ a => ({a} : Finset α)) ha))
+    rw [← key]
+    exact algClosure_finsetSup' hx λ a ha => .base ⟨a, hS ha, rfl⟩
+
+end Finset
 
 /-! ### Distributive inference (join-prime atoms) -/
 

@@ -35,8 +35,8 @@ The six-scheme entailment lattice ((28)) and the WR-as-cumulation identity ((120
 `weakReciprocity_iff_cumulative_strict`) live in `Plurality/Reciprocal.lean` and are
 consumed here. The convergence with [haug-dalrymple-2020] on presuppositional
 distinctness is housed in `Studies/HaugDalrymple2020.lean` (the later paper draws the
-comparison); the trivalent divergence from [sternefeld-1998] in
-`Studies/Sternefeld1998.lean`.
+comparison); the trivalent divergence from [sternefeld-1998] is noted at
+`SituationWeakReciprocity`.
 
 ## References
 

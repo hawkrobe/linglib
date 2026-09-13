@@ -153,6 +153,11 @@ theorem algClosure_mono {Q : α → Prop} (h : ∀ x, P x → Q x) :
   | base hp => exact .base (h _ hp)
   | sum _ _ ih₁ ih₂ => exact .sum ih₁ ih₂
 
+/-- `*P` contains the sum of every nonempty finite family from `*P`. -/
+theorem algClosure_finsetSup' {ι : Type*} {s : Finset ι} (hs : s.Nonempty) {f : ι → α}
+    (hf : ∀ i ∈ s, AlgClosure P (f i)) : AlgClosure P (s.sup' hs f) :=
+  SupClosed.finsetSup'_mem algClosure_cum hs hf
+
 /-- Every element of `*P` has a `P`-element below it. -/
 theorem algClosure_has_base {x : α} (h : AlgClosure P x) : ∃ a, P a ∧ a ≤ x := by
   induction h with
