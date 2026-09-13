@@ -42,7 +42,7 @@ inductive ShiftLabel where
   | temporal    -- temporal shift (sequence of tense, historical present)
   | evidential  -- evidential perspective shift ([cumming-2026])
   | mood        -- mood operator (SUBJ situation introduction)
-  | perspective -- full perspective shift (FID: agent + time + world)
+  | perspective -- full perspective shift (agent + time + world)
   | quotation   -- direct quotation
   | clauseChain -- clause chain scope (final verb TAM scopes over medial clauses)
   | roleShift   -- sign language Role Shift (viewpoint + perspective shift)

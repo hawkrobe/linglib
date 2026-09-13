@@ -6,7 +6,7 @@ import Linglib.Semantics.Mood.Situation
 # Exclusion features and X/O-marking strategies
 
 [iatridou-2000] [von-fintel-iatridou-2023] [anderson-1951]
-[schlenker-2004] [mizuno-2024]
+[schlenker-2004a] [mizuno-2024]
 
 Framework primitives for the **Exclusion Feature** analysis of past
 morphology ([iatridou-2000]) and the **X-marking / O-marking** typology
@@ -29,7 +29,7 @@ Past morphology encodes **exclusion** ([iatridou-2000]):
 - **Modal**: w(topic) ≠ w(speaker)
 
 This maps onto the `ContextTower`'s `origin` / `innermost` distinction —
-[schlenker-2004]'s Context of Thought θ (= `tower.origin`) vs Context of
+[schlenker-2004a]'s Context of Thought θ (= `tower.origin`) vs Context of
 Utterance υ (= `tower.innermost`): `ExclF dim tower` holds iff the
 relevant coordinate of `tower.innermost` differs from that of
 `tower.origin`. At a root tower the two coincide, so no `ExclF` holds;
@@ -126,7 +126,7 @@ inductive MarkingStrategy where
   | xMarking
   /-- O-marking: the absence of X-marking. In Japanese Anderson
       conditionals, Non-Past morphology triggers a perspectival shift
-      analogous to the Historical Present ([schlenker-2004]); the
+      analogous to the Historical Present ([schlenker-2004a]); the
       backward time shift expands the domain under branching time,
       avoiding triviality without counterfactual morphology.
       Japanese ([mizuno-2024], ex. 4a): "Jones-si-ga ... nom-*eba*,

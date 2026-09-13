@@ -35,6 +35,7 @@ structure KContext (W : Type*) (E : Type*) (P : Type*) (T : Type*) where
   time : T
   /-- The position (location) of the context -/
   position : P
+  deriving DecidableEq
 
 /-- Proper context: the agent exists at the context's world.
 

@@ -4,13 +4,12 @@ import Linglib.Semantics.Reference.Context.Tower
 # Standard Context Shifts
 
 Shift constructors for `KContext` that correspond to specific linguistic operations:
-attitude embedding, temporal shift, full perspective shift, and the identity (no-op)
-shift. Each preserves or changes specific coordinates, with theorems documenting
-the preservation pattern.
+attitude embedding, temporal shift, and the identity (no-op) shift. Each preserves or
+changes specific coordinates, with theorems documenting the preservation pattern.
 
 These are the building blocks for tower-based composition. An attitude verb pushes
-`attitudeShift`, a sequence-of-tense embedding pushes `temporalShift`, FID pushes
-`perspectiveShift`, and Kaplan-compliant English attitude verbs push `identityShift`.
+`attitudeShift`, a sequence-of-tense embedding pushes `temporalShift`, and Kaplan-compliant
+English attitude verbs push `identityShift`.
 -/
 
 namespace Semantics.Context
@@ -40,14 +39,6 @@ def attitudeShift (holder : E) (attWorld : W) : ContextShift (KContext W E P T) 
 def temporalShift (newTime : T) : ContextShift (KContext W E P T) where
   apply := λ c => { c with time := newTime }
   label := .temporal
-
-/-- Perspective shift: changes agent, time, and world simultaneously.
-    This is the shift for Free Indirect Discourse (FID), where the
-    narrative adopts the character's perspective across all coordinates. -/
-def perspectiveShift (newAgent : E) (newTime : T) (newWorld : W) :
-    ContextShift (KContext W E P T) where
-  apply := λ c => { c with agent := newAgent, time := newTime, world := newWorld }
-  label := .perspective
 
 /-- Identity shift: no change to the context. Kaplan's thesis for English
     says attitude verbs push identity shifts — embedding happens without
@@ -110,30 +101,6 @@ def identityShift : ContextShift (KContext W E P T) where
 theorem push_identityShift_innermost (t : ContextTower (KContext W E P T)) :
     (t.push identityShift).innermost = t.innermost := by
   rw [ContextTower.push_innermost, identityShift_apply]
-
--- ════════════════════════════════════════════════════════════════
--- § Perspective Shift Properties
--- ════════════════════════════════════════════════════════════════
-
-@[simp] theorem perspectiveShift_changes_agent (a : E) (t : T) (w : W)
-    (c : KContext W E P T) :
-    ((perspectiveShift a t w).apply c).agent = a := rfl
-
-@[simp] theorem perspectiveShift_changes_time (a : E) (t : T) (w : W)
-    (c : KContext W E P T) :
-    ((perspectiveShift a t w).apply c).time = t := rfl
-
-@[simp] theorem perspectiveShift_changes_world (a : E) (t : T) (w : W)
-    (c : KContext W E P T) :
-    ((perspectiveShift a t w).apply c).world = w := rfl
-
-@[simp] theorem perspectiveShift_preserves_addressee (a : E) (t : T) (w : W)
-    (c : KContext W E P T) :
-    ((perspectiveShift a t w).apply c).addressee = c.addressee := rfl
-
-@[simp] theorem perspectiveShift_preserves_position (a : E) (t : T) (w : W)
-    (c : KContext W E P T) :
-    ((perspectiveShift a t w).apply c).position = c.position := rfl
 
 end KContextShifts
 
