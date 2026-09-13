@@ -1,0 +1,1005 @@
+[
+  {
+    "id": "jeretic2025_1a",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(1a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "#Lea broke all her arms.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "english"
+      ],
+      [
+        "slot",
+        "universal"
+      ],
+      [
+        "dual",
+        "false"
+      ]
+    ],
+    "comment": "Anti-dual in a domain of two: both is available.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_1c",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(1c)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Lea broke both her arms.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "english"
+      ],
+      [
+        "slot",
+        "universal"
+      ],
+      [
+        "dual",
+        "true"
+      ]
+    ],
+    "comment": "The lexical dual universal.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_2a",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(2a)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "#Léa s'est cassé tous les bras.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Léa broke all her arms.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "french"
+      ],
+      [
+        "slot",
+        "universal"
+      ],
+      [
+        "dual",
+        "false"
+      ]
+    ],
+    "comment": "Anti-dual although French has no word for both.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_2b",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(2b)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Léa s'est cassé les deux bras.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Léa broke both her arms.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "french"
+      ],
+      [
+        "slot",
+        "universal"
+      ],
+      [
+        "dual",
+        "true"
+      ]
+    ],
+    "comment": "The definite numeral, the indirect alternative to tous.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_6a",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(6a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "#None of the sides of this sheet of paper has been used.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "english"
+      ],
+      [
+        "slot",
+        "negative"
+      ],
+      [
+        "dual",
+        "false"
+      ]
+    ],
+    "comment": "Anti-dual: neither is available.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_6a_neither",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(6a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Neither of the sides of this sheet of paper has been used.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "english"
+      ],
+      [
+        "slot",
+        "negative"
+      ],
+      [
+        "dual",
+        "true"
+      ]
+    ],
+    "comment": "The lexical dual negative.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_6b",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(6b)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Aucun des côtés de cette feuille n'a été utilisé.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Neither of the sides of this sheet of paper has been used.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "french"
+      ],
+      [
+        "slot",
+        "negative"
+      ],
+      [
+        "dual",
+        "false"
+      ]
+    ],
+    "comment": "Not anti-dual: aucun des deux and ni l'un ni l'autre are too complex to block the dual parse.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_6c",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(6c)"
+    },
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Keine der Seiten dieses Blattes wurde verwendet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Neither of the sides of this sheet of paper has been used.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "german"
+      ],
+      [
+        "slot",
+        "negative"
+      ],
+      [
+        "dual",
+        "false"
+      ]
+    ],
+    "comment": "Not anti-dual: German has beide but no dual negative.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_7a",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(7a)"
+    },
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Á hvorum handleggnum brotnaði hún?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Which arm did she break?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "icelandic"
+      ],
+      [
+        "slot",
+        "which"
+      ],
+      [
+        "dual",
+        "true"
+      ]
+    ],
+    "comment": "The dual interrogative hvor.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_7b",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(7b)"
+    },
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "?Á hvaða handlegg brotnaði hún?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Which arm did she break?",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "icelandic"
+      ],
+      [
+        "slot",
+        "which"
+      ],
+      [
+        "dual",
+        "false"
+      ]
+    ],
+    "comment": "Marginal in a domain of two.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_8a",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(8a)"
+    },
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Taroo-wa dotti-no ude-o o-tta-no?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Which arm did Taro break?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "japanese"
+      ],
+      [
+        "slot",
+        "which"
+      ],
+      [
+        "dual",
+        "true"
+      ]
+    ],
+    "comment": "The dual indeterminate dotti.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_8b",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(8b)"
+    },
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "#Taroo-wa dono ude-o o-tta-no?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Which arm did Taro break?",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "japanese"
+      ],
+      [
+        "slot",
+        "which"
+      ],
+      [
+        "dual",
+        "false"
+      ]
+    ],
+    "comment": "Anti-dual.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_9a",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(9a)"
+    },
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Taroo-wa dotti-no ude-mo o-tta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Taro broke each of his arms.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "japanese"
+      ],
+      [
+        "slot",
+        "each"
+      ],
+      [
+        "dual",
+        "true"
+      ]
+    ],
+    "comment": "Dual each on dotti.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_9b",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(9b)"
+    },
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "#Taroo-wa dono ude-mo o-tta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Taro broke each of his arms.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "japanese"
+      ],
+      [
+        "slot",
+        "each"
+      ],
+      [
+        "dual",
+        "false"
+      ]
+    ],
+    "comment": "Anti-dual.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_10a",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(10a)"
+    },
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Taroo-wa dotti-no ude-ka-o o-tta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Taro broke one of his arms.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "japanese"
+      ],
+      [
+        "slot",
+        "one"
+      ],
+      [
+        "dual",
+        "true"
+      ]
+    ],
+    "comment": "Dual one on dotti.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_10b",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(10b)"
+    },
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "#Taroo-wa dono ude-ka-o o-tta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Taro broke one of his arms.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "japanese"
+      ],
+      [
+        "slot",
+        "one"
+      ],
+      [
+        "dual",
+        "false"
+      ]
+    ],
+    "comment": "Anti-dual.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_11a",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(11a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Which arm hurts you?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "english"
+      ],
+      [
+        "slot",
+        "which"
+      ],
+      [
+        "dual",
+        "false"
+      ]
+    ],
+    "comment": "Not anti-dual: which of the two is more complex than which.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_11b",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(11b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I have a problem with each arm.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "english"
+      ],
+      [
+        "slot",
+        "each"
+      ],
+      [
+        "dual",
+        "false"
+      ]
+    ],
+    "comment": "Not anti-dual.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_11c",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(11c)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "One arm hurts me.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "english"
+      ],
+      [
+        "slot",
+        "one"
+      ],
+      [
+        "dual",
+        "false"
+      ]
+    ],
+    "comment": "Not anti-dual.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_12a",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(12a)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Quel bras te fait mal?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Which arm hurts you?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "french"
+      ],
+      [
+        "slot",
+        "which"
+      ],
+      [
+        "dual",
+        "false"
+      ]
+    ],
+    "comment": "Not anti-dual.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_12b",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(12b)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "J'ai un problème à chaque bras.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I have a problem with each arm.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "french"
+      ],
+      [
+        "slot",
+        "each"
+      ],
+      [
+        "dual",
+        "false"
+      ]
+    ],
+    "comment": "Not anti-dual.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_12c",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(12c)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Un bras me fait mal.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "One arm hurts me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "french"
+      ],
+      [
+        "slot",
+        "one"
+      ],
+      [
+        "dual",
+        "false"
+      ]
+    ],
+    "comment": "Not anti-dual.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_80a",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(80a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "#She came twice to visit us, and she always brought us flowers.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "english"
+      ],
+      [
+        "slot",
+        "always"
+      ],
+      [
+        "dual",
+        "false"
+      ]
+    ],
+    "comment": "Anti-dual: both times is as complex as all+ways.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_80b",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(80b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She came twice to visit us, and both times she brought us flowers.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "english"
+      ],
+      [
+        "slot",
+        "always"
+      ],
+      [
+        "dual",
+        "true"
+      ]
+    ],
+    "comment": "The dual of always.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_81a",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(81a)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Elle est venue deux fois nous rendre visite, et elle nous a toujours apporté des fleurs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "She came twice to visit us, and she always brought us flowers.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "french"
+      ],
+      [
+        "slot",
+        "always"
+      ],
+      [
+        "dual",
+        "false"
+      ]
+    ],
+    "comment": "Not anti-dual: les deux fois is more complex than toujours.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_83a",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(83a)"
+    },
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "#Sie hat uns zweimal besucht und uns immer Blumen mitgebracht.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "She visited us twice and always brought us flowers.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "german"
+      ],
+      [
+        "slot",
+        "always"
+      ],
+      [
+        "dual",
+        "false"
+      ]
+    ],
+    "comment": "Anti-dual: suppletive immer competes with beide Male.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_83b",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(83b)"
+    },
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "?Kanozyo-wa watasi-tati-o ni-kai tazunete-kite, itu-mo hana-o motte-kita.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "She came to visit us twice and she always brought us flowers.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "japanese"
+      ],
+      [
+        "slot",
+        "always"
+      ],
+      [
+        "dual",
+        "false"
+      ]
+    ],
+    "comment": "Weakly anti-dual: ni-kai on its definite reading is as complex as itu-mo.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_85",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(85)"
+    },
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "Kanozyo-wa watasi-tati-o ni-kai tazunete-kite, ni-kai hana-o motte-kita.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "She came to visit us twice and she brought flowers both times.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "language",
+        "japanese"
+      ],
+      [
+        "slot",
+        "always"
+      ],
+      [
+        "dual",
+        "true"
+      ]
+    ],
+    "comment": "The bimorphemic dual, ni-kai.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_36",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(36)"
+    },
+    "reportedIn": null,
+    "language": "slov1268",
+    "primaryText": "Računalnika sta pokvarjena.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The computers are broken.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "slot",
+        "definite"
+      ],
+      [
+        "dual",
+        "true"
+      ]
+    ],
+    "comment": "Overt dual number morphology; felicitous only with two computers.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_25a",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(25a)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Tous les verres sont pleins.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "All the cups are full.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "example",
+        "25"
+      ]
+    ],
+    "comment": "The worked example: the plural parse of tous les verres.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "jeretic2025_25b",
+    "source": {
+      "bibkey": "jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025",
+      "paperLabel": "(25b)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Les deux verres sont pleins.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The two cups are full.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "example",
+        "25"
+      ]
+    ],
+    "comment": "The indirect alternative, at most as complex by node count (38).",
+    "metaLanguage": "stan1293"
+  }
+]
