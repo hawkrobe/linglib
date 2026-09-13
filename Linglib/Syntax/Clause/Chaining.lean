@@ -13,8 +13,9 @@ supplies tense, mood, and often agreement for the whole chain. Chaining
 is the prototypical *cosubordinate* combining scheme
 (`Clause.CombiningScheme`): the medial clause is dependent but not
 embedded ([foley-r-d-van-valin-1984]; [longacre-2007]). Anchors:
-[sarvasy-aikhenvald-2025] and [de-vries-2025], with per-language
-bundles and generalizations in `Studies/SarvasyAikhenvald2025.lean`.
+[sarvasy-aikhenvald-2025] and [de-vries-2025]; per-language bundles live in
+the language fragments (`Fragments/<Language>/MedialVerbs.lean`) and the
+generalizations over them in `Studies/SarvasyAikhenvald2025.lean`.
 
 ## Main definitions
 
@@ -27,7 +28,7 @@ bundles and generalizations in `Studies/SarvasyAikhenvald2025.lean`.
 * `InterclauseRelation` — marked interclausal semantic relations
 * `BridgingType` — discourse bridging across chain boundaries
 * `System` — a language's clause-chaining system; per-language
-  instances live in `Studies/SarvasyAikhenvald2025.lean`
+  instances live in the language fragments
 -/
 
 namespace Clause
@@ -279,8 +280,8 @@ inductive BridgingType where
 
 /-- A language's clause-chaining system: chain structure,
     switch-reference, medial morphology, marked relations, and
-    bridging. Per-language instances and generalizations over them
-    live in `Studies/SarvasyAikhenvald2025.lean`. -/
+    bridging. Per-language instances live in the language fragments and
+    the generalizations over them in `Studies/SarvasyAikhenvald2025.lean`. -/
 structure System where
   /-- Linear order of medial and final clauses. -/
   direction : ChainDirection

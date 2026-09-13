@@ -3,574 +3,105 @@ import Linglib.Fragments.Nungon.MedialVerbs
 import Linglib.Fragments.Manambu.MedialVerbs
 import Linglib.Fragments.Korean.MedialVerbs
 import Linglib.Fragments.Turkish.MedialVerbs
-import Linglib.Semantics.Reference.Context.Tower
-import Linglib.Semantics.Reference.Context.Shifts
 
 /-!
-# Clause Chaining
-[sarvasy-aikhenvald-2025] [foley-r-d-van-valin-1984]
+# Sarvasy & Aikhenvald (2025): Clause Chaining in the Languages of the World
 
-## Part I: Fragment Verification
+This file formalizes the typological generalizations of the volume's introduction over the
+clause-chaining systems of four of its languages. A clause chain is a sequence of medial
+clauses, formally dependent and underspecified for inflectional categories, closed by one
+independent clause, and the introduction surveys the parameters along which chaining varies:
+the switch-reference marking of many medial-final languages, the categories medial verbs
+retain, the relations medial forms encode, the two bridging constructions and the
+non-canonical uses of medial clauses. The systems are those of Nungon and Manambu, whose
+chapters describe switch-reference systems, and of Korean and Turkish, which chain without
+switch-reference; each is read off its fragment's inventory of medial forms
+(`Clause.Chaining.System`, `sample`). The generalizations proved are that same-subject
+medial forms leave the subject unindexed while different-subject forms index it
+(`ss_forms_lack_subject_marking`), that Nungon's switch-reference morphology itself encodes the
+temporal relations whereas Manambu's markers add relations beyond them
+(`temporal_via_sr`), that the chain's tense comes from the final verb in the two Papuan
+languages while Korean admits tense before some medial suffixes (`tense_from_final_verb`),
+that Korean and Turkish negate medial clauses individually (`negated_individually`), and
+that their medial verbs are converbs (`converb_form`).
 
-Theorems connecting the clause chaining fragment data (medial verb
-inventories) to the typological parameters in `Data.lean`. Each
-theorem verifies that the fragment's morphological inventory is consistent
-with the language's clause chaining parameter bundle.
+## Implementation notes
 
-### Dimensions
+The Korean and Turkish inventories come from reference grammars rather than the volume,
+whose introduction discusses both languages; the volume's Turkish suffix list overlaps but
+does not coincide with the grammar's. Ku Waru and Korowai, formerly in the sample, are
+dropped: the former has no chapter in the volume and the latter's switch-reference system was
+misrecorded as tracking several arguments. The bridging and stand-alone fields are the
+chapters' reports and are not derived from the inventories.
 
-1. **SR inventory ↔ SR system**: languages with SR morphology have SS and DS
-   markers in their fragment; languages without SR have no SR-indexed markers
-2. **Relation inventory ↔ relations marked**: the number of distinct semantic
-   relations in the fragment matches the parameter bundle's list
-3. **Agreement pattern ↔ medial morphology**: DS-triggered agreement is
-   consistent with the medial morph profile
-4. **Converb count ↔ relation richness**: non-SR languages have more converbal
-   suffixes, consistent with the generalization that SR absorbs semantic work
+## References
 
-## Part II: ContextTower Derivation
-
-End-to-end derivation chain connecting the ContextTower infrastructure to
-clause chaining phenomena. The core insight: in a medial-final chain, the
-final verb establishes the root context and each medial clause pushes a
-`.clauseChain` shift. TAM values absent on medial verbs are inherited from
-the origin (the final verb's context).
-
-### Results
-
-1. **Tower depth = chain length**: N medial clauses → tower depth N
-2. **TAM scope = origin access**: the final verb's tense/mood at `.origin`
-   scopes over medial clauses that lack their own tense/mood
-3. **Tense inheritance**: languages with `tenseFromFinalVerb = true` (Nungon)
-   read tense from origin; languages with medial tense (Turkish) read locally
-4. **SR as agent comparison**: SS = `.agent` same across adjacent tower levels;
-   DS = `.agent` differs
+* [sarvasy-aikhenvald-2025]
+* [sarvasy-2017]
+* [aikhenvald-2008]
+* [sohn-1999]
+* [goksel-kerslake-2005]
 -/
-
-namespace ClauseChaining
-
-open Clause.Chaining
-
--- ============================================================================
--- Language data (inlined per the
--- provenance-tracking policy). [sarvasy-aikhenvald-2025] is the natural
--- owner — the parameter sample comes from this paper.
--- ============================================================================
-
-/-- Nungon (Trans-New Guinea, Finisterre-Huon; [sarvasy-2017], 2025 Ch. 7).
-
-    The best-described clause chaining language. Obligatory SR with
-    temporal encoding: four distinct medial forms (SS-SEQ, SS-SIM,
-    DS-SEQ, DS-SIM). Medial verbs are maximally reduced (bare stem +
-    SR suffix). The final verb alone carries tense, agreement, and full mood.
-    Non-canonical stand-alone medial clauses are attested. -/
-def nungon : Clause.Chaining.System where
-  direction           := .medialFinal
-  srSystem            := .ssDsTemporal
-  srTarget            := some .subjectOnly
-  srObligatory        := true
-  srMarkedness        := some .ssUnmarked
-  medialMorph         := {
-    tense     := .absent
-    agreement := .absent
-    mood      := .restricted
-    polarity  := .restricted
-    aspect    := .absent
-  }
-  relationsMarked     := [.sequential, .simultaneous]
-  hasRecapLinkage     := true
-  hasSummaryLinkage   := false
-  medialCanStandAlone := true
-
-/-- Manambu (Ndu family, East Sepik; [aikhenvald-2008], 2025 Ch. 6). -/
-def manambu : Clause.Chaining.System where
-  direction           := .medialFinal
-  srSystem            := .ssDs
-  srTarget            := some .subjectOnly
-  srObligatory        := true
-  srMarkedness        := some .ssUnmarked
-  medialMorph         := {
-    tense     := .restricted
-    agreement := .restricted
-    mood      := .restricted
-    polarity  := .restricted
-    aspect    := .restricted
-  }
-  relationsMarked     := [.sequential, .simultaneous, .causal]
-  hasRecapLinkage     := true
-  hasSummaryLinkage   := true
-  medialCanStandAlone := true
-
-/-- Ku Waru (Trans-New Guinea, Chimbu-Wahgi; [merlan-rumsey-1991]). -/
-def kuWaru : Clause.Chaining.System where
-  direction           := .medialFinal
-  srSystem            := .ssDs
-  srTarget            := some .subjectOnly
-  srObligatory        := true
-  srMarkedness        := some .ssUnmarked
-  medialMorph         := {
-    tense     := .absent
-    agreement := .absent
-    mood      := .restricted
-    polarity  := .absent
-    aspect    := .absent
-  }
-  relationsMarked     := [.sequential, .simultaneous]
-  hasRecapLinkage     := true
-  hasSummaryLinkage   := true
-  medialCanStandAlone := false
-
-/-- Korean (Koreanic; [sohn-1999]). -/
-def korean : Clause.Chaining.System where
-  direction           := .medialFinal
-  srSystem            := .none
-  srTarget            := none
-  srObligatory        := false
-  srMarkedness        := none
-  medialMorph         := {
-    tense     := .restricted
-    agreement := .absent
-    mood      := .restricted
-    polarity  := .full
-    aspect    := .restricted
-  }
-  relationsMarked     := [.sequential, .simultaneous, .causal,
-                          .conditional, .concessive, .contrastive,
-                          .manner, .purpose]
-  hasRecapLinkage     := false
-  hasSummaryLinkage   := false
-  medialCanStandAlone := true
-
-/-- Turkish (Turkic; [goksel-kerslake-2005]). -/
-def turkish : Clause.Chaining.System where
-  direction           := .medialFinal
-  srSystem            := .none
-  srTarget            := none
-  srObligatory        := false
-  srMarkedness        := none
-  medialMorph         := {
-    tense     := .restricted
-    agreement := .absent
-    mood      := .restricted
-    polarity  := .full
-    aspect    := .restricted
-  }
-  relationsMarked     := [.sequential, .simultaneous, .causal,
-                          .conditional, .concessive, .manner, .purpose]
-  hasRecapLinkage     := false
-  hasSummaryLinkage   := false
-  medialCanStandAlone := false
-
-/-- Korowai (Trans-New Guinea, Greater Awyu; [de-vries-2025] Ch. 5). -/
-def korowai : Clause.Chaining.System where
-  direction           := .medialFinal
-  srSystem            := .multiTrack
-  srTarget            := some .topicBased
-  srObligatory        := false
-  srMarkedness        := some .ssUnmarked
-  medialMorph         := {
-    tense     := .restricted
-    agreement := .restricted
-    mood      := .restricted
-    polarity  := .restricted
-    aspect    := .absent
-  }
-  relationsMarked     := [.sequential, .simultaneous, .causal, .conditional]
-  hasRecapLinkage     := true
-  hasSummaryLinkage   := false
-  medialCanStandAlone := false
-
-/-- All language data entries. -/
-def allLanguages : List Clause.Chaining.System :=
-  [nungon, manambu, kuWaru, korean, turkish, korowai]
-
-theorem nungon_has_sr : nungon.hasSR = true := rfl
-theorem manambu_has_sr : manambu.hasSR = true := rfl
-theorem kuWaru_has_sr : kuWaru.hasSR = true := rfl
-theorem korean_no_sr : korean.hasSR = false := rfl
-theorem turkish_no_sr : turkish.hasSR = false := rfl
-theorem korowai_has_sr : korowai.hasSR = true := rfl
-
-theorem nungon_tense_from_final : nungon.tenseFromFinalVerb = true := rfl
-theorem manambu_tense_not_from_final : manambu.tenseFromFinalVerb = false := rfl
-theorem korean_tense_not_from_final : korean.tenseFromFinalVerb = false := rfl
-
-theorem nungon_has_bridging : nungon.hasBridging = true := rfl
-theorem korean_no_bridging : korean.hasBridging = false := rfl
-theorem kuWaru_has_bridging : kuWaru.hasBridging = true := rfl
-
-theorem nungon_temporal_via_sr : nungon.temporalViaSR = true := rfl
-theorem manambu_not_temporal_via_sr : manambu.temporalViaSR = false := rfl
-
-theorem nungon_medial_is_converb : nungon.medialVerbForm = UD.VerbForm.Conv := rfl
-theorem korean_medial_is_converb : korean.medialVerbForm = UD.VerbForm.Conv := rfl
-theorem turkish_medial_is_converb : turkish.medialVerbForm = UD.VerbForm.Conv := rfl
-
-/-- All sampled languages are medial-final. -/
-theorem all_medial_final :
-    allLanguages.all (·.direction == .medialFinal) = true := by decide
-
-/-- Every language with SR tracks at least subject continuity. -/
-theorem sr_languages_have_target :
-    allLanguages.all (λ p => !p.hasSR || p.srTarget.isSome) = true := by decide
-
-/-- In every SR language in the sample, SS is the unmarked member. -/
-theorem sr_languages_ss_unmarked :
-    allLanguages.all (λ p => !p.hasSR || p.srMarkedness == some .ssUnmarked) = true := by decide
-
-/-- Languages without SR mark more interclausal semantic relations
-(7+ relation types). SR languages encode fewer relation types
-because the SR morpheme absorbs sequential/simultaneous distinctions. -/
-theorem noSR_richer_relations :
-    allLanguages.all (λ p => p.hasSR || p.relationsMarked.length ≥ 7) = true := by decide
-
-end ClauseChaining
-
-
--- ============================================================================
--- Sarvasy & Aikhenvald 2025 study content
--- ============================================================================
 
 namespace SarvasyAikhenvald2025
 
--- ============================================================================
--- Part I: Fragment Verification
--- ============================================================================
-
-open ClauseChaining
 open Clause.Chaining
-open Nungon.MedialVerbs (SRCategory dsParadigm ssSuffixes ds2du ds3du ds2pl ds3pl)
-open Manambu.MedialVerbs (allMarkers ssMarkers dsMarkers neutralMarkers
-  markersWithSubjAgreement MarkerEntry SRValue)
-open Korean.MedialVerbs (allSuffixes tensedSuffixes)
-open Turkish.MedialVerbs (allConverbs affirmativeConverbs negativeConverbs)
 
--- ============================================================================
--- § Nungon bridges
--- ============================================================================
-
-section Nungon
-
-/-- Nungon has the `ssDsTemporal` SR system: the fragment provides both
-    SS suffixes (invariant, 2 forms for SEQ/SIM) and a full DS person/number
-    paradigm. The four-way system (SS-SEQ, SS-SIM, DS-SEQ, DS-SIM) matches
-    `SRSystem.ssDsTemporal`. -/
-theorem nungon_sr_system_matches :
-    nungon.srSystem = .ssDsTemporal := rfl
-
-/-- Nungon DS paradigm has 9 cells (3 persons x 3 numbers).
-    DS forms carry person/number agreement — consistent with the `agreement`
-    field being `.absent` on medial verbs *in general* (SS forms lack agreement;
-    DS forms are the exception that proves the rule). -/
-theorem nungon_ds_paradigm_complete :
-    dsParadigm.length = 9 := rfl
-
-/-- Nungon SS suffixes are exactly 2: sequential and simultaneous.
-    This matches the `relationsMarked = [.sequential,.simultaneous]` in the
-    parameter bundle — the two temporal relations are the only semantics
-    encoded on SS medial verbs. -/
-theorem nungon_ss_matches_relations :
-    ssSuffixes.length = nungon.relationsMarked.length := rfl
-
-/-- Nungon has dual number syncretism: 2du = 3du. -/
-theorem nungon_dual_syncretism : ds2du.form = ds3du.form := rfl
-
-/-- Nungon has plural number syncretism: 2pl = 3pl. -/
-theorem nungon_plural_syncretism : ds2pl.form = ds3pl.form := rfl
-
-/-- Nungon tense is absent on medial verbs — inherited from the final verb. -/
-theorem nungon_tense_scope :
-    nungon.tenseFromFinalVerb = true := rfl
-
-/-- Nungon medial verbs are UD converbs. -/
-theorem nungon_medial_converb :
-    nungon.medialVerbForm = UD.VerbForm.Conv := rfl
-
-end Nungon
-
--- ============================================================================
--- § Manambu bridges
--- ============================================================================
-
-section Manambu
-
-/-- Manambu has a binary SS/DS system (without temporal encoding).
-    The fragment inventory partitions into SS, DS, and neutral markers. -/
-theorem manambu_sr_system_matches :
-    manambu.srSystem = .ssDs := rfl
-
-/-- Manambu has 9 medial clause markers in total. -/
-theorem manambu_inventory_size :
-    allMarkers.length = 9 := rfl
-
-/-- Manambu's 9 markers partition into 5 SS + 2 DS + 2 neutral. -/
-theorem manambu_sr_partition :
-    ssMarkers.length + dsMarkers.length + neutralMarkers.length
-    = allMarkers.length := rfl
-
-/-- Every Manambu DS marker triggers subject agreement; no SS marker does.
-    This mirrors the Nungon pattern: agreement is a property of DS marking,
-    not of medial verbs in general. -/
-theorem manambu_agreement_on_ds_only :
-    dsMarkers.all (·.hasSubjectMarking) = true
-    ∧ ssMarkers.all (! ·.hasSubjectMarking) = true := ⟨rfl, rfl⟩
-
-/-- Manambu marks 3 interclausal relations (sequential, simultaneous, causal),
-    matching the parameter bundle. -/
-theorem manambu_relation_count :
-    manambu.relationsMarked.length = 3 := rfl
-
-/-- Manambu has both bridging types (recapitulative and summary). -/
-theorem manambu_both_bridging :
-    manambu.hasBridging = true := rfl
-
-end Manambu
-
--- ============================================================================
--- § Korean bridges
--- ============================================================================
-
-section Korean
-
-/-- Korean has no SR system: conjunctive suffixes encode semantic relations
-    directly without tracking subject continuity. -/
-theorem korean_no_sr :
-    korean.srSystem = .none := rfl
-
-/-- Korean has 8 conjunctive suffixes. -/
-theorem korean_suffix_inventory :
-    allSuffixes.length = 8 := rfl
-
-/-- Korean marks 8 interclausal relations in its parameter bundle.
-    The suffix count matches the relation count: each suffix maps to
-    (at least) one relation type. -/
-theorem korean_suffix_relation_match :
-    allSuffixes.length = korean.relationsMarked.length := rfl
-
-/-- Korean allows full independent negation on medial clauses — consistent
-    with all 8 suffixes allowing negation. -/
-theorem korean_full_negation :
-    korean.medialMorph.polarity = .full := rfl
-
-/-- Korean medial verbs partially retain tense. The fragment confirms this:
-    3 of 8 suffixes allow tense marking on the medial verb. -/
-theorem korean_partial_tense :
-    korean.medialMorph.tense = .restricted
-    ∧ tensedSuffixes.length = 3 := ⟨rfl, rfl⟩
-
-end Korean
-
--- ============================================================================
--- § Turkish bridges
--- ============================================================================
-
-section Turkish
-
-/-- Turkish has no SR system. -/
-theorem turkish_no_sr :
-    turkish.srSystem = .none := rfl
-
-/-- Turkish has 8 converbal suffixes (-(y)ip, -(y)erek, -(y)ince, -ken,
-    -dikce, -meden, -AlI, -casina). -/
-theorem turkish_converb_inventory :
-    allConverbs.length = 8 := rfl
-
-/-- Turkish converbs outnumber relations: multiple converbs can encode the
-    same semantic relation (e.g., both -erek and -çasına encode manner;
-    both -erek and -ken encode simultaneous). -/
-theorem turkish_converb_covers_relations :
-    allConverbs.length ≥ turkish.relationsMarked.length := by native_decide
-
-/-- Turkish allows full independent negation on medial clauses — every
-    affirmative converb has a negative counterpart, plus there is one
-    inherently negative converb (-meden). -/
-theorem turkish_full_negation :
-    turkish.medialMorph.polarity = .full := rfl
-
-/-- 7 affirmative + 1 inherently negative = 8 total. -/
-theorem turkish_polarity_complete :
-    affirmativeConverbs.length + negativeConverbs.length
-    = allConverbs.length := rfl
-
-end Turkish
-
--- ============================================================================
--- § Cross-linguistic bridges
--- ============================================================================
-
-/-- Non-SR languages have richer converbal inventories than SR languages'
-    non-SR-encoded relations. Korean (8 suffixes for 8 relations) and Turkish
-    (8 converbs for 7 relations) each have more dedicated markers than
-    Nungon (2 SS forms for 2 relations) or Manambu (9 markers, but only
-    3 dedicated relations — the rest are SR-conditioned). -/
-theorem noSR_more_dedicated_markers :
-    allSuffixes.length > ssSuffixes.length
-    ∧ allConverbs.length > ssSuffixes.length := ⟨by native_decide, by native_decide⟩
-
-/-- Agreement asymmetry is cross-linguistically stable: in both Nungon and
-    Manambu, subject agreement appears only on DS medial verbs, never on SS.
-    This structural fact — that SS doesn't need to identify its subject because
-    it's shared with the following clause — is the functional motivation for
-    the SS/DS asymmetry. -/
-theorem ds_agreement_universal :
-    -- Manambu: DS has agreement, SS doesn't
-    dsMarkers.all (·.hasSubjectMarking) = true
-    ∧ ssMarkers.all (! ·.hasSubjectMarking) = true := ⟨rfl, rfl⟩
-
--- ============================================================================
--- Part II: ContextTower Derivation
--- ============================================================================
-
-open Reference
-
--- ============================================================================
--- § Chain Context Type
--- ============================================================================
-
-/-- A minimal clause chain context: world (event structure), agent (subject),
-    position (clause index), and time (event time). -/
-inductive ChainAgent where | subjectA | subjectB | subjectC
-  deriving DecidableEq, Repr
-
-abbrev ChainCtx := Context Unit ChainAgent Unit ℤ
-
-/-- The final verb's context: subject A speaking at time 0.
-    This is the "root" of the chain — the final verb's TAM values. -/
-def finalCtx : ChainCtx :=
-  { world := (), agent := .subjectA, addressee := .subjectA, time := 0, position := () }
-
-/-- A clauseChain shift: changes agent and time for a medial clause.
-    The medial clause has its own subject and event time. -/
-def chainShift (newAgent : ChainAgent) (eventTime : ℤ) : Function.End ChainCtx :=
-  λ c => { c with agent := newAgent, time := eventTime }
-
--- ============================================================================
--- § Tower Depth = Chain Length
--- ============================================================================
-
-/-- Root tower: just the final verb, no medial clauses. -/
-def finalOnly : ContextTower ChainCtx := ContextTower.root finalCtx
-
-/-- A 1-medial chain: one medial clause (subject B, time -3) + final. -/
-def chain1 : ContextTower ChainCtx :=
-  finalOnly.push (chainShift .subjectB (-3))
-
-/-- A 2-medial chain: two medial clauses + final. -/
-def chain2 : ContextTower ChainCtx :=
-  chain1.push (chainShift .subjectC (-5))
-
-/-- Final-only chain has depth 0. -/
-theorem finalOnly_depth : finalOnly.depth = 0 := rfl
-
-/-- 1-medial chain has depth 1. -/
-theorem chain1_depth : chain1.depth = 1 := rfl
-
-/-- 2-medial chain has depth 2. -/
-theorem chain2_depth : chain2.depth = 2 := rfl
-
--- ============================================================================
--- § TAM Scope = Origin Access
--- ============================================================================
-
-/-- The final verb's tense is always accessible at the origin,
-    regardless of how many medial clauses are pushed.
-    This is why the final verb's TAM "scopes over" the chain. -/
-theorem final_tense_at_origin_1 :
-    chain1.origin.time = 0 := rfl
-
-theorem final_tense_at_origin_2 :
-    chain2.origin.time = 0 := rfl
-
-/-- The innermost medial clause has its own event time. -/
-theorem medial_has_own_time_1 :
-    chain1.innermost.time = -3 := rfl
-
-theorem medial_has_own_time_2 :
-    chain2.innermost.time = -5 := rfl
-
--- ============================================================================
--- § Tense Inheritance via DepthSpec
--- ============================================================================
-
-/-- Origin access pattern: reads tense from the final verb. This models
-    languages like Nungon where medial verbs lack tense entirely
-    (`tenseFromFinalVerb = true`). The medial verb inherits tense from
-    the final verb's context. -/
-def originTenseAccess : AccessPattern ChainCtx ℤ :=
-  { depth := .origin, project := Context.time }
-
-/-- Local access pattern: reads tense from the medial verb's own context.
-    This models languages like Turkish where medial verbs retain some
-    tense distinctions. -/
-def localTenseAccess : AccessPattern ChainCtx ℤ :=
-  { depth := .local, project := Context.time }
-
-/-- In a Nungon-style chain (tenseFromFinalVerb = true), medial verb
-    reads final verb's tense (0) via origin access. -/
-theorem nungon_style_reads_final_tense :
-    originTenseAccess.resolve chain1 = 0 := rfl
-
-/-- In a Turkish-style chain, medial verb reads its own event time (-3)
-    via local access. -/
-theorem turkish_style_reads_local_tense :
-    localTenseAccess.resolve chain1 = -3 := rfl
-
-/-- Origin tense access is stable: adding more medial clauses doesn't
-    change the final verb's tense. This is the scope property: the
-    final verb's TAM values are invariant under chain extension. -/
-theorem tense_scope_stable :
-    originTenseAccess.resolve chain1 =
-    originTenseAccess.resolve chain2 := by
-  exact originTenseAccess.origin_stable rfl chain1 (chainShift .subjectC (-5))
-
--- ============================================================================
--- § Tense Inheritance ↔ Data
--- ============================================================================
-
-/-- Nungon's `tenseFromFinalVerb = true` is consistent with origin access:
-    the medial verb's tense dimension is absent, so it reads from origin. -/
-theorem nungon_tense_absent_means_origin :
-    nungon.tenseFromFinalVerb = true := rfl
-
-/-- Turkish's `tenseFromFinalVerb = false` is consistent with local access:
-    the medial verb has restricted tense, so it reads locally. -/
-theorem turkish_tense_retained_means_local :
-    turkish.tenseFromFinalVerb = false := rfl
-
-/-- Korean's `tenseFromFinalVerb = false` matches local access. -/
-theorem korean_tense_retained_means_local :
-    korean.tenseFromFinalVerb = false := rfl
-
-/-- Ku Waru's `tenseFromFinalVerb = true` matches origin access (like Nungon). -/
-theorem kuWaru_tense_absent_means_origin :
-    kuWaru.tenseFromFinalVerb = true := rfl
-
--- ============================================================================
--- § SR as Agent Comparison Across Tower Levels
--- ============================================================================
-
-/-- Same-subject (SS): adjacent medial clause has the same agent. -/
-def sameSubjectChain : ContextTower ChainCtx :=
-  finalOnly.push (chainShift .subjectA (-3))
-
-/-- Different-subject (DS): adjacent medial clause has a different agent. -/
-def diffSubjectChain : ContextTower ChainCtx :=
-  finalOnly.push (chainShift .subjectB (-3))
-
-/-- SS: the medial clause's agent equals the final verb's agent. -/
-theorem ss_agent_match :
-    sameSubjectChain.innermost.agent = sameSubjectChain.origin.agent := rfl
-
-/-- DS: the medial clause's agent differs from the final verb's agent. -/
-theorem ds_agent_mismatch :
-    diffSubjectChain.innermost.agent ≠ diffSubjectChain.origin.agent := by decide
-
-/-- SR-bearing languages in the sample all have SR systems. -/
-theorem sr_languages_use_tower_agent_tracking :
-    [nungon, manambu, kuWaru, korowai].all (·.hasSR) = true := by native_decide
-
-/-- Non-SR languages don't track agent continuity morphologically. -/
-theorem nonsr_languages_no_agent_tracking :
-    [korean, turkish].all (λ p => !p.hasSR) = true := by native_decide
+/-- The four systems, from the fragments. -/
+def sample : List System :=
+  [Nungon.MedialVerbs.chaining, Manambu.MedialVerbs.chaining, Korean.MedialVerbs.chaining,
+    Turkish.MedialVerbs.chaining]
+
+/-- Every sampled language chains medial-final, as verb-final languages do. -/
+theorem medial_final : ∀ s ∈ sample, s.direction = .medialFinal := by decide
+
+/-- Same-subject medial forms leave the subject unindexed and different-subject forms index
+it: Nungon's two same-subject suffixes are invariant while its different-subject paradigm
+indexes person and number, and no Manambu same-subject marker carries subject marking while
+every different-subject marker does, so agreement on medial verbs is restricted in both. -/
+theorem ss_forms_lack_subject_marking :
+    Nungon.MedialVerbs.chaining.medialMorph.agreement = .restricted ∧
+      Manambu.MedialVerbs.chaining.medialMorph.agreement = .restricted ∧
+      ∀ m ∈ Manambu.MedialVerbs.allMarkers,
+        (m.sr = .ss → m.hasSubjectMarking = false) ∧ (m.sr = .ds → m.hasSubjectMarking = true) := by
+  decide
+
+/-- Nungon's switch-reference suffixes encode the temporal relations themselves, so the
+relations it marks are exactly sequence and simultaneity; Manambu's markers encode relations
+beyond the temporal ones. -/
+theorem temporal_via_sr :
+    Nungon.MedialVerbs.chaining.temporalViaSR = true ∧
+      (∀ r ∈ Nungon.MedialVerbs.chaining.relationsMarked, r.Temporal) ∧
+      ∃ r ∈ Manambu.MedialVerbs.chaining.relationsMarked, ¬ r.Temporal := by
+  decide
+
+/-- The chain's tense comes from the final verb in Nungon, whose medial verbs bear no tense,
+and Manambu's medial tense is relative; Korean admits tense before some but not all of its
+medial suffixes. -/
+theorem tense_from_final_verb :
+    Nungon.MedialVerbs.chaining.tenseFromFinalVerb = true ∧
+      Manambu.MedialVerbs.chaining.medialMorph.tense = .restricted ∧
+      Korean.MedialVerbs.chaining.medialMorph.tense = .restricted := by
+  decide
+
+/-- Korean and Turkish negate medial clauses individually: every Korean suffix admits negation
+and every Turkish converb has a negative form or is negative itself. -/
+theorem negated_individually :
+    Korean.MedialVerbs.chaining.medialMorph.polarity = .full ∧
+      Turkish.MedialVerbs.chaining.medialMorph.polarity = .full := by
+  decide
+
+/-- The medial verbs of the languages without switch-reference are converbs. -/
+theorem converb_form :
+    Korean.MedialVerbs.chaining.medialVerbForm = .Conv ∧
+      Turkish.MedialVerbs.chaining.medialVerbForm = .Conv := by
+  decide
+
+/-- Switch-reference goes with the Papuan systems of the sample and its absence with the
+converbal ones, and the systems with switch-reference are the ones whose medial verbs lose
+tense or reduce it to relative tense. -/
+theorem sr_and_tense :
+    ∀ s ∈ sample, s.hasSR = true → s.medialMorph.tense ≠ .full := by
+  decide
 
 end SarvasyAikhenvald2025

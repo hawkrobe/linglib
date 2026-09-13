@@ -1,6 +1,7 @@
+import Linglib.Syntax.Clause.Chaining
+
 /-!
 # Manambu Medial Clause Markers [aikhenvald-2008]
-
 
 Medial clause markers (clause chain linkers) in Manambu (Ndu family, East Sepik,
 Papua New Guinea). Data from [aikhenvald-2008] and [sarvasy-aikhenvald-2025].
@@ -26,9 +27,15 @@ Manambu has a rich system of medial clause markers that encode:
 | -ga:y | SS | unlikely condition 'if' | no |
 | -n | neutral | sequential or simultaneous, manner | no |
 
+The language's clause-chaining system (`chaining`) is read off this inventory where it can be:
+the switch-reference type from the SS and DS markers, its obligatoriness from the absence of
+neutral markers, the agreement profile from the markers that index the subject, and the marked
+relations from the markers' relations.
 -/
 
 namespace Manambu.MedialVerbs
+
+open Clause.Chaining (InterclauseRelation)
 
 /-- Switch-reference value on a medial clause marker. -/
 inductive SRValue where
@@ -45,60 +52,67 @@ structure MarkerEntry where
   sr : SRValue
   /-- Semantic relation gloss. -/
   gloss : String
+  /-- The interclausal relations the marker encodes. -/
+  relations : List InterclauseRelation
   /-- Whether subject agreement appears on the medial verb with this marker. -/
   hasSubjectMarking : Bool
   deriving Repr, BEq
 
--- ============================================================================
--- § Marker inventory ([sarvasy-aikhenvald-2025]: Table 3)
--- ============================================================================
+/-! ### Marker inventory ([sarvasy-aikhenvald-2025]: Table 3) -/
 
 /-- -ku: SS, temporal completive 'after'. No subject marking. -/
 def ku : MarkerEntry :=
-  { form := "-ku", sr := .ss, gloss := "after (completive)", hasSubjectMarking := false }
+  { form := "-ku", sr := .ss, gloss := "after (completive)", relations := [.sequential],
+    hasSubjectMarking := false }
 
 /-- -k: DS, reason or real condition. Subject marking on medial verb. -/
 def k : MarkerEntry :=
-  { form := "-k", sr := .ds, gloss := "reason/real condition", hasSubjectMarking := true }
+  { form := "-k", sr := .ds, gloss := "reason/real condition",
+    relations := [.causal, .conditional], hasSubjectMarking := true }
 
 /-- -ta:y: SS, cotemporaneous 'while'. No subject marking. -/
 def tay : MarkerEntry :=
-  { form := "-ta:y", sr := .ss, gloss := "while (cotemporaneous)", hasSubjectMarking := false }
+  { form := "-ta:y", sr := .ss, gloss := "while (cotemporaneous)", relations := [.simultaneous],
+    hasSubjectMarking := false }
 
 /-- -taka: SS, immediate sequence 'as soon as, just as'. No subject marking. -/
 def taka : MarkerEntry :=
-  { form := "-taka", sr := .ss, gloss := "as soon as (immediate sequence)", hasSubjectMarking := false }
+  { form := "-taka", sr := .ss, gloss := "as soon as (immediate sequence)",
+    relations := [.sequential], hasSubjectMarking := false }
 
 /-- -kab: DS, brief temporal overlap 'as soon as'. Subject marking present. -/
 def kab : MarkerEntry :=
-  { form := "-kab", sr := .ds, gloss := "as soon as (brief overlap)", hasSubjectMarking := true }
+  { form := "-kab", sr := .ds, gloss := "as soon as (brief overlap)",
+    relations := [.sequential], hasSubjectMarking := true }
 
 /-- -ta:y-kab: SS, brief temporal overlap 'as soon as'. No subject marking.
     Morphologically complex: cotemporaneous -ta:y + overlap -kab. -/
 def tayKab : MarkerEntry :=
-  { form := "-ta:y-kab", sr := .ss, gloss := "as soon as (brief overlap)", hasSubjectMarking := false }
+  { form := "-ta:y-kab", sr := .ss, gloss := "as soon as (brief overlap)",
+    relations := [.sequential], hasSubjectMarking := false }
 
 /-- -lak: neutral (not SR-sensitive), reason/consequence 'because, so'.
     Subject marking present. -/
 def lak : MarkerEntry :=
-  { form := "-lak", sr := .neutral, gloss := "because/so (reason/consequence)", hasSubjectMarking := true }
+  { form := "-lak", sr := .neutral, gloss := "because/so (reason/consequence)",
+    relations := [.causal], hasSubjectMarking := true }
 
 /-- -ga:y: SS, unlikely condition 'if (unlikely)'. No subject marking. -/
 def gay : MarkerEntry :=
-  { form := "-ga:y", sr := .ss, gloss := "if (unlikely condition)", hasSubjectMarking := false }
+  { form := "-ga:y", sr := .ss, gloss := "if (unlikely condition)", relations := [.conditional],
+    hasSubjectMarking := false }
 
 /-- -n: neutral (not SR-sensitive), sequential or simultaneous action, manner.
     No subject marking. The most semantically general medial marker. -/
 def n : MarkerEntry :=
-  { form := "-n", sr := .neutral, gloss := "and/while/by (sequential/simultaneous/manner)", hasSubjectMarking := false }
+  { form := "-n", sr := .neutral, gloss := "and/while/by (sequential/simultaneous/manner)",
+    relations := [.sequential, .simultaneous, .manner], hasSubjectMarking := false }
 
 /-- All medial clause markers. -/
 def allMarkers : List MarkerEntry :=
   [ku, k, tay, taka, kab, tayKab, lak, gay, n]
 
--- ============================================================================
--- § Derived properties
--- ============================================================================
+/-! ### Derived properties -/
 
 /-- SS markers. -/
 def ssMarkers : List MarkerEntry := allMarkers.filter (·.sr == .ss)
@@ -113,39 +127,27 @@ def neutralMarkers : List MarkerEntry := allMarkers.filter (·.sr == .neutral)
 def markersWithSubjAgreement : List MarkerEntry :=
   allMarkers.filter (·.hasSubjectMarking)
 
--- ============================================================================
--- § Verification theorems
--- ============================================================================
-
-/-- 9 medial clause markers in total. -/
-theorem marker_count : allMarkers.length = 9 := rfl
-
-/-- 5 SS markers. -/
-theorem ss_count : ssMarkers.length = 5 := rfl
-
-/-- 2 DS markers. -/
-theorem ds_count : dsMarkers.length = 2 := rfl
-
-/-- 2 neutral markers. -/
-theorem neutral_count : neutralMarkers.length = 2 := rfl
-
-/-- 9 = 5 + 2 + 2: SS + DS + neutral exhausts the inventory. -/
-theorem sr_partition :
-    ssMarkers.length + dsMarkers.length + neutralMarkers.length
-    = allMarkers.length := rfl
-
-/-- No SS marker triggers subject agreement. -/
-theorem ss_no_subject_marking :
-    ssMarkers.all (! ·.hasSubjectMarking) = true := rfl
-
-/-- Every DS marker triggers subject agreement. -/
-theorem ds_has_subject_marking :
-    dsMarkers.all (·.hasSubjectMarking) = true := rfl
-
-/-- Subject marking correlates with DS or neutral status: it never appears
-    with SS. This reflects the structural logic — when subjects are the same,
-    marking the subject on the medial verb would be redundant. -/
-theorem subject_marking_implies_not_ss :
-    markersWithSubjAgreement.all (·.sr != .ss) = true := rfl
+/-- Manambu's clause-chaining system: medial-final chains with a binary switch-reference system
+that two neutral markers escape, medial verbs partially inflected for the subject under
+different-subject marking, relative tense fused with the marking, no mood or aspect, a dedicated
+dependent-clause negator, both bridging constructions, and dependent clauses on their own
+([sarvasy-aikhenvald-2025] Ch. 6, [aikhenvald-2008]). -/
+def chaining : Clause.Chaining.System where
+  direction := .medialFinal
+  srSystem := if dsMarkers.isEmpty then .none else .ssDs
+  srTarget := some .subjectOnly
+  srObligatory := neutralMarkers.isEmpty
+  srMarkedness := some .ssUnmarked
+  medialMorph := {
+    tense := .restricted
+    agreement := if markersWithSubjAgreement.isEmpty then .absent
+      else if markersWithSubjAgreement.length = allMarkers.length then .full else .restricted
+    mood := .absent
+    polarity := .restricted
+    aspect := .absent }
+  relationsMarked := (allMarkers.flatMap (·.relations)).eraseDups
+  hasRecapLinkage := true
+  hasSummaryLinkage := true
+  medialCanStandAlone := true
 
 end Manambu.MedialVerbs
