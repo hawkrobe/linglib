@@ -21,6 +21,8 @@ polarity is the sign of the association.
   indexes, or shares one with it.
 * `GroundedField.lift`, `GroundedField.liftMI`: the personae compatible with a variant on each
   reading.
+* `Persona`: a maximal independent set of the incompatibility graph, and
+  `GroundedField.personae`, the personae that meet a variant.
 * `AssociationField.ground`: the grounded field of an association field over the dimensions.
 
 ## Main results
@@ -78,6 +80,22 @@ theorem liftMI_subset_liftMI (h : F.indexes v₁ ⊆ F.indexes v₂) : F.liftMI 
   Finset.monotone_filter_right _ λ _ _ hπ hd => hπ (hd.mono_left h)
 
 end GroundedField
+
+/-- A persona is a maximal independent set of the incompatibility graph, a maximal consistent
+set of properties. -/
+abbrev Persona {P : Type*} (G : SimpleGraph P) [Fintype P] [DecidableEq P] [DecidableRel G.Adj] :
+    Type _ :=
+  {π : Finset P // π ∈ G.maximalIndepSets}
+
+/-- The personae that meet a variant. -/
+def GroundedField.personae {Variant P : Type*} {G : SimpleGraph P} [Fintype P] [DecidableEq P]
+    [DecidableRel G.Adj] (F : GroundedField Variant G) (v : Variant) : Finset (Persona G) :=
+  Finset.univ.filter λ π => F.Meets v π.1
+
+@[simp] theorem GroundedField.mem_personae {Variant P : Type*} {G : SimpleGraph P} [Fintype P]
+    [DecidableEq P] [DecidableRel G.Adj] {F : GroundedField Variant G} {v : Variant}
+    {π : Persona G} : π ∈ F.personae v ↔ F.Meets v π.1 := by
+  simp [GroundedField.personae]
 
 /-- An association field over the dimensions grounds as the poles whose polarity is the sign
 of the variant's association with their dimension. -/
