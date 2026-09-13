@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Data.Rat.Defs
+import Mathlib.Order.Partition.Finpartition
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Data.Finset.Lattice.Fold
 import Mathlib.Data.Finset.Max
@@ -46,6 +47,8 @@ explanation models) can use decision problems without pulling in the
 
 * `DecisionProblem.questionUtility_eq_expectedValueSampleInfo`:
   `EUV(Q) = EVSI(Q)` ([van-rooy-2003], p. 742).
+* `DecisionProblem.questionUtility_anti_of_le`: `EUV` is antitone in the `Finpartition`
+  refinement order.
 * `DecisionProblem.questionUtility_mono_of_refines`: `EUV` is monotone under
   partition refinement — the `⟹` direction of [van-rooy-2003]'s §4.1 Fact
   (p. 743).
@@ -545,6 +548,23 @@ theorem questionUtility_mono_of_refines [Fintype W] (dp : DecisionProblem K W A)
   rw [questionUtility_eq dp acts coarse hprior, questionUtility_eq dp acts fine hprior,
     hcell]
   linarith [huv]
+
+/-- Question utility is antitone in the `Finpartition` refinement order: the finer partition
+question is worth at least as much. -/
+theorem questionUtility_anti_of_le [Fintype W] (dp : DecisionProblem K W A) (acts : Finset A)
+    {P Q : Finpartition (Finset.univ : Finset W)} (h : P ≤ Q) (hprior : ∀ w, 0 ≤ dp.prior w) :
+    questionUtility dp acts Q.parts ≤ questionUtility dp acts P.parts := by
+  choose! assign hmem hsub using λ f (hf : f ∈ P.parts) => h hf
+  refine questionUtility_mono_of_refines dp acts assign hmem (λ c hc => ?_)
+    (λ f₁ hf₁ f₂ hf₂ hne => P.disjoint hf₁ hf₂ hne) hprior
+  ext x
+  simp only [Finset.mem_sup, Finset.mem_filter, id]
+  constructor
+  · intro hx
+    obtain ⟨f, hf, hxf⟩ := P.exists_mem (Finset.mem_univ x)
+    exact ⟨f, ⟨hf, Q.eq_of_mem_parts (hmem f hf) hc (hsub f hf hxf) hx⟩, hxf⟩
+  · rintro ⟨f, ⟨hf, rfl⟩, hxf⟩
+    exact hsub f hf hxf
 
 end Refinement
 

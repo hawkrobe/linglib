@@ -1,6 +1,7 @@
 import Linglib.Semantics.Questions.Partition.Basic
 import Linglib.Core.Probability.Decision.Basic
 import Mathlib.Data.Set.Card
+import Mathlib.Order.Partition.Finpartition
 import Mathlib.Tactic.FieldSimp
 
 /-!
@@ -153,10 +154,9 @@ theorem sum_compl_prob_eq_one_iff {W : Type*} [Fintype W] [DecidableEq W]
 
 /-! ### Coarsening and negative attributes -/
 
-/-- Q properly coarsens Q' over a finite domain: Q coarsens Q' with strictly fewer cells
-([merin-1999] p. 262 definition). -/
-def IsProperCoarsening {M : Type*} (q q' : Setoid M) : Prop :=
-  q' ≤ q ∧ Nat.card (Quotient q) < Nat.card (Quotient q')
+/-- Q properly coarsens Q': Q is strictly coarser than Q' in the refinement order, which over
+a finite domain is coarsening with strictly fewer cells ([merin-1999] p. 262 definition). -/
+def IsProperCoarsening {M : Type*} (q q' : Setoid M) : Prop := q' < q
 
 /-- `R` is a **negative attribute** with respect to `q` ([merin-1999] p. 263): the complement
 of `R` is a cell of `q`, and the two-cell partition `{R, ¬R}` properly coarsens `q`. Negativity
