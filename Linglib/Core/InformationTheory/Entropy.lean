@@ -39,6 +39,8 @@ conditioning reduces entropy.
 * `measureMutualInfo_eq_toReal_klDiv`, `measureMutualInfo_nonneg`,
   `measureMutualInfo_parallelComp_id_comp_le` (data processing).
 * `chain_rule`, `mutualInfo_eq_entropy_sub_condEntropy`, `condEntropy_le_entropy`.
+* `condEntropy_uniformOn_univ`: on a finite population under the uniform measure, conditional
+  entropy is a formula in counts.
 
 ## References
 
@@ -330,5 +332,42 @@ theorem condEntropy_le_entropy : H[X | Y ; μ] ≤ H[X ; μ] :=
   sub_nonneg.mp (mutualInfo_eq_entropy_sub_condEntropy hX hY μ ▸ mutualInfo_nonneg hX hY μ)
 
 end entropy
+
+/-! ### Empirical entropies of a finite population
+
+Under the uniform measure on a finite type, entropies are counts. -/
+
+section Empirical
+
+variable {Ω : Type*} [MeasurableSpace Ω] [MeasurableSingletonClass Ω]
+
+/-- Conditioning the uniform measure on a finite type by a set restricts it to the set. -/
+theorem uniformOn_univ_cond [Finite Ω] (A : Set Ω) :
+    (uniformOn (Set.univ : Set Ω))[|A] = uniformOn A := by
+  rw [uniformOn, uniformOn, cond_cond_eq_cond_inter' .univ (Set.toFinite A).measurableSet
+    (Measure.count_apply_lt_top.2 Set.finite_univ).ne, Set.univ_inter]
+
+/-- The conditional entropy of one attribute of a finite population given another, under the
+uniform measure: each fibre of `Y` weighted by its share of the population, with the entropy of
+the distribution of `X` on the fibre, all as counts. -/
+theorem condEntropy_uniformOn_univ [Fintype Ω] {S T : Type*} [MeasurableSpace S]
+    [MeasurableSingletonClass S] [Fintype S] [DecidableEq S] [MeasurableSpace T]
+    [MeasurableSingletonClass T] [Fintype T] [DecidableEq T] (X : Ω → S) (Y : Ω → T) :
+    H[X | Y ; uniformOn (Set.univ : Set Ω)]
+      = ∑ y, ((Finset.univ.filter (Y · = y)).card / Fintype.card Ω : ℝ)
+          * ∑ x, negMulLog (((Finset.univ.filter λ ω => Y ω = y ∧ X ω = x).card
+              / (Finset.univ.filter (Y · = y)).card : ℝ)) := by
+  have hY : ∀ y, (Y ⁻¹' {y}).ncard = (Finset.univ.filter (Y · = y)).card := λ y => by
+    rw [← Set.ncard_coe_finset]; congr; ext; simp
+  have hXY : ∀ y x, (Y ⁻¹' {y} ∩ X ⁻¹' {x}).ncard
+      = (Finset.univ.filter λ ω => Y ω = y ∧ X ω = x).card := λ y x => by
+    rw [← Set.ncard_coe_finset]; congr; ext; simp
+  rw [condEntropy_eq_sum X (measurable_of_finite Y)]
+  refine Finset.sum_congr rfl λ y _ => ?_
+  rw [uniformOn_univ_cond, entropy_eq_sum (measurable_of_finite X), uniformOn_real_apply,
+    Set.univ_inter, Set.ncard_univ, Nat.card_eq_fintype_card]
+  simp_rw [uniformOn_real_apply, hY, hXY]
+
+end Empirical
 
 end InformationTheory
