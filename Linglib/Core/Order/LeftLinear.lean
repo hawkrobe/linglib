@@ -30,6 +30,10 @@ class IsLeftLinear (M : Type*) [PartialOrder M] : Prop where
   /-- The predecessors of any element are pairwise comparable. -/
   comparable_of_le_common : ∀ ⦃a b c : M⦄, a ≤ c → b ≤ c → a ≤ b ∨ b ≤ a
 
+/-- A linear order is left-linear. -/
+instance (priority := 100) {M : Type*} [LinearOrder M] : IsLeftLinear M :=
+  ⟨λ a b _ _ _ => le_total a b⟩
+
 namespace IsLeftLinear
 
 variable {M : Type*} [PartialOrder M] [IsLeftLinear M]

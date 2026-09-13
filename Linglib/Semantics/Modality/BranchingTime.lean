@@ -2,45 +2,43 @@ import Linglib.Core.Order.LeftLinear
 import Linglib.Semantics.Tense.Defs
 import Mathlib.Order.Zorn
 import Mathlib.Order.Directed
+import Mathlib.Order.Preorder.Finite
 
 /-!
-# Branching time (the 𝔗 model)
+# Branching time
 
-The **branching-times** model of Prior–Thomason: an order-theoretic tree of **moments**,
-whose maximal chains are the **histories**. This is the sibling of the **T×W parallel-worlds**
-model in `Semantics/Modality/HistoricalAlternatives.lean`; the two are inter-translatable by
-quotienting the historical-equivalence relation ([rumberg-lauer-2023] §4.1.3, deferred).
-
-A branching-time structure is a left-linear (`Core.Order.IsLeftLinear`: no backward
-branching) and downward-directed (`IsCodirectedOrder`: historically connected) partial order
-([rumberg-lauer-2023] Def 1). Histories are mathlib `Flag`s (maximal chains).
-
-Temporal-modal formulas are evaluated in one of two **postsemantics** ([rumberg-lauer-2023]
-§3.2): **Peircean** at a moment (future truth requires settledness) and **Ockhamist** at a
-`moment/history` pair (future truth is history-relative). Settledness `oSettled` (`□_O`)
-quantifies over the histories through a moment.
-
-The conceptual heart ([rumberg-lauer-2023] pp. 541, 546): the Ockhamist **history parameter
-is not fixed by a context of utterance** ("there is no actual future") — only the moment is.
-`oSettled` is precisely the operator that quantifies the unfixed parameter away, which is why
-the felicity facts (eventive futurate present, apprehensionals) turn on it.
+This file defines the branching-time model of [prior-1967] and Thomason: an order-theoretic
+tree of moments whose maximal chains are the histories, and the two classic postsemantics
+over it. A branching-time structure is a left-linear (`Core.Order.IsLeftLinear`, no backward
+branching) and downward-directed (`IsCodirectedOrder`, historically connected) partial order,
+and its histories are mathlib `Flag`s. Peircean truth is at a moment, and future truth
+requires settledness; Ockhamist truth is at a moment–history pair, and future truth is
+history-relative, with settledness the quantifier over the histories through the moment. The
+Ockhamist history parameter is not fixed by a context of utterance, since there is no actual
+future; only the moment is, which is why settledness carries the felicity facts.
 
 ## Main definitions
 
-* `IsBranchingTime`, `IsBranchingMeetTree` — the frame ([rumberg-lauer-2023] Def 1; the
-  meet-tree form adds branching points as `⊓`, R&L Def 1(ii) / fn. 9).
-* `Hist` — the histories through a moment.
-* `pPast`; `oAtom`/`oPast`/`oFut`/`oSettled`/`oSupervaluation` — the Peircean/Ockhamist operators.
-* `IsInevitable`, `PresumedSettled`, `IsSettledWhether` — settledness (context-relative).
-* `kaufmannPresent`, `kaufmannPast` — [kaufmann-2005-truth]'s non-deictic tenses, reconstructed in
-  Ockhamist branching time by [rumberg-lauer-2023] §4.1.3 (NOT framework-neutral primitives).
+* `IsBranchingTime`, `IsBranchingMeetTree` — the frame, and its form with branching points
+  as meets.
+* `Hist` — the histories through a moment; `flagOfMax` — the history below a maximal moment.
+* `pPast`, `oAtom`, `oPast`, `oFut`, `oSettled`, `oSupervaluation` — the Peircean and
+  Ockhamist operators.
+* `IsInevitable` — settled future truth, the Peircean future.
 
 ## Main results
 
-* `oSettled_oAtom` — atomic propositions are settled ([rumberg-lauer-2023] fn. 10).
-* `isInevitable_iff_oSupervaluation_oFut` — Peircean future = Ockhamist settled future.
-* `Iic_subset_of_mem` — the past sits inside every history through a moment (the past is
-  history-independent), the payoff of left-linearity.
+* `Iic_subset_of_mem` — the past sits inside every history through a moment, the payoff of
+  left-linearity; `exists_mem_gt_of_lt` — a history cannot stop at a moment with a future.
+* `oSettled_oAtom` — atomic propositions are settled.
+* `isInevitable_iff_oSupervaluation_oFut` — the Peircean future is the Ockhamist settled future.
+* `exists_isMax_eq_flagOfMax`, `forall_hist_iff`, `isInevitable_iff` — on a finite frame every
+  history is the down-set of a maximal moment, so settledness is decidable.
+
+## References
+
+* [prior-1967]
+* [rumberg-lauer-2023]
 -/
 
 namespace BranchingTime
@@ -49,33 +47,27 @@ variable {M : Type*}
 
 /-! ### The frame -/
 
-/-- A **branching-time structure** ([rumberg-lauer-2023] Def 1): a left-linear, downward-directed
-    partial order. Left-linearity (`IsLeftLinear`) is no backward branching; downward-directedness
-    (`IsCodirectedOrder`) is historical connectedness. Weaker than R&L Def 1(ii), which asks for a
-    *greatest* common lower bound (fn. 9) — that strengthening is `IsBranchingMeetTree`. -/
+/-- A branching-time structure: a left-linear, downward-directed partial order. Left-linearity
+is no backward branching; downward-directedness is historical connectedness. -/
 class IsBranchingTime (M : Type*) [PartialOrder M] : Prop
     extends IsLeftLinear M, IsCodirectedOrder M
 
-/-- The **meet-tree** form ([rumberg-lauer-2023] Def 1(ii) + fn. 9): branching points exist as
-    meets, `m₁ ⊓ m₂` being the moment where the histories of `m₁` and `m₂` diverge. (The same `⊓`
-    that `Core.Order.Branching.Positions` uses for syntactic least common ancestors.) -/
+/-- The meet-tree form: branching points exist as meets, `m₁ ⊓ m₂` being the moment where the
+histories of `m₁` and `m₂` diverge. -/
 class IsBranchingMeetTree (M : Type*) [SemilatticeInf M] : Prop
     extends IsLeftLinear M
 
 /-! ### Histories -/
 
-/-- The **histories** through a moment: the maximal `≤`-chains (mathlib `Flag`) containing `m`
-    ([rumberg-lauer-2023] Def 2). -/
+/-- The histories through a moment: the maximal chains containing it. -/
 def Hist [PartialOrder M] (m : M) : Set (Flag M) := {h | m ∈ h}
 
 /-- Every moment lies on a history. -/
 theorem hist_nonempty [PartialOrder M] (m : M) : (Hist m).Nonempty :=
   let ⟨s, hs⟩ := Flag.exists_mem m; ⟨s, hs⟩
 
-/-- The past of a moment sits inside **every** history through it — the past is
-    history-independent. The payoff of left-linearity: `Iic m` is a chain
-    (`IsLeftLinear.isChain_Iic`), so `(h : Set M) ∪ Iic m` is a chain extending the maximal
-    chain `h`, forcing `Iic m ⊆ h`. -/
+/-- The past of a moment sits inside every history through it: `Iic m` is a chain by
+left-linearity, so it extends the maximal chain `h` and is therefore contained in it. -/
 theorem Iic_subset_of_mem [PartialOrder M] [IsLeftLinear M] {m : M} {h : Flag M}
     (hm : m ∈ h) : Set.Iic m ⊆ (h : Set M) := by
   have hchain : IsChain (· ≤ ·) ((h : Set M) ∪ Set.Iic m) := by
@@ -93,10 +85,8 @@ theorem Iic_subset_of_mem [PartialOrder M] [IsLeftLinear M] {m : M} {h : Flag M}
   have hmem : x ∈ (h : Set M) ∪ Set.Iic m := Or.inr hx
   rwa [← heq] at hmem
 
-/-- A history through a non-maximal moment contains a **future** moment: if `m ∈ h` and `m < x`
-    for some `x`, then `h` contains some `y > m`. (Otherwise `insert x h` would be a strictly
-    larger chain, contradicting `h`'s maximality.) The engine of inevitability reasoning: a
-    history cannot stop at a moment that still has a future. -/
+/-- A history through a non-maximal moment contains a later moment: otherwise inserting a
+successor would give a strictly larger chain. -/
 theorem exists_mem_gt_of_lt [PartialOrder M] {m x : M} {h : Flag M}
     (hm : m ∈ h) (hx : m < x) : ∃ y ∈ h, m < y := by
   by_contra hcon
@@ -121,99 +111,63 @@ theorem exists_mem_gt_of_lt [PartialOrder M] {m x : M} {h : Flag M}
 
 /-! ### Postsemantics
 
-`MProp` = truth at a moment (Peircean); `OProp` = truth at a moment/history pair (Ockhamist;
-intended `m ∈ h`). Atomic propositions depend only on the moment ([rumberg-lauer-2023] Def 3). -/
+`MProp` is truth at a moment (Peircean); `OProp` is truth at a moment–history pair
+(Ockhamist, intended `m ∈ h`). Atomic propositions depend only on the moment. -/
 
 /-- A Peircean proposition: truth at a moment. -/
 abbrev MProp (M : Type*) := M → Prop
 
-/-- An Ockhamist proposition: truth at a moment/history pair. -/
+/-- An Ockhamist proposition: truth at a moment–history pair. -/
 abbrev OProp (M : Type*) [PartialOrder M] := M → Flag M → Prop
 
-/-- Peircean past: `φ` held at some earlier moment ([rumberg-lauer-2023] §3.2.1). -/
-def pPast [PartialOrder M] (φ : MProp M) : MProp M := fun m => ∃ m' < m, φ m'
+/-- Peircean past: `φ` held at some earlier moment. -/
+def pPast [PartialOrder M] (φ : MProp M) : MProp M := λ m => ∃ m' < m, φ m'
 
-/-- Lift a moment-proposition to an Ockhamist one, ignoring the history (atoms depend only on
-    the moment). -/
-def oAtom [PartialOrder M] (φ : MProp M) : OProp M := fun m _h => φ m
+/-- Lift a moment-proposition to an Ockhamist one, ignoring the history. -/
+def oAtom [PartialOrder M] (φ : MProp M) : OProp M := λ m _h => φ m
 
 /-- Ockhamist past: `φ` held at some earlier moment, along the same history. -/
-def oPast [PartialOrder M] (φ : OProp M) : OProp M := fun m h => ∃ m' < m, φ m' h
+def oPast [PartialOrder M] (φ : OProp M) : OProp M := λ m h => ∃ m' < m, φ m' h
 
-/-- Ockhamist future (`F_O`): `φ` holds at some later moment **on the fixed history `h`**
-    ([rumberg-lauer-2023] §3.2.2). -/
+/-- Ockhamist future: `φ` holds at some later moment on the fixed history. -/
 def oFut [PartialOrder M] (φ : OProp M) : OProp M :=
-  fun m h => ∃ m' ∈ h, m < m' ∧ φ m' h
+  λ m h => ∃ m' ∈ h, m < m' ∧ φ m' h
 
-/-- Ockhamist settledness (`□_O`): `φ` holds at `m` on **every** history through `m`
-    ([rumberg-lauer-2023] §3.2.2). The history argument is ignored — settledness quantifies
-    the (contextually unfixed) history parameter away. -/
+/-- Ockhamist settledness: `φ` holds at `m` on every history through `m`. The history argument
+is ignored, since settledness quantifies the unfixed history parameter away. -/
 def oSettled [PartialOrder M] (φ : OProp M) : OProp M :=
-  fun m _h => ∀ h' ∈ Hist m, φ m h'
+  λ m _h => ∀ h' ∈ Hist m, φ m h'
 
-/-- Supervaluationist truth at a moment (Thomason 1970): `□_O` read off the moment. The third
-    classic postsemantics; makes the settledness connection explicit. -/
+/-- Supervaluationist truth at a moment: settledness read off the moment. -/
 def oSupervaluation [PartialOrder M] (φ : OProp M) : MProp M :=
-  fun m => ∀ h ∈ Hist m, φ m h
+  λ m => ∀ h ∈ Hist m, φ m h
 
-/-! ### Settledness (context-relative)
-
-The objective "all histories through `m` agree" is the special case of agreement over the
-histories compatible with a context/common ground ([phillips-2021]'s "presumed settled" is
-over `∩cg`, not all histories; the T×W sibling carries the same `cg` parameter). -/
-
-/-- A future-directed claim `φ` is **inevitable** at `m`: on every history through `m`, `φ`
-    eventually holds. This is the Peircean future. -/
+/-- A future-directed claim `φ` is inevitable at `m`: on every history through `m`, `φ`
+eventually holds. This is the Peircean future. -/
 def IsInevitable [PartialOrder M] (φ : MProp M) (m : M) : Prop :=
   ∀ h ∈ Hist m, ∃ m' ∈ h, m < m' ∧ φ m'
 
-/-- **Presumed settled-whether** relative to a context set `C` of histories: all `C`-histories
-    agree on whether `φ` will hold ([phillips-2021]'s "(not) presumed settled"). -/
-def PresumedSettled [PartialOrder M] (C : Set (Flag M)) (φ : MProp M) (m : M) : Prop :=
-  (∀ h ∈ C, ∃ m' ∈ h, m < m' ∧ φ m') ∨ (∀ h ∈ C, ¬ ∃ m' ∈ h, m < m' ∧ φ m')
-
-/-- Objective settledness = presumed-settled relative to the maximal context (all histories). -/
-abbrev IsSettledWhether [PartialOrder M] (φ : MProp M) (m : M) : Prop :=
-  PresumedSettled (Hist m) φ m
-
-/-! ### Tense translations ([kaufmann-2005-truth] via [rumberg-lauer-2023] §4.1.3)
-
-`PRESENT Q := Q ∨ F_O Q`, `PAST Q := P_O Q`. These encode [kaufmann-2005-truth]'s non-deictic-present
-analysis (morphological present = non-pastness) reconstructed in Ockhamism — *not* neutral
-branching primitives ([schulz-2008]'s Peircean reconstruction gives the same surface forms). -/
-
-/-- [kaufmann-2005-truth]'s present (non-deictic), Ockhamist reconstruction. -/
-def kaufmannPresent [PartialOrder M] (φ : OProp M) : OProp M := fun m h => φ m h ∨ oFut φ m h
-
-/-- [kaufmann-2005-truth]'s past, Ockhamist reconstruction. -/
-def kaufmannPast [PartialOrder M] (φ : OProp M) : OProp M := oPast φ
-
 /-! ### Theorems -/
 
-/-- **Atomic propositions are settled** ([rumberg-lauer-2023] fn. 10): the valuation depends
-    only on the moment, so `□_O Q ↔ Q`. Uses history-nonemptiness. -/
+/-- Atomic propositions are settled: the valuation depends only on the moment. -/
 @[simp] theorem oSettled_oAtom [PartialOrder M] (φ : MProp M) (m : M) (h : Flag M) :
     oSettled (oAtom φ) m h ↔ φ m := by
   unfold oSettled oAtom
-  refine ⟨fun hall => ?_, fun hφ _ _ => hφ⟩
+  refine ⟨λ hall => ?_, λ hφ _ _ => hφ⟩
   obtain ⟨h', hh'⟩ := hist_nonempty m
   exact hall h' hh'
 
-/-- **Peircean future = Ockhamist settled future** ([rumberg-lauer-2023] §3.2): inevitability
-    of `φ` is `□_O F_O φ` read off the moment. Holds by construction — the two postsemantics'
-    notions of "settled that φ will happen" coincide. -/
+/-- The Peircean future is the Ockhamist settled future read off the moment. -/
 theorem isInevitable_iff_oSupervaluation_oFut [PartialOrder M] (φ : MProp M) (m : M) :
     IsInevitable φ m ↔ oSupervaluation (oFut (oAtom φ)) m := Iff.rfl
 
 /-! ### Grounding in the library's tense cells
 
-The Ockhamist past/future operators land in the same comparison cells as the rest of the library's
-tense (`Tense.past`/`Tense.future`, `Semantics/Tense/Defs.lean`) rather than re-stipulating
-"earlier"/"later": `oPast`'s witness compares into `Tense.past` against the evaluation moment,
-`oFut`'s into `Tense.future`, so branching-time tense and grammatical tense are the *same*
-comparison. These are the **linear-frame** reductions (no branching, so the comparison is total on
-all of `M`); for a genuinely branching frame the comparison lives on each history's chain order
-(`Flag`'s `LinearOrder`), `oFut_oAtom_holds_on_hist`. -/
+The Ockhamist past and future operators land in the same comparison cells as the rest of the
+library's tense (`Tense.past`, `Tense.future`): `oPast`'s witness compares into `Tense.past`
+against the evaluation moment and `oFut`'s into `Tense.future`. These are the linear-frame
+reductions; on a genuinely branching frame the comparison lives on each history's chain order
+(`oFut_oAtom_holds_on_hist`). -/
 
 @[simp] theorem oPast_oAtom_iff_holds {M : Type*} [LinearOrder M]
     (φ : MProp M) (m : M) (h : Flag M) :
@@ -225,10 +179,8 @@ all of `M`); for a genuinely branching frame the comparison lives on each histor
     oFut (oAtom φ) m h ↔ ∃ m' ∈ h, compare m' m ∈ Tense.future ∧ φ m' := by
   simp only [oFut, oAtom, Tense.compare_mem_future]
 
-/-- **Genuine-branching grounding** (`oFut` on any branching frame): the future witness comparison
-    lands in `Tense.future` over the history's own chain order (mathlib's `LinearOrder ↥h` for a
-    maximal chain `h`). So the Ockhamist future *along a history* is literally the tense-cell
-    future, with the chain supplying the linear order that `compare` requires. -/
+/-- The Ockhamist future along a history is the tense-cell future over the history's own chain
+order, mathlib's `LinearOrder ↥h` for a maximal chain. -/
 theorem oFut_oAtom_holds_on_hist {M : Type*} [PartialOrder M]
     [DecidableEq M] [DecidableRel (· ≤ · : M → M → Prop)] [DecidableLT M]
     (φ : MProp M) {m : M} {h : Flag M} (hm : m ∈ h) :
@@ -239,5 +191,69 @@ theorem oFut_oAtom_holds_on_hist {M : Type*} [PartialOrder M]
     exact ⟨⟨m', hm'⟩, hlt, hφ⟩
   · rintro ⟨x, hlt, hφ⟩
     exact ⟨x, x.2, hlt, hφ⟩
+
+/-! ### Finite frames
+
+On a finite frame every history is the down-set of a maximal moment, so quantifying over the
+histories through a moment is quantifying over the maximal moments above it, and settledness
+is decidable. -/
+
+section Finite
+
+variable [PartialOrder M] [IsLeftLinear M]
+
+/-- The history below a maximal moment: its down-set, a chain by left-linearity, which no
+chain properly extends. -/
+def flagOfMax (x : M) (hx : IsMax x) : Flag M where
+  carrier := Set.Iic x
+  Chain' := IsLeftLinear.isChain_Iic x
+  max_chain' := λ _ hc hsub => hsub.antisymm λ _ hy =>
+    (hc.total (hsub (Set.mem_Iic.2 le_rfl)) hy).elim (λ h => hx h) id
+
+@[simp] theorem mem_flagOfMax {x y : M} (hx : IsMax x) : y ∈ flagOfMax x hx ↔ y ≤ x := Iff.rfl
+
+variable [Finite M] [Nonempty M]
+
+/-- On a finite frame every history is the down-set of its greatest moment, which is maximal:
+a finite chain has a greatest element, the past of that element lies in the history, and a
+successor of it would extend the history. -/
+theorem exists_isMax_eq_flagOfMax (h : Flag M) : ∃ x, ∃ hx : IsMax x, h = flagOfMax x hx := by
+  obtain ⟨x, hx, hmax⟩ :=
+    WellFounded.has_min (wellFounded_gt (α := M)) (h : Set M) (h.maxChain.nonempty_iff.1 ‹_›)
+  have hx' : IsMax x := λ y hxy => by
+    by_contra hyx
+    obtain ⟨z, hz, hxz⟩ := exists_mem_gt_of_lt hx (lt_of_le_not_ge hxy hyx)
+    exact hmax z hz hxz
+  refine ⟨x, hx', Flag.ext (Set.ext λ y => ⟨λ hy => ?_, λ hy => Iic_subset_of_mem hx hy⟩)⟩
+  exact (h.le_or_le hy hx).elim id λ hxy => hx' hxy
+
+/-- Quantifying over the histories through `m` is quantifying over the maximal moments
+above `m`. -/
+theorem forall_hist_iff {m : M} {P : Flag M → Prop} :
+    (∀ h ∈ Hist m, P h) ↔ ∀ x, ∀ hx : IsMax x, m ≤ x → P (flagOfMax x hx) :=
+  ⟨λ H x hx hmx => H _ hmx, λ H h hm => by
+    obtain ⟨x, hx, rfl⟩ := exists_isMax_eq_flagOfMax h
+    exact H x hx hm⟩
+
+/-- Inevitability on a finite frame: below every maximal moment above `m` there is a later
+`φ`-moment. -/
+theorem isInevitable_iff (φ : MProp M) (m : M) :
+    IsInevitable φ m ↔ ∀ x, IsMax x → m ≤ x → ∃ m', m < m' ∧ m' ≤ x ∧ φ m' := by
+  rw [IsInevitable, forall_hist_iff]
+  exact forall_congr' λ x => forall_congr' λ _ => imp_congr_right λ _ =>
+    ⟨λ ⟨m', hm', hlt, hφ⟩ => ⟨m', hlt, hm', hφ⟩, λ ⟨m', hlt, hm', hφ⟩ => ⟨m', hm', hlt, hφ⟩⟩
+
+end Finite
+
+/-- Maximality is decidable on a finite frame. -/
+instance [PartialOrder M] [Fintype M] [DecidableRel (· ≤ · : M → M → Prop)] (x : M) :
+    Decidable (IsMax x) :=
+  decidable_of_iff (∀ b, x ≤ b → b ≤ x) Iff.rfl
+
+instance [PartialOrder M] [IsLeftLinear M] [Fintype M] [DecidableEq M]
+    [DecidableRel (· ≤ · : M → M → Prop)] [DecidableLT M] (φ : MProp M) [DecidablePred φ]
+    (m : M) : Decidable (IsInevitable φ m) :=
+  haveI : Nonempty M := ⟨m⟩
+  decidable_of_iff _ (isInevitable_iff φ m).symm
 
 end BranchingTime
