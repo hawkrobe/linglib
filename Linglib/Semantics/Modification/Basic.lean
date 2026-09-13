@@ -16,7 +16,7 @@ modifiers are deflationary (`m x ≤ x`), **privative** modifiers have output
 disjoint from the modificand, and **intersective** modifiers are
 meet-translations (`m x = q ⊓ x`; at `α → Prop`, pointwise conjunction).
 The intensional hierarchy (`Modification/Classification.lean`) and its
-single-world specializations (`Studies/Kamp1975.lean` § 1) are these
+single-world specializations (the bridge section of `Studies/Kamp1975.lean`) are these
 classes at the carriers `W → E → Prop` and `E → Prop`.
 
 ## Main declarations
