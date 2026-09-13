@@ -1,0 +1,160 @@
+[
+  {
+    "id": "poole2024_ex15",
+    "source": {"bibkey": "poole-2024", "paperLabel": "(15)"},
+    "language": "yaku1245",
+    "primaryText": "Min kinige-ni Masha-qa bier-di-m.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Min", "I"], ["kinige-ni", "book-ACC"], ["Masha-qa", "Masha-DAT"],
+      ["bier-di-m", "give-PST-1SG"]
+    ],
+    "translation": "I gave the book to Masha.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["acc", "yes"],
+      ["accessible", "yes"],
+      ["licensor", "yes"]
+    ],
+    "comment": "The shifted direct object is accusative; the accusative is obligatory.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "poole2024_ex15_bare",
+    "source": {"bibkey": "poole-2024", "paperLabel": "(15)"},
+    "language": "yaku1245",
+    "primaryText": "Min kinige Masha-qa bier-di-m.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Min", "I"], ["kinige", "book"], ["Masha-qa", "Masha-DAT"], ["bier-di-m", "give-PST-1SG"]
+    ],
+    "translation": "I gave the book to Masha.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["acc", "no"],
+      ["accessible", "yes"],
+      ["licensor", "yes"]
+    ],
+    "comment": "The shifted direct object cannot stay unmarked.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "poole2024_ex18",
+    "source": {"bibkey": "poole-2024", "paperLabel": "(18)"},
+    "language": "yaku1245",
+    "primaryText": "Min Masha-qa kinige bier-di-m.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Min", "I"], ["Masha-qa", "Masha-DAT"], ["kinige", "book"], ["bier-di-m", "give-PST-1SG"]
+    ],
+    "translation": "I gave Masha books/a book.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["acc", "no"],
+      ["accessible", "no"],
+      ["licensor", "yes"]
+    ],
+    "comment": "The direct object inside VP stays unmarked.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "poole2024_ex18_acc",
+    "source": {"bibkey": "poole-2024", "paperLabel": "(18)"},
+    "language": "yaku1245",
+    "primaryText": "Min Masha-qa kinige-ni bier-di-m.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Min", "I"], ["Masha-qa", "Masha-DAT"], ["kinige-ni", "book-ACC"],
+      ["bier-di-m", "give-PST-1SG"]
+    ],
+    "translation": "I gave Masha books/a book.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["acc", "yes"],
+      ["accessible", "no"],
+      ["licensor", "yes"]
+    ],
+    "comment": "Accusative on the unshifted direct object is infelicitous.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "poole2024_ex20a",
+    "source": {"bibkey": "vinokurova-2005", "paperLabel": "(20a)"},
+    "language": "yaku1245",
+    "primaryText": "Keskil Aisen-y kel-bet dien xomoj-do.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Keskil", "Keskil"], ["Aisen-y", "Aisen-ACC"], ["kel-bet", "come-NEG.AOR.3SG"],
+      ["dien", "that"], ["xomoj-do", "become.sad-PST.3SG"]
+    ],
+    "translation": "Keskil became sad that Aisen is not coming.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["acc", "yes"],
+      ["accessible", "yes"],
+      ["licensor", "yes"]
+    ],
+    "comment": "The raised embedded subject is accusative in the presence of a matrix DP.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "poole2024_ex20b",
+    "source": {"bibkey": "poole-2024", "paperLabel": "(20b)"},
+    "language": "yaku1245",
+    "primaryText": "Aisen-y massyyna atyylah-ar-a naada buol-la.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Aisen-y", "Aisen-ACC"], ["massyyna", "car"], ["atyylah-ar-a", "buy-AOR-3SG"],
+      ["naada", "need"], ["buol-la", "become-PST.3SG"]
+    ],
+    "translation": "It became necessary for Aisen to buy a car.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["acc", "yes"],
+      ["accessible", "yes"],
+      ["licensor", "no"]
+    ],
+    "comment": "No matrix DP unlocks the accusative.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "poole2024_ex20b_bare",
+    "source": {"bibkey": "poole-2024", "paperLabel": "(20b)"},
+    "language": "yaku1245",
+    "primaryText": "Aisen massyyna atyylah-ar-a naada buol-la.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Aisen", "Aisen"], ["massyyna", "car"], ["atyylah-ar-a", "buy-AOR-3SG"], ["naada", "need"],
+      ["buol-la", "become-PST.3SG"]
+    ],
+    "translation": "It became necessary for Aisen to buy a car.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["acc", "no"],
+      ["accessible", "yes"],
+      ["licensor", "no"]
+    ],
+    "lgrConformance": "WORD_ALIGNED"
+  }
+]
