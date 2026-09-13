@@ -18,9 +18,8 @@ shift to an alternative situation that keeps the agent fixed, used to quantify a
 across a believer's alternatives.
 
 Contexts may also be taken as primitive, with functions returning their coordinates
-[schlenker-2011]: a type is *context-like* when it maps to the canonical tuple
-(`ContextLike`), on the pattern of `SetLike` and `FunLike`, and the indexical lexicon and
-Kaplan's tenets are stated for any such type. `Context` itself is the terminal instance.
+[schlenker-2011]: Kaplan's tenets in `Reference/Kaplan.lean` take the coordinate projections
+as arguments, and `Context` supplies them.
 
 ## References
 
@@ -71,42 +70,5 @@ variable (s : Index W T)
 @[simp] theorem shiftWorldTime_toIndex : (c.shiftWorldTime s).toIndex = s := rfl
 
 end Context
-
-/-- A type whose elements carry the coordinates of a context of utterance, through a map to
-the canonical tuple. -/
-class ContextLike (C : Type*) (W E P T : outParam Type*) where
-  /-- The context an element determines. -/
-  toContext : C → Context W E P T
-
-namespace ContextLike
-
-variable {C W E P T : Type*} [ContextLike C W E P T]
-
-instance : ContextLike (Context W E P T) W E P T := ⟨id⟩
-
-@[simp] theorem toContext_self (c : Context W E P T) : toContext c = c := rfl
-
-/-- The agent of a context-like element. -/
-def agent (c : C) : E := (toContext c).agent
-
-/-- The addressee of a context-like element. -/
-def addressee (c : C) : E := (toContext c).addressee
-
-/-- The world of a context-like element. -/
-def world (c : C) : W := (toContext c).world
-
-/-- The time of a context-like element. -/
-def time (c : C) : T := (toContext c).time
-
-/-- The position of a context-like element. -/
-def position (c : C) : P := (toContext c).position
-
-@[simp] theorem agent_context (c : Context W E P T) : agent c = c.agent := rfl
-@[simp] theorem addressee_context (c : Context W E P T) : addressee c = c.addressee := rfl
-@[simp] theorem world_context (c : Context W E P T) : world c = c.world := rfl
-@[simp] theorem time_context (c : Context W E P T) : time c = c.time := rfl
-@[simp] theorem position_context (c : Context W E P T) : position c = c.position := rfl
-
-end ContextLike
 
 end Reference
