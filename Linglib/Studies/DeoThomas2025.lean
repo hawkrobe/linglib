@@ -1,4 +1,4 @@
-import Linglib.Semantics.Questions.Partition.Basic
+import Linglib.Semantics.Questions.Partition.Inquisitive
 import Linglib.Semantics.Presupposition.Defs
 import Linglib.Data.Examples.DeoThomas2025
 

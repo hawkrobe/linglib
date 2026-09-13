@@ -1,4 +1,4 @@
-import Linglib.Semantics.Questions.Partition.SubjectMatter
+import Linglib.Semantics.Questions.Partition.Basic
 import Linglib.Semantics.Attitudes.Desire.BestWorlds
 import Linglib.Semantics.Attitudes.Desire.Conditional
 import Linglib.Semantics.Presupposition.Basic
@@ -37,7 +37,7 @@ context (`undefined_of_insensitive`), which leaves the semantics Strawson upward
 ## Implementation notes
 
 * A question is a `Setoid`, its answers the cells; the question raised by a list of issues is
-  their `Setoid.subjectMatter`, and *p* is considered relative to a question when the question
+  their `Setoid.ofProps`, and *p* is considered relative to a question when the question
   settles it. Answers are ordered by the desires they entail, [kratzer-1981]'s ordering with
   entailment as satisfaction (`entailed`), and the best answers are the `MaximalFor` elements
   of that valuation.
@@ -216,14 +216,14 @@ theorem cpr_overgenerates :
 
 /-- The question considering whether the act is done and whether its benefit obtains
 (Figure 3). -/
-def qBenefit : Setoid World := Setoid.subjectMatter {act, benefit}
+def qBenefit : Setoid World := Setoid.ofProps {act, benefit}
 
 /-- The question considering whether the act is done and whether its cost obtains
 (Figure 5). -/
-def qCost : Setoid World := Setoid.subjectMatter {act, cost}
+def qCost : Setoid World := Setoid.ofProps {act, cost}
 
-instance : DecidableRel qBenefit := inferInstanceAs (DecidableRel (Setoid.subjectMatter _))
-instance : DecidableRel qCost := inferInstanceAs (DecidableRel (Setoid.subjectMatter _))
+instance : DecidableRel qBenefit := inferInstanceAs (DecidableRel (Setoid.ofProps _))
+instance : DecidableRel qCost := inferInstanceAs (DecidableRel (Setoid.ofProps _))
 
 /-- The salient propositions of the case, the test set of the anti-deckstacking constraint. -/
 def issues : List (Finset World) := [act, benefit, cost]
@@ -270,10 +270,10 @@ instance : DecidablePred (· ∈ belLu) := λ w => inferInstanceAs (Decidable (w
 def qStacked : Setoid LuWorld := Setoid.ker λ w => if w.rain then none else some w.happy
 
 /-- The level playing field (Figure 9). -/
-def qFair : Setoid LuWorld := Setoid.subjectMatter {rain, happy}
+def qFair : Setoid LuWorld := Setoid.ofProps {rain, happy}
 
 instance : DecidableRel qStacked := inferInstanceAs (DecidableRel (Setoid.ker _))
-instance : DecidableRel qFair := inferInstanceAs (DecidableRel (Setoid.subjectMatter _))
+instance : DecidableRel qFair := inferInstanceAs (DecidableRel (Setoid.ofProps _))
 
 /-- Without the constraint the deck-stacked question makes *Lu wants it not to rain* true,
 though Lu is indifferent to the weather; the level playing field makes it false. -/

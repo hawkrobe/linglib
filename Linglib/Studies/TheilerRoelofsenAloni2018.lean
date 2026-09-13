@@ -3,7 +3,7 @@ import Mathlib.Data.Setoid.Basic
 import Mathlib.Data.Setoid.Partition
 import Linglib.Semantics.Questions.Basic
 import Linglib.Semantics.Questions.Hamblin
-import Linglib.Semantics.Questions.Partition.Basic
+import Linglib.Semantics.Questions.Partition.Inquisitive
 
 /-!
 # Theiler, Roelofsen & Aloni (2018) — A Uniform Semantics for Declarative and Interrogative Complements
@@ -55,7 +55,7 @@ This file does **not** formalize the rest of the paper:
 
 The point of this file is the existence theorem for the "more
 expressive than partitions" claim, which is what the
-`Semantics/Questions/Basic.lean`/`Semantics/Questions/Partition/Basic.lean`
+`Semantics/Questions/Basic.lean`/`Semantics/Questions/Partition/Inquisitive.lean`
 pair was built to support.
 -/
 
