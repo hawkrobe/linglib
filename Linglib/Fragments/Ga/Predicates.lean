@@ -10,7 +10,7 @@ import Linglib.Syntax.Category.Verb.Complement.Takes
 # Gã complement-taking verbs
 
 This file records the Gã verbs of [allotey-2021] that embed clauses, as `Verb`
-entries whose frames are the clause types of `Fragments/Ga/Basic` and whose
+entries whose frames are the clause frames of `Fragments/Ga/Basic` and whose
 `ni`-frame reading carries the control relation. Several verbs alternate between
 frames: *kai* 'remember' takes the controlled `ni`-clause (ex 43) or a finite
 `akɛ`-clause (ex 89a), *kɛɛ* 'say' takes `akɛ` (exx 47–49) or an
@@ -36,11 +36,9 @@ in `form`.
 
 namespace Ga
 
-open EmbeddedClauseType
-
 /-- The reading of the controlled `ni`-frame under control relation `c`. -/
 def niReading (c : ControlType) : Verb.Reading :=
-  { frame := irrealisNi.frame, control := some c }
+  { frame := niFrame, control := some c }
 
 /-! ### Subject control -/
 
@@ -49,7 +47,7 @@ def niReading (c : ControlType) : Verb.Reading :=
     *má* (exx 88, 100). -/
 def tao : Verb where
   form := "tao"
-  frames := [irrealisNi.frame]
+  frames := [niFrame]
   readings := [niReading .subjectControl]
 
 /-- *sumɔ* 'like' — subject control, with no complementizer under negation
@@ -57,7 +55,7 @@ def tao : Verb where
     `ni` in the future (ex 92); the embedded pronoun cannot be obviative. -/
 def sumo : Verb where
   form := "sumɔ"
-  frames := [irrealisNi.frame]
+  frames := [niFrame]
   readings := [niReading .subjectControl]
 
 /-- *hiɛ-kã-nɔ* 'hope' (lit. 'face-place-upon') — subject control; `ni`
@@ -65,7 +63,7 @@ def sumo : Verb where
     school one day'). -/
 def hiekano : Verb where
   form := "hiɛ-kã-nɔ"
-  frames := [irrealisNi.frame]
+  frames := [niFrame]
   readings := [niReading .subjectControl]
 
 /-- *hiɛ-kpa-nɔ* 'forget' (lit. 'face-stop-upon') — subject control; `ni`
@@ -75,7 +73,7 @@ def hiekano : Verb where
     carries the irrealis marker (exx 102–103). -/
 def hiekpano : Verb where
   form := "hiɛ-kpa-nɔ"
-  frames := [irrealisNi.frame]
+  frames := [niFrame]
   readings := [niReading .subjectControl]
   implicative := some .negative
 
@@ -83,7 +81,7 @@ def hiekpano : Verb where
     obligatory (exx 36, 60a: 'I tried to close the door'). -/
 def miamihie : Verb where
   form := "mia-mi-hiɛ"
-  frames := [irrealisNi.frame]
+  frames := [niFrame]
   readings := [niReading .subjectControl]
 
 /-- *kai* 'remember' — subject control in the `ni`-frame (exx 42–43: *Mi kai ni
@@ -93,7 +91,7 @@ def miamihie : Verb where
     keeps it (ex 117a). -/
 def kai : Verb where
   form := "kai"
-  frames := [irrealisNi.frame, finiteAke.frame]
+  frames := [niFrame, Frame.finiteClause]
   readings := [niReading .subjectControl]
   implicative := some .positive
 
@@ -103,7 +101,7 @@ def kai : Verb where
     outside the three-way clause typology. -/
 def nye : Verb where
   form := "nyɛ"
-  frames := [irrealisNi.frame]
+  frames := [niFrame]
   readings := [niReading .subjectControl]
   implicative := some .positive
 
@@ -112,14 +110,14 @@ def nye : Verb where
     complement, 'agree that' (ex 105: *Osa kplɛnɔ ni/akɛ Taki á-tsɛ́ Momo*). -/
 def kpleno : Verb where
   form := "kplɛnɔ"
-  frames := [irrealisNi.frame, finiteAke.frame]
+  frames := [niFrame, Frame.finiteClause]
   readings := [niReading .subjectControl]
 
 /-- *kpaŋ* 'plan, decide' — subject control; only `ni` introduces the complement
     (ex 106) and the irrealis marker is obligatory (ex 89d). -/
 def kpang : Verb where
   form := "kpaŋ"
-  frames := [irrealisNi.frame]
+  frames := [niFrame]
   readings := [niReading .subjectControl]
 
 /-- *kpã-gbɛ* 'expect' — subject control (ex 53: *Ajele kpã-gbɛ ni e-ye
@@ -127,7 +125,7 @@ def kpang : Verb where
     not self-ascribe winning: the *de se* diagnostic). -/
 def kpagbe : Verb where
   form := "kpã-gbɛ"
-  frames := [irrealisNi.frame]
+  frames := [niFrame]
   readings := [niReading .subjectControl]
 
 /-- *dwɛŋ* 'think' — a finite complement with a low-tone, freely referring
@@ -136,7 +134,7 @@ def kpagbe : Verb where
     subject (ex 112: 'Aku thought to buy a book'). -/
 def dweng : Verb where
   form := "dwɛŋ"
-  frames := [finiteAke.frame, irrealisNi.frame]
+  frames := [Frame.finiteClause, niFrame]
   readings := [niReading .subjectControl]
   attitude := some (.doxastic .nonVeridical)
 
@@ -147,20 +145,20 @@ def dweng : Verb where
     literature after [karttunen-1971]; left unclassified. -/
 def wa : Verb where
   form := "wa"
-  frames := [irrealisNi.frame]
+  frames := [niFrame]
   readings := [niReading .objectControl]
 
 /-- *kenya* 'urge, encourage' — object control (exx 55, 60b). -/
 def kenya : Verb where
   form := "kenya"
-  frames := [irrealisNi.frame]
+  frames := [niFrame]
   readings := [niReading .objectControl]
 
 /-- *dai* 'force' — object control (ex 56: 'I forced Kofi to go to school'); a
     coercive causative whose complement is entailed ([nadathur-lauer-2020]). -/
 def dai : Verb where
   form := "dai"
-  frames := [irrealisNi.frame]
+  frames := [niFrame]
   readings := [niReading .objectControl]
   implicative := some .positive
   causative := some .force
@@ -169,13 +167,13 @@ def dai : Verb where
     (exx 57–58). -/
 def laka : Verb where
   form := "laka"
-  frames := [irrealisNi.frame]
+  frames := [niFrame]
   readings := [niReading .objectControl]
 
 /-- *bi* 'ask' — object control (ex 59: 'I asked Ayele to tell me a story'). -/
 def bi : Verb where
   form := "bi"
-  frames := [irrealisNi.frame]
+  frames := [niFrame]
   readings := [niReading .objectControl]
 
 /-- *kɛɛ* 'say, tell' — the paper's utterance-verb exemplar with a finite
@@ -184,7 +182,7 @@ def bi : Verb where
     ni é he noko-noko* 'John didn't tell Mary to buy anything'). -/
 def kee : Verb where
   form := "kɛɛ"
-  frames := [finiteAke.frame, irrealisNi.frame]
+  frames := [Frame.finiteClause, niFrame]
   readings := [niReading .objectControl]
   speechActVerb := true
 
@@ -195,7 +193,7 @@ def kee : Verb where
     book'). -/
 def le : Verb where
   form := "le"
-  frames := [finiteKeji.frame]
+  frames := [kejiFrame]
   attitude := some (.doxastic .veridical)
 
 /-- The clause-embedding verbs attested in the paper's examples. -/

@@ -23,6 +23,8 @@ Uyghur *de*.
 * `Complementizer.Licenser` — adnominal vs adverbal licensing category
 * `Complementizer.form` — the surface form with boundary notation
 * `Complementizer.IsBound` — affixal status, read off the morphs
+* `Complementizer.IsFinite` — finiteness of the typed clause, read off the
+  verb form
 * `Complementizer.toWord` — the `SCONJ` word a free complementizer
   projects
 
@@ -84,6 +86,12 @@ def IsBound (c : Complementizer) : Prop := ∀ m ∈ c.morphs, m.kind ≠ .free
 
 instance : DecidablePred IsBound := fun c => by
   unfold IsBound; infer_instance
+
+/-- Finite: the clause the morpheme types has a finite verb form. -/
+def IsFinite (c : Complementizer) : Prop := c.verbForm = some .Fin
+
+instance : DecidablePred IsFinite := fun c =>
+  inferInstanceAs (Decidable (c.verbForm = some .Fin))
 
 /-- The `SCONJ` word a free complementizer projects; `none` for bound
 clause-typers. -/
