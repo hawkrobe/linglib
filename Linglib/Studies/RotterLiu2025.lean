@@ -1,57 +1,42 @@
 import Linglib.Studies.LiuRotter2025
 import Linglib.Data.Examples.RotterLiu2025
-import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
 /-!
-# [rotter-liu-2025]: A Register Approach to Modal (Non-)Concord in English
+# Rotter and Liu (2025): A Register Approach to Modal (Non-)Concord in English
 
-Modal concord (MC) doubles a modal verb and a modal adverb of the same force
-(*may possibly*, *must certainly*) versus the single modal (SM, *may* / *must*).
-[rotter-liu-2025] asks whether MC differs from SM in meaning and social
-perception, and whether that difference is **register-sensitive** (varies with
-situational context). Its Experiment 1 is the no-context study [liu-rotter-2025]
-(formalized in `Studies/LiuRotter2025`); Experiment 2, formalized here, adds a
-CONTEXT factor — interlocutor relation, close vs distant — in a 2×2×2
-(NUMBER × FORCE × CONTEXT) design (306 participants, Prolific).
-
-Two analyses make precise, divergent predictions ([rotter-liu-2025] (3a)/(3b)):
-
-* **concord** ([zeijlstra-2007]): MC ≡ SM, so doubling has no commitment effect,
-  for any force.
-* **modal spread** ([giannakidou-mari-2018]): for universal modals doubling
-  *strengthens* commitment (*must certainly* > *must*); for existential modals it
-  merely *maintains* the default (*may possibly* = *may*).
-
-They differ only for universal modals. Experiment 2 replicates Experiment 1: the
-necessity strengthening (which adjudicates for spread), the possibility weakening
-(a residual *neither* analysis predicts, [rotter-liu-2025] §4.1), the
-confidence crossover, the warmth penalty, and lower grammaticality/appropriateness
-for MC. Crucially (RQ4) **no NUMBER × CONTEXT interaction** appears for any
-measure: MC's effect is not register-sensitive to interlocutor relation.
-
-## Main definitions
-* `concordPred` / `spreadPred` — the two analyses as `ModalForce → SignType`.
-* `RegisterSensitive` — a concord effect whose sign differs between contexts.
-* `observedShift` — the MC − SM cell-mean shift from `Data.Examples.RotterLiu2025`.
-
-## Main results
-* `analyses_diverge_only_on_necessity` — concord and spread agree on possibility,
-  differ on necessity: the single locus the data can adjudicate.
-* `necessity_adjudicates` — the necessity strengthening matches spread, not concord.
-* `possibility_residual` — the possibility weakening matches neither analysis.
-* `context_main_effect_preserves_sign` / `not_registerSensitive_of_main_effect` —
-  an additive CONTEXT main effect cancels in MC − SM, so it yields no
-  NUMBER × CONTEXT interaction: the structural reason for the RQ4 null.
-* `possibility_observed_vs_predicted` — the observed weakening ([liu-rotter-2025]'s
-  `spreadEffect`, −1) versus the spread *prediction* (0) is exactly the residual.
+This file formalizes the second experiment of the paper, which adds a context factor, a close
+or a distant interlocutor, to the modal concord design of [liu-rotter-2025]: modal concord
+doubles a modal verb with a modal adverb of the same force, *must certainly* and *may
+possibly*, against the single modal. The concord analysis of [zeijlstra-2007] predicts no
+effect of doubling on speaker commitment for either force, the modal-spread analysis of
+[giannakidou-mari-2018] a strengthening for universal modals and no effect for existential
+ones (`spreadPred`), so the two differ only on necessity (`analyses_diverge_only_on_necessity`).
+The cell means of the paper's tables are rows, and the shifts from the single modal to concord
+carry the signs of the first experiment in both contexts: strengthening for necessity, which
+adjudicates for spread (`necessity_adjudicates`), and weakening for possibility, which neither
+analysis predicts (`possibility_residual`), with confidence tracking commitment and a
+force-blind penalty on grammaticality, appropriateness, warmth, friendliness, and education.
+The paper's register question is answered by the absence of any number-by-context
+interaction: the sign of each concord shift is the same for the close and the distant
+interlocutor (`context_invariant`), as an additive context effect must leave it
+(`not_registerSensitive_of_main_effect`).
 
 ## Implementation notes
-Reuses the sign-prediction machinery of `Studies/LiuRotter2025`
-(`ShiftObservation`, `forceKey`, the rival accounts). Cell means live in
-`Data.Examples.RotterLiu2025` (×100, on the 1–7 scale); concrete shifts are
-exhibited via `#eval` while the kernel-checkable content is each analysis's
-systematic prediction.
+
+The analyses and the observed effects are signs, as in the first experiment's study, whose
+`ShiftObservation` and rival accounts are reused. Cell means are rows of
+`Data/Examples/RotterLiu2025.json`, hundredths of the 1–7 scale read structurally, so the
+observed signs are decided in the kernel; regression estimates are not formal commitments.
+Register sensitivity is a difference in sign between the two contexts, and the context main
+effect is modelled as one additive shift on both cells of a pair.
+
+## References
+
+* [rotter-liu-2025]
+* [liu-rotter-2025]
+* [zeijlstra-2007]
+* [giannakidou-mari-2018]
 -/
 
 namespace RotterLiu2025
@@ -60,149 +45,124 @@ open Modality (ModalForce)
 open Data.Examples (LinguisticExample)
 open LiuRotter2025 (ShiftObservation vacuityEffect spreadEffect forceKey)
 
-/-! ### The two analyses (precise predictions) -/
+/-! ### The two analyses -/
 
-/-- The concord analysis ([zeijlstra-2007]): MC is truth-conditionally
-    equivalent to SM, so doubling has no commitment effect — the force-blind null
-    `LiuRotter2025.vacuityEffect`. -/
+/-- The concord analysis: doubling has no commitment effect for any force. -/
 abbrev concordPred : ModalForce → SignType := vacuityEffect
 
-/-- The modal-spread analysis ([giannakidou-mari-2018]) as [rotter-liu-2025]
-    state it ((3a)/(3b)): doubling strengthens commitment for universal modals
-    (*must certainly* > *must*) but only maintains the default for existential
-    modals (*may possibly* = *may*). -/
+/-- The modal-spread analysis as the paper states it: doubling strengthens commitment for
+universal modals and maintains the default for existential ones. -/
 def spreadPred : ModalForce → SignType
-  | .necessity     => 1
+  | .necessity => 1
   | .weakNecessity => 1
-  | .possibility   => 0
+  | .possibility => 0
 
-@[simp] theorem spreadPred_necessity : spreadPred .necessity = 1 := rfl
-@[simp] theorem spreadPred_possibility : spreadPred .possibility = 0 := rfl
-
-/-- The two analyses agree for existential modals (no change) and differ only
-    for universal modals — the single locus where the data can adjudicate
-    ([rotter-liu-2025] (3a) vs (3b)). -/
+/-- The analyses agree on existential modals and differ on universal ones, the one place the
+data can adjudicate. -/
 theorem analyses_diverge_only_on_necessity :
     concordPred .possibility = spreadPred .possibility ∧
-    concordPred .necessity ≠ spreadPred .necessity := by decide
+      concordPred .necessity ≠ spreadPred .necessity := by
+  decide
 
-/-! ### Predicting against the data
-
-Each cell of `Data.Examples.RotterLiu2025` carries the Experiment 2 means
-(×100) for one CONTEXT × FORCE × NUMBER combination. An analysis predicts the
-*sign* of the concord shift MC − SM per force; the observed sign is read off the
-paired cell means. -/
-
-/-- The cell with the given `context` / `force` / `number` `paperFeatures`. -/
-def findCell (context force number : String) : Option LinguisticExample :=
-  Examples.all.find? fun e =>
-    e.paperFeatures.lookup "context" == some context &&
-    e.paperFeatures.lookup "force" == some force &&
-    e.paperFeatures.lookup "number" == some number
-
-/-- The observed MC − SM shift for `measure` in `context` under `force`. -/
-def observedShift (measure context : String) (force : ModalForce) :
-    Option ShiftObservation := do
-  let mc ← findCell context (forceKey force) "MC"
-  let sm ← findCell context (forceKey force) "SM"
-  pure { force := force, mcMean := ← mc.nat? measure, smMean := ← sm.nat? measure }
-
-/-- The universal case adjudicates: *must certainly* > *must* carries the
-    strengthening sign the spread analysis predicts and the concord analysis
-    does not. -/
-theorem necessity_adjudicates (o : ShiftObservation)
-    (hf : o.force = .necessity) (h : o.smMean < o.mcMean) :
+/-- The necessity strengthening carries the sign the spread analysis predicts and the concord
+analysis does not. -/
+theorem necessity_adjudicates (o : ShiftObservation) (hf : o.force = .necessity)
+    (h : o.smMean < o.mcMean) :
     o.observedSign = spreadPred o.force ∧ o.observedSign ≠ concordPred o.force := by
   have hs : o.observedSign = 1 := by
     show SignType.sign ((o.mcMean : ℤ) - o.smMean) = 1
     exact sign_pos (sub_pos.mpr (by exact_mod_cast h))
   rw [hs, hf]; decide
 
-/-- The existential weakening is a residual: *may possibly* < *may* carries a
-    sign that *neither* analysis predicts — both predict maintenance
-    ([rotter-liu-2025] §4.1). -/
-theorem possibility_residual (o : ShiftObservation)
-    (hf : o.force = .possibility) (h : o.mcMean < o.smMean) :
+/-- The possibility weakening carries a sign neither analysis predicts, both predicting
+maintenance. -/
+theorem possibility_residual (o : ShiftObservation) (hf : o.force = .possibility)
+    (h : o.mcMean < o.smMean) :
     o.observedSign ≠ spreadPred o.force ∧ o.observedSign ≠ concordPred o.force := by
   have hs : o.observedSign = -1 := by
     show SignType.sign ((o.mcMean : ℤ) - o.smMean) = -1
     exact sign_neg (sub_neg.mpr (by exact_mod_cast h))
   rw [hs, hf]; decide
 
-/-! ### Register (in)sensitivity — RQ4
+/-! ### Register sensitivity -/
 
-The headline null result: no NUMBER × CONTEXT interaction. Structurally, a
-CONTEXT main effect shifts the MC and SM means by the same amount, so it cancels
-in the concord contrast MC − SM and cannot change its sign. -/
-
-/-- A concord effect is register-sensitive (for this CONTEXT parameter) when its
-    shift differs in sign between the close and distant contexts — a
-    NUMBER × CONTEXT interaction at the level of sign. -/
+/-- A concord effect is register-sensitive when its shift differs in sign between the close
+and the distant context. -/
 def RegisterSensitive (close distant : ShiftObservation) : Prop :=
   close.observedSign ≠ distant.observedSign
 
-/-- A CONTEXT main effect (the same additive shift `c` on MC and SM) leaves the
-    concord shift's sign unchanged: it cancels in MC − SM. -/
+/-- A context main effect, the same additive shift on the concord and the single-modal
+cell, leaves the sign of the concord shift unchanged. -/
 theorem context_main_effect_preserves_sign (o : ShiftObservation) (c : ℕ) :
-    ShiftObservation.observedSign ⟨o.force, o.mcMean + c, o.smMean + c⟩
-      = o.observedSign := by
-  show SignType.sign (((o.mcMean + c : ℕ) : ℤ) - ((o.smMean + c : ℕ) : ℤ))
-    = SignType.sign ((o.mcMean : ℤ) - o.smMean)
+    ShiftObservation.observedSign ⟨o.force, o.mcMean + c, o.smMean + c⟩ = o.observedSign := by
+  show SignType.sign (((o.mcMean + c : ℕ) : ℤ) - ((o.smMean + c : ℕ) : ℤ)) =
+    SignType.sign ((o.mcMean : ℤ) - o.smMean)
   congr 1; push_cast; ring
 
-/-- RQ4 ([rotter-liu-2025]): when contexts differ only by a main effect, the
-    concord shift is *not* register-sensitive — close and distant carry the same
-    sign, so no NUMBER × CONTEXT interaction arises. -/
+/-- Contexts that differ by a main effect alone are not register-sensitive: no
+number-by-context interaction arises. -/
 theorem not_registerSensitive_of_main_effect (o : ShiftObservation) (c : ℕ) :
     ¬ RegisterSensitive o ⟨o.force, o.mcMean + c, o.smMean + c⟩ := by
   unfold RegisterSensitive
   rw [context_main_effect_preserves_sign]
   simp
 
-/-! ### Relationship to Experiment 1 ([liu-rotter-2025])
+/-! ### The cell means -/
 
-The replication is exact at the level of accounts on the necessity side, and the
-one mismatch on the possibility side is precisely the residual: [liu-rotter-2025]'s
-`spreadEffect` records the *observed* weakening (−1), whereas the spread
-*analysis* predicts maintenance (0). -/
+/-- The cell of a context, force, and number. -/
+def findCell (context force number : String) : Option LinguisticExample :=
+  Examples.all.find? λ e =>
+    decide (e.feature? "context" = some context ∧ e.feature? "force" = some force ∧
+      e.feature? "number" = some number)
 
-/-- On necessity, Experiment 2's strengthening matches the spread prediction and
-    the crossover sign [liu-rotter-2025] reports for Experiment 1. -/
+/-- The observed shift from the single modal to concord on a measure, in a context and under
+a force. -/
+def observedShift (measure context : String) (force : ModalForce) : Option ShiftObservation := do
+  let mc ← findCell context (forceKey force) "MC"
+  let sm ← findCell context (forceKey force) "SM"
+  pure ⟨force, ← mc.nat? measure, ← sm.nat? measure⟩
+
+/-- The sign of the observed shift. -/
+def observedSign (measure context : String) (force : ModalForce) : Option SignType :=
+  (observedShift measure context force).map ShiftObservation.observedSign
+
+/-- The crossover of the first experiment replicates in both contexts: doubling strengthens
+commitment and confidence for necessity and weakens them for possibility. -/
+theorem crossover :
+    ∀ measure ∈ ["commitment", "confidence"], ∀ context ∈ ["close", "distant"],
+      observedSign measure context .necessity = some 1 ∧
+        observedSign measure context .possibility = some (-1) := by
+  decide +kernel
+
+/-- The force-blind penalty: concord is rated lower than the single modal on grammaticality,
+appropriateness, warmth, friendliness, and education in every cell. -/
+theorem penalty :
+    ∀ measure ∈ ["grammaticality", "appropriateness", "warmth", "friendliness", "education"],
+      ∀ context ∈ ["close", "distant"], ∀ force ∈ [ModalForce.necessity, .possibility],
+        observedSign measure context force = some (-1) := by
+  decide +kernel
+
+/-- No number-by-context interaction: on every measure with a concord effect the shift has the
+same sign for the close and the distant interlocutor. -/
+theorem context_invariant :
+    ∀ measure ∈ ["commitment", "confidence", "grammaticality", "appropriateness", "warmth",
+      "friendliness", "education"],
+      ∀ force ∈ [ModalForce.necessity, .possibility],
+        observedSign measure "close" force = observedSign measure "distant" force := by
+  decide +kernel
+
+/-! ### The first experiment -/
+
+/-- On necessity the strengthening matches the spread prediction and the sign the first
+experiment reports. -/
 theorem necessity_matches_experiment1 :
-    spreadPred .necessity = LiuRotter2025.spreadEffect .necessity := by decide
+    spreadPred .necessity = LiuRotter2025.spreadEffect .necessity := by
+  decide
 
-/-- On possibility, [liu-rotter-2025]'s observed `spreadEffect` (−1) diverges
-    from the spread analysis's prediction (0): the gap is the residual that
-    `possibility_residual` isolates. -/
+/-- On possibility the first experiment's observed weakening diverges from the spread
+analysis's prediction: the gap is the residual. -/
 theorem possibility_observed_vs_predicted :
-    LiuRotter2025.spreadEffect .possibility ≠ spreadPred .possibility := by decide
-
-/-! ### The observed shifts
-
-The `#eval`s exhibit Experiment 2's findings (means do not reduce in the kernel,
-so these are computed). The commitment and confidence crossovers and the warmth
-and appropriateness penalties hold in *both* contexts, and the commitment sign is
-context-invariant per force — the RQ4 null in the data. -/
-
--- Commitment crossover replicates in both contexts (necessity +1, possibility −1):
-#eval (observedShift "commitment" "close" .necessity).map fun o => (o.observedSign : ℤ)     -- some 1
-#eval (observedShift "commitment" "distant" .necessity).map fun o => (o.observedSign : ℤ)    -- some 1
-#eval (observedShift "commitment" "close" .possibility).map fun o => (o.observedSign : ℤ)    -- some -1
-#eval (observedShift "commitment" "distant" .possibility).map fun o => (o.observedSign : ℤ)  -- some -1
--- Confidence tracks commitment (same crossover):
-#eval (observedShift "confidence" "close" .necessity).map fun o => (o.observedSign : ℤ)      -- some 1
-#eval (observedShift "confidence" "distant" .possibility).map fun o => (o.observedSign : ℤ)  -- some -1
--- Warmth penalty (−1) and appropriateness penalty (−1), force/context-blind:
-#eval (observedShift "warmth" "close" .necessity).map fun o => (o.observedSign : ℤ)          -- some -1
-#eval (observedShift "appropriateness" "distant" .possibility).map fun o => (o.observedSign : ℤ) -- some -1
--- RQ4: the commitment shift sign is context-invariant (close == distant) per force:
-#eval (do
-  let c ← observedShift "commitment" "close" .necessity
-  let d ← observedShift "commitment" "distant" .necessity
-  pure ((c.observedSign : ℤ) == (d.observedSign : ℤ)))                                       -- some true
-#eval (do
-  let c ← observedShift "commitment" "close" .possibility
-  let d ← observedShift "commitment" "distant" .possibility
-  pure ((c.observedSign : ℤ) == (d.observedSign : ℤ)))                                       -- some true
+    LiuRotter2025.spreadEffect .possibility ≠ spreadPred .possibility := by
+  decide
 
 end RotterLiu2025
