@@ -5,9 +5,10 @@ import Mathlib.Data.Rat.Defs
 
 Typed schema for the per-treebank statistics a paper reports on how many of a treebank's
 dependency trees, or of the grammar rules extracted from them, satisfy a constraint on
-non-projectivity: projectivity, a bound on the gap degree, well-nestedness, planarity, or a
-conjunction of these. Generated rows live in `Data/Treebank/Coverage/<Paper>.lean`, emitted
-from the canonical `<Paper>.json` by `scripts/gen_treebank_coverage.py`.
+non-projectivity: projectivity, a bound on the gap degree or the edge degree, well-nestedness,
+planarity, or a conjunction of these. Generated rows live in
+`Data/Treebank/Coverage/<Paper>.lean`, emitted from the canonical `<Paper>.json` by
+`scripts/gen_treebank_coverage.py`.
 
 This is data: it imports nothing from `Linglib/` and states no theorems. A row records the
 covered quantity at the precision the paper prints, either as a count or as a percentage in
@@ -31,6 +32,8 @@ inductive Constraint where
   | gapDegreeEq (k : ℕ)
   /-- Gap degree at most `k`, block-degree and fan-out at most `k + 1`. -/
   | gapDegreeLe (k : ℕ)
+  /-- Edge degree exactly `k`. -/
+  | edgeDegreeEq (k : ℕ)
   /-- Well-nestedness. -/
   | wellNested
   /-- Planarity. -/

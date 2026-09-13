@@ -1,116 +1,258 @@
 import Linglib.Syntax.DependencyGrammar.Projectivity
 import Linglib.Morphology.Word.Basic
+import Linglib.Data.Treebank.Coverage.KuhlmannNivre2006
+import Mathlib.Algebra.Order.Round
+import Mathlib.Data.Rat.Floor
+import Mathlib.Order.Interval.Finset.Fin
 
 /-!
-# Kuhlmann & Nivre 2006: Mildly Non-Projective Dependency Structures
-[kuhlmann-nivre-2006]
+# Kuhlmann & Nivre (2006): Mildly Non-Projective Dependency Structures
 
-Figure 2a's planar-but-not-projective structure, and the treebank coverage
-data of Table 1: prevalence of gap degree, well-nestedness, and planarity in
-the Prague and Danish dependency treebanks.
+This file formalizes the paper's comparison of the constraints proposed for mildly
+non-projective dependency structures: planarity, well-nestedness, gap degree, and the edge
+degree of [nivre-2006]. The first three, with the dominance and projection they are stated
+through, are the substrate of `Syntax/DependencyGrammar/`, whose definitions follow the paper;
+edge degree, the number of constituents an edge spans without dominating, is `edgeDegree`, and
+`edgeDegree_eq_zero_iff` proves for it the paper's observation that degree zero is
+projectivity, as `Graph.isProjective_iff_gapDegree_eq_zero` proves it for gap degree. The
+hierarchy projective ⊂ planar ⊂ well-nested is the substrate's; the paper's figures supply the
+witnesses that keep the inclusions strict, that separate the two graded measures, and that
+show well-nestedness independent of both.
 
-## Main declarations
+The counts of Table 1 are the rows of `Data/Treebank/Coverage/KuhlmannNivre2006.json`, over
+which the paper's percentages are recomputed: about 15% of the Danish and 23% of the Prague
+trees are non-projective (`nonProjective_share`), a degree bound of one covers more than 98% of
+both treebanks on either measure (`degreeLe1_coverage`), and among the non-projective trees
+planarity covers fewer than a quarter while well-nestedness covers more than 99%
+(`nonProjective_binary`).
 
-- `KuhlmannNivre2006.planarNotProjective`: Figure 2a, adapted to a single
-  root, separating planarity from projectivity
-- `KuhlmannNivre2006.TreebankCoverage`: coverage row (percentages scaled x100)
-- `KuhlmannNivre2006.pdt`, `KuhlmannNivre2006.ddt`: Table 1 rows
-- `KuhlmannNivre2006.wellNested_near_universal`: well-nestedness covers ≥99%
-  of both treebanks
-- `KuhlmannNivre2006.gapDeg_leq1_sufficient`: gap degree ≤ 1 covers ≥99% of
-  both treebanks
-- `KuhlmannNivre2006.planarity_insufficient`: planarity covers less than
-  well-nestedness
+## Implementation notes
+
+Positions are zero-based, so node `i` of a figure is position `i - 1`. A connected component
+of the subgraph an edge's span induces is identified by its root, the position of the span
+whose head lies outside it or which is the root of the graph, so the degree of an edge counts
+those positions its head does not dominate. The trees of the figures are read off the
+drawings, and the paper's remarks about them, the projections of the nodes marked `i`, the
+edges of degree one, and the interleaving subtrees, are proved of the reconstructions.
+Percentages are recomputed from the rows as rounded hundredths of a percent, the precision the
+paper prints, and the subtable over non-projective trees is the difference from the projective
+row, since planarity and well-nestedness each contain projectivity.
+
+## TODO
+
+* The paper gives the coverage of edge degree at most one on DDT as 98.24%, the sum of the
+  printed 84.95% and 13.29%; the rows give 98.25%.
+
+## References
+
+* [kuhlmann-nivre-2006]
+* [nivre-2006]
 -/
 
 namespace KuhlmannNivre2006
 
-open DependencyGrammar
+open DependencyGrammar Relation
 open Morphology (Word)
 
-/-! ### Figure 2a: planar but not projective -/
+variable {n : ℕ} (g : Graph n)
 
-/-- Planar but not projective: no crossing links, yet the positions
-    dominated by 0 are `{0, 3}`, which is not an interval.
+/-! ### Edge degree (Definition 9) -/
 
-    Figure 2a's own witness is a forest, with the skipped position a second
-    root; this adapts it to a single root. The root sits at position 2,
-    inside the gap, and it has to: the paper observes that in a planar tree
-    every gap contains the root, so a planar tree rooted at a sentence
-    boundary is projective. -/
-def planarNotProjective : Graph 4 :=
-  .ofArcs
-    [Word.mk' "w0" .X, Word.mk' "w1" .X, Word.mk' "w2" .X, Word.mk' "w3" .X]
-    2
-    [(2, 0, .dep), (2, 1, .dep), (0, 3, .dep)]
+/-- The roots of the connected components of the subgraph induced by the span of the arc from
+`h` to `d`: the positions of the span that are the root of the graph or whose head lies outside
+the span. -/
+def componentRoots (h d : Fin n) : Finset (Fin n) :=
+  (Finset.uIcc h d).filter λ v => v = g.root ∨ g.headOf v ∉ Finset.uIcc h d
 
-example : planarNotProjective.IsTree := by decide
+/-- The degree of the arc from `h` to `d`: the number of components of the subgraph induced by
+its span whose root `h` does not dominate. -/
+def edgeDegreeAt (h d : Fin n) : ℕ :=
+  ((componentRoots g h d).filter λ v => ¬ Dominates g h v).card
 
-/-- Planarity is strictly weaker than projectivity. -/
-example : planarNotProjective.IsPlanar ∧ ¬ planarNotProjective.IsProjective := by
+/-- The edge degree of a graph: the maximum degree of its arcs. -/
+def edgeDegree : ℕ :=
+  (Finset.univ.filter λ p : Fin n × Fin n => g.Adj p.1 p.2).sup λ p => edgeDegreeAt g p.1 p.2
+
+variable {g}
+
+/-- An arc has degree zero exactly when its head dominates every position it spans. -/
+theorem edgeDegreeAt_eq_zero_iff (hT : g.IsTree) {h d : Fin n} :
+    edgeDegreeAt g h d = 0 ↔ ∀ v ∈ Set.uIcc h d, Dominates g h v := by
+  rw [edgeDegreeAt, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
+  simp only [componentRoots, Finset.mem_filter, not_not, and_imp]
+  simp only [← Finset.mem_coe, Finset.coe_uIcc]
+  constructor
+  · intro H v hv
+    by_cases hr : g.root ∈ Set.uIcc h d
+    · exact (Dominates.antisymm hT.acyclic (H hr (.inl rfl)) (hT.root_dominates h)).symm ▸
+        hT.root_dominates v
+    · obtain ⟨p, q, hpq, hp, hq, -, hqv⟩ :=
+        (hT.root_dominates v).exists_boundary (S := (Set.uIcc h d)ᶜ) hr (not_not_intro hv)
+      exact (H (not_not.mp hq) (.inr (by rw [hT.headOf_eq hpq]; exact hp))).trans hqv
+  · exact λ H v hv _ => H v hv
+
+/-- Degree zero is projectivity, for edge degree as for gap degree: a tree has edge degree zero
+exactly when it is projective. -/
+theorem edgeDegree_eq_zero_iff (hT : g.IsTree) : edgeDegree g = 0 ↔ g.IsProjective := by
+  rw [Graph.isProjective_iff_isArcProjective, edgeDegree, ← Nat.bot_eq_zero,
+    Finset.sup_eq_bot_iff]
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and, Nat.bot_eq_zero, Prod.forall,
+    edgeDegreeAt_eq_zero_iff hT]
+  exact Iff.rfl
+
+/-! ### Figure 2: planarity
+
+Figure 2a is planar but not projective, its root inside the gap where the substrate's
+`Graph.IsPlanar.root_mem_gap` says a planar tree's root has to be; Figure 2b is not planar,
+its two named edges crossing. -/
+
+/-- An unlabelled position. -/
+private def dot : Word := Word.mk' "•" .X
+
+/-- Figure 2a: the yield of node 1, `{1, 3}`, skips the root. -/
+def fig2a : Graph 3 := .ofArcs [dot, dot, dot] 1 [(1, 0, .dep), (0, 2, .dep)]
+
+/-- Figure 2b: the edges (1, 4) and (3, 5) cross. -/
+def fig2b : Graph 5 :=
+  .ofArcs [dot, dot, dot, dot, dot] 0 [(0, 1, .dep), (0, 3, .dep), (3, 2, .dep), (2, 4, .dep)]
+
+theorem fig2a_isTree : fig2a.IsTree := by decide
+theorem fig2b_isTree : fig2b.IsTree := by decide
+
+/-- Planar but not projective, with the root strictly inside the gap of node 1. -/
+theorem fig2a_planar_not_projective :
+    fig2a.IsPlanar ∧ ¬ fig2a.IsProjective ∧ (0 : Fin 3) < fig2a.root ∧ fig2a.root < 2 := by
   decide
 
-/-- Planarity is exactly having no crossings, so the count is zero even
-    though the structure is not projective. -/
-example : planarNotProjective.crossings = 0 := by decide
+/-- Figure 2b is not planar: the edges (1, 4) and (3, 5) cross, and no other pair does. -/
+theorem fig2b_crossing :
+    fig2b.Linked 0 3 ∧ fig2b.Linked 2 4 ∧ Alternate (0 : Fin 5) 3 2 4 ∧ fig2b.crossings = 1 := by
+  decide +kernel
 
-/-- The root lies strictly inside the gap of position 0. -/
-example : (0 : Fin 4) < planarNotProjective.root ∧
-    planarNotProjective.root < 3 := by decide
+/-! ### Figure 3: gap degree, edge degree, and well-nestedness -/
 
-/-! ### Table 1: treebank coverage -/
+/-- Figure 3a: the projection of node 2 is the interval `(2, 3, 4)`. -/
+def fig3a : Graph 6 :=
+  .ofArcs [dot, dot, dot, dot, dot, dot] 0
+    [(0, 1, .dep), (1, 2, .dep), (2, 3, .dep), (0, 4, .dep), (4, 5, .dep)]
 
-/-- Treebank coverage data from [kuhlmann-nivre-2006], Table 1.
-    Percentages scaled x100 for Nat arithmetic. -/
-structure TreebankCoverage where
-  name : String
-  totalTrees : Nat
-  /-- Percentage x100 of trees at gap degree 0 (projective) -/
-  gapDeg0 : Nat
-  /-- Percentage x100 of trees at gap degree 1 -/
-  gapDeg1 : Nat
-  /-- Percentage x100 of trees at gap degree 2 -/
-  gapDeg2 : Nat
-  /-- Percentage x100 of well-nested trees -/
-  wellNested : Nat
-  /-- Percentage x100 of planar trees -/
-  planar : Nat
-  deriving Repr
+/-- Figure 3b: the projection of node 2 is `(2, 3, 6)`, with the gap `(3, 6)`. -/
+def fig3b : Graph 6 :=
+  .ofArcs [dot, dot, dot, dot, dot, dot] 0
+    [(0, 1, .dep), (1, 2, .dep), (2, 5, .dep), (0, 3, .dep), (3, 4, .dep)]
 
-/-- Prague Dependency Treebank row of [kuhlmann-nivre-2006] Table 1. -/
-def pdt : TreebankCoverage :=
-  { name := "Prague Dependency Treebank"
-    totalTrees := 73088
-    gapDeg0 := 7685   -- 76.85%
-    gapDeg1 := 2272   -- 22.72%
-    gapDeg2 := 42      -- 0.42%
-    wellNested := 9989 -- 99.89%
-    planar := 8216     -- 82.16%
-  }
+/-- Figure 3c: the projection of node 2 is `(2, 4, 6)`, with the gaps `(2, 4)` and `(4, 6)`. -/
+def fig3c : Graph 6 :=
+  .ofArcs [dot, dot, dot, dot, dot, dot] 0
+    [(0, 1, .dep), (1, 3, .dep), (3, 5, .dep), (0, 2, .dep), (2, 4, .dep)]
 
-/-- Danish Dependency Treebank row of [kuhlmann-nivre-2006] Table 1. -/
-def ddt : TreebankCoverage :=
-  { name := "Danish Dependency Treebank"
-    totalTrees := 4393
-    gapDeg0 := 8495   -- 84.95%
-    gapDeg1 := 1489   -- 14.89%
-    gapDeg2 := 16      -- 0.16%
-    wellNested := 9989 -- 99.89%
-    planar := 8641     -- 86.41%
-  }
+theorem figure3_isTree : fig3a.IsTree ∧ fig3b.IsTree ∧ fig3c.IsTree := by decide
 
-/-- Well-nestedness covers ≥99% of both treebanks ([kuhlmann-nivre-2006] Table 1). -/
-theorem wellNested_near_universal :
-    pdt.wellNested ≥ 9900 ∧ ddt.wellNested ≥ 9900 := by decide
+/-- Node 2 has gap degree 0, 1, and 2 across the figure, and in each graph the maximum. -/
+theorem figure3_gapDegree :
+    (fig3a.gapDegreeAt 1 = 0 ∧ fig3a.gapDegree = 0) ∧
+      (fig3b.gapDegreeAt 1 = 1 ∧ fig3b.gapDegree = 1) ∧
+        (fig3c.gapDegreeAt 1 = 2 ∧ fig3c.gapDegree = 2) := by
+  decide +kernel
 
-/-- Gap degree ≤ 1 covers ≥99% of both treebanks. -/
-theorem gapDeg_leq1_sufficient :
-    pdt.gapDeg0 + pdt.gapDeg1 ≥ 9900 ∧
-    ddt.gapDeg0 + ddt.gapDeg1 ≥ 9900 := by decide
+/-- Edge degree 0, 1, and 1: the edge (1, 5) of Figure 3a spans the component `{2, 3, 4}`,
+which its head dominates; the edge (3, 6) of Figure 3b and the edges (2, 4), (3, 5), and
+(4, 6) of Figure 3c each span one component their head does not dominate. -/
+theorem figure3_edgeDegree :
+    (edgeDegreeAt fig3a 0 4 = 0 ∧ edgeDegree fig3a = 0) ∧
+      (edgeDegreeAt fig3b 2 5 = 1 ∧ edgeDegree fig3b = 1) ∧
+        (edgeDegreeAt fig3c 1 3 = 1 ∧ edgeDegreeAt fig3c 2 4 = 1 ∧ edgeDegreeAt fig3c 3 5 = 1 ∧
+          edgeDegree fig3c = 1) := by
+  decide +kernel
 
-/-- Planarity covers far less than well-nestedness. -/
-theorem planarity_insufficient :
-    pdt.planar < pdt.wellNested ∧
-    ddt.planar < ddt.wellNested := by decide
+/-- Figures 3a and 3b are well-nested; Figure 3c is not, the disjoint subtrees at nodes 2 and 3
+interleaving through the positions 2, 4 and 3, 5. -/
+theorem figure3_wellNested :
+    fig3a.IsWellNested ∧ fig3b.IsWellNested ∧
+      (fig3c.Interleave 1 2 ∧ ¬ Dominates fig3c 1 2 ∧ ¬ Dominates fig3c 2 1) := by
+  decide +kernel
+
+/-- The hierarchy projective ⊂ planar ⊂ well-nested is strict: Figure 2a is planar and not
+projective, Figure 3b well-nested and not planar. -/
+theorem hierarchy_strict :
+    (fig2a.IsPlanar ∧ ¬ fig2a.IsProjective) ∧ (fig3b.IsWellNested ∧ ¬ fig3b.IsPlanar) := by
+  decide +kernel
+
+/-! ### Figure 4: gap degree against edge degree -/
+
+/-- Figure 4a: the subtree at node 2 has two gaps, each of its edges spanning one component
+node 2 does not dominate. -/
+def fig4a : Graph 6 :=
+  .ofArcs [dot, dot, dot, dot, dot, dot] 0
+    [(0, 1, .dep), (0, 2, .dep), (2, 4, .dep), (1, 3, .dep), (3, 5, .dep)]
+
+/-- Figure 4b: the subtree at node 2 has one gap, containing two components node 2 does not
+dominate. -/
+def fig4b : Graph 5 :=
+  .ofArcs [dot, dot, dot, dot, dot] 0 [(0, 1, .dep), (0, 2, .dep), (0, 3, .dep), (1, 4, .dep)]
+
+theorem figure4_isTree : fig4a.IsTree ∧ fig4b.IsTree := by decide
+
+/-- Gap degree measures the discontinuities of a subtree, edge degree the constituents an edge
+spans: the two orders of Figure 4 reverse. -/
+theorem figure4_degrees :
+    (fig4a.gapDegreeAt 1 = 2 ∧ fig4a.gapDegree = 2 ∧ edgeDegree fig4a = 1) ∧
+      (fig4b.gapDegreeAt 1 = 1 ∧ fig4b.gapDegree = 1 ∧ edgeDegreeAt fig4b 1 4 = 2 ∧
+        edgeDegree fig4b = 2) := by
+  decide +kernel
+
+/-! ### Table 1: coverage on the Danish and Prague treebanks -/
+
+open Data.Treebank.Coverage
+
+/-- The rows of Table 1. -/
+abbrev rows : List Row := Data.Treebank.Coverage.KuhlmannNivre2006.rows
+
+/-- The number of trees of a treebank meeting a constraint. -/
+def count (treebank : String) (c : Constraint) : ℕ :=
+  match rows.find? λ r => r.treebank = treebank ∧ r.constraint = c with
+  | some r => r.value
+  | none => 0
+
+/-- The number of trees of a treebank. -/
+def total (treebank : String) : ℕ :=
+  match rows.find? (·.treebank = treebank) with
+  | some r => r.total
+  | none => 0
+
+/-- The number of trees of degree at most `k` on a graded measure. -/
+def atMost (treebank : String) (measure : ℕ → Constraint) (k : ℕ) : ℕ :=
+  ((List.range (k + 1)).map λ d => count treebank (measure d)).sum
+
+/-- The number of non-projective trees of a treebank. -/
+def nonProjective (treebank : String) : ℕ := total treebank - count treebank .projective
+
+/-- A share in hundredths of a percent, rounded as the paper prints it. -/
+def shareBp (num den : ℕ) : ℤ := round ((num : ℚ) / den * 10000)
+
+/-- About 15% of the Danish and 23% of the Prague trees are non-projective. -/
+theorem nonProjective_share :
+    shareBp (nonProjective "DDT") (total "DDT") = 1505 ∧
+      shareBp (nonProjective "PDT") (total "PDT") = 2315 := by
+  decide +kernel
+
+/-- Gap degree at most one covers 99.84% of DDT and 99.57% of PDT, edge degree at most one
+98.25% and 99.54%. -/
+theorem degreeLe1_coverage :
+    (shareBp (atMost "DDT" .gapDegreeEq 1) (total "DDT") = 9984 ∧
+      shareBp (atMost "PDT" .gapDegreeEq 1) (total "PDT") = 9957) ∧
+    (shareBp (atMost "DDT" .edgeDegreeEq 1) (total "DDT") = 9825 ∧
+      shareBp (atMost "PDT" .edgeDegreeEq 1) (total "PDT") = 9954) := by
+  decide +kernel
+
+/-- Among the non-projective trees, planarity covers 9.68% of DDT and 22.93% of PDT,
+well-nestedness 99.24% and 99.54%. -/
+theorem nonProjective_binary :
+    (shareBp (count "DDT" .planar - count "DDT" .projective) (nonProjective "DDT") = 968 ∧
+      shareBp (count "PDT" .planar - count "PDT" .projective) (nonProjective "PDT") = 2293) ∧
+    (shareBp (count "DDT" .wellNested - count "DDT" .projective) (nonProjective "DDT") = 9924 ∧
+      shareBp (count "PDT" .wellNested - count "PDT" .projective) (nonProjective "PDT") =
+        9954) := by
+  decide +kernel
 
 end KuhlmannNivre2006
