@@ -1458,7 +1458,6 @@ import Linglib.Processing.Expectation.InformationValue
 import Linglib.Processing.Expectation.LanguageModel
 import Linglib.Processing.Expectation.PrefixProbability
 import Linglib.Processing.Memory.Channel
-import Linglib.Processing.Memory.InformationalFusion
 import Linglib.Processing.Memory.LossyContext
 import Linglib.Processing.Memory.SurprisalTradeoff
 import Linglib.Processing.Psychophysics.GaussianChoice

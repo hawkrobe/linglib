@@ -25,7 +25,8 @@ classes.
 * `ParadigmSystem.realizations`, `ParadigmSystem.maxRealizations`,
   `ParadigmSystem.ParadigmEconomy`: enumerative counts and the paradigm economy principle.
 * `ParadigmSystem.declensionEntropy`, `ParadigmSystem.cellEntropy`,
-  `ParadigmSystem.conditionalCellEntropy`: entropies in nats, from the class weights.
+  `ParadigmSystem.conditionalCellEntropy`, `ParadigmSystem.mutualCellInfo`: entropies and
+  mutual information in nats, from the class weights.
 * `ParadigmSystem.IsImplicative`, `ParadigmSystem.IsTransparent`: zero conditional entropy.
 
 ## Main statements
@@ -150,6 +151,10 @@ noncomputable def jointCellEntropy (ci cj : Fin n) : ℝ :=
 /-- The conditional entropy `H(cᵢ | cⱼ) = H(cᵢ, cⱼ) − H(cⱼ)` of cell `ci` given cell `cj`. -/
 noncomputable def conditionalCellEntropy (ci cj : Fin n) : ℝ :=
   ps.jointCellEntropy ci cj - ps.cellEntropy cj
+
+/-- The mutual information `I(cᵢ : cⱼ) = H(cᵢ) − H(cᵢ | cⱼ)` of cell `ci` and cell `cj`. -/
+noncomputable def mutualCellInfo (ci cj : Fin n) : ℝ :=
+  ps.cellEntropy ci - ps.conditionalCellEntropy ci cj
 
 /-- Knowing cell `cj` leaves no uncertainty about cell `ci`. -/
 def IsImplicative (ci cj : Fin n) : Prop := ps.conditionalCellEntropy ci cj = 0
