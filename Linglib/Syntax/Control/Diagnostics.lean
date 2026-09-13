@@ -11,21 +11,24 @@ import Mathlib.Tactic.DeriveFintype
 # Control Diagnostics and Profiles
 
 The observable diagnostic battery of control — the antecedence and reading
-tests every framework's account is answerable to. A `Profile ι` records which
-of an analysis's licensing clauses hold of a construction, over an arbitrary
+tests every framework's account is answerable to. A profile is the set of an
+analysis's licensing clauses that hold of a construction, over an arbitrary
 clause index `ι`; an `Excludes ι` instance says which clause's failure admits
-each diagnostic, and `Profile.admits` computes the admitted diagnostics as a
-preimage: `admits` is antitone, obligatory control is the empty fiber,
-non-obligatory control the full one, and the battery encodes the profile
-faithfully (`Profile.admits_injective`). Which configurations admit which
-diagnostics varies by theory — [landau-2013] (75)–(79) derives the five from
-the two clauses of its OC signature (`Studies/Landau2013.lean`).
+each diagnostic, and `admits` computes the admitted diagnostics as the
+preimage of the failing clauses: `admits` is antitone, obligatory control (every
+clause holds) is the empty fiber, non-obligatory control the full one, and the
+battery encodes the profile faithfully (`admits_injective`). `ofAttested` goes
+the other way, from the diagnostics a construction is observed to admit to the
+clauses none of them refutes. Which configurations admit which diagnostics
+varies by theory — [landau-2013] (75)–(79) derives the five from the two
+clauses of its OC signature (`Studies/Landau2013.lean`).
 
 ## Main definitions
 
 - `Control.Diagnostic`: the observable battery
-- `Control.Profile`: clause profiles over an index, with `Profile.admits`
 - `Control.Excludes`: the clause each diagnostic is excluded by
+- `Control.admits`, `Control.ofAttested`: from a profile to its admitted
+  diagnostics and back from attested diagnostics to a profile
 -/
 
 namespace Control
@@ -57,53 +60,49 @@ class Excludes (ι : Type*) where
 
 export Excludes (excludedBy)
 
-/-- A profile over an index of licensing clauses: which clauses hold of a
-    construction. -/
-abbrev Profile (ι : Type*) : Type _ := ι → Bool
+variable {ι : Type*} [Excludes ι] {p q : Set ι} {A : Set Diagnostic}
 
-namespace Profile
+/-- The diagnostics a profile — the set of clauses holding of a construction —
+    admits: those whose excluding clause fails. -/
+def admits (p : Set ι) : Set Diagnostic := excludedBy ⁻¹' pᶜ
 
-variable {ι : Type*} [Excludes ι] {p q : Profile ι}
-
-/-- Obligatory control: every licensing clause holds. -/
-def IsObligatory (p : Profile ι) : Prop := ∀ c, p c
-
-/-- Non-obligatory control: no licensing clause holds. -/
-def IsNonObligatory (p : Profile ι) : Prop := ∀ c, ¬ p c
-
-instance [Fintype ι] : DecidablePred (IsObligatory (ι := ι)) :=
-  fun _ => inferInstanceAs (Decidable (∀ _, _))
-
-instance [Fintype ι] : DecidablePred (IsNonObligatory (ι := ι)) :=
-  fun _ => inferInstanceAs (Decidable (∀ _, _))
-
-/-- The diagnostics a profile admits: those whose excluding clause fails. -/
-def admits (p : Profile ι) : Set Diagnostic := excludedBy ⁻¹' {c | ¬ p c}
-
-instance : DecidablePred (· ∈ p.admits) :=
-  fun _ => inferInstanceAs (Decidable ¬(_ = true))
+instance [DecidablePred (· ∈ p)] : DecidablePred (· ∈ admits p) :=
+  fun d => decidable_of_iff (excludedBy d ∉ p) Iff.rfl
 
 /-- The more clauses hold, the fewer diagnostics are admitted. -/
 @[gcongr] theorem admits_anti : Antitone (admits (ι := ι)) :=
-  fun _ _ h => Set.preimage_mono fun _ hc hc' => hc (h _ hc')
+  fun _ _ h => Set.preimage_mono (Set.compl_subset_compl.2 h)
 
-/-- A profile is obligatory control iff it admits nothing. -/
-theorem isObligatory_iff_admits_eq_empty : p.IsObligatory ↔ p.admits = ∅ := by
-  simp [admits, IsObligatory, Set.eq_empty_iff_forall_notMem,
+/-- Obligatory control, every clause holding, admits no diagnostic. -/
+theorem admits_eq_empty_iff : admits p = ∅ ↔ p = Set.univ := by
+  simp [admits, Set.eq_empty_iff_forall_notMem, Set.eq_univ_iff_forall,
     (Excludes.surjective (ι := ι)).forall]
 
-/-- A profile is non-obligatory control iff it admits everything. -/
-theorem isNonObligatory_iff_admits_eq_univ :
-    p.IsNonObligatory ↔ p.admits = Set.univ := by
-  simp [admits, IsNonObligatory, Set.eq_univ_iff_forall,
+/-- Non-obligatory control, no clause holding, admits every diagnostic. -/
+theorem admits_eq_univ_iff : admits p = Set.univ ↔ p = ∅ := by
+  simp [admits, Set.eq_univ_iff_forall, Set.eq_empty_iff_forall_notMem,
     (Excludes.surjective (ι := ι)).forall]
 
 /-- The battery encodes the profile faithfully: distinct profiles admit
     distinct diagnostic sets. -/
-theorem admits_injective : Function.Injective (admits (ι := ι)) := fun p q h => by
-  have h' := Set.preimage_injective.2 (Excludes.surjective (ι := ι)) h
-  exact funext fun c => by simpa using congrArg (c ∈ ·) h'
+theorem admits_injective : Function.Injective (admits (ι := ι)) :=
+  (Set.preimage_injective.2 Excludes.surjective).comp compl_injective
 
-end Profile
+/-- The profile a set of attested diagnostics determines: the clauses none of
+    them refutes. -/
+def ofAttested (A : Set Diagnostic) : Set ι := (excludedBy '' A)ᶜ
+
+instance [DecidableEq ι] [DecidablePred (· ∈ A)] :
+    DecidablePred (· ∈ ofAttested (ι := ι) A) :=
+  fun c => decidable_of_iff (∀ d ∈ A, excludedBy d ≠ c) (by simp [ofAttested])
+
+/-- Attested diagnostics are admitted. -/
+theorem subset_admits_ofAttested : A ⊆ admits (ofAttested (ι := ι) A) := by
+  rw [admits, ofAttested, compl_compl]
+  exact Set.subset_preimage_image _ _
+
+/-- With nothing attested every clause holds. -/
+@[simp] theorem ofAttested_eq_univ_iff : ofAttested (ι := ι) A = Set.univ ↔ A = ∅ := by
+  rw [ofAttested, Set.compl_univ_iff, Set.image_eq_empty]
 
 end Control

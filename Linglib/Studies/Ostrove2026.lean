@@ -67,14 +67,14 @@ theorem clause_types_distinguished (c c' : EmbeddedClauseType) (h : c ≠ c') :
 
 /-- The control signature of each clause type, from whether it admits a non-coreferential
 subject, by the derivation of `Landau2013.ofNoncoreferential`. -/
-def smpmProfile (c : EmbeddedClauseType) : Profile Landau2013.Clause74 :=
+def smpmProfile (c : EmbeddedClauseType) : Set Landau2013.Clause74 :=
   Landau2013.ofNoncoreferential (clauseProperties c).noncoreferentialSubject
 
 /-- Only untensed subjunctives are obligatory-control clauses: sloppy readings only under
 ellipsis (33), exhaustive binding (37), and a local c-commanding antecedent (40), (44); the
 other two types allow strict readings, non-exhaustive binding, and non-local antecedents. -/
 theorem isObligatory_iff (c : EmbeddedClauseType) :
-    (smpmProfile c).IsObligatory ↔ c = .untensedSubjunctive := by
+    smpmProfile c = Set.univ ↔ c = .untensedSubjunctive := by
   cases c <;> simp [smpmProfile, clauseProperties]
 
 /-- The clause types on the finiteness scale of [landau-2004]: untensed subjunctives are

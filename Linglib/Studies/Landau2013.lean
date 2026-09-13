@@ -13,11 +13,11 @@ be a co-dependent of the clause, and the controlled element, or part of it, is i
 bound variable. The familiar criteria follow from the two clauses: co-dependence excludes
 arbitrary, long-distance, and non-c-commanding control and forces the sloppy reading under
 ellipsis, and variable binding excludes the strict reading under *only*. The `Control.Excludes`
-instance records this derivation, so that the library's `Control.Profile` returns the book's
+instance records this derivation, so that the library's `Control.admits` returns the book's
 characterizations: a profile satisfying both clauses admits no criterial configuration and one
 satisfying neither admits them all. `ofNoncoreferential` reads such a profile off whether a
-clause type licenses a noncoreferential subject, which the studies of overt controlled subjects
-consume.
+clause type licenses a noncoreferential subject — a free reading of the controlled position,
+refuting co-dependence — which the studies of overt controlled subjects consume.
 
 ## Implementation notes
 
@@ -59,12 +59,14 @@ instance : Excludes Clause74 where
     exacts [⟨.arbitraryControl, rfl⟩, ⟨.strictUnderOnly, rfl⟩]
 
 /-- The profile determined by whether a clause type licenses noncoreferential subjects: free
-reference fails both clauses, obligatory coreference satisfies both. -/
-def ofNoncoreferential (noncoreferential : Bool) : Profile Clause74 :=
-  λ _ => !noncoreferential
+reference attests a free reading of the controlled position, refuting co-dependence;
+obligatory coreference attests nothing. -/
+def ofNoncoreferential (noncoreferential : Bool) : Set Clause74 :=
+  ofAttested {d | noncoreferential = true ∧ d = .arbitraryControl}
 
-@[simp] theorem isObligatory_ofNoncoreferential {b : Bool} :
-    (ofNoncoreferential b).IsObligatory ↔ b = false := by
-  cases b <;> decide
+@[simp] theorem ofNoncoreferential_eq_univ_iff {b : Bool} :
+    ofNoncoreferential b = Set.univ ↔ b = false := by
+  rw [ofNoncoreferential, ofAttested_eq_univ_iff]
+  cases b <;> simp [Set.eq_empty_iff_forall_notMem]
 
 end Landau2013
