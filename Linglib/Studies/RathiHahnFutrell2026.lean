@@ -1,493 +1,290 @@
-import Linglib.Processing.Memory.InformationalFusion
-import Linglib.Processing.Memory.SurprisalTradeoff
-import Linglib.Studies.Bybee1985
-import Linglib.Morphology.Morphotactics.RelevanceHierarchy
 import Linglib.Morphology.Paradigm.Complexity
+import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
 
 /-!
-# [rathi-hahn-futrell-2026]: Information-theoretic morphological fusion
-[rathi-hahn-futrell-2026] [rathi-hahn-futrell-2021]
-[hahn-degen-futrell-2021] [hahn-mathew-degen-2021]
+# Rathi, Hahn, and Futrell (2026): Toward an information-theoretic model of morphological fusion based on an efficient tradeoff of memory and surprisal
 
-[rathi-hahn-futrell-2026] extend the **Memory-Surprisal Tradeoff**
-([hahn-degen-futrell-2021], formalized in
-`Processing/Memory/SurprisalTradeoff.lean` and consumed in
-`Studies/HahnDegenFutrell2021.lean`) from word/morpheme
-order to four further morphological phenomena:
+This file formalizes the paper's measure of fusion and its simulations. Informational fusion,
+`LearnerModel.fusion`, is the surprisal of a form under a learner that has never seen a form
+for its feature set, so it measures how far the form resists analysis into processes attested
+for subsets of its features. The efficient tradeoff hypothesis of [hahn-degen-futrell-2021] is
+then turned from a theory of morpheme order into one of feature packaging: fusion is favored
+where it lowers surprisal for the memory it costs, and the paper's toy languages say exactly
+when. With two features whose agreeing values carry weight `q`, the second character of the
+agglutinative language carries `log 2` nats out of context and that of the fusional language
+`binEntropy (2q)`, the gain being the features' mutual information, `fus_local_gain`, and
+positive exactly when the features are dependent. With three features, fusing the two
+independent ones leaves local surprisal unchanged but raises the surprisal of the third
+character given the second by the mutual information the fused character hides,
+`fuseLow_memory_burden`, while fusing the dependent pair costs nothing. Giving up category
+clustering adds `binEntropy (2q)` to the surprisal of the first slot, which doubles it at the
+paper's uniform weights, `nonclustered_cellEntropy_zero`.
 
-1. **Polyexponence** — features fused into a single morpheme.
-2. **Suppletion** — root forms changing unpredictably with grammatical features.
-3. **Category clustering** — mutually exclusive feature values in consistent slots.
-4. **Pairwise informational fusion** — gradable measure of how cell-pair forms
-   resist decomposition into per-feature morphemes.
+The corpus studies of polyexponence, suppletion and pairwise fusion rest on optimal orderings
+and a neural learner computed outside Lean; they belong to the paper and its data release.
 
-The central theoretical move: define **informational fusion** as the surprisal
-of a form given all-but-one feature held out from a learner's training data
-(eq. 4 of the paper). This generalizes binary polyexponence to a continuous
-quantity that handles nonconcatenative morphology (Semitic root-and-pattern,
-ablaut, suppletion, reduplication) without committing to a morpheme
-segmentation.
+## Implementation notes
 
-## Structure
+The cells of a `ParadigmSystem` stand for the string positions of a toy language and its
+classes for the meanings, so the paper's quantities are the substrate's `cellEntropy`,
+`conditionalCellEntropy` and `mutualCellInfo`, in nats. Each family is parametrized by the
+weight `q` of the agreeing feature values; the paper's tables are `q = 3/8`, `q = 3/16` and
+`q = 1/4`. The Appendix's arguments for arbitrary unambiguous languages are instantiated on
+these families rather than stated over `Core.InformationTheory`, which lacks the invariance of
+entropy under an injective recoding.
 
-- §1: Toy languages L_agg, L_fus, L_clustered (paper Tables 4, 5, 6)
-- §2: A1/A2/A3 instantiations (paper Appendix); abstract theorems live in
-  `Processing/Memory/InformationalFusion.lean`
-- §3: Polyexponence empirical clustering (paper §4.2, Figs 7–8)
-- §4: Suppletion — number-before-case in optimal ordering (paper §4.3)
-- §5: Pairwise informational fusion in Spanish (paper §4.4, Table 7)
-- §6: Cross-framework engagement (Bybee Relevance, Mirror Principle, DM Fusion)
+## References
 
-## Numerics that are NOT Lean-internal
-
-The paper's empirical results are computed by an external LSTM seq2seq learner
-on UniMorph 3.0 paradigm data ([mccarthy-kirov-2020],
-[sylak-glassman-2015]). Specific φ₂ values, Pareto AUC values, and
-permutation-test p-values cannot be re-derived inside Lean — the LSTM is the
-authoritative source. All such values below are flagged `-- UNVERIFIED:` per
-CLAUDE.md hallucination-prevention rules; they are recorded here for cross-
-study reference and human verification against the published figures.
-
-## Substantive concerns flagged
-
-The number-vs-case suppletion result (§4 below, 15/17 languages confirm the
-ETH prediction) glosses over a known counterexample: Russian `čelovek/ljudi`
-('person') coexists with case-and-number suppletion `god/let` ('year') where
-the GEN.PL form is suppletive in both number AND case. [moskal-2015]
-advances the asymmetry as a **structural universal** under a phase-based
-locality account; [rathi-hahn-futrell-2026] treat it as a frequency-
-based regularity averaged over the typological sample. These are different
-claims about the same data; this study file follows the paper but flags the
-distinction.
+* [N. Rathi, M. Hahn, R. Futrell, *Toward an information-theoretic model of morphological
+  fusion based on an efficient tradeoff of memory and surprisal* (2026)][rathi-hahn-futrell-2026]
+* [N. Rathi, M. Hahn, R. Futrell, *An information-theoretic characterization of morphological
+  fusion* (2021)][rathi-hahn-futrell-2021]
+* [M. Hahn, J. Degen, R. Futrell, *Modeling word and morpheme order in natural language as an
+  efficient trade-off of memory and surprisal* (2021)][hahn-degen-futrell-2021]
+* [F. Ackerman, R. Malouf, *Morphological organization: the low conditional entropy
+  conjecture* (2013)][ackerman-malouf-2013]
+* [S. Wu, R. Cotterell, T. O'Connor, *Morphological irregularity correlates with frequency*
+  (2019)][wu-cotterell-2019]
+* [J. Mansfield, S. Stoll, B. Bickel, *Category clustering: a probabilistic bias in the
+  morphology of verbal agreement marking* (2020)][mansfield-stoll-bickel-2020]
+* [T. M. Cover, J. A. Thomas, *Elements of information theory* (2006)][cover-thomas-2006]
 -/
 
 namespace RathiHahnFutrell2026
 
-open Morphology
-open Processing.MemorySurprisal.InformationalFusion
-open Bybee1985
-
--- ============================================================================
--- §1: Toy languages L_agg, L_fus, L_clustered (paper Tables 4, 5, 6)
--- ============================================================================
-
-/-! ### Tables 4 (L_agg vs L_fus) and 6 (L_clustered vs L_nonclustered)
-
-Each toy "language" maps two binary input features (X₁ ∈ {ACTIVE, PASSIVE},
-X₂ ∈ {PRESENT, PAST}) to a 2-character string Y₁Y₂ ∈ {A,B,C,D}². The four
-(X₁, X₂) combinations have frequencies 3/8, 1/8, 1/8, 3/8 — chosen so that
-mutual information `I[X₁; X₂] > 0` while marginals are uniform.
-
-We encode each (X₁, X₂) combination as a separate `Paradigm 2` (a
-two-cell paradigm: cell 0 is the first character, cell 1 is the second).
-Frequencies attach to inflection classes, recovering the table-4 weights.
-
-Paper Table 4:
-```
-Probability  (X₁, X₂)              L_agg form  L_fus form
-3/8          ACTIVE, PRESENT       AC          AC
-1/8          ACTIVE, PAST          AD          AD
-1/8          PASSIVE, PRESENT      BC          BD
-3/8          PASSIVE, PAST         BD          BC
-```
-
-L_agg: each character independently encodes one feature (Y₁=A iff X₁=ACTIVE,
-Y₂=C iff X₂=PRESENT). L_fus: Y₂ is the XOR of X₁ and X₂ (Controlled-NOT). -/
-
-/-- L_agg, the agglutinative toy language. n=2 cells (first character,
-    second character); 4 inflection classes (one per (X₁, X₂) combination)
-    with frequencies 3/8, 1/8, 1/8, 3/8. -/
-def L_agg : ParadigmSystem 2 String :=
-  { entries :=
-    [ -- (ACTIVE, PRESENT) → AC, freq 3/8
-      ((fun i => if i = 0 then "A" else "C"), 3/8)
-    , -- (ACTIVE, PAST) → AD, freq 1/8
-      ((fun i => if i = 0 then "A" else "D"), 1/8)
-    , -- (PASSIVE, PRESENT) → BC, freq 1/8
-      ((fun i => if i = 0 then "B" else "C"), 1/8)
-    , -- (PASSIVE, PAST) → BD, freq 3/8
-      ((fun i => if i = 0 then "B" else "D"), 3/8)
-    ] }
-
-/-- L_fus, the fusional toy language. Same paradigm shape as L_agg but the
-    second character of each form depends on BOTH input features (XOR). -/
-def L_fus : ParadigmSystem 2 String :=
-  { entries :=
-    [ -- (ACTIVE, PRESENT) → AC, freq 3/8
-      ((fun i => if i = 0 then "A" else "C"), 3/8)
-    , -- (ACTIVE, PAST) → AD, freq 1/8
-      ((fun i => if i = 0 then "A" else "D"), 1/8)
-    , -- (PASSIVE, PRESENT) → BD, freq 1/8 (XOR-flipped from BC)
-      ((fun i => if i = 0 then "B" else "D"), 1/8)
-    , -- (PASSIVE, PAST) → BC, freq 3/8 (XOR-flipped from BD)
-      ((fun i => if i = 0 then "B" else "C"), 3/8)
-    ] }
-
-/-- E-complexity (`[ackerman-malouf-2013]`): both toy languages have
-    4 inflection classes. -/
-theorem L_agg_eComplexity : L_agg.eComplexity = 4 := by decide
-theorem L_fus_eComplexity : L_fus.eComplexity = 4 := by decide
-
-/-- The cell-1 distribution of L_agg has support of exactly two forms ("C", "D"),
-    which means Y₂ takes both values — supporting `H[Y₂_agg] = log 2` (paper
-    Appendix A1 step 1). The numerical entropy comparison itself goes through
-    `InformationTheory.condEntropy_le_entropy`; the structural witness
-    is here. The actual list (with kernel-evaluated rationals) is:
-    `[("C", 1/2), ("D", 1/2)]` — the marginal is uniform. -/
-theorem L_agg_cell1_has_two_forms :
-    (L_agg.cellDistribution 1).length = 2 := by decide
-
-/-- The cell-1 distribution of L_fus also has support of two forms — but
-    with concentrated weights `[("C", 3/4), ("D", 1/4)]` (kernel-evaluated).
-    The concentration is the structural condition for `H[Y₂_fus] < log 2`. -/
-theorem L_fus_cell1_has_two_forms :
-    (L_fus.cellDistribution 1).length = 2 := by decide
-
-/-- Both toy languages have the same number of cell-0 distinct realizations
-    (two: "A" and "B"). Fusion in L_fus does not affect cell 0. -/
-theorem L_agg_L_fus_cell0_match_length :
-    (L_agg.cellDistribution 0).length = (L_fus.cellDistribution 0).length := by decide
-
-/-! ### Table 6: L_clustered vs L_nonclustered (paper §3.3)
-
-Two binary input features X₁, X₂; same 4 forms in 4-element string set
-{A,B,C,D}. L_clustered places voice (X₁) before tense (X₂) consistently;
-L_nonclustered alternates the order based on voice value. -/
-
-/-- L_clustered: voice always realized in slot 0, tense always in slot 1. -/
-def L_clustered : ParadigmSystem 2 String :=
-  { entries :=
-    [ ((fun i => if i = 0 then "A" else "C"), 1/4)
-    , ((fun i => if i = 0 then "A" else "D"), 1/4)
-    , ((fun i => if i = 0 then "B" else "C"), 1/4)
-    , ((fun i => if i = 0 then "B" else "D"), 1/4)
-    ] }
-
-/-- L_nonclustered: voice morpheme in slot 0 for ACTIVE; in slot 1 for
-    PASSIVE. The same two morpheme inventories occupy *different* slots
-    depending on the value of X₁. -/
-def L_nonclustered : ParadigmSystem 2 String :=
-  { entries :=
-    [ ((fun i => if i = 0 then "A" else "C"), 1/4)
-    , ((fun i => if i = 0 then "D" else "A"), 1/4)
-    , ((fun i => if i = 0 then "B" else "C"), 1/4)
-    , ((fun i => if i = 0 then "D" else "B"), 1/4)
-    ] }
-
-/-- Both clustered languages have the same E-complexity. -/
-theorem L_clustered_eComplexity_match :
-    L_clustered.eComplexity = L_nonclustered.eComplexity := by decide
-
--- ============================================================================
--- §2: A1, A2, A3 instantiations
--- ============================================================================
-
-/-! ### Paper Appendix A1: fusion can lower local surprisal
-
-The abstract theorem is `InformationTheory.condEntropy_le_entropy`
-(Cover-Thomas 2.6.4), discussed in `Processing/Memory/InformationalFusion.lean`.
-
-The instantiation here exhibits L_fus and L_agg as concrete witnesses:
-both have the same first-character distribution (`L_agg_L_fus_cell0_match`),
-but L_fus's second-character distribution is strictly more concentrated
-(6/8 C vs 4/8 C — see `L_fus_cell1_distribution`), so its marginal Shannon
-entropy is strictly lower. The conclusion follows from `condEntropy_le_entropy`
-applied to the joint (X₁, X₂)-distribution implicit in the toy paradigm
-construction. The numerical strict inequality `H[Y₂_fus] < H[Y₂_agg]` requires
-`Real.log` arithmetic and lives in the abstract substrate; the structural
-witnesses (the distributions) live here. -/
-
-/-- L_fus's cell-1 distribution has 6/8 mass on a single form (C),
-    making it strictly **more concentrated** than L_agg's uniform 4/8/4/8.
-    Direct from the explicit lists in `L_fus_cell1_distribution` and
-    `L_agg_cell1_distribution`. The substrate's
-    `fusion_can_lower_marginal_entropy` (Cover-Thomas 2.6.4) applies to
-    the underlying joint distribution. -/
-theorem L_fus_max_mass_exceeds_L_agg_max_mass :
-    (6 : ℚ) / 8 > 4 / 8 := by norm_num
-
-/-! ### Paper Appendix A2: fusion of independent features increases remote uncertainty
-
-The abstract building block is `InformationTheory.mutualInfo_nonneg`
-(Cover-Thomas 2.6.5), discussed in `InformationalFusion.lean`. The paper's Table 5 gives a
-3-feature toy with `I[X₁; X₂] = 0` and `I[X₂; X₃] > 0`; we omit the
-3-feature instantiation here as it requires a `ParadigmSystem 3` with 8
-inflection classes — the structural pattern is identical to A1, with the
-substrate theorem doing the work. -/
-
-/-! ### Paper Appendix A3: category clustering lowers local surprisal
-
-The structural witness: in L_clustered, knowing the slot-0 morpheme uniquely
-predicts which feature it expresses (always voice). In L_nonclustered, the
-same morpheme inventory `{A,B,D}` appears at slot 0 across multiple X₁ values.
-The slot-0 distribution of L_nonclustered has 3 distinct values (A, B, D)
-versus L_clustered's 2 (A, B); higher cardinality → potentially higher
-entropy. -/
-
-/-- L_clustered's slot-0 distribution has support ≤ 2 forms (voice is always
-    realized in slot 0; only A and B appear). -/
-theorem L_clustered_cell0_two_forms :
-    (L_clustered.cellDistribution 0).length ≤ 2 := by decide
-
-/-- L_nonclustered's slot-0 distribution has support 3 forms (A, B, D — voice
-    morpheme has been "displaced" into slot 0 for some entries). Higher
-    cardinality is the structural condition for higher entropy (paper §3.3). -/
-theorem L_nonclustered_cell0_three_forms :
-    (L_nonclustered.cellDistribution 0).length = 3 := by decide
-
--- ============================================================================
--- §3: Polyexponence empirical clustering (paper §4.2, Figs 7–8)
--- ============================================================================
-
-/-! ### Polyexponence — features that cluster in optimal ordering
-
-The paper computes optimal feature orderings for ~20 languages by minimizing
-the memory-surprisal AUC and asks: do features that are commonly polyexponent
-(person/number, case/number, TAM, PNG) cluster close together in the
-resulting orderings?
-
-Result (paper §4.2): yes. For each polyexponent feature pair/triple, the
-average **normalized separation** in optimal orderings is significantly
-lower than the random baseline. All four feature combinations show p < 0.001
-by one-sample t-test.
-
-Specific normalized-separation values from paper Figs 7-8 are NOT quantified
-in the paper prose; only mean diamonds and 95% CIs are visible in the violin
-plots. We record below the qualitative result with a sample-size table. -/
-
-/-- A polyexponent-feature group from paper §4.2: which Bybee categories
-    participate, the language sample size, and the significance verdict.
-
-    `categories` carries the typed Bybee categorization rather than a
-    display string, so cross-framework cross-checks (e.g.,
-    `polyexponent_categories_in_core_inflectional_range` below) can engage
-    the substrate's `MorphCategory.peripherality` directly. Display names
-    (PNG, TAM, person/number, case/number) are recorded inline at the
-    constructor sites. -/
-structure PolyexponentGroup where
-  /-- The Bybee categories participating in this polyexponent group.
-      Some paper-described features (notably *case*) have no Bybee primitive
-      because Bybee 1985 surveys only verbal morphology; case is omitted
-      from the typed list and noted in the constructor comment. -/
-  categories : List BybeeCategory
-  /-- Number of UD treebank languages contributing data points. -/
-  numLanguages : Nat
-  /-- Whether the average separation is significantly below random (p < 0.001). -/
-  significantlyClustered : Bool
-  deriving Repr, DecidableEq
-
--- UNVERIFIED: the language-count numbers below are taken from paper §4.2 prose
--- (p. 17): "twenty-three data points for person/number ... ten for case/number
--- ... fifteen for PNG ... thirteen for TAM". Significance verdicts (p < 0.001)
--- also from §4.2.
-def polyexponentGroups : List PolyexponentGroup :=
-  [ -- "person/number"
-    ⟨[.personAgr, .numberAgr],                  23, true⟩
-  , -- "case/number" (case has no Bybee primitive — noun morphology)
-    ⟨[.numberAgr],                              10, true⟩
-  , -- "PNG" = person/number/gender agreement
-    ⟨[.personAgr, .numberAgr, .genderAgr],      15, true⟩
-  , -- "TAM" = tense/aspect/mood
-    ⟨[.tense, .aspect, .mood],                  13, true⟩
-  ]
-
-/-- All four feature groups in the paper's sample show significant clustering. -/
-theorem all_polyexponent_groups_clustered :
-    polyexponentGroups.all (·.significantlyClustered) = true := by decide
-
--- ============================================================================
--- §4: Suppletion — number-before-case in optimal ordering (paper §4.3)
--- ============================================================================
-
-/-! ### Suppletion as fusion of root with feature
-
-The paper frames suppletion as fusion of the root with the suppletion-
-triggering grammatical feature. [veselinova-2013] (WALS Ch 79) and
-[moskal-2015] document that nominal suppletion is more commonly
-triggered by **number** than by **case**. The paper's prediction: in
-the memory-surprisal optimal ordering of features, number should be
-closer to the root than case across languages.
-
-**Result (paper §4.3, p. 18)**: 15 of 17 languages confirm number-before-
-case in optimal ordering. Two exceptions: Russian and Urdu.
-
-The two exceptions are non-trivial. Russian *čelovek/ljudi* coexists with
-the case-and-number suppletion *god/let* (GEN.PL). [moskal-2015]
-treats nominal-suppletion locality as a **structural universal** with a
-phase-based account; the paper treats it as a tendency derivable from
-average-case frequency reasoning. These are different theoretical claims
-about the same data. -/
-
-/-- Per-language suppletion-relevant ordering data from paper §4.3.
-    The boolean records whether number is closer to the root than case
-    in the language's optimal ordering. -/
-structure SuppletionLanguage where
-  name : String
-  family : String
-  /-- True iff number-before-case in the memory-surprisal optimal ordering
-      (the prediction the paper claims to verify). -/
-  numberBeforeCase : Bool
-  deriving Repr, DecidableEq
-
--- UNVERIFIED: language list and per-language verdicts from paper §4.3 prose
--- (p. 18). Russian and Urdu are explicitly named as the two exceptions.
-def suppletionLanguages : List SuppletionLanguage :=
-  [ ⟨"Arabic",     "Afro-Asiatic",   true⟩
-  , ⟨"Armenian",   "Indo-European",  true⟩
-  , ⟨"Basque",     "Basque",         true⟩
-  , ⟨"Czech",      "Indo-European",  true⟩
-  , ⟨"Estonian",   "Uralic",         true⟩
-  , ⟨"German",     "Indo-European",  true⟩
-  , ⟨"Greek",      "Indo-European",  true⟩
-  , ⟨"Finnish",    "Uralic",         true⟩
-  , ⟨"Hungarian",  "Uralic",         true⟩
-  , ⟨"Latin",      "Indo-European",  true⟩
-  , ⟨"Polish",     "Indo-European",  true⟩
-  , ⟨"Romanian",   "Indo-European",  true⟩
-  , ⟨"Slovak",     "Indo-European",  true⟩
-  , ⟨"Slovenian",  "Indo-European",  true⟩
-  , ⟨"Turkish",    "Turkic",         true⟩
-  , ⟨"Russian",    "Indo-European",  false⟩  -- exception per paper
-  , ⟨"Urdu",       "Indo-European",  false⟩  -- exception per paper
-  ]
-
-/-- Russian and Urdu are the only languages in the sample where the paper's
-    number-before-case prediction fails. This is the substantive structural
-    claim — it survives sample growth as long as Russian and Urdu remain
-    the only counterexamples. The "15 of 17" docstring count is by
-    construction; per linglib's `feedback_no_aggregate_count_theorems.md`,
-    aggregate-count theorems go stale on data revision and are omitted here. -/
-theorem suppletion_exceptions_are_russian_and_urdu :
-    (suppletionLanguages.filter (fun l => ¬ l.numberBeforeCase)).map (·.name)
-    = ["Russian", "Urdu"] := by decide
-
--- ============================================================================
--- §5: Pairwise informational fusion in Spanish (paper §4.4, Table 7)
--- ============================================================================
-
-/-! ### Spanish *amar* paradigm (paper Table 7)
-
-The paper estimates pairwise informational fusion `φ₂(f₁, f₂)` for Spanish
-verbal feature pairs using an LSTM seq2seq learner trained on UniMorph 3.0.
-Two specific values are cited in the prose:
-- φ₂(IMPF, SG) ≈ 2.71 bits (low; predictable from regular morphology)
-- φ₂(1, PL)    ≈ 46.08 bits (very high; -mos suffix unpredictable from rest)
-
-The values are produced by the LSTM, not derivable inside Lean. We record
-them as documented constants with `-- UNVERIFIED:` flags.
-
-The qualitative claim — feature pairs with high φ₂ are CLOSE in optimal
-ordering — is verified empirically by the paper's Pareto-frontier permutation
-test (Fig 10), p < 0.05 for all four languages tested (Arabic, Latin,
-Portuguese, Spanish). -/
-
--- UNVERIFIED: φ₂ values from paper §4.4 prose, p. 19. The LSTM model is
--- the authoritative source.
-
-/-- φ₂(IMPF, SG) for Spanish *amar* ≈ 2.71 bits — low: regular morphology
-    (`amar` + `ba` + `s` decomposes cleanly). Stored × 100. -/
-def spanishAmarPhi2_impfSg_x100 : Nat := 271
-
-/-- φ₂(1, PL) for Spanish *amar* ≈ 46.08 bits — very high: the `-mos` suffix
-    cannot be predicted from any subset of (1st-person, plural) features
-    when both are held out from the learner. Stored × 100. -/
-def spanishAmarPhi2_onePl_x100 : Nat := 4608
-
-/-- The (1, PL) feature pair has substantially higher informational fusion
-    than (IMPF, SG) — the paper's qualitative observation that the
-    `-mos` suffix cannot be predicted from the rest of the paradigm. -/
-theorem amar_onePl_higher_than_impfSg :
-    spanishAmarPhi2_onePl_x100 > spanishAmarPhi2_impfSg_x100 := by decide
-
--- ============================================================================
--- §6: Cross-framework engagement
--- ============================================================================
-
-/-! ### Bybee Relevance ↔ informational fusion
-
-The paper §5.2 claims to **operationalize** Bybee 1985's "relevance" as
-mutual information: features more relevant to the stem cluster close, and
-fuse, due to high mutual information.
-
-This is a substantive reframing, not a translation. Bybee's "relevance" is
-defined in terms of *semantic effect on stem denotation* (valence > voice >
-aspect > tense > mood > agreement; [bybee-1985] Ch 2 §3 p. 20). Mutual
-information is a *usage-statistic*. These coincide to the extent that
-semantic relevance drives co-occurrence regularity, but they are distinct
-constructs and can in principle diverge.
-
-The substrate's `Morphology.MorphCategory.peripherality` numerically
-encodes Bybee's hierarchy as constants in `Morphology/RelevanceHierarchy.lean`. The bridge
-`Bybee1985.toMorphCategory : BybeeCategory → MorphCategory` connects the
-paper-typed enum to the substrate.
-[rathi-hahn-futrell-2026]'s reframing makes those constants
-potentially derivable from MI on a large multilingual corpus.
-
-The substrate retains the Bybee primitive (option (a) in the cross-
-framework audit); the cross-check theorem below tracks `polyexponentGroups`
-data through `toMorphCategory ∘ peripherality`, so editing the data table
-drives the theorem (strong test: adding a feature group containing
-`nonfinite` (rank 9) breaks the theorem). -/
-
-/-- Polyexponent feature groups stay within the **core verbal-inflectional
-    band** of the relevance order: every category appearing in
-    `polyexponentGroups` is no more stem-relevant than `aspect` and no less
-    stem-relevant than `agreement`. None falls at the stem-adjacent end
-    (`derivation`, `valence`, nominal `number`) or beyond agreement
-    (`nonfinite`).
-
-    The theorem engages the substrate via `RelevanceLE`, so:
-    - **Strong test passes**: a category outside the `aspect..agreement` band
-      — nominal `.number` (more stem-relevant than aspect) or `.nonfinite`
-      (less relevant than agreement) — fails the `decide`. The lower bound
-      guards the bridge in particular: were `numberAgr` to map to nominal
-      `.number` rather than `.agreement`, this theorem would break.
-    - **No silent disagreement**: the order comes from the substrate
-      `RelevanceLE`, not a duplicate local table.
-
-    Note: all four agreement subtypes (`personAgr`/`numberAgr`/`genderAgr`/
-    `personAgrObj`) collapse to `MorphCategory.agreement _` — faithful to
-    Bybee, who places verbal-number agreement at the low-relevance end with
-    person and gender (Ch 2 §3), distinct from nominal number, which the
-    substrate ranks separately, more stem-relevant. -/
-theorem polyexponent_categories_in_core_inflectional_range :
-    ∀ g ∈ polyexponentGroups, ∀ c ∈ g.categories,
-      MorphCategory.RelevanceLE .aspect (toMorphCategory c)
-        ∧ (toMorphCategory c).RelevanceLE (.agreement .subj) := by decide
-
-/-! ### Mirror Principle ↔ ETH
-
-[baker-1985]'s Mirror Principle holds that morpheme order reflects
-syntactic-derivation order. [rathi-hahn-futrell-2026] §5.1 argues ETH
-makes compatible predictions for affix order, but for a different reason:
-ETH derives ordering from on-line processing efficiency rather than from
-underlying syntactic structure.
-
-A formal bridge `mirror_compatible_with_information_locality` would need
-`Studies/Baker1985.lean` to import the memory-surprisal
-substrate. This is out of scope for the current study file; the existing
-Baker 1985 study exists as `Studies/Baker1985.lean`
-and should eventually carry such a bridge.
-
-### DM Fusion ↔ informational fusion
-
-[halle-marantz-1993] treat fusion as postsyntactic merger of adjacent
-terminals (`FusionRule`, inlined in `HalleMarantz1993.lean`).
-[rathi-hahn-futrell-2026]'s informational fusion is a usage-statistic
-on surface paradigm forms. The two are different mathematical objects with
-overlapping names; a formal bridge `dm_fusion_implies_high_mi` is out of
-scope but would tie the substrate together.
-
-### Ackerman-Malouf 2013 LCEC ↔ informational fusion
-
-[ackerman-malouf-2013]'s i-complexity is `(1/n(n-1)) Σᵢ≠ⱼ H(Cᵢ|Cⱼ)`,
-the average pairwise conditional entropy across cells of the same paradigm
-system. [rathi-hahn-futrell-2026]'s pairwise informational fusion
-`φ₂(f₁,f₂)` is closely related — both measure paradigm-internal
-predictability. With Phase 3 of the substrate restructure, both consumers
-share `Morphology.ParadigmSystem` and route through
-`InformationTheory.condEntropy`. A formal bridge
-`iComplexity ↔ MutualInfoProfile.totalInfo` is left for future work; the
-shared substrate makes such a bridge syntactically straightforward. -/
+open Morphology Real
+
+variable {n : ℕ} {Form : Type*}
+
+/-! ### Informational fusion -/
+
+/-- A language with every form for the feature sets in `S` removed: the data set from which a
+learner guesses those forms. -/
+def holdOut (L : ParadigmSystem n Form) (S : Finset (Fin n)) : ParadigmSystem n (Option Form) :=
+  ⟨L.entries.map λ e => (λ c => if c ∈ S then none else some (e.1 c), e.2)⟩
+
+/-- A learner model: the probability it assigns to a form at a feature set for a lexeme whose
+other forms it is shown, after training on a data set. -/
+structure LearnerModel (n : ℕ) (Form : Type*) where
+  predict : ParadigmSystem n (Option Form) → Paradigm n (Option Form) → Fin n → Form → ℝ
+
+/-- The probability the learner assigns to the form for `σ` in the paradigm `p` of the language
+`L`, trained on `L` with the feature sets in `S` held out. -/
+def LearnerModel.prob (M : LearnerModel n Form) (L : ParadigmSystem n Form) (p : Paradigm n Form)
+    (S : Finset (Fin n)) (σ : Fin n) : ℝ :=
+  M.predict (holdOut L S) (λ c => if c ∈ S then none else some (p c)) σ (p σ)
+
+/-- Informational fusion: the surprisal of the form for `σ` under a learner that has seen no
+form for the feature sets in `S`, among them `σ`. Holding out `σ` alone is the paper's
+informational fusion; holding out every feature set containing a pair of features is its
+pairwise fusion. -/
+noncomputable def LearnerModel.fusion (M : LearnerModel n Form) (L : ParadigmSystem n Form)
+    (p : Paradigm n Form) (S : Finset (Fin n)) (σ : Fin n) : ℝ :=
+  -log (M.prob L p S σ)
+
+/-- A form's informational fusion under a learner assigning it a probability is nonnegative. -/
+theorem LearnerModel.fusion_nonneg {M : LearnerModel n Form} {L : ParadigmSystem n Form}
+    {p : Paradigm n Form} {S : Finset (Fin n)} {σ : Fin n} (h₀ : 0 ≤ M.prob L p S σ)
+    (h₁ : M.prob L p S σ ≤ 1) : 0 ≤ M.fusion L p S σ :=
+  neg_nonneg.2 (log_nonpos h₀ h₁)
+
+/-! ### The toy languages -/
+
+/-- The entropy of the law with weights `q`, `1/2 − q`, `1/2 − q`, `q` exceeds `log 2` by the
+binary entropy of `2q`. -/
+private theorem two_negMulLog (q : ℝ) :
+    2 * negMulLog q + 2 * negMulLog (1 / 2 - q) - log 2 = binEntropy (2 * q) := by
+  rw [binEntropy_eq_negMulLog_add_negMulLog_one_sub, show (1 : ℝ) - 2 * q = 2 * (1 / 2 - q) by ring,
+    negMulLog_mul, negMulLog_mul]
+  simp only [negMulLog]
+  ring
+
+private theorem negMulLog_half : negMulLog (1 / 2 : ℝ) = log 2 / 2 := by
+  simp [negMulLog, log_inv]; ring
+
+private theorem negMulLog_quarter : negMulLog (1 / 4 : ℝ) = log 2 / 2 := by
+  rw [show (1 / 4 : ℝ) = (2⁻¹) ^ 2 by norm_num, negMulLog, log_pow, log_inv]; ring
+
+/-- A rational differs from a rational exactly when their real casts do. -/
+private theorem cast_ne_iff {q r : ℚ} {x : ℝ} (h : (r : ℝ) = x) : (q : ℝ) ≠ x ↔ q ≠ r := by
+  rw [← h, ne_eq, ne_eq, Rat.cast_inj]
+
+/-- Two binary features whose agreeing values weigh `q` each and whose disagreeing values
+`1/2 − q`, expressed agglutinatively: the first character by the first feature and the second
+by the second. The paper's Table 4 is `q = 3/8`; its Table 6 language with category clustering
+is `q = 1/4`. -/
+def agg (q : ℚ) : ParadigmSystem 2 Char :=
+  ⟨[(!['A', 'C'], q), (!['A', 'D'], 1 / 2 - q), (!['B', 'C'], 1 / 2 - q), (!['B', 'D'], q)]⟩
+
+/-- The fusional language of Table 4: the second character expresses the exclusive or of the
+two features. -/
+def fus (q : ℚ) : ParadigmSystem 2 Char :=
+  ⟨[(!['A', 'C'], q), (!['A', 'D'], 1 / 2 - q), (!['B', 'D'], 1 / 2 - q), (!['B', 'C'], q)]⟩
+
+/-- The language of Table 6 without category clustering: the character for the first feature
+precedes the one for the second when the first feature is active and follows it otherwise. -/
+def nonclustered (q : ℚ) : ParadigmSystem 2 Char :=
+  ⟨[(!['A', 'C'], q), (!['D', 'A'], 1 / 2 - q), (!['C', 'B'], 1 / 2 - q), (!['B', 'D'], q)]⟩
+
+/-- Three binary features, the second and third agreeing with weight `q` and disagreeing with
+`1/4 − q` independently of the first, expressed agglutinatively. The paper's Table 5 is
+`q = 3/16`. -/
+def agg₃ (q : ℚ) : ParadigmSystem 3 Char :=
+  ⟨[(!['A', 'B', 'C'], q), (!['A', 'B', 'E'], 1 / 4 - q), (!['A', 'F', 'C'], 1 / 4 - q),
+    (!['A', 'F', 'E'], q), (!['G', 'B', 'C'], q), (!['G', 'B', 'E'], 1 / 4 - q),
+    (!['G', 'F', 'C'], 1 / 4 - q), (!['G', 'F', 'E'], q)]⟩
+
+/-- The language of Table 5 fusing the two independent features: the second character
+expresses the exclusive or of the first two. -/
+def fuseLow (q : ℚ) : ParadigmSystem 3 Char :=
+  ⟨[(!['A', 'B', 'C'], q), (!['A', 'B', 'E'], 1 / 4 - q), (!['A', 'F', 'C'], 1 / 4 - q),
+    (!['A', 'F', 'E'], q), (!['G', 'F', 'C'], q), (!['G', 'F', 'E'], 1 / 4 - q),
+    (!['G', 'B', 'C'], 1 / 4 - q), (!['G', 'B', 'E'], q)]⟩
+
+/-- The language of Table 5 fusing the two dependent features: the third character expresses
+the exclusive or of the last two. -/
+def fuseHigh (q : ℚ) : ParadigmSystem 3 Char :=
+  ⟨[(!['A', 'B', 'C'], q), (!['A', 'B', 'E'], 1 / 4 - q), (!['A', 'F', 'E'], 1 / 4 - q),
+    (!['A', 'F', 'C'], q), (!['G', 'B', 'C'], q), (!['G', 'B', 'E'], 1 / 4 - q),
+    (!['G', 'F', 'E'], 1 / 4 - q), (!['G', 'F', 'C'], q)]⟩
+
+/-! ### Fusing dependent features lowers local surprisal -/
+
+/-- Out of context, each character of the agglutinative language carries `log 2` nats. -/
+theorem agg_cellEntropy (q : ℚ) (c : Fin 2) : (agg q).cellEntropy c = log 2 := by
+  fin_cases c <;>
+    simp [ParadigmSystem.cellEntropy, ParadigmSystem.realizations, ParadigmSystem.cellWeight,
+      ParadigmSystem.total, agg] <;>
+    ring_nf <;> rw [negMulLog_half] <;> ring
+
+/-- The second feature given the first has entropy `binEntropy (2q)`. -/
+theorem agg_conditionalCellEntropy (q : ℚ) :
+    (agg q).conditionalCellEntropy 1 0 = binEntropy (2 * q) := by
+  rw [ParadigmSystem.conditionalCellEntropy, agg_cellEntropy, ← two_negMulLog]
+  congr 1
+  simp [ParadigmSystem.jointCellEntropy, ParadigmSystem.jointRealizations,
+    ParadigmSystem.jointWeight, ParadigmSystem.total, agg]
+  ring_nf
+
+/-- The mutual information of the two features is `log 2 − binEntropy (2q)`, zero exactly
+when `q = 1/4`. -/
+theorem agg_mutualCellInfo (q : ℚ) : (agg q).mutualCellInfo 1 0 = log 2 - binEntropy (2 * q) := by
+  rw [ParadigmSystem.mutualCellInfo, agg_cellEntropy, agg_conditionalCellEntropy]
+
+/-- Out of context, the fused second character carries `binEntropy (2q)` nats. -/
+theorem fus_cellEntropy (q : ℚ) : (fus q).cellEntropy 1 = binEntropy (2 * q) := by
+  simp [ParadigmSystem.cellEntropy, ParadigmSystem.realizations, ParadigmSystem.cellWeight,
+    ParadigmSystem.total, fus]
+  rw [binEntropy_eq_negMulLog_add_negMulLog_one_sub]
+  ring_nf
+
+/-- Fusion lowers the local surprisal of the second character by the mutual information of the
+two features. -/
+theorem fus_local_gain (q : ℚ) :
+    (agg q).cellEntropy 1 - (fus q).cellEntropy 1 = (agg q).mutualCellInfo 1 0 := by
+  rw [agg_cellEntropy, fus_cellEntropy, agg_mutualCellInfo]
+
+/-- Fusion lowers local surprisal exactly when the features are dependent. -/
+theorem fus_cellEntropy_lt_iff (q : ℚ) :
+    (fus q).cellEntropy 1 < (agg q).cellEntropy 1 ↔ q ≠ 1 / 4 := by
+  rw [fus_cellEntropy, agg_cellEntropy, binEntropy_lt_log_two, inv_eq_one_div,
+    ← cast_ne_iff (q := q) (r := 1 / 4) (x := 1 / 4) (by norm_num)]
+  constructor <;> intro h h' <;> apply h <;> linarith
+
+/-! ### Fusing independent features raises long-range surprisal -/
+
+/-- Out of context, each character of the three-feature agglutinative language carries `log 2`
+nats. -/
+theorem agg₃_cellEntropy (q : ℚ) (c : Fin 3) : (agg₃ q).cellEntropy c = log 2 := by
+  fin_cases c <;>
+    simp [ParadigmSystem.cellEntropy, ParadigmSystem.realizations, ParadigmSystem.cellWeight,
+      ParadigmSystem.total, agg₃] <;>
+    ring_nf <;> rw [negMulLog_half] <;> ring
+
+/-- Fusing the independent features leaves local surprisal unchanged. -/
+theorem fuseLow_cellEntropy (q : ℚ) (c : Fin 3) : (fuseLow q).cellEntropy c = log 2 := by
+  fin_cases c <;>
+    simp [ParadigmSystem.cellEntropy, ParadigmSystem.realizations, ParadigmSystem.cellWeight,
+      ParadigmSystem.total, fuseLow] <;>
+    ring_nf <;> rw [negMulLog_half] <;> ring
+
+/-- The third feature given the second has entropy `binEntropy (4q)`. -/
+theorem agg₃_conditionalCellEntropy (q : ℚ) :
+    (agg₃ q).conditionalCellEntropy 2 1 = binEntropy (4 * q) := by
+  rw [ParadigmSystem.conditionalCellEntropy, agg₃_cellEntropy,
+    show (4 : ℝ) * q = 2 * (2 * q) by ring, ← two_negMulLog]
+  congr 1
+  simp [ParadigmSystem.jointCellEntropy, ParadigmSystem.jointRealizations,
+    ParadigmSystem.jointWeight, ParadigmSystem.total, agg₃]
+  ring_nf
+
+/-- Fusing the dependent features costs nothing: the third character given the second keeps
+the entropy of the third feature given the second. -/
+theorem fuseHigh_conditionalCellEntropy (q : ℚ) :
+    (fuseHigh q).conditionalCellEntropy 2 1 = binEntropy (4 * q) := by
+  rw [ParadigmSystem.conditionalCellEntropy, ← agg₃_conditionalCellEntropy,
+    ParadigmSystem.conditionalCellEntropy, agg₃_cellEntropy]
+  simp [ParadigmSystem.jointCellEntropy, ParadigmSystem.jointRealizations,
+    ParadigmSystem.jointWeight, ParadigmSystem.cellEntropy, ParadigmSystem.realizations,
+    ParadigmSystem.cellWeight, ParadigmSystem.total, fuseHigh, agg₃]
+  ring_nf
+  rw [negMulLog_half]
+  ring
+
+/-- Fusing the independent features hides the second feature from the third character, whose
+surprisal given the second character rises to `log 2`. -/
+theorem fuseLow_conditionalCellEntropy (q : ℚ) :
+    (fuseLow q).conditionalCellEntropy 2 1 = log 2 := by
+  rw [ParadigmSystem.conditionalCellEntropy, fuseLow_cellEntropy]
+  simp [ParadigmSystem.jointCellEntropy, ParadigmSystem.jointRealizations,
+    ParadigmSystem.jointWeight, ParadigmSystem.total, fuseLow]
+  ring_nf
+  rw [negMulLog_quarter]
+  ring
+
+/-- The memory burden of fusing independent features is the mutual information of the
+dependent features the fused character no longer exposes. -/
+theorem fuseLow_memory_burden (q : ℚ) :
+    (fuseLow q).conditionalCellEntropy 2 1 - (agg₃ q).conditionalCellEntropy 2 1 =
+      (agg₃ q).mutualCellInfo 2 1 := by
+  rw [ParadigmSystem.mutualCellInfo, fuseLow_conditionalCellEntropy, agg₃_cellEntropy]
+
+/-- Fusing the independent features raises long-range surprisal exactly when the second and
+third features are dependent. -/
+theorem agg₃_conditionalCellEntropy_lt_iff (q : ℚ) :
+    (agg₃ q).conditionalCellEntropy 2 1 < (fuseLow q).conditionalCellEntropy 2 1 ↔
+      q ≠ 1 / 8 := by
+  rw [fuseLow_conditionalCellEntropy, agg₃_conditionalCellEntropy, binEntropy_lt_log_two,
+    inv_eq_one_div, ← cast_ne_iff (q := q) (r := 1 / 8) (x := 1 / 8) (by norm_num)]
+  constructor <;> intro h h' <;> apply h <;> linarith
+
+/-! ### Category clustering lowers local surprisal -/
+
+/-- Without category clustering the first slot has four realizations, and its surprisal
+exceeds the clustered language's by the binary entropy of `2q`. -/
+theorem nonclustered_cellEntropy_zero (q : ℚ) :
+    (nonclustered q).cellEntropy 0 = log 2 + binEntropy (2 * q) := by
+  rw [← two_negMulLog]
+  simp [ParadigmSystem.cellEntropy, ParadigmSystem.realizations, ParadigmSystem.cellWeight,
+    ParadigmSystem.total, nonclustered]
+  ring_nf
+
+/-- At the paper's uniform weights the surprisal of the first slot doubles. -/
+theorem nonclustered_cellEntropy_zero_quarter :
+    (nonclustered (1 / 4)).cellEntropy 0 = 2 * (agg (1 / 4)).cellEntropy 0 := by
+  rw [nonclustered_cellEntropy_zero, agg_cellEntropy]
+  norm_num
+  rw [one_div, binEntropy_two_inv]
+  ring
+
+/-- Category clustering lowers the surprisal of the first slot whenever both feature values
+occur. -/
+theorem agg_cellEntropy_lt_nonclustered {q : ℚ} (h₀ : 0 < q) (h₁ : q < 1 / 2) :
+    (agg q).cellEntropy 0 < (nonclustered q).cellEntropy 0 := by
+  rw [nonclustered_cellEntropy_zero, agg_cellEntropy]
+  have : (0 : ℝ) < q := by exact_mod_cast h₀
+  have : (q : ℝ) < 1 / 2 := by
+    rw [show (1 / 2 : ℝ) = ((1 / 2 : ℚ) : ℝ) by norm_num]; exact_mod_cast h₁
+  linarith [binEntropy_pos (by linarith : (0 : ℝ) < 2 * q) (by linarith : (2 * q : ℝ) < 1)]
 
 end RathiHahnFutrell2026
