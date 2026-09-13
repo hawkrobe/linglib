@@ -11,8 +11,8 @@ generated Lean is never hand-edited: edit the JSON and re-run.
 A JSON row gives the covered quantity either as `value` at the row's `scale`
 (`count` or `percentHundredths`) or, for papers that print losses, as `lost`,
 a count the generator subtracts from `total`. Constraints are written
-`projective`, `gapDegreeEq:k`, `gapDegreeLe:k`, `wellNested`, `planar`, or
-`gapDegreeLeWellNested:k`.
+`projective`, `gapDegreeEq:k`, `gapDegreeLe:k`, `edgeDegreeEq:k`, `wellNested`,
+`planar`, or `gapDegreeLeWellNested:k`.
 
     python3 scripts/gen_treebank_coverage.py Kuhlmann2013       # (re)generate
     python3 scripts/gen_treebank_coverage.py --check [<Paper>]  # verify, no writes (CI)
@@ -26,7 +26,7 @@ DATA_DIR = ROOT / "Linglib" / "Data" / "Treebank" / "Coverage"
 ITEMS = {"trees", "rules"}
 SCALES = {"count", "percentHundredths"}
 UNARY = {"projective", "wellNested", "planar"}
-INDEXED = {"gapDegreeEq", "gapDegreeLe", "gapDegreeLeWellNested"}
+INDEXED = {"gapDegreeEq", "gapDegreeLe", "edgeDegreeEq", "gapDegreeLeWellNested"}
 
 
 def constraint_lit(s: str, where: str) -> str:
