@@ -42,7 +42,7 @@ theorem resolve_addressee : resolve tower .addressee = tower.origin.addressee :=
 
 /-- Discourse role resolution is invariant under tower push: discourse
     roles reflect speech-act participants (from origin), not embedded ones. -/
-theorem resolve_push (σ : ContextShift (Context W E P T)) (r : Role) :
+theorem resolve_push (σ : Function.End (Context W E P T)) (r : Role) :
     resolve (tower.push σ) r = resolve tower r := by
   cases r <;> simp only [resolve, ContextTower.push_origin]
 

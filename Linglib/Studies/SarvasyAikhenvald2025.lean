@@ -441,7 +441,7 @@ def finalCtx : ChainCtx :=
 
 /-- A clauseChain shift: changes agent and time for a medial clause.
     The medial clause has its own subject and event time. -/
-def chainShift (newAgent : ChainAgent) (eventTime : ℤ) : ContextShift ChainCtx :=
+def chainShift (newAgent : ChainAgent) (eventTime : ℤ) : Function.End ChainCtx :=
   λ c => { c with agent := newAgent, time := eventTime }
 
 -- ============================================================================

@@ -238,7 +238,7 @@ theorem resolvePRole_hearer {W E P T : Type*} (tower : ContextTower (Context W E
     context shift / embedding — inherited from
     `Discourse.Role.resolve_push`. -/
 theorem resolvePRole_shift_invariant {W E P T : Type*}
-    (tower : ContextTower (Context W E P T)) (σ : ContextShift (Context W E P T))
+    (tower : ContextTower (Context W E P T)) (σ : Function.End (Context W E P T))
     (r : PRole) :
     resolvePRole (tower.push σ) r = resolvePRole tower r := by
   simp only [resolvePRole, Discourse.Role.resolve_push]

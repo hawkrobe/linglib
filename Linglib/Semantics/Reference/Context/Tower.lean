@@ -37,20 +37,16 @@ pattern is (`AccessPattern.stable_origin`).
 
 namespace Reference
 
-/-- A context shift: an endomorphism of the context type, the action of an embedding
-operator on the context of utterance. -/
-abbrev ContextShift (C : Type*) := Function.End C
-
 /-- A context tower: an origin with a stack of shifts, from outermost to innermost. -/
 structure ContextTower (C : Type*) where
   /-- The root context, the speech-act context. -/
   origin : C
   /-- The shifts, the first being the outermost embedding. -/
-  shifts : List (ContextShift C)
+  shifts : List (Function.End C)
 
 namespace ContextTower
 
-variable {C : Type*} (t : ContextTower C) (σ : ContextShift C) (c : C) {k : ℕ}
+variable {C : Type*} (t : ContextTower C) (σ : Function.End C) (c : C) {k : ℕ}
 
 /-- The embedding depth: the number of shifts. -/
 def depth : ℕ := t.shifts.length
@@ -138,7 +134,7 @@ namespace AccessPattern
 universe u
 
 variable {C R : Type*} (ap : AccessPattern C R) (t : ContextTower C) (f : C → R)
-  (σ : ContextShift C)
+  (σ : Function.End C)
 
 /-- Resolve an access pattern against a tower. -/
 def resolve : R := ap.project (t.contextAt (ap.depth.resolve t.depth))
@@ -180,19 +176,19 @@ def Stable : Prop := ∀ t, ap.resolve (t.push σ) = ap.resolve t
 /-- Origin access is invariant under push: Kaplan's thesis for expressions reading the
 speech-act context. -/
 theorem origin_stable (ap : AccessPattern C R) (hd : ap.depth = .origin) (t : ContextTower C)
-    (σ : ContextShift C) : ap.resolve (t.push σ) = ap.resolve t := by
+    (σ : Function.End C) : ap.resolve (t.push σ) = ap.resolve t := by
   simp only [resolve, hd, DepthSpec.origin_resolve, ContextTower.contextAt_zero,
     ContextTower.push_origin]
 
 theorem stable_of_depth_origin (ap : AccessPattern C R) (hd : ap.depth = .origin)
-    (σ : ContextShift C) : ap.Stable σ :=
+    (σ : Function.End C) : ap.Stable σ :=
   λ t => ap.origin_stable hd t σ
 
 theorem stable_origin : (origin f).Stable σ := stable_of_depth_origin _ rfl σ
 
 /-- Innermost access tracks the pushed shift. -/
 theorem local_updates (ap : AccessPattern C R) (hd : ap.depth = .local) (t : ContextTower C)
-    (σ : ContextShift C) : ap.resolve (t.push σ) = ap.project (σ • t.innermost) := by
+    (σ : Function.End C) : ap.resolve (t.push σ) = ap.project (σ • t.innermost) := by
   simp only [resolve, hd, DepthSpec.local_resolve, ContextTower.push_depth,
     ContextTower.push_contextAt_succ_depth]
 

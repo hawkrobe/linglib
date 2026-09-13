@@ -26,11 +26,11 @@ variable {W E P T : Type*} (c : Context W E P T)
 
 /-- The attitude shift: the holder becomes the agent and the attitude world the world;
 addressee, time and position are preserved. -/
-def attitudeShift (holder : E) (attWorld : W) : ContextShift (Context W E P T) :=
+def attitudeShift (holder : E) (attWorld : W) : Function.End (Context W E P T) :=
   λ c => { c with agent := holder, world := attWorld }
 
 /-- The temporal shift: the time moves to `newTime`; every other coordinate is preserved. -/
-def temporalShift (newTime : T) : ContextShift (Context W E P T) :=
+def temporalShift (newTime : T) : Function.End (Context W E P T) :=
   λ c => { c with time := newTime }
 
 section attitudeShift
