@@ -18,7 +18,7 @@ set to the time points it covers, and `eventDenotation`
 (`Semantics/Events/Basic.lean`) realises the patterns from
 neo-Davidsonian event predicates. The temporal-connective analyses that
 consume this carrier live in their studies (Anscombe1964, Karttunen1974,
-BeaverCondoravdi2003, Rett2020, …).
+BeaverCondoravdi2003, Rett2020a, …).
 -/
 
 namespace Tense

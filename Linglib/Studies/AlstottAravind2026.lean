@@ -1,4 +1,4 @@
-import Linglib.Studies.Rett2020
+import Linglib.Studies.Rett2020a
 import Linglib.Data.Examples.AlstottAravind2026
 
 /-!
@@ -7,8 +7,8 @@ import Linglib.Data.Examples.AlstottAravind2026
 Telic *before*-clauses and atelic *after*-clauses each have a weak and a strong reading.
 Under-specification theories (Anscombe's entries with a weakened *before*, `weakBefore`,
 `weakAfter`) give them one LF with the weak truth conditions; Rett's ambiguity theory
-(`Rett.before`, `Rett.after`) gives the strong reading by default and derives the weak one
-by inserting `COMPLET` or `INCHOAT`. Since coercion has a processing cost, only Rett's
+(`before`, `after`) gives the strong reading by default and derives the weak one
+by inserting `completive` or `inchoative`. Since coercion has a processing cost, only Rett's
 theory predicts that a *before*-clause is harder to read in a before-finish context than
 in a before-start context, and an *after*-clause harder in an after-start context: on the
 paper's own experimental contexts the default reading is true in one context and false in
@@ -45,7 +45,7 @@ to pragmatic as against semantic coercion.
 
 namespace AlstottAravind2026
 
-open Tense Rett2020 Data.Examples
+open Tense Rett2020a Data.Examples
 
 /-! ### The two theories (§2.1) -/
 
@@ -87,8 +87,8 @@ theorem weakAfter_stative_stative_iff (a b : NonemptyInterval T) :
 /-- A stative and an accomplishment overlap iff neither ends before the other starts. -/
 theorem overlap_stative_accomplishment_iff (a b : NonemptyInterval T) :
     Overlap (stativeDenotation a) (accomplishmentDenotation b) ↔ a.fst ≤ b.snd ∧ b.fst ≤ a.snd := by
-  simp only [Overlap, timeTrace_stative_closedInterval, timeTrace_accomplishment_closedInterval,
-    Set.mem_ofPred_eq]
+  simp only [Overlap, timeTrace_stativeDenotation, timeTrace_accomplishmentDenotation,
+    Set.mem_ofPred_eq, NonemptyInterval.mem_def]
   constructor
   · rintro ⟨t, ⟨h1, h2⟩, h3, h4⟩
     exact ⟨h1.trans h4, h3.trans h2⟩
@@ -122,12 +122,12 @@ abbrev regretfulA := stativeDenotation daveRegretfulA
 abbrev regretfulB := stativeDenotation daveRegretfulB
 
 /-- Exp. 2: Rett's default before-start reading is true in the before-start context and
-false in the before-finish context, where `COMPLET` restores truth — coercion is needed in
+false in the before-finish context, where `completive` restores truth — coercion is needed in
 (29b) only. -/
 theorem exp2_rett_asymmetric :
-    Rett.before irritableA tent ∧ ¬ Rett.before irritableB tent ∧
-      Rett.before irritableB (COMPLET tent) := by
-  simp only [Rett.before_stative_accomplishment_iff, Rett.before_stative_complet_iff]
+    before irritableA tent ∧ ¬ before irritableB tent ∧
+      before irritableB (completive tent) := by
+  simp only [before_stative_accomplishment_iff, before_stative_completive_iff]
   decide
 
 /-- Exp. 2: the under-specification reading is true in both contexts, and so is the
@@ -140,12 +140,12 @@ theorem exp2_underspecification_symmetric :
   decide
 
 /-- Exp. 4: Rett's default after-finish reading is false in the after-start context, where
-`INCHOAT` restores truth, and true in the after-finish context — coercion is needed in
+`inchoative` restores truth, and true in the after-finish context — coercion is needed in
 (31a) only. -/
 theorem exp4_rett_asymmetric :
-    ¬ Rett.after regretfulA fear ∧ Rett.after regretfulA (INCHOAT fear) ∧
-      Rett.after regretfulB fear := by
-  simp only [Rett.after_stative_stative_iff, Rett.after_stative_inchoat_iff]
+    ¬ after regretfulA fear ∧ after regretfulA (inchoative fear) ∧
+      after regretfulB fear := by
+  simp only [after_stative_stative_iff, after_stative_inchoative_iff]
   decide
 
 /-- Exp. 4: the under-specification reading is true in both contexts. -/
@@ -188,15 +188,15 @@ theorem within_accomplishment_iff (t d : ℕ) (i : NonemptyInterval ℕ) :
 
 /-! ### Predictions against the four experiments -/
 
-/-- The operator Rett's theory inserts (§3): `INCHOAT` for atelic *within*-modifier
-sentences and after-start readings of atelic *after*-clauses, `COMPLET` for accomplishment
+/-- The operator Rett's theory inserts (§3): `inchoative` for atelic *within*-modifier
+sentences and after-start readings of atelic *after*-clauses, `completive` for accomplishment
 *at*-modifier sentences and before-finish readings of telic *before*-clauses. -/
 def rettOperator (row : LinguisticExample) : Option String :=
   match row.feature? "construction", row.feature? "telicity", row.feature? "context" with
-  | some "within", some "atelic", _ => some "INCHOAT"
-  | some "at", some "telic", _ => some "COMPLET"
-  | some "before", some "telic", some "beforeFinish" => some "COMPLET"
-  | some "after", some "atelic", some "afterStart" => some "INCHOAT"
+  | some "within", some "atelic", _ => some "inchoative"
+  | some "at", some "telic", _ => some "completive"
+  | some "before", some "telic", some "beforeFinish" => some "completive"
+  | some "after", some "atelic", some "afterStart" => some "inchoative"
   | _, _, _ => none
 
 /-- The paper's revision (§8.2): no operator in *within*-modifier sentences. -/
@@ -216,11 +216,11 @@ theorem connective_costs_track_rett :
       ((rettOperator row).isSome ↔ row.feature? "rtCost" = some "yes") := by
   decide +kernel
 
-/-- On the atelic *within*-modifier trials Rett's theory inserts `INCHOAT` and no cost was
+/-- On the atelic *within*-modifier trials Rett's theory inserts `inchoative` and no cost was
 found (Exps. 1a, 3). -/
 theorem within_disconfirms_inchoat :
     ∀ row ∈ Examples.all, IsAspectualTrial row → row.feature? "construction" = some "within" →
-      rettOperator row = some "INCHOAT" ∧ row.feature? "rtCost" = some "no" := by
+      rettOperator row = some "inchoative" ∧ row.feature? "rtCost" = some "no" := by
   decide +kernel
 
 /-- With the §8.2 revision, operator insertion and observed cost coincide on every
