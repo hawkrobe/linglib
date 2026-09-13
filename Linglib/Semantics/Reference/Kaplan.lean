@@ -13,7 +13,10 @@ The English pure indexicals of [kaplan-1989] read a coordinate of the speech-act
 as access patterns on the context tower they are `AccessPattern.origin` of a coordinate
 (`Kaplan.I`, `Kaplan.you`, `Kaplan.now`, `Kaplan.here`, `Kaplan.actually`), hence invariant
 under every embedding shift (`AccessPattern.stable_origin`), which is Kaplan's thesis for
-English. An access pattern stable under every shift is *Kaplan-compliant*
+English. An access pattern is a character over towers with rigid content
+(`AccessPattern.toCharacter`), and an origin pattern at a root tower is `Character.dthat` of
+its coordinate (`AccessPattern.origin_toCharacter_root`): the tower analysis at depth zero is
+Kaplan's. An access pattern stable under every shift is *Kaplan-compliant*
 (`AccessPattern.IsKaplanCompliant`); a shift that moves some context is a *monster*
 (`ContextShift.IsMonster`), an operator on the context of utterance rather than on the
 circumstance of evaluation. A shift that is no monster leaves every access pattern stable
@@ -79,6 +82,25 @@ theorem stable_of_not_isMonster (ap : AccessPattern C R) {σ : ContextShift C}
     · rw [DepthSpec.relative_resolve, DepthSpec.relative_resolve,
         ContextTower.push_contextAt_of_lt _ _ hk, hσ, ContextTower.contextAt_saturates _ _ hk.le]
       rfl
+
+/-- An access pattern as a character over towers: at each tower, the rigid content at its
+value. -/
+def toCharacter (ap : AccessPattern C R) : Character (ContextTower C) W R :=
+  Character.dthat ap.resolve
+
+@[simp] theorem toCharacter_apply (ap : AccessPattern C R) (t : ContextTower C) (w : W) :
+    (ap.toCharacter : Character (ContextTower C) W R) t w = ap.resolve t :=
+  rfl
+
+theorem toCharacter_isDirectlyReferential (ap : AccessPattern C R) :
+    (ap.toCharacter : Character (ContextTower C) W R).IsDirectlyReferential :=
+  Character.dthat_isDirectlyReferential _
+
+/-- At a root tower an origin pattern is Kaplan's rigidifier of its coordinate. -/
+theorem origin_toCharacter_root (f : C → R) (c : C) :
+    ((origin f).toCharacter : Character (ContextTower C) W R) (ContextTower.root c) =
+      Character.dthat f c :=
+  rfl
 
 /-- An access pattern is Kaplan-compliant when it is stable under every shift. -/
 def IsKaplanCompliant (ap : AccessPattern C R) : Prop := ∀ σ, ap.Stable σ

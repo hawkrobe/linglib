@@ -42,7 +42,7 @@ variable {E : Type} [PartialOrder E] (e : PersonalPronoun) (g : Assignment E) (i
 /-- A pronoun denotes the value of its index under the assignment: its selector is the canonical
 variable lookup, the same one for the bound, anaphoric and deictic uses. -/
 theorem selector_eq_assignment :
-    (e.denote i spk adr isFemale isInanimate).selector g ⟨⟩
+    (e.denote (W := PUnit) i spk adr isFemale isInanimate).selector g ⟨⟩
       = some (interpPronoun (E := E) (W := PUnit) i g) := rfl
 
 /-- A feminine pronoun is undefined of a non-female referent: the feature does not assert that the
@@ -51,7 +51,7 @@ theorem undefined_of_non_female (scope : E → PUnit → Prop) (hfem : e.gender 
     (h : ¬ isFemale (g i)) :
     ¬ ((e.denote i spk adr isFemale isInanimate).toPartialProp scope g).presup ⟨⟩ := by
   simp only [PersonalPronoun.denote, PersonalPronoun.phiPresup, hfem,
-    Reference.NominalDenot.toPartialProp, PartialProp.and, femSem]
+    Reference.Nominal.toPartialProp, PartialProp.and, femSem]
   exact fun hp => h hp.1.2.2
 
 /-- *She* is undefined of a male referent. -/
@@ -87,7 +87,8 @@ theorem they_defined_where_she_undefined (scope : E → PUnit → Prop) (h : ¬ 
 /-- Binding leaves the pronoun alone: the binding operator updates the assignment at the pronoun's
 index, and the unchanged denotation then returns the binder. There is no bound-pronoun lexeme. -/
 theorem bound_reading (b : E) :
-    (e.denote i spk adr isFemale isInanimate).selector (Function.update g i b) ⟨⟩ = some b := by
+    (e.denote (W := PUnit) i spk adr isFemale isInanimate).selector (Function.update g i b) ⟨⟩
+      = some b := by
   simp only [PersonalPronoun.denote, interpPronoun, Function.update_self]
 
 end Buring2012
