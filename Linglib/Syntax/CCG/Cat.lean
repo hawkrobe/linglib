@@ -204,6 +204,24 @@ def forwardTypeRaise (x : Cat α) (t : Cat α) : Cat α :=
 def backwardTypeRaise (x : Cat α) (t : Cat α) : Cat α :=
   t \ (t / x)
 
+/-! ### The count invariant -/
+
+/-- The count of the atom `a` in a category ([van-benthem-1986]): `+1` for each occurrence in
+result position and `−1` for each occurrence in argument position, so that every combinatory
+rule preserves it (`CCG.Rule.count_eq`). -/
+def count (a : α) : Cat α → ℤ
+  | .atom b => if b = a then 1 else 0
+  | .rslash x _ y => count a x - count a y
+  | .lslash x _ y => count a x - count a y
+
+@[simp] theorem count_atom (a b : α) : count a (Cat.atom b) = if b = a then 1 else 0 := rfl
+
+@[simp] theorem count_rslash (a : α) (x y : Cat α) (m : Modality) :
+    count a (Cat.rslash x m y) = count a x - count a y := rfl
+
+@[simp] theorem count_lslash (a : α) (x y : Cat α) (m : Modality) :
+    count a (Cat.lslash x m y) = count a x - count a y := rfl
+
 /-! ### Targets
 
 Each category has a *target* — its leftmost atom, "similar to the return type of a

@@ -176,6 +176,25 @@ instance LexIn.decidable (L : List (String × Cat α)) {c : Cat α} :
   | .node _ d₁ d₂ =>
       @instDecidableAnd _ _ (decidable L d₁) (decidable L d₂)
 
+/-! ### The count invariant -/
+
+/-- Every combinatory rule preserves the count of every atom. -/
+theorem _root_.CCG.Rule.count_eq (a : α) {l r c : Cat α} (ru : Rule α l r c) :
+    c.count a = l.count a + r.count a := by
+  cases ru <;> simp only [Cat.count_rslash, Cat.count_lslash] <;> omega
+
+/-- The count invariant of [van-benthem-1986]: a derivation's category has the count of its
+leaves, so a string whose lexical counts do not sum to the count of a category has no derivation
+of that category from the lexicon. -/
+theorem count_eq_sum (a : α) {L : List (String × Cat α)} {f : String → ℤ}
+    (hL : ∀ p ∈ L, p.2.count a = f p.1) {c : Cat α} :
+    ∀ d : Derivation α c, d.LexIn L → c.count a = (d.yield.map f).sum
+  | .lex w c, h => by simpa [yield] using hL (w, c) h
+  | .node ru d₁ d₂, h => by
+    rw [ru.count_eq a, count_eq_sum a hL d₁ (show d₁.LexIn L ∧ d₂.LexIn L from h).1,
+      count_eq_sum a hL d₂ (show d₁.LexIn L ∧ d₂.LexIn L from h).2, yield, List.map_append,
+      List.sum_append]
+
 /-- The derivation contains a composition node (of any order or direction). -/
 def HasComp {c : Cat α} : Derivation α c → Prop
   | .lex _ _ => False
