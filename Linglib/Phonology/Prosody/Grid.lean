@@ -36,7 +36,10 @@ a homomorphism from the tree into the head-marked grid, built from a small algeb
 * `Tree.columns` / `Tree.headTerminals` / `Tree.headHeights` / `Tree.IsHeaded` — the grid readers.
 
 ## Main results
-* `Grid.ofTree_isContinuous` — the Continuous Column Constraint, by construction (free).
+* `Grid.ofTree_isContinuous` — the Continuous Column Constraint, by construction (free);
+  `Marks.isContinuous_iff` reads it column by column.
+* `Grid.isCulminative_of_forall_lt` / `Grid.IsCulminative.eq_of_eq_peak` — a strict unique
+  maximum is culminative, and a culminative grid has one peak column.
 * `Grid.peak_toProsTree` — head-preservation for a foot (its grid peaks at the head σ).
 * `Tree.headHeights_eq_peak` — on a non-recursive headed word the head terminal's height is the
   grid peak: metrical primary stress is the tallest column.
@@ -89,6 +92,27 @@ def IsContinuous (m : Marks) : Prop :=
   m.IsChain (fun lower upper => rowSubmask upper lower = true)
 
 instance (m : Marks) : Decidable (IsContinuous m) := by unfold IsContinuous; infer_instance
+
+/-- Continuity column by column: a mark in a row sits over a mark in the row below. -/
+theorem isContinuous_iff {m : Marks} : IsContinuous m ↔
+    ∀ r (hr : r + 1 < m.length) i (hi : i < m[r + 1].length) (hi' : i < m[r].length),
+      m[r + 1][i] = true → m[r][i] = true := by
+  rw [IsContinuous, List.isChain_iff_getElem]
+  refine forall_congr' λ r => forall_congr' λ hr => ?_
+  simp only [rowSubmask, List.all_eq_true, Bool.or_eq_true, Bool.not_eq_eq_eq_not,
+    Bool.not_true]
+  constructor
+  · intro h i hi hi' hup
+    have := h (m[r + 1][i], m[r][i]) (List.mem_iff_getElem.2 ⟨i, by simp; omega, by simp⟩)
+    simpa [hup] using this
+  · rintro h ⟨u, l⟩ hul
+    obtain ⟨i, hi, hi'⟩ := List.mem_iff_getElem.1 hul
+    simp only [List.getElem_zip, Prod.mk.injEq] at hi'
+    obtain ⟨rfl, rfl⟩ := hi'
+    simp only [List.length_zip, lt_min_iff] at hi
+    by_cases hu : m[r + 1][i] = true
+    · exact Or.inr (h i hi.1 hi.2 hu)
+    · exact Or.inl (by simpa using hu)
 
 end Marks
 
@@ -193,6 +217,47 @@ theorem peak_le {n : ℕ} (h : ∀ x ∈ g, x ≤ n) : peak g ≤ n := List.max_
 def IsCulminative (g : Grid) : Prop := g.countP (· == peak g) = 1
 
 instance (g : Grid) : Decidable (IsCulminative g) := by unfold IsCulminative; infer_instance
+
+/-- A column strictly taller than every other is the unique peak. -/
+theorem isCulminative_of_forall_lt {i : ℕ} (hi : i < g.length)
+    (h : ∀ j (hj : j < g.length), j ≠ i → g[j] < g[i]) : IsCulminative g := by
+  have hpeak : peak g = g[i] :=
+    le_antisymm (peak_le λ x hx => by
+      obtain ⟨j, hj, rfl⟩ := List.mem_iff_getElem.1 hx
+      by_cases hji : j = i
+      · subst hji; exact le_rfl
+      · exact (h j hj hji).le) (le_peak (List.getElem_mem hi))
+  rw [IsCulminative, hpeak]
+  generalize hm : g[i] = m at h
+  have h1 : (g.take i).countP (· == m) = 0 := List.countP_eq_zero.2 λ x hx => by
+    obtain ⟨j, hj, rfl⟩ := List.mem_iff_getElem.1 hx
+    simp only [List.length_take, lt_min_iff] at hj
+    simpa [List.getElem_take] using (h j hj.2 (by omega)).ne
+  have h2 : (g.drop (i + 1)).countP (· == m) = 0 := List.countP_eq_zero.2 λ x hx => by
+    obtain ⟨j, hj, rfl⟩ := List.mem_iff_getElem.1 hx
+    simp only [List.length_drop] at hj
+    simpa [List.getElem_drop] using (h (i + 1 + j) (by omega) (by omega)).ne
+  have h3 : g.countP (· == m) = (g.take i).countP (· == m) + (g.drop i).countP (· == m) := by
+    rw [← List.countP_append, List.take_append_drop]
+  rw [List.drop_eq_getElem_cons hi, List.countP_cons_of_pos (by simp [hm])] at h3
+  omega
+
+/-- Two columns at the peak of a culminative grid are the same column. -/
+theorem IsCulminative.eq_of_eq_peak (hc : IsCulminative g) {i j : ℕ} (hi : i < g.length)
+    (hj : j < g.length) (hpi : g[i] = peak g) (hpj : g[j] = peak g) : i = j := by
+  by_contra hne
+  wlog hlt : i < j generalizing i j
+  · exact this hj hi hpj hpi (Ne.symm hne) (by omega)
+  rw [IsCulminative] at hc
+  generalize hp : peak g = p at hc hpi hpj
+  have h1 : (g.drop i).countP (· == p) = (g.drop (i + 1)).countP (· == p) + 1 := by
+    rw [List.drop_eq_getElem_cons hi, List.countP_cons_of_pos (by simp [hpi])]
+  have h2 : 0 < (g.drop (i + 1)).countP (· == p) :=
+    List.countP_pos_iff.2 ⟨g[j], List.mem_iff_getElem.2 ⟨j - (i + 1), by simp; omega,
+      by rw [List.getElem_drop]; congr 1; omega⟩, by simp [hpj]⟩
+  have h3 : g.countP (· == p) = (g.take i).countP (· == p) + (g.drop i).countP (· == p) := by
+    rw [← List.countP_append, List.take_append_drop]
+  omega
 
 /-- Render a grid as stacked rows of marks: row `r` carries a mark over every column taller than
     `r`. -/
