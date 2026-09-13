@@ -11,8 +11,8 @@ literally-true world, `addressesIssue` when no cell straddles the true/false bou
 are exactly usability at gap-worlds (`gap_enables_nonmax`); gap removal blocks them
 (`metaAssert_prevents_nonmax`); tolerated exceptions cannot be mentioned
 (`exception_unaddressable`). `communicatedContent` is what the hearer learns; strong relevance
-([kriz-spector-2021]) is the bivalent counterpart of Addressing, the issue settling the
-proposition (`Setoid.Settles`).
+([kriz-spector-2021]) is the bivalent counterpart of Addressing, the issue deciding the
+proposition (`Setoid.Decides`).
 
 ## Main definitions
 
@@ -150,12 +150,12 @@ theorem communicatedContent_antitone {q q' : Setoid W} (p : Prop3 W) (hRef : q' 
 /-! ### Strong relevance
 
 Bivalent counterpart of `addressesIssue`, from [kriz-spector-2021]: a `W → Prop` is *strongly
-relevant* to an issue when it is constant on each cell, that is, when the issue settles it;
+relevant* to an issue when it is constant on each cell, that is, when the issue decides it;
 Addressing has it as its special case on bivalent propositions
 (`KrizSpector2021.addressesIssue_iff_stronglyRelevant`). -/
 
-/-- A proposition is strongly relevant to an issue iff the issue settles it. -/
-abbrev isStronglyRelevantProp (q : Setoid W) (p : W → Prop) : Prop := q.Settles {w | p w}
+/-- A proposition is strongly relevant to an issue iff the issue decides it. -/
+abbrev isStronglyRelevantProp (q : Setoid W) (p : W → Prop) : Prop := q.Decides {w | p w}
 
 /-- Filter a set of propositions to those strongly relevant to `q`. -/
 def stronglyRelevantSet (q : Setoid W) (candidates : Set (W → Prop)) : Set (W → Prop) :=
@@ -164,10 +164,10 @@ def stronglyRelevantSet (q : Setoid W) (candidates : Set (W → Prop)) : Set (W 
 /-- With the trivial issue, strong relevance is constancy on `W`. -/
 theorem trivial_relevant_iff_constant (p : W → Prop) :
     isStronglyRelevantProp ⊤ p ↔ ∀ w₁ w₂ : W, p w₁ ↔ p w₂ :=
-  Setoid.top_settles_iff
+  Setoid.top_decides_iff
 
 /-- With the finest issue, every proposition is strongly relevant. -/
-theorem exact_all_relevant (p : W → Prop) : isStronglyRelevantProp ⊥ p := Setoid.bot_settles
+theorem exact_all_relevant (p : W → Prop) : isStronglyRelevantProp ⊥ p := Setoid.bot_decides
 
 /-- With the finest issue, the strongly-relevant filter is the identity. -/
 theorem exact_stronglyRelevantSet_eq (candidates : Set (W → Prop)) :

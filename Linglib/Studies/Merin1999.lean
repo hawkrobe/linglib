@@ -13,7 +13,7 @@ attributes as proper coarsenings. The complements of a partition's cells form a 
 exactly when the partition is binary (`compl_isPartition_iff`); complement probabilities sum
 to one less than the number of cells and form a distribution exactly for two cells
 (`sum_compl_prob`, `sum_compl_prob_eq_one_iff`); the binary partition of a proposition and
-its negation is the coarsest coarsening preserving it, which is what `Setoid.Settles` says,
+its negation is the coarsest coarsening preserving it, which is what `Setoid.Decides` says,
 and a proposition and its negation carry the same partition (`Setoid.polar_compl`); an
 attribute is negative with respect to a partition when its complement is a cell and its polar
 question properly coarsens the partition (`IsNegativeAttribute`); and partition-relative

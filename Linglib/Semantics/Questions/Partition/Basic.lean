@@ -6,18 +6,21 @@ import Mathlib.Data.Setoid.Partition
 
 This file defines the basic vocabulary of partition questions. A question in the sense of
 [groenendijk-stokhof-1984] is a `Setoid W`, its answers the cells; the same object is a subject
-matter in the sense of [lewis-1988], and a proposition is entirely about it when the partition
-settles it, that is, when it is constant on the cells. The polar question whether `p` is the
-kernel of the indicator of `p`, settledness is the refinement order `s ≤ polar p`, and the
-question raised by a family of propositions is the meet of their polar questions, so a finer
-question settles more (`le_trans`), the finest question settles everything (`bot_le`), and a
-family's question settles each member (`iInf₂_le`).
+matter in the sense of [lewis-1988], and a proposition is entirely about it when the question
+decides it, that is, when it is constant on the cells. The polar question whether `p` is the
+kernel of the indicator of `p`, a question decides `p` exactly when it refines the polar
+question, `Q ≤ polar p`, and the question raised by a family of propositions is the meet of
+their polar questions, so a finer question decides more (`le_trans`), the finest question
+decides everything (`bot_le`), and a family's question decides each member (`iInf₂_le`). A
+proposition a question decides is [cariani-2013]'s visible, [phillips-brown-2025]'s
+considered, and an issue in a subject matter for [von-fintel-gillies-2010]; the converse
+relation, a proposition settling a question, is `Question.Resolves`.
 
 ## Main definitions
 
-* `Setoid.cell s w` — the cell of `w`, an element of `s.classes`.
+* `Setoid.cell Q w` — the cell of `w`, an element of `Q.classes`.
 * `Setoid.polar p` — the polar question whether `p`.
-* `Setoid.Settles s p` — `s` settles `p`: `p` is a union of cells.
+* `Setoid.Decides Q p` — `Q` decides `p`: `p` is a union of cells.
 * `Setoid.ofProps ps` — the question raised by a finite family of propositions.
 
 ## References
@@ -25,27 +28,29 @@ family's question settles each member (`iInf₂_le`).
 * [groenendijk-stokhof-1984]
 * [lewis-1988]
 * [von-fintel-gillies-2010]
+* [cariani-2013]
+* [phillips-brown-2025]
 -/
 
 namespace Setoid
 
-variable {W : Type*} (s : Setoid W) (p q : Set W)
+variable {W : Type*} (Q : Setoid W) (p q : Set W)
 
 /-! ### Cells -/
 
 /-- The cell of `w`: the worlds equivalent to it. -/
-def cell (w : W) : Set W := {v | s v w}
+def cell (w : W) : Set W := {v | Q v w}
 
-variable {s p q} {w v : W}
+variable {Q p q} {w v : W}
 
-@[simp] theorem mem_cell : v ∈ s.cell w ↔ s v w := Iff.rfl
+@[simp] theorem mem_cell : v ∈ Q.cell w ↔ Q v w := Iff.rfl
 
-theorem cell_mem_classes (w : W) : s.cell w ∈ s.classes := s.mem_classes w
+theorem cell_mem_classes (w : W) : Q.cell w ∈ Q.classes := Q.mem_classes w
 
-theorem mem_cell_self (w : W) : w ∈ s.cell w := s.refl' w
+theorem mem_cell_self (w : W) : w ∈ Q.cell w := Q.refl' w
 
-theorem cell_eq_of_rel (h : s w v) : s.cell w = s.cell v :=
-  Set.ext λ _ => ⟨λ h' => s.trans' h' h, λ h' => s.trans' h' (s.symm' h)⟩
+theorem cell_eq_of_rel (h : Q w v) : Q.cell w = Q.cell v :=
+  Set.ext λ _ => ⟨λ h' => Q.trans' h' h, λ h' => Q.trans' h' (Q.symm' h)⟩
 
 @[simp] theorem cell_bot (w : W) : (⊥ : Setoid W).cell w = {w} := by
   ext; simp [cell]
@@ -55,12 +60,12 @@ instance [DecidableEq W] : DecidableRel (⊥ : Setoid W) :=
 
 instance : DecidableRel (⊤ : Setoid W) := λ _ _ => isTrue trivial
 
-instance [DecidableRel s] : Decidable (v ∈ s.cell w) := inferInstanceAs (Decidable (s v w))
+instance [DecidableRel Q] : Decidable (v ∈ Q.cell w) := inferInstanceAs (Decidable (Q v w))
 
-instance [Fintype W] [DecidableRel s] [DecidablePred (· ∈ p)] : Decidable (s.cell w ⊆ p) :=
-  inferInstanceAs (Decidable (∀ v, s v w → v ∈ p))
+instance [Fintype W] [DecidableRel Q] [DecidablePred (· ∈ p)] : Decidable (Q.cell w ⊆ p) :=
+  inferInstanceAs (Decidable (∀ v, Q v w → v ∈ p))
 
-/-! ### Polar questions and settled propositions -/
+/-! ### Polar questions and decided propositions -/
 
 variable (p) in
 /-- The polar question whether `p`: the kernel of its indicator. -/
@@ -74,67 +79,67 @@ theorem polar_iff : polar p w v ↔ (w ∈ p ↔ v ∈ p) := eq_iff_iff
 instance [DecidablePred (· ∈ p)] : DecidableRel (polar p) :=
   λ _ _ => decidable_of_iff _ polar_iff.symm
 
-variable (s p) in
-/-- `s` settles `p`: `p` is constant on the cells of `s`, so it is a union of cells. The
-question `s` refines the polar question whether `p`. -/
-def Settles : Prop := s ≤ polar p
+variable (Q p) in
+/-- `Q` decides `p`: `p` is constant on the cells of `Q`, so it is a union of cells. The
+question `Q` refines the polar question whether `p`. -/
+def Decides : Prop := Q ≤ polar p
 
-theorem settles_iff : s.Settles p ↔ ∀ w v, s w v → (w ∈ p ↔ v ∈ p) :=
+theorem decides_iff : Q.Decides p ↔ ∀ w v, Q w v → (w ∈ p ↔ v ∈ p) :=
   ⟨λ h _ _ hwv => polar_iff.1 (h hwv), λ h _ _ hwv => polar_iff.2 (h _ _ hwv)⟩
 
-/-- Equivalent worlds agree on a settled proposition. -/
-theorem Settles.iff (h : s.Settles p) (hwv : s w v) : w ∈ p ↔ v ∈ p :=
-  settles_iff.1 h w v hwv
+/-- Equivalent worlds agree on a decided proposition. -/
+theorem Decides.iff (h : Q.Decides p) (hwv : Q w v) : w ∈ p ↔ v ∈ p :=
+  decides_iff.1 h w v hwv
 
-/-- `s` settles `p` iff each cell entails `p` or entails its negation. -/
-theorem settles_iff_forall_cell :
-    s.Settles p ↔ ∀ w, s.cell w ⊆ p ∨ ∀ v ∈ s.cell w, v ∉ p := by
-  rw [settles_iff]
+/-- `Q` decides `p` iff each cell entails `p` or entails its negation. -/
+theorem decides_iff_forall_cell :
+    Q.Decides p ↔ ∀ w, Q.cell w ⊆ p ∨ ∀ v ∈ Q.cell w, v ∉ p := by
+  rw [decides_iff]
   refine ⟨λ h w => ?_, λ h w v hwv => ?_⟩
   · by_cases hw : w ∈ p
     · exact Or.inl λ v hv => (h v w hv).2 hw
     · exact Or.inr λ v hv hv' => hw ((h v w hv).1 hv')
   · rcases h v with hall | hnone
-    · exact iff_of_true (hall hwv) (hall (s.refl' v))
-    · exact iff_of_false (hnone w hwv) (hnone v (s.refl' v))
+    · exact iff_of_true (hall hwv) (hall (Q.refl' v))
+    · exact iff_of_false (hnone w hwv) (hnone v (Q.refl' v))
 
-instance [Fintype W] [DecidableRel s] [DecidablePred (· ∈ p)] : Decidable (s.Settles p) :=
-  decidable_of_iff _ settles_iff.symm
+instance [Fintype W] [DecidableRel Q] [DecidablePred (· ∈ p)] : Decidable (Q.Decides p) :=
+  decidable_of_iff _ decides_iff.symm
 
-/-- A finer question settles whatever a coarser one does. -/
-theorem Settles.mono {s' : Setoid W} (hs : s' ≤ s) (h : s.Settles p) : s'.Settles p :=
-  hs.trans h
+/-- A finer question decides whatever a coarser one does. -/
+theorem Decides.mono {Q' : Setoid W} (hQ : Q' ≤ Q) (h : Q.Decides p) : Q'.Decides p :=
+  hQ.trans h
 
-/-- The finest question settles every proposition. -/
-theorem bot_settles : (⊥ : Setoid W).Settles p := bot_le
+/-- The finest question decides every proposition. -/
+theorem bot_decides : (⊥ : Setoid W).Decides p := bot_le
 
-/-- The polar question whether `p` settles `p`. -/
-theorem polar_settles : (polar p).Settles p := le_rfl
+/-- The polar question whether `p` decides `p`. -/
+theorem polar_decides : (polar p).Decides p := le_rfl
 
-/-- The coarsest question settles only the trivial propositions. -/
-theorem top_settles_iff : (⊤ : Setoid W).Settles p ↔ ∀ w v, (w ∈ p ↔ v ∈ p) := by
-  simp [settles_iff, Setoid.top_def]
+/-- The coarsest question decides only the trivial propositions. -/
+theorem top_decides_iff : (⊤ : Setoid W).Decides p ↔ ∀ w v, (w ∈ p ↔ v ∈ p) := by
+  simp [decides_iff, Setoid.top_def]
 
-theorem settles_compl_iff : s.Settles pᶜ ↔ s.Settles p := by
-  simp only [Settles, polar_compl]
+theorem decides_compl_iff : Q.Decides pᶜ ↔ Q.Decides p := by
+  simp only [Decides, polar_compl]
 
-theorem Settles.compl (h : s.Settles p) : s.Settles pᶜ := settles_compl_iff.2 h
+theorem Decides.compl (h : Q.Decides p) : Q.Decides pᶜ := decides_compl_iff.2 h
 
-theorem Settles.inter (hp : s.Settles p) (hq : s.Settles q) : s.Settles (p ∩ q) :=
-  settles_iff.2 λ _ _ h => and_congr (settles_iff.1 hp _ _ h) (settles_iff.1 hq _ _ h)
+theorem Decides.inter (hp : Q.Decides p) (hq : Q.Decides q) : Q.Decides (p ∩ q) :=
+  decides_iff.2 λ _ _ h => and_congr (decides_iff.1 hp _ _ h) (decides_iff.1 hq _ _ h)
 
-theorem Settles.union (hp : s.Settles p) (hq : s.Settles q) : s.Settles (p ∪ q) :=
-  settles_iff.2 λ _ _ h => or_congr (settles_iff.1 hp _ _ h) (settles_iff.1 hq _ _ h)
+theorem Decides.union (hp : Q.Decides p) (hq : Q.Decides q) : Q.Decides (p ∪ q) :=
+  decides_iff.2 λ _ _ h => or_congr (decides_iff.1 hp _ _ h) (decides_iff.1 hq _ _ h)
 
-/-- A cell of a question settling `p` that meets `p` entails it. -/
-theorem Settles.cell_subset (h : s.Settles p) (hw : w ∈ p) : s.cell w ⊆ p :=
-  λ _ hv => (settles_iff.1 h _ _ hv).2 hw
+/-- A cell of a question deciding `p` that meets `p` entails it. -/
+theorem Decides.cell_subset (h : Q.Decides p) (hw : w ∈ p) : Q.cell w ⊆ p :=
+  λ _ hv => (decides_iff.1 h _ _ hv).2 hw
 
 /-! ### The question raised by a family of propositions -/
 
 variable (ps : Finset (Finset W))
 
-/-- The question raised by a family of propositions: the coarsest question settling each of
+/-- The question raised by a family of propositions: the coarsest question deciding each of
 them, the meet of their polar questions. -/
 def ofProps : Setoid W := ⨅ p ∈ ps, polar (↑p : Set W)
 
@@ -144,12 +149,12 @@ theorem ofProps_iff : ofProps ps w v ↔ ∀ p ∈ ps, (w ∈ p ↔ v ∈ p) := 
 instance [DecidableEq W] : DecidableRel (ofProps ps) :=
   λ _ _ => decidable_of_iff _ (ofProps_iff ps).symm
 
-/-- The question raised by a family settles each of its members. -/
-theorem ofProps_settles {p : Finset W} (hp : p ∈ ps) : (ofProps ps).Settles ↑p :=
+/-- The question raised by a family decides each of its members. -/
+theorem ofProps_decides {p : Finset W} (hp : p ∈ ps) : (ofProps ps).Decides ↑p :=
   iInf₂_le p hp
 
-/-- The question raised by a family is the coarsest question settling all of its members. -/
-theorem le_ofProps_iff : s ≤ ofProps ps ↔ ∀ p ∈ ps, s.Settles ↑p :=
+/-- The question raised by a family is the coarsest question deciding all of its members. -/
+theorem le_ofProps_iff : Q ≤ ofProps ps ↔ ∀ p ∈ ps, Q.Decides ↑p :=
   le_iInf₂_iff
 
 end Setoid

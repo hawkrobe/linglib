@@ -426,7 +426,7 @@ theorem stronglyRelevant_powersetCard {lo hi n : ℕ} (hn₀ : 0 < n) (hn : n �
     isStronglyRelevantProp (issue lo hi)
       (reading (conv (insert Finset.univ (Finset.powersetCard n (Finset.univ : Finset Book))))
         readP) := by
-  refine Setoid.settles_iff.2 λ w v hwv => ?_
+  refine Setoid.decides_iff.2 λ w v hwv => ?_
   show reading _ readP w ↔ reading _ readP v
   rw [reading_powersetCard hn₀ hn, reading_powersetCard hn₀ hn]
   rcases h with rfl | rfl
@@ -462,7 +462,7 @@ theorem trueOnRelevant_not_reading {lo hi : ℕ} (h₀ : 0 < lo) (hlh : lo ≤ h
   · intro h
     rw [← not_le, ← reading_powersetCard h₀ hlo]
     exact h _ (mem_Cand.2 ⟨_, powersetCard_subset_parts h₀, rfl⟩)
-      (Setoid.settles_iff.2 λ _ _ hwv =>
+      (Setoid.decides_iff.2 λ _ _ hwv =>
         not_congr ((stronglyRelevant_powersetCard h₀ hlo (Or.inl rfl)).iff hwv))
   · intro h
     have hne : (Finset.univ : Finset Book).Nonempty :=
@@ -486,7 +486,7 @@ theorem addressesIssue_iff_stronglyRelevant {S : Prop3 W} (hbiv : S.isBivalent) 
     addressesIssue q S ↔ isStronglyRelevantProp q (· ∈ S.posExt) := by
   constructor
   · intro h
-    refine Setoid.settles_iff.2 λ w₁ w₂ hr => ?_
+    refine Setoid.decides_iff.2 λ w₁ w₂ hr => ?_
     show S w₁ = .true ↔ S w₂ = .true
     constructor
     · intro h₁
@@ -494,7 +494,7 @@ theorem addressesIssue_iff_stronglyRelevant {S : Prop3 W} (hbiv : S.isBivalent) 
     · intro h₂
       exact (hbiv w₁).resolve_right λ h₁ => h ⟨w₂, w₁, q.symm' hr, h₂, h₁⟩
   · rintro h ⟨w₁, w₂, hr, h₁, h₂⟩
-    have h₂' : S w₂ = .true := (Setoid.settles_iff.1 h w₁ w₂ hr).1 h₁
+    have h₂' : S w₂ = .true := (Setoid.decides_iff.1 h w₁ w₂ hr).1 h₁
     simp [h₂] at h₂'
 
 /-! The paper's (36): to pass, Mary must solve all of the math problems, or some of them and

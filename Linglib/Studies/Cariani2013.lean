@@ -17,7 +17,7 @@ account keeps COARSENESS, on which an ought-sentence can be true although some w
 prejacent true is impermissible, by relativizing *ought* to a resolution: a partition of the
 modal base into the agent's options (`Setoid W`), an ordering of the options, and a benchmark
 below which an option is impermissible (`ResolutionContext`). *Ought p* holds when the
-resolution settles `p`, every best option entails `p`, and every option entailing `p` meets the
+resolution decides `p`, every best option entails `p`, and every option entailing `p` meets the
 benchmark (`Ought`), so that one impermissible option compatible with the prejacent falsifies
 the sentence, the paper's COARSE FALSEMAKING (`not_ought_of_not_meetsBenchmark`), while
 impermissible ways of `p` that no option distinguishes leave it true.
@@ -32,7 +32,7 @@ of the finest resolution with a benchmark every option meets (`ought_bot_iff`).
 ## Implementation notes
 
 * The ordering on options is a valuation of worlds in a preordered scale that the resolution
-  settles, so that it ranks options, with the benchmark a threshold of the scale; this is
+  decides, so that it ranks options, with the benchmark a threshold of the scale; this is
   neutral between the ranking and quantitative scales the paper allows, and the best options
   are the `MaximalFor` elements of the valuation. The paper's examples value an option at the
   rank of its best world (`ofRanking`).
@@ -40,7 +40,7 @@ of the finest resolution with a benchmark every option meets (`ought_bot_iff`).
   parameter and the ordering does not vary with it. The paper's third puzzle, conditional
   *oughts* under the restrictor analysis of conditionals, needs the modal base and is not
   formalized.
-* Visibility is `Setoid.Settles`, the resolution settling the prejacent.
+* Visibility is `Setoid.Decides`, the resolution settling the prejacent.
 
 ## References
 
@@ -55,7 +55,7 @@ namespace Cariani2013
 variable {W V : Type*}
 
 /-- A resolution context: the resolution, a partition of the modal base into the agent's
-options; the ordering, a valuation of worlds that the resolution settles, so that it ranks
+options; the ordering, a valuation of worlds that the resolution decides, so that it ranks
 options; and the benchmark, the threshold of the scale below which an option is
 impermissible. -/
 structure ResolutionContext (W V : Type*) where
@@ -64,7 +64,7 @@ structure ResolutionContext (W V : Type*) where
   /-- The ordering: the value of a world's option in the scale. -/
   value : W → V
   /-- The valuation is constant on options. -/
-  value_settled : resolution ≤ Setoid.ker value
+  value_decided : resolution ≤ Setoid.ker value
   /-- The benchmark: the least permissible value. -/
   benchmark : V
 
@@ -75,7 +75,7 @@ def ofRanking [Fintype W] [SemilatticeSup V] [OrderBot V] (s : Setoid W) [Decida
     (rank : W → V) (benchmark : V) : ResolutionContext W V where
   resolution := s
   value w := (Finset.univ.filter (s · w)).sup rank
-  value_settled _ _ h := congrArg (Finset.sup · rank) <| Finset.filter_congr λ _ _ =>
+  value_decided _ _ h := congrArg (Finset.sup · rank) <| Finset.filter_congr λ _ _ =>
     ⟨λ h' => s.trans' h' h, λ h' => s.trans' h' (s.symm' h)⟩
   benchmark := benchmark
 
@@ -83,8 +83,8 @@ variable [Preorder V] (rc : ResolutionContext W V) (p : Set W)
 
 /-! ### The clauses -/
 
-/-- `p` is *visible* when the resolution settles it: each option entails `p` or its negation. -/
-abbrev IsVisible : Prop := rc.resolution.Settles p
+/-- `p` is *visible* when the resolution decides it: each option entails `p` or its negation. -/
+abbrev IsVisible : Prop := rc.resolution.Decides p
 
 /-- An option *meets the benchmark* when its value is at least the benchmark. -/
 def MeetsBenchmark (w : W) : Prop := rc.benchmark ≤ rc.value w
@@ -172,7 +172,7 @@ theorem Permitted₂.mono (hpq : p ⊆ q) : rc.Permitted₂ p → rc.Permitted�
 over the best worlds: the boxing semantics is a resolution semantics. -/
 theorem ought_bot_iff (h : rc.resolution = ⊥) (hb : ∀ w, rc.MeetsBenchmark w) :
     rc.Ought p ↔ ∀ w, rc.IsBest w → w ∈ p := by
-  simp only [Ought, IsVisible, IsOptimal, IsStronglyPermissible, h, Setoid.bot_settles,
+  simp only [Ought, IsVisible, IsOptimal, IsStronglyPermissible, h, Setoid.bot_decides,
     Setoid.cell_bot, Set.singleton_subset_iff, true_and]
   exact ⟨λ h => h.1, λ h => ⟨h, λ w _ => hb w⟩⟩
 
