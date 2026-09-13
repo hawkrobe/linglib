@@ -107,30 +107,25 @@ abbrev Picture3 := Fin 3 → SomeAllWorld
 
 namespace Exp1Some
 
-/-- (10a): each letter is connected with at least one of its circles. -/
-abbrev literal (p : Picture6) : Prop := ∀ i, p i ≠ .none
+variable {ι : Type*}
 
-/-- (10b): the literal reading, and not every letter is connected with all its circles. -/
-abbrev global (p : Picture6) : Prop := literal p ∧ ∃ i, p i ≠ .all
+/-- The three readings of (8), over any domain of letters: (10a) each letter is connected with
+at least one of its circles; (10b) that, and not every letter with all of them; (10c) every
+letter with some but not all of them. -/
+def reading : ReadingLabel → (ι → SomeAllWorld) → Prop
+  | .literal => SomeAllWorld.everySome
+  | .global => λ p => SomeAllWorld.everySome p ∧ ¬ SomeAllWorld.everyAll p
+  | .local_ => SomeAllWorld.everySomeNotAll
 
-/-- (10c): every letter is connected with some but not all of its circles. -/
-abbrev local_ (p : Picture6) : Prop := ∀ i, p i = .someNotAll
-
-/-- The three readings of (8). -/
-def reading : ReadingLabel → Picture6 → Prop
-  | .literal => literal
-  | .global => global
-  | .local_ => local_
-
-instance : (ℓ : ReadingLabel) → (p : Picture6) → Decidable (reading ℓ p)
-  | .literal, p => inferInstanceAs (Decidable (literal p))
-  | .global, p => inferInstanceAs (Decidable (global p))
-  | .local_, p => inferInstanceAs (Decidable (local_ p))
+instance [Fintype ι] : (ℓ : ReadingLabel) → (p : ι → SomeAllWorld) → Decidable (reading ℓ p)
+  | .literal, p => inferInstanceAs (Decidable (SomeAllWorld.everySome p))
+  | .global, _ => inferInstanceAs (Decidable (_ ∧ _))
+  | .local_, p => inferInstanceAs (Decidable (SomeAllWorld.everySomeNotAll p))
 
 /-- Under the universal the local reading entails the literal one, which keeps the unrestricted
 globalist abreast of the localist throughout Experiment 1. -/
-theorem local_globallyDerivable : GloballyDerivable reading .local_ :=
-  λ p h i => by rw [h i]; simp
+theorem local_globallyDerivable : GloballyDerivable (reading (ι := ι)) .local_ :=
+  λ _ h => h.everySome
 
 end Exp1Some
 
@@ -315,11 +310,10 @@ theorem localist_eq_unrestrictedGlobalist_exp1 (c : Exp1Condition) :
 
 /-- The local reading is reinforceable over the literal one: at WEAK the literal reading holds
 and the local one fails ([sadock-1978]'s diagnostic). -/
-theorem local_isReinforceable : Implicature.IsReinforceable Exp1Some.literal Exp1Some.local_ := by
-  refine ⟨Exp1Condition.witness .weak, ?_, ?_⟩
-  · decide
-  · show ¬ Exp1Some.local_ (Exp1Condition.witness .weak)
-    decide
+theorem local_isReinforceable :
+    Implicature.IsReinforceable (SomeAllWorld.everySome (ι := Fin 6))
+      SomeAllWorld.everySomeNotAll :=
+  ⟨Exp1Condition.witness .weak, by decide, by decide⟩
 
 /-! ### Experiment 2 -/
 

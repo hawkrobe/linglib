@@ -1,0 +1,2212 @@
+[
+  {
+    "id": "ronai2024_1",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "(1)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary read some of the books.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Mary read at least some of the books.",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "Mary read some, but not all, of the books.",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "scale",
+        "some/all"
+      ],
+      [
+        "environment",
+        "unembedded"
+      ]
+    ],
+    "comment": "The global scalar implicature: the literal (1a) and the upper-bounded (1b) interpretations.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_2",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "(2)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every student read some of the books.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "Not every student read all of the books.",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "No student read all of the books.",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "scale",
+        "some/all"
+      ],
+      [
+        "environment",
+        "every"
+      ]
+    ],
+    "comment": "The weak inference (2a) is the global implicature; the strong inference (2b) is the embedded one, which no alternative of an unmodified neo-Gricean account generates.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_5",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "(5)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Some students read all of the books.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "scale",
+        "some/all"
+      ],
+      [
+        "role",
+        "alternative"
+      ]
+    ],
+    "comment": "The alternative to (2) obtained by replacing both scalar terms (Sauerland 2004); it does not entail (2), and its negation is the strong inference (2b).",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_7",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "(7)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The soup is warm.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "The soup is warm, but not hot.",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "scale",
+        "warm/hot"
+      ],
+      [
+        "environment",
+        "unembedded"
+      ]
+    ],
+    "comment": "A scale whose global implicature arises at a lower rate than some/all (van Tiel et al. 2016).",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_11a",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "(11a), Figure 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every soup was warm.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "example",
+        "11"
+      ],
+      [
+        "condition",
+        "weak"
+      ],
+      [
+        "inference",
+        "Not every soup was hot."
+      ],
+      [
+        "mean",
+        "42"
+      ]
+    ],
+    "comment": "Experiment 1: mean sliding-scale response (0-100) to whether the first sentence suggests the second, over the 42 scales in the weak condition, 118 participants; computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_11b",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "(11b), Figure 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every soup was warm.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "example",
+        "11"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No soup was hot."
+      ],
+      [
+        "mean",
+        "30"
+      ]
+    ],
+    "comment": "Experiment 1: mean sliding-scale response (0-100) to whether the first sentence suggests the second, over the 42 scales in the strong condition, 118 participants; computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_11c",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "(11c), Figure 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every soup was warm.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "example",
+        "11"
+      ],
+      [
+        "condition",
+        "true"
+      ],
+      [
+        "inference",
+        "At least one soup was warm."
+      ],
+      [
+        "mean",
+        "86"
+      ]
+    ],
+    "comment": "Experiment 1: mean sliding-scale response (0-100) to whether the first sentence suggests the second, over the 42 scales in the true condition, 118 participants; computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_11d",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "(11d), Figure 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every soup was warm.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "example",
+        "11"
+      ],
+      [
+        "condition",
+        "false"
+      ],
+      [
+        "inference",
+        "Not every soup was warm."
+      ],
+      [
+        "mean",
+        "4"
+      ]
+    ],
+    "comment": "Experiment 1: mean sliding-scale response (0-100) to whether the first sentence suggests the second, over the 42 scales in the false condition, 118 participants; computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_12",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "(12)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every soup was warm.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Mary says the sentence; the question is: Would you conclude from this that, according to Mary, no soup was hot?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "example",
+        "12"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No soup was hot."
+      ]
+    ],
+    "comment": "Experiment 2: the inference task; participants answer Yes or No to whether they would conclude the inference from Mary's utterance.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item1",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every solution was adequate.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "1"
+      ],
+      [
+        "scale",
+        "adequate/good"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No solution was good."
+      ],
+      [
+        "exp1",
+        "34"
+      ],
+      [
+        "exp2",
+        "7"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item2",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every move was allowed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "2"
+      ],
+      [
+        "scale",
+        "allowed/obligatory"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No move was obligatory."
+      ],
+      [
+        "exp1",
+        "55"
+      ],
+      [
+        "exp2",
+        "49"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item3",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every model was attractive.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "3"
+      ],
+      [
+        "scale",
+        "attractive/stunning"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No model was stunning."
+      ],
+      [
+        "exp1",
+        "26"
+      ],
+      [
+        "exp2",
+        "0"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item4",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every mother believed it would happen.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "4"
+      ],
+      [
+        "scale",
+        "believe/know"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No mother knew it would happen."
+      ],
+      [
+        "exp1",
+        "29"
+      ],
+      [
+        "exp2",
+        "9"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item5",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every elephant was big.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "5"
+      ],
+      [
+        "scale",
+        "big/enormous"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No elephant was enormous."
+      ],
+      [
+        "exp1",
+        "21"
+      ],
+      [
+        "exp2",
+        "2"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item6",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every meal was cheap.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "6"
+      ],
+      [
+        "scale",
+        "cheap/free"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No meal was free."
+      ],
+      [
+        "exp1",
+        "74"
+      ],
+      [
+        "exp2",
+        "49"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item7",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every child was content.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "7"
+      ],
+      [
+        "scale",
+        "content/happy"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No child was happy."
+      ],
+      [
+        "exp1",
+        "12"
+      ],
+      [
+        "exp2",
+        "4"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item8",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every room was cool.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "8"
+      ],
+      [
+        "scale",
+        "cool/cold"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No room was cold."
+      ],
+      [
+        "exp1",
+        "25"
+      ],
+      [
+        "exp2",
+        "9"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item9",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every fabric was dark.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "9"
+      ],
+      [
+        "scale",
+        "dark/black"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No fabric was black."
+      ],
+      [
+        "exp1",
+        "9"
+      ],
+      [
+        "exp2",
+        "0"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item10",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every problem was difficult.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "10"
+      ],
+      [
+        "scale",
+        "difficult/impossible"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No problem was impossible."
+      ],
+      [
+        "exp1",
+        "43"
+      ],
+      [
+        "exp2",
+        "31"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item11",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every teacher disliked fighting.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "11"
+      ],
+      [
+        "scale",
+        "dislike/loathe"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No teacher loathed fighting."
+      ],
+      [
+        "exp1",
+        "14"
+      ],
+      [
+        "exp2",
+        "13"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item12",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every movie was funny. ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "12"
+      ],
+      [
+        "scale",
+        "funny/hilarious"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No movie was hilarious."
+      ],
+      [
+        "exp1",
+        "15"
+      ],
+      [
+        "exp2",
+        "4"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item13",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every layout was good.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "13"
+      ],
+      [
+        "scale",
+        "good/perfect"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No layout was perfect."
+      ],
+      [
+        "exp1",
+        "45"
+      ],
+      [
+        "exp2",
+        "18"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item14",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every movie was good.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "14"
+      ],
+      [
+        "scale",
+        "good/excellent"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No movie was excellent."
+      ],
+      [
+        "exp1",
+        "39"
+      ],
+      [
+        "exp2",
+        "13"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item15",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every puzzle was hard.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "15"
+      ],
+      [
+        "scale",
+        "hard/unsolvable"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No puzzle was unsolvable."
+      ],
+      [
+        "exp1",
+        "49"
+      ],
+      [
+        "exp2",
+        "22"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item16",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every dog was hungry.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "16"
+      ],
+      [
+        "scale",
+        "hungry/starving"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No dog was starving."
+      ],
+      [
+        "exp1",
+        "14"
+      ],
+      [
+        "exp2",
+        "4"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item17",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every professor was intelligent.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "17"
+      ],
+      [
+        "scale",
+        "intelligent/brilliant"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No professor was brilliant."
+      ],
+      [
+        "exp1",
+        "15"
+      ],
+      [
+        "exp2",
+        "7"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item18",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every princess liked dancing.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "18"
+      ],
+      [
+        "scale",
+        "like/love"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No princess loved dancing."
+      ],
+      [
+        "exp1",
+        "13"
+      ],
+      [
+        "exp2",
+        "9"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item19",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every battery was low.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "19"
+      ],
+      [
+        "scale",
+        "low/depleted"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No battery was depleted."
+      ],
+      [
+        "exp1",
+        "46"
+      ],
+      [
+        "exp2",
+        "29"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item20",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every lawyer may appear in person.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "20"
+      ],
+      [
+        "scale",
+        "may/will"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No lawyer will appear in person."
+      ],
+      [
+        "exp1",
+        "7"
+      ],
+      [
+        "exp2",
+        "4"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item21",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every child may eat an apple.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "21"
+      ],
+      [
+        "scale",
+        "may/have to"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No child has to eat an apple."
+      ],
+      [
+        "exp1",
+        "67"
+      ],
+      [
+        "exp2",
+        "53"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item22",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every party was memorable.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "22"
+      ],
+      [
+        "scale",
+        "memorable/unforgettable"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No party was unforgettable."
+      ],
+      [
+        "exp1",
+        "43"
+      ],
+      [
+        "exp2",
+        "44"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item23",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every house was old.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "23"
+      ],
+      [
+        "scale",
+        "old/ancient"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No house was ancient."
+      ],
+      [
+        "exp1",
+        "16"
+      ],
+      [
+        "exp2",
+        "7"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item24",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every wine was palatable.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "24"
+      ],
+      [
+        "scale",
+        "palatable/delicious"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No wine was delicious."
+      ],
+      [
+        "exp1",
+        "35"
+      ],
+      [
+        "exp2",
+        "18"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item25",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every freshman participated.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "25"
+      ],
+      [
+        "scale",
+        "participate/win"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No freshman won."
+      ],
+      [
+        "exp1",
+        "24"
+      ],
+      [
+        "exp2",
+        "0"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item26",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every outcome was possible.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "26"
+      ],
+      [
+        "scale",
+        "possible/certain"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No outcome was certain."
+      ],
+      [
+        "exp1",
+        "66"
+      ],
+      [
+        "exp2",
+        "62"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item27",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every girl was pretty.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "27"
+      ],
+      [
+        "scale",
+        "pretty/beautiful"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No girl was beautiful."
+      ],
+      [
+        "exp1",
+        "21"
+      ],
+      [
+        "exp2",
+        "7"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item28",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every bird was rare.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "28"
+      ],
+      [
+        "scale",
+        "rare/extinct"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No bird was extinct."
+      ],
+      [
+        "exp1",
+        "50"
+      ],
+      [
+        "exp2",
+        "33"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item29",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every resource was scarce.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "29"
+      ],
+      [
+        "scale",
+        "scarce/unavailable"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No resource was unavailable."
+      ],
+      [
+        "exp1",
+        "37"
+      ],
+      [
+        "exp2",
+        "20"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item30",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every song was silly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "30"
+      ],
+      [
+        "scale",
+        "silly/ridiculous"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No song was ridiculous."
+      ],
+      [
+        "exp1",
+        "18"
+      ],
+      [
+        "exp2",
+        "7"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item31",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every fish was small.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "31"
+      ],
+      [
+        "scale",
+        "small/tiny"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No fish was tiny."
+      ],
+      [
+        "exp1",
+        "17"
+      ],
+      [
+        "exp2",
+        "7"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item32",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every shirt was snug.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "32"
+      ],
+      [
+        "scale",
+        "snug/tight"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No shirt was tight."
+      ],
+      [
+        "exp1",
+        "13"
+      ],
+      [
+        "exp2",
+        "7"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item33",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every bartender saw some of the cars.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "33"
+      ],
+      [
+        "scale",
+        "some/all"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No bartender saw all of the cars."
+      ],
+      [
+        "exp1",
+        "46"
+      ],
+      [
+        "exp2",
+        "40"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item34",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every doctor was sometimes irritable.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "34"
+      ],
+      [
+        "scale",
+        "sometimes/always"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No doctor was always irritable."
+      ],
+      [
+        "exp1",
+        "39"
+      ],
+      [
+        "exp2",
+        "33"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item35",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every dress was special.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "35"
+      ],
+      [
+        "scale",
+        "special/unique"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No dress was unique."
+      ],
+      [
+        "exp1",
+        "17"
+      ],
+      [
+        "exp2",
+        "2"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item36",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every runner started.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "36"
+      ],
+      [
+        "scale",
+        "start/finish"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No runner finished."
+      ],
+      [
+        "exp1",
+        "22"
+      ],
+      [
+        "exp2",
+        "7"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item37",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every worker was tired.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "37"
+      ],
+      [
+        "scale",
+        "tired/exhausted"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No worker was exhausted."
+      ],
+      [
+        "exp1",
+        "12"
+      ],
+      [
+        "exp2",
+        "7"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item38",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every athlete tried.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "38"
+      ],
+      [
+        "scale",
+        "try/succeed"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No athlete succeeded."
+      ],
+      [
+        "exp1",
+        "33"
+      ],
+      [
+        "exp2",
+        "13"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item39",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every wallpaper was ugly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "39"
+      ],
+      [
+        "scale",
+        "ugly/hideous"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No wallpaper was hideous."
+      ],
+      [
+        "exp1",
+        "17"
+      ],
+      [
+        "exp2",
+        "7"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item40",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every movie was unsettling.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "40"
+      ],
+      [
+        "scale",
+        "unsettling/horrific"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No movie was horrific."
+      ],
+      [
+        "exp1",
+        "28"
+      ],
+      [
+        "exp2",
+        "4"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item41",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every soup was warm.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "41"
+      ],
+      [
+        "scale",
+        "warm/hot"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No soup was hot."
+      ],
+      [
+        "exp1",
+        "45"
+      ],
+      [
+        "exp2",
+        "31"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "ronai2024_item42",
+    "source": {
+      "bibkey": "ronai-2024",
+      "paperLabel": "Figures 2-7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every victim was wary.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "item",
+        "42"
+      ],
+      [
+        "scale",
+        "wary/scared"
+      ],
+      [
+        "condition",
+        "strong"
+      ],
+      [
+        "inference",
+        "No victim was scared."
+      ],
+      [
+        "exp1",
+        "16"
+      ],
+      [
+        "exp2",
+        "4"
+      ]
+    ],
+    "comment": "Strong-inference item: exp1 is the mean sliding-scale response (0-100) in Experiment 1, exp2 the percentage of Yes answers in Experiment 2; both computed from the raw data at https://osf.io/kx42p/.",
+    "metaLanguage": "stan1293"
+  }
+]
