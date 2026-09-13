@@ -1,0 +1,2442 @@
+[
+  {
+    "id": "qin2025_bu",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "部 bù",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a department",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "1"]
+    ]
+  },
+  {
+    "id": "qin2025_chang",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "厂 chǎng",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a factory",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "1"]
+    ]
+  },
+  {
+    "id": "qin2025_dai",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "代 dài",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to act for",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "1"]
+    ]
+  },
+  {
+    "id": "qin2025_duo",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "多 duo",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "many; multiple",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "1"]
+    ]
+  },
+  {
+    "id": "qin2025_fan",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "反 fǎn",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "reverse, opposite",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "1"]
+    ]
+  },
+  {
+    "id": "qin2025_fang",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "房 fáng",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a house; a room",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "1"]
+    ]
+  },
+  {
+    "id": "qin2025_fen",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "分 fen",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to divide",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "1"]
+    ]
+  },
+  {
+    "id": "qin2025_ge",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "哥 ge",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a friendly way of addressing males of approximately one’s age",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "1"]
+    ]
+  },
+  {
+    "id": "qin2025_guo",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "国 guó",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a nation",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "1"]
+    ]
+  },
+  {
+    "id": "qin2025_hu",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "户 hù",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a household",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "1"]
+    ]
+  },
+  {
+    "id": "qin2025_jie",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "姐 jiě",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a general term for young women",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "1"]
+    ]
+  },
+  {
+    "id": "qin2025_pai",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "派 pài",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a group of people sharing identical views, style or taste",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "1"]
+    ]
+  },
+  {
+    "id": "qin2025_qian",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "钱 qián",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "cost; fee",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "1"]
+    ]
+  },
+  {
+    "id": "qin2025_qun",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "群 qún",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "crowd; group",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "1"]
+    ]
+  },
+  {
+    "id": "qin2025_ren",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "人 rén",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "people; a person",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "1"]
+    ]
+  },
+  {
+    "id": "qin2025_shi",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "事 shì",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a matter; a thing",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "1"]
+    ]
+  },
+  {
+    "id": "qin2025_shui",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "税 shùi",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a tax",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "1"]
+    ]
+  },
+  {
+    "id": "qin2025_suo",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "所 suǒ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "an institution",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "1"]
+    ]
+  },
+  {
+    "id": "qin2025_wu",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "无 wú",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "without",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "1"]
+    ]
+  },
+  {
+    "id": "qin2025_xing",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "形 xíng",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a shape",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "1"]
+    ]
+  },
+  {
+    "id": "qin2025_xiu",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "秀 xiù",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a show",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "1"]
+    ]
+  },
+  {
+    "id": "qin2025_you",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "有 yǒu",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to possess, to have",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "1"]
+    ]
+  },
+  {
+    "id": "qin2025_ba",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "吧 ba",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a place for recreation",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_ban",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "版 bǎn",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a version",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_bu_2",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "不 bù",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to express negative meaning",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "less"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_ce",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "册 cè",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a volume",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_chang_2",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "场 chǎng",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a venue where people gather for a specific purpose",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_dan",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "单 dan",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "single",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_fan_2",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "泛 fàn",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "general; extensive; nonspecific",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_fang_2",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "方 fang",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a direction, a locality",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_gan",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "感 gǎn",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "feeling; sense",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_gong",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "工 gong",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a worker",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_hao",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "好 hǎo",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to express a general feeling of positivity or contentment",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "less"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_ji",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "机 jī",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a machine",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_ke",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "可 kě",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to express a general feeling of possibility or worthiness",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "less"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_ke_2",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "客 kè",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a person who is traveling for certain purposes",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_li",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "力 lì",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "an ability; strength",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_pin",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "品 pǐn",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a product; an article",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_qi",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "气 qì",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a mental state",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_qi_2",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "器 qì",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a utensil",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_qin",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "亲 qīn",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "of blood or marital relationship",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_sheng",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "生 sheng",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "indicating a certain type of people",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_ti",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "体 tǐ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a shape or state of a substance",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_wei",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "伪 wěi",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "false; fake",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_wu_2",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "物 wù",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a thing",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_xiang",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "相 xiang",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "mutually",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_xiao",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "小 xiǎo",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a certain degree of diminutiveness in different aspects",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "less"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_xin",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "心 xīn",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a feeling",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_xing_2",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "星 xīng",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a celebrity",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_ye",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "业 yè",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "line of business",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_ying",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "影 yǐng",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a picture, a motion picture",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_yuan",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "园 yuán",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a place of recreation; a park",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_zheng",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "症 zhèng",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a disease",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_zhong",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "种 zhǒng",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a category; a sort",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_zi",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "子 zǐ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "something that is small and hard",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_zi_2",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "自 zì",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "self",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_zong",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "总 zǒng",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "overall; general",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "2"]
+    ]
+  },
+  {
+    "id": "qin2025_ba_2",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "霸 bà",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a person who stands out in a specific field for good or bad reasons",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_ban_2",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "半 bàn",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "partly; incompletely",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "less"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_bie",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "别 bié",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a classification; distinction",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_chu",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "处 chù",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a part; a point",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_dao",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "道 dào",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a doctrine; a principle",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_ding",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "丁 dīng",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a person engaged in certain types of manual work",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_du",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "度 dù",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "extent",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_fa",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "法 fǎ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a method",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_fan_3",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "犯 fàn",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a criminal",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_fei",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "非 fei",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "indicating the negative side of something",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "flexible"],
+      ["phonology", "toned"],
+      ["meaning", "less"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_fei_2",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "费 fèi",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a fee; expense",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_feng",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "风 feng",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a tendency; an atmosphere",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_fu",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "夫 fu",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a person engaged in a manual labor",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_fu_2",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "副 fù",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "auxiliary; assistant",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "left"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_guan",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "观 guan",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a view; an outlook",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_gui",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "鬼 gǔi",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a derogatory term for a person with a certain problem",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_gun",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "棍 gùn",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a scoundrel",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_han",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "汉 hàn",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a man",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_hao_2",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "豪 háo",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a person of extraordinary powers or endowment",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_jia",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "家 jia",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a person specialized in a certain field",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_jian",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "件 jiàn",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a document",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_jiang",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "匠 jiàng",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a craftsman",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_jie_2",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "界 jiè",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "walks of life; circles",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_ju",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "具 jù",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a tool",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_lei",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "类 lèi",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to resemble; be similar to",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "left"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_ling",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "零 líng",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "zero; nought",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "free"],
+      ["position", "left"],
+      ["phonology", "toned"],
+      ["meaning", "less"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_lun",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "论 lùn",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a view; a theory",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_lu",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "率 lǜ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a rate",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_mang",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "盲 máng",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a person who is ignorant about something",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_mi",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "迷 mí",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "an enthusiast",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_min",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "民 mín",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a person of a certain occupation",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_re",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "热 rè",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a craze",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_ruan",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "软 ruǎn",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "being not necessarily required",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "left"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_shi_2",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "师 shī",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a person skilled in a certain profession",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_shi_3",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "士 shì",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a person trained in a specified field",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_shi_4",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "式 shì",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a type; a style",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_shou",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "手 shǒu",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a person good at something or engaged in a certain activity",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_tan",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "坛 tán",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "circles",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_tu",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "徒 tú",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a member or follower",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_xing_3",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "型 xíng",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a model; a form",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_xue",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "学 xué",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a subject of study; science",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_ya",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "亚 yà",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "inferior; sub-",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "left"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_yan",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "炎 yán",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "inflammation",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_yi",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "仪 yí",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "an apparatus",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_you_2",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "友 yǒu",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a friend",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_yuan_2",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "员 yuán",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a person holding a post in a certain field",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_zhang",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "张 zhang",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "something can be rolled up, unfolded, or closed",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_zhang_2",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "长 zhǎng",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a director of an institute",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_zhe",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "者 zhě",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "someone has a certain type of quality",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_zhi",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "制 zhì",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "system; regulation",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_zhi_2",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "质 zhì",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "matter; substance",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_zu",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "族 zú",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "a group of people with common features",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "lexical"],
+      ["group", "3"]
+    ]
+  },
+  {
+    "id": "qin2025_chao",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "超 chao",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "super; extra",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "left"],
+      ["phonology", "toned"],
+      ["meaning", "less"],
+      ["group", "4"]
+    ]
+  },
+  {
+    "id": "qin2025_ci",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "次 cì",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "inferior in quality",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "left"],
+      ["phonology", "toned"],
+      ["meaning", "less"],
+      ["group", "4"]
+    ]
+  },
+  {
+    "id": "qin2025_hua",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "化 huà",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "indicating a changing process",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "less"],
+      ["group", "4"]
+    ]
+  },
+  {
+    "id": "qin2025_lai",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "来 lái",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "used after a time expression, indicating a period that extends from past to this moment",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "less"],
+      ["group", "4"]
+    ]
+  },
+  {
+    "id": "qin2025_mian",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "面 miàn",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to form nouns of locality",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "less"],
+      ["group", "4"]
+    ]
+  },
+  {
+    "id": "qin2025_nan",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "难 nán",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to form adjectives expressing an unpleasant feeling",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "left"],
+      ["phonology", "toned"],
+      ["meaning", "less"],
+      ["group", "4"]
+    ]
+  },
+  {
+    "id": "qin2025_ran",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "然 rán",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to form adjectives or adverbs indicating a state",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "less"],
+      ["group", "4"]
+    ]
+  },
+  {
+    "id": "qin2025_shi_5",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "是 shì",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "introducing a condition for doing something",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "less"],
+      ["group", "4"]
+    ]
+  },
+  {
+    "id": "qin2025_xing_4",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "性 xìng",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "to form nouns or adjectives indicating a property",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toned"],
+      ["meaning", "less"],
+      ["group", "4"]
+    ]
+  },
+  {
+    "id": "qin2025_yi_2",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "一 yī",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "suddenness or thoroughness of an action or a change in the situation",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "left"],
+      ["phonology", "toned"],
+      ["meaning", "less"],
+      ["group", "4"]
+    ]
+  },
+  {
+    "id": "qin2025_zhun",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "准 zhǔn",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "quasi; partly",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "left"],
+      ["phonology", "toned"],
+      ["meaning", "less"],
+      ["group", "4"]
+    ]
+  },
+  {
+    "id": "qin2025_bian",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "边 bian",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "indicating locality",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toneless"],
+      ["meaning", "less"],
+      ["group", "5"]
+    ]
+  },
+  {
+    "id": "qin2025_ge_2",
+    "source": {"bibkey": "qin-2025", "paperLabel": "Appendix A"},
+    "language": "mand1415",
+    "primaryText": "个 ge",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "used after a demonstrative pronoun",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["boundness", "bound"],
+      ["position", "right"],
+      ["phonology", "toneless"],
+      ["meaning", "less"],
+      ["group", "5"]
+    ]
+  }
+]
