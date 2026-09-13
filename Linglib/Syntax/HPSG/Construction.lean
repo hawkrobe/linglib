@@ -64,9 +64,9 @@ gap then makes the amalgamated mother `GAP` non-empty, contradicting `[GAP ⟨�
 rejected — the model-theoretic content of "topicalization is an absolute extraction island", a theorem
 about `Models`, not a universal Subjacency. Weak islands (`weak-island-cxt`) are *selectively* permeable
 (NP passes, PP blocked), a generic demonstration of a selectively permeable domain. Coordination
-(`coord-cxt`, two conjunct daughters) carries no principle here; [sag-wasow-bender-2003] Ch. 15 derives
-the Coordinate Structure Constraint from the conjuncts sharing their SYN value, GAP included, and
-`Studies/SagWasowBender2003` states that principle over this signature.
+(`coord-cxt`, two conjunct daughters) carries no principle here; [sag-wasow-bender-2003] Ch. 15
+derives the Coordinate Structure Constraint from the conjuncts sharing their SYN value, GAP
+included, and `Studies/SagWasowBender2003` states that principle over this signature.
 
 ## Scope
 
@@ -733,9 +733,9 @@ example : theClSecondGap.Models grammar := by decide
 /-! ### Head-modifier constructs ([sag-2010] §6)
 
 A head (e.g. a noun) modified by an adjunct (e.g. a relative clause). The modifier's `MOD` value
-selects the head's category and the mother inherits it, as `Models` facts: a relative clause modifies a
-noun and the result is a noun; a modifier selecting the wrong category is rejected. The relative
-clause's *internal* gap is the filler-gap `wh-rel-cl` construct above. -/
+selects the head's category and the mother inherits it, as `Models` facts: a relative clause
+modifies a noun and the result is a noun; a modifier selecting the wrong category is rejected. The
+relative clause's *internal* gap is the filler-gap `wh-rel-cl` construct above. -/
 
 /-- Head-modifier construct family: a head daughter of category `noun`, an adjunct (modifier) daughter
 whose `MOD` value is the entity `modTarget`, and a mother of the head's category. When `modTarget` is the
