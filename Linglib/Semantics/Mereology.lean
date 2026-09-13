@@ -266,11 +266,17 @@ theorem IsPlural.algClosure (h : IsPlural P x) : AlgClosure P x := h.1
 theorem not_isPlural_of_subsingleton (h : ∀ a b, P a → P b → a = b) (x : α) : ¬ IsPlural P x :=
   fun ⟨_, _, _, _, _, ha, hb, hne⟩ => hne (h _ _ ha hb)
 
-/-- An atom in the closure of a predicate holding only of atoms is one of its members. -/
-theorem of_algClosure_of_atom (hP : ∀ ⦃a⦄, P a → Atom a) (hx : AlgClosure P x) (h : Atom x) :
-    P x :=
-  let ⟨_, ha, hle⟩ := algClosure_has_base hx
-  h.eq hle (hP ha).not_isBot ▸ ha
+/-- An atom in the closure of a predicate is one of its members: an atom is not a proper sum. -/
+theorem of_algClosure_of_atom (hx : AlgClosure P x) (h : Atom x) : P x := by
+  induction hx with
+  | base hp => exact hp
+  | @sum a b _ _ iha ihb =>
+    by_cases ha : IsBot a
+    · rw [sup_eq_right.mpr (ha _)] at h ⊢
+      exact ihb h
+    · have heq := h.eq le_sup_left ha
+      rw [← heq] at h ⊢
+      exact iha h
 
 /-- For a predicate holding only of atoms, a plurality is a non-atomic element of the closure. -/
 theorem isPlural_iff_of_atom (hP : ∀ ⦃a⦄, P a → Atom a) :
@@ -287,7 +293,7 @@ theorem isPlural_iff_of_atom (hP : ∀ ⦃a⦄, P a → Atom a) :
       · by_cases haz : Atom z
         · refine ⟨y, lt_of_le_of_ne le_sup_left fun h => hne (by rw [← h]; exact hay),
             z, lt_of_le_of_ne le_sup_right fun h => hne (by rw [← h]; exact haz),
-            of_algClosure_of_atom hP hy hay, of_algClosure_of_atom hP hz haz, fun h => hne ?_⟩
+            of_algClosure_of_atom hy hay, of_algClosure_of_atom hz haz, fun h => hne ?_⟩
           subst h
           rwa [sup_idem]
         · obtain ⟨a, ha, b, hb, hPa, hPb, hab⟩ := ihz haz

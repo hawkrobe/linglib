@@ -138,20 +138,9 @@ end Constitution
 
 /-! ### Link's theorems -/
 
-theorem of_star_of_atom (hx : Atom x) (h : star P x) : P x := by
-  induction h with
-  | base hp => exact hp
-  | @sum a b _ _ iha ihb =>
-    by_cases ha : IsBot a
-    · rw [sup_eq_right.mpr (ha _)] at hx ⊢
-      exact ihb hx
-    · have heq := hx.eq le_sup_left ha
-      rw [← heq] at hx ⊢
-      exact iha hx
-
 /-- On an atom, `*P` and `P` agree (T.8). -/
 theorem star_iff_of_atom (hx : Atom x) : star P x ↔ P x :=
-  ⟨of_star_of_atom hx, .base⟩
+  ⟨(of_algClosure_of_atom · hx), .base⟩
 
 /-- No element of a distributive predicate is a proper plural (T.6). -/
 theorem IsDistr.not_properPlural (hP : IsDistr P) (hx : P x) : ¬ properPlural P x :=
