@@ -113,11 +113,9 @@ quantification over situations is a separate semantic step. The tower
 version tracks depth for depth-sensitive operations (presupposition,
 tense indexing). -/
 
-/-- The mood-labeled context shift to the introduced situation's world
-and time. -/
+/-- The context shift to the introduced situation's world and time. -/
 def subjShift {E P : Type*} (newWorld : W) (newTime : T) :
-    ContextShift (Context W E P T) where
-  apply := λ c => { c with world := newWorld, time := newTime }
-  label := .mood
+    ContextShift (Context W E P T) :=
+  λ c => { c with world := newWorld, time := newTime }
 
 end Mood

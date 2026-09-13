@@ -441,9 +441,8 @@ def finalCtx : ChainCtx :=
 
 /-- A clauseChain shift: changes agent and time for a medial clause.
     The medial clause has its own subject and event time. -/
-def chainShift (newAgent : ChainAgent) (eventTime : ℤ) : ContextShift ChainCtx where
-  apply := λ c => { c with agent := newAgent, time := eventTime }
-  label := .clauseChain
+def chainShift (newAgent : ChainAgent) (eventTime : ℤ) : ContextShift ChainCtx :=
+  λ c => { c with agent := newAgent, time := eventTime }
 
 -- ============================================================================
 -- § Tower Depth = Chain Length
@@ -573,20 +572,5 @@ theorem sr_languages_use_tower_agent_tracking :
 /-- Non-SR languages don't track agent continuity morphologically. -/
 theorem nonsr_languages_no_agent_tracking :
     [korean, turkish].all (λ p => !p.hasSR) = true := by native_decide
-
--- ============================================================================
--- § Chain Label = clauseChain
--- ============================================================================
-
-/-- The chain shift carries the `.clauseChain` label, connecting it to the
-    `ShiftLabel` taxonomy in Tower.lean. -/
-theorem chain_shift_label :
-    (chainShift .subjectB (-3)).label = ShiftLabel.clauseChain := rfl
-
-/-- Chain shifts are distinct from attitude shifts (subordination). This
-    reflects the cosubordination ≠ subordination distinction: clause chaining
-    uses a different shift label than attitude embedding. -/
-theorem chain_is_not_attitude :
-    (chainShift .subjectB (-3)).label ≠ ShiftLabel.attitude := by decide
 
 end SarvasyAikhenvald2025

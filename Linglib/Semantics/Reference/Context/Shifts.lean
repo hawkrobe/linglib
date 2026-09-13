@@ -1,15 +1,18 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Semantics.Reference.Context.Tower
 
 /-!
-# Standard Context Shifts
+# Standard context shifts
 
-Shift constructors for `Context` that correspond to specific linguistic operations:
-attitude embedding, temporal shift, and the identity (no-op) shift. Each preserves or
-changes specific coordinates, with theorems documenting the preservation pattern.
-
-These are the building blocks for tower-based composition. An attitude verb pushes
-`attitudeShift`, a sequence-of-tense embedding pushes `temporalShift`, and Kaplan-compliant
-English attitude verbs push `identityShift`.
+The shifts of `Context` that embedding operators push: an attitude verb makes the holder the
+agent and an accessible world the world (`attitudeShift`, [schlenker-2003]), and a
+sequence-of-tense embedding moves the time to the matrix event time (`temporalShift`,
+[von-stechow-2009]); a Kaplan-compliant English attitude verb pushes the identity `1`. The
+lemmas record which coordinates each shift changes and which it preserves.
 
 ## References
 
@@ -19,93 +22,49 @@ English attitude verbs push `identityShift`.
 
 namespace Reference
 
+variable {W E P T : Type*} (c : Context W E P T)
 
-section ContextShifts
+/-- The attitude shift: the holder becomes the agent and the attitude world the world;
+addressee, time and position are preserved. -/
+def attitudeShift (holder : E) (attWorld : W) : ContextShift (Context W E P T) :=
+  λ c => { c with agent := holder, world := attWorld }
 
-variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
+/-- The temporal shift: the time moves to `newTime`; every other coordinate is preserved. -/
+def temporalShift (newTime : T) : ContextShift (Context W E P T) :=
+  λ c => { c with time := newTime }
 
-/-- Attitude shift: changes agent (to the attitude holder) and world
-    (to an attitude-accessible world). Addressee, time, and position
-    are preserved.
+section attitudeShift
 
-    [schlenker-2003]: "John said that I am happy" — under the monster
-    analysis, the attitude verb shifts agent to John. Under Kaplan's
-    thesis, English uses `identityShift` instead. -/
-def attitudeShift (holder : E) (attWorld : W) : ContextShift (Context W E P T) where
-  apply := λ c => { c with agent := holder, world := attWorld }
-  label := .attitude
+variable (holder : E) (attWorld : W)
 
-/-- Temporal shift: changes time only. Used for sequence of tense,
-    where embedded tense is evaluated relative to the matrix event time.
+@[simp] theorem attitudeShift_agent :
+    (attitudeShift (P := P) (T := T) holder attWorld c).agent = holder := rfl
+@[simp] theorem attitudeShift_world :
+    (attitudeShift (P := P) (T := T) holder attWorld c).world = attWorld := rfl
+@[simp] theorem attitudeShift_addressee :
+    (attitudeShift (P := P) (T := T) holder attWorld c).addressee = c.addressee := rfl
+@[simp] theorem attitudeShift_time :
+    (attitudeShift (P := P) (T := T) holder attWorld c).time = c.time := rfl
+@[simp] theorem attitudeShift_position :
+    (attitudeShift (P := P) (T := T) holder attWorld c).position = c.position := rfl
 
-    [von-stechow-2009]: the attitude verb transmits its event time to
-    the embedded clause's perspective time. -/
-def temporalShift (newTime : T) : ContextShift (Context W E P T) where
-  apply := λ c => { c with time := newTime }
-  label := .temporal
+end attitudeShift
 
-/-- Identity shift: no change to the context. Kaplan's thesis for English
-    says attitude verbs push identity shifts — embedding happens without
-    shifting the context of utterance. -/
-def identityShift : ContextShift (Context W E P T) where
-  apply := id
-  label := .generic
+section temporalShift
 
--- ════════════════════════════════════════════════════════════════
--- § Attitude Shift Preservation
--- ════════════════════════════════════════════════════════════════
+variable (newTime : T)
 
-@[simp] theorem attitudeShift_preserves_addressee (holder : E) (attWorld : W)
-    (c : Context W E P T) :
-    ((attitudeShift holder attWorld).apply c).addressee = c.addressee := rfl
+@[simp] theorem temporalShift_time :
+    (temporalShift (W := W) (E := E) (P := P) newTime c).time = newTime := rfl
+@[simp] theorem temporalShift_agent :
+    (temporalShift (W := W) (E := E) (P := P) newTime c).agent = c.agent := rfl
+@[simp] theorem temporalShift_world :
+    (temporalShift (W := W) (E := E) (P := P) newTime c).world = c.world := rfl
+@[simp] theorem temporalShift_addressee :
+    (temporalShift (W := W) (E := E) (P := P) newTime c).addressee = c.addressee := rfl
+@[simp] theorem temporalShift_position :
+    (temporalShift (W := W) (E := E) (P := P) newTime c).position = c.position := rfl
 
-@[simp] theorem attitudeShift_preserves_time (holder : E) (attWorld : W)
-    (c : Context W E P T) :
-    ((attitudeShift holder attWorld).apply c).time = c.time := rfl
-
-@[simp] theorem attitudeShift_preserves_position (holder : E) (attWorld : W)
-    (c : Context W E P T) :
-    ((attitudeShift holder attWorld).apply c).position = c.position := rfl
-
-@[simp] theorem attitudeShift_changes_agent (holder : E) (attWorld : W)
-    (c : Context W E P T) :
-    ((attitudeShift holder attWorld).apply c).agent = holder := rfl
-
-@[simp] theorem attitudeShift_changes_world (holder : E) (attWorld : W)
-    (c : Context W E P T) :
-    ((attitudeShift holder attWorld).apply c).world = attWorld := rfl
-
--- ════════════════════════════════════════════════════════════════
--- § Temporal Shift Preservation
--- ════════════════════════════════════════════════════════════════
-
-@[simp] theorem temporalShift_preserves_agent (newTime : T) (c : Context W E P T) :
-    ((temporalShift newTime).apply c).agent = c.agent := rfl
-
-@[simp] theorem temporalShift_preserves_world (newTime : T) (c : Context W E P T) :
-    ((temporalShift newTime).apply c).world = c.world := rfl
-
-@[simp] theorem temporalShift_preserves_addressee (newTime : T) (c : Context W E P T) :
-    ((temporalShift newTime).apply c).addressee = c.addressee := rfl
-
-@[simp] theorem temporalShift_preserves_position (newTime : T) (c : Context W E P T) :
-    ((temporalShift newTime).apply c).position = c.position := rfl
-
-@[simp] theorem temporalShift_changes_time (newTime : T) (c : Context W E P T) :
-    ((temporalShift newTime).apply c).time = newTime := rfl
-
--- ════════════════════════════════════════════════════════════════
--- § Identity Shift
--- ════════════════════════════════════════════════════════════════
-
-@[simp] theorem identityShift_apply (c : Context W E P T) :
-    (identityShift (W := W) (E := E) (P := P) (T := T)).apply c = c := rfl
-
-/-- Pushing an identity shift doesn't change the innermost context. -/
-theorem push_identityShift_innermost (t : ContextTower (Context W E P T)) :
-    (t.push identityShift).innermost = t.innermost := by
-  rw [ContextTower.push_innermost, identityShift_apply]
-
-end ContextShifts
+end temporalShift
 
 end Reference

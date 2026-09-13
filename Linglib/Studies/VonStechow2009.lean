@@ -349,7 +349,7 @@ theorem von_stechow_tower_innermost
     (t : ContextTower (Context W E P T)) (newTime : T) :
     (t.push (temporalShift newTime)).innermost.time = newTime := by
   rw [ContextTower.push_innermost]
-  simp only [temporalShift]
+  rfl
 
 end TemporalBridge
 
