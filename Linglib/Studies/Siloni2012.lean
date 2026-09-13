@@ -708,21 +708,18 @@ inductive Kisser where
   | rina
   deriving DecidableEq, Repr
 
-/-- The event domain: nonempty finite sets of atomic event markers, the
-    left summand for directional kissings and the right for group
-    atoms. -/
-abbrev KissEvent : Type := {F : Finset (ℕ ⊕ ℕ) // F.Nonempty}
+/-- The event domain: finite sets of atomic event markers, the left summand
+    for directional kissings and the right for group atoms. -/
+abbrev KissEvent : Type := Finset (ℕ ⊕ ℕ)
 
 noncomputable def kissGroups : GroupStructure KissEvent :=
   GroupStructure.finsetModel ℕ
 
 /-- The `i`-th directional kissing event. -/
-def directional (i : ℕ) : KissEvent :=
-  ⟨{Sum.inl i}, Finset.singleton_nonempty _⟩
+def directional (i : ℕ) : KissEvent := {Sum.inl i}
 
 theorem directional_injective : Function.Injective directional :=
-  fun _ _ h => Sum.inl.inj (Finset.singleton_injective
-    (congrArg Subtype.val h))
+  λ _ _ h => Sum.inl.inj (Finset.singleton_injective h)
 
 /-- Round `j` kisses in both directions: Dan's is event `2j`, Rina's is
     event `2j + 1`. -/
@@ -771,8 +768,7 @@ theorem mutualEvent_injective : Function.Injective mutualEvent := by
   have hv : ({Sum.inl (2 * (j : ℕ))} ∪ {Sum.inl (2 * (j : ℕ) + 1)}
       : Finset (ℕ ⊕ ℕ)) =
       {Sum.inl (2 * (j' : ℕ))} ∪ {Sum.inl (2 * (j' : ℕ) + 1)} := by
-    simpa [directional, GroupStructure.coe_sup] using
-      congrArg Subtype.val h2
+    simpa [directional, Finset.sup_eq_union] using h2
   have hmem : (Sum.inl (2 * (j : ℕ)) : ℕ ⊕ ℕ) ∈
       ({Sum.inl (2 * (j' : ℕ))} ∪ {Sum.inl (2 * (j' : ℕ) + 1)}
         : Finset (ℕ ⊕ ℕ)) := by
@@ -813,8 +809,8 @@ theorem card_accumulated : (Finset.univ.image accumulated).card = 5 := by
     have hmem : (Sum.inl (2 * (j : ℕ)) : ℕ ⊕ ℕ) ∈
         ({Sum.inl (2 * (j' : ℕ))} ∪ {Sum.inl (2 * (j' : ℕ) + 1)}
           : Finset (ℕ ⊕ ℕ)) := by
-      have hv := congrArg Subtype.val h
-      simp only [accumulated, GroupStructure.coe_sup, directional] at hv
+      have hv := h
+      simp only [accumulated, Finset.sup_eq_union, directional] at hv
       rw [← hv]; simp
     simp only [Finset.mem_union, Finset.mem_singleton, Sum.inl.injEq] at hmem
     exact Fin.ext (by omega)
