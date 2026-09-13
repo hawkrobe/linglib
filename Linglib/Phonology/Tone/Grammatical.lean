@@ -27,8 +27,6 @@ a natural class of morphemes or constructions ([rolle-2018] Def 5).
   components (grammatical tune, trigger, target, host, valuation window).
 * `tonalOverwrite` — apply a grammatical tone to a host word, overwriting
   lexical tones in the valuation window (replacive-dominant GT).
-* `DominantGTAsymmetry` — the typological generalization that dominant
-  GT triggers are always dependents ([rolle-2018] §3.4.1).
 
 ## Implementation notes
 
@@ -315,37 +313,6 @@ def tonalOverwrite {S : Type*} [DecidableEq S] [BEq S] [Repr S]
         ++ [{ last with tone := tFin }]
   | _, _ => host  -- no change if melody doesn't match window pattern
 
-/-! ### Dominant GT asymmetry -/
-
-/-- The **dominant GT asymmetry**: within a multi-morphemic constituent,
-    dominant GT triggers are always **dependents** (affixes, modifiers,
-    clitics), and the target is always the **lexical head** (root, stem,
-    noun). Lexical heads do not impose dominant GT on their dependents.
-
-    [rolle-2018] derives this from the CoP-scope hierarchy:
-    VIs within specifiers scope over heads, and VIs within heads scope
-    over complements. Since dependents are structurally outer relative
-    to the head, dominant triggers are always dependents.
-
-    See `Rolle2018.dominant_gt_asymmetry_from_scope` for a derivation
-    of this asymmetry from the CoP-scope ordering, which eliminates
-    the stipulation by showing it follows from Spec > Head > Complement.
-
-    We encode this as a predicate over GT specifications: if the
-    trigger is dominant, then by the asymmetry, the trigger must be
-    a dependent morpheme. Outward dominance — a lexical head imposing
-    dominant GT on its dependents — would falsify the theory. -/
-structure DominantGTAsymmetry where
-  /-- The trigger morpheme's structural role. -/
-  triggerIsDependent : Bool
-  /-- The target morpheme's structural role. -/
-  targetIsHead : Bool
-
-/-- The dominant GT asymmetry holds when all dominant triggers are
-    dependents and all dominant targets are heads. -/
-def DominantGTAsymmetry.holds (a : DominantGTAsymmetry) : Bool :=
-  a.triggerIsDependent && a.targetIsHead
-
 /-! ### GT indomitability -/
 
 /-- Types of GT indomitability: exceptional targets that fail to undergo
@@ -417,15 +384,5 @@ theorem recessive_isNonDominant :
 /-- Neutral GT is non-dominant. -/
 theorem neutral_isNonDominant :
     GTDominance.IsNonDominant .neutral := by decide
-
-/-- The dominant GT asymmetry holds for a typical case: dependent trigger
-    targeting a lexical head. -/
-theorem dominant_asymmetry_typical :
-    DominantGTAsymmetry.holds ⟨true, true⟩ = true := rfl
-
-/-- Outward dominance — a lexical head targeting its dependent — violates
-    the asymmetry. -/
-theorem outward_dominance_violates :
-    DominantGTAsymmetry.holds ⟨false, true⟩ = false := rfl
 
 end Tone
