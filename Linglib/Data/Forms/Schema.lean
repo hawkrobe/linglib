@@ -35,6 +35,9 @@ and its reduplicant); CLDF has no standard component for these and permits custo
   phonemic segmentation: a long vowel as one segment, or a residue the paper treats as one
   variable. `Form.slots` reads the segments as a slot-indexed item on the flat carrier, the
   shape the schema substrate consumes.
+* CLDF lets any table carry custom columns. A form's are kept as `columns`, name-value pairs
+  under the column names of the JSON and read by `Form.column?`, for the per-form codes a paper
+  assigns (a canonicity judgment, a tone class).
 * Identifiers follow the CLDF `id` format `[a-zA-Z0-9_-]+`, enforced by the generator.
 
 ## References
@@ -64,10 +67,15 @@ structure Form where
   comment : String := ""
   /-- `Source`: the references, each a bibkey with a locator. -/
   source : List SourceRef := []
+  /-- The custom columns of the table, by column name. -/
+  columns : List (String × String) := []
   deriving DecidableEq, Repr
 
 /-- The segments of a form as a slot-indexed item on the flat carrier. -/
 def Form.slots (f : Form) (i : Fin f.segments.length) : Flat String := ↑(f.segments.get i)
+
+/-- The value of a custom column, if the form has one. -/
+def Form.column? (f : Form) (name : String) : Option String := f.columns.lookup name
 
 /-- A row of a CLDF `ParameterTable`: a concept forms express. -/
 structure Parameter where

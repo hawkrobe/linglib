@@ -1,0 +1,2324 @@
+{
+  "FormTable": [
+    {
+      "ID": "qin2025_bu",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "bu",
+      "Form": "部",
+      "Segments": ["bù"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "1"
+    },
+    {
+      "ID": "qin2025_chang",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "chang",
+      "Form": "厂",
+      "Segments": ["chǎng"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "1"
+    },
+    {
+      "ID": "qin2025_dai",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "dai",
+      "Form": "代",
+      "Segments": ["dài"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "1"
+    },
+    {
+      "ID": "qin2025_duo",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "duo",
+      "Form": "多",
+      "Segments": ["duō"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "1"
+    },
+    {
+      "ID": "qin2025_fan",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "fan",
+      "Form": "反",
+      "Segments": ["fǎn"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "1"
+    },
+    {
+      "ID": "qin2025_fang",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "fang",
+      "Form": "房",
+      "Segments": ["fáng"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "1"
+    },
+    {
+      "ID": "qin2025_fen",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "fen",
+      "Form": "分",
+      "Segments": ["fēn"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "1"
+    },
+    {
+      "ID": "qin2025_ge",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "ge",
+      "Form": "哥",
+      "Segments": ["gē"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "1"
+    },
+    {
+      "ID": "qin2025_guo",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "guo",
+      "Form": "国",
+      "Segments": ["guó"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "1"
+    },
+    {
+      "ID": "qin2025_hu",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "hu",
+      "Form": "户",
+      "Segments": ["hù"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "1"
+    },
+    {
+      "ID": "qin2025_jie",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "jie",
+      "Form": "姐",
+      "Segments": ["jiě"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "1"
+    },
+    {
+      "ID": "qin2025_pai",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "pai",
+      "Form": "派",
+      "Segments": ["pài"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "1"
+    },
+    {
+      "ID": "qin2025_qian",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "qian",
+      "Form": "钱",
+      "Segments": ["qián"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "1"
+    },
+    {
+      "ID": "qin2025_qun",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "qun",
+      "Form": "群",
+      "Segments": ["qún"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "1"
+    },
+    {
+      "ID": "qin2025_ren",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "ren",
+      "Form": "人",
+      "Segments": ["rén"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "1"
+    },
+    {
+      "ID": "qin2025_shi",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "shi",
+      "Form": "事",
+      "Segments": ["shì"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "1"
+    },
+    {
+      "ID": "qin2025_shui",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "shui",
+      "Form": "税",
+      "Segments": ["shuì"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "1"
+    },
+    {
+      "ID": "qin2025_suo",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "suo",
+      "Form": "所",
+      "Segments": ["suǒ"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "1"
+    },
+    {
+      "ID": "qin2025_wu",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "wu",
+      "Form": "无",
+      "Segments": ["wú"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "1"
+    },
+    {
+      "ID": "qin2025_xing",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "xing",
+      "Form": "形",
+      "Segments": ["xíng"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "1"
+    },
+    {
+      "ID": "qin2025_xiu",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "xiu",
+      "Form": "秀",
+      "Segments": ["xiù"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "1"
+    },
+    {
+      "ID": "qin2025_you",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "you",
+      "Form": "有",
+      "Segments": ["yǒu"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "1"
+    },
+    {
+      "ID": "qin2025_ba",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "ba",
+      "Form": "吧",
+      "Segments": ["bā"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_ban",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "ban",
+      "Form": "版",
+      "Segments": ["bǎn"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_bu_2",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "bu_2",
+      "Form": "不",
+      "Segments": ["bù"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "NL",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_ce",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "ce",
+      "Form": "册",
+      "Segments": ["cè"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_chang_2",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "chang_2",
+      "Form": "场",
+      "Segments": ["chǎng"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_dan",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "dan",
+      "Form": "单",
+      "Segments": ["dān"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_fan_2",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "fan_2",
+      "Form": "泛",
+      "Segments": ["fàn"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_fang_2",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "fang_2",
+      "Form": "方",
+      "Segments": ["fāng"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_gan",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "gan",
+      "Form": "感",
+      "Segments": ["gǎn"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_gong",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "gong",
+      "Form": "工",
+      "Segments": ["gōng"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_hao",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "hao",
+      "Form": "好",
+      "Segments": ["hǎo"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "NL",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_ji",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "ji",
+      "Form": "机",
+      "Segments": ["jī"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_ke",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "ke",
+      "Form": "可",
+      "Segments": ["kě"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "NL",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_ke_2",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "ke_2",
+      "Form": "客",
+      "Segments": ["kè"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_li",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "li",
+      "Form": "力",
+      "Segments": ["lì"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_pin",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "pin",
+      "Form": "品",
+      "Segments": ["pǐn"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_qi",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "qi",
+      "Form": "气",
+      "Segments": ["qì"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_qi_2",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "qi_2",
+      "Form": "器",
+      "Segments": ["qì"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_qin",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "qin",
+      "Form": "亲",
+      "Segments": ["qīn"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_sheng",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "sheng",
+      "Form": "生",
+      "Segments": ["shēng"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_ti",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "ti",
+      "Form": "体",
+      "Segments": ["tǐ"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_wei",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "wei",
+      "Form": "伪",
+      "Segments": ["wěi"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_wu_2",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "wu_2",
+      "Form": "物",
+      "Segments": ["wù"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_xiang",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "xiang",
+      "Form": "相",
+      "Segments": ["xiāng"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_xiao",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "xiao",
+      "Form": "小",
+      "Segments": ["xiǎo"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "NL",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_xin",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "xin",
+      "Form": "心",
+      "Segments": ["xīn"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_xing_2",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "xing_2",
+      "Form": "星",
+      "Segments": ["xīng"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_ye",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "ye",
+      "Form": "业",
+      "Segments": ["yè"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_ying",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "ying",
+      "Form": "影",
+      "Segments": ["yǐng"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_yuan",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "yuan",
+      "Form": "园",
+      "Segments": ["yuán"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_zheng",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "zheng",
+      "Form": "症",
+      "Segments": ["zhèng"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_zhong",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "zhong",
+      "Form": "种",
+      "Segments": ["zhǒng"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_zi",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "zi",
+      "Form": "子",
+      "Segments": ["zǐ"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_zi_2",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "zi_2",
+      "Form": "自",
+      "Segments": ["zì"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_zong",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "zong",
+      "Form": "总",
+      "Segments": ["zǒng"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "2"
+    },
+    {
+      "ID": "qin2025_ba_2",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "ba_2",
+      "Form": "霸",
+      "Segments": ["bà"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_ban_2",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "ban_2",
+      "Form": "半",
+      "Segments": ["bàn"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "NL",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_bie",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "bie",
+      "Form": "别",
+      "Segments": ["bié"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_chu",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "chu",
+      "Form": "处",
+      "Segments": ["chù"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_dao",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "dao",
+      "Form": "道",
+      "Segments": ["dào"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_ding",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "ding",
+      "Form": "丁",
+      "Segments": ["dīng"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_du",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "du",
+      "Form": "度",
+      "Segments": ["dù"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_fa",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "fa",
+      "Form": "法",
+      "Segments": ["fǎ"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_fan_3",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "fan_3",
+      "Form": "犯",
+      "Segments": ["fàn"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_fei",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "fei",
+      "Form": "非",
+      "Segments": ["fēi"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "FLEX",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "NL",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_fei_2",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "fei_2",
+      "Form": "费",
+      "Segments": ["fèi"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_feng",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "feng",
+      "Form": "风",
+      "Segments": ["fēng"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_fu",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "fu",
+      "Form": "夫",
+      "Segments": ["fū"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_fu_2",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "fu_2",
+      "Form": "副",
+      "Segments": ["fù"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SL",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_guan",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "guan",
+      "Form": "观",
+      "Segments": ["guān"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_gui",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "gui",
+      "Form": "鬼",
+      "Segments": ["guǐ"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_gun",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "gun",
+      "Form": "棍",
+      "Segments": ["gùn"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_han",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "han",
+      "Form": "汉",
+      "Segments": ["hàn"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_hao_2",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "hao_2",
+      "Form": "豪",
+      "Segments": ["háo"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_jia",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "jia",
+      "Form": "家",
+      "Segments": ["jiā"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_jian",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "jian",
+      "Form": "件",
+      "Segments": ["jiàn"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_jiang",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "jiang",
+      "Form": "匠",
+      "Segments": ["jiàng"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_jie_2",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "jie_2",
+      "Form": "界",
+      "Segments": ["jiè"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_ju",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "ju",
+      "Form": "具",
+      "Segments": ["jù"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_lei",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "lei",
+      "Form": "类",
+      "Segments": ["lèi"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SL",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_ling",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "ling",
+      "Form": "零",
+      "Segments": ["líng"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "F",
+      "Positional_Flexibility": "SL",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "NL",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_lun",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "lun",
+      "Form": "论",
+      "Segments": ["lùn"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_lu",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "lu",
+      "Form": "率",
+      "Segments": ["lǜ"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_mang",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "mang",
+      "Form": "盲",
+      "Segments": ["máng"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_mi",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "mi",
+      "Form": "迷",
+      "Segments": ["mí"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_min",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "min",
+      "Form": "民",
+      "Segments": ["mín"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_re",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "re",
+      "Form": "热",
+      "Segments": ["rè"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_ruan",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "ruan",
+      "Form": "软",
+      "Segments": ["ruǎn"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SL",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_shi_2",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "shi_2",
+      "Form": "师",
+      "Segments": ["shī"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_shi_3",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "shi_3",
+      "Form": "士",
+      "Segments": ["shì"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_shi_4",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "shi_4",
+      "Form": "式",
+      "Segments": ["shì"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_shou",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "shou",
+      "Form": "手",
+      "Segments": ["shǒu"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_tan",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "tan",
+      "Form": "坛",
+      "Segments": ["tán"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_tu",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "tu",
+      "Form": "徒",
+      "Segments": ["tú"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_xing_3",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "xing_3",
+      "Form": "型",
+      "Segments": ["xíng"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_xue",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "xue",
+      "Form": "学",
+      "Segments": ["xué"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_ya",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "ya",
+      "Form": "亚",
+      "Segments": ["yà"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SL",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_yan",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "yan",
+      "Form": "炎",
+      "Segments": ["yán"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_yi",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "yi",
+      "Form": "仪",
+      "Segments": ["yí"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_you_2",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "you_2",
+      "Form": "友",
+      "Segments": ["yǒu"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_yuan_2",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "yuan_2",
+      "Form": "员",
+      "Segments": ["yuán"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_zhang",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "zhang",
+      "Form": "张",
+      "Segments": ["zhāng"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_zhang_2",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "zhang_2",
+      "Form": "长",
+      "Segments": ["zhǎng"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_zhe",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "zhe",
+      "Form": "者",
+      "Segments": ["zhě"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_zhi",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "zhi",
+      "Form": "制",
+      "Segments": ["zhì"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_zhi_2",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "zhi_2",
+      "Form": "质",
+      "Segments": ["zhì"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_zu",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "zu",
+      "Form": "族",
+      "Segments": ["zú"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "L",
+      "Group": "3"
+    },
+    {
+      "ID": "qin2025_chao",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "chao",
+      "Form": "超",
+      "Segments": ["chāo"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SL",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "NL",
+      "Group": "4"
+    },
+    {
+      "ID": "qin2025_ci",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "ci",
+      "Form": "次",
+      "Segments": ["cì"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SL",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "NL",
+      "Group": "4"
+    },
+    {
+      "ID": "qin2025_hua",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "hua",
+      "Form": "化",
+      "Segments": ["huà"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "NL",
+      "Group": "4"
+    },
+    {
+      "ID": "qin2025_lai",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "lai",
+      "Form": "来",
+      "Segments": ["lái"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "NL",
+      "Group": "4"
+    },
+    {
+      "ID": "qin2025_mian",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "mian",
+      "Form": "面",
+      "Segments": ["miàn"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "NL",
+      "Group": "4"
+    },
+    {
+      "ID": "qin2025_nan",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "nan",
+      "Form": "难",
+      "Segments": ["nán"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SL",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "NL",
+      "Group": "4"
+    },
+    {
+      "ID": "qin2025_ran",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "ran",
+      "Form": "然",
+      "Segments": ["rán"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "NL",
+      "Group": "4"
+    },
+    {
+      "ID": "qin2025_shi_5",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "shi_5",
+      "Form": "是",
+      "Segments": ["shì"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "NL",
+      "Group": "4"
+    },
+    {
+      "ID": "qin2025_xing_4",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "xing_4",
+      "Form": "性",
+      "Segments": ["xìng"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "NL",
+      "Group": "4"
+    },
+    {
+      "ID": "qin2025_yi_2",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "yi_2",
+      "Form": "一",
+      "Segments": ["yī"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SL",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "NL",
+      "Group": "4"
+    },
+    {
+      "ID": "qin2025_zhun",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "zhun",
+      "Form": "准",
+      "Segments": ["zhǔn"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SL",
+      "Phonological_Richness": "1",
+      "Meaning_Lexicality": "NL",
+      "Group": "4"
+    },
+    {
+      "ID": "qin2025_bian",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "bian",
+      "Form": "边",
+      "Segments": ["bian"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "TL",
+      "Meaning_Lexicality": "NL",
+      "Group": "5"
+    },
+    {
+      "ID": "qin2025_ge_2",
+      "Language_ID": "mand1415",
+      "Parameter_ID": "ge_2",
+      "Form": "个",
+      "Segments": ["ge"],
+      "Comment": "",
+      "Source": ["qin-2025[Appendix A]"],
+      "Boundness": "B",
+      "Positional_Flexibility": "SR",
+      "Phonological_Richness": "TL",
+      "Meaning_Lexicality": "NL",
+      "Group": "5"
+    }
+  ],
+  "ParameterTable": [
+    {
+      "ID": "bu",
+      "Name": "a department",
+      "Description": ""
+    },
+    {
+      "ID": "chang",
+      "Name": "a factory",
+      "Description": ""
+    },
+    {
+      "ID": "dai",
+      "Name": "to act for",
+      "Description": ""
+    },
+    {
+      "ID": "duo",
+      "Name": "many; multiple",
+      "Description": ""
+    },
+    {
+      "ID": "fan",
+      "Name": "reverse, opposite",
+      "Description": ""
+    },
+    {
+      "ID": "fang",
+      "Name": "a house; a room",
+      "Description": ""
+    },
+    {
+      "ID": "fen",
+      "Name": "to divide",
+      "Description": ""
+    },
+    {
+      "ID": "ge",
+      "Name": "a friendly way of addressing males of approximately one's age",
+      "Description": ""
+    },
+    {
+      "ID": "guo",
+      "Name": "a nation",
+      "Description": ""
+    },
+    {
+      "ID": "hu",
+      "Name": "a household",
+      "Description": ""
+    },
+    {
+      "ID": "jie",
+      "Name": "a general term for young women",
+      "Description": ""
+    },
+    {
+      "ID": "pai",
+      "Name": "a group of people sharing identical views, style or taste",
+      "Description": ""
+    },
+    {
+      "ID": "qian",
+      "Name": "cost; fee",
+      "Description": ""
+    },
+    {
+      "ID": "qun",
+      "Name": "crowd; group",
+      "Description": ""
+    },
+    {
+      "ID": "ren",
+      "Name": "people; a person",
+      "Description": ""
+    },
+    {
+      "ID": "shi",
+      "Name": "a matter; a thing",
+      "Description": ""
+    },
+    {
+      "ID": "shui",
+      "Name": "a tax",
+      "Description": ""
+    },
+    {
+      "ID": "suo",
+      "Name": "an institution",
+      "Description": ""
+    },
+    {
+      "ID": "wu",
+      "Name": "without",
+      "Description": ""
+    },
+    {
+      "ID": "xing",
+      "Name": "a shape",
+      "Description": ""
+    },
+    {
+      "ID": "xiu",
+      "Name": "a show",
+      "Description": ""
+    },
+    {
+      "ID": "you",
+      "Name": "to possess, to have",
+      "Description": ""
+    },
+    {
+      "ID": "ba",
+      "Name": "a place for recreation",
+      "Description": ""
+    },
+    {
+      "ID": "ban",
+      "Name": "a version",
+      "Description": ""
+    },
+    {
+      "ID": "bu_2",
+      "Name": "to express negative meaning",
+      "Description": ""
+    },
+    {
+      "ID": "ce",
+      "Name": "a volume",
+      "Description": ""
+    },
+    {
+      "ID": "chang_2",
+      "Name": "a venue where people gather for a specific purpose",
+      "Description": ""
+    },
+    {
+      "ID": "dan",
+      "Name": "single",
+      "Description": ""
+    },
+    {
+      "ID": "fan_2",
+      "Name": "general; extensive; nonspecific",
+      "Description": ""
+    },
+    {
+      "ID": "fang_2",
+      "Name": "a direction, a locality",
+      "Description": ""
+    },
+    {
+      "ID": "gan",
+      "Name": "feeling; sense",
+      "Description": ""
+    },
+    {
+      "ID": "gong",
+      "Name": "a worker",
+      "Description": ""
+    },
+    {
+      "ID": "hao",
+      "Name": "to express a general feeling of positivity or contentment",
+      "Description": ""
+    },
+    {
+      "ID": "ji",
+      "Name": "a machine",
+      "Description": ""
+    },
+    {
+      "ID": "ke",
+      "Name": "to express a general feeling of possibility or worthiness",
+      "Description": ""
+    },
+    {
+      "ID": "ke_2",
+      "Name": "a person who is traveling for certain purposes",
+      "Description": ""
+    },
+    {
+      "ID": "li",
+      "Name": "an ability; strength",
+      "Description": ""
+    },
+    {
+      "ID": "pin",
+      "Name": "a product; an article",
+      "Description": ""
+    },
+    {
+      "ID": "qi",
+      "Name": "a mental state",
+      "Description": ""
+    },
+    {
+      "ID": "qi_2",
+      "Name": "a utensil",
+      "Description": ""
+    },
+    {
+      "ID": "qin",
+      "Name": "of blood or marital relationship",
+      "Description": ""
+    },
+    {
+      "ID": "sheng",
+      "Name": "indicating a certain type of people",
+      "Description": ""
+    },
+    {
+      "ID": "ti",
+      "Name": "a shape or state of a substance",
+      "Description": ""
+    },
+    {
+      "ID": "wei",
+      "Name": "false; fake",
+      "Description": ""
+    },
+    {
+      "ID": "wu_2",
+      "Name": "a thing",
+      "Description": ""
+    },
+    {
+      "ID": "xiang",
+      "Name": "mutually",
+      "Description": ""
+    },
+    {
+      "ID": "xiao",
+      "Name": "a certain degree of diminutiveness in different aspects",
+      "Description": ""
+    },
+    {
+      "ID": "xin",
+      "Name": "a feeling",
+      "Description": ""
+    },
+    {
+      "ID": "xing_2",
+      "Name": "a celebrity",
+      "Description": ""
+    },
+    {
+      "ID": "ye",
+      "Name": "line of business",
+      "Description": ""
+    },
+    {
+      "ID": "ying",
+      "Name": "a picture, a motion picture",
+      "Description": ""
+    },
+    {
+      "ID": "yuan",
+      "Name": "a place of recreation; a park",
+      "Description": ""
+    },
+    {
+      "ID": "zheng",
+      "Name": "a disease",
+      "Description": ""
+    },
+    {
+      "ID": "zhong",
+      "Name": "a category; a sort",
+      "Description": ""
+    },
+    {
+      "ID": "zi",
+      "Name": "something that is small and hard",
+      "Description": ""
+    },
+    {
+      "ID": "zi_2",
+      "Name": "self",
+      "Description": ""
+    },
+    {
+      "ID": "zong",
+      "Name": "overall; general",
+      "Description": ""
+    },
+    {
+      "ID": "ba_2",
+      "Name": "a person who stands out in a specific field for good or bad reasons",
+      "Description": ""
+    },
+    {
+      "ID": "ban_2",
+      "Name": "partly; incompletely",
+      "Description": ""
+    },
+    {
+      "ID": "bie",
+      "Name": "a classification; distinction",
+      "Description": ""
+    },
+    {
+      "ID": "chu",
+      "Name": "a part; a point",
+      "Description": ""
+    },
+    {
+      "ID": "dao",
+      "Name": "a doctrine; a principle",
+      "Description": ""
+    },
+    {
+      "ID": "ding",
+      "Name": "a person engaged in certain types of manual work",
+      "Description": ""
+    },
+    {
+      "ID": "du",
+      "Name": "extent",
+      "Description": ""
+    },
+    {
+      "ID": "fa",
+      "Name": "a method",
+      "Description": ""
+    },
+    {
+      "ID": "fan_3",
+      "Name": "a criminal",
+      "Description": ""
+    },
+    {
+      "ID": "fei",
+      "Name": "indicating the negative side of something",
+      "Description": ""
+    },
+    {
+      "ID": "fei_2",
+      "Name": "a fee; expense",
+      "Description": ""
+    },
+    {
+      "ID": "feng",
+      "Name": "a tendency; an atmosphere",
+      "Description": ""
+    },
+    {
+      "ID": "fu",
+      "Name": "a person engaged in a manual labor",
+      "Description": ""
+    },
+    {
+      "ID": "fu_2",
+      "Name": "auxiliary; assistant",
+      "Description": ""
+    },
+    {
+      "ID": "guan",
+      "Name": "a view; an outlook",
+      "Description": ""
+    },
+    {
+      "ID": "gui",
+      "Name": "a derogatory term for a person with a certain problem",
+      "Description": ""
+    },
+    {
+      "ID": "gun",
+      "Name": "a scoundrel",
+      "Description": ""
+    },
+    {
+      "ID": "han",
+      "Name": "a man",
+      "Description": ""
+    },
+    {
+      "ID": "hao_2",
+      "Name": "a person of extraordinary powers or endowment",
+      "Description": ""
+    },
+    {
+      "ID": "jia",
+      "Name": "a person specialized in a certain field",
+      "Description": ""
+    },
+    {
+      "ID": "jian",
+      "Name": "a document",
+      "Description": ""
+    },
+    {
+      "ID": "jiang",
+      "Name": "a craftsman",
+      "Description": ""
+    },
+    {
+      "ID": "jie_2",
+      "Name": "walks of life; circles",
+      "Description": ""
+    },
+    {
+      "ID": "ju",
+      "Name": "a tool",
+      "Description": ""
+    },
+    {
+      "ID": "lei",
+      "Name": "to resemble; be similar to",
+      "Description": ""
+    },
+    {
+      "ID": "ling",
+      "Name": "zero; nought",
+      "Description": ""
+    },
+    {
+      "ID": "lun",
+      "Name": "a view; a theory",
+      "Description": ""
+    },
+    {
+      "ID": "lu",
+      "Name": "a rate",
+      "Description": ""
+    },
+    {
+      "ID": "mang",
+      "Name": "a person who is ignorant about something",
+      "Description": ""
+    },
+    {
+      "ID": "mi",
+      "Name": "an enthusiast",
+      "Description": ""
+    },
+    {
+      "ID": "min",
+      "Name": "a person of a certain occupation",
+      "Description": ""
+    },
+    {
+      "ID": "re",
+      "Name": "a craze",
+      "Description": ""
+    },
+    {
+      "ID": "ruan",
+      "Name": "being not necessarily required",
+      "Description": ""
+    },
+    {
+      "ID": "shi_2",
+      "Name": "a person skilled in a certain profession",
+      "Description": ""
+    },
+    {
+      "ID": "shi_3",
+      "Name": "a person trained in a specified field",
+      "Description": ""
+    },
+    {
+      "ID": "shi_4",
+      "Name": "a type; a style",
+      "Description": ""
+    },
+    {
+      "ID": "shou",
+      "Name": "a person good at something or engaged in a certain activity",
+      "Description": ""
+    },
+    {
+      "ID": "tan",
+      "Name": "circles",
+      "Description": ""
+    },
+    {
+      "ID": "tu",
+      "Name": "a member or follower",
+      "Description": ""
+    },
+    {
+      "ID": "xing_3",
+      "Name": "a model; a form",
+      "Description": ""
+    },
+    {
+      "ID": "xue",
+      "Name": "a subject of study; science",
+      "Description": ""
+    },
+    {
+      "ID": "ya",
+      "Name": "inferior; sub-",
+      "Description": ""
+    },
+    {
+      "ID": "yan",
+      "Name": "inflammation",
+      "Description": ""
+    },
+    {
+      "ID": "yi",
+      "Name": "an apparatus",
+      "Description": ""
+    },
+    {
+      "ID": "you_2",
+      "Name": "a friend",
+      "Description": ""
+    },
+    {
+      "ID": "yuan_2",
+      "Name": "a person holding a post in a certain field",
+      "Description": ""
+    },
+    {
+      "ID": "zhang",
+      "Name": "something can be rolled up, unfolded, or closed",
+      "Description": ""
+    },
+    {
+      "ID": "zhang_2",
+      "Name": "a director of an institute",
+      "Description": ""
+    },
+    {
+      "ID": "zhe",
+      "Name": "someone has a certain type of quality",
+      "Description": ""
+    },
+    {
+      "ID": "zhi",
+      "Name": "system; regulation",
+      "Description": ""
+    },
+    {
+      "ID": "zhi_2",
+      "Name": "matter; substance",
+      "Description": ""
+    },
+    {
+      "ID": "zu",
+      "Name": "a group of people with common features",
+      "Description": ""
+    },
+    {
+      "ID": "chao",
+      "Name": "super; extra",
+      "Description": ""
+    },
+    {
+      "ID": "ci",
+      "Name": "inferior in quality",
+      "Description": ""
+    },
+    {
+      "ID": "hua",
+      "Name": "indicating a changing process",
+      "Description": ""
+    },
+    {
+      "ID": "lai",
+      "Name": "used after a time expression, indicating a period that extends from past to this moment",
+      "Description": ""
+    },
+    {
+      "ID": "mian",
+      "Name": "to form nouns of locality",
+      "Description": ""
+    },
+    {
+      "ID": "nan",
+      "Name": "to form adjectives expressing an unpleasant feeling",
+      "Description": ""
+    },
+    {
+      "ID": "ran",
+      "Name": "to form adjectives or adverbs indicating a state",
+      "Description": ""
+    },
+    {
+      "ID": "shi_5",
+      "Name": "introducing a condition for doing something",
+      "Description": ""
+    },
+    {
+      "ID": "xing_4",
+      "Name": "to form nouns or adjectives indicating a property",
+      "Description": ""
+    },
+    {
+      "ID": "yi_2",
+      "Name": "suddenness or thoroughness of an action or a change in the situation",
+      "Description": ""
+    },
+    {
+      "ID": "zhun",
+      "Name": "quasi; partly",
+      "Description": ""
+    },
+    {
+      "ID": "bian",
+      "Name": "indicating locality",
+      "Description": ""
+    },
+    {
+      "ID": "ge_2",
+      "Name": "used after a demonstrative pronoun",
+      "Description": ""
+    }
+  ]
+}

@@ -32,7 +32,9 @@ array of rows keyed by the CLDF column names:
   }
 
 `Source` entries use the CLDF reference syntax `bibkey[label]`; a bare
-`bibkey` is accepted with an empty label.
+`bibkey` is accepted with an empty label. Any further key of a `FormTable`
+row is a CLDF custom column and is emitted, with its string value, into the
+form's `columns` list in the order given.
 
 Behavior mirrors scripts/gen_examples.py: errors out on malformed input,
 idempotent, `--check` exits 1 on drift, `--fmt` rewrites JSON canonically
@@ -113,6 +115,19 @@ def emit_segments(xs, where: str) -> str:
     return "[" + ", ".join(lean_string(x) for x in xs) + "]"
 
 
+def emit_columns(row: dict, where: str) -> str:
+    """Emit the custom columns of a `FormTable` row as a `columns` field, or
+    nothing when the row has none."""
+    extra = [(k, v) for k, v in row.items() if k not in FORM_KEYS]
+    for k, v in extra:
+        if not isinstance(v, str):
+            raise ValueError(f"{where}: custom column {k!r} must hold a string")
+    if not extra:
+        return ""
+    items = ", ".join(f"({lean_string(k)}, {lean_string(v)})" for k, v in extra)
+    return f"\n    columns := [{items}]"
+
+
 def emit_form(row: dict, ay: str) -> tuple[str, str]:
     rid = req_id(row, "ID", "FormTable row")
     where = f"form {rid!r}"
@@ -124,7 +139,7 @@ def emit_form(row: dict, ay: str) -> tuple[str, str]:
     form := {lean_string(req(row, "Form", where))}
     segments := {emit_segments(row.get("Segments"), where)}
     comment := {lean_string(opt(row, "Comment"))}
-    source := {emit_sources(row.get("Source"), where, "    ")} }}"""
+    source := {emit_sources(row.get("Source"), where, "    ")}{emit_columns(row, where)} }}"""
     return local, text
 
 
