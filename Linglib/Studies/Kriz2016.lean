@@ -21,7 +21,7 @@ issue.
 
 ## Implementation notes
 
-* `QUD W` is the substrate partition type, not the question stack of [roberts-1996]: the
+* `Setoid W` is the substrate partition type, not the question stack of [roberts-1996]: the
   paper's §4.5 argues that the current issue is an overarching property of the discourse that
   is not directly manipulable, so `coarseQ` and `fineQ` are constructions for the model.
 * Following §4.4, the gap is trivalent but not presuppositional (contra [gajewski-2005]).
@@ -111,10 +111,10 @@ def receptionGrade : ProfWorld → Reception
   | .noneSmiled => .negative
 
 /-- Coarse QUD: "Was Sue's talk well-received?" -/
-def coarseQ : QUD ProfWorld := QUD.ofDecEq receptionGrade
+abbrev coarseQ : Setoid ProfWorld := Setoid.ker receptionGrade
 
 /-- Fine QUD: "Did every professor smile?" -/
-def fineQ : QUD ProfWorld := QUD.ofDecEq id
+abbrev fineQ : Setoid ProfWorld := ⊥
 
 /-! #### Trivalent values at each world -/
 
@@ -148,12 +148,12 @@ theorem smithNeutral_not_usable_fine :
     ¬usable fineQ (barePlural smiled profs) .smithNeutral := by decide
 
 /-- The *all*-sentence is not usable at `smithNeutral` under any QUD. -/
-theorem all_not_usable_smithNeutral (q : QUD ProfWorld)
+theorem all_not_usable_smithNeutral (q : Setoid ProfWorld)
     (h : usable q (allPlural smiled profs) .smithNeutral) : False :=
   absurd (allPlural_prevents_nonmax smiled profs q .smithNeutral h) (by decide)
 
 /-- Wherever the *all*-sentence is usable, Smith smiled. -/
-theorem smith_exception_unmentionable (q : QUD ProfWorld) (w : ProfWorld)
+theorem smith_exception_unmentionable (q : Setoid ProfWorld) (w : ProfWorld)
     (h : usable q (allPlural smiled profs) w) :
     smiled .smith w :=
   allPlural_exceptions_unmentionable smiled profs q w .smith (by decide) h
@@ -263,7 +263,7 @@ def someWentPartition : ConjWorld → ConjPartition
   | .onlyBert => .someWent
   | .noneWent => .noneWent
 
-def coarseConjQ : QUD ConjWorld := QUD.ofDecEq someWentPartition
+abbrev coarseConjQ : Setoid ConjWorld := Setoid.ker someWentPartition
 
 theorem conj_dorasMissing_gap :
     barePlural wentThere threeCoworkers .dorasMissing = .indet := by decide

@@ -1,5 +1,5 @@
 import Linglib.Discourse.Gameboard.Defs
-import Linglib.Semantics.Questions.Partition.QUD
+import Linglib.Semantics.Questions.Partition.Basic
 import Linglib.Semantics.Questions.Support
 
 /-!
@@ -226,25 +226,20 @@ theorem downdateQud_restores_nonResolveCond
 
 Ch. 4 defines QUD-downdate in terms of FACTS resolving questions.
 The `Support` typeclass abstracts this. Here we connect it to the
-partition-based `QUD W` from `Semantics/Questions/Partition/QUD.lean`
+partition question `Setoid W` of `Semantics/Questions/Partition/Basic.lean`
 ([groenendijk-stokhof-1984]):
 
-A `Set W` fact supports a `QUD W` question when the fact determines
+A `Set W` fact supports a partition question when the fact determines
 a unique cell — all worlds where the fact holds are in the same
 partition cell. -/
 
-/-- A `Set W` resolves a `QUD W` if all fact-worlds are in the same
-partition cell. Prop-valued; `Decidable` via the bundled per-pair
-predicate decidability. -/
-def PropResolvesQUD {W : Type*} (worlds : List W)
-    (fact : Set W) [DecidablePred fact] (q : QUD W) : Prop :=
-  ∀ w₁ ∈ worlds.filter (fun w => decide (fact w)),
-    ∀ w₂ ∈ worlds.filter (fun w => decide (fact w)),
-      q.sameAnswer w₁ w₂ = true
+/-- A `Set W` resolves a partition question if all fact-worlds are in the same cell. -/
+def PropResolvesQUD {W : Type*} (worlds : List W) (fact : Set W) (q : Setoid W) : Prop :=
+  ∀ w₁ ∈ worlds, w₁ ∈ fact → ∀ w₂ ∈ worlds, w₂ ∈ fact → q w₁ w₂
 
-instance {W : Type*} (worlds : List W) (fact : Set W) [DecidablePred fact]
-    (q : QUD W) : Decidable (PropResolvesQUD worlds fact q) := by
-  unfold PropResolvesQUD; infer_instance
+instance {W : Type*} (worlds : List W) (fact : Set W) [DecidablePred (· ∈ fact)]
+    (q : Setoid W) [DecidableRel q] : Decidable (PropResolvesQUD worlds fact q) :=
+  inferInstanceAs (Decidable (∀ w₁ ∈ worlds, _ → ∀ w₂ ∈ worlds, _ → _))
 
 /-! Worked partition consumers below construct their own
 `DecidableSupport` instances at the concrete fact-type (e.g.
