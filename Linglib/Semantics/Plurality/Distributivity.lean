@@ -37,15 +37,15 @@ namespace Plurality.Distributivity
 
 open _root_.Plurality _root_.Plurality.Algebra
 
-variable {Atom W : Type*} {P : Atom → W → Prop} {x : Finset Atom} {w : W}
+variable {α W : Type*} {P : α → W → Prop} {x : Finset α} {w : W}
 
 /-- Tolerant distribution: some nonempty subplurality `z ⪯ x` has every atom satisfying `P` at
 `w`. -/
-def distTolerant (P : Atom → W → Prop) (tol : Tolerance Atom) (x : Finset Atom) (w : W) : Prop :=
+def distTolerant (P : α → W → Prop) (tol : Tolerance α) (x : Finset α) (w : W) : Prop :=
   ∃ z ⊆ x, z.Nonempty ∧ tol.rel z x ∧ ∀ a ∈ z, P a w
 
-instance (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (tol : Tolerance Atom)
-    [DecidableRel tol.rel] (x : Finset Atom) (w : W) : Decidable (distTolerant P tol x w) := by
+instance (P : α → W → Prop) [∀ a w, Decidable (P a w)] (tol : Tolerance α)
+    [DecidableRel tol.rel] (x : Finset α) (w : W) : Decidable (distTolerant P tol x w) := by
   unfold distTolerant; infer_instance
 
 theorem distMaximal_iff_identity (hne : x.Nonempty) :
@@ -54,21 +54,21 @@ theorem distMaximal_iff_identity (hne : x.Nonempty) :
   rintro ⟨z, -, -, rfl, hz⟩
   exact hz
 
-theorem distTolerant_trivial_of_mem {a : Atom} (ha : a ∈ x) (hPa : P a w) :
+theorem distTolerant_trivial_of_mem {a : α} (ha : a ∈ x) (hPa : P a w) :
     distTolerant P Tolerance.trivial x w :=
   ⟨{a}, Finset.singleton_subset_iff.2 ha, Finset.singleton_nonempty a,
     Finset.singleton_subset_iff.2 ha, λ _ hb => (Finset.mem_singleton.1 hb) ▸ hPa⟩
 
 @[simp]
-theorem distMaximal_singleton (a : Atom) : distMaximal P {a} w ↔ P a w := by
+theorem distMaximal_singleton (a : α) : distMaximal P {a} w ↔ P a w := by
   simp [distMaximal]
 
-theorem distMaximal_pair [DecidableEq Atom] (a b : Atom) :
+theorem distMaximal_pair [DecidableEq α] (a b : α) :
     distMaximal P {a, b} w ↔ P a w ∧ P b w := by
   simp [distMaximal]
 
 /-- On a singleton every tolerance reduces to the predicate itself. -/
-theorem distTolerant_singleton (tol : Tolerance Atom) (a : Atom) :
+theorem distTolerant_singleton (tol : Tolerance α) (a : α) :
     distTolerant P tol {a} w ↔ P a w := by
   constructor
   · rintro ⟨z, hz, ⟨b, hb⟩, -, hall⟩
@@ -79,8 +79,8 @@ theorem distTolerant_singleton (tol : Tolerance Atom) (a : Atom) :
 
 /-- Maximal distribution on a nonempty plurality is Link's `*` of the predicate's atoms, taken
 as singletons ([link-1983]). -/
-theorem distMaximal_iff_star [DecidableEq Atom] (hne : x.Nonempty) :
-    distMaximal P x w ↔ star (· ∈ ({·} : Atom → Finset Atom) '' {a | P a w}) x := by
+theorem distMaximal_iff_star [DecidableEq α] (hne : x.Nonempty) :
+    distMaximal P x w ↔ star (· ∈ ({·} : α → Finset α) '' {a | P a w}) x := by
   rw [star_image_singleton, and_iff_right hne]
   exact Iff.rfl
 
