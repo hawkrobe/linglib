@@ -385,7 +385,7 @@ end GQTBridge
 The lexical numeral object (`Degree.Comparison`, `Numeral.Entry`) is owned by
 `Typology/Numeral/Basic.lean`; this section is the *semantics* side — it imports
 that object and provides its `Comparison.over` denotation, mirroring how
-`Semantics/Reference/PronounDenotation.lean` denotes the `PersonalPronoun` object.
+`Semantics/Reference/Pronoun.lean` denotes the `PersonalPronoun` object.
 The denotation is **by construction** a `Degree.Comparison.over`, so every lemma
 about `Comparison.over` transfers to every numeral entry. `Entry.denoteUnder` (the
 cardinal, theory-parameterized reading) is in Section 3. -/

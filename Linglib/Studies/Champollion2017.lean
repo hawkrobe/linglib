@@ -1,5 +1,5 @@
 import Linglib.Semantics.Aspect.Stratified
-import Linglib.Semantics.ArgumentStructure.VerbDenotation
+import Linglib.Semantics.ArgumentStructure.Verb
 import Linglib.Semantics.Plurality.Cover
 import Linglib.Semantics.Plurality.Algebra
 import Linglib.Fragments.English.Predicates.Verbal

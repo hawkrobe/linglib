@@ -1500,7 +1500,6 @@ import Linglib.Semantics.ArgumentStructure.Thematic.Basic
 import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 import Linglib.Semantics.ArgumentStructure.Thematic.Mereology
 import Linglib.Semantics.ArgumentStructure.Valency
-import Linglib.Semantics.ArgumentStructure.VerbDenotation
 import Linglib.Semantics.ArgumentStructure.VoiceSemantics
 import Linglib.Semantics.Aspect.AtomDist
 import Linglib.Semantics.Aspect.Basic
@@ -1589,7 +1588,6 @@ import Linglib.Semantics.Conditionals.WillConditional
 import Linglib.Semantics.Definiteness.Basic
 import Linglib.Semantics.Definiteness.Defs
 import Linglib.Semantics.Definiteness.Description
-import Linglib.Semantics.Definiteness.DeterminerDenotation
 import Linglib.Semantics.Definiteness.Interpret
 import Linglib.Semantics.Definiteness.Maximality
 import Linglib.Semantics.Degree.Adjective
@@ -1814,7 +1812,6 @@ import Linglib.Semantics.Reference.Context.Index
 import Linglib.Semantics.Reference.Context.Shifts
 import Linglib.Semantics.Reference.Context.Tower
 import Linglib.Semantics.Reference.Nominal
-import Linglib.Semantics.Reference.PronounDenotation
 import Linglib.Semantics.Reference.Rigidity
 import Linglib.Semantics.Supervaluation
 import Linglib.Semantics.Tense.Compositional
@@ -2918,7 +2915,6 @@ import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025a
 import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025b
 import Linglib.Data.Examples.AlonsoOvalleRoyer2024
 import Linglib.Semantics.Modality.Anchor
-import Linglib.Semantics.Modality.IndefiniteDenotation
 import Linglib.Syntax.Category.Determiner.ModalIndefinite
 import Linglib.Syntax.Category.WhModifier
 import Linglib.Data.Examples.Alsop2024
