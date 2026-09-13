@@ -1,481 +1,272 @@
-import Mathlib.Data.Rat.Defs
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Features.PropertyDomain
-import Linglib.Semantics.Degree.Adjective
+import Linglib.Data.Examples.RonderosEtAl2024
 import Linglib.Processing.VisualWorld
-import Linglib.Studies.SedivyEtAl1999
+import Linglib.Semantics.Degree.Adjective
+import Mathlib.Data.Finset.Basic
 
 /-!
-# [ronderos-etal-2024]
-[sedivy-etal-1999] [kursat-degen-2021] [giles-etal-2026]
-[aparicio-xiang-kennedy-2015] [aparicio-2017]
+# Ronderos et al. (2024): Factors affecting contrastive inferences
 
-Perceptual, Semantic, and Pragmatic Factors Affect the Derivation of
-Contrastive Inferences. *Open Mind: Discoveries in Cognitive Science*
-8, 1213–1227.
+This file formalizes [ronderos-etal-2024]'s cross-linguistic eye-tracking study of contrastive
+inference with colour, scalar, and material adjectives in the paradigm of [sedivy-etal-1999]: a
+listener who interprets *the short pencil* contrastively, as distinguishing the pencil from a
+longer one, identifies the referent before the noun when the display holds such a contrasting
+object. The paper separates three factors by the predictions they make across adjective types.
+The pragmatic account of [sedivy-2003] and [sedivy-2004] lets the interpretation be contrastive
+only for adjectives rarely used descriptively, so colour, often descriptive, should show no
+contrast effect and material should; the perceptual account requires the contrast to be
+perceived during preview, and material contrasts are less salient than colour ones
+([kursat-degen-2021], [jara-ettinger-rubio-fernandez-2022]), so colour should show the effect
+and material should not. The semantic account of [aparicio-xiang-kennedy-2015] concerns the
+no-contrast baseline: a relative gradable adjective ([kennedy-2007]) is interpreted against a
+comparison class the listener must find in the display, so looks to the two property-matching
+objects are lower for scalar adjectives than for the non-gradable colour and material ones.
 
-## Empirical Phenomenon
+`Display.contrastive` is the contrastive interpretation over a display of the paper's four
+objects, and `Account.PredictsEffect` derives an account's contrast effect from whether the noun
+is anticipated in each condition. `perceptual_matches` and `pragmatic_fails` compare the two
+accounts with the effects found, for colour and scalar but not material adjectives, and
+`baseline_higher_iff_not_relative` checks the baseline against the adjective classes, where
+salience cannot explain material adjectives exceeding scalar ones. Language (English, Hindi,
+Hungarian) enters the paper's models as a grouping unit only, and the rows are the pooled
+findings.
 
-Cross-linguistic visual-world eye-tracking (English, Hindi, Hungarian)
-crossing a same-category contrast manipulation with three adjective
-types (color, scalar, material). The paper reports two qualitatively
-distinct findings, formalised here as two predicates:
+## Implementation notes
 
-1. **Contrast effect** (target-advantage analysis, §3 Results, ¶1–2):
-   the contrastive inference effect — reduced cross-category competitor
-   looks in the contrast condition — appears for color and scalar
-   adjectives but is absent for material. The interaction term (helmert
-   contrast: material vs. color+scalar) is significant.
+* Kinds of object are named by a representative object. The perceptual factor attributes a
+  property to a whole kind as soon as one member shows it, so that objects of a kind are never
+  perceived as contrasting.
+* Salience and informativity are the paper's premises per adjective type, with size contrasts
+  taken as perceptible, as the replicated scalar effect requires.
 
-2. **Scalar baseline disadvantage** (No-Contrast total looks, §3
-   Results, ¶4): in the no-contrast condition, fixations on
-   target + competitor are *lower* for scalar adjectives than for
-   either color (β = 0.25, p < 0.01) or material (β = 0.24, p < 0.05).
-   No significant difference between color and material. Attributed to
-   scalar adjectives requiring more comparison-class processing
-   ([aparicio-xiang-kennedy-2015], [aparicio-2017]) — gaze
-   is more distributed across all four display objects when the listener
-   must construct a comparison class.
+## References
 
-These two findings target *different mechanisms*: pattern (1) is the
-perceptual / pragmatic story (visual salience of the contrastive
-property modulates the contrastive inference); pattern (2) is the
-semantic story (gradable adjectives demand comparison-class binding).
-The paper's contribution is teasing these apart.
-
-## Paradigm
-
-Built on `VisualWorld` ([huettig-rommers-meyer-2011]).
-The display contains four objects (`ObjectRole`):
-
-- `target`: the intended referent.
-- `contrastingObject`: same category, opposite pole on the adjective
-  dimension. Present only in the *contrast* condition.
-- `crossCategoryCompetitor`: different category, sharing the
-  adjective property with the target. Always present.
-- `distractor`: unrelated. Always present.
-
-Within-subjects manipulations on `Cell`:
-
-- **Contrast** (`ContrastCondition`): same-category contrasting object
-  present vs. absent.
-- **AdjType**: color, scalar, material — a study-local factor that
-  partitions the cell space into three strata. Adjective type is *not*
-  a paradigm primitive (the [huettig-rommers-meyer-2011] review
-  does not single it out), so it stays study-local; the paradigm
-  exposes the stratified predicates `ContrastReducesCompetitorLooksWhen`
-  and `RoleSumLowerInBaselineWhen` to consume it.
-
-Cross-linguistic generalisation (English, Hindi, Hungarian) is
-*methodological* rather than structural: the paper deliberately omits
-LANGUAGE as a regression predictor (treating it as a clustering unit
-above participants) because the empirical claim is that the same
-qualitative pattern survives across all three groups, *not* that the
-effect magnitudes are identical. We therefore do not include a
-`Language` field on `Cell` — it would force the predicates to make
-empirically too-strong pairwise claims (e.g., the marginal-mean
-helmert interaction does not entail that every Hungarian material
-cell has a smaller contrast effect than every English color cell, as
-Figure 3 makes visible). The cross-linguistic generalisation is
-documented here in prose; if a future study formalises a
-language-stratified predicate at the paradigm level, the field can be
-added.
-
-The task is held constant (instruction with definite NP across all
-trials), so it is *not* lensed on `Cell` — varying it would have no
-within-study consumer.
-
-## Architectural Role
-
-This file is an **empirical anchor**: it defines the experimental cells
-and qualitative predicates that downstream theoretical models must
-satisfy. The empirical claims are encoded as paradigm-level
-predicates, never as `rfl`-over-stipulated-statistics theorems
-([ronderos-etal-2024]'s F/β/p values are documented in prose at
-each predicate, per the `CLAUDE.md` Processing scope).
-
-The novel architectural feature relative to [sedivy-etal-1999] is
-**stratification**: where Sedivy's contrast effect is universal over
-cells, Ronderos's is conditional on the stratum (color or scalar, not
-material). The stratified predicate
-`VisualWorld.ContrastReducesCompetitorLooksWhen` was added
-to support exactly this kind of multi-factor design without inflating
-the paradigm with a study-specific factor. The interaction (color and
-scalar effects strictly larger than material effects) is expressed via
-`VisualWorld.ContrastEffectLargerFor` — the paradigm-level
-shape of an "X × condition" interaction.
-
-The scalar baseline disadvantage is expressed via
-`VisualWorld.RoleSumLowerInBaselineWhen` — also added to the
-paradigm because it is a recurring analysis pattern
-([aparicio-xiang-kennedy-2015] report it on color vs. scalar;
-[ronderos-etal-2024] replicate and extend to material vs. scalar).
-
-## Theoretical Significance
-
-Two prior accounts of the contrastive inference effect:
-
-1. **Lexical comparison-class** ([sedivy-etal-1999],
-   [bierwisch-1989]): scalar adjectives carry a free
-   comparison-class variable, bound by visual context, which makes
-   the contrast pair pragmatically informative. Predicts an effect
-   for scalar but *not* for color or material (color and material are
-   non-gradable, so require no comparison class — see `AdjType.toClass`
-   and `AdjectiveClass.IsRelative`).
-
-2. **Perceptual discrimination** ([kursat-degen-2021],
-   [giles-etal-2026]): high perceptual discriminability makes a
-   contrastive description informative. Predicts an effect tracking
-   the perceptual-difficulty ordering color > size > material
-   established by [kursat-degen-2021].
-
-Pattern (1) above is the joint envelope: scalar effect (lexical route),
-color effect (perceptual route), no material effect (fails both
-routes). Pattern (2) above is *additionally* required to capture the
-semantic-restrictiveness signature on the no-contrast baseline, which
-is observable independent of any contrast manipulation.
-
-## Open architectural threads
-
-- **No theoretical witness for `SatisfiesRonderosPattern`**: only the
-  trivial witness `trivialLooks` is provided. A natural deepening is an
-  incremental semantics with noise-perturbed `wordApplies` (per-domain
-  reliability parameters) whose `LookProportion` provably satisfies the
-  pattern — deriving the Ronderos effects from a perceptual-noise
-  asymmetry rather than stipulating the ordering. A vanilla Boolean
-  incremental semantics cannot satisfy `SatisfiesRonderosPattern`
-  because it would predict equal contrast effects for all adjective
-  types — a useful negative result that could itself be a theorem.
-- **Connection to `Semantics/Degree/`**: Ronderos's semantic factor
-  (scalar = gradable + comparison-class-dependent; color/material =
-  non-gradable) is derived through `AdjType.toClass`, which maps each
-  adjective type to a Kennedy-style `Degree.AdjectiveClass`.
-  The "scalar requires a comparison class" claim then follows from
-  `AdjectiveClass.IsRelative`, grounded in gradability theory rather
-  than projected via a perceptual-domain table.
+* [ronderos-etal-2024]
+* [sedivy-etal-1999]
+* [sedivy-2003]
+* [sedivy-2004]
+* [kursat-degen-2021]
+* [jara-ettinger-rubio-fernandez-2022]
+* [aparicio-xiang-kennedy-2015]
+* [kennedy-2007]
 -/
 
 namespace RonderosEtAl2024
 
-open VisualWorld
+open Data.Examples VisualWorld
 
--- ============================================================================
--- §1. Study-Specific Factor: Adjective Type
--- ============================================================================
+/-! ### The paradigm (Figure 1) -/
 
-/-- Adjective types crossed with the contrast manipulation.
+/-- The four objects of a display: the target, the object that in the contrast condition is of
+the target's kind and lacks the property, the competitor of another kind sharing it, and a
+distractor. -/
+inductive Object where
+  | target
+  | contrastingObject
+  | competitor
+  | distractor
+  deriving DecidableEq, Repr, Fintype
 
-    - `color`: black, blue, brown, green, orange, red, white, yellow.
-    - `scalar`: large, narrow, short, small, tall, thick, thin, wide.
-    - `material`: cotton, glass, gold, leather, metal, paper, plastic,
-      wooden, woolen.
+/-- A display as the listener takes it in: the kind of each object, named by a representative,
+and the objects showing the adjective's property. -/
+structure Display where
+  kind : Object → Object
+  has : Finset Object
 
-    Adjective type is a *study-local* factor — it partitions the cells
-    but is not lensed (the contrast factor is the only one swapped by
-    the paradigm-level predicates here). -/
+namespace Display
+
+variable (d : Display)
+
+/-- The descriptive interpretation of the adjective: the objects with the property. -/
+def descriptive : Finset Object := d.has
+
+/-- The contrastive interpretation: the objects with the property that an object of their kind
+lacks. -/
+def contrastive : Finset Object :=
+  d.has.filter λ o => ∃ o', d.kind o' = d.kind o ∧ o' ∉ d.has
+
+theorem contrastive_subset_descriptive : d.contrastive ⊆ d.descriptive := Finset.filter_subset _ _
+
+/-- The display with the property attributed to a whole kind as soon as one of its members shows
+it: how a property whose contrast is not perceived is taken in. -/
+def blur : Display where
+  kind := d.kind
+  has := Finset.univ.filter λ o => ∃ o', d.kind o' = d.kind o ∧ o' ∈ d.has
+
+/-- A blurred display never shows a contrast within a kind. -/
+theorem contrastive_blur : d.blur.contrastive = ∅ := by
+  rw [contrastive, Finset.filter_eq_empty_iff]
+  rintro o ho ⟨o', hk, hn⟩
+  simp only [blur, Finset.mem_filter, Finset.mem_univ, true_and] at ho hn
+  obtain ⟨o₁, h₁, hh⟩ := ho
+  exact hn ⟨o₁, h₁.trans hk.symm, hh⟩
+
+end Display
+
+/-- An interpretation anticipates the noun when it already singles out the target. -/
+def Anticipates (S : Finset Object) : Prop := S = {.target}
+
+instance (S : Finset Object) : Decidable (Anticipates S) := inferInstanceAs (Decidable (_ = _))
+
+/-- The display of the contrast condition: the contrasting object is of the target's kind and
+lacks the property, the competitor has it. -/
+def contrastDisplay : Display where
+  kind
+    | .contrastingObject => .target
+    | o => o
+  has := {.target, .competitor}
+
+/-- The display of the no-contrast condition: the contrasting object is replaced by a distractor
+of its own kind. -/
+def noContrastDisplay : Display where
+  kind o := o
+  has := {.target, .competitor}
+
+/-- The display of each condition. -/
+def display : ContrastCondition → Display
+  | .contrast => contrastDisplay
+  | .noContrast => noContrastDisplay
+
+/-- The contrastive interpretation of the contrast display singles out the target before the
+noun: the competitor has the property but no object of its kind lacks it. -/
+theorem contrastive_contrast : contrastDisplay.contrastive = {.target} := by decide
+
+/-- The descriptive interpretation leaves the target and the competitor. -/
+theorem descriptive_contrast : contrastDisplay.descriptive = {.target, .competitor} := by decide
+
+/-- Without a contrasting object the contrastive interpretation finds nothing. -/
+theorem contrastive_noContrast : noContrastDisplay.contrastive = ∅ := by decide
+
+theorem descriptive_noContrast : noContrastDisplay.descriptive = {.target, .competitor} := by
+  decide
+
+/-! ### The three factors -/
+
+/-- The adjective types crossed with the contrast manipulation: colour (*black*, *blue*, …),
+scalar (*large*, *narrow*, *short*, …), and material (*cotton*, *glass*, *leather*, …). -/
 inductive AdjType where
   | color
   | scalar
   | material
-  deriving DecidableEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Fintype
 
-/-- Map adjective type to its `Features.PropertyDomain`. Scalar adjectives
-    are spatial dimensions (`size`); color and material map to their
-    eponymous domains. This is the bridge that lets cross-study
-    theorems connect Ronderos's adjective-type stratification to
-    Sedivy's domain-level reasoning. -/
-def AdjType.toDomain : AdjType → Features.PropertyDomain
-  | .color    => .color
-  | .scalar   => .size
-  | .material => .material
+/-- Whether the contrast in the property is visually salient during preview: material contrasts
+are not ([kursat-degen-2021], [jara-ettinger-rubio-fernandez-2022]), colour and size contrasts
+are. -/
+def Salient : AdjType → Prop
+  | .material => False
+  | .color | .scalar => True
 
-/-- Map an adjective type to its Kennedy-style scale-structure class
-    ([kennedy-2007], [kennedy-mcnally-2005]). Ronderos's semantic factor:
-    scalar adjectives are gradable and interpreted against a comparison
-    class (`relativeGradable`); color and material encode non-gradable
-    properties (`nonGradable`), interpreted in absolute terms. -/
-def AdjType.toClass : AdjType → Degree.AdjectiveClass
-  | .scalar   => .relativeGradable
-  | .color    => .nonGradable
-  | .material => .nonGradable
+instance : DecidablePred Salient
+  | .material => isFalse id
+  | .color | .scalar => isTrue trivial
 
--- ============================================================================
--- §2. Cell
--- ============================================================================
+/-- Whether the adjective type is expected to be informative, being rarely used descriptively:
+colour adjectives are produced descriptively about half the time ([sedivy-2004]), material and
+scalar ones rarely. -/
+def Informative : AdjType → Prop
+  | .color => False
+  | .scalar | .material => True
 
-/-- A condition cell in Ronderos's 2 × 3 design (contrast × adjective
-    type). Only the contrast factor is lensed — adjective type is
-    consumed by the sub-cell predicates in §3. See the module docstring
-    for why `Language` is *not* a field. -/
-structure Cell where
-  contrast : ContrastCondition
-  adjType : AdjType
-  deriving DecidableEq, Repr, Inhabited, Fintype
+instance : DecidablePred Informative
+  | .color => isFalse id
+  | .scalar | .material => isTrue trivial
 
-instance : HasContrastCondition Cell where
-  contrastOf c := c.contrast
-  setContrast k c := { c with contrast := k }
-  contrastOf_setContrast _ _ := rfl
-  setContrast_contrastOf _ := rfl
-  setContrast_setContrast _ _ _ := rfl
+/-- The adjective classes ([kennedy-2007]): scalar adjectives are relative gradable, colour and
+material adjectives non-gradable. -/
+def AdjType.adjectiveClass : AdjType → Degree.AdjectiveClass
+  | .scalar => .relativeGradable
+  | .color | .material => .nonGradable
 
-/-- Display kind is the four-object workspace throughout, per the
-    paper's Methods. Between-study constant, no lens. -/
-instance : HasDisplayKind Cell where
-  displayKindOf _ := .objectArray
+/-! ### The accounts of the contrast effect -/
 
-/-! Note: no `HasTask` instance. The task is fixed (definite-NP
-instruction) across all cells — a constant projection cannot satisfy
-the `setTask`/`taskOf` lens laws (`taskOf (setTask k c) = k` would
-force the projection to vary). Studies that hold a paradigm factor
-constant should *omit* the lens, not stub it with a constant. -/
+/-- An account fixes, per adjective type, how the display is perceived and how the adjective is
+interpreted. -/
+structure Account where
+  perceive : AdjType → Display → Display
+  interpret : AdjType → Display → Finset Object
 
--- ============================================================================
--- §3. Sub-cell Predicates (Strata)
--- ============================================================================
+/-- The pragmatic account ([sedivy-2003], [sedivy-2004]): perception is veridical, and the
+adjective is interpreted contrastively only when it is expected to be informative. -/
+def pragmatic : Account where
+  perceive _ d := d
+  interpret t := if Informative t then Display.contrastive else Display.descriptive
 
-/-! Adjective type partitions the cell space into three strata. The
-paradigm-level predicates `ContrastReducesCompetitorLooksWhen`,
-`ContrastEffectLargerFor`, and `RoleSumLowerInBaselineWhen` consume
-`Cell → Prop` filters; defining the strata as Props lets us state the
-empirical patterns at exactly the granularity Ronderos's analysis
-reports. -/
+/-- The perceptual account: the adjective is always interpreted contrastively, but a contrast
+that is not salient is not perceived. -/
+def perceptual : Account where
+  perceive t d := if Salient t then d else d.blur
+  interpret _ := Display.contrastive
 
-/-- Cells whose adjective is a color term. -/
-def ColorCells (c : Cell) : Prop := c.adjType = .color
+/-- The contrast effect an account predicts for an adjective type: the noun is anticipated in
+the contrast condition and not in the no-contrast one. -/
+def Account.PredictsEffect (a : Account) (t : AdjType) : Prop :=
+  Anticipates (a.interpret t (a.perceive t contrastDisplay)) ∧
+    ¬ Anticipates (a.interpret t (a.perceive t noContrastDisplay))
 
-/-- Cells whose adjective is a scalar (spatial-dimension) term. -/
-def ScalarCells (c : Cell) : Prop := c.adjType = .scalar
+instance (a : Account) (t : AdjType) : Decidable (a.PredictsEffect t) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Cells whose adjective is a material term. -/
-def MaterialCells (c : Cell) : Prop := c.adjType = .material
+/-- The pragmatic account predicts a contrast effect exactly for the informative types. -/
+theorem pragmatic_predictsEffect_iff (t : AdjType) :
+    pragmatic.PredictsEffect t ↔ Informative t := by
+  cases t <;> decide
 
-/-- The "inference-triggering" strata — color and scalar adjective
-    types — corresponding to the helmert-coded grouping the paper uses
-    for the interaction analysis (material vs. color+scalar). The name
-    is *interpretive* of the paper's conclusion that this group
-    produces a contrastive inference; the underlying primitive is the
-    helmert contrast. -/
-def InferenceTriggeringCells (c : Cell) : Prop :=
-  ColorCells c ∨ ScalarCells c
+/-- The perceptual account predicts a contrast effect exactly for the salient contrasts. -/
+theorem perceptual_predictsEffect_iff (t : AdjType) :
+    perceptual.PredictsEffect t ↔ Salient t := by
+  cases t <;> decide
 
--- ============================================================================
--- §4. Empirical Pattern
--- ============================================================================
+/-! ### The findings -/
 
-/-! The Ronderos pattern is encoded as a `Prop`-valued structure with
-one field per qualitative finding. The empirical claims fall into two
-distinct families with two distinct observables:
+/-- The row key of an adjective type. -/
+def AdjType.key : AdjType → String
+  | .color => "color"
+  | .scalar => "scalar"
+  | .material => "material"
 
-- **Contrast-effect family** (target-advantage / cluster-permutation
-  analyses, §3 Results ¶1–3): four fields, all over the contrast
-  manipulation on cross-category-competitor looks.
-- **Baseline-restrictiveness family** (No-Contrast total-looks
-  analysis, §3 Results ¶4): two fields, comparing the
-  target + competitor role-sum across strata in the no-contrast
-  baseline.
+/-- The row key of a condition. -/
+def conditionKey : ContrastCondition → String
+  | .contrast => "contrast"
+  | .noContrast => "noContrast"
 
-A theory of contrastive inference "satisfies the Ronderos pattern" iff
-its predicted look proportions satisfy *all* fields. Statistical
-readings (the F/β/p values cited below) need a real-valued aggregator
-and are out of scope for the paradigm contract. -/
+/-- A feature of the row for an adjective type in a condition. -/
+def finding (t : AdjType) (c : ContrastCondition) (key : String) : Option String :=
+  (Examples.all.find? λ r =>
+    r.feature? "adjType" == some t.key && r.feature? "condition" == some (conditionKey c)).bind
+    (·.feature? key)
 
-/-- A look-proportion observable **satisfies the Ronderos pattern** if:
+/-- Whether the paper found a contrast effect for an adjective type: a cluster of condition
+effects on target looks after noun onset and an effect of condition on the target-advantage
+score. -/
+def Effect (t : AdjType) : Prop := finding t .contrast "contrastEffect" = some "present"
 
-    **Contrast-effect family** (§3 Results ¶1–3):
+instance : DecidablePred Effect := λ _ => inferInstanceAs (Decidable (_ = _))
 
-    - `color_contrast_reduces_competitor`: paradigm-level
-      `ContrastReducesCompetitorLooksWhen ColorCells` — every color
-      cell shows a strictly smaller cross-category competitor look
-      proportion in the contrast condition than in the no-contrast
-      condition. Paper §3 ¶1: significant cluster 240–600 ms post
-      adjective onset (sum-t = 39.61, p < 0.01). §3 ¶2: target-
-      advantage β = 0.24, t = 2.41, p < 0.05.
-    - `scalar_contrast_reduces_competitor`: same shape, restricted to
-      `ScalarCells`. §3 ¶1: significant cluster 260–500 ms
-      (sum-t = 33.07, p < 0.01). §3 ¶2: β = 0.19, t = 2.02, p < 0.05.
-    - `material_effect_smaller`: paradigm-level
-      `ContrastEffectLargerFor InferenceTriggeringCells MaterialCells`
-      — the contrast effect on every inference-triggering cell strictly
-      exceeds the contrast effect on every material cell. §3 ¶1
-      adjective-type × condition interaction: significant cluster
-      280–600 ms (sum-t = 37.96, p < 0.01). §3 ¶2 reports the material
-      main effect as non-significant (β = 0.10, t = 1.08, p = 0.28).
+/-- Whether looks to the target and the competitor in the no-contrast baseline were higher for
+an adjective type than for scalar adjectives. -/
+def BaselineHigherThanScalar (t : AdjType) : Prop :=
+  finding t .noContrast "baselineVsScalar" = some "higher"
 
-    The *absence* of a `material_contrast_reduces_competitor` field is
-    deliberate: a null finding is encoded by absence, not by adding
-    `¬ ContrastReducesCompetitorLooksWhen MaterialCells looks`
-    (statistical power and direction-of-null are prose, not theorem).
-    The interaction field is the stronger qualitative claim that
-    survives without statistical machinery: material's effect is
-    *strictly smaller* than the others, not exactly zero.
+instance : DecidablePred BaselineHigherThanScalar := λ _ => inferInstanceAs (Decidable (_ = _))
 
-    **Baseline-restrictiveness family** (§3 Results ¶4):
+/-- The perceptual account predicts the effects found: for colour and scalar adjectives, not for
+material ones. -/
+theorem perceptual_matches : ∀ t, perceptual.PredictsEffect t ↔ Effect t := by decide +kernel
 
-    - `scalar_baseline_lower_than_color`: paradigm-level
-      `RoleSumLowerInBaselineWhen .noContrast [.target,
-      .crossCategoryCompetitor] ScalarCells ColorCells` — in the
-      no-contrast baseline, total looks on target + cross-category
-      competitor are strictly lower for scalar than for color cells.
-      §3 ¶4: β = 0.25, z = 2.80, p < 0.01.
-    - `scalar_baseline_lower_than_material`: same shape, scalar vs.
-      material. §3 ¶4: β = 0.24, z = 2.40, p < 0.05.
+/-- The pragmatic account predicts an effect for material and none for colour, the reverse of
+what was found. -/
+theorem pragmatic_fails : ¬ ∀ t, pragmatic.PredictsEffect t ↔ Effect t := by decide +kernel
 
-    The paper reports *no* significant color-vs-material baseline
-    difference; we encode this null by the *absence* of a field
-    asserting either direction (same convention as the contrast-effect
-    null). The two scalar fields together encode the paper's
-    interpretation: scalar adjectives demand comparison-class
-    processing, distributing gaze across all four display objects and
-    away from the two critical roles. This semantic factor is
-    independent of the contrast manipulation. -/
-structure SatisfiesRonderosPattern {R : Type} [LT R] [Sub R] [Add R]
-    [Zero R] (looks : LookProportion Cell R) : Prop where
-  color_contrast_reduces_competitor :
-    ContrastReducesCompetitorLooksWhen (Cell := Cell) (R := R)
-      ColorCells looks
-  scalar_contrast_reduces_competitor :
-    ContrastReducesCompetitorLooksWhen (Cell := Cell) (R := R)
-      ScalarCells looks
-  material_effect_smaller :
-    ContrastEffectLargerFor (Cell := Cell) (R := R)
-      .crossCategoryCompetitor InferenceTriggeringCells MaterialCells looks
-  scalar_baseline_lower_than_color :
-    RoleSumLowerInBaselineWhen (Cell := Cell) (R := R)
-      .noContrast [.target, .crossCategoryCompetitor]
-      ScalarCells ColorCells looks
-  scalar_baseline_lower_than_material :
-    RoleSumLowerInBaselineWhen (Cell := Cell) (R := R)
-      .noContrast [.target, .crossCategoryCompetitor]
-      ScalarCells MaterialCells looks
+/-- The baseline follows the adjective classes: looks to the property-matching objects exceed
+those for scalar adjectives exactly for the non-gradable types, which need no comparison class
+([aparicio-xiang-kennedy-2015]). -/
+theorem baseline_higher_iff_not_relative :
+    ∀ t, BaselineHigherThanScalar t ↔ ¬ t.adjectiveClass.IsRelative := by
+  decide +kernel
 
--- ============================================================================
--- §5. Non-Vacuity Witness
--- ============================================================================
-
-/-- A trivial look model exhibiting both Ronderos shapes simultaneously.
-
-    Cross-category competitor looks: 1 in every contrast cell;
-    in no-contrast cells, color 5, scalar 4, material 2. The contrast
-    effect is therefore color 4, scalar 3, material 1 — strictly
-    positive everywhere with inference-triggering strata strictly
-    exceeding material.
-
-    Target looks (no-contrast only): color 5, scalar 1, material 6.
-    The target + competitor role-sum in the no-contrast baseline is
-    therefore color 10, scalar 5, material 8 — scalar strictly below
-    both, satisfying the baseline disadvantage fields.
-
-    Witness only — carries no theoretical content. -/
-def trivialLooks : LookProportion Cell ℚ := fun role c =>
-  match role, c.contrast, c.adjType with
-  | .crossCategoryCompetitor, .contrast,   _         => 1
-  | .crossCategoryCompetitor, .noContrast, .color    => 5
-  | .crossCategoryCompetitor, .noContrast, .scalar   => 4
-  | .crossCategoryCompetitor, .noContrast, .material => 2
-  | .target,                  .noContrast, .color    => 5
-  | .target,                  .noContrast, .scalar   => 1
-  | .target,                  .noContrast, .material => 6
-  | _, _, _                                          => 0
-
-/-- The Ronderos pattern is satisfiable: `trivialLooks` satisfies all
-    five fields. Without this witness the structure could in principle
-    be uninhabited. -/
-theorem trivial_satisfies_pattern :
-    SatisfiesRonderosPattern trivialLooks where
-  color_contrast_reduces_competitor := by
-    intro c hc
-    obtain ⟨k, a⟩ := c
-    simp only [ColorCells] at hc
-    subst hc
-    cases k <;> simp [trivialLooks, HasContrastCondition.setContrast] <;> norm_num
-  scalar_contrast_reduces_competitor := by
-    intro c hc
-    obtain ⟨k, a⟩ := c
-    simp only [ScalarCells] at hc
-    subst hc
-    cases k <;> simp [trivialLooks, HasContrastCondition.setContrast] <;> norm_num
-  material_effect_smaller := by
-    intro cP cQ hP hQ
-    obtain ⟨kP, aP⟩ := cP
-    obtain ⟨kQ, aQ⟩ := cQ
-    simp only [InferenceTriggeringCells, ColorCells, ScalarCells,
-      MaterialCells] at hP hQ
-    subst hQ
-    rcases hP with hC | hS
-    all_goals (subst_vars; cases kP <;> cases kQ <;>
-      simp [contrastEffect, trivialLooks, HasContrastCondition.setContrast] <;> norm_num)
-  scalar_baseline_lower_than_color := by
-    intro cS cC hS hC
-    obtain ⟨kS, aS⟩ := cS
-    obtain ⟨kC, aC⟩ := cC
-    simp only [ScalarCells, ColorCells] at hS hC
-    subst hS; subst hC
-    simp [roleSum, trivialLooks, HasContrastCondition.setContrast]; norm_num
-  scalar_baseline_lower_than_material := by
-    intro cS cM hS hM
-    obtain ⟨kS, aS⟩ := cS
-    obtain ⟨kM, aM⟩ := cM
-    simp only [ScalarCells, MaterialCells] at hS hM
-    subst hS; subst hM
-    simp [roleSum, trivialLooks, HasContrastCondition.setContrast]; norm_num
-
--- ============================================================================
--- §6. Cross-Study Bridges
--- ============================================================================
-
-/-! These theorems articulate the theoretical positions Ronderos's data
-take on. They are *type-level* connections to the relevant
-infrastructure (`Features.PropertyDomain`, `SedivyEtAl1999`),
-not restated empirical claims. -/
-
-/-- **Agreement with [sedivy-etal-1999] on scalar adjectives.**
-    Both studies place the scalar contrast effect on the size domain,
-    and scalar adjectives are relative gradable adjectives — interpreted
-    against a comparison class ([kennedy-2007]). -/
-theorem scalar_shares_sedivy_domain :
-    AdjType.toDomain .scalar = SedivyEtAl1999.adjDomain ∧
-    (AdjType.toClass .scalar).IsRelative :=
-  ⟨rfl, rfl⟩
-
-/-- **Disagreement with the comparison-class-only mechanism on color.**
-    Color does *not* require comparison-class binding (so the
-    Bierwisch/Sedivy mechanism alone predicts no contrast effect for
-    color), yet Ronderos finds a robust color contrast effect. -/
-theorem color_does_not_require_comparison_class :
-    ¬ (AdjType.toClass .color).IsRelative := by decide
-
-/-- **Material fails the comparison-class route.** Material adjectives,
-    like color, do not require comparison-class binding — so the
-    lexical mechanism predicts no contrast effect, consistent with
-    Ronderos's null finding for material. (The lexical mechanism alone
-    is insufficient for color, however; see
-    `color_does_not_require_comparison_class`.) -/
-theorem material_does_not_require_comparison_class :
-    ¬ (AdjType.toClass .material).IsRelative := by decide
-
-/-- **The two empirical families project onto different mechanisms.**
-    The contrast-effect family is keyed off perceptual discriminability
-    (perceptual route): only adjective types above the material level
-    produce a contrast effect. The
-    baseline-restrictiveness family is keyed off `AdjType.toClass` /
-    `AdjectiveClass.IsRelative` (semantic route): only the scalar type is
-    a relative gradable adjective — requiring a comparison class — predicting
-    the no-contrast baseline disadvantage to be uniquely scalar.
-
-    This theorem records the semantic route as a typed statement: the
-    scalar adjective type is the *unique* one whose class is relative
-    gradable. The perceptual route — color and scalar discriminable,
-    material at the floor — is the difficulty ordering established
-    experimentally by [kursat-degen-2021]; the two mechanisms make
-    orthogonal predictions, and Ronderos's pattern is the joint
-    envelope. -/
-theorem two_mechanisms_factorise :
-    -- Semantic route: scalar uniquely is relative gradable (needs a CC)
-    (AdjType.toClass .scalar).IsRelative ∧
-    ¬ (AdjType.toClass .color).IsRelative ∧
-    ¬ (AdjType.toClass .material).IsRelative :=
-  ⟨rfl, by decide, by decide⟩
+/-- Salience does not explain the baseline: material adjectives, whose contrast is not salient,
+still draw more looks than scalar ones. -/
+theorem salience_not_baseline : ¬ ∀ t, BaselineHigherThanScalar t → Salient t := by
+  decide +kernel
 
 end RonderosEtAl2024
