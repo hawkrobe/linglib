@@ -1,7 +1,7 @@
 import Linglib.Semantics.Quantification.Numerals.Roundness
 import Linglib.Semantics.Quantification.Numerals.Precision
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
-import Linglib.Pragmatics.SocialMeaning.SCM
+import Linglib.Pragmatics.SocialMeaning.Dimension
 import Linglib.Pragmatics.SocialMeaning.EckertMontague
 import Linglib.Studies.BeltramaSoltBurnett2023
 import Linglib.Data.Examples.BeltramaSchwarz2024
@@ -58,8 +58,6 @@ stimulus and observed directions are the rows of `Data.Examples.BeltramaSchwarz2
 namespace BeltramaSchwarz2024
 
 open SocialMeaning
-open SocialMeaning.SCM
-open SocialMeaning.EckertMontague
 open Numerals.Precision
 open Data.Examples (LinguisticExample)
 
@@ -98,7 +96,7 @@ def toVariant : PrecisionMode → BeltramaSoltBurnett2023.Variant
 /-- The indexical field for numeral precision: [beltrama-solt-burnett-2023]'s measured
     field pulled back along `toVariant` — grounded by construction, not by a stipulated
     twin. -/
-def precisionField : AssociationField PrecisionMode SocialDimension SignType :=
+def precisionField : AssociationField PrecisionMode Dimension SignType :=
   BeltramaSoltBurnett2023.bsbField.submatrix toVariant id
 
 /-- Exact and approximate index opposite ways on every dimension, inherited along the
@@ -112,7 +110,7 @@ def Persona.precision : Persona → PrecisionMode
   | .chill => .approximate
 
 /-- The SCM dimension a persona foregrounds (§2). -/
-def Persona.dimension : Persona → SocialDimension
+def Persona.dimension : Persona → Dimension
   | .nerdy => .competence
   | .chill => .warmth
 
@@ -123,18 +121,18 @@ theorem bidirectionality (p : Persona) :
   cases p <;> decide +kernel
 
 /-- The precision field as a [burnett-2019] grounded field over the SCM space. -/
-def precisionGroundedField : GroundedField PrecisionMode scmSpace :=
-  fromAssociationField precisionField
+def precisionGroundedField : GroundedField PrecisionMode Pole.incompatible :=
+  precisionField.ground
 
 /-- Precise speech indexes {competent, cold, antiSolidary}. -/
 theorem exact_scmProperties :
-    precisionGroundedField.indexedProperties .exact =
+    precisionGroundedField.indexes .exact =
       {.competent, .cold, .antiSolidary} := by
   decide +kernel
 
 /-- Approximate speech indexes {incompetent, warm, solidary}. -/
 theorem approx_scmProperties :
-    precisionGroundedField.indexedProperties .approximate =
+    precisionGroundedField.indexes .approximate =
       {.incompetent, .warm, .solidary} := by
   decide +kernel
 

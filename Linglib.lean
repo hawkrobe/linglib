@@ -1439,9 +1439,6 @@ import Linglib.Pragmatics.SignalingGame.Basic
 import Linglib.Pragmatics.SignalingGame.Interpretation
 import Linglib.Pragmatics.SocialMeaning.EckertMontague
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
-import Linglib.Pragmatics.SocialMeaning.PropertySpace
-import Linglib.Pragmatics.SocialMeaning.SCM
-import Linglib.Pragmatics.SocialMeaning.SocialUtility
 import Linglib.Pragmatics.SoftmaxOptimality
 import Linglib.Pragmatics.Superoptimal
 import Linglib.Processing.Cost.Profile

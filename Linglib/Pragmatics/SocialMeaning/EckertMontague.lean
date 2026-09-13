@@ -1,180 +1,95 @@
-import Linglib.Pragmatics.SocialMeaning.SCM
+import Linglib.Pragmatics.SocialMeaning.Dimension
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
 
 /-!
-# Eckert-Montague Lift ([burnett-2019], Definition 3.4)
-[burnett-2019]
+# The Eckert–Montague lift
 
-Burnett's set-theoretic reinterpretation of [eckert-2008]'s indexical
-field. A variant's social meaning is formalized as the set of personae
-compatible with the properties it indexes.
+This file defines the grounded indexical fields of [burnett-2019] and their lift to persona
+compatibility. A property space is a graph of incompatibility on social properties, a persona
+is a maximal independent set of it, and a grounded field indexes each variant to an independent
+set of properties. The Eckert–Montague lift sends a variant to the personae compatible with it,
+those with every property it indexes, or on the Montagovian-individual reading those sharing
+some property with it, as an entity lifts to the generalized quantifier of the properties it
+has. An association field over the dimensions of social evaluation grounds as the poles whose
+polarity is the sign of the association.
 
-## The EM field
+## Main definitions
 
-Given a grounded indexical field `F : Variant → Finset Property`, the
-**Eckert-Montague lift** maps each variant to its compatible personae:
+* `GroundedField`: an indexical field whose values are independent sets of an incompatibility
+  graph.
+* `GroundedField.Compatible`, `GroundedField.Meets`: a persona has every property a variant
+  indexes, or shares one with it.
+* `GroundedField.lift`, `GroundedField.liftMI`: the personae compatible with a variant on each
+  reading.
+* `AssociationField.ground`: the grounded field of an association field over the dimensions.
 
-    EM(F)(v) = { p ∈ Persona | F(v) ⊆ p.properties }
+## Main results
 
-This is analogous to Montague's lift from entities to generalized
-quantifiers: a variant doesn't denote a single persona but a *set* of
-personae — those consistent with the social properties it indexes.
+* `GroundedField.lift_subset_lift`, `GroundedField.liftMI_subset_liftMI`: the lift is antitone
+  and the Montagovian-individual lift monotone in the indexed properties.
 
-## Bridge: `fromAssociationField`
+## References
 
-The `fromAssociationField` function converts association fields
-(`SocialMeaning.AssociationField`) into grounded fields over the SCM property
-space. This bridges existing studies (BSB2022, B&S2024) to Burnett's
-formalism:
-- positive association → positive pole property
-- negative association → negative pole property
-- zero association → no property indexed on that dimension
-
+* [burnett-2019]
+* [eckert-2008]
 -/
 
-namespace SocialMeaning.EckertMontague
+namespace SocialMeaning
 
-open SocialMeaning
-open SocialMeaning.SCM
+/-- A grounded field indexes each variant to an independent set of the incompatibility graph
+on properties. -/
+structure GroundedField (Variant : Type*) {P : Type*} (G : SimpleGraph P) where
+  /-- The properties each variant indexes. -/
+  indexes : IndexicalField Variant P
+  isIndepSet : ∀ v, G.IsIndepSet (indexes v : Set P)
 
--- ============================================================================
--- §1. Grounded indexical field (Burnett Definition 3.4)
--- ============================================================================
+namespace GroundedField
 
-/-- A grounded indexical field: maps each variant to a consistent set
-    of properties from a property space.
+variable {Variant P : Type*} {G : SimpleGraph P} (F : GroundedField Variant G) (v : Variant)
+  (π : Finset P) {v₁ v₂ : Variant}
 
-    This is the set-theoretic version of Eckert's indexical field.
-    Each variant indexes a set of social properties; the set must be
-    internally consistent (no incompatible properties). -/
-structure GroundedField (Variant : Type) (ps : PropertySpace) where
-  /-- Properties indexed by each variant. -/
-  indexedProperties : IndexicalField Variant ps.Property
-  /-- The indexed property set is always consistent. -/
-  indexed_consistent : ∀ (v : Variant), ps.isConsistent (indexedProperties v) = true
+/-- A persona is compatible with a variant when it has every property the variant indexes. -/
+def Compatible : Prop := F.indexes v ⊆ π
 
--- ============================================================================
--- §2. Eckert-Montague lift
--- ============================================================================
+/-- On the Montagovian-individual reading, a persona meets a variant when it shares a property
+with it. -/
+def Meets : Prop := ¬ Disjoint (F.indexes v) π
 
-/-- The Eckert-Montague lift (Burnett Def. 3.4): the set of personae
-    compatible with a variant's indexed properties.
+instance [DecidableEq P] : Decidable (F.Compatible v π) :=
+  inferInstanceAs (Decidable (F.indexes v ⊆ π))
 
-    EM(F)(v) = { p ∈ allPersonaeSets | F(v) ⊆ p }
+instance [DecidableEq P] : Decidable (F.Meets v π) :=
+  inferInstanceAs (Decidable (¬ Disjoint _ _))
 
-    More properties indexed → fewer compatible personae (antitonicity). -/
-def emField {Variant : Type} {ps : PropertySpace}
-    (gf : GroundedField Variant ps) (v : Variant) : Finset (Finset ps.Property) :=
-  ps.allPersonaeSets.filter fun persona => gf.indexedProperties v ⊆ persona
+variable [Fintype P] [DecidableEq P] [DecidableRel G.Adj]
 
-/-- The EM lift is antitone: more indexed properties → fewer compatible personae. -/
-theorem emField_antitone {Variant : Type} {ps : PropertySpace}
-    (gf : GroundedField Variant ps) (v₁ v₂ : Variant)
-    (h : gf.indexedProperties v₁ ⊆ gf.indexedProperties v₂) :
-    emField gf v₂ ⊆ emField gf v₁ := by
-  intro persona hp
-  simp only [emField, Finset.mem_filter] at hp ⊢
-  exact ⟨hp.1, Finset.Subset.trans h hp.2⟩
+/-- The Eckert–Montague lift sends a variant to the personae compatible with it. -/
+def lift : Finset (Finset P) := G.maximalIndepSets.filter (F.Compatible v)
 
--- ============================================================================
--- §3. Bridge from sign-valued indexical fields to SCM grounded fields
--- ============================================================================
+/-- The Montagovian-individual lift sends a variant to the personae that meet it. -/
+def liftMI : Finset (Finset P) := G.maximalIndepSets.filter (F.Meets v)
 
-/-- Decidable predicate: whether an SCM property is indexed by a variant
-    given an association field over social dimensions.
+/-- The more a variant indexes, the fewer personae are compatible with it. -/
+theorem lift_subset_lift (h : F.indexes v₁ ⊆ F.indexes v₂) : F.lift v₂ ⊆ F.lift v₁ :=
+  Finset.monotone_filter_right _ λ _ _ hπ => h.trans hπ
 
-    Maps association signs to SCM poles:
-    - `association(v, d) > 0` → positive pole of dimension d
-    - `association(v, d) < 0` → negative pole of dimension d
-    - `association(v, d) = 0` → no property on dimension d -/
-def scmPropertyIndexed {Variant : Type} {R : Type*} [Zero R] [LT R]
-    (field : AssociationField Variant SocialDimension R)
-    (v : Variant) : SCMProperty → Prop
-  | .competent     => field v .competence > 0
-  | .incompetent   => field v .competence < 0
-  | .warm          => field v .warmth > 0
-  | .cold          => field v .warmth < 0
-  | .solidary      => field v .antiSolidarity < 0
-  | .antiSolidary  => field v .antiSolidarity > 0
+/-- The more a variant indexes, the more personae meet it. -/
+theorem liftMI_subset_liftMI (h : F.indexes v₁ ⊆ F.indexes v₂) : F.liftMI v₁ ⊆ F.liftMI v₂ :=
+  Finset.monotone_filter_right _ λ _ _ hπ hd => hπ (hd.mono_left h)
 
-instance {Variant : Type} {R : Type*} [Zero R] [LT R] [DecidableLT R]
-    (field : AssociationField Variant SocialDimension R)
-    (v : Variant) : DecidablePred (scmPropertyIndexed field v) :=
-  fun prop => match prop with
-  | .competent     => inferInstanceAs (Decidable (_ > _))
-  | .incompetent   => inferInstanceAs (Decidable (_ < _))
-  | .warm          => inferInstanceAs (Decidable (_ > _))
-  | .cold          => inferInstanceAs (Decidable (_ < _))
-  | .solidary      => inferInstanceAs (Decidable (_ < _))
-  | .antiSolidary  => inferInstanceAs (Decidable (_ > _))
+end GroundedField
 
-def scmPropertiesFromField {Variant : Type} {R : Type*} [Zero R] [LT R] [DecidableLT R]
-    (field : AssociationField Variant SocialDimension R)
-    (v : Variant) : Finset SCMProperty :=
-  Finset.univ.filter (scmPropertyIndexed field v)
+/-- An association field over the dimensions grounds as the poles whose polarity is the sign
+of the variant's association with their dimension. -/
+def AssociationField.ground {Variant R : Type*} [Zero R] [Preorder R] [DecidableLT R]
+    (M : AssociationField Variant Dimension R) : GroundedField Variant Pole.incompatible where
+  indexes v := Finset.univ.filter λ p => SignType.sign (M v p.dimension) = p.polarity
+  isIndepSet v p hp q hq hne hadj := hne <| Pole.eq_iff.2 ⟨hadj.2, by
+    rw [← (Finset.mem_filter.1 hp).2, ← (Finset.mem_filter.1 hq).2, hadj.2]⟩
 
-/-- The SCM properties derived from a sign-valued field are always
-    consistent: no variant can index both poles of the same dimension,
-    because `x > 0` and `x < 0` cannot both hold. -/
-theorem scmPropertiesFromField_consistent {Variant : Type} {R : Type*} [Zero R] [Preorder R]
-    [DecidableLT R] (field : AssociationField Variant SocialDimension R)
-    (v : Variant) :
-    scmSpace.isConsistent (scmPropertiesFromField field v) = true := by
-  simp only [PropertySpace.isConsistent]
-  apply decide_eq_true
-  intro p hp q hq hne
-  have hp' := (Finset.mem_filter.mp hp).2
-  have hq' := (Finset.mem_filter.mp hq).2
-  cases p <;> cases q <;>
-    simp only [scmPropertyIndexed, scmIncompatible, scmSpace] at * <;>
-    first | rfl | exact (lt_asymm hp' hq').elim
+@[simp] theorem AssociationField.mem_ground_indexes {Variant R : Type*} [Zero R] [Preorder R]
+    [DecidableLT R] {M : AssociationField Variant Dimension R} {v : Variant} {p : Pole} :
+    p ∈ M.ground.indexes v ↔ SignType.sign (M v p.dimension) = p.polarity := by
+  simp [AssociationField.ground]
 
-/-- Convert an association field over the SCM dimensions to a `GroundedField` over
-    the SCM property space. -/
-def fromAssociationField {Variant : Type} {R : Type*} [Zero R] [Preorder R] [DecidableLT R]
-    (field : AssociationField Variant SocialDimension R) :
-    GroundedField Variant scmSpace :=
-  { indexedProperties := scmPropertiesFromField field
-    indexed_consistent := scmPropertiesFromField_consistent field }
-
--- ============================================================================
--- §4. Intersection-based EM lift (Burnett's Montagovian Individual)
--- ============================================================================
-
-/-- The Eckert–Montague lift with intersection semantics: a persona is
-    compatible with variant `v` iff the persona shares *at least one*
-    property with `v`'s Eckert field.
-
-    This is the Montagovian Individual interpretation from footnote 14 of
-    [burnett-2019]: EM({p₁, p₂}) = {π ∈ PERS | p₁ ∈ π ∨ p₂ ∈ π}.
-
-    Compare `emField` (§2 above) which uses the *subset* semantics
-    (all indexed properties must be in the persona). The intersection
-    semantics gives a weaker / more inclusive meaning function, matching
-    Burnett's Table 1. -/
-def emFieldMI {Variant : Type} {ps : PropertySpace}
-    (gf : GroundedField Variant ps) (v : Variant) : Finset (Finset ps.Property) :=
-  ps.allPersonaeSets.filter fun persona =>
-    decide (∃ p ∈ gf.indexedProperties v, p ∈ persona)
-
-/-- Meaning function from the intersection-based EM lift.
-    Returns `true` iff `persona` shares at least one property with the
-    Eckert field of `v`. -/
-def emMeaningMI {Variant : Type} {ps : PropertySpace}
-    (gf : GroundedField Variant ps) (v : Variant) (persona : Finset ps.Property) : Bool :=
-  decide (∃ p ∈ gf.indexedProperties v, p ∈ persona)
-
-/-- The intersection-based EM lift is monotone: more indexed properties
-    → more compatible personae (opposite of `emField_antitone`). -/
-theorem emFieldMI_monotone {Variant : Type} {ps : PropertySpace}
-    (gf : GroundedField Variant ps) (v₁ v₂ : Variant)
-    (h : gf.indexedProperties v₁ ⊆ gf.indexedProperties v₂) :
-    emFieldMI gf v₁ ⊆ emFieldMI gf v₂ := by
-  intro persona hp
-  simp only [emFieldMI, Finset.mem_filter] at hp ⊢
-  refine ⟨hp.1, ?_⟩
-  rw [decide_eq_true_eq] at hp ⊢
-  obtain ⟨p, hp1, hp2⟩ := hp.2
-  exact ⟨p, h hp1, hp2⟩
-
-end SocialMeaning.EckertMontague
+end SocialMeaning
