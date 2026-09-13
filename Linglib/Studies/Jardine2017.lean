@@ -7,37 +7,30 @@ import Linglib.Phonology.Autosegmental.Junction
 import Linglib.Phonology.Tone.Basic
 
 /-!
-# Jardine (2017): tone-association patterns as forbidden subgraphs
+# Jardine (2017): The local nature of tone-association patterns
 
-[jardine-2017] argues that tone-association patterns are *local*: each is specified by a
-finite grammar `¬r₁ ∧ … ∧ ¬rₙ` of forbidden connected subgraphs of autosegmental
-representations (§2, §4), so that well-formedness is checked, and learned, by scanning a
-bounded window. The directional patterns of §3.1 are the test case: Mende (Leben 1973)
-allows plateaus and contours only at the right word edge, (4)–(5), and Hausa (Newman
-1986) only at the left, (6)–(7). The grammars of §5.1 forbid non-final spreading and
-contours, (21), and non-initial ones, (22) — mirror images, differing only in the edge.
+This file formalizes [jardine-2017]'s claim that tone-association patterns are local: each is
+specified by a finite grammar `¬r₁ ∧ … ∧ ¬rₙ` of forbidden connected subgraphs of
+autosegmental representations, so that well-formedness is checked, and learned, by scanning a
+bounded window. The directional patterns of the paper's typology are the test case: Mende
+allows plateaus and contours only at the right word edge, (4)–(5), and Hausa only at the left,
+(6)–(7). The grammars (21) and (22) forbid non-final spreading and contours, and non-initial
+ones, mirror images differing only in the edge. `Mende.free` and `Hausa.free` show every word
+of (4) and (6) well formed under its own grammar, and `Mende.not_free_hántúnàa` and
+`Hausa.not_free_félàmà` that each language's diagnostic form fails the other's grammar,
+left-edge spreading being exactly what (21) forbids and right-edge spreading exactly what (22)
+forbids, (18) and (16). Northern Karanga Shona, Kukuya, and Hirosaki Japanese, (23)–(38),
+follow the same schema and are not formalized.
 
-Forbidden subgraphs are factors (`AR.FactorEmbeds`). The contour subgraph (19) leaves its
-two tones unordered so as to match rising as well as falling contours; a factor's tier word
-is ordered, so (19) is rendered as the pair of orders.
+## Implementation notes
 
-## Main definitions
+* Forbidden subgraphs are factors (`AR.FactorEmbeds`). The contour subgraph (19) leaves its
+  two tones unordered so as to match rising as well as falling contours; a factor's tier word
+  is ordered, so (19) is rendered as the pair of orders.
 
-* `ar` — a representation drawn as the paper does: a melody, a syllable string, and the
-  association lines as position pairs.
-* `Mende.forms`, `Hausa.forms` — the words of (4) and (6) as representations.
-* `Mende.grammar`, `Hausa.grammar` — the grammars (21) and (22).
+## References
 
-## Main results
-
-* `Mende.free`, `Hausa.free` — every word of (4) is free of (21), every word of (6) free
-  of (22).
-* `Mende.not_free_hántúnàa`, `Hausa.not_free_félàmà` — the diagnostic forms fail the
-  other language's grammar: left-edge spreading is exactly what (21) forbids, right-edge
-  spreading exactly what (22) forbids ((18), (16)).
-
-Northern Karanga Shona (23)–(28), Kukuya (29)–(33) and Hirosaki Japanese (34)–(38) follow
-the same schema.
+* [jardine-2017]
 -/
 
 namespace Jardine2017
