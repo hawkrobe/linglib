@@ -6,7 +6,7 @@ import Linglib.Phonology.Constraints.Defs
 
 OT-tradition names for the neutral violation primitives in
 `Core.Optimization.Evaluation`, shared by Optimality Theory (lexicographic
-comparison) and Harmonic Grammar (weighted aggregation, `[riggle-2009]`).
+comparison) and Harmonic Grammar (weighted aggregation, `[riggle-2009b]`).
 
 ## Main definitions
 

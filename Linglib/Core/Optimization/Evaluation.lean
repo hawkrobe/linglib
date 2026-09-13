@@ -589,8 +589,7 @@ noncomputable instance (n : Nat) :
     `Tropical (WithTop (Lex (Fin n → Nat)))` is a `CommSemiring` where
     addition is `min` (under the lex order) and multiplication is
     componentwise `+`. Derived, not stipulated. Linguistic packaging:
-    `Phonology/HarmonicGrammar/ViolationSemiring.lean` after
-    [riggle-2009]. -/
+    `Studies/Riggle2009b.lean` after [riggle-2009b]. -/
 noncomputable example (n : Nat) :
     CommSemiring (Tropical (WithTop (Lex (Fin n → Nat)))) :=
   inferInstance

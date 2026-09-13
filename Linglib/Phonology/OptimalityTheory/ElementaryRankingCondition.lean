@@ -7,7 +7,7 @@ import Mathlib.Data.Fintype.Perm
 /-!
 # Elementary ranking conditions
 
-OT's algebraic ranking-inference layer ([prince-2002]; [riggle-2009-complexity]). An
+OT's algebraic ranking-inference layer ([prince-2002]; [riggle-2009a]). An
 ERC value is a *sign*, so the alphabet is mathlib's `SignType` — `W` (`+1`,
 winner-preferring), `L` (`-1`, loser-preferring), `e` (`0`, neutral) — which buys
 `ercOfProfiles` as a coordinatewise `SignType.sign`, the antithetical ERC as pointwise
@@ -263,7 +263,7 @@ theorem simpleERC_isSimple_or_isTrivial (i j : Fin n) :
 /-! ### Bridges: profiles, tableaux, and the Core lex order -/
 
 /-- The ERC of a winner/loser violation-profile pair: the coordinatewise sign of
-the violation difference ([prince-2002] §0; [riggle-2009-complexity] Def. 3). -/
+the violation difference ([prince-2002] §0; [riggle-2009a] Def. 3). -/
 def ercOfProfiles (winner loser : ViolationProfile n) : ERC n :=
   fun k => SignType.sign ((loser k : ℤ) - (winner k : ℤ))
 
