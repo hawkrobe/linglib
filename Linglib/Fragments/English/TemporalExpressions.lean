@@ -5,7 +5,7 @@ import Linglib.Fragments.English.FunctionWords
 
 /-!
 # English Temporal Expressions Fragment
-[alstott-aravind-2026] [heinamaki-1974] [rett-2020] [karttunen-1974] [ogihara-steinert-threlkeld-2024] [iatridou-anagnostopoulou-izvorski-2001] [vendler-1957]
+[alstott-aravind-2026] [heinamaki-1974] [rett-2020a] [karttunen-1974] [ogihara-steinert-threlkeld-2024] [iatridou-anagnostopoulou-izvorski-2001] [vendler-1957]
 
 Lexical entries for English temporal expressions, organised into two sibling
 structures (mathlib pattern, mirroring `Quantifier` + `NumericalDetEntry`
@@ -15,7 +15,7 @@ in `Determiners.lean`):
   (*before*, *after*, *while*, *when*, *until*, *since*, *till*) and ordering
   modifiers (*within*, *at*, *by*). The `complementType` field captures the
   clausal-vs-nominal distinction; semantic fields (`order`, `licensesNPI`,
-  `complementVeridical`) are shared so generalizations like [rett-2020]'s
+  `complementVeridical`) are shared so generalizations like [rett-2020a]'s
   veridicality typology apply uniformly.
 
 - `DurationExprEntry` — **duration / measure adverbials**: *for*, *in* (telic
@@ -97,7 +97,7 @@ structure TemporalExprEntry where
   coercedReading : Option Reading
   /-- Does telicity of the embedded clause affect interpretation? -/
   embeddedTelicityEffect : Bool
-  /-- Attested in all 17 languages of [rett-2020]'s typological survey -/
+  /-- Attested in all 17 languages of [rett-2020a]'s typological survey -/
   crossLinguisticBasic : Bool
   /-- Does the expression entail the truth of its complement?
       *after* is veridical: "He left after she arrived" entails she arrived.

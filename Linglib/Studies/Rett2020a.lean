@@ -33,7 +33,7 @@ monotonicity.
 ## References
 
 * [J. Rett, *Eliminating EARLIEST: a general semantics for before and after*
-  (2020)][rett-2020]
+  (2020)][rett-2020a]
 * [G. E. M. Anscombe, *Before and after* (1964)][anscombe-1964]
 * [O. Heinämäki, *Semantics of English temporal connectives* (1974)][heinamaki-1974]
 * [D. Beaver, C. Condoravdi, *A uniform analysis of before and after*

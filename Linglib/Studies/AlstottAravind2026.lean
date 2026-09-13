@@ -34,7 +34,7 @@ to pragmatic as against semantic coercion.
 ## References
 
 * [alstott-aravind-2026]
-* [rett-2020]
+* [rett-2020a]
 * [anscombe-1964]
 * [heinamaki-1974]
 * [krifka-2010b]

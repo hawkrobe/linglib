@@ -501,7 +501,7 @@ def ex_36a : LinguisticExample :=
 
 def ex_17a : LinguisticExample :=
   { id := "alstottaravind2026_17a"
-    source := ⟨"rett-2020", "(12a)"⟩
+    source := ⟨"rett-2020a", "(12a)"⟩
     reportedIn := some ⟨"alstott-aravind-2026", "(17a)"⟩
     language := "taga1270"
     primaryText := "Um-alis siya bago niya w<in>alisan ang sahig"
@@ -519,7 +519,7 @@ def ex_17a : LinguisticExample :=
 
 def ex_17b : LinguisticExample :=
   { id := "alstottaravind2026_17b"
-    source := ⟨"rett-2020", "(12b)"⟩
+    source := ⟨"rett-2020a", "(12b)"⟩
     reportedIn := some ⟨"alstott-aravind-2026", "(17b)"⟩
     language := "taga1270"
     primaryText := "Um-alis siya bago niya na-walisan ang sahig"
