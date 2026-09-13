@@ -178,22 +178,6 @@ def Verb.isENTrigger (v : Verb) : Bool :=
 def Verb.isPreferentialAttitude (v : Verb) : Bool :=
   v.preferentialValence.isSome
 
-/-- Can this verb take a clausal (CP) complement?
-
-    Checks both primary and alternate complement frames. Used to classify
-    verbs as CP-selecting vs non-CP-selecting for coordination studies
-    ([schwarzer-2026]). -/
-def Verb.canTakeClausalComplement (v : Verb) : Bool :=
-  v.complementType.isClausal ||
-  match v.altComplementType with | some ct => ct.isClausal | none => false
-
-/-- Can this verb take a nominal (DP) complement?
-
-    Checks both primary and alternate complement frames. -/
-def Verb.canTakeNominalComplement (v : Verb) : Bool :=
-  v.complementType.isNominal ||
-  match v.altComplementType with | some ct => ct.isNominal | none => false
-
 /-- Look up a verb core by citation form and sense tag. -/
 def lookupSense (verbs : List Verb) (form : String) (tag : SenseTag := .default) :
     Option Verb :=

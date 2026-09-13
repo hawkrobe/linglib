@@ -7,17 +7,21 @@ import Linglib.Semantics.Mood.Defs
 A predicate's complement frame as a list of typed
 `Complement.Position`s: nominal, adpositional, or clausal, the clausal
 case carrying the axes the predicate selects for. The flat
-`ComplementType` enum survives as a round-trip view
-(`ComplementType.toFrame` / `Frame.toComplementType`).
+`ComplementType` enum survives as a classification of frames
+(`Frame.complementType?`) with `ComplementType.toFrame` as its section.
 
 ## Main definitions
 
 * `Complement.Position` — one complement position; a clausal position
   carries its selectional axes by construction
+* `Complement.Position.IsClausal`, `IsNominal`, `Frame.HasClausal`,
+  `Frame.HasNominal` — category of a position, and of some position of a
+  frame
 * `Frame` + `Frame.np`, `Frame.finiteClause`, … — a frame is a list of
   complement positions; the flat enum cells as smart constructors
-* `ComplementType` + `toFrame` / `Frame.toComplementType` — the flat
-  enum and its round-trip view
+* `ComplementType` + `toFrame` / `Frame.complementType?` — the flat enum,
+  its cell frames, and the classification of a frame by the axes of its
+  clausal position (`none` on frames outside the enum's shapes)
 * `ComplementType.toCoding` + `codings_toFrame` — the enum's
   [noonan-2007] coding and its agreement with the typed frames
 
@@ -68,6 +72,22 @@ def embeddedSubject? : Position → Option Clause.EmbeddedSubject
   | clausal _ _ es => es
   | _ => none
 
+/-- The position is clausal. -/
+def IsClausal : Position → Prop
+  | clausal _ _ _ => True
+  | _ => False
+
+instance : DecidablePred IsClausal := fun p => by
+  cases p <;> unfold IsClausal <;> infer_instance
+
+/-- The position is nominal. -/
+def IsNominal : Position → Prop
+  | nominal => True
+  | _ => False
+
+instance : DecidablePred IsNominal := fun p => by
+  cases p <;> unfold IsNominal <;> infer_instance
+
 end Position
 
 end Complement
@@ -90,6 +110,18 @@ def hasForce (fr : Frame) (f : Mood.Illocutionary) : Prop :=
 
 instance (fr : Frame) (f : Mood.Illocutionary) :
     Decidable (fr.hasForce f) :=
+  inferInstanceAs (Decidable (∃ p ∈ fr, _))
+
+/-- Some position of the frame is clausal. -/
+def HasClausal (fr : Frame) : Prop := ∃ p ∈ fr, p.IsClausal
+
+instance (fr : Frame) : Decidable fr.HasClausal :=
+  inferInstanceAs (Decidable (∃ p ∈ fr, _))
+
+/-- Some position of the frame is nominal. -/
+def HasNominal (fr : Frame) : Prop := ∃ p ∈ fr, p.IsNominal
+
+instance (fr : Frame) : Decidable fr.HasNominal :=
   inferInstanceAs (Decidable (∃ p ∈ fr, _))
 
 /-! ### Smart constructors — the flat `ComplementType` cells -/
@@ -192,23 +224,48 @@ def ComplementType.toFrame : ComplementType → Frame
   | .smallClause => Frame.smallClause
   | .question => Frame.question
 
-/-- Partial inverse of `ComplementType.toFrame`: the flat enum cell a
-    frame instantiates, `none` on frames richer than any cell. -/
-def Frame.toComplementType (fr : Frame) : Option ComplementType :=
-  [ComplementType.none, .np, .np_np, .np_pp, .finiteClause, .infinitival,
-    .gerund, .smallClause, .question].find? (·.toFrame == fr)
+/-- The clausal cell a clausal position with axes `c`, `f` instantiates:
+    interrogative force is an embedded question, otherwise the coding
+    decides, and a position recording no axis is a small clause. -/
+private def clausalCell (c : Option Complement.Coding) (f : Option Mood.Illocutionary) :
+    ComplementType :=
+  if f = some .interrogative then .question
+  else match c with
+    | some .indicative | some .subjunctive | some .paratactic => .finiteClause
+    | some .infinitive => .infinitival
+    | some .nominalized | some .participle => .gerund
+    | none => .smallClause
 
-/-- The enum view round-trips over the smart-constructor cells. -/
+/-- The flat enum cell a frame instantiates: the nominal shapes by their
+    positions, a single clausal position by its axes, and `none` on the
+    shapes the enum has no cell for. -/
+def Frame.complementType? : Frame → Option ComplementType
+  | [] => some .none
+  | [.nominal] => some .np
+  | [.nominal, .nominal] => some .np_np
+  | [.nominal, .adpositional] => some .np_pp
+  | [.clausal c f _] => some (clausalCell c f)
+  | _ => none
+
+/-- `ComplementType.toFrame` is a section of the classification. -/
 @[simp]
-theorem toComplementType_toFrame (ct : ComplementType) :
-    ct.toFrame.toComplementType = some ct := by cases ct <;> rfl
+theorem Frame.complementType?_toFrame (ct : ComplementType) :
+    ct.toFrame.complementType? = some ct := by cases ct <;> rfl
 
 theorem ComplementType.toFrame_injective :
-    Function.Injective ComplementType.toFrame := by
-  intro a b h
-  have ha := toComplementType_toFrame a
-  rw [h, toComplementType_toFrame b] at ha
-  exact (Option.some.inj ha).symm
+    Function.Injective ComplementType.toFrame := fun a b h =>
+  Option.some_injective _
+    (by rw [← Frame.complementType?_toFrame, h, Frame.complementType?_toFrame])
+
+/-- A cell's frame has a clausal position exactly when the cell is clausal. -/
+@[simp]
+theorem Frame.hasClausal_toFrame (ct : ComplementType) :
+    ct.toFrame.HasClausal ↔ ct.isClausal = true := by cases ct <;> decide
+
+/-- A cell's frame has a nominal position exactly when the cell is nominal. -/
+@[simp]
+theorem Frame.hasNominal_toFrame (ct : ComplementType) :
+    ct.toFrame.HasNominal ↔ ct.isNominal = true := by cases ct <;> decide
 
 /-- The [noonan-2007] coding of a complement frame: `none` for
 non-clausal frames, for small clauses (outside the coding inventory),
