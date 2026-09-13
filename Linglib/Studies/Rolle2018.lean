@@ -1,480 +1,258 @@
-/-
-Copyright (c) 2026 Robert Hawkins. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Robert Hawkins
--/
 import Linglib.Phonology.Tone.Grammatical
 import Linglib.Phonology.OptimalityTheory.Correspondence
-import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Phonology.Subregular.TierProjection
 import Linglib.Phonology.OptimalityTheory.Cophonology
+import Linglib.Phonology.Subregular.TierProjection
 
 /-!
-# Rolle 2018 — Grammatical tone: CoP-scope and Matrix-Basemap Correspondence
+# Rolle (2018): Grammatical tone: typology and theory
 
-[rolle-2018]'s thesis frames dominant vs. non-dominant grammatical tone (GT)
-via three problems: the **origin** (where does the grammatical tune come from?),
-the **erasure** (why do the target's underlying tones go unrealized?), and the
-**scope** (what determines the domain of the GT operation?). This file
-formalises Rolle's two central mechanisms; the origin problem is solved by the
-floating-tone representation (the tune is part of the trigger's UR, in
-`Tone/Grammatical.lean`).
+This file formalizes the dissertation's account of dominant grammatical tone, the replacement
+of a target's underlying tones by a trigger's grammatical tune, through its two mechanisms.
+Cophonology-scope answers the scope problem: hierarchy exchange lays the vocabulary items of
+a specifier–head–complement configuration out from outermost to innermost, `Position`, and an
+item's cophonology scopes over everything located inwardly, `ScopesOver`, so the dominant
+trigger is the outer item. The dominant-tone asymmetry, that triggers are dependents and
+lexical heads never impose dominance outward, is read off the order, and the typology table
+of trigger–target pairs is reproduced once objects sit in specifier position,
+`Row.dominant_iff`. Matrix–basemap correspondence answers the erasure problem: a dominant
+trigger's subranking promotes faithfulness to the output of a basemap derivation whose input
+is the induced projection of the target with its tones unvalued, `basemapOutput`, and
+cophonological evaluation under that subranking selects exactly the candidates whose tonal
+tier matches the basemap's, `coph_selects_basemap_faithful`; the same constraint referring to
+the stem itself yields the recessive pattern, in which the tune does not apply to a valued
+target.
 
-* **CoP-scope** (Ch 6) — the *scope* problem. Structural positions in a
-  cophonological domain are ordered Spec > Head > Complement, and at spell-out
-  syntactic structure is mapped to a morpho-phonological tree via **hierarchy
-  exchange**. The dominant-GT asymmetry (triggers are dependents, targets are
-  heads) is *derived* from this ordering rather than stipulated.
-* **Matrix-Basemap Correspondence (MxBM-C)** (Ch 5) — the *erasure* problem.
-  Dominant GT is faithfulness to a *basemap* output (a "deficient projection"
-  of the input with all valued tones stripped), extending Output-Output
-  Correspondence ([benua-1997]) to the tonal tier.
+## Implementation notes
 
-## Main definitions
-
-### CoP-scope
-* `CoPPosition`, `CoPPosition.rank`, `scopesOver`, `CoPPosition.isDependent`
-* `CoPNode`, `hierarchyExchange`
-* `dominant_gt_asymmetry_from_scope` — derives the asymmetry from scope
-
-### Matrix-Basemap Correspondence
-* `deficientProjection`, `basemapOutput`, `tonalTier`
-* `basemapViolations` — IDENT-OO ([mccarthy-prince-1995]) on the tonal tier,
-  derived from `Correspondence.identViol`
-* `mkBasemapConstraint`, `tonalOverwrite_basemap_faithful`
+Positions are the three of one specifier–head–complement configuration; a trigger–target pair
+on a larger spine is read at the configuration containing both, which is how the typology
+table's rows are placed. Basemap induction is represented by unvaluing the target's tones, the
+basemap derivation by the overwrite that docks the tune, and matrix–basemap correspondence by
+identity on the tonal tier, the substrate's `Correspondence.identViol`. The Izon and Hausa
+case studies and the treatment of apparent outward dominance are not formalized.
 
 ## References
 
-* [rolle-2018]
-* [benua-1997], [mccarthy-prince-1995] — Output-Output Correspondence
-* [goldsmith-1976]
+* [N. R. Rolle, *Grammatical tone: typology and theory* (2018)][rolle-2018]
+* [L. Benua, *Transderivational identity: phonological relations between words*
+  (1997)][benua-1997]
+* [J. J. McCarthy, A. Prince, *Faithfulness and reduplicative identity*
+  (1995)][mccarthy-prince-1995]
+* [S. Inkelas, C. Zoll, *Is grammar dependence real? A comparison between cophonological and
+  indexed constraint approaches to morphologically conditioned phonology*
+  (2007)][inkelas-zoll-2007]
+* [H. Sande, P. Jenks, *Cophonologies by phase* (2017)][sande-jenks-2017]
+* [G. Ó. Hansson, *(Dis)agreement by (non)correspondence: inspecting the foundations*
+  (2014)][hansson-2014]
+* [R. S. Kayne, *The antisymmetry of syntax* (1994)][kayne-1994]
 -/
 
 namespace Rolle2018
 
-open Tone
-open Constraints OptimalityTheory
+open Tone Constraints OptimalityTheory
 
-/-! ## CoP-scope: cophonological domain scope hierarchy -/
+/-! ### Cophonology-scope -/
 
-/-! ### CoP-scope positions -/
-
-/-- Structural positions within a cophonological domain (CoP), ordered
-    by scope. The ordering Spec > Head > Complement determines which
-    VI's cophonology takes precedence within the domain.
-
-    [rolle-2018] Ch 6 §6.2: each VI has cophonology-scope over
-    all inwardly located morphemes, and cophonologies apply cyclically
-    up the tree, producing layered grammatical tone effects. -/
-inductive CoPPosition where
-  /-- Specifier: outermost scope. Dependents (modifiers, possessors)
-      typically occupy this position. -/
-  | spec
-  /-- Head: middle scope. Lexical heads (roots, stems) occupy this
-      position. -/
-  | head
-  /-- Complement: innermost scope. Complements and some affixes
-      occupy this position. -/
+/-- The positions of a specifier–head–complement configuration, ordered from innermost to
+outermost as hierarchy exchange lays their vocabulary items out in the morpho-phonological
+tree: the head is outer to its complement and the specifier outer to the head. -/
+inductive Position
   | complement
-  deriving DecidableEq, Repr
+  | head
+  | spec
+  deriving DecidableEq, Fintype
 
-/-! ### Scope ordering -/
+namespace Position
 
-/-- Numeric rank for scope ordering: higher rank = wider scope.
-    Spec (2) > Head (1) > Complement (0). -/
-def CoPPosition.rank : CoPPosition → Nat
-  | .spec       => 2
-  | .head       => 1
+private def toFin : Position → Fin 3
   | .complement => 0
+  | .head => 1
+  | .spec => 2
 
-/-- Does position `a` scope over position `b`? -/
-def scopesOver (a b : CoPPosition) : Bool := a.rank > b.rank
+private theorem toFin_injective : Function.Injective toFin := by
+  intro a b h; cases a <;> cases b <;> simp_all [toFin]
 
-/-- Specifiers scope over heads. -/
-theorem spec_scopes_over_head : scopesOver .spec .head = true := rfl
+noncomputable instance : LinearOrder Position := LinearOrder.lift' toFin toFin_injective
 
-/-- Heads scope over complements. -/
-theorem head_scopes_over_complement : scopesOver .head .complement = true := rfl
+/-- A dependent position: any position but the head. -/
+def IsDependent (p : Position) : Prop := p ≠ .head
 
-/-- Specifiers scope over complements (transitivity). -/
-theorem spec_scopes_over_complement : scopesOver .spec .complement = true := rfl
+instance : DecidablePred IsDependent := λ p => inferInstanceAs (Decidable (p ≠ .head))
 
-/-- No position scopes over itself. -/
-theorem no_self_scope (p : CoPPosition) : scopesOver p p = false := by
-  cases p <;> rfl
+end Position
 
-/-- Heads do not scope over specifiers (asymmetry). -/
-theorem head_not_over_spec : scopesOver .head .spec = false := rfl
+/-- Cophonology-scope: the vocabulary item at `p` scopes over the item at `q` when `q` is
+located inwardly, so that `p`'s subranking governs the constituent containing both. -/
+def ScopesOver (p q : Position) : Prop := q < p
 
-/-- Complements do not scope over heads (asymmetry). -/
-theorem complement_not_over_head : scopesOver .complement .head = false := rfl
+noncomputable instance : DecidableRel ScopesOver := λ p q => inferInstanceAs (Decidable (q < p))
 
-/-! ### Dependency status (derived from position) -/
+/-- Only the specifier's item scopes over the head: a dominant trigger targeting a lexical head
+is a dependent, and an object imposes dominant tone on its verb because it sits in specifier
+position. -/
+theorem scopesOver_head_iff (p : Position) : ScopesOver p .head ↔ p = .spec := by
+  cases p <;> decide
 
-/-- Whether a position is a dependent position. Derived from the CoP
-    structure: specifiers and complements are dependents; heads are not.
+/-- No item scopes over the specifier's: a lexical head never imposes dominance outward. -/
+theorem not_scopesOver_spec (p : Position) : ¬ ScopesOver p .spec := by
+  cases p <;> decide
 
-    This is not an independent stipulation — it follows from the
-    structural definition of the CoP, where the head is the structural
-    center and specifiers/complements are its dependents. -/
-def CoPPosition.isDependent : CoPPosition → Bool
-  | .spec       => true
-  | .head       => false
-  | .complement => true
+/-- The complement's item scopes over nothing. -/
+theorem not_scopesOver_of_complement (q : Position) : ¬ ScopesOver .complement q := by
+  cases q <;> decide
 
-/-- Specifiers are dependents. -/
-theorem spec_is_dependent : CoPPosition.isDependent .spec = true := rfl
+/-- A trigger that scopes over another item is a dependent or the head over its complement. -/
+theorem isDependent_of_scopesOver_head {p : Position} (h : ScopesOver p .head) :
+    p.IsDependent := by
+  rw [scopesOver_head_iff] at h
+  subst h
+  decide
 
-/-- Heads are not dependents. -/
-theorem head_is_not_dependent : CoPPosition.isDependent .head = false := rfl
+/-- The trigger–target pairs of the dominant-tone asymmetry table, with the positions the
+dissertation assigns them: an affix is a head taking the root, or the inner stem, as its
+complement; modifiers and objects are specifiers; an inner item stands to an outer one as the
+complement of the outer configuration. -/
+inductive Row
+  | affixRoot
+  | outerAffixStem
+  | modifierNoun
+  | outerModifierNoun
+  | objectVerb
+  | rootAffix
+  | innerAffixOuter
+  | nounModifier
+  | innerModifierOuter
+  | verbObject
+  deriving DecidableEq, Fintype
 
-/-- Complements are dependents. -/
-theorem complement_is_dependent : CoPPosition.isDependent .complement = true := rfl
+/-- The trigger's position. -/
+def Row.trigger : Row → Position
+  | .affixRoot | .outerAffixStem | .nounModifier | .verbObject => .head
+  | .modifierNoun | .outerModifierNoun | .objectVerb => .spec
+  | .rootAffix | .innerAffixOuter | .innerModifierOuter => .complement
 
-/-! ### CoP node — morpho-phonological tree node -/
+/-- The target's position. -/
+def Row.target : Row → Position
+  | .affixRoot | .outerAffixStem => .complement
+  | .modifierNoun | .outerModifierNoun | .objectVerb | .rootAffix | .innerAffixOuter => .head
+  | .nounModifier | .innerModifierOuter | .verbObject => .spec
 
-/-- A node in a morpho-phonological tree within a cophonological domain.
-    Each node represents a morpheme at a structural position, with an
-    optional grammatical tone specification.
+/-- The table's dominant column: dominant tone from a dependent onto a lexical head or an
+inner item is attested, dominant tone outward from a head or from an inner item is not. -/
+def Row.DominantAttested : Row → Prop
+  | .affixRoot | .outerAffixStem | .modifierNoun | .outerModifierNoun | .objectVerb => True
+  | .rootAffix | .innerAffixOuter | .nounModifier | .innerModifierOuter | .verbObject => False
 
-    Dependency status is **derived from position** via
-    `CoPPosition.isDependent`, not independently stipulated. After
-    hierarchy exchange ([rolle-2018] Ch 4), syntactic structure
-    maps to a CoP tree where scope ordering determines evaluation order:
-    outer-scoping VIs' cophonologies apply after (and thus override)
-    inner-scoping ones. -/
-structure CoPNode where
-  /-- Structural position within the CoP. -/
-  position : CoPPosition
-  /-- Optional GT specification. `none` if this morpheme has no
-      grammatical tone. -/
-  gtSpec : Option GTSpec := none
-  deriving Repr
+instance : DecidablePred Row.DominantAttested := λ r => by
+  cases r <;> unfold Row.DominantAttested <;> infer_instance
 
-/-- Derived dependency status: a node is a dependent iff its position
-    is Spec or Complement. -/
-def CoPNode.isDependent (n : CoPNode) : Bool := n.position.isDependent
+/-- The typology table falls out of cophonology-scope: dominant tone is attested for a
+trigger–target pair exactly when the trigger's item scopes over the target's. -/
+theorem Row.dominant_iff (r : Row) : r.DominantAttested ↔ ScopesOver r.trigger r.target := by
+  cases r <;> decide
 
-/-! ### Hierarchy exchange -/
+/-! ### Matrix–basemap correspondence -/
 
-/-- **Hierarchy exchange**: map a set of morphemes (from syntactic
-    structure) to a cophonological evaluation order. The result is
-    sorted by scope rank (highest first), so outer-scoping cophonologies
-    are evaluated last — their effects take precedence.
+variable {S : Type}
 
-    [rolle-2018] Ch 4: hierarchy exchange preserves the inside-out
-    derivational history of the syntactic module by referencing
-    asymmetrical c-command, mediated through the CoP-scope ordering. -/
-def hierarchyExchange (nodes : List CoPNode) : List CoPNode :=
-  nodes.mergeSort (λ a b => a.position.rank ≥ b.position.rank)
+/-- Basemap induction: the target with its tones unvalued, the structure common to the
+vocabulary items that the constraint's similarity condition picks out. -/
+def deficientProjection (host : List (TBU S)) : List (TBU S) :=
+  host.map λ tbu => { tbu with tone := TRN.empty }
 
-/-- Hierarchy exchange preserves the node set (it only reorders). -/
-theorem hierarchyExchange_perm (nodes : List CoPNode) :
-    (hierarchyExchange nodes).length = nodes.length := by
-  simp [hierarchyExchange, List.length_mergeSort]
-
-/-! ### Deriving the dominant GT asymmetry -/
-
-/-- **The key lemma**: if a position scopes over Head, it must be Spec.
-
-    Complement has lower rank than Head, so it cannot scope over Head.
-    Head cannot scope over itself. Only Spec (rank 2 > 1) qualifies.
-
-    This is the structural backbone of the dominant GT asymmetry:
-    if dominant GT requires scoping over the head, and only Spec
-    scopes over Head, then dominant triggers must be at Spec. -/
-theorem scopes_over_head_implies_spec (p : CoPPosition)
-    (h : scopesOver p .head = true) : p = .spec := by
-  cases p with
-  | spec => rfl
-  | head => exact absurd h (by decide)
-  | complement => exact absurd h (by decide)
-
-/-- A position that scopes over Head is a dependent position.
-
-    Follows from `scopes_over_head_implies_spec` (it must be Spec)
-    and `spec_is_dependent` (Spec is a dependent). -/
-theorem scopes_over_head_is_dependent (p : CoPPosition)
-    (h : scopesOver p .head = true) : p.isDependent = true := by
-  have := scopes_over_head_implies_spec p h
-  subst this; rfl
-
-/-- **The dominant GT asymmetry derived from CoP-scope.**
-
-    Hypotheses:
-    1. The target is at Head position (it's the lexical head)
-    2. The trigger scopes over the target (required for dominance)
-
-    From these two facts alone, the CoP-scope hierarchy determines:
-    - The trigger is at Spec (only Spec scopes over Head)
-    - Spec is a dependent position
-    - Head is not a dependent position
-
-    Therefore `DominantGTAsymmetry.holds` is satisfied: the trigger
-    is a dependent and the target is a head. The Bool values are
-    **computed from positions**, not independently stipulated.
-
-    Non-trivial prediction: complements are dependents but cannot be
-    dominant triggers, because Complement does not scope over Head. -/
-theorem dominant_gt_asymmetry_from_scope (triggerPos targetPos : CoPPosition)
-    (hTarget : targetPos = .head)
-    (hScope : scopesOver triggerPos targetPos = true) :
-    DominantGTAsymmetry.holds
-      ⟨triggerPos.isDependent, !targetPos.isDependent⟩ = true := by
-  subst hTarget
-  have := scopes_over_head_implies_spec triggerPos hScope
-  subst this; rfl
-
-/-- Complements cannot be dominant triggers despite being dependents:
-    Complement does not scope over Head. This is a non-trivial prediction
-    of the CoP-scope account — the asymmetry is not simply "dependents
-    dominate heads" but specifically "dependents that scope over heads
-    dominate heads." -/
-theorem complement_cannot_dominate_head :
-    scopesOver .complement .head = false := rfl
-
-/-- Heads cannot impose dominant GT on specifiers (outward dominance). -/
-theorem head_cannot_dominate_spec :
-    scopesOver .head .spec = false := rfl
-
-/-! ## Matrix-Basemap Correspondence (MxBM-C)
-
-A **basemap** is an abstract I/O mapping derived from a "deficient projection"
-of the input: all valued (lexical) tones on the target are stripped, leaving
-only floating (grammatical) tones. **Dominant GT** = faithfulness to the
-basemap output; since the basemap has no valued tones to preserve, the matrix
-output is forced to match the grammatical tune, so the target's underlying
-tones go unrealized.
--/
-
-open Tone (TRN)
-
-/-! ### Basemap — deficient projection -/
-
-/-- Strip all tones from a host word, replacing them with a default tone.
-    The **deficient projection** of [rolle-2018] Ch 5: the input with
-    all valued (lexical) tones removed, leaving only the segmental skeleton
-    ready to receive floating (grammatical) tones.
-
-    The `defaultTone` is the tone assigned to "unvalued" TBUs —
-    language-specific (often L in African tone languages). -/
-def deficientProjection {S : Type} (host : List (TBU S)) (defaultTone : TRN) :
-    List (TBU S) :=
-  host.map fun tbu => { tbu with tone := defaultTone }
-
-/-- Deficient projection produces uniform tone: every TBU gets the
-    default tone. -/
-theorem deficientProjection_uniform {S : Type}
-    (host : List (TBU S)) (defaultTone : TRN) :
-    (deficientProjection host defaultTone).map TBU.tone =
-    host.map fun _ => defaultTone := by
-  simp only [deficientProjection, List.map_map]; congr 1
-
-/-! ### Basemap output -/
-
-/-- Compute the basemap output: apply the grammatical tune to the
-    deficient projection. This represents what the output would look
-    like if the target had no underlying tones — only the floating
-    tones from the trigger determine the surface pattern.
-
-    For replacive-dominant GT with a whole-word melody, the basemap
-    output has the grammatical tune on every TBU. -/
-def basemapOutput {S : Type} [DecidableEq S] [BEq S] [Repr S]
-    (host : List (TBU S)) (spec : Spec) (defaultTone : TRN) : List (TBU S) :=
-  tonalOverwrite (deficientProjection host defaultTone) spec
-
-/-! ### Tonal tier extraction -/
-
-/-- Extract the tonal tier from a list of TBUs.
-
-    Grounded in the `Tier` abstraction
-    (`TierProjection.apply (TierProjection.total TBU.tone)`): an erasing string
-    homomorphism `(TBU S)* → TRN*` in the Kleisli category of `Option`.
-    The tonal tier is the `total` (no-erasure) case [goldsmith-1976]. -/
-def tonalTier {S : Type} (tbus : List (TBU S)) : List TRN :=
+/-- The tonal tier, the projection along which matrix and basemap outputs are compared: the
+total tier projection of the tone of each tone-bearing unit. -/
+def tonalTier (tbus : List (TBU S)) : List TRN :=
   TierProjection.apply (TierProjection.total TBU.tone) tbus
 
-/-- The tonal tier reduces to `List.map TBU.tone` (the historical
-    formulation), via `TierProjection.total`'s length-preservation property. -/
-@[simp] theorem tonalTier_eq_map {S : Type} (tbus : List (TBU S)) :
-    tonalTier tbus = tbus.map TBU.tone :=
+@[simp] theorem tonalTier_eq_map (tbus : List (TBU S)) : tonalTier tbus = tbus.map TBU.tone :=
   TierProjection.apply_total _ _
 
-/-! ### Matrix-Basemap Correspondence — derived from `Correspondence` -/
-
-/-- Matrix-Basemap Correspondence violation count: Hamming distance between
-    the matrix tonal tier and the basemap tonal tier.
-
-    **Derived from `Correspondence.identViol`** on the `(false, true)` edge of the
-    binary parallel-pair correspondence between the two tiers. This
-    structurally identifies MxBM-C as IDENT-OO of [mccarthy-prince-1995]
-    / [benua-1997] specialized to the tonal tier — no separate Hamming
-    implementation, no bridge theorem required.
-
-    On unequal-length tiers, the underlying `Correspondence.parallel` truncates to the
-    shorter prefix (matching `List.zip` semantics). -/
-def basemapViolations (tier₁ tier₂ : List TRN) : Nat :=
+/-- Matrix–basemap correspondence on the tonal tier: the identity violations between two
+tiers, the substrate's output–output identity restricted to tone. -/
+def basemapViolations (tier₁ tier₂ : List TRN) : ℕ :=
   (Correspondence.parallel tier₁ tier₂).identViol .lhs .rhs
 
-/-- Self-comparison has zero basemap violations: a tonal tier is
-    perfectly faithful to itself. Derived from `Correspondence.identViol_identity`. -/
-theorem basemapViolations_self_eq_zero (t : List TRN) :
-    basemapViolations t t = 0 :=
+theorem basemapViolations_self (t : List TRN) : basemapViolations t t = 0 :=
   Correspondence.identViol_identity t
 
-/-- Zero basemap violations with equal-length tiers implies the tiers are
-    identical. The equal-length hypothesis is necessary because the
-    underlying `Correspondence.parallel` truncates to `min`. -/
-theorem basemapViolations_eq_zero_imp
-    (t₁ t₂ : List TRN) (hLen : t₁.length = t₂.length)
-    (hZero : basemapViolations t₁ t₂ = 0) : t₁ = t₂ := by
-  unfold basemapViolations Correspondence.identViol at hZero
-  rw [Finset.card_eq_zero, Finset.filter_eq_empty_iff] at hZero
+/-- Tiers of equal length with no identity violation are equal. -/
+theorem eq_of_basemapViolations_eq_zero {t₁ t₂ : List TRN} (hLen : t₁.length = t₂.length)
+    (h : basemapViolations t₁ t₂ = 0) : t₁ = t₂ := by
+  unfold basemapViolations Correspondence.identViol at h
+  rw [Finset.card_eq_zero, Finset.filter_eq_empty_iff] at h
   apply List.ext_getElem hLen
   intro n hn₁ hn₂
   have hmem : ((⟨n, hn₁⟩ : Fin t₁.length), (⟨n, hn₂⟩ : Fin t₂.length)) ∈
       (Correspondence.parallel t₁ t₂).edge .lhs .rhs := by
     rw [Correspondence.parallel_edge_lhs_rhs]
     exact (Correspondence.mem_diagonal _ _).mpr rfl
-  have hne := hZero hmem
+  have hne := h hmem
   simp only [Correspondence.parallel_form_lhs, Correspondence.parallel_form_rhs, not_not] at hne
   simpa using hne
 
-/-! ### Constraint bridge -/
+/-- The matrix–basemap constraint of a trigger's subranking: a candidate's tonal tier against
+the basemap output's. -/
+def mxbm {C : Type} (basemapTier : List TRN) (extractTier : C → List TRN) : Constraint C :=
+  λ c => basemapViolations (extractTier c) basemapTier
 
-/-- Wrap `basemapViolations` as a `Constraint` for use in OT
-    tableaux and cophonological evaluation.
+open OptimalityTheory.Cophonology (cophonologicalEval mergeRanking)
 
-    Given a fixed basemap output (the tonal tier of the basemap-faithful
-    form), this constraint evaluates each candidate by comparing its
-    tonal tier against the basemap. In [rolle-2018]'s analysis,
-    dominant triggers promote this constraint above default markedness
-    in their cophonology's subranking.
+variable {L C : Type} [DecidableEq L] [DecidableEq C] (extractTier : C → List TRN) (l : L)
+  (defaultRanking : List (L × Constraint C)) (candidates : List C) (h : candidates ≠ [])
 
-    `extractTier` converts a candidate to its tonal tier for comparison.
-    This allows the constraint to work with any candidate type, not
-    just raw `List TRN`. -/
-def mkBasemapConstraint {C : Type}
-    (basemapTier : List TRN)
-    (extractTier : C → List TRN) : Constraint C :=
-  fun c => basemapViolations (extractTier c) basemapTier
-
-/-! ### Dominance as basemap faithfulness -/
-
-/-- Helper: whole-word `tonalOverwrite` reduces to `List.map`. -/
-private theorem tonalOverwrite_whole_eq_map {S : Type}
-    [DecidableEq S] [BEq S] [Repr S]
-    (host : List (TBU S)) (t : TRN) :
-    tonalOverwrite host ⟨"", [t], .whole⟩ =
-    host.map fun tbu => { tbu with tone := t } := rfl
-
-/-- The central theorem of MxBM-C: for replacive-dominant GT with a
-    whole-word single-tone melody, the matrix output's tonal tier
-    equals the basemap output's tonal tier.
-
-    This captures [rolle-2018]'s key insight: dominant GT is not
-    a special deletion rule or markedness constraint, but faithfulness
-    to an abstract basemap. The target's underlying tones go unrealized
-    because the output must match what would happen if those tones
-    were never there. -/
-theorem tonalOverwrite_basemap_faithful {S : Type}
-    [DecidableEq S] [BEq S] [Repr S]
-    (host : List (TBU S)) (t : TRN) (defaultTone : TRN) :
-    let spec : Spec := ⟨"", [t], .whole⟩
-    tonalTier (tonalOverwrite host spec) =
-    tonalTier (basemapOutput host spec defaultTone) := by
-  simp only [tonalTier_eq_map, basemapOutput, deficientProjection]
-  rw [tonalOverwrite_whole_eq_map, tonalOverwrite_whole_eq_map]
-  simp only [List.map_map]
-  congr 1
-
-/-- The basemap output's tonal tier is independent of the host's
-    underlying tones: for whole-word replacement, two hosts with
-    different lexical tones but identical segmental content produce
-    the same basemap tonal tier.
-
-    The formal content of "transparadigmatic uniformity"
-    ([rolle-2018] Ch 5): the basemap abstracts away from the
-    paradigmatic tonal variation of the target. -/
-theorem basemapOutput_tone_independent_whole {S : Type}
-    [DecidableEq S] [BEq S] [Repr S]
-    (host₁ host₂ : List (TBU S)) (t defaultTone : TRN)
-    (hLen : host₁.length = host₂.length) :
-    let spec : Spec := ⟨"", [t], .whole⟩
-    tonalTier (basemapOutput host₁ spec defaultTone) =
-    tonalTier (basemapOutput host₂ spec defaultTone) := by
-  simp only [tonalTier_eq_map, basemapOutput, deficientProjection]
-  rw [tonalOverwrite_whole_eq_map, tonalOverwrite_whole_eq_map]
-  simp only [List.map_map]
-  have mapConst : ∀ xs : List (TBU S),
-      List.map (TBU.tone ∘ (fun tbu : TBU S => { tbu with tone := t }) ∘
-        fun tbu : TBU S => { tbu with tone := defaultTone }) xs =
-      List.replicate xs.length t := by
-    intro xs
-    induction xs with
-    | nil => rfl
-    | cons _ _ ih =>
-      simp only [List.map_cons, Function.comp_def, List.length_cons,
-                 List.replicate_succ]
-      exact congrArg _ ih
-  rw [mapConst, mapConst, hLen]
-
-/-! ### Dominant cophonology and overwrite agree
-
-Promoting MxBM-C (basemap faithfulness) in a cophonological subranking forces every optimal
-candidate to be basemap-faithful, so the constraint-based evaluation of dominant grammatical
-tone coincides with direct `tonalOverwrite`. -/
-
-section DominantCophAgreement
-
-open OptimalityTheory.Cophonology (mergeRanking cophonologicalEval)
-
-/-- When MxBM-C is in the cophonological subranking, every optimal candidate's tonal tier is
-the basemap output. -/
-theorem dominant_coph_selects_basemap_faithful
-    {L C : Type} [DecidableEq L] [DecidableEq C]
-    (basemapTier : List TRN) (extractTier : C → List TRN)
-    (l : L) (defaultRanking : List (L × Constraints.Constraint C))
-    (candidates : List C) (h : candidates ≠ [])
+/-- Promoting matrix–basemap faithfulness in a cophonology selects exactly the basemap-faithful
+candidates: with a faithful candidate available, every optimal candidate's tonal tier is the
+basemap's. -/
+theorem coph_selects_basemap_faithful (basemapTier : List TRN)
     (hLen : ∀ c ∈ candidates, (extractTier c).length = basemapTier.length)
     (hFaithful : ∃ c ∈ candidates, extractTier c = basemapTier) :
-    let mxbmc := mkBasemapConstraint basemapTier extractTier
-    ∀ c ∈ cophonologicalEval defaultRanking [(l, mxbmc)] candidates h,
+    ∀ c ∈ cophonologicalEval defaultRanking [(l, mxbm basemapTier extractTier)] candidates h,
       extractTier c = basemapTier := by
-  intro mxbmc c hc
+  intro c hc
   simp only [cophonologicalEval, mergeRanking] at hc
-  have hExists : ∃ c₀ ∈ candidates, mxbmc c₀ = 0 := by
-    obtain ⟨c₀, hc₀_mem, hc₀_eq⟩ := hFaithful
-    exact ⟨c₀, hc₀_mem, by simp [mxbmc, mkBasemapConstraint, hc₀_eq,
-      basemapViolations_self_eq_zero]⟩
-  have hZero := Tableau.ofRanking_optimal_zero_first mxbmc _ hExists hc
-  simp only [mxbmc, mkBasemapConstraint] at hZero
-  exact basemapViolations_eq_zero_imp (extractTier c) basemapTier
-    (hLen c (Tableau.ofRanking_optimal_mem hc)) hZero
+  have hExists : ∃ c₀ ∈ candidates, mxbm basemapTier extractTier c₀ = 0 :=
+    let ⟨c₀, hc₀, he⟩ := hFaithful
+    ⟨c₀, hc₀, by simp [mxbm, he, basemapViolations_self]⟩
+  have hZero := Tableau.ofRanking_optimal_zero_first (mxbm basemapTier extractTier) _ hExists hc
+  exact eq_of_basemapViolations_eq_zero (hLen c (Tableau.ofRanking_optimal_mem hc)) hZero
 
-/-- For whole-word single-tone replacement, the dominant cophonology selects exactly the
-candidates whose tonal tier is the `tonalOverwrite` output. -/
-theorem dominant_coph_agrees_with_tonalOverwrite
-    {S L C : Type} [DecidableEq S] [BEq S] [Repr S] [DecidableEq L] [DecidableEq C]
-    (host : List (TBU S)) (t defaultTone : TRN) (extractTier : C → List TRN)
-    (l : L) (defaultRanking : List (L × Constraints.Constraint C))
-    (candidates : List C) (h : candidates ≠ [])
-    (hLen : ∀ c ∈ candidates, (extractTier c).length =
-      (tonalTier (basemapOutput host ⟨"", [t], .whole⟩ defaultTone)).length)
-    (hFaithful : ∃ c ∈ candidates,
-      extractTier c = tonalTier (basemapOutput host ⟨"", [t], .whole⟩ defaultTone)) :
-    let spec : Spec := ⟨"", [t], .whole⟩
-    let baseTier := tonalTier (basemapOutput host spec defaultTone)
-    let mxbmc := mkBasemapConstraint baseTier extractTier
-    ∀ c ∈ cophonologicalEval defaultRanking [(l, mxbmc)] candidates h,
-      extractTier c = tonalTier (tonalOverwrite host spec) := by
-  intro spec baseTier mxbmc c hc
-  have hFaith := dominant_coph_selects_basemap_faithful
-    baseTier extractTier l defaultRanking candidates h hLen hFaithful c hc
-  rw [hFaith]
-  exact (tonalOverwrite_basemap_faithful host t defaultTone).symm
+/-- Recessive grammatical tone: under a subranking promoting faithfulness to the stem itself,
+every optimal candidate keeps the target's own tones, so the tune does not apply to a valued
+target. -/
+theorem recessive (host : List (TBU S))
+    (hLen : ∀ c ∈ candidates, (extractTier c).length = host.length)
+    (hFaithful : ∃ c ∈ candidates, extractTier c = tonalTier host) :
+    ∀ c ∈ cophonologicalEval defaultRanking [(l, mxbm (tonalTier host) extractTier)] candidates h,
+      extractTier c = tonalTier host :=
+  coph_selects_basemap_faithful extractTier l defaultRanking candidates h _
+    (by simpa using hLen) hFaithful
 
-end DominantCophAgreement
+variable [DecidableEq S] [BEq S] [Repr S]
+
+/-- The basemap output: the trigger's tune docked onto the unvalued projection. -/
+def basemapOutput (host : List (TBU S)) (spec : Spec) : List (TBU S) :=
+  tonalOverwrite (deficientProjection host) spec
+
+/-- For a whole-word tune the basemap output carries the tune on every unit, whatever the
+target's own tones: the locus of erasure. -/
+theorem tonalTier_basemapOutput_whole (host : List (TBU S)) (t : TRN) :
+    tonalTier (basemapOutput host ⟨"", [t], .whole⟩) = host.map λ _ => t := by
+  rw [tonalTier_eq_map, basemapOutput, tonalOverwrite_whole_uniform, deficientProjection,
+    List.map_map]
+  rfl
+
+/-- Dominant grammatical tone: under a subranking promoting faithfulness to the induced
+basemap, every optimal candidate carries the trigger's whole-word tune, whatever the target's
+underlying tones were. -/
+theorem dominant (host : List (TBU S)) (t : TRN)
+    (hLen : ∀ c ∈ candidates, (extractTier c).length = host.length)
+    (hFaithful : ∃ c ∈ candidates, extractTier c = host.map λ _ => t) :
+    ∀ c ∈ cophonologicalEval defaultRanking
+        [(l, mxbm (tonalTier (basemapOutput host ⟨"", [t], .whole⟩)) extractTier)] candidates h,
+      extractTier c = host.map λ _ => t := by
+  rw [tonalTier_basemapOutput_whole]
+  exact coph_selects_basemap_faithful extractTier l defaultRanking candidates h _
+    (by simpa using hLen) hFaithful
 
 end Rolle2018
