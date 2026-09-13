@@ -8,12 +8,12 @@ import Linglib.Semantics.Questions.Resolution
 
 The inquiry coordinate of the conversational scoreboard, after
 [roberts-2012]: the stack of accepted-but-unanswered questions
-(`QUDStack`, her definition (10g); the head is the immediate QUD),
-strategies of inquiry as rose trees of questions (`Strategy`, her (12);
+(`QUDStack`, definition (10g); the head is the immediate QUD),
+strategies of inquiry as rose trees of questions (`Strategy`, (12);
 [buring-2003]'s d-trees are the explicit tree-shaped ancestor),
 hereditary strategy completeness (`IsComplete`), and relevance of a
 move's denotation to a set of questions (`Question.IsRelevantTo`, built from the
-assertion clause of her Relevance (15)). [ginzburg-2012]'s KoS models
+assertion clause of Relevance (15)). [ginzburg-2012]'s KoS models
 the same coordinate as a partially ordered set with its own update
 rules; that structure lives with the gameboard in
 `Discourse/Gameboard/`. [beaver-roberts-simons-tonhauser-2017] is the
@@ -24,7 +24,7 @@ corpus data.
 ## Main definitions
 
 * `Discourse.QUDStack` — the stack, as a `List (Question W)`
-* `Discourse.QUDStack.WellFormed` — Roberts' ordering constraint
+* `Discourse.QUDStack.WellFormed` — the ordering constraint
   (10g.iii), relative to a context set
 * `Discourse.Strategy` — strategies of inquiry as `RoseTree (Question W)`
 * `Discourse.Strategy.IsComplete` — at every branching node, the meet of
@@ -34,23 +34,23 @@ corpus data.
 
 ## Fidelity notes
 
-Roberts' (10g) makes QUD a function from moves to ordered sets of
+Definition (10g) makes QUD a function from moves to ordered sets of
 accepted, unanswered questions; `QUDStack` models a single value of that
 function, and clause (iii) — each question's complete answers
 contextually entail partial answers to every question below it — is
-`WellFormed`, relative to a context set because entailment in her (9) is
-contextual throughout. She warns against strengthening (iii) to question
-entailment (her bridging-question discourse (13) violates it). Questions
+`WellFormed`, relative to a context set because entailment in (9) is
+contextual throughout. The paper warns against strengthening (iii) to question
+entailment (the bridging-question discourse (13) violates it). Questions
 are retired when answered or determined practically unanswerable, and
-she licenses non-LIFO removal (answering a lower question discharges the
+the paper licenses non-LIFO removal (answering a lower question discharges the
 higher questions in its strategy); `List.tail` is the unconditional LIFO
 special case, and the licensing conditions are the caller's obligation.
 
-Her (12) defines `Strat(q)` derivatively — its substrategies are those
+Definition (12) gives `Strat(q)` derivatively — its substrategies are those
 for the questions accepted while `q` was the immediate QUD — with
 well-formedness left to "rational considerations", and the second
 component an unordered set. The ordered `RoseTree` follows
-[buring-2003]. `IsComplete` is the success criterion her D₀ discussion
+[buring-2003]. `IsComplete` is the success criterion the D₀ discussion
 illustrates (complete answers to the subquestions jointly yield a
 complete answer to the parent), not a clause of (12); the converse
 direction (parent entails children-meet) is exactly what (13) rules out.
@@ -76,7 +76,7 @@ namespace QUDStack
 
 variable {W : Type*}
 
-/-- Roberts' ordering constraint (10g.iii) on a QUD stack, relative to context
+/-- The ordering constraint (10g.iii) on a QUD stack, relative to context
 set `C`: for `higher` accepted more recently than `lower`, every complete
 answer to `higher` contextually entails a partial answer to `lower`. -/
 def WellFormed (C : Set W) (s : QUDStack W) : Prop :=
