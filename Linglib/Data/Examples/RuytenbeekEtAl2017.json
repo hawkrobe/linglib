@@ -1,0 +1,199 @@
+[
+  {
+    "id": "ruytenbeek2017_ex17",
+    "source": {"bibkey": "ruytenbeek-etal-2017", "paperLabel": "(17)"},
+    "language": "stan1290",
+    "primaryText": "Mettez le cercle rouge à gauche du rectangle jaune.",
+    "glossedTokens": [],
+    "translation": "Move the red circle to the left of the yellow rectangle.",
+    "context": "Study 1: a grid of coloured shapes with yes and no buttons beneath it; the sentence is heard through headphones and answered either by moving a shape or by clicking a button.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["study", "1"],
+      ["construction", "imperative"],
+      ["directive", "only"],
+      ["activation", "none"],
+      ["rtMove", "2833"]
+    ],
+    "comment": "Control imperative. Response time is the model estimate in milliseconds for the move response."
+  },
+  {
+    "id": "ruytenbeek2017_ex18",
+    "source": {"bibkey": "ruytenbeek-etal-2017", "paperLabel": "(18)"},
+    "language": "stan1290",
+    "primaryText": "Le cercle rouge est-il à gauche du rectangle jaune ?",
+    "glossedTokens": [],
+    "translation": "Is the red circle on the left of the yellow rectangle?",
+    "context": "Study 1: a grid of coloured shapes with yes and no buttons beneath it; the sentence is heard through headphones and answered either by moving a shape or by clicking a button.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["study", "1"],
+      ["construction", "controlInterrogative"],
+      ["directive", "none"],
+      ["rtAnswer", "3707"]
+    ],
+    "comment": "Control interrogative. Response time is the model estimate in milliseconds for the yes response."
+  },
+  {
+    "id": "ruytenbeek2017_ex19",
+    "source": {"bibkey": "ruytenbeek-etal-2017", "paperLabel": "(19)"},
+    "language": "stan1290",
+    "primaryText": "Pouvez-vous mettre le cercle rouge à gauche du rectangle jaune ?",
+    "glossedTokens": [],
+    "translation": "Can you move the red circle to the left of the yellow rectangle?",
+    "context": "Study 1: a grid of coloured shapes with yes and no buttons beneath it; the sentence is heard through headphones and answered either by moving a shape or by clicking a button.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["study", "1"],
+      ["construction", "canYou"],
+      ["directive", "minority"],
+      ["activation", "none"],
+      ["rtMove", "2990"],
+      ["rtAnswer", "4729"]
+    ],
+    "comment": "Conventionalised indirect request. Directive interpretations were fewer than question interpretations but more frequent than for Est-il possible; their response times did not differ from the imperative and no fixations fell on the yes and no buttons; the yes responses were slower than to the control interrogative."
+  },
+  {
+    "id": "ruytenbeek2017_ex20",
+    "source": {"bibkey": "ruytenbeek-etal-2017", "paperLabel": "(20)"},
+    "language": "stan1290",
+    "primaryText": "Est-il possible de mettre le cercle rouge à gauche du rectangle jaune ?",
+    "glossedTokens": [],
+    "translation": "Is it possible to move the red circle to the left of the yellow rectangle?",
+    "context": "Study 1: a grid of coloured shapes with yes and no buttons beneath it; the sentence is heard through headphones and answered either by moving a shape or by clicking a button.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["study", "1"],
+      ["construction", "isItPossible"],
+      ["directive", "minority"],
+      ["activation", "none"],
+      ["rtMove", "2878"],
+      ["rtAnswer", "4409"]
+    ],
+    "comment": "Non-conventionalised indirect request. Its directive interpretations did not differ in response time from the imperative and no fixations fell on the yes and no buttons."
+  },
+  {
+    "id": "ruytenbeek2017_ex23",
+    "source": {"bibkey": "ruytenbeek-etal-2017", "paperLabel": "(23)"},
+    "language": "stan1290",
+    "primaryText": "Vous devez mettre le cercle rouge à gauche du rectangle jaune.",
+    "glossedTokens": [],
+    "translation": "You must move the red circle to the left of the yellow rectangle.",
+    "context": "Study 2: a grid of coloured shapes with true and false buttons beneath it; the sentence is heard through headphones and answered either by moving a shape or by clicking a button.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["study", "2"],
+      ["construction", "youMust"],
+      ["directive", "dominant"],
+      ["activation", "none"],
+      ["rtMove", "3133"]
+    ],
+    "comment": "Deontic necessity declarative. Almost only move responses; response times did not differ from the imperative and virtually no fixations fell on the true and false buttons."
+  },
+  {
+    "id": "ruytenbeek2017_ex24",
+    "source": {"bibkey": "ruytenbeek-etal-2017", "paperLabel": "(24)"},
+    "language": "stan1290",
+    "primaryText": "Mettez le cercle rouge à gauche du rectangle jaune.",
+    "glossedTokens": [],
+    "translation": "Move the red circle to the left of the yellow rectangle.",
+    "context": "Study 2: a grid of coloured shapes with true and false buttons beneath it; the sentence is heard through headphones and answered either by moving a shape or by clicking a button.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["study", "2"],
+      ["construction", "imperative"],
+      ["directive", "only"],
+      ["activation", "none"],
+      ["rtMove", "2953"]
+    ],
+    "comment": "Control imperative of Study 2."
+  },
+  {
+    "id": "ruytenbeek2017_ex25",
+    "source": {"bibkey": "ruytenbeek-etal-2017", "paperLabel": "(25)"},
+    "language": "stan1290",
+    "primaryText": "Vous pouvez mettre le cercle rouge à gauche du rectangle jaune.",
+    "glossedTokens": [],
+    "translation": "You can move the red circle to the left of the yellow rectangle.",
+    "context": "Study 2: a grid of coloured shapes with true and false buttons beneath it; the sentence is heard through headphones and answered either by moving a shape or by clicking a button.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["study", "2"],
+      ["construction", "youCan"],
+      ["directive", "minority"],
+      ["activation", "none"],
+      ["rtMove", "3146"]
+    ],
+    "comment": "Possibility declarative. Statement interpretations dominated; the directive interpretations, more frequent than for Il est possible, did not differ in response time from the imperative and drew no fixations on the true and false buttons."
+  },
+  {
+    "id": "ruytenbeek2017_ex26",
+    "source": {"bibkey": "ruytenbeek-etal-2017", "paperLabel": "(26)"},
+    "language": "stan1290",
+    "primaryText": "Il est possible de mettre le cercle rouge à gauche du rectangle jaune.",
+    "glossedTokens": [],
+    "translation": "It is possible to move the red circle to the left of the yellow rectangle.",
+    "context": "Study 2: a grid of coloured shapes with true and false buttons beneath it; the sentence is heard through headphones and answered either by moving a shape or by clicking a button.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["study", "2"],
+      ["construction", "itIsPossible"],
+      ["directive", "minority"],
+      ["activation", "none"],
+      ["rtMove", "3184"]
+    ],
+    "comment": "Impersonal possibility declarative. Statement interpretations dominated; the directive interpretations did not differ in response time from the imperative and drew no fixations on the true and false buttons."
+  },
+  {
+    "id": "ruytenbeek2017_ex27",
+    "source": {"bibkey": "ruytenbeek-etal-2017", "paperLabel": "(27)"},
+    "language": "stan1290",
+    "primaryText": "Le cercle rouge est à gauche du rectangle jaune.",
+    "glossedTokens": [],
+    "translation": "The red circle is on the left of the yellow rectangle.",
+    "context": "Study 2: a grid of coloured shapes with true and false buttons beneath it; the sentence is heard through headphones and answered either by moving a shape or by clicking a button.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["study", "2"],
+      ["construction", "controlDeclarative"],
+      ["directive", "none"]
+    ],
+    "comment": "Control declarative."
+  },
+  {
+    "id": "ruytenbeek2017_corpus_pouvezvous",
+    "source": {"bibkey": "ruytenbeek-etal-2017", "paperLabel": "(9)"},
+    "language": "stan1290",
+    "primaryText": "Pouvez-vous VP ?",
+    "glossedTokens": [],
+    "translation": "Can you VP?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["construction", "canYou"],
+      ["corpusN", "365"],
+      ["directivePct", "71"],
+      ["questionPct", "25"],
+      ["rhetoricalPct", "4"]
+    ],
+    "comment": "Frantext tokens after 1900 with a singular addressee, coded as indirect request, genuine question or rhetorical question."
+  },
+  {
+    "id": "ruytenbeek2017_corpus_estilpossible",
+    "source": {"bibkey": "ruytenbeek-etal-2017", "paperLabel": "(10)"},
+    "language": "stan1290",
+    "primaryText": "Est-il possible de VP ?",
+    "glossedTokens": [],
+    "translation": "Is it possible to VP?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["construction", "isItPossible"],
+      ["corpusN", "63"],
+      ["directivePct", "16"],
+      ["questionPct", "70"],
+      ["rhetoricalPct", "14"]
+    ],
+    "comment": "Frantext tokens after 1900, coded as indirect request, genuine question or rhetorical question."
+  }
+]

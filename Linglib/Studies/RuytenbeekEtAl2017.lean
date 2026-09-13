@@ -1,431 +1,238 @@
 import Linglib.Discourse.SpeechAct
 import Linglib.Semantics.Mood.SpeechEvent
 import Linglib.Fragments.Romance.French.Modals
+import Linglib.Data.Examples.RuytenbeekEtAl2017
 
 /-!
-# [ruytenbeek-etal-2017]: Indirect Request Processing, Sentence Types
-  and Illocutionary Forces
+# Ruytenbeek et al. (2017): Indirect request processing, sentence types and illocutionary forces
 
-Journal of Pragmatics 119 (2017) 46–62.
+This file formalizes the paper's test of speech-act literalism, on which a sentence type
+encodes an illocutionary force, so that a directive reading of a non-imperative sentence is
+secondary, mediated by the encoded force, unless the construction is a conventionalised
+indirect request. Non-literalism instead makes a directive reading primary whenever the
+sentence shares the semantic features that make imperatives suited to directives: the deontic
+necessity of [kaufmann-2012]'s imperative, the questioning of the addressee's ability that is
+[clark-1979]'s convention of means, or the enablement the possibility modals encode. The
+two accounts are predicates on the constructions of the paper's two French experiments
+(`Literalist.DirectivePrimary`, `NonLiteralist.DirectivePrimary`), with conventionalisation
+read off the paper's corpus counts and the modal semantics off the French fragment. In both
+experiments directive interpretations came with no fixations on the answer buttons and with
+response times matching the imperative, and they came for exactly the constructions
+non-literalism predicts (`nonLiteralist_predicts`); the non-conventionalised *Est-il possible
+de VP?* and the deontic *Vous devez VP* received them although literalism makes those
+readings secondary (`literalist_refuted`).
 
-Two French eye-tracking experiments testing the **literalist** view that
-sentence types encode illocutionary force at the semantic level. Both
-studies support **non-literalist** theories: directive force in
-non-imperative constructions arises from semantic features they share
-with imperatives, not from sentence type per se.
+## Implementation notes
 
-## Three mechanisms for non-imperative directive force
+The rows of `Data/Examples/RuytenbeekEtAl2017.json` are the paper's stimulus sentences with
+the observed response pattern of each construction, the model estimates of response times the
+paper reports, and the corpus counts for the two interrogative requests. A construction is
+directive when it received directive interpretations at all, and unactivated when the paper
+reports no fixations on the answer buttons and response times equal to the imperative's for
+those interpretations; the regression coefficients and confidence intervals stay in the data.
+The paper's ranking of directive rates, *Vous devez* above *Vous pouvez* above *Il est
+possible*, which it attributes to the permission reading of *pouvoir*, is not derived.
 
-The paper invokes three (overlapping) routes by which a non-imperative
-construction can carry directive force:
+## References
 
-1. **Shared deontic semantics** ([kaufmann-2012]; paper §3.4
-   Discussion). A construction whose modal flavor matches the
-   imperative's deontic semantics is directive-compatible. *Vous devez VP*
-   and the permission reading of *Vous pouvez VP* (paper §3.4)
-   instantiate this route. Formalised as `SentType.deonticMatch`.
-2. **Preparatory-condition questioning** ([clark-1979]; paper §1
-   Introduction). An interrogative that questions an addressee
-   preparatory condition (canonically `.ability`) is directive-compatible.
-   *Pouvez-vous VP?* and *Est-il possible de VP?* instantiate this route.
-   Formalised as `SentType.prepConditionQueried`; the deeper
-   characterisation `interrogative + circumstantial-modal` is proved
-   equivalent in `prepConditionQueried_iff_interrog_circumstantial`.
-3. **Force-dynamic enablement** ([johnson-1987], [sweetser-1990],
-   [talmy-2000]; paper §4 General Discussion, p. 61). The four
-   constructions that semantically encode the addressee's *enablement*
-   to perform the action — both interrogative IRs *and* both
-   ability/possibility declaratives — pattern together. Formalised as
-   `SentType.enablementEncoded`, derived directly from
-   `modalForce = some .possibility` in this paper's domain. This is the
-   broader generalisation that distinguishes the corrected
-   formalisation from earlier versions that categorically denied
-   directive force to *Il est possible de VP*.
-
-The three mechanisms overlap. *Vous pouvez VP* fires (1) and (3); the
-two interrogative IRs fire (2) and (3); *Il est possible de VP* fires
-(3) only. The joint `SentType.isDirective` diagnostic licenses
-directive force when any mechanism fires (or when the construction is
-itself an imperative).
-
-## A note on empirical numbers
-
-Hand-transcribed RT means, fixation durations, and move-response
-proportions read off Figs. 3/5/6/8 in the original version of this
-file were either reconstructions of percentages reported in the paper
-text, upper-bound stipulations, or eyeball reads of bar charts that
-are demonstrably off (per the 2026-04-24 audit and 2026-05-13 PDF
-re-audit). The paper's actual claims are β estimates with confidence
-intervals (Study 1 §2.3, Study 2 §3.3) and significance tests. This
-file records the directional ordering predictions and lets statistics
-live in docstrings — Lean is not the right place for hand-transcribed
-regression coefficients.
-
-## Cross-paper bridges
-
-- `Semantics/Mood/SpeechEvent.lean`: the imperative's
-  `primaryFlavor = .deontic` is the layered foundation;
-  `SentType.modalFlavor` for the imperative branch derives from it.
-- `Studies/Roberts2023.lean`: a chronologically later sibling on which
-  the imperative's prejacent modal is circumstantial and goal-based rather
-  than deontic.
-- `Studies/FrancikClark1985.lean`: another
-  consumer of `PreparatoryCondition`. That file's `Query` and this
-  file's `SentType.queriedPrep` both read off which preparatory
-  condition a form asks about, on the shared Searle/Francik substrate.
-
-## Mood substrate choice
-
-This file uses `Mood.Illocutionary` rather than the
-Minimalist-derived `SAPMood`. The two are isomorphic on the
-declarative/interrogative/imperative cases used here, and
-`Illocutionary` is the canonical substrate (`SAPMood` adds
-syntax-derivation machinery the paper does not invoke). This also
-keeps the file independent of the Minimalist substrate.
+* [ruytenbeek-etal-2017]
+* [kaufmann-2012]
+* [clark-1979]
+* [sadock-zwicky-1985]
+* [talmy-2000]
 -/
 
 namespace RuytenbeekEtAl2017
 
+open Data.Examples French.Modals
 open Modality (ModalFlavor ModalForce)
 open Mood (Illocutionary)
 open Mood.Illocutionary (primaryFlavor)
 
-/-! ### Sentence types and modal projections -/
+/-! ### Constructions and forces -/
 
-/-- The eight sentence types appearing across Studies 1 and 2.
-
-    Study 1 §2.1 (p. 51) uses `imperative`, `canYouInterrog`,
-    `possibleInterrog`, and `ctrlInterrog` (24 trials = 4 × 6).
-    Study 2 §3.1 (p. 56) uses `imperative` (3 *You must* + 3 control
-    imperatives), `mustDeclarative`, `canDeclarative`, `possibleDecl`,
-    and `plainDeclarative` (24 trials). The 3 control imperatives in
-    Study 2 collapse to `imperative` here since they are imperatives
-    without a polar response option. -/
-inductive SentType where
-  /-- *Mettez le cercle rouge…* — Study 1 + Study 2 imperative. -/
+/-- The constructions of the two experiments. -/
+inductive Construction where
   | imperative
-  /-- *Pouvez-vous VP?* — Study 1 conventionalised IR. -/
-  | canYouInterrog
-  /-- *Est-il possible de VP?* — Study 1 non-conventionalised IR. -/
-  | possibleInterrog
-  /-- *Le cercle rouge est-il…?* — Study 1 control interrogative. -/
-  | ctrlInterrog
-  /-- *Vous devez VP* — Study 2 deontic-necessity declarative. -/
-  | mustDeclarative
-  /-- *Vous pouvez VP* — Study 2 modal declarative. The paper's §3.4
-      Discussion attributes the directive readings to the **permission**
-      sense of *pouvoir* (deontic possibility, not circumstantial
-      ability); the paper's §4 General Discussion offers the broader
-      force-dynamic enablement analysis (mechanism 3) as the unified
-      pattern. -/
-  | canDeclarative
-  /-- *Il est possible de VP* — Study 2 existential-possibility
-      declarative. Per paper §2.1 the modal base is unrestricted (in
-      the sense of [kratzer-1991]); we choose `.circumstantial`
-      as the canonical flavor since *Pouvez-vous VP?* (semantically
-      close per p. 50) is restricted to the ability reading in the
-      experimental contexts. -/
-  | possibleDecl
-  /-- *Le cercle rouge est…* — Study 2 control declarative. -/
-  | plainDeclarative
+  | controlInterrogative
+  | canYou
+  | isItPossible
+  | youMust
+  | youCan
+  | itIsPossible
+  | controlDeclarative
+  deriving DecidableEq, Repr, Fintype
+
+/-- The morphosyntactic mood of a construction. -/
+def Construction.mood : Construction → Illocutionary
+  | .imperative => .imperative
+  | .controlInterrogative | .canYou | .isItPossible => .interrogative
+  | .youMust | .youCan | .itIsPossible | .controlDeclarative => .declarative
+
+/-- The modal of a construction, from the French fragment. -/
+def Construction.modal : Construction → Option FrenchModalEntry
+  | .canYou | .youCan => some pouvoir
+  | .isItPossible | .itIsPossible => some ilEstPossible
+  | .youMust => some devoir
+  | _ => none
+
+/-- The force of a construction's modal. -/
+def Construction.modalForce (c : Construction) : Option ModalForce := c.modal.map (·.force)
+
+/-- The flavors of a construction's modal. -/
+def Construction.modalFlavors (c : Construction) : List ModalFlavor :=
+  (c.modal.map (·.flavors)).getD []
+
+/-- The preparatory condition a construction questions: the two interrogative requests ask
+about the addressee's ability. -/
+def Construction.queriedPrep : Construction → Option PreparatoryCondition
+  | .canYou | .isItPossible => some .ability
+  | _ => none
+
+/-- The construction's key in the rows. -/
+def Construction.tag : Construction → String
+  | .imperative => "imperative"
+  | .controlInterrogative => "controlInterrogative"
+  | .canYou => "canYou"
+  | .isItPossible => "isItPossible"
+  | .youMust => "youMust"
+  | .youCan => "youCan"
+  | .itIsPossible => "itIsPossible"
+  | .controlDeclarative => "controlDeclarative"
+
+/-- The major illocutionary forces. -/
+inductive Force where
+  | directive
+  | question
+  | assertion
   deriving DecidableEq, Repr
 
-/-- Morphosyntactic mood of each sentence type. -/
-def SentType.mood : SentType → Illocutionary
-  | .imperative       => .imperative
-  | .canYouInterrog   => .interrogative
-  | .possibleInterrog => .interrogative
-  | .ctrlInterrog     => .interrogative
-  | .mustDeclarative  => .declarative
-  | .canDeclarative   => .declarative
-  | .possibleDecl     => .declarative
-  | .plainDeclarative => .declarative
+/-- Literalism: the force a sentence type encodes. -/
+def encodedForce : Illocutionary → Option Force
+  | .imperative => some .directive
+  | .interrogative => some .question
+  | .declarative => some .assertion
+  | _ => none
 
-/-- Contextually salient modal flavor for each sentence type.
+/-! ### The corpus and conventionalisation -/
 
-    The imperative branch is **derived** from
-    `Mood.Illocutionary.primaryFlavor` rather than restipulated
-    (layered grounding — see `imperative_modalFlavor_eq_assert` below).
+/-- The paper's corpus coding of a construction's uses, as a percentage. -/
+def corpusPct (c : Construction) (use : String) : ℕ :=
+  ((Examples.all.filter λ x => x.feature? "construction" = some c.tag ∧
+      (x.feature? "corpusN").isSome).filterMap (·.nat? use)).headD 0
 
-    `canDeclarative = .deontic` follows the paper's §3.4 Discussion
-    explanation of the *Vous pouvez VP* directive readings via the
-    permission sense of *pouvoir*. `canYouInterrog = .circumstantial`
-    follows the paper's §2.1 (p. 50) statement that the experimental
-    contexts force the ability reading of *pouvez*/*possible*.
+/-- A construction is conventionalised as a request when its directive uses outnumber its
+question uses in the corpus. -/
+def Conventionalised (c : Construction) : Prop :=
+  corpusPct c "questionPct" < corpusPct c "directivePct"
 
-    `ctrlInterrog` and `plainDeclarative` carry no modal, hence the
-    `Option` codomain. -/
-def SentType.modalFlavor : SentType → Option ModalFlavor
-  | .imperative       => some (primaryFlavor .imperative)
-  | .canYouInterrog   => some .circumstantial
-  | .possibleInterrog => some .circumstantial
-  | .ctrlInterrog     => none
-  | .mustDeclarative  => some .deontic
-  | .canDeclarative   => some .deontic
-  | .possibleDecl     => some .circumstantial
-  | .plainDeclarative => none
+instance (c : Construction) : Decidable (Conventionalised c) := by
+  unfold Conventionalised; infer_instance
 
-/-- Modal force (necessity / possibility) for each sentence type. -/
-def SentType.modalForce : SentType → Option ModalForce
-  | .imperative       => some .necessity
-  | .canYouInterrog   => some .possibility
-  | .possibleInterrog => some .possibility
-  | .ctrlInterrog     => none
-  | .mustDeclarative  => some .necessity
-  | .canDeclarative   => some .possibility
-  | .possibleDecl     => some .possibility
-  | .plainDeclarative => none
+/-- *Pouvez-vous VP?* is conventionalised as a request and *Est-il possible de VP?* is not. -/
+theorem conventionalised : Conventionalised .canYou ∧ ¬ Conventionalised .isItPossible := by
+  decide +kernel
 
-/-- The imperative's flavor matches the one Hacquard's SAP architecture
-    assigns to imperative speech acts — derived, not coincidentally
-    equal. Layered Grounding for the headline [kaufmann-2012]
-    commitment. -/
-theorem imperative_modalFlavor_eq_assert :
-    SentType.modalFlavor .imperative = some (primaryFlavor .imperative) := rfl
+/-! ### The two accounts -/
 
-/-! ### Mechanism 1 — shared deontic semantics ([kaufmann-2012])
+/-- Under literalism a directive reading is primary only when the sentence type encodes
+directive force or the construction is a conventionalised indirect request; any other
+directive reading is secondary and activates the encoded force. -/
+def Literalist.DirectivePrimary (c : Construction) : Prop :=
+  encodedForce c.mood = some .directive ∨ Conventionalised c
 
-A construction is mechanism-1-compatible with directive force when its
-modal flavor matches the imperative's. The check is a single equality
-on `ModalFlavor`. Mechanism 1 does not distinguish necessity from
-possibility — that ranking is a quantitative finding (paper §3.3:
-*You must* yields more directive interpretations than *You can*,
-z = -8.11, p < 0.001) which mechanism 1 alone underdetermines. -/
+/-- Under non-literalism a directive reading is primary when the construction shares the
+imperative's directive-making semantics: the imperative's own deontic necessity, the
+questioning of the addressee's ability, or a possibility modal's enablement. -/
+def NonLiteralist.DirectivePrimary (c : Construction) : Prop :=
+  c.mood = .imperative ∨
+    (c.modalForce = some .necessity ∧ primaryFlavor .imperative ∈ c.modalFlavors) ∨
+    c.queriedPrep = some .ability ∨ c.modalForce = some .possibility
 
-/-- A sentence type is mechanism-1-compatible iff its modal flavor
-    matches the imperative's. Encodes [kaufmann-2012]'s
-    deontic-modal account of imperatives: any construction with the
-    same modal flavor is a candidate directive. -/
-def SentType.deonticMatch (s : SentType) : Prop :=
-  s.modalFlavor = some (primaryFlavor .imperative)
+instance (c : Construction) : Decidable (Literalist.DirectivePrimary c) := by
+  unfold Literalist.DirectivePrimary; infer_instance
 
-instance : DecidablePred SentType.deonticMatch := fun _ => decEq _ _
+instance (c : Construction) : Decidable (NonLiteralist.DirectivePrimary c) := by
+  unfold NonLiteralist.DirectivePrimary; infer_instance
 
-/-! ### Mechanism 2 — preparatory-condition questioning ([clark-1979])
+/-- The accounts agree on the constructions without a modal and on the conventionalised
+request, and differ on every other modal construction. -/
+theorem accounts_differ (c : Construction) :
+    (Literalist.DirectivePrimary c ↔ NonLiteralist.DirectivePrimary c) ↔
+      c.modalForce = none ∨ Conventionalised c := by
+  cases c <;> decide +kernel
 
-Per [clark-1979], asking about a preparatory condition for a
-request licenses the directive interpretation without sharing the
-imperative's modal semantics. The substrate
-`PreparatoryCondition` (Searle's conditions, ordered by specificity)
-is the target type; the projection `SentType.queriedPrep` mirrors
-`Studies/FrancikClark1985.lean`'s `Query`. -/
+/-! ### The observations -/
 
-/-- The preparatory condition queried by each sentence type, when one
-    is queried. The two interrogative IRs both query `.ability` (per
-    paper §2.1 p. 50, the experimental contexts force the ability
-    reading). The empty `.queriedPrep` cases are the imperative,
-    declaratives, and the control interrogative — none of which raise
-    a polar question over an addressee precondition. -/
-def SentType.queriedPrep : SentType → Option PreparatoryCondition
-  | .canYouInterrog   => some .ability
-  | .possibleInterrog => some .ability
-  | _                 => none
+/-- How often a construction received directive interpretations. -/
+inductive Directiveness where
+  | only
+  | dominant
+  | minority
+  | none
+  deriving DecidableEq, Repr
 
-/-- Mechanism 2 directive licensing: the construction queries an
-    addressee preparatory condition. -/
-def SentType.prepConditionQueried (s : SentType) : Prop :=
-  s.queriedPrep.isSome
+private def constructions : List (String × Construction) :=
+  [.imperative, .controlInterrogative, .canYou, .isItPossible, .youMust, .youCan, .itIsPossible,
+    .controlDeclarative].map λ c => (c.tag, c)
 
-instance : DecidablePred SentType.prepConditionQueried := fun _ =>
-  inferInstanceAs (Decidable (Option.isSome _))
+/-- A stimulus row: its construction and how often it was interpreted as a directive. -/
+def datum (x : LinguisticExample) : Option (Construction × Directiveness) := do
+  pure (← x.parse? "construction" constructions,
+    ← x.parse? "directive"
+      [("only", .only), ("dominant", .dominant), ("minority", .minority), ("none", .none)])
 
-/-- Deeper characterisation of mechanism 2 in this paper's domain:
-    `queriedPrep = some .ability` iff the construction is an
-    interrogative with circumstantial modal flavor. This is the
-    structural content of [clark-1979]'s "convention of means"
-    applied to the paper's specific stimulus set, where circumstantial
-    modal force in an interrogative form picks out exactly the
-    ability-questioning indirect requests. -/
-theorem queriedPrep_eq_ability_iff_interrog_circumstantial (s : SentType) :
-    s.queriedPrep = some .ability ↔
-      s.mood = .interrogative ∧ s.modalFlavor = some .circumstantial := by
-  cases s <;> decide
+/-- The stimulus rows of the two experiments. -/
+def stimuli : List (LinguisticExample × Construction × Directiveness) :=
+  Examples.all.filterMap λ x => (datum x).map (x, ·)
 
-/-! ### Mechanism 3 — force-dynamic enablement ([johnson-1987],
-    [sweetser-1990], [talmy-2000])
+/-- The construction received directive interpretations. -/
+def Directive (p : LinguisticExample × Construction × Directiveness) : Prop := p.2.2 ≠ .none
 
-Per the paper's §4 General Discussion (p. 61), all four constructions
-that semantically encode the addressee's *enablement* to perform the
-action — *Pouvez-vous VP?*, *Vous pouvez VP*, *Est-il possible de VP?*,
-and *Il est possible de VP* — pattern together as candidate directives.
-This is the broader generalisation that mechanism 2 (questioning only)
-misses: declarative ability/possibility constructions also encode the
-enablement-to-act semantic content, and the paper's data show that
-*Il est possible de VP* indeed receives directive interpretations
-(though fewer than *Vous pouvez VP*; z = -3.29, p = 0.0028, §3.3).
+instance (p : LinguisticExample × Construction × Directiveness) : Decidable (Directive p) := by
+  unfold Directive; infer_instance
 
-Force-dynamic enablement in this paper's domain reduces to "the
-construction has possibility modal force": the four enablement-encoding
-constructions are precisely the four with `modalForce = some
-.possibility`. The derivation is captured directly in the definition;
-the explicit four-construction list (matching the paper's prose at
-p. 61) appears in `mechanism_attribution`. -/
+/-- The directive interpretations came without activation of the encoded force: no fixations
+on the answer buttons and response times equal to the imperative's. -/
+def Unactivated (p : LinguisticExample × Construction × Directiveness) : Prop :=
+  p.1.feature? "activation" = some "none"
 
-/-- Mechanism 3 directive licensing: the construction encodes a
-    force-dynamic enablement pattern, characterised in this paper's
-    domain by possibility modal force. The four ability/possibility
-    constructions in the paper instantiate this. -/
-def SentType.enablementEncoded (s : SentType) : Prop :=
-  s.modalForce = some .possibility
+instance (p : LinguisticExample × Construction × Directiveness) : Decidable (Unactivated p) := by
+  unfold Unactivated; infer_instance
 
-instance : DecidablePred SentType.enablementEncoded := fun _ => decEq _ _
+/-- Every construction that received directive interpretations received them without
+activating the force its sentence type encodes. -/
+theorem directive_unactivated : ∀ p ∈ stimuli, Directive p → Unactivated p := by
+  decide +kernel
 
-/-! ### Joint diagnostic
+/-- Non-literalism predicts primary directive readings for exactly the constructions that
+received directive interpretations. -/
+theorem nonLiteralist_predicts :
+    ∀ p ∈ stimuli, Directive p ↔ NonLiteralist.DirectivePrimary p.2.1 := by
+  decide +kernel
 
-The paper's non-literalist model: a sentence type is directive-compatible
-iff at least one mechanism fires (or the construction is itself an
-imperative). The imperative is direct (no indirection); *Vous devez VP*
-fires (1); *Vous pouvez VP* fires (1) and (3); the two interrogative
-IRs fire (2) and (3); *Il est possible de VP* fires (3) only; the two
-controls fire none. -/
+/-- Literalism is refuted on both of the paper's predictions: the non-conventionalised
+*Est-il possible de VP?* and the deontic *Vous devez VP*, like the two possibility
+declaratives, received directive interpretations without activating the question or the
+assertion, although literalism makes those readings secondary. -/
+theorem literalist_refuted :
+    ∀ p ∈ stimuli, ¬ Literalist.DirectivePrimary p.2.1 → Directive p → Unactivated p := by
+  decide +kernel
 
-/-- Joint diagnostic: directive force is licensed by mechanism 1, 2,
-    or 3 (or by being an imperative outright). -/
-def SentType.isDirective (s : SentType) : Prop :=
-  s = .imperative ∨ s.deonticMatch
-                  ∨ s.prepConditionQueried
-                  ∨ s.enablementEncoded
+/-- The secondary readings literalism posits are the ones the experiments found primary. -/
+theorem literalist_secondary_found :
+    ∀ c, c = .isItPossible ∨ c = .youMust ∨ c = .youCan ∨ c = .itIsPossible →
+      ¬ Literalist.DirectivePrimary c ∧ ∃ p ∈ stimuli, p.2.1 = c ∧ Directive p := by
+  decide +kernel
 
-instance : DecidablePred SentType.isDirective := fun _ =>
-  inferInstanceAs (Decidable (_ ∨ _ ∨ _ ∨ _))
+/-- The reported response time of a construction's answer responses, in milliseconds. -/
+def rtAnswer (c : Construction) : ℕ :=
+  ((Examples.all.filter λ x => x.feature? "construction" = some c.tag ∧
+      x.feature? "study" = some "1").filterMap (·.nat? "rtAnswer")).headD 0
 
-/-! ### Predictions
-
-Six of the eight sentence types are directive (imperative + the five
-modal sentences); the two non-modal controls are not. The joint
-`isDirective` diagnostic produces this partition. The
-mechanism-attribution table records *which* mechanism licenses each
-directive sentence type — the empirical content of the paper's
-non-literalist analysis. -/
-
-/-- The paper's headline qualitative finding (§4 General Discussion):
-    the joint diagnostic correctly partitions the eight sentence types
-    into directive (imperative + 5 modal sentences) and non-directive
-    (2 controls). -/
-theorem joint_diagnostic_partitions_sentence_types :
-    SentType.isDirective .imperative ∧
-    SentType.isDirective .mustDeclarative ∧
-    SentType.isDirective .canDeclarative ∧
-    SentType.isDirective .canYouInterrog ∧
-    SentType.isDirective .possibleInterrog ∧
-    SentType.isDirective .possibleDecl ∧
-    ¬ SentType.isDirective .ctrlInterrog ∧
-    ¬ SentType.isDirective .plainDeclarative := by decide
-
-/-- Mechanism-attribution table: which sentence types each mechanism
-    licenses, and which it rejects. Documents the empirical content
-    of the three-mechanism analysis: mechanism 1 (deontic match) fires
-    on the imperative, *Vous devez VP*, and *Vous pouvez VP*;
-    mechanism 2 (preparatory-condition questioning) fires only on the
-    two interrogative IRs; mechanism 3 (force-dynamic enablement)
-    fires on all four ability/possibility constructions. -/
-theorem mechanism_attribution :
-    -- Mechanism 1 (deontic match):
-    SentType.deonticMatch .imperative ∧
-    SentType.deonticMatch .mustDeclarative ∧
-    SentType.deonticMatch .canDeclarative ∧
-    ¬ SentType.deonticMatch .canYouInterrog ∧
-    ¬ SentType.deonticMatch .possibleInterrog ∧
-    ¬ SentType.deonticMatch .possibleDecl ∧
-    -- Mechanism 2 (preparatory-condition questioning):
-    SentType.prepConditionQueried .canYouInterrog ∧
-    SentType.prepConditionQueried .possibleInterrog ∧
-    ¬ SentType.prepConditionQueried .mustDeclarative ∧
-    ¬ SentType.prepConditionQueried .canDeclarative ∧
-    ¬ SentType.prepConditionQueried .possibleDecl ∧
-    -- Mechanism 3 (force-dynamic enablement):
-    SentType.enablementEncoded .canYouInterrog ∧
-    SentType.enablementEncoded .possibleInterrog ∧
-    SentType.enablementEncoded .canDeclarative ∧
-    SentType.enablementEncoded .possibleDecl ∧
-    ¬ SentType.enablementEncoded .mustDeclarative := by decide
-
-/-! ### Force–type mismatch (the headline anti-literalist claim)
-
-The paper's core theoretical claim (§4 General Discussion) is that
-sentence type does NOT encode illocutionary force: declarative sentence
-types can carry directive force (via mechanisms 1/3 for *Vous devez VP*,
-*Vous pouvez VP*, and *Il est possible de VP*), and interrogative
-sentence types can carry directive force (via mechanisms 2/3 for the
-two IRs).
-
-The literalist default is the Searle taxonomy: declarative mood maps
-to assertive force, interrogative mood maps to question-class
-directives (asking, not commanding). Both defaults are falsified by
-the existence of force–type mismatch witnesses below. -/
-
-/-- A sentence-type carries a force–type mismatch when its
-    morphosyntactic mood is `m` but it nonetheless licenses directive
-    interpretation. The five mismatch cases (`mustDeclarative`,
-    `canDeclarative`, `possibleDecl`, `canYouInterrog`,
-    `possibleInterrog`) all instantiate this. -/
-abbrev SentType.forceTypeMismatch (s : SentType) (m : Illocutionary) : Prop :=
-  s.mood = m ∧ s.isDirective
-
-/-- The literalist Searle default for declarative mood is
-    `.assertive`, not `.directive`. The paper's data falsify the
-    consequence "declarative-mood utterances cannot carry directive
-    force" (witnessed by `anti_literalism_for_declaratives`). -/
-theorem declarative_default_searleClass :
-    Illocutionary.declarative.searleClass = .assertive := rfl
-
-/-- Anti-literalism witness: there is a sentence type whose
-    morphosyntactic mood is declarative yet which licenses directive
-    interpretation. (`mustDeclarative`, `canDeclarative`, and
-    `possibleDecl` all witness this; `mustDeclarative` is the canonical
-    paper Study 2 case.) -/
-theorem anti_literalism_for_declaratives :
-    ∃ s : SentType, s.mood = .declarative ∧ s.isDirective :=
-  ⟨.mustDeclarative, by decide, by decide⟩
-
-/-- Anti-literalism witness: there is a sentence type whose
-    morphosyntactic mood is interrogative yet which licenses directive
-    interpretation. (`canYouInterrog` and `possibleInterrog` both
-    witness this; either is the canonical paper Study 1 case.) -/
-theorem anti_literalism_for_interrogatives :
-    ∃ s : SentType, s.mood = .interrogative ∧ s.isDirective :=
-  ⟨.canYouInterrog, by decide, by decide⟩
-
-/-- The five non-imperative sentence types that carry directive
-    force — declarative-form mismatches and interrogative-form
-    mismatches alike. -/
-theorem nonImperative_force_type_mismatches :
-    SentType.forceTypeMismatch .mustDeclarative .declarative ∧
-    SentType.forceTypeMismatch .canDeclarative .declarative ∧
-    SentType.forceTypeMismatch .possibleDecl .declarative ∧
-    SentType.forceTypeMismatch .canYouInterrog .interrogative ∧
-    SentType.forceTypeMismatch .possibleInterrog .interrogative := by decide
-
-/-! ### Bridge to French Fragment
-
-The `SentType.modalFlavor` and `SentType.modalForce` projections are
-consistent with the lexical entries in `Fragments/French/Modals.lean`:
-each sentence type's force–flavor pair appears in the corresponding
-modal verb's `forceFlavors` list. This is a derive-don't-duplicate
-consistency check — changing a Fragment entry's flavor inventory will
-break these theorems. -/
-
-section FrenchFragmentBridge
-
-open French.Modals (devoir pouvoir ilEstPossible)
-open Modality (ForceFlavor)
-
-/-- *Vous devez VP* = deontic necessity, present in *devoir*'s
-    force-flavor inventory. -/
-theorem mustDeclarative_forceFlavor_in_devoir :
-    (⟨.necessity, .deontic⟩ : ForceFlavor) ∈ devoir.forceFlavors := by decide
-
-/-- *Vous pouvez VP* = deontic possibility (permission), present in
-    *pouvoir*'s force-flavor inventory. -/
-theorem canDeclarative_forceFlavor_in_pouvoir :
-    (⟨.possibility, .deontic⟩ : ForceFlavor) ∈ pouvoir.forceFlavors := by decide
-
-/-- *Il est possible de VP* = circumstantial possibility, present in
-    the impersonal construction's force-flavor inventory. -/
-theorem possibleDecl_forceFlavor_in_ilEstPossible :
-    (⟨.possibility, .circumstantial⟩ : ForceFlavor) ∈
-      ilEstPossible.forceFlavors := by decide
-
-end FrenchFragmentBridge
+/-- Answering the conventionalised request as a question is slower than answering a control
+question, which the paper reads as interference from its entrenched directive use. -/
+theorem canYou_question_slower : rtAnswer .controlInterrogative < rtAnswer .canYou := by
+  decide +kernel
 
 end RuytenbeekEtAl2017
