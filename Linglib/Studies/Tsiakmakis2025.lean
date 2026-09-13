@@ -583,31 +583,6 @@ theorem neg1_neg2_complementary (h : ENHostCategory) :
   cases h <;> rfl
 
 -- ════════════════════════════════════════════════════
--- § 9. Bridge to Rett 2026
--- ════════════════════════════════════════════════════
-
-/-! ### Non-homogeneity refines ambidirectionality
-
-The ambidirectionality generalization (formalized in `Rett2026.lean`)
-predicts EN licensing at the construction level. The non-homogeneity
-claim here refines this by distinguishing the *nature* of the negation:
-
-- In **NEG₁** hosts (before, than), ambidirectionality explains why
-  standard negation is truth-conditionally vacuous → appears "expletive"
-- In **NEG₂** hosts (fear, doubt), the marker is not negation at all
-  but a modal — so "ambidirectionality" applies to the modal component
-  (both p and ¬p worlds are relevant to the ordering)
-
-The two accounts are compatible: the ambidirectionality generalization
-covers the distributional pattern (where EN appears), while the
-non-homogeneity distinction explains the mechanism (what kind of
-marker appears).
-
-**Note**: The formal bridge theorem mapping `ENConstruction` to
-`ENHostCategory` lives in `Rett2026.lean` (chronological direction:
-Rett 2026 can reference Tsiakmakis 2025, not vice versa). -/
-
--- ════════════════════════════════════════════════════
 -- § 10. Bridge to Preferential Attitudes
 -- ════════════════════════════════════════════════════
 
