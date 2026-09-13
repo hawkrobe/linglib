@@ -143,24 +143,20 @@ def germanSubjectRelative : Analysis := ⟨[⟨2, 3, 11⟩, ⟨6, 7, 10⟩], [sp
 [on which]ₐ Mary [put]ₐ the cup [into which]ᵦ I [poured]ᵦ the tea Ø Ø*. -/
 def piedPiping : Analysis := ⟨[⟨4, 15, 6⟩, ⟨9, 14, 11⟩], [span 4 13, span 9 13]⟩
 
-/-- Table 1: with empty categories, the filler–gap pattern, the gap–verb pattern, and the
-construction type vary independently across the four sentence types. -/
+/-- The four sentence types of Tables 1 and 2. -/
+def sentenceTypes : List Analysis :=
+  [subjectRelative, objectRelative, germanSubjectRelative, piedPiping]
+
+/-- Table 1: with empty categories, neither the filler–gap pattern nor the gap–verb pattern
+tracks the construction type. -/
 theorem table1 :
-    (¬ Nested subjectRelative.fillerGap ∧ ¬ Nested subjectRelative.gapVerb ∧
-        ¬ subjectRelative.IsNestedConstruction) ∧
-      (Nested objectRelative.fillerGap ∧ ¬ Nested objectRelative.gapVerb ∧
-        objectRelative.IsNestedConstruction) ∧
-      (¬ Nested germanSubjectRelative.fillerGap ∧ Nested germanSubjectRelative.gapVerb ∧
-        germanSubjectRelative.IsNestedConstruction) ∧
-      (Nested piedPiping.fillerGap ∧ Nested piedPiping.gapVerb ∧
-        ¬ piedPiping.IsNestedConstruction) := by
+    ¬ (∀ A ∈ sentenceTypes, Nested A.fillerGap ↔ A.IsNestedConstruction) ∧
+      ¬ (∀ A ∈ sentenceTypes, Nested A.gapVerb ↔ A.IsNestedConstruction) := by
   decide
 
 /-- Table 2: without empty categories, the filler–verb pattern is nested exactly in the nested
 constructions. -/
-theorem table2 :
-    ∀ A ∈ [subjectRelative, objectRelative, germanSubjectRelative, piedPiping],
-      Nested A.fillerVerb ↔ A.IsNestedConstruction := by
+theorem table2 : ∀ A ∈ sentenceTypes, Nested A.fillerVerb ↔ A.IsNestedConstruction := by
   decide
 
 /-- The four sentence types with their analyses. -/
