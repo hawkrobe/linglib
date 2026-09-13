@@ -135,7 +135,7 @@ theorem mem_range_strongAnswer_iff {C : Set W} :
    fun ⟨w, _, hw⟩ => ⟨w, hw.symm⟩⟩
 
 /-- The strongly exhaustive answer to an inquisitive question mention-all answers it. -/
-theorem mentionAll_strongAnswer (Q : Question W) : MentionAll (strongAnswer (alt Q) w) Q := by
+theorem completelyAnsweredBy_strongAnswer (Q : Question W) : CompletelyAnsweredBy Q (strongAnswer (alt Q) w) := by
   intro p hp
   by_cases hw : w ∈ p
   · exact Or.inl fun _ hv => (hv p hp).1 hw

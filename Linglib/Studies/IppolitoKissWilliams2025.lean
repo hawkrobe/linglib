@@ -182,11 +182,11 @@ private theorem buy_mem_alt : buy ∈ alt (polar buy) := (mem_alt_polar_buy _).2
 
 private theorem relevant_beautiful : (ofSet beautiful).IsRelevantTo ctx₁₇.issues :=
   ⟨beautiful, by simp, polar beautiful, by simp [IppolitoKissWilliams2022.Context.issues, ctx₁₇],
-    partiallyAnswers_of_mem_alt ((mem_alt_polar_beautiful _).2 (Or.inl rfl))⟩
+    partiallyAnsweredBy_of_mem_alt ((mem_alt_polar_beautiful _).2 (Or.inl rfl))⟩
 
 private theorem relevant_expensive : (ofSet expensive).IsRelevantTo ctx₁₇.issues :=
   ⟨expensive, by simp, polar expensive, by simp [IppolitoKissWilliams2022.Context.issues, ctx₁₇],
-    partiallyAnswers_of_mem_alt ((mem_alt_polar_of_nontrivial
+    partiallyAnsweredBy_of_mem_alt ((mem_alt_polar_of_nontrivial
       (ne_of_mem (show (⟨false, true, false, false⟩ : World) ∈ expensive by simp [expensive]))
       (ne_univ_of_notMem (show (⟨false, false, false, false⟩ : World) ∉ expensive
         by simp [expensive])) _).2 (Or.inl rfl))⟩
@@ -194,7 +194,7 @@ private theorem relevant_expensive : (ofSet expensive).IsRelevantTo ctx₁₇.is
 private theorem relevant_afford : (polar afford).IsRelevantTo ctx₁₇.issues :=
   ⟨afford, (mem_alt_polar_afford _).2 (Or.inl rfl), polar afford,
     by simp [IppolitoKissWilliams2022.Context.issues, ctx₁₇],
-    partiallyAnswers_of_mem_alt ((mem_alt_polar_afford _).2 (Or.inl rfl))⟩
+    partiallyAnsweredBy_of_mem_alt ((mem_alt_polar_afford _).2 (Or.inl rfl))⟩
 
 /-- The speaker of (17) supports buying by the house's beauty. -/
 private theorem supports_beautiful : ctx₁₇.QSupports (ofSet beautiful) buy :=
@@ -283,7 +283,7 @@ question is a fine left argument. -/
 theorem defined_rhetorical : ctx₁₇.Defined (polar beautiful) (ofSet expensive) :=
   ⟨⟨beautiful, (mem_alt_polar_beautiful _).2 (Or.inl rfl), polar beautiful,
       by simp [IppolitoKissWilliams2022.Context.issues, ctx₁₇],
-      partiallyAnswers_of_mem_alt ((mem_alt_polar_beautiful _).2 (Or.inl rfl))⟩,
+      partiallyAnsweredBy_of_mem_alt ((mem_alt_polar_beautiful _).2 (Or.inl rfl))⟩,
     relevant_expensive, buy, buy_mem_alt, beautiful, (mem_alt_polar_beautiful _).2 (Or.inl rfl),
     Set.inter_subset_left, Or.inl ⟨rfl, rfl⟩⟩
 

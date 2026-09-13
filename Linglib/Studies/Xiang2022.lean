@@ -150,7 +150,7 @@ theorem relExhPresupposition_of_pointwise_EP
 [xiang-2022] §5: Dayal's EP requires a unique max-info true
 answer; MS rejects this for `can`-questions. The substrate-level
 shadow: a question can fail Dayal's EP at `w` while having
-`Resolves σ Q` succeed for some non-maximal witness — same
+`ResolvedBy Q` σ succeed for some non-maximal witness — same
 phenomenon as in [fox-2018] §2.1 (`Fox2018.ans_disjClosure`). RelExh resolves the
 dilemma by relativising the EP to a per-accessible-world basis. -/
 

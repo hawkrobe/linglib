@@ -81,7 +81,7 @@ set `C`: for `higher` accepted more recently than `lower`, every complete
 answer to `higher` contextually entails a partial answer to `lower`. -/
 def WellFormed (C : Set W) (s : QUDStack W) : Prop :=
   s.Pairwise fun higher lower =>
-    ∀ a ∈ Question.alt higher, Question.PartiallyAnswers (C ∩ a) lower
+    ∀ a ∈ Question.alt higher, Question.PartiallyAnsweredBy lower (C ∩ a)
 
 @[simp] theorem wellFormed_nil (C : Set W) : WellFormed C ([] : QUDStack W) :=
   List.Pairwise.nil
@@ -95,7 +95,7 @@ contextually partially answer every question already on the stack. -/
 theorem wellFormed_cons {C : Set W} {q : Question W} {s : QUDStack W} :
     WellFormed C (q :: s) ↔
       (∀ lower ∈ s, ∀ a ∈ Question.alt q,
-        Question.PartiallyAnswers (C ∩ a) lower) ∧ WellFormed C s :=
+        Question.PartiallyAnsweredBy lower (C ∩ a)) ∧ WellFormed C s :=
   List.pairwise_cons
 
 /-- Retiring the immediate QUD preserves well-formedness. -/
