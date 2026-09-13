@@ -1,7 +1,7 @@
 import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
 import Linglib.Core.Probability.Kernel.OfWeights
 import Linglib.Core.Probability.Kernel.Posterior
-import Linglib.Pragmatics.SocialMeaning.SocialUtility
+import Mathlib.Algebra.Order.Group.PosPart
 import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -49,7 +49,7 @@ namespace HoulihanEtAl2023
 
 noncomputable section
 
-open MeasureTheory ProbabilityTheory Core
+open MeasureTheory ProbabilityTheory
 open scoped ENNReal
 
 /-! ### The game -/
@@ -106,8 +106,8 @@ theorem sum_domain {β : Type*} [AddCommMonoid β] (f : Domain → β) :
 `ref`. -/
 def Domain.feature (pot ref : ℝ) (a₁ a₂ : Action) : Domain → ℝ
   | .money => payoff pot a₁ a₂ - ref
-  | .aia => advantageousInequality (payoff pot a₁ a₂) (payoff pot a₂ a₁)
-  | .dia => disadvantageousInequality (payoff pot a₁ a₂) (payoff pot a₂ a₁)
+  | .aia => (payoff pot a₁ a₂ - payoff pot a₂ a₁)⁺
+  | .dia => (payoff pot a₂ a₁ - payoff pot a₁ a₂)⁺
 
 /-- Money is sought and the inequities are avoided: the signs of (3.1). -/
 def Domain.sign : Domain → ℝ
@@ -127,18 +127,18 @@ include hpot
 theorem feature_aia_cooperate (a₂ : Action) : Domain.feature pot ref .cooperate a₂ .aia = 0 := by
   cases a₂
   · simp [Domain.feature, payoff]
-  · exact advantageousInequality_of_le _ _ hpot
+  · simp [Domain.feature, payoff, posPart_eq_zero.2 (neg_nonpos.2 hpot)]
 
 theorem feature_aia_defect_cooperate : Domain.feature pot ref .defect .cooperate .aia = pot := by
-  rw [Domain.feature, payoff, payoff, advantageousInequality_of_ge _ _ hpot, sub_zero]
+  simp [Domain.feature, payoff, posPart_eq_self.2 hpot]
 
 theorem feature_dia_defect (a₂ : Action) : Domain.feature pot ref .defect a₂ .dia = 0 := by
   cases a₂
-  · exact disadvantageousInequality_of_le _ _ hpot
+  · simp [Domain.feature, payoff, posPart_eq_zero.2 (neg_nonpos.2 hpot)]
   · simp [Domain.feature, payoff]
 
 theorem feature_dia_cooperate_defect : Domain.feature pot ref .cooperate .defect .dia = pot := by
-  rw [Domain.feature, payoff, payoff, disadvantageousInequality_of_ge _ _ hpot, sub_zero]
+  simp [Domain.feature, payoff, posPart_eq_self.2 hpot]
 
 omit hpot in
 theorem feature_aia_defect_defect : Domain.feature pot ref .defect .defect .aia = 0 := by

@@ -21,12 +21,13 @@ same released /t/ that makes one speaker sound like a stern leader leaves a stro
 speaker's interpretation untouched.
 
 The meaning function is not stipulated: it is the lift of each variant's indexical field to
-persona compatibility, and `ingMeaning_eq_emMeaningMI` checks the two agree. The predictions are
-exact comparisons of the listener and speaker distributions, not simulated values.
+persona compatibility, and the four personae are the maximal consistent sets of the property
+space (`personae_eq`). The predictions are exact comparisons of the listener and speaker
+distributions, not simulated values.
 
 ## Main definitions
 
-* `ingField`, `ingMeaning` — the indexical fields of the two variants and the compatibility they
+* `ingField`, `compatible` — the indexical fields of the two variants and the compatibility they
   induce
 * `L0`, `S1`, `L1` — the literal listener, the speaker and the pragmatic listener at a prior
 * `excluded` — the persona each variant rules out
@@ -68,7 +69,6 @@ namespace Burnett2019
 open MeasureTheory ProbabilityTheory RSA
 open scoped ENNReal NNReal
 open SocialMeaning
-open SocialMeaning.EckertMontague
 open Eckert2008 (INGVariant)
 
 /-! ### Personae and variants -/
@@ -110,15 +110,18 @@ intersection semantics (Burnett footnote 14, Table 1): persona p is
 compatible with variant v iff p shares at least one property with v's
 Eckert field. -/
 
-/-- The property space for Burnett's simplified example. -/
-def burnettSpace : PropertySpace where
-  Property := PersonaTrait
-  incompatible
-    | .competent, .incompetent | .incompetent, .competent => true
-    | .friendly, .aloof | .aloof, .friendly => true
-    | _, _ => false
-  incomp_symm := by intro p q; cases p <;> cases q <;> simp
-  incomp_irrefl := by intro p; cases p <;> rfl
+/-- The dimension a trait is a pole of. -/
+def PersonaTrait.dimension : PersonaTrait → Dimension
+  | .competent | .incompetent => .competence
+  | .friendly | .aloof => .warmth
+
+/-- The property space of the example: the two poles of each dimension are incompatible. -/
+def incompatible : SimpleGraph PersonaTrait where
+  Adj p q := p ≠ q ∧ p.dimension = q.dimension
+  symm := ⟨λ _ _ h => ⟨h.1.symm, h.2.symm⟩⟩
+  loopless := ⟨λ _ h => h.1 rfl⟩
+
+instance : DecidableRel incompatible.Adj := λ p q => inferInstanceAs (Decidable (p ≠ q ∧ _))
 
 /-- Persona membership as a `Finset`. -/
 def Persona.toFinset : Persona → Finset PersonaTrait
@@ -132,28 +135,14 @@ def ingEckertField : INGVariant → Finset PersonaTrait
   | .velar => {.competent, .aloof}
   | .apical => {.incompetent, .friendly}
 
+/-- The four personae are the maximal consistent sets of the property space (example (6)). -/
+theorem personae_eq : incompatible.maximalIndepSets = Finset.univ.image Persona.toFinset := by
+  decide +kernel
+
 /-- The ING grounded field: both Eckert fields are consistent. -/
-def ingField : GroundedField INGVariant burnettSpace where
-  indexedProperties := ingEckertField
-  indexed_consistent := by intro v; cases v <;> decide
-
-/-- Meaning via the EM intersection lift: persona p is compatible with
-    variant v iff p shares ≥1 property with v's Eckert field. -/
-def ingMeaning : INGVariant → Persona → Bool
-  | .velar,.coolGuy     => true   -- coolGuy has competent ∈ {comp, aloof}
-  | .velar,.sternLeader => true   -- sternLeader has comp AND aloof
-  | .velar,.asshole     => true   -- asshole has aloof ∈ {comp, aloof}
-  | .velar,.doofus      => false  -- doofus has neither comp nor aloof
-  | .apical,.coolGuy     => true   -- coolGuy has friendly ∈ {incomp, friendly}
-  | .apical,.sternLeader => false  -- sternLeader has neither incomp nor friendly
-  | .apical,.asshole     => true   -- asshole has incomp ∈ {incomp, friendly}
-  | .apical,.doofus      => true   -- doofus has incomp AND friendly
-
-/-- **Grounding theorem**: the inline meaning function equals the
-    theory-layer `emMeaningMI` applied to the ING Eckert fields. -/
-theorem ingMeaning_eq_emMeaningMI (v : INGVariant) (p : Persona) :
-    ingMeaning v p = emMeaningMI ingField v p.toFinset := by
-  cases v <;> cases p <;> decide
+def ingField : GroundedField INGVariant incompatible where
+  indexes := ingEckertField
+  isIndepSet := by intro v; cases v <;> decide
 
 /-! ### The model
 
@@ -172,8 +161,10 @@ instance : MeasurableSingletonClass INGVariant :=
   DiscreteMeasurableSpace.toMeasurableSingletonClass
 instance : Nonempty INGVariant := ⟨.velar⟩
 
-/-- The personae a variant is compatible with. -/
-def compatible (v : INGVariant) : Finset Persona := Finset.univ.filter fun p => ingMeaning v p
+/-- The personae a variant is compatible with: those sharing a property with its field, the
+Montagovian-individual reading of footnote 14 and Table 1. -/
+def compatible (v : INGVariant) : Finset Persona :=
+  Finset.univ.filter λ p => ingField.Meets v p.toFinset
 
 /-- The extension of a variant, as a set. -/
 abbrev extension (v : INGVariant) : Set Persona := ↑(compatible v)

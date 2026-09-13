@@ -1,7 +1,7 @@
 import Linglib.Semantics.Quantification.Numerals.Roundness
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
 import Linglib.Semantics.Quantification.Numerals.Precision
-import Linglib.Pragmatics.SocialMeaning.SCM
+import Linglib.Pragmatics.SocialMeaning.Dimension
 import Linglib.Pragmatics.SocialMeaning.EckertMontague
 import Linglib.Fragments.English.NumeralModifiers
 import Mathlib.Data.Sign.Defs
@@ -57,7 +57,6 @@ contrasts sharpen where precision is pragmatically idle.
 namespace BeltramaSoltBurnett2023
 
 open SocialMeaning
-open SocialMeaning.SCM
 
 /-! ### Stimuli and the three-way contrast -/
 
@@ -128,7 +127,7 @@ theorem classify_50_about :
 theorem non_round_collapses (n : Nat)
     (h : Numerals.Roundness.roundnessScore n < 2) :
     classifyVariant n true = .precise ∧ classifyVariant n false = .precise := by
-  unfold classifyVariant; constructor <;> simp [if_pos h]
+  constructor <;> simp [classifyVariant] <;> omega
 
 /-- Round numerals support the full three-way contrast: bare is underspecified, modified is
     approximate. -/
@@ -136,15 +135,14 @@ theorem round_supports_contrast (n : Nat)
     (h : Numerals.Roundness.roundnessScore n ≥ 2) :
     classifyVariant n false = .underspecified ∧
     classifyVariant n true = .approximate := by
-  have h' : ¬(Numerals.Roundness.roundnessScore n < 2) := by omega
-  unfold classifyVariant; constructor <;> simp [if_neg h']
+  constructor <;> simp [classifyVariant] <;> omega
 
 /-! ### Cell means -/
 
 /-- Experiment 1 cell means (216 recruited, 61 excluded; within-subjects; 7-point scales).
-    PCA factors mapped onto `SocialDimension`: Status → `.competence`, Solidarity →
+    PCA factors mapped onto `Dimension`: Status → `.competence`, Solidarity →
     `.warmth`, anti-Solidarity → `.antiSolidarity`. -/
-def exp1Mean : Variant → SocialDimension → ℚ
+def exp1Mean : Variant → Dimension → ℚ
   | .precise,       .competence      => 501/100  -- M = 5.01, SD = 0.95
   | .precise,       .warmth          => 437/100  -- M = 4.37, SD = 1.08
   | .precise,       .antiSolidarity  => 437/100  -- M = 4.37, SD = 1.22
@@ -156,7 +154,7 @@ def exp1Mean : Variant → SocialDimension → ℚ
   | .approximate,   .antiSolidarity  => 410/100  -- M = 4.10, SD = 1.24
 
 /-- Experiment 2 cell means (960 recruited, 150 excluded; one-trial between-subjects). -/
-def exp2Mean : Variant → SocialDimension → ℚ
+def exp2Mean : Variant → Dimension → ℚ
   | .precise,       .competence      => 516/100  -- M = 5.16, SD = 0.82
   | .precise,       .warmth          => 415/100  -- M = 4.15, SD = 0.97
   | .precise,       .antiSolidarity  => 385/100  -- M = 3.85, SD = 1.05
@@ -206,12 +204,12 @@ theorem sign_alignment :
     variant is the zero point, the neutral-diagnostic reading of the general discussion
     (p. 828), on which it reveals which endpoint drives each contrast; the paper's alternative,
     round numbers carrying their own chameleonic indexicality, is not modeled. -/
-def signField (mean : Variant → SocialDimension → ℚ) :
-    AssociationField Variant SocialDimension SignType :=
+def signField (mean : Variant → Dimension → ℚ) :
+    AssociationField Variant Dimension SignType :=
   .of λ v d => SignType.sign (mean v d - mean .underspecified d)
 
 /-- The three-way field, the signs of the Experiment 1 contrasts. -/
-def bsbField : AssociationField Variant SocialDimension SignType := signField exp1Mean
+def bsbField : AssociationField Variant Dimension SignType := signField exp1Mean
 
 /-- Precise and approximate are antipodal, their contrasts with the underspecified variant
     running opposite ways on every dimension. -/
@@ -371,28 +369,25 @@ theorem context_crossover :
 
 /-! ### The Eckert–Montague lift -/
 
-open SocialMeaning.EckertMontague
-
 /-- The field as a [burnett-2019] grounded field over the SCM property space. -/
-def bsbGroundedField : GroundedField Variant scmSpace :=
-  fromAssociationField bsbField
+def bsbGroundedField : GroundedField Variant Pole.incompatible := bsbField.ground
 
 /-- Precise speech indexes {competent, cold, antiSolidary}. -/
 theorem precise_scmProperties :
-    bsbGroundedField.indexedProperties .precise =
+    bsbGroundedField.indexes .precise =
       {.competent, .cold, .antiSolidary} := by
   decide +kernel
 
 /-- Approximate speech indexes the complement, {incompetent, warm, solidary}. -/
 theorem approximate_scmProperties :
-    bsbGroundedField.indexedProperties .approximate =
+    bsbGroundedField.indexes .approximate =
       {.incompetent, .warm, .solidary} := by
   decide +kernel
 
 /-- The underspecified variant indexes nothing, so under the EM lift it is compatible with
     every persona — the neutral-diagnostic reading made structural. -/
 theorem underspecified_indexes_nothing :
-    bsbGroundedField.indexedProperties .underspecified = ∅ := by
+    bsbGroundedField.indexes .underspecified = ∅ := by
   decide +kernel
 
 end BeltramaSoltBurnett2023
