@@ -50,10 +50,10 @@ theorem retaining_gt_shifting :
 
 variable {E R : Type*} [DecidableEq E]
 
-/-- Internal classifier given both Cbs: equal Cbs continue/retain
-    by Cp alignment; unequal Cbs shift. -/
-private def classifyTransitionInternal
-    (curCb : E) (curCp : Option E) (prevCb : E) : Transition :=
+/-- The transition of an utterance with center `curCb` and preferred center `curCp` after an
+utterance with center `prevCb`: the center is kept and is the preferred center (continuation),
+kept but not preferred (retaining), or changed (shifting). -/
+def Transition.ofCenters (curCb : E) (curCp : Option E) (prevCb : E) : Transition :=
   if prevCb = curCb then
     if curCp = some curCb then .continuation else .retaining
   else .shifting
@@ -67,7 +67,7 @@ def classifyTransitionStrict
   match cb prev cur, prevCb with
   | none, _      => some .shifting
   | _, none      => none  -- segment-initial: paper Def 4 is silent
-  | some curCb, some pcb => some (classifyTransitionInternal curCb cur.cp pcb)
+  | some curCb, some pcb => some (Transition.ofCenters curCb cur.cp pcb)
 
 /-- Extended classification: applies the worked-example convention
     for the segment-initial case (treats missing prior Cb as if equal
@@ -77,7 +77,7 @@ def classifyTransitionExtended
   match cb prev cur with
   | none => .shifting
   | some curCb =>
-    classifyTransitionInternal curCb cur.cp (prevCb.getD curCb)
+    Transition.ofCenters curCb cur.cp (prevCb.getD curCb)
 
 /-- The two classifications agree whenever the strict variant is
     defined. -/
