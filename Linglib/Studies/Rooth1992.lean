@@ -1,554 +1,441 @@
-import Linglib.Semantics.Alternatives.Basic
-import Linglib.Semantics.Focus.Interpretation
-import Linglib.Semantics.Focus.Control
-import Linglib.Semantics.Focus.Particles
-import Linglib.Semantics.Composition.Tree
-import Linglib.Fragments.English.Nouns
-import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Data.Examples.Rooth1992
+import Linglib.Pragmatics.NeoGricean.Basic
+import Linglib.Semantics.Focus.Control
 
 /-!
-# Rooth 1992: A theory of focus interpretation
+# Rooth (1992): A theory of focus interpretation
 
-Formalises [rooth-1992] over the example rows in
-`Data/Examples/Rooth1992.json`: question-answer congruence via the
-focus interpretation principle (FIP, the paper's (27)), association
-with *only* ((26a), (30b)), the contrasting-phrases rule (14), and the
-argument that focus *constrains* rather than *fixes* the domain of
-*only* (the *Recognitions* example (7)).
+This file formalizes [rooth-1992]'s unification of the effects of intonational focus. Alternative
+semantics gives a phrase a focus semantic value beside its ordinary one, the set of substitution
+instances at the focused position, computed here by mapping a predicate over an F-marked
+constituent whose alternatives are the whole domain (`focused`). The four effects the paper
+surveys, association with *only*, contrasting phrases, scalar implicature, and question-answer
+congruence, each require some semantic or pragmatic object to be a subset or an element of a
+focus semantic value, and the focus interpretation principle keeps only that requirement: the
+operator ~ presupposes `Focus.SquiggleSet` or `Focus.SquiggleInd` of a free variable whose
+antecedent is a `Focus.Antecedent`. In the introduction scenario *only* quantifies over a
+domain constrained by focus, `Focus.onlyVia`, which gives (3a) and (3b) their truth values; a
+focused transitive verb shows why the domain is constrained rather than fixed, since its full
+focus semantic value contains the trivial relation and fixing the domain to it makes *only*
+unsatisfiable. A scale of alternative assertions lies inside the focus semantic value, so focus
+on the verb licenses the acing scale that focus on the subject does not, and the group scale
+under subject focus yields the roommate implicature through the neo-Gricean substrate. A
+question denotation lies inside the answer's focus semantic value, admitting the subject-focused
+answer to the subject question and rejecting the object-focused one. In bare remnant ellipsis
+focus filters a compositional ambiguity instead of restricting a parameter: each choice of
+correlate finds an antecedent for ~ under exactly one focus placement (`ellipsis_filter`).
 
-The question-answer model is the paper's §2.4 paradigm — "Who cut Bill
-down to size?" answered by *[Mary]F cut Bill down to size* (23), with
-the alternative answers of (24) — in a four-world model crossing
-subjects {Mary, Monique} with objects {Bill, Björn}. The *only* model
-is the §2.1 introduction scenario (Mary introduced Bill and Tom to
-Sue). Focus values are computed, not stipulated: the `interp` engine
-that computes ordinary values at `M = Id` computes both dimensions at
-`M = WithAlternatives`, grounding the stipulated Hamblin sets, and the
-lexicon's surface forms are checked against the English fragment
-entries.
+## Implementation notes
+
+* Worlds of the relational models are sets of atomic facts, so that distinct facts denote
+  distinct propositions; the quiz model assigns each person a grade, acing entailing passing,
+  with groups as finite sets of people.
+* The rows carry the paper's examples with the truth values of the introduction scenario and
+  the question-answer judgments, which the theorems derive.
+
+## References
+
+* [rooth-1992]
+* [rooth-1985]
+* [hamblin-1973b]
+* [sauerland-2004]
 -/
 
 namespace Rooth1992
 
-open Focus.Interpretation (fip PropFocusValue qaCongruent qaCongruentWeak)
+open Data.Examples Focus Focus.Interpretation WithAlternatives
 
-/-! ### The question-answer world model -/
+/-! ### Focus semantic values (2) -/
 
-/-- Worlds crossing cutter (Mary/Monique) × cuttee (Bill/Björn),
-    after the answer columns of [rooth-1992] (24). Sufficient to
-    distinguish subject-focus from object-focus alternative sets. -/
-inductive QAWorld where
-  | maryBill | maryBjorn | moniqueBill | moniqueBjorn
-  deriving DecidableEq, Repr
+section Values
 
-open QAWorld
+universe u
 
-/-- "Mary cut Bill down to size" — true exactly at `maryBill`. -/
-def maryCutBill : Set QAWorld := {maryBill}
+variable {α β : Type u}
 
-/-- "Monique cut Bill down to size" — true exactly at `moniqueBill`. -/
-def moniqueCutBill : Set QAWorld := {moniqueBill}
+/-- An F-marked constituent: its ordinary value with every object of its type as an
+alternative. -/
+def focused (x : α) : WithAlternatives α := ⟨x, Set.univ⟩
 
-/-- "Mary cut Björn down to size" — true exactly at `maryBjorn`. -/
-def maryCutBjorn : Set QAWorld := {maryBjorn}
+@[simp] theorem ordinary_focused (x : α) : (focused x).ordinary = x := rfl
 
-/-! ### Alternative meanings -/
+/-- The focus semantic value of a phrase with one F-marked constituent is the set of
+substitution instances at that position. -/
+theorem alternatives_map_focused (f : α → β) (x : α) :
+    (f <$> focused x).alternatives = Set.range f := by
+  ext b; simp [focused]
 
-/-- Focused *[MARY]F* in the answer *[Mary]F cut Bill down to size*
-    ((23Aa) of [rooth-1992] §2.4): ordinary value = "Mary";
-    alternative set = {"Mary", "Monique"}. -/
-def altSubjectFocused : WithAlternatives String :=
-  { ordinary := "Mary", alternatives := {"Mary", "Monique"} }
+/-- An F-marked constituent is well formed: the ordinary value is among the alternatives, and
+so is the ordinary value of any phrase built on it. -/
+theorem wellFormed_map_focused (f : α → β) (x : α) : (f <$> focused x).WellFormed :=
+  WellFormed.map (Set.mem_univ x)
 
-/-- Non-focused "cut Bill down to size": singleton alternative set. Exercises
-    `WithAlternatives.unfeatured`. -/
-def altPredicateUnfeatured : WithAlternatives String :=
-  WithAlternatives.unfeatured "cut Bill down to size"
+end Values
 
-/-- Unfeatured ordinary value equals the input. -/
-theorem unfeatured_preserves_ordinary :
-    altPredicateUnfeatured.ordinary = "cut Bill down to size" := rfl
+/-! ### Relational models
 
-/-- Unfeatured alternative set is a singleton containing the ordinary value — "the
-    focus semantic value of a focus-free phrase is the unit set of its
-    ordinary semantic value" ([rooth-1992] (42)). -/
-theorem unfeatured_singleton_alternatives :
-    altPredicateUnfeatured.alternatives = {"cut Bill down to size"} := rfl
+A world is a set of atomic facts and a fact denotes the proposition that it holds. -/
 
-/-! ### Question-answer congruence and the FIP
+section Atoms
 
-The question-answer constraint ((26d) of [rooth-1992] §3, motivated by
-the §2.4 question-answer paradigm): in a Q-A pair ⟨ψ, α⟩,
-⟦ψ⟧° ⊆ ⟦α⟧f — the ordinary semantic value of the question is a subset
-of the focus semantic value of the answer. The FIP (27) schematizes
-this as Γ ⊆ ⟦α⟧f with Γ resolved to the question denotation. -/
+variable {A : Type}
 
-/-- "Who cut Bill down to size?" ((23Qa)) — Hamblin question with
-    subject alternatives, the (25a) value restricted to the model's
-    individuals. -/
-def q_whoCutBill : PropFocusValue QAWorld :=
-  {maryCutBill, moniqueCutBill}
+/-- The proposition that the fact `a` holds. -/
+def atom (a : A) : Set (Set A) := {w | a ∈ w}
 
-/-- Focus value of *[MARY]F cut Bill down to size* ((23Aa)) — same
-    subject alternatives. -/
-def fv_subjectFocus : PropFocusValue QAWorld :=
-  {maryCutBill, moniqueCutBill}
+@[simp] theorem mem_atom {a : A} {w : Set A} : w ∈ atom a ↔ a ∈ w := Iff.rfl
 
-/-- Focus value of *Mary cut [BILL]F down to size* ((23Ab)) — object
-    alternatives (varies object, not subject). -/
-def fv_objectFocus : PropFocusValue QAWorld :=
-  {maryCutBill, maryCutBjorn}
+theorem atom_injective : Function.Injective (atom (A := A)) := λ a _ h =>
+  (Set.mem_singleton_iff.1 ((Set.ext_iff.1 h {a}).1 (Set.mem_singleton a))).symm
 
-/-- Q-A congruence: subject focus value = question denotation. -/
-theorem qa_subject_focus_congruent :
-    qaCongruent fv_subjectFocus q_whoCutBill := rfl
+theorem atom_ne_univ (a : A) : atom a ≠ Set.univ := λ h =>
+  Set.notMem_empty a ((Set.ext_iff.1 h ∅).2 (Set.mem_univ ∅))
 
-/-- The FIP holds for subject focus: question alternatives ⊆ focus
-    value — trivially, since the sets are equal. -/
-theorem fip_congruent :
-    fip q_whoCutBill fv_subjectFocus :=
-  fun _ h => h
+end Atoms
 
-/-- "moniqueCutBill" is in the question alternatives... -/
-theorem moniqueCutBill_in_question :
-    moniqueCutBill ∈ q_whoCutBill := Or.inr rfl
+/-! ### Focusing adverbs (§2.1)
 
-/-- ...but it is NOT in the object-focus alternative set... -/
-theorem moniqueCutBill_not_in_objectFocus :
-    moniqueCutBill ∉ fv_objectFocus := by
-  simp [fv_objectFocus, moniqueCutBill, maryCutBill, maryCutBjorn]
+*Only* quantifies over a domain `C` of properties: if Mary has a property in `C`, it is the one
+the VP expresses ((4b), (30b)). Focus constrains `C` to lie inside the focus semantic value of
+the VP ((9c)); the substrate's `onlyVia` is the assertion at the propositional level. -/
 
-/-- ...so the FIP fails for object focus: (23Ab) is linked to (23Qa)
-    only by a dotted (inappropriate) line in the paper's (23). -/
-theorem fip_fails_object_focus :
-    ¬ fip q_whoCutBill fv_objectFocus :=
-  fun h => moniqueCutBill_not_in_objectFocus (h moniqueCutBill_in_question)
+section Only
 
-/-! ### The question as focus antecedent -/
+variable {E : Type} (m b t s c : E)
 
-/-- 'Who cut Bill down to size?' as a focus antecedent
-    (`Focus.Antecedent`): the anaphoric source of the squiggle's
-    contrast set. -/
-def qaAntecedent : Focus.Antecedent QAWorld := .question q_whoCutBill
+/-- The fact that `x` introduced `y` to `z`. -/
+def intro (x y z : E) : Set (Set (E × E × E)) := atom (x, y, z)
 
-/-- Question antecedents license the new-information use. -/
-theorem qaAntecedent_use : qaAntecedent.use = .newInfo := rfl
+/-- The introduction scenario: Mary introduced Bill and Tom to Sue, and there were no other
+introductions. -/
+def scenario : Set (E × E × E) := {(m, b, s), (m, t, s)}
 
-/-- The antecedent admits subject focus — the FIP routed through the
-    antecedent layer. -/
-theorem qaAntecedent_admits_subjectFocus :
-    qaAntecedent.Admits fv_subjectFocus := fip_congruent
+/-- (5a): the focus semantic value of *introduced [Bill]F to Sue* with Mary as subject, the
+propositions of the form 'Mary introduced y to Sue'. -/
+theorem vp_objectFocus :
+    ((λ y => intro m y s) <$> focused b).alternatives = Set.range λ y => intro m y s :=
+  alternatives_map_focused _ _
 
-/-- The antecedent rejects object focus. -/
-theorem qaAntecedent_rejects_objectFocus :
-    ¬ qaAntecedent.Admits fv_objectFocus := fip_fails_object_focus
+/-- (3a) is false in the scenario: 'Mary introduced Tom to Sue' is a true member of the domain
+distinct from the prejacent. -/
+theorem three_a (hbt : b ≠ t) :
+    scenario m b t s ∉ onlyVia (Set.range λ y => intro m y s) (intro m b s) :=
+  not_mem_onlyVia (q := intro m t s) ⟨t, rfl⟩ (by simp [scenario, intro])
+    λ h => hbt (Prod.mk.inj (Prod.mk.inj (atom_injective h)).2).1.symm
 
-/-- The question antecedent *fully* resolves against the subject-focus
-    meaning: all three clauses of the squiggle presupposition
-    ([rooth-1992] (40) set case), not just the FIP — the contrast set
-    contains the ordinary value `maryCutBill` and the distinct
-    alternative `moniqueCutBill`. -/
-theorem qaAntecedent_resolves :
-    qaAntecedent.Resolves maryCutBill fv_subjectFocus :=
-  ⟨fip_congruent, Or.inl rfl,
-    moniqueCutBill, Or.inr rfl,
-    fun h => by simp [moniqueCutBill, maryCutBill] at h⟩
-
-/-- A focus-free answer cannot resolve any antecedent: its focus value
-    is the unit set of its ordinary value ((42)), defeating the
-    contrast clause — "the argument must contain a focus". -/
-theorem focusFree_answer_cannot_resolve (Γ : PropFocusValue QAWorld) :
-    ¬ Focus.SquiggleSet maryCutBill {maryCutBill} Γ :=
-  Focus.not_squiggleSet_singleton maryCutBill Γ
-
-/-- Contrasting phrases ([rooth-1992] (14), on the symmetric-contrast
-    joke opening (11)): construe α as contrasting with β if
-    ⟦β⟧° ∈ ⟦α⟧f. *Canadian farmer*'s ordinary value is a member of
-    *[American]F farmer*'s focus value distinct from its ordinary
-    value. -/
-theorem farmer_contrast :
-    Focus.SquiggleInd "American farmer"
-      ({"American farmer", "Canadian farmer"} : Set String)
-      "Canadian farmer" :=
-  ⟨Or.inr rfl, by decide⟩
-
-/-! ### Constraining vs fixing the domain of *only*
-
-With a focused transitive verb — *Mary only [read]F The Recognitions*
-((7) of [rooth-1992] §2.1) — the full focus value contains "even
-trivial relations", so [rooth-1985]'s move of *fixing* *only*'s domain
-`C` to it yields unsatisfiable truth conditions, while intuitively (7)
-can be true. The 1992 revision (9c) merely *constrains* `C ⊆ ⟦VP⟧f`,
-leaving `C` to pragmatics: it "might be quite a small set", e.g.
-{read(c), understand(c)} ((37c)). A lexically carried alternative list
-cannot be narrowed this way. -/
-
-/-- Worlds tracking Mary's relation to *The Recognitions*. -/
-inductive RWorld where
-  | readOnly      -- read it, nothing more
-  | readAndGrasp  -- read and understood it
-  | neither
-  deriving DecidableEq, Repr
-
-/-- 'reading The Recognitions'. -/
-def reading : Set RWorld := {.readOnly, .readAndGrasp}
-/-- 'understanding The Recognitions'. -/
-def grasping : Set RWorld := {.readAndGrasp}
-/-- A trivial property of the same semantic type — a member of the
-    full focus value. -/
-def trivialR : Set RWorld := Set.univ
-
-/-- With the pragmatically restricted domain ((37c)), *only READ* is
-    satisfiable: true where Mary read without understanding. -/
-theorem restricted_only_satisfiable :
-    RWorld.readOnly ∈
-      Focus.onlyVia {reading, grasping} reading := by
-  intro q hq hw
-  rcases hq with rfl | rfl
+/-- (3b) is true in the scenario: the only true proposition of the form 'Mary introduced Bill
+to z' is the prejacent. -/
+theorem three_b (hbt : b ≠ t) :
+    scenario m b t s ∈ onlyVia (Set.range λ z => intro m b z) (intro m b s) := by
+  rintro q ⟨z, rfl⟩ hw
+  simp only [scenario, intro, mem_atom, Set.mem_insert_iff, Set.mem_singleton_iff,
+    Prod.mk.injEq] at hw
+  rcases hw with ⟨-, -, rfl⟩ | ⟨-, hb, -⟩
   · rfl
-  · exact absurd hw (by simp [grasping])
+  · exact absurd hb hbt
 
-/-- With the domain fixed to the full focus value (trivial property
-    included), *only READ* is unsatisfiable — fixing `C`
-    over-generates exclusions. -/
-theorem direct_only_unsatisfiable :
-    Focus.onlyVia {reading, grasping, trivialR} reading = ∅ := by
-  have hne : trivialR ≠ reading := fun h =>
-    (by simp [reading] : RWorld.neither ∉ reading)
-      (h ▸ Set.mem_univ RWorld.neither)
-  ext w
-  simp only [Focus.mem_onlyVia, Set.mem_empty_iff_false, iff_false]
-  exact fun hw => hne (hw trivialR (by simp) (Set.mem_univ w))
+/-- The relations a focused transitive verb ranges over. -/
+inductive Verb where
+  | read
+  | understand
+  deriving DecidableEq
 
-/-- The same over-generation on the lexical semantics of *only*: with
-    the full focus value carried as a lexical alternative list, the
-    assertion is unsatisfiable, and no pragmatic narrowing is possible
-    — the list is fixed in the lexical entry. -/
-theorem lexical_only_unsatisfiable :
-    Focus.Particles.onlyAssertion [grasping, trivialR] = (∅ : Set RWorld) := by
-  rw [Set.eq_empty_iff_forall_notMem]
-  exact fun w hw => hw trivialR (by simp) (Set.mem_univ w)
+/-- The fact that `x` stands in relation `v` to `y`. -/
+def rel (v : Verb) (x y : E) : Set (Set (Verb × E × E)) := atom (v, x, y)
 
-/-! ### Association with *only*
+/-- (8): the focus semantic value of *[read]F The Recognitions* with Mary as subject ranges over
+every relation, so it contains the trivial proposition. -/
+theorem univ_mem_vp_verbFocus :
+    Set.univ ∈ ((λ R : E → E → Set (Set (Verb × E × E)) => R m c) <$>
+      focused (rel .read)).alternatives := by
+  rw [alternatives_map_focused]; exact ⟨λ _ _ => Set.univ, rfl⟩
 
-The focusing adverb constraint ((26a) of [rooth-1992] §3): the domain
-of quantification `C` of a focusing adverb with argument α satisfies
-`C ⊆ ⟦α⟧f`. The lexical semantics (30b) is
-∀P[P ∈ C ∧ P(m) → P = VP']. The model is the §2.1 introduction
-scenario: Mary introduced Bill and Tom to Sue, and there were no other
-introductions — so *Mary only introduced [Bill]F to Sue* (3a) is
-false. -/
+/-- (7) with the domain fixed to the full focus semantic value, as in [rooth-1985], is
+unsatisfiable. -/
+theorem recognitions_fixed :
+    onlyVia ((λ R : E → E → Set (Set (Verb × E × E)) => R m c) <$>
+      focused (rel .read)).alternatives (rel .read m c) = ∅ :=
+  onlyVia_eq_empty_of_univ_mem (univ_mem_vp_verbFocus m c) (atom_ne_univ _)
 
-/-- Worlds for the *only* model: who Mary introduced to Sue. -/
-inductive OnlyWorld where
-  | billOnly   -- Mary introduced only Bill to Sue
-  | tomOnly    -- Mary introduced only Tom to Sue
-  | both       -- Mary introduced both Bill and Tom (the paper's story)
+/-- (37c): with the domain constrained to reading and understanding, (7) is true where Mary
+read without understanding. -/
+theorem recognitions_constrained :
+    {(Verb.read, m, c)} ∈ onlyVia {rel .read m c, rel .understand m c} (rel .read m c) := by
+  rintro q (rfl | rfl) hw
+  · rfl
+  · simp [rel] at hw
+
+end Only
+
+/-! ### Contrasting phrases (§2.2)
+
+(14): construe `α` as contrasting with `β` if the ordinary value of `β` is a member of the focus
+semantic value of `α`; the paper derives it from the individual case of the focus
+interpretation principle, where the ordinary value of any phrase can be the antecedent. -/
+
+section Contrast
+
+variable {E W : Type} (farmer american canadian : E → Set W)
+
+/-- The intersective N' *P farmer*. -/
+def nbar (P : E → Set W) : E → Set W := λ x => P x ∩ farmer x
+
+/-- (15): 'Canadian farmer' is a property of the form 'P farmer', so it can be the antecedent
+for the focus on *[American]F farmer*. -/
+theorem farmer_contrast (h : nbar farmer canadian ≠ nbar farmer american) :
+    SquiggleInd (nbar farmer american) ((nbar farmer <$> focused american).alternatives)
+      (nbar farmer canadian) := by
+  rw [alternatives_map_focused]; exact ⟨⟨canadian, rfl⟩, h⟩
+
+end Contrast
+
+/-! ### Scalar implicature (§2.3)
+
+Asserting a member of a scale implicates the negation of the members that entail it. The
+constraint on scales (22) requires the underlying set to lie inside the focus semantic value of
+the assertion, so the two placements of focus in (16) and (17) license different scales. -/
+
+section Scale
+
+variable {E : Type} (m : E)
+
+/-- The world in which everyone has a grade: failed, passed, or aced. -/
+abbrev Grades (E : Type) := E → Fin 3
+
+/-- The group `g` passed. -/
+def pass (g : Finset E) : Set (Grades E) := {w | ∀ x ∈ g, 1 ≤ w x}
+
+/-- `x` aced. -/
+def ace (x : E) : Set (Grades E) := {w | 2 ≤ w x}
+
+/-- (18): acing entails passing and not conversely. -/
+theorem ace_ssubset_pass : ace m ⊂ pass {m} := by
+  refine ⟨λ w h => ?_, λ h => ?_⟩
+  · intro x hx
+    rw [Finset.mem_singleton] at hx
+    exact hx ▸ le_trans (by decide) h
+  · have := h (show (λ _ => (1 : Fin 3)) ∈ pass {m} by simp [pass])
+    exact absurd this (by simp [ace])
+
+/-- A group passed iff its parts did. -/
+theorem pass_union [DecidableEq E] (g g' : Finset E) : pass (g ∪ g') = pass g ∩ pass g' := by
+  ext w; simp [pass, or_imp, forall_and]
+
+/-- (16): the scale of acing and passing lies inside the focus semantic value of
+*I [passed]F*, and asserting the weaker member implicates the negation of the stronger. -/
+theorem verbFocus_scale :
+    fip {ace m, pass {m}} ((λ V : Finset E → Set (Grades E) => V {m}) <$>
+      focused pass).alternatives ∧
+    NeoGricean.IsSecondaryImplicature (pass {m}) {ace m} (ace m) := by
+  refine ⟨?_, NeoGricean.isSecondaryImplicature_of_ssubset (ace_ssubset_pass m)⟩
+  rw [alternatives_map_focused]
+  rintro q (rfl | rfl)
+  · exact ⟨λ _ => ace m, rfl⟩
+  · exact ⟨pass, rfl⟩
+
+/-- (21): the scale of group propositions of the form 'x passed' lies inside the focus semantic
+value of *[I]F passed*. -/
+theorem subjectFocus_scale :
+    fip (Set.range pass) ((pass (E := E)) <$> focused {m}).alternatives := by
+  rw [alternatives_map_focused]; exact subset_rfl
+
+/-- The acing scale does not lie inside the focus semantic value of *[I]F passed*: no group's
+passing is Mats's acing, which is why (17) suggests nothing about acing. -/
+theorem ace_notMem_subjectFocus : ace m ∉ ((pass (E := E)) <$> focused {m}).alternatives := by
+  rw [alternatives_map_focused]
+  rintro ⟨g, hg⟩
+  have := (Set.ext_iff.1 hg (λ _ => 1)).1 (λ _ _ => le_rfl)
+  simp [ace] at this
+
+/-- The roommate implicature: asserting that Mats passed implicates the negation of the
+group proposition that Mats and Paul passed, which with Mats passing is Paul not passing. -/
+theorem roommate_implicature [DecidableEq E] (p : E) (w : Grades E) (hm : w ∈ pass {m})
+    (hmp : w ∉ pass {m, p}) : w ∉ pass {p} := λ hp =>
+  hmp (by rw [show ({m, p} : Finset E) = {m} ∪ {p} from rfl, pass_union]; exact ⟨hm, hp⟩)
+
+end Scale
+
+/-! ### Questions and answers (§2.4)
+
+The ordinary semantic value of a question is its set of potential answers ([hamblin-1973b]),
+which the question-answer constraint (26d) requires to lie inside the focus semantic value of
+the answer. -/
+
+section Questions
+
+variable {E : Type} (P : Set E) (m b : E)
+
+/-- The fact that `x` cut `y` down to size. -/
+def cut (x y : E) : Set (Set (E × E)) := atom (x, y)
+
+/-- (25a): *Who cut Bill down to size?* over the persons `P`. -/
+def whoCut (b : E) : PropFocusValue (Set (E × E)) := (λ x => cut x b) '' P
+
+/-- The focus semantic value of *[Mary]F cut Bill down to size*: the propositions of the form
+'x cut Bill down to size', over every individual. -/
+theorem subjectFocus_value :
+    ((λ x => cut x b) <$> focused m).alternatives = Set.range λ x => cut x b :=
+  alternatives_map_focused _ _
+
+/-- (23Aa) answers (23Qa): the question fully resolves the focus on the subject, with any other
+person supplying the contrasting alternative. -/
+theorem question_resolves_subjectFocus {x : E} (hm : m ∈ P) (hx : x ∈ P) (hxm : x ≠ m) :
+    (Antecedent.question (whoCut P b)).Resolves (cut m b) (Set.range λ x => cut x b) :=
+  ⟨Set.image_subset_range _ _, ⟨m, hm, rfl⟩,
+    cut x b, ⟨x, hx, rfl⟩, λ h => hxm (Prod.mk.inj (atom_injective h)).1⟩
+
+/-- (23Ab) does not answer (23Qa): another person's cutting Bill down to size is not of the
+form 'Mary cut y down to size'. -/
+theorem question_rejects_objectFocus {x : E} (hx : x ∈ P) (hxm : x ≠ m) :
+    ¬ (Antecedent.question (whoCut P b)).Admits (Set.range λ y => cut m y) := λ h =>
+  let ⟨_, hy⟩ := h ⟨x, hx, rfl⟩
+  hxm (Prod.mk.inj (atom_injective hy)).1.symm
+
+end Questions
+
+/-! ### Bare remnant ellipsis (§7–§8)
+
+*She beats [me]F more often than Sue* has two logical forms, with the object or the subject as
+the correlate of the remnant; focus does not enter the grammar of ellipsis but filters the two,
+since the ~ operator at the main clause needs the *than*-clause as an antecedent of the right
+form (64)–(66). -/
+
+section Ellipsis
+
+variable {E : Type} (she me sue : E)
+
+/-- The fact that `x` beats `y`. -/
+def beats (x y : E) : Set (Set (E × E)) := atom (x, y)
+
+/-- Which phrase of the main clause the remnant *Sue* corresponds to. -/
+inductive Correlate where
+  | object
+  | subject
   deriving DecidableEq, Repr
 
-open OnlyWorld
+/-- The *than*-clause under each correlate: 'she beats Sue' or 'Sue beats me'. -/
+def thanClause : Correlate → Set (Set (E × E))
+  | .object => beats she sue
+  | .subject => beats sue me
 
-/-- "Mary introduced Bill to Sue" -/
-def introBill : OnlyWorld → Bool
-  | billOnly => true | tomOnly => false | both => true
-
-/-- "Mary introduced Tom to Sue" -/
-def introTom : OnlyWorld → Bool
-  | billOnly => false | tomOnly => true | both => true
-
-/-- Focus on BILL ((3a)): ordinary value = introBill;
-    alternative set = {introBill, introTom}. Focus constrains the domain of
-    *only*. -/
-def altBillFocused : WithAlternatives (OnlyWorld → Bool) :=
-  { ordinary := introBill, alternatives := {introBill, introTom} }
-
-/-- "Only Bill" = Mary introduced Bill but not Tom. -/
-def onlyBill : OnlyWorld → Bool
-  | billOnly => true | _ => false
-
-/-- "Only Tom" = Mary introduced Tom but not Bill. -/
-def onlyTom : OnlyWorld → Bool
-  | tomOnly => true | _ => false
-
-/-- *Only* with focus on BILL: the prejacent holds and all non-actual
-    alternatives are excluded ((30b)). -/
-theorem only_bill_semantics :
-    ∀ w, onlyBill w = (introBill w && !introTom w) :=
-  fun w => by cases w <;> rfl
-
-/-- *Only* with focus on TOM: symmetric case. -/
-theorem only_tom_semantics :
-    ∀ w, onlyTom w = (introTom w && !introBill w) :=
-  fun w => by cases w <;> rfl
-
-/-- Different domains → different *only* meanings. (The paper's minimal
-    pair (3a)/(3b) varies focus between *Bill* and *Sue*; the model
-    exhibits the domain-dependence on the introducee axis.) -/
-theorem only_focus_determines_meaning :
-    onlyBill ≠ onlyTom :=
-  fun h => absurd (congrFun h billOnly) (by decide)
-
-/-! ### Data rows
-
-The rows (`Data/Examples/Rooth1992.json`) record the paper's (23):
-"MARY cut Bill down to size" is congruent and "#Mary cut BILL down to
-size" incongruent with "Who cut Bill down to size?", and focus
-determines what *only* excludes ((3a)/(3b)). The theory explains both:
-subject focus produces a focus value equal to the question denotation
-(`fip_congruent`), object focus one that excludes a question
-alternative (`fip_fails_object_focus`); and the FIP constrains the
-domain `C` of *only*, so different focus positions yield different
-exclusion domains. -/
-
-/-- The FIP prediction for a row, read off its `focus` feature: subject
-    focus ("Mary") evokes the subject-alternative focus value, object
-    focus ("Bill") the object-alternative one. -/
-def fipPrediction (row : Data.Examples.LinguisticExample) : Prop :=
-  match row.feature? "focus" with
-  | some "Mary" => fip q_whoCutBill fv_subjectFocus
-  | some "Bill" => fip q_whoCutBill fv_objectFocus
-  | _ => False
-
-/-- **Transfer**: a Q-A row is acceptable iff its focus value satisfies
-    the FIP against "Who cut Bill down to size?"
-    ([rooth-1992] (26d)). -/
-theorem qa_acceptable_iff_fip :
-    ∀ row ∈ Examples.all,
-      row.feature? "fip_application" = some "qaCongruence" →
-      (row.judgment = .acceptable ↔ fipPrediction row) := by
-  intro row hrow happ
-  simp only [Examples.all, List.mem_cons, List.not_mem_nil, or_false] at hrow
-  rcases hrow with rfl | rfl | rfl | rfl
-  · exact absurd happ (by decide)
-  · exact absurd happ (by decide)
-  · exact ⟨fun _ => fip_congruent, fun _ => rfl⟩
-  · exact ⟨fun h => absurd h (by decide),
-           fun h => absurd h fip_fails_object_focus⟩
-
-/-- Distinct focusing-adverb rows carry distinct `focus` features: the
-    rows form an association-with-focus minimal pair. -/
-theorem focusingAdverb_rows_differ_in_focus :
-    ∀ r₁ ∈ Examples.all, ∀ r₂ ∈ Examples.all,
-      r₁.feature? "fip_application" = some "focusingAdverb" →
-      r₂.feature? "fip_application" = some "focusingAdverb" →
-      r₁.id ≠ r₂.id → r₁.feature? "focus" ≠ r₂.feature? "focus" := by
-  decide
-
-/-- Bridge: the focusing-adverb rows differ only in focus position
-    ((3a) vs (3b)), and the theory maps distinct domains to distinct
-    *only* meanings. -/
-theorem bridge_only_association :
-    Examples.only_bill.feature? "focus" ≠
-      Examples.only_sue.feature? "focus" ∧
-    onlyBill ≠ onlyTom :=
-  ⟨by decide, only_focus_determines_meaning⟩
-
-/-! ### Montague lexicon and trees
-
-The propositions above were hand-defined. Here they are derived
-compositionally: entity denotations + a world-indexed verb meaning are
-combined via Heim & Kratzer's `interp`, run once per world. The
-particle-verb *cut … down to size* is treated as a single transitive
-lexical item keyed "cut". -/
-
-open Semantics.Composition
-open Semantics.Montague (Lexicon)
-open Syntax
-open Semantics.Composition.Tree
-
-/-- Entity domain for the focus model. -/
-inductive E where
-  | mary | monique | bill | bjorn
+/-- Where the focus falls in the main clause. -/
+inductive FocusSite where
+  | onObject
+  | onSubject
   deriving DecidableEq, Repr
 
-/-- World-indexed verb semantics for "cut (down to size)".
-    `cutInWorld w obj subj` follows Montague's argument order
-    (object first, then subject). -/
-def cutInWorld (w : QAWorld) : Denot E Unit (.e ⇒ .e ⇒ .t) :=
-  fun obj subj => match w, subj, obj with
-  | .maryBill,     .mary,    .bill  => True
-  | .maryBjorn,    .mary,    .bjorn => True
-  | .moniqueBill,  .monique, .bill  => True
-  | .moniqueBjorn, .monique, .bjorn => True
-  | _, _, _ => False
+/-- The focus semantic value of the main clause under each placement of focus. -/
+def mainClause : FocusSite → PropFocusValue (Set (E × E))
+  | .onObject => ((λ y => beats she y) <$> focused me).alternatives
+  | .onSubject => ((λ x => beats x me) <$> focused she).alternatives
 
-/-- Montague lexicon parameterized by world.
-    Maps surface forms to typed denotations. -/
-def focusLex (w : QAWorld) : Lexicon E Unit := fun word =>
-  match word with
-  | "Mary"    => some ⟨.e, E.mary⟩
-  | "Monique" => some ⟨.e, E.monique⟩
-  | "cut"     => some ⟨.e ⇒ .e ⇒ .t, cutInWorld w⟩
-  | "Bill"    => some ⟨.e, E.bill⟩
-  | "Björn"   => some ⟨.e, E.bjorn⟩
-  | _ => none
+/-- (66): the *than*-clause is an antecedent for the focus in the main clause exactly when the
+correlate is the focused phrase, so each reading survives under one placement of focus. -/
+theorem ellipsis_filter (hsm : sue ≠ me) (hss : sue ≠ she) (r : Correlate) (f : FocusSite) :
+    (Antecedent.phrase (thanClause she me sue r)).Resolves (beats she me)
+        (mainClause she me f) ↔
+      (r = .object ↔ f = .onObject) := by
+  cases r <;> cases f <;>
+    simp only [Antecedent.Resolves, thanClause, mainClause, alternatives_map_focused]
+  · exact iff_of_true ⟨⟨sue, rfl⟩, λ h => hsm (Prod.mk.inj (atom_injective h)).2⟩ (by decide)
+  · exact iff_of_false (λ ⟨⟨_, hx⟩, _⟩ => hsm (Prod.mk.inj (atom_injective hx)).2.symm)
+      (by decide)
+  · exact iff_of_false (λ ⟨⟨_, hy⟩, _⟩ => hss (Prod.mk.inj (atom_injective hy)).1.symm)
+      (by decide)
+  · exact iff_of_true ⟨⟨sue, rfl⟩, λ h => hss (Prod.mk.inj (atom_injective h)).1⟩ (by decide)
 
-/-- Syntax tree: [S [NP Mary] [VP [V cut] [NP Bill]]] -/
-def tree_maryCutBill : Tree Unit String :=
-  .bin (.leaf "Mary") (.bin (.leaf "cut") (.leaf "Bill"))
+end Ellipsis
 
-/-- Syntax tree: [S [NP Monique] [VP [V cut] [NP Bill]]] -/
-def tree_moniqueCutBill : Tree Unit String :=
-  .bin (.leaf "Monique") (.bin (.leaf "cut") (.leaf "Bill"))
+/-! ### The rows -/
 
-/-- Syntax tree: [S [NP Mary] [VP [V cut] [NP Björn]]] -/
-def tree_maryCutBjorn : Tree Unit String :=
-  .bin (.leaf "Mary") (.bin (.leaf "cut") (.leaf "Björn"))
+/-- The individuals of the paper's scenarios. -/
+inductive Person where
+  | mary
+  | bill
+  | tom
+  | sue
+  | monique
+  | bjorn
+  deriving DecidableEq, Repr
 
-/-- Default assignment for binding-free trees. -/
-private def g₀ : Assignment E := λ _ => E.mary
+/-- The focus positions of the *only* rows. -/
+inductive OnlyFocus where
+  | bill
+  | sue
+  deriving DecidableEq, Repr
 
-/-- Extract the Prop truth value from a tree interpretation.
-    Returns `none` if the tree is uninterpretable or has non-`t` type. -/
-def treeResult (lex : Lexicon E Unit) (t : Tree Unit String) : Option Prop :=
-  match interp E Unit lex g₀ t with
-  | some ⟨.t, p⟩ => some p
-  | _ => none
+/-- The domain of *only* a focus position constrains, over the introduction scenario. -/
+def OnlyFocus.domain : OnlyFocus → PropFocusValue (Set (Person × Person × Person))
+  | .bill => Set.range λ y => intro Person.mary y .sue
+  | .sue => Set.range λ z => intro Person.mary .bill z
 
-/-! ### Grounding the stipulated propositions -/
+/-- The focus position and the truth value an *only* row reports. -/
+def onlyRow (r : LinguisticExample) : Option (OnlyFocus × Bool) := do
+  let f ← r.parse? "focus" [("Bill", OnlyFocus.bill), ("Sue", .sue)]
+  let v ← r.parse? "truth" [("true", true), ("false", false)]
+  pure (f, v)
 
-/-- Compositionally derived "Mary cut Bill" proposition. -/
-def maryCutBill_comp : QAWorld → Prop :=
-  fun w => (treeResult (focusLex w) tree_maryCutBill).getD False
+/-- The *only* rows: (3a) false and (3b) true. -/
+def onlyData : List (OnlyFocus × Bool) := Examples.all.filterMap onlyRow
 
-/-- Compositionally derived "Monique cut Bill" proposition. -/
-def moniqueCutBill_comp : QAWorld → Prop :=
-  fun w => (treeResult (focusLex w) tree_moniqueCutBill).getD False
+/-- (3a) and (3b): a row is true in the introduction scenario iff *only* over the domain its
+focus constrains holds there. -/
+theorem only_rows : ∀ d ∈ onlyData, (d.2 = true ↔
+    scenario Person.mary .bill .tom .sue ∈ onlyVia d.1.domain (intro Person.mary .bill .sue)) := by
+  intro d hd
+  rw [show onlyData = [(.bill, false), (.sue, true)] by decide] at hd
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hd
+  rcases hd with rfl | rfl
+  · exact ⟨λ h => absurd h Bool.false_ne_true, λ h => absurd h (three_a _ _ _ _ (by decide))⟩
+  · exact ⟨λ _ => three_b _ _ _ _ (by decide), λ _ => rfl⟩
 
-/-- Compositionally derived "Mary cut Björn" proposition. -/
-def maryCutBjorn_comp : QAWorld → Prop :=
-  fun w => (treeResult (focusLex w) tree_maryCutBjorn).getD False
+/-- The questions of (23). -/
+inductive Q where
+  | whoCutBill
+  | whoDidMaryCut
+  deriving DecidableEq, Repr
 
-/-- Direct function application matches tree interpretation. -/
-theorem direct_eq_interp (w : QAWorld) :
-    treeResult (focusLex w) tree_maryCutBill =
-    some (cutInWorld w E.bill E.mary) := by
-  cases w <;> rfl
+/-- The denotation of a question, over all persons. -/
+def Q.den : Q → PropFocusValue (Set (Person × Person))
+  | .whoCutBill => whoCut Set.univ .bill
+  | .whoDidMaryCut => (λ y => cut Person.mary y) '' Set.univ
 
-/-- Grounding: compositional "Mary cut Bill" agrees with the
-    hand-defined proposition at each world. -/
-theorem comp_grounds_maryCutBill :
-    maryCutBill_comp = fun w => cutInWorld w E.bill E.mary := by
-  funext w; cases w <;> rfl
+/-- The focus positions of the answers of (23). -/
+inductive AnswerFocus where
+  | mary
+  | bill
+  deriving DecidableEq, Repr
 
-/-- Grounding: compositional "Monique cut Bill" = direct application. -/
-theorem comp_grounds_moniqueCutBill :
-    moniqueCutBill_comp = fun w => cutInWorld w E.bill E.monique := by
-  funext w; cases w <;> rfl
+/-- The focus semantic value of an answer. -/
+def AnswerFocus.value : AnswerFocus → PropFocusValue (Set (Person × Person))
+  | .mary => Set.range λ x => cut x Person.bill
+  | .bill => Set.range λ y => cut Person.mary y
 
-/-- Grounding: compositional "Mary cut Björn" = direct application. -/
-theorem comp_grounds_maryCutBjorn :
-    maryCutBjorn_comp = fun w => cutInWorld w E.bjorn E.mary := by
-  funext w; cases w <;> rfl
+/-- The question, the answer's focus position, and the judgment of a question-answer row. -/
+def qaRow (r : LinguisticExample) : Option (Q × AnswerFocus × Bool) := do
+  let q ← r.parse? "question" [("whoCutBill", Q.whoCutBill), ("whoDidMaryCut", .whoDidMaryCut)]
+  let f ← r.parse? "focus" [("Mary", AnswerFocus.mary), ("Bill", .bill)]
+  pure (q, f, decide (r.judgment = .acceptable))
 
-/-! ### The focus dimension through the engine
+/-- The question-answer rows of (23). -/
+def qaData : List (Q × AnswerFocus × Bool) := Examples.all.filterMap qaRow
 
-F-marking is a non-`pure` lexicon entry: the same `interp` that
-computes ordinary values at `M = Id` computes focus values at
-`M = WithAlternatives` (`pure = WithAlternatives.unfeatured` lifts the focus-free
-entries), with `applyForward`'s `<*>` doing Hamblin functional
-application. -/
-
-/-- Alternatives do not distribute through predicate abstraction —
-    the honest `none`. -/
-instance (E W D : Type) : PredAbs WithAlternatives E W D := ⟨none⟩
-
-/-- The focus lexicon at `M = WithAlternatives`: every entry `pure`-lifts
-    except focused *[Mary]F*, whose entry carries the subject
-    alternatives. -/
-def focusLexF (w : QAWorld) : Lexicon E Unit WithAlternatives := fun word =>
-  match word with
-  | "Mary" => some ⟨.e, (⟨E.mary, {E.mary, E.monique}⟩ : WithAlternatives _)⟩
-  | w' => Lexicon.lift WithAlternatives (focusLex w) w'
-
-/-- Focus-dimension tree interpretation. -/
-def treeResultF (lex : Lexicon E Unit WithAlternatives) (t : Tree Unit String) :
-    Option (WithAlternatives Prop) :=
-  match interp E Unit lex g₀ t with
-  | some ⟨.t, p⟩ => some p
-  | _ => none
-
-/-- The engine at `M = WithAlternatives` computes the two-dimensional meaning
-    of *[MARY]F cut Bill down to size*: the ordinary value is the ordinary
-    interpretation and the alternative set is the subject-alternative family —
-    the focus value is computed, not stipulated. -/
-theorem treeResultF_maryCutBill (w : QAWorld) :
-    treeResultF (focusLexF w) tree_maryCutBill =
-      some ⟨cutInWorld w E.bill E.mary,
-            {cutInWorld w E.bill E.mary, cutInWorld w E.bill E.monique}⟩ := by
-  cases w <;>
-    · refine congrArg some (WithAlternatives.ext rfl ?_)
-      ext q
-      simp [eq_comm]
-
-/-- O-projection through the engine: mapping `ordinary` over the
-    `WithAlternatives` run recovers the `Id` run. -/
-theorem treeResultF_ordinary (w : QAWorld) :
-    (treeResultF (focusLexF w) tree_maryCutBill).map (·.ordinary) =
-      treeResult (focusLex w) tree_maryCutBill := by
-  cases w <;> rfl
-
-/-- The stipulated `fv_subjectFocus` is exactly the engine's computed
-    alternative family, read as proposition sets. -/
-theorem fv_subjectFocus_computed :
-    fv_subjectFocus =
-      {{w | cutInWorld w E.bill E.mary}, {w | cutInWorld w E.bill E.monique}} := by
-  have h1 : ({w | cutInWorld w E.bill E.mary} : Set QAWorld) = maryCutBill := by
-    ext w; cases w <;> simp [cutInWorld, maryCutBill]
-  have h2 : ({w | cutInWorld w E.bill E.monique} : Set QAWorld) = moniqueCutBill := by
-    ext w; cases w <;> simp [cutInWorld, moniqueCutBill]
-  rw [h1, h2]
-  rfl
-
-/-! ### Fragment connection
-
-Fragment entries provide morphological and syntactic properties; the
-bridge verifies these are consistent with the model and that fragment
-surface forms feed the compositional lexicon. -/
-
-section FragmentNouns
-open English.Nouns
-
-/-- Mary is a proper name in the English fragment. -/
-theorem fragment_mary_proper : mary.proper = true := rfl
-
-/-- Bill is a proper name in the English fragment. -/
-theorem fragment_bill_proper : bill.proper = true := rfl
-
-/-- Fragment surface forms feed the Montague lexicon.
-    The form field of each fragment entry matches a lexicon key. -/
-theorem fragment_mary_in_lexicon :
-    (focusLex .maryBill mary.formSg).isSome = true := rfl
-
-theorem fragment_bill_in_lexicon :
-    (focusLex .maryBill bill.formSg).isSome = true := rfl
-
-end FragmentNouns
-
-section FragmentVerbs
-open English.Predicates.Verbal
-
-/-- "cut" is transitive (NP frame). -/
-theorem fragment_cut_transitive : cut.frames = [.np] := rfl
-
-/-- "cut" has (irregular) past tense "cut" matching the lexicon key. -/
-theorem fragment_cut_past_form : cut.formPast = "cut" := rfl
-
-/-- The past form of "cut" is in the Montague lexicon. -/
-theorem fragment_cut_past_in_lexicon :
-    (focusLex .maryBill cut.formPast).isSome = true := rfl
-
-end FragmentVerbs
-
-/-! ### End to end -/
-
-/-- End-to-end: at each world, the compositional derivation produces
-    the same truth values as the hand-defined propositions used to
-    build the Hamblin question. -/
-theorem endToEnd_question_grounded :
-    (∀ w, treeResult (focusLex w) tree_maryCutBill = some (cutInWorld w E.bill E.mary)) ∧
-    (∀ w, treeResult (focusLex w) tree_moniqueCutBill = some (cutInWorld w E.bill E.monique)) :=
-  ⟨fun w => by cases w <;> rfl, fun w => by cases w <;> rfl⟩
+/-- (23): an answer is appropriate iff the question denotation lies inside its focus semantic
+value. -/
+theorem qa_rows : ∀ d ∈ qaData,
+    (d.2.2 = true ↔ (Antecedent.question d.1.den).Admits d.2.1.value) := by
+  intro d hd
+  rw [show qaData = [(.whoCutBill, .mary, true), (.whoCutBill, .bill, false),
+    (.whoDidMaryCut, .bill, true), (.whoDidMaryCut, .mary, false)] by decide] at hd
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hd
+  rcases hd with rfl | rfl | rfl | rfl
+  · exact ⟨λ _ => Set.image_subset_range _ _, λ _ => rfl⟩
+  · exact ⟨λ h => absurd h Bool.false_ne_true,
+      λ h => absurd h (question_rejects_objectFocus _ _ _ (Set.mem_univ Person.monique)
+        (by decide))⟩
+  · exact ⟨λ _ => Set.image_subset_range _ _, λ _ => rfl⟩
+  · refine ⟨λ h => absurd h Bool.false_ne_true, λ h => ?_⟩
+    obtain ⟨_, hy⟩ := h ⟨Person.bjorn, Set.mem_univ _, rfl⟩
+    exact absurd (Prod.mk.inj (atom_injective hy)).2 (by decide)
 
 end Rooth1992
