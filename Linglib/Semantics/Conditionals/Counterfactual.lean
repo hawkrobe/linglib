@@ -29,13 +29,8 @@ Formalization of three competing theories of counterfactual conditionals.
    - Presupposes: all closest A-worlds agree on B
    - Asserts: they all satisfy B (given the presupposition)
 
-## Key Prediction: Quantifier Embedding
-
-The theories diverge when counterfactuals are embedded under quantifiers
-in mixed scenarios:
-- Selectional: quantifier STRENGTH determines truth values (QUD-independent)
-- Homogeneity: QUD × polarity interaction
-- Universal: all individual CFs false → strength-independent
+The theories' predictions for counterfactuals embedded under quantifiers are derived in
+`Studies/RamotowskaEtAl2025.lean`.
 -/
 
 namespace Conditionals.Counterfactual
@@ -345,33 +340,6 @@ theorem selectional_as_supervaluation {W : Type*} [DecidableEq W] [Fintype W]
     by_cases hF : ∀ w' ∈ sim.closestWorlds w (Finset.univ.filter A), ¬ B w'
     · rw [if_pos hF, if_pos hF]
     · rw [if_neg hF, if_neg hF]
-
--- ════════════════════════════════════════════════════
--- Architectural Grounding via Aggregation Pushforward
--- ════════════════════════════════════════════════════
-
-/-!
-## Connection to Aggregation Pushforward
-
-`projectTruthValues` delegates directly to `Trivalent.aggregate`, so
-`embeddedSelectional_determinate` and `strength_determines_pattern` (in
-`QuantifierEmbedding.lean`) are thin wrappers around
-`Duality.aggregate_map_ofBool_ne_indet` and `Duality.aggregate_map_ofBool_mixed`
-respectively.
-
-The companion fact `aggregate_replicate_indet` (also in `Duality.lean`)
-captures the homogeneity theory's architecture: when all inputs are
-gaps, both existential and universal aggregation return gap — strength
-is invisible.
--/
-
-/-- The selectional theory's strength-effect prediction is an instance of
-    the global aggregation pattern: mixed Bool inputs split duality types. -/
-theorem selectional_is_global_architecture (bs : List Bool)
-    (h_some_true : bs.any id) (h_some_false : bs.any (!·)) :
-    Trivalent.aggregate .disjunctive (bs.map Trivalent.ofBool) = .true ∧
-    Trivalent.aggregate .conjunctive (bs.map Trivalent.ofBool) = .false :=
-  Trivalent.aggregate_map_ofBool_mixed bs h_some_true h_some_false
 
 -- ════════════════════════════════════════════════════
 -- Might Counterfactuals: Lewis vs Stalnaker
