@@ -1,0 +1,403 @@
+[
+  {
+    "id": "sandeclemdabkowski2026_ex11a",
+    "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(11a)"},
+    "language": "gabo1234",
+    "primaryText": "e ji ɟaci joku-ni",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["e", "1SG.NOM"], ["ji", "FUT"], ["ɟaci", "Djatchi"], ["joku-ni", "PART-see"]
+    ],
+    "translation": "I will see Djatchi.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["order", "SAuxOPartV"],
+      ["pattern", "S Aux O Part V"],
+      ["verb", "ni"],
+      ["particleATR", "plus"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sandeclemdabkowski2026_ex11b",
+    "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(11b)"},
+    "language": "gabo1234",
+    "primaryText": "e ni ɟaci jɔkʊ",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["e", "1SG.NOM"], ["ni", "see.PFV"], ["ɟaci", "Djatchi"], ["jɔkʊ", "PART"]
+    ],
+    "translation": "I saw Djatchi.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["order", "SVOPart"],
+      ["pattern", "S V O Part"],
+      ["verb", "ni"],
+      ["particleATR", "minus"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sandeclemdabkowski2026_ex11c",
+    "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(11c)"},
+    "language": "gabo1234",
+    "primaryText": "e joku-ni ɟaci",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["e", "1SG.NOM"], ["joku-ni", "PART-see.PFV"], ["ɟaci", "Djatchi"]
+    ],
+    "translation": "I saw Djatchi.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "S Part V O"]
+    ],
+    "comment": "The particle cannot surface with the verb in the post-subject position.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sandeclemdabkowski2026_ex12b",
+    "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(12b)"},
+    "language": "gabo1234",
+    "primaryText": "ɟaci ji ɔnɛ ɡbɔɡɔ jɔkʊ-ŋwɔsa",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ɟaci", "Djatchi"], ["ji", "FUT"], ["ɔnɛ", "3SG.POSS"], ["ɡbɔɡɔ", "leg"],
+      ["jɔkʊ-ŋwɔsa", "PART-scrape"]
+    ],
+    "translation": "Djatchi will scrape his leg.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["order", "SAuxOPartV"],
+      ["pattern", "S Aux O Part V"],
+      ["verb", "ngwOsa"],
+      ["particleATR", "minus"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sandeclemdabkowski2026_ex13b",
+    "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(13b)"},
+    "language": "gabo1234",
+    "primaryText": "ɟaci ŋwɔsa ɔnɛ ɡbɔɡɔ jɔkʊ",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ɟaci", "Djatchi"], ["ŋwɔsa", "scrape.PFV"], ["ɔnɛ", "3SG.POSS"], ["ɡbɔɡɔ", "leg"],
+      ["jɔkʊ", "PART"]
+    ],
+    "translation": "Djatchi scraped his leg.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["order", "SVOPart"],
+      ["pattern", "S V O Part"],
+      ["verb", "ngwOsa"],
+      ["particleATR", "minus"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sandeclemdabkowski2026_ex21a",
+    "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(21a)"},
+    "language": "gabo1234",
+    "primaryText": "jɔkʊ ɔ ni=ɔ",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["jɔkʊ", "PART"], ["ɔ", "3SG.NOM"], ["ni=ɔ", "see.PFV=3SG.ACC"]
+    ],
+    "translation": "He SAW him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["order", "PartSVO"],
+      ["pattern", "Part S V O"],
+      ["verb", "ni"],
+      ["particleATR", "minus"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sandeclemdabkowski2026_ex21b",
+    "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(21b)"},
+    "language": "gabo1234",
+    "primaryText": "joku-ni ɔ ni=ɔ",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["joku-ni", "PART-see"], ["ɔ", "3SG.NOM"], ["ni=ɔ", "see.PFV=3SG.ACC"]
+    ],
+    "translation": "He SAW him.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "Part V S V O"]
+    ],
+    "comment": "Also unacceptable with a clause-final copy of the particle.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sandeclemdabkowski2026_ex21c",
+    "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(21c)"},
+    "language": "gabo1234",
+    "primaryText": "ni ɔ ni=ɔ jɔkʊ",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ni", "see"], ["ɔ", "3SG.NOM"], ["ni=ɔ", "see.PFV=3SG.ACC"], ["jɔkʊ", "PART"]
+    ],
+    "translation": "He SAW him.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "V S V O Part"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sandeclemdabkowski2026_ex21d",
+    "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(21d)"},
+    "language": "gabo1234",
+    "primaryText": "ni ɔ =ɔ jɔkʊ",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ni", "see"], ["ɔ", "3SG.NOM"], ["=ɔ", "3SG.ACC"], ["jɔkʊ", "PART"]
+    ],
+    "translation": "He SAW him.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "V S O Part"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sandeclemdabkowski2026_ex21e",
+    "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(21e)"},
+    "language": "gabo1234",
+    "primaryText": "joku ɔ ni=ɔ jɔkʊ",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["joku", "PART"], ["ɔ", "3SG.NOM"], ["ni=ɔ", "see.PFV=3SG.ACC"], ["jɔkʊ", "PART"]
+    ],
+    "translation": "He SAW him.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "Part S V O Part"]
+    ],
+    "comment": "Unacceptable with either value of the fronted particle's vowels.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sandeclemdabkowski2026_ex22",
+    "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(22)"},
+    "language": "gabo1234",
+    "primaryText": "joku ɔ ji ɟaci ni",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["joku", "PART"], ["ɔ", "3SG.NOM"], ["ji", "FUT"], ["ɟaci", "Djatchi"], ["ni", "see"]
+    ],
+    "translation": "He will SEE Djatchi.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["order", "PartSAuxOV"],
+      ["pattern", "Part S Aux O V"],
+      ["verb", "ni"],
+      ["particleATR", "plus"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sandeclemdabkowski2026_ex24b",
+    "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(24b)"},
+    "language": "gabo1234",
+    "primaryText": "joku ɔ ji ɟaci ni",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["joku", "PART"], ["ɔ", "3SG.NOM"], ["ji", "FUT"], ["ɟaci", "Djatchi"], ["ni", "see"]
+    ],
+    "translation": "He will SEE Djatchi.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "jɔkʊ ɔ ji ɟaci ni", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["order", "PartSAuxOV"],
+      ["pattern", "Part S Aux O V"],
+      ["verb", "ni"],
+      ["particleATR", "plus"]
+    ],
+    "comment": "The fronted particle harmonizes with the clause-final verb across the subject, auxiliary and object.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sandeclemdabkowski2026_ex49a",
+    "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(49a)"},
+    "language": "nucl1347",
+    "primaryText": "fas w-ale",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["fas", "horse"], ["w-ale", "CL-DEM.DIST"]
+    ],
+    "translation": "that horse",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["shape", "localDP"],
+      ["headATR", "minus"],
+      ["demATR", "minus"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sandeclemdabkowski2026_ex49b",
+    "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(49b)"},
+    "language": "nucl1347",
+    "primaryText": "béy w-ëlé",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["béy", "goat"], ["w-ëlé", "CL-DEM.DIST"]
+    ],
+    "translation": "that goat",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["shape", "localDP"],
+      ["headATR", "plus"],
+      ["demATR", "plus"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sandeclemdabkowski2026_ex50a",
+    "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(50a)"},
+    "language": "nucl1347",
+    "primaryText": "xaj b-u weex b-ale",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["xaj", "dog"], ["b-u", "CL-REL"], ["weex", "be.white"], ["b-ale", "CL-DEM.DIST"]
+    ],
+    "translation": "that white dog",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["shape", "relClause"],
+      ["headATR", "minus"],
+      ["stativeATR", "minus"],
+      ["demATR", "minus"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sandeclemdabkowski2026_ex50b",
+    "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(50b)"},
+    "language": "nucl1347",
+    "primaryText": "béy w-u réy w-ëlé",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["béy", "goat"], ["w-u", "CL-REL"], ["réy", "be.big"], ["w-ëlé", "CL-DEM.DIST"]
+    ],
+    "translation": "that big goat",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["shape", "relClause"],
+      ["headATR", "plus"],
+      ["stativeATR", "plus"],
+      ["demATR", "plus"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sandeclemdabkowski2026_ex50c",
+    "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(50c)"},
+    "language": "nucl1347",
+    "primaryText": "xaj b-u réy b-ale",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["xaj", "dog"], ["b-u", "CL-REL"], ["réy", "be.big"], ["b-ale", "CL-DEM.DIST"]
+    ],
+    "translation": "that big dog",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["shape", "relClause"],
+      ["headATR", "minus"],
+      ["stativeATR", "plus"],
+      ["demATR", "minus"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sandeclemdabkowski2026_ex50d",
+    "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(50d)"},
+    "language": "nucl1347",
+    "primaryText": "béy w-u weex w-ëlé",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["béy", "goat"], ["w-u", "CL-REL"], ["weex", "be.white"], ["w-ëlé", "CL-DEM.DIST"]
+    ],
+    "translation": "that white goat",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["shape", "relClause"],
+      ["headATR", "plus"],
+      ["stativeATR", "minus"],
+      ["demATR", "plus"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  }
+]
