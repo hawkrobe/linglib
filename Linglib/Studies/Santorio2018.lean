@@ -3,20 +3,20 @@ import Linglib.Studies.McKayVanInwagen1977
 import Mathlib.Data.List.Sublists
 
 /-!
-# Santorio (2018): alternatives and truthmakers in conditional semantics
+# Santorio (2018): Alternatives and Truthmakers in Conditional Semantics
 
-[santorio-2018] starts from a trilemma: counterfactuals invalidate Antecedent
-Strengthening, validate Simplification of Disjunctive Antecedents, and validate
-Substitution of Logical Equivalents in the antecedent, yet with Boolean disjunction the
-last two entail the first. The paper keeps the first and gives up the other two by letting
-an *if*-clause denote the set of *truthmakers* of its antecedent: the conjunctive closures
-of the minimal stable subsets of the antecedent's alternatives that entail it, where a
-subset is stable when it is consistent with the negation of every alternative outside it
-(§5: `Stable`, `MinimalStable`, `truthmakers`). The conditional is a description of that
-set (§6): with the optional distributivity operator `DIST_π` it holds of each truthmaker,
-which is Simplification (`distributiveConditional`), and without it the modal *would*
-extracts the disjunctive closure, which is not (`collectiveConditional`); `DIST_π` carries
-the all-or-nothing homogeneity presupposition (`homogeneityPresup`). The readings are
+This file formalizes the paper's truthmaker semantics for conditionals. The paper starts from
+a trilemma: counterfactuals invalidate Antecedent Strengthening, validate Simplification of
+Disjunctive Antecedents, and validate Substitution of Logical Equivalents in the antecedent,
+yet with Boolean disjunction the last two entail the first. It keeps the first and gives up
+the other two by letting an *if*-clause denote the set of truthmakers of its antecedent: the
+conjunctive closures of the minimal stable subsets of the antecedent's alternatives that
+entail it, where a subset is stable when it is consistent with the negation of every
+alternative outside it (`Stable`, `MinimalStable`, `truthmakers`). The conditional is a
+description of that set: with the optional distributivity operator it holds of each
+truthmaker, which is Simplification (`distributiveConditional`), and without it the modal
+*would* extracts the disjunctive closure, which is not (`collectiveConditional`); the operator
+carries the all-or-nothing homogeneity presupposition (`homogeneityPresup`). The readings are
 those of `Semantics/Conditionals/Counterfactual/Alternatives.lean` over the truthmakers.
 
 On *Otto or Anna went to the party* (44) the truthmakers are *Otto went* and *Anna went*
@@ -24,11 +24,26 @@ On *Otto or Anna went to the party* (44) the truthmakers are *Otto went* and *An
 global algorithm finds the mixed truthmaker *some read Anna Karenina and some read War and
 Peace* that [alonso-ovalle-2009]'s disjunct alternatives cannot (`karenina_truthmakers`,
 `karenina_mixed_not_alonsoOvalle`), predicting the infelicity of (39). On
-[mckay-vaninwagen-1977]'s Spain case, the paper's (8), the collective parsing is true and
-the distributive one is not, so Antecedent Strengthening fails and Simplification is not
-validated (`spain_collective`, `spain_not_distributive`, `spain_homogeneity`); and on
-(57)–(58), logically equivalent antecedents whose *if*-clauses denote different sets
-receive different distributive verdicts (`substitution_fails`).
+[mckay-vaninwagen-1977]'s Spain case (8) the collective parsing is true and the distributive
+one is not, so Antecedent Strengthening fails and Simplification is not validated
+(`spain_collective`, `spain_not_distributive`, `spain_homogeneity`); and on (57)–(58),
+logically equivalent antecedents whose *if*-clauses denote different sets receive different
+distributive verdicts (`substitution_fails`).
+
+## Implementation notes
+
+The formalization is checked against the author's revised draft, whose example numbering the
+labels follow; the draft's definition of a truthmaker once says "maximal stable" where its
+text and its examples require minimal stability. The empty set of alternatives, stable
+whenever some world falsifies every alternative, is excluded from the minimal stable sets, as
+the paper's examples presuppose. Alternatives are given as propositions over a finite world
+type rather than generated from syntactic substitution sources.
+
+## References
+
+* [santorio-2018]
+* [alonso-ovalle-2009]
+* [mckay-vaninwagen-1977]
 -/
 
 namespace Santorio2018
@@ -65,8 +80,8 @@ def conjunctiveClosure (σ : List (Finset W)) : Finset W := σ.foldr (· ∩ ·)
 /-- The truthmakers of `S` relative to `alts`: the conjunctive closures of the minimal stable
 subsets of `alts` that entail `S` — the denotation of the *if*-clause. -/
 def truthmakers (alts : List (Finset W)) (S : Finset W) : List (Finset W) :=
-  ((alts.sublists.filter fun σ => decide (MinimalStable alts σ)).map conjunctiveClosure).filter
-    fun p => decide (p ⊆ S)
+  ((alts.sublists.filter λ σ => decide (MinimalStable alts σ)).map conjunctiveClosure).filter
+    λ p => decide (p ⊆ S)
 
 theorem subset_of_mem_truthmakers {alts : List (Finset W)} {S p : Finset W}
     (h : p ∈ truthmakers alts S) : p ⊆ S := by
@@ -74,7 +89,7 @@ theorem subset_of_mem_truthmakers {alts : List (Finset W)} {S p : Finset W}
 
 /-- The disjunctive closure of the truthmakers is at most the antecedent. -/
 theorem disjunctiveClosure_truthmakers_subset (alts : List (Finset W)) (S : Finset W) :
-    disjunctiveClosure (truthmakers alts S) ⊆ S := fun _ hx =>
+    disjunctiveClosure (truthmakers alts S) ⊆ S := λ _ hx =>
   let ⟨_, hp, hxp⟩ := (mem_disjunctiveClosure _).1 hx
   subset_of_mem_truthmakers hp hxp
 
@@ -197,7 +212,7 @@ end Spain
 /-- Closeness for the party: the Anna-only world is closest to the actual world, then the
 world where both came, then Otto's. -/
 def partySim : SimilarityOrdering Party := .ofBool
-  (fun _ w₁ w₂ => w₁ == w₂ || (w₁ == .annaOnly && w₂ != .neither) ||
+  (λ _ w₁ w₂ => w₁ == w₂ || (w₁ == .annaOnly && w₂ != .neither) ||
     (w₁ == .both && w₂ == .ottoOnly))
   (by decide) (by decide)
 
