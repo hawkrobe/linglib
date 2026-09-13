@@ -1,0 +1,252 @@
+[
+  {
+    "id": "ross1967_ex4_15a",
+    "source": {"bibkey": "ross-1967", "paperLabel": "(4.15a)"},
+    "language": "stan1293",
+    "primaryText": "Who does Phineas know a girl who is jealous of?",
+    "glossedTokens": [],
+    "translation": "Who does Phineas know a girl who is jealous of?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["rule", "question"],
+      ["constraint", "CNPC"]
+    ],
+    "comment": "Questioning out of a relative clause on a lexically headed NP."
+  },
+  {
+    "id": "ross1967_ex4_18a",
+    "source": {"bibkey": "ross-1967", "paperLabel": "(4.18a)"},
+    "language": "stan1293",
+    "primaryText": "The hat which I believed the claim that Otto was wearing is red.",
+    "glossedTokens": [],
+    "translation": "The hat which I believed the claim that Otto was wearing is red.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["rule", "relativization"],
+      ["constraint", "CNPC"]
+    ],
+    "comment": "Relativization out of a noun complement clause under the lexical head noun claim."
+  },
+  {
+    "id": "ross1967_ex4_18b",
+    "source": {"bibkey": "ross-1967", "paperLabel": "(4.18b)"},
+    "language": "stan1293",
+    "primaryText": "The hat which I believed that Otto was wearing is red.",
+    "glossedTokens": [],
+    "translation": "The hat which I believed that Otto was wearing is red.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["rule", "relativization"]
+    ],
+    "comment": "The minimal pair of (4.18a): the complement clause is not dominated by a lexically headed NP."
+  },
+  {
+    "id": "ross1967_ex2_18",
+    "source": {"bibkey": "ross-1967", "paperLabel": "(2.18)"},
+    "language": "stan1293",
+    "primaryText": "What sofa will he put the chair between some table and?",
+    "glossedTokens": [],
+    "translation": "What sofa will he put the chair between some table and?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["rule", "question"],
+      ["constraint", "CSC"]
+    ],
+    "comment": "Questioning a conjunct."
+  },
+  {
+    "id": "ross1967_ex4_82a",
+    "source": {"bibkey": "ross-1967", "paperLabel": "(4.82a)"},
+    "language": "stan1293",
+    "primaryText": "The lute which Henry plays and sings madrigals is warped.",
+    "glossedTokens": [],
+    "translation": "The lute which Henry plays and sings madrigals is warped.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["rule", "relativization"],
+      ["constraint", "CSC"]
+    ],
+    "comment": "Relativization out of a conjoined VP."
+  },
+  {
+    "id": "ross1967_ex4_82d",
+    "source": {"bibkey": "ross-1967", "paperLabel": "(4.82d)"},
+    "language": "stan1293",
+    "primaryText": "Which trombone did the nurse polish and the plumber computed my tax?",
+    "glossedTokens": [],
+    "translation": "Which trombone did the nurse polish and the plumber computed my tax?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["rule", "question"],
+      ["constraint", "CSC"]
+    ],
+    "comment": "Questioning out of a conjoined S."
+  },
+  {
+    "id": "ross1967_ex4_184a",
+    "source": {"bibkey": "ross-1967", "paperLabel": "(4.184a)"},
+    "language": "stan1293",
+    "primaryText": "The boy whose guardian's employer we elected president ratted on us.",
+    "glossedTokens": [],
+    "translation": "The boy whose guardian's employer we elected president ratted on us.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["rule", "relativization"]
+    ],
+    "comment": "Relativization of the largest NP, the pied-piping output the Left Branch Condition leaves."
+  },
+  {
+    "id": "ross1967_ex4_184b",
+    "source": {"bibkey": "ross-1967", "paperLabel": "(4.184b)"},
+    "language": "stan1293",
+    "primaryText": "The boy whose guardian's we elected employer president ratted on us.",
+    "glossedTokens": [],
+    "translation": "The boy whose guardian's we elected employer president ratted on us.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["rule", "relativization"],
+      ["constraint", "LBC"]
+    ],
+    "comment": "Relativization of the possessor NP on the left branch of the object NP."
+  },
+  {
+    "id": "ross1967_ex4_184c",
+    "source": {"bibkey": "ross-1967", "paperLabel": "(4.184c)"},
+    "language": "stan1293",
+    "primaryText": "The boy whose we elected guardian's employer president ratted on us.",
+    "glossedTokens": [],
+    "translation": "The boy whose we elected guardian's employer president ratted on us.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["rule", "relativization"],
+      ["constraint", "LBC"]
+    ],
+    "comment": "Relativization of the lowest possessor NP, on the left branch of the possessor NP."
+  },
+  {
+    "id": "ross1967_ex4_251a",
+    "source": {"bibkey": "ross-1967", "paperLabel": "(4.251a)"},
+    "language": "stan1293",
+    "primaryText": "The teacher who the reporters expected that the principal would fire is a crusty old battleax.",
+    "glossedTokens": [],
+    "translation": "The teacher who the reporters expected that the principal would fire is a crusty old battleax.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["rule", "relativization"]
+    ],
+    "comment": "Relativization out of an object that-clause."
+  },
+  {
+    "id": "ross1967_ex4_251b",
+    "source": {"bibkey": "ross-1967", "paperLabel": "(4.251b)"},
+    "language": "stan1293",
+    "primaryText": "The teacher who that the principal would fire was expected by the reporters is a crusty old battleax.",
+    "glossedTokens": [],
+    "translation": "The teacher who that the principal would fire was expected by the reporters is a crusty old battleax.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["rule", "relativization"],
+      ["constraint", "SSC"]
+    ],
+    "comment": "Relativization out of the that-clause in subject position, the passive of (4.250a); no lexical head noun is involved."
+  },
+  {
+    "id": "ross1967_ex4_251c",
+    "source": {"bibkey": "ross-1967", "paperLabel": "(4.251c)"},
+    "language": "stan1293",
+    "primaryText": "The teacher who it was expected by the reporters that the principal would fire is a crusty old battleax.",
+    "glossedTokens": [],
+    "translation": "The teacher who it was expected by the reporters that the principal would fire is a crusty old battleax.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["rule", "relativization"]
+    ],
+    "comment": "Relativization out of the extraposed that-clause."
+  },
+  {
+    "id": "ross1967_ex4_252",
+    "source": {"bibkey": "ross-1967", "paperLabel": "(4.252)"},
+    "language": "stan1293",
+    "primaryText": "Of which cars were the hoods damaged by the explosion?",
+    "glossedTokens": [],
+    "translation": "Of which cars were the hoods damaged by the explosion?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["rule", "question"]
+    ],
+    "comment": "Questioning a subconstituent of a phrasal, not sentential, subject."
+  },
+  {
+    "id": "ross1967_ex6_128b",
+    "source": {"bibkey": "ross-1967", "paperLabel": "(6.128b)"},
+    "language": "stan1293",
+    "primaryText": "My father, the man he works with in Boston is going to tell the police that that traffic expert has set that traffic light on the corner of Murk Street far too slow.",
+    "glossedTokens": [],
+    "translation": "My father, the man he works with in Boston is going to tell the police that that traffic expert has set that traffic light on the corner of Murk Street far too slow.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["rule", "leftDislocation"],
+      ["constraint", "CNPC"]
+    ],
+    "comment": "Left Dislocation out of a relative clause on a lexically headed NP, leaving a pronoun."
+  },
+  {
+    "id": "ross1967_ex6_135b",
+    "source": {"bibkey": "ross-1967", "paperLabel": "(6.135b)"},
+    "language": "stan1293",
+    "primaryText": "This guitar, I've sung folksongs and accompanied myself on it all my life.",
+    "glossedTokens": [],
+    "translation": "This guitar, I've sung folksongs and accompanied myself on it all my life.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["rule", "leftDislocation"],
+      ["constraint", "CSC"]
+    ],
+    "comment": "Left Dislocation out of a conjunct."
+  },
+  {
+    "id": "ross1967_ex6_136",
+    "source": {"bibkey": "ross-1967", "paperLabel": "(6.136)"},
+    "language": "stan1293",
+    "primaryText": "My father, that he's lived here all his life is well-known to the cops.",
+    "glossedTokens": [],
+    "translation": "My father, that he's lived here all his life is well-known to the cops.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["rule", "leftDislocation"],
+      ["constraint", "SSC"]
+    ],
+    "comment": "Left Dislocation out of a sentential subject."
+  },
+  {
+    "id": "ross1967_ex6_137",
+    "source": {"bibkey": "ross-1967", "paperLabel": "(6.137)"},
+    "language": "stan1293",
+    "primaryText": "My wife, somebody stole her handbag last night.",
+    "glossedTokens": [],
+    "translation": "My wife, somebody stole her handbag last night.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["rule", "leftDislocation"],
+      ["constraint", "LBC"]
+    ],
+    "comment": "Left Dislocation of a possessor on the left branch of an NP."
+  }
+]
