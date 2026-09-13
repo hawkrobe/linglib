@@ -7,8 +7,7 @@ import Mathlib.Order.Basic
 import Mathlib.Data.Finset.Max
 import Linglib.Core.Algebra.Order.ToIntervalMod
 import Mathlib.Algebra.Order.Group.Defs
-import Linglib.Semantics.Questions.Partition.QUD
-import Linglib.Semantics.Questions.Partition.Lattice
+import Linglib.Semantics.Questions.Partition.Basic
 
 /-!
 # Granularity-Sensitive Degree Semantics [thomas-deo-2020]
@@ -265,13 +264,12 @@ section GranularityQuestion
     Maps each degree d to grain index ⌊d/ε⌋, inducing a partition where
     degrees in the same grain cell are indistinguishable — the ℕ grain
     partition (`Setoid.ker (· / ε)`, `Core/Algebra/Order/Grain.lean`)
-    restricted to `Fin n` and packaged as a `QUD`.
+    restricted to `Fin n`.
 
     [deo-thomas-2025] definition (22): γ maps each point p to a cell I
     of a partition such that p ∈ I. For uniform grain width ε on a discrete
     scale with cells aligned at 0, this is integer division by ε. -/
-def granQUD (n : Nat) (ε : Nat) : QUD (Fin n) :=
-  QUD.ofProject (λ w => w.val / ε)
+abbrev granQUD (n : Nat) (ε : Nat) : Setoid (Fin n) := Setoid.ker (λ w => w.val / ε)
 
 /-- Finer granularity induces partition refinement.
 
@@ -279,10 +277,8 @@ def granQUD (n : Nat) (ε : Nat) : QUD (Fin n) :=
     fits evenly into coarser grain), then the ε₁-partition refines the
     ε₂-partition. Every fine cell is contained in exactly one coarse cell. -/
 theorem finer_granularity_refines (n ε₁ ε₂ : Nat) (hdvd : ε₁ ∣ ε₂) :
-    QUD.refines (granQUD n ε₁) (granQUD n ε₂) := by
-  intro w v h
-  simp only [granQUD, QUD.ofProject_sameAnswer_iff] at *
-  exact Nat.ker_div_le_of_dvd hdvd h
+    granQUD n ε₁ ≤ granQUD n ε₂ :=
+  Setoid.le_def.2 λ h => Setoid.le_def.1 (Nat.ker_div_le_of_dvd hdvd) h
 
 end GranularityQuestion
 

@@ -57,6 +57,8 @@ theorem cell_eq_of_rel (h : s w v) : s.cell w = s.cell v :=
 instance [DecidableEq W] : DecidableRel (⊥ : Setoid W) :=
   λ v w => decidable_of_iff (v = w) (by rw [Setoid.bot_def])
 
+instance : DecidableRel (⊤ : Setoid W) := λ _ _ => isTrue trivial
+
 instance [DecidableRel s] : Decidable (v ∈ s.cell w) := inferInstanceAs (Decidable (s v w))
 
 instance [Fintype W] [DecidableRel s] [DecidablePred (· ∈ p)] : Decidable (s.cell w ⊆ p) :=
@@ -84,6 +86,10 @@ def Settles : Prop := s ≤ polar p
 theorem settles_iff : s.Settles p ↔ ∀ w v, s w v → (w ∈ p ↔ v ∈ p) :=
   ⟨λ h _ _ hwv => polar_iff.1 (h hwv), λ h _ _ hwv => polar_iff.2 (h _ _ hwv)⟩
 
+/-- Equivalent worlds agree on a settled proposition. -/
+theorem Settles.iff (h : s.Settles p) (hwv : s w v) : w ∈ p ↔ v ∈ p :=
+  settles_iff.1 h w v hwv
+
 /-- `s` settles `p` iff each cell entails `p` or entails its negation. -/
 theorem settles_iff_forall_cell :
     s.Settles p ↔ ∀ w, s.cell w ⊆ p ∨ ∀ v ∈ s.cell w, v ∉ p := by
@@ -108,6 +114,10 @@ theorem bot_settles : (⊥ : Setoid W).Settles p := bot_le
 
 /-- The polar question whether `p` settles `p`. -/
 theorem polar_settles : (polar p).Settles p := le_rfl
+
+/-- The coarsest question settles only the trivial propositions. -/
+theorem top_settles_iff : (⊤ : Setoid W).Settles p ↔ ∀ w v, (w ∈ p ↔ v ∈ p) := by
+  simp [settles_iff, Setoid.top_def]
 
 theorem settles_compl_iff : s.Settles pᶜ ↔ s.Settles p := by
   simp only [Settles, polar_compl]

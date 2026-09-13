@@ -1,4 +1,4 @@
-import Linglib.Semantics.Questions.Partition.QUD
+import Linglib.Semantics.Questions.Partition.Basic
 import Linglib.Semantics.Degree.Boundedness
 import Linglib.Semantics.Degree.Comparison
 import Mathlib.Algebra.Order.Interval.Set.Instances
@@ -77,11 +77,9 @@ structure MonotoneAntiCorrelation where
 /-! ### QUD Connection -/
 /-- Qualitative QUD-based at-issueness: content varying within QUD cells
     counts as at-issue ([roberts-2012]). -/
-def atIssuenessFromQUD {M : Type*} (q : QUD M)
+def atIssuenessFromQUD {M : Type*} (q : Setoid M) [DecidableRel q]
     (content : M → Bool) (worlds : List M) : AtIssuenessDegree :=
-  let varies := worlds.any λ w₁ =>
-    worlds.any λ w₂ => q.sameAnswer w₁ w₂ && (content w₁ != content w₂)
-  if varies then
+  if ∃ w₁ ∈ worlds, ∃ w₂ ∈ worlds, q w₁ w₂ ∧ content w₁ ≠ content w₂ then
     ⟨1, by norm_num, le_refl 1⟩
   else
     ⟨0, le_refl 0, by norm_num⟩

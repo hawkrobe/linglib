@@ -63,7 +63,7 @@ theorem posExt_strictConditional :
 
 /-- *necessarily* prevents non-maximal use: a usable strict conditional
     makes `Q` hold at every closest P-world. -/
-theorem necessarily_prevents_nonmax (q : QUD W) (w : W)
+theorem necessarily_prevents_nonmax (q : Setoid W) (w : W)
     (h : usable q (strictConditional closestPWorlds Q) w)
     (hne : (closestPWorlds w).Nonempty) :
     ∀ w' ∈ closestPWorlds w, Q w' := by

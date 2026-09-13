@@ -1,4 +1,4 @@
-import Linglib.Semantics.Questions.Partition.QUD
+import Linglib.Semantics.Questions.Partition.Basic
 import Linglib.Semantics.Focus.ExtractionClash
 import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Fragments.English.Predicates.Verbal
@@ -61,15 +61,15 @@ variable {M A : Type*}
 
 /-- A dimension `π` of the events is foregrounded under the question `q`: its alternatives are
 alternatives of the question, so two events in one cell agree on it. -/
-def Foregrounded (q : QUD M) (π : M → A) : Prop :=
-  ∀ e e', q.r e e' → π e = π e'
+def Foregrounded (q : Setoid M) (π : M → A) : Prop :=
+  ∀ e e', q e e' → π e = π e'
 
 /-- A dimension varied by `upd` is backgrounded under `q`: varying it never changes the cell. -/
-def Backgrounded (q : QUD M) (upd : M → A → M) : Prop :=
-  ∀ e a, q.r e (upd e a)
+def Backgrounded (q : Setoid M) (upd : M → A → M) : Prop :=
+  ∀ e a, q e (upd e a)
 
 /-- A dimension that can be varied is not both foregrounded and backgrounded. -/
-theorem Foregrounded.not_backgrounded {q : QUD M} {π : M → A} {upd : M → A → M}
+theorem Foregrounded.not_backgrounded {q : Setoid M} {π : M → A} {upd : M → A → M}
     (hf : Foregrounded q π) (h : ∃ e a, π (upd e a) ≠ π e) : ¬ Backgrounded q upd :=
   λ hb => let ⟨e, a, hne⟩ := h; hne (hf _ _ (hb e a)).symm
 
@@ -98,49 +98,42 @@ end CommEvent
 
 section Questions
 
-variable {Manner Content : Type*} [DecidableEq Manner] [DecidableEq Content]
+variable {Manner Content : Type*}
 
 /-- The manner question, *how did John say it?*: events in one cell share a manner. -/
-def mannerQUD : QUD (CommEvent Manner Content) := QUD.ofDecEq CommEvent.manner
+abbrev mannerQUD : Setoid (CommEvent Manner Content) := Setoid.ker CommEvent.manner
 
 /-- The content question, *what did John say?*: events in one cell share a content. -/
-def contentQUD : QUD (CommEvent Manner Content) := QUD.ofDecEq CommEvent.content
+abbrev contentQUD : Setoid (CommEvent Manner Content) := Setoid.ker CommEvent.content
 
-omit [DecidableEq Content] in
 theorem mannerQUD_r_iff (e e' : CommEvent Manner Content) :
-    (mannerQUD (Manner := Manner) (Content := Content)).r e e' ↔ e.manner = e'.manner :=
+    mannerQUD (Manner := Manner) (Content := Content) e e' ↔ e.manner = e'.manner :=
   Iff.rfl
 
-omit [DecidableEq Manner] in
 theorem contentQUD_r_iff (e e' : CommEvent Manner Content) :
-    (contentQUD (Manner := Manner) (Content := Content)).r e e' ↔ e.content = e'.content :=
+    contentQUD (Manner := Manner) (Content := Content) e e' ↔ e.content = e'.content :=
   Iff.rfl
 
-omit [DecidableEq Content] in
 /-- The manner question foregrounds the manner. -/
 theorem foregrounded_manner_mannerQUD :
     Foregrounded (mannerQUD (Manner := Manner) (Content := Content)) CommEvent.manner :=
   λ _ _ h => h
 
-omit [DecidableEq Content] in
 /-- The manner question backgrounds the content. -/
 theorem backgrounded_content_mannerQUD :
     Backgrounded (mannerQUD (Manner := Manner) (Content := Content)) CommEvent.withContent :=
   λ _ _ => rfl
 
-omit [DecidableEq Manner] in
 /-- The content question foregrounds the content. -/
 theorem foregrounded_content_contentQUD :
     Foregrounded (contentQUD (Manner := Manner) (Content := Content)) CommEvent.content :=
   λ _ _ h => h
 
-omit [DecidableEq Manner] in
 /-- The content question backgrounds the manner. -/
 theorem backgrounded_manner_contentQUD :
     Backgrounded (contentQUD (Manner := Manner) (Content := Content)) CommEvent.withManner :=
   λ _ _ => rfl
 
-omit [DecidableEq Content] in
 /-- With two contents to choose from, the manner question does not foreground the content. -/
 theorem not_foregrounded_content_mannerQUD (m : Manner) {c c' : Content} (h : c ≠ c') :
     ¬ Foregrounded (mannerQUD (Manner := Manner) (Content := Content)) CommEvent.content :=
@@ -150,23 +143,20 @@ theorem not_foregrounded_content_mannerQUD (m : Manner) {c c' : Content} (h : c 
 
 /-- Extraction from the complement asks after its content; the question is relevant to the
 active question only if some change of content changes the cell ([roberts-1996]). -/
-def ContentQuestionRelevant (q : QUD (CommEvent Manner Content)) : Prop :=
-  ∃ e : CommEvent Manner Content, ∃ c, ¬ q.r e (e.withContent c)
+def ContentQuestionRelevant (q : Setoid (CommEvent Manner Content)) : Prop :=
+  ∃ e : CommEvent Manner Content, ∃ c, ¬ q e (e.withContent c)
 
-omit [DecidableEq Manner] [DecidableEq Content] in
 /-- The content question is relevant exactly when the content is not backgrounded. -/
-theorem contentQuestionRelevant_iff (q : QUD (CommEvent Manner Content)) :
+theorem contentQuestionRelevant_iff (q : Setoid (CommEvent Manner Content)) :
     ContentQuestionRelevant q ↔ ¬ Backgrounded q CommEvent.withContent := by
   simp [ContentQuestionRelevant, Backgrounded]
 
-omit [DecidableEq Content] in
 /-- Under the manner question the content question is irrelevant: every filler gives the same
 answer. -/
 theorem not_contentQuestionRelevant_mannerQUD :
     ¬ ContentQuestionRelevant (mannerQUD (Manner := Manner) (Content := Content)) :=
   λ h => (contentQuestionRelevant_iff _).1 h backgrounded_content_mannerQUD
 
-omit [DecidableEq Manner] in
 /-- Under the content question it is relevant, given two contents. -/
 theorem contentQuestionRelevant_contentQUD (m : Manner) {c c' : Content} (h : c ≠ c') :
     ContentQuestionRelevant (contentQUD (Manner := Manner) (Content := Content)) :=

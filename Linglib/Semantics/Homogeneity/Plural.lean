@@ -86,15 +86,15 @@ theorem bivalentPred_allPlural_iff (w : W) :
     bivalence turns usability's not-false clause into literal truth.
     Cf. `allPlural_blocked_by_wide_issue` for the complementary Addressing
     direction. -/
-theorem allPlural_prevents_nonmax (q : QUD W) (w : W)
+theorem allPlural_prevents_nonmax (q : Setoid W) (w : W)
     (h : usable q (allPlural P x) w) : ∀ a ∈ x, P a w :=
   (allPlural_eq_true_iff P x w).mp
     (((usable_iff_of_isBivalent (isBivalent_allPlural P x) q w).mp h).1)
 
 /-- An *all*-sentence cannot address a "wide" issue — one with a cell
     straddling the *all*/not-*all* boundary ([kriz-2016] §3.4). -/
-theorem allPlural_blocked_by_wide_issue (q : QUD W)
-    (hWide : ∃ w₁ w₂, q.r w₁ w₂ ∧ (∀ a ∈ x, P a w₁) ∧ ¬ ∀ a ∈ x, P a w₂) :
+theorem allPlural_blocked_by_wide_issue (q : Setoid W)
+    (hWide : ∃ w₁ w₂, q w₁ w₂ ∧ (∀ a ∈ x, P a w₁) ∧ ¬ ∀ a ∈ x, P a w₂) :
     ¬ addressesIssue q (allPlural P x) := by
   intro hAddr
   obtain ⟨w₁, w₂, hEq, h1, h2⟩ := hWide
@@ -108,7 +108,7 @@ theorem allPlural_blocked_by_wide_issue (q : QUD W)
     the professors smiled, Smith didn't" is contradictory. The bare-plural
     unmentionability result proper ([kriz-2016] §4.1) is
     `exception_unaddressable`. -/
-theorem allPlural_exceptions_unmentionable (q : QUD W) (w : W) (a : Atom)
+theorem allPlural_exceptions_unmentionable (q : Setoid W) (w : W) (a : Atom)
     (ha : a ∈ x) (h : usable q (allPlural P x) w) : P a w :=
   allPlural_prevents_nonmax P x q w h a ha
 

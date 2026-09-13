@@ -1,4 +1,4 @@
-import Linglib.Semantics.Questions.Partition.Lattice
+import Linglib.Semantics.Questions.Partition.Basic
 import Linglib.Data.Examples.GroenendijkStokhof1984
 import Mathlib.Data.Fintype.Basic
 
@@ -9,7 +9,7 @@ This file formalizes the propositional analysis of wh-complements and interrogat
 [groenendijk-stokhof-1984], "Studies on the semantics of questions and the pragmatics of
 answers", chapters I and II: at an index, *who walks* denotes the proposition
 true at exactly the indices where the extension of *walk* is what it is at that index, so a
-question is an equivalence relation on indices, the library's `QUD`, and to know the answer is
+question is an equivalence relation on indices, a `Setoid`, and to know the answer is
 to have one's doxastic alternatives inside the actual cell (`Knows`). The arguments the
 dissertation takes as data follow: knowing who walks entails knowing of each walker that they
 walk, argument (V) (`knows_who_entails_knows_that`); it excludes believing of a non-walker that
@@ -26,7 +26,7 @@ referent (`description_answers_iff_referent_fixed`).
 
 ## Implementation notes
 
-Extensions are Boolean-valued over a finite domain so that the wh-question is `QUD.ofProject`
+Extensions are Boolean-valued over a finite domain so that the wh-question is a `Setoid.ker`
 and knowledge in the concrete counter-models decides. The domain of discourse is fixed across
 indices, the assumption under which the dissertation accepts (X). The chapter VI judgments on
 mention-some, pragmatic answerhood, and the pair-list and choice readings are rows of
@@ -45,52 +45,47 @@ and choice readings of chapter I's (11) to (18), are not formalized.
 
 namespace GroenendijkStokhof1984
 
-open scoped QUD
-
 variable {W E : Type*}
 
 section Questions
-
-variable [Fintype E]
 
 /-! ### Questions and knowing their answers -/
 
 /-- *Who P?*: indices are alike when the extension of `P` is the same, section 1.4 of
 chapter II. -/
-def whQ (P : E → W → Bool) : QUD W := QUD.ofProject λ w x => P x w
+abbrev whQ (P : E → W → Bool) : Setoid W := Setoid.ker λ w x => P x w
 
 /-- *Whether p?*: indices are alike when `p` has the same value. -/
-def whetherQ (p : W → Bool) : QUD W := QUD.ofProject p
+abbrev whetherQ (p : W → Bool) : Setoid W := Setoid.ker p
 
 /-- *Whether p or q?*: indices are alike when both values agree, (IX). -/
-def whetherOrQ (p q : W → Bool) : QUD W := QUD.ofProject λ w => (p w, q w)
+abbrev whetherOrQ (p q : W → Bool) : Setoid W := Setoid.ker λ w => (p w, q w)
 
 /-- An agent whose doxastic alternatives at `w` are `dox` knows the answer to `q` when every
 alternative lies in the cell of `w`. -/
-def Knows (dox : Set W) (q : QUD W) (w : W) : Prop := dox ⊆ q.cell w
+def Knows (dox : Set W) (q : Setoid W) (w : W) : Prop := dox ⊆ q.cell w
 
-theorem whQ_r {P : E → W → Bool} {w v : W} : (whQ P).r w v ↔ ∀ x, P x w = P x v := by
-  simp [whQ, funext_iff]
+theorem whQ_r {P : E → W → Bool} {w v : W} : whQ P w v ↔ ∀ x, P x w = P x v := by
+  simp [funext_iff]
 
 /-- (V) and (2): knowing who walks entails, of each walker, knowing that they walk; with the
 non-factive *tell* in place of *know* the same holds, the entailment resting on extensionality
 alone. -/
 theorem knows_who_entails_knows_that {dox : Set W} {P : E → W → Bool} {w : W}
     (h : Knows dox (whQ P) w) (x : E) : ∀ v ∈ dox, P x v = P x w :=
-  λ _ hv => (whQ_r.mp (h hv) x).symm
+  λ _ hv => whQ_r.mp (h hv) x
 
 /-- (1) and (4): knowing whether Mary walks entails knowing that she does or that she does not,
 according to the index. -/
 theorem knows_whether_entails {dox : Set W} {p : W → Bool} {w : W}
     (h : Knows dox (whetherQ p) w) : ∀ v ∈ dox, p v = p w :=
-  λ v hv => ((QUD.ofProject_r p w v).mp (h hv)).symm
+  λ _ hv => h hv
 
 /-- (IX): knowing whether Mary walks or Bill sleeps fixes both. -/
 theorem knows_whether_or_entails {dox : Set W} {p q : W → Bool} {w : W}
     (h : Knows dox (whetherOrQ p q) w) : ∀ v ∈ dox, p v = p w ∧ q v = q w := by
   intro v hv
-  have := (QUD.ofProject_r (λ w => (p w, q w)) w v).mp (h hv)
-  exact ⟨(Prod.mk.inj this).1.symm, (Prod.mk.inj this).2.symm⟩
+  exact ⟨(Prod.mk.inj (h hv)).1, (Prod.mk.inj (h hv)).2⟩
 
 /-- (VIII) and (6): if only Bill walks, John, who believes that Bill and Suzy walk, does not
 know who walks; the proposition denoted by *who walks* is exhaustive. -/
@@ -102,11 +97,11 @@ theorem strong_exhaustiveness {dox : Set W} {P : E → W → Bool} {w v : W} {su
 /-- (X): knowing who walks is knowing who does not walk, the domain of discourse being fixed. -/
 theorem knows_who_iff_knows_who_not {dox : Set W} {P : E → W → Bool} {w : W} :
     Knows dox (whQ P) w ↔ Knows dox (whQ λ x v => !P x v) w := by
-  simp only [Knows, Set.subset_def, QUD.mem_cell_iff_r, whQ_r, Bool.not_inj_iff]
+  simp only [Knows, Set.subset_def, Setoid.mem_cell, whQ_r, Bool.not_inj_iff]
 
 /-- (5): *Who walks?* entails *Does John walk?*. -/
-theorem wh_refines_polar (P : E → W → Bool) (e : E) : whQ P ⊑ whetherQ (P e) :=
-  λ _ _ h => decide_eq_true (whQ_r.mp (QUD.r_of_sameAnswer h) e)
+theorem wh_refines_polar (P : E → W → Bool) (e : E) : whQ P ≤ whetherQ (P e) :=
+  Setoid.le_def.2 λ h => whQ_r.mp h e
 
 /-! ### De dicto and de re readings, chapter II section 1.6
 
@@ -115,10 +110,10 @@ which individuals are girls that walk, so that knowing its answer takes knowing 
 them that she is a girl. -/
 
 /-- *Which G P?* de re at `w`: the extension of `P` on the actual `G`s. -/
-def deRe (G P : E → W → Bool) (w : W) : QUD W := whQ λ x v => G x w && P x v
+abbrev deRe (G P : E → W → Bool) (w : W) : Setoid W := whQ λ x v => G x w && P x v
 
 /-- *Which G P?* de dicto: the extension of `G` and `P` together. -/
-def deDicto (G P : E → W → Bool) : QUD W := whQ λ x v => G x v && P x v
+abbrev deDicto (G P : E → W → Bool) : Setoid W := whQ λ x v => G x v && P x v
 
 /-- (XI) read de re is valid: knowing who walks is knowing, of each actual girl, whether she
 walks. -/
@@ -130,7 +125,7 @@ theorem de_re_entailed {dox : Set W} {G P : E → W → Bool} {w : W} (h : Knows
 not, of the actual men. -/
 theorem de_re_negation {dox : Set W} {G P : E → W → Bool} {w : W} :
     Knows dox (deRe G P w) w ↔ Knows dox (deRe G (λ x v => !P x v) w) w := by
-  simp only [Knows, Set.subset_def, QUD.mem_cell_iff_r, deRe, whQ_r]
+  simp only [Knows, Set.subset_def, Setoid.mem_cell, whQ_r]
   refine forall_congr' λ v => forall_congr' λ _ => forall_congr' λ x => ?_
   cases G x w <;> simp
 
@@ -160,8 +155,8 @@ def girl : Unit → Bool → Bool := λ _ w => w
 /-- (XI) read de dicto is invalid: John knows who walks but not which girl walks. -/
 theorem de_dicto_not_entailed :
     Knows Set.univ (whQ walk) true ∧ ¬ Knows Set.univ (deDicto girl walk) true :=
-  ⟨λ v _ => by rw [QUD.mem_cell_iff_r]; cases v <;> decide,
-    λ h => absurd (h (Set.mem_univ false)) (by rw [QUD.mem_cell_iff_r]; decide)⟩
+  ⟨λ v _ => by rw [Setoid.mem_cell]; cases v <;> decide,
+    λ h => absurd (h (Set.mem_univ false)) (by rw [Setoid.mem_cell]; decide)⟩
 
 /-- Nobody walks, and John errs about who is a man. -/
 def noWalk : Unit → Bool → Bool := λ _ _ => false
@@ -171,8 +166,8 @@ which men do not walk. -/
 theorem de_dicto_negation_invalid :
     Knows Set.univ (deDicto girl noWalk) true ∧
       ¬ Knows Set.univ (deDicto girl λ x v => !noWalk x v) true :=
-  ⟨λ v _ => by rw [QUD.mem_cell_iff_r]; cases v <;> decide,
-    λ h => absurd (h (Set.mem_univ false)) (by rw [QUD.mem_cell_iff_r]; decide)⟩
+  ⟨λ v _ => by rw [Setoid.mem_cell]; cases v <;> decide,
+    λ h => absurd (h (Set.mem_univ false)) (by rw [Setoid.mem_cell]; decide)⟩
 
 end Model
 

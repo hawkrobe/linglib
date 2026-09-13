@@ -138,8 +138,7 @@ inductive Door
 def doors : Door → Finset Door := fun _ => {.left, .right}
 
 /-- The issue that separates every world from every other. -/
-def strict : QUD Door :=
-  ⟨⟨(· = ·), ⟨fun _ => rfl, Eq.symm, Eq.trans⟩⟩, fun a b => inferInstanceAs (Decidable (a = b))⟩
+abbrev strict : Setoid Door := ⊥
 
 /-- Taking the right door *should* be taken is neither true nor false — neither assertible nor
 deniable — while that it *must* be taken is false. -/
@@ -167,14 +166,10 @@ def everyExercise (w : Grade) : Prop := w = .strictAll ∨ w = .lenientAll
 instance : DecidablePred everyExercise := fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- *What is a way to get a perfect grade?* — every world answers alike. -/
-def wayQUD : QUD Grade :=
-  ⟨⟨fun _ _ => True, ⟨fun _ => trivial, id, fun _ _ => trivial⟩⟩,
-    fun _ _ => inferInstanceAs (Decidable True)⟩
+abbrev wayQUD : Setoid Grade := ⊤
 
 /-- *What are the minimal requirements?* — worlds are grouped by their rules. -/
-def minimalQUD : QUD Grade :=
-  ⟨⟨fun a b => grade a = grade b, ⟨fun _ => rfl, Eq.symm, Eq.trans⟩⟩,
-    fun a b => inferInstanceAs (Decidable (grade a = grade b))⟩
+abbrev minimalQUD : Setoid Grade := Setoid.ker grade
 
 /-- Where most exercises suffice, *you should do every exercise* is usable under the first
 question but not the second, and *you have to do every exercise* under neither. -/

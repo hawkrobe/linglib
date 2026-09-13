@@ -1,8 +1,6 @@
 import Linglib.Semantics.Questions.Hamblin
 import Linglib.Semantics.Questions.Entailment
 import Linglib.Semantics.Questions.Partition.Basic
-import Linglib.Semantics.Questions.Partition.QUD
-import Linglib.Semantics.Questions.Partition.Lattice
 
 /-!
 # Partition questions as inquisitive contents
@@ -23,7 +21,6 @@ classes of any equivalence relation.
   `Setoid W ↪o Question W`.
 - `IsPartition P` — `Setoid.IsPartition (alt P)`.
 - `toSetoid h` — the equivalence relation of a partition issue.
-- `QUD.toQuestion q` — the issue whose alternatives are a QUD's cells.
 
 ## Main theorems
 
@@ -229,25 +226,6 @@ alternative cell. -/
 theorem toSetoid_rel_iff {P : Question W} (h : P.IsPartition) (w v : W) :
     (toSetoid h) w v ↔ ∃ p ∈ alt P, w ∈ p ∧ v ∈ p := by
   rw [Setoid.rel_iff_exists_classes, classes_toSetoid h]
-
-/-! ### Bridge to the Bool-based `QUD` -/
-
-/-- The issue raised by a `QUD`: its alternatives are exactly the QUD's
-equivalence classes. The bridge is one-way: not every `Question`
-arises from a `QUD` (mention-some, intermediate-exhaustive, and
-conditional-question alternatives are non-disjoint or non-exhaustive
-and so are not the cells of any equivalence relation —
-[theiler-etal-2018]). -/
-def _root_.QUD.toQuestion (q : QUD W) : Question W :=
-  fromSetoid q.toSetoid
-
-/-- `QUD` refinement is question entailment of the induced partition
-issues: the Bool-layer `⊑` agrees with the `Question`-layer entailment
-order. -/
-theorem _root_.QUD.refines_iff_toQuestion_entails {M : Type*} [Finite M]
-    (q q' : QUD M) :
-    q.refines q' ↔ q.toQuestion.Entails q'.toQuestion := by
-  rw [QUD.refines_iff_toSetoid_le, ← fromSetoid_entails_iff]; rfl
 
 /-! ### Round-trips with `fromSetoid`
 

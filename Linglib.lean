@@ -53,7 +53,6 @@ import Linglib.Core.Analysis.LeastSquares
 import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
 import Linglib.Core.Analysis.SpecialFunctions.Softmax
 import Linglib.Core.Categorical.AgentCat
-import Linglib.Core.Categorical.PartitionCat
 import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
 import Linglib.Core.Combinatorics.Antimatroid
 import Linglib.Core.Combinatorics.Enumerative.PermutationPattern
@@ -1791,8 +1790,6 @@ import Linglib.Semantics.Questions.Exhaustivity
 import Linglib.Semantics.Questions.Hamblin
 import Linglib.Semantics.Questions.Highlighting
 import Linglib.Semantics.Questions.Partition.Basic
-import Linglib.Semantics.Questions.Partition.Lattice
-import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.Probabilistic
 import Linglib.Semantics.Questions.Resolution
 import Linglib.Semantics.Questions.Singleton

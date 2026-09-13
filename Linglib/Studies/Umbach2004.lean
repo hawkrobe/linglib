@@ -1,5 +1,4 @@
 import Linglib.Discourse.Coherence
-import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.Resolution
 import Linglib.Semantics.Questions.Partition.Inquisitive
 import Linglib.Semantics.Focus.Interpretation
