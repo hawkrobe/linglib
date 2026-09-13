@@ -1,194 +1,767 @@
 [
   {
-    "id": "pollock1989_ex_p01",
-    "source": {"bibkey": "pollock-1989", "paperLabel": "UNVERIFIED (3b)"},
-    "language": "stan1290",
-    "primaryText": "Aime-t-il Marie?",
+    "id": "pollock1989_ex2a",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(2a)"},
+    "language": "stan1293",
+    "primaryText": "John likes not Mary.",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Does he love Marie?",
+    "translation": "",
     "context": "",
-    "judgment": "acceptable",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
     "paperFeatures": [
-      ["diagnostic", "inversion"],
-      ["verb_type", "lexical"],
-      ["v_precedes_diagnostic", "true"]
-    ],
-    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex_p01. French lexical verb inverts with the subject (V-to-I-to-C)."
+      ["finite", "yes"],
+      ["verb", "lexical"],
+      ["diagnostic", "negation"],
+      ["verbPrecedes", "true"]
+    ]
   },
   {
-    "id": "pollock1989_ex_p02",
-    "source": {"bibkey": "pollock-1989", "paperLabel": "UNVERIFIED (3a)"},
+    "id": "pollock1989_ex2b",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(2b)"},
+    "language": "stan1290",
+    "primaryText": "Jean (n')aime pas Marie.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "yes"],
+      ["verb", "lexical"],
+      ["diagnostic", "negation"],
+      ["verbPrecedes", "true"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex3a",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(3a)"},
     "language": "stan1293",
     "primaryText": "Likes he Mary?",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Likes he Mary?",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
     "paperFeatures": [
+      ["finite", "yes"],
+      ["verb", "lexical"],
       ["diagnostic", "inversion"],
-      ["verb_type", "lexical"],
-      ["v_precedes_diagnostic", "true"]
-    ],
-    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex_p02. English lexical verb cannot invert with the subject (*V-to-C)."
+      ["verbPrecedes", "true"]
+    ]
   },
   {
-    "id": "pollock1989_ex_p03",
-    "source": {"bibkey": "pollock-1989", "paperLabel": "UNVERIFIED (4b)"},
+    "id": "pollock1989_ex3b",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(3b)"},
     "language": "stan1290",
-    "primaryText": "Jean embrasse souvent Marie",
+    "primaryText": "Aime-t-il Marie?",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Jean often kisses Marie",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
     "paperFeatures": [
-      ["diagnostic", "adverb"],
-      ["verb_type", "lexical"],
-      ["v_precedes_diagnostic", "true"]
-    ],
-    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex_p03. French lexical verb raises past the adverb (V > Adv)."
+      ["finite", "yes"],
+      ["verb", "lexical"],
+      ["diagnostic", "inversion"],
+      ["verbPrecedes", "true"]
+    ]
   },
   {
-    "id": "pollock1989_ex_p04",
-    "source": {"bibkey": "pollock-1989", "paperLabel": "UNVERIFIED (4a)"},
+    "id": "pollock1989_ex4a",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(4a)"},
     "language": "stan1293",
-    "primaryText": "John kisses often Mary",
+    "primaryText": "John kisses often Mary.",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "John kisses often Mary",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
     "paperFeatures": [
+      ["finite", "yes"],
+      ["verb", "lexical"],
       ["diagnostic", "adverb"],
-      ["verb_type", "lexical"],
-      ["v_precedes_diagnostic", "true"]
-    ],
-    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex_p04. English lexical verb cannot raise past the adverb (*V > Adv)."
+      ["verbPrecedes", "true"]
+    ]
   },
   {
-    "id": "pollock1989_ex_p05",
-    "source": {"bibkey": "pollock-1989", "paperLabel": "UNVERIFIED (4c)"},
-    "language": "stan1293",
-    "primaryText": "John often kisses Mary",
+    "id": "pollock1989_ex4b",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(4b)"},
+    "language": "stan1290",
+    "primaryText": "Jean embrasse souvent Marie.",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "John often kisses Mary",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
     "paperFeatures": [
+      ["finite", "yes"],
+      ["verb", "lexical"],
       ["diagnostic", "adverb"],
-      ["verb_type", "lexical"],
-      ["v_precedes_diagnostic", "false"]
-    ],
-    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex_p05. English adverb precedes the in-situ lexical verb (Adv > V)."
+      ["verbPrecedes", "true"]
+    ]
   },
   {
-    "id": "pollock1989_ex_p06",
-    "source": {"bibkey": "pollock-1989", "paperLabel": "UNVERIFIED (4d)"},
-    "language": "stan1290",
-    "primaryText": "Jean souvent embrasse Marie",
+    "id": "pollock1989_ex4c",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(4c)"},
+    "language": "stan1293",
+    "primaryText": "John often kisses Mary.",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Jean often kisses Marie",
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "yes"],
+      ["verb", "lexical"],
+      ["diagnostic", "adverb"],
+      ["verbPrecedes", "false"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex4d",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(4d)"},
+    "language": "stan1290",
+    "primaryText": "Jean souvent embrasse Marie.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
     "paperFeatures": [
+      ["finite", "yes"],
+      ["verb", "lexical"],
       ["diagnostic", "adverb"],
-      ["verb_type", "lexical"],
-      ["v_precedes_diagnostic", "false"]
-    ],
-    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex_p06. French adverb cannot precede the lexical verb (*Adv > V; V must raise)."
+      ["verbPrecedes", "false"]
+    ]
   },
   {
-    "id": "pollock1989_ex_p07",
-    "source": {"bibkey": "pollock-1989", "paperLabel": "UNVERIFIED (2b)"},
-    "language": "stan1290",
-    "primaryText": "Jean n'aime pas Marie",
-    "glossedTokens": [],
-    "translation": "Jean does not love Marie",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["diagnostic", "negation"],
-      ["verb_type", "lexical"],
-      ["v_precedes_diagnostic", "true"]
-    ],
-    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex_p07. French lexical verb raises past negation (V > Neg)."
-  },
-  {
-    "id": "pollock1989_ex_p08",
-    "source": {"bibkey": "pollock-1989", "paperLabel": "UNVERIFIED (2a)"},
+    "id": "pollock1989_ex5a",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(5a)"},
     "language": "stan1293",
-    "primaryText": "John likes not Mary",
+    "primaryText": "My friends love all Mary.",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "John likes not Mary",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
     "paperFeatures": [
-      ["diagnostic", "negation"],
-      ["verb_type", "lexical"],
-      ["v_precedes_diagnostic", "true"]
-    ],
-    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex_p08. English lexical verb cannot raise past negation (*V > Neg)."
-  },
-  {
-    "id": "pollock1989_ex_p09",
-    "source": {"bibkey": "pollock-1989", "paperLabel": "UNVERIFIED (5b)"},
-    "language": "stan1290",
-    "primaryText": "Mes amis aiment tous Marie",
-    "glossedTokens": [],
-    "translation": "My friends all love Marie",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
+      ["finite", "yes"],
+      ["verb", "lexical"],
       ["diagnostic", "floatingQ"],
-      ["verb_type", "lexical"],
-      ["v_precedes_diagnostic", "true"]
-    ],
-    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex_p09. French lexical verb raises past the floating quantifier (V > FQ)."
+      ["verbPrecedes", "true"]
+    ]
   },
   {
-    "id": "pollock1989_ex_p10",
-    "source": {"bibkey": "pollock-1989", "paperLabel": "UNVERIFIED (5a)"},
-    "language": "stan1293",
-    "primaryText": "My friends love all Mary",
+    "id": "pollock1989_ex5b",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(5b)"},
+    "language": "stan1290",
+    "primaryText": "Mes amis aiment tous Marie.",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "My friends love all Mary",
-    "context": "",
-    "judgment": "unacceptable",
-    "paperFeatures": [
-      ["diagnostic", "floatingQ"],
-      ["verb_type", "lexical"],
-      ["v_precedes_diagnostic", "true"]
-    ],
-    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex_p10. English lexical verb cannot raise past the floating quantifier (*V > FQ)."
-  },
-  {
-    "id": "pollock1989_ex_p11",
-    "source": {"bibkey": "pollock-1989", "paperLabel": "UNVERIFIED auxiliary raising (no quoted example number)"},
-    "language": "stan1293",
-    "primaryText": "John has often eaten pizza",
-    "glossedTokens": [],
-    "translation": "John has often eaten pizza",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
     "paperFeatures": [
-      ["diagnostic", "adverb"],
-      ["verb_type", "auxiliary"],
-      ["v_precedes_diagnostic", "true"]
-    ],
-    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex_p11. English auxiliary raises past the adverb (Aux > Adv), patterning with French lexical verbs."
+      ["finite", "yes"],
+      ["verb", "lexical"],
+      ["diagnostic", "floatingQ"],
+      ["verbPrecedes", "true"]
+    ]
   },
   {
-    "id": "pollock1989_ex_p12",
-    "source": {"bibkey": "pollock-1989", "paperLabel": "UNVERIFIED auxiliary raising (no quoted example number)"},
+    "id": "pollock1989_ex5c",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(5c)"},
     "language": "stan1293",
-    "primaryText": "John often has eaten pizza",
+    "primaryText": "My friends all love Mary.",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "John often has eaten pizza",
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "yes"],
+      ["verb", "lexical"],
+      ["diagnostic", "floatingQ"],
+      ["verbPrecedes", "false"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex5d",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(5d)"},
+    "language": "stan1290",
+    "primaryText": "Mes amis tous aiment Marie.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "yes"],
+      ["verb", "lexical"],
+      ["diagnostic", "floatingQ"],
+      ["verbPrecedes", "false"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex7a",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(7a)"},
+    "language": "stan1293",
+    "primaryText": "John is not happy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "yes"],
+      ["verb", "auxiliary"],
+      ["diagnostic", "negation"],
+      ["verbPrecedes", "true"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex7b",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(7b)"},
+    "language": "stan1293",
+    "primaryText": "John does not be happy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "yes"],
+      ["verb", "auxiliary"],
+      ["diagnostic", "negation"],
+      ["verbPrecedes", "false"]
+    ],
+    "comment": "Do-support with an auxiliary that must raise."
+  },
+  {
+    "id": "pollock1989_ex11a_neg",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(11a)"},
+    "language": "stan1293",
+    "primaryText": "He hasn't understood.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "yes"],
+      ["verb", "auxiliary"],
+      ["diagnostic", "negation"],
+      ["verbPrecedes", "true"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex11a_inv",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(11a)"},
+    "language": "stan1293",
+    "primaryText": "Has he understood?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "yes"],
+      ["verb", "auxiliary"],
+      ["diagnostic", "inversion"],
+      ["verbPrecedes", "true"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex11b_neg",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(11b)"},
+    "language": "stan1290",
+    "primaryText": "Il (n')a pas compris.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "yes"],
+      ["verb", "auxiliary"],
+      ["diagnostic", "negation"],
+      ["verbPrecedes", "true"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex11b_inv",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(11b)"},
+    "language": "stan1290",
+    "primaryText": "A-t-il compris?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "yes"],
+      ["verb", "auxiliary"],
+      ["diagnostic", "inversion"],
+      ["verbPrecedes", "true"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex11c_adv",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(11c)"},
+    "language": "stan1293",
+    "primaryText": "He is seldom satisfied.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "yes"],
+      ["verb", "auxiliary"],
+      ["diagnostic", "adverb"],
+      ["verbPrecedes", "true"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex11c_fq",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(11c)"},
+    "language": "stan1293",
+    "primaryText": "They are all satisfied.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "yes"],
+      ["verb", "auxiliary"],
+      ["diagnostic", "floatingQ"],
+      ["verbPrecedes", "true"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex11d_adv",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(11d)"},
+    "language": "stan1290",
+    "primaryText": "Il est rarement satisfait.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "yes"],
+      ["verb", "auxiliary"],
+      ["diagnostic", "adverb"],
+      ["verbPrecedes", "true"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex11d_fq",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(11d)"},
+    "language": "stan1290",
+    "primaryText": "Ils sont tous satisfaits.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "yes"],
+      ["verb", "auxiliary"],
+      ["diagnostic", "floatingQ"],
+      ["verbPrecedes", "true"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex12a",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(12a)"},
+    "language": "stan1293",
+    "primaryText": "I don't have sung.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "yes"],
+      ["verb", "auxiliary"],
+      ["diagnostic", "negation"],
+      ["verbPrecedes", "false"]
+    ],
+    "comment": "Failure to raise have yields do-support."
+  },
+  {
+    "id": "pollock1989_ex15a",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(15a)"},
+    "language": "stan1290",
+    "primaryText": "Ne pas être heureux est une condition pour écrire des romans.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "no"],
+      ["verb", "auxiliary"],
+      ["diagnostic", "negation"],
+      ["verbPrecedes", "false"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex15b",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(15b)"},
+    "language": "stan1290",
+    "primaryText": "N'être pas heureux est une condition pour écrire des romans.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "no"],
+      ["verb", "auxiliary"],
+      ["diagnostic", "negation"],
+      ["verbPrecedes", "true"]
+    ],
+    "comment": "Somewhat literary but perfectly fine."
+  },
+  {
+    "id": "pollock1989_ex16a",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(16a)"},
+    "language": "stan1290",
+    "primaryText": "Ne pas sembler heureux est une condition pour écrire des romans.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "no"],
+      ["verb", "lexical"],
+      ["diagnostic", "negation"],
+      ["verbPrecedes", "false"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex16b",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(16b)"},
+    "language": "stan1290",
+    "primaryText": "Ne sembler pas heureux est une condition pour écrire des romans.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "no"],
+      ["verb", "lexical"],
+      ["diagnostic", "negation"],
+      ["verbPrecedes", "true"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex21a",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(21a)"},
+    "language": "stan1293",
+    "primaryText": "Not to be happy is a prerequisite for writing novels.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "no"],
+      ["verb", "auxiliary"],
+      ["diagnostic", "negation"],
+      ["verbPrecedes", "false"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex21b",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(21b)"},
+    "language": "stan1293",
+    "primaryText": "To be not happy is a prerequisite for writing novels.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
     "context": "",
     "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
     "paperFeatures": [
-      ["diagnostic", "adverb"],
-      ["verb_type", "auxiliary"],
-      ["v_precedes_diagnostic", "false"]
+      ["finite", "no"],
+      ["verb", "auxiliary"],
+      ["diagnostic", "negation"],
+      ["verbPrecedes", "true"]
     ],
-    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex_p12. English adverb before the auxiliary is marginal (Aux should raise)."
+    "comment": "Marginally acceptable, with much variation in judgments."
+  },
+  {
+    "id": "pollock1989_ex22a",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(22a)"},
+    "language": "stan1293",
+    "primaryText": "Not to seem happy is a prerequisite for writing novels.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "no"],
+      ["verb", "lexical"],
+      ["diagnostic", "negation"],
+      ["verbPrecedes", "false"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex22b",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(22b)"},
+    "language": "stan1293",
+    "primaryText": "To seem not happy is a prerequisite for writing novels.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "no"],
+      ["verb", "lexical"],
+      ["diagnostic", "negation"],
+      ["verbPrecedes", "true"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex24b",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(24b)"},
+    "language": "stan1290",
+    "primaryText": "Souvent paraître triste pendant son voyage de noce, c'est rare.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "no"],
+      ["verb", "lexical"],
+      ["diagnostic", "adverb"],
+      ["verbPrecedes", "false"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex27b",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(27b)"},
+    "language": "stan1290",
+    "primaryText": "Paraître souvent triste pendant son voyage de noce, c'est rare.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "no"],
+      ["verb", "lexical"],
+      ["diagnostic", "adverb"],
+      ["verbPrecedes", "true"]
+    ],
+    "comment": "Short verb movement, to a position below pas."
+  },
+  {
+    "id": "pollock1989_ex28a",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(28a)"},
+    "language": "stan1290",
+    "primaryText": "On imagine mal les députés démissionner tous en même temps.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "no"],
+      ["verb", "lexical"],
+      ["diagnostic", "floatingQ"],
+      ["verbPrecedes", "true"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex29c",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(29c)"},
+    "language": "stan1290",
+    "primaryText": "Ne paraître pas triste pendant son voyage de noce, c'est normal.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "no"],
+      ["verb", "lexical"],
+      ["diagnostic", "negation"],
+      ["verbPrecedes", "true"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex37b",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(37b)"},
+    "language": "stan1293",
+    "primaryText": "To often look sad during one's honeymoon is rare.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "no"],
+      ["verb", "lexical"],
+      ["diagnostic", "adverb"],
+      ["verbPrecedes", "false"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex38b",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(38b)"},
+    "language": "stan1293",
+    "primaryText": "To look often sad during one's honeymoon is rare.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "no"],
+      ["verb", "lexical"],
+      ["diagnostic", "adverb"],
+      ["verbPrecedes", "true"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex39a",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(39a)"},
+    "language": "stan1293",
+    "primaryText": "I believe John to often be sarcastic.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "no"],
+      ["verb", "auxiliary"],
+      ["diagnostic", "adverb"],
+      ["verbPrecedes", "false"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex39c",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(39c)"},
+    "language": "stan1293",
+    "primaryText": "I believe John to be often sarcastic.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "no"],
+      ["verb", "auxiliary"],
+      ["diagnostic", "adverb"],
+      ["verbPrecedes", "true"]
+    ]
+  },
+  {
+    "id": "pollock1989_ex39d",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "(39d)"},
+    "language": "stan1293",
+    "primaryText": "I believe John to sound often sarcastic.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["finite", "no"],
+      ["verb", "lexical"],
+      ["diagnostic", "adverb"],
+      ["verbPrecedes", "true"]
+    ]
   }
 ]

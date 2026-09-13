@@ -1,97 +1,215 @@
-import Linglib.Syntax.Minimalist.Movement.VerbMovementParameter
 import Linglib.Data.Examples.Pollock1989
+import Mathlib.Order.Basic
 
 /-!
-# Pollock's Verb Movement Diagnostics
-[pollock-1989]
+# Pollock (1989): Verb Movement, Universal Grammar, and the Structure of IP
 
-Connects the Minimalist verb movement parameter
-(`Syntax/Minimalist/VerbMovementParameter.lean`) to Pollock's
-French/English diagnostic paradigm (`Data/Examples/Pollock1989.json`).
+This file formalizes [pollock-1989]'s account of the placement of French and English verbs
+relative to negation, adverbs, floating quantifiers, and the subject. The clause is
+`[TP T [NegP Neg [AgrP Agr [VP Adv V]]]]`, and a verb moves head to head: to Agr, the short
+movement that carries it past an adverb, and from Agr to T, the long movement that carries it
+past negation and lets it invert with the subject. A head that is opaque to θ-role assignment
+blocks the movement of a verb with θ-roles to assign, since the raised verb could no longer
+assign them, and only a verb with none, the auxiliaries *be* and *have*, may pass. English Agr
+is opaque and French Agr transparent; nonfinite T is opaque in both languages. Finite T is an
+operator that must bind a verb trace, so in a finite clause a verb rises as high as it can,
+and when it cannot rise at all the tense affix lowers onto it and *do* supports it under
+negation.
 
-## Main declarations
+The heights a verb can reach are `Reaches`; from it follow the paper's generalizations: long
+movement passes through short movement, auxiliaries reach T in every clause, no lexical verb
+reaches nonfinite T in either language, lexical verbs move at all exactly in French, and
+do-support arises exactly in English finite clauses with a lexical verb (`reaches_tense_imp_agr`,
+`auxiliary_reaches_tense`, `lexical_not_reaches_nonfinite_tense`, `lexical_reaches_agr_iff`,
+`needsDo_iff`). The paradigm of examples (2) to (39), forty rows over finite and nonfinite
+clauses of both languages, is accounted for row by row: a row is excluded exactly when no
+admissible height puts the verb where the row puts it (`paradigm`).
 
-- `paramOf`, `diagOf`: adapters reading a row's language and
-  `paperFeatures` into `VMovementParam` and `VDiagnostic`
-- `acceptable_iff_order_predicted`: a row is acceptable iff the theory's
-  predicted V/diagnostic order matches the row's attested surface order
-- `all_diagnostics_converge`: all four diagnostics agree for any
-  parameter setting
-- `doSupport_iff_no_raising`: do-support anticorrelates with V-raising
+## Implementation notes
+
+The θ-theoretic mechanism is represented by its effect, which head hosts which verb, not by
+θ-grids and chains; the ban on vacuous quantification likewise by the obligatoriness of the
+highest reachable position in finite clauses. Marginal rows are counted as admitted, as the
+paper treats their degradation as stylistic. The structure of TP with *do*, imperatives,
+gerunds, and the ECP account of why *not* alone blocks affix lowering are not formalized.
+
+## References
+
+* [pollock-1989]
 -/
 
 namespace Pollock1989
 
-open Data.Examples
-open Minimalist
+open Data.Examples Examples
 
--- ============================================================================
--- § 1  Transfer Equation over Pollock's Rows
--- ============================================================================
+/-! ### Heads, verbs, and reachability -/
 
-/-- Movement-parameter adapter: French lexical verbs raise, English
-    lexical verbs stay in situ, English auxiliaries raise. -/
-def paramOf (row : LinguisticExample) : Option VMovementParam :=
-  match row.language, row.feature? "verb_type" with
-  | "stan1290", some "lexical"   => some french
-  | "stan1293", some "lexical"   => some englishLexical
-  | "stan1293", some "auxiliary" => some englishAux
-  | _, _ => none
+/-- The positions a verb can occupy: in VP, in Agr after short movement, in T after long
+movement. -/
+inductive Height where
+  | vp
+  | agr
+  | tense
+  deriving DecidableEq, Repr, Fintype
 
-/-- Diagnostic adapter: the row's `diagnostic` feature as a `VDiagnostic`. -/
-def diagOf (row : LinguisticExample) : Option VDiagnostic :=
-  match row.feature? "diagnostic" with
-  | some "inversion" => some .inversion
-  | some "adverb"    => some .adverb
-  | some "negation"  => some .negation
-  | some "floatingQ" => some .floatingQ
-  | _ => none
+/-- Height as the number of heads climbed. -/
+def Height.rank : Height → ℕ
+  | .vp => 0
+  | .agr => 1
+  | .tense => 2
 
-/-- The theory's predicted surface order: does the verb precede the
-    diagnostic element? -/
-def predictedOrder (row : LinguisticExample) : Option Bool := do
-  pure (verbPrecedesDiagnostic (← paramOf row) (← diagOf row))
+instance : LinearOrder Height := LinearOrder.lift' Height.rank (by decide)
 
-/-- The attested surface order recorded in the row's
-    `v_precedes_diagnostic` feature. -/
-def surfaceOrder (row : LinguisticExample) : Option Bool :=
-  (row.feature? "v_precedes_diagnostic").map (· == "true")
+/-- A verb with θ-roles to assign, or an auxiliary with none. -/
+inductive Verb where
+  | lexical
+  | auxiliary
+  deriving DecidableEq, Repr, Fintype
 
-/-- **Transfer equation**: a Pollock row is acceptable iff the verb
-    movement parameter predicts exactly the attested surface order.
-    The marginal row (`ex_p12`, "John often has eaten pizza") sits on
-    the not-acceptable side: the auxiliary should raise, so the
-    Adv > Aux order mismatches the prediction. -/
-theorem acceptable_iff_order_predicted :
-    ∀ row ∈ Examples.all,
-      row.judgment = .acceptable ↔ predictedOrder row = surfaceOrder row := by
+/-- The two languages compared. -/
+inductive Language where
+  | french
+  | english
+  deriving DecidableEq, Repr, Fintype
+
+/-- A clause type: its language and whether its T is finite. -/
+structure Clause where
+  language : Language
+  finite : Bool
+  deriving DecidableEq, Repr
+
+/-- English Agr is too poor morphologically to transmit θ-roles. -/
+def Clause.AgrOpaque (c : Clause) : Prop := c.language = .english
+
+/-- Nonfinite T is opaque to θ-role assignment in both languages. -/
+def Clause.TenseOpaque (c : Clause) : Prop := c.finite = false
+
+/-- A head hosts a verb unless it is opaque and the verb has θ-roles to assign. -/
+def Hosts (isOpaque : Prop) (v : Verb) : Prop := ¬ isOpaque ∨ v = .auxiliary
+
+/-- The heights a verb reaches in a clause, head by head: Agr if Agr hosts it, T if moreover T
+hosts it. -/
+def Reaches (c : Clause) (v : Verb) : Height → Prop
+  | .vp => True
+  | .agr => Hosts c.AgrOpaque v
+  | .tense => Hosts c.AgrOpaque v ∧ Hosts c.TenseOpaque v
+
+instance (c : Clause) (v : Verb) : DecidablePred (Reaches c v) := λ h => by
+  cases h <;> unfold Reaches Hosts Clause.AgrOpaque Clause.TenseOpaque <;> infer_instance
+
+/-- Long movement is short movement continued (the Head Movement Constraint). -/
+theorem reaches_tense_imp_agr {c : Clause} {v : Verb} (h : Reaches c v .tense) :
+    Reaches c v .agr :=
+  h.1
+
+/-- Reachability is downward closed. -/
+theorem reaches_of_le {c : Clause} {v : Verb} {h h' : Height} (hle : h' ≤ h)
+    (hr : Reaches c v h) : Reaches c v h' := by
+  cases h <;> cases h' <;>
+    first | exact hr | exact trivial | exact hr.1 | exact absurd hle (by decide)
+
+/-- *Be* and *have* reach T in every clause of both languages. -/
+theorem auxiliary_reaches_tense (c : Clause) : Reaches c .auxiliary .tense :=
+  ⟨Or.inr rfl, Or.inr rfl⟩
+
+/-- No lexical verb reaches nonfinite T, in French as in English: the restriction is not an
+English idiosyncrasy. -/
+theorem lexical_not_reaches_nonfinite_tense (l : Language) :
+    ¬ Reaches ⟨l, false⟩ .lexical .tense :=
+  λ h => h.2.elim (· rfl) (nomatch ·)
+
+/-- A lexical verb moves at all exactly in French: the lexical restrictions on short movement
+in infinitives and on long movement in finite clauses are the same restriction. -/
+theorem lexical_reaches_agr_iff (c : Clause) : Reaches c .lexical .agr ↔ c.language = .french := by
+  cases c with
+  | mk l f => cases l <;> cases f <;> decide
+
+/-! ### Finiteness and do-support -/
+
+/-- The highest position a verb reaches. -/
+def top (c : Clause) (v : Verb) : Height :=
+  if Reaches c v .tense then .tense else if Reaches c v .agr then .agr else .vp
+
+/-- The positions a verb may surface in: only the highest one in a finite clause, where T is an
+operator that must bind the verb's trace, and any reachable one in a nonfinite clause. -/
+def Admits (c : Clause) (v : Verb) (h : Height) : Prop :=
+  if c.finite then h = top c v else Reaches c v h
+
+instance (c : Clause) (v : Verb) (h : Height) : Decidable (Admits c v h) := by
+  unfold Admits; infer_instance
+
+/-- The tense affix must lower onto a verb that cannot rise at all, and *do* supports it when
+negation blocks the lowering. -/
+def NeedsDo (c : Clause) (v : Verb) : Prop := c.finite = true ∧ top c v = .vp
+
+instance (c : Clause) (v : Verb) : Decidable (NeedsDo c v) := by unfold NeedsDo; infer_instance
+
+/-- Do-support arises exactly in English finite clauses with a lexical verb. -/
+theorem needsDo_iff (c : Clause) (v : Verb) :
+    NeedsDo c v ↔ c = ⟨.english, true⟩ ∧ v = .lexical := by
+  cases c with
+  | mk l f => cases l <;> cases f <;> cases v <;> decide
+
+/-! ### The paradigm -/
+
+/-- The four diagnostics of the verb's position. -/
+inductive Diagnostic where
+  | negation
+  | adverb
+  | floatingQ
+  | inversion
+  deriving DecidableEq, Repr, Fintype
+
+/-- Whether a verb at a height precedes the diagnostic element: negation and the inverted
+subject require T, an adverb or floating quantifier in the VP-initial position requires Agr. -/
+def precedes (h : Height) : Diagnostic → Bool
+  | .negation | .inversion => h = .tense
+  | .adverb | .floatingQ => h ≠ .vp
+
+/-- The adverb and floating-quantifier diagnostics agree at every height, and negation and
+inversion agree at every height. -/
+theorem precedes_adverb_floatingQ (h : Height) :
+    precedes h .adverb = precedes h .floatingQ ∧ precedes h .negation = precedes h .inversion := by
+  cases h <;> decide
+
+/-- A row's clause type, verb, diagnostic, and attested order, read from its features. -/
+def interpret (r : LinguisticExample) : Option (Clause × Verb × Diagnostic × Bool) := do
+  let language ← match r.language with
+    | "stan1290" => some Language.french
+    | "stan1293" => some Language.english
+    | _ => none
+  let finite ← match r.feature? "finite" with
+    | some "yes" => some true
+    | some "no" => some false
+    | _ => none
+  let verb ← match r.feature? "verb" with
+    | some "lexical" => some Verb.lexical
+    | some "auxiliary" => some Verb.auxiliary
+    | _ => none
+  let diagnostic ← match r.feature? "diagnostic" with
+    | some "negation" => some Diagnostic.negation
+    | some "adverb" => some Diagnostic.adverb
+    | some "floatingQ" => some Diagnostic.floatingQ
+    | some "inversion" => some Diagnostic.inversion
+    | _ => none
+  let order ← match r.feature? "verbPrecedes" with
+    | some "true" => some true
+    | some "false" => some false
+    | _ => none
+  pure (⟨language, finite⟩, verb, diagnostic, order)
+
+/-- A row is predicted: it is excluded exactly when no admitted height puts the verb on the
+attested side of the diagnostic element. -/
+def Predicted (r : LinguisticExample) : Prop :=
+  match interpret r with
+  | some (c, v, d, b) => r.judgment ≠ .unacceptable ↔ ∃ h, Admits c v h ∧ precedes h d = b
+  | none => False
+
+instance (r : LinguisticExample) : Decidable (Predicted r) := by
+  unfold Predicted; split <;> infer_instance
+
+/-- The paradigm (2) to (39): every row is predicted. -/
+theorem paradigm : ∀ r ∈ Examples.all, Predicted r := by
   decide
-
--- ============================================================================
--- § 2  Diagnostic Convergence
--- ============================================================================
-
-/-! All four diagnostics agree for any parameter setting. This is the core
-of Pollock's argument: the four tests are not independent observations but
-consequences of a single parameter (V-raises vs. V-in-situ). -/
-
-/-- For any parameter setting, all four diagnostics give the same answer. -/
-theorem all_diagnostics_converge (p : VMovementParam) (d₁ d₂ : VDiagnostic) :
-    verbPrecedesDiagnostic p d₁ = verbPrecedesDiagnostic p d₂ :=
-  diagnostics_converge p d₁ d₂
-
--- ============================================================================
--- § 3  Do-Support / V-Raising Anticorrelation
--- ============================================================================
-
-/-! Do-support and verb raising are complementary: a parameter setting that
-raises V never needs do-support, and a setting that keeps V in situ always
-needs it. This follows from the theory: do-support exists *because* V
-cannot raise. -/
-
-/-- Do-support is needed iff V does not raise past negation. -/
-theorem doSupport_iff_no_raising (p : VMovementParam) (ctx : TenseSupportContext) :
-    needsDoSupport p ctx = !verbPrecedesDiagnostic p .negation :=
-  doSupport_anticorrelates_raising p ctx
 
 end Pollock1989
