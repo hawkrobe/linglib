@@ -2,28 +2,31 @@ import Linglib.Pragmatics.NeoGricean.Basic
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# [sauerland-2004] — Scalar Implicatures in Complex Sentences
-[sauerland-2004]
+# Sauerland (2004): Scalar Implicatures in Complex Sentences
 
-Sauerland, U. (2004). Scalar implicatures in complex sentences.
-*Linguistics and Philosophy* 27(3): 367–391.
+This file formalizes the paper's derivation of the implicatures of disjunction. The paper
+separates primary implicatures, that the speaker is not certain of a stronger alternative,
+from secondary implicatures, that the speaker is certain the alternative is false, and admits
+a secondary implicature only when it is consistent with the assertion and every primary
+implicature; the two conditions are `IsSecondaryImplicature` of
+`Pragmatics/NeoGricean/Basic`. Asserting *A or B* against the alternatives *A*, *B* and
+*A and B* yields the primary implicatures that the speaker is not certain of either disjunct
+or of the conjunction. The secondary implicature that the conjunction is false is consistent
+with them and arises (`conj_secondary`), while the one that *A* is false is blocked: with the
+assertion it would force certainty of *B*, against the primary implicature
+(`disjunct_blocked`); the paper puts the block as a conflict with the possibility of *A*
+that the assertion and the primary implicature about *B* entail. That "not both" arises but
+"not A" does not is the paper's prediction for disjunction, which accounts negating every
+stronger alternative cannot make.
 
-The paper's derivation for disjunction, run through the consistency-gated
-algorithm in `Pragmatics/NeoGricean/Basic.lean` (`IsSecondaryImplicature`,
-implementing the paper's (42)/(43), verified p. 383): asserting *A or B*
-against the alternatives {A, B, A∧B} yields the primary implicatures
-¬KA, ¬KB, ¬K(A∧B). Of the candidate secondary implicatures, K¬(A∧B)
-is consistent with the commitments and arises (`conj_secondary`),
-while K¬A is **blocked** (`disjunct_blocked`): K¬A together with
-K(A∨B) forces KB, contradicting the primary ¬KB. (The paper frames the same block dually:
-K¬A contradicts the possibility implicature PA entailed by the
-assertion plus ¬KB.) This asymmetry — "not both" arises but
-"not A" does not — is the paper's signature prediction for disjunction,
-unavailable to accounts that negate all stronger alternatives
-indiscriminately.
+## Implementation notes
 
-The four-world model `DisjWorld` distinguishes worlds by which
-disjuncts hold; the assertion *A or B* excludes only `neither`.
+The worlds are the four combinations of the disjuncts' truth values, so the assertion excludes
+only the world in which neither holds.
+
+## References
+
+* [sauerland-2004]
 -/
 
 namespace Sauerland2004
@@ -77,12 +80,12 @@ commitments. The strengthened meaning `disj \ propA` entails B, so K¬A
 together with K(A∨B) forces KB — contradicting the primary implicature
 ¬KB (`isSecondaryImplicature_iff`: the single primary ¬KB blocks K¬A).
 The disjuncts therefore yield only ignorance inferences, never "not A". -/
-theorem disjunct_blocked : ¬ IsSecondaryImplicature disj orAlts propA := fun h =>
+theorem disjunct_blocked : ¬ IsSecondaryImplicature disj orAlts propA := λ h =>
   (isSecondaryImplicature_iff.1 h).2 propB (by simp [orAlts])
     (by simp only [Set.subset_def, Set.mem_sdiff, disj, propA, propB]; decide)
 
 /-- By the A↔B symmetry of the model, K¬B is blocked identically, by ¬KA. -/
-theorem disjunct_blocked' : ¬ IsSecondaryImplicature disj orAlts propB := fun h =>
+theorem disjunct_blocked' : ¬ IsSecondaryImplicature disj orAlts propB := λ h =>
   (isSecondaryImplicature_iff.1 h).2 propA (by simp [orAlts])
     (by simp only [Set.subset_def, Set.mem_sdiff, disj, propA, propB]; decide)
 
