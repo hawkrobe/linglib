@@ -1,5 +1,5 @@
 import Linglib.Semantics.Conditionals.Counterfactual
-import Linglib.Semantics.Plurality.Trivalent
+import Linglib.Logic.Duality
 
 /-!
 # Ramotowska, Marty, Romoli, and Santorio (2025): Counterfactuals and Quantificational Force
@@ -240,8 +240,8 @@ plural definite *the players won* has a gap, while the quantified counterfactual
 scenario have none. -/
 theorem dissociation (h : Mixed sim A w D B) {v : W}
     (hv : (∃ d ∈ D, B d v) ∧ ∃ d ∈ D, ¬ B d v) (q : Quant) :
-    Plurality.Trivalent.pluralTruthValue B D v = .indet ∧ selectional sim A w D B q ≠ .indet :=
-  ⟨(Plurality.Trivalent.pluralTruthValue_eq_gap_iff B D v).2 hv, selectional_determinate h q⟩
+    Trivalent.dist D (B · v) = .indet ∧ selectional sim A w D B q ≠ .indet :=
+  ⟨(Trivalent.dist_eq_indet_iff D (B · v)).2 hv, selectional_determinate h q⟩
 
 
 end RamotowskaEtAl2025

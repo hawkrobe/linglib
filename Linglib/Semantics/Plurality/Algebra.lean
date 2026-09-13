@@ -40,11 +40,6 @@ mathlib's `SupHom` and could be folded into it (Todo).
 | `IsDistr(P)` | `∀x. P x → At x` | `IsDistr` |
 | `Inv(P)` | closed under m-equivalent substitution | `Inv` |
 
-## Todo
-
-* Bridge to `Distributivity.distMaximal`: on `Finset` carriers `star_image_singleton`
-  gives `*P = D P` for a `P` true of individuals only; the world-indexed
-  `distMaximal` is its pointwise form.
 -/
 
 namespace Plurality.Algebra
@@ -371,34 +366,5 @@ theorem properPlural_cum {P : E → Prop} {x y : E}
 
 end Classification
 
-
-/-! ### Connection to Finset-based distributivity
-
-Link's `IsDistr(P)` (P applies to atoms only) is the mereological
-foundation for `distMaximal` in `Distributivity.lean`. The Finset-based
-`distMaximal P x w = ∀a ∈ x. P(a)(w)` corresponds to Link's distributive
-inference (`distr_atom_part`): if P is distributive, distributing to
-every atom-part is correct. The connection is structural — Link works
-with a lattice `E` and atoms; `distMaximal` works with `Finset Atom`.
-The pointwise correspondence:
-
-- Link's atoms `A ⊆ E` = the type `Atom` in `Distributivity.lean`
-- Link's `≤ᵢ` (individual part) = Finset membership `a ∈ x`
-- Link's `*P(x)` (plural closure) = "the members of `x` all satisfy `P`"
-- `IsDistr(P) ∧ *P(x)` → `∀a atom-part-of x. P(a)` = `distMaximal P x w`
-
-The formal bridge is proved in `Distributivity.lean`:
-`distMaximal_iff_star_atoms` (star form) and `distMaximal_iff_forall_atom`
-(atom form). It runs through mathlib's `IsAtom`, which is what `Atom` is over
-an `OrderBot` carrier like `Finset Atom` (`Mereology.atom_iff_isAtom`): the
-null `∅` is excluded and the atoms are the singletons (`Finset.isAtom_iff`),
-so `distr_atom_part` instantiates at the free model. -/
-
-/-- Restatement of `distr_atom_part` under the `star` alias, anticipating
-    the Finset-side `distMaximal_forces_all` consumer. -/
-theorem distr_star_iff_all_atoms {P : E → Prop} (hDistr : IsDistr P)
-    (hJP : AtomJoinPrime E) {x : E} :
-    star P x → ∀ {y : E}, Atom y → y ≤ x → P y :=
-  distr_atom_part hDistr hJP
 
 end Plurality.Algebra

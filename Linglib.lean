@@ -1729,7 +1729,6 @@ import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Semantics.Plurality.Groups
 import Linglib.Semantics.Plurality.Reciprocal
 import Linglib.Semantics.Plurality.Reciprocal.Scope
-import Linglib.Semantics.Plurality.Trivalent
 import Linglib.Semantics.Polarity.CzechNegation
 import Linglib.Semantics.Polarity.ExpletiveNegation
 import Linglib.Semantics.Polarity.Strength

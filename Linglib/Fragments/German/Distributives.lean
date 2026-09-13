@@ -1,159 +1,55 @@
 import Linglib.Semantics.Plurality.Distributivity
-import Linglib.Semantics.Plurality.Trivalent
 
 /-!
-# German Distributive Expressions
+# German distributive expressions
 
-Fragment entries for German distributive items grounded in the theory-layer
-operators from `Semantics/Lexical/Plural/Distributivity.lean`.
+The German distributive items *jeder*, *jeweils* and *alle*, with their denotations as the
+theory-layer operators and their syntactic uses ([haslinger-etal-2025]). *jeder* and *jeweils*
+are both obligatorily distributive; *jeder* is maximal, while *jeweils* distributes over a
+contextually tolerated subplurality and has no determiner use.
 
-## Inventory
+## References
 
-| Form     | Gloss          | Syntactic use   | Semantics       | ±dist | ±max |
-|----------|----------------|-----------------|-----------------|-------|------|
-| *jeder*  | every/each     | DP + distance   | `distMaximal`   | +     | +    |
-| *jeweils*| each/resp.     | distance only   | `distTolerant`  | +     | -    |
-| *alle*   | all            | DP only         | `allViaForallH` | -     | +    |
-
-The key contrast: *jeder* and *jeweils* are both obligatorily distributive,
-but differ in maximality. *jeder* uses identity tolerance (forces maximality);
-*jeweils* uses a contextually provided tolerance (permits non-maximality for
-some speakers). [haslinger-etal-2025].
-
-## Grounding
-
-Each entry's semantics is defined by direct reference to theory-layer operators,
-following the compositional grounding principle: Fragment entries import and use
-Theory definitions, never stipulating their own meaning functions.
+* [haslinger-etal-2025]
 -/
 
 namespace German.Distributives
 
-open Plurality
-open Plurality.Distributivity
-open Plurality.Trivalent
+open Plurality Plurality.Distributivity
 
-variable {Atom W : Type*} [DecidableEq Atom]
+variable {Atom W : Type*}
 
--- Semantic Entries
+/-- ⟦jeder⟧: maximal distribution. -/
+def jederSem (P : Atom → W → Prop) : Finset Atom → W → Prop := distMaximal P
 
-/--
-⟦jeder⟧ = `distMaximal`: distribute P to every atom, no exceptions.
-
-Equivalent to `distTolerant` with identity tolerance
-(`distMaximal_eq_identity`). On atoms, reduces to P itself
-(`distMaximal_singleton`).
-
-[haslinger-etal-2025] examples (1), (22b-c).
--/
-def jederSem (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] :
-    Finset Atom → W → Prop :=
-  distMaximal P
-
-/--
-⟦jeweils⟧ = `distTolerant`: distribute P to atoms within a tolerant
-sub-plurality. The tolerance relation ≤ is contextually provided.
-
-For speakers who accept *jeweils* in non-maximal contexts, the tolerance
-parameter allows exceptions irrelevant to the QUD.
-
-[haslinger-etal-2025] eq. (25), examples (22a), (23b), (24b).
--/
-def jeweilsSem (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
-    (tol : Tolerance Atom) : Finset Atom → W → Prop :=
+/-- ⟦jeweils⟧: tolerant distribution with a contextually supplied tolerance. -/
+def jeweilsSem (P : Atom → W → Prop) (tol : Tolerance Atom) : Finset Atom → W → Prop :=
   distTolerant P tol
 
-/--
-⟦alle⟧ = universal quantification over the tolerance parameter.
+/-- ⟦alle⟧: maximal, without distributive inferences of its own. -/
+def alleSem (P : Atom → W → Prop) : Finset Atom → W → Prop := distMaximal P
 
-`alle` does not itself force distributivity — it removes the tolerance
-parameter that would otherwise permit non-maximal readings. The predicate's
-own dist/non-dist nature is preserved.
-
-Formally: ⟦alle P⟧ = λw.λx.∀≤'[≤' tolerance → ⟦P⟧^≤'(x)]
-This is equivalent to `allSatisfy` by `allViaForallH_iff_allSatisfy`.
-
-[haslinger-etal-2025] eq. (20b); [kriz-spector-2021] §5.3.
--/
-def alleSem [Fintype Atom] (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
-    (x : Finset Atom) (w : W) : Prop :=
-  allViaForallH P x w
-
--- Lexical Properties
-
-/--
-German distributive expression with grounded semantics.
--/
+/-- A German distributive item. -/
 structure DistributiveEntry where
-  /-- Surface form -/
   form : String
-  /-- English gloss -/
   gloss : String
-  /-- Has a DP-internal (determiner) use? -/
+  /-- Has a determiner use. -/
   hasDPUse : Bool
-  /-- Has a distance-distributive (adverbial) use? -/
+  /-- Has a distance-distributive, adverbial use. -/
   hasDistanceUse : Bool
-  /-- Classification -/
   distMaxClass : DistMaxClass
   deriving Repr
 
 def jederEntry : DistributiveEntry :=
-  { form := "jeder"
-  , gloss := "every/each"
-  , hasDPUse := true
-  , hasDistanceUse := true
-  , distMaxClass := .distMax }
+  { form := "jeder", gloss := "every/each", hasDPUse := true, hasDistanceUse := true,
+    distMaxClass := .distMax }
 
 def jeweilsEntry : DistributiveEntry :=
-  { form := "jeweils"
-  , gloss := "each/respectively"
-  , hasDPUse := false        -- No DP-internal use!
-  , hasDistanceUse := true
-  , distMaxClass := .distNonMax }
+  { form := "jeweils", gloss := "each/respectively", hasDPUse := false, hasDistanceUse := true,
+    distMaxClass := .distNonMax }
 
 def alleEntry : DistributiveEntry :=
-  { form := "alle"
-  , gloss := "all"
-  , hasDPUse := true
-  , hasDistanceUse := false
-  , distMaxClass := .nonDistMax }
-
--- Grounding Theorems
-
-/-- jeder's semantics IS distMaximal -/
-theorem jeder_eq_distMaximal (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] :
-    jederSem P = distMaximal P := rfl
-
-/-- jeder ↔ distTolerant with identity tolerance (on nonempty pluralities) -/
-theorem jeder_iff_identity_tolerant (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
-    (x : Finset Atom) (w : W) (hne : x.Nonempty) :
-    jederSem P x w ↔ distTolerant P Tolerance.identity x w :=
-  distMaximal_iff_identity P x w hne
-
-/-- jeweils with identity tolerance ↔ jeder (on nonempty pluralities) -/
-theorem jeweils_identity_iff_jeder (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
-    (x : Finset Atom) (w : W) (hne : x.Nonempty) :
-    jeweilsSem P Tolerance.identity x w ↔ jederSem P x w :=
-  (distMaximal_iff_identity P x w hne).symm
-
-/-- alle reduces to simple universal check on atoms -/
-theorem alle_iff_allSatisfy [Fintype Atom] (P : Atom → W → Prop)
-    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
-    alleSem P x w ↔ allSatisfy P x w :=
-  allViaForallH_iff_allSatisfy P x w
-
--- Typological Correlation
-
-/-- The DP-use / maximality correlation from [haslinger-etal-2025] §4:
-    items with a DP-internal use (*jeder*, *alle*) enforce maximality;
-    items without one (*jeweils*) permit non-maximality.
-
-    This is a descriptive correlation, not a theorem — the paper notes
-    that `jeder*` (eq. 27) would be a counterexample if attested. -/
-theorem dp_use_implies_maximal_for_attested :
-    jederEntry.hasDPUse = true ∧ jederEntry.distMaxClass.isMaximal ∧
-    alleEntry.hasDPUse = true ∧ alleEntry.distMaxClass.isMaximal ∧
-    jeweilsEntry.hasDPUse = false ∧ ¬ jeweilsEntry.distMaxClass.isMaximal := by
-  decide
+  { form := "alle", gloss := "all", hasDPUse := true, hasDistanceUse := false,
+    distMaxClass := .nonDistMax }
 
 end German.Distributives
