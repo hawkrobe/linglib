@@ -1,0 +1,1367 @@
+[
+  {
+    "id": "rosaarnold2017_1a",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "(1a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The butler blamed the chauffeur because he...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "murdered someone",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "verbType",
+        "implicitCausality"
+      ],
+      [
+        "expected",
+        "stimulus"
+      ]
+    ],
+    "comment": "Implicit causality: the stimulus, the chauffeur, is the expected continuation.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_1b",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "(1b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The butler impressed the chauffeur because he...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "figured out the case",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "verbType",
+        "implicitCausality"
+      ],
+      [
+        "expected",
+        "stimulus"
+      ]
+    ],
+    "comment": "Implicit causality: the stimulus, the butler, is the expected continuation.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_2a",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "(2a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The butler gave the threatening note to the chauffeur and he...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "turned it in to the police",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "verbType",
+        "transfer"
+      ],
+      [
+        "expected",
+        "goal"
+      ]
+    ],
+    "comment": "Transfer of possession: the goal, the chauffeur, is the expected continuation.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_2b",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "(2b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The butler received a ticking bomb from the chauffeur and he...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "chucked it into the river",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "verbType",
+        "transfer"
+      ],
+      [
+        "expected",
+        "goal"
+      ]
+    ],
+    "comment": "Transfer of possession with the goal as subject: the butler is the expected continuation.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_3a",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "(3a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sir Barnes got a backrub from Lady Mannerly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "role",
+        "goal"
+      ],
+      [
+        "gram",
+        "subject"
+      ]
+    ],
+    "comment": "Goal continuation, subject position: the continued character is the goal and the subject. The underlined character is the one the next picture continues.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_3b",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "(3b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Lady Mannerly gave a backrub to Sir Barnes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "role",
+        "goal"
+      ],
+      [
+        "gram",
+        "nonsubject"
+      ]
+    ],
+    "comment": "Goal continuation, nonsubject position. The underlined character is the one the next picture continues.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_4a",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "(4a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The chef handed a cookbook to the maid.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "role",
+        "source"
+      ],
+      [
+        "gram",
+        "subject"
+      ]
+    ],
+    "comment": "Source continuation, subject position. The underlined character is the one the next picture continues.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_4b",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "(4b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The maid took a cookbook from the chef.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "role",
+        "source"
+      ],
+      [
+        "gram",
+        "nonsubject"
+      ]
+    ],
+    "comment": "Source continuation, nonsubject position. The underlined character is the one the next picture continues.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_t1_goal_subject_different",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sir Barnes got a backrub from Lady Mannerly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "retelling"
+      ],
+      [
+        "table",
+        "1"
+      ],
+      [
+        "role",
+        "goal"
+      ],
+      [
+        "gram",
+        "subject"
+      ],
+      [
+        "gender",
+        "different"
+      ],
+      [
+        "pronouns",
+        "64"
+      ]
+    ],
+    "comment": "Experiment 1, the in-person event-retelling task: rate of pronoun production when the continued character is the goal in subject position, different-gender item, in percent.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_t1_source_subject_different",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The chef handed a cookbook to the maid.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "retelling"
+      ],
+      [
+        "table",
+        "1"
+      ],
+      [
+        "role",
+        "source"
+      ],
+      [
+        "gram",
+        "subject"
+      ],
+      [
+        "gender",
+        "different"
+      ],
+      [
+        "pronouns",
+        "37"
+      ]
+    ],
+    "comment": "Experiment 1, the in-person event-retelling task: rate of pronoun production when the continued character is the source in subject position, different-gender item, in percent.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_t1_goal_nonsubject_different",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Lady Mannerly gave a backrub to Sir Barnes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "retelling"
+      ],
+      [
+        "table",
+        "1"
+      ],
+      [
+        "role",
+        "goal"
+      ],
+      [
+        "gram",
+        "nonsubject"
+      ],
+      [
+        "gender",
+        "different"
+      ],
+      [
+        "pronouns",
+        "31"
+      ]
+    ],
+    "comment": "Experiment 1, the in-person event-retelling task: rate of pronoun production when the continued character is the goal in nonsubject position, different-gender item, in percent.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_t1_source_nonsubject_different",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The maid took a cookbook from the chef.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "retelling"
+      ],
+      [
+        "table",
+        "1"
+      ],
+      [
+        "role",
+        "source"
+      ],
+      [
+        "gram",
+        "nonsubject"
+      ],
+      [
+        "gender",
+        "different"
+      ],
+      [
+        "pronouns",
+        "18"
+      ]
+    ],
+    "comment": "Experiment 1, the in-person event-retelling task: rate of pronoun production when the continued character is the source in nonsubject position, different-gender item, in percent.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_t1_goal_subject_same",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sir Barnes got a backrub from Lady Mannerly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "retelling"
+      ],
+      [
+        "table",
+        "1"
+      ],
+      [
+        "role",
+        "goal"
+      ],
+      [
+        "gram",
+        "subject"
+      ],
+      [
+        "gender",
+        "same"
+      ],
+      [
+        "pronouns",
+        "59"
+      ]
+    ],
+    "comment": "Experiment 1, the in-person event-retelling task: rate of pronoun production when the continued character is the goal in subject position, same-gender item, in percent.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_t1_source_subject_same",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The chef handed a cookbook to the maid.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "retelling"
+      ],
+      [
+        "table",
+        "1"
+      ],
+      [
+        "role",
+        "source"
+      ],
+      [
+        "gram",
+        "subject"
+      ],
+      [
+        "gender",
+        "same"
+      ],
+      [
+        "pronouns",
+        "22"
+      ]
+    ],
+    "comment": "Experiment 1, the in-person event-retelling task: rate of pronoun production when the continued character is the source in subject position, same-gender item, in percent.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_t1_goal_nonsubject_same",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Lady Mannerly gave a backrub to Sir Barnes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "retelling"
+      ],
+      [
+        "table",
+        "1"
+      ],
+      [
+        "role",
+        "goal"
+      ],
+      [
+        "gram",
+        "nonsubject"
+      ],
+      [
+        "gender",
+        "same"
+      ],
+      [
+        "pronouns",
+        "23"
+      ]
+    ],
+    "comment": "Experiment 1, the in-person event-retelling task: rate of pronoun production when the continued character is the goal in nonsubject position, same-gender item, in percent.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_t1_source_nonsubject_same",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Table 1"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The maid took a cookbook from the chef.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "retelling"
+      ],
+      [
+        "table",
+        "1"
+      ],
+      [
+        "role",
+        "source"
+      ],
+      [
+        "gram",
+        "nonsubject"
+      ],
+      [
+        "gender",
+        "same"
+      ],
+      [
+        "pronouns",
+        "15"
+      ]
+    ],
+    "comment": "Experiment 1, the in-person event-retelling task: rate of pronoun production when the continued character is the source in nonsubject position, same-gender item, in percent.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_t4_goal_subject_different",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Table 4"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sir Barnes got a backrub from Lady Mannerly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "completion"
+      ],
+      [
+        "table",
+        "4"
+      ],
+      [
+        "role",
+        "goal"
+      ],
+      [
+        "gram",
+        "subject"
+      ],
+      [
+        "gender",
+        "different"
+      ],
+      [
+        "pronouns",
+        "83"
+      ]
+    ],
+    "comment": "Experiment 2, the sentence-completion task over the story materials: rate of pronoun production when the continued character is the goal in subject position, different-gender item, in percent.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_t4_source_subject_different",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Table 4"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The chef handed a cookbook to the maid.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "completion"
+      ],
+      [
+        "table",
+        "4"
+      ],
+      [
+        "role",
+        "source"
+      ],
+      [
+        "gram",
+        "subject"
+      ],
+      [
+        "gender",
+        "different"
+      ],
+      [
+        "pronouns",
+        "78"
+      ]
+    ],
+    "comment": "Experiment 2, the sentence-completion task over the story materials: rate of pronoun production when the continued character is the source in subject position, different-gender item, in percent.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_t4_goal_nonsubject_different",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Table 4"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Lady Mannerly gave a backrub to Sir Barnes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "completion"
+      ],
+      [
+        "table",
+        "4"
+      ],
+      [
+        "role",
+        "goal"
+      ],
+      [
+        "gram",
+        "nonsubject"
+      ],
+      [
+        "gender",
+        "different"
+      ],
+      [
+        "pronouns",
+        "55"
+      ]
+    ],
+    "comment": "Experiment 2, the sentence-completion task over the story materials: rate of pronoun production when the continued character is the goal in nonsubject position, different-gender item, in percent.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_t4_source_nonsubject_different",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Table 4"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The maid took a cookbook from the chef.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "completion"
+      ],
+      [
+        "table",
+        "4"
+      ],
+      [
+        "role",
+        "source"
+      ],
+      [
+        "gram",
+        "nonsubject"
+      ],
+      [
+        "gender",
+        "different"
+      ],
+      [
+        "pronouns",
+        "33"
+      ]
+    ],
+    "comment": "Experiment 2, the sentence-completion task over the story materials: rate of pronoun production when the continued character is the source in nonsubject position, different-gender item, in percent.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_t4_goal_subject_same",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Table 4"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sir Barnes got a backrub from Lady Mannerly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "completion"
+      ],
+      [
+        "table",
+        "4"
+      ],
+      [
+        "role",
+        "goal"
+      ],
+      [
+        "gram",
+        "subject"
+      ],
+      [
+        "gender",
+        "same"
+      ],
+      [
+        "pronouns",
+        "69"
+      ]
+    ],
+    "comment": "Experiment 2, the sentence-completion task over the story materials: rate of pronoun production when the continued character is the goal in subject position, same-gender item, in percent.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_t4_source_subject_same",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Table 4"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The chef handed a cookbook to the maid.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "completion"
+      ],
+      [
+        "table",
+        "4"
+      ],
+      [
+        "role",
+        "source"
+      ],
+      [
+        "gram",
+        "subject"
+      ],
+      [
+        "gender",
+        "same"
+      ],
+      [
+        "pronouns",
+        "69"
+      ]
+    ],
+    "comment": "Experiment 2, the sentence-completion task over the story materials: rate of pronoun production when the continued character is the source in subject position, same-gender item, in percent.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_t4_goal_nonsubject_same",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Table 4"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Lady Mannerly gave a backrub to Sir Barnes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "completion"
+      ],
+      [
+        "table",
+        "4"
+      ],
+      [
+        "role",
+        "goal"
+      ],
+      [
+        "gram",
+        "nonsubject"
+      ],
+      [
+        "gender",
+        "same"
+      ],
+      [
+        "pronouns",
+        "18"
+      ]
+    ],
+    "comment": "Experiment 2, the sentence-completion task over the story materials: rate of pronoun production when the continued character is the goal in nonsubject position, same-gender item, in percent.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_t4_source_nonsubject_same",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Table 4"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The maid took a cookbook from the chef.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "completion"
+      ],
+      [
+        "table",
+        "4"
+      ],
+      [
+        "role",
+        "source"
+      ],
+      [
+        "gram",
+        "nonsubject"
+      ],
+      [
+        "gender",
+        "same"
+      ],
+      [
+        "pronouns",
+        "19"
+      ]
+    ],
+    "comment": "Experiment 2, the sentence-completion task over the story materials: rate of pronoun production when the continued character is the source in nonsubject position, same-gender item, in percent.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_t7_goal_subject_different",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Table 7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sir Barnes got a backrub from Lady Mannerly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "renamed"
+      ],
+      [
+        "table",
+        "7"
+      ],
+      [
+        "role",
+        "goal"
+      ],
+      [
+        "gram",
+        "subject"
+      ],
+      [
+        "gender",
+        "different"
+      ],
+      [
+        "pronouns",
+        "71"
+      ]
+    ],
+    "comment": "Experiment 3, the sentence-completion task with disconnected items: rate of pronoun production when the continued character is the goal in subject position, different-gender item, in percent.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_t7_source_subject_different",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Table 7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The chef handed a cookbook to the maid.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "renamed"
+      ],
+      [
+        "table",
+        "7"
+      ],
+      [
+        "role",
+        "source"
+      ],
+      [
+        "gram",
+        "subject"
+      ],
+      [
+        "gender",
+        "different"
+      ],
+      [
+        "pronouns",
+        "71"
+      ]
+    ],
+    "comment": "Experiment 3, the sentence-completion task with disconnected items: rate of pronoun production when the continued character is the source in subject position, different-gender item, in percent.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_t7_goal_nonsubject_different",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Table 7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Lady Mannerly gave a backrub to Sir Barnes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "renamed"
+      ],
+      [
+        "table",
+        "7"
+      ],
+      [
+        "role",
+        "goal"
+      ],
+      [
+        "gram",
+        "nonsubject"
+      ],
+      [
+        "gender",
+        "different"
+      ],
+      [
+        "pronouns",
+        "38"
+      ]
+    ],
+    "comment": "Experiment 3, the sentence-completion task with disconnected items: rate of pronoun production when the continued character is the goal in nonsubject position, different-gender item, in percent.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_t7_source_nonsubject_different",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Table 7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The maid took a cookbook from the chef.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "renamed"
+      ],
+      [
+        "table",
+        "7"
+      ],
+      [
+        "role",
+        "source"
+      ],
+      [
+        "gram",
+        "nonsubject"
+      ],
+      [
+        "gender",
+        "different"
+      ],
+      [
+        "pronouns",
+        "33"
+      ]
+    ],
+    "comment": "Experiment 3, the sentence-completion task with disconnected items: rate of pronoun production when the continued character is the source in nonsubject position, different-gender item, in percent.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_t7_goal_subject_same",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Table 7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sir Barnes got a backrub from Lady Mannerly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "renamed"
+      ],
+      [
+        "table",
+        "7"
+      ],
+      [
+        "role",
+        "goal"
+      ],
+      [
+        "gram",
+        "subject"
+      ],
+      [
+        "gender",
+        "same"
+      ],
+      [
+        "pronouns",
+        "68"
+      ]
+    ],
+    "comment": "Experiment 3, the sentence-completion task with disconnected items: rate of pronoun production when the continued character is the goal in subject position, same-gender item, in percent.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_t7_source_subject_same",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Table 7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The chef handed a cookbook to the maid.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "renamed"
+      ],
+      [
+        "table",
+        "7"
+      ],
+      [
+        "role",
+        "source"
+      ],
+      [
+        "gram",
+        "subject"
+      ],
+      [
+        "gender",
+        "same"
+      ],
+      [
+        "pronouns",
+        "64"
+      ]
+    ],
+    "comment": "Experiment 3, the sentence-completion task with disconnected items: rate of pronoun production when the continued character is the source in subject position, same-gender item, in percent.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_t7_goal_nonsubject_same",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Table 7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Lady Mannerly gave a backrub to Sir Barnes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "renamed"
+      ],
+      [
+        "table",
+        "7"
+      ],
+      [
+        "role",
+        "goal"
+      ],
+      [
+        "gram",
+        "nonsubject"
+      ],
+      [
+        "gender",
+        "same"
+      ],
+      [
+        "pronouns",
+        "33"
+      ]
+    ],
+    "comment": "Experiment 3, the sentence-completion task with disconnected items: rate of pronoun production when the continued character is the goal in nonsubject position, same-gender item, in percent.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_t7_source_nonsubject_same",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Table 7"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The maid took a cookbook from the chef.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "renamed"
+      ],
+      [
+        "table",
+        "7"
+      ],
+      [
+        "role",
+        "source"
+      ],
+      [
+        "gram",
+        "nonsubject"
+      ],
+      [
+        "gender",
+        "same"
+      ],
+      [
+        "pronouns",
+        "10"
+      ]
+    ],
+    "comment": "Experiment 3, the sentence-completion task with disconnected items: rate of pronoun production when the continued character is the source in nonsubject position, same-gender item, in percent.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rosaarnold2017_rating",
+    "source": {
+      "bibkey": "rosa-arnold-2017",
+      "paperLabel": "Rating studies"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sir Barnes got a backrub from Lady Mannerly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "study",
+        "rating"
+      ],
+      [
+        "goal",
+        "71"
+      ],
+      [
+        "subject",
+        "54"
+      ]
+    ],
+    "comment": "Next-mention rating study over the Experiment 1 stimuli: the percentage of choices of the goal, and of the subject, as the character more likely to be talked about next; 20 raters.",
+    "metaLanguage": "stan1293"
+  }
+]

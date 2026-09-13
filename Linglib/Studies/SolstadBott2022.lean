@@ -4,7 +4,6 @@ import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Discourse.Coherence
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Studies.RosaArnold2017
 import Linglib.Studies.KehlerRohde2013
 
 /-!
@@ -397,66 +396,6 @@ theorem predictions_match_data :
     predictICBias expStimSubjectProfile = VerbClass.predictedBias .expStim ∧
     predictICBias agPatSubjectProfile = VerbClass.predictedBias .agentPat := by
   refine ⟨by native_decide, by native_decide, by native_decide⟩
-
--- ════════════════════════════════════════════════════
--- § 10. Cross-Study Bridge: [rosa-arnold-2017]
--- ════════════════════════════════════════════════════
-
-open RosaArnold2017
-
-/-- The IC reversal (StimExp→NP1, ExpStim→NP2) and the transfer verb
-    goal bias are both instances of the same deeper pattern: **swapping
-    which argument carries a discourse-prominent thematic role reverses
-    the discourse bias direction**.
-
-    For IC: swapping stimulus between subject (StimExp) and object (ExpStim)
-    reverses the IC bias from NP1 to NP2.
-    For transfer: swapping goal between subject and nonsubject doesn't
-    eliminate the goal bias — goals still get more pronouns in BOTH positions.
-
-    The IC reversal is the stronger demonstration: it shows the bias direction
-    is ENTIRELY determined by the thematic role, not the grammatical position.
-    [rosa-arnold-2017]'s data corroborates this by showing that thematic
-    role affects form even when grammatical role is held constant, violating
-    [kehler-rohde-2013]'s independence hypothesis. -/
-theorem thematic_role_not_position_determines_bias :
-    -- IC: stimulus=subject → NP1 (derived from entailment profile)
-    predictICBias stimExpSubjectProfile = .np1 ∧
-    -- IC: stimulus=object (experiencer=subject) → NP2 (reversal!)
-    predictICBias expStimSubjectProfile = .np2 ∧
-    -- Transfer: goal gets more reduced form than source
-    -- (derived from transferNextMention, not stipulated)
-    (transferNextMention .goal).predictedForm.rank >
-    (transferNextMention .source).predictedForm.rank ∧
-    -- Rosa & Arnold's data confirms: independence is violated
-    ¬ kehlerRohdeIndependence
-      (fun role gram => match role, gram with
-        | .goal, .subject => 64 | .source, .subject => 37
-        | .goal, .nonsubject => 31 | .source, .nonsubject => 18)
-      .subject := by
-  refine ⟨by native_decide, by native_decide, by native_decide, ?_⟩
-  simp [kehlerRohdeIndependence]
-
-/-- Coherence relations select for COMPLEMENTARY thematic roles in the
-    two phenomena, demonstrating that the coherence-role interaction is
-    systematic rather than accidental:
-
-    Explanation (because) → selects CAUSE → stimulus in psych verbs
-    Occasion/Result       → selects ENDPOINT → goal in transfer verbs
-
-    This complementarity is predicted by the semantics of the coherence
-    relations: Explanation asks "why did this happen?" (→ cause), while
-    Occasion/Result asks "what happened next?" (→ endpoint). -/
-theorem coherence_selects_complementary_roles :
-    -- Explanation selects causes (the IC mechanism)
-    CoherenceRelation.explanation.selectsCause ∧
-    -- Occasion/Result is the coherence class that amplifies goal bias
-    occasionResult_interaction.significant = true ∧
-    other_interaction.significant = false ∧
-    -- These are genuinely different coherence classes
-    CoherenceRelation.explanation.toClass ≠
-    CoherenceRelation.occasion.toClass := by
-  refine ⟨rfl, rfl, rfl, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 11. Cross-Study Bridge: [kehler-rohde-2013]
