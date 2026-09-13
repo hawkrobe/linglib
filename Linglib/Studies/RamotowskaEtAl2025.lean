@@ -1,580 +1,247 @@
-import Linglib.Features.Acceptability
-import Linglib.Logic.Duality
-import Linglib.Fragments.English.Determiners
 import Linglib.Semantics.Conditionals.Counterfactual
-import Linglib.Semantics.Conditionals.Counterfactual.QuantifierEmbedding
-import Linglib.Semantics.Conditionals.Counterfactual.Implicature
-import Mathlib.Data.Rat.Defs
+import Linglib.Semantics.Plurality.Trivalent
 
 /-!
-# [ramotowska-marty-romoli-santorio-2025] - Counterfactuals and Quantificational Force
+# Ramotowska, Marty, Romoli, and Santorio (2025): Counterfactuals and Quantificational Force
 
-Ramotowska, S., Marty, P., Romoli, J. & Santorio, P. (2025).
-Counterfactuals and quantificational force: Experimental evidence for
-selectional semantics. Semantics & Pragmatics 18, Article 6: 1–43.
+This file formalizes [ramotowska-marty-romoli-santorio-2025]'s comparison of three theories of
+counterfactuals on quantified sentences in mixed scenarios, where some but not all of the
+players would have won. The universal theory of [lewis-1973] and [kratzer-2012] quantifies over
+the closest antecedent worlds (2); the selectional theory of [stalnaker-1968] evaluates the whole
+sentence at a selected world and supervaluates over the candidate selections after composition
+(5); the
+homogeneity theory of [von-fintel-1997] and [kriz-2015] gives each counterfactual a third
+status during composition (6). Unembedded, the last two agree that a single player's
+counterfactual has a third status and the first calls it false (Table 1, `unembedded`).
+Embedded under a quantifier they part ways: the universal theory makes the sentence turn on its
+polarity (`universal_polarity`), the selectional theory on its quantificational force, the
+universal sentences false and the existential ones true whatever the question under discussion
+(`selectional_force`), and the homogeneity theory leaves every quantified sentence undefined
+under either projection algorithm (`homogeneity_undefined`), so that only there is a gap for a
+question under discussion to resolve, as it does for the plural definite of the same scenario
+(`dissociation`). The implicature variant of [bassi-bar-lev-2018] (§8) mispredicts *some* and
+*not all* (`implicature_some`, `implicature_notAll`). The paper's two experiments find the force
+effect and no effect of the question under discussion on counterfactuals, alongside a question
+effect on plural definites, the pattern of the selectional theory.
 
-## Finding
+## Implementation notes
 
-Quantifier STRENGTH determines graded truth-value judgments for
-counterfactuals embedded under quantifiers, not polarity or QUD.
+A scenario is a similarity ordering, an antecedent, and one consequent per player. Mixedness is
+stated as the paper's setting has it: every closest antecedent world has a winner and a loser,
+and every player wins in one closest world and loses in another. The homogeneity theory's
+projection through a quantifier is the Kleene aggregation of the players' trivalent values,
+conjunctive or disjunctive over the values or their negations; the paper notes that the choice
+makes no difference when every instance is undefined, and its Table 3 row for that theory,
+which rests on a pragmatic resolution of undefinedness by the question under discussion, is
+not derived. Force is the paper's binary, universal against existential, which differs from the
+weak/strong labels of [barwise-cooper-1981] on *no*. The mean ratings and mixed-effects models
+of §5 and §6 are not restated.
 
-This supports the SELECTIONAL theory (Stalnaker + supervaluation) over:
-- Homogeneity theory (von Fintel/Križ): predicts QUD × polarity interaction
-- Universal theory (Lewis/Kratzer): predicts determinate true/false
+## References
 
-## Experimental Paradigm
-
-Two experiments using graded truth-value judgments (0–99 slider from
-"completely false" to "completely true"). QUD manipulated between
-subjects: E-QuD (existential: "at least one has a chance to win")
-vs U-QuD (universal: "all are guaranteed to win").
-
-- **Experiment 1** (n=87 after exclusion): Lottery scenarios where
-  "only some of the tickets that have been bought win a prize."
-- **Experiment 2** (n=94 after exclusion): Card game with 4 players;
-  mixed scenario has 2/4 red cards (win) and 2/4 gray cards (lose).
-  Also tested plural definite sentences alongside counterfactuals.
-
-Test sentences (Experiment 2):
-- "All/None/Some/Not all of the players would have won if they had
-  played and finished this round."
-
-## Key Results
-
-- Strong quantifiers (every, no): mean ratings < 15 (Exp 1), < 4 (Exp 2)
-- Weak quantifiers (some, not every): mean ratings > 84 (Exp 1), > 82 (Exp 2)
-- STRENGTH: β = −77.09, p < .001 (Exp 1); β = −88.7, p < .001 (Exp 2)
-- QUD: not significant for counterfactuals
-  (Exp 1: β = −0.09, p = .97; Exp 2: β = −0.6, p = 0.7)
-- Plural definites WERE sensitive to QUD (Exp 2: β = −12.6, p = 0.01;
-  raw means E-QuD M=41.0, U-QuD M=22.8), confirming QUD manipulation effective
+* [ramotowska-marty-romoli-santorio-2025]
+* [lewis-1973]
+* [kratzer-2012]
+* [stalnaker-1968]
+* [von-fintel-1997]
+* [kriz-2015]
+* [bassi-bar-lev-2018]
+* [barwise-cooper-1981]
 -/
+
+open Conditionals Conditionals.Counterfactual
 
 namespace RamotowskaEtAl2025
 
--- ════════════════════════════════════════════════════════════════
--- Experimental Design
--- ════════════════════════════════════════════════════════════════
+/-! ### Quantified counterfactuals -/
 
-/-- The three theories being tested. -/
-inductive Theory where
-  | universal    -- Lewis/Kratzer: ∀ closest worlds
-  | selectional  -- Stalnaker + supervaluation
-  | homogeneity  -- Universal + homogeneity presupposition
-  deriving Repr, DecidableEq
+/-- The four quantifiers of the test sentences (15): *all*, *none*, *some*, and *not all* of the
+players would have won. -/
+inductive Quant
+  | all | none | some | notAll
+  deriving DecidableEq, Repr, Fintype
 
-/-- Quantifiers tested in the experiment. -/
-inductive Quantifier where
-  | every      -- Universal affirmative (strong/positive)
-  | some       -- Existential (weak/positive)
-  | no         -- Universal negative (strong/negative)
-  | notEvery   -- Negated universal (weak/negative)
-  deriving Repr, DecidableEq
+/-- Quantificational force, the paper's binary: *all* and *none* are universal, *some* and *not
+all* existential. -/
+inductive Force
+  | universal | existential
+  deriving DecidableEq, Repr
 
-open English.Determiners (Strength)
+/-- The force of a quantifier. -/
+def Quant.force : Quant → Force
+  | .all | .none => .universal
+  | .some | .notAll => .existential
 
-/-- Map local quantifiers to canonical Strength (B&C Table II). -/
-def Quantifier.strength : Quantifier → Strength
-  | .every => .strong | .no => .strong
-  | .some => .weak   | .notEvery => .weak
+/-- Polarity: *all* and *some* are positive, *none* and *not all* negative. -/
+def Quant.IsPositive : Quant → Prop
+  | .all | .some => True
+  | .none | .notAll => False
 
-/-- Quantifier strength classification, derived from canonical `Strength`. -/
-def Quantifier.isStrong (q : Quantifier) : Bool := q.strength == .strong
+/-- The selectional theory's verdict in a mixed scenario is fixed by force alone. -/
+def Force.verdict : Force → Trivalent
+  | .universal => .false
+  | .existential => .true
 
-/-- Quantifier polarity classification. -/
-def Quantifier.isPositive : Quantifier → Bool
-  | .every => true
-  | .some => true
-  | .no => false
-  | .notEvery => false
-
-/-- QUD type manipulated between subjects. -/
-inductive QuDType where
-  | existential  -- E-QuD: "at least one has a chance to win"
-  | universal    -- U-QuD: "all are guaranteed to win"
-  deriving Repr, DecidableEq
-
--- ════════════════════════════════════════════════════════════════
--- Theoretical Predictions (Table 3 of the paper)
--- ════════════════════════════════════════════════════════════════
-
-/-- Selectional theory predictions (Table 3): QUD-independent.
-    Strong quantifiers → rejected (low ratings),
-    weak quantifiers → accepted (high ratings). -/
-def selectionalPredictedHigh (q : Quantifier) : Bool := !q.isStrong
-
-/-- Homogeneity theory predictions (Table 3): QUD-dependent.
-    Positive quantifiers: high under E-QuD, low under U-QuD.
-    Negative quantifiers: low under E-QuD, high under U-QuD.
-    The predicted interaction is between QUD and polarity, not strength. -/
-def homogeneityPredictedHigh (q : Quantifier) (qud : QuDType) : Bool :=
-  match q.isPositive, qud with
-  | true,  .existential => true
-  | true,  .universal   => false
-  | false, .existential => false
-  | false, .universal   => true
-
--- ════════════════════════════════════════════════════════════════
--- Experimental Results
--- ════════════════════════════════════════════════════════════════
-
-/--
-Experimental datum: mean slider rating (0–99 scale) for a condition.
-0 = "completely false", 99 = "completely true". -/
-structure ExperimentalDatum where
-  quantifier : Quantifier
-  qud : QuDType
-  meanRating : ℚ     -- Mean slider value (0–99 scale)
-  deriving Repr
-
-/-! ### Experiment 2 Results (card game, n=94)
-
-Experiment 2 (§6) provides per-condition mean slider ratings for
-target counterfactual (TC) sentences in the mixed scenario, reported
-in §6.7.3 (p. 6:34). Values verified against raw CSV data (OSF:
-osf.io/3jywr); paper rounds raw means to 1 decimal place. -/
-
-/-- Experiment 2: mean slider ratings for counterfactuals in mixed
-    scenarios. Verified against raw CSV data (OSF) and paper §6.7.3.
-
-    Strong quantifiers (every/all, none): all means < 4.
-    Weak quantifiers (not all, some): all means > 82. -/
-def experiment2MixedResults : List ExperimentalDatum :=
-  [ -- Strong quantifiers
-    { quantifier := .every, qud := .universal,    meanRating := 222/153 }  -- M = 1.45
-  , { quantifier := .every, qud := .existential,  meanRating := 165/127 }  -- M = 1.30
-  , { quantifier := .no,    qud := .universal,    meanRating := 510/153 }  -- M = 3.33
-  , { quantifier := .no,    qud := .existential,  meanRating := 112/126 }  -- M = 0.89
-    -- Weak quantifiers
-  , { quantifier := .notEvery, qud := .universal,   meanRating := 12567/153 } -- M = 82.14
-  , { quantifier := .notEvery, qud := .existential, meanRating := 11026/128 } -- M = 86.14
-  , { quantifier := .some,     qud := .universal,   meanRating := 14652/152 } -- M = 96.39
-  , { quantifier := .some,     qud := .existential, meanRating := 12197/125 } -- M = 97.58
-  ]
-
-/-! ### Experiment 1 Results (lottery, n=87)
-
-Experiment 1 (§5) uses lottery scenarios where "only some of the tickets
-that have been bought win a prize." Mean slider ratings (0–99) for
-counterfactual sentences in the mixed scenario. No per-quantifier ×
-per-QUD breakdown is reported; the paper reports marginal means by
-STRENGTH (collapsing across QUD and polarity).
-
-Key results from the mixed-effects model (§5.7.2):
-- STRENGTH: β = −77.09, p < .001
-- QUD: β = −0.09, p = .97 (not significant) -/
-
-/-- Experiment 1: marginal means by quantifier strength in mixed
-    scenarios. These are the key data points establishing the
-    strength effect (strong < 15, weak > 84).
-    Values verified from raw CSV data (OSF: osf.io/3jywr). -/
-structure StrengthMarginal where
-  isStrong : Bool
-  meanRating : ℚ
-  deriving Repr
-
-def experiment1Marginals : List StrengthMarginal :=
-  [ { isStrong := true,  meanRating := 1705/150 }   -- M = 11.37 (strong, n=150)
-  , { isStrong := false, meanRating := 13086/146 }   -- M = 89.63 (weak, n=146)
-  ]
-
--- The strength effect replicates across experiments: strong < 15,
--- weak > 84 in Experiment 1.
-#guard experiment1Marginals.all λ d =>
-  if d.isStrong then d.meanRating < 15 else d.meanRating > 84
-
--- ════════════════════════════════════════════════════════════════
--- Key Empirical Observations
--- ════════════════════════════════════════════════════════════════
-
-/--
-**Key empirical observation**: Strength, not polarity or QUD, determines
-truth-value judgments for counterfactuals in mixed scenarios.
-
-Strong quantifiers (every, no) have uniformly low mean ratings (< 4/99).
-Weak quantifiers (some, not every) have uniformly high ratings (> 82/99).
-QUD has no significant effect on counterfactual ratings. -/
-def strengthEffect : Bool :=
-  let strong := experiment2MixedResults.filter (·.quantifier.isStrong)
-  let weak := experiment2MixedResults.filter (!·.quantifier.isStrong)
-  -- All strong ratings below midpoint (50), all weak above
-  strong.all (·.meanRating < 50) && weak.all (·.meanRating > 50)
-
-#guard strengthEffect
-
-/--
-**Strength effect**: all strong quantifier ratings are below 5/99 and
-all weak quantifier ratings are above 80/99 in the mixed scenario.
-
-This extreme separation rules out chance variation and confirms that
-strength is the dominant factor. -/
-theorem strength_effect_verified :
-    experiment2MixedResults.all (λ d =>
-      if d.quantifier.isStrong then d.meanRating < 5
-      else d.meanRating > 80) = true := by
-  rw [List.all_eq_true]
-  intro d hd
-  unfold experiment2MixedResults at hd
-  simp only [List.mem_cons, List.not_mem_nil, or_false] at hd
-  rcases hd with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-    simp [Quantifier.isStrong, Quantifier.strength] <;> norm_num
-
-/--
-**QUD has no effect on counterfactuals**: within each quantifier,
-E-QuD and U-QuD ratings are close (differ by < 5 points on 0–99 scale).
-
-This is the key prediction of the selectional theory (QUD-independent)
-and against the homogeneity theory (which predicts QUD × polarity). -/
-def qudNoEffect : Bool :=
-  let pairs := [
-    (Quantifier.every, QuDType.existential, QuDType.universal),
-    (Quantifier.no, QuDType.existential, QuDType.universal),
-    (Quantifier.some, QuDType.existential, QuDType.universal),
-    (Quantifier.notEvery, QuDType.existential, QuDType.universal)
-  ]
-  pairs.all λ (q, qud1, qud2) =>
-    match experiment2MixedResults.find? (λ d => d.quantifier == q && d.qud == qud1),
-          experiment2MixedResults.find? (λ d => d.quantifier == q && d.qud == qud2) with
-    | some d1, some d2 =>
-      let diff := if d1.meanRating > d2.meanRating
-                  then d1.meanRating - d2.meanRating
-                  else d2.meanRating - d1.meanRating
-      diff < 5  -- Within 5 points on 0–99 scale
-    | _, _ => false
-
-#guard qudNoEffect
-
--- ════════════════════════════════════════════════════════════════
--- Theory Evaluation
--- ════════════════════════════════════════════════════════════════
-
-/--
-**Selectional theory succeeds**: predictions match data.
-
-The selectional theory predicts that quantifier strength determines
-ratings regardless of QUD. This matches the observed pattern:
-strong quantifiers uniformly rejected, weak uniformly accepted,
-with no QUD modulation. -/
-def selectionalFits : Bool :=
-  experiment2MixedResults.all λ d =>
-    let predictedHigh := selectionalPredictedHigh d.quantifier
-    if predictedHigh then d.meanRating > 50 else d.meanRating < 50
-
-#guard selectionalFits
-
-/--
-**Homogeneity theory fails**: predicted QUD × polarity interaction absent.
-
-The homogeneity theory predicts that positive quantifiers (every, some)
-should be rated HIGH under E-QuD but LOW under U-QuD, and vice versa
-for negative quantifiers. The data shows no such interaction:
-- "every" is low under BOTH QUDs (~1.2 and ~1.5)
-- "some" is high under BOTH QUDs (~97.2 and ~96.1) -/
-def homogeneityFails : Bool :=
-  -- Find a case where the homogeneity prediction is wrong
-  experiment2MixedResults.any λ d =>
-    let predictedHigh := homogeneityPredictedHigh d.quantifier d.qud
-    -- Prediction says high but rating is low, or vice versa
-    (predictedHigh && d.meanRating < 50) || (!predictedHigh && d.meanRating > 50)
-
-#guard homogeneityFails
-
-/--
-The homogeneity theory makes wrong predictions for 4 of 8 conditions.
-
-Under U-QuD, homogeneity predicts:
-- every → low (✓ observed: 1.5)
-- some → low (✗ observed: 96.1)
-- no → high (✗ observed: 3.3)
-- not every → high (✓ observed: 82.1)
-
-Under E-QuD, homogeneity predicts:
-- every → high (✗ observed: 1.2)
-- some → high (✓ observed: 97.2)
-- no → low (✓ observed: 0.9)
-- not every → low (✗ observed: 86.1) -/
-theorem homogeneity_wrong_count :
-    (experiment2MixedResults.filter λ d =>
-      let predictedHigh := homogeneityPredictedHigh d.quantifier d.qud
-      (predictedHigh && d.meanRating < 50) || (!predictedHigh && d.meanRating > 50)
-    ).length = 4 := by
-  unfold experiment2MixedResults
-  simp only [List.filter_cons, List.filter_nil, homogeneityPredictedHigh,
-    Quantifier.isPositive, decide_eq_true_eq]
-  norm_num
-
--- ════════════════════════════════════════════════════════════════
--- Statistical Results
--- ════════════════════════════════════════════════════════════════
-
-/-!
-### Mixed-Effects Model Results (Table 5 of paper)
-
-Experiment 2 target counterfactual sentences, linear mixed-effects model
-with POLARITY, STRENGTH, QUD and interactions as predictors:
-
-| Effect              | β      | p      |
-|---------------------|--------|--------|
-| INTERCEPT           | 46.1   | < .001 |
-| STRENGTH            | −88.7  | < .001 |
-| QUD                 | −0.6   | 0.7    |
-| POLARITY            | 5.9    | < .001 |
-| QUD:POLARITY        | 0.3    | 0.9    |
-| STRENGTH:QUD        | 3.9    | 0.2    |
-| STRENGTH:POLARITY   | −13.2  | < .001 |
-| STR:POL:QUD         | −5.3   | 0.4    |
-
-Key findings:
-- **STRENGTH** is the dominant predictor (β = −88.7)
-- **QUD** has no significant main effect or interactions
-- **POLARITY** has a small effect (β = 5.9): "some" rated slightly
-  higher than "not every" within weak quantifiers
-- **STRENGTH×POLARITY** interaction (β = −13.2): the polarity effect
-  is confined to weak quantifiers
--/
-
--- ════════════════════════════════════════════════════════════════
--- Plural Definite Dissociation (Experiment 2)
--- ════════════════════════════════════════════════════════════════
-
-/-!
-### Plural Definites vs Counterfactuals: QUD Sensitivity
-
-Experiment 2 also tested plural definite sentences alongside
-counterfactuals. The key finding: plural definites ARE sensitive to
-QUD (β = −12.6, p = 0.01), while counterfactuals are NOT (β = −0.6,
-p = 0.7). This dissociation confirms:
-
-1. The QUD manipulation was effective (plural definites detect it)
-2. Counterfactuals' QUD insensitivity is a genuine semantic property
-3. Both phenomena use the same DIST operator, but differ in
-   architecture: plural homogeneity is LOCAL (gap before quantifier),
-   while selectional counterfactuals are GLOBAL (Bool before quantifier)
--/
-
-/-- Plural definite datum: mean slider rating under each QUD condition
-    in the mixed scenario ("The players won this round"). -/
-structure PluralDefiniteDatum where
-  qud : QuDType
-  meanRating : ℚ
-  deriving Repr
-
-/-- Experiment 2: plural definite mean ratings in mixed scenario.
-    Unlike counterfactuals, these show a significant QUD effect.
-    Raw means from OSF data; paper §6.7.2 reports model-estimated
-    marginals (42.2 / 29.6) which differ slightly. -/
-def experiment2PluralDefiniteResults : List PluralDefiniteDatum :=
-  [ { qud := .existential, meanRating := 4554/111 }   -- M = 41.03
-  , { qud := .universal,   meanRating := 2601/114 }    -- M = 22.82
-  ]
-
--- QUD affects plural definites: E-QuD > U-QuD by > 10 points
-#guard
-  match experiment2PluralDefiniteResults.find? (·.qud == .existential),
-        experiment2PluralDefiniteResults.find? (·.qud == .universal) with
-  | some e, some u => e.meanRating - u.meanRating > 10
-  | _, _ => false
-
--- ════════════════════════════════════════════════════════════════
--- Grounding: Study Predictions ↔ Formal Selectional Semantics
--- ════════════════════════════════════════════════════════════════
-
-open Conditionals.Counterfactual
-  (embeddedSelectional noSelectional notEverySelectional QStrength
-   all_four_quantifiers_mixed)
-
-/-- Bridge: map study quantifiers to formal selectional predictions.
-    Each quantifier maps to the corresponding projection operation
-    from the theory layer (`Counterfactual.lean`). -/
-def Quantifier.selectionalResult (q : Quantifier) (results : List Trivalent) : Trivalent :=
+/-- The quantifier applied to a domain and a predicate. -/
+def Quant.eval {ι : Type*} (q : Quant) (D : Finset ι) (P : ι → Prop) : Prop :=
   match q with
-  | .every    => embeddedSelectional .strong results
-  | .some     => embeddedSelectional .weak results
-  | .no       => noSelectional results
-  | .notEvery => notEverySelectional results
+  | .all => ∀ d ∈ D, P d
+  | .none => ∀ d ∈ D, ¬ P d
+  | .some => ∃ d ∈ D, P d
+  | .notAll => ∃ d ∈ D, ¬ P d
 
-/--
-**Grounding theorem**: the study-level prediction (`selectionalPredictedHigh`)
-agrees with the formal selectional semantics for any mixed input.
+instance {ι : Type*} (q : Quant) (D : Finset ι) (P : ι → Prop) [DecidablePred P] :
+    Decidable (q.eval D P) := by
+  cases q <;> dsimp only [Quant.eval] <;> infer_instance
 
-This connects the theory layer's three-valued projection operations to the
-study file's simple strength-based classification. The classification is
-not stipulated — it is derived from the formal theory by construction. -/
-theorem selectional_prediction_grounded (q : Quantifier) (bs : List Bool)
-    (h_some_true : bs.any id) (h_some_false : bs.any (!·)) :
-    (q.selectionalResult (bs.map Trivalent.ofBool) == .true) = selectionalPredictedHigh q := by
-  obtain ⟨h1, h2, h3, h4⟩ := all_four_quantifiers_mixed bs h_some_true h_some_false
-  cases q <;>
-    simp only [Quantifier.selectionalResult, selectionalPredictedHigh,
-      Quantifier.isStrong, Quantifier.strength, h1, h2, h3, h4] <;>
-    decide
+/-- The quantifier's projection through the players' trivalent values: the Kleene meet for the
+universal quantifiers and the Kleene join for the existential ones, over the values or their
+negations. -/
+def Quant.aggregate (q : Quant) (vs : List Trivalent) : Trivalent :=
+  match q with
+  | .all => Trivalent.aggregate .conjunctive vs
+  | .none => Trivalent.aggregate .conjunctive (vs.map Trivalent.neg)
+  | .some => Trivalent.aggregate .disjunctive vs
+  | .notAll => Trivalent.aggregate .disjunctive (vs.map Trivalent.neg)
 
--- ════════════════════════════════════════════════════════════════
--- Architectural Explanation: Local vs Global Trivalence
--- ════════════════════════════════════════════════════════════════
+variable {W ι : Type*} [DecidableEq W] [Fintype W] (sim : SimilarityOrdering W)
+  (A : W → Prop) [DecidablePred A] (w : W) (D : Finset ι) (B : ι → W → Prop)
 
-open Trivalent (aggregate ProjectionType
-  aggregate_replicate_indet aggregate_map_ofBool_mixed aggregate_map_ofBool_ne_indet)
-open Conditionals.Counterfactual (projectTruthValues_eq_aggregate)
+/-- The closest antecedent worlds to the world of evaluation. -/
+abbrev closest : Finset W := sim.closestWorlds w (Finset.univ.filter A)
 
-/-!
-### Why Strength Matters: Local vs Global Aggregation
+/-! ### Mixed scenarios -/
 
-The paper's deepest insight (§2.2): whether gaps arise LOCALLY (before
-the quantifier) or GLOBALLY (after the quantifier) determines whether
-quantifier strength matters. The algebra is `Trivalent.aggregate`
-applied to two different inputs:
+/-- A win-some-lose-some scenario: there are players, every closest antecedent world has a
+winner and a loser among them, and every player wins in some closest world and loses in
+another. -/
+structure Mixed : Prop where
+  nonempty : D.Nonempty
+  worlds : ∀ w' ∈ closest sim A w, (∃ d ∈ D, B d w') ∧ ∃ d ∈ D, ¬ B d w'
+  players : ∀ d ∈ D, (∃ w' ∈ closest sim A w, B d w') ∧ ∃ w' ∈ closest sim A w, ¬ B d w'
 
-- **Homogeneity** uses local scope: each individual's counterfactual
-  is `.indet` (gap). `aggregate_replicate_indet` proves both ∃ and
-  ∀ aggregation return `.indet` — strength is invisible.
-- **Selectional** uses global scope: within each selected world,
-  individual outcomes are Bool. `aggregate_map_ofBool_mixed` proves
-  mixed Bools yield `.true` for ∃ and `.false` for ∀ — the strength
-  effect.
--/
+/-- Some closest antecedent world exists. -/
+theorem Mixed.closest_nonempty (h : Mixed sim A w D B) : (closest sim A w).Nonempty :=
+  let ⟨d, hd⟩ := h.nonempty
+  let ⟨⟨w₁, hw₁, _⟩, _⟩ := h.players d hd
+  ⟨w₁, hw₁⟩
 
-/-- **Homogeneity architecture erases strength**: when gaps arise locally,
-    both strong and weak quantifiers return `.indet`. The quantifier's
-    projection type is invisible — it cannot "see past" gaps.
+/-! ### The theories on a quantified sentence -/
 
-    This is why the homogeneity theory predicts no strength effect and
-    must resort to QUD × polarity to distinguish conditions. -/
-theorem homogeneity_erases_strength (n : Nat) (hn : n > 0) :
-    ∀ proj : ProjectionType,
-    embeddedSelectional proj (List.replicate n Trivalent.indet) = .indet := by
-  intro proj
-  unfold embeddedSelectional
-  rw [projectTruthValues_eq_aggregate]
-  exact aggregate_replicate_indet proj n hn
+variable [∀ d, DecidablePred (B d)]
 
-/-- **Selectional architecture produces strength effect**: when the
-    quantifier sees only Bools (global scope), mixed inputs yield
-    `.true` for weak (∃/disjunctive) and `.false` for strong (∀/conjunctive).
+/-- The universal theory (2): the quantifier over the players' universal counterfactuals. -/
+def universal (q : Quant) : Prop := q.eval D λ d => universalCounterfactual sim A (B d) w
 
-    This connects the study's `embeddedSelectional` through the bridging
-    theorem to `Duality.aggregate_map_ofBool_mixed`. -/
-theorem selectional_strength_effect (bs : List Bool)
-    (h_some_true : bs.any id) (h_some_false : bs.any (!·)) :
-    embeddedSelectional .weak (bs.map Trivalent.ofBool) = .true ∧
-    embeddedSelectional .strong (bs.map Trivalent.ofBool) = .false := by
-  unfold embeddedSelectional QStrength.toProjection
-  constructor <;> rw [projectTruthValues_eq_aggregate]
-  · exact (aggregate_map_ofBool_mixed bs h_some_true h_some_false).1
-  · exact (aggregate_map_ofBool_mixed bs h_some_true h_some_false).2
+/-- The selectional theory (5): the quantified sentence evaluated at the selected world and
+supervaluated over the candidate selections, the closest antecedent worlds. -/
+def selectional (q : Quant) : Trivalent :=
+  Trivalent.dist (closest sim A w) λ w' => q.eval D λ d => B d w'
 
-/-- **Selectional counterfactuals are always determinate**: under global
-    scope, aggregation over Bools never produces a gap.
+/-- The homogeneity theory (6): each player's counterfactual carries its third status into
+composition, and the quantifier projects it. -/
+noncomputable def homogeneity (q : Quant) : Trivalent :=
+  q.aggregate (D.toList.map λ d => selectionalCounterfactual sim A (B d) w)
 
-    This explains why selectional semantics yields crisp true/false
-    judgments (no "undefined"), matching the experimental pattern of
-    extreme slider values (< 4 or > 82). -/
-theorem selectional_always_determinate (proj : ProjectionType) (bs : List Bool) :
-    embeddedSelectional proj (bs.map Trivalent.ofBool) ≠ .indet := by
-  unfold embeddedSelectional
-  rw [projectTruthValues_eq_aggregate]
-  exact aggregate_map_ofBool_ne_indet proj bs
+/-- The implicature theory (§8): the basic existential meaning (23) and its exhaustified
+universal strengthening (24), the latter computed in the upward-entailing scope of *some* and
+the former in the downward-entailing scope of *not all*. -/
+def implicature (q : Quant) : Prop :=
+  match q with
+  | .all => ∀ d ∈ D, universalCounterfactual sim A (B d) w
+  | .none => ∀ d ∈ D, ¬ lewisMight sim A (B d) w
+  | .some => ∃ d ∈ D, universalCounterfactual sim A (B d) w
+  | .notAll => ∃ d ∈ D, ¬ lewisMight sim A (B d) w
 
--- ════════════════════════════════════════════════════════════════
--- The Plural Definite Dissociation
--- ════════════════════════════════════════════════════════════════
+variable {sim A w D B}
 
-/-!
-### Why Plural Definites Are QUD-Sensitive But Counterfactuals Are Not
+/-! ### Predictions in mixed scenarios -/
 
-Experiment 2 tested both counterfactuals and plural definites ("The
-players won this round") in the same mixed scenarios. The key finding:
+/-- Table 1, the unembedded case: a player's counterfactual is false on the universal theory,
+indeterminate on the selectional theory, and undefined on the homogeneity theory. -/
+theorem unembedded (h : Mixed sim A w D B) {d : ι} (hd : d ∈ D) :
+    ¬ universalCounterfactual sim A (B d) w ∧
+      selectionalCounterfactual sim A (B d) w = .indet ∧
+      (homogeneityCounterfactual sim A (B d) w).presupposition = .failed := by
+  obtain ⟨⟨w₁, hw₁, hB₁⟩, ⟨w₂, hw₂, hB₂⟩⟩ := h.players d hd
+  have hnot : ¬ ∀ w' ∈ closest sim A w, B d w' := λ hall => hB₂ (hall w₂ hw₂)
+  have hnot' : ¬ ∀ w' ∈ closest sim A w, ¬ B d w' := λ hnone => hnone w₁ hw₁ hB₁
+  refine ⟨hnot, ?_, ?_⟩
+  · unfold selectionalCounterfactual
+    rw [if_neg hnot, if_neg hnot']
+  · unfold homogeneityCounterfactual
+    rw [if_neg hnot, if_neg hnot']
 
-- **Counterfactuals**: QUD has no effect (β = −0.6, p = 0.7)
-- **Plural definites**: QUD has a significant effect (β = −12.6, p = 0.01;
-  E-QuD M=41.0 vs U-QuD M=22.8)
+/-- The universal theory turns on polarity: since every player's counterfactual is false, the
+positive sentences are false and the negative ones true. -/
+theorem universal_polarity (h : Mixed sim A w D B) (q : Quant) :
+    universal sim A w D B q ↔ ¬ q.IsPositive := by
+  have hfalse : ∀ d ∈ D, ¬ universalCounterfactual sim A (B d) w :=
+    λ d hd => (unembedded h hd).1
+  cases q
+  · simp only [universal, Quant.eval, Quant.IsPositive, not_true_eq_false, iff_false]
+    exact λ hall => let ⟨d, hd⟩ := h.nonempty; hfalse d hd (hall d hd)
+  · simp only [universal, Quant.eval, Quant.IsPositive, not_false_eq_true, iff_true]
+    exact hfalse
+  · simp only [universal, Quant.eval, Quant.IsPositive, not_true_eq_false, iff_false]
+    exact λ ⟨d, hd, hc⟩ => hfalse d hd hc
+  · simp only [universal, Quant.eval, Quant.IsPositive, not_false_eq_true, iff_true]
+    exact let ⟨d, hd⟩ := h.nonempty; ⟨d, hd, hfalse d hd⟩
 
-The NonBivalence dichotomy explains this dissociation:
+/-- Table 3, the selectional row: the quantified sentence is determinately false for the
+universal quantifiers and determinately true for the existential ones, whatever the polarity,
+because every selected world has a winner and a loser. -/
+theorem selectional_force (h : Mixed sim A w D B) (q : Quant) :
+    selectional sim A w D B q = q.force.verdict := by
+  cases q
+  · exact (Trivalent.dist_eq_false_iff _ _).2 ⟨h.closest_nonempty, λ w' hw' hall =>
+      let ⟨d, hd, hB⟩ := (h.worlds w' hw').2; hB (hall d hd)⟩
+  · exact (Trivalent.dist_eq_false_iff _ _).2 ⟨h.closest_nonempty, λ w' hw' hnone =>
+      let ⟨d, hd, hB⟩ := (h.worlds w' hw').1; hnone d hd hB⟩
+  · exact (Trivalent.dist_eq_true_iff _ _).2 λ w' hw' => (h.worlds w' hw').1
+  · exact (Trivalent.dist_eq_true_iff _ _).2 λ w' hw' => (h.worlds w' hw').2
 
-- **Plural definites use LOCAL trivalence**: each individual's predication
-  is evaluated via supervaluation (pluralTruthValue / dist), producing
-  `.indet` when some-but-not-all atoms satisfy the predicate. The
-  quantifier sees these gaps. By `aggregate_replicate_indet`, ALL
-  quantifier types return `.indet`.
+/-- No selectional value is a gap: there is nothing for a question under discussion to
+resolve. -/
+theorem selectional_determinate (h : Mixed sim A w D B) (q : Quant) :
+    selectional sim A w D B q ≠ .indet := by
+  rw [selectional_force h]
+  cases q <;> simp [Quant.force, Force.verdict]
 
-- **Counterfactuals use GLOBAL trivalence**: within each selected world,
-  individual outcomes are Boolean. The quantifier sees Bools. By
-  `aggregate_map_ofBool_ne_indet`, the result is always definite.
+/-- Every player's counterfactual is undefined, so the quantified sentence is undefined under
+either projection algorithm, for every quantifier: the homogeneity theory leaves the sentences
+to pragmatics. -/
+theorem homogeneity_undefined (h : Mixed sim A w D B) (q : Quant) :
+    homogeneity sim A w D B q = .indet := by
+  have hl : D.toList.map (λ d => selectionalCounterfactual sim A (B d) w)
+      = List.replicate D.card .indet := by
+    rw [List.eq_replicate_iff]
+    refine ⟨by simp, λ v hv => ?_⟩
+    obtain ⟨d, hd, rfl⟩ := List.mem_map.1 hv
+    exact (unembedded h (Finset.mem_toList.1 hd)).2.1
+  have hpos : 0 < D.card := Finset.card_pos.2 h.nonempty
+  cases q <;> simp only [homogeneity, Quant.aggregate, hl, List.map_replicate, Trivalent.neg] <;>
+    exact Trivalent.aggregate_replicate_indet _ _ hpos
 
-The consequence: when the semantic layer returns `.indet`, the only
-source of variation in judgments is pragmatic resolution — and pragmatic
-resolution is QUD-dependent ([kriz-2016]: `sufficientlyTrue` and
-`addressesIssue`). When the semantic layer returns a determinate value,
-there is no gap for pragmatics to exploit — QUD has nothing to modulate.
+/-- (25): with the implicature computed in its scope, *some* says that some player was
+guaranteed to win, false in the scenario. -/
+theorem implicature_some (h : Mixed sim A w D B) : ¬ implicature sim A w D B .some :=
+  λ ⟨_, hd, hc⟩ => (unembedded h hd).1 hc
 
-This is why the SAME mixed scenario produces QUD-sensitivity for PDs
-but not for CFs: the scope of trivalence determines whether pragmatics
-gets a foothold.
--/
+/-- (26): with the basic existential meaning in its scope, *not all* says that some player
+could not have won, false in the scenario. -/
+theorem implicature_notAll (h : Mixed sim A w D B) : ¬ implicature sim A w D B .notAll :=
+  λ ⟨d, hd, hc⟩ => hc λ hall =>
+    let ⟨w₁, hw₁, hB₁⟩ := (h.players d hd).1
+    hall w₁ hw₁ hB₁
 
-/-- **Plural definites are LOCAL**: in mixed scenarios, every quantifier
-    returns `.indet`. Strength, polarity, and QUD are all invisible at
-    the semantic level — the quantifier cannot see past the gap. -/
-theorem pd_all_quantifiers_gap (n : Nat) (hn : n > 0) (d : ProjectionType) :
-    aggregate d (List.replicate n Trivalent.indet) = .indet :=
-  aggregate_replicate_indet d n hn
+/-- The dissociation of Experiment 2: at a world where some but not all of the players won, the
+plural definite *the players won* has a gap, while the quantified counterfactuals of the same
+scenario have none. -/
+theorem dissociation (h : Mixed sim A w D B) {v : W}
+    (hv : (∃ d ∈ D, B d v) ∧ ∃ d ∈ D, ¬ B d v) (q : Quant) :
+    Plurality.Trivalent.pluralTruthValue B D v = .indet ∧ selectional sim A w D B q ≠ .indet :=
+  ⟨(Plurality.Trivalent.pluralTruthValue_eq_gap_iff B D v).2 hv, selectional_determinate h q⟩
 
-/-- **Counterfactuals are GLOBAL**: in mixed scenarios, every quantifier
-    returns a determinate value. There is no gap for pragmatics to exploit. -/
-theorem cf_all_quantifiers_determinate (d : ProjectionType) (bs : List Bool) :
-    aggregate d (bs.map Trivalent.ofBool) ≠ .indet :=
-  aggregate_map_ofBool_ne_indet d bs
-
-/-- **The dissociation**: for the same mixed input (n individuals, some
-    satisfying the predicate, some not), PDs return `.indet` while CFs
-    return a definite value. The gap is what makes PDs QUD-sensitive —
-    pragmatic resolution via `sufficientlyTrue` ([kriz-2016]) depends
-    on the QUD partition. CFs have no gap to resolve.
-
-    This is a direct corollary of the local/global aggregation
-    decomposition in `Trivalent`: local scope produces gaps that pass
-    through quantifiers; global scope produces Bools that quantifiers
-    can distinguish. -/
-theorem scope_determines_qud_sensitivity (n : Nat) (hn : n > 0)
-    (bs : List Bool) (hlen : bs.length = n)
-    (h_some_true : bs.any id) (h_some_false : bs.any (!·))
-    (d : ProjectionType) :
-    -- PDs: gap (pragmatic resolution needed, QUD-sensitive)
-    aggregate d (List.replicate n Trivalent.indet) = .indet ∧
-    -- CFs: determinate (no pragmatic resolution, QUD-insensitive)
-    aggregate d (bs.map Trivalent.ofBool) ≠ .indet :=
-  ⟨aggregate_replicate_indet d n hn, aggregate_map_ofBool_ne_indet d bs⟩
-
--- ════════════════════════════════════════════════════════════════
--- Connections to Other Phenomena
--- ════════════════════════════════════════════════════════════════
-
-/-!
-## Related Phenomena
-
-1. **Local vs Global Aggregation** (`Trivalent.aggregate_*`):
-   The paper's deepest architectural insight is formalized as two
-   facts about `aggregate`. `homogeneity_erases_strength` derives that
-   local gaps make strength invisible; `selectional_strength_effect`
-   derives that global Bools produce the strength effect.
-
-2. **Plural Definite Dissociation** (above):
-   `scope_determines_qud_sensitivity` derives the CF/PD dissociation
-   from the NonBivalence dichotomy. Plural definites are LOCAL (gap
-   before quantifier → QUD-sensitive pragmatic resolution); counterfactuals
-   are GLOBAL (Bool before quantifier → no gap to resolve).
-
-3. **Modal Homogeneity** ([agha-jeretic-2022]):
-   Weak necessity modals (*should*) are to strong necessity (*must*) what
-   plural definites are to `all`-sentences. `shouldEval` produces `.indet`
-   in mixed domains (local), while `mustEval` produces `ofBool` (global).
-   The same NonBivalence dichotomy predicts that embedded *should*-sentences
-   would be strength-insensitive while embedded *must*-sentences would show
-   the strength effect.
-
-4. **Conditional Excluded Middle (CEM)**:
-   Stalnaker's semantics validates CEM: (A □→ B) ∨ (A □→ ¬B).
-   See `Counterfactual.lean` for the proof.
--/
 
 end RamotowskaEtAl2025

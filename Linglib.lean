@@ -1572,9 +1572,7 @@ import Linglib.Semantics.Conditionals.Basic
 import Linglib.Semantics.Conditionals.ConditionalType
 import Linglib.Semantics.Conditionals.Counterfactual
 import Linglib.Semantics.Conditionals.Counterfactual.Alternatives
-import Linglib.Semantics.Conditionals.Counterfactual.Implicature
 import Linglib.Semantics.Conditionals.Counterfactual.Lumping
-import Linglib.Semantics.Conditionals.Counterfactual.QuantifierEmbedding
 import Linglib.Semantics.Conditionals.Marker
 import Linglib.Semantics.Conditionals.PremiseSemantic
 import Linglib.Semantics.Conditionals.Presupposition
