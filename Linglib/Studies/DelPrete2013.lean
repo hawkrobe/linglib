@@ -95,7 +95,7 @@ variable {linear τ}
 theorem isPlural_of_large {V₀ : E → Prop} (hV₀ : ∀ ⦃e⦄, V₀ e → Atom e) {s : S}
     (hL : Large linear τ V₀ s) {b : S} (hb : Branch linear b s) {e : E}
     (he : AlgClosure V₀ e) (hbe : b ≤ τ e) : IsPlural V₀ e :=
-  (isPlural_iff_of_atom hV₀).2 ⟨he, λ ha => hL b hb e (of_algClosure_of_atom hV₀ he ha) hbe⟩
+  (isPlural_iff_of_atom hV₀).2 ⟨he, λ ha => hL b hb e (of_algClosure_of_atom he ha) hbe⟩
 
 /-- PROG, §5: over a small reference situation, a single singular event whose trace covers the
 expanded situation verifies the same denotation. -/
