@@ -1,288 +1,180 @@
-import Mathlib.Data.Finset.Card
-import Linglib.Semantics.Plurality.Cumulativity
+import Linglib.Semantics.Plurality.Algebra
 import Linglib.Semantics.Plurality.Reciprocal
-import Linglib.Studies.Beck2001
 
 /-!
-# Sternefeld (1998): Reciprocity and Cumulative Predication
-[sternefeld-1998]
+# Sternefeld (1998): Reciprocity and cumulative predication
 
-*Natural Language Semantics* 6(3): 303–337. doi:10.1023/A:1008352502939.
+This file formalizes [sternefeld-1998]'s derivation of the readings of plural and reciprocal
+sentences from the placement of Link's `*` and Krifka's `**` at Logical Form, on
+[schwarzschild-1996]'s set-based ontology: pluralities are finite sets of individuals, an
+individual is its singleton, and sum is union. Weak distributivity is `**R` and weak
+reciprocity is `**` of the relation with non-identity conjoined into it, so the reciprocal
+carries no quantifier of its own; strong distributivity and strong reciprocity are iterated
+`*`. We prove that for a relation between individuals each form is the corresponding formula
+of [langendoen-1978], that Langendoen's weak reciprocity always entails the cumulation form,
+and that the converse fails in Langendoen's model where two individuals relate to a third only
+jointly.
 
-[sternefeld-1998] extends [langendoen-1978]'s
-reciprocity-as-cumulativity insight into a fully compositional theory.
-Distinct readings of plural and reciprocal sentences arise from
-different placements of the pluralization operators (`*` and `**`) at
-Logical Form. The reciprocal NP itself denotes "the others", with the
-non-identity statement injected into the LF as semantic glue.
+## Implementation notes
 
-## Headline analysis (paper §3, eq 26b)
+* A relation between individuals enters the set-based ontology as its image under singleton
+  formation, `Relation.Map R ({·}) ({·})`; this is the paper's D-based case (§2.3), and
+  Langendoen's formulae are the substrate schemes `Reciprocal.WeakReciprocity` and
+  `Reciprocal.StrongReciprocity` of `R` itself.
+* Denotations are nonempty, so the equivalences carry the nonemptiness, or for strong
+  reciprocity the two-member, hypothesis that `*` and `**` build in and Langendoen's formulae
+  leave vacuous.
+* The n-ary `***` (§3.1), dependent plurals (§3.2–3.3), LF movement (§3.4), the Geach–Kaplan
+  sentence (§3.6) and the cover pragmatics of §4 are not formalized.
 
-Sternefeld's WR analysis: `⟨A, A⟩ ∈ **λxy[R(x, y) ∧ x ≠ y]`. The
-distinctness condition `x ≠ y` is **inside** the `**`'s relation
-argument — NOT a separate asserted clause as some readings of the
-literature suggest.
+## References
 
-In bivalent semantics this is structurally identical to
-[beck-2001]'s eq 120 (`**(λxλy.[R(x,y) ∧ @(x ≠ y)])(A,A)`). The
-two analyses agree on the bivalent predicate — `Reciprocal.WeakReciprocity`
-— and diverge only on:
-
-1. **Status of distinctness**: Sternefeld asserts; Beck presupposes
-   (`@`). Visible only in trivalent semantics (truth-value gap when R
-   holds with x = y).
-2. **Status of SR**: [sternefeld-1998] §3.5 argues SR is
-   *expressible* in his framework but defends in §3.6 (the
-   Geach-Kaplan sentence) that SR is "probably a special case of WR"
-   plus *only*-focus on the non-identity statement. [beck-2001]
-   takes SR as a basic reading.
-3. **`**` operator shape**: [sternefeld-1998] eq 5 uses
-   [krifka-1989]'s closure form (smallest relation closed under
-   `⟨a,b⟩+⟨c,d⟩ → ⟨a∪c, b∪d⟩`); [beck-sauerland-2000] use
-   bidirectional coverage (`(∀a∈x. ∃b∈y. R(a,b)) ∧ (∀b∈y. ∃a∈x. R(a,b))`).
-   Equivalent on Quine-innovation domains where individuals are
-   identified with singletons.
-
-## What is formalized
-
-| Paper §  | Topic                                                    | Lean encoding              |
-|----------|----------------------------------------------------------|----------------------------|
-| §2 eq 5  | `**` operator ([krifka-1989] closure form)          | `sternefeldStarStar` (inductive) |
-| §2.4 eq 12 | WD analysis (Scha 1981 cumulative)                     | (deferred)                 |
-| §3 eq 26b | WR analysis (distinctness inside relation)              | `sternefeldWR`             |
-| §3 eq 25b | Langendoen-style WR (existence-witnessed)               | `langendoenWR`             |
-| §3.5 eq 48b | SR expressed as iterated `*` distribution             | `sternefeldSR_iff_stronglyReciprocal` |
-
-The `**` closure-form ↔ bidirectional-coverage equivalence is proved
-in the easy direction (`sternefeldStarStar_implies_cumulative`).
-The reverse direction is a substantial inductive argument that would
-properly belong in `Semantics/Plurality/Cumulativity.lean` as
-substrate justification for treating the two `**` formulations as
-interchangeable; not in this study file.
-
-## Out of scope
-
-- §2.5 Plural Predication at LF (Augmented Logical Forms with
-  freely-inserted `*` operators) — purely representational; would
-  require Tree.lean syntactic-tree machinery.
-- §3.1 Three-place relations (`***` operator, paper eq 29) — small
-  extension of `**`; substrate-deferred.
-- §3.2–3.3 dependent plurals + Heim's inner/outer indices — would
-  require inner/outer-index distinction substrate.
-- §3.4 LF-movement crossover constraint — syntax, not semantics.
-- §3.6 Geach-Kaplan sentence with [rooth-1985] focus — would
-  require Focus substrate; the SR-derivation step is recorded in
-  prose but not as a Lean theorem.
-- §4.1–4.2 [schwarzschild-1996] covers as pragmatic supplement —
-  substrate exists in `Plurality.Cover`; the closure-of-`**` ↔
-  Schwarzschild-PPart(PCov) reduction is a separate effort.
-
-## Connection to [beck-2001] and [haug-dalrymple-2020]
-
-[beck-2001] cites Sternefeld 1998 as the immediate predecessor
-and at one point characterises Sternefeld's analysis as bare-`**(R)(A,A)`
-(i.e., without distinctness in the relation). Reading Sternefeld 1998
-directly: bare `**(R)(A,A)` does NOT appear in his analysis; his
-actual eq 26b *has* distinctness inside the relation. The
-Beck-vs-Sternefeld difference is therefore presupposition-vs-assertion
-of the distinctness clause, not structural placement.
-
-[haug-dalrymple-2020] consumes the same `**` machinery via the
-PPCDRT bridge `groupIdentityCond_iff_cumulative_eq`. The three-paper
-convergence on `**`-cumulation as the heart of reciprocity is the
-linglib interconnection-density payoff: Sternefeld's WR ↔ Beck's
-eq 120 ↔ H&D's group identity all factor through
-`Plurality.Cumulativity.Cumulative`.
+* [sternefeld-1998]
+* [langendoen-1978]
+* [krifka-1986]
+* [link-1983]
+* [schwarzschild-1996]
 -/
 
 namespace Sternefeld1998
 
-open Plurality.Cumulativity
-open Reciprocal
+open Mereology Plurality.Algebra Plurality.Cumulativity Reciprocal
 
-variable {α : Type*} [DecidableEq α]
+variable {α β : Type*}
 
--- ════════════════════════════════════════════════════════════════
--- § 1: Sternefeld's `**` Operator (paper eq 5, [krifka-1989])
--- ════════════════════════════════════════════════════════════════
+/-! ### Relations between individuals -/
 
-/-- **Sternefeld eq 5 / [krifka-1989]**: the smallest relation
-    `Q` over `Finset α × Finset α` such that `R ⊆ Q` (lifted to
-    singletons) and `Q` is closed under `⟨a,b⟩ + ⟨c,d⟩ → ⟨a∪c, b∪d⟩`.
+@[simp]
+theorem map_singleton_singleton (R : α → β → Prop) (a : α) (b : β) :
+    Relation.Map R ({·}) ({·}) ({a} : Finset α) ({b} : Finset β) ↔ R a b := by
+  simp [Relation.Map, Finset.singleton_inj]
 
-    On Quine-innovation domains, this is equivalent to
-    [beck-sauerland-2000]'s bidirectional-coverage `Cumulative`
-    — see `sternefeldStarStar_implies_cumulative` for the easy
-    direction. The reverse direction holds on nonempty pluralities
-    but the inductive proof is non-trivial; substrate-deferred. -/
-inductive sternefeldStarStar (R : α → α → Prop) : Finset α → Finset α → Prop
-  | base {a b : α} (h : R a b) : sternefeldStarStar R {a} {b}
-  | union {a b c d : Finset α}
-      (hab : sternefeldStarStar R a b) (hcd : sternefeldStarStar R c d) :
-      sternefeldStarStar R (a ∪ c) (b ∪ d)
+/-- `*` of a relation between individuals, in its second argument, holds of the nonempty
+pluralities all of whose members are related to the first. -/
+theorem star_map_iff [DecidableEq β] (R : α → β → Prop) (a : α) (B : Finset β) :
+    star (Relation.Map R ({·}) ({·}) ({a} : Finset α)) B ↔ B.Nonempty ∧ ∀ b ∈ B, R a b := by
+  rw [star_iff_of_subset_range_singleton]
+  · simp only [map_singleton_singleton]
+  · rintro _ ⟨_, b, _, _, rfl⟩
+    exact ⟨b, rfl⟩
 
-/-- **Sternefeld closure form `**` entails [beck-sauerland-2000]
-    bidirectional coverage** (the easy direction of the equivalence
-    `sternefeldStarStar R x y ↔ Cumulative R x y`).
+private theorem star_map_subset_range [DecidableEq β] (R : α → β → Prop)
+    (B : Finset α → Finset β) :
+    {x : Finset α | star (Relation.Map R ({·}) ({·}) x) (B x)} ⊆
+      Set.range ({·} : α → Finset α) :=
+  λ _ h =>
+    let ⟨_, hy, _⟩ := algClosure_has_base h
+    let ⟨a, _, _, ha, _⟩ := hy
+    ⟨a, ha⟩
 
-    Proof: induction on the closure derivation. Base case
-    `⟨{a},{b}⟩` from `R a b`: both quantifiers reduce to the witness
-    pair. Union case: bidirectional coverage of `⟨a∪c, b∪d⟩` follows
-    from coverage of `⟨a,b⟩` and `⟨c,d⟩` by case-splitting on the
-    union membership. -/
-theorem sternefeldStarStar_implies_cumulative
-    (R : α → α → Prop) (x y : Finset α)
-    (h : sternefeldStarStar R x y) :
-    Cumulative R x y := by
-  induction h with
-  | base hab =>
-    refine ⟨?_, ?_⟩
-    · intro p hp
-      rw [Finset.mem_singleton] at hp
-      subst hp
-      exact ⟨_, Finset.mem_singleton_self _, hab⟩
-    · intro q hq
-      rw [Finset.mem_singleton] at hq
-      subst hq
-      exact ⟨_, Finset.mem_singleton_self _, hab⟩
-  | @union a b c d _ _ ihab ihcd =>
-    refine ⟨?_, ?_⟩
-    · intro p hp
-      rw [Finset.mem_union] at hp
-      cases hp with
-      | inl hpa =>
-        obtain ⟨q, hqb, hRpq⟩ := ihab.1 p hpa
-        exact ⟨q, Finset.mem_union_left d hqb, hRpq⟩
-      | inr hpc =>
-        obtain ⟨q, hqd, hRpq⟩ := ihcd.1 p hpc
-        exact ⟨q, Finset.mem_union_right b hqd, hRpq⟩
-    · intro q hq
-      rw [Finset.mem_union] at hq
-      cases hq with
-      | inl hqb =>
-        obtain ⟨p, hpa, hRpq⟩ := ihab.2 q hqb
-        exact ⟨p, Finset.mem_union_left c hpa, hRpq⟩
-      | inr hqd =>
-        obtain ⟨p, hpc, hRpq⟩ := ihcd.2 q hqd
-        exact ⟨p, Finset.mem_union_right a hpc, hRpq⟩
+variable [DecidableEq α] [DecidableEq β]
 
--- ════════════════════════════════════════════════════════════════
--- § 2: Sternefeld's WR Analysis (paper §3, eq 26b)
--- ════════════════════════════════════════════════════════════════
+/-! ### Weak distributivity and weak reciprocity -/
 
-/-- **Sternefeld 1998 eq 26b**: WR truth conditions are
-    `⟨A, A⟩ ∈ **λxy[R(x, y) ∧ x ≠ y]`. The distinctness clause is
-    INSIDE the `**`'s relation argument, NOT a separate asserted
-    clause.
+/-- Weak distributivity (2b) is `⟨A, B⟩ ∈ **R` (26a) between nonempty pluralities. -/
+theorem cumulation_map_iff (R : α → β → Prop) {A : Finset α} (hA : A.Nonempty) (B : Finset β) :
+    Cumulation (Relation.Map R ({·}) ({·})) A B ↔ Cumulative R A B :=
+  (cumulation_map_singleton R A B).trans (and_iff_right hA)
 
-    Encoding choice: we use [beck-sauerland-2000]'s bidirectional
-    coverage `Cumulative` for `**` (see
-    `sternefeldStarStar_implies_cumulative` for the connection to
-    Sternefeld's closure-form `**`).
+/-- Weak reciprocity (6), (26b): the reciprocal NP denotes the others, and non-identity is
+conjoined into the relation before cumulation. -/
+def WR (R : Finset α → Finset α → Prop) (A : Finset α) : Prop :=
+  Cumulation (λ x y => R x y ∧ x ≠ y) A A
 
-    In bivalent semantics this is structurally identical to
-    `Reciprocal.WeakReciprocity` (and to Beck eq 120). The
-    two analyses diverge only on the trivalent assertion-vs-
-    presupposition status of `x ≠ y` (Sternefeld asserts;
-    [beck-2001] eq 120 presupposes via `@`). -/
-def sternefeldWR (A : Finset α) (R : α → α → Prop) : Prop :=
-  Cumulative (fun x y => R x y ∧ x ≠ y) A A
+/-- Langendoen's weak reciprocity (25b) between individuals entails (26b), for any relation
+over pluralities. -/
+theorem wr_of_weakReciprocity {R : Finset α → Finset α → Prop} {A : Finset α}
+    (hA : A.Nonempty) (h : WeakReciprocity (λ a b => R {a} {b}) A) : WR R A := by
+  have := (cumulation_map_singleton (λ a b => R {a} {b} ∧ a ≠ b) A A).2
+    ⟨hA, (weakReciprocity_iff_cumulative_strict _ _).1 h⟩
+  refine this.mono ?_
+  rintro x y ⟨a, b, ⟨hab, hne⟩, rfl, rfl⟩
+  exact ⟨hab, Finset.singleton_injective.ne hne⟩
 
-instance sternefeldWR.instDecidable
-    (A : Finset α) (R : α → α → Prop) [∀ a b, Decidable (R a b)] :
-    Decidable (sternefeldWR A R) := by
-  unfold sternefeldWR; infer_instance
+/-- For a relation between individuals, (26b) is Langendoen's (25b). -/
+theorem wr_map_iff (R : α → α → Prop) {A : Finset α} (hA : A.Nonempty) :
+    WR (Relation.Map R ({·}) ({·})) A ↔ WeakReciprocity R A := by
+  have : (λ x y : Finset α => Relation.Map R ({·}) ({·}) x y ∧ x ≠ y) =
+      Relation.Map (λ a b => R a b ∧ a ≠ b) ({·}) ({·}) := by
+    ext x y
+    constructor
+    · rintro ⟨⟨a, b, hab, rfl, rfl⟩, hne⟩
+      exact ⟨a, b, ⟨hab, Finset.singleton_injective.ne_iff.1 hne⟩, rfl, rfl⟩
+    · rintro ⟨a, b, ⟨hab, hne⟩, rfl, rfl⟩
+      exact ⟨⟨a, b, hab, rfl, rfl⟩, Finset.singleton_injective.ne hne⟩
+  rw [WR, this, cumulation_map_singleton, and_iff_right hA,
+    weakReciprocity_iff_cumulative_strict]
 
-/-- **Sternefeld 1998 ↔ Beck 2001 (bivalent collapse)**: in bivalent
-    encoding, the two reciprocity analyses produce identical
-    predicates. The cumulation-with-distinctness shape is the
-    *common ground* of both papers; they only diverge at the
-    trivalent (presupposition projection) layer. Substrate form
-    `Reciprocal.WeakReciprocity`. -/
-theorem sternefeldWR_iff_WeakReciprocity
-    (A : Finset α) (R : α → α → Prop) :
-    sternefeldWR A R ↔ WeakReciprocity R A :=
-  (weakReciprocity_iff_cumulative_strict R A).symm
+/-! ### Langendoen's model
 
--- ════════════════════════════════════════════════════════════════
--- § 3: Langendoen-style WR (paper §1, eq 25b — equivalent on
--- nonempty A but historically attributed to [langendoen-1978])
--- ════════════════════════════════════════════════════════════════
+`A = {a, b, c}` and `R = {⟨{a, b}, c⟩, ⟨c, a⟩, ⟨c, b⟩}` (§3): the As relate to each other,
+but no individual relates to `c` on its own, so (25b) fails while (26b) holds. -/
 
-/-- **[langendoen-1978] WR** (paper eq 25b): for each `x ∈ A`,
-    there are `y, z ∈ A` with `x ≠ y`, `x ≠ z`, `xRy`, `zRx`. This is
-    the existence-witnessed form Sternefeld attributes to Langendoen.
+/-- Langendoen's relation: `a` and `b` relate to `c` jointly, and `c` relates to each. -/
+def langendoenModel (x y : Finset (Fin 3)) : Prop :=
+  (x = {0, 1} ∧ y = {2}) ∨ (x = {2} ∧ y = {0}) ∨ (x = {2} ∧ y = {1})
 
-    Sternefeld notes (paper p. 316) that this form does not entail his
-    eq 26b for non-D-based relations; in particular, in the
-    "problematic situation" `f(R) = {⟨⟨a,b⟩, c⟩, ⟨c, a⟩, ⟨c, b⟩}`,
-    eq 25b cannot apply but eq 26b is still true. For D-based
-    relations on Quine-innovation domains, the two coincide and both
-    reduce to `Reciprocal.WeakReciprocity`. -/
-def langendoenWR (A : Finset α) (R : α → α → Prop) : Prop :=
-  ∀ x ∈ A, ∃ y ∈ A, ∃ z ∈ A,
-    x ≠ y ∧ x ≠ z ∧ R x y ∧ R z x
+instance : DecidableRel langendoenModel := λ _ _ => by
+  unfold langendoenModel; infer_instance
 
-instance langendoenWR.instDecidable
-    (A : Finset α) (R : α → α → Prop) [∀ a b, Decidable (R a b)] :
-    Decidable (langendoenWR A R) := by
-  unfold langendoenWR; infer_instance
+/-- Langendoen's relation is not a relation between individuals. -/
+theorem langendoenModel_ne_map (R : Fin 3 → Fin 3 → Prop) :
+    langendoenModel ≠ Relation.Map R ({·}) ({·}) := by
+  intro h
+  have hL : langendoenModel {0, 1} {2} := Or.inl ⟨rfl, rfl⟩
+  rw [h] at hL
+  obtain ⟨a, -, -, ha, -⟩ := hL
+  revert a
+  decide
 
-/-- For symmetric, distinctness-bearing R, [langendoen-1978] WR
-    entails `Reciprocal.WeakReciprocity`: the existence-
-    witnesses on each side are the y and z of the Langendoen formula. -/
-theorem langendoenWR_implies_WeakReciprocity
-    (A : Finset α) (R : α → α → Prop)
-    (h : langendoenWR A R) :
-    WeakReciprocity R A := by
-  refine ⟨?_, ?_⟩
-  · intro x hx
-    obtain ⟨y, hy, _, _, hxy, _, hRxy, _⟩ := h x hx
-    exact ⟨y, hy, hRxy, hxy⟩
-  · intro x hx
-    obtain ⟨_, _, z, hz, _, hxz, _, hRzx⟩ := h x hx
-    exact ⟨z, hz, hRzx, hxz.symm⟩
+/-- (26b) holds in Langendoen's model. -/
+theorem wr_langendoenModel : WR langendoenModel Finset.univ := by
+  have h₁ : ({0, 1} : Finset (Fin 3)) ⊔ ({2} ⊔ {2}) = Finset.univ := by decide
+  have h₂ : ({2} : Finset (Fin 3)) ⊔ ({0} ⊔ {1}) = Finset.univ := by decide
+  have h := (Cumulation.of_rel (R := λ x y => langendoenModel x y ∧ x ≠ y)
+      (x := {0, 1}) (y := {2}) (by decide)).sup
+    ((Cumulation.of_rel (x := {2}) (y := {0}) (by decide)).sup
+      (Cumulation.of_rel (x := {2}) (y := {1}) (by decide)))
+  simpa only [WR, h₁, h₂] using h
 
--- ════════════════════════════════════════════════════════════════
--- § 4: Strong Reciprocity Expressibility (paper §3.5, eq 48b)
--- ════════════════════════════════════════════════════════════════
+/-- (25b) fails in Langendoen's model. -/
+theorem not_weakReciprocity_langendoenModel :
+    ¬ WeakReciprocity (λ a b => langendoenModel {a} {b}) Finset.univ := by
+  decide
 
-/-- **Sternefeld §3.5 eq 48b** (SR via iterated distribution):
-    `A ∈ *λx[{y: y ∈ A ∧ y ≠ x} ∈ *λy.R(x, y)]`. The outer `*`
-    distributes over A; the inner `*` quantifies universally over
-    `{y ∈ A : y ≠ x}`. Assuming R is D-based (applies only to atoms),
-    this unfolds to `∀x ∈ A. ∀y ∈ A. y ≠ x → R(x,y)` — exactly
-    `Reciprocal.StrongReciprocity`.
+/-! ### Strong distributivity and strong reciprocity by iterated `*` -/
 
-    Sternefeld's point (paper §3.5–3.6): SR is *expressible* in his
-    framework but is not a basic reading; it falls out of more
-    general WR + focus mechanisms (the Geach-Kaplan analysis,
-    paper §3.6). This contrasts with [beck-2001], who takes SR
-    as a basic reading. -/
-theorem sternefeldSR_iff_StrongReciprocity
-    (A : Finset α) (R : α → α → Prop) :
-    (∀ x ∈ A, ∀ y ∈ A, y ≠ x → R x y) ↔
-    StrongReciprocity R A := Iff.rfl
+/-- Strong distributivity by iterated `*` (7): `A ∈ *{x : B ∈ *{y : R(x, y)}}`. -/
+def SD (R : α → β → Prop) (A : Finset α) (B : Finset β) : Prop :=
+  star (λ x : Finset α => star (Relation.Map R ({·}) ({·}) x) B) A
 
--- ════════════════════════════════════════════════════════════════
--- § 5: Cross-paper Cumulation Bridges
--- ════════════════════════════════════════════════════════════════
+/-- Strong reciprocity by iterated `*` (48b): `A ∈ *λx[{y : y ∈ A ∧ y ≠ x} ∈ *λy.R(x, y)]`,
+the reciprocal interpreted in situ as one NP. -/
+def SR (R : α → α → Prop) (A : Finset α) : Prop :=
+  star (λ x : Finset α =>
+    star (Relation.Map R ({·}) ({·}) x) (A.filter λ b => ({b} : Finset α) ≠ x)) A
 
-/-- **Sternefeld 1998 ↔ [beck-2001] ↔ [haug-dalrymple-2020]
-    (bivalent)**: chain `sternefeldWR → Cumulative` via the substrate
-    `WeakReciprocity` bridge — the meeting point of all three analyses
-    at the cumulation substrate.
+/-- (7) is Langendoen's strong distributivity (2a) between nonempty pluralities. -/
+theorem sd_iff (R : α → β → Prop) {A : Finset α} {B : Finset β} (hA : A.Nonempty)
+    (hB : B.Nonempty) : SD R A B ↔ ∀ a ∈ A, ∀ b ∈ B, R a b := by
+  rw [SD, star_iff_of_subset_range_singleton (star_map_subset_range R λ _ => B),
+    and_iff_right hA]
+  exact forall₂_congr λ a _ => (star_map_iff R a B).trans (and_iff_right hB)
 
-    The three-paper convergence makes
-    `Plurality.Cumulativity.Cumulative` the substrate consumed by all
-    three Studies files; the implementation choice (BS form vs Krifka
-    closure form) is invisible from the consumer side modulo the
-    easy-direction equivalence `sternefeldStarStar_implies_cumulative`. -/
-theorem sternefeldWR_implies_cumulative_R
-    (A : Finset α) (R : α → α → Prop)
-    (hWR : sternefeldWR A R) :
-    Cumulative R A A := by
-  rw [sternefeldWR_iff_WeakReciprocity] at hWR
-  exact weakReciprocity_imp_cumulative R A hWR
+/-- (48b) is Langendoen's strong reciprocity (3a) on a plurality of two or more. -/
+theorem sr_iff (R : α → α → Prop) {A : Finset α} :
+    SR R A ↔ 2 ≤ A.card ∧ StrongReciprocity R A := by
+  rw [SR, star_iff_of_subset_range_singleton (star_map_subset_range R _)]
+  simp only [star_map_iff, Finset.mem_filter, ne_eq, Finset.singleton_inj,
+    Finset.filter_nonempty_iff, StrongReciprocity]
+  constructor
+  · rintro ⟨⟨a, ha⟩, h⟩
+    obtain ⟨⟨b, hb, hba⟩, -⟩ := h a ha
+    exact ⟨Finset.one_lt_card.2 ⟨a, ha, b, hb, Ne.symm hba⟩,
+      λ x hx y hy hyx => (h x hx).2 y ⟨hy, hyx⟩⟩
+  · rintro ⟨hcard, h⟩
+    refine ⟨Finset.card_pos.1 (by omega), λ a ha => ⟨?_, λ b ⟨hb, hba⟩ => h a ha b hb hba⟩⟩
+    obtain ⟨b, hb, hba⟩ := A.exists_mem_ne hcard a
+    exact ⟨b, hb, hba⟩
 
 end Sternefeld1998
