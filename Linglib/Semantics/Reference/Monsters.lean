@@ -33,7 +33,6 @@ monster *predicate* and Kaplan's thesis, not the operator.
 
 namespace Reference.Monsters
 
-open Semantics.Context
 
 -- ════════════════════════════════════════════════════════════════
 -- § Tower Monster
@@ -80,12 +79,12 @@ theorem identityShift_not_monster {W : Type*} {E : Type*} {P : Type*} {T : Type*
 /-- An attitude shift is a monster when the holder differs from some
     context's agent. -/
 theorem attitudeShift_is_monster {W : Type*} {E : Type*} {P : Type*} {T : Type*}
-    (holder : E) (attWorld : W) (c : KContext W E P T)
+    (holder : E) (attWorld : W) (c : Context W E P T)
     (hAgent : c.agent ≠ holder) :
     IsTowerMonster (attitudeShift (P := P) (T := T) holder attWorld) := by
   rw [isTowerMonster_iff_exists]
   refine ⟨c, fun h => hAgent ?_⟩
-  simpa using (congrArg KContext.agent h).symm
+  simpa using (congrArg Context.agent h).symm
 
 -- ════════════════════════════════════════════════════════════════
 -- § Kaplan's Thesis (Tower Formulation)

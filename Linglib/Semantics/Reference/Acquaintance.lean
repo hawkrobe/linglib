@@ -16,7 +16,7 @@ cover identifies it at `p`.
 
 Instantiated at an assignment–witness pair as `Idx` and `Res := E` this is the
 cover-relative belief system of [dekker-2012].
-Instantiated at `Idx := KContext W E P T`, `Res := T` this is
+Instantiated at `Idx := Context W E P T`, `Res := T` this is
 [heim-1994-comments]'s time-concept; [abusch-1997]'s own de re rule, through an
 acquaintance relation rather than a cover, is `Acquaintance.deRe`
 (`Semantics/Attitudes/Acquaintance.lean`).
@@ -38,7 +38,7 @@ open Reference (IsRigid isRigid_const)
     identifying" values of type `Res`.
 
     [heim-1994-comments]'s time-concepts are the instance with
-    `Idx := KContext W E P T`, `Res := T`. -/
+    `Idx := Context W E P T`, `Res := T`. -/
 abbrev Cover (Idx Res : Type*) : Type _ := Set (Idx → Res)
 
 /-- A cover is exhaustive on a domain when, at every index, every value

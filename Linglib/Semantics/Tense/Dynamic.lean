@@ -48,7 +48,7 @@ Sibling of `Tense/Compositional.lean` (the static operators) and
 
 namespace Tense
 
-open Semantics.Context (Index)
+open Reference
 open DynamicSemantics
 open DynamicSemantics.Update (test closure)
 

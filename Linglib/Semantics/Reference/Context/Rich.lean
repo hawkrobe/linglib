@@ -6,8 +6,8 @@ import Linglib.Semantics.Evidential.Source
 # Rich Context
 [aikhenvald-2004] [condoravdi-2002] [cumming-2026] [iatridou-2000]
 
-`RichContext` extends `KContext` with a domain of accessible worlds and an
-evidential source. This supports two phenomena that plain `KContext` cannot
+`RichContext` extends `Context` with a domain of accessible worlds and an
+evidential source. This supports two phenomena that plain `Context` cannot
 express:
 
 1. **Domain expansion** ([condoravdi-2002], Mizuno): backward temporal shifts
@@ -20,16 +20,15 @@ express:
 
 ## Key Types
 
-- `RichContext W E P T` — KContext + `domain : Set W` + `evidence : CoarseSource`
-- `KContext.toRich` — lift with trivial domain (`Set.univ`) and default evidence
+- `RichContext W E P T` — Context + `domain : Set W` + `evidence : CoarseSource`
+- `Context.toRich` — lift with trivial domain (`Set.univ`) and default evidence
 - `DomainExpanding` — property of a shift: it expands the domain
 - `hpShift` — historical present temporal shift (backward time + domain expansion)
 
 -/
 
-namespace Semantics.Context
+namespace Reference
 
-open Semantics.Context (KContext ContextTower ContextShift)
 open Evidential
 
 -- ════════════════════════════════════════════════════════════════
@@ -48,7 +47,7 @@ open Evidential
     connecting to [cumming-2026]'s tense-evidential constraints. -/
 structure RichContext (W : Type*) (E : Type*) (P : Type*) (T : Type*) where
   /-- The underlying Kaplanian context -/
-  base : KContext W E P T
+  base : Context W E P T
   /-- The set of accessible worlds (modal domain) -/
   domain : Set W
   /-- The evidential source for the current assertion -/
@@ -58,8 +57,8 @@ section RichContextOps
 
 variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
 
-/-- Project back to a KContext (forget domain and evidence). -/
-def RichContext.toKContext (rc : RichContext W E P T) : KContext W E P T := rc.base
+/-- Project back to a Context (forget domain and evidence). -/
+def RichContext.toContext (rc : RichContext W E P T) : Context W E P T := rc.base
 
 /-- Agent of the rich context. -/
 def RichContext.agent (rc : RichContext W E P T) : E := rc.base.agent
@@ -77,27 +76,27 @@ def RichContext.addressee (rc : RichContext W E P T) : E := rc.base.addressee
 def RichContext.position (rc : RichContext W E P T) : P := rc.base.position
 
 /-- Project a RichContext to a `Index` (world + time pair). -/
-def RichContext.toIndex (rc : RichContext W E P T) : Semantics.Context.Index W T :=
+def RichContext.toIndex (rc : RichContext W E P T) : Index W T :=
   rc.base.toIndex
 
 -- ════════════════════════════════════════════════════════════════
--- § KContext Lift
+-- § Context Lift
 -- ════════════════════════════════════════════════════════════════
 
-/-- Lift a `KContext` to a `RichContext` with the trivial (universal) domain
+/-- Lift a `Context` to a `RichContext` with the trivial (universal) domain
     and default direct evidence. This is the root-clause default: no modal
     restriction, speaker has direct evidence. -/
-def KContext.toRich (c : KContext W E P T) : RichContext W E P T where
+def Context.toRich (c : Context W E P T) : RichContext W E P T where
   base := c
   domain := Set.univ
   evidence := .direct
 
 /-- The trivial lift has universal domain. -/
-theorem KContext.toRich_domain (c : KContext W E P T) :
+theorem Context.toRich_domain (c : Context W E P T) :
     c.toRich.domain = Set.univ := rfl
 
 /-- The trivial lift preserves the base context. -/
-theorem KContext.toRich_base (c : KContext W E P T) :
+theorem Context.toRich_base (c : Context W E P T) :
     c.toRich.base = c := rfl
 
 -- ════════════════════════════════════════════════════════════════
@@ -220,4 +219,4 @@ theorem coarseSourceShift_preserves_domain
 
 end RichContextOps
 
-end Semantics.Context
+end Reference

@@ -40,7 +40,7 @@ subjunctive, keeps the past indicative (`antecedent_french`).
 namespace Iatridou2000
 
 open Modality.Exclusion
-open Semantics.Context (KContext ContextTower temporalShift)
+open Reference
 open Mood (subjShift)
 
 /-! ### The exclusion feature -/
@@ -83,7 +83,7 @@ theorem Claim.excludes_situation_iff (c : Claim X) :
 
 /-- The library's exclusion feature on a context tower is the feature at a point-sized topic:
 the innermost coordinate against the origin's. -/
-theorem exclF_iff_excludes {W E P T : Type*} (tower : ContextTower (KContext W E P T)) :
+theorem exclF_iff_excludes {W E P T : Type*} (tower : ContextTower (Context W E P T)) :
     (ExclF .temporal tower ↔ Excludes {tower.innermost.time} {tower.origin.time}) ∧
       (ExclF .modal tower ↔ Excludes {tower.innermost.world} {tower.origin.world}) :=
   ⟨Set.disjoint_singleton.symm, Set.disjoint_singleton.symm⟩
@@ -149,14 +149,14 @@ theorem pastCF_notMem_readings (a : Aktionsart) : .pastCF ∉ readings a := by
 
 /-- The one-feature conditionals: a subjunctive shift alone excludes on worlds and, keeping
 the time, not on times. -/
-theorem one_feature {W E P T : Type*} (c : KContext W E P T) {w' : W} (hw : w' ≠ c.world) :
+theorem one_feature {W E P T : Type*} (c : Context W E P T) {w' : W} (hw : w' ≠ c.world) :
     ExclF .modal ((ContextTower.root c).push (subjShift w' c.time)) ∧
       ¬ ExclF .temporal ((ContextTower.root c).push (subjShift w' c.time)) :=
   ⟨subjShift_produces_modal_exclF c w' c.time hw, λ h => h rfl⟩
 
 /-- The pluperfect's two layers: a subjunctive shift and a temporal shift exclude on both
 dimensions, the past counterfactual. -/
-theorem two_features {W E P T : Type*} (c : KContext W E P T) {w' : W} {t' : T}
+theorem two_features {W E P T : Type*} (c : Context W E P T) {w' : W} {t' : T}
     (hw : w' ≠ c.world) (ht : t' ≠ c.time) :
     ExclF .modal (((ContextTower.root c).push (subjShift w' c.time)).push (temporalShift t')) ∧
       ExclF .temporal

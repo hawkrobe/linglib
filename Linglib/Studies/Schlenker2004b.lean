@@ -43,9 +43,9 @@ The general-indexicals content of [schlenker-2003] lives at
 ## Derivation Chain
 
 ```
-Semantics.Context.Tower (ContextTower, push, innermost, origin)
+Reference/Context/Tower.lean (ContextTower, push, innermost, origin)
     ↓
-Semantics.Context.Shifts (temporalShift: changes time, preserves agent/world)
+Reference/Context/Shifts.lean (temporalShift: changes time, preserves agent/world)
     ↓
 This file: tower operations produce the Reichenbach frames of the SOT diagnostics
 (matrixSaid, embeddedSickSimultaneous, etc.)
@@ -67,14 +67,14 @@ open Tense
 
 namespace Schlenker2004b
 
-open Semantics.Context
+open Reference
 
 -- ============================================================================
 -- § Tower-Based Tense Model
 -- ============================================================================
 
 /-- A minimal tense context: world, agent, position, and time (as ℤ). -/
-abbrev TenseCtx := KContext Unit Unit Unit ℤ
+abbrev TenseCtx := Context Unit Unit Unit ℤ
 
 /-- The speech-act context: time = 0 (speech time). -/
 def speechCtx : TenseCtx :=
@@ -166,7 +166,7 @@ theorem simultaneous_perspective_match :
     Tower model: the embedded present uses `DepthSpec.origin` for its
     temporal coordinate, reading time = 0 from the origin. -/
 def presentAccess : AccessPattern TenseCtx ℤ :=
-  { depth := .origin, project := KContext.time }
+  { depth := .origin, project := Context.time }
 
 /-- Present-under-past reads speech time (0), not matrix event time (-2). -/
 theorem double_access_reads_speech_time :
@@ -186,7 +186,7 @@ theorem double_access_matches_data :
     the LOCAL (innermost) context. The embedded past tense evaluates its
     reference time relative to the shifted perspective time. -/
 def shiftedAccess : AccessPattern TenseCtx ℤ :=
-  { depth := .local, project := KContext.time }
+  { depth := .local, project := Context.time }
 
 /-- Shifted reading reads matrix event time (-2) from the innermost context. -/
 theorem shifted_reads_matrix_time :
@@ -246,7 +246,7 @@ theorem nested_double_access :
 /-! Substrate-level bridge from [schlenker-2004b]'s tower-shift
     framework to the `TimeConcept` substrate
     (`Semantics/Tense/DeRe.lean`). Both formalisms resolve
-    against the same `KContext` substrate (= `TenseCtx`); the
+    against the same `Context` substrate (= `TenseCtx`); the
     substrate's `IsRigid` predicate distinguishes
     Kaplan-stable readings (Schlenker's `presentAccess`, origin depth)
     from shifted readings (`shiftedAccess`, local depth).

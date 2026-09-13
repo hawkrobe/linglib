@@ -18,7 +18,7 @@ temporal instantiation of `Assignment`; all update laws are mathlib's
 `Function.update` lemmas.
 -/
 
-open Semantics.Context (Index)
+open Reference
 
 namespace Tense
 

@@ -28,7 +28,7 @@ open Tense
 
 namespace Partee1973
 
-open Semantics.Context
+open Reference
 
 /-- *I didn't turn off the stove*: negation over a past tense that refers to the salient time
 the assignment supplies for variable `n`. -/

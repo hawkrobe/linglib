@@ -29,7 +29,7 @@ clause retrieves for temporal anchoring (`conditionalSF`).
 
 namespace Mood
 
-open Semantics.Context (Index)
+open Reference
 open HistoricalAlternatives
 
 /-- A situation predicate, relating a described situation to its anchor. -/
@@ -116,7 +116,7 @@ tense indexing). -/
 /-- The mood-labeled context shift to the introduced situation's world
 and time. -/
 def subjShift {E P : Type*} (newWorld : W) (newTime : T) :
-    Semantics.Context.ContextShift (Semantics.Context.KContext W E P T) where
+    ContextShift (Context W E P T) where
   apply := λ c => { c with world := newWorld, time := newTime }
   label := .mood
 

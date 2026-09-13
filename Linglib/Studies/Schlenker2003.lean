@@ -47,7 +47,7 @@ derive logophoric pronouns.
 
 namespace Schlenker2003
 
-open Semantics.Context
+open Reference
 open Doxastic (BoxAt)
 
 variable {W E P T : Type*}
@@ -58,32 +58,32 @@ variable {W E P T : Type*}
     the attitude shift onto the tower and read the innermost context —
     the holder becomes the agent, the accessible world the world, and
     the remaining coordinates are inherited. -/
-def reportedContext (t : ContextTower (KContext W E P T)) (holder : E)
-    (w' : W) : KContext W E P T :=
+def reportedContext (t : ContextTower (Context W E P T)) (holder : E)
+    (w' : W) : Context W E P T :=
   (t.push (attitudeShift holder w')).innermost
 
 @[simp] theorem reportedContext_world
-    (t : ContextTower (KContext W E P T)) (holder : E) (w' : W) :
+    (t : ContextTower (Context W E P T)) (holder : E) (w' : W) :
     (reportedContext t holder w').world = w' := by
   simp [reportedContext, attitudeShift]
 
 @[simp] theorem reportedContext_agent
-    (t : ContextTower (KContext W E P T)) (holder : E) (w' : W) :
+    (t : ContextTower (Context W E P T)) (holder : E) (w' : W) :
     (reportedContext t holder w').agent = holder := by
   simp [reportedContext, attitudeShift]
 
 @[simp] theorem reportedContext_time
-    (t : ContextTower (KContext W E P T)) (holder : E) (w' : W) :
+    (t : ContextTower (Context W E P T)) (holder : E) (w' : W) :
     (reportedContext t holder w').time = t.innermost.time := by
   simp [reportedContext, attitudeShift]
 
 @[simp] theorem reportedContext_position
-    (t : ContextTower (KContext W E P T)) (holder : E) (w' : W) :
+    (t : ContextTower (Context W E P T)) (holder : E) (w' : W) :
     (reportedContext t holder w').position = t.innermost.position := by
   simp [reportedContext, attitudeShift]
 
 @[simp] theorem reportedContext_addressee
-    (t : ContextTower (KContext W E P T)) (holder : E) (w' : W) :
+    (t : ContextTower (Context W E P T)) (holder : E) (w' : W) :
     (reportedContext t holder w').addressee = t.innermost.addressee := by
   simp [reportedContext, attitudeShift]
 
@@ -95,13 +95,13 @@ def reportedContext (t : ContextTower (KContext W E P T)) (holder : E)
     contexts, with the finite `worlds` list as the decidable rendering
     of the quantification (cf. `BoxAt`). -/
 def ContextBox (R : E → W → W → Prop) (holder : E)
-    (φ : KContext W E P T → Prop)
-    (t : ContextTower (KContext W E P T)) (w : W) (worlds : List W) : Prop :=
+    (φ : Context W E P T → Prop)
+    (t : ContextTower (Context W E P T)) (w : W) (worlds : List W) : Prop :=
   ∀ w' ∈ worlds, R holder w w' → φ (reportedContext t holder w')
 
 instance (R : E → W → W → Prop) [∀ a w w', Decidable (R a w w')]
-    (holder : E) (φ : KContext W E P T → Prop) [DecidablePred φ]
-    (t : ContextTower (KContext W E P T)) (w : W) (worlds : List W) :
+    (holder : E) (φ : Context W E P T → Prop) [DecidablePred φ]
+    (t : ContextTower (Context W E P T)) (w : W) (worlds : List W) :
     Decidable (ContextBox R holder φ t w worlds) :=
   inferInstanceAs (Decidable (∀ w' ∈ worlds, _))
 
@@ -110,7 +110,7 @@ instance (R : E → W → W → Prop) [∀ a w w', Decidable (R a w w')]
     a special case of [schlenker-2003]'s. -/
 theorem contextBox_world_only
     (R : E → W → W → Prop) (holder : E) (p : W → Prop)
-    (t : ContextTower (KContext W E P T)) (w : W) (worlds : List W) :
+    (t : ContextTower (Context W E P T)) (w : W) (worlds : List W) :
     ContextBox R holder (fun c => p c.world) t w worlds ↔
     BoxAt R holder w worlds p := by
   simp only [ContextBox, BoxAt, reportedContext_world]
@@ -122,7 +122,7 @@ theorem contextBox_world_only
 theorem doxastic_holdsAt_iff_contextBox
     (V : Doxastic.DoxasticPredicate W E) (agent : E)
     (p : W → Prop) (w : W) (worlds : List W)
-    (t : ContextTower (KContext W E P T)) :
+    (t : ContextTower (Context W E P T)) :
     V.HoldsAt agent p w worlds ↔
     (Doxastic.VeridicalityHolds V.veridicality p w ∧
      ContextBox V.access agent (fun c => p c.world) t w worlds) := by
@@ -138,8 +138,8 @@ theorem doxastic_holdsAt_iff_contextBox
     tower configuration. It holds of every meaning of a monster-free
     language and fails for the shift-reading meanings of the paper's
     monster-friendly logics (Appendix B). -/
-def SatisfiesFixity (φ : ContextTower (KContext W E P T) → W → Prop) : Prop :=
-  ∀ (t₁ t₂ : ContextTower (KContext W E P T)) (w : W), φ t₁ w ↔ φ t₂ w
+def SatisfiesFixity (φ : ContextTower (Context W E P T) → W → Prop) : Prop :=
+  ∀ (t₁ t₂ : ContextTower (Context W E P T)) (w : W), φ t₁ w ↔ φ t₂ w
 
 /-- World-only meanings satisfy the Fixity Thesis. -/
 theorem fixity_world_only (p : W → Prop) :
@@ -155,7 +155,7 @@ open Reference.Kaplan (pronI_access pronI_shift_invariant)
     `ContextBox` — it resolves to the origin agent (the actual
     speaker), not the attitude holder. -/
 theorem english_I_invariant
-    (t : ContextTower (KContext W E P T)) (holder : E) (w' : W) :
+    (t : ContextTower (Context W E P T)) (holder : E) (w' : W) :
     pronI_access.resolve (t.push (attitudeShift holder w')) =
     pronI_access.resolve t :=
   pronI_shift_invariant t (attitudeShift holder w')
@@ -174,7 +174,7 @@ inductive Person | alice | bob
 inductive World | w0 | w1
   deriving DecidableEq, Repr
 
-abbrev Ctx := KContext World Person Unit Unit
+abbrev Ctx := Context World Person Unit Unit
 
 /-- Speech-act context: Alice speaking to Bob at world w0. -/
 def speechCtx : Ctx :=

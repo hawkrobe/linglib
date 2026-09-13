@@ -3,7 +3,7 @@ import Linglib.Semantics.Reference.Context.Tower
 /-!
 # Standard Context Shifts
 
-Shift constructors for `KContext` that correspond to specific linguistic operations:
+Shift constructors for `Context` that correspond to specific linguistic operations:
 attitude embedding, temporal shift, and the identity (no-op) shift. Each preserves or
 changes specific coordinates, with theorems documenting the preservation pattern.
 
@@ -12,11 +12,10 @@ These are the building blocks for tower-based composition. An attitude verb push
 English attitude verbs push `identityShift`.
 -/
 
-namespace Semantics.Context
+namespace Reference
 
-open Semantics.Context (KContext)
 
-section KContextShifts
+section ContextShifts
 
 variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
 
@@ -27,7 +26,7 @@ variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
     [schlenker-2003]: "John said that I am happy" — under the monster
     analysis, the attitude verb shifts agent to John. Under Kaplan's
     thesis, English uses `identityShift` instead. -/
-def attitudeShift (holder : E) (attWorld : W) : ContextShift (KContext W E P T) where
+def attitudeShift (holder : E) (attWorld : W) : ContextShift (Context W E P T) where
   apply := λ c => { c with agent := holder, world := attWorld }
   label := .attitude
 
@@ -36,14 +35,14 @@ def attitudeShift (holder : E) (attWorld : W) : ContextShift (KContext W E P T) 
 
     [von-stechow-2009]: the attitude verb transmits its event time to
     the embedded clause's perspective time. -/
-def temporalShift (newTime : T) : ContextShift (KContext W E P T) where
+def temporalShift (newTime : T) : ContextShift (Context W E P T) where
   apply := λ c => { c with time := newTime }
   label := .temporal
 
 /-- Identity shift: no change to the context. Kaplan's thesis for English
     says attitude verbs push identity shifts — embedding happens without
     shifting the context of utterance. -/
-def identityShift : ContextShift (KContext W E P T) where
+def identityShift : ContextShift (Context W E P T) where
   apply := id
   label := .generic
 
@@ -52,56 +51,56 @@ def identityShift : ContextShift (KContext W E P T) where
 -- ════════════════════════════════════════════════════════════════
 
 @[simp] theorem attitudeShift_preserves_addressee (holder : E) (attWorld : W)
-    (c : KContext W E P T) :
+    (c : Context W E P T) :
     ((attitudeShift holder attWorld).apply c).addressee = c.addressee := rfl
 
 @[simp] theorem attitudeShift_preserves_time (holder : E) (attWorld : W)
-    (c : KContext W E P T) :
+    (c : Context W E P T) :
     ((attitudeShift holder attWorld).apply c).time = c.time := rfl
 
 @[simp] theorem attitudeShift_preserves_position (holder : E) (attWorld : W)
-    (c : KContext W E P T) :
+    (c : Context W E P T) :
     ((attitudeShift holder attWorld).apply c).position = c.position := rfl
 
 @[simp] theorem attitudeShift_changes_agent (holder : E) (attWorld : W)
-    (c : KContext W E P T) :
+    (c : Context W E P T) :
     ((attitudeShift holder attWorld).apply c).agent = holder := rfl
 
 @[simp] theorem attitudeShift_changes_world (holder : E) (attWorld : W)
-    (c : KContext W E P T) :
+    (c : Context W E P T) :
     ((attitudeShift holder attWorld).apply c).world = attWorld := rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- § Temporal Shift Preservation
 -- ════════════════════════════════════════════════════════════════
 
-@[simp] theorem temporalShift_preserves_agent (newTime : T) (c : KContext W E P T) :
+@[simp] theorem temporalShift_preserves_agent (newTime : T) (c : Context W E P T) :
     ((temporalShift newTime).apply c).agent = c.agent := rfl
 
-@[simp] theorem temporalShift_preserves_world (newTime : T) (c : KContext W E P T) :
+@[simp] theorem temporalShift_preserves_world (newTime : T) (c : Context W E P T) :
     ((temporalShift newTime).apply c).world = c.world := rfl
 
-@[simp] theorem temporalShift_preserves_addressee (newTime : T) (c : KContext W E P T) :
+@[simp] theorem temporalShift_preserves_addressee (newTime : T) (c : Context W E P T) :
     ((temporalShift newTime).apply c).addressee = c.addressee := rfl
 
-@[simp] theorem temporalShift_preserves_position (newTime : T) (c : KContext W E P T) :
+@[simp] theorem temporalShift_preserves_position (newTime : T) (c : Context W E P T) :
     ((temporalShift newTime).apply c).position = c.position := rfl
 
-@[simp] theorem temporalShift_changes_time (newTime : T) (c : KContext W E P T) :
+@[simp] theorem temporalShift_changes_time (newTime : T) (c : Context W E P T) :
     ((temporalShift newTime).apply c).time = newTime := rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- § Identity Shift
 -- ════════════════════════════════════════════════════════════════
 
-@[simp] theorem identityShift_apply (c : KContext W E P T) :
+@[simp] theorem identityShift_apply (c : Context W E P T) :
     (identityShift (W := W) (E := E) (P := P) (T := T)).apply c = c := rfl
 
 /-- Pushing an identity shift doesn't change the innermost context. -/
-theorem push_identityShift_innermost (t : ContextTower (KContext W E P T)) :
+theorem push_identityShift_innermost (t : ContextTower (Context W E P T)) :
     (t.push identityShift).innermost = t.innermost := by
   rw [ContextTower.push_innermost, identityShift_apply]
 
-end KContextShifts
+end ContextShifts
 
-end Semantics.Context
+end Reference

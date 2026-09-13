@@ -42,7 +42,7 @@ namespace Levin2026
 
 open Verb
 open Semantics
-open Semantics.Context (Index)
+open Reference
 
 open ArgumentStructure
 open LevinClass (pushPull hit wipe)

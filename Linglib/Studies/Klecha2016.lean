@@ -38,7 +38,7 @@ verdicts (`rows_readings`).
 
 namespace Klecha2016
 
-open Tense HistoricalAlternatives Features Semantics.Context English.Predicates.Verbal
+open Tense HistoricalAlternatives Features Reference English.Predicates.Verbal
 
 variable {W T : Type*}
 

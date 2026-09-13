@@ -23,7 +23,6 @@ namespace Reference.Kaplan
 
 open Reference (IsRigid isRigid_const)
 open _root_.Reference.Basic
-open Semantics.Context (KContext)
 
 /-! ## Indexicals -/
 
@@ -32,26 +31,23 @@ names), but its content at each context is rigid.
 
 Example: "I" has a different content when uttered by Alice vs Bob,
 but once we fix the context, the content rigidly picks out the agent. -/
-def indexical {W E : Type*} (charFn : Context W E → E) : ReferringExpression (Context W E) W E :=
+def indexical {W E P T : Type*} (charFn : Context W E P T → E) :
+    ReferringExpression (Context W E P T) W E :=
   { character := λ c => fun _ => charFn c
   , profile := ⟨true, true, false⟩ }
 
 /-- "I": picks out the agent of the context. -/
-def pronI {W E : Type*} : ReferringExpression (Context W E) W E :=
-  indexical (λ c => c.agent)
+def pronI {W E P T : Type*} : ReferringExpression (Context W E P T) W E :=
+  indexical (·.agent)
 
 /-- "I" is directly referential: at every context, its content is rigid. -/
-theorem pronI_directlyReferential {W E : Type*} :
-    isDirectlyReferential (pronI (W := W) (E := E)).character :=
+theorem pronI_directlyReferential {W E P T : Type*} :
+    isDirectlyReferential (pronI (W := W) (E := E) (P := P) (T := T)).character :=
   λ _ => isRigid_const _
 
-/-- "You": picks out the addressee of the context (Speas & Tenny's HEARER).
-
-    Parallel to `pronI` but uses the full `KContext` (which has `addressee`)
-    rather than the simple `Context` (which only has `agent` and `world`). -/
-def pronYou {W E P T : Type*} : ReferringExpression (KContext W E P T) W E :=
-  { character := λ c => fun _ => c.addressee
-  , profile := ⟨true, true, false⟩ }
+/-- "You": picks out the addressee of the context (Speas & Tenny's HEARER). -/
+def pronYou {W E P T : Type*} : ReferringExpression (Context W E P T) W E :=
+  indexical (·.addressee)
 
 /-- "You" is directly referential: at every context, its content is rigid. -/
 theorem pronYou_directlyReferential {W E P T : Type*} :
@@ -61,9 +57,9 @@ theorem pronYou_directlyReferential {W E P T : Type*} :
 /-- Indexicals have non-constant character (in general).
 
 "I" said by Alice ≠ "I" said by Bob: the character varies. -/
-theorem indexical_character_varies {W E : Type*} [Inhabited W]
-    (charFn : Context W E → E)
-    (c₁ c₂ : Context W E) (h : charFn c₁ ≠ charFn c₂) :
+theorem indexical_character_varies {W E P T : Type*} [Inhabited W]
+    (charFn : Context W E P T → E)
+    (c₁ c₂ : Context W E P T) (h : charFn c₁ ≠ charFn c₂) :
     (indexical charFn).character c₁ ≠ (indexical charFn).character c₂ := by
   intro heq
   have : (indexical charFn).character c₁ default = (indexical charFn).character c₂ default :=
@@ -130,10 +126,10 @@ at every context, the content is true at the world of the context.
 It is NOT necessary — there are worlds where the agent is elsewhere.
 This distinguishes logical truth (true at every context) from
 necessity (true at every world). -/
-theorem i_am_here_now_logically_true {W E : Type*}
-    (here : Context W E → E → W → Prop)
-    (hCtx : ∀ c : Context W E, here c c.agent c.world) :
-    ∀ c : Context W E, here c c.agent c.world :=
+theorem i_am_here_now_logically_true {W E P T : Type*}
+    (here : Context W E P T → E → W → Prop)
+    (hCtx : ∀ c : Context W E P T, here c c.agent c.world) :
+    ∀ c : Context W E P T, here c c.agent c.world :=
   hCtx
 
 /-! ## Indexicals as Tower Access Patterns
@@ -145,7 +141,6 @@ are invariant under embedding operators becomes a corollary of `origin_stable`. 
 
 section TowerIndexicals
 
-open Semantics.Context
 
 variable {W' : Type*} {E' : Type*} {P' : Type*} {T' : Type*}
 
@@ -157,36 +152,36 @@ variable {W' : Type*} {E' : Type*} {P' : Type*} {T' : Type*}
 
     [kaplan-1989]: the character of "I" is the function that maps every
     context to the agent of that context. In tower terms, "I" reads from
-    the origin (depth 0), projecting `KContext.agent`. -/
-def pronI_access : AccessPattern (KContext W' E' P' T') E' :=
-  ⟨.origin, KContext.agent⟩
+    the origin (depth 0), projecting `Context.agent`. -/
+def pronI_access : AccessPattern (Context W' E' P' T') E' :=
+  ⟨.origin, Context.agent⟩
 
 /-- "you" — second person pronoun. Reads the addressee from the speech-act context.
 
     Following [speas-tenny-2003], the addressee is a coordinate of the
-    Kaplanian context. "You" reads from the origin, projecting `KContext.addressee`. -/
-def pronYou_access : AccessPattern (KContext W' E' P' T') E' :=
-  ⟨.origin, KContext.addressee⟩
+    Kaplanian context. "You" reads from the origin, projecting `Context.addressee`. -/
+def pronYou_access : AccessPattern (Context W' E' P' T') E' :=
+  ⟨.origin, Context.addressee⟩
 
 /-- "now" — temporal indexical. Reads the time from the speech-act context.
 
     [kaplan-1989] §VI: N (now) is a content operator that shifts the
     evaluation time to the context time. As an access pattern, "now"
-    reads `KContext.time` from the origin. -/
-def opNow_access : AccessPattern (KContext W' E' P' T') T' :=
-  ⟨.origin, KContext.time⟩
+    reads `Context.time` from the origin. -/
+def opNow_access : AccessPattern (Context W' E' P' T') T' :=
+  ⟨.origin, Context.time⟩
 
 /-- "here" — spatial indexical. Reads the position from the speech-act context. -/
-def opHere_access : AccessPattern (KContext W' E' P' T') P' :=
-  ⟨.origin, KContext.position⟩
+def opHere_access : AccessPattern (Context W' E' P' T') P' :=
+  ⟨.origin, Context.position⟩
 
 /-- "actually" — modal indexical. Reads the world from the speech-act context.
 
     [kaplan-1989] §VI: A (actually) shifts the evaluation world to the
-    context world. As an access pattern, "actually" reads `KContext.world`
+    context world. As an access pattern, "actually" reads `Context.world`
     from the origin. -/
-def opActually_access : AccessPattern (KContext W' E' P' T') W' :=
-  ⟨.origin, KContext.world⟩
+def opActually_access : AccessPattern (Context W' E' P' T') W' :=
+  ⟨.origin, Context.world⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § Depth Verification
@@ -217,31 +212,31 @@ def opActually_access : AccessPattern (KContext W' E' P' T') W' :=
 
     "John said that I am happy" => "I" = the actual speaker, not John. -/
 theorem pronI_shift_invariant
-    (t : ContextTower (KContext W' E' P' T')) (σ : ContextShift (KContext W' E' P' T')) :
+    (t : ContextTower (Context W' E' P' T')) (σ : ContextShift (Context W' E' P' T')) :
     pronI_access.resolve (t.push σ) = pronI_access.resolve t :=
   AccessPattern.origin_stable pronI_access rfl t σ
 
 /-- "you" is invariant under any tower push. -/
 theorem pronYou_shift_invariant
-    (t : ContextTower (KContext W' E' P' T')) (σ : ContextShift (KContext W' E' P' T')) :
+    (t : ContextTower (Context W' E' P' T')) (σ : ContextShift (Context W' E' P' T')) :
     pronYou_access.resolve (t.push σ) = pronYou_access.resolve t :=
   AccessPattern.origin_stable pronYou_access rfl t σ
 
 /-- "now" is invariant under any tower push. -/
 theorem opNow_shift_invariant
-    (t : ContextTower (KContext W' E' P' T')) (σ : ContextShift (KContext W' E' P' T')) :
+    (t : ContextTower (Context W' E' P' T')) (σ : ContextShift (Context W' E' P' T')) :
     opNow_access.resolve (t.push σ) = opNow_access.resolve t :=
   AccessPattern.origin_stable opNow_access rfl t σ
 
 /-- "here" is invariant under any tower push. -/
 theorem opHere_shift_invariant
-    (t : ContextTower (KContext W' E' P' T')) (σ : ContextShift (KContext W' E' P' T')) :
+    (t : ContextTower (Context W' E' P' T')) (σ : ContextShift (Context W' E' P' T')) :
     opHere_access.resolve (t.push σ) = opHere_access.resolve t :=
   AccessPattern.origin_stable opHere_access rfl t σ
 
 /-- "actually" is invariant under any tower push. -/
 theorem opActually_shift_invariant
-    (t : ContextTower (KContext W' E' P' T')) (σ : ContextShift (KContext W' E' P' T')) :
+    (t : ContextTower (Context W' E' P' T')) (σ : ContextShift (Context W' E' P' T')) :
     opActually_access.resolve (t.push σ) = opActually_access.resolve t :=
   AccessPattern.origin_stable opActually_access rfl t σ
 
@@ -288,23 +283,23 @@ theorem kaplansThesisTower :
 -- ════════════════════════════════════════════════════════════════
 
 /-- In a root tower, "I" resolves to the context's agent. -/
-theorem pronI_root (c : KContext W' E' P' T') :
+theorem pronI_root (c : Context W' E' P' T') :
     pronI_access.resolve (ContextTower.root c) = c.agent := rfl
 
 /-- In a root tower, "you" resolves to the context's addressee. -/
-theorem pronYou_root (c : KContext W' E' P' T') :
+theorem pronYou_root (c : Context W' E' P' T') :
     pronYou_access.resolve (ContextTower.root c) = c.addressee := rfl
 
 /-- In a root tower, "now" resolves to the context's time. -/
-theorem opNow_root (c : KContext W' E' P' T') :
+theorem opNow_root (c : Context W' E' P' T') :
     opNow_access.resolve (ContextTower.root c) = c.time := rfl
 
 /-- In a root tower, "here" resolves to the context's position. -/
-theorem opHere_root (c : KContext W' E' P' T') :
+theorem opHere_root (c : Context W' E' P' T') :
     opHere_access.resolve (ContextTower.root c) = c.position := rfl
 
 /-- In a root tower, "actually" resolves to the context's world. -/
-theorem opActually_root (c : KContext W' E' P' T') :
+theorem opActually_root (c : Context W' E' P' T') :
     opActually_access.resolve (ContextTower.root c) = c.world := rfl
 
 end TowerIndexicals

@@ -17,7 +17,7 @@ classes and direction of fit).
 namespace Discourse
 
 /-- The two fundamental discourse participants. `.addressee` matches
-    `KContext.addressee` (not `.listener` as in `DynamicSemantics`). -/
+    `Context.addressee` (not `.listener` as in `DynamicSemantics`). -/
 inductive Role where
   | speaker
   | addressee
@@ -25,9 +25,9 @@ inductive Role where
 
 namespace Role
 
-open Semantics.Context
+open Reference
 
-variable {W E P T : Type*} (tower : ContextTower (KContext W E P T))
+variable {W E P T : Type*} (tower : ContextTower (Context W E P T))
 
 /-- Resolve a discourse role to a concrete entity via a `ContextTower`,
     reading from the origin (speech-act context).
@@ -42,7 +42,7 @@ theorem resolve_addressee : resolve tower .addressee = tower.origin.addressee :=
 
 /-- Discourse role resolution is invariant under tower push: discourse
     roles reflect speech-act participants (from origin), not embedded ones. -/
-theorem resolve_push (σ : ContextShift (KContext W E P T)) (r : Role) :
+theorem resolve_push (σ : ContextShift (Context W E P T)) (r : Role) :
     resolve (tower.push σ) r = resolve tower r := by
   cases r <;> simp only [resolve, ContextTower.push_origin]
 

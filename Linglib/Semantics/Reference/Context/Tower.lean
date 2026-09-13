@@ -10,7 +10,7 @@ mechanisms: Kaplanian indexicals (origin access), shifted indexicals (local acce
 De Bruijn temporal indexing (depth-relative access), situation introduction (mood),
 and domain expansion (branching time).
 
-The tower is parametric over any context type `C`. `KContext` serves as the canonical
+The tower is parametric over any context type `C`. `Context` serves as the canonical
 instantiation — it represents what a single context layer looks like. The tower wraps
 it with a stack of shifts.
 
@@ -30,7 +30,7 @@ as a reader parameter — `ContextTower C →...` is the enriched meaning type.
 
 -/
 
-namespace Semantics.Context
+namespace Reference
 
 -- ════════════════════════════════════════════════════════════════
 -- § Shift Labels
@@ -187,9 +187,9 @@ end DepthSpec
     - `depth` says which tower layer to read from
     - `project` says which coordinate to extract
 
-    English "I" = `⟨.origin, KContext.agent⟩`
-    Amharic "I" = `⟨.local, KContext.agent⟩`
-    English "now" = `⟨.origin, KContext.time⟩` -/
+    English "I" = `⟨.origin, Context.agent⟩`
+    Amharic "I" = `⟨.local, Context.agent⟩`
+    English "now" = `⟨.origin, Context.time⟩` -/
 structure AccessPattern (C : Type*) (R : Type*) where
   /-- Which depth to read from -/
   depth : DepthSpec
@@ -275,4 +275,4 @@ theorem root_origin_eq_local (ap₁ ap₂ : AccessPattern C R)
 
 end AccessPattern
 
-end Semantics.Context
+end Reference

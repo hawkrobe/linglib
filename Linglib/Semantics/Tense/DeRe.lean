@@ -17,11 +17,11 @@ centered context — together with a base-world condition, the temporal instance
 ## Implementation notes
 
 Time-concepts are intensions from the centered Kaplanian
-context `Semantics.Context.KContext`
+context `Reference.Context`
 (`Semantics/Reference/Context/Basic.lean`) — Abusch's `⟨x_self, t_now, w⟩`
 is a three-field projection of the richer context the rest of linglib
 commits to. Rigidity across alternatives is `IsRigidOn` after
-`KContext.shiftWorldTime`; the alternative set is a bare
+`Context.shiftWorldTime`; the alternative set is a bare
 `Set (Index W T)`, so doxastic (Hintikka belief alternatives,
 the Abusch-canonical case) and metaphysical ([klecha-2016] DOX via
 `HistoricalAlternatives.actualHistoryBase`) modal bases are call-site
@@ -30,9 +30,9 @@ instantiations (`doxasticAlternatives`, `metaphysicalAlternatives`).
 
 namespace Tense.DeRe
 
-open Semantics.Context (Index)
+open Reference
 open Reference (IsRigid IsRigidOn)
-open Semantics.Context (KContext)
+open Reference
 open HistoricalAlternatives (actualHistoryBase)
 
 /-! ### Time-concepts -/
@@ -43,7 +43,7 @@ open HistoricalAlternatives (actualHistoryBase)
     centered-proposition framework (§3 develops it for individuals via
     the acquaintance relation `R₁ : eeiwt`, eq. 12; §4 applies it to
     times). -/
-abbrev TimeConcept (W E P T : Type*) := (KContext W E P T) → T
+abbrev TimeConcept (W E P T : Type*) := (Context W E P T) → T
 
 /-! ### Temporal de re reading -/
 
@@ -60,7 +60,7 @@ structure TemporalDeReReading (W E P T : Type*) where
       [abusch-1997] §7 ULC, `holderContext.time` is the holder's now —
       the perspective time for embedded tense evaluation, *not* the
       outer speaker's speech time. -/
-  holderContext : KContext W E P T
+  holderContext : Context W E P T
 
 namespace TemporalDeReReading
 
