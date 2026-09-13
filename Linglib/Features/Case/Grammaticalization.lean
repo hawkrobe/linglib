@@ -73,9 +73,9 @@ namespace Features
     → abstract/core: the source function is less grammaticalized than the
     target.
 
-    See also `Possession.Source` for
-    [heine-2009] Table 29.5 (possessive case sources, adapted from
-    [heine-1997]). -/
+    The possessor cases of the source schemas of predicative possession,
+    the sources of [heine-2009] Table 29.5, are `Heine1997.Schema.possessorCase`
+    in `Studies/Heine1997.lean` ([heine-1997]). -/
 def _root_.Case.Extends : Case → Case → Prop
   | .abl,  .caus | .abl,  .gen  | .abl,  .part | .abl,  .inst => True
   | .all,  .ben  | .all,  .dat  | .all,  .acc                 => True
