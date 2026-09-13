@@ -1,5 +1,6 @@
 import Linglib.Syntax.Comparative
-import Linglib.Studies.SarvasyAikhenvald2025
+import Linglib.Fragments.Korean.MedialVerbs
+import Linglib.Fragments.Turkish.MedialVerbs
 import Linglib.Features.Case.Basic
 import Linglib.Fragments.Japanese.Comparison
 import Linglib.Fragments.Korean.Comparison
@@ -402,15 +403,15 @@ theorem turkish_three_layer :
 /-- Korean: absolute deranking predicts non-finite medial verbs. -/
 theorem korean_deranking_consistent :
     koreanCT = .absoluteDeranking ∧
-    ClauseChaining.korean.medialVerbForm =
+    Korean.MedialVerbs.chaining.medialVerbForm =
       UD.VerbForm.Conv :=
-  ⟨rfl, rfl⟩
+  ⟨rfl, by decide⟩
 
 theorem turkish_deranking_consistent :
     turkishCT = .absoluteDeranking ∧
-    ClauseChaining.turkish.medialVerbForm =
+    Turkish.MedialVerbs.chaining.medialVerbForm =
       UD.VerbForm.Conv :=
-  ⟨rfl, rfl⟩
+  ⟨rfl, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 11. 1985 ↔ WALS 2013

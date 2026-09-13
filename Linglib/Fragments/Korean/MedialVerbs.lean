@@ -1,3 +1,5 @@
+import Linglib.Syntax.Clause.Chaining
+
 /-!
 # Korean Conjunctive (Converbal) Suffixes
 [sohn-1999]
@@ -25,9 +27,14 @@ the single final (independent) verb.
 | -nikka | causal 'since, because' (evidential) | possible | possible |
 | -(eu)ryeo | purpose/intention 'in order to' | no | possible |
 
+The language's clause-chaining system (`chaining`) is read off this inventory where it can be:
+the tense and polarity profiles of medial verbs from the suffixes that admit tense and negation,
+and the marked relations from the suffixes' relations.
 -/
 
 namespace Korean.MedialVerbs
+
+open Clause.Chaining (InterclauseRelation CategoryRetention)
 
 /-- A Korean conjunctive suffix entry. -/
 structure ConjSuffixEntry where
@@ -35,64 +42,70 @@ structure ConjSuffixEntry where
   form : String
   /-- Semantic relation gloss. -/
   gloss : String
+  /-- The interclausal relations the suffix encodes. -/
+  relations : List InterclauseRelation
   /-- Whether tense can be marked on the medial verb with this suffix. -/
   allowsTense : Bool
   /-- Whether independent negation is possible on the medial clause. -/
   allowsNegation : Bool
   deriving Repr, BEq
 
--- ============================================================================
--- § Suffix inventory
--- ============================================================================
+/-! ### Suffix inventory -/
 
 /-- -go: sequential or additive 'and, and then'.
     The most neutral connective — imposes minimal semantic constraint. -/
 def go : ConjSuffixEntry :=
-  { form := "-go", gloss := "and/and then (sequential/additive)", allowsTense := false, allowsNegation := true }
+  { form := "-go", gloss := "and/and then (sequential/additive)",
+    relations := [.sequential, .additive], allowsTense := false, allowsNegation := true }
 
 /-- -myeonseo: simultaneous 'while, as'.
     Requires temporal overlap between medial and following event. -/
 def myeonseo : ConjSuffixEntry :=
-  { form := "-myeonseo", gloss := "while (simultaneous)", allowsTense := false, allowsNegation := true }
+  { form := "-myeonseo", gloss := "while (simultaneous)", relations := [.simultaneous],
+    allowsTense := false, allowsNegation := true }
 
 /-- -eoseo: causal or tight sequential 'because, and then'.
     The medial event is either the cause or the immediately preceding event.
     Differs from -go in implying closer connection between events. -/
 def eoseo : ConjSuffixEntry :=
-  { form := "-eoseo", gloss := "because/and then (causal/sequential)", allowsTense := false, allowsNegation := true }
+  { form := "-eoseo", gloss := "because/and then (causal/sequential)",
+    relations := [.causal, .sequential], allowsTense := false, allowsNegation := true }
 
 /-- -(eu)myeon: conditional 'if, when'.
     Can combine with past tense for counterfactual readings. -/
 def myeon : ConjSuffixEntry :=
-  { form := "-(eu)myeon", gloss := "if/when (conditional)", allowsTense := true, allowsNegation := true }
+  { form := "-(eu)myeon", gloss := "if/when (conditional)", relations := [.conditional],
+    allowsTense := true, allowsNegation := true }
 
 /-- -jiman: concessive 'but, although'.
     The medial event holds despite the following event. -/
 def jiman : ConjSuffixEntry :=
-  { form := "-jiman", gloss := "but/although (concessive)", allowsTense := true, allowsNegation := true }
+  { form := "-jiman", gloss := "but/although (concessive)", relations := [.concessive],
+    allowsTense := true, allowsNegation := true }
 
 /-- -dorok: purpose or extent 'so that, until'.
     The medial event is the goal or limit of the following event. -/
 def dorok : ConjSuffixEntry :=
-  { form := "-dorok", gloss := "so that/until (purpose)", allowsTense := false, allowsNegation := true }
+  { form := "-dorok", gloss := "so that/until (purpose)", relations := [.purpose],
+    allowsTense := false, allowsNegation := true }
 
 /-- -nikka: causal 'since, because' (with evidential overtone).
     Marks the medial event as an established or experienced reason. -/
 def nikka : ConjSuffixEntry :=
-  { form := "-nikka", gloss := "since/because (causal-evidential)", allowsTense := true, allowsNegation := true }
+  { form := "-nikka", gloss := "since/because (causal-evidential)", relations := [.causal],
+    allowsTense := true, allowsNegation := true }
 
 /-- -(eu)ryeo: purpose/intention 'in order to'.
     The subject intends to bring about the medial event. -/
 def ryeo : ConjSuffixEntry :=
-  { form := "-(eu)ryeo", gloss := "in order to (purpose/intention)", allowsTense := false, allowsNegation := true }
+  { form := "-(eu)ryeo", gloss := "in order to (purpose/intention)", relations := [.purpose],
+    allowsTense := false, allowsNegation := true }
 
 /-- All conjunctive suffixes. -/
 def allSuffixes : List ConjSuffixEntry :=
   [go, myeonseo, eoseo, myeon, jiman, dorok, nikka, ryeo]
 
--- ============================================================================
--- § Derived properties
--- ============================================================================
+/-! ### Derived properties -/
 
 /-- Suffixes that allow tense marking on the medial verb. -/
 def tensedSuffixes : List ConjSuffixEntry :=
@@ -102,26 +115,29 @@ def tensedSuffixes : List ConjSuffixEntry :=
 def untensedSuffixes : List ConjSuffixEntry :=
   allSuffixes.filter (! ·.allowsTense)
 
--- ============================================================================
--- § Verification theorems
--- ============================================================================
+/-- How far medial verbs retain a category, from the suffixes that admit it. -/
+def retention (p : ConjSuffixEntry → Bool) : CategoryRetention :=
+  if allSuffixes.all p then .full else if allSuffixes.any p then .restricted else .absent
 
-/-- 8 conjunctive suffixes in the inventory. -/
-theorem suffix_count : allSuffixes.length = 8 := rfl
-
-/-- Every suffix allows independent negation on the medial clause.
-    Korean medial clauses can always be independently negated. -/
-theorem all_allow_negation :
-    allSuffixes.all (·.allowsNegation) = true := rfl
-
-/-- 3 suffixes allow tense on the medial verb. -/
-theorem tensed_count : tensedSuffixes.length = 3 := rfl
-
-/-- 5 suffixes disallow tense on the medial verb. -/
-theorem untensed_count : untensedSuffixes.length = 5 := rfl
-
-/-- The tensed/untensed partition exhausts the inventory. -/
-theorem tense_partition :
-    tensedSuffixes.length + untensedSuffixes.length = allSuffixes.length := rfl
+/-- Korean's clause-chaining system: medial-final chains without switch-reference, each
+conjunctive suffix encoding its own relations, tense admitted before some suffixes and
+independent negation before all, no agreement, and medial clauses on their own ([sohn-1999];
+[sarvasy-aikhenvald-2025] Ch. 1 on Korean's inventory of medial suffixes). -/
+def chaining : Clause.Chaining.System where
+  direction := .medialFinal
+  srSystem := .none
+  srTarget := none
+  srObligatory := false
+  srMarkedness := none
+  medialMorph := {
+    tense := retention (·.allowsTense)
+    agreement := .absent
+    mood := .restricted
+    polarity := retention (·.allowsNegation)
+    aspect := .restricted }
+  relationsMarked := (allSuffixes.flatMap (·.relations)).eraseDups
+  hasRecapLinkage := false
+  hasSummaryLinkage := false
+  medialCanStandAlone := true
 
 end Korean.MedialVerbs

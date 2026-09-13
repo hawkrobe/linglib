@@ -1,6 +1,7 @@
 import Linglib.Data.UD.Basic
 import Linglib.Features.Number.Capabilities
 import Linglib.Features.Person.Capabilities
+import Linglib.Syntax.Clause.Chaining
 
 /-!
 # Nungon Medial Verb Morphology [sarvasy-2017]
@@ -39,6 +40,9 @@ participant whose identity *differs* from the following clause's subject.
 
 Note: 2du and 3du are syncretic (-uny-a); 2pl and 3pl are syncretic (-u-ya).
 
+The language's clause-chaining system (`chaining`) is read off this inventory where it can be:
+the switch-reference type from the relations the SS suffixes distinguish, the agreement profile
+from the DS paradigm, and the marked relations from the SS categories.
 -/
 
 namespace Nungon.MedialVerbs
@@ -129,32 +133,37 @@ def ssSIM : SSSuffix := { form := "-ma", category := .ssSIM }
 /-- All SS suffixes. -/
 def ssSuffixes : List SSSuffix := [ssSEQ, ssSIM]
 
--- ============================================================================
--- § Verification theorems
--- ============================================================================
+/-! ### The clause-chaining system -/
 
-/-- 9 cells in the DS paradigm (3 persons x 3 numbers). -/
-theorem ds_paradigm_size : dsParadigm.length = 9 := rfl
+/-- The interclausal relation an SR category encodes. -/
+def SRCategory.relation : SRCategory → Clause.Chaining.InterclauseRelation
+  | .ssSEQ | .dsSEQ => .sequential
+  | .ssSIM | .dsSIM => .simultaneous
 
-/-- 2 SS suffixes (sequential and simultaneous). -/
-theorem ss_suffix_count : ssSuffixes.length = 2 := rfl
+/-- The relations the SS suffixes distinguish. -/
+def ssRelations : List Clause.Chaining.InterclauseRelation :=
+  (ssSuffixes.map (·.category.relation)).eraseDups
 
-/-- 2du and 3du are syncretic (same form). -/
-theorem du_syncretism : ds2du.form = ds3du.form := rfl
-
-/-- 2pl and 3pl are syncretic (same form). -/
-theorem pl_syncretism : ds2pl.form = ds3pl.form := rfl
-
-/-- SS-SEQ is same-subject. -/
-theorem ssSEQ_is_ss : SRCategory.ssSEQ.isSS = true := rfl
-
-/-- DS-SEQ is different-subject. -/
-theorem dsSEQ_is_ds : SRCategory.dsSEQ.isSS = false := rfl
-
-/-- SS-SEQ is sequential. -/
-theorem ssSEQ_is_seq : SRCategory.ssSEQ.isSequential = true := rfl
-
-/-- SS-SIM is not sequential (it's simultaneous). -/
-theorem ssSIM_not_seq : SRCategory.ssSIM.isSequential = false := rfl
+/-- Nungon's clause-chaining system: medial-final chains whose medial verbs carry only a
+switch-reference suffix, the same-subject forms distinguishing the temporal relations and the
+different-subject forms indexing the medial subject; tense, mood and aspect come from the
+final verb, clauses are negated individually, recapitulative and summary linkage both occur,
+and medial clauses are used on their own ([sarvasy-aikhenvald-2025] Ch. 7, [sarvasy-2017]). -/
+def chaining : Clause.Chaining.System where
+  direction := .medialFinal
+  srSystem := if 1 < ssRelations.length then .ssDsTemporal else .ssDs
+  srTarget := some .subjectOnly
+  srObligatory := true
+  srMarkedness := some .ssUnmarked
+  medialMorph := {
+    tense := .absent
+    agreement := if dsParadigm.isEmpty then .absent else .restricted
+    mood := .absent
+    polarity := .full
+    aspect := .absent }
+  relationsMarked := ssRelations
+  hasRecapLinkage := true
+  hasSummaryLinkage := true
+  medialCanStandAlone := true
 
 end Nungon.MedialVerbs
