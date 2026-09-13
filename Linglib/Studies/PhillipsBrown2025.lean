@@ -20,7 +20,7 @@ true (§2.2), an instance of the closure under doxastic equivalence of [villalta
 (`closure_under_doxastic_equivalence`, `cpr_overgenerates`). The proposal evaluates an
 ascription against a contextual question (§3), a partition of the worlds: the answers
 compatible with the beliefs are ranked by the desires they entail, *S wants p* holds when every
-best answer entails *p* (`Want`), and the ascription is defined only if the question settles *p*
+best answer entails *p* (`Want`), and the ascription is defined only if the question decides *p*
 (§3.6), is diverse and does not stack the deck (§3.7), and the beliefs are sensitive to it
 (§4.2) (`Defined`). *Nap* is true considering whether one naps and whether one feels rested,
 *Not-nap* considering whether one naps and whether one passes, and in the former context *Fail*
@@ -29,7 +29,7 @@ is undefined, the outcome of the exam being ignored (`act_true`, `not_act_true`,
 deck-stacked question of Lu's case would make *Lu wants it not to rain* true and is excluded by
 the anti-deckstacking constraint, which the level playing field satisfies
 (`not_rain_deckstacked`, `deckstacked_excluded`); an agent whose beliefs are insensitive to
-every question that settles *p*, William III and nuclear war, has *S wants p* undefined in every
+every question that decides *p*, William III and nuclear war, has *S wants p* undefined in every
 context (`undefined_of_insensitive`), which leaves the semantics Strawson upward monotone
 (`toPartialProp_strawsonEntails`). On the finest question the semantics is the best-worlds one
 (`want_bot_iff`).
@@ -38,7 +38,7 @@ context (`undefined_of_insensitive`), which leaves the semantics Strawson upward
 
 * A question is a `Setoid`, its answers the cells; the question raised by a list of issues is
   their `Setoid.ofProps`, and *p* is considered relative to a question when the question
-  settles it. Answers are ordered by the desires they entail, [kratzer-1981]'s ordering with
+  decides it. Answers are ordered by the desires they entail, [kratzer-1981]'s ordering with
   entailment as satisfaction (`entailed`), and the best answers are the `MaximalFor` elements
   of that valuation.
 * The act, its benefit and its cost are the three issues of the nap and lobster cases (nap,
@@ -83,15 +83,15 @@ def Want : Prop := ∀ w, MaximalFor (Live s bel) (entailed G s) w → s.cell w 
 /-- Some answer entails `p` and some entails `¬p`. -/
 def IsDiverse : Prop := (∃ w, s.cell w ⊆ p) ∧ ∃ w, s.cell w ⊆ pᶜ
 
-/-- Every salient proposition in `N` that some answer entails is itself settled. -/
-def IsAntiDeckstacking : Prop := ∀ q ∈ N, (∃ w, s.cell w ⊆ ↑q) → s.Settles ↑q
+/-- Every salient proposition in `N` that some answer entails is itself decided. -/
+def IsAntiDeckstacking : Prop := ∀ q ∈ N, (∃ w, s.cell w ⊆ ↑q) → s.Decides ↑q
 
 /-- The beliefs discriminate among the answers: some answer is live and some is not. -/
 def IsBelSensitive : Prop := (∃ w, Live s bel w) ∧ ∃ w, ¬ Live s bel w
 
 /-- The four metasemantic constraints jointly. -/
 def Defined : Prop :=
-  s.Settles p ∧ IsDiverse s p ∧ IsAntiDeckstacking N s ∧ IsBelSensitive s bel
+  s.Decides p ∧ IsDiverse s p ∧ IsAntiDeckstacking N s ∧ IsBelSensitive s bel
 
 /-- Question-based *want* with its definedness conditions as presupposition. -/
 def toPartialProp : PartialProp W := ⟨λ _ => Defined N s bel p, λ _ => Want G s bel p⟩
@@ -135,11 +135,11 @@ theorem not_want_of_not_exists [Finite W] (hlive : ∃ w, Live s bel w)
   let ⟨w, hb⟩ := exists_best (G := G) hlive
   hp ⟨w, hw w hb⟩
 
-/-- With the question settling `p` and no `¬p`-answer the ascription is true: the diversity
+/-- With the question deciding `p` and no `¬p`-answer the ascription is true: the diversity
 constraint against vacuous truth. -/
-theorem want_of_settles_of_not_exists (hc : s.Settles p) (hnp : ¬ ∃ w, s.cell w ⊆ pᶜ) :
+theorem want_of_decides_of_not_exists (hc : s.Decides p) (hnp : ¬ ∃ w, s.cell w ⊆ pᶜ) :
     Want G s bel p := λ w _ =>
-  (Setoid.settles_iff_forall_cell.1 hc w).resolve_right λ h => hnp ⟨w, h⟩
+  (Setoid.decides_iff_forall_cell.1 hc w).resolve_right λ h => hnp ⟨w, h⟩
 
 /-- Strawson upward monotonicity: where both ascriptions are defined, `want p` entails
 `want q` for `p ⊆ q`. -/
@@ -234,7 +234,7 @@ theorem act_true : Defined issues qBenefit bel ↑act ∧ Want desires qBenefit 
 
 /-- *Fail*, *Die*: in that context the cost is ignored, so the ascription is undefined
 (§3.6), which blocks the inference from *Nap* to *Fail* (§4.1). -/
-theorem cost_undefined : ¬ qBenefit.Settles ↑cost := by decide +kernel
+theorem cost_undefined : ¬ qBenefit.Decides ↑cost := by decide +kernel
 
 /-- *Not-nap*, *Not-lobster*: considering the act and its cost, not doing the act is wanted,
 and so is avoiding the cost, *Not-die*. -/
@@ -286,29 +286,29 @@ theorem not_rain_deckstacked :
 another leaves open, while the level playing field satisfies it for every proposition. -/
 theorem deckstacked_excluded :
     ¬ IsAntiDeckstacking [happy] qStacked ∧
-      ∀ q : Finset LuWorld, (∃ w, qFair.cell w ⊆ ↑q) → qFair.Settles ↑q := by
+      ∀ q : Finset LuWorld, (∃ w, qFair.cell w ⊆ ↑q) → qFair.Decides ↑q := by
   decide +kernel
 
 /-- Read with `q` ranging over all propositions, the Anti-deckstacking Constraint admits only
 the finest partition: two worlds in one cell, with a second cell available, are equal, since
 the union of the second cell with the first minus one of the worlds is entailed by an answer
-and settled by none. -/
+and decided by none. -/
 theorem antiDeckstacking_univ_singleton {W : Type*} {s : Setoid W}
-    (h : ∀ q : Set W, (∃ w, s.cell w ⊆ q) → s.Settles q) {w₁ w₂ w₃ : W} (h₁₂ : s w₁ w₂)
+    (h : ∀ q : Set W, (∃ w, s.cell w ⊆ q) → s.Decides q) {w₁ w₂ w₃ : W} (h₁₂ : s w₁ w₂)
     (h₁₃ : ¬ s w₁ w₃) : w₁ = w₂ := by
   by_contra hne
-  have hq := Setoid.settles_iff.1 (h (s.cell w₃ ∪ (s.cell w₁ \ {w₂})) ⟨w₃, Set.subset_union_left⟩)
+  have hq := Setoid.decides_iff.1 (h (s.cell w₃ ∪ (s.cell w₁ \ {w₂})) ⟨w₃, Set.subset_union_left⟩)
   rcases (hq w₁ w₂ h₁₂).1 (Or.inr ⟨s.refl' w₁, hne⟩) with h | ⟨_, h⟩
   · exact h₁₃ (s.trans' h₁₂ h)
   · exact h rfl
 
 /-! ### Belief-sensitivity (§4.2) -/
 
-/-- An agent whose beliefs are insensitive to every question that settles `p`, William III and
+/-- An agent whose beliefs are insensitive to every question that decides `p`, William III and
 England avoiding nuclear war with France, has *S wants p* undefined in every context: where `p`
-is settled the beliefs are insensitive, and where they are sensitive `p` is not settled. -/
+is decided the beliefs are insensitive, and where they are sensitive `p` is not decided. -/
 theorem undefined_of_insensitive {W : Type*} {bel p : Set W}
-    (h : ∀ s : Setoid W, s.Settles p → ¬ IsBelSensitive s bel) (N : List (Finset W))
+    (h : ∀ s : Setoid W, s.Decides p → ¬ IsBelSensitive s bel) (N : List (Finset W))
     (s : Setoid W) : ¬ Defined N s bel p :=
   λ hd => h s hd.1 hd.2.2.2
 

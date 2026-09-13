@@ -277,7 +277,7 @@ def subjectMatter : Setoid W where
 
 /-- `P` is an *issue* in a subject matter `S`: `S`-equivalent worlds never
     disagree on `P`. -/
-def IsIssue (s : Setoid W) (φ : W → Prop) : Prop := s.Settles {w | φ w}
+def IsIssue (s : Setoid W) (φ : W → Prop) : Prop := s.Decides {w | φ w}
 
 /-- `K` settles `P` by partition iff `P` is an issue in `S_K`. -/
 def settlesByPartition (φ : W → Prop) : Prop :=
@@ -296,9 +296,9 @@ theorem partition_implies_entailment (φ : W → Prop)
   rcases Set.eq_empty_or_nonempty k.base with hEmpty | ⟨w₀, hw₀⟩
   · exact Or.inl λ w hw => absurd (hEmpty ▸ hw) (Set.notMem_empty w)
   · exact (Classical.em (φ w₀)).imp
-      (λ hφ v hv => (Setoid.settles_iff.1 h w₀ v (subjectMatter_rel_base k hw₀ hv)).mp hφ)
+      (λ hφ v hv => (Setoid.decides_iff.1 h w₀ v (subjectMatter_rel_base k hw₀ hv)).mp hφ)
       (λ hφ v hv hφv =>
-        hφ ((Setoid.settles_iff.1 h w₀ v (subjectMatter_rel_base k hw₀ hv)).mpr hφv))
+        hφ ((Setoid.decides_iff.1 h w₀ v (subjectMatter_rel_base k hw₀ hv)).mpr hφv))
 
 /-! ### Non-equivalence of the two implementations (§7.2)
 
@@ -313,7 +313,7 @@ determined jointly by K-propositions that no single proposition settles
 private theorem not_settles_redOrBlue :
     ¬ settlesByPartition ⟨[red]⟩ redOrBlue := by
   intro h
-  have h12 := Setoid.settles_iff.1 h .w1 .w2 (λ p hp => by
+  have h12 := Setoid.decides_iff.1 h .w1 .w2 (λ p hp => by
     rcases List.mem_singleton.mp hp with rfl; decide)
   exact absurd (h12.mp (by decide)) (by decide)
 
@@ -332,7 +332,7 @@ theorem explicit_not_implies_partition :
 theorem partition_not_implies_explicit :
     ∃ (k : Kernel World) (φ : World → Prop),
       settlesByPartition k φ ∧ ¬ k.directlySettles φ := by
-  refine ⟨mastermindK, blue, Setoid.settles_iff.2 λ w v h => ?_, mastermind_blue_unsettled⟩
+  refine ⟨mastermindK, blue, Setoid.decides_iff.2 λ w v h => ?_, mastermind_blue_unsettled⟩
   have h1 := h redOrBlue (by simp [mastermindK])
   have h2 := h notRed (by simp [mastermindK])
   revert h1 h2

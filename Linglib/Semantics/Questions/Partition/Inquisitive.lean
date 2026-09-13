@@ -146,7 +146,7 @@ theorem fromSetoid_entails_iff [Finite W] (r₁ r₂ : Setoid W) :
     (fromSetoid r₁).Entails (fromSetoid r₂) ↔ r₁ ≤ r₂ := by
   rw [entails_iff_le (Set.toFinite _) (Set.toFinite _), fromSetoid_le_iff]
 
-/-! ### Polar questions and settledness -/
+/-! ### Polar questions and decided propositions -/
 
 /-- The partition issue of the polar question whether `p` is the inquisitive polar
 question. -/
@@ -167,9 +167,9 @@ theorem fromSetoid_polar (p : Set W) : fromSetoid (Setoid.polar p) = polar p := 
       · exact Or.inl rfl
       · exact Or.inr ⟨_, ⟨y, rfl⟩, λ x hx => Setoid.polar_iff.2 (iff_of_false (h hx) (h hy))⟩
 
-/-- A partition settles `p` iff its issue entails the polar question whether `p`. -/
-theorem settles_iff_fromSetoid_le (r : Setoid W) (p : Set W) :
-    r.Settles p ↔ fromSetoid r ≤ polar p := by
+/-- A partition decides `p` iff its issue entails the polar question whether `p`. -/
+theorem decides_iff_fromSetoid_le (r : Setoid W) (p : Set W) :
+    r.Decides p ↔ fromSetoid r ≤ polar p := by
   rw [← fromSetoid_polar, fromSetoid_le_iff]; rfl
 
 /-! ### `IsPartition` predicate -/
