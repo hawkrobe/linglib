@@ -4,42 +4,45 @@ import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Reference.Kaplan
 
 /-!
-# Schlenker 2003: attitude verbs as context quantifiers
+# Schlenker (2003): A Plea for Monsters
 
-[schlenker-2003]'s attitude semantics: attitude verbs quantify over
-*contexts* of the reported speech act, not just worlds. Standard
-Hintikka semantics ([hintikka-1962]) — ∀w'. R(x,w,w') → p(w') — is the
-special case where the embedded meaning reads only the world coordinate
-(`contextBox_world_only`); in languages with shifted indexicals
-(Amharic, Zazaki) the agent coordinate carries semantic content that
-world quantification cannot express, because the embedded first person
-reads the agent of the shifted context (`reportedContext_agent`) while
-English *I* is invariant under the shift (`english_I_invariant`).
+This file formalizes the paper's semantics of attitude verbs as quantifiers over contexts.
+The Fixity Thesis of [kaplan-1989]'s direct-reference theory holds that the value of an
+indexical is fixed by the context of the actual speech act and untouched by any operator, so
+that no operator shifts contexts; the paper's counterexamples are the shifted indexicals of
+Amharic, where the
+first person under *say* denotes the reported speaker. An attitude verb therefore quantifies
+over contexts of the reported speech act or thought, of which [hintikka-1962]'s
+quantification over worlds is the special case where the embedded meaning reads only the
+world coordinate (`ContextBox`, `contextBox_world_only`); the doxastic predicates of
+`Semantics/Attitudes/Doxastic` are that special case with a veridicality check
+(`doxastic_holdsAt_iff_contextBox`). The reported context is the innermost context after the
+attitude shift, with the holder as agent and the accessible world as world
+(`reportedContext`). The Fixity Thesis is rendered as independence of a meaning's truth value
+from the context tower (`SatisfiesFixity`), which world-only meanings satisfy
+(`fixity_world_only`), while English *I* resolves to the origin agent under any shift
+(`english_I_invariant`) and Amharic *I* to the innermost agent, so the two diverge under a
+shift to another holder (`amharicI_ne_I`). Person features are presuppositions on contexts,
+and a logophoric pronoun is the author of an embedded context who is not the actual speaker
+(`Logophoric`, `logophoric_local_of_ne`, `not_logophoric_origin_agent`). A two-person,
+two-world model shows context quantification strictly exceeding world quantification: *Bob
+said that I am happy* is false read as English and true read as Amharic
+(`english_amharic_differ`).
 
-`ContextBox` is the operator: at each accessible world the embedded
-meaning is evaluated against `reportedContext`, the context of the
-reported speech act — the innermost context after pushing the attitude
-shift, with the holder as agent, the accessible world as world, and the
-remaining coordinates inherited. `doxastic_holdsAt_iff_contextBox`
-grounds the `DoxasticPredicate` API of `Doxastic.lean` as veridicality
-plus context quantification over a world-only meaning.
+## Implementation notes
 
-`SatisfiesFixity` renders the paper's Fixity Thesis, his (1): a meaning
-whose truth value is independent of the context tower. World-only
-meanings satisfy it (`fixity_world_only`); the shift-reading meanings
-of his monster-friendly logics (Appendix B) are the failures. A
-tower-general monstrous operator — an embedded meaning consuming the
-whole shifted tower, needed for mixed origin/local readings — is the
-generalization to mint when a study requires it; `ContextBox`'s meaning
-consults only the reported context.
+The paper's context variables and its syntactic filtering of shiftable from non-shiftable
+indexicals are not modelled; shiftability is the choice between the origin and the innermost
+access pattern of `Semantics/Reference/Context/Tower`. A finite list of worlds renders the
+quantification decidably, as in the doxastic substrate. A monstrous operator whose embedded
+meaning consumes the whole shifted tower, needed for mixed origin and local readings, is not
+defined.
 
-The model sections verify the argument end to end on a two-person,
-two-world model: English *I* refers to the actual speaker even under
-attitudes (Kaplan's thesis), Amharic *I* shifts to the attitude
-holder, `ContextBox` captures both patterns — reducing to `BoxAt` on
-world-only meanings, where Fixity holds, and strictly exceeding it on
-agent-reading meanings — and person features as presuppositions
-derive logophoric pronouns.
+## References
+
+* [schlenker-2003]
+* [kaplan-1989]
+* [hintikka-1962]
 -/
 
 namespace Schlenker2003
@@ -108,7 +111,7 @@ instance (R : E → W → W → Prop) [∀ a w w', Decidable (R a w w')]
 theorem contextBox_world_only
     (R : E → W → W → Prop) (holder : E) (p : W → Prop)
     (t : ContextTower (Context W E P T)) (w : W) (worlds : List W) :
-    ContextBox R holder (fun c => p c.world) t w worlds ↔
+    ContextBox R holder (λ c => p c.world) t w worlds ↔
     BoxAt R holder w worlds p := by
   simp only [ContextBox, BoxAt, reportedContext_world]
 
@@ -122,7 +125,7 @@ theorem doxastic_holdsAt_iff_contextBox
     (t : ContextTower (Context W E P T)) :
     V.HoldsAt agent p w worlds ↔
     (Doxastic.VeridicalityHolds V.veridicality p w ∧
-     ContextBox V.access agent (fun c => p c.world) t w worlds) := by
+     ContextBox V.access agent (λ c => p c.world) t w worlds) := by
   simp only [Doxastic.DoxasticPredicate.HoldsAt,
     contextBox_world_only]
 
@@ -141,8 +144,8 @@ def SatisfiesFixity (φ : ContextTower (Context W E P T) → W → Prop) : Prop 
 /-- World-only meanings satisfy the Fixity Thesis. -/
 theorem fixity_world_only (p : W → Prop) :
     SatisfiesFixity (W := W) (E := E) (P := P) (T := T)
-      (fun _ w => p w) :=
-  fun _ _ _ => Iff.rfl
+      (λ _ w => p w) :=
+  λ _ _ _ => Iff.rfl
 
 /-! ### Shifted indexicals -/
 
@@ -196,27 +199,27 @@ theorem not_logophoric_origin_agent (t : ContextTower (Context W E P T)) (d : De
     ¬ Logophoric d t.origin.agent t :=
   λ h => h.2 rfl
 
--- ════════════════════════════════════════════════════════════════
--- § Concrete Setup
--- ════════════════════════════════════════════════════════════════
+/-! ### A two-person, two-world model -/
 
-inductive Person | alice | bob
+/-- The speaker Alice and the attitude holder Bob. -/
+inductive Person where
+  | alice
+  | bob
   deriving DecidableEq, Repr
 
-inductive World | w0 | w1
+/-- The actual world and one alternative. -/
+inductive World where
+  | w0
+  | w1
   deriving DecidableEq, Repr
 
 abbrev Ctx := Context World Person Unit Unit
 
-/-- Speech-act context: Alice speaking to Bob at world w0. -/
+/-- The context of the actual speech act: Alice speaking to Bob at the actual world. -/
 def speechCtx : Ctx :=
-  { agent := .alice, addressee := .bob, world := .w0,
-    time := (), position := () }
+  { agent := .alice, addressee := .bob, world := .w0, time := (), position := () }
 
-def rootT : ContextTower Ctx := ContextTower.root speechCtx
-
-/-- Bob's doxastic accessibility: both worlds are compatible with
-    what Bob believes. -/
+/-- Bob's doxastic accessibility: both worlds are compatible with what he believes. -/
 def bobBel : Person → World → World → Prop
   | .bob, _, _ => True
   | .alice, _, w' => w' = .w0
@@ -224,30 +227,7 @@ def bobBel : Person → World → World → Prop
 instance : ∀ a w w', Decidable (bobBel a w w') := by
   intro a w w'; cases a <;> simp [bobBel] <;> infer_instance
 
-/-- Tower after attitude shift: "Bob said that ..." pushes Bob as
-    agent and w1 as the attitude world. -/
-def shiftedT : ContextTower Ctx :=
-  rootT.push (attitudeShift .bob .w1)
-
--- ════════════════════════════════════════════════════════════════
--- § English vs Amharic "I" Under Attitude Shift
--- ════════════════════════════════════════════════════════════════
-
-/-- English "I" = Alice (actual speaker), even under Bob's attitude verb. -/
-theorem english_I_is_speaker : Kaplan.I.resolve shiftedT = .alice := rfl
-
-/-- Amharic "I" = Bob (attitude holder), shifted by the attitude verb. -/
-theorem amharic_I_is_holder : amharicI.resolve shiftedT = .bob := rfl
-
-/-- English and Amharic "I" diverge under the same attitude shift. -/
-theorem indexicals_diverge : Kaplan.I.resolve shiftedT ≠ amharicI.resolve shiftedT := by
-  decide
-
--- ════════════════════════════════════════════════════════════════
--- § Context Quantification: English vs Amharic Truth Conditions
--- ════════════════════════════════════════════════════════════════
-
-/-- Happiness predicate: Alice is happy in w0 only; Bob is happy in both. -/
+/-- Alice is happy only in the actual world; Bob is happy in both. -/
 def isHappy : Person → World → Prop
   | .alice, .w0 => True
   | .alice, .w1 => False
@@ -256,76 +236,14 @@ def isHappy : Person → World → Prop
 instance : ∀ p w, Decidable (isHappy p w) := by
   intro p w; cases p <;> cases w <;> simp [isHappy] <;> infer_instance
 
-/-- English: "Bob said that I am happy" = "Bob said that Alice is happy."
-    The meaning is world-only (Alice is fixed by origin-reading "I"),
-    so context quantification reduces to standard world quantification. -/
-theorem english_reduces_to_BoxAt :
-    ContextBox bobBel .bob (fun c => isHappy .alice c.world) rootT .w0 [.w0, .w1] ↔
-    BoxAt bobBel .bob .w0 [.w0, .w1] (isHappy .alice) :=
-  contextBox_world_only bobBel .bob (isHappy .alice) rootT .w0 [.w0, .w1]
-
-/-- English version is false: Alice is NOT happy in all of Bob's
-    belief worlds (she's unhappy in w1). -/
-theorem english_result :
-    ¬ ContextBox bobBel .bob (fun c => isHappy .alice c.world)
-      rootT .w0 [.w0, .w1] := by
-  decide
-
-/-- Amharic: "Bob said that I am happy" = "Bob said that Bob is happy."
-    The meaning reads the agent from the shifted context (Bob),
-    so ContextBox does NOT reduce to BoxAt. -/
-theorem amharic_result :
-    ContextBox bobBel .bob (fun c => isHappy c.agent c.world)
-      rootT .w0 [.w0, .w1] := by
-  decide
-
-/-- The English and Amharic versions have different truth values:
-    English fails, Amharic holds. This is the formal content of
-    [schlenker-2003]'s argument that context quantification is
-    strictly more expressive than world quantification. -/
+/-- *Bob said that I am happy* is false read as English, where *I* is Alice and the meaning
+is world-only, and true read as Amharic, where *I* is the agent of the reported context:
+context quantification is strictly more expressive than world quantification. -/
 theorem english_amharic_differ :
-    ¬ ContextBox bobBel .bob (fun c => isHappy .alice c.world)
-      rootT .w0 [.w0, .w1] ∧
-    ContextBox bobBel .bob (fun c => isHappy c.agent c.world)
-      rootT .w0 [.w0, .w1] :=
-  ⟨english_result, amharic_result⟩
-
--- ════════════════════════════════════════════════════════════════
--- § Fixity Thesis
--- ════════════════════════════════════════════════════════════════
-
-/-- World-only meanings satisfy the Fixity Thesis: the truth value of
-    "Alice is happy" is tower-independent. -/
-theorem fixity_english :
-    SatisfiesFixity (W := World) (E := Person) (P := Unit) (T := Unit)
-      (fun _ w => isHappy .alice w) :=
-  fixity_world_only (isHappy .alice)
-
--- ════════════════════════════════════════════════════════════════
--- § Context Quantification ↔ Shifted Indexicals Bridge
--- ════════════════════════════════════════════════════════════════
-
-/-- The agent of the reported context is exactly what Amharic "I"
-    (`amharicI`) resolves to. -/
-theorem bridge_reportedContext_amharic :
-    (reportedContext rootT .bob .w1).agent = amharicI.resolve shiftedT := by
+    ¬ ContextBox bobBel .bob (λ c => isHappy .alice c.world)
+        (ContextTower.root speechCtx) .w0 [.w0, .w1] ∧
+      ContextBox bobBel .bob (λ c => isHappy c.agent c.world)
+        (ContextTower.root speechCtx) .w0 [.w0, .w1] := by
   decide
-
-/-- English "I" gives the same result with or without the shift:
-    both return Alice (the origin agent). -/
-theorem bridge_english_invariant : Kaplan.I.resolve shiftedT = Kaplan.I.resolve rootT :=
-  english_I_invariant rootT .bob .w1
-
--- ════════════════════════════════════════════════════════════════
--- § Person Features: Logophoric Pronouns
--- ════════════════════════════════════════════════════════════════
-
-/-- Bob is logophoric under the attitude shift: he is +author(local)
-    (agent of the embedded context) but −author* (not the actual
-    speaker Alice). -/
-theorem bob_is_logophoric : Logophoric .local .bob shiftedT := by decide
-
-/-- Alice (the speaker) is never logophoric: +author* blocks it. -/
-theorem alice_not_logophoric : ¬ Logophoric .local .alice shiftedT := by decide
 
 end Schlenker2003
