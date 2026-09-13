@@ -5,39 +5,57 @@ import Linglib.Semantics.Plurality.Cumulativity
 /-!
 # Reciprocal predicates
 
-The interpretation schemes of reciprocal sentences, as conditions on a relation `R` and a
-plurality `X`: Strong, Intermediate and Weak Reciprocity from [langendoen-1978], Partitioned
-Strong Reciprocity from [fiengo-lasnik-1973], Inclusive Alternative Ordering from
-[kanski-1987], and One-way Weak Reciprocity from [dalrymple-et-al-1998], whose survey fixes the
-definitions used here. The schemes form an entailment lattice on pluralities of two or more
-(`strong_imp_partitionedStrong`, `partitionedStrong_imp_weak`, `strong_imp_intermediate`,
-`intermediate_imp_weak`, `weak_imp_oneWay`, `oneWay_imp_inclusiveAlternative`), and Weak
-Reciprocity is definitionally the cumulation `**` of the relation with non-identity conjoined
-into it (`weakReciprocity_iff_cumulative_strict`).
+This file defines the interpretation schemes of reciprocal sentences. A scheme is a predicate on
+a relation `R : A → A → Prop` and a finite set `X : Finset A` saying how much of `R` must hold
+among the members of `X` for *the Xs R each other* to be true, from every distinct pair down to
+one link in either direction. It also defines the configurations a mutual event can take, as
+conditions fixing the extension of `R` on `X`, and locates each in the lattice of schemes.
 
-The second half is the configurational typology of [evans-et-al-2011b] and [majid-et-al-2011]:
-the pairwise, chain, ring, radial and melee shapes of a mutual event, as exact-extension
-conditions on `(R, X)`, with their symmetry and participant-exhaustiveness as theorems
-locating each shape in the lattice.
+## Definitions
+
+* `Reciprocal.StrongReciprocity R X`: any two distinct members of `X` are `R`-related.
+* `Reciprocal.PartitionedStrongReciprocity R X`: `X` has a `Finpartition` into cells of two or
+  more members, each strongly reciprocal.
+* `Reciprocal.IntermediateReciprocity R X`: any two distinct members are joined by an `R`-chain
+  within `X`.
+* `Reciprocal.WeakReciprocity R X`: every member is `R`-related to a distinct member as subject
+  and as object. `Reciprocal.OneWayWeakReciprocity R X` asks for the subject direction only,
+  `Reciprocal.InclusiveAlternativeOrdering R X` for either.
+* `Reciprocal.PairwiseConfig`, `Reciprocal.ChainConfig`, `Reciprocal.RingConfig`,
+  `Reciprocal.RadialConfig`, `Reciprocal.MeleeConfig`: `R` pairs the members of `X` off, lines
+  them up, closes the line into a cycle, radiates from one member, or leaves a member out.
+
+## Main results
+
+* `Reciprocal.strong_imp_weak`, `Reciprocal.intermediate_imp_weak`,
+  `Reciprocal.partitionedStrong_imp_weak`, `Reciprocal.oneWay_imp_inclusiveAlternative`: the
+  schemes are ordered by entailment on sets of two or more members.
+* `Reciprocal.weakReciprocity_iff_cumulative_strict`: weak reciprocity is the cumulation of `R`
+  with non-identity conjoined in.
+* `Reciprocal.PairwiseConfig.partitionedStrong`, `Reciprocal.RingConfig.oneWayWeak`,
+  `Reciprocal.ChainConfig.inclusiveAlternativeOrdering`: the place of each configuration in the
+  lattice. The chain, ring and radial configurations are not symmetric.
 
 ## Implementation notes
 
-* Intermediate Reciprocity is `Relation.TransGen` of `R` restricted to `X`; Partitioned Strong
-  Reciprocity is a `Finpartition` of `X` into cells of two or more; adjacency in a chain or ring
-  is a pair of consecutive positions in a duplicate-free list.
-* The two-member condition that [dalrymple-et-al-1998] build into each scheme is a hypothesis
-  of the entailments rather than a conjunct of the definitions.
-
-## TODO
-
-* The Alternative schemes SAR and IAR, and the Strongest Meaning Hypothesis as an operator
-  selecting among schemes.
+Adjacency in a chain or ring is a pair of consecutive positions in a duplicate-free list
+(`Reciprocal.Consecutive`). The two-member condition that [dalrymple-et-al-1998] build into each
+scheme is a hypothesis of the entailments rather than a conjunct of the definitions.
 
 ## References
 
-* [langendoen-1978], [fiengo-lasnik-1973], [kanski-1987], [dalrymple-et-al-1998]
-* [beck-2001], [sternefeld-1998]
-* [evans-et-al-2011b], [majid-et-al-2011]
+* [D. T. Langendoen, *The logic of reciprocity* (1978)][langendoen-1978]
+* [R. Fiengo and H. Lasnik, *The logical structure of reciprocal sentences in English*
+  (1973)][fiengo-lasnik-1973]
+* [Z. Kański, *Logical symmetry and natural language reciprocals* (1987)][kanski-1987]
+* [M. Dalrymple, M. Kanazawa, Y. Kim, S. A. Mchombo and S. Peters, *Reciprocal expressions and
+  the concept of reciprocity* (1998)][dalrymple-et-al-1998]
+* [S. Beck, *Reciprocals are definites* (2001)][beck-2001]
+* [W. Sternefeld, *Reciprocity and cumulative predication* (1998)][sternefeld-1998]
+* [N. Evans, S. C. Levinson, A. Gaby and A. Majid, *Introduction: Reciprocals and semantic
+  typology* (2011)][evans-et-al-2011b]
+* [A. Majid, N. Evans, A. Gaby and S. C. Levinson, *The semantics of reciprocal constructions
+  across languages: An extensional approach* (2011)][majid-et-al-2011]
 -/
 
 namespace Reciprocal
@@ -162,12 +180,10 @@ theorem weakReciprocity_imp_cumulative (R : A → A → Prop) (X : Finset A)
   ⟨λ x hx => let ⟨y, hy, hRxy, _⟩ := hWR.1 x hx; ⟨y, hy, hRxy⟩,
    λ y hy => let ⟨x, hx, hRxy, _⟩ := hWR.2 y hy; ⟨x, hx, hRxy⟩⟩
 
-/-! ### Configurational typology
+/-! ### Configurations
 
-The event configurations of [evans-et-al-2011b] and [majid-et-al-2011], as exact-extension
-conditions on `(R, X)`. Pairwise strengthens to Partitioned Strong Reciprocity, ring yields
-One-way Weak Reciprocity, chain and radial yield Inclusive Alternative Ordering, and melee is
-by definition the failure of Inclusive Alternative Ordering. -/
+The event configurations of [evans-et-al-2011b] and [majid-et-al-2011], as conditions fixing the
+extension of `R` on `X`. -/
 
 /-- `y` immediately follows `x` in `l`. -/
 def Consecutive (l : List A) (x y : A) : Prop := ∃ i, l[i]? = some x ∧ l[i + 1]? = some y
