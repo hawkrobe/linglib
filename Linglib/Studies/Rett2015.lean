@@ -3,33 +3,36 @@ import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Semantics.Degree.Basic
 
 /-!
-# Rett (2015): evaluativity as implicature
+# Rett (2015): The semantics of evaluativity
 
-[rett-2015] derives the distribution of evaluativity across degree constructions (the book's
-Table 3.1) from two Neo-Gricean implicatures: a Quantity implicature strengthens the otherwise
-tautological positive construction (Chapter 3), and the Marked Meaning Principle (Chapter 5,
-after [horn-1984]'s division of pragmatic labor) makes the marked, negative antonym
-evaluative in exactly the *polar-invariant* constructions — equatives and degree questions —
-where its unmarked antonym has the same truth conditions. Antonym polarity is the adjective's
-`Adjective.polarity`, the `ScalePolarity` that `Degree.equativeSem` and
-`Degree.comparativeSem` already take as their direction; negative antonyms are the marked
-members of their pairs ([bierwisch-1989], [kennedy-2007]).
+This file formalizes the book's derivation of the distribution of evaluativity across degree
+constructions, its Table 3.1, from two Neo-Gricean implicatures. A Quantity implicature
+strengthens the otherwise tautological positive construction, and the Marked Meaning
+Principle, after [horn-1984]'s division of pragmatic labor, makes the marked, negative antonym
+evaluative in exactly the polar-invariant constructions, `IsPolarInvariant`, the equatives and
+degree questions in which its unmarked antonym has the same truth conditions. The route
+deriving evaluativity for a construction and antonym polarity, if any, is `implicature`, and
+`evaluative_iff_observed` checks its predictions against every judgment of the table. Polar
+invariance is grounded in the comparison semantics: the strengthened equatives of two
+antonyms are mutually entailing, `exact_equative_antonym_invariant`, while their comparatives
+exclude each other, `comparative_antonym_variant`.
 
-## Main definitions
+## Implementation notes
 
-* `IsPolarInvariant`: Rett's classification of constructions.
-* `implicature`, `Evaluative`: the implicature route, if any, deriving evaluativity for a
-  construction and polarity.
-* `evaluativity`: the same for a fragment adjective, read off its lexicalized polarity.
+Antonym polarity is the adjective's `Adjective.polarity`, the `ScalePolarity` that
+`Degree.equativeSem` and `Degree.comparativeSem` take as their direction; negative antonyms
+are the marked members of their pairs ([bierwisch-1989], [kennedy-2007]). The positive
+construction and the measure phrase have no polarity-parametrized semantics in the substrate,
+so their rows of `IsPolarInvariant` are the book's classification.
 
-## Main results
+## References
 
-* `implicature_eq_manner_iff`: the Marked Meaning Principle — Manner-derived evaluativity
-  exactly for the marked antonym in a polar-invariant construction.
-* `exact_equative_antonym_invariant`, `comparative_antonym_variant`: the equative and
-  comparative rows of `IsPolarInvariant` derived from `Degree.equativeSem` and
-  `Degree.comparativeSem`.
-* `evaluative_iff_observed`: the predictions match every Table 3.1 judgment.
+* [J. Rett, *The semantics of evaluativity* (2015)][rett-2015]
+* [L. R. Horn, *Toward a new taxonomy for pragmatic inference: Q-based and R-based
+  implicature* (1984)][horn-1984]
+* [M. Bierwisch, *The semantics of gradation* (1989)][bierwisch-1989]
+* [C. Kennedy, *Vagueness and grammar: the semantics of relative and absolute gradable
+  adjectives* (2007)][kennedy-2007]
 -/
 
 namespace Rett2015
@@ -70,12 +73,12 @@ inductive Implicature where
   deriving DecidableEq, Repr
 
 /-- The implicature deriving evaluativity for a construction and antonym polarity, if any:
-positives are strengthened by Quantity for both antonyms, and polar-invariant constructions
-get Manner-derived evaluativity for the marked antonym only. -/
-def implicature : Construction → ScalePolarity → Option Implicature
-  | .positive, _ => some .quantity
-  | .equative, .negative | .degreeQuestion, .negative => some .manner
-  | _, _ => none
+the positive construction is strengthened by Quantity for both antonyms, and the Marked
+Meaning Principle makes the marked antonym of a polar-invariant construction evaluative by
+Manner. -/
+def implicature (c : Construction) (p : ScalePolarity) : Option Implicature :=
+  if c = .positive then some .quantity
+  else if IsPolarInvariant c ∧ IsMarked p then some .manner else none
 
 /-- A construction–polarity pair is evaluative iff some implicature derives it. -/
 def Evaluative (c : Construction) (p : ScalePolarity) : Prop := implicature c p ≠ none
@@ -149,7 +152,7 @@ theorem exact_equative_eq_strengthened :
 B" cannot both hold. -/
 theorem comparative_antonyms_exclusive :
     comparativeSem μ a b .positive → ¬ comparativeSem μ a b .negative :=
-  fun h => lt_asymm h
+  λ h => lt_asymm h
 
 /-- Whenever the antonyms could differ (`μ a ≠ μ b`), they do: the antonym comparatives have
 complementary truth conditions, so no truth-conditionally equivalent unmarked alternative
@@ -157,7 +160,7 @@ exists. -/
 theorem comparative_antonym_variant (h : μ a ≠ μ b) :
     comparativeSem μ a b .positive ↔ ¬ comparativeSem μ a b .negative := by
   simp only [comparativeSem, not_lt]
-  exact ⟨le_of_lt, fun hle => hle.lt_of_ne h.symm⟩
+  exact ⟨le_of_lt, λ hle => hle.lt_of_ne h.symm⟩
 
 end PolarVarianceGrounding
 
@@ -167,21 +170,11 @@ end PolarVarianceGrounding
 evaluative. The ungrammatical negative-antonym measure phrase carries no judgment. -/
 def datum (e : Data.Examples.LinguisticExample) : Option (Construction × ScalePolarity × Bool) :=
   do
-    let c ← match e.feature? "construction" with
-      | some "positive" => some Construction.positive
-      | some "comparative" => some .comparative
-      | some "equative" => some .equative
-      | some "measurePhrase" => some .measurePhrase
-      | some "degreeQuestion" => some .degreeQuestion
-      | _ => none
-    let p ← match e.feature? "polarity" with
-      | some "positive" => some ScalePolarity.positive
-      | some "negative" => some .negative
-      | _ => none
-    let v ← match e.feature? "evaluative" with
-      | some "true" => some true
-      | some "false" => some false
-      | _ => none
+    let c ← e.parse? "construction" [("positive", Construction.positive),
+      ("comparative", .comparative), ("equative", .equative), ("measurePhrase", .measurePhrase),
+      ("degreeQuestion", .degreeQuestion)]
+    let p ← e.parse? "polarity" [("positive", ScalePolarity.positive), ("negative", .negative)]
+    let v ← e.parse? "evaluative" [("true", true), ("false", false)]
     pure (c, p, v)
 
 /-- The Table 3.1 judgments. -/
