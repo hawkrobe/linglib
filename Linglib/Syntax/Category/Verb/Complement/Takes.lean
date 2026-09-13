@@ -1,28 +1,31 @@
 import Linglib.Syntax.Category.Verb.Defs
 import Linglib.Syntax.Category.Complementizer.Basic
-import Linglib.Core.Data.Option.Compatible
 
 /-!
 # Verb–complementizer compatibility
 
 The hom between the `Verb` and `Complementizer` entry APIs: which
-clause-typers a predicate takes. One relation, lifted twice: a position
-takes a typer when their recorded axes — [noonan-2007]'s coding axis
-and the force axis — are `Option.Compatible` throughout and
-`Option.Agrees` somewhere; a frame or verb takes a typer when some
-position or frame does. All decidable. Non-clausal positions record no
-axes, so positive evidence already excludes them; the
-subject-requirement axis (`Complement.Position.embeddedSubject?`) is
-object-side and not matched: typers record no subject requirement.
+clause-typers a predicate takes. A clausal position and a clause-typer
+each record a bundle of partial axis values (`Complement.Axes`, the
+[noonan-2007] coding and the illocutionary force) in the flat order, and
+a position takes a typer when the two bundles unify (`Compat`) with some
+axis actually agreeing (a non-`⊥` meet). One relation, lifted twice: a
+frame or verb takes a typer when some position or frame does. All
+decidable. Non-clausal positions record no axes, so positive evidence
+already excludes them; the subject-requirement axis
+(`Complement.Position.embeddedSubject?`) is object-side and not matched:
+typers record no subject requirement.
 
 ## Main definitions
 
+- `Complementizer.axes` — the typer's bundle
 - `Complement.Position.Takes`, `Frame.Takes`, `Verb.takes` — the
   relation and its lifts
 - `Verb.typers` — the typers of a verb within an inventory
 
 ## Main results
 
+- `Complement.Position.takes_iff` — the relation axis by axis
 - `Complement.Position.not_takes_of_blank`,
   `Complement.Position.blank_not_takes` — matching needs positive
   evidence on both sides
@@ -34,31 +37,46 @@ Consistency checks against Fragment data live in Studies
 (e.g. `Bondarenko2022.hanaxa_typers`).
 -/
 
-/-- The position takes clause-typer `z`: every recorded axis
-    compatible, some axis agreeing. Matching needs positive evidence,
-    so a typer or position recording nothing — in particular any
-    non-clausal position — takes nothing. -/
-def Complement.Position.Takes (p : Complement.Position)
-    (z : Complementizer) : Prop :=
-  p.coding?.Compatible z.coding ∧ p.force?.Compatible z.force ∧
-    (p.coding?.Agrees z.coding ∨ p.force?.Agrees z.force)
+/-- The axes a clause-typer records. -/
+def Complementizer.axes (z : Complementizer) : Complement.Axes
+  | .coding => z.coding
+  | .force => z.force
 
-instance (p : Complement.Position) (z : Complementizer) :
-    Decidable (p.Takes z) :=
-  inferInstanceAs (Decidable (_ ∧ _))
+namespace Complement.Position
+
+variable {p : Complement.Position} {z : Complementizer}
+
+/-- The position takes clause-typer `z`: the two bundles unify and some
+    axis agrees. Matching needs positive evidence, so a typer or position
+    recording nothing — in particular any non-clausal position — takes
+    nothing. -/
+def Takes (p : Complement.Position) (z : Complementizer) : Prop :=
+  Compat p.axes z.axes ∧ p.axes ⊓ z.axes ≠ ⊥
+
+/-- The relation axis by axis: every axis compatible, some axis agreeing. -/
+theorem takes_iff :
+    p.Takes z ↔
+      (∀ a, Compat (p.axes a) (z.axes a)) ∧ ∃ a, p.axes a ⊓ z.axes a ≠ ⊥ := by
+  rw [Takes, compat_pi_iff]
+  simp only [ne_eq, funext_iff, Pi.inf_apply, Pi.bot_apply, not_forall]
+
+instance : Decidable (p.Takes z) := decidable_of_iff _ takes_iff.symm
 
 /-- A typer recording neither axis takes nothing. -/
-theorem Complement.Position.not_takes_of_blank
-    {p : Complement.Position} {z : Complementizer}
-    (hc : z.coding = none) (hf : z.force = none) : ¬ p.Takes z := by
-  simp [Position.Takes, hc, hf]
+theorem not_takes_of_blank (hc : z.coding = none) (hf : z.force = none) : ¬ p.Takes z := by
+  rw [takes_iff]
+  rintro ⟨-, a, ha⟩
+  cases a <;> simp [Complementizer.axes, hc, hf, Flat.none_eq_bot] at ha
 
 /-- A position recording neither axis takes nothing: matching needs
     positive evidence. -/
-theorem Complement.Position.blank_not_takes {z : Complementizer}
-    {e : Option Clause.EmbeddedSubject} :
+theorem blank_not_takes {e : Option Clause.EmbeddedSubject} :
     ¬ (Complement.Position.clausal none none e).Takes z := by
-  simp [Position.Takes, Position.coding?, Position.force?]
+  rw [takes_iff]
+  rintro ⟨-, a, ha⟩
+  cases a <;> simp [axes, coding?, force?, Flat.none_eq_bot] at ha
+
+end Complement.Position
 
 /-- The frame takes `z`: some position does. -/
 def Frame.Takes (fr : Frame) (z : Complementizer) : Prop :=
@@ -87,10 +105,14 @@ theorem Frame.finiteClause_takes {z : Complementizer}
     (hc : z.coding = some .indicative)
     (hf : z.force = none ∨ z.force = some .declarative) :
     Frame.finiteClause.Takes z := by
-  refine ⟨_, List.mem_singleton_self _, ?_⟩
-  rcases hf with hf | hf <;>
-    simp [Complement.Position.Takes, Complement.Position.coding?,
-      Complement.Position.force?, hc, hf]
+  refine ⟨_, List.mem_singleton_self _,
+    Complement.Position.takes_iff.mpr ⟨λ a => ?_, .coding, ?_⟩⟩
+  · rcases hf with hf | hf <;> cases a <;>
+      simp only [Complement.Position.axes, Complementizer.axes, Complement.Position.coding?,
+        Complement.Position.force?, hc, hf, Flat.none_eq_bot] <;>
+      first | exact compat_self _ | exact compat_bot _
+  · simp [Complement.Position.axes, Complementizer.axes, Complement.Position.coding?, hc,
+      Flat.some_eq_coe]
 
 /-- The verb takes `z`: some frame does. -/
 def Verb.takes (v : Verb) (z : Complementizer) : Prop :=

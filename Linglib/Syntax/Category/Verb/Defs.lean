@@ -251,6 +251,9 @@ structure Reading where
   opaqueContext : Option Bool := none
   /-- Control type for this frame. -/
   control : Option ControlType := none
+  /-- The semantic sort of the complement on this frame
+      ([wurmbrand-lohninger-2023]). -/
+  size : Option Clause.Size := none
   deriving DecidableEq, Repr
 
 /-- Attitudinal and intensional properties: attitude classification, opacity,

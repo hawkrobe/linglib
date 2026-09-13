@@ -242,6 +242,11 @@ theorem Compat.mono [Preorder α] {a b c d : α} (h₁ : a ≤ b) (h₂ : c ≤ 
 theorem compat_self [Preorder α] (a : α) : Compat a a :=
   Compat.of_le le_rfl le_rfl
 
+/-- Compatibility on a Pi type is pointwise. -/
+theorem compat_pi_iff {F : Type*} {S : F → Type*} [∀ t, Preorder (S t)] {f g : ∀ t, S t} :
+    Compat f g ↔ ∀ t, Compat (f t) (g t) := by
+  simp only [Compat, bddAbove_pi, Set.image_pair]
+
 /-- `⊥` is a wildcard: compatible with everything. -/
 theorem bot_compat [Preorder α] [OrderBot α] (a : α) : Compat (⊥ : α) a :=
   Compat.of_le bot_le le_rfl

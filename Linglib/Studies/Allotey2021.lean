@@ -38,6 +38,8 @@ requirement derives the overt pronoun from the minimal-pronoun inventory.
 * [karttunen-1971]
 * [noonan-2007]
 * [rizzi-1997]
+* [wurmbrand-lohninger-2023]
+* [wurmbrand-2024]
 -/
 
 namespace Allotey2021
@@ -81,6 +83,14 @@ theorem frame_takes_iff (c d : EmbeddedClauseType) :
 /-- A verb takes `ni` exactly when some frame of it is controlled. -/
 theorem takes_ni_iff_control :
     ∀ v ∈ verbs, v.takes ni ↔ ∃ r ∈ v.readings, r.control.isSome := by
+  decide
+
+/-- [wurmbrand-lohninger-2023]'s hierarchy at Gã's granularity: a proposition
+    complement is exactly one whose frame takes a finite complementizer;
+    situations and events share the infinitival `ni`-frame. -/
+theorem proposition_iff_finite :
+    ∀ v ∈ verbs, ∀ r ∈ v.readings, ∀ s ∈ r.size,
+      (s = .proposition ↔ ∃ z ∈ complementizers, r.frame.Takes z ∧ z.IsFinite) := by
   decide
 
 /-! ### Table 2 -/
