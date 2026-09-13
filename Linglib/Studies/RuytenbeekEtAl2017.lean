@@ -66,9 +66,9 @@ regression coefficients.
 - `Semantics/Mood/SpeechEvent.lean`: the imperative's
   `primaryFlavor = .deontic` is the layered foundation;
   `SentType.modalFlavor` for the imperative branch derives from it.
-- `Studies/Roberts2023.lean`: a chronologically
-  later sibling that contradicts the imperative's deontic-flavor
-  assignment; the cross-paper wedge lives in Roberts2023.
+- `Studies/Roberts2023.lean`: a chronologically later sibling on which
+  the imperative's prejacent modal is circumstantial and goal-based rather
+  than deontic.
 - `Studies/FrancikClark1985.lean`: another
   consumer of `PreparatoryCondition`. That file's `Query` and this
   file's `SentType.queriedPrep` both read off which preparatory
