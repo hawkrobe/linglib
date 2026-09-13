@@ -98,7 +98,7 @@ def toVariant : PrecisionMode → BeltramaSoltBurnett2023.Variant
 /-- The indexical field for numeral precision: [beltrama-solt-burnett-2023]'s measured
     field pulled back along `toVariant` — grounded by construction, not by a stipulated
     twin. -/
-def precisionField : AssociationField PrecisionMode SocialDimension ℚ :=
+def precisionField : AssociationField PrecisionMode SocialDimension SignType :=
   BeltramaSoltBurnett2023.bsbField.submatrix toVariant id
 
 /-- Exact and approximate index opposite ways on every dimension, inherited along the
@@ -120,7 +120,7 @@ def Persona.dimension : Persona → SocialDimension
     the dimension it foregrounds. -/
 theorem bidirectionality (p : Persona) :
     precisionField.Indexes p.precision p.dimension := by
-  cases p <;> exact one_pos
+  cases p <;> decide +kernel
 
 /-- The precision field as a [burnett-2019] grounded field over the SCM space. -/
 def precisionGroundedField : GroundedField PrecisionMode scmSpace :=
@@ -130,13 +130,13 @@ def precisionGroundedField : GroundedField PrecisionMode scmSpace :=
 theorem exact_scmProperties :
     precisionGroundedField.indexedProperties .exact =
       {.competent, .cold, .antiSolidary} := by
-  decide
+  decide +kernel
 
 /-- Approximate speech indexes {incompetent, warm, solidary}. -/
 theorem approx_scmProperties :
     precisionGroundedField.indexedProperties .approximate =
       {.incompetent, .warm, .solidary} := by
-  decide
+  decide +kernel
 
 /-! ### Roundness gating -/
 
@@ -172,9 +172,7 @@ def Persona.haloMultiplier : Persona → ℚ
     in the inherited field. -/
 theorem haloMultiplier_coheres (p : Persona) :
     p.haloMultiplier < 1 ↔ precisionField p.precision .warmth < 0 := by
-  cases p <;>
-    norm_num [Persona.haloMultiplier, precisionField, Matrix.submatrix_apply, toVariant,
-      Persona.precision, BeltramaSoltBurnett2023.bsbField]
+  cases p <;> decide +kernel
 
 /-- Speaker-conditioned halo width: the substrate `haloWidth` scaled by the condition's
     tolerance multiplier (baseline `1`). -/
