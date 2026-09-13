@@ -1,0 +1,157 @@
+[
+  {
+    "id": "poesioetal2004_ex5",
+    "source": {"bibkey": "poesio-stevenson-eugenio-hitzeman-2004", "paperLabel": "(5)"},
+    "language": "stan1293",
+    "primaryText": "John walked toward the house. The door was open.",
+    "discourseSegments": [
+      "John walked toward the house.",
+      "The door was open."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["parameter", "realization"],
+      ["section", "2.4.2"]
+    ],
+    "comment": "The house is realized in the second utterance only indirectly, by the associative reference the door."
+  },
+  {
+    "id": "poesioetal2004_ex7",
+    "source": {"bibkey": "poesio-stevenson-eugenio-hitzeman-2004", "paperLabel": "(7)"},
+    "language": "stan1293",
+    "primaryText": "You should not use PRODUCT-Z if you are pregnant or breast-feeding. Whilst you are receiving PRODUCT-Z ...",
+    "discourseSegments": [
+      "You should not use PRODUCT-Z",
+      "if you are pregnant or breast-feeding.",
+      "Whilst you are receiving PRODUCT-Z ..."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["parameter", "cfFilter"],
+      ["parameter", "previousUtterance"],
+      ["section", "2.4.2"]
+    ],
+    "comment": "Neither the second nor the third utterance has a CB unless the second-person pronoun introduces a CF; treating the if-clause as embedded makes the first utterance the previous utterance of the third."
+  },
+  {
+    "id": "poesioetal2004_ex9",
+    "source": {"bibkey": "poesio-stevenson-eugenio-hitzeman-2004", "paperLabel": "(9)"},
+    "language": "stan1293",
+    "primaryText": "These \"egg vases\" are of exceptional quality: basketwork bases support egg-shaped bodies and bundles of straw form the handles, while small eggs resting in straw nests serve as the finial for each lid. Each vase is decorated with inlaid decoration: ...",
+    "discourseSegments": [
+      "These \"egg vases\" are of exceptional quality:",
+      "basketwork bases support egg-shaped bodies",
+      "and bundles of straw form the handles,",
+      "while small eggs resting in straw nests serve as the finial for each lid.",
+      "Each vase is decorated with inlaid decoration: ..."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["parameter", "utterance"],
+      ["parameter", "realization"],
+      ["section", "4.1.1"]
+    ],
+    "comment": "With finite clauses as utterances only the last clause refers to the egg vases; identifying utterances with sentences or allowing indirect realization removes the Strong Constraint 1 violations."
+  },
+  {
+    "id": "poesioetal2004_ex10",
+    "source": {"bibkey": "poesio-stevenson-eugenio-hitzeman-2004", "paperLabel": "(10)"},
+    "language": "stan1293",
+    "primaryText": "The drawing of the corner cupboard, or more probably an engraving of it, must have caught Branicki's attention. Dubois was commissioned through a Warsaw dealer to construct the cabinet for the Polish aristocrat.",
+    "discourseSegments": [
+      "The drawing of the corner cupboard, or more probably an engraving of it, must have caught Branicki's attention.",
+      "Dubois was commissioned through a Warsaw dealer to construct the cabinet for the Polish aristocrat."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["parameter", "rank"],
+      ["section", "4.1.1"]
+    ],
+    "comment": "The corner cupboard (np-compl) and Branicki (gen) tie under grammatical-function ranking and are both realized in the next utterance, so both are its CB."
+  },
+  {
+    "id": "poesioetal2004_ex14",
+    "source": {"bibkey": "poesio-stevenson-eugenio-hitzeman-2004", "paperLabel": "(14)"},
+    "language": "stan1293",
+    "primaryText": "John woke up when Bill rang the door. He had forgotten the appointment.",
+    "discourseSegments": [
+      "John woke up",
+      "when Bill rang the door.",
+      "He had forgotten the appointment."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["parameter", "previousUtterance"],
+      ["section", "4.2.5"]
+    ],
+    "comment": "Kameyama-style the previous utterance of the third clause is the when-clause; Suri and McCoy-style it is the first clause."
+  },
+  {
+    "id": "poesioetal2004_ex16",
+    "source": {"bibkey": "poesio-stevenson-eugenio-hitzeman-2004", "paperLabel": "(16)"},
+    "language": "stan1293",
+    "primaryText": "Do not use scissors as you may damage the patch inside. Take out the patch.",
+    "discourseSegments": [
+      "Do not use scissors",
+      "as you may damage the patch inside.",
+      "Take out the patch."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["parameter", "previousUtterance"],
+      ["section", "4.2.5"]
+    ],
+    "comment": "The adjunct clause introduces the patch, so treating it as embedded loses the CB of the third clause."
+  },
+  {
+    "id": "poesioetal2004_ex23",
+    "source": {"bibkey": "poesio-stevenson-eugenio-hitzeman-2004", "paperLabel": "(23)"},
+    "language": "stan1293",
+    "primaryText": "This leaflet is a summary of the important information about Product A. If you have any questions or are not sure about anything to do with your treatment, ask your doctor or your pharmacist.",
+    "discourseSegments": [
+      "This leaflet is a summary of the important information about Product A.",
+      "If you have any questions or are not sure about anything to do with your treatment,",
+      "ask your doctor or your pharmacist."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "5.2.2"]
+    ],
+    "comment": "Successive utterances mention no common entity; the connection is made by the connectives."
+  }
+]
