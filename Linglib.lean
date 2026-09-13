@@ -1437,7 +1437,6 @@ import Linglib.Pragmatics.RelevanceTheory.Ostension
 import Linglib.Pragmatics.RelevanceTheory.Relevance
 import Linglib.Pragmatics.SignalingGame.Basic
 import Linglib.Pragmatics.SignalingGame.Interpretation
-import Linglib.Pragmatics.SocialMeaning.EckertMontague
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
 import Linglib.Pragmatics.SoftmaxOptimality
 import Linglib.Pragmatics.Superoptimal

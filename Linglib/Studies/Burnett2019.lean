@@ -101,7 +101,7 @@ def ingEckertField : IndexicalField INGVariant PersonaTrait
   | .velar => {.competent, .aloof}
   | .apical => {.incompetent, .friendly}
 
-/-- The grounded field of (ING): both fields are consistent. -/
+/-- The grounded field of (ING), both fields being consistent. -/
 def ingField : GroundedField INGVariant incompatible where
   indexes := ingEckertField
   isIndepSet := by intro v; cases v <;> decide
@@ -142,7 +142,7 @@ theorem personae_velar : ingField.personae .velar = {coolGuy, sternLeader, assho
 theorem personae_apical : ingField.personae .apical = {coolGuy, doofus, asshole} := by
   decide +kernel
 
-/-- The persona each variant rules out: *-ing* rules out the doofus, *-in'* the stern leader. -/
+/-- The persona each variant rules out, the doofus for *-ing* and the stern leader for *-in'*. -/
 def excluded : INGVariant → Persona
   | .velar => doofus
   | .apical => sternLeader
@@ -195,8 +195,8 @@ theorem prefers_iff (prior : Measure Persona) [IsFiniteMeasure prior] {p : Perso
 A context is a prior over personae, given as integer weights read off the paper's tables as
 the text describes them. -/
 
-/-- At the barbecue the voters take Obama to be aloof (Table 2): more mass on the aloof
-personae. -/
+/-- At the barbecue the voters take Obama to be aloof (Table 2), so the aloof personae carry
+more mass. -/
 def casualWeight (π : Persona) : ℕ := if .aloof ∈ π.1 then 3 else 2
 
 /-- With the journalists he is taken to be incompetent (Table 5). -/
@@ -235,10 +235,10 @@ theorem casual_asshole_prefers_apical :
       simp only [excluded, priorOfWeights_singleton]
       exact_mod_cast (by decide +kernel : casualWeight doofus < casualWeight sternLeader))
 
-/-- Style shifting: with the journalists the doofus outweighs the stern leader instead, so
-*-ing* is now the more informative variant and the same cool guy prefers it. Neither the speaker
-nor the meaning has changed, only the context's prior, and with it which variant rules more
-out. -/
+/-- Style shifting arises because with the journalists the doofus outweighs the stern leader
+instead, so *-ing* is now the more informative variant and the same cool guy prefers it.
+Neither the speaker nor the meaning has changed, only the context's prior, and with it which
+variant rules more out. -/
 theorem careful_coolGuy_prefers_velar :
     (S1 (priorOfWeights carefulWeight) coolGuy).real {.apical}
       < (S1 (priorOfWeights carefulWeight) coolGuy).real {.velar} :=
@@ -247,10 +247,10 @@ theorem careful_coolGuy_prefers_velar :
       simp only [excluded, priorOfWeights_singleton]
       exact_mod_cast (by decide +kernel : carefulWeight sternLeader < carefulWeight doofus))
 
-/-- Bulletproofing: Bush's listeners are almost certain he is inarticulate and aloof, and the
-two personae the variants distinguish carry the same small weight, so neither variant rules out
-more than the other and the speaker is indifferent: variant choice conveys nothing at all
-(pp. 444–445). -/
+/-- Bulletproofing arises because Bush's listeners are almost certain he is inarticulate and
+aloof, and the two personae the variants distinguish carry the same small weight, so neither
+variant rules out more than the other, the speaker is indifferent, and variant choice conveys
+nothing at all (pp. 444–445). -/
 theorem bush_indifferent :
     ¬ (S1 (priorOfWeights bushWeight) asshole).real {.velar}
         < (S1 (priorOfWeights bushWeight) asshole).real {.apical} ∧
@@ -273,8 +273,8 @@ theorem rice_indifferent :
         (priorOfWeights_singleton_ne_zero _ (by decide +kernel))]
       simp [excluded, riceWeight]
 
-/-- The predicted direction is the observed one: the cool guy takes *-in'* at the barbecue and
-*-ing* with the journalists, and Obama's rate of *-in'* falls from the casual through the
+/-- The predicted direction is the observed one, the cool guy taking *-in'* at the barbecue
+and *-ing* with the journalists while Obama's rate of *-in'* falls from the casual through the
 careful to the formal style ([labov-2012]). -/
 theorem matches_labov_direction :
     (S1 (priorOfWeights casualWeight) coolGuy).real {.velar}
@@ -294,7 +294,7 @@ production between them, so the exclusive persona wins the posterior whenever th
 not favour the other. That is the shape of the paper's interpretation results: a released /t/
 points at the stern leader, a flapped one at the doofus. -/
 
-/-- The stern leader can only be conveyed by *-ing*, and the doofus only by *-in'*: each is
+/-- The stern leader can only be conveyed by *-ing* and the doofus only by *-in'*, so each is
 produced with certainty by the persona it is exclusive to. -/
 theorem sternLeader_certain {w : Persona → ℕ} (hw : ∀ p, w p ≠ 0) :
     S1 (priorOfWeights w) sternLeader {.velar} = 1 ∧
@@ -304,8 +304,8 @@ theorem sternLeader_certain {w : Persona → ℕ} (hw : ∀ p, w p ≠ 0) :
     ingField.speaker_indexation_eq_one_of_exclusive _ (by norm_num) one_ne_zero ENNReal.one_ne_top
       (priorOfWeights_singleton_ne_zero _ (hw _)) (by decide +kernel) (by decide +kernel)⟩
 
-/-- A variant gives no posterior mass to a persona it cannot convey: hearing *-ing* rules out
-the doofus and hearing *-in'* rules out the stern leader, whatever the listener believed
+/-- A variant gives no posterior mass to a persona it cannot convey, so hearing *-ing* rules
+out the doofus and hearing *-in'* rules out the stern leader, whatever the listener believed
 beforehand. -/
 theorem L1_eq_zero_of_excluded {w : Persona → ℕ} (hw : ∀ p, w p ≠ 0) (v : INGVariant) :
     L1 (priorOfWeights w) v {excluded v} = 0 := by

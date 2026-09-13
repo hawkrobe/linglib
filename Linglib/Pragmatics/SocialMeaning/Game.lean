@@ -1,5 +1,5 @@
 import Linglib.Pragmatics.RSA.Basic
-import Linglib.Pragmatics.SocialMeaning.EckertMontague
+import Linglib.Pragmatics.SocialMeaning.Persona
 
 /-!
 # Social meaning games
@@ -107,8 +107,8 @@ theorem GroundedField.speaker_indexation_eq_one_of_exclusive (hα : 0 < α) (hc0
 /-- Hearing a message rules out the personae it does not meet, once some persona it meets has
 prior mass. -/
 theorem GroundedField.pragmaticListener_indexation_apply_singleton_of_not_meets
-    [Nonempty (Persona G)] (hα : 0 < α) (hc0 : c ≠ 0) (hctop : c ≠ ∞) {π' : Persona G} (h : π ∉ F.personae m)
-    (h' : π' ∈ F.personae m) (h0 : prior {π'} ≠ 0) :
+    [Nonempty (Persona G)] (hα : 0 < α) (hc0 : c ≠ 0) (hctop : c ≠ ∞) {π' : Persona G}
+    (h : π ∉ F.personae m) (h' : π' ∈ F.personae m) (h0 : prior {π'} ≠ 0) :
     pragmaticListener α (λ _ => c) (literalListener prior F.indexation) prior m {π} = 0 :=
   pragmaticListener_literalListener_indicator_apply_singleton_of_notMem α (λ _ => c) prior hα
     (λ _ => hc0) (λ _ => hctop) (λ m => ↑(F.personae m)) (Finset.mem_coe.not.2 h)

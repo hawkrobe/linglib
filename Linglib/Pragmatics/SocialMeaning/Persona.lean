@@ -2,12 +2,13 @@ import Linglib.Pragmatics.SocialMeaning.Dimension
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
 
 /-!
-# The Eckert–Montague lift
+# Personae and grounded fields
 
-This file defines the grounded indexical fields of [burnett-2019] and their lift to persona
-compatibility. A property space is a graph of incompatibility on social properties, a persona
-is a maximal independent set of it, and a grounded field indexes each variant to an independent
-set of properties. The Eckert–Montague lift sends a variant to the personae compatible with it,
+This file defines the personae and grounded indexical fields of [burnett-2019] and the
+Eckert–Montague lift of a field to persona compatibility. A property space is a graph of
+incompatibility on social properties, a persona is a maximal independent set of it, and a
+grounded field indexes each variant to an independent set of properties. The lift sends a
+variant to the personae compatible with it,
 those with every property it indexes, or on the Montagovian-individual reading those sharing
 some property with it, as an entity lifts to the generalized quantifier of the properties it
 has. An association field over the dimensions of social evaluation grounds as the poles whose
