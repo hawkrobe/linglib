@@ -171,13 +171,13 @@ private theorem subset_corners_iff {σ A B : Set World} :
 
 /-- A state completely answers "What did `u` eat?" iff it lies within one cell of the
 partition the alternatives induce. -/
-theorem mentionAll_wh_iff {σ : Set World} {u : Person} :
-    MentionAll σ (wh u) ↔
+theorem completelyAnsweredBy_wh_iff {σ : Set World} {u : Person} :
+    CompletelyAnsweredBy (wh u) σ ↔
       σ ⊆ ate u .bagels ∩ ate u .tofu ∨
       σ ⊆ ate u .bagels ∩ (ate u .tofu)ᶜ ∨
       σ ⊆ (ate u .bagels)ᶜ ∩ ate u .tofu ∨
       σ ⊆ (ate u .bagels)ᶜ ∩ (ate u .tofu)ᶜ := by
-  rw [mentionAll_iff_of_alt_eq_range (alt_wh u), Food.forall_food]
+  rw [completelyAnsweredBy_iff_of_alt_eq_range (alt_wh u), Food.forall_food]
   exact subset_corners_iff
 
 private instance (C : Finset World) (S : Set World) [DecidablePred (· ∈ S)] :
@@ -185,10 +185,10 @@ private instance (C : Finset World) (S : Set World) [DecidablePred (· ∈ S)] :
   decidable_of_iff (∀ w ∈ C, w ∈ S) (by simp [Set.subset_def])
 
 /-- Whether a finite state completely answers a question of the discourse is decidable. -/
-instance (C : Finset World) : ∀ q : Qn, Decidable (MentionAll (C : Set World) q.den)
-  | .one => decidable_of_iff _ (mentionAll_iff_of_alt_eq_range alt_q_1).symm
-  | .a | .b => decidable_of_iff _ mentionAll_wh_iff.symm
-  | .ai | .aii | .bi | .bii => decidable_of_iff _ mentionAll_ofSet_iff.symm
+instance (C : Finset World) : ∀ q : Qn, Decidable (CompletelyAnsweredBy q.den (C : Set World))
+  | .one => decidable_of_iff _ (completelyAnsweredBy_iff_of_alt_eq_range alt_q_1).symm
+  | .a | .b => decidable_of_iff _ completelyAnsweredBy_wh_iff.symm
+  | .ai | .aii | .bi | .bii => decidable_of_iff _ completelyAnsweredBy_ofSet_iff.symm
 
 /-! ### Question entailment ((3), (8))
 
@@ -214,14 +214,14 @@ theorem q1_entails_polar (u : Person) (f : Food) :
 "What did Hilary eat?" but decides nothing about Robin. -/
 theorem wh_not_entails_q1 :
     ¬ completeAnswers (wh .hilary) ⊆ completeAnswers q_1 := λ h => by
-  have := h (mentionAll_wh_iff.mpr (Or.inl subset_rfl)) _ (mem_alt_q1 .robin .bagels)
+  have := h (completelyAnsweredBy_wh_iff.mpr (Or.inl subset_rfl)) _ (mem_alt_q1 .robin .bagels)
   rcases this with h' | h' <;> exact absurd h' (by decide)
 
 /-- "Did Hilary eat the bagels?" does not entail "What did Hilary eat?": the positive answer
 leaves the tofu alternative open. -/
 theorem polar_not_entails_wh :
     ¬ completeAnswers (polar .hilary .bagels) ⊆ completeAnswers (wh .hilary) := λ h => by
-  have hma : MentionAll (hilaryBagels : Set World) (polar .hilary .bagels) := λ p hp => by
+  have hma : CompletelyAnsweredBy (polar .hilary .bagels) (hilaryBagels : Set World) := λ p hp => by
     rw [alt_ofSet, Set.mem_singleton_iff] at hp
     subst hp
     exact Or.inl subset_rfl
@@ -285,7 +285,7 @@ def asked : List Move → List Qn
 /-- The questions under discussion after a sequence of moves: the accepted questions whose
 complete answer the context set fails to entail, most recent first (10g.i). -/
 def qud (ms : List Move) : List Qn :=
-  (asked ms).filter λ q => decide (¬ MentionAll (contextSet ms : Set World) q.den)
+  (asked ms).filter λ q => decide (¬ CompletelyAnsweredBy q.den (contextSet ms : Set World))
 
 /-- The paper's table of stacks: the questions under discussion at each of the eleven
 moves, the immediate one first, and the empty stack after the last answer. -/
@@ -312,7 +312,7 @@ theorem qud_D₀ : ∀ k < 12, qud (D₀.take k) = table k := by decide
 question is an alternative of an older one, each complete answer contextually partially
 answers the older question. -/
 private theorem pa_of_alt_subset (C : Set World) {P Q : Question World} (h : alt P ⊆ alt Q) :
-    ∀ a ∈ alt P, PartiallyAnswers (C ∩ a) Q :=
+    ∀ a ∈ alt P, PartiallyAnsweredBy Q (C ∩ a) :=
   λ a ha => ⟨a, h ha, Or.inl Set.inter_subset_right⟩
 
 private theorem wellFormed_wh (C : Set World) (u : Person) :
@@ -393,26 +393,26 @@ direction, ruling an alternative out, is the paper's point against confirm-only 
 
 /-- "Hilary didn't eat bagels" negatively answers "Did Hilary eat the bagels?": it falsifies
 its sole alternative. -/
-theorem neg_hilaryBagels_partiallyAnswers_polar :
-    PartiallyAnswers (hilaryBagelsᶜ : Set World) (polar .hilary .bagels) :=
-  partiallyAnswers_compl_of_mem_alt (self_mem_alt_ofSet (ate .hilary .bagels))
+theorem neg_hilaryBagels_partiallyAnsweredBy_polar :
+    PartiallyAnsweredBy (polar .hilary .bagels) (hilaryBagelsᶜ : Set World) :=
+  partiallyAnsweredBy_compl_of_mem_alt (self_mem_alt_ofSet (ate .hilary .bagels))
 
 /-- "Hilary didn't eat bagels" partially answers "What did Hilary eat?": it rules out the
 bagels alternative. -/
-theorem neg_hilaryBagels_partiallyAnswers_wh :
-    PartiallyAnswers (hilaryBagelsᶜ : Set World) (wh .hilary) :=
-  partiallyAnswers_compl_of_mem_alt (mem_alt_wh .hilary .bagels)
+theorem neg_hilaryBagels_partiallyAnsweredBy_wh :
+    PartiallyAnsweredBy (wh .hilary) (hilaryBagelsᶜ : Set World) :=
+  partiallyAnsweredBy_compl_of_mem_alt (mem_alt_wh .hilary .bagels)
 
 /-- "Hilary ate bagels" positively answers "Did Hilary eat the bagels?". -/
-theorem hilaryBagels_partiallyAnswers_polar :
-    PartiallyAnswers (hilaryBagels : Set World) (polar .hilary .bagels) :=
-  partiallyAnswers_of_mem_alt (self_mem_alt_ofSet (ate .hilary .bagels))
+theorem hilaryBagels_partiallyAnsweredBy_polar :
+    PartiallyAnsweredBy (polar .hilary .bagels) (hilaryBagels : Set World) :=
+  partiallyAnsweredBy_of_mem_alt (self_mem_alt_ofSet (ate .hilary .bagels))
 
 /-- "Hilary ate bagels" partially answers "Who ate what?": it confirms one of its four
 alternatives. -/
-theorem hilaryBagels_partiallyAnswers_q1 :
-    PartiallyAnswers (hilaryBagels : Set World) q_1 :=
-  partiallyAnswers_of_mem_alt (mem_alt_q1 .hilary .bagels)
+theorem hilaryBagels_partiallyAnsweredBy_q1 :
+    PartiallyAnsweredBy q_1 (hilaryBagels : Set World) :=
+  partiallyAnsweredBy_of_mem_alt (mem_alt_q1 .hilary .bagels)
 
 /-! ### Relevance (15)
 
@@ -425,17 +425,17 @@ def hilaryBagels_assertion : Question World := Question.ofSet hilaryBagels
 
 /-- "Hilary ate bagels" is relevant to move 1, "Who ate what?". -/
 theorem hilaryBagels_relevant_to_q1 : hilaryBagels_assertion.IsRelevantTo {q_1} :=
-  ⟨hilaryBagels, self_mem_alt_ofSet _, q_1, rfl, hilaryBagels_partiallyAnswers_q1⟩
+  ⟨hilaryBagels, self_mem_alt_ofSet _, q_1, rfl, hilaryBagels_partiallyAnsweredBy_q1⟩
 
 /-- "What did Hilary eat?" is relevant to "Who ate what?" under the assertion-clause proxy:
 its bagels alternative confirms an alternative of the big question. -/
 theorem wh_relevant_to_q1 : (wh .hilary).IsRelevantTo {q_1} :=
-  ⟨hilaryBagels, mem_alt_wh .hilary .bagels, q_1, rfl, hilaryBagels_partiallyAnswers_q1⟩
+  ⟨hilaryBagels, mem_alt_wh .hilary .bagels, q_1, rfl, hilaryBagels_partiallyAnsweredBy_q1⟩
 
 /-- "Hilary ate bagels" is relevant to the whole strategy: it partially answers its root. -/
 theorem hilaryBagels_relevant_to_strat :
     hilaryBagels_assertion.IsRelevantTo {q | q ∈ strat.values} :=
   ⟨hilaryBagels, self_mem_alt_ofSet _, q_1, by simp [strat_eq],
-    hilaryBagels_partiallyAnswers_q1⟩
+    hilaryBagels_partiallyAnsweredBy_q1⟩
 
 end Roberts2012

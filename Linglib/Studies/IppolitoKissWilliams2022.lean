@@ -226,10 +226,10 @@ order, so *but* is licensed. -/
 theorem but : ctx.But (polar veg) := by
   refine Context.but_of_polar rfl meat_ne_empty meat_ne_univ ?_ rfl ?_ (Or.inl ⟨rfl, rfl⟩) ?_ ?_ ?_
   · exact ⟨veg, mem_alt_polar_of_nontrivial veg_ne_empty veg_ne_univ veg |>.2 (Or.inl rfl),
-      polar veg, by simp [Context.issues, ctx], partiallyAnswers_of_mem_alt
+      polar veg, by simp [Context.issues, ctx], partiallyAnsweredBy_of_mem_alt
         (mem_alt_polar_of_nontrivial veg_ne_empty veg_ne_univ veg |>.2 (Or.inl rfl))⟩
   · exact ⟨steak, by simp, polar steak, by simp [Context.issues, ctx],
-      partiallyAnswers_of_mem_alt (mem_alt_polar_of_nontrivial
+      partiallyAnsweredBy_of_mem_alt (mem_alt_polar_of_nontrivial
         (λ h => by simpa [steak] using Set.ext_iff.1 h ⟨false, true, false⟩)
         (λ h => by simpa [steak] using Set.ext_iff.1 h ⟨false, false, false⟩) steak |>.2
         (Or.inl rfl))⟩
