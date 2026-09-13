@@ -17,9 +17,9 @@ measure-pullback predications of the reified `Degree.Comparison`
 S-comparative ([hoeksema-1983]) *is* `Comparison.gt.overSet μ` directly — there is
 no separate clausal-comparison definition; its properties are stated about `overSet`
 here (anti-additivity) and reuse the `Comparison.overSet`/`over` API for the rest.
-Framework-specific content for [rett-2026] (MAX, ambidirectionality, manner
-implicature) lives in `Studies/Rett2026.lean`; [hoeksema-1983]'s polarity-asymmetry
-consumers in `Studies/Hoeksema1983.lean`.
+Framework-specific content for [rett-2026] (fixed-point ambidirectionality) lives in
+`Studies/Rett2026.lean`; [hoeksema-1983]'s polarity-asymmetry consumers in
+`Studies/Hoeksema1983.lean`.
 
 ## Main declarations
 
