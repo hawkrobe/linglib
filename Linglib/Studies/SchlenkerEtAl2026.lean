@@ -170,7 +170,7 @@ def resolveViewpoint
     The viewpoint consequence is indirect: since π* reads the agent's
     viewpoint via `resolveViewpoint`, changing the agent changes what
     π* denotes. -/
-def roleShiftCtx (character : E) (rsWorld : W) : ContextShift (Context W E P T) :=
+def roleShiftCtx (character : E) (rsWorld : W) : Function.End (Context W E P T) :=
   attitudeShift character rsWorld
 
 /-- Role Shift is a monster (non-identity context shift), connecting
@@ -180,8 +180,8 @@ theorem roleShift_is_monster
     (character : E) (rsWorld : W)
     (c : Context W E P T)
     (hAgent : c.agent ≠ character) :
-    (roleShiftCtx (P := P) (T := T) character rsWorld).IsMonster :=
-  ContextShift.isMonster_attitudeShift character rsWorld c hAgent
+    IsMonster (roleShiftCtx (P := P) (T := T) character rsWorld) :=
+  isMonster_attitudeShift character rsWorld c hAgent
 
 /-- Under Role Shift, π* resolves to the character's viewpoint. -/
 theorem contextBound_under_roleShift

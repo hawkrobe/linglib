@@ -99,7 +99,7 @@ def allocutiveProfile (s : CoarseSource) : EpistemicProfile :=
 /-- Epistemic authority is invariant under tower push: egophoric marking
     reflects speech-act participants (from origin), not embedded ones. -/
 theorem epistemicAuthority_shift_invariant {W E P T : Type*} [DecidableEq E]
-    (tower : ContextTower (Context W E P T)) (σ : ContextShift (Context W E P T))
+    (tower : ContextTower (Context W E P T)) (σ : Function.End (Context W E P T))
     (knower : E) :
     epistemicAuthority (tower.push σ) knower = epistemicAuthority tower knower := by
   simp only [epistemicAuthority, ContextTower.push_origin]

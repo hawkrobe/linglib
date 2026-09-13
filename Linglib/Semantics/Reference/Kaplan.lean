@@ -26,14 +26,14 @@ English. An access pattern is a character over towers with rigid content
 coordinate (`AccessPattern.origin_toCharacter_root`): the tower analysis at depth zero is Kaplan's.
 An access pattern stable under every shift is *Kaplan-compliant*
 (`AccessPattern.IsKaplanCompliant`); a shift that moves some context is a *monster*
-(`ContextShift.IsMonster`), an operator on the context of utterance rather than on the circumstance
+(`IsMonster`), an operator on the context of utterance rather than on the circumstance
 of evaluation. A shift that is no monster leaves every access pattern stable
 (`AccessPattern.stable_of_not_isMonster`), and a monster is exactly a shift under which the
-innermost context itself is unstable (`ContextShift.isMonster_iff_not_stable_innermost_id`). The
+innermost context itself is unstable (`isMonster_iff_not_stable_innermost_id`). The
 identity shift that Kaplan's thesis assigns to English attitude verbs is no monster
-(`ContextShift.not_isMonster_one`); the attitude shift of [schlenker-2003] and [anand-
+(`not_isMonster_one`); the attitude shift of [schlenker-2003] and [anand-
 nevins-2004], which makes the holder the agent, is one whenever the holder is not the speaker
-(`ContextShift.isMonster_attitudeShift`).
+(`isMonster_attitudeShift`).
 
 ## References
 
@@ -107,27 +107,24 @@ end Kaplan
 /-! ### Monsters -/
 
 /-- A context shift is a monster when it is not the identity: it moves some context. -/
-def ContextShift.IsMonster (σ : ContextShift C) : Prop := σ ≠ 1
+def IsMonster (σ : Function.End C) : Prop := σ ≠ 1
 
-namespace ContextShift
-
-theorem isMonster_iff (σ : ContextShift C) : σ.IsMonster ↔ ∃ c : C, σ • c ≠ c :=
+theorem isMonster_iff (σ : Function.End C) : IsMonster σ ↔ ∃ c : C, σ • c ≠ c :=
   show (σ : C → C) ≠ id ↔ _ from Function.ne_iff
 
-theorem not_isMonster_one : ¬ (1 : ContextShift C).IsMonster := λ h => h rfl
+theorem not_isMonster_one : ¬ IsMonster (1 : Function.End C) := λ h => h rfl
 
 /-- An attitude shift to a holder other than some context's agent moves that context. -/
 theorem isMonster_attitudeShift (holder : E) (w' : W) (c : Context W E P T)
-    (h : c.agent ≠ holder) : (attitudeShift (P := P) (T := T) holder w').IsMonster :=
+    (h : c.agent ≠ holder) : IsMonster (attitudeShift (P := P) (T := T) holder w') :=
   (isMonster_iff _).2 ⟨c, λ e => h (by simpa using (congrArg Context.agent e).symm)⟩
 
-end ContextShift
 
 namespace AccessPattern
 
 /-- A shift that is no monster leaves every access pattern stable. -/
-theorem stable_of_not_isMonster (ap : AccessPattern C R) {σ : ContextShift C}
-    (h : ¬ σ.IsMonster) : ap.Stable σ := by
+theorem stable_of_not_isMonster (ap : AccessPattern C R) {σ : Function.End C}
+    (h : ¬ IsMonster σ) : ap.Stable σ := by
   have hσ : σ = 1 := not_not.mp h
   subst hσ
   intro t
@@ -175,8 +172,8 @@ theorem isKaplanCompliant_origin (f : C → R) : (origin f).IsKaplanCompliant :=
 end AccessPattern
 
 /-- A shift is a monster iff the innermost context is unstable under it. -/
-theorem ContextShift.isMonster_iff_not_stable_innermost_id (σ : ContextShift C) :
-    σ.IsMonster ↔ ¬ (AccessPattern.innermost id).Stable σ := by
+theorem isMonster_iff_not_stable_innermost_id (σ : Function.End C) :
+    IsMonster σ ↔ ¬ (AccessPattern.innermost id).Stable σ := by
   simp only [isMonster_iff, AccessPattern.Stable, AccessPattern.innermost_resolve,
     ContextTower.push_innermost, id_eq, not_forall]
   exact ⟨λ ⟨c, hc⟩ => ⟨ContextTower.root c, by simpa using hc⟩, λ ⟨t, ht⟩ => ⟨t.innermost, ht⟩⟩

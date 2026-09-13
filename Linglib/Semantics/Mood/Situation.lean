@@ -115,7 +115,7 @@ tense indexing). -/
 
 /-- The context shift to the introduced situation's world and time. -/
 def subjShift {E P : Type*} (newWorld : W) (newTime : T) :
-    ContextShift (Context W E P T) :=
+    Function.End (Context W E P T) :=
   λ c => { c with world := newWorld, time := newTime }
 
 end Mood
