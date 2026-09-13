@@ -1,255 +1,206 @@
-import Linglib.Syntax.Minimalist.ExtendedProjection.Properties
-import Linglib.Semantics.Quantification.BinominalDefs
+import Linglib.Fragments.Spanish.Binominals
 import Linglib.Features.Number.Basic
 import Linglib.Data.Examples.Saab2026
+import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Minimalist Nominal Spine → NP-Ellipsis [saab-2026]
-[lobeck-1995] [ritter-1991]
+# Saab (2026): NP-Ellipsis Patterns in Spanish Binominals
 
-Connects the Minimalist nominal extended projection (N → n → Q → Num → D)
-to the NP-ellipsis data in Spanish binominals.
+This file formalizes the paper's argument that pseudo-partitive and quantificational
+binominals (*un grupo*, *un montón de estudiantes*) and qualitative binominals (*una mierda de
+departamento*) have different underlying syntax. In the former the genitive coda is the nP
+complement of Num, a primeval genitive in the sense of [pesetsky-2013], so an [E]-feature on
+Num licenses NP-ellipsis of the coda under the usual identity condition of [merchant-2001],
+and Num controls verbal agreement; in the latter the coda is the specifier of an equative
+phrase relating it to an indexical empty noun, so no licensor can elide it and its gap is
+resolved by context rather than by an antecedent. A structure is the nominal that is the
+complement of Num together with the nominal in the specifier above it (`Structure`).
+NP-ellipsis of a nominal is licensed exactly when it is that complement and has internal
+structure (`Structure.Elidable`), and the verb agrees with the number of that complement. The
+same principle covers the paper's structural ambiguity of quantity nouns: under the
+descriptive reading the noun heads the projection, so it can be elided and the verb is
+singular, and under the quantificational reading the coda heads it, so the coda can be elided
+and the verb is plural (`elidable_first_iff_singular`). The rows are the paper's examples,
+with the type of each first noun read from the Spanish fragment, and their ellipsis,
+agreement and gap facts follow from the structure assigned to them (`ellipsis_matches`).
 
-## Key Results
+## Implementation notes
 
-1. The nominal argument domain (nP = {N, n}) parallels the verbal
-   argument domain (vP = {V, v}) at the same F-level cutoff.
-2. NP-ellipsis targets exactly the nominal argument domain: everything
-   at or below n (F1) is deleted when Num carries [E].
-3. Pseudo-partitive and quantificational binominals have Num[E];
-   qualitative binominals lack it due to their EquP structure.
-4. The genitive source ([pesetsky-2013] primeval vs. equative) and the
-   verbal-agreement number track the same split, and the typed example
-   rows (`Data.Examples.Saab2026`) conform to all predictions.
+Identity between an antecedent and an ellipsis site is taken modulo case and number, as the
+paper argues: case is assigned at PF or overwritten by D after identity is computed, and
+number sits on the licensing head outside the ellipsis domain. The paper's three kinds of
+nominal gap are distinguished by the recovery they need, a linguistic antecedent for
+ellipsis, a contextual assignment for the indexical empty noun and none for a silent noun,
+which is what the sub-extraction, argument-structure and context diagnostics of the rows
+track. Pesetsky's derivation of genitive marking and the equations at the entity and
+proposition types are not formalized.
 
+## References
+
+* [saab-2026]
+* [pesetsky-2013]
+* [merchant-2001]
+* [hankamer-sag-1976]
 -/
 
 namespace Saab2026
 
-open Minimalist
-open Quantification.Binominal
+open Quantification.Binominal Spanish.Binominals Data.Examples
 
-/-! ### Nominal ellipsis licensing (relocated from Minimalist/Ellipsis/Nominal.lean)
+/-! ### Structures -/
 
-[merchant-2001] [saab-2026] [lobeck-1995]
+/-- The nominals of a binominal: the first noun, the genitive coda, and the indexical empty
+noun of the equative structure. -/
+inductive Nominal where
+  | first
+  | coda
+  | index
+  deriving DecidableEq, Repr, Fintype
 
-NP-ellipsis is licensed when the Num head carries an [E] feature,
-which permits PF-deletion of the nominal argument domain (complement
-of Num — everything at or below nP).
+/-- A structure: the nominal that is the complement of Num, the head of the extended
+projection, and the nominal in the specifier above it. -/
+structure Structure where
+  head : Nominal
+  spec : Option Nominal
+  deriving DecidableEq, Repr, Fintype
 
-The nominal argument domain is {N, n} (F0–F1), parallel to the verbal
-argument domain {V, v}. Num (F2) and above are outside.
--/
+/-- The primeval-genitive structure of pseudo-partitive and quantificational binominals: the
+coda is the nP complement of Num and the quantity phrase sits in the specifier. -/
+def quantificational : Structure := ⟨.coda, some .first⟩
 
--- ═══════════════════════════════════════════════════════════════
--- § 0a: NP-Ellipsis Licensing
--- ═══════════════════════════════════════════════════════════════
+/-- The descriptive reading of a quantity noun: the noun heads the projection and the coda is
+its complement. -/
+def descriptive : Structure := ⟨.first, none⟩
 
-/-- Nominal ellipsis license: Num[E] feature.
-    NP-ellipsis is licensed when the Num head carries an [E] feature,
-    which permits PF-deletion of the nominal argument domain (complement
-    of Num — everything at or below nP). -/
-structure NominalEllipsisLicense where
-  /-- Does Num carry [E]? -/
-  numHasE : Bool
-  /-- The nominal argument domain boundary (n for full DPs). -/
-  argDomainBoundary : Cat := .n
-  deriving Repr, DecidableEq
+/-- The equative structure of qualitative binominals: the complement of Num is the indexical
+empty noun, which the equative head relates to the coda in its specifier. -/
+def equative : Structure := ⟨.index, some .coda⟩
 
-/-- Is NP-ellipsis licensed? Requires Num[E]. -/
-def NominalEllipsisLicense.isLicensed (nel : NominalEllipsisLicense) : Bool :=
-  nel.numHasE
+/-- A nominal can be elided when it is the complement of Num, whose [E]-feature licenses the
+ellipsis of its complement, and has internal structure: the indexical empty noun is an atomic
+index, so eliding it is vacuous. -/
+def Structure.Elidable (s : Structure) (x : Nominal) : Prop := s.head = x ∧ x ≠ .index
 
--- ═══════════════════════════════════════════════════════════════
--- § 0b: Nominal Argument Domain ([saab-2026])
--- ═══════════════════════════════════════════════════════════════
+instance (s : Structure) (x : Nominal) : Decidable (s.Elidable x) := by
+  unfold Structure.Elidable; infer_instance
 
-/-- N is within the nominal argument domain (F0 ≤ F1 = n). -/
-theorem n_lexical_in_nominal_argdomain :
-    isInArgumentDomain .N .D := by decide
+/-- The number of a nominal, given the coda's: the first noun is singular, and the indexical
+empty noun takes the coda's number through the equation. -/
+def Nominal.number (c : Number) : Nominal → Number
+  | .first => .singular
+  | .coda | .index => c
 
-/-- n is within the nominal argument domain (F1 ≤ F1). -/
-theorem n_functional_in_nominal_argdomain :
-    isInArgumentDomain .n .D := by decide
+/-- The verb agrees with the Num head, whose number is that of its complement. -/
+def Structure.agreement (s : Structure) (c : Number) : Number := s.head.number c
 
-/-- Num is NOT in the nominal argument domain (F2 > F1 = n). -/
-theorem num_not_in_nominal_argdomain :
-    ¬ isInArgumentDomain .Num .D := by decide
-
-/-- Q is NOT in the nominal argument domain (F3 > F1 = n). -/
-theorem q_not_in_nominal_argdomain :
-    ¬ isInArgumentDomain .Q .D := by decide
-
-/-- D is NOT in the nominal argument domain (F4 > F1 = n). -/
-theorem d_not_in_nominal_argdomain :
-    ¬ isInArgumentDomain .D .D := by decide
-
-/-- NP-ellipsis with Num[E]: pseudo-partitive/quantificational
-    binominals license deletion of the nominal argument domain. -/
-theorem pseudopartitive_licenses_npe :
-    NominalEllipsisLicense.isLicensed ⟨true, .n⟩ = true := by decide
-
-/-- NP-ellipsis without Num[E]: qualitative binominals
-    (with EquP + indexical empty noun) block NP-ellipsis. -/
-theorem qualitative_blocks_npe :
-    NominalEllipsisLicense.isLicensed ⟨false, .n⟩ = false := by decide
-
--- ═══════════════════════════════════════════════════════════════
--- § 1: Nominal Extended Projection Well-Formedness
--- ═══════════════════════════════════════════════════════════════
-
-/-- The full nominal EP [N, n, Q, Num, D] is well-formed:
-    category-consistent and F-monotone. -/
-theorem nominal_ep_wellformed :
-    allCategoryConsistent fullNominalEP = true ∧
-    allFMonotone fullNominalEP = true := by decide
-
-/-- The nominal spine is structurally parallel to the verbal spine
-    at all F-levels: lexical (F0) → categorizer (F1) → specification
-    (F2) → inner edge (F3) → discourse (F4+).
-
-    At F2–F3, the parallel is structural (same EP zone) rather than
-    functional: T specifies temporally while Q specifies via
-    individuation; Fin types the clause while Num types the nominal. -/
-theorem nominal_verbal_spine_parallel :
-    fValue .N = fValue .V ∧
-    fValue .n = fValue .v ∧
-    fValue .Q = fValue .T ∧
-    fValue .Num = fValue .Fin := by decide
-
--- ═══════════════════════════════════════════════════════════════
--- § 2: Argument Domain Symmetry
--- ═══════════════════════════════════════════════════════════════
-
-/-- The verbal and nominal argument domains use the same F-level
-    boundary (F1): v for clauses, n for noun phrases. -/
-theorem argdomain_boundary_parallel :
-    fValue (argumentDomainCat .C) = fValue (argumentDomainCat .D) := by decide
-
-/-- The verbal argument domain is {V, v} (F0–F1).
-    The nominal argument domain is {N, n} (F0–F1).
-    Both exclude inflectional heads (T/Num at F2). -/
-theorem verbal_nominal_argdomain_symmetric :
-    -- Verbal: V and v are in, T is out
-    isInArgumentDomain .V .C ∧
-    isInArgumentDomain .v .C ∧
-    ¬ isInArgumentDomain .T .C ∧
-    -- Nominal: N and n are in, Q (first head above n) is out
-    isInArgumentDomain .N .D ∧
-    isInArgumentDomain .n .D ∧
-    ¬ isInArgumentDomain .Q .D := by decide
-
--- ═══════════════════════════════════════════════════════════════
--- § 3: NP-Ellipsis Licensing via Num[E]
--- ═══════════════════════════════════════════════════════════════
-
-/-- Build a NominalEllipsisLicense from a BinominalType. -/
-def mkNominalLicense (b : BinominalType) : NominalEllipsisLicense :=
-  { numHasE := b.hasNumE }
-
-/-- Pseudo-partitive Num[E] licenses NP-ellipsis. -/
-theorem pseudopartitive_license :
-    (mkNominalLicense .pseudoPartitive).isLicensed = true := by decide
-
-/-- Quantificational Num[E] licenses NP-ellipsis. -/
-theorem quantificational_license :
-    (mkNominalLicense .quantificational).isLicensed = true := by decide
-
-/-- Qualitative lacks Num[E], blocking NP-ellipsis. -/
-theorem qualitative_no_license :
-    (mkNominalLicense .qualitative).isLicensed = false := by decide
-
-/-- The licensing prediction matches the empirical data for every
-    binominal type. -/
-theorem licensing_matches_data (b : BinominalType) :
-    (mkNominalLicense b).isLicensed = b.licensesNPE := by
-  cases b <;> decide
-
--- ═══════════════════════════════════════════════════════════════
--- § 4: Genitive Source and Verbal Agreement
--- ═══════════════════════════════════════════════════════════════
-
-/-- The structural source of the genitive *de* in a binominal. -/
-inductive GenitiveSource where
-  /-- [pesetsky-2013]'s primeval genitive: default case assigned when
-      D blocks structural case. -/
-  | primeval
-  /-- [dendikken-2006]-style EquP predication, not a true genitive. -/
-  | equative
+/-- The gap left by a missing nominal: a true ellipsis or an indexical empty noun. -/
+inductive Gap where
+  | ellipsis
+  | index
   deriving DecidableEq, Repr
 
-/-- Map a binominal type to its genitive source. Pseudo-partitive and
-    quantificational binominals have the primeval genitive; qualitative
-    binominals have the equative structure, whose indexical empty noun
-    (contextually referential, like a pronoun) is unrecoverable at the
-    ellipsis site. -/
-def genitiveSource : BinominalType → GenitiveSource
-  | .pseudoPartitive  => .primeval
-  | .quantificational => .primeval
-  | .qualitative      => .equative
+/-- The gap of a binominal whose coda is missing: an indexical empty noun when the structure
+has one, an ellipsis otherwise. -/
+def Structure.gap (s : Structure) : Gap := if s.head = .index then .index else .ellipsis
 
-/-- Primeval genitive ↔ NP-ellipsis licensed: the genitive source and
-    Num[E]-driven licensing are coextensive across binominal types. -/
-theorem primeval_iff_npe (b : BinominalType) :
-    (genitiveSource b == .primeval) = b.licensesNPE := by
-  cases b <;> rfl
+/-- A gap with internal structure hosts arguments and allows sub-extraction. -/
+def Gap.Structured : Gap → Prop
+  | .ellipsis => True
+  | .index => False
 
-/-- The number on the verb for each binominal type: Num inherits plural
-    from the complement NP in pseudo-partitives and quantificationals,
-    but gets singular from the expressive noun in qualitatives. -/
-def verbAgreement : BinominalType → Number
-  | .pseudoPartitive  => .plural
-  | .quantificational => .plural
-  | .qualitative      => .singular
+/-- A gap resolved by a contextual assignment rather than a linguistic antecedent. -/
+def Gap.ContextResolved : Gap → Prop
+  | .ellipsis => False
+  | .index => True
 
--- ═══════════════════════════════════════════════════════════════
--- § 5: Conformance with the Example Data
--- ═══════════════════════════════════════════════════════════════
+instance : DecidablePred Gap.Structured := λ g => by
+  cases g <;> unfold Gap.Structured <;> infer_instance
 
-/-- Parse a `binominal_type` paper-feature value. -/
-def binominalOfFeature : String → Option BinominalType
-  | "pseudo_partitive" => some .pseudoPartitive
-  | "quantificational" => some .quantificational
-  | "qualitative"      => some .qualitative
-  | _                  => none
+instance : DecidablePred Gap.ContextResolved := λ g => by
+  cases g <;> unfold Gap.ContextResolved <;> infer_instance
 
-/-- Parse a `verb_agreement` paper-feature value. -/
-def numberOfFeature : String → Option Number
-  | "singular" => some .singular
-  | "plural"   => some .plural
-  | _          => none
+/-- Nothing in the equative structure can be elided: the coda has no licensor and the index is
+atomic. -/
+theorem equative_not_elidable (x : Nominal) : ¬ equative.Elidable x := by
+  cases x <;> decide
 
-/-- Every example row's `npe_grammatical` and `verb_agreement` features
-    match the predictions (`licensesNPE`, `verbAgreement`) for its
-    `binominal_type`. -/
-theorem examples_conform :
-    Examples.all.all (λ e =>
-      match (e.paperFeatures.lookup "binominal_type").bind binominalOfFeature with
-      | some b =>
-          e.paperFeatures.lookup "npe_grammatical"
-            == some (if b.licensesNPE then "true" else "false") &&
-          (e.paperFeatures.lookup "verb_agreement").bind numberOfFeature
-            == some (verbAgreement b)
-      | none => false) := by decide
+/-- The quantificational structure elides its coda and not the quantity noun; the descriptive
+structure the reverse. -/
+theorem quantificational_descriptive_elidable :
+    quantificational.Elidable .coda ∧ ¬ quantificational.Elidable .first ∧
+      descriptive.Elidable .first ∧ ¬ descriptive.Elidable .coda := by
+  decide
 
--- ═══════════════════════════════════════════════════════════════
--- § 6: EP-Internal Relations in the Nominal Spine
--- ═══════════════════════════════════════════════════════════════
+/-! ### Readings -/
 
-/-- Each nominal functional head is EP-internal to the next higher
-    head — complement selection proceeds up the nominal spine:
-    N(F0) → n(F1) → Q(F2) → Num(F3) → D(F4). -/
-theorem nominal_spine_ep_internal :
-    isEPInternal .N .n = true ∧
-    isEPInternal .n .Q = true ∧
-    isEPInternal .Q .Num = true ∧
-    isEPInternal .Num .D = true := by decide
+/-- The two readings of a quantity noun. -/
+inductive Reading where
+  | quantificational
+  | descriptive
+  deriving DecidableEq, Repr, Fintype
 
-/-- Nominal heads are EP-external to verbal projections:
-    a DP in Spec,vP is always EP-external (nominal ≠ verbal). -/
-theorem nominal_external_to_verbal :
-    isEPExternal .D .v = true ∧
-    isEPExternal .Q .T = true ∧
-    isEPExternal .n .v = true := by decide
+/-- The structure of a binominal of a given type under a reading. -/
+def structureOf : BinominalType → Reading → Structure
+  | .qualitative, _ => equative
+  | _, .quantificational => quantificational
+  | _, .descriptive => descriptive
+
+/-- With a plural coda, a quantity noun can be elided exactly when the verb agrees in the
+singular: both follow from the noun heading the projection. -/
+theorem elidable_first_iff_singular (b : BinominalType) (r : Reading) (hb : b ≠ .qualitative) :
+    (structureOf b r).Elidable .first ↔ (structureOf b r).agreement .plural = .singular := by
+  cases b <;> cases r <;> simp_all [structureOf, Structure.Elidable, Structure.agreement,
+    Nominal.number, quantificational, descriptive]
+
+/-! ### The paper's examples -/
+
+/-- A row's binominal type, from the fragment entry of its first noun. -/
+def binominalType? (x : LinguisticExample) : Option BinominalType :=
+  (x.feature? "noun").bind λ f => (lookup f).map (·.binominalType)
+
+private def readings : List (String × Reading) :=
+  [("quantificational", .quantificational), ("descriptive", .descriptive)]
+
+/-- The structure the paper assigns to a row: from its first noun's type and, for a quantity
+noun, its reading, quantificational unless recorded otherwise. -/
+def structure? (x : LinguisticExample) : Option Structure :=
+  (binominalType? x).map λ b =>
+    structureOf b ((x.parse? "reading" readings).getD .quantificational)
+
+private def nominals : List (String × Nominal) := [("first", .first), ("coda", .coda)]
+
+private def numbers : List (String × Number) := [("singular", .singular), ("plural", .plural)]
+
+/-- Whether the ellipsis reading of a row is acceptable: the reading's judgment when one is
+recorded, else the row's. -/
+def EllipsisAcceptable (x : LinguisticExample) : Prop :=
+  (x.readings.lookup "ellipsis").getD x.judgment = .acceptable
+
+instance (x : LinguisticExample) : Decidable (EllipsisAcceptable x) := by
+  unfold EllipsisAcceptable; infer_instance
+
+/-- The rows that elide a nominal: the ellipsis reading is acceptable exactly when the row's
+structure licenses eliding that nominal. -/
+theorem ellipsis_matches :
+    ∀ x ∈ Examples.all, ∀ s, structure? x = some s → ∀ e, x.parse? "elided" nominals = some e →
+      (EllipsisAcceptable x ↔ s.Elidable e) := by
+  decide +kernel
+
+/-- The rows that record verbal agreement agree with the Num head of the row's structure. -/
+theorem agreement_matches :
+    ∀ x ∈ Examples.all, ∀ s, structure? x = some s → (x.feature? "agreement").isSome →
+      x.parse? "agreement" numbers = (x.parse? "codaNumber" numbers).map s.agreement := by
+  decide +kernel
+
+/-- The diagnostics of the rows: sub-extraction and argument structure succeed exactly in a
+structured gap, and contextual resolution exactly in an indexical one. -/
+theorem diagnostics_match :
+    ∀ x ∈ Examples.all, ∀ s, structure? x = some s →
+      (x.feature? "diagnostic" = some "subextraction" ∨
+          x.feature? "diagnostic" = some "argumentStructure" →
+        (x.judgment = .acceptable ↔ s.gap.Structured)) ∧
+      (x.feature? "diagnostic" = some "contextResolved" →
+        (x.judgment = .acceptable ↔ s.gap.ContextResolved)) := by
+  decide +kernel
 
 end Saab2026

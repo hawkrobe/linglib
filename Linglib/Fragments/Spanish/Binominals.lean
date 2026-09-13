@@ -45,6 +45,8 @@ def serie     : BinominalNoun := ⟨"serie",     Head.n_uFem,  .pseudoPartitive,
 def montón    : BinominalNoun := ⟨"montón",    Head.n_plain, .quantificational, "heap/lot"⟩
 def pila      : BinominalNoun := ⟨"pila",      Head.n_uFem,  .quantificational, "pile"⟩
 def cantidad  : BinominalNoun := ⟨"cantidad",  Head.n_uFem,  .quantificational, "quantity"⟩
+/-- Rioplatense *bocha* 'ball', a quantificational noun. -/
+def bocha     : BinominalNoun := ⟨"bocha",     Head.n_uFem,  .quantificational, "ball/lot"⟩
 
 -- Expressive nouns (qualitative)
 def mierda    : BinominalNoun := ⟨"mierda",    Head.n_uFem,  .qualitative,      "shit"⟩
@@ -53,16 +55,9 @@ def desastre  : BinominalNoun := ⟨"desastre",  Head.n_plain, .qualitative,    
 
 /-- All binominal noun entries. -/
 def allNouns : List BinominalNoun :=
-  [grupo, conjunto, serie, montón, pila, cantidad, mierda, maravilla, desastre]
+  [grupo, conjunto, serie, montón, pila, cantidad, bocha, mierda, maravilla, desastre]
 
-/-- Group and quantity nouns license NP-ellipsis; expressive nouns do not. -/
-theorem grupo_licenses_npe : grupo.binominalType.licensesNPE = true := rfl
-theorem monton_licenses_npe : montón.binominalType.licensesNPE = true := rfl
-theorem mierda_blocks_npe : mierda.binominalType.licensesNPE = false := rfl
-
-/-- Every noun's NPE licensing is determined by its binominal type. -/
-theorem all_nouns_npe_from_type :
-    allNouns.all (λ n => n.binominalType.licensesNPE = n.binominalType.hasNumE) = true := by
-  decide
+/-- The entry with a given form. -/
+def lookup (form : String) : Option BinominalNoun := allNouns.find? (·.form == form)
 
 end Spanish.Binominals
