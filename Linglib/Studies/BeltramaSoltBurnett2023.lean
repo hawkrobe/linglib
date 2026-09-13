@@ -27,7 +27,7 @@ contrasts sharpen where precision is pragmatically idle.
 * `exp1Mean`, `exp2Mean` — the per-dimension cell means (Experiment 1: 216 recruited, 61
   excluded, within-subjects; Experiment 2: 960 recruited, 150 excluded, one-trial
   between-subjects).
-* `bsbField` — the sign-valued indexical field, `0` on the underspecified variant (the
+* `bsbField` — the association field of signs, `0` on the underspecified variant (the
   neutral-diagnostic reading of the general discussion); `bsbGroundedField` — its
   [burnett-2019] Eckert–Montague lift.
 
@@ -54,7 +54,7 @@ contrasts sharpen where precision is pragmatically idle.
 
 namespace BeltramaSoltBurnett2023
 
-open SocialMeaning.IndexicalField
+open SocialMeaning
 open SocialMeaning.SCM
 
 /-! ### Stimuli and the three-way contrast -/
@@ -199,26 +199,25 @@ theorem sign_alignment :
 
 /-! ### The three-way indexical field -/
 
-/-- The three-way indexical field: idealized signs (±1) matching the ordering theorems above,
+/-- The three-way association field: idealized signs (±1) matching the ordering theorems above,
     with `0` on the underspecified variant. The `0` encodes the neutral-diagnostic reading of
     the general discussion (p. 828), on which the underspecified variant reveals which
     endpoint drives each contrast; the paper's alternative — round numbers carrying their own
     chameleonic indexicality — is not modeled. -/
-def bsbField : IndexicalField Variant SocialDimension :=
-  { association := λ v d => match v, d with
-    | .precise,       .competence      =>  1
-    | .precise,       .warmth          => -1
-    | .precise,       .antiSolidarity  =>  1
-    | .approximate,   .competence      => -1
-    | .approximate,   .warmth          =>  1
-    | .approximate,   .antiSolidarity  => -1
-    | .underspecified, _               =>  0
-  , order := .third }
+def bsbField : AssociationField Variant SocialDimension ℚ := .of λ
+  | .precise, .competence => 1
+  | .precise, .warmth => -1
+  | .precise, .antiSolidarity => 1
+  | .approximate, .competence => -1
+  | .approximate, .warmth => 1
+  | .approximate, .antiSolidarity => -1
+  | .underspecified, _ => 0
 
 /-- Precise and approximate are antipodal: algebraically opposite associations on
     every dimension. -/
 theorem opposite_directions : bsbField.Antipodal .precise .approximate := by
-  intro d; cases d <;> simp [bsbField]
+  show bsbField .precise = -bsbField .approximate
+  funext d; cases d <;> decide
 
 /-! ### The underspecified diagnostic (pp. 827–828)
 
@@ -368,7 +367,7 @@ open SocialMeaning.EckertMontague
 
 /-- The field as a [burnett-2019] grounded field over the SCM property space. -/
 def bsbGroundedField : GroundedField Variant scmSpace :=
-  fromIndexicalField bsbField
+  fromAssociationField bsbField
 
 /-- Precise speech indexes {competent, cold, antiSolidary}. -/
 theorem precise_scmProperties :

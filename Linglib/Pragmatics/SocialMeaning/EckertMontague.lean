@@ -21,10 +21,10 @@ This is analogous to Montague's lift from entities to generalized
 quantifiers: a variant doesn't denote a single persona but a *set* of
 personae — those consistent with the social properties it indexes.
 
-## Bridge: `fromIndexicalField`
+## Bridge: `fromAssociationField`
 
-The `fromIndexicalField` function converts sign-valued indexical fields
-(from `SocialMeaning.IndexicalField`) into grounded fields over the SCM property
+The `fromAssociationField` function converts association fields
+(`SocialMeaning.AssociationField`) into grounded fields over the SCM property
 space. This bridges existing studies (BSB2022, B&S2024) to Burnett's
 formalism:
 - positive association → positive pole property
@@ -50,7 +50,7 @@ open SocialMeaning.SCM
     internally consistent (no incompatible properties). -/
 structure GroundedField (Variant : Type) (ps : PropertySpace) where
   /-- Properties indexed by each variant. -/
-  indexedProperties : Variant → Finset ps.Property
+  indexedProperties : IndexicalField Variant ps.Property
   /-- The indexed property set is always consistent. -/
   indexed_consistent : ∀ (v : Variant), ps.isConsistent (indexedProperties v) = true
 
@@ -82,24 +82,24 @@ theorem emField_antitone {Variant : Type} {ps : PropertySpace}
 -- ============================================================================
 
 /-- Decidable predicate: whether an SCM property is indexed by a variant
-    given a sign-valued field over social dimensions.
+    given an association field over social dimensions.
 
     Maps association signs to SCM poles:
     - `association(v, d) > 0` → positive pole of dimension d
     - `association(v, d) < 0` → negative pole of dimension d
     - `association(v, d) = 0` → no property on dimension d -/
 def scmPropertyIndexed {Variant : Type}
-    (field : SocialMeaning.IndexicalField.IndexicalField Variant SocialDimension)
+    (field : AssociationField Variant SocialDimension ℚ)
     (v : Variant) : SCMProperty → Prop
-  | .competent     => field.association v .competence > 0
-  | .incompetent   => field.association v .competence < 0
-  | .warm          => field.association v .warmth > 0
-  | .cold          => field.association v .warmth < 0
-  | .solidary      => field.association v .antiSolidarity < 0
-  | .antiSolidary  => field.association v .antiSolidarity > 0
+  | .competent     => field v .competence > 0
+  | .incompetent   => field v .competence < 0
+  | .warm          => field v .warmth > 0
+  | .cold          => field v .warmth < 0
+  | .solidary      => field v .antiSolidarity < 0
+  | .antiSolidary  => field v .antiSolidarity > 0
 
 instance {Variant : Type}
-    (field : SocialMeaning.IndexicalField.IndexicalField Variant SocialDimension)
+    (field : AssociationField Variant SocialDimension ℚ)
     (v : Variant) : DecidablePred (scmPropertyIndexed field v) :=
   fun prop => match prop with
   | .competent     => inferInstanceAs (Decidable (_ > _))
@@ -110,7 +110,7 @@ instance {Variant : Type}
   | .antiSolidary  => inferInstanceAs (Decidable (_ > _))
 
 def scmPropertiesFromField {Variant : Type}
-    (field : SocialMeaning.IndexicalField.IndexicalField Variant SocialDimension)
+    (field : AssociationField Variant SocialDimension ℚ)
     (v : Variant) : Finset SCMProperty :=
   Finset.univ.filter (scmPropertyIndexed field v)
 
@@ -118,7 +118,7 @@ def scmPropertiesFromField {Variant : Type}
     consistent: no variant can index both poles of the same dimension,
     because `x > 0` and `x < 0` cannot both hold. -/
 theorem scmPropertiesFromField_consistent {Variant : Type}
-    (field : SocialMeaning.IndexicalField.IndexicalField Variant SocialDimension)
+    (field : AssociationField Variant SocialDimension ℚ)
     (v : Variant) :
     scmSpace.isConsistent (scmPropertiesFromField field v) = true := by
   simp only [PropertySpace.isConsistent]
@@ -130,10 +130,10 @@ theorem scmPropertiesFromField_consistent {Variant : Type}
     simp only [scmPropertyIndexed, scmIncompatible, scmSpace] at * <;>
     first | rfl | (exfalso; linarith)
 
-/-- Convert a sign-valued `IndexicalField` to a `GroundedField` over
+/-- Convert an association field over the SCM dimensions to a `GroundedField` over
     the SCM property space. -/
-def fromIndexicalField {Variant : Type}
-    (field : SocialMeaning.IndexicalField.IndexicalField Variant SocialDimension) :
+def fromAssociationField {Variant : Type}
+    (field : AssociationField Variant SocialDimension ℚ) :
     GroundedField Variant scmSpace :=
   { indexedProperties := scmPropertiesFromField field
     indexed_consistent := scmPropertiesFromField_consistent field }

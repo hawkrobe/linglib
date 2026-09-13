@@ -1,4 +1,4 @@
-import Linglib.Pragmatics.SocialMeaning.IndexicalField
+import Mathlib.Order.Monotone.Basic
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.DeriveFintype
 
@@ -18,13 +18,11 @@ toward the standard with formality (`StyleShifted`). Four variables show both
 real deviation, the lower class neither stratified against the other classes nor shifting
 with style (`oh_real_deviation`), which Labov takes to mean that (oh) is not a variable for
 lower-class speakers, while the other two classes shift regularly
-(`oh_shift_working_middle`). The (ing) indices of Chapter 10 by age and class are
-`StratificationProfile`s: older speakers show the stable stigmatized pattern of Case I-A
-except that in casual speech the highest class does not use the least */in/*, a crossover
-between the two middle groups (`ingOlder_case_IA`, `ingOlder_crossover`). All five
-phonological variables and (ing) are markers, stratified by class and shifting with style,
-with (r) a change from above, (æh) and (oh) changes from below, and (th), (dh), and (ing)
-stable (`variableBehavior`, `all_markers`).
+(`oh_shift_working_middle`). The (ing) indices of Chapter 10 by age and class show, for
+older speakers, the stable stigmatized pattern of Case I-A, except that in casual speech the
+highest class does not use the least */in/*, a crossover between the two middle groups
+(`ingOlder_case_IA`, `ingOlder_crossover`). Of the five phonological variables, (r) is a change
+from above, (æh) and (oh) changes from below, and (th) and (dh) stable (`Variable.change`).
 
 ## Implementation notes
 
@@ -36,7 +34,9 @@ measured differ by variable, five for (r), four for the vowels, three for the co
 (r) crossover of the lower middle class above the upper middle class in the two formal
 styles appears in Figures 7.10 and 7.11 over six class groups without a table and is not
 encoded; the crossover predicate is exercised on the (ing) table instead. The (ing) table
-groups the socioeconomic index as 0–2, 3–6, 7–8, and 9, differently from Table 7.8.
+groups the socioeconomic index as 0–2, 3–6, 7–8, and 9, differently from Table 7.8. The
+book's classification of all five variables as markers is their class stratification together
+with their style shifting, the theorems above, and is not restated as a table.
 
 ## References
 
@@ -44,8 +44,6 @@ groups the socioeconomic index as 0–2, 3–6, 7–8, and 9, differently from T
 -/
 
 namespace Labov2006
-
-open SocialMeaning.IndexicalField
 
 /-! ### Class groups -/
 
@@ -128,6 +126,27 @@ inductive Variable where
   | th
   | dh
   deriving DecidableEq, Repr
+
+/-- The contextual styles of Chapter 4, in order of the attention paid to speech, are casual
+speech (A), careful interview speech (B), reading (C), word lists (D), and minimal pairs (D'). -/
+inductive ContextualStyle where
+  | casual
+  | careful
+  | reading
+  | wordList
+  | minimalPair
+  deriving DecidableEq, Repr
+
+/-- The rank of a style. -/
+@[simp] def ContextualStyle.rank : ContextualStyle → ℕ
+  | .casual => 0
+  | .careful => 1
+  | .reading => 2
+  | .wordList => 3
+  | .minimalPair => 4
+
+instance : LinearOrder ContextualStyle :=
+  LinearOrder.lift' ContextualStyle.rank (λ a b h => by cases a <;> cases b <;> simp_all)
 
 /-- Whether a higher index is closer to the standard: so for (r), the percentage of the
 constricted variant, and for the vowel-height indices (æh) and (oh); not for (th) and (dh),
@@ -269,57 +288,55 @@ inductive INGStyle where
 instance : LinearOrder INGStyle :=
   LinearOrder.lift' INGStyle.rank (λ a b h => by cases a <;> cases b <;> simp_all)
 
-/-- The (ing) index, the percentage of */in/*, of speakers aged 20–39. -/
-def ingYoung : StratificationProfile INGClass INGStyle where
-  index
-    | .sc1, .A => 90 | .sc1, .B => 75
-    | .sc2, .A => 60 | .sc2, .B => 45
-    | .sc3, .A => 43 | .sc3, .B => 50
-    | .sc4, .A => 0 | .sc4, .B => 2
+/-- The (ing) index, the percentage of */in/*, of speakers aged 20–39, by class and style. -/
+def ingYoung : INGClass → INGStyle → ℚ
+  | .sc1, .A => 90 | .sc1, .B => 75
+  | .sc2, .A => 60 | .sc2, .B => 45
+  | .sc3, .A => 43 | .sc3, .B => 50
+  | .sc4, .A => 0 | .sc4, .B => 2
 
 /-- The (ing) index of speakers aged 40 and over. -/
-def ingOlder : StratificationProfile INGClass INGStyle where
-  index
-    | .sc1, .A => 85 | .sc1, .B => 50
-    | .sc2, .A => 48 | .sc2, .B => 27
-    | .sc3, .A => 21 | .sc3, .B => 12
-    | .sc4, .A => 23 | .sc4, .B => 2
+def ingOlder : INGClass → INGStyle → ℚ
+  | .sc1, .A => 85 | .sc1, .B => 50
+  | .sc2, .A => 48 | .sc2, .B => 27
+  | .sc3, .A => 21 | .sc3, .B => 12
+  | .sc4, .A => 23 | .sc4, .B => 2
 
-/-- Younger speakers are stratified in casual speech. -/
-theorem ingYoung_monotone_casual : ingYoung.isMonotoneDown [.A] := by
-  unfold StratificationProfile.isMonotoneDown
-  decide
+/-- Younger speakers are stratified in casual speech, the index falling with class. -/
+theorem ingYoung_antitone_casual : Antitone (ingYoung · .A) := by
+  intro a b h; cases a <;> cases b <;> revert h <;> decide
 
 /-- Older speakers show the pattern of Case I-A, a stigmatized feature not involved in change:
 every class shifts toward the standard in careful speech, in which the classes are
 stratified. -/
-theorem ingOlder_case_IA :
-    ingOlder.hasStyleShift [.sc1, .sc2, .sc3, .sc4] ∧ ingOlder.isMonotoneDown [.B] := by
-  unfold StratificationProfile.hasStyleShift StratificationProfile.isMonotoneDown
-  decide
+theorem ingOlder_case_IA : (∀ g, Antitone (ingOlder g)) ∧ Antitone (ingOlder · .B) := by
+  refine ⟨λ g a b h => ?_, λ a b h => ?_⟩ <;> cases a <;> cases b <;> revert h <;>
+    first | cases g <;> decide | decide
 
 /-- The one departure from Case I-A: in casual speech the highest group does not use the least
 */in/*, crossing the lower middle group. -/
-theorem ingOlder_crossover : ingOlder.hasCrossover .sc3 .sc4 .B .A := by
-  unfold StratificationProfile.hasCrossover
+theorem ingOlder_crossover :
+    ingOlder .sc4 .B < ingOlder .sc3 .B ∧ ingOlder .sc3 .A < ingOlder .sc4 .A := by
   decide
 
-/-! ### The variables' behaviour -/
+/-! ### The variables' change status -/
 
-/-- The behaviour of each variable: all are markers, stratified by class and shifting with
-style; (r) is a change from above, (æh) and (oh) changes from below, (th) and (dh) stable. -/
-def variableBehavior : Variable → VariableBehavior
-  | .r => ⟨.second, .changeFromAbove⟩
-  | .aeh => ⟨.second, .changeFromBelow⟩
-  | .oh => ⟨.second, .changeFromBelow⟩
-  | .th => ⟨.second, .stable⟩
-  | .dh => ⟨.second, .stable⟩
+/-- A variable is stable, or a change from above, the prestige variant spreading from the
+highest-status group as an overt norm, or a change from below, spreading from interior groups
+below conscious awareness. -/
+inductive ChangeStatus where
+  | stable
+  | changeFromAbove
+  | changeFromBelow
+  deriving DecidableEq, Repr
 
-/-- Every phonological variable of the survey is a marker. -/
-theorem all_markers (v : Variable) : (variableBehavior v).isMarker := by
-  cases v <;> rfl
-
-/-- (ing), Case I-A: a stable stigmatized marker. -/
-def ingBehavior : VariableBehavior := ⟨.second, .stable⟩
+/-- Each variable's change status, (r) a change from above, (æh) and (oh) changes from below,
+(th) and (dh) stable. -/
+def Variable.change : Variable → ChangeStatus
+  | .r => .changeFromAbove
+  | .aeh => .changeFromBelow
+  | .oh => .changeFromBelow
+  | .th => .stable
+  | .dh => .stable
 
 end Labov2006

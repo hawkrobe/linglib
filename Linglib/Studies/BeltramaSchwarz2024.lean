@@ -23,7 +23,7 @@ it would also predict globally more charitable TVJ responses, which is not obser
 ## Main definitions
 
 * `precisionField` — [beltrama-solt-burnett-2023]'s measured indexical field pulled back
-  (`IndexicalField.comap`) to the two `PrecisionMode`s manipulated here.
+  (`Matrix.submatrix`) to the two `PrecisionMode`s manipulated here.
 * `speakerHalo`, `personaShift` — the persona-scaled halo and the rejection shift,
   the sign of the halo narrowing relative to baseline.
 * `RejectionPrejudicial`, `predictedShift` — the task gate suppressing rejection shifts.
@@ -57,7 +57,7 @@ stimulus and observed directions are the rows of `Data.Examples.BeltramaSchwarz2
 
 namespace BeltramaSchwarz2024
 
-open SocialMeaning.IndexicalField
+open SocialMeaning
 open SocialMeaning.SCM
 open SocialMeaning.EckertMontague
 open Numerals.Precision
@@ -98,8 +98,8 @@ def toVariant : PrecisionMode → BeltramaSoltBurnett2023.Variant
 /-- The indexical field for numeral precision: [beltrama-solt-burnett-2023]'s measured
     field pulled back along `toVariant` — grounded by construction, not by a stipulated
     twin. -/
-def precisionField : IndexicalField PrecisionMode SocialDimension :=
-  BeltramaSoltBurnett2023.bsbField.comap toVariant
+def precisionField : AssociationField PrecisionMode SocialDimension ℚ :=
+  BeltramaSoltBurnett2023.bsbField.submatrix toVariant id
 
 /-- Exact and approximate index opposite ways on every dimension, inherited along the
     pullback. -/
@@ -119,12 +119,12 @@ def Persona.dimension : Persona → SocialDimension
 /-- Production and comprehension cohere: the mode a persona favors positively indexes
     the dimension it foregrounds. -/
 theorem bidirectionality (p : Persona) :
-    precisionField.indexes p.precision p.dimension := by
+    precisionField.Indexes p.precision p.dimension := by
   cases p <;> exact one_pos
 
 /-- The precision field as a [burnett-2019] grounded field over the SCM space. -/
 def precisionGroundedField : GroundedField PrecisionMode scmSpace :=
-  fromIndexicalField precisionField
+  fromAssociationField precisionField
 
 /-- Precise speech indexes {competent, cold, antiSolidary}. -/
 theorem exact_scmProperties :
@@ -171,10 +171,10 @@ def Persona.haloMultiplier : Persona → ℚ
 /-- A persona narrows the halo exactly when its favored mode indexes away from Warmth
     in the inherited field. -/
 theorem haloMultiplier_coheres (p : Persona) :
-    p.haloMultiplier < 1 ↔ precisionField.association p.precision .warmth < 0 := by
+    p.haloMultiplier < 1 ↔ precisionField p.precision .warmth < 0 := by
   cases p <;>
-    norm_num [Persona.haloMultiplier, precisionField, IndexicalField.comap, toVariant,
-      Persona.precision, BeltramaSoltBurnett2023.bsbField, Function.comp]
+    norm_num [Persona.haloMultiplier, precisionField, Matrix.submatrix_apply, toVariant,
+      Persona.precision, BeltramaSoltBurnett2023.bsbField]
 
 /-- Speaker-conditioned halo width: the substrate `haloWidth` scaled by the condition's
     tolerance multiplier (baseline `1`). -/
