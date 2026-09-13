@@ -313,16 +313,15 @@ Flat readers over `Verb.frames`/`Verb.readings`, preserving the flat
 enum-based call syntax: the citation frame's complement/control type and
 the alternate frame's, when present. -/
 
-/-- The citation (first) frame's flat `ComplementType` cell. -/
+/-- The citation (first) frame's flat `ComplementType` cell; `.none` for an
+    intransitive and for a frame shape the enum has no cell for. -/
 def Verb.complementType (v : Verb) : ComplementType :=
-  (v.frames.head?.bind Frame.toComplementType).getD .none
+  (v.frames.head?.bind Frame.complementType?).getD .none
 
-/-- The alternate (second) frame's flat `ComplementType` cell. A second
-    frame richer than any enum cell reads as `none` — Buryat *hanaxa*'s
-    genitive-subject nominalized frame has `altComplementType = none`
-    despite a recorded second frame. -/
+/-- The alternate (second) frame's flat `ComplementType` cell, `none` when
+    there is no second frame or it has a shape outside the enum. -/
 def Verb.altComplementType (v : Verb) : Option ComplementType :=
-  v.frames[1]?.bind Frame.toComplementType
+  v.frames[1]?.bind Frame.complementType?
 
 /-- The control type of the reading keyed to the citation frame. -/
 def Verb.controlType (v : Verb) : ControlType :=
@@ -360,3 +359,16 @@ instance (v : Verb) (f : Mood.Illocutionary) :
     rogatives: know, wonder, ask). Derived from `frames`. -/
 def Verb.takesQuestionBase (v : Verb) : Bool :=
   decide (v.takesForce .interrogative)
+
+/-- Some frame of the verb has a clausal position: the verb selects a CP or
+    reduced clause ([schwarzer-2026]'s CP-selecting verbs). -/
+def Verb.TakesClausal (v : Verb) : Prop := ∃ fr ∈ v.frames, fr.HasClausal
+
+instance (v : Verb) : Decidable v.TakesClausal :=
+  inferInstanceAs (Decidable (∃ fr ∈ v.frames, _))
+
+/-- Some frame of the verb has a nominal position: the verb selects a DP. -/
+def Verb.TakesNominal (v : Verb) : Prop := ∃ fr ∈ v.frames, fr.HasNominal
+
+instance (v : Verb) : Decidable v.TakesNominal :=
+  inferInstanceAs (Decidable (∃ fr ∈ v.frames, _))

@@ -679,32 +679,24 @@ theorem sorgen_is_uncertainty :
 /-- Non-CP-selecting verbs cannot take clausal complements.
     Their only frame is `Frame.np`. -/
 theorem nonCPSelecting_profile :
-    beenden.toVerb.canTakeClausalComplement = false ∧
-    streichen.toVerb.canTakeClausalComplement = false ∧
-    uebereilen.toVerb.canTakeClausalComplement = false ∧
-    entwickeln.toVerb.canTakeClausalComplement = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
+    ¬ beenden.toVerb.TakesClausal ∧ ¬ streichen.toVerb.TakesClausal ∧
+    ¬ uebereilen.toVerb.TakesClausal ∧ ¬ entwickeln.toVerb.TakesClausal := by
+  decide
 
 /-- CP-and-DP-selecting verbs can take clausal complements.
     Their `frames` include a `Frame.finiteClause` alternate. -/
 theorem cpSelecting_profile :
-    veranlassen.toVerb.canTakeClausalComplement = true ∧
-    vergessen.toVerb.canTakeClausalComplement = true ∧
-    erwarten.toVerb.canTakeClausalComplement = true ∧
-    beschliessen.toVerb.canTakeClausalComplement = true :=
-  ⟨rfl, rfl, rfl, rfl⟩
+    veranlassen.toVerb.TakesClausal ∧ vergessen.toVerb.TakesClausal ∧
+    erwarten.toVerb.TakesClausal ∧ beschliessen.toVerb.TakesClausal := by
+  decide
 
 /-- All 8 experimental verbs can take nominal (DP) complements. -/
 theorem all_experimental_select_dp :
-    beenden.toVerb.canTakeNominalComplement = true ∧
-    streichen.toVerb.canTakeNominalComplement = true ∧
-    uebereilen.toVerb.canTakeNominalComplement = true ∧
-    entwickeln.toVerb.canTakeNominalComplement = true ∧
-    veranlassen.toVerb.canTakeNominalComplement = true ∧
-    vergessen.toVerb.canTakeNominalComplement = true ∧
-    erwarten.toVerb.canTakeNominalComplement = true ∧
-    beschliessen.toVerb.canTakeNominalComplement = true :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+    beenden.toVerb.TakesNominal ∧ streichen.toVerb.TakesNominal ∧
+    uebereilen.toVerb.TakesNominal ∧ entwickeln.toVerb.TakesNominal ∧
+    veranlassen.toVerb.TakesNominal ∧ vergessen.toVerb.TakesNominal ∧
+    erwarten.toVerb.TakesNominal ∧ beschliessen.toVerb.TakesNominal := by
+  decide
 
 -- ============================================================================
 -- § 11: Cross-Linguistic Bridge Theorems

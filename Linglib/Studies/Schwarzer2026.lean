@@ -120,44 +120,44 @@ theorem german_vfinal_grounds_preverbal :
 -- ============================================================================
 
 /-! Each experimental verb is classified as CP-selecting or non-CP-selecting
-    by deriving the classification from its `complementType` and
-    `altComplementType` fields in the German fragment lexicon. -/
+    by deriving the classification from its frames in the German fragment
+    lexicon (`Verb.TakesClausal`). -/
 
 -- Non-CP-selecting verbs: DP complement only
 
 /-- *beenden* "end" does not take a *dass*-clause complement. -/
 theorem beenden_nonselecting :
-    beenden.toVerb.canTakeClausalComplement = false := rfl
+    ¬ beenden.toVerb.TakesClausal := by decide
 
 /-- *streichen* "cancel" does not take a *dass*-clause complement. -/
 theorem streichen_nonselecting :
-    streichen.toVerb.canTakeClausalComplement = false := rfl
+    ¬ streichen.toVerb.TakesClausal := by decide
 
 /-- *übereilen* "rush" does not take a *dass*-clause complement. -/
 theorem uebereilen_nonselecting :
-    uebereilen.toVerb.canTakeClausalComplement = false := rfl
+    ¬ uebereilen.toVerb.TakesClausal := by decide
 
 /-- *entwickeln* "develop" does not take a *dass*-clause complement. -/
 theorem entwickeln_nonselecting :
-    entwickeln.toVerb.canTakeClausalComplement = false := rfl
+    ¬ entwickeln.toVerb.TakesClausal := by decide
 
 -- CP-and-DP-selecting verbs
 
 /-- *veranlassen* "induce" takes both DP and *dass*-clause. -/
 theorem veranlassen_selecting :
-    veranlassen.toVerb.canTakeClausalComplement = true := rfl
+    veranlassen.toVerb.TakesClausal := by decide
 
 /-- *vergessen* "forget" takes both DP and *dass*-clause. -/
 theorem vergessen_selecting :
-    vergessen.toVerb.canTakeClausalComplement = true := rfl
+    vergessen.toVerb.TakesClausal := by decide
 
 /-- *erwarten* "expect" takes both DP and *dass*-clause. -/
 theorem erwarten_selecting :
-    erwarten.toVerb.canTakeClausalComplement = true := rfl
+    erwarten.toVerb.TakesClausal := by decide
 
 /-- *beschließen* "decide" takes both DP and *dass*-clause. -/
 theorem beschliessen_selecting :
-    beschliessen.toVerb.canTakeClausalComplement = true := rfl
+    beschliessen.toVerb.TakesClausal := by decide
 
 -- ============================================================================
 -- § 3: Competing Analyses & Structural Predictions
@@ -416,15 +416,13 @@ def nonSelectingVerbs : List GermanVerbEntry :=
 def selectingVerbs : List GermanVerbEntry :=
   [veranlassen, vergessen, erwarten, beschliessen]
 
-/-- All non-selecting verbs lack clausal complement capability. -/
-theorem nonSelecting_all_false :
-    nonSelectingVerbs.all
-      (λ v => !v.toVerb.canTakeClausalComplement) = true := by native_decide
+/-- No non-selecting verb takes a clausal complement. -/
+theorem nonSelecting_all_false : ∀ v ∈ nonSelectingVerbs, ¬ v.toVerb.TakesClausal := by
+  decide
 
-/-- All selecting verbs have clausal complement capability. -/
-theorem selecting_all_true :
-    selectingVerbs.all
-      (λ v => v.toVerb.canTakeClausalComplement) = true := by native_decide
+/-- Every selecting verb takes a clausal complement. -/
+theorem selecting_all_true : ∀ v ∈ selectingVerbs, v.toVerb.TakesClausal := by
+  decide
 
 /-- No verb is in both lists. -/
 theorem selecting_nonselecting_disjoint :
