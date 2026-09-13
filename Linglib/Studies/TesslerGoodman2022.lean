@@ -2,7 +2,6 @@ import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Adjective
 import Linglib.Pragmatics.RSA.Canonical
 import Linglib.Data.Examples.TesslerGoodman2022
-import Linglib.Semantics.Quantification.DomainRestriction
 
 /-!
 # [tessler-goodman-2022]: Warm (for Winter)
@@ -1750,53 +1749,5 @@ language: "Birds fly south in the winter" ≈ P(x flies south | x is a bird) > �
 The comparison class model (this file) infers which c maximizes the pragmatic
 listener's posterior. The generics model infers which θ is pragmatically
 optimal. Same RSA machinery applied to different latent variables. -/
-
--- ============================================================================
--- § 14. Comparison Class as Nested Domain Restriction
--- ============================================================================
-
-/-! The comparison class hierarchy is structurally a `DDRP`:
-subordinate (restricted) ⊆ superordinate (unrestricted). Going from subordinate
-to superordinate widens the reference population.
-
-This connects comparison class inference to the same nesting pattern used
-by [ritchie-schiller-2024]'s domain restriction possibilities. -/
-
-open Quantification.DomainRestriction (DDRP)
-
-private def ComparisonClass.toFin : ComparisonClass → Fin 2
-  | .subordinate => 0
-  | .superordinate => 1
-
-private theorem ComparisonClass.toFin_injective :
-    Function.Injective ComparisonClass.toFin := by
-  intro a b h; cases a <;> cases b <;> simp_all [ComparisonClass.toFin]
-
-instance : LinearOrder ComparisonClass :=
-  LinearOrder.lift' ComparisonClass.toFin ComparisonClass.toFin_injective
-
-instance : OrderTop ComparisonClass where
-  top := .superordinate
-  le_top a := by cases a <;> decide
-
-/-- Whether a height has nonzero prior weight for a given kind. -/
-def isTypical (k : Kind) (h : Height) : Bool :=
-  heightWeight k h > 0
-
-/-- The comparison class hierarchy as a nested restriction on heights. -/
-def compClassRestriction (k : Kind) : DDRP ComparisonClass Height where
-  region
-    | .subordinate => λ h => isTypical k h = true
-    | .superordinate => Set.univ
-  monotone s₁ s₂ h d hr := by
-    cases s₁ <;> cases s₂ <;> simp_all [Set.mem_univ]
-    · exact absurd h (by decide)
-  top_total := rfl
-
-/-- Nesting: subordinate ⊆ superordinate for all kinds. -/
-theorem compClass_nesting (k : Kind) (h : Height) :
-    h ∈ (compClassRestriction k).region .subordinate →
-    h ∈ (compClassRestriction k).region .superordinate :=
-  λ hr => (compClassRestriction k).monotone (by decide) hr
 
 end TesslerGoodman2022

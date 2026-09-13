@@ -102,9 +102,7 @@ theorem identity_belief_eq_world_marginal
           = Σ_b beliefMarginal(a, b) · eval(b, φ)
           = Σ_w worldMarginal(a, w) · eval(w, φ)    [by identity_belief_eq_world_marginal]
 
-    The second line is exactly the L1 listener's posterior expectation
-    (via the PMF-face bridge `rsa_btom_bridge` in
-    `Studies/RitchieSchiller2024.lean`). -/
+    The second line is the pragmatic listener's posterior expectation. -/
 theorem btomCredence_eq_world_expectation
     (model : BToMModel F A W W D S M W)
     (h_percept : ∀ w p, model.perceptModel w p = if p = w then 1 else 0)
