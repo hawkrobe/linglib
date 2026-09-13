@@ -4,50 +4,37 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Semantics.Degree.Granularity
-import Linglib.Fragments.English.NumeralModifiers
 
 /-!
-# [sauerland-stateva-2011]: Two Types of Vagueness
-[sauerland-stateva-2011] [krifka-2007] [lasersohn-1999]
+# Sauerland & Stateva (2011): Two Types of Vagueness
 
-[sauerland-stateva-2011] argue from the distribution of *approximators* that
-vagueness comes in two kinds: **scalar** (point-denoting scalar terms —
-numerals, *6 o'clock* — interpreted at a contextual granularity, following
-[krifka-2007]) and **epistemic** (*heap*, *Beef Stroganoff* — extension
-varies across indistinguishable worlds). Scalar approximators (*exactly*,
-*approximately*, *completely*, *more or less*) are granularity *setters*:
-(19) resets the context's granularity parameter to the finest
-(*exactly*) or coarsest (*approximately*) available level — here
-`Degree.Granularity.finestWidth`/`coarsestWidth`. Epistemic approximators
-(*definitely*, *maybe*) quantify over worlds instead, which is why the two
-classes distribute complementarily (§6.2, §6.4) — the argument the
-distribution table below reproduces. §6.3.5: stacked scalar
-approximators are vacuous, since the first reset leaves a singleton
-granularity set — `second_reset_vacuous`.
+This file formalizes the chapter's argument from the distribution of approximators that
+vagueness comes in two kinds. Scalar vagueness belongs to point-denoting scalar terms,
+numerals and clock times, interpreted at a contextual granularity after [krifka-2007], and
+epistemic vagueness to terms like *heap* whose extension varies across indistinguishable
+worlds. Scalar approximators such as *exactly* and *approximately* are granularity setters,
+resetting the context's granularity to the finest or the coarsest available level
+(`Degree.Granularity.finestWidth`, `coarsestWidth`), while epistemic approximators quantify
+over worlds, which is why the two classes distribute complementarily. Within the scalar
+class the endpoint approximators *absolutely*, *completely* and *more or less* combine only
+with scale endpoints and block plain *exactly* and *approximately* there. The chapter's
+example expressions and approximators are classified accordingly (`Item.itemClass`,
+`Approximator.selects`), and the classification reproduces every cited judgment
+(`classification_predicts_distribution`); the reset targets bound every available
+interpretation (`exactly_narrowest`, `approximately_widest`), and a second scalar
+approximator is vacuous because the first reset leaves a single granularity
+(`second_reset_vacuous`).
 
-Within the scalar class, endpoint-approximators (*absolutely*,
-*completely*, *more or less*) combine only with scale endpoints, blocking
-plain *exactly*/*approximately* there (§6.4, (32), (35)–(45)).
+## Implementation notes
 
-## Main definitions
+The chapter is not available for verification here, so the judgments are as the file found
+them; the granularity intervals are those of `Semantics/Degree/Granularity`.
 
-- `Item`, `ItemClass`: their example expressions and the two-vagueness
-  classification
-- `Approximator`, `Approximator.selects`: the approximator inventory and
-  which item class each selects
-- `Judgment.rows`: their cited acceptability judgments ((4)–(6), (35),
-  (37), (44)–(45))
+## References
 
-## Main results
-
-- `classification_predicts_distribution`: the two-type theory reproduces
-  every cited judgment
-- `exactly_narrowest`, `approximately_widest`: the reset targets bound all
-  available interpretations (the paper's (19), via `finestWidth_le`/
-  `le_coarsestWidth` and `finer_contained`)
-- `second_reset_vacuous`: approximator stacking is vacuous (§6.3.5)
-- `fragment_setter_directions`: the `English.NumeralModifiers` entries
-  carry the setter classification
+* [sauerland-stateva-2011]
+* [krifka-2007]
+* [lasersohn-1999]
 -/
 
 namespace SauerlandStateva2011
@@ -157,37 +144,11 @@ theorem approximately_widest {ε : ℚ} (hε : ε ∈ 𝒢) (d : ℚ) :
     (mkGranInterval ε d).hi ≤ (mkGranInterval (coarsestWidth 𝒢 h𝒢) d).hi :=
   finer_contained _ _ d (le_coarsestWidth 𝒢 h𝒢 hε)
 
--- (12): at grain ½ m, *5 meters* denotes [4.50 m, 5.50 m]; at the
--- finer grain 0.05 m, [4.95 m, 5.05 m].
-example : mkGranInterval (1/2 : ℚ) 5 = ⟨9/2, 11/2⟩ := by
-  simp only [mkGranInterval]; norm_num
-example : mkGranInterval (1/20 : ℚ) 5 = ⟨99/20, 101/20⟩ := by
-  simp only [mkGranInterval]; norm_num
-
-/-- §6.3.5: a second scalar approximator is vacuous — the first reset
-leaves a singleton granularity set, on which resetting (in either
-direction) returns the same width. Hence `#exactly approximately 30`. -/
+/-- A second scalar approximator is vacuous: the first reset leaves a single granularity, on
+which resetting in either direction returns the same width. -/
 theorem second_reset_vacuous (ε : ℚ) :
     finestWidth {ε} (Finset.singleton_nonempty ε) = ε ∧
     coarsestWidth {ε} (Finset.singleton_nonempty ε) = ε :=
   ⟨finestWidth_singleton ε, coarsestWidth_singleton ε⟩
-
-/-! ### Fragment bridge
-
-The `English.NumeralModifiers` entries carry the setter classification:
-exactifiers signal a point distribution and set the finest grain;
-tolerance modifiers signal a peaked distribution and set a coarser one. -/
-
-open English.NumeralModifiers in
-/-- The fragment's *exactly*/*precisely* are finest-setters (pointSignal
-exactifiers) and its *about*/*around*/*approximately*/*roughly* are
-coarse-setters (peakedSignal tolerance modifiers). -/
-theorem fragment_setter_directions :
-    exactly.modType = .exactifier ∧ exactly.pragFunction = .pointSignal ∧
-    precisely.modType = .exactifier ∧ precisely.pragFunction = .pointSignal ∧
-    approximately.modType = .tolerance ∧
-    approximately.pragFunction = .peakedSignal ∧
-    about.modType = .tolerance ∧ about.pragFunction = .peakedSignal := by
-  exact ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 end SauerlandStateva2011
