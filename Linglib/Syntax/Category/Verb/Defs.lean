@@ -3,7 +3,7 @@ import Linglib.Syntax.Category.Verb.Complement.Basic
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Aspect.Basic
-import Linglib.Features.Attitudes
+import Linglib.Semantics.Attitudes.Basic
 import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Logic.Natural.Basic
@@ -246,7 +246,7 @@ structure Reading where
       `frames`; `Verb.readingsWF`). -/
   frame : Frame
   /-- Frame-conditioned attitude override. -/
-  attitude : Option Features.Attitude := none
+  attitude : Option _root_.Attitude := none
   /-- Frame-conditioned opacity override. -/
   opaqueContext : Option Bool := none
   /-- Control type for this frame. -/
@@ -263,7 +263,7 @@ structure Attitude where
   opaqueContext : Bool := false
   /-- Unified attitude classification covering doxastic and preferential attitudes.
       Theoretical properties (C-distributivity, parasitic, etc.) are DERIVED. -/
-  attitude : Option Features.Attitude := none
+  attitude : Option _root_.Attitude := none
   /-- Frame-conditioned readings ([bondarenko-2022] §4.4.3): per-frame
       attitude/opacity overrides and control, keyed to `frames` entries. -/
   readings : List Reading := []
@@ -338,7 +338,7 @@ def Verb.altControlType (v : Verb) : ControlType :=
 
 /-- The effective attitude on frame `fr`: reading override, else lexeme
     default. -/
-def Verb.attitudeOn (v : Verb) (fr : Frame) : Option Features.Attitude :=
+def Verb.attitudeOn (v : Verb) (fr : Frame) : Option _root_.Attitude :=
   ((v.readings.find? (·.frame == fr)).bind (·.attitude)).orElse
     fun _ => v.attitude
 

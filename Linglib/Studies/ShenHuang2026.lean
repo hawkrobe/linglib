@@ -2,7 +2,7 @@ import Linglib.Studies.Ross1967
 import Linglib.Syntax.Binding.SpecificityCondition
 import Linglib.Semantics.Definiteness.Defs
 import Linglib.Semantics.Aspect.Basic
-import Linglib.Features.Attitudes
+import Linglib.Semantics.Attitudes.Basic
 import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Semantics.ArgumentStructure.MeaningComponents

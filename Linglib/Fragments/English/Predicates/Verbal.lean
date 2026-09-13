@@ -23,7 +23,6 @@ namespace English.Predicates.Verbal
 -- Re-export Features verb-entry vocabulary so downstream files that open this
 -- namespace continue to find it. The `Verb`/`ComplementType`/… types now
 -- live at the root namespace (`Syntax/Category/Verb/Defs`), so they need no re-export.
-export Features (Preferential Attitude)
 
 open Features
 open ArgumentStructure

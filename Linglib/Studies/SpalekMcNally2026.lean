@@ -1,7 +1,7 @@
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.Spanish.Predicates
 import Linglib.Semantics.Aspect.Basic
-import Linglib.Features.Attitudes
+import Linglib.Semantics.Attitudes.Basic
 import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Semantics.ArgumentStructure.MeaningComponents

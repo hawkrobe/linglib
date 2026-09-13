@@ -108,12 +108,11 @@ theorem comparative_dual {Entity α : Type*} [LinearOrder α] (μ : Entity → �
 
 /-! ### Verbal triggers -/
 
-open Features in
 /-- A negative-valence preferential attitude is a trigger of the *fear* class. -/
 theorem negative_valence_is_en_trigger (v : Verb)
     (h : v.preferentialValence = some .negative) : v.isENTrigger = true := by
-  simp only [Verb.isENTrigger, h, show (some AttitudeValence.negative ==
-    some AttitudeValence.negative) = true from rfl, Bool.true_or]
+  simp only [Verb.isENTrigger, h, show (some Preferential.Valence.negative ==
+    some Preferential.Valence.negative) = true from rfl, Bool.true_or]
 
 /-- A negative implicative verb is a trigger of the *forget* class. -/
 theorem negative_implicative_is_en_trigger (v : Verb) (h : v.implicative = some .negative) :

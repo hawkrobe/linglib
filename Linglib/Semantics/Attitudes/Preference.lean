@@ -2,7 +2,7 @@ import Mathlib.Order.Defs.Unbundled
 import Mathlib.Order.Preorder.Chain
 import Mathlib.Data.Set.Lattice
 import Mathlib.Data.Rat.Defs
-import Linglib.Features.Attitudes
+import Linglib.Semantics.Attitudes.Basic
 import Linglib.Semantics.Attitudes.Distributivity
 import Linglib.Core.Order.Normality
 
@@ -221,8 +221,6 @@ end PreferenceStructure
 
 namespace Preferential
 
-open Features (AttitudeValence)
-
 variable {W E : Type*}
 
 /-- A preferential attitude predicate: an evaluative valence, a
@@ -231,7 +229,7 @@ variable {W E : Type*}
     class of propositions. -/
 structure PreferentialPredicate (W E : Type*) where
   /-- Evaluative valence (positive for *hope*, negative for *fear*). -/
-  valence : AttitudeValence
+  valence : Valence
   /-- Preference degree function: `μ x p` is how strongly `x` prefers
       (or, for negative valence, dreads) `p`. -/
   μ : E → Finset W → ℚ
@@ -264,7 +262,7 @@ theorem PreferentialPredicate.not_isDistributive_of_forall_not {V : Preferential
 /-- Degree-comparison predicate ([villalta-2008]): ⟦x V p⟧(C) =
     μ(x, p) > θ(C), with the question semantics the pointwise
     existential. -/
-def mkDegreeComparison (valence : AttitudeValence)
+def mkDegreeComparison (valence : Valence)
     (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ) :
     PreferentialPredicate W E where
   valence := valence
@@ -276,7 +274,7 @@ def mkDegreeComparison (valence : AttitudeValence)
 /-- Degree-comparison predicates are clausally distributive by
     construction: the question semantics is the existential over the
     propositional semantics. -/
-theorem mkDegreeComparison_isDistributive (valence : AttitudeValence)
+theorem mkDegreeComparison_isDistributive (valence : Valence)
     (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ) :
     (mkDegreeComparison valence μ θ).IsDistributive :=
   λ _ _ _ => Iff.rfl
