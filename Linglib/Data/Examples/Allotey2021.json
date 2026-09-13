@@ -34,7 +34,7 @@
     ],
     "translation": "I want to see you",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -81,7 +81,7 @@
     ],
     "translation": "Father is reluctant to see you",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -132,7 +132,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Mi-i tao ni na bo", "judgment": "unacceptable"}
+      {"form": "Mi-i tao ni na bo", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -282,7 +282,7 @@
     ],
     "translation": "Father is reluctant to see you",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -305,7 +305,7 @@
     ],
     "translation": "I want to see you",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -354,7 +354,7 @@
     ],
     "translation": "Ameele remembered to buy a book",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -378,7 +378,7 @@
     ],
     "translation": "She remembered for Ameele to buy a book",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -460,7 +460,8 @@
       ["control", "subject"],
       ["diagnostic", "cCommand"],
       ["person", "3"],
-      ["number", "plural"]
+      ["number", "plural"],
+      ["antecedent", "cCommanding"]
     ],
     "comment": "The pronoun is coindexed with the whole possessive phrase, not the possessor Jojo.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -477,7 +478,7 @@
     ],
     "translation": "Jojo's children forgot to wash the utensils.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -486,7 +487,8 @@
       ["embeddedSubject", "pronoun"],
       ["diagnostic", "cCommand"],
       ["person", "3"],
-      ["number", "singular"]
+      ["number", "singular"],
+      ["antecedent", "nonCCommanding"]
     ],
     "comment": "Singular pronoun coindexed with the possessor Jojo.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -513,7 +515,8 @@
       ["control", "subject"],
       ["diagnostic", "cCommand"],
       ["person", "3"],
-      ["number", "singular"]
+      ["number", "singular"],
+      ["antecedent", "cCommanding"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -530,7 +533,7 @@
     ],
     "translation": "The children's father remembered to buy the books.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -539,7 +542,8 @@
       ["embeddedSubject", "pronoun"],
       ["diagnostic", "cCommand"],
       ["person", "3"],
-      ["number", "plural"]
+      ["number", "plural"],
+      ["antecedent", "nonCCommanding"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -564,7 +568,8 @@
       ["complementizer", "ni"],
       ["embeddedSubject", "pronoun"],
       ["control", "subject"],
-      ["diagnostic", "longDistance"]
+      ["diagnostic", "longDistance"],
+      ["antecedent", "local"]
     ],
     "comment": "The embedded pronoun refers to Debo, the local subject, not to Jojo.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -589,7 +594,8 @@
       ["complementizer", "ni"],
       ["embeddedSubject", "pronoun"],
       ["control", "subject"],
-      ["diagnostic", "longDistance"]
+      ["diagnostic", "longDistance"],
+      ["antecedent", "local"]
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -607,19 +613,40 @@
     "translation": "I said that Debo forgot to buy the book",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "Mi kɛɛ akɛ Debo hiekpano ni ma he wolo lɛ", "judgment": "unacceptable"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "hiɛ-kpa-nɔ"],
       ["complementizer", "ni"],
       ["embeddedSubject", "pronoun"],
       ["control", "subject"],
-      ["diagnostic", "longDistance"]
+      ["diagnostic", "longDistance"],
+      ["antecedent", "local"]
     ],
     "comment": "The embedded pronoun must be third person, matching the closest antecedent Debo.",
     "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "allotey2021_49b",
+    "source": {"bibkey": "allotey-2021", "paperLabel": "(49)"},
+    "language": "gaaa1244",
+    "primaryText": "Mi kɛɛ akɛ Debo hiekpano ni ma he wolo lɛ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I said that Debo forgot to buy the book",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "hiɛ-kpa-nɔ"],
+      ["complementizer", "ni"],
+      ["embeddedSubject", "pronoun"],
+      ["diagnostic", "longDistance"],
+      ["antecedent", "longDistance"]
+    ],
+    "comment": "The embedded first person cannot take the matrix subject as antecedent.",
+    "lgrConformance": ""
   },
   {
     "id": "allotey2021_52",
@@ -636,14 +663,16 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
+    "readings": [
+      {"name": "sloppy", "judgment": "acceptable"},
+      {"name": "strict", "judgment": "unacceptable"}
+    ],
     "paperFeatures": [
       ["verb", "kplɛnɔ"],
       ["complementizer", "ni"],
       ["embeddedSubject", "pronoun"],
       ["control", "subject"],
-      ["diagnostic", "ellipsis"],
-      ["reading", "sloppy"]
+      ["diagnostic", "ellipsis"]
     ],
     "comment": "In the elided clause the pronoun refers to Peter only: sloppy reading.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -660,7 +689,7 @@
     ],
     "translation": "Ajele expects to win the prize.",
     "context": "Ajele Thompson has been nominated for a prize without knowing it. She sees a notice reading 'Ayele Tomson is nominated for the Anisha prize', does not recognize the misspelled name as her own, and comes to believe that Ayele will win.",
-    "judgment": "questionable",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -829,7 +858,7 @@
     ],
     "translation": "Ameele remembered to buy a book",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1015,7 +1044,7 @@
     ],
     "translation": "They should ask her",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1038,9 +1067,7 @@
     "translation": "I want to see you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "Mi-i tao má ná bo", "judgment": "unacceptable"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "tao"],
@@ -1049,10 +1076,36 @@
       ["control", "subject"],
       ["irrealisMarker", "present"],
       ["verbTone", "low"],
-      ["diagnostic", "tone"]
+      ["diagnostic", "tone"],
+      ["clauseContext", "control"]
     ],
     "comment": "A high tone on the embedded bare verb, as in a true subjunctive, is ungrammatical.",
     "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "allotey2021_88b",
+    "source": {"bibkey": "allotey-2021", "paperLabel": "(88)"},
+    "language": "gaaa1244",
+    "primaryText": "Mi-i tao má ná bo",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I want to see you.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "tao"],
+      ["complementizer", "none"],
+      ["embeddedSubject", "pronoun"],
+      ["control", "subject"],
+      ["irrealisMarker", "present"],
+      ["verbTone", "high"],
+      ["diagnostic", "tone"],
+      ["clauseContext", "control"]
+    ],
+    "comment": "A high tone on the embedded verb, as in a true subjunctive.",
+    "lgrConformance": ""
   },
   {
     "id": "allotey2021_89a",
@@ -1068,7 +1121,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Mi kai ake má he wolo lɛ", "judgment": "unacceptable"}
+      {"form": "Mi kai ake má he wolo lɛ", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -1094,7 +1147,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Mi nyɛ má sha tsensii lɛ", "judgment": "unacceptable"}
+      {"form": "Mi nyɛ má sha tsensii lɛ", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -1120,7 +1173,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Mi kpleno ni mi ya skul wɔ", "judgment": "unacceptable"}
+      {"form": "Mi kpleno ni mi ya skul wɔ", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -1147,7 +1200,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Mi kpaŋ ni mi shi mra", "judgment": "unacceptable"}
+      {"form": "Mi kpaŋ ni mi shi mra", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -1174,7 +1227,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
+    "readings": [
+      {"name": "controlled", "judgment": "acceptable"},
+      {"name": "free", "judgment": "unacceptable"}
+    ],
     "paperFeatures": [
       ["verb", "sumɔ"],
       ["complementizer", "ni"],
@@ -1266,9 +1322,7 @@
     "translation": "She will visit us tomorrow",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "É bàá-sla wɔ wɔ́", "judgment": "unacceptable"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["clauseContext", "future"],
@@ -1278,6 +1332,27 @@
     ],
     "comment": "The irrealis marker is realized only inside the future prefix.",
     "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "allotey2021_96b",
+    "source": {"bibkey": "allotey-2021", "paperLabel": "(96)"},
+    "language": "gaaa1244",
+    "primaryText": "É bàá-sla wɔ wɔ́",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "She will visit us tomorrow",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["clauseContext", "future"],
+      ["subjectTone", "high"],
+      ["verbTone", "low"],
+      ["irrealisVowel", "present"]
+    ],
+    "comment": "A high tone on the future subject.",
+    "lgrConformance": ""
   },
   {
     "id": "allotey2021_97a",
@@ -1370,7 +1445,7 @@
     ],
     "translation": "I want to see you",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1397,7 +1472,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "O hiɛ-kpa-nɔ ni ó baa-kɔ aspaatere lɛ", "judgment": "unacceptable"}
+      {"form": "O hiɛ-kpa-nɔ ni ó baa-kɔ aspaatere lɛ", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -1428,7 +1503,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "È hiɛ-kpa-nɔ ni é baa-ŋa shinaa lɛ", "judgment": "unacceptable"}
+      {"form": "È hiɛ-kpa-nɔ ni é baa-ŋa shinaa lɛ", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -1458,10 +1533,7 @@
     "translation": "I want to know if they will be coming or not.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "Mi tao ni mà le akɛ amɛ bàá-ba a-lo", "judgment": "questionable"},
-      {"form": "Mi tao ni mà le ni amɛ bàá-ba a-lo", "judgment": "unacceptable"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "le"],
@@ -1470,6 +1542,46 @@
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "allotey2021_104b",
+    "source": {"bibkey": "allotey-2021", "paperLabel": "(104)"},
+    "language": "gaaa1244",
+    "primaryText": "Mi tao ni mà le akɛ amɛ bàá-ba a-lo",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I want to know if they will be coming or not.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "le"],
+      ["complementizer", "ake"],
+      ["diagnostic", "cSelection"]
+    ],
+    "comment": "akɛ is used by beginners; not felicitous.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "allotey2021_104c",
+    "source": {"bibkey": "allotey-2021", "paperLabel": "(104)"},
+    "language": "gaaa1244",
+    "primaryText": "Mi tao ni mà le ni amɛ bàá-ba a-lo",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I want to know if they will be coming or not.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "le"],
+      ["complementizer", "ni"],
+      ["diagnostic", "cSelection"]
+    ],
+    "comment": "",
+    "lgrConformance": ""
   },
   {
     "id": "allotey2021_105",
@@ -1484,10 +1596,7 @@
     "translation": "Osa agreed that Taki should call Momo",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "Osa kplɛnɔ akɛ Taki á-tsɛ́ Momo", "judgment": "acceptable"},
-      {"form": "Osa kplɛnɔ kɛji Taki á-tsɛ́ Momo", "judgment": "unacceptable"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "kplɛnɔ"],
@@ -1498,6 +1607,50 @@
     ],
     "comment": "A true subjunctive complement with a lexical subject; ni or akɛ introduces it.",
     "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "allotey2021_105b",
+    "source": {"bibkey": "allotey-2021", "paperLabel": "(105)"},
+    "language": "gaaa1244",
+    "primaryText": "Osa kplɛnɔ akɛ Taki á-tsɛ́ Momo",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Osa agreed that Taki should call Momo",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "kplɛnɔ"],
+      ["complementizer", "ake"],
+      ["embeddedSubject", "lexical"],
+      ["clauseContext", "subjunctive"],
+      ["diagnostic", "cSelection"]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "allotey2021_105c",
+    "source": {"bibkey": "allotey-2021", "paperLabel": "(105)"},
+    "language": "gaaa1244",
+    "primaryText": "Osa kplɛnɔ kɛji Taki á-tsɛ́ Momo",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Osa agreed that Taki should call Momo",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "kplɛnɔ"],
+      ["complementizer", "keji"],
+      ["embeddedSubject", "lexical"],
+      ["clauseContext", "subjunctive"],
+      ["diagnostic", "cSelection"]
+    ],
+    "comment": "",
+    "lgrConformance": ""
   },
   {
     "id": "allotey2021_106",
@@ -1512,10 +1665,7 @@
     "translation": "Osa decided to call Momo",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "Osa kpaŋ akɛ é-tsɛ Momo", "judgment": "unacceptable"},
-      {"form": "Osa kpaŋ kɛji é-tsɛ Momo", "judgment": "unacceptable"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["verb", "kpaŋ"],
@@ -1527,6 +1677,48 @@
     ],
     "comment": "",
     "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "allotey2021_106b",
+    "source": {"bibkey": "allotey-2021", "paperLabel": "(106)"},
+    "language": "gaaa1244",
+    "primaryText": "Osa kpaŋ akɛ é-tsɛ Momo",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Osa decided to call Momo",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "kpaŋ"],
+      ["complementizer", "ake"],
+      ["embeddedSubject", "pronoun"],
+      ["diagnostic", "cSelection"]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "allotey2021_106c",
+    "source": {"bibkey": "allotey-2021", "paperLabel": "(106)"},
+    "language": "gaaa1244",
+    "primaryText": "Osa kpaŋ kɛji é-tsɛ Momo",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Osa decided to call Momo",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "kpaŋ"],
+      ["complementizer", "keji"],
+      ["embeddedSubject", "pronoun"],
+      ["diagnostic", "cSelection"]
+    ],
+    "comment": "",
+    "lgrConformance": ""
   },
   {
     "id": "allotey2021_107",
@@ -1542,7 +1734,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Aku kai ni wolo ni e he", "judgment": "unacceptable"}
+      {"form": "Aku kai ni wolo ni e he", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -1567,7 +1759,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Aku lé ni bo aloo lɛ ni he wolo lɛ", "judgment": "unacceptable"}
+      {"form": "Aku lé ni bo aloo lɛ ni he wolo lɛ", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -1592,8 +1784,8 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Aku kplɛnɔ nyɛ ni e-baa-he wolo", "judgment": "unacceptable"},
-      {"form": "Aku kplɛnɔ nyɛ ni e-he wolo", "judgment": "unacceptable"}
+      {"form": "Aku kplɛnɔ nyɛ ni e-baa-he wolo", "judgment": "ungrammatical"},
+      {"form": "Aku kplɛnɔ nyɛ ni e-he wolo", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -1624,7 +1816,9 @@
     "alternatives": [
       {"form": "Aku dwɛŋ ni è hè wolo", "judgment": "acceptable"}
     ],
-    "readings": [],
+    "readings": [
+      {"name": "free", "judgment": "acceptable"}
+    ],
     "paperFeatures": [
       ["verb", "dwɛŋ"],
       ["complementizer", "ake"],
@@ -1650,7 +1844,9 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
+    "readings": [
+      {"name": "free", "judgment": "acceptable"}
+    ],
     "paperFeatures": [
       ["verb", "dwɛŋ"],
       ["complementizer", "ake"],
@@ -1676,10 +1872,13 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Aku dwɛŋ akɛ é hè wolo", "judgment": "unacceptable"},
-      {"form": "Aku dwɛŋ ni amɛ̀ hè wolo", "judgment": "unacceptable"}
+      {"form": "Aku dwɛŋ akɛ é hè wolo", "judgment": "ungrammatical"},
+      {"form": "Aku dwɛŋ ni amɛ̀ hè wolo", "judgment": "ungrammatical"}
     ],
-    "readings": [],
+    "readings": [
+      {"name": "controlled", "judgment": "acceptable"},
+      {"name": "free", "judgment": "unacceptable"}
+    ],
     "paperFeatures": [
       ["verb", "dwɛŋ"],
       ["complementizer", "ni"],
@@ -1773,7 +1972,7 @@
     ],
     "translation": "Jojo didn't say that Okoe saw anybody",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1797,7 +1996,7 @@
     ],
     "translation": "Aku didn't remember that she bought anything",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1876,7 +2075,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Aku tao ni è na bo", "judgment": "unacceptable"}
+      {"form": "Aku tao ni è na bo", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -1905,7 +2104,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Aku mii-tao ni é mii-na bo", "judgment": "unacceptable"}
+      {"form": "Aku mii-tao ni é mii-na bo", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -1934,7 +2133,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Aku baa-tao ni é baa-na bo", "judgment": "unacceptable"}
+      {"form": "Aku baa-tao ni é baa-na bo", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -2029,7 +2228,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Jojo kplɛnɔ ni é ka he-ka wolo lɛ", "judgment": "unacceptable"}
+      {"form": "Jojo kplɛnɔ ni é ka he-ka wolo lɛ", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -2059,7 +2258,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Aku tao ni é ka na-ka bo", "judgment": "unacceptable"}
+      {"form": "Aku tao ni é ka na-ka bo", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -2088,7 +2287,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Asibi e he wolo lɛ", "judgment": "unacceptable"}
+      {"form": "Asibi e he wolo lɛ", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -2110,7 +2309,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "E e he wolo lɛ", "judgment": "unacceptable"}
+      {"form": "E e he wolo lɛ", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": [
