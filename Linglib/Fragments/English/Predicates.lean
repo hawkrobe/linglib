@@ -13,7 +13,6 @@ namespace English.Predicates
 export Verbal (
   -- Types (PresupTriggerType/ComplementType/ControlType are root-namespace now)
   VerbEntry
-  Preferential
   -- Functions
   allVerbs
 )

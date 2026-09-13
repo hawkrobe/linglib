@@ -40,7 +40,6 @@ predicative dependency, and its inflected-complement row is the one derived here
 namespace Landau2015
 
 open Control
-open Features (Attitude)
 
 /-! ### The two tiers -/
 

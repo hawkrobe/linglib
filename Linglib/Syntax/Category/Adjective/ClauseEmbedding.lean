@@ -19,7 +19,6 @@ in `Fragments/English/Predicates/Copular.lean`), Mandarin and Japanese
 without a copula.
 -/
 
-open Features (Attitude)
 open NaturalLogic (Signature)
 
 /-- A clause-embedding adjective: the `Adjective` core plus the

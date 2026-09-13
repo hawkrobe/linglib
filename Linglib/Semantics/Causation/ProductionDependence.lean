@@ -37,8 +37,6 @@ namespace Causation.ProductionDependence
 
 open Reference
 
-open Features
-
 /-! ## Causation Type
 
 The two concepts of causation that lexical causative verbs can encode.

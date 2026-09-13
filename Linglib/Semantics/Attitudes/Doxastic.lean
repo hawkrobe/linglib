@@ -1,5 +1,5 @@
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Features.Attitudes
+import Linglib.Semantics.Attitudes.Basic
 import Linglib.Discourse.SpeechAct
 
 /-!
@@ -42,8 +42,6 @@ embedded scalar implicature ([goodman-stuhlmuller-2013]) in
 
 namespace Doxastic
 
-open Features (Veridicality)
-export Features (Veridicality)
 
 variable {W E : Type*}
 

@@ -63,7 +63,7 @@ def Verb.effectiveObjectEntailments (v : Verb) : Option EntailmentProfile :=
   v.objectEntailments <|> v.levinClass.bind (·.objectProfile)
 
 /-- Veridicality is DERIVED from the attitude builder -/
-def Verb.veridicality (v : Verb) : Option Veridicality :=
+def Verb.veridicality (v : Verb) : Option Doxastic.Veridicality :=
   v.attitude.map (·.veridicality)
 
 /-- Is this verb a doxastic attitude? -/
@@ -75,7 +75,7 @@ def Verb.isPreferential (v : Verb) : Bool :=
   v.attitude.map (·.isPreferential) |>.getD false
 
 /-- Valence is DERIVED from the attitude builder (for preferential attitudes) -/
-def Verb.preferentialValence (v : Verb) : Option AttitudeValence :=
+def Verb.preferentialValence (v : Verb) : Option Preferential.Valence :=
   v.attitude.bind (·.valence)
 
 /-- Does this verb presuppose its complement via factivity?

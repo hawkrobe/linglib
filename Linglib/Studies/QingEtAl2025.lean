@@ -65,7 +65,7 @@ constituent question, which the paper sets aside, are recorded but not predicted
 
 namespace QingEtAl2025
 
-open Data.Examples Examples Features Preferential Modality.Kratzer
+open Data.Examples Examples Preferential Modality.Kratzer
 
 variable {W E : Type*}
 
@@ -81,7 +81,7 @@ abbrev Threshold (W : Type*) := List (Finset W) → ℚ
 /-- A preferential predicate whose question use is a relation to the question itself, anxious
 uncertainty for *worry* (§3.1.2) or anticipation of resolution for Mandarin *qidai* (§3.1.1),
 while its declarative use is the degree comparison. -/
-def relational (valence : AttitudeValence) (μ : Degree W E) (θ : Threshold W)
+def relational (valence : Valence) (μ : Degree W E) (θ : Threshold W)
     (R : E → List (Finset W) → Prop) : PreferentialPredicate W E where
   valence := valence
   μ := μ
@@ -92,7 +92,7 @@ def relational (valence : AttitudeValence) (μ : Degree W E) (θ : Threshold W)
 /-- The diagnostic of (23) to (25): an agent anxious to find out where he can dock, and happy
 to dock anywhere, worries where he can dock without worrying that he can dock at any particular
 place, so *worry* is not clausally distributive. -/
-theorem relational_not_isDistributive (v : AttitudeValence) (μ : Degree W E) (θ : Threshold W)
+theorem relational_not_isDistributive (v : Valence) (μ : Degree W E) (θ : Threshold W)
     (R : E → List (Finset W) → Prop) {x : E} {Q C : List (Finset W)} (hR : R x Q)
     (h : ∀ p ∈ Q, ¬ μ x p > θ C) : ¬ (relational v μ θ R).IsDistributive :=
   PreferentialPredicate.not_isDistributive_of_forall_not (V := relational v μ θ R) hR h
@@ -108,7 +108,7 @@ def Trivial (V : Degree W E → Threshold W → PreferentialPredicate W E)
 /-- What a preferential predicate presupposes of a question: threshold significance for a
 positive predicate, and for a negative one, which triggers none (§3.2), only that the question
 has an answer in the comparison class. -/
-def presupposition : AttitudeValence → Degree W E → Threshold W → E → List (Finset W) → Prop
+def presupposition : Valence → Degree W E → Threshold W → E → List (Finset W) → Prop
   | .positive => ThresholdSignificance
   | .negative => λ _ _ _ Q => Q ≠ []
 
@@ -127,7 +127,7 @@ theorem not_trivial_negative [Inhabited E] :
 
 /-- A relational predicate is not trivial even under threshold significance: some agent does
 not stand in the relation to a question an answer of which clears the threshold. -/
-theorem not_trivial_relational (v : AttitudeValence) (R : E → List (Finset W) → Prop)
+theorem not_trivial_relational (v : Valence) (R : E → List (Finset W) → Prop)
     (hR : ∃ x Q, Q ≠ [] ∧ ¬ R x Q) :
     ¬ Trivial (λ μ θ => relational v μ θ R) (presupposition v) :=
   λ h => by
@@ -151,21 +151,21 @@ inductive PredicateClass
   deriving DecidableEq, Repr
 
 /-- The class of a predicate, read off the compositional strategy its lexical entry records. -/
-def classOf : Features.Preferential → PredicateClass
+def classOf : Strategy → PredicateClass
   | .degreeComparison .positive => .distributivePositive
   | .degreeComparison .negative => .distributiveNegative
   | .uncertaintyBased | .relevanceBased _ => .nonDistributive
 
 /-- The semantics of a strategy, the relational ones over a relation `R` to the question. -/
 def semantics (R : E → List (Finset W) → Prop) :
-    Features.Preferential → Degree W E → Threshold W → PreferentialPredicate W E
+    Strategy → Degree W E → Threshold W → PreferentialPredicate W E
   | .degreeComparison v => mkDegreeComparison v
   | .uncertaintyBased => λ μ θ => relational .negative μ θ R
   | .relevanceBased v => λ μ θ => relational v μ θ R
 
 /-- Table 2: canonical composition with a question is trivial, hence anti-rogative, exactly for
 the distributive positive class. -/
-theorem trivial_iff_class [Inhabited E] (k : Features.Preferential)
+theorem trivial_iff_class [Inhabited E] (k : Strategy)
     (R : E → List (Finset W) → Prop) (hR : ∃ x Q, Q ≠ [] ∧ ¬ R x Q) :
     Trivial (semantics R k) (presupposition k.valence) ↔ classOf k = .distributivePositive := by
   cases k with
@@ -202,11 +202,11 @@ def attitude? : String → Option Attitude
 
 /-- The class of a row's predicate. -/
 def class? (r : LinguisticExample) : Option PredicateClass :=
-  ((r.feature? "predicate").bind attitude?).bind Attitude.getPreferential |>.map classOf
+  ((r.feature? "predicate").bind attitude?).bind Attitude.strategy? |>.map classOf
 
 /-- The valence of a row's predicate, or of its manner adverb or veridical preferential where
 the paper's argument turns on valence alone. -/
-def valence? (r : LinguisticExample) : Option AttitudeValence :=
+def valence? (r : LinguisticExample) : Option Valence :=
   match r.feature? "valence" with
   | some "positive" => some .positive
   | some "negative" => some .negative
@@ -271,7 +271,7 @@ theorem diye_rows :
 /-- Candidate analysis 1 (§4.2): composed with the highlighted content of *whether p*, the
 singleton of the radical, a degree-comparison predicate means its declarative (70), which yields
 the interpretive asymmetry but not the inquisitive implication. -/
-theorem highlighted_eq_declarative (v : AttitudeValence) (μ : Degree W E) (θ : Threshold W)
+theorem highlighted_eq_declarative (v : Valence) (μ : Degree W E) (θ : Threshold W)
     (x : E) (p : Finset W) (C : List (Finset W)) :
     (mkDegreeComparison v μ θ).questionSemantics x [p] C ↔
       (mkDegreeComparison v μ θ).propSemantics x p C := by

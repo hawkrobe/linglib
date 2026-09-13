@@ -693,7 +693,6 @@ import Linglib.Features.Acceptability
 import Linglib.Features.Agreement
 import Linglib.Features.AnsweringSystem
 import Linglib.Features.Antonymy
-import Linglib.Features.Attitudes
 import Linglib.Features.Basic
 import Linglib.Features.Case.Basic
 import Linglib.Features.Case.Capabilities

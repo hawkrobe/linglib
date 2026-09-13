@@ -1,5 +1,5 @@
 import Linglib.Semantics.Aspect.Basic
-import Linglib.Features.Attitudes
+import Linglib.Semantics.Attitudes.Basic
 import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Semantics.ArgumentStructure.MeaningComponents
@@ -41,7 +41,6 @@ dispatch) are promoted to canonical here.
 
 namespace Implicative
 
-open Features
 open Causation (SEM CausalGraph Valuation DecidableValuation)
 
 /-! ### Prerequisite Types ([nadathur-2023-implicatives]) -/
