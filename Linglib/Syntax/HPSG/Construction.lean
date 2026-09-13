@@ -63,7 +63,10 @@ wh-exclamative (74)) additionally constrains its mother to `[GAP ⟨⟩]` (`elis
 gap then makes the amalgamated mother `GAP` non-empty, contradicting `[GAP ⟨⟩]`, so the construct is
 rejected — the model-theoretic content of "topicalization is an absolute extraction island", a theorem
 about `Models`, not a universal Subjacency. Weak islands (`weak-island-cxt`) are *selectively* permeable
-(NP passes, PP blocked), the NP/PP asymmetry of [sag-wasow-bender-2003] Ch. 15.
+(NP passes, PP blocked), a generic demonstration of a selectively permeable domain. Coordination
+(`coord-cxt`, two conjunct daughters) carries no principle here; [sag-wasow-bender-2003] Ch. 15
+derives the Coordinate Structure Constraint from the conjuncts sharing their SYN value, GAP
+included, and `Studies/SagWasowBender2003` states that principle over this signature.
 
 ## Scope
 
@@ -73,8 +76,8 @@ wh-relative, the-clause), and the gap/island mechanism. The hierarchy also carri
 `aux-initial-cxt`, `polar-int-cl` and `aux-initial-excl-cl` sort nodes and the `INV` feature
 ([sag-etal-2020] Figs. 6, 10); the
 **inversion construction**'s own principle and worked constructs are paper-anchored in
-`Studies/SagEtAl2020.lean`, and the island/extraction taxonomy theorems in `Studies/SagWasowBender2003`
-and `Studies/Sag2010`, which consume this substrate.
+`Studies/SagEtAl2020.lean`, the island theorems in `Studies/Sag2010`, and the coordination principle
+in `Studies/SagWasowBender2003`, which consume this substrate.
 
 The relational binding signature `bindingSig` (`Binding.lean`) stays a **separate example signature** over
 the same RSRL framework — it has its own binding-specific sort hierarchy (anaphor/pronoun/index) and the
@@ -119,6 +122,9 @@ inductive Srt
   | construct | phrasalCxt | lexicalCxt | headedCxt | clause | fillerHeadCxt | auxInitialCxt
   -- head-modifier-cxt (Fig. 6): a relative clause or other adjunct modifies a head ([sag-2010] §6)
   | headModifierCxt
+  -- coord-cxt: a non-headed phrasal construct of two conjunct daughters ([sag-wasow-bender-2003]
+  -- Ch. 15's coordination rule)
+  | coordCxt
   -- lexical constructs (Fig. 6): inflectional-cxt = a category-preserving lexical rule (e.g. passive)
   | inflectionalCxt
   -- generic island demonstrations (Ross domains, not Sag construction types) under filler-head-cxt
@@ -153,7 +159,7 @@ def covers : Srt → Srt → Bool
   -- construct backbone
   | .phrasalCxt, .construct => true | .lexicalCxt, .construct => true
   | .inflectionalCxt, .lexicalCxt => true
-  | .headedCxt, .phrasalCxt => true | .clause, .phrasalCxt => true
+  | .headedCxt, .phrasalCxt => true | .clause, .phrasalCxt => true | .coordCxt, .phrasalCxt => true
   | .fillerHeadCxt, .headedCxt => true | .auxInitialCxt, .headedCxt => true
   | .headModifierCxt, .headedCxt => true
   | .islandCxt, .fillerHeadCxt => true | .weakIslandCxt, .fillerHeadCxt => true
@@ -180,7 +186,7 @@ def rank : Srt → Nat
   | .verbal => 2 | .nonverbal => 2 | .austinean => 2 | .question => 2 | .fact => 2 | .proposition => 2
   | .invPlus => 2 | .invMinus => 2 | .elist => 2 | .nelist => 2 | .phrasalCxt => 2 | .lexicalCxt => 2
   | .verb => 3 | .comp => 3 | .nominal => 3 | .adj => 3 | .adv => 3 | .headedCxt => 3
-  | .clause => 3 | .inflectionalCxt => 3
+  | .clause => 3 | .inflectionalCxt => 3 | .coordCxt => 3
   | .noun => 4 | .prep => 4 | .fillerHeadCxt => 4 | .auxInitialCxt => 4 | .headModifierCxt => 4
   | .coreCl => 4 | .relativeCl => 4
   | .islandCxt => 5 | .weakIslandCxt => 5
@@ -197,18 +203,19 @@ instance : DecidableLE Srt := fun a b =>
      .semType, .austinean, .question, .fact, .proposition, .invVal, .invPlus, .invMinus,
      .list, .elist, .nelist, .loc, .idx, .sign,
      .construct, .phrasalCxt, .lexicalCxt, .headedCxt, .clause, .fillerHeadCxt, .auxInitialCxt,
-     .headModifierCxt, .inflectionalCxt, .islandCxt, .weakIslandCxt,
+     .headModifierCxt, .inflectionalCxt, .coordCxt, .islandCxt, .weakIslandCxt,
      .coreCl, .relativeCl, .declarativeCl, .interrogativeCl, .exclamativeCl,
      .topCl, .whExclCl, .nsWhIntCl, .whRelCl, .theCl, .polarIntCl, .auxInitialExclCl]
     (by decide) a b
 
 /-! ### Attributes and the signature -/
 
-/-- Attributes: a construct's mother (`MTR`) and head/filler daughters (`HDDTR`/`FILLERDTR`); a sign's
-`CAT`, (list-valued) `GAP`, `SEM` type, and `INV` value; a nonempty list's `FIRST` (a category) and
-`REST` (a list). -/
+/-- Attributes: a construct's mother (`MTR`), head/filler/modifier daughters (`HDDTR`/`FILLERDTR`/
+`MODDTR`) or conjunct daughters (`CONJ1`/`CONJ2`); a sign's `CAT`, (list-valued) `GAP`, `SEM` type,
+and `INV` value; a nonempty list's `FIRST` (a category) and `REST` (a list). -/
 inductive Feat
-  | MTR | HDDTR | FILLERDTR | MODDTR | BASE | CAT | GAP | SEM | INV | MOD | FIRST | REST | INDEX
+  | MTR | HDDTR | FILLERDTR | MODDTR | CONJ1 | CONJ2 | BASE | CAT | GAP | SEM | INV | MOD | FIRST
+  | REST | INDEX
   deriving DecidableEq, Fintype, Repr
 
 /-- Appropriateness: every construct has a `MTR` (a sign); `headed-cxt` and its subtypes additionally
@@ -239,6 +246,10 @@ def approp : Srt → Feat → Option Srt
   | .polarIntCl, .MTR => some .sign
   | .auxInitialExclCl, .MTR => some .sign
   | .headModifierCxt, .MTR => some .sign
+  | .coordCxt, .MTR => some .sign
+  -- the two conjunct daughters of a coordinate construct are signs: a gap, a `loc`, cannot be one
+  | .coordCxt, .CONJ1 => some .sign
+  | .coordCxt, .CONJ2 => some .sign
   -- HDDTR is common to all headed constructs; FILLERDTR is specific to filler-head-cxt (an
   -- aux-initial construct has head + valent daughters, no filler); MODDTR (the modifier) to
   -- head-modifier-cxt
@@ -355,13 +366,13 @@ def topPrinciple : Desc sig :=
 
 /-- **Absolute island** ([sag-2010] (67)): a generic island construct's mother is `[GAP ⟨⟩]` — no
 dependency penetrates beyond the one its filler binds. This generic `island-cxt` demonstrates the
-mechanism for Ross's island *domains* (`Studies/SagWasowBender2003`); the F-G constructions that are
+mechanism for Ross's island *domains*; the F-G constructions that are
 absolute islands carry their own `[GAP ⟨⟩]` principle below. -/
 def islandPrinciple : Desc sig :=
   .imp (.sortAssign .colon .islandCxt) (.sortAssign (.path [.MTR, .GAP]) .elist)
 
 /-- **Weak-island constraint**: a weak island is *selectively* permeable — an NP dependency passes
-through, a PP (more generally, non-nominal) dependency does not ([sag-wasow-bender-2003] Ch. 15). Stated
+through, a PP (more generally, non-nominal) dependency does not (a generic demonstration). Stated
 on the *passing* gap: if a weak-island construct's mother `GAP|FIRST` is a `prep` (PP), the mother must
 be `[GAP ⟨⟩]` — so a PP cannot penetrate, while a `noun` (NP) mother gap is unconstrained and passes. -/
 def weakIslandPrinciple : Desc sig :=
@@ -641,7 +652,7 @@ example : ¬ topClCompHead.Models grammar := by decide
 The two-gap models exercise amalgamation: the filler binds the first gap and the second passes up to the
 mother. Whether the second gap survives is what distinguishes a free filler-head construct, an absolute
 island, and a (selectively permeable) weak island. These named models ground the island taxonomy
-theorems of `Studies/SagWasowBender2003` and `Studies/Sag2010`. -/
+theorems of `Studies/Sag2010` and the GAP Principle theorems of `Studies/SagWasowBender2003`. -/
 
 /-- **Amalgamation of overlapping dependencies** ([sag-2010] (53), (59)): a generic filler-head head
 with two gaps `⟨c₁, c₂⟩`; the filler binds `c₁` and the second gap `c₂` passes up — the mother's `GAP`
@@ -722,10 +733,9 @@ example : theClSecondGap.Models grammar := by decide
 /-! ### Head-modifier constructs ([sag-2010] §6)
 
 A head (e.g. a noun) modified by an adjunct (e.g. a relative clause). The modifier's `MOD` value
-selects the head's category and the mother inherits it. These ground `Studies/SagWasowBender2003`'s
-relative-clause licensing as `Models` facts: a relative clause modifies a noun and the result is a noun;
-a modifier selecting the wrong category is rejected. The relative clause's *internal* gap is the
-filler-gap `wh-rel-cl` construct above. -/
+selects the head's category and the mother inherits it, as `Models` facts: a relative clause
+modifies a noun and the result is a noun; a modifier selecting the wrong category is rejected. The
+relative clause's *internal* gap is the filler-gap `wh-rel-cl` construct above. -/
 
 /-- Head-modifier construct family: a head daughter of category `noun`, an adjunct (modifier) daughter
 whose `MOD` value is the entity `modTarget`, and a mother of the head's category. When `modTarget` is the

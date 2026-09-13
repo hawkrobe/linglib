@@ -1,134 +1,155 @@
 import Linglib.Syntax.HPSG.Binding
 import Linglib.Syntax.HPSG.Construction
-import Linglib.Morphology.Word.Basic
-
-open Morphology (Word)
+import Linglib.Data.Examples.SagWasowBender2003
 
 /-!
-# Sag, Wasow & Bender (2003) — Syntactic Theory: A Formal Introduction
-[sag-wasow-bender-2003] [chomsky-1981] [pollard-sag-1994] [hofmeister-sag-2010]
+# Sag, Wasow & Bender (2003): Syntactic Theory: A Formal Introduction
 
-Consolidated study of three strands of the HPSG textbook *Syntactic Theory: A Formal Introduction*
-(2nd ed.):
+This file formalizes two chapters of the textbook in the RSRL model theory of `Syntax/HPSG`.
+The binding theory of Chapter 7 says that an anaphor must be outranked by a coindexed argument
+on some argument-structure list and that a nonreflexive pronoun must not be, and the
+textbook's judgments on reflexives and pronouns follow from the binding grammar of
+`Syntax/HPSG/Binding`, whose outranking is local o-command (`binding_rows`). The long-distance
+dependencies of Chapter 15 rest on the list-valued feature GAP: the GAP Principle sums the
+daughters' gaps into the mother and the Head-Filler Rule discharges one, which is the
+filler-head construction of `Syntax/HPSG/Construction` (`head_filler_models`,
+`gap_principle_models`). The Coordinate Structure Constraint and its across-the-board exception
+are then derived rather than stipulated: conjuncts share their SYN value, GAP included, so a gap
+in one conjunct whose filler lies outside is rejected while gaps in every conjunct paired with
+one filler pass (`coordinationPrinciple`, `coordination_rows`), and a conjunct cannot itself be
+a gap, since a gap is an argument unrealized in the syntax rather than an empty phrase
+(`gap_not_conjunct`).
 
-- **Binding Theory** (Ch. 7) — the reduction of the Chomskyan three-way anaphor/pronoun/R-expression
-  classification (Principles A/B/C) to local o-command, grounded **model-theoretically** in the RSRL
-  Binding theory (`Syntax/HPSG/Binding`): Principle A (a locally o-commanded anaphor is locally o-bound,
-  agreeing in φ) and Principle B (a pronoun is locally o-free), instantiating the [chomsky-1981]
-  minimal-pair paradigm (`Studies/Chomsky1981`).
-- **Long-Distance Dependencies** (Ch. 15) — the Head-Filler Schema and `GAP`/SLASH mechanism, grounded
-  **model-theoretically** in the RSRL `GAP` (the canonical `Syntax/HPSG/Construction` signature: a set of
-  `loc` objects with amalgamation), with the island taxonomy derived from gap amalgamation, not stipulated
-  as Subjacency.
-- **Relative Clauses** — a relative clause modifies a head noun via the Head-Modifier Schema, grounded
-  **model-theoretically** in the RSRL `head-modifier-cxt` (the canonical `Syntax/HPSG/Construction`
-  signature); category preservation falls out of the Head Feature Principle.
+## Implementation notes
+
+The textbook's ranking on argument-structure lists, with a prepositional object of equal rank
+to its PP, is the substrate's local o-command relation, given directly on a worked transitive
+clause; the rows record whether the pronoun's antecedent is its local o-commander.
+Coordination is a binary construct whose conjuncts share their category and GAP list by token
+identity, the SYN identity of the textbook's rule; n-ary coordination, the conjunction daughter
+and the semantic restriction list are not modelled. The Argument Realization Principle, the
+subject-extraction lexical rule and the initial symbol are not formalized.
+
+## References
+
+* [sag-wasow-bender-2003]
+* [ross-1967]
+* [chomsky-1981]
 -/
 
 namespace SagWasowBender2003
 
+open HPSG.RSRL HPSG.Construction Data.Examples Features
 
-/-! ### Binding Theory (Ch. 7)
+/-- The rows on a topic. -/
+def probing (t : String) : List LinguisticExample :=
+  Examples.all.filter λ x => decide (x.feature? "topic" = some t)
 
-The HPSG binding theory reduces the Chomskyan three-way classification (anaphor / pronoun /
-R-expression → Principles A/B/C) to two `MODE`-based ARG-ST principles:
+/-! ### Binding theory -/
 
-- **Principle A**: `[MODE ana]` must be outranked on ARG-ST by a coindexed element;
-- **Principle B**: `[MODE ref]` must NOT be outranked on ARG-ST by a coindexed element.
+private def sorts : List (String × Binding.BSort) := [("anaphor", .ana), ("pronoun", .ppro)]
 
-Both pronouns and R-expressions are `[MODE ref]`, so Principle B subsumes Principle C. -/
+private def binders : List (String × Binding.BindEnt) :=
+  [("local", .iSubj), ("nonlocal", .iObj)]
 
-section Binding
+/-- The rows on binding are acceptable exactly when the worked clause with a pronoun of the
+row's sort, coindexed with its local o-commander or not as the row records, satisfies the
+binding grammar: a reflexive needs a coindexed local o-commander and a nonreflexive pronoun
+must lack one. -/
+theorem binding_rows :
+    ∀ x ∈ probing "binding", ∀ s ∈ x.parse? "sort" sorts, ∀ i ∈ x.parse? "binder" binders,
+      (x.judgment = .acceptable ↔
+        (Binding.clause s i .gMasc .nSing).Models Binding.bindingGrammar) := by
+  decide +kernel
 
-/-! ### Binding Theory (Principles A & B), model-theoretic in RSRL
+/-! ### Long-distance dependencies -/
 
-[sag-wasow-bender-2003]'s HPSG Binding Theory as RSRL descriptions over `Syntax/HPSG/Binding`:
-**Principle A** (a locally o-commanded anaphor is locally o-bound, agreeing in φ) and **Principle B** (a
-personal pronoun is locally o-free). The diagnostic reflexive / pronoun / φ-agreement contrasts hold as
-`Models` facts over the model theory; the [chomsky-1981] minimal-pair paradigm they instantiate lives in
-`Studies/Chomsky1981`. Reciprocal binding (*each other*, requiring a semantically plural antecedent) is a
-deferred RSRL addition — the principle needs a plurality-of-binder condition not yet in the substrate. -/
+/-- The Head-Filler Rule: a filler-head construct whose filler is identical to the head
+daughter's one gap satisfies the grammar, and the mother's GAP is empty. -/
+theorem head_filler_models : goodFillerHead.Models grammar := by decide
 
-/-- The reflexive (Principle A) judgments grounded in the RSRL model theory: a coindexed, φ-agreeing
-anaphor object satisfies the whole grammar (*John likes himself*), while a disjoint-indexed anaphor is
-locally o-commanded but not locally o-bound, violating Principle A (*himself likes John*). -/
-theorem reflexive_binding_grounded_in_rsrl :
-    (_root_.HPSG.RSRL.Binding.clause .ana .iSubj .gMasc .nSing).Models
-      _root_.HPSG.RSRL.Binding.bindingGrammar ∧
-    ¬ (_root_.HPSG.RSRL.Binding.clause .ana .iObj .gMasc .nSing).Models
-      [_root_.HPSG.RSRL.Binding.principleA] := by
+/-- The GAP Principle: with two gaps in the head daughter, the filler discharges the first and
+the second is summed into the mother. -/
+theorem gap_principle_models : goodTwoGap.Models grammar := by decide
+
+/-- The coordination construction: the two conjuncts share their category and GAP list, and the
+mother carries them. -/
+def coordinationPrinciple : Desc sig :=
+  .imp (.sortAssign .colon .coordCxt)
+    (.and (.pathEq (.path [.CONJ1, .CAT]) (.path [.CONJ2, .CAT]))
+      (.and (.pathEq (.path [.CONJ1, .GAP]) (.path [.CONJ2, .GAP]))
+        (.and (.pathEq (.path [.MTR, .CAT]) (.path [.CONJ1, .CAT]))
+          (.pathEq (.path [.MTR, .GAP]) (.path [.CONJ1, .GAP])))))
+
+/-- The filler-gap grammar with the coordination construction. -/
+def swbGrammar : Grammar sig := grammar ++ [coordinationPrinciple]
+
+/-- The entities of a worked coordinate construct: the construct, its mother and two conjuncts,
+their category, a one-gap list with its NP `loc` and index, and the empty list. -/
+inductive CoordEnt where
+  | cxt
+  | mtr
+  | c₁
+  | c₂
+  | cat
+  | np
+  | g
+  | lcl
+  | nil
+  | ix
+  deriving DecidableEq, Fintype, Repr
+
+/-- The GAP list of a conjunct: the shared one-gap list when it contains a gap, else empty. -/
+private def gapList (b : Bool) : CoordEnt := if b then .g else .nil
+
+/-- A coordinate construct of two clausal conjuncts, each containing a gap or not; the gap is
+one NP `loc`, shared by the conjuncts that have one, and the mother's GAP is the first
+conjunct's. -/
+@[reducible] def coordConstruct (gap₁ gap₂ : Bool) : Interpretation sig where
+  U := CoordEnt
+  S := λ
+    | .cxt => .coordCxt
+    | .mtr | .c₁ | .c₂ => .sign
+    | .cat => .verb
+    | .np => .noun
+    | .g => .nelist
+    | .lcl => .loc
+    | .nil => .elist
+    | .ix => .idx
+  A := λ a u => match a, u with
+    | .MTR, .cxt => some .mtr
+    | .CONJ1, .cxt => some .c₁
+    | .CONJ2, .cxt => some .c₂
+    | .CAT, .mtr | .CAT, .c₁ | .CAT, .c₂ => some .cat
+    | .GAP, .mtr | .GAP, .c₁ => some (gapList gap₁)
+    | .GAP, .c₂ => some (gapList gap₂)
+    | .FIRST, .g => some .lcl
+    | .REST, .g => some .nil
+    | .CAT, .lcl => some .np
+    | .INDEX, .lcl => some .ix
+    | _, _ => none
+  R := noRel
+
+instance (g₁ g₂ : Bool) : Fintype (coordConstruct g₁ g₂).U := inferInstanceAs (Fintype CoordEnt)
+
+instance (g₁ g₂ : Bool) : DecidableEq (coordConstruct g₁ g₂).U :=
+  inferInstanceAs (DecidableEq CoordEnt)
+
+private def bools : List (String × Bool) := [("true", true), ("false", false)]
+
+/-- The rows on coordination are acceptable exactly when the coordinate construct with a gap in
+the conjuncts the row records satisfies the grammar: a gap in one conjunct alone breaks the
+identity of the conjuncts' GAP lists, and gaps in both, paired with one filler, keep it. -/
+theorem coordination_rows :
+    ∀ x ∈ probing "coordination", ∀ g₁ ∈ x.parse? "gapInFirst" bools,
+      ∀ g₂ ∈ x.parse? "gapInSecond" bools,
+        (x.judgment = .acceptable ↔ (coordConstruct g₁ g₂).Models swbGrammar) := by
+  decide +kernel
+
+/-- A conjunct is a sign and a gap is a `loc` object, an argument unrealized in the syntax, so no
+well-typed construct has a gap for a conjunct: the sort a conjunct must bear is `sign`, which
+`loc` does not resolve to. -/
+theorem gap_not_conjunct : approp .coordCxt .CONJ1 = some .sign ∧ ¬ (Srt.loc ≤ .sign) := by
   decide
-
-/-- Principle B grounded in RSRL: a coindexed personal pronoun violates the model-theoretic
-Principle B (a pronoun must be locally o-free), the counterpart of the ARG-ST disjoint-reference data. -/
-theorem pronoun_binding_grounded_in_rsrl :
-    ¬ (_root_.HPSG.RSRL.Binding.clause .ppro .iSubj .gMasc .nSing).Models
-      [_root_.HPSG.RSRL.Binding.principleB] := by
-  decide
-
-/-- **φ-agreement grounded in RSRL.** The gender/number agreement of binding (the `Word.Agree` check in
-the computational engine) is the model-theoretic requirement that the bound anaphor's `GEND`/`NUM` are
-token-identical to the binder's: a *coindexed but φ-clashing* anaphor (feminine — *John likes herself*;
-or plural — *they like himself*) is not locally o-bound, violating Principle A. -/
-theorem agreement_binding_grounded_in_rsrl :
-    ¬ (_root_.HPSG.RSRL.Binding.clause .ana .iSubj .gFem .nSing).Models
-      [_root_.HPSG.RSRL.Binding.principleA] ∧
-    ¬ (_root_.HPSG.RSRL.Binding.clause .ana .iSubj .gMasc .nPlur).Models
-      [_root_.HPSG.RSRL.Binding.principleA] := by
-  decide
-
-end Binding
-
-/-! ### Long-Distance Dependencies: extraction and islands (Ch. 15)
-
-The Head-Filler Schema and SLASH mechanism, stated **model-theoretically** over the canonical RSRL
-signature (`islands_rsrl_grounded` below) — gap introduction, amalgamation, and the island taxonomy are
-all the RSRL list-valued `GAP`, which subsumes the former computational `SlashValue`/`gapComplement`
-shadow: a dependency penetrates a domain iff its `GAP` survives amalgamation. -/
-
-section Extraction
-
-open HPSG
-
-/-! #### Long-distance dependencies in the RSRL model theory — the full island taxonomy
-
-Extraction licensing is stated directly over the **model-theoretic** RSRL list-valued `GAP`
-(the canonical `Syntax/HPSG/Construction` signature): filler-gap category matching is gap amalgamation,
-and island permeability is the island/weak-island principles. The whole taxonomy is *derived* from
-amalgamation ([sag-2010] (67); after [bouma-malouf-sag-2001]), not stipulated as Subjacency — a
-dependency penetrates a domain iff its `GAP` survives amalgamation. -/
-
-/-- The island taxonomy as RSRL `Models` facts (the three cases of the now-retired coarse
-`GapRestriction` enum: unrestricted / absolute / weak). A free filler-head construct licenses
-extraction; an absolute island (`[GAP ⟨⟩]`) blocks a second gap; a weak island lets an NP gap pass but
-blocks a PP gap — each over the canonical construction grammar. -/
-theorem islands_rsrl_grounded :
-    Construction.goodTwoGap.Models Construction.grammar ∧
-    ¬ Construction.islandTwoGap.Models Construction.grammar ∧
-    Construction.weakIslandNPGap.Models Construction.grammar ∧
-    ¬ Construction.weakIslandPPGap.Models Construction.grammar := by decide
-
-end Extraction
-
-/-! ### Relative Clauses (Ch. 14)
-
-SWB2003 defers relative-clause analysis ("beyond the scope of this text", p. 442). The standard HPSG
-treatment — a relative clause is a filler-gap construct that modifies a head noun via the Head-Modifier
-Schema — is grounded **model-theoretically** in the canonical RSRL signature (`Syntax/HPSG/Construction`:
-`head-modifier-cxt` for the modification, `wh-rel-cl` for the clause-internal gap). The relativizer
-inventory and the Keenan–Comrie accessibility-hierarchy typology live, framework-neutrally, in
-`Fragments/English/Relativization` and `Typology/RelativeClause`, not here. -/
-
-section RelativeClauses
-
-/-- **Model-theoretic grounding (RSRL head-modifier).** The relative-clause head-modification above is
-grounded in the canonical RSRL signature (`Syntax/HPSG/Construction`'s `head-modifier-cxt`): a relative
-clause whose `MOD` value selects the noun head is licensed and the mother is a noun (modification
-preserves category — `headModifierPrinciple`); a modifier selecting the wrong category is rejected. -/
-theorem relatives_rsrl_grounded :
-    HPSG.Construction.goodHeadMod.Models HPSG.Construction.grammar ∧
-    ¬ HPSG.Construction.headModWrongCat.Models HPSG.Construction.grammar := by decide
-
-end RelativeClauses
 
 end SagWasowBender2003
