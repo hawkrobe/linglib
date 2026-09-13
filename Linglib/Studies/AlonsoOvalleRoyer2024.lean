@@ -1,6 +1,6 @@
 import Mathlib.Tactic.DeriveFintype
 import Mathlib.Data.Fintype.Powerset
-import Linglib.Semantics.Modality.Indefinite
+import Linglib.Semantics.Modality.ModalIndefinite
 import Linglib.Fragments.Mayan.Chuj.ModalIndefinites
 import Linglib.Fragments.Spanish.ModalIndefinites
 import Linglib.Fragments.German.ModalIndefinites
