@@ -3,19 +3,17 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Computability.ContextFreeGrammar
+import Linglib.Core.Computability.ContextFreeGrammar
 import Linglib.Core.Data.RoseTree.Get
 import Linglib.Core.Data.RoseTree.Countable
 import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
-import Mathlib.Algebra.Order.BigOperators.Group.List
-import Mathlib.Algebra.Order.Group.Nat
 import Mathlib.Data.Finset.Card
 import Mathlib.Data.Nat.Find
 
 /-!
 # Derivation trees of a context-free grammar
 
-A derivation tree of a context-free grammar is a rose tree over its symbols,
+A derivation tree, or parse tree, of a context-free grammar is a rose tree over its symbols,
 `RoseTree (Symbol T N)`. It is valid for a grammar when every terminal node is a leaf and every
 nonterminal node, read with the symbols of its children, is a rule. The yield of a tree is the
 list of terminals at its leaves, left to right.
@@ -27,52 +25,17 @@ list of terminals at its leaves, left to right.
 * `RoseTree.ruleCount`, `RoseTree.corpusRuleCount`: the number of applications of a rule in a
   tree and in a corpus of trees.
 * `RoseTree.ruleAt?`: the rule applied at a Gorn address.
-* `ContextFreeGrammar.maxBranch`, `ContextFreeGrammar.pumpingConstant`: the branching bound and
-  the pumping constant of a grammar.
 
 ## Main results
 
 * `RoseTree.ValidFor.derives`: a valid tree derives its yield from its root symbol.
 * `ContextFreeGrammar.exists_valid_tree`: every word of the language has a valid derivation tree
   from the start symbol.
-* `RoseTree.ValidFor.length_yield_le`: a valid tree of height `h` has at most `maxBranch ^ h`
-  terminals.
 * `RoseTree.ValidFor.replaceAt`, `RoseTree.ValidFor.exists_repeat`: replacing a subtree by one
   with the same root symbol preserves validity, and a long enough path in a valid tree passes two
   nodes with the same nonterminal; together with `RoseTree.numNodes_replaceAt_lt` these are the
   ingredients of the pumping lemma.
 -/
-
-/-- The terminal at a symbol, if it is one. -/
-def Symbol.terminal? {T N : Type*} : Symbol T N → Option T
-  | .terminal a => some a
-  | .nonterminal _ => none
-
-@[simp] theorem Symbol.terminal?_terminal {T N : Type*} (a : T) :
-    (Symbol.terminal a : Symbol T N).terminal? = some a := rfl
-
-@[simp] theorem Symbol.terminal?_nonterminal {T N : Type*} (A : N) :
-    (Symbol.nonterminal A : Symbol T N).terminal? = none := rfl
-
-/-- Relabel the nonterminals of a symbol. -/
-def Symbol.mapNonterminal {T N N' : Type*} (f : N → N') : Symbol T N → Symbol T N'
-  | .terminal a => .terminal a
-  | .nonterminal A => .nonterminal (f A)
-
-@[simp] theorem Symbol.mapNonterminal_terminal {T N N' : Type*} (f : N → N') (a : T) :
-    Symbol.mapNonterminal f (Symbol.terminal a : Symbol T N) = .terminal a := rfl
-
-@[simp] theorem Symbol.mapNonterminal_nonterminal {T N N' : Type*} (f : N → N') (A : N) :
-    Symbol.mapNonterminal f (Symbol.nonterminal A : Symbol T N) = .nonterminal (f A) := rfl
-
-@[simp] theorem Symbol.terminal?_mapNonterminal {T N N' : Type*} (f : N → N') (s : Symbol T N) :
-    (s.mapNonterminal f).terminal? = s.terminal? := by cases s <;> rfl
-
-instance Symbol.instCountable {T N : Type*} [Countable T] [Countable N] : Countable (Symbol T N) :=
-  Function.Injective.countable (f := fun s : Symbol T N => match s with
-    | .terminal t => Sum.inl t
-    | .nonterminal n => Sum.inr n) fun s s' h => by
-    cases s <;> cases s' <;> simp_all
 
 namespace RoseTree
 
@@ -327,54 +290,7 @@ end RoseTree
 
 namespace ContextFreeGrammar
 
-variable {T : Type*} (g : ContextFreeGrammar T)
-
-/-! ### The branching bound -/
-
-/-- The branching bound of a grammar: the longest right-hand side, and at least `2`. -/
-noncomputable def maxBranch : ℕ := max 2 (g.rules.sup fun r => r.output.length)
-
-/-- The pumping constant `maxBranch ^ (rules.card + 1)`: a valid tree with more terminals has a
-path through two nodes with the same nonterminal. -/
-noncomputable def pumpingConstant : ℕ := g.maxBranch ^ (g.rules.card + 1)
-
-theorem two_le_maxBranch : 2 ≤ g.maxBranch := le_max_left _ _
-
-theorem pumpingConstant_pos : 0 < g.pumpingConstant :=
-  Nat.pow_pos (by have := g.two_le_maxBranch; omega)
-
-theorem length_output_le_maxBranch {r : ContextFreeRule T g.NT} (hr : r ∈ g.rules) :
-    r.output.length ≤ g.maxBranch :=
-  le_trans (Finset.le_sup (f := fun r : ContextFreeRule T g.NT => r.output.length) hr)
-    (le_max_right _ _)
-
-variable {g}
-
-/-- A valid tree of height `h` has at most `maxBranch ^ h` terminals. -/
-theorem _root_.RoseTree.ValidFor.length_yield_le {t : RoseTree (Symbol T g.NT)}
-    (ht : t.ValidFor g) : t.yield.length ≤ g.maxBranch ^ t.height := by
-  induction ht with
-  | terminal a => simp [RoseTree.leaf]
-  | nonterminal A cs hrule _ ih =>
-    cases cs with
-    | nil => simp
-    | cons c cs =>
-      set h := (RoseTree.node (.nonterminal A) (c :: cs)).height with hh
-      have hpos : 0 < h :=
-        Nat.lt_of_le_of_lt (Nat.zero_le _) (RoseTree.height_lt_of_mem (c := c) (by simp))
-      have hb : 0 < g.maxBranch := by have := g.two_le_maxBranch; omega
-      rw [RoseTree.yield_node_nonterminal, List.length_flatten, List.map_map]
-      calc ((c :: cs).map (List.length ∘ RoseTree.yield)).sum
-          ≤ ((c :: cs).map fun _ => g.maxBranch ^ (h - 1)).sum := by
-            refine List.sum_le_sum fun d hd => ?_
-            refine (ih d hd).trans (Nat.pow_le_pow_right hb ?_)
-            have := RoseTree.height_lt_of_mem (t := RoseTree.node (.nonterminal A) (c :: cs)) hd
-            omega
-        _ = (c :: cs).length * g.maxBranch ^ (h - 1) := by
-            rw [List.map_const', List.sum_const_nat]
-        _ ≤ g.maxBranch * g.maxBranch ^ (h - 1) :=
-            Nat.mul_le_mul_right _ (by simpa using g.length_output_le_maxBranch hrule)
-        _ = g.maxBranch ^ h := by rw [← Nat.pow_succ']; congr 1; omega
+variable {T : Type*} {g : ContextFreeGrammar T}
 
 /-! ### Soundness and completeness -/
 
@@ -397,13 +313,6 @@ theorem _root_.RoseTree.ValidFor.derives {t : RoseTree (Symbol T g.NT)} (ht : t.
     rw [RoseTree.value_node, RoseTree.yield_node_nonterminal]
     exact (Produces.single ⟨⟨A, cs.map RoseTree.value⟩, hrule,
       ContextFreeRule.Rewrites.input_output⟩).trans (derives_flatten_yield ih)
-
-/-- A rewriting step at any position. -/
-private theorem Rewrites.at_position {r : ContextFreeRule T g.NT} (p q : List (Symbol T g.NT)) :
-    r.Rewrites (p ++ [Symbol.nonterminal r.input] ++ q) (p ++ r.output ++ q) := by
-  induction p with
-  | nil => simpa using ContextFreeRule.Rewrites.head q
-  | cons x xs ih => simpa using ContextFreeRule.Rewrites.cons x ih
 
 /-- **Forest existence.** A sentential form deriving a word is the list of root symbols of a
 list of valid trees whose yields concatenate to the word. -/

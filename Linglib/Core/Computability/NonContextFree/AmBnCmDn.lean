@@ -122,7 +122,7 @@ theorem pump_breaks_ambncmdn (p : ℕ) (_hp : 0 < p) :
   omega
 
 /-- `{aᵐbⁿcᵐdⁿ}` does not have the CFL pumping property. -/
-theorem ambncmdn_not_pumpable : ¬ HasCFLPumpingProperty ambncmdn := by
+theorem ambncmdn_not_pumpable : ¬ ambncmdn.HasCFLPumpingProperty := by
   rintro ⟨p, hp, hpump⟩
   obtain ⟨u, v, x, y, z, hw, hvxy, hvy, hall⟩ :=
     hpump _ (makeString_anbncndn_in_ambncmdn p) (by rw [length_makeString_anbncndn]; omega)
@@ -132,4 +132,4 @@ theorem ambncmdn_not_pumpable : ¬ HasCFLPumpingProperty ambncmdn := by
 /-- `{aᵐbⁿcᵐdⁿ}` is not context-free — the two-parameter relaxation that [shieber-1985]'s
 Swiss German argument requires. -/
 theorem ambncmdn_not_contextFree : ¬ Language.IsContextFree ambncmdn :=
-  not_isContextFree_of_not_pumpable ambncmdn ambncmdn_not_pumpable
+  mt Language.IsContextFree.hasCFLPumpingProperty ambncmdn_not_pumpable
