@@ -153,7 +153,7 @@ def ex_4_8a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("arg", "abs"), ("arg", "loc"), ("subject", "abs")]
-    comment := "The simple absolutive is subject; the other argument does not combine locative with absolutive."
+    comment := "The simple absolutive is subject; the goal locative is a spatial argument, ineligible for subject."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -170,8 +170,8 @@ def ex_4_8b : LinguisticExample :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("arg", "abs,loc"), ("arg", "abs"), ("subject", "abs,loc")]
-    comment := "Under (38) with its optional comma the complex absolutive abs,loc takes precedence over the simple one; under (38)′ the with-phrase is an adjunct outside subject selection."
+    paperFeatures := [("arg", "abs,loc"), ("adjunct", "abs"), ("subject", "abs,loc")]
+    comment := "The holistic subject is a contactive; the with-phrase is a circumstantial outside subject selection, which is what lets (38)' drop the optional comma of (38)."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
