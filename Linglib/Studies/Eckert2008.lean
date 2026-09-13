@@ -1,4 +1,5 @@
 import Linglib.Core.Relation.ReflTransGen
+import Linglib.Pragmatics.SocialMeaning.IndexicalField
 import Mathlib.Data.Fintype.Sum
 import Mathlib.Order.Closure
 import Mathlib.Order.Iterate
@@ -7,41 +8,32 @@ import Mathlib.Tactic.DeriveFintype
 /-!
 # Eckert (2008): Variation and the indexical field
 
-This file formalizes the indexical field of [eckert-2008]. Against the reading of a variable as
-the reflection of a fixed social category, the paper builds on [silverstein-2003]'s indexical
-order: a first-order index marks membership in a population, the social evaluation of that
-population is reconstrued into elements of character the variable comes to mark, and every
-nth-order value is available for an n + 1st reconstrual, so that continual reconstrual creates
-an indexical field, a constellation of ideologically linked meanings any of which a situated use
-may activate. An ideological field records what each meaning is available to be construed as
-(`IdeologicalField`), one reconstrual adds the construals of a set of meanings (`construe`), and
-the indexical field of a first-order index is its closure under construal (`indexicalField`), a
-closure operator whose closed sets are the sets no reconstrual extends and whose closure the
-iterated reconstruals exhaust. [labov-1963]'s Martha's Vineyard (ay) is the paper's example of an
-indicator becoming a marker, the fishermen's claim about what a Vineyarder is a second-order
-value of the index of Vineyarders.
+This file formalizes the indexical field of [eckert-2008]. On [silverstein-2003]'s indexical
+order, a first-order index marks membership in a population and every nth-order value is
+available for an n + 1st reconstrual, so the paper takes the meaning of a variable to be not a
+fixed category but the constellation of ideologically linked meanings that continual
+reconstrual creates, any of which a situated use may activate. An ideological field records
+what each meaning is available to be construed as (`IdeologicalField`), a reconstrual adds
+those construals to a set of meanings, and the indexical field of a first-order index is its
+closure under reconstrual, a closure operator whose closed sets are the sets no reconstrual
+extends.
 
-The (ING) field of Figure 3, built on [campbell-kibler-2007]'s matched-guise results, holds
-favourable and unfavourable meanings for both variants, so the variants' meanings do not work in
-lockstep, and a hearer interprets a variant against presupposed indexicality: the variant whose
-field holds the hearer's impression of the speaker passes, and the other is heard as a social
-move. The /t/ release field of Figure 4 distinguishes momentary stances from permanent
-qualities, the former accreting into the latter, the ideological field that elaborates it
-(`accretion`), and is anchored by social types; the diva style of [podesva-2007]'s Heath
-combines the two extremes of the articulation continuum. The Belten High variables of Figure 1
-divide into the older changes led by girls and the newer urban changes led by burnouts, so that
-the burnout girls alone are among the leaders of every variable, the urban–suburban opposition
-embedded within a suburban school.
+The examples are the paper's. [labov-1963]'s Martha's Vineyard (ay) is an indicator become a
+marker. The (ING) field of Figure 3, after [campbell-kibler-2007], holds favourable and
+unfavourable meanings for both variants, and a hearer expects the variant whose field holds
+the impression formed of the speaker. The stances of the /t/ release field of Figure 4 accrete
+into qualities, social types anchor the field, and [podesva-2007]'s diva combines the two
+extremes of the articulation continuum. Among the Belten High groups of Figure 1, the burnout
+girls alone are among the leaders of every variable.
 
 ## Implementation notes
 
-The fields hold the meanings of Figures 3 and 4 as printed, and the ideological links the text
-states; the association strengths of the numerical `IndexicalField` substrate are not in the
-paper. The leadership of Figure 1 is derived from the two generalizations the text states, and
-`Leads` marks a group among the greatest or second-greatest users, which reproduces the figure's
-marked cells. The burned-out burnout girls, a network cluster within the burnout girls, the
-Beijing variables of Figure 2 from [zhang-2005], Podesva's release-rate measurements, and the
-(DH) discussion are not represented.
+Figures 3 and 4 are recorded as printed and the ideological links as the text states them; the
+graded strengths of `SocialMeaning.AssociationField` are not in the paper. `Leads` marks a group
+among the greatest or second-greatest users of Figure 1 and is derived from the text's two
+generalizations, that girls lead the older changes and burnouts the newer. The burned-out
+burnout girls, the Beijing variables of Figure 2 from [zhang-2005], Podesva's release-rate
+measurements and the (DH) discussion are not represented.
 
 ## References
 
@@ -56,17 +48,19 @@ Beijing variables of Figure 2 from [zhang-2005], Podesva's release-rate measurem
 
 namespace Eckert2008
 
+open SocialMeaning
+
 /-! ### Indexical order and the indexical field -/
 
-/-- An ideological field: the meanings each potential meaning is available to be construed as,
-the links along which an nth-order value acquires an n + 1st. -/
+/-- An ideological field records, for each potential meaning, the meanings it is available to
+be construed as, the links along which an nth-order value acquires an n + 1st. -/
 abbrev IdeologicalField (T : Type*) := T → Finset T
 
 namespace IdeologicalField
 
 variable {T : Type*} [DecidableEq T] (I : IdeologicalField T) {S : Finset T} {t : T}
 
-/-- One reconstrual: the meanings of `S` together with everything they are construed as. -/
+/-- One reconstrual of `S` adds to its meanings everything they are construed as. -/
 def construe (S : Finset T) : Finset T := S ∪ S.biUnion I
 
 @[simp] theorem mem_construe : t ∈ I.construe S ↔ t ∈ S ∨ ∃ s ∈ S, t ∈ I s := by
@@ -77,14 +71,15 @@ theorem subset_construe (S : Finset T) : S ⊆ I.construe S := Finset.subset_uni
 theorem construe_mono : Monotone I.construe := λ _ _ h =>
   Finset.union_subset_union h (Finset.biUnion_subset_biUnion_of_subset_left _ h)
 
-/-- Reconstrual only adds meanings: the values of order `n` are among those of order `n + 1`. -/
+/-- Reconstrual only adds meanings, so the values of order `n` are among those of order
+`n + 1`. -/
 theorem monotone_construe_iterate (S : Finset T) : Monotone λ n => I.construe^[n] S :=
   I.construe_mono.monotone_iterate_of_le_map (I.subset_construe S)
 
 variable [Fintype T]
 
-/-- The indexical field a first-order index creates: every meaning the index is continually
-reconstrued as, the closure of the index under the ideological links. -/
+/-- The indexical field of a first-order index is its closure under the ideological links,
+every meaning the index is continually reconstrued as. -/
 def indexicalField : ClosureOperator (Finset T) :=
   .mk₂ (λ S => Finset.univ.filter λ t => ∃ s ∈ S, Relation.ReflTransGen (λ a b => b ∈ I a) s t)
     (λ _ _ h => Finset.mem_filter.2 ⟨Finset.mem_univ _, _, h, .refl⟩)
@@ -110,7 +105,7 @@ theorem iterate_construe_subset_indexicalField (n : ℕ) (S : Finset T) :
     · obtain ⟨u, hu, hus⟩ := I.mem_indexicalField.1 (ih hs)
       exact I.mem_indexicalField.2 ⟨u, hu, hus.tail hts⟩
 
-/-- Continual reconstrual creates, in the end, the indexical field: a meaning is in the field
+/-- Continual reconstrual creates, in the end, the indexical field, a meaning lying in the field
 exactly when some order of reconstrual reaches it. -/
 theorem mem_indexicalField_iff_exists_iterate :
     t ∈ I.indexicalField S ↔ ∃ n, t ∈ I.construe^[n] S := by
@@ -146,8 +141,8 @@ end IdeologicalField
 
 /-! ### Martha's Vineyard (ay) -/
 
-/-- The meanings of centralized (ay): membership among Vineyarders, and the claim about what a
-Vineyarder is that the fishermen made with the variant, local authenticity and opposition to
+/-- The meanings of centralized (ay) are membership among Vineyarders and the claim about what
+a Vineyarder is that the fishermen made with the variant, local authenticity and opposition to
 the mainland. -/
 inductive VineyardMeaning
   | vineyarder
@@ -155,23 +150,24 @@ inductive VineyardMeaning
   | oppositionToMainland
   deriving DecidableEq, Fintype
 
-/-- The island's ideological field: the evaluation of Vineyarders that the disagreements about
-the future of the island made available to the index. -/
+/-- The island's ideological field makes available to the index the evaluation of Vineyarders
+that the disagreements about the future of the island raised. -/
 def vineyardIdeology : IdeologicalField VineyardMeaning
   | .vineyarder => {.localAuthenticity, .oppositionToMainland}
   | _ => ∅
 
-/-- The first-order index of centralized (ay): Vineyarders. -/
+/-- The first-order index of centralized (ay) is membership among Vineyarders. -/
 def centralizedAy : Finset VineyardMeaning := {.vineyarder}
 
-/-- The indicator becomes a marker: local authenticity is a second-order value of centralized
-(ay), not a first-order one. -/
+/-- The indicator becomes a marker, local authenticity being a second-order value of
+centralized (ay) and not a first-order one. -/
 theorem vineyard_marker :
     .localAuthenticity ∉ centralizedAy ∧
       .localAuthenticity ∈ vineyardIdeology.construe centralizedAy := by
   decide
 
-/-- The field of [labov-1963]'s variant reconstrued: Vineyarders, and what a Vineyarder is. -/
+/-- The field of [labov-1963]'s variant reconstrued holds Vineyarders and what a Vineyarder
+is. -/
 theorem indexicalField_centralizedAy :
     vineyardIdeology.indexicalField centralizedAy =
       {.vineyarder, .localAuthenticity, .oppositionToMainland} :=
@@ -185,8 +181,8 @@ inductive INGVariant
   | apical
   deriving DecidableEq, Fintype
 
-/-- The potential meanings of Figure 3: the velar variant educated, formal, effortful and
-articulate or pretentious; the apical variant uneducated, relaxed, easygoing or lazy, and
+/-- The potential meanings of Figure 3, the velar variant heard as educated, formal, effortful
+and articulate or pretentious, the apical as uneducated, relaxed, easygoing or lazy, and
 inarticulate or unpretentious. -/
 inductive INGMeaning
   | educated
@@ -203,33 +199,33 @@ inductive INGMeaning
   deriving DecidableEq, Fintype
 
 /-- The (ING) field of Figure 3, black for the velar variant and gray for the apical. -/
-def ingField : INGVariant → Finset INGMeaning
+def ingField : IndexicalField INGVariant INGMeaning
   | .velar => {.educated, .formal, .effortful, .articulate, .pretentious}
   | .apical => {.uneducated, .relaxed, .easygoing, .lazy, .inarticulate, .unpretentious}
 
-/-- A hearer's evaluation of a meaning. -/
+/-- A hearer's evaluation of a meaning is favourable or unfavourable. -/
 inductive Evaluation
   | favourable
   | unfavourable
   deriving DecidableEq, Fintype
 
-/-- The evaluation of the meanings the figure pairs as alternatives: the apical speaker heard
-as inarticulate or lazy or else as unpretentious or easygoing, the velar speaker as articulate
-or as pretentious. The other meanings carry none. -/
+/-- The text attaches evaluations to the meanings the figure pairs as alternatives, the apical
+speaker heard as inarticulate or lazy or else as unpretentious or easygoing and the velar
+speaker as articulate or as pretentious; the other meanings carry none. -/
 def INGMeaning.evaluation : INGMeaning → Option Evaluation
   | .articulate | .unpretentious | .easygoing => some .favourable
   | .pretentious | .inarticulate | .lazy => some .unfavourable
   | _ => none
 
-/-- The region of a variant's field a hearer's evaluation activates. -/
+/-- A hearer's evaluation activates the region of a variant's field it evaluates that way. -/
 def activate (e : Evaluation) (v : INGVariant) : Finset INGMeaning :=
   (ingField v).filter (·.evaluation = some e)
 
-/-- The pairs do not work in lockstep: each variant has favourable and unfavourable meanings. -/
+/-- The pairs do not work in lockstep, each variant having favourable and unfavourable meanings. -/
 theorem activate_nonempty : ∀ e v, (activate e v).Nonempty := by decide
 
-/-- Presupposed indexicality: the variants a hearer expects from an impression of the speaker
-formed on general style and content, those whose field holds the impression. -/
+/-- Presupposed indexicality expects of a speaker the variants whose field holds the impression
+the hearer has formed of the speaker from general style and content. -/
 def expected (i : INGMeaning) : Finset INGVariant := Finset.univ.filter (i ∈ ingField ·)
 
 /-- An impression of the speaker as educated leads the hearer to expect the velar variant, one
@@ -245,7 +241,7 @@ inductive Move
   | insincere
   deriving DecidableEq, Fintype, Inhabited
 
-/-- The expected variant passes; the wrong one is heard as pretentious, condescending or
+/-- The expected variant passes, and the wrong one is heard as pretentious, condescending or
 insincere. -/
 def interpret (i : INGMeaning) (v : INGVariant) : Finset Move :=
   if v ∈ expected i then ∅ else Finset.univ
@@ -283,14 +279,14 @@ inductive TQuality
   | habitual (s : TStance)
   deriving DecidableEq, Fintype
 
-/-- A meaning of /t/ release: a stance or a quality. -/
+/-- A meaning of /t/ release is a stance or a quality. -/
 inductive TMeaning
   | stance (s : TStance)
   | quality (q : TQuality)
   deriving DecidableEq, Fintype
 
-/-- Stance accretion as an ideological field: a stance is available to be construed as the
-quality of habitually taking it, the mechanism by which the field is elaborated. -/
+/-- Stance accretion is the ideological field on which a stance is available to be construed
+as the quality of habitually taking it, the mechanism by which the field is elaborated. -/
 def accretion : IdeologicalField TMeaning
   | .stance s => {.quality (.habitual s)}
   | .quality _ => ∅
@@ -300,22 +296,23 @@ theorem quality_habitual_mem_construe {S : Finset TMeaning} {s : TStance}
     (h : .stance s ∈ S) : .quality (.habitual s) ∈ accretion.construe S :=
   accretion.mem_construe.2 (.inr ⟨_, h, by simp [accretion]⟩)
 
-/-- The field of /t/ release of Figure 4: nine stances and four qualities. -/
+/-- The field of /t/ release of Figure 4, nine stances and four qualities. -/
 def tRelease : Finset TMeaning :=
   {.stance .formal, .stance .clear, .stance .emphatic, .stance .annoyed, .stance .angry,
     .stance .careful, .stance .exasperated, .stance .polite, .stance .effortful,
     .quality .educated, .quality .articulate, .quality .elegant, .quality .prissy}
 
-/-- Qualities are construed no further, so accretion elaborates the field in one round: the
-indexical field of /t/ release is Figure 4 with the habitual quality of each of its stances. -/
+/-- Qualities are construed no further, so accretion elaborates the field in one round, and
+the indexical field of /t/ release is Figure 4 with the habitual quality of each of its
+stances. -/
 theorem indexicalField_tRelease :
     accretion.indexicalField tRelease = accretion.construe tRelease :=
   accretion.indexicalField_eq_iterate (n := 1) (by decide)
 
-/-- The social types of Figure 4, the enregistered voices at the less fluid end of the field
-that anchor interpretation: the British of the stereotype /t/ release evokes, the school teacher
-of the standard of clear speech, the nerd girl who builds on that standard while distancing
-herself from teachers, and the gay diva of [podesva-2007]'s Heath. -/
+/-- The social types of Figure 4 are the enregistered voices at the less fluid end of the field
+that anchor interpretation, the British of the stereotype /t/ release evokes, the school
+teacher of the standard of clear speech, the nerd girl who builds on that standard while
+distancing herself from teachers, and the gay diva of [podesva-2007]'s Heath. -/
 inductive SocialType
   | british
   | schoolTeacher
@@ -323,7 +320,7 @@ inductive SocialType
   | gayDiva
   deriving DecidableEq
 
-/-- The meanings the text has each type anchor: the British the articulateness of their
+/-- Each type anchors the meanings the text gives it, the British the articulateness of their
 stereotype and the elegance it opens up, the teacher clear, careful standard speech, the nerd
 girl its clarity and education, the diva the prissiness of the teacher's pet with
 exasperation. -/
@@ -338,14 +335,14 @@ theorem nerdGirl_anchors_subset :
     SocialType.nerdGirl.anchors ⊆ SocialType.schoolTeacher.anchors := by
   decide
 
-/-- The diva's generalized attitude of exasperation: the stance accreted into a quality. -/
+/-- The diva's generalized attitude of exasperation is the stance accreted into a quality. -/
 theorem gayDiva_habitual_exasperated :
     .quality (.habitual .exasperated) ∈ accretion.construe SocialType.gayDiva.anchors :=
   quality_habitual_mem_construe (by decide)
 
-/-- The continuum of /t/ articulation, hypo- to hyperarticulation: the deletion stigmatized in
-African American English, the flap of American English, the release of British English and the
-exaggerated release of the diva's parody. -/
+/-- The continuum of /t/ articulation runs from hypo- to hyperarticulation, from the deletion
+stigmatized in African American English through the flap of American English and the release
+of British English to the exaggerated release of the diva's parody. -/
 inductive Articulation
   | deletion
   | flap
@@ -353,7 +350,7 @@ inductive Articulation
   | exaggeratedRelease
   deriving DecidableEq, Fintype
 
-/-- Position on the continuum. -/
+/-- The position of an articulation on the continuum. -/
 def Articulation.rank : Articulation → ℕ
   | .deletion => 0
   | .flap => 1
@@ -389,24 +386,24 @@ inductive Orientation
   | burnout
   deriving DecidableEq
 
-/-- A social category of Figure 1: gender crossed with orientation. -/
+/-- A social category of Figure 1 crosses gender with orientation. -/
 structure Group where
   gender : Gender
   orientation : Orientation
   deriving DecidableEq
 
-/-- The strata of the seven variables: the older fronting components of the Northern Cities
-Shift, stabilized across the suburbs, the newer backing changes more advanced near the urban
-centre, and negative concord. -/
+/-- The seven variables fall into three strata, the older fronting components of the Northern
+Cities Shift, stabilized across the suburbs, the newer backing changes more advanced near the
+urban centre, and negative concord. -/
 inductive Stratum
   | older
   | newer
   | negativeConcord
   deriving DecidableEq, Fintype
 
-/-- A group is among the leaders of a stratum, the greatest or second-greatest users Figure 1
-marks: the older changes are used predominantly by girls, the newer urban changes and negative
-concord by burnouts. -/
+/-- A group leads a stratum when it is among the greatest or second-greatest users Figure 1
+marks, girls for the older changes and burnouts for the newer urban changes and negative
+concord. -/
 def Leads (g : Group) : Stratum → Prop
   | .older => g.gender = .girl
   | .newer | .negativeConcord => g.orientation = .burnout
@@ -415,8 +412,8 @@ instance (g : Group) : DecidablePred (Leads g)
   | .older => inferInstanceAs (Decidable (g.gender = .girl))
   | .newer | .negativeConcord => inferInstanceAs (Decidable (g.orientation = .burnout))
 
-/-- The burnout girls alone are among the leaders of every variable: the two leaderships cross
-gender with orientation, the urban–suburban opposition embedded within the school. -/
+/-- The burnout girls alone are among the leaders of every variable, the two leaderships
+crossing gender with orientation, the urban–suburban opposition embedded within the school. -/
 theorem leads_all_iff (g : Group) : (∀ s, Leads g s) ↔ g = ⟨.girl, .burnout⟩ :=
   ⟨λ h => by cases g; cases h .older; cases h .newer; rfl, by rintro rfl s; cases s <;> rfl⟩
 

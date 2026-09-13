@@ -1,4 +1,3 @@
-import Linglib.Pragmatics.SocialMeaning.IndexicalField
 import Mathlib.Tactic.NormNum
 
 /-!

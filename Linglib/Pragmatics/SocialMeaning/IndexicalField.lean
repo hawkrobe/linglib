@@ -1,270 +1,110 @@
-import Mathlib.Data.Rat.Defs
-import Linglib.Features.Register
+import Mathlib.Algebra.Order.Group.Unbundled.Basic
+import Mathlib.Data.Fintype.Basic
+import Mathlib.LinearAlgebra.Matrix.Defs
 
 /-!
-# Social Meaning and the Indexical Field [eckert-2008]
-[beltrama-schwarz-2024]
+# Indexical fields
 
-Framework-agnostic types for the social meaning of linguistic variation,
-following [eckert-2008]'s theory of the indexical field.
+This file defines indexical fields, the social meanings of the variants of a linguistic
+variable in the sense of [eckert-2008]. An indexical field assigns each variant the set of
+meanings, stances, qualities or persona traits, that a use of the variant may activate. An
+association field grades the assignment, giving each variant a signed strength toward each
+trait, positive when the variant indexes the trait and negative when it indexes away from it,
+and the traits a variant indexes toward form its indexical field.
 
-A linguistic variable's social meaning is not a fixed correspondence to a
-social category but a constellation of ideologically linked persona
-traits — an *indexical field* — that can be selectively activated by
-context.
+## Main definitions
 
-## Core concepts
+* `IndexicalField`: the meanings each variant of a variable indexes.
+* `AssociationField`: the signed strength with which each variant indexes each trait, a matrix
+  over an ordered ring.
+* `AssociationField.Indexes`: a variant indexes a trait, the strength being positive.
+* `AssociationField.Antipodal`: two variants index every trait in opposite directions.
+* `AssociationField.support`: the indexical field of the traits a variant indexes.
 
-**Indexical order**: variables accumulate layers of
-social meaning. First-order (demographic correlation, below awareness) →
-second-order (stylistic marker, available for manipulation) → third-order
-(stereotype, subject to metapragmatic commentary).
+## Main results
 
-**Stances vs. qualities**: variables directly
-index interactional *stances* (momentary positions like "being precise
-right now"). Habitual stances accrete into attributed *qualities* (stable
-traits like "is meticulous"). Social meaning mediates between form and
-identity through this stance → quality pathway.
+* `AssociationField.Antipodal.indexes_iff`: an antipodal pair index a trait in opposite
+  directions.
+* `AssociationField.Antipodal.disjoint_support`: an antipodal pair index no trait in common.
 
-**Indexical field**: the constellation of potential meanings associated
-with a variant. Not a fixed meaning but a structured space — each use
-activates a region of the field, contextually selecting among
-ideologically linked traits (Figures 3–4 in [eckert-2008]).
+## Implementation notes
 
-## Connections
+An association field is a `Matrix`, so composing associations through a mediating domain, the
+indirect indexicality of [ochs-1992], is matrix multiplication, and inheriting a field along a
+map of variant spaces is `Matrix.submatrix`. The sign-valued fields of
+[beltrama-solt-burnett-2023] and the grounded fields of [burnett-2019] are association fields
+and indexical fields over the Stereotype Content Model dimensions.
 
-* `Features.Register.SocialIndex`: competence/solidarity is one axis of the
-  social space that indexical fields map into
-* `RSA.CombinedUtility`: social utility as a component of speaker utility
-* `RSA.NoncooperativeCommunication.SpeakerOrientation`: cooperative vs.
-  argumentative as a coarse speaker-type dimension
+## References
 
+* [eckert-2008]
+* [ochs-1992]
+* [beltrama-solt-burnett-2023]
+* [burnett-2019]
 -/
 
-namespace SocialMeaning.IndexicalField
+namespace SocialMeaning
 
--- ============================================================================
--- Indexical order ([silverstein-2003])
--- ============================================================================
+/-- An indexical field assigns each variant of a variable the meanings it indexes. -/
+abbrev IndexicalField (Variant Meaning : Type*) := Variant → Finset Meaning
 
-/-- [silverstein-2003]'s indexical order: how a variable's social meaning
-    accumulates layers through use and metapragmatic awareness.
+/-- An association field assigns each variant of a variable a signed strength toward each
+trait, positive when the variant indexes the trait and negative when it indexes away. -/
+abbrev AssociationField (Variant Trait R : Type*) := Matrix Variant Trait R
 
-    Each order presupposes the previous: a variable must correlate with a
-    social category (first-order) before speakers can consciously manipulate
-    it (second-order), and must be a marker before it can become a stereotype
-    subject to overt commentary (third-order). -/
-inductive IndexicalOrder where
-  /-- Correlates with a social category but below conscious awareness. -/
-  | first
-  /-- Noticed and available for stylistic manipulation (Labov's "marker"). -/
-  | second
-  /-- Stereotype: subject to metapragmatic commentary and performance. -/
-  | third
-  deriving DecidableEq, Repr
+namespace AssociationField
 
-def IndexicalOrder.toNat : IndexicalOrder → Nat
-  | .first => 0 | .second => 1 | .third => 2
+variable {Variant Trait R : Type*} {v v₁ v₂ : Variant} {t : Trait}
 
-instance : LinearOrder IndexicalOrder :=
-  LinearOrder.lift' IndexicalOrder.toNat
-    (fun a b h => by cases a <;> cases b <;> simp_all [IndexicalOrder.toNat])
+section Indexes
 
--- ============================================================================
--- Indexical field ([eckert-2008])
--- ============================================================================
+variable [Zero R] [LT R] (M : AssociationField Variant Trait R)
 
-/-- An indexical field: the constellation of ideologically
-    related meanings associated with a linguistic variable.
+/-- A variant indexes a trait when its association with the trait is positive. -/
+def Indexes (v : Variant) (t : Trait) : Prop := 0 < M v t
 
-    Parameterized by:
-    * `Variant`: variant forms of the variable (e.g., round vs. precise numeral)
-    * `Trait`: persona traits in the field (e.g., meticulous, casual,...)
+instance [DecidableLT R] : DecidableRel M.Indexes := λ _ _ => inferInstanceAs (Decidable (_ < _))
 
-    The `association` function maps each (variant, trait) pair to a rational
-    value. Positive values mean the variant indexes *toward* the trait;
-    negative values mean it indexes *away*. The field is context-dependent:
-    the same variable may have different fields in different contexts
-    ([eckert-2008]: "the field is a space of potential meanings"). -/
-structure IndexicalField (Variant : Type) (Trait : Type) where
-  /-- How strongly using this variant indexes this trait.
-      Positive = toward, negative = away. -/
-  association : Variant → Trait → ℚ
-  /-- Indexical order of this variable. -/
-  order : IndexicalOrder
+variable [Fintype Trait] [DecidableLT R]
 
-/-- Two variants *contrast* on a trait when their associations differ. -/
-def IndexicalField.contrasts {Variant Trait : Type}
-    (field : IndexicalField Variant Trait) (v₁ v₂ : Variant) (t : Trait) : Prop :=
-  field.association v₁ t ≠ field.association v₂ t
+/-- The support of a variant is the indexical field of the traits it indexes. -/
+def support (v : Variant) : Finset Trait := Finset.univ.filter (M.Indexes v)
 
-/-- A variant *positively indexes* a trait. -/
-def IndexicalField.indexes {Variant Trait : Type}
-    (field : IndexicalField Variant Trait) (v : Variant) (t : Trait) : Prop :=
-  field.association v t > 0
+@[simp] theorem mem_support : t ∈ M.support v ↔ M.Indexes v t := by simp [support]
 
-/-- Pull back an indexical field along a variant map: `comap f field` gives each
-    variant the associations of its image. A study manipulating a coarser variant
-    space than the one a field was measured on inherits the field this way. -/
-def IndexicalField.comap {Variant Variant' Trait : Type}
-    (f : Variant' → Variant) (field : IndexicalField Variant Trait) :
-    IndexicalField Variant' Trait where
-  association := field.association ∘ f
-  order := field.order
+end Indexes
 
-/-- Two variants are *antipodal* when their associations are exact opposites on
-    every trait. -/
-def IndexicalField.Antipodal {Variant Trait : Type}
-    (field : IndexicalField Variant Trait) (v₁ v₂ : Variant) : Prop :=
-  ∀ t, field.association v₁ t = - field.association v₂ t
+section Antipodal
 
--- ============================================================================
--- Social meaning dimensions
--- ============================================================================
+variable [InvolutiveNeg R] (M : AssociationField Variant Trait R)
 
--- `SocialDimension` (Fiske et al.'s competence/warmth/antiSolidarity axes)
--- has moved to `Pragmatics/SocialMeaning/SCM.lean`, where it belongs as part
--- of the Stereotype Content Model theory rather than framework-agnostic Core.
+/-- Two variants are antipodal when they index every trait in opposite directions. -/
+def Antipodal (v₁ v₂ : Variant) : Prop := M v₁ = -M v₂
 
--- ============================================================================
--- Contextual style ([labov-2006], ch. 4)
--- ============================================================================
+variable {M}
 
-/-- [labov-2006]'s attention-to-speech model of contextual style.
+theorem Antipodal.symm (h : M.Antipodal v₁ v₂) : M.Antipodal v₂ v₁ := (neg_eq_iff_eq_neg.2 h).symm
 
-    Speech formality increases with the degree of conscious monitoring.
-    The five levels correspond to the interview methodology: casual speech
-    elicited through group interaction and emotional narratives (A), careful
-    interview speech (B), reading aloud (C), word lists (D), and minimal
-    pairs that force attention to a specific contrast (D'). -/
-inductive ContextualStyle where
-  | casual       -- A: group interaction, tangents, danger-of-death narrative
-  | careful      -- B: interview response speech
-  | reading      -- C: connected reading passage
-  | wordList     -- D: isolated word list
-  | minimalPair  -- D': minimal pair test
-  deriving DecidableEq, Repr, Inhabited
+theorem antipodal_comm : M.Antipodal v₁ v₂ ↔ M.Antipodal v₂ v₁ := ⟨Antipodal.symm, Antipodal.symm⟩
 
-def ContextualStyle.toNat : ContextualStyle → Nat
-  | .casual => 0 | .careful => 1 | .reading => 2
-  | .wordList => 3 | .minimalPair => 4
+end Antipodal
 
-instance : LinearOrder ContextualStyle :=
-  LinearOrder.lift' ContextualStyle.toNat
-    (fun a b h => by cases a <;> cases b <;> simp_all [ContextualStyle.toNat])
+section AddGroup
 
-/-- Bridge to `Features.Register.Level`: maps the 5-point Labovian style scale
-    to the 3-point register scale used by Fragment lexical entries. -/
-def ContextualStyle.toRegisterLevel : ContextualStyle → Features.Register.Level
-  | .casual | .careful => .informal
-  | .reading           => .neutral
-  | .wordList | .minimalPair => .formal
+variable [AddGroup R] [Preorder R] [AddLeftStrictMono R] {M : AssociationField Variant Trait R}
 
--- ============================================================================
--- Stratification profile
--- ============================================================================
+/-- An antipodal pair index a trait in opposite directions. -/
+theorem Antipodal.indexes_iff (h : M.Antipodal v₁ v₂) : M.Indexes v₁ t ↔ M v₂ t < 0 := by
+  rw [Indexes, h, Pi.neg_apply, neg_pos]
 
-/-- A stratification profile: the fundamental data object of variationist
-    sociolinguistics ([labov-2006]).
+/-- An antipodal pair index no trait in common. -/
+theorem Antipodal.disjoint_support [Fintype Trait] [DecidableLT R] (h : M.Antipodal v₁ v₂) :
+    Disjoint (M.support v₁) (M.support v₂) :=
+  Finset.disjoint_left.2 λ _ h₁ h₂ =>
+    lt_asymm (M.mem_support.1 h₂) (h.indexes_iff.1 (M.mem_support.1 h₁))
 
-    Maps (social group, contextual style) pairs to a variable index (ℚ),
-    where the index is the proportion of non-prestige variant usage (0–100).
-    Every [labov-2006]-style stratification diagram is a visualization
-    of one of these matrices. -/
-structure StratificationProfile (Group Style : Type) where
-  index : Group → Style → ℚ
+end AddGroup
 
-/-- A stratification profile is monotone (down) if higher-ranked groups
-    use less of the stigmatized variant, in every style.
-    This is the canonical pattern for socially stratified variables. -/
-def StratificationProfile.isMonotoneDown {Group Style : Type}
-    [LT Group] [DecidableRel (α := Group) (· < ·)]
-    (p : StratificationProfile Group Style) (styles : List Style) : Prop :=
-  ∀ s ∈ styles, ∀ g₁ g₂ : Group, g₁ < g₂ → p.index g₁ s ≥ p.index g₂ s
+end AssociationField
 
-/-- A profile exhibits style shifting if every group uses less of the
-    stigmatized variant in more formal styles. -/
-def StratificationProfile.hasStyleShift {Group Style : Type}
-    [LT Style] [DecidableRel (α := Style) (· < ·)]
-    (p : StratificationProfile Group Style) (groups : List Group) : Prop :=
-  ∀ g ∈ groups, ∀ s₁ s₂ : Style, s₁ < s₂ → p.index g s₁ ≥ p.index g s₂
-
-/-- A crossover occurs when group g₁ has a *higher* index than g₂ in style
-    s₁, but *lower* in style s₂. The canonical example: lower-middle class
-    exceeds upper-middle class in formal styles for (r) in NYC. -/
-def StratificationProfile.hasCrossover {Group Style : Type}
-    (p : StratificationProfile Group Style)
-    (g₁ g₂ : Group) (s₁ s₂ : Style) : Prop :=
-  p.index g₁ s₁ > p.index g₂ s₁ ∧ p.index g₁ s₂ < p.index g₂ s₂
-
--- ============================================================================
--- Variable behavior classification ([labov-2006], ch. 7)
--- ============================================================================
-
-/-- [labov-2006]'s classification of variable change status.
-
-    Labov distinguishes stable variables (no change in apparent time)
-    from variables undergoing change. Changes "from above" are led by
-    the highest-status group and involve adoption of an overt prestige
-    norm; changes "from below" are led by interior groups and proceed
-    below conscious awareness until they reach the level of social
-    comment. -/
-inductive ChangeStatus where
-  /-- No change in apparent time; stable social stratification. -/
-  | stable
-  /-- Prestige variant spreading from highest-status group downward. -/
-  | changeFromAbove
-  /-- Non-prestige variant spreading from interior social groups. -/
-  | changeFromBelow
-  deriving DecidableEq, Repr
-
-/-- A variable's sociolinguistic behavior: its structural properties in
-    the social matrix, its indexical order (awareness level), and its
-    change status. This type connects Labov's variationist classification
-    to [silverstein-2003]'s indexical orders already formalized in
-    `IndexicalOrder`. -/
-structure VariableBehavior where
-  /-- Silverstein's indexical order (awareness level). -/
-  order : IndexicalOrder
-  /-- Stability vs. direction of change. -/
-  change : ChangeStatus
-
-/-- Indicators are first-order: socially stratified but below conscious
-    awareness, hence no style shifting. -/
-def VariableBehavior.isIndicator (vb : VariableBehavior) : Prop :=
-  vb.order = .first
-
-/-- Markers are second-order: socially stratified AND showing style
-    shifting. Available for conscious manipulation. -/
-def VariableBehavior.isMarker (vb : VariableBehavior) : Prop :=
-  vb.order = .second
-
-/-- Stereotypes are third-order: subject to overt metapragmatic
-    commentary and performance. -/
-def VariableBehavior.isStereotype (vb : VariableBehavior) : Prop :=
-  vb.order = .third
-
--- ============================================================================
--- Indirect indexicality ([ochs-1992], [silverstein-1976])
--- ============================================================================
-
-/-- Compose two association maps through an intermediate domain.
-
-    The composed association of source `s` with target `t` is the sum
-    over all mediating elements `m` of `f₁(s,m) × f₂(m,t)`:
-
-      composed(s, t) = Σ_m f₁(s,m) × f₂(m,t)
-
-    This formalizes [ochs-1992]'s indirect indexicality: linguistic
-    forms do not directly index gender; they index stances, which in turn
-    index gender. The composed value captures how strongly a form
-    indirectly indexes a gender category.
-
-    Requires a list of all mediators (study files with `[Fintype M]`
-    pass `Fintype.elems.toList`). -/
-def composeIndex {S M T : Type}
-    (f₁ : S → M → ℚ) (f₂ : M → T → ℚ)
-    (allM : List M) (s : S) (t : T) : ℚ :=
-  (allM.map fun m => f₁ s m * f₂ m t).sum
-
-end SocialMeaning.IndexicalField
+end SocialMeaning
