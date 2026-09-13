@@ -1,6 +1,6 @@
 import Linglib.Semantics.Evidential.Source
 import Linglib.Semantics.Modality.Kernel
-import Linglib.Semantics.Questions.Partition.SubjectMatter
+import Linglib.Semantics.Questions.Partition.Basic
 import Linglib.Data.Examples.VonFintelGillies2010
 
 /-!

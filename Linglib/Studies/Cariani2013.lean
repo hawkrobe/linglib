@@ -1,4 +1,4 @@
-import Linglib.Semantics.Questions.Partition.SubjectMatter
+import Linglib.Semantics.Questions.Partition.Basic
 import Mathlib.Data.Finset.Lattice.Fold
 import Mathlib.Order.Preorder.Finite
 import Mathlib.Tactic.DeriveFintype

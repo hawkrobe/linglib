@@ -1,7 +1,5 @@
-import Linglib.Semantics.Questions.Partition.Lattice
-import Linglib.Semantics.Questions.Partition.Cells
+import Linglib.Semantics.Questions.Partition.Basic
 import Linglib.Core.Probability.Decision.Basic
-import Mathlib.Data.Setoid.Partition
 import Mathlib.Data.Set.Card
 import Mathlib.Tactic.FieldSimp
 
@@ -14,13 +12,14 @@ attributes as proper coarsenings. The complements of a partition's cells form a 
 exactly when the partition is binary (`compl_isPartition_iff`); complement probabilities sum
 to one less than the number of cells and form a distribution exactly for two cells
 (`sum_compl_prob`, `sum_compl_prob_eq_one_iff`); the binary partition of a proposition and
-its negation is the coarsest coarsening preserving it (`binaryPartition_coarsens`); an
-attribute is negative with respect to a partition when it and some cell properly coarsen it
-(`IsNegativeAttribute`); and partition-relative expected utility is the law of total
-expectation, a coarsening's cell terms regrouping the finer partition's
-(`eu_eq_partitionEU`, `partitionEU_coarsening_regroup`). The paper's claim that re-coverings
-which neither coarsen nor refine fail compositionality, and the conditional-independence
-result of [johnson-1986] it cites, are not represented.
+its negation is the coarsest coarsening preserving it, which is what `Setoid.Settles` says,
+and a proposition and its negation carry the same partition (`Setoid.polar_compl`); an
+attribute is negative with respect to a partition when its complement is a cell and its polar
+question properly coarsens the partition (`IsNegativeAttribute`); and partition-relative
+expected utility is the law of total expectation, a coarsening's cell terms regrouping the
+finer partition's (`eu_eq_partitionEU`, `partitionEU_congr`). The paper's claim that
+re-coverings which neither coarsen nor refine fail compositionality, and the
+conditional-independence result of [johnson-1986] it cites, are not represented.
 
 ## TODO
 
@@ -35,7 +34,7 @@ file and are UNVERIFIED.
 
 namespace Merin1999
 
-open QUD Core.DecisionTheory Core.DecisionTheory.DecisionProblem
+open Core.DecisionTheory Core.DecisionTheory.DecisionProblem
 
 /-! ### FACT 1: complement families -/
 
@@ -154,59 +153,28 @@ theorem sum_compl_prob_eq_one_iff {W : Type*} [Fintype W] [DecidableEq W]
 
 /-! ### Coarsening and negative attributes -/
 
-/-- Binary partition from a Boolean predicate: two elements are
-equivalent iff the predicate agrees on both. Negation-induced
-repartitioning yields exactly these ([merin-1999] §8). -/
-abbrev binaryPartition {M : Type*} (p : M → Bool) : QUD M := ofProject p
+/-- Q properly coarsens Q' over a finite domain: Q coarsens Q' with strictly fewer cells
+([merin-1999] p. 262 definition). -/
+def IsProperCoarsening {M : Type*} (q q' : Setoid M) : Prop :=
+  q' ≤ q ∧ Nat.card (Quotient q) < Nat.card (Quotient q')
 
-/-- Complement predicates induce the same binary partition: a
-proposition and its negation carry the same information. -/
-theorem complement_same_partition {M : Type*} (p : M → Bool) (w v : M) :
-    (binaryPartition p).sameAnswer w v =
-    (binaryPartition (λ m => !p m)).sameAnswer w v := by
-  simp only [ofProject_sameAnswer]
-  cases p w <;> cases p v <;> rfl
-
-/-- Q properly coarsens Q' over a finite domain: Q coarsens Q' with
-strictly fewer cells ([merin-1999] p. 262 definition). -/
-def IsProperCoarsening {M : Type*} [DecidableEq M]
-    (q q' : QUD M) (elements : List M) : Prop :=
-  q.coarsens q' ∧ q.numCells elements < q'.numCells elements
-
-/-- FACT 4 ([merin-1999] p. 263): `{P, ¬P}` is the *coarsest*
-`P`-preserving coarsening. Any partition whose cells respect `P` — in
-particular any `P`-preserving coarsening of a given partition — is
-refined by the binary partition of `P`. -/
-theorem binaryPartition_coarsens {M : Type*} (q : QUD M) (p : M → Bool)
-    (h : ∀ w v, q.sameAnswer w v = true → p w = p v) :
-    (binaryPartition p).coarsens q := by
-  intro w v hq
-  simp only [ofProject_sameAnswer, beq_iff_eq]
-  exact h w v hq
-
-/-- `R` is a **negative attribute** with respect to `q`
-([merin-1999] p. 263): the complement of `R` is a cell of `q`,
-and the two-cell partition `{R, ¬R}` properly coarsens `q`. Negativity
+/-- `R` is a **negative attribute** with respect to `q` ([merin-1999] p. 263): the complement
+of `R` is a cell of `q`, and the two-cell partition `{R, ¬R}` properly coarsens `q`. Negativity
 is epistemic (partition-kinetic), not morphological. -/
-def IsNegativeAttribute {M : Type*} [DecidableEq M] (R : M → Bool)
-    (q : QUD M) (elements : List M) : Prop :=
-  (∃ w, ∀ v, q.sameAnswer w v = true ↔ R v = false) ∧
-  IsProperCoarsening (binaryPartition R) q elements
+def IsNegativeAttribute {M : Type*} (R : Set M) (q : Setoid M) : Prop :=
+  (∃ w, q.cell w = Rᶜ) ∧ IsProperCoarsening (Setoid.polar R) q
 
 /-! ### EU compositionality under coarsening -/
 
 variable {M : Type*} {A : Type*}
 
-/-- Expected utility computed via a partition: weight each cell's
-conditional EU by the cell's probability
-(`EU_Q(a) = Σ_{c ∈ cells Q} P(c) · EU(a | c)`). -/
-def partitionEU [Fintype M] [DecidableEq M]
-    (dp : DecisionProblem ℚ M A) (q : QUD M) (a : A) : ℚ :=
-  (q.toCellsFinset Finset.univ).sum (λ cell =>
-    cell.sum dp.prior * condExpectedUtility dp cell a)
+/-- Expected utility computed via a partition: weight each cell's conditional EU by the
+cell's probability (`EU_Q(a) = Σ_{c ∈ cells Q} P(c) · EU(a | c)`). -/
+def partitionEU [Fintype M] [DecidableEq M] (dp : DecisionProblem ℚ M A) (q : Setoid M)
+    [DecidableRel q] (a : A) : ℚ :=
+  ∑ cell ∈ (Finpartition.ofSetoid q).parts, cell.sum dp.prior * condExpectedUtility dp cell a
 
-/-- Cell probability times conditional EU is the raw weighted sum, for
-non-negative priors. -/
+/-- Cell probability times conditional EU is the raw weighted sum, for non-negative priors. -/
 private theorem cellProb_mul_conditionalEU [DecidableEq M]
     (dp : DecisionProblem ℚ M A) (cell : Finset M) (a : A)
     (hprior : ∀ w, dp.prior w ≥ 0) :
@@ -224,48 +192,23 @@ private theorem cellProb_mul_conditionalEU [DecidableEq M]
     rw [Finset.mul_sum]
     congr 1; ext w; field_simp
 
-/-- Law of total expectation: the unconditional expected utility equals
-the partition-relative EU, for any partition (non-negative priors). -/
-theorem eu_eq_partitionEU [Fintype M] [DecidableEq M]
-    (dp : DecisionProblem ℚ M A) (a : A) (q : QUD M)
-    (hprior : ∀ w, dp.prior w ≥ 0) :
+/-- Law of total expectation: the unconditional expected utility equals the
+partition-relative EU, for any partition (non-negative priors). -/
+theorem eu_eq_partitionEU [Fintype M] [DecidableEq M] (dp : DecisionProblem ℚ M A) (a : A)
+    (q : Setoid M) [DecidableRel q] (hprior : ∀ w, dp.prior w ≥ 0) :
     expectedUtility dp a = partitionEU dp q a := by
   simp only [expectedUtility, partitionEU]
-  conv_lhs => rw [show (Finset.univ : Finset M) =
-    (q.toCellsFinset Finset.univ).biUnion id
-    from (toCellsFinset_covers q Finset.univ).symm]
-  rw [Finset.sum_biUnion (toCellsFinset_pairwiseDisjoint q Finset.univ)]
-  exact Finset.sum_congr rfl (λ cell _ =>
-    (cellProb_mul_conditionalEU dp cell a hprior).symm)
+  conv_lhs => rw [← (Finpartition.ofSetoid q).biUnion_parts]
+  rw [Finset.sum_biUnion (Finpartition.ofSetoid q).supIndep.pairwiseDisjoint]
+  exact Finset.sum_congr rfl (λ cell _ => (cellProb_mul_conditionalEU dp cell a hprior).symm)
 
-/-- Partition-relative EU is partition-independent: any two partitions
-compute the unconditional EU. [merin-1999] p. 264 is the
-coarsening instance; the paper's FACT 5 — that non-coarsening
-re-coverings *fail* term-by-term re-usability — is not formalized. -/
-theorem partitionEU_congr [Fintype M] [DecidableEq M]
-    (dp : DecisionProblem ℚ M A) (q q' : QUD M) (a : A)
+/-- Partition-relative EU is partition-independent: any two partitions compute the
+unconditional EU. [merin-1999] p. 264 is the coarsening instance; the paper's FACT 5, that
+non-coarsening re-coverings *fail* term-by-term re-usability, is not formalized. -/
+theorem partitionEU_congr [Fintype M] [DecidableEq M] (dp : DecisionProblem ℚ M A)
+    (q q' : Setoid M) [DecidableRel q] [DecidableRel q'] (a : A)
     (hprior : ∀ w, dp.prior w ≥ 0) :
     partitionEU dp q a = partitionEU dp q' a :=
   (eu_eq_partitionEU dp a q hprior).symm.trans (eu_eq_partitionEU dp a q' hprior)
-
-/-- EU compositionality under coarsening ([merin-1999] p. 264):
-each coarse cell's term is the sum of the terms of the fine cells it
-groups, so a coarsening re-uses the finer partition's computations. -/
-theorem partitionEU_coarsening_regroup [Fintype M] [DecidableEq M]
-    (dp : DecisionProblem ℚ M A) {q q' : QUD M} (a : A)
-    (hcoarse : q'.coarsens q)
-    (hprior : ∀ w, dp.prior w ≥ 0) :
-    partitionEU dp q' a =
-      (q'.toCellsFinset Finset.univ).sum (λ c' =>
-        ((q.toCellsFinset Finset.univ).filter (· ⊆ c')).sum (λ c =>
-          c.sum dp.prior * condExpectedUtility dp c a)) := by
-  unfold partitionEU
-  refine Finset.sum_congr rfl (λ c' hc' => ?_)
-  rw [cellProb_mul_conditionalEU dp c' a hprior]
-  conv_lhs => rw [show c' = ((q.toCellsFinset Finset.univ).filter (· ⊆ c')).biUnion id
-    from coarse_eq_biUnion_fine q q' Finset.univ hcoarse c' hc']
-  rw [Finset.sum_biUnion (fine_cells_in_coarse_pairwiseDisjoint q Finset.univ c')]
-  exact Finset.sum_congr rfl (λ c _ =>
-    (cellProb_mul_conditionalEU dp c a hprior).symm)
 
 end Merin1999

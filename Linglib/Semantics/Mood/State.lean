@@ -54,7 +54,7 @@ is a partition, not a general inquisitive content: non-partition
 phenomena (mention-some, intermediate exhaustivity —
 [theiler-etal-2018], `Studies/TheilerRoelofsenAloni2018.lean`) live
 in `Question W`, with `Question.fromSetoid`
-(`Semantics/Questions/Partition/Basic.lean`) as the faithful
+(`Semantics/Questions/Partition/Inquisitive.lean`) as the faithful
 embedding.
 -/
 
