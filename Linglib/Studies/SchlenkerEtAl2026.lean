@@ -1,5 +1,5 @@
 import Linglib.Semantics.Iconicity
-import Linglib.Semantics.Reference.Monsters
+import Linglib.Semantics.Reference.Kaplan
 import Linglib.Fragments.ASL.Classifiers
 import Linglib.Semantics.Reference.Context.Shifts
 import Mathlib.Data.Rat.Defs
@@ -44,7 +44,6 @@ is on a 7-point scale (7 = best, 1 = worst). Classifier direction
 namespace SchlenkerEtAl2026
 
 open Semantics.Iconic
-open Reference.Monsters (IsTowerMonster attitudeShift_is_monster isTowerMonster_congr)
 open Reference
 open ASL (SigningSpace)
 
@@ -177,18 +176,14 @@ def roleShiftCtx (character : E) (rsWorld : W) :
   label := .roleShift
 
 /-- Role Shift is a monster (non-identity context shift), connecting
-    to the Kaplan/Schlenker monster debate in `Monsters.lean`.
-
-    Derived directly from `attitudeShift_is_monster`: `roleShiftCtx` shares
-    `attitudeShift`'s `apply`, and monsterhood depends only on `apply`. -/
+    to the Kaplan/Schlenker monster debate in `Reference/Kaplan.lean`:
+    `roleShiftCtx` acts on contexts as `attitudeShift` does. -/
 theorem roleShift_is_monster
     (character : E) (rsWorld : W)
     (c : Context W E P T)
     (hAgent : c.agent ≠ character) :
-    IsTowerMonster (roleShiftCtx (P := P) (T := T) character rsWorld) :=
-  (isTowerMonster_congr (σ := roleShiftCtx (P := P) (T := T) character rsWorld)
-      (τ := attitudeShift (P := P) (T := T) character rsWorld) rfl).mpr
-    (attitudeShift_is_monster character rsWorld c hAgent)
+    (roleShiftCtx (P := P) (T := T) character rsWorld).IsMonster :=
+  ContextShift.isMonster_attitudeShift character rsWorld c hAgent
 
 /-- Under Role Shift, π* resolves to the character's viewpoint. -/
 theorem contextBound_under_roleShift

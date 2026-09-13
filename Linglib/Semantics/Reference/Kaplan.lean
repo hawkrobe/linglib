@@ -1,307 +1,119 @@
 /-
-# Kaplan's Character/Content Semantics
-
-Formalizes [kaplan-1989] "Demonstratives": the two-stage semantics for
-indexicals and the theory of singular propositions ([almog-2014], Ch 2).
-
-## Key Results
-
-- `indexical`: Character varies with context, content is rigid
-- `pronI`: "I" picks out the agent of the context
-- `pronI_directlyReferential`: "I" is directly referential
-- `SingularProposition`: Structured ⟨individual, property⟩ pairs
-- `structured_distinguishes_unstructured`: The Frege puzzle — same
-  unstructured content, different structured content
-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
 -/
-
-import Linglib.Semantics.Reference.Basic
-import Linglib.Semantics.Reference.Context.Tower
+import Linglib.Semantics.Reference.Character
 import Linglib.Semantics.Reference.Context.Shifts
 
-namespace Reference.Kaplan
-
-open Reference (IsRigid isRigid_const)
-open _root_.Reference.Basic
-
-/-! ## Indexicals -/
-
-/-- An indexical expression: its character varies with context (unlike proper
-names), but its content at each context is rigid.
-
-Example: "I" has a different content when uttered by Alice vs Bob,
-but once we fix the context, the content rigidly picks out the agent. -/
-def indexical {W E P T : Type*} (charFn : Context W E P T → E) :
-    ReferringExpression (Context W E P T) W E :=
-  { character := λ c => fun _ => charFn c
-  , profile := ⟨true, true, false⟩ }
-
-/-- "I": picks out the agent of the context. -/
-def pronI {W E P T : Type*} : ReferringExpression (Context W E P T) W E :=
-  indexical (·.agent)
-
-/-- "I" is directly referential: at every context, its content is rigid. -/
-theorem pronI_directlyReferential {W E P T : Type*} :
-    isDirectlyReferential (pronI (W := W) (E := E) (P := P) (T := T)).character :=
-  λ _ => isRigid_const _
-
-/-- "You": picks out the addressee of the context (Speas & Tenny's HEARER). -/
-def pronYou {W E P T : Type*} : ReferringExpression (Context W E P T) W E :=
-  indexical (·.addressee)
-
-/-- "You" is directly referential: at every context, its content is rigid. -/
-theorem pronYou_directlyReferential {W E P T : Type*} :
-    isDirectlyReferential (pronYou (W := W) (E := E) (P := P) (T := T)).character :=
-  λ _ => isRigid_const _
-
-/-- Indexicals have non-constant character (in general).
-
-"I" said by Alice ≠ "I" said by Bob: the character varies. -/
-theorem indexical_character_varies {W E P T : Type*} [Inhabited W]
-    (charFn : Context W E P T → E)
-    (c₁ c₂ : Context W E P T) (h : charFn c₁ ≠ charFn c₂) :
-    (indexical charFn).character c₁ ≠ (indexical charFn).character c₂ := by
-  intro heq
-  have : (indexical charFn).character c₁ default = (indexical charFn).character c₂ default :=
-    congrFun heq default
-  simp only [indexical] at this
-  exact h this
+/-!
+# Pure indexicals and monsters
+
+The English pure indexicals of [kaplan-1989] read a coordinate of the speech-act context:
+as access patterns on the context tower they are `AccessPattern.origin` of a coordinate
+(`Kaplan.I`, `Kaplan.you`, `Kaplan.now`, `Kaplan.here`, `Kaplan.actually`), hence invariant
+under every embedding shift (`AccessPattern.stable_origin`), which is Kaplan's thesis for
+English. An access pattern stable under every shift is *Kaplan-compliant*
+(`AccessPattern.IsKaplanCompliant`); a shift that moves some context is a *monster*
+(`ContextShift.IsMonster`), an operator on the context of utterance rather than on the
+circumstance of evaluation. A shift that is no monster leaves every access pattern stable
+(`AccessPattern.stable_of_not_isMonster`), and a monster is exactly a shift under which the
+innermost context itself is unstable (`ContextShift.isMonster_iff_not_stable_innermost_id`). The
+identity shift that Kaplan's thesis assigns to English attitude verbs is no monster
+(`ContextShift.not_isMonster_identityShift`); the attitude shift of [schlenker-2003] and
+[anand-nevins-2004], which makes the holder the agent, is one whenever the holder is not the
+speaker (`ContextShift.isMonster_attitudeShift`).
+
+## References
+
+* [kaplan-1989]
+* [schlenker-2003]
+* [anand-nevins-2004]
+-/
+
+namespace Reference
+
+variable {C R W E P T : Type*}
+
+/-! ### Monsters -/
+
+/-- A context shift is a monster when it moves some context. -/
+def ContextShift.IsMonster (σ : ContextShift C) : Prop := σ.apply ≠ id
+
+namespace ContextShift
+
+theorem isMonster_iff (σ : ContextShift C) : σ.IsMonster ↔ ∃ c, σ.apply c ≠ c :=
+  Function.ne_iff
+
+theorem not_isMonster_identityShift :
+    ¬ (identityShift : ContextShift (Context W E P T)).IsMonster :=
+  λ h => h rfl
+
+/-- An attitude shift to a holder other than some context's agent moves that context. -/
+theorem isMonster_attitudeShift (holder : E) (w' : W) (c : Context W E P T)
+    (h : c.agent ≠ holder) : (attitudeShift (P := P) (T := T) holder w').IsMonster :=
+  (isMonster_iff _).2 ⟨c, λ e => h (by simpa using (congrArg Context.agent e).symm)⟩
+
+end ContextShift
+
+namespace AccessPattern
+
+/-- A shift that is no monster leaves every access pattern stable. -/
+theorem stable_of_not_isMonster (ap : AccessPattern C R) {σ : ContextShift C}
+    (h : ¬ σ.IsMonster) : ap.Stable σ := by
+  have hσ : σ.apply = id := not_not.mp h
+  intro t
+  obtain ⟨d, f⟩ := ap
+  simp only [resolve]
+  congr 1
+  cases d with
+  | origin => simp
+  | «local» =>
+    rw [DepthSpec.local_resolve, DepthSpec.local_resolve, ContextTower.push_depth,
+      ContextTower.push_contextAt_of_lt _ _ (Nat.lt_succ_self _), hσ, ContextTower.contextAt_depth]
+    rfl
+  | relative k =>
+    rcases le_or_gt k t.depth with hk | hk
+    · rw [DepthSpec.relative_resolve, DepthSpec.relative_resolve,
+        ContextTower.push_contextAt_of_le _ _ hk]
+    · rw [DepthSpec.relative_resolve, DepthSpec.relative_resolve,
+        ContextTower.push_contextAt_of_lt _ _ hk, hσ, ContextTower.contextAt_saturates _ _ hk.le]
+      rfl
+
+/-- An access pattern is Kaplan-compliant when it is stable under every shift. -/
+def IsKaplanCompliant (ap : AccessPattern C R) : Prop := ∀ σ, ap.Stable σ
+
+theorem isKaplanCompliant_origin (f : C → R) : (origin f).IsKaplanCompliant :=
+  stable_origin f
+
+end AccessPattern
+
+/-- A shift is a monster iff the innermost context is unstable under it. -/
+theorem ContextShift.isMonster_iff_not_stable_innermost_id (σ : ContextShift C) :
+    σ.IsMonster ↔ ¬ (AccessPattern.innermost id).Stable σ := by
+  simp only [isMonster_iff, AccessPattern.Stable, AccessPattern.innermost_resolve,
+    ContextTower.push_innermost, id_eq, not_forall]
+  exact ⟨λ ⟨c, hc⟩ => ⟨ContextTower.root c, by simpa using hc⟩, λ ⟨t, ht⟩ => ⟨t.innermost, ht⟩⟩
+
+/-! ### The English pure indexicals -/
+
+namespace Kaplan
+
+/-- *I*: the agent of the speech-act context. -/
+def I : AccessPattern (Context W E P T) E := .origin Context.agent
+
+/-- *you*: the addressee of the speech-act context. -/
+def you : AccessPattern (Context W E P T) E := .origin Context.addressee
+
+/-- *now*: the time of the speech-act context. -/
+def now : AccessPattern (Context W E P T) T := .origin Context.time
 
-/-! ## Singular Propositions -/
-
-/-- A singular proposition: a structured pair ⟨individual, property⟩.
-
-Where unstructured propositions are sets of worlds (W → Prop), singular
-propositions retain the identity of the individual. This is essential
-for solving the Frege puzzle: ⟨Hesperus, bright⟩ ≠ ⟨Phosphorus, bright⟩
-even when "Hesperus is bright" and "Phosphorus is bright" are true at
-exactly the same worlds. -/
-structure SingularProposition (W : Type*) (E : Type*) where
-  /-- The individual the proposition is about -/
-  individual : E
-  /-- The property predicated of the individual -/
-  property : E → W → Prop
-
-namespace SingularProposition
+/-- *here*: the position of the speech-act context. -/
+def here : AccessPattern (Context W E P T) P := .origin Context.position
 
-variable {W E : Type*}
-
-/-- Evaluate a singular proposition at a world. -/
-def eval (sp : SingularProposition W E) (w : W) : Prop :=
-  sp.property sp.individual w
-
-/-- Flatten a singular proposition to an unstructured proposition (W → Prop). -/
-def flatten (sp : SingularProposition W E) : W → Prop :=
-  λ w => sp.property sp.individual w
+/-- *actually*: the world of the speech-act context. -/
+def actually : AccessPattern (Context W E P T) W := .origin Context.world
 
-/-- Two singular propositions with the same property but different individuals
-produce the same unstructured content iff the property can't distinguish them.
+end Kaplan
 
-This is the formal Frege puzzle: ⟨a, P⟩ and ⟨b, P⟩ may flatten to the same
-W → Prop, yet remain distinct as structured propositions because a ≠ b. -/
-theorem structured_distinguishes_unstructured
-    (a b : E) (P : E → W → Prop) (hab : a ≠ b)
-    (_hflat : (SingularProposition.mk a P).flatten = (SingularProposition.mk b P).flatten) :
-    (SingularProposition.mk a P) ≠ (SingularProposition.mk b P) := by
-  intro heq
-  have : (SingularProposition.mk a P).individual = (SingularProposition.mk b P).individual :=
-    congrArg SingularProposition.individual heq
-  simp at this
-  exact hab this
-
-end SingularProposition
-
-/-! ## Bridge to Attitude/Intensional -/
-
-/-- The content of a proper name at any context is the constant intension at its bearer:
-Montague's `^` of the bearer is the name's Kaplanian character. -/
-theorem constantCharacter_is_up {C W E : Type*} (e : E) (c : C) :
-    (properName (C := C) (W := W) e).character c = fun _ => e := rfl
-
-/-! ## Kaplan's Logical Truth: "I am here now" -/
-
-/-- "I am here now" is a logical truth in the logic of demonstratives:
-at every context, the content is true at the world of the context.
-
-It is NOT necessary — there are worlds where the agent is elsewhere.
-This distinguishes logical truth (true at every context) from
-necessity (true at every world). -/
-theorem i_am_here_now_logically_true {W E P T : Type*}
-    (here : Context W E P T → E → W → Prop)
-    (hCtx : ∀ c : Context W E P T, here c c.agent c.world) :
-    ∀ c : Context W E P T, here c c.agent c.world :=
-  hCtx
-
-/-! ## Indexicals as Tower Access Patterns
-
-Connects the character/content theory above to the ContextTower infrastructure.
-Each pure indexical is an `AccessPattern` reading from the origin (speech-act context)
-with a projection to the relevant coordinate. Kaplan's thesis that English indexicals
-are invariant under embedding operators becomes a corollary of `origin_stable`. -/
-
-section TowerIndexicals
-
-
-variable {W' : Type*} {E' : Type*} {P' : Type*} {T' : Type*}
-
--- ════════════════════════════════════════════════════════════════
--- § Pure Indexicals as Access Patterns
--- ════════════════════════════════════════════════════════════════
-
-/-- "I" — first person pronoun. Reads the agent from the speech-act context.
-
-    [kaplan-1989]: the character of "I" is the function that maps every
-    context to the agent of that context. In tower terms, "I" reads from
-    the origin (depth 0), projecting `Context.agent`. -/
-def pronI_access : AccessPattern (Context W' E' P' T') E' :=
-  ⟨.origin, Context.agent⟩
-
-/-- "you" — second person pronoun. Reads the addressee from the speech-act context.
-
-    Following [speas-tenny-2003], the addressee is a coordinate of the
-    Kaplanian context. "You" reads from the origin, projecting `Context.addressee`. -/
-def pronYou_access : AccessPattern (Context W' E' P' T') E' :=
-  ⟨.origin, Context.addressee⟩
-
-/-- "now" — temporal indexical. Reads the time from the speech-act context.
-
-    [kaplan-1989] §VI: N (now) is a content operator that shifts the
-    evaluation time to the context time. As an access pattern, "now"
-    reads `Context.time` from the origin. -/
-def opNow_access : AccessPattern (Context W' E' P' T') T' :=
-  ⟨.origin, Context.time⟩
-
-/-- "here" — spatial indexical. Reads the position from the speech-act context. -/
-def opHere_access : AccessPattern (Context W' E' P' T') P' :=
-  ⟨.origin, Context.position⟩
-
-/-- "actually" — modal indexical. Reads the world from the speech-act context.
-
-    [kaplan-1989] §VI: A (actually) shifts the evaluation world to the
-    context world. As an access pattern, "actually" reads `Context.world`
-    from the origin. -/
-def opActually_access : AccessPattern (Context W' E' P' T') W' :=
-  ⟨.origin, Context.world⟩
-
--- ════════════════════════════════════════════════════════════════
--- § Depth Verification
--- ════════════════════════════════════════════════════════════════
-
-@[simp] theorem pronI_depth :
-    (pronI_access (W' := W') (E' := E') (P' := P') (T' := T')).depth = .origin := rfl
-
-@[simp] theorem pronYou_depth :
-    (pronYou_access (W' := W') (E' := E') (P' := P') (T' := T')).depth = .origin := rfl
-
-@[simp] theorem opNow_depth :
-    (opNow_access (W' := W') (E' := E') (P' := P') (T' := T')).depth = .origin := rfl
-
-@[simp] theorem opHere_depth :
-    (opHere_access (W' := W') (E' := E') (P' := P') (T' := T')).depth = .origin := rfl
-
-@[simp] theorem opActually_depth :
-    (opActually_access (W' := W') (E' := E') (P' := P') (T' := T')).depth = .origin := rfl
-
--- ════════════════════════════════════════════════════════════════
--- § Shift Invariance: "I" Under Embedding
--- ════════════════════════════════════════════════════════════════
-
-/-- "I" is invariant under any tower push. This is the formal content of
-    Kaplan's thesis for the first person pronoun: no embedding operator
-    (attitude verb, temporal shift, mood operator) changes what "I" refers to.
-
-    "John said that I am happy" => "I" = the actual speaker, not John. -/
-theorem pronI_shift_invariant
-    (t : ContextTower (Context W' E' P' T')) (σ : ContextShift (Context W' E' P' T')) :
-    pronI_access.resolve (t.push σ) = pronI_access.resolve t :=
-  AccessPattern.origin_stable pronI_access rfl t σ
-
-/-- "you" is invariant under any tower push. -/
-theorem pronYou_shift_invariant
-    (t : ContextTower (Context W' E' P' T')) (σ : ContextShift (Context W' E' P' T')) :
-    pronYou_access.resolve (t.push σ) = pronYou_access.resolve t :=
-  AccessPattern.origin_stable pronYou_access rfl t σ
-
-/-- "now" is invariant under any tower push. -/
-theorem opNow_shift_invariant
-    (t : ContextTower (Context W' E' P' T')) (σ : ContextShift (Context W' E' P' T')) :
-    opNow_access.resolve (t.push σ) = opNow_access.resolve t :=
-  AccessPattern.origin_stable opNow_access rfl t σ
-
-/-- "here" is invariant under any tower push. -/
-theorem opHere_shift_invariant
-    (t : ContextTower (Context W' E' P' T')) (σ : ContextShift (Context W' E' P' T')) :
-    opHere_access.resolve (t.push σ) = opHere_access.resolve t :=
-  AccessPattern.origin_stable opHere_access rfl t σ
-
-/-- "actually" is invariant under any tower push. -/
-theorem opActually_shift_invariant
-    (t : ContextTower (Context W' E' P' T')) (σ : ContextShift (Context W' E' P' T')) :
-    opActually_access.resolve (t.push σ) = opActually_access.resolve t :=
-  AccessPattern.origin_stable opActually_access rfl t σ
-
--- ════════════════════════════════════════════════════════════════
--- § Kaplan's Thesis (Tower Formulation)
--- ════════════════════════════════════════════════════════════════
-
-/-- Kaplan's thesis as a tower property: an access pattern is *Kaplan-compliant*
-    when it is stable under every embedding shift — pushing any operator leaves
-    its resolution unchanged. This is the ∀-over-operators projection of
-    `AccessPattern.Stable`, dual to monsterhood's ∃-over-operators projection
-    (`Reference/Monsters.lean`).
-
-    Reading from the origin (`depth =.origin`) is the canonical sufficient
-    condition (`isKaplanCompliant_of_depth_origin`): an origin-reading
-    expression sees the speech-act context regardless of embedding. -/
-def IsKaplanCompliant {C R : Type*} (ap : AccessPattern C R) : Prop :=
-  ∀ σ, ap.Stable σ
-
-/-- An origin-reading access pattern is Kaplan-compliant. -/
-theorem isKaplanCompliant_of_depth_origin {C R : Type*} (ap : AccessPattern C R)
-    (hd : ap.depth = .origin) : IsKaplanCompliant ap :=
-  fun σ => ap.Stable_of_depth_origin hd σ
-
-/-- All English pure indexicals are Kaplan-compliant: they all read from
-    the origin (speech-act context).
-
-    This is the tower formulation of [kaplan-1989]'s anti-monster thesis:
-    natural language (English) operators cannot shift the context of utterance.
-    In tower terms, English indexicals have `depth =.origin`, so embedding
-    (pushing shifts) has no effect on their resolution. -/
-theorem kaplansThesisTower :
-    IsKaplanCompliant (pronI_access (W' := W') (E' := E') (P' := P') (T' := T')) ∧
-    IsKaplanCompliant (pronYou_access (W' := W') (E' := E') (P' := P') (T' := T')) ∧
-    IsKaplanCompliant (opNow_access (W' := W') (E' := E') (P' := P') (T' := T')) ∧
-    IsKaplanCompliant (opHere_access (W' := W') (E' := E') (P' := P') (T' := T')) ∧
-    IsKaplanCompliant (opActually_access (W' := W') (E' := E') (P' := P') (T' := T')) :=
-  ⟨isKaplanCompliant_of_depth_origin _ rfl, isKaplanCompliant_of_depth_origin _ rfl,
-   isKaplanCompliant_of_depth_origin _ rfl, isKaplanCompliant_of_depth_origin _ rfl,
-   isKaplanCompliant_of_depth_origin _ rfl⟩
-
--- ════════════════════════════════════════════════════════════════
--- § Resolution in Root Tower
--- ════════════════════════════════════════════════════════════════
-
-/-- In a root tower, "I" resolves to the context's agent. -/
-theorem pronI_root (c : Context W' E' P' T') :
-    pronI_access.resolve (ContextTower.root c) = c.agent := rfl
-
-/-- In a root tower, "you" resolves to the context's addressee. -/
-theorem pronYou_root (c : Context W' E' P' T') :
-    pronYou_access.resolve (ContextTower.root c) = c.addressee := rfl
-
-/-- In a root tower, "now" resolves to the context's time. -/
-theorem opNow_root (c : Context W' E' P' T') :
-    opNow_access.resolve (ContextTower.root c) = c.time := rfl
-
-/-- In a root tower, "here" resolves to the context's position. -/
-theorem opHere_root (c : Context W' E' P' T') :
-    opHere_access.resolve (ContextTower.root c) = c.position := rfl
-
-/-- In a root tower, "actually" resolves to the context's world. -/
-theorem opActually_root (c : Context W' E' P' T') :
-    opActually_access.resolve (ContextTower.root c) = c.world := rfl
-
-end TowerIndexicals
-
-end Reference.Kaplan
+end Reference

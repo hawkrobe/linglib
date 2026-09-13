@@ -1,5 +1,4 @@
-import Linglib.Semantics.Reference.Basic
-import Linglib.Semantics.Reference.Kripke
+import Linglib.Semantics.Reference.Character
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Studies.Longobardi2001
 
@@ -204,15 +203,12 @@ theorem kindReading_iff_operator (a : ArticleType) : KindReadingPossible a ↔ a
 
 /-! ### Bridges -/
 
-open Reference.Basic (properName isDirectlyReferential constantCharacter)
-
 /-- A proper name in D is a constant in the semantic sense too: directly referential, with a
 constant character. -/
 theorem proper_name_in_d_is_constant {C W E : Type*} (e : E) :
-    isDirectlyReferential (properName (C := C) (W := W) e).character ∧
-      constantCharacter (properName (C := C) (W := W) e).character :=
-  ⟨Reference.Basic.properName_isDirectlyReferential e,
-   Reference.Basic.properName_constantCharacter e⟩
+    (Reference.Character.const e : Reference.Character C W E).IsDirectlyReferential ∧
+      Reference.IsRigid (Reference.Character.const e : Reference.Character C W E) :=
+  ⟨Reference.Character.const_isDirectlyReferential e, Reference.isRigid_const _⟩
 
 /-- The strong-D parameter of [longobardi-2001] is the requirement that D be filled overtly
 for a constant: Romance names need D filled and Romance bare nouns cannot be constants,

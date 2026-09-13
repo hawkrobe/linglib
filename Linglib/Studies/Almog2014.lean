@@ -1,0 +1,105 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
+import Linglib.Studies.Kripke1980
+import Linglib.Semantics.Quantification.Defs
+
+/-!
+# Almog (2014): Referential Mechanics
+
+This file formalizes the formal core of [almog-2014]. Rigid designation and directly
+referential content are separated by Kaplan's `dthat`: `dthat[the φ]` designates rigidly and
+so is scope-inert (`dthat_deRe_iff_deDicto`), yet two descriptions that co-denote at the
+context world rigidify to one content (`dthat_eq_dthat_of_eq`), so rigidity alone leaves the
+informativeness of an identity unexplained, while a structured singular proposition keeps the
+individuals apart (`SingularProposition.mk_ne_mk_of_ne`). Co-referential rigid designators
+have the same content, `IsRigid.eq_of_apply_eq`, which is the book's "no entailments" thesis:
+direct reference assigns *Cicero is Cicero* and *Cicero is Tully* one proposition and is
+silent on whether it is necessary or believed. Donnellan's referential use is a different
+mechanism from rigidification: reference fixed by contact with the object before any
+description is deployed is the constant character, and it diverges from `dthat` of the
+description whenever the description misfits (`const_ne_dthat_of_ne`). The Russell–Partee–
+Kaplan challenge is the type gap between referential and quantificational subjects: the
+Montague lift `Quantification.individual` is injective (`individual_injective`) but the
+universal quantifier is not in its image (`not_exists_individual_eq_forall`), so a subject of
+type `E` cannot serve *every philosopher*.
+
+## Implementation notes
+
+The book's taxonomy of three mechanisms of direct reference (designation, singular
+proposition, referential use), whose pairwise independence it argues expression by
+expression, is not formalized: a profile assigned to an expression by fiat is not derivable
+from its semantics, so nothing would be proved about it.
+
+## References
+
+* [almog-2014]
+* [kaplan-1989]
+* [kripke-1980]
+* [donnellan-1966]
+-/
+
+namespace Almog2014
+
+open Reference Kripke1980
+
+variable {W E : Type*} {desc desc₁ desc₂ : W → E} {c w₀ w : W}
+
+/-! ### Rigidity without singularity -/
+
+/-- `dthat` of a description is scope-inert. -/
+theorem dthat_deRe_iff_deDicto (P : E → W → Prop) :
+    deRe P (Character.dthat desc c) w₀ w ↔ deDicto P (Character.dthat desc c) w :=
+  (isRigid_iff_deRe_iff_deDicto (Character.dthat desc c) w₀).1 (isRigid_const (desc c)) P w
+
+/-- Descriptions that co-denote at the context world rigidify to one content. -/
+theorem dthat_eq_dthat_of_eq (h : desc₁ c = desc₂ c) :
+    (Character.dthat desc₁ : Character W W E) c = Character.dthat desc₂ c :=
+  funext λ _ => h
+
+/-- A singular proposition: a structured pair of an individual and a property. -/
+structure SingularProposition (W E : Type*) where
+  /-- The individual the proposition is about. -/
+  individual : E
+  /-- The property predicated of it. -/
+  property : E → W → Prop
+
+namespace SingularProposition
+
+variable {a b : E} {P : E → W → Prop}
+
+/-- The unstructured proposition a singular proposition determines. -/
+def flatten (p : SingularProposition W E) : W → Prop := p.property p.individual
+
+/-- Singular propositions about distinct individuals are distinct, whatever their
+unstructured propositions: the Frege puzzle is dissolved by structure. -/
+theorem mk_ne_mk_of_ne (h : a ≠ b) : mk a P ≠ mk b P :=
+  λ e => h (congrArg individual e)
+
+end SingularProposition
+
+/-! ### Referential use is not rigidification -/
+
+/-- Reference fixed on an intended individual differs from `dthat` of a description that
+misfits it. -/
+theorem const_ne_dthat_of_ne {intended : E} (h : desc c ≠ intended) :
+    (Character.const intended : Character W W E) c ≠ Character.dthat desc c :=
+  λ e => h (congrFun e c).symm
+
+/-! ### The Russell–Partee–Kaplan challenge -/
+
+/-- The Montague lift is injective: distinct individuals give distinct quantifiers. -/
+theorem individual_injective : Function.Injective (Quantification.individual : E → _) :=
+  λ a b h => ((congrFun h (· = a)).mp rfl : b = a).symm
+
+/-- The universal quantifier is not the lift of an individual: no subject of type `E` serves
+*every φ*. -/
+theorem not_exists_individual_eq_forall (a b : E) (hab : a ≠ b) :
+    ¬ ∃ e : E, Quantification.individual e = λ P => ∀ x, P x := by
+  rintro ⟨e, he⟩
+  have h : ∀ x, x = e := (congrFun he (· = e)).mp rfl
+  exact hab ((h a).trans (h b).symm)
+
+end Almog2014

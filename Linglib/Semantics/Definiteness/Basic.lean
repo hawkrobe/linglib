@@ -1,6 +1,5 @@
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Composition.TypeShifting
-import Linglib.Semantics.Reference.Donnellan
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Definiteness.Defs
 import Linglib.Semantics.Definiteness.Maximality

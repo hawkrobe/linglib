@@ -14,19 +14,14 @@ The tower is parametric over any context type `C`. `Context` serves as the canon
 instantiation — it represents what a single context layer looks like. The tower wraps
 it with a stack of shifts.
 
-## Key Operations
+## Main definitions
 
-- `.origin` — the root context (speech-act context, Kaplan's c*)
-- `.innermost` — the most deeply embedded context (fold all shifts over origin)
-- `.contextAt k` — the context at depth k (fold first k shifts)
-- `.push σ` — embed deeper by adding a new shift
-- `.root c` — trivial tower (no shifts, depth 0)
-
-## How FA Composes with Towers
-
-FA takes two meanings (function and argument). Both are parameterized by the same
-tower. FA applies the function to the argument at that tower. The tower is threaded
-as a reader parameter — `ContextTower C →...` is the enriched meaning type.
+- `ContextTower.origin`, `ContextTower.innermost`, `ContextTower.contextAt`,
+  `ContextTower.push`, `ContextTower.root`.
+- `AccessPattern`: a depth specification plus a projection, resolved against a tower;
+  `AccessPattern.origin` and `AccessPattern.innermost` read a coordinate of the speech-act
+  context and of the innermost context respectively.
+- `AccessPattern.Stable`: invariance of an access pattern under a shift.
 
 -/
 
@@ -144,6 +139,21 @@ theorem contextAt_saturates (t : ContextTower C) (k : ℕ) (hk : t.depth ≤ k) 
     (t.push σ).innermost = σ.apply t.innermost := by
   simp only [push, innermost, List.foldl_append, List.foldl_cons, List.foldl_nil]
 
+/-- Below the tower depth, a push leaves the context at each depth unchanged. -/
+theorem push_contextAt_of_le (t : ContextTower C) (σ : ContextShift C) {k : ℕ}
+    (hk : k ≤ t.depth) : (t.push σ).contextAt k = t.contextAt k := by
+  simp only [contextAt, push]
+  rw [List.take_append_of_le_length hk]
+
+/-- Beyond the tower depth, a push saturates at the shifted innermost context. -/
+theorem push_contextAt_of_lt (t : ContextTower C) (σ : ContextShift C) {k : ℕ}
+    (hk : t.depth < k) : (t.push σ).contextAt k = σ.apply t.innermost := by
+  rw [← push_innermost, contextAt_saturates _ _ (by rw [push_depth]; exact hk)]
+
+@[simp] theorem push_contextAt_succ_depth (t : ContextTower C) (σ : ContextShift C) :
+    (t.push σ).contextAt (t.depth + 1) = σ.apply t.innermost :=
+  push_contextAt_of_lt _ _ (Nat.lt_succ_self _)
+
 end ContextTower
 
 -- ════════════════════════════════════════════════════════════════
@@ -229,49 +239,34 @@ theorem local_updates (ap : AccessPattern C R) (hd : ap.depth = .local)
 /-- An access pattern is *stable* under a shift when pushing that shift onto any
     tower leaves its resolution unchanged. This relation underlies both
     Kaplan-compliance (`Reference/Kaplan.lean`: an expression stable under
-    *every* shift) and monsterhood (`Reference/Monsters.lean`: a shift that
-    destabilizes *some* expression) — the two are its ∀-over-shifts and
-    ∃-over-expressions projections. -/
+    *every* shift) and monsterhood (a shift that destabilizes *some* expression),
+    the two being its ∀-over-shifts and ∃-over-expressions projections. -/
 def Stable (ap : AccessPattern C R) (σ : ContextShift C) : Prop :=
   ∀ t, ap.resolve (t.push σ) = ap.resolve t
 
 /-- Origin-depth access is stable under every shift — the access-pattern form
     of `origin_stable`, and the sufficient condition for Kaplan-compliance. -/
-theorem Stable_of_depth_origin (ap : AccessPattern C R) (hd : ap.depth = .origin)
+theorem stable_of_depth_origin (ap : AccessPattern C R) (hd : ap.depth = .origin)
     (σ : ContextShift C) : ap.Stable σ :=
   fun t => origin_stable ap hd t σ
 
-/-- The canonical *innermost reader*: returns the innermost context verbatim
-    (`.local` depth, identity projection). It is the universal witness for
-    instability — a shift destabilizes some access pattern iff it destabilizes
-    this one, because a push only ever changes the innermost context — so
-    monsterhood is defined as its instability (`Reference/Monsters.lean`). -/
-def innermostReader (C : Type*) : AccessPattern C C := ⟨.local, id⟩
+/-- Read the coordinate `f` of the speech-act context: the access pattern of a Kaplanian
+pure indexical. -/
+def origin (f : C → R) : AccessPattern C R := ⟨.origin, f⟩
 
-@[simp] theorem innermostReader_resolve (t : ContextTower C) :
-    (innermostReader C).resolve t = t.innermost := by
-  simp only [innermostReader, resolve, DepthSpec.local_resolve,
-    ContextTower.contextAt_depth, id_eq]
+/-- Read the coordinate `f` of the innermost context: the access pattern of a shifted
+indexical. -/
+def innermost (f : C → R) : AccessPattern C R := ⟨.local, f⟩
 
-/-- An `AccessPattern` IS an intension `ContextTower C → R` via its `resolve` method, so
-    the substrate's rigidity machinery (`Reference.IsRigid`,
-    `IsRigidOn`, the functoriality lemmas in
-    `Semantics/Reference/Rigidity.lean`) thereby applies to access
-    patterns. The push-invariance of origin-depth access (`origin_stable`
-    above) is the access-pattern analog of the substrate's `IsRigidOn`
-    on tower-shift orbits. -/
-def toIntension (ap : AccessPattern C R) : ContextTower C → R :=
-  ap.resolve
+@[simp] theorem origin_resolve (f : C → R) (t : ContextTower C) :
+    (origin f).resolve t = f t.origin := rfl
 
-@[simp] theorem toIntension_apply (ap : AccessPattern C R) (t : ContextTower C) :
-    ap.toIntension t = ap.resolve t := rfl
+@[simp] theorem innermost_resolve (f : C → R) (t : ContextTower C) :
+    (innermost f).resolve t = f t.innermost := by
+  simp [innermost, resolve]
 
-/-- In a root tower, origin and local access agree. -/
-theorem root_origin_eq_local (ap₁ ap₂ : AccessPattern C R)
-    (h₁ : ap₁.depth = .origin) (h₂ : ap₂.depth = .local)
-    (hProj : ap₁.project = ap₂.project) (c : C) :
-    ap₁.resolve (ContextTower.root c) = ap₂.resolve (ContextTower.root c) := by
-  simp [resolve, h₁, h₂, hProj]
+theorem stable_origin (f : C → R) (σ : ContextShift C) : (origin f).Stable σ :=
+  stable_of_depth_origin _ rfl σ
 
 end AccessPattern
 

@@ -1,10 +1,7 @@
 import Linglib.Semantics.Reference.Context.Tower
 import Linglib.Semantics.Reference.Context.Shifts
 import Linglib.Semantics.Attitudes.Doxastic
-import Linglib.Semantics.Reference.ShiftedIndexicals
 import Linglib.Semantics.Reference.Kaplan
-import Linglib.Semantics.Reference.Monsters
-import Linglib.Semantics.Reference.PersonFeatures
 
 /-!
 # Schlenker 2003: attitude verbs as context quantifiers
@@ -149,20 +146,55 @@ theorem fixity_world_only (p : W → Prop) :
 
 /-! ### Shifted indexicals -/
 
-open Reference.Kaplan (pronI_access pronI_shift_invariant)
-
 /-- English *I* is invariant under the attitude shift used by
     `ContextBox` — it resolves to the origin agent (the actual
     speaker), not the attitude holder. -/
 theorem english_I_invariant
     (t : ContextTower (Context W E P T)) (holder : E) (w' : W) :
-    pronI_access.resolve (t.push (attitudeShift holder w')) =
-    pronI_access.resolve t :=
-  pronI_shift_invariant t (attitudeShift holder w')
+    Kaplan.I.resolve (t.push (attitudeShift holder w')) = Kaplan.I.resolve t :=
+  AccessPattern.stable_origin _ _ t
 
+/-- Amharic *I* ([schlenker-2003] §3): the agent of the innermost context, so under an
+    attitude shift the attitude holder. -/
+def amharicI : AccessPattern (Context W E P T) E := .innermost Context.agent
 
-open Reference.ShiftedIndexicals (amharic_pronI)
-open Reference.Kaplan (pronI_access)
+/-- The paper's counterexample to Kaplan's thesis: under an attitude shift to a holder other
+    than the speaker, Amharic *I* and English *I* resolve differently. -/
+theorem amharicI_ne_I (c : Context W E P T) (holder : E) (w' : W) (h : c.agent ≠ holder) :
+    amharicI.resolve ((ContextTower.root c).push (attitudeShift holder w')) ≠
+      Kaplan.I.resolve ((ContextTower.root c).push (attitudeShift holder w')) := by
+  simpa [amharicI, Kaplan.I] using h.symm
+
+/-! ### Person features as presuppositions -/
+
+/-- `+author(x, cᵢ)` of the paper's MELP: `x` is the agent of the context at depth `d`,
+    `+author*(x)` being the case `d = .origin`. -/
+def AuthorAt (d : DepthSpec) (x : E) (t : ContextTower (Context W E P T)) : Prop :=
+  x = (AccessPattern.mk d Context.agent).resolve t
+
+/-- A logophoric pronoun, §6: `+author(x, cᵢ) ∧ −author*(x)`, the agent of the embedded
+    context who is not the actual speaker. -/
+def Logophoric (d : DepthSpec) (x : E) (t : ContextTower (Context W E P T)) : Prop :=
+  AuthorAt d x t ∧ ¬ AuthorAt .origin x t
+
+instance [DecidableEq E] (d : DepthSpec) (x : E) (t : ContextTower (Context W E P T)) :
+    Decidable (AuthorAt d x t) := by
+  unfold AuthorAt; infer_instance
+
+instance [DecidableEq E] (d : DepthSpec) (x : E) (t : ContextTower (Context W E P T)) :
+    Decidable (Logophoric d x t) := by
+  unfold Logophoric; infer_instance
+
+/-- Under an attitude shift, a holder other than the speaker is logophoric at the local
+    depth. -/
+theorem logophoric_local_of_ne (t : ContextTower (Context W E P T)) (holder : E) (w' : W)
+    (h : holder ≠ t.origin.agent) : Logophoric .local holder (t.push (attitudeShift holder w')) :=
+  ⟨by simp [AuthorAt, AccessPattern.resolve], by simpa [AuthorAt, AccessPattern.resolve] using h⟩
+
+/-- The actual speaker is never logophoric. -/
+theorem not_logophoric_origin_agent (t : ContextTower (Context W E P T)) (d : DepthSpec) :
+    ¬ Logophoric d t.origin.agent t :=
+  λ h => h.2 rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- § Concrete Setup
@@ -202,16 +234,13 @@ def shiftedT : ContextTower Ctx :=
 -- ════════════════════════════════════════════════════════════════
 
 /-- English "I" = Alice (actual speaker), even under Bob's attitude verb. -/
-theorem english_I_is_speaker :
-    pronI_access.resolve shiftedT = .alice := rfl
+theorem english_I_is_speaker : Kaplan.I.resolve shiftedT = .alice := rfl
 
 /-- Amharic "I" = Bob (attitude holder), shifted by the attitude verb. -/
-theorem amharic_I_is_holder :
-    amharic_pronI.resolve shiftedT = .bob := rfl
+theorem amharic_I_is_holder : amharicI.resolve shiftedT = .bob := rfl
 
 /-- English and Amharic "I" diverge under the same attitude shift. -/
-theorem indexicals_diverge :
-    pronI_access.resolve shiftedT ≠ amharic_pronI.resolve shiftedT := by
+theorem indexicals_diverge : Kaplan.I.resolve shiftedT ≠ amharicI.resolve shiftedT := by
   decide
 
 -- ════════════════════════════════════════════════════════════════
@@ -277,35 +306,26 @@ theorem fixity_english :
 -- ════════════════════════════════════════════════════════════════
 
 /-- The agent of the reported context is exactly what Amharic "I"
-    (`amharic_pronI`) resolves to. -/
+    (`amharicI`) resolves to. -/
 theorem bridge_reportedContext_amharic :
-    (reportedContext rootT .bob .w1).agent =
-    amharic_pronI.resolve shiftedT := by
+    (reportedContext rootT .bob .w1).agent = amharicI.resolve shiftedT := by
   decide
 
 /-- English "I" gives the same result with or without the shift:
     both return Alice (the origin agent). -/
-theorem bridge_english_invariant :
-    pronI_access.resolve shiftedT =
-    pronI_access.resolve rootT :=
+theorem bridge_english_invariant : Kaplan.I.resolve shiftedT = Kaplan.I.resolve rootT :=
   english_I_invariant rootT .bob .w1
 
 -- ════════════════════════════════════════════════════════════════
 -- § Person Features: Logophoric Pronouns
 -- ════════════════════════════════════════════════════════════════
 
-open Reference.PersonFeatures
-
 /-- Bob is logophoric under the attitude shift: he is +author(local)
     (agent of the embedded context) but −author* (not the actual
     speaker Alice). -/
-theorem bob_is_logophoric :
-    isLogophoric .bob shiftedT .local = true := by
-  native_decide
+theorem bob_is_logophoric : Logophoric .local .bob shiftedT := by decide
 
 /-- Alice (the speaker) is never logophoric: +author* blocks it. -/
-theorem alice_not_logophoric :
-    isLogophoric .alice shiftedT .local = false := by
-  native_decide
+theorem alice_not_logophoric : ¬ Logophoric .local .alice shiftedT := by decide
 
 end Schlenker2003
