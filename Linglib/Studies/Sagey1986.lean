@@ -1,284 +1,68 @@
 import Linglib.Phonology.FeatureGeometry
 import Linglib.Phonology.Segmental.FeatureClass
 import Linglib.Phonology.Autosegmental.NonCrossing
-import Linglib.Phonology.Subregular.LocalRewrite
 import Linglib.Core.Order.Interval
 import Mathlib.Data.Set.Pairwise.Basic
 
 /-!
-# Sagey (1986) [sagey-1986]
+# Sagey (1986): The Representation of Features and Relations in Non-Linear Phonology
 
-The Representation of Features and Relations in Non-Linear Phonology.
-PhD dissertation, Massachusetts Institute of Technology.
+This file formalizes the feature geometry of the dissertation and its account of association
+lines. The geometry has a class node for each independently functioning articulator, the
+larynx, the soft palate, the lips, the tongue front and the tongue body, grouped under a
+laryngeal and a supralaryngeal node with a place node over the three oral articulators, and
+each terminal feature hangs from one class node, the degree-of-closure features `[continuant]`
+and `[consonantal]` directly from the root (`Node`, `node`). A class node is present or absent,
+never minus, and a terminal feature under an articulator node implies that articulator
+(`Segment.Licensed`). Three consequences follow from the natural classes of the tree: place
+assimilation leaves degree of closure and nasality untouched, as in Kpelle and Sanskrit
+(`degreeOfClosure_mem_naturalClass_iff`), features of distinct articulators can stand in no
+dependency, so the rounding-under-height structure proposed for Yawelmani is unrepresentable
+(`disjoint_naturalClass_of_articulators`), and a rounded coronal is a complex segment, so a
+language that admits one articulator under the place node rounds only labials
+(`isComplex_of_round_of_coronal`).
 
-[sagey-1986] proposes a hierarchical feature geometry organized by
-vocal tract articulator, establishing the labial, coronal, dorsal, and
-soft palate nodes (`Node` below, an instance of
-`Phonology/FeatureGeometry.lean`). The geometry predicts which multiply-articulated
-(complex) segments are possible in human language
-(`Segment.IsComplex` in `Phonology/Segmental/FeatureClass.lean`).
+Association lines represent overlap in time rather than simultaneity (`Association.Valid`),
+which lets a contour segment share one timing slot and a geminate one melody. Two valid
+associations cannot cross (`Association.Valid.not_crosses`), so the well-formedness condition
+of [goldsmith-1976] is eliminated: the index-level No-Crossing Constraint of
+`Phonology/Autosegmental/NonCrossing` holds of any link set realised by valid associations
+(`isNonCrossing_of_valid`).
 
-This study file formalizes Sagey-specific contributions that go beyond
-the consensus geometry:
+## Implementation notes
 
-## Formalized contributions
+The substrate's features are mapped onto the dissertation's: `[voice]` stands in for the
+laryngeal stiffness and slackness features, `[lateral]` is placed under the supralaryngeal
+node, which the Klamath evidence supports without fixing the node below it, and the acoustic
+residue `[sonorant]` and `[strident]` together with the features the dissertation lacks are
+left unplaced. The major-articulator pointer from the root and the phonetic default degree of
+closure of minor articulators are not formalized; the root placement of the degree-of-closure
+features that motivates the pointer is.
 
-1. **Major/minor articulator distinction** (Ch. 3): in complex segments,
-   one articulator is major (determines degree of closure) and one is minor.
+## References
 
-2. **Degree of closure as articulator-level property** (Ch. 3): [continuant]
-   and [consonantal] describe the root-to-articulator relationship, not the
-   segment as a whole. This allows different degrees of closure at
-   different articulators within one segment (e.g., clicks).
-
-3. **Soft palate independence** (Ch. 2): nasal assimilation (spreading
-   the soft palate node) is structurally simpler than place assimilation
-   (spreading the place node), explaining its cross-linguistic frequency.
-
-4. **Empirical arguments**: Nupe labiovelars [k͡p]/[g͡b] as labio-dorsal
-   complex segments with dorsal as major articulator.
+* [sagey-1986]
+* [goldsmith-1976]
+* [clements-1985]
 -/
-
-open Phonology (Segment Feature)
-open Phonology.FeatureGeometry (naturalClass)
-
-namespace Autosegmental
-
-/-! ### Interval-overlap semantics for association lines
-
-[sagey-1986] §5.3 derives the ban on crossing association lines from
-temporal precedence rather than stipulating it as a well-formedness condition.
-
-The key move is choosing the right temporal relation for association lines.
-Simultaneity (identity of time points) is too strong — it predicts that
-contour segments and geminates are impossible, since two distinct elements
-cannot both be identical to the same time point (§5.2.2). Overlap is the
-correct relation: it is reflexive and symmetric but crucially NOT transitive
-(`NonemptyInterval.overlaps_not_transitive`), which is what allows the NCC proof to
-go through via a contradiction chain (§5.2.2, fn. 6).
-
-The derivation (§5.3, p.294): if timing₁ ≺ timing₂ on the timing tier but
-melody₂ ≺ melody₁ on the melody tier, the overlap requirements on valid
-associations produce a chain melody₂.finish < melody₁.start ≤ timing₁.finish
-< timing₂.start ≤ melody₂.finish — a contradiction. Crossing is therefore
-logically impossible for valid associations.
-
-This section formalizes the derivation using `NonemptyInterval` for
-temporal intervals and its `precedes`/`overlaps` relations.
--/
-
-section NoCrossing
-
-variable {T : Type*} [LinearOrder T]
-
-
-/-- A position on an autosegmental tier, occupying a temporal interval. -/
-structure TierPosition (T : Type*) [LinearOrder T] where
-  interval : NonemptyInterval T
-
-/-- An association between a timing-tier position and a melody-tier position.
-    An association line represents temporal overlap: the melody element is
-    realized during the timing position's interval. -/
-structure Association (T : Type*) [LinearOrder T] where
-  timing : TierPosition T
-  melody : TierPosition T
-
-/-- Association validity: the timing and melody intervals must overlap.
-    This is the phonetic grounding — an association line means the melodic
-    content is realized during the timing slot. -/
-def validAssociation (a : Association T) : Prop :=
-  a.timing.interval.overlaps a.melody.interval
-
-/-- **Simultaneity contradicts contours** ([sagey-1986] §5.2.2):
-    if association required temporal identity (simultaneity), contour
-    segments — two distinct melody elements F ≠ G associated to the same
-    timing position x — would be impossible, since F = x and G = x
-    imply F = G by transitivity. This is Sagey's negative argument for
-    why association must be overlap, not identity. -/
-theorem simultaneity_no_contours {T : Type*} (t m₁ m₂ : T)
-    (h₁ : t = m₁) (h₂ : t = m₂) : m₁ = m₂ :=
-  h₁.symm.trans h₂
-
-/-- Two associations cross iff their timing positions are ordered one way
-    but their melody positions are ordered the other way.
-    Crossing(a₁, a₂) ≡ timing₁ ≺ timing₂ ∧ melody₂ ≺ melody₁. -/
-def crosses (a₁ a₂ : Association T) : Prop :=
-  a₁.timing.interval.precedes a₂.timing.interval ∧
-  a₂.melody.interval.precedes a₁.melody.interval
-
-/-- **No-Crossing Constraint** ([sagey-1986] §5.3, [goldsmith-1976]):
-    Two valid associations cannot cross.
-
-    If timing₁ ≺ timing₂, then timing₁.finish < timing₂.start.
-    Validity requires timing₁ overlaps melody₁ and timing₂ overlaps melody₂.
-    If melodies also cross (melody₂ ≺ melody₁), then melody₂.finish < melody₁.start.
-
-    From timing₁ overlaps melody₁: melody₁.start ≤ timing₁.finish.
-    From timing₂ overlaps melody₂: timing₂.start ≤ melody₂.finish.
-
-    Chaining: melody₂.finish < melody₁.start ≤ timing₁.finish < timing₂.start ≤ melody₂.finish.
-    This gives melody₂.finish < melody₂.finish — a contradiction. -/
-theorem no_crossing (a₁ a₂ : Association T)
-    (h₁ : validAssociation a₁) (h₂ : validAssociation a₂) :
-    ¬ crosses a₁ a₂ := by
-  intro ⟨htime, hmelody⟩
-  -- Unpack definitions
-  simp only [NonemptyInterval.precedes] at htime hmelody
-  simp only [validAssociation, NonemptyInterval.overlaps] at h₁ h₂
-  obtain ⟨h₁_tm, h₁_mt⟩ := h₁
-  obtain ⟨h₂_tm, h₂_mt⟩ := h₂
-  -- Chain: melody₂.finish < melody₁.start ≤ timing₁.finish < timing₂.start ≤ melody₂.finish
-  have : a₂.melody.interval.snd < a₂.melody.interval.snd :=
-    calc a₂.melody.interval.snd
-        < a₁.melody.interval.fst := hmelody
-      _ ≤ a₁.timing.interval.snd := h₁_mt
-      _ < a₂.timing.interval.fst := htime
-      _ ≤ a₂.melody.interval.snd := h₂_tm
-  exact lt_irrefl _ this
-
-/-- Crossing is also impossible in the symmetric direction: if timing₂ ≺ timing₁
-    and melody₁ ≺ melody₂, the same contradiction arises. -/
-theorem no_crossing_symm (a₁ a₂ : Association T)
-    (h₁ : validAssociation a₁) (h₂ : validAssociation a₂) :
-    ¬ crosses a₂ a₁ :=
-  no_crossing a₂ a₁ h₂ h₁
-
-/-! ### Set-level No-Crossing Constraint -/
-
-namespace Association
-
-/-- A set of associations satisfies the **No-Crossing Constraint** iff no two
-    associations in the set cross. Expressed via mathlib's `Set.Pairwise`. -/
-def IsNoCrossing (associations : Set (Association T)) : Prop :=
-  associations.Pairwise (fun a₁ a₂ => ¬ crosses a₁ a₂)
-
-/-- **Set-level lift of `no_crossing`**: any set of valid associations
-    automatically satisfies the No-Crossing Constraint. -/
-theorem IsNoCrossing.of_all_valid {associations : Set (Association T)}
-    (hValid : ∀ a ∈ associations, validAssociation a) :
-    IsNoCrossing associations :=
-  fun a₁ ha₁ a₂ ha₂ _ => no_crossing a₁ a₂ (hValid a₁ ha₁) (hValid a₂ ha₂)
-
-/-- A subset of a no-crossing association set is no-crossing.
-    Inherited from `Set.Pairwise.mono`. -/
-theorem IsNoCrossing.subset {s t : Set (Association T)} (hst : s ⊆ t)
-    (h : IsNoCrossing t) : IsNoCrossing s :=
-  Set.Pairwise.mono hst h
-
-end Association
-
-/-! ### Grounding the combinatorial No-Crossing Constraint
-
-[goldsmith-1976]'s index-level NCC (`IsNonCrossing` over `Finset (ℕ × ℕ)` in
-`Autosegmental/NonCrossing.lean`) is *stipulated* as the filter on autosegmental
-GEN. [sagey-1986] §5.4 argues it should instead be *derived* from the
-temporal-overlap semantics of association lines (§5.3). This section makes the
-derivation load-bearing: an order-respecting assignment of time intervals to
-tier positions turns an index-level crossing into a Sagey `crosses`, which
-`no_crossing` rules out. The combinatorial filter is thus the discrete shadow
-of the temporal derivation, not an independent axiom. -/
-
-/-- An interval realization of the two tiers: time intervals for lower-tier
-    (timing) positions and upper-tier (melody) positions, each respecting tier
-    index order as temporal precedence. -/
-structure TierRealization (T : Type*) [LinearOrder T] where
-  tim : ℕ → NonemptyInterval T
-  mel : ℕ → NonemptyInterval T
-  tim_mono : ∀ {i j : ℕ}, i < j → (tim i).precedes (tim j)
-  mel_mono : ∀ {k l : ℕ}, k < l → (mel k).precedes (mel l)
-
-/-- The association realizing the index link `(k, i)`: upper-tier position `k`
-    linked to lower-tier position `i`. -/
-def TierRealization.assoc (R : TierRealization T) (k i : ℕ) : Association T :=
-  ⟨⟨R.tim i⟩, ⟨R.mel k⟩⟩
-
-/-- **The combinatorial NCC is derived, not stipulated.** If every link in a set
-    is realized as a *valid* (temporally overlapping) association under some
-    order-respecting interval assignment, the set automatically satisfies
-    [goldsmith-1976]'s index-level No-Crossing Constraint. The stipulated GEN
-    filter (`IsNonCrossing`) is exactly the discrete shadow of [sagey-1986]'s
-    overlap derivation (`no_crossing`): a crossing pair of links would realize
-    two associations that cross, which cannot both overlap-validly. -/
-theorem isNonCrossing_of_validRealization (R : TierRealization T)
-    {links : Finset (ℕ × ℕ)}
-    (hValid : ∀ p ∈ links, validAssociation (R.assoc p.1 p.2)) :
-    IsNonCrossing links := by
-  rw [isNonCrossing_iff]
-  intro l₁ hl₁ l₂ hl₂ hlt
-  by_contra hgt
-  push Not at hgt
-  exact no_crossing (R.assoc l₂.1 l₂.2) (R.assoc l₁.1 l₁.2)
-    (hValid l₂ hl₂) (hValid l₁ hl₁) ⟨R.tim_mono hgt, R.mel_mono hlt⟩
-
-/-- Witness that the grounding hypothesis is non-vacuous: over `ℤ`, tier
-    position `n` occupies the unit interval `[2n, 2n+1]`, so index order is
-    realized as temporal precedence (consecutive positions are disjoint and
-    ordered). -/
-def TierRealization.canonical : TierRealization ℤ where
-  tim n := ⟨⟨2 * (n : ℤ), 2 * (n : ℤ) + 1⟩, by omega⟩
-  mel n := ⟨⟨2 * (n : ℤ), 2 * (n : ℤ) + 1⟩, by omega⟩
-  tim_mono h := by simp only [NonemptyInterval.precedes]; omega
-  mel_mono h := by simp only [NonemptyInterval.precedes]; omega
-
-/-- Under the canonical realization every diagonal link `(n, n)` is valid — a
-    position overlaps itself — so the grounding theorem's hypothesis is
-    satisfiable (any diagonal link set is `IsNonCrossing` through it), not
-    vacuously true. -/
-theorem canonical_diagonal_valid (n : ℕ) :
-    validAssociation (TierRealization.canonical.assoc n n) := by
-  simp only [validAssociation, TierRealization.canonical, TierRealization.assoc,
-    NonemptyInterval.overlaps]
-  omega
-
-/-! ### Concrete demonstrations -/
-
-/-- Helper: build an interval from start and finish with a proof of validity. -/
-private def mkInterval (s f : T) (h : s ≤ f) : NonemptyInterval T := ⟨⟨s, f⟩, h⟩
-
-/-- A geminate consonant: two adjacent timing positions associated to a single
-    melodic element. The melodic element's interval spans both timing slots.
-
-    Example: /t/ linked to two C-slots in [atta].
-
-    ```
-    C-tier:    C₁    C₂
-                \  /
-    melody:     t
-    ``` -/
-def geminate (t1s t1f t2s t2f ms mf : T)
-    (h1 : t1s ≤ t1f) (h2 : t2s ≤ t2f) (hm : ms ≤ mf)
-    : Association T × Association T :=
-  ( ⟨⟨mkInterval t1s t1f h1⟩, ⟨mkInterval ms mf hm⟩⟩,
-    ⟨⟨mkInterval t2s t2f h2⟩, ⟨mkInterval ms mf hm⟩⟩ )
-
-/-- A contour tone: one timing position associated to two tonal elements
-    sequenced within it. The two tonal elements occupy sub-intervals.
-
-    Example: falling tone HL on a single syllable.
-
-    ```
-    timing:     σ
-               / \
-    tone:     H   L
-    ``` -/
-def contourTone (ts tf m1s m1f m2s m2f : T)
-    (ht : ts ≤ tf) (hm1 : m1s ≤ m1f) (hm2 : m2s ≤ m2f)
-    : Association T × Association T :=
-  ( ⟨⟨mkInterval ts tf ht⟩, ⟨mkInterval m1s m1f hm1⟩⟩,
-    ⟨⟨mkInterval ts tf ht⟩, ⟨mkInterval m2s m2f hm2⟩⟩ )
-
-end NoCrossing
-
-end Autosegmental
 
 namespace Sagey1986
 
+open Phonology Phonology.FeatureGeometry Autosegmental
+
 /-! ### The articulator geometry -/
 
-/-- The class nodes: root; laryngeal and supralaryngeal; soft palate and place below
-supralaryngeal; the articulators labial, coronal and dorsal below place. -/
+/-- The class nodes: the root; the laryngeal and supralaryngeal nodes; the soft palate and
+place nodes under the latter; the articulators labial, coronal and dorsal under place. -/
 inductive Node where
-  | root | laryngeal | supralaryngeal | softPalate | place | labial | coronal | dorsal
+  | root
+  | laryngeal
+  | supralaryngeal
+  | softPalate
+  | place
+  | labial
+  | coronal
+  | dorsal
   deriving DecidableEq, Repr, Fintype
 
 namespace Node
@@ -302,251 +86,193 @@ instance : OrderBot Node where
   bot := .root
   bot_le := by decide
 
-/-- The articulator nodes — labial, coronal, dorsal — whose distinct combinations give complex
-segments. -/
-def IsArticulator : Node → Prop
-  | .labial | .coronal | .dorsal => True
-  | _ => False
+/-- The class feature of an articulator node, present exactly when the articulator is active
+in the segment. -/
+def feature? : Node → Option Feature
+  | .labial => some .labial
+  | .coronal => some .coronal
+  | .dorsal => some .dorsal
+  | _ => none
 
-instance : DecidablePred IsArticulator :=
-  λ n => by cases n <;> unfold IsArticulator <;> infer_instance
+/-- The articulator nodes under place, whose distinct combinations are the complex segments. -/
+def articulators : Finset Node := {.labial, .coronal, .dorsal}
+
+/-- Distinct articulators are independent: neither dominates the other. -/
+theorem not_le_of_mem_articulators {a b : Node} (ha : a ∈ articulators) (hb : b ∈ articulators)
+    (hab : a ≠ b) : ¬ a ≤ b := by
+  revert a b; decide
 
 end Node
 
-/-- The terminal features under each node. TODO: the placement of `[continuant]` under
-supralaryngeal and of `[lateral]`/`[strident]` under coronal is unverified against the
-dissertation. -/
-def node : Feature → Node
-  | .syllabic | .consonantal | .sonorant | .approximant | .delayedRelease | .tap | .trill => .root
-  | .voice | .spreadGlottis | .constrGlottis => .laryngeal
-  | .continuant => .supralaryngeal
-  | .nasal => .softPalate
-  | .labial | .round | .labiodental => .labial
-  | .coronal | .anterior | .distributed | .lateral | .strident => .coronal
-  | .dorsal | .high | .low | .front | .back | .tense => .dorsal
+/-- The class node each terminal feature hangs from: the degree-of-closure features from the
+root, the glottal features from the laryngeal node, nasality from the soft palate, laterality
+from the supralaryngeal node, and the place features from their articulators. -/
+def node : Feature → Option Node
+  | .continuant | .consonantal => some .root
+  | .voice | .spreadGlottis | .constrGlottis => some .laryngeal
+  | .nasal => some .softPalate
+  | .lateral => some .supralaryngeal
+  | .labial | .round => some .labial
+  | .coronal | .anterior | .distributed => some .coronal
+  | .dorsal | .high | .low | .back => some .dorsal
+  | .syllabic | .sonorant | .approximant | .delayedRelease | .strident | .tap | .trill
+  | .labiodental | .front | .tense => none
 
-instance : Phonology.FeatureGeometry Feature Node where
+instance : FeatureGeometry Feature Node where
   isChain_Iic := by unfold IsChain Set.Pairwise; decide +revert
-  node f := some (node f)
+  node := node
 
--- ============================================================================
--- § 1: Major/Minor Articulator Distinction (Ch. 3)
--- ============================================================================
+/-! ### Natural classes -/
 
-/-- When a complex segment's two articulations **differ in degree of closure**,
-    one articulator is **major** — it receives the segment's lexical
-    degree-of-closure specification — and the other **minor**, its degree of
-    closure predictable ([sagey-1986] §3.3, p.217). Majorness is lexically
-    marked, not reducible to anterior/posterior order. This distinction is
-    Sagey-specific — modern phonology does not uniformly adopt it. -/
-structure MajorMinor where
-  major : Node
-  minor : Node
-  major_is_articulator : major.IsArticulator
-  minor_is_articulator : minor.IsArticulator
-  distinct : major ≠ minor
-
-/-- Margi labiocoronal /ps/: the **coronal** articulation is major, the labial
-    minor — even though coronal is the *more posterior* of the two
-    ([sagey-1986] §3.4, p.258, where Sagey contrasts it with Kinyarwanda [skw],
-    also coronal-major). The point is that majorness cannot be read off
-    articulator order; it must be lexically marked.
-
-    Nupe /k͡p/ is deliberately *not* the example here: Sagey shows that in /k͡p/
-    **both** labial and dorsal are major — they share a degree of closure (both
-    stops) — so it is symmetric, not an asymmetric major/minor segment
-    ([sagey-1986] §3.3, p.217). -/
-def margi_ps_articulation : MajorMinor where
-  major := .coronal
-  minor := .labial
-  major_is_articulator := by decide
-  minor_is_articulator := by decide
-  distinct := by decide
-
--- ============================================================================
--- § 2: Degree of Closure as Articulator-Level Property (Ch. 3)
--- ============================================================================
-
-/-- Sagey's degree of closure: a property of an articulator node, not a
-    terminal feature. This is the Sagey-specific treatment; the modern
-    geometry encodes closure as [±continuant] at the supralaryngeal node. -/
-inductive DegreeOfClosure where
-  | stop        -- complete closure
-  | fricative   -- narrow constriction
-  | approximant -- open constriction
-  deriving DecidableEq, Repr
-
-/-- An articulator paired with its degree of closure: degree of closure is a
-    property of an articulator node, not the whole segment. In a !Xõ click both
-    the coronal (anterior) and dorsal (velar) closures are stops, but only the
-    major one — the velar — carries the segment's lexical degree-of-closure
-    specification; the anterior closure's is predictable ([sagey-1986] §3.4,
-    p.258). -/
-structure ArticulatorSpec where
-  node : Node
-  closure : DegreeOfClosure
-  node_is_articulator : node.IsArticulator
-
-/-- A click's anterior closure (coronal, full stop). -/
-def click_anterior : ArticulatorSpec where
-  node := .coronal
-  closure := .stop
-  node_is_articulator := by decide
-
-/-- A click's posterior closure (dorsal, full stop). -/
-def click_posterior : ArticulatorSpec where
-  node := .dorsal
-  closure := .stop
-  node_is_articulator := by decide
-
--- ============================================================================
--- § 3: Soft Palate Independence (Ch. 2)
--- ============================================================================
-
-/-- Nasal assimilation spreads the soft palate node (1 feature), while
-    place assimilation spreads the place node (14 features). The soft
-    palate's independence from place explains why nasal assimilation is
-    cross-linguistically simpler and more common than place assimilation:
-    it involves spreading a smaller constituent. -/
-theorem nasal_assimilation_scope :
-    (naturalClass Node.softPalate).card < (naturalClass Node.place).card := by
+/-- The degree-of-closure features belong to the root's class alone: spreading any class node
+below the root, as place assimilation does, leaves the degree of closure untouched. -/
+theorem degreeOfClosure_mem_naturalClass_iff :
+    ∀ f ∈ ({.continuant, .consonantal} : Finset Feature), ∀ a : Node,
+      f ∈ naturalClass a ↔ a = ⊥ := by
   decide
 
-/-- Nasality is NOT under the place node — spreading place does not
-    spread nasality. This is Sagey's core structural argument for the
-    soft palate node as a separate constituent. -/
-theorem nasal_not_under_place : Feature.nasal ∉ naturalClass Node.place := by decide
+/-- Nasality is in the classes of the soft palate node and its ancestors alone: place
+assimilation leaves it, and spreading the supralaryngeal node carries it, as in Klamath. -/
+theorem nasal_mem_naturalClass_iff (a : Node) : .nasal ∈ naturalClass a ↔ a ≤ .softPalate := by
+  revert a; decide
 
-/-- Nasality IS under supralaryngeal (via the soft palate node), so
-    total assimilation (spreading supralaryngeal) does spread nasality. -/
-theorem nasal_under_supralaryngeal : Feature.nasal ∈ naturalClass Node.supralaryngeal := by
+/-- Distinct articulators have disjoint classes: a feature of one, such as rounding, can depend
+on no node of another, such as height. -/
+theorem disjoint_naturalClass_of_articulators {a b : Node} (ha : a ∈ Node.articulators)
+    (hb : b ∈ Node.articulators) (hab : a ≠ b) :
+    Disjoint (naturalClass a : Finset Feature) (naturalClass b) :=
+  disjoint_naturalClass (Node.not_le_of_mem_articulators ha hb hab)
+    (Node.not_le_of_mem_articulators hb ha hab.symm)
+
+/-! ### Complex segments -/
+
+/-- A segment is licensed when every terminal feature it specifies under an articulator node,
+whichever its value, activates that articulator. -/
+def _root_.Phonology.Segment.Licensed (s : Segment) : Prop :=
+  ∀ f, (s f).isSome → ∀ n ∈ node f, ∀ g ∈ n.feature?, s g = some true
+
+instance (s : Segment) : Decidable s.Licensed := by unfold Segment.Licensed; infer_instance
+
+/-- A rounded coronal is complex, since rounding activates the labial articulator; a language
+that admits one articulator under the place node therefore rounds only labials. -/
+theorem isComplex_of_round_of_coronal {s : Segment} (hs : s.Licensed) (hr : (s .round).isSome)
+    (hc : s .coronal = some true) : s.IsComplex := by
+  have hl : s .labial = some true := hs .round hr .labial rfl .labial rfl
+  exact Finset.one_lt_card.2 ⟨.labial, by simp [Segment.articulators, hl], .coronal,
+    by simp [Segment.articulators, hc], by decide⟩
+
+/-- The double occlusions of Halle's survey and the Kinyarwanda triple occlusion: the
+labiovelar, labiocoronal, coronovelar and labiocoronovelar stops. -/
+def kp : Segment := Segment.ofSpecs [(.consonantal, true), (.continuant, false),
+  (.labial, true), (.dorsal, true)]
+
+def pt : Segment := Segment.ofSpecs [(.consonantal, true), (.continuant, false),
+  (.labial, true), (.coronal, true), (.anterior, true)]
+
+def click : Segment := Segment.ofSpecs [(.consonantal, true), (.continuant, false),
+  (.coronal, true), (.dorsal, true)]
+
+def tkw : Segment := Segment.ofSpecs [(.consonantal, true), (.continuant, false),
+  (.labial, true), (.round, true), (.coronal, true), (.anterior, true), (.dorsal, true)]
+
+/-- The rounded labial nasal of Aneityum, whose inventory admits one articulator under place. -/
+def mw : Segment := Segment.ofSpecs [(.consonantal, true), (.continuant, false),
+  (.nasal, true), (.labial, true), (.round, true)]
+
+/-- Every multiple occlusion is complex, and the rounded labial is licensed yet simple. -/
+theorem occlusions_isComplex :
+    kp.IsComplex ∧ pt.IsComplex ∧ click.IsComplex ∧ tkw.IsComplex ∧
+      mw.Licensed ∧ ¬ mw.IsComplex := by
   decide
 
--- ============================================================================
--- § 4: Nupe Labiovelars
--- ============================================================================
+/-! ### Association lines -/
 
-/-- A Nupe labiovelar stop /k͡p/: specified for both labial and dorsal,
-    voiceless, non-continuant. -/
-def nupe_kp_segment : Segment :=
-  Segment.ofSpecs
-    [(.consonantal, true), (.sonorant, false), (.continuant, false),
-     (.voice, false), (.labial, true), (.dorsal, true)]
+section Association
 
-/-- The Nupe /k͡p/ is a complex segment (two active place articulators). -/
-theorem nupe_kp_is_complex : Segment.IsComplex nupe_kp_segment := by decide
+variable {T : Type*} [LinearOrder T]
 
-/-- A simple /p/ (labial only) is not complex. -/
-def simple_p : Segment :=
-  Segment.ofSpecs
-    [(.consonantal, true), (.sonorant, false), (.continuant, false),
-     (.voice, false), (.labial, true)]
+/-- An association line between a timing position and a melodic element, each occupying an
+interval of time. -/
+structure Association (T : Type*) [LinearOrder T] where
+  timing : NonemptyInterval T
+  melody : NonemptyInterval T
 
-theorem simple_p_not_complex : ¬ Segment.IsComplex simple_p := by decide
+/-- An association line represents overlap in time: some instant of the melody is simultaneous
+with some instant of the timing position. -/
+def Association.Valid (a : Association T) : Prop := a.timing.overlaps a.melody
 
-/-- A velar nasal /ŋ/ is NOT complex despite activating both the dorsal
-    articulator and the soft palate (velum lowering). The soft palate
-    is structurally independent of place, so nasal + place combinations
-    are simple segments — this is Sagey's core argument for the soft
-    palate node's independence. -/
-def velar_nasal : Segment :=
-  Segment.ofSpecs
-    [(.consonantal, true), (.sonorant, true), (.continuant, false),
-     (.nasal, true), (.voice, true), (.dorsal, true)]
+instance (a : Association T) : Decidable a.Valid :=
+  inferInstanceAs (Decidable (a.timing.overlaps a.melody))
 
-theorem velar_nasal_not_complex : ¬ Segment.IsComplex velar_nasal := by decide
+/-- Two associations cross when their timing positions are ordered one way and their melodies
+the other. -/
+def Association.Crosses (a b : Association T) : Prop :=
+  a.timing.precedes b.timing ∧ b.melody.precedes a.melody
 
--- ============================================================================
--- § 5: Impossible Complex Segments (Ch. 2)
--- ============================================================================
+/-- Valid associations do not cross: the two precedences and the two overlaps would chain
+into an instant preceding itself, so the relations a crossing encodes are contradictory. -/
+theorem Association.Valid.not_crosses {a b : Association T} (ha : a.Valid) (hb : b.Valid) :
+    ¬ a.Crosses b := by
+  rintro ⟨ht, hm⟩
+  exact lt_irrefl _ (((hm.trans_le ha.2).trans ht).trans_le hb.1)
 
-/-- A coronal-only segment (alveolar /t/, [+cor, +ant]) is NOT complex:
-    multiple coronal features fall under the single coronal articulator. This
-    formalizes Sagey's key prediction (§2.2): complex segments are possible
-    only for combinations of two *different* articulators, so no combination of
-    features under a single articulator yields a complex segment. The
-    same-articulator bar is exactly why alveolars and alveopalatals — both
-    coronal — cannot form a doubly-articulated stop ([sagey-1986] §2.2, p.64). -/
-def alveolar_t : Segment :=
-  Segment.ofSpecs
-    [(.consonantal, true), (.sonorant, false), (.continuant, false),
-     (.voice, false), (.coronal, true), (.anterior, true)]
+/-- A set of association lines satisfies the No-Crossing Constraint when no two of them
+cross. -/
+def IsNoCrossing (S : Set (Association T)) : Prop := S.Pairwise λ a b => ¬ a.Crosses b
 
-theorem alveolar_not_complex : ¬ Segment.IsComplex alveolar_t := by decide
+/-- Any set of valid associations satisfies the No-Crossing Constraint. -/
+theorem isNoCrossing_of_forall_valid {S : Set (Association T)} (h : ∀ a ∈ S, a.Valid) :
+    IsNoCrossing S :=
+  λ _ ha _ hb _ => (h _ ha).not_crosses (h _ hb)
 
-/-- An alveopalatal (postalveolar) is [+cor, −ant, +dist] — still just
-    one articulator (coronal), so not complex. An alveolar-alveopalatal
-    doubly-articulated stop is therefore impossible: both articulations
-    use the coronal articulator ([sagey-1986] §2.2). -/
-def alveopalatal : Segment :=
-  Segment.ofSpecs
-    [(.consonantal, true), (.sonorant, false), (.continuant, false),
-     (.voice, false), (.coronal, true), (.anterior, false),
-     (.distributed, true)]
+/-- A realisation of two tiers in time: intervals for the timing positions and for the melodic
+elements, each tier's order realised as precedence. -/
+structure TierRealization (T : Type*) [LinearOrder T] where
+  timing : ℕ → NonemptyInterval T
+  melody : ℕ → NonemptyInterval T
+  timing_precedes : ∀ {i j : ℕ}, i < j → (timing i).precedes (timing j)
+  melody_precedes : ∀ {k l : ℕ}, k < l → (melody k).precedes (melody l)
 
-theorem alveopalatal_not_complex : ¬ Segment.IsComplex alveopalatal := by decide
+/-- The association realising the link of melodic element `k` to timing position `i`. -/
+def TierRealization.assoc (R : TierRealization T) (k i : ℕ) : Association T :=
+  ⟨R.timing i, R.melody k⟩
 
--- ============================================================================
--- § 6: No-Crossing Constraint (Ch. 5)
--- ============================================================================
+/-- Goldsmith's index-level No-Crossing Constraint is derived: a link set whose links are all
+realised as valid associations satisfies it. -/
+theorem isNonCrossing_of_valid (R : TierRealization T) {links : Finset (ℕ × ℕ)}
+    (h : ∀ p ∈ links, (R.assoc p.1 p.2).Valid) : IsNonCrossing links := by
+  rw [isNonCrossing_iff]
+  intro l₁ hl₁ l₂ hl₂ hlt
+  by_contra hgt
+  push Not at hgt
+  exact (h l₂ hl₂).not_crosses (h l₁ hl₁) ⟨R.timing_precedes hgt, R.melody_precedes hlt⟩
 
-/-! ### Temporal derivation of the No-Crossing Constraint
+/-- Position `n` of either tier occupies the interval from `2n` to `2n + 1`. -/
+def TierRealization.canonical : TierRealization ℤ where
+  timing n := ⟨⟨2 * n, 2 * n + 1⟩, by omega⟩
+  melody n := ⟨⟨2 * n, 2 * n + 1⟩, by omega⟩
+  timing_precedes h := by simp only [NonemptyInterval.precedes]; omega
+  melody_precedes h := by simp only [NonemptyInterval.precedes]; omega
 
-[sagey-1986] Ch. 5 derives the ban on crossing association lines from
-temporal precedence. This section demonstrates the derived constraint with
-concrete integer-valued time instances. -/
-
-section NoCrossing
-
-open Autosegmental (Association TierPosition
-  validAssociation crosses no_crossing)
-
-/-- Helper: build a ℤ interval. -/
-private def mkI (s f : ℤ) (h : s ≤ f := by omega) : NonemptyInterval ℤ := ⟨⟨s, f⟩, h⟩
-
-/-- Helper: build an association from four ℤ values. -/
-private def mkAssoc (ts tf ms mf : ℤ) (ht : ts ≤ tf := by omega) (hm : ms ≤ mf := by omega)
-    : Association ℤ :=
-  ⟨⟨⟨⟨ts, tf⟩, ht⟩⟩, ⟨⟨⟨ms, mf⟩, hm⟩⟩⟩
-
-/-- A concrete geminate /t:/ occupying timing slots [0,1] and [2,3],
-    with the melodic element spanning [0,3]. -/
-def geminate_tt : Association ℤ × Association ℤ :=
-  (mkAssoc 0 1 0 3, mkAssoc 2 3 0 3)
-
-/-- Both associations in the geminate are valid (timing overlaps melody). -/
-theorem geminate_tt_valid :
-    validAssociation geminate_tt.1 ∧ validAssociation geminate_tt.2 := by
-  simp only [geminate_tt, mkAssoc, validAssociation, NonemptyInterval.overlaps]
+/-- Every diagonal link is valid under the canonical realisation, so the hypothesis of
+`isNonCrossing_of_valid` is satisfiable. -/
+theorem canonical_diagonal_valid (n : ℕ) : (TierRealization.canonical.assoc n n).Valid := by
+  simp only [Association.Valid, TierRealization.canonical, TierRealization.assoc,
+    NonemptyInterval.overlaps]
   omega
 
-/-- A concrete falling contour tone: timing [0,4], H tone [0,2], L tone [2,4]. -/
-def contour_HL : Association ℤ × Association ℤ :=
-  (mkAssoc 0 4 0 2, mkAssoc 0 4 2 4)
+end Association
 
-/-- Both associations in the contour tone are valid. -/
-theorem contour_HL_valid :
-    validAssociation contour_HL.1 ∧ validAssociation contour_HL.2 := by
-  simp only [contour_HL, mkAssoc, validAssociation, NonemptyInterval.overlaps]
-  omega
+private def assoc (ts tf ms mf : ℤ) (ht : ts ≤ tf := by omega) (hm : ms ≤ mf := by omega) :
+    Association ℤ :=
+  ⟨⟨⟨ts, tf⟩, ht⟩, ⟨⟨ms, mf⟩, hm⟩⟩
 
-/-- **Crossing forces invalidity** ([sagey-1986] §5.3):
-    a crossing configuration — timing₁ at [0,1] → melody₁ at [4,5],
-    timing₂ at [2,3] → melody₂ at [0,1] — has its timing positions
-    correctly ordered and melody positions reversed, but the first
-    association is invalid because timing [0,1] does not overlap
-    melody [4,5]. This demonstrates the mechanism: crossing is
-    impossible not because it's stipulated, but because validity
-    (temporal overlap) cannot be satisfied for both associations
-    simultaneously when they cross. -/
-theorem crossing_forces_invalidity :
-    let a₁ := mkAssoc 0 1 4 5
-    let a₂ := mkAssoc 2 3 0 1
-    crosses a₁ a₂ ∧ ¬ validAssociation a₁ := by
-  simp only [mkAssoc, crosses, validAssociation,
-    NonemptyInterval.precedes, NonemptyInterval.overlaps]
-  omega
-
-end NoCrossing
+/-- A contour segment, two melodies sequenced within one timing slot, and a geminate, one
+melody spanning two timing slots, are both pairs of valid associations, which simultaneity
+would forbid by identifying the two melodies, or the two slots. -/
+theorem contour_geminate_valid :
+    ((assoc 0 4 0 2).Valid ∧ (assoc 0 4 2 4).Valid) ∧
+      ((assoc 0 1 0 3).Valid ∧ (assoc 2 3 0 3).Valid) := by
+  decide
 
 end Sagey1986
