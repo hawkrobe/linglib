@@ -24,9 +24,7 @@ rule, forcing assimilation/harmony). Consonant harmony, vowel harmony,
 and tone spreading factor through `TierStrictlyLocalGrammar.agree`; dissimilation,
 anti-geminate, and Meeussen's rule factor through `TierStrictlyLocalGrammar.ocp`. The
 generic `TierStrictlyLocalGrammar.ofForbiddenPairs` subsumes both — and asymmetric
-patterns that are neither pure agreement nor pure dissimilation
-(directional harmony driven by morphological geometry, e.g. Kikongo nasal
-harmony in `Studies/RoseWalker2004.lean`) instantiate
+patterns that are neither pure agreement nor pure dissimilation instantiate
 the generic constructor directly with their own asymmetric `R`.
 
 Everything here is a one-line specialization of the generic
