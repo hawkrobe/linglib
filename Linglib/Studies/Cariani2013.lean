@@ -1,40 +1,44 @@
 import Linglib.Semantics.Attitudes.Desire.QuestionBased
 import Mathlib.Data.Finset.Lattice.Fold
-import Mathlib.Data.Fintype.Basic
+import Mathlib.Order.Preorder.Finite
 
 /-!
-# Cariani 2013: ought and resolution semantics
+# Cariani (2013): 'Ought' and resolution semantics
 
-This file formalizes the account of *ought* in [cariani-2013]. Reading *ought* as universal
-quantification over the best worlds validates INHERITANCE — if `p` entails `q` then *ought p*
-entails *ought q* — and [cariani-2013] argues that this is wrong. *Joan ought to attend her
-classes* does not commit one to *Joan ought to either attend her classes or burn down the
-philosophy department* ([ross-1941]), and *Procrastinate ought to accept and write the review*
-does not commit one to *Procrastinate ought to accept* ([jackson-pargetter-1986]). Both are cases
-of coarseness: an ought-sentence can be true although some way of making its prejacent true is
-impermissible, and it is false as soon as a relevant option compatible with the prejacent is
-impermissible.
+This file formalizes [cariani-2013]'s resolution semantics for *ought*. Reading *ought* as a
+universal quantifier over the best worlds validates INHERITANCE, closure of *ought* under
+entailment of the prejacent, and the paper takes the classical counterexamples at face value:
+*Joan ought to attend her classes* does not entail *Joan ought to either attend her classes or
+burn down the philosophy department* ([ross-1941]), and *Procrastinate ought to accept and write
+the review* does not entail *Procrastinate ought to accept* ([jackson-pargetter-1986]). The
+account keeps COARSENESS, on which an ought-sentence can be true although some way of making its
+prejacent true is impermissible, by relativizing *ought* to a resolution: a partition of the
+modal base into the agent's options, an ordering of the options, and a benchmark below which an
+option is impermissible (`ResolutionContext`). *Ought p* holds when the options settle `p`,
+every best option entails `p`, and every option entailing `p` meets the benchmark (`Ought`), so
+that one impermissible option compatible with the prejacent falsifies the sentence, the paper's
+COARSE FALSEMAKING (`not_ought_of_not_meetsBenchmark`), while impermissible ways of `p` that no
+option distinguishes leave it true.
 
-Resolution semantics replaces the modal base and ordering source ([kratzer-1981]) with three
-parameters — a set of mutually exclusive options, an ordering on them, and a benchmark. *Ought p*
-holds when the options settle `p`, when every best option is a way of `p`, and when every option
-that is a way of `p` meets the benchmark. The third clause is what fails in both puzzles, and
-what makes the account anti-inheritance by construction rather than by stipulation.
+Both puzzles refute INHERITANCE (`not_inheritance_ross`, `not_inheritance_proc`). Permission has
+two candidate entries, some option at the benchmark entails `p` or some best option does
+(`Permitted₁`, `Permitted₂`); *ought* entails both, both are closed under entailment, and since
+that closure together with the duality of *ought* and permission would restore INHERITANCE
+(`inheritance_of_dual`), *ought* is the dual of neither. A boxing semantics is the special case
+of a resolution whose cells are singletons and whose benchmark every option meets
+(`ought_finest_iff`).
 
-## Main definitions
+## Implementation notes
 
-* `ResolutionContext`, `ofRanking` — the three parameters, and the context of a ranked space
-* `isWayOf`, `isVisible`, `isBest`, `isOptimal`, `isStronglyPermissible` — the clauses
-* `ought`, `permitted` — the two deontic operators
-* `Inheritance` — closure of *ought* under entailment of the prejacent
-
-## Main results
-
-* `not_ought_of_impermissible_way` — one impermissible way of `p` falsifies *ought p*
-* `permitted_of_ought` — *ought* entails *permitted* wherever some option is best
-* `ought_iff_of_all_meetBenchmark` — with every option at the benchmark only the boxing clauses
-  do any work
-* `not_inheritance_ross`, `not_inheritance_proc` — either puzzle refutes INHERITANCE
+* The ordering on options is a valuation into a preordered scale with the benchmark a threshold
+  of the scale, neutral between the ranking and quantitative scales the paper allows; the best
+  options are the `MaximalFor` elements of the valuation. The paper's examples value an option
+  at the rank of its best world (`ofRanking`).
+* `options` is the partition of the modal base itself, so the modal base is not a separate
+  parameter and the ordering does not vary with it. The paper's third puzzle, conditional
+  *oughts* under the restrictor analysis of conditionals, needs the modal base and is not
+  formalized.
+* Visibility is `Desire.QuestionBased.IsConsidered`, every cell settling the prejacent.
 
 ## References
 
@@ -46,193 +50,277 @@ what makes the account anti-inheritance by construction rather than by stipulati
 
 namespace Cariani2013
 
-open Desire.QuestionBased (IsConsidered)
+open Desire.QuestionBased
 
-variable {W : Type*}
+variable {W V : Type*}
 
-/-! ### The three contextual parameters -/
-
-/-- The parameters of a resolution context: mutually exclusive options, an ordering on them, and
-a benchmark. The benchmark is a cutoff in the ordering's range rather than a number, since
-[cariani-2013] is non-committal between ranking and quantitative scales. -/
-structure ResolutionContext (W : Type*) where
-  /-- The options: mutually exclusive courses of action, a partition of the action space. -/
+/-- A resolution context: the agent's options, the cells of a partition of the modal base; the
+ordering, a valuation of options in a preordered scale; and the benchmark, the threshold of the
+scale below which an option is impermissible. -/
+structure ResolutionContext (W V : Type*) where
+  /-- The options, mutually exclusive courses of action. -/
   options : List (Finset W)
-  /-- `betterThan o o'`: `o` is at least as good as `o'`. -/
-  betterThan : Finset W → Finset W → Prop
-  /-- Decidability of the ordering. -/
-  betterThanDec : ∀ a b, Decidable (betterThan a b)
-  /-- Whether an option is at or above the benchmark. -/
-  meetsBenchmark : Finset W → Prop
-  /-- Decidability of the benchmark. -/
-  meetsBenchmarkDec : ∀ o, Decidable (meetsBenchmark o)
+  /-- The ordering: the value of an option in the scale. -/
+  value : Finset W → V
+  /-- The benchmark: the least permissible value. -/
+  benchmark : V
 
-instance (rc : ResolutionContext W) (a b : Finset W) :
-    Decidable (rc.betterThan a b) := rc.betterThanDec a b
+namespace ResolutionContext
 
-instance (rc : ResolutionContext W) (o : Finset W) :
-    Decidable (rc.meetsBenchmark o) := rc.meetsBenchmarkDec o
+/-- The context of a ranked action space: an option is valued at the rank of its best world. -/
+def ofRanking [SemilatticeSup V] [OrderBot V] (options : List (Finset W)) (rank : W → V)
+    (benchmark : V) : ResolutionContext W V :=
+  ⟨options, (·.sup rank), benchmark⟩
 
-/-- The context of a ranked action space: an option is as good as another when its best world
-ranks at least as high, and it meets the benchmark when that rank reaches `b`. -/
-def ofRanking (options : List (Finset W)) (rank : W → ℕ) (b : ℕ) : ResolutionContext W where
-  options := options
-  betterThan o o' := o'.sup rank ≤ o.sup rank
-  betterThanDec _ _ := inferInstanceAs (Decidable (_ ≤ _))
-  meetsBenchmark o := b ≤ o.sup rank
-  meetsBenchmarkDec _ := inferInstanceAs (Decidable (_ ≤ _))
+variable [Preorder V] (rc : ResolutionContext W V) (p : Set W)
 
 /-! ### The clauses -/
 
-/-- Cariani's propositions carry function-form decidability; the question-based substrate reads
-membership. -/
-instance {p : Set W} [DecidablePred p] : DecidablePred (· ∈ p) :=
-  fun w => inferInstanceAs (Decidable (p w))
+/-- `p` is *visible* when the options settle it: each entails `p` or entails its negation. -/
+abbrev IsVisible : Prop := IsConsidered rc.options p
 
-instance [DecidableEq W] (a : W) : DecidablePred ({a} : Set W) :=
-  fun _ => inferInstanceAs (Decidable (_ = _))
+/-- An option *meets the benchmark* when its value is at least the benchmark. -/
+def MeetsBenchmark (o : Finset W) : Prop := rc.benchmark ≤ rc.value o
 
-instance [DecidableEq W] (a b : W) : DecidablePred ({a, b} : Set W) :=
-  fun _ => inferInstanceAs (Decidable (_ ∨ _))
+/-- An option is *best* when no option is strictly better. -/
+def IsBest (o : Finset W) : Prop := MaximalFor (· ∈ rc.options) rc.value o
 
-variable (rc : ResolutionContext W)
+/-- `p` is *optimal* when every best option entails it. -/
+def IsOptimal : Prop := ∀ o ∈ rc.options, rc.IsBest o → ∀ w ∈ o, w ∈ p
 
-/-- An option is a *way of* `p` when it entails `p`. -/
-def isWayOf (o : Finset W) (p : Set W) : Prop := ∀ w ∈ o, p w
+/-- `p` is *strongly permissible* when every option that entails it meets the benchmark. -/
+def IsStronglyPermissible : Prop := ∀ o ∈ rc.options, (∀ w ∈ o, w ∈ p) → rc.MeetsBenchmark o
 
-instance (o : Finset W) (p : Set W) [DecidablePred p] : Decidable (isWayOf o p) :=
-  inferInstanceAs (Decidable (∀ _ ∈ _, _))
+/-! ### The operators -/
 
-/-- `p` is *visible* when the options settle it: each is a way of `p` or a way of its
-negation. -/
-abbrev isVisible (p : Set W) : Prop := IsConsidered rc.options p
+/-- *Ought p*: `p` is visible, optimal, and strongly permissible. -/
+def Ought : Prop := rc.IsVisible p ∧ rc.IsOptimal p ∧ rc.IsStronglyPermissible p
 
-/-- An option is *best* when it is at least as good as every option. -/
-def isBest (o : Finset W) : Prop := ∀ o' ∈ rc.options, rc.betterThan o o'
+/-- *Permitted p*, first entry: some option that entails `p` meets the benchmark. -/
+def Permitted₁ : Prop := ∃ o ∈ rc.options, (∀ w ∈ o, w ∈ p) ∧ rc.MeetsBenchmark o
 
-instance (o : Finset W) : Decidable (isBest rc o) :=
-  inferInstanceAs (Decidable (∀ _ ∈ _, _))
-
-/-- `p` is *optimal* when every best option is a way of it. -/
-def isOptimal (p : Set W) : Prop := ∀ o ∈ rc.options, isBest rc o → isWayOf o p
-
-instance (p : Set W) [DecidablePred p] : Decidable (isOptimal rc p) :=
-  inferInstanceAs (Decidable (∀ _ ∈ _, _))
-
-/-- `p` is *strongly permissible* when every option that is a way of it meets the benchmark. -/
-def isStronglyPermissible (p : Set W) : Prop :=
-  ∀ o ∈ rc.options, isWayOf o p → rc.meetsBenchmark o
-
-instance (p : Set W) [DecidablePred p] : Decidable (isStronglyPermissible rc p) :=
-  inferInstanceAs (Decidable (∀ _ ∈ _, _))
-
-/-! ### The two operators -/
-
-/-- *Ought p*: the options settle `p`, every best option is a way of `p`, and every option that
-is a way of `p` meets the benchmark. -/
-def ought (p : Set W) : Prop :=
-  isVisible rc p ∧ isOptimal rc p ∧ isStronglyPermissible rc p
-
-instance (p : Set W) [DecidablePred p] : Decidable (ought rc p) :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
-/-- *Permitted p*: some option that is a way of `p` meets the benchmark. -/
-def permitted (p : Set W) : Prop := ∃ o ∈ rc.options, isWayOf o p ∧ rc.meetsBenchmark o
-
-instance (p : Set W) [DecidablePred p] : Decidable (permitted rc p) :=
-  inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
-/-- Coarse falsemaking: a single option that is a way of `p` and falls below the benchmark makes
-*ought p* false, however good the rest of the options are. -/
-theorem not_ought_of_impermissible_way (p : Set W) (o : Finset W) (ho : o ∈ rc.options)
-    (hway : isWayOf o p) (himp : ¬ rc.meetsBenchmark o) : ¬ ought rc p :=
-  fun ⟨_, _, hsp⟩ => himp (hsp o ho hway)
-
-/-- What one ought to do is permitted, as long as some option is best: that option is a way of
-`p` by optimality, and meets the benchmark by strong permissibility. -/
-theorem permitted_of_ought (p : Set W) (h : ∃ o ∈ rc.options, isBest rc o)
-    (hought : ought rc p) : permitted rc p := by
-  obtain ⟨o, ho, hbest⟩ := h
-  obtain ⟨_, hopt, hsp⟩ := hought
-  exact ⟨o, ho, hopt o ho hbest, hsp o ho (hopt o ho hbest)⟩
-
-/-- When every option is at the benchmark the permissibility clause does no work and *ought* is
-the boxing reading — quantification over the best options, restricted to visible prejacents. -/
-theorem ought_iff_of_all_meetBenchmark (p : Set W)
-    (h : ∀ o ∈ rc.options, rc.meetsBenchmark o) :
-    ought rc p ↔ isVisible rc p ∧ isOptimal rc p :=
-  ⟨fun ⟨hv, ho, _⟩ => ⟨hv, ho⟩, fun ⟨hv, ho⟩ => ⟨hv, ho, fun o hoo _ => h o hoo⟩⟩
+/-- *Permitted p*, second entry: some best option entails `p`. -/
+def Permitted₂ : Prop := ∃ o ∈ rc.options, rc.IsBest o ∧ ∀ w ∈ o, w ∈ p
 
 /-- INHERITANCE: *ought* is closed under entailment of the prejacent. -/
-def Inheritance : Prop := ∀ p q : Set W, (∀ w, p w → q w) → ought rc p → ought rc q
+def Inheritance : Prop := ∀ p q : Set W, p ⊆ q → rc.Ought p → rc.Ought q
+
+section Decidable
+
+variable [DecidableRel (α := V) (· ≤ ·)]
+
+instance (o : Finset W) : Decidable (rc.MeetsBenchmark o) := inferInstanceAs (Decidable (_ ≤ _))
+
+instance [DecidableEq W] (o : Finset W) : Decidable (rc.IsBest o) :=
+  inferInstanceAs (Decidable (o ∈ rc.options ∧ ∀ o' ∈ rc.options, _ → _))
+
+instance [DecidableEq W] [DecidablePred (· ∈ p)] : Decidable (rc.IsOptimal p) :=
+  inferInstanceAs (Decidable (∀ o ∈ rc.options, _ → _))
+
+instance [DecidablePred (· ∈ p)] : Decidable (rc.IsStronglyPermissible p) :=
+  inferInstanceAs (Decidable (∀ o ∈ rc.options, _ → _))
+
+instance [DecidableEq W] [DecidablePred (· ∈ p)] : Decidable (rc.Ought p) :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+instance [DecidablePred (· ∈ p)] : Decidable (rc.Permitted₁ p) :=
+  inferInstanceAs (Decidable (∃ o ∈ rc.options, _))
+
+instance [DecidableEq W] [DecidablePred (· ∈ p)] : Decidable (rc.Permitted₂ p) :=
+  inferInstanceAs (Decidable (∃ o ∈ rc.options, _))
+
+end Decidable
+
+variable {rc p} {q : Set W}
+
+/-! ### Coarse falsemaking and permission -/
+
+/-- COARSE FALSEMAKING: one option below the benchmark that entails `p` falsifies *ought p*,
+however good the other options are. -/
+theorem not_ought_of_not_meetsBenchmark {o : Finset W} (ho : o ∈ rc.options)
+    (hp : ∀ w ∈ o, w ∈ p) (h : ¬ rc.MeetsBenchmark o) : ¬ rc.Ought p :=
+  λ ⟨_, _, hsp⟩ => h (hsp o ho hp)
+
+/-- Some option is best as soon as there are options. -/
+theorem exists_isBest (h : rc.options ≠ []) : ∃ o ∈ rc.options, rc.IsBest o :=
+  let ⟨o, ho⟩ := Set.Finite.exists_maximalFor rc.value _ (List.finite_toSet rc.options)
+    (List.exists_mem_of_ne_nil rc.options h)
+  ⟨o, ho.1, ho⟩
+
+/-- What one ought to do some best option does. -/
+theorem Ought.permitted₂ (h : rc.options ≠ []) (ho : rc.Ought p) : rc.Permitted₂ p :=
+  let ⟨o, hmem, hbest⟩ := exists_isBest h
+  ⟨o, hmem, hbest, ho.2.1 o hmem hbest⟩
+
+/-- What one ought to do is permitted: a best option does it by optimality and meets the
+benchmark by strong permissibility. -/
+theorem Ought.permitted₁ (h : rc.options ≠ []) (ho : rc.Ought p) : rc.Permitted₁ p :=
+  let ⟨o, hmem, hbest⟩ := exists_isBest h
+  ⟨o, hmem, ho.2.1 o hmem hbest, ho.2.2 o hmem (ho.2.1 o hmem hbest)⟩
+
+/-- PI: permission is closed under entailment of the prejacent, on either entry. -/
+theorem Permitted₁.mono (hpq : p ⊆ q) : rc.Permitted₁ p → rc.Permitted₁ q :=
+  λ ⟨o, ho, hp, hb⟩ => ⟨o, ho, λ w hw => hpq (hp w hw), hb⟩
+
+theorem Permitted₂.mono (hpq : p ⊆ q) : rc.Permitted₂ p → rc.Permitted₂ q :=
+  λ ⟨o, ho, hb, hp⟩ => ⟨o, ho, hb, λ w hw => hpq (hp w hw)⟩
+
+/-! ### The boxing special case -/
+
+/-- With singleton cells and every option at the benchmark, *ought p* is quantification over the
+best worlds: the boxing semantics is a resolution semantics at the finest resolution. -/
+theorem ought_finest_iff {worlds : List W} (hw : ∀ w, w ∈ worlds)
+    (ho : rc.options = finest worlds) (hb : ∀ o ∈ rc.options, rc.MeetsBenchmark o) :
+    rc.Ought p ↔ ∀ w, MaximalFor (λ _ => True) (λ w => rc.value {w}) w → w ∈ p := by
+  have hv : IsConsidered (worlds.map ({·})) p := isConsidered_finest worlds
+  simp only [Ought, IsVisible, IsOptimal, IsStronglyPermissible, IsBest, MaximalFor, ho, finest,
+    List.mem_map, hw, true_and, true_implies, forall_exists_index, forall_apply_eq_imp_iff,
+    Finset.mem_singleton, forall_eq, Finset.singleton_inj, exists_eq] at hb ⊢
+  exact ⟨λ h w hm => h.2.1 w hm, λ h => ⟨hv, λ w hm => h w hm, λ w _ => hb w⟩⟩
+
+end ResolutionContext
+
+/-! ### Duality -/
+
+/-- DUALITY of an operator with a permission closed under entailment yields INHERITANCE. -/
+theorem inheritance_of_dual {O P : Set W → Prop} (hd : ∀ p, O p ↔ ¬ P pᶜ)
+    (hP : ∀ p q : Set W, p ⊆ q → P p → P q) {p q : Set W} (hpq : p ⊆ q) (hp : O p) : O q :=
+  (hd q).2 λ hq => (hd p).1 hp (hP _ _ (Set.compl_subset_compl.2 hpq) hq)
+
+variable [Preorder V] {rc : ResolutionContext W V}
+
+/-- Where INHERITANCE fails, *ought* is not the dual of benchmark permission. -/
+theorem ResolutionContext.not_dual₁ (h : ¬ rc.Inheritance) :
+    ¬ ∀ p, rc.Ought p ↔ ¬ rc.Permitted₁ pᶜ :=
+  λ hd => h λ _ _ hpq => inheritance_of_dual hd (λ _ _ => Permitted₁.mono) hpq
+
+/-- Where INHERITANCE fails, *ought* is not the dual of best-option permission. -/
+theorem ResolutionContext.not_dual₂ (h : ¬ rc.Inheritance) :
+    ¬ ∀ p, rc.Ought p ↔ ¬ rc.Permitted₂ pᶜ :=
+  λ hd => h λ _ _ hpq => inheritance_of_dual hd (λ _ _ => Permitted₂.mono) hpq
 
 /-! ### Ross's paradox -/
 
 /-- Joan's three courses of action. -/
 inductive RossW | attend | stayHome | burn
-  deriving DecidableEq, Fintype, Repr
+  deriving DecidableEq
 
-/-- Attending is best, staying home is next, burning down the department is worst. -/
+/-- Attending is best, staying home next, burning down the department worst. -/
 def rossRank : RossW → ℕ
   | .attend => 3
   | .stayHome => 2
   | .burn => 1
 
-/-- Joan's context: the three actions as options, with the benchmark at staying home, so that
-burning down the department is the one impermissible option. -/
-def rossContext : ResolutionContext RossW :=
-  ofRanking [{.attend}, {.stayHome}, {.burn}] rossRank 2
+/-- Joan's context: each action an option, the benchmark at staying home, so that burning down
+the department is the one impermissible option. -/
+def rossContext : ResolutionContext RossW ℕ :=
+  .ofRanking [{.attend}, {.stayHome}, {.burn}] rossRank 2
 
 /-- *Joan ought to attend her classes* is true. -/
-theorem ross_ought_attend : ought rossContext {RossW.attend} := by decide +kernel
+theorem ross_ought_attend : rossContext.Ought {RossW.attend} := by decide +kernel
 
-/-- The disjunction is visible, so it is only the permissibility clause that rejects it: burning
-down the department is a way of *attend or burn* below the benchmark. -/
+/-- The disjunction is visible, so only the permissibility clause rejects it: burning down the
+department entails *attend or burn* and is below the benchmark. -/
 theorem ross_disjunction_visible_not_permissible :
-    isVisible rossContext {RossW.attend, .burn} ∧
-      ¬ isStronglyPermissible rossContext {RossW.attend, .burn} := by decide +kernel
+    rossContext.IsVisible {RossW.attend, .burn} ∧
+      ¬ rossContext.IsStronglyPermissible {RossW.attend, .burn} := by decide +kernel
 
 /-- *Joan ought to either attend her classes or burn down the philosophy department* is false. -/
-theorem ross_not_ought_disjunction : ¬ ought rossContext {RossW.attend, .burn} := by
+theorem ross_not_ought_disjunction : ¬ rossContext.Ought {RossW.attend, .burn} := by
   decide +kernel
 
-/-- *Joan ought to stay home* is false as well, on the optimality clause rather than the
-permissibility one: staying home is at the benchmark but is not the best option. -/
-theorem ross_not_ought_stayHome : ¬ ought rossContext {RossW.stayHome} := by decide +kernel
+/-- Staying home is permitted but not obligatory: it is at the benchmark and not best. -/
+theorem ross_stayHome_permitted_not_ought :
+    rossContext.Permitted₁ {RossW.stayHome} ∧ ¬ rossContext.Ought {RossW.stayHome} := by
+  decide +kernel
 
 /-- Ross's paradox refutes INHERITANCE. -/
-theorem not_inheritance_ross : ¬ Inheritance rossContext := fun h =>
-  ross_not_ought_disjunction (h _ _ (fun _ hw => Or.inl hw) ross_ought_attend)
+theorem not_inheritance_ross : ¬ rossContext.Inheritance := λ h =>
+  ross_not_ought_disjunction
+    (h _ _ (Set.singleton_subset_iff.2 (Set.mem_insert _ _)) ross_ought_attend)
+
+/-- And so *ought* is the dual of neither permission. -/
+theorem not_dual_ross :
+    (¬ ∀ p, rossContext.Ought p ↔ ¬ rossContext.Permitted₁ pᶜ) ∧
+      ¬ ∀ p, rossContext.Ought p ↔ ¬ rossContext.Permitted₂ pᶜ :=
+  ⟨ResolutionContext.not_dual₁ not_inheritance_ross,
+    ResolutionContext.not_dual₂ not_inheritance_ross⟩
 
 /-! ### Procrastinate -/
 
 /-- Procrastinate's three courses of action ([jackson-pargetter-1986]): accepting the review and
 writing it, declining it, and accepting without writing. -/
-inductive ProcW | acceptWrite | doNotAccept | acceptNoWrite
-  deriving DecidableEq, Fintype, Repr
+inductive ProcW | acceptWrite | decline | acceptNoWrite
+  deriving DecidableEq
 
 /-- Accepting and writing is best; declining is better than accepting and not writing, which is
 what Procrastinate would in fact do. -/
 def procRank : ProcW → ℕ
   | .acceptWrite => 3
-  | .doNotAccept => 2
+  | .decline => 2
   | .acceptNoWrite => 1
 
 /-- Procrastinate's context, with the benchmark at declining. -/
-def procContext : ResolutionContext ProcW :=
-  ofRanking [{.acceptWrite}, {.doNotAccept}, {.acceptNoWrite}] procRank 2
+def procContext : ResolutionContext ProcW ℕ :=
+  .ofRanking [{.acceptWrite}, {.decline}, {.acceptNoWrite}] procRank 2
 
 /-- *Procrastinate ought to accept and write the review* is true. -/
-theorem proc_ought_acceptWrite : ought procContext {ProcW.acceptWrite} := by decide +kernel
+theorem proc_ought_acceptWrite : procContext.Ought {ProcW.acceptWrite} := by decide +kernel
 
-/-- *Procrastinate ought to accept* is false: accepting without writing is a way of accepting,
-and it is below the benchmark. -/
-theorem proc_not_ought_accept :
-    ¬ ought procContext {ProcW.acceptWrite, .acceptNoWrite} := by decide +kernel
+/-- *Procrastinate ought to accept* is false: accepting without writing is a way of accepting
+and is below the benchmark. -/
+theorem proc_not_ought_accept : ¬ procContext.Ought {ProcW.acceptWrite, .acceptNoWrite} := by
+  decide +kernel
 
-/-- Procrastinate refutes INHERITANCE too, on a prejacent that is weaker by way of an
-impermissible option rather than by a disjunct. -/
-theorem not_inheritance_proc : ¬ Inheritance procContext := fun h =>
-  proc_not_ought_accept (h _ _ (fun _ hw => Or.inl hw) proc_ought_acceptWrite)
+/-- Procrastinate refutes INHERITANCE too, on a prejacent weakened by an impermissible option
+rather than by a disjunct. -/
+theorem not_inheritance_proc : ¬ procContext.Inheritance := λ h =>
+  proc_not_ought_accept
+    (h _ _ (Set.singleton_subset_iff.2 (Set.mem_insert _ _)) proc_ought_acceptWrite)
+
+/-! ### Jenny's ways to school -/
+
+/-- Jenny's ways to school. -/
+inductive Mode | running | walking | swimming | driving
+  deriving DecidableEq
+
+/-- Running is best, walking and swimming tie, driving is worst. -/
+def jennyRank : Mode → ℕ
+  | .running => 3
+  | .walking => 2
+  | .swimming => 2
+  | .driving => 1
+
+/-- The proposition that Jenny goes to school by `m`; a world also records whether she has a cup
+of coffee, which no option settles. -/
+abbrev mode (m : Mode) : Set (Mode × Bool) := {w | w.1 = m}
+
+/-- Jenny's context: the four ways to school as options, coffee below the resolution, and the
+benchmark between walking and driving, so that driving is the one impermissible option. -/
+def jennyContext : ResolutionContext (Mode × Bool) ℕ :=
+  .ofRanking ([.running, .walking, .swimming, .driving].map λ m => {(m, true), (m, false)})
+    (jennyRank ·.1) 2
+
+/-- Running is permissible, optimal, and strongly permissible, so Jenny ought to run. -/
+theorem jenny_ought_running : jennyContext.Ought (mode .running) := by decide +kernel
+
+/-- Running or driving is permissible and optimal but not strongly permissible. -/
+theorem jenny_running_or_driving :
+    jennyContext.Permitted₁ (mode .running ∪ mode .driving) ∧
+      jennyContext.IsOptimal (mode .running ∪ mode .driving) ∧
+        ¬ jennyContext.IsStronglyPermissible (mode .running ∪ mode .driving) := by
+  decide +kernel
+
+/-- Swimming or driving is permissible but neither strongly permissible nor optimal. -/
+theorem jenny_swimming_or_driving :
+    jennyContext.Permitted₁ (mode .swimming ∪ mode .driving) ∧
+      ¬ jennyContext.IsOptimal (mode .swimming ∪ mode .driving) ∧
+        ¬ jennyContext.IsStronglyPermissible (mode .swimming ∪ mode .driving) := by
+  decide +kernel
+
+/-- Running or walking is visible in Jenny's options; having a cup of coffee is not. -/
+theorem jenny_visible :
+    jennyContext.IsVisible (mode .running ∪ mode .walking) ∧
+      ¬ jennyContext.IsVisible {w | w.2 = true} := by decide +kernel
 
 end Cariani2013
