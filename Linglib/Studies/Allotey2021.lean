@@ -8,9 +8,10 @@ import Linglib.Data.Examples.Allotey2021
 /-!
 # Allotey (2021): overt pronouns of infinitival predicates of Gã
 
-Obligatory control into Gã irrealis `ni`-clauses requires an overt subject
-proclitic: null PRO is ungrammatical, a lexical subject is ungrammatical, and
-the proclitic shows the whole OC signature (Table 2). The controlled clause is
+This file formalizes [allotey-2021]. Obligatory control into Gã irrealis
+`ni`-clauses requires an overt subject proclitic: null PRO is ungrammatical, a
+lexical subject is ungrammatical, and the proclitic shows the whole OC signature
+(Table 2). The controlled clause is
 non-finite and irrealis rather than subjunctive — it bars tense and aspect,
 focus fronting and obviation, licenses NPIs across its boundary, negates
 preverbally, and carries the irrealis marker only as a high tone on its
@@ -18,10 +19,11 @@ subject (Table 4). The pronoun is overt because that tone needs a segmental
 host.
 
 The OC signature is read off the Fragment's clause typology through
-[landau-2013]'s profile, complementizer selection off the Fragment's verb
-frames through `Verb.takes`, and the finiteness diagnostics off the Fragment's
-clause properties; the example rows check each claim, including the implicative
-contrast of (89) against the verbs' Karttunen classes. The Movement Theory of
+[landau-2013]'s profile and complementizer selection off the Fragment's verb
+frames through `Verb.takes`; every finiteness diagnostic is a theorem over the
+example rows conditioned on the complementizer's finiteness alone, which is the
+paper's convergence argument. The rows also check the implicative contrast of
+(89) against the verbs' Karttunen classes. The Movement Theory of
 Control is refuted by the lexical-subject rows, and the tone-hosting
 requirement derives the overt pronoun from the minimal-pronoun inventory.
 
@@ -35,6 +37,7 @@ requirement derives the overt pronoun from the minimal-pronoun inventory.
 * [satik-2019]
 * [karttunen-1971]
 * [noonan-2007]
+* [rizzi-1997]
 -/
 
 namespace Allotey2021
@@ -43,27 +46,28 @@ open Minimalist.MinimalPronoun Control Ga Data.Examples
 
 /-! ### Pronouns (Table 3) -/
 
-/-- Only second and third person singular distinguish a subjective from an
-    objective form. -/
-theorem objective_distinct_iff (p : Person) (n : Number) :
-    pronoun p n .objective ≠ pronoun p n .subjective ↔
+/-- Only second and third person singular have a dedicated objective form. -/
+theorem objective_form_iff (p : Person) (n : Number) :
+    (∃ q ∈ pronouns, q.person = some p ∧ q.number = some n ∧ q.case_ = some .acc) ↔
       n = .singular ∧ (p = .second ∨ p = .third) := by
   cases p <;> cases n <;> decide
 
-/-- The possessive always matches the subjective form. -/
-theorem possessive_eq_subjective (p : Person) (n : Number) :
-    pronoun p n .possessive = pronoun p n .subjective := by
-  cases p <;> cases n <;> rfl
+/-- No dedicated possessive form: the possessive column of Table 3 is the
+    elsewhere form. -/
+theorem no_possessive_form : ∀ q ∈ pronouns, q.case_ ≠ some .gen := by
+  decide
 
 /-! ### OC by clause type -/
 
-/-- The control profile of a Gã clause type, from its noncoreference flag. -/
+/-- The control profile of a Gã clause type: the finite clauses license a
+    noncoreferential subject (exx 110 vs 112). -/
 def gaProfile (c : EmbeddedClauseType) : Profile Landau2013.Clause74 :=
-  Landau2013.ofNoncoreferential (clauseProperties c).noncoreferentialSubject
+  Landau2013.ofNoncoreferential (decide c.complementizer.IsFinite)
 
-/-- OC status is read off the complementizer's finiteness. -/
+/-- OC status is the complementizer's non-finiteness: [szabolcsi-2009]'s
+    long-distance Agree reaches the embedded subject across the weak CP only. -/
 theorem obligatory_iff_not_finite (c : EmbeddedClauseType) :
-    (gaProfile c).IsObligatory ↔ (clauseComplementizer c).verbForm ≠ some .Fin := by
+    (gaProfile c).IsObligatory ↔ ¬ c.complementizer.IsFinite := by
   cases c <;> decide
 
 /-! ### Complementizer selection (§5.5.1) -/
@@ -71,7 +75,7 @@ theorem obligatory_iff_not_finite (c : EmbeddedClauseType) :
 /-- The three-way clause typology is the selection relation: each clause type's
     frame takes exactly its own complementizer. -/
 theorem frame_takes_iff (c d : EmbeddedClauseType) :
-    c.frame.Takes (clauseComplementizer d) ↔ c = d := by
+    c.frame.Takes d.complementizer ↔ c = d := by
   cases c <;> cases d <;> decide
 
 /-- A verb takes `ni` exactly when some frame of it is controlled. -/
@@ -101,12 +105,12 @@ def overtPronoun (r : Table2Row) : Bool := r != .longDistanceAntecedent
     under [landau-2013]'s signature: nothing. -/
 theorem signature_rows :
     (overtPronoun .cCommandedByAntecedent ↔
-      Diagnostic.nonCCommandingControl ∉ (gaProfile .irrealisNi).admits) ∧
+      Diagnostic.nonCCommandingControl ∉ (gaProfile .ni).admits) ∧
     (overtPronoun .longDistanceAntecedent ↔
-      Diagnostic.longDistanceControl ∈ (gaProfile .irrealisNi).admits) ∧
-    (overtPronoun .sloppyOnly ↔ Diagnostic.strictEllipsis ∉ (gaProfile .irrealisNi).admits) ∧
+      Diagnostic.longDistanceControl ∈ (gaProfile .ni).admits) ∧
+    (overtPronoun .sloppyOnly ↔ Diagnostic.strictEllipsis ∉ (gaProfile .ni).admits) ∧
     (overtPronoun .boundVariable ↔
-      Diagnostic.strictUnderOnly ∉ (gaProfile .irrealisNi).admits) := by
+      Diagnostic.strictUnderOnly ∉ (gaProfile .ni).admits) := by
   decide
 
 /-- The two control rows are the verb inventory. -/
@@ -121,7 +125,7 @@ theorem control_rows :
     [satik-2019]'s form-invariant Ewe *yè*. -/
 theorem controlled_form_covaries :
     overtPronoun .hasPhiFeatures ↔
-      subjectProclitic .second .singular ≠ subjectProclitic .second .plural := by
+      subjectProclitic? .second .singular ≠ subjectProclitic? .second .plural := by
   decide
 
 /-! ### Minimal-pronoun inventory -/
@@ -140,9 +144,9 @@ def verbOf (row : LinguisticExample) : Option Verb :=
 
 /-- The clause type a complementizer feature names. -/
 def clauseOf : String → Option EmbeddedClauseType
-  | "ni" => some .irrealisNi
-  | "ake" => some .finiteAke
-  | "keji" => some .finiteKeji
+  | "ni" => some .ni
+  | "ake" => some .ake
+  | "keji" => some .keji
   | _ => none
 
 /-- The clause type of a row: its complement's, or the finite type for a
@@ -150,14 +154,14 @@ def clauseOf : String → Option EmbeddedClauseType
 def clauseTypeOf (row : LinguisticExample) : Option EmbeddedClauseType :=
   match row.feature? "complementizer", row.feature? "clauseType" with
   | some c, _ => clauseOf c
-  | none, some "finite" => some .finiteAke
+  | none, some "finite" => some .ake
   | _, _ => none
 
 /-- The complementizer inside an alternative form. -/
 def clauseOfForm (s : String) : Option EmbeddedClauseType :=
-  if " ni ".toList <:+: s.toList then some .irrealisNi
-  else if " akɛ ".toList <:+: s.toList then some .finiteAke
-  else if " kɛji ".toList <:+: s.toList then some .finiteKeji
+  if " ni ".toList <:+: s.toList then some .ni
+  else if " akɛ ".toList <:+: s.toList then some .ake
+  else if " kɛji ".toList <:+: s.toList then some .keji
   else none
 
 /-- The realized form of a row's embedded subject. -/
@@ -188,40 +192,41 @@ theorem c_selection_rows :
     ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "cSelection" →
       ∀ v ∈ verbOf row,
         (∀ c ∈ clauseTypeOf row,
-          (row.judgment = .acceptable ↔ v.takes (clauseComplementizer c))) ∧
+          (row.judgment = .acceptable ↔ v.takes c.complementizer)) ∧
         ∀ alt ∈ row.alternatives, ∀ c ∈ clauseOfForm alt.1,
-          (alt.2 = .acceptable ↔ v.takes (clauseComplementizer c)) := by
+          (alt.2 = .acceptable ↔ v.takes c.complementizer) := by
   decide +kernel
 
-/-- Overt tense or aspect in the complement is grammatical exactly in the
-    clause types with unrestricted TAM (exx 101, 111). -/
+/-- Overt tense or aspect in the complement is grammatical exactly in the finite
+    clause types (exx 101, 111). -/
 theorem tam_rows :
     ∀ row ∈ Examples.all, ∀ c ∈ clauseTypeOf row, ∀ t ∈ row.feature? "embeddedTAM",
-      t ≠ "none" → (row.judgment = .acceptable ↔ (clauseProperties c).unrestrictedTAM) := by
+      t ≠ "none" → (row.judgment = .acceptable ↔ c.complementizer.IsFinite) := by
   decide +kernel
 
-/-- Focus fronting (exx 107–108) and NPI licensing by matrix negation (exx
-    116–117) follow the clause properties. -/
+/-- Focus fronting, [rizzi-1997]'s strong-CP diagnostic, is available exactly in
+    the finite clauses (exx 107–108); matrix negation licenses an embedded NPI
+    exactly across the non-finite one (exx 116–117). -/
 theorem focus_npi_rows :
     ∀ row ∈ Examples.all, ∀ c ∈ clauseTypeOf row,
       (row.feature? "diagnostic" = some "focus" →
-        (row.judgment = .acceptable ↔ (clauseProperties c).focusFronting)) ∧
+        (row.judgment = .acceptable ↔ c.complementizer.IsFinite)) ∧
       (row.feature? "diagnostic" = some "npi" → row.feature? "negation" = some "matrix" →
-        (row.judgment = .acceptable ↔ (clauseProperties c).npiTransparent)) := by
+        (row.judgment = .acceptable ↔ ¬ c.complementizer.IsFinite)) := by
   decide +kernel
 
-/-- Negation precedes the verb exactly in the irrealis clause (exx 121–122,
+/-- Negation precedes the verb exactly in the non-finite clause (exx 121–122,
     124). -/
 theorem negation_rows :
     ∀ row ∈ Examples.all, ∀ c ∈ clauseTypeOf row, ∀ p ∈ row.feature? "negationPosition",
-      (p = "preverbal") = (clauseProperties c).preverbalNegation := by
+      (p = "preverbal" ↔ ¬ c.complementizer.IsFinite) := by
   decide +kernel
 
 /-- The embedded subject bears the irrealis high tone exactly in the `ni`-clause
     (exx 110–112, 118). -/
 theorem subject_tone_rows :
     ∀ row ∈ Examples.all, row.judgment = .acceptable → ∀ c ∈ clauseTypeOf row,
-      ∀ t ∈ row.feature? "subjectTone", (t = "high") = (c = .irrealisNi) := by
+      ∀ t ∈ row.feature? "subjectTone", (t = "high") = (c = .ni) := by
   decide +kernel
 
 /-! ### The irrealis marker -/
@@ -248,9 +253,10 @@ theorem implicative_rows :
 /-! ### Landau's scale -/
 
 /-- Gã clause types on [landau-2004]'s finiteness scale — a scale position, not
-    a mood claim. -/
+    a mood claim. Unrestricted TAM and independent tense both coincide with the
+    complementizer's finiteness (exx 109–111, 118–119). -/
 def gaToLandau (c : EmbeddedClauseType) : ClauseClass :=
-  .ofFiniteness (clauseProperties c).unrestrictedTAM (clauseProperties c).independentTense
+  .ofFiniteness (decide c.complementizer.IsFinite) (decide c.complementizer.IsFinite)
 
 /-- No Gã clause type is a tensed-but-controlled F-subjunctive. -/
 theorem ga_no_fSubjunctive (c : EmbeddedClauseType) : gaToLandau c ≠ .fSubjunctive := by
@@ -261,27 +267,6 @@ theorem ga_no_fSubjunctive (c : EmbeddedClauseType) : gaToLandau c ≠ .fSubjunc
 theorem landau_predicts_control (c : EmbeddedClauseType) (agr : Bool) :
     (gaProfile c).IsObligatory ↔ (gaToLandau c).HasOC agr := by
   cases c <;> cases agr <;> decide
-
-/-! ### CP strength -/
-
-/-- A strong CP in [rizzi-1997]'s sense: focus features and independent tense. -/
-def StrongCP (c : EmbeddedClauseType) : Prop :=
-  (clauseProperties c).focusFronting ∧ (clauseProperties c).independentTense
-
-instance : DecidablePred StrongCP :=
-  λ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
-
-/-- `akɛ` and `kɛji` head strong CPs, `ni` a weak one. -/
-theorem strongCP_iff_finite (c : EmbeddedClauseType) :
-    StrongCP c ↔ (clauseComplementizer c).verbForm = some .Fin := by
-  cases c <;> decide
-
-/-- Long-distance Agree ([szabolcsi-2009]) reaches the embedded subject across
-    the weak CP only: the controlled clauses are the weak ones, and they are
-    the NPI-transparent ones. -/
-theorem weakCP_iff_obligatory (c : EmbeddedClauseType) :
-    ¬ StrongCP c ↔ (gaProfile c).IsObligatory ∧ (clauseProperties c).npiTransparent := by
-  cases c <;> decide
 
 /-! ### Table 4 -/
 
