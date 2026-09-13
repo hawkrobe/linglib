@@ -107,8 +107,9 @@ def Complementizer.ofString? : String → Option Complementizer
   | _ => none
 
 /-- Every verb–complementizer pairing in the paper's examples, apart from those testing an
-adverb or a factivity continuation, is acceptable exactly when predicted from the verb's sort
-and Vendler class — including *simveni*, which no complementizer fits (fn. 14). -/
+adverb, a factivity continuation or the ban on a preposition, is acceptable exactly when
+predicted from the verb's sort and Vendler class — including *simveni*, which no complementizer
+fits (fn. 14). -/
 theorem rows_track_selection :
     ∀ r ∈ Examples.all, r.feature? "confound" = none →
       ∀ e ∈ ((r.feature? "verb").bind fun name => lexicon.lookup name).toList,
