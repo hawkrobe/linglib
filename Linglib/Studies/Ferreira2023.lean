@@ -230,8 +230,7 @@ theorem bestAmong_univ_eq (b : Bool) :
     bestAmong (Set.univ : Set Bool) [λ v => v = b] = {b} := by
   ext u
   simp only [mem_bestAmong, atLeastAsGoodAs_iff, Set.mem_univ, true_and, List.forall_mem_cons,
-    List.mem_nil_iff, false_implies, implies_true, and_true, Set.mem_singleton_iff,
-    Set.mem_ofPred_eq]
+    List.mem_nil_iff, false_implies, implies_true, and_true, Set.mem_singleton_iff]
   cases u <;> cases b <;> decide
 
 /-- (27i), (20), (29): weak necessity does not entail strong necessity. -/
@@ -593,7 +592,7 @@ theorem best_revise_f81 :
     bestAmong ({⟨false, false⟩, ⟨true, false⟩} : Set Day) (normal ⟨false, false⟩) =
       {⟨true, false⟩} := by
   ext v
-  simp only [mem_bestAmong, atLeastAsGoodAs_iff, normal, Set.mem_ofPred_eq, Set.mem_insert_iff,
+  simp only [mem_bestAmong, atLeastAsGoodAs_iff, normal, Set.mem_insert_iff,
     Set.mem_singleton_iff, List.forall_mem_cons, List.mem_nil_iff, false_implies, implies_true,
     and_true]
   obtain ⟨o, h⟩ := v
@@ -633,7 +632,7 @@ theorem best_revise_f80 :
     bestAmong ({⟨false, true⟩, ⟨true, true⟩} : Set Day) (normal ⟨false, true⟩) =
       {⟨false, true⟩} := by
   ext v
-  simp only [mem_bestAmong, atLeastAsGoodAs_iff, normal, Set.mem_ofPred_eq, Set.mem_insert_iff,
+  simp only [mem_bestAmong, atLeastAsGoodAs_iff, normal, Set.mem_insert_iff,
     Set.mem_singleton_iff, List.forall_mem_cons, List.mem_nil_iff, false_implies, implies_true,
     and_true]
   obtain ⟨o, h⟩ := v
