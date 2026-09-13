@@ -65,27 +65,6 @@ inductive BinominalType where
   | qualitative       -- *una mierda de departamento* / *that idiot of a doctor*
   deriving DecidableEq, Repr
 
-/-- Does this binominal type license NP-ellipsis?
-    [saab-2026]: pseudo-partitive and quantificational yes;
-    qualitative no. -/
-def BinominalType.licensesNPE : BinominalType → Bool
-  | .pseudoPartitive  => true
-  | .quantificational => true
-  | .qualitative      => false
-
-/-- Does the Num head in this structure carry [E]?
-    [saab-2026]: Num[E] is present iff the complement of Num
-    is a standard nP (not an EquP with an indexical empty noun). -/
-def BinominalType.hasNumE : BinominalType → Bool
-  | .pseudoPartitive  => true
-  | .quantificational => true
-  | .qualitative      => false
-
-/-- Core result: NP-ellipsis is licensed iff Num has [E]. -/
-theorem npe_iff_numE (b : BinominalType) :
-    b.licensesNPE = b.hasNumE := by
-  cases b <;> rfl
-
 /-! ### : Six-Way Classification (English, ten-Wolde 2023) -/
 
 /-- Which noun is the semantic head of the binominal construction. -/
@@ -330,7 +309,8 @@ theorem premod_lost_at_4 (t : OfBinominalType) :
 theorem premod_loss_monotone (t₁ t₂ : OfBinominalType) :
     t₁.clinePosition ≤ t₂.clinePosition →
     t₁.n₁AllowsDescriptivePremod = false → t₂.n₁AllowsDescriptivePremod = false := by
-  cases t₁ <;> cases t₂ <;> simp [OfBinominalType.clinePosition, OfBinominalType.n₁AllowsDescriptivePremod]
+  cases t₁ <;> cases t₂ <;>
+    simp [OfBinominalType.clinePosition, OfBinominalType.n₁AllowsDescriptivePremod]
 
 /-- Copula replacement is unique to evaluative BNPs. -/
 theorem copula_only_evaluative (t : OfBinominalType) :
@@ -363,7 +343,8 @@ theorem plural_loss_monotone (t₁ t₂ : OfBinominalType) :
 theorem agreement_loosens_monotone (t₁ t₂ : OfBinominalType) :
     t₁.clinePosition ≤ t₂.clinePosition →
     t₁.n₁N₂Agreement.toNat ≤ t₂.n₁N₂Agreement.toNat := by
-  cases t₁ <;> cases t₂ <;> simp [OfBinominalType.clinePosition, OfBinominalType.n₁N₂Agreement, AgreementLevel.toNat]
+  cases t₁ <;> cases t₂ <;>
+    simp [OfBinominalType.clinePosition, OfBinominalType.n₁N₂Agreement, AgreementLevel.toNat]
 
 /-- N₂ mass restriction is non-monotone: it narrows at the evaluative
     stage (positions 3–4) and widens again at BI (position 5), reflecting

@@ -1,80 +1,378 @@
 [
   {
-    "id": "saab2026_6a_grupo",
-    "source": {"bibkey": "saab-2026", "paperLabel": "(6a)"},
-    "reportedIn": null,
+    "id": "saab2026_ex1a",
+    "source": {"bibkey": "saab-2026", "paperLabel": "(1a)"},
     "language": "stan1288",
     "primaryText": "un grupo de estudiantes",
-    "discourseSegments": [],
     "glossedTokens": [
-      ["un", "a"], ["grupo", "group"], ["de", "of"], ["estudiantes", "student.PL"]
+      ["un", "a"], ["grupo", "group"], ["de", "of"], ["estudiantes", "students"]
     ],
     "translation": "a group of students",
-    "context": "Pseudo-partitive binominal: NP-ellipsis of the de-complement is licensed, and the verb agrees with the plural embedded noun.",
+    "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "un grupo", "judgment": "acceptable"}
-    ],
-    "readings": [],
     "paperFeatures": [
-      ["binominal_type", "pseudo_partitive"],
-      ["npe_grammatical", "true"],
-      ["verb_agreement", "plural"]
+      ["noun", "grupo"]
     ],
-    "comment": "UNVERIFIED paperLabel: ex. (6a) carried from Phenomena/Ellipsis/NPEllipsis.lean grupoDeEstudiantes ('Saab 2026, (6a)'), not checked against the published paper. The NP-ellipsis form 'un grupo' in alternatives is the Lean ellipsisForm field. Gloss 'group' from Fragments/Spanish/Binominals.lean.",
-    "metaLanguage": "stan1293",
+    "comment": "Pseudo-partitive binominal.",
     "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "saab2026_7a_monton",
-    "source": {"bibkey": "saab-2026", "paperLabel": "(7a)"},
-    "reportedIn": null,
+    "id": "saab2026_ex1b",
+    "source": {"bibkey": "saab-2026", "paperLabel": "(1b)"},
     "language": "stan1288",
     "primaryText": "un montón de estudiantes",
-    "discourseSegments": [],
     "glossedTokens": [
-      ["un", "a"], ["montón", "heap/lot"], ["de", "of"], ["estudiantes", "student.PL"]
+      ["un", "a"], ["montón", "lot"], ["de", "of"], ["estudiantes", "students"]
     ],
     "translation": "a lot of students",
-    "context": "Quantificational binominal: NP-ellipsis of the de-complement is licensed, and the verb agrees with the plural embedded noun.",
+    "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "un montón", "judgment": "acceptable"}
-    ],
-    "readings": [],
     "paperFeatures": [
-      ["binominal_type", "quantificational"],
-      ["npe_grammatical", "true"],
-      ["verb_agreement", "plural"]
+      ["noun", "montón"]
     ],
-    "comment": "UNVERIFIED paperLabel: ex. (7a) carried from Phenomena/Ellipsis/NPEllipsis.lean montonDeEstudiantes ('Saab 2026, (7a)'), not checked against the published paper. The NP-ellipsis form 'un montón' in alternatives is the Lean ellipsisForm field. Gloss 'heap/lot' from Fragments/Spanish/Binominals.lean.",
-    "metaLanguage": "stan1293",
+    "comment": "Quantificational binominal.",
     "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "saab2026_9_mierda",
-    "source": {"bibkey": "saab-2026", "paperLabel": "(9)"},
-    "reportedIn": null,
+    "id": "saab2026_ex1c",
+    "source": {"bibkey": "saab-2026", "paperLabel": "(1c)"},
     "language": "stan1288",
     "primaryText": "una mierda de departamento",
-    "discourseSegments": [],
     "glossedTokens": [
-      ["una", "a.F"], ["mierda", "shit"], ["de", "of"], ["departamento", "apartment"]
+      ["una", "a"], ["mierda", "shit"], ["de", "of"], ["departamento", "apartment"]
     ],
-    "translation": "a shit of apartment",
-    "context": "Qualitative binominal: NP-ellipsis of the de-complement is blocked (with the intended referent reading), and the verb agrees with the singular expressive noun.",
+    "translation": "a shit of an apartment",
+    "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "una mierda", "judgment": "ungrammatical"}
-    ],
-    "readings": [],
     "paperFeatures": [
-      ["binominal_type", "qualitative"],
-      ["npe_grammatical", "false"],
-      ["verb_agreement", "singular"]
+      ["noun", "mierda"]
     ],
-    "comment": "UNVERIFIED paperLabel: ex. (9) carried from Phenomena/Ellipsis/NPEllipsis.lean mierdaDeDepartamento ('Saab 2026, (9)'), not checked against the published paper. The starred NP-ellipsis form '*una mierda' in alternatives is the Lean ellipsisForm field; the file's docstring notes the star holds for the intended referent reading. Gloss 'shit' from Fragments/Spanish/Binominals.lean.",
-    "metaLanguage": "stan1293",
+    "comment": "Qualitative binominal.",
     "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "saab2026_ex2a",
+    "source": {"bibkey": "saab-2026", "paperLabel": "(2a)"},
+    "language": "stan1288",
+    "primaryText": "Vinieron un grupo de estudiantes.",
+    "glossedTokens": [],
+    "translation": "A group of students came.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["noun", "grupo"],
+      ["agreement", "plural"],
+      ["codaNumber", "plural"]
+    ],
+    "comment": "The verb is plural although the first noun is singular."
+  },
+  {
+    "id": "saab2026_ex2b",
+    "source": {"bibkey": "saab-2026", "paperLabel": "(2b)"},
+    "language": "stan1288",
+    "primaryText": "Vinieron un montón de estudiantes.",
+    "glossedTokens": [],
+    "translation": "A lot of students came.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["noun", "montón"],
+      ["agreement", "plural"],
+      ["codaNumber", "plural"]
+    ],
+    "comment": "The verb is plural although the first noun is singular."
+  },
+  {
+    "id": "saab2026_ex2c",
+    "source": {"bibkey": "saab-2026", "paperLabel": "(2c)"},
+    "language": "stan1288",
+    "primaryText": "Se derrumbaron una mierda de departamentos.",
+    "glossedTokens": [],
+    "translation": "Some shitty apartments were demolished.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["noun", "mierda"],
+      ["agreement", "plural"],
+      ["codaNumber", "plural"]
+    ],
+    "comment": "The verb is plural although the expressive noun is singular."
+  },
+  {
+    "id": "saab2026_ex5_bocha",
+    "source": {"bibkey": "saab-2026", "paperLabel": "(5)"},
+    "language": "stan1288",
+    "primaryText": "Una bocha.",
+    "discourseSegments": [
+      "A: Vinieron muchos estudiantes?",
+      "B: Una bocha."
+    ],
+    "glossedTokens": [],
+    "translation": "A: Did many students come? B: A lot.",
+    "context": "B answers A's question.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["noun", "bocha"],
+      ["elided", "coda"]
+    ],
+    "comment": "The genitive coda de estudiantes is elided after the quantificational noun."
+  },
+  {
+    "id": "saab2026_ex5_grupo",
+    "source": {"bibkey": "saab-2026", "paperLabel": "(5)"},
+    "language": "stan1288",
+    "primaryText": "Un grupo.",
+    "discourseSegments": [
+      "A: Vinieron muchos estudiantes?",
+      "B: Un grupo."
+    ],
+    "glossedTokens": [],
+    "translation": "A: Did many students come? B: A group.",
+    "context": "B answers A's question.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["noun", "grupo"],
+      ["elided", "coda"]
+    ],
+    "comment": "The genitive coda de estudiantes is elided after the pseudo-partitive noun."
+  },
+  {
+    "id": "saab2026_ex6",
+    "source": {"bibkey": "saab-2026", "paperLabel": "(6)"},
+    "language": "stan1288",
+    "primaryText": "una mierda de departamento en San Telmo y una mierda en La Boca",
+    "glossedTokens": [],
+    "translation": "a shit of an apartment in San Telmo and a shit in La Boca",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "ellipsis", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["noun", "mierda"],
+      ["elided", "coda"]
+    ],
+    "comment": "The second conjunct cannot mean a shit of an apartment in La Boca; only a shitty thing in La Boca."
+  },
+  {
+    "id": "saab2026_ex43",
+    "source": {"bibkey": "saab-2026", "paperLabel": "(43)"},
+    "language": "stan1288",
+    "primaryText": "No, pero de química hay una bocha.",
+    "discourseSegments": [
+      "A: Hay muchos estudiantes de física?",
+      "B: No, pero de química hay una bocha."
+    ],
+    "glossedTokens": [],
+    "translation": "A: Are there many students of physics? B: No, but of chemistry there are a lot.",
+    "context": "B answers A's question.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["noun", "bocha"],
+      ["elided", "coda"],
+      ["diagnostic", "subextraction"]
+    ],
+    "comment": "The complement de química is sub-extracted from the ellipsis site."
+  },
+  {
+    "id": "saab2026_ex45",
+    "source": {"bibkey": "saab-2026", "paperLabel": "(45)"},
+    "language": "stan1288",
+    "primaryText": "A COLOMBIA, hubo un montón.",
+    "discourseSegments": [
+      "A: Hubo un montón de envíos de libros a Ecuador.",
+      "B: A COLOMBIA, hubo un montón."
+    ],
+    "glossedTokens": [],
+    "translation": "A: There were a lot of book shipments to Ecuador. B: TO COLOMBIA, there were a lot.",
+    "context": "B replies to A.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["noun", "montón"],
+      ["elided", "coda"],
+      ["diagnostic", "subextraction"]
+    ],
+    "comment": "The focused locative with its preposition is sub-extracted from the ellipsis site."
+  },
+  {
+    "id": "saab2026_ex52a",
+    "source": {"bibkey": "saab-2026", "paperLabel": "(52a)"},
+    "language": "stan1288",
+    "primaryText": "un profesor de química y una mierda de física",
+    "glossedTokens": [],
+    "translation": "a professor of chemistry and a shit of physics",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["noun", "mierda"],
+      ["elided", "coda"],
+      ["diagnostic", "argumentStructure"]
+    ],
+    "comment": "The complement de física has no noun to attach to: neither ellipsis nor an indexical empty noun."
+  },
+  {
+    "id": "saab2026_ex52b",
+    "source": {"bibkey": "saab-2026", "paperLabel": "(52b)"},
+    "language": "stan1288",
+    "primaryText": "una mierda de profesor de química y una mierda de física",
+    "glossedTokens": [],
+    "translation": "a shit of a professor of chemistry and a shit of physics",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["noun", "mierda"],
+      ["elided", "coda"],
+      ["diagnostic", "argumentStructure"]
+    ],
+    "comment": "Same with a genitive antecedent."
+  },
+  {
+    "id": "saab2026_ex53a",
+    "source": {"bibkey": "saab-2026", "paperLabel": "(53a)"},
+    "language": "stan1288",
+    "primaryText": "algunos profesores de química y un montón de física",
+    "glossedTokens": [],
+    "translation": "some professors of chemistry and a lot of physics",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["noun", "montón"],
+      ["elided", "coda"],
+      ["diagnostic", "argumentStructure"]
+    ],
+    "comment": "The elided coda de profesores still hosts the complement de física."
+  },
+  {
+    "id": "saab2026_ex53b",
+    "source": {"bibkey": "saab-2026", "paperLabel": "(53b)"},
+    "language": "stan1288",
+    "primaryText": "un montón de profesores de química y un montón de física",
+    "glossedTokens": [],
+    "translation": "a lot of professors of chemistry and a lot of physics",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["noun", "montón"],
+      ["elided", "coda"],
+      ["diagnostic", "argumentStructure"]
+    ],
+    "comment": "Same with a genitive antecedent."
+  },
+  {
+    "id": "saab2026_ex54",
+    "source": {"bibkey": "saab-2026", "paperLabel": "(54)"},
+    "language": "stan1288",
+    "primaryText": "Sí, a una mierda.",
+    "discourseSegments": [
+      "A: Contrataron a algún profesor?",
+      "B: Sí, a una mierda."
+    ],
+    "glossedTokens": [],
+    "translation": "A: Did they hire some professor? B: Yes, a shit.",
+    "context": "B answers A's question.",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "ellipsis", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["noun", "mierda"],
+      ["elided", "coda"]
+    ],
+    "comment": "Fine with the indexical empty noun, not as ellipsis of de profesor."
+  },
+  {
+    "id": "saab2026_ex48",
+    "source": {"bibkey": "saab-2026", "paperLabel": "(48)"},
+    "language": "stan1288",
+    "primaryText": "Qué mierda!",
+    "glossedTokens": [],
+    "translation": "What a shit!",
+    "context": "Said after watching a bad movie.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["noun", "mierda"],
+      ["diagnostic", "contextResolved"]
+    ],
+    "comment": "The hearer resolves the expressive to the movie without any linguistic antecedent."
+  },
+  {
+    "id": "saab2026_ex62a",
+    "source": {"bibkey": "saab-2026", "paperLabel": "(62a)"},
+    "language": "stan1288",
+    "primaryText": "Un grupo de senadores votó a favor de la ley, pero uno de diputados votó en contra.",
+    "glossedTokens": [],
+    "translation": "One group of senators voted in favor of the law, but one of delegates voted against.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["noun", "grupo"],
+      ["reading", "descriptive"],
+      ["elided", "first"],
+      ["agreement", "singular"],
+      ["codaNumber", "plural"]
+    ],
+    "comment": "Under singular agreement the group reading is salient and grupo itself is elided."
+  },
+  {
+    "id": "saab2026_ex62b",
+    "source": {"bibkey": "saab-2026", "paperLabel": "(62b)"},
+    "language": "stan1288",
+    "primaryText": "Un grupo de senadores votaron a favor de la ley, pero uno de diputados votaron en contra.",
+    "glossedTokens": [],
+    "translation": "A group of senators voted in favor of the law, but one of delegates voted against.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["noun", "grupo"],
+      ["reading", "quantificational"],
+      ["elided", "first"],
+      ["agreement", "plural"],
+      ["codaNumber", "plural"]
+    ],
+    "comment": "Under plural agreement grupo cannot be elided."
+  },
+  {
+    "id": "saab2026_ex63",
+    "source": {"bibkey": "saab-2026", "paperLabel": "(63)"},
+    "language": "stan1288",
+    "primaryText": "Y, a mí, se me cayó uno de revistas.",
+    "discourseSegments": [
+      "A: Se me cayó un montón de libros.",
+      "B: Y, a mí, se me cayó uno de revistas."
+    ],
+    "glossedTokens": [],
+    "translation": "A: I dropped a bunch of books. B: And I dropped one of magazines.",
+    "context": "B replies to A.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["noun", "montón"],
+      ["reading", "descriptive"],
+      ["elided", "first"],
+      ["agreement", "singular"],
+      ["codaNumber", "plural"]
+    ],
+    "comment": "Descriptive reading with singular agreement: montón is elided."
+  },
+  {
+    "id": "saab2026_ex64",
+    "source": {"bibkey": "saab-2026", "paperLabel": "(64)"},
+    "language": "stan1288",
+    "primaryText": "Y, a mí, se me cayeron uno de revistas.",
+    "discourseSegments": [
+      "A: Se me cayeron un montón de libros.",
+      "B: Y, a mí, se me cayeron uno de revistas."
+    ],
+    "glossedTokens": [],
+    "translation": "A: I dropped a lot of books. B: And I dropped one of magazines.",
+    "context": "B replies to A.",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["noun", "montón"],
+      ["reading", "quantificational"],
+      ["elided", "first"],
+      ["agreement", "plural"],
+      ["codaNumber", "plural"]
+    ],
+    "comment": "Quantificational reading with plural agreement: montón cannot be elided."
   }
 ]
