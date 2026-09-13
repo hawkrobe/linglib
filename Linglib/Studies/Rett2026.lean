@@ -1,4 +1,5 @@
 import Linglib.Semantics.Degree.Basic
+import Linglib.Studies.Rett2020a
 import Linglib.Semantics.Polarity.ExpletiveNegation
 import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Fragments.Italian.Negation
@@ -271,9 +272,9 @@ above (§1); `hasEN` is *derived* from `allENData` (§2) by predicating
 backed by a witness theorem (see `..._isAmbidirectional_witness` below).
 
 The ambidirectionality classification is anchored in:
-- `before_preEvent_ambidirectional` (`Studies/Rett2020.lean`)
-- `after_not_ambidirectional` (`Studies/Rett2020.lean`)
-- `while_not_ambidirectional` (`Studies/Rett2020.lean`)
+- `before_preEvent_ambidirectional` (below, over `Rett2020a.before`)
+- `after_not_ambidirectional` (below)
+- `while_not_ambidirectional` (below)
 - `comparative_boundary` + scale-MAX singletons (Comparative.lean +
   Core/Scales/Scale.lean)
 For *until* the classification follows from the same closed-interval
@@ -341,19 +342,19 @@ def ENConstruction.isAmbidirectional : ENConstruction → Bool
 
 /-- Cross-references the entry `isAmbidirectional .before = true` to
     its witness. The structural anchor is
-    `Rett2020.before_preEvent_ambidirectional`,
+    `before_preEvent_ambidirectional`,
     which proves the iff for any closed event interval. -/
 theorem before_isAmbidirectional_witness :
     ENConstruction.before.isAmbidirectional = true := rfl
 
 /-- Cross-references `isAmbidirectional .after = false` to
-    `Rett2020.after_not_ambidirectional`,
+    `after_not_ambidirectional`,
     which exhibits a counter-witness. -/
 theorem after_isAmbidirectional_witness :
     ENConstruction.after.isAmbidirectional = false := rfl
 
 /-- Cross-references `isAmbidirectional .while_ = false` to
-    `Rett2020.while_not_ambidirectional`. -/
+    `while_not_ambidirectional`. -/
 theorem while_isAmbidirectional_witness :
     ENConstruction.while_.isAmbidirectional = false := rfl
 
@@ -618,5 +619,64 @@ theorem neg_type_of_en_hosts :
       (fun c => (c.toHostCategory.map ENHostCategory.negatorType) == some .neg1)
       = true :=
   ⟨rfl, rfl⟩
+
+/-! ### Ambidirectionality of the temporal connectives
+
+*Before* relates its main clause only to the first time of its embedded clause, which the
+pre-event complement of a closed interval, coerced to its end, shares; so negating the embedded
+clause is truth-conditionally vacuous. *After* and *while* relate to a bound that negation
+moves. -/
+
+section Temporal
+
+open Tense Rett2020a Degree
+
+variable {T : Type*} [LinearOrder T]
+
+/-- *Before* is insensitive to the polarity of its embedded clause: an event interval and the
+complement that precedes it, coerced to its end, share their first time. -/
+theorem before_preEvent_ambidirectional (A : RunTimes T) (i : NonemptyInterval T) (bot : T)
+    (hbot : bot ≤ i.fst) :
+    before A (stativeDenotation i) ↔
+      before A (completive (stativeDenotation ⟨⟨bot, i.fst⟩, hbot⟩)) :=
+  (before_iff_of_isLeast (isLeast_timeTrace_stative i)).trans
+    (before_completive_iff (isGreatest_timeTrace_stative ⟨⟨bot, i.fst⟩, hbot⟩)).symm
+
+/-- *After* is not ambidirectional: negating the embedded clause moves its last time. -/
+theorem after_not_ambidirectional (hab : ∃ a b : T, a < b) :
+    ¬ ∀ (A : RunTimes T) (B : Set T),
+      isAmbidirectional (λ X => ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale .gt X, m < t) B := by
+  obtain ⟨a, b, hab⟩ := hab
+  intro h
+  have h_amb := h {NonemptyInterval.pure b} {a}
+  have h_fB : ∃ t ∈ timeTrace ({NonemptyInterval.pure b} : RunTimes T),
+      ∃ m ∈ maxOnScale .gt ({a} : Set T), m < t :=
+    ⟨b, ⟨NonemptyInterval.pure b, rfl, le_refl _, le_refl _⟩,
+     a, ⟨rfl, λ _ hx' hne => absurd hx' hne⟩, hab⟩
+  obtain ⟨t, ht_A, m, ⟨_, hm_dom⟩, htm⟩ := h_amb.mp h_fB
+  obtain ⟨j, hj_mem, hj_s, hj_f⟩ := ht_A
+  simp only [Set.mem_singleton_iff] at hj_mem
+  subst hj_mem
+  simp only [NonemptyInterval.pure] at hj_s hj_f
+  have ht_eq : t = b := le_antisymm hj_f hj_s
+  have hb_compl : b ∈ ({a} : Set T)ᶜ := by
+    simp only [Set.mem_compl_iff, Set.mem_singleton_iff]; exact ne_of_gt hab
+  by_cases hmb : m = b
+  · rw [ht_eq, hmb] at htm; exact absurd htm (lt_irrefl _)
+  · rw [ht_eq] at htm
+    exact absurd htm (not_lt.mpr (le_of_lt (hm_dom b hb_compl (Ne.symm hmb))))
+
+omit [LinearOrder T] in
+/-- *While* is not ambidirectional: total overlap with a set fails for its complement. -/
+theorem while_not_ambidirectional [Inhabited T] :
+    ¬ ∀ (A B : Set T), isAmbidirectional (λ X => ∀ t ∈ A, t ∈ X) B := by
+  intro h
+  have := h {default} {default}
+  simp only [isAmbidirectional] at this
+  have lhs : ∀ t ∈ ({default} : Set T), t ∈ ({default} : Set T) := λ _ h => h
+  have rhs := this.mp lhs (default : T) rfl
+  exact absurd rfl rhs
+
+end Temporal
 
 end Rett2026
