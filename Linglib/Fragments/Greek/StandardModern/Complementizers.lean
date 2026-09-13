@@ -188,6 +188,57 @@ def thimonoStat : Verb where
   attitude := some (.preferential (.degreeComparison .negative))
   vendlerClass := some .state
 
+/-- *nomízo* (νομίζω) 'think' — doxastic, non-veridical, stative; takes *oti*, and *na*
+    under matrix negation or question ([roussou-2010]). -/
+def nomizo : Verb where
+  form := "nomízo"
+  frames := [Frame.finiteClause]
+  attitude := some (.doxastic .nonVeridical)
+  vendlerClass := some .state
+  opaqueContext := true
+
+/-- *paradhéxome* (παραδέχομαι) 'admit' — factive speech-act verb; takes *oti* and not
+    *pu* ([roussou-2010]). -/
+def paradhexome : Verb where
+  form := "paradhéxome"
+  frames := [Frame.finiteClause]
+  speechActVerb := true
+  attitude := some (.doxastic .veridical)
+  vendlerClass := some .achievement
+
+/-- *antilamvánome* (αντιλαμβάνομαι) 'realize' — factive doxastic, eventive; takes *oti*
+    and not *pu* ([roussou-2010]). -/
+def antilamvanome : Verb where
+  form := "antilamvánome"
+  frames := [Frame.finiteClause]
+  attitude := some (.doxastic .veridical)
+  vendlerClass := some .achievement
+
+/-- *anisixó* (ανησυχώ) 'worry' — preferential (negative valence) experiencer verb,
+    stative; takes *pu* on the factive reading and *oti* otherwise ([roussou-2010]). -/
+def anisixo : Verb where
+  form := "anisixó"
+  frames := [Frame.finiteClause]
+  attitude := some (.preferential (.degreeComparison .negative))
+  vendlerClass := some .state
+
+/-! ### Interrogative and volitional predicates -/
+
+/-- *anarotjéme* (αναρωτιέμαι) 'wonder' — rogative, selecting the interrogative
+    complementizer *an* ([roussou-2010]). -/
+def anarotjeme : Verb where
+  form := "anarotjéme"
+  frames := [Frame.question]
+  vendlerClass := some .state
+  senseTag := .rogative
+
+/-- *thélo* (θέλω) 'want' — volitional, taking only a *na*-clause ([roussou-2010]). -/
+def thelo : Verb where
+  form := "thélo"
+  frames := [[.clausal (coding := some .subjunctive)]]
+  attitude := some (.preferential (.degreeComparison .positive))
+  vendlerClass := some .state
+
 /-! ### Occurrence verbs -/
 
 /-- *simvéni* (συμβαίνει) 'happen/occur' — unaccusative achievement,
