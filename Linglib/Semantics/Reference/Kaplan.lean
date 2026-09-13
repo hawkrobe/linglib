@@ -7,11 +7,19 @@ import Linglib.Semantics.Reference.Character
 import Linglib.Semantics.Reference.Context.Shifts
 
 /-!
-# Pure indexicals and monsters
+# Kaplan's theory of indexicality
 
-The English pure indexicals of [kaplan-1989] read a coordinate of the speech-act context:
-as access patterns on the context tower they are `AccessPattern.origin` of a coordinate
-(`Kaplan.I`, `Kaplan.you`, `Kaplan.now`, `Kaplan.here`, `Kaplan.actually`), hence invariant
+The three tenets of [kaplan-1989] as [schlenker-2011] states them. Interpretation is
+relativized to a context, so a sentence's character holds at a context when its content is
+true at that context's world (`Character.HoldsAt`), and a character is *a priori* when it
+holds at every context (`Character.IsAPriori`) and *necessary* when its content is true at
+every world (`Character.IsNecessary`); the two come apart because contexts are finer than
+worlds, and on a type whose contexts are all proper (`ContextLike.Proper`) *I exist* is a
+priori (`isAPriori_exists_agent`) without being necessary (`not_isNecessary_exists_agent`),
+as is *I am here now* on a located type (`isAPriori_located_agent`). The English pure
+indexicals read a coordinate of the speech-act context: as access patterns on the context
+tower they are `AccessPattern.origin` of a coordinate (`Kaplan.I`, `Kaplan.you`,
+`Kaplan.now`, `Kaplan.here`, `Kaplan.actually`), for any context-like type, hence invariant
 under every embedding shift (`AccessPattern.stable_origin`), which is Kaplan's thesis for
 English. An access pattern is a character over towers with rigid content
 (`AccessPattern.toCharacter`), and an origin pattern at a root tower is `Character.dthat` of
@@ -30,6 +38,7 @@ speaker (`ContextShift.isMonster_attitudeShift`).
 ## References
 
 * [kaplan-1989]
+* [schlenker-2011]
 * [schlenker-2003]
 * [anand-nevins-2004]
 -/
@@ -37,6 +46,68 @@ speaker (`ContextShift.isMonster_attitudeShift`).
 namespace Reference
 
 variable {C R W E P T : Type*}
+
+/-! ### A priori and necessary truth -/
+
+namespace Character
+
+variable [ContextLike C W E P T]
+
+/-- A character holds at a context when its content is true at the world of that context:
+the evaluation of a root sentence. -/
+def HoldsAt (χ : Character C W Prop) (c : C) : Prop := χ c (ContextLike.world c)
+
+/-- A character is a priori when it holds at every context. -/
+def IsAPriori (χ : Character C W Prop) : Prop := ∀ c, χ.HoldsAt c
+
+/-- A character is necessary when its content is true at every world of every context. -/
+def IsNecessary (χ : Character C W Prop) : Prop := ∀ (c : C) (w : W), χ c w
+
+theorem IsNecessary.isAPriori {χ : Character C W Prop} (h : χ.IsNecessary) : χ.IsAPriori :=
+  λ c => h c _
+
+end Character
+
+/-- A context-like type is proper for an existence predicate when the agent of every element
+exists at its world: Kaplan's coherence constraint on contexts. -/
+class ContextLike.Proper (C : Type*) {W E P T : Type*} [ContextLike C W E P T]
+    (exists_ : E → W → Prop) : Prop where
+  proper : ∀ c : C, (ContextLike.toContext c).Proper exists_
+
+/-- A context-like type is located for a location predicate when the agent of every element
+is at its position at its time in its world. -/
+class ContextLike.Located (C : Type*) {W E P T : Type*} [ContextLike C W E P T]
+    (located : E → P → T → W → Prop) : Prop where
+  located : ∀ c : C, (ContextLike.toContext c).Located located
+
+section Tenets
+
+variable [ContextLike C W E P T] (exists_ : E → W → Prop) (located : E → P → T → W → Prop)
+
+/-- The character of *I exist*: the agent of the context exists at the world of evaluation. -/
+def Kaplan.existsAgent : Character C W Prop := λ c w => exists_ (ContextLike.agent c) w
+
+/-- The character of *I am here now*: the agent of the context is at its position at its
+time in the world of evaluation. -/
+def Kaplan.locatedAgent : Character C W Prop :=
+  λ c w => located (ContextLike.agent c) (ContextLike.position c) (ContextLike.time c) w
+
+/-- *I exist* is a priori on a proper type. -/
+theorem isAPriori_exists_agent [ContextLike.Proper C exists_] :
+    (Kaplan.existsAgent (C := C) exists_).IsAPriori :=
+  ContextLike.Proper.proper
+
+/-- *I exist* is not necessary once some agent fails to exist at some world. -/
+theorem not_isNecessary_exists_agent {c : C} {w : W} (h : ¬ exists_ (ContextLike.agent c) w) :
+    ¬ (Kaplan.existsAgent (C := C) exists_).IsNecessary :=
+  λ hn => h (hn c w)
+
+/-- *I am here now* is a priori on a located type. -/
+theorem isAPriori_located_agent [ContextLike.Located C located] :
+    (Kaplan.locatedAgent (C := C) located).IsAPriori :=
+  ContextLike.Located.located
+
+end Tenets
 
 /-! ### Monsters -/
 
@@ -121,20 +192,22 @@ theorem ContextShift.isMonster_iff_not_stable_innermost_id (σ : ContextShift C)
 
 namespace Kaplan
 
+variable [ContextLike C W E P T]
+
 /-- *I*: the agent of the speech-act context. -/
-def I : AccessPattern (Context W E P T) E := .origin Context.agent
+def I : AccessPattern C E := .origin ContextLike.agent
 
 /-- *you*: the addressee of the speech-act context. -/
-def you : AccessPattern (Context W E P T) E := .origin Context.addressee
+def you : AccessPattern C E := .origin ContextLike.addressee
 
 /-- *now*: the time of the speech-act context. -/
-def now : AccessPattern (Context W E P T) T := .origin Context.time
+def now : AccessPattern C T := .origin ContextLike.time
 
 /-- *here*: the position of the speech-act context. -/
-def here : AccessPattern (Context W E P T) P := .origin Context.position
+def here : AccessPattern C P := .origin ContextLike.position
 
 /-- *actually*: the world of the speech-act context. -/
-def actually : AccessPattern (Context W E P T) W := .origin Context.world
+def actually : AccessPattern C W := .origin ContextLike.world
 
 end Kaplan
 
