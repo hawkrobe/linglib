@@ -63,7 +63,7 @@ theorem coordination_plural (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
 domain of `[Pl]`. -/
 theorem sg_domain_ssubset_pl (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
     {x | (sgSem E).defined x} ⊂ {x | (plSem E).defined x} :=
-  ⟨fun _ _ => trivial, fun h => not_atom_sup_of_ne ha hb hne (@h (a ⊔ b) trivial)⟩
+  ⟨λ_ _ => trivial, λh => not_atom_sup_of_ne ha hb hne (@h (a ⊔ b) trivial)⟩
 
 /-- `DER` is well defined on a cumulative restrictor: `*R` has at most one maximal element. -/
 theorem der_unique {R : E → Prop} {m₁ m₂ : E} (h₁ : Maximal (AlgClosure R) m₁)
@@ -90,7 +90,7 @@ theorem sg_pl_competition [PartialOrder E] (x : E) :
 /-! ### *Every* as `JE ∘ DER`, and the indefinite -/
 
 /-- The indefinite: the scope's presupposition projects existentially. -/
-def aSem (R S : E → Prop) (domS : E → Prop := fun _ => True) : PartialProp E where
+def aSem (R S : E → Prop) (domS : E → Prop := λ_ => True) : PartialProp E where
   presup _ := ∃ x, R x ∧ domS x
   assertion _ := ∃ x, R x ∧ S x
 
@@ -100,7 +100,7 @@ variable [PartialOrder E]
 
 /-- `JE`, the quantificational part of *every*: over the atomic parts of a group individual
 `X`, presupposing the scope predicate is defined at each and asserting it holds at each. -/
-def JE (X : E) (P : E → Prop) (domP : E → Prop := fun _ => True) : PartialProp E where
+def JE (X : E) (P : E → Prop) (domP : E → Prop := λ_ => True) : PartialProp E where
   presup _ := ∀ a, Atom a → a ≤ X → domP a
   assertion _ := ∀ a, Atom a → a ≤ X → P a
 
@@ -108,29 +108,29 @@ def JE (X : E) (P : E → Prop) (domP : E → Prop := fun _ => True) : PartialPr
 universal. -/
 theorem je_assertion_eq_forall {R Q : E → Prop} {maxR : E} (hR : ∀ x, R x ↔ Atom x ∧ x ≤ maxR)
     (w : E) : (JE maxR Q).assertion w ↔ ∀ x, R x → Q x :=
-  ⟨fun h x hx => h x ((hR x).1 hx).1 ((hR x).1 hx).2, fun h a ha hle => h a ((hR a).2 ⟨ha, hle⟩)⟩
+  ⟨λh x hx => h x ((hR x).1 hx).1 ((hR x).1 hx).2, λh a ha hle => h a ((hR a).2 ⟨ha, hle⟩)⟩
 
 /-- Presupposition projection: `JE` projects universally, the indefinite existentially. With
 a restrictor atom `a₂ ≤ boys` outside the scope's domain and some `R`-individual inside it,
 *a boy invited his sister* is defined and *every boy invited his sister* is not. -/
 theorem projection_asymmetry {boys a₁ a₂ : E} {R domP : E → Prop} (ha₂ : Atom a₂)
     (h₂ : a₂ ≤ boys) (hR₁ : R a₁) (hdom₁ : domP a₁) (hdom₂ : ¬ domP a₂) :
-    (aSem R (fun _ => True) domP).defined boys ∧ ¬ (JE boys (fun _ => True) domP).defined boys :=
-  ⟨⟨a₁, hR₁, hdom₁⟩, fun h => hdom₂ (h a₂ ha₂ h₂)⟩
+    (aSem R (λ_ => True) domP).defined boys ∧ ¬ (JE boys (λ_ => True) domP).defined boys :=
+  ⟨⟨a₁, hR₁, hdom₁⟩, λh => hdom₂ (h a₂ ha₂ h₂)⟩
 
 /-- The weak plural: *Lina didn't harvest tomatoes* entails *Lina didn't harvest a tomato*,
 the singular indefinite restricting the plural's assertion to atoms. -/
 theorem negated_pl_entails_negated_sg {starR harvest : E → Prop} {w : E}
     (h : ¬ (aSem starR harvest).assertion w) :
-    ¬ (aSem (fun x => Atom x ∧ starR x) harvest).assertion w :=
-  fun ⟨e, ⟨_, hR⟩, hH⟩ => h ⟨e, hR, hH⟩
+    ¬ (aSem (λx => Atom x ∧ starR x) harvest).assertion w :=
+  λ⟨e, ⟨_, hR⟩, hH⟩ => h ⟨e, hR, hH⟩
 
 end Every
 
 /-- The assertion of `JE` is [link-1987]'s distributivity operator. -/
 theorem je_assertion_eq_D [SemilatticeSup E] (X : E) (P : E → Prop) (w : E) :
     (JE X P).assertion w ↔ D P X :=
-  ⟨fun h y hle hAtom => h y hAtom hle, fun h a hAtom hle => h a hle hAtom⟩
+  ⟨λh y hle hAtom => h y hAtom hle, λh a hAtom hle => h a hle hAtom⟩
 
 /-! ### Gender agreement in Czech coordinations -/
 
