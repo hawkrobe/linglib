@@ -15,7 +15,7 @@ temporal *token* with runtime and sort), and
 activity/result phases of a token). `EventPhase` is type-level and modal —
 phases as predicates over worlds, not intervals. For change-of-state verbs
 its precondition/consequence coincide with `Features.ChangeOfState`'s
-presupposition/assertion pair (bridged in `Studies/RobertsSimons2024.lean`).
+presupposition/assertion pair (instantiated in `Studies/RobertsSimons2024.lean`).
 
 ## Main declarations
 
