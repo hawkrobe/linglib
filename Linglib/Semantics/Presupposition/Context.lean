@@ -130,7 +130,7 @@ def localCtxConsequent (c : Set W) (antecedent : PartialProp W) : Set W :=
     context c + ¬P.assertion ([schlenker-2009], reconstructing
     [karttunen-1973]'s asymmetric disjunction rule). -/
 def localCtxSecondDisjunct (c : Set W) (first : PartialProp W) : Set W :=
-  λ w => c w ∧ ¬first.assertion w
+  c ∩ {w | ¬ first.assertion w}
 
 /-- Local context under negation: unchanged — negation is a hole
     ([karttunen-1973]). -/
