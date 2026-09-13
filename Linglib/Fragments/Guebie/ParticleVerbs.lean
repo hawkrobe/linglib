@@ -86,6 +86,7 @@ def ny : Morpheme := ⟨"ɲ", [], none⟩
 def ggO : Morpheme := ⟨"ggɔ", [.O], none⟩
 def wa : Morpheme := ⟨"wa", [.a], none⟩
 def ni : Morpheme := ⟨"ni", [.i], some "see"⟩
+def ngwOsa : Morpheme := ⟨"ŋwɔsa", [.O, .a], some "scrape"⟩
 
 /-! ### Particle verbs -/
 
@@ -102,14 +103,14 @@ structure ParticleVerb where
 def ParticleVerb.harmonizedParticleATR (pv : ParticleVerb) : ATR :=
   pv.verb.atr
 
-/-- The (10) inventory, plus the (11)–(12) /jɔkʊ/+/ni/ pair. -/
+/-- The (10) inventory, plus the (11)–(12) /jɔkʊ/+/ni/ and /jɔkʊ/+/ŋwɔsa/ pairs. -/
 def particleVerbs : List ParticleVerb :=
   [⟨mE, tE, "be strong"⟩, ⟨mE, trO, "be long"⟩, ⟨mE, para, "enter"⟩,
    ⟨mE, salI, "tell"⟩, ⟨mE, nu, "understand"⟩,
    ⟨kO, silije, "straighten"⟩, ⟨kO, trO, "be tall"⟩, ⟨kO, salI, "diminish"⟩,
    ⟨kO, djE, "take"⟩, ⟨kO, pulo, "hurry"⟩, ⟨kO, ny, "give"⟩,
    ⟨dakO, ggO, "move"⟩, ⟨dakO, wa, "hide"⟩,
-   ⟨jOkU, ni, "see"⟩]
+   ⟨jOkU, ni, "see"⟩, ⟨jOkU, ngwOsa, "scrape"⟩]
 
 /-- Every morpheme in the lexicon is ATR-uniform. -/
 theorem particleVerbs_ATRUniform :
