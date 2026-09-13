@@ -1,6 +1,5 @@
 import Linglib.Semantics.Aspect.Stratified
 import Linglib.Semantics.ArgumentStructure.Verb
-import Linglib.Semantics.Plurality.Cover
 import Linglib.Semantics.Plurality.Algebra
 import Linglib.Fragments.English.Predicates.Verbal
 
@@ -67,7 +66,6 @@ namespace Champollion2017
 open English.Predicates.Verbal
 open _root_.Mereology
 open Aspect.Stratified
-open Plurality.Cover (IsFinCover algClosure_iff_exists_finCover)
 
 /-! ### §2.7.2 algebraic substrate -/
 
@@ -110,19 +108,15 @@ end Distributivity
 
 /-! ### Atelicity as a Schwarzschild cover (§5.4) -/
 
-/-- [champollion-2017] §5.4: a predicate `P` has stratified subinterval
-    reference at `e` iff `e` has a finite Schwarzschild cover into
-    proper-subinterval `P`-parts. The for-adverbial atelicity diagnostic
-    *is* the existence of such a cover — his Theorem 14
-    (`Cover.algClosure_iff_exists_finCover`) at the runtime dimension. The
-    genuine consumer of `Semantics/Plurality/Cover.lean`. -/
+/-- §5.4: a predicate `P` has stratified subinterval reference at `e` iff `e` is the sum of a
+finite Schwarzschild cover into proper-subinterval `P`-parts, the book's Theorem 14 at the
+runtime dimension. -/
 theorem subintervalReference_iff_cover {T : Type*} [LinearOrder T]
-    [SemilatticeSup (Event T)] [DecidableEq (Event T)]
-    {P : Event T → Prop} {e : Event T} :
+    [SemilatticeSup (Event T)] {P : Event T → Prop} {e : Event T} :
     SubintervalReference P e ↔
       ∃ (parts : Finset (Event T)) (hne : parts.Nonempty),
-        IsFinCover parts hne e ∧ ∀ p ∈ parts, P p ∧ p.runtime < e.runtime := by
+        (∀ p ∈ parts, P p ∧ p.runtime < e.runtime) ∧ parts.sup' hne id = e := by
   unfold SubintervalReference Reference SubintervalGranularity
-  exact algClosure_iff_exists_finCover
+  exact algClosure_iff_exists_sup' _ _
 
 end Champollion2017

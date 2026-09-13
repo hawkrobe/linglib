@@ -18,7 +18,7 @@ Feature-Subset Principle, and the competition is presuppositional rather than sc
 (`sg_pl_competition`).
 
 *Every* decomposes into a definite `DER`, taking the maximal element of a cumulative
-restrictor (`der_unique`; his cover-based `*` is `Plurality.Cover.algClosure_of_finCover`),
+restrictor (`der_unique`; his cover-based `*` is `Mereology.algClosure_iff_exists_sup'`),
 and `JE`, a universal over the atomic parts of a group individual that projects its scope's
 presupposition universally (`JE`), whose assertion is [link-1987]'s distributivity operator
 (`je_assertion_eq_D`, `je_assertion_eq_forall`). The indefinite projects existentially

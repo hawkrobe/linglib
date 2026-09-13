@@ -1,5 +1,4 @@
 import Linglib.Semantics.Exhaustification.Disjunctive
-import Linglib.Semantics.Plurality.Implicature
 import Linglib.Data.Generalizations.HomogeneityGap
 import Linglib.Data.Examples.BarLev2021
 
@@ -41,9 +40,17 @@ non-distributive extension of §8 is not formalized.
 
 namespace BarLev2021
 
-open Exhaustification Plurality.Implicature
+open Exhaustification
 
 variable {Atom W : Type*} {D x : Finset Atom} {P : Atom → W → Prop}
+
+/-- The existential pluralization operator `∃-PL_D`: some atom of `x` in the domain `D`
+satisfies `P`. Replacing `D` by a subset yields the subdomain alternatives. -/
+def existPL (D : Finset Atom) (P : Atom → W → Prop) (x : Finset Atom) (w : W) : Prop :=
+  ∃ a ∈ x, a ∈ D ∧ P a w
+
+instance [DecidableEq Atom] [∀ a w, Decidable (P a w)] (w : W) : Decidable (existPL D P x w) :=
+  inferInstanceAs (Decidable (∃ a ∈ x, a ∈ D ∧ P a w))
 
 /-- Under negation the universal reading is the basic meaning. -/
 theorem not_existPL_iff (w : W) : ¬ existPL D P x w ↔ ∀ a ∈ x, a ∈ D → ¬ P a w := by
