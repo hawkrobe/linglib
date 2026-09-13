@@ -25,6 +25,7 @@ quantify over them. The uniform-prior Boolean specialization with its decision p
   inapplicable utterances; `RSA.speaker` is its instance at the informativity utility
   (`RSA.speaker_eq_speakerOfScore`).
 * `RSA.pragmaticListener` — eq. 3: `(speaker α cost L)†μ`.
+* `RSA.priorOfWeights` — the prior determined by integer weights on the states.
 * `RSA.jointListener` — eqs. 18b/21b: the posterior over (state, choice) given the heard
   form; `.fst` is the state listener, `.snd` the choice posterior.
 * `RSA.familySpeaker`, `RSA.familyListener` — state-side latents (eqs. 11–13): the latent
@@ -32,6 +33,8 @@ quantify over them. The uniform-prior Boolean specialization with its decision p
 
 ## Main results
 
+* `RSA.speaker_literalListener_indicator_real_singleton_lt_iff` — with Boolean meanings a
+  state prefers the utterance with the smaller extension.
 * `RSA.jointListener_apply_singleton` — exact Bayes for the joint listener.
 * `RSA.jointListener_fst_real_lt_iff`, `RSA.jointListener_snd_real_lt_iff`,
   `RSA.familyListener_fst_real_lt_iff`, `RSA.familyListener_snd_real_lt_iff` — listener
@@ -163,6 +166,40 @@ theorem literalListener_indicator_apply_singleton_le_one [DiscreteMeasurableSpac
     exact zero_le_one
   · rw [ENNReal.inv_mul_le_iff h0 hfin, mul_one]
     exact measure_mono (Set.singleton_subset_iff.mpr h)
+
+/-- The prior determined by natural-number weights on the states. Only the ratios matter to
+the pipeline, so a paper's table of percentages is recorded as integer weights. -/
+noncomputable def priorOfWeights [Fintype W] (w : W → ℕ) : Measure W :=
+  ∑ x, (w x : ℝ≥0∞) • Measure.dirac x
+
+section PriorOfWeights
+
+variable [Fintype W] [MeasurableSingletonClass W] (w : W → ℕ)
+
+@[simp] theorem priorOfWeights_singleton (x : W) : priorOfWeights w {x} = w x :=
+  Measure.sum_smul_dirac_apply_singleton (λ x => (w x : ℝ≥0∞)) x
+
+instance : IsFiniteMeasure (priorOfWeights w) :=
+  ⟨by
+    rw [priorOfWeights, Measure.finsetSum_apply]
+    exact ENNReal.sum_lt_top.mpr λ x _ => by
+      rw [Measure.smul_apply, smul_eq_mul, Measure.dirac_apply_of_mem (Set.mem_univ _), mul_one]
+      exact ENNReal.natCast_lt_top _⟩
+
+theorem priorOfWeights_singleton_ne_zero {x : W} (h : w x ≠ 0) : priorOfWeights w {x} ≠ 0 := by
+  rw [priorOfWeights_singleton]
+  exact_mod_cast h
+
+/-- On natural-number weights and likelihoods the literal listener is the weighted likelihood
+over its total. -/
+theorem literalListener_natCast_real_singleton (lik : U → W → ℕ) (u : U) (x : W) :
+    (literalListener (priorOfWeights w) (λ u x => (lik u x : ℝ≥0∞)) u).real {x}
+      = (lik u x * w x : ℝ) / ∑ x', (lik u x' * w x' : ℝ) := by
+  rw [measureReal_def, literalListener_apply_singleton, ENNReal.toReal_div,
+    ENNReal.toReal_sum λ _ _ => ENNReal.mul_ne_top (ENNReal.natCast_ne_top _) (measure_ne_top _ _)]
+  simp [ENNReal.toReal_mul]
+
+end PriorOfWeights
 
 end LiteralListener
 
@@ -357,6 +394,32 @@ theorem speaker_eq_speakerOfScore (α : ℝ) (cost : U → ℝ≥0∞) (L : Kern
 
 end ScoreSpeaker
 
+/-- With Boolean meanings and a constant cost, a state two utterances both fit produces the
+utterance with the smaller extension more often: informativity is the inverse of extension
+mass. -/
+theorem speaker_literalListener_indicator_real_singleton_lt_iff [DiscreteMeasurableSpace W]
+    {α : ℝ} (hα : 0 < α) {c : ℝ≥0∞} (hc0 : c ≠ 0) (hctop : c ≠ ∞) (μ : Measure W)
+    [IsFiniteMeasure μ] (sem : U → Set W) {w : W} (hμ : μ {w} ≠ 0) {u u' : U} (hu : w ∈ sem u)
+    (hu' : w ∈ sem u') :
+    (speaker α (λ _ => c) (literalListener μ λ u => (sem u).indicator 1) w).real {u}
+        < (speaker α (λ _ => c) (literalListener μ λ u => (sem u).indicator 1) w).real {u'}
+      ↔ μ (sem u') < μ (sem u) := by
+  have hle : ∀ v, literalListener μ (λ u => (sem u).indicator 1) v {w} ≤ 1 := λ v => by
+    by_cases h : w ∈ sem v
+    · exact literalListener_indicator_apply_singleton_le_one μ sem (measure_ne_top _ _) h
+    · rw [literalListener_indicator_apply_singleton_of_notMem μ sem h]; exact zero_le_one
+  have hne : literalListener μ (λ u => (sem u).indicator 1) u {w} ≠ 0 := by
+    rw [literalListener_indicator_apply_singleton μ sem hu]
+    exact mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) hμ
+  have key : ∀ {a b c : ℝ≥0∞}, c ≠ 0 → c ≠ ∞ → (a * c < b * c ↔ a < b) := λ h0 htop =>
+    ⟨λ h => lt_of_not_ge λ hab => absurd h (not_lt.mpr (mul_le_mul' hab le_rfl)),
+      ENNReal.mul_lt_mul_left h0 htop⟩
+  rw [speaker_real_singleton_lt_iff hα.le (λ _ => hctop) hle
+      ⟨u, mul_ne_zero (weight_rpow_ne_zero hα.le hne) hc0⟩,
+    key hc0 hctop, ENNReal.rpow_lt_rpow_iff hα, literalListener_indicator_apply_singleton μ sem hu,
+    literalListener_indicator_apply_singleton μ sem hu', key hμ (measure_ne_top _ _),
+    ENNReal.inv_lt_inv]
+
 /-! #### Pragmatic listeners -/
 
 section Listener
@@ -369,6 +432,27 @@ noncomputable def pragmaticListener : Kernel U W := (speaker α cost L)†μ
 
 instance : IsMarkovKernel (pragmaticListener α cost L μ) :=
   inferInstanceAs (IsMarkovKernel ((speaker α cost L)†μ))
+
+omit [StandardBorelSpace W] [Nonempty W] in
+/-- With Boolean meanings, hearing an utterance rules out every state it does not fit, once some
+state it fits has prior mass. -/
+theorem pragmaticListener_literalListener_indicator_apply_singleton_of_notMem
+    [DiscreteMeasurableSpace W] [StandardBorelSpace W] [Nonempty W] (hα : 0 < α)
+    (hc0 : ∀ u, cost u ≠ 0) (hctop : ∀ u, cost u ≠ ∞) (sem : U → Set W) {u : U} {w w' : W}
+    (hw : w ∉ sem u) (hw' : w' ∈ sem u) (hμ : μ {w'} ≠ 0) :
+    pragmaticListener α cost (literalListener μ λ u => (sem u).indicator 1) μ u {w} = 0 := by
+  have hle : ∀ v, literalListener μ (λ u => (sem u).indicator 1) v {w'} ≤ 1 := λ v => by
+    by_cases h : w' ∈ sem v
+    · exact literalListener_indicator_apply_singleton_le_one μ sem (measure_ne_top _ _) h
+    · rw [literalListener_indicator_apply_singleton_of_notMem μ sem h]; exact zero_le_one
+  have hS : speaker α cost (literalListener μ λ u => (sem u).indicator 1) w' {u} ≠ 0 :=
+    speaker_apply_singleton_ne_zero hα.le hc0 hctop hle (by
+      rw [literalListener_indicator_apply_singleton μ sem hw']
+      exact mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) hμ)
+  rw [pragmaticListener, posterior_apply_singleton _ _ (comp_apply_singleton_ne_zero _ _ hμ hS),
+    speaker_apply_singleton_eq_zero hα
+      (literalListener_indicator_apply_singleton_of_notMem μ sem hw)]
+  simp
 
 /-- At a prior giving every state the same positive mass, listener preference between two
 states is speaker preference between them: the prior and the marginal cancel. -/
