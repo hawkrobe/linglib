@@ -1,6 +1,6 @@
 import Linglib.Syntax.HPSG.Binding
 import Linglib.Syntax.HPSG.Construction
-import Linglib.Studies.Ross1967
+import Linglib.Morphology.Word.Basic
 
 open Morphology (Word)
 
@@ -18,8 +18,8 @@ Consolidated study of three strands of the HPSG textbook *Syntactic Theory: A Fo
   minimal-pair paradigm (`Studies/Chomsky1981`).
 - **Long-Distance Dependencies** (Ch. 15) — the Head-Filler Schema and `GAP`/SLASH mechanism, grounded
   **model-theoretically** in the RSRL `GAP` (the canonical `Syntax/HPSG/Construction` signature: a set of
-  `loc` objects with amalgamation), with the island taxonomy of `Studies/Ross1967` derived from gap
-  amalgamation, not stipulated as Subjacency.
+  `loc` objects with amalgamation), with the island taxonomy derived from gap amalgamation, not stipulated
+  as Subjacency.
 - **Relative Clauses** — a relative clause modifies a head noun via the Head-Modifier Schema, grounded
   **model-theoretically** in the RSRL `head-modifier-cxt` (the canonical `Syntax/HPSG/Construction`
   signature); category preservation falls out of the Head Feature Principle.

@@ -1,4 +1,3 @@
-import Linglib.Studies.Ross1967
 import Linglib.Syntax.Binding.SpecificityCondition
 import Linglib.Semantics.Definiteness.Defs
 import Linglib.Semantics.Aspect.Basic
@@ -53,6 +52,23 @@ open Minimalist.Linearization
 open ArgumentStructure
 open Definiteness
 open Syntax.Binding.SpecificityCondition (ExternalOperator blocked)
+
+/-- The source of an island constraint: the mechanism that produces it, a structural
+configuration, a binding restriction, memory or retrieval difficulty, or information-structural
+backgroundedness. -/
+inductive IslandSource where
+  | syntactic
+  | semantic
+  | processing
+  | discourse
+  deriving Repr, DecidableEq
+
+/-- Whether a constraint consistently blocks the dependency or is ameliorated in some
+contexts. -/
+inductive ConstraintStrength where
+  | strong
+  | weak
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- §1. Wh-dependency type and source architecture
