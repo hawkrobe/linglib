@@ -1,113 +1,73 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Logic.Relation
+import Mathlib.Data.Rel
 import Linglib.Semantics.Mereology
 
 /-!
-# Cumulative Predication
-[krifka-1986] [krifka-1989] [sternefeld-1998] [beck-sauerland-2000]
+# Cumulative predication
 
-Formalises the cumulative operator `**` in its two forms. The closure form of [krifka-1986],
-adopted by [sternefeld-1998], takes the smallest relation containing `R` and closed under
-componentwise sum: Link's `*` on the product semilattice (`Cumulation`). The
-bidirectional-coverage form of [beck-sauerland-2000] asks that every atom of `x` be `R`-related
-to some atom of `y` and conversely (`Cumulative`). On finite sets of individuals the two agree
-away from the empty pair (`cumulation_map_singleton`).
+This file defines the cumulative operator `**` on relations between individuals. In the
+coverage form of [beck-sauerland-2000], `**R` holds of two finite pluralities when every atom
+of the first is `R`-related to some atom of the second and conversely; in the closure form of
+[krifka-1986] and [sternefeld-1998], `**R` is the smallest relation containing `R` and closed
+under componentwise sum, which is Link's `*` on the product semilattice. The two agree on
+nonempty finite sets of individuals.
 
-## Main declarations
+## Definitions
 
-* `Cumulative R x y` — bidirectional-coverage cumulative predication.
-* `LeftCoverage`, `RightCoverage` — the two conjuncts; their conjunction
-  IS `Cumulative` (`cumulative_iff_coverages`).
-* `Cumulative.union` — coverage is closed under componentwise union.
-* `singleton_right_cumulative` — `**` on a singleton right argument
-  collapses to universal distribution.
-* `Cumulation R x y` — the closure form `**R` on any pair of join-semilattices.
-* `cumulation_map_singleton` — the closure and coverage forms agree on nonempty finite sets.
+* `Plurality.Cumulativity.Cumulative R x y`: bidirectional coverage of `x` and `y` by `R`.
+* `Plurality.Cumulativity.Cumulation R x y`: the closure form, on any pair of
+  join-semilattices.
 
-## Implementation notes
+## Main results
 
-Link's `CUM` (`Mereology.CUM`) is a *property* of denotations:
-`P(x) ∧ P(y) → P(x ⊔ y)`. The `**` operator here takes a two-place
-predicate and returns a new predicate with cumulative truth conditions;
-the output of `**` applied to a non-cumulative predicate is itself
-cumulative (`cumulation_iff_of_cum` is the fixed-point statement).
+* `Plurality.Cumulativity.cumulative_iff_subset_preimage_image`: coverage is inclusion of `x`
+  in the `SetRel.preimage` of `y` and of `y` in the `SetRel.image` of `x`.
+* `Plurality.Cumulativity.Cumulative.union`, `Plurality.Cumulativity.singleton_right_cumulative`:
+  coverage is closed under componentwise union and collapses to distribution over a singleton.
+* `Plurality.Cumulativity.cumulation_iff_of_cum`: a cumulative relation is its own cumulation.
+* `Plurality.Cumulativity.cumulation_map_singleton`: on finite sets, the closure form of a
+  relation between individuals is coverage of a nonempty pair.
 
-## Todo
+## References
 
-* n-ary `***` ([sternefeld-1998] §3.1) is not formalised.
-* Schein (1993) *Plurals and Events* (bib entry pending) — the
-  event-quantification alternative to the `**`-relational treatment
-  of cumulativity — is not yet formalised.
+* [M. Krifka, *Nominalreferenz und Zeitkonstitution* (1986)][krifka-1986]
+* [W. Sternefeld, *Reciprocity and cumulative predication* (1998)][sternefeld-1998]
+* [S. Beck and U. Sauerland, *Cumulation is needed: A reply to Winter (2000)*
+  (2000)][beck-sauerland-2000]
+* [G. Link, *The logical analysis of plurals and mass terms* (1983)][link-1983]
 -/
 
 namespace Plurality.Cumulativity
 
-variable {A B : Type*}
+variable {A B : Type*} {R : A → B → Prop} {x : Finset A} {y : Finset B}
 
-/-! ### Bidirectional-coverage `**` -/
+/-! ### Coverage form -/
 
-/--
-The cumulative operator `**` in [beck-sauerland-2000]'s
-bidirectional-coverage form.
-
-Given a two-place predicate R and two pluralities x : Finset A, y : Finset B:
-
-  **(R)(x, y) = [∀a ∈ x. ∃b ∈ y. R(a, b)] ∧ [∀b ∈ y. ∃a ∈ x. R(a, b)]
-
-Both argument pluralities must be "covered": every atom in x is
-R-related to some atom in y, and vice versa.
-
-Heterogeneous: A and B may be different types (e.g., Elephant × Continent).
--/
+/-- Bidirectional coverage: every atom of `x` is `R`-related to some atom of `y` and every atom
+of `y` to some atom of `x` ([beck-sauerland-2000]). -/
 def Cumulative (R : A → B → Prop) (x : Finset A) (y : Finset B) : Prop :=
   (∀ a ∈ x, ∃ b ∈ y, R a b) ∧ (∀ b ∈ y, ∃ a ∈ x, R a b)
 
-instance Cumulative.instDecidable
-    [DecidableEq A] [DecidableEq B] (R : A → B → Prop)
-    [DecidableRel R] (x : Finset A) (y : Finset B) :
+instance (R : A → B → Prop) [DecidableRel R] (x : Finset A) (y : Finset B) :
     Decidable (Cumulative R x y) := by
   unfold Cumulative; infer_instance
 
-/--
-Left coverage: every atom in x is R-related to some atom in y.
--/
-def LeftCoverage (R : A → B → Prop) (x : Finset A) (y : Finset B) : Prop :=
-  ∀ a ∈ x, ∃ b ∈ y, R a b
-
-/--
-Right coverage: every atom in y is R-related to some atom in x.
--/
-def RightCoverage (R : A → B → Prop) (x : Finset A) (y : Finset B) : Prop :=
-  ∀ b ∈ y, ∃ a ∈ x, R a b
-
-/-- `**` is the conjunction of left and right coverage. -/
-theorem cumulative_iff_coverages (R : A → B → Prop) (x : Finset A) (y : Finset B) :
-    Cumulative R x y ↔ LeftCoverage R x y ∧ RightCoverage R x y := Iff.rfl
-
-/-- `**` entails DIST on the left argument: if `**(R)(x, y)` then every
-    atom in x is R-related to *something* in y (left universality). -/
-theorem cumulative_left_universal (R : A → B → Prop) (x : Finset A) (y : Finset B)
-    (h : Cumulative R x y) (a : A) (ha : a ∈ x) :
-    ∃ b ∈ y, R a b :=
-  h.1 a ha
-
-/-- `**` entails DIST on the right argument: if `**(R)(x, y)` then every
-    atom in y is R-related to *something* in x (right universality). -/
-theorem cumulative_right_universal (R : A → B → Prop) (x : Finset A) (y : Finset B)
-    (h : Cumulative R x y) (b : B) (hb : b ∈ y) :
-    ∃ a ∈ x, R a b :=
-  h.2 b hb
+theorem cumulative_iff_subset_preimage_image :
+    Cumulative R x y ↔
+      (x : Set A) ⊆ SetRel.preimage {p | R p.1 p.2} y ∧
+        (y : Set B) ⊆ SetRel.image {p | R p.1 p.2} x :=
+  Iff.rfl
 
 @[simp]
 theorem cumulative_singleton (R : A → B → Prop) (a : A) (b : B) :
     Cumulative R {a} {b} ↔ R a b := by
   simp [Cumulative]
 
-/-- Bidirectional coverage is closed under componentwise union. -/
-theorem Cumulative.union [DecidableEq A] [DecidableEq B] {R : A → B → Prop}
-    {x x' : Finset A} {y y' : Finset B} (h : Cumulative R x y) (h' : Cumulative R x' y') :
-    Cumulative R (x ∪ x') (y ∪ y') := by
+/-- Coverage is closed under componentwise union. -/
+theorem Cumulative.union [DecidableEq A] [DecidableEq B] {x' : Finset A} {y' : Finset B}
+    (h : Cumulative R x y) (h' : Cumulative R x' y') : Cumulative R (x ∪ x') (y ∪ y') := by
   refine ⟨λ a ha => ?_, λ b hb => ?_⟩
   · rcases Finset.mem_union.1 ha with ha | ha
     · obtain ⟨b, hb, hab⟩ := h.1 a ha
@@ -120,36 +80,12 @@ theorem Cumulative.union [DecidableEq A] [DecidableEq B] {R : A → B → Prop}
     · obtain ⟨a, ha, hab⟩ := h'.2 b hb
       exact ⟨a, Finset.mem_union_right _ ha, hab⟩
 
-/-- Left coverage with singleton right argument reduces to universal quantification.
-
-    When the right plurality has exactly one element y, left coverage
-    becomes: ∀a ∈ x. R(a, y).
-
-    This is one half of [johnston-2023]'s "number effect": with a
-    singular object DP, the cumulative reading collapses to universal
-    distribution, eliminating the pairing uncertainty that motivates
-    over-informative elaboration. -/
-theorem singleton_right_left_coverage (R : A → B → Prop) (x : Finset A) (y : B) :
-    LeftCoverage R x {y} ↔ ∀ a ∈ x, R a y := by
-  unfold LeftCoverage
-  constructor
-  · intro h a ha
-    obtain ⟨b, hb, hR⟩ := h a ha
-    rw [Finset.mem_singleton.mp hb] at hR; exact hR
-  · intro h a ha
-    exact ⟨y, Finset.mem_singleton.mpr rfl, h a ha⟩
-
-/-- Full `**` with singleton right argument and nonempty left argument.
-
-    When `|Y| = 1` and `X` is nonempty, `**(R)(X, {y}) = ∀a ∈ X. R(a, y)`.
-    Right coverage is trivially satisfied by any witness from X. -/
-theorem singleton_right_cumulative (R : A → B → Prop) (x : Finset A) (y : B)
-    (hne : x.Nonempty) :
-    Cumulative R x {y} ↔ ∀ a ∈ x, R a y := by
-  rw [cumulative_iff_coverages, singleton_right_left_coverage]
-  refine ⟨And.left, fun h => ⟨h, ?_⟩⟩
-  intro b hb
-  rw [Finset.mem_singleton.mp hb]
+/-- Over a singleton right argument, coverage of a nonempty plurality is distribution: the
+number effect of [johnston-2023]. -/
+theorem singleton_right_cumulative (hne : x.Nonempty) (b : B) :
+    Cumulative R x {b} ↔ ∀ a ∈ x, R a b := by
+  simp only [Cumulative, Finset.mem_singleton, exists_eq_left, forall_eq]
+  refine ⟨And.left, λ h => ⟨h, ?_⟩⟩
   obtain ⟨a, ha⟩ := hne
   exact ⟨a, ha, h a ha⟩
 
