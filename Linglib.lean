@@ -1810,13 +1810,11 @@ import Linglib.Semantics.Questions.Resolution
 import Linglib.Semantics.Questions.Singleton
 import Linglib.Semantics.Questions.Support
 import Linglib.Semantics.Reference.Acquaintance
-import Linglib.Semantics.Reference.Binding
 import Linglib.Semantics.Reference.Context.Basic
 import Linglib.Semantics.Reference.Context.Index
 import Linglib.Semantics.Reference.Context.Shifts
 import Linglib.Semantics.Reference.Context.Tower
 import Linglib.Semantics.Reference.Nominal
-import Linglib.Semantics.Reference.PluralityLicensing
 import Linglib.Semantics.Reference.PronounDenotation
 import Linglib.Semantics.Reference.Rigidity
 import Linglib.Semantics.Supervaluation

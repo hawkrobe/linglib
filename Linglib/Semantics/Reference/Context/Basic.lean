@@ -1,25 +1,31 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Semantics.Reference.Context.Index
-import Linglib.Semantics.Tense.Reichenbach
 
 /-!
-# Kaplanian Context of Utterance
-[kaplan-1989] [speas-tenny-2003]
+# The context of utterance
 
-The full context tuple ⟨agent, world, time, position⟩ from [kaplan-1989]
-"Demonstratives" §XVIII. Framework-agnostic infrastructure used by reference
-theory, tense semantics, mood, and RSA.
+The context of utterance of [kaplan-1989], a tuple of an agent, a world, a time and a
+position, with the addressee of [speas-tenny-2003] as a fifth coordinate. A context is
+*proper* when its agent exists at its world (`Context.Proper`), which validates *I exist*, and
+*located* when its agent is at its position at its time in its world (`Context.Located`),
+which validates *I am here now*. The world and time of a context form its index of evaluation
+(`Context.toIndex`), and replacing them by another index (`Context.shiftWorldTime`) is the
+shift to an alternative situation that keeps the agent fixed, used to quantify a concept
+across a believer's alternatives.
 
+## References
+
+* [kaplan-1989]
+* [speas-tenny-2003]
 -/
-
-open Tense
 
 namespace Reference
 
-
-/-- Full Kaplanian context of utterance: ⟨agent, world, time, position⟩.
-
-[kaplan-1989] §XVIII: "A context is a tuple ⟨cₐ, cw, ct, cp⟩ where cₐ is
-the agent, cw the world, ct the time, and cp the position." -/
+/-- The context of utterance: an agent, an addressee, a world, a time and a position. -/
 structure Context (W : Type*) (E : Type*) (P : Type*) (T : Type*) where
   /-- The agent (speaker) of the context -/
   agent : E
@@ -33,61 +39,31 @@ structure Context (W : Type*) (E : Type*) (P : Type*) (T : Type*) where
   position : P
   deriving DecidableEq
 
-/-- Proper context: the agent exists at the context's world.
+namespace Context
 
-[kaplan-1989] §XVIII Remark 3: contexts are proper only if the agent exists
-at the world of the context. This validates ⊨ Exist I. -/
-def Context.Proper {W E P T : Type*} (c : Context W E P T) (exists_ : E → W → Prop) : Prop :=
-  exists_ c.agent c.world
+variable {W E P T : Type*} (c : Context W E P T)
 
-/-- Located context: the agent is at the context's position at the context's
-time in the context's world.
+/-- A proper context: the agent exists at the context's world. -/
+def Proper (exists_ : E → W → Prop) : Prop := exists_ c.agent c.world
 
-Validates ⊨ N(Located(I, Here)). -/
-def Context.Located {W E P T : Type*} (c : Context W E P T)
-    (located : E → P → T → W → Prop) : Prop :=
+/-- A located context: the agent is at the context's position at its time in its world. -/
+def Located (located : E → P → T → W → Prop) : Prop :=
   located c.agent c.position c.time c.world
 
-/-- Project a Context to a `Index` (world + time pair). -/
-def Context.toIndex {W E P T : Type*} (c : Context W E P T) :
-    Index W T :=
-  ⟨c.world, c.time⟩
+/-- The index of evaluation of a context: its world and time. -/
+def toIndex : Index W T := ⟨c.world, c.time⟩
 
-/-- Replace the world and time of a Context with those of a `Index`,
-    preserving agent / addressee / position. The natural "shift to alternative
-    situation" operation: an agent at an evaluation context can hold the same
-    centered identity (`agent`) while considering an alternative ⟨world, time⟩.
-    Used by centered-world de re semantics to quantify the time-concept across
-    a believer's doxastic or metaphysical alternative situations. -/
-def Context.shiftWorldTime {W E P T : Type*} (c : Context W E P T)
-    (s : Index W T) : Context W E P T :=
-  { c with world := s.world, time := s.time }
+/-- Replace the world and time of a context by those of an index, keeping the agent, the
+addressee and the position. -/
+def shiftWorldTime (s : Index W T) : Context W E P T := { c with world := s.world, time := s.time }
 
-@[simp] theorem Context.shiftWorldTime_world {W E P T : Type*}
-    (c : Context W E P T) (s : Index W T) :
-    (c.shiftWorldTime s).world = s.world := rfl
+variable (s : Index W T)
 
-@[simp] theorem Context.shiftWorldTime_time {W E P T : Type*}
-    (c : Context W E P T) (s : Index W T) :
-    (c.shiftWorldTime s).time = s.time := rfl
+@[simp] theorem shiftWorldTime_world : (c.shiftWorldTime s).world = s.world := rfl
+@[simp] theorem shiftWorldTime_time : (c.shiftWorldTime s).time = s.time := rfl
+@[simp] theorem shiftWorldTime_agent : (c.shiftWorldTime s).agent = c.agent := rfl
+@[simp] theorem shiftWorldTime_toIndex : (c.shiftWorldTime s).toIndex = s := rfl
 
-@[simp] theorem Context.shiftWorldTime_agent {W E P T : Type*}
-    (c : Context W E P T) (s : Index W T) :
-    (c.shiftWorldTime s).agent = c.agent := rfl
-
-@[simp] theorem Context.shiftWorldTime_toIndex {W E P T : Type*}
-    (c : Context W E P T) (s : Index W T) :
-    (c.shiftWorldTime s).toIndex = s := rfl
-
-/-- Project a Context into a root-clause ReichenbachFrame.
-    Speech time S = context time; perspective time P = S (root clause
-    default, [kiparsky-2002]); R and E are supplied per clause. -/
-def Context.toReichenbachFrame {W E P T : Type*}
-    (c : Context W E P T) (R Ev : T) :
-    ReichenbachFrame T where
-  speechTime := c.time
-  perspectiveTime := c.time  -- root clause default: P = S
-  referenceTime := R
-  eventTime := Ev
+end Context
 
 end Reference

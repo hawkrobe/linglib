@@ -2,6 +2,7 @@ import Linglib.Data.Examples.DalrympleHaug2024
 import Linglib.Semantics.Plurality.Reciprocal.Scope
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.Hungarian.Reciprocals
+import Linglib.Data.Examples.Rakosi2019
 import Linglib.Fragments.Wan.Reciprocals
 import Linglib.Studies.Landau2015
 
@@ -201,8 +202,11 @@ theorem wide_of_individual {A : Analysis} {a : Antecedent} (h : a.grain = some .
 /-! ### Bound and nonbound antecedents (§2) -/
 
 /-- The Hungarian complement subject, a null pronoun whose number is the singular agreement on
-    its verb, Rákosi's bound-variable construction ((10)). -/
-def hungarian : Antecedent := .ofNumber (numberOf Hungarian.Reciprocals.boundVariable)
+    its verb, Rákosi's bound-variable construction ((10)), his (17): the verb agreement recorded
+    on that row. -/
+def hungarian : Antecedent :=
+  .ofNumber <| some <|
+    if Rakosi2019.Examples.ex_17.feature? "verb" = some "pl" then .plural else .singular
 
 /-- A singular null pronoun must be bound, so (10) has wide scope only on every analysis. -/
 theorem hungarian_fits (A : Analysis) : Fits A hungarian Examples.ex_10 :=

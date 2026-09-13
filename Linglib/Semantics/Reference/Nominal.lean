@@ -1,55 +1,31 @@
 import Linglib.Semantics.Presupposition.Basic
 
 /-!
-# Nominal denotations: a unified presuppositional referential core
+# Nominal denotations
 
-A pronoun, definite description, demonstrative, and bound variable are one
-kind of thing — a presuppositional, assignment/context-relative individual
-denotation — differing only in their *selector* (which individual: `g i`,
-`ι`, the demonstratum) and their intrinsic *presupposition* (φ-features,
-uniqueness, deixis). `NominalDenot` makes that common shape explicit.
-
-This is the static core: the selector returns an `Option E` against a context
-`Ctx` (an assignment for pronouns/bound variables, a discourse context for
-definites). The dynamic case — where a selector returns a *family* of
-referents (`Set`/`PMF` anaphora) — is the functor-parameterised
-generalisation of this signature, to be added when a dynamic study needs it.
-
-## Main definitions
-
-* `NominalDenot Ctx W E` — intrinsic presupposition plus a partial referent
-  selector.
-* `NominalDenot.resolve` — resolve a nominal against a scope, as
-  `PartialProp.presupOfReferent` applied to the selector at a context. Existing
-  definite denotations *are* this, by `rfl` (see `Studies/Donnellan1966.lean`).
-* `NominalDenot.toPartialProp` — the full denotation: `resolve` conjoined with the
-  intrinsic presupposition, so a pronoun's φ-features project.
+A pronoun, a definite description, a demonstrative and a bound variable are one kind of
+thing: a presuppositional, context-relative individual denotation, differing only in the
+*selector* that chooses the individual (the assignment value, the iota, the demonstratum) and
+in the intrinsic *presupposition* (φ-features, uniqueness, deixis) [buring-2012]. A
+`NominalDenot` is that common shape. Resolving it against a scope is `PartialProp.presupOfReferent`
+of the selector at a context (`NominalDenot.resolve`), so a definite built from
+`presupOfReferent` is a resolved `NominalDenot.ofReferent` by `rfl` (`ofReferent_resolve`),
+and the full denotation conjoins the intrinsic presupposition (`NominalDenot.toPartialProp`),
+which is where a pronoun's φ-features project. `NominalDenot Ctx W` is the
+presupposition-projecting partiality monad: `bind` threads the partial referent and projects
+the continuation's presupposition through definedness of the head, so a re-selection such as
+possessive-of composes as a Kleisli arrow while the head's presupposition rides along.
 
 ## Implementation notes
 
-`resolve` is deliberately *just* `presupOfReferent` applied to the selector at
-a context, so that the existing `presupOfReferent`-built definite denotations
-fold into a `NominalDenot` by `rfl` without migrating any consumer; the
-intrinsic presupposition is layered on separately in `toPartialProp`.
+The selector is `Option`-valued against a context; the dynamic case, where a selector returns
+a family of referents, is the functor-parameterised generalisation of this signature and is
+left to the first dynamic consumer that needs it.
 
-## Relation to the dynamic lookup interface
+## References
 
-The unification this core was built toward is realized by the seam lemma
-`PronounDenotation.interpPronoun_eq_iLookup`: the pronoun's static
-`interpPronoun` selector *is* the `M = Id` extensional-baseline instance of
-`DynamicSemantics.HasFiberedLookup.iLookup`, modulo the `Option`
-partiality layer this signature adds. Static reference and dynamic
-(`Set`/`PMF`) anaphora therefore meet at one lookup interface on the static
-fiber, and bound pronouns share that selector with binding supplied externally
-(`Reference.Binding`).
-
-Carrying the effect functor `M` *in this structure* (so `selector` is
-`Ctx → W → M (Option E)` and literally `iLookup`) is deliberately **not** done
-here: with only `Id` exercised it would be the same un-exercised generality
-PR1 removed, and a faithful `resolve`/`toPartialProp` for `M ≠ Id` needs a
-dynamic-semantic commitment (a nonempty-set / distribution presupposition) that
-belongs with the first dynamic consumer that requires it. Until then the seam
-lemma carries the connection.
+* [buring-2012]
+* [heim-kratzer-1998]
 -/
 
 namespace Reference

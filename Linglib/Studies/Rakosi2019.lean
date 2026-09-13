@@ -1,241 +1,133 @@
-import Linglib.Semantics.Reference.PluralityLicensing
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
 import Linglib.Fragments.Hungarian.Reciprocals
+import Linglib.Data.Examples.Rakosi2019
 
 /-!
 # Rákosi (2019): Reciprocal anaphors in singular constructions in Hungarian
-[rakosi-2019]
 
-Workshop on Cross-Linguistic Semantics of Reciprocals, Utrecht University,
-7–8 October 2019. Proceedings edited by Palmieri, Winter & Zwarts (2020).
+This file formalizes [rakosi-2019]: the reciprocal *egymás* takes any antecedent that denotes
+a plurality, whether or not the plurality is coded morphosyntactically, while a plural
+reflexive requires a plural antecedent and a plural verb. Over the paper's examples, a
+reciprocal is acceptable exactly when its antecedent is semantically plural
+(`reciprocal_iff_semanticPlural`), a plural reflexive exactly when the verb agrees in the
+plural (`reflexivePl_iff_verb_pl`), and a singular reflexive exactly when it agrees in the
+singular (`reflexiveSg_iff_verb_sg`); each of the four constructions with a singular verb, the
+quantified antecedents of §3, the singular coordinate noun phrases of §4, the collective nouns
+of §5 and the pro-dropped singular variables of §6, licenses the reciprocal
+(`reciprocal_with_singular_verb`). The inclusive reflexive of §2 is set apart: it is never
+read as a bound variable (`inclusive_not_bound`), so it is no counterexample, and the reciprocal
+is excluded in its construction. The semantic side is the plural-assignment semantics of
+`PPCDRT`: reciprocity over jointly defined states forces two distinct individuals
+(`reciprocity_implies_multiple_individuals`), the plurality a reciprocal feeds on, whereas
+binding is satisfied by a singleton state (`binding_compatible_with_singleton`), which is why
+a reflexive's plurality is a matter of φ-agreement instead. The reciprocal itself carries no
+number feature (`egymas_no_number_feature`), the reflexive inflects (`reflexive_number_paradigm`).
 
-## Core Empirical Generalization
+## References
 
-Hungarian reciprocals (*egymás*) tolerate morphosyntactically singular
-antecedents in four construction types (§§3–6), while reflexives
-(*maga/maguk*) require morphosyntactic plurality (plural noun head +
-plural verb agreement + plural anaphor form).
-
-| §  | Construction            | Syn# | Sem# | Refl(PL) | Recip |
-|----|-------------------------|------|------|----------|-------|
-| 3  | Quantified NP           | SG   | PL   | ✗        | ✓     |
-| 4  | Singular coordinate DP  | SG   | PL   | ✗        | ✓     |
-| 5  | Collective noun         | SG   | PL   | ✗        | ✓     |
-| 6  | Bound variable (pro)    | SG   | PL   | —        | ✓     |
-| —  | Plural NP (baseline)    | PL   | PL   | ✓        | ✓     |
-
-## Theoretical Claim
-
-The plurality requirement on reciprocal antecedents is **semantic**, not
-morphosyntactic. This follows from the formal semantics of the
-anaphoric relations: reciprocity (R) requires per-situation distinctness
-(`u_ant s ≠ u_pro s`), presupposing multiple individuals in the
-denotation. Reflexive binding (=) operates via φ-feature agreement,
-a morphosyntactic mechanism.
-
-## Connections
-
-- `Semantics/Reference/PluralityLicensing.lean` — the
-  `PluralityRequirement` substrate (anchored on this paper).
-- `Semantics/Dynamic/PPCDRT/Anaphora.lean` — the formal-semantic
-  reciprocity / binding conditions over plural assignments.
-- `Fragments/Hungarian/Reciprocals.lean` — `AntecedentConfig`,
-  `reciprocalLicensed`, `pluralReflexiveLicensed`, verification.
-- `Studies/Chomsky1981.lean` — the English reciprocal minimal pairs
-  notes that syntactically singular antecedents are possible.
+* [rakosi-2019]
+* [dalrymple-haug-2024]
 -/
 
 namespace Rakosi2019
 
-open Reference.PluralityLicensing
-open PPCDRT
-open Core
-open Hungarian.Reciprocals
+open PPCDRT Data.Examples Hungarian.Reciprocals
+open Examples (all)
 
--- ════════════════════════════════════════════════════════════════
--- § 1: The Asymmetry — Derived from PluralityRequirement
--- ════════════════════════════════════════════════════════════════
+/-! ### The rows -/
 
-/-- The paper's core generalization: reciprocals need semantic plurality,
-    reflexives need morphosyntactic plurality.
+/-- The anaphor of a row: the reciprocal, a singular or plural reflexive bound by its
+antecedent, or the inclusive reflexive of §2. -/
+inductive Anaphor
+  | reciprocal
+  | reflexiveSg
+  | reflexivePl
+  | inclusiveReflexive
+  deriving DecidableEq
 
-    This is not stipulated — it is derived from `anaphorPluralityReq`
-    in the theory layer, which in turn follows from the formal semantics
-    of binding (=) vs. reciprocity (R). -/
-theorem core_generalization :
-    anaphorPluralityReq (isReciprocal := true) = .semantic ∧
-    anaphorPluralityReq (isReciprocal := false) = .morphosyntactic := ⟨rfl, rfl⟩
+/-- The anaphor a row records. -/
+def anaphor? (e : LinguisticExample) : Option Anaphor :=
+  e.parse? "anaphor" [("reciprocal", .reciprocal), ("reflexiveSg", .reflexiveSg),
+    ("reflexivePl", .reflexivePl), ("inclusiveReflexive", .inclusiveReflexive)]
 
-/-- All four singular constructions license reciprocals. -/
-theorem all_singular_constructions_license_recip :
-    singularConstructions.map reciprocalLicensed = [true, true, true, true] :=
-  (singular_asymmetry).1
+/-- The verb agrees in the plural. -/
+def VerbPlural (e : LinguisticExample) : Prop := e.feature? "verb" = some "pl"
 
-/-- No singular construction licenses the plural reflexive. -/
-theorem no_singular_construction_licenses_pl_refl :
-    singularConstructions.map pluralReflexiveLicensed = [false, false, false, false] :=
-  (singular_asymmetry).2
+/-- The antecedent denotes a plurality. -/
+def SemanticPlural (e : LinguisticExample) : Prop := e.feature? "semanticPlural" = some "yes"
 
--- ════════════════════════════════════════════════════════════════
--- § 2: Inclusive Reference Reflexives Are Not True Anaphors
--- ════════════════════════════════════════════════════════════════
+instance (e : LinguisticExample) : Decidable (VerbPlural e) := by unfold VerbPlural; infer_instance
+instance (e : LinguisticExample) : Decidable (SemanticPlural e) := by
+  unfold SemanticPlural; infer_instance
 
-/-- §2 rules out a potential confound: Hungarian "inclusive reference"
-    reflexives (1SG subject + "ourselves") look like singular antecedent
-    + plural reflexive, but these are NOT bound variables.
+/-! ### The asymmetry -/
 
-    Evidence: under *csak* ('only'), the inclusive reflexive gets a
-    referential reading ("for us"), not a bound-variable reading
-    ("for themselves"). True anaphors (matching-φ reflexives and
-    reciprocals) DO get bound readings under *csak*.
+/-- A reciprocal is acceptable exactly when its antecedent is semantically plural. -/
+theorem reciprocal_iff_semanticPlural :
+    ∀ e ∈ all, anaphor? e = some .reciprocal → (e.judgment = .acceptable ↔ SemanticPlural e) := by
+  decide
 
-    The reciprocal is NEVER licensed in inclusive reference:
-    "*Sokszor sajnálom egymás-t" is ungrammatical — the 1SG
-    antecedent is not semantically plural. -/
-structure InclusiveRefData where
-  /-- Can the inclusive reflexive be bound under "only"? -/
-  boundUnderOnly : Bool
-  /-- Can the reciprocal appear in the inclusive construction? -/
-  reciprocalPossible : Bool
-  deriving Repr
+/-- A plural reflexive is acceptable exactly when the verb agrees in the plural. -/
+theorem reflexivePl_iff_verb_pl :
+    ∀ e ∈ all, anaphor? e = some .reflexivePl → (e.judgment = .acceptable ↔ VerbPlural e) := by
+  decide
 
-def inclusiveReflexive : InclusiveRefData :=
-  { boundUnderOnly := false   -- referential only (ex. 4a)
-    reciprocalPossible := false }  -- *Sokszor sajnálom egymást (ex. 6)
+/-- A singular reflexive is acceptable exactly when the verb agrees in the singular. -/
+theorem reflexiveSg_iff_verb_sg :
+    ∀ e ∈ all, anaphor? e = some .reflexiveSg → (e.judgment = .acceptable ↔ ¬ VerbPlural e) := by
+  decide
 
-/-- Inclusive reflexives are not true anaphors: they don't bind under
-    *only*, and the reciprocal is categorically excluded. -/
-theorem inclusive_not_anaphor :
-    inclusiveReflexive.boundUnderOnly = false ∧
-    inclusiveReflexive.reciprocalPossible = false := ⟨rfl, rfl⟩
+/-- Each of the four constructions of §§3–6 licenses the reciprocal under a singular verb. -/
+theorem reciprocal_with_singular_verb :
+    ∀ c ∈ ["quantified", "coordinate", "collective", "boundPro"], ∃ e ∈ all,
+      e.feature? "antecedent" = some c ∧ anaphor? e = some .reciprocal ∧ ¬ VerbPlural e ∧
+        e.judgment = .acceptable := by
+  decide
 
--- ════════════════════════════════════════════════════════════════
--- § 3: Per-Construction Verification
--- ════════════════════════════════════════════════════════════════
+/-- The inclusive reflexive of §2 is never read as a bound variable, so it is no plural
+reflexive with a singular antecedent. -/
+theorem inclusive_not_bound :
+    ∀ e ∈ all, anaphor? e = some .inclusiveReflexive →
+      e.readings.lookup "bound variable" ≠ some .acceptable := by
+  decide
 
-/-- §3: Quantified antecedents. Hungarian quantified NPs are
-    morphologically singular and take 3SG verbs.
+/-! ### The semantics of the two anaphoric relations -/
 
-    (8a) A két gyerek jól érezte magá-t/\*maguk-at.
-    'The two children felt well.' (SG reflexive only)
+/-- Reciprocity over states where both discourse referents are defined forces two distinct
+individuals: the distinctness clause of `reciprocityCond` yields a distinct pair from any
+jointly defined state. This is the plurality a reciprocal requires of its antecedent. -/
+theorem reciprocity_implies_multiple_individuals {E : Type*} (uAnaph uAnt : ℕ)
+    (S : PluralAssign ℕ E) (Δ : Set ℕ) (hdef : ∃ s ∈ S, (s uAnaph).isSome ∧ (s uAnt).isSome)
+    (h : reciprocityCond uAnaph uAnt S Δ) : ∃ a b : E, a ≠ b := by
+  obtain ⟨g, hgS, hAnaph, hAnt⟩ := hdef
+  obtain ⟨da, hda⟩ := Option.isSome_iff_exists.mp hAnaph
+  obtain ⟨db, hdb⟩ := Option.isSome_iff_exists.mp hAnt
+  exact ⟨da, db, h.2 g hgS da db hda hdb⟩
 
-    (9a) A szobában három kisgyerek kergeti egymás-t.
-    'Three little children are chasing each other.' (reciprocal OK) -/
-theorem quantified_np_asymmetry :
-    reciprocalLicensed quantifiedNP = true ∧
-    pluralReflexiveLicensed quantifiedNP = false ∧
-    quantifiedNP.verbAgr = .Sing := ⟨rfl, rfl, rfl⟩
+/-- Binding is satisfied by a singleton state mapping both discourse referents to one value:
+reflexive binding imposes no plurality on the denotation. -/
+theorem binding_compatible_with_singleton {E : Type*} (e : E) (uAnaph uAnt : ℕ) :
+    bindingCond uAnaph uAnt
+      {PartialAssign.update (PartialAssign.update PartialAssign.empty uAnaph e) uAnt e} ∅ := by
+  intro g hg
+  obtain rfl : g = _ := hg
+  by_cases h : uAnaph = uAnt
+  · subst h; rfl
+  · simp [PartialAssign.update_at, h]
 
-/-- §4: Singular coordinate DPs.
+/-! ### The forms -/
 
-    (11a) Kati és Éva kihúzta magát/\*magukat.
-    'Kati and Éva drew themselves up.' (3SG verb → SG reflexive only)
+/-- *egymás* is invariable: it bears no number feature, consistent with a plurality
+requirement that is semantic rather than a matter of agreement. -/
+theorem egymas_no_number_feature : egymas.number = none := rfl
 
-    (12) Kati és Éva látta/látták egymás-t a tükörben.
-    'Kati and Éva saw each other.' (reciprocal OK with SG or PL verb) -/
-theorem coordinate_dp_asymmetry :
-    reciprocalLicensed singularCoordinate = true ∧
-    pluralReflexiveLicensed singularCoordinate = false ∧
-    singularCoordinate.verbAgr = .Sing := ⟨rfl, rfl, rfl⟩
-
-/-- §5: Collective noun antecedents.
-
-    (14) A személyzet fáradt volt/\*voltak.
-    'The staff was tired.' (collective nouns: 3SG agreement only)
-
-    (15a) A személyzet riadtan nézte egymás-t.
-    'The staff were watching each other frightened.' (reciprocal OK)
-
-    (16) Az egész család jól érezte magá-t/\*maguk-at.
-    'The whole family enjoyed themselves.' (SG reflexive only) -/
-theorem collective_noun_asymmetry :
-    reciprocalLicensed collectiveNoun = true ∧
-    pluralReflexiveLicensed collectiveNoun = false ∧
-    collectiveNoun.verbAgr = .Sing := ⟨rfl, rfl, rfl⟩
-
-/-- §6: Bound variable antecedent.
-
-    (17) Péter és Éva az-t gondolja, hogy (\*ő) szereti egymás-t.
-    'Péter and Éva think that they love each other.'
-    (pro-dropped 3SG embedded subject, reciprocal OK, wide scope only) -/
-theorem bound_variable_asymmetry :
-    reciprocalLicensed boundVariable = true ∧
-    pluralReflexiveLicensed boundVariable = false ∧
-    boundVariable.verbAgr = .Sing := ⟨rfl, rfl, rfl⟩
-
--- ════════════════════════════════════════════════════════════════
--- § 4: Connection to Formal Semantics
--- ════════════════════════════════════════════════════════════════
-
-/-- The semantic justification: reciprocity requires distinct individuals,
-    which is a denotation-level property. A semantically-plural but
-    syntactically-singular antecedent provides the needed distinct
-    individuals. A truly singular (atomic) antecedent does not —
-    which is why "*A gyerek kergeti egymás-t" (the child chases
-    each other) is ungrammatical even though the verb is 3SG. -/
-theorem semantic_justification :
-    -- Semantic plurality suffices for reciprocals
-    satisfiesPluralityReq .semantic false true = true ∧
-    -- Syntactic singularity blocks plural reflexives
-    satisfiesPluralityReq .morphosyntactic false true = false ∧
-    -- True singularity (no semantic plurality) blocks both
-    satisfiesPluralityReq .semantic false false = false ∧
-    satisfiesPluralityReq .morphosyntactic false false = false := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- The formal semantics connection: reciprocity (R) presupposes
-    multiple individuals in the range of the discourse referent function.
-    This is derived in `PluralityLicensing.lean`:
-    `reciprocity_implies_multiple_individuals`. The PPCDRT version uses
-    plural information states; the witness here is the *contrapositive* —
-    if both anaphor and antecedent are mapped to the same value `0` in a
-    singleton state, the distinctness clause of `reciprocityCond` rules
-    out reciprocity. -/
-theorem recip_needs_multiple_individuals :
-    ¬ reciprocityCond (E := Nat) 0 1
-        {PartialAssign.update
-          (PartialAssign.update PartialAssign.empty 0 0) 1 0} ∅ := by
-  intro h
-  have hg : (PartialAssign.update (PartialAssign.update PartialAssign.empty 0 0) 1 0) ∈
-            ({PartialAssign.update (PartialAssign.update PartialAssign.empty 0 0) 1 0} :
-              PluralAssign ℕ Nat) :=
-    rfl
-  have h0 : (PartialAssign.update (PartialAssign.update PartialAssign.empty 0 0) 1 0) 0 = some 0 := by
-    simp [PartialAssign.update]
-  have h1 : (PartialAssign.update (PartialAssign.update PartialAssign.empty 0 0) 1 0) 1 = some 0 := by
-    simp [PartialAssign.update]
-  exact h.2 _ hg 0 0 h0 h1 rfl
-
-/-- Binding (=) is compatible with a singleton state where both drefs
-    point to the same value — explaining why reflexives don't impose a
-    semantic plurality requirement. -/
-theorem binding_ok_with_singleton :
-    bindingCond (E := Nat) 0 1
-      {PartialAssign.update
-        (PartialAssign.update PartialAssign.empty 0 42) 1 42} ∅ :=
-  binding_compatible_with_singleton 42 0 1
-
--- ════════════════════════════════════════════════════════════════
--- § 5: Cross-References to Existing Formalization
--- ════════════════════════════════════════════════════════════════
-
-/-- *egymás* is morphologically invariable — it bears no number feature.
-    This is consistent with the claim that its plurality requirement is
-    semantic, not morphosyntactic: it doesn't participate in φ-agreement. -/
-theorem egymas_no_number_feature :
-    egymas.number = none := rfl
-
-/-- The reflexive DOES participate in φ-agreement: *maga* (SG) vs.
-    *maguk* (PL). The anaphor's number must match the verb's agreement,
-    confirming that reflexive licensing is morphosyntactic. -/
+/-- The reflexive inflects for number, *maga* against *maguk*, and must match the verb. -/
 theorem reflexive_number_paradigm :
     maga.number = some .singular ∧ maguk.number = some .plural := ⟨rfl, rfl⟩
-
-/-- The morphological invariance of *egymás* predicts it should be
-    insensitive to verb agreement number — and it is: reciprocals are
-    grammatical with both SG and PL verbs when the antecedent is a
-    coordinate DP (ex. 12: "Kati és Éva látta/látták egymás-t"). -/
-theorem recip_indifferent_to_verb_agreement :
-    reciprocalLicensed singularCoordinate = true ∧
-    reciprocalLicensed pluralAntecedent = true := ⟨rfl, rfl⟩
 
 end Rakosi2019
