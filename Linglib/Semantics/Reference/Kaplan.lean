@@ -31,7 +31,7 @@ of evaluation. A shift that is no monster leaves every access pattern stable
 (`AccessPattern.stable_of_not_isMonster`), and a monster is exactly a shift under which the
 innermost context itself is unstable (`ContextShift.isMonster_iff_not_stable_innermost_id`). The
 identity shift that Kaplan's thesis assigns to English attitude verbs is no monster
-(`ContextShift.not_isMonster_identityShift`); the attitude shift of [schlenker-2003] and [anand-
+(`ContextShift.not_isMonster_one`); the attitude shift of [schlenker-2003] and [anand-
 nevins-2004], which makes the holder the agent, is one whenever the holder is not the speaker
 (`ContextShift.isMonster_attitudeShift`).
 
@@ -106,17 +106,15 @@ end Kaplan
 
 /-! ### Monsters -/
 
-/-- A context shift is a monster when it moves some context. -/
-def ContextShift.IsMonster (σ : ContextShift C) : Prop := σ.apply ≠ id
+/-- A context shift is a monster when it is not the identity: it moves some context. -/
+def ContextShift.IsMonster (σ : ContextShift C) : Prop := σ ≠ 1
 
 namespace ContextShift
 
-theorem isMonster_iff (σ : ContextShift C) : σ.IsMonster ↔ ∃ c, σ.apply c ≠ c :=
-  Function.ne_iff
+theorem isMonster_iff (σ : ContextShift C) : σ.IsMonster ↔ ∃ c : C, σ • c ≠ c :=
+  show (σ : C → C) ≠ id ↔ _ from Function.ne_iff
 
-theorem not_isMonster_identityShift :
-    ¬ (identityShift : ContextShift (Context W E P T)).IsMonster :=
-  λ h => h rfl
+theorem not_isMonster_one : ¬ (1 : ContextShift C).IsMonster := λ h => h rfl
 
 /-- An attitude shift to a holder other than some context's agent moves that context. -/
 theorem isMonster_attitudeShift (holder : E) (w' : W) (c : Context W E P T)
@@ -130,7 +128,8 @@ namespace AccessPattern
 /-- A shift that is no monster leaves every access pattern stable. -/
 theorem stable_of_not_isMonster (ap : AccessPattern C R) {σ : ContextShift C}
     (h : ¬ σ.IsMonster) : ap.Stable σ := by
-  have hσ : σ.apply = id := not_not.mp h
+  have hσ : σ = 1 := not_not.mp h
+  subst hσ
   intro t
   obtain ⟨d, f⟩ := ap
   simp only [resolve]
@@ -139,15 +138,14 @@ theorem stable_of_not_isMonster (ap : AccessPattern C R) {σ : ContextShift C}
   | origin => simp
   | «local» =>
     rw [DepthSpec.local_resolve, DepthSpec.local_resolve, ContextTower.push_depth,
-      ContextTower.push_contextAt_of_lt _ _ (Nat.lt_succ_self _), hσ, ContextTower.contextAt_depth]
-    rfl
+      ContextTower.push_contextAt_succ_depth, one_smul, ContextTower.contextAt_depth]
   | relative k =>
     rcases le_or_gt k t.depth with hk | hk
     · rw [DepthSpec.relative_resolve, DepthSpec.relative_resolve,
         ContextTower.push_contextAt_of_le _ _ hk]
     · rw [DepthSpec.relative_resolve, DepthSpec.relative_resolve,
-        ContextTower.push_contextAt_of_lt _ _ hk, hσ, ContextTower.contextAt_saturates _ _ hk.le]
-      rfl
+        ContextTower.push_contextAt_of_lt _ _ hk, one_smul,
+        ContextTower.contextAt_saturates _ hk.le]
 
 /-- An access pattern as a character over towers: at each tower, the rigid content at its
 value. -/
@@ -172,7 +170,7 @@ theorem origin_toCharacter_root (f : C → R) (c : C) :
 def IsKaplanCompliant (ap : AccessPattern C R) : Prop := ∀ σ, ap.Stable σ
 
 theorem isKaplanCompliant_origin (f : C → R) : (origin f).IsKaplanCompliant :=
-  stable_origin f
+  λ σ => stable_origin f σ
 
 end AccessPattern
 

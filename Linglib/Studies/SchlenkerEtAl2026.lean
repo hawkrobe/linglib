@@ -170,10 +170,8 @@ def resolveViewpoint
     The viewpoint consequence is indirect: since π* reads the agent's
     viewpoint via `resolveViewpoint`, changing the agent changes what
     π* denotes. -/
-def roleShiftCtx (character : E) (rsWorld : W) :
-    ContextShift (Context W E P T) where
-  apply := (attitudeShift (P := P) (T := T) character rsWorld).apply
-  label := .roleShift
+def roleShiftCtx (character : E) (rsWorld : W) : ContextShift (Context W E P T) :=
+  attitudeShift character rsWorld
 
 /-- Role Shift is a monster (non-identity context shift), connecting
     to the Kaplan/Schlenker monster debate in `Reference/Kaplan.lean`:
