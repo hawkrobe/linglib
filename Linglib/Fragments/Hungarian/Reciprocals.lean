@@ -1,8 +1,6 @@
 import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Syntax.Reciprocal
 import Linglib.Syntax.Category.Pronoun.Reciprocal
-import Linglib.Data.UD.Basic
-import Linglib.Features.Number.Capabilities
 
 /-!
 # Hungarian Reciprocal Fragment
@@ -21,23 +19,8 @@ with the reflexive *maga*, which has the full paradigm
 (*magam, magad, maga, magunk, magatok, maguk*).
 [rakosi-2019] fn. 1.
 
-## Singular Antecedents ([rakosi-2019])
-
-Reciprocals tolerate morphosyntactically singular antecedents in four
-construction types, while reflexives require morphosyntactic plurality
-(plural noun head + plural verb agreement + plural anaphor form):
-
-1. **Quantified NPs (§3)**: Hungarian quantified NPs are morphologically
-   singular and take 3SG verbs, yet license *egymás*.
-2. **Singular coordinate DPs (§4)**: Two conjoined singulars can trigger
-   3SG agreement in Hungarian; *egymás* is fine, but plural reflexive
-   *magukat* is blocked (only SG *magát* permitted with SG verb).
-3. **Collective nouns (§5)**: Collective nouns (*személyzet* 'staff',
-   *család* 'family') never trigger plural agreement, yet perfectly
-   license *egymás*.
-4. **Bound variable antecedents (§6)**: Embedded pro-dropped singular
-   subject bound by a matrix coordination; the local antecedent of the
-   reciprocal in (10) of [dalrymple-haug-2024].
+The antecedent constructions in which *egymás* tolerates a singular antecedent are the
+rows of `Data/Examples/Rakosi2019.json`, studied in `Studies/Rakosi2019.lean`.
 -/
 
 
@@ -60,80 +43,6 @@ def maga : PersonalPronoun :=
 /-- *maguk* — reflexive pronoun (3PL form). -/
 def maguk : PersonalPronoun :=
   { form := "maguk", person := some .third, number := some .plural }
-
--- ════════════════════════════════════════════════════════════════
--- Antecedent Constructions ([rakosi-2019] §§3-6)
--- ════════════════════════════════════════════════════════════════
-
-/-- An antecedent configuration for anaphor licensing.
-    `syntacticPl` = the antecedent bears plural morphology and triggers
-    plural verb agreement. `semanticPl` = the antecedent denotes a
-    plurality (multiple individuals). -/
-structure AntecedentConfig where
-  name : String
-  /-- Morphosyntactically plural (plural noun head, plural verb agr) -/
-  syntacticPl : Bool
-  /-- Semantically plural (denotes multiple individuals) -/
-  semanticPl : Bool
-  /-- Verb agreement number -/
-  verbAgr : UD.Number
-  deriving Repr
-
-/-- An antecedent configuration bears its verb-agreement number (`HasNumber`). -/
-instance : HasNumber AntecedentConfig := ⟨fun c => Number.fromUD c.verbAgr⟩
-
-/-- §3: Quantified NPs. Hungarian quantified NPs are morphologically
-    singular (no -ek suffix) and trigger 3SG verb agreement.
-    Ex: "Két gyerek jól érezte magá-t/\*maguk-at."
-    (Two child well felt.3SG self-ACC/\*selves-ACC)
-    But: "Három kisgyerek kergeti egymás-t." (OK) -/
-def quantifiedNP : AntecedentConfig :=
-  { name := "Quantified NP (két/három/néhány + SG noun)"
-    syntacticPl := false
-    semanticPl := true
-    verbAgr := .Sing }
-
-/-- §4: Singular coordinate DPs. Two conjoined singular NPs can
-    trigger either SG or PL agreement from the left periphery.
-    With SG verb: reflexive must be SG (*magát*), reciprocal is OK.
-    Ex: "Kati és Éva kihúzta magát/\*magukat." (3SG → SG refl only)
-    But: "Kati és Éva látta/látták egymás-t a tükörben." (both OK) -/
-def singularCoordinate : AntecedentConfig :=
-  { name := "Singular coordinate DP (X és Y + 3SG verb)"
-    syntacticPl := false
-    semanticPl := true
-    verbAgr := .Sing }
-
-/-- §5: Collective nouns. Hungarian collective nouns never trigger
-    plural agreement (\*voltak for *személyzet*).
-    Ex: "A személyzet riadtan nézte egymás-t." (3SG, reciprocal OK)
-    Ex: "Az egész család jól érezte magá-t/\*maguk-at." (SG refl only) -/
-def collectiveNoun : AntecedentConfig :=
-  { name := "Collective noun (személyzet, család, pár)"
-    syntacticPl := false
-    semanticPl := true
-    verbAgr := .Sing }
-
-/-- §6: Bound variable antecedent. Embedded pro-dropped SG subject
-    bound by matrix coordination.
-    Ex: "Péter és Éva azt gondolja, hogy (\*ő) szereti egymás-t." -/
-def boundVariable : AntecedentConfig :=
-  { name := "Bound singular pro-drop (coordination in matrix)"
-    syntacticPl := false
-    semanticPl := true
-    verbAgr := .Sing }
-
-/-- Standard plural antecedent (baseline).
-    Ex: "A gyerek-ek látták egymás-t a tükörben." -/
-def pluralAntecedent : AntecedentConfig :=
-  { name := "Plural NP (standard)"
-    syntacticPl := true
-    semanticPl := true
-    verbAgr := .Plur }
-
-/-- All four singular-antecedent constructions from [rakosi-2019]. -/
-def singularConstructions : List AntecedentConfig :=
-  [quantifiedNP, singularCoordinate, collectiveNoun, boundVariable]
 
 /-- *egymás* is formally distinct from both reflexive forms. -/
 theorem recip_distinct_from_reflexive :
