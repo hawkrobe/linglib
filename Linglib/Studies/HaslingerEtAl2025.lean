@@ -135,10 +135,16 @@ for whom it coincides with *jeder*. -/
 theorem jeweils_identity_rejects_magnets :
     ¬ distTolerant hasTwoMagnets Tolerance.identity Finset.univ () :=
   λ h => jeder_rejects_magnets
-    ((distMaximal_iff_identity hasTwoMagnets Finset.univ () Finset.univ_nonempty).mpr h)
+    ((distMaximal_iff_identity Finset.univ_nonempty).mpr h)
 
-/-- The hypothetical determiner *jeder\** of (27) accepts the scenario as *jeweils* does:
-the framework's tools do not predict its absence. -/
+/-- The hypothetical exception-tolerant determiner *jeder\** of (27): tolerant distribution
+of the scope over a subplurality of the restrictor. -/
+def distTolerantQuant {Atom W : Type*} (restrictor scope : Atom → W → Prop)
+    (tol : Tolerance Atom) (x : Finset Atom) (w : W) : Prop :=
+  ∃ z ⊆ x, z.Nonempty ∧ tol.rel z x ∧ (∀ a ∈ z, restrictor a w) ∧ ∀ a ∈ z, scope a w
+
+/-- *jeder\** accepts the scenario as *jeweils* does: the framework's tools do not predict its
+absence. -/
 theorem jederStar_accepts_magnets :
     distTolerantQuant (λ _ _ => True) hasTwoMagnets Tolerance.trivial Finset.univ () :=
   ⟨{0, 1, 2, 3}, by decide, by decide, by decide, λ _ _ => trivial, by decide⟩

@@ -185,7 +185,7 @@ theorem setOf_algClosure (P : α → Prop) : {x | AlgClosure P x} = supClosure {
 closure is an explicit finite cover ([schwarzschild-1996]; [champollion-2017]). -/
 theorem algClosure_iff_exists_sup' (P : α → Prop) (x : α) :
     AlgClosure P x ↔ ∃ (t : Finset α) (ht : t.Nonempty), (∀ y ∈ t, P y) ∧ t.sup' ht id = x := by
-  rw [← Set.mem_setOf_eq (p := AlgClosure P), setOf_algClosure]
+  rw [← Set.mem_ofPred_eq (p := AlgClosure P), setOf_algClosure]
   exact Iff.rfl
 
 end SemilatticeSup

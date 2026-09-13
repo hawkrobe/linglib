@@ -2,126 +2,75 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Powerset
 
 /-!
-# Plurality — Shared substrate
-[kriz-spector-2021] [haslinger-etal-2025]
+# Plural predication over sets of atoms
 
-Substrate primitives shared across all theoretical accounts of plural
-predication in this directory: a tolerance relation on `Finset Atom`
-(controlling exception tolerance), the basic distribution operators
-`distMaximal`/`allSatisfy`/`someSatisfy`/`noneSatisfy`, and their
-decidability instances. Specialised operators (`distTolerant`,
-the trivalent K&S apparatus) live in sibling files.
+This file defines the distribution operators shared by the accounts of plural predication in
+this directory, over pluralities `x : Finset Atom` and world-indexed predicates
+`P : Atom → W → Prop`, together with the tolerance relations of [kriz-spector-2021] that
+govern how far a reading may fall short of the whole plurality.
 
-## Main declarations
+## Definitions
 
-* `Tolerance` — reflexive, sub-plurality-respecting relation on
-  `Finset Atom`.
-* `Tolerance.identity`, `Tolerance.trivial` — the two anchor instances
-  used by downstream Studies.
-* `distMaximal` — `∀ a ∈ x, P a w`. The maximal-distribution predicate.
-* `allSatisfy` — alias of `distMaximal` (kept under its K&S-paper-faithful
-  name for legibility in study files).
-* `someSatisfy`, `noneSatisfy` — existential and universal-negation
-  duals.
+* `Plurality.Tolerance Atom`: a reflexive relation `⪯` on `Finset Atom` contained in `⊆`;
+  `y ⪯ x` says `y` is close enough to `x` for current purposes. `Plurality.Tolerance.identity`
+  and `Plurality.Tolerance.trivial` are the two extremes.
+* `Plurality.distMaximal P x w`: every atom of `x` satisfies `P` at `w`.
+* `Plurality.noneSatisfy P x w`: no atom of `x` satisfies `P` at `w`.
 
-## Implementation notes
+## References
 
-This file sits under `namespace Plurality` (the directory
-umbrella) rather than `Plurality.Basic` (filename pattern).
-Consumers `open Plurality` for substrate access; specific
-theoretical accounts (`Distributivity`, `Trivalent`, `Implicature`,
-`Cumulativity`, …) live under sub-namespaces and are opened separately.
+* [kriz-spector-2021]
+* [haslinger-etal-2025]
 -/
 
 namespace Plurality
 
 variable {Atom W : Type*}
 
-/-! ### Tolerance relations -/
-
-/--
-A tolerance relation determines which sub-pluralities count as
-"similar enough" to the whole for current conversational purposes.
-
-Formally: `⪯` is reflexive and respects mereological structure.
--/
-structure Tolerance (Atom : Type*) [DecidableEq Atom] where
-  /-- `y ⪯ x`: `y` is similar enough to `x`. -/
+/-- A tolerance relation: `y ⪯ x` when the subplurality `y` is close enough to `x` for current
+purposes. Reflexive and contained in `⊆`. -/
+structure Tolerance (Atom : Type*) where
+  /-- `rel y x`: `y` is close enough to `x`. -/
   rel : Finset Atom → Finset Atom → Prop
-  /-- Decidability of the tolerance relation. -/
-  decRel : ∀ x y, Decidable (rel x y)
-  /-- Reflexivity. -/
   refl : ∀ x, rel x x
-  /-- Tolerance implies sub-plurality. -/
-  sub : ∀ x y, rel x y → x ⊆ y
-
-/-- Per-`Tolerance` decidability instance for the relation. -/
-instance Tolerance.instDecidableRel {Atom : Type*} [DecidableEq Atom]
-    (tol : Tolerance Atom) (x y : Finset Atom) : Decidable (tol.rel x y) :=
-  tol.decRel x y
+  subset_of_rel : ∀ {x y}, rel x y → x ⊆ y
 
 namespace Tolerance
 
-variable [DecidableEq Atom]
-
-/-- Identity tolerance: only `x ⪯ x` (forces maximal reading). -/
+/-- Only `x` itself is close enough to `x`. -/
 def identity : Tolerance Atom where
   rel x y := x = y
-  decRel x y := decEq x y
   refl _ := rfl
-  sub x _ h := h ▸ Finset.Subset.refl x
+  subset_of_rel h := h ▸ Finset.Subset.refl _
 
-/-- Trivial tolerance: any sub-plurality is tolerated (allows existential
-    reading). [kriz-spector-2021] call this the *trivial* tolerance
-    — the relation is just sub-pluralityhood, with no further restriction. -/
+/-- Every subplurality of `x` is close enough to `x`. -/
 def trivial : Tolerance Atom where
   rel x y := x ⊆ y
-  decRel _ _ := Finset.decidableDforallFinset
   refl _ := Finset.Subset.refl _
-  sub _ _ h := h
+  subset_of_rel h := h
+
+instance [DecidableEq Atom] : DecidableRel (identity (Atom := Atom)).rel :=
+  λ x y => inferInstanceAs (Decidable (x = y))
+
+instance [DecidableEq Atom] : DecidableRel (trivial (Atom := Atom)).rel :=
+  λ x y => inferInstanceAs (Decidable (x ⊆ y))
 
 end Tolerance
 
-/-! ### Basic plural predicates -/
-
-/-- Maximal distributive: `⟦each P⟧(x) = ∀ a ∈ x, P a`.
-    The semantics of English *each*, German *jeder*. -/
-def distMaximal (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
-    (x : Finset Atom) (w : W) : Prop :=
+/-- Maximal distribution: every atom of `x` satisfies `P` at `w`. -/
+def distMaximal (P : Atom → W → Prop) (x : Finset Atom) (w : W) : Prop :=
   ∀ a ∈ x, P a w
 
-instance distMaximal.instDecidable (P : Atom → W → Prop)
-    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
-    Decidable (distMaximal P x w) := by unfold distMaximal; infer_instance
+instance (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
+    Decidable (distMaximal P x w) := by
+  unfold distMaximal; infer_instance
 
-/-- All atoms in `x` satisfy `P` at `w`. Alias of `distMaximal` — kept
-    under its K&S-paper-faithful name for legibility in study files;
-    consumers may use either. -/
-def allSatisfy (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
-    (x : Finset Atom) (w : W) : Prop :=
-  distMaximal P x w
-
-instance allSatisfy.instDecidable (P : Atom → W → Prop)
-    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
-    Decidable (allSatisfy P x w) :=
-  inferInstanceAs (Decidable (distMaximal P x w))
-
-/-- Some atom in `x` satisfies `P` at `w`. -/
-def someSatisfy (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
-    (x : Finset Atom) (w : W) : Prop :=
-  ∃ a ∈ x, P a w
-
-instance someSatisfy.instDecidable (P : Atom → W → Prop)
-    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
-    Decidable (someSatisfy P x w) := by unfold someSatisfy; infer_instance
-
-/-- No atom in `x` satisfies `P` at `w`. -/
-def noneSatisfy (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
-    (x : Finset Atom) (w : W) : Prop :=
+/-- No atom of `x` satisfies `P` at `w`. -/
+def noneSatisfy (P : Atom → W → Prop) (x : Finset Atom) (w : W) : Prop :=
   ∀ a ∈ x, ¬ P a w
 
-instance noneSatisfy.instDecidable (P : Atom → W → Prop)
-    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
-    Decidable (noneSatisfy P x w) := by unfold noneSatisfy; infer_instance
+instance (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
+    Decidable (noneSatisfy P x w) := by
+  unfold noneSatisfy; infer_instance
 
 end Plurality

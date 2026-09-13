@@ -1,5 +1,5 @@
 import Linglib.Semantics.Homogeneity.Usable
-import Linglib.Semantics.Plurality.Trivalent
+import Linglib.Logic.Duality
 import Linglib.Semantics.Supervaluation
 
 /-!
@@ -33,15 +33,13 @@ Originates with [kriz-2016]; consumed by `Studies/Kriz2016.lean`,
 namespace Homogeneity
 
 open Trivalent (Prop3)
-open Plurality
-open Plurality.Trivalent
 
 variable {Atom W : Type*} (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
   (x : Finset Atom)
 
 /-- The bare plural sentence "the Xs are P" as a trivalent sentence. -/
 def barePlural : Prop3 W :=
-  λ w => pluralTruthValue P x w
+  λ w => Trivalent.dist x (P · w)
 
 /-- The *all*-sentence "all the Xs are P". Per [kriz-2016] §3.1, *all*'s
     semantic contribution is gap removal, so the semantics is derived from
@@ -72,15 +70,15 @@ theorem isBivalent_allPlural : (allPlural P x).isBivalent :=
 
 /-- An *all*-sentence is true iff all atoms satisfy `P`. -/
 theorem allPlural_eq_true_iff (w : W) :
-    allPlural P x w = .true ↔ allSatisfy P x w := by
-  rw [← pluralTruthValue_eq_true_iff]
+    allPlural P x w = .true ↔ ∀ a ∈ x, P a w := by
+  rw [← Trivalent.dist_eq_true_iff x (P · w)]
   simp only [allPlural, barePlural, Trivalent.Prop3.metaAssert_apply]
-  generalize pluralTruthValue P x w = t
+  generalize Trivalent.dist x (P · w) = t
   cases t <;> simp
 
-/-- `bivalentPred` of an *all*-sentence is true iff `allSatisfy` holds. -/
-theorem bivalentPred_allPlural_eq_allSatisfy (w : W) :
-    bivalentPred (allPlural P x) w = true ↔ allSatisfy P x w := by
+/-- `bivalentPred` of an *all*-sentence is true iff all atoms satisfy `P`. -/
+theorem bivalentPred_allPlural_iff (w : W) :
+    bivalentPred (allPlural P x) w = true ↔ ∀ a ∈ x, P a w := by
   simp only [bivalentPred, beq_iff_eq]
   exact allPlural_eq_true_iff P x w
 
@@ -89,14 +87,14 @@ theorem bivalentPred_allPlural_eq_allSatisfy (w : W) :
     Cf. `allPlural_blocked_by_wide_issue` for the complementary Addressing
     direction. -/
 theorem allPlural_prevents_nonmax (q : QUD W) (w : W)
-    (h : usable q (allPlural P x) w) : allSatisfy P x w :=
+    (h : usable q (allPlural P x) w) : ∀ a ∈ x, P a w :=
   (allPlural_eq_true_iff P x w).mp
     (((usable_iff_of_isBivalent (isBivalent_allPlural P x) q w).mp h).1)
 
 /-- An *all*-sentence cannot address a "wide" issue — one with a cell
     straddling the *all*/not-*all* boundary ([kriz-2016] §3.4). -/
 theorem allPlural_blocked_by_wide_issue (q : QUD W)
-    (hWide : ∃ w₁ w₂, q.r w₁ w₂ ∧ allSatisfy P x w₁ ∧ ¬ allSatisfy P x w₂) :
+    (hWide : ∃ w₁ w₂, q.r w₁ w₂ ∧ (∀ a ∈ x, P a w₁) ∧ ¬ ∀ a ∈ x, P a w₂) :
     ¬ addressesIssue q (allPlural P x) := by
   intro hAddr
   obtain ⟨w₁, w₂, hEq, h1, h2⟩ := hWide
@@ -120,7 +118,7 @@ theorem allPlural_exceptions_unmentionable (q : QUD W) (w : W) (a : Atom)
 theorem barePlural_eq_superTrue (hne : x.Nonempty) (w : W) :
     barePlural P x w =
     Semantics.Supervaluation.superTrue (fun a => P a w) ⟨x, hne⟩ := by
-  simp only [barePlural, pluralTruthValue]
+  simp only [barePlural]
   rw [Semantics.Supervaluation.superTrue_eq_dist]
 
 /-- An *all*-sentence is never indefinite. -/

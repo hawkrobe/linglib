@@ -1,4 +1,5 @@
 import Linglib.Semantics.Homogeneity.Plural
+import Linglib.Semantics.Plurality.Basic
 import Linglib.Semantics.Homogeneity.Collective
 import Mathlib.Data.Finset.Interval
 import Mathlib.Data.Fintype.Powerset
@@ -70,7 +71,7 @@ gloss of (25). The reading-list example (26)–(28) is stated for any thresholds
 
 namespace KrizSpector2021
 
-open Homogeneity Plurality Plurality.Trivalent
+open Homogeneity Plurality
 open Trivalent (Prop3)
 
 variable {Atom W : Type*} [DecidableEq Atom]
@@ -237,8 +238,8 @@ theorem star_antitone (Q : Atom → W → Prop) {z z' : Finset Atom} (h : z' ⊆
 value: true when every atom satisfies the predicate, false when none does. -/
 theorem value_reading_star {x : Finset Atom} (hx : x.Nonempty) (Q : Atom → W → Prop)
     [∀ a w, Decidable (Q a w)] (w : W) :
-    value x (reading · (star Q)) w = pluralTruthValue Q x w := by
-  have ht : TrueOnAll x (reading · (star Q)) w ↔ allSatisfy Q x w := trueOnAll_reading _ _ _
+    value x (reading · (star Q)) w = Trivalent.dist x (Q · w) := by
+  have ht : TrueOnAll x (reading · (star Q)) w ↔ distMaximal Q x w := trueOnAll_reading _ _ _
   have hf : FalseOnAll x (reading · (star Q)) w ↔ noneSatisfy Q x w := by
     rw [falseOnAll_reading hx]
     constructor
@@ -251,13 +252,13 @@ theorem value_reading_star {x : Finset Atom} (hx : x.Nonempty) (Q : Atom → W �
       obtain ⟨a, ha⟩ := (mem_parts.1 hz).1
       exact h a ((mem_parts.1 hz).2 ha) (hQ a ha)
   unfold value
-  rcases h : pluralTruthValue Q x w with _ | _ | _
-  · rw [pluralTruthValue_eq_true_iff] at h
+  rcases h : Trivalent.dist x (Q · w) with _ | _ | _
+  · rw [Trivalent.dist_eq_true_iff] at h
     exact if_pos (ht.2 h)
-  · rw [pluralTruthValue_eq_false_iff] at h
+  · rw [Trivalent.dist_eq_false_iff] at h
     obtain ⟨a, ha⟩ := hx
     rw [if_neg λ h' => h.2 a ha (ht.1 h' a ha), if_pos (hf.2 h.2)]
-  · rw [pluralTruthValue_eq_gap_iff] at h
+  · rw [Trivalent.dist_eq_indet_iff] at h
     obtain ⟨⟨a, ha, hQ⟩, b, hb, hQ'⟩ := h
     rw [if_neg λ h' => hQ' (ht.1 h' b hb), if_neg λ h' => hf.1 h' a ha hQ]
 
@@ -522,11 +523,11 @@ def solvedMath : Prop3 (ExamWorld Math) := barePlural (λ m w => m ∈ w.1) Fins
 
 theorem solvedMath_eq_true_iff (w : ExamWorld Math) :
     solvedMath w = .true ↔ w.1 = Finset.univ := by
-  simp [solvedMath, barePlural, allSatisfy, distMaximal, Finset.eq_univ_iff_forall]
+  simp [solvedMath, barePlural, Trivalent.dist_eq_true_iff, Finset.eq_univ_iff_forall]
 
 theorem solvedMath_eq_false_iff [Nonempty Math] (w : ExamWorld Math) :
     solvedMath w = .false ↔ w.1 = ∅ := by
-  simp [solvedMath, barePlural, noneSatisfy, Finset.eq_empty_iff_forall_notMem]
+  simp [solvedMath, barePlural, Trivalent.dist_eq_false_iff, Finset.eq_empty_iff_forall_notMem]
 
 /-- Križ's sentence addresses the pass/fail issue: its true worlds pass and its false worlds
 fail. -/
