@@ -1,571 +1,477 @@
 import Linglib.Semantics.ArgumentStructure.EnergySource
-import Linglib.Semantics.ArgumentStructure.EventStructure
-import Linglib.Semantics.ArgumentStructure.Projection
-import Linglib.Semantics.ArgumentStructure.LevinClass
-import Linglib.Semantics.ArgumentStructure.RoleList
+import Linglib.Data.Examples.RappaportHovavLevin2024
 
 /-!
-# Variable Agentivity: Polysemy or Underspecification?
+# Rappaport Hovav and Levin (2024): Variable agentivity: polysemy or underspecification?
 
-[rappaport-hovav-levin-2024]
+This file formalizes the paper's account of the English verb *sweep*, whose subject may or may
+not be an agent. The verb has two senses. In the basic sense its event structure says only
+that an entity moves across a surface while imparting a force to it through contact; either
+predicate may determine argument realization, general principles then yield the simple
+transitive, transitive+PP and unaccusative+PP frames, and agentivity is left to pragmatic
+inference. In the broom sense the moving entity is lexically saturated by a broom, an
+instrument: since only an agent manipulates an instrument the sense is obligatorily agentive,
+since the saturated variable cannot head a small clause the motion predicate cannot determine
+argument realization, and since sweeping with a broom is a routine activity the surface may go
+unexpressed.
 
-A formalization of Rappaport Hovav & Levin's 2024 *Glossa* paper on the
-English verb *sweep* and the wiping-verbs class. The paper argues that the
-variable agentivity of *sweep* — *Matt swept the walk* (agentive) vs *the
-branch of the tree swept the window* (non-agentive) — is the joint effect
-of two mechanisms, not one.
-
-## Main claims
-
-1. **basic-*sweep*** is unspecified for agentivity. Its event structure
-   ([rappaport-hovav-levin-2024] p.17, eq.42) is a complex activity
-   with two grammatically relevant predicates: motion and force-transmission
-   through contact. Either predicate can determine argument realization
-   per-frame, yielding the simple transitive, transitive+PP, and
-   unaccusative+PP frames attested in COCA.
-
-2. **broom-*sweep*** is obligatorily agentive. It is derived from
-   basic-*sweep* by lexicalization of the moving entity as a broom
-   ([kiparsky-1997] on canonical-use of denominal verbs). The broom's
-   instrument status forces an agent who manipulates it; the broom's
-   design purpose underlies the routine-activity narrowing that licenses
-   the unspecified-object frame ([glass-2022], [brisson-1994],
-   [mittwoch-2005]). The two senses constitute motivated polysemy
-   (distinct from regular polysemy à la Apresjan; zeugma test eq.35).
-
-3. The motion-and-sustained-contact event structure generalizes to the
-   wiping-verbs class ([levin-1993] 10.4): *sweep*, *rub*, *scrape*,
-   *wipe*. Force-dynamic primitives follow [talmy-1988],
-   [croft-2012], [copley-harley-2015],
-   [goldschmidt-zwarts-2016].
-
-4. **Counterexample to the resultative restriction.**
-   [schaefer-2012]'s and [folli-harley-2008]'s claim that
-   non-agentive external arguments require a result phrase fails for
-   basic-*sweep* (eq.92: *A breeze moved the willows, the tips of their
-   branches sweeping the ground*).
-
-## Main declarations
-
-* `MotionContactES`: the two-predicate complex-activity event structure for
-  the wiping-verbs class. `basicSweep` and `broomSweep` are instances.
-* `ForceRole` and `Effector`: force-dynamic primitives following
-  [talmy-1988], [croft-2012], [copley-harley-2015].
-* `DeterminingPredicate` (motion / contact): per-frame parameter to the
-  argument-realization principles.
-* `Frame`: the five syntactic frames attested for basic-*sweep* and
-  broom-*sweep* (p.5, §2.2).
-* `realizeFrame`: applies argument-realization principles (43)-(45) to
-  produce the predicted frame from an event structure and a determining
-  predicate.
-* `WipingVerb`: the [levin-1993] class 10.4 (sweep / rub / scrape /
-  wipe) sharing the basic-*sweep* event structure.
+Participants are classified by the source of their energy, `EnergySource`: a moving entity
+that draws its energy from a user needs an expressed agent, which excludes *the brush swept
+through her hair* while admitting *fire swept through their home*. `Licensed` derives from
+the realization principles the surface frames an event admits, and
+`acceptable_iff_licensed` checks the paper's judgments, those for *rub* and *scrape* included,
+against it. A non-agentive subject in the simple transitive frame comes with no small clause,
+against the resultative restriction.
 
 ## Implementation notes
 
-This file does *not* add a fifth case to `ArgumentStructure.EventStructure.Template`.
-RHL 2024's contribution is an enrichment of the *internal structure* of
-the activity template for one manner subclass — two grammatically relevant
-predicates instead of one — and a per-frame choice of which predicate
-determines argument realization. The current `RoleList.motionContact`
-case in `Features/EventStructure.lean` is a misformalization of the
-2024 paper and is queued for removal.
+The cause of the causativized event structure and the agent whose instrument or body part sits
+in a *with* phrase are one participant, the causer. Interpretive properties the paper derives
+from the conceptual content of *broom* (a floor-like surface, the removal of unwanted material,
+the *with* phrase naming a broom), the resultatives, the *again* readings and the relaxation
+under which a contextually recoverable agent goes unexpressed are outside the model, and their
+rows are omitted. The causativized event structure has no result state, so it is not the
+accomplishment of `ArgumentStructure.EventStructure.Template`.
 
-Footnote 31 of the paper explicitly disclaims the asymmetric "x moves...
-while x imparts..." formulation: the subordination is prose-only.
-Footnote 32 generalizes the mechanism beyond *sweep* to locative
-alternation ([rappaport-hovav-levin-1998] 1c–d), substance-emission
-verbs ([levin-krejci-2019]), and *drown*.
+## References
 
-## Todo
-
-* Formalize the lexicon-uniformity blocker for some causative-alternation
-  pairs ([rappaport-hovav-2014] on direct-causation requirement).
-* Engage [ramchand-2008]'s first-phase syntax and
-  [borer-2005] as syntactic rivals to the lexical-projection account
-  this paper inherits from [rappaport-hovav-levin-1998].
+* [M. Rappaport Hovav, B. Levin, *Variable agentivity: polysemy or underspecification?*
+  (2024)][rappaport-hovav-levin-2024]
+* [M. Rappaport Hovav, B. Levin, *Building verb meanings* (1998)][rappaport-hovav-levin-1998]
+* [M. Rappaport Hovav, *Lexical content and context: the causative alternation in English
+  revisited* (2014)][rappaport-hovav-2014]
+* [R. D. Van Valin, D. P. Wilkins, *The case for "effector": case roles, agents, and agency
+  revisited* (1996)][van-valin-wilkins-1996]
+* [D. A. Cruse, *Some thoughts on agentivity* (1973)][cruse-1973]
+* [F. Schäfer, *Two types of external argument licensing: the case of causers*
+  (2012)][schaefer-2012]
+* [R. Folli, H. Harley, *Teleology and animacy in external arguments* (2008)][folli-harley-2008]
+* [P. Kiparsky, *Remarks on denominal verbs* (1997)][kiparsky-1997]
+* [B. Levin, *English verb classes and alternations* (1993)][levin-1993]
 -/
 
 namespace RappaportHovavLevin2024
 
-open ArgumentStructure.EventStructure
-open ArgumentStructure
-open ArgumentStructure
+open ArgumentStructure Data.Examples
 
-/-! ### Force-dynamic primitives -/
+/-! ### Participants and senses -/
 
-/-- Role in a force-transmission sub-event
-([talmy-1988], [croft-2012], [goldschmidt-zwarts-2016]).
-
-In basic-*sweep*'s event structure (p.17, eq.42), x is the **force-bearer**
-(it imparts the force) and y is the **force-recipient** (the surface
-receiving the force throughout the contact). -/
-inductive ForceRole where
-  /-- Force-bearer: imparts force via motion-induced contact (x in eq.42). -/
-  | bearer
-  /-- Force-recipient: receives force throughout the contact (y; the surface). -/
-  | recipient
-  deriving DecidableEq, Repr
-
-/-- The ontological types of entity that can occupy the basic-*sweep*
-subject position. The paper restricts the moving entity to entities
-capable of motion across a surface (p.5).
-
-`naturalPhenomenon` and `projectile` together qualify as **effectors**
-in the strict sense (p.25): self-energetic. Agents are effectors via
-intentional control. Instruments and body parts qualify as force-bearers
-only under agent control (footnote 9, p.7). -/
-inductive Effector where
-  /-- Volitional, intentional human or animal participant
-      ([cruse-1973], [van-valin-wilkins-1996], p.7). -/
-  | agent
-  /-- Wind, fire, water, storms — inherently self-energetic
-      (p.25). -/
-  | naturalPhenomenon
-  /-- Physical objects with kinetic energy imparted by an unmentioned
-      causer; can transmit that energy through contact
-      ([kearns-2000] on projectiles; p.23). -/
-  | projectile
-  /-- Self-propelled artifact (footnote 9, p.7); patterns with agents
-      grammatically but not in the strict animate-intentional sense. -/
+/-- The ontological kinds of participant the paper distinguishes. -/
+inductive Kind where
+  /-- An animate entity, an agent when it acts intentionally. -/
+  | animate
+  /-- A machine operating under its own power, which patterns with agents. -/
   | machine
-  /-- Instrument or body part. Cannot be a force-bearer without an
-      agent providing the energy (p.21, p.25). -/
+  /-- Wind, fire, water, a storm. -/
+  | naturalPhenomenon
+  /-- A physical object imbued with kinetic energy: debris, ash, a truck carried off by water. -/
+  | projectile
+  /-- An artifact manipulated for its design purpose. -/
   | instrument
-  /-- Displaced entity moved along the surface (basic-*sweep* with
-      transitive+PP frame; p.21). -/
-  | displacedEntity
-  deriving DecidableEq, Repr
+  /-- A body part of an agent. -/
+  | bodyPart
+  /-- A physical object that moves only while an agent is continuously involved: the coins
+  swept off a counter. -/
+  | displaced
+  deriving DecidableEq
 
-/-- The energy source of each kind of subject: agents, natural phenomena and machines their
-own, projectiles energy imparted by an unmentioned causer, instruments the energy of the
-agent using them; a displaced entity bears no force. -/
-def Effector.energySource : Effector → Option EnergySource
-  | .agent | .naturalPhenomenon | .machine => some .internal
-  | .projectile => some .imparted
-  | .instrument => some .instrumental
-  | .displacedEntity => none
+/-- The source of a participant's energy. -/
+def Kind.energy : Kind → EnergySource
+  | .animate | .machine | .naturalPhenomenon => .internal
+  | .projectile => .imparted
+  | .instrument | .bodyPart | .displaced => .instrumental
 
-/-- Self-energetic force-bearers that qualify as **effectors** in the strict sense (p.25),
-the kinds of subjects basic-*sweep* allows in the non-agentive simple transitive frame: those
-bearing force from an energy source not supplied by a user. -/
-def Effector.IsSelfEnergetic (e : Effector) : Prop :=
-  ∃ s, e.energySource = some s ∧ s.IsSelfEnergetic
+/-- Whether a participant manipulates instruments: an agent, or a machine designed to carry out
+an agent's activity autonomously. -/
+def Kind.Manipulates : Kind → Prop
+  | .animate | .machine => True
+  | _ => False
 
-instance (e : Effector) : Decidable e.IsSelfEnergetic := by
-  unfold Effector.IsSelfEnergetic; infer_instance
+instance : DecidablePred Kind.Manipulates := λ k => by
+  cases k <;> unfold Kind.Manipulates <;> infer_instance
 
-/-- An effector qualifies as a basic-*sweep* simple-transitive subject
-under the contact-determines-AR derivation (p.24-25) iff it is
-self-energetic. -/
-abbrev Effector.QualifiesAsSimpleTransitiveSubject : Effector → Prop :=
-  Effector.IsSelfEnergetic
+/-- A sense of a verb of motion and sustained contact: whether the moving entity of its event
+structure is lexically saturated by an instrument, and whether the sense names a culturally
+recognized routine activity, which licenses the unspecified object frame. -/
+structure Sense where
+  saturated : Bool
+  routine : Bool
+  deriving DecidableEq
 
-/-- An effector can intentionally manipulate an instrument
-([rappaport-hovav-levin-2024] p.7, footnote 9). Only agents and
-self-propelled machines pattern this way; machines pattern with agents
-grammatically but are not animate-intentional. Natural phenomena and
-projectiles, despite being self-energetic, do not manipulate
+/-- Basic-*sweep*: an entity moves across a surface while imparting a force to it through
+contact. -/
+def basicSweep : Sense := ⟨false, false⟩
+
+/-- Broom-*sweep*: the moving entity is a broom, and sweeping with one is a routine activity. -/
+def broomSweep : Sense := ⟨true, true⟩
+
+/-- An event described by a sense: the kind of the moving entity and the kind of the causer,
+when there is one. -/
+structure Event where
+  sense : Sense
+  mover : Kind
+  causer : Option Kind
+  deriving DecidableEq
+
+/-- A saturated sense fixes the moving entity to an instrument, and an entity that draws its
+energy from a user moves only under the control of an agent, who must be expressed. -/
+def Event.WellFormed (i : Event) : Prop :=
+  (i.sense.saturated = true → i.mover = .instrument) ∧
+    (i.mover.energy = .instrumental → ∃ c ∈ i.causer, c.Manipulates)
+
+instance : DecidablePred Event.WellFormed := λ _ => by
+  unfold Event.WellFormed; infer_instance
+
+/-- A sense is agentive when every well-formed event it describes has a causer that manipulates
 instruments. -/
-def Effector.CanManipulateInstrument : Effector → Prop
-  | .agent              => True
-  | .machine            => True   -- footnote 9: patterns with agents
-  | _                   => False
+def Sense.Agentive (s : Sense) : Prop :=
+  ∀ i : Event, i.sense = s → i.WellFormed → ∃ c ∈ i.causer, c.Manipulates
 
-instance (e : Effector) : Decidable e.CanManipulateInstrument := by
-  cases e <;> unfold Effector.CanManipulateInstrument <;> infer_instance
+/-- Obligatory agentivity: lexicalizing an instrument as the moving entity requires an agent
+to manipulate it. -/
+theorem agentive_of_saturated {s : Sense} (h : s.saturated = true) : s.Agentive :=
+  λ _ hi ⟨h₁, h₂⟩ => h₂ (by rw [h₁ (hi ▸ h)]; rfl)
 
-/-! ### The basic-*sweep* event structure (eq. 42)
+/-- Variable agentivity: a sense whose moving entity is free describes events, *the north wind
+swept the open tundra*, with no agent at all. -/
+theorem not_agentive_of_free {s : Sense} (h : s.saturated = false) : ¬ s.Agentive := λ ha => by
+  simpa using ha ⟨s, .naturalPhenomenon, none⟩ rfl ⟨by simp [h], by simp [Kind.energy]⟩
 
-The grammatically relevant meaning components of *sweep* and other
-verbs in the wiping-verbs class. Encoded as a structure type so that
-broom-*sweep* (with the moving entity lexicalized) is derived by
-field-level minimal adjustment per [rappaport-hovav-levin-2024] §3.5
-(eq.76). -/
+/-- Unspecified objects are licensed by senses naming culturally recognized routine activities
+of agents, so a routine sense is agentive. -/
+def Sense.Licit (s : Sense) : Prop := s.routine = true → s.Agentive
 
-/-- The motion-and-sustained-contact event structure
-([rappaport-hovav-levin-2024] p.17, eq.42):
+/-- Among senses of motion and sustained contact, only one that lexicalizes an instrument can
+name a routine activity: basic-*sweep* is never found with unspecified objects. -/
+theorem Sense.Licit.saturated_of_routine {s : Sense} (h : s.Licit) (hr : s.routine = true) :
+    s.saturated = true :=
+  by_contra λ hs => not_agentive_of_free (Bool.eq_false_iff.mpr hs) (h hr)
 
-> *x moves across a surface y while x imparts a force to y through contact*
+/-! ### The argument realization principles -/
 
-Two grammatically relevant predicates: a motion predicate and a
-force-transmission predicate, sharing the moving entity x. Footnote 31
-disclaims the "while" subordination — there is no theoretical
-significance to which predicate is "main"; the two are equipotent in
-determining argument realization.
-
-The `movingEntityLexicalization` field carries broom-*sweep*'s
-lexical saturation (eq.76: `x_broom`); `none` is basic-*sweep*. -/
-structure MotionContactES where
-  /-- Lexicalization status of the moving entity x.
-      `none` = unsaturated (basic-*sweep*); `some "broom"` =
-      basic-*sweep*'s moving-entity variable saturated by broom (broom-*sweep*).
-      Other instrument-lexicalizations in English ([harley-haugen-2007]):
-      `comb`, `funnel`, `hoe`, `mop`, `plow`, `rake`, `saw`, `shovel`,
-      `staple`, `towel`, `whip` (paper eq.77). -/
-  movingEntityLexicalization : Option String := none
-  deriving DecidableEq, Repr
-
-/-- basic-*sweep*: the underspecified base sense. Moving entity x is
-unsaturated; subject can be agent, natural phenomenon, projectile, or
-displaced entity depending on the frame and which predicate determines
+/-- The grammatically relevant predicates of the event structure, one of which determines
 argument realization. -/
-def basicSweep : MotionContactES := {}
-
-/-- broom-*sweep*: the specialized agentive sense (eq.76). Moving entity
-x is lexically saturated as a broom; the broom's instrument status
-forces an agent. -/
-def broomSweep : MotionContactES := { movingEntityLexicalization := some "broom" }
-
-/-- An event structure is **lexically saturated** iff its moving entity
-variable is fixed. -/
-def MotionContactES.IsLexicallySaturated (es : MotionContactES) : Prop :=
-  match es.movingEntityLexicalization with
-  | none => False
-  | some _ => True
-
-instance (es : MotionContactES) : Decidable es.IsLexicallySaturated := by
-  unfold MotionContactES.IsLexicallySaturated
-  cases es.movingEntityLexicalization <;> infer_instance
-
-@[simp] theorem broomSweep_saturated : broomSweep.IsLexicallySaturated := trivial
-
-@[simp] theorem basicSweep_not_saturated : ¬ basicSweep.IsLexicallySaturated := id
-
-/-! ### Argument-realization principles ((43)-(45)) -/
-
-/-- Per-frame choice of which predicate in the event structure
-[rappaport-hovav-levin-2024] (eq.42) determines argument realization.
-
-> "When an event structure includes two grammatically relevant predicates,
-> the argument realization principles are applied with respect to only
-> one" (p.18, after eq.47).
-
-The choice is per-frame, not per-verb: basic-*sweep* admits both
-motion-determines and contact-determines derivations of distinct frames
-from the same lexical entry. -/
-inductive DeterminingPredicate where
-  /-- Motion determines: principle (43) applies, yielding a small-clause
-      realization where the moving entity is the small-clause subject
-      and a path PP is the predicate. Yields unaccusative+PP and
-      transitive+PP frames. -/
+inductive Predicate where
+  /-- The moving entity moves along a path across the surface. -/
   | motion
-  /-- Contact determines: principles (44)-(45) apply, force-recipient
-      → internal argument, effector → external argument. Yields simple
-      transitive and unspecified-object frames. -/
+  /-- The moving entity, a force bearer, imparts a force to the surface, a force recipient. -/
   | contact
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype
 
-/-! ### Syntactic frames -/
+/-- The syntactic positions the principles assign. -/
+inductive Position where
+  | external
+  | object
+  | smallClauseSubject
+  | smallClausePredicate
+  | pathObject
+  | oblique
+  deriving DecidableEq
 
-/-- The five syntactic frames attested for the wiping-verbs class
-([rappaport-hovav-levin-2024] §2, p.5-13). -/
-inductive Frame where
-  /-- *the branch of the tree swept the window*: contact determines AR
-      from basic-*sweep*. Subject is force-bearer/effector; surface is
-      direct object. -/
-  | simpleTransitive
-  /-- *the wind swept the fires through the top growth*: motion determines
-      AR; CAUSE applied on top (eq.50, causativized counterpart of eq.47).
-      Subject is causer; moving entity is direct object; path is PP. -/
-  | transitivePP
-  /-- *the fires swept through the top growth*: motion determines AR
-      without external causer (eq.46, eq.47); unaccusative+PP frame from
-      basic-*sweep*'s underlying event structure. -/
-  | unaccusativePP
-  /-- *Yesterday I swept in the morning*: contact determines AR from
-      broom-*sweep*; surface omitted under routine-activity narrowing
-      ([glass-2022], [brisson-1994], [mittwoch-2005]). -/
-  | unspecifiedObject
-  deriving DecidableEq, Repr
+/-- What the principles require of a participant's expression. -/
+inductive Requirement where
+  | obligatory (p : Position)
+  | optional (p : Position)
+  | absent
+  deriving DecidableEq
 
-/-- Argument-realization principles (eqs. 43-45) applied to an event
-structure with a given determining-predicate choice. Outputs the
-predicted frame, or `none` when the derivation is blocked.
+/-- The requirements on the moving entity, the path, the surface and the causer. -/
+structure Realization where
+  mover : Requirement
+  path : Requirement
+  surface : Requirement
+  causer : Requirement
+  deriving DecidableEq
 
-* (43a) An entity in motion along a path is the subject of a small
-  clause. Requires the moving entity variable to be available for
-  syntactic expression — fails if x is lexically saturated (p.30,
-  after eq.86).
-* (43b) A path is the predicate of a small clause.
-* (44) A force recipient is an internal argument.
-* (45) An effector is an external argument.
+/-- An effector is an external argument: the causer, when the event has one. -/
+def Event.external (i : Event) : Requirement :=
+  i.causer.elim .absent λ _ => .obligatory .external
 
-The `hasCauser` parameter encodes whether an external z is added
-(eq.50: *z causes x to move across y while x imparts a force to y*);
-without it, the motion-determined frame is unaccusative+PP. -/
-def realizeFrame (es : MotionContactES) (dp : DeterminingPredicate)
-    (hasCauser : Bool) : Option Frame :=
-  match dp with
-  -- Contact determines: simple transitive frame; routine-activity
-  -- narrowing licenses the unspecified-object frame for saturated
-  -- event structures (§3.5.2), which we fold into simpleTransitive here.
-  | .contact => some .simpleTransitive
+/-- The realization principles applied to an event with respect to the determining
+predicate. Simple motion along a path is expressed via a small clause whose subject is the
+moving entity and whose predicate is the path, the surface being the object of the path's
+preposition if expressed; a saturated moving entity is unavailable for syntactic expression,
+so the motion predicate cannot determine realization. A force recipient is an internal
+argument, omissible only for a routine activity. A self-energetic force bearer is an effector
+and hence external; one that draws its energy from the causer sits in a *with* phrase,
+optionally when the sense lexicalizes it. -/
+def realize (i : Event) : Predicate → Option Realization
   | .motion =>
-    -- (43a) requires the moving entity to form a small clause with a
-    -- path PP; a lexically saturated moving entity (broom) is
-    -- unavailable for syntactic expression and blocks this derivation
-    -- (p.30, eqs. 86-87).
-    match es.movingEntityLexicalization with
-    | some _ => none
-    | none => some (if hasCauser then .transitivePP else .unaccusativePP)
+    if i.sense.saturated then none
+    else some { mover := .obligatory .smallClauseSubject, path := .obligatory .smallClausePredicate,
+                surface := .optional .pathObject, causer := i.external }
+  | .contact =>
+    some { mover := match i.causer with
+             | none => if i.mover.energy.IsSelfEnergetic then .obligatory .external else .absent
+             | some _ => if i.sense.saturated then .optional .oblique else .obligatory .oblique
+           path := .absent
+           surface := if i.sense.routine then .optional .object else .obligatory .object
+           causer := i.external }
 
-/-! ### Variable agentivity in basic-*sweep* -/
+/-! ### Surface frames -/
 
-/-- basic-*sweep*'s simple transitive frame admits non-agentive subjects
-provided the subject is a self-energetic effector
-(p.25). This is the **variable agentivity** of basic-*sweep*. -/
-theorem basicSweep_simple_transitive_admits_natural_force (e : Effector)
-    (h : e = .naturalPhenomenon ∨ e = .projectile) :
-    e.QualifiesAsSimpleTransitiveSubject := by
-  rcases h with h | h <;> subst h <;> decide
+/-- The positions in which a participant surfaces. -/
+inductive Slot where
+  | subject
+  | object
+  /-- The object of the preposition heading a directional PP. -/
+  | pathObject
+  /-- The object of *with*. -/
+  | withObject
+  /-- The directional PP itself, for the path. -/
+  | directionalPP
+  | unexpressed
+  deriving DecidableEq
 
-/-- basic-*sweep* admits an agentive subject in the simple transitive
-frame, but only with a `with` phrase specifying body part or instrument
-to provide a force-bearer (p.25 on *The harpist swept the strings of her
-instrument ??(with a bow)*). The agent qualifies as effector by (45);
-the body part / instrument is the force-bearer.
+/-- Where a position surfaces: the subject of a small clause is the object of a transitive
+clause and the subject of an unaccusative one. -/
+def Position.slot (external : Bool) : Position → Slot
+  | .external => .subject
+  | .object => .object
+  | .smallClauseSubject => if external then .object else .subject
+  | .smallClausePredicate => .directionalPP
+  | .pathObject => .pathObject
+  | .oblique => .withObject
 
-This is captured at the type level: an `agent` Effector qualifies as a
-simple-transitive subject because it's self-energetic via intentional
-control. The `with`-phrase requirement is a separate condition on the
-syntactic frame, not on the effector classification.
+/-- A requirement met by a surface slot. -/
+def Requirement.Satisfied (external : Bool) : Requirement → Slot → Prop
+  | .obligatory p, s => s = p.slot external
+  | .optional p, s => s = p.slot external ∨ s = .unexpressed
+  | .absent, s => s = .unexpressed
 
-[rissman-vanputten-majid-2022]: body parts as instrument-like
-extensions of the subject. -/
-theorem basicSweep_simple_transitive_admits_agent :
-    Effector.agent.QualifiesAsSimpleTransitiveSubject := by decide
+instance (external : Bool) : DecidableRel (Requirement.Satisfied external) := λ r _ => by
+  cases r <;> unfold Requirement.Satisfied <;> infer_instance
 
-/-- An instrument or body part by itself cannot be a basic-*sweep* simple
-transitive subject (p.21: *body part and instrument options are not
-found* without an agent). They are not self-energetic. -/
-theorem basicSweep_rejects_bare_instrument :
-    ¬ Effector.instrument.QualifiesAsSimpleTransitiveSubject := by decide
+/-- The slots of the moving entity, the surface, the causer and the path in a sentence. -/
+structure Slots where
+  mover : Slot
+  surface : Slot
+  causer : Slot
+  path : Slot
+  deriving DecidableEq
 
-/-! ### Obligatory agentivity in broom-*sweep* -/
+/-- Whether the sentence has an external argument, the causer as subject. -/
+def Slots.external (σ : Slots) : Bool := σ.causer = .subject
 
-/-- broom-*sweep*'s lexically saturated moving entity is a broom — an
-artifact-noun-derived instrument ([kiparsky-1997] on canonical-use).
-Brooms require intentional manipulation (paper footnote 9, p.7);
-therefore the external argument of broom-*sweep* must be capable of
-intentional instrument manipulation: agent or machine.
+/-- A realization met by a sentence's slots. -/
+def Realization.Satisfied (r : Realization) (σ : Slots) : Prop :=
+  r.mover.Satisfied σ.external σ.mover ∧ r.path.Satisfied σ.external σ.path ∧
+    r.surface.Satisfied σ.external σ.surface ∧ r.causer.Satisfied σ.external σ.causer
 
-This is the **obligatory agentivity** of broom-*sweep*.
+instance : DecidableRel Realization.Satisfied := λ _ _ => by
+  unfold Realization.Satisfied; infer_instance
 
-The proof factors through `Effector.canManipulateInstrument`: only `agent`
-and `machine` qualify, matching the disjunction in the conclusion. -/
-theorem broomSweep_obligatorily_agentive (e : Effector)
-    (h : e.CanManipulateInstrument) :
-    e = .agent ∨ e = .machine := by
-  cases e <;> simp_all [Effector.CanManipulateInstrument]
+/-- The sentences describing an event when the given predicate determines realization. -/
+def Licensed (i : Event) (p : Predicate) (σ : Slots) : Prop :=
+  i.WellFormed ∧ ∃ r ∈ realize i p, r.Satisfied σ
 
-/-! ### broom-*sweep* lacks the causative alternation -/
+instance (i : Event) (p : Predicate) (σ : Slots) : Decidable (Licensed i p σ) := by
+  unfold Licensed; infer_instance
 
-/-- broom-*sweep* is obligatorily agentive (above), and lacks the
-causative alternation: *Danny swept the floor / \*The floor swept*
-(p.12, eq.31).
+/-- *The north wind swept the open tundra*: the moving entity as subject and the surface as
+object. -/
+def simpleTransitive : Slots := ⟨.subject, .object, .unexpressed, .unexpressed⟩
 
-At the level of the event-structure-to-frame mapping: motion-determines
-AR is unavailable for broom-*sweep* because x_broom is lexically
-saturated and cannot serve as the small-clause subject required by
-principle (43a) (p.30, after eq.86). The `realizeFrame` function
-encodes this: motion-determines on a saturated event structure
-returns `none`. -/
-theorem broomSweep_no_motion_determined_frame (hc : Bool) :
-    realizeFrame broomSweep .motion hc = none := by
-  cases hc <;> rfl
+/-- *The harpist swept the strings with a bow*: the causer as subject, the surface as object
+and the moving entity in a *with* phrase. -/
+def withFrame : Slots := ⟨.withObject, .object, .subject, .unexpressed⟩
 
-/-- Conversely, broom-*sweep* can still derive a frame via the contact
-predicate: the simple transitive frame *I swept the floor*. The
-unspecified-object frame *Yesterday I swept in the morning* is a
-distinct realization licensed by routine-activity narrowing (separate
-from `realizeFrame` which folds it into `simpleTransitive`; see
-`LicensesUnspecifiedObject` below). -/
-theorem broomSweep_contact_yields_simple_transitive (hc : Bool) :
-    realizeFrame broomSweep .contact hc = some .simpleTransitive := by
-  cases hc <;> rfl
+/-- *I swept the terrace*: the causer as subject and the surface as object, the moving entity
+unexpressed. -/
+def instrumentTransitive : Slots := ⟨.unexpressed, .object, .subject, .unexpressed⟩
 
-/-! ### Counterexample to the resultative restriction -/
+/-- *Yesterday, I swept in the morning*: the causer alone. -/
+def unspecifiedObject : Slots := ⟨.unexpressed, .unexpressed, .subject, .unexpressed⟩
 
-/-- [schaefer-2012]'s **resultative restriction**: non-agentive
-external arguments require a result phrase in the VP (or imply one).
-[folli-harley-2008] refined this to *external arguments lacking
-teleological capability*.
+/-- *The wind swept the fires through the top growth*: the causer as subject, the moving
+entity as object and the surface in a directional PP. -/
+def transitivePP : Slots := ⟨.object, .pathObject, .subject, .directionalPP⟩
 
-basic-*sweep* with the contact-determines derivation falsifies both:
-*A breeze moved the willows, the tips of their branches sweeping the
-ground* (eq.92) — inanimate, non-teleological external argument, no
-explicit or implied result.
+/-- *Fire swept through their home*: the moving entity as subject and the surface in a
+directional PP. -/
+def unaccusativePP : Slots := ⟨.subject, .pathObject, .unexpressed, .directionalPP⟩
 
-This is the paper's central empirical departure from the literature on
-external-argument licensing. -/
-theorem resultative_restriction_falsified :
-    -- Witness: basic-*sweep* simple-transitive with a non-teleological
-    -- non-agentive subject (e.g. tree branch tips) and no result phrase
-    -- is acceptable.
-    realizeFrame basicSweep .contact false = some .simpleTransitive ∧
-    Effector.naturalPhenomenon.IsSelfEnergetic ∧
-    -- The result phrase is not part of the derived structure
-    -- (no result-state field in MotionContactES; no causer needed).
-    ¬ basicSweep.IsLexicallySaturated :=
-  ⟨rfl, by decide, id⟩
+/-! ### Basic-*sweep* -/
 
-/-! ### Routine-activity narrowing -/
+/-- The contact predicate realizes an event without a causer as a simple transitive exactly
+when the moving entity is self-energetic: a natural phenomenon or a projectile, not a brush. -/
+theorem basicSweep_simpleTransitive_iff (k : Kind) :
+    Licensed ⟨basicSweep, k, none⟩ .contact simpleTransitive ↔ k.energy.IsSelfEnergetic := by
+  cases k <;> decide
 
-/-- broom-*sweep*'s unspecified-object frame is licensed by routine-activity
-narrowing ([glass-2022], [brisson-1994], [mittwoch-2005]):
-denominal-like verbs derived via lexicalization of artifacts come to
-refer to culturally-recognized routine activities for which the
-canonical-purpose object can be omitted.
+/-- With a causer, the contact predicate puts the moving entity in a *with* phrase, and a
+moving entity that draws its energy from its user needs a causer that manipulates it. -/
+theorem basicSweep_withFrame_iff (k c : Kind) :
+    Licensed ⟨basicSweep, k, some c⟩ .contact withFrame ↔
+      (k.energy = .instrumental → c.Manipulates) := by
+  cases k <;> cases c <;> decide
 
-Parallel cases (p.28-29):
-* `mop` (denominal from *mop*, the canonical activity is floor-mopping)
-* `bake` (non-denominal but specialized to baked-goods preparation in the
-  unspecified-object frame: *I baked this morning* ≠ baking potatoes)
-* `clean` ([levin-rappaport-hovav-2014])
-* `wash` (Alexiadou et al. 2017 from the references)
+/-- The *with* phrase is obligatory: *Miriam gently swept the strings of her harp ??(with
+slim, white fingers)*. -/
+theorem basicSweep_not_instrumentTransitive (k c : Kind) :
+    ¬ Licensed ⟨basicSweep, k, some c⟩ .contact instrumentTransitive := by
+  cases k <;> cases c <;> decide
 
-basic-*sweep* does NOT license the unspecified-object frame
-(p.13: in the basic-*sweep* sense the verb is never found with
-unspecified objects in any syntactic frame). -/
-def LicensesUnspecifiedObject (es : MotionContactES) : Prop :=
-  es.IsLexicallySaturated
+/-- The motion predicate realizes an event without a causer as an unaccusative exactly
+when the moving entity is self-energetic: *fire swept through their home*, but not *the brush
+swept through her hair*. -/
+theorem basicSweep_unaccusativePP_iff (k : Kind) :
+    Licensed ⟨basicSweep, k, none⟩ .motion unaccusativePP ↔ k.energy.IsSelfEnergetic := by
+  cases k <;> decide
 
-instance (es : MotionContactES) : Decidable (LicensesUnspecifiedObject es) :=
-  inferInstanceAs (Decidable es.IsLexicallySaturated)
+/-- With a causer, the motion predicate yields the transitive+PP frame for any moving entity,
+an instrument or body part requiring a causer that manipulates it. -/
+theorem basicSweep_transitivePP_iff (k c : Kind) :
+    Licensed ⟨basicSweep, k, some c⟩ .motion transitivePP ↔
+      (k.energy = .instrumental → c.Manipulates) := by
+  cases k <;> cases c <;> decide
 
-@[simp] theorem broomSweep_licenses_unspecified : LicensesUnspecifiedObject broomSweep := trivial
+/-- Both elements of the small clause are obligatory: the moving entity and the path are
+expressed whenever the motion predicate determines realization. -/
+theorem motion_smallClause {i : Event} {σ : Slots} (h : Licensed i .motion σ) :
+    σ.mover ≠ .unexpressed ∧ σ.path = .directionalPP := by
+  obtain ⟨-, r, hr, hm, hp, -⟩ := h
+  simp only [realize] at hr
+  split at hr
+  · exact absurd hr (Option.not_mem_none _)
+  · obtain rfl := Option.mem_some_iff.mp hr
+    refine ⟨λ h => ?_, hp⟩
+    rw [h] at hm
+    simp only [Requirement.Satisfied, Position.slot] at hm
+    split at hm <;> simp at hm
 
-@[simp] theorem basicSweep_no_unspecified : ¬ LicensesUnspecifiedObject basicSweep := id
+/-- Basic-*sweep* is never found with an unspecified object, in any frame. -/
+theorem basicSweep_not_unspecifiedObject (i : Event) (h : i.sense = basicSweep) (p : Predicate) :
+    ¬ Licensed i p unspecifiedObject := by
+  obtain ⟨s, k, c⟩ := i
+  simp only at h
+  subst h
+  rcases c with _ | c <;> cases p <;> (try cases c) <;> cases k <;> decide
 
-/-! ### Motivated polysemy
+/-! ### Broom-*sweep* -/
 
-The paper distinguishes its analysis of *sweep*'s two senses from
-"regular polysemy" ([apresjan-1973], Pustejovsky 1995, 1998,
-[nunberg-1995], [cruse-1995], [dolling-2014]) by two
-diagnostics:
+/-- A saturated moving entity cannot form a small clause, so no frame arises from the motion
+predicate: broom-*sweep* has neither the transitive+PP nor the unaccusative+PP frame. -/
+theorem not_licensed_motion_of_saturated {i : Event} (h : i.sense.saturated = true)
+    (σ : Slots) : ¬ Licensed i .motion σ := by
+  simp [Licensed, realize, h]
 
-1. **Zeugma test** (Zwicky & Sadock 1975, Cruse 1986, Asher 2011 §3-4;
-   p.13 eq.35): co-predication of the two senses is odd.
-   `#The sailor swept the deck and so did the rain.`
-   Regular polysemy (e.g., *book* = text/object) allows co-predication;
-   broom-*sweep*/basic-*sweep* do not.
+/-- Broom-*sweep* is transitive with the surface as object exactly when its subject can
+manipulate a broom: *#The wind swept the floor*. -/
+theorem broomSweep_instrumentTransitive_iff (c : Kind) :
+    Licensed ⟨broomSweep, .instrument, some c⟩ .contact instrumentTransitive ↔
+      c.Manipulates := by
+  cases c <;> decide
 
-2. **Idiosyncratic lexicalization**: broom-*sweep* lexicalizes broom
-   as the moving entity, but this is an idiosyncratic fact about
-   English — there is no general process making instrument-lexicalized
-   senses of all motion-contact verbs (p.28: English exceptionally
-   lacks denominal *broom*, with *sweep* blocking it). -/
+/-- The lexicalized broom may be expressed in a *with* phrase. -/
+theorem broomSweep_withFrame_iff (c : Kind) :
+    Licensed ⟨broomSweep, .instrument, some c⟩ .contact withFrame ↔ c.Manipulates := by
+  cases c <;> decide
 
-/-- Motivated polysemy: two related senses sharing a root and overlapping
-event structure, but **not** co-predicable (failing the zeugma test). -/
-structure MotivatedPolysemy where
-  /-- The basic sense, structurally simpler. -/
-  basicSense : MotionContactES
-  /-- The specialized sense, derived from basic by lexicalization. -/
-  specializedSense : MotionContactES
-  /-- The specialized sense is derived from the basic sense by
-      saturating the moving-entity variable. -/
-  specializedIsSaturationOfBasic :
-    ¬ basicSense.IsLexicallySaturated ∧ specializedSense.IsLexicallySaturated
-  deriving Repr
+/-- The routine activity licenses the unspecified object frame. -/
+theorem broomSweep_unspecifiedObject_iff (c : Kind) :
+    Licensed ⟨broomSweep, .instrument, some c⟩ .contact unspecifiedObject ↔
+      c.Manipulates := by
+  cases c <;> decide
 
-/-- *sweep*'s two senses constitute motivated polysemy. -/
-def sweepPolysemy : MotivatedPolysemy where
-  basicSense := basicSweep
-  specializedSense := broomSweep
-  specializedIsSaturationOfBasic := ⟨id, trivial⟩
+/-- Broom-*sweep* lacks the anticausative: *Danny swept the floor* but not *the floor swept*. -/
+theorem broomSweep_not_uncaused (p : Predicate) (σ : Slots) :
+    ¬ Licensed ⟨broomSweep, .instrument, none⟩ p σ :=
+  λ ⟨⟨_, h⟩, _⟩ => by simpa using h rfl
 
-/-! ### Wiping-verbs class generalization -/
+/-! ### The resultative restriction -/
 
-/-- The motion-and-sustained-contact event structure generalizes to the
-[levin-1993] class 10.4 (wiping verbs): *sweep*, *rub*, *scrape*,
-*wipe*. The paper establishes generalization in §2.3-2.4
-(p.13-14): *rub* and *scrape* show the same constellation of syntactic
-frames as basic-*sweep*, supporting the contention that basic-*sweep*'s
-event structure is shared by the class. *wipe* itself is not explicitly
-worked through but is assumed to pattern with the class
-([levin-rappaport-hovav-1991]).
+/-- The resultative restriction: a subject that is not an agent selects a small clause, which
+here can only be the path. -/
+def ResultativeRestriction : Prop :=
+  ∀ i p σ, Licensed i p σ → i.causer = none → ¬ i.mover.Manipulates →
+    σ.mover = .subject → σ.path = .directionalPP
 
-These verbs differ in lexicalized **manner** (the type of motion-with-contact):
-* *sweep*: extended movement across a planar surface, contact during
-  trajectory ([mcnally-spalek-2022]).
-* *rub*: contact with pressure, back-and-forth or circular movement.
-* *scrape*: similar to sweep but with a harder contact and removal
-  affordance.
-* *wipe*: similar to sweep, often with a cloth-like instrument. -/
-inductive WipingVerb where
+/-- *The north wind swept the open tundra*: a non-agentive subject in the simple transitive
+frame, with no small clause and no result. -/
+theorem not_resultativeRestriction : ¬ ResultativeRestriction := λ h =>
+  absurd (h ⟨basicSweep, .naturalPhenomenon, none⟩ .contact simpleTransitive (by decide) rfl
+    (by decide) rfl) (by decide)
+
+/-! ### The paper's judgments -/
+
+/-- The verbs of the paper's examples. -/
+inductive Verb where
   | sweep
   | rub
   | scrape
-  | wipe
-  deriving DecidableEq, Repr
+  | funnel
+  | mop
+  deriving DecidableEq
 
-/-- Every wiping verb has basic-*sweep*'s event structure as its basic
-sense (§2.3-2.4). -/
-def WipingVerb.basicEventStructure : WipingVerb → MotionContactES
-  | _ => basicSweep
+/-- The verbs by their `paperFeatures` labels. -/
+def Verb.labels : List (String × Verb) :=
+  [("sweep", .sweep), ("rub", .rub), ("scrape", .scrape), ("funnel", .funnel), ("mop", .mop)]
 
-/-- Only *sweep* has an attested broom-sense in English (p.13-14, p.28).
-*rub* and *scrape* lack a specialized agentive sub-sense. -/
-def WipingVerb.HasSpecializedSense : WipingVerb → Prop
-  | .sweep => True
-  | _      => False
+/-- The senses by their `paperFeatures` labels: a free moving entity, an instrument
+lexicalized as the moving entity, and such an instrument in a routine activity. -/
+def Sense.labels : List (String × Sense) :=
+  [("basic", basicSweep), ("instrument", ⟨true, false⟩), ("routine", broomSweep)]
 
-instance (v : WipingVerb) : Decidable v.HasSpecializedSense := by
-  cases v <;> unfold WipingVerb.HasSpecializedSense <;> infer_instance
+/-- The kinds by their `paperFeatures` labels. -/
+def Kind.labels : List (String × Kind) :=
+  [("animate", .animate), ("machine", .machine), ("natural phenomenon", .naturalPhenomenon),
+   ("projectile", .projectile), ("instrument", .instrument), ("body part", .bodyPart),
+   ("displaced", .displaced)]
 
-/-! ### Bridge to existing substrate
+/-- The slots by their `paperFeatures` labels. -/
+def Slot.labels : List (String × Slot) :=
+  [("subject", .subject), ("object", .object), ("path object", .pathObject),
+   ("with", .withObject), ("pp", .directionalPP)]
 
-The wiping-verbs class corresponds to [levin-1993] class 10.4,
-encoded as `LevinClass.wipe` in `Linglib/Semantics/ArgumentStructure/LevinClass.lean`.
-Verbs in this class share the basic-*sweep* event structure. -/
+/-- A participant's slot, unexpressed when the row names none. -/
+def slot? (e : LinguisticExample) (key : String) : Option Slot :=
+  match e.feature? key with
+  | none => some .unexpressed
+  | some v => Slot.labels.lookup v
 
-/-- [levin-1993] 10.4 — the wiping-verbs Levin class. -/
-def wipingLevinClass : LevinClass := .wipe
+/-- The causer's kind, none when the row names none. -/
+def causer? (e : LinguisticExample) : Option (Option Kind) :=
+  match e.feature? "causer" with
+  | none => some none
+  | some v => (Kind.labels.lookup v).map some
 
-/-- All `WipingVerb` instances belong to `LevinClass.wipe`. -/
-def WipingVerb.levinClass : WipingVerb → LevinClass := fun _ => wipingLevinClass
+/-- An example of the paper: its verb, the event it describes, the slots of the participants,
+and the judgment. -/
+structure Datum where
+  verb : Verb
+  event : Event
+  slots : Slots
+  judgment : Features.Judgment
 
-@[simp] theorem WipingVerb.all_in_wipe (v : WipingVerb) : v.levinClass = .wipe := by
-  cases v <;> rfl
+/-- An example read into its datum. -/
+def datum (e : LinguisticExample) : Option Datum := do
+  pure { verb := ← e.parse? "verb" Verb.labels
+         event := { sense := ← e.parse? "sense" Sense.labels
+                    mover := ← e.parse? "mover" Kind.labels
+                    causer := ← causer? e }
+         slots := { mover := ← slot? e "moverSlot", surface := ← slot? e "surfaceSlot",
+                    causer := ← slot? e "causerSlot", path := ← slot? e "path" }
+         judgment := e.judgment }
 
-/-! ### The two senses on the agentivity lattice -/
+/-- Every example is read. -/
+theorem isSome_datum : ∀ e ∈ Examples.all, (datum e).isSome := by decide
 
-section AgentivityBridge
+/-- The paper's examples. -/
+def data : List Datum := Examples.all.filterMap datum
 
-open ArgumentStructure
-
-/-- The two *sweep* senses pair with the two Levin 10.4 subclass templates:
-    basic-*sweep* (moving entity unsaturated) with the manner subclass, whose
-    subject is underspecified for volition; broom-*sweep* (saturated) with the
-    instrument subclass (`wipeInstrument`), whose subject is an obligatory
-    volitional agent. -/
-theorem sweep_senses_match_templates :
-    (¬ basicSweep.IsLexicallySaturated ∧
-      wipeManner.subjectProfile.volition = false) ∧
-    (broomSweep.IsLexicallySaturated ∧
-      wipeInstrument.subjectProfile.volition = true) :=
-  ⟨⟨id, rfl⟩, ⟨trivial, rfl⟩⟩
-
-/-- Basic-*sweep* projects to {motion} on [grimm-2011]'s agentivity lattice —
-    the lattice image of variable agentivity. -/
-theorem wipeManner_agentivity :
-    Agentivity.fromEntailmentProfile wipeManner.subjectProfile
-      = .mk false false false true := rfl
-
-/-- Broom-*sweep* projects to the full agent {V, S, I, M}. -/
-theorem wipeInstrument_agentivity :
-    Agentivity.fromEntailmentProfile wipeInstrument.subjectProfile
-      = ⊤ := by decide
-
-/-- Instrument lexicalization strictly raises agentivity on the lattice:
-    the paper's obligatory-agentivity claim as strict lattice dominance. -/
-theorem instrument_lexicalization_increases_agentivity :
-    Agentivity.fromEntailmentProfile wipeManner.subjectProfile <
-      Agentivity.fromEntailmentProfile wipeInstrument.subjectProfile := by
+/-- A sentence is acceptable exactly when one of the two predicates licenses it for the event
+it describes. -/
+theorem acceptable_iff_licensed :
+    ∀ d ∈ data, (d.judgment = .acceptable ↔ ∃ p, Licensed d.event p d.slots) := by
   decide
 
-end AgentivityBridge
+/-- *Rub* and *scrape* show the constellation of frames of basic-*sweep*: each of the three
+verbs is attested in the simple transitive, transitive+PP and unaccusative+PP frames. -/
+theorem frames_shared :
+    ∀ v ∈ [Verb.sweep, .rub, .scrape],
+      ∀ σ ∈ [simpleTransitive, transitivePP, unaccusativePP],
+        ∃ d ∈ data, d.verb = v ∧ d.slots = σ ∧ d.judgment = .acceptable := by
+  decide
 
 end RappaportHovavLevin2024
