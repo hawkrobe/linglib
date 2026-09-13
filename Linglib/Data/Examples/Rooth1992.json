@@ -1,170 +1,452 @@
 [
   {
-    "id": "rooth1992_only_bill",
+    "id": "rooth1992_3a",
     "source": {
       "bibkey": "rooth-1992",
-      "paperLabel": "(3a), p. 77"
+      "paperLabel": "(3a)"
     },
+    "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "Mary only introduced BILL to Sue",
+    "primaryText": "Mary only introduced [Bill]F to Sue.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Mary only introduced BILL to Sue",
-    "context": "",
+    "translation": "",
+    "context": "Mary introduced Bill and Tom to Sue, and there were no other introductions.",
     "judgment": "acceptable",
-    "alternatives": [
-      {
-        "form": "Mary introduced Bill to Sue",
-        "judgment": "acceptable"
-      },
-      {
-        "form": "Mary introduced John to Sue",
-        "judgment": "acceptable"
-      },
-      {
-        "form": "Mary introduced Tom to Sue",
-        "judgment": "acceptable"
-      },
-      {
-        "form": "Mary introduced Fred to Sue",
-        "judgment": "acceptable"
-      }
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      [
+        "construction",
+        "only"
+      ],
       [
         "focus",
         "Bill"
       ],
       [
-        "fip_application",
-        "focusingAdverb"
+        "truth",
+        "false"
       ]
     ],
-    "comment": "Migrated from Phenomena/Focus/Basic.lean roothOnlyBill. Focus on 'Bill' makes only quantify over alternative introducees: Bill is the only person Mary introduced to Sue. The alternatives field carries the Roothian focus-alternative set {introduce(m,x,s) : x in {Bill, John, Tom, Fred}} as substituted prejacents; the alternative individuals beyond Bill are illustrative, not verified against the paper."
+    "comment": "False in the introduction scenario: the domain of only is constrained to properties of the form 'introducing y to Sue', and Mary also introduced Tom to Sue.",
+    "metaLanguage": "stan1293"
   },
   {
-    "id": "rooth1992_only_sue",
+    "id": "rooth1992_3b",
     "source": {
       "bibkey": "rooth-1992",
-      "paperLabel": "(3b), p. 77"
+      "paperLabel": "(3b)"
     },
+    "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "Mary only introduced Bill to SUE",
+    "primaryText": "Mary only introduced Bill to [Sue]F.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Mary only introduced Bill to SUE",
-    "context": "",
+    "translation": "",
+    "context": "Mary introduced Bill and Tom to Sue, and there were no other introductions.",
     "judgment": "acceptable",
-    "alternatives": [
-      {
-        "form": "Mary introduced Bill to Sue",
-        "judgment": "acceptable"
-      },
-      {
-        "form": "Mary introduced Bill to Jane",
-        "judgment": "acceptable"
-      },
-      {
-        "form": "Mary introduced Bill to Ann",
-        "judgment": "acceptable"
-      },
-      {
-        "form": "Mary introduced Bill to Beth",
-        "judgment": "acceptable"
-      }
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      [
+        "construction",
+        "only"
+      ],
       [
         "focus",
         "Sue"
       ],
       [
-        "fip_application",
-        "focusingAdverb"
+        "truth",
+        "true"
       ]
     ],
-    "comment": "Migrated from Phenomena/Focus/Basic.lean roothOnlySue. Same string as rooth1992_only_bill modulo focus position: focus on 'Sue' makes only exclude alternative recipients instead of alternative introducees. The alternatives field carries the Roothian focus-alternative set {introduce(m,b,y) : y in {Sue, Jane, Ann, Beth}}; the alternative individuals beyond Sue are illustrative, not verified against the paper."
+    "comment": "True in the introduction scenario: among properties of the form 'introducing Bill to z', Mary has only 'introducing Bill to Sue'.",
+    "metaLanguage": "stan1293"
   },
   {
-    "id": "rooth1992_qa_congruent",
+    "id": "rooth1992_7",
     "source": {
       "bibkey": "rooth-1992",
-      "paperLabel": "(23Qa)/(23Aa), p. 84"
+      "paperLabel": "(7)"
     },
+    "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "MARY cut Bill down to size",
+    "primaryText": "Mary only [read]F The Recognitions.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "MARY cut Bill down to size",
-    "context": "Who cut Bill down to size?",
+    "translation": "",
+    "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "only"
+      ],
+      [
+        "focus",
+        "read"
+      ]
+    ],
+    "comment": "With a focused transitive verb the focus semantic value of the VP contains every property of the form 'R-ing The Recognitions', trivial relations included; fixing the domain of only to it gives unsatisfiable truth conditions, though the sentence can be true.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rooth1992_11",
+    "source": {
+      "bibkey": "rooth-1992",
+      "paperLabel": "(11)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "An [American]F farmer was talking to a [Canadian]F farmer ...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "contrast"
+      ]
+    ],
+    "comment": "Symmetric contrast: each N' is construed as contrasting with the other, the ordinary value of each being a member of the focus semantic value of the other.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rooth1992_16",
+    "source": {
+      "bibkey": "rooth-1992",
+      "paperLabel": "(16)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Well, I [passed]F.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The speaker and roommates Steve and Paul took a quiz; George asks how it went.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
       {
-        "form": "MARY cut Bill down to size",
-        "judgment": "acceptable"
-      },
-      {
-        "form": "MONIQUE cut Bill down to size",
-        "judgment": "acceptable"
-      },
-      {
-        "form": "MICHIKO cut Bill down to size",
+        "name": "the speaker did not ace the quiz",
         "judgment": "acceptable"
       }
     ],
+    "paperFeatures": [
+      [
+        "construction",
+        "scale"
+      ],
+      [
+        "focus",
+        "passed"
+      ]
+    ],
+    "comment": "Suggests that the speaker did no better than passing, and nothing about whether the roommates passed.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rooth1992_17",
+    "source": {
+      "bibkey": "rooth-1992",
+      "paperLabel": "(17)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Well, [I]F passed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The speaker and roommates Steve and Paul took a quiz; George asks how it went.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "the roommates did not pass",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "construction",
+        "scale"
+      ],
+      [
+        "focus",
+        "I"
+      ]
+    ],
+    "comment": "Suggests that the roommates did not pass, via a scale of group propositions of the form 'x passed'.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rooth1992_23Aa_Qa",
+    "source": {
+      "bibkey": "rooth-1992",
+      "paperLabel": "(23Aa) answering (23Qa)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "[Mary]F cut Bill down to size.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Who cut Bill down to size?",
+    "judgment": "acceptable",
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      [
+        "construction",
+        "qa"
+      ],
+      [
+        "question",
+        "whoCutBill"
+      ],
       [
         "focus",
         "Mary"
-      ],
-      [
-        "fip_application",
-        "qaCongruence"
       ]
     ],
-    "comment": "Rooth's (23): the solid line links (23Qa) to the subject-focus answer (23Aa). Subject focus matches the wh-position, so the answer is congruent. The alternatives field carries the subject-varying focus-alternative set from the left column of (24), each member a congruent answer to (23Qa)."
+    "comment": "An appropriate answer: the question denotation is a subset of the answer's focus semantic value.",
+    "metaLanguage": "stan1293"
   },
   {
-    "id": "rooth1992_qa_incongruent",
+    "id": "rooth1992_23Ab_Qa",
     "source": {
       "bibkey": "rooth-1992",
-      "paperLabel": "(23Ab) as answer to (23Qa), p. 84"
+      "paperLabel": "(23Ab) answering (23Qa)"
     },
+    "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "#Mary cut BILL down to size",
+    "primaryText": "Mary cut [Bill]F down to size.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Mary cut BILL down to size",
+    "translation": "",
     "context": "Who cut Bill down to size?",
     "judgment": "unacceptable",
-    "alternatives": [
-      {
-        "form": "#Mary cut BILL down to size",
-        "judgment": "unacceptable"
-      },
-      {
-        "form": "#Mary cut BJÖRN down to size",
-        "judgment": "unacceptable"
-      },
-      {
-        "form": "#Mary cut BORIS down to size",
-        "judgment": "unacceptable"
-      }
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       [
-        "focus",
-        "Bill"
+        "construction",
+        "qa"
       ],
       [
-        "fip_application",
-        "qaCongruence"
+        "question",
+        "whoCutBill"
+      ],
+      [
+        "focus",
+        "Bill"
       ]
     ],
-    "comment": "Rooth's (23): the dotted line marks (23Ab) as an inappropriate answer to (23Qa). Object focus does not match the wh-position, so the answer is infelicitous (#). The alternatives field carries the object-varying set from the right column of (24); in this context every member is equally incongruent."
+    "comment": "Inappropriate: the propositions of the form 'x cut Bill down to size' are not all of the form 'Mary cut y down to size'.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rooth1992_23Ab_Qb",
+    "source": {
+      "bibkey": "rooth-1992",
+      "paperLabel": "(23Ab) answering (23Qb)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary cut [Bill]F down to size.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Who did Mary cut down to size?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qa"
+      ],
+      [
+        "question",
+        "whoDidMaryCut"
+      ],
+      [
+        "focus",
+        "Bill"
+      ]
+    ],
+    "comment": "An appropriate answer to the object question.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rooth1992_23Aa_Qb",
+    "source": {
+      "bibkey": "rooth-1992",
+      "paperLabel": "(23Aa) answering (23Qb)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "[Mary]F cut Bill down to size.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Who did Mary cut down to size?",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qa"
+      ],
+      [
+        "question",
+        "whoDidMaryCut"
+      ],
+      [
+        "focus",
+        "Mary"
+      ]
+    ],
+    "comment": "Inappropriate as an answer to the object question.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rooth1992_59a",
+    "source": {
+      "bibkey": "rooth-1992",
+      "paperLabel": "(59a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "she beats [me]F more often than Sue",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "than she beats Sue",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "than Sue beats me",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "construction",
+        "ellipsis"
+      ],
+      [
+        "focus",
+        "me"
+      ]
+    ],
+    "comment": "Bare remnant ellipsis: focus on the object correlate selects the reading in which the remnant corresponds to the object.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rooth1992_59b",
+    "source": {
+      "bibkey": "rooth-1992",
+      "paperLabel": "(59b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "[she]F beats me more often than Sue",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "than she beats Sue",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "than Sue beats me",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "construction",
+        "ellipsis"
+      ],
+      [
+        "focus",
+        "she"
+      ]
+    ],
+    "comment": "Focus on the subject correlate selects the reading in which the remnant corresponds to the subject.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rooth1992_70",
+    "source": {
+      "bibkey": "rooth-1992",
+      "paperLabel": "(70)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "People who [grow]F rice generally only [eat]F rice.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "only"
+      ],
+      [
+        "focus",
+        "eat"
+      ]
+    ],
+    "comment": "The focus on the verb is anaphoric to the other verb phrase rather than associated with only, whose domain is then fixed pragmatically: what is excluded is eating staples other than rice.",
+    "metaLanguage": "stan1293"
+  },
+  {
+    "id": "rooth1992_72a",
+    "source": {
+      "bibkey": "rooth-1992",
+      "paperLabel": "(72a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "An American farmer was talking to a [Canadian]F farmer ...",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "contrast"
+      ]
+    ],
+    "comment": "The anticipatory first focus of (11) is optional: no focus interpretation operator at the level of the first N'.",
+    "metaLanguage": "stan1293"
   }
 ]

@@ -1,429 +1,257 @@
+import Linglib.Data.Examples.Heine1997
+import Linglib.Features.Case.Basic
 import Linglib.Semantics.Possession.Defs
-import Linglib.Features.Grammaticalization
+import Mathlib.Data.Fintype.Powerset
+import Mathlib.Order.SymmDiff
+import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Heine (1997): Possession — Cognitive Sources, Forces, and Grammaticalization
-[heine-1997]
+# Heine (1997): Possession
 
-Bernd Heine. *Possession: Cognitive Sources, Forces, and Grammaticalization.*
-Cambridge Studies in Linguistics 83. Cambridge University Press, 1997.
+This file formalizes the second chapter of [heine-1997], on the sources of predicative
+possession. Possessive constructions derive by grammaticalization from eight event schemas,
+propositional templates for everyday situations: *X takes Y*, *Y is located at X*, *X is with
+Y*, *X's Y exists*, *Y exists for X*, *Y exists from X*, *as for X, Y exists*, and *Y is X's*.
+Each schema is a `Formula` giving its predicate nucleus, which participant it makes the subject,
+and how the other participant enters, and the contrastive properties the chapter tabulates
+follow from the formulas: only the Action Schema has a lexical nucleus, only Action and
+Location are basic rather than extended by an adjunct or modifier, and only Action and
+Companion encode the possessor as the subject, the others marking it by an oblique case
+(`Schema.possessorCase`). Grammaticalization follows the Overlap Model: a construction carries
+the source meaning alone, then both meanings, then the target meaning alone, and
+`overlap_of_gradual` derives the middle stage for any development that changes one meaning at
+a time and is never meaningless. The rows carry the chapter's examples, the Russian locative
+construction at each of the three stages (`russian_stages`), the Telugu division of labour
+between the Location Schema for physical possession and the Goal Schema for the permanent and
+inalienable notions of `Possession.Notion` (`telugu_notions`), and the Ewe and English cases.
 
-## Core claims
+The chapter's survey of source schemas in a hundred languages, the correlations between
+schemas and *have* or *belong* constructions, and the probabilistic generalizations about
+which notions each schema tends to express stay in prose: Location and Goal are the most
+frequent sources and Action a minority one, Location gives *have* constructions and Equation
+*belong* constructions, and the Existence schemas are seldom recruited for physical
+possession.
 
-1. Predicative possession constructions worldwide derive from a small set of
-   eight cognitive **event schemas** (Table 2.1), each with a fixed propositional
-   structure that predicts the resulting word order and case marking.
+## Implementation notes
 
-2. Each schema has characteristic **contrastive properties** (Table 2.3):
-   whether its predicate nucleus is lexical (Action only) or non-lexical,
-   whether its structure is basic or extended, and which participant
-   (possessor or possessee) maps to clausal subject.
+* The formulas are the chapter's; the classification of nuclei as lexical or schematic and of
+  the second participant's entry as core or grafted on are the chapter's criteria, applied
+  once to each formula.
+* The Source Schema, absent from the chapter's tables, is treated as an Existence schema with
+  an ablative possessor.
 
-3. Schemas correlate with **possessive notions** (Table 2.4): Location
-   invariably yields have-constructions; Equation invariably yields
-   belong-constructions; Action and Goal can yield both.
+## References
 
-4. Grammaticalization proceeds via the **Overlap Model**: Stage I (source
-   meaning only) → Stage II (source + target overlap) → Stage III
-   (target meaning only).
-
-5. A 100-language survey (Table 2.2) shows schemas are distributed across
-   all continents with Location (20.9%) and Goal (20.0%) as the most
-   common sources, and Action (13.6%) less common than often assumed.
-
-## Connections
-
-- `Source`: the eight event schemas (this file)
-- `Possession.Notion`: the seven target notions (substrate)
-- `Grammaticalization.GramStage`: the verbal cline
+* [heine-1997]
+* [heine-1993]
 -/
-
-open Possession
-open Grammaticalization
 
 namespace Heine1997
 
-/-- Heine's eight event schemas, the cognitive sources of predicative possession (Table 2.1). -/
-inductive Source where
-  /-- Action "X takes Y" (English `have` < OE `habban`). -/
+open Data.Examples Possession
+
+/-! ### The event schemas -/
+
+/-- The eight event schemas from which predicative possession derives. -/
+inductive Schema where
   | action
-  /-- Location "Y is at X" (Finnish adessive, Russian `u`). -/
   | location
-  /-- Companion "X is with Y" (Swahili `-na`). -/
   | companion
-  /-- Genitive "X's Y exists" (Turkish `var`). -/
   | genitive
-  /-- Goal "Y exists for X" (Hindi, Irish). -/
   | goal
-  /-- Source "Y exists from X". -/
   | source
-  /-- Topic "as for X, Y exists" (Japanese). -/
   | topic
-  /-- Equation "Y is X's" (Scots Gaelic). -/
   | equation
+  deriving DecidableEq, Repr, Fintype
+
+/-- The predicate nucleus of a schema's formula: the lexical verb *take*, the locative copula
+*be at*, the existential *exist*, or the equative copula *be*. -/
+inductive Nucleus where
+  | take
+  | beAt
+  | exist
+  | be
   deriving DecidableEq, Repr
 
--- ============================================================================
--- §1. Schema Contrastive Properties (Table 2.3)
--- ============================================================================
+/-- Whether a nucleus retains lexical content: *take* does, the schematic predicates of
+location, existence, and equation do not. -/
+def Nucleus.IsLexical : Nucleus → Prop
+  | .take => True
+  | .beAt | .exist | .be => False
 
-/-- Whether the predicate nucleus of a schema retains lexical content.
-    Action is unique: its predicate nucleus is a lexical verb ('take', 'seize',
-    'hold'). All other schemas have non-lexical nuclei (copulas, existentials,
-    locative verbs). -/
-def schemaHasLexicalNucleus : Source → Bool
-  | .action => true
-  | _       => false
+instance : DecidablePred Nucleus.IsLexical
+  | .take => isTrue trivial
+  | .beAt | .exist | .be => isFalse id
 
-/-- Whether the source structure is basic (two core arguments) or extended
-    (basic structure + an additional oblique participant grafted on).
-    Action and Location are basic; the remaining five involve extending a
-    simpler structure with an additional case-marked participant. -/
-inductive SourceStructure where
-  | basic    -- Two core arguments (agent+patient or figure+ground)
-  | extended -- Basic + oblique/topic participant added
+/-- The two participants of a possessive situation. -/
+inductive Participant where
+  | possessor
+  | possessee
   deriving DecidableEq, Repr
 
-def schemaStructure : Source → SourceStructure
-  | .action    => .basic
-  | .location  => .basic
-  | .companion => .extended
-  | .genitive  => .extended
-  | .goal      => .extended
-  | .source    => .extended
-  | .topic     => .extended
-  | .equation  => .extended
-
-/-- Which participant of the source schema is encoded as the clausal subject.
-    Action and Companion encode the possessor as subject; all others encode
-    the possessee as subject. -/
-inductive SubjectParticipant where
-  | possessor  -- Possessor = clausal subject (transitive-like)
-  | possessee  -- Possessee = clausal subject (intransitive/existential)
+/-- How the participant that is not the subject enters the formula: as the object or the
+locative argument of the nucleus, or grafted on as a comitative, dative, or ablative adjunct,
+a genitival modifier, or a topic. -/
+inductive Entry where
+  | object
+  | locative
+  | comitative
+  | genitive
+  | dative
+  | ablative
+  | topic
   deriving DecidableEq, Repr
 
-def schemaSubject : Source → SubjectParticipant
-  | .action    => .possessor
-  | .companion => .possessor
-  | .location  => .possessee
-  | .genitive  => .possessee
-  | .goal      => .possessee
-  | .source    => .possessee
-  | .topic     => .possessee
-  | .equation  => .possessee
+/-- Whether the entry is an argument of the nucleus rather than an addition to a simpler
+structure. -/
+def Entry.IsCore : Entry → Prop
+  | .object | .locative => True
+  | .comitative | .genitive | .dative | .ablative | .topic => False
 
-/-- Only Action has a lexical predicate nucleus. -/
-theorem action_unique_lexical :
-    (∀ s : Source, schemaHasLexicalNucleus s = true → s = .action) := by
-  intro s h; cases s <;> simp_all [schemaHasLexicalNucleus]
+instance : DecidablePred Entry.IsCore
+  | .object | .locative => isTrue trivial
+  | .comitative | .genitive | .dative | .ablative | .topic => isFalse id
 
-/-- Only Action and Companion have possessor-as-subject. -/
-theorem possessor_subject_iff_action_or_companion :
-    ∀ s : Source,
-      schemaSubject s = .possessor ↔ (s = .action ∨ s = .companion) := by
-  intro s; cases s <;> simp [schemaSubject]
+/-- The case that marks an entry, when it is a case-marked oblique. -/
+def Entry.case : Entry → Option Case
+  | .locative => some .loc
+  | .comitative => some .com
+  | .genitive => some .gen
+  | .dative => some .dat
+  | .ablative => some .abl
+  | .object | .topic => none
 
-/-- Basic schemas are exactly Action and Location. -/
-theorem basic_iff_action_or_location :
-    ∀ s : Source,
-      schemaStructure s = .basic ↔ (s = .action ∨ s = .location) := by
-  intro s; cases s <;> simp [schemaStructure]
-
--- ============================================================================
--- §2. Schema → Construction Type (Table 2.4)
--- ============================================================================
-
-/-- Whether a schema gives rise to a have-construction ('X has Y'),
-    a belong-construction ('Y belongs to X'), or both.
-    Location → have only. Equation → belong only. Action and Goal → both.
-    Companion, Genitive, Topic → have only. Source → irrelevant for
-    predicative possession (provides attributive possession source). -/
-def schemaYieldsHave : Source → Bool
-  | .action    => true
-  | .location  => true
-  | .companion => true
-  | .genitive  => true
-  | .goal      => true
-  | .source    => false  -- irrelevant for predicative
-  | .topic     => true
-  | .equation  => false
-
-def schemaYieldsBelong : Source → Bool
-  | .action    => true
-  | .location  => false
-  | .companion => false
-  | .genitive  => false
-  | .goal      => true
-  | .source    => false
-  | .topic     => false
-  | .equation  => true
-
-/-- Location invariably leads to have-constructions, never belong. -/
-theorem location_yields_have_only :
-    schemaYieldsHave .location = true ∧
-    schemaYieldsBelong .location = false := ⟨rfl, rfl⟩
-
-/-- Equation invariably leads to belong-constructions, never have. -/
-theorem equation_yields_belong_only :
-    schemaYieldsHave .equation = false ∧
-    schemaYieldsBelong .equation = true := ⟨rfl, rfl⟩
-
-/-- Action and Goal are the only schemas that can yield both types. -/
-theorem dual_schemas :
-    ∀ s : Source,
-      (schemaYieldsHave s = true ∧ schemaYieldsBelong s = true) ↔
-      (s = .action ∨ s = .goal) := by
-  intro s; cases s <;> simp [schemaYieldsHave, schemaYieldsBelong]
-
--- ============================================================================
--- §3. The Overlap Model (Figure 2.1)
--- ============================================================================
-
-/-- Grammaticalization from source schema to possessive target proceeds
-    through three stages (the Overlap Model, Figure 2.1). -/
-inductive OverlapStage where
-  /-- Stage I: the construction has source meaning only.
-      (e.g., "The money is in his hand" = pure location) -/
-  | sourceOnly
-  /-- Stage II: source and target meanings overlap; the construction is
-      ambiguous between source and possessive interpretations.
-      (e.g., Russian "u Markovyx gripp" = "There is flu at the Markovs"
-       or "The Markovs have the flu") -/
-  | overlap
-  /-- Stage III: target meaning only; source meaning is no longer available.
-      (e.g., Estonian "isal on raamat" = "Father has a book", not
-       "A book is on the father") -/
-  | targetOnly
+/-- A formulaic description of a schema: its nucleus, the participant it encodes as the
+subject, and how the other participant enters. -/
+structure Formula where
+  nucleus : Nucleus
+  subject : Participant
+  entry : Entry
   deriving DecidableEq, Repr
 
-/-- The Overlap Model is a monotonic progression: each stage is more
-    grammaticalized than the previous. -/
-def OverlapStage.degree : OverlapStage → Nat
-  | .sourceOnly => 0
-  | .overlap    => 1
-  | .targetOnly => 2
+/-- The formulas of the eight schemas. -/
+def Schema.formula : Schema → Formula
+  | .action => ⟨.take, .possessor, .object⟩
+  | .location => ⟨.beAt, .possessee, .locative⟩
+  | .companion => ⟨.be, .possessor, .comitative⟩
+  | .genitive => ⟨.exist, .possessee, .genitive⟩
+  | .goal => ⟨.exist, .possessee, .dative⟩
+  | .source => ⟨.exist, .possessee, .ablative⟩
+  | .topic => ⟨.exist, .possessee, .topic⟩
+  | .equation => ⟨.be, .possessee, .genitive⟩
 
-/-- Source-only precedes overlap, which precedes target-only. -/
-theorem overlap_ordered :
-    OverlapStage.sourceOnly.degree < OverlapStage.overlap.degree ∧
-    OverlapStage.overlap.degree < OverlapStage.targetOnly.degree :=
-  ⟨by decide, by decide⟩
+/-- A schema is basic when its second participant is an argument of the nucleus, extended when
+it is grafted onto a simpler structure. -/
+def Schema.IsBasic (s : Schema) : Prop := s.formula.entry.IsCore
 
-/-- The Action Schema's grammaticalization path through the Overlap Model:
-    a full lexical verb ('take', 'seize') at Stage I becomes a possessive
-    auxiliary ('have') at Stage III. Both the Overlap Model and the verbal
-    cline are monotonic, and they co-vary: advancing through overlap stages
-    corresponds to advancing along the boundedness cline.
+instance : DecidablePred Schema.IsBasic := λ s =>
+  inferInstanceAs (Decidable s.formula.entry.IsCore)
 
-    This parallels the general unidirectionality of grammaticalization:
-    fullVerb → auxiliary is the path from source schema (action verb)
-    to target schema (possessive marker). -/
-theorem action_overlap_cline_covary :
-    OverlapStage.sourceOnly.degree < OverlapStage.targetOnly.degree ∧
-    GramStage.fullVerb < GramStage.auxiliary :=
-  ⟨by decide, by decide⟩
+/-- The case marking the possessor when it is not the subject. -/
+def Schema.possessorCase (s : Schema) : Option Case :=
+  if s.formula.subject = .possessee then s.formula.entry.case else none
 
--- ============================================================================
--- §4. The 100-Language Survey (Table 2.2)
--- ============================================================================
+/-! The contrastive properties of the schemas follow from their formulas. -/
 
-/-- Distribution of major source schemas across continents, from the
-    100-language sample. Each entry is (schema, counts by continent).
-    Continents: Europe, Asia, Africa, America, Indian/Pacific Ocean. -/
-structure SchemaDist where
-  schema : Source
-  europe : Nat
-  asia : Nat
-  africa : Nat
-  america : Nat
-  pacific : Nat
-  deriving DecidableEq, Repr
+/-- Only the Action Schema has a lexical predicate nucleus. -/
+theorem isLexical_iff (s : Schema) : s.formula.nucleus.IsLexical ↔ s = .action := by
+  cases s <;> decide
 
-def SchemaDist.total (d : SchemaDist) : Nat :=
-  d.europe + d.asia + d.africa + d.america + d.pacific
+/-- Action and Location are the basic schemas. -/
+theorem isBasic_iff (s : Schema) : s.IsBasic ↔ s = .action ∨ s = .location := by
+  cases s <;> decide
 
-/-- Table 2.2 data: major schemas in 100 languages.
-    Note: some languages have more than one major schema,
-    so totals exceed 100. -/
-def actionDist  : SchemaDist := { schema := .action,    europe := 3, asia := 1,  africa := 9, america := 1, pacific := 1 }
-def locationDist : SchemaDist := { schema := .location,  europe := 5, asia := 8,  africa := 9, america := 1, pacific := 0 }
-def companionDist : SchemaDist := { schema := .companion, europe := 0, asia := 0,  africa := 7, america := 3, pacific := 4 }
-def genitiveDist : SchemaDist := { schema := .genitive,  europe := 0, asia := 2,  africa := 4, america := 5, pacific := 5 }
-def goalDist    : SchemaDist := { schema := .goal,      europe := 3, asia := 11, africa := 4, america := 1, pacific := 3 }
-def topicDist   : SchemaDist := { schema := .topic,     europe := 0, asia := 4,  africa := 1, america := 3, pacific := 3 }
+/-- Action and Companion encode the possessor as the subject. -/
+theorem subject_possessor_iff (s : Schema) :
+    s.formula.subject = .possessor ↔ s = .action ∨ s = .companion := by
+  cases s <;> decide
 
-def table2_2 : List SchemaDist :=
-  [actionDist, locationDist, companionDist, genitiveDist, goalDist, topicDist]
+/-- A schema marks its possessor by a case exactly when the possessor is not the subject and
+is not merely topicalized. -/
+theorem possessorCase_isSome_iff (s : Schema) :
+    s.possessorCase.isSome ↔ s.formula.subject = .possessee ∧ s ≠ .topic := by
+  cases s <;> decide
 
-/-- Total attestations across six identifiable schemas: 101 (> 100 because
-    some languages use multiple schemas). The remaining 9 attestations are
-    opaque or minor schemas not included here. -/
-theorem table2_2_total :
-    actionDist.total + locationDist.total + companionDist.total +
-    genitiveDist.total + goalDist.total + topicDist.total = 101 := by native_decide
+/-! ### The Overlap Model
 
-/-- Location and Goal are the two most frequent schemas worldwide. -/
-theorem location_and_goal_most_frequent :
-    locationDist.total ≥ goalDist.total ∧
-    goalDist.total > actionDist.total := by native_decide
+A construction grammaticalizing from a source schema to a possessive target carries the source
+meaning alone at Stage I, both meanings at Stage II, where it is ambiguous, and the target
+meaning alone at Stage III. -/
 
-/-- Action accounts for only 13.6% of major schema attestations (15 out
-    of 110 total) — less common than often assumed for European-centric
-    linguistics. The denominator 110 includes opaque/other schemas. -/
-theorem action_not_dominant :
-    actionDist.total * 100 / 110 < 15 := by native_decide
+/-- The meanings a construction can carry: that of its source schema and the possessive
+target. -/
+inductive Meaning where
+  | source
+  | target
+  deriving DecidableEq, Repr, Fintype
 
-/-- In Asia, Goal (via dative/benefactive) is the most common schema,
-    exceeding Location (the runner-up): 11 vs 8 out of 26. -/
-theorem asia_goal_dominant :
-    goalDist.asia > locationDist.asia ∧
-    goalDist.asia > actionDist.asia ∧
-    goalDist.asia > topicDist.asia := by native_decide
+/-- The three stages of the Overlap Model. -/
+def stage : Fin 3 → Finset Meaning
+  | 0 => {.source}
+  | 1 => {.source, .target}
+  | 2 => {.target}
 
-/-- In Africa, Location and Action tie as the most common sources (9 each). -/
-theorem africa_location_action_tie :
-    locationDist.africa = actionDist.africa := by native_decide
+/-- A development is gradual when consecutive stages differ in at most one meaning and no
+stage is meaningless. -/
+def Gradual (f : ℕ → Finset Meaning) : Prop :=
+  ∀ i, (f i).Nonempty ∧ (symmDiff (f i) (f (i + 1))).card ≤ 1
 
--- ============================================================================
--- §5. Schema → Possessive Notion Correlations (§2.3)
--- ============================================================================
+/-- A gradual development from the source meaning alone to the target meaning alone passes
+through the overlap stage. -/
+theorem overlap_of_gradual (f : ℕ → Finset Meaning) (hf : Gradual f) (h0 : f 0 = stage 0)
+    {n : ℕ} (hn : f n = stage 2) : ∃ i ≤ n, f i = stage 1 := by
+  have hex : ∃ i, Meaning.target ∈ f i := ⟨n, by simp [hn, stage]⟩
+  have hstep : ∀ s t : Finset Meaning, s.Nonempty → (symmDiff s t).card ≤ 1 →
+      Meaning.target ∉ s → Meaning.target ∈ t → t = stage 1 := by
+    decide
+  obtain ⟨j, hj⟩ : ∃ j, Nat.find hex = j + 1 := by
+    refine Nat.exists_eq_succ_of_ne_zero λ h => ?_
+    have := Nat.find_spec hex
+    rw [h, h0] at this
+    simp [stage] at this
+  refine ⟨Nat.find hex, Nat.find_min' hex (by simp [hn, stage]), ?_⟩
+  rw [hj]
+  exact hstep (f j) (f (j + 1)) (hf j).1 (hf j).2
+    (Nat.find_min hex (by omega)) (hj ▸ Nat.find_spec hex)
 
-/-- Probabilistic correlations between source schemas and the possessive
-    notions they are most likely to express (§2.3, generalizations i-iv).
+/-! ### The rows -/
 
-    - Location: most likely physical/temporary possession
-    - Existence (Genitive, Goal, Topic): permanent/inalienable possession
-    - Companion: physical/temporary, or alienable possession
-    - Action: wide range (physical through permanent)
-    - Equation: permanent (ownership, "the book is mine") -/
-def schemaTypicalNotions : Source → List Notion
-  | .action    => [.physical, .temporary, .permanent]
-  | .location  => [.physical, .temporary]
-  | .companion => [.physical, .temporary]
-  | .genitive  => [.permanent, .inalienable]
-  | .goal      => [.permanent, .inalienable, .abstract]
-  | .source    => []  -- irrelevant for predicative
-  | .topic     => [.permanent, .inalienable]
-  | .equation  => [.permanent, .inalienable]
+/-- The schema a row instantiates. -/
+def schema (r : LinguisticExample) : Option Schema :=
+  r.parse? "schema" [("action", .action), ("location", .location), ("companion", .companion),
+    ("genitive", .genitive), ("goal", .goal), ("source", .source), ("topic", .topic),
+    ("equation", .equation)]
 
-/-- Existence schemas (Genitive, Goal, Topic) are never recruited for
-    physical possession. -/
-theorem existence_not_physical :
-    ¬(schemaTypicalNotions .genitive).contains .physical ∧
-    ¬(schemaTypicalNotions .goal).contains .physical ∧
-    ¬(schemaTypicalNotions .topic).contains .physical := by native_decide
+/-- The meanings a row's construction carries, read from whether the source and the target
+readings are available. -/
+def meanings (r : LinguisticExample) : Finset Meaning :=
+  (if r.feature? "source" = some "true" then {Meaning.source} else ∅) ∪
+    (if r.feature? "target" = some "true" then {Meaning.target} else ∅)
 
-/-- Location is most likely associated with physical/temporary; it is not
-    typically recruited for permanent or inalienable possession. -/
-theorem location_not_permanent :
-    ¬(schemaTypicalNotions .location).contains .permanent ∧
-    ¬(schemaTypicalNotions .location).contains .inalienable := by
-  native_decide
+/-- The meaning sets of the Russian rows (73), stages I, II, and III of the Location Schema's
+grammaticalization. -/
+def russianData : List (Finset Meaning) :=
+  (Examples.all.filter λ r => r.language = "russ1263").map meanings
 
--- ============================================================================
--- §6. Bridge to Barker 2011: Subject Encoding and Arity
--- ============================================================================
+/-- The Russian locative construction is attested at each stage of the Overlap Model, with the
+ambiguous (73c) at the overlap stage. -/
+theorem russian_stages : ∀ i, stage i ∈ russianData := by decide +kernel
 
-/-- Arity of the possessive predicate a schema yields: one core argument (sortal) or
-    two (relational), [barker-2011]'s two nominal types. -/
-inductive NominalInterpType
-  | sortal
-  | relational
-  deriving DecidableEq, Repr
+/-- The possessive notion a row expresses. -/
+def notion (r : LinguisticExample) : Option Notion :=
+  r.parse? "notion" [("physical", .physical), ("temporary", .temporary),
+    ("permanent", .permanent), ("inalienable", .inalienable), ("abstract", .abstract),
+    ("inanimateInalienable", .inanimateInalienable), ("inanimateAlienable", .inanimateAlienable)]
 
-/-- Map each schema to its Barker 2011 semantic type, based on the
-    argument structure of the resulting possessive predicate.
+/-- The schema and notion of each Telugu row (85). -/
+def teluguData : List (Schema × Notion) :=
+  (Examples.all.filter λ r => r.language = "telu1262").filterMap λ r => do
+    pure (← schema r, ← notion r)
 
-    Possessor-as-subject schemas (Action, Companion) produce transitive
-    constructions: the possessive verb takes two core arguments (possessor
-    and possessee), corresponding to [barker-2011]'s two-place relational type.
-
-    Possessee-as-subject schemas produce intransitive/existential
-    constructions: the possessee is the sole core argument, and the
-    possessor is an oblique adjunct. The possessive predicate is one-place,
-    with the possessor introduced by Ex closure or case marking. -/
-def schemaArity : Source → NominalInterpType
-  | .action    => .relational  -- X takes Y: two core arguments
-  | .companion => .relational  -- X is with Y: two core arguments
-  | _          => .sortal  -- Y exists/is-at/...: one core argument + oblique
-
-/-- Possessor-as-subject correlates exactly with the relational interpretation (transitive). -/
-theorem possessor_subject_iff_relational :
-    ∀ s : Source,
-      schemaSubject s = .possessor ↔ schemaArity s = .relational := by
-  intro s; cases s <;> simp [schemaSubject, schemaArity]
-
-/-- Relational schemas are exactly the basic-structure schemas where the
-    possessor is a core argument (not grafted on). Companion is the
-    exception: extended structure but still relational, because the comitative
-    complement is reanalyzed as a core argument. -/
-theorem relational_action_companion_only :
-    ∀ s : Source,
-      schemaArity s = .relational ↔ (s = .action ∨ s = .companion) := by
-  intro s; cases s <;> simp [schemaArity]
-
-/-- The sortal schemas (Location, Genitive, Goal, Source, Topic, Equation)
-    express possession via an existential predicate + oblique possessor.
-    This matches Barker's ExProp closure: the possessor is introduced
-    by existential quantification over a relation, not as a direct argument
-    of the predicate.
-
-    Structural consequence: in these schemas, the possessor does NOT
-    fill a relatum slot directly (as it would with a relational noun). Instead, it is
-    introduced via case morphology (locative, dative, genitive, etc.) —
-    the morphological reflex of the oblique adjunct position. -/
-theorem sortal_possessee_subject :
-    ∀ s : Source,
-      schemaArity s = .sortal → schemaSubject s = .possessee := by
-  intro s h; cases s <;> simp [schemaArity] at h <;> simp [schemaSubject]
-
-/-- The Action Schema's grammaticalization path:
-    full lexical verb ('take', 'seize') → have-verb (auxiliary-like).
-    This places Action Schema verbs on the grammaticalization cline
-    from fullVerb toward auxiliary. -/
-theorem action_schema_on_cline :
-    GramStage.fullVerb < GramStage.auxiliary := by decide
-
--- ============================================================================
--- §7. Fragment Prediction Verification
--- ============================================================================
-
-/-- A schema prediction bundle: the testable predictions Heine makes for
-    any language that draws on a given source schema. -/
-structure SchemaPrediction where
-  schema : Source
-  yieldsHave : Bool
-  yieldsBelong : Bool
-  possessorIsSubject : Bool
-  arity : NominalInterpType
-
-/-- Derive predictions from a schema. -/
-def predictionsFor (s : Source) : SchemaPrediction :=
-  { schema := s
-    yieldsHave := schemaYieldsHave s
-    yieldsBelong := schemaYieldsBelong s
-    possessorIsSubject := schemaSubject s == .possessor
-    arity := schemaArity s }
-
-/-- Location Schema predictions: have-only, possessee-as-subject, sortal. -/
-theorem location_predictions :
-    let p := predictionsFor .location
-    p.yieldsHave = true ∧ p.yieldsBelong = false ∧
-    p.possessorIsSubject = false ∧ p.arity = .sortal := by
-  exact ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Companion Schema predictions: have-only, possessor-as-subject, relational. -/
-theorem companion_predictions :
-    let p := predictionsFor .companion
-    p.yieldsHave = true ∧ p.yieldsBelong = false ∧
-    p.possessorIsSubject = true ∧ p.arity = .relational := by
-  exact ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Genitive Schema predictions: have-only, possessee-as-subject, sortal. -/
-theorem genitive_predictions :
-    let p := predictionsFor .genitive
-    p.yieldsHave = true ∧ p.yieldsBelong = false ∧
-    p.possessorIsSubject = false ∧ p.arity = .sortal := by
-  exact ⟨rfl, rfl, rfl, rfl⟩
+/-- Telugu divides the notions between two schemas as the chapter's generalizations expect:
+the Location Schema expresses physical possession and the Goal Schema, an Existence schema,
+the permanent and inalienable notions, never the physical one. -/
+theorem telugu_notions : ∀ d ∈ teluguData, d.1 = .location ↔ d.2 = .physical := by
+  decide +kernel
 
 end Heine1997
