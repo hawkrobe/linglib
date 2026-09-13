@@ -1,43 +1,32 @@
-/-
-[kratzer-1981] Modal Operators — IL Foundation
+import Linglib.Semantics.Modality.Kratzer.Ordering
+import Linglib.Logic.Modal.Basic
 
-Kratzer-style necessity and possibility, defined as `box`/`diamond` from
-`Intensional` over conversational-background-derived accessibility
-relations. Frame conditions on the accessibility relation are derived from
-conversational-background properties; modal-axiom derivations then follow from
-the polymorphic correspondence theorems in `RestrictedModality`.
+/-!
+# Kratzer's modal operators
 
-## Main declarations
-
-* `kratzerR`, `kratzerBestR`: accessibility relations from a modal base alone
-  and from a modal base together with an ordering source.
-* `simpleNecessity`, `simplePossibility`: `□`/`◇` over `kratzerR`.
-* `necessity`, `possibility`: `□`/`◇` over `kratzerBestR`.
-* `duality`: `□p ↔ ¬◇¬p`, delegating to `box_neg_diamond`.
-* `K_axiom`, `totally_realistic_gives_T`: instances of generic axioms applied
-  to Kratzer-specific accessibility.
-* `restrictedBase`: conditional-as-restrictor on the modal base.
+This file defines necessity and possibility over a modal base and an ordering source,
+[kratzer-1981]'s operators, as the box and diamond of `Logic.Modal` over the accessibility
+relations the two backgrounds induce: simple necessity quantifies over the accessible worlds
+(`kratzerR`, `simpleNecessity`), necessity over the best accessible worlds (`kratzerBestR`,
+`necessity`). The paper's own definition needs no Limit Assumption: human necessity asks each
+accessible world to see, at least as good, a witness below which only `p`-worlds occur
+(`humanNecessity`), and it is universal quantification over the best worlds exactly under the
+Limit Assumption (`humanNecessity_iff_necessity`). The modal axioms follow from the frame
+conditions the backgrounds impose (`duality`, `K_axiom`, `totally_realistic_gives_T`), and a
+conditional antecedent restricts the modal base (`restrictedBase`).
 
 ## Implementation notes
 
-`necessity` follows the Limit-Assumption-collapsed form: it quantifies over
-`bestWorlds f g w` directly, not over the Lewis-style "good-enough below every
-accessible world" structure (Kratzer 2012, p. 40). Downstream studies treating
-`necessity`/`possibility` as the Kratzer pair inherit the LA. A Limit-Assumption-
-free variant is left for future work.
+`necessity` quantifies over `bestWorlds` directly, so studies that treat `necessity` and
+`possibility` as the Kratzer pair inherit the Limit Assumption; `humanNecessity` is the
+limit-free form. The comparative-possibility scale of [kratzer-2012], good possibility, weak
+necessity, and slight possibility, is not formalized.
 
-`atLeastAsGoodPossibility` and the rest of the comparative-possibility scale
-from Kratzer 2012 §2.4 (good possibility, weak necessity, slight possibility)
-are not yet formalized.
+## References
 
-Sources:
-- Kratzer, A. (1981). The Notional Category of Modality. In H. J. Eikmeyer &
-  H. Rieser (eds.), *Words, Worlds, and Contexts*, 38–74. Berlin: de Gruyter.
-- Kratzer, A. (2012). *Modals and Conditionals*. OUP.
+* [kratzer-1981]
+* [kratzer-2012]
 -/
-
-import Linglib.Semantics.Modality.Kratzer.Ordering
-import Linglib.Logic.Modal.Basic
 
 namespace Modality.Kratzer
 
@@ -65,7 +54,7 @@ def kratzerBestR (f : ModalBase W) (g : OrderingSource W) : W → W → Prop :=
     accessibility. -/
 theorem kratzerBestR_empty (f : ModalBase W) (w w' : W) :
     kratzerBestR f (emptyBackground (W := W)) w w' ↔ kratzerR f w w' := by
-  rw [kratzerBestR, kratzerR, empty_ordering_emptyBackground]
+  rw [kratzerBestR, kratzerR, bestWorlds_emptyBackground]
   rfl
 
 /-! ### Operators -/
@@ -132,8 +121,7 @@ theorem humanNecessity_of_necessity {f : ModalBase W} {g : OrderingSource W}
   intro u hu
   obtain ⟨v, hvbest, hvle⟩ := hlim u hu
   refine ⟨v, hvbest.1, hvle, fun z hz hzv => h z ⟨hz, fun z' hz' hz'z => ?_⟩⟩
-  exact ordering_transitive (g w) z v z' hzv
-    (hvbest.2 hz' (ordering_transitive (g w) z' z v hz'z hzv))
+  exact atLeastAsGoodAs_trans hzv (hvbest.2 hz' (atLeastAsGoodAs_trans hz'z hzv))
 
 /-- Under the Limit Assumption, [kratzer-1981]'s human necessity is
 exactly universal quantification over the best worlds. -/
@@ -156,10 +144,9 @@ theorem humanNecessity_emptyBackground_iff (f : ModalBase W)
   constructor
   · intro h u hu
     obtain ⟨v, _, _, hall⟩ := h u hu
-    exact hall u hu ((empty_ordering_all_equivalent u v).1)
+    exact hall u hu (atLeastAsGoodAs_nil u v)
   · intro h u hu
-    exact ⟨u, hu, (empty_ordering_all_equivalent u u).1,
-      fun z hz _ => h z hz⟩
+    exact ⟨u, hu, atLeastAsGoodAs_nil u u, fun z hz _ => h z hz⟩
 
 /-! ### Characterization lemmas -/
 
@@ -183,7 +170,7 @@ theorem possibility_iff_any (f : ModalBase W) (g : OrderingSource W) (p : W → 
 theorem necessity_empty_iff_simple (f : ModalBase W) (p : W → Prop) (w : W) :
     necessity f (emptyBackground (W := W)) p w ↔ simpleNecessity f p w := by
   simp only [necessity_iff_all, simpleNecessity_iff_all]
-  rw [empty_ordering_emptyBackground]
+  rw [bestWorlds_emptyBackground]
 
 /-! ### Monotonicity in the modal base -/
 
@@ -267,7 +254,7 @@ theorem totally_realistic_gives_T (f : ModalBase W) (g : OrderingSource W)
     · have : w'' ∈ propIntersection (f w) := hw''
       rw [hTotal w] at this
       cases this
-      exact ordering_reflexive (g w) w
+      exact atLeastAsGoodAs_refl (g w) w
   exact hNec w hSelf
 
 /-! ### Conditionals as modal-base restriction -/

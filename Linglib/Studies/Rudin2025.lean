@@ -469,6 +469,12 @@ private theorem filter_length_lt_of_strict
           simp only [List.filter_cons, hd, hd']
           exact ih hsub_rs ⟨q, hqrs, hqw', hqw⟩
 
+/-- The propositions of `A` true at `w`, filtered classically; only its length matters. -/
+private noncomputable def satisfiedPropositions (A : List (World → Prop)) (w : World) :
+    List (World → Prop) :=
+  haveI : DecidablePred (fun p : World → Prop => p w) := fun p => Classical.propDecidable (p w)
+  A.filter (fun p => p w)
+
 /-- Strict domination implies strictly more satisfied propositions.
 
     Proof: from `h1` (w' ≤[A] w), every A-prop true at w is true at w'; from

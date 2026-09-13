@@ -289,7 +289,7 @@ def HopefulGoals (φ Bφ : V → Prop) (G : List (V → Prop)) : Prop := ∀ g �
 to believe `p` is strictly better than the one in which they do not, so the wondering meets
 [tabatowski-2022]'s convention on asking whether `p`. -/
 theorem hopes_radical (h₁ : Bp v₁) (h₂ : ¬ Bp v₂) : v₁ <[[Bp]] v₂ := by
-  simp only [strictlyBetter, atLeastAsGoodAs_iff, List.mem_singleton, forall_eq]
+  simp only [strictlyBetter_iff, atLeastAsGoodAs_iff, List.mem_singleton, forall_eq]
   exact ⟨λ h => (h₂ h).elim, λ h => h₂ (h h₁)⟩
 
 /-- Hoping for the negation: whichever goal (89) allows, an outcome in which `p` holds and the
@@ -307,7 +307,7 @@ theorem hopes_negation {G : List (V → Prop)} (hG : HopefulGoals (λ v => ¬ p 
 to believe `p` strictly better than remaining undecided, whichever answer is feared. -/
 theorem fears (h₁ : Bp v₁) (h₂ : ¬ Bp v₂) (hn₂ : ¬ Bnp v₂) :
     v₁ <[[λ v => Bp v ∨ Bnp v]] v₂ := by
-  simp only [strictlyBetter, atLeastAsGoodAs_iff, List.mem_singleton, forall_eq]
+  simp only [strictlyBetter_iff, atLeastAsGoodAs_iff, List.mem_singleton, forall_eq]
   exact ⟨λ h => (h.elim h₂ hn₂).elim, λ h => (h (Or.inl h₁)).elim h₂ hn₂⟩
 
 end Asymmetry

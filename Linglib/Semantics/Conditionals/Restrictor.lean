@@ -80,7 +80,7 @@ theorem restrictor_eq_strict (f : ModalBase W) (α : W → Prop) (β : W → Pro
     conditionalNecessity f emptyBackground α β w ↔
     (∀ w' ∈ accessibleWorlds f w, α w' → β w') := by
   unfold conditionalNecessity
-  rw [necessity_iff_all, empty_ordering_emptyBackground, restricted_accessible_eq]
+  rw [necessity_iff_all, bestWorlds_emptyBackground, restricted_accessible_eq]
   constructor
   · intro h w' hw' hα
     exact h w' ⟨hw', hα⟩

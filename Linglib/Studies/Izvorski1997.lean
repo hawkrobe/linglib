@@ -93,8 +93,7 @@ theorem necessity_of_beliefs (hex : ∃ u ∈ accessibleWorlds f w, ∀ q ∈ g 
     (h : ∀ u ∈ accessibleWorlds f w, (∀ q ∈ g w, q u) → p u) : necessity f g p w := by
   rw [necessity_iff_all]
   intro u hu
-  rw [bestWorlds, kratzerNormality, Core.Order.Normality.fromProps,
-    Core.Order.Normality.optimal_ofCriteria_eq hex] at hu
+  rw [bestWorlds, bestAmong_eq_of_exists hex] at hu
   exact h u hu.1 hu.2
 
 /-- Section 5.3: the domain of quantification lies within the epistemically accessible worlds,

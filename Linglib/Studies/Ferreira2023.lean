@@ -104,7 +104,7 @@ theorem revise_new (sim : Similarity W) (f : ModalBase W) (p : W → Prop) (w w'
   rw [accessibleWorlds_revise] at h
   rcases h with h | ⟨_, _, h⟩
   · exact absurd h hn
-  · exact bestAmong_sub _ _ h
+  · exact bestAmong_subset _ _ h
 
 /-! ### ∗∗-revision of an ordering source (130)–(131) -/
 
@@ -119,7 +119,7 @@ def bestOf (R : W → W → Prop) (D : Set W) : Set W := {u | u ∈ D ∧ ∀ v 
 theorem bestOf_better (g : OrderingSource W) (w : W) (D : Set W) :
     bestOf (Better g w) D = bestAmong D (g w) := by
   ext u
-  simp only [bestOf, bestAmong, Better, Set.mem_ofPred_eq, not_and, not_not]
+  simp only [bestOf, mem_bestAmong, Better, Set.mem_ofPred_eq, not_and, not_not]
 
 theorem bestWorlds_eq_bestAmong (f : ModalBase W) (g : OrderingSource W) (w : W) :
     bestWorlds f g w = bestAmong (accessibleWorlds f w) (g w) := rfl
@@ -145,8 +145,8 @@ theorem bestOf_starstar (g : OrderingSource W) (p : W → Prop) (w : W) (D : Set
   · rintro ⟨⟨hu, hbest⟩, hp⟩
     refine ⟨hu, λ v hv h => ?_⟩
     rcases h with ⟨hvu, huv⟩ | ⟨hpv, hpu, hv', hu'⟩
-    · exact huv (hbest v hv hvu)
-    · refine hpu (hp v hv' (λ q hq hqu => ?_) p (List.mem_singleton.mpr rfl) hpv)
+    · exact huv (hbest hv hvu)
+    · refine hpu (hp hv' (λ q hq hqu => ?_) p (List.mem_singleton.mpr rfl) hpv)
       rcases List.mem_singleton.mp hq with rfl
       exact absurd hqu hpu
 
@@ -223,13 +223,13 @@ theorem sn_entails_snXg (f : ModalBase W) (g : OrderingSource W) (p q : W → Pr
 /-- The best worlds when nothing is excluded and nothing ordered: every world. -/
 theorem bestWorlds_empty_empty (w : W) :
     bestWorlds (emptyBackground (W := W)) (emptyBackground (W := W)) w = Set.univ := by
-  rw [empty_ordering_emptyBackground, empty_base_universal_access]
+  rw [bestWorlds_emptyBackground, empty_base_universal_access]
 
 /-- The `b`-best of both truth values. -/
 theorem bestAmong_univ_eq (b : Bool) :
     bestAmong (Set.univ : Set Bool) [λ v => v = b] = {b} := by
   ext u
-  simp only [bestAmong, atLeastAsGoodAs_iff, Set.mem_univ, true_and, List.forall_mem_cons,
+  simp only [mem_bestAmong, atLeastAsGoodAs_iff, Set.mem_univ, true_and, List.forall_mem_cons,
     List.mem_nil_iff, false_implies, implies_true, and_true, Set.mem_singleton_iff,
     Set.mem_ofPred_eq]
   cases u <;> cases b <;> decide
@@ -288,7 +288,7 @@ theorem snXf_not_entails_sn :
     rw [accessibleWorlds_revise, hacc]
     ext v
     simp only [Set.mem_union, Set.mem_singleton_iff, Set.mem_ofPred_eq, Set.mem_univ, iff_true,
-      bestAmong_empty, exists_eq_left]
+      bestAmong_nil, exists_eq_left]
     cases v <;> simp
   have hX : snXf (λ _ => []) f g (· = true) true := by
     rw [snXf, necessity_iff_all, bestWorlds_eq_bestAmong, hrev]
@@ -296,12 +296,12 @@ theorem snXf_not_entails_sn :
     by_contra hq
     have hle : atLeastAsGoodAs (g true) true w' := (atLeastAsGoodAs_iff _ _ _).mpr λ r hr hrw => by
       rcases List.mem_singleton.mp hr with rfl; exact absurd hrw hq
-    exact hq ((atLeastAsGoodAs_iff _ _ _).mp (hw'.2 true (Set.mem_univ _) hle) _
+    exact hq ((atLeastAsGoodAs_iff _ _ _).mp (hw'.2 (Set.mem_univ _) hle) _
       (List.mem_singleton.mpr rfl) rfl)
   have hsn := h Bool (λ _ => []) f g (· = true) true hX
   rw [strongNecessity, necessity_iff_all, bestWorlds_eq_bestAmong, hacc] at hsn
   exact Bool.false_ne_true (hsn false ⟨rfl, λ v hv _ => by
-    rw [Set.mem_singleton_iff.mp hv]; exact ordering_reflexive _ _⟩)
+    rw [Set.mem_singleton_iff.mp hv]; exact atLeastAsGoodAs_refl _ _⟩)
 
 /-! ### Portuguese (135) -/
 
@@ -460,7 +460,7 @@ theorem consistent_pos_notWn : Pattern.Consistent ⟨⟨.pos, false, false⟩, �
 is a prejacent-world. -/
 theorem consistent_wn_sn : Pattern.Consistent ⟨⟨.wn, false, false⟩, ⟨.sn, false, false⟩⟩ := by
   have hbest : bestWorlds (W := Bool) (λ _ => [(· = true)]) emptyBackground true = {true} := by
-    rw [empty_ordering_emptyBackground]
+    rw [bestWorlds_emptyBackground]
     ext v
     simp [accessibleWorlds, propIntersection]
   have hsn : strongNecessity (W := Bool) (λ _ => [(· = true)]) emptyBackground (· = true) true := by
@@ -583,7 +583,7 @@ theorem revise_f81 :
   rw [accessibleWorlds_revise, accessible_f81]
   ext v
   simp only [Set.mem_union, Set.mem_singleton_iff, Set.mem_insert_iff, Set.mem_ofPred_eq,
-    exists_eq_left, bestAmong, atLeastAsGoodAs_iff, sim, office, List.forall_mem_cons,
+    exists_eq_left, mem_bestAmong, atLeastAsGoodAs_iff, sim, office, List.forall_mem_cons,
     List.mem_nil_iff, false_implies, implies_true, and_true]
   obtain ⟨o, h⟩ := v
   cases o <;> cases h <;> decide
@@ -593,7 +593,7 @@ theorem best_revise_f81 :
     bestAmong ({⟨false, false⟩, ⟨true, false⟩} : Set Day) (normal ⟨false, false⟩) =
       {⟨true, false⟩} := by
   ext v
-  simp only [bestAmong, atLeastAsGoodAs_iff, normal, Set.mem_ofPred_eq, Set.mem_insert_iff,
+  simp only [mem_bestAmong, atLeastAsGoodAs_iff, normal, Set.mem_ofPred_eq, Set.mem_insert_iff,
     Set.mem_singleton_iff, List.forall_mem_cons, List.mem_nil_iff, false_implies, implies_true,
     and_true]
   obtain ⟨o, h⟩ := v
@@ -611,7 +611,7 @@ theorem xMarked_81 :
   · rw [strongNecessity, necessity_iff_all, bestWorlds_eq_bestAmong, accessible_f81]
     intro h
     exact Bool.false_ne_true (h ⟨false, false⟩ ⟨rfl, λ v hv _ => by
-      rw [Set.mem_singleton_iff.mp hv]; exact ordering_reflexive _ _⟩)
+      rw [Set.mem_singleton_iff.mp hv]; exact atLeastAsGoodAs_refl _ _⟩)
 
 /-- (80): on the holiday the revision adds the holiday office-world. -/
 theorem revise_f80 :
@@ -623,7 +623,7 @@ theorem revise_f80 :
   rw [accessibleWorlds_revise, hacc]
   ext v
   simp only [Set.mem_union, Set.mem_singleton_iff, Set.mem_insert_iff, Set.mem_ofPred_eq,
-    exists_eq_left, bestAmong, atLeastAsGoodAs_iff, sim, office, List.forall_mem_cons,
+    exists_eq_left, mem_bestAmong, atLeastAsGoodAs_iff, sim, office, List.forall_mem_cons,
     List.mem_nil_iff, false_implies, implies_true, and_true]
   obtain ⟨o, h⟩ := v
   cases o <;> cases h <;> decide
@@ -633,7 +633,7 @@ theorem best_revise_f80 :
     bestAmong ({⟨false, true⟩, ⟨true, true⟩} : Set Day) (normal ⟨false, true⟩) =
       {⟨false, true⟩} := by
   ext v
-  simp only [bestAmong, atLeastAsGoodAs_iff, normal, Set.mem_ofPred_eq, Set.mem_insert_iff,
+  simp only [mem_bestAmong, atLeastAsGoodAs_iff, normal, Set.mem_ofPred_eq, Set.mem_insert_iff,
     Set.mem_singleton_iff, List.forall_mem_cons, List.mem_nil_iff, false_implies, implies_true,
     and_true]
   obtain ⟨o, h⟩ := v

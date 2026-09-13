@@ -316,13 +316,13 @@ world: accessible worlds as information, the ordering-source ranking
 as pattern. -/
 def stateAt (f : ModalBase W) (g : OrderingSource W) (w : W) :
     ExpState W :=
-  ⟨accessibleWorlds f w, kratzerNormality (g w)⟩
+  ⟨accessibleWorlds f w, kratzerPreorder (g w)⟩
 
 @[simp] theorem stateAt_info (f : ModalBase W) (g : OrderingSource W) (w : W) :
     (stateAt f g w).info = accessibleWorlds f w := rfl
 
 @[simp] theorem stateAt_order (f : ModalBase W) (g : OrderingSource W) (w : W) :
-    (stateAt f g w).order = kratzerNormality (g w) := rfl
+    (stateAt f g w).order = kratzerPreorder (g w) := rfl
 
 /-- Kratzer's best worlds are the induced state's optimal worlds. -/
 theorem bestWorlds_eq_optimal (f : ModalBase W) (g : OrderingSource W)

@@ -114,12 +114,12 @@ def weakNecessityR (pt : PriorityTypology) (p : World → Prop) (w : World) : Pr
 /-! ### Strong necessity entails weak necessity (§1) -/
 
 /-- Strong necessity entails weak necessity, since `BEST(Fav, g) ⊆ Fav`
-    (`bestAmong_sub`). Parallel to `Directive.strong_entails_weak`. -/
+    (`bestAmong_subset`). Parallel to `Directive.strong_entails_weak`. -/
 theorem strong_entails_weak_R (pt : PriorityTypology) (p : World → Prop)
     (w : World) (h : strongNecessityR pt p w) :
     weakNecessityR pt p w := by
   intro w' hw'
-  exact h w' (bestAmong_sub _ _ hw')
+  exact h w' (bestAmong_subset _ _ hw')
 
 /-- Counterexample components for the converse. -/
 private def ce_pt : PriorityTypology where
@@ -163,7 +163,7 @@ theorem weak_not_entails_strong_R :
       have hq' : q = fun w : World => w = w₁ := by
         simpa [ce_pt] using hq
       subst hq'; rfl
-    exact hmin w₁ hW1Fav hTop _ hProp rfl
+    exact hmin hW1Fav hTop _ hProp rfl
   -- but it fails at the favored world w₀, so strong necessity does not hold.
   have hNotStrong : ¬ strongNecessityR ce_pt ce_p w₀ := by
     intro hS
@@ -215,10 +215,10 @@ theorem strongR_eq_weakR_trivial (f : ModalBase World) (p : World → Prop)
   rw [favored_no_promoted f emptyBackground w]
   -- After rewriting, the favored set is `accessibleWorlds f w`.
   -- The negotiable ordering is `emptyBackground .. = []`, so
-  -- `bestAmong (accessibleWorlds f w) [] = accessibleWorlds f w` by `bestAmong_empty`.
+  -- `bestAmong (accessibleWorlds f w) [] = accessibleWorlds f w` by `bestAmong_nil`.
   show (∀ w' ∈ accessibleWorlds f w, p w') ↔
        ∀ w' ∈ bestAmong (accessibleWorlds f w) [], p w'
-  rw [bestAmong_empty]
+  rw [bestAmong_nil]
 
 /-! ### The tax report scenario (§3.3, examples 45–47, 51)
 
@@ -291,7 +291,7 @@ theorem tax_should_holds :
     intro q hq _
     have hq' : q = reportInternational := by simpa [taxScenarioA] using hq
     subst hq'; exact hW0Int
-  have hInt : reportInternational w' := hBest w₀ hW0Fav hTop reportInternational hPropMem hW0Int
+  have hInt : reportInternational w' := hBest hW0Fav hTop reportInternational hPropMem hW0Int
   exact ⟨hDom, hInt⟩
 
 /-- In scenario A, strong necessity FAILS: not all favored worlds
@@ -478,8 +478,8 @@ theorem comparative_split :
       intro x q hq _
       have hq' : q = fun w : World => w = w₁ := by simpa [ce_pt] using hq
       subst hq'; rfl
-    have hav : a = w₁ := hA w₁ (Set.mem_univ w₁) (hTop a) (fun w => w = w₁) hPmem rfl
-    have hbv : b = w₁ := hB w₁ (Set.mem_univ w₁) (hTop b) (fun w => w = w₁) hPmem rfl
+    have hav : a = w₁ := hA (Set.mem_univ w₁) (hTop a) (fun w => w = w₁) hPmem rfl
+    have hbv : b = w₁ := hB (Set.mem_univ w₁) (hTop b) (fun w => w = w₁) hPmem rfl
     rw [hav, hbv]
 
 /-- Membership in Rubinstein's comparative natural class: an evaluative
