@@ -309,7 +309,8 @@ theorem premod_lost_at_4 (t : OfBinominalType) :
 theorem premod_loss_monotone (t₁ t₂ : OfBinominalType) :
     t₁.clinePosition ≤ t₂.clinePosition →
     t₁.n₁AllowsDescriptivePremod = false → t₂.n₁AllowsDescriptivePremod = false := by
-  cases t₁ <;> cases t₂ <;> simp [OfBinominalType.clinePosition, OfBinominalType.n₁AllowsDescriptivePremod]
+  cases t₁ <;> cases t₂ <;>
+    simp [OfBinominalType.clinePosition, OfBinominalType.n₁AllowsDescriptivePremod]
 
 /-- Copula replacement is unique to evaluative BNPs. -/
 theorem copula_only_evaluative (t : OfBinominalType) :
@@ -342,7 +343,8 @@ theorem plural_loss_monotone (t₁ t₂ : OfBinominalType) :
 theorem agreement_loosens_monotone (t₁ t₂ : OfBinominalType) :
     t₁.clinePosition ≤ t₂.clinePosition →
     t₁.n₁N₂Agreement.toNat ≤ t₂.n₁N₂Agreement.toNat := by
-  cases t₁ <;> cases t₂ <;> simp [OfBinominalType.clinePosition, OfBinominalType.n₁N₂Agreement, AgreementLevel.toNat]
+  cases t₁ <;> cases t₂ <;>
+    simp [OfBinominalType.clinePosition, OfBinominalType.n₁N₂Agreement, AgreementLevel.toNat]
 
 /-- N₂ mass restriction is non-monotone: it narrows at the evaluative
     stage (positions 3–4) and widens again at BI (position 5), reflecting
