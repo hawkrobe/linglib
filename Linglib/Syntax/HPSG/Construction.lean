@@ -70,7 +70,8 @@ about `Models`, not a universal Subjacency. Weak islands (`weak-island-cxt`) are
 This file is the **substrate**: the type hierarchy, the cross-classification keystone, all five
 filler-gap constructions ([sag-2010] §5: topicalization, wh-exclamative, nonsubject wh-interrogative,
 wh-relative, the-clause), and the gap/island mechanism. The hierarchy also carries the
-`aux-initial-cxt`/`interrogative-SAI` sort nodes and the `INV` feature ([sag-etal-2020] Fig. 6); the
+`aux-initial-cxt`, `polar-int-cl` and `aux-initial-excl-cl` sort nodes and the `INV` feature
+([sag-etal-2020] Figs. 6, 10); the
 **inversion construction**'s own principle and worked constructs are paper-anchored in
 `Studies/SagEtAl2020.lean`, and the island/extraction taxonomy theorems in `Studies/SagWasowBender2003`
 and `Studies/Sag2010`, which consume this substrate.
@@ -124,9 +125,9 @@ inductive Srt
   | islandCxt | weakIslandCxt
   -- clausal hierarchy (Fig. 7)
   | coreCl | relativeCl | declarativeCl | interrogativeCl | exclamativeCl
-  -- the filler-gap constructions ([sag-2010] §5) and the interrogative SAI ([sag-etal-2020]), each
-  -- cross-classifying a clausal type
-  | topCl | whExclCl | nsWhIntCl | whRelCl | theCl | interrogativeSAI
+  -- the filler-gap constructions ([sag-2010] §5) and the polar-interrogative and aux-initial
+  -- exclamative clauses ([sag-etal-2020] Fig. 10), each cross-classifying a clausal type
+  | topCl | whExclCl | nsWhIntCl | whRelCl | theCl | polarIntCl | auxInitialExclCl
   deriving DecidableEq, Fintype, Repr
 
 /-- Direct subsumption ("covers"): the **DAG edges** (a is *directly* more specific than b), not the
@@ -159,14 +160,15 @@ def covers : Srt → Srt → Bool
   | .coreCl, .clause => true | .relativeCl, .clause => true
   | .declarativeCl, .coreCl => true | .interrogativeCl, .coreCl => true
   | .exclamativeCl, .coreCl => true
-  -- filler-gap constructions and the interrogative SAI: each covers its headed parent AND its clausal
+  -- filler-gap and aux-initial constructions: each covers its headed parent AND its clausal
   -- type ([sag-2010] §5; whRelCl's clausal parent is relative-cl, directly under clause, Fig. 7)
   | .topCl, .fillerHeadCxt => true | .topCl, .declarativeCl => true
   | .whExclCl, .fillerHeadCxt => true | .whExclCl, .exclamativeCl => true
   | .nsWhIntCl, .fillerHeadCxt => true | .nsWhIntCl, .interrogativeCl => true
   | .whRelCl, .fillerHeadCxt => true | .whRelCl, .relativeCl => true
   | .theCl, .fillerHeadCxt => true | .theCl, .declarativeCl => true
-  | .interrogativeSAI, .auxInitialCxt => true | .interrogativeSAI, .interrogativeCl => true
+  | .polarIntCl, .auxInitialCxt => true | .polarIntCl, .interrogativeCl => true
+  | .auxInitialExclCl, .auxInitialCxt => true | .auxInitialExclCl, .exclamativeCl => true
   | _, _ => false
 
 /-- Specificity depth; every covers edge strictly increases it, giving antisymmetry. The filler-gap
@@ -183,7 +185,8 @@ def rank : Srt → Nat
   | .coreCl => 4 | .relativeCl => 4
   | .islandCxt => 5 | .weakIslandCxt => 5
   | .declarativeCl => 5 | .interrogativeCl => 5 | .exclamativeCl => 5
-  | .topCl => 6 | .whExclCl => 6 | .nsWhIntCl => 6 | .whRelCl => 6 | .theCl => 6 | .interrogativeSAI => 6
+  | .topCl => 6 | .whExclCl => 6 | .nsWhIntCl => 6 | .whRelCl => 6 | .theCl => 6
+  | .polarIntCl => 6 | .auxInitialExclCl => 6
 
 instance : PartialOrder Srt :=
   partialOrderOfCovers (covers · · = true) rank (by decide)
@@ -196,7 +199,7 @@ instance : DecidableLE Srt := fun a b =>
      .construct, .phrasalCxt, .lexicalCxt, .headedCxt, .clause, .fillerHeadCxt, .auxInitialCxt,
      .headModifierCxt, .inflectionalCxt, .islandCxt, .weakIslandCxt,
      .coreCl, .relativeCl, .declarativeCl, .interrogativeCl, .exclamativeCl,
-     .topCl, .whExclCl, .nsWhIntCl, .whRelCl, .theCl, .interrogativeSAI]
+     .topCl, .whExclCl, .nsWhIntCl, .whRelCl, .theCl, .polarIntCl, .auxInitialExclCl]
     (by decide) a b
 
 /-! ### Attributes and the signature -/
@@ -233,14 +236,16 @@ def approp : Srt → Feat → Option Srt
   | .whRelCl, .MTR => some .sign
   | .theCl, .MTR => some .sign
   | .auxInitialCxt, .MTR => some .sign
-  | .interrogativeSAI, .MTR => some .sign
+  | .polarIntCl, .MTR => some .sign
+  | .auxInitialExclCl, .MTR => some .sign
   | .headModifierCxt, .MTR => some .sign
   -- HDDTR is common to all headed constructs; FILLERDTR is specific to filler-head-cxt (an
   -- aux-initial construct has head + valent daughters, no filler); MODDTR (the modifier) to
   -- head-modifier-cxt
   | .headedCxt, .HDDTR => some .sign
   | .auxInitialCxt, .HDDTR => some .sign
-  | .interrogativeSAI, .HDDTR => some .sign
+  | .polarIntCl, .HDDTR => some .sign
+  | .auxInitialExclCl, .HDDTR => some .sign
   | .fillerHeadCxt, .HDDTR => some .sign
   | .fillerHeadCxt, .FILLERDTR => some .sign
   | .islandCxt, .HDDTR => some .sign
@@ -275,10 +280,10 @@ def approp : Srt → Feat → Option Srt
 
 -- Appropriateness values never refine down this hierarchy (a sort and its subsorts carry the *same*
 -- value for an attribute); proving this propagation over just `(σ₁, σ₂, α)` — without the `τ₁`
--- quantifier or `∃`-search — keeps the `decide` within budget, and `approp_inh_of_propagates` derives
--- the `Signature.approp_inherits` obligation from it.
+-- quantifier or `∃`-search — keeps the kernel evaluation within budget, and
+-- `approp_inh_of_propagates` derives the `Signature.approp_inherits` obligation from it.
 private theorem approp_propagates : ∀ (σ₁ σ₂ : Srt) (α : Feat),
-    σ₂ ≤ σ₁ → (approp σ₁ α).isSome = true → approp σ₂ α = approp σ₁ α := by decide
+    σ₂ ≤ σ₁ → (approp σ₁ α).isSome = true → approp σ₂ α = approp σ₁ α := by decide +kernel
 
 /-- The fragment's one relation symbol: **list membership**, `member(x, L)` — the category `x` is an
 element of the `GAP` list `L`. This is the RSRL relation (the "R" of RSRL, [richter-2024] Ch. 3) that

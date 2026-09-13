@@ -1,108 +1,105 @@
-/-
-Copyright (c) 2026 Robert Hawkins. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Robert Hawkins
--/
 import Linglib.Syntax.HPSG.Construction
 
 /-!
-# Sag et al. (2020): the Aux-Initial (Subject-Auxiliary Inversion) construction
-[sag-etal-2020] [sag-2010]
+# Sag et al. (2020): Lessons from the English Auxiliary System
 
-The **second paper-anchored consumer** of the SBCG construct type hierarchy
-(`Syntax/HPSG/Construction.lean`). [sag-etal-2020] analyzes the English auxiliary system in
-Sign-Based Construction Grammar; its **Aux-Initial Construction** ((39)) is a `headed-cxt` subtype —
-a *sibling* of the filler-gap supertype `filler-head-cxt` — whose head daughter is an inverted
-`[INV +]` word (an invertible finite auxiliary).
+This file formalizes the paper's constructional analysis of subject-auxiliary inversion. The
+aux-initial construction requires the head daughter of a clause to be an invertible finite
+auxiliary, a word marked `[INV +]`, and says nothing about meaning: following Fillmore, the
+aux-initial clauses share no semantics, and each kind of aux-initial clause gets its meaning
+from the clausal type it cross-classifies with, the polar interrogative from the
+interrogative clauses and the aux-initial exclamative from the exclamative clauses. So the
+construction is one principle over the RSRL construct hierarchy of
+`Syntax/HPSG/Construction` (`auxInitialPrinciple`), the two clauses are sorts below both the
+aux-initial construction and a clausal type (`sai_cross_classify`), and a worked construct of
+either sort satisfies the grammar exactly when its head is inverted and its mother carries the
+clausal type's semantics (`polarInterrogative_models`, `auxInitialExclamative_models`). A
+polar interrogative is built directly by its construction rather than derived from an
+uninverted clause, which is why the auxiliary puzzle of structure dependence never arises.
 
-Following Fillmore (1999), aux-initial constructions share **no** semantics ([sag-etal-2020] fn. 34);
-a particular SAI's clausal meaning comes only from cross-classification with the clausal dimension. So
-the **interrogative SAI** ("Has Lee eaten apples?") is `aux-initial-cxt ⊓ interrogative-cl`, and a
-worked construct inherits the inverted head (from `aux-initial-cxt`) *and* the question semantics (from
-`interrogative-cl`) from one sort — by the *same* multiple-inheritance machinery as [sag-2010]'s
-filler-gap constructions.
+## Implementation notes
 
-That two paper-anchored studies (this and `Studies/Sag2010.lean`) consume one construct hierarchy is
-the justification for its theory-layer home. The aux-initial / inversion sort nodes and the `INV`
-feature live in the substrate; the construction's own *principle* and worked constructs are here.
+The construction's valence conditions, that the head daughter's valents are its sisters and
+the mother is valence-saturated, are not in the RSRL signature and are not modelled; only the
+`[INV +]` head is. The remaining constructions of the paper, the inflectional and negation
+constructions and contraction, are not formalized.
 
-## Scope
+## References
 
-The single distinguishing constraint modeled is the head's `[INV +]` value. The richer apparatus of
-the paper — the `MTR`/`DTRS` `SYN` token-sharing of (39), the valence list `VAL`/`⊕` amalgamation, the
-`AUX`/`GRAM` features, and the ellipsis interactions — is deferred, as are the other SAI subtypes
-(polar-interrogative, exclamative, conditional inversion).
+* [sag-etal-2020]
+* [sag-2010]
+* [ginzburg-sag-2000]
 -/
 
 namespace SagEtAl2020
 
 open HPSG.RSRL HPSG.Construction
 
-/-- The **Aux-Initial Construction** ([sag-etal-2020] (39)): the head daughter is an inverted
-(`[INV +]`) word — an invertible finite auxiliary. Unlike the filler-gap constructions it carries no
-shared semantics (Fillmore 1999, [sag-etal-2020] fn. 34); its clausal meaning comes only from
-cross-classification. -/
+/-- The aux-initial construction: the head daughter is an inverted word. -/
 def auxInitialPrinciple : Desc sig :=
   .imp (.sortAssign .colon .auxInitialCxt) (.sortAssign (.path [.HDDTR, .INV]) .invPlus)
 
-/-- The filler-gap grammar of `Construction.lean` extended with the inversion construction. -/
+/-- The filler-gap grammar extended with the aux-initial construction. -/
 def saiGrammar : Grammar sig := grammar ++ [auxInitialPrinciple]
 
-/-- `aux-initial-cxt` is a sibling of `filler-head-cxt` under `headed-cxt`, and the interrogative SAI
-cross-classifies it with `interrogative-cl` — the same machinery as [sag-2010]'s filler-gap
-constructions, now for the second paper's construction. -/
+/-- The aux-initial construction is a headed construction beside the filler-head construction,
+and the polar interrogative and aux-initial exclamative clauses cross-classify it with the
+interrogative and exclamative clausal types. -/
 theorem sai_cross_classify :
-    ((Srt.auxInitialCxt ≤ .headedCxt) ∧ (Srt.fillerHeadCxt ≤ .headedCxt)) ∧
-      ((Srt.interrogativeSAI ≤ .auxInitialCxt) ∧ (Srt.interrogativeSAI ≤ .interrogativeCl)) := by
+    (Srt.auxInitialCxt ≤ .headedCxt ∧ Srt.fillerHeadCxt ≤ .headedCxt) ∧
+      (Srt.polarIntCl ≤ .auxInitialCxt ∧ Srt.polarIntCl ≤ .interrogativeCl) ∧
+      (Srt.auxInitialExclCl ≤ .auxInitialCxt ∧ Srt.auxInitialExclCl ≤ .exclamativeCl) := by
   decide
 
-/-! ### A worked interrogative SAI -/
+/-! ### Worked aux-initial constructs -/
 
-/-- Entities of a worked aux-initial construct: the construct, its mother and (inverted) head daughter,
-and the inversion- and semantic-value objects. (Aux-initial constructs have no filler daughter.) -/
-inductive SAIEnt
-  | cxt | mtr | hd | invE | semE
+/-- The entities of a worked aux-initial construct: the construct, its mother and head
+daughter, and the head's inversion value and the mother's semantic object; an aux-initial
+construct has no filler daughter. -/
+inductive SAIEnt where
+  | cxt
+  | mtr
+  | hd
+  | inv
+  | sem
   deriving DecidableEq, Fintype, Repr
 
-/-- A well-formed interrogative SAI (sort `interrogative-SAI`): inverted head, interrogative mother. -/
-@[reducible] def goodInterrogativeSAI : Interpretation sig where
+/-- An aux-initial construct of sort `cxtSort` whose head daughter has inversion value
+`invSort` and whose mother has semantic type `semSort`. -/
+@[reducible] def saiConstruct (cxtSort invSort semSort : Srt) : Interpretation sig where
   U := SAIEnt
-  S := fun
-    | .cxt => .interrogativeSAI
-    | .mtr => .sign | .hd => .sign
-    | .invE => .invPlus
-    | .semE => .question
-  A := fun a u => match a, u with
+  S := λ
+    | .cxt => cxtSort
+    | .mtr | .hd => .sign
+    | .inv => invSort
+    | .sem => semSort
+  A := λ a u => match a, u with
     | .MTR, .cxt => some .mtr
     | .HDDTR, .cxt => some .hd
-    | .INV, .hd => some .invE     -- head is [INV +]
-    | .SEM, .mtr => some .semE    -- interrogative semantics, inherited from interrogative-cl
+    | .INV, .hd => some .inv
+    | .SEM, .mtr => some .sem
     | _, _ => none
   R := noRel
 
-instance : Fintype goodInterrogativeSAI.U := inferInstanceAs (Fintype SAIEnt)
-instance : DecidableEq goodInterrogativeSAI.U := inferInstanceAs (DecidableEq SAIEnt)
+instance (c i s : Srt) : Fintype (saiConstruct c i s).U := inferInstanceAs (Fintype SAIEnt)
 
-/-- The interrogative SAI satisfies the grammar — the inverted head (from `aux-initial-cxt`) and the
-question semantics (from `interrogative-cl`) are both inherited from one sort, like [sag-2010]'s
-filler-gap keystone but for the second paper's construction. -/
-example : goodInterrogativeSAI.Models saiGrammar := by decide
+instance (c i s : Srt) : DecidableEq (saiConstruct c i s).U := inferInstanceAs (DecidableEq SAIEnt)
 
-/-- The inverted-head restriction binds: an aux-initial construct with an `[INV −]` head violates the
-aux-initial principle. -/
-@[reducible] def saiUninverted : Interpretation sig where
-  U := SAIEnt
-  S := fun
-    | .cxt => .interrogativeSAI
-    | .mtr => .sign | .hd => .sign
-    | .invE => .invMinus    -- head not inverted
-    | .semE => .question
-  A := goodInterrogativeSAI.A
-  R := noRel
+/-- A polar interrogative satisfies the grammar exactly when its head is inverted and its
+mother is a question: the inversion comes from the aux-initial construction and the semantics
+from the interrogative clausal type, neither stated on the polar interrogative itself. -/
+theorem polarInterrogative_models :
+    (saiConstruct .polarIntCl .invPlus .question).Models saiGrammar ∧
+      ¬ (saiConstruct .polarIntCl .invMinus .question).Models saiGrammar ∧
+      ¬ (saiConstruct .polarIntCl .invPlus .austinean).Models saiGrammar := by
+  decide
 
-instance : Fintype saiUninverted.U := inferInstanceAs (Fintype SAIEnt)
-instance : DecidableEq saiUninverted.U := inferInstanceAs (DecidableEq SAIEnt)
-
-example : ¬ saiUninverted.Models saiGrammar := by decide
+/-- An aux-initial exclamative satisfies the grammar exactly when its head is inverted and its
+mother is a fact: the same inverted head with the exclamative type's semantics. -/
+theorem auxInitialExclamative_models :
+    (saiConstruct .auxInitialExclCl .invPlus .fact).Models saiGrammar ∧
+      ¬ (saiConstruct .auxInitialExclCl .invMinus .fact).Models saiGrammar ∧
+      ¬ (saiConstruct .auxInitialExclCl .invPlus .question).Models saiGrammar := by
+  decide
 
 end SagEtAl2020
