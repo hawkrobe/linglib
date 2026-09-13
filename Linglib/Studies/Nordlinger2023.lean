@@ -308,7 +308,7 @@ inductive ReciprocityType where
     `RadialConfig.inclusiveAlternativeOrdering`, melee failing
     `InclusiveAlternativeOrdering` by definition, …), not stipulated
     features of the labels. -/
-def ReciprocityType.Realizes {A : Type*} :
+def ReciprocityType.Realizes {A : Type*} [DecidableEq A] :
     ReciprocityType → (A → A → Prop) → Finset A → Prop
   | .strong,   R, X => Reciprocal.StrongReciprocity R X
   | .pairwise, R, X => Reciprocal.PairwiseConfig R X
