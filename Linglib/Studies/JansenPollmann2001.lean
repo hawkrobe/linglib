@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Data.Examples.JansenPollmann2001
 import Linglib.Semantics.Quantification.Numerals.Roundness
 import Linglib.Syntax.Category.Numeral.Composition
 import Mathlib.Data.Rat.Defs
@@ -13,50 +14,51 @@ import Mathlib.Tactic.Ring
 import Mathlib.Tactic.NormNum.GCD
 
 /-!
-# [jansen-pollmann-2001]: On Round Numbers
-[jansen-pollmann-2001] [sigurd-1988] [krifka-2007] [woodin-etal-2023]
+# Jansen and Pollmann (2001): On round numbers
 
-[jansen-pollmann-2001] operationalize roundness as *relative* suitability
-for approximation contexts (frequency after Dutch *ongeveer* 'about') and
-find it carried by four numerical properties — 10-ness, 2-ness, 5-ness,
-and (following [sigurd-1988]) 2½-ness: membership in `[k × (1–9 × 10ⁿ)]`
-(their p. 198). Their explanation (pp. 200–201) is the **principle of
-favourite quantities**: doubling and halving (sometimes followed by
-halving again) are the basic means of manipulating quantities, so the
-round-number unit inventory is the orbit of the decimal base powers under
-these operations — exactly the four k-families (`favUnit_iff`), and
-provably not the 3-family (`not_favUnit_three_mul_pow`; their p. 199:
-3-, 4-, 6-, 7-ness contribute nothing).
+This file formalizes [jansen-pollmann-2001]'s account of what makes a number round. Roundness
+is operationalized as relative suitability for approximation contexts, the frequency of a
+number after Dutch *ongeveer* 'about', and is carried by four numerical properties: 10-ness,
+2-ness, 5-ness, and, following [sigurd-1988], 2½-ness, membership in the set
+`k × (1–9 × 10ⁿ)` for the respective `k` (p. 198), the substrate's `Roundness.HasKness`. The
+paper's explanation is the principle of favourite quantities (pp. 200–201): doubling and
+halving, sometimes followed by halving again, are the basic means of manipulating quantities,
+so the round units are the orbit of the decimal base powers under these operations, which
+`favUnit_iff` identifies with the four families and `not_favUnit_three_mul_pow` separates from
+the 3-family, whose contribution to frequency the paper finds to be nil (p. 199).
 
-Two-number approximative expressions (*about 5 or 6 books*) obey the
-**revised sequence rule** (their p. 197): the pair consists of consecutive
-members of an arithmetic sequence whose ratio and first member are
-`1×10ⁿ`, `2×10ⁿ`, or `½×10ⁿ`. Quarters, which do round single numbers
-(2½-ness), are absent from pairs (`quarter_unit_not_seqRatio`).
+Two-number approximative expressions, *about 5 or 6 books*, obey the revised sequence rule
+(pp. 196–197): the pair consists of consecutive members of an arithmetic sequence whose ratio
+and first member are `1 × 10ⁿ`, `2 × 10ⁿ`, or `½ × 10ⁿ`; `seqPair_iff` reduces the rule to a
+condition on the pair's difference, and `pair_rows` checks it against the paper's attested and
+starred pairs, including the quarter pair the revision drops. Quarters, which round single
+numbers, are thus absent from pairs (`quarter_unit_not_seqRatio`). The paper's regression of
+frequency on magnitude and the four properties stays in prose.
 
-Their definition allows the zeroth power (`Roundness.HasKness`);
-`Roundness.roundnessScore` follows [woodin-etal-2023]'s b ≥ 1
-restriction, which is k-ness with k scaled by ten. The divergence matters
-downstream: under the original, 15 has 5-ness
-(`fifteen_hasKness_five_not_fifty`) — roundness that the restricted variant,
-and hence `Precision.inferPrecisionMode`, misses at 15, 45, …. Their
-10-ness is the k = 1 family (divisors 10, 100, …) — their own example
-"70 has only 10-ness" — not the k = 10 family.
+## Implementation notes
 
-Their regression (frequency from magnitude n⁻¹, n⁻² plus the four
-properties, R² = 0.968, p. 200) stays prose per the no-regression-theorems
-rule, as does the FA operationalization itself.
+* The paper's definition allows the zeroth power; `Roundness.roundnessScore` follows
+  [woodin-etal-2023] in requiring the first, which is `k`-ness with `k` scaled by ten. The
+  divergence shows at 15, which has 5-ness under the paper's definition but not 50-ness
+  (`fifteen_hasKness_five_not_fifty`), so `Precision.inferPrecisionMode` misses it. The paper's
+  10-ness is the `k = 1` family, as its example *70 has only 10-ness* shows.
 
+## References
+
+* [jansen-pollmann-2001]
+* [sigurd-1988]
+* [woodin-etal-2023]
+* [hurford-1975]
 -/
 
 namespace JansenPollmann2001
 
-open Numerals.Roundness
+open Data.Examples Numerals.Roundness
 
-/-! ### The principle of favourite quantities (their pp. 200–201) -/
+/-! ### The principle of favourite quantities (pp. 200–201) -/
 
-/-- The basic quantity-manipulation operations: "doubling and halving
-(sometimes followed by halving again)". -/
+/-- The basic quantity-manipulation operations: doubling and halving, sometimes followed by
+halving again. -/
 inductive QuantityOp where
   /-- Leave the base quantity as is. -/
   | id
@@ -75,13 +77,12 @@ def QuantityOp.apply : QuantityOp → ℚ → ℚ
   | .half, q => q / 2
   | .halfAgain, q => q / 4
 
-/-- A favourite unit: a decimal base power manipulated by one quantity
-operation. -/
+/-- A favourite unit: a decimal base power manipulated by one quantity operation. -/
 def IsFavUnit (q : ℚ) : Prop :=
   ∃ (op : QuantityOp) (n : ℕ), q = op.apply (10 ^ n)
 
-/-- The favourite units are exactly the four k-ness families: powers of
-ten, their doubles, their halves, and their quarters. -/
+/-- The favourite units are exactly the four `k`-ness families: powers of ten, their doubles,
+their halves, and their quarters. -/
 theorem favUnit_iff (q : ℚ) :
     IsFavUnit q ↔
       ∃ n : ℕ, q = 10 ^ n ∨ q = 2 * 10 ^ n ∨ q = 10 ^ n / 2 ∨ q = 10 ^ n / 4 := by
@@ -99,11 +100,11 @@ theorem half_pow (n : ℕ) : (10 : ℚ) ^ (n + 1) / 2 = 5 * 10 ^ n := by
 theorem halfAgain_pow (n : ℕ) : (10 : ℚ) ^ (n + 1) / 4 = 5 / 2 * 10 ^ n := by
   rw [pow_succ]; ring
 
-/-- No quantity operation reaches the 3-family: the structural reason the
-roundness inventory has exactly four properties (their p. 199: 3-, 4-, 6-,
-7-ness contribute nothing to frequency). -/
+/-- No quantity operation reaches the 3-family: the structural reason the roundness inventory
+has exactly four properties, 3-, 4-, 6-, and 7-ness contributing nothing to frequency
+(p. 199). -/
 theorem not_favUnit_three_mul_pow (m : ℕ) : ¬ IsFavUnit (3 * 10 ^ m) := by
-  have h3 : ∀ j : ℕ, ¬ (3 ∣ 10 ^ j) := fun j hd => by
+  have h3 : ∀ j : ℕ, ¬ (3 ∣ 10 ^ j) := λ j hd => by
     have h1 := (Nat.Coprime.pow_right j (show Nat.Coprime 3 10 by norm_num)).eq_one_of_dvd hd
     omega
   rintro ⟨op, n, h⟩
@@ -118,13 +119,12 @@ theorem not_favUnit_three_mul_pow (m : ℕ) : ¬ IsFavUnit (3 * 10 ^ m) := by
     have hn : 12 * 10 ^ m = 10 ^ n := by exact_mod_cast h2
     exact h3 n ⟨4 * 10 ^ m, by omega⟩
 
-/-! ### The revised sequence rule (their pp. 196–197)
+/-! ### The revised sequence rule (pp. 196–197)
 
-Two-number approximative expressions ([about 5 or 6 books]) consist of
-consecutive members of an arithmetic sequence whose ratio equals its first
-member and is `1×10ⁿ`, `2×10ⁿ`, or `½×10ⁿ` (in ℕ, the half-family is
-`5×10ⁿ`). The original rule also allowed `¼×10ⁿ`; the revision drops it
-(quarter-ratio pairs are under 0.5% in all four corpora). -/
+Two-number approximative expressions consist of consecutive members of an arithmetic sequence
+whose ratio equals its first member and is `1 × 10ⁿ`, `2 × 10ⁿ`, or `½ × 10ⁿ`, in `ℕ` the
+family `5 × 10ⁿ`. The original rule also allowed `¼ × 10ⁿ`; the revision drops it, quarter-ratio
+pairs being under half a percent in all four corpora. -/
 
 /-- A ratio licensed by the revised sequence rule. -/
 def SeqRatio (r : ℕ) : Prop :=
@@ -133,59 +133,73 @@ def SeqRatio (r : ℕ) : Prop :=
 instance (r : ℕ) : Decidable (SeqRatio r) :=
   inferInstanceAs (Decidable (∃ n < 11, _ ∨ _ ∨ _))
 
-/-- The revised sequence rule: `[a, b]` are consecutive members of the
-sequence `r, 2r, 3r, …` for a licensed ratio `r`. -/
+/-- The revised sequence rule: `[a, b]` are consecutive members of the sequence `r, 2r, 3r, …`
+for a licensed ratio `r`. -/
 def SeqPair (a b : ℕ) : Prop :=
   ∃ r ≤ a, 0 < r ∧ SeqRatio r ∧ r ∣ a ∧ b = a + r
 
+/-- The ratio of a pair is its difference, so the rule is a condition on `b - a`. -/
+theorem seqPair_iff (a b : ℕ) :
+    SeqPair a b ↔ a < b ∧ b - a ≤ a ∧ SeqRatio (b - a) ∧ b - a ∣ a := by
+  constructor
+  · rintro ⟨r, hr, h0, hs, hd, rfl⟩
+    refine ⟨by omega, ?_, ?_, ?_⟩ <;> simpa using ‹_›
+  · rintro ⟨hab, hle, hs, hd⟩
+    exact ⟨b - a, hle, by omega, hs, hd, by omega⟩
+
 instance (a b : ℕ) : Decidable (SeqPair a b) :=
-  inferInstanceAs (Decidable (∃ r ≤ a, _ ∧ _ ∧ _ ∧ _))
+  decidable_of_iff _ (seqPair_iff a b).symm
 
--- Their p. 196 pairs: attested combinations conform to the rule,
--- their starred non-combinations do not, and the revision excludes
--- quarter-ratio pairs (their p. 197).
-example : SeqPair 3 4 := by decide      -- sequence 1, 2, 3, 4
-example : SeqPair 40 50 := by decide    -- sequence 10, 20, …, 50
-example : SeqPair 18 20 := by decide    -- sequence 2, 4, …, 20
-set_option maxRecDepth 2048 in
-example : SeqPair 100 150 := by decide  -- sequence 50, 100, 150
-example : ¬ SeqPair 1 3 := by decide    -- [*about 1 or 3]
-example : ¬ SeqPair 5 7 := by decide    -- [*about 5 or 7]
-example : ¬ SeqPair 6 9 := by decide    -- [*about 6 or 9]
-example : ¬ SeqPair 40 80 := by decide  -- [*about 40 or 80]
-set_option maxRecDepth 2048 in
-example : ¬ SeqPair 100 125 := by decide -- ratio ¼ × 10²: excluded
-
-/-- Quarters split single-number roundness from pair formation: `25` is a
-favourite unit (twice-halved `10²`, whence 2½-ness) but not a licensed
-sequence ratio — their pp. 197, 199–200 asymmetry. -/
+/-- Quarters split single-number roundness from pair formation: `25` is a favourite unit, twice
+halved `10²`, whence 2½-ness, but not a licensed sequence ratio (pp. 197, 199–200). -/
 theorem quarter_unit_not_seqRatio : IsFavUnit 25 ∧ ¬ SeqRatio 25 :=
   ⟨⟨.halfAgain, 2, by norm_num [QuantityOp.apply]⟩, by decide⟩
 
-/-! ### k-ness and the b ≥ 1 restriction -/
+/-! ### The rows -/
 
--- Their examples: "40 has 10-ness, 2-ness, and 5-ness; 8 has 10-ness and
--- 2-ness but no 5-ness; 300 has 10-ness and 5-ness but no 2-ness; 70 has
--- only 10-ness; 61 has none."
-example : HasKness 1 40 ∧ HasKness 2 40 ∧ HasKness 5 40 := by decide
-example : HasKness 1 8 ∧ HasKness 2 8 ∧ ¬ HasKness 5 8 := by decide
-example : HasKness 1 300 ∧ HasKness 5 300 ∧ ¬ HasKness 2 300 := by decide
-example : HasKness 1 70 ∧ ¬ HasKness 2 70 ∧ ¬ HasKness 5 70 := by decide
-example : ¬ HasKness 1 61 ∧ ¬ HasKness 2 61 ∧ ¬ HasKness 5 61 := by decide
+/-- A two-number approximative expression of the paper with its acceptability. -/
+def pairRow (r : LinguisticExample) : Option (ℕ × ℕ × Bool) := do
+  let a ← r.nat? "first"
+  let b ← r.nat? "second"
+  pure (a, b, decide (r.judgment = .acceptable))
 
-/-- The divergence that matters downstream: under the original definition
-15 has 5-ness (15 = 3 × 5 × 10⁰), which the b ≥ 1 variant, 50-ness,
-drops — the source of the 15/45-idealization noted at
-`Precision.inferPrecisionMode`. -/
+/-- The attested and starred pairs of pp. 196–197. -/
+def pairData : List (ℕ × ℕ × Bool) := Examples.all.filterMap pairRow
+
+/-- The attested pairs obey the revised sequence rule and the starred pairs, and the quarter
+pair, do not. -/
+theorem pair_rows : ∀ d ∈ pairData, d.2.2 = true ↔ SeqPair d.1 d.2.1 := by decide +kernel
+
+/-- A single number with the three properties the paper reads off it: 10-ness, 2-ness, and
+5-ness. -/
+def numberRow (r : LinguisticExample) : Option (ℕ × Bool × Bool × Bool) := do
+  let n ← r.nat? "n"
+  let ten ← r.parse? "tenness" [("true", true), ("false", false)]
+  let two ← r.parse? "twoness" [("true", true), ("false", false)]
+  let five ← r.parse? "fiveness" [("true", true), ("false", false)]
+  pure (n, ten, two, five)
+
+/-- The numbers of p. 198. -/
+def numberData : List (ℕ × Bool × Bool × Bool) := Examples.all.filterMap numberRow
+
+/-- The paper's readings of 10-ness, 2-ness, and 5-ness, 10-ness being the `k = 1` family. -/
+theorem number_rows : ∀ d ∈ numberData,
+    (d.2.1 = true ↔ HasKness 1 d.1) ∧ (d.2.2.1 = true ↔ HasKness 2 d.1) ∧
+      (d.2.2.2 = true ↔ HasKness 5 d.1) := by
+  decide +kernel
+
+/-! ### `k`-ness and the `b ≥ 1` restriction -/
+
+/-- The divergence that matters downstream: under the paper's definition 15 has 5-ness, as
+`15 = 3 × 5 × 10⁰`, which the `b ≥ 1` variant, 50-ness, drops. -/
 theorem fifteen_hasKness_five_not_fifty : HasKness 5 15 ∧ ¬ HasKness 50 15 := by
   decide
 
 /-! ### 10-ness as expression shape ([hurford-1975]) -/
 
-/-- 10-ness is two-word expressibility: `n` has 10-ness iff it is the
-value of a digit×base PHRASE — [hurford-1975]'s `[NUMBER M]` with a digit
-NUMBER and a pure ten-power M (*forty*, *four hundred*, …). The
-favourite-quantity properties are facts about numeral expression shape. -/
+/-- 10-ness is two-word expressibility: `n` has 10-ness iff it is the value of a digit × base
+phrase, [hurford-1975]'s `[NUMBER M]` with a digit NUMBER and a pure ten-power M, *forty*,
+*four hundred*. The favourite-quantity properties are facts about numeral expression shape. -/
 theorem hasKness_ten_iff_phrase (n : ℕ) :
     HasKness 10 n ↔ ∃ m ≤ 8, ∃ k,
       n = (Syntax.Numeral.Phrase.mk (.tally m) (.tenPow k)).value := by
