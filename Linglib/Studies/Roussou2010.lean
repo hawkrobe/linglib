@@ -1,219 +1,268 @@
 import Linglib.Fragments.Greek.StandardModern.Complementizers
 import Linglib.Semantics.Questions.Hamblin
-import Linglib.Semantics.Polarity.Licensing
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Composition.Tree
-import Linglib.Studies.Chierchia1984
+import Linglib.Data.Examples.Roussou2010
 
 /-!
-# Roussou 2010: Selecting complementizers
-[roussou-2010]
+# Roussou (2010): Selecting complementizers
 
-Modern Greek complementizers in their dual capacity of being selected
-and of selecting. *oti*, *pu*, and *an* are nominal elements merging
-OUTSIDE the embedded clause (under N, as the matrix verb's internal
-argument); *na* merges INSIDE the lower C domain and re-opens the EPP
-position. The paper's informal semantic glosses are formalized here on
-their classical anchors, each denotation carrying its distribution:
+This file formalizes the paper's account of the Modern Greek complementizers as nominal
+elements, each with a lexical specification that fixes what it can embed and what can embed it
+(`profile`). *oti*, *an*, and *pu* merge outside the clause, as the internal argument of the
+matrix verb, and take a proposition: *oti* is an indefinite over propositions, *an* an
+indefinite that is a polarity item, and *pu* a definite, which is why a *pu*-clause is factive,
+its content presupposed and projecting through negation (`puClause_factive`,
+`pu_projects_through_negation`), while the *oti*-clause of the same verb carries only the weak,
+deniable presupposition the verb supplies. *na* merges inside the clause and reopens the
+subject position, so a *na*-clause is a property rather than a proposition and cannot be
+embedded under the outside mergers (`comp_over_na_type_clash`). The distribution follows from
+the specifications and the lexical semantics of the selecting predicate: *an* needs a binder,
+an interrogative predicate or a matrix negation or question over a proposition-taking one
+(`polar_needs_binder`); *pu* needs an emotive factive, a recollection reading, or a focused
+predicate; *na* is taken freely by volitionals and verbs of knowing, with control, and by
+epistemic predicates only in the present tense (`epistemic_na_present`). The paper's examples
+are rows, read by `rows` as the analysis predicts.
 
-- *pu* is definite ([christidis-1986]; the factive-definite lineage of
-  [kiparsky-kiparsky-1970]): `puClause` presupposes the proposition it
-  locates, so factivity IS the definite's existence presupposition —
-  projecting through negation (ex. 15b) where the presupposition-free
-  `otiClause` is freely deniable (ex. 16).
-- *an* denotes the Hamblin polar set {p, ¬p} (the paper adopts
-  [adger-quer-2001]'s (6b), after [hamblin-1973b]): `anClause` is the
-  inquisitive polar question — informationally inert, so some operator
-  must close the open set. That polarity requirement is `anItem`, an
-  NPI over the propositional domain whose licensing routes through the
-  substrate's [zwarts-1998] / [van-rooy-2003-npi] table: matrix
-  negation (ex. 11), question — supplied lexically by rogatives
-  (ex. 10) or structurally (ex. 2c) — and incorporated-negation
-  predicates ('doubt', 'forget', ex. 14). True/False predicates
-  ([adger-quer-2001]; *ipothéto* 'assume', ex. 7) are veridical
-  embedders: no row of the table corresponds to them, and none could —
-  that absence is the account's rendering of their blocking effect.
-- *na*-clauses denote properties, [chierchia-1984]'s control-complement
-  layer, despite finite morphology (MG lacks infinitives): control
-  (ex. 25–26) is the matrix argument saturating the open slot, and the
-  outside mergers cannot embed a na-clause because they consume
-  propositions — a type-level application failure.
+## Implementation notes
 
-Selection is thus not one-to-one (ex. 1–3): epistemic *pistévo* takes
-*na* only with present-tense matrix inflection (ex. 23) and focus
-licenses otherwise unselected *pu* (ex. 22) — both left as prose.
+The matrix predicates are entries of the Greek fragment, classified for selection as the paper
+classifies them; the classification is the paper's, with the recollection sense of *thimáme*
+the fragment's stative entry, and *nomízo*'s need of an operator for its *na*-complement a
+lexical mark. The type-level incompatibility of the outside mergers with *na* is stated on the
+composition substrate's types, propositions as `t` and properties as `⟨e,t⟩`. Control, the
+dynamic modal reading of *kséro* with *na*, the Romance and English parallels, and the paper's
+argument against uninterpretable features are not formalized.
 
-## Main declarations
+## References
 
-- `PropQuant`, `MergeSite`, `CProfile`, `profile` — the lexical
-  specification table (§3–4)
-- `otiClause`, `puClause`, `anClause` — the three denotations;
-  `puClause_factive`, `pu_projects_through_negation`,
-  `puClause_strongEntails_oti`, `anClause_not_informative`
-- `anItem` — *an* as `Polarity.Item`; `anItem_licensed` routes its
-  distribution through `LicensingContext.licenses`
-- `naDenotation`, `na_layer_diverges_from_coding`, `comp_over_na_type_clash`
-  — the property-layer analysis of *na*
-- `factive_iff_definite` — the fragment's `factive` flag coincides
-  with definite propositional quantification
+* [roussou-2010]
+* [christidis-1986]
+* [kiparsky-kiparsky-1970]
+* [adger-quer-2001]
+* [hamblin-1973b]
 -/
 
 namespace Roussou2010
 
-open Greek.StandardModern.Complementizers
-open Presupposition
+open Greek.StandardModern.Complementizers Presupposition Data.Examples
 open Semantics.Composition.Tree
-open Semantics.Composition.TypeShifting
 
-/-! ### The lexical specification (§3–4) -/
+/-! ### The lexical specification -/
 
-/-- Propositional quantification contributed by an outside-merging
-complementizer: definite (binds a single proposition, locating it to a
-reference point) vs indefinite (ranges over a set of propositions). -/
-inductive PropQuant where
-  | definite
+/-- The quantification over propositions an outside-merging complementizer contributes: an
+indefinite ranging over a set of propositions, a polar indefinite requiring a binder, or a
+definite binding a single proposition. -/
+inductive Quantification
   | indefinite
+  | polar
+  | definite
   deriving DecidableEq, Repr
 
-/-- Merge site of a clause-typing element: outside the embedded clause
-(under N, as the matrix verb's internal argument — *oti*, *pu*, *an*)
-or inside its lower C domain (*na*, ex. 28). -/
-inductive MergeSite where
-  | outside
+/-- The lexical specification of a clause-typing element: merging outside the clause, as the
+matrix verb's argument, with a quantification over propositions, or inside its lower C domain,
+binding no propositional variable. -/
+inductive Spec
+  | outside (q : Quantification)
   | inside
   deriving DecidableEq, Repr
 
-/-- The lexical specification §4 attributes to a clause-typer: merge
-site, propositional quantification (`none` for inside-mergers, which
-bind no propositional variable), and polarity sensitivity. -/
-structure CProfile where
-  site : MergeSite
-  quant : Option PropQuant
-  polar : Bool := false
-  deriving DecidableEq, Repr
-
-/-- The MG assignment (§3.1, §4): *oti* indefinite, *an* polar
-indefinite, *pu* definite — all outside — and *na* inside with no
-propositional quantification. -/
-def profile (c : Complementizer) : Option CProfile :=
-  if c = oti then some { site := .outside, quant := some .indefinite }
-  else if c = an then
-    some { site := .outside, quant := some .indefinite, polar := true }
-  else if c = pu then some { site := .outside, quant := some .definite }
-  else if c = na then some { site := .inside, quant := none }
+/-- The specification of the Modern Greek complementizers: *oti* indefinite, *an* polar, *pu*
+definite, all outside, and *na* inside. -/
+def profile (c : Complementizer) : Option Spec :=
+  if c = oti then some (.outside .indefinite)
+  else if c = an then some (.outside .polar)
+  else if c = pu then some (.outside .definite)
+  else if c = na then some .inside
   else none
 
-/-- Definiteness is what the fragment's lexical `factive` flag records
-([christidis-1986]: *pu* as the definite article of the propositional
-domain). One way only: the factive doxastics (*kséro*, *katalavéno*)
-take indefinite *oti* (ex. 19), with weak, deniable, verb-derived
-factivity (ex. 15). -/
+/-- The fragment's lexical factivity is definiteness: the one definite complementizer is the
+one factive one, the factive reading of an *oti*-clause being the verb's. -/
 theorem factive_iff_definite :
-    ∀ c ∈ [oti, pu, an, na],
-      (c.factive = some true ↔ (profile c).bind (·.quant) = some .definite) := by
+    ∀ c ∈ complementizers,
+      (c.factive = some true ↔ profile c = some (.outside .definite)) := by
   decide
 
 /-! ### The denotations -/
 
 variable {W : Type*}
 
-/-- The oti-clause: a plain indefinite over propositions —
-presupposition-free assertion of its content. Any factive flavor is
-verb-derived and deniable (ex. 15–16). -/
-def otiClause (p : Set W) : PartialProp W :=
-  { presup := fun _ => True, assertion := (· ∈ p) }
+/-- The *oti*-clause: an indefinite over propositions, asserting its content without
+presupposition. -/
+def otiClause (p : Set W) : PartialProp W := { presup := λ _ => True, assertion := (· ∈ p) }
 
-/-- The pu-clause: a definite over propositions ([christidis-1986];
-[kiparsky-kiparsky-1970]'s factive-definite) — it presupposes the
-proposition it locates to the reference point. -/
-def puClause (p : Set W) : PartialProp W :=
-  { presup := (· ∈ p), assertion := (· ∈ p) }
+/-- The *pu*-clause: a definite over propositions, presupposing the proposition it locates. -/
+def puClause (p : Set W) : PartialProp W := { presup := (· ∈ p), assertion := (· ∈ p) }
 
-/-- The an-clause: the Hamblin polar set {p, ¬p} (the paper's (6b),
-after [adger-quer-2001] and [hamblin-1973b]), as the inquisitive polar
-question. -/
+/-- The *an*-clause: the polar set of the proposition and its negation. -/
 def anClause (p : Set W) : Question W := Question.polar p
 
-/-- Factivity IS the definite's existence presupposition: the
-pu-clause is defined at a world exactly when its content holds
-there. -/
-theorem puClause_factive (p : Set W) (w : W) :
-    (puClause p).defined w ↔ w ∈ p := Iff.rfl
+/-- Factivity is the definite's presupposition: the *pu*-clause is defined at a world exactly
+when its content holds there. -/
+theorem puClause_factive (p : Set W) (w : W) : (puClause p).defined w ↔ w ∈ p := Iff.rfl
 
-/-- ex. 15b: the definite's presupposition projects through internal
-negation — denying a pu-clause still commits to its content — while
-the oti-clause stays defined everywhere, so denial carries no factive
-residue (ex. 16). -/
+/-- The presupposition of the *pu*-clause projects through negation, so denying it still
+commits to its content, while the *oti*-clause is defined everywhere and its denial carries no
+factive residue. -/
 theorem pu_projects_through_negation (p : Set W) (w : W) :
     ((PartialProp.neg (puClause p)).defined w ↔ w ∈ p) ∧
-      (PartialProp.neg (otiClause p)).defined w := by
-  constructor
-  · exact Iff.rfl
-  · exact trivial
+      (PartialProp.neg (otiClause p)).defined w :=
+  ⟨Iff.rfl, trivial⟩
 
-/-- ex. 17 (*thimáme oti/pu*): the pu-reading strong-entails the
-oti-reading — Terrell's strong vs weak presupposition as
-`strongEntails`. -/
-theorem puClause_strongEntails_oti (p : Set W) :
-    (puClause p).strongEntails (otiClause p) :=
-  fun _ _ ha => ⟨trivial, ha⟩
+/-- Strong against weak presupposition: the *pu*-clause strongly entails the *oti*-clause. -/
+theorem puClause_strongEntails_oti (p : Set W) : (puClause p).strongEntails (otiClause p) :=
+  λ _ _ ha => ⟨trivial, ha⟩
 
-/-- The an-clause is informationally inert: it asserts nothing, only
-raising the {p, ¬p} issue. The polarity requirement is the demand that
-some operator close this open set. -/
-theorem anClause_not_informative (p : Set W) :
-    ¬ (anClause p).isInformative :=
+/-- The *an*-clause asserts nothing, raising only the issue its binder must settle. -/
+theorem anClause_not_informative (p : Set W) : ¬ (anClause p).isInformative :=
   Question.not_isInformative_polar p
 
-/-! ### *an* as a polarity item (§2) -/
-
-/-- *an* as an NPI over the propositional domain: weak licensor
-requirement, with the paper's binder inventory mapped onto the
-substrate's licensing rows — matrix negation (ex. 11), question,
-whether supplied lexically by a rogative (ex. 10) or structurally
-(ex. 2c), and incorporated-negation predicates (*amfivállo* 'doubt',
-*ksexnó* 'forget', ex. 14). True/False predicates (ex. 7) are
-veridical embedders: no licensing row corresponds to them, which is
-the account's rendering of their blocking effect. -/
-def anItem : Polarity.Item where
-  form := "an"
-  baseForce := .existential
-  licensor := some .weak
-  licensingContexts := [.negation, .question, .doubtVerb]
-
-/-- *an*'s polarity is a bona fide licensor requirement. -/
-theorem anItem_isNPI : anItem.isNPI := by decide
-
-/-- Each context of the inventory in fact licenses *an* under the
-substrate's keystone ([zwarts-1998] strength on the signature rows,
-[van-rooy-2003-npi] entropy on questions). -/
-theorem anItem_licensed :
-    ∀ c ∈ anItem.licensingContexts, c.licenses anItem := by
-  decide
-
-/-! ### *na* and the property layer (§3.2, §4) -/
-
-/-- *na* re-opens the EPP position, so the na-clause denotes a
-property — [chierchia-1984]'s control-complement layer — despite
-finite morphology. -/
-def naDenotation : ComplementDenotation := .property
-
-/-- MG detaches the property layer from nonfinite coding: the
-coding-based mapping sends finite clauses to the propositional layer
-(`ComplementType.denotation`), but the finite na-clause is a
-property. Control (ex. 25–26) is the matrix argument saturating the
-open slot. -/
-theorem na_layer_diverges_from_coding :
-    naDenotation = .property ∧
-    ComplementType.finiteClause.denotation = some .proposition := by
-  exact ⟨rfl, rfl⟩
-
-/-- The merge-site split cashed out at type level (p. 597): an outside
-merger consumes a proposition (`.t`), while the na-clause — its EPP
-re-opened — is a property, `.fn .e .t`; application is undefined
-whatever the merger returns. Relative *pu* + *na* (ex. 31) escapes
-because relative *pu* binds an individual variable instead. -/
+/-- An outside merger takes a proposition, and a *na*-clause, its subject position reopened,
+is a property: application is undefined whatever the merger returns. -/
 theorem comp_over_na_type_clash (b : Semantics.Composition.Ty) :
     canApply (.fn .t b) (.fn .e .t) = none := rfl
+
+/-! ### Selection -/
+
+/-- The classes of selecting predicate the paper distinguishes: interrogatives, which bind the
+polar complementizer themselves; verbs of knowing, which take any complement; epistemic verbs,
+which take *na* only in the present tense, some of them only under an operator; volitionals,
+which take *na* alone; emotive factives, which take *pu* alone; emotives that take *pu* on a
+factive and *oti* on a non-factive reading; factive non-emotives, which take *oti* and not
+*pu*; verbs of saying; and the recollection sense of *remember*, which takes *pu*. -/
+inductive Class
+  | interrogative
+  | knowing
+  | epistemic (needsOperator : Bool)
+  | volitional
+  | emotiveFactive
+  | emotive
+  | factive
+  | saying
+  | recollection
+  deriving DecidableEq, Repr
+
+/-- The paper's classification of the fragment's predicates. -/
+def classOf (v : Verb) : Option Class :=
+  if v == anarotjeme then some .interrogative
+  else if v == ksero then some .knowing
+  else if v == thimame then some .knowing
+  else if v == thimameStat then some .recollection
+  else if v == pistevo then some (.epistemic false)
+  else if v == nomizo then some (.epistemic true)
+  else if v == thelo then some .volitional
+  else if v == xerome then some .emotiveFactive
+  else if v == anisixo then some .emotive
+  else if v == paradhexome then some .factive
+  else if v == antilamvanome then some .factive
+  else if v == leo then some .saying
+  else none
+
+/-- A selection configuration: the predicate's class, the complementizer, and the matrix
+operators and tenses the paper finds relevant. -/
+structure Config where
+  cls : Class
+  comp : Complementizer
+  negated : Bool
+  question : Bool
+  focused : Bool
+  past : Bool
+  embeddedPast : Bool
+  deriving DecidableEq, Repr
+
+/-- The class takes a propositional complement, so an indefinite complementizer. -/
+def Class.TakesProposition : Class → Prop
+  | .knowing | .epistemic _ | .emotive | .factive | .saying | .recollection => True
+  | .interrogative | .volitional | .emotiveFactive => False
+
+instance : DecidablePred Class.TakesProposition
+  | .knowing | .epistemic _ | .emotive | .factive | .saying | .recollection => isTrue trivial
+  | .interrogative | .volitional | .emotiveFactive => isFalse id
+
+/-- The class takes a set of propositions under an operator: the proposition-taking classes
+other than the epistemic ones. -/
+def Class.TakesSet : Class → Prop
+  | .knowing | .factive | .saying => True
+  | _ => False
+
+instance : DecidablePred Class.TakesSet
+  | .knowing | .factive | .saying => isTrue trivial
+  | .interrogative | .epistemic _ | .volitional | .emotiveFactive | .emotive | .recollection =>
+    isFalse id
+
+/-- The complementizer is licensed in the configuration: *oti* by a proposition-taking
+predicate; *an* by an interrogative predicate, or by a matrix negation or question over a
+predicate taking a set of propositions; *pu* by an emotive factive, an emotive, a recollection
+reading, or a focused predicate; *na* by a volitional, by a verb of knowing with a present-tense
+complement, or by a present-tense epistemic, with an operator when the verb demands one. -/
+def Licensed (k : Config) : Prop :=
+  (k.comp = oti ∧ k.cls.TakesProposition) ∨
+  (k.comp = an ∧ (k.cls = .interrogative ∨ (k.cls.TakesSet ∧ (k.negated ∨ k.question)))) ∨
+  (k.comp = pu ∧ (k.cls = .emotiveFactive ∨ k.cls = .emotive ∨ k.cls = .recollection ∨
+    k.focused)) ∨
+  (k.comp = na ∧ (k.cls = .volitional ∨ (k.cls = .knowing ∧ ¬ k.embeddedPast) ∨
+    ∃ b, k.cls = .epistemic b ∧ ¬ k.past ∧ (¬ b ∨ k.negated ∨ k.question)))
+
+instance (k : Config) : Decidable (Licensed k) := by unfold Licensed; infer_instance
+
+/-- The polar complementizer needs a binder: an interrogative predicate, or a matrix negation
+or question. -/
+theorem polar_needs_binder (k : Config) (hc : k.comp = an) (h : Licensed k) :
+    k.cls = .interrogative ∨ k.negated ∨ k.question := by
+  have hne : ∀ c ∈ [oti, pu, na], an ≠ c := by decide
+  rcases h with ⟨h₁, _⟩ | ⟨_, h₂ | ⟨_, h₃⟩⟩ | ⟨h₁, _⟩ | ⟨h₁, _⟩
+  · exact absurd (hc ▸ h₁) (hne oti (by simp))
+  · exact .inl h₂
+  · exact .inr h₃
+  · exact absurd (hc ▸ h₁) (hne pu (by simp))
+  · exact absurd (hc ▸ h₁) (hne na (by simp))
+
+/-- An epistemic predicate takes *na* only in the present tense. -/
+theorem epistemic_na_present (k : Config) (b : Bool) (hc : k.comp = na)
+    (hk : k.cls = .epistemic b) (h : Licensed k) : ¬ k.past := by
+  have hne : ∀ c ∈ [oti, an, pu], na ≠ c := by decide
+  rcases h with ⟨h₁, _⟩ | ⟨h₁, _⟩ | ⟨h₁, _⟩ | ⟨_, h₂ | ⟨h₂, _⟩ | ⟨_, _, h₃, _⟩⟩
+  · exact absurd (hc ▸ h₁) (hne oti (by simp))
+  · exact absurd (hc ▸ h₁) (hne an (by simp))
+  · exact absurd (hc ▸ h₁) (hne pu (by simp))
+  · exact absurd (hk ▸ h₂) (by simp)
+  · exact absurd (hk ▸ h₂) (by simp)
+  · exact h₃
+
+/-! ### The rows -/
+
+/-- The fragment entry named by a row. -/
+def verbOf : String → Option Verb
+  | "ksero" => some ksero
+  | "anarotjeme" => some anarotjeme
+  | "xerome" => some xerome
+  | "thelo" => some thelo
+  | "pistevo" => some pistevo
+  | "nomizo" => some nomizo
+  | "thimame" => some thimame
+  | "thimameStat" => some thimameStat
+  | "paradhexome" => some paradhexome
+  | "anisixo" => some anisixo
+  | "leo" => some leo
+  | _ => none
+
+/-- A row's configuration and judgment. -/
+def datum (r : LinguisticExample) : Option (Config × Judgment) := do
+  let v ← (r.feature? "verb").bind verbOf
+  let cls ← classOf v
+  let comp ← r.parse? "complementizer" [("oti", oti), ("an", an), ("pu", pu), ("na", na)]
+  let flag (key : String) : Bool := r.feature? key = some "yes"
+  pure (⟨cls, comp, flag "negation", flag "question", flag "focus",
+    r.feature? "tense" = some "past", r.feature? "embeddedTense" = some "past"⟩, r.judgment)
+
+/-- The paper's examples. -/
+def data : List (Config × Judgment) := Examples.all.filterMap datum
+
+/-- Every row has its configuration. -/
+theorem data_length : data.length = Examples.all.length := by decide +kernel
+
+/-- The examples are acceptable exactly when their complementizer is licensed. -/
+theorem rows : ∀ d ∈ data, d.2 = .acceptable ↔ Licensed d.1 := by
+  decide +kernel
 
 end Roussou2010

@@ -1,0 +1,560 @@
+[
+  {
+    "id": "roussou2010_ex1a",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(1a)"},
+    "language": "mode1248",
+    "primaryText": "Ksero oti o Janis elise to provlima.",
+    "glossedTokens": [],
+    "translation": "I know that John solved the problem.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "ksero"],
+      ["complementizer", "oti"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roussou2010_ex1a-an",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(1a-an)"},
+    "language": "mode1248",
+    "primaryText": "Ksero an o Janis elise to provlima.",
+    "glossedTokens": [],
+    "translation": "I know if John solved the problem.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["verb", "ksero"],
+      ["complementizer", "an"]
+    ],
+    "comment": "The polar complementizer has no binder."
+  },
+  {
+    "id": "roussou2010_ex1b",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(1b)"},
+    "language": "mode1248",
+    "primaryText": "Anarotjeme an o Janis elise to provlima.",
+    "glossedTokens": [],
+    "translation": "I wonder if John solved the problem.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "anarotjeme"],
+      ["complementizer", "an"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roussou2010_ex1b-oti",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(1b-oti)"},
+    "language": "mode1248",
+    "primaryText": "Anarotjeme oti o Janis elise to provlima.",
+    "glossedTokens": [],
+    "translation": "I wonder that John solved the problem.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["verb", "anarotjeme"],
+      ["complementizer", "oti"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roussou2010_ex1c",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(1c)"},
+    "language": "mode1248",
+    "primaryText": "Xerome pu o Janis elise to provlima.",
+    "glossedTokens": [],
+    "translation": "I am glad that John solved the problem.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "xerome"],
+      ["complementizer", "pu"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roussou2010_ex1c-oti",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(1c-oti)"},
+    "language": "mode1248",
+    "primaryText": "Xerome oti o Janis elise to provlima.",
+    "glossedTokens": [],
+    "translation": "I am glad that John solved the problem.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["verb", "xerome"],
+      ["complementizer", "oti"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roussou2010_ex1d",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(1d)"},
+    "language": "mode1248",
+    "primaryText": "Thelo na liso to provlima.",
+    "glossedTokens": [],
+    "translation": "I want to solve the problem.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "thelo"],
+      ["complementizer", "na"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roussou2010_ex1d-oti",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(1d-oti)"},
+    "language": "mode1248",
+    "primaryText": "Thelo oti liso to provlima.",
+    "glossedTokens": [],
+    "translation": "I want that I solve the problem.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["verb", "thelo"],
+      ["complementizer", "oti"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roussou2010_ex2a",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(2a)"},
+    "language": "mode1248",
+    "primaryText": "Ksero na aghapao.",
+    "glossedTokens": [],
+    "translation": "I know how to love.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "ksero"],
+      ["complementizer", "na"]
+    ],
+    "comment": "Dynamic modal reading with control."
+  },
+  {
+    "id": "roussou2010_ex2b-an",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(2b-an)"},
+    "language": "mode1248",
+    "primaryText": "Dhen ksero an elise to provlima.",
+    "glossedTokens": [],
+    "translation": "I do not know if he solved the problem.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "ksero"],
+      ["complementizer", "an"],
+      ["negation", "yes"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roussou2010_ex2b-oti",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(2b-oti)"},
+    "language": "mode1248",
+    "primaryText": "Dhen ksero oti elise to provlima.",
+    "glossedTokens": [],
+    "translation": "I do not know that he solved the problem.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "ksero"],
+      ["complementizer", "oti"],
+      ["negation", "yes"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roussou2010_ex2c-an",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(2c-an)"},
+    "language": "mode1248",
+    "primaryText": "Kseris an elise to provlima?",
+    "glossedTokens": [],
+    "translation": "Do you know if he solved the problem?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "ksero"],
+      ["complementizer", "an"],
+      ["question", "yes"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roussou2010_ex2c-oti",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(2c-oti)"},
+    "language": "mode1248",
+    "primaryText": "Kseris oti elise to provlima?",
+    "glossedTokens": [],
+    "translation": "Do you know that he solved the problem?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "ksero"],
+      ["complementizer", "oti"],
+      ["question", "yes"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roussou2010_ex3a-oti",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(3a-oti)"},
+    "language": "mode1248",
+    "primaryText": "Pistevo oti elise to provlima.",
+    "glossedTokens": [],
+    "translation": "I believe that he solved the problem.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "pistevo"],
+      ["complementizer", "oti"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roussou2010_ex3a-na",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(3a-na)"},
+    "language": "mode1248",
+    "primaryText": "Pistevo na elise to provlima.",
+    "glossedTokens": [],
+    "translation": "I believe (hope) that he solved the problem.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "pistevo"],
+      ["complementizer", "na"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roussou2010_ex3b-oti",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(3b-oti)"},
+    "language": "mode1248",
+    "primaryText": "Pistepsa oti elise to provlima.",
+    "glossedTokens": [],
+    "translation": "I believed that he had solved the problem.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "pistevo"],
+      ["complementizer", "oti"],
+      ["tense", "past"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roussou2010_ex3b-na",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(3b-na)"},
+    "language": "mode1248",
+    "primaryText": "Pistepsa na elise to provlima.",
+    "glossedTokens": [],
+    "translation": "I believed that he had solved the problem.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["verb", "pistevo"],
+      ["complementizer", "na"],
+      ["tense", "past"]
+    ],
+    "comment": "Past tense on the epistemic verb blocks na."
+  },
+  {
+    "id": "roussou2010_ex16a",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(16a)"},
+    "language": "mode1248",
+    "primaryText": "O Janis dhen pistevi oti i Maria efije.",
+    "glossedTokens": [],
+    "translation": "John does not believe that Mary left.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "pistevo"],
+      ["complementizer", "oti"],
+      ["negation", "yes"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roussou2010_ex17-oti",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(17-oti)"},
+    "language": "mode1248",
+    "primaryText": "Thimame oti dhjavaze poli.",
+    "glossedTokens": [],
+    "translation": "I remember that he used to read a lot.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "thimame"],
+      ["complementizer", "oti"]
+    ],
+    "comment": "Weak, deniable presupposition."
+  },
+  {
+    "id": "roussou2010_ex17-pu",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(17-pu)"},
+    "language": "mode1248",
+    "primaryText": "Thimame pu dhjavaze poli.",
+    "glossedTokens": [],
+    "translation": "I remember him reading a lot.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "thimameStat"],
+      ["complementizer", "pu"]
+    ],
+    "comment": "Strong presupposition: the content cannot be denied."
+  },
+  {
+    "id": "roussou2010_ex19a",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(19a)"},
+    "language": "mode1248",
+    "primaryText": "O Janis paradextike oti eklepse ta lefta.",
+    "glossedTokens": [],
+    "translation": "John admitted that he had stolen the money.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "paradhexome"],
+      ["complementizer", "oti"],
+      ["tense", "past"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roussou2010_ex19a-pu",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(19a-pu)"},
+    "language": "mode1248",
+    "primaryText": "O Janis paradextike pu eklepse ta lefta.",
+    "glossedTokens": [],
+    "translation": "John admitted that he had stolen the money.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["verb", "paradhexome"],
+      ["complementizer", "pu"],
+      ["tense", "past"]
+    ],
+    "comment": "A factive non-emotive predicate does not take pu."
+  },
+  {
+    "id": "roussou2010_ex20a",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(20a)"},
+    "language": "mode1248",
+    "primaryText": "O Janis xerete pu efijes.",
+    "glossedTokens": [],
+    "translation": "John is glad that you left.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "xerome"],
+      ["complementizer", "pu"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roussou2010_ex20a-oti",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(20a-oti)"},
+    "language": "mode1248",
+    "primaryText": "O Janis xerete oti efijes.",
+    "glossedTokens": [],
+    "translation": "John is glad that you left.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["verb", "xerome"],
+      ["complementizer", "oti"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roussou2010_ex20b-pu",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(20b-pu)"},
+    "language": "mode1248",
+    "primaryText": "O Janis anisixi pu efijes.",
+    "glossedTokens": [],
+    "translation": "John worries about the fact that you left.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "anisixo"],
+      ["complementizer", "pu"]
+    ],
+    "comment": "Factive reading."
+  },
+  {
+    "id": "roussou2010_ex20b-oti",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(20b-oti)"},
+    "language": "mode1248",
+    "primaryText": "O Janis anisixi oti efijes.",
+    "glossedTokens": [],
+    "translation": "John worries that you left.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "anisixo"],
+      ["complementizer", "oti"]
+    ],
+    "comment": "Non-factive reading."
+  },
+  {
+    "id": "roussou2010_ex22a",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(22a)"},
+    "language": "mode1248",
+    "primaryText": "Su IPA pu efije o Janis?",
+    "glossedTokens": [],
+    "translation": "Did I tell you that John left?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "leo"],
+      ["complementizer", "pu"],
+      ["question", "yes"],
+      ["focus", "yes"],
+      ["tense", "past"]
+    ],
+    "comment": "Focus on the past-tense matrix verb licenses pu."
+  },
+  {
+    "id": "roussou2010_ex23c",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(23c)"},
+    "language": "mode1248",
+    "primaryText": "Dhen nomizo na efije noris.",
+    "glossedTokens": [],
+    "translation": "I do not think that he left early.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "nomizo"],
+      ["complementizer", "na"],
+      ["negation", "yes"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roussou2010_ex23c-star",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(23c-star)"},
+    "language": "mode1248",
+    "primaryText": "Nomizo na efije noris.",
+    "glossedTokens": [],
+    "translation": "I think that he left early.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["verb", "nomizo"],
+      ["complementizer", "na"]
+    ],
+    "comment": "The na-complement of nomizo needs matrix negation or question."
+  },
+  {
+    "id": "roussou2010_ex23d",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(23d)"},
+    "language": "mode1248",
+    "primaryText": "Pistepsa na efije noris.",
+    "glossedTokens": [],
+    "translation": "I believed that he had left early.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["verb", "pistevo"],
+      ["complementizer", "na"],
+      ["tense", "past"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roussou2010_ex25a",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(25a)"},
+    "language": "mode1248",
+    "primaryText": "O Janis kseri oti tha fiji.",
+    "glossedTokens": [],
+    "translation": "John knows that he will leave.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "ksero"],
+      ["complementizer", "oti"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roussou2010_ex25b",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(25b)"},
+    "language": "mode1248",
+    "primaryText": "O Janis kseri na dhjavazi.",
+    "glossedTokens": [],
+    "translation": "John knows how to read.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "ksero"],
+      ["complementizer", "na"]
+    ],
+    "comment": "Control and a dynamic modal reading."
+  },
+  {
+    "id": "roussou2010_ex26a",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(26a)"},
+    "language": "mode1248",
+    "primaryText": "Thimithike na klidhosi tin porta.",
+    "glossedTokens": [],
+    "translation": "He remembered to lock the door.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "thimame"],
+      ["complementizer", "na"],
+      ["tense", "past"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roussou2010_ex26a-star",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(26a-star)"},
+    "language": "mode1248",
+    "primaryText": "Thimithike na klidhose tin porta.",
+    "glossedTokens": [],
+    "translation": "He remembered to have locked the door.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["verb", "thimame"],
+      ["complementizer", "na"],
+      ["tense", "past"],
+      ["embeddedTense", "past"]
+    ],
+    "comment": "The control complement of a verb of knowing must be present tense."
+  },
+  {
+    "id": "roussou2010_ex34",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(34)"},
+    "language": "mode1248",
+    "primaryText": "O Janis dhen kseri an perase tis eksetasis.",
+    "glossedTokens": [],
+    "translation": "John does not know if he passed the exams.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "ksero"],
+      ["complementizer", "an"],
+      ["negation", "yes"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roussou2010_ex34-star",
+    "source": {"bibkey": "roussou-2010", "paperLabel": "(34-star)"},
+    "language": "mode1248",
+    "primaryText": "O Janis kseri an perase tis eksetasis.",
+    "glossedTokens": [],
+    "translation": "John knows if he passed the exams.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["verb", "ksero"],
+      ["complementizer", "an"]
+    ],
+    "comment": ""
+  }
+]
