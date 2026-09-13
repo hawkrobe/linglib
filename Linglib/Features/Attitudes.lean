@@ -99,16 +99,20 @@ inductive AttitudeValence where
 -- § 3. Preferential (attitude predicate strategy)
 -- ════════════════════════════════════════════════════
 
-/-- Which Montague predicate strategy this preferential verb uses.
+/-- Which compositional strategy this preferential verb uses.
 
     Links the Fragment entry to the compositional semantics in
     `Preferential`; clausal distributivity is derived from the tag's
-    constructor (`Preferential.mkDegreeComparison_isDistributive`,
-    `Preferential.worry_not_distributive`), not stipulated.
+    constructor, not stipulated: a degree comparison's question
+    semantics is the existential over its answers
+    (`Preferential.mkDegreeComparison_isDistributive`), while a relation
+    to the question itself holds of a question without holding of any
+    answer (`Preferential.PreferentialPredicate.not_isDistributive_of_forall_not`).
 
     - `degreeComparison`: `Preferential.mkDegreeComparison` — distributive
-    - `uncertaintyBased`: `Preferential.worry` — not distributive
-    - `relevanceBased`: `Preferential.qidai` — not distributive -/
+    - `uncertaintyBased`: anxious uncertainty about the question (*worry*) — not distributive
+    - `relevanceBased`: anticipation of the question's resolution (*qidai*, *care*) — not
+      distributive -/
 inductive Preferential where
   /-- Degree comparison semantics: ⟦x V Q⟧ = ∃p ∈ Q. μ(x,p) > θ. C-distributive. -/
   | degreeComparison (valence : AttitudeValence)

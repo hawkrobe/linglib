@@ -60,6 +60,18 @@ def kitai : JapaneseVerbEntry where
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
 
+/-- 望む "nozomu" — hope (Class 3: positive, C-distributive, anti-rogative). -/
+def nozomu : JapaneseVerbEntry where
+  form := "nozomu"
+  form3sg := "nozomu"
+  formPast := "nozonda"
+  formGerund := "nozonde"
+  formProgressive := "nozondeiru"
+  frames := [Frame.finiteClause]
+  passivizable := false
+  opaqueContext := true
+  attitude := some (.preferential (.degreeComparison .positive))
+
 /-- 心配 "shinpai" — worry (Class 1: non-C-distributive). -/
 def shinpai : JapaneseVerbEntry where
   form := "shinpai"
