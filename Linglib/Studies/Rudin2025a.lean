@@ -47,7 +47,7 @@ argues on two three-world scenarios that both steps are needed, and both are for
 * [yalcin-2007]
 -/
 
-namespace Rudin2025
+namespace Rudin2025a
 
 open Modality.Kratzer
 
@@ -380,4 +380,4 @@ theorem relational_ordering {f : W → Set W} {g : W → List (W → Prop)} {p :
     rw [hf w hw, hg w hw]
     exact h v hv
 
-end Rudin2025
+end Rudin2025a

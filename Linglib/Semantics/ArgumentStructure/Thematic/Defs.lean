@@ -35,7 +35,7 @@ abbrev ThematicRel (Entity T : Type*) [LinearOrder T] :=
     order is *event-first* (vs. ThematicRel's entity-first), reflecting
     the neo-Davidsonian convention for thematic roles vs. the more
     general event-relation pattern used by content/reenactment relations
-    ([rudin-2025b], §4.4–4.7). -/
+    ([rudin-2025b]). -/
 abbrev EventRel (T α : Type*) [LinearOrder T] := Event T → α → Prop
 
 /-- A thematic frame bundles thematic relations for a given model.
