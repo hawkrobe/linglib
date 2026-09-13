@@ -116,7 +116,6 @@ import Linglib.Core.Data.Multiset.Dominates
 import Linglib.Core.Data.Multiset.FilterMap
 import Linglib.Core.Data.Multiset.Powerset
 import Linglib.Core.Data.Multiset.Rel
-import Linglib.Core.Data.Option.Compatible
 import Linglib.Core.Data.Part
 import Linglib.Core.Data.RoseTree.Basic
 import Linglib.Core.Data.RoseTree.Count
