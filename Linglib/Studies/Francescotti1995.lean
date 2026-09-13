@@ -105,10 +105,10 @@ theorem felicitous_universal_iff :
   simp [Felicitous, Meets, surpassed, List.countP_eq_length]
 
 /-- The universal threshold is the scalar presupposition of *even*. -/
-theorem evenPresup_iff_universal {W : Type*} (r : Set W → Set W → Prop) [DecidableRel r]
-    (p : Set W) (alts : List (Set W)) :
-    evenPresup r p alts ↔ Felicitous p alts r .universal :=
-  (felicitous_universal_iff ..).symm
+theorem evenPresup_iff_universal {W α : Type*} [PartialOrder α]
+    [DecidableRel (α := α) (· < ·)] (μ : Set W → α) (p : Set W) (alts : List (Set W)) :
+    evenPresup μ p alts ↔ Felicitous p alts (μ · < μ ·) .universal :=
+  (felicitous_universal_iff p alts (μ · < μ ·)).symm
 
 end Neighbors
 

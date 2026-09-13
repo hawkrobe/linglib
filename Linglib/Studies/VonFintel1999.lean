@@ -2,7 +2,7 @@ import Linglib.Logic.Natural.Strawson.Basic
 import Linglib.Semantics.Focus.Control
 import Linglib.Data.Examples.VonFintel1999
 import Linglib.Studies.KadmonLandman1993
-import Linglib.Studies.Lahiri1998
+import Linglib.Data.Examples.Lahiri1998
 import Linglib.Studies.Hoeksema1983
 
 /-!

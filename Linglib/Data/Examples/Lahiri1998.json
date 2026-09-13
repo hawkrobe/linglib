@@ -380,6 +380,24 @@
     "comment": "Before-clauses license NPIs; after-clauses do not (4.6)."
   },
   {
+    "id": "lahiri1998_ex33a",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(33a)"},
+    "language": "hind1269",
+    "primaryText": "kisiike bhii aane-ke baad raam ghar calaa gayaa",
+    "glossedTokens": [
+      ["kisiike bhii", "anyone's"], ["aane-ke baad", "coming after"], ["raam", "Ram"],
+      ["ghar", "home"], ["calaa gayaa", "went"]
+    ],
+    "translation": "Ram went home after anyone came.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["npi", "kisiike bhii"],
+      ["environment", "after-clause"]
+    ],
+    "comment": "After-clauses, unlike before-clauses, do not license NPIs (4.6)."
+  },
+  {
     "id": "lahiri1998_ex34a",
     "source": {"bibkey": "lahiri-1998", "paperLabel": "(34a)"},
     "language": "hind1269",
@@ -574,6 +592,60 @@
       ["environment", "necessity modal"]
     ],
     "comment": ""
+  },
+  {
+    "id": "lahiri1998_ex37a",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(37a)"},
+    "language": "hind1269",
+    "primaryText": "kal raam koii bhii mez uThaa sakaa",
+    "glossedTokens": [
+      ["kal", "yesterday"], ["raam", "Ram"], ["koii bhii", "any"], ["mez", "table"],
+      ["uThaa sakaa", "lift could"]
+    ],
+    "translation": "Yesterday Ram was able to lift any table.",
+    "context": "",
+    "judgment": "questionable",
+    "paperFeatures": [
+      ["npi", "koii bhii"],
+      ["environment", "episodic possibility modal"]
+    ],
+    "comment": "Paper's diacritic is ??: an episodic ability modal degrades the NPI, so the licensing factor is genericity rather than the modal (5.2)."
+  },
+  {
+    "id": "lahiri1998_ex38a",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(38a)"},
+    "language": "hind1269",
+    "primaryText": "ek bhii aadmii is mez-ko uThaa legaa",
+    "glossedTokens": [
+      ["ek bhii", "one even"], ["aadmii", "man"], ["is", "this"], ["mez-ko", "table"],
+      ["uThaa legaa", "lift will"]
+    ],
+    "translation": "Even one person will lift this table.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "ek bhii"],
+      ["environment", "generic future"]
+    ],
+    "comment": "The future licenses NPIs on its generic reading (5.3)."
+  },
+  {
+    "id": "lahiri1998_ex38e",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(38e)"},
+    "language": "hind1269",
+    "primaryText": "kal tiin bajee koii bhii aadmii is mez-ko uThaa legaa",
+    "glossedTokens": [
+      ["kal", "tomorrow"], ["tiin bajee", "3 o'clock"], ["koii bhii", "any"], ["aadmii", "man"],
+      ["is", "this"], ["mez-ko", "table"], ["uThaa legaa", "lift will"]
+    ],
+    "translation": "Anyone will lift this table at 3 o'clock tomorrow.",
+    "context": "",
+    "judgment": "questionable",
+    "paperFeatures": [
+      ["npi", "koii bhii"],
+      ["environment", "episodic future"]
+    ],
+    "comment": "Paper's diacritic is ??: an episodic future degrades the NPI (5.3)."
   },
   {
     "id": "lahiri1998_ex39a",
