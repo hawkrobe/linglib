@@ -130,6 +130,29 @@ instance [DecidableLE α] {i₁ i₂ : NonemptyInterval α} : Decidable (i₁.pr
   unfold precedes
   exact decidable_of_iff' _ lt_iff_le_not_ge
 
+/-- i₁ lies during i₂ ([allen-1983]'s *during*): strictly inside on both sides. -/
+def during (i₁ i₂ : NonemptyInterval α) : Prop :=
+  i₂.fst < i₁.fst ∧ i₁.snd < i₂.snd
+
+instance [DecidableLE α] {i₁ i₂ : NonemptyInterval α} : Decidable (i₁.during i₂) :=
+  @instDecidableAnd _ _ (decidable_of_iff' _ lt_iff_le_not_ge)
+    (decidable_of_iff' _ lt_iff_le_not_ge)
+
+theorem during_irrefl (i : NonemptyInterval α) : ¬ i.during i := λ h => lt_irrefl _ h.1
+
+theorem during_asymm {i₁ i₂ : NonemptyInterval α} (h : i₁.during i₂) : ¬ i₂.during i₁ :=
+  λ h' => lt_asymm h.1 h'.1
+
+theorem during_trans {i₁ i₂ i₃ : NonemptyInterval α} (h₁ : i₁.during i₂) (h₂ : i₂.during i₃) :
+    i₁.during i₃ :=
+  ⟨h₂.1.trans h₁.1, h₁.2.trans h₂.2⟩
+
+/-- An interval during another neither precedes nor follows it. -/
+theorem not_precedes_of_during {i₁ i₂ : NonemptyInterval α} (h : i₁.during i₂) :
+    ¬ i₁.precedes i₂ ∧ ¬ i₂.precedes i₁ :=
+  ⟨λ h' => lt_irrefl _ ((h.1.trans_le i₁.fst_le_snd).trans h'),
+   λ h' => lt_irrefl _ ((i₁.fst_le_snd.trans_lt h.2).trans h')⟩
+
 /-- Every interval is a final subinterval of itself. -/
 theorem finalSubinterval_refl (i : NonemptyInterval α) : i.finalSubinterval i :=
   ⟨le_refl i, rfl⟩

@@ -1,301 +1,375 @@
-import Linglib.Processing.Cost.Profile
-import Linglib.Semantics.Composition.Combinator
+import Linglib.Core.Order.Interval
+import Linglib.Syntax.CCG.Derivation
+import Linglib.Data.Examples.PickeringBarry1991
 
 /-!
-# Pickering & Barry (1991)
-[pickering-barry-1991]
+# Pickering and Barry (1991): Sentence Processing without Empty Categories
 
-Sentence Processing without Empty Categories.
-*Language and Cognitive Processes*, 6(3), 229–259.
+This file formalizes [pickering-barry-1991]'s argument that the processing of an unbounded
+dependency associates the filler directly with its subcategoriser and never with an empty
+category. An analysis with empty categories makes two associations per dependency, filler to
+gap and gap to verb; the gap-free analysis makes one, filler to verb. Each association spans an
+interval of the sentence, a pattern of associations is nested when one association lies strictly
+inside another (abba) and disjoint when none overlap (aabb), and nested associations are the
+ones that must be held open while others are formed.
 
-## Core Thesis
+Under the analysis with empty categories neither pattern lines up with nested constructions in
+Chomsky's sense or with the judgments (Table 1): the multiple pied-piping sentence (42) has
+nested filler–gap and nested gap–verb associations yet is as easy as the multiple subject
+relative. Under the gap-free analysis the one pattern coincides with nestedness in Chomsky's
+sense (Table 2) and with the judgments (`table1`, `table2`, `difficulty`,
+`trace_prediction_fails`), and it stays disjoint however far the pied-piping and the recursive
+passive are extended, where the empty-category analysis holds every filler to the end of the
+sentence (`peripheralGaps_fillerVerb_disjoint`, `peripheralGaps_fillerGap_common`). The
+categorial grammar of the paper's later sections derives the embedded questions (82a–c) with no
+empty category (`der82a`, `der82b`, `der82c`), and (82d) has no derivation because the pronoun
+must fill an argument role of the embedded verb, which is the count invariant of
+[van-benthem-1986] (`no_der82d`).
 
-Processing of unbounded dependencies does not involve empty categories
-(traces). Fillers associate directly with their subcategorizing verbs —
-**filler-verb association** — without intermediary gap sites. Processing
-difficulty is determined by the **nesting pattern** of filler-verb associations:
+## Implementation notes
 
-- **Nested** (abba): must hold first filler while processing inner pairs → hard
-- **Disjoint** (aabb): each pair completed before the next begins → easy
+Associations are spans between word positions of the paper's annotated strings, empty
+categories included; a nested construction in Chomsky's sense is the same relation on the
+lexical spans of the relative clauses, which is where the paper's removal of "nonnull" from
+the definition shows up. The paper's rule (80a), which combines a subject with a transitive verb
+before its object, is the composition of the subject's raised category with the verb, so the
+lexicon carries the raised entry, as in `Syntax/CCG/Derivation`. The semantic side of the
+derivations and the discussion of incremental interpretation are not formalized.
 
-This single distinction correctly predicts processing difficulty across four
-sentence types (Table 2), where the trace-based account (requiring separate
-filler-gap and gap-verb association patterns) makes incorrect predictions
-for multiple pied-piping constructions.
+## References
 
-## Connection to CCG
-
-The gap-free account is made possible by CCG's forward composition (the B
-combinator), which allows partial constituents like S/NP for "John saw"
-without positing a gap after "saw." In the derivation of "Sue wonders whom
-John saw" (ex 84):
-
-- John : NP type-raises to S/(S\NP) via T
-- saw : (S\NP)/NP
-- T(John) >B saw yields S/NP — a sentence missing an object
-- whom : Q/(S/NP) combines with S/NP to form Q
-
-No empty category is needed because composition creates the filler-verb
-association directly — formalized below as `subject_verb_composition`.
-
-## Sections
-
-- §1: Association patterns and the two competing analyses
-- §2: The four sentence types with empirical difficulty
-- §3: Table 2 — the gap-free classification and its processing predictions
-- §4: Contrast with the trace-based analysis (Table 1)
-- §5: Bridges to ProcessingProfile, cross-serial dependencies, and CCG
+* [pickering-barry-1991]
+* [van-benthem-1986]
 -/
 
 namespace PickeringBarry1991
 
-open ProcessingModel
+open Data.Examples Examples
+open scoped CCG
 
--- ============================================================================
--- §1: Association Patterns
--- ============================================================================
+/-! ### Associations and their patterns -/
 
-/-- Nesting pattern of associations in a sentence.
-
-Two concurrent associations can be nested (abba: the second pair is
-enclosed within the first) or disjoint (aabb: each pair completed
-before the next begins).
-
-This is the central formal object of [pickering-barry-1991]. -/
-inductive NestingPattern where
-  | nested   -- abba: hard (must hold unfinished association in memory)
-  | disjoint -- aabb: easy (each association completed sequentially)
+/-- A dependency of an annotated sentence: the positions of its filler, of the empty category
+the trace analysis posits, and of its subcategoriser. -/
+structure Dependency where
+  filler : ℕ
+  gap : ℕ
+  verb : ℕ
   deriving DecidableEq, Repr
 
-/-- Under the gap-free account, there is only one type of association:
-filler-verb. Under the trace account, there are two: filler-gap and gap-verb.
+/-- The span between two positions. -/
+def span (i j : ℕ) : NonemptyInterval ℕ := ⟨(min i j, max i j), min_le_max⟩
 
-The trace account must classify both patterns independently, while the
-gap-free account needs only one. -/
-inductive AnalysisType where
-  | gapFree    -- 1 association type: filler-verb
-  | traceBased -- 2 association types: filler-gap + gap-verb
+@[simp] theorem span_fst (i j : ℕ) : (span i j).fst = min i j := rfl
+
+@[simp] theorem span_snd (i j : ℕ) : (span i j).snd = max i j := rfl
+
+namespace Dependency
+
+/-- The filler–gap association of the trace analysis. -/
+def fillerGap (d : Dependency) : NonemptyInterval ℕ := span d.filler d.gap
+
+/-- The gap–verb association of the trace analysis. -/
+def gapVerb (d : Dependency) : NonemptyInterval ℕ := span d.gap d.verb
+
+/-- The filler–verb association of the gap-free analysis. -/
+def fillerVerb (d : Dependency) : NonemptyInterval ℕ := span d.filler d.verb
+
+/-- The filler–verb association does not depend on where an empty category would sit: heavy
+shift, extraposition, and word-order freedom relocate the gap and leave it unchanged. -/
+theorem fillerVerb_gap (f g g' v : ℕ) :
+    (⟨f, g, v⟩ : Dependency).fillerVerb = (⟨f, g', v⟩ : Dependency).fillerVerb := rfl
+
+end Dependency
+
+/-- A pattern of associations is nested when one association lies strictly inside another. -/
+def Nested (L : List (NonemptyInterval ℕ)) : Prop := ∃ a ∈ L, ∃ b ∈ L, a.during b
+
+instance (L : List (NonemptyInterval ℕ)) : Decidable (Nested L) :=
+  inferInstanceAs (Decidable (∃ _ ∈ L, _))
+
+/-- A pattern of associations is disjoint when any two of them are one before the other. -/
+def Disjoint (L : List (NonemptyInterval ℕ)) : Prop :=
+  ∀ a ∈ L, ∀ b ∈ L, a ≠ b → a.precedes b ∨ b.precedes a
+
+instance (L : List (NonemptyInterval ℕ)) : Decidable (Disjoint L) :=
+  inferInstanceAs (Decidable (∀ _ ∈ L, ∀ _ ∈ L, _ → _))
+
+/-- A disjoint pattern is not nested. -/
+theorem Disjoint.not_nested {L : List (NonemptyInterval ℕ)} (h : Disjoint L) : ¬ Nested L :=
+  λ ⟨a, ha, b, hb, hab⟩ => (h a ha b hb λ e => NonemptyInterval.during_irrefl b (e ▸ hab)).elim
+    (NonemptyInterval.not_precedes_of_during hab).1 (NonemptyInterval.not_precedes_of_during hab).2
+
+/-- An annotated sentence: its dependencies, and the spans of its relative clauses over the
+lexical positions. -/
+structure Analysis where
+  deps : List Dependency
+  clauses : List (NonemptyInterval ℕ)
+
+namespace Analysis
+
+/-- The filler–gap associations. -/
+def fillerGap (A : Analysis) : List (NonemptyInterval ℕ) := A.deps.map Dependency.fillerGap
+
+/-- The gap–verb associations. -/
+def gapVerb (A : Analysis) : List (NonemptyInterval ℕ) := A.deps.map Dependency.gapVerb
+
+/-- The filler–verb associations. -/
+def fillerVerb (A : Analysis) : List (NonemptyInterval ℕ) := A.deps.map Dependency.fillerVerb
+
+/-- A nested construction in Chomsky's sense: a clause lying inside another with lexical
+material on both sides of it. -/
+def IsNestedConstruction (A : Analysis) : Prop := Nested A.clauses
+
+instance (A : Analysis) : Decidable A.IsNestedConstruction := inferInstanceAs (Decidable (Nested _))
+
+end Analysis
+
+/-! ### The four sentence types (Tables 1 and 2) -/
+
+/-- The multiple subject relative (44), annotated as (46) and (56): *I saw the farmer [who]ₐ Ø
+[owned]ₐ the dog [which]ᵦ Ø [chased]ᵦ the cat*. -/
+def subjectRelative : Analysis := ⟨[⟨4, 5, 6⟩, ⟨9, 10, 11⟩], [span 4 13, span 9 13]⟩
+
+/-- The multiple object relative (45), annotated as (47) and (57): *The cat [which]ₐ the dog
+[which]ᵦ the farmer [owned]ᵦ Ø [chased]ₐ Ø fled*. -/
+def objectRelative : Analysis := ⟨[⟨2, 11, 10⟩, ⟨5, 9, 8⟩], [span 2 10, span 5 8]⟩
+
+/-- The German multiple subject relative (48), annotated as (49) and (58): *Der Bauer [der]ₐ Ø
+das Mädchen [das]ᵦ Ø den Jungen [küßte]ᵦ [schlug]ₐ ging*. -/
+def germanSubjectRelative : Analysis := ⟨[⟨2, 3, 11⟩, ⟨6, 7, 10⟩], [span 2 11, span 6 10]⟩
+
+/-- The multiple pied-piping sentence (42), annotated as (50) and (59): *John found the saucer
+[on which]ₐ Mary [put]ₐ the cup [into which]ᵦ I [poured]ᵦ the tea Ø Ø*. -/
+def piedPiping : Analysis := ⟨[⟨4, 15, 6⟩, ⟨9, 14, 11⟩], [span 4 13, span 9 13]⟩
+
+/-- The four sentence types of Tables 1 and 2. -/
+def sentenceTypes : List Analysis :=
+  [subjectRelative, objectRelative, germanSubjectRelative, piedPiping]
+
+/-- Table 1: with empty categories, neither the filler–gap pattern nor the gap–verb pattern
+tracks the construction type. -/
+theorem table1 :
+    ¬ (∀ A ∈ sentenceTypes, Nested A.fillerGap ↔ A.IsNestedConstruction) ∧
+      ¬ (∀ A ∈ sentenceTypes, Nested A.gapVerb ↔ A.IsNestedConstruction) := by
+  decide
+
+/-- Table 2: without empty categories, the filler–verb pattern is nested exactly in the nested
+constructions. -/
+theorem table2 : ∀ A ∈ sentenceTypes, Nested A.fillerVerb ↔ A.IsNestedConstruction := by
+  decide
+
+/-- The four sentence types with their analyses. -/
+def rows : List (LinguisticExample × Analysis) :=
+  [(ex44, subjectRelative), (ex45, objectRelative), (ex48, germanSubjectRelative),
+   (ex42, piedPiping)]
+
+/-- Processing difficulty is nesting of the filler–verb associations: the sentences that are
+hard to process are exactly those whose gap-free pattern is nested. -/
+theorem difficulty : ∀ p ∈ rows, p.1.judgment = .acceptable ↔ ¬ Nested p.2.fillerVerb := by
+  decide
+
+/-- The trace analysis predicts difficulty for the multiple pied-piping sentence, whose
+filler–gap and gap–verb associations are both nested, yet it is easy. -/
+theorem trace_prediction_fails :
+    Nested piedPiping.fillerGap ∧ Nested piedPiping.gapVerb ∧ ex42.judgment = .acceptable := by
+  decide
+
+/-- Pied piping against preposition stranding, (15) and (16): the filler associates with the
+verb in one and with the stranded preposition at the end in the other, a longer association
+for a less acceptable sentence. -/
+theorem stranding :
+    ex15.judgment = .acceptable ∧ ex16.judgment ≠ .acceptable ∧
+      ((⟨0, 15, 3⟩ : Dependency).fillerVerb).snd
+        < ((⟨0, 14, 14⟩ : Dependency).fillerVerb).snd := by
+  decide
+
+/-! ### Extending the constructions -/
+
+/-- The constructions whose `n` relative clauses each place a filler and, two words later, its
+verb, while the trace analysis sites all `n` gaps at the end of the sentence: multiple pied
+piping from position 4, (42), (54), (55), and the recursive passive from position 0, (93)–(95).
+-/
+def peripheralGaps (a n : ℕ) : List Dependency :=
+  (List.range n).map λ k => ⟨a + 5 * k, a + 5 * n + (n - 1 - k), a + 5 * k + 2⟩
+
+/-- The constructions whose `n` relative clauses each place a filler, its gap, and its verb in
+succession: the multiple subject relative (44), (51). -/
+def localGaps (n : ℕ) : List Dependency :=
+  (List.range n).map λ k => ⟨4 + 5 * k, 5 + 5 * k, 6 + 5 * k⟩
+
+/-- The multiple object relative with `n` clauses, (45), (52): fillers in succession, then the
+verbs in reverse order each followed by its gap. -/
+def centreEmbedded (n : ℕ) : List Dependency :=
+  (List.range n).map λ k =>
+    ⟨2 + 3 * k, 2 + 3 * n + 2 * (n - 1 - k) + 1, 2 + 3 * n + 2 * (n - 1 - k)⟩
+
+/-- The German multiple subject relative with `n` clauses, (48), (53): each filler followed by
+its gap, then the verbs in reverse order. -/
+def verbFinal (n : ℕ) : List Dependency :=
+  (List.range n).map λ k => ⟨2 + 4 * k, 3 + 4 * k, 2 + 4 * n + (n - 1 - k)⟩
+
+/-- Without empty categories, extending the pied-piping or the passive construction keeps the
+pattern disjoint: there is never an unfinished association to remember. -/
+theorem peripheralGaps_fillerVerb_disjoint (a n : ℕ) :
+    Disjoint ((peripheralGaps a n).map Dependency.fillerVerb) := by
+  simp only [Disjoint, peripheralGaps, List.map_map, List.mem_map, List.mem_range,
+    Function.comp, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
+  intro i hi j hj hne
+  rcases Nat.lt_trichotomy i j with h | rfl | h
+  · exact Or.inl (by simp [NonemptyInterval.precedes, Dependency.fillerVerb]; omega)
+  · exact absurd rfl hne
+  · exact Or.inr (by simp [NonemptyInterval.precedes, Dependency.fillerVerb]; omega)
+
+/-- With empty categories, every filler of the extended construction is held until the first
+gap, the position `a + 5n` common to all `n` filler–gap associations. -/
+theorem peripheralGaps_fillerGap_common (a n : ℕ) :
+    ∀ d ∈ peripheralGaps a n, a + 5 * n ∈ d.fillerGap := by
+  simp only [peripheralGaps, List.mem_map, List.mem_range, forall_exists_index, and_imp,
+    forall_apply_eq_imp_iff₂, Dependency.fillerGap, NonemptyInterval.mem_def, span_fst, span_snd]
+  intro k hk
+  omega
+
+/-- With empty categories, the extended construction's filler–gap and gap–verb associations are
+nested as soon as there are two clauses. -/
+theorem peripheralGaps_nested (a n : ℕ) (hn : 2 ≤ n) :
+    Nested ((peripheralGaps a n).map Dependency.fillerGap) ∧
+      Nested ((peripheralGaps a n).map Dependency.gapVerb) := by
+  simp only [Nested, peripheralGaps, List.map_map, List.mem_map, List.mem_range, Function.comp,
+    exists_exists_and_eq_and, Dependency.fillerGap, Dependency.gapVerb, NonemptyInterval.during,
+    span_fst, span_snd]
+  exact ⟨⟨1, by omega, 0, by omega, by omega⟩, ⟨1, by omega, 0, by omega, by omega⟩⟩
+
+/-- The multiple subject relative stays disjoint on every analysis, however far it is
+extended. -/
+theorem localGaps_disjoint (n : ℕ) :
+    Disjoint ((localGaps n).map Dependency.fillerGap) ∧
+      Disjoint ((localGaps n).map Dependency.gapVerb) ∧
+      Disjoint ((localGaps n).map Dependency.fillerVerb) := by
+  refine ⟨?_, ?_, ?_⟩ <;>
+  · simp only [Disjoint, localGaps, List.map_map, List.mem_map, List.mem_range, Function.comp,
+      forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
+    intro i hi j hj hne
+    rcases Nat.lt_trichotomy i j with h | rfl | h
+    · exact Or.inl (by simp [NonemptyInterval.precedes, Dependency.fillerGap, Dependency.gapVerb,
+        Dependency.fillerVerb]; omega)
+    · exact absurd rfl hne
+    · exact Or.inr (by simp [NonemptyInterval.precedes, Dependency.fillerGap, Dependency.gapVerb,
+        Dependency.fillerVerb]; omega)
+
+/-- In the multiple object relative every filler is held until the innermost verb, on either
+analysis: the associations are nested and difficulty grows with every clause. -/
+theorem centreEmbedded_common (n : ℕ) :
+    ∀ d ∈ centreEmbedded n, 2 + 3 * n ∈ d.fillerVerb ∧ 2 + 3 * n ∈ d.fillerGap := by
+  simp only [centreEmbedded, List.mem_map, List.mem_range, forall_exists_index, and_imp,
+    forall_apply_eq_imp_iff₂, Dependency.fillerVerb, Dependency.fillerGap,
+    NonemptyInterval.mem_def, span_fst, span_snd]
+  intro k hk
+  omega
+
+/-- In the German multiple subject relative every filler is held until the innermost verb; the
+trace analysis puts the nesting in the gap–verb associations instead, its filler–gap
+associations staying disjoint. -/
+theorem verbFinal_common (n : ℕ) :
+    (∀ d ∈ verbFinal n, 2 + 4 * n ∈ d.fillerVerb ∧ 2 + 4 * n ∈ d.gapVerb) ∧
+      Disjoint ((verbFinal n).map Dependency.fillerGap) := by
+  refine ⟨?_, ?_⟩
+  · simp only [verbFinal, List.mem_map, List.mem_range, forall_exists_index, and_imp,
+      forall_apply_eq_imp_iff₂, Dependency.fillerVerb, Dependency.gapVerb,
+      NonemptyInterval.mem_def, span_fst, span_snd]
+    intro k hk
+    omega
+  · simp only [Disjoint, verbFinal, List.map_map, List.mem_map, List.mem_range, Function.comp,
+      forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
+    intro i hi j hj hne
+    rcases Nat.lt_trichotomy i j with h | rfl | h
+    · exact Or.inl (by simp [NonemptyInterval.precedes, Dependency.fillerGap]; omega)
+    · exact absurd rfl hne
+    · exact Or.inr (by simp [NonemptyInterval.precedes, Dependency.fillerGap]; omega)
+
+/-! ### Unbounded dependencies in categorial grammar -/
+
+/-- The basic categories of the fragment: declarative sentence, embedded question, noun phrase,
+and prepositional phrase. -/
+inductive Basic where
+  | S
+  | Q
+  | NP
+  | PP
   deriving DecidableEq, Repr
 
-/-- Number of independent association types required by each analysis. -/
-def AnalysisType.associationTypes : AnalysisType → Nat
-  | .gapFree => 1
-  | .traceBased => 2
+/-- The sentence category. -/
+def sent : CCG.Cat Basic := .atom .S
 
-/-- The gap-free analysis is simpler: fewer association types to track. -/
-theorem gapFree_simpler :
-    AnalysisType.gapFree.associationTypes <
-    AnalysisType.traceBased.associationTypes := by decide
+/-- The embedded-question category. -/
+def quest : CCG.Cat Basic := .atom .Q
 
--- ============================================================================
--- §2: The Four Sentence Types
--- ============================================================================
+/-- The noun-phrase category. -/
+def np : CCG.Cat Basic := .atom .NP
 
-/-- The four sentence types classified in Tables 1 and 2 (p. 242, 246).
+/-- The prepositional-phrase category. -/
+def pp : CCG.Cat Basic := .atom .PP
 
-Each involves multiple extractions and exhibits characteristic processing
-difficulty that discriminates between the two analyses. -/
-inductive SentenceType where
-  /-- "I saw the farmer who owned the dog which chased the cat." (ex 44)
-  Subject extracted from each relative clause. -/
-  | engMultiSubjRel
-  /-- "The cat which the dog which the farmer owned chased fled." (ex 45)
-  Object extracted from each relative clause (center-embedded). -/
-  | engMultiObjRel
-  /-- "Der Bauer der das Mädchen das den Jungen küßte schlug ging." (ex 48)
-  German: subject extracted, verb-final order creates nesting. -/
-  | gerMultiSubjRel
-  /-- "John found the saucer on which Mary put the cup into which
-  I poured the tea." (ex 42) Pied-piped PPs, successive relatives. -/
-  | engMultiPiedPiping
-  deriving DecidableEq, Repr
+/-- The lexicon of (82)–(85): the subject pronoun *who* takes a sentence missing its subject,
+the object pronoun *whom* a sentence missing an object, and *John* carries the raised category
+through which rule (80a) combines it with a verb before the verb's object. -/
+def lexicon : List (String × CCG.Cat Basic) :=
+  [("Sue", np), ("John", np), ("John", sent / (sent \ np)), ("Mary", np),
+   ("saw", (sent \ np) / np), ("talked", (sent \ np) / pp), ("to", pp / np),
+   ("wonders", (sent \ np) / quest), ("who", quest / (sent \ np)), ("whom", quest / (sent / np))]
 
-/-- Observed processing difficulty. -/
-inductive Difficulty where
-  | easy -- Extensible without processing cost increase
-  | hard -- Difficulty increases with each additional embedding
-  deriving DecidableEq, Repr
+/-- (83): *who saw Mary* — the subject pronoun applies to a sentence missing its subject. -/
+def der83 : CCG.Derivation Basic quest :=
+  .fapp (.lex "who" (quest / (sent \ np))) (.fapp (.lex "saw" ((sent \ np) / np)) (.lex "Mary" np))
 
-/-- Empirical processing difficulty for each sentence type.
+/-- (84): *whom John saw* — the raised subject composes with the verb into a sentence missing
+its object, which the object pronoun takes. -/
+def der84 : CCG.Derivation Basic quest :=
+  .fapp (.lex "whom" (quest / (sent / np)))
+    (.fcomp bot_le (.lex "John" (sent / (sent \ np))) (.lex "saw" ((sent \ np) / np)))
 
-Subject relatives and pied-piping are easy to extend with further
-relative clauses (exx 51, 54–55); object relatives and German subject
-relatives become rapidly incomprehensible (exx 52–53). -/
-def observedDifficulty : SentenceType → Difficulty
-  | .engMultiSubjRel   => .easy
-  | .engMultiObjRel    => .hard
-  | .gerMultiSubjRel   => .hard
-  | .engMultiPiedPiping => .easy
+/-- (85): *whom John talked to* — two compositions leave the preposition's object missing. -/
+def der85 : CCG.Derivation Basic quest :=
+  .fapp (.lex "whom" (quest / (sent / np)))
+    (.fcomp bot_le (.fcomp bot_le (.lex "John" (sent / (sent \ np)))
+      (.lex "talked" ((sent \ np) / pp))) (.lex "to" (pp / np)))
 
--- ============================================================================
--- §3: Table 2 — Gap-Free Analysis
--- ============================================================================
+/-- *Sue wonders* applied to an embedded question. -/
+def wonders (d : CCG.Derivation Basic quest) : CCG.Derivation Basic sent :=
+  .bapp (.lex "Sue" np) (.fapp (.lex "wonders" ((sent \ np) / quest)) d)
 
-/-- Filler-verb association pattern under the gap-free analysis (Table 2).
+/-- (82a). -/
+def der82a : CCG.Derivation Basic sent := wonders der83
 
-This is the ONLY association type needed. The annotation scheme from
-p. 245:
-- Subject relative (ex 56): [who]₁ [owned]₁ ... [which]₂ [chased]₂
-  → disjoint (1122)
-- Object relative (ex 57): [which]₁ ... [which]₂ [owned]₂ [chased]₁
-  → nested (1221)
-- German subj rel (ex 58): [der]₁ [das]₂ [küßte]₂ [schlug]₁
-  → nested (1221)
-- Pied-piping (ex 59): [on which]₁ [put]₁ [into which]₂ [poured]₂
-  → disjoint (1122) -/
-def fillerVerbPattern : SentenceType → NestingPattern
-  | .engMultiSubjRel    => .disjoint
-  | .engMultiObjRel     => .nested
-  | .gerMultiSubjRel    => .nested
-  | .engMultiPiedPiping => .disjoint
+/-- (82b). -/
+def der82b : CCG.Derivation Basic sent := wonders der84
 
-/-- Is the construction nested in Chomsky's (1965) sense?
+/-- (82c). -/
+def der82c : CCG.Derivation Basic sent := wonders der85
 
-Under the gap-free analysis (no empty categories), the definition
-simplifies: a construction is nested iff its filler-verb associations
-are nested. This collapse is the central result. -/
-def isNestedConstruction : SentenceType → Prop
-  | .engMultiSubjRel    => False
-  | .engMultiObjRel     => True
-  | .gerMultiSubjRel    => True
-  | .engMultiPiedPiping => False
+/-- The embedded questions (82a–c) are derived from the lexicon, with no empty category. -/
+theorem embedded_questions :
+    (der82a.LexIn lexicon ∧ der82a.yield = ["Sue", "wonders", "who", "saw", "Mary"]) ∧
+      (der82b.LexIn lexicon ∧ der82b.yield = ["Sue", "wonders", "whom", "John", "saw"]) ∧
+      (der82c.LexIn lexicon ∧
+        der82c.yield = ["Sue", "wonders", "whom", "John", "talked", "to"]) := by
+  decide
 
-instance : DecidablePred isNestedConstruction := fun x => by
-  cases x <;> unfold isNestedConstruction <;> infer_instance
+/-- The noun phrases each word of the fragment contributes, in the sense of the count invariant:
+a verb consumes its arguments, a pronoun supplies the one it fills. -/
+def npCount : String → ℤ
+  | "saw" => -2
+  | "talked" | "to" | "wonders" => -1
+  | _ => 1
 
-/-- **Table 2 correspondence** (p. 246): under the gap-free analysis,
-the filler-verb pattern directly determines construction nestedness.
-
-Table 1 (trace-based) has three independent columns (filler-gap pattern,
-gap-verb pattern, construction type) with no systematic relationship.
-Table 2 collapses to two identical columns. -/
-theorem table2_correspondence :
-    ∀ s : SentenceType,
-    (fillerVerbPattern s = .nested) ↔ isNestedConstruction s := by
-  intro s; cases s <;> simp [fillerVerbPattern, isNestedConstruction]
-
-/-- Gap-free processing prediction: nested filler-verb associations are
-hard, disjoint are easy. -/
-def gapFreePrediction (s : SentenceType) : Difficulty :=
-  match fillerVerbPattern s with
-  | .nested => .hard
-  | .disjoint => .easy
-
-/-- **The gap-free analysis correctly predicts all four observations.** -/
-theorem gapFree_all_correct :
-    ∀ s : SentenceType, gapFreePrediction s = observedDifficulty s := by
-  intro s; cases s <;> rfl
-
--- ============================================================================
--- §4: Contrast with Trace-Based Analysis (Table 1)
--- ============================================================================
-
-/-- Filler-gap pattern under the trace-based analysis (Table 1). -/
-def fillerGapPattern : SentenceType → NestingPattern
-  | .engMultiSubjRel    => .disjoint
-  | .engMultiObjRel     => .nested
-  | .gerMultiSubjRel    => .disjoint  -- filler-gap is disjoint!
-  | .engMultiPiedPiping => .nested
-
-/-- Gap-verb pattern under the trace-based analysis (Table 1). -/
-def gapVerbPattern : SentenceType → NestingPattern
-  | .engMultiSubjRel    => .disjoint
-  | .engMultiObjRel     => .disjoint
-  | .gerMultiSubjRel    => .nested
-  | .engMultiPiedPiping => .nested
-
-/-- Trace-based prediction: a construction is hard if EITHER filler-gap
-or gap-verb associations are nested. -/
-def traceBasedPrediction (s : SentenceType) : Difficulty :=
-  if fillerGapPattern s == .nested || gapVerbPattern s == .nested
-  then .hard else .easy
-
-/-- The trace-based analysis incorrectly predicts pied-piping is hard.
-It has nested filler-gap AND nested gap-verb (Table 1), yet the
-construction is easy to process and easily extensible (exx 54–55). -/
-theorem traceBased_piedPiping_wrong :
-    traceBasedPrediction .engMultiPiedPiping ≠
-    observedDifficulty .engMultiPiedPiping := by decide
-
-/-- The gap-free analysis correctly predicts pied-piping is easy —
-the critical case where it outperforms the trace-based account. -/
-theorem gapFree_piedPiping_correct :
-    gapFreePrediction .engMultiPiedPiping =
-    observedDifficulty .engMultiPiedPiping := rfl
-
-/-- Table 1 has no systematic relationship between its three columns.
-The filler-gap pattern, gap-verb pattern, and construction type are
-all independent. German subject relatives are nested constructions
-with disjoint filler-gap associations — the columns disagree. -/
-theorem table1_columns_disagree :
-    fillerGapPattern .gerMultiSubjRel = .disjoint ∧
-    gapVerbPattern .gerMultiSubjRel = .nested ∧
-    isNestedConstruction .gerMultiSubjRel := ⟨rfl, rfl, trivial⟩
-
--- ============================================================================
--- §5: Bridges
--- ============================================================================
-
-/-! ### Bridge to ProcessingProfile -/
-
-/-- Map nesting pattern to ProcessingProfile.
-
-Nested associations require holding unfinished fillers in working memory
-while forming inner associations — higher locality (longer dependency span)
-and referential load (more intervening material to track). -/
-def nestingProfile : NestingPattern → ProcessingProfile
-  | .nested =>
-    { locality := 4, boundaries := 2, referentialLoad := 2, ease := 0 }
-  | .disjoint =>
-    { locality := 2, boundaries := 0, referentialLoad := 0, ease := 1 }
-
-instance : HasProcessingProfile SentenceType where
-  profile s := nestingProfile (fillerVerbPattern s)
-
-/-- Nested associations are Pareto-harder than disjoint. -/
-theorem nested_harder_than_disjoint :
-    (nestingProfile .nested).compare (nestingProfile .disjoint) =
-    .harder := by decide
-
-/-- Processing ordering predictions verified via Pareto dominance. -/
-def orderingPredictions : List (OrderingPrediction SentenceType) := [
-  { harder := .engMultiObjRel
-    easier := .engMultiSubjRel
-    description := "Object relatives harder than subject relatives" },
-  { harder := .gerMultiSubjRel
-    easier := .engMultiPiedPiping
-    description := "German subject relatives harder than pied-piping" },
-  { harder := .engMultiObjRel
-    easier := .engMultiPiedPiping
-    description := "Object relatives harder than pied-piping" },
-  { harder := .gerMultiSubjRel
-    easier := .engMultiSubjRel
-    description := "German subject relatives harder than English" }
-]
-
-theorem all_orderings_verified :
-    orderingPredictions.all verifyOrdering = true := by decide
-
-/-! ### Bridge to cross-serial dependencies -/
-
-/-- German verb-final order produces nested filler-verb associations, the
-pattern of German verb clusters ([bach-brown-marslen-wilson-1986]): both
-constructions nest because the verb that closes each dependency comes in
-reverse order. [bach-brown-marslen-wilson-1986] confirms the processing
-prediction: German nested constructions are hard, like their Dutch
-cross-serial counterparts (though for different structural reasons). -/
-theorem german_nested_consistent : fillerVerbPattern .gerMultiSubjRel = .nested := rfl
-
-/-! ### Bridge to CCG combinators
-
-The gap-free account requires a grammar that can establish filler-verb associations
-without positing gap positions. CCG achieves this via forward composition (`B`) and
-type-raising (`T`): in derivation (84), "John saw" becomes a constituent `S/NP` via
-rule (80a), and "whom" : `Q/(S/NP)` combines with it to form `Q` — no trace needed. -/
-
-/-- A type-raised subject composed with a transitive verb applies directly to the
-object: the combinator form of filler-verb association, with no gap position. -/
-theorem subject_verb_composition {α β γ : Type*} (subj : α) (verb : β → α → γ) (obj : β) :
-    Combinator.B (Combinator.T subj) verb obj = verb obj subj := rfl
+/-- (82d): *Sue wonders who John saw Mary* has no derivation, with *who* or with *whom*, because
+the pronoun supplies a noun phrase no verb consumes. -/
+theorem no_der82d (w : String) (hw : w = "who" ∨ w = "whom") :
+    ¬ ∃ d : CCG.Derivation Basic sent,
+      d.LexIn lexicon ∧ d.yield = ["Sue", "wonders", w, "John", "saw", "Mary"] := by
+  rintro ⟨d, hd, hy⟩
+  have h := d.count_eq_sum .NP (f := npCount) (by decide) hd
+  rw [hy] at h
+  rcases hw with rfl | rfl <;> exact absurd h (by decide)
 
 end PickeringBarry1991
