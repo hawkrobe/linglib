@@ -1,4 +1,5 @@
 import Linglib.Fragments.Ga.Predicates
+import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Syntax.Minimalist.MinimalPronoun
 import Linglib.Syntax.Control.Head
 import Linglib.Studies.Landau2013
@@ -17,9 +18,9 @@ subject (Table 4). The pronoun is overt because that tone needs a segmental
 host.
 
 The OC signature is read off the Fragment's clause typology through
-[landau-2013]'s profile, the complement frames off the Fragment's verb
-inventory, and the finiteness diagnostics off the Fragment's clause
-properties; the example rows check each claim, including the implicative
+[landau-2013]'s profile, complementizer selection off the Fragment's verb
+frames through `Verb.takes`, and the finiteness diagnostics off the Fragment's
+clause properties; the example rows check each claim, including the implicative
 contrast of (89) against the verbs' Karttunen classes. The Movement Theory of
 Control is refuted by the lexical-subject rows, and the tone-hosting
 requirement derives the overt pronoun from the minimal-pronoun inventory.
@@ -61,13 +62,21 @@ def gaProfile (c : EmbeddedClauseType) : Profile Landau2013.Clause74 :=
   Landau2013.ofNoncoreferential (clauseProperties c).noncoreferentialSubject
 
 /-- OC status is read off the complementizer's finiteness. -/
-theorem obligatory_iff_not_isFinite (c : EmbeddedClauseType) :
-    (gaProfile c).IsObligatory ↔ (clauseComplementizer c).isFinite = false := by
+theorem obligatory_iff_not_finite (c : EmbeddedClauseType) :
+    (gaProfile c).IsObligatory ↔ (clauseComplementizer c).verbForm ≠ some .Fin := by
   cases c <;> decide
 
-/-- A verb has a `ni`-frame exactly when it is a control verb. -/
-theorem control_iff_selects_ni :
-    ∀ v ∈ gaCTPs, .irrealisNi ∈ v.selects ↔ v.control ≠ .none := by
+/-! ### Complementizer selection (§5.5.1) -/
+
+/-- The three-way clause typology is the selection relation: each clause type's
+    frame takes exactly its own complementizer. -/
+theorem frame_takes_iff (c d : EmbeddedClauseType) :
+    c.frame.Takes (clauseComplementizer d) ↔ c = d := by
+  cases c <;> cases d <;> decide
+
+/-- A verb takes `ni` exactly when some frame of it is controlled. -/
+theorem takes_ni_iff_control :
+    ∀ v ∈ verbs, v.takes ni ↔ ∃ r ∈ v.readings, r.control.isSome := by
   decide
 
 /-! ### Table 2 -/
@@ -102,8 +111,10 @@ theorem signature_rows :
 
 /-- The two control rows are the verb inventory. -/
 theorem control_rows :
-    (overtPronoun .subjectControl ↔ ∃ v ∈ gaCTPs, v.control = .subjectControl) ∧
-    (overtPronoun .objectControl ↔ ∃ v ∈ gaCTPs, v.control = .objectControl) := by
+    (overtPronoun .subjectControl ↔
+      ∃ v ∈ verbs, ∃ r ∈ v.readings, r.control = some .subjectControl) ∧
+    (overtPronoun .objectControl ↔
+      ∃ v ∈ verbs, ∃ r ∈ v.readings, r.control = some .objectControl) := by
   decide
 
 /-- The controlled form φ-covaries with its controller (exx 37–39), unlike
@@ -124,8 +135,8 @@ def gaInventory : MinPronInventory PronForm where
 /-! ### Rows -/
 
 /-- The Fragment entry for a row's matrix verb. -/
-def ctpOf (row : LinguisticExample) : Option CTP :=
-  (row.feature? "verb").bind λ v ↦ gaCTPs.find? (·.form = v)
+def verbOf (row : LinguisticExample) : Option Verb :=
+  (row.feature? "verb").bind (lookupSense verbs ·)
 
 /-- The clause type a complementizer feature names. -/
 def clauseOf : String → Option EmbeddedClauseType
@@ -172,13 +183,14 @@ theorem lexical_subject_rows :
   decide +kernel
 
 /-- Complementizer selection (exx 104–106), over each row and its alternatives:
-    grammatical exactly when the Fragment records the frame for the verb. -/
+    grammatical exactly when the verb takes the complementizer. -/
 theorem c_selection_rows :
     ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "cSelection" →
-      ∀ v ∈ ctpOf row,
-        (∀ c ∈ clauseTypeOf row, (row.judgment = .acceptable ↔ c ∈ v.selects)) ∧
+      ∀ v ∈ verbOf row,
+        (∀ c ∈ clauseTypeOf row,
+          (row.judgment = .acceptable ↔ v.takes (clauseComplementizer c))) ∧
         ∀ alt ∈ row.alternatives, ∀ c ∈ clauseOfForm alt.1,
-          (alt.2 = .acceptable ↔ c ∈ v.selects) := by
+          (alt.2 = .acceptable ↔ v.takes (clauseComplementizer c)) := by
   decide +kernel
 
 /-- Overt tense or aspect in the complement is grammatical exactly in the
@@ -229,7 +241,7 @@ theorem marker_rows :
     realized ([karttunen-1971]). -/
 theorem implicative_rows :
     ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "implicative" →
-      ∀ v ∈ ctpOf row,
+      ∀ v ∈ verbOf row,
         (row.feature? "irrealisMarker" = some "absent" ↔ v.implicative = some .positive) := by
   decide +kernel
 
@@ -260,8 +272,8 @@ instance : DecidablePred StrongCP :=
   λ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- `akɛ` and `kɛji` head strong CPs, `ni` a weak one. -/
-theorem strongCP_iff_isFinite (c : EmbeddedClauseType) :
-    StrongCP c ↔ (clauseComplementizer c).isFinite := by
+theorem strongCP_iff_finite (c : EmbeddedClauseType) :
+    StrongCP c ↔ (clauseComplementizer c).verbForm = some .Fin := by
   cases c <;> decide
 
 /-- Long-distance Agree ([szabolcsi-2009]) reaches the embedded subject across
@@ -361,14 +373,10 @@ theorem deSe_witness :
 
 /-! ### Typological placement -/
 
-/-- Gã complements in [noonan-2007]'s typology; `.infinitive` is the paper's
-    own term for the bare-root `ni`-complement. -/
-def gaToNoonan : EmbeddedClauseType → Complement.Coding
-  | .finiteAke => .indicative
-  | .finiteKeji => .indicative
-  | .irrealisNi => .infinitive
-
-/-- The control complement is reduced in Noonan's terms. -/
-theorem ni_complement_reduced : (gaToNoonan .irrealisNi).isReduced = true := rfl
+/-- In [noonan-2007]'s typology the controlled complement is the reduced one:
+    `.infinitive`, the paper's own term for the bare-root `ni`-complement. -/
+theorem reduced_iff_obligatory (c : EmbeddedClauseType) :
+    (∀ cd ∈ c.frame.codings, cd.isReduced = true) ↔ (gaProfile c).IsObligatory := by
+  cases c <;> decide
 
 end Allotey2021
