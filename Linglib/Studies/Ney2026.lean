@@ -1,4 +1,4 @@
-import Linglib.Semantics.Reference.Basic
+import Linglib.Semantics.Reference.Character
 import Linglib.Discourse.CommonGround
 
 /-!
@@ -57,7 +57,7 @@ witnessed on toy operators over a small carrier.
 
 namespace Ney2026
 
-open Reference.Basic
+open Reference
 
 /-! ## §1. Metasemantic apparatus -/
 
@@ -72,8 +72,8 @@ value. -/
 structure SpeakerIntention (C W E : Type*) where
   /-- The speaker (typically the agent of the context). -/
   speaker      : E
-  /-- The referring expression: demonstrative, supplementive, pronoun. -/
-  expression   : ReferringExpression C W E
+  /-- The character of the referring expression: demonstrative, supplementive, pronoun. -/
+  expression   : Character C W E
   /-- The Kaplanian context of utterance. -/
   context      : C
   /-- The object the speaker intends to be the semantic value. -/
@@ -305,8 +305,7 @@ bridge that does not yet exist. -/
 intends `true`, with a constant character. -/
 private def boolWitness : SpeakerIntention Unit Unit Bool where
   speaker     := false
-  expression  := { character := λ _ _ => true
-                 , profile := ⟨true, true, false⟩ }
+  expression  := λ _ _ => true
   context     := ()
   intendedRef := true
 
@@ -436,8 +435,7 @@ def mkBinary
     Scenario Unit Unit E where
   intention :=
     { speaker     := speaker
-    , expression  := { character := λ _ _ => unavowed
-                     , profile := ⟨true, true, false⟩ }
+    , expression  := λ _ _ => unavowed
     , context     := ()
     , intendedRef := unavowed }
   licenses          := λ r => r = unavowed ∨ r = avowable

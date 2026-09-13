@@ -21,7 +21,7 @@ generalisation of this signature, to be added when a dynamic study needs it.
   selector.
 * `NominalDenot.resolve` — resolve a nominal against a scope, as
   `PartialProp.presupOfReferent` applied to the selector at a context. Existing
-  definite denotations *are* this, by `rfl` (see `Reference.Donnellan`).
+  definite denotations *are* this, by `rfl` (see `Studies/Donnellan1966.lean`).
 * `NominalDenot.toPartialProp` — the full denotation: `resolve` conjoined with the
   intrinsic presupposition, so a pronoun's φ-features project.
 
