@@ -46,11 +46,9 @@ namespace Minimalist
     - Intransitive: probe passes through (no Voice_TR) → finds S → real φ-agreement
     - Transitive: probe encounters Voice_TR → satisfied without copying φ → default "∅"
 
-    This turns the Mam bridge's prose account into a computable derivation:
-    ```
-    def mamInflSatisfaction : SatisfactionCond :=
-.disjunctive [.featureMatch .person, .headEncounter .v]
-    ```
+    The Mam probe itself is defined in `Studies/Scott2023.lean` as a `Probe` over the
+    clause's encounters, `.disjunctive [.featureMatch .person, .headEncounter .v]` in
+    this file's terms.
 -/
 inductive SatisfactionCond where
   /-- Standard: probe is satisfied by finding a matching valued feature. -/
@@ -107,48 +105,5 @@ def SatisfactionCond.toProbe {α : Type*} (cond : SatisfactionCond)
     (feats : α → FeatureBundle) (cat : α → Option Cat) : Probe α :=
   { vis := fun a => cond.isSatisfied (feats a) (cat a)
     act := fun a => cond.copiedFeatures (feats a) (cat a) }
-
-/-- Mam's Infl probe satisfaction condition:
-    satisfied by EITHER matching φ-features OR encountering transitive Voice. -/
-def mamInflSatisfaction : SatisfactionCond :=
-  .disjunctive [.featureMatch .person, .headEncounter .v]
-
-/-- Intransitive environment: the probe encounters a DP with φ-features
-    (no Voice_TR in the way). Feature match is satisfied → real agreement. -/
-theorem mam_intransitive_satisfied :
-    mamInflSatisfaction.isSatisfied
-      (.ofGramFeatures [.valued (.phi (.person .first)), .valued (.phi (.number .singular))])
-      none = true := by decide
-
-/-- Transitive environment: the probe encounters Voice_TR (category.v).
-    Head encounter is satisfied → probe stops without copying features. -/
-theorem mam_transitive_satisfied :
-    mamInflSatisfaction.isSatisfied ⊥ (some .v) = true := by decide
-
-/-- In the transitive case, no features are copied — yielding default. -/
-theorem mam_transitive_no_copy :
-    mamInflSatisfaction.copiedFeatures ⊥ (some .v) = false := by decide
-
-/-- In the intransitive case, features ARE copied — yielding real agreement. -/
-theorem mam_intransitive_copies :
-    mamInflSatisfaction.copiedFeatures
-      (.ofGramFeatures [.valued (.phi (.person .first)), .valued (.phi (.number .singular))])
-      none = true := by decide
-
-/-- Infl's satisfaction condition, unfolded: φ-match or Voice_TR encounter. -/
-theorem mamInflSatisfaction_isSatisfied (fb : FeatureBundle) (ctx : Option Cat) :
-    mamInflSatisfaction.isSatisfied fb ctx
-      = (fb.hasValuedFeature .person || ctx == some Cat.v) := by
-  simp [mamInflSatisfaction, SatisfactionCond.isSatisfied, atomicSatisfied]
-
-/-- Head-encounter satisfaction never copies: Infl copies features iff
-    they are there to copy, whatever the context. -/
-theorem mamInflSatisfaction_copiedFeatures (fb : FeatureBundle) (ctx : Option Cat) :
-    mamInflSatisfaction.copiedFeatures fb ctx
-      = fb.hasValuedFeature .person := by
-  cases hv : fb.hasValuedFeature .person <;>
-    cases hc : ctx == some Cat.v <;>
-      simp [mamInflSatisfaction, SatisfactionCond.copiedFeatures, atomicSatisfied,
-        List.find?, hv, hc]
 
 end Minimalist

@@ -5,49 +5,40 @@ import Linglib.Syntax.Minimalist.Features
 import Linglib.Data.Examples.Scott2021
 
 /-!
-# Two types of resumptive pronouns in Swahili
+# Scott (2021): Two Types of Resumptive Pronouns in Swahili
 
-[scott-2021]: the resumptive pronouns that objects of monosyllabic
-prepositions require are of two kinds. Bound pronouns, the only option in
-adjunct islands ((31)–(33)), match the head in person; movement copies,
-diagnosed by parasitic gaps ((35)–(37)), never carry person. Both follow
-from one Vocabulary ((28)) and the copy theory of movement: a movement copy
-in a position with a phonological requirement is reduced rather than deleted
-([landau-2006]), and MaxElide removes the largest constituent whose residue
-can still be spelled out — PersP, since *-ye* spells out `[sg + n_anim]`
-while nothing spells out Num alone ((46)–(48)).
-
-## Main definitions
-
-* `pronoun`: the pronoun structures of (40)–(44), with PersP only for local
-  persons.
-* `resumptiveVocab`, `spellout`: the Vocabulary Items of (28) over a
-  pronoun's features.
-* `Deletable`, `maxElideTarget`: a layer is deletable when its residue has an
-  exponent; MaxElide takes the largest such layer.
-* `pronounce`: the chain reduction of a copy — full deletion, or PersP
-  deletion where Minimality forbids deleting the copy — against a bound
-  pronoun's full spell-out.
-
-## Main results
-
-* `table2`: the paradigm of the Fragment's `resumptivePronoun` is (28) over
-  the structures (42) and (44).
-* `maxElide_persP`: PersP is the unique deletable layer, by the Vocabulary.
-* `cleft_rows`, `island_rows`, `parasitic_rows`: the data pool — clefts
-  allow either pronoun but fix number, islands allow only the bound pronoun,
-  and a personless parasitic pronoun needs a personless true gap for every
-  speaker of Table 4.
-* `person_entails_number`: any deletion that keeps person keeps number,
-  since Num is above Pers (§6).
+This file formalizes the paper's account of the resumptive pronouns that the objects of Swahili's
+monosyllabic prepositions require (§3.3): bound pronouns, the only option inside adjunct islands
+((31)–(33)), match the head in person, while movement copies, diagnosed by parasitic gaps
+((35)–(37)), never carry person. Both follow from the Vocabulary of (28) (`resumptiveVocab`) and
+the copy theory of movement. A pronoun is a `Syntax.Tree` over D, Num, the animate n and, for
+local persons only, a Person projection ((40)–(44), `pronoun`), and the Vocabulary spells out the
+Fragment's paradigm of Table 2 (`table2`). A movement copy in a position with a phonological
+requirement is reduced rather than deleted, following [landau-2006]: MaxElide removes the largest
+constituent whose residue can still be spelled out (`Deletable`, `maxElideTarget`), which is
+PersP, since *-ye* spells out `[sg + n_anim]` while nothing spells out Num alone ((46)–(48),
+`maxElide_persP`). So a movement copy of a local-person pronoun surfaces as the personless
+pronoun (`movement_copy_personless`), a bound pronoun is spelled out in full, and a copy in a
+subject or object position, which carries no requirement, is deleted ((17)–(18),
+`gap_without_minimality`); and since Num is above Pers, a deletion that keeps person keeps
+number (`person_entails_number`), the crosslinguistic pattern of the paper's conclusion. The
+paper's judgments (`Data/Examples/Scott2021`) instantiate the account: clefts allow either
+pronoun but fix number ((24)–(25), (29)), islands allow only the bound pronoun, and for every
+speaker of Table 4 a personless parasitic pronoun needs a personless true gap (`cleft_rows`,
+`island_rows`, `parasitic_rows`).
 
 ## Implementation notes
 
-The structures are `Syntax.Tree`s over the four DP-internal categories, so
-MaxElide is structural deletion rather than feature removal; features are
-read off the terminals for Vocabulary Insertion. The interspeaker variation
-of Table 4 beyond its first two rows is not derived, as the paper does not
-derive it.
+* The structures are `Syntax.Tree`s over the four DP-internal categories, so MaxElide is
+  structural deletion rather than feature removal; features are read off the terminals for
+  Vocabulary Insertion.
+* The interspeaker variation of Table 4 beyond its first two rows is not derived, as the paper
+  does not derive it.
+
+## References
+
+* [scott-2021]
+* [landau-2006]
 -/
 
 namespace Scott2021
@@ -166,7 +157,7 @@ def layers : List DPCat := [.D, .Num, .n, .Pers]
 
 /-- MaxElide: the largest deletable constituent. -/
 def maxElideTarget (t : Tree DPCat String) : Option DPCat :=
-  layers.find? fun c => decide (Deletable t c)
+  layers.find? λ c => decide (Deletable t c)
 
 /-- In a local-person pronoun PersP is the unique deletable layer, so MaxElide
 deletes it ((46)–(47)). -/
@@ -180,9 +171,9 @@ Pers (§6). -/
 theorem person_entails_number :
     ∀ (c : DPCat) (n : Number),
       (featureList (deleteLayer c (pronoun (some .first) n))).any
-          (fun f => match f with | .valued (.phi (.person _)) => true | _ => false) = true →
+          (λ f => match f with | .valued (.phi (.person _)) => true | _ => false) = true →
         (featureList (deleteLayer c (pronoun (some .first) n))).any
-          (fun f => match f with | .valued (.phi (.number _)) => true | _ => false) = true := by
+          (λ f => match f with | .valued (.phi (.number _)) => true | _ => false) = true := by
   decide
 
 /-! ### Chain reduction (§5.2–5.3) -/
@@ -218,10 +209,16 @@ theorem movement_copy_personless :
 
 /-! ### The data pool (§3.4, §4) -/
 
-/-- A cell of the pool: the antecedent's person and number, the construction,
-the resumptive form or forms, and the judgment. -/
+/-- The constructions of the pool: simple clefts, clefts out of adjunct islands, and parasitic
+gaps. -/
+inductive Construction where
+  | cleft | island | parasiticGap
+  deriving DecidableEq, Repr
+
+/-- A cell of the pool: the antecedent's person and number, the construction, the resumptive
+form or forms, and the judgment. -/
 structure Row where
-  construction : String
+  construction : Construction
   person : Person
   number : Number
   form : String
@@ -231,7 +228,11 @@ structure Row where
 
 def Row.ofExample (ex : LinguisticExample) : Option Row := do
   let fs := ex.paperFeatures
-  let construction ← fs.lookup "construction"
+  let construction ← match fs.lookup "construction" with
+    | some "cleft" => some Construction.cleft
+    | some "island" => some Construction.island
+    | some "parasiticGap" => some Construction.parasiticGap
+    | _ => none
   let person ← match fs.lookup "antecedentPerson" with
     | some "1" => some Person.first | some "2" => some Person.second | _ => none
   let number ← match fs.lookup "antecedentNumber" with
@@ -250,7 +251,7 @@ def Row.tree (r : Row) : Tree DPCat String := pronoun (some r.person) r.number
 copy is available, so the form is accepted iff it is one of the two — which
 fixes number while leaving person optional. -/
 theorem cleft_rows :
-    ∀ r ∈ rows, r.construction = "cleft" →
+    ∀ r ∈ rows, r.construction = .cleft →
       (r.accepted = (pronounce r.tree .bound true = some r.form ∨
         pronounce r.tree .movementCopy true = some r.form)) := by
   decide
@@ -258,7 +259,7 @@ theorem cleft_rows :
 /-- **Adjunct islands** ((31)–(33)): movement is blocked, so the form is
 accepted iff it is the bound pronoun's. -/
 theorem island_rows :
-    ∀ r ∈ rows, r.construction = "island" →
+    ∀ r ∈ rows, r.construction = .island →
       (r.accepted = (pronounce r.tree .bound true = some r.form)) := by
   decide
 
@@ -266,7 +267,7 @@ theorem island_rows :
 position is licensed only by a movement copy in the true-gap position — for
 every speaker, *ye … ye* is in and *mi … ye* is out. -/
 theorem parasitic_rows :
-    ∀ r ∈ rows, r.construction = "parasiticGap" →
+    ∀ r ∈ rows, r.construction = .parasiticGap →
       r.parasitic = pronounce r.tree .movementCopy true →
         (r.accepted = (some r.form = pronounce r.tree .movementCopy true)) := by
   decide
