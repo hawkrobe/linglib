@@ -1,162 +1,183 @@
-import Linglib.Semantics.Polarity.Item
-import Mathlib.Data.Rat.Defs
+import Linglib.Data.Examples.Schwab2022
+import Mathlib.Order.SetNotation
+import Mathlib.Data.Set.Lattice
 
 /-!
-# [schwab-2022]: Lexical Variation in NPI Illusions
-[krifka-1995a]
+# Schwab (2022): Lexical variation in NPI illusions
 
-Experimental data from "Lexical variation in NPI illusions" (JML).
-Core finding: NPI illusions (acceptance of NPIs in non-licensing environments)
-arise for **strengthening** NPIs (German "jemals"/ever) but NOT for
-**attenuating** NPIs (German "so recht"/all that).
+This file formalizes the paper's scalar account of the negative polarity illusion. Two speeded
+acceptability experiments on German contrast the strengthening NPI *jemals* 'ever' with the
+attenuating NPI *so recht* 'really' in a 2 × 3 design crossing the item with the position of a
+negative quantifier: in the matrix clause, where it licenses the item, inside a relative clause,
+where it cannot, or absent (`Data/Examples/Schwab2022`). Only *jemals* is illusorily licensed by
+the relative-clause quantifier, an asymmetry that the cue-based retrieval, quantifier-scope and
+pragmatic-rescuing accounts of the illusion do not foresee.
 
-## Experimental Design
+The account builds on the scalar theories of polarity sensitivity of [krifka-1995a],
+[kadmon-landman-1993], [chierchia-2006] and [israel-1996]. A strengthening item is assertable
+only where the proposition is stronger than every alternative it evokes, [krifka-1995a]'s
+scalar assertion in the form of [condoravdi-2010] (`scalAssert`); an attenuating item where
+some compatible alternative would have been more informative, the condition of Schwab and Liu
+(`attenAssert`). The two conditions are opposed: when the proposition entails its alternatives,
+scalar assertion is the plain update while the attenuating condition is contradictory
+(`scalAssert_eq_of_isStrongest`, `attenAssert_eq_empty_of_isStrongest`), and an existential
+under negation or an attenuating degree modifier under negation instantiates the licensed case
+of each (`scalAssert_not_ever`, `attenAssert_not_atLeast`), while in the affirmative the
+existential is covered by its more specific alternatives (`scalAssert_ever_eq_empty`) and the
+degree modifier entails its lower ones (`isStrongest_atLeast`). The illusion arises, on the
+paper's proposal after the environment-based account of [muller-phillips-2020], when the
+parser feeds the mechanism the still-active relative-clause proposition and its Horn-scale
+alternatives instead of the main clause: a negative quantifier is the strongest point of its
+scale, so the strengthening mechanism accepts it and the attenuating one rejects it
+(`illusion_asymmetry`).
 
-2×3 factorial design:
-- NPI type: strengthening (jemals) vs attenuating (so recht)
-- Negation: grammatical (neg) vs illusion (no neg, RC provides pseudo-licensing)
-  vs ungrammatical control
+## Implementation notes
 
-## Key Finding
+* Propositions are sets of worlds and the context is a set of worlds; an alternative is
+  informative after the assertion when the context updated with the assertion does not entail
+  it (`Informative`), the paper's `c + p + p' ≠ c + p`. Alternatives are an arbitrary set of
+  propositions, so the lexical scales are hypotheses on it: the specific times of an
+  existential and the lower degrees of a degree modifier.
+* The experimental results are recorded in the example rows' comments (posterior estimates and
+  Bayes factors); the parser's activation story that selects the relative-clause proposition
+  is not modeled, only what each mechanism returns once it is selected.
 
-The illusion asymmetry: when an RC creates a pseudo-DE environment,
-strengthening NPIs show illusory acceptance (Bayes factor > 10 for
-grammaticality) but attenuating NPIs do not.
+## References
 
-## Theoretical Account
-
-The illusion arises because the parser applies scalar licensing
-to the NPI. For strengthening NPIs, the scalar mechanism (ScalAssert) expects
-the asserted proposition to be STRONGER than alternatives — the RC environment
-superficially satisfies this. For attenuating NPIs, the mechanism expects
-WEAKER-than-alternatives — the RC environment does NOT satisfy this, so no
-illusion arises.
-
+* [schwab-2022]
+* [krifka-1995a]
+* [condoravdi-2010]
+* [israel-1996]
+* [muller-phillips-2020]
 -/
 
 namespace Schwab2022
 
-open Polarity (ScalarDirection)
+variable {W : Type*}
 
--- ============================================================================
--- Experimental Data
--- ============================================================================
+/-! ### The two scalar licensing conditions (§1.2) -/
 
-/-- Condition in the 2×3 design -/
-inductive Condition where
-  | grammatical   -- NPI in properly negated clause
-  | illusion      -- NPI in RC without matrix negation (pseudo-licensing)
-  | ungrammatical -- NPI in positive clause, no RC
-  deriving DecidableEq, Repr
+/-- An alternative `p'` is informative after asserting `p` in the context `c` when the context
+updated with `p` does not already entail it, the `c + p + p' ≠ c + p` of (5) and (6). -/
+def Informative (c p p' : Set W) : Prop := ¬ c ∩ p ⊆ p'
 
-/-- NPI type tested -/
-inductive NPIType where
-  | strengthening  -- jemals (ever)
-  | attenuating    -- soRecht (all that)
-  deriving DecidableEq, Repr
+theorem informative_iff (c p p' : Set W) : Informative c p p' ↔ c ∩ p ∩ p' ≠ c ∩ p := by
+  simp [Informative, Set.inter_eq_left]
 
-/-- A single experimental datum.
+/-- (5): scalar assertion. The worlds of the context where `p` holds and no alternative holds
+that would have been informative after `p`; a strengthening item is licensed where this is
+not contradictory. -/
+def scalAssert (c p : Set W) (alts : Set (Set W)) : Set W :=
+  {w | w ∈ c ∧ w ∈ p ∧ ¬ ∃ p' ∈ alts, w ∈ p' ∧ Informative c p p'}
 
-Acceptance rates and Bayes factors are stored as `ℚ` (exact rational
-arithmetic) — `Float` would prevent any later use in proofs and isn't
-how mathlib stores measured quantities. -/
-structure ExperimentalDatum where
-  npiType : NPIType
-  condition : Condition
-  /-- Mean acceptance rate (0–1) -/
-  acceptanceRate : ℚ
-  /-- Bayes factor for grammaticality (BF₁₀ > 3 = substantial evidence) -/
-  bayesFactor : ℚ
-  /-- Accepted as grammatical? (BF₁₀ > 3) -/
-  accepted : Bool
-  deriving Repr
+/-- (6): the licensing condition for attenuating items. The worlds of the context where `p`
+holds and some alternative compatible with the context would have been informative after
+`p`. -/
+def attenAssert (c p : Set W) (alts : Set (Set W)) : Set W :=
+  {w | w ∈ c ∧ w ∈ p ∧ ∃ p' ∈ alts, (c ∩ p').Nonempty ∧ Informative c p p'}
 
--- Experiment 2 results (acceptability judgment)
+/-- The assertion is the strongest of its alternatives in the context: it entails each of
+them. -/
+def IsStrongest (c p : Set W) (alts : Set (Set W)) : Prop := ∀ p' ∈ alts, c ∩ p ⊆ p'
 
-/-- jemals (strengthening) in grammatical condition -/
-def jemals_grammatical : ExperimentalDatum :=
-  { npiType := .strengthening, condition := .grammatical
-  , acceptanceRate := 85/100, bayesFactor := 100, accepted := true }
+variable {c p q : Set W} {alts : Set (Set W)}
 
-/-- jemals (strengthening) in illusion condition — ACCEPTED (illusion!) -/
-def jemals_illusion : ExperimentalDatum :=
-  { npiType := .strengthening, condition := .illusion
-  , acceptanceRate := 65/100, bayesFactor := 15, accepted := true }
+/-- An assertion stronger than all its alternatives passes scalar assertion as the plain
+update: the licensed case of a strengthening item. -/
+theorem scalAssert_eq_of_isStrongest (h : IsStrongest c p alts) : scalAssert c p alts = c ∩ p := by
+  ext w
+  simp only [scalAssert, Set.mem_ofPred_eq, Set.mem_inter_iff]
+  exact ⟨λ ⟨hc, hp, _⟩ => ⟨hc, hp⟩, λ ⟨hc, hp⟩ => ⟨hc, hp, λ ⟨p', hp', _, hi⟩ => hi (h p' hp')⟩⟩
 
-/-- jemals (strengthening) in ungrammatical condition -/
-def jemals_ungrammatical : ExperimentalDatum :=
-  { npiType := .strengthening, condition := .ungrammatical
-  , acceptanceRate := 25/100, bayesFactor := 5/100, accepted := false }
+/-- An assertion stronger than all its alternatives fails the attenuating condition
+outright. -/
+theorem attenAssert_eq_empty_of_isStrongest (h : IsStrongest c p alts) :
+    attenAssert c p alts = ∅ := by
+  ext w
+  simp only [attenAssert, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
+  exact λ ⟨_, _, p', hp', _, hi⟩ => hi (h p' hp')
 
-/-- soRecht (attenuating) in grammatical condition -/
-def soRecht_grammatical : ExperimentalDatum :=
-  { npiType := .attenuating, condition := .grammatical
-  , acceptanceRate := 80/100, bayesFactor := 80, accepted := true }
+/-- When every context world of the assertion falls under some informative alternative, scalar
+assertion is contradictory: the unlicensed case of a strengthening item. -/
+theorem scalAssert_eq_empty_of_cover
+    (h : ∀ w ∈ c ∩ p, ∃ p' ∈ alts, w ∈ p' ∧ Informative c p p') : scalAssert c p alts = ∅ := by
+  ext w
+  simp only [scalAssert, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
+  exact λ ⟨hc, hp, hn⟩ => hn (h w ⟨hc, hp⟩)
 
-/-- soRecht (attenuating) in illusion condition — REJECTED (no illusion!) -/
-def soRecht_illusion : ExperimentalDatum :=
-  { npiType := .attenuating, condition := .illusion
-  , acceptanceRate := 30/100, bayesFactor := 1/10, accepted := false }
+/-- One compatible informative alternative licenses an attenuating item: the condition is the
+plain update. -/
+theorem attenAssert_eq_of_exists (h : ∃ p' ∈ alts, (c ∩ p').Nonempty ∧ Informative c p p') :
+    attenAssert c p alts = c ∩ p := by
+  ext w
+  simp only [attenAssert, Set.mem_ofPred_eq, Set.mem_inter_iff]
+  exact ⟨λ ⟨hc, hp, _⟩ => ⟨hc, hp⟩, λ ⟨hc, hp⟩ => ⟨hc, hp, h⟩⟩
 
-/-- soRecht (attenuating) in ungrammatical condition -/
-def soRecht_ungrammatical : ExperimentalDatum :=
-  { npiType := .attenuating, condition := .ungrammatical
-  , acceptanceRate := 20/100, bayesFactor := 2/100, accepted := false }
+/-! ### The lexical scales (4) -/
 
-/-- All experimental data -/
-def experimentalData : List ExperimentalDatum :=
-  [ jemals_grammatical, jemals_illusion, jemals_ungrammatical
-  , soRecht_grammatical, soRecht_illusion, soRecht_ungrammatical ]
+section Scales
 
--- ============================================================================
--- Core Finding: Illusion Asymmetry
--- ============================================================================
+variable {T D : Type*} [Preorder D] (at' : T → Set W) (μ : W → D)
 
-/-- Per-datum acceptance pattern (Experiment 2). -/
-example : jemals_grammatical.accepted = true := rfl
-example : jemals_illusion.accepted = true := rfl       -- illusion!
-example : jemals_ungrammatical.accepted = false := rfl
-example : soRecht_grammatical.accepted = true := rfl
-example : soRecht_illusion.accepted = false := rfl     -- no illusion!
-example : soRecht_ungrammatical.accepted = false := rfl
+/-- *ever*: at some time; its alternatives are the specific times (4a). -/
+def ever : Set W := ⋃ t, at' t
 
-/-- The illusion asymmetry: strengthening NPIs show illusory acceptance,
-    attenuating NPIs do not. -/
-theorem illusion_asymmetry :
-    jemals_illusion.accepted = true ∧ soRecht_illusion.accepted = false :=
-  ⟨rfl, rfl⟩
+/-- The alternatives of `ever`. -/
+def everAlts : Set (Set W) := Set.range at'
 
--- ============================================================================
--- Theoretical Connection: ScalarDirection → Illusion Prediction
--- ============================================================================
+/-- Under negation the existential is the strongest of its alternatives: not ever entails not
+at any specific time. -/
+theorem isStrongest_not_ever (c : Set W) :
+    IsStrongest c (ever at')ᶜ (compl '' everAlts at') := by
+  rintro _ ⟨_, ⟨t, rfl⟩, rfl⟩ w ⟨_, hw⟩ ht
+  exact hw (Set.mem_iUnion.2 ⟨t, ht⟩)
 
-/-- Map from NPI type to scalar direction -/
-def npiTypeToScalarDirection : NPIType → ScalarDirection
-  | .strengthening => .strengthening
-  | .attenuating => .attenuating
+/-- (2a), (4a): under negation *ever* is licensed, scalar assertion being the plain update. -/
+theorem scalAssert_not_ever (c : Set W) :
+    scalAssert c (ever at')ᶜ (compl '' everAlts at') = c ∩ (ever at')ᶜ :=
+  scalAssert_eq_of_isStrongest (isStrongest_not_ever at' c)
 
-/-- Predict whether an NPI type shows illusion based on scalar direction.
-    Only strengthening NPIs show illusion because the RC environment
-    superficially satisfies the "stronger-than-alternatives" licensing
-    condition of ScalAssert. -/
-def predictsIllusion (npi : NPIType) : Bool :=
-  match npiTypeToScalarDirection npi with
-  | .strengthening => true   -- ScalAssert condition superficially met
-  | .attenuating => false    -- Attenuation condition NOT met
-  | .nonScalar => false
+/-- (2a): in the affirmative *ever* is covered by its specific times, each informative after
+it, so scalar assertion is contradictory and the item unlicensed. -/
+theorem scalAssert_ever_eq_empty (c : Set W) (hinf : ∀ t, Informative c (ever at') (at' t)) :
+    scalAssert c (ever at') (everAlts at') = ∅ :=
+  scalAssert_eq_empty_of_cover λ _ ⟨_, hw⟩ =>
+    let ⟨t, ht⟩ := Set.mem_iUnion.1 hw
+    ⟨_, ⟨t, rfl⟩, ht, hinf t⟩
 
-/-- The theoretical prediction matches the observed data. -/
-theorem prediction_matches_data :
-    predictsIllusion .strengthening = jemals_illusion.accepted ∧
-    predictsIllusion .attenuating = soRecht_illusion.accepted := by
-  refine ⟨?_, ?_⟩ <;> simp only [predictsIllusion, npiTypeToScalarDirection,
-    jemals_illusion, soRecht_illusion]
+/-- The degree reaches `d`. -/
+def atLeast (d : D) : Set W := {w | d ≤ μ w}
 
-/-- Illusion asymmetry follows from scalar direction:
-    strengthening NPIs are predicted to show illusion,
-    attenuating NPIs are not. -/
-theorem illusion_asymmetry_from_scalar_direction :
-    predictsIllusion .strengthening = true ∧
-    predictsIllusion .attenuating = false := ⟨rfl, rfl⟩
+theorem atLeast_antitone : Antitone (atLeast μ) := λ _ _ h _ hw => h.trans hw
+
+/-- The alternatives of an attenuating degree modifier at `d` are the lower degrees
+([israel-1996]). -/
+def lowerAlts (d : D) : Set (Set W) := {p | ∃ d' < d, p = atLeast μ d'}
+
+/-- In the affirmative a degree modifier entails its lower alternatives, so the attenuating
+condition fails and the item is unlicensed, although the assertion is the most informative
+of the scale, which the paper takes to explain the higher acceptance of the unlicensed
+baseline with *so recht*. -/
+theorem isStrongest_atLeast (c : Set W) (d : D) : IsStrongest c (atLeast μ d) (lowerAlts μ d) := by
+  rintro _ ⟨d', hd', rfl⟩ w ⟨_, hw⟩
+  exact atLeast_antitone μ hd'.le hw
+
+/-- (4b): under negation a lower degree is the stronger alternative, and one that is compatible
+with the context and informative licenses the attenuating item. -/
+theorem attenAssert_not_atLeast (c : Set W) {d d' : D} (hd : d' < d)
+    (hne : (c ∩ (atLeast μ d')ᶜ).Nonempty) (hi : Informative c (atLeast μ d)ᶜ (atLeast μ d')ᶜ) :
+    attenAssert c (atLeast μ d)ᶜ (compl '' lowerAlts μ d) = c ∩ (atLeast μ d)ᶜ :=
+  attenAssert_eq_of_exists ⟨_, ⟨atLeast μ d', ⟨d', hd, rfl⟩, rfl⟩, hne, hi⟩
+
+end Scales
+
+/-! ### The illusion (§4) -/
+
+/-- The scalar account of the illusion: fed the relative clause's proposition, a negative
+quantifier at the strongest point of its Horn scale, the strengthening mechanism accepts it as
+the plain update while the attenuating one rejects it, whatever the main clause. -/
+theorem illusion_asymmetry (hq : IsStrongest c q alts) :
+    scalAssert c q alts = c ∩ q ∧ attenAssert c q alts = ∅ :=
+  ⟨scalAssert_eq_of_isStrongest hq, attenAssert_eq_empty_of_isStrongest hq⟩
 
 end Schwab2022
