@@ -1,112 +1,218 @@
-/-
-Copyright (c) 2026 Robert Hawkins. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Robert Hawkins
--/
-import Linglib.Syntax.Negation
 import Linglib.Data.WALS.Features.F115A
+import Linglib.Data.Examples.VanDerAuweraVanAlsenoy2016
+import Mathlib.Order.Basic
+import Mathlib.Data.Fintype.Prod
 
 /-!
-# [van-der-auwera-van-alsenoy-2016] — negative concord ↔ n-word status
+# van der Auwera and Van Alsenoy (2016): On the Typology of Negative Concord
 
-The cross-linguistic bridge between a language's WALS 115A negative-indefinite
-*strategy* ([haspelmath-2013], typed in `Syntax.Negation`) and the item-level
-*n-word status* of its negation-sensitive indefinites ([giannakidou-2000], `NWordStatus`
-below): an n-word needs a negative-concord system, an
-inherently negative quantifier needs a non-concord (double-negation /
-neg-existential) one, and an NPI is admitted by either.
+This file formalizes [van-der-auwera-van-alsenoy-2016], a typology of negative concord, a
+semantically single negation expressed both by a clausal negator and by a negative indefinite,
+(1), over a variety sample of 179 languages. A negative indefinite is an indefinite whose dominant
+use is negation, as against a negatively polar or a neutral indefinite, `Indefinite`, and a
+language's way of negating with an indefinite is one of Kahrel's five strategies,
+`Strategy`. The paper's first claim is that negative concord is not frequent: the impression that
+it is rests on [haspelmath-1997]'s deliberately wide notion of negative indefinite, so that the
+co-occurrence value of WALS 115A, [haspelmath-2013], covers the neutral and polar strategies as
+well as concord, `toWALS`, `toWALS_eq_predicateNegationAlsoPresent_iff`. The second claim is that
+strict concord is far more frequent than non-strict, and that non-strict concord is not one
+pattern but many. A concord system records, for a negative indefinite before and after the finite
+verb, whether the clausal negator is absent, optional or obligatory, or the position unavailable,
+`Marking` and `System`, the paper's formulas (19), (26), (28), (30), (32), (36), (38), (39): strict
+concord is obligatory marking in both positions, `IsStrict`, and non-strict concord is concord
+that is not strict, `IsNonStrict`. [jespersen-1917]'s Negative Early principle, that the clausal
+negator appears first where the negative indefinite comes late, orders the two positions,
+`NegativeEarly`, and the four subtypes of Table 9 are exactly the non-strict systems with both
+positions available that respect it, `nonStrict_negativeEarly_iff`. The diachrony of Table 6 from
+Latin to modern Slavic is a chain on the strictness scale, `stages_isChain`, each stage respecting
+Negative Early, `negativeEarly_of_mem_stages`, whereas Catalan moves from strict to the Spanish
+subtype, the other way along the scale, `informalCatalan_lt_formalCatalan`.
 
-Anchored here (rather than left in `Syntax.Negation` substrate) because it is a
-paper-specific prediction with no other consumer, and the n-word and concord types are the
-paper's own typology.
+## Implementation notes
 
-## Main definitions
+The strictness scale orders the markings absent, optional, obligatory, and a system is a pair of
+optional markings, the asterisk of the paper's formulas being `none`; Georgian's immediate
+precedence, (36), Welsh's compound verbs, (43), and Yiddish's emphatic omission, (45), are
+recorded as rows, since they parametrize concord by something other than the position relative
+to the finite verb. The frequencies of Tables 1 to 3, the areal distribution, and the
+morpho-syntactic composition of Table 4 are reported in the paper and not formalized. The
+examples are the rows of `Data.Examples.VanDerAuweraVanAlsenoy2016`.
 
-* `NWordStatus`, `NegConcordSubtype`, `NWordPosition` — the n-word trichotomy and the concord
-  subtypes, with `NegConcordSubtype.nmRequired` deriving the strict/non-strict contrast.
-* `hasNegativeConcord` — whether a WALS 115A strategy is a concord system.
-* `admits` — whether an n-word status is consistent with a strategy.
+## References
+
+* [van-der-auwera-van-alsenoy-2016]
+* [haspelmath-1997]
+* [haspelmath-2013]
+* [kahrel-1996]
+* [giannakidou-1998]
+* [jespersen-1917]
+* [de-swart-2010]
 -/
 
 namespace VanDerAuweraVanAlsenoy2016
 
 open Data.WALS
-/-- Item-level status of a negation-sensitive indefinite: the n-word vs
-    negative-quantifier vs NPI trichotomy. [giannakidou-2000] gives the minimal,
-    deliberately theory-neutral definition — n-words "occur in NC structures and can be
-    associated with negative meaning" — and stresses their heterogeneity. The *internal*
-    semantics is contested; this enum records only the distributional class, which
-    [van-der-auwera-van-alsenoy-2016] take as the basis of the NC typology. -/
-inductive NWordStatus where
-  /-- N-word: occurs in negative-concord structures (Romance *nessuno*, Slavic никто,
-      Greek *típota*, Hungarian *semmi*); licenses a negative fragment answer yet typically
-      co-occurs with a clausal negation marker. -/
-  | nWord
-  /-- Inherently negative quantifier: negates on its own with no concord; two stack to
-      double negation. English *nobody*, German *niemand*. -/
-  | negQuantifier
-  /-- Negative-polarity item: non-negative, licensed by negation, occurs across a wider
-      range of contexts. English *anybody*. -/
-  | npi
+
+/-! ### Indefinites and strategies -/
+
+/-- The indefinite used in a negative clause, by its dominant use: neutral, at home in positive
+and negative contexts alike, negatively polar, licensed by negation among other contexts, or
+negative, used predominantly for negation. -/
+inductive Indefinite where
+  | neutral
+  | negativelyPolar
+  | negative
   deriving DecidableEq, Repr
 
-/-- Subtype of negative concord ([van-der-auwera-van-alsenoy-2016]; [giannakidou-2000]).
-    `strict` keeps the clausal negation marker regardless of n-word position (Greek,
-    Hungarian, Slavic); `nonStrict` drops it when the n-word is preverbal but requires it
-    postverbally (Italian, Spanish, Portuguese); `negativeSpread` has several n-words share
-    one negation with no clausal marker at all. -/
-inductive NegConcordSubtype where
-  | strict
-  | nonStrict
-  | negativeSpread
+/-- [kahrel-1996]'s strategies for a single negation with an indefinite, Table 1: a verbal negator
+with a neutral or a negatively polar indefinite, a negative indefinite alone, negative concord,
+and another construction such as a negative existential. -/
+inductive Strategy where
+  | verbalNegatorNeutral
+  | verbalNegatorPolar
+  | negativeIndefiniteAlone
+  | concord
+  | other
+  deriving DecidableEq, Repr, Fintype
+
+/-- The indefinite each strategy uses, if any. -/
+def Strategy.indefinite : Strategy → Option Indefinite
+  | .verbalNegatorNeutral => some .neutral
+  | .verbalNegatorPolar => some .negativelyPolar
+  | .negativeIndefiniteAlone | .concord => some .negative
+  | .other => none
+
+/-- The WALS 115A value a strategy falls under: [haspelmath-2013]'s co-occurrence of predicate
+negation with a negative indefinite, in the wide sense of [haspelmath-1997], covers every
+strategy with a verbal negator. -/
+def Strategy.toWALS : Strategy → F115A.NegativeIndefiniteType
+  | .verbalNegatorNeutral | .verbalNegatorPolar | .concord => .predicateNegationAlsoPresent
+  | .negativeIndefiniteAlone => .noPredicateNegation
+  | .other => .negativeExistentialConstruction
+
+/-- WALS co-occurrence is not negative concord: it is any strategy with a verbal negator, so the
+frequency of the WALS value does not measure the frequency of concord. -/
+theorem toWALS_eq_predicateNegationAlsoPresent_iff (s : Strategy) :
+    s.toWALS = .predicateNegationAlsoPresent ↔
+      s = .verbalNegatorNeutral ∨ s = .verbalNegatorPolar ∨ s = .concord := by
+  cases s <;> simp [Strategy.toWALS]
+
+/-! ### Strict and non-strict negative concord -/
+
+/-- Whether the clausal negator accompanies a negative indefinite in a position: absent, the
+formula V, optional, (N) V, or obligatory, N V; the strictness scale. -/
+inductive Marking where
+  | absent
+  | optional
+  | obligatory
+  deriving DecidableEq, Repr, Fintype
+
+/-- The position of a marking on the strictness scale. -/
+def Marking.rank : Marking → Fin 3
+  | .absent => 0
+  | .optional => 1
+  | .obligatory => 2
+
+instance : LinearOrder Marking := LinearOrder.lift' Marking.rank (by decide)
+
+/-- A negative concord system: the marking of a preverbal and of a postverbal negative
+indefinite, `none` when the position is unavailable, the asterisk of the formulas. -/
+structure System where
+  preverbal : Option Marking
+  postverbal : Option Marking
   deriving DecidableEq, Repr
 
-/-- Position of an n-word relative to the finite verb, the parameter the strict versus
-    non-strict contrast turns on. -/
-inductive NWordPosition where
-  | preverbal
-  | postverbal
-  deriving DecidableEq, Repr
+/-- A pattern with both positions available, the systems of Tables 6 and 9. -/
+abbrev Pattern := Marking × Marking
 
-/-- Whether a clausal negation marker is required, given the concord subtype and the
-    n-word's position: strict concord keeps the marker regardless of position, non-strict
-    drops it for a preverbal n-word but requires it postverbally, and negative spread has no
-    clausal marker. -/
-def NegConcordSubtype.nmRequired : NegConcordSubtype → NWordPosition → Bool
-  | .strict, _ => true
-  | .nonStrict, .preverbal => false
-  | .nonStrict, .postverbal => true
-  | .negativeSpread, _ => false
+/-- The system of a pattern. -/
+def Pattern.toSystem (p : Pattern) : System := ⟨some p.1, some p.2⟩
 
-/-- The strict versus non-strict contrast: both require the marker postverbally, but only
-    strict requires it preverbally ([giannakidou-2000]). -/
-theorem strict_nonstrict_contrast :
-    NegConcordSubtype.strict.nmRequired .preverbal = true ∧
-    NegConcordSubtype.nonStrict.nmRequired .preverbal = false ∧
-    NegConcordSubtype.nonStrict.nmRequired .postverbal = true := by decide
+/-- Concord is available in some construction. -/
+def System.HasConcord (s : System) : Prop :=
+  (∃ m, s.preverbal = some m ∧ m ≠ .absent) ∨ (∃ m, s.postverbal = some m ∧ m ≠ .absent)
 
-/-- Whether the negative-indefinite system shows negative concord
-    ([van-der-auwera-van-alsenoy-2016]): WALS Ch 115A's predicate-negation-also-present (concord)
-    and mixed-behaviour (position-dependent) do; no-predicate-negation (double
-    negation) and the negative-existential construction do not. -/
-def hasNegativeConcord : F115A.NegativeIndefiniteType → Bool
-  | .predicateNegationAlsoPresent | .mixedBehaviour => true
-  | .noPredicateNegation | .negativeExistentialConstruction => false
+/-- Strict negative concord: the clausal negator is obligatory whatever the position of the
+negative indefinite, (14). -/
+def System.IsStrict (s : System) : Prop :=
+  s.preverbal = some .obligatory ∧ s.postverbal = some .obligatory
 
-/-- Whether an item-level n-word status is consistent with a language's WALS 115A
-    negative-indefinite strategy: an n-word needs a concord system, an inherently
-    negative quantifier a non-concord (double-negation / neg-existential) one, an NPI
-    any ([van-der-auwera-van-alsenoy-2016]). -/
-def admits : F115A.NegativeIndefiniteType → NWordStatus → Bool
-  | strat, .nWord => hasNegativeConcord strat
-  | strat, .negQuantifier => !hasNegativeConcord strat
-  | _, .npi => true
+/-- Non-strict negative concord: concord in some construction but not in all, (15). -/
+def System.IsNonStrict (s : System) : Prop := s.HasConcord ∧ ¬ s.IsStrict
 
-/-- N-words live in negative-concord systems, inherently negative quantifiers in
-    double-negation ones ([van-der-auwera-van-alsenoy-2016]). -/
-theorem nWord_vs_negQuantifier :
-    admits .predicateNegationAlsoPresent .nWord = true ∧
-    admits .noPredicateNegation .nWord = false ∧
-    admits .noPredicateNegation .negQuantifier = true := by decide
+instance (s : System) : Decidable s.HasConcord := by unfold System.HasConcord; infer_instance
+instance (s : System) : Decidable s.IsStrict := by unfold System.IsStrict; infer_instance
+instance (s : System) : Decidable s.IsNonStrict := by unfold System.IsNonStrict; infer_instance
+
+theorem System.IsStrict.hasConcord {s : System} (h : s.IsStrict) : s.HasConcord :=
+  Or.inl ⟨.obligatory, h.1, by decide⟩
+
+/-- The Negative Early principle: a postverbal negative indefinite, which leaves the negation
+late, calls for the clausal negator at least as much as a preverbal one. -/
+def Pattern.NegativeEarly (p : Pattern) : Prop := p.1 ≤ p.2
+
+instance : DecidablePred Pattern.NegativeEarly := λ p => inferInstanceAs (Decidable (p.1 ≤ p.2))
+
+/-- (19): the Spanish subtype, no negator with a preverbal negative indefinite and an obligatory
+one with a postverbal one. -/
+def spanish : Pattern := (.absent, .obligatory)
+
+/-- (30): Belgian Brabantic Dutch, an optional negator with a postverbal negative indefinite. -/
+def brabanticDutch : Pattern := (.absent, .optional)
+
+/-- (32): French and African American English, the negator optional in both positions. -/
+def french : Pattern := (.optional, .optional)
+
+/-- (28): older Slavic and Catalan, the negator optional preverbally and obligatory
+postverbally. -/
+def olderSlavic : Pattern := (.optional, .obligatory)
+
+/-- Table 9: the non-strict subtypes with both positions available. -/
+def nonStrictSubtypes : List Pattern := [brabanticDutch, french, spanish, olderSlavic]
+
+/-- Table 9 is exactly the non-strict patterns respecting Negative Early. -/
+theorem nonStrict_negativeEarly_iff (p : Pattern) :
+    p.toSystem.IsNonStrict ∧ p.NegativeEarly ↔ p ∈ nonStrictSubtypes := by
+  revert p
+  decide
+
+/-- Table 6: the diachrony from Latin, with negative indefinites alone, through older Romance,
+Spanish and older Slavic to modern Slavic and Romanian, with strict concord. -/
+def stages : List Pattern :=
+  [(.absent, .absent), (.absent, .optional), spanish, olderSlavic, (.obligatory, .obligatory)]
+
+/-- The diachrony ascends the strictness scale in both positions. -/
+theorem stages_isChain : stages.IsChain (· ≤ ·) := by decide
+
+/-- Every stage respects Negative Early: the verbal negator appears with the postverbal negative
+indefinite before it appears with the preverbal one. -/
+theorem negativeEarly_of_mem_stages : ∀ p ∈ stages, p.NegativeEarly := by decide
+
+/-- (29): informal Catalan has the Spanish subtype, formal Catalan strict concord. -/
+def informalCatalan : Pattern := spanish
+
+def formalCatalan : Pattern := (.obligatory, .obligatory)
+
+/-- Catalan is changing from strict to Spanish-style concord, down the strictness scale: the
+diachrony has no single direction. -/
+theorem informalCatalan_lt_formalCatalan :
+    informalCatalan ≤ formalCatalan ∧ informalCatalan ≠ formalCatalan := by decide
+
+/-! ### Systems with an unavailable position -/
+
+/-- (26): Icelandic *neinn*, no preverbal position and obligatory concord postverbally. -/
+def icelandic : System := ⟨none, some .obligatory⟩
+
+/-- (39): Welsh, no preverbal position and optional concord postverbally. -/
+def welsh : System := ⟨none, some .optional⟩
+
+/-- (38): Western Armenian, optional concord preverbally and no postverbal position. -/
+def westernArmenian : System := ⟨some .optional, none⟩
+
+/-- Table 8: the subtypes with one position unavailable are non-strict, concord depending on
+word order even where it is obligatory. -/
+theorem isNonStrict_table8 :
+    icelandic.IsNonStrict ∧ welsh.IsNonStrict ∧ westernArmenian.IsNonStrict := by
+  decide
 
 end VanDerAuweraVanAlsenoy2016
