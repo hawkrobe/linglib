@@ -2180,7 +2180,6 @@ import Linglib.Studies.IatridouZeijlstra2021
 import Linglib.Studies.Icard2012
 import Linglib.Studies.Imanishi2014
 import Linglib.Studies.Imanishi2020
-import Linglib.Studies.ImelGuoST2026
 import Linglib.Studies.IoninMatushansky2006
 import Linglib.Studies.IppolitoKissWilliams2022
 import Linglib.Studies.IppolitoKissWilliams2025

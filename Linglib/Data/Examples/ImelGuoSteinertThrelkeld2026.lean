@@ -1,20 +1,20 @@
 import Linglib.Data.Examples.Schema
 
 /-!
-# `ImelGuoST2026` — typed example data
+# `ImelGuoSteinertThrelkeld2026` — typed example data
 
-Auto-generated from `Linglib/Data/Examples/ImelGuoST2026.json` by
+Auto-generated from `Linglib/Data/Examples/ImelGuoSteinertThrelkeld2026.json` by
 `scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
 the generator. Consumers (the paper's study file, test-suite hubs) import
-this module; declarations live in `namespace ImelGuoST2026.Examples`.
+this module; declarations live in `namespace ImelGuoSteinertThrelkeld2026.Examples`.
 -/
 
-namespace ImelGuoST2026.Examples
+namespace ImelGuoSteinertThrelkeld2026.Examples
 
 open Data.Examples
 
 def s1a : LinguisticExample :=
-  { id := "imelguost2026_s1a"
+  { id := "imelguosteinertthrelkeld2026_s1a"
     source := ⟨"imel-guo-steinert-threlkeld-2026", "(1a)"⟩
     reportedIn := none
     language := "stan1293"
@@ -32,7 +32,7 @@ def s1a : LinguisticExample :=
     lgrConformance := "" }
 
 def s1b : LinguisticExample :=
-  { id := "imelguost2026_s1b"
+  { id := "imelguosteinertthrelkeld2026_s1b"
     source := ⟨"imel-guo-steinert-threlkeld-2026", "(1b)"⟩
     reportedIn := none
     language := "stan1293"
@@ -50,7 +50,7 @@ def s1b : LinguisticExample :=
     lgrConformance := "" }
 
 def s2a : LinguisticExample :=
-  { id := "imelguost2026_s2a"
+  { id := "imelguosteinertthrelkeld2026_s2a"
     source := ⟨"imel-guo-steinert-threlkeld-2026", "(2a)"⟩
     reportedIn := none
     language := "stan1293"
@@ -68,7 +68,7 @@ def s2a : LinguisticExample :=
     lgrConformance := "" }
 
 def s2b : LinguisticExample :=
-  { id := "imelguost2026_s2b"
+  { id := "imelguosteinertthrelkeld2026_s2b"
     source := ⟨"imel-guo-steinert-threlkeld-2026", "(2b)"⟩
     reportedIn := none
     language := "stan1293"
@@ -86,7 +86,7 @@ def s2b : LinguisticExample :=
     lgrConformance := "" }
 
 def s3a : LinguisticExample :=
-  { id := "imelguost2026_s3a"
+  { id := "imelguosteinertthrelkeld2026_s3a"
     source := ⟨"imel-guo-steinert-threlkeld-2026", "(3a)"⟩
     reportedIn := none
     language := "lill1248"
@@ -104,7 +104,7 @@ def s3a : LinguisticExample :=
     lgrConformance := "" }
 
 def s3b : LinguisticExample :=
-  { id := "imelguost2026_s3b"
+  { id := "imelguosteinertthrelkeld2026_s3b"
     source := ⟨"imel-guo-steinert-threlkeld-2026", "(3b)"⟩
     reportedIn := none
     language := "lill1248"
@@ -123,4 +123,4 @@ def s3b : LinguisticExample :=
 
 def all : List LinguisticExample := [s1a, s1b, s2a, s2b, s3a, s3b]
 
-end ImelGuoST2026.Examples
+end ImelGuoSteinertThrelkeld2026.Examples
