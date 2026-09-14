@@ -229,14 +229,14 @@ verbs are far more projective (Exp 2: .69 vs .52; see the prediction section). -
 
 /-- Occasion verbs are the agent-evocator class; their predicted IC bias is NP2. -/
 theorem occasion_is_agent_evocator_bias :
-    VerbClass.agentEvocator.predictedBias = .np2 := rfl
+    VerbClass.agentEvocator.icausBias = some .np2 := by decide
 
 /-- IC bias and projectivity dissociate: occasion verbs share the NP2 bias with
     experiencer-stimulus psych verbs, yet (by the Exp 2 data pooled in
     `Generalizations.Projectivity`) project more strongly. The shared bias is
     structural; the projectivity gap is empirical. -/
 theorem ic_bias_shared_with_expStim :
-    VerbClass.agentEvocator.predictedBias = VerbClass.expStim.predictedBias := rfl
+    VerbClass.agentEvocator.icausBias = VerbClass.expStim.icausBias := by decide
 
 /-! ### Predicting against the data
 
