@@ -33,12 +33,12 @@ variable (s : Segment)
 
 theorem fillFromContext_apply_self_of_unspecified {f : Feature} (h : s.Unspecified f) (ctx : Segment) :
     (s.fillFromContext f ctx) f = ctx f := by
-  simp only [Segment.fillFromContext, Features.Bundle.merge,
+  simp only [Segment.fillFromContext, Bundle.merge,
     show s f = none from h, Function.update_self]
 
 theorem fillFromContext_apply_self_of_specified {f : Feature} {w : Bool} (h : s.HasValue f w)
     (ctx : Segment) : (s.fillFromContext f ctx) f = some w := by
-  simp only [Segment.fillFromContext, Features.Bundle.merge, show s f = some w from h]
+  simp only [Segment.fillFromContext, Bundle.merge, show s f = some w from h]
 
 /-! ### Value preserved on other features -/
 
@@ -48,7 +48,7 @@ theorem fillFromContext_apply_self_of_specified {f : Feature} {w : Bool} (h : s.
 
 @[simp] theorem fillFromContext_apply_of_ne {f g : Feature} (h : f ≠ g) (ctx : Segment) :
     (s.fillFromContext f ctx) g = s g := by
-  simp only [Segment.fillFromContext, Features.Bundle.merge, Function.update_of_ne (Ne.symm h)]
+  simp only [Segment.fillFromContext, Bundle.merge, Function.update_of_ne (Ne.symm h)]
   cases s g <;> rfl
 
 end Segment

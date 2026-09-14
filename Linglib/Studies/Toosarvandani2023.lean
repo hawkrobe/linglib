@@ -49,7 +49,7 @@ with first- and second-person plural pronouns.
 - §6 Structural properties of the PCC condition
 - §7 Denotation ↔ PCC correspondence
 - §8 Heterogeneity and SINGULAR/PLURAL composition order
-- §9 Bridges to `UD.Person` and `Features.Prominence`
+- §9 Bridges to `UD.Person` and `Reference.Prominence`
 
 ## Note on absolute vs relative PCC
 
@@ -634,11 +634,11 @@ theorem wrong_order_produces_plural :
       oplus (speakerDen zd) (singularFilter (participantDen zd)) := by decide
 
 -- ============================================================================
--- § 9: Bridges to UD.Person / Features.Prominence
+-- § 9: Bridges to UD.Person / Reference.Prominence
 -- ============================================================================
 
 /-- Map PronType to the coarser 3-way person distinction in
-    `Features.Prominence`. All third-person animacy subtypes collapse. -/
+    `Reference.Prominence`. All third-person animacy subtypes collapse. -/
 def PronType.toPerson : PronType → Person
   | .first  => .first
   | .second => .second
@@ -663,7 +663,7 @@ theorem person_features_consistent : ∀ p : PronType,
 
 /-- Map third-person pronoun types to AnimacyLevel. Elder and human both
     map to `.human` — elder is a human subtype. SAPs return `none`. -/
-def PronType.toAnimacyLevel : PronType → Option Features.Prominence.AnimacyLevel
+def PronType.toAnimacyLevel : PronType → Option Reference.Prominence.AnimacyLevel
   | .thirdElder     => some .human
   | .thirdHuman     => some .human
   | .thirdAnimal    => some .animate

@@ -48,4 +48,4 @@ abbrev HasGender.Compatible {α β : Type*} [HasGender α] [HasGender β]
 theorem UD.MorphFeatures.compatible_hasGender {f₁ f₂ : UD.MorphFeatures}
     (h : f₁.compatible f₂ = true) :
     HasGender.Compatible f₁ f₂ :=
-  Features.compat_of_clause_map Gender.fromUD (UD.MorphFeatures.compatible_gender h)
+  Agreement.compat_of_clause_map Gender.fromUD (UD.MorphFeatures.compatible_gender h)

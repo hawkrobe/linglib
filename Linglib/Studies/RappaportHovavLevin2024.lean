@@ -442,7 +442,7 @@ structure Datum where
   verb : Verb
   event : Event
   slots : Slots
-  judgment : Features.Judgment
+  judgment : Data.Examples.Judgment
 
 /-- An example read into its datum. -/
 def datum (e : LinguisticExample) : Option Datum := do

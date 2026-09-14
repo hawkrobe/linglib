@@ -164,13 +164,13 @@ def DirectedScale.ofLabel : String → Option DirectedScale
 
 /-- The scales of an example's two terms and its judgment. -/
 def datum (e : Data.Examples.LinguisticExample) :
-    Option (DirectedScale × DirectedScale × Features.Judgment) := do
+    Option (DirectedScale × DirectedScale × Data.Examples.Judgment) := do
   let l ← DirectedScale.ofLabel (← e.feature? "leftScale")
   let r ← DirectedScale.ofLabel (← e.feature? "rightScale")
   pure (l, r, e.judgment)
 
 /-- The comparatives whose scales the paper records. -/
-def data : List (DirectedScale × DirectedScale × Features.Judgment) :=
+def data : List (DirectedScale × DirectedScale × Data.Examples.Judgment) :=
   Examples.all.filterMap datum
 
 /-- The starred comparatives compare distinct scales. -/

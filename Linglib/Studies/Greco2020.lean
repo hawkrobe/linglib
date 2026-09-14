@@ -43,7 +43,7 @@ constituent.
 
 namespace Greco2020
 
-open Minimalist Negation Data.Examples Features
+open Minimalist Negation Data.Examples
 
 /-! ### Tables 1 and 2: the Italian expletive negation environments -/
 

@@ -83,7 +83,7 @@ theorem interpret_anaphoric (R : DenotGS E W .et) (d : Nat)
        if R g gs (g d) then some (g d) else none) := rfl
 
 theorem interpret_demonstrative
-    (R : DenotGS E W .et) (deictic : Features.Deixis.Feature)
+    (R : DenotGS E W .et) (deictic : Reference.Deixis)
     (sIdx d : Nat) (g : Assignment E) (gs : SitAssignment W) :
     interpret (.demonstrative R deictic sIdx d) g gs =
       (letI := Classical.dec (R g gs (g d))
@@ -114,7 +114,7 @@ theorem interpret_bare_eq_unique
     when they share restrictor and discourse index. The deictic content is
     a presupposition filter, not a selector. -/
 theorem interpret_demonstrative_eq_anaphoric
-    (R : DenotGS E W .et) (deictic : Features.Deixis.Feature)
+    (R : DenotGS E W .et) (deictic : Reference.Deixis)
     (sIdx d : Nat) (g : Assignment E) (gs : SitAssignment W) :
     interpret (.demonstrative R deictic sIdx d) g gs =
     interpret (.anaphoric R d) g gs := rfl

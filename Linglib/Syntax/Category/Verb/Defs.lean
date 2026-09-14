@@ -49,9 +49,9 @@ primitive fields in `Syntax/Category/Verb/Basic.lean`, not stipulated as an enum
 
 open Aspect
 open Presupposition
-open Features
+open Aspect.ChangeOfState
 open ArgumentStructure
-open Features.ChangeOfState
+open Aspect.ChangeOfState
 open NaturalLogic (Signature)
 open Causation.Psych (CausalSource)
 open ArgumentStructure (EntailmentProfile)

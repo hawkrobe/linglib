@@ -53,7 +53,7 @@ wh-interrogatives to processing.
 
 namespace Sag2010
 
-open HPSG HPSG.RSRL HPSG.Construction Data.Examples Features
+open HPSG HPSG.RSRL HPSG.Construction Data.Examples
 
 /-! ### The five constructions -/
 

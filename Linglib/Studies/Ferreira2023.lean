@@ -472,7 +472,7 @@ theorem consistent_wn_sn : Pattern.Consistent ⟨⟨.wn, false, false⟩, ⟨.sn
 /-- A row: the conjunction and the paper's judgment. -/
 structure Row where
   pattern : Pattern
-  judgment : Features.Judgment
+  judgment : Data.Examples.Judgment
   deriving DecidableEq, Repr
 
 def conjunctTable : List (String × Conjunct) :=

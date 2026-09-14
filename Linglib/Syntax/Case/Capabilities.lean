@@ -47,4 +47,4 @@ abbrev HasCase.Compatible {α β : Type*} [HasCase α] [HasCase β]
 theorem UD.MorphFeatures.compatible_hasCase {f1 f2 : UD.MorphFeatures}
     (h : f1.compatible f2 = true) :
     HasCase.Compatible f1 f2 :=
-  Features.compat_of_clause_map Case.fromUD (UD.MorphFeatures.compatible_case h)
+  Agreement.compat_of_clause_map Case.fromUD (UD.MorphFeatures.compatible_case h)

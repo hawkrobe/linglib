@@ -45,7 +45,7 @@ namespace Tense.Evidential
 
 open Tense
 open _root_.Evidential
-open Features.Mirativity
+open Evidential
 open Presupposition
 
 variable {T : Type*}
@@ -183,7 +183,7 @@ structure TAMEEntry where
   /-- The grammatical mood, if specified. -/
   mood : Option Mood.Grammatical := none
   /-- The mirativity value, if specified. -/
-  mirative : Option MirativityValue := none
+  mirative : Option Evidential.Mirativity := none
 
 instance : HasEvidentialPerspective TAMEEntry where
   toEvidentialPerspective p := toEvidentialPerspective p.ep

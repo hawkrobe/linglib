@@ -138,7 +138,7 @@ structure Datum where
   verbClass : Option VerbClass
   /-- Whether *do* and *happen* are neutralized, as in *why does the door do that*. -/
   neutralized : Bool
-  judgment : Features.Judgment
+  judgment : Data.Examples.Judgment
 
 /-- An example read into its frame, profile and judgment. -/
 def datum (e : Data.Examples.LinguisticExample) : Option Datum := do

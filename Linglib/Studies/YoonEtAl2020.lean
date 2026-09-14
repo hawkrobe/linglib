@@ -454,7 +454,7 @@ attention to the addressee's face, and S2 additionally manages how kind
 they *appear* — doubly intersubjective. [narrog-2010] connects this to
 modality: strong obligation is face-threatening because it is performative
 and volitive. -/
-def socialGoalSubjectivityLevel : Features.Subjectivity.SubjectivityLevel :=
+def socialGoalSubjectivityLevel : Modality.SubjectivityLevel :=
   .intersubjective
 
 end YoonEtAl2020

@@ -27,7 +27,7 @@ to polar questions.
 
 namespace Theiler2021
 
-open Features (QParticleLayer)
+open Question (QParticleLayer)
 
 /-- Theiler's layer assignment for *denn*. The `_` argument is unused
     because the layer is a theoretical overlay, not a computed property

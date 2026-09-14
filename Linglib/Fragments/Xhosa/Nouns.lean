@@ -26,7 +26,7 @@ structure NounEntry where
   form : String
   gloss : String
   cls : NounClass
-  animacy : Features.Prominence.AnimacyLevel
+  animacy : Reference.Prominence.AnimacyLevel
   deriving DecidableEq, Repr
 
 namespace Nouns

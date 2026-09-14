@@ -14,7 +14,7 @@ fronts like A but intransitive verbs have no AF form.
 ## Main declarations
 
 * `Kaqchikel.focusRealize`: focus realization by focused argument
-  position, as a `Features.Marking` reflex list.
+  position, as a `Reflex.Marking` reflex list.
 * `Kaqchikel.af_reflex_iff`: the verb-hosted AF reflex appears exactly
   under transitive-subject (A) focus.
 * `Kaqchikel.marked_subject_is_A_not_S`: the A-focus vs S-focus split
@@ -35,7 +35,7 @@ construction only and no `EveryTargetOvert` claim is made.
 
 namespace Kaqchikel
 
-open Features
+open Reflex
 
 /-! ### Sites -/
 

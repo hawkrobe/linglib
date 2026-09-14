@@ -30,7 +30,7 @@ assigned by a head, is `Syntax/Case/Dependent.lean` ([marantz-1991],
 -/
 namespace Minimalist
 
-open Features.Prominence
+open Reference.Prominence
 
 /-! ### Assigner feature bundles -/
 

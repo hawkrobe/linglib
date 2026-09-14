@@ -78,7 +78,7 @@ theorem notUntil_iff_when_of_presupposition (a b : T)
 
 /-! ### The durative selectional restriction -/
 
-open Features Data.Examples
+open Data.Examples
 open Aspect
 
 /-- Durative *until* selects a durative, atelic main clause — the classes with the

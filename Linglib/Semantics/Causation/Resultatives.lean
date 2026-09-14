@@ -41,10 +41,10 @@ namespace Causation.Resultatives
 
 open ConstructionGrammar
 open ConstructionGrammar.Resultatives
-open Features
+open Aspect.ChangeOfState
 open Aspect
 open ArgumentStructure
-open Features.ChangeOfState
+open Aspect.ChangeOfState
 open Causation.ProductionDependence
 open Causation.CCSelection
 

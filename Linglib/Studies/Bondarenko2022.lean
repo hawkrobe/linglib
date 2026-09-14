@@ -93,7 +93,7 @@ structure CooccurrenceDatum where
 def cooccurrenceDatum (e : LinguisticExample) : Option CooccurrenceDatum := do
   let s ← parseSort (← e.paperFeatures.lookup "nounSort")
   let d ← parseDiagnostic (← e.paperFeatures.lookup "diagnostic")
-  some ⟨s, d, e.judgment == Features.Judgment.acceptable⟩
+  some ⟨s, d, e.judgment == Data.Examples.Judgment.acceptable⟩
 
 /-- The ch. 2 co-occurrence examples. -/
 def cooccurrenceData : List CooccurrenceDatum := Examples.all.filterMap cooccurrenceDatum

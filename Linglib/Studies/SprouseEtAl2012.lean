@@ -42,8 +42,8 @@ shape of output a theory must produce*; bridge theorems in downstream
 
 namespace SprouseEtAl2012
 
-open Features
-open Features.MinimalPairs
+open Data.Examples Processing.MinimalPairs
+open Processing.MinimalPairs
 
 /-! ### Factorial conditions -/
 

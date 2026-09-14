@@ -134,13 +134,13 @@ structure Pronoun where
       capability tower deferred. Reciprocal (`Rcp`) is *not* stored: `toWord` derives it
       from `bindingClass = .reciprocal`. `none` where unspecified. -/
   pronType : Option UD.PronType := none
-  /-- The binding class this pro-form declares — its `Features.BindingSource Pronoun` value:
+  /-- The binding class this pro-form declares — its `Binding.BindingSource Pronoun` value:
       Principle A anaphor (`.reflexive`/`.reciprocal`), B pronominal (`.pronoun`), or C
       R-expression. *One* source of an expression's binding class — the lexical declaration
       ([chomsky-1981]'s GB classes); the binding engine is polymorphic over `BindingSource`, so
       a theory may instead source the class structurally or from context. `none` for a bare
       φ-shell. -/
-  bindingClass : Option Features.BindingClass := none
+  bindingClass : Option Binding.BindingClass := none
   /-- [cardinaletti-starke-1999] deficiency class of the form-*series* this entry
       represents, when the series is homogeneous (an Italian object clitic
       `some .clitic`, French *lui* `some .strong`). `none` = unrecorded, or no
@@ -163,7 +163,7 @@ structure PersonalPronoun extends Pronoun where
   /-- Register level (formality/honorifics). Binary T/V systems use
       `.informal`/`.formal`; ternary honorific systems (Hindi, Magahi,
       Maithili, Korean) use all three levels. -/
-  register : Features.Register.Level := .informal
+  register : SocialMeaning.Register.Level := .informal
   /-- Referential person — who the pronoun refers to in terms of discourse
       role — when it diverges from formal/agreement person. For polite
       pronouns (Italian LEI, Spanish USTED, German SIE), the formal `person`
@@ -189,7 +189,7 @@ end PersonalPronoun
 
 namespace Pronoun
 
-open Features.Register (Level)
+open SocialMeaning.Register (Level)
 
 /-! ### Realization as a `Word` -/
 

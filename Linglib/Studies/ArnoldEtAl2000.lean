@@ -45,7 +45,7 @@ size in the data and is not represented.
 
 namespace ArnoldEtAl2000
 
-open Constraints Features Data.Examples
+open Constraints Discourse Data.Examples
 
 /-! ### Phrases, orderings, and candidates -/
 

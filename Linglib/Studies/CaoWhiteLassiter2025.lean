@@ -53,7 +53,7 @@ The paper's in-text judgments, its examples (3)–(11), are rows in
 
 namespace CaoWhiteLassiter2025
 
-open Causation Causation.Mechanism Causation.SEM Features
+open Causation Causation.Mechanism Causation.SEM
 open scoped ENNReal NNReal
 
 /-! ### Soft-optimality policy

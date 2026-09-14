@@ -44,7 +44,7 @@ subjectivity cline fails to distinguish (§2.4, ch. 3).
 namespace Modality.Narrog
 
 open Modality (ModalFlavor)
-open Features.Subjectivity (SubjectivityLevel Performativity)
+open Modality (SubjectivityLevel Performativity)
 
 -- ============================================================================
 -- §1. Volitivity

@@ -41,4 +41,4 @@ abbrev HasPerson.Compatible {α β : Type*} [HasPerson α] [HasPerson β]
 theorem UD.MorphFeatures.compatible_hasPerson {f1 f2 : UD.MorphFeatures}
     (h : f1.compatible f2 = true) :
     HasPerson.Compatible f1 f2 :=
-  Features.compat_of_clause_map Person.fromUD (UD.MorphFeatures.compatible_person h)
+  Agreement.compat_of_clause_map Person.fromUD (UD.MorphFeatures.compatible_person h)

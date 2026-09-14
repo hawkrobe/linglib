@@ -28,7 +28,6 @@ restrictions), aspectual classification, and suppression conditions live in
 
 namespace Presupposition.Aboutness
 
-open Features (Polarity)
 
 variable {W : Type*}
 
@@ -38,7 +37,7 @@ structure EventSentence (W : Type*) where
   /-- The event type this sentence is about -/
   eventType : EventPhase W
   /-- The polarity of the claim -/
-  polarity : Polarity
+  polarity : SentencePolarity
 
 /-- The aboutness of a sentence: the event type it refers to, independent
     of polarity. -/

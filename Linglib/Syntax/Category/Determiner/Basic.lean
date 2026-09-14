@@ -103,7 +103,7 @@ plain demonstrative that merely *can* be used deictically it is empty. The deter
 the word-class-neutral `Demonstrative` deixis capability, sharing it with `DemonstrativePronoun`. -/
 structure DemonstrativeDeterminer extends Determiner where
   /-- Deictic feature (proximal/medial/distal/unspecified). -/
-  deictic : Features.Deixis.Feature
+  deictic : Reference.Deixis
   /-- Definite use-types this demonstrative obligatorily expones. -/
   definiteUses : List DefiniteUseType := []
   deriving DecidableEq, Repr

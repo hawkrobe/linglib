@@ -35,7 +35,7 @@ structure DegreeAchievementScale where
   /-- The scalar dimension the base adjective measures. Its boundedness is the
       order-mixin profile of the dimension's degree type, recovered by the derived
       `scaleBoundedness` below — not stored. -/
-  dimension : Features.ScalarDimension
+  dimension : Degree.ScalarDimension
   /-- Citation form of the base adjective (if deadjectival). -/
   baseAdjective : Option String := none
   deriving Repr, BEq
@@ -53,7 +53,7 @@ instance : Inhabited DegreeAchievementScale where
 
     Delegates to `ScalarDimension.defaultTelicity` — a scale with a maximal degree gives
     a telic verb — grounded to the order mixin by
-    `Features.ScalarDimension.defaultTelicity_telic_iff_hasGreatest`. -/
+    `Degree.ScalarDimension.defaultTelicity_telic_iff_hasGreatest`. -/
 def DegreeAchievementScale.defaultTelicity (s : DegreeAchievementScale) : Telicity :=
   s.dimension.defaultTelicity
 
@@ -92,14 +92,14 @@ end
 theorem default_vendler_is_dynamic (s : DegreeAchievementScale) :
     s.defaultVendlerClass = .accomplishment ∨ s.defaultVendlerClass = .activity := by
   simp only [DegreeAchievementScale.defaultVendlerClass,
-    Features.ScalarDimension.defaultVendlerClass]
+    Degree.ScalarDimension.defaultVendlerClass]
   cases s.dimension.boundedness <;> simp
 
 /-- defaultTelicity agrees with the telicity of defaultVendlerClass. -/
 theorem telicity_vendler_agree (s : DegreeAchievementScale) :
     s.defaultVendlerClass.telicity = s.defaultTelicity := by
   simp only [DegreeAchievementScale.defaultVendlerClass, DegreeAchievementScale.defaultTelicity,
-    Features.ScalarDimension.defaultVendlerClass, Features.ScalarDimension.defaultTelicity]
+    Degree.ScalarDimension.defaultVendlerClass, Degree.ScalarDimension.defaultTelicity]
   cases s.dimension.boundedness <;> simp [VendlerClass.telicity]
 
 

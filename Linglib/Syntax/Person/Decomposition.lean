@@ -25,7 +25,7 @@ Decomposition of person into two bivalent features:
 
 These features form a containment hierarchy: [+author] → [+participant].
 An author (speaker) is necessarily a participant. The hierarchy is carried
-as the cooccurrence filter inherited from `Features.ContainmentPair` — the
+as the cooccurrence filter inherited from `Agreement.ContainmentPair` — the
 descriptive convention of the feature-geometric tradition. [harbour-2016]
 ch. 9 rejects the filter: in his calculus `+author(−participant(π))` is the
 quadripartition *exclusive*, not ill-formed — see
@@ -54,7 +54,7 @@ these eight cells — is the subject of `Studies/Cysouw2003.lean`.
 
 -/
 
-open Features (ContainmentPair ContainmentPairLike)
+open Agreement (ContainmentPair ContainmentPairLike)
 
 namespace Person
 

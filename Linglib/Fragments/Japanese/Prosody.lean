@@ -5,7 +5,7 @@ import Linglib.Phonology.Prosody.Intonation
 
 Word-level prosodic entries for Tokyo Japanese: lexical pitch accent as a mora
 position ([beckman-pierrehumbert-1986]; [kawahara-2015]) and an affix lexicon
-classified by the eight-way `Features.Prosody.AffixAccentType` typology
+classified by the eight-way `Prosody.AffixAccentType` typology
 ([kawahara-2015] §6).
 
 Accent values are grounded in the sources' own data: the presence/location
@@ -15,7 +15,7 @@ materials of [beckman-pierrehumbert-1986] (Figs. 6–13).
 
 namespace Japanese.Prosody
 
-open Features.Prosody
+open _root_.Prosody
 
 /-- A Japanese lexical entry with its prosodic specification. The accent is
     the 0-indexed mora position of the linked H tone, and unaccented words
@@ -73,7 +73,7 @@ theorem ameCandy_unaccented : ameCandy.isAccented = false := rfl
 /-! ### Affix accent lexicon
 
 One canonical affix per accent type of [kawahara-2015] §6's eight-way
-typology, encoded by `Features.Prosody.AffixAccentType`. -/
+typology, encoded by `Prosody.AffixAccentType`. -/
 
 /-- A Japanese affix with its accentual behavior class. -/
 structure AffixEntry where

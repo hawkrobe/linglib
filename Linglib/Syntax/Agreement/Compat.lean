@@ -18,11 +18,11 @@ slot-level face of subsumption-based agreement ([shieber-1986];
 
 ## Main declarations
 
-* `Features.compat_of_clause` — clause ⟹ `Compat` after a partial ingest `ι`
-* `Features.compat_of_clause_map` — the same for a total ingest `g`
+* `Agreement.compat_of_clause` — clause ⟹ `Compat` after a partial ingest `ι`
+* `Agreement.compat_of_clause_map` — the same for a total ingest `g`
 -/
 
-namespace Features
+namespace Agreement
 
 /-- A per-slot compatibility clause lifts to `Compat` in `Flat F`. If two raw
     values `a b : Option U` are equal-or-absent — `(a.isNone || b.isNone ||
@@ -57,4 +57,4 @@ theorem compat_of_clause_map {U F : Type*} [DecidableEq U] [DecidableEq F]
   simp only [e]
   exact compat_of_clause (λ u => some (g u)) h
 
-end Features
+end Agreement

@@ -322,7 +322,7 @@ theorem tamil_clusivity_collapsed_by_toFeatures :
 combinatorics of chapter 9 generate and the calculus fills
 (`Examples.exclusive_includes_speaker`). -/
 theorem exclusive_sign_filtered :
-    ¬ (Features.ContainmentPair.mk (signOf .excl).participant (signOf .excl).author).WellFormed :=
+    ¬ (Agreement.ContainmentPair.mk (signOf .excl).participant (signOf .excl).author).WellFormed :=
   by decide
 
 end Harbour2016

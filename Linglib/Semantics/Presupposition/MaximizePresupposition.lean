@@ -67,7 +67,7 @@ strength directly (`mp_reverses_markedness`).
 
 namespace Presupposition.MaximizePresupposition
 
-open Features (ContainmentPair)
+open Agreement (ContainmentPair)
 open Constraints OptimalityTheory
 open Core.Optimization.Evaluation
 open Presupposition.PhiFeatures

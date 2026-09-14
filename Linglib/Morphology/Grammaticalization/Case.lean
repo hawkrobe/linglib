@@ -60,11 +60,11 @@ theorem caseGramCline_ordered :
 
 /-! ## Case-extension dot-methods
 
-These live under `namespace Features` so they project onto the `Case`
+These live under `namespace Grammaticalization` so they project onto the `Case`
 type via dot-notation (mirroring `Case.hierarchyRank` in
 `Syntax/Case/Basic.lean`). -/
 
-namespace Features
+namespace Grammaticalization
 
 /-- Direct extension between case functions ([heine-2009] Table 29.6).
 
@@ -142,4 +142,4 @@ theorem inst_reachable_from_loc : Case.ExtensionReachable .loc .inst :=
   .tail (.single (a := (.loc : Case)) (b := (.com : Case)) (by decide))
     (show Case.Extends .com .inst by decide)
 
-end Features
+end Grammaticalization

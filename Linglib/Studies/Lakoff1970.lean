@@ -131,7 +131,7 @@ private def frame (e : ℤ) (Salient : Prop) [Decidable Salient] : Perspective �
 structure Judgment where
   form : TenseForm
   frame : Perspective ℤ
-  verdict : Features.Judgment
+  verdict : Data.Examples.Judgment
 
 /-- The paper licenses a form in a frame when its use is true, or when it is a synthetic form
 in one of the false uses the paper describes: a false past, or will-deletion. -/

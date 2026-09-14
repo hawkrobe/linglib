@@ -300,7 +300,7 @@ structure Row where
   inputNegative : Bool
   responseNegative : Bool
   particles : List Particle
-  judgment : Features.Judgment
+  judgment : Data.Examples.Judgment
   deriving DecidableEq, Repr
 
 /-- [same] or [reverse], from the polarities of the shared radical. -/

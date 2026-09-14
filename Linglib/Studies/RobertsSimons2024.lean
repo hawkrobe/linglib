@@ -10,7 +10,7 @@ predicates, factives and selectional restrictions as the ontological preconditio
 event types they describe. A sentence refers to an event type and claims, according to its
 polarity, that the event's result obtains; its affirmative and negative forms share the
 reference, so the precondition projects while the claim flips, the substrate's
-`EventSentence`. The change-of-state predicates are read off `Features.ChangeOfState`,
+`EventSentence`. The change-of-state predicates are read off `Aspect.ChangeOfState`,
 `cosEventPhase`, which makes *stop* and *start* telic and *continue* atelic; factives and
 selectional restrictions are the other two instances, *discover* carrying prior ignorance as
 a second precondition. Projection is a pragmatic default, the presumption that the speaker's
@@ -48,7 +48,7 @@ reference-time account of the *know* and *discover* contrast.
 
 namespace RobertsSimons2024
 
-open Presupposition.Aboutness Features.ChangeOfState Question
+open Presupposition.Aboutness Aspect.ChangeOfState Question
 
 variable {W : Type*}
 

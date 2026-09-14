@@ -16,11 +16,11 @@ mirativity (e.g. `Epistemicity.EpistemicProfile`) import both.
 
 -/
 
-namespace Features.Mirativity
+namespace Evidential
 
 /-- Mirativity value: whether the propositional content aligns with
     speaker expectations. -/
-inductive MirativityValue where
+inductive Mirativity where
   /-- Content is expected / non-newsworthy. -/
   | expected
   /-- Content is surprising / newsworthy. -/
@@ -29,4 +29,4 @@ inductive MirativityValue where
   | neutral
   deriving DecidableEq, Repr, Inhabited
 
-end Features.Mirativity
+end Evidential

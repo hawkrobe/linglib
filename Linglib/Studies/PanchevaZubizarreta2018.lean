@@ -184,7 +184,7 @@ theorem super_le_strong : superStrongGrammar ≤ strongGrammar := by decide
 
 /-- The prominence values as the logophoric roles of [sells-1987]: proximate arguments are
 pivots, participants selves, and authors sources. -/
-def prominenceToSellsRole : ProminenceThreshold → Features.Logophoricity.LogophoricRole
+def prominenceToSellsRole : ProminenceThreshold → Reference.LogophoricRole
   | .proximate => .pivot
   | .participant => .self
   | .author => .source

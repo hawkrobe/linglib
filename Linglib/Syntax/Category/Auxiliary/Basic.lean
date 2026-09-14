@@ -10,7 +10,7 @@ import Linglib.Syntax.Person.Capabilities
 
 open Morphology (Word)
 open Modality (ForceFlavor ModalItem ModalFeature ModalInterpretability)
-open Features.Register (Level)
+open SocialMeaning.Register (Level)
 
 /-!
 # Auxiliary

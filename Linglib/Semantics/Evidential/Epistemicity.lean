@@ -22,7 +22,7 @@ party), which the glossary argues is independent of evidential source.
 ## Design
 
 `EpistemicAuthority` fills the egophoricity gap. `EpistemicProfile` bundles it
-with `CoarseSource` and `MirativityValue` for unified epistemic specification.
+with `CoarseSource` and `Evidential.Mirativity` for unified epistemic specification.
 `epistemicAuthority` bridges epistemic authority to `ContextTower` by resolving
 from the origin (speech-act context), since egophoric marking reflects the
 actual speech-act participants, not reported ones.
@@ -38,7 +38,7 @@ extension respectively) and are left for future work.
 namespace Epistemicity
 
 open Evidential
-open Features.Mirativity
+open Evidential
 open Reference
 
 /-- Epistemic authority: WHO has privileged access to the propositional content.
@@ -61,7 +61,7 @@ inductive EpistemicAuthority where
 structure EpistemicProfile where
   source     : CoarseSource
   authority  : EpistemicAuthority
-  mirativity : MirativityValue := .neutral
+  mirativity : Evidential.Mirativity := .neutral
   deriving Repr, BEq
 
 /-- Determine epistemic authority from a ContextTower, resolving from the

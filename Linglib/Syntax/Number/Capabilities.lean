@@ -42,4 +42,4 @@ abbrev HasNumber.Compatible {α β : Type*} [HasNumber α] [HasNumber β]
 theorem UD.MorphFeatures.compatible_hasNumber {f1 f2 : UD.MorphFeatures}
     (h : f1.compatible f2 = true) :
     HasNumber.Compatible f1 f2 :=
-  Features.compat_of_clause Number.fromUD (UD.MorphFeatures.compatible_number h)
+  Agreement.compat_of_clause Number.fromUD (UD.MorphFeatures.compatible_number h)

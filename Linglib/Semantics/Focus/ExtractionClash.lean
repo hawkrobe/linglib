@@ -12,7 +12,7 @@ over the marking axes `(Mark, BinaryGivenness)`.
 
 namespace Focus.ExtractionClash
 
-open Features (BinaryGivenness)
+open Discourse (BinaryGivenness)
 
 /-- Two propositions are semantically independent iff neither entails the other.
     [umbach-2004] §2.2: required for alternatives in focus, coordination,

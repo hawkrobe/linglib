@@ -25,7 +25,7 @@ Ternary honorific systems (Hindi, Magahi, Maithili, Korean) use all three levels
 
 -/
 
-namespace Features.Register
+namespace SocialMeaning.Register
 
 /-- Register level: the formality of a linguistic form.
 
@@ -97,4 +97,4 @@ inductive SocialIndex where
   | solidarity
   deriving DecidableEq, Repr, Inhabited
 
-end Features.Register
+end SocialMeaning.Register

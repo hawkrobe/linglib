@@ -35,7 +35,7 @@ concrete by carrying both axes on one object (`zibun_anaphor_yet_pivot_oriented`
 * `ye`, `zibun` — worked [sells-1987] entries; licensing derived from the hierarchy.
 -/
 
-open Features.Logophoricity (LogophoricRole Logophoric)
+open Reference (LogophoricRole Logophoric)
 
 /-- A single logophoric pronoun — the general `Pronoun` (surface `form` + φ-features) plus its
     [sells-1987] orientation: the minimum perspectival role an antecedent must fill to license it

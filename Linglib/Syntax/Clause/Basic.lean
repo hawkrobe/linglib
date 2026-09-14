@@ -35,7 +35,7 @@ inductive EmbeddedSubject where
 /-- A [bhatt-dayal-2020] / [dayal-2025] interrogative-embedding
     context: where the clause token occurs, not a property of the
     clause object. A particle's left-periphery layer
-    (`Features.QParticleLayer`) is derivable from its distribution
+    (`Question.QParticleLayer`) is derivable from its distribution
     over these cells (`Studies/Dayal2025`). -/
 inductive EmbeddingContext where
   | matrix

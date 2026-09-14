@@ -149,7 +149,7 @@ structure InferenceRate where
   /-- Inference type -/
   inferenceType : String
   /-- Polarity of context -/
-  polarity : Features.Polarity
+  polarity : SentencePolarity
   /-- Rate of inference-consistent responses (qualitative) -/
   rate : String
   deriving Repr

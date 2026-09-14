@@ -49,7 +49,6 @@ implicatures are independent, with homogeneity acquired earlier.
 
 namespace TieuKrizChemla2019
 
-open Features (Polarity)
 
 
 -- ============================================================

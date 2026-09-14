@@ -24,7 +24,6 @@ namespace English.Predicates.Verbal
 -- namespace continue to find it. The `Verb`/`ComplementType`/… types now
 -- live at the root namespace (`Syntax/Category/Verb/Defs`), so they need no re-export.
 
-open Features
 open ArgumentStructure
 open Aspect.DegreeAchievement (DegreeAchievementScale)
 open Degree (Boundedness)
@@ -3604,7 +3603,6 @@ theorems above remain intact. -/
 namespace V2
 
 open Causation (SEM CausalGraph Valuation DecidableValuation)
-open Features
 
 variable {V : Type*} {α : V → Type*}
   [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]

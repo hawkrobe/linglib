@@ -50,7 +50,7 @@ manner-of-speaking complements (16).
 
 namespace LuPanDegen2025
 
-open Focus Features Focus.ExtractionClash ArgumentStructure English.Predicates.Verbal
+open Focus Discourse Focus.ExtractionClash ArgumentStructure English.Predicates.Verbal
 open Data.Examples
 
 /-! ### Foreground and background (Definition 1) -/

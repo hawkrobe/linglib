@@ -84,7 +84,7 @@ scale ([preminger-2014] Ch. 7).
 
 namespace Minimalist
 
-open Features.Prominence
+open Reference.Prominence
 
 -- ============================================================================
 -- § 1: Decomposed Person Features

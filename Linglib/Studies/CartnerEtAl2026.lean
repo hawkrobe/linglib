@@ -47,7 +47,7 @@ predicts the same verdict in every construction and is untouched by the result, 
 
 namespace CartnerEtAl2026
 
-open Features (BinaryGivenness)
+open Discourse (BinaryGivenness)
 open Focus (Mark)
 open Focus.ExtractionClash (extractionISClash)
 

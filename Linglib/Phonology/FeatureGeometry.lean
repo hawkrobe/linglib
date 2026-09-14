@@ -45,7 +45,7 @@ dominance, the root is `⊥`, and the chain axiom is `decide`d. `node` is `Optio
 geometry may leave features unplaced. Spreading an arbitrary set of terminals
 (Halle, Vaux and Wolfe's partial spreading, Padgett's partial class behaviour) is
 `Finset.piecewise` on that set with no further apparatus, and single-feature spreading is
-`Features.Bundle.assimilate` (`Finset.piecewise_singleton`). The linking of a spread node to
+`Bundle.assimilate` (`Finset.piecewise_singleton`). The linking of a spread node to
 several anchors is the tier-association object `AR` (`Autosegmental/AR.lean`), not recorded
 on feature bundles.
 

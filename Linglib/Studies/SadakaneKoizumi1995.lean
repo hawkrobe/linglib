@@ -44,7 +44,7 @@ in tables 14, 27, 29, and 32:
 | *ni*-insertion      | *           | */??              | OK               |
 | Copula *ni*         | */N.A.      | */??              | */??             |
 
-The diagnostic acceptability scores are encoded in `Features.Acceptability`
+The diagnostic acceptability scores are encoded in `Data.Examples.Acceptability`
 (the project canon): `*/??` reduces to `unacceptable`; `*/?/OK` to
 `variable` (genuine speaker variation); `*/N.A.` to `unacceptable` (per
 S&K fn. 10, the test fails for an independent non-referentiality reason
@@ -85,7 +85,7 @@ correspondingly coarse.
 
 ## Layered grounding to linglib
 
-- Diagnostic acceptability scores use `Features.Acceptability` (the
+- Diagnostic acceptability scores use `Data.Examples.Acceptability` (the
   project canon), not a per-paper Grammaticality enum.
 - `Classification.marantz` aligns S&K's 4-way with [baker-2015]'s
   `Case.Mechanism` from `Syntax/Case/Dependent.lean`. The map
@@ -125,7 +125,7 @@ stipulation only. Documented here as future work.
 
 namespace SadakaneKoizumi1995
 
-open Features (Acceptability)
+open Data.Examples (Acceptability)
 
 /-! ## §1 Classification — S&K's four homophonous *ni* lexemes -/
 

@@ -14,7 +14,7 @@ temporal *token* with runtime and sort), and
 `Aspect.SubeventStructure.TemporalDecomposition` (interval-valued
 activity/result phases of a token). `EventPhase` is type-level and modal —
 phases as predicates over worlds, not intervals. For change-of-state verbs
-its precondition/consequence coincide with `Features.ChangeOfState`'s
+its precondition/consequence coincide with `Aspect.ChangeOfState`'s
 presupposition/assertion pair (instantiated in `Studies/RobertsSimons2024.lean`).
 
 ## Main declarations

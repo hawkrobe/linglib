@@ -73,7 +73,7 @@ NOT [laka-1990]'s ΣP
 namespace Westergaard2009
 
 open Minimalist (ForceHead V2Profile WhElementStatus WhBlocksMovementTo)
-open Features (BinaryGivenness)
+open Discourse (BinaryGivenness)
 
 -- Fragment data (theory-neutral)
 open Norwegian (stdNorwegian nordmoreNorwegian)

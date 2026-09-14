@@ -108,7 +108,7 @@ abbrev predictsSplit (c : RevisedClass) : Prop := c ≠ .nonSubsective
 /-- The [nowak-2000] split sample: each split datum (or reading, for
     ambiguous *biedny*) paired with the class the paper assigns to the
     adjective's reading. -/
-def splitSample : List (Features.Judgment × RevisedClass) :=
+def splitSample : List (Data.Examples.Judgment × RevisedClass) :=
   [(Examples.ex_11b.judgment, .intersective),   -- przystojny 'handsome'
    (Examples.ex_12b.judgment, .intersective),   -- nowy 'new'
    (Examples.ex_13a.judgment, .intersective),   -- rozległy 'vast'

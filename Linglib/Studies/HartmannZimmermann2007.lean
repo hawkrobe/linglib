@@ -55,7 +55,7 @@ prepublication manuscript of the chapter.
 namespace HartmannZimmermann2007
 
 open Hausa
-open Focus Features
+open Focus Reflex
 
 /-! ## What is focused (§2.2.2) -/
 
@@ -294,7 +294,7 @@ theorem exSitu_subject_subjunctive_no_reflex :
     ¬ exSitu_subject_subjunctive.HasMorphosyntacticReflex := by decide
 
 /-- The overt reflexes of a focus utterance in the shared
-`Features.Marking` vocabulary: non-vacuous fronting,
+`Reflex.Marking` vocabulary: non-vacuous fronting,
 Relative-form morphology, and the stabilizer. -/
 def FocusUtterance.reflexes (u : FocusUtterance) : List (Reflex Focused) :=
   (if u.focused = .nonSubject ∧ u.cfg.strategy = .exSitu
@@ -317,7 +317,7 @@ theorem hasMorphosyntacticReflex_iff (u : FocusUtterance) :
 receives an overt reflex — the same `EveryTargetOvert` shape
 Tangale refutes in `HartmannZimmermann2004.lean`. -/
 theorem hausa_refutes_perceptibility :
-    ¬ Features.EveryTargetOvert
+    ¬ Reflex.EveryTargetOvert
         (λ u : {u : FocusUtterance // u.IsHausaLicensed} =>
           Marking.mk u.1.focused u.1.reflexes) :=
   λ h => absurd

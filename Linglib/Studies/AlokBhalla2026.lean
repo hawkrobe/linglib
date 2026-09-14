@@ -95,7 +95,7 @@ def analyses : Language → List MarkerType
   | .galician => [.clitic]
 
 /-- Register level named by a row's honorific feature. -/
-def levelOf : String → Option Features.Register.Level
+def levelOf : String → Option SocialMeaning.Register.Level
   | "nh" => some .informal
   | "h" => some .neutral
   | "hh" => some .formal

@@ -43,7 +43,7 @@ pair on the pattern of the person and number presentations.
 * [hammerly-2019]
 -/
 
-open Features
+open Agreement
 
 namespace Gender
 

@@ -31,7 +31,7 @@ cascade makes it audible.
 
 ## Implementation notes
 
-Realisation uses the shared `Features.Marking` reflex vocabulary, and the paper's strategy
+Realisation uses the shared `Reflex.Marking` reflex vocabulary, and the paper's strategy
 labels are read off the reflex shape where `marking_matches_rows` pins the configurations to the
 data rows. Configurations carry the fragment's tense–aspect type: the perfective rows are
 [kidda-1985]'s singular perfective and the paper's progressive is the fragment's continuous
@@ -57,7 +57,7 @@ example numbers and sections were checked against the journal version of the pap
 
 namespace HartmannZimmermann2004
 
-open Focus Features
+open Focus Reflex
 open Constraints (Constraint)
 open OptimalityTheory (Tableau)
 

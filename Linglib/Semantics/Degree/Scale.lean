@@ -26,7 +26,7 @@ telicity defaults, endpoint licensing) is in
 `Semantics/Degree/Gradability/Dimension.lean`.
 -/
 
-namespace Features
+namespace Degree
 
 open Aspect
 
@@ -145,4 +145,4 @@ theorem ScalarDimension.defaultTelicity_telic_iff_hasGreatest (d : ScalarDimensi
   rw [ScalarDimension.hasGreatest_degree_iff]; cases d <;> decide
 
 
-end Features
+end Degree

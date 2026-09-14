@@ -137,7 +137,7 @@ structure OutlookMarkerForm where
 
 /-- Outlook markers are all use-conditional items of one expressive class — the consensus
 metadata Fragments carry. -/
-def expressiveKind : Features.Expressive := .outlookMarker
+def expressiveKind : Pragmatics.Expressives.Kind := .outlookMarker
 
 /-! ### Adverbs ([kubota-2026] (1)) -/
 

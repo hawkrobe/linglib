@@ -11,7 +11,7 @@ import Linglib.Semantics.Presupposition.Basic
 
 Phi-features (number, person, definiteness) are **presuppositional partial
 identity functions** on the entity domain, ordered by presuppositional
-strength via `Features.ContainmentPair.specLevel`.
+strength via `Agreement.ContainmentPair.specLevel`.
 
 The core mathematical object is `phiPresup`: a single function that maps
 each `ContainmentPair` cell to a `PartialProp`, using two predicates (innerP,
@@ -48,7 +48,7 @@ belong in `Studies/`).
 namespace Presupposition.PhiFeatures
 
 open Mereology (Atom)
-open Features (ContainmentPair ContainmentPairLike)
+open Agreement (ContainmentPair ContainmentPairLike)
 open Presupposition
 
 -- ============================================================================

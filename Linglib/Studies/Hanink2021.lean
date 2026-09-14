@@ -88,7 +88,7 @@ theorem interpret_anaphoric_eq_russellIota (R : DenotGS E W .et) (d : ℕ) (g : 
 /-- (34b), (34c): the demonstrative D heads *hádi* and *wídi* add a deictic presupposition and
 otherwise contribute ι, so a demonstrative refers as the anaphoric DP does. -/
 theorem interpret_demonstrative_eq_russellIota (R : DenotGS E W .et)
-    (deictic : Features.Deixis.Feature) (sIdx d : ℕ) (g : Assignment E) (gs : SitAssignment W) :
+    (deictic : Reference.Deixis) (sIdx d : ℕ) (g : Assignment E) (gs : SitAssignment W) :
     interpret (.demonstrative R deictic sIdx d) g gs =
       russellIota (λ x => R g gs x ∧ idxVar d g x) :=
   (interpret_demonstrative_eq_anaphoric R deictic sIdx d g gs).trans
@@ -138,7 +138,7 @@ overt NP, a CP, an RP, or a nominal under ellipsis, which lacks the phonological
 make an NP overt (section 6.3). -/
 inductive Feat where
   | idx | dep | np | cp | rp | elided
-  | d | deixis (f : Features.Deixis.Feature)
+  | d | deixis (f : Reference.Deixis)
   deriving DecidableEq, Repr
 
 /-- (119), (131): the Vocabulary entries for idx, *gi* elsewhere, *ge* under dependent case, and

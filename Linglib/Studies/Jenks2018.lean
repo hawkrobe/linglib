@@ -193,7 +193,7 @@ theorem rows_agree :
 restrictor holds of it: it cannot covary through the situation pronoun as the bare unique
 definite does, (27) to (30). -/
 theorem interpret_demonstrative_eq_some_iff {E W : Type} (R : DenotGS E W .et)
-    (δ : Features.Deixis.Feature) (s d : Nat) (g : Assignment E) (gs : SitAssignment W) (x : E) :
+    (δ : Reference.Deixis) (s d : Nat) (g : Assignment E) (gs : SitAssignment W) (x : E) :
     interpret (.demonstrative R δ s d) g gs = some x ↔ R g gs (g d) ∧ x = g d := by
   rw [interpret_demonstrative]
   split_ifs with h <;> simp [h, eq_comm]

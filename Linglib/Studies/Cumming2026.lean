@@ -111,7 +111,7 @@ structure Datum where
   cell : TAMEEntry
   frame : EvidentialFrame ℤ
   scheduled : Bool
-  judgment : Features.Judgment
+  judgment : Data.Examples.Judgment
 
 /-- An example's judgment together with its cell and the scenario's times. -/
 def datum (e : Data.Examples.LinguisticExample) : Option Datum := do

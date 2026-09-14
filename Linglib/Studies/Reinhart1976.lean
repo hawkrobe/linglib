@@ -254,7 +254,7 @@ structure Datum where
   np₁ : TreePath
   np₂ : TreePath
   pron : List TreePath
-  judgment : Features.Judgment
+  judgment : Data.Examples.Judgment
 
 /-- An example read into its datum. -/
 def datum (e : LinguisticExample) : Option Datum := do

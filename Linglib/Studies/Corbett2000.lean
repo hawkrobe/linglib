@@ -89,7 +89,7 @@ is a category apart. The book's examples are the rows of `Data/Examples/Corbett2
 
 namespace Corbett2000
 
-open Agreement Corbett1991 Features.Prominence
+open Agreement Corbett1991 Reference.Prominence
 
 /-- Singular, dual and plural. -/
 def sgDuPl : List Number := [.singular, .dual, .plural]
