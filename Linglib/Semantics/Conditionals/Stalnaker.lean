@@ -104,6 +104,40 @@ def pragmaticConstraint {W : Type*} (s : SelectionFunction W)
     (C : Set W) : Prop :=
   ∀ w (A : Set W), C w → (∃ w' ∈ A, C w') → C (s.sel w A)
 
+open Classical in
+/-- The restriction of a selection function to a context: at a context world, an antecedent
+compatible with the context selects among the context's antecedent-worlds; otherwise
+selection is as before. The restriction obeys the pragmatic constraint of [stalnaker-1975]
+for the context. -/
+noncomputable def SelectionFunction.restrict {W : Type*} (s : SelectionFunction W)
+    (C : Set W) : SelectionFunction W where
+  sel w A := if w ∈ C ∧ (A ∩ C).Nonempty then s.sel w (A ∩ C) else s.sel w A
+  inclusion w A hA := by
+    split_ifs with h
+    · exact (s.inclusion w (A ∩ C) h.2).1
+    · exact s.inclusion w A hA
+  centering w A hw := by
+    split_ifs with h
+    · exact s.centering w (A ∩ C) ⟨hw, h.1⟩
+    · exact s.centering w A hw
+
+theorem SelectionFunction.restrict_sel_of_mem {W : Type*} (s : SelectionFunction W) (C : Set W)
+    {w : W} {A : Set W} (hw : w ∈ C) (hA : (A ∩ C).Nonempty) :
+    (s.restrict C).sel w A = s.sel w (A ∩ C) := by
+  simp [SelectionFunction.restrict, hw, hA]
+
+theorem SelectionFunction.restrict_sel_of_notMem {W : Type*} (s : SelectionFunction W)
+    (C : Set W) {w : W} (A : Set W) (hw : w ∉ C) : (s.restrict C).sel w A = s.sel w A := by
+  simp [SelectionFunction.restrict, hw]
+
+/-- The restriction of a selection function to a context obeys the pragmatic constraint for
+that context. -/
+theorem pragmaticConstraint_restrict {W : Type*} (s : SelectionFunction W) (C : Set W) :
+    pragmaticConstraint (s.restrict C) C := λ w A hw hA => by
+  have hAC : (A ∩ C).Nonempty := let ⟨v, hvA, hvC⟩ := hA; ⟨v, hvA, hvC⟩
+  rw [SelectionFunction.restrict_sel_of_mem s C hw hAC]
+  exact (s.inclusion w (A ∩ C) hAC).2
+
 /-- **Mooded conditional** ([stalnaker-1975]): the truth-conditional
 clause is `selectionConditional` regardless of grammatical mood. The mood
 index `m` is metadata at the call site; the *semantic* mood difference

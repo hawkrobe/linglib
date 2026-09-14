@@ -1,474 +1,428 @@
-import Linglib.Semantics.Conditionals.Basic
 import Linglib.Semantics.Conditionals.Stalnaker
-import Linglib.Discourse.Commitment.Space
-import Linglib.Discourse.CommonGround
 
 /-!
-# Stalnaker 1975 [stalnaker-1975]
+# Stalnaker (1975): Indicative Conditionals
 
-*Indicative Conditionals.* Philosophia 5(3): 269–286.
+This file formalizes [stalnaker-1975]'s account of the direct argument, *either the butler or
+the gardener did it, so if the butler didn't, the gardener did*. The indicative conditional
+has the selection-function truth condition of [stalnaker-1968], and entails the material
+conditional without being entailed by it (`selectionConditional_imp_material`,
+`not_entails_direct`). What makes the argument compelling is pragmatic: in a context, an
+indicative conditional's selection function keeps to the context set whenever the antecedent
+is compatible with it, and a disjunction is appropriately asserted only where each disjunct
+can hold without the other. Under the constraint, a proposition accepted in the context is
+accepted under any compatible antecedent (`selectionConditional_of_accepted`), the indicative
+and the material conditional are accepted in the same contexts (`accepted_iff_material`), and
+so the direct argument, contraposition and the hypothetical syllogism are reasonable for
+indicatives though invalid (`direct_argument`, `contraposition`, `hypothetical_syllogism`).
 
-## Core contributions formalized here
+The appendix's calculus makes reasonable inference a logical notion: a pragmatic
+interpretation assigns each sentence a proposition in a context, an appropriateness relation
+and a change function obeying two postulates, and an inference is reasonable when every
+context in which its premisses are appropriately asserted in sequence comes to entail its
+conclusion (`PragmaticInterpretation.Reasonable`). An entailment whose conclusion expresses
+the same proposition in every context is reasonable (`Reasonable.of_entails`). On the
+language of the direct argument, whose contexts carry a
+selection function obeying the constraint, the direct argument is reasonable in the language
+(`direct_argument_reasonable`) though not an entailment in it. The fatalist's argument
+(`fatalism`) draws each of its conditional conclusions reasonably within the context that
+supposes a disjunct, and fails only by detaching them: constructive dilemma, valid for
+entailment (`Entails.or`), does not hold for reasonable inference.
 
-1. **The pragmatic constraint on selection** (§III): if `i ∈ C`, then
-   `f(A,i) ∈ C` whenever some `A`-world is in `C`.
+## Implementation notes
 
-2. **Indicative ≠ subjunctive at the pragmatic level** (§III/IV): both have
-   the same truth-conditional clause; subjunctive mood signals that the
-   pragmatic constraint may be suspended.
+A context of the conditional language is a context set together with a selection function
+obeying the pragmatic constraint for it, and assertion restricts the selection function to
+the updated set, so that indicatives conform to the constraint after every assertion. The
+appropriateness relation encodes the paper's two generalizations, that a disjunction requires
+each disjunct to be open without the other and that an indicative conditional requires a
+compatible antecedent, together with the first postulate. Subjunctive conditionals, which
+suspend the constraint, are outside the language; the substrate's `Mood.admissibleSelection`
+carries the paper's account of the mood distinction.
 
-3. **Disjunction-appropriateness** (§III): `A or B` is appropriately
-   asserted only in contexts where both `¬A∧B` and `A∧¬B` are open.
+## References
 
-4. **The direct argument is a reasonable inference but not an entailment**
-   (§IV): from `A or B`, infer `if ¬A, B`.
-   * `direct_argument_reasonable`: in any context where the disjunction
-     can be appropriately asserted, the post-update context makes the
-     indicative conditional true at every surviving world.
-   * `direct_argument_not_entailment`: a single concrete world model
-     exhibits a selection function for which `A∨B` holds at a world but
-     `if ¬A, B` fails — so the inference is not semantic entailment.
-
-5. **Fatalism failure** (§V): sketched in `fatalism_remark` as a docstring;
-   the formal point is that constructive dilemma is valid only for
-   entailments, not for reasonable inferences.
-
-6. **Polymorphic lift via `HasAssertion`** (§ 4 below): the
-   Stalnaker-1975 change-function calculus is shown to be the
-   Stalnaker-instance projection of the framework-generic
-   `HasAssertion.assert`. The direct-argument theorem then lifts
-   to: for ANY `HasAssertion` framework, the direct argument from
-   `A∨B` to `if ¬A, B` is a reasonable inference. Stalnaker's
-   pragmatic claim is framework-generic, not Stalnaker-representation-specific.
-
-The two universal pragmatic postulates from the Appendix
-(`respectsCompatibility`, `changeFn_eq`) are stated in
-the substrate section above.
-
-## Integration
-
-* `pragmaticConstraint`, `selectionConditional`, `moodedConditional`,
-  `Mood.admissibleSelection`, `selectionConditional_eq_material_within_context`,
-  `moodedConditional_indicative_eq_material_within_context` —
-  in `Semantics/Conditionals/Basic.lean`. The mood distinction lives
-  in `Mood.admissibleSelection`, not in two parallel conditional defs:
-  `.indicative` requires `pragmaticConstraint`, `.subjunctive` imposes none.
-* `Appropriateness`, `changeFn`, `reasonableInference` — in
-  the substrate section above.
-* This file: a butler/gardener witness for (4); abstract version of (4)
-  parameterised over any constraint-respecting selection function.
-
-## See also
-
-* `Studies/CarianiSantorio2018.lean` — extends the
-  Stalnaker selection-function mechanism from conditionals to bare
-  *will*. C&S's `Conditionals.SelectionFunction` infrastructure is exactly the
-  one used here for `selectionConditional`; the `would`-conditional /
-  Stalnaker-counterfactual identification in C&S §5.3.2 reuses this
-  paper's selection-function semantics under universe parameter.
+* [stalnaker-1975]
+* [stalnaker-1968]
+* [grice-1975]
+* [anderson-1951]
 -/
-
-/-!### Reasonable Inference [stalnaker-1975]
-
-Stalnaker 1975's Appendix introduces a *pragmatic* notion of inference,
-distinct from semantic entailment. The idea: an inference from a sequence
-of premise assertions `(P₁, …, Pₙ)` to a conclusion `Q` is *reasonable*
-when, in every context in which the premises can appropriately be asserted
-in sequence, the resulting context entails `Q`.
-
-The formal apparatus is a triple `(⟦·⟧, A, g)`:
-
-* `⟦P⟧_k`: the proposition expressed by `P` in context `k` (the semantic
-  interpretation, here just a `Set W`);
-* `A(P, k)`: the **appropriateness** relation — whether asserting `P` in
-  context `k` is appropriate;
-* `g(P, k) = k ∩ ⟦P⟧_k`: the **change function** — the new context after
-  asserting `P`. This is exactly intersective update of the context set.
-
-This module defines `Appropriateness`, sequential appropriateness `A*`,
-sequential update `g*`, and the `reasonableInference` predicate.
-
-Stalnaker's proposal is that **entailment ⊊ reasonable inference** —
-inferences like the "direct argument" (A or B; ∴ if not-A, B) are
-reasonable without being entailments. The Stalnaker1975 study file
-exhibits the gap.
--/
-
-namespace Discourse.ReasonableInference
-
-
-/--
-**Appropriateness** of a sentence in a context. Stalnaker leaves this
-maximally schematic; concrete theories of conditionals, disjunction,
-presupposition fill it in. Two universal constraints from the Appendix
-are captured below as `compatible_of_appropriate` and the change-function
-identity. -/
-abbrev Appropriateness (W : Type*) := Set W → Set W → Prop
-
-/--
-The **change function** `g(P, k) = k ∩ ⟦P⟧_k`: intersective update of the
-context set. -/
-def changeFn {W : Type*} (P : Set W) (k : Set W) : Set W :=
-  k ∩ P
-
-/-- Sequential update along a list of asserted sentences. -/
-def changeFnSeq {W : Type*} (σ : List (Set W)) (k : Set W) :
-    Set W :=
-  σ.foldl (λ acc P => changeFn P acc) k
-
-/-- Sequential appropriateness: each `Pᵢ` is appropriate in the context
-    obtained by updating with `P₁, …, Pᵢ₋₁`. Stalnaker's `A(σ, k) = ⋀ᵢ
-    A(Pᵢ, kᵢ)`. -/
-def appropriateSeq {W : Type*} (A : Appropriateness W)
-    (σ : List (Set W)) (k : Set W) : Prop :=
-  match σ with
-  | [] => True
-  | P :: rest => A P k ∧ appropriateSeq A rest (changeFn P k)
-
-/--
-**Reasonable inference** ([stalnaker-1975] Appendix).
-
-`σ ⊨ᵣ Q` (reasonable-in-`A`) iff in every context `k` in which the premise
-sequence is appropriate, the post-update context entails the conclusion.
-
-This is **distinct from** `changeFnSeq σ k ⊆ ⟦Q⟧` for
-*arbitrary* `k`: reasonable inference quantifies only over contexts in
-which the premises can be asserted in sequence. The premise filter is
-exactly what lets pragmatic information (e.g., the disjunction-
-appropriateness condition) feed into the inference. -/
-def reasonableInference {W : Type*} (A : Appropriateness W)
-    (σ : List (Set W)) (Q : Set W) : Prop :=
-  ∀ k : Set W,
-    appropriateSeq A σ k →
-    changeFnSeq σ k ⊆ Q
-
-/-- **Entailment ⇒ reasonable inference** for any appropriateness relation:
-    if a single premise semantically entails the conclusion, the inference
-    is also reasonable. The converse is the substantive Stalnakerian claim
-    and fails — see the direct-argument theorem in Stalnaker1975. -/
-theorem entailment_implies_reasonable {W : Type*}
-    (A : Appropriateness W) (P Q : Set W)
-    (h_ent : ∀ w, P w → Q w) :
-    reasonableInference A [P] Q := by
-  intro k _h_app w hw
-  -- changeFnSeq [P] k = changeFn P k = λ w => k w ∧ P w
-  exact h_ent w hw.2
-
-/-- **Empty premise sequence**: a reasonable inference from no premises is
-    just universal validity of the conclusion. -/
-theorem reasonable_nil {W : Type*} (A : Appropriateness W) (Q : Set W) :
-    reasonableInference A [] Q ↔ ∀ w, Q w := by
-  unfold reasonableInference changeFnSeq appropriateSeq
-  refine ⟨λ h w => h Set.univ trivial (Set.mem_univ w),
-          λ h _ _ _ hw => h _⟩
-
-/-- **Stalnaker's first universal constraint** ([stalnaker-1975]
-    Appendix, postulate 1): one cannot appropriately assert a proposition
-    in a context incompatible with it. Any concrete `A` should satisfy this. -/
-def respectsCompatibility {W : Type*} (A : Appropriateness W) : Prop :=
-  ∀ P k, A P k → (k ∩ P).Nonempty
-
-/-- **Stalnaker's second universal constraint** ([stalnaker-1975]
-    Appendix, postulate 2): the change function commutes with the
-    interpretation — `g(P, k) = k ∩ ⟦P⟧_k`. This holds by construction
-    of `changeFn`. -/
-theorem changeFn_eq {W : Type*} (P : Set W) (k : Set W) (w : W) :
-    changeFn P k w ↔ k w ∧ P w := Iff.rfl
-
-end Discourse.ReasonableInference
-
 
 namespace Stalnaker1975
 
-open Mood (Grammatical)
-open _root_.Conditionals (SelectionFunction)
 open Conditionals
-open Discourse.ReasonableInference
 
--- § 1. The direct argument is REASONABLE (abstract version)
+/-! ### The indicative conditional in a context -/
 
-/--
-**Stalnaker's direct argument is reasonable** ([stalnaker-1975] §IV).
+section Context
 
-Quantified over any selection function `s` and context `C` such that:
-- `s` obeys the pragmatic constraint relative to `C`;
-- the antecedent `¬A` is open in `C` (some context-set world is `¬A`);
-- in `C`, every world satisfies `A ∨ B` (i.e., the disjunction is
-  established as common ground after assertion);
+variable {W : Type*} (s : SelectionFunction W) {C : Set W} {p q r : W → Prop}
 
-the indicative conditional `if ¬A, B` is true at every world in `C`.
+/-- The conditional entails the material conditional: at a world where the antecedent holds
+the selected world is the world itself. -/
+theorem selectionConditional_imp_material {w : W} (h : selectionConditional s p q w) (hp : p w) :
+    q w := by
+  unfold selectionConditional at h
+  rwa [s.centering w {w' | p w'} hp] at h
 
-This is the substance of §IV: no individual semantic entailment is invoked;
-the pragmatic constraint plus the post-update common ground are enough.
+/-- Weakening the consequent preserves the conditional. -/
+theorem selectionConditional_mono (hqr : ∀ w, q w → r w) {w : W}
+    (h : selectionConditional s p q w) : selectionConditional s p r w :=
+  hqr _ h
 
-Stalnaker's appropriateness condition for disjunction (§III, end) — that
-asserting `A or B` requires both `¬A∧B` and `A∧¬B` to be open in the prior
-context — is what guarantees `h_open_notA` after the update. -/
-theorem direct_argument_reasonable {W : Type*}
-    (s : SelectionFunction W) (C : Set W)
-    (notA B AorB : W → Prop)
-    (h_constraint : pragmaticConstraint s C)
-    (h_C_AorB : ∀ w, C w → AorB w)
-    (h_AorB_decomp : ∀ w, AorB w → notA w → B w)
-    (h_open_notA : ∃ w' ∈ {w' | notA w'}, C w') :
-    ∀ w, C w → moodedConditional .indicative s notA B w := by
-  intro w hCw
-  apply moodedConditional_indicative_eq_material_within_context s C notA B w hCw
-    h_open_notA h_constraint
-  intro w' hCw' hnotA
-  exact h_AorB_decomp w' (h_C_AorB w' hCw') hnotA
+/-- A proposition accepted in a context is accepted under any antecedent compatible with the
+context, once the selection function obeys the pragmatic constraint. -/
+theorem selectionConditional_of_accepted (hC : pragmaticConstraint s C) (hp : ∃ w ∈ C, p w)
+    (hq : ∀ w ∈ C, q w) : ∀ w ∈ C, selectionConditional s p q w := λ w hw =>
+  selectionConditional_eq_material_within_context s C p q w hw
+    (hp.imp λ _ hv => ⟨hv.2, hv.1⟩) hC λ w' hw' _ => hq w' hw'
 
-/--
-**The direct argument is reasonable as a `reasonableInference`**
-([stalnaker-1975] Appendix), in the sense of the change-function
-calculus: in every prior context `k` such that asserting `A∨B` lands one
-in a Stalnakerian indicative-friendly state, the post-update context
-entails the indicative conditional.
+/-- The direct argument is reasonable: in a context accepting the disjunction where the
+negated first disjunct is open, the indicative conditional is accepted. -/
+theorem direct_argument (hC : pragmaticConstraint s C) (hopen : ∃ w ∈ C, ¬ p w)
+    (hdisj : ∀ w ∈ C, p w ∨ q w) : ∀ w ∈ C, selectionConditional s (λ w => ¬ p w) q w :=
+  λ w hw => selectionConditional_eq_material_within_context s C _ q w hw
+    (hopen.imp λ _ hv => ⟨hv.2, hv.1⟩) hC λ w' hw' hnp => (hdisj w' hw').resolve_left hnp
 
-The Appropriateness relation here bundles the two contextual facts the
-disjunction-appropriateness condition guarantees: the pragmatic constraint
-holds, and `¬A` remains open after the update. -/
-theorem direct_argument_reasonableInference {W : Type*}
-    (s : SelectionFunction W)
-    (notA B AorB : W → Prop)
-    (h_AorB_decomp : ∀ w, AorB w → notA w → B w)
-    (𝒜 : Appropriateness W)
-    (h_𝒜 : ∀ k, 𝒜 AorB k →
-      pragmaticConstraint s (changeFn AorB k) ∧
-      ∃ w' ∈ {w' | notA w'}, changeFn AorB k w') :
-    reasonableInference 𝒜 [AorB] (moodedConditional .indicative s notA B) := by
-  intro k h_app w hw_post
-  -- changeFnSeq [AorB] k = changeFn AorB k.
-  -- hw_post : changeFn AorB k w; h_app.1 : 𝒜 AorB k.
-  obtain ⟨h_constraint, h_open⟩ := h_𝒜 k h_app.1
-  have h_C_AorB : ∀ w', changeFn AorB k w' → AorB w' := by
-    intro w' hw'; exact ((changeFn_eq AorB k w').mp hw').2
-  exact direct_argument_reasonable s (changeFn AorB k) notA B AorB
-    h_constraint h_C_AorB h_AorB_decomp h_open w hw_post
+/-- In a context compatible with the antecedent, the indicative and the material conditional
+are accepted together. -/
+theorem accepted_iff_material (hC : pragmaticConstraint s C) (hp : ∃ w ∈ C, p w) :
+    (∀ w ∈ C, selectionConditional s p q w) ↔ ∀ w ∈ C, p w → q w :=
+  ⟨λ h w hw hpw => selectionConditional_imp_material s (h w hw) hpw,
+    λ h w hw => selectionConditional_eq_material_within_context s C p q w hw
+      (hp.imp λ _ hv => ⟨hv.2, hv.1⟩) hC h⟩
 
--- § 2. The direct argument is NOT a semantic entailment
+/-- Contraposition is reasonable for indicatives: when the conditional is accepted and the
+negated consequent is open, the contrapositive is accepted. -/
+theorem contraposition (hC : pragmaticConstraint s C) (hq : ∃ w ∈ C, ¬ q w)
+    (h : ∀ w ∈ C, selectionConditional s p q w) :
+    ∀ w ∈ C, selectionConditional s (λ w => ¬ q w) (λ w => ¬ p w) w := by
+  intro w hw
+  have hsel : s.sel w {w' | ¬ q w'} ∈ C := hC w _ hw (hq.imp λ _ hv => ⟨hv.2, hv.1⟩)
+  have hnq : ¬ q (s.sel w {w' | ¬ q w'}) := s.inclusion w _ (hq.imp λ _ hv => hv.2)
+  exact λ hp => hnq (selectionConditional_imp_material s (h _ hsel) hp)
 
-/-- Three worlds for the butler/gardener model. The third world makes
-    `B` false at a possible selection target, exhibiting the gap. -/
-inductive Suspect where
+/-- The hypothetical syllogism is reasonable for indicatives: when both conditionals are
+accepted and the first antecedent is open, the chained conditional is accepted. -/
+theorem hypothetical_syllogism (hC : pragmaticConstraint s C) (hp : ∃ w ∈ C, p w)
+    (h₁ : ∀ w ∈ C, selectionConditional s p q w) (h₂ : ∀ w ∈ C, selectionConditional s q r w) :
+    ∀ w ∈ C, selectionConditional s p r w := by
+  intro w hw
+  have hsel : s.sel w {w' | p w'} ∈ C := hC w _ hw (hp.imp λ _ hv => ⟨hv.2, hv.1⟩)
+  have hpsel : p (s.sel w {w' | p w'}) := s.inclusion w _ (hp.imp λ _ hv => hv.2)
+  show r (s.sel w {w' | p w'})
+  exact selectionConditional_imp_material s (p := q) (q := r) (h₂ _ hsel)
+    (selectionConditional_imp_material s (p := p) (q := q) (h₁ _ hsel) hpsel)
+
+/-- A counterfactual antecedent, one incompatible with the context, selects outside the
+context set: the conditional must be subjunctive. -/
+theorem sel_notMem_of_incompatible (hp : ∀ w ∈ C, ¬ p w) (hne : ∃ w, p w) (w : W) :
+    s.sel w {w' | p w'} ∉ C :=
+  λ hmem => hp _ hmem (s.inclusion w _ hne)
+
+end Context
+
+/-! ### Reasonable inference -/
+
+/-- A pragmatic interpretation of a language (the paper's appendix): the proposition each
+sentence expresses in a context, an appropriateness relation, and a change function, obeying
+the two postulates that an appropriate assertion is compatible with the context and that an
+assertion adds its proposition to the context set. -/
+structure PragmaticInterpretation (L W K : Type*) where
+  /-- The context set of a context. -/
+  contextSet : K → Set W
+  /-- The proposition a sentence expresses in a context. -/
+  prop : L → K → Set W
+  /-- Appropriateness of asserting a sentence in a context. -/
+  appropriate : L → K → Prop
+  /-- The context resulting from asserting a sentence. -/
+  change : L → K → K
+  /-- The first postulate: an appropriate assertion is compatible with the context. -/
+  appropriate_compatible : ∀ P k, appropriate P k → (contextSet k ∩ prop P k).Nonempty
+  /-- The second postulate: an assertion narrows the context set to its proposition. -/
+  contextSet_change : ∀ P k, contextSet (change P k) = contextSet k ∩ prop P k
+
+namespace PragmaticInterpretation
+
+variable {L W K : Type*} (I : PragmaticInterpretation L W K)
+
+/-- The context after asserting a sequence of sentences. -/
+def changeSeq (σ : List L) (k : K) : K := σ.foldl (λ k P => I.change P k) k
+
+/-- Sequential appropriateness: each sentence is appropriate in the context the preceding
+ones produce. -/
+def AppropriateSeq : List L → K → Prop
+  | [], _ => True
+  | P :: σ, k => I.appropriate P k ∧ AppropriateSeq σ (I.change P k)
+
+/-- Reasonable inference: every context in which the premisses are appropriately asserted in
+sequence comes to entail the conclusion. -/
+def Reasonable (σ : List L) (P : L) : Prop :=
+  ∀ k, I.AppropriateSeq σ k → I.contextSet (I.changeSeq σ k) ⊆ I.prop P (I.changeSeq σ k)
+
+/-- Entailment in the language: the premiss's proposition is included in the conclusion's in
+every context. -/
+def Entails (P Q : L) : Prop := ∀ k, I.prop P k ⊆ I.prop Q k
+
+/-- A sentence is rigid when it expresses the same proposition in every context. -/
+def Rigid (P : L) : Prop := ∀ k k', I.prop P k = I.prop P k'
+
+theorem changeSeq_singleton (P : L) (k : K) : I.changeSeq [P] k = I.change P k := rfl
+
+/-- An entailment of a rigid conclusion is a reasonable inference. -/
+theorem Reasonable.of_entails {P Q : L} (hQ : I.Rigid Q) (h : I.Entails P Q) :
+    I.Reasonable [P] Q := λ k _ => by
+  rw [changeSeq_singleton, I.contextSet_change, hQ (I.change P k) k]
+  exact λ _ hw => h _ hw.2
+
+/-- Constructive dilemma for entailment: with disjunction interpreted as union, entailments
+from the disjuncts yield an entailment from the disjunction. -/
+theorem Entails.or {P₁ P₂ Q₁ Q₂ P Q : L} (hP : ∀ k, I.prop P k = I.prop P₁ k ∪ I.prop P₂ k)
+    (hQ : ∀ k, I.prop Q k = I.prop Q₁ k ∪ I.prop Q₂ k) (h₁ : I.Entails P₁ Q₁)
+    (h₂ : I.Entails P₂ Q₂) : I.Entails P Q := λ k => by
+  rw [hP, hQ]
+  exact Set.union_subset_union (h₁ k) (h₂ k)
+
+end PragmaticInterpretation
+
+/-! ### The language of the direct argument -/
+
+/-- The sentences: atoms, negation, disjunction, and the indicative conditional. -/
+inductive Sentence (Atom : Type*)
+  | atom (a : Atom)
+  | not (P : Sentence Atom)
+  | or (P Q : Sentence Atom)
+  | ifThen (P Q : Sentence Atom)
+
+/-- A context: a context set and a selection function obeying the pragmatic constraint for
+it. -/
+structure Context (W : Type*) where
+  /-- The context set. -/
+  set : Set W
+  /-- The selection function of the context. -/
+  sel : SelectionFunction W
+  /-- Indicative conditionals conform to the constraint. -/
+  constraint : pragmaticConstraint sel set
+
+variable {Atom W : Type*}
+
+/-- The proposition a sentence expresses in a context under a valuation of the atoms. -/
+def Sentence.prop (V : Atom → Set W) : Sentence Atom → Context W → Set W
+  | .atom a, _ => V a
+  | .not P, k => (P.prop V k)ᶜ
+  | .or P Q, k => P.prop V k ∪ Q.prop V k
+  | .ifThen P Q, k => selectionConditional k.sel (P.prop V k) (Q.prop V k)
+
+/-- Appropriateness: a disjunction requires each disjunct to be open without the other, an
+indicative conditional requires a compatible antecedent, and every assertion is compatible
+with the context. -/
+def Sentence.Appropriate (V : Atom → Set W) : Sentence Atom → Context W → Prop
+  | .or P Q, k =>
+    (k.set ∩ (P.prop V k ∩ (Q.prop V k)ᶜ)).Nonempty ∧
+      (k.set ∩ (Q.prop V k ∩ (P.prop V k)ᶜ)).Nonempty
+  | .ifThen P Q, k =>
+    (k.set ∩ P.prop V k).Nonempty ∧ (k.set ∩ (Sentence.ifThen P Q).prop V k).Nonempty
+  | P, k => (k.set ∩ P.prop V k).Nonempty
+
+/-- The context after accepting a proposition: the narrowed context set with the selection
+function restricted to it. -/
+noncomputable def Context.update (k : Context W) (P : Set W) : Context W :=
+  ⟨k.set ∩ P, k.sel.restrict (k.set ∩ P), pragmaticConstraint_restrict _ _⟩
+
+/-- The pragmatic interpretation of the language under a valuation. -/
+noncomputable def interp (V : Atom → Set W) : PragmaticInterpretation (Sentence Atom) W (Context W)
+    where
+  contextSet := Context.set
+  prop := Sentence.prop V
+  appropriate := Sentence.Appropriate V
+  change P k := k.update (P.prop V k)
+  appropriate_compatible P k h := by
+    cases P with
+    | or P Q =>
+      obtain ⟨w, hw, hP, -⟩ := h.1
+      exact ⟨w, hw, Or.inl hP⟩
+    | ifThen P Q => exact h.2
+    | atom a => exact h
+    | not P => exact h
+  contextSet_change _ _ := rfl
+
+/-- Reasonable inference in the language: reasonable under every valuation. -/
+def ReasonableInL (W : Type*) (σ : List (Sentence Atom)) (P : Sentence Atom) : Prop :=
+  ∀ V : Atom → Set W, (interp V).Reasonable σ P
+
+/-- Entailment in the language: entailment under every valuation. -/
+def EntailsInL (W : Type*) (P Q : Sentence Atom) : Prop :=
+  ∀ V : Atom → Set W, (interp V).Entails P Q
+
+/-- The indicative conditional entails the material conditional in the language. -/
+theorem ifThen_entails_material (P Q : Sentence Atom) :
+    EntailsInL W (.ifThen P Q) (.or (.not P) Q) := λ V k w h => by
+  by_cases hp : w ∈ P.prop V k
+  · exact Or.inr (selectionConditional_imp_material k.sel h hp)
+  · exact Or.inl hp
+
+/-- The direct argument is reasonable in the language: wherever a disjunction of atoms is
+appropriately asserted, the context comes to accept the conditional from the negated first
+disjunct to the second. -/
+theorem direct_argument_reasonable (a b : Atom) :
+    ReasonableInL W [.or (.atom a) (.atom b)] (.ifThen (.not (.atom a)) (.atom b)) := by
+  rintro V k ⟨⟨-, hopen⟩, -⟩
+  refine direct_argument (Context.sel _) (Context.constraint _) ?_ ?_
+  · obtain ⟨w, hw, hb, ha⟩ := hopen
+    exact ⟨w, ⟨hw, Or.inr hb⟩, ha⟩
+  · exact λ w hw => hw.2
+
+/-! ### The direct argument is not an entailment -/
+
+/-- The suspects. -/
+inductive Suspect
   | butler | gardener | someoneElse
   deriving DecidableEq, Repr
 
-abbrev W3 := Suspect
-def A3 : W3 → Prop := λ s => s = .butler
-def B3 : W3 → Prop := λ s => s = .gardener
-def AorB3 : W3 → Prop := λ s => A3 s ∨ B3 s
-def notA3 : W3 → Prop := λ s => ¬ A3 s
+/-- The atoms of the butler-or-gardener argument. -/
+inductive Culprit
+  | butler | gardener
+  deriving DecidableEq, Repr
 
-instance : DecidablePred A3 := fun s => decEq s .butler
-instance : DecidablePred B3 := fun s => decEq s .gardener
-instance : DecidablePred AorB3 := fun s => instDecidableOr (p := A3 s) (q := B3 s)
-instance : DecidablePred notA3 := fun s => instDecidableNot (p := A3 s)
+/-- The valuation: each atom names its suspect. -/
+def culpritOf : Culprit → Set Suspect
+  | .butler => {.butler}
+  | .gardener => {.gardener}
 
 open Classical in
-/-- A "subjunctive" selection function on `W3` that, for any nonempty
-    antecedent set, picks `someoneElse` first if available — modelling
-    selection that reaches outside the natural context set. -/
-noncomputable def s_subj3 : SelectionFunction W3 where
-  sel w P :=
-    if w ∈ P then w
-    else if (Suspect.someoneElse : W3) ∈ P then .someoneElse
-    else if (Suspect.gardener : W3) ∈ P then .gardener
-    else if (Suspect.butler : W3) ∈ P then .butler
-    else w
-  inclusion := by
-    intro w P hne
-    by_cases hw : w ∈ P
-    · rw [if_pos hw]; exact hw
-    · rw [if_neg hw]
-      by_cases hs : (Suspect.someoneElse : W3) ∈ P
-      · rw [if_pos hs]; exact hs
-      · rw [if_neg hs]
-        by_cases hg : (Suspect.gardener : W3) ∈ P
-        · rw [if_pos hg]; exact hg
-        · rw [if_neg hg]
-          by_cases hb : (Suspect.butler : W3) ∈ P
-          · rw [if_pos hb]; exact hb
-          · exfalso
-            obtain ⟨w', hw'⟩ := hne
-            cases w' <;> first | exact hs hw' | exact hg hw' | exact hb hw'
-  centering := by intro w P hw; rw [if_pos hw]
+/-- A selection function that, off the antecedent, reaches for someone else first. -/
+noncomputable def someoneElseFirst : SelectionFunction Suspect where
+  sel w A :=
+    if w ∈ A then w
+    else if Suspect.someoneElse ∈ A then .someoneElse
+    else if Suspect.gardener ∈ A then .gardener
+    else .butler
+  inclusion w A hA := by
+    split_ifs with hw hs hg
+    · exact hw
+    · exact hs
+    · exact hg
+    · obtain ⟨v, hv⟩ := hA
+      cases v with
+      | butler => exact hv
+      | gardener => exact absurd hv hg
+      | someoneElse => exact absurd hv hs
+  centering w A hw := by simp [hw]
 
-/-- **Counterexample to the direct argument as a semantic entailment.**
+/-- At a world where the butler did it, *the butler or the gardener did it* holds while *if the
+butler didn't, the gardener did* fails: the direct argument is no entailment. -/
+theorem not_entails_direct :
+    ¬ EntailsInL Suspect (.or (.atom Culprit.butler) (.atom .gardener))
+      (.ifThen (.not (.atom .butler)) (.atom .gardener)) := by
+  intro h
+  have := h culpritOf ⟨Set.univ, someoneElseFirst, λ _ _ _ _ => trivial⟩
+    (show Suspect.butler ∈ (interp culpritOf).prop (.or (.atom .butler) (.atom .gardener)) _ from
+      Or.inl rfl)
+  change ({Suspect.gardener} : Set Suspect)
+    (someoneElseFirst.sel .butler {w' | ({Suspect.butler} : Set Suspect)ᶜ w'}) at this
+  have h1 : Suspect.butler ∉ ({w' | ({Suspect.butler} : Set Suspect)ᶜ w'} : Set Suspect) :=
+    λ h => h rfl
+  have h2 : Suspect.someoneElse ∈ ({w' | ({Suspect.butler} : Set Suspect)ᶜ w'} : Set Suspect) :=
+    λ h => Suspect.noConfusion h
+  simp only [someoneElseFirst, if_neg h1, if_pos h2] at this
+  exact (by decide : Suspect.someoneElse ≠ .gardener) this
 
-At `w = butler`, `A∨B = true`, but `s_subj3.sel butler {¬A worlds} =
-someoneElse`, where `B` fails. So `if ¬A, B` is false at `butler` under
-this selection function. -/
-theorem direct_argument_not_entailment :
-    AorB3 .butler ∧
-    ¬ moodedConditional (W := W3) .indicative s_subj3 notA3 B3 .butler := by
-  refine ⟨by decide, ?_⟩
-  show ¬ B3 (s_subj3.sel Suspect.butler {w | notA3 w})
-  have hw : (Suspect.butler : W3) ∉ ({w | notA3 w} : Set W3) :=
-    fun h => absurd (h : notA3 .butler) (by decide)
-  have hs : (Suspect.someoneElse : W3) ∈ ({w | notA3 w} : Set W3) :=
-    show notA3 .someoneElse from by decide
-  simp only [s_subj3, if_neg hw, if_pos hs]
-  decide
+/-! ### Fatalism -/
 
-/-- **Sanity check**: with any *indicative* selection function (one that
-    obeys the pragmatic constraint relative to `C`), the conditional *does*
-    hold at every `C`-world satisfying the disjunction. The contrast with
-    `direct_argument_not_entailment` is the pragmatic-vs-semantic gap
-    [stalnaker-1975] emphasises. -/
-theorem direct_argument_holds_under_indicative_selection :
-    ∀ s : SelectionFunction W3,
-      pragmaticConstraint s (λ w => w ≠ .someoneElse ∧ AorB3 w) →
-      moodedConditional (W := W3) .indicative s notA3 B3 .butler := by
-  intro s h_constraint
-  apply direct_argument_reasonable s (λ w => w ≠ .someoneElse ∧ AorB3 w)
-    notA3 B3 AorB3 h_constraint
-  · intro w hw; exact hw.2
-  · intro w h_AorB h_notA
-    -- butler: ¬A is false, contradicts h_notA.
-    -- gardener: B holds. someoneElse: AorB false, contradicts h_AorB.
-    cases w with
-    | butler => exact absurd h_notA (by decide)
-    | gardener => decide
-    | someoneElse => exact absurd h_AorB (by decide)
-  · exact ⟨.gardener, by decide, by decide, by decide⟩
-  · exact ⟨by decide, by decide⟩
+/-- The atoms of the fatalist's argument: being killed, and taking precautions. -/
+inductive Fate
+  | killed | precautions
+  deriving DecidableEq, Repr
 
--- ════════════════════════════════════════════════════════════════
--- § 3. Polymorphic version via HasAssertion
--- ════════════════════════════════════════════════════════════════
+/-- A world: whether one is killed, and whether one takes precautions. -/
+abbrev Outcome := Bool × Bool
 
-/-! Stalnaker 1975's change-function calculus uses `changeFn p k`
-(set intersection) as the post-assertion update operator. The
-`HasAssertion` typeclass abstracts over
-*any* dialogue-state representation that admits Stalnakerian
-narrowing. This section shows that:
+/-- The valuation of the fatalist's atoms. -/
+def fateOf : Fate → Set Outcome
+  | .killed => {w | w.1 = true}
+  | .precautions => {w | w.2 = true}
 
-1. The `changeFn` operator IS the projection of
-   `HasAssertion.assert` in EVERY `HasAssertion` framework — the
-   typeclass's `commonGround_assert` law restated through
-   `changeFn` = intersective update.
-2. The direct-argument theorem lifts to be polymorphic over
-   `[HasAssertion S W]` — Stalnaker's "reasonable inference" claim
-   doesn't depend on Stalnaker's particular state representation.
-3. The lifted theorem applies cleanly to both the Stalnaker
-   instance (the original framework) and the Krifka instance (a
-   commitment-space representation with a radically different
-   internal structure but the same projected context-set behavior).
+open Classical in
+/-- A selection function that, off the antecedent, reaches first for survival. -/
+noncomputable def survivalFirst : SelectionFunction Outcome where
+  sel w A :=
+    if w ∈ A then w
+    else if (false, true) ∈ A then (false, true)
+    else if (false, false) ∈ A then (false, false)
+    else if (true, true) ∈ A then (true, true)
+    else (true, false)
+  inclusion w A hA := by
+    split_ifs with hw h1 h2 h3
+    · exact hw
+    · exact h1
+    · exact h2
+    · exact h3
+    · obtain ⟨v, hv⟩ := hA
+      rcases v with ⟨_ | _, _ | _⟩
+      · exact absurd hv h2
+      · exact absurd hv h1
+      · exact hv
+      · exact absurd hv h3
+  centering w A hw := by simp [hw]
 
-This is the consumer that earns the `HasAssertion`
-typeclass's existence: a substantive philosophical claim
-(reasonable inference is framework-generic) given a
-substrate-level proof (the typeclass's update law is
-sufficient). -/
+/-- The null context of the fatalist, with a selection function reaching first for survival. -/
+noncomputable def fateCtx : Context Outcome := ⟨Set.univ, survivalFirst, λ _ _ _ _ => trivial⟩
 
-open HasCommonGround (contextSet)
+/-- *I will be killed.* -/
+def killed : Sentence Fate := .atom .killed
 
-/-- **Bridge theorem**: Stalnaker's `changeFn` operator equals the
-    context-set projection of `HasAssertion.assert` — in any
-    `HasAssertion` framework, since `changeFn p k` is definitionally
-    `k ∩ p` (Stalnaker 1975 Appendix postulate 2) and the typeclass's
-    update law projects to exactly that (`HasAssertion.contextSet_assert`). -/
-theorem assert_eq_changeFn {S W : Type*} [HasAssertion S W]
-    (s : S) (p : Set W) :
-    contextSet (HasAssertion.assert s p) =
-    changeFn p (contextSet s) :=
-  HasAssertion.contextSet_assert s p
+/-- *I take precautions.* -/
+def precautions : Sentence Fate := .atom .precautions
 
-/-- **Polymorphic direct argument**: for ANY `HasAssertion` framework,
-    asserting `A∨B` yields a context set in which the indicative
-    conditional `if ¬A, B` holds at every world.
-
-    The proof is shorter than its single-framework predecessor
-    (`direct_argument_reasonable`) because the HasAssertion typeclass
-    provides one of the hypotheses for free: every world surviving
-    the assertion satisfies `AorB` (the typeclass law
-    `contextSet_assert`). Compare with the Stalnaker-specific
-    version, which had to take this as a hypothesis (`h_C_AorB`). -/
-theorem direct_argument_reasonable_polymorphic
-    {S W : Type*} [HasAssertion S W]
-    (s : S) (sel : SelectionFunction W)
-    (notA B AorB : W → Prop)
-    (h_AorB_decomp : ∀ w, AorB w → notA w → B w)
-    (h_constraint : pragmaticConstraint sel
-      (contextSet (HasAssertion.assert s AorB)))
-    (h_open_notA : ∃ w' ∈ {w' | notA w'},
-      contextSet (HasAssertion.assert s AorB) w') :
-    ∀ w, contextSet (HasAssertion.assert s AorB) w →
-      moodedConditional .indicative sel notA B w := by
-  apply direct_argument_reasonable sel _ notA B AorB h_constraint
-    _ h_AorB_decomp h_open_notA
-  -- The post-assertion context set ⊆ {w | AorB w}, by the typeclass law.
-  intro w hw
-  rw [HasAssertion.contextSet_assert] at hw
-  exact hw.2
-
-/-- **Stalnaker instance application**: the polymorphic lift fires on
-    the Stalnaker framework. Recovers the framework-specific
-    `direct_argument_reasonable` for the post-assertion context. -/
-theorem direct_argument_reasonable_stalnaker {W : Type*}
-    (s : Filter W) (sel : SelectionFunction W)
-    (notA B AorB : W → Prop)
-    (h_AorB_decomp : ∀ w, AorB w → notA w → B w)
-    (h_constraint : pragmaticConstraint sel
-      (contextSet (HasAssertion.assert s AorB)))
-    (h_open_notA : ∃ w' ∈ {w' | notA w'},
-      contextSet (HasAssertion.assert s AorB) w') :
-    ∀ w, contextSet (HasAssertion.assert s AorB) w →
-      moodedConditional .indicative sel notA B w :=
-  direct_argument_reasonable_polymorphic s sel notA B AorB
-    h_AorB_decomp h_constraint h_open_notA
-
-/-- The same inference on a commitment space ([krifka-2015]), whose common ground is what its
-root entails: `HasAssertion` abstracts over the representation. -/
-theorem direct_argument_reasonable_krifka {W : Type*}
-    (s : Commitment.Space (Commitment.State Discourse.Role W))
-    (sel : SelectionFunction W)
-    (notA B AorB : W → Prop)
-    (h_AorB_decomp : ∀ w, AorB w → notA w → B w)
-    (h_constraint : pragmaticConstraint sel
-      (contextSet (HasAssertion.assert s AorB)))
-    (h_open_notA : ∃ w' ∈ {w' | notA w'},
-      contextSet (HasAssertion.assert s AorB) w') :
-    ∀ w, contextSet (HasAssertion.assert s AorB) w →
-      moodedConditional .indicative sel notA B w :=
-  direct_argument_reasonable_polymorphic s sel notA B AorB
-    h_AorB_decomp h_constraint h_open_notA
-
--- ════════════════════════════════════════════════════════════════
--- § 4. Note on contraposition, hypothetical syllogism, and fatalism
--- ════════════════════════════════════════════════════════════════
-
-
-/-! ### Contraposition / hypothetical syllogism
-
-[stalnaker-1975] observes that contraposition and hypothetical
-syllogism fail in general for selection-based conditionals; the
-counterexamples all involve **subjunctives** whose antecedents are
-presupposed false. For indicatives — which obey `pragmaticConstraint` —
-both inference forms come out reasonable in the Appendix's sense.
-
-The semantic-failure side already exists as
-`Conditionals.perfection_not_entailed_variablyStrict` and can be
-adapted directly to selection-based conditionals. The pragmatic-success
-side is a clean extension of `direct_argument_reasonable` and is left for
-follow-up. -/
-
-/-! ### Fatalism (§V) `fatalism_remark`
-
-Dummett's wartime-Britain fatalism argument has the form:
-1. `K ∨ ¬K` (premise: I will be killed or not).
-2. From `K`, derive `If P, K` (precautions ineffective).
-3. From `¬K`, derive `If ¬P, ¬K` (precautions unnecessary).
-4. ∴ `Q ∨ R`.
-
-Steps 2 and 3 are *reasonable inferences* (they exploit the post-update
-context where `K` or `¬K` is taken as established). Step 4 applies
-constructive dilemma — valid for **entailments**, but not for
-reasonable inferences. The argument equivocates the two notions.
-
-Formalising this requires the n-ary `appropriateSeq` machinery already
-present, plus a counterexample showing constructive dilemma fails for
-reasonable inference. Left for follow-up. -/
+/-- The fatalist's argument: *I will be killed or not; if I will, then even with precautions I
+will be killed; if I will not, then even without precautions I will not be; so precautions are
+ineffective or unnecessary*. In the null context the disjunction is appropriate, and each
+conditional is accepted in the context supposing its disjunct; but the disjunction of the
+conditionals is not accepted in the context of the disjunctive premiss, since at a world
+where one is killed without precautions neither conditional holds. Constructive dilemma
+fails for reasonable inference. -/
+theorem fatalism :
+    (Sentence.or killed (.not killed)).Appropriate fateOf fateCtx ∧
+    (fateCtx.update (killed.prop fateOf fateCtx)).set ⊆
+      (Sentence.ifThen precautions killed).prop fateOf
+        (fateCtx.update (killed.prop fateOf fateCtx)) ∧
+    (fateCtx.update ((Sentence.not killed).prop fateOf fateCtx)).set ⊆
+      (Sentence.ifThen (.not precautions) (.not killed)).prop fateOf
+        (fateCtx.update ((Sentence.not killed).prop fateOf fateCtx)) ∧
+    ¬ (fateCtx.update ((Sentence.or killed (.not killed)).prop fateOf fateCtx)).set ⊆
+      (Sentence.or (.ifThen precautions killed) (.ifThen (.not precautions) (.not killed))).prop
+        fateOf (fateCtx.update ((Sentence.or killed (.not killed)).prop fateOf fateCtx)) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · show (Set.univ ∩ (fateOf .killed ∩ ((fateOf .killed)ᶜ)ᶜ)).Nonempty ∧
+      (Set.univ ∩ ((fateOf .killed)ᶜ ∩ (fateOf .killed)ᶜ)).Nonempty
+    exact ⟨⟨(true, true), trivial, rfl, λ h => h rfl⟩,
+      ⟨(false, true), trivial, Bool.false_ne_true, Bool.false_ne_true⟩⟩
+  · have h1 := selectionConditional_of_accepted (survivalFirst.restrict (Set.univ ∩ fateOf .killed))
+      (pragmaticConstraint_restrict _ _) (p := fateOf .precautions) (q := fateOf .killed)
+      ⟨(true, true), ⟨trivial, rfl⟩, rfl⟩ λ _ hw => hw.2
+    exact λ w hw => h1 w hw
+  · have h2 := selectionConditional_of_accepted
+      (survivalFirst.restrict (Set.univ ∩ (fateOf .killed)ᶜ)) (pragmaticConstraint_restrict _ _)
+      (p := (fateOf .precautions)ᶜ) (q := (fateOf .killed)ᶜ)
+      ⟨(false, false), ⟨trivial, Bool.false_ne_true⟩, Bool.false_ne_true⟩ λ _ hw => hw.2
+    exact λ w hw => h2 w hw
+  · intro h
+    have hw := h (show (true, false) ∈ (fateCtx.update
+      ((Sentence.or killed (.not killed)).prop fateOf fateCtx)).set from ⟨trivial, Or.inl rfl⟩)
+    rcases hw with hw | hw
+    · change fateOf .killed ((survivalFirst.restrict _).sel (true, false) _) at hw
+      rw [SelectionFunction.restrict_sel_of_mem] at hw
+      · simp [survivalFirst, fateOf, Sentence.prop, fateCtx, Context.update, precautions,
+          killed] at hw
+        have n1 : ¬ ({w : Outcome | w.2 = true} (true, false)) := Bool.false_ne_true
+        have p2 : {w : Outcome | w.2 = true} (false, true) := rfl
+        simp only [if_neg n1, if_pos p2] at hw
+        exact Bool.false_ne_true hw
+      · exact ⟨trivial, Or.inl rfl⟩
+      · exact ⟨(false, true), rfl, trivial, Or.inr Bool.false_ne_true⟩
+    · change (fateOf .killed)ᶜ ((survivalFirst.restrict _).sel (true, false) _) at hw
+      rw [SelectionFunction.centering] at hw
+      · exact hw rfl
+      · exact Bool.false_ne_true
 
 end Stalnaker1975
