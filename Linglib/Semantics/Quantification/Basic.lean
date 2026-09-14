@@ -6,13 +6,13 @@ import Linglib.Core.Order.Aristotelian
 # Concrete propositional generalized quantifiers
 [barwise-cooper-1981] [keenan-stavi-1986] [peters-westerstahl-2006]
 
-The three propositional GQs `every_sem`, `some_sem`, `no_sem` and the property
-proofs that don't need `Fintype`. Counting GQs (`most_sem`, `few_sem`, etc.) and
+The propositional GQs `every_sem`, `some_sem`, `no_sem` and the Russellian `the_sem`, with
+the property proofs that don't need `Fintype`. Counting GQs (`most_sem`, `few_sem`, etc.) and
 their proofs live in `Quantification.Counting`.
 
 ## Main declarations
 
-* `every_sem`, `some_sem`, `no_sem` — the three propositional GQ denotations.
+* `every_sem`, `some_sem`, `no_sem`, `the_sem` — the propositional GQ denotations.
 * `SatisfiesUniversals` — B&C universals: conservativity + monotonicity in scope.
 * Conservativity/monotonicity/symmetry/intersectivity/duality/etc. proofs.
 -/
@@ -29,6 +29,19 @@ def some_sem {α : Type*} : GQ α := fun R S => ∃ x : α, R x ∧ S x
 
 /-- ⟦no⟧ = λR.λS. ∀x. R(x) → ¬S(x). -/
 def no_sem {α : Type*} : GQ α := fun R S => ∀ x : α, R x → ¬ S x
+
+/-- ⟦the⟧ = λR.λS. ∃x. ∀y. (R(y) ↔ y = x) ∧ S(x), the singular definite of [russell-1905] in the
+Montagovian form. -/
+def the_sem {α : Type*} : GQ α := λ R S => ∃ x : α, (∀ y, R y ↔ y = x) ∧ S x
+
+/-- The definite asserts a unique restrictor element and applies the scope to it. -/
+theorem the_sem_iff {α : Type*} (R S : α → Prop) :
+    the_sem R S ↔ (∃! x, R x) ∧ ∀ x, R x → S x := by
+  constructor
+  · rintro ⟨x, hx, hS⟩
+    exact ⟨⟨x, (hx x).2 rfl, λ y hy => (hx y).1 hy⟩, λ y hy => (hx y).1 hy ▸ hS⟩
+  · rintro ⟨⟨x, hx, huniq⟩, hS⟩
+    exact ⟨x, λ y => ⟨huniq y, λ h => h ▸ hx⟩, hS x hx⟩
 
 /-- B&C semantic universals ([barwise-cooper-1981]): conservativity plus
     monotonicity in scope. Convenience conjunction of three Core predicates. -/
