@@ -1,343 +1,236 @@
-import Linglib.Semantics.Modality.Kratzer.Premise
-import Linglib.Data.UD.Basic
 import Linglib.Semantics.Alternatives.Basic
-import Linglib.Semantics.Polarity.Operator
-import Linglib.Semantics.Focus.Interpretation
+import Linglib.Semantics.Alternatives.Structural
+import Linglib.Semantics.Questions.Exhaustivity
+import Linglib.Semantics.Questions.Hamblin
+import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Fragments.Turkish.QuestionParticles
 import Linglib.Data.Examples.TurkHirsch2026
-import Mathlib.Data.Set.Basic
 
 /-!
-# Türk & Hirsch (2026) — Category Match constrains polar question alternatives
-[turk-hirsch-2026] [atlamaz-2023] [fox-katzir-2011] [rooth-1992]
+# Türk and Hirsch (2026): Constraining Alternatives in Turkish Polar Questions
 
-Connects the empirical judgments in `TurkHirsch2026.Examples` (modal answers
-are infelicitous to Turkish polar questions) to the formal explanation
-[turk-hirsch-2026] propose: [fox-katzir-2011] category match
-over UPOS tags applied to the focus alternatives evoked by the polarity
-head Σ_F that hosts Turkish *mI*.
+This file formalizes [turk-hirsch-2026], an argument from Turkish polar questions that focus
+alternatives are formed in the syntax under a category constraint. Turkish polar questions carry
+the focus clitic *=mI*, which by default attaches to a focused covert polarity head Σ, (4), and
+[atlamaz-2023] derives the Hamblin set of the question from focus alternatives: Σ has the identity
+as ordinary value and the identity and negation as focus value, the alternatives propagate
+pointwise, and a question head C_Q sets the ordinary value of the clause to the focus value of its
+prejacent, `sigmaF`, `tp`, `cq`. The two alternatives of Σ are assumed rather than derived. Under
+[rooth-1985]'s type-theoretic alternatives the focus value of Σ is every propositional operator,
+so the Hamblin set is every proposition, `hamblinType_eq_univ`, and [dayal-1996]'s answerhood
+operator, which selects the strongest true member, returns total information about the world,
+`isStrongestTrueAnswer_hamblinType`; on the sample (31), which adds the deontic modal
+propositions, it returns the conjunction that Ali had to sleep and did, (35b), rather than the
+attested complete answer (35a), `isStrongestTrueAnswer_sample`. Contextual restriction cannot
+repair this, since any Hamblin set at all is the intersection of the type-theoretic focus value
+with some context, `exists_context_inter_eq`, whereas the modalized question (38) is unavailable
+even in the supporting context (39). Instead alternatives are syntactic objects formed under the
+Category Match Constraint (42), [fox-katzir-2011], [katzir-2007]: replacements of the focus share
+its category, `categoryMatch`. With Σ and NEG the only morphemes of category Pol, the Hamblin set
+is the polar one, `hamblinCat_eq`, `hamblinCat_eq_alt_polar`, Dayal's operator returns the
+positive or the negative answer, `isStrongestTrueAnswer_hamblinCat`, and the modal answer (41)
+is not a member, `mem_hamblinCat_iff`. No structural-complexity constraint is involved: category
+match is a single substitution step of [katzir-2007]'s operations, `structOp_of_mem_categoryMatch`.
 
-## The puzzle
+## Implementation notes
 
-Following [atlamaz-2023]'s bidimensional analysis, Turkish *mI* heads
-PolP and bears focus (Σ_F). Under [rooth-1992]-style type-theoretic
-alternative computation, any operator of the same semantic type counts as
-an alternative — including deontic modals. This yields {p, ¬p, □p}, wrongly
-predicting □p is a felicitous answer.
+Propositions are sets of worlds, the deontic modal is `Modality.Kratzer.necessity` over a modal
+base and an ordering source, and the lexicon is a list of terminals of `Syntax.Tree` so that
+category match is the substitution step of `Alternatives.Structural.StructOp`; the denotation of
+a tree is its terminal's operator and the identity elsewhere. Two-dimensional values are
+`WithAlternatives`, whose `<*>` is pointwise functional application. The embedding data, (14) and
+(18), in which *=mI* below the complementizer *diye* yields a declarative matrix clause and
+*=mI* above it a matrix question, so that *=mI* tracks the highest focus mark, are recorded as
+rows and not modelled. The examples are the rows of `Data.Examples.TurkHirsch2026`.
 
-## The fix
+## References
 
-Category match restricts alternatives to items sharing *mI*'s UPOS tag
-`PART`. Polarity operators (Σ = `id`, NEG = set complement) are `PART`; "must"
-is `AUX`. Category match yields {p, ¬p} — the correct polar question.
-
-## Scenario
-
-Four worlds: Ali sleeps/doesn't × deontic must/free.
+* [turk-hirsch-2026]
+* [atlamaz-2023]
+* [fox-katzir-2011]
+* [katzir-2007]
+* [rooth-1985]
+* [rooth-1992]
+* [dayal-1996]
+* [hamblin-1973b]
+* [kamali-krifka-2020]
+* [hirsch-schwarz-2025]
 -/
 
 namespace TurkHirsch2026
 
-open Focus.Interpretation (PropFocusValue)
+open Alternatives Alternatives.Structural Modality.Kratzer Question Syntax
 
--- ═══════════════════════════════════════════════════════════════════════
--- §1  World type and propositions
--- ═══════════════════════════════════════════════════════════════════════
+/-! ### The polar morphemes and the deontic modal -/
 
-/-- Four worlds crossing Ali-sleeps with deontic-must. -/
-inductive PolarWorld where
-  | sleeps_must   -- Ali sleeps, must is in force
-  | sleeps_free   -- Ali sleeps, no deontic necessity
-  | nosleep_must  -- Ali doesn't sleep, must is in force
-  | nosleep_free  -- Ali doesn't sleep, no deontic necessity
+/-- Syntactic categories: the polarity category of Σ and NEG, and that of the deontic modal. -/
+inductive Cat where
+  | pol
+  | modal
   deriving DecidableEq, Repr
 
-open PolarWorld
-
-def allWorlds : List PolarWorld :=
-  [sleeps_must, sleeps_free, nosleep_must, nosleep_free]
-
-/-- p = "Ali sleeps": holds at the worlds where Ali sleeps. -/
-def p : Set PolarWorld := {sleeps_must, sleeps_free}
-
-/-- ¬p = "Ali doesn't sleep". Set complement of `p`. -/
-def notP : Set PolarWorld := pᶜ
-
-/-! Deontic must, grounded in [kratzer-1977]'s premise-set semantics.
-
-    The deontic source maps each world to the propositions encoding the
-    deontic obligations in force at that world. In the *_must worlds the
-    obligation "Ali sleeps" is in force; in the *_free worlds nothing is.
-    `mustP` is then the Bool reflection of `mustInView deonticBase pProp` —
-    no longer a stipulated 4-row table. -/
-
-/-- Prop view of `p` for use with the polymorphic Kratzer machinery
-    (which lives at type `Index → Prop`). Just set membership. -/
-def pProp : PolarWorld → Prop := fun w => w ∈ p
-
-/-- The deontic premise set: in must-worlds the obligation `pProp` is
-    in force; in free-worlds the premise set is empty. -/
-def deonticBase : PolarWorld → List (PolarWorld → Prop)
-  | sleeps_must  => [pProp]
-  | nosleep_must => [pProp]
-  | sleeps_free  => []
-  | nosleep_free => []
-
-/-- Kratzer-grounded deontic must: `□p` as [kratzer-1977] Def 5
-    (`mustInView`) over the deontic premise set. -/
-def mustGrounded (w : PolarWorld) : Prop :=
-  Modality.Kratzer.mustInView deonticBase pProp w
-
-/-- □p = "Ali must sleep" (deontic necessity). The Set reflection of
-    `mustGrounded`; equivalence proved by `mustP_iff_mustGrounded`. -/
-def mustP : Set PolarWorld := {sleeps_must, nosleep_must}
-
-/-- The stipulated table matches the Kratzer-grounded derivation. The
-    over-generation argument below is therefore about a genuine modal
-    proposition, not a hand-tuned function. -/
-theorem mustP_iff_mustGrounded (w : PolarWorld) :
-    w ∈ mustP ↔ mustGrounded w := by
-  unfold mustGrounded Modality.Kratzer.mustInView
-         Modality.Kratzer.followsFrom
-         Modality.Kratzer.propIntersection
-  cases w
-  · -- sleeps_must: deonticBase = [pProp], obligation entails p
-    simp [mustP, deonticBase, pProp, p]
-  · -- sleeps_free: deonticBase = [], requires p at every world — fails at nosleep_must
-    refine iff_of_false (by simp [mustP]) ?_
-    intro h
-    have hmem : nosleep_must ∈ ({a | ∀ p ∈ deonticBase sleeps_free, p a} : Set _) := by
-      simp [deonticBase]
-    have := h hmem
-    simp [pProp, p] at this
-  · -- nosleep_must: deonticBase = [pProp], obligation entails p
-    simp [mustP, deonticBase, pProp, p]
-  · -- nosleep_free: deonticBase = [], same shape as sleeps_free
-    refine iff_of_false (by simp [mustP]) ?_
-    intro h
-    have hmem : nosleep_must ∈ ({a | ∀ p ∈ deonticBase nosleep_free, p a} : Set _) := by
-      simp [deonticBase]
-    have := h hmem
-    simp [pProp, p] at this
-
--- ═══════════════════════════════════════════════════════════════════════
--- §2  Operators as UPOS-tagged items
--- ═══════════════════════════════════════════════════════════════════════
-
-/-- A denotation tagged with its UD UPOS category. Study-internal
-    utility used to model [turk-hirsch-2026]'s claim that *mI*'s
-    PART tag licenses only PART-tagged alternatives. -/
-structure TaggedDen (α : Type) where
-  cat : UD.UPOS
-  den : α
-  deriving Repr
-
-/-- The lexicon of propositional operators at type ⟨⟨s,t⟩,t⟩.
-    Polarity heads (Σ, NEG) are tagged `PART`; the deontic modal is `AUX`.
-    This UPOS distinction is what category match exploits. -/
-def opLexicon : List (TaggedDen (Set PolarWorld)) :=
-  [⟨.PART, p⟩, ⟨.PART, notP⟩, ⟨.AUX, mustP⟩]
-
--- ═══════════════════════════════════════════════════════════════════════
--- §3  Alternative sets
--- ═══════════════════════════════════════════════════════════════════════
-
-/-- Type-theoretic alternatives ([rooth-1985] D_τ): all operators
-    regardless of UPOS → {p, ¬p, □p}. Over-generates. -/
-def typeTheoAlternatives : List (Set PolarWorld) :=
-  opLexicon.map (·.den)
-
-/-- Category-match alternatives: only `PART`-tagged
-    operators → {p, ¬p}. Correct. -/
-def catMatchAlternatives : List (Set PolarWorld) :=
-  (opLexicon.filter (·.cat == .PART)).map (·.den)
-
--- ═══════════════════════════════════════════════════════════════════════
--- §4  Hamblin questions
--- ═══════════════════════════════════════════════════════════════════════
-
-/-- Type-theoretic question: {p, ¬p, □p} — over-generated. -/
-def typeTheoQ : PropFocusValue PolarWorld :=
-  { q | q ∈ typeTheoAlternatives }
-
-/-- Category-match question: {p, ¬p} — correct. -/
-def catMatchQ : PropFocusValue PolarWorld :=
-  { q | q ∈ catMatchAlternatives }
-
-/-- The expected polar question: {p, ¬p}. -/
-def polarQ : PropFocusValue PolarWorld := {p, notP}
-
--- ═══════════════════════════════════════════════════════════════════════
--- §5  Core theorems
--- ═══════════════════════════════════════════════════════════════════════
-
-/-- Category-matched question = standard polar question.
-    [fox-katzir-2011]'s category match yields the correct {p, ¬p} partition.
-    `catMatchAlternatives` filters opLexicon to `[p, notP]`, and the
-    resulting set-of-alternatives equals the polar `{p, notP}` literal. -/
-theorem catMatch_eq_polar : catMatchQ = polarQ := by
-  ext q
-  simp [catMatchQ, polarQ, catMatchAlternatives, opLexicon]
-
-/-- The spurious prediction: □p is an answer to the type-theoretic question.
-    Under [rooth-1992]-style D_τ, "Ali must sleep" is predicted to be a
-    felicitous answer to "Does Ali sleep?" — which is empirically wrong. -/
-theorem typeTheo_admits_modal : mustP ∈ typeTheoQ := by
-  simp [typeTheoQ, typeTheoAlternatives, opLexicon]
-
-/-- The correct prediction: □p is NOT an answer to the polar question.
-    "Ali must sleep" is not a felicitous answer to a yes/no question
-    about whether Ali sleeps. -/
-theorem polar_rejects_modal : mustP ∉ polarQ := by
-  intro h
-  rcases h with h | h
-  · -- mustP = p contradiction (different singletons membership)
-    have : sleeps_free ∈ mustP := by
-      rw [h]; simp [p]
-    simp [mustP] at this
-  · -- mustP = notP contradiction
-    have : sleeps_must ∈ mustP := by simp [mustP]
-    rw [h] at this
-    simp [notP, p] at this
-
-/-- Category match fixes the over-generation: □p is NOT an answer
-    to the category-matched question. -/
-theorem catMatch_rejects_modal : mustP ∉ catMatchQ := by
-  rw [catMatch_eq_polar]
-  exact polar_rejects_modal
-
-/-- Type-theoretic question ≠ polar question. The D_τ computation
-    admits □p, which the polar question rejects. -/
-theorem typeTheo_ne_polar : typeTheoQ ≠ polarQ := by
-  intro h
-  exact polar_rejects_modal (h ▸ typeTheo_admits_modal)
-
--- ═══════════════════════════════════════════════════════════════════════
--- §6  Bridge: data ↔ theory
--- ═══════════════════════════════════════════════════════════════════════
-
-/-! Connect the empirical judgments from `TurkHirsch2026.Examples` to the
-    formal model. The data says modal answers are infelicitous;
-    the theory (category match) explains why: □p is excluded from
-    the Hamblin alternative set. -/
-
-/-- The empirical datum: the deontic modal answer
-    ("Ali uyumalı" to "Ali uyuyor mu?") is unacceptable. -/
-theorem data_modal_infelicitous :
-    Examples.polar_must.judgment = .unacceptable := rfl
-
-/-- The theory predicts it: □p is not an answer under category match. -/
-theorem theory_modal_excluded : mustP ∉ catMatchQ :=
-  catMatch_rejects_modal
-
-/-- The theory would wrongly predict felicity without category match. -/
-theorem theory_overgen_without_catmatch : mustP ∈ typeTheoQ :=
-  typeTheo_admits_modal
-
--- ═══════════════════════════════════════════════════════════════════════
--- §7  Bridge: alternative set computation
--- ═══════════════════════════════════════════════════════════════════════
-
-/-! Following [rooth-1992], the alternative set of a [FoC]-marked
-    constituent is the set of alternatives of the same semantic type — i.e.,
-    exactly the type-theoretic D_τ computation.
-
-    [turk-hirsch-2026]'s contribution is showing that this over-generates
-    for Turkish polar questions, and that category match ([fox-katzir-2011])
-    is the correct constraint on alternative computation when the focus host
-    is Σ_F. -/
-
-/-- Applying [FoC] with type-theoretic alternative set yields the over-generating set. -/
-def applyFoC_typeTheo : WithAlternatives (Set PolarWorld) :=
-  { ordinary := p, alternatives := typeTheoQ }
-
-/-- The two carriers agree definitionally: the type-theoretic [FoC]
-alternative set *as a set* is the type-theoretic question. -/
-theorem applyFoC_typeTheo_alternatives : applyFoC_typeTheo.alternatives = typeTheoQ := rfl
-
-/-- The type-theoretic alternative set produces the wrong question denotation. -/
-theorem applyFoC_is_typeTheo : mustP ∈ applyFoC_typeTheo.alternatives := by
-  show mustP ∈ typeTheoAlternatives
-  simp [typeTheoAlternatives, opLexicon]
-
-/-- Restricting the alternative set by category match corrects the prediction. -/
-def applyFoC_catMatch : WithAlternatives (Set PolarWorld) :=
-  { ordinary := p, alternatives := catMatchQ }
-
-/-- The two carriers agree definitionally on the category-matched side
-as well. -/
-theorem applyFoC_catMatch_alternatives : applyFoC_catMatch.alternatives = catMatchQ := rfl
-
-/-- The category-matched alternative set produces the correct question denotation. -/
-theorem categoryMatch_fixes_applyFoC :
-    mustP ∉ applyFoC_catMatch.alternatives := by
-  show mustP ∉ catMatchAlternatives
-  -- catMatchAlternatives = [p, notP]; mustP is neither.
-  have hcm : catMatchAlternatives = [p, notP] := by
-    simp [catMatchAlternatives, opLexicon]
-  rw [hcm]
-  simp only [List.mem_cons, List.not_mem_nil, or_false]
-  rintro (h | h)
-  · -- mustP = p contradiction
-    have : sleeps_free ∈ mustP := h ▸ (by simp [p])
-    simp [mustP] at this
-  · -- mustP = notP contradiction
-    have : sleeps_must ∈ mustP := by simp [mustP]
-    rw [h] at this
-    simp [notP, p] at this
-
--- ═══════════════════════════════════════════════════════════════════════
--- §8  Turkish fragment connection
--- ═══════════════════════════════════════════════════════════════════════
-
-/-! The fragment exposes only theory-neutral lexical primitives. Here we
-    add the theory-specific tagging that [turk-hirsch-2026]'s analysis
-    requires: a UPOS label (for [fox-katzir-2011] category match) and
-    a `Head` label (for [laka-1990]-style PolP). These commitments
-    live in the study file, not the fragment, so the fragment stays
-    reusable across syntactic theories. -/
-
-open Turkish.QuestionParticles
-open Polarity
-
-/-- Polarity-head labels assumed by this study (Laka-style ΣP/NEGP).
-    Lean reserves `Σ` for sigma types, so the affirmative head's
-    Lean-side identifier is `affirm` (the linguistic name "Σ" is
-    preserved in docstrings). -/
-inductive Head where
-  /-- Affirmative polarity head (Laka's Σ). -/
-  | affirm
-  /-- Negation polarity head. -/
+/-- The propositional operators of the lexicon. -/
+inductive Word where
+  | sigma
   | neg
+  | deontic
   deriving DecidableEq, Repr
 
-/-- The bare semantic operator each head spells out. -/
-def Head.toOp : Head → ((PolarWorld → Prop) → (PolarWorld → Prop))
-  | .affirm => Polarity.affirm _
-  | .neg    => Polarity.neg _
+variable {W : Type*} (f : ModalBase W) (g : OrderingSource W)
 
-/-- This study's commitments about Turkish *mI*. -/
-structure MiAnalysis where
-  /-- Which polarity head *mI* spells out (Σ in [atlamaz-2023]). -/
-  head : Head
-  /-- UPOS tag used by [fox-katzir-2011] category match. -/
-  upos : UD.UPOS
+/-- The operator a word denotes: Σ the identity, NEG complementation, and the deontic modal
+necessity over the modal base and ordering source. -/
+def Word.den : Word → Set W → Set W
+  | .sigma => id
+  | .neg => compl
+  | .deontic => λ p => {w | necessity f g (· ∈ p) w}
 
-/-- The [turk-hirsch-2026] / [atlamaz-2023] analysis: *mI* is Σ
-    and tagged `PART`. -/
-def miAnalysis : MiAnalysis :=
-  { head := Head.affirm, upos := UD.UPOS.PART }
+/-- The operator a tree denotes: its terminal's operator, and the identity on a node. -/
+def Tree.den : Tree Cat Word → Set W → Set W
+  | .terminal _ w => w.den f g
+  | _ => id
 
-/-- *mI*'s lexical denotation matches the operator its analyzed head
-    spells out — a definitional consistency check between the fragment
-    entry and the head analysis adopted here. -/
-theorem mi_denotation_matches_head :
-    (mi.denotation : (PolarWorld → Prop) → (PolarWorld → Prop)) =
-      miAnalysis.head.toOp := rfl
+/-- (44): the lexicon of propositional operators, Σ and NEG of category Pol and the deontic modal
+of its own category. -/
+def lexicon : List (Tree Cat Word) :=
+  [.terminal .pol .sigma, .terminal .pol .neg, .terminal .modal .deontic]
 
-/-- The UPOS tag this study assigns to *mI* matches the category used in
-    the alternative-restriction computation. -/
-theorem mi_category_matches :
-    miAnalysis.upos = UD.UPOS.PART := rfl
+/-- The focused polarity head Σ_F. -/
+def sigma : Tree Cat Word := .terminal .pol .sigma
+
+/-! ### Composing the question -/
+
+/-- Σ_F with a given focus value: the identity as ordinary value, (8a). -/
+def sigmaF (A : Set (Set W → Set W)) : WithAlternatives (Set W → Set W) :=
+  { ordinary := id, alternatives := A }
+
+/-- The TP: Σ_F applied pointwise to the unfocused prejacent `p`, (9). -/
+def tp (A : Set (Set W → Set W)) (p : Set W) : WithAlternatives (Set W) := sigmaF A <*> pure p
+
+/-- (10): C_Q sets the ordinary value to the focus value of its prejacent, the Hamblin set. -/
+def cq (m : WithAlternatives (Set W)) : WithAlternatives (Set (Set W)) :=
+  { ordinary := m.alternatives, alternatives := {m.alternatives} }
+
+theorem tp_alternatives (A : Set (Set W → Set W)) (p : Set W) :
+    (tp A p).alternatives = (· p) '' A := by
+  ext q
+  simp [tp, sigmaF]
+
+/-! ### Type-theoretic alternatives over-generate -/
+
+/-- The Hamblin set under [rooth-1985]'s type-theoretic focus value, every operator of Σ's type,
+(26). -/
+def hamblinType (p : Set W) : Set (Set W) := (cq (tp Set.univ p)).ordinary
+
+/-- (28): the type-theoretic Hamblin set is every proposition. -/
+theorem hamblinType_eq_univ (p : Set W) : hamblinType p = Set.univ := by
+  rw [hamblinType, cq, tp_alternatives]
+  exact Set.eq_univ_of_forall λ q => ⟨λ _ => q, Set.mem_univ _, rfl⟩
+
+/-- Under type-theoretic alternatives the complete answer at `w` is total information about
+`w`: the responder must supply every true proposition. -/
+theorem isStrongestTrueAnswer_hamblinType (p : Set W) (w : W) :
+    IsStrongestTrueAnswer (hamblinType p) w {w} := by
+  rw [hamblinType_eq_univ]
+  exact ⟨⟨Set.mem_univ _, rfl⟩, λ _ hq => Set.singleton_subset_iff.2 hq.2⟩
+
+/-- (31): the sample of the Hamblin set with the deontic propositions. -/
+def sample (p : Set W) : Set (Set W) :=
+  {p, pᶜ, Word.deontic.den f g p, (Word.deontic.den f g p)ᶜ, Word.deontic.den f g p ∩ p}
+
+theorem sample_subset_hamblinType (p : Set W) : sample f g p ⊆ hamblinType p := by
+  rw [hamblinType_eq_univ]
+  exact Set.subset_univ _
+
+/-- (34): at a world where Ali had to sleep and slept, the strongest true member of the sample
+is the conjunction that he had to sleep and did, the over-informative answer (35b). -/
+theorem isStrongestTrueAnswer_sample {p : Set W} {w : W} (hw : w ∈ p)
+    (hbox : w ∈ Word.deontic.den f g p) :
+    IsStrongestTrueAnswer (sample f g p) w (Word.deontic.den f g p ∩ p) := by
+  refine ⟨⟨by simp [sample], hbox, hw⟩, ?_⟩
+  rintro q ⟨hq, hwq⟩
+  simp only [sample, Set.mem_insert_iff, Set.mem_singleton_iff] at hq
+  rcases hq with rfl | rfl | rfl | rfl | rfl
+  · exact Set.inter_subset_right
+  · exact absurd hw hwq
+  · exact Set.inter_subset_left
+  · exact absurd hbox hwq
+  · exact le_rfl
+
+/-- (36): any Hamblin set whatever is the type-theoretic focus value restricted by some
+context, so restriction by context alone cannot exclude the modalized question (38). -/
+theorem exists_context_inter_eq (p : Set W) (H : Set (Set W)) :
+    ∃ c : Set (Set W), hamblinType p ∩ c = H :=
+  ⟨H, by rw [hamblinType_eq_univ, Set.univ_inter]⟩
+
+/-! ### Category match -/
+
+/-- (42), the Category Match Constraint: the alternatives of a focused constituent are its
+same-category replacements from the lexicon. -/
+def categoryMatch {C V : Type} (lex : List (Tree C V)) (φ : Tree C V) : Set (Tree C V) :=
+  {ψ | ψ ∈ lex ∧ ψ.cat = φ.cat}
+
+/-- A category-match replacement is one substitution step of [katzir-2007]'s structural
+operations; no complexity bound is involved. -/
+theorem structOp_of_mem_categoryMatch {C V : Type} {lex : List (Tree C V)} {φ ψ : Tree C V}
+    (h : ψ ∈ categoryMatch lex φ) : StructOp lex φ ψ :=
+  .subst h.2 h.1
+
+/-- (45): the category-match alternatives of Σ_F are Σ and NEG. -/
+theorem categoryMatch_sigma :
+    categoryMatch lexicon sigma = {.terminal .pol .sigma, .terminal .pol .neg} := by
+  ext ψ
+  simp only [categoryMatch, lexicon, sigma, Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil,
+    or_false, Set.mem_insert_iff, Set.mem_singleton_iff]
+  constructor
+  · rintro ⟨rfl | rfl | rfl, hc⟩
+    · exact Or.inl rfl
+    · exact Or.inr rfl
+    · exact absurd hc (by decide)
+  · rintro (rfl | rfl) <;> exact ⟨by simp, rfl⟩
+
+/-- The Hamblin set under category match. -/
+def hamblinCat (p : Set W) : Set (Set W) :=
+  (cq (tp ((Tree.den f g) '' categoryMatch lexicon sigma) p)).ordinary
+
+/-- Under category match the Hamblin set is the polar one, (23). -/
+theorem hamblinCat_eq (p : Set W) : hamblinCat f g p = {p, pᶜ} := by
+  rw [hamblinCat, cq, tp_alternatives, categoryMatch_sigma, Set.image_image, Set.image_pair]
+  rfl
+
+/-- The category-match Hamblin set is the alternative set of the polar interrogative. -/
+theorem hamblinCat_eq_alt_polar {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
+    hamblinCat f g p = alt (polar p) := by
+  rw [hamblinCat_eq, alt_polar_of_nontrivial hne hnu]
+
+/-- (41): a proposition is a member of the category-match Hamblin set only as the positive or
+the negative answer; the modal answer is excluded as soon as it differs from both. -/
+theorem mem_hamblinCat_iff (p q : Set W) : q ∈ hamblinCat f g p ↔ q = p ∨ q = pᶜ := by
+  rw [hamblinCat_eq]
+  rfl
+
+/-- (35a): under category match the complete answer is the positive answer when it is true. -/
+theorem isStrongestTrueAnswer_hamblinCat {p : Set W} {w : W} (hw : w ∈ p) :
+    IsStrongestTrueAnswer (hamblinCat f g p) w p := by
+  rw [hamblinCat_eq]
+  refine ⟨⟨Set.mem_insert _ _, hw⟩, ?_⟩
+  rintro q ⟨hq, hwq⟩
+  rcases hq with rfl | rfl
+  · exact le_rfl
+  · exact absurd hw hwq
+
+/-- And the negative answer when the positive one is false. -/
+theorem isStrongestTrueAnswer_hamblinCat_compl {p : Set W} {w : W} (hw : w ∉ p) :
+    IsStrongestTrueAnswer (hamblinCat f g p) w pᶜ := by
+  rw [hamblinCat_eq]
+  refine ⟨⟨Set.mem_insert_of_mem _ rfl, hw⟩, ?_⟩
+  rintro q ⟨hq, hwq⟩
+  rcases hq with rfl | rfl
+  · exact absurd hwq hw
+  · exact le_rfl
+
+/-- *=mI* is vacuous: the fragment's entry is the identity, the ordinary value of Σ. -/
+theorem mi_denotation_eq {V : Type} (p : V → Prop) :
+    Turkish.QuestionParticles.mi.denotation p = p := rfl
 
 end TurkHirsch2026
