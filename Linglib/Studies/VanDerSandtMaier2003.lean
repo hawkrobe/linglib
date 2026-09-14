@@ -1,427 +1,261 @@
-import Mathlib.Tactic.DeriveFintype
 import Linglib.Semantics.Presupposition.ContentLayer
 import Linglib.Data.Examples.VanDerSandtMaier2003
+import Mathlib.Data.Set.Lattice
+import Mathlib.Order.Disjoint
 
 /-!
-# Van der Sandt & Maier (2003) — Denials in Discourse
-[van-der-sandt-maier-2003]
+# van der Sandt and Maier (2003): Denials in Discourse
 
-Denials in Discourse. Michigan Linguistics and Philosophy Workshop, 2003.
+This file formalizes [van-der-sandt-maier-2003]'s account of denial as a non-monotonic
+correction operation on the discourse record, independent of the semantic operator of
+negation, against [horn-1985]'s metalinguistic negation. A denial leaves a negated star
+condition in the discourse representation, and reverse anaphora moves the material objected
+to under that negation, (2); removing the whole contribution of the previous utterance fails on
+[strawson-1952]'s pushed man, (3), on multiple presuppositions, (4), and on an acknowledged
+part of the utterance, (5). Layered DRT distributes the information an utterance conveys over
+layers, each condition labelled with the Frege, presupposition or implicature layer of the
+sentence it comes from, `Label`, `Condition`, `LDRS`, and the content of a set of layers ignores
+every other, `content`, (13). Directed reverse anaphora then targets the offensive layers alone,
+a smallest set of layers whose content is inconsistent with the Frege content of the correction,
+`IsOff`, (18), and moves their conditions under the negation of the denial, `directedRA`, (19):
+the resulting record keeps the conditions of every other layer and entails the negation of the
+offensive content, `content_directedRA`, so the offensive content is retracted,
+`disjoint_content_directedRA`, while assertion, the merge of representations, only strengthens
+the record, `content_append_subset`. The worked examples are the implicature denials of the
+possibly right Pope, (20), `popeOff`, `pope_content_directedRA`, and of the lady who is a wife,
+(21), `ladyOff`, `lady_nice_survives`.
 
-Formalization of directed reverse anaphora (RA*) applied to the paper's worked
-examples, connecting:
+## Implementation notes
 
-- `Presupposition.LayeredProp.offensiveLayers` — the layers a correction makes offensive
-- `Data/Examples/VanDerSandtMaier2003.json` — the paper's denial/correction
-  discourse rows
+The paper interprets layered representations by partial embeddings and closes open layers
+into singular propositions through the utterance context, (15) and (16); here a condition
+carries the proposition it expresses once anchored, so an LDRS is a list of labelled
+propositions and the L-content is the intersection of the conditions bearing a label in L.
+Offensiveness is minimal disjointness, which need not be unique. The finer targeting of
+footnote 10, moving only the smallest inconsistent sub-DRS, is not formalized: at the
+granularity of layers the denial of one of two presuppositions of the same sentence, (4),
+retracts both, `kingQuit_quit_lost`, the limitation the paper records there. The examples are
+the rows of `Data.Examples.VanDerSandtMaier2003`.
 
-## Denial ≠ negation
+## References
 
-The paper's central architectural claim: denial and negation are orthogonal.
-Negation is a semantic operator; denial is a discourse operation
-(non-monotonic correction of contextual information). A denial can use a
-positive sentence ("Mary IS happy" denying "Mary is unhappy", ex. 6), and a
-negative sentence can be a plain assertion. The `DenialType` taxonomy below
-classifies denials by the content layer the correction targets — one
-mechanism, three targets.
-
-## Layered DRT apparatus
-
-The Layered-DRT machinery (`LCond`/`LDRS`/`directedRA`/`denialUpdate`) is
-**single-paper substrate**, defined locally here. It is orthogonal to the
-faithful model-theoretic DRS core (`Semantics/Dynamic/DRS/`): that core supplies
-K&R's model theory and subordination, whereas LDRT's content-layer/RA* algebra
-is a purely *syntactic* discourse-update operation (no model-theoretic
-interpretation is exercised by this paper). Condition formulas (`LCond`) are
-therefore opaque atoms — the paper's claims are about the layer bookkeeping, not
-truth conditions.
-
-## Layer naming convention
-
-The paper's layer labels map to `ContentLayer` constructors as follows:
-
-| Paper | Code | Meaning |
-|-------|------|---------|
-| `pr` | `.presupposition` | Backgrounded precondition |
-| `fr` (Frege) | `.atIssue` | Assertoric/at-issue content |
-| `imp` | `.implicature` | Scalar implicature or connotation |
-
-## Core mechanism
-
-Denial is a non-monotonic discourse operation that selectively retracts content.
-The RA* algorithm: (1) identify offensive layers via `offensiveLayers` — those
-inconsistent with the correction; (2) move conditions at offensive layers under
-negation; (3) preserve conditions at non-offensive layers.
-
-## Verified examples
-
-| Example | Denial type | Off | RA* result |
-|---------|-------------|-----|------------|
-| King of France (49) | Presuppositional | {pr, fr} | 1 cond: ¬[pr+fr] |
-| Possible/necessary (68) | Implicature | {imp} | 3 conds: pr, fr + ¬[imp] |
-| Lady/wife (69) | Connotation | {imp} | 4 conds: pr, fr, fr + ¬[imp] |
+* [van-der-sandt-maier-2003]
+* [van-der-sandt-1991]
+* [van-der-sandt-1992]
+* [geurts-1998]
+* [horn-1985]
+* [horn-1989]
+* [levinson-2000]
+* [strawson-1952]
+* [kamp-reyle-1993]
 -/
 
 namespace VanDerSandtMaier2003
 
-open Presupposition Data.Examples
+open Presupposition
 
-/-! ### Denial taxonomy
+/-! ### Layered DRT -/
 
-[van-der-sandt-maier-2003]'s three denial types are not different operations
-but one mechanism (non-monotonic discourse correction) targeting different
-content layers. The fourth empirical category — register/connotation denials
-like "not a LAdy — my WIfe" (69) — maps to the implicature layer alongside
-scalar implicature. -/
-
-/-- The type of a denial, determined by which content layer the correction
-targets. -/
-inductive DenialType where
-  /-- Targets at-issue content; the presupposition survives.
-      (5): "Mary is not happy." -/
-  | propositional
-  /-- Targets presupposed content; the assertion falls with it.
-      (30b): "The king of France is NOT bald — France does not have a king." -/
-  | presuppositional
-  /-- Targets enrichment beyond truth conditions; literal meaning survives.
-      (29b): "It's not POSSIBLE — it's NECESSARY." -/
-  | implicature
+/-- A layer label, (6): the background, or a content layer of the `i`-th sentence. -/
+inductive Label where
+  | background
+  | of (layer : ContentLayer) (i : ℕ)
   deriving DecidableEq, Repr
 
-/-- Map a denial type to the content layer it targets. -/
-def DenialType.targetLayer : DenialType → ContentLayer
-  | .propositional => .atIssue
-  | .presuppositional => .presupposition
-  | .implicature => .implicature
+/-- The Frege layer of sentence `i`. -/
+abbrev fr (i : ℕ) : Label := .of .atIssue i
 
-/-- No two denial types target the same layer: the taxonomy is exactly the
-layer structure. -/
-theorem DenialType.targetLayer_injective :
-    Function.Injective DenialType.targetLayer := by
-  intro d₁ d₂ h
-  cases d₁ <;> cases d₂ <;> simp_all [targetLayer]
+/-- The presupposition layer of sentence `i`. -/
+abbrev pr (i : ℕ) : Label := .of .presupposition i
 
-/-! ### Layered DRT (LDRT) substrate
+/-- The implicature layer of sentence `i`. -/
+abbrev imp (i : ℕ) : Label := .of .implicature i
 
-[van-der-sandt-maier-2003] extend DRT with content layers: each condition
-carries a label (`pr`, `fr`, `imp`) marking its discourse role. -/
+variable {W : Type*}
 
-/-- A condition formula. Opaque atoms (`Nat`-indexed predicate over `Nat`-indexed
-referents) closed under negation and boxing; never interpreted semantically — the
-paper reasons over the layer tags, not truth conditions. -/
-inductive LCond
-  | atom (pred : Nat) (args : List Nat)
-  | neg (c : LCond)
-  | box (drefs : List Nat) (conds : List LCond)
+/-- A labelled condition, (8): its labels and the proposition it expresses once its reference
+markers are anchored in the context. -/
+structure Condition (W : Type*) where
+  labels : Finset Label
+  content : Set W
 
-/-- A condition tagged with its content layer. -/
-structure TaggedCondition where
-  /-- The content layer this condition contributes to. -/
-  layer : ContentLayer
-  /-- The underlying condition formula. -/
-  condition : LCond
+/-- A layered DRS: its labelled conditions. -/
+abbrev LDRS (W : Type*) := List (Condition W)
 
-/-- A Layered DRS: a DRS whose conditions carry content-layer tags. A standard
-DRS is the special case where every condition is `atIssue`. -/
-structure LDRS where
-  /-- Universe: discourse referent indices. -/
-  drefs : List Nat
-  /-- Layered conditions. -/
-  conditions : List TaggedCondition
+/-- (11b), (13): the `L`-content of a representation, the conditions bearing a label in `L`,
+every other condition being ignored. -/
+def content (ϕ : LDRS W) (L : Finset Label) : Set W :=
+  ⋂ c ∈ ϕ.filter (λ c => (c.labels ∩ L).Nonempty), c.content
 
-/-- LDRS merge: combine two layered DRSs, preserving layer tags. -/
-def LDRS.merge (k1 k2 : LDRS) : LDRS :=
-  { drefs := k1.drefs ++ k2.drefs
-  , conditions := k1.conditions ++ k2.conditions }
+theorem mem_content_iff {ϕ : LDRS W} {L : Finset Label} {w : W} :
+    w ∈ content ϕ L ↔ ∀ c ∈ ϕ, (c.labels ∩ L).Nonempty → w ∈ c.content := by
+  simp only [content, Set.mem_iInter, List.mem_filter, decide_eq_true_eq, and_imp]
 
-/-- The offensive conditions of an LDRS w.r.t. a correction: those whose layer is
-in the offensive set. In denial, these are retracted. -/
-def LDRS.offensiveConditions (k : LDRS) (offLayers : Finset ContentLayer) :
-    List TaggedCondition :=
-  k.conditions.filter fun c => decide (c.layer ∈ offLayers)
+theorem content_append (ϕ ψ : LDRS W) (L : Finset Label) :
+    content (ϕ ++ ψ) L = content ϕ L ∩ content ψ L := by
+  ext w
+  simp only [mem_content_iff, List.mem_append, Set.mem_inter_iff]
+  exact ⟨λ h => ⟨λ c hc => h c (Or.inl hc), λ c hc => h c (Or.inr hc)⟩,
+    λ h c hc => hc.elim (h.1 c) (h.2 c)⟩
 
-/-- The surviving conditions after denial: those NOT at offensive layers. -/
-def LDRS.survivingConditions (k : LDRS) (offLayers : Finset ContentLayer) :
-    List TaggedCondition :=
-  k.conditions.filter fun c => decide (c.layer ∉ offLayers)
+/-- Assertion is monotonic: merging a representation into the record only strengthens the
+record's content. -/
+theorem content_append_subset (ϕ ψ : LDRS W) (L : Finset Label) :
+    content (ϕ ++ ψ) L ⊆ content ϕ L := by
+  rw [content_append]
+  exact Set.inter_subset_left
 
-/-! ### Assertion vs. denial: monotonicity
+/-! ### Directed reverse anaphora -/
 
-The paper's deepest architectural claim: assertion is monotonic (merge only adds
-conditions), denial is non-monotonic (surviving conditions are a subset). Denial
-is the only operation that removes information from the discourse context. -/
+/-- (18): `L` is offensive against the correction layers `K`, a smallest set of layers whose
+content is inconsistent with the content of `K`. -/
+def IsOff (ϕ : LDRS W) (K L : Finset Label) : Prop :=
+  Disjoint (content ϕ L) (content ϕ K) ∧ ∀ L' ⊂ L, ¬ Disjoint (content ϕ L') (content ϕ K)
 
-/-- Offensive + surviving = all conditions (partition). -/
-theorem LDRS.offensive_surviving_partition (k : LDRS)
-    (offLayers : Finset ContentLayer) :
-    (k.offensiveConditions offLayers).length +
-    (k.survivingConditions offLayers).length = k.conditions.length := by
-  have := (List.filter_append_perm (fun c : TaggedCondition => decide (c.layer ∈ offLayers))
-    k.conditions).length_eq
-  simpa [offensiveConditions, survivingConditions, decide_not] using this
+/-- The conditions bearing no offensive label. -/
+def surviving (ϕ : LDRS W) (off : Finset Label) : LDRS W :=
+  ϕ.filter (λ c => c.labels ∩ off = ∅)
 
-/-- Assertion (merge) is monotonic: the result has at least as many conditions as
-the original LDRS. -/
-theorem merge_monotonic (k1 k2 : LDRS) :
-    k1.conditions.length ≤ (k1.merge k2).conditions.length := by
-  simp only [LDRS.merge, List.length_append]; omega
+/-- (19): directed reverse anaphora for the denial `σ i`: the conditions bearing an offensive
+label move under a negation in the denial's Frege layer, the others stay. -/
+def directedRA (ϕ : LDRS W) (off : Finset Label) (i : ℕ) : LDRS W :=
+  surviving ϕ off ++ [⟨{fr i}, (content ϕ off)ᶜ⟩]
 
-/-- Denial (surviving conditions) is non-monotonic: the result has at most as
-many conditions as the original LDRS. -/
-theorem denial_nonmonotonic (k : LDRS) (offLayers : Finset ContentLayer) :
-    (k.survivingConditions offLayers).length ≤ k.conditions.length :=
-  List.length_filter_le _ _
+/-- The record after directed reverse anaphora, read at layers including the denial's Frege
+layer: the surviving conditions together with the negation of the offensive content. -/
+theorem content_directedRA (ϕ : LDRS W) (off : Finset Label) {i : ℕ} {L : Finset Label}
+    (hi : fr i ∈ L) :
+    content (directedRA ϕ off i) L = content (surviving ϕ off) L ∩ (content ϕ off)ᶜ := by
+  rw [directedRA, content_append]
+  congr 1
+  ext w
+  simp only [mem_content_iff, List.mem_singleton, forall_eq, Set.mem_compl_iff]
+  exact ⟨λ h => h ⟨fr i, Finset.mem_inter.2 ⟨Finset.mem_singleton_self _, hi⟩⟩, λ h _ => h⟩
 
-/-! ### Directed reverse anaphora (RA*)
+/-- Denial is non-monotonic: the offensive content is retracted from the record. -/
+theorem disjoint_content_directedRA (ϕ : LDRS W) (off : Finset Label) {i : ℕ} {L : Finset Label}
+    (hi : fr i ∈ L) : Disjoint (content (directedRA ϕ off i) L) (content ϕ off) := by
+  rw [content_directedRA ϕ off hi]
+  exact Set.disjoint_left.2 λ w hw => hw.2
 
-[van-der-sandt-maier-2003]: given the offensive layers (computed by
-`offensiveLayers`), RA* partitions the conditions — surviving conditions remain in
-the main DRS, offensive conditions are moved under a single negation. -/
+/-- A condition bearing no offensive label survives directed reverse anaphora. -/
+theorem content_directedRA_subset {ϕ : LDRS W} {off : Finset Label} {i : ℕ} {L : Finset Label}
+    (hi : fr i ∈ L) {c : Condition W} (hc : c ∈ ϕ) (hoff : c.labels ∩ off = ∅)
+    (hL : (c.labels ∩ L).Nonempty) : content (directedRA ϕ off i) L ⊆ c.content := by
+  rw [content_directedRA ϕ off hi]
+  intro w hw
+  exact mem_content_iff.1 hw.1 c (List.mem_filter.2 ⟨hc, by simp [hoff]⟩) hL
 
-/-- Directed reverse anaphora (RA*): move offensive-layer conditions under
-negation, preserving non-offensive conditions. -/
-def LDRS.directedRA (k : LDRS) (offLayers : Finset ContentLayer) : LDRS :=
-  let surviving := k.survivingConditions offLayers
-  let offensive := k.offensiveConditions offLayers
-  { drefs := k.drefs
-  , conditions :=
-    surviving ++ match offensive with
-    | [] => []
-    | cs => [⟨.atIssue, .neg (.box [] (cs.map (·.condition)))⟩] }
+/-! ### The possibly right Pope, (20) -/
 
-/-- Denial pipeline: merge correction, then apply RA*. In an
-assertion-denial-correction sequence, the correction is merged with the discourse
-state, then RA* retracts the offensive layers. -/
-def LDRS.denialUpdate (state correction : LDRS) (offLayers : Finset ContentLayer) :
-    LDRS :=
-  (state.merge correction).directedRA offLayers
-
-/-- RA* preserves discourse referents — denial retracts conditions, not referent
-introductions, so drefs introduced by σ₁ remain available for anaphora even after
-denial ("A man jumped off the bridge. He didn't jump, he was pushed."). -/
-theorem LDRS.directedRA_preserves_drefs (k : LDRS) (offLayers : Finset ContentLayer) :
-    (k.directedRA offLayers).drefs = k.drefs := rfl
-
-/-! ### §1. Presuppositional denial — King of France (§3.5, ex. 49)
-
-σ₁: "The King of France walks in the park." σ₂: "No, he doesn't," σ₃: "France
-doesn't have a king."
-
-The correction targets the existence presupposition of the definite. Off = {pr,
-fr}: both layers conflict with "no king".
-
-The row `vdsm2003_ex30b_king` uses a different sentence (ex. 30b) but the same
-scenario and denial type — presuppositional; the §5 transfer theorem connects
-the Off computation to every row tagged with this scenario. -/
-
-private inductive KFW | kingWalks | kingStands | noKing
+/-- The worlds of (20): the Pope is possibly but not necessarily right, or necessarily right. -/
+inductive PopeW where
+  | possNotNec
+  | nec
   deriving DecidableEq, Repr, Fintype
 
-private abbrev kfLayered : LayeredProp KFW :=
-  { presupposition := (· ≠ .noKing), atIssue := (· = .kingWalks) }
+/-- `ψ` of (20) before reverse anaphora: the background Pope, σ₁'s Frege content that he is
+possibly right and implicature that he is not necessarily right, and σ₃'s correction that he is
+necessarily right. -/
+def popeRecord : LDRS PopeW :=
+  [⟨{.background}, Set.univ⟩, ⟨{fr 1}, Set.univ⟩, ⟨{imp 1}, {.possNotNec}⟩, ⟨{fr 3}, {.nec}⟩]
 
-/-- Off: "no king" conflicts with both pr (king exists) and fr (king walks). -/
-theorem kf_off :
-    kfLayered.offensiveLayers {w | w = .noKing} =
-      ({.presupposition, .atIssue} : Finset ContentLayer) := by decide
+private theorem content_popeRecord_imp : content popeRecord {imp 1} = {.possNotNec} := by
+  ext w
+  simp [mem_content_iff, popeRecord]
 
-/-- LDRS for σ₁. Rel 0 = KF (pr layer), Rel 1 = walkInPark (fr layer). -/
-private def kfAssertion : LDRS :=
-  { drefs := [0]
-  , conditions := [ ⟨.presupposition, .atom 0 [0]⟩
-                   , ⟨.atIssue, .atom 1 [0]⟩ ] }
+private theorem content_popeRecord_fr3 : content popeRecord {fr 3} = {.nec} := by
+  ext w
+  simp [mem_content_iff, popeRecord]
 
-/-- After RA* with Off = {pr, fr}: no conditions survive (both offensive); all
-material moves under a single negation wrapper. -/
-theorem kf_ra_length :
-    (kfAssertion.directedRA {.presupposition, .atIssue}).conditions.length
-    = 1 := by decide
+/-- Off(ψ, fr₃) = {imp₁}: the correction clashes with the implicature layer alone. -/
+theorem popeOff : IsOff popeRecord {fr 3} {imp 1} := by
+  refine ⟨?_, λ L' hL' => ?_⟩
+  · rw [content_popeRecord_imp, content_popeRecord_fr3]
+    exact Set.disjoint_singleton.2 (by decide)
+  · rw [Finset.ssubset_singleton_iff.1 hL', content_popeRecord_fr3]
+    intro h
+    have : content popeRecord ∅ = Set.univ := by
+      ext w
+      simp [mem_content_iff]
+    rw [this] at h
+    exact Set.singleton_ne_empty _ (Set.univ_disjoint.1 h)
 
-/-- The sole surviving condition is at fr level (the negation wrapper is
-assertoric: "it is not the case that ..."). -/
-theorem kf_ra_layers :
-    (kfAssertion.directedRA {.presupposition, .atIssue}).conditions.map (·.layer)
-    = [.atIssue] := by decide
+/-- After directed reverse anaphora the record says the Pope is necessarily right, keeping
+σ₁'s Frege content and negating its implicature. -/
+theorem pope_content_directedRA :
+    content (directedRA popeRecord {imp 1} 2) {.background, fr 1, fr 2, fr 3} = {.nec} := by
+  ext w
+  have h2 : fr 2 ∈ ({.background, fr 1, fr 2, fr 3} : Finset Label) := by decide
+  simp [content_directedRA _ _ h2, mem_content_iff, surviving, popeRecord]
+  cases w <;> simp
 
-/-! ### §2. Implicature denial — Possible/Necessary (§4.4, ex. 68)
+/-! ### The lady who is a wife, (21) -/
 
-σ₁: "It is possible the Pope is right." σ₂: "No, it's not POssible," σ₃: "it's
-NECessary that he's right."
-
-The correction targets the scalar implicature ¬□p. Off = {imp}: only the
-implicature conflicts with correction □p. At-issue content ◇p survives (□p
-entails ◇p). -/
-
-private inductive ModalW | possNotNec | nec
+/-- The worlds of (21): the woman pointed at is a nice stranger, a nice wife, or a wife who is
+not nice. -/
+inductive LadyW where
+  | niceStranger
+  | niceWife
+  | plainWife
   deriving DecidableEq, Repr, Fintype
 
-private abbrev modalLayered : LayeredProp ModalW :=
-  { presupposition := fun _ => True, atIssue := fun _ => True, implicature := (· = .possNotNec) }
+/-- `ψ` of (21): the background pointing, σ₁'s Frege content that she is a lady and nice, the
+latter acknowledged by σ₂, its implicature that she is a stranger, and σ₄'s correction that she
+is my wife. -/
+def ladyRecord : LDRS LadyW :=
+  [⟨{.background}, Set.univ⟩, ⟨{fr 1}, Set.univ⟩, ⟨{fr 1, fr 2}, {.niceStranger, .niceWife}⟩,
+    ⟨{imp 1}, {.niceStranger}⟩, ⟨{fr 4}, {.niceWife, .plainWife}⟩]
 
-/-- Off: correction "necessary" (□p) conflicts only with imp (¬□p). -/
-theorem modal_off :
-    modalLayered.offensiveLayers {w | w = .nec} = ({.implicature} : Finset ContentLayer) := by
-  decide
+private theorem content_ladyRecord_imp : content ladyRecord {imp 1} = {.niceStranger} := by
+  ext w
+  simp [mem_content_iff, ladyRecord]
 
-/-- LDRS for σ₁. Rel 0 = pope (pr), Rel 1 = ◇right (fr), Rel 2 = □right; the imp
-layer carries ¬□right. -/
-private def modalAssertion : LDRS :=
-  { drefs := [0]
-  , conditions := [ ⟨.presupposition, .atom 0 [0]⟩
-                   , ⟨.atIssue, .atom 1 [0]⟩
-                   , ⟨.implicature, .neg (.atom 2 [0])⟩ ] }
+private theorem content_ladyRecord_fr4 : content ladyRecord {fr 4} = {.niceWife, .plainWife} := by
+  ext w
+  simp [mem_content_iff, ladyRecord]
 
-/-- After RA* with Off = {imp}: pr and fr survive; imp moves under negation.
-Result: 2 surviving + 1 negation wrapper = 3 conditions. -/
-theorem modal_ra_length :
-    (modalAssertion.directedRA {.implicature}).conditions.length = 3 := by decide
+/-- Off(ψ, fr₄) = {imp₁}: being my wife clashes with the stranger implicature alone. -/
+theorem ladyOff : IsOff ladyRecord {fr 4} {imp 1} := by
+  refine ⟨?_, λ L' hL' => ?_⟩
+  · rw [content_ladyRecord_imp, content_ladyRecord_fr4]
+    exact Set.disjoint_singleton_left.2 (by decide)
+  · rw [Finset.ssubset_singleton_iff.1 hL', content_ladyRecord_fr4]
+    intro h
+    have : content ladyRecord ∅ = Set.univ := by
+      ext w
+      simp [mem_content_iff]
+    rw [this] at h
+    exact (Set.insert_nonempty _ _).ne_empty (Set.univ_disjoint.1 h)
 
-/-- Surviving layers: pr, fr at top level; negated imp tagged fr. -/
-theorem modal_ra_layers :
-    (modalAssertion.directedRA {.implicature}).conditions.map (·.layer)
-    = [.presupposition, .atIssue, .atIssue] := by decide
+/-- The acknowledged content that she is nice survives the denial of the implicature. -/
+theorem lady_nice_survives :
+    content (directedRA ladyRecord {imp 1} 3) {.background, fr 1, fr 2, fr 3, fr 4} ⊆
+      {.niceStranger, .niceWife} := by
+  refine content_directedRA_subset (c := ⟨{fr 1, fr 2}, {LadyW.niceStranger, .niceWife}⟩)
+    ?_ ?_ ?_ ?_
+  · decide
+  · exact List.mem_cons_of_mem _ (List.mem_cons_of_mem _ List.mem_cons_self)
+  · decide
+  · decide
 
-/-! ### §3. Connotation denial — Lady/Wife (§4.4, ex. 69)
+/-! ### Two presuppositions, (4) -/
 
-σ₁: "Now, THAT's a nice lady." σ₂: "Yes, she is," σ₃: "but she's not a LAdy,"
-σ₄: "she's my WIfe."
+/-- The worlds of (4): whether France has a king and whether I quit smoking. -/
+abbrev KingQuitW := Bool × Bool
 
-The correction targets the connotation of "a lady" (implicature: a stranger, not
-a close relative). The literal predication (lady, nice) and presupposition
-(pointing) survive; only the stranger implicature is retracted. Off = {imp}.
+/-- `ψ` of (4): σ₁'s two presuppositions, that France has a king and that I quit smoking, its
+Frege content that the king knows it, and σ₂'s correction that France has no king. -/
+def kingQuitRecord : LDRS KingQuitW :=
+  [⟨{pr 1}, {w | w.1 = true}⟩, ⟨{pr 1}, {w | w.2 = true}⟩, ⟨{fr 1}, {w | w.1 = true ∧ w.2 = true}⟩,
+    ⟨{fr 2}, {w | w.1 = false}⟩]
 
-The paper's derivation has 4 utterances; σ₂ (affirmation) is monotonic merge and
-omitted; Off depends only on σ₁ + σ₄. The row `vdsm2003_ex13_lady` uses a
-related sentence (ex. 13) but the same scenario and denial type. -/
-
-private inductive LadyW | ladyStranger | ladyWife | notLadyWife
-  deriving DecidableEq, Repr, Fintype
-
-private abbrev ladyLayered : LayeredProp LadyW :=
-  { presupposition := fun _ => True, atIssue := (· ≠ .notLadyWife),
-    implicature := (· = .ladyStranger) }
-
-/-- Off: correction "wife" conflicts only with imp (stranger). Crucially, lady
-(fr) is consistent with wife — Off does NOT retract the literal predication. -/
-theorem lady_off :
-    ladyLayered.offensiveLayers {w | w = .ladyWife ∨ w = .notLadyWife} =
-      ({.implicature} : Finset ContentLayer) := by
-  decide
-
-/-- LDRS for σ₁. Rel 0 = pointed_at (pr), Rel 1 = lady (fr), Rel 2 = nice (fr),
-Rel 3 = stranger (imp). -/
-private def ladyAssertion : LDRS :=
-  { drefs := [0]
-  , conditions := [ ⟨.presupposition, .atom 0 [0]⟩
-                   , ⟨.atIssue, .atom 1 [0]⟩
-                   , ⟨.atIssue, .atom 2 [0]⟩
-                   , ⟨.implicature, .atom 3 [0]⟩ ] }
-
-/-- After RA*: pr, fr (lady), fr (nice) survive; imp (stranger) moves under
-negation. Result: 3 surviving + 1 negated = 4. -/
-theorem lady_ra_length :
-    (ladyAssertion.directedRA {.implicature}).conditions.length = 4 := by decide
-
-/-- Surviving layers: pr, fr, fr at top level; negated imp as fr. -/
-theorem lady_ra_layers :
-    (ladyAssertion.directedRA {.implicature}).conditions.map (·.layer)
-    = [.presupposition, .atIssue, .atIssue, .atIssue] := by decide
-
-/-! ### §4. Discourse pipeline: assertion → denial
-
-Full pipeline for the modal example: assertion adds content (monotonic merge),
-denial selectively retracts (non-monotonic RA*) — the paper's central claim that
-assertion and denial are dual discourse operations, one monotonic and one not. -/
-
-private def modalBackground : LDRS :=
-  { drefs := [0], conditions := [⟨.presupposition, .atom 0 [0]⟩] }
-
-private def modalContent : LDRS :=
-  { drefs := []
-  , conditions := [ ⟨.atIssue, .atom 1 [0]⟩
-                   , ⟨.implicature, .neg (.atom 2 [0])⟩ ] }
-
-private def modalCorrection : LDRS :=
-  { drefs := [], conditions := [⟨.atIssue, .atom 2 [0]⟩] }
-
-/-- Step 1: assertion is monotonic — merge adds conditions. -/
-private def φ₁ : LDRS := modalBackground.merge modalContent
-
-theorem assertion_grows :
-    φ₁.conditions.length > modalBackground.conditions.length := by decide
-
-/-- Step 2: denial update — merge correction, then apply RA*. -/
-private def φ₃ : LDRS := φ₁.denialUpdate modalCorrection {.implicature}
-
-/-- Denial update: 4 conditions = 2 surviving (pr + ◇right) + 1 correction
-(□right) + 1 negated wrapper (¬[¬□right]). -/
-theorem denial_result_length : φ₃.conditions.length = 4 := by decide
-
-/-- All surviving content is at pr or fr level; no imp content remains. -/
-theorem denial_result_layers :
-    φ₃.conditions.map (·.layer)
-    = [.presupposition, .atIssue, .atIssue, .atIssue] := by decide
-
-/-- The imp layer has been fully retracted from the top level. -/
-theorem implicature_retracted :
-    (φ₃.conditions.map (·.layer)).count .implicature = 0 := by decide
-
-/-! ### §5. Off → row transfer
-
-The Off computations above agree with the paper's denial-type classification
-of its rows (`Data/Examples/VanDerSandtMaier2003.json`): for every row whose
-discourse scenario is formalized as a `LayeredProp` above, the computed
-offensive layers include the layer targeted by the row's denial type. -/
-
-/-- Denial-type adapter: the row's `denial_type` feature as a `DenialType`. -/
-def denialTypeOf (row : LinguisticExample) : Option DenialType :=
-  match row.feature? "denial_type" with
-  | some "propositional" => some .propositional
-  | some "presuppositional" => some .presuppositional
-  | some "implicature" => some .implicature
-  | _ => none
-
-/-- The Off computation of the `LayeredProp` scenario named by the row's
-`scenario` feature. -/
-private def scenarioOff (row : LinguisticExample) : Option (Finset ContentLayer) :=
-  match row.feature? "scenario" with
-  | some "kingOfFrance" => some (kfLayered.offensiveLayers {w | w = .noKing})
-  | some "modal" => some (modalLayered.offensiveLayers {w | w = .nec})
-  | some "lady" => some (ladyLayered.offensiveLayers {w | w = .ladyWife ∨ w = .notLadyWife})
-  | _ => none
-
-/-- **Transfer**: the Off computation of every formalized scenario contains
-the target layer of each row classified under that scenario. -/
-theorem off_contains_target_layer :
-    ∀ row ∈ Examples.all, ∀ d ∈ denialTypeOf row, ∀ off ∈ scenarioOff row,
-      d.targetLayer ∈ off := by
-  decide
-
-/-! ### §6. Denial ≠ negation (§2.1)
-
-[van-der-sandt-maier-2003] §2.1: denial and negation are orthogonal. Denial
-is a discourse operation (non-monotonic correction); negation is a semantic
-operator. A denial can use a positive sentence, and a negative sentence can be a
-plain assertion. -/
-
-/-- Positive denial is propositional: every row whose denial utterance is
-syntactically positive (ex. 6, where the denial IS the correction) targets fr,
-like negative propositional denials. The mechanism is the same regardless of
-surface polarity. -/
-theorem positive_denial_propositional :
-    ∀ row ∈ Examples.all, row.feature? "surface_polarity" = some "positive" →
-      denialTypeOf row = some .propositional := by
-  decide
-
-/-- The same surface negation can correspond to different denial types,
-disambiguated by the correction (§2.3: "still" denials, ex. 19–20): two rows
-share the denial utterance (second discourse segment) but target different
-layers. -/
-theorem same_surface_different_types :
-    ∃ r₁ ∈ Examples.all, ∃ r₂ ∈ Examples.all,
-      r₁.discourseSegments[1]? = r₂.discourseSegments[1]? ∧
-      denialTypeOf r₁ = some .propositional ∧
-      denialTypeOf r₂ = some .presuppositional := by
-  decide
+/-- At the granularity of layers, denying the king moves the presupposition that I quit
+smoking under the negation as well: only the Frege conditions survive, the limitation of
+footnote 10. -/
+theorem kingQuit_quit_lost :
+    surviving kingQuitRecord {pr 1} =
+      [⟨{fr 1}, {w | w.1 = true ∧ w.2 = true}⟩, ⟨{fr 2}, {w | w.1 = false}⟩] := by
+  simp [surviving, kingQuitRecord]
 
 end VanDerSandtMaier2003
