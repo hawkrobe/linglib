@@ -44,15 +44,15 @@ namespace Modality
 
 variable (m : Finset ForceFlavor)
 
-/-- Independence of force and flavor: a meaning is the product of its forces and its flavors, so
-with `(fo₁, fl₁)` and `(fo₂, fl₂)` it expresses `(fo₁, fl₂)`. -/
+/-- A meaning has independent force and flavor when it is the product of its forces and its
+flavors, so that with `(fo₁, fl₁)` and `(fo₂, fl₂)` it expresses `(fo₁, fl₂)`. -/
 def ForceFlavorIndependent : Prop := m = m.image Prod.fst ×ˢ m.image Prod.snd
 
-/-- Single axis of variability: the pairs all share a force or all share a flavor. -/
+/-- A meaning varies on a single axis when its pairs all share a force or all share a flavor. -/
 def SingleAxis : Prop := (m.image Prod.fst).card ≤ 1 ∨ (m.image Prod.snd).card ≤ 1
 
-/-- Path-connectedness: with `(fo₁, fl₁)` and `(fo₂, fl₂)` a meaning expresses `(fo₁, fl₂)` or
-`(fo₂, fl₁)`, the Ferrers property of a relation. -/
+/-- A meaning is path-connected when with `(fo₁, fl₁)` and `(fo₂, fl₂)` it expresses `(fo₁, fl₂)`
+or `(fo₂, fl₁)`, the Ferrers property of a relation. -/
 def PathConnected : Prop := ∀ x ∈ m, ∀ y ∈ m, (x.1, y.2) ∈ m ∨ (y.1, x.2) ∈ m
 
 instance : Decidable (ForceFlavorIndependent m) := inferInstanceAs (Decidable (_ = _))
@@ -64,7 +64,7 @@ instance : Decidable (PathConnected m) :=
 
 variable {m}
 
-/-- The universal as stated: two pairs recombine into a third. -/
+/-- The universal as the paper states it, closure under recombining two pairs into a third. -/
 theorem forceFlavorIndependent_iff :
     ForceFlavorIndependent m ↔ ∀ x ∈ m, ∀ y ∈ m, (x.1, y.2) ∈ m := by
   refine ⟨λ h x hx y hy => ?_, λ h => Finset.subset_product.antisymm λ ⟨a, b⟩ hz => ?_⟩
@@ -78,8 +78,9 @@ theorem forceFlavorIndependent_iff :
 alias ⟨ForceFlavorIndependent.mk_mem, ForceFlavorIndependent.of_mk_mem⟩ :=
   forceFlavorIndependent_iff
 
-/-- Independence is convexity for the grid betweenness on the force-flavor space: a meaning
-contains every pair between two of its pairs, the rectangle they span. -/
+/-- A meaning is independent exactly when it contains the rectangle spanned by any two of its
+pairs, the pairs between them for the grid betweenness on the force-flavor space, so
+independence is convexity in that sense. -/
 theorem forceFlavorIndependent_iff_pair_product_subset :
     ForceFlavorIndependent m ↔ ∀ x ∈ m, ∀ y ∈ m,
       ({x.1, y.1} : Finset ModalForce) ×ˢ ({x.2, y.2} : Finset ModalFlavor) ⊆ m := by

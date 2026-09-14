@@ -279,8 +279,8 @@ theorem informativeness_whole (need : ForceFlavor → ℚ) :
     rw [h, mul_comm]
   revert hp; rcases p with ⟨f, fl⟩; cases f <;> cases fl <;> decide +kernel
 
-/-- A listener hearing a product modal earns half the reciprocal of each axis size: the utility
-of an IFF modal depends only on how many forces and how many flavors it leaves open. -/
+/-- A listener hearing a product modal earns half the reciprocal of each axis size, so the
+utility of an IFF modal depends only on how many forces and how many flavors it leaves open. -/
 theorem listen_product {F : Finset ModalForce} {Φ : Finset ModalFlavor} {p : ForceFlavor}
     (hF : p.1 ∈ F) (hΦ : p.2 ∈ Φ) :
     listen (F ×ˢ Φ) p = (1 / F.card + 1 / Φ.card) / 2 := by

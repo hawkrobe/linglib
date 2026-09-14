@@ -175,18 +175,18 @@ def Consistent : ForceAnalysis → Finset ForceFlavor → Prop
 instance (a : ForceAnalysis) (m : Finset ForceFlavor) : Decidable (Consistent a m) := by
   cases a <;> unfold Consistent <;> infer_instance
 
-/-- Gitksan ima('a) and gat: variable force, both forces attested. -/
+/-- Gitksan ima('a) and gat are variable-force and attest both forces. -/
 theorem gitksan_force_consistent :
     Consistent (Gitksan.Modals.forceAnalysis Gitksan.Modals.imaa) Gitksan.Modals.imaa.meaning ∧
       Consistent (Gitksan.Modals.forceAnalysis Gitksan.Modals.gat) Gitksan.Modals.gat.meaning := by
   decide
 
-/-- Nez Perce o'qa: strengthened possibility, only possibility attested. -/
+/-- Nez Perce o'qa is strengthened possibility and attests only possibility. -/
 theorem nez_perce_oqa_force_consistent :
     Consistent (NezPerce.Modals.forceAnalysis NezPerce.Modals.oqa) NezPerce.Modals.oqa.meaning := by
   decide
 
-/-- St'át'imcets =ka and Niuean liga: variable force. -/
+/-- St'át'imcets =ka and Niuean liga are variable-force. -/
 theorem statimcets_niuean_force_consistent :
     Consistent (Statimcets.Modals.forceAnalysis Statimcets.Modals.ka) Statimcets.Modals.ka.meaning ∧
       Consistent (Niuean.Modals.forceAnalysis Niuean.Modals.liga) Niuean.Modals.liga.meaning := by

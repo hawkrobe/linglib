@@ -66,20 +66,22 @@ theorem javanese_singletons :
       ForceFlavorIndependent Javanese.Modals.iso.meaning :=
   ⟨.singleton _, .singleton _, .singleton _⟩
 
-/-- The hypothetical *mighst*: epistemic possibility and deontic necessity only, which the
-universal rules out; it is the third modal of Table 1. -/
+/-- The hypothetical *mighst* expresses epistemic possibility and deontic necessity only, which
+the universal rules out; it is the third modal of Table 1. -/
 def mighst : Finset ForceFlavor := {(.possibility, .epistemic), (.necessity, .deontic)}
 
 theorem not_forceFlavorIndependent_mighst : ¬ ForceFlavorIndependent mighst := by decide
 
 /-! ### Table 1 and the two readings of path-connectedness -/
 
-/-- The first modal of Table 1: both forces with the epistemic and teleological flavors. -/
+/-- The first modal of Table 1 expresses both forces with the epistemic and teleological
+flavors. -/
 def table1a : Finset ForceFlavor :=
   {(.possibility, .epistemic), (.possibility, .circumstantial),
    (.necessity, .epistemic), (.necessity, .circumstantial)}
 
-/-- The second modal of Table 1: weak deontic and teleological, strong epistemic and deontic. -/
+/-- The second modal of Table 1 expresses weak deontic and teleological and strong epistemic and
+deontic. -/
 def table1b : Finset ForceFlavor :=
   {(.possibility, .deontic), (.possibility, .circumstantial),
    (.necessity, .epistemic), (.necessity, .deontic)}
@@ -88,8 +90,8 @@ theorem table1a_forceFlavorIndependent :
     ForceFlavorIndependent table1a ∧ ¬ SingleAxis table1a := by
   decide
 
-/-- The rook's graph on the force-flavor grid: pairs differing in exactly one coordinate are
-adjacent. -/
+/-- The rook's graph on the force-flavor grid, in which pairs differing in exactly one coordinate
+are adjacent. -/
 abbrev rookGraph : SimpleGraph ForceFlavor := (⊤ : SimpleGraph ModalForce) □ ⊤
 
 /-- Two pairs of a meaning sharing a coordinate are joined in the rook's graph. -/
@@ -104,8 +106,8 @@ theorem reachable_of_fst_eq_or_snd_eq {m : Finset ForceFlavor} {p q : ForceFlavo
   · exact Or.inr ⟨λ h₂ => hpq (Prod.ext h h₂), h⟩
   · exact Or.inl ⟨λ h₁ => hpq (Prod.ext h₁ h), h⟩
 
-/-- The "or" formulation implies the footnote's: a path-connected meaning induces a connected
-subgraph of the rook's graph, any two pairs being joined through a corner. -/
+/-- A path-connected meaning induces a connected subgraph of the rook's graph, any two pairs
+being joined through a corner, so the "or" formulation implies the footnote's. -/
 theorem PathConnected.connected {m : Finset ForceFlavor} (h : PathConnected m) (hm : m.Nonempty) :
     (rookGraph.induce ↑m).Connected := by
   have := (Finset.coe_nonempty.2 hm).to_subtype

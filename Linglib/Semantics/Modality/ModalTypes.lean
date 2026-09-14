@@ -138,7 +138,7 @@ theorem ForceFlavor.card : Fintype.card ForceFlavor = 12 := by decide
 -- §4. Modal Item
 -- ============================================================================
 
-/-- A modal item: the shared core of any expression carrying modal meaning, which
+/-- A modal item is the shared core of any expression carrying modal meaning, which
 `Auxiliary.toModalItem` and `ModalAdvEntry.toModalItem` project onto. -/
 structure ModalItem where
   form : String
