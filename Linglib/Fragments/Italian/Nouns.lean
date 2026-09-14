@@ -1,4 +1,4 @@
-import Linglib.Features.Gender.Basic
+import Linglib.Syntax.Phi.Gender.Basic
 import Linglib.Data.UD.Basic
 import Linglib.Features.Number.Capabilities
 import Linglib.Semantics.Genericity.NominalMappingParameter

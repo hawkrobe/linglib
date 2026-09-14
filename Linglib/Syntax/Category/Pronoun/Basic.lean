@@ -3,7 +3,7 @@ import Linglib.Data.UD.Basic
 import Linglib.Features.Case.Basic
 import Linglib.Features.Register
 import Linglib.Features.Prominence
-import Linglib.Features.Gender.Basic
+import Linglib.Syntax.Phi.Gender.Basic
 import Linglib.Features.Person.Clusivity
 import Linglib.Features.CoreferenceStatus
 import Linglib.Features.Person.Decomposition

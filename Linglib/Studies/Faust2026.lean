@@ -1,7 +1,7 @@
 import Linglib.Studies.McCarthy1981
 import Linglib.Fragments.Hebrew.ConsonantalRoots
 import Linglib.Fragments.Amharic.ConsonantalRoots
-import Linglib.Features.Gender.Basic
+import Linglib.Syntax.Phi.Gender.Basic
 import Linglib.Data.Examples.Faust2026
 
 /-!

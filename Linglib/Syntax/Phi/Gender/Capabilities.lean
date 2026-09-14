@@ -1,6 +1,6 @@
 import Linglib.Core.Order.Flat
 import Linglib.Features.Agreement
-import Linglib.Features.Gender.Basic
+import Linglib.Syntax.Phi.Gender.Basic
 
 /-!
 # The gender-bearing capability

@@ -1,4 +1,4 @@
-import Linglib.Features.Gender.Basic
+import Linglib.Syntax.Phi.Gender.Basic
 import Linglib.Syntax.Category.Classifier.Basic
 import Linglib.Data.UD.Basic
 import Linglib.Features.Number.Capabilities

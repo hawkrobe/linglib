@@ -1,5 +1,5 @@
 import Linglib.Features.Person.Decomposition
-import Linglib.Features.Gender.Basic
+import Linglib.Syntax.Phi.Gender.Basic
 
 /-!
 # Hausa TAM and the Person-Aspect-Complex (PAC) — mathlib-style

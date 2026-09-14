@@ -2,7 +2,7 @@ import Linglib.Semantics.Mereology
 import Linglib.Features.ContainmentPair
 import Linglib.Features.Number.Decomposition
 import Linglib.Features.Person.Decomposition
-import Linglib.Features.Gender.Decomposition
+import Linglib.Syntax.Phi.Gender.Decomposition
 import Linglib.Semantics.Presupposition.Basic
 
 /-!
