@@ -43,7 +43,7 @@ variable {E : Type} [PartialOrder E] (e : PersonalPronoun) (g : Assignment E) (i
 variable lookup, the same one for the bound, anaphoric and deictic uses. -/
 theorem selector_eq_assignment :
     (e.denote (W := PUnit) i spk adr isFemale isInanimate).selector g ⟨⟩
-      = some (interpPronoun (E := E) (W := PUnit) i g) := rfl
+      = some (interpPronoun (E := E) i g) := rfl
 
 /-- A feminine pronoun is undefined of a non-female referent: the feature does not assert that the
 referent is female, it presupposes it, so the denotation has no value at all when it fails. -/

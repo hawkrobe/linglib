@@ -67,7 +67,7 @@ def PersonalPronoun.denote {E W : Type} [PartialOrder E] (e : PersonalPronoun) (
     (speaker addressee : E) (isFemale isInanimate : E → Prop) :
     Nominal (Assignment E) W E where
   presup := λ g _ => (e.phiPresup speaker addressee isFemale isInanimate).presup (g i)
-  selector := λ g _ => some (interpPronoun (E := E) (W := W) i g)
+  selector := λ g _ => some (interpPronoun (E := E) i g)
 
 @[simp] theorem PersonalPronoun.denote_selector {E W : Type} [PartialOrder E]
     (e : PersonalPronoun) (i : ℕ) (speaker addressee : E) (isFemale isInanimate : E → Prop)

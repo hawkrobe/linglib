@@ -1,4 +1,3 @@
-import Linglib.Semantics.Composition.Ty
 import Linglib.Logic.Assignment
 
 /-!
@@ -7,15 +6,15 @@ import Linglib.Logic.Assignment
 Denotations of expressions with free variables, relative to an assignment `g : ℕ → E` of
 entities to indices ([heim-kratzer-1998]): a pronoun with index `n` denotes `g n`, a binder
 at `n` abstracts over the value of `n` by updating `g`, and composition threads the assignment
-through — the Reader applicative of [charlow-2018], whose laws hold definitionally. Situation
-pronouns are the same construction at an assignment of indices, and `Ty.DomainGS` carries both.
+through. An assignment-relative denotation in `α` is a function `Assignment E → α`, the Reader
+applicative of [charlow-2018], whose laws hold definitionally. Situation pronouns are the same
+construction at an assignment of indices.
 
 ## Main definitions
 
-* `Ty.DomainG E W ty`: denotations relative to an entity assignment; `constDenot`, `applyG`,
-  `lambdaAbsG`, `interpPronoun`, `denotGJoin`.
-* `Ty.DomainGS E W ty`: denotations relative to an entity and a situation assignment;
-  `interpSitPronoun`, `Ty.DomainGS.const`.
+* `interpPronoun`, `constDenot`, `applyG`, `lambdaAbsG`, `denotGJoin`: the pronoun, the
+  constant lift, application, abstraction, and join of assignment-relative denotations.
+* `SitAssignment`, `interpSitPronoun`: situation assignments and situation pronouns.
 
 ## References
 
@@ -27,30 +26,24 @@ namespace Semantics.Composition
 
 open scoped Assignment
 
-/-- A denotation relative to an entity assignment. -/
-abbrev Ty.DomainG (E W : Type) (ty : Ty) := Assignment E → Ty.Domain E W ty
+variable {E α β γ : Type}
 
 /-- Pronoun/variable denotation: ⟦xₙ⟧^g = g(n). -/
-def interpPronoun {E W : Type} (n : ℕ) : Ty.DomainG E W .e :=
-  λ g => g n
+def interpPronoun (n : ℕ) : Assignment E → E := λ g => g n
 
-/-- Lift constant denotation to assignment-relative form. -/
-def constDenot {E W : Type} {ty : Ty} (d : Ty.Domain E W ty) : Ty.DomainG E W ty :=
-  λ _ => d
+/-- Lift a constant denotation to assignment-relative form. -/
+def constDenot (d : α) : Assignment E → α := λ _ => d
 
 /-- Function application with assignments. -/
-def applyG {E W : Type} {σ τ : Ty}
-    (f : Ty.DomainG E W (σ ⇒ τ)) (x : Ty.DomainG E W σ) : Ty.DomainG E W τ :=
+def applyG (f : Assignment E → α → β) (x : Assignment E → α) : Assignment E → β :=
   λ g => f g (x g)
 
 /-- Lambda abstraction with variable binding. -/
-def lambdaAbsG {E W : Type} {τ : Ty} (n : ℕ) (body : Ty.DomainG E W τ)
-    : Ty.DomainG E W (.e ⇒ τ) :=
-  λ g => λ x => body (g[n ↦ x])
+def lambdaAbsG (n : ℕ) (body : Assignment E → α) : Assignment E → E → α :=
+  λ g x => body (g[n ↦ x])
 
-theorem lambdaAbsG_apply {E W : Type} {τ : Ty} (n : ℕ) (body : Ty.DomainG E W τ)
-    (arg : E) (g : Assignment E)
-    : (lambdaAbsG n body g) arg = body (g[n ↦ arg]) := rfl
+theorem lambdaAbsG_apply (n : ℕ) (body : Assignment E → α) (arg : E) (g : Assignment E) :
+    lambdaAbsG n body g arg = body (g[n ↦ arg]) := rfl
 
 /-! ### Assignment-sensitive composition as an applicative functor
 
@@ -61,37 +54,28 @@ definitionally. -/
 
 section ApplicativeFunctor
 
-variable {E W : Type} {σ τ υ : Ty}
-
 /-- **Homomorphism**: `ρ f ⊛ ρ x = ρ (f x)`. -/
-theorem constDenot_applyG (f : Ty.Domain E W (σ ⇒ τ)) (x : Ty.Domain E W σ) :
-    applyG (constDenot f) (constDenot x) = constDenot (f x) := rfl
+theorem constDenot_applyG (f : α → β) (x : α) :
+    applyG (constDenot (E := E) f) (constDenot x) = constDenot (f x) := rfl
 
 /-- **Identity**: `ρ id ⊛ v = v`. -/
-theorem applyG_constDenot_id (v : Ty.DomainG E W σ) :
-    applyG (constDenot id) v = v := rfl
+theorem applyG_constDenot_id (v : Assignment E → α) : applyG (constDenot id) v = v := rfl
 
 /-- **Interchange**: `u ⊛ ρ y = ρ (· y) ⊛ u`. -/
-theorem applyG_constDenot_interchange
-    (u : Ty.DomainG E W (σ ⇒ τ)) (y : Ty.Domain E W σ) :
-    applyG u (constDenot y) =
-    applyG (constDenot (ty := (σ ⇒ τ) ⇒ τ) (fun f => f y)) u := rfl
+theorem applyG_constDenot_interchange (u : Assignment E → α → β) (y : α) :
+    applyG u (constDenot y) = applyG (constDenot λ f : α → β => f y) u := rfl
 
 /-- **Composition**: `ρ comp ⊛ u ⊛ v ⊛ w = u ⊛ (v ⊛ w)`. -/
 theorem applyG_composition
-    (u : Ty.DomainG E W (τ ⇒ υ)) (v : Ty.DomainG E W (σ ⇒ τ)) (w : Ty.DomainG E W σ) :
-    applyG (applyG (applyG (constDenot
-      (ty := (τ ⇒ υ) ⇒ (σ ⇒ τ) ⇒ σ ⇒ υ)
-      (fun f g x => f (g x))) u) v) w =
-    applyG u (applyG v w) := rfl
+    (u : Assignment E → β → γ) (v : Assignment E → α → β) (w : Assignment E → α) :
+    applyG (applyG (applyG (constDenot λ (f : β → γ) (g : α → β) x => f (g x)) u) v) w =
+      applyG u (applyG v w) := rfl
 
 end ApplicativeFunctor
 
 /-! ### Monadic join for higher-order variables -/
 
 section MonadicJoin
-
-variable {E W : Type}
 
 /-- **Join** (μ): flatten a doubly assignment-dependent meaning.
 
@@ -100,23 +84,18 @@ variable {E W : Type}
 Enables higher-order variables: a pronoun anaphoric to an *intension*
 (type `g → g → a`) is flattened to a standard denotation (type `g → a`)
 by evaluating the retrieved intension at the current assignment. -/
-def denotGJoin {A : Type} (ho : Assignment E → Assignment E → A) :
-    Assignment E → A :=
+def denotGJoin (ho : Assignment E → Assignment E → α) : Assignment E → α :=
   fun g => ho g g
 
 /-- **Left identity**: `μ (ρ d) = d`. -/
-theorem denotGJoin_const {A : Type} (d : Assignment E → A) :
-    denotGJoin (fun _ => d) = d := rfl
+theorem denotGJoin_const (d : Assignment E → α) : denotGJoin (fun _ => d) = d := rfl
 
 /-- **Right identity**: `μ (λg. ρ(d g)) = d`. -/
-theorem denotGJoin_inner_const {A : Type} (d : Assignment E → A) :
-    denotGJoin (fun g _ => d g) = d := rfl
+theorem denotGJoin_inner_const (d : Assignment E → α) : denotGJoin (fun g _ => d g) = d := rfl
 
 /-- **Associativity**: `μ ∘ μ = μ ∘ fmap μ`. -/
-theorem denotGJoin_assoc {A : Type}
-    (hho : Assignment E → Assignment E → Assignment E → A) :
-    denotGJoin (denotGJoin hho) =
-    denotGJoin (fun g => denotGJoin (hho g)) := rfl
+theorem denotGJoin_assoc (hho : Assignment E → Assignment E → Assignment E → α) :
+    denotGJoin (denotGJoin hho) = denotGJoin (fun g => denotGJoin (hho g)) := rfl
 
 end MonadicJoin
 
@@ -127,8 +106,7 @@ literature on situational vs anaphoric definites argue that a situation
 argument can be a *bound variable* (a "situation pronoun"), not just a free
 parameter handed to an interpretation function.
 
-Type-theoretically this is the dual of entity binding under `Ty.intens`:
-where entity pronouns are interpreted relative to `Assignment E := ℕ → E`,
+Where entity pronouns are interpreted relative to `Assignment E := ℕ → E`,
 situation pronouns are interpreted relative to `SitAssignment W := ℕ → W`.
 Both reuse `Assignment` at different instantiations, so mathlib's
 `Function.update` lemmas apply to both. -/
@@ -140,15 +118,5 @@ abbrev SitAssignment (W : Type) := Assignment W
 /-- Situation-pronoun denotation: ⟦sₙ⟧^{gs} = gs(n). Parallels `interpPronoun`. -/
 def interpSitPronoun {W : Type} (n : Nat) : SitAssignment W → W :=
   fun gs => gs n
-
-/-- A denotation relative to an entity assignment and a situation assignment, for
-expressions containing both entity and situation pronouns (definites, attitude reports,
-world-variable binding). -/
-abbrev Ty.DomainGS (E W : Type) (ty : Ty) :=
-  Assignment E → SitAssignment W → Ty.Domain E W ty
-
-/-- A constant denotation as a bi-assignment-relative one. -/
-def Ty.DomainGS.const {E W : Type} {ty : Ty} (d : Ty.Domain E W ty) : Ty.DomainGS E W ty :=
-  fun _ _ => d
 
 end Semantics.Composition

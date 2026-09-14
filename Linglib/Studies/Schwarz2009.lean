@@ -126,7 +126,7 @@ referent** in the entity assignment (`g d`). -/
     interpretation directly — the restrictor itself is what calls
     `interpSitPronoun sIdx` to fetch the resource situation. -/
 theorem weak_article_consults_situation_assignment
-    (R : Ty.DomainGS E W .et) (sIdx : Nat)
+    (R : Restrictor E W) (sIdx : Nat)
     (g : Assignment E) (gs : SitAssignment W) :
     interpret (.unique R sIdx) g gs =
       russellIota (fun x => R g gs x) := rfl
@@ -136,7 +136,7 @@ theorem weak_article_consults_situation_assignment
     assignment is consulted only through the restrictor `R` — the
     constructor itself reads the entity slot. -/
 theorem strong_article_consults_entity_assignment
-    (R : Ty.DomainGS E W .et) (d : Nat)
+    (R : Restrictor E W) (d : Nat)
     (g : Assignment E) (gs : SitAssignment W) :
     interpret (.anaphoric R d) g gs =
       (letI := Classical.dec (R g gs (g d))
@@ -336,7 +336,7 @@ inductive Student where
 
 /-- Both students count as students. The restrictor has *two* satisfiers,
     so the weak (uniqueness) article fails — there is no unique satisfier. -/
-def studentRestr : Ty.DomainGS Student Unit .et := fun _g _gs _x => True
+def studentRestr : Restrictor Student Unit := fun _g _gs _x => True
 
 /-- Discourse referent at index 0 is Alice. The strong article
     (`.anaphoric`) reads off this slot. -/

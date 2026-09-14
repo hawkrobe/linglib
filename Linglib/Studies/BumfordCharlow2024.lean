@@ -590,9 +590,9 @@ remains here is the bridge to movement-and-abstraction trees. -/
     predicate abstraction of its scope. QR and Cont differ only in
     how scope order is *specified* (tree structure vs bind order),
     not in what they *compute*. -/
-theorem qr_cont_structural_agreement {E W : Type}
+theorem qr_cont_structural_agreement {E : Type}
     (q : Cont Prop E)
-    (body : Ty.DomainG E W .t) (n : Nat) (g : Assignment E) :
+    (body : Assignment E → Prop) (n : Nat) (g : Assignment E) :
     q (lambdaAbsG n body g) =
     ContT.eval (q >>= λ x => pure (body (g[n ↦ x]))) := rfl
 

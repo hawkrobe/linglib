@@ -62,28 +62,28 @@ noncomputable def interpret (k : Description E W)
 -- ════════════════════════════════════════════════════════════════
 
 @[simp]
-theorem interpret_bare (R : Ty.DomainGS E W .et)
+theorem interpret_bare (R : Restrictor E W)
     (g : Assignment E) (gs : SitAssignment W) :
     interpret (.bare R) g gs = russellIota (fun x => R g gs x) := rfl
 
 @[simp]
-theorem interpret_indefinite (R : Ty.DomainGS E W .et)
+theorem interpret_indefinite (R : Restrictor E W)
     (g : Assignment E) (gs : SitAssignment W) :
     interpret (E := E) (W := W) (.indefinite R) g gs = none := rfl
 
 @[simp]
-theorem interpret_unique (R : Ty.DomainGS E W .et) (sIdx : Nat)
+theorem interpret_unique (R : Restrictor E W) (sIdx : Nat)
     (g : Assignment E) (gs : SitAssignment W) :
     interpret (.unique R sIdx) g gs = russellIota (fun x => R g gs x) := rfl
 
-theorem interpret_anaphoric (R : Ty.DomainGS E W .et) (d : Nat)
+theorem interpret_anaphoric (R : Restrictor E W) (d : Nat)
     (g : Assignment E) (gs : SitAssignment W) :
     interpret (.anaphoric R d) g gs =
       (letI := Classical.dec (R g gs (g d))
        if R g gs (g d) then some (g d) else none) := rfl
 
 theorem interpret_demonstrative
-    (R : Ty.DomainGS E W .et) (deictic : Reference.Deixis)
+    (R : Restrictor E W) (deictic : Reference.Deixis)
     (sIdx d : Nat) (g : Assignment E) (gs : SitAssignment W) :
     interpret (.demonstrative R deictic sIdx d) g gs =
       (letI := Classical.dec (R g gs (g d))
@@ -91,7 +91,8 @@ theorem interpret_demonstrative
 
 @[simp]
 theorem interpret_possessive
-    (R : Ty.DomainGS E W .et) (possessor : Ty.DomainGS E W .e) (rel : Ty.DomainGS E W .eet)
+    (R : Restrictor E W) (possessor : Assignment E → SitAssignment W → E)
+    (rel : Assignment E → SitAssignment W → E → E → Prop)
     (g : Assignment E) (gs : SitAssignment W) :
     interpret (.possessive R possessor rel) g gs =
       russellIota (fun x => R g gs x ∧ rel g gs (possessor g gs) x) := rfl
@@ -105,7 +106,7 @@ theorem interpret_possessive
     Languages whose bare nouns shift to ∃ or kind readings override this
     via fragment-specific interpreters. -/
 theorem interpret_bare_eq_unique
-    (R : Ty.DomainGS E W .et) (sIdx : Nat)
+    (R : Restrictor E W) (sIdx : Nat)
     (g : Assignment E) (gs : SitAssignment W) :
     interpret (.bare R) g gs = interpret (.unique R sIdx) g gs := rfl
 
@@ -114,7 +115,7 @@ theorem interpret_bare_eq_unique
     when they share restrictor and discourse index. The deictic content is
     a presupposition filter, not a selector. -/
 theorem interpret_demonstrative_eq_anaphoric
-    (R : Ty.DomainGS E W .et) (deictic : Reference.Deixis)
+    (R : Restrictor E W) (deictic : Reference.Deixis)
     (sIdx d : Nat) (g : Assignment E) (gs : SitAssignment W) :
     interpret (.demonstrative R deictic sIdx d) g gs =
     interpret (.anaphoric R d) g gs := rfl
@@ -124,7 +125,7 @@ theorem interpret_demonstrative_eq_anaphoric
     situation assignment, so the index records *which* pronoun is bound
     but does not change what is computed by the operator. -/
 theorem interpret_unique_index_irrelevant
-    (R : Ty.DomainGS E W .et) (sIdx₁ sIdx₂ : Nat)
+    (R : Restrictor E W) (sIdx₁ sIdx₂ : Nat)
     (g : Assignment E) (gs : SitAssignment W) :
     interpret (.unique R sIdx₁) g gs = interpret (.unique R sIdx₂) g gs := rfl
 
@@ -136,7 +137,7 @@ theorem interpret_unique_index_irrelevant
     Stated for `.unique` (the operator-driven case); the analogue for
     `.bare` follows by `interpret_bare_eq_unique`. -/
 theorem interpret_unique_witness_satisfies
-    (R : Ty.DomainGS E W .et) (sIdx : Nat) (e : E)
+    (R : Restrictor E W) (sIdx : Nat) (e : E)
     (g : Assignment E) (gs : SitAssignment W)
     (h : interpret (.unique R sIdx) g gs = some e) :
     R g gs e := by
@@ -151,7 +152,7 @@ theorem interpret_unique_witness_satisfies
     `interpret_unique` → `russellIota_isSome_iff_exists_unique` → `Option.isSome_iff_exists` →
     `russellIota_witness_satisfies` → case analysis. -/
 theorem interpret_unique_eq_some_of_existsUnique
-    (R : Ty.DomainGS E W .et) (sIdx : Nat)
+    (R : Restrictor E W) (sIdx : Nat)
     (g : Assignment E) (gs : SitAssignment W) (e : E)
     (hSat : R g gs e) (hUniq : ∀ y, R g gs y → y = e) :
     interpret (.unique R sIdx) g gs = some e := by
@@ -166,7 +167,7 @@ theorem interpret_unique_eq_some_of_existsUnique
 /-- Specialization of `interpret_unique_eq_some_of_existsUnique` to a packaged
     `∃!` hypothesis, with the witness extracted via `Exists.choose`. -/
 theorem interpret_unique_eq_some_choose
-    (R : Ty.DomainGS E W .et) (sIdx : Nat)
+    (R : Restrictor E W) (sIdx : Nat)
     (g : Assignment E) (gs : SitAssignment W)
     (hExU : ∃! x, R g gs x) :
     interpret (.unique R sIdx) g gs = some hExU.choose :=
@@ -176,7 +177,7 @@ theorem interpret_unique_eq_some_choose
 /-- An anaphoric definite that returns a witness must return the indexed
     entity — it never picks anything else. -/
 theorem interpret_anaphoric_witness_is_indexed
-    (R : Ty.DomainGS E W .et) (d : Nat)
+    (R : Restrictor E W) (d : Nat)
     (g : Assignment E) (gs : SitAssignment W) (e : E)
     (h : interpret (.anaphoric R d) g gs = some e) :
     e = g d := by
@@ -189,7 +190,7 @@ theorem interpret_anaphoric_witness_is_indexed
 /-- An anaphoric definite returns a witness iff the restrictor holds of the
     indexed entity. -/
 theorem interpret_anaphoric_isSome_iff
-    (R : Ty.DomainGS E W .et) (d : Nat)
+    (R : Restrictor E W) (d : Nat)
     (g : Assignment E) (gs : SitAssignment W) :
     (interpret (.anaphoric R d) g gs).isSome ↔ R g gs (g d) := by
   classical
@@ -202,7 +203,8 @@ theorem interpret_anaphoric_isSome_iff
     a unique satisfier — the typed-world form of the relational definite's
     uniqueness presupposition (`∃!`). -/
 theorem interpret_possessive_isSome_iff_exists_unique
-    (R : Ty.DomainGS E W .et) (possessor : Ty.DomainGS E W .e) (rel : Ty.DomainGS E W .eet)
+    (R : Restrictor E W) (possessor : Assignment E → SitAssignment W → E)
+    (rel : Assignment E → SitAssignment W → E → E → Prop)
     (g : Assignment E) (gs : SitAssignment W) :
     (interpret (.possessive R possessor rel) g gs).isSome
       ↔ ∃! x, R g gs x ∧ rel g gs (possessor g gs) x := by
@@ -217,7 +219,7 @@ theorem interpret_possessive_isSome_iff_exists_unique
     diverge, PG&G's point that the strong article is anaphoric in a way the weak
     one is not. -/
 theorem interpret_anaphoric_eq_unique_of_existsUnique
-    (R : Ty.DomainGS E W .et) (sIdx i : Nat)
+    (R : Restrictor E W) (sIdx i : Nat)
     (g : Assignment E) (gs : SitAssignment W)
     (hSat : R g gs (g i)) (hUniq : ∀ y, R g gs y → y = g i) :
     interpret (.anaphoric R i) g gs = interpret (.unique R sIdx) g gs := by

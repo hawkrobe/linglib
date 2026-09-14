@@ -20,11 +20,11 @@ description that the syntax–semantics interface needs to distinguish:
 
 The whole type is parameterized by entity and index types `E`/`W`, so all
 restrictors, situation pronouns, and possessor expressions are typed via the
-unified `Ty.Domain E W` machinery rather than ad-hoc `E → Bool` predicates.
+assignment-relative predicates rather than ad-hoc `E → Bool` predicates.
 
 ## Design notes
 
-- **Restrictors are `Ty.DomainGS E W .et`.** Both entity assignments and situation
+- **Restrictors are `Restrictor E W`.** Both entity assignments and situation
   assignments are first-class. This is the [hanink-2021] position: a noun's
   resource situation is a *bound variable* in the structure, not a free
   contextual parameter.
@@ -65,6 +65,9 @@ namespace Definiteness
 
 open Semantics.Composition
 
+/-- A restrictor: a property relative to an entity assignment and a situation assignment. -/
+abbrev Restrictor (E W : Type) := Assignment E → SitAssignment W → E → Prop
+
 -- ════════════════════════════════════════════════════════════════
 -- § The Sum Type
 -- ════════════════════════════════════════════════════════════════
@@ -73,31 +76,31 @@ open Semantics.Composition
     axis (bare/indefinite vs the definite subtypes), orthogonal to
     `Binding.BindingClass` (binding distribution) and to a pronoun's lexical
     kind. The type parameters `E`/`W` supply the entity domain and index set so
-    all subexpressions live in the same `Ty.Domain E W` universe. -/
+    all subexpressions share one entity domain and index set. -/
 inductive Description (E W : Type) where
   /-- Bare noun (no overt determiner). The actual reading — kind, indefinite,
       unique, or anaphoric — is selected by the language's covert type-shift
       hierarchy ([chierchia-1998], [dayal-2004]). -/
-  | bare (restrictor : Ty.DomainGS E W .et)
+  | bare (restrictor : Restrictor E W)
   /-- Overt-article indefinite (∃): a *marked* indefinite (English *a*).
       Introduces a new discourse referent and presupposes nothing about prior
       discourse ([heim-1982]/Kamp novelty). Article-less languages express
       indefinite readings through `bare` (the type-shift hierarchy selects ∃),
       not this constructor. -/
-  | indefinite (restrictor : Ty.DomainGS E W .et)
+  | indefinite (restrictor : Restrictor E W)
   /-- Coppock–Beaver weak/uniqueness definite (Sharvy/Križ maximal). The
       restrictor is evaluated at the resource situation pointed to by the
       `situationIdx`-th situation pronoun (Hanink 2021 binding). -/
-  | unique (restrictor : Ty.DomainGS E W .et) (situationIdx : Nat)
+  | unique (restrictor : Restrictor E W) (situationIdx : Nat)
   /-- Schwarz strong-article / Hanink-indexed anaphoric definite. The
       `discourseIdx`-th entity-assignment slot is the antecedent. -/
-  | anaphoric (restrictor : Ty.DomainGS E W .et) (discourseIdx : Nat)
+  | anaphoric (restrictor : Restrictor E W) (discourseIdx : Nat)
   /-- Demonstrative (genuinely deictic this/that). Carries a deictic feature
       ([moroney-2021] Shan *nâj*/*nân*) and a discourse/pointing index; the
       restrictor is checked at the resource situation `situationIdx`. Distinct from
       the [schwarz-2009] strong article `anaphoric` (PG&G's German *der*). -/
   | demonstrative
-      (restrictor : Ty.DomainGS E W .et)
+      (restrictor : Restrictor E W)
       (deictic : Reference.Deixis)
       (situationIdx : Nat)
       (discourseIdx : Nat)
@@ -105,9 +108,9 @@ inductive Description (E W : Type) where
       restrictor and `relation` jointly pin down a unique satisfier related to
       `possessor`. -/
   | possessive
-      (restrictor : Ty.DomainGS E W .et)
-      (possessor : Ty.DomainGS E W .e)
-      (relation : Ty.DomainGS E W .eet)
+      (restrictor : Restrictor E W)
+      (possessor : Assignment E → SitAssignment W → E)
+      (relation : Assignment E → SitAssignment W → E → E → Prop)
 
 -- ════════════════════════════════════════════════════════════════
 -- § The Frame-free kind and the strength section
@@ -139,7 +142,7 @@ def kind : Description E W → DescriptionKind
     it fills the situation-pronoun slot, which `interpret` discards
     (`interpret_unique_index_irrelevant`). -/
 def ofPresupType (p : DefPresupType)
-    (restrictor : Ty.DomainGS E W .et) (idx : Nat) : Description E W :=
+    (restrictor : Restrictor E W) (idx : Nat) : Description E W :=
   match p with
   | .uniqueness  => .unique restrictor idx
   | .familiarity => .anaphoric restrictor idx
@@ -148,7 +151,7 @@ def ofPresupType (p : DefPresupType)
     (`DefPresupType.toKind`) — the Frame-aware and Frame-free realization maps
     agree. -/
 theorem kind_ofPresupType
-    (p : DefPresupType) (R : Ty.DomainGS E W .et) (idx : Nat) :
+    (p : DefPresupType) (R : Restrictor E W) (idx : Nat) :
     (ofPresupType p R idx).kind = p.toKind := by
   cases p <;> rfl
 
