@@ -27,39 +27,37 @@ namespace German.Predicates.Modal
 
 open Modality (ForceFlavor ModalForce ModalFlavor)
 
-private abbrev cp := ForceFlavor.cartesianProduct
-
 /-! ### Modal Entries -/
 
 /-- *können* — "can/may": epistemic + circumstantial possibility. -/
 def koennen : Auxiliary where
   form := "können"
-  modality := cp [.possibility] [.epistemic, .circumstantial]
+  modality := [.possibility] ×ˢ [.epistemic, .circumstantial]
 
 /-- *dürfen* — "may/be allowed to": deontic possibility. -/
 def duerfen : Auxiliary where
   form := "dürfen"
-  modality := cp [.possibility] [.deontic]
+  modality := [.possibility] ×ˢ [.deontic]
 
 /-- *müssen* — "must/have to": epistemic + deontic necessity. -/
 def muessen : Auxiliary where
   form := "müssen"
-  modality := cp [.necessity] [.epistemic, .deontic]
+  modality := [.necessity] ×ˢ [.epistemic, .deontic]
 
 /-- *sollen* — "should/be supposed to": deontic necessity. -/
 def sollen : Auxiliary where
   form := "sollen"
-  modality := cp [.necessity] [.deontic]
+  modality := [.necessity] ×ˢ [.deontic]
 
 /-- *mögen* — "may" (epistemic): epistemic possibility. -/
 def moegen : Auxiliary where
   form := "mögen"
-  modality := cp [.possibility] [.epistemic]
+  modality := [.possibility] ×ˢ [.epistemic]
 
 /-- *wollen* — "want to": bouletic necessity. -/
 def wollen : Auxiliary where
   form := "wollen"
-  modality := cp [.necessity] [.bouletic]
+  modality := [.necessity] ×ˢ [.bouletic]
 
 /-- *sollte* — Konjunktiv II of *sollen*: weak necessity across multiple flavors.
     Treated as a **separate modal** from *sollen* because it has complex
@@ -68,7 +66,7 @@ def wollen : Auxiliary where
     Both *soll* and *sollte* individually satisfy IFF. -/
 def sollte : Auxiliary where
   form := "sollte"
-  modality := cp [.weakNecessity] [.deontic, .epistemic, .circumstantial]
+  modality := [.weakNecessity] ×ˢ [.deontic, .epistemic, .circumstantial]
 
 /-! ### All Modals -/
 

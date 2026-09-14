@@ -330,7 +330,7 @@ def Form.item : Form → ModalItem
 /-- (83), (135): a form's force in the fragment is weak necessity exactly when its ordering
 source is X-marked; X-marking the modal base leaves the force. -/
 theorem force_of_vertex : ∀ φ : Form, ∀ ff ∈ φ.item.meaning,
-    ff.force = if φ.vertex.xg then .weakNecessity else .necessity := by
+    ff.1 = if φ.vertex.xg then .weakNecessity else .necessity := by
   decide
 
 /-! ### The consistency paradigm of §2 -/

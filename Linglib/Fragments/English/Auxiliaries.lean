@@ -53,42 +53,40 @@ contracted form and `Polarity=Neg`. -/
 private def contract (a : Auxiliary) (form : String) : Auxiliary :=
   { a with form := form, features := { a.features with polarity := some .Neg } }
 
-private abbrev cp := ForceFlavor.cartesianProduct
-
 -- Modals. Negative forms from [zwicky-pullum-1983], Table 1.
 def can : Auxiliary where
   form := "can"
-  modality := cp [.possibility] [.epistemic, .deontic, .circumstantial]
+  modality := [.possibility] ×ˢ [.epistemic, .deontic, .circumstantial]
 def could : Auxiliary where
   form := "could"
   features := agr (tense := some .Past)
-  modality := cp [.possibility] [.epistemic, .deontic, .circumstantial]
+  modality := [.possibility] ×ˢ [.epistemic, .deontic, .circumstantial]
 def will : Auxiliary where
   form := "will"
-  modality := cp [.necessity] [.epistemic, .circumstantial]
+  modality := [.necessity] ×ˢ [.epistemic, .circumstantial]
 def would : Auxiliary where
   form := "would"
   features := agr (tense := some .Past)
-  modality := cp [.necessity] [.epistemic, .circumstantial]
+  modality := [.necessity] ×ˢ [.epistemic, .circumstantial]
 def shall : Auxiliary where
   form := "shall"
   register := .formal
-  modality := cp [.necessity] [.deontic]
+  modality := [.necessity] ×ˢ [.deontic]
 def should : Auxiliary where
   form := "should"
   features := agr (tense := some .Past)
-  modality := cp [.weakNecessity] [.deontic, .epistemic]
+  modality := [.weakNecessity] ×ˢ [.deontic, .epistemic]
 def may : Auxiliary where
   form := "may"
-  modality := cp [.possibility] [.epistemic, .deontic]
+  modality := [.possibility] ×ˢ [.epistemic, .deontic]
 def might : Auxiliary where
   form := "might"
   features := agr (tense := some .Past)
-  modality := cp [.possibility] [.epistemic]
+  modality := [.possibility] ×ˢ [.epistemic]
 def must : Auxiliary where
   form := "must"
   register := .formal
-  modality := cp [.necessity] [.epistemic, .deontic, .circumstantial]
+  modality := [.necessity] ×ˢ [.epistemic, .deontic, .circumstantial]
 
 -- Semi-modals and periphrastic modals
 
@@ -98,17 +96,17 @@ def must : Auxiliary where
 def haveTo : Auxiliary where
   form := "have to"
   register := .informal
-  modality := cp [.necessity] [.deontic, .circumstantial]
+  modality := [.necessity] ×ˢ [.deontic, .circumstantial]
 
 -- Semi-modals (Z&P Table 1 rows o–q)
 def dare : Auxiliary where
   form := "dare"
 def need : Auxiliary where
   form := "need"
-  modality := cp [.necessity] [.deontic, .circumstantial]
+  modality := [.necessity] ×ˢ [.deontic, .circumstantial]
 def ought : Auxiliary where
   form := "ought"
-  modality := cp [.weakNecessity] [.deontic, .epistemic]
+  modality := [.weakNecessity] ×ˢ [.deontic, .epistemic]
 
 -- Do-support
 def do_ : Auxiliary where
@@ -231,46 +229,44 @@ def ModalAdvEntry.toWord (a : ModalAdvEntry) : Word :=
 /-- Project to the shared modal item core (form + meaning + register). -/
 def ModalAdvEntry.toModalItem (a : ModalAdvEntry) : Modality.ModalItem where
   form := a.form
-  meaning := a.modalMeaning
+  meaning := a.modalMeaning.toFinset
   register := a.register
-
-private abbrev mcp := ForceFlavor.cartesianProduct
 
 def certainly : ModalAdvEntry where
   form := "certainly"
-  modalMeaning := mcp [.necessity] [.epistemic]
+  modalMeaning := [.necessity] ×ˢ [.epistemic]
   register := .formal
 
 def definitely : ModalAdvEntry where
   form := "definitely"
-  modalMeaning := mcp [.necessity] [.epistemic, .deontic]
+  modalMeaning := [.necessity] ×ˢ [.epistemic, .deontic]
 
 def necessarily : ModalAdvEntry where
   form := "necessarily"
-  modalMeaning := mcp [.necessity] [.epistemic, .circumstantial]
+  modalMeaning := [.necessity] ×ˢ [.epistemic, .circumstantial]
   register := .formal
 
 def possibly : ModalAdvEntry where
   form := "possibly"
-  modalMeaning := mcp [.possibility] [.epistemic]
+  modalMeaning := [.possibility] ×ˢ [.epistemic]
 
 def perhaps : ModalAdvEntry where
   form := "perhaps"
-  modalMeaning := mcp [.possibility] [.epistemic]
+  modalMeaning := [.possibility] ×ˢ [.epistemic]
   register := .formal
 
 def maybe : ModalAdvEntry where
   form := "maybe"
-  modalMeaning := mcp [.possibility] [.epistemic]
+  modalMeaning := [.possibility] ×ˢ [.epistemic]
   register := .informal
 
 def probably : ModalAdvEntry where
   form := "probably"
-  modalMeaning := mcp [.necessity] [.epistemic]
+  modalMeaning := [.necessity] ×ˢ [.epistemic]
 
 def potentially : ModalAdvEntry where
   form := "potentially"
-  modalMeaning := mcp [.possibility] [.circumstantial]
+  modalMeaning := [.possibility] ×ˢ [.circumstantial]
 
 def allModalAdverbs : List ModalAdvEntry :=
   [certainly, definitely, necessarily, possibly, perhaps, maybe, probably, potentially]

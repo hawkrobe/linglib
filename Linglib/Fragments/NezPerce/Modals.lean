@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.Typology
+import Linglib.Semantics.Modality.ModalTypes
 
 /-!
 # Nez Perce Modal Inventory
@@ -42,10 +42,9 @@ like with *some* but no *all* or *every*.
 
 namespace NezPerce.Modals
 
-open Modality (ForceFlavor ForceAnalysis)
-open Modality.Typology (ModalExpression satisfiesIFF satisfiesSAV)
+open Modality (ForceFlavor ForceAnalysis ModalItem)
 
-private abbrev pc := ForceFlavor.mk .possibility .circumstantial
+private abbrev pc : ForceFlavor := (.possibility, .circumstantial)
 
 /-! ## Modal expressions -/
 
@@ -54,9 +53,9 @@ private abbrev pc := ForceFlavor.mk .possibility .circumstantial
     [deal-2011]: pure possibility semantics (∃-quantifier over
     circumstantially accessible worlds). Apparent necessity readings
     are scalar: no ∀-competitor triggers the 'not all' implicature. -/
-def oqa : ModalExpression := ⟨"o'qa", [pc]⟩
+def oqa : ModalItem := { form := "o'qa", meaning := {pc} }
 
-def allExpressions : List ModalExpression := [oqa]
+def allExpressions : List ModalItem := [oqa]
 
 /-! ## Force analysis -/
 
@@ -64,8 +63,8 @@ def allExpressions : List ModalExpression := [oqa]
     semantics is ◇, but absence of a dual ∀-modal allows pragmatic
     necessity readings in non-downward-entailing contexts.
     [matthewson-2016] §18.3.2. -/
-def forceAnalysis : ModalExpression → ForceAnalysis
-  | ⟨"o'qa", _⟩ => .strengthened .possibility
+def forceAnalysis : ModalItem → ForceAnalysis
+  | ⟨"o'qa", _, _⟩ => .strengthened .possibility
   | _ => .strengthened .possibility
 
 /-- o'qa has no lexical dual. -/
@@ -84,17 +83,7 @@ theorem oqa_admits_possibility :
 open Modality (BackgroundClass) in
 /-- o'qa is factual-circumstantial: the modal base provides facts about
     the actual world (circumstances), not evidence or information. -/
-def backgroundClass : ModalExpression → BackgroundClass
+def backgroundClass : ModalItem → BackgroundClass
   | _ => .factualCircumstantial
-
-/-! ## Typological properties -/
-
-/-- o'qa satisfies IFF (singleton meaning). -/
-theorem oqa_satisfies_iff : satisfiesIFF oqa.meaning = true := by decide
-
-/-- The *semantic* meaning of o'qa (pure possibility) is a singleton,
-    so its SAV status reflects the base semantics, not the pragmatically
-    enriched interpretation. -/
-theorem oqa_satisfies_sav : satisfiesSAV oqa.meaning = true := by decide
 
 end NezPerce.Modals

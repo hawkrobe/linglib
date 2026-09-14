@@ -66,14 +66,14 @@ def person (a : Auxiliary) : Option UD.Person := a.features.person
 def number (a : Auxiliary) : Option UD.Number := a.features.number
 
 /-- The modal item an auxiliary contributes: form, meanings, register. -/
-def toModalItem (a : Auxiliary) : ModalItem := ⟨a.form, a.modality, a.register⟩
+def toModalItem (a : Auxiliary) : ModalItem := ⟨a.form, a.modality.toFinset, a.register⟩
 
 /-- The modal feature a modal auxiliary carries ([zeijlstra-2007]): the force
 of its primary meaning, **uninterpretable** — semantically vacuous and
 checked by a c-commanding interpretable operator. `none` for an auxiliary
 with no modality. -/
 def modalFeature (a : Auxiliary) : Option ModalFeature :=
-  a.modality.head?.map fun ff => ⟨ff.force, .uninterpretable⟩
+  a.modality.head?.map fun ff => ⟨ff.1, .uninterpretable⟩
 
 /-- The interpretability of the auxiliary's modal feature, if it has one. -/
 def interpretability (a : Auxiliary) : Option ModalInterpretability :=

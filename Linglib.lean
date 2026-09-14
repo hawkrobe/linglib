@@ -1648,7 +1648,6 @@ import Linglib.Semantics.Modality.Orthologic.Modal
 import Linglib.Semantics.Modality.Orthologic.RegularProp
 import Linglib.Semantics.Modality.ProbabilityOrdering
 import Linglib.Semantics.Modality.Selectional
-import Linglib.Semantics.Modality.Typology
 import Linglib.Semantics.Modification.Basic
 import Linglib.Semantics.Modification.Classification
 import Linglib.Semantics.Modification.Coercion

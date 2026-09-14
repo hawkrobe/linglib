@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.Typology
+import Linglib.Semantics.Modality.ModalTypes
 
 /-!
 # St'át'imcets (Lillooet Salish) Modal Inventory
@@ -30,12 +30,11 @@ The system demonstrates two key typological properties:
 
 namespace Statimcets.Modals
 
-open Modality (ForceFlavor ForceAnalysis)
-open Modality.Typology (ModalExpression satisfiesIFF satisfiesSAV)
+open Modality (ForceFlavor ForceAnalysis ModalItem)
 
-private abbrev nd := ForceFlavor.mk .necessity .deontic
-private abbrev pd := ForceFlavor.mk .possibility .deontic
-private abbrev pc := ForceFlavor.mk .possibility .circumstantial
+private abbrev nd : ForceFlavor := (.necessity, .deontic)
+private abbrev pd : ForceFlavor := (.possibility, .deontic)
+private abbrev pc : ForceFlavor := (.possibility, .circumstantial)
 
 /-! ## Modal expressions -/
 
@@ -43,22 +42,22 @@ private abbrev pc := ForceFlavor.mk .possibility .circumstantial
     [matthewson-2016] example 1:
     - *wá7=ka s-lep' i=k'ún7=a ku=pála7 máqa7*
       'The eggs can/have to stay in the ground for a year.' -/
-def ka : ModalExpression := ⟨"=ka", [pd, nd]⟩
+def ka : ModalItem := { form := "=ka", meaning := {pd, nd} }
 
 /-- Ability circumfix: fixed possibility force, circumstantial flavour.
     [matthewson-2005]:
     - *ka-xílh-ts-tal'í-ha* 'could do it the fastest' -/
-def kaCircumfix : ModalExpression := ⟨"ka-...-a", [pc]⟩
+def kaCircumfix : ModalItem := { form := "ka-...-a", meaning := {pc} }
 
-def allExpressions : List ModalExpression := [ka, kaCircumfix]
+def allExpressions : List ModalItem := [ka, kaCircumfix]
 
 /-! ## Force analysis -/
 
 /-- =ka is variable-force (single deontic flavour, both forces).
     ka-...-a is fixed possibility. -/
-def forceAnalysis : ModalExpression → ForceAnalysis
-  | ⟨"=ka", _⟩ => .variableForce
-  | ⟨"ka-...-a", _⟩ => .fixed .possibility
+def forceAnalysis : ModalItem → ForceAnalysis
+  | ⟨"=ka", _, _⟩ => .variableForce
+  | ⟨"ka-...-a", _, _⟩ => .fixed .possibility
   | _ => .fixed .possibility
 
 /-! ## Background classification
@@ -70,24 +69,7 @@ classes in St'át'imcets are expressed by the evidential elements k'a
 and lákw7a, which are not formalized here. -/
 
 open Modality (BackgroundClass) in
-def backgroundClass : ModalExpression → BackgroundClass
+def backgroundClass : ModalItem → BackgroundClass
   | _ => .factualCircumstantial
-
-/-! ## Typological properties -/
-
-/-- =ka satisfies IFF (trivially: single flavour, variable force =
-    Cartesian product {poss, nec} × {deontic}). -/
-theorem ka_satisfies_iff : satisfiesIFF ka.meaning = true := by decide
-
-/-- =ka satisfies SAV: varies on force axis only. -/
-theorem ka_satisfies_sav : satisfiesSAV ka.meaning = true := by decide
-
-/-- ka-...-a satisfies IFF (singleton meaning). -/
-theorem kaCircumfix_satisfies_iff :
-    satisfiesIFF kaCircumfix.meaning = true := by decide
-
-/-- All St'át'imcets modals satisfy IFF. -/
-theorem all_satisfy_iff :
-    allExpressions.all (fun e => satisfiesIFF e.meaning) = true := by decide
 
 end Statimcets.Modals

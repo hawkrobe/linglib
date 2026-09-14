@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.Typology
+import Linglib.Semantics.Modality.ModalTypes
 
 /-!
 # Modern Greek Modal Inventory
@@ -12,23 +12,22 @@ subsets of the meaning space.
 
 namespace Greek.StandardModern.Modals
 
-open Modality (ForceFlavor)
-open Modality.Typology (ModalExpression)
+open Modality (ForceFlavor ModalItem)
 
-private abbrev ne := ForceFlavor.mk .necessity .epistemic
-private abbrev pe := ForceFlavor.mk .possibility .epistemic
-private abbrev nd := ForceFlavor.mk .necessity .deontic
-private abbrev nc := ForceFlavor.mk .necessity .circumstantial
-private abbrev pd := ForceFlavor.mk .possibility .deontic
-private abbrev pc := ForceFlavor.mk .possibility .circumstantial
+private abbrev ne : ForceFlavor := (.necessity, .epistemic)
+private abbrev pe : ForceFlavor := (.possibility, .epistemic)
+private abbrev nd : ForceFlavor := (.necessity, .deontic)
+private abbrev nc : ForceFlavor := (.necessity, .circumstantial)
+private abbrev pd : ForceFlavor := (.possibility, .deontic)
+private abbrev pc : ForceFlavor := (.possibility, .circumstantial)
 
 /-- NOT IFF: forces={nec,poss}, flavors={e,d,c} but missing (poss,d) and (poss,c). -/
-def prepei : ModalExpression := ⟨"Prepei", [ne, pe, nd, nc]⟩
+def prepei : ModalItem := { form := "Prepei", meaning := {ne, pe, nd, nc} }
 /-- NOT IFF: missing (nec,d). -/
-def mporei : ModalExpression := ⟨"Mporei", [ne, pe, pd, nc, pc]⟩
-def isos : ModalExpression := ⟨"Isos", [pe]⟩
+def mporei : ModalItem := { form := "Mporei", meaning := {ne, pe, pd, nc, pc} }
+def isos : ModalItem := { form := "Isos", meaning := {pe} }
 
-def allExpressions : List ModalExpression :=
+def allExpressions : List ModalItem :=
   [prepei, mporei, isos]
 
 end Greek.StandardModern.Modals
