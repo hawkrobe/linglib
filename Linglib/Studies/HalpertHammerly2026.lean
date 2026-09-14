@@ -145,16 +145,16 @@ structure AnimacyFeatures where
 namespace AnimacyFeatures
 
 /-- The features as a containment pair, [+Human] the inner feature entailing [+Animate]. -/
-def featuresEquiv : AnimacyFeatures ≃ Features.ContainmentPair where
+def featuresEquiv : AnimacyFeatures ≃ Agreement.ContainmentPair where
   toFun af := ⟨af.isAnimate, af.isHuman⟩
   invFun p := ⟨p.outer, p.inner⟩
   left_inv := λ ⟨_, _⟩ => rfl
   right_inv := λ ⟨_, _⟩ => rfl
 
-instance : Features.ContainmentPairLike AnimacyFeatures := .ofEquiv featuresEquiv
+instance : Agreement.ContainmentPairLike AnimacyFeatures := .ofEquiv featuresEquiv
 
 /-- Coherence: [+Human] entails [+Animate] (footnote 10). -/
-abbrev WellFormed (af : AnimacyFeatures) : Prop := Features.ContainmentPairLike.WellFormed af
+abbrev WellFormed (af : AnimacyFeatures) : Prop := Agreement.ContainmentPairLike.WellFormed af
 
 /-- The features as a specification of the [Animate] and [Human] features of (3). -/
 def spec (af : AnimacyFeatures) : Spec := λ q =>
@@ -200,7 +200,7 @@ theorem category_spec_inanimate : category inanimate.1.spec = Set.Ioi .animal :=
   decide
 
 /-- The core class of a referent of a given animacy. -/
-def ofAnimacyLevel : Features.Prominence.AnimacyLevel → Core
+def ofAnimacyLevel : Reference.Prominence.AnimacyLevel → Core
   | .human => human
   | .animate => animal
   | .inanimate => inanimate

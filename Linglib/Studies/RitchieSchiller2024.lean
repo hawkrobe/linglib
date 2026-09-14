@@ -235,7 +235,7 @@ structure Datum where
   restriction : Restriction
   anchor : Anchor
   setup : Setup
-  judgment : Features.Judgment
+  judgment : Data.Examples.Judgment
 
 /-- A default restriction possibility: a heuristic restriction anchored to the here and
 now. -/

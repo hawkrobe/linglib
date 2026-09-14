@@ -204,7 +204,7 @@ inductive Site where
 /-- 3rd-person agent (subject) extraction switches the verb to AF (the
     suffix *-on*, [coon-mateo-pedro-preminger-2014]); nothing else is
     marked. -/
-def realize : ExtractionTarget → List (Features.Reflex Site)
+def realize : ExtractionTarget → List (Reflex Site)
   | .subject => [.morpheme .verb]
   | _ => []
 

@@ -146,15 +146,15 @@ abbrev Meaning := Finset ForceFlavor
 structure ModalItem where
   form : String
   meaning : Meaning
-  register : Features.Register.Level := .neutral
+  register : SocialMeaning.Register.Level := .neutral
   deriving DecidableEq
 
 /-- Two modal items are register variants if they differ in register. -/
 def ModalItem.areRegisterVariants (a b : ModalItem) : Prop :=
-  Features.Register.areVariants a.register b.register
+  SocialMeaning.Register.areVariants a.register b.register
 
 instance (a b : ModalItem) : Decidable (a.areRegisterVariants b) :=
-  inferInstanceAs (Decidable (Features.Register.areVariants _ _))
+  inferInstanceAs (Decidable (SocialMeaning.Register.areVariants _ _))
 
 -- ============================================================================
 -- §5. Concord Types

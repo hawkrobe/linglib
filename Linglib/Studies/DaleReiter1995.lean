@@ -446,7 +446,7 @@ end Incremental
 /-- The head noun and the perceptual properties, the attributes of the paper's examples. -/
 inductive Attr where
   | type
-  | property (d : Features.PropertyDomain)
+  | property (d : Degree.PropertyDomain)
   deriving DecidableEq, Repr, Fintype
 
 /-- The values of the paper's examples. -/

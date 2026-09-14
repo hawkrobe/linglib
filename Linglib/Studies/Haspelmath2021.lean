@@ -46,8 +46,8 @@ anti-efficient language of §11.3 that the universals exclude.
 
 namespace Haspelmath2021
 
-open Features (BinaryGivenness)
-open Features.Prominence (AnimacyLevel)
+open Discourse (BinaryGivenness)
+open Reference.Prominence (AnimacyLevel)
 
 /-! ### Referential prominence scales (8)
 

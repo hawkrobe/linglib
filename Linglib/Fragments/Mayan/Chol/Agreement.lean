@@ -130,7 +130,7 @@ namespace Extraction
     3rd person follows from the absent AF marking:
     `Maxki₁ tyi y-il-ä (___₁) jiñi wiñik (___₁)?`
     'Who saw the man?' / 'Who did the man see?' -/
-def realize : ExtractionTarget → List (Features.Reflex Empty) :=
+def realize : ExtractionTarget → List (Reflex Empty) :=
   fun _ => []
 
 /-- WALS-style label: extraction is unmarked. -/

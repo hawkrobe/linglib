@@ -38,7 +38,7 @@ than a value, and two values are incomparable. This is the per-slot order that
 the bundle subsumption order (`Features.BundleLike.Subsumes`) is built from.
 -/
 
-namespace Features
+namespace Minimalist
 
 /-- A feature-checking slot for value type `α`: `absent` / `unvalued` (probe) /
 `valued v`. See the module docstring. -/
@@ -132,4 +132,4 @@ instance [DecidableEq α] (a b : FeatureSlot α) : Decidable (a ≤ b) :=
 
 end FeatureSlot
 
-end Features
+end Minimalist

@@ -39,7 +39,7 @@ stated.
 
 namespace BhattTakahashi2011
 
-open Core.Order Core.Order.Branching Data.Examples Features Lechner2004 Minimalist Syntax
+open Core.Order Core.Order.Branching Data.Examples Lechner2004 Minimalist Syntax
 open Syntax.Tree
 
 /-! ### The rows -/

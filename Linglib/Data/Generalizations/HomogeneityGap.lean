@@ -43,7 +43,6 @@ live in the comparing paper's study file, not here.
 namespace Generalizations.HomogeneityGap
 
 open Data.Examples (LinguisticExample SourceRef)
-open Features (Polarity)
 
 /-! ### Substrate -/
 
@@ -65,7 +64,7 @@ Empirical datum lifted from a paper-anchored `LinguisticExample`:
 this `(polarity, scenario)` cell.
 -/
 structure GapDatum where
-  polarity : Polarity
+  polarity : SentencePolarity
   scenario : GapScenario
   observed : Trivalent
   source   : SourceRef
@@ -74,7 +73,7 @@ structure GapDatum where
 /-! ### `LinguisticExample` adapter -/
 
 /-- Read a `Polarity` from the `paperFeatures` `"polarity"` value. -/
-def parsePolarity : String → Option Polarity
+def parsePolarity : String → Option SentencePolarity
   | "positive" => some .positive
   | "negative" => some .negative
   | _          => none
@@ -91,7 +90,7 @@ Observed trivalent value for a baseline cell, determined by polarity:
 a positive sentence is true in ALL and false in NONE; a negative one
 the reverse.
 -/
-def baselineTruth (p : Polarity) (s : GapScenario) : Trivalent :=
+def baselineTruth (p : SentencePolarity) (s : GapScenario) : Trivalent :=
   match p, s with
   | .positive, .all => .true
   | .negative, .all => .false

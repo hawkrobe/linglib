@@ -38,7 +38,7 @@ determines whether "yes" values the variable as [+Pol] (polarity-based)
 or affirms the question's primary proposition (truth-based).
 -/
 
-namespace Features
+namespace Question
 
 /-- How a language interprets "yes" in response to negative polar questions.
 
@@ -80,7 +80,7 @@ structure PolarAnswerProfile where
     "Doesn't John drink?" under each answering system?
 
     Returns the polarity of the proposition expressed by "yes". -/
-def AnsweringSystem.yesToNegativeQuestion : AnsweringSystem → Features.Polarity
+def AnsweringSystem.yesToNegativeQuestion : AnsweringSystem → SentencePolarity
   | .truthBased    => .negative  -- "yes" = "he doesn't drink"
   | .polarityBased => .positive  -- "yes" = "he does drink"
 
@@ -113,9 +113,9 @@ structure AnswerParticle where
   /-- Citation form. -/
   form : String
   /-- The polarity value assigned to [±Pol]. -/
-  assigns : Polarity
+  assigns : SentencePolarity
   /-- Polarities of antecedent context the particle can respond to. -/
-  respondsTo : List Polarity
+  respondsTo : List SentencePolarity
   deriving DecidableEq, Repr
 
 /-- A polarity-reversing particle assigns [+Pol] while responding only
@@ -274,4 +274,4 @@ theorem NegationHeight.predictedSystem_eq_truthBased_iff {W : Type*} [Nonempty W
     rw [PolP.answer_high rfl]
     simp [ha, Set.compl_empty, Set.empty_ne_univ]
 
-end Features
+end Question

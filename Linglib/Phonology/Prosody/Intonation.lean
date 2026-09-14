@@ -1,7 +1,7 @@
 import Mathlib.Order.Nat
 
 /-!
-# Features.Prosody
+# Prosody
 [pierrehumbert-1980] [beckman-pierrehumbert-1986]
 
 Theory-neutral prosodic types: pitch accents, phrase accents, boundary
@@ -22,7 +22,7 @@ These types are used across multiple theories:
 
 -/
 
-namespace Features.Prosody
+namespace Prosody
 
 -- ============================================================================
 -- § 1: Pitch Accents
@@ -281,4 +281,4 @@ theorem AffixAccentType.dominant_overrides_root :
 theorem AffixAccentType.deaccenting_is_dominant :
     AffixAccentType.deaccenting.toProsodicDominance = .dominant := rfl
 
-end Features.Prosody
+end Prosody

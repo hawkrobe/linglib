@@ -131,7 +131,7 @@ structure Row where
   cls : VerbClass
   obj : Object
   adverbial : Adverbial
-  judgment : Features.Judgment
+  judgment : Data.Examples.Judgment
   deriving DecidableEq, Repr
 
 /-- The telicity the classification assigns: telic verbs form telic predicates

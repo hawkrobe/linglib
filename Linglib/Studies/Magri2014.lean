@@ -48,7 +48,6 @@ indefinite triggers its implicature is described in prose.
 
 namespace Magri2014
 
-open Features (Polarity)
 
 /--
 The three items in a double-strengthening configuration.
@@ -407,7 +406,7 @@ In the **dual** theory (conjunction):
 - UE: MYSTERY reveals STRONG (conjunctive) directly
 - DE: double strengthening yields WEAK (disjunctive)
 -/
-def effectiveInterpretation (variant : TheoryVariant) (pol : Polarity) : Role :=
+def effectiveInterpretation (variant : TheoryVariant) (pol : SentencePolarity) : Role :=
   match variant, pol with
   | .primal, .positive => .strong   -- strengthened to universal
   | .primal, .negative => .weak     -- reveals existential
@@ -868,7 +867,7 @@ section UniformStrengthening
 /-- The effective meaning of MYSTERY in each polarity, parameterized
     by theory variant. Both variants produce the same result:
     STRONG (= ALL) in UE, WEAK (= SOME) in DE. -/
-def uniformResult (v : TheoryVariant) (pol : Polarity) : Scenario → Bool :=
+def uniformResult (v : TheoryVariant) (pol : SentencePolarity) : Scenario → Bool :=
   match v, pol with
   | .primal, .positive => allMeaning    -- double-strengthened
   | .primal, .negative => someMeaning   -- revealed
@@ -877,7 +876,7 @@ def uniformResult (v : TheoryVariant) (pol : Polarity) : Scenario → Bool :=
 
 /-- Primal and dual give the same effective meaning in both polarities. -/
 theorem uniform_primal_dual_agree :
-    ∀ (pol : Polarity), uniformResult .primal pol = uniformResult .dual pol := by
+    ∀ (pol : SentencePolarity), uniformResult .primal pol = uniformResult .dual pol := by
   intro pol; cases pol <;> rfl
 
 /-- The primal UE result matches `double_strengthening_yields_universal`. -/

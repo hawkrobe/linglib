@@ -22,7 +22,7 @@ segment of the scale. The subhierarchies' derivation by harmonic alignment
 (the paper's §§2–3) is taken as given; the constraint lists below are written
 directly in their derived ranking.
 
-Language grids (`Features.Prominence.MarkingPattern`) record *obligatory*
+Language grids (`Reference.Prominence.MarkingPattern`) record *obligatory*
 marking — the zone whose constraints strictly dominate \*STRUC_C. The paper's
 optional zones (constraints that rerank with \*STRUC_C, stochastically in
 Boersma's sense) are noted in docstrings but not represented.
@@ -44,7 +44,7 @@ Boersma's sense) are noted in docstrings but not represented.
 
 namespace Aissen2003
 
-open Features.Prominence
+open Reference.Prominence
 open Constraints OptimalityTheory
 
 /-! ### The DOM systems of the paper

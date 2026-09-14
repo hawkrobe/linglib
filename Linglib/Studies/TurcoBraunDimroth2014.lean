@@ -63,7 +63,6 @@ open Swedish.AnswerParticles (joMarking)
 open English.PolarityMarking (emphaticDo)
 open Spanish.PolarityMarking (siQue)
 open Italian.PolarityMarking (siChe)
-open Features (Polarity)
 
 /-! ## Polarity-marking levels (p. 104, following Blühdorn 2012)
 
@@ -99,7 +98,7 @@ structure SentenceStructure (W : Type*) where
   /-- Polarity-neutral propositional content -/
   radical : W → Bool
   /-- The polarity value [±Pol] -/
-  pol : Polarity
+  pol : SentencePolarity
   /-- Which structural level is overtly marked, if any -/
   marking : Option PolarityMarkingLevel := none
 
@@ -112,7 +111,7 @@ def SentenceStructure.eval (s : SentenceStructure W) : W → Bool :=
 /-- Assertion-level marking (VF) is compatible with either polarity;
 polarity-level marking (particles) requires `[+Pol]` — the particle IS
 the polarity operator. -/
-def PolarityMarkingLevel.compatibleWith : PolarityMarkingLevel → Polarity → Bool
+def PolarityMarkingLevel.compatibleWith : PolarityMarkingLevel → SentencePolarity → Bool
   | .assertion, _         => true
   | .polarity,  .positive => true
   | .polarity,  .negative => false

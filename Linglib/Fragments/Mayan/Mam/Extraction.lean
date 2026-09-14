@@ -33,7 +33,7 @@ inductive Site
 
 /-- The two marked cells: subject extraction antipassivizes the verb, oblique extraction places
 =(y)a' on a Voice or directional head; core-object extraction is unmarked. -/
-def realize : ExtractionTarget → List (Features.Reflex Site)
+def realize : ExtractionTarget → List (Reflex Site)
   | .subject => [.morpheme .verb]
   | .oblique => [.morpheme .voiceHead]
   | _ => []
@@ -44,7 +44,7 @@ def strategy : ExtractionMarkingStrategy := .dedicatedMorpheme
 theorem marks_oblique : Marked realize .oblique := by decide
 
 /-- =(y)a' tracks obliques, not subjects: no voice-head reflex under subject extraction. -/
-theorem eqya_not_on_subject : Features.Reflex.morpheme Site.voiceHead ∉ realize .subject := by
+theorem eqya_not_on_subject : Reflex.morpheme Site.voiceHead ∉ realize .subject := by
   decide
 
 end Mam.Extraction

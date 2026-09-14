@@ -44,7 +44,7 @@ inductive SelectionClass where
   deriving DecidableEq, Repr, Fintype
 
 /-- The largest layer a class selects. -/
-def SelectionClass.layer : SelectionClass → Option Features.QParticleLayer
+def SelectionClass.layer : SelectionClass → Option Question.QParticleLayer
   | .uninterrogative => none
   | .rogativeCP => some .cp
   | .rogativePerspP => some .perspP

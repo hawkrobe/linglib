@@ -53,7 +53,7 @@ structure TemporalMarker where
   /-- `.formal` for *telah*, "almost entirely confined to writing and very
       formal speech"; `.neutral` for the rest, which [sneddon-1996] leaves
       unrestricted (§2.144). -/
-  register : Features.Register.Level
+  register : SocialMeaning.Register.Level
   /-- `some b`: §§2.143–51 states or illustrates that the marker does
       (`true`) or does not (`false`) occur with non-verbal predicates;
       `none`: not addressed there. -/

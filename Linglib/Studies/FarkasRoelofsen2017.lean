@@ -309,7 +309,7 @@ instance (f : Form) (s : Situation) : Decidable (Felicitous f s) := by
 structure Row where
   form : Form
   situation : Situation
-  judgment : Features.Judgment
+  judgment : Data.Examples.Judgment
   deriving DecidableEq, Repr
 
 def formTable : List (String × Form) :=

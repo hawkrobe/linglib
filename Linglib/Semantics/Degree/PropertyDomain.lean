@@ -13,10 +13,10 @@ These channels, together with `size`, are the dimensions parameterised by the
 RSA reference-production studies; the remaining domains are inventoried for
 typological completeness.
 
-`PropertyDomain` is the codomain of `Features.ScalarDimension.domain`.
+`PropertyDomain` is the codomain of `Degree.ScalarDimension.domain`.
 -/
 
-namespace Features
+namespace Degree
 
 /-- Broad perceptual/cognitive domain that a gradable dimension belongs to.
     `color`, `size`, `material`, and `orientation` are the perceptually
@@ -33,4 +33,4 @@ inductive PropertyDomain where
   | state
   deriving Repr, DecidableEq, Inhabited, Fintype
 
-end Features
+end Degree

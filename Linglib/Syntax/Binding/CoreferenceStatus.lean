@@ -1,5 +1,5 @@
 /-!
-# Features.CoreferenceStatus
+# Binding.CoreferenceStatus
 
 Cross-framework coreference verdict enum. Syntactic frameworks (HPSG,
 Dependency Grammar, Minimalism) each provide a
@@ -8,7 +8,7 @@ return type is what makes their predictions comparable rather than each
 framework's verdict living in a private namespace.
 -/
 
-namespace Features
+namespace Binding
 
 /-- The possible coreference relationships between two positions. -/
 inductive CoreferenceStatus where
@@ -49,26 +49,26 @@ language-neutral source), a lexical declaration (`Pronoun.bindingClass`), a stru
 over the source: it takes a `BindingSource` and stays agnostic to where the class came from. -/
 abbrev BindingSource (α : Type _) := α → Option BindingClass
 
-end Features
+end Binding
 
 /-! ### The `Bound` capability: total binding class on a carrier
 
 The typeclass face of the binding-class axis, beside its partial companion
-`Features.BindingSource`. The *class* is theory-neutral and lives here; each carrier's
+`Binding.BindingSource`. The *class* is theory-neutral and lives here; each carrier's
 *instance* lives with the carrier (`Pronoun` in `Syntax/Category/Pronoun/Capabilities.lean`,
 Italian clitics and Turkish anaphors in their Fragments). -/
 
-/-- A carrier whose every element carries a (total) `Features.BindingClass` — its Principle A/B/C
-role. The typed companion to `Features.BindingSource` (`α → Option BindingClass`, the *partial*
+/-- A carrier whose every element carries a (total) `Binding.BindingClass` — its Principle A/B/C
+role. The typed companion to `Binding.BindingSource` (`α → Option BindingClass`, the *partial*
 source the framework-neutral binding engine consumes): `Bound` is the case where the kind fixes the
 class for the whole carrier. -/
 class Bound (α : Type _) where
   /-- The Principle A anaphor / B pronominal / C R-expression class. -/
-  bindingClass : α → Features.BindingClass
+  bindingClass : α → Binding.BindingClass
 
-/-- A `[Bound α]` carrier's `Features.BindingSource` — the canonical mixin → source bridge:
+/-- A `[Bound α]` carrier's `Binding.BindingSource` — the canonical mixin → source bridge:
 every element classifies, so the source is total (`some` everywhere). -/
-def Bound.source {α : Type _} [Bound α] : Features.BindingSource α :=
+def Bound.source {α : Type _} [Bound α] : Binding.BindingSource α :=
   fun a => some (Bound.bindingClass a)
 
 /-- Principle-A carrier: every element is an anaphor (reflexive or reciprocal). -/

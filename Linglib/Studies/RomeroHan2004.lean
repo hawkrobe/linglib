@@ -163,7 +163,7 @@ structure Datum where
   bias : Option OriginalBias
   form : Option Form
   item : Option Polarity.Item
-  judgment : Features.Judgment
+  judgment : Data.Examples.Judgment
 
 /-- An example read into its datum. -/
 def datum (e : LinguisticExample) : Datum where

@@ -21,7 +21,7 @@ intersubjectification.
   subjectified speaker).
 -/
 
-namespace Features.Subjectivity
+namespace Modality
 
 open Epistemicity
 
@@ -87,4 +87,4 @@ inductive Performativity where
   | descriptive    -- utterance describes an existing state (assessment, report)
   deriving DecidableEq, Repr, Inhabited
 
-end Features.Subjectivity
+end Modality

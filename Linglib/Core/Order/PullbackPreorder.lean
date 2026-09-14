@@ -26,7 +26,7 @@ several constructions in linglib:
 - `Modality.Kratzer.kratzerPreorder` — the projection is the
   satisfied proposition set, same shape as `SatisfactionOrdering`.
 - `BundleLike.subsumptionPreorder` — the projection is a feature
-  bundle's valuation, the target is `Features.Bundle` with subsumption.
+  bundle's valuation, the target is `Bundle` with subsumption.
 
 ## The reusable theorem
 

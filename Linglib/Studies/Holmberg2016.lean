@@ -26,7 +26,7 @@ answered like neutral questions (`high_answers_like_neutral`).
 
 ## Implementation notes
 
-* The valuation mechanism is the substrate `Features.PolP.answer`; the study instantiates it
+* The valuation mechanism is the substrate `Question.PolP.answer`; the study instantiates it
   with the particles of the fragments and the negation heights the book assigns to each
   construction. The book's Table 4.2 of reversing particles and the global survey of Section
   4.2 are not encoded.
@@ -40,7 +40,7 @@ answered like neutral questions (`high_answers_like_neutral`).
 
 namespace Holmberg2016
 
-open Features Question
+open Question
 
 variable {W : Type*}
 

@@ -53,7 +53,7 @@ tables.
 namespace Chomsky1981
 
 
-open Features.MinimalPairs
+open Processing.MinimalPairs
 open Minimalist SyntacticObject
 open Binding (SimpleClause Pos CommandRelation)
 

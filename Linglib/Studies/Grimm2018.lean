@@ -286,7 +286,7 @@ instance : LinearOrder AnimacyTier :=
   .lift' AnimacyTier.toNat (λ a b h => by cases a <;> cases b <;> simp_all [AnimacyTier.toNat])
 
 /-- The tiers within the library's animacy ranks. -/
-def AnimacyTier.toRank : AnimacyTier → Features.Prominence.AnimacyRank
+def AnimacyTier.toRank : AnimacyTier → Reference.Prominence.AnimacyRank
   | .inanimate => .discreteInanimate
   | .lowerAnimate => .lowerAnimal
   | .higherAnimate => .higherAnimal

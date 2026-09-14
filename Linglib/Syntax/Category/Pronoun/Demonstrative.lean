@@ -10,7 +10,7 @@ open Morphology (Word)
 [patel-grosz-grosz-2017] [moroney-2021]
 
 The *deictic* demonstrative pronoun (*this*/*that*, German *dieser*, Japanese *kore/sore/are*):
-`DemonstrativePronoun` `extends` the general `Pronoun` with a `Features.Deixis.Feature` — the
+`DemonstrativePronoun` `extends` the general `Pronoun` with a `Reference.Deixis` — the
 spatial contrast (proximal/medial/distal) that makes it a demonstrative. One carrier of the
 word-class-neutral `Demonstrative` capability; an adnominal demonstrative determiner (*this* book)
 or pro-adverb (*here*) would be sibling carriers.
@@ -31,14 +31,14 @@ assignment keeps them apart by construction.
 -/
 
 /-- A deictic demonstrative pronoun: the general `Pronoun` (form + φ) plus the
-    `Features.Deixis.Feature` it encodes — its proximal/medial/distal contrast (or `unspecified`
+    `Reference.Deixis` it encodes — its proximal/medial/distal contrast (or `unspecified`
     for a distance-neutral demonstrative like German *dieser*). Carries no separate denotation here;
     its meaning is the deictic `Definiteness.Description.demonstrative` over its restrictor. -/
 structure DemonstrativePronoun extends Pronoun where
   /-- Demonstratives are UD `PronType=Dem`; the *type* fixes the morphology. -/
   pronType := some UD.PronType.Dem
   /-- The deictic feature (proximal/medial/distal, or `unspecified`). -/
-  deixis : Features.Deixis.Feature
+  deixis : Reference.Deixis
   deriving Repr, DecidableEq
 
 /-- A demonstrative pronoun bears φ via its `Pronoun` core. -/

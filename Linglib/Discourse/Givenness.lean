@@ -31,7 +31,7 @@ canonical scalar scale and is small enough for `decide`. See also
 [prince-1981], [chafe-1976], [chafe-1987].
 -/
 
-namespace Features
+namespace Discourse
 
 /-- [gundel-hedberg-zacharski-1993] six-tier Givenness Hierarchy
     (`inFocus > … > typeIdentifiable`), each status entailing all lower. -/
@@ -91,4 +91,4 @@ theorem GivennessStatus.toBinary_monotone (a b : GivennessStatus) :
     a.rank ≤ b.rank → a.toBinary.rank ≤ b.toBinary.rank := by
   cases a <;> cases b <;> decide
 
-end Features
+end Discourse

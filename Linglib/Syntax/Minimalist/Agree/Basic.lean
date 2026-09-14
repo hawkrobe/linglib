@@ -68,7 +68,7 @@ theorem validAgree_irrefl (feats : LIToken → FeatureBundle) (root s : Syntacti
   rintro ⟨-, hu, hv⟩
   cases h : headBundle feats s t <;>
     simp [FeatureBundle.hasUnvaluedFeature, FeatureBundle.hasValuedFeature,
-      Features.FeatureSlot.isUnvalued, Features.FeatureSlot.isValued, h] at hu hv
+      Minimalist.FeatureSlot.isUnvalued, Minimalist.FeatureSlot.isValued, h] at hu hv
 
 /-! ### Locality: closest goal
 

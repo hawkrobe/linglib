@@ -60,7 +60,7 @@ open Reference
 open Presupposition
 open French.Predicates
 open ArgumentStructure
-open Features
+
 open Aspect
 open Minimalist Minimalist.Voice
 

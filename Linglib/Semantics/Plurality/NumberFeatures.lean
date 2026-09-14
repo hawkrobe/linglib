@@ -53,7 +53,7 @@ where the atoms are the singletons.
 
 namespace Number
 
-open _root_.Features (ContainmentPair ContainmentPairLike)
+open Agreement (ContainmentPair ContainmentPairLike)
 open Mereology (Atom CUM atomize)
 
 /-! ### The feature bundle -/

@@ -91,7 +91,7 @@ def allocutiveMarkers : List AllocutiveEntry := [suffNH, suffH, suffHH]
 
 /-- The fused subject/addressee agreement suffix by the subject's and the
     addressee's honorific level; `none` where no form is attested. -/
-def allocutive : Features.Register.Level → Features.Register.Level → Option String
+def allocutive : SocialMeaning.Register.Level → SocialMeaning.Register.Level → Option String
   | .informal, .informal => some "-au"
   | .informal, .neutral => some "-o"
   | .informal, .formal => some "-ain"

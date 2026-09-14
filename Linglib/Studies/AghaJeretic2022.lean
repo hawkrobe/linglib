@@ -56,7 +56,6 @@ open Trivalent (Prop3 dist dist_eq_true_iff dist_eq_false_iff dist_eq_indet_iff
   dist_not_of_nonempty)
 open Homogeneity Quantification Data.Examples
 open Generalizations.HomogeneityGap (GapDatum GapScenario fromExample)
-open Features (Polarity)
 
 variable {W : Type*} (D : W → Finset W) (p : W → Prop) [DecidablePred p]
 
@@ -224,14 +223,14 @@ def scenarioDomain : GapScenario → Finset Bool
   | .gap => {true, false}
 
 /-- The plural semantics' value at a cell: negative polarity predicates the negated prejacent. -/
-def shouldPredict (pol : Polarity) (s : GapScenario) : Trivalent :=
+def shouldPredict (pol : SentencePolarity) (s : GapScenario) : Trivalent :=
   match pol with
   | .positive => should (fun _ => scenarioDomain s) (· = true) true
   | .negative => should (fun _ => scenarioDomain s) (· = false) true
 
 /-- Domain restriction's value at a cell: universal quantification, negated by Strong Kleene
 negation. -/
-def domainRestrictionPredict (pol : Polarity) (s : GapScenario) : Trivalent :=
+def domainRestrictionPredict (pol : SentencePolarity) (s : GapScenario) : Trivalent :=
   match pol with
   | .positive => must (fun _ => scenarioDomain s) (· = true) true
   | .negative => (must (fun _ => scenarioDomain s) (· = true) true).neg

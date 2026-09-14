@@ -58,7 +58,7 @@ inductive Site where
 
 /-- Only the pivot, the subject, extracts, and the voice form on the verb says which argument
 that is. -/
-def realize : ExtractionTarget → List (Features.Reflex Site)
+def realize : ExtractionTarget → List (Reflex Site)
   | .subject => [.morpheme .verb]
   | _ => []
 

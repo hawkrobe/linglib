@@ -110,7 +110,7 @@ Pairs live inside one numbered example: the felicitous `primaryText` (strategy `
 plus the infelicitous `alternatives` entry (realizing `m.other`). -/
 
 /-- Felicitous when fully acceptable. -/
-def IsFelicitous (j : Features.Judgment) : Prop := j = .acceptable
+def IsFelicitous (j : Data.Examples.Judgment) : Prop := j = .acceptable
 
 /-- Parse the `strategy` tag. -/
 def ofStrategyTag? : String → Option MarkingStrategy

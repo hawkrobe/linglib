@@ -51,7 +51,7 @@ non-control complements under 'intend' altogether are recorded as rows without a
 
 namespace Grano2024
 
-open Data.Examples Features Mood
+open Data.Examples Mood
 
 /-! ### The pool -/
 

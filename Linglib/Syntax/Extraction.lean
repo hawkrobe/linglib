@@ -102,11 +102,11 @@ inductive Extractee where
 /-! ### Extraction marking as morphological reflexes
 
 A language's extraction marking is the overt morphosyntactic *response* to
-extraction from each target position, as `Features.Reflex` lists — the
+extraction from each target position, as `Reflex` lists — the
 movement itself is not a reflex ([branan-erlewine-2023]). Per-language data
 are a nested `Lang.Extraction` namespace with a host type `Site` and
 
-    realize : ExtractionTarget → List (Features.Reflex Site)
+    realize : ExtractionTarget → List (Reflex Site)
 
 (`Site := Empty` for languages that mark nothing). Languages with several
 markers place them at their cells — K'iche' AF at `.subject` and *wi* at
@@ -119,12 +119,12 @@ resolving. -/
 
 /-- Does the language overtly mark extraction from a given target? The
 shared overtness predicate of `Syntax/Reflex.lean`. -/
-def Marked {C : Type*} (realize : ExtractionTarget → List (Features.Reflex C))
+def Marked {C : Type*} (realize : ExtractionTarget → List (Reflex C))
     (t : ExtractionTarget) : Prop :=
-  Features.Reflex.Overt (realize t)
+  Reflex.Overt (realize t)
 
-instance {C : Type*} (realize : ExtractionTarget → List (Features.Reflex C))
+instance {C : Type*} (realize : ExtractionTarget → List (Reflex C))
     (t : ExtractionTarget) : Decidable (Marked realize t) :=
-  inferInstanceAs (Decidable (Features.Reflex.Overt _))
+  inferInstanceAs (Decidable (Reflex.Overt _))
 
 end Extraction

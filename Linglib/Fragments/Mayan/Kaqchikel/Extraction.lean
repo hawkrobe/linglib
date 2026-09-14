@@ -44,7 +44,7 @@ inductive Site where
 /-- Transitive-subject extraction switches the verb to AF (the suffix
     *-ö* or *-n*, with Set A suppressed, [erlewine-2016]); nothing else
     is marked. -/
-def realize : ExtractionTarget → List (Features.Reflex Site)
+def realize : ExtractionTarget → List (Reflex Site)
   | .subject => [.morpheme .verb]
   | _ => []
 

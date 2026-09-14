@@ -32,7 +32,7 @@ This maps directly to `PartialProp` from `Presupposition`:
 
 import Linglib.Semantics.Presupposition.Basic
 
-namespace Features.ChangeOfState
+namespace Aspect.ChangeOfState
 
 open Presupposition
 
@@ -316,4 +316,4 @@ compositional semantics. The `cosSemantics` function provides the
 grounding for downstream pragmatic reasoning.
 -/
 
-end Features.ChangeOfState
+end Aspect.ChangeOfState

@@ -40,7 +40,7 @@ respondent counts and mean scores.
 namespace OsborneLi2023
 
 open DependencyGrammar Data.Examples
-open Features (Judgment)
+open Data.Examples (Judgment)
 open Morphology (Word)
 
 /-! ### Conjunct and full valents -/

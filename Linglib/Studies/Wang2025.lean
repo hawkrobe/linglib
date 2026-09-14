@@ -66,7 +66,7 @@ The epistemic operator K (speaker's beliefs) interacts with exhaustification:
 
 namespace Wang2025
 
-open Features (Acceptability)
+open Data.Examples (Acceptability)
 open Mandarin.Particles (MandarinTrigger)
 
 /-- Context condition for presupposition support. -/
@@ -83,7 +83,7 @@ structure Exp1Datum where
   /-- Mean naturalness rating (1-7 Likert scale, ×10 for rational representation) -/
   meanRating : ℚ
   /-- Observed felicity judgment, encoded as a standard acceptability diacritic
-      (`Features.Acceptability`): `.ok` = felicitous, `.marginal` = borderline `?`,
+      (`Data.Examples.Acceptability`): `.ok` = felicitous, `.marginal` = borderline `?`,
       `.anomalous` = pragmatically odd `#`. -/
   felicity : Acceptability
   deriving Repr

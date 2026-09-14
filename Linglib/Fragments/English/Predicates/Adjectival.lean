@@ -17,7 +17,7 @@ namespace English.Predicates.Adjectival
 open Degree (AntonymRelation GradableAdjective)
 open Degree (Boundedness)
 open Degree (EvaluativeValence)
-open Features (NegationType)
+open Degree (AntonymRelation)
 
 
 /-- [kennedy-2007]

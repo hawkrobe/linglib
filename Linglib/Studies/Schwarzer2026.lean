@@ -45,7 +45,7 @@ notes that the latter is thereby supported only indirectly.
 
 namespace Schwarzer2026
 
-open Features WordOrder BrueningAlKhalaf2020
+open WordOrder BrueningAlKhalaf2020
 
 /-- The position of a coordinated complement relative to the finite verb in a German root
 declarative: the verb in second position precedes its complements, the configuration of (17). -/

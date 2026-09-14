@@ -100,7 +100,6 @@ denotations, and the polarity flip.
 
 namespace Degree
 
-open Features (NegationType Asymmetry)
 
 -- ============================================================================
 -- § 1. The Four Surface Forms

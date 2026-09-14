@@ -38,7 +38,7 @@ namespace English.Auxiliaries
 
 section Modals
 open Modality (ForceFlavor ModalForce ModalFlavor ModalInterpretability ModalFeature)
-open Features.Register (Level)
+open SocialMeaning.Register (Level)
 
 /-- Agreement features of a finite auxiliary. "Past" modals (*could*,
 *would*) carry `Past` as a morphological feature even where they are
@@ -208,7 +208,7 @@ end Modals
 
 section ModalAdverbs
 open Modality (ForceFlavor ModalForce ModalFlavor)
-open Features.Register (Level)
+open SocialMeaning.Register (Level)
 
 /-- Modal adverb entry: an adverb expressing modal force and flavor
     without auxiliary morphology.

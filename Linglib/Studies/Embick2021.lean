@@ -84,7 +84,7 @@ structure Row where
   spine : Spine Head
   rootClass : Option RootClass
   construction : Construction
-  judgment : Features.Judgment
+  judgment : Data.Examples.Judgment
   deriving Repr
 
 /-- The heads as named in the rows. -/

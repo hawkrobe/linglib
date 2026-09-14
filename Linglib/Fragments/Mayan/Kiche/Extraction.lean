@@ -28,7 +28,7 @@ inductive Site
 
 /-- The two marked cells: subject extraction takes Agent Focus, oblique extraction adds *wi*;
 core-object extraction is unmarked. -/
-def realize : ExtractionTarget → List (Features.Reflex Site)
+def realize : ExtractionTarget → List (Reflex Site)
   | .subject => [.morpheme .verb]
   | .oblique => [.morpheme .verb]
   | _ => []

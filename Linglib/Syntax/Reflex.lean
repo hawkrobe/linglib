@@ -18,7 +18,7 @@ movement ([mccloskey-2002], [georgi-2017]). A `Marking` pairs the target
 with its list of `Reflex`es, each a marking `Modality` at a host
 constituent; the modalities classify by `Channel` — the literature's
 phonological vs morphological vs syntactic reflex cut — with the process
-supplying the unity. Like `Features.Judgment` for acceptability, this is
+supplying the unity. Like `Data.Examples.Judgment` for acceptability, this is
 a prediction-target vocabulary: theories never consume it as machinery;
 studies translate theory-native predictions into it.
 
@@ -45,20 +45,19 @@ vacuous over orders with a bottom, so that member must use `¬ Disjoint`
 or bot-free carriers.
 -/
 
-namespace Features
 
 variable {C : Type*}
 
 /-- The channel of a reflex: the literature's phonological vs
 morphological vs syntactic reflex cut (reflexes of one process are
 individuated by the module whose output carries the trace). -/
-inductive Channel where
+inductive Reflex.Channel where
   | phonological | morphological | syntactic
   deriving DecidableEq, Repr, Fintype
 
 /-- A marking modality: the kind of perceptible perturbation. The two
 prosodic cases keep the demarcative vs culminative cut visible. -/
-inductive Modality where
+inductive Reflex.Modality where
   /-- Syntactic: an exponent constituent surfaces displaced from its
   base position (movement that is not string-vacuous). -/
   | displacement
@@ -74,7 +73,7 @@ inductive Modality where
   deriving DecidableEq, Repr, Fintype
 
 /-- The channel a modality marks in. -/
-def Modality.channel : Modality → Channel
+def Reflex.Modality.channel : Reflex.Modality → Reflex.Channel
   | .displacement => .syntactic
   | .morpheme     => .morphological
   | .boundary     => .phonological
@@ -82,7 +81,7 @@ def Modality.channel : Modality → Channel
 
 /-- A single overt reflex: a marking modality at a host constituent. -/
 structure Reflex (C : Type*) where
-  modality : Modality
+  modality : Reflex.Modality
   host     : C
   deriving DecidableEq, Repr
 
@@ -108,6 +107,7 @@ instance (rs : List (Reflex C)) : Decidable (Overt rs) :=
 
 end Reflex
 
+namespace Reflex
 /-- A marking: the designated target constituent and the grammatical
 reflexes marking it. -/
 structure Marking (C : Type*) where
@@ -143,7 +143,7 @@ variable [PartialOrder C] [DecidableEq C] [DecidableLT C] {m : Marking C}
 
 /-- Classify a reflex host's position relative to a target. Total by
 construction: the four `HostRelation` cells partition the possibilities. -/
-def Reflex.relationTo (ρ : Reflex C) (t : C) : HostRelation :=
+def relationTo (ρ : Reflex C) (t : C) : HostRelation :=
   if ρ.host = t then .exact
   else if t < ρ.host then .piedPiping
   else if ρ.host < t then .antiPiedPiping
@@ -194,4 +194,4 @@ and Tangale focus each refute their instance ([hartmann-zimmermann-2004],
 def EveryTargetOvert {I : Type*} (realize : I → Marking C) : Prop :=
   ∀ i, (realize i).IsOvert
 
-end Features
+end Reflex

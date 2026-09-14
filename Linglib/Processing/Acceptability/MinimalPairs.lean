@@ -24,14 +24,14 @@ Two parallel families:
   are raw strings, parseable by any theory. Used by data files that
   should remain free of theoretical commitments.
 
-Judgments use the five-level `Features.Judgment` scale
+Judgments use the five-level `Data.Examples.Judgment` scale
 (`Linglib/Data/Examples/Judgment.lean`).
 -/
 
-namespace Features.MinimalPairs
+namespace Processing.MinimalPairs
 
 
-open Features
+open Data.Examples Processing.MinimalPairs
 
 
 /-! ### Word-based -/
@@ -121,4 +121,4 @@ structure StringPhenomenonData where
   generalization : String
   deriving Repr
 
-end Features.MinimalPairs
+end Processing.MinimalPairs

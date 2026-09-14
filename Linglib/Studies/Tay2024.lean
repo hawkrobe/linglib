@@ -52,7 +52,7 @@ open Reference
 
 open Causation.Resultatives
 open Morphology
-open Features.ChangeOfState (CoSType priorStatePresup)
+open Aspect.ChangeOfState (CoSType priorStatePresup)
 open Mandarin.Resultatives
 
 -- ════════════════════════════════════════════════════

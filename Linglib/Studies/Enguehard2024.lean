@@ -271,7 +271,7 @@ judgment. -/
 structure ContinuationRow where
   antecedent : Number
   pronoun : Pronoun
-  judgment : Features.Judgment
+  judgment : Data.Examples.Judgment
   deriving DecidableEq, Repr
 
 /-- A row from an example. -/

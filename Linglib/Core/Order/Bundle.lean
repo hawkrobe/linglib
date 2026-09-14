@@ -6,7 +6,7 @@ import Linglib.Core.Order.PullbackPreorder
 # Feature bundles
 
 The representation-polymorphic interface for feature bundles, and the
-canonical extensional representation `Features.Bundle`.
+canonical extensional representation `Bundle`.
 
 A feature bundle assigns values to features. Theories disagree about
 what a bundle *is* — a list of valued features, a finite set, a partial
@@ -46,7 +46,7 @@ theory is proved once at the Pi level and inherited by every choice of
 * `BundleLike.Specifies`, `BundleLike.Subsumes` — the derived API;
   `Subsumes` is the subsumption order of the unification-grammar
   tradition ([shieber-1986])
-* `Features.Bundle F V` — the canonical extensional carrier, a partial
+* `Bundle F V` — the canonical extensional carrier, a partial
   assignment `(t : F) → Option (V t)`, carrying the subsumption
   `PartialOrder` with `⊥` the everywhere-underspecified bundle
 * `BundleLike.subsumptionPreorder` — any representation pulls the
@@ -54,7 +54,7 @@ theory is proved once at the Pi level and inherited by every choice of
 
 ## Implementation notes
 
-`Features.Bundle` is an `abbrev` over the Pi type of `Flat` slots
+`Bundle` is an `abbrev` over the Pi type of `Flat` slots
 (`Core/Order/Flat.lean`): the reducibility barrier sits at `Flat`, so
 the subsumption order does not leak onto bare `Option`-valued Pi types,
 while mathlib's Pi instances supply the whole order stack — the
@@ -63,7 +63,7 @@ underspecified), `SemilatticeInf` (generalization/anti-unification),
 and the partial join `PartialUnify` (unification). This is the bounded
 complete partial order of the unification tradition ([carpenter-1992]
 Definition 2.1; "a finite BCPO is nothing more nor less than a finite
-meet semilattice", presented through its joins). `Features.Bundle` is
+meet semilattice", presented through its joins). `Bundle` is
 unrelated to mathlib's fiber-bundle `Bundle` namespace; qualify when
 both are in scope.
 
@@ -72,7 +72,7 @@ Instances live with their carriers, not here: this file imports only
 `BundleLike` in its own file.
 
 The phonological carrier uses `Bundle` directly: `Phonology.Segment`'s `spec`
-field is `Features.Bundle Feature (fun _ => Bool)` (in unfolded `Feature →
+field is `Bundle Feature (fun _ => Bool)` (in unfolded `Feature →
 Option Bool` form), with the shared `merge`/`set`/`delete` algebra below.
 
 ## Todo
@@ -176,7 +176,6 @@ end Order
 
 end BundleLike
 
-namespace Features
 
 /-- The canonical extensional feature bundle: a partial assignment of
 values to features, as a Pi type of `Flat` slots. Underspecification is
@@ -274,7 +273,6 @@ def assimilate [DecidableEq F] (t : F) (src tgt : Bundle F V) : Bundle F V :=
 
 end Bundle
 
-end Features
 
 namespace BundleLike
 
