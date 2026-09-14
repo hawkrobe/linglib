@@ -1,488 +1,214 @@
+import Linglib.Pragmatics.RSA.Basic
 import Linglib.Fragments.English.Determiners
-import Linglib.Semantics.Quantification.Lexicon
-import Linglib.Semantics.Quantification.Prototype
-import Mathlib.Data.Rat.Defs
+import Linglib.Data.Examples.VanTielEtAl2021
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Probability.Kernel.Composition.Comp
 
 /-!
-# [van-tiel-franke-sauerland-2021]
+# van Tiel, Franke and Sauerland (2021): Probabilistic Pragmatics Explains Gradience and Focality in Natural Language Quantification
 
-"Probabilistic pragmatics explains gradience and focality in natural language quantification"
-PNAS 118(9): e2005453118
+This file formalizes the speaker models of [van-tiel-franke-sauerland-2021], which test two
+semantic theories of quantity words against production data, the frame *— of the circles are
+red* over displays of 432 circles. Production is gradient, without sharp boundaries, and focal,
+peaking inside the range where a word is true. Generalized quantifier theory, [barwise-cooper-1981],
+gives each word a threshold on the intersection set size, a lower bound for a monotone-increasing
+word and an upper bound for a monotone-decreasing one, `gq`; prototype theory gives it a degree of
+truth falling off with the distance from a prototype, `pt`. A literal speaker produces a word in
+proportion to its salience and its truth value, `speakerLit`, and a pragmatic speaker in
+proportion to its salience and the probability that a literal listener recovers the state from
+it, `listenerLit` and `speakerPrag`, both with imprecise number representation added by
+composing with a confusion kernel, `withConfusion`. The paper's finding is that the pragmatic
+model over the threshold semantics explains the data as well as the prototype models: a literal
+speaker never produces a false word, `speakerLit_apply_singleton_eq_zero`, and is indifferent
+among true words of equal salience, `speakerLit_real_eq_of_eq`, so its productions are step
+functions, whereas the pragmatic speaker prefers the true word with the smaller extension,
+`speakerPrag_real_lt_of_card_lt`, which is where focality comes from, and it lets words
+compete that stand in no entailment relation, *some* and *few*, `gq_no_entailment`. The
+prototype semantics is gradient by itself, `pt_lt_pt_of_abs_lt`.
 
-This paper compares two semantic theories of quantity words:
+## Implementation notes
 
-1. **GQT (Generalized Quantifier Theory)**: Binary threshold semantics
-   - Monotone increasing (some, most, all): t >= theta
-   - Monotone decreasing (few, none): t <= theta
+States are the intersection set sizes `Fin (n + 1)` and speakers are kernels from states to
+words built with `Kernel.ofWeights`, the normalizing step of the RSA pipeline; the literal
+listener has a uniform prior over states. Thresholds, prototypes, spreads and saliences are
+parameters, not the fitted posterior values, and the Weber-fraction confusion kernel of
+Experiment 3 is an arbitrary kernel on states. The monotonicity classification of Experiment 2,
+the model comparison of Table 1, and the adequacy ratings of Experiment 4 are reported in the
+paper and not formalized. The examples are the rows of `Data.Examples.VanTielEtAl2021`.
 
-2. **Prototype Theory (PT)**: Gradient Gaussian semantics
-   - L_PT(m, t) = exp(-((t - p_m) / d_m)^2)
+## References
 
-Combined with two speaker models:
-- **Literal (S0)**: P_Slit(m | t) proportional to Salience(m) * L(m, t)
-- **Pragmatic (S1)**: P_Sprag(m | t) proportional to Salience(m) * L_lit(t | m)^alpha
-
-## Experiments
-
-1. **Exp. 1a/1b**: Production study (600/200 participants)
-   - 432 circles (red/black), describe "— of the circles are red"
-   - Recorded which quantity words participants used
-
-2. **Exp. 2**: Monotonicity judgments (120 participants)
-   - Tested inference patterns to classify monotonicity
-
-3. **Exp. 3**: ANS estimation (20 participants)
-   - Estimated Weber's fraction w = 0.576
-
-4. **Exp. 4**: Model evaluation (200 participants)
-   - Rated adequacy of model-predicted quantity words
-
-## Main Result
-
-GQ-pragmatic model explains gradience as well as prototype-based models.
-Gradience emerges from pragmatic competition, not encoded in semantics.
-
-## Grounding
-
-Connects to `Semantics.Montague.Quantifiers` for threshold semantics.
+* [van-tiel-franke-sauerland-2021]
+* [barwise-cooper-1981]
+* [frank-goodman-2012]
+* [grice-1975]
+* [sauerland-2004]
 -/
 
 namespace VanTielEtAl2021
 
--- ============================================================================
--- Section I: Empirical Data
--- ============================================================================
+open MeasureTheory ProbabilityTheory
+open scoped ENNReal
 
--- Quantity Words Used in Experiments
+/-- The states: the intersection set sizes of a display of `n` circles. -/
+abbrev State (n : ℕ) := Fin (n + 1)
 
-/-- The 17 quantity words studied (in order from low to high intersection) -/
-inductive QuantityWord where
-  | none_         -- "none"
-  | hardlyAny     -- "hardly any"
-  | veryFew       -- "very few"
-  | aFew          -- "a few"
-  | few           -- "few"
-  | lessThanHalf  -- "less than half"
-  | some_         -- "some"
-  | several       -- "several"
-  | half          -- "half"
-  | aboutHalf     -- "about half"
-  | many          -- "many"
-  | moreThanHalf  -- "more than half"
-  | aLot          -- "a lot"
-  | majority      -- "majority"
-  | most          -- "most"
-  | almostAll     -- "almost all"
-  | all           -- "all"
-  deriving Repr, DecidableEq, Inhabited
+/-- The direction of a quantity word's threshold: a lower bound for a monotone-increasing word,
+an upper bound for a monotone-decreasing one. -/
+inductive Direction where
+  | increasing
+  | decreasing
+  deriving DecidableEq, Repr
 
-/-- All quantity words in experimental order -/
-def allQuantityWords : List QuantityWord :=
-  [.none_, .hardlyAny, .veryFew, .aFew, .few, .lessThanHalf, .some_, .several,
-   .half, .aboutHalf, .many, .moreThanHalf, .aLot, .majority, .most, .almostAll, .all]
+variable {n : ℕ} {M : Type*}
 
--- Monotonicity Classification (Exp. 2)
+/-- A lexical meaning function: the truth value of a word at a state. -/
+abbrev Lexicon (n : ℕ) (M : Type*) := M → State n → ℝ
 
-/-- Monotonicity determines threshold direction in GQT -/
-inductive Monotonicity where
-  | increasing  -- licenses inference from sets to supersets
-  | decreasing  -- licenses inference from sets to subsets
-  deriving Repr, DecidableEq
+/-- The generalized-quantifier lexicon: a word is true at the states on its side of its
+threshold. -/
+def gq (dir : M → Direction) (θ : M → ℕ) : Lexicon n M := λ m t =>
+  match dir m with
+  | .increasing => if θ m ≤ t.val then 1 else 0
+  | .decreasing => if t.val ≤ θ m then 1 else 0
 
-/-- Empirically determined monotonicity (from Exp. 2, Table in paper)
+/-- The prototype lexicon: the degree of truth falls off with the distance from the
+prototype `p`, scaled by the spread `d`. -/
+noncomputable def pt (p d : M → ℝ) : Lexicon n M := λ m t =>
+  Real.exp (-(((t.val : ℝ) - p m) / d m) ^ 2)
 
-Participants judged inference patterns:
-- Monotone increasing: "Q of the people P1 → Q of the people P2" valid when P1 ⊂ P2
-- Monotone decreasing: "Q of the people P2 → Q of the people P1" valid when P1 ⊂ P2
+theorem gq_eq_one_or_zero (dir : M → Direction) (θ : M → ℕ) (m : M) (t : State n) :
+    gq dir θ m t = 1 ∨ gq dir θ m t = 0 := by
+  unfold gq
+  split <;> split_ifs <;> simp
 
-Classification: clustered with "all" (increasing) or "none" (decreasing)
--/
-def monotonicity : QuantityWord → Monotonicity
-  | .none_         => .decreasing
-  | .hardlyAny     => .decreasing
-  | .veryFew       => .decreasing
-  | .aFew          => .increasing
-  | .few           => .decreasing
-  | .lessThanHalf  => .decreasing
-  | .some_         => .increasing
-  | .several       => .increasing
-  | .half          => .increasing
-  | .aboutHalf     => .increasing
-  | .many          => .increasing
-  | .moreThanHalf  => .increasing
-  | .aLot          => .increasing
-  | .majority      => .increasing
-  | .most          => .increasing
-  | .almostAll     => .increasing
-  | .all           => .increasing
+/-- *Some* and *few* stand in no entailment relation: with a lower bound for *some* and an upper
+bound for *few* inside the range, *few* is true and *some* false of an empty intersection, and
+the other way round of a full one. -/
+theorem gq_no_entailment (dir : M → Direction) (θ : M → ℕ) {m m' : M}
+    (hm : dir m = .increasing) (hθm : 1 ≤ θ m) (hθm' : θ m ≤ n) (hm' : dir m' = .decreasing)
+    (hθ : θ m' < n) :
+    gq dir θ m' (0 : State n) = 1 ∧ gq dir θ m (0 : State n) = 0 ∧
+      gq dir θ m (Fin.last n) = 1 ∧ gq dir θ m' (Fin.last n) = 0 := by
+  simp [gq, hm, hm', Fin.val_last]
+  omega
 
-/-- Decreasing quantifiers (from paper: "few," "hardly any," "less than half," "none," "very few") -/
-def decreasingQuantifiers : List QuantityWord :=
-  [.none_, .hardlyAny, .veryFew, .few, .lessThanHalf]
+theorem pt_pos (p d : M → ℝ) (m : M) (t : State n) : 0 < pt p d m t := Real.exp_pos _
 
-/-- Increasing quantifiers (all others) -/
-def increasingQuantifiers : List QuantityWord :=
-  allQuantityWords.filter (λ q => monotonicity q == .increasing)
+theorem pt_le_one (p d : M → ℝ) (m : M) (t : State n) : pt p d m t ≤ 1 :=
+  Real.exp_le_one_iff.2 (neg_nonpos.2 (sq_nonneg _))
 
--- Model Comparison Results (Table 1)
+/-- The prototype semantics is gradient by itself: a state closer to the prototype is truer. -/
+theorem pt_lt_pt_of_abs_lt (p d : M → ℝ) (m : M) {t t' : State n} (hd : 0 < d m)
+    (h : |(t.val : ℝ) - p m| < |(t'.val : ℝ) - p m|) : pt p d m t' < pt p d m t := by
+  unfold pt
+  rw [Real.exp_lt_exp, neg_lt_neg_iff, div_pow, div_pow]
+  refine div_lt_div_of_pos_right ?_ (pow_pos hd 2)
+  rw [← sq_abs ((t.val : ℝ) - p m), ← sq_abs ((t'.val : ℝ) - p m)]
+  exact pow_lt_pow_left₀ h (abs_nonneg _) two_ne_zero
 
-/-- The four models compared in the paper -/
-inductive Model where
-  | gqLit    -- GQT semantics + literal speaker
-  | ptLit    -- Prototype Theory semantics + literal speaker
-  | gqPrag   -- GQT semantics + pragmatic speaker
-  | ptPrag   -- Prototype Theory semantics + pragmatic speaker
-  deriving Repr, DecidableEq
+/-- The extension of a word: the states where it is true. -/
+noncomputable def extension (n : ℕ) (dir : M → Direction) (θ : M → ℕ) (m : M) :
+    Finset (State n) :=
+  Finset.univ.filter λ t => gq dir θ m t = 1
 
-/-- Log-likelihood of test data (Exp. 1b) for each model
+theorem gq_nonneg (dir : M → Direction) (θ : M → ℕ) (m : M) (t : State n) :
+    0 ≤ gq dir θ m t := by
+  rcases gq_eq_one_or_zero dir θ m t with h | h <;> simp [h]
 
-Higher is better. GQ-prag achieves the best fit.
--/
-def logLikelihood : Model → Int
-  | .gqLit  => -1717
-  | .ptLit  => -1660
-  | .gqPrag => -1625  -- Best fit
-  | .ptPrag => -1675
+theorem sum_gq (dir : M → Direction) (θ : M → ℕ) (m : M) :
+    ∑ t : State n, gq dir θ m t = (extension n dir θ m).card := by
+  rw [extension, Finset.card_filter, Nat.cast_sum]
+  refine Finset.sum_congr rfl λ t _ => ?_
+  rcases gq_eq_one_or_zero dir θ m t with h | h <;> simp [h]
 
-/-- Human rating difference (Exp. 4)
+/-! ### Speakers -/
 
-Rating of model predictions minus rating of actual data.
-Negative = model predictions rated worse than data.
-CI = 95% confidence interval.
--/
-structure RatingResult where
-  mean : ℚ
-  ciLow : ℚ
-  ciHigh : ℚ
-  deriving Repr
+/-- Production under imprecise number representation: the speaker rule at the state the
+confusion kernel `cf` represents the true state as. -/
+noncomputable def withConfusion [MeasurableSpace M] (S : Kernel (State n) M)
+    (cf : Kernel (State n) (State n)) : Kernel (State n) M :=
+  S ∘ₖ cf
 
-def ratingDifference : Model → RatingResult
-  | .gqLit  => ⟨-225/100, -330/100, -130/100⟩   -- CI excludes 0
-  | .ptLit  => ⟨-99/100,  -197/100,    0/100⟩   -- CI includes 0 (marginal)
-  | .gqPrag => ⟨-77/100,  -182/100,   14/100⟩   -- CI includes 0 (not significantly worse)
-  | .ptPrag => ⟨-141/100, -237/100,  -41/100⟩   -- CI excludes 0
+/-- Exact number representation changes nothing. -/
+theorem withConfusion_id [MeasurableSpace M] (S : Kernel (State n) M) :
+    withConfusion S Kernel.id = S :=
+  Kernel.comp_id S
 
-/-- GQ-prag is the only model not significantly worse than data (p > 0.05) -/
-def notSignificantlyWorse : Model → Bool
-  | .gqPrag => true   -- p = 0.07
-  | _       => false  -- all others p < 0.02
+variable [Fintype M] [MeasurableSpace M] [MeasurableSingletonClass M]
 
--- Approximate Number System (Exp. 3)
+/-- The literal speaker: a word in proportion to its salience and its truth value. -/
+noncomputable def speakerLit (L : Lexicon n M) (sal : M → ℝ) : Kernel (State n) M :=
+  Kernel.ofWeights λ t m => ENNReal.ofReal (sal m * L m t)
 
-/-- Weber's fraction estimated from Exp. 3
+/-- The literal listener with a uniform prior over states: a state in proportion to the truth
+value of the word there. -/
+noncomputable def listenerLit (L : Lexicon n M) : Kernel M (State n) :=
+  Kernel.ofWeights λ m t => ENNReal.ofReal (L m t)
 
-Represents sensitivity to relative differences in numerosity.
-Higher w means less precise number discrimination.
--/
-def weberFraction : ℚ := 576 / 1000  -- 0.576
+/-- The pragmatic speaker with rationality `α`: a word in proportion to its salience and the
+probability that the literal listener recovers the state from it. -/
+noncomputable def speakerPrag (L : Lexicon n M) (sal : M → ℝ) (α : ℝ) : Kernel (State n) M :=
+  Kernel.ofWeights λ t m => ENNReal.ofReal (sal m * ((listenerLit L m).real {t}) ^ α)
 
-/-- Total set size in experiments -/
-def totalSetSize : Nat := 432
+/-- A literal speaker never produces a false word. -/
+theorem speakerLit_apply_singleton_eq_zero (L : Lexicon n M) (sal : M → ℝ) {m : M}
+    {t : State n} (h : L m t = 0) : speakerLit L sal t {m} = 0 :=
+  Kernel.ofWeights_apply_singleton_eq_zero (by simp [h])
 
-/-- Number of possible intersection set sizes (0 through 432) -/
-def numWorldStates : Nat := 433
+/-- A literal speaker is indifferent among words of equal salience and truth value: with a
+threshold semantics its productions are step functions. -/
+theorem speakerLit_real_eq_of_eq (L : Lexicon n M) (sal : M → ℝ) {m m' : M} {t : State n}
+    (hL : L m t = L m' t) (hs : sal m = sal m') :
+    (speakerLit L sal t).real {m} = (speakerLit L sal t).real {m'} := by
+  rw [speakerLit, Kernel.ofWeights_real_singleton _ _ (λ _ => ENNReal.ofReal_ne_top),
+    Kernel.ofWeights_real_singleton _ _ (λ _ => ENNReal.ofReal_ne_top), hL, hs]
 
--- Focal Production Points (from Fig. 1)
+/-- Under the threshold semantics the literal listener recovers a state from a word true there
+with the reciprocal of the size of the word's extension. -/
+theorem listenerLit_real_gq (dir : M → Direction) (θ : M → ℕ) {m : M} {t : State n}
+    (h : gq dir θ m t = 1) :
+    (listenerLit (gq dir θ) m).real {t} = 1 / (extension n dir θ m).card := by
+  rw [listenerLit, Kernel.ofWeights_real_singleton _ _ (λ _ => ENNReal.ofReal_ne_top),
+    ENNReal.toReal_ofReal (gq_nonneg dir θ m t), h,
+    Finset.sum_congr rfl (λ t' _ => ENNReal.toReal_ofReal (gq_nonneg dir θ m t')), sum_gq]
 
-/-- Approximate prototype (peak production) for each quantity word.
+/-- Focality: among words true at a state and equally salient, the pragmatic speaker prefers the
+one with the smaller extension, the more informative one. -/
+theorem speakerPrag_real_lt_of_card_lt (dir : M → Direction) (θ : M → ℕ) {sal : M → ℝ}
+    (hsal : ∀ m, 0 < sal m) {α : ℝ} (hα : 0 < α) {m m' : M} {t : State n}
+    (hm : gq dir θ m t = 1) (hm' : gq dir θ m' t = 1) (hs : sal m = sal m')
+    (hcard : (extension n dir θ m).card < (extension n dir θ m').card) :
+    (speakerPrag (gq dir θ) sal α t).real {m'} < (speakerPrag (gq dir θ) sal α t).real {m} := by
+  have hcm : 0 < (extension n dir θ m).card := Finset.card_pos.2 ⟨t, by simp [extension, hm]⟩
+  have hwm : 0 < sal m * ((listenerLit (gq dir θ) m).real {t}) ^ α := by
+    rw [listenerLit_real_gq dir θ hm]
+    exact mul_pos (hsal m) (Real.rpow_pos_of_pos (by positivity) _)
+  have h0 : (∑ m'', ENNReal.ofReal (sal m'' * ((listenerLit (gq dir θ) m'').real {t}) ^ α)) ≠ 0 :=
+    λ h => (ENNReal.ofReal_pos.2 hwm).ne' ((Finset.sum_eq_zero_iff.1 h) m (Finset.mem_univ m))
+  have htop : (∑ m'', ENNReal.ofReal (sal m'' * ((listenerLit (gq dir θ) m'').real {t}) ^ α)) ≠ ∞ :=
+    ENNReal.sum_ne_top.2 λ _ _ => ENNReal.ofReal_ne_top
+  rw [speakerPrag, Kernel.ofWeights_real_singleton_lt_iff _ h0 htop,
+    ENNReal.ofReal_lt_ofReal_iff hwm, listenerLit_real_gq dir θ hm, listenerLit_real_gq dir θ hm',
+    ← hs]
+  refine mul_lt_mul_of_pos_left (Real.rpow_lt_rpow (by positivity) ?_ hα) (hsal m)
+  exact one_div_lt_one_div_of_lt (by exact_mod_cast hcm) (by exact_mod_cast hcard)
 
-These are rough estimates from Fig. 1A in the paper.
-Values are approximate intersection set sizes where production peaks.
--/
-def approximatePrototype : QuantityWord → Nat
-  | .none_         => 0
-  | .hardlyAny     => 10
-  | .veryFew       => 20
-  | .aFew          => 40
-  | .few           => 60
-  | .lessThanHalf  => 160
-  | .some_         => 80
-  | .several       => 100
-  | .half          => 216    -- half of 432
-  | .aboutHalf     => 216
-  | .many          => 280
-  | .moreThanHalf  => 260
-  | .aLot          => 300
-  | .majority      => 300
-  | .most          => 340
-  | .almostAll     => 400
-  | .all           => 432
-
--- Key Empirical Patterns
-
-/-
-## Pattern 1: Gradience
-
-Production probabilities for quantity words show gradual transitions,
-not sharp boundaries. This is true even for words with clear logical
-thresholds (e.g., "all" should be 432 exactly, but production extends below).
-
-## Pattern 2: Focality
-
-Each quantity word has a focal point where production peaks.
-For example:
-- "some" peaks around 80, not at the threshold of 1
-- "most" peaks around 340 (roughly 80%), not at 217 (just over half)
-
-## Pattern 3: Overlap
-
-Multiple quantity words can be produced for the same intersection set size.
-At t=300, participants might produce "many", "most", "a lot", or "majority".
-
-## Pattern 4: GQ-prag Explains These
-
-The key finding is that GQT + pragmatic reasoning produces:
-- Gradience: from competition between utterances
-- Focality: from informativity preferences
-- Overlap: from multiple true descriptions with different informativity
--/
-
-/-- Production data shows gradience (quantitative pattern) -/
-def hasGradience : Bool := true
-
-/-- Production data shows focal points (qualitative pattern) -/
-def hasFocality : Bool := true
-
-/-- Multiple quantity words can describe same state -/
-def hasOverlap : Bool := true
-
--- Competition Without Entailment (Novel Contribution)
-
-/-
-## Pragmatic Competition Beyond Scalar Implicature
-
-Traditional scalar implicature requires entailment (all → some).
-This paper shows pragmatic competition occurs even WITHOUT entailment.
-
-Example: "some" and "few" do not entail each other:
-- "few" true, "some" false: when t = 0
-- "some" true, "few" false: when t = total
-
-Yet pragmatic speakers still contrast them based on communicative success.
-This generalizes Gricean reasoning beyond traditional Horn scales.
--/
-
-/-- "some" and "few" don't stand in entailment relation -/
-theorem some_few_no_entailment :
-    -- "few" can be true when "some" is false (at t=0)
-    (monotonicity .few = .decreasing ∧ monotonicity .some_ = .increasing)
-    -- They have opposite monotonicity, so neither entails the other
-    := by native_decide
-
--- Summary Statistics
-
-/-- Number of participants in Exp. 1a (training) -/
-def exp1a_participants : Nat := 600
-
-/-- Number of participants in Exp. 1b (test) -/
-def exp1b_participants : Nat := 200
-
-/-- Number of participants in Exp. 2 (monotonicity) -/
-def exp2_participants : Nat := 120
-
-/-- Number of participants in Exp. 3 (ANS) -/
-def exp3_participants : Nat := 20
-
-/-- Number of participants in Exp. 4 (evaluation) -/
-def exp4_participants : Nat := 200
-
-/-- These 17 quantity words account for 87% of production data -/
-def coveragePercent : Nat := 87
-
--- ============================================================================
--- Section II: RSA Model (Simplified 6-Word Domain)
--- ============================================================================
-
-/-
-## Simplified Domain
-
-The original experiment used 432 circles. We use a smaller domain (0-10)
-to demonstrate the key theoretical insights computably.
--/
-
-namespace RSAModel
+/-! ### The canonical quantity words -/
 
 open English.Determiners
-  renaming QuantityWord → ModelQuantityWord
 
-/-- Domain size (simplified from 432 to 10) -/
-abbrev domainSize : Nat := 10
+/-- The threshold direction of the canonical quantity words, *half* counted as increasing as
+the participants of Experiment 2 classified every word in the sample as monotone. -/
+def direction : QuantityWord → Direction
+  | .none_ | .few => .decreasing
+  | .some_ | .half | .most | .all => .increasing
 
-/-- Intersection set sizes (simplified from 0-432 to 0-10) -/
-abbrev WorldState := Fin 11
-
-def allWorlds : List WorldState := List.finRange (domainSize + 1)
-
-def modelTotalSetSize : Nat := 10
-
-def allModelQuantityWords : List ModelQuantityWord := ModelQuantityWord.toList
-
-/-- Monotonicity of each model word (lifted from the canonical inventory). -/
-def modelMonotonicity (q : ModelQuantityWord) :
-    Quantification.Lexicon.Monotonicity :=
-  q.monotonicity
-
--- GQT Parameters (per-paper threshold settings, B&C-style)
-
-/-- Per-word GQT threshold for the simplified `domainSize = 10` domain.
-    Values are scaled from B&C-style fractions:
-    none = 0, few = ⌊10/3⌋ = 3, some = 1 (≥1 reading), half = 5,
-    most = 6 (>half), all = 10. -/
-def threshold : ModelQuantityWord → Nat
-  | .none_ => 0
-  | .few   => 3
-  | .some_ => 1
-  | .half  => 5
-  | .most  => 6
-  | .all   => domainSize
-
-/-- GQT meaning: van Tiel's threshold scale-model. At the word's fitted
-    threshold and monotonicity direction, is the intersection count `t` true?
-    The deliberately-impoverished GQT foil to the prototype model below. -/
-def gqtMeaning (m : ModelQuantityWord) (t : WorldState) : Bool :=
-  match m.monotonicity with
-  | .increasing  => t.val ≥ threshold m
-  | .decreasing  => t.val ≤ threshold m
-  | .nonMonotone => t.val == threshold m
-
-/-- GQT meaning as rational (for RSA arithmetic). -/
-def gqtMeaningRat (m : ModelQuantityWord) (t : WorldState) : ℚ :=
-  if gqtMeaning m t then 1 else 0
-
--- PT Parameters (per-paper prototype + spread settings)
-
-/-- Per-word PT prototype (peak production count) for the simplified domain. -/
-def prototype : ModelQuantityWord → Nat
-  | .none_ => 0
-  | .few   => 2
-  | .some_ => 3
-  | .half  => 5
-  | .most  => 8
-  | .all   => domainSize
-
-/-- Per-word PT spread (Gaussian width). -/
-def spread : ModelQuantityWord → ℚ
-  | .none_ => 1
-  | .few   => 2
-  | .some_ => 3
-  | .half  => 2
-  | .most  => 2
-  | .all   => 1
-
-/-- PT meaning via the parametric operator from
-    `Quantification.Prototype`. -/
-def ptMeaning (m : ModelQuantityWord) (t : WorldState) : ℚ :=
-  Quantification.Prototype.ptMeaning
-    domainSize (prototype m) (spread m) t
-
--- Salience: Lexical Accessibility
-
-/-- Salience prior (uniform for simplicity) -/
-def salience : ModelQuantityWord → ℚ
-  | .none_ => 1
-  | .few   => 1
-  | .some_ => 1
-  | .half  => 1
-  | .most  => 1
-  | .all   => 1
-
--- Connection to Montague Quantifiers (Grounding)
-
-/-
-## Grounding in Montague Semantics
-
-The GQT semantics are grounded in Montague's generalized quantifiers.
-The threshold semantics correspond to:
-- "some": exists x. P(x) and Q(x) iff |P intersect Q| >= 1
-- "all": forall x. P(x) -> Q(x) iff |P intersect Q| = |P|
-- "most": |P intersect Q| > |P - Q|
--/
-
-/-- "some" threshold matches Montague's existential: count >= 1 -/
-theorem some_matches_montague :
-    threshold .some_ = 1 := by native_decide
-
-/-- "all" threshold matches Montague's universal: count = total -/
-theorem all_matches_montague :
-    threshold .all = modelTotalSetSize := by native_decide
-
-/-- "most" threshold > half matches Montague's most_sem -/
-theorem most_above_half :
-    threshold .most > modelTotalSetSize / 2 := by native_decide
-
-/-- "some" and "few" have opposite monotonicity (no entailment) -/
-theorem some_few_opposite_monotonicity :
-    modelMonotonicity .some_ = .increasing ∧
-    modelMonotonicity .few = .decreasing := by
-  exact ⟨rfl, rfl⟩
-
-end RSAModel
-
--- ============================================================================
--- Section III: RSA Bridge — Monotonicity Agreement
--- ============================================================================
-
-/-! Connects the RSA quantity-word production model to the empirical
-monotonicity classifications. -/
-
-/-- Convert canonical 6-element model word to the 17-element empirical data type. -/
-def toDataWord : English.Determiners.QuantityWord → QuantityWord
-  | .none_ => .none_
-  | .few   => .few
-  | .some_ => .some_
-  | .half  => .half
-  | .most  => .most
-  | .all   => .all
-
-/-- Monotonicity matches empirical classification for clear cases (excluding "half").
-
-Note: "half" is classified as nonMonotone in the three-way system but as
-"increasing" in the binary empirical classification. -/
-theorem monotonicity_matches_data_increasing
-    (q : English.Determiners.QuantityWord) :
-    q ≠ .half →
-    (RSAModel.modelMonotonicity q = Quantification.Lexicon.Monotonicity.increasing) ↔
-    (monotonicity (toDataWord q) = Monotonicity.increasing) := by
-  cases q <;> native_decide
-
-theorem monotonicity_matches_data_decreasing
-    (q : English.Determiners.QuantityWord) :
-    (RSAModel.modelMonotonicity q = Quantification.Lexicon.Monotonicity.decreasing) ↔
-    (monotonicity (toDataWord q) = Monotonicity.decreasing) := by
-  cases q <;> native_decide
-
--- Summary
-
-/-
-## What This Implementation Shows
-
-1. **GQT-literal** produces step-function production patterns
-   - Sharp boundaries at thresholds
-   - No prototype structure
-
-2. **PT-literal** produces smooth Gaussian production patterns
-   - Peak at prototype
-   - Gradual falloff
-
-3. **GQT-pragmatic** produces gradient patterns DESPITE binary semantics
-   - Competition between utterances smooths boundaries
-   - Prototype-like peaks emerge from informativity
-   - "Gradience is an epiphenomenon of pragmatic competition"
-
-4. **PT-pragmatic** sharpens the Gaussian patterns
-   - Listener model focuses probability mass
-   - Similar qualitative behavior to GQT-pragmatic
-
-## Paper's Conclusion (Replicated)
-
-"A modular view, whereby language production consists of a semantic module
-that calculates the truth-conditional meaning of an utterance, and a pragmatic
-module that reasons about the probability that the utterance receives the
-intended interpretation, can explain gradience and focalization in production
-just as well as a PT-based approach."
-
-The truth-conditional (GQT) account works when complemented by probabilistic
-pragmatics. We don't need to encode prototypes into the semantics.
--/
+/-- *Some* and *few* compete without entailment for any thresholds inside the range. -/
+theorem some_few_no_entailment (θ : QuantityWord → ℕ) (hs : 1 ≤ θ .some_) (hs' : θ .some_ ≤ n)
+    (hf : θ .few < n) :
+    gq direction θ .few (0 : State n) = 1 ∧ gq direction θ .some_ (0 : State n) = 0 ∧
+      gq direction θ .some_ (Fin.last n) = 1 ∧ gq direction θ .few (Fin.last n) = 0 :=
+  gq_no_entailment direction θ rfl hs hs' rfl hf
 
 end VanTielEtAl2021
