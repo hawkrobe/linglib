@@ -1,242 +1,157 @@
 import Linglib.Phonology.Segmental.Basic
 import Linglib.Fragments.Latin.Phonology
+import Mathlib.Order.Basic
 
 /-!
-# Sen (2015): Latin /l/ Allophony as Positional Underspecification [sen-2015]
+# Sen (2015): Syllable and Segment in Latin
 
-Latin /l/ has clear ([l]) and dark ([ɫ]) realisations whose distribution
-[sen-2015] ch. 2 analyses as positional underspecification of the
-feature [back]. The chosen formal analysis (§2.4, eq. 23) settles on an
-equipollent specification in which all three positional /l/ allophones
-share a tongue-body-displacement feature [+high] while differing on
-[back]: coda /l/ is [+high, +back] (dark), geminate /ll/ is
-[+high, −back] (clear), and onset /l/ is [+high, Ø back] — left
-unspecified for [back] and inheriting a surface value from the following
-vowel by categorical spreading (cf. [keating-1988], with the
-categorical-vs-gradient distinction discussed under Implementation notes).
-
-This file derives the three positional /l/ allophones from the Latin
-Fragment's single /l/ phoneme via `Segment.setFeature`, implements the
-inheritance mechanism as categorical feature spreading through
-`Segment.fillFromContext` (with the spreading theorem
-`surfaceL_inherits_back` and worked surface theorems for onset /l/ before
-each Latin short vowel), and proves the categorical context-invariance of
-coda /l/ and geminate /ll/, illustrating that `fillFromContext` is
-feature-filling rather than feature-overwriting.
-
-## Main definitions
-
-* `lWithDorsal` — the Fragment's /l/ with [+high] added (Sen's dorsal
-  articulation, shared by all three positional allophones).
-* `lOnset` — onset /l/: [+high, Ø back].
-* `lCoda` — coda /l/: [+high, +back] (dark).
-* `lGeminate` — geminate /ll/: [+high, −back] (clear).
-* `surfaceL` — feature spreading applied to onset /l/.
-* `surfaceCoda`, `surfaceGem` — spreading applied to the already-
-  specified coda and geminate values (no-op for [back]).
-
-## Main results
-
-* `surfaceL_inherits_back` — onset /l/ takes its surface [back] value from
-  the following segment.
-* `surfaceL_before_{i,e,o,u}` — concrete realisations from the Fragment's
-  four primary short vowels: clear before front vowels, dark before back
-  vowels.
-* `surfaceL_before_a` — Fragment/Sen divergence on /a/: the Fragment
-  encodes /a/ as [Ø back] (Hayes 2009 convention), so the categorical
-  model leaves onset /l/ at [Ø back]; Sen groups /a/ as a darkening
-  context for onset /l/.
-* `surfaceCoda_*`, `surfaceGem_*` — coda and geminate /l/ stay at their
-  underlying [back] value regardless of context.
+This file formalizes the second chapter's analysis of clear and dark /l/. The colouring of a
+preceding vowel, read off the grammarians' statements and the internal history of Latin words
+(§2.3), orders the contexts of /l/ by darkness (18): the syllable coda, then onset /l/ before
+/a o u/, before /e/, before /ē/, and last onset /l/ before /i/ and geminate /ll/ (`Context`,
+`darkness`; Figure 2.1, `colouring`). The distribution is categorical across three positions and
+gradient within one: coda /l/ is dark, geminate /ll/ is clear, and onset /l/ darkens with the
+backness of the following vowel. The equipollent analysis (23) states this as surface
+specifications on the Fragment's single /l/, `[+high, +back]` in the coda, `[+high, −back]` in
+the geminate and `[+high, Ø back]` in the onset (`spec`, `spec_ternary`). The specified variants
+sit at the ends of the scale (`coda_darkest`, `geminate_clearest`), colouring follows the scale
+(`colouring_monotone`), and the unspecified onset ranges over three degrees (`onset_gradient`):
+the specification does not determine darkness, which is why the chapter rejects synchronic
+feature spreading as the source of the colouring (§2.5) in favour of phonetic interpolation
+through the underspecified segment, in the sense of [keating-1988].
 
 ## Implementation notes
 
-The Latin Fragment exposes a single /l/ phoneme. The three positional
-allophones are derived here by `Segment.setFeature` on `Latin.Phonology.l`,
-with the dorsal [+high] articulation that distinguishes /l/'s phonetic
-profile factored into `lWithDorsal`. Sen's analysis treats this dorsal
-raising as common to all three /l/ allophones — only [back] distinguishes
-them at the underlying level.
+* Sen takes /l/ to be underlyingly unspecified for [back], the coda and geminate values being
+  filled once a string is syllabified (§2.4); `spec` is the surface specification by position,
+  built from the Fragment's /l/ with `Segment.setFeature`.
+* `colouring` is the regular outcome of Figure 2.1; its exceptions (after /w j/, after dorsals,
+  forms with particular histories) are not encoded. The gradient phonetic implementation
+  (Figure 2.3), the diachronic account of the split, and the parallel analysis of /r/ in the
+  fourth chapter are out of scope.
 
-The spreading theorems use `Segment.fillFromContext` rather than the
-overwriting `Segment.setFeature`: the operation is *filling*, which
-preserves the existing value of [back] on coda and geminate /l/ even when
-they are followed by a vowel with a conflicting [back] specification. The
-`surfaceCoda_*` and `surfaceGem_*` theorems witness this behaviour
-end-to-end.
+## References
 
-**Categorical vs. gradient layer.** This file formalises Sen's
-*categorical* phonological analysis (eq. 19/23): the ternary [back]
-underspecification, and the prediction that an unspecified target
-inherits the immediately following specified value. Sen's full account
-adds a *gradient phonetic interpolation* layer (§2.4-2.5, Fig. 2.3) in
-which surface darkness varies along a gradient scale running from
-darkest (coda) through onset /l/ before /a o u/, then /e/, then /e:/,
-to clearest (onset before /i/ and geminate /ll/); in particular, onset
-/l/ before /e/ is "dark" in Sen's gradient picture while the categorical
-model formalised here has /l/ inherit /e/'s [−back] and surface "clear".
-On p. 41 Sen explicitly rejects synchronic categorical feature spreading
-as the *actuating* mechanism, on the grounds that it would over-predict
-identical effects in identical-feature contexts; the substrate's
-`fillFromContext` is exactly such a categorical operation — Keating's
-schema (2) case (b) ([keating-1988] p. 287), in which the target
-acquires a feature value from its neighbour, rather than her case (c)
-gradient phonetic interpolation in which the target stays unspecified
-and the phonetics builds a continuous trajectory through it. The
-categorical underspecification claim is captured faithfully; the
-gradient phonetic implementation, which is what Keating's own term
-*interpolation* picks out, is out of scope.
-
-**Fragment-vs-Sen divergence on /a/.** The Latin Fragment leaves /a/
-unspecified for [back] (following [hayes-2009]'s convention that
-low vowels carry no primary [back] value), so the categorical
-`fillFromContext` leaves onset /l/ before /a/ at [Ø back]. Sen instead
-groups /a/ with /o u/ as a darkening context for onset /l/ (§2.3.1,
-Fig. 2.2), which would require either encoding /a/ as [+back] in Latin
-or modelling Keating's propagation across the underspecified
-intermediate. `surfaceL_before_a` records what the categorical model and
-the Fragment's vowel inventory predict, not Sen's empirical claim.
-
-**Diachronic content out of scope.** [sen-2015] also develops a
-diachronic account (the historical loss of geminate /l/, inverse
-compensatory lengthening, the prehistory of clear/dark /l/ split); this
-study formalises only the synchronic underspecification analysis of
-ch. 2. The parallel analysis for /r/ (vowel reduction before TR clusters)
-in ch. 4 is also deferred.
-
-## Todo
-
-* Multi-segment interpolation across consonant + vowel sequences, once
-  `Segment.fillFromContextTier` lands in the Underspec substrate.
-* The parallel reduction analysis for /r/ (Sen ch. 4).
+* [sen-2015]
+* [keating-1988]
 -/
 
 namespace Sen2015
 
 open Phonology Latin.Phonology
 
-/-! ### Positional /l/ values
+/-- The three categorical positions of /l/ (19): syllable coda, onset, and geminate. -/
+inductive Position
+  | coda | onset | geminate
+  deriving DecidableEq, Repr
 
-The Fragment's `l` lacks a [high] specification. Sen 2015 ch. 2 analyses
-all three positional allophones as bearing [+high] (the dorsal articulation
-that distinguishes /l/ from a pure alveolar). The three allophones diverge
-on [back] alone: coda [+back], geminate [−back], onset [Ø back]. -/
+/-- The contexts of /l/ that the colouring evidence distinguishes (18), Figure 2.1: the coda,
+onset /l/ before /a o u/, before /e/, before /ē/, before /i/, and the geminate. -/
+inductive Context
+  | coda | preBack | preE | preLongE | preI | geminate
+  deriving DecidableEq, Repr, Fintype
 
-/-- The Fragment's /l/ extended with the dorsal [+high] specification
-common to all three positional allophones. -/
-def lWithDorsal : Segment := l.setFeature .high true
+/-- The categorical position of a context. -/
+def Context.position : Context → Position
+  | .coda => .coda
+  | .geminate => .geminate
+  | .preBack | .preE | .preLongE | .preI => .onset
 
-/-- Onset /l/: [+high] with [back] left unspecified for Keating-style
-interpolation from the following vowel. -/
-def lOnset : Segment := lWithDorsal
+/-- The scale of darkness (18), as a rank with the coda highest; onset /l/ before /i/ and the
+geminate share the clearest degree. -/
+def Context.darkness : Context → ℕ
+  | .coda => 4
+  | .preBack => 3
+  | .preE => 2
+  | .preLongE => 1
+  | .preI | .geminate => 0
 
-/-- Coda /l/ (dark [ɫ]): [+high, +back]. -/
-def lCoda : Segment := lWithDorsal.setFeature .back true
+/-- Contexts are ordered by darkness. -/
+instance : Preorder Context := Preorder.lift Context.darkness
 
-/-- Geminate /ll/ (clear [l]): [+high, −back]. -/
-def lGeminate : Segment := lWithDorsal.setFeature .back false
+instance : DecidableRel (α := Context) (· ≤ ·) :=
+  λ a b => inferInstanceAs (Decidable (a.darkness ≤ b.darkness))
 
-/-! ### Underlying specification status -/
+instance : DecidableRel (α := Context) (· < ·) :=
+  λ a b => inferInstanceAs (Decidable (a.darkness < b.darkness))
 
-/-- Onset /l/ is unspecified for [back]: the Keating interpolation target. -/
-theorem lOnset_unspecified_back : lOnset.Unspecified .back := by decide
+/-- The colouring of a short vowel before /l/: to /u/, to /o/, or unchanged. -/
+inductive Colouring
+  | toU | toO | unchanged
+  deriving DecidableEq, Repr
 
-/-- Coda /l/ is [+back] underlyingly (dark). -/
-theorem lCoda_back : lCoda.HasValue .back true := by decide
+/-- The vowel a colouring produces, from the Fragment. -/
+def Colouring.vowel : Colouring → Option Segment
+  | .toU => some u
+  | .toO => some o
+  | .unchanged => none
 
-/-- Geminate /l/ is [−back] underlyingly (clear). -/
-theorem lGeminate_front : lGeminate.HasValue .back false := by decide
+/-- Colouring strength: to /u/ is stronger than to /o/, which is stronger than unchanged. -/
+def Colouring.strength : Colouring → ℕ
+  | .toU => 2
+  | .toO => 1
+  | .unchanged => 0
 
-/-- All three positional /l/ allophones are [+high] (Sen's dorsal articulation). -/
-theorem all_lAllophones_high :
-    lOnset.HasValue .high true ∧ lCoda.HasValue .high true ∧
-      lGeminate.HasValue .high true := by decide
+/-- Whether the coloured vowel sits in an internal or an initial syllable (Figure 2.1). -/
+inductive Syllable
+  | internal | initial
+  deriving DecidableEq, Repr
 
-/-! ### Keating interpolation on onset /l/
+/-- The regular colouring of a preceding short vowel by context (Figure 2.1): in an internal
+syllable to /u/ before the coda and before onset /l/ followed by /a o u/ or /e/, to /o/ before
+/lē/, and none before /li/ and /ll/; in an initial syllable to /u/ before the coda and to /o/
+before /la lo lu/ only. -/
+def colouring : Syllable → Context → Colouring
+  | .internal, .coda | .internal, .preBack | .internal, .preE => .toU
+  | .internal, .preLongE => .toO
+  | .internal, .preI | .internal, .geminate => .unchanged
+  | .initial, .coda => .toU
+  | .initial, .preBack => .toO
+  | .initial, .preE | .initial, .preLongE | .initial, .preI | .initial, .geminate => .unchanged
 
-Onset /l/ inherits its surface [back] value from the following segment.
-The general theorem `surfaceL_inherits_back` exhibits the mechanism; the
-per-vowel theorems below are concrete instances. -/
+/-- Colouring follows the scale of darkness (18): in either syllable, a darker context colours
+at least as strongly. -/
+theorem colouring_monotone (s : Syllable) : Monotone λ c => (colouring s c).strength := by
+  cases s <;> intro c₁ c₂ <;> revert c₁ c₂ <;> decide
 
-/-- Surface form of onset /l/ before a context segment, via Keating
-interpolation on [back]. -/
-def surfaceL (ctx : Segment) : Segment := lOnset.fillFromContext .back ctx
+/-- The coda is the darkest context and the geminate the clearest ((18), Figure 2.2). -/
+theorem coda_darkest (c : Context) : c ≤ .coda := by revert c; decide
 
-/-- The key theorem: onset /l/'s surface [back] equals the following
-segment's [back] value, by `fillFromContext` applied to an unspecified
-target. -/
-theorem surfaceL_inherits_back (ctx : Segment) :
-    (surfaceL ctx) .back = ctx .back :=
-  Segment.fillFromContext_apply_self_of_unspecified lOnset lOnset_unspecified_back ctx
+theorem geminate_clearest (c : Context) : Context.geminate ≤ c := by revert c; decide
 
-/-- Onset /l/ before /i/ surfaces clear ([−back]): /i/ is [−back]. -/
-theorem surfaceL_before_i : (surfaceL i).HasValue .back false := by decide
+/-- The surface specification of /l/ by position (23): the Fragment's /l/ with the dorsal
+articulation `[+high]` common to the three variants, `[+back]` in the coda, `[−back]` in the
+geminate, and no value for `[back]` in the onset. -/
+def spec : Position → Segment
+  | .coda => (l.setFeature .high true).setFeature .back true
+  | .geminate => (l.setFeature .high true).setFeature .back false
+  | .onset => l.setFeature .high true
 
-/-- Onset /l/ before /e/ inherits /e/'s [−back] in the categorical model,
-predicting clear /l/. Sen's gradient phonetic analysis (Fig. 2.2, p. 33)
-treats this context as "Dark" — relatively dark, dark enough to colour a
-preceding vowel — a distinction the categorical layer formalised here
-does not capture. -/
-theorem surfaceL_before_e : (surfaceL e).HasValue .back false := by decide
+/-- The ternary surface contrast (19), (23): plus, minus and unspecified `[back]`, all
+`[+high]`. -/
+theorem spec_ternary :
+    (spec .coda).HasValue .back true ∧ (spec .geminate).HasValue .back false ∧
+      (spec .onset).Unspecified .back ∧ ∀ p, (spec p).HasValue .high true := by
+  refine ⟨by decide, by decide, by decide, ?_⟩
+  intro p
+  cases p <;> decide
 
-/-- Onset /l/ before /o/ surfaces dark ([+back]): /o/ is [+back]. -/
-theorem surfaceL_before_o : (surfaceL o).HasValue .back true := by decide
+/-- The specified variants are the extremes of the scale: a context at least as dark as the coda
+is the coda, and one at least as clear as the geminate is the geminate or onset /l/ before /i/,
+its equal in darkness. -/
+theorem extremes_specified (c : Context) :
+    (Context.coda ≤ c → c = .coda) ∧
+      (c ≤ .geminate → c = .geminate ∨ c = .preI) := by
+  revert c; decide
 
-/-- Onset /l/ before /u/ surfaces dark ([+back]): /u/ is [+back]. -/
-theorem surfaceL_before_u : (surfaceL u).HasValue .back true := by decide
-
-/-- Fragment-vs-Sen divergence on /a/: the Latin Fragment encodes /a/ as
-[Ø back] (Hayes 2009 convention for low vowels), so the categorical
-`fillFromContext` leaves onset /l/ before /a/ at [Ø back]. Sen instead
-groups /a/ with /o u/ as a darkening context for onset /l/; this theorem
-records what the Fragment's vowel inventory and the categorical model
-predict, not Sen's empirical claim. -/
-theorem surfaceL_before_a : (surfaceL a).Unspecified .back := by decide
-
-/-! ### Context-invariance of categorically-specified /l/
-
-Coda /l/ and geminate /l/ have [back] specified underlyingly, so
-`fillFromContext` is a no-op for them: they retain their categorical
-[back] value regardless of the following segment. -/
-
-/-- Surface form of coda /l/ in some right context. -/
-def surfaceCoda (ctx : Segment) : Segment := lCoda.fillFromContext .back ctx
-
-/-- Surface form of geminate /l/ in some right context. -/
-def surfaceGem (ctx : Segment) : Segment := lGeminate.fillFromContext .back ctx
-
-/-- Coda /l/ stays [+back] for any context, by `fillFromContext` applied
-to an already-specified target. -/
-theorem surfaceCoda_invariant (ctx : Segment) :
-    (surfaceCoda ctx).HasValue .back true :=
-  Segment.fillFromContext_apply_self_of_specified lCoda lCoda_back ctx
-
-/-- Geminate /l/ stays [−back] for any context. -/
-theorem surfaceGem_invariant (ctx : Segment) :
-    (surfaceGem ctx).HasValue .back false :=
-  Segment.fillFromContext_apply_self_of_specified lGeminate lGeminate_front ctx
-
-/-- Concrete witness: coda /l/ followed by the front vowel /i/ stays dark,
-contrasting with `surfaceL_before_i` where onset /l/ surfaces clear. -/
-theorem surfaceCoda_before_i : (surfaceCoda i).HasValue .back true :=
-  surfaceCoda_invariant i
-
-/-- Concrete witness: geminate /l/ followed by the back vowel /o/ stays
-clear, contrasting with `surfaceL_before_o` where onset /l/ surfaces dark. -/
-theorem surfaceGem_before_o : (surfaceGem o).HasValue .back false :=
-  surfaceGem_invariant o
-
-/-! ### Cross-feature preservation
-
-The interpolation modifies only [back]; the dorsal [+high] specification
-and every other feature on onset /l/ pass through unchanged. -/
-
-/-- Onset /l/'s [+high] dorsal articulation survives interpolation. -/
-theorem surfaceL_high (ctx : Segment) : (surfaceL ctx).HasValue .high true := by
-  have h : (surfaceL ctx) .high = lOnset .high :=
-    Segment.fillFromContext_apply_of_ne lOnset (by decide : (Feature.back) ≠ .high) ctx
-  show (surfaceL ctx) .high = some true
-  rw [h]
+/-- Within the onset the specification is one and the darkness is not: before /a o u/, /e/ and
+/i/ the same `[Ø back]` /l/ ranges over three degrees, so the categorical specification does not
+determine the colouring, the chapter's reason for rejecting synchronic feature spreading as its
+mechanism (§2.5). -/
+theorem onset_gradient :
+    Context.preBack.position = .onset ∧ Context.preE.position = .onset ∧
+      Context.preI.position = .onset ∧
+      Context.preI < .preE ∧ Context.preE < .preBack := by
   decide
 
 end Sen2015
