@@ -1,296 +1,349 @@
 import Mathlib.Data.Fintype.Powerset
-import Linglib.Semantics.Plurality.Individuation
-import Linglib.Semantics.Plurality.MassCount
 import Linglib.Semantics.Mereology
+import Linglib.Semantics.Plurality.MassCount
 
 /-!
-# Sutton & Filip (2021) — The Count/Mass Distinction for Granular Nouns
-[sutton-filip-2021]
+# Sutton and Filip (2021): The Count/Mass Distinction for Granular Nouns
 
-Formalizes the core of:
+This file formalizes [sutton-filip-2021]'s account of the lexical count/mass distinction and
+its answer to the accessibility puzzle: *rice* denotes stuff made of perceptually salient
+grains, yet *three rices* cannot mean three grains of rice while it can mean three bowls of
+rice. A basic predicate is a frame with an extension and, when the concept has perceptually
+or functionally identified units, a unit field (28)–(29), `Frame`; the object identifying
+function returns the unit field where there is one and the predicate itself otherwise (30),
+`Frame.objects`; a specific individuation schema selects a maximally disjoint subset of the
+objects, a perspective, and the null schema unions all perspectives (32), the substrate's
+`Mereology.IsMaxDisjointIn` and `Mereology.nullSchema`. A lexical entry is tripartite (33):
+the basic predicate, a counting base built from it by the object function and a schema, and
+an extension that is the counting base or its closure under sum, `Entry`, `Entry.cbase`,
+`Entry.extn`. Grammatical counting is defined over disjoint counting bases only (A1), so an
+entry is count exactly when its base is disjoint, `Entry.IsCount`. The features `[±O]` and
+`[±S]` record whether the entry applies the object function and whether it carries a specific
+schema, `Entry.features`. Every `[+S]` entry is count, `Entry.isCount_of_perspective`, and
+since the null schema is the identity, `Mereology.nullSchema_eq`, a `[−S]` entry is count
+exactly when the predicate its schema applies to is disjoint, `Entry.isCount_iff_of_null`.
+Table 9.1 follows: prototypical objects and count granulars are `[+O,+S]` and count, mass
+granulars and substances `[−O,−S]` and mass because the basic predicate overlaps, collective
+artifacts `[+O,−S]` and mass because their functional units overlap, and Finnish *huonekalut*
+is *furniture* with the null schema replaced by the schema of utterance, `huonekalut`.
 
-  Sutton, P. R. & Filip, H. (2021). The count/mass distinction for granular
-  nouns. In H. Filip (ed.), *Countability in Natural Language*, 252–291.
-  Cambridge University Press.
+A frame of units and their sums (29) overlaps as soon as it has two units, whether or not the
+units do, `overlapPred_extn_ofUnits`; so the `[−O,−S]` entry for *rice* or Czech *čočka* is
+mass while the `[+O,+S]` entry for *lentil* over a frame of the same kind is count,
+`rice_mass`, `lentil_count`: the grains are in the basic predicate and inaccessible to
+counting. The unit extracting classifier *grain of* inserts the object function and the
+schema of utterance into the counting base (49)–(50), `unitShift`, and its result is count
+for every entry whatever, `isCount_unitShift`; that is the generalized `[−O,−S]` to
+`[+O,+S]` shift a language with a lexicalized distinction cannot license implicitly (9.5.4).
+A container classifier instead counts by the receptacle's own base and leaves the argument's
+individuation untouched (43)–(44), `containerExtn`, under the precondition that the argument's
+extension is cumulative (45), which sum-closed extensions meet and singular count extensions
+with two units fail, `cum_extn_of_sumClosed`, `not_cum_extn_of_singular`. The furniture and
+rice models on subsets of three atoms witness both halves of the puzzle,
+`furniture_two_perspectives`, `rice_accessibility`.
 
-## The account
+## Implementation notes
 
-Lexical entries are tripartite (33): a basic predicate (`baspred`,
-number-neutral conceptual content), a counting base (`cbase`), and an
-extension. Two mechanisms mediate between them: the **object identifying
-function** 𝒪 (30), which selects the perceptually/functionally
-salient units if the concept specifies any, and **individuation schemas**
-𝒮ᵢ, which select a maximally disjoint subset of those units; the **null
-schema** 𝒮₀ (32) instead unions *all* maximally disjoint subsets.
-Grammatical counting requires a disjoint counting base, so:
+A specific schema is a function from predicates to perspectives in the paper; an entry here
+records the perspective the schema of utterance selects on the predicate it applies to, with
+its maximality, since only that value enters the counting base. Overlap is the substrate's
+`Mereology.Overlap`, a shared non-null part. The cardinality comparisons licensed by `[+O]`,
+the perceptual content of frames, the composition with verbs of Appendix B, and the notional
+classes of Table 9.1 are not formalized.
 
-* count = `[+O, +S]` (a specific schema over identified objects — *cat*,
-  *lentil*, Finnish *huonekalut* 'items of furniture');
-* mass = `[−S]` (null schema): either `[+O, −S]` (*furniture* — objects
-  identified but overlapping, so cardinality comparison is available) or
-  `[−O, −S]` (*rice*, Czech *čočka* 'lentil', *mud* — no object function
-  in the counting base at all).
+## References
 
-The **accessibility puzzle**: *rice* denotes stuff made of perceptually
-salient, *disjoint* grains, yet `#three rices` cannot mean 'three grains of
-rice' (only container/subkind readings). On this account the grains live in
-`baspred` but are not passed to `cbase` — and an *implicit* unit-extracting
-shift would be a generalized `[−O,−S] → [+O,+S]` operation, incompatible
-with a lexicalized mass/count distinction (§9.5.4; Yudja, which
-lacks one, counts everything — cf. `Grimm2018.yudjaClassify`).
-
-## Main declarations
-
-* `OverlapPred`/`IsMaxDisjointIn`/`nullSchema` — the schema machinery over
-  an arbitrary overlap relation. The disjoint-counting-base thesis and the
-  multiple-perspectives ("variants") idea this packages originate with
-  [landman-2011] and [landman-2016]; the chapter's own contribution is the
-  null schema `𝒮₀` and the unified `𝒪`/`𝒮ᵢ` mechanism. The machinery is a
-  graduation candidate when a Landman-anchored study lands.
-* `overlapPred_union_of_maxDisjoint_ne` — the load-bearing generic fact:
-  the union of two *distinct* maximal disjoint subsets overlaps. Hence
-  `nullSchema`-saturated entries are mass whenever individuation is
-  perspectival (`overlapPred_nullSchema`), and stable for prototypical
-  objects (`nullSchema_eq_of_disjoint`).
-* `Categorization` (`[±O, ±S]`) and Table 9.1 (`table91`) over the
-  graduated individuation scale (`Semantics/Plurality/Individuation.lean`), with the
-  junction theorems: the count option *ascends* the scale
-  (`count_option_monotone`) and the mass option *descends* it
-  (`mass_option_antitone`). Ordering Table 9.1 by [grimm-2018]'s scale is
-  this study's bridge, not the chapter's (it cites [grimm-2012] and Grimm &
-  Levin 2017, not [grimm-2018]); the theorems show the two frameworks'
-  landscapes coincide.
-* A concrete furniture/rice model on nonempty `Finset`s: *furniture*'s
-  identified units overlap (table vs. vanity), *rice*'s grains are disjoint
-  in `baspred` yet its counting base overlaps — the accessibility puzzle's
-  two halves (`furniture_units_overlap`, `rice_accessibility`).
-
-## Connections
-
-* Second consumer of the individuation scale — the graduation that moved
-  `IndividuationType` to `Semantics/Plurality/Individuation.lean` (with [grimm-2018]).
-* `MassCount` records the *outcome* of categorization
-  (`Categorization.massCount`); the `[±O, ±S]` features are its analysis.
-* The cluster/MSSC content of granular `baspred` frames is [grimm-2012]'s
-  mereotopology ([casati-varzi-1999] self-connection), not formalized
-  here.
-* Their counting condition (cardinality only over disjoint bases, their
-  (A1), after [landman-2011]'s overlap thesis) is the semantic ground for why
-  countability classes, not `Number` values, carry the count/mass
-  distinction (`Syntax/Number/Basic.lean`).
+* [sutton-filip-2021]
+* [landman-2011]
+* [landman-2016]
+* [krifka-1989]
 -/
 
 namespace SuttonFilip2021
 
-/-! ### Overlap, disjointness, and individuation schemas
+open Mereology
 
-(16)–(18): the schema machinery (`Mereology.OverlapPred`,
-`Mereology.IsMaxDisjointIn`, `Mereology.nullSchema` for `𝒮₀`, (32))
-lives in `Semantics/Mereology.lean`, shared with [landman-2020]
-(`Studies/Landman2020.lean`), whose disjointness thesis it packages.
-A predicate is *overlapping* if two distinct members overlap (the paper's (17)
-omits the distinctness, under which any inhabited predicate self-overlaps
-via `x ∘ x`; the substrate states the intended reading). -/
+section Entries
 
-open Mereology (OverlapPred DisjointPred IsMaxDisjointIn nullSchema
-  overlapPred_nullSchema)
+variable {α : Type*}
 
-/-! ### The `[±O, ±S]` categorization and Table 9.1
+/-- A basic predicate frame (28)–(29): its extension and, when the concept has perceptually or
+functionally identified units, its unit field. -/
+structure Frame (α : Type*) where
+  extn : Set α
+  unit : Option (Set α)
 
-`[+O]`: the counting base contains the object identifying function 𝒪;
-`[+S]`: it is interpreted under a specific schema `𝒮ᵢ` rather than `𝒮₀`.
-Count nouns are `[+O, +S]`; mass nouns are `[−S]`. -/
+/-- The object identifying function (30): the unit field where there is one, the predicate
+itself otherwise. -/
+def Frame.objects (F : Frame α) : Set α := F.unit.getD F.extn
 
-/-- The two binary features classifying counting bases (§9.4.4). -/
-structure Categorization where
-  /-- The counting base contains the object identifying function 𝒪. -/
-  hasObjectFn : Bool
-  /-- The counting base is interpreted under a specific schema `𝒮ᵢ`
-      (rather than the null schema `𝒮₀`). -/
-  hasSpecificSchema : Bool
-  deriving DecidableEq, Repr
+/-- A substance frame: no unit field. -/
+def Frame.substance (stuff : Set α) : Frame α := ⟨stuff, none⟩
 
-/-- Count iff `[+O, +S]`; everything `[−S]` is mass (Table 9.1's
-    generalizations). -/
-def Categorization.massCount : Categorization → MassCount
-  | ⟨true, true⟩ => .count
-  | _ => .mass
+@[simp] theorem Frame.objects_substance (stuff : Set α) : (substance stuff).objects = stuff :=
+  rfl
 
-/-- Table 9.1: the categorization options available to each notional
-    class, stated over the graduated individuation scale. Substances are
-    `[−O, −S]` only (*mud*); granulars lexicalize either way (*lentil* vs
-    *rice*/*čočka*); collective artifacts are `[+O, ±S]` (*huonekalut* vs
-    *furniture*); prototypical objects are `[+O, +S]` (*cat*). -/
-def table91 : IndividuationType → List Categorization
-  | .substance => [⟨false, false⟩]
-  | .granularAggregate => [⟨true, true⟩, ⟨false, false⟩]
-  | .collectiveAggregate => [⟨true, true⟩, ⟨true, false⟩]
-  | .individualEntity => [⟨true, true⟩]
+variable [SemilatticeSup α]
 
-/-- A count lexicalization is available from granular aggregates upward —
-    availability of `[+O, +S]` is monotone on the individuation scale. -/
-theorem count_option_monotone :
-    Monotone (fun i =>
-      (table91 i).any (fun c => c.hasObjectFn && c.hasSpecificSchema)) := by
-  decide
+/-- A frame whose extension is its units and their sums, the unit and collection fields of
+(28)–(29): granular for disjoint units, a collective artifact for overlapping ones. -/
+def Frame.ofUnits (units : Set α) : Frame α := ⟨{x | AlgClosure (· ∈ units) x}, some units⟩
 
-/-- A mass lexicalization is available from collective aggregates
-    downward — availability of `[−S]` is antitone on the scale. Together
-    with `count_option_monotone`, this is [grimm-2018]'s Table 20
-    landscape derived from the `[±O, ±S]` analysis: the count/mass
-    boundary can only fall *across* the scale, never gerrymander it. -/
-theorem mass_option_antitone :
-    Antitone (fun i => (table91 i).any (fun c => !c.hasSpecificSchema)) := by
-  decide
+@[simp] theorem Frame.objects_ofUnits (units : Set α) : (ofUnits units).objects = units := rfl
 
-/-- Every notional class has at least one lexicalization, and the
-    cross-linguistically variable classes (granular, collective artifact)
-    are exactly those with two ([sutton-filip-2021] §9.3.1: *lentil* vs
-    *čočka*, *furniture* vs *huonekalut*). -/
-theorem variable_classes :
-    (∀ i, (table91 i) ≠ []) ∧
-    (∀ i, (table91 i).length = 2 ↔
-      (i = .granularAggregate ∨ i = .collectiveAggregate)) := by
-  constructor
-  · decide
-  · decide
+/-- A lexical entry (33): the basic predicate; whether the counting base applies the object
+identifying function, `[±O]`; whether the extension is closed under sum, the `(*)` of (33);
+and the perspective the schema of utterance selects, `[+S]`, or none for the null schema,
+`[−S]`. -/
+structure Entry (α : Type*) [SemilatticeSup α] where
+  frame : Frame α
+  objectFn : Bool
+  sumClosed : Bool
+  perspective : Option (Set α)
+  perspective_max : ∀ D, perspective = some D →
+    IsMaxDisjointIn Overlap D (if objectFn then frame.objects else frame.extn)
 
-/-! ### A concrete model: furniture and rice
+namespace Entry
 
-Carrier: nonempty subsets of a small atom domain, overlap = nonempty
-intersection. *Furniture* (§9.4.2–9.4.3): a table `t`, a mirror `m`,
-and the vanity `t ⊔ m` are all functional units, so `𝒪(furniture)`
-overlaps — two individuation perspectives exist (count the vanity as one,
-or the table and mirror as two). *Rice*: the basic predicate knows the
-grains (disjoint!) and their aggregates, but the `[−O, −S]` counting base
-is the null schema over the whole predicate — overlapping. The grains are
-real and inaccessible: the accessibility puzzle. -/
+variable (E : Entry α)
 
-/-- Mereological overlap on `Finset` parts: nonempty intersection. -/
-def fovl (s t : Finset (Fin 3)) : Prop := (s ∩ t).Nonempty
+/-- The predicate the schema applies to: the objects under `[+O]`, the basic predicate under
+`[−O]`. -/
+def base : Set α := if E.objectFn then E.frame.objects else E.frame.extn
 
-instance : ∀ s t, Decidable (fovl s t) := fun s t =>
-  inferInstanceAs (Decidable (s ∩ t).Nonempty)
+/-- The counting base: the perspective under a specific schema, the null schema otherwise. -/
+def cbase : Set α := E.perspective.getD (nullSchema Overlap E.base)
 
-instance {a : Finset (Fin 3)} {P : Set (Finset (Fin 3))}
-    [DecidablePred (· ∈ P)] : DecidablePred (· ∈ insert a P) := fun x =>
-  decidable_of_iff (x = a ∨ x ∈ P) (by simp [Set.mem_insert_iff])
+/-- The extension: the counting base, closed under sum when the entry is. -/
+def extn : Set α := if E.sumClosed then {x | AlgClosure (· ∈ E.cbase) x} else E.cbase
 
-instance {P : Set (Finset (Fin 3))} [DecidablePred (· ∈ P)] :
-    Decidable (OverlapPred fovl P) := by
+/-- Grammatical counting (A1) is defined over disjoint counting bases only: an entry is count
+when its base is disjoint. -/
+def IsCount : Prop := DisjointPred Overlap E.cbase
+
+/-- The features `[±O]` and `[±S]`. -/
+def features : Bool × Bool := (E.objectFn, E.perspective.isSome)
+
+open scoped Classical in
+/-- The morphosyntactic outcome of the categorization. -/
+noncomputable def massCount : MassCount := if E.IsCount then .count else .mass
+
+variable {E}
+
+/-- A `[+S]` entry is count: its perspective is disjoint. -/
+theorem isCount_of_perspective {D : Set α} (h : E.perspective = some D) : E.IsCount := by
+  rw [IsCount, cbase, h, Option.getD_some]
+  exact (E.perspective_max D h).2.1
+
+/-- Under the null schema the counting base is the predicate the schema applies to. -/
+theorem cbase_of_null (h : E.perspective = none) : E.cbase = E.base := by
+  rw [cbase, h, Option.getD_none, nullSchema_eq]
+
+/-- A `[−S]` entry is count exactly when the predicate its schema applies to is disjoint. -/
+theorem isCount_iff_of_null (h : E.perspective = none) :
+    E.IsCount ↔ DisjointPred Overlap E.base := by
+  rw [IsCount, cbase_of_null h]
+
+theorem massCount_eq_mass_iff : E.massCount = .mass ↔ ¬ E.IsCount := by
+  unfold massCount; split_ifs <;> simp [*]
+
+variable (E)
+
+/-- The substitution of the null schema by the schema of utterance, `⟦furniture⟧^{𝒮₀ ↦ 𝒮ᵢ}`. -/
+def withPerspective (D : Set α) (h : IsMaxDisjointIn Overlap D E.base) : Entry α :=
+  { E with perspective := some D, perspective_max := λ _ hD => Option.some_inj.1 hD ▸ h }
+
+theorem withPerspective_isCount (D : Set α) (h : IsMaxDisjointIn Overlap D E.base) :
+    (E.withPerspective D h).IsCount :=
+  isCount_of_perspective rfl
+
+end Entry
+
+/-! ### Unit extracting and container classifiers -/
+
+/-- The unit extracting classifier (49): the object identifying function and the schema of
+utterance inserted into the counting base of any entry, the extension closed under sum. -/
+def unitShift (E : Entry α) (D : Set α) (h : IsMaxDisjointIn Overlap D E.frame.objects) :
+    Entry α :=
+  ⟨E.frame, true, true, some D, λ _ hD => Option.some_inj.1 hD ▸ h⟩
+
+/-- The unit shift is the generalized `[−O,−S]` to `[+O,+S]` shift (9.5.4). -/
+theorem features_unitShift (E : Entry α) (D : Set α)
+    (h : IsMaxDisjointIn Overlap D E.frame.objects) :
+    (unitShift E D h).features = (true, true) := rfl
+
+/-- The unit shift makes every entry count. -/
+theorem isCount_unitShift (E : Entry α) (D : Set α)
+    (h : IsMaxDisjointIn Overlap D E.frame.objects) : (unitShift E D h).IsCount :=
+  Entry.isCount_of_perspective rfl
+
+/-- The extension of the container reading (44): sums of counted receptacles, each of which
+contains something in the argument's extension; counting proceeds by the receptacle's
+counting base, which the argument does not touch. -/
+def containerExtn (R P : Entry α) (contain : α → α → Prop) : Set α :=
+  {x | AlgClosure (· ∈ R.cbase) x ∧ ∀ z ∈ R.cbase, z ≤ x → ∃ v ∈ P.extn, contain z v}
+
+/-- The precondition (45) of the container classifier: the argument's extension is
+cumulative, which every sum-closed extension is. -/
+theorem cum_extn_of_sumClosed {E : Entry α} (h : E.sumClosed = true) : CUM (· ∈ E.extn) := by
+  simp only [Entry.extn, h, if_true]
+  exact algClosure_cum
+
+/-- A singular count extension with two distinct units is not cumulative: the sum of two units
+is not a unit, so *#a bowl of an apple*. -/
+theorem not_cum_extn_of_singular {E : Entry α} (hs : E.sumClosed = false) (hc : E.IsCount)
+    {u v : α} (hu : u ∈ E.cbase) (hv : v ∈ E.cbase) (hne : u ≠ v) (hu0 : ¬ IsBot u)
+    (hv0 : ¬ IsBot v) : ¬ CUM (· ∈ E.extn) := by
+  simp only [Entry.extn, hs, Bool.false_eq_true, if_false]
+  intro hcum
+  have hsum : u ⊔ v ∈ E.cbase := hcum hu hv
+  by_cases huv : u ⊔ v = u
+  · exact hc ⟨u, hu, v, hv, hne, v, hv0, sup_eq_left.1 huv, le_rfl⟩
+  · exact hc ⟨u, hu, u ⊔ v, hsum, Ne.symm huv, u, hu0, le_rfl, le_sup_left⟩
+
+/-! ### Granular frames -/
+
+/-- A frame of units and their sums overlaps as soon as it has two distinct non-null units:
+a unit and its sum with another share the unit. -/
+theorem overlapPred_extn_ofUnits {units : Set α} {u v : α} (hu : u ∈ units) (hv : v ∈ units)
+    (hne : u ≠ v) (hu0 : ¬ IsBot u) (hv0 : ¬ IsBot v) :
+    OverlapPred Overlap (Frame.ofUnits units).extn := by
+  by_cases huv : u ⊔ v = u
+  · exact ⟨u, .base hu, v, .base hv, hne, v, hv0, sup_eq_left.1 huv, le_rfl⟩
+  · exact ⟨u, .base hu, u ⊔ v, .sum (.base hu) (.base hv), Ne.symm huv, u, hu0, le_rfl,
+      le_sup_left⟩
+
+/-- A `[−O,−S]` entry over a frame of units and their sums with two distinct non-null units is
+mass: the grains of *rice* and *čočka* are in the basic predicate, not in the counting base. -/
+theorem rice_mass {units : Set α} {u v : α} (hu : u ∈ units) (hv : v ∈ units) (hne : u ≠ v)
+    (hu0 : ¬ IsBot u) (hv0 : ¬ IsBot v) (E : Entry α) (hF : E.frame = Frame.ofUnits units)
+    (hO : E.objectFn = false) (hS : E.perspective = none) : ¬ E.IsCount := by
+  rw [Entry.isCount_iff_of_null hS]
+  simp only [Entry.base, hO, Bool.false_eq_true, if_false, hF]
+  exact λ h => h (overlapPred_extn_ofUnits hu hv hne hu0 hv0)
+
+/-- The `[+O,+S]` entry over a frame of disjoint units, *lentil* (36)–(37): the perspective
+is the units themselves. -/
+def lentil (units : Set α) (hd : DisjointPred Overlap units) (sumClosed : Bool) : Entry α :=
+  ⟨Frame.ofUnits units, true, sumClosed, some units,
+    λ _ hD => Option.some_inj.1 hD ▸ isMaxDisjointIn_self _ hd⟩
+
+/-- *lentil* is count, with the units as its counting base. -/
+theorem lentil_count {units : Set α} (hd : DisjointPred Overlap units) (sumClosed : Bool) :
+    (lentil units hd sumClosed).IsCount ∧ (lentil units hd sumClosed).cbase = units :=
+  ⟨Entry.isCount_of_perspective rfl, rfl⟩
+
+end Entries
+
+/-! ### Furniture and rice on three atoms -/
+
+section Model
+
+/-- Parts are subsets of three atoms; overlap is a shared non-empty part. -/
+abbrev Part := Finset (Fin 3)
+
+instance : DecidableRel (Overlap (α := Part)) := λ s t =>
+  decidable_of_iff (¬ Disjoint s t) overlap_iff_not_disjoint.symm
+
+instance {a : Part} {P : Set Part} [DecidablePred (· ∈ P)] : DecidablePred (· ∈ insert a P) :=
+  λ x => decidable_of_iff (x = a ∨ x ∈ P) (by simp [Set.mem_insert_iff])
+
+instance {P : Set Part} [DecidablePred (· ∈ P)] : Decidable (OverlapPred Overlap P) := by
   unfold OverlapPred; infer_instance
 
-instance {P : Set (Finset (Fin 3))} [DecidablePred (· ∈ P)] :
-    Decidable (DisjointPred fovl P) :=
-  decidable_of_iff (¬ OverlapPred fovl P) Iff.rfl
+instance {P : Set Part} [DecidablePred (· ∈ P)] : Decidable (DisjointPred Overlap P) :=
+  decidable_of_iff (¬ OverlapPred Overlap P) Iff.rfl
 
-instance {P Q : Set (Finset (Fin 3))} [DecidablePred (· ∈ P)]
-    [DecidablePred (· ∈ Q)] : Decidable (P ⊆ Q) :=
+instance {P Q : Set Part} [DecidablePred (· ∈ P)] [DecidablePred (· ∈ Q)] : Decidable (P ⊆ Q) :=
   decidable_of_iff (∀ x, x ∈ P → x ∈ Q) Iff.rfl
 
-instance {D P : Set (Finset (Fin 3))} [DecidablePred (· ∈ D)]
-    [DecidablePred (· ∈ P)] : Decidable (IsMaxDisjointIn fovl D P) :=
+instance {D P : Set Part} [DecidablePred (· ∈ D)] [DecidablePred (· ∈ P)] :
+    Decidable (IsMaxDisjointIn Overlap D P) :=
   decidable_of_iff
-    ((∀ x, x ∈ D → x ∈ P) ∧ DisjointPred fovl D ∧
-      ∀ x, x ∈ P → x ∉ D → OverlapPred fovl (insert x D)) Iff.rfl
+    ((∀ x, x ∈ D → x ∈ P) ∧ DisjointPred Overlap D ∧
+      ∀ x, x ∈ P → x ∉ D → OverlapPred Overlap (insert x D)) Iff.rfl
 
-/-- The identified units of *furniture* on a two-atom domain: table `{0}`,
-    mirror `{1}`, and the vanity `{0, 1}` they jointly compose. -/
-def furnitureUnits : Set (Finset (Fin 3)) :=
-  {s | s = {0} ∨ s = {1} ∨ s = {0, 1}}
+/-- The functional units of *furniture*: a table, a mirror, and the vanity they compose. -/
+def furnitureUnits : Set Part := {s | s = {0} ∨ s = {1} ∨ s = {0, 1}}
 
-instance : DecidablePred (· ∈ furnitureUnits) := fun s =>
+instance : DecidablePred (· ∈ furnitureUnits) := λ s =>
   decidable_of_iff (s = {0} ∨ s = {1} ∨ s = {0, 1}) Iff.rfl
 
 /-- The piece perspective: count the table and the mirror. -/
-def piecePerspective : Set (Finset (Fin 3)) := {s | s = {0} ∨ s = {1}}
+def piecePerspective : Set Part := {s | s = {0} ∨ s = {1}}
 
-instance : DecidablePred (· ∈ piecePerspective) := fun s =>
+instance : DecidablePred (· ∈ piecePerspective) := λ s =>
   decidable_of_iff (s = {0} ∨ s = {1}) Iff.rfl
 
 /-- The vanity perspective: count the composed unit. -/
-def vanityPerspective : Set (Finset (Fin 3)) := {s | s = {0, 1}}
+def vanityPerspective : Set Part := {s | s = {0, 1}}
 
-instance : DecidablePred (· ∈ vanityPerspective) := fun s =>
-  decidable_of_iff (s = {0, 1}) Iff.rfl
+instance : DecidablePred (· ∈ vanityPerspective) := λ s => decidable_of_iff (s = {0, 1}) Iff.rfl
 
-/-- `𝒪(furniture)` is overlapping: the vanity shares parts with the table.
-    Hence *furniture* is `[+O, −S]`: object units exist (cardinality
-    comparisons are licensed) but the null schema's base overlaps — mass. -/
-theorem furniture_units_overlap : OverlapPred fovl furnitureUnits := by
-  decide
+/-- *furniture* (40): `[+O,−S]` over the functional units and their sums. -/
+def furniture : Entry Part :=
+  ⟨Frame.ofUnits furnitureUnits, true, true, none, λ _ h => by simp at h⟩
 
-/-- The two individuation perspectives on the furniture units — count the
-    pieces, or count the vanity — are both maximally disjoint, and differ;
-    by `overlapPred_nullSchema` the null-schema counting base is
-    overlapping, which is *why* `#three furnitures` fails. -/
+/-- The functional units overlap, so *furniture* is mass although its units are identified. -/
+theorem furniture_mass : ¬ furniture.IsCount := by
+  rw [Entry.isCount_iff_of_null rfl]
+  show ¬ DisjointPred Overlap furnitureUnits
+  exact λ h => h (by decide)
+
+/-- Two perspectives on the furniture units, the pieces and the vanity, are both maximal and
+differ, which is why the null schema's base overlaps. -/
 theorem furniture_two_perspectives :
-    IsMaxDisjointIn fovl piecePerspective furnitureUnits ∧
-    IsMaxDisjointIn fovl vanityPerspective furnitureUnits ∧
-    OverlapPred fovl (nullSchema fovl furnitureUnits) := by
-  refine ⟨by decide, by decide,
-    overlapPred_nullSchema fovl (D₁ := piecePerspective)
-      (D₂ := vanityPerspective) (by decide) (by decide) ?_⟩
-  intro h
-  have h0 : ({0} : Finset (Fin 3)) ∈ vanityPerspective := by
-    rw [← h]; exact Or.inl rfl
-  exact absurd h0 (by decide)
+    IsMaxDisjointIn Overlap piecePerspective furnitureUnits ∧
+      IsMaxDisjointIn Overlap vanityPerspective furnitureUnits ∧
+      piecePerspective ≠ vanityPerspective ∧ OverlapPred Overlap furniture.cbase := by
+  refine ⟨by decide, by decide, λ h => ?_, ?_⟩
+  · have h0 : ({0} : Part) ∈ vanityPerspective := by rw [← h]; exact Or.inl rfl
+    exact absurd h0 (by decide)
+  · rw [Entry.cbase_of_null rfl]
+    show OverlapPred Overlap furnitureUnits
+    decide
 
-/-- *Rice* on a three-grain domain: the basic predicate contains the
-    grains and their aggregates (its `extension = unit ∨ collection`,
-    (29)). -/
-def riceBaspred : Set (Finset (Fin 3)) := {s | s.Nonempty}
+/-- *huonekalut* (41): *furniture* with the null schema replaced by the piece perspective, and
+count. -/
+def huonekalut : Entry Part :=
+  furniture.withPerspective piecePerspective
+    (by show IsMaxDisjointIn Overlap piecePerspective furnitureUnits; decide)
 
-instance : DecidablePred (· ∈ riceBaspred) := fun s =>
-  inferInstanceAs (Decidable s.Nonempty)
+theorem huonekalut_count : huonekalut.IsCount := furniture.withPerspective_isCount _ _
 
-/-- The grains of rice: the atoms. -/
-def riceGrains : Set (Finset (Fin 3)) :=
-  {s | s = {0} ∨ s = {1} ∨ s = {2}}
+/-- The grains of *rice*: the atoms. -/
+def riceGrains : Set Part := {s | s = {0} ∨ s = {1} ∨ s = {2}}
 
-instance : DecidablePred (· ∈ riceGrains) := fun s =>
+instance : DecidablePred (· ∈ riceGrains) := λ s =>
   decidable_of_iff (s = {0} ∨ s = {1} ∨ s = {2}) Iff.rfl
 
-/-- The heap perspective on rice: one three-grain aggregate. -/
-def heapPerspective : Set (Finset (Fin 3)) := {s | s = {0, 1, 2}}
+/-- *rice* (38): `[−O,−S]` over the grains and their sums. -/
+def rice : Entry Part := ⟨Frame.ofUnits riceGrains, false, true, none, λ _ h => by simp at h⟩
 
-instance : DecidablePred (· ∈ heapPerspective) := fun s =>
-  decidable_of_iff (s = {0, 1, 2}) Iff.rfl
+theorem riceGrains_disjoint : DisjointPred Overlap riceGrains := by decide
 
-/-- **The accessibility puzzle, both halves** ((Q2), §9.5.3): the grains
-    are part of *rice*'s basic predicate and are perfectly disjoint — they
-    intuitively count as one — yet the `[−O, −S]` counting base (the null
-    schema over the whole basic predicate) is overlapping, because grain
-    and heap perspectives are both maximal. Grammatical counting is
-    blocked: salience without accessibility. -/
+/-- The accessibility puzzle, both halves ((Q2), 9.5.3): the grains are disjoint and in the
+basic predicate, yet *rice* is mass; *grains of rice* (50) is the *lentil* entry over the same
+frame, count with the grains as its counting base. -/
 theorem rice_accessibility :
-    riceGrains ⊆ riceBaspred ∧
-    DisjointPred fovl riceGrains ∧
-    OverlapPred fovl (nullSchema fovl riceBaspred) := by
-  refine ⟨by decide, by decide,
-    overlapPred_nullSchema fovl
-      (D₁ := riceGrains) (D₂ := heapPerspective)
-      (by decide) (by decide) ?_⟩
-  intro h
-  have h0 : ({0} : Finset (Fin 3)) ∈ heapPerspective := by
-    rw [← h]; exact Or.inl rfl
-  exact absurd h0 (by decide)
+    riceGrains ⊆ rice.frame.extn ∧ ¬ rice.IsCount ∧
+      unitShift rice riceGrains (isMaxDisjointIn_self _ riceGrains_disjoint) =
+        lentil riceGrains riceGrains_disjoint true ∧
+      (lentil riceGrains riceGrains_disjoint true).IsCount ∧
+      (lentil riceGrains riceGrains_disjoint true).cbase = riceGrains :=
+  ⟨λ _ h => .base h,
+    rice_mass (α := Part) (u := {0}) (v := {1}) (Or.inl rfl) (Or.inr (Or.inl rfl)) (by decide)
+      (by decide) (by decide) rice rfl rfl rfl,
+    rfl, (lentil_count _ _).1, (lentil_count _ _).2⟩
 
-/-! ### Cross-linguistic variation as a schema substitution
+/-- *mud* (39): `[−O,−S]` over the parts of some mud, which overlap. -/
+def mud : Entry Part := ⟨Frame.substance {s | s.Nonempty}, false, true, none, λ _ h => by simp at h⟩
 
-Finnish *huonekalut* 'items of furniture' is the count counterpart of
-*furniture*: identical basic predicate, with the null schema replaced by a
-contextually specified one — `⟦huonekalut⟧^𝒮ᵢ = ⟦furniture⟧^{𝒮₀ ↦ 𝒮ᵢ}`
-(their p. 278). On the model: each *specific* perspective on the furniture
-units is disjoint, hence countable. The same substitution relates Czech
-*čočka* to English *lentil(s)* among granulars. -/
+theorem mud_mass : ¬ mud.IsCount := by
+  rw [Entry.isCount_iff_of_null rfl]
+  show ¬ DisjointPred Overlap {s : Part | s.Nonempty}
+  exact λ h => h ⟨{0}, by decide, {0, 1}, by decide, by decide, {0}, by decide, le_rfl, by decide⟩
 
-/-- Each specific individuation perspective on the furniture units is a
-    disjoint counting base — `[+O, +S]` is count (*huonekalut*), even
-    though the `[+O, −S]` null-schema base overlaps (*furniture*). -/
-theorem huonekalut_count :
-    DisjointPred fovl piecePerspective ∧
-    DisjointPred fovl vanityPerspective := by
-  exact ⟨by decide, by decide⟩
+end Model
 
 end SuttonFilip2021

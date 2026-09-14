@@ -2,6 +2,7 @@ import Mathlib.Algebra.Order.Archimedean.Basic
 import Mathlib.Data.Set.Card
 import Mathlib.Order.Atoms
 import Mathlib.Order.SupClosed
+import Mathlib.Order.Zorn
 import Linglib.Core.Order.Antichain
 import Linglib.Core.Order.Valuation
 
@@ -38,7 +39,8 @@ overlap.
 * `QMOD`, `atomize`, `atomCount` — quantizing modification, the `P`-atoms, and the
   number of atoms below an element.
 * `IsMaxDisjointIn`, `nullSchema` — individuation perspectives ([landman-2020],
-  [sutton-filip-2021]).
+  [sutton-filip-2021]); every member of a predicate lies in some perspective
+  (`exists_isMaxDisjointIn_mem`), so the null schema is the identity (`nullSchema_eq`).
 
 ## Main results
 
@@ -556,14 +558,36 @@ theorem overlapPred_nullSchema {D₁ D₂ P : Set α} (h₁ : IsMaxDisjointIn ov
     (Set.union_subset (fun _ ha => ⟨D₁, h₁, ha⟩) (fun _ ha => ⟨D₂, h₂, ha⟩))
     (overlapPred_union_of_maxDisjoint_ne ov h₁ h₂ hne)
 
-/-- A disjoint predicate is its own null schema. -/
-theorem nullSchema_eq_of_disjoint {P : Set α} (h : DisjointPred ov P) : nullSchema ov P = P := by
-  ext x
-  constructor
-  · rintro ⟨D, hD, hx⟩
-    exact hD.1 hx
-  · intro hx
-    exact ⟨P, ⟨Set.Subset.rfl, h, fun y hy hny => absurd hy hny⟩, hx⟩
+/-- A disjoint predicate is its own unique perspective. -/
+theorem isMaxDisjointIn_self {P : Set α} (h : DisjointPred ov P) : IsMaxDisjointIn ov P P :=
+  ⟨Set.Subset.rfl, h, λ _ hy hny => absurd hy hny⟩
+
+/-- Every member of a predicate lies in some perspective on it: a disjoint subset containing
+it extends to a maximal one. -/
+theorem exists_isMaxDisjointIn_mem {P : Set α} {x : α} (hx : x ∈ P) :
+    ∃ D, IsMaxDisjointIn ov D P ∧ x ∈ D := by
+  obtain ⟨D, hxD, hD⟩ := zorn_subset_nonempty {D | D ⊆ P ∧ DisjointPred ov D}
+    (λ c hc hchain _ => ⟨⋃₀ c, ⟨Set.sUnion_subset λ D hD => (hc hD).1,
+      λ ⟨a, ⟨A, hA, haA⟩, b, ⟨B, hB, hbB⟩, hab, hov⟩ =>
+        (hchain.total hA hB).elim (λ hAB => (hc hB).2 ⟨a, hAB haA, b, hbB, hab, hov⟩)
+          (λ hBA => (hc hA).2 ⟨a, haA, b, hBA hbB, hab, hov⟩)⟩,
+      λ D hD => Set.subset_sUnion_of_mem hD⟩)
+    {x} ⟨Set.singleton_subset_iff.2 hx, λ ⟨a, ha, b, hb, hab, _⟩ =>
+      hab ((Set.mem_singleton_iff.1 ha).trans (Set.mem_singleton_iff.1 hb).symm)⟩
+  refine ⟨D, ⟨hD.prop.1, hD.prop.2, λ y hy hyD => ?_⟩, hxD rfl⟩
+  by_contra hno
+  exact hyD (hD.2 ⟨Set.insert_subset hy hD.prop.1, hno⟩ (Set.subset_insert _ _)
+    (Set.mem_insert _ _))
+
+/-- The null schema is the identity: every member of a predicate is in some perspective. -/
+theorem nullSchema_eq (P : Set α) : nullSchema ov P = P :=
+  Set.Subset.antisymm (λ _ ⟨_, hD, hx⟩ => hD.1 hx)
+    (λ _ hx => let ⟨D, hD, hxD⟩ := exists_isMaxDisjointIn_mem ov hx; ⟨D, hD, hxD⟩)
+
+/-- The null schema of a predicate overlaps exactly when the predicate does. -/
+theorem overlapPred_nullSchema_iff (P : Set α) :
+    OverlapPred ov (nullSchema ov P) ↔ OverlapPred ov P := by
+  rw [nullSchema_eq]
 
 end Individuation
 
