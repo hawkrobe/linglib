@@ -1,622 +1,282 @@
-import Mathlib.Order.Monotone.Defs
 import Linglib.Logic.Natural.Additivity
 import Linglib.Semantics.Presupposition.Basic
+import Linglib.Semantics.Conditionals.Basic
+import Linglib.Semantics.Degree.Quantifier
 
 /-!
 # Strawson entailment
 
-This file defines Strawson-DE — downward entailingness checked only
-where the conclusion's presuppositions are satisfied
-([von-fintel-1999]) — and the presuppositional operators that motivate
-it: `only`, adversative attitude verbs, superlatives, and conditional
-antecedents license NPIs without being classically DE.
+This file defines Strawson downward entailingness and the presuppositional operators that
+motivate it. An operator into partial propositions is Strawson downward entailing when a smaller
+argument gives a conclusion Strawson-entailed by the premise: the downward inference is checked
+only where the conclusion's presupposition holds ([von-fintel-1999]). The operators are focus
+*only*, the adversative attitudes, superlatives, temporal *since*, and conditional antecedents,
+each of which licenses negative polarity items without being downward entailing in the
+classical sense.
 
-## Main declarations
+## Main definitions
 
-* `IsStrawsonDE`, `IsStrawsonAntiAdditive`, `StrawsonValid`: the DE
-  notions and validity, relativized to a definedness predicate.
-* `antitone_implies_strawsonDE`, `antiAdditive_implies_strawsonAA`:
-  the classical notions imply their Strawson forms.
-* `onlyFull`, `sorryFull`, `gladFull`, `superlativeAssert`,
-  `condNecessity`, `sinceFull`: the operators, each Strawson-DE (or
-  Strawson-anti-additive) but not classically DE.
-* `strawsonDE_strictly_weaker_than_DE`: each step of
-  AM ⊂ AA ⊂ DE ⊂ Strawson-DE is strict.
+* `IsStrawsonDE`, `IsStrawsonAntiAdditive`: Strawson downward entailingness and Strawson
+  anti-additivity ([gajewski-2011]) of an operator into `PartialProp`.
+* `only`, `regret`, `glad`, `superlative`, `since`, `would`: the operators.
+
+## Main results
+
+* `IsStrawsonDE.of_antitone`: an operator whose assertion is antitone is Strawson downward
+  entailing, whatever its presupposition.
+* `not_antitone_truthSet`: an operator whose presupposition fails at a smaller argument is not
+  classically downward entailing.
+* `IsStrawsonAntiAdditive.of_antiAdditive`: a monotone presupposition over an anti-additive
+  assertion is Strawson anti-additive.
+* `only_isStrawsonDE`, `regret_isStrawsonDE`, `superlative_isStrawsonDE`, `since_isStrawsonDE`,
+  `would_isStrawsonDE`, and the `_not_antitone` counterexamples.
 
 ## Implementation notes
 
-The operators are polymorphic over a world type, taking their
-presupposition, ordering, and modal-base parameters at mathlib types
-(`Set W`, `W → Set W`, `W → Prop`). The concrete counterexamples
-("not classically DE") are specialized to `Fin 4`: non-DE-ness is an
-existence claim about some inhabited domain.
+Every operator here has a presupposition monotone in its argument and an assertion antitone in
+it; Strawson downward entailingness is the antitone assertion alone, and the failure of
+classical downward entailingness is the presupposition failing at the empty argument. The
+attitude operators take their belief set and best worlds as world-indexed sets so that
+`Modality.Kratzer.bestWorlds` can be supplied at the use site, and `only` and `superlative`
+take an intensional property `ι → Set W`, an extensional predicate being its world-constant
+case.
 
 ## References
 
-* [von-fintel-1999] — Strawson entailment and the licensor case
-  studies.
-* [strawson-1952] — the presuppositional notion of entailment.
+* [von-fintel-1999]
+* [strawson-1952]
+* [horn-1996]
+* [heim-1992]
+* [kratzer-1986]
+* [gajewski-2011]
 -/
 
 namespace NaturalLogic
 
-/-! ### Strawson entailment -/
+open Presupposition
 
-/--
-**Strawson-DE** ([von-fintel-1999], Definition 14, p. 104).
+variable {α ι W D : Type*}
 
-A function `f : Set W → Set W` is Strawson-DE with respect to a
-world-relativized definedness predicate `defined` iff: for all `p ⊆ q`,
-at every world `w` where `defined p w` holds (i.e. the presupposition
-of `f(p)` is satisfied at `w`), we have `f q w → f p w`.
+/-! ### Strawson downward entailingness -/
 
-The definedness predicate is world-relativized because presuppositions
-are world-relative: "sorry that p" presupposes p at the evaluation
-world, not at all worlds. For "only" the presupposition happens to be
-world-independent, but the type accommodates factive attitudes.
--/
-def IsStrawsonDE {α β : Type*} (f : Set α → Set β)
-    (defined : Set α → β → Prop) : Prop :=
-  ∀ p q : Set α, p ⊆ q → ∀ w : β, defined p w → f q w → f p w
+section StrawsonDE
 
-/--
-**Strawson-valid inference** ([von-fintel-1999], Definition 19, p. 105).
+variable [Preorder α] {f : α → PartialProp W}
 
-An inference from premises to conclusion is Strawson-valid iff it is
-classically valid once we add the premise that all presuppositions of
-the conclusion are satisfied.
--/
-def StrawsonValid {W : Type*} (premises : List (Set W)) (conclusion : Set W)
-    (presupSatisfied : Prop) : Prop :=
-  presupSatisfied →
-    (∀ w, (∀ p ∈ premises, p w) → conclusion w)
+/-- An operator into partial propositions is Strawson downward entailing when `p ≤ q` makes
+`f q` Strawson-entail `f p`: the downward inference is checked only where the conclusion is
+defined ([von-fintel-1999]'s Definition 14). -/
+def IsStrawsonDE (f : α → PartialProp W) : Prop :=
+  ∀ ⦃p q⦄, p ≤ q → (f q).strawsonEntails (f p)
 
-/-! ### The classical-to-Strawson hierarchy -/
+theorem isStrawsonDE_iff :
+    IsStrawsonDE f ↔ ∀ ⦃p q⦄, p ≤ q → ∀ w, (f p).presup w → (f q).holds w → (f p).holds w :=
+  ⟨λ h _ _ hpq w hp hq => ⟨hp, h hpq w hq.1 hp hq.2⟩,
+    λ h _ _ hpq w hq hp hq' => (h hpq w hp ⟨hq, hq'⟩).2⟩
 
-/-- Classical DE implies Strawson-DE (for any definedness predicate).
-    The `defined p w` hypothesis is simply ignored. Polymorphic over
-    domain and codomain to match `IsAntiAdditive`'s shape. -/
-theorem antitone_implies_strawsonDE {α β : Type*} (f : Set α → Set β)
-    (hAnti : Antitone f) (defined : Set α → β → Prop) :
-    IsStrawsonDE f defined :=
-  fun _p _q hpq _w _hdef hfqw => hAnti hpq hfqw
+/-- An antitone assertion is Strawson downward entailing, whatever the presupposition. -/
+theorem IsStrawsonDE.of_antitone (h : Antitone λ p => (f p).assertion) : IsStrawsonDE f :=
+  λ _ _ hpq w _ _ hq => h hpq w hq
 
-/--
-**Strawson anti-additive** — the Strawson-relativized version of
-anti-additivity. Required by strong NPIs ("lift a finger", "in years"):
-[gajewski-2011], [chierchia-2013] ch. 3, [crnic-2014].
+/-- Classical downward entailingness of the total meaning implies the Strawson form. -/
+theorem IsStrawsonDE.of_antitone_truthSet (h : Antitone λ p => (f p).truthSet) :
+    IsStrawsonDE f :=
+  λ _ _ hpq _ hq _ hq' => (h hpq ⟨hq, hq'⟩).2
 
-`f` is Strawson-AA iff for all `p, q` and worlds `w` where both `f p`'s
-and `f q`'s presuppositions are satisfied, `f (p ∪ q) w ↔ f p w ∧ f q w`.
+theorem IsStrawsonDE.comp_monotone {β : Type*} [Preorder β] {g : β → α} (hf : IsStrawsonDE f)
+    (hg : Monotone g) : IsStrawsonDE (f ∘ g) :=
+  λ _ _ hpq => hf (hg hpq)
 
-The Strawson move on AA is the same as on DE: the equality is checked
-"under the assumption that all presuppositions of the statements
-involved are satisfied" (vF Definition 19, p. 105). Strong NPIs are
-licensed in Strawson-AA contexts but not in mere-Strawson-DE contexts —
-this is the asymmetry that distinguishes "any" (weak, needs only DE) from
-"lift a finger" (strong, needs AA).
--/
-def IsStrawsonAntiAdditive {α β : Type*} (f : Set α → Set β)
-    (defined : Set α → β → Prop) : Prop :=
-  ∀ p q : Set α, ∀ w : β, defined p w → defined q w →
-    (f (p ∪ q) w ↔ f p w ∧ f q w)
+/-- Presupposition failure at a smaller argument defeats classical downward entailingness. -/
+theorem not_antitone_truthSet {p q : α} {w : W} (hpq : p ≤ q) (hq : (f q).holds w)
+    (hp : ¬ (f p).presup w) : ¬ Antitone λ p => (f p).truthSet :=
+  λ h => hp (h hpq hq).1
 
-/-- Classical anti-additivity ⇒ Strawson-AA (definedness is ignored).
-    Polymorphic over `{α β : Type*}` to match `IsStrawsonAntiAdditive`'s shape. -/
-theorem antiAdditive_implies_strawsonAA {α β : Type*} (f : Set α → Set β)
-    (hAA : IsAntiAdditive f) (defined : Set α → β → Prop) :
-    IsStrawsonAntiAdditive f defined := by
-  intro p q w _ _
-  exact isAntiAdditive_iff_mem.mp hAA p q w
+end StrawsonDE
 
-/-- Strawson-AA ⇒ Strawson-DE.
+/-! ### Strawson anti-additivity -/
 
-    Anti-additivity is strictly stronger than DE classically; the same
-    strict inclusion holds in the Strawson-relativized world (modulo
-    suitable presupposition handling). -/
-theorem strawsonAA_implies_strawsonDE {W : Type*} (f : Set W → Set W)
-    (defined : Set W → W → Prop)
-    (hAA : IsStrawsonAntiAdditive f defined)
-    (hDefSubset : ∀ p q : Set W, p ⊆ q → ∀ w, defined p w → defined q w) :
-    IsStrawsonDE f defined := by
-  intro p q hpq w hdefp hfqw
-  -- Show q = p ∪ q (since p ⊆ q)
-  have hUnion : p ∪ q = q := by
-    ext x; constructor
-    · rintro (hp | hq)
-      · exact hpq hp
-      · exact hq
-    · intro hq; exact Or.inr hq
-  -- defined q w follows from definedness monotonicity and p ⊆ q
-  have hdefq : defined q w := hDefSubset p q hpq w hdefp
-  -- transport f q w to f (p ∪ q) w via p ∪ q = q
-  have hfunion : f (p ∪ q) w := by rw [hUnion]; exact hfqw
-  exact (hAA p q w hdefp hdefq |>.mp hfunion).1
+section StrawsonAA
 
-/-! ### `only` (Horn's asymmetric analysis; [horn-1996]) -/
+variable [SemilatticeSup α] {f : α → PartialProp W}
 
-/-!
-### `only`
+/-- Anti-additivity of the total meaning, checked where both arguments' presuppositions hold
+([gajewski-2011]'s Strawson anti-additivity). -/
+def IsStrawsonAntiAdditive (f : α → PartialProp W) : Prop :=
+  ∀ p q w, (f p).presup w → (f q).presup w →
+    ((f (p ⊔ q)).holds w ↔ (f p).holds w ∧ (f q).holds w)
 
-Horn's analysis: "Only x VP" decomposes into:
-- **Presupposition** (positive): `∃ y, x y ∧ VP y` — some witness exists
-  (Horn's amended 1996/1997 version, vF footnote 2 p. 104).
-- **Assertion** (negative): `∀ y, x y ∨ ¬ VP y` — no `y ≠ x` satisfies VP.
+/-- A monotone presupposition over an anti-additive assertion is Strawson anti-additive. -/
+theorem IsStrawsonAntiAdditive.of_antiAdditive (hp : Monotone λ p => (f p).presup)
+    (ha : IsAntiAdditive λ p => (f p).assertion) : IsStrawsonAntiAdditive f := by
+  intro p q w hpw hqw
+  have h : (f (p ⊔ q)).assertion w ↔ (f p).assertion w ∧ (f q).assertion w :=
+    iff_of_eq (congrFun (ha p q) w)
+  exact ⟨λ hs => ⟨⟨hpw, (h.1 hs.2).1⟩, hqw, (h.1 hs.2).2⟩,
+    λ hs => ⟨hp le_sup_left w hpw, h.2 ⟨hs.1.2, hs.2.2⟩⟩⟩
 
-Von Fintel's key observation: `only` is NOT classically DE
-(`onlyFull_not_de` below; vF ex. 11 p. 101) but IS Strawson-DE
-(`onlyFull_isStrawsonDE`; vF ex. 18 p. 104).
--/
+/-- Strawson anti-additivity implies Strawson downward entailingness once the presupposition is
+monotone. -/
+theorem IsStrawsonAntiAdditive.isStrawsonDE (hAA : IsStrawsonAntiAdditive f)
+    (hp : Monotone λ p => (f p).presup) : IsStrawsonDE f :=
+  λ p q hpq w hq hp' hq' =>
+    ((hAA p q w hp' (hp hpq w hp')).1 (by rw [sup_eq_right.mpr hpq]; exact ⟨hq, hq'⟩)).1.2
 
-/--
-"Only x VP" as a `PartialProp`: Horn's asymmetric decomposition.
--/
-def onlyPartialProp {W : Type*} (x : W → Prop) (scope : Set W) :
-    Presupposition.PartialProp W where
-  presup := fun _ => ∃ y, x y ∧ scope y
-  assertion := fun _ => ∀ y, x y ∨ ¬ scope y
+end StrawsonAA
 
-/--
-The full "only" meaning: presupposition + assertion combined.
+/-! ### *Only* -/
 
-"Only x VP" is true at w iff x satisfies VP AND no one else does.
-By construction, `onlyFull x scope w ↔ (onlyPartialProp x scope).presup w ∧
-(onlyPartialProp x scope).assertion w` (`Iff.rfl`).
--/
-def onlyFull {W : Type*} (x : W → Prop) (scope : Set W) : Set W :=
-  fun _w => (∃ y, x y ∧ scope y) ∧ (∀ y, x y ∨ ¬ scope y)
+section Only
 
-theorem onlyFull_eq_prprop {W : Type*} (x : W → Prop) (scope : Set W) (w : W) :
-    onlyFull x scope w ↔
-    (onlyPartialProp x scope).presup w ∧ (onlyPartialProp x scope).assertion w :=
-  Iff.rfl
+variable (x : ι) (P : ι → Set W)
 
-/--
-Ex. 18 (p. 104): `onlyFull` is Strawson-DE in its scope.
+/-- *Only x is P* presupposes that `x` is `P` and asserts that nothing else is
+([von-fintel-1999]'s (15)); [horn-1996]'s presupposition that something is `P` derives this one
+from the assertion. -/
+def only : PartialProp W where
+  presup w := w ∈ P x
+  assertion w := ∀ y, y ≠ x → w ∉ P y
 
-When the presupposition is satisfied (the focused individual `x`
-satisfies the scope `P`), then `P ⊆ Q`, "no `y ≠ x` satisfies `Q`"
-implies "no `y ≠ x` satisfies `P`" — because `P ⊆ Q` makes the
-exclusion easier to satisfy.
+theorem only_isStrawsonDE : IsStrawsonDE (only (W := W) x) :=
+  .of_antitone λ _ _ h _ hQ y hy hP => hQ y hy (h y hP)
 
-The definedness predicate is world-independent (existential
-presupposition), so the world argument is unused.
--/
-theorem onlyFull_isStrawsonDE {W : Type*} (x : W → Prop) :
-    IsStrawsonDE (onlyFull x) (fun scope _w => ∃ w', x w' ∧ scope w') := by
-  intro p q hpq w ⟨wx, hx_true, hp_wx⟩ h
-  obtain ⟨_h_any, h_all⟩ := h
-  refine ⟨⟨wx, hx_true, hp_wx⟩, ?_⟩
-  intro y
-  rcases h_all y with hxy | hnq
-  · left; exact hxy
-  · right; intro hpy; exact hnq (hpq hpy)
+theorem only_isStrawsonAA : IsStrawsonAntiAdditive (only (W := W) x) :=
+  .of_antiAdditive (λ _ _ h _ hw => h x hw) λ _ _ => funext λ _ => propext <| by
+    simp only [only, Pi.sup_apply, Pi.inf_apply, inf_Prop_eq, Set.sup_eq_union, Set.mem_union,
+      not_or, imp_and, forall_and]
 
-/--
-[gajewski-2011] Appendix 1 / eqs. 37-38: `onlyFull` is **Strawson-AA**.
+/-- *Only John ate vegetables* does not classically entail *only John ate kale*: the
+conclusion's presupposition may fail ([von-fintel-1999]'s (11)). -/
+theorem only_not_antitone : ¬ Antitone λ P : Bool → Set Unit => (only true P).truthSet :=
+  not_antitone_truthSet (p := ⊥) (q := λ y => {_u | y = true}) (w := ()) bot_le
+    ⟨rfl, λ _ hy h => hy h⟩ id
 
-This is the load-bearing puzzle of [gajewski-2011]: vF's recalcitrant
-Strawson-DE operators are also Strawson-AA, yet they don't license strong
-NPIs (`either`, `in weeks`, punctual `until`). So Strawson-AA is too weak
-as a characterization of strong-NPI licensors — Gajewski argues the
-operative property is DE assessed on the meaning enriched with the
-licenser's direct implicature, and the apparent AA-requirement is just
-"DE + scalar endpoint" in disguise (Conjecture 48).
+end Only
 
-Definedness predicate: existence of a witness for *both* `p` and `q`
-individually (the conjunctive form of Strawson biconditional definedness).
--/
-theorem onlyFull_isStrawsonAA {W : Type*} (x : W → Prop) :
-    IsStrawsonAntiAdditive (onlyFull x)
-      (fun scope _w => ∃ w', x w' ∧ scope w') := by
-  intro p q w hdefp hdefq
-  constructor
-  · -- forward: only(p ∪ q) → only(p) ∧ only(q)
-    rintro ⟨_, h_no_other⟩
-    refine ⟨⟨hdefp, ?_⟩, ⟨hdefq, ?_⟩⟩
-    · intro y
-      rcases h_no_other y with hy | hy
-      · left; exact hy
-      · right; intro hp; exact hy (Or.inl hp)
-    · intro y
-      rcases h_no_other y with hy | hy
-      · left; exact hy
-      · right; intro hq; exact hy (Or.inr hq)
-  · -- reverse: only(p) ∧ only(q) → only(p ∪ q)
-    rintro ⟨⟨_, h_no_other_p⟩, ⟨_, h_no_other_q⟩⟩
-    obtain ⟨wp, hwpx, hwpp⟩ := hdefp
-    refine ⟨⟨wp, hwpx, Or.inl hwpp⟩, ?_⟩
-    intro y
-    rcases h_no_other_p y with hy | hy
-    · left; exact hy
-    · rcases h_no_other_q y with hy' | hy'
-      · left; exact hy'
-      · right; intro h
-        rcases h with hp | hq
-        · exact hy hp
-        · exact hy' hq
+/-! ### Adversative and congruent attitudes -/
 
-/--
-Ex. 11 (p. 101): `onlyFull` is NOT classically DE.
+section Attitudes
 
-Concrete counterexample over the toy 4-element `Fin 4`: take
-`p = ∅` and `q = {w0}` with focus on `w0`. Then `p ⊆ q` and `onlyFull
-(· = w0) q w0` holds (w0 satisfies q and is the only such), but `onlyFull
-(· = w0) p w0` fails (the existence presup that someone satisfies p is
-unmet). Classical DE would require the conclusion to hold.
--/
-theorem onlyFull_not_de : ¬ Antitone (onlyFull (· = (0 : Fin 4))) := by
-  intro hDE
-  let p : Set (Fin 4) := fun _ => False
-  let q : Set (Fin 4) := fun w => w = (0 : Fin 4)
-  have hle : p ≤ q := fun _ h => h.elim
-  have hq_only : onlyFull (· = (0 : Fin 4)) q (0 : Fin 4) := by
-    refine ⟨⟨(0 : Fin 4), rfl, rfl⟩, ?_⟩
-    intro y
-    by_cases h : y = (0 : Fin 4)
-    · left; exact h
-    · right; intro hy; cases h hy
-  have h : onlyFull (· = (0 : Fin 4)) p (0 : Fin 4) := @hDE p q hle (0 : Fin 4) hq_only
-  rcases h with ⟨⟨_, _, hp_y⟩, _⟩
-  exact hp_y
+variable (dox best : W → Set W)
 
-/-! ### Adversative attitudes ([heim-1992], [kadmon-landman-1993]) -/
+/-- *Sorry*, *regret*, *amazed*, *surprised* ([von-fintel-1999]'s (53)): the subject believes
+`p` and the best relevant worlds are not `p`-worlds; the attitudes differ only in the ordering
+behind `best`. Factivity is doxastic ([heim-1992]). -/
+def regret (p : Set W) : PartialProp W where
+  presup w := dox w ⊆ p
+  assertion w := Disjoint (best w) p
 
-/-!
-### Adversative/Factive Attitudes
+theorem regret_isStrawsonDE : IsStrawsonDE (regret dox best) :=
+  .of_antitone λ _ _ h _ hq => hq.mono_right h
 
-Polymorphic over world type `W` and two parameters:
-- `dox : W → Set W` — the agent's doxastic accessibility (DOX in
-  [heim-1992] / vF eq. 41-50). `dox w` is the set of worlds
-  compatible with what the agent at `w` believes.
-- `bestOf : W → Set W` — the worlds in `dox w` that maximally satisfy
-  the attitude's preference / expectation ordering. Intended to be
-  instantiated with `Modality.Kratzer.bestWorlds f g w`.
+theorem regret_isStrawsonAA : IsStrawsonAntiAdditive (regret dox best) :=
+  .of_antiAdditive (λ _ _ h _ hw => hw.trans h)
+    λ _ _ => funext λ _ => propext Set.disjoint_union_right
 
-Both `sorryFull` and `gladFull` use *doxastic factivity* (vF eq. 50/53):
-"α is sorry/glad that p" presupposes that the agent at `w` believes `p`,
-i.e. `dox w ⊆ p`. This is more faithful to vF §3.2-3.3 than the
-evaluation-world factivity `p w` an earlier draft used.
+/-- *Sorry that Robin bought a car* does not classically entail *sorry that Robin bought a Honda
+Civic*: the conclusion's factive presupposition may fail ([von-fintel-1999]'s (30)). -/
+theorem regret_not_antitone :
+    ¬ Antitone λ p : Set Bool => (regret (λ w => {w}) (λ _ => {false}) p).truthSet :=
+  not_antitone_truthSet (p := ∅) (q := {true}) (w := true) (Set.empty_subset _)
+    ⟨Set.Subset.rfl, Set.disjoint_singleton.2 Bool.false_ne_true⟩ λ h => h rfl
 
-Two `glad` semantics are provided: `gladFull` (K&L eq. 50, the analysis
-vF *cites*), and `gladFullVF` (vF eq. 52, the analysis vF *prefers*).
-Both are UE in the complement (`gladFull_isUE`, `gladFullVF_isUE`), so
-the headline NPI-licensing prediction is the same; they differ on the
-factual content of the gladness claim (cf. vF p. 124's Honda Civic
-example). For `sorry` the analogous K&L vs vF distinction is collapsed
-in the substrate's `sorryFull` (both eq. 50/53 styles produce
-Strawson-DE; the substrate uses the simpler additive form).
--/
+/-- *Glad* ([von-fintel-1999]'s (50)): the subject believes `p` and the best relevant worlds
+are `p`-worlds, which makes *glad* belief conjoined with *want*. -/
+def glad (p : Set W) : PartialProp W where
+  presup w := dox w ⊆ p
+  assertion w := best w ⊆ p
 
-/-- `sorry` denotation with doxastic factivity (vF eq. 50/53).
-    `α is sorry that p` at `w` iff (i) the agent at `w` believes `p`
-    (factivity through belief: `dox w ⊆ p`) AND (ii) in `α`'s preferred
-    worlds, `p` does NOT hold (adversative preference). -/
-def sorryFull {W : Type*} (dox : W → Set W) (bestOf : W → Set W)
-    (p : Set W) : Set W :=
-  fun w => (∀ w' ∈ dox w, p w') ∧ ∀ w' ∈ bestOf w, ¬ p w'
+/-- *Glad* is upward entailing in its complement, so it licenses no negative polarity item. -/
+theorem glad_monotone : Monotone λ p => (glad dox best p).truthSet :=
+  λ _ _ h _ hw => ⟨hw.1.trans h, hw.2.trans h⟩
 
-/-- `glad` (K&L eq. 50): factivity + congruent preference.
-    "α is glad that p" at `w` iff agent at `w` believes `p` AND in `α`'s
-    preferred worlds, `p` also holds. -/
-def gladFull {W : Type*} (dox : W → Set W) (bestOf : W → Set W)
-    (p : Set W) : Set W :=
-  fun w => (∀ w' ∈ dox w, p w') ∧ ∀ w' ∈ bestOf w, p w'
-
-/-- Ex. 28b (p. 111): `sorry` IS Strawson-DE in its complement.
-    Definedness is doxastic factivity (`dox w ⊆ p`). Given doxastic
-    factivity of `p` and `p ⊆ q`: doxastic factivity of `q` is
-    inherited (every dox-world satisfies q since it satisfies p);
-    for all best worlds, `¬q w'` (from `sorry q`) gives `¬p w'` by
-    contraposition of `p ⊆ q`. -/
-theorem sorryFull_isStrawsonDE {W : Type*} (dox bestOf : W → Set W) :
-    IsStrawsonDE (sorryFull dox bestOf) (fun p w => ∀ w' ∈ dox w, p w') := by
-  intro p q hpq w hdef h
-  obtain ⟨_, hAllNotQ⟩ := h
-  refine ⟨hdef, ?_⟩
-  intro w' hw' hpw'
-  exact hAllNotQ w' hw' (hpq hpw')
-
-/-- [gajewski-2011] Appendix 1: `sorry` is **Strawson-AA**.
-    Definedness: doxastic factivity of *both* p and q. Forward direction
-    needs definedness to extract the doxastic-factivity component for
-    each conjunct; reverse direction needs only `p ⊆ p ∪ q` and the
-    contraposition on best worlds. -/
-theorem sorryFull_isStrawsonAA {W : Type*} (dox bestOf : W → Set W) :
-    IsStrawsonAntiAdditive (sorryFull dox bestOf)
-      (fun p w => ∀ w' ∈ dox w, p w') := by
-  intro p q w hdefp hdefq
-  constructor
-  · -- forward: sorry(p ∪ q) → sorry(p) ∧ sorry(q)
-    rintro ⟨_, h_all_not_pq⟩
-    refine ⟨⟨hdefp, ?_⟩, ⟨hdefq, ?_⟩⟩
-    · intro w' hw' hpw'; exact h_all_not_pq w' hw' (Or.inl hpw')
-    · intro w' hw' hqw'; exact h_all_not_pq w' hw' (Or.inr hqw')
-  · -- reverse: sorry(p) ∧ sorry(q) → sorry(p ∪ q)
-    rintro ⟨⟨_, h_all_not_p⟩, ⟨_, h_all_not_q⟩⟩
-    refine ⟨?_, ?_⟩
-    · intro w' hw'; exact Or.inl (hdefp w' hw')
-    · intro w' hw' h
-      rcases h with hp | hq
-      · exact h_all_not_p w' hw' hp
-      · exact h_all_not_q w' hw' hq
-
-/-- Ex. 30 (p. 111): `sorry` is NOT classically DE. Concrete witness over
-    toy `Fin 4`: `dox w := {w}` (agent believes only actual world),
-    `bestOf w := {w1}`, `p = ∅`, `q = {w0}`. Then `sorry q w0` holds but
-    `sorry p w0` fails (doxastic factivity of empty p fails). -/
-theorem sorryFull_not_de :
-    ¬ Antitone
-      (sorryFull (fun (w : Fin 4) => ({w} : Set (Fin 4)))
-                 (fun (_ : Fin 4) => (({1} : Set (Fin 4)) : Set (Fin 4)))) := by
-  intro hDE
-  let p : Set (Fin 4) := fun _ => False
-  let q : Set (Fin 4) := fun w => w = (0 : Fin 4)
-  have hle : p ≤ q := fun _ h => h.elim
-  have hq_sorry : sorryFull (fun (w : Fin 4) => ({w} : Set (Fin 4)))
-      (fun (_ : Fin 4) => (({1} : Set (Fin 4)) : Set (Fin 4))) q (0 : Fin 4) := by
-    refine ⟨?_, ?_⟩
-    · intro w' hw'; rcases hw' with rfl; rfl
-    · intro w' hw'; rcases hw' with rfl; intro h; cases h
-  have h : sorryFull (fun (w : Fin 4) => ({w} : Set (Fin 4)))
-      (fun (_ : Fin 4) => (({1} : Set (Fin 4)) : Set (Fin 4))) p (0 : Fin 4) :=
-    @hDE p q hle (0 : Fin 4) hq_sorry
-  exact h.1 (0 : Fin 4) rfl
-
-/-- `sorry` is Strawson-DE but NOT classically DE — the canonical adversative example. -/
-theorem sorryFull_strictly_strawsonDE :
-    IsStrawsonDE
-      (sorryFull (fun (w : Fin 4) => ({w} : Set (Fin 4)))
-                 (fun (_ : Fin 4) => (({1} : Set (Fin 4)) : Set (Fin 4))))
-      (fun p w => ∀ w' ∈ ({w} : Set (Fin 4)), p w') ∧
-    ¬ Antitone
-      (sorryFull (fun (w : Fin 4) => ({w} : Set (Fin 4)))
-                 (fun (_ : Fin 4) => (({1} : Set (Fin 4)) : Set (Fin 4)))) :=
-  ⟨sorryFull_isStrawsonDE _ _, sorryFull_not_de⟩
-
-/-- `glad` (K&L eq. 50) is UE in its complement. -/
-theorem gladFull_isUE {W : Type*} (dox bestOf : W → Set W) :
-    Monotone (gladFull dox bestOf) := by
-  intro p q hpq w h
-  obtain ⟨hdef, hAll⟩ := h
-  exact ⟨fun w' hw' => hpq (hdef w' hw'), fun w' hw' => hpq (hAll w' hw')⟩
+end Attitudes
 
 /-! ### Superlatives -/
 
-/-!
-### Superlatives
+section Superlative
 
-vF eq. 79 (p. 139) presupposes `Q(α) = True` — the *designated subject*
-α satisfies the restriction Q. The substrate parameterizes by the
-individual `α : W` directly (rather than by a predicate `subject : W →
-Prop`), so the presupposition is the literal `restriction α`. The
-assertion encodes "no other y in the restriction outranks α" via
-absence of a non-α witness in the restriction.
+variable [Preorder D] (μ : ι → D) (Q : ι → Set W) (a : ι)
 
-The substrate elides scales/degrees: a faithful eq. 79 formalization
-would need a `Degree` type and a relation `α has_higher_P_than y at d`.
-The current encoding tracks the Strawson-DE *structure* without the
-ordinal content, which suffices for the NPI-licensing prediction.
--/
+/-- *a is the μ-est Q* ([von-fintel-1999]'s (79)): presupposes that `a` is a `Q` and asserts that
+every other `Q` has a smaller degree; at a world this is [heim-1999]'s absolute superlative
+(`superlative_holds_iff`). -/
+def superlative : PartialProp W where
+  presup w := w ∈ Q a
+  assertion w := ∀ x, w ∈ Q x → x ≠ a → μ x < μ a
 
-/-- Presupposition of superlative (vF eq. 79): the designated subject α
-    satisfies the restriction. World-independent. -/
-def superlativePresup {W : Type*} (α : W) (restriction : Set W)
-    (_w : W) : Prop :=
-  restriction α
+theorem superlative_isStrawsonDE : IsStrawsonDE (superlative (W := W) μ · a) :=
+  .of_antitone λ _ _ h _ hQ x hx => hQ x (h x hx)
 
-/-- Superlative assertion: the designated subject α satisfies the
-    restriction, and no `y ≠ α` in the restriction "outranks" α
-    (encoded here as absence of a non-α witness — placeholder for
-    a real degree order). -/
-def superlativeAssert {W : Type*} (α : W) (restriction : Set W) : Set W :=
-  fun _w => restriction α ∧ ∀ y, y = α ∨ ¬ restriction y
+theorem superlative_isStrawsonAA : IsStrawsonAntiAdditive (superlative (W := W) μ · a) :=
+  .of_antiAdditive (λ _ _ h _ hw => h a hw) λ _ _ => funext λ _ => propext <| by
+    simp only [superlative, Pi.sup_apply, Pi.inf_apply, inf_Prop_eq, Set.sup_eq_union,
+      Set.mem_union, or_imp, forall_and]
 
-/-- Ex. 77 (p. 139): superlatives are Strawson-DE in the restriction position.
-    Adding a restriction can only improve the subject's rank, *given* that
-    α satisfies the new restriction. -/
-theorem superlative_isStrawsonDE {W : Type*} (α : W) :
-    IsStrawsonDE (superlativeAssert α) (superlativePresup α) := by
-  intro p q hpq w hdef h
-  obtain ⟨_, h_all_q⟩ := h
-  refine ⟨hdef, ?_⟩
-  intro y
-  rcases h_all_q y with heq | hnq
-  · left; exact heq
-  · right; intro hp_y; exact hnq (hpq hp_y)
+theorem superlative_holds_iff {D : Type*} [LinearOrder D] (μ : ι → D) (w : W) :
+    (superlative μ Q a).holds w ↔ Degree.absoluteSuperlative μ {x | w ∈ Q x} a :=
+  Iff.rfl
 
-/-- [gajewski-2011] Appendix 1: superlatives are **Strawson-AA** in
-    the restriction position. The "α is/isn't outranked" universal
-    composes through union/intersection like `onlyFull`'s "no other y
-    satisfies the scope." Definedness: `restriction α` for both p and q. -/
-theorem superlative_isStrawsonAA {W : Type*} (α : W) :
-    IsStrawsonAntiAdditive (superlativeAssert α) (superlativePresup α) := by
-  intro p q w hdefp hdefq
-  constructor
-  · -- forward: superlative(p ∪ q) → superlative(p) ∧ superlative(q)
-    rintro ⟨_, h_all_pq⟩
-    refine ⟨⟨hdefp, ?_⟩, ⟨hdefq, ?_⟩⟩
-    · intro y
-      rcases h_all_pq y with heq | hnpq
-      · left; exact heq
-      · right; intro hp; exact hnpq (Or.inl hp)
-    · intro y
-      rcases h_all_pq y with heq | hnpq
-      · left; exact heq
-      · right; intro hq; exact hnpq (Or.inr hq)
-  · -- reverse: superlative(p) ∧ superlative(q) → superlative(p ∪ q)
-    rintro ⟨⟨_, h_all_p⟩, ⟨_, h_all_q⟩⟩
-    refine ⟨Or.inl hdefp, ?_⟩
-    intro y
-    rcases h_all_p y with heq | hnp
-    · left; exact heq
-    · rcases h_all_q y with heq | hnq
-      · left; exact heq
-      · right; intro h
-        rcases h with hp | hq
-        · exact hnp hp
-        · exact hnq hq
+end Superlative
+
+/-! ### Temporal *since* -/
+
+section Since
+
+variable (past window : W → Set W)
+
+/-- *It has been five years since p* ([von-fintel-1999]'s (20)–(22)): presupposes a `p`-time
+five years ago and asserts none since. -/
+def since (p : Set W) : PartialProp W where
+  presup w := (past w ∩ p).Nonempty
+  assertion w := Disjoint (window w) p
+
+theorem since_isStrawsonDE : IsStrawsonDE (since past window) :=
+  .of_antitone λ _ _ h _ hq => hq.mono_right h
+
+/-- *Since I saw a bird of prey* does not classically entail *since I saw an eagle*
+([von-fintel-1999]'s (20)). -/
+theorem since_not_antitone :
+    ¬ Antitone λ p : Set Unit => (since (λ _ => Set.univ) (λ _ => ∅) p).truthSet :=
+  not_antitone_truthSet (p := ∅) (q := Set.univ) (w := ()) (Set.empty_subset _)
+    ⟨⟨(), trivial, trivial⟩, Set.empty_disjoint _⟩ λ h => h.ne_empty (Set.inter_empty _)
+
+end Since
 
 /-! ### Conditional antecedents -/
 
-/-!
-### Conditional Antecedents
-[kratzer-1986]
+section Would
 
-`condNecessity domain α β`: "if α, must β" is true at `w` iff `β` holds
-at all α-worlds in `domain w`. This is the *idle-ordering* subcase of
-the Kratzer restrictor analysis. The full Kratzer conditional with a
-non-trivial preference ordering lives in
-`Semantics/Conditionals/Restrictor.lean::conditionalNecessity`
-and is *not* monotone in its antecedent — that is the §4 puzzle vF
-addresses via dynamic context shifts in [von-fintel-2000]. The
-substrate's `condNecessity` here proves the easy idle case so consumer
-files have a stable handle.
+variable (domain : W → Set W)
 
-For the genuine non-monotonicity counterexample (vF ex. 70-73), see
-`Conditionals/Restrictor.lean::restrictor_monotone` for the idle-base
-case and `Conditionals/Counterfactual.lean` for the Stalnaker-Lewis
-similarity-based operator.
--/
+/-- *If p, would q* over a modal base with an idle ordering source ([von-fintel-1999]'s (72),
+[kratzer-1986]): presupposes that the base admits `p` and asserts the strict conditional. -/
+def would (p q : Set W) : PartialProp W where
+  presup w := (domain w ∩ p).Nonempty
+  assertion w := w ∈ Conditionals.strictImp domain p q
 
-/-- Conditional necessity via domain restriction (idle ordering source). -/
-def condNecessity {W : Type*} (domain : W → Set W) (α β : Set W) : Set W :=
-  fun w => ∀ w' ∈ domain w, α w' → β w'
+theorem would_isStrawsonDE (q : Set W) : IsStrawsonDE (would domain · q) :=
+  .of_antitone λ _ _ h _ hw => Conditionals.strictImp_anti_left (access := domain) (q := q) h hw
 
-/-- The antecedent position of `condNecessity` is classically DE
-    (Antitone in the polymorphic sense). -/
-theorem conditional_antecedent_antitone {W : Type*} (domain : W → Set W)
-    (β : Set W) : Antitone (fun α => condNecessity domain α β) := by
-  intro α₁ α₂ hle w h w' hw'_mem hw'_α₁
-  exact h w' hw'_mem (hle hw'_α₁)
+theorem would_isStrawsonAA (q : Set W) : IsStrawsonAntiAdditive (would domain · q) :=
+  .of_antiAdditive (λ _ _ h _ hw => hw.mono (Set.inter_subset_inter_right _ h))
+    λ _ _ => funext λ _ => propext <| by
+      simp only [would, Pi.inf_apply, inf_Prop_eq, Set.sup_eq_union, Conditionals.mem_strictImp,
+        Set.inter_union_distrib_left, Set.union_subset_iff]
 
-/-- Conditional antecedents are *a fortiori* Strawson-DE. -/
-theorem conditional_antecedent_strawsonDE {W : Type*} (domain : W → Set W)
-    (β : Set W) (defined : Set W → W → Prop) :
-    IsStrawsonDE (fun α => condNecessity domain α β) defined :=
-  antitone_implies_strawsonDE _ (conditional_antecedent_antitone domain β) defined
+/-- With its presupposition in, *would* is not classically downward entailing in its antecedent:
+an impossible antecedent fails it. -/
+theorem would_not_antitone :
+    ¬ Antitone λ p : Set Unit => (would (λ _ => Set.univ) p Set.univ).truthSet :=
+  not_antitone_truthSet (p := ∅) (q := Set.univ) (w := ()) (Set.empty_subset _)
+    ⟨⟨(), trivial, trivial⟩, Set.subset_univ _⟩ λ h => h.ne_empty (Set.inter_empty _)
 
-/-- Conditional antecedents are *classically* anti-additive in the
-    antecedent: `(P ∪ Q)-restricted modal base = (P-restricted) ∪
-    (Q-restricted)`, so universal-over-restriction-implies-consequent
-    distributes appropriately. -/
-theorem condNecessity_isAntiAdditive {W : Type*} (domain : W → Set W) (β : Set W) :
-    IsAntiAdditive (fun α => condNecessity domain α β) := by
-  refine isAntiAdditive_iff_mem.mpr (fun p q w => ?_)
-  constructor
-  · intro h
-    exact ⟨fun w' hw' hp => h w' hw' (Or.inl hp),
-           fun w' hw' hq => h w' hw' (Or.inr hq)⟩
-  · rintro ⟨hp, hq⟩ w' hw' h_pq
-    rcases h_pq with hp' | hq'
-    · exact hp w' hw' hp'
-    · exact hq w' hw' hq'
+end Would
 
-/-- Conditional antecedents are Strawson-AA with trivial definedness
-    (since they are classically AA). -/
-theorem condNecessity_isStrawsonAA {W : Type*} (domain : W → Set W) (β : Set W) :
-    IsStrawsonAntiAdditive (fun α => condNecessity domain α β)
-      (fun _ _ => True) :=
-  antiAdditive_implies_strawsonAA _ (condNecessity_isAntiAdditive domain β) _
-
-/-- The full meaning of *would*: the conditional with its non-vacuity presupposition, that the
-modal base admits the antecedent ([von-fintel-1999]). -/
-def wouldFull {W : Type*} (domain : W → Set W) (p q : Set W) : Set W :=
-  fun w => (∃ w' ∈ domain w, p w') ∧ condNecessity domain p q w
-
-/-- With its presupposition in, *would* is not downward entailing in the antecedent: an empty
-antecedent fails the presupposition. -/
-theorem wouldFull_not_de :
-    ¬ Antitone (λ p => wouldFull (λ (_ : Fin 4) => Set.univ) p Set.univ) := λ h =>
-  have hu : (0 : Fin 4) ∈ wouldFull (λ (_ : Fin 4) => Set.univ) Set.univ Set.univ :=
-    ⟨⟨0, trivial, trivial⟩, λ _ _ _ => trivial⟩
-  (h (Set.empty_subset Set.univ) hu).1.elim λ _ hw => hw.2
-
-/-- *Would* is Strawson downward entailing in its antecedent: definedness supplies the
-non-vacuity a smaller antecedent could lose, and the conditional itself is antitone. -/
-theorem wouldFull_isStrawsonDE {W : Type*} (domain : W → Set W) (q : Set W) :
-    IsStrawsonDE (λ p => wouldFull domain p q) (λ p w => ∃ w' ∈ domain w, p w') :=
-  λ _ _ hpq _ hdef h => ⟨hdef, λ w' hw' hp => h.2 w' hw' (hpq hp)⟩
-
-/-- *Would* is Strawson anti-additive in its antecedent ([gajewski-2011]'s appendix): once both
-disjuncts are possible, the disjunctive antecedent is too, and the conditional distributes. -/
-theorem wouldFull_isStrawsonAA {W : Type*} (domain : W → Set W) (q : Set W) :
-    IsStrawsonAntiAdditive (λ p => wouldFull domain p q) (λ p w => ∃ w' ∈ domain w, p w') :=
-  λ _ _ _ hp hp' =>
-    ⟨λ h => ⟨⟨hp, λ w' hw' hpw => h.2 w' hw' (Or.inl hpw)⟩,
-        ⟨hp', λ w' hw' hpw => h.2 w' hw' (Or.inr hpw)⟩⟩,
-      λ ⟨h₁, h₂⟩ => ⟨hp.imp λ _ ⟨hw', hpw⟩ => ⟨hw', Or.inl hpw⟩,
-        λ w' hw' h => h.elim (h₁.2 w' hw') (h₂.2 w' hw')⟩⟩
-
-/-! ### Strictness -/
-
-/-- Strawson-DE is *strictly* weaker than DE: `onlyFull` is the canonical
-    witness — Strawson-DE without classical DE. -/
-theorem strawsonDE_strictly_weaker_than_DE :
-    ∃ (f : Set (Fin 4) → Set (Fin 4)) (defined : Set (Fin 4) → Fin 4 → Prop),
-      IsStrawsonDE f defined ∧ ¬ Antitone f :=
-  ⟨onlyFull (· = (0 : Fin 4)),
-   fun scope _w => ∃ w', (w' = (0 : Fin 4)) ∧ scope w',
-   onlyFull_isStrawsonDE _,
-   onlyFull_not_de⟩
-
-/-! ### Additional operators -/
-
-/-!
-### `since` (Iatridou, vF §2.2 exs. 20-22)
-
-"It's been five years since I saw a bird of prey in this area." Same
-dialectical structure as `only`: licenses NPIs but is not classically
-DE; adding the temporal presupposition (the bird-sighting) restores
-the inference.
-
-`pastEvent w` is the set of past worlds (5 years ago); `sinceWindow w`
-is the set of intermediate worlds (between past event and now). The
-operator says: there was an event in `pastEvent` that satisfied `p`,
-and no `sinceWindow` world has satisfied `p`.
--/
-
-/-- `since(p)` denotation. -/
-def sinceFull {W : Type*} (pastEvent sinceWindow : W → Set W) (p : Set W) :
-    Set W :=
-  fun w => (∃ w' ∈ pastEvent w, p w') ∧ (∀ w' ∈ sinceWindow w, ¬ p w')
-
-/-- `since` is Strawson-DE in `p`. Definedness: there is a past
-    `p`-event (the temporal presupposition). With `p ⊆ q`, the past
-    `p`-event is *a fortiori* a past `q`-event; the no-since-then-q
-    constraint contraposes to no-since-then-p. -/
-theorem sinceFull_isStrawsonDE {W : Type*} (pastEvent sinceWindow : W → Set W) :
-    IsStrawsonDE (sinceFull pastEvent sinceWindow)
-      (fun p w => ∃ w' ∈ pastEvent w, p w') := by
-  intro p q hpq w ⟨wx, hwx_mem, hp_wx⟩ h
-  obtain ⟨_, hAllNotQ⟩ := h
-  refine ⟨⟨wx, hwx_mem, hp_wx⟩, ?_⟩
-  intro w' hw' hpw'
-  exact hAllNotQ w' hw' (hpq hpw')
-
-/-!
-### `regret`, `amazed`, `surprised` (vF §3 siblings of `sorry`)
-
-vF p. 114: "For attitudes like *want, wish, glad, regret, sorry* the
-ordering will be one of 'preference'. For attitudes like *expect,
-amazed, surprised* the ordering will be one of 'expectation/likelihood'."
-
-The difference is in the ordering source supplied to `bestOf`, not in
-the operator's structure. We define `regretFull`, `amazedFull`,
-`surprisedFull` as aliases of `sorryFull` with the understanding that
-their `bestOf` will be instantiated with different ordering sources at
-the use site. The Strawson-DE proof is shared.
--/
-
-/-- `regret`: preference-based adversative attitude (vF §3 sibling of `sorry`).
-    Same structure; `bestOf` carries the preference ordering source. -/
-abbrev regretFull {W : Type*} := @sorryFull W
-
-/-- `amazed`: expectation-based adversative attitude.
-    `bestOf` carries an expectation/likelihood ordering source. -/
-abbrev amazedFull {W : Type*} := @sorryFull W
-
-/-- `surprised`: expectation-based adversative attitude. -/
-abbrev surprisedFull {W : Type*} := @sorryFull W
+/-- Strawson downward entailingness is strictly weaker than the classical notion. -/
+theorem strawsonDE_strictly_weaker_than_antitone :
+    ∃ f : (Bool → Set Unit) → PartialProp Unit,
+      IsStrawsonDE f ∧ ¬ Antitone λ P => (f P).truthSet :=
+  ⟨only true, only_isStrawsonDE true, only_not_antitone⟩
 
 end NaturalLogic

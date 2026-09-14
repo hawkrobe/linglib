@@ -48,7 +48,7 @@ anti-additivity and downward entailment, is `IsIntolerant`.
 
 namespace Gajewski2011
 
-open NaturalLogic Quantification Data.Examples
+open NaturalLogic Presupposition Quantification Data.Examples
 
 variable {α : Type*}
 
@@ -170,25 +170,24 @@ def Licensed : Licenser → Strength → Prop
       ∀ {α : Type} [Fintype α], ScopeDownwardMono (exh (at_most_n_sem (α := α) 5) {at_most_n_sem 4})
   | .some, .weak => ∀ {α : Type}, ScopeDownwardMono (some_sem : GQ α)
   | .some, .strong => ∀ {α : Type}, ScopeDownwardMono (exh (some_sem : GQ α) {every_sem})
-  | .only, .weak =>
-      ∀ {W : Type} (x : W → Prop), IsStrawsonDE (onlyFull x) (λ scope _ => ∃ w', x w' ∧ scope w')
-  | .only, .strong => ∀ {W : Type} (x : W → Prop), Antitone (onlyFull x)
+  | .only, .weak => ∀ {ι W : Type} (x : ι), IsStrawsonDE (only (W := W) x)
+  | .only, .strong => ∀ {ι W : Type} (x : ι), Antitone λ P : ι → Set W => (only x P).truthSet
   | .conditional, .weak => ∀ {W : Type} (domain : W → Set W) (q : Set W),
-      IsStrawsonDE (λ p => wouldFull domain p q) (λ p w => ∃ w' ∈ domain w, p w')
-  | .conditional, .strong =>
-      ∀ {W : Type} (domain : W → Set W) (q : Set W), Antitone (λ p => wouldFull domain p q)
-  | .sorryThat, .weak => ∀ {W : Type} (dox bestOf : W → Set W),
-      IsStrawsonDE (sorryFull dox bestOf) (λ p w => ∀ w' ∈ dox w, p w')
-  | .sorryThat, .strong => ∀ {W : Type} (dox bestOf : W → Set W), Antitone (sorryFull dox bestOf)
+      IsStrawsonDE (would domain · q)
+  | .conditional, .strong => ∀ {W : Type} (domain : W → Set W) (q : Set W),
+      Antitone λ p => (would domain p q).truthSet
+  | .sorryThat, .weak => ∀ {W : Type} (dox best : W → Set W), IsStrawsonDE (regret dox best)
+  | .sorryThat, .strong => ∀ {W : Type} (dox best : W → Set W),
+      Antitone λ p => (regret dox best p).truthSet
 
 /-- The Strawson anti-additive triggers license weak items but not strong ones: their full
 meanings are not downward entailing, the puzzle the two principles resolve. -/
 theorem strawsonAA_not_sufficient :
     (Licensed .only .weak ∧ Licensed .conditional .weak ∧ Licensed .sorryThat .weak) ∧
       ¬ Licensed .only .strong ∧ ¬ Licensed .conditional .strong ∧ ¬ Licensed .sorryThat .strong :=
-  ⟨⟨λ x => onlyFull_isStrawsonDE x, λ d q => wouldFull_isStrawsonDE d q,
-      λ d b => sorryFull_isStrawsonDE d b⟩,
-    λ h => onlyFull_not_de (h _), λ h => wouldFull_not_de (h _ _), λ h => sorryFull_not_de (h _ _)⟩
+  ⟨⟨λ x => only_isStrawsonDE x, λ d q => would_isStrawsonDE d q, λ d b => regret_isStrawsonDE d b⟩,
+    λ h => only_not_antitone (h _), λ h => would_not_antitone (h _ _),
+    λ h => regret_not_antitone (h _ _)⟩
 
 /-! ### Intolerance -/
 

@@ -20,10 +20,10 @@ derive-don't-stipulate rule.
 Coverage is incremental (`contextWitness?` is `Option`-valued): the
 witnessed rows are those whose operators exist in the zoo — negation
 (complementation), the quantifier rows (`every_sem`/`no_sem`/`few_sem` sections,
-`atMost2_student`), conditional antecedents (`condNecessity`), and the
-four Strawson-only rows (`onlyFull`, `sorryFull`, `superlativeAssert`,
-`sinceFull`). The `none` rows await operators (*without*, *deny*,
-*doubt*, *before*, *too…to*, the comparatives) or concern rows whose
+`atMost2_student`), conditional antecedents (`Conditionals.strictImp`), and the
+four Strawson-only rows (`only`, `regret`, `superlative`, `since`). The `none`
+rows await operators (*without*, *deny*, *doubt*, *before*, *too…to*, the
+comparatives) or concern rows whose
 content is the licensing mechanism rather than the signature (the
 FC/`mono` rows, questions).
 
@@ -280,13 +280,13 @@ def atMostWitness : ContextWitness .atMost where
 
 private theorem condAntecedent_soundFor :
     Signature.SoundFor .anti
-      (fun α => condNecessity (W := Fin 4) (fun _ => Set.univ) α ∅) :=
-  soundFor_anti_iff.mpr (conditional_antecedent_antitone _ _)
+      (fun α : Set (Fin 4) => Conditionals.strictImp (fun _ : Fin 4 => Set.univ) α ∅) :=
+  soundFor_anti_iff.mpr fun _ _ h => Conditionals.strictImp_anti_left h
 
-/-- Conditional antecedents: the antecedent section of `condNecessity` is
-classically antitone with the modal base held constant. -/
+/-- Conditional antecedents: the antecedent position of the strict conditional is classically
+antitone with the modal base held constant. -/
 def conditionalAntecedentWitness : ContextWitness .conditionalAntecedent where
-  f := fun α => condNecessity (W := Fin 4) (fun _ => Set.univ) α ∅
+  f := fun α : Set (Fin 4) => Conditionals.strictImp (fun _ : Fin 4 => Set.univ) α ∅
   defined := fun _ => ⊤
   strawson := condAntecedent_soundFor.strawsonSoundFor _
   classical := soundFor_of_mem_some condAntecedent_soundFor
@@ -295,39 +295,47 @@ def conditionalAntecedentWitness : ContextWitness .conditionalAntecedent where
 
 /-! ### Strawson-only rows (`classicalSignature = none`) -/
 
-/-- *Only*: Strawson-`.anti` with its existence presupposition;
-classically nothing (`onlyFull_not_de`). -/
+/-- *Only*: Strawson-`.anti` with its presupposition that the focused individual satisfies the
+scope, read as a world-constant property; classically nothing (`only_not_antitone`). -/
 def onlyFocusWitness : ContextWitness .onlyFocus where
-  f := onlyFull (W := Fin 4) (· = (0 : Fin 4))
-  defined := fun scope => {w | ∃ w', w' = (0 : Fin 4) ∧ scope w'}
-  strawson := onlyFull_strawsonSoundFor_anti _
+  f := fun S : Set (Fin 4) => (only (0 : Fin 4) fun y => {_w : Fin 4 | y ∈ S}).truthSet
+  defined := fun S => {w | (only (0 : Fin 4) fun y => {_w : Fin 4 | y ∈ S}).presup w}
+  strawson := strawsonSoundFor_anti_of_isStrawsonDE
+    ((only_isStrawsonDE (W := Fin 4) 0).comp_monotone
+      (g := fun S : Set (Fin 4) => fun y => {_w : Fin 4 | y ∈ S})
+      fun _ _ h _ _ hy => h hy)
   classical := soundFor_of_mem_none
   strength := strength_of_mem_none
 
 /-- Adversatives: Strawson-`.anti` with doxastic factivity; classically
-nothing (`sorryFull_not_de`). -/
+nothing (`regret_not_antitone`). -/
 def adversativeWitness : ContextWitness .adversative where
-  f := sorryFull (W := Fin 4) (fun w => {w}) (fun _ => ({1} : Set (Fin 4)))
-  defined := fun p => {w | ∀ w' ∈ ({w} : Set (Fin 4)), p w'}
-  strawson := sorryFull_strawsonSoundFor_anti _ _
+  f := fun p => (regret (W := Fin 4) (fun w => {w}) (fun _ => {1}) p).truthSet
+  defined := fun p => {w | (regret (W := Fin 4) (fun w => {w}) (fun _ => {1}) p).presup w}
+  strawson := regret_strawsonSoundFor_anti _ _
   classical := soundFor_of_mem_none
   strength := strength_of_mem_none
 
 /-- Temporal *since*: Strawson-`.anti` with the past-event
 presupposition. -/
 def sinceTemporalWitness : ContextWitness .sinceTemporal where
-  f := sinceFull (W := Fin 4) (fun _ => ({0} : Set (Fin 4))) (fun _ => ∅)
-  defined := fun p => {w | ∃ w' ∈ (({0} : Set (Fin 4)) : Set (Fin 4)), p w'}
-  strawson := sinceFull_strawsonSoundFor_anti _ _
+  f := fun p => (since (W := Fin 4) (fun _ => {0}) (fun _ => ∅) p).truthSet
+  defined := fun p => {w | (since (W := Fin 4) (fun _ => {0}) (fun _ => ∅) p).presup w}
+  strawson := since_strawsonSoundFor_anti _ _
   classical := soundFor_of_mem_none
   strength := strength_of_mem_none
 
 /-- Superlatives: Strawson-`.anti` in the restriction with the
 designated-subject presupposition. -/
 def superlativeWitness : ContextWitness .superlative where
-  f := superlativeAssert (W := Fin 4) (0 : Fin 4)
-  defined := fun restriction => {w | superlativePresup (0 : Fin 4) restriction w}
-  strawson := superlativeAssert_strawsonSoundFor_anti _
+  f := fun S : Set (Fin 4) =>
+    (superlative (W := Fin 4) (id : Fin 4 → Fin 4) (fun y => {_w | y ∈ S}) 0).truthSet
+  defined := fun S =>
+    {w | (superlative (W := Fin 4) (id : Fin 4 → Fin 4) (fun y => {_w | y ∈ S}) 0).presup w}
+  strawson := strawsonSoundFor_anti_of_isStrawsonDE
+    ((superlative_isStrawsonDE (W := Fin 4) id 0).comp_monotone
+      (g := fun S : Set (Fin 4) => fun y => {_w : Fin 4 | y ∈ S})
+      fun _ _ h _ _ hy => h hy)
   classical := soundFor_of_mem_none
   strength := strength_of_mem_none
 
