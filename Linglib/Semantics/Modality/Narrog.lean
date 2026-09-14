@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.ModalTypes
+import Linglib.Semantics.Modality.Basic
 import Linglib.Semantics.Modality.Subjectivity
 
 /-!

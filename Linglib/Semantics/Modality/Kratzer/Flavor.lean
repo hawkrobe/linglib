@@ -8,7 +8,7 @@ modal base and ordering source for different types of modality.
 -/
 
 import Linglib.Semantics.Modality.Kratzer.Operators
-import Linglib.Semantics.Modality.ModalTypes
+import Linglib.Semantics.Modality.Basic
 
 namespace Modality.Kratzer
 
@@ -74,40 +74,6 @@ def BouleticFlavor.flavorTag : ModalFlavor := .bouletic
 /-- Teleological modality maps to the circumstantial flavor tag
     (teleological is subsumed under circumstantial in the 2×3 space). -/
 def TeleologicalFlavor.flavorTag : ModalFlavor := .circumstantial
-
-/-! ## Background Classification (Kratzer 2012)
-
-Each flavor structure maps to a `BackgroundClass` from
-[kratzer-2012]'s three-way classification, which refines the
-traditional epistemic/circumstantial binary based on the **projection
-mode** of the conversational background ([matthewson-2016] Table 18.3). -/
-
-open Modality (BackgroundClass ProjectionMode)
-
-/-- Epistemic modality: factual-evidential by default. -/
-def EpistemicFlavor.toBackgroundClass (_ : EpistemicFlavor W) : BackgroundClass :=
-  .factualEvidential
-
-def DeonticFlavor.toBackgroundClass (_ : DeonticFlavor W) : BackgroundClass :=
-  .factualCircumstantial
-
-def BouleticFlavor.toBackgroundClass (_ : BouleticFlavor W) : BackgroundClass :=
-  .factualCircumstantial
-
-def TeleologicalFlavor.toBackgroundClass (_ : TeleologicalFlavor W) : BackgroundClass :=
-  .factualCircumstantial
-
-theorem deontic_factual (f : DeonticFlavor W) :
-    f.toBackgroundClass.projectionMode = .factual := rfl
-
-theorem bouletic_factual (f : BouleticFlavor W) :
-    f.toBackgroundClass.projectionMode = .factual := rfl
-
-theorem teleological_factual (f : TeleologicalFlavor W) :
-    f.toBackgroundClass.projectionMode = .factual := rfl
-
-theorem epistemic_default_factual (f : EpistemicFlavor W) :
-    f.toBackgroundClass.projectionMode = .factual := rfl
 
 /-! ## Kratzer Parameters -/
 

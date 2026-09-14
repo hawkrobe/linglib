@@ -3,7 +3,7 @@ import Linglib.Syntax.Category.Auxiliary.Basic
 import Linglib.Syntax.Number.Capabilities
 import Linglib.Syntax.Person.Capabilities
 import Linglib.Syntax.Person.Decomposition
-import Linglib.Semantics.Modality.ModalTypes
+import Linglib.Semantics.Modality.Basic
 import Linglib.Pragmatics.SocialMeaning.Register
 import Linglib.Morphology.Word.Basic
 
@@ -37,7 +37,7 @@ namespace English.Auxiliaries
 
 
 section Modals
-open Modality (ForceFlavor ModalForce ModalFlavor ModalInterpretability ModalFeature)
+open Modality (ForceFlavor ModalForce ModalFlavor)
 open SocialMeaning.Register (Level)
 
 /-- Agreement features of a finite auxiliary. "Past" modals (*could*,

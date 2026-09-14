@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.ModalTypes
+import Linglib.Semantics.Modality.Basic
 
 /-!
 # St'át'imcets (Lillooet Salish) Modal Inventory
@@ -59,17 +59,5 @@ def forceAnalysis : ModalItem → ForceAnalysis
   | ⟨"=ka", _, _⟩ => .variableForce
   | ⟨"ka-...-a", _, _⟩ => .fixed .possibility
   | _ => .fixed .possibility
-
-/-! ## Background classification
-
-Both St'át'imcets modals formalized here are factual-circumstantial:
-=ka is deontic (norms as ordering source) and ka-...-a is ability
-(circumstantial facts). The factual-evidential and content-evidential
-classes in St'át'imcets are expressed by the evidential elements k'a
-and lákw7a, which are not formalized here. -/
-
-open Modality (BackgroundClass) in
-def backgroundClass : ModalItem → BackgroundClass
-  | _ => .factualCircumstantial
 
 end Statimcets.Modals

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.ModalTypes
+import Linglib.Semantics.Modality.Basic
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Logic.Modal.Basic
 import Linglib.Data.Examples.CiardelliGuerrini2026
@@ -85,26 +85,64 @@ theorem exists_poss_and_not_inter :
 
 end Scope
 
-/-! ### Modal concord (§3) -/
+/-! ### Modal features ([zeijlstra-2007]) -/
 
-/-- [zeijlstra-2007]'s generalization over the Fragment: every modal auxiliary carries its
-feature uninterpretable. -/
-theorem modals_uninterpretable :
-    ∀ a ∈ modals, ∀ f ∈ a.modalFeature, f.interp = .uninterpretable := by decide
+/-- A modal feature is interpretable, contributing a modal operator, or uninterpretable,
+checked by an interpretable feature that c-commands it. -/
+inductive ModalInterpretability
+  | interpretable
+  | uninterpretable
+  deriving DecidableEq
+
+/-- A modal feature pairs a force with its interpretability: the four features `[i∀-MOD]`,
+`[u∀-MOD]`, `[i∃-MOD]` and `[u∃-MOD]`. -/
+structure ModalFeature where
+  force : ModalForce
+  interp : ModalInterpretability
+  deriving DecidableEq
+
+/-- An interpretable feature checks an uninterpretable one of the same concord class; one
+interpretable feature may check several. -/
+def ModalFeature.Checks (checker checked : ModalFeature) : Prop :=
+  checker.interp = .interpretable ∧ checked.interp = .uninterpretable ∧
+    (checker.force.IsUniversal ↔ checked.force.IsUniversal)
+
+instance : DecidableRel ModalFeature.Checks :=
+  λ _ _ => inferInstanceAs (Decidable (_ ∧ _ ∧ (_ ↔ _)))
+
+/-- The feature of a negated constituent: negation flips the force of the feature it scopes
+over, so concord across negation checks the negated feature (§4.2, footnote 7, after
+[grosz-2010] and [anand-brasoveanu-2010]). -/
+def ModalFeature.negated (f : ModalFeature) : ModalFeature := ⟨f.force.dual, f.interp⟩
+
+/-- Concord across negation succeeds exactly between the two classes: an interpretable feature
+checks a negated uninterpretable one iff their forces fall in different classes. -/
+theorem ModalFeature.checks_negated_iff {checker checked : ModalFeature}
+    (hi : checker.interp = .interpretable) (hu : checked.interp = .uninterpretable) :
+    checker.Checks checked.negated ↔ ¬ (checker.force.IsUniversal ↔ checked.force.IsUniversal) := by
+  simp only [ModalFeature.Checks, ModalFeature.negated, hi, hu, true_and]
+  cases checker.force <;> cases checked.force <;> decide
+
+/-- The feature of a modal auxiliary of the Fragment: the force of its first meaning,
+uninterpretable, Zeijlstra's generalization that auxiliaries contribute no operator. -/
+def auxiliaryFeature (a : Auxiliary) : Option ModalFeature :=
+  a.modality.head?.map λ ff => ⟨ff.force, .uninterpretable⟩
+
+/-! ### Modal concord (§3) -/
 
 /-- Two modal features stand in concord when both are uninterpretable and fall in one concord
 class: one silent interpretable operator above the coordination then checks both, (15), so the
 modal outscopes the coordinator. -/
 def Concord (f₁ f₂ : ModalFeature) : Prop :=
   f₁.interp = .uninterpretable ∧ f₂.interp = .uninterpretable ∧
-    ConcordType.fromModalForce f₁.force = ConcordType.fromModalForce f₂.force
+    (f₁.force.IsUniversal ↔ f₂.force.IsUniversal)
 
-instance : DecidableRel Concord := λ _ _ => inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+instance : DecidableRel Concord := λ _ _ => inferInstanceAs (Decidable (_ ∧ _ ∧ (_ ↔ _)))
 
 /-- The silent operator: an interpretable feature of the shared class checks both features. -/
 theorem exists_checks_of_concord {f₁ f₂ : ModalFeature} (h : Concord f₁ f₂) :
     ∃ op : ModalFeature, op.interp = .interpretable ∧ op.Checks f₁ ∧ op.Checks f₂ :=
-  ⟨⟨f₁.force, .interpretable⟩, rfl, ⟨rfl, h.1, rfl⟩, ⟨rfl, h.2.1, h.2.2⟩⟩
+  ⟨⟨f₁.force, .interpretable⟩, rfl, ⟨rfl, h.1, Iff.rfl⟩, ⟨rfl, h.2.1, h.2.2⟩⟩
 
 /-- Conversely, two features one operator checks are in concord. -/
 theorem concord_of_checks {op f₁ f₂ : ModalFeature} (h₁ : op.Checks f₁) (h₂ : op.Checks f₂) :
@@ -122,10 +160,10 @@ theorem not_checks_of_interpretable (op : ModalFeature) {f : ModalFeature}
 /-- The Fragment's modals pair as the paper needs: *may* with *may*, *must* with *must*, *may*
 with *can*, [alonso-ovalle-2006]'s mixed form of footnote 4, and *may* not with *must*. -/
 theorem fragment_concord :
-    (∀ f ∈ may.modalFeature, ∀ g ∈ may.modalFeature, Concord f g) ∧
-      (∀ f ∈ must.modalFeature, ∀ g ∈ must.modalFeature, Concord f g) ∧
-      (∀ f ∈ may.modalFeature, ∀ g ∈ can.modalFeature, Concord f g) ∧
-      (∀ f ∈ may.modalFeature, ∀ g ∈ must.modalFeature, ¬ Concord f g) := by
+    (∀ f ∈ auxiliaryFeature may, ∀ g ∈ auxiliaryFeature may, Concord f g) ∧
+      (∀ f ∈ auxiliaryFeature must, ∀ g ∈ auxiliaryFeature must, Concord f g) ∧
+      (∀ f ∈ auxiliaryFeature may, ∀ g ∈ auxiliaryFeature can, Concord f g) ∧
+      (∀ f ∈ auxiliaryFeature may, ∀ g ∈ auxiliaryFeature must, ¬ Concord f g) := by
   decide
 
 /-! ### Concord across negation (§4.2) -/
@@ -134,7 +172,7 @@ theorem fragment_concord :
 silent possibility operator, (29a), and not by a necessity one, (29c), so the sentence conveys
 a permission to do neither and not an obligation to do neither. -/
 theorem need_not :
-    ∀ f ∈ need.modalFeature,
+    ∀ f ∈ auxiliaryFeature need,
       ModalFeature.Checks ⟨.possibility, .interpretable⟩ f.negated ∧
         ¬ ModalFeature.Checks ⟨.necessity, .interpretable⟩ f.negated := by
   decide
@@ -144,10 +182,10 @@ theorem need_not :
 /-- The modal feature of a modal named in the rows: the auxiliaries' from the Fragment, and the
 interpretable feature of the non-auxiliary modals, (20). -/
 private def featureOf : String → Option ModalFeature
-  | "may" => may.modalFeature
-  | "can" => can.modalFeature
-  | "must" => must.modalFeature
-  | "need" => need.modalFeature
+  | "may" => auxiliaryFeature may
+  | "can" => auxiliaryFeature can
+  | "must" => auxiliaryFeature must
+  | "need" => auxiliaryFeature need
   | "allow" | "it's ok" | "be allowed" | "be permitted" => some ⟨.possibility, .interpretable⟩
   | "demand" | "be required" => some ⟨.necessity, .interpretable⟩
   | _ => none

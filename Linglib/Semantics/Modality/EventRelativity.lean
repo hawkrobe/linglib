@@ -1,5 +1,5 @@
 import Linglib.Semantics.Modality.Kratzer.Operators
-import Linglib.Semantics.Modality.ModalTypes
+import Linglib.Semantics.Modality.Basic
 
 /-!
 # Event-Relative Modality

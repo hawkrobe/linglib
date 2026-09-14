@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.ModalTypes
+import Linglib.Semantics.Modality.Basic
 
 /-!
 # Nez Perce Modal Inventory
@@ -66,24 +66,5 @@ def allExpressions : List ModalItem := [oqa]
 def forceAnalysis : ModalItem → ForceAnalysis
   | ⟨"o'qa", _, _⟩ => .strengthened .possibility
   | _ => .strengthened .possibility
-
-/-- o'qa has no lexical dual. -/
-theorem oqa_no_dual : ¬ (forceAnalysis oqa).HasDual := fun h => h.elim
-
-/-- o'qa admits necessity readings (via strengthening). -/
-theorem oqa_admits_necessity :
-    (forceAnalysis oqa).AdmitsNecessity := by decide
-
-/-- o'qa admits possibility readings (base semantics). -/
-theorem oqa_admits_possibility :
-    (forceAnalysis oqa).AdmitsPossibility := by decide
-
-/-! ## Background classification -/
-
-open Modality (BackgroundClass) in
-/-- o'qa is factual-circumstantial: the modal base provides facts about
-    the actual world (circumstances), not evidence or information. -/
-def backgroundClass : ModalItem → BackgroundClass
-  | _ => .factualCircumstantial
 
 end NezPerce.Modals
