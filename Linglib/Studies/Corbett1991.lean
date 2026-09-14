@@ -1,12 +1,10 @@
-import Mathlib.Data.Fintype.Pi
-import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Rat.Defs
-import Mathlib.Data.Set.Finite.Range
-import Mathlib.SetTheory.Cardinal.Finite
 import Mathlib.Tactic.DeriveFintype
-import Mathlib.Tactic.NormNum
-import Linglib.Syntax.Agreement.Target
-import Linglib.Features.Number.Basic
+import Linglib.Syntax.Agreement.Hierarchy
+import Linglib.Syntax.Agreement.Resolution
+import Linglib.Features.Gender.TargetGender
+import Linglib.Features.Number.Resolve
+import Linglib.Features.Person.Resolve
 import Linglib.Fragments.Tamil.Gender
 import Linglib.Fragments.Swahili.Nouns
 import Linglib.Fragments.Afar.Gender
@@ -17,24 +15,34 @@ import Linglib.Fragments.Latin.Gender
 import Linglib.Data.Examples.Corbett1991
 
 /-!
-# Corbett's typology of gender
+# Corbett (1991): Gender
 
-Gender is a property of nouns shown only in agreement, and a language's genders are the
-classes of nouns that take the same agreements. Nouns are assigned to them by rules reading
-their meaning or their form: semantic rules on the core of sex-differentiable or animate
-nouns take precedence, formal rules, morphological or phonological, sort the semantic
-residue, and no system is formal alone. Counting the genders starts from agreement classes,
-the sets of nouns taking identical agreements in every form on every target, distinguishes
-the controller genders into which nouns fall from the target genders marked on agreeing
-elements, and reads Greenberg's universal that the plural never distinguishes more genders
-than the singular off the map between the two numbers' target genders: parallel, convergent
-or crossed. Nouns whose meaning and form conflict may be hybrid, taking semantic agreement on
-some targets and syntactic agreement on others, and the Agreement Hierarchy, attributive
-before predicate before relative pronoun before personal pronoun, orders the targets so that
-the likelihood of semantic agreement never decreases along it. Conjoined controllers are
-resolved by ordered rules of two shapes, one conjunct of a kind or all conjuncts of a kind,
-reading the conjuncts' meaning, their gender, or both, a language's resolution never less
-semantic than its assignment. The judgments the book reports are the rows of
+This file formalizes the book's typology of gender. Gender is a property of nouns shown only
+in agreement, and a language's genders are the classes of nouns that take the same
+agreements. Nouns are assigned to them by rules reading their meaning or their form: the
+semantic rules take precedence, the formal rules, morphological or phonological, sort the
+semantic residue, and no system is formal alone (`AssignmentSystem`). Tamil, Russian,
+Swahili, Afar and Hausa instantiate the schema on their fragments, and the assignment systems
+of chapters 2 and 3 are surveyed by kind and by the semantic criteria their rules use
+(`survey`).
+
+Counting the genders starts from agreement classes, the sets of nouns taking identical
+agreements in every form on every target, distinguishes the controller genders into which
+nouns fall from the target genders marked on agreeing elements, and reads Greenberg's
+universal that the plural never distinguishes more genders than the singular off the map
+between the two numbers' target genders, parallel, convergent or crossed, exhibited here for
+French, German, Tamil, Romanian, Lak and Slovene. Nouns whose meaning and form conflict may
+be hybrid, taking semantic agreement on some targets and syntactic agreement on others, and
+the hybrids of the book's summary table respect the Agreement Hierarchy
+(`hybrids_respectHierarchy`); the Bantu data of §8.3 divide the attributive position into
+the possessive and the other modifiers (`FinePosition`), and the corpus proportions of
+feminine agreement with Russian *vrač* respect the hierarchy too.
+
+Conjoined controllers are resolved by ordered rules of two shapes, one conjunct of a kind or
+all conjuncts of a kind, reading the conjuncts' person, meaning or gender; the rules of
+person, of number and of gender are stated for Czech, Tamil, Archi, Luganda, French, Slovene,
+Icelandic, Latin, Polish, Romanian, Serbo-Croat and Ojibwa, and a language's resolution is
+never less semantic than its assignment. The judgments the book reports are the rows of
 `Data/Examples/Corbett1991.json`.
 
 ## Implementation notes
@@ -42,23 +50,25 @@ semantic than its assignment. The judgments the book reports are the rows of
 * An assignment system is typed by the meaning `σ` its semantic rules read and the form `φ`
   its formal rules read; the rules are total functions to an optional gender, ordered by
   construction so that precedence of the semantic rules is a theorem, and the residue gender
-  catches what neither covers. Tamil, Russian, Swahili, Afar and Hausa instantiate it on
-  their fragments, whose natural-gender flag stands in for the referent's sex. Corbett's
-  irregular third declension of Russian is the study's refinement of the fragment's
-  declension classes.
-* Agreement classes are the kernel of the noun-level agreement map, and target genders the
-  ranges of its restrictions to one target; the map between the singular and plural target
-  genders is `Function.FactorsThrough`. Subgenders, inquorate genders and consistent
+  catches what neither covers. The fragments' natural-gender flag stands in for the
+  referent's sex. Corbett's irregular third declension of Russian is the study's refinement
+  of the fragment's declension classes.
+* Agreement classes, target genders and the map between two numbers' target genders are the
+  substrate's `Gender.agreementClasses`, `Gender.targetGenders` and `Gender.Parallel`,
+  `Gender.Convergent` and `Gender.Crossed`. Subgenders, inquorate genders and consistent
   agreement patterns are described in the book's prose and not formalised.
-* The Agreement Hierarchy is the partial order on `Agreement.Target`, attributive at the
-  top; a hybrid noun's profile assigns each position one of five availabilities of semantic
-  agreement, the categories of the book's summary table, and respects the hierarchy when
-  availability is antitone on the positions where it is defined.
-* Resolution rules apply to a list of conjunct descriptors and return no form when no rule
-  applies, the book's ineffable coordinations; the descriptors are genders, semantic
-  features, or fragment nouns as each language requires. Optional rules are recorded as
-  rows. The gender carriers of French, German, Lak, Slovene, Icelandic and Ojibwa are
-  declared in the study, there being no fragments for them.
+* A hybrid noun is an `Agreement.Hybrid` over the positions of `Agreement.Target`, or over
+  `FinePosition` where the book divides the attributive; it respects the hierarchy when the
+  availability of semantic agreement is antitone on the positions where it is recorded, and
+  the same predicate serves the corpus proportions.
+* Resolution rules are the substrate's `Agreement.ResolutionRule`, applied in order to a
+  list of conjunct descriptors and returning no form when no rule applies, the book's
+  ineffable coordinations; the descriptors are persons, genders, semantic features, or
+  fragment nouns as each language requires. Optional rules are recorded as rows. Number
+  resolution is `Number.resolveIn` folded over the conjuncts, except that a coordination of
+  plurals alone resolves nothing, the book's restriction that keeps gender resolution from
+  being triggered. The gender carriers of French, German, Lak, Slovene, Icelandic and Ojibwa
+  are declared in the study, there being no fragments for them.
 * Not modelled: the psycholinguistic evidence of chapter 4, the morphology of agreement and
   its limits in chapter 5, syncretism and neutral agreement in chapter 7, the diachrony of
   chapters 8 to 10, Russian acronyms and indeclinables, Chichewa's target-gender rule for
@@ -71,8 +81,6 @@ semantic than its assignment. The judgments the book reports are the rows of
   want the full paradigm tables of the book's chapter 6 in the Russian fragment.
 * The corpus-level reading of the hierarchy, proportions of semantic agreement per target,
   is recorded for *vrač* only.
-* Attributive possessives are a finer division of the hierarchy (§8.3: Swahili *rafiki*,
-  Kami), which `Agreement.Target` lacks; those examples are rows without a profile.
 * The generalization of §9.8, that resolution is never less semantic than assignment, wants
   resolution rules tagged by what they read, meaning or gender.
 
@@ -94,7 +102,7 @@ semantic than its assignment. The judgments the book reports are the rows of
 
 namespace Corbett1991
 
-open Agreement
+open Agreement Agreement.ResolutionRule
 
 /-! ### Assignment systems -/
 
@@ -309,7 +317,8 @@ def sem (n : Swahili.Noun) : Option Evaluative × Bool := (n.evaluative, n.anima
 
 /-- The rules of §3.1.2: augmentatives to 5/6, diminutives to 7/8, remaining animates to
 1/2; then each morphological class to its own gender, over the fragment's five genders (the
-book's 11/10 and 15 are not among them). The residue gender is never reached. -/
+book's 11/10 and 15 are not among them). The formal rule is total, so the residue gender is
+never reached. -/
 def system :
     AssignmentSystem (Option Evaluative × Bool) _root_.Swahili.Gender _root_.Swahili.Gender where
   semantic
@@ -387,73 +396,20 @@ theorem assign_eq_gender :
 
 end Hausa
 
-/-! ### Agreement classes, controller genders and target genders (chapter 6) -/
-
-section AgreementClasses
-
-variable {N T F : Type*}
-
-/-- Zaliznjak's agreement classes: two nouns are in one class when they take the same form
-on every target in every morphosyntactic form. -/
-abbrev agreementClasses (agr : N → T → F) : Setoid N := Setoid.ker agr
-
-/-- The controller genders are the agreement classes: as many as the agreement map has
-values. -/
-theorem card_quotient_agreementClasses (agr : N → T → F) :
-    Nat.card (Quotient (agreementClasses agr)) = Nat.card (Set.range agr) :=
-  Nat.card_congr (Setoid.quotientKerEquivRange agr)
-
-/-- The target genders of a target: the forms it shows. -/
-abbrev targetGenders (agr : N → T → F) (t : T) : Set F := Set.range (agr · t)
-
-/-- The controller genders are at most the product of the target genders over the targets:
-Romanian's three controller genders over two target genders in each number. -/
-theorem card_range_le_prod [Finite N] [Fintype T] (agr : N → T → F) :
-    Nat.card (Set.range agr) ≤ ∏ t, Nat.card (targetGenders agr t) := by
-  rw [← Nat.card_pi]
-  exact Nat.card_le_card_of_injective (λ f t => ⟨f.1 t, f.2.imp λ n hn => congrFun hn t⟩)
-    λ f g h => Subtype.ext (funext λ t => congrArg Subtype.val (congrFun h t))
-
-variable {F' : Type*}
-
-/-- The map between the target genders of two numbers (§6.3.1): parallel when each determines
-the other. -/
-def Parallel (sg : N → F) (pl : N → F') : Prop :=
-  Function.FactorsThrough pl sg ∧ Function.FactorsThrough sg pl
-
-/-- Convergent when the singular determines the plural but not conversely. -/
-def Convergent (sg : N → F) (pl : N → F') : Prop :=
-  Function.FactorsThrough pl sg ∧ ¬ Function.FactorsThrough sg pl
-
-/-- Crossed when neither determines the other. -/
-def Crossed (sg : N → F) (pl : N → F') : Prop :=
-  ¬ Function.FactorsThrough pl sg ∧ ¬ Function.FactorsThrough sg pl
-
-variable [Fintype N] [DecidableEq F] [DecidableEq F'] (sg : N → F) (pl : N → F')
-
-instance : Decidable (Parallel sg pl) := by
-  unfold Parallel; infer_instance
-
-instance : Decidable (Convergent sg pl) := by
-  unfold Convergent; infer_instance
-
-instance : Decidable (Crossed sg pl) := by
-  unfold Crossed; infer_instance
-
-end AgreementClasses
+/-! ### Controller and target genders (chapter 6) -/
 
 namespace Romanian
 
 open _root_.Romanian.Gender
 
 /-- Figure 6.1: a crossed system. -/
-theorem crossed : Crossed (Value.adjForm · false) (Value.adjForm · true) := by decide
+theorem crossed : Gender.Crossed (Value.adjForm · false) (Value.adjForm · true) := by decide
 
 /-- Three controller genders over two target genders in each number. -/
 theorem card_range_adjForm :
     Fintype.card (Set.range Value.adjForm) = 3 ∧
-      Fintype.card (targetGenders Value.adjForm false) = 2 ∧
-        Fintype.card (targetGenders Value.adjForm true) = 2 := by
+      Fintype.card (Gender.targetGenders Value.adjForm false) = 2 ∧
+        Fintype.card (Gender.targetGenders Value.adjForm true) = 2 := by
   decide
 
 /-- Every fragment noun takes, in each number, the form of its gender: (5) to (10). -/
@@ -474,7 +430,7 @@ inductive Value where
   | fem
   deriving DecidableEq, Repr, Fintype
 
-theorem parallel : Parallel (id : Value → Value) id := by decide
+theorem parallel : Gender.Parallel (id : Value → Value) id := by decide
 
 end French
 
@@ -504,7 +460,7 @@ def Value.sgArticle : Value → Article
 /-- The plural article, one form for all three. -/
 def Value.plArticle : Value → Article := λ _ => .die
 
-theorem convergent : Convergent Value.sgArticle Value.plArticle := by decide
+theorem convergent : Gender.Convergent Value.sgArticle Value.plArticle := by decide
 
 end German
 
@@ -539,7 +495,7 @@ def Value.plMarker : Value → Marker
 
 /-- Figure 6.10: a crossed system, three target genders in the singular and two in the
 plural. -/
-theorem crossed : Crossed Value.sgMarker Value.plMarker := by decide
+theorem crossed : Gender.Crossed Value.sgMarker Value.plMarker := by decide
 
 /-- Universal 37 holds though neither number determines the other. -/
 theorem card_plMarker_le :
@@ -585,11 +541,11 @@ def Value.plEnding : Value → Ending
   | .fem => .e
   | .neut => .a
 
-theorem parallel_sg_pl : Parallel Value.sgEnding Value.plEnding := by decide
+theorem parallel_sg_pl : Gender.Parallel Value.sgEnding Value.plEnding := by decide
 
-theorem convergent_sg_du : Convergent Value.sgEnding Value.duEnding := by decide
+theorem convergent_sg_du : Gender.Convergent Value.sgEnding Value.duEnding := by decide
 
-theorem convergent_pl_du : Convergent Value.plEnding Value.duEnding := by decide
+theorem convergent_pl_du : Gender.Convergent Value.plEnding Value.duEnding := by decide
 
 end Slovene
 
@@ -598,7 +554,7 @@ namespace Tamil
 open _root_.Tamil.Gender
 
 /-- Figure 6.8: three singular target genders converge on two in the plural. -/
-theorem convergent : Convergent Value.sgConcord Value.plConcord := by decide
+theorem convergent : Gender.Convergent Value.sgConcord Value.plConcord := by decide
 
 /-- Greenberg's Universal 37 in Tamil as a corollary of convergence: a number whose target
 genders are determined by another's distinguishes no more of them. The book states the
@@ -611,122 +567,63 @@ end Tamil
 
 /-! ### Hybrid nouns and the Agreement Hierarchy (chapter 8) -/
 
-/-- Whether an agreement form follows the semantic or the formal assignment rules. -/
-inductive AgreementKind where
-  | syntactic
-  | semantic
-  deriving DecidableEq, Repr, Fintype
-
-/-- The availability of semantic agreement at a target, the five categories of Table 8.1,
-ordered by the likelihood of semantic agreement. -/
-inductive Availability where
-  | syntacticOnly
-  | mostlySyntactic
-  | both
-  | mostlySemantic
-  | semanticOnly
-  deriving DecidableEq, Repr, Fintype
-
-namespace Availability
-
-/-- The position of an availability in the order of likelihood of semantic agreement. -/
-def toNat : Availability → ℕ
-  | .syntacticOnly => 0
-  | .mostlySyntactic => 1
-  | .both => 2
-  | .mostlySemantic => 3
-  | .semanticOnly => 4
-
-theorem toNat_injective : Function.Injective toNat := by decide
-
-instance : LinearOrder Availability := LinearOrder.lift' toNat toNat_injective
-
-/-- Which agreement an availability admits. -/
-def Allows : Availability → AgreementKind → Prop
-  | .syntacticOnly, k => k = .syntactic
-  | .semanticOnly, k => k = .semantic
-  | _, _ => True
-
-instance (a : Availability) (k : AgreementKind) : Decidable (a.Allows k) := by
-  cases a <;> simp only [Allows] <;> infer_instance
-
-end Availability
-
-/-- A hybrid noun: for each position of the hierarchy where gender agreement applies, the
-availability of semantic agreement. -/
-structure Hybrid where
-  /-- The noun or class of nouns, as the rows name it. -/
-  name : String
-  /-- The availability of semantic agreement at each position where gender agreement applies
-  and the book has data. -/
-  profile : Target → Option Availability
-
-/-- The Agreement Hierarchy: moving rightwards, towards the personal pronoun, the likelihood
-of semantic agreement never decreases. Positions where gender agreement does not apply, or
-for which the book has no data, carry no availability and are skipped. -/
-def Hybrid.RespectsHierarchy (h : Hybrid) : Prop :=
-  ∀ t u : Target, t ≤ u → ∀ a ∈ h.profile t, ∀ b ∈ h.profile u, b ≤ a
-
-instance (h : Hybrid) : Decidable h.RespectsHierarchy := by
-  unfold Hybrid.RespectsHierarchy; infer_instance
-
 /-- Table 8.1, with the English boat nouns of §6.4.5 and the Bantu hybrids of §8.3. -/
-def frenchTitles : Hybrid := ⟨"frenchTitles", λ
+def frenchTitles : Hybrid Target := ⟨"frenchTitles", λ
   | .attributive | .predicate | .relativePronoun => some .syntacticOnly
   | .personalPronoun => some .mostlySyntactic
   | .verb => none⟩
 
-def madchen : Hybrid := ⟨"mädchen", λ
+def madchen : Hybrid Target := ⟨"mädchen", λ
   | .attributive | .relativePronoun => some .syntacticOnly
   | .personalPronoun => some .both
   | .predicate | .verb => none⟩
 
-def lajdaki : Hybrid := ⟨"łajdaki", λ
+def lajdaki : Hybrid Target := ⟨"łajdaki", λ
   | .attributive | .predicate | .relativePronoun => some .syntacticOnly
   | .personalPronoun => some .semanticOnly
   | .verb => none⟩
 
-def spanishTitles : Hybrid := ⟨"spanishTitles", λ
+def spanishTitles : Hybrid Target := ⟨"spanishTitles", λ
   | .attributive => some .syntacticOnly
   | .predicate | .relativePronoun | .personalPronoun => some .semanticOnly
   | .verb => none⟩
 
-def konkani : Hybrid := ⟨"konkani", λ
+def konkani : Hybrid Target := ⟨"konkani", λ
   | .attributive => some .syntacticOnly
   | .predicate | .personalPronoun => some .semanticOnly
   | .relativePronoun | .verb => none⟩
 
-def vrac : Hybrid := ⟨"vrač", λ
+def vrac : Hybrid Target := ⟨"vrač", λ
   | .attributive => some .mostlySyntactic
   | .predicate => some .both
   | .relativePronoun | .personalPronoun => some .mostlySemantic
   | .verb => none⟩
 
-def gazde : Hybrid := ⟨"gazde", λ
+def gazde : Hybrid Target := ⟨"gazde", λ
   | .attributive => some .mostlySyntactic
   | .predicate => some .both
   | .relativePronoun => some .mostlySemantic
   | .personalPronoun => some .semanticOnly
   | .verb => none⟩
 
-def boat : Hybrid := ⟨"boat", λ
+def boat : Hybrid Target := ⟨"boat", λ
   | .relativePronoun => some .syntacticOnly
   | .personalPronoun => some .both
   | _ => none⟩
 
 /-- *kamwana*: gender 12/13 forms normally, gender 1/2 also possible for a personal pronoun
 sufficiently removed from the controller. -/
-def kamwana : Hybrid := ⟨"kamwana", λ
+def kamwana : Hybrid Target := ⟨"kamwana", λ
   | .attributive | .predicate | .relativePronoun => some .syntacticOnly
   | .personalPronoun => some .mostlySyntactic
   | .verb => none⟩
 
-def kilumba : Hybrid := ⟨"kilumba", λ
+def kilumba : Hybrid Target := ⟨"kilumba", λ
   | .attributive => some .syntacticOnly
   | .predicate => some .both
   | _ => none⟩
 
-def hybrids : List Hybrid :=
+def hybrids : List (Hybrid Target) :=
   [frenchTitles, madchen, lajdaki, spanishTitles, konkani, vrac, gazde, boat, kamwana, kilumba]
 
 /-- Every hybrid of Table 8.1 respects the Agreement Hierarchy. -/
@@ -739,16 +636,79 @@ def vracFeminine : Target → Option ℚ
   | .predicate => some (517 / 1000)
   | _ => none
 
-theorem vracFeminine_attributive_le_predicate :
-    ∀ p ∈ vracFeminine .predicate, ∀ a ∈ vracFeminine .attributive, a ≤ p := by
-  norm_num [vracFeminine]
+/-- The proportion of semantic agreement rises along the hierarchy. -/
+theorem vracFeminine_respectsHierarchy : RespectsHierarchy vracFeminine := by decide +kernel
 
 /-- The stacked-target constraint of §8.1.2: when stacked or parallel targets of one
 controller differ, the further one shows semantic agreement. -/
-def StackedAllowed (near far : AgreementKind) : Prop := near = .semantic → far = .semantic
+def StackedAllowed (near far : Kind) : Prop := near = .semantic → far = .semantic
 
-instance (near far : AgreementKind) : Decidable (StackedAllowed near far) := by
+instance (near far : Kind) : Decidable (StackedAllowed near far) := by
   unfold StackedAllowed; infer_instance
+
+/-! ### Attributive possessives (§8.3)
+
+The last stages of the loss of syntactic agreement in coastal Bantu treat the attributive
+possessive differently from the other attributive modifiers, a finer division of the
+hierarchy. -/
+
+/-- The positions of the hierarchy with the attributive divided into the possessive and the
+other attributive modifiers, the possessive above them. -/
+inductive FinePosition where
+  | possessive
+  | attributive
+  | predicate
+  | relativePronoun
+  | personalPronoun
+  deriving DecidableEq, Repr, Fintype
+
+namespace FinePosition
+
+/-- The rank of a fine position, the possessive on top. -/
+def rank : FinePosition → ℕ
+  | .possessive => 4
+  | .attributive => 3
+  | .predicate => 2
+  | .relativePronoun => 1
+  | .personalPronoun => 0
+
+theorem rank_injective : Function.Injective rank := by decide
+
+instance : LinearOrder FinePosition := LinearOrder.lift' rank rank_injective
+
+/-- The position of the hierarchy a fine position divides. -/
+def toTarget : FinePosition → Target
+  | .possessive | .attributive => .attributive
+  | .predicate => .predicate
+  | .relativePronoun => .relativePronoun
+  | .personalPronoun => .personalPronoun
+
+/-- The finer division refines the hierarchy. -/
+theorem toTarget_monotone : Monotone toTarget := by decide
+
+end FinePosition
+
+/-- Swahili *rafiki* 'friend', (47) to (49): an animate of morphological class 9/10 with
+gender 1/2 agreement throughout, class 9/10 agreement remaining possible on an attributive
+possessive alone. -/
+def rafiki : Hybrid FinePosition := ⟨"rafiki", λ
+  | .possessive => some .both
+  | .attributive | .predicate => some .semanticOnly
+  | _ => none⟩
+
+/-- Kami *ng'ombe* 'cows' and *mbudzi* 'goats', (54) and (55): syntactic agreement of the
+predicate rejected, both forms accepted on attributives other than the possessive, which the
+book reports with class 10 agreement only. -/
+def ngombe : Hybrid FinePosition := ⟨"ng'ombe", λ
+  | .possessive => some .syntacticOnly
+  | .attributive => some .both
+  | .predicate => some .semanticOnly
+  | _ => none⟩
+
+def fineHybrids : List (Hybrid FinePosition) := [rafiki, ngombe]
+
+/-- The Bantu hybrids respect the finer hierarchy. -/
+theorem fineHybrids_respectHierarchy : ∀ h ∈ fineHybrids, h.RespectsHierarchy := by decide
 
 /-! ### The judgments of chapter 8
 
@@ -756,102 +716,68 @@ A row with a `hybrid`, a `target` and an `agreement` feature is a use of a hybri
 position of the hierarchy, acceptable exactly when the hybrid's availability there admits
 the agreement; a row with `near` and `far` features is a pair of stacked targets. -/
 
-/-- The hybrids by the names the rows use. -/
-def hybridNames : List (String × Hybrid) := hybrids.map λ h => (h.name, h)
+/-- The hybrids of Table 8.1 by the names the rows use. -/
+def hybridNames : List (String × Hybrid Target) := hybrids.map λ h => (h.name, h)
+
+/-- The Bantu hybrids of §8.3 by the names the rows use. -/
+def fineHybridNames : List (String × Hybrid FinePosition) := fineHybrids.map λ h => (h.name, h)
 
 /-- The positions of the hierarchy by the names the rows use. -/
 def targetNames : List (String × Target) :=
   [("attributive", .attributive), ("predicate", .predicate),
     ("relativePronoun", .relativePronoun), ("personalPronoun", .personalPronoun)]
 
+/-- The fine positions by the names the rows use. -/
+def finePositionNames : List (String × FinePosition) :=
+  [("attributivePossessive", .possessive), ("attributive", .attributive),
+    ("predicate", .predicate), ("relativePronoun", .relativePronoun),
+    ("personalPronoun", .personalPronoun)]
+
 /-- The two agreements by the names the rows use. -/
-def kindNames : List (String × AgreementKind) :=
-  [("syntactic", .syntactic), ("semantic", .semantic)]
+def kindNames : List (String × Kind) := [("syntactic", .syntactic), ("semantic", .semantic)]
 
 theorem hybrid_rows : ∀ row ∈ Examples.all, ∀ h ∈ row.parse? "hybrid" hybridNames,
     ∀ t ∈ row.parse? "target" targetNames, ∀ k ∈ row.parse? "agreement" kindNames,
       (row.judgment = .acceptable ↔ ∃ a ∈ h.profile t, a.Allows k) := by
   decide +kernel
 
+theorem fine_rows : ∀ row ∈ Examples.all, ∀ h ∈ row.parse? "hybrid" fineHybridNames,
+    ∀ t ∈ row.parse? "target" finePositionNames, ∀ k ∈ row.parse? "agreement" kindNames,
+      (row.judgment = .acceptable ↔ ∃ a ∈ h.profile t, a.Allows k) := by
+  decide +kernel
+
+/-- Every row naming a hybrid names one of Table 8.1 or one of §8.3, at a position one of
+the two theorems reads. -/
+theorem hybrid_rows_covered : ∀ row ∈ Examples.all, ∀ n ∈ row.feature? "hybrid",
+    (n ∈ hybridNames.map Prod.fst ∨ n ∈ fineHybridNames.map Prod.fst) ∧
+      ∀ t ∈ row.feature? "target", t ∈ finePositionNames.map Prod.fst := by
+  decide +kernel
+
 theorem stacked_rows : ∀ row ∈ Examples.all, ∀ near ∈ row.parse? "near" kindNames,
     ∀ far ∈ row.parse? "far" kindNames, (row.judgment = .acceptable ↔ StackedAllowed near far) := by
   decide +kernel
 
-/-! ### Gender resolution (chapter 9) -/
+/-! ### Resolution (chapter 9) -/
 
-/-- The two shapes of a resolution rule (§9.4): at least one conjunct of a kind, or all. -/
-inductive Quantifier where
-  | any
-  | all
-  deriving DecidableEq, Repr, Fintype
+/-- The person resolution rules of §9.1.1, Czech's and claimed universal: a first person
+conjunct, first person; a second, second; otherwise third. -/
+def personRules : List (ResolutionRule Person Person) :=
+  [⟨.any, (· = .first), .first⟩, ⟨.any, (· = .second), .second⟩, otherwise .third]
 
-/-- A resolution rule: a condition on conjuncts, quantified one way or the other, and the
-form it selects. -/
-structure Rule (α G : Type*) where
-  /-- Whether one conjunct or every conjunct must meet the condition. -/
-  quant : Quantifier
-  /-- The condition on a conjunct. -/
-  pred : α → Prop
-  [dec : DecidablePred pred]
-  /-- The form the rule selects. -/
-  out : G
+/-- On the three persons the rules are the substrate's resolution in a system of three
+persons, the union of the conjuncts' discourse roles. -/
+theorem resolve_personRules_pair :
+    ∀ a ∈ [Person.first, .second, .third], ∀ b ∈ [Person.first, .second, .third],
+      resolve personRules [a, b] = some (Person.resolveIn [.first, .second, .third] a b) := by
+  decide
 
-attribute [instance] Rule.dec
-
-namespace Rule
-
-variable {α G : Type*}
-
-/-- Whether the rule applies to a coordination. -/
-def Applies (r : Rule α G) (cs : List α) : Prop :=
-  match r.quant with
-  | .any => ∃ c ∈ cs, r.pred c
-  | .all => ∀ c ∈ cs, r.pred c
-
-instance (r : Rule α G) (cs : List α) : Decidable (r.Applies cs) := by
-  unfold Applies; cases r.quant <;> infer_instance
-
-/-- The final "otherwise" rule. -/
-def otherwise (g : G) : Rule α G := ⟨.all, λ _ => True, g⟩
-
-theorem otherwise_applies (g : G) (cs : List α) : (otherwise g).Applies cs := λ _ _ => trivial
-
-end Rule
-
-/-- Apply ordered rules: the first that applies selects the form; none applying, the
-coordination has no resolved form. -/
-def resolve {α G : Type*} : List (Rule α G) → List α → Option G
-  | [], _ => none
-  | r :: rs, cs => if r.Applies cs then some r.out else resolve rs cs
-
-section Resolve
-
-variable {α G : Type*} (r : Rule α G) (rs : List (Rule α G)) (cs : List α)
-
-@[simp] theorem resolve_nil : resolve ([] : List (Rule α G)) cs = none := rfl
-
-theorem resolve_cons_of_applies (h : r.Applies cs) : resolve (r :: rs) cs = some r.out := by
-  simp [resolve, h]
-
-theorem resolve_cons_of_not_applies (h : ¬ r.Applies cs) :
-    resolve (r :: rs) cs = resolve rs cs := by
-  simp [resolve, h]
-
-/-- An "otherwise" rule guarantees a resolved form. -/
-theorem resolve_otherwise_isSome (g : G) :
-    (resolve (rs ++ [Rule.otherwise g]) cs).isSome := by
-  induction rs with
-  | nil => simp [resolve, Rule.otherwise_applies]
-  | cons r rs ih => by_cases h : r.Applies cs <;> simp [resolve, h, ih]
-
-end Resolve
-
-/-- The number resolution rules of §9.1.2: in a language with a dual, two singulars take
-the dual; any other coordination with a non-plural conjunct takes the plural; all-plural
-conjuncts resolve nothing. -/
-def numberResolve (hasDual : Bool) (ns : List Number) : Option Number :=
-  if hasDual ∧ ns = [.singular, .singular] then some .dual
-  else if ∃ n ∈ ns, n ≠ .plural then some .plural else none
+/-- The number resolution rules of §9.1.2 in a system with the given values: the conjuncts'
+numbers resolved pairwise and coarsened to the system, except that a coordination of plurals
+alone resolves nothing, so that gender resolution is not triggered. -/
+def numberResolve (sys : List Number) : List Number → Option Number
+  | [] => none
+  | n :: ns =>
+    if ∀ m ∈ n :: ns, m = .plural then none else some (ns.foldl (Number.resolveIn sys) n)
 
 namespace Tamil
 
@@ -864,7 +790,7 @@ instance : DecidablePred Rational := λ _ => by unfold Rational; infer_instance
 
 /-- §9.3: all rationals take the rational form, all non-rationals the neuter; a mixture
 has no resolved form. -/
-def rules : List (Rule Value PlConcord) :=
+def rules : List (ResolutionRule Value PlConcord) :=
   [⟨.all, Rational, .rational⟩, ⟨.all, (¬ Rational ·), .neuter⟩]
 
 /-- (16): masculine and feminine together resolve to the rational form. -/
@@ -883,7 +809,7 @@ theorem resolve_factorsThrough :
   have h₂ : ∀ l : List Value,
       (∀ c ∈ l, ¬ Rational c) ↔ ∀ b ∈ l.map (decide <| Rational ·), b = false := λ l => by
     simp
-  simp only [resolve, rules, Rule.Applies, h₁, h₂, h]
+  simp only [resolve, rules, ResolutionRule.Applies, h₁, h₂, h]
 
 end Tamil
 
@@ -897,7 +823,7 @@ inductive PlForm where
 
 /-- §9.3: a conjunct denoting a rational brings gender I/II, otherwise III/IV; the
 descriptor is rationality, so *xalq'* 'people' resolves by what it denotes. -/
-def rules : List (Rule Bool PlForm) := [⟨.any, (· = true), .I_II⟩, Rule.otherwise .III_IV]
+def rules : List (ResolutionRule Bool PlForm) := [⟨.any, (· = true), .I_II⟩, otherwise .III_IV]
 
 theorem resolve_rational_nonrational : resolve rules [true, false] = some .I_II := by decide
 
@@ -913,43 +839,47 @@ inductive PlForm where
 
 /-- §9.3: all humans take class 2, no humans class 8, and a mixture class 8 if resolution is
 forced at all. -/
-def rules : List (Rule Bool PlForm) :=
-  [⟨.all, (· = true), .cl2⟩, ⟨.all, (· = false), .cl8⟩, Rule.otherwise .cl8]
+def rules : List (ResolutionRule Bool PlForm) :=
+  [⟨.all, (· = true), .cl2⟩, ⟨.all, (· = false), .cl8⟩, otherwise .cl8]
 
 end Luganda
 
 namespace French
 
 /-- The type-A rules of §9.4: at least one masculine, masculine; otherwise feminine. -/
-def rulesA : List (Rule Value Value) := [⟨.any, (· = .masc), .masc⟩, Rule.otherwise .fem]
+def rulesA : List (ResolutionRule Value Value) := [⟨.any, (· = .masc), .masc⟩, otherwise .fem]
 
 /-- The type-B rules: all feminine, feminine; otherwise masculine. -/
-def rulesB : List (Rule Value Value) := [⟨.all, (· = .fem), .fem⟩, Rule.otherwise .masc]
+def rulesB : List (ResolutionRule Value Value) := [⟨.all, (· = .fem), .fem⟩, otherwise .masc]
 
 /-- With exactly two genders the two formulations agree on every coordination. -/
 theorem resolve_rulesA_eq_rulesB (cs : List Value) : resolve rulesA cs = resolve rulesB cs := by
   induction cs with
   | nil => rfl
-  | cons c cs ih => cases c <;> simp_all [rulesA, rulesB, resolve, Rule.Applies, Rule.otherwise]
+  | cons c cs ih =>
+    cases c <;> simp_all [rulesA, rulesB, resolve, ResolutionRule.Applies, otherwise]
 
 end French
 
 namespace Slovene
 
+/-- The numbers of Slovene. -/
+def numbers : List Number := [.singular, .dual, .plural]
+
 /-- §9.4: all feminine, feminine; otherwise masculine, a type-B system in which the neuter
 never results from resolution. -/
-def rules : List (Rule Value Value) := [⟨.all, (· = .fem), .fem⟩, Rule.otherwise .masc]
+def rules : List (ResolutionRule Value Value) := [⟨.all, (· = .fem), .fem⟩, otherwise .masc]
 
 /-- (52): three neuter singulars take the masculine plural, gender resolution triggered by
 number resolution. -/
 theorem resolve_neuters :
     resolve rules [.neut, .neut, .neut] = some .masc ∧
-      numberResolve true [.singular, .singular, .singular] = some .plural := by
+      numberResolve numbers [.singular, .singular, .singular] = some .plural := by
   decide
 
 /-- The neuter is excluded as a resolved form. -/
 theorem resolve_ne_neut (cs : List Value) : resolve rules cs ≠ some .neut := by
-  simp only [rules, resolve, Rule.otherwise, Rule.Applies]
+  simp only [rules, resolve, otherwise, ResolutionRule.Applies]
   split_ifs <;> simp
 
 end Slovene
@@ -964,8 +894,8 @@ inductive Value where
 
 /-- §9.4: homogeneous masculines or feminines keep their gender, any mixture takes the
 neuter, the semantically justified gender for beings of both sexes. -/
-def rules : List (Rule Value Value) :=
-  [⟨.all, (· = .masc), .masc⟩, ⟨.all, (· = .fem), .fem⟩, Rule.otherwise .neut]
+def rules : List (ResolutionRule Value Value) :=
+  [⟨.all, (· = .masc), .masc⟩, ⟨.all, (· = .fem), .fem⟩, otherwise .neut]
 
 end Icelandic
 
@@ -978,9 +908,9 @@ abbrev Conjunct := Value × Bool
 
 /-- §9.5: two syntactic rules for homogeneous genders, a semantic rule for humans, the neuter
 otherwise. -/
-def rules : List (Rule Conjunct Value) :=
+def rules : List (ResolutionRule Conjunct Value) :=
   [⟨.all, (·.1 = .masc), .masc⟩, ⟨.all, (·.1 = .fem), .fem⟩, ⟨.all, (·.2 = true), .masc⟩,
-    Rule.otherwise .neut]
+    otherwise .neut]
 
 end Latin
 
@@ -994,7 +924,8 @@ inductive PlForm where
 
 /-- The obligatory rules of §9.5: a masculine personal conjunct, masculine personal;
 otherwise non-masculine personal. The optional rules of (60) to (62) are rows only. -/
-def rules : List (Rule Bool PlForm) := [⟨.any, (· = true), .mascPers⟩, Rule.otherwise .nonMascPers]
+def rules : List (ResolutionRule Bool PlForm) :=
+  [⟨.any, (· = true), .mascPers⟩, otherwise .nonMascPers]
 
 end Polish
 
@@ -1010,8 +941,8 @@ instance : DecidablePred MaleAnimate := λ _ => by unfold MaleAnimate; infer_ins
 
 /-- §9.5, collapsed: a male animate, masculine; all masculine, masculine; otherwise
 feminine, over the fragment's nouns. -/
-def rules : List (Rule Romanian.Gender.Noun Value) :=
-  [⟨.any, MaleAnimate, .masc⟩, ⟨.all, (·.gender = .masc), .masc⟩, Rule.otherwise .fem]
+def rules : List (ResolutionRule Romanian.Gender.Noun Value) :=
+  [⟨.any, MaleAnimate, .masc⟩, ⟨.all, (·.gender = .masc), .masc⟩, otherwise .fem]
 
 /-- (69): a masculine and a neuter inanimate resolve to the feminine, the form the neuter
 takes in the plural. -/
@@ -1024,9 +955,9 @@ namespace SerboCroat
 /-- Stage 2 of §9.7, the alternative formulation, stage 1 being Slovene's rules: all
 female, feminine; all feminine, optionally feminine; otherwise masculine. The optional rule
 yields a second grammar. -/
-def stage2 : List (List (Rule (Slovene.Value × Bool) Slovene.Value)) :=
-  [[⟨.all, (λ c => c.1 = .fem ∧ c.2), .fem⟩, ⟨.all, (·.1 = .fem), .fem⟩, Rule.otherwise .masc],
-    [⟨.all, (λ c => c.1 = .fem ∧ c.2), .fem⟩, Rule.otherwise .masc]]
+def stage2 : List (List (ResolutionRule (Slovene.Value × Bool) Slovene.Value)) :=
+  [[⟨.all, (λ c => c.1 = .fem ∧ c.2), .fem⟩, ⟨.all, (·.1 = .fem), .fem⟩, otherwise .masc],
+    [⟨.all, (λ c => c.1 = .fem ∧ c.2), .fem⟩, otherwise .masc]]
 
 /-- (77) and (78): feminine inanimates may take the masculine. -/
 theorem feminine_inanimates_masc :
@@ -1048,7 +979,7 @@ inductive Value where
 
 /-- §9.7: homogeneous conjuncts keep their gender; animate and inanimate cannot be
 conjoined. -/
-def rules : List (Rule Value Value) :=
+def rules : List (ResolutionRule Value Value) :=
   [⟨.all, (· = .animate), .animate⟩, ⟨.all, (· = .inanimate), .inanimate⟩]
 
 theorem resolve_mixed : resolve rules [.animate, .inanimate] = none := by decide
@@ -1059,6 +990,13 @@ end Ojibwa
 
 A row with a `conjuncts` and a `resolved` feature names its conjuncts and the form the
 predicate shows; it is acceptable exactly when the language's rules select that form. -/
+
+theorem czech_rows : ∀ row ∈ Examples.all, row.language = "czec1258" →
+    ∀ cs ∈ row.parse? "conjuncts" [("1+2", [Person.first, .second]), ("3+1", [.third, .first]),
+      ("3+2", [.third, .second])],
+      ∀ p ∈ row.parse? "resolved" [("1", Person.first), ("2", .second)],
+        (row.judgment = .acceptable ↔ resolve personRules cs = some p) := by
+  decide +kernel
 
 open _root_.Tamil.Gender in
 theorem tamil_rows : ∀ row ∈ Examples.all, row.language = "tami1289" →
@@ -1103,7 +1041,7 @@ theorem slovene_number_rows : ∀ row ∈ Examples.all, row.language = "slov1268
     ∀ ns ∈ row.parse? "numbers" [("sg+sg", [Number.singular, .singular]),
       ("sg+sg+sg", [.singular, .singular, .singular]), ("sg+du", [.singular, .dual])],
       ∀ n ∈ row.parse? "number" [("dual", Number.dual), ("plural", .plural)],
-        (row.judgment = .acceptable ↔ numberResolve true ns = some n) := by
+        (row.judgment = .acceptable ↔ numberResolve Slovene.numbers ns = some n) := by
   decide +kernel
 
 theorem icelandic_rows : ∀ row ∈ Examples.all, row.language = "icel1247" →
