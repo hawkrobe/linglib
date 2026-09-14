@@ -171,22 +171,9 @@ def system : Gender.System Value where
   label := λ g => some g.toLabel
   default := .masc
 
-/-- The assigned system: every noun gets its controller gender. -/
-def assigned : Gender.System.Assigned Noun Value := { system with assign := (·.gender) }
-
 /-- The carrier is faithful to the adjectival concord evidence: *-o* vs
     *-a* distinguishes the two genders. [corbett-1991]'s
     genders-are-agreement-classes criterion. -/
 theorem faithful_concord : Function.Injective Value.concord := by decide
-
-/-- [kramer-2015]'s (7ii) / [dahl-2000]'s generalization instantiated:
-    the natural-gender nouns (Group A) form a semantic core, their gender
-    being the referent-sex classification (that is what `isNaturalGender`
-    asserts). *persona* and *ángel* are outside the core
-    (`isNaturalGender = false`), so the fixed-gender exceptions do not
-    disturb the factoring. -/
-theorem assigned_semanticCore :
-    assigned.SemanticCore {n | n.isNaturalGender = true} (·.gender) :=
-  ⟨⟨mujer, rfl⟩, λ _ _ _ _ h => h⟩
 
 end Spanish.Gender

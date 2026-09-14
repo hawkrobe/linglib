@@ -135,7 +135,7 @@ def minimal : ContainmentPair := ⟨false, false⟩
 @[simp] theorem minimal_wellFormed : minimal.WellFormed := by decide
 
 /-- The unique filtered combination: [−outer, +inner]. -/
-theorem illFormed_only : ¬ (⟨false, true⟩ : ContainmentPair).WellFormed := by
+theorem not_wellFormed_mk_false_true : ¬ (⟨false, true⟩ : ContainmentPair).WellFormed := by
   decide
 
 /-- Every well-formed pair is one of the three canonical cells. -/

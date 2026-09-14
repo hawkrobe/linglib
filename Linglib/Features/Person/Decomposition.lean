@@ -137,7 +137,7 @@ abbrev Features.WellFormed (pf : Features) : Prop :=
 
 /-- The filtered combination [−participant, +author] is the only one that
     violates containment. -/
-theorem illFormed_only : ¬ (⟨false, true⟩ : Features).WellFormed := by decide
+theorem not_wellFormed_mk_false_true : ¬ (⟨false, true⟩ : Features).WellFormed := by decide
 
 /-- Exactly 3 well-formed feature combinations (= 3 persons) — the carrier
     count of the containment chain (`ContainmentPair.card_wellFormed`). -/

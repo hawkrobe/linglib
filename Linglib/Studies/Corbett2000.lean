@@ -629,19 +629,17 @@ theorem bayso_concord_not_injective :
 /-- British English *committee*: syntactic agreement only in attributive position, either
 agreement elsewhere, (19) to (22). -/
 def britishCommittee : Hybrid Target :=
-  ⟨"committee (British English)",
-    λ | .attributive => some .syntacticOnly | .predicate | .relativePronoun => some .both
-      | .personalPronoun => some .both | .verb => none⟩
+  λ | .attributive => some .syntacticOnly | .predicate | .relativePronoun => some .both
+      | .personalPronoun => some .both | .verb => none
 
 /-- American English *committee*: plural agreement rare in the predicate, admitted in the
 personal pronoun. -/
 def americanCommittee : Hybrid Target :=
-  ⟨"committee (American English)",
-    λ | .attributive => some .syntacticOnly | .predicate => some .mostlySyntactic
-      | .personalPronoun => some .both | _ => none⟩
+  λ | .attributive => some .syntacticOnly | .predicate => some .mostlySyntactic
+      | .personalPronoun => some .both | _ => none
 
 theorem committee_respectHierarchy :
-    britishCommittee.RespectsHierarchy ∧ americanCommittee.RespectsHierarchy := by decide
+    RespectsHierarchy britishCommittee ∧ RespectsHierarchy americanCommittee := by decide
 
 /-- Nixon's corpus: the percentage of plural agreement with corporate nouns, by target, the
 pronouns pooling the possessive with the personal. -/
@@ -909,7 +907,7 @@ theorem macedonian_rows : ∀ row ∈ Examples.all, row.language = "mace1250" �
 /-- British *committee*, (19) to (22): the agreement each target allows. -/
 theorem committee_rows : ∀ row ∈ Examples.all, row.language = "stan1293" →
     ∀ t ∈ row.parse? "target" targetNames, ∀ k ∈ row.parse? "agreement" kindNames,
-    ∀ a ∈ britishCommittee.profile t, (row.judgment = .acceptable ↔ a.Allows k) := by
+    ∀ a ∈ britishCommittee t, (row.judgment = .acceptable ↔ a.Allows k) := by
   decide +kernel
 
 /-- Hopi, (40) to (42): the number read off the pronoun's and the verb's marking. -/

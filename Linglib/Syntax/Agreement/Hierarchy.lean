@@ -23,7 +23,7 @@ hierarchy when it is antitone on the positions where it is recorded.
   syntactic only to semantic only, linearly ordered.
 * `Agreement.RespectsHierarchy`: a profile recorded at some positions of a hierarchy is
   antitone where it is recorded.
-* `Agreement.Hybrid`: a hybrid noun, with the availability of semantic agreement at the
+* `Agreement.Hybrid`: a hybrid noun, the availability of semantic agreement at the
   positions of a hierarchy for which there are data.
 
 ## Implementation notes
@@ -103,23 +103,15 @@ instance [Fintype ι] [DecidableLE ι] [DecidableLE α] (f : ι → Option α) :
 
 /-- A profile recorded at every position respects the hierarchy exactly when it is
 antitone. -/
-theorem respectsHierarchy_some_comp_iff {g : ι → α} :
+theorem respectsHierarchy_some_comp_iff_antitone {g : ι → α} :
     RespectsHierarchy (some ∘ g) ↔ Antitone g := by
   simp [RespectsHierarchy, Antitone]
 
 end Hierarchy
 
-/-- A hybrid noun: the availability of semantic agreement at each position of a hierarchy at
-which agreement in the feature applies and there are data. -/
-structure Hybrid (ι : Type*) where
-  /-- The noun or class of nouns. -/
-  name : String
-  /-- The availability of semantic agreement at each position where it is recorded. -/
-  profile : ι → Option Availability
-
-/-- A hybrid noun respects a hierarchy when the availability of semantic agreement never
-decreases down it. -/
-abbrev Hybrid.RespectsHierarchy {ι : Type*} [Preorder ι] (h : Hybrid ι) : Prop :=
-  Agreement.RespectsHierarchy h.profile
+/-- A hybrid noun, as the availability of semantic agreement at each position of a hierarchy
+at which agreement in the feature applies and there are data; it respects the hierarchy when
+`RespectsHierarchy` holds of it. -/
+abbrev Hybrid (ι : Type*) := ι → Option Availability
 
 end Agreement
