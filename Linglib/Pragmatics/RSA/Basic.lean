@@ -648,6 +648,17 @@ theorem familyListener_fst_apply_singleton_ne_zero_iff [Fintype Λ] (L : Λ → 
     ENNReal.div_eq_zero_iff, mul_eq_zero, not_forall, not_or]
   exact ⟨λ ⟨l, h⟩ => ⟨l, h.1⟩, λ ⟨l, h⟩ => ⟨l, h, measure_ne_top _ _⟩⟩
 
+/-- The state marginal of the family listener over a product prior, on reals: the prior at the
+state times the latent-averaged member speaker share, over the observation marginal. -/
+theorem familyListener_fst_real_singleton [Fintype Λ] (L : Λ → Kernel U W) (α : ℝ)
+    (cost : U → ℝ≥0∞) (μW : Measure W) [IsFiniteMeasure μW] (ν : Measure Λ) [IsFiniteMeasure ν]
+    {u : U} (hu : (familySpeaker L α cost ∘ₘ μW.prod ν) {u} ≠ 0) (w : W) :
+    (familyListener L α cost (μW.prod ν) u).fst.real {w}
+      = μW.real {w} * (∑ l, ν.real {l} * (speaker α cost (L l) w).real {u})
+        / (familySpeaker L α cost ∘ₘ μW.prod ν).real {u} := by
+  rw [familyListener, posterior_fst_real_singleton _ _ hu, Finset.mul_sum]
+  simp_rw [Measure.prod_real_singleton, familySpeaker_apply, mul_assoc]
+
 /-- Event comparison for the family listener reduces to prior-weighted member speaker
 sums. -/
 theorem familyListener_real_lt_iff (L : Λ → Kernel U W) (α : ℝ) (cost : U → ℝ≥0∞) {u : U}
