@@ -1,4 +1,4 @@
-import Linglib.Discourse.Givenness
+import Linglib.Semantics.Reference.Givenness
 import Linglib.Semantics.Focus.Marking
 
 /-!
@@ -12,7 +12,7 @@ over the marking axes `(Mark, BinaryGivenness)`.
 
 namespace Focus.ExtractionClash
 
-open Discourse (BinaryGivenness)
+open Reference (BinaryGivenness)
 
 /-- Two propositions are semantically independent iff neither entails the other.
     [umbach-2004] §2.2: required for alternatives in focus, coordination,

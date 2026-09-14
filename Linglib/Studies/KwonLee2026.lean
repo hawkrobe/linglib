@@ -1,4 +1,4 @@
-import Linglib.Discourse.Accessibility
+import Linglib.Semantics.Reference.Accessibility
 import Linglib.Fragments.Korean.Pronouns
 import Mathlib.Tactic.NormNum
 
@@ -52,7 +52,7 @@ comparison studies are complements of the reported object biases where only thos
 
 namespace KwonLee2026
 
-open Discourse
+open Reference
 
 /-! ### The three referential forms on the accessibility scale -/
 
