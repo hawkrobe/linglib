@@ -225,48 +225,6 @@ Both cases are handled in `Semantics/Numerals/Basic.lean`:
   `atLeast_strictly_weaker_than_bare` prove the key contrast
 -/
 
-namespace Number
-
-/-!
-### Singular/Plural as a Horn Scale
-[sauerland-2003] [spector-2007] [tieu-etal-2020]
-
-The singular and plural morphemes form a Horn scale ⟨singular, plural⟩
-where singular ("a giraffe") is the stronger alternative to plural ("giraffes").
-
-Under the implicature approach to multiplicity inferences, the plural
-literally means "one or more" and the "more than one" inference arises
-as a scalar implicature: the listener reasons that the speaker chose
-the weaker "giraffes" over the stronger "a giraffe," implying that
-the singular alternative is false — hence more than one.
-
-This scale is structurally unusual: the alternatives differ in morphology
-(number marking), not in lexical choice (unlike some/all, or/and).
--/
-
-inductive NumberExpr where
-  | singular | plural
-  deriving DecidableEq, Repr, Inhabited
-
-def NumberExpr.toString : NumberExpr → String
-  | .singular => "singular"
-  | .plural => "plural"
-
-instance : ToString NumberExpr := ⟨NumberExpr.toString⟩
-
-/-- Singular is stronger: "a giraffe" entails "giraffes" (one or more). -/
-def numberScale : HornScale NumberExpr :=
-  ⟨[.plural, .singular]⟩
-
-theorem singular_stronger_than_plural :
-    isStronger numberScale .singular .plural = true := by
-  decide
-
-theorem plural_alternative :
-    strongerAlternatives numberScale .plural = [.singular] := by
-  decide
-
-end Number
 
 def scalarImplicatures {α : Type} [BEq α] (s : HornScale α) (x : α) : List α :=
   strongerAlternatives s x
