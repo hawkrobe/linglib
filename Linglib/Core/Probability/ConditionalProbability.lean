@@ -133,3 +133,38 @@ theorem count_apply_fintype [Fintype Ω] [MeasurableSingletonClass Ω]
   simp []
 
 end ProbabilityTheory
+
+/-! ### Sequential conditioning
+
+Conditioning is scale-invariant, so two Bayesian updates compose: reweighting by `f`,
+normalizing, reweighting by `g` and normalizing again is one reweighting by `f * g`. -/
+
+namespace ProbabilityTheory
+
+variable {Ω : Type*} [MeasurableSpace Ω]
+
+/-- Conditioning is invariant under scaling the measure by a positive finite constant. -/
+theorem cond_smul {c : ℝ≥0∞} (hc0 : c ≠ 0) (hc : c ≠ ∞) (μ : Measure Ω) (s : Set Ω) :
+    (c • μ)[|s] = μ[|s] := by
+  simp only [cond, Measure.smul_apply, smul_eq_mul, Measure.restrict_smul, smul_smul]
+  rw [ENNReal.mul_inv (Or.inl hc0) (Or.inl hc), mul_right_comm, ENNReal.inv_mul_cancel hc0 hc,
+    one_mul]
+
+/-- Two Bayesian updates compose: normalizing after reweighting by `f` and again after
+reweighting by `g` is normalizing once after reweighting by `f * g`. -/
+theorem cond_univ_withDensity_mul (μ : Measure Ω) {f g : Ω → ℝ≥0∞} (hf : Measurable f)
+    (hg : Measurable g) (hfin : μ.withDensity f Set.univ ≠ ∞) :
+    (((μ.withDensity f)[|Set.univ]).withDensity g)[|Set.univ] =
+      (μ.withDensity (f * g))[|Set.univ] := by
+  rw [withDensity_mul μ hf hg]
+  rcases eq_or_ne (μ.withDensity f Set.univ) 0 with h0 | h0
+  · have hz : (0 : Measure Ω).withDensity g = 0 :=
+      Measure.ext λ s hs => by rw [withDensity_apply _ hs]; simp
+    rw [Measure.measure_univ_eq_zero.1 h0,
+      cond_eq_zero_of_meas_eq_zero (μ := (0 : Measure Ω)) (s := Set.univ) (by simp), hz]
+  · have hc : (μ.withDensity f)[|Set.univ] = (μ.withDensity f Set.univ)⁻¹ • μ.withDensity f := by
+      rw [cond, Measure.restrict_univ]
+    rw [hc, withDensity_smul_measure,
+      cond_smul (ENNReal.inv_ne_zero.2 hfin) (ENNReal.inv_ne_top.2 h0)]
+
+end ProbabilityTheory

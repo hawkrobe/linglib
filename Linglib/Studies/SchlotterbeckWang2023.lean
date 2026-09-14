@@ -1,204 +1,405 @@
-import Linglib.Core.Probability.Scores
+import Linglib.Core.Probability.ConditionalProbability
 import Linglib.Pragmatics.RSA.Incremental
+import Linglib.Pragmatics.RSA.Uniform
 
 /-!
-# [schlotterbeck-wang-2023] — incremental RSA for adjective ordering
-[cohn-gordon-goodman-potts-2019] [degen-etal-2020] [waldon-degen-2021]
+# Schlotterbeck & Wang (2023): An incremental RSA model for adjective ordering preferences
 
-Schlotterbeck, F. & Wang, H. (2023). An incremental RSA model for adjective
-ordering preferences in referential visual context. *SCiL* 6, 121–132.
+This file formalizes the paper's fully incremental Rational Speech Act model (Table 1) and the
+qualitative predictions it draws from it for the order of two prenominal adjectives. The
+incremental literal listener (`l0`) interprets a word sequence from the noun outward, each word
+against the support of the distribution the later words left, so a context-dependent meaning such
+as the k%-semantics of a dimension adjective (`kPercent`) can resolve differently in the two
+orders. The incremental sequence speaker produces the words left to right, scoring each prefix by
+its utility for the referent and each word by a language model (`seqSpeaker`); the global speaker
+scores whole sequences, and the incremental utterance speaker is a softmax over the sequence
+speaker with an utterance prior.
 
-**Scope.** This file formalizes the *symmetric-semantics sanity-check slice*
-of the paper, not its main asymmetric model: the order-independence of the
-incremental listener under symmetric per-class semantics, plus
-discrimination-driven ordering preferences at the speaker level as
-chain-rule trajectory products (per-step normalized; the paper's `S1^inc`
-normalizes once globally, and the two agree at the literal layer). Not
-formalized: asymmetric per-class semantics, the `P_Lang` grammaticality
-filter, and the size-first utterance-prior bias. The paper's α is the
-utterance-level softmax temperature; its β (word-level) is 1 in all
-reported simulations, matching the exponent-free chain here.
-
-## Main results
-
-* Order-independence of the prefix meaning — the paper's listener-level
-  sanity check — is the substrate lemma `RSA.prodMeaning_perm`.
-* `size_first_when_size_discriminates` / `color_first_when_color_reliable`:
-  the trajectory preference tracks discriminatory power (Scene A) and
-  flips to the more reliable dimension under equal discrimination
-  (Scene B); `ordering_preference_flips` conjoins them.
-* `big_more_informative_A` / `blue_more_informative_B`: the first-word
-  preferences driving the flip.
-* `both_orderings_identify_target_A`/`_B`: after both adjectives the
-  target carries the highest meaning among scene members.
+The paper's theoretical result is the listener-level sanity check: at a context-independent
+semantics the incremental listener is the one-shot literal listener at the product meaning,
+because Bayesian updates compose, so it cannot distinguish word orders (`l0_perm`), and the
+global speaker is then indifferent between them. The speaker-level prediction, the effect of
+discriminatory strength, comes from the language model that produces either adjective first and
+then the other: with an order-blind listener the sequence speaker's preference between the two
+orders is its preference between their first words, and at a uniform prior and Boolean meanings
+the more informative first word is the one true of fewer referents
+(`seqSpeaker_real_lt_of_card_lt`). The k%-semantics witnesses that the listener does distinguish
+orders once meanings depend on the comparison class (`l0_big_blue_ne`).
 
 ## Implementation notes
 
-The chain is exact ℚ≥0: `lex` is the Bernoulli-channel form of
-[degen-etal-2020]'s continuous semantics (reliability if the word truly
-applies, the complementary noise floor otherwise), prefix meanings are
-`RSA.prodMeaning` products, `l0Score`/`s1Score`
-normalize via `PMF.normalizeScores`, and the PMF speaker is `PMF.ofScores`. Trajectories are `Fin`-indexed
-products of speaker values, so ordering predictions close by
-`PMF.prod_ofScores_lt` with one kernel certificate each.
+* Meanings are graded and bounded by one; the comparison class is a finset of referents, and
+  the support of a distribution is the finset of referents it gives positive mass. Sequences are
+  surface-order lists with the noun-adjacent word last, and the speakers over sequences of a
+  fixed length are weight kernels on `Fin n → U`.
+* The paper leaves the cost function unspecified; here the cost factor `exp (−β c)` depends on
+  the sequence length alone, which covers per-word costs and cost zero, and the rationality `β`
+  is free rather than pinned to the paper's one.
+* With the noise floor `ε > 0` of the paper's color semantics no color word empties the
+  support, so in the paper's simulations every later word is interpreted against the whole
+  display; the order-sensitivity witness uses a sharp color meaning. The perceptual blur of the
+  size distribution manipulation is not modeled.
+
+## References
+
+* [schlotterbeck-wang-2023]
+* [cohn-gordon-goodman-potts-2019]
+* [degen-etal-2020]
+* [scontras-degen-goodman-2017]
+* [frank-goodman-2012]
 -/
 
-open scoped ENNReal NNRat
+open MeasureTheory ProbabilityTheory RSA
+open scoped ENNReal
 
 namespace SchlotterbeckWang2023
 
-open RSA
+variable {U R : Type*}
 
-/-- Referents in the reference game. -/
-inductive Referent where
-  | bigBlue | bigGreen | smallBlue | smallGreen | smallRed
-  deriving DecidableEq, Fintype, Repr
+private theorem mul_lt_mul_right_iff {a b c : ℝ≥0∞} (h0 : c ≠ 0) (hc : c ≠ ∞) :
+    a * c < b * c ↔ a < b :=
+  ⟨λ h => lt_of_not_ge λ hba => h.not_ge (mul_le_mul' hba le_rfl), ENNReal.mul_lt_mul_left h0 hc⟩
 
-instance : Nonempty Referent := ⟨.bigBlue⟩
+private theorem mul_lt_mul_left_iff {a b c : ℝ≥0∞} (h0 : c ≠ 0) (hc : c ≠ ∞) :
+    c * a < c * b ↔ a < b :=
+  ⟨λ h => lt_of_not_ge λ hba => h.not_ge (mul_le_mul' le_rfl hba), ENNReal.mul_lt_mul_right h0 hc⟩
 
-/-- Words available to the speaker: size adjectives, color adjectives, noun. -/
-inductive Word where
-  | big | small | blue | green | red | sticker
-  deriving DecidableEq, Fintype, Repr
+private theorem ofFn_pair (x y : U) : List.ofFn ![x, y] = [x, y] := by simp [List.ofFn_succ]
 
-instance : Nonempty Word := ⟨.sticker⟩
+/-! ### Meanings and the language model -/
 
-/-- Whether a word is veridically true of a referent. -/
-def wordApplies : Word → Referent → Bool
-  | .big,     .bigBlue  | .big,     .bigGreen  => true
-  | .small,   .smallBlue | .small,  .smallGreen | .small, .smallRed => true
-  | .blue,    .bigBlue  | .blue,    .smallBlue  => true
-  | .green,   .bigGreen | .green,   .smallGreen => true
-  | .red,     .smallRed => true
-  | .sticker, _         => true
-  | _,        _         => false
+/-- A Boolean semantics, as graded meanings. -/
+noncomputable def sharp (ext : U → Finset R → Finset R) : U → Finset R → R → ℝ≥0∞ :=
+  λ u C => ((ext u C : Set R)).indicator 1
 
-/-- Per-class perceptual reliability: size words use `sRel`, color words
-use `cRel`, the noun applies universally. -/
-def rel (sRel cRel : ℚ≥0) : Word → ℚ≥0
-  | .big | .small         => sRel
-  | .blue | .green | .red => cRel
-  | .sticker              => 1
+theorem sharp_apply_le_one (ext : U → Finset R → Finset R) (u : U) (C : Finset R) (r : R) :
+    sharp ext u C r ≤ 1 := by
+  unfold sharp Set.indicator
+  split_ifs <;> simp
 
-/-- Noisy word meaning: reliability if the word truly applies, the
-complementary noise floor otherwise — the Bernoulli-channel form of
-[degen-etal-2020]'s continuous semantics. -/
-def lex (sRel cRel : ℚ≥0) (w : Word) (r : Referent) : ℚ≥0 :=
-  if wordApplies w r then rel sRel cRel w else 1 - rel sRel cRel w
+/-- The sequentially intersective update of a Boolean semantics: the extension of a sequence,
+built from the noun outward. -/
+def extSeq [Fintype R] [DecidableEq R] (ext : U → Finset R → Finset R) : List U → Finset R
+  | [] => Finset.univ
+  | u :: us => extSeq ext us ∩ ext u (extSeq ext us)
 
-/-! ### Scenes -/
+/-- The paper's language model: either adjective first, with equal probability, then the other. -/
+noncomputable def alternation [DecidableEq U] (a b : U) : List U → U → ℝ≥0∞
+  | [], u => if u = a ∨ u = b then 2⁻¹ else 0
+  | [u'], u => if u' = a ∧ u = b ∨ u' = b ∧ u = a then 1 else 0
+  | _, _ => 0
 
-/-- Scene A: size discriminates. Objects {big-blue, small-blue,
-small-green, small-red}, so "big" uniquely identifies the target. -/
-def sceneA : Referent → Bool
-  | .bigBlue | .smallBlue | .smallGreen | .smallRed => true
-  | _ => false
+theorem alternation_comm [DecidableEq U] (a b : U) : alternation a b = alternation b a := by
+  funext us u
+  cases us with
+  | nil => simp [alternation, or_comm]
+  | cons u' us => cases us <;> simp [alternation, or_comm]
 
-/-- Scene B: equal discrimination. Objects {big-blue, big-green,
-small-blue, small-green}; "big" and "blue" each narrow to two. -/
-def sceneB : Referent → Bool
-  | .bigBlue | .bigGreen | .smallBlue | .smallGreen => true
-  | _ => false
+theorem alternation_ne_top [DecidableEq U] {a b : U} (us : List U) (u : U) :
+    alternation a b us u ≠ ∞ := by
+  cases us with
+  | nil => simp only [alternation]; split_ifs <;> simp
+  | cons u' us => cases us <;> simp only [alternation] <;> (try split_ifs) <;> simp
 
-/-- The target referent in both scenes. -/
-def target : Referent := .bigBlue
+open Classical in
+/-- The support of a distribution over referents, the comparison class the next word is
+interpreted against. -/
+noncomputable def supp [Fintype R] [MeasurableSpace R] (ν : Measure R) : Finset R :=
+  Finset.univ.filter λ r => ν {r} ≠ 0
 
-/-- Scene A lexicon: size more reliable (99/100 vs 95/100). -/
-def lexA : Word → Referent → ℚ≥0 := lex (99/100) (95/100)
+theorem mem_supp [Fintype R] [MeasurableSpace R] {ν : Measure R} {r : R} :
+    r ∈ supp ν ↔ ν {r} ≠ 0 := by
+  simp [supp]
 
-/-- Scene B lexicon: color more reliable (95/100 vs 80/100). -/
-def lexB : Word → Referent → ℚ≥0 := lex (80/100) (95/100)
+section
 
-/-! ### The incremental chain -/
+variable [Fintype U] [MeasurableSpace U] [DiscreteMeasurableSpace U] [Fintype R] [MeasurableSpace R]
 
-/-- Literal listener over scene referents at each prefix extension. -/
-def l0Score (lex : Word → Referent → ℚ≥0) (scene : Referent → Bool)
-    (ctx : List Word) (u : Word) : Referent → ℚ≥0 :=
-  PMF.normalizeScores fun r => if scene r then prodMeaning lex (ctx ++ [u]) r else 0
+/-! ### The incremental listener (rows 1–2) -/
 
-/-- Word-level speaker (β = 1, no cost): renormalized literal posteriors. -/
-def s1Score (lex : Word → Referent → ℚ≥0) (scene : Referent → Bool)
-    (ctx : List Word) (r : Referent) : Word → ℚ≥0 :=
-  PMF.normalizeScores fun u => l0Score lex scene ctx u r
+/-- Rows (1)–(2): the incremental literal listener on a word sequence in surface order, the
+noun-adjacent word last. That word is interpreted first, against the prior's support, and each
+earlier word against the support of the distribution the later words left. -/
+noncomputable def l0 (μ : Measure R) (sem : U → Finset R → R → ℝ≥0∞) : List U → Measure R
+  | [] => μ
+  | u :: us => literalListener (l0 μ sem us) (λ u' => sem u' (supp (l0 μ sem us))) u
 
-/-- Word-by-word speaker at context `ctx`. -/
-noncomputable def s1 (lex : Word → Referent → ℚ≥0) (scene : Referent → Bool)
-    (ctx : List Word) (r : Referent) : PMF Word :=
-  .ofScores .uniform (s1Score lex scene ctx r)
+theorem l0_apply_le_one {μ : Measure R} {sem : U → Finset R → R → ℝ≥0∞} [IsProbabilityMeasure μ]
+    (us : List U) (s : Set R) :
+    l0 μ sem us s ≤ 1 := by
+  cases us with
+  | nil => exact prob_le_one (μ := μ)
+  | cons u us => exact literalListener_apply_le_one _ _ _ _
 
-/-- Trajectory probability of an utterance: the chain-rule product of
-per-step speaker values along its prefixes. -/
-noncomputable def s1Traj (lex : Word → Referent → ℚ≥0)
-    (scene : Referent → Bool) (r : Referent) (us : List Word) : ℝ≥0∞ :=
-  ∏ i : Fin us.length, s1 lex scene (us.take i.1) r (us.get i)
+/-! ### Utilities and sequence weights (rows 4–5 and 7) -/
 
-/-- ℚ≥0 shadow of `s1Traj`. -/
-def s1TrajScore (lex : Word → Referent → ℚ≥0) (scene : Referent → Bool)
-    (r : Referent) (us : List Word) : ℚ≥0 :=
-  ∏ i : Fin us.length,
-    PMF.scoresWith .uniform (s1Score lex scene (us.take i.1) r) (us.get i)
+variable (μ : Measure R) (sem : U → Finset R → R → ℝ≥0∞)
 
-theorem s1Traj_lt {lex₁ lex₂ : Word → Referent → ℚ≥0}
-    {sc₁ sc₂ : Referent → Bool} {r₁ r₂ : Referent} {us vs : List Word}
-    (h : s1TrajScore lex₁ sc₁ r₁ us < s1TrajScore lex₂ sc₂ r₂ vs) :
-    s1Traj lex₁ sc₁ r₁ us < s1Traj lex₂ sc₂ r₂ vs := by
-  unfold s1Traj s1
-  rw [PMF.prod_ofScores_apply, PMF.prod_ofScores_apply]
-  exact_mod_cast h
+/-- Row (7): the utility of the sequence `us` for the referent `r` at rationality `β`, with
+`cost n` the cost factor `exp (−β c)` of an `n`-word sequence. -/
+noncomputable def utility (β : ℝ) (cost : ℕ → ℝ≥0∞) (us : List U) (r : R) : ℝ≥0∞ :=
+  l0 μ sem us {r} ^ β * cost us.length
 
-/-! ### Predictions -/
+/-- Rows (4)–(5) unrolled: the weight of producing `us` word by word, each prefix scored by its
+utility and each word by the language model's probability given the words before it. -/
+noncomputable def seqWeight (β : ℝ) (cost : ℕ → ℝ≥0∞) (pLang : List U → U → ℝ≥0∞) (r : R)
+    (us : List U) : ℝ≥0∞ :=
+  ∏ i : Fin us.length, utility μ sem β cost (us.take (i.1 + 1)) r * pLang (us.take i.1) us[i]
 
-/-- Size-first and color-first orderings for the big-blue target. -/
-def sizeFirst : List Word := [.big, .blue, .sticker]
+variable {μ : Measure R} {sem : U → Finset R → R → ℝ≥0∞} {β : ℝ} {cost : ℕ → ℝ≥0∞}
+  {pLang : List U → U → ℝ≥0∞} {r : R} {a b : U}
 
-/-- See `sizeFirst`. -/
-def colorFirst : List Word := [.blue, .big, .sticker]
+theorem utility_ne_top [IsProbabilityMeasure μ] (hβ : 0 ≤ β) (hcost : ∀ n, cost n ≠ ∞)
+    (us : List U) : utility μ sem β cost us r ≠ ∞ :=
+  ENNReal.mul_ne_top (weight_rpow_ne_top hβ (l0_apply_le_one us _)) (hcost _)
 
-/-- When size has the higher discriminatory power (Scene A), the
-incremental speaker prefers the size-first ordering. -/
-theorem size_first_when_size_discriminates :
-    s1Traj lexA sceneA target colorFirst < s1Traj lexA sceneA target sizeFirst :=
-  s1Traj_lt (by decide +kernel)
+/-! ### Two adjectives -/
 
-/-- Under equal discrimination with color more reliable (Scene B), the
-preference flips to color-first. -/
-theorem color_first_when_color_reliable :
-    s1Traj lexB sceneB target sizeFirst < s1Traj lexB sceneB target colorFirst :=
-  s1Traj_lt (by decide +kernel)
+theorem seqWeight_pair_alternation [DecidableEq U] (r : R) (a b : U) :
+    seqWeight μ sem β cost (alternation a b) r [a, b] =
+      2⁻¹ * (utility μ sem β cost [a] r * utility μ sem β cost [a, b] r) := by
+  simp [seqWeight, Fin.prod_univ_two, alternation]
+  ring
 
-/-- The ordering preference tracks the scene's discriminatory structure,
-not a fixed ordering rule. -/
-theorem ordering_preference_flips :
-    s1Traj lexA sceneA target colorFirst < s1Traj lexA sceneA target sizeFirst ∧
-    s1Traj lexB sceneB target sizeFirst < s1Traj lexB sceneB target colorFirst :=
-  ⟨size_first_when_size_discriminates, color_first_when_color_reliable⟩
+/-- Under the paper's language model the sequence speaker's order preference compares the
+utilities accumulated along the two production paths. -/
+theorem seqWeight_pair_lt_iff [DecidableEq U] (r : R) (a b : U) :
+    seqWeight μ sem β cost (alternation a b) r [a, b] <
+        seqWeight μ sem β cost (alternation a b) r [b, a] ↔
+      utility μ sem β cost [a] r * utility μ sem β cost [a, b] r <
+        utility μ sem β cost [b] r * utility μ sem β cost [b, a] r := by
+  rw [seqWeight_pair_alternation, alternation_comm, seqWeight_pair_alternation]
+  exact mul_lt_mul_left_iff (by simp) (by simp)
 
-/-- In Scene A, "big" is the more informative first word for the target. -/
-theorem big_more_informative_A :
-    s1 lexA sceneA [] target .blue < s1 lexA sceneA [] target .big :=
-  PMF.ofScores_lt _ (by decide +kernel)
+/-- Discriminatory strength: with an order-blind listener, the sequence speaker's preference
+between the two orders is its preference between their first words. -/
+theorem seqWeight_pair_lt_iff_of_l0_eq [DecidableEq U] [IsProbabilityMeasure μ] (hβ : 0 ≤ β)
+    (hcost : ∀ n, cost n ≠ ∞) (hl : l0 μ sem [a, b] = l0 μ sem [b, a])
+    (hne : utility μ sem β cost [a, b] r ≠ 0) :
+    seqWeight μ sem β cost (alternation a b) r [a, b] <
+        seqWeight μ sem β cost (alternation a b) r [b, a] ↔
+      utility μ sem β cost [a] r < utility μ sem β cost [b] r := by
+  rw [seqWeight_pair_lt_iff, show utility μ sem β cost [b, a] r = utility μ sem β cost [a, b] r by
+    simp only [utility, ← hl, List.length_cons, List.length_nil]]
+  exact mul_lt_mul_right_iff hne (utility_ne_top hβ hcost _)
 
-/-- In Scene B, "blue" is the more informative first word. -/
-theorem blue_more_informative_B :
-    s1 lexB sceneB [] target .big < s1 lexB sceneB [] target .blue :=
-  PMF.ofScores_lt _ (by decide +kernel)
+/-- At a positive rationality the first-word utility comparison is the listener comparison. -/
+theorem utility_single_lt_iff (hβ : 0 < β) (h0 : cost 1 ≠ 0) (htop : cost 1 ≠ ∞) :
+    utility μ sem β cost [a] r < utility μ sem β cost [b] r ↔
+      l0 μ sem [a] {r} < l0 μ sem [b] {r} := by
+  simp only [utility, List.length_singleton]
+  rw [mul_lt_mul_right_iff h0 htop, ENNReal.rpow_lt_rpow_iff hβ]
 
-/-- After both adjectives, the target carries the highest meaning among
-Scene A members. -/
-theorem both_orderings_identify_target_A (r : Referent)
-    (hr : sceneA r = true) (hne : r ≠ target) :
-    prodMeaning lexA [.big, .blue] r < prodMeaning lexA [.big, .blue] target := by
-  cases r
-  · exact absurd rfl hne
-  all_goals first | exact absurd hr (by decide) | decide +kernel
+end
 
-/-- After both adjectives, the target carries the highest meaning among
-Scene B members. -/
-theorem both_orderings_identify_target_B (r : Referent)
-    (hr : sceneB r = true) (hne : r ≠ target) :
-    prodMeaning lexB [.big, .blue] r < prodMeaning lexB [.big, .blue] target := by
-  cases r
-  · exact absurd rfl hne
-  all_goals first | exact absurd hr (by decide) | decide +kernel
+section
+
+variable [Fintype U] [MeasurableSpace U] [DiscreteMeasurableSpace U] [Fintype R] [MeasurableSpace R]
+  [DiscreteMeasurableSpace R]
+  {μ : Measure R} {sem : U → Finset R → R → ℝ≥0∞} {β : ℝ} {cost : ℕ → ℝ≥0∞}
+  {pLang : List U → U → ℝ≥0∞} {r : R} {a b : U}
+
+/-! ### Order-blind listeners -/
+
+/-- At a context-independent semantics the incremental listener is the one-shot literal listener
+at the product meaning: Bayesian updates compose. -/
+theorem l0_contextFree [IsProbabilityMeasure μ] (m : U → R → ℝ≥0∞) (hm : ∀ u r, m u r ≤ 1)
+    (us : List U) :
+    l0 μ (λ u _ => m u) us = (μ.withDensity (prodMeaning m us))[|Set.univ] := by
+  induction us with
+  | nil =>
+    rw [show prodMeaning m [] = 1 from funext (prodMeaning_nil m), withDensity_one, cond_univ]
+    rfl
+  | cons u us ih =>
+    have hfin : μ.withDensity (prodMeaning m us) Set.univ ≠ ∞ := by
+      rw [withDensity_apply _ MeasurableSet.univ, Measure.restrict_univ]
+      refine ne_top_of_le_ne_top ENNReal.one_ne_top ?_
+      calc ∫⁻ r, prodMeaning m us r ∂μ
+          ≤ ∫⁻ _, 1 ∂μ := lintegral_mono λ r => prodMeaning_le_one hm us r
+        _ = 1 := by simp
+    simp only [l0, literalListener_apply]
+    rw [ih, cond_univ_withDensity_mul _ (measurable_of_countable _) (measurable_of_countable _)
+      hfin, show prodMeaning m us * m u = prodMeaning m (u :: us) from
+        funext λ r => by simp [prodMeaning_cons, mul_comm]]
+
+/-- The paper's sanity check: a context-independent semantics cannot distinguish word orders. -/
+theorem l0_perm [IsProbabilityMeasure μ] (m : U → R → ℝ≥0∞) (hm : ∀ u r, m u r ≤ 1)
+    {us us' : List U} (h : us.Perm us') :
+    l0 μ (λ u _ => m u) us = l0 μ (λ u _ => m u) us' := by
+  rw [l0_contextFree m hm, l0_contextFree m hm, funext (prodMeaning_perm (lex := m) h)]
+
+theorem supp_uniformOn (S : Finset R) :
+    supp (uniformOn (S : Set R)) = S := by
+  ext r
+  simp [mem_supp, uniformOn_eq_zero_iff S.finite_toSet, Set.inter_singleton_eq_empty]
+
+/-- At a uniform prior and a Boolean semantics the incremental listener is uniform on the
+sequentially intersected extension. -/
+theorem l0_indicator [DecidableEq R] (ext : U → Finset R → Finset R) (us : List U) :
+    l0 (uniformOn Set.univ) (sharp ext) us = uniformOn (extSeq ext us : Set R) := by
+  induction us with
+  | nil => simp [l0, extSeq]
+  | cons u us ih =>
+    have h := literalListener_indicator (uniformOn (extSeq ext us : Set R))
+      λ u' => ((ext u' (extSeq ext us) : Set R))
+    simp only [l0, sharp]
+    rw [ih, supp_uniformOn, h, Kernel.ofFunOfCountable_apply, extSeq, Finset.coe_inter, uniformOn,
+      uniformOn, cond_cond_eq_cond_inter' .of_discrete .of_discrete
+        (by rw [Measure.count_apply_finite _ (Finset.finite_toSet _)]
+            exact ENNReal.natCast_ne_top _)]
+
+/-- At a uniform prior and Boolean meanings, of two words true of the referent the one true of
+fewer referents is the more informative first word. -/
+theorem l0_single_lt_iff [DecidableEq R] (ext : U → Finset R → Finset R)
+    (ha : r ∈ ext a Finset.univ)
+    (hb : r ∈ ext b Finset.univ) :
+    l0 (uniformOn Set.univ) (sharp ext) [a] {r} < l0 (uniformOn Set.univ) (sharp ext) [b] {r} ↔
+      (ext b Finset.univ).card < (ext a Finset.univ).card := by
+  simp [l0_indicator, extSeq, uniformOn_finset_apply_singleton, ha, hb, ENNReal.inv_lt_inv]
+
+/-! ### The speaker kernels (rows 3–6) -/
+
+variable (μ sem)
+
+/-- Rows (4)–(5): the incremental sequence speaker over sequences of length `n`. -/
+noncomputable def seqSpeaker (β : ℝ) (cost : ℕ → ℝ≥0∞) (pLang : List U → U → ℝ≥0∞) (n : ℕ) :
+    Kernel R (Fin n → U) :=
+  Kernel.ofWeights λ r v => seqWeight μ sem β cost pLang r (List.ofFn v)
+
+/-- Row (3): the global speaker over sequences of length `n` with utterance prior `P`. -/
+noncomputable def globalSpeaker (β : ℝ) (cost : ℕ → ℝ≥0∞) {n : ℕ} (P : (Fin n → U) → ℝ≥0∞) :
+    Kernel R (Fin n → U) :=
+  Kernel.ofWeights λ r v => utility μ sem β cost (List.ofFn v) r * P v
+
+/-- Row (6): the incremental utterance speaker, a softmax at rationality `α` over the sequence
+speaker with utterance prior `P`. -/
+noncomputable def uttSpeaker (β : ℝ) (cost : ℕ → ℝ≥0∞) (pLang : List U → U → ℝ≥0∞) (α : ℝ)
+    {n : ℕ} (P : (Fin n → U) → ℝ≥0∞) : Kernel R (Fin n → U) :=
+  Kernel.ofWeights λ r v => seqWeight μ sem β cost pLang r (List.ofFn v) ^ α * P v
+
+variable {μ sem}
+
+/-- An order preference of the sequence speaker is a weight comparison; normalization cancels. -/
+theorem seqSpeaker_real_lt_iff [IsProbabilityMeasure μ] (hβ : 0 ≤ β) (hcost : ∀ n, cost n ≠ ∞)
+    (hp : ∀ us u, pLang us u ≠ ∞) {n : ℕ}
+    (h0 : ∃ v : Fin n → U, seqWeight μ sem β cost pLang r (List.ofFn v) ≠ 0) {v v' : Fin n → U} :
+    (seqSpeaker μ sem β cost pLang n r).real {v} <
+        (seqSpeaker μ sem β cost pLang n r).real {v'} ↔
+      seqWeight μ sem β cost pLang r (List.ofFn v) <
+        seqWeight μ sem β cost pLang r (List.ofFn v') :=
+  Kernel.ofWeights_real_singleton_lt_iff r
+    (λ h => let ⟨v₀, hv₀⟩ := h0; hv₀ (Finset.sum_eq_zero_iff.mp h v₀ (Finset.mem_univ _)))
+    (ENNReal.sum_ne_top.mpr λ _ _ => ENNReal.prod_ne_top λ _ _ =>
+      ENNReal.mul_ne_top (utility_ne_top hβ hcost _) (hp _ _))
+
+/-- Row (3): a global speaker cannot prefer an order the listener cannot distinguish. -/
+theorem globalSpeaker_apply_singleton_eq {n : ℕ} {P : (Fin n → U) → ℝ≥0∞} {v v' : Fin n → U}
+    (hl : l0 μ sem (List.ofFn v) = l0 μ sem (List.ofFn v')) (hP : P v = P v') :
+    globalSpeaker μ sem β cost P r {v} = globalSpeaker μ sem β cost P r {v'} := by
+  simp only [globalSpeaker, Kernel.ofWeights_apply_singleton, utility, hl, hP, List.length_ofFn]
+
+/-- Row (6): the utterance speaker's order preference is the sequence speaker's weighed against
+the utterance prior. -/
+theorem uttSpeaker_real_lt_iff [IsProbabilityMeasure μ] (hβ : 0 ≤ β) (hcost : ∀ n, cost n ≠ ∞)
+    (hp : ∀ us u, pLang us u ≠ ∞) {α : ℝ} (hα : 0 ≤ α) {n : ℕ} {P : (Fin n → U) → ℝ≥0∞}
+    (hP : ∀ v, P v ≠ ∞)
+    (h0 : ∃ v : Fin n → U, seqWeight μ sem β cost pLang r (List.ofFn v) ^ α * P v ≠ 0)
+    {v v' : Fin n → U} :
+    (uttSpeaker μ sem β cost pLang α P r).real {v} <
+        (uttSpeaker μ sem β cost pLang α P r).real {v'} ↔
+      seqWeight μ sem β cost pLang r (List.ofFn v) ^ α * P v <
+        seqWeight μ sem β cost pLang r (List.ofFn v') ^ α * P v' :=
+  Kernel.ofWeights_real_singleton_lt_iff r
+    (λ h => let ⟨v₀, hv₀⟩ := h0; hv₀ (Finset.sum_eq_zero_iff.mp h v₀ (Finset.mem_univ _)))
+    (ENNReal.sum_ne_top.mpr λ v _ => ENNReal.mul_ne_top
+      (ENNReal.rpow_ne_top_of_nonneg hα (ENNReal.prod_ne_top λ _ _ =>
+        ENNReal.mul_ne_top (utility_ne_top hβ hcost _) (hp _ _))) (hP v))
+
+/-- The relevance effect: at a uniform prior, sharp context-independent meanings and the paper's
+language model, the sequence speaker prefers first the adjective true of fewer referents. -/
+theorem seqSpeaker_real_lt_of_card_lt [DecidableEq U] [DecidableEq R] (hβ : 0 < β)
+    (hcost0 : ∀ n, cost n ≠ 0)
+    (hcost : ∀ n, cost n ≠ ∞) (ext : U → Finset R) (ha : r ∈ ext a) (hb : r ∈ ext b)
+    (hcard : (ext a).card < (ext b).card) :
+    (seqSpeaker (uniformOn Set.univ) (sharp λ u _ => ext u) β cost (alternation a b) 2 r).real
+        {![b, a]} <
+      (seqSpeaker (uniformOn Set.univ) (sharp λ u _ => ext u) β cost (alternation a b) 2 r).real
+        {![a, b]} := by
+  have : Nonempty R := ⟨r⟩
+  have hl0 : ∀ us, r ∈ extSeq (λ u _ => ext u) us →
+      l0 (uniformOn Set.univ) (sharp λ u _ => ext u) us {r} ≠ 0 := λ us hus => by
+    rw [l0_indicator, uniformOn_finset_apply_singleton, if_pos hus]
+    exact ENNReal.inv_ne_zero.2 (ENNReal.natCast_ne_top _)
+  have hu : ∀ us, r ∈ extSeq (λ u _ => ext u) us →
+      utility (uniformOn Set.univ) (sharp λ u _ => ext u) β cost us r ≠ 0 := λ us hus =>
+    mul_ne_zero (weight_rpow_ne_zero hβ.le (hl0 us hus)) (hcost0 _)
+  have hl : l0 (uniformOn Set.univ) (sharp λ u _ => ext u) [b, a] =
+      l0 (uniformOn Set.univ) (sharp λ u _ => ext u) [a, b] :=
+    l0_perm (m := λ u => ((ext u : Set R)).indicator 1) (sharp_apply_le_one (λ u _ => ext u) · ∅)
+      (List.Perm.swap a b [])
+  rw [seqSpeaker_real_lt_iff hβ.le hcost (λ _ _ => alternation_ne_top _ _)
+    ⟨![a, b], by
+      rw [ofFn_pair, seqWeight_pair_alternation]
+      exact mul_ne_zero (by simp) (mul_ne_zero (hu _ (by simp [extSeq, ha]))
+        (hu _ (by simp [extSeq, ha, hb])))⟩,
+    ofFn_pair, ofFn_pair, alternation_comm,
+    seqWeight_pair_lt_iff_of_l0_eq hβ.le hcost hl (hu _ (by simp [extSeq, ha, hb])),
+    utility_single_lt_iff hβ (hcost0 1) (hcost 1), l0_single_lt_iff (λ u _ => ext u) hb ha]
+  exact hcard
+
+
+end
+
+/-! ### The k%-semantics (3a) distinguishes the orders -/
+
+/-- (3a): the k%-semantics of a dimension adjective against the comparison class `C`: an object
+is big when its size exceeds the maximum of `C` less `k`% of the range of `C`. -/
+def kPercent [Fintype R] (k : ℕ) (size : R → ℕ) (C : Finset R) : Finset R :=
+  Finset.univ.filter λ x =>
+    ∃ hC : C.Nonempty, 100 * C.sup' hC size < 100 * size x + k * (C.sup' hC size - C.inf' hC size)
+
+/-- Four stickers: three blue ones of sizes 6, 5 and 1, and a green one of size 10. -/
+inductive Sticker
+  | blue6
+  | blue5
+  | blue1
+  | green10
+  deriving DecidableEq, Fintype
+
+instance : MeasurableSpace Sticker := ⊤
+instance : DiscreteMeasurableSpace Sticker := ⟨λ _ => trivial⟩
+
+/-- A sticker's size. -/
+def Sticker.size : Sticker → ℕ
+  | .blue6 => 6
+  | .blue5 => 5
+  | .blue1 => 1
+  | .green10 => 10
+
+/-- The two adjectives of the paper's stimuli. -/
+inductive Adj
+  | big
+  | blue
+  deriving DecidableEq, Fintype
+
+instance : MeasurableSpace Adj := ⊤
+instance : DiscreteMeasurableSpace Adj := ⟨λ _ => trivial⟩
+
+/-- *big* by the 50%-semantics of the paper's simulations, and *blue* sharply. -/
+def Adj.ext : Adj → Finset Sticker → Finset Sticker
+  | .big, C => kPercent 50 Sticker.size C
+  | .blue, _ => {.blue6, .blue5, .blue1}
+
+/-- *big blue* and *blue big* resolve differently: interpreted against the blue stickers, *big*
+admits the second-largest one, which it excludes against the whole display. -/
+theorem l0_big_blue_ne :
+    l0 (uniformOn Set.univ) (sharp Adj.ext) [.big, .blue] ≠
+      l0 (uniformOn Set.univ) (sharp Adj.ext) [.blue, .big] := by
+  rw [l0_indicator, l0_indicator, show extSeq Adj.ext [.big, .blue] = {.blue6, .blue5} by decide,
+    show extSeq Adj.ext [.blue, .big] = {.blue6} by decide]
+  intro h
+  have := congrArg (· {Sticker.blue5}) h
+  rw [uniformOn_finset_apply_singleton, uniformOn_finset_apply_singleton] at this
+  simp at this
 
 end SchlotterbeckWang2023

@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Algebra.BigOperators.Group.List.Basic
 import Mathlib.Algebra.Order.BigOperators.GroupWithZero.List
+import Mathlib.Algebra.Order.Monoid.Unbundled.Basic
 
 /-!
 # Incremental RSA: prefix meanings
@@ -13,8 +14,8 @@ Incremental RSA ([cohn-gordon-goodman-potts-2019]) runs the pipeline word by wor
 literal listener needs the meaning of an utterance *prefix*. With the graded lexical semantics of
 [degen-etal-2020] each word contributes a value in a commutative monoid and the prefix meaning is
 their product, treating words as independent constraints — the composition of
-[waldon-degen-2021] (ℚ-valued) and [schlotterbeck-wang-2023] (ℚ≥0-valued), an instance of the
-probabilistic turn surveyed in [erk-2022].
+[waldon-degen-2021] and of [schlotterbeck-wang-2023]'s context-independent case, an instance of
+the probabilistic turn surveyed in [erk-2022].
 
 ## Main definitions
 
@@ -24,7 +25,7 @@ probabilistic turn surveyed in [erk-2022].
 
 * `RSA.prodMeaning_perm`: the prefix meaning is independent of token order — the listener-level
   sanity check of [schlotterbeck-wang-2023].
-* `RSA.prodMeaning_nonneg`: nonnegativity from a nonnegative lexicon.
+* `RSA.prodMeaning_nonneg`, `RSA.prodMeaning_le_one`: bounds inherited from the lexicon.
 
 ## References
 
@@ -73,5 +74,17 @@ theorem prodMeaning_nonneg {lex : U → W → R} (h : ∀ u w, 0 ≤ lex u w) (u
   List.prod_nonneg (List.forall_mem_map.2 fun u _ => h u w)
 
 end Order
+
+section Bounded
+
+variable [CommMonoid R] [Preorder R] [MulLeftMono R]
+
+theorem prodMeaning_le_one {lex : U → W → R} (h : ∀ u w, lex u w ≤ 1) (us : List U) (w : W) :
+    prodMeaning lex us w ≤ 1 := by
+  induction us with
+  | nil => exact (prodMeaning_nil lex w).le
+  | cons u us ih => exact (prodMeaning_cons lex u us w).trans_le (Left.mul_le_one (h u w) ih)
+
+end Bounded
 
 end RSA
