@@ -1392,7 +1392,6 @@ import Linglib.Processing.DiscriminativeLexicon.Realization
 import Linglib.Processing.DiscriminativeLexicon.Training
 import Linglib.Processing.Expectation.Defs
 import Linglib.Processing.Expectation.InformationValue
-import Linglib.Processing.Expectation.LanguageModel
 import Linglib.Processing.Expectation.PrefixProbability
 import Linglib.Processing.Memory.LossyContext
 import Linglib.Processing.Memory.SurprisalTradeoff
