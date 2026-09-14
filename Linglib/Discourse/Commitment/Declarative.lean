@@ -1,5 +1,5 @@
 import Linglib.Discourse.Commitment.Basic
-import Linglib.Discourse.Roles
+import Linglib.Discourse.Role
 
 /-!
 # Rising and falling declaratives
@@ -119,52 +119,39 @@ theorem IsNeutral.not_subset (h : IsNeutral K p) (hu : ¬ IsResolved K p)
   ⟨λ hx => h.2 ⟨⟨x, hne x, by simpa using hx⟩, by simpa using hu, hne⟩,
     λ hx => h.1 ⟨⟨x, hne x, hx⟩, hu, hne⟩⟩
 
-/-- Narrowing one participant's commitment set to `p` in a neutral, unresolved, nonempty context
-biases it toward `p`. -/
+/-- Narrowing one participant's commitment set to `p` and leaving the other's alone, in a
+neutral, unresolved, nonempty context, biases it toward `p`. -/
 theorem isBiased_of_commitmentSet_eq {K' : State Discourse.Role W} {y : Discourse.Role}
     (h : IsNeutral K p) (hu : ¬ IsResolved K p) (hne : ∀ x, (commitmentSet K x).Nonempty)
     (hy : commitmentSet K' y = p ∩ commitmentSet K y)
-    (hx : ∀ x, x ≠ y → commitmentSet K' x = commitmentSet K x) : IsBiased K' p := by
+    (hx : commitmentSet K' y.other = commitmentSet K y.other) : IsBiased K' p := by
   have hyp : (commitmentSet K' y).Nonempty := by
     obtain ⟨w, hw, hwp⟩ := Set.not_subset.1 (h.not_subset hu hne y).2
     exact ⟨w, by rw [hy]; exact ⟨by simpa using hwp, hw⟩⟩
-  have hne' : ∀ x, (commitmentSet K' x).Nonempty := λ x => by
-    by_cases hxy : x = y
-    · subst hxy; exact hyp
-    · rw [hx x hxy]; exact hne x
-  have hsub : commitmentSet K' y ⊆ p := by rw [hy]; exact Set.inter_subset_left
-  have hnot : ∀ x, ¬ commitmentSet K' x ⊆ pᶜ := λ x hxp => by
-    by_cases hxy : x = y
-    · subst hxy
-      obtain ⟨w, hw⟩ := hyp
-      exact hxp hw (hsub hw)
-    · exact (h.not_subset hu hne x).2 (by rwa [hx x hxy] at hxp)
+  have hne' : ∀ x, (commitmentSet K' x).Nonempty :=
+    (Discourse.Role.forall_role' y).2 ⟨hyp, hx ▸ hne _⟩
+  have hsub : commitmentSet K' y ⊆ p := hy ▸ Set.inter_subset_left
+  have hnot : ∀ x, ¬ commitmentSet K' x ⊆ pᶜ :=
+    (Discourse.Role.forall_role' y).2 ⟨λ hxp => hyp.elim λ _ hw => hxp hw (hsub hw),
+      λ hxp => (h.not_subset hu hne _).2 (hx ▸ hxp)⟩
   refine ⟨⟨⟨y, hyp, by simpa using hsub⟩, ?_, hne'⟩, λ hc => hc.1.elim λ x hx' => hnot x hx'.2⟩
   rw [isResolved_compl]
   rintro (hj | hj)
-  · obtain ⟨z, hz⟩ : ∃ z, z ≠ y := by
-      rcases y with _ | _
-      · exact ⟨.addressee, by decide⟩
-      · exact ⟨.speaker, by decide⟩
-    exact (h.not_subset hu hne z).1 (by rw [← hx z hz]; exact (hj z).2)
+  · exact (h.not_subset hu hne y.other).1 (hx ▸ (hj y.other).2)
   · exact hnot y (hj y).2
 
 /-- A falling declarative in a neutral, unresolved, nonempty context biases it toward its
 content. -/
 theorem isBiased_falling (h : IsNeutral K p) (hu : ¬ IsResolved K p)
     (hne : ∀ x, (commitmentSet K x).Nonempty) : IsBiased (falling K p) p :=
-  isBiased_of_commitmentSet_eq h hu hne (commitmentSet_falling K p).1 λ x hx =>
-    match x, hx with
-    | .speaker, hx => absurd rfl hx
-    | .addressee, _ => (commitmentSet_falling K p).2
+  isBiased_of_commitmentSet_eq h hu hne (commitmentSet_falling K p).1
+    (commitmentSet_falling K p).2
 
 /-- A rising declarative in a neutral, unresolved, nonempty context biases it toward its
 content. -/
 theorem isBiased_rising (h : IsNeutral K p) (hu : ¬ IsResolved K p)
     (hne : ∀ x, (commitmentSet K x).Nonempty) : IsBiased (rising K p) p :=
-  isBiased_of_commitmentSet_eq h hu hne (commitmentSet_rising K p).1 λ x hx =>
-    match x, hx with
-    | .addressee, hx => absurd rfl hx
-    | .speaker, _ => (commitmentSet_rising K p).2
+  isBiased_of_commitmentSet_eq h hu hne (commitmentSet_rising K p).1
+    (commitmentSet_rising K p).2
 
 end Commitment
