@@ -456,28 +456,21 @@ theorem spohnRevision_c3 [Finite W] : (spohnRevision W).C3 :=
 theorem spohnRevision_c4 [Finite W] : (spohnRevision W).C4 :=
   spohnRevision_faithful.c4_iff.2 spohn_preservesLe
 
-/-- On a normalised ranking and a contingent proposition, Spohn's revision is
-`RankingFunction.revise`. -/
-theorem _root_.RankingFunction.revise_rank [Fintype W] [DecidableEq W]
-    (κ : RankingFunction W) (φ : W → Prop) [DecidablePred φ] (hφ : ∃ w, φ w)
-    (hNφ : ∃ w, ¬ φ w) : (κ.revise φ hφ hNφ).rank = spohn κ.rank {w | φ w} := by
-  have hprop : ∀ (ψ : W → Prop) [DecidablePred ψ] (hψ : ∃ w, ψ w),
-      κ.rankProp ψ hψ = rank κ.rank {w | ψ w} := λ ψ _ hψ => by
-    refine le_antisymm ?_ ?_
-    · obtain ⟨u, hu, e⟩ := exists_rank_eq κ.rank {w | ψ w} hψ
-      exact e ▸ κ.rankProp_le_rank ψ hψ u hu
-    · obtain ⟨v, hv, e⟩ := Finset.exists_mem_eq_inf'
-        (⟨hψ.choose, Finset.mem_filter.2 ⟨Finset.mem_univ _, hψ.choose_spec⟩⟩ :
-          (Finset.univ.filter (λ w => ψ w)).Nonempty) κ.rank
-      unfold RankingFunction.rankProp
-      rw [e]
-      exact rank_le κ.rank {w | ψ w} (Finset.mem_filter.1 hv).2
+/-- On a normalised ranking, Spohn's revision is `RankingFunction.revise`. -/
+theorem _root_.RankingFunction.revise_rank (κ : RankingFunction W) (A : Set W)
+    (hA : A.Nonempty) : (κ.revise A hA).rank = spohn κ.rank A := by
+  have hrank : ∀ B : Set W, B.Nonempty → (κ.rankSet B).toNat = rank κ.rank B := λ B hB => by
+    obtain ⟨u, hu, e⟩ := exists_rank_eq κ.rank B hB
+    obtain ⟨v, hv, e'⟩ := κ.exists_rank_eq_rankSet hB
+    rw [← e', ENat.toNat_natCast, ← e]
+    exact le_antisymm (by exact_mod_cast e' ▸ κ.rankSet_le hu) (e ▸ rank_le κ.rank B hv)
   funext w
-  unfold RankingFunction.revise RankingFunction.conditionα
-  by_cases hw : φ w
-  · simp only [hw, if_true, spohn_of_mem κ.rank {w | φ w} hw, hprop]
-  · simp only [hw, if_false, spohn_of_notMem κ.rank {w | φ w} hw]
-    have := κ.rankProp_le_rank (λ w => ¬ φ w) hNφ w hw
+  by_cases hw : w ∈ A
+  · rw [RankingFunction.revise, κ.conditionα_of_mem _ _ hw, spohn_of_mem κ.rank A hw,
+      RankingFunction.aPart, hrank A hA]
+  · rw [RankingFunction.revise, κ.conditionα_of_notMem _ _ hw, spohn_of_notMem κ.rank A hw,
+      RankingFunction.aPart]
+    have := κ.toNat_rankSet_le (A := Aᶜ) hw
     omega
 
 end Spohn

@@ -393,66 +393,47 @@ section RankingAGM
 
 attribute [local instance] Classical.propDecidable
 
-/-- The revision operation for a ranking function: K*φ = beliefs of
-    κ revised by φ when both φ and ¬φ are satisfiable, K otherwise. -/
-private noncomputable def rankingReviseSet {W : Type*} [Fintype W] [DecidableEq W]
-    (κ : RankingFunction W) (φ : Set W) : BeliefSet W :=
-  if h : (∃ w, φ w) ∧ (∃ w, ¬φ w) then (κ.revise φ h.1 h.2).beliefSet
-  else κ.beliefSet
+/-- The revision operation for a ranking function: the beliefs of `κ` revised by a satisfiable
+`φ`, and `κ`'s own beliefs on the contradiction. -/
+private noncomputable def rankingReviseSet {W : Type*} (κ : RankingFunction W) (φ : Set W) :
+    BeliefSet W :=
+  if h : φ.Nonempty then (κ.revise φ h).beliefSet else κ.beliefSet
 
-/-- A ranking function induces an AGM revision operator.
-
-    [goldszmidt-pearl-1996] §6: ranking conditioning satisfies the
-    AGM postulates K*2–K*5. K = beliefSet κ (propositions true at all
-    rank-0 worlds), K*φ = beliefSet of κ revised by φ.
-
-    When φ is a tautology (¬φ unsatisfiable), revision is trivial and
-    K*φ = K. The unsatisfiable case never arises since K*2 and K*5
-    require `∃ w, φ w`. -/
-noncomputable def rankingToAGM {W : Type*} [Fintype W] [DecidableEq W]
-    (κ : RankingFunction W) : AGMRevision W where
+/-- A ranking function induces an AGM revision operator ([goldszmidt-pearl-1996] §6): the prior
+beliefs are the propositions true at every world of rank `0`, and `K * φ` the beliefs of the
+ranking revised by `φ`. -/
+noncomputable def rankingToAGM {W : Type*} (κ : RankingFunction W) : AGMRevision W where
   beliefs := κ.beliefSet
   revise := rankingReviseSet κ
   success φ hφ := by
-    unfold rankingReviseSet; split_ifs with h
-    · exact κ.revise_success φ h.1 h.2
-    · have hAll : ∀ w, φ w := by
-        by_contra hc; push Not at hc; exact h ⟨hφ, hc⟩
-      exact fun w _ => hAll w
+    unfold rankingReviseSet
+    rw [dif_pos (show φ.Nonempty from hφ)]
+    exact κ.revise_success hφ
   inclusion φ ψ hrev w hbeliefs hφw := by
-    have hw0 : κ.rank w = 0 :=
-      hbeliefs (fun v => κ.rank v = 0) (fun _ hv => hv)
-    unfold rankingReviseSet at hrev; split_ifs at hrev with h
-    · apply hrev; show (κ.revise φ h.1 h.2).rank w = 0
-      unfold RankingFunction.revise RankingFunction.conditionα
-      simp only [if_pos hφw]
-      have := RankingFunction.rankProp_le_rank κ φ h.1 w hφw; omega
-    · exact hrev w hw0
+    have hw0 : κ.rank w = 0 := hbeliefs {v | κ.rank v = 0} λ _ hv => hv
+    unfold rankingReviseSet at hrev
+    rw [dif_pos ⟨w, hφw⟩] at hrev
+    refine hrev w ?_
+    rw [RankingFunction.revise, κ.conditionα_of_mem _ _ hφw, RankingFunction.aPart, hw0]
+    exact Nat.zero_sub _
   vacuity φ ψ hneg hent := by
-    unfold rankingReviseSet; split_ifs with h
-    · have ⟨w₀, hw₀, hφw₀⟩ : ∃ w, κ.rank w = 0 ∧ φ w := by
-        by_contra hall; exact hneg (fun w hw hφw => hall ⟨w, hw, hφw⟩)
-      have hrp : κ.rankProp φ h.1 = 0 := by
-        have := RankingFunction.rankProp_le_rank κ φ h.1 w₀ hφw₀; omega
-      intro w hw
-      have hφw : φ w := κ.revise_success φ h.1 h.2 w hw
-      have hw0 : κ.rank w = 0 := by
-        have hk : (κ.revise φ h.1 h.2).rank w = κ.rank w - κ.rankProp φ h.1 := by
-          unfold RankingFunction.revise RankingFunction.conditionα; simp only [if_pos hφw]
-        rw [hrp] at hk; omega
-      exact hent w (fun χ hχ => hχ w hw0) hφw
-    · have hAll : ∀ w, φ w := by
-        by_contra hc; push Not at hc
-        by_cases hφ : ∃ w, φ w
-        · exact h ⟨hφ, hc⟩
-        · push Not at hφ; exact hneg (fun w _ => hφ w)
-      intro w hw0; exact hent w (fun χ hχ => hχ w hw0) (hAll w)
+    obtain ⟨w₀, hw₀, hφw₀⟩ : ∃ w, κ.rank w = 0 ∧ φ w := by
+      by_contra hall
+      exact hneg λ w hw hφw => hall ⟨w, hw, hφw⟩
+    unfold rankingReviseSet
+    rw [dif_pos ⟨w₀, hφw₀⟩]
+    intro w hw
+    have hφw : φ w := κ.revise_success ⟨w₀, hφw₀⟩ w hw
+    have hw0 : κ.rank w = 0 := by
+      rw [RankingFunction.revise, κ.conditionα_of_mem _ _ hφw, RankingFunction.aPart,
+        κ.rankSet_eq_zero_iff.2 ⟨w₀, hφw₀, hw₀⟩] at hw
+      simpa using hw
+    exact hent w (λ χ hχ => hχ w hw0) hφw
   consistency φ hφ := by
-    unfold rankingReviseSet; split_ifs with h
-    · obtain ⟨w, hw⟩ := (κ.revise φ h.1 h.2).normalized
-      exact ⟨w, fun ψ hψ => hψ w hw⟩
-    · obtain ⟨w, hw⟩ := κ.normalized
-      exact ⟨w, fun ψ hψ => hψ w hw⟩
+    unfold rankingReviseSet
+    rw [dif_pos (show φ.Nonempty from hφ)]
+    obtain ⟨w, hw⟩ := (κ.revise φ hφ).normalized
+    exact ⟨w, λ ψ hψ => hψ w hw⟩
 
 end RankingAGM
 

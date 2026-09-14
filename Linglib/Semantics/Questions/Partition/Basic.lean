@@ -131,6 +131,10 @@ theorem Decides.inter (hp : Q.Decides p) (hq : Q.Decides q) : Q.Decides (p ∩ q
 theorem Decides.union (hp : Q.Decides p) (hq : Q.Decides q) : Q.Decides (p ∪ q) :=
   decides_iff.2 λ _ _ h => or_congr (decides_iff.1 hp _ _ h) (decides_iff.1 hq _ _ h)
 
+/-- A question decides each of its cells. -/
+theorem decides_cell (w : W) : Q.Decides (Q.cell w) :=
+  decides_iff.2 λ _ _ hab => ⟨λ h => Q.trans (Q.symm hab) h, λ h => Q.trans hab h⟩
+
 /-- A cell of a question deciding `p` that meets `p` entails it. -/
 theorem Decides.cell_subset (h : Q.Decides p) (hw : w ∈ p) : Q.cell w ⊆ p :=
   λ _ hv => (decides_iff.1 h _ _ hv).2 hw
