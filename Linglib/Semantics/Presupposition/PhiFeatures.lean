@@ -303,20 +303,6 @@ def mascSem : PartialProp E where
 @[simp] theorem mascSem_eq_phiPresup (innerP outerP : E → Prop) :
     phiPresup innerP outerP .minimal = (mascSem : PartialProp E) := rfl
 
--- ── Bridge to Features.Gender ─────
-
-/-- Neuter features map to the maximal `ContainmentPair` cell (specLevel 2). -/
-@[simp] theorem neut_is_maximal_cell :
-    ContainmentPairLike.toPair Gender.neuterF = .maximal := rfl
-
-/-- Feminine features map to the intermediate cell (specLevel 1). -/
-@[simp] theorem fem_is_intermediate_cell :
-    ContainmentPairLike.toPair Gender.feminineF = .intermediate := rfl
-
-/-- Masculine features map to the minimal cell (specLevel 0). -/
-@[simp] theorem masc_is_minimal_cell :
-    ContainmentPairLike.toPair Gender.masculineF = .minimal := rfl
-
 /-- Gender domain nesting: dom(Neut) ⊆ dom(Fem) ⊆ dom(Masc).
     Parallels number (sg ⊆ pl) and person (1st ⊆ 3rd). -/
 theorem gender_domain_nesting (isInanimate isFemale : E → Prop)
@@ -341,13 +327,13 @@ theorem gender_nesting_from_phi (isInanimate isFemale : E → Prop)
 /-- Gender, person, and number have the same `specLevel` ordering —
     all three domains share the phi kernel structure. -/
 theorem gender_person_number_isomorphism :
-    ContainmentPairLike.specLevel Gender.neuterF =
+    ContainmentPairLike.specLevel Gender.Features.neuter =
       ContainmentPairLike.specLevel Person.firstF ∧
-    ContainmentPairLike.specLevel Gender.neuterF =
+    ContainmentPairLike.specLevel Gender.Features.neuter =
       ContainmentPairLike.specLevel Number.singularF ∧
-    ContainmentPairLike.specLevel Gender.feminineF =
+    ContainmentPairLike.specLevel Gender.Features.feminine =
       ContainmentPairLike.specLevel Person.secondF ∧
-    ContainmentPairLike.specLevel Gender.masculineF =
+    ContainmentPairLike.specLevel Gender.Features.masculine =
       ContainmentPairLike.specLevel Person.thirdF :=
   ⟨rfl, rfl, rfl, rfl⟩
 

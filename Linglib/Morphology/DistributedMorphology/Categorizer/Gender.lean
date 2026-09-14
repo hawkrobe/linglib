@@ -1,19 +1,19 @@
 import Linglib.Features.Gender.Decomposition
-import Linglib.Features.Gender.Interp
 import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
 
 /-!
 # Gender on the nominal categorizer
 
 The nominal categorizer is the locus of grammatical gender: an n may
-carry a valued gender feature (`Gender.Signed`), interpretable (natural)
+carry a valued gender feature (`GenderValue`, a signed `GenderDimension`),
+interpretable (natural)
 or uninterpretable (arbitrary), and Vocabulary Insertion realizes the
 result in the language's own gender system (`Gender.System`), falling
 back to the system's morphosyntactic default. The attested realization
 patterns — Set 1, Set 2, three-gender, animacy-based — differ only in
 their system, and PF is blind to interpretability. DM features are the
 non-hybrid fragment of `Gender.SplitFeature`, and the FEM slice of the
-head inventory is `Gender.KramerN`.
+head inventory is `KramerN`, whose three-gender bound for one dimension is a theorem.
 
 ## Main definitions
 
@@ -43,6 +43,120 @@ head inventory is `Gender.KramerN`.
 namespace DistributedMorphology
 
 open Minimalist Minimalist.Voice
+
+/-! ### Gender dimensions and valued gender features
+
+Kramer's calculus ranges over language-particular binary dimensions, [±FEM] in Amharic,
+Spanish and Maa, [±ANIM] in Lealao Chinantec, Algonquian and Teop, and Adamson's [±MASC]
+in Jarawara. A valued gender feature is a dimension with a sign, and its surface is the
+comparative label of the pole the sign picks; the interpretability-annotated FEM slice of
+the head inventory is `KramerN`. -/
+
+/-- A binary gender dimension, the contrast a language's gender features are drawn over
+([kramer-2015]; [adamson-2024] for MASC). -/
+inductive GenderDimension where
+  /-- [±FEM]: Amharic, Spanish, Maa. -/
+  | fem
+  /-- [±MASC]: Jarawara. -/
+  | masc
+  /-- [±ANIM]: Lealao Chinantec, Algonquian, Teop. -/
+  | anim
+  deriving DecidableEq, Repr, Fintype
+
+/-- The comparative label at a dimension's positive pole. -/
+def GenderDimension.positive : GenderDimension → Gender
+  | .fem => .feminine
+  | .masc => .masculine
+  | .anim => .animate
+
+/-- The comparative label at a dimension's negative pole. -/
+def GenderDimension.negative : GenderDimension → Gender
+  | .fem => .masculine
+  | .masc => .feminine
+  | .anim => .inanimate
+
+/-- The sign of a valued binary feature. Neither sign is inherently marked: which one a
+language's arbitrary gender carries is the Set 1 versus Set 2 parameter ([kramer-2015]). -/
+inductive GenderValue.Pole where
+  | pos
+  | neg
+  deriving DecidableEq, Repr, Fintype
+
+/-- A valued gender feature, a dimension with a sign: [+FEM], [−FEM], [+ANIM] and so on. -/
+structure GenderValue where
+  /-- The dimension the feature is drawn over. -/
+  dim : GenderDimension
+  /-- The sign. -/
+  pole : GenderValue.Pole
+  deriving DecidableEq, Repr, Fintype
+
+/-- The comparative label a valued feature denotes, the pole its sign picks. Surface labels
+underdetermine features: Maa's [−FEM] and Jarawara's [+MASC] both surface masculine. -/
+def GenderValue.surface (v : GenderValue) : Gender :=
+  match v.pole with
+  | .pos => v.dim.positive
+  | .neg => v.dim.negative
+
+/-- The canonical numbering of the six valued features, the encoding consumers with numeral
+gender slots use. -/
+def GenderValue.toNat : GenderValue → ℕ
+  | ⟨.fem, .pos⟩ => 0
+  | ⟨.fem, .neg⟩ => 1
+  | ⟨.masc, .pos⟩ => 2
+  | ⟨.masc, .neg⟩ => 3
+  | ⟨.anim, .pos⟩ => 4
+  | ⟨.anim, .neg⟩ => 5
+
+theorem GenderValue.toNat_injective : Function.Injective GenderValue.toNat := by decide
+
+/-- A gender-relevant nominalizing head in [kramer-2015]'s calculus: plain n, or n bearing
+an interpretable or uninterpretable [±FEM]. -/
+inductive KramerN where
+  /-- n with no gender features, Romanian's default-gender nouns. -/
+  | plain
+  /-- n i[+FEM], interpretable feminine, natural gender. -/
+  | iFem
+  /-- n i[−FEM], interpretable masculine, natural gender. -/
+  | iMasc
+  /-- n u[+FEM], uninterpretable feminine, arbitrary gender. -/
+  | uFem
+  /-- n u[−FEM], uninterpretable masculine, arbitrary gender. -/
+  | uMasc
+  deriving DecidableEq, Repr, Fintype
+
+namespace KramerN
+
+/-- What agreement exponence sees: the sign of the feature, not its interpretability, since
+natural and arbitrary gender receive the same Vocabulary Item; `none` for no feature. -/
+def exponence : KramerN → Option GenderValue.Pole
+  | .plain => none
+  | .iFem => some .pos
+  | .uFem => some .pos
+  | .iMasc => some .neg
+  | .uMasc => some .neg
+
+/-- Each head as a split feature: interpretable heads value both halves, uninterpretable
+heads only the morphological half. -/
+def toSplitFeature : KramerN → Gender.SplitFeature GenderValue
+  | .plain => ⟨none, none⟩
+  | .iFem => ⟨some ⟨.fem, .pos⟩, some ⟨.fem, .pos⟩⟩
+  | .iMasc => ⟨some ⟨.fem, .neg⟩, some ⟨.fem, .neg⟩⟩
+  | .uFem => ⟨some ⟨.fem, .pos⟩, none⟩
+  | .uMasc => ⟨some ⟨.fem, .neg⟩, none⟩
+
+/-- The calculus generates no hybrids: every head is natural, arbitrary or absent in
+split-feature terms, the gap [smith-2015]'s architecture closes. -/
+theorem toSplitFeature_not_isHybrid (n : KramerN) : ¬ n.toSplitFeature.IsHybrid := by
+  cases n <;> rintro ⟨u, i, hu, hi, hne⟩ <;> simp_all [toSplitFeature]
+
+/-- [kramer-2015]'s three-gender bound for a single binary dimension: an inventory of heads
+over [±FEM] distinguishes at most three agreement classes, [+FEM], [−FEM] and bare, so a
+system with more genders needs a further dimension or a language-particular carrier. -/
+theorem card_image_exponence_le_three (inv : Finset KramerN) :
+    (inv.image exponence).card ≤ 3 :=
+  le_trans (Finset.card_le_univ _) (by decide)
+
+end KramerN
 
 /-! ### Phi-features on categorizing heads
 
@@ -76,13 +190,13 @@ def Contrastivity.obligatory : Contrastivity → Bool
   | .contrastive => true
   | .nonContrastive => false
 
-/-- A valued gender feature (`Gender.Signed`) annotated for
+/-- A valued gender feature (`GenderValue`) annotated for
 interpretability. Per dimension this yields the four attested gendered
 ns of [kramer-2015] Ch 3 — i[+VAL], i[−VAL], u[+VAL], u[−VAL] — beside
 plain n with no feature. -/
 structure GenderFeature where
   interp : Interpretability
-  val : Gender.Signed
+  val : GenderValue
   deriving DecidableEq, Repr
 
 /-- Whether a gender feature is interpretable (natural). -/
@@ -158,14 +272,14 @@ negative-polarity FEM, not MASC. -/
 /-- The gendered nominal categorizer: n bearing the valued feature `v`
 with interpretability `interp`. -/
 def Categorizer.Head.gendered (interp : Interpretability)
-    (v : Gender.Signed) : Categorizer.Head where
+    (v : GenderValue) : Categorizer.Head where
   categorizer := .n
   phi := { gender := some ⟨interp, v⟩ }
 
 /-- Distinct feature content gives distinct heads — every pairwise
 contrast in the inventory below, in one statement. -/
 theorem Categorizer.Head.gendered_inj {i₁ i₂ : Interpretability}
-    {v₁ v₂ : Gender.Signed} :
+    {v₁ v₂ : GenderValue} :
     gendered i₁ v₁ = gendered i₂ v₂ ↔ i₁ = i₂ ∧ v₁ = v₂ := by
   simp [Categorizer.Head.gendered, PhiBundle.mk.injEq]
 
@@ -186,7 +300,7 @@ def Categorizer.Head.n_plain : Categorizer.Head where
 
 /-- A gendered head is never the plain n. -/
 theorem Categorizer.Head.gendered_ne_n_plain (interp : Interpretability)
-    (v : Gender.Signed) : gendered interp v ≠ n_plain := by
+    (v : GenderValue) : gendered interp v ≠ n_plain := by
   simp [Categorizer.Head.gendered, Categorizer.Head.n_plain]
 
 /-- The n bearing uninterpretable [+FEM] — the arbitrary feminine of
@@ -258,10 +372,10 @@ def GenderFeature.licensingType : GenderFeature → LicensingType
   | ⟨.i, _⟩ => .semantic
   | ⟨.u, _⟩ => .arbitrary
 
-@[simp] theorem GenderFeature.licensingType_i (v : Gender.Signed) :
+@[simp] theorem GenderFeature.licensingType_i (v : GenderValue) :
     (GenderFeature.mk .i v).licensingType = .semantic := rfl
 
-@[simp] theorem GenderFeature.licensingType_u (v : Gender.Signed) :
+@[simp] theorem GenderFeature.licensingType_u (v : GenderValue) :
     (GenderFeature.mk .u v).licensingType = .arbitrary := rfl
 
 /-! ### The split-feature reading
@@ -270,20 +384,20 @@ DM's gender features are the non-hybrid fragment of the split-feature
 architecture of `Features/Gender/Decomposition.lean`: interpretable gender
 values both halves of a `Gender.SplitFeature`, uninterpretable gender only
 the morphological one. The FEM slice of the head inventory is
-[kramer-2015]'s calculus `Gender.KramerN`. -/
+[kramer-2015]'s calculus `KramerN`. -/
 
 /-- A DM gender feature as a split feature ([smith-2015] via
 `Gender.SplitFeature`) — interpretable gender values both halves,
 uninterpretable gender only the morphological one. -/
 def GenderFeature.toSplitFeature (gf : GenderFeature) :
-    Gender.SplitFeature Gender.Signed :=
+    Gender.SplitFeature GenderValue :=
   match gf.interp with
   | .i => ⟨some gf.val, some gf.val⟩
   | .u => ⟨some gf.val, none⟩
 
 /-- The gender half of a phi-bundle as a split feature, absent for plain
 heads. -/
-def PhiBundle.genderSplit (phi : PhiBundle) : Gender.SplitFeature Gender.Signed :=
+def PhiBundle.genderSplit (phi : PhiBundle) : Gender.SplitFeature GenderValue :=
   (phi.gender.map GenderFeature.toSplitFeature).getD ⟨none, none⟩
 
 /-- Natural gender in the DM sense is natural gender in the split-feature
@@ -306,7 +420,7 @@ theorem toSplitFeature_isArbitrary_iff (gf : GenderFeature) :
 
 /-- The DM calculus generates no hybrids — the mismatch zoo of
 [smith-2015] lies outside it (cf.
-`Gender.KramerN.toSplitFeature_not_isHybrid` for the FEM slice). -/
+`KramerN.toSplitFeature_not_isHybrid` for the FEM slice). -/
 theorem toSplitFeature_not_isHybrid (gf : GenderFeature) :
     ¬ gf.toSplitFeature.IsHybrid := by
   cases gf with | mk interp val =>
@@ -327,7 +441,7 @@ theorem genderSplit_isAbsent_iff (phi : PhiBundle) :
 
 /-- [kramer-2015]'s FEM-dimension calculus embeds into the head
 inventory. -/
-def Categorizer.Head.ofKramerN : Gender.KramerN → Categorizer.Head
+def Categorizer.Head.ofKramerN : KramerN → Categorizer.Head
   | .plain => .n_plain
   | .iFem  => .n_iFem
   | .iMasc => .n_iMasc
@@ -371,24 +485,24 @@ variable {G : Type*}
 /-- Vocabulary Insertion of gender: realize the head's valued feature in
 the language's own system, falling back to the system's default. -/
 def Categorizer.Head.realizeGender (sys : Gender.System G)
-    (value : Gender.Signed → G) (ch : Categorizer.Head) : G :=
+    (value : GenderValue → G) (ch : Categorizer.Head) : G :=
   (ch.phi.gender.map fun gf => value gf.val).getD sys.default
 
 @[simp] theorem realizeGender_gendered (sys : Gender.System G)
-    (value : Gender.Signed → G) (interp : Interpretability)
-    (v : Gender.Signed) :
+    (value : GenderValue → G) (interp : Interpretability)
+    (v : GenderValue) :
     (Categorizer.Head.gendered interp v).realizeGender sys value = value v :=
   rfl
 
 @[simp] theorem realizeGender_n_plain (sys : Gender.System G)
-    (value : Gender.Signed → G) :
+    (value : GenderValue → G) :
     Categorizer.Head.n_plain.realizeGender sys value = sys.default := rfl
 
 /-- PF is blind to interpretability: heads carrying the same valued
 feature realize alike, whatever their LF status — natural and arbitrary
 gender receive the same Vocabulary Item ([kramer-2015]). -/
 theorem realizeGender_congr (sys : Gender.System G)
-    (value : Gender.Signed → G) {ch₁ ch₂ : Categorizer.Head}
+    (value : GenderValue → G) {ch₁ ch₂ : Categorizer.Head}
     (h : ch₁.phi.gender.map (·.val) = ch₂.phi.gender.map (·.val)) :
     ch₁.realizeGender sys value = ch₂.realizeGender sys value := by
   have e : ∀ o : Option GenderFeature,
@@ -396,9 +510,9 @@ theorem realizeGender_congr (sys : Gender.System G)
     intro o; cases o <;> rfl
   rw [Categorizer.Head.realizeGender, Categorizer.Head.realizeGender, e, e, h]
 
-/-- Realization sees only what `Gender.KramerN.exponence` sees. -/
+/-- Realization sees only what `KramerN.exponence` sees. -/
 theorem realizeGender_ofKramerN (sys : Gender.System G)
-    (value : Gender.Signed → G) (k₁ k₂ : Gender.KramerN)
+    (value : GenderValue → G) (k₁ k₂ : KramerN)
     (h : k₁.exponence = k₂.exponence) :
     (Categorizer.Head.ofKramerN k₁).realizeGender sys value =
       (Categorizer.Head.ofKramerN k₂).realizeGender sys value := by
@@ -413,20 +527,20 @@ Set 1 and Set 2 share a feature inventory and differ only here. -/
 
 /-- A Set 1 system: [+FEM] realizes the feminine-labeled gender and the
 default is masculine-labeled (Amharic, Spanish; [kramer-2015] Ch 6). -/
-def IsSet1 (sys : Gender.System G) (value : Gender.Signed → G) : Prop :=
+def IsSet1 (sys : Gender.System G) (value : GenderValue → G) : Prop :=
   sys.label (value ⟨.fem, .pos⟩) = some .feminine
     ∧ sys.label sys.default = some .masculine
 
 /-- A Set 2 system: [−FEM] realizes the masculine-labeled gender and the
 default is feminine-labeled (Maa; [kramer-2015] §6.3). -/
-def IsSet2 (sys : Gender.System G) (value : Gender.Signed → G) : Prop :=
+def IsSet2 (sys : Gender.System G) (value : GenderValue → G) : Prop :=
   sys.label (value ⟨.fem, .neg⟩) = some .masculine
     ∧ sys.label sys.default = some .feminine
 
 /-- A three-gender system: both FEM poles are realized and the default
 is neuter-labeled (Mangarayi; [kramer-2015] §7.2 — the other Ch 7 case
 studies add uninterpretable features to this inventory). -/
-def IsThreeGender (sys : Gender.System G) (value : Gender.Signed → G) : Prop :=
+def IsThreeGender (sys : Gender.System G) (value : GenderValue → G) : Prop :=
   sys.label (value ⟨.fem, .pos⟩) = some .feminine
     ∧ sys.label (value ⟨.fem, .neg⟩) = some .masculine
     ∧ sys.label sys.default = some .neuter
@@ -434,20 +548,20 @@ def IsThreeGender (sys : Gender.System G) (value : Gender.Signed → G) : Prop :
 /-- An animacy system: [+ANIM] realizes the animate-labeled gender and
 the default is inanimate-labeled (Lealao Chinantec, [kramer-2015] §5.3;
 Algonquian, §6.4; Teop, [adamson-2024]). -/
-def IsAnimacyBased (sys : Gender.System G) (value : Gender.Signed → G) : Prop :=
+def IsAnimacyBased (sys : Gender.System G) (value : GenderValue → G) : Prop :=
   sys.label (value ⟨.anim, .pos⟩) = some .animate
     ∧ sys.label sys.default = some .inanimate
 
 /-- The Set 1 vs Set 2 parameter is exclusive: their defaults carry
 different labels. -/
 theorem not_isSet1_and_isSet2 (sys : Gender.System G)
-    (value : Gender.Signed → G) : ¬ (IsSet1 sys value ∧ IsSet2 sys value) :=
+    (value : GenderValue → G) : ¬ (IsSet1 sys value ∧ IsSet2 sys value) :=
   fun ⟨h₁, h₂⟩ => by have := h₁.2.symm.trans h₂.2; simp at this
 
 /-- In a Set 1 system, arbitrary-feminine n realizes the
 feminine-labeled gender and plain n the masculine-labeled default. -/
 theorem IsSet1.realize_labels {sys : Gender.System G}
-    {value : Gender.Signed → G} (h : IsSet1 sys value) :
+    {value : GenderValue → G} (h : IsSet1 sys value) :
     sys.label (Categorizer.Head.n_uFem.realizeGender sys value)
         = some .feminine
       ∧ sys.label (Categorizer.Head.n_plain.realizeGender sys value)
@@ -457,7 +571,7 @@ theorem IsSet1.realize_labels {sys : Gender.System G}
 /-- In a Set 2 system, arbitrary-masculine n realizes the
 masculine-labeled gender and plain n the feminine-labeled default. -/
 theorem IsSet2.realize_labels {sys : Gender.System G}
-    {value : Gender.Signed → G} (h : IsSet2 sys value) :
+    {value : GenderValue → G} (h : IsSet2 sys value) :
     sys.label (Categorizer.Head.n_uNegFem.realizeGender sys value)
         = some .masculine
       ∧ sys.label (Categorizer.Head.n_plain.realizeGender sys value)
@@ -477,17 +591,15 @@ example : IsSet1 (G := Bool)
 comparative label of its realized gender, unspecified where the system
 leaves the class unlabeled. -/
 def Categorizer.Head.genderInfo (sys : Gender.System G)
-    (value : Gender.Signed → G) (ch : Categorizer.Head) : GenderInfo :=
-  (sys.label (ch.realizeGender sys value)).elim .unspecified .known
+    (value : GenderValue → G) (ch : Categorizer.Head) : Option Gender :=
+  sys.label (ch.realizeGender sys value)
 
 /-- In a fully labeled system the grammar always determines a concrete
 discourse gender: underspecification ([arnold-2026]) arises from the
 discourse, not from a resolved morphosyntax. -/
-theorem genderInfo_known (sys : Gender.System G)
-    (value : Gender.Signed → G) (hlab : ∀ g, (sys.label g).isSome)
-    (ch : Categorizer.Head) :
-    ∃ g, ch.genderInfo sys value = .known g := by
-  obtain ⟨g, hg⟩ := Option.isSome_iff_exists.mp (hlab (ch.realizeGender sys value))
-  exact ⟨g, by simp [Categorizer.Head.genderInfo, hg]⟩
+theorem genderInfo_isSome (sys : Gender.System G)
+    (value : GenderValue → G) (hlab : ∀ g, (sys.label g).isSome)
+    (ch : Categorizer.Head) : (ch.genderInfo sys value).isSome :=
+  hlab _
 
 end DistributedMorphology

@@ -3,6 +3,7 @@ import Mathlib.Tactic.DeriveFintype
 import Linglib.Syntax.Agreement.Hierarchy
 import Linglib.Syntax.Agreement.Resolution
 import Linglib.Features.Gender.AgreementClass
+import Linglib.Features.Gender.Assignment
 import Linglib.Features.Number.Resolve
 import Linglib.Features.Person.Resolve
 import Linglib.Fragments.Tamil.Gender
@@ -21,7 +22,7 @@ This file formalizes the book's typology of gender. Gender is a property of noun
 in agreement, and a language's genders are the classes of nouns that take the same
 agreements. Nouns are assigned to them by rules reading their meaning or their form: the
 semantic rules take precedence, the formal rules, morphological or phonological, sort the
-semantic residue, and no system is formal alone (`AssignmentSystem`). Tamil, Russian,
+semantic residue, and no system is formal alone (`Gender.AssignmentSystem`). Tamil, Russian,
 Swahili, Afar and Hausa instantiate the schema on their fragments, and the assignment systems
 of chapters 2 and 3 are surveyed by kind and by the semantic criteria their rules use
 (`survey`).
@@ -47,20 +48,18 @@ never less semantic than its assignment. The judgments the book reports are the 
 
 ## Implementation notes
 
-* An assignment system is typed by the meaning `σ` its semantic rules read and the form `φ`
-  its formal rules read; the rules are total functions to an optional gender, ordered by
-  construction so that precedence of the semantic rules is a theorem, and the residue gender
-  catches what neither covers. The fragments' natural-gender flag stands in for the
+* The assignment systems are the substrate's, typed by the meaning their semantic rules read
+  and the form their formal rules read; the fragments' natural-gender flag stands in for the
   referent's sex. Corbett's irregular third declension of Russian is the study's refinement
   of the fragment's declension classes.
 * Agreement classes, target genders and the map between two numbers' target genders are the
   substrate's `Gender.agreementClasses`, `Gender.targetGenders` and `Gender.Parallel`,
   `Gender.Convergent` and `Gender.Crossed`. Subgenders, inquorate genders and consistent
   agreement patterns are described in the book's prose and not formalised.
-* A hybrid noun is an `Agreement.Hybrid` over the positions of `Agreement.Target`, or over
-  `FinePosition` where the book divides the attributive; it respects the hierarchy when the
-  availability of semantic agreement is antitone on the positions where it is recorded, and
-  the same predicate serves the corpus proportions.
+* A hybrid noun is an `Agreement.Hybrid`, its availability profile over the positions of
+  `Agreement.Target`, or over `FinePosition` where the book divides the attributive; it
+  respects the hierarchy when the profile is antitone on the positions where it is recorded,
+  and the same predicate serves the corpus proportions.
 * Resolution rules are the substrate's `Agreement.ResolutionRule`, applied in order to a
   list of conjunct descriptors and returning no form when no rule applies, the book's
   ineffable coordinations; the descriptors are persons, genders, semantic features, or
@@ -126,56 +125,6 @@ inductive Criterion where
   | lustre
   deriving DecidableEq, Repr, Fintype
 
-/-- An assignment system: semantic rules reading a noun's meaning, formal rules reading its
-form, and the residue gender. -/
-structure AssignmentSystem (σ φ G : Type*) where
-  /-- The semantic rules, as a partial function of the meaning. -/
-  semantic : σ → Option G
-  /-- The formal rules, morphological or phonological, as a partial function of the form. -/
-  formal : φ → Option G
-  /-- The gender of nouns no rule covers. -/
-  residue : G
-
-namespace AssignmentSystem
-
-variable {N σ φ G : Type*} (A : AssignmentSystem σ φ G) (sem : N → σ) (form : N → φ)
-
-/-- The gender of a noun: the semantic rules first, the formal rules on the semantic residue,
-the residue gender last. -/
-def assign (n : N) : G := ((A.semantic (sem n)).or (A.formal (form n))).getD A.residue
-
-theorem assign_of_semantic {n : N} {g : G} (h : A.semantic (sem n) = some g) :
-    A.assign sem form n = g := by
-  simp [assign, h]
-
-/-- Semantic rules take precedence: a formal rule decides only in the semantic residue. -/
-theorem assign_of_formal {n : N} {g : G} (h₁ : A.semantic (sem n) = none)
-    (h₂ : A.formal (form n) = some g) : A.assign sem form n = g := by
-  simp [assign, h₁, h₂]
-
-theorem assign_of_residue {n : N} (h₁ : A.semantic (sem n) = none)
-    (h₂ : A.formal (form n) = none) : A.assign sem form n = A.residue := by
-  simp [assign, h₁, h₂]
-
-/-- A strict semantic system has no formal rules. -/
-def IsStrictSemantic : Prop := ∀ x, A.formal x = none
-
-/-- In a strict semantic system the gender is a function of the meaning. -/
-theorem factorsThrough_of_isStrictSemantic (h : A.IsStrictSemantic) :
-    Function.FactorsThrough (A.assign sem form) sem := λ a b hab => by
-  simp [assign, hab, h (form a), h (form b)]
-
-/-- Every system assigns by meaning on the nouns its semantic rules cover: the substrate's
-semantic core, once one such noun exists. -/
-theorem semanticCore_of_isSome (S : Gender.System G) {n₀ : N} (h : (A.semantic (sem n₀)).isSome) :
-    ({ S with assign := A.assign sem form } : Gender.System.Assigned N G).SemanticCore
-      {n | (A.semantic (sem n)).isSome} sem :=
-  ⟨⟨n₀, h⟩, λ _ b _ hb hab => by
-    obtain ⟨g, hg⟩ := Option.isSome_iff_exists.1 hb
-    simp [assign, hab, hg]⟩
-
-end AssignmentSystem
-
 /-- The book's typology of assignment systems. -/
 inductive AssignmentKind where
   | strictSemantic
@@ -231,7 +180,7 @@ def sem (n : Tamil.Gender.Noun) : Bool × Option Value :=
   (n.rational, if n.isNaturalGender then some n.gender else none)
 
 /-- Table 2.1: male rationals masculine, female rationals feminine, the residue neuter. -/
-def system : AssignmentSystem (Bool × Option Value) Unit Value where
+def system : Gender.AssignmentSystem (Bool × Option Value) Unit Value where
   semantic
     | (true, some .masc) => some .masc
     | (true, some .fem) => some .fem
@@ -279,7 +228,7 @@ def sem (n : Russian.Gender.Noun) : Option Value :=
 /-- The rules of §3.1.1 for declinable nouns: males masculine and females feminine; then
 declension I masculine, declensions II and III feminine, the rest neuter. The rules for
 acronyms and indeclinables (Figure 3.4) are not modelled. -/
-def system : AssignmentSystem (Option Value) (Option Declension) Value where
+def system : Gender.AssignmentSystem (Option Value) (Option Declension) Value where
   semantic := id
   formal
     | some .I => some .masc
@@ -319,8 +268,8 @@ def sem (n : Swahili.Noun) : Option Evaluative × Bool := (n.evaluative, n.anima
 1/2; then each morphological class to its own gender, over the fragment's five genders (the
 book's 11/10 and 15 are not among them). The formal rule is total, so the residue gender is
 never reached. -/
-def system :
-    AssignmentSystem (Option Evaluative × Bool) _root_.Swahili.Gender _root_.Swahili.Gender where
+def system : Gender.AssignmentSystem (Option Evaluative × Bool) _root_.Swahili.Gender
+    _root_.Swahili.Gender where
   semantic
     | (some .augmentative, _) => some .genderC
     | (some .diminutive, _) => some .genderD
@@ -353,7 +302,7 @@ def sem (n : Afar.Gender.Noun) : Option Value := if n.isNaturalGender then some 
 
 /-- Sex first; then a citation form ending in an accented vowel is feminine, the rest
 masculine. -/
-def system : AssignmentSystem (Option Value) Bool Value where
+def system : Gender.AssignmentSystem (Option Value) Bool Value where
   semantic := id
   formal acc := if acc then some .fem else none
   residue := .masc
@@ -381,7 +330,7 @@ open _root_.Hausa
 def sem (n : Hausa.Noun) : Option Gender := if n.isNaturalGender then some n.gender else none
 
 /-- Sex first; then a noun in *-ā* is feminine, the rest masculine. -/
-def system : AssignmentSystem (Option Gender) Bool Gender where
+def system : Gender.AssignmentSystem (Option Gender) Bool Gender where
   semantic := id
   formal aa := if aa then some .feminine else none
   residue := .masculine
@@ -568,66 +517,76 @@ end Tamil
 /-! ### Hybrid nouns and the Agreement Hierarchy (chapter 8) -/
 
 /-- Table 8.1, with the English boat nouns of §6.4.5 and the Bantu hybrids of §8.3. -/
-def frenchTitles : Hybrid Target := ⟨"frenchTitles", λ
+def frenchTitles : Hybrid Target := λ
   | .attributive | .predicate | .relativePronoun => some .syntacticOnly
   | .personalPronoun => some .mostlySyntactic
-  | .verb => none⟩
+  | .verb => none
 
-def madchen : Hybrid Target := ⟨"mädchen", λ
+def madchen : Hybrid Target := λ
   | .attributive | .relativePronoun => some .syntacticOnly
   | .personalPronoun => some .both
-  | .predicate | .verb => none⟩
+  | .predicate | .verb => none
 
-def lajdaki : Hybrid Target := ⟨"łajdaki", λ
+def lajdaki : Hybrid Target := λ
   | .attributive | .predicate | .relativePronoun => some .syntacticOnly
   | .personalPronoun => some .semanticOnly
-  | .verb => none⟩
+  | .verb => none
 
-def spanishTitles : Hybrid Target := ⟨"spanishTitles", λ
+def spanishTitles : Hybrid Target := λ
   | .attributive => some .syntacticOnly
   | .predicate | .relativePronoun | .personalPronoun => some .semanticOnly
-  | .verb => none⟩
+  | .verb => none
 
-def konkani : Hybrid Target := ⟨"konkani", λ
+def konkani : Hybrid Target := λ
   | .attributive => some .syntacticOnly
   | .predicate | .personalPronoun => some .semanticOnly
-  | .relativePronoun | .verb => none⟩
+  | .relativePronoun | .verb => none
 
-def vrac : Hybrid Target := ⟨"vrač", λ
+def vrac : Hybrid Target := λ
   | .attributive => some .mostlySyntactic
   | .predicate => some .both
   | .relativePronoun | .personalPronoun => some .mostlySemantic
-  | .verb => none⟩
+  | .verb => none
 
-def gazde : Hybrid Target := ⟨"gazde", λ
+def gazde : Hybrid Target := λ
   | .attributive => some .mostlySyntactic
   | .predicate => some .both
   | .relativePronoun => some .mostlySemantic
   | .personalPronoun => some .semanticOnly
-  | .verb => none⟩
+  | .verb => none
 
-def boat : Hybrid Target := ⟨"boat", λ
+def boat : Hybrid Target := λ
   | .relativePronoun => some .syntacticOnly
   | .personalPronoun => some .both
-  | _ => none⟩
+  | _ => none
 
 /-- *kamwana*: gender 12/13 forms normally, gender 1/2 also possible for a personal pronoun
 sufficiently removed from the controller. -/
-def kamwana : Hybrid Target := ⟨"kamwana", λ
+def kamwana : Hybrid Target := λ
   | .attributive | .predicate | .relativePronoun => some .syntacticOnly
   | .personalPronoun => some .mostlySyntactic
-  | .verb => none⟩
+  | .verb => none
 
-def kilumba : Hybrid Target := ⟨"kilumba", λ
+def kilumba : Hybrid Target := λ
   | .attributive => some .syntacticOnly
   | .predicate => some .both
-  | _ => none⟩
+  | _ => none
 
-def hybrids : List (Hybrid Target) :=
-  [frenchTitles, madchen, lajdaki, spanishTitles, konkani, vrac, gazde, boat, kamwana, kilumba]
+/-- The hybrids of Table 8.1 by the names the rows use. -/
+def hybridNames : List (String × Hybrid Target) :=
+  [("frenchTitles", frenchTitles),
+    ("mädchen", madchen),
+    ("łajdaki", lajdaki),
+    ("spanishTitles", spanishTitles),
+    ("konkani", konkani),
+    ("vrač", vrac),
+    ("gazde", gazde),
+    ("boat", boat),
+    ("kamwana", kamwana),
+    ("kilumba", kilumba)]
 
 /-- Every hybrid of Table 8.1 respects the Agreement Hierarchy. -/
-theorem hybrids_respectHierarchy : ∀ h ∈ hybrids, h.RespectsHierarchy := by decide
+theorem hybrids_respectHierarchy : ∀ h ∈ hybridNames, RespectsHierarchy h.2 := by decide
 
 /-- The corpus-level claim on *vrač*: Panov's respondents favouring feminine agreement, 16.9
 per cent of 3,835 for the attributive and 51.7 per cent of 3,806 for the predicate. -/
@@ -691,36 +650,35 @@ end FinePosition
 /-- Swahili *rafiki* 'friend', (47) to (49): an animate of morphological class 9/10 with
 gender 1/2 agreement throughout, class 9/10 agreement remaining possible on an attributive
 possessive alone. -/
-def rafiki : Hybrid FinePosition := ⟨"rafiki", λ
+def rafiki : Hybrid FinePosition := λ
   | .possessive => some .both
   | .attributive | .predicate => some .semanticOnly
-  | _ => none⟩
+  | _ => none
 
 /-- Kami *ng'ombe* 'cows' and *mbudzi* 'goats', (54) and (55): syntactic agreement of the
 predicate rejected, both forms accepted on attributives other than the possessive, which the
 book reports with class 10 agreement only. -/
-def ngombe : Hybrid FinePosition := ⟨"ng'ombe", λ
+def ngombe : Hybrid FinePosition := λ
   | .possessive => some .syntacticOnly
   | .attributive => some .both
   | .predicate => some .semanticOnly
-  | _ => none⟩
+  | _ => none
 
-def fineHybrids : List (Hybrid FinePosition) := [rafiki, ngombe]
+/-- The Bantu hybrids of §8.3 by the names the rows use. -/
+def fineHybridNames : List (String × Hybrid FinePosition) :=
+  [("rafiki", rafiki),
+    ("ng'ombe", ngombe)]
 
 /-- The Bantu hybrids respect the finer hierarchy. -/
-theorem fineHybrids_respectHierarchy : ∀ h ∈ fineHybrids, h.RespectsHierarchy := by decide
+theorem fineHybrids_respectHierarchy : ∀ h ∈ fineHybridNames, RespectsHierarchy h.2 := by
+  decide
 
 /-! ### The judgments of chapter 8
 
 A row with a `hybrid`, a `target` and an `agreement` feature is a use of a hybrid noun at a
 position of the hierarchy, acceptable exactly when the hybrid's availability there admits
-the agreement; a row with `near` and `far` features is a pair of stacked targets. -/
-
-/-- The hybrids of Table 8.1 by the names the rows use. -/
-def hybridNames : List (String × Hybrid Target) := hybrids.map λ h => (h.name, h)
-
-/-- The Bantu hybrids of §8.3 by the names the rows use. -/
-def fineHybridNames : List (String × Hybrid FinePosition) := fineHybrids.map λ h => (h.name, h)
+the agreement; a row with `near` and `far` features is a pair of stacked targets. The
+hybrids are listed by the names the rows use. -/
 
 /-- The positions of the hierarchy by the names the rows use. -/
 def targetNames : List (String × Target) :=
@@ -736,14 +694,14 @@ def finePositionNames : List (String × FinePosition) :=
 /-- The two agreements by the names the rows use. -/
 def kindNames : List (String × Kind) := [("syntactic", .syntactic), ("semantic", .semantic)]
 
-theorem hybrid_rows : ∀ row ∈ Examples.all, ∀ h ∈ row.parse? "hybrid" hybridNames,
+theorem hybrid_rows : ∀ row ∈ Examples.all, ∀ h ∈ hybridNames, row.feature? "hybrid" = some h.1 →
     ∀ t ∈ row.parse? "target" targetNames, ∀ k ∈ row.parse? "agreement" kindNames,
-      (row.judgment = .acceptable ↔ ∃ a ∈ h.profile t, a.Allows k) := by
+      (row.judgment = .acceptable ↔ ∃ a ∈ h.2 t, a.Allows k) := by
   decide +kernel
 
-theorem fine_rows : ∀ row ∈ Examples.all, ∀ h ∈ row.parse? "hybrid" fineHybridNames,
+theorem fine_rows : ∀ row ∈ Examples.all, ∀ h ∈ fineHybridNames, row.feature? "hybrid" = some h.1 →
     ∀ t ∈ row.parse? "target" finePositionNames, ∀ k ∈ row.parse? "agreement" kindNames,
-      (row.judgment = .acceptable ↔ ∃ a ∈ h.profile t, a.Allows k) := by
+      (row.judgment = .acceptable ↔ ∃ a ∈ h.2 t, a.Allows k) := by
   decide +kernel
 
 /-- Every row naming a hybrid names one of Table 8.1 or one of §8.3, at a position one of

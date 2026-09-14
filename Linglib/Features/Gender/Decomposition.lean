@@ -3,56 +3,47 @@ import Linglib.Features.ContainmentPair
 import Linglib.Features.Gender.Basic
 
 /-!
-# Gender — feature decompositions of the labels
-[smith-2015] [smith-2021] [kramer-2015] [adamson-anagnostopoulou-2025]
-[hammerly-2019]
+# Feature decompositions of gender
 
-Rival feature analyses of gender values. None is baked into `Gender.System`
-— the carrier is analysis-neutral, and each scheme here is a presentation a
-study can adopt or refute.
+This file defines two decompositions of gender values: the split feature, whose
+morphological and semantic halves may match, differ or go missing, and the bivalent
+[±feminine, ±neuter] presentation of a sex-based three-gender system.
 
-* **The split-feature architecture** ([smith-2015]; book version
-  [smith-2021]): a grammatical feature has two halves — `uF` legible to
-  morphology, `iF` legible to semantics — which "in general match up" but
-  "can be distinct or one can be missing altogether". `SplitFeature V`
-  encodes this for any value vocabulary. [kramer-2015]'s interpretability
-  classification falls out as the special cases (`IsNatural`,
-  `IsArbitrary`), and *hybrid* values (`IsHybrid` — [smith-2021]'s
-  mismatch zoo: committee-type collectives for number, Russian
-  profession nouns for gender, Hebrew be'alim, Chichewa heroes) are
-  exactly what the special cases cannot represent.
-* **Kramer's gender calculus** ([kramer-2015]): valued gender features
-  are signed binary dimensions (`Signed` over `Dimension` — FEM, ANIM,
-  and [adamson-2024]'s MASC), whose `surface` labels underdetermine them
-  (`Signed.surface_femNeg_eq_mascPos`). The interpretability-annotated
-  FEM slice is `KramerN` = {plain, i[±FEM], u[±FEM]}.
-  Natural and arbitrary gender differ only in interpretability and receive
-  the same exponence at PF (`KramerN.exponence`), which yields the
-  calculus's signature limit, here a theorem
-  (`KramerN.card_image_exponence_le_three`): **no inventory of
-  gender-relevant ns distinguishes more than three agreement classes** —
-  Kramer's own argument that >3-gender systems need per-class identity
-  features, i.e. a language-particular carrier (`Gender.System`).
+A split feature has a half legible to morphology and a half legible to semantics. The
+halves match on a natural value, only the morphological half is present on an arbitrary
+value, and a hybrid value carries mismatched halves, the committee-type nouns that a
+classification of single feature tokens by interpretability cannot represent. The bivalent
+presentation makes neuter the most specified gender and masculine the least, a containment
+pair on the pattern of the person and number presentations.
+
+## Main definitions
+
+* `Gender.SplitFeature`: a feature with a morphological and a semantic half, with its five
+  exhaustive cases `IsNatural`, `IsHybrid`, `IsArbitrary`, `IsSemanticOnly` and `IsAbsent`.
+* `Gender.Features`: the bivalent [±feminine, ±neuter] features, a `ContainmentPairLike`
+  presentation whose well-formed cells are `Features.neuter`, `Features.feminine` and
+  `Features.masculine`.
 
 ## Implementation notes
 
-* `SplitFeature` is φ-generic (its motivating mismatch, *committee*
-  uF:SG × iF:PL, is a number value): it lives here until a second feature
-  module consumes it, then hoists to a shared file.
-* The bivalent [±feminine, ±neuter] presentation ([sauerland-2003]):
-  `Gender.Features`, a `ContainmentPairLike` label scheme for sex-based
-  three-gender systems — one edge of the φ-feature iso-web
-  (`phiKernelEquiv, Studies/Harbour2016.lean`), parallel to `Person.Features` and
-  `Number.Features`. Its `no_fourth_gender` is a claim about this scheme,
-  not about gender writ large (Fula has 20 controller genders).
-* [hammerly-2019] rejects both interpretability schemes (masculine = bare
-  GENDER node, no masculine feature; natural/arbitrary derived at LF, not
-  represented) — a single-paper analysis, so it belongs in
-  `Studies/Hammerly2019.lean`, stated over the same `Gender.System`
-  carriers as its rivals.
+* Kramer's calculus of valued gender features on the nominal categorizer lives beside its
+  consumer in `Morphology/DistributedMorphology/Categorizer/Gender.lean`, where its heads
+  are the non-hybrid split features.
+* The bivalent presentation's three-cell bound is `ContainmentPairLike.no_four_way`, a claim
+  about the presentation and not about gender systems: Fula has twenty controller genders.
+* Hammerly's rejection of both schemes, with masculine a bare gender node and natural
+  gender derived at LF, is a single-paper analysis for its study.
+
+## References
+
+* [smith-2015] — the split-feature architecture
+* [smith-2021] — the mismatch typology
+* [kramer-2015] — interpretable and uninterpretable gender
+* [sauerland-2003] — the markedness ordering the bivalent presentation reconstructs
+* [hammerly-2019]
 -/
 
-open Features (ContainmentPair ContainmentPairLike)
+open Features
 
 namespace Gender
 
@@ -117,36 +108,34 @@ end SplitFeature
 
 /-! ### The bivalent presentation: [±feminine, ±neuter]
 
-[sauerland-2003]'s decomposition of sex-based gender:
-**[±feminine]** (feminine and neuter are [+feminine]) and **[±neuter]**
-(only neuter is [+neuter]), with the containment [+neuter] → [+feminine]:
-neuter is the most specified gender (like singular for number, 1st for
-person) and masculine the least. The three well-formed combinations are the
-three genders of a sex-based system; the scheme parallels person
-[±author] ⊂ [±participant] and number [±atomic] ⊂ [±minimal] — all three are
-`ContainmentPairLike` presentations of the same skeleton
-(`Features/ContainmentPair.lean`). -/
+A reconstruction of [sauerland-2003]'s markedness ordering of sex-based gender, on which
+masculine is semantically vacuous, feminine presupposes non-masculinity and neuter
+presupposes genderlessness, as two binary features with the containment
+[+neuter] → [+feminine]: neuter is the most specified gender, as singular is for number and
+first person for person, and masculine the least. The paper itself states no features; the
+three well-formed combinations are the three genders of a sex-based system, and the scheme
+parallels person [±author] ⊂ [±participant] and number [±atomic] ⊂ [±minimal], all three
+`ContainmentPairLike` presentations of one skeleton (`Features/ContainmentPair.lean`). -/
 
-/-- Bivalent gender features: [±feminine, ±neuter] ([sauerland-2003]).
-
-    The three well-formed combinations yield the three sex-based genders:
-    neuter [+feminine, +neuter], feminine [+feminine, −neuter],
-    masculine [−feminine, −neuter]. -/
+/-- Bivalent gender features [±feminine, ±neuter], reconstructing [sauerland-2003]'s
+    markedness ordering. The three well-formed combinations yield the three sex-based
+    genders: neuter [+feminine, +neuter], feminine [+feminine, −neuter], masculine
+    [−feminine, −neuter]. -/
 structure Features where
-  /-- [+feminine]: referent triggers feminine (or neuter) agreement. -/
+  /-- [+feminine]: non-masculine, the value feminine and neuter share. -/
   isFeminine : Bool
   /-- [+neuter]: referent triggers neuter agreement. -/
   isNeuter : Bool
   deriving DecidableEq, Repr, Fintype
 
 /-- Neuter features: [+feminine, +neuter]. -/
-def neuterF : Features := ⟨true, true⟩
+def Features.neuter : Features := ⟨true, true⟩
 
 /-- Feminine features: [+feminine, −neuter]. -/
-def feminineF : Features := ⟨true, false⟩
+def Features.feminine : Features := ⟨true, false⟩
 
 /-- Masculine features: [−feminine, −neuter]. -/
-def masculineF : Features := ⟨false, false⟩
+def Features.masculine : Features := ⟨false, false⟩
 
 /-- The `[±feminine, ±neuter]` decomposition is carrier-equivalent to the
     containment pair: `outer` = feminine, `inner` = neuter — one edge of the
@@ -154,49 +143,40 @@ def masculineF : Features := ⟨false, false⟩
 def featuresEquiv : Features ≃ ContainmentPair where
   toFun f := ⟨f.isFeminine, f.isNeuter⟩
   invFun p := ⟨p.outer, p.inner⟩
-  left_inv := fun ⟨_, _⟩ => rfl
-  right_inv := fun ⟨_, _⟩ => rfl
+  left_inv := λ ⟨_, _⟩ => rfl
+  right_inv := λ ⟨_, _⟩ => rfl
 
 instance : ContainmentPairLike Features := .ofEquiv featuresEquiv
 
-/-- The three canonical gender values land on the three well-formed cells. -/
-@[simp] theorem neuter_is_maximal :
-    ContainmentPairLike.toPair neuterF = .maximal := rfl
-@[simp] theorem feminine_is_intermediate :
-    ContainmentPairLike.toPair feminineF = .intermediate := rfl
-@[simp] theorem masculine_is_minimal :
-    ContainmentPairLike.toPair masculineF = .minimal := rfl
+/-- The three genders land on the three well-formed cells. -/
+@[simp] theorem Features.toPair_neuter :
+    ContainmentPairLike.toPair Features.neuter = .maximal := rfl
+@[simp] theorem Features.toPair_feminine :
+    ContainmentPairLike.toPair Features.feminine = .intermediate := rfl
+@[simp] theorem Features.toPair_masculine :
+    ContainmentPairLike.toPair Features.masculine = .minimal := rfl
 
 /-- Well-formedness: [+neuter] → [+feminine] — neuter entails feminine in
     the feature geometry, inherited from `ContainmentPair.WellFormed`. -/
 abbrev Features.WellFormed (gf : Features) : Prop :=
   ContainmentPairLike.WellFormed gf
 
-/-- No 4-way distinction *within this scheme* (inherited from
-    `ContainmentPairLike.no_four_way`) — a claim about the sex-based
-    bivalent presentation, not about gender systems writ large. -/
-theorem no_fourth_gender :
-    ∀ (a b c d : Features),
-      a.WellFormed → b.WellFormed → c.WellFormed → d.WellFormed →
-      a ≠ b → a ≠ c → a ≠ d → b ≠ c → b ≠ d → c ≠ d → False :=
-  fun a b c d ha hb hc hd =>
-    ContainmentPairLike.no_four_way a b c d ha hb hc hd
-
-@[simp] theorem neuter_wellFormed : neuterF.WellFormed := by decide
-@[simp] theorem feminine_wellFormed : feminineF.WellFormed := by decide
-@[simp] theorem masculine_wellFormed : masculineF.WellFormed := by decide
+@[simp] theorem Features.neuter_wellFormed : Features.neuter.WellFormed := by decide
+@[simp] theorem Features.feminine_wellFormed : Features.feminine.WellFormed := by decide
+@[simp] theorem Features.masculine_wellFormed : Features.masculine.WellFormed := by decide
 
 /-- The filtered combination [−feminine, +neuter] is the only one that
     violates containment. -/
-theorem illFormed_only : ¬ (⟨false, true⟩ : Features).WellFormed := by decide
+theorem Features.not_wellFormed_mk_false_true : ¬ (⟨false, true⟩ : Features).WellFormed := by
+  decide
 
 /-- Exactly 3 well-formed feature combinations (= 3 genders) — the carrier
     count of the containment chain (`ContainmentPair.card_wellFormed`). -/
-theorem card_wellFormed :
+theorem Features.card_wellFormed :
     Fintype.card {gf : Features // gf.WellFormed} = 3 := by decide
 
 /-- Containment: [+neuter] → [+feminine] for all well-formed features. -/
-theorem neuter_implies_feminine :
+theorem Features.isFeminine_of_isNeuter :
     ∀ f : Features, f.WellFormed → f.isNeuter = true → f.isFeminine = true := by
   decide
 
@@ -205,149 +185,19 @@ def Features.toGender : Features → Option Gender
   | ⟨true, true⟩   => some .neuter
   | ⟨true, false⟩  => some .feminine
   | ⟨false, false⟩ => some .masculine
-  | ⟨false, true⟩  => none  -- ill-formed
+  | ⟨false, true⟩  => none
 
 /-- Map comparative labels to gender features (partial — only sex-based
     labels have feature equivalents). -/
 def Features.fromGender : Gender → Option Features
-  | .neuter    => some neuterF
-  | .feminine  => some feminineF
-  | .masculine => some masculineF
+  | .neuter    => some Features.neuter
+  | .feminine  => some Features.feminine
+  | .masculine => some Features.masculine
   | _          => none
 
-/-- Round-trip: `fromGender ∘ toGender = some` for all well-formed
-    features. -/
-theorem roundtrip_fromGender_toGender :
-    [neuterF, feminineF, masculineF].all
-      (λ f => f.toGender.bind Features.fromGender == some f) = true := by
-  decide
-
-/-! ### Dimensions and signed features
-
-Kramer's calculus ranges over language-particular binary dimensions:
-[±FEM] (Amharic, Spanish, Maa), [±ANIM] (Lealao Chinantec, Algonquian,
-Teop), and [adamson-2024]'s [±MASC] (Jarawara). A signed dimension is a
-valued gender feature, and its `surface` is the comparative label of the
-chosen pole. `KramerN` below is the interpretability-annotated FEM
-slice. -/
-
-/-- A binary gender dimension: the contrast a language's gender features
-are drawn over ([kramer-2015]; [adamson-2024] for MASC). -/
-inductive Dimension where
-  | fem   -- [±FEM]: Amharic, Spanish, Maa
-  | masc  -- [±MASC]: Jarawara
-  | anim  -- [±ANIM]: Lealao Chinantec, Algonquian, Teop
-  deriving DecidableEq, Repr, Fintype
-
-/-- The sign of a valued binary feature. Neither sign is inherently
-marked: which one a language's arbitrary gender carries is the Set 1 vs
-Set 2 parameter ([kramer-2015] Ch 6). -/
-inductive Pole where
-  | pos  -- [+VAL]
-  | neg  -- [−VAL]
-  deriving DecidableEq, Repr, Fintype
-
-/-- The comparative label at a dimension's positive pole. -/
-def Dimension.positive : Dimension → Gender
-  | .fem  => .feminine
-  | .masc => .masculine
-  | .anim => .animate
-
-/-- The comparative label at a dimension's negative pole. -/
-def Dimension.negative : Dimension → Gender
-  | .fem  => .masculine
-  | .masc => .feminine
-  | .anim => .inanimate
-
-/-- A valued gender feature: a dimension with a sign — [+FEM], [−FEM],
-[+ANIM], and so on. -/
-structure Signed where
-  dim : Dimension
-  pole : Pole
-  deriving DecidableEq, Repr, Fintype
-
-/-- The comparative label a valued feature denotes: the pole its sign
-picks. -/
-def Signed.surface (v : Signed) : Gender :=
-  match v.pole with
-  | .pos => v.dim.positive
-  | .neg => v.dim.negative
-
-/-- Surface labels underdetermine features: Maa's [−FEM] and Jarawara's
-[+MASC] both surface masculine ([kramer-2015] §6.3 vs [adamson-2024]
-§3.2) — drawing the featural distinction is what the dimension inventory
-is for. -/
-theorem Signed.surface_femNeg_eq_mascPos :
-    (Signed.mk .fem .neg).surface = (Signed.mk .masc .pos).surface := rfl
-
-/-- The canonical numbering of the six valued features — the encoding
-consumers with numeral gender slots (the Minimalist φ-interface) use. -/
-def Signed.toNat : Signed → Nat
-  | ⟨.fem, .pos⟩  => 0  -- [+FEM]
-  | ⟨.fem, .neg⟩  => 1  -- [−FEM]
-  | ⟨.masc, .pos⟩ => 2  -- [+MASC]
-  | ⟨.masc, .neg⟩ => 3  -- [−MASC]
-  | ⟨.anim, .pos⟩ => 4  -- [+ANIM]
-  | ⟨.anim, .neg⟩ => 5  -- [−ANIM]
-
-/-- The numbering is faithful. -/
-theorem Signed.toNat_injective : Function.Injective Signed.toNat := by
-  decide
-
-/-! ### Kramer's gender calculus and its three-gender bound -/
-
-/-- A gender-relevant nominalizing head in [kramer-2015]'s calculus:
-    plain n, or n bearing an interpretable or uninterpretable [±FEM]. -/
-inductive KramerN where
-  /-- n with no gender features (Romanian default-gender nouns). -/
-  | plain
-  /-- n i[+FEM]: interpretable feminine (natural gender). -/
-  | iFem
-  /-- n i[−FEM]: interpretable masculine (natural gender). -/
-  | iMasc
-  /-- n u[+FEM]: uninterpretable feminine (arbitrary gender). -/
-  | uFem
-  /-- n u[−FEM]: uninterpretable masculine (arbitrary gender). -/
-  | uMasc
-  deriving DecidableEq, Repr, Fintype
-
-namespace KramerN
-
-/-- What agreement exponence sees: the feature value, not its
-    interpretability — natural and arbitrary gender receive the same
-    Vocabulary Item ([kramer-2015]). `none` = no gender features. -/
-def exponence : KramerN → Option Bool
-  | .plain => none
-  | .iFem  => some true
-  | .uFem  => some true
-  | .iMasc => some false
-  | .uMasc => some false
-
-/-- Each Kramer head reads as a split feature: interpretable heads value
-    both halves, uninterpretable heads only the morphological half. -/
-def toSplitFeature : KramerN → SplitFeature Bool
-  | .plain => ⟨none, none⟩
-  | .iFem  => ⟨some true, some true⟩
-  | .iMasc => ⟨some false, some false⟩
-  | .uFem  => ⟨some true, none⟩
-  | .uMasc => ⟨some false, none⟩
-
-/-- The calculus generates no hybrids: every Kramer head is natural,
-    arbitrary, or absent in split-feature terms — the representational gap
-    [smith-2015]'s architecture closes. -/
-theorem toSplitFeature_not_isHybrid (n : KramerN) :
-    ¬ n.toSplitFeature.IsHybrid := by
-  cases n <;> rintro ⟨u, i, hu, hi, hne⟩ <;> simp_all [toSplitFeature]
-
-/-- [kramer-2015]'s three-gender bound, as a theorem: any inventory of
-    gender-relevant ns distinguishes at most three agreement classes
-    ([+FEM], [−FEM], bare). More than three genders therefore requires
-    machinery beyond the calculus — per-class identity features, i.e. a
-    language-particular `Gender.System` carrier. -/
-theorem card_image_exponence_le_three (inv : Finset KramerN) :
-    (inv.image exponence).card ≤ 3 :=
-  le_trans (Finset.card_le_univ _) (by decide)
-
-end KramerN
+/-- A well-formed feature survives the round trip through its label. -/
+theorem Features.fromGender_toGender {f : Features} (h : f.WellFormed) :
+    f.toGender.bind Features.fromGender = some f := by
+  revert f; decide
 
 end Gender

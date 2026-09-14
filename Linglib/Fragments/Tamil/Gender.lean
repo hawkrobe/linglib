@@ -78,9 +78,6 @@ def system : Gender.System Value where
     | .neut => some .neuter
   default := .neut
 
-/-- Every noun gets its controller gender. -/
-def assigned : Gender.System.Assigned Noun Value := { system with assign := (·.gender) }
-
 instance : HasGender Value := ⟨λ g => system.label g⟩
 
 instance : HasGender Noun := ⟨λ n => genderOf n.gender⟩

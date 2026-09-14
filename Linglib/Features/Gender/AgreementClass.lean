@@ -1,6 +1,7 @@
 import Mathlib.Data.Fintype.Pi
 import Mathlib.Data.Set.Finite.Range
 import Mathlib.SetTheory.Cardinal.Finite
+import Linglib.Core.Relation.FactorsThroughOn
 import Linglib.Features.Gender.Basic
 
 /-!
@@ -30,8 +31,21 @@ German, or neither determines the other, as in Romanian or Lak.
   agreement map has values.
 * `Gender.card_range_le_prod`: the controller genders are at most the product over the
   targets of the target genders.
-* `Gender.System.Assigned.agreementClasses_eq`: when a faithful system mediates agreement,
-  the agreement classes are the fibres of its assignment.
+* `Gender.agreementClasses_eq_ker_of_faithful`: when a faithful carrier mediates
+  agreement, the agreement classes are the fibres of the assignment.
+* `Gender.parallel_iff_ker_eq`, `Gender.convergent_iff_ker_lt`: the map between two numbers'
+  target genders is the order of their kernels.
+
+## Implementation notes
+
+* The index `T` of the agreement map is whatever the map is restricted to: a target
+  category, a morphosyntactic form, or a pair of the two, so that target genders can be
+  counted per target as well as per number across targets.
+* Subgenders, agreement classes differing on a minority of forms, inquorate genders, small
+  closed classes whose pattern mixes other genders, and overdifferentiated targets are the
+  steps from agreement classes to controller genders that remain to be defined; until then
+  the agreement classes of a fragment are its controller genders only when the fragment
+  records no such class.
 
 ## References
 
@@ -65,14 +79,14 @@ theorem card_range_le_prod [Finite N] [Fintype T] (agr : N → T → F) :
   exact Nat.card_le_card_of_injective (λ f t => ⟨f.1 t, f.2.imp λ n hn => congrFun hn t⟩)
     λ f g h => Subtype.ext (funext λ t => congrArg Subtype.val (congrFun h t))
 
-/-- When a faithful system mediates agreement, the agreement classes are the fibres of its
-assignment: the controller genders are the genders. -/
-theorem System.Assigned.agreementClasses_eq {G : Type*} (S : System.Assigned N G)
-    {nounAgr : N → T → F} {agr : G → T → F} (med : S.Mediates nounAgr agr)
-    (faith : Faithful agr) : agreementClasses nounAgr = Setoid.ker S.assign :=
+/-- When noun-level agreement is the per-gender behaviour of a faithful carrier, the
+agreement classes are the fibres of the assignment: the genders are the agreement classes. -/
+theorem agreementClasses_eq_ker_of_faithful {G : Type*} {assign : N → G}
+    {nounAgr : N → T → F} {agr : G → T → F} (med : nounAgr = agr ∘ assign)
+    (faith : Faithful agr) : agreementClasses nounAgr = Setoid.ker assign :=
   Setoid.ext λ a b => by
-    change nounAgr a = nounAgr b ↔ S.assign a = S.assign b
-    rw [med a, med b, faith.eq_iff]
+    rw [Setoid.ker_def, Setoid.ker_def, med, Function.comp_apply, Function.comp_apply,
+      faith.eq_iff]
 
 section NumberMap
 
@@ -90,6 +104,16 @@ def Convergent (sg : N → F) (pl : N → F') : Prop :=
 /-- Crossed when neither determines the other. -/
 def Crossed (sg : N → F) (pl : N → F') : Prop :=
   ¬ Function.FactorsThrough pl sg ∧ ¬ Function.FactorsThrough sg pl
+
+/-- Parallel target genders have the same kernel. -/
+theorem parallel_iff_ker_eq {sg : N → F} {pl : N → F'} :
+    Parallel sg pl ↔ Setoid.ker sg = Setoid.ker pl := by
+  simp only [Parallel, Function.factorsThrough_iff_ker_le, le_antisymm_iff]
+
+/-- Convergent target genders have strictly ordered kernels. -/
+theorem convergent_iff_ker_lt {sg : N → F} {pl : N → F'} :
+    Convergent sg pl ↔ Setoid.ker sg < Setoid.ker pl := by
+  simp only [Convergent, Function.factorsThrough_iff_ker_le, lt_iff_le_not_ge]
 
 variable [Fintype N] [DecidableEq F] [DecidableEq F'] (sg : N → F) (pl : N → F')
 

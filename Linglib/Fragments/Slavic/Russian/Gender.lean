@@ -217,23 +217,9 @@ def system : Gender.System Value where
   label := λ g => some g.toLabel
   default := .neut
 
-/-- The assigned system: every noun gets its controller gender. For the
-    hybrid *vrač* this is the morphological masculine; the
-    female-referent agreement alternation is the datum
-    `Kramer2020.hybridTargets`. -/
-def assigned : Gender.System.Assigned Noun Value := { system with assign := (·.gender) }
-
 /-- The carrier is faithful to the past-tense concord evidence:
     *-∅* / *-a* / *-o* distinguishes all three genders on a single
     target. [corbett-1991]'s genders-are-agreement-classes criterion. -/
 theorem faithful_pastConcord : Function.Injective Value.pastConcord := by decide
-
-/-- [kramer-2015]'s (7ii) / [dahl-2000]'s generalization instantiated:
-    the natural-gender nouns form a semantic core, their gender being the
-    referent-sex classification. The hybrid *vrač* and the
-    declension-class remainder are outside the core. -/
-theorem assigned_semanticCore :
-    assigned.SemanticCore {n | n.isNaturalGender = true} (·.gender) :=
-  ⟨⟨mat', rfl⟩, λ _ _ _ _ h => h⟩
 
 end Russian.Gender

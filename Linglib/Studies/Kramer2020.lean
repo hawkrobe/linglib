@@ -246,7 +246,7 @@ acquires by agreement. -/
 inductive DetFeature where
   | d
   | definite
-  | gender (v : Gender.Signed)
+  | gender (v : GenderValue)
   deriving DecidableEq, Repr
 
 /-- What the determiner carries after agreeing with a head. -/

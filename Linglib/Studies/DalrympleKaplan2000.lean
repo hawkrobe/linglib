@@ -1,5 +1,4 @@
 import Linglib.Data.Examples.DalrympleKaplan2000
-import Linglib.Features.Gender.Resolve
 import Linglib.Features.Person.Resolve
 import Linglib.Fragments.Chichewa.Gender
 import Linglib.Fragments.English.Predicates.Verbal
@@ -57,9 +56,8 @@ conjunction's marker. Each construction is then checked against the paper's judg
 * The collapsed English system is stated as the tripartition's coarsened resolution, the
   study's bridge to the substrate; the paper frames §6.2 as a choice between two marker
   assignments.
-* Each language's gender rules are a table over its own gender carrier, the shape of the
-  substrate's `Gender.Strategy.res`, so that Slovene's same-gender clause is the failure of
-  `Gender.Strategy.Congruent`.
+* Each language's gender rules are a table over its own gender carrier, and Slovene's
+  same-gender clause is the failure of the table's congruence (`Congruent`).
 
 ## TODO
 
@@ -418,12 +416,16 @@ inductive GenderMarker where
 /-- A gender value as a set of markers. -/
 abbrev GenderSet := Finset GenderMarker
 
+/-- A resolution table is congruent when a shared gender resolves to itself, the
+    generalization (105b). -/
+def Congruent {G : Type*} (rules : G → G → Option G) : Prop := ∀ g, rules g g = some g
+
 /-- Whenever an injective marker assignment reproduces a language's resolution rules by union,
     same-gender coordination resolves to that gender, the generalization (105b), because union
     is idempotent. -/
 theorem congruent_of_union {G : Type*} {mark : G → GenderSet} (hinj : Function.Injective mark)
     {rules : G → G → Option G} (h : ∀ a b, (rules a b).map mark = some (mark a ∪ mark b)) :
-    Gender.Strategy.Congruent rules := by
+    Congruent rules := by
   intro g
   have hg := h g g
   rw [Finset.union_self] at hg
@@ -462,7 +464,7 @@ theorem hindi_injective : Function.Injective hindi := by decide
 theorem hindi_union : ∀ a b, (hindiRules a b).map hindi = some (hindi a ∪ hindi b) := by
   decide
 
-theorem hindi_congruent : Gender.Strategy.Congruent hindiRules :=
+theorem hindi_congruent : Congruent hindiRules :=
   congruent_of_union hindi_injective hindi_union
 
 /-- The feminine set is nested in the masculine, so the mixed coordination is masculine and
@@ -502,7 +504,7 @@ theorem icelandic_union :
   decide
 
 /-- Same-gender coordination resolves to that gender in Icelandic ((105b)). -/
-theorem icelandic_congruent : Gender.Strategy.Congruent icelandicRules :=
+theorem icelandic_congruent : Congruent icelandicRules :=
   congruent_of_union icelandic_injective icelandic_union
 
 /-- Masculine and feminine are incomparable, so their join is neither and a third gender must
@@ -550,10 +552,10 @@ theorem slovene_union :
     ((123)), and the violation is the conjunction's marker, since without it the neuter's set
     is idempotent. -/
 theorem slovene_not_congruent :
-    ¬ Gender.Strategy.Congruent sloveneRules ∧
+    ¬ Congruent sloveneRules ∧
       slovene .neuter ∪ slovene .neuter ∪ {.fem} ≠ slovene .neuter ∧
       slovene .neuter ∪ slovene .neuter = slovene .neuter := by
-  unfold Gender.Strategy.Congruent; decide
+  unfold Congruent; decide
 
 /-- The tree and the nest take masculine agreement ((123)). -/
 theorem slovene_example :

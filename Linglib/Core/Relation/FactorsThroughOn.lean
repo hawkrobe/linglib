@@ -3,6 +3,7 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Set.Finite.Range
 import Mathlib.SetTheory.Cardinal.Finite
+import Mathlib.Data.Setoid.Basic
 
 /-!
 # Factor-through on a subset
@@ -25,11 +26,17 @@ equality of `g a` and `g b`.
   pair of in-set points agreeing on `f` and differing on `g`.
 * `Function.FactorsThrough.card_range_le`: a function that factors through
   another takes no more values.
+* `Function.factorsThrough_iff_ker_le`: factoring through is the order of kernels.
 -/
 
 namespace Function
 
 variable {α : Type*} {β : Type*} {γ : Type*}
+
+/-- `g` factors through `f` exactly when the kernel of `f` refines the kernel of `g`. -/
+theorem factorsThrough_iff_ker_le {g : α → γ} {f : α → β} :
+    FactorsThrough g f ↔ Setoid.ker f ≤ Setoid.ker g :=
+  ⟨λ h => Setoid.le_def.2 λ hab => h hab, λ h _ _ hab => Setoid.le_def.1 h hab⟩
 
 /-- `g` factors through `f` on `s`: for `a b ∈ s`, `f a = f b` implies
 `g a = g b`. -/
